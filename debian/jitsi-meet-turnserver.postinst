@@ -33,12 +33,24 @@ case "$1" in
         JVB_HOSTNAME="$RET"
 
         TURN_CONFIG="/etc/turnserver.conf"
+        NGINX_CONFIG="/etc/nginx/sites-available/$JVB_HOSTNAME.conf"
 
         # detect dpkg-reconfigure, just delete old links
         db_get jitsi-meet-turnserver/jvb-hostname
         JVB_HOSTNAME_OLD=$RET
         if [ -n "$RET" ] && [ ! "$JVB_HOSTNAME_OLD" = "$JVB_HOSTNAME" ] ; then
             rm -f $TURN_CONFIG
+        fi
+
+        # this detect only old installations with no nginx
+        db_get jitsi-meet/jvb-serve || true
+        if [ ! -f $NGINX_CONFIG -o "$RET" = "true" ] ; then
+            # nothing to do
+            echo ""
+            echo "turnserver not configured as no nginx found to multiplex traffic"
+            echo ""
+            db_stop
+            exit 0
         fi
 
         # stores the hostname so we will reuse it later, like in purge
@@ -82,8 +94,8 @@ case "$1" in
             invoke-rc.d coturn restart || true
 
             NGINX_STREAM_CONFIG="/etc/nginx/modules-enabled/50-jitsi-meet.conf"
-            if [ -f $NGINX_STREAM_CONFIG ] ; then
-                sed -i "s/listen 443 ssl/listen 4444 ssl http2/g" /etc/nginx/sites-available/$JVB_HOSTNAME.conf
+            if [ -f $NGINX_STREAM_CONFIG ] && [ -f $NGINX_CONFIG ] ; then
+                sed -i "s/listen 443 ssl/listen 4444 ssl http2/g" $NGINX_CONFIG
                 invoke-rc.d nginx reload || true
             fi
         fi
