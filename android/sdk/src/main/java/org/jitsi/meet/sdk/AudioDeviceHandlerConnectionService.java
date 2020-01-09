@@ -17,6 +17,7 @@
 package org.jitsi.meet.sdk;
 
 import android.content.Context;
+import android.media.AudioManager;
 import android.os.Build;
 import android.telecom.CallAudioState;
 import androidx.annotation.RequiresApi;
@@ -37,6 +38,11 @@ class AudioDeviceHandlerConnectionService implements
         RNConnectionService.CallAudioStateListener {
 
     private final static String TAG = AudioDeviceHandlerConnectionService.class.getSimpleName();
+
+    /**
+     * {@link AudioManager} instance used to interact with the Android audio subsystem.
+     */
+    private AudioManager audioManager;
 
     /**
      * Reference to the main {@code AudioModeModule}.
@@ -134,6 +140,8 @@ class AudioDeviceHandlerConnectionService implements
         JitsiMeetLogger.i("Using " + TAG + " as the audio device handler");
 
         module = audioModeModule;
+        audioManager = (AudioManager)context.getSystemService(Context.AUDIO_SERVICE);
+
         RNConnectionService rcs = ReactInstanceManagerHolder.getNativeModule(RNConnectionService.class);
         if (rcs != null) {
             rcs.setCallAudioStateListener(this);
@@ -160,6 +168,16 @@ class AudioDeviceHandlerConnectionService implements
 
     @Override
     public boolean setMode(int mode) {
+        if (mode != AudioModeModule.DEFAULT) {
+            // This shouldn't be needed when using ConnectionService, but some devices have been
+            // observed not doing it.
+            try {
+                audioManager.setMicrophoneMute(false);
+            } catch (Throwable tr) {
+                JitsiMeetLogger.w(tr, TAG + " Failed to unmute the microphone");
+            }
+        }
+
         return true;
     }
 }
