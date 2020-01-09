@@ -132,7 +132,7 @@ case "$1" in
 
         # Check whether prosody config has the internal muc, if not add it,
         # as we are migrating configs
-        if ! grep -q "internal.auth.$JVB_HOSTNAME" $PROSODY_HOST_CONFIG; then
+        if [ -f $PROSODY_HOST_CONFIG ] && ! grep -q "internal.auth.$JVB_HOSTNAME" $PROSODY_HOST_CONFIG; then
             echo -e "\nComponent \"internal.auth.$JVB_HOSTNAME\" \"muc\"" >> $PROSODY_HOST_CONFIG
             echo -e "    storage = \"null\"" >> $PROSODY_HOST_CONFIG
             echo -e "    modules_enabled = { \"ping\"; }" >> $PROSODY_HOST_CONFIG
