@@ -57,6 +57,15 @@ if [ -f /etc/nginx/sites-enabled/$DOMAIN.conf ] ; then
     echo "service nginx reload" >> $CRON_FILE
     service nginx reload
 
+    TURN_CONFIG="/etc/turnserver.conf"
+    if [ -f $TURN_CONFIG ] && grep -q "jitsi-meet coturn config" "$TURN_CONFIG" ; then
+        echo "Configuring turnserver"
+        sed -i "s/cert=\/etc\/jitsi\/meet\/.*crt/cert=$CERT_CRT_ESC/g" $TURN_CONFIG
+        sed -i "s/pkey=\/etc\/jitsi\/meet\/.*key/pkey=$CERT_KEY_ESC/g" $TURN_CONFIG
+
+        echo "service coturn restart" >> $CRON_FILE
+        service coturn restart
+    fi
 elif [ -f /etc/apache2/sites-enabled/$DOMAIN.conf ] ; then
 
     ./certbot-auto certonly --noninteractive \
