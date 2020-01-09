@@ -329,6 +329,8 @@ var config = {
 
         // The STUN servers that will be used in the peer to peer connections
         stunServers: [
+
+            // { urls: 'stun:jitsi-meet.example.com:443' },
             { urls: 'stun:stun.l.google.com:19302' },
             { urls: 'stun:stun1.l.google.com:19302' },
             { urls: 'stun:stun2.l.google.com:19302' }

@@ -80,6 +80,15 @@ case "$1" in
         # stores the hostname so we will reuse it later, like in purge
         db_set jitsi-meet-prosody/jvb-hostname "$JVB_HOSTNAME"
 
+        db_get jitsi-meet-prosody/turn-secret
+        if [ -z "$RET" ] ; then
+            # 8-chars random secret used for the turnserver
+            TURN_SECRET=`cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 8 | head -n 1`
+            db_set jitsi-meet-prosody/turn-secret "$TURN_SECRET"
+        else
+            TURN_SECRET="$RET"
+        fi
+
         # and we're done with debconf
         db_stop
 
@@ -97,6 +106,7 @@ case "$1" in
             sed -i "s/jitmeet.example.com/$JVB_HOSTNAME/g" $PROSODY_HOST_CONFIG
             sed -i "s/focusSecret/$JICOFO_SECRET/g" $PROSODY_HOST_CONFIG
             sed -i "s/focusUser/$JICOFO_AUTH_USER/g" $PROSODY_HOST_CONFIG
+            sed -i "s/__turnSecret__/$TURN_SECRET/g" $PROSODY_HOST_CONFIG
             if [ ! -f /etc/prosody/conf.d/$JVB_HOSTNAME.cfg.lua ]; then
                 ln -s $PROSODY_HOST_CONFIG /etc/prosody/conf.d/$JVB_HOSTNAME.cfg.lua
             fi
@@ -115,12 +125,14 @@ case "$1" in
             PROSODY_CONFIG_PRESENT="false"
         fi
 
-        # we always try to create the user 'jvb' and not fail configure if user exists
-        prosodyctl register jvb $JICOFO_AUTH_DOMAIN $JVB_SECRET || true
+        USER_EXISTS_CHECK=`prosodyctl adduser jvb@$JICOFO_AUTH_DOMAIN < /dev/null || true`
+        if [ ! "$USER_EXISTS_CHECK" = "That user already exists" ]; then
+            prosodyctl register jvb $JICOFO_AUTH_DOMAIN $JVB_SECRET || true
+        fi
 
         # Check whether prosody config has the internal muc, if not add it,
         # as we are migrating configs
-        if ! grep -q "internal.auth.$JVB_HOSTNAME" $PROSODY_HOST_CONFIG; then
+        if [ -f $PROSODY_HOST_CONFIG ] && ! grep -q "internal.auth.$JVB_HOSTNAME" $PROSODY_HOST_CONFIG; then
             echo -e "\nComponent \"internal.auth.$JVB_HOSTNAME\" \"muc\"" >> $PROSODY_HOST_CONFIG
             echo -e "    storage = \"null\"" >> $PROSODY_HOST_CONFIG
             echo -e "    modules_enabled = { \"ping\"; }" >> $PROSODY_HOST_CONFIG

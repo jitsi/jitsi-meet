@@ -3,6 +3,17 @@ plugin_paths = { "/usr/share/jitsi-meet/prosody-plugins/" }
 -- domain mapper options, must at least have domain base set to use the mapper
 muc_mapper_domain_base = "jitmeet.example.com";
 
+turncredentials_secret = "__turnSecret__";
+
+turncredentials = {
+  { type = "stun", host = "jitmeet.example.com", port = "443" },
+  { type = "turn", host = "jitmeet.example.com", port = "443", transport = "udp" },
+  { type = "turns", host = "jitmeet.example.com", port = "443", transport = "tcp" }
+};
+
+cross_domain_bosh = false;
+consider_bosh_secure = true;
+
 VirtualHost "jitmeet.example.com"
         -- enabled = false -- Remove this line to enable this host
         authentication = "anonymous"
@@ -25,6 +36,7 @@ VirtualHost "jitmeet.example.com"
             "pubsub";
             "ping"; -- Enable mod_ping
             "speakerstats";
+            "turncredentials";
         }
         c2s_require_encryption = false
 

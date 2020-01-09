@@ -3,7 +3,17 @@ server_names_hash_bucket_size 64;
 server {
     listen 80;
     server_name jitsi-meet.example.com;
-    return 301 https://$host$request_uri;
+
+    location ^~ /.well-known/acme-challenge/ {
+       default_type "text/plain";
+       root         /usr/share/jitsi-meet;
+    }
+    location = /.well-known/acme-challenge/ {
+       return 404;
+    }
+    location / {
+       return 301 https://$host$request_uri;
+    }
 }
 server {
     listen 443 ssl;
