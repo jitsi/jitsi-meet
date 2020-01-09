@@ -34,6 +34,7 @@ case "$1" in
 
         TURN_CONFIG="/etc/turnserver.conf"
         NGINX_CONFIG="/etc/nginx/sites-available/$JVB_HOSTNAME.conf"
+        JITSI_MEET_CONFIG="/etc/jitsi/meet/$JVB_HOSTNAME-config.js"
 
         # detect dpkg-reconfigure, just delete old links
         db_get jitsi-meet-turnserver/jvb-hostname
@@ -97,6 +98,11 @@ case "$1" in
             if [ -f $NGINX_STREAM_CONFIG ] && [ -f $NGINX_CONFIG ] ; then
                 sed -i "s/listen 443 ssl/listen 4444 ssl http2/g" $NGINX_CONFIG
                 invoke-rc.d nginx reload || true
+            fi
+
+            # Enable turn server in config.js
+            if [ -f $JITSI_MEET_CONFIG ] ; then
+                sed -i "s/\/\/ useStunTurn: true/useStunTurn: true/g" $JITSI_MEET_CONFIG
             fi
         fi
 
