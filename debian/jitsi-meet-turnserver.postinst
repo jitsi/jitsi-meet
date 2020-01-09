@@ -4,6 +4,7 @@
 # see: dh_installdeb(1)
 
 set -e
+set -x
 
 # summary of how this script can be called:
 #        * <postinst> `configure' <most-recently-configured-version>
