@@ -129,6 +129,15 @@ const eventEmitter = new EventEmitter();
 let room;
 let connection;
 
+/**
+ * This promise is used for chaining mutePresenterVideo calls in order to avoid  calling GUM multiple times if it takes
+ * a while to finish.
+ *
+ * @type {Promise<void>}
+ * @private
+ */
+let _prevMutePresenterVideo = Promise.resolve();
+
 /*
  * Logic to open a desktop picker put on the window global for
  * lib-jitsi-meet to detect and invoke
@@ -446,6 +455,7 @@ export default {
 
     /**
      * The local presenter video track (if any).
+     * @type {JitsiLocalTrack|null}
      */
     localPresenterVideo: null,
 
@@ -857,7 +867,10 @@ export default {
         }
 
         if (this.isSharingScreen) {
-            return this._mutePresenterVideo(mute);
+            // Chain _mutePresenterVideo calls
+            _prevMutePresenterVideo = _prevMutePresenterVideo.then(() => this._mutePresenterVideo(mute));
+
+            return;
         }
 
         // If not ready to modify track's state yet adjust the base/media
@@ -1634,6 +1647,15 @@ export default {
         const maybeShowErrorDialog = error => {
             APP.store.dispatch(notifyCameraError(error));
         };
+
+        // Check for NO-OP
+        if (mute && (!this.localPresenterVideo || this.localPresenterVideo.isMuted())) {
+
+            return;
+        } else if (!mute && this.localPresenterVideo && !this.localPresenterVideo.isMuted()) {
+
+            return;
+        }
 
         if (!this.localPresenterVideo && !mute) {
             // create a new presenter track and apply the presenter effect.
