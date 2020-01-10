@@ -2171,7 +2171,7 @@ export default {
 
                     // dispose the existing presenter track and create a new
                     // camera track.
-                    this.localPresenterVideo.dispose();
+                    this.localPresenterVideo && this.localPresenterVideo.dispose();
                     this.localPresenterVideo = null;
 
                     return this._createPresenterStreamEffect(height, cameraDeviceId)
@@ -2191,7 +2191,7 @@ export default {
                     const { height } = this.localVideo.track.getSettings();
 
                     this._updateVideoDeviceId();
-                    this.localPresenterVideo.dispose();
+                    this.localPresenterVideo && this.localPresenterVideo.dispose();
                     this.localPresenterVideo = null;
                     this._createPresenterStreamEffect(height, cameraDeviceId);
 
