@@ -31,8 +31,7 @@ import java.util.Map;
 
 
 /**
- * A base activity for SDK users to embed. It uses {@link JitsiMeetFragment} to do the heavy
- * lifting and wires the remaining Activity lifecycle methods so it works out of the box.
+ * A base activity for SDK users to embed.
  */
 public class JitsiMeetActivity extends FragmentActivity
         implements JitsiMeetActivityInterface, JitsiMeetViewListener {
@@ -73,6 +72,20 @@ public class JitsiMeetActivity extends FragmentActivity
     }
 
     @Override
+    protected void onResume() {
+
+        super.onResume();
+        JitsiMeetActivityDelegate.onHostResume(this);
+    }
+
+    @Override
+    public void onStop() {
+
+        super.onStop();
+        JitsiMeetActivityDelegate.onHostPause(this);
+    }
+
+    @Override
     public void onDestroy() {
         // Here we are trying to handle the following corner case: an application using the SDK
         // is using this Activity for displaying meetings, but there is another "main" Activity
@@ -81,6 +94,10 @@ public class JitsiMeetActivity extends FragmentActivity
         // current meeting, but when our view is detached from React the JS <-> Native bridge won't
         // be operational so the external API won't be able to notify the native side that the
         // conference terminated. Thus, try our best to clean up.
+        getJitsiView().dispose();
+
+        JitsiMeetActivityDelegate.onHostDestroy(this);
+
         leave();
         if (AudioModeModule.useConnectionService()) {
             ConnectionService.abortConnections();
@@ -101,9 +118,7 @@ public class JitsiMeetActivity extends FragmentActivity
     //
 
     protected JitsiMeetView getJitsiView() {
-        JitsiMeetFragment fragment
-            = (JitsiMeetFragment) getSupportFragmentManager().findFragmentById(R.id.jitsiFragment);
-        return fragment.getJitsiView();
+        return findViewById(R.id.jitsiView);
     }
 
     public void join(@Nullable String url) {
@@ -164,6 +179,7 @@ public class JitsiMeetActivity extends FragmentActivity
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         JitsiMeetActivityDelegate.onActivityResult(this, requestCode, resultCode, data);
     }
 
