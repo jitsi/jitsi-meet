@@ -1424,10 +1424,23 @@ export default {
 
         this._stopProxyConnection();
 
-        let promise = null;
+        // It can happen that presenter GUM is in progress while screensharing is being turned off. Here it needs to
+        // wait for that GUM to be resolved in order to prevent leaking the presenter track(this.localPresenterVideo
+        // will be null when SS is being turned off, but it will initialize once GUM resolves).
+        let promise = _prevMutePresenterVideo = _prevMutePresenterVideo.then(() => {
+            // mute the presenter track if it exists.
+            if (this.localPresenterVideo) {
+                APP.store.dispatch(setVideoMuted(true, MEDIA_TYPE.PRESENTER));
+
+                return this.localPresenterVideo.dispose().then(() => {
+                    APP.store.dispatch(trackRemoved(this.localPresenterVideo));
+                    this.localPresenterVideo = null;
+                });
+            }
+        });
 
         if (didHaveVideo) {
-            promise = createLocalTracksF({ devices: [ 'video' ] })
+            promise = promise.then(() => createLocalTracksF({ devices: [ 'video' ] }))
                 .then(([ stream ]) => this.useVideoStream(stream))
                 .then(() => {
                     sendAnalytics(createScreenSharingEvent('stopped'));
@@ -1443,17 +1456,7 @@ export default {
                     );
                 });
         } else {
-            promise = this.useVideoStream(null);
-        }
-
-        // mute the presenter track if it exists.
-        if (this.localPresenterVideo) {
-            APP.store.dispatch(
-                setVideoMuted(true, MEDIA_TYPE.PRESENTER));
-            this.localPresenterVideo.dispose();
-            APP.store.dispatch(
-                trackRemoved(this.localPresenterVideo));
-            this.localPresenterVideo = null;
+            promise = promise.then(() => this.useVideoStream(null));
         }
 
         return promise.then(
@@ -2171,6 +2174,7 @@ export default {
 
                     // dispose the existing presenter track and create a new
                     // camera track.
+                    // FIXME JitsiLocalTrack.dispose is async and should be waited for
                     this.localPresenterVideo && this.localPresenterVideo.dispose();
                     this.localPresenterVideo = null;
 
@@ -2191,6 +2195,8 @@ export default {
                     const { height } = this.localVideo.track.getSettings();
 
                     this._updateVideoDeviceId();
+
+                    // FIXME JitsiLocalTrack.dispose is async and should be waited for
                     this.localPresenterVideo && this.localPresenterVideo.dispose();
                     this.localPresenterVideo = null;
                     this._createPresenterStreamEffect(height, cameraDeviceId);
