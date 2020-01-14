@@ -15,6 +15,7 @@ import {
     showParticipantJoinedNotification
 } from './actions';
 import { NOTIFICATION_TIMEOUT } from './constants';
+import { joinLeaveNotificationsDisabled } from './functions';
 
 declare var interfaceConfig: Object;
 
@@ -31,7 +32,7 @@ MiddlewareRegistry.register(store => next => action => {
 
         const { participant: p } = action;
 
-        if (!p.local) {
+        if (!p.local && !joinLeaveNotificationsDisabled()) {
             store.dispatch(showParticipantJoinedNotification(
                 getParticipantDisplayName(store.getState, p.id)
             ));
@@ -40,20 +41,21 @@ MiddlewareRegistry.register(store => next => action => {
         return result;
     }
     case PARTICIPANT_LEFT: {
-        const participant = getParticipantById(
-            store.getState(),
-            action.participant.id
-        );
+        if (!joinLeaveNotificationsDisabled()) {
+            const participant = getParticipantById(
+                store.getState(),
+                action.participant.id
+            );
 
-        if (typeof interfaceConfig === 'object'
-            && participant
-            && !participant.local) {
-            store.dispatch(showNotification({
-                descriptionKey: 'notify.disconnected',
-                titleKey: 'notify.somebody',
-                title: participant.name
-            },
-            NOTIFICATION_TIMEOUT));
+            if (typeof interfaceConfig === 'object'
+                && participant
+                && !participant.local) {
+                store.dispatch(showNotification({
+                    descriptionKey: 'notify.disconnected',
+                    titleKey: 'notify.somebody',
+                    title: participant.name
+                }, NOTIFICATION_TIMEOUT));
+            }
         }
 
         return next(action);
