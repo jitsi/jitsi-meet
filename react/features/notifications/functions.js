@@ -2,6 +2,8 @@
 
 import { toState } from '../base/redux';
 
+declare var interfaceConfig: Object;
+
 /**
  * Tells whether or not the notifications are enabled and if there are any
  * notifications to be displayed based on the current Redux state.
@@ -14,4 +16,13 @@ export function areThereNotifications(stateful: Object | Function) {
     const { enabled, notifications } = state['features/notifications'];
 
     return enabled && notifications.length > 0;
+}
+
+/**
+ * Tells wether join/leave notifications are enabled in interface_config.
+ *
+ * @returns {boolean}
+ */
+export function joinLeaveNotificationsDisabled() {
+    return Boolean(interfaceConfig?.DISABLE_JOIN_LEAVE_NOTIFICATIONS);
 }
