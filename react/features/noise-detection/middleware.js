@@ -13,17 +13,19 @@ import { NOISY_AUDIO_INPUT_SOUND_FILE } from './sounds';
 
 MiddlewareRegistry.register(store => next => action => {
     const result = next(action);
-    const { dispatch, getState } = store;
-    const { conference } = action;
+
 
     switch (action.type) {
     case APP_WILL_MOUNT:
-        dispatch(registerSound(NOISY_AUDIO_INPUT_SOUND_ID, NOISY_AUDIO_INPUT_SOUND_FILE));
+        store.dispatch(registerSound(NOISY_AUDIO_INPUT_SOUND_ID, NOISY_AUDIO_INPUT_SOUND_FILE));
         break;
     case APP_WILL_UNMOUNT:
-        dispatch(unregisterSound(NOISY_AUDIO_INPUT_SOUND_ID));
+        store.dispatch(unregisterSound(NOISY_AUDIO_INPUT_SOUND_ID));
         break;
     case CONFERENCE_JOINED: {
+        const { dispatch, getState } = store;
+        const { conference } = action;
+
         conference.on(
             JitsiConferenceEvents.TRACK_MUTE_CHANGED,
             track => {
