@@ -5,10 +5,7 @@ import { CONFERENCE_JOINED } from '../base/conference';
 import { JitsiConferenceEvents } from '../base/lib-jitsi-meet';
 import { MiddlewareRegistry } from '../base/redux';
 import { playSound, registerSound, unregisterSound } from '../base/sounds';
-import {
-    hideNotification,
-    showNotification
-} from '../notifications';
+import { hideNotification, showNotification } from '../notifications';
 
 import { setNoisyAudioInputNotificationUid } from './actions';
 import { NOISY_AUDIO_INPUT_SOUND_ID } from './constants';
@@ -26,7 +23,6 @@ MiddlewareRegistry.register(store => next => action => {
     case APP_WILL_UNMOUNT:
         dispatch(unregisterSound(NOISY_AUDIO_INPUT_SOUND_ID));
         break;
-
     case CONFERENCE_JOINED: {
         conference.on(
             JitsiConferenceEvents.TRACK_MUTE_CHANGED,
@@ -47,7 +43,6 @@ MiddlewareRegistry.register(store => next => action => {
                 });
 
                 dispatch(notification);
-
                 dispatch(playSound(NOISY_AUDIO_INPUT_SOUND_ID));
 
                 // we store the last notification id so we can hide it if the mic is muted
