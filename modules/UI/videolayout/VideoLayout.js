@@ -2,10 +2,6 @@
 const logger = require('jitsi-meet-logger').getLogger(__filename);
 
 import {
-    getNearestReceiverVideoQualityLevel,
-    setMaxReceiverVideoQuality
-} from '../../../react/features/base/conference';
-import {
     JitsiParticipantConnectionStatus
 } from '../../../react/features/base/lib-jitsi-meet';
 import { VIDEO_TYPE } from '../../../react/features/base/media';
@@ -14,13 +10,9 @@ import {
     getPinnedParticipant,
     pinParticipant
 } from '../../../react/features/base/participants';
-import {
-    shouldDisplayTileView
-} from '../../../react/features/video-layout';
 import { SHARED_VIDEO_CONTAINER_TYPE } from '../shared_video/SharedVideo';
 import SharedVideoThumb from '../shared_video/SharedVideoThumb';
 
-import Filmstrip from './Filmstrip';
 import UIEvents from '../../../service/UI/UIEvents';
 
 import RemoteVideo from './RemoteVideo';
@@ -87,11 +79,6 @@ const VideoLayout = {
         // sets default video type of local video
         // FIXME container type is totally different thing from the video type
         localVideoThumbnail.setVideoType(VIDEO_CONTAINER_TYPE);
-
-        // if we do not resize the thumbs here, if there is no video device
-        // the local video thumb maybe one pixel
-        this.resizeThumbnails(true);
-
         this.registerListeners();
     },
 
@@ -331,8 +318,6 @@ const VideoLayout = {
             remoteVideo.setVideoType(VIDEO_CONTAINER_TYPE);
         }
 
-        VideoLayout.resizeThumbnails(true);
-
         // Initialize the view
         remoteVideo.updateView();
     },
@@ -340,12 +325,9 @@ const VideoLayout = {
     // FIXME: what does this do???
     remoteVideoActive(videoElement, resourceJid) {
         logger.info(`${resourceJid} video is now active`, videoElement);
-        VideoLayout.resizeThumbnails(
-            false, () => {
-                if (videoElement) {
-                    $(videoElement).show();
-                }
-            });
+        if (videoElement) {
+            $(videoElement).show();
+        }
         this._updateLargeVideoIfDisplayed(resourceJid, true);
     },
 
@@ -376,37 +358,6 @@ const VideoLayout = {
 
             remoteVideo.updateRemoteVideoMenu();
         });
-    },
-
-    /*
-     * Shows or hides the audio muted indicator over the local thumbnail video.
-     * @param {boolean} isMuted
-     */
-    showLocalAudioIndicator(isMuted) {
-        localVideoThumbnail.showAudioIndicator(isMuted);
-    },
-
-    /**
-     * Resizes thumbnails.
-     */
-    resizeThumbnails(forceUpdate = false, onComplete = null) {
-        const { localVideo, remoteVideo } = Filmstrip.calculateThumbnailSize();
-
-        Filmstrip.resizeThumbnails(localVideo, remoteVideo, forceUpdate);
-
-        if (shouldDisplayTileView(APP.store.getState())) {
-            const height = (localVideo && localVideo.thumbHeight) || (remoteVideo && remoteVideo.thumbnHeight) || 0;
-            const qualityLevel = getNearestReceiverVideoQualityLevel(height);
-
-            APP.store.dispatch(setMaxReceiverVideoQuality(qualityLevel));
-        }
-
-        localVideoThumbnail && localVideoThumbnail.rerender();
-        Object.values(remoteVideos).forEach(remoteVideoThumbnail => remoteVideoThumbnail.rerender());
-
-        if (onComplete && typeof onComplete === 'function') {
-            onComplete();
-        }
     },
 
     /**
@@ -544,18 +495,6 @@ const VideoLayout = {
     },
 
     /**
-     * Hides the connection indicator
-     * @param id
-     */
-    hideConnectionIndicator(id) {
-        const remoteVideo = remoteVideos[id];
-
-        if (remoteVideo) {
-            remoteVideo.removeConnectionIndicator();
-        }
-    },
-
-    /**
      * Hides all the indicators
      */
     hideStats() {
@@ -586,8 +525,6 @@ const VideoLayout = {
         } else {
             logger.warn(`No remote video for ${id}`);
         }
-
-        VideoLayout.resizeThumbnails();
     },
 
     onVideoTypeChanged(id, newVideoType) {
@@ -623,12 +560,7 @@ const VideoLayout = {
      *
      * @param forceUpdate indicates that hidden thumbnails will be shown
      */
-    resizeVideoArea(
-            forceUpdate = false,
-            animate = false) {
-        // Resize the thumbnails first.
-        this.resizeThumbnails(forceUpdate);
-
+    resizeVideoArea(animate = false) {
         if (largeVideo) {
             largeVideo.updateContainerSize();
             largeVideo.resize(animate);
@@ -917,6 +849,10 @@ const VideoLayout = {
     refreshLayout() {
         localVideoThumbnail && localVideoThumbnail.updateDOMLocation();
         VideoLayout.resizeVideoArea();
+
+        // Rerender the thumbnails since they are dependant on the layout because of the tooltip positioning.
+        localVideoThumbnail && localVideoThumbnail.rerender();
+        Object.values(remoteVideos).forEach(remoteVideoThumbnail => remoteVideoThumbnail.rerender());
     },
 
     /**
@@ -967,6 +903,13 @@ const VideoLayout = {
         if (this.isCurrentlyOnLarge(participantId)) {
             this.updateLargeVideo(participantId, force);
         }
+    },
+
+    /**
+     * Handles window resizes.
+     */
+    onResize() {
+        VideoLayout.resizeVideoArea();
     }
 };
 

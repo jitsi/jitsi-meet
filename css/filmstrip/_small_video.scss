@@ -1,5 +1,5 @@
 .filmstrip__videos .videocontainer {
-    display: none;
+    display: inline-block;
     position: relative;
     background-size: contain;
     border: $thumbnailVideoBorder solid transparent;

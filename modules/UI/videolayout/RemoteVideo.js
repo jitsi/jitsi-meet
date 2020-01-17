@@ -22,7 +22,8 @@ import {
 } from '../../../react/features/remote-video-menu';
 import {
     LAYOUTS,
-    getCurrentLayout
+    getCurrentLayout,
+    shouldDisplayTileView
 } from '../../../react/features/video-layout';
 /* eslint-enable no-unused-vars */
 
@@ -129,6 +130,39 @@ export default class RemoteVideo extends SmallVideo {
     addRemoteVideoContainer() {
         this.container = createContainer(this.videoSpanId);
         this.$container = $(this.container);
+        const layout = getCurrentLayout(APP.store.getState());
+
+        switch (layout) {
+        case LAYOUTS.VERTICAL_FILMSTRIP_VIEW:
+            this.$container.css('padding-top', `${1 / interfaceConfig.REMOTE_THUMBNAIL_RATIO * 100}%`);
+            break;
+        case LAYOUTS.HORIZONTAL_FILMSTRIP_VIEW: {
+            const state = APP.store.getState();
+            const { height, width } = state['features/filmstrip'].horizontalViewDimensions.remote;
+
+            this.$container.css({
+                height: `${height}px`,
+                'min-height': `${height}px`,
+                'min-width': `${width}px`,
+                width: `${width}px`
+            });
+            break;
+        }
+        case LAYOUTS.TILE_VIEW: {
+            const state = APP.store.getState();
+            const { height, width } = state['features/filmstrip'].tileViewDimensions.thumbnailSize;
+
+            this.$container.css({
+                height: `${height}px`,
+                'min-height': `${height}px`,
+                'min-width': `${width}px`,
+                width: `${width}px`
+            });
+            break;
+        }
+        }
+
+
         this.initBrowserSpecificProperties();
         this.updateRemoteVideoMenu();
         this.addAudioLevelIndicator();

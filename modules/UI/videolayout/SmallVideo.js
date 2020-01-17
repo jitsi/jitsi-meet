@@ -34,7 +34,6 @@ import {
 
 const logger = require('jitsi-meet-logger').getLogger(__filename);
 
-import UIUtil from '../util/UIUtil';
 import UIEvents from '../../../service/UI/UIEvents';
 
 /**
@@ -629,8 +628,7 @@ export default class SmallVideo {
                 <Provider store = { APP.store }>
                     <AvatarDisplay
                         className = 'userAvatar'
-                        participantId = { this.id }
-                        size = { this.$avatar().width() } />
+                        participantId = { this.id } />
                 </Provider>,
                 thumbnail
             );
@@ -801,7 +799,8 @@ export default class SmallVideo {
             return;
         }
 
-        const iconSize = UIUtil.getIndicatorFontSize();
+        const { NORMAL = 8 } = interfaceConfig.INDICATOR_FONT_SIZES || {};
+        const iconSize = NORMAL;
         const showConnectionIndicator = this.videoIsHovered || !interfaceConfig.CONNECTION_INDICATOR_AUTO_HIDE_ENABLED;
         const state = APP.store.getState();
         const currentLayout = getCurrentLayout(state);
@@ -830,11 +829,9 @@ export default class SmallVideo {
                                     connectionStatus = { this._connectionStatus }
                                     iconSize = { iconSize }
                                     isLocalVideo = { this.isLocal }
-                                    enableStatsDisplay
-                                        = { !interfaceConfig.filmStripOnly }
+                                    enableStatsDisplay = { !interfaceConfig.filmStripOnly }
                                     participantId = { this.id }
-                                    statsPopoverPosition
-                                        = { statsPopoverPosition } />
+                                    statsPopoverPosition = { statsPopoverPosition } />
                                 : null }
                             <RaisedHandIndicator
                                 iconSize = { iconSize }

@@ -9,7 +9,7 @@ import { JitsiTrackEvents } from '../../../react/features/base/lib-jitsi-meet';
 import { VideoTrack } from '../../../react/features/base/media';
 import { updateSettings } from '../../../react/features/base/settings';
 import { getLocalVideoTrack } from '../../../react/features/base/tracks';
-import { shouldDisplayTileView } from '../../../react/features/video-layout';
+import { getCurrentLayout, LAYOUTS, shouldDisplayTileView } from '../../../react/features/video-layout';
 /* eslint-enable no-unused-vars */
 
 const logger = require('jitsi-meet-logger').getLogger(__filename);
@@ -33,6 +33,38 @@ export default class LocalVideo extends SmallVideo {
         this.streamEndedCallback = streamEndedCallback;
         this.container = this.createContainer();
         this.$container = $(this.container);
+        const layout = getCurrentLayout(APP.store.getState());
+
+        switch (layout) {
+        case LAYOUTS.VERTICAL_FILMSTRIP_VIEW:
+            this.$container.css('padding-top', `${1 / interfaceConfig.LOCAL_THUMBNAIL_RATIO * 100}%`);
+            break;
+        case LAYOUTS.HORIZONTAL_FILMSTRIP_VIEW: {
+            const state = APP.store.getState();
+            const { height, width } = state['features/filmstrip'].horizontalViewDimensions.local;
+
+            this.$container.css({
+                height: `${height}px`,
+                'min-height': `${height}px`,
+                'min-width': `${width}px`,
+                width: `${width}px`
+            });
+            break;
+        }
+        case LAYOUTS.TILE_VIEW: {
+            const state = APP.store.getState();
+            const { height, width } = state['features/filmstrip'].tileViewDimensions.thumbnailSize;
+
+            this.$container.css({
+                height: `${height}px`,
+                'min-height': `${height}px`,
+                'min-width': `${width}px`,
+                width: `${width}px`
+            });
+            break;
+        }
+        }
+
         this.updateDOMLocation();
 
         this.localVideoId = null;
@@ -42,8 +74,7 @@ export default class LocalVideo extends SmallVideo {
         }
         this.isLocal = true;
         this.emitter = emitter;
-        this.statsPopoverLocation = interfaceConfig.VERTICAL_FILMSTRIP
-            ? 'left top' : 'top center';
+        this.statsPopoverLocation = interfaceConfig.VERTICAL_FILMSTRIP ? 'left top' : 'top center';
 
         Object.defineProperty(this, 'id', {
             get() {
