@@ -20,7 +20,7 @@ import {
 } from './actionTypes';
 import { showNotification, showWarningNotification } from '../../notifications';
 import { updateSettings } from '../settings';
-import { setAudioOutputDeviceId } from './functions';
+import { formatDeviceLabel, setAudioOutputDeviceId } from './functions';
 import logger from './logger';
 
 const JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP = {
@@ -186,12 +186,7 @@ function _checkAndNotifyForNewDevice(store, newDevices, oldDevices) {
 
         // we want to strip any device details that are not very
         // user friendly, like usb ids put in brackets at the end
-        let description = newDevice.label;
-        const ix = description.lastIndexOf('(');
-
-        if (ix !== -1) {
-            description = description.substr(0, ix);
-        }
+        const description = formatDeviceLabel(newDevice.label);
 
         let titleKey;
 

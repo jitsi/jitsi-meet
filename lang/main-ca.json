@@ -21,10 +21,11 @@
         "bluetooth": "Bluetooth",
         "headphones": "Auriculars",
         "phone": "Telèfon",
-        "speaker": "Altaveu"
+        "speaker": "Altaveu",
+        "none": ""
     },
     "audioOnly": {
-        "audioOnly": "Només l'àudio"
+        "audioOnly": ""
     },
     "calendarSync": {
         "addMeetingURL": "Afegeix un enllaç de reunió",
@@ -46,12 +47,17 @@
     },
     "chat": {
         "error": "",
+        "fieldPlaceHolder": "",
         "messagebox": "",
+        "messageTo": "",
+        "noMessagesMessage": "",
         "nickname": {
             "popover": "Trieu un sobrenom",
             "title": "Introduïu un sobrenom per a usar el xat"
         },
-        "title": "Xat"
+        "privateNotice": "",
+        "title": "Xat",
+        "you": ""
     },
     "connectingOverlay": {
         "joiningRoom": ""
@@ -96,8 +102,7 @@
         "resolution": "Resolució:",
         "status": "Connexió:",
         "transport": "Transport:",
-        "transport_plural": "Transports:",
-        "turn": " (torn)"
+        "transport_plural": "Transports:"
     },
     "dateUtils": {
         "earlier": "",
@@ -115,6 +120,7 @@
         "tryAgainButton": "Torna-ho a intentar en l'escriptori"
     },
     "defaultLink": "p. ex. {{url}}",
+    "defaultNickname": "p. ex. Pere Cullera",
     "deviceError": {
         "cameraError": "No s'ha pogut accedir a la càmera",
         "cameraPermission": "",
@@ -178,7 +184,7 @@
         "kickParticipantDialog": "",
         "kickParticipantTitle": "",
         "kickTitle": "",
-        "liveStreaming": "",
+        "liveStreaming": "Transmissió en directe",
         "liveStreamingDisabledForGuestTooltip": "",
         "liveStreamingDisabledTooltip": "",
         "lockMessage": "No s'ha pogut blocar la conferència.",
@@ -195,7 +201,7 @@
         "micPermissionDeniedError": "",
         "micUnknownError": "",
         "muteParticipantBody": "",
-        "muteParticipantButton": "",
+        "muteParticipantButton": "Silenciat",
         "muteParticipantDialog": "",
         "muteParticipantTitle": "",
         "Ok": "D'acord",
@@ -228,6 +234,10 @@
         "screenSharingFirefoxPermissionDeniedError": "",
         "screenSharingFirefoxPermissionDeniedTitle": "",
         "screenSharingPermissionDeniedError": "",
+        "sendPrivateMessage": "",
+        "sendPrivateMessageCancel": "",
+        "sendPrivateMessageOk": "",
+        "sendPrivateMessageTitle": "",
         "serviceUnavailable": "El servei no és disponible",
         "sessTerminated": "La trucada ha finalitzat",
         "Share": "Comparteix",
@@ -258,9 +268,11 @@
         "Yes": "Sí",
         "yourEntireScreen": ""
     },
-    "\u0005dialog": {},
     "dialOut": {
         "statusMessage": ""
+    },
+    "documentSharing": {
+        "title": ""
     },
     "feedback": {
         "average": "",
@@ -308,7 +320,6 @@
         "tooltip": "",
         "label": ""
     },
-    "\u0005info": {},
     "inviteDialog": {
         "alertText": "",
         "header": "Convida",
@@ -337,9 +348,9 @@
         "toggleFilmstrip": "",
         "toggleScreensharing": "",
         "toggleShortcuts": "",
-        "videoMute": ""
+        "videoMute": "",
+        "videoQuality": "Gestiona la qualitat de la trucada"
     },
-    "\u0005keyboardShortcuts": {},
     "liveStreaming": {
         "busy": "",
         "busyTitle": "",
@@ -357,7 +368,9 @@
         "getStreamKeyManually": "",
         "invalidStreamKey": "",
         "off": "",
+        "offBy": "",
         "on": "Transmissió en directe",
+        "onBy": "",
         "pending": "",
         "serviceName": "",
         "signedInAs": "",
@@ -368,7 +381,6 @@
         "streamIdHelp": "Què és això?",
         "unavailableTitle": ""
     },
-    "\u0005liveStreaming": {},
     "localRecording": {
         "clientState": {
             "off": "Inactiu",
@@ -398,7 +410,6 @@
         "stop": "Inicia l'enregistrament",
         "yes": "Sí"
     },
-    "\u0005localRecording": {},
     "lockRoomPassword": "Contrasenya",
     "lockRoomPasswordUppercase": "Contrasenya",
     "me": "",
@@ -426,7 +437,7 @@
         "somebody": "Algú",
         "startSilentTitle": "",
         "startSilentDescription": "",
-        "suboptimalExperienceDescription": "",
+        "suboptimalBrowserWarning": "",
         "suboptimalExperienceTitle": "",
         "unmute": "",
         "newDeviceCameraTitle": "",
@@ -456,6 +467,7 @@
         "setEmailLabel": "",
         "title": ""
     },
+    "raisedHand": "Vull parlar",
     "recording": {
         "authDropboxText": "Puja a Dropbox",
         "availableSpace": "",
@@ -471,7 +483,9 @@
         "live": "",
         "loggedIn": "",
         "off": "",
+        "offBy": "",
         "on": "Enregistrament",
+        "onBy": "",
         "pending": "S'està preparant per a enregistrar la reunió...",
         "rec": "ENREG",
         "serviceDescription": "",
@@ -507,20 +521,21 @@
         "startVideoMuted": "",
         "title": "Configuració"
     },
-    "\u0005settings": {
-        "calendar": {}
-    },
     "settingsView": {
+        "advanced": "",
         "alertOk": "D'acord",
         "alertTitle": "",
         "alertURLText": "L'URL introduït no és vàlid",
         "buildInfoSection": "",
         "conferenceSection": "Conferència",
+        "disableCallIntegration": "",
+        "disableP2P": "",
         "displayName": "Nom visible",
         "email": "Adreça electrònica",
         "header": "Configuració",
         "profileSection": "",
         "serverURL": "URL del servidor",
+        "showAdvanced": "",
         "startWithAudioMuted": "Inicia amb l'àudio silenciat",
         "startWithVideoMuted": "Inicia amb el vídeo silenciat",
         "version": ""
@@ -538,7 +553,6 @@
         "speakerStats": "Estadístiques de l'interlocutor",
         "speakerTime": ""
     },
-    "\u0005speakerStats": {},
     "startupoverlay": {
         "policyText": "",
         "title": ""
@@ -552,13 +566,15 @@
         "accessibilityLabel": {
             "audioOnly": "Canvia només l'àudio",
             "audioRoute": "Seleccioneu l'aparell de so",
-            "callQuality": "",
+            "callQuality": "Gestiona la qualitat de la trucada",
             "cc": "Canvia l'estat dels subtítols",
             "chat": "Canvia l'estat de la finestra de xats",
             "document": "Canvia el document compartit",
+            "download": "",
             "feedback": "Deixa comentaris",
             "fullScreen": "Activa o desactiva la pantalla completa",
             "hangup": "Abandona la trucada",
+            "help": "",
             "invite": "Convida-hi persones",
             "kick": "Silencia el participant",
             "localRecording": "Activa o desactiva les controls d'enregistrament local",
@@ -567,6 +583,7 @@
             "moreActionsMenu": "Menú d'accions addicionals",
             "mute": "Activa o desactiva el silenci de l'àudio",
             "pip": "",
+            "privateMessage": "",
             "profile": "Edita el perfil",
             "raiseHand": "Aixeca o abaixa la mà",
             "recording": "Activa o desactiva l'enregistrament",
@@ -584,8 +601,8 @@
             "videoblur": ""
         },
         "addPeople": "Afegeix persones a la trucada",
-        "audioOnlyOff": "Desactiva el mode de només àudio",
-        "audioOnlyOn": "Activa el mode de només àudio",
+        "audioOnlyOff": "",
+        "audioOnlyOn": "",
         "audioRoute": "Seleccioneu l'aparell de so",
         "authenticate": "Autentica",
         "callQuality": "Gestiona la qualitat de la trucada",
@@ -593,20 +610,26 @@
         "closeChat": "Tanca el xat",
         "documentClose": "Tanca el document compartit",
         "documentOpen": "Obre el document compartit",
+        "download": "",
         "enterFullScreen": "Mostra en pantalla completa",
         "enterTileView": "",
         "exitFullScreen": "Surt de la pantalla completa",
         "exitTileView": "",
         "feedback": "Deixa comentaris",
         "hangup": "Surt",
+        "help": "",
         "invite": "Convida-hi persones",
         "login": "",
         "logout": "Tanca la sessió",
         "lowerYourHand": "",
         "moreActions": "Accions addionals",
         "mute": "",
+        "noAudioSignalTitle": "",
+        "noAudioSignalDesc": "",
+        "noAudioSignalDescSuggestion": "",
         "openChat": "Obre el xat",
         "pip": "",
+        "privateMessage": "",
         "profile": "Edita el perfil",
         "raiseHand": "Aixeca o abaixa la mà",
         "raiseYourHand": "Aixeca la mà",
@@ -627,9 +650,6 @@
         "startvideoblur": "",
         "stopvideoblur": ""
     },
-    "\u0005toolbar": {
-        "accessibilityLabel": {}
-    },
     "transcribing": {
         "ccButtonTooltip": "Inicia o atura els subtítols",
         "error": "La transcripció ha fallat. Torneu-ho a intentar més tard.",
@@ -642,7 +662,6 @@
         "stop": "",
         "tr": "TR"
     },
-    "\u0005transcribing": {},
     "userMedia": {
         "androidGrantPermissions": "",
         "chromeGrantPermissions": "",
@@ -670,10 +689,12 @@
         "audioOnlyExpanded": "",
         "callQuality": "",
         "hd": "HD",
+        "hdTooltip": "",
         "highDefinition": "Alta definició",
         "labelTooiltipNoVideo": "No hi ha vídeo",
         "labelTooltipAudioOnly": "",
         "ld": "LD",
+        "ldTooltip": "",
         "lowDefinition": "Baixa definició",
         "onlyAudioAvailable": "Només hi ha disponible l'àudio",
         "onlyAudioSupported": "",
@@ -681,6 +702,7 @@
         "p2pVideoQualityDescription": "",
         "recHighDefinitionOnly": "",
         "sd": "",
+        "sdTooltip": "",
         "standardDefinition": ""
     },
     "videothumbnail": {
@@ -694,7 +716,6 @@
         "show": "",
         "videomute": ""
     },
-    "\u0005videothumbnail": {},
     "welcomepage": {
         "accessibilityLabel": {
             "join": "Toqueu per a unir-vos-hi",
@@ -709,7 +730,9 @@
         "connectCalendarButton": "",
         "connectCalendarText": "",
         "enterRoomTitle": "Inicia una reunió nova",
+        "roomNameAllowedChars": "",
         "go": "",
+        "goSmall": "",
         "join": "",
         "info": "",
         "privacy": "Privadesa",

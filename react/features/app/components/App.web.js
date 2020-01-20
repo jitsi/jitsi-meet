@@ -7,6 +7,7 @@ import { DialogContainer } from '../../base/dialog';
 import '../../base/user-interaction';
 import '../../chat';
 import '../../external-api';
+import '../../no-audio-signal';
 import '../../power-monitor';
 import '../../room-lock';
 import '../../talk-while-muted';

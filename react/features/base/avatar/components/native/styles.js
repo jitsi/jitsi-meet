@@ -1,5 +1,7 @@
 // @flow
 
+import { StyleSheet } from 'react-native';
+
 import { ColorPalette } from '../../../styles';
 
 const DEFAULT_SIZE = 65;
@@ -25,6 +27,38 @@ export default {
             height: size,
             width: size
         };
+    },
+
+    badge: (size: number = DEFAULT_SIZE, status: string) => {
+        let color;
+
+        switch (status) {
+        case 'available':
+            color = 'rgb(110, 176, 5)';
+            break;
+        case 'away':
+            color = 'rgb(250, 201, 20)';
+            break;
+        case 'busy':
+            color = 'rgb(233, 0, 27)';
+            break;
+        case 'idle':
+            color = 'rgb(172, 172, 172)';
+            break;
+        }
+
+        return {
+            backgroundColor: color,
+            borderRadius: size / 2,
+            bottom: 0,
+            height: size * 0.3,
+            position: 'absolute',
+            width: size * 0.3
+        };
+    },
+
+    badgeContainer: {
+        ...StyleSheet.absoluteFillObject
     },
 
     initialsContainer: {

@@ -9,6 +9,7 @@ import { connect } from '../../../base/redux';
 import { PictureInPictureButton } from '../../../mobile/picture-in-picture';
 import { isToolboxVisible } from '../../../toolbox';
 
+import ConferenceTimer from '../ConferenceTimer';
 import styles, { NAVBAR_GRADIENT_COLORS } from './styles';
 
 type Props = {
@@ -63,6 +64,7 @@ class NavigationBar extends Component<Props> {
                         style = { styles.roomName }>
                         { this.props._meetingName }
                     </Text>
+                    <ConferenceTimer />
                 </View>
             </View>
         ];

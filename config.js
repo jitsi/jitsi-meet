@@ -73,6 +73,11 @@ var config = {
     // Disable measuring of audio levels.
     // disableAudioLevels: false,
 
+    // Enabling this will run the lib-jitsi-meet no audio detection module which
+    // will notify the user if the current selected microphone has no audio
+    // input and will suggest another valid device if one is present.
+    // enableNoAudioDetection: false
+
     // Start the conference in audio only mode (no video is being received nor
     // sent).
     // startAudioOnly: false,
@@ -324,6 +329,8 @@ var config = {
 
         // The STUN servers that will be used in the peer to peer connections
         stunServers: [
+
+            // { urls: 'stun:jitsi-meet.example.com:443' },
             { urls: 'stun:stun.l.google.com:19302' },
             { urls: 'stun:stun1.l.google.com:19302' },
             { urls: 'stun:stun2.l.google.com:19302' }

@@ -140,15 +140,13 @@
     margin-top: 20px;
     font-size: 12px;
     line-height: 24px;
-    border-collapse: separate;
-    border-spacing: 0 5px;
+    border-collapse: collapse;
 
     thead {
         text-align: left;
     }
 
-    td,
-    th {
+    tr {
         border-bottom: 1px solid #d1dbe8;
     }
 

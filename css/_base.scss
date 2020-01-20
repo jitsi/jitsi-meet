@@ -161,6 +161,7 @@ form {
 ::-webkit-scrollbar {
     background: transparent;
     width: 7px;
+    height: $scrollHeight;
 }
 
 ::-webkit-scrollbar-button {

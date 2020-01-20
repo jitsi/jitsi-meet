@@ -188,7 +188,12 @@ var interfaceConfig = {
      *
      * Note: this mode is experimental and subject to breakage.
      */
-    AUTO_PIN_LATEST_SCREEN_SHARE: 'remote-only'
+    AUTO_PIN_LATEST_SCREEN_SHARE: 'remote-only',
+
+    /**
+     * If we should capture periodic screenshots of the content sharing.
+     */
+    ENABLE_SCREENSHOT_CAPTURE: false
 
     /**
      * How many columns the tile view can expand to. The respected range is

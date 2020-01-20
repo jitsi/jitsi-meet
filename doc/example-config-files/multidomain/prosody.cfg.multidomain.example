@@ -83,8 +83,6 @@ modules_enabled = {
 		"adhoc";
 		"websocket";
 		"http_altconnect";
-    -- include domain mapper as global level module
-        "muc_domain_mapper";
 }
 
 -- domain mapper options, must at least have domain base set to use the mapper
