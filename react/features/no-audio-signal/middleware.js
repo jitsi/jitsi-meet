@@ -48,12 +48,9 @@ MiddlewareRegistry.register(store => next => async action => {
 async function _handleNoAudioSignalNotification({ dispatch, getState }, action) {
 
     const { conference } = action;
-    let confAudioInputState;
 
     conference.on(JitsiConferenceEvents.AUDIO_INPUT_STATE_CHANGE, hasAudioInput => {
         const { noAudioSignalNotificationUid } = getState()['features/no-audio-signal'];
-
-        confAudioInputState = hasAudioInput;
 
         // In case the notification is displayed but the conference detected audio input signal we hide it.
         if (noAudioSignalNotificationUid && hasAudioInput) {
@@ -71,16 +68,7 @@ async function _handleNoAudioSignalNotification({ dispatch, getState }, action) 
             return;
         }
 
-        // Force the flag to false in case AUDIO_INPUT_STATE_CHANGE is received after the notification is displayed,
-        // possibly preventing the notification from displaying because of an outdated state.
-        confAudioInputState = false;
-
-
         const activeDevice = await JitsiMeetJS.getActiveAudioDevice();
-
-        if (confAudioInputState) {
-            return;
-        }
 
         // In case there is a previous notification displayed just hide it.
         const { noAudioSignalNotificationUid } = getState()['features/no-audio-signal'];
