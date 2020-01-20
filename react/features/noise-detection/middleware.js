@@ -14,7 +14,6 @@ import { NOISY_AUDIO_INPUT_SOUND_FILE } from './sounds';
 MiddlewareRegistry.register(store => next => action => {
     const result = next(action);
 
-
     switch (action.type) {
     case APP_WILL_MOUNT:
         store.dispatch(registerSound(NOISY_AUDIO_INPUT_SOUND_ID, NOISY_AUDIO_INPUT_SOUND_FILE));
