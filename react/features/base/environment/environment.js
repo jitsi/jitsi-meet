@@ -17,7 +17,6 @@ const DEFAULT_UNSUPPORTED_BROWSERS = [];
 const browserNameToCheck = {
     chrome: browser.isChrome.bind(browser),
     chromium: browser.isChromiumBased.bind(browser),
-    edge: browser.isEdge.bind(browser),
     electron: browser.isElectron.bind(browser),
     firefox: browser.isFirefox.bind(browser),
     nwjs: browser.isNWJS.bind(browser),
