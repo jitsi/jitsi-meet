@@ -193,7 +193,14 @@ var interfaceConfig = {
     /**
      * If we should capture periodic screenshots of the content sharing.
      */
-    ENABLE_SCREENSHOT_CAPTURE: false
+    ENABLE_SCREENSHOT_CAPTURE: false,
+
+    /**
+    * Decides whether the chrome extension banner should be rendered on the landing page and during the meeting.
+    * If this is set to false, the banner will not be rendered at all. If set to true, the check for extension(s)
+    * being already installed is done before rendering.
+    */
+    SHOW_CHROME_EXTENSION_BANNER: false
 
     /**
      * How many columns the tile view can expand to. The respected range is

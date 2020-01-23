@@ -18,7 +18,9 @@ import { PersistenceRegistry } from '../../storage';
 
 import { appWillMount, appWillUnmount } from '../actions';
 import logger from '../logger';
+import { ChromeExtensionBanner } from '../../../chrome-extension-banner';
 
+declare var interfaceConfig: Object;
 declare var APP: Object;
 
 /**
@@ -129,6 +131,11 @@ export default class BaseApp extends Component<*, State> {
                 <I18nextProvider i18n = { i18next }>
                     <Provider store = { store }>
                         <Fragment>
+                            {
+                                typeof interfaceConfig !== 'undefined'
+                                && interfaceConfig.SHOW_CHROME_EXTENSION_BANNER
+                                && <ChromeExtensionBanner />
+                            }
                             { this._createMainElement(component) }
                             <SoundCollection />
                             { this._createExtraElement() }
