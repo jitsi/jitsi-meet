@@ -14,7 +14,7 @@ if not have_async then
     return;
 end
 
-local wrap_async_run = module:require "util".wrap_async_run;
+local async_handler_wrapper = module:require "util".async_handler_wrapper;
 
 local tostring = tostring;
 local neturl = require "net.url";
@@ -79,7 +79,7 @@ end
 --         tha value is without counting the focus.
 function handle_get_room_size(event)
     if (not event.request.url.query) then
-        return 400;
+        return { status_code = 400; };
     end
 
 	local params = parse(event.request.url.query);
@@ -95,7 +95,7 @@ function handle_get_room_size(event)
     end
 
     if not verify_token(params["token"], room_address) then
-        return 403;
+        return { status_code = 403; };
     end
 
 	local room = get_room_from_jid(room_address);
@@ -112,14 +112,14 @@ function handle_get_room_size(event)
             "there are %s occupants in room", tostring(participant_count));
 	else
 		log("debug", "no such room exists");
-		return 404;
+		return { status_code = 404; };
 	end
 
 	if participant_count > 1 then
 		participant_count = participant_count - 1;
 	end
 
-	return [[{"participants":]]..participant_count..[[}]];
+	return { status_code = 200; body = [[{"participants":]]..participant_count..[[}]] };
 end
 
 --- Handles request for retrieving the room participants details
@@ -127,7 +127,7 @@ end
 -- @return GET response, containing a json with participants details
 function handle_get_room (event)
     if (not event.request.url.query) then
-        return 400;
+        return { status_code = 400; };
     end
 
 	local params = parse(event.request.url.query);
@@ -142,7 +142,7 @@ function handle_get_room (event)
     end
 
     if not verify_token(params["token"], room_address) then
-        return 403;
+        return { status_code = 403; };
     end
 
 	local room = get_room_from_jid(room_address);
@@ -173,14 +173,14 @@ function handle_get_room (event)
             "there are %s occupants in room", tostring(participant_count));
 	else
 		log("debug", "no such room exists");
-		return 404;
+		return { status_code = 404; };
 	end
 
 	if participant_count > 1 then
 		participant_count = participant_count - 1;
 	end
 
-	return json.encode(occupants_json);
+	return { status_code = 200; body = json.encode(occupants_json); };
 end;
 
 function module.load()
@@ -188,9 +188,9 @@ function module.load()
 	module:provides("http", {
 		default_path = "/";
 		route = {
-			["GET room-size"] = function (event) return wrap_async_run(event,handle_get_room_size) end;
+			["GET room-size"] = function (event) return async_handler_wrapper(event,handle_get_room_size) end;
 			["GET sessions"] = function () return tostring(it.count(it.keys(prosody.full_sessions))); end;
-			["GET room"] = function (event) return wrap_async_run(event,handle_get_room) end;
+			["GET room"] = function (event) return async_handler_wrapper(event,handle_get_room) end;
 		};
 	});
 end
