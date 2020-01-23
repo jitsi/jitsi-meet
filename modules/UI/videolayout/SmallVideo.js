@@ -933,4 +933,67 @@ export default class SmallVideo {
         this._popoverIsHovered = popoverIsHovered;
         this.updateView();
     }
+
+    /**
+     * Sets the size of the thumbnail.
+     */
+    _setThumbnailSize() {
+        const layout = getCurrentLayout(APP.store.getState());
+        const heightToWidthPercent = 100
+                / (this.isLocal ? interfaceConfig.LOCAL_THUMBNAIL_RATIO : interfaceConfig.REMOTE_THUMBNAIL_RATIO);
+
+        switch (layout) {
+        case LAYOUTS.VERTICAL_FILMSTRIP_VIEW: {
+            this.$container.css('padding-top', `${heightToWidthPercent}%`);
+            this.$avatar().css({
+                height: '50%',
+                width: `${heightToWidthPercent / 2}%`
+            });
+            break;
+        }
+        case LAYOUTS.HORIZONTAL_FILMSTRIP_VIEW: {
+            const state = APP.store.getState();
+            const { local, remote } = state['features/filmstrip'].horizontalViewDimensions;
+            const size = this.isLocal ? local : remote;
+
+            if (typeof size !== 'undefined') {
+                const { height, width } = size;
+                const avatarSize = height / 2;
+
+                this.$container.css({
+                    height: `${height}px`,
+                    'min-height': `${height}px`,
+                    'min-width': `${width}px`,
+                    width: `${width}px`
+                });
+                this.$avatar().css({
+                    height: `${avatarSize}px`,
+                    width: `${avatarSize}px`
+                });
+            }
+            break;
+        }
+        case LAYOUTS.TILE_VIEW: {
+            const state = APP.store.getState();
+            const { thumbnailSize } = state['features/filmstrip'].tileViewDimensions;
+
+            if (typeof thumbnailSize !== 'undefined') {
+                const { height, width } = thumbnailSize;
+                const avatarSize = height / 2;
+
+                this.$container.css({
+                    height: `${height}px`,
+                    'min-height': `${height}px`,
+                    'min-width': `${width}px`,
+                    width: `${width}px`
+                });
+                this.$avatar().css({
+                    height: `${avatarSize}px`,
+                    width: `${avatarSize}px`
+                });
+            }
+            break;
+        }
+        }
+    }
 }

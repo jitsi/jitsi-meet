@@ -1,32 +1,6 @@
 /* global $ */
 
 /**
- * Associates the default display type with corresponding CSS class
- */
-const SHOW_CLASSES = {
-    'block': 'show',
-    'inline': 'show-inline',
-    'list-item': 'show-list-item'
-};
-
-/**
- * Returns default display style for the tag
- * @param tag
- * @returns {*}
- * @private
- */
-function getElementDefaultDisplay(tag) {
-    const tempElement = document.createElement(tag);
-
-    document.body.appendChild(tempElement);
-    const style = window.getComputedStyle(tempElement).display;
-
-    document.body.removeChild(tempElement);
-
-    return style;
-}
-
-/**
  * Created by hristo on 12/22/14.
  */
 const UIUtil = {
@@ -58,42 +32,6 @@ const UIUtil = {
             container.insertBefore(newChild, firstChild);
         } else {
             container.appendChild(newChild);
-        }
-    },
-
-    /**
-     * Shows / hides the element given by id.
-     *
-     * @param {string|HTMLElement} idOrElement the identifier or the element
-     *        to show/hide
-     * @param {boolean} show <tt>true</tt> to show or <tt>false</tt> to hide
-     */
-    setVisible(id, visible) {
-        let element;
-
-        if (id instanceof HTMLElement) {
-            element = id;
-        } else {
-            element = document.getElementById(id);
-        }
-
-        if (!element) {
-            return;
-        }
-
-        if (!visible) {
-            element.classList.add('hide');
-        } else if (element.classList.contains('hide')) {
-            element.classList.remove('hide');
-        }
-
-        const type = getElementDefaultDisplay(element.tagName);
-        const className = SHOW_CLASSES[type];
-
-        if (visible) {
-            element.classList.add(className);
-        } else if (element.classList.contains(className)) {
-            element.classList.remove(className);
         }
     },
 
