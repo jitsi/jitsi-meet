@@ -167,7 +167,7 @@ class ChromeExtensionBanner extends PureComponent<Props, State> {
      * Whether the user closed the banner.
      * Whether the extension is already installed.
      *
-     * @returns {boolean} whether to show the banner or not.
+     * @returns {boolean} Whether to show the banner or not.
      */
     _shouldNotRender() {
         if (!this.props.chromeExtensionUrl) {
