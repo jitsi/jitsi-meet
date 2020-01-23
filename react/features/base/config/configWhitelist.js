@@ -97,6 +97,8 @@ export default [
     'enableLipSync',
     'enableRemb',
     'enableTalkWhileMuted',
+    'enableNoAudioDetection',
+    'enableNoisyMicDetection',
     'enableTcc',
     'etherpad_base',
     'failICE',
