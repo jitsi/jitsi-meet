@@ -59,6 +59,11 @@
         "title": "Chat",
         "you": "you"
     },
+    "chromeExtensionBanner": {
+        "installExtensionText": "Install the extension for Google Calendar and Office 365 integration",
+        "buttonText": "Install Chrome Extension",
+        "dontShowAgain": "Don’t show me this again"
+    },
     "connectingOverlay": {
         "joiningRoom": "Connecting you to your meeting..."
     },
@@ -277,7 +282,7 @@
     "dialOut": {
         "statusMessage": "is now {{status}}"
     },
-    "documentSharing" : {
+    "documentSharing": {
         "title": "Shared Document"
     },
     "feedback": {
@@ -630,7 +635,6 @@
         "lowerYourHand": "Lower your hand",
         "moreActions": "More actions",
         "mute": "Mute / Unmute",
-
         "noAudioSignalTitle": "There is no input coming from your mic!",
         "noAudioSignalDesc": "If you did not purposely mute it from system settings or hardware, consider changing the device.",
         "noAudioSignalDescSuggestion": "If you did not purposely mute it from system settings or hardware, consider using the following device:",

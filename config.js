@@ -385,6 +385,20 @@ var config = {
         // userRegion: "asia"
     }
 
+    // Information for the chrome extension banner
+    // chromeExtensionBanner: {
+    //     // The chrome extension to be installed address
+    //     url: 'https://chrome.google.com/webstore/detail/jitsi-meetings/kglhbbefdnlheedjiejgomgmfplipfeb',
+
+    //     // Extensions info which allows checking if they are installed or not
+    //     chromeExtensionsInfo: [
+    //         {
+    //             id: 'kglhbbefdnlheedjiejgomgmfplipfeb',
+    //             path: 'jitsi-logo-48x48.png'
+    //         }
+    //     ]
+    // }
+
     // Local Recording
     //
 
