@@ -39,25 +39,20 @@ export function getMaxColumnCount() {
  * equal count of tiles for height and width, until maxColumn is reached in
  * which rows will be added but no more columns.
  *
- * @param {Object} state - The redux state.
+ * @param {number} numberOfParticipants - The number of participants including the fake participants.
  * @param {number} maxColumns - The maximum number of columns that can be
  * displayed.
  * @returns {Object} An object is return with the desired number of columns,
  * rows, and visible rows (the rest should overflow) for the tile view layout.
  */
-export function getTileViewGridDimensions(state: Object, maxColumns: number) {
-    // Purposefully include all participants, which includes fake participants
-    // that should show a thumbnail.
-    const potentialThumbnails = state['features/base/participants'].length;
-
-    const columnsToMaintainASquare = Math.ceil(Math.sqrt(potentialThumbnails));
+export function getTileViewGridDimensions(numberOfParticipants: number, maxColumns: number = getMaxColumnCount()) {
+    const columnsToMaintainASquare = Math.ceil(Math.sqrt(numberOfParticipants));
     const columns = Math.min(columnsToMaintainASquare, maxColumns);
-    const rows = Math.ceil(potentialThumbnails / columns);
+    const rows = Math.ceil(numberOfParticipants / columns);
     const visibleRows = Math.min(maxColumns, rows);
 
     return {
         columns,
-        rows,
         visibleRows
     };
 }

@@ -490,9 +490,15 @@ export default class LargeVideoManager {
             show = APP.conference.isConnectionInterrupted();
         }
 
-        const id = 'localConnectionMessage';
+        const element = document.getElementById('localConnectionMessage');
 
-        UIUtil.setVisible(id, show);
+        if (element) {
+            if (show) {
+                element.classList.add('show');
+            } else {
+                element.classList.remove('show');
+            }
+        }
 
         if (show) {
             // Avatar message conflicts with 'videoConnectionMessage',

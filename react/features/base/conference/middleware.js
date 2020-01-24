@@ -116,16 +116,12 @@ StateListenerRegistry.register(
             maxReceiverVideoQuality,
             preferredReceiverVideoQuality
         } = currentState;
-        const changedPreferredVideoQuality = preferredReceiverVideoQuality
-            !== previousState.preferredReceiverVideoQuality;
-        const changedMaxVideoQuality = maxReceiverVideoQuality
-            !== previousState.maxReceiverVideoQuality;
+        const changedPreferredVideoQuality
+            = preferredReceiverVideoQuality !== previousState.preferredReceiverVideoQuality;
+        const changedMaxVideoQuality = maxReceiverVideoQuality !== previousState.maxReceiverVideoQuality;
 
         if (changedPreferredVideoQuality || changedMaxVideoQuality) {
-            _setReceiverVideoConstraint(
-                conference,
-                preferredReceiverVideoQuality,
-                maxReceiverVideoQuality);
+            _setReceiverVideoConstraint(conference, preferredReceiverVideoQuality, maxReceiverVideoQuality);
         }
     });
 

@@ -34,7 +34,6 @@ import {
 
 const logger = require('jitsi-meet-logger').getLogger(__filename);
 
-import UIUtil from '../util/UIUtil';
 import UIEvents from '../../../service/UI/UIEvents';
 
 /**
@@ -629,8 +628,7 @@ export default class SmallVideo {
                 <Provider store = { APP.store }>
                     <AvatarDisplay
                         className = 'userAvatar'
-                        participantId = { this.id }
-                        size = { this.$avatar().width() } />
+                        participantId = { this.id } />
                 </Provider>,
                 thumbnail
             );
@@ -801,7 +799,8 @@ export default class SmallVideo {
             return;
         }
 
-        const iconSize = UIUtil.getIndicatorFontSize();
+        const { NORMAL = 8 } = interfaceConfig.INDICATOR_FONT_SIZES || {};
+        const iconSize = NORMAL;
         const showConnectionIndicator = this.videoIsHovered || !interfaceConfig.CONNECTION_INDICATOR_AUTO_HIDE_ENABLED;
         const state = APP.store.getState();
         const currentLayout = getCurrentLayout(state);
@@ -830,11 +829,9 @@ export default class SmallVideo {
                                     connectionStatus = { this._connectionStatus }
                                     iconSize = { iconSize }
                                     isLocalVideo = { this.isLocal }
-                                    enableStatsDisplay
-                                        = { !interfaceConfig.filmStripOnly }
+                                    enableStatsDisplay = { !interfaceConfig.filmStripOnly }
                                     participantId = { this.id }
-                                    statsPopoverPosition
-                                        = { statsPopoverPosition } />
+                                    statsPopoverPosition = { statsPopoverPosition } />
                                 : null }
                             <RaisedHandIndicator
                                 iconSize = { iconSize }
@@ -935,5 +932,68 @@ export default class SmallVideo {
     _onPopoverHover(popoverIsHovered) {
         this._popoverIsHovered = popoverIsHovered;
         this.updateView();
+    }
+
+    /**
+     * Sets the size of the thumbnail.
+     */
+    _setThumbnailSize() {
+        const layout = getCurrentLayout(APP.store.getState());
+        const heightToWidthPercent = 100
+                / (this.isLocal ? interfaceConfig.LOCAL_THUMBNAIL_RATIO : interfaceConfig.REMOTE_THUMBNAIL_RATIO);
+
+        switch (layout) {
+        case LAYOUTS.VERTICAL_FILMSTRIP_VIEW: {
+            this.$container.css('padding-top', `${heightToWidthPercent}%`);
+            this.$avatar().css({
+                height: '50%',
+                width: `${heightToWidthPercent / 2}%`
+            });
+            break;
+        }
+        case LAYOUTS.HORIZONTAL_FILMSTRIP_VIEW: {
+            const state = APP.store.getState();
+            const { local, remote } = state['features/filmstrip'].horizontalViewDimensions;
+            const size = this.isLocal ? local : remote;
+
+            if (typeof size !== 'undefined') {
+                const { height, width } = size;
+                const avatarSize = height / 2;
+
+                this.$container.css({
+                    height: `${height}px`,
+                    'min-height': `${height}px`,
+                    'min-width': `${width}px`,
+                    width: `${width}px`
+                });
+                this.$avatar().css({
+                    height: `${avatarSize}px`,
+                    width: `${avatarSize}px`
+                });
+            }
+            break;
+        }
+        case LAYOUTS.TILE_VIEW: {
+            const state = APP.store.getState();
+            const { thumbnailSize } = state['features/filmstrip'].tileViewDimensions;
+
+            if (typeof thumbnailSize !== 'undefined') {
+                const { height, width } = thumbnailSize;
+                const avatarSize = height / 2;
+
+                this.$container.css({
+                    height: `${height}px`,
+                    'min-height': `${height}px`,
+                    'min-width': `${width}px`,
+                    width: `${width}px`
+                });
+                this.$avatar().css({
+                    height: `${avatarSize}px`,
+                    width: `${avatarSize}px`
+                });
+            }
+            break;
+        }
+        }
     }
 }

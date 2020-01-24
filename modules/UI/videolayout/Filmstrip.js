@@ -1,33 +1,8 @@
 /* global $, APP, interfaceConfig */
 
-import {
-    LAYOUTS,
-    getCurrentLayout,
-    getMaxColumnCount,
-    getTileViewGridDimensions,
-    shouldDisplayTileView
-} from '../../../react/features/video-layout';
-
-import UIUtil from '../util/UIUtil';
+import { isFilmstripVisible } from '../../../react/features/filmstrip';
 
 const Filmstrip = {
-    /**
-     * Caches jquery lookups of the filmstrip for future use.
-     */
-    init() {
-        this.filmstripContainerClassName = 'filmstrip';
-        this.filmstrip = $('#remoteVideos');
-        this.filmstripRemoteVideos = $('#filmstripRemoteVideosContainer');
-    },
-
-    /**
-     * Shows if filmstrip is visible
-     * @returns {boolean}
-     */
-    isFilmstripVisible() {
-        return APP.store.getState()['features/filmstrip'].visible;
-    },
-
     /**
      * Returns the height of filmstrip
      * @returns {number} height
@@ -36,8 +11,8 @@ const Filmstrip = {
         // FIXME Make it more clear the getFilmstripHeight check is used in
         // horizontal film strip mode for calculating how tall large video
         // display should be.
-        if (this.isFilmstripVisible() && !interfaceConfig.VERTICAL_FILMSTRIP) {
-            return $(`.${this.filmstripContainerClassName}`).outerHeight();
+        if (isFilmstripVisible(APP.store) && !interfaceConfig.VERTICAL_FILMSTRIP) {
+            return $('.filmstrip').outerHeight();
         }
 
         return 0;
@@ -48,303 +23,135 @@ const Filmstrip = {
      * @returns {number} width
      */
     getFilmstripWidth() {
-        return this.isFilmstripVisible()
-            ? this.filmstrip.outerWidth()
-                - parseInt(this.filmstrip.css('paddingLeft'), 10)
-                - parseInt(this.filmstrip.css('paddingRight'), 10)
+        const filmstrip = $('#remoteVideos');
+
+        return isFilmstripVisible(APP.store)
+            ? filmstrip.outerWidth()
+                - parseInt(filmstrip.css('paddingLeft'), 10)
+                - parseInt(filmstrip.css('paddingRight'), 10)
             : 0;
     },
 
     /**
-     * Calculates the size for thumbnails: local and remote one
-     * @returns {*|{localVideo, remoteVideo}}
-     */
-    calculateThumbnailSize() {
-        if (shouldDisplayTileView(APP.store.getState())) {
-            return this._calculateThumbnailSizeForTileView();
-        }
-
-        const { availableWidth, availableHeight } = this.calculateAvailableSize();
-
-        return this.calculateThumbnailSizeFromAvailable(availableWidth, availableHeight);
-    },
-
-    /**
-     * Calculates available size for one thumbnail according to
-     * the current window size.
+     * Resizes thumbnails for tile view.
      *
-     * @returns {{availableWidth: number, availableHeight: number}}
+     * @param {number} width - The new width of the thumbnails.
+     * @param {number} height - The new height of the thumbnails.
+     * @param {boolean} forceUpdate
+     * @returns {void}
      */
-    calculateAvailableSize() {
-        /**
-         * If the videoAreaAvailableWidth is set we use this one to calculate
-         * the filmstrip width, because we're probably in a state where the
-         * filmstrip size hasn't been updated yet, but it will be.
-         */
-        const videoAreaAvailableWidth
-            = UIUtil.getAvailableVideoWidth()
-                - this._getFilmstripExtraPanelsWidth()
-                - UIUtil.parseCssInt(this.filmstrip.css('right'), 10)
-                - UIUtil.parseCssInt(this.filmstrip.css('paddingLeft'), 10)
-                - UIUtil.parseCssInt(this.filmstrip.css('paddingRight'), 10)
-                - UIUtil.parseCssInt(this.filmstrip.css('borderLeftWidth'), 10)
-                - UIUtil.parseCssInt(this.filmstrip.css('borderRightWidth'), 10)
-                - 5;
-
-        const availableHeight = Math.min(interfaceConfig.FILM_STRIP_MAX_HEIGHT || 120, window.innerHeight - 18);
-        let availableWidth = videoAreaAvailableWidth;
-        const localVideoContainer = $('#localVideoContainer');
-
-        // If local thumb is not hidden
-        if (!localVideoContainer.has('hidden')) {
-            availableWidth = Math.floor(
-                videoAreaAvailableWidth - (
-                    UIUtil.parseCssInt(localVideoContainer.css('borderLeftWidth'), 10)
-                    + UIUtil.parseCssInt(localVideoContainer.css('borderRightWidth'), 10)
-                    + UIUtil.parseCssInt(localVideoContainer.css('paddingLeft'), 10)
-                    + UIUtil.parseCssInt(localVideoContainer.css('paddingRight'), 10)
-                    + UIUtil.parseCssInt(localVideoContainer.css('marginLeft'), 10)
-                    + UIUtil.parseCssInt(localVideoContainer.css('marginRight'), 10))
-            );
-        }
-
-        return {
-            availableHeight,
-            availableWidth
-        };
-    },
-
-    /**
-     * Traverse all elements inside the filmstrip
-     * and calculates the sum of all of them except
-     * remote videos element. Used for calculation of
-     * available width for video thumbnails.
-     *
-     * @returns {number} calculated width
-     * @private
-     */
-    _getFilmstripExtraPanelsWidth() {
-        const className = this.filmstripContainerClassName;
-        let width = 0;
-
-        $(`.${className}`)
-            .children()
-            .each(function() {
-                /* eslint-disable no-invalid-this */
-                if (this.id !== 'remoteVideos') {
-                    width += $(this).outerWidth();
-                }
-                /* eslint-enable no-invalid-this */
-            });
-
-        return width;
-    },
-
-    /**
-     Calculate the thumbnail size in order to fit all the thumnails in passed
-     * dimensions.
-     * NOTE: Here we assume that the remote and local thumbnails are with the
-     * same height.
-     * @param {int} availableWidth the maximum width for all thumbnails
-     * @param {int} availableHeight the maximum height for all thumbnails
-     * @returns {{localVideo, remoteVideo}}
-     */
-    calculateThumbnailSizeFromAvailable(availableWidth, availableHeight) {
-        /**
-         * Let:
-         * lW - width of the local thumbnail
-         * rW - width of the remote thumbnail
-         * h - the height of the thumbnails
-         * remoteRatio - width:height for the remote thumbnail
-         * localRatio - width:height for the local thumbnail
-         * remoteThumbsInRow - number of remote thumbnails in a row (we have
-         * only one local thumbnail) next to the local thumbnail. In vertical
-         * filmstrip mode, this will always be 0.
-         *
-         * Since the height for local thumbnail = height for remote thumbnail
-         * and we know the ratio (width:height) for the local and for the
-         * remote thumbnail we can find rW/lW:
-         * rW / remoteRatio = lW / localRatio then -
-         * remoteLocalWidthRatio = rW / lW = remoteRatio / localRatio
-         * and rW = lW * remoteRatio / localRatio = lW * remoteLocalWidthRatio
-         * And the total width for the thumbnails is:
-         * totalWidth = rW * remoteThumbsInRow + lW
-         * = lW * remoteLocalWidthRatio * remoteThumbsInRow + lW =
-         * lW * (remoteLocalWidthRatio * remoteThumbsInRow + 1)
-         * and the h = lW/localRatio
-         *
-         * In order to fit all the thumbails in the area defined by
-         * availableWidth * availableHeight we should check one of the
-         * following options:
-         * 1) if availableHeight == h - totalWidth should be less than
-         * availableWidth
-         * 2) if availableWidth ==  totalWidth - h should be less than
-         * availableHeight
-         *
-         * 1) or 2) will be true and we are going to use it to calculate all
-         * sizes.
-         *
-         * if 1) is true that means that
-         * availableHeight/h > availableWidth/totalWidth otherwise 2) is true
-         */
-
-        const remoteLocalWidthRatio = interfaceConfig.REMOTE_THUMBNAIL_RATIO / interfaceConfig.LOCAL_THUMBNAIL_RATIO;
-        const lW = Math.min(availableWidth, availableHeight * interfaceConfig.LOCAL_THUMBNAIL_RATIO);
-        const h = lW / interfaceConfig.LOCAL_THUMBNAIL_RATIO;
-
-        const remoteVideoWidth = lW * remoteLocalWidthRatio;
-
-        let localVideo;
-
-        if (interfaceConfig.VERTICAL_FILMSTRIP) {
-            localVideo = {
-                thumbWidth: remoteVideoWidth,
-                thumbHeight: h * remoteLocalWidthRatio
-            };
-        } else {
-            localVideo = {
-                thumbWidth: lW,
-                thumbHeight: h
-            };
-        }
-
-        return {
-            localVideo,
-            remoteVideo: {
-                thumbWidth: remoteVideoWidth,
-                thumbHeight: h
-            }
-        };
-    },
-
-    /**
-     * Calculates the size for thumbnails when in tile view layout.
-     *
-     * @returns {{localVideo, remoteVideo}}
-     */
-    _calculateThumbnailSizeForTileView() {
-        const tileAspectRatio = 16 / 9;
-
-        // The distance from the top and bottom of the screen, as set by CSS, to
-        // avoid overlapping UI elements.
-        const topBottomPadding = 200;
-
-        // Minimum space to keep between the sides of the tiles and the sides
-        // of the window.
-        const sideMargins = 30 * 2;
-
-        const state = APP.store.getState();
-
-        const viewWidth = document.body.clientWidth - sideMargins;
-        const viewHeight = document.body.clientHeight - topBottomPadding;
-
-        const {
-            columns,
-            visibleRows
-        } = getTileViewGridDimensions(state, getMaxColumnCount());
-        const initialWidth = viewWidth / columns;
-        const aspectRatioHeight = initialWidth / tileAspectRatio;
-
-        const heightOfEach = Math.floor(Math.min(
-            aspectRatioHeight,
-            viewHeight / visibleRows
-        ));
-        const widthOfEach = Math.floor(tileAspectRatio * heightOfEach);
-
-        return {
-            localVideo: {
-                thumbWidth: widthOfEach,
-                thumbHeight: heightOfEach
-            },
-            remoteVideo: {
-                thumbWidth: widthOfEach,
-                thumbHeight: heightOfEach
-            }
-        };
-    },
-
-    /**
-     * Resizes thumbnails
-     * @param local
-     * @param remote
-     * @param forceUpdate
-     * @returns {Promise}
-     */
-    // eslint-disable-next-line max-params
-    resizeThumbnails(local, remote, forceUpdate = false) {
-        const state = APP.store.getState();
-
-        if (shouldDisplayTileView(state)) {
-            // The size of the side margins for each tile as set in CSS.
-            const sideMargins = 10 * 2;
-            const { columns, rows } = getTileViewGridDimensions(state, getMaxColumnCount());
-            const hasOverflow = rows > columns;
-
-            // Width is set so that the flex layout can automatically wrap
-            // tiles onto new rows.
-            this.filmstripRemoteVideos.css({ width: (local.thumbWidth * columns) + (columns * sideMargins) });
-            this.filmstripRemoteVideos.toggleClass('has-overflow', hasOverflow);
-        } else {
-            this.filmstripRemoteVideos.css('width', '');
-        }
-
-        const thumbs = this.getThumbs(!forceUpdate);
+    resizeThumbnailsForTileView(width, height, forceUpdate = false) {
+        const thumbs = this._getThumbs(!forceUpdate);
+        const avatarSize = height / 2;
 
         if (thumbs.localThumb) {
-            // eslint-disable-next-line no-shadow
             thumbs.localThumb.css({
-                display: 'inline-block',
-                height: `${local.thumbHeight}px`,
-                'min-height': `${local.thumbHeight}px`,
-                'min-width': `${local.thumbWidth}px`,
-                width: `${local.thumbWidth}px`
+                'padding-top': '',
+                height: `${height}px`,
+                'min-height': `${height}px`,
+                'min-width': `${width}px`,
+                width: `${width}px`
             });
-
-            const avatarSize = local.thumbHeight / 2;
-
-            thumbs.localThumb.find('.avatar-container')
-                .height(avatarSize)
-                .width(avatarSize);
         }
 
         if (thumbs.remoteThumbs) {
             thumbs.remoteThumbs.css({
-                display: 'inline-block',
-                height: `${remote.thumbHeight}px`,
-                'min-height': `${remote.thumbHeight}px`,
-                'min-width': `${remote.thumbWidth}px`,
-                width: `${remote.thumbWidth}px`
-            });
-
-            const avatarSize = remote.thumbHeight / 2;
-
-            thumbs.remoteThumbs.find('.avatar-container')
-                .height(avatarSize)
-                .width(avatarSize);
-        }
-
-        const currentLayout = getCurrentLayout(APP.store.getState());
-
-        // Let CSS take care of height in vertical filmstrip mode.
-        if (currentLayout === LAYOUTS.VERTICAL_FILMSTRIP_VIEW) {
-            $('#filmstripLocalVideo').css({
-                // adds 4 px because of small video 2px border
-                width: `${local.thumbWidth + 4}px`
-            });
-        } else if (currentLayout === LAYOUTS.HORIZONTAL_FILMSTRIP_VIEW) {
-            this.filmstrip.css({
-                // adds 4 px because of small video 2px border and 10px margin for the scroll
-                height: `${remote.thumbHeight + 14}px`
+                'padding-top': '',
+                height: `${height}px`,
+                'min-height': `${height}px`,
+                'min-width': `${width}px`,
+                width: `${width}px`
             });
         }
 
-        const { localThumb } = this.getThumbs();
-        const height = localThumb ? localThumb.height() : 0;
-        const fontSize = UIUtil.getIndicatorFontSize(height);
-
-        this.filmstrip.find('.indicator').css({
-            'font-size': `${fontSize}px`
+        $('.avatar-container').css({
+            height: `${avatarSize}px`,
+            width: `${avatarSize}px`
         });
+    },
+
+    /**
+     * Resizes thumbnails for horizontal view.
+     *
+     * @param {Object} dimensions - The new dimensions of the thumbnails.
+     * @param {boolean} forceUpdate
+     * @returns {void}
+     */
+    resizeThumbnailsForHorizontalView({ local = {}, remote = {} }, forceUpdate = false) {
+        const thumbs = this._getThumbs(!forceUpdate);
+
+        if (thumbs.localThumb) {
+            const { height, width } = local;
+            const avatarSize = height / 2;
+
+            thumbs.localThumb.css({
+                height: `${height}px`,
+                'min-height': `${height}px`,
+                'min-width': `${width}px`,
+                width: `${width}px`
+            });
+            $('#localVideoContainer > .avatar-container').css({
+                height: `${avatarSize}px`,
+                width: `${avatarSize}px`
+            });
+        }
+
+        if (thumbs.remoteThumbs) {
+            const { height, width } = remote;
+            const avatarSize = height / 2;
+
+            thumbs.remoteThumbs.css({
+                height: `${height}px`,
+                'min-height': `${height}px`,
+                'min-width': `${width}px`,
+                width: `${width}px`
+            });
+            $('#filmstripRemoteVideosContainer > span > .avatar-container').css({
+                height: `${avatarSize}px`,
+                width: `${avatarSize}px`
+            });
+        }
+    },
+
+    /**
+     * Resizes thumbnails for vertical view.
+     *
+     * @returns {void}
+     */
+    resizeThumbnailsForVerticalView() {
+        const thumbs = this._getThumbs(true);
+
+        if (thumbs.localThumb) {
+            const heightToWidthPercent = 100 / interfaceConfig.LOCAL_THUMBNAIL_RATIO;
+
+            thumbs.localThumb.css({
+                'padding-top': `${heightToWidthPercent}%`,
+                width: '',
+                height: '',
+                'min-width': '',
+                'min-height': ''
+            });
+            $('#localVideoContainer > .avatar-container').css({
+                height: '50%',
+                width: `${heightToWidthPercent / 2}%`
+            });
+        }
+
+        if (thumbs.remoteThumbs) {
+            const heightToWidthPercent = 100 / interfaceConfig.REMOTE_THUMBNAIL_RATIO;
+
+            thumbs.remoteThumbs.css({
+                'padding-top': `${heightToWidthPercent}%`,
+                width: '',
+                height: '',
+                'min-width': '',
+                'min-height': ''
+            });
+            $('#filmstripRemoteVideosContainer > span > .avatar-container').css({
+                height: '50%',
+                width: `${heightToWidthPercent / 2}%`
+            });
+        }
     },
 
     /**
@@ -352,7 +159,7 @@ const Filmstrip = {
      * @param onlyVisible
      * @returns {object} thumbnails
      */
-    getThumbs(onlyVisible = false) {
+    _getThumbs(onlyVisible = false) {
         let selector = 'span';
 
         if (onlyVisible) {
@@ -360,7 +167,7 @@ const Filmstrip = {
         }
 
         const localThumb = $('#localVideoContainer');
-        const remoteThumbs = this.filmstripRemoteVideos.children(selector);
+        const remoteThumbs = $('#filmstripRemoteVideosContainer').children(selector);
 
         // Exclude the local video container if it has been hidden.
         if (localThumb.hasClass('hidden')) {

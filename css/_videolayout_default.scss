@@ -173,7 +173,9 @@
     &__hoverOverlay {
         background: rgba(0,0,0,.6);
         border-radius: $borderRadius;
-        position: relative;
+        position: absolute;
+        top: 0px;
+        left: 0px;
         width: 100%;
         height: 100%;
         visibility: hidden;
@@ -526,13 +528,16 @@
     display: flex;
     justify-content: center;
     height: 50%;
-    overflow: hidden;
     width: auto;
+    overflow: hidden;
 
     .userAvatar {
         height: 100%;
         object-fit: cover;
         width: 100%;
+        top: 0px;
+        left: 0px;
+        position: absolute;
     }
 }
 
@@ -555,6 +560,9 @@
 }
 
 .sharedVideoAvatar {
+    position: absolute;
+    left: 0px;
+    top: 0px;
     height: 100%;
     width: 100%;
     object-fit: cover;

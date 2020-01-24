@@ -20,10 +20,7 @@ import {
     REMOTE_CONTROL_MENU_STATES,
     RemoteVideoMenuTriggerButton
 } from '../../../react/features/remote-video-menu';
-import {
-    LAYOUTS,
-    getCurrentLayout
-} from '../../../react/features/video-layout';
+import { LAYOUTS, getCurrentLayout } from '../../../react/features/video-layout';
 /* eslint-enable no-unused-vars */
 
 const logger = require('jitsi-meet-logger').getLogger(__filename);
@@ -129,6 +126,7 @@ export default class RemoteVideo extends SmallVideo {
     addRemoteVideoContainer() {
         this.container = createContainer(this.videoSpanId);
         this.$container = $(this.container);
+        this._setThumbnailSize();
         this.initBrowserSpecificProperties();
         this.updateRemoteVideoMenu();
         this.addAudioLevelIndicator();

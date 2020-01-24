@@ -11,7 +11,6 @@ import EtherpadManager from './etherpad/Etherpad';
 import SharedVideoManager from './shared_video/SharedVideo';
 
 import VideoLayout from './videolayout/VideoLayout';
-import Filmstrip from './videolayout/Filmstrip';
 
 import { getLocalParticipant } from '../../react/features/base/participants';
 import { toggleChat } from '../../react/features/chat';
@@ -158,8 +157,6 @@ UI.start = function() {
     // Set the defaults for prompt dialogs.
     $.prompt.setDefaults({ persistent: false });
 
-    Filmstrip.init(eventEmitter);
-
     VideoLayout.init(eventEmitter);
     if (!interfaceConfig.filmStripOnly) {
         VideoLayout.initLargeVideo();
@@ -202,7 +199,7 @@ UI.bindEvents = () => {
      *
      */
     function onResize() {
-        VideoLayout.resizeVideoArea();
+        VideoLayout.onResize();
     }
 
     // Resize and reposition videos in full screen mode.
@@ -352,12 +349,6 @@ UI.toggleFilmstrip = function() {
 
     APP.store.dispatch(setFilmstripVisible(!visible));
 };
-
-/**
- * Checks if the filmstrip is currently visible or not.
- * @returns {true} if the filmstrip is currently visible, and false otherwise.
- */
-UI.isFilmstripVisible = () => Filmstrip.isFilmstripVisible();
 
 /**
  * Toggles the visibility of the chat panel.
