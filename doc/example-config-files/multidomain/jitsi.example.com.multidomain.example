@@ -60,4 +60,12 @@ server {
         rewrite ^/(.*)$ /http-bind;
     }
 
+    # websockets for subdomains
+    location ~ ^/([^/?&:'"]+)/xmpp-websocket {
+        set $subdomain "$1.";
+        set $subdir "$1/";
+        set $prefix "$1";
+
+        rewrite ^/(.*)$ /xmpp-websocket;
+    }
 }
