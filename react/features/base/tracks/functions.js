@@ -110,7 +110,7 @@ export function createLocalTracksF(
                 return Promise.resolve();
             })
         : Promise.resolve();
-    const screenshotCapturePromise = state['features/screenshot-capture'].capturesEnabled
+    const screenshotCapturePromise = state['features/screenshot-capture']?.capturesEnabled
         ? createScreenshotCaptureEffect(state)
             .catch(error => {
                 logger.error('Failed to obtain the screenshot capture effect effect instance with error: ', error);
