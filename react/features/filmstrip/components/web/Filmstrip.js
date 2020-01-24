@@ -167,7 +167,7 @@ class Filmstrip extends Component <Props> {
 
         switch (this.props._currentLayout) {
         case LAYOUTS.VERTICAL_FILMSTRIP_VIEW:
-            // Adding 8px - margin & borders; 7px - scrollbar
+            // Adding 8px for the 2px margins and 2px borders on the left and right. Also adding 7px for the scrollbar.
             remoteVideosStyle.maxWidth = (interfaceConfig.FILM_STRIP_MAX_HEIGHT || 120) + 15;
             break;
         case LAYOUTS.TILE_VIEW: {
