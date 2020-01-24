@@ -17,8 +17,8 @@ local provider = {};
 
 local host = module.host;
 
--- Extract 'token' param from BOSH URL when session is created
-module:hook("bosh-session", function(event)
+-- Extract 'token' param from URL when session is created
+function init_session(event)
 	local session, request = event.session, event.request;
 	local query = request.url.query;
 
@@ -30,22 +30,10 @@ module:hook("bosh-session", function(event)
         session.jitsi_bosh_query_room = params.room;
         session.jitsi_bosh_query_prefix = params.prefix or "";
     end
-end);
+end
 
--- Extract 'token' param from Websocket URL when session is created
-module:hook("websocket-session", function(event)
-	local session, request = event.session, event.request;
-	local query = request.url.query;
-
-	if query ~= nil then
-        local params = formdecode(query);
-        session.auth_token = query and params.token or nil;
-
-        -- The room name and optional prefix from the bosh query
-        session.jitsi_bosh_query_room = params.room;
-        session.jitsi_bosh_query_prefix = params.prefix or "";
-    end
-end);
+module:hook("bosh-session", init_session);
+module:hook("websocket-session", init_session);
 
 function provider.test_password(username, password)
 	return nil, "Password based auth not supported";
