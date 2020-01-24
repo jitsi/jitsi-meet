@@ -312,7 +312,8 @@ function _constructOptions(state) {
 
         room && (bosh += `?room=${getBackendSafeRoomName(room)}`);
 
-        options.bosh = bosh;
+        // FIXME Remove deprecated 'bosh' option assignment at some point.
+        options.serviceUrl = options.bosh = bosh;
     }
 
     return options;
