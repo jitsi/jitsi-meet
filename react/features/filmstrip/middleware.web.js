@@ -7,7 +7,6 @@ import Filmstrip from '../../../modules/UI/videolayout/Filmstrip';
 import {
     getCurrentLayout,
     LAYOUTS,
-    SET_TILE_VIEW,
     shouldDisplayTileView
 } from '../video-layout';
 
@@ -68,12 +67,6 @@ MiddlewareRegistry.register(store => next => action => {
 
         break;
     }
-    case SET_TILE_VIEW:
-        if (getCurrentLayout(store.getState()) === LAYOUTS.VERTICAL_FILMSTRIP_VIEW) {
-            // Once the thumbnails are reactified this should be moved there too.
-            Filmstrip.resizeThumbnailsForVerticalView();
-        }
-        break;
     }
 
     return result;
