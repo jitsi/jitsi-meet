@@ -59,6 +59,16 @@ server {
         proxy_set_header Host $http_host;
     }
 
+    # xmpp websockets
+    location = /xmpp-websocket {
+        proxy_pass http://127.0.0.1:5280/xmpp-websocket?prefix=$prefix&$args;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_set_header Host $http_host;
+        tcp_nodelay on;
+    }
+
     location ~ ^/([^/?&:'"]+)$ {
         try_files $uri @root_path;
     }
@@ -89,5 +99,14 @@ server {
         set $prefix "$1";
 
         rewrite ^/(.*)$ /http-bind;
+    }
+
+    # websockets for subdomains
+    location ~ ^/([^/?&:'"]+)/xmpp-websocket {
+        set $subdomain "$1.";
+        set $subdir "$1/";
+        set $prefix "$1";
+
+        rewrite ^/(.*)$ /xmpp-websocket;
     }
 }
