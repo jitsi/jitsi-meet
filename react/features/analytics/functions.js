@@ -95,6 +95,9 @@ export function initAnalytics({ getState }: { getState: Function }) {
                 permanentProperties.group = group;
             }
 
+            //  Report if user is using websocket
+            permanentProperties.websocket = navigator.product !== 'ReactNative' && typeof config.websocket === 'string';
+
             // Optionally, include local deployment information based on the
             // contents of window.config.deploymentInfo.
             if (deploymentInfo) {
