@@ -47,12 +47,6 @@ type Props = {
      * Whether or not to display a filter on the video to visually indicate a
      * problem with the video being displayed.
      */
-    showLocalProblemFilter: boolean,
-
-    /**
-     * Whether or not to display a filter on the video to visually indicate a
-     * problem with the video being displayed.
-     */
     showRemoteProblemFilter: boolean,
 
     /**
@@ -138,12 +132,10 @@ export class LargeVideoBackground extends Component<Props> {
         const {
             hidden,
             mirror,
-            showLocalProblemFilter,
             showRemoteProblemFilter
         } = this.props;
         const classNames = `large-video-background ${mirror ? 'flip-x' : ''} ${
             hidden ? 'invisible' : ''} ${
-            showLocalProblemFilter ? 'videoProblemFilter' : ''} ${
             showRemoteProblemFilter ? 'remoteVideoProblemFilter' : ''}`;
 
         return (

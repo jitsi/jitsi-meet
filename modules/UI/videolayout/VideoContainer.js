@@ -21,15 +21,6 @@ const FADE_DURATION_MS = 300;
 
 /**
  * The CSS class used to add a filter effect on the large video when there is
- * a problem with local video.
- *
- * @private
- * @type {string}
- */
-const LOCAL_PROBLEM_FILTER_CLASS = 'videoProblemFilter';
-
-/**
- * The CSS class used to add a filter effect on the large video when there is
  * a problem with remote video.
  *
  * @private
@@ -287,18 +278,6 @@ export class VideoContainer extends LargeContainer {
      */
     addResizeListener(callback) {
         this._resizeListeners.add(callback);
-    }
-
-    /**
-     * Enables a filter on the video which indicates that there are some
-     * problems with the local media connection.
-     *
-     * @param {boolean} enable <tt>true</tt> if the filter is to be enabled or
-     * <tt>false</tt> otherwise.
-     */
-    enableLocalConnectionProblemFilter(enable) {
-        this.$video.toggleClass(LOCAL_PROBLEM_FILTER_CLASS, enable);
-        this._updateBackground();
     }
 
     /**
@@ -686,8 +665,6 @@ export class VideoContainer extends LargeContainer {
                     && this.localFlipX
                 }
                 orientationFit = { this._backgroundOrientation }
-                showLocalProblemFilter
-                    = { this.$video.hasClass(LOCAL_PROBLEM_FILTER_CLASS) }
                 showRemoteProblemFilter
                     = { this.$video.hasClass(REMOTE_PROBLEM_FILTER_CLASS) }
                 videoElement = { this.$video && this.$video[0] }

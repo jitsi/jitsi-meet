@@ -578,11 +578,6 @@
     filter: grayscale(100%);
 }
 
-.videoProblemFilter {
-    -webkit-filter: blur(10px) grayscale(.5) opacity(0.8);
-    filter: blur(10px) grayscale(.5) opacity(0.8);
-}
-
 .videoThumbnailProblemFilter {
     -webkit-filter: grayscale(100%);
     filter: grayscale(100%);
@@ -616,24 +611,6 @@
 }
 #remoteConnectionMessage {
     display: none;
-}
-
-#localConnectionMessage {
-    display: none;
-    position: absolute;
-    left: 0;
-    width: 100%;
-    top:50%;
-    z-index: $zindex2;
-    font-weight: 600;
-    font-size: 14px;
-    text-align: center;
-    color: #FFF;
-    opacity: .80;
-    text-shadow:    0px 0px 1px rgba(0,0,0,0.3),
-                    0px 1px 1px rgba(0,0,0,0.3),
-                    1px 0px 1px rgba(0,0,0,0.3),
-                    0px 0px 1px rgba(0,0,0,0.3);
 }
 
 .display-avatar-with-name {

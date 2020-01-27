@@ -1,9 +1,6 @@
 /* global APP, $, interfaceConfig  */
 const logger = require('jitsi-meet-logger').getLogger(__filename);
 
-import {
-    JitsiParticipantConnectionStatus
-} from '../../../react/features/base/lib-jitsi-meet';
 import { VIDEO_TYPE } from '../../../react/features/base/media';
 import {
     getLocalParticipant as getLocalParticipantFromStore,
@@ -427,20 +424,10 @@ const VideoLayout = {
      * Shows/hides warning about a user's connectivity issues.
      *
      * @param {string} id - The ID of the remote participant(MUC nickname).
-     * @param {status} status - The new connection status.
      * @returns {void}
      */
-    onParticipantConnectionStatusChanged(id, status) {
+    onParticipantConnectionStatusChanged(id) {
         if (APP.conference.isLocalId(id)) {
-            // Maintain old logic of passing in either interrupted or active
-            // to updateConnectionStatus.
-            localVideoThumbnail.updateConnectionStatus(status);
-
-            if (status === JitsiParticipantConnectionStatus.INTERRUPTED) {
-                largeVideo && largeVideo.onVideoInterrupted();
-            } else {
-                largeVideo && largeVideo.onVideoRestored();
-            }
 
             return;
         }
