@@ -70,12 +70,7 @@ export async function createLocalPresenterTrack(options, desktopHeight) {
  * is to execute and from which state such as {@code config} is to be retrieved.
  * @returns {Promise<JitsiLocalTrack[]>}
  */
-export function createLocalTracksF(
-        options,
-        firePermissionPromptIsShownEvent,
-        store) {
-    options || (options = {}); // eslint-disable-line no-param-reassign
-
+export function createLocalTracksF(options = {}, firePermissionPromptIsShownEvent, store) {
     let { cameraDeviceId, micDeviceId } = options;
 
     if (typeof APP !== 'undefined') {
