@@ -1,7 +1,5 @@
 /* global APP */
 
-import { createScreenshotCaptureEffect } from '../../stream-effects/screenshot-capture';
-import { getBlurEffect } from '../../blur';
 import JitsiMeetJS, { JitsiTrackErrors, browser } from '../lib-jitsi-meet';
 import { MEDIA_TYPE } from '../media';
 import {
@@ -9,6 +7,7 @@ import {
     getUserSelectedMicDeviceId
 } from '../settings';
 
+import loadEffects from './loadEffects';
 import logger from './logger';
 
 /**
@@ -94,29 +93,10 @@ export function createLocalTracksF(options = {}, firePermissionPromptIsShownEven
         firefox_fake_device, // eslint-disable-line camelcase
         resolution
     } = state['features/base/config'];
-    const constraints = options.constraints
-        ?? state['features/base/config'].constraints;
-
-    const blurPromise = state['features/blur'].blurEnabled
-        ? getBlurEffect()
-            .catch(error => {
-                logger.error('Failed to obtain the blur effect instance with error: ', error);
-
-                return Promise.resolve();
-            })
-        : Promise.resolve();
-    const screenshotCapturePromise = state['features/screenshot-capture']?.capturesEnabled
-        ? createScreenshotCaptureEffect(state)
-            .catch(error => {
-                logger.error('Failed to obtain the screenshot capture effect effect instance with error: ', error);
-
-                return Promise.resolve();
-            })
-        : Promise.resolve();
-    const loadEffectsPromise = Promise.all([ blurPromise, screenshotCapturePromise ]);
+    const constraints = options.constraints ?? state['features/base/config'].constraints;
 
     return (
-        loadEffectsPromise.then(effectsArray => {
+        loadEffects(store).then(effectsArray => {
             // Filter any undefined values returned by Promise.resolve().
             const effects = effectsArray.filter(effect => Boolean(effect));
 
