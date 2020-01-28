@@ -321,4 +321,8 @@ function devServerProxyBypass({ path }) {
     if (path.startsWith('/libs/')) {
         return path;
     }
+
+    if (path.indexOf('.') === -1) {
+        return 'index.html';
+    }
 }
