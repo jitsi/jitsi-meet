@@ -4,7 +4,7 @@ import { I18nextProvider } from 'react-i18next';
 
 import parseURLParams from '../../../base/config/parseURLParams';
 import { i18next } from '../../../base/i18n';
-import { isMobileBrowser } from '../../../base/environment';
+import { isMobileBrowser } from '../../../base/environment/utils';
 import { DialInSummary } from '../dial-in-summary';
 
 import NoRoomError from './NoRoomError';

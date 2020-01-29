@@ -5,7 +5,7 @@ import { Icon, IconClose } from '../../base/icons';
 import { translate } from '../../base/i18n';
 import { getCurrentConference } from '../../base/conference/functions';
 import { browser } from '../../base/lib-jitsi-meet';
-import { isMobileBrowser } from '../../base/environment';
+import { isMobileBrowser } from '../../base/environment/utils';
 
 declare var interfaceConfig: Object;
 
@@ -183,8 +183,7 @@ class ChromeExtensionBanner extends PureComponent<Props, State> {
 
         const dontShowAgain = localStorage.getItem(DONT_SHOW_AGAIN_CHECKED) === 'true';
 
-        return typeof interfaceConfig === 'undefined'
-            || !interfaceConfig.SHOW_CHROME_EXTENSION_BANNER
+        return !interfaceConfig.SHOW_CHROME_EXTENSION_BANNER
             || !browser.isChrome()
             || isMobileBrowser()
             || dontShowAgain

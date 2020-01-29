@@ -1,7 +1,7 @@
 // @flow
 
 import JitsiMeetJS from '../lib-jitsi-meet';
-import { Platform } from '../react';
+import { isMobileBrowser } from './utils';
 
 const { browser } = JitsiMeetJS.util;
 
@@ -95,13 +95,4 @@ function _isCurrentBrowserInList(list) {
 
         return checkFunction ? checkFunction.call(browser) : false;
     }));
-}
-
-/**
- * Returns whether or not the current environment is a mobile device.
- *
- * @returns {boolean}
- */
-export function isMobileBrowser() {
-    return Platform.OS === 'android' || Platform.OS === 'ios';
 }
