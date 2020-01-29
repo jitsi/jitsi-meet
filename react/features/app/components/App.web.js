@@ -4,6 +4,7 @@ import { AtlasKitThemeProvider } from '@atlaskit/theme';
 import React from 'react';
 
 import { DialogContainer } from '../../base/dialog';
+import { ChromeExtensionBanner } from '../../chrome-extension-banner';
 import '../../base/user-interaction';
 import '../../chat';
 import '../../external-api';
@@ -31,6 +32,7 @@ export class App extends AbstractApp {
     _createMainElement(component, props) {
         return (
             <AtlasKitThemeProvider mode = 'dark'>
+                <ChromeExtensionBanner />
                 { super._createMainElement(component, props) }
             </AtlasKitThemeProvider>
         );

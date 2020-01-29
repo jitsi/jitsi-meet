@@ -4,6 +4,10 @@ import { connect } from '../../base/redux';
 import { Icon, IconClose } from '../../base/icons';
 import { translate } from '../../base/i18n';
 import { getCurrentConference } from '../../base/conference/functions';
+import { browser } from '../../base/lib-jitsi-meet';
+import { isMobileBrowser } from '../../base/environment/utils';
+
+declare var interfaceConfig: Object;
 
 /**
  * Local storage key name for flag telling if user checked 'Don't show again' checkbox on the banner
@@ -31,6 +35,11 @@ type Props = {
      * An array containing info for identifying a chrome extension
      */
     chromeExtensionsInfo: Array<Object>,
+
+    /**
+     * Whether I am the current recorder.
+     */
+    iAmRecorder: boolean,
 
     /**
      * Invoked to obtain translated strings.
@@ -161,11 +170,7 @@ class ChromeExtensionBanner extends PureComponent<Props, State> {
     _shouldNotRender: () => boolean;
 
     /**
-     * Checks whether the banner should be displayed based on:
-     * Whether there is a configuration issue with the chrome extensions data.
-     * Whether the user checked don't show again checkbox in a previous session.
-     * Whether the user closed the banner.
-     * Whether the extension is already installed.
+     * Checks whether the banner should not be rendered.
      *
      * @returns {boolean} Whether to show the banner or not.
      */
@@ -178,9 +183,13 @@ class ChromeExtensionBanner extends PureComponent<Props, State> {
 
         const dontShowAgain = localStorage.getItem(DONT_SHOW_AGAIN_CHECKED) === 'true';
 
-        return dontShowAgain
-        || this.state.closePressed
-        || !this.state.shouldShow;
+        return !interfaceConfig.SHOW_CHROME_EXTENSION_BANNER
+            || !browser.isChrome()
+            || isMobileBrowser()
+            || dontShowAgain
+            || this.state.closePressed
+            || !this.state.shouldShow
+            || this.props.iAmRecorder;
     }
 
     _onDontShowAgainChange: (object: Object) => void;
@@ -269,7 +278,8 @@ const _mapStateToProps = state => {
     return {
         chromeExtensionUrl: bannerCfg.url,
         chromeExtensionsInfo: bannerCfg.chromeExtensionsInfo || [],
-        conference: getCurrentConference(state)
+        conference: getCurrentConference(state),
+        iAmRecorder: state['features/base/config'].iAmRecorder
     };
 };
 

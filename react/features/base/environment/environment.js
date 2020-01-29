@@ -1,7 +1,7 @@
 // @flow
 
 import JitsiMeetJS from '../lib-jitsi-meet';
-import { Platform } from '../react';
+import { isMobileBrowser } from './utils';
 
 const { browser } = JitsiMeetJS.util;
 
@@ -67,7 +67,7 @@ export function isSupportedBrowser() {
     }
 
     // Blacklists apply to desktop browsers only right now.
-    if (!_isMobileBrowser() && _isCurrentBrowserInList(
+    if (!isMobileBrowser() && _isCurrentBrowserInList(
         interfaceConfig.UNSUPPORTED_BROWSERS || DEFAULT_UNSUPPORTED_BROWSERS
     )) {
         return false;
@@ -77,7 +77,7 @@ export function isSupportedBrowser() {
     // - the WelcomePage is mobile ready;
     // - if the URL points to a conference then deep-linking will take
     //   care of it.
-    return _isMobileBrowser() || JitsiMeetJS.isWebRtcSupported();
+    return isMobileBrowser() || JitsiMeetJS.isWebRtcSupported();
 }
 
 /**
@@ -95,14 +95,4 @@ function _isCurrentBrowserInList(list) {
 
         return checkFunction ? checkFunction.call(browser) : false;
     }));
-}
-
-/**
- * Returns whether or not the current environment is a mobile device.
- *
- * @private
- * @returns {boolean}
- */
-function _isMobileBrowser() {
-    return Platform.OS === 'android' || Platform.OS === 'ios';
 }
