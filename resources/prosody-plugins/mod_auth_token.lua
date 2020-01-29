@@ -95,6 +95,7 @@ local function anonymous(self, message)
 	local result, err, msg = self.profile.anonymous(self, username, self.realm);
 
 	if result == true then
+		self.username = username;
 		return "success";
 	else
 
