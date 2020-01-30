@@ -111,12 +111,5 @@ export default {
         }
 
         return instance;
-    },
-
-    /**
-     * Currently not implemented.
-     *
-     * @returns {void}
-     */
-    fixDeviceID() { } // eslint-disable-line no-empty-function
+    }
 };

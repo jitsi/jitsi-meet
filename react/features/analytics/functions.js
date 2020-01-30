@@ -35,28 +35,23 @@ export function resetAnalytics() {
 }
 
 /**
- * Loads the analytics scripts and inits JitsiMeetJS.analytics by setting
- * permanent properties and setting the handlers from the loaded scripts.
- * NOTE: Has to be used after JitsiMeetJS.init. Otherwise analytics will be
- * null.
+ * Creates the analytics handlers.
  *
- * @param {Store} store - The redux store in which the specified {@code action}
- * is being dispatched.
- * @returns {void}
+ * @param {Store} store - The redux store in which the specified {@code action} is being dispatched.
+ * @returns {Promise} Resolves with the handlers that have been successfully loaded.
  */
-export function initAnalytics({ getState }: { getState: Function }) {
+export function createHandlers({ getState }: { getState: Function }) {
     getJitsiMeetGlobalNS().analyticsHandlers = [];
     window.analyticsHandlers = []; // Legacy support.
 
-    if (!analytics || !isAnalyticsEnabled(getState)) {
-        return;
+    if (!isAnalyticsEnabled(getState)) {
+        return Promise.resolve([]);
     }
 
     const state = getState();
     const config = state['features/base/config'];
     const { locationURL } = state['features/base/connection'];
     const host = locationURL ? locationURL.host : '';
-
     const {
         analytics: analyticsConfig = {},
         deploymentInfo
@@ -68,7 +63,7 @@ export function initAnalytics({ getState }: { getState: Function }) {
         googleAnalyticsTrackingId,
         whiteListedEvents
     } = analyticsConfig;
-    const { group, server, user } = state['features/base/jwt'];
+    const { group, user } = state['features/base/jwt'];
     const handlerConstructorOptions = {
         amplitudeAPPKey,
         blackListedEvents,
@@ -82,54 +77,93 @@ export function initAnalytics({ getState }: { getState: Function }) {
         version: JitsiMeetJS.version,
         whiteListedEvents
     };
+    const handlers = [];
 
-    _loadHandlers(scriptURLs, handlerConstructorOptions)
-        .then(handlers => {
-            const roomName = state['features/base/conference'].room;
-            const permanentProperties = {};
+    try {
+        const amplitude = new AmplitudeHandler(handlerConstructorOptions);
 
-            if (server) {
-                permanentProperties.server = server;
-            }
-            if (group) {
-                permanentProperties.group = group;
-            }
+        handlers.push(amplitude);
+    // eslint-disable-next-line no-empty
+    } catch (e) {}
 
-            //  Report if user is using websocket
-            permanentProperties.websocket = navigator.product !== 'ReactNative' && typeof config.websocket === 'string';
-
-            // Optionally, include local deployment information based on the
-            // contents of window.config.deploymentInfo.
-            if (deploymentInfo) {
-                for (const key in deploymentInfo) {
-                    if (deploymentInfo.hasOwnProperty(key)) {
-                        permanentProperties[key] = deploymentInfo[key];
-                    }
+    return (
+        _loadHandlers(scriptURLs, handlerConstructorOptions)
+            .then(externalHandlers => {
+                handlers.push(...externalHandlers);
+                if (handlers.length === 0) {
+                    // Throwing an error in  order to dispose the analytics in the catch clause due to the lack of any
+                    // analytics handlers.
+                    throw new Error('No analytics handlers created!');
                 }
-            }
 
-            analytics.addPermanentProperties(permanentProperties);
-            analytics.setConferenceName(roomName);
+                return handlers;
+            })
+            .catch(e => {
+                analytics.dispose();
+                logger.error(e);
 
-            // Set the handlers last, since this triggers emptying of the cache
-            analytics.setAnalyticsHandlers(handlers);
-        })
-        .catch(error => {
-            analytics.dispose();
-            logger.error(error);
-        });
+                return [];
+            }));
+
 }
 
 /**
- * Tries to load the scripts for the analytics handlers.
+ * Inits JitsiMeetJS.analytics by setting permanent properties and setting the handlers from the loaded scripts.
+ * NOTE: Has to be used after JitsiMeetJS.init. Otherwise analytics will be null.
+ *
+ * @param {Store} store - The redux store in which the specified {@code action} is being dispatched.
+ * @param {Array<Object>} handlers - The analytics handlers.
+ * @returns {void}
+ */
+export function initAnalytics({ getState }: { getState: Function }, handlers: Array<Object>) {
+    if (!isAnalyticsEnabled(getState) || handlers.length === 0) {
+        return;
+    }
+
+    const state = getState();
+    const config = state['features/base/config'];
+    const {
+        deploymentInfo
+    } = config;
+    const { group, server } = state['features/base/jwt'];
+    const roomName = state['features/base/conference'].room;
+    const permanentProperties = {};
+
+    if (server) {
+        permanentProperties.server = server;
+    }
+    if (group) {
+        permanentProperties.group = group;
+    }
+
+    //  Report if user is using websocket
+    permanentProperties.websocket = navigator.product !== 'ReactNative' && typeof config.websocket === 'string';
+
+    // Optionally, include local deployment information based on the
+    // contents of window.config.deploymentInfo.
+    if (deploymentInfo) {
+        for (const key in deploymentInfo) {
+            if (deploymentInfo.hasOwnProperty(key)) {
+                permanentProperties[key] = deploymentInfo[key];
+            }
+        }
+    }
+
+    analytics.addPermanentProperties(permanentProperties);
+    analytics.setConferenceName(roomName);
+
+    // Set the handlers last, since this triggers emptying of the cache
+    analytics.setAnalyticsHandlers(handlers);
+}
+
+/**
+ * Tries to load the scripts for the analytics handlers and creates them.
  *
  * @param {Array} scriptURLs - The array of script urls to load.
- * @param {Object} handlerConstructorOptions - The default options to pass when
- * creating handlers.
+ * @param {Object} handlerConstructorOptions - The default options to pass when creating handlers.
  * @private
- * @returns {Promise} Resolves with the handlers that have been
- * successfully loaded and rejects if there are no handlers loaded or the
- * analytics is disabled.
+ * @returns {Promise} Resolves with the handlers that have been successfully loaded and rejects if there are no handlers
+ * loaded or the analytics is disabled.
  */
 function _loadHandlers(scriptURLs = [], handlerConstructorOptions) {
     const promises = [];
@@ -161,13 +195,8 @@ function _loadHandlers(scriptURLs = [], handlerConstructorOptions) {
         // check the old location to provide legacy support
         const analyticsHandlers = [
             ...getJitsiMeetGlobalNS().analyticsHandlers,
-            ...window.analyticsHandlers,
-
-            // NOTE: when we add second handler it will be good to put all
-            // build-in handlers in an array and destruct it here.
-            AmplitudeHandler
+            ...window.analyticsHandlers
         ];
-
         const handlers = [];
 
         for (const Handler of analyticsHandlers) {
@@ -179,7 +208,6 @@ function _loadHandlers(scriptURLs = [], handlerConstructorOptions) {
                 logger.warn(`Error creating analytics handler: ${error}`);
             }
         }
-
         logger.debug(`Loaded ${handlers.length} analytics handlers`);
 
         return handlers;
