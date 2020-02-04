@@ -81,7 +81,6 @@
         "GET_SESSION_ID_ERROR": "Get session-id error: {{code}}",
         "GOT_SESSION_ID": "Obtaining session-id... Done",
         "LOW_BANDWIDTH": "Video for {{displayName}} has been turned off to save bandwidth",
-        "RECONNECTING": "A network problem occurred. Reconnecting...",
         "USER_CONNECTION_INTERRUPTED": "{{displayName}} is having connectivity issues..."
     },
     "connectionindicator": {
