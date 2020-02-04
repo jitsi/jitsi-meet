@@ -16,7 +16,7 @@ import { getLocalParticipant } from '../../react/features/base/participants';
 import { toggleChat } from '../../react/features/chat';
 import { setDocumentUrl } from '../../react/features/etherpad';
 import { setFilmstripVisible } from '../../react/features/filmstrip';
-import { setNotificationsEnabled } from '../../react/features/notifications';
+import { joinLeaveNotificationsDisabled, setNotificationsEnabled } from '../../react/features/notifications';
 import {
     dockToolbox,
     setToolboxEnabled,
@@ -327,7 +327,9 @@ UI.updateUserStatus = (user, status) => {
     const reduxState = APP.store.getState() || {};
     const { calleeInfoVisible } = reduxState['features/invite'] || {};
 
-    if (!status || calleeInfoVisible) {
+    // We hide status updates when join/leave notifications are disabled,
+    // as jigasi is the component with statuses and they are seen as join/leave notifications.
+    if (!status || calleeInfoVisible || joinLeaveNotificationsDisabled()) {
         return;
     }
 
