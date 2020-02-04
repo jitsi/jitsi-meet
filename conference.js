@@ -1665,19 +1665,40 @@ export default {
             return;
         }
 
+        // Create a new presenter track and apply the presenter effect.
         if (!this.localPresenterVideo && !mute) {
-            // create a new presenter track and apply the presenter effect.
-            let { height } = this.localVideo.track.getSettings();
+            let { aspectRatio, height } = this.localVideo.track.getSettings();
+            const { width } = this.localVideo.track.getSettings();
+            let desktopResizeConstraints = {};
+            let resizeDesktopStream = false;
+            const DESKTOP_STREAM_CAP = 720;
 
-            // Workaround for Firefox since it doesn't return the correct width/height of the desktop stream
-            // that is being currently shared.
-            if (!height) {
-                const desktopResizeConstraints = {
+            // Determine the constraints if the desktop track needs to be resized.
+            // Resizing is needed when the resolution cannot be determined or when
+            // the window is bigger than 720p.
+            if (height && width) {
+                aspectRatio = aspectRatio ?? (width / height).toPrecision(4);
+                const advancedConstraints = [ { aspectRatio } ];
+                const isPortrait = height >= width;
+
+                // Determine which dimension needs resizing and resize only that side
+                // keeping the aspect ratio same as before.
+                if (isPortrait && width > DESKTOP_STREAM_CAP) {
+                    resizeDesktopStream = true;
+                    advancedConstraints.push({ width: DESKTOP_STREAM_CAP });
+                } else if (!isPortrait && height > DESKTOP_STREAM_CAP) {
+                    resizeDesktopStream = true;
+                    advancedConstraints.push({ height: DESKTOP_STREAM_CAP });
+                }
+                desktopResizeConstraints.advanced = advancedConstraints;
+            } else {
+                resizeDesktopStream = true;
+                desktopResizeConstraints = {
                     width: 1280,
-                    height: 720,
-                    resizeMode: 'crop-and-scale'
+                    height: 720
                 };
-
+            }
+            if (resizeDesktopStream) {
                 try {
                     await this.localVideo.track.applyConstraints(desktopResizeConstraints);
                 } catch (err) {
@@ -1685,7 +1706,7 @@ export default {
 
                     return;
                 }
-                height = desktopResizeConstraints.height;
+                height = this.localVideo.track.getSettings().height ?? DESKTOP_STREAM_CAP;
             }
             const defaultCamera = getUserSelectedCameraDeviceId(APP.store.getState());
             let effect;
