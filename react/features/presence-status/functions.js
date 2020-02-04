@@ -8,5 +8,5 @@ declare var interfaceConfig: Object;
  * @returns {boolean}
  */
 export function presenceStatusDisabled() {
-    return Boolean(interfaceConfig?.DISABLE_PRESENCE_STATUS);
+    return Boolean(typeof interfaceConfig !== 'undefined' && interfaceConfig?.DISABLE_PRESENCE_STATUS);
 }
