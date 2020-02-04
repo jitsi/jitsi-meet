@@ -24,5 +24,5 @@ export function areThereNotifications(stateful: Object | Function) {
  * @returns {boolean}
  */
 export function joinLeaveNotificationsDisabled() {
-    return Boolean(interfaceConfig?.DISABLE_JOIN_LEAVE_NOTIFICATIONS);
+    return Boolean(typeof interfaceConfig !== 'undefined' && interfaceConfig?.DISABLE_JOIN_LEAVE_NOTIFICATIONS);
 }
