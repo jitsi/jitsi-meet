@@ -38,7 +38,7 @@
     "@react-native-community/netinfo": "4.1.5",
     "@svgr/webpack": "4.3.2",
     "@tensorflow-models/body-pix": "2.0.4",
-    "@tensorflow/tfjs": "1.2.9",
+    "@tensorflow/tfjs": "1.5.1",
     "@webcomponents/url": "0.7.1",
     "amplitude-js": "4.5.2",
     "bc-css-flags": "3.0.0",
