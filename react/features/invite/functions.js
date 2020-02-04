@@ -525,6 +525,23 @@ export function getDialInfoPageURLForURIString(
 }
 
 /**
+ * Returns whether or not dial-in related UI should be displayed.
+ *
+ * @param {Object} dialIn - Dial in information.
+ * @returns {boolean}
+ */
+export function shouldDisplayDialIn(dialIn: Object) {
+    const { conferenceID, numbers, numbersEnabled } = dialIn;
+    const phoneNumber = _getDefaultPhoneNumber(numbers);
+
+    return Boolean(
+            conferenceID
+            && numbers
+            && numbersEnabled
+            && phoneNumber);
+}
+
+/**
  * Sets the internal state of which dial-in number to display.
  *
  * @param {Array<string>|Object} dialInNumbers - The array or object of

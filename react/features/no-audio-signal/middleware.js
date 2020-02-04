@@ -1,5 +1,7 @@
 // @flow
 
+import React from 'react';
+
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../base/app';
 import { CONFERENCE_JOINED } from '../base/conference';
 import {
@@ -10,14 +12,12 @@ import JitsiMeetJS, { JitsiConferenceEvents } from '../base/lib-jitsi-meet';
 import { MiddlewareRegistry } from '../base/redux';
 import { updateSettings } from '../base/settings';
 import { playSound, registerSound, unregisterSound } from '../base/sounds';
-import { getDialInfoPageURL } from '../invite/functions';
 import { hideNotification, showNotification } from '../notifications';
 
 import { setNoAudioSignalNotificationUid } from './actions';
+import DialInLink from './components/DialInLink';
 import { NO_AUDIO_SIGNAL_SOUND_ID } from './constants';
 import { NO_AUDIO_SIGNAL_SOUND_FILE } from './sounds';
-
-import React from 'react';
 
 MiddlewareRegistry.register(store => next => async action => {
     const result = next(action);
@@ -37,32 +37,6 @@ MiddlewareRegistry.register(store => next => async action => {
 
     return result;
 });
-
-
-/**
- * Creates a {@code ReactElement} for displaying the dial-in link.
- *
- * @param {Object} room - Current conference room name.
- * @param {Object} locationURL - Domain location url.
- * @returns {ReactElement}
- */
-function renderDialInLink(room, locationURL) {
-    return (
-        <div>
-            <a
-                href = {
-                    getDialInfoPageURL(
-                        room,
-                        locationURL
-                    )
-                }
-                rel = 'noopener noreferrer'
-                target = '_blank'>
-            Dial-in numbers
-            </a>
-        </div>
-    );
-}
 
 /**
  * Handles the logic of displaying the no audio input detected notification as well as finding a valid device on the
@@ -89,9 +63,6 @@ async function _handleNoAudioSignalNotification({ dispatch, getState }, action) 
     });
     conference.on(JitsiConferenceEvents.NO_AUDIO_INPUT, async () => {
         const { noSrcDataNotificationUid } = getState()['features/base/no-src-data'];
-        const { room } = getState()['features/base/conference'];
-        const { locationURL } = getState()['features/base/connection'];
-
 
         // In case the 'no data detected from source' notification was already shown, we prevent the
         // no audio signal notification as it's redundant i.e. it's clear that the users microphone is
@@ -139,7 +110,7 @@ async function _handleNoAudioSignalNotification({ dispatch, getState }, action) 
 
         const notification = showNotification({
             titleKey: 'toolbar.noAudioSignalTitle',
-            description: renderDialInLink(room, locationURL),
+            description: <DialInLink />,
             descriptionKey,
             customActionNameKey,
             customActionHandler
