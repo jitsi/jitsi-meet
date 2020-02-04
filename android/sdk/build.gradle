@@ -38,7 +38,7 @@ dependencies {
 
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.appcompat:appcompat:1.1.0'
-    implementation 'androidx.fragment:fragment:1.1.0'
+    implementation 'androidx.fragment:fragment:1.2.0'
 
     //noinspection GradleDynamicVersion
     api 'com.facebook.react:react-native:+'
