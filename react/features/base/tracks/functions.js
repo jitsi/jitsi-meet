@@ -27,7 +27,7 @@ export async function createLocalPresenterTrack(options, desktopHeight) {
 
     // compute the constraints of the camera track based on the resolution
     // of the desktop screen that is being shared.
-    const cameraHeights = [ 180, 270, 360, 540, 720 ];
+    const cameraHeights = [ 120, 180, 240, 360, 480, 600, 720 ];
     const proportion = 4;
     const result = cameraHeights.find(
             height => (desktopHeight / proportion) < height);
