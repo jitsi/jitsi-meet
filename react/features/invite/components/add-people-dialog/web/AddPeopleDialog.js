@@ -274,8 +274,8 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
     /**
      * Returns the avatar component for a user.
      *
-     * @param {Object} user - The user
-     * @param {string} className - The CSS class for the avatar component
+     * @param {Object} user - The user.
+     * @param {string} className - The CSS class for the avatar component.
      * @private
      * @returns {ReactElement}
      */
