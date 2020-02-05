@@ -550,7 +550,11 @@ export function shouldDisplayDialIn(dialIn: Object) {
  * @returns {string|null}
  */
 export function _getDefaultPhoneNumber(
-        dialInNumbers: Object): ?string {
+        dialInNumbers: ?Object): ?string {
+
+    if (!dialInNumbers) {
+        return null;
+    }
 
     if (Array.isArray(dialInNumbers)) {
         // new syntax follows
