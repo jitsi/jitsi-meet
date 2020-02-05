@@ -144,9 +144,6 @@ class ParticipantView extends Component<Props> {
         case JitsiParticipantConnectionStatus.INACTIVE:
             messageKey = 'connection.LOW_BANDWIDTH';
             break;
-        case JitsiParticipantConnectionStatus.INTERRUPTED:
-            messageKey = 'connection.USER_CONNECTION_INTERRUPTED';
-            break;
         default:
             return null;
         }
