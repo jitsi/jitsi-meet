@@ -181,12 +181,6 @@
         visibility: hidden;
         z-index: $zindex2;
     }
-
-    &.audio-only {
-        .videoThumbnailProblemFilter {
-            filter: none;
-        }
-    }
 }
 
 #localVideoWrapper {
@@ -571,11 +565,6 @@
 .videoMessageFilter {
     -webkit-filter: grayscale(.5) opacity(0.8);
     filter: grayscale(.5) opacity(0.8);
-}
-
-.videoThumbnailProblemFilter {
-    -webkit-filter: grayscale(100%);
-    filter: grayscale(100%);
 }
 
 #remotePresenceMessage,
