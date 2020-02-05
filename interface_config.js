@@ -191,11 +191,6 @@ var interfaceConfig = {
     AUTO_PIN_LATEST_SCREEN_SHARE: 'remote-only',
 
     /**
-     * If we should capture periodic screenshots of the content sharing.
-     */
-    ENABLE_SCREENSHOT_CAPTURE: false,
-
-    /**
      * If true, presence status: busy, calling, connected etc. is not displayed.
      */
     DISABLE_PRESENCE_STATUS: false,

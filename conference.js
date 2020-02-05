@@ -1460,8 +1460,9 @@ export default {
         } else {
             promise = promise.then(() => this.useVideoStream(null));
         }
-
-        APP.store.dispatch(toggleScreenshotCaptureEffect(false));
+        if (config.enableScreenshotCapture) {
+            APP.store.dispatch(toggleScreenshotCaptureEffect(false));
+        }
 
         return promise.then(
             () => {
@@ -1734,7 +1735,9 @@ export default {
             .then(stream => this.useVideoStream(stream))
             .then(() => {
                 this.videoSwitchInProgress = false;
-                APP.store.dispatch(toggleScreenshotCaptureEffect(true));
+                if (config.enableScreenshotCapture) {
+                    APP.store.dispatch(toggleScreenshotCaptureEffect(true));
+                }
                 sendAnalytics(createScreenSharingEvent('started'));
                 logger.log('Screen sharing started');
             })

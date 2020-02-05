@@ -96,6 +96,7 @@ export default [
     'enableLayerSuspension',
     'enableLipSync',
     'enableRemb',
+    'enableScreenshotCapture',
     'enableTalkWhileMuted',
     'enableNoAudioDetection',
     'enableNoisyMicDetection',
