@@ -1,5 +1,6 @@
 // @flow
 
+import { ColorSchemeRegistry, schemeColor } from '../../../base/color-scheme';
 import { BoxModel, ColorPalette } from '../../../base/styles';
 
 // XXX The "standard" {@code BoxModel.padding} has been deemed insufficient in
@@ -13,9 +14,10 @@ export const ICON_SHARE = require('../../../../../images/icon-users.png');
 export const JITSI_LOGO = require('../../../../../images/jitsiLogo_square.png');
 
 /**
- * The styles of the React {@code Components} of the feature recording.
+ * Color schemed styles for the @{code StartRecordingDialogContent} component.
  */
-export default {
+ColorSchemeRegistry.register('StartRecordingDialogContent', {
+
     container: {
         flex: 0,
         flexDirection: 'column'
@@ -64,6 +66,6 @@ export default {
     },
 
     text: {
-        color: ColorPalette.white
+        color: schemeColor('text')
     }
-};
+});
