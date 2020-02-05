@@ -1,5 +1,7 @@
 // @flow
 
+import React from 'react';
+
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../base/app';
 import { CONFERENCE_JOINED } from '../base/conference';
 import {
@@ -13,6 +15,7 @@ import { playSound, registerSound, unregisterSound } from '../base/sounds';
 import { hideNotification, showNotification } from '../notifications';
 
 import { setNoAudioSignalNotificationUid } from './actions';
+import DialInLink from './components/DialInLink';
 import { NO_AUDIO_SIGNAL_SOUND_ID } from './constants';
 import { NO_AUDIO_SIGNAL_SOUND_FILE } from './sounds';
 
@@ -91,7 +94,7 @@ async function _handleNoAudioSignalNotification({ dispatch, getState }, action) 
             // at the point of the implementation the showNotification function only supports doing that for
             // the description.
             // TODO Add support for arguments to showNotification title and customAction strings.
-            customActionNameKey = `Use ${formatDeviceLabel(activeDevice.deviceLabel)}`;
+            customActionNameKey = `Switch to ${formatDeviceLabel(activeDevice.deviceLabel)}`;
             customActionHandler = () => {
                 // Select device callback
                 dispatch(
@@ -107,6 +110,7 @@ async function _handleNoAudioSignalNotification({ dispatch, getState }, action) 
 
         const notification = showNotification({
             titleKey: 'toolbar.noAudioSignalTitle',
+            description: <DialInLink />,
             descriptionKey,
             customActionNameKey,
             customActionHandler
