@@ -435,13 +435,6 @@ export default class RemoteVideo extends SmallVideo {
         // Update 'mutedWhileDisconnected' flag
         this._figureOutMutedWhileDisconnected();
         this.updateConnectionStatus(connectionStatus);
-
-        const isInterrupted = connectionStatus === JitsiParticipantConnectionStatus.INTERRUPTED;
-
-        // Toggle thumbnail video problem filter
-
-        this.selectVideoElement().toggleClass('videoThumbnailProblemFilter', isInterrupted);
-        this.$avatar().toggleClass('videoThumbnailProblemFilter', isInterrupted);
     }
 
     /**
