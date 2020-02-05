@@ -127,10 +127,8 @@ class StartRecordingDialogContent extends Component<Props> {
         // Bind event handler so it is only bound once for every instance.
         this._onSignIn = this._onSignIn.bind(this);
         this._onSignOut = this._onSignOut.bind(this);
-        this._onDropboxSwitchChange
-            = this._onDropboxSwitchChange.bind(this);
-        this._onRecordingServiceSwitchChange
-            = this._onRecordingServiceSwitchChange.bind(this);
+        this._onDropboxSwitchChange = this._onDropboxSwitchChange.bind(this);
+        this._onRecordingServiceSwitchChange = this._onRecordingServiceSwitchChange.bind(this);
     }
 
     /**
@@ -237,13 +235,10 @@ class StartRecordingDialogContent extends Component<Props> {
                     <Switch
                         className = 'recording-switch'
                         disabled = { isValidating }
-                        onValueChange
-                            = { this._onRecordingServiceSwitchChange }
+                        onValueChange = { this._onRecordingServiceSwitchChange }
                         style = { styles.switch }
                         trackColor = {{ false: ColorPalette.lightGrey }}
-                        value = {
-                            this.props.selectedRecordingService
-                                === RECORDING_TYPES.JITSI_REC_SERVICE } />
+                        value = { this.props.selectedRecordingService === RECORDING_TYPES.JITSI_REC_SERVICE } />
                 ) : null;
 
         return (
@@ -464,9 +459,7 @@ class StartRecordingDialogContent extends Component<Props> {
      * @returns {void}
      */
     _onSignIn() {
-        sendAnalytics(
-            createRecordingDialogEvent('start', 'signIn.button')
-        );
+        sendAnalytics(createRecordingDialogEvent('start', 'signIn.button'));
         this.props.dispatch(authorizeDropbox());
     }
 
