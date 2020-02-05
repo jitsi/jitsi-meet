@@ -237,17 +237,8 @@ export default class LargeVideoManager {
                 this.updateLargeVideoAudioLevel(0);
             }
 
-            const isConnectionInterrupted
-                = APP.conference.getParticipantConnectionStatus(id)
-                    === JitsiParticipantConnectionStatus.INTERRUPTED;
-            let messageKey = null;
-
-            if (isConnectionInterrupted) {
-                messageKey = 'connection.USER_CONNECTION_INTERRUPTED';
-            } else if (connectionStatus
-                    === JitsiParticipantConnectionStatus.INACTIVE) {
-                messageKey = 'connection.LOW_BANDWIDTH';
-            }
+            const messageKey
+                = connectionStatus === JitsiParticipantConnectionStatus.INACTIVE ? 'connection.LOW_BANDWIDTH' : null;
 
             // Do not show connection status message in the audio only mode,
             // because it's based on the video playback status.
@@ -255,7 +246,6 @@ export default class LargeVideoManager {
 
             this.updateParticipantConnStatusIndication(
                     id,
-                    !overrideAndHide && isConnectionInterrupted,
                     !overrideAndHide && messageKey);
 
             // Change the participant id the presence label is listening to.
@@ -281,20 +271,12 @@ export default class LargeVideoManager {
      * shown on the large video area.
      *
      * @param {string} id the id of remote participant(MUC nickname)
-     * @param {boolean} showProblemsIndication
      * @param {string|null} messageKey the i18n key of the message which will be
      * displayed on the large video or <tt>null</tt> to hide it.
      *
      * @private
      */
-    updateParticipantConnStatusIndication(
-            id,
-            showProblemsIndication,
-            messageKey) {
-        // Apply grey filter on the large video
-        this.videoContainer.showRemoteConnectionProblemIndicator(
-            showProblemsIndication);
-
+    updateParticipantConnStatusIndication(id, messageKey) {
         if (messageKey) {
             // Get user's display name
             const displayName

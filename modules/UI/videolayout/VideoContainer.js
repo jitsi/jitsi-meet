@@ -20,15 +20,6 @@ export const VIDEO_CONTAINER_TYPE = 'camera';
 const FADE_DURATION_MS = 300;
 
 /**
- * The CSS class used to add a filter effect on the large video when there is
- * a problem with remote video.
- *
- * @private
- * @type {string}
- */
-const REMOTE_PROBLEM_FILTER_CLASS = 'remoteVideoProblemFilter';
-
-/**
  * Returns an array of the video dimensions, so that it keeps it's aspect
  * ratio and fits available area with it's larger dimension. This method
  * ensures that whole video will be visible and can leave empty areas.
@@ -556,20 +547,6 @@ export class VideoContainer extends LargeContainer {
     }
 
     /**
-     * Indicates that the remote user who is currently displayed by this video
-     * container is having connectivity issues.
-     *
-     * @param {boolean} show <tt>true</tt> to show or <tt>false</tt> to hide
-     * the indication.
-     */
-    showRemoteConnectionProblemIndicator(show) {
-        this.$video.toggleClass(REMOTE_PROBLEM_FILTER_CLASS, show);
-        this.$avatar.toggleClass(REMOTE_PROBLEM_FILTER_CLASS, show);
-        this._updateBackground();
-    }
-
-
-    /**
      * We are doing fadeOut/fadeIn animations on parent div which wraps
      * largeVideo, because when Temasys plugin is in use it replaces
      * <video> elements with plugin <object> tag. In Safari jQuery is
@@ -665,8 +642,6 @@ export class VideoContainer extends LargeContainer {
                     && this.localFlipX
                 }
                 orientationFit = { this._backgroundOrientation }
-                showRemoteProblemFilter
-                    = { this.$video.hasClass(REMOTE_PROBLEM_FILTER_CLASS) }
                 videoElement = { this.$video && this.$video[0] }
                 videoTrack = { this.stream } />,
             document.getElementById('largeVideoBackgroundContainer')

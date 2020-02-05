@@ -573,11 +573,6 @@
     filter: grayscale(.5) opacity(0.8);
 }
 
-.remoteVideoProblemFilter {
-    -webkit-filter: grayscale(100%);
-    filter: grayscale(100%);
-}
-
 .videoThumbnailProblemFilter {
     -webkit-filter: grayscale(100%);
     filter: grayscale(100%);
