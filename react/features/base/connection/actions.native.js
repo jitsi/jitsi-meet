@@ -299,12 +299,12 @@ function _constructOptions(state) {
             // Handle relative URLs, which won't work on mobile.
             const {
                 protocol,
-                hostname,
+                host,
                 contextRoot
             } = parseURIString(locationURL.href);
 
             // eslint-disable-next-line max-len
-            bosh = `${protocol}//${hostname}${contextRoot || '/'}${bosh.substr(1)}`;
+            bosh = `${protocol}//${host}${contextRoot || '/'}${bosh.substr(1)}`;
         }
 
         // Append room to the URL's search.
