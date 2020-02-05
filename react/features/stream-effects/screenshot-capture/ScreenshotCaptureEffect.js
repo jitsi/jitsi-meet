@@ -57,11 +57,7 @@ export default class ScreenshotCaptureEffect {
      * @returns {boolean} - Returns true if this effect can run on the specified track, false otherwise.
      */
     isEnabled(jitsiLocalTrack: Object) {
-        return (
-            interfaceConfig.ENABLE_SCREENSHOT_CAPTURE
-            && jitsiLocalTrack.isVideoTrack()
-            && jitsiLocalTrack.videoType === 'desktop'
-        );
+        return jitsiLocalTrack.isVideoTrack() && jitsiLocalTrack.videoType === 'desktop';
     }
 
     /**
