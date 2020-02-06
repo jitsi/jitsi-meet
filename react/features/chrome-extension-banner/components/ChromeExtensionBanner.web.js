@@ -6,6 +6,7 @@ import { translate } from '../../base/i18n';
 import { getCurrentConference } from '../../base/conference/functions';
 import { browser } from '../../base/lib-jitsi-meet';
 import { isMobileBrowser } from '../../base/environment/utils';
+import logger from '../logger';
 
 declare var interfaceConfig: Object;
 
@@ -102,6 +103,10 @@ class ChromeExtensionBanner extends PureComponent<Props, State> {
      * @inheritdoc
      */
     async componentDidUpdate() {
+        if (!this._isSupportedEnvironment()) {
+            return;
+        }
+
         const hasExtensions = await this._checkExtensionsInstalled();
 
         if (
@@ -112,6 +117,18 @@ class ChromeExtensionBanner extends PureComponent<Props, State> {
         ) {
             this.setState({ shouldShow: true }); // eslint-disable-line
         }
+    }
+
+    /**
+     * Checks whether the feature is enabled and whether the environment(browser/os)
+     * supports it.
+     *
+     * @returns {boolean}
+     */
+    _isSupportedEnvironment() {
+        return interfaceConfig.SHOW_CHROME_EXTENSION_BANNER
+            && browser.isChrome()
+            && !isMobileBrowser();
     }
 
     _onClosePressed: () => void;
@@ -159,7 +176,7 @@ class ChromeExtensionBanner extends PureComponent<Props, State> {
         const extensionInstalledFunction = info => isExtensionInstalled(info);
 
         if (!this.props.chromeExtensionsInfo.length) {
-            console.warn('Further configuration needed, missing chrome extension(s) info');
+            logger.warn('Further configuration needed, missing chrome extension(s) info');
         }
 
         return Promise.all(
@@ -175,18 +192,19 @@ class ChromeExtensionBanner extends PureComponent<Props, State> {
      * @returns {boolean} Whether to show the banner or not.
      */
     _shouldNotRender() {
+        if (!this._isSupportedEnvironment()) {
+            return true;
+        }
+
         if (!this.props.chromeExtensionUrl) {
-            console.warn('Further configuration needed, missing chrome extension URL');
+            logger.warn('Further configuration needed, missing chrome extension URL');
 
             return true;
         }
 
         const dontShowAgain = localStorage.getItem(DONT_SHOW_AGAIN_CHECKED) === 'true';
 
-        return !interfaceConfig.SHOW_CHROME_EXTENSION_BANNER
-            || !browser.isChrome()
-            || isMobileBrowser()
-            || dontShowAgain
+        return dontShowAgain
             || this.state.closePressed
             || !this.state.shouldShow
             || this.props.iAmRecorder;
