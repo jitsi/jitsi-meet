@@ -49,7 +49,7 @@
         "error": "Erreur : votre message n'a pas été envoyé. Raison : {{error}}",
         "fieldPlaceHolder": "Tapez votre message ici",
         "messagebox": "Saisissez un message",
-        "messageTo": "",
+        "messageTo": "Message privé à {{recipient}}",
         "noMessagesMessage": "Il n'y a pas encore de messages dans cette réunion. Démarrez une conversation ici !",
         "nickname": {
             "popover": "Choisissez un pseudonyme",
@@ -58,6 +58,11 @@
         "privateNotice": "Message privé à {{recipient}}",
         "title": "Chat",
         "you": "vous"
+    },
+    "chromeExtensionBanner": {
+        "installExtensionText": "",
+        "buttonText": "",
+        "dontShowAgain": ""
     },
     "connectingOverlay": {
         "joiningRoom": "Connexion à la réunion..."
@@ -536,7 +541,7 @@
         "profileSection": "Profil",
         "serverURL": "URL du serveur",
         "showAdvanced": "Afficher les paramètres avancés",
-        "startWithAudioMuted": "Commencez avec la vidéo en sourdine",
+        "startWithAudioMuted": "Commencez avec l'audio en sourdine",
         "startWithVideoMuted": "Commencez avec la vidéo en sourdine",
         "version": "Version"
     },
@@ -570,11 +575,11 @@
             "cc": "Activer/désactiver les sous-titres",
             "chat": "Afficher/masquer la discussion instantanée",
             "document": "Activer/désactiver le document partagé",
-            "download": "",
+            "download": "Télécharger nos applications",
             "feedback": "Laisser des commentaires",
             "fullScreen": "Activer/désactiver le plein écran",
             "hangup": "Quitter la conversation",
-            "help": "",
+            "help": "Aide",
             "invite": "Inviter des participants",
             "kick": "Expulser le participant",
             "localRecording": "Activer/désactiver les contrôles d'enregistrement local",
@@ -583,7 +588,7 @@
             "moreActionsMenu": "Menu d'actions supplémentaires",
             "mute": "Activer/désactiver l'audio",
             "pip": "Activer/désactiver le mode Picture in Picture",
-            "privateMessage": "",
+            "privateMessage": "Envoyer un message privé",
             "profile": "Éditer votre profil",
             "raiseHand": "Lever/baisser la main",
             "recording": "Activer/désactiver l'enregistrement",
@@ -627,6 +632,8 @@
         "noAudioSignalTitle": "Il n'y a pas d'entrée provenant de votre micro !",
         "noAudioSignalDesc": "Si vous n'avez pas délibérément coupé le son des paramètres du système ou du matériel, envisagez de changer le périphérique.",
         "noAudioSignalDescSuggestion": "Si vous n'avez pas délibérément coupé le son des paramètres du système ou du matériel, pensez à utiliser le périphérique suivant :",
+        "noisyAudioInputTitle": "",
+        "noisyAudioInputDesc": "",
         "openChat": "Ouvrir le chat",
         "pip": "Entrer en mode Picture-in-Picture",
         "privateMessage": "Envoyer un message privé",
@@ -712,7 +719,7 @@
         "moderator": "Moderateur",
         "mute": "Un participant a coupé son micro",
         "muted": "Muet",
-        "remoteControl": "Contrôle à distance",
+        "remoteControl": "",
         "show": "Afficher en premier plan",
         "videomute": "Le participant a arrêté la caméra"
     },
