@@ -161,14 +161,15 @@ class Filmstrip extends Component <Props> {
         // will get updated without replacing the DOM. If the known DOM gets
         // modified, then the views will get blown away.
 
-        const remoteVideosStyle = { };
+        const filmstripStyle = { };
         const filmstripRemoteVideosContainerStyle = {};
         let remoteVideoContainerClassName = 'remote-videos-container';
 
         switch (this.props._currentLayout) {
         case LAYOUTS.VERTICAL_FILMSTRIP_VIEW:
-            // Adding 8px for the 2px margins and 2px borders on the left and right. Also adding 7px for the scrollbar.
-            remoteVideosStyle.maxWidth = (interfaceConfig.FILM_STRIP_MAX_HEIGHT || 120) + 15;
+            // Adding 18px for the 2px margins, 2px borders on the left and right and 5px padding on the left and right.
+            // Also adding 7px for the scrollbar.
+            filmstripStyle.maxWidth = (interfaceConfig.FILM_STRIP_MAX_HEIGHT || 120) + 25;
             break;
         case LAYOUTS.TILE_VIEW: {
             // The size of the side margins for each tile as set in CSS.
@@ -184,13 +185,14 @@ class Filmstrip extends Component <Props> {
         }
 
         return (
-            <div className = { `filmstrip ${this.props._className}` }>
+            <div
+                className = { `filmstrip ${this.props._className}` }
+                style = { filmstripStyle }>
                 { this.props._filmstripOnly
                     ? <Toolbar /> : this._renderToggleButton() }
                 <div
                     className = { this.props._videosClassName }
-                    id = 'remoteVideos'
-                    style = { remoteVideosStyle }>
+                    id = 'remoteVideos'>
                     <div
                         className = 'filmstrip__videos'
                         id = 'filmstripLocalVideo'
