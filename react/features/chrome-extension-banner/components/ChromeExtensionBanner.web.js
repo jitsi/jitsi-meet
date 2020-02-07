@@ -102,9 +102,17 @@ class ChromeExtensionBanner extends PureComponent<Props, State> {
      *
      * @inheritdoc
      */
-    async componentDidUpdate() {
+    async componentDidUpdate(prevProps) {
         if (!this._isSupportedEnvironment()) {
             return;
+        }
+
+        if (this.props.chromeExtensionUrl && !prevProps.chromeExtensionUrl) {
+            logger.info('Chrome extension URL found.');
+        }
+
+        if (this.props.chromeExtensionsInfo.length && !prevProps.chromeExtensionsInfo.length) {
+            logger.info('Chrome extension(s) info found.');
         }
 
         const hasExtensions = await this._checkExtensionsInstalled();
@@ -175,10 +183,6 @@ class ChromeExtensionBanner extends PureComponent<Props, State> {
         });
         const extensionInstalledFunction = info => isExtensionInstalled(info);
 
-        if (!this.props.chromeExtensionsInfo.length) {
-            logger.warn('Further configuration needed, missing chrome extension(s) info');
-        }
-
         return Promise.all(
             this.props.chromeExtensionsInfo.map(info => extensionInstalledFunction(info))
         );
@@ -196,15 +200,10 @@ class ChromeExtensionBanner extends PureComponent<Props, State> {
             return true;
         }
 
-        if (!this.props.chromeExtensionUrl) {
-            logger.warn('Further configuration needed, missing chrome extension URL');
-
-            return true;
-        }
-
         const dontShowAgain = localStorage.getItem(DONT_SHOW_AGAIN_CHECKED) === 'true';
 
-        return dontShowAgain
+        return !this.props.chromeExtensionUrl
+            || dontShowAgain
             || this.state.closePressed
             || !this.state.shouldShow
             || this.props.iAmRecorder;
