@@ -116,3 +116,20 @@ export function calculateThumbnailSizeForTileView({
         width
     };
 }
+
+/**
+ * Returns the width of the visible area (doesn't include the left margin/padding) of the the vertical filmstrip.
+ *
+ * @returns {number} - The width of the vertical filmstrip.
+ */
+export function getVerticalFilmstripVisibleAreaWidth() {
+    // Adding 11px for the 2px right margin, 2px borders on the left and right and 5px right padding.
+    // Also adding 7px for the scrollbar. Note that we are not counting the left margins and paddings because this
+    // function is used for calculating the available space and they are invisible.
+    // TODO: Check if we can remove the left margins and paddings from the CSS.
+    // FIXME: This function is used to calculate the size of the large video, etherpad or shared video. Once everything
+    // is reactified this calculation will need to move to the corresponding components.
+    const filmstripMaxWidth = (interfaceConfig.FILM_STRIP_MAX_HEIGHT || 120) + 18;
+
+    return Math.min(filmstripMaxWidth, window.innerWidth);
+}

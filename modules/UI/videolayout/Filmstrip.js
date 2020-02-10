@@ -1,6 +1,6 @@
 /* global $, APP, interfaceConfig */
 
-import { isFilmstripVisible } from '../../../react/features/filmstrip';
+import { getVerticalFilmstripVisibleAreaWidth, isFilmstripVisible } from '../../../react/features/filmstrip';
 
 const Filmstrip = {
     /**
@@ -19,17 +19,12 @@ const Filmstrip = {
     },
 
     /**
-     * Returns the width of filmstip
-     * @returns {number} width
+     * Returns the width of the vertical filmstip if the filmstrip is visible and 0 otherwise.
+     *
+     * @returns {number} - The width of the vertical filmstip if the filmstrip is visible and 0 otherwise.
      */
-    getFilmstripWidth() {
-        const filmstrip = $('#remoteVideos');
-
-        return isFilmstripVisible(APP.store)
-            ? filmstrip.outerWidth()
-                - parseInt(filmstrip.css('paddingLeft'), 10)
-                - parseInt(filmstrip.css('paddingRight'), 10)
-            : 0;
+    getVerticalFilmstripWidth() {
+        return isFilmstripVisible(APP.store) ? getVerticalFilmstripVisibleAreaWidth() : 0;
     },
 
     /**
