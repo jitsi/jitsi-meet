@@ -542,15 +542,11 @@ const VideoLayout = {
 
     /**
      * Resizes the video area.
-     *
-     * TODO: Remove the "animate" param as it is no longer passed in as true.
-     *
-     * @param forceUpdate indicates that hidden thumbnails will be shown
      */
-    resizeVideoArea(animate = false) {
+    resizeVideoArea() {
         if (largeVideo) {
             largeVideo.updateContainerSize();
-            largeVideo.resize(animate);
+            largeVideo.resize(false);
         }
     },
 
