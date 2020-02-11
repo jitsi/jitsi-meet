@@ -30,15 +30,17 @@ export function getCalendarEntries(
  * Loads Google API.
  *
  * @param {string} clientId - The client ID to be used with the API library.
+ * @param {boolean} enableYoutube - Whether youtube scope is enabled.
+ * @param {boolean} enableCalendar - Whether calendar scope is enabled.
  * @returns {Function}
  */
-export function loadGoogleAPI(clientId: string) {
+export function loadGoogleAPI(clientId: string, enableYoutube: boolean, enableCalendar: boolean) {
     return (dispatch: Dispatch<any>, getState: Function) =>
         googleApi.get()
         .then(() => {
             if (getState()['features/google-api'].googleAPIState
                     === GOOGLE_API_STATES.NEEDS_LOADING) {
-                return googleApi.initializeClient(clientId);
+                return googleApi.initializeClient(clientId, enableYoutube, enableCalendar);
             }
 
             return Promise.resolve();

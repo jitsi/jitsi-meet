@@ -29,6 +29,12 @@ import StreamKeyForm from './StreamKeyForm';
 type Props = AbstractProps & {
 
     /**
+     * When initializing google api we need to pass whether calendar and youtube integration is enabled.
+     * If we are in this dialog it means that youtube is enabled, we just check for calendar config.
+     */
+    _enableCalendarIntegration: boolean,
+
+    /**
      * The ID for the Google client application used for making stream key
      * related requests.
      */
@@ -122,7 +128,10 @@ class StartLiveStreamDialog
      */
     _onInitializeGoogleApi() {
         this.props.dispatch(
-            loadGoogleAPI(this.props._googleApiApplicationClientID))
+            loadGoogleAPI(
+                this.props._googleApiApplicationClientID,
+                true,
+                this.props._enableCalendarIntegration))
         .catch(response => this._parseErrorFromResponse(response));
     }
 
@@ -379,10 +388,15 @@ class StartLiveStreamDialog
  * }}
 */
 function _mapStateToProps(state: Object) {
+    const {
+        enableCalendarIntegration,
+        googleApiApplicationClientID
+    } = state['features/base/config'];
+
     return {
         ..._abstractMapStateToProps(state),
-        _googleApiApplicationClientID:
-        state['features/base/config'].googleApiApplicationClientID
+        _enableCalendarIntegration: enableCalendarIntegration,
+        _googleApiApplicationClientID: googleApiApplicationClientID
     };
 }
 

@@ -44,10 +44,14 @@ export const googleCalendarApi = {
      */
     load() {
         return (dispatch: Dispatch<any>, getState: Function) => {
-            const { googleApiApplicationClientID }
-                = getState()['features/base/config'];
+            const {
+                liveStreamingEnabled,
+                enableCalendarIntegration,
+                googleApiApplicationClientID
+            } = getState()['features/base/config'];
 
-            return dispatch(loadGoogleAPI(googleApiApplicationClientID));
+            return dispatch(loadGoogleAPI(
+                googleApiApplicationClientID, liveStreamingEnabled, enableCalendarIntegration));
         };
     },
 
