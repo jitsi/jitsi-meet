@@ -38,11 +38,11 @@ export function loadGoogleAPI() {
             const {
                 liveStreamingEnabled,
                 enableCalendarIntegration,
-                googleAPIState,
                 googleApiApplicationClientID
             } = getState()['features/base/config'];
 
-            if (googleAPIState === GOOGLE_API_STATES.NEEDS_LOADING) {
+            if (getState()['features/google-api'].googleAPIState
+                    === GOOGLE_API_STATES.NEEDS_LOADING) {
                 return googleApi.initializeClient(
                     googleApiApplicationClientID, liveStreamingEnabled, enableCalendarIntegration);
             }
