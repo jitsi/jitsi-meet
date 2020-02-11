@@ -29,18 +29,22 @@ export function getCalendarEntries(
 /**
  * Loads Google API.
  *
- * @param {string} clientId - The client ID to be used with the API library.
- * @param {boolean} enableYoutube - Whether youtube scope is enabled.
- * @param {boolean} enableCalendar - Whether calendar scope is enabled.
  * @returns {Function}
  */
-export function loadGoogleAPI(clientId: string, enableYoutube: boolean, enableCalendar: boolean) {
+export function loadGoogleAPI() {
     return (dispatch: Dispatch<any>, getState: Function) =>
         googleApi.get()
         .then(() => {
-            if (getState()['features/google-api'].googleAPIState
-                    === GOOGLE_API_STATES.NEEDS_LOADING) {
-                return googleApi.initializeClient(clientId, enableYoutube, enableCalendar);
+            const {
+                liveStreamingEnabled,
+                enableCalendarIntegration,
+                googleAPIState,
+                googleApiApplicationClientID
+            } = getState()['features/base/config'];
+
+            if (googleAPIState === GOOGLE_API_STATES.NEEDS_LOADING) {
+                return googleApi.initializeClient(
+                    googleApiApplicationClientID, liveStreamingEnabled, enableCalendarIntegration);
             }
 
             return Promise.resolve();

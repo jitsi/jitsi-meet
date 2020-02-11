@@ -36,8 +36,6 @@ export function bootstrapCalendarIntegration(): Function {
         }
 
         const {
-            liveStreamingEnabled,
-            enableCalendarIntegration,
             googleApiApplicationClientID
         } = state['features/base/config'];
         const {
@@ -48,9 +46,7 @@ export function bootstrapCalendarIntegration(): Function {
         return Promise.resolve()
             .then(() => {
                 if (googleApiApplicationClientID) {
-                    return dispatch(
-                        loadGoogleAPI(
-                            googleApiApplicationClientID, liveStreamingEnabled, enableCalendarIntegration));
+                    return dispatch(loadGoogleAPI());
                 }
             })
             .then(() => {
