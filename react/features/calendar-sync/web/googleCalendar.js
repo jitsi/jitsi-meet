@@ -43,12 +43,7 @@ export const googleCalendarApi = {
      * @returns {function(Dispatch<any>, Function): Promise<void>}
      */
     load() {
-        return (dispatch: Dispatch<any>, getState: Function) => {
-            const { googleApiApplicationClientID }
-                = getState()['features/base/config'];
-
-            return dispatch(loadGoogleAPI(googleApiApplicationClientID));
-        };
+        return (dispatch: Dispatch<any>) => dispatch(loadGoogleAPI());
     },
 
     /**
