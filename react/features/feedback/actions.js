@@ -54,6 +54,7 @@ export function maybeOpenFeedbackDialog(conference: Object) {
 
     return (dispatch: Dispatch<any>, getState: Function): Promise<R> => {
         const state = getState();
+        const { feedbackPercentage = 100 } = state['features/base/config'];
 
         if (interfaceConfig.filmStripOnly || config.iAmRecorder) {
             // Intentionally fall through the if chain to prevent further action
@@ -69,7 +70,7 @@ export function maybeOpenFeedbackDialog(conference: Object) {
                 feedbackSubmitted: true,
                 showThankYou: true
             });
-        } else if (conference.isCallstatsEnabled()) {
+        } else if (conference.isCallstatsEnabled() && feedbackPercentage > Math.random() * 100) {
             return new Promise(resolve => {
                 dispatch(openFeedbackDialog(conference, () => {
                     const { submitted } = getState()['features/feedback'];

@@ -103,6 +103,7 @@ export default [
     'enableTcc',
     'etherpad_base',
     'failICE',
+    'feedbackPercentage',
     'fileRecordingsEnabled',
     'firefox_fake_device',
     'forceJVB121Ratio',
