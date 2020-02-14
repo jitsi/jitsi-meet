@@ -16,6 +16,13 @@ import {
 const logger = require('jitsi-meet-logger').getLogger(__filename);
 
 /**
+ * The feature announced so we can distinguish jibri participants.
+ *
+ * @type {string}
+ */
+export const DISCO_JIBRI_FEATURE = 'http://jitsi.org/protocol/jibri';
+
+/**
  * Checks if we have data to use attach instead of connect. If we have the data
  * executes attach otherwise check if we have to wait for the data. If we have
  * to wait for the attach data we are setting handler to APP.connect.handler
@@ -90,6 +97,10 @@ function connect(id, password, roomName) {
             null,
             jwt && issuer && issuer !== 'anonymous' ? jwt : undefined,
             connectionConfig);
+
+    if (config.iAmRecorder) {
+        connection.addFeature(DISCO_JIBRI_FEATURE);
+    }
 
     return new Promise((resolve, reject) => {
         connection.addEventListener(
