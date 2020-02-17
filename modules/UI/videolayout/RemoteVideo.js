@@ -129,6 +129,7 @@ export default class RemoteVideo extends SmallVideo {
         this._setThumbnailSize();
         this.initBrowserSpecificProperties();
         this.updateRemoteVideoMenu();
+        this.updateStatusBar();
         this.addAudioLevelIndicator();
         this.addPresenceLabel();
 
@@ -187,7 +188,6 @@ export default class RemoteVideo extends SmallVideo {
         // hide volume when in silent mode
         const onVolumeChange
             = APP.store.getState()['features/base/config'].startSilent ? undefined : this._setAudioVolume;
-        const { isModerator } = APP.conference;
         const participantID = this.id;
         const currentLayout = getCurrentLayout(APP.store.getState());
         let remoteMenuPosition;
@@ -207,7 +207,6 @@ export default class RemoteVideo extends SmallVideo {
                         <RemoteVideoMenuTriggerButton
                             initialVolumeValue = { initialVolumeValue }
                             isAudioMuted = { this.isAudioMuted }
-                            isModerator = { isModerator }
                             menuPosition = { remoteMenuPosition }
                             onMenuDisplay
                                 = {this._onRemoteVideoMenuDisplay.bind(this)}
