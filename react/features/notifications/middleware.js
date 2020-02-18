@@ -40,7 +40,9 @@ MiddlewareRegistry.register(store => next => action => {
             ));
         }
 
-        if (!interfaceConfig.DISABLE_FOCUS_INDICATOR && p.role === PARTICIPANT_ROLE.MODERATOR) {
+        if (typeof interfaceConfig === 'object'
+                && !interfaceConfig.DISABLE_FOCUS_INDICATOR && p.role === PARTICIPANT_ROLE.MODERATOR) {
+            // Do not show the notification for mobile and also when the focus indicator is disabled.
             const displayName = getParticipantDisplayName(getState, p.id);
 
             dispatch(showNotification({
@@ -75,7 +77,8 @@ MiddlewareRegistry.register(store => next => action => {
         return next(action);
     }
     case PARTICIPANT_UPDATED: {
-        if (interfaceConfig.DISABLE_FOCUS_INDICATOR) {
+        if (typeof interfaceConfig === 'undefined' || interfaceConfig.DISABLE_FOCUS_INDICATOR) {
+            // Do not show the notification for mobile and also when the focus indicator is disabled.
             return next(action);
         }
 
