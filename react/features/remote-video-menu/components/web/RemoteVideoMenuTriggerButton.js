@@ -235,7 +235,7 @@ function _mapStateToProps(state, ownProps) {
     const participant = participantID ? getParticipantById(state, participantID) : getLocalParticipant(state);
 
     return {
-        _isModerator: participant ? participant.role === PARTICIPANT_ROLE.MODERATOR : false
+        _isModerator: Boolean(participant?.role === PARTICIPANT_ROLE.MODERATOR)
     };
 }
 
