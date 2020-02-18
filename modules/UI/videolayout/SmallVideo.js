@@ -20,7 +20,7 @@ import { DisplayName } from '../../../react/features/display-name';
 import {
     DominantSpeakerIndicator,
     RaisedHandIndicator,
-    StatusBar
+    StatusIndicators
 } from '../../../react/features/filmstrip';
 import {
     LAYOUTS,
@@ -286,7 +286,7 @@ export default class SmallVideo {
         ReactDOM.render(
             <Provider store = { APP.store }>
                 <I18nextProvider i18n = { i18next }>
-                    <StatusBar
+                    <StatusIndicators
                         showAudioMutedIndicator = { this.isAudioMuted }
                         showVideoMutedIndicator = { this.isVideoMuted }
                         participantID = { this.id } />

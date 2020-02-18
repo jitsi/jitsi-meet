@@ -5,5 +5,5 @@ export { default as DominantSpeakerIndicator } from './DominantSpeakerIndicator'
 export { default as Filmstrip } from './Filmstrip';
 export { default as ModeratorIndicator } from './ModeratorIndicator';
 export { default as RaisedHandIndicator } from './RaisedHandIndicator';
-export { default as StatusBar } from './StatusBar';
+export { default as StatusIndicators } from './StatusIndicators';
 export { default as VideoMutedIndicator } from './VideoMutedIndicator';

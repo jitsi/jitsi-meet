@@ -13,7 +13,7 @@ import VideoMutedIndicator from './VideoMutedIndicator';
 declare var interfaceConfig: Object;
 
 /**
- * The type of the React {@code Component} props of {@link StatusBar}.
+ * The type of the React {@code Component} props of {@link StatusIndicators}.
  */
 type Props = {
 
@@ -48,7 +48,7 @@ type Props = {
  *
  * @extends Component
  */
-class StatusBar extends Component<Props> {
+class StatusIndicators extends Component<Props> {
     /**
      * Implements React's {@link Component#render()}.
      *
@@ -86,7 +86,7 @@ class StatusBar extends Component<Props> {
 }
 
 /**
- * Maps (parts of) the Redux state to the associated {@code StatusBar}'s props.
+ * Maps (parts of) the Redux state to the associated {@code StatusIndicators}'s props.
  *
  * @param {Object} state - The Redux state.
  * @param {Object} ownProps - The own props of the component.
@@ -109,4 +109,4 @@ function _mapStateToProps(state, ownProps) {
     };
 }
 
-export default connect(_mapStateToProps)(StatusBar);
+export default connect(_mapStateToProps)(StatusIndicators);
