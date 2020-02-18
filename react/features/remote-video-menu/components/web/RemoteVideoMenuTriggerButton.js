@@ -3,7 +3,7 @@
 import React, { Component } from 'react';
 
 import { Icon, IconMenuThumb } from '../../../base/icons';
-import { getLocalParticipant, getParticipantById, PARTICIPANT_ROLE } from '../../../base/participants';
+import { getLocalParticipant, PARTICIPANT_ROLE } from '../../../base/participants';
 import { Popover } from '../../../base/popover';
 import { connect } from '../../../base/redux';
 
@@ -228,11 +228,8 @@ class RemoteVideoMenuTriggerButton extends Component<Props> {
  *     _isModerator: boolean
  * }}
  */
-function _mapStateToProps(state, ownProps) {
-    const { participantID } = ownProps;
-
-    // Only the local participant won't have id for the time when the conference is not yet joined.
-    const participant = participantID ? getParticipantById(state, participantID) : getLocalParticipant(state);
+function _mapStateToProps(state) {
+    const participant = getLocalParticipant(state);
 
     return {
         _isModerator: Boolean(participant?.role === PARTICIPANT_ROLE.MODERATOR)
