@@ -1,3 +1,5 @@
+import groovy.json.JsonSlurper
+
 apply plugin: 'com.android.library'
 apply plugin: 'maven-publish'
 
@@ -31,6 +33,10 @@ android {
             }
         }
     }
+
+    packagingOptions {
+        pickFirst '**/libc++_shared.so'
+    }
 }
 
 dependencies {
@@ -38,7 +44,7 @@ dependencies {
 
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.appcompat:appcompat:1.1.0'
-    implementation 'androidx.fragment:fragment:1.1.0'
+    implementation 'androidx.fragment:fragment:1.2.0'
 
     //noinspection GradleDynamicVersion
     api 'com.facebook.react:react-native:+'
@@ -218,6 +224,14 @@ publishing {
                     dependency.appendNode('artifactId', artifactId)
                     dependency.appendNode('version', it.moduleVersion)
                 }
+
+                // Add Hermes dependency.
+                def hermesPkg = new File("$rootDir/../node_modules/hermes-engine/package.json")
+                def hermesVersion = new JsonSlurper().parseText(hermesPkg.text).version
+                def hermesDependency = dependencies.appendNode('dependency')
+                hermesDependency.appendNode('groupId', "com.facebook")
+                hermesDependency.appendNode('artifactId', "hermes")
+                hermesDependency.appendNode('version', hermesVersion)
             }
         }
 

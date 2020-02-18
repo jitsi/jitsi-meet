@@ -34,6 +34,7 @@ class ModeratorIndicator extends Component<Props> {
                 <BaseIndicator
                     className = 'focusindicator toolbar-icon'
                     icon = { IconModerator }
+                    iconSize = { 13 }
                     tooltipKey = 'videothumbnail.moderator'
                     tooltipPosition = { this.props.tooltipPosition } />
             </div>

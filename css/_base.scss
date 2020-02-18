@@ -37,6 +37,11 @@ body {
     fill: white;
 }
 
+.jitsi-icon.gray svg {
+    fill: #5E6D7A;
+    cursor: pointer;
+}
+
 /**
  * AtlasKitThemeProvider sets a background color on an app-wrapping div, thereby
  * preventing transparency in filmstrip-only mode. The selector chosen to

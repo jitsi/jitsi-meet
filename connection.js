@@ -16,6 +16,13 @@ import {
 const logger = require('jitsi-meet-logger').getLogger(__filename);
 
 /**
+ * The feature announced so we can distinguish jibri participants.
+ *
+ * @type {string}
+ */
+export const DISCO_JIBRI_FEATURE = 'http://jitsi.org/protocol/jibri';
+
+/**
  * Checks if we have data to use attach instead of connect. If we have the data
  * executes attach otherwise check if we have to wait for the data. If we have
  * to wait for the attach data we are setting handler to APP.connect.handler
@@ -75,13 +82,25 @@ function connect(id, password, roomName) {
     const connectionConfig = Object.assign({}, config);
     const { issuer, jwt } = APP.store.getState()['features/base/jwt'];
 
-    connectionConfig.bosh += `?room=${roomName}`;
+    // Use Websocket URL for the web app if configured. Note that there is no 'isWeb' check, because there's assumption
+    // that this code executes only on web browsers/electron. This needs to be changed when mobile and web are unified.
+    let serviceUrl = connectionConfig.websocket || connectionConfig.bosh;
+
+    serviceUrl += `?room=${roomName}`;
+
+    // FIXME Remove deprecated 'bosh' option assignment at some point(LJM will be accepting only 'serviceUrl' option
+    //  in future). It's included for the time being for Jitsi Meet and lib-jitsi-meet versions interoperability.
+    connectionConfig.serviceUrl = connectionConfig.bosh = serviceUrl;
 
     const connection
         = new JitsiMeetJS.JitsiConnection(
             null,
             jwt && issuer && issuer !== 'anonymous' ? jwt : undefined,
             connectionConfig);
+
+    if (config.iAmRecorder) {
+        connection.addFeature(DISCO_JIBRI_FEATURE);
+    }
 
     return new Promise((resolve, reject) => {
         connection.addEventListener(

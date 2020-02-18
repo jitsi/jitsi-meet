@@ -299,12 +299,12 @@ function _constructOptions(state) {
             // Handle relative URLs, which won't work on mobile.
             const {
                 protocol,
-                hostname,
+                host,
                 contextRoot
             } = parseURIString(locationURL.href);
 
             // eslint-disable-next-line max-len
-            bosh = `${protocol}//${hostname}${contextRoot || '/'}${bosh.substr(1)}`;
+            bosh = `${protocol}//${host}${contextRoot || '/'}${bosh.substr(1)}`;
         }
 
         // Append room to the URL's search.
@@ -312,7 +312,8 @@ function _constructOptions(state) {
 
         room && (bosh += `?room=${getBackendSafeRoomName(room)}`);
 
-        options.bosh = bosh;
+        // FIXME Remove deprecated 'bosh' option assignment at some point.
+        options.serviceUrl = options.bosh = bosh;
     }
 
     return options;

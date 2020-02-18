@@ -74,7 +74,7 @@ MiddlewareRegistry.register(store => next => action => {
         break;
 
     case SET_FILMSTRIP_VISIBLE:
-        VideoLayout.resizeVideoArea(true, false);
+        VideoLayout.resizeVideoArea();
         break;
 
     case TRACK_ADDED:

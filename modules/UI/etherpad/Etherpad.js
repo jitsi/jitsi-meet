@@ -120,7 +120,7 @@ class Etherpad extends LargeContainer {
 
         if (interfaceConfig.VERTICAL_FILMSTRIP) {
             height = containerHeight - getToolboxHeight();
-            width = containerWidth - Filmstrip.getFilmstripWidth();
+            width = containerWidth - Filmstrip.getVerticalFilmstripWidth();
         } else {
             height = containerHeight - Filmstrip.getFilmstripHeight();
             width = containerWidth;

@@ -18,7 +18,7 @@ import {
 
 import { UPDATE_LOCAL_TRACKS_DURATION } from './actionTypes';
 import { createLocalTracksDurationEvent, createNetworkInfoEvent } from './AnalyticsEvents';
-import { initAnalytics, resetAnalytics, sendAnalytics } from './functions';
+import { createHandlers, initAnalytics, resetAnalytics, sendAnalytics } from './functions';
 
 /**
  * Calculates the duration of the local tracks.
@@ -79,13 +79,28 @@ function calculateLocalTrackDuration(state) {
  * @returns {Function}
  */
 MiddlewareRegistry.register(store => next => action => {
-    if (action.type === SET_CONFIG) {
+    switch (action.type) {
+    case SET_CONFIG:
         if (navigator.product === 'ReactNative') {
             // Reseting the analytics is currently not needed for web because
             // the user will be redirected to another page and new instance of
             // Analytics will be created and initialized.
             resetAnalytics();
         }
+        break;
+    case SET_ROOM: {
+        // createHandlers is called before the SET_ROOM action is executed in order for Amplitude to initialize before
+        // the deeplinking logic is executed (after the SET_ROOM action) so that the Amplitude device id is available
+        // if needed.
+        const createHandlersPromise = createHandlers(store);
+        const result = next(action);
+
+        createHandlersPromise.then(handlers => {
+            initAnalytics(store, handlers);
+        });
+
+        return result;
+    }
     }
 
     const result = next(action);
@@ -136,10 +151,6 @@ MiddlewareRegistry.register(store => next => action => {
                 networkType: action.networkType
             }));
         break;
-    case SET_ROOM: {
-        initAnalytics(store);
-        break;
-    }
     case TRACK_ADDED:
     case TRACK_REMOVED:
     case TRACK_UPDATED: {

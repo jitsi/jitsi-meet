@@ -1,7 +1,5 @@
 /* global APP */
 
-import { createScreenshotCaptureEffect } from '../../stream-effects/screenshot-capture';
-import { getBlurEffect } from '../../blur';
 import JitsiMeetJS, { JitsiTrackErrors, browser } from '../lib-jitsi-meet';
 import { MEDIA_TYPE } from '../media';
 import {
@@ -9,6 +7,7 @@ import {
     getUserSelectedMicDeviceId
 } from '../settings';
 
+import loadEffects from './loadEffects';
 import logger from './logger';
 
 /**
@@ -28,7 +27,7 @@ export async function createLocalPresenterTrack(options, desktopHeight) {
 
     // compute the constraints of the camera track based on the resolution
     // of the desktop screen that is being shared.
-    const cameraHeights = [ 180, 270, 360, 540, 720 ];
+    const cameraHeights = [ 120, 180, 240, 360, 480, 600, 720 ];
     const proportion = 4;
     const result = cameraHeights.find(
             height => (desktopHeight / proportion) < height);
@@ -70,12 +69,7 @@ export async function createLocalPresenterTrack(options, desktopHeight) {
  * is to execute and from which state such as {@code config} is to be retrieved.
  * @returns {Promise<JitsiLocalTrack[]>}
  */
-export function createLocalTracksF(
-        options,
-        firePermissionPromptIsShownEvent,
-        store) {
-    options || (options = {}); // eslint-disable-line no-param-reassign
-
+export function createLocalTracksF(options = {}, firePermissionPromptIsShownEvent, store) {
     let { cameraDeviceId, micDeviceId } = options;
 
     if (typeof APP !== 'undefined') {
@@ -99,29 +93,10 @@ export function createLocalTracksF(
         firefox_fake_device, // eslint-disable-line camelcase
         resolution
     } = state['features/base/config'];
-    const constraints = options.constraints
-        ?? state['features/base/config'].constraints;
-
-    const blurPromise = state['features/blur'].blurEnabled
-        ? getBlurEffect()
-            .catch(error => {
-                logger.error('Failed to obtain the blur effect instance with error: ', error);
-
-                return Promise.resolve();
-            })
-        : Promise.resolve();
-    const screenshotCapturePromise = state['features/screenshot-capture'].capturesEnabled
-        ? createScreenshotCaptureEffect(state)
-            .catch(error => {
-                logger.error('Failed to obtain the screenshot capture effect effect instance with error: ', error);
-
-                return Promise.resolve();
-            })
-        : Promise.resolve();
-    const loadEffectsPromise = Promise.all([ blurPromise, screenshotCapturePromise ]);
+    const constraints = options.constraints ?? state['features/base/config'].constraints;
 
     return (
-        loadEffectsPromise.then(effectsArray => {
+        loadEffects(store).then(effectsArray => {
             // Filter any undefined values returned by Promise.resolve().
             const effects = effectsArray.filter(effect => Boolean(effect));
 
