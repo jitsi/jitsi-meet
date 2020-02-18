@@ -3,7 +3,9 @@
 import React, { Component } from 'react';
 
 import { Icon, IconMenuThumb } from '../../../base/icons';
+import { getLocalParticipant, PARTICIPANT_ROLE } from '../../../base/participants';
 import { Popover } from '../../../base/popover';
+import { connect } from '../../../base/redux';
 
 import {
     MuteButton,
@@ -24,6 +26,11 @@ declare var interfaceConfig: Object;
 type Props = {
 
     /**
+     * Whether or not the participant is a conference moderator.
+     */
+    _isModerator: boolean,
+
+    /**
      * A value between 0 and 1 indicating the volume of the participant's
      * audio element.
      */
@@ -33,11 +40,6 @@ type Props = {
      * Whether or not the participant is currently muted.
      */
     isAudioMuted: boolean,
-
-    /**
-     * Whether or not the participant is a conference moderator.
-     */
-    isModerator: boolean,
 
     /**
      * Callback to invoke when the popover has been displayed.
@@ -154,9 +156,9 @@ class RemoteVideoMenuTriggerButton extends Component<Props> {
      */
     _renderRemoteVideoMenu() {
         const {
+            _isModerator,
             initialVolumeValue,
             isAudioMuted,
-            isModerator,
             onRemoteControlToggle,
             onVolumeChange,
             remoteControlState,
@@ -165,7 +167,7 @@ class RemoteVideoMenuTriggerButton extends Component<Props> {
 
         const buttons = [];
 
-        if (isModerator) {
+        if (_isModerator) {
             buttons.push(
                 <MuteButton
                     isAudioMuted = { isAudioMuted }
@@ -216,4 +218,22 @@ class RemoteVideoMenuTriggerButton extends Component<Props> {
     }
 }
 
-export default RemoteVideoMenuTriggerButton;
+/**
+ * Maps (parts of) the Redux state to the associated {@code RemoteVideoMenuTriggerButton}'s props.
+ *
+ * @param {Object} state - The Redux state.
+ * @param {Object} ownProps - The own props of the component.
+ * @private
+ * @returns {{
+ *     _isModerator: boolean
+ * }}
+ */
+function _mapStateToProps(state) {
+    const participant = getLocalParticipant(state);
+
+    return {
+        _isModerator: Boolean(participant?.role === PARTICIPANT_ROLE.MODERATOR)
+    };
+}
+
+export default connect(_mapStateToProps)(RemoteVideoMenuTriggerButton);

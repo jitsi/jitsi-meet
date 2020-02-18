@@ -126,10 +126,6 @@ UI.initConference = function() {
     const { getState } = APP.store;
     const { id, name } = getLocalParticipant(getState);
 
-    // Update default button states before showing the toolbar
-    // if local role changes buttons state will be again updated.
-    UI.updateLocalRole(APP.conference.isModerator);
-
     UI.showToolbar();
 
     const displayName = config.displayJids ? id : name;
@@ -278,44 +274,6 @@ UI.addUser = function(user) {
  */
 UI.onPeerVideoTypeChanged
     = (id, newVideoType) => VideoLayout.onVideoTypeChanged(id, newVideoType);
-
-/**
- * Update local user role and show notification if user is moderator.
- * @param {boolean} isModerator if local user is moderator or not
- */
-UI.updateLocalRole = isModerator => {
-    VideoLayout.showModeratorIndicator();
-
-    if (isModerator && !interfaceConfig.DISABLE_FOCUS_INDICATOR) {
-        messageHandler.participantNotification(
-            null, 'notify.me', 'connected', 'notify.moderator');
-    }
-};
-
-/**
- * Check the role for the user and reflect it in the UI, moderator ui indication
- * and notifies user who is the moderator
- * @param user to check for moderator
- */
-UI.updateUserRole = user => {
-    VideoLayout.showModeratorIndicator();
-
-    // We don't need to show moderator notifications when the focus (moderator)
-    // indicator is disabled.
-    if (!user.isModerator() || interfaceConfig.DISABLE_FOCUS_INDICATOR) {
-        return;
-    }
-
-    const displayName = user.getDisplayName();
-
-    messageHandler.participantNotification(
-        displayName,
-        'notify.somebody',
-        'connected',
-        'notify.grantedTo',
-        { to: displayName
-            ? UIUtil.escapeHtml(displayName) : '$t(notify.somebody)' });
-};
 
 /**
  * Updates the user status.

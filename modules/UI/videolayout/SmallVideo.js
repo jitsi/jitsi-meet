@@ -18,11 +18,9 @@ import {
 import { ConnectionIndicator } from '../../../react/features/connection-indicator';
 import { DisplayName } from '../../../react/features/display-name';
 import {
-    AudioMutedIndicator,
     DominantSpeakerIndicator,
-    ModeratorIndicator,
     RaisedHandIndicator,
-    VideoMutedIndicator
+    StatusIndicators
 } from '../../../react/features/filmstrip';
 import {
     LAYOUTS,
@@ -84,7 +82,6 @@ export default class SmallVideo {
      * Constructor.
      */
     constructor(VideoLayout) {
-        this._isModerator = false;
         this.isAudioMuted = false;
         this.hasAvatar = false;
         this.isVideoMuted = false;
@@ -286,43 +283,16 @@ export default class SmallVideo {
             return;
         }
 
-        const currentLayout = getCurrentLayout(APP.store.getState());
-        let tooltipPosition;
-
-        if (currentLayout === LAYOUTS.TILE_VIEW) {
-            tooltipPosition = 'right';
-        } else if (currentLayout === LAYOUTS.VERTICAL_FILMSTRIP_VIEW) {
-            tooltipPosition = 'left';
-        } else {
-            tooltipPosition = 'top';
-        }
-
         ReactDOM.render(
-            <I18nextProvider i18n = { i18next }>
-                <div>
-                    { this.isAudioMuted
-                        ? <AudioMutedIndicator
-                            tooltipPosition = { tooltipPosition } />
-                        : null }
-                    { this.isVideoMuted
-                        ? <VideoMutedIndicator
-                            tooltipPosition = { tooltipPosition } />
-                        : null }
-                    { this._isModerator && !interfaceConfig.DISABLE_FOCUS_INDICATOR
-                        ? <ModeratorIndicator
-                            tooltipPosition = { tooltipPosition } />
-                        : null }
-                </div>
-            </I18nextProvider>,
+            <Provider store = { APP.store }>
+                <I18nextProvider i18n = { i18next }>
+                    <StatusIndicators
+                        showAudioMutedIndicator = { this.isAudioMuted }
+                        showVideoMutedIndicator = { this.isVideoMuted }
+                        participantID = { this.id } />
+                </I18nextProvider>
+            </Provider>,
             statusBarContainer);
-    }
-
-    /**
-     * Adds the element indicating the moderator(owner) of the conference.
-     */
-    addModeratorIndicator() {
-        this._isModerator = true;
-        this.updateStatusBar();
     }
 
     /**
@@ -378,14 +348,6 @@ export default class SmallVideo {
      */
     _getAudioLevelContainer() {
         return this.container.querySelector('.audioindicator-container');
-    }
-
-    /**
-     * Removes the element indicating the moderator(owner) of the conference.
-     */
-    removeModeratorIndicator() {
-        this._isModerator = false;
-        this.updateStatusBar();
     }
 
     /**
