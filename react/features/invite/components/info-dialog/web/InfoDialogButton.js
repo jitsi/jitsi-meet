@@ -47,10 +47,10 @@ type Props = {
     _liveStreamViewURL: ?string,
 
     /**
-     * The number of real participants in the call. If in a lonely call, the
+     * True if the number of real participants in the call is less than 2. If in a lonely call, the
      * {@code InfoDialog} will be automatically shown.
      */
-    _participantCount: number,
+    _participantCountLessThan2: boolean,
 
     /**
      * Whether or not the toolbox, in which this component exists, is visible.
@@ -108,7 +108,7 @@ class InfoDialogButton extends Component<Props, State> {
             showDialog: (props._toolboxVisible && state.showDialog)
                 || (!state.hasConnectedToConference
                     && props._isConferenceJoined
-                    && props._participantCount < 2
+                    && props._participantCountLessThan2
                     && props._toolboxVisible
                     && !props._disableAutoShow)
         };
@@ -243,7 +243,7 @@ class InfoDialogButton extends Component<Props, State> {
  *     _disableAutoShow: boolean,
  *     _isConferenceIsJoined: boolean,
  *     _liveStreamViewURL: string,
- *     _participantCount: number,
+ *     _participantCountLessThan2: boolean,
  *     _toolboxVisible: boolean
  * }}
  */
@@ -259,7 +259,7 @@ function _mapStateToProps(state) {
         _liveStreamViewURL:
             currentLiveStreamingSession
                 && currentLiveStreamingSession.liveStreamViewURL,
-        _participantCount: getParticipantCount(state),
+        _participantCountLessThan2: getParticipantCount(state) < 2,
         _toolboxVisible: state['features/toolbox'].visible
     };
 }

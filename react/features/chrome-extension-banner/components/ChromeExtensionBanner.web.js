@@ -17,6 +17,8 @@ import {
 
 declare var interfaceConfig: Object;
 
+const emptyObject = {};
+
 /**
  * Local storage key name for flag telling if user checked 'Don't show again' checkbox on the banner
  * If the user checks this before closing the banner, next time he will access a jitsi domain
@@ -271,7 +273,8 @@ class ChromeExtensionBanner extends PureComponent<Props, State> {
  */
 const _mapStateToProps = state => {
     return {
-        bannerCfg: state['features/base/config'].chromeExtensionBanner || {},
+        // Using emptyObject so that we don't change the reference every time when _mapStateToProps is called.
+        bannerCfg: state['features/base/config'].chromeExtensionBanner || emptyObject,
         conference: getCurrentConference(state),
         iAmRecorder: state['features/base/config'].iAmRecorder
     };

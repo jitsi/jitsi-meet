@@ -2,7 +2,6 @@
 
 import React, { Component } from 'react';
 
-import { connect } from '../../../base/redux';
 import { SettingsButton } from '../../../settings';
 import {
     AudioMuteButton,
@@ -12,23 +11,16 @@ import {
 
 declare var interfaceConfig: Object;
 
-/**
- * The type of the React {@code Component} props of {@link Toolbar}.
- */
-type Props = {
-
-    /**
-     * The set of buttons which should be visible in this {@code Toolbar}.
-     */
-    _visibleButtons: Set<string>
-};
+// XXX: We are not currently using state here, but in the future, when
+// interfaceConfig is part of redux we will. This has to be retrieved from the store.
+const visibleButtons = new Set(interfaceConfig.TOOLBAR_BUTTONS);
 
 /**
  * Implements the conference toolbar on React/Web for filmstrip-only mode.
  *
  * @extends Component
  */
-class Toolbar extends Component<Props> {
+class Toolbar extends Component<*> {
     /**
      * Implements React's {@link Component#render()}.
      *
@@ -68,26 +60,8 @@ class Toolbar extends Component<Props> {
      * otherwise.
      */
     _shouldShowButton(buttonName) {
-        return this.props._visibleButtons.has(buttonName);
+        return visibleButtons.has(buttonName);
     }
 }
 
-/**
- * Maps (parts of) the redux state to the associated props for this component.
- *
- * @param {Object} state - The Redux state.
- * @private
- * @returns {{
- *     _visibleButtons: Set<string>
- * }}
- */
-function _mapStateToProps(state): Object { // eslint-disable-line no-unused-vars
-    // XXX: We are not currently using state here, but in the future, when
-    // interfaceConfig is part of redux we will.
-
-    return {
-        _visibleButtons: new Set(interfaceConfig.TOOLBAR_BUTTONS)
-    };
-}
-
-export default connect(_mapStateToProps)(Toolbar);
+export default Toolbar;

@@ -206,6 +206,10 @@ type State = {
 declare var APP: Object;
 declare var interfaceConfig: Object;
 
+// XXX: We are not currently using state here, but in the future, when
+// interfaceConfig is part of redux we will. This will have to be retrieved from the store.
+const visibleButtons = new Set(interfaceConfig.TOOLBAR_BUTTONS);
+
 /**
  * Implements the conference toolbox on React/Web.
  *
@@ -1347,10 +1351,7 @@ function _mapStateToProps(state) {
             || sharedVideoStatus === 'start'
             || sharedVideoStatus === 'pause',
         _visible: isToolboxVisible(state),
-
-        // XXX: We are not currently using state here, but in the future, when
-        // interfaceConfig is part of redux we will.
-        _visibleButtons: new Set(interfaceConfig.TOOLBAR_BUTTONS)
+        _visibleButtons: visibleButtons
     };
 }
 
