@@ -944,6 +944,16 @@ export default {
         return user && user.isModerator();
     },
 
+    /**
+     * Retrieve list of conference participants (without local user).
+     * @returns {JitsiParticipant[]}
+     *
+     * NOTE: Used by jitsi-meet-torture!
+     */
+    listMembers() {
+        return room.getParticipants();
+    },
+
     get membersCount() {
         return room.getParticipants().length + 1;
     },
