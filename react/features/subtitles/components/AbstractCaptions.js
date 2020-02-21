@@ -36,7 +36,7 @@ export class AbstractCaptions<P: AbstractCaptionsProps>
     render() {
         const { _requestingSubtitles, _transcripts } = this.props;
 
-        if (!_requestingSubtitles || !_transcripts || !_transcripts.size) {
+        if (!_requestingSubtitles || !_transcripts?.size) {
             return null;
         }
 
