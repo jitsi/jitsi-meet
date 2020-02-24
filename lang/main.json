@@ -59,6 +59,11 @@
         "title": "Chat",
         "you": "you"
     },
+    "chromeExtensionBanner": {
+        "installExtensionText": "Install the extension for Google Calendar and Office 365 integration",
+        "buttonText": "Install Chrome Extension",
+        "dontShowAgain": "Don’t show me this again"
+    },
     "connectingOverlay": {
         "joiningRoom": "Connecting you to your meeting..."
     },
@@ -75,9 +80,7 @@
         "FETCH_SESSION_ID": "Obtaining session-id...",
         "GET_SESSION_ID_ERROR": "Get session-id error: {{code}}",
         "GOT_SESSION_ID": "Obtaining session-id... Done",
-        "LOW_BANDWIDTH": "Video for {{displayName}} has been turned off to save bandwidth",
-        "RECONNECTING": "A network problem occurred. Reconnecting...",
-        "USER_CONNECTION_INTERRUPTED": "{{displayName}} is having connectivity issues..."
+        "LOW_BANDWIDTH": "Video for {{displayName}} has been turned off to save bandwidth"
     },
     "connectionindicator": {
         "address": "Address:",
@@ -277,7 +280,7 @@
     "dialOut": {
         "statusMessage": "is now {{status}}"
     },
-    "documentSharing" : {
+    "documentSharing": {
         "title": "Shared Document"
     },
     "feedback": {
@@ -587,6 +590,7 @@
             "lockRoom": "Toggle meeting password",
             "moreActions": "Toggle more actions menu",
             "moreActionsMenu": "More actions menu",
+            "moreOptions": "Show more options",
             "mute": "Toggle mute audio",
             "pip": "Toggle Picture-in-Picture mode",
             "privateMessage": "Send private message",
@@ -629,11 +633,15 @@
         "logout": "Logout",
         "lowerYourHand": "Lower your hand",
         "moreActions": "More actions",
+        "moreOptions": "More options",
         "mute": "Mute / Unmute",
-
         "noAudioSignalTitle": "There is no input coming from your mic!",
-        "noAudioSignalDesc": "If you did not purposely mute it from system settings or hardware, consider changing the device.",
-        "noAudioSignalDescSuggestion": "If you did not purposely mute it from system settings or hardware, consider using the following device:",
+        "noAudioSignalDesc": "If you did not purposely mute it from system settings or hardware, consider switching the device.",
+        "noAudioSignalDescSuggestion": "If you did not purposely mute it from system settings or hardware, consider switching to the suggested device.",
+        "noAudioSignalDialInDesc": "You can also dial-in using:",
+        "noAudioSignalDialInLinkDesc" : "Dial-in numbers",
+        "noisyAudioInputTitle": "Your microphone appears to be noisy!",
+        "noisyAudioInputDesc": "Jitsi has detected noise coming from your microphone, please consider muting or changing the device.",
         "openChat": "Open chat",
         "pip": "Enter Picture-in-Picture mode",
         "privateMessage": "Send private message",
@@ -719,7 +727,7 @@
         "moderator": "Moderator",
         "mute": "Participant is muted",
         "muted": "Muted",
-        "remoteControl": "Remote control",
+        "remoteControl": "Start / Stop remote control",
         "show": "Show on stage",
         "videomute": "Participant has stopped the camera"
     },
@@ -740,7 +748,7 @@
         "roomNameAllowedChars": "Meeting name should not contain any of these characters: ?, &, :, ', \", %, #.",
         "go": "GO",
         "goSmall": "GO",
-        "join": "JOIN",
+        "join": "CREATE / JOIN",
         "info": "Info",
         "privacy": "Privacy",
         "recentList": "Recent",

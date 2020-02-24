@@ -25,7 +25,7 @@ set -e
 case "$1" in
     remove)
         if [ -x "/etc/init.d/prosody" ]; then
-            invoke-rc.d prosody reload
+            invoke-rc.d prosody reload || true
         fi
     ;;
 

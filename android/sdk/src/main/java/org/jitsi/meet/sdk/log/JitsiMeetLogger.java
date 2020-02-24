@@ -24,11 +24,24 @@ public class JitsiMeetLogger {
     }
 
     public static void addHandler(JitsiMeetBaseLogHandler handler) {
-        Timber.plant(handler);
+        if (!Timber.forest().contains(handler)) {
+            try {
+                Timber.plant(handler);
+            } catch (Throwable t) {
+                Timber.w(t, "Couldn't add log handler");
+            }
+
+        }
     }
 
     public static void removeHandler(JitsiMeetBaseLogHandler handler) {
-        Timber.uproot(handler);
+        if (Timber.forest().contains(handler)) {
+            try {
+                Timber.uproot(handler);
+            } catch (Throwable t) {
+                Timber.w(t, "Couldn't remove log handler");
+            }
+        }
     }
 
     public static void v(String message, Object... args) {

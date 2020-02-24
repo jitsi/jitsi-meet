@@ -28,3 +28,23 @@ export const SET_FILMSTRIP_HOVERED = 'SET_FILMSTRIP_HOVERED';
  * }
  */
 export const SET_FILMSTRIP_VISIBLE = 'SET_FILMSTRIP_VISIBLE';
+
+/**
+ * The type of (redux) action which sets the dimensions of the tile view grid.
+ *
+ * {
+ *     type: SET_TILE_VIEW_DIMENSIONS,
+ *     dimensions: Object
+ * }
+ */
+export const SET_TILE_VIEW_DIMENSIONS = 'SET_TILE_VIEW_DIMENSIONS';
+
+/**
+ * The type of (redux) action which sets the dimensions of the thumbnails in horizontal view.
+ *
+ * {
+ *     type: SET_HORIZONTAL_VIEW_DIMENSIONS,
+ *     dimensions: Object
+ * }
+ */
+export const SET_HORIZONTAL_VIEW_DIMENSIONS = 'SET_HORIZONTAL_VIEW_DIMENSIONS';

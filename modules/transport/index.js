@@ -3,8 +3,7 @@
 import { API_ID } from '../API/constants';
 import { getJitsiMeetGlobalNS } from '../../react/features/base/util';
 
-import PostMessageTransportBackend from './PostMessageTransportBackend';
-import Transport from './Transport';
+import { PostMessageTransportBackend, Transport } from 'js-utils/transport';
 
 export {
     PostMessageTransportBackend,

@@ -1,6 +1,7 @@
 /* global interfaceConfig */
 
 import { URI_PROTOCOL_PATTERN } from '../base/util';
+import { isMobileBrowser } from '../base/environment/utils';
 import { Platform } from '../base/react';
 
 import {
@@ -55,10 +56,7 @@ export function getDeepLinkingPage(state) {
         return Promise.resolve();
     }
 
-    const OS = Platform.OS;
-    const isUsingMobileBrowser = OS === 'android' || OS === 'ios';
-
-    if (isUsingMobileBrowser) { // mobile
+    if (isMobileBrowser()) { // mobile
         const mobileAppPromo
             = typeof interfaceConfig === 'object'
                 && interfaceConfig.MOBILE_APP_PROMO;

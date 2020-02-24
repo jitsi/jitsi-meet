@@ -21,7 +21,12 @@ type Props = AbstractProps & {
     /**
      * ID of the component to be rendered.
      */
-    id?: string
+    id?: string,
+
+    /**
+     * One of the expected status strings (e.g. 'available') to render a badge on the avatar, if necessary.
+     */
+    status?: ?string
 };
 
 /**
@@ -40,7 +45,7 @@ export default class StatelessAvatar extends AbstractStatelessAvatar<Props> {
         if (this._isIcon(url)) {
             return (
                 <div
-                    className = { this._getAvatarClassName() }
+                    className = { `${this._getAvatarClassName()} ${this._getBadgeClassName()}` }
                     id = { this.props.id }
                     style = { this._getAvatarStyle(this.props.color) }>
                     <Icon
@@ -52,19 +57,21 @@ export default class StatelessAvatar extends AbstractStatelessAvatar<Props> {
 
         if (url) {
             return (
-                <img
-                    className = { this._getAvatarClassName() }
-                    id = { this.props.id }
-                    onError = { this.props.onAvatarLoadError }
-                    src = { url }
-                    style = { this._getAvatarStyle() } />
+                <div className = { this._getBadgeClassName() }>
+                    <img
+                        className = { this._getAvatarClassName() }
+                        id = { this.props.id }
+                        onError = { this.props.onAvatarLoadError }
+                        src = { url }
+                        style = { this._getAvatarStyle() } />
+                </div>
             );
         }
 
         if (initials) {
             return (
                 <div
-                    className = { this._getAvatarClassName() }
+                    className = { `${this._getAvatarClassName()} ${this._getBadgeClassName()}` }
                     id = { this.props.id }
                     style = { this._getAvatarStyle(this.props.color) }>
                     <svg
@@ -87,11 +94,13 @@ export default class StatelessAvatar extends AbstractStatelessAvatar<Props> {
 
         // default avatar
         return (
-            <img
-                className = { this._getAvatarClassName('defaultAvatar') }
-                id = { this.props.id }
-                src = { this.props.defaultAvatar || 'images/avatar.png' }
-                style = { this._getAvatarStyle() } />
+            <div className = { this._getBadgeClassName() }>
+                <img
+                    className = { this._getAvatarClassName('defaultAvatar') }
+                    id = { this.props.id }
+                    src = { this.props.defaultAvatar || 'images/avatar.png' }
+                    style = { this._getAvatarStyle() } />
+            </div>
         );
     }
 
@@ -120,6 +129,21 @@ export default class StatelessAvatar extends AbstractStatelessAvatar<Props> {
      */
     _getAvatarClassName(additional) {
         return `avatar ${additional || ''} ${this.props.className || ''}`;
+    }
+
+    /**
+     * Generates a class name to render a badge on the avatar, if necessary.
+     *
+     * @returns {string}
+     */
+    _getBadgeClassName() {
+        const { status } = this.props;
+
+        if (status) {
+            return `avatar-badge avatar-badge-${status}`;
+        }
+
+        return '';
     }
 
     _isIcon: (?string | ?Object) => boolean

@@ -21,10 +21,11 @@
         "bluetooth": "",
         "headphones": "",
         "phone": "",
-        "speaker": "Rečník"
+        "speaker": "Rečník",
+        "none": ""
     },
     "audioOnly": {
-        "audioOnly": ""
+        "audioOnly": "Nízka náročnosť na prenos"
     },
     "calendarSync": {
         "addMeetingURL": "",
@@ -42,16 +43,21 @@
         "permissionButton": "",
         "permissionMessage": "",
         "refresh": "",
-        "today": ""
+        "today": "Dnes"
     },
     "chat": {
         "error": "",
-        "messagebox": "",
+        "fieldPlaceHolder": "",
+        "messagebox": "Napíšte správu",
+        "messageTo": "",
+        "noMessagesMessage": "",
         "nickname": {
             "popover": "Zvoľte meno",
             "title": ""
         },
-        "title": ""
+        "privateNotice": "",
+        "title": "",
+        "you": ""
     },
     "connectingOverlay": {
         "joiningRoom": ""
@@ -76,12 +82,12 @@
         "connectedTo": "",
         "framerate": "",
         "less": "Zobraz menej",
-        "localaddress": "Lokálna adresa:",
-        "localaddress_plural_2": "Lokálne adresy:",
-        "localaddress_plural_5": "",
-        "localport": "Lokálny port:",
-        "localport_plural_2": "Lokálne porty:",
-        "localport_plural_5": "",
+        "localaddress_0": "Lokálna adresa:",
+        "localaddress_1": "Lokálne adresy:",
+        "localaddress_2": "",
+        "localport_0": "Lokálny port:",
+        "localport_1": "Lokálne porty:",
+        "localport_2": "",
         "more": "Zobraz viac",
         "packetloss": "Strata packetov:",
         "quality": {
@@ -91,22 +97,20 @@
             "nonoptimal": "",
             "poor": ""
         },
-        "remoteaddress": "Vzdialená adresa:",
-        "remoteaddress_plural_2": "Vzdialené adresy:",
-        "remoteaddress_plural_5": "",
-        "remoteport": "Vzdialený port:",
-        "remoteport_plural_2": "Vzdialené porty:",
-        "remoteport_plural_5": "",
+        "remoteaddress_0": "Vzdialená adresa:",
+        "remoteaddress_1": "Vzdialené adresy:",
+        "remoteaddress_2": "",
+        "remoteport_0": "Vzdialený port:",
+        "remoteport_1": "Vzdialené porty:",
+        "remoteport_2": "",
         "resolution": "Rozlíšenie:",
         "status": "Pripájam",
-        "transport": "Prenos:",
-        "turn": ""
+        "transport": "Prenos:"
     },
-    "\u0005connectionindicator": {},
     "dateUtils": {
         "earlier": "",
-        "today": "",
-        "yesterday": ""
+        "today": "Dnes",
+        "yesterday": "Včera"
     },
     "deepLinking": {
         "appNotInstalled": "",
@@ -119,6 +123,7 @@
         "tryAgainButton": ""
     },
     "defaultLink": "napr. {{url}}",
+    "defaultNickname": "",
     "deviceError": {
         "cameraError": "",
         "cameraPermission": "",
@@ -138,7 +143,7 @@
         "allow": "",
         "alreadySharedVideoMsg": "",
         "alreadySharedVideoTitle": "",
-        "applicationWindow": "",
+        "applicationWindow": "Okno aplikácie",
         "Back": "Späť",
         "cameraConstraintFailedError": "",
         "cameraNotFoundError": "",
@@ -160,13 +165,13 @@
         "connectErrorWithMsg": "Oops! Niečo je zle a nemožem sa pripojiť do konferencie. Správa: {{msg}}",
         "connecting": "Pripájam",
         "contactSupport": "",
-        "copy": "",
+        "copy": "Kopírovať",
         "dismiss": "",
         "displayNameRequired": "",
         "done": "",
         "enterDisplayName": "",
         "error": "Chyba",
-        "externalInstallationMsg": "",
+        "externalInstallationMsg": "Zlyhanie pri inštalácií rozšírenia pre zdieľanie prac. plochy",
         "externalInstallationTitle": "Potrebné rozšírenie:",
         "goToStore": "",
         "gracefulShutdown": "Naša služba je momentálne vypnutá pre údržbu. Skúste to neskor.",
@@ -232,15 +237,19 @@
         "screenSharingFirefoxPermissionDeniedError": "",
         "screenSharingFirefoxPermissionDeniedTitle": "",
         "screenSharingPermissionDeniedError": "",
+        "sendPrivateMessage": "",
+        "sendPrivateMessageCancel": "",
+        "sendPrivateMessageOk": "",
+        "sendPrivateMessageTitle": "",
         "serviceUnavailable": "Služba nedostupná",
         "sessTerminated": "",
         "Share": "Zdieľať",
         "shareVideoLinkError": "Prosím, zadajte správny Prezi odkaz.",
         "shareVideoTitle": "",
-        "shareYourScreen": "",
+        "shareYourScreen": "Zdielať obrazovku",
         "shareYourScreenDisabled": "",
         "shareYourScreenDisabledForGuest": "",
-        "startLiveStreaming": "",
+        "startLiveStreaming": "Spustiť priamy prenos",
         "startRecording": "",
         "startRemoteControlErrorMessage": "",
         "stopLiveStreaming": "",
@@ -260,11 +269,13 @@
         "WaitForHostMsgWOk": "",
         "WaitingForHost": "Čakám na hostiteľa ...",
         "Yes": "Áno",
-        "yourEntireScreen": ""
+        "yourEntireScreen": "Celú obrazovku"
     },
-    "\u0005dialog": {},
     "dialOut": {
         "statusMessage": ""
+    },
+    "documentSharing": {
+        "title": ""
     },
     "feedback": {
         "average": "",
@@ -286,7 +297,7 @@
         "accessibilityLabel": "",
         "addPassword": "",
         "cancelPassword": "",
-        "conferenceURL": "",
+        "conferenceURL": "Odkaz:",
         "country": "",
         "dialANumber": "",
         "dialInConferenceID": "",
@@ -302,14 +313,14 @@
         "inviteURLFirstPartPersonal": "",
         "inviteURLSecondPart": "",
         "liveStreamURL": "",
-        "moreNumbers": "",
+        "moreNumbers": "Viac čísel",
         "noNumbers": "",
         "noPassword": "",
         "noRoom": "",
         "numbers": "",
         "password": "",
         "title": "Zdieľať",
-        "tooltip": "",
+        "tooltip": "Zdieľať odkaz a info o vytáčaní pre toto stretnutie",
         "label": ""
     },
     "inviteDialog": {
@@ -340,9 +351,9 @@
         "toggleFilmstrip": "",
         "toggleScreensharing": "",
         "toggleShortcuts": "",
-        "videoMute": ""
+        "videoMute": "",
+        "videoQuality": ""
     },
-    "\u0005keyboardShortcuts": {},
     "liveStreaming": {
         "busy": "",
         "busyTitle": "",
@@ -360,7 +371,9 @@
         "getStreamKeyManually": "",
         "invalidStreamKey": "",
         "off": "",
+        "offBy": "",
         "on": "",
+        "onBy": "",
         "pending": "",
         "serviceName": "",
         "signedInAs": "",
@@ -401,7 +414,7 @@
         "yes": "Áno"
     },
     "lockRoomPassword": "heslo",
-    "lockRoomPasswordUppercase": "",
+    "lockRoomPasswordUppercase": "Heslo",
     "me": "ja",
     "notify": {
         "connectedOneMember": "",
@@ -427,7 +440,7 @@
         "somebody": "Niekto",
         "startSilentTitle": "",
         "startSilentDescription": "",
-        "suboptimalExperienceDescription": "",
+        "suboptimalBrowserWarning": "",
         "suboptimalExperienceTitle": "",
         "unmute": "",
         "newDeviceCameraTitle": "",
@@ -451,13 +464,13 @@
         "rejected": "",
         "ringing": ""
     },
-    "\u0005presenceStatus": {},
     "profile": {
         "setDisplayNameLabel": "",
         "setEmailInput": "",
         "setEmailLabel": "",
         "title": ""
     },
+    "raisedHand": "",
     "recording": {
         "authDropboxText": "",
         "availableSpace": "",
@@ -473,7 +486,9 @@
         "live": "",
         "loggedIn": "",
         "off": "",
+        "offBy": "",
         "on": "",
+        "onBy": "",
         "pending": "",
         "rec": "",
         "serviceDescription": "",
@@ -509,22 +524,23 @@
         "startVideoMuted": "",
         "title": "Nastavenia"
     },
-    "\u0005settings": {
-        "calendar": {}
-    },
     "settingsView": {
+        "advanced": "",
         "alertOk": "",
         "alertTitle": "Upozornenie",
         "alertURLText": "",
         "buildInfoSection": "",
         "conferenceSection": "",
+        "disableCallIntegration": "",
+        "disableP2P": "",
         "displayName": "",
-        "email": "",
+        "email": "E-mail",
         "header": "Nastavenia",
         "profileSection": "",
-        "serverURL": "",
-        "startWithAudioMuted": "",
-        "startWithVideoMuted": "",
+        "serverURL": "Adresa URL servera",
+        "showAdvanced": "",
+        "startWithAudioMuted": "Začať so stlmením zvukom",
+        "startWithVideoMuted": "Začať so stlmeným videom",
         "version": ""
     },
     "share": {
@@ -553,13 +569,15 @@
         "accessibilityLabel": {
             "audioOnly": "",
             "audioRoute": "",
-            "callQuality": "",
+            "callQuality": "Spravovať kvalitu videa",
             "cc": "",
             "chat": "",
             "document": "",
+            "download": "",
             "feedback": "",
             "fullScreen": "",
             "hangup": "",
+            "help": "",
             "invite": "",
             "kick": "",
             "localRecording": "",
@@ -568,6 +586,7 @@
             "moreActionsMenu": "",
             "mute": "",
             "pip": "",
+            "privateMessage": "",
             "profile": "",
             "raiseHand": "",
             "recording": "",
@@ -579,7 +598,7 @@
             "shortcuts": "",
             "show": "",
             "speakerStats": "",
-            "tileView": "",
+            "tileView": "Prepnúť dlaždicové zobrazenie",
             "toggleCamera": "",
             "videomute": "",
             "videoblur": ""
@@ -589,27 +608,33 @@
         "audioOnlyOn": "",
         "audioRoute": "",
         "authenticate": "Overiť",
-        "callQuality": "",
-        "chat": "Otvoriť / zatvoriť chat",
+        "callQuality": "Spravovať kvalitu videa",
+        "chat": "Otvoriť / Zatvoriť chat",
         "closeChat": "",
         "documentClose": "",
         "documentOpen": "",
-        "enterFullScreen": "",
+        "download": "",
+        "enterFullScreen": "Zobraziť na celú obrazovku",
         "enterTileView": "",
-        "exitFullScreen": "",
+        "exitFullScreen": "Opustiť celú obrazovku",
         "exitTileView": "",
         "feedback": "",
-        "hangup": "",
+        "hangup": "Odísť",
+        "help": "",
         "invite": "",
         "login": "Prihlásiť",
         "logout": "Odhlásiť",
         "lowerYourHand": "",
-        "moreActions": "",
+        "moreActions": "Viac akcií",
         "mute": "Vypnúť / Zapnúť mikrofón",
+        "noAudioSignalTitle": "",
+        "noAudioSignalDesc": "",
+        "noAudioSignalDescSuggestion": "",
         "openChat": "",
         "pip": "",
+        "privateMessage": "",
         "profile": "",
-        "raiseHand": "",
+        "raiseHand": "Prihlásiť / Odhlásiť sa o slovo",
         "raiseYourHand": "",
         "Settings": "Nastavenia",
         "sharedvideo": "",
@@ -622,13 +647,12 @@
         "stopSubtitles": "",
         "stopSharedVideo": "",
         "talkWhileMutedPopup": "",
-        "tileViewToggle": "",
+        "tileViewToggle": "Prepnúť dlaždicové zobrazenie",
         "toggleCamera": "",
         "videomute": "Vypnúť / Zapnúť kameru",
         "startvideoblur": "",
         "stopvideoblur": ""
     },
-    "\u0005toolbar": {},
     "transcribing": {
         "ccButtonTooltip": "",
         "error": "",
@@ -668,10 +692,12 @@
         "audioOnlyExpanded": "",
         "callQuality": "",
         "hd": "",
+        "hdTooltip": "",
         "highDefinition": "",
         "labelTooiltipNoVideo": "",
         "labelTooltipAudioOnly": "",
         "ld": "",
+        "ldTooltip": "",
         "lowDefinition": "",
         "onlyAudioAvailable": "",
         "onlyAudioSupported": "",
@@ -679,6 +705,7 @@
         "p2pVideoQualityDescription": "",
         "recHighDefinitionOnly": "",
         "sd": "",
+        "sdTooltip": "",
         "standardDefinition": ""
     },
     "videothumbnail": {
@@ -706,18 +733,20 @@
         "connectCalendarButton": "",
         "connectCalendarText": "",
         "enterRoomTitle": "",
+        "roomNameAllowedChars": "",
         "go": "Pripojiť",
+        "goSmall": "Pripojiť",
         "join": "",
         "info": "",
-        "privacy": "",
+        "privacy": "Súkromie",
         "recentList": "",
         "recentListDelete": "",
         "recentListEmpty": "",
         "reducedUIText": "",
         "roomname": "Zadajte názov miestnosti",
         "roomnameHint": "",
-        "sendFeedback": "",
-        "terms": "",
+        "sendFeedback": "Odoslať spätnú väzbu",
+        "terms": "Podmienky",
         "title": ""
     }
 }

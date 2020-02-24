@@ -46,8 +46,7 @@ export function bootstrapCalendarIntegration(): Function {
         return Promise.resolve()
             .then(() => {
                 if (googleApiApplicationClientID) {
-                    return dispatch(
-                        loadGoogleAPI(googleApiApplicationClientID));
+                    return dispatch(loadGoogleAPI());
                 }
             })
             .then(() => {

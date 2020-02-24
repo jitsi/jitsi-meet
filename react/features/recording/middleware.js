@@ -127,7 +127,13 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
     case RECORDING_SESSION_UPDATED: {
         // When in recorder mode no notifications are shown
         // or extra sounds are also not desired
-        if (getState()['features/base/config'].iAmRecorder) {
+        // but we want to indicate those in case of sip gateway
+        const {
+            iAmRecorder,
+            iAmSipGateway
+        } = getState()['features/base/config'];
+
+        if (iAmRecorder && !iAmSipGateway) {
             break;
         }
 

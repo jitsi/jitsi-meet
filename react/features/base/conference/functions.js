@@ -168,6 +168,20 @@ export function getConferenceName(stateful: Function | Object): string {
 }
 
 /**
+* Returns the UTC timestamp when the first participant joined the conference.
+*
+* @param {Function | Object} stateful - Reference that can be resolved to Redux
+* state with the {@code toState} function.
+* @returns {number}
+*/
+export function getConferenceTimestamp(stateful: Function | Object): number {
+    const state = toState(stateful);
+    const { conferenceTimestamp } = state['features/base/conference'];
+
+    return conferenceTimestamp;
+}
+
+/**
  * Returns the current {@code JitsiConference} which is joining or joined and is
  * not leaving. Please note the contrast with merely reading the
  * {@code conference} state of the feature base/conference which is not joining

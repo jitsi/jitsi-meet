@@ -1,11 +1,11 @@
 // @flow
 
-import Avatar from '@atlaskit/avatar';
 import InlineMessage from '@atlaskit/inline-message';
 import React from 'react';
 import type { Dispatch } from 'redux';
 
 import { createInviteDialogEvent, sendAnalytics } from '../../../../analytics';
+import { Avatar } from '../../../../base/avatar';
 import { Dialog, hideDialog } from '../../../../base/dialog';
 import { translate, translateToHTML } from '../../../../base/i18n';
 import { Icon, IconPhone } from '../../../../base/icons';
@@ -272,6 +272,21 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
     _parseQueryResults: (?Array<Object>) => Array<Object>;
 
     /**
+     * Returns the avatar component for a user.
+     *
+     * @param {Object} user - The user.
+     * @param {string} className - The CSS class for the avatar component.
+     * @private
+     * @returns {ReactElement}
+     */
+    _getAvatar(user, className = 'avatar-small') {
+        return (<Avatar
+            className = { className }
+            status = { user.status }
+            url = { user.avatar } />);
+    }
+
+    /**
      * Processes results from requesting available numbers and people by munging
      * each result into a format {@code MultiSelectAutocomplete} can use for
      * display.
@@ -283,22 +298,40 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
      * search autocomplete.
      */
     _parseQueryResults(response = []) {
-        const { t } = this.props;
+        const { t, _dialOutEnabled } = this.props;
         const users = response.filter(item => item.type !== 'phone');
-        const userDisplayItems = users.map(user => {
-            return {
-                content: user.name,
-                elemBefore: <Avatar
-                    size = 'small'
-                    src = { user.avatar } />,
+        const userDisplayItems = [];
+
+        users.forEach(user => {
+            const { name, phone } = user;
+            const tagAvatar = this._getAvatar(user, 'avatar-xsmall');
+            const elemAvatar = this._getAvatar(user);
+
+            userDisplayItems.push({
+                content: name,
+                elemBefore: elemAvatar,
                 item: user,
                 tag: {
-                    elemBefore: <Avatar
-                        size = 'xsmall'
-                        src = { user.avatar } />
+                    elemBefore: tagAvatar
                 },
                 value: user.id || user.user_id
-            };
+            });
+
+            if (phone && _dialOutEnabled) {
+                userDisplayItems.push({
+                    filterValues: [ name, phone ],
+                    content: `${phone} (${name})`,
+                    elemBefore: elemAvatar,
+                    item: {
+                        type: 'phone',
+                        number: phone
+                    },
+                    tag: {
+                        elemBefore: tagAvatar
+                    },
+                    value: phone
+                });
+            }
         });
 
         const numbers = response.filter(item => item.type === 'phone');

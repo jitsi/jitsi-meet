@@ -17,7 +17,8 @@ import {
 import {
     _decodeRoomURI,
     _getDefaultPhoneNumber,
-    getDialInfoPageURL
+    getDialInfoPageURL,
+    shouldDisplayDialIn
 } from '../../../functions';
 import logger from '../../../logger';
 import DialInNumber from './DialInNumber';
@@ -316,7 +317,6 @@ class InfoDialog extends Component<Props, State> {
      */
     _getTextToCopy() {
         const { _localParticipant, liveStreamViewURL, t } = this.props;
-        const shouldDisplayDialIn = this._shouldDisplayDialIn();
         const _inviteURL = _decodeRoomURI(this.props._inviteURL);
 
         let invite = _localParticipant && _localParticipant.name
@@ -335,7 +335,7 @@ class InfoDialog extends Component<Props, State> {
             invite = `${invite}\n${liveStream}`;
         }
 
-        if (shouldDisplayDialIn) {
+        if (shouldDisplayDialIn(this.props.dialIn)) {
             const dial = t('info.invitePhone', {
                 number: this.state.phoneNumber,
                 conferenceID: this.props.dialIn.conferenceID
@@ -480,7 +480,7 @@ class InfoDialog extends Component<Props, State> {
      * @returns {null|ReactElement}
      */
     _renderDialInDisplay() {
-        if (!this._shouldDisplayDialIn()) {
+        if (!shouldDisplayDialIn(this.props.dialIn)) {
             return null;
         }
 
@@ -569,23 +569,6 @@ class InfoDialog extends Component<Props, State> {
                 </span>
             </div>
         );
-    }
-
-    /**
-     * Returns whether or not dial-in related UI should be displayed.
-     *
-     * @private
-     * @returns {boolean}
-     */
-    _shouldDisplayDialIn() {
-        const { conferenceID, numbers, numbersEnabled } = this.props.dialIn;
-        const { phoneNumber } = this.state;
-
-        return Boolean(
-            conferenceID
-            && numbers
-            && numbersEnabled
-            && phoneNumber);
     }
 
     _setCopyElement: () => void;

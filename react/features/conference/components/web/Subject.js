@@ -7,6 +7,7 @@ import { getParticipantCount } from '../../../base/participants/functions';
 import { connect } from '../../../base/redux';
 import { isToolboxVisible } from '../../../toolbox';
 
+import ConferenceTimer from '../ConferenceTimer';
 import ParticipantsCount from './ParticipantsCount';
 
 /**
@@ -51,6 +52,7 @@ class Subject extends Component<Props> {
             <div className = { `subject ${_visible ? 'visible' : ''}` }>
                 <span className = 'subject-text'>{ _subject }</span>
                 { _showParticipantCount && <ParticipantsCount /> }
+                <ConferenceTimer />
             </div>
         );
     }

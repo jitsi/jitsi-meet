@@ -443,6 +443,7 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
                     <AvatarListItem
                         avatarOnly = { true }
                         avatarSize = { AVATAR_SIZE }
+                        avatarStatus = { item.status }
                         avatarStyle = { styles.avatar }
                         avatarTextStyle = { styles.avatarText }
                         item = { renderableItem }
@@ -497,6 +498,7 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
                     style = { styles.itemWrapper }>
                     <AvatarListItem
                         avatarSize = { AVATAR_SIZE }
+                        avatarStatus = { item.status }
                         avatarStyle = { styles.avatar }
                         avatarTextStyle = { styles.avatarText }
                         item = { renderableItem }
