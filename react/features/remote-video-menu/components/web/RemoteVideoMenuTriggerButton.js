@@ -9,6 +9,7 @@ import { connect } from '../../../base/redux';
 
 import {
     MuteButton,
+    MuteEveryoneElseButton,
     KickButton,
     PrivateMessageMenuButton,
     RemoteControlButton,
@@ -172,6 +173,11 @@ class RemoteVideoMenuTriggerButton extends Component<Props> {
                 <MuteButton
                     isAudioMuted = { isAudioMuted }
                     key = 'mute'
+                    participantID = { participantID } />
+            );
+            buttons.push(
+                <MuteEveryoneElseButton
+                    key = 'mute-others'
                     participantID = { participantID } />
             );
             buttons.push(

@@ -5,6 +5,8 @@ export {
     default as KickRemoteParticipantDialog
 } from './KickRemoteParticipantDialog';
 export { default as MuteButton } from './MuteButton';
+export { default as MuteEveryoneElseButton } from './MuteEveryoneElseButton';
+export { default as MuteEveryoneDialog } from './MuteEveryoneDialog';
 export {
     default as MuteRemoteParticipantDialog
 } from './MuteRemoteParticipantDialog';
