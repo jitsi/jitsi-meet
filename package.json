@@ -122,7 +122,7 @@
     "imports-loader": "0.7.1",
     "jetifier": "1.6.4",
     "metro-react-native-babel-preset": "0.56.0",
-    "node-sass": "4.12.0",
+    "node-sass": "4.13.1",
     "precommit-hook": "3.0.0",
     "string-replace-loader": "2.1.1",
     "style-loader": "0.19.0",
