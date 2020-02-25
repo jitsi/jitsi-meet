@@ -250,10 +250,11 @@ class InfoDialogButton extends Component<Props, State> {
 function _mapStateToProps(state) {
     const currentLiveStreamingSession
         = getActiveSession(state, JitsiRecordingConstants.mode.STREAM);
+    const { iAmRecorder, iAmSipGateway } = state['features/base/config'];
 
     return {
         _dialIn: state['features/invite'],
-        _disableAutoShow: state['features/base/config'].iAmRecorder,
+        _disableAutoShow: iAmRecorder || iAmSipGateway,
         _isConferenceJoined:
             Boolean(state['features/base/conference'].conference),
         _liveStreamViewURL:
