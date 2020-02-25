@@ -23,6 +23,7 @@ import SmallVideo from './SmallVideo';
  *
  */
 export default class LocalVideo extends SmallVideo {
+    
     /**
      *
      * @param {*} VideoLayout
@@ -197,7 +198,7 @@ export default class LocalVideo extends SmallVideo {
 /**
  * Builds the context menu for the local video.
  */
-LocalVideo.prototype._buildContextMenu = function() {
+    _buildContextMenu() {
     $.contextMenu({
         selector: `#${this.videoSpanId}`,
         zIndex: 10000,
@@ -221,15 +222,6 @@ LocalVideo.prototype._buildContextMenu = function() {
             }
         }
     });
-};
-
-/**
- * Enables or disables the context menu for the local video.
- * @param enable {boolean} true for enable, false for disable
- */
-LocalVideo.prototype._enableDisableContextMenu = function(enable) {
-    if (this.$container.contextMenu) {
-        this.$container.contextMenu(enable);
     }
 
     /**
