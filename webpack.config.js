@@ -38,7 +38,10 @@ const config = {
             '/': {
                 bypass: devServerProxyBypass,
                 secure: false,
-                target: devServerProxyTarget
+                target: devServerProxyTarget,
+                headers: {
+                    'Host': new URL(devServerProxyTarget).host
+                }
             }
         }
     },

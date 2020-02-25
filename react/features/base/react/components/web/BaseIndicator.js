@@ -72,7 +72,6 @@ class BaseIndicator extends Component<Props> {
      */
     static defaultProps = {
         className: '',
-        iconSize: 13,
         id: '',
         tooltipPosition: 'top'
     };
@@ -95,8 +94,12 @@ class BaseIndicator extends Component<Props> {
             tooltipKey,
             tooltipPosition
         } = this.props;
-
         const iconContainerClassName = `indicator-icon-container ${className}`;
+        const style = {};
+
+        if (iconSize) {
+            style.fontSize = iconSize;
+        }
 
         return (
             <div className = 'indicator-container'>
@@ -110,7 +113,7 @@ class BaseIndicator extends Component<Props> {
                             className = { iconClassName }
                             id = { iconId }
                             src = { icon }
-                            style = {{ fontSize: iconSize }} />
+                            style = { style } />
                     </span>
                 </Tooltip>
             </div>

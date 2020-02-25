@@ -44,18 +44,6 @@ type Props = {
     orientationFit: string,
 
     /**
-     * Whether or not to display a filter on the video to visually indicate a
-     * problem with the video being displayed.
-     */
-    showLocalProblemFilter: boolean,
-
-    /**
-     * Whether or not to display a filter on the video to visually indicate a
-     * problem with the video being displayed.
-     */
-    showRemoteProblemFilter: boolean,
-
-    /**
      * The video stream to display.
      */
     videoElement: Object
@@ -137,14 +125,9 @@ export class LargeVideoBackground extends Component<Props> {
     render() {
         const {
             hidden,
-            mirror,
-            showLocalProblemFilter,
-            showRemoteProblemFilter
+            mirror
         } = this.props;
-        const classNames = `large-video-background ${mirror ? 'flip-x' : ''} ${
-            hidden ? 'invisible' : ''} ${
-            showLocalProblemFilter ? 'videoProblemFilter' : ''} ${
-            showRemoteProblemFilter ? 'remoteVideoProblemFilter' : ''}`;
+        const classNames = `large-video-background ${mirror ? 'flip-x' : ''} ${hidden ? 'invisible' : ''}`;
 
         return (
             <div className = { classNames }>

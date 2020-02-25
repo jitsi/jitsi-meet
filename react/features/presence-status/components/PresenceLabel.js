@@ -8,6 +8,7 @@ import { Text } from '../../base/react';
 import { connect } from '../../base/redux';
 
 import { STATUS_TO_I18N_KEY } from '../constants';
+import { presenceStatusDisabled } from '../functions';
 
 /**
  * The type of the React {@code Component} props of {@link PresenceLabel}.
@@ -124,8 +125,9 @@ function _mapStateToProps(state, ownProps) {
     const participant = getParticipantById(state, ownProps.participantID);
 
     return {
-        _presence:
-            (participant && participant.presence) || ownProps.defaultPresence
+        _presence: presenceStatusDisabled() ? ''
+            : participant?.presence || ownProps.defaultPresence
+
     };
 }
 

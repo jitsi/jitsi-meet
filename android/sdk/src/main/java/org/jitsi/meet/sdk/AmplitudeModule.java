@@ -16,6 +16,10 @@
 
 package org.jitsi.meet.sdk;
 
+import android.annotation.SuppressLint;
+import android.provider.Settings;
+import android.text.TextUtils;
+
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
@@ -49,8 +53,16 @@ class AmplitudeModule
      * @param apiKey The API_KEY of the Amplitude project.
      */
     @ReactMethod
+    @SuppressLint("HardwareIds")
     public void init(String instanceName, String apiKey) {
         Amplitude.getInstance(instanceName).initialize(getCurrentActivity(), apiKey);
+
+        // Set the device ID to something consistent.
+        String android_id
+            = Settings.Secure.getString(getReactApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID);
+        if (!TextUtils.isEmpty(android_id)) {
+            Amplitude.getInstance(instanceName).setDeviceId(android_id);
+        }
     }
 
     /**

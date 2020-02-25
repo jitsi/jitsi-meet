@@ -27,8 +27,6 @@ allprojects {
         jcenter()
         // React Native (JS, Obj-C sources, Android binaries) is installed from npm.
         maven { url "$rootDir/../node_modules/react-native/android" }
-        // Android JSC is installed from npm.
-        maven { url("$rootDir/../node_modules/jsc-android/dist") }
     }
 
     // Make sure we use the react-native version in node_modules and not the one

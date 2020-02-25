@@ -13,7 +13,8 @@
         // IE11 and earlier can be identified via their user agent and be
         // redirected to a page that is known to have no newer js syntax.
         if (window.navigator.userAgent.match(/(MSIE|Trident)/)) {
-            window.location.href = "static/recommendedBrowsers.html";
+            var roomName = encodeURIComponent(window.location.pathname);
+            window.location.href = "static/recommendedBrowsers.html" + "?room=" + roomName;
         }
 
         window.indexLoadedTime = window.performance.now();

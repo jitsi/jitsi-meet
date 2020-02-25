@@ -1,6 +1,6 @@
 /* global interfaceConfig */
 
-import { parseURIString,convertForTrans } from '../base/util';
+import { parseURIString,convertForTrans, safeDecodeURIComponent } from '../base/util'
 
 
 /**
@@ -18,7 +18,7 @@ export function toDisplayableList(recentList) {
                     date: item.date,
                     duration: item.duration,
                     time: [ item.date ],
-                    title: convertForTrans(parseURIString(item.conference).room),
+                    title: convertForTrans(safeDecodeURIComponent(parseURIString(item.conference).room)),
                     url: item.conference
                 };
             }));

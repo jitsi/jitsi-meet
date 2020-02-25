@@ -25,6 +25,7 @@
     display: flex;
     flex-direction: column-reverse;
     height: 100%;
+    width: 100%;
     padding: ($desktopAppDragBarHeight - 5px) 5px 10px;
     /**
      * fixed positioning is necessary for remote menus and tooltips to pop
@@ -48,7 +49,6 @@
     .filmstrip__videos {
         @extend %align-right;
         bottom: 0;
-        overflow: visible !important;
         padding: 0;
         position:relative;
         right: 0;
@@ -67,6 +67,7 @@
             border: $thumbnailsBorder solid transparent;
             padding-left: 0;
             transition: right 2s;
+            width: 100%;
         }
     }
 
@@ -80,6 +81,16 @@
         flex-direction: column-reverse;
         height: auto;
         justify-content: flex-start;
+
+        #filmstripLocalVideoThumbnail {
+            width: calc(100% - 15px);
+
+            .videocontainer {
+                height: 0px;
+                width: 100%;
+    }
+        }
+
     }
 
     /**
@@ -96,18 +107,21 @@
 
         display: flex;
         flex: 1;
-        flex-direction: column;
+        flex-direction: column-reverse;
         height: auto;
-        justify-content: flex-end;
+        overflow-x: hidden;
+        overflow-y: scroll;
 
         #filmstripRemoteVideosContainer {
+            @include minHWAutoFix();
             flex-direction: column-reverse;
-            /**
-             * Add padding as a hack for Firefox not to show scrollbars when
-             * unnecessary.
-             */
-            padding: 1px 0;
-            overflow-x: hidden;
+            overflow: visible;
+            width: calc(100% - 8px); // 8px for margin + border of the thumbnails
+
+            .videocontainer {
+                height: 0px;
+                width: 100%;
+            }
         }
     }
 
@@ -160,9 +174,24 @@
     }
 }
 
+/**
+ * FF does not include the scroll width when calculating the size of the content. That's why we need to include
+ * ourselves the width of the scroll so that the remote videos are aligned with the local one.
+ */
+@mixin filmstripSizeWithoutScroll {
+    .vertical-filmstrip {
+        #remoteVideos #filmstripRemoteVideos {
+            #filmstripRemoteVideosContainer {
+                width: calc(100% - 15px) // 8 px - margins + border of the thumbnails; 7px - for the scroll
+            }
+        }
+    }
+}
+
 /** Firefox detection hack **/
 @-moz-document url-prefix() {
     @include undoColumnReverseVideos();
+    @include filmstripSizeWithoutScroll();
 }
 
 /** Edge detection hack **/

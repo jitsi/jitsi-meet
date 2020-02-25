@@ -6,6 +6,13 @@ local st = require "util.stanza";
 local socket = require "socket";
 local json = require "util.json";
 
+-- we use async to detect Prosody 0.10 and earlier
+local have_async = pcall(require, "util.async");
+if not have_async then
+    module:log("warn", "speaker stats will not work with Prosody version 0.10 or less.");
+    return;
+end
+
 local muc_component_host = module:get_option_string("muc_component");
 if muc_component_host == nil then
     log("error", "No muc_component specified. No muc to operate on!");
