@@ -83,7 +83,6 @@ export default class SmallVideo {
      */
     constructor(VideoLayout) {
         this.isAudioMuted = false;
-        this.hasAvatar = false;
         this.isVideoMuted = false;
         this.videoStream = null;
         this.audioStream = null;
@@ -518,20 +517,9 @@ export default class SmallVideo {
     }
 
     /**
-     * Hides or shows the user's avatar.
-     * This update assumes that large video had been updated and we will
-     * reflect it on this small video.
+     * Updates the css classes of the thumbnail based on the current state.
      */
     updateView() {
-        if (this.id) {
-            // Init / refresh avatar
-            this.initializeAvatar();
-        } else {
-            logger.error('Unable to init avatar - no id', this);
-
-            return;
-        }
-
         this.$container.removeClass((index, classNames) =>
             classNames.split(' ').filter(name => name.startsWith('display-')));
 
@@ -580,8 +568,6 @@ export default class SmallVideo {
      */
     initializeAvatar() {
         const thumbnail = this.$avatar().get(0);
-
-        this.hasAvatar = true;
 
         if (thumbnail) {
             // Maybe add a special case for local participant, as on init of
