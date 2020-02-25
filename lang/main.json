@@ -136,6 +136,7 @@
             "lockRoom": "切换会议室锁定",
             "moreActions": "显示 / 隐藏 更多选择",
             "moreActionsMenu": "更多功能菜单",
+            "moreOptions": "更多设置",
             "mute": "静音 / 取消静音",
             "pip": "切换子母画面模式",
             "profile": "编辑您的简介",
@@ -207,6 +208,8 @@
         "tileViewToggle": "视图切换",
         "enterTileview": "视图切换",
         "moreActions": "更多设置",
+        "moreOptions": "更多设置",
+        "privateMessage": "发送私聊消息",
         "callQuality": "视频质量",
         "pip": "进入小窗口模式",
         "shareRoom": "分享会议室",
@@ -229,7 +232,7 @@
     "chat": {
         "error": "错误：你的消息 \"{{originalText}}\" 未被发送。原因： {{error}}",
         "fieldPlaceHolder": "输入您发送的信息",
-        "messageTo": "与 {{recipient}} 的私有消息",
+        "messageTo": "发给 {{recipient}} 的私有消息",
         "noMessagesMessage": "无消息",
         "nickname": {
             "title": "请在下面的方框内输入昵称",
@@ -237,7 +240,9 @@
         },
         "title": "聊天",
         "button": "发送",
-        "messagebox": "请输入文本..."
+        "privateNotice": "发给 {{recipient}} 的私有消息",
+        "messagebox": "请输入文本...",
+        "you": "您"
     },
     "connectingOverlay": {
         "joiningRoom": "会议连接中..."
