@@ -59,6 +59,11 @@ type Props = {
     _hideScrollbar: boolean,
 
     /**
+     * Whether the filmstrip toolbar should be hidden or not.
+     */
+    _hideToolbar: boolean,
+
+    /**
      * Whether or not remote videos are currently being hovered over. Hover
      * handling is currently being handled detected outside of react.
      */
@@ -195,12 +200,17 @@ class Filmstrip extends Component <Props> {
             remoteVideosWrapperClassName += ' hide-scrollbar';
         }
 
+        let toolbar = null;
+
+        if (!this.props._hideToolbar) {
+            toolbar = this.props._filmstripOnly ? <Toolbar /> : this._renderToggleButton();
+        }
+
         return (
             <div
                 className = { `filmstrip ${this.props._className}` }
                 style = { filmstripStyle }>
-                { this.props._filmstripOnly
-                    ? <Toolbar /> : this._renderToggleButton() }
+                { toolbar }
                 <div
                     className = { this.props._videosClassName }
                     id = 'remoteVideos'>
@@ -369,6 +379,7 @@ function _mapStateToProps(state) {
         _filmstripOnly: isFilmstripOnly,
         _filmstripWidth: filmstripWidth,
         _hideScrollbar: Boolean(iAmSipGateway),
+        _hideToolbar: Boolean(iAmSipGateway),
         _hovered: hovered,
         _rows: gridDimensions.rows,
         _videosClassName: videosClassName,
