@@ -126,6 +126,7 @@ export default class RemoteVideo extends SmallVideo {
     addRemoteVideoContainer() {
         this.container = createContainer(this.videoSpanId);
         this.$container = $(this.container);
+        this.initializeAvatar();
         this._setThumbnailSize();
         this.initBrowserSpecificProperties();
         this.updateRemoteVideoMenu();
