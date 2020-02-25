@@ -136,6 +136,13 @@
         display: flex;
         transition: opacity 1s;
     }
+
+    .hide-scrollbar#filmstripRemoteVideos {
+        margin-right: 7px; // Scrollbar size
+        &::-webkit-scrollbar {
+            display: none;
+        }
+    }
 }
 
 /**
