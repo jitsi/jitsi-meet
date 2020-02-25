@@ -228,6 +228,9 @@
     },
     "chat": {
         "error": "错误：你的消息 \"{{originalText}}\" 未被发送。原因： {{error}}",
+        "fieldPlaceHolder": "输入您发送的信息",
+        "messageTo": "与 {{recipient}} 的私有消息",
+        "noMessagesMessage": "无消息",
         "nickname": {
             "title": "请在下面的方框内输入昵称",
             "popover": "选择一个昵称"
@@ -842,7 +845,20 @@
         "labelToolTip": "本地录像启动",
         "startWithAudioMuted": "启动并关闭音频",
         "startWithVideoMuted": "启动并关闭视频",
-        "version": "版本"
+        "version": "版本",
+        "devices": "Devices",
+        "followMe": "Everyone follows me",
+        "language": "Language",
+        "loggedIn": "Logged in as {{name}}",
+        "more": "More",
+        "name": "Name",
+        "noDevice": "None",
+        "selectAudioOutput": "Audio output",
+        "selectCamera": "Camera",
+        "selectMic": "Microphone",
+        "startAudioMuted": "Everyone starts muted",
+        "startVideoMuted": "Everyone starts hidden",
+        "title": "Settings"
     },
     "share": {
         "dialInfoText": "",

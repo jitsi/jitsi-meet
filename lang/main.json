@@ -228,9 +228,9 @@
     },
     "chat": {
         "error": "错误：你的消息 \"{{originalText}}\" 未被发送。原因： {{error}}",
-        "fieldPlaceHolder": "Type your message here",
-        "messageTo": "Private message to {{recipient}}",
-        "noMessagesMessage": "There are no messages in the meeting yet. Start a conversation here!",
+        "fieldPlaceHolder": "输入您发送的信息",
+        "messageTo": "与 {{recipient}} 的私有消息",
+        "noMessagesMessage": "无消息",
         "nickname": {
             "title": "请在下面的方框内输入昵称",
             "popover": "选择一个昵称"
