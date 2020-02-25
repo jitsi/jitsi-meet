@@ -5,8 +5,15 @@ import { Icon, IconClose } from '../../base/icons';
 import { translate } from '../../base/i18n';
 import { getCurrentConference } from '../../base/conference/functions';
 import { browser } from '../../base/lib-jitsi-meet';
-import { isMobileBrowser } from '../../base/environment/utils';
+import {
+    checkChromeExtensionsInstalled,
+    isMobileBrowser
+} from '../../base/environment/utils';
 import logger from '../logger';
+import {
+    createChromeExtensionBannerEvent,
+    sendAnalytics
+} from '../../analytics';
 
 declare var interfaceConfig: Object;
 
@@ -23,19 +30,14 @@ const DONT_SHOW_AGAIN_CHECKED = 'hide_chrome_extension_banner';
 type Props = {
 
     /**
+     * Contains info about installed/to be installed chrome extension(s).
+     */
+    bannerCfg: Object,
+
+    /**
      * Conference data, if any
      */
     conference: Object,
-
-    /**
-     * The url of the chrome extension
-     */
-    chromeExtensionUrl: string,
-
-    /**
-     * An array containing info for identifying a chrome extension
-     */
-    chromeExtensionsInfo: Array<Object>,
 
     /**
      * Whether I am the current recorder.
@@ -91,7 +93,6 @@ class ChromeExtensionBanner extends PureComponent<Props, State> {
 
         this._onClosePressed = this._onClosePressed.bind(this);
         this._onInstallExtensionClick = this._onInstallExtensionClick.bind(this);
-        this._checkExtensionsInstalled = this._checkExtensionsInstalled.bind(this);
         this._shouldNotRender = this._shouldNotRender.bind(this);
         this._onDontShowAgainChange = this._onDontShowAgainChange.bind(this);
     }
@@ -107,15 +108,18 @@ class ChromeExtensionBanner extends PureComponent<Props, State> {
             return;
         }
 
-        if (this.props.chromeExtensionUrl && !prevProps.chromeExtensionUrl) {
+        const { bannerCfg } = this.props;
+        const prevBannerCfg = prevProps.bannerCfg;
+
+        if (bannerCfg.url && !prevBannerCfg.url) {
             logger.info('Chrome extension URL found.');
         }
 
-        if (this.props.chromeExtensionsInfo.length && !prevProps.chromeExtensionsInfo.length) {
+        if ((bannerCfg.chromeExtensionsInfo || []).length && !(prevBannerCfg.chromeExtensionsInfo || []).length) {
             logger.info('Chrome extension(s) info found.');
         }
 
-        const hasExtensions = await this._checkExtensionsInstalled();
+        const hasExtensions = await checkChromeExtensionsInstalled(this.props.bannerCfg);
 
         if (
             hasExtensions
@@ -147,6 +151,7 @@ class ChromeExtensionBanner extends PureComponent<Props, State> {
      * @returns {void}
      */
     _onClosePressed() {
+        sendAnalytics(createChromeExtensionBannerEvent(false));
         this.setState({ closePressed: true });
     }
 
@@ -158,34 +163,9 @@ class ChromeExtensionBanner extends PureComponent<Props, State> {
      * @returns {void}
      */
     _onInstallExtensionClick() {
-        window.open(this.props.chromeExtensionUrl);
+        sendAnalytics(createChromeExtensionBannerEvent(true));
+        window.open(this.props.bannerCfg.url);
         this.setState({ closePressed: true });
-    }
-
-    _checkExtensionsInstalled: () => Promise<*>;
-
-    /**
-     * Checks whether the chrome extensions defined in the config file are installed or not.
-     *
-     * @returns {Promise[]}
-     */
-    _checkExtensionsInstalled() {
-        const isExtensionInstalled = info => new Promise(resolve => {
-            const img = new Image();
-
-            img.src = `chrome-extension://${info.id}/${info.path}`;
-            img.onload = function() {
-                resolve(true);
-            };
-            img.onerror = function() {
-                resolve(false);
-            };
-        });
-        const extensionInstalledFunction = info => isExtensionInstalled(info);
-
-        return Promise.all(
-            this.props.chromeExtensionsInfo.map(info => extensionInstalledFunction(info))
-        );
     }
 
     _shouldNotRender: () => boolean;
@@ -202,7 +182,7 @@ class ChromeExtensionBanner extends PureComponent<Props, State> {
 
         const dontShowAgain = localStorage.getItem(DONT_SHOW_AGAIN_CHECKED) === 'true';
 
-        return !this.props.chromeExtensionUrl
+        return !this.props.bannerCfg.url
             || dontShowAgain
             || this.state.closePressed
             || !this.state.shouldShow
@@ -290,11 +270,8 @@ class ChromeExtensionBanner extends PureComponent<Props, State> {
  * @returns {Object}
  */
 const _mapStateToProps = state => {
-    const bannerCfg = state['features/base/config'].chromeExtensionBanner || {};
-
     return {
-        chromeExtensionUrl: bannerCfg.url,
-        chromeExtensionsInfo: bannerCfg.chromeExtensionsInfo || [],
+        bannerCfg: state['features/base/config'].chromeExtensionBanner || {},
         conference: getCurrentConference(state),
         iAmRecorder: state['features/base/config'].iAmRecorder
     };
