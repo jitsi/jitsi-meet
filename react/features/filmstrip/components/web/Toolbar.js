@@ -2,6 +2,7 @@
 
 import React, { Component } from 'react';
 
+import { connect } from '../../../base/redux';
 import { SettingsButton } from '../../../settings';
 import {
     AudioMuteButton,
@@ -16,11 +17,22 @@ declare var interfaceConfig: Object;
 const visibleButtons = new Set(interfaceConfig.TOOLBAR_BUTTONS);
 
 /**
+ * The type of the React {@code Component} props of {@link Toolbar}.
+ */
+type Props = {
+
+    /**
+     * The set of buttons which should be visible in this {@code Toolbar}.
+     */
+    _visibleButtons: Set<string>
+};
+
+/**
  * Implements the conference toolbar on React/Web for filmstrip-only mode.
  *
  * @extends Component
  */
-class Toolbar extends Component<*> {
+class Toolbar extends Component<Props> {
     /**
      * Implements React's {@link Component#render()}.
      *
@@ -60,8 +72,26 @@ class Toolbar extends Component<*> {
      * otherwise.
      */
     _shouldShowButton(buttonName) {
-        return visibleButtons.has(buttonName);
+        return this.props._visibleButtons.has(buttonName);
     }
 }
 
-export default Toolbar;
+/**
+ * Maps (parts of) the redux state to the associated props for this component.
+ *
+ * @param {Object} state - The Redux state.
+ * @private
+ * @returns {{
+ *     _visibleButtons: Set<string>
+ * }}
+ */
+function _mapStateToProps(state): Object { // eslint-disable-line no-unused-vars
+    // XXX: We are not currently using state here, but in the future, when
+    // interfaceConfig is part of redux we will.
+
+    return {
+        _visibleButtons: visibleButtons
+    };
+}
+
+export default connect(_mapStateToProps)(Toolbar);
