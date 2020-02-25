@@ -206,8 +206,9 @@ class AudioModeModule extends ReactContextBaseJavaModule {
             audioDeviceHandler.stop();
         }
 
+
         if (useConnectionService()) {
-            audioDeviceHandler = new AudioDeviceHandlerConnectionService();
+            audioDeviceHandler = new AudioDeviceHandlerGeneric();
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             audioDeviceHandler = new AudioDeviceHandlerGeneric();
         } else {
