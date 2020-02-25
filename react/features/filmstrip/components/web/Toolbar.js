@@ -12,6 +12,10 @@ import {
 
 declare var interfaceConfig: Object;
 
+// XXX: We are not currently using state here, but in the future, when
+// interfaceConfig is part of redux we will. This has to be retrieved from the store.
+const visibleButtons = new Set(interfaceConfig.TOOLBAR_BUTTONS);
+
 /**
  * The type of the React {@code Component} props of {@link Toolbar}.
  */
@@ -86,7 +90,7 @@ function _mapStateToProps(state): Object { // eslint-disable-line no-unused-vars
     // interfaceConfig is part of redux we will.
 
     return {
-        _visibleButtons: new Set(interfaceConfig.TOOLBAR_BUTTONS)
+        _visibleButtons: visibleButtons
     };
 }
 
