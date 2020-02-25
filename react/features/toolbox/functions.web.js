@@ -34,11 +34,12 @@ export function isButtonEnabled(name: string) {
  * otherwise.
  */
 export function isToolboxVisible(state: Object) {
+    const { iAmSipGateway } = state['features/base/config'];
     const {
         alwaysVisible,
         timeoutID,
         visible
     } = state['features/toolbox'];
 
-    return Boolean(timeoutID || visible || alwaysVisible);
+    return Boolean(!iAmSipGateway && (timeoutID || visible || alwaysVisible));
 }
