@@ -1426,6 +1426,9 @@ export default {
         }
 
         this._stopProxyConnection();
+        if (config.enableScreenshotCapture) {
+            APP.store.dispatch(toggleScreenshotCaptureEffect(false));
+        }
 
         // It can happen that presenter GUM is in progress while screensharing is being turned off. Here it needs to
         // wait for that GUM to be resolved in order to prevent leaking the presenter track(this.localPresenterVideo
@@ -1460,9 +1463,6 @@ export default {
                 });
         } else {
             promise = promise.then(() => this.useVideoStream(null));
-        }
-        if (config.enableScreenshotCapture) {
-            APP.store.dispatch(toggleScreenshotCaptureEffect(false));
         }
 
         return promise.then(

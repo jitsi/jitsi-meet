@@ -34,17 +34,13 @@ export function toggleScreenshotCaptureEffect(enabled: boolean) {
         if (state['features/screenshot-capture'].capturesEnabled !== enabled) {
             const { jitsiTrack } = getLocalVideoTrack(state['features/base/tracks']);
 
+            // Screenshot capture effect doesn't return a modified stream. Therefore, we don't have to
+            // switch the stream at the conference level, starting/stopping the effect will suffice here.
             return createScreenshotCaptureEffect(state)
-                .then(effect =>
-                    jitsiTrack.setEffect(enabled ? effect : undefined)
-                        .then(() => {
-                            dispatch(setScreenshotCapture(enabled));
-                        })
-                        .catch(() => {
-                            dispatch(setScreenshotCapture(!enabled));
-                        })
-                )
-                .catch(() => dispatch(setScreenshotCapture(false)));
+                .then(effect => {
+                    enabled ? effect.startEffect(jitsiTrack.getOriginalStream()) : effect.stopEffect();
+                    dispatch(setScreenshotCapture(enabled));
+                });
         }
 
         return Promise.resolve();
