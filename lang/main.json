@@ -153,7 +153,9 @@
             "tileView": "画面模式",
             "toggleCamera": "切换相机",
             "videomute": "静音 / 取消静音",
-            "videoblur": ""
+            "videoblur": "",
+            "noisyAudioInputTitle": "噪音提示",
+            "noisyAudioInputDesc": "当前噪音较大，请检查您的mic和扬声器是否距离太近！"
         },
         "closeChat": "关闭聊天",
         "enterTileView": "切换视图",
@@ -486,6 +488,10 @@
         "screenSharingFailedToInstall": "哎呀！屏幕共享插件安装失败。",
         "screenSharingFailedToInstallTitle": "屏幕共享插件安装失败",
         "screenSharingFirefoxPermissionDeniedError": "尝试进行屏幕共享时遇到了问题。请确认给予了相应的权限。",
+        "sendPrivateMessage": "您最近有收到私人讯息。您要进行私人回复，或是要将自己的信息发布至群组？",
+        "sendPrivateMessageCancel": "发布至群组",
+        "sendPrivateMessageOk": "私秘回复",
+        "sendPrivateMessageTitle": "私秘聊天？",
         "micErrorPresent": "连接到麦克风时发生错误。",
         "cameraErrorPresent": "连接到摄像头时发生错误。",
         "cameraUnsupportedResolutionError": "您的摄像头不支持所需分辨率。",
