@@ -51,39 +51,35 @@ export default class ScreenshotCaptureEffect {
     }
 
     /**
-     * Checks if the local track supports this effect.
-     *
-     * @param {JitsiLocalTrack} jitsiLocalTrack - Targeted local track.
-     * @returns {boolean} - Returns true if this effect can run on the specified track, false otherwise.
-     */
-    isEnabled(jitsiLocalTrack: Object) {
-        return jitsiLocalTrack.isVideoTrack() && jitsiLocalTrack.videoType === 'desktop';
-    }
-
-    /**
      * Starts the screenshot capture event on a loop.
      *
      * @param {MediaStream} stream - The desktop stream from which screenshots are to be sent.
-     * @returns {MediaStream} - The same stream, with the interval set.
+     * @param {string} videoType - The type of the media stream.
+     * @returns {Promise} - Promise that resolves once effect has started or rejects if the
+     * videoType parameter is not desktop.
      */
-    startEffect(stream: MediaStream) {
-        const desktopTrack = stream.getVideoTracks()[0];
-        const { height, width }
-            = desktopTrack.getSettings() ?? desktopTrack.getConstraints();
+    startEffect(stream: MediaStream, videoType: string) {
+        return new Promise<void>((resolve, reject) => {
+            if (videoType !== 'desktop') {
+                reject();
+            }
+            const desktopTrack = stream.getVideoTracks()[0];
+            const { height, width }
+                = desktopTrack.getSettings() ?? desktopTrack.getConstraints();
 
-        this._streamHeight = height;
-        this._streamWidth = width;
-        this._currentCanvas.height = parseInt(height, 10);
-        this._currentCanvas.width = parseInt(width, 10);
-        this._videoElement.height = parseInt(height, 10);
-        this._videoElement.width = parseInt(width, 10);
-        this._videoElement.srcObject = stream;
-        this._videoElement.play();
+            this._streamHeight = height;
+            this._streamWidth = width;
+            this._currentCanvas.height = parseInt(height, 10);
+            this._currentCanvas.width = parseInt(width, 10);
+            this._videoElement.height = parseInt(height, 10);
+            this._videoElement.width = parseInt(width, 10);
+            this._videoElement.srcObject = stream;
+            this._videoElement.play();
 
-        // Store first capture for comparisons in {@code this._handleScreenshot}.
-        this._videoElement.addEventListener('loadeddata', this._initScreenshotCapture);
-
-        return stream;
+            // Store first capture for comparisons in {@code this._handleScreenshot}.
+            this._videoElement.addEventListener('loadeddata', this._initScreenshotCapture);
+            resolve();
+        });
     }
 
     /**
