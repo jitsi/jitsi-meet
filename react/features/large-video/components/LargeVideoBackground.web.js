@@ -2,6 +2,9 @@
 
 import React, { Component } from 'react';
 
+import { connect } from '../../base/redux';
+import { shouldDisplayTileView } from '../../video-layout';
+
 /**
  * Constants to describe the dimensions of the video. Landscape videos
  * are wider than they are taller and portrait videos are taller than they
@@ -20,6 +23,14 @@ export const ORIENTATION = {
  * {@link LargeVideoBackgroundCanvas}.
  */
 type Props = {
+
+   /**
+     * Whether or not the layout should change to support tile view mode.
+     *
+     * @protected
+     * @type {boolean}
+     */
+    _shouldDisplayTileView: boolean,
 
     /**
      * Additional CSS class names to add to the root of the component.
@@ -83,7 +94,9 @@ export class LargeVideoBackground extends Component<Props> {
      * @returns {void}
      */
     componentDidMount() {
-        if (this.props.videoElement && !this.props.hidden) {
+        const { _shouldDisplayTileView, hidden, videoElement } = this.props;
+
+        if (videoElement && !hidden && !_shouldDisplayTileView) {
             this._updateCanvas();
             this._setUpdateCanvasInterval();
         }
@@ -95,15 +108,18 @@ export class LargeVideoBackground extends Component<Props> {
      * @inheritdoc
      */
     componentDidUpdate(prevProps: Props) {
-        if (prevProps.hidden && !this.props.hidden) {
-            this._clearCanvas();
-            this._setUpdateCanvasInterval();
-        }
+        const wasCanvasUpdating = !prevProps.hidden && !prevProps._shouldDisplayTileView && prevProps.videoElement;
+        const shouldCanvasUpdating
+            = !this.props.hidden && !this.props._shouldDisplayTileView && this.props.videoElement;
 
-        if ((!prevProps.hidden && this.props.hidden)
-            || !this.props.videoElement) {
-            this._clearCanvas();
-            this._clearUpdateCanvasInterval();
+        if (wasCanvasUpdating !== shouldCanvasUpdating) {
+            if (shouldCanvasUpdating) {
+                this._clearCanvas();
+                this._setUpdateCanvasInterval();
+            } else {
+                this._clearCanvas();
+                this._clearUpdateCanvasInterval();
+            }
         }
     }
 
@@ -216,3 +232,22 @@ export class LargeVideoBackground extends Component<Props> {
         }
     }
 }
+
+/**
+ * Maps (parts of) the Redux state to the associated LargeVideoBackground props.
+ *
+ * @param {Object} state - The Redux state.
+ * @private
+ * @returns {{
+ *     _shouldDisplayTileView: boolean
+ * }}
+ */
+function _mapStateToProps(state) {
+    return {
+        _shouldDisplayTileView: shouldDisplayTileView(state)
+    };
+}
+
+
+export default connect(_mapStateToProps)(LargeVideoBackground);
+
