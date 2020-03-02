@@ -211,6 +211,19 @@ export class LargeVideoBackground extends Component<Props> {
      * @returns {void}
      */
     _updateCanvas() {
+        // On Electron 7 there is a memory leak if we try to draw into a hidden canvas that is part of the DOM tree.
+        // See: https://github.com/electron/electron/issues/22417
+        // Trying to detect all the cases when the page will be hidden because of something not in our control
+        // (for example when the page is loaded in an iframe which is hidden due to the host page styles) to solve
+        // the memory leak. Currently we are not handling the use case when the page is hidden with visibility:hidden
+        // because we don't have a good way to do it.
+        // All other cases when the canvas is not visible are handled trough the component props
+        // (hidden, _shouldDisplayTileView).
+        if (!this._canvasEl || this._canvasEl.offsetParent === null
+                || window.innerHeight === 0 || window.innerWidth === 0) {
+            return;
+        }
+
         const { videoElement } = this.props;
         const { videoWidth, videoHeight } = videoElement;
         const {
