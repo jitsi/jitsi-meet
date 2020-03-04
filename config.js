@@ -75,6 +75,7 @@ var config = {
 
     // Disable measuring of audio levels.
     // disableAudioLevels: false,
+    // audioLevelsInterval: 200,
 
     // Enabling this will run the lib-jitsi-meet no audio detection module which
     // will notify the user if the current selected microphone has no audio
@@ -300,6 +301,9 @@ var config = {
     // the webrtc stats) as it is done in the jitsi-meet-torture bandwidth
     // estimation tests.
     // gatherStats: false,
+
+    // The interval at which PeerConnection.getStats() is called. Defaults to 10000
+    // pcStatsInterval: 10000,
 
     // To enable sending statistics to callstats.io you must provide the
     // Application ID and Secret.
