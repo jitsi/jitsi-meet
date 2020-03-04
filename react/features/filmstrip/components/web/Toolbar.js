@@ -2,7 +2,7 @@
 
 import React, { Component } from 'react';
 
-import { connect } from '../../../base/redux';
+import { connect, equals } from '../../../base/redux';
 import { SettingsButton } from '../../../settings';
 import {
     AudioMuteButton,
@@ -88,9 +88,13 @@ class Toolbar extends Component<Props> {
 function _mapStateToProps(state): Object { // eslint-disable-line no-unused-vars
     // XXX: We are not currently using state here, but in the future, when
     // interfaceConfig is part of redux we will.
+    //
+    // NB: We compute the buttons again here because if URL parameters were used to
+    // override them we'd miss it.
+    const buttons = new Set(interfaceConfig.TOOLBAR_BUTTONS);
 
     return {
-        _visibleButtons: visibleButtons
+        _visibleButtons: equals(visibleButtons, buttons) ? visibleButtons : buttons
     };
 }
 
