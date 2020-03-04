@@ -28,7 +28,7 @@ import {
     getParticipants,
     participantUpdated
 } from '../../../base/participants';
-import { connect } from '../../../base/redux';
+import { connect, equals } from '../../../base/redux';
 import { OverflowMenuItem } from '../../../base/toolbox';
 import { getLocalVideoTrack, toggleScreensharing } from '../../../base/tracks';
 import { VideoBlurButton } from '../../../blur';
@@ -1330,6 +1330,10 @@ function _mapStateToProps(state) {
         }
     }
 
+    // NB: We compute the buttons again here because if URL parameters were used to
+    // override them we'd miss it.
+    const buttons = new Set(interfaceConfig.TOOLBAR_BUTTONS);
+
     return {
         _chatOpen: state['features/chat'].isOpen,
         _conference: conference,
@@ -1351,7 +1355,7 @@ function _mapStateToProps(state) {
             || sharedVideoStatus === 'start'
             || sharedVideoStatus === 'pause',
         _visible: isToolboxVisible(state),
-        _visibleButtons: visibleButtons
+        _visibleButtons: equals(visibleButtons, buttons) ? visibleButtons : buttons
     };
 }
 
