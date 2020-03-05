@@ -81,7 +81,7 @@ var config = {
     // Enabling this will run the lib-jitsi-meet no audio detection module which
     // will notify the user if the current selected microphone has no audio
     // input and will suggest another valid device if one is present.
-    enableNoAudioDetection: true,
+    enableNoAudioDetection: false,
 
     // Enabling this will run the lib-jitsi-meet noise detection module which will
     // notify the user if there is noise, other than voice, coming from the current
@@ -94,7 +94,7 @@ var config = {
     // startAudioOnly: false,
 
     // Every participant after the Nth will start audio muted.
-    // startAudioMuted: 10,
+    startAudioMuted: 100,
 
     // Start calls with audio muted. Unlike the option above, this one is only
     // applied locally. FIXME: having these 2 options is confusing.
@@ -131,10 +131,10 @@ var config = {
 
     // Suspend sending video if bandwidth estimation is too low. This may cause
     // problems with audio playback. Disabled until these are fixed.
-    disableSuspendVideo: true,
+    disableSuspendVideo: false,
 
     // Every participant after the Nth will start video muted.
-    startVideoMuted: 10,
+    startVideoMuted: 100,
 
     // Start calls with video muted. Unlike the option above, this one is only
     // applied locally. FIXME: having these 2 options is confusing.
@@ -321,9 +321,10 @@ var config = {
 
         // The STUN servers that will be used in the peer to peer connections
         stunServers: [
-            { urls: 'stun:211.149.170.209:34708' },
-            { urls: 'stun:39.105.139.90:34708' },
-            { urls: 'stun:47.100.170.169:34708' }
+            { urls: 'stun:139.196.75.243:3478' },
+            { urls: 'stun:120.78.183.87:3478' },
+            { urls: 'stun:139.9.228.150:3478' },
+            { urls: 'stun:39.106.112.38:3478' }
         ],
 
         // Sets the ICE transport policy for the p2p connection. At the time

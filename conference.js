@@ -1959,6 +1959,12 @@ export default {
                 APP.UI.notifyDateLimitWillReached(extensionMsg);
             });
 
+        room.on(
+            JitsiConferenceEvents.MUTE_BY_FOCUS,
+            () => {                
+                logger.log(`MUTE_BY_FOCUS`);
+                APP.store.dispatch(setAudioMuted(true));
+            });
         room.on(JitsiConferenceEvents.PARTCIPANT_FEATURES_CHANGED,
             user => APP.UI.onUserFeaturesChanged(user));
         room.on(JitsiConferenceEvents.USER_JOINED, (id, user) => {

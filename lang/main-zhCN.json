@@ -217,7 +217,12 @@
         "shareRoom": "分享会议室",
         "raiseHand": "请求 / 取消 发言",
         "raiseYourHand": "请求发言",
-        "lowerYourHand": "取消发言"
+        "lowerYourHand": "取消发言",
+        "noisyAudioInputTitle": "噪音提示",
+        "noisyAudioInputDesc": "当前噪音较大，请检查您的mic和扬声器是否距离太近！",        
+        "noAudioSignalTitle": "麦克风没有声音",
+        "noAudioSignalDesc": "如果您没有静音的话，换一个声音输入设备试试？",
+        "noAudioSignalDescSuggestion": "如果您没有静音的话，换一个声音输入设备试试？"
     },
     "unsupportedBrowser": {
         "appInstalled": "或者如果您已经安装了<br /><strong>那么</strong>",
@@ -791,8 +796,6 @@
         "moderator": "已授权主持人权限！",
         "muted": "您已经开始了通话，并处于静音状态。",
         "mutedTitle": "您已被静音！",
-        "mutedRemotelyTitle": "",
-        "mutedRemotelyDescription": "",
         "passwordRemovedRemotely": "",
         "passwordSetRemotely": "",
         "raisedHand": "{{name}} 想要发言。",
@@ -804,7 +807,9 @@
         "unmute": "",
         "newDeviceCameraTitle": "检测到新相机",
         "newDeviceAudioTitle": "检测到新音频设备",
-        "newDeviceAction": "使用"
+        "newDeviceAction": "使用",
+        "mutedRemotelyTitle": "您已被 {{participantDisplayName}} 静音!",
+        "mutedRemotelyDescription": "您可以自己打开麦克风发言，您也可以自己重新关闭麦克风静音！"
     },
     "passwordSetRemotely": "由其他与会者设置",
     "passwordDigitsOnly": "",
