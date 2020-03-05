@@ -17,6 +17,8 @@
 package org.jitsi.meet.sdk;
 
 import android.app.Activity;
+import android.os.Build;
+
 import androidx.annotation.Nullable;
 
 import com.facebook.hermes.reactexecutor.HermesExecutorFactory;
@@ -90,16 +92,19 @@ class ReactInstanceManagerHolder {
         options.setAudioDeviceModule(adm);
 
         VideoEncoderFactory videoEncoderFactory = new SoftwareVideoEncoderFactory();
-        VideoDecoderFactory videoDecoderFactory;
+        VideoDecoderFactory videoDecoderFactory = new SoftwareVideoDecoderFactory();
+
         // Initialize EGL context required for HW acceleration. We are only going to use it for
         // decoding.
-        EglBase.Context eglContext = EglUtils.getRootEglBaseContext();
-        if (eglContext == null) {
-            // Fallback to the software decoder.
-            videoDecoderFactory = new SoftwareVideoDecoderFactory();
-        } else {
-            videoDecoderFactory = new DefaultVideoDecoderFactory(eglContext);
+        // NOTE: We are explicitly skipping Samsung devices because we have observed a high crash
+        // count on them.
+        if (!Build.MANUFACTURER.toLowerCase().contains("samsung")) {
+            EglBase.Context eglContext = EglUtils.getRootEglBaseContext();
+            if (eglContext != null) {
+                videoDecoderFactory = new DefaultVideoDecoderFactory(eglContext);
+            }
         }
+
         options.setVideoDecoderFactory(videoDecoderFactory);
         options.setVideoEncoderFactory(videoEncoderFactory);
 
