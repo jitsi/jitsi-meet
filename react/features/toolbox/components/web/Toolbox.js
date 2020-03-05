@@ -1004,7 +1004,7 @@ class Toolbox extends Component<Props, State> {
             <MuteEveryoneButton
                 key = 'mute-everyone'
                 showLabel = { true }
-                visible = { true || this._shouldShowButton('mute-everyone') } />,
+                visible = { this._shouldShowButton('mute-everyone') } />,
             this._shouldShowButton('stats')
                 && <OverflowMenuItem
                     accessibilityLabel = { t('toolbar.accessibilityLabel.speakerStats') }
