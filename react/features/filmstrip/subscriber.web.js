@@ -15,7 +15,7 @@ StateListenerRegistry.register(
         const state = store.getState();
 
         if (shouldDisplayTileView(state)) {
-            const gridDimensions = getTileViewGridDimensions(state['features/base/participants'].length);
+            const gridDimensions = getTileViewGridDimensions(state);
             const oldGridDimensions = state['features/filmstrip'].tileViewDimensions.gridDimensions;
             const { clientHeight, clientWidth } = state['features/base/responsive-ui'];
 
@@ -41,7 +41,7 @@ StateListenerRegistry.register(
             const { clientHeight, clientWidth } = state['features/base/responsive-ui'];
 
             store.dispatch(setTileViewDimensions(
-                getTileViewGridDimensions(state['features/base/participants'].length), {
+                getTileViewGridDimensions(state), {
                     clientHeight,
                     clientWidth
                 }));
