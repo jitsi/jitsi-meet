@@ -53,7 +53,10 @@ function on_message(event)
         local oldDominantSpeakerId = roomSpeakerStats['dominantSpeakerId'];
 
         if oldDominantSpeakerId then
-            roomSpeakerStats[oldDominantSpeakerId]:setDominantSpeaker(false);
+            local oldDominantSpeaker = roomSpeakerStats[oldDominantSpeakerId];
+            if oldDominantSpeaker then
+                oldDominantSpeaker:setDominantSpeaker(false);
+            end
         end
 
         if newDominantSpeaker then
