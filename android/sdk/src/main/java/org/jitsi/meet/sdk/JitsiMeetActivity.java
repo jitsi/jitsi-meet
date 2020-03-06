@@ -16,6 +16,7 @@
 
 package org.jitsi.meet.sdk;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -162,6 +163,7 @@ public class JitsiMeetActivity extends FragmentActivity
     // Activity lifecycle methods
     //
 
+    @SuppressLint("MissingSuperCall")
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         JitsiMeetActivityDelegate.onActivityResult(this, requestCode, resultCode, data);
