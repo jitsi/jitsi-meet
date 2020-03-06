@@ -2274,7 +2274,7 @@ export default {
                 })
                 .then(stream => this.useAudioStream(stream))
                 .then(() => {
-                    logger.log('switched local audio device');
+                    logger.log(`switched local audio device: ${this.localAudio?.getDeviceId()}`);
 
                     this._updateAudioDeviceId();
                 })
@@ -2651,12 +2651,6 @@ export default {
         // audio devices detected or if the local audio stream already exists.
         const available = audioDeviceCount > 0 || Boolean(this.localAudio);
 
-        logger.debug(
-            `Microphone button enabled: ${available}`,
-            `local audio: ${this.localAudio}`,
-            `audio devices: ${audioMediaDevices}`,
-            `device count: ${audioDeviceCount}`);
-
         APP.store.dispatch(setAudioAvailable(available));
         APP.API.notifyAudioAvailabilityChanged(available);
     },
@@ -2676,12 +2670,6 @@ export default {
         // created before the permissions were rejected (through browser
         // config).
         const available = videoDeviceCount > 0 || Boolean(this.localVideo);
-
-        logger.debug(
-            `Camera button enabled: ${available}`,
-            `local video: ${this.localVideo}`,
-            `video devices: ${videoMediaDevices}`,
-            `device count: ${videoDeviceCount}`);
 
         APP.store.dispatch(setVideoAvailable(available));
         APP.API.notifyVideoAvailabilityChanged(available);
