@@ -131,7 +131,7 @@ var config = {
 
     // Suspend sending video if bandwidth estimation is too low. This may cause
     // problems with audio playback. Disabled until these are fixed.
-    disableSuspendVideo: false,
+    disableSuspendVideo: true,
 
     // Every participant after the Nth will start video muted.
     startVideoMuted: 100,
