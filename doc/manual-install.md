@@ -1,9 +1,6 @@
 # Server Installation for Jitsi Meet
 
-
-:warning: **WARNING:** Manual installation is not recommended. We recommend following the [quick-install](https://github.com/jitsi/jitsi-meet/blob/master/doc/quick-install.md) document. The current document describes the steps that are needed to install a working deployment, but steps are easy to mess up, and the debian packages are more up-to-date, where this document sometimes is not updated to latest changes.
-
-
+:warning: **WARNING:** Manual installation is not recommended. We recommend following the [quick-install](https://github.com/jitsi/jitsi-meet/blob/master/doc/quick-install.md) document. The current document describes the steps that are needed to install a working deployment, but steps are easy to mess up, and the debian packages are more up-to-date, where this document is sometimes not updated to reflect latest changes.
 
 This describes configuring a server `jitsi.example.com` running Debian or a Debian Derivative. You will need to
 change references to that to match your host, and generate some passwords for
@@ -22,7 +19,7 @@ This is how the network looks:
                   443                          |
                +-------+                       |
                |       |                       |
-               | NginX |                       |
+               | Nginx |                       |
                |       |                       |
                +--+-+--+                       |
                   | |                          |
@@ -31,7 +28,7 @@ This is how the network looks:
 | jitsi-meet +<---+ +--->+ prosody/xmpp |      |
 |            |files 5280 |              |      |
 +------------+           +--------------+      v
-                     5222,5347^    ^5347      4443
+                     5222,5347^    ^5347   4443,10000
                 +--------+    |    |    +-------------+
                 |        |    |    |    |             |
                 | jicofo +----^    ^----+ videobridge |
@@ -112,7 +109,7 @@ Restart prosody XMPP server with the new config
 prosodyctl restart
 ```
 
-## Install nginx
+## Install Nginx
 ```sh
 apt-get install nginx
 ```
@@ -122,12 +119,13 @@ Add a new file `jitsi.example.com` in `/etc/nginx/sites-available` (see also the
 server_names_hash_bucket_size 64;
 
 server {
-    listen 443;
+    listen 0.0.0.0:443 ssl http2;
+    listen [::]:443 ssl http2;
     # tls configuration that is not covered in this guide
     # we recommend the use of https://certbot.eff.org/
     server_name jitsi.example.com;
     # set the root
-    root /srv/jitsi.example.com;
+    root /srv/jitsi-meet;
     index index.html;
     location ~ ^/([a-zA-Z0-9=\?]+)$ {
         rewrite ^/(.*)$ / break;
@@ -152,6 +150,7 @@ ln -s ../sites-available/jitsi.example.com jitsi.example.com
 ```
 
 ## Install Jitsi Videobridge
+Visit https://download.jitsi.org/jitsi-videobridge/linux to determine the current build number, download and unzip it:
 ```sh
 wget https://download.jitsi.org/jitsi-videobridge/linux/jitsi-videobridge-linux-{arch-buildnum}.zip
 unzip jitsi-videobridge-linux-{arch-buildnum}.zip
@@ -164,9 +163,10 @@ apt-get install openjdk-8-jre
 
 _NOTE: When installing on older Debian releases keep in mind that you need JRE >= 1.7._
 
-In the user home that will be starting Jitsi Videobridge create `.sip-communicator` folder and add the file `sip-communicator.properties` with one line in it:
-```
-org.jitsi.impl.neomedia.transform.srtp.SRTPCryptoContext.checkReplay=false
+Create `~/.sip-communicator/sip-communicator.properties` in the home folder of the user that will be starting Jitsi Videobridge:
+```sh
+mkdir -p ~/.sip-communicator
+echo "org.jitsi.impl.neomedia.transform.srtp.SRTPCryptoContext.checkReplay=false" > ~/.sip-communicator/sip-communicator.properties
 ```
 
 Start the videobridge with:
@@ -191,7 +191,7 @@ Clone source from Github repo:
 ```sh
 git clone https://github.com/jitsi/jicofo.git
 ```
-Build distribution package. Replace {os-name} with one of: 'lin', 'lin64', 'macosx', 'win', 'win64'.
+Build the package.
 ```sh
 cd jicofo
 mvn package -DskipTests -Dassembly.skipAssembly=false
@@ -199,8 +199,8 @@ mvn package -DskipTests -Dassembly.skipAssembly=false
 Run jicofo:
 ```sh
 =======
-unzip target/jicofo-{os-name}-1.0-SNAPSHOT.zip
-cd jicofo-{os-name}-1.0-SNAPSHOT'
+unzip target/jicofo-1.1-SNAPSHOT-archive.zip
+cd jicofo-1.1-SNAPSHOT-archive'
 ./jicofo.sh --host=localhost --domain=jitsi.example.com --secret=YOURSECRET2 --user_domain=auth.jitsi.example.com --user_name=focus --user_password=YOURSECRET3
 ```
 
@@ -209,13 +209,12 @@ Checkout and configure Jitsi Meet:
 ```sh
 cd /srv
 git clone https://github.com/jitsi/jitsi-meet.git
-mv jitsi-meet/ jitsi.example.com
-cd jitsi.example.com
+cd jitsi-meet
 npm install
 make
 ```
 
-Edit host names in `/srv/jitsi.example.com/config.js` (see also the example config file):
+Edit host names in `/srv/jitsi-meet/config.js` (see also the example config file):
 ```
 var config = {
     hosts: {
@@ -231,15 +230,19 @@ var config = {
 };
 ```
 
-Restart nginx to get the new configuration:
+Verify that nginx config is valid and reload nginx:
 ```sh
-invoke-rc.d nginx restart
+nginx -t && nginx -s reload
 ```
 
 ## Running behind NAT
-Jitsi-Videobridge can run behind a NAT, provided that all required ports are routed (forwarded) to the machine that it runs on. By default these ports are (TCP/443 or TCP/4443 and UDP 10000).
+Jitsi Videobridge can run behind a NAT, provided that both required ports are routed (forwarded) to the machine that it runs on. By default these ports are `TCP/4443` and `UDP/10000`.
 
-The following extra lines need to be added the file `~/.sip-communicator/sip-communicator.properties` (in the home directory of the user running the videobridge):
+If you do not route these two ports, Jitsi Meet will only work with video for two people, breaking upon 3 or more people trying to show video.
+
+`TCP/443` is required for the webserver which can be running on another machine than the Jitsi Videobrige is running on.
+
+The following extra lines need to be added to the file `~/.sip-communicator/sip-communicator.properties` (in the home directory of the user running the videobridge):
 ```
 org.ice4j.ice.harvest.NAT_HARVESTER_LOCAL_ADDRESS=<Local.IP.Address>
 org.ice4j.ice.harvest.NAT_HARVESTER_PUBLIC_ADDRESS=<Public.IP.Address>
@@ -248,6 +251,5 @@ org.ice4j.ice.harvest.NAT_HARVESTER_PUBLIC_ADDRESS=<Public.IP.Address>
 # Hold your first conference
 You are now all set and ready to have your first meet by going to http://jitsi.example.com
 
-
 ## Enabling recording
-[Jibri](https://github.com/jitsi/jibri)is a set of tools for recording and/or streaming a Jitsi Meet conference.
+[Jibri](https://github.com/jitsi/jibri) is a set of tools for recording and/or streaming a Jitsi Meet conference.
