@@ -10,7 +10,7 @@ import {
 } from '../video-layout';
 
 import { SET_HORIZONTAL_VIEW_DIMENSIONS, SET_TILE_VIEW_DIMENSIONS } from './actionTypes';
-import { setHorizontalViewDimensions, setTileViewDimensions } from './actions';
+import { setHorizontalViewDimensions, setTileViewDimensions } from './actions.web';
 
 import './subscriber.web';
 
@@ -29,11 +29,18 @@ MiddlewareRegistry.register(store => next => action => {
         case LAYOUTS.TILE_VIEW: {
             const { gridDimensions } = state['features/filmstrip'].tileViewDimensions;
             const { clientHeight, clientWidth } = state['features/base/responsive-ui'];
+            const { isOpen } = state['features/chat'];
 
-            store.dispatch(setTileViewDimensions(gridDimensions, {
-                clientHeight,
-                clientWidth
-            }));
+            store.dispatch(
+                setTileViewDimensions(
+                    gridDimensions,
+                    {
+                        clientHeight,
+                        clientWidth
+                    },
+                    isOpen
+                )
+            );
             break;
         }
         case LAYOUTS.HORIZONTAL_FILMSTRIP_VIEW:
