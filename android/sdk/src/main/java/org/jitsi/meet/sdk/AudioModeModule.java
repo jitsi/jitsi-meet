@@ -198,7 +198,12 @@ class AudioModeModule extends ReactContextBaseJavaModule {
      */
     @Override
     public void initialize() {
-        setAudioDeviceHandler();
+        runInAudioThread(new Runnable() {
+            @Override
+            public void run() {
+                setAudioDeviceHandler();
+            }
+        });
     }
 
     private void setAudioDeviceHandler() {
@@ -292,9 +297,14 @@ class AudioModeModule extends ReactContextBaseJavaModule {
      * @param use Boolean indicator of where it should be used or not.
      */
     @ReactMethod
-    public void setUseConnectionService(boolean use) {
-        useConnectionService_ = use;
-        setAudioDeviceHandler();
+    public void setUseConnectionService(final boolean use) {
+        runInAudioThread(new Runnable() {
+            @Override
+            public void run() {
+                useConnectionService_ = use;
+                setAudioDeviceHandler();
+            }
+        });
     }
 
     /**
