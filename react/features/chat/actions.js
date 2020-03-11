@@ -1,5 +1,7 @@
 // @flow
 
+import VideoLayout from '../../../modules/UI/videolayout/VideoLayout';
+
 import {
     ADD_MESSAGE,
     CLEAR_MESSAGES,
@@ -86,14 +88,14 @@ export function setPrivateMessageRecipient(participant: Object) {
 }
 
 /**
- * Toggles display of the chat side panel.
+ * Toggles display of the chat side panel while also taking window
+ * resize into account.
  *
- * @returns {{
- *     type: TOGGLE_CHAT
- * }}
+ * @returns {Function}
  */
 export function toggleChat() {
-    return {
-        type: TOGGLE_CHAT
+    return function(dispatch: (Object) => Object) {
+        dispatch({ type: TOGGLE_CHAT });
+        VideoLayout.onResize();
     };
 }

@@ -32,7 +32,7 @@ import { connect, equals } from '../../../base/redux';
 import { OverflowMenuItem } from '../../../base/toolbox';
 import { getLocalVideoTrack, toggleScreensharing } from '../../../base/tracks';
 import { VideoBlurButton } from '../../../blur';
-import { ChatCounter, toggleChat } from '../../../chat';
+import { CHAT_SIZE, ChatCounter, toggleChat } from '../../../chat';
 import { SharedDocumentButton } from '../../../etherpad';
 import { openFeedbackDialog } from '../../../feedback';
 import { beginAddPeople } from '../../../invite';
@@ -322,6 +322,10 @@ class Toolbox extends Component<Props, State> {
             this._onSetOverflowVisible(false);
             this.props.dispatch(setToolbarHovered(false));
         }
+
+        if (this.props._chatOpen !== prevProps._chatOpen) {
+            this._onResize();
+        }
     }
 
     /**
@@ -344,9 +348,9 @@ class Toolbox extends Component<Props, State> {
      * @returns {ReactElement}
      */
     render() {
-        const { _visible, _visibleButtons } = this.props;
+        const { _chatOpen, _visible, _visibleButtons } = this.props;
         const rootClassNames = `new-toolbox ${_visible ? 'visible' : ''} ${
-            _visibleButtons.size ? '' : 'no-buttons'}`;
+            _visibleButtons.size ? '' : 'no-buttons'} ${_chatOpen ? 'shift-right' : ''}`;
 
         return (
             <div
@@ -534,10 +538,15 @@ class Toolbox extends Component<Props, State> {
      * @returns {void}
      */
     _onResize() {
-        const width = window.innerWidth;
+        let widthToUse = window.innerWidth;
 
-        if (this.state.windowWidth !== width) {
-            this.setState({ windowWidth: width });
+        // Take chat size into account when resizing toolbox.
+        if (this.props._chatOpen) {
+            widthToUse -= CHAT_SIZE;
+        }
+
+        if (this.state.windowWidth !== widthToUse) {
+            this.setState({ windowWidth: widthToUse });
         }
     }
 
@@ -1174,15 +1183,15 @@ class Toolbox extends Component<Props, State> {
             / 2 // divide by the number of groups(left and right group)
         );
 
+        if (this._shouldShowButton('chat')) {
+            buttonsLeft.push('chat');
+        }
         if (this._shouldShowButton('desktop')
                 && this._isDesktopSharingButtonVisible()) {
             buttonsLeft.push('desktop');
         }
         if (this._shouldShowButton('raisehand')) {
             buttonsLeft.push('raisehand');
-        }
-        if (this._shouldShowButton('chat')) {
-            buttonsLeft.push('chat');
         }
         if (this._shouldShowButton('closedcaptions')) {
             buttonsLeft.push('closedcaptions');
@@ -1239,15 +1248,6 @@ class Toolbox extends Component<Props, State> {
         return (
             <div className = 'toolbox-content'>
                 <div className = 'button-group-left'>
-                    { buttonsLeft.indexOf('desktop') !== -1
-                        && this._renderDesktopSharingButton() }
-                    { buttonsLeft.indexOf('raisehand') !== -1
-                        && <ToolbarButton
-                            accessibilityLabel = { t('toolbar.accessibilityLabel.raiseHand') }
-                            icon = { IconRaisedHand }
-                            onClick = { this._onToolbarToggleRaiseHand }
-                            toggled = { _raisedHand }
-                            tooltip = { t('toolbar.raiseHand') } /> }
                     { buttonsLeft.indexOf('chat') !== -1
                         && <div className = 'toolbar-button-with-badge'>
                             <ToolbarButton
@@ -1258,6 +1258,15 @@ class Toolbox extends Component<Props, State> {
                                 tooltip = { t('toolbar.chat') } />
                             <ChatCounter />
                         </div> }
+                    { buttonsLeft.indexOf('desktop') !== -1
+                        && this._renderDesktopSharingButton() }
+                    { buttonsLeft.indexOf('raisehand') !== -1
+                        && <ToolbarButton
+                            accessibilityLabel = { t('toolbar.accessibilityLabel.raiseHand') }
+                            icon = { IconRaisedHand }
+                            onClick = { this._onToolbarToggleRaiseHand }
+                            toggled = { _raisedHand }
+                            tooltip = { t('toolbar.raiseHand') } /> }
                     {
                         buttonsLeft.indexOf('closedcaptions') !== -1
                             && <ClosedCaptionButton />
