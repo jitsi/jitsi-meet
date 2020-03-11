@@ -28,10 +28,8 @@ import {
 } from '../AbstractConference';
 import type { AbstractProps } from '../AbstractConference';
 
-import InviteMore from './InviteMore';
 import Labels from './Labels';
 import { default as Notice } from './Notice';
-import { default as Subject } from './Subject';
 
 declare var APP: Object;
 declare var config: Object;
@@ -201,8 +199,6 @@ class Conference extends AbstractConference<Props, *> {
                 onMouseMove = { this._onShowToolbar }>
 
                 <Notice />
-                <Subject />
-                <InviteMore />
                 <div id = 'videospace'>
                     <LargeVideo />
                     <KnockingParticipantList />
