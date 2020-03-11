@@ -108,7 +108,8 @@ class AudioDeviceHandlerConnectionService implements
      */
     private int supportedRouteMask = -1;
 
-    public AudioDeviceHandlerConnectionService() {
+    public AudioDeviceHandlerConnectionService(AudioManager audioManager) {
+        this.audioManager = audioManager;
     }
 
     @Override
@@ -136,11 +137,10 @@ class AudioDeviceHandlerConnectionService implements
     }
 
     @Override
-    public void start(Context context, AudioModeModule audioModeModule) {
+    public void start(AudioModeModule audioModeModule) {
         JitsiMeetLogger.i("Using " + TAG + " as the audio device handler");
 
         module = audioModeModule;
-        audioManager = (AudioManager)context.getSystemService(Context.AUDIO_SERVICE);
 
         RNConnectionService rcs = ReactInstanceManagerHolder.getNativeModule(RNConnectionService.class);
         if (rcs != null) {
