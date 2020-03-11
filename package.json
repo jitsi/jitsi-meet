@@ -56,7 +56,7 @@
     "js-utils": "github:jitsi/js-utils#8567f86ec2774ae1d1c47b22e3435928cf5d9771",
     "jsrsasign": "8.0.12",
     "jwt-decode": "2.2.0",
-    "lib-jitsi-meet": "github:jitsi/lib-jitsi-meet#567ba72675b1bfd5931e7d4936a4e53ebb4ef5f2",
+    "lib-jitsi-meet": "github:jitsi/lib-jitsi-meet#aadfce2283cad4de3cb58c2eed8e14d2ce62c465",
     "libflacjs": "github:mmig/libflac.js#93d37e7f811f01cf7d8b6a603e38bd3c3810907d",
     "lodash": "4.17.13",
     "moment": "2.19.4",
