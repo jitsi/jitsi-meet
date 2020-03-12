@@ -751,7 +751,7 @@ const VideoLayout = {
         APP.remoteControl.checkUserRemoteControlSupport(user)
             .then(result => remoteVideo.setRemoteControlSupport(result))
             .catch(error =>
-                logger.warn('could not get remote control properties', error));
+                logger.warn(`could not get remote control properties for: ${user.getJid()}`, error));
     },
 
     /**
