@@ -660,10 +660,10 @@ export default {
                     startAudioOnly: config.startAudioOnly,
                     startScreenSharing: config.startScreenSharing,
                     startWithAudioMuted: config.startWithAudioMuted
-                    || config.startSilent
-                    || isUserInteractionRequiredForUnmute(APP.store.getState()),
+                        || config.startSilent
+                        || isUserInteractionRequiredForUnmute(APP.store.getState()),
                     startWithVideoMuted: config.startWithVideoMuted
-                    || isUserInteractionRequiredForUnmute(APP.store.getState())
+                        || isUserInteractionRequiredForUnmute(APP.store.getState())
                 }))
             .then(([ tracks, con ]) => {
                 tracks.forEach(track => {

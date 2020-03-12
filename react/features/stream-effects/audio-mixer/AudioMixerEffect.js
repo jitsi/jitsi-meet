@@ -10,7 +10,6 @@ import logger from '../../base/redux/logger';
  * provided at the moment of creation, second is provided through the effect interface.
  */
 export class AudioMixerEffect {
-
     /**
      * JitsiLocalTrack that is going to be mixed into the track that uses this effect.
      */
@@ -53,7 +52,6 @@ export class AudioMixerEffect {
      * @returns {MediaStream} - MediaStream containing both audio tracks mixed together.
      */
     startEffect(audioStream: MediaStream) {
-
         this._audioMixer = JitsiMeetJS.createAudioMixer();
         this._audioMixer.addJitsiLocalTrack(this._mixAudio);
         this._audioMixer.addMediaStream(audioStream);
