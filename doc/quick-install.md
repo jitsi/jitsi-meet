@@ -124,7 +124,7 @@ The reason for failure is that sometimes, the uninstall script is faster than th
 #### Systemd details
 To reload the systemd changes on a running system execute `systemctl daemon-reload` and `service jitsi-videobridge restart`.
 To check the tasks part execute `service jitsi-videobridge status` and you should see `Tasks: XX (limit: 65000)`.
-To check the files and process part execute ```cat /proc/`cat /var/run/jitsi-videobridge.pid`/limits``` and you should see:
+To check the files and process part execute ```cat /proc/`cat /var/run/jitsi-videobridge/jitsi-videobridge.pid`/limits``` and you should see:
 ```
 Max processes             65000                65000                processes
 Max open files            65000                65000                files
