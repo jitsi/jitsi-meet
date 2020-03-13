@@ -5,7 +5,7 @@ import React from 'react';
 import { createToolbarEvent, sendAnalytics } from '../../../analytics';
 import { openDialog } from '../../../base/dialog';
 import { translate } from '../../../base/i18n';
-import { IconMicDisabled } from '../../../base/icons';
+import { IconMuteEveryoneElse } from '../../../base/icons';
 import { connect } from '../../../base/redux';
 
 import AbstractMuteButton, {
@@ -45,7 +45,7 @@ class MuteEveryoneElseButton extends AbstractMuteButton {
             <RemoteVideoMenuButton
                 buttonText = { t('videothumbnail.domuteOthers') }
                 displayClass = { 'mutelink' }
-                icon = { IconMicDisabled }
+                icon = { IconMuteEveryoneElse }
                 id = { `mutelink_${participantID}` }
                 // eslint-disable-next-line react/jsx-handler-names
                 onClick = { this._handleClick } />
