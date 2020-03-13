@@ -498,7 +498,9 @@ export default class LargeVideoManager {
         const container = this.containers[type];
 
         if (!container) {
-            throw new Error(`container of type ${type} doesn't exist`);
+            /** ****************Ater********************************/
+            // throw new Error(`container of type ${type} doesn't exist`);
+            /** ****************Ater********************************/
         }
 
         return container;
@@ -542,7 +544,8 @@ export default class LargeVideoManager {
      * @param {string} type container type.
      * @returns {Promise}
      */
-    showContainer(type) {
+    /** ****************Ater********************************/
+    showContainer(type, isHiddenOldContainer = true) {
         if (this.state === type) {
             return Promise.resolve();
         }
@@ -557,7 +560,12 @@ export default class LargeVideoManager {
             this.showWatermark(false);
             this.showRemoteConnectionMessage(false);
         }
-        oldContainer.hide();
+
+        /** ****************Ater********************************/
+        if (isHiddenOldContainer === true) {
+            oldContainer.hide();
+        }
+        /** ****************Ater********************************/
 
         this.state = type;
         const container = this.getContainer(type);
@@ -577,6 +585,29 @@ export default class LargeVideoManager {
             }
         });
     }
+
+    /** ****************Ater********************************/
+    /**
+     * Show showEtherDrawContainer.
+     * Does nothing if such container is already visible.
+     * @param {string} type container type.
+     * @returns {Promise}
+     */
+    showEtherDrawContainer(type, show) {
+        if (this.state === type) {
+            return Promise.resolve();
+        }
+
+        const container = this.getContainer(type);
+
+        if (show) {
+            return container.show();
+        } else {
+            return container.hide();
+        }
+    }
+
+    /** ****************Ater********************************/
 
     /**
      * Changes the flipX state of the local video.

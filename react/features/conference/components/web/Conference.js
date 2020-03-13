@@ -177,6 +177,7 @@ class Conference extends AbstractConference<Props, *> {
                 || VIDEO_QUALITY_LABEL_DISABLED
                 || this.props._iAmRecorder;
 
+        /** ****************Ater********************************/
         return (
             <div
                 className = { this.props._layoutClassName }

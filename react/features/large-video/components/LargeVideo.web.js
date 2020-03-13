@@ -30,6 +30,7 @@ class LargeVideo extends Component<Props> {
      * @inheritdoc
      * @returns {React$Element}
      */
+    /** ****************Ater********************************/
     render() {
         return (
             <div
@@ -38,6 +39,9 @@ class LargeVideo extends Component<Props> {
                 <div id = 'sharedVideo'>
                     <div id = 'sharedVideoIFrame' />
                 </div>
+
+                <div id = 'etherdraw' />
+
                 <div id = 'etherpad' />
 
                 <Watermarks />

@@ -6,38 +6,35 @@ var config = {
 
     hosts: {
         // XMPP domain.
-        domain: 'jitsi-meet.example.com',
+        domain: 'meet.jitsi',
 
         // When using authentication, domain for guest users.
         // anonymousdomain: 'guest.example.com',
 
         // Domain for authenticated users. Defaults to <domain>.
-        // authdomain: 'jitsi-meet.example.com',
+        // authdomain: 'meet.jitsi',
 
         // Jirecon recording component domain.
-        // jirecon: 'jirecon.jitsi-meet.example.com',
+        // jirecon: 'jirecon.meet.jitsi',
 
         // Call control component (Jigasi).
-        // call_control: 'callcontrol.jitsi-meet.example.com',
+        // call_control: 'callcontrol.meet.jitsi',
 
         // Focus component domain. Defaults to focus.<domain>.
-        // focus: 'focus.jitsi-meet.example.com',
+        // focus: 'focus.meet.jitsi',
 
         // XMPP MUC domain. FIXME: use XEP-0030 to discover it.
-        muc: 'conference.jitsi-meet.example.com'
+        muc: 'muc.meet.jitsi',
     },
 
     // BOSH URL. FIXME: use XEP-0156 to discover it.
-    bosh: '//jitsi-meet.example.com/http-bind',
-
-    // Websocket URL
-    // websocket: 'wss://jitsi-meet.example.com/xmpp-websocket',
+    bosh: '/http-bind',
 
     // The name of client node advertised in XEP-0115 'c' stanza
     clientNode: 'http://jitsi.org/jitsimeet',
 
     // The real JID of focus participant - can be overridden here
-    // focusUserJid: 'focus@auth.jitsi-meet.example.com',
+    focusUserJid: 'focus@auth.meet.jitsi',
 
 
     // Testing / experimental features.
@@ -185,9 +182,9 @@ var config = {
     //     appKey: '<APP_KEY>' // Specify your app key here.
     //     // A URL to redirect the user to, after authenticating
     //     // by default uses:
-    //     // 'https://jitsi-meet.example.com/static/oauth.html'
+    //     // 'https://meet.jitsi/static/oauth.html'
     //     redirectURI:
-    //          'https://jitsi-meet.example.com/subfolder/static/oauth.html'
+    //          'https://meet.jitsi/subfolder/static/oauth.html'
     // },
     // When integrations like dropbox are enabled only that will be shown,
     // by enabling fileRecordingsServiceEnabled, we show both the integrations
@@ -251,14 +248,14 @@ var config = {
     //
 
     // Use display name as XMPP nickname.
-    // useNicks: false,
+    useNicks: true,
 
     // Require users to always specify a display name.
-    // requireDisplayName: true,
+    requireDisplayName: false,
 
     // Whether to use a welcome page or not. In case it's false a random room
     // will be joined when no room is specified.
-    enableWelcomePage: true,
+    enableWelcomePage: false,
 
     // Enabling the close page will ignore the welcome page redirection when
     // a call is hangup.
@@ -268,7 +265,7 @@ var config = {
     // disable1On1Mode: false,
 
     // Default language for the user interface.
-    // defaultLanguage: 'en',
+    defaultLanguage: 'zhCN',
 
     // If true all users without a token will be considered guests and all users
     // with token will be considered non-guests. Only guests will be allowed to
@@ -409,20 +406,20 @@ var config = {
     // Local Recording
     //
 
-    // localRecording: {
-    // Enables local recording.
-    // Additionally, 'localrecording' (all lowercase) needs to be added to
-    // TOOLBAR_BUTTONS in interface_config.js for the Local Recording
-    // button to show up on the toolbar.
-    //
-    //     enabled: true,
-    //
+    ,localRecording: {
+        // Enables local recording.
+        // Additionally, 'localrecording' (all lowercase) needs to be added to
+        // TOOLBAR_BUTTONS in interface_config.js for the Local Recording
+        // button to show up on the toolbar.
+        //
+        enabled: true,
+        //
 
-    // The recording format, can be one of 'ogg', 'flac' or 'wav'.
-    //     format: 'flac'
-    //
+        // The recording format, can be one of 'ogg', 'flac' or 'wav'.
+        format: 'wav'
+        //
 
-    // }
+    }
 
     // Options related to end-to-end (participant to participant) ping.
     // e2eping: {
@@ -460,6 +457,8 @@ var config = {
     //    // to the specified URL for an app download page.
     //    downloadAppsUrl: 'https://docs.example.com/our-apps.html'
     // }
+    ,etherpad_base: 'https://conference.lawbal.com/etherpad/p/'
+    ,etherdraw_base: 'https://conference.lawbal.com/etherdraw/'
 
     // List of undocumented settings used in jitsi-meet
     /**

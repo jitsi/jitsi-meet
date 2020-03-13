@@ -1,6 +1,7 @@
 /* eslint-disable no-unused-vars, no-var, max-len */
 
 var interfaceConfig = {
+    LBRECORDUPLOAD: 'https://v.lawbal.com/lvbao/conference/upload',
     // TO FIX: this needs to be handled from SASS variables. There are some
     // methods allowing to use variables both in css and js.
     DEFAULT_BACKGROUND: '#474747',
@@ -13,24 +14,24 @@ var interfaceConfig = {
 
     INITIAL_TOOLBAR_TIMEOUT: 20000,
     TOOLBAR_TIMEOUT: 4000,
-    TOOLBAR_ALWAYS_VISIBLE: false,
-    DEFAULT_REMOTE_DISPLAY_NAME: 'Fellow Jitster',
-    DEFAULT_LOCAL_DISPLAY_NAME: 'me',
-    SHOW_JITSI_WATERMARK: true,
-    JITSI_WATERMARK_LINK: 'https://jitsi.org',
+    TOOLBAR_ALWAYS_VISIBLE: true,
+    DEFAULT_REMOTE_DISPLAY_NAME: '另一位律师',
+    DEFAULT_LOCAL_DISPLAY_NAME: '我',
+    SHOW_JITSI_WATERMARK: false,
+    JITSI_WATERMARK_LINK: 'https://v.lawbal.com/',
 
     // if watermark is disabled by default, it can be shown only for guests
     SHOW_WATERMARK_FOR_GUESTS: true,
     SHOW_BRAND_WATERMARK: false,
-    BRAND_WATERMARK_LINK: '',
+    BRAND_WATERMARK_LINK: 'https://v.lawbal.com/',
     SHOW_POWERED_BY: false,
     SHOW_DEEP_LINKING_IMAGE: false,
     GENERATE_ROOMNAMES_ON_WELCOME_PAGE: true,
     DISPLAY_WELCOME_PAGE_CONTENT: true,
     DISPLAY_WELCOME_PAGE_TOOLBAR_ADDITIONAL_CONTENT: false,
-    APP_NAME: 'Jitsi Meet',
-    NATIVE_APP_NAME: 'Jitsi Meet',
-    PROVIDER_NAME: 'Jitsi',
+    APP_NAME: '律宝视频会议',
+    NATIVE_APP_NAME: '律宝视频会议',
+    PROVIDER_NAME: '艾特律宝',
     LANG_DETECTION: false, // Allow i18n to detect the system language
     INVITATION_POWERED_BY: true,
 
@@ -48,13 +49,13 @@ var interfaceConfig = {
      */
     TOOLBAR_BUTTONS: [
         'microphone', 'camera', 'closedcaptions', 'desktop', 'fullscreen',
-        'fodeviceselection', 'hangup', 'profile', 'info', 'chat', 'recording',
-        'livestreaming', 'etherpad', 'sharedvideo', 'settings', 'raisehand',
-        'videoquality', 'filmstrip', 'invite', 'feedback', 'stats', 'shortcuts',
-        'tileview', 'videobackgroundblur', 'download', 'help', 'mute-everyone'
-    ],
+        'fodeviceselection', 'hangup', 'profile', 'recording',
+        'etherpad', 'settings', 'raisehand',
+        'videoquality', 'filmstrip', 'stats', 'shortcuts',
+        'tileview', 'videobackgroundblur','download', 'help', 'mute-everyone', 'etherdraw'
+    ], //'chat','info','feedback','invite', 'livestreaming', 'sharedvideo'
 
-    SETTINGS_SECTIONS: [ 'devices', 'language', 'moderator', 'profile', 'calendar' ],
+    SETTINGS_SECTIONS: [ 'devices', 'language', 'moderator', 'profile' ], //'calendar'
 
     // Determines how the video would fit the screen. 'both' would fit the whole
     // screen, 'height' would fit the original video height to the height of the
@@ -89,7 +90,7 @@ var interfaceConfig = {
      *
      * @type {boolean}
      */
-    DISABLE_TRANSCRIPTION_SUBTITLES: false,
+    DISABLE_TRANSCRIPTION_SUBTITLES: true,
 
     /**
      * Whether the ringing sound in the call/ring overlay is disabled. If
@@ -127,7 +128,7 @@ var interfaceConfig = {
      * If indicated some of the error dialogs may point to the support URL for
      * help.
      */
-    SUPPORT_URL: 'https://github.com/jitsi/jitsi-meet/issues/new',
+    SUPPORT_URL: 'https://v.lawbal.com/',
 
     /**
      * Whether the connection indicator icon should hide itself based on
@@ -226,7 +227,7 @@ var interfaceConfig = {
     /**
      * Specify mobile app scheme for opening the app from the mobile browser.
      */
-    // APP_SCHEME: 'org.jitsi.meet',
+    ,APP_SCHEME: 'https://conference.lawbal.com/' //'org.jitsi.meet',
 
     /**
      * Specify the Android app package name.

@@ -23,6 +23,46 @@ import {
     showToolbox
 } from '../../react/features/toolbox';
 
+/** ****************Ater********************************/
+import EtherdrawManager from './etherdraw/Etherdraw';
+import { setEtherdrawHasInitialzied } from '../../react/features/etherdraw';
+
+let etherdrawManager;
+
+/**
+ * Returns true if the etherdraw window is currently visible.
+ * @returns {Boolean} - true if the etherdraw window is currently visible.
+ */
+UI.isEtherdrawVisible = function() {
+    return Boolean(etherdrawManager && etherdrawManager.isVisible());
+};
+
+/**
+ * Setup and show Etherdraw.
+ * @param {string} name etherdraw id
+ */
+UI.initEtherdraw = name => {
+    const etherDrawBase = config.etherdraw_base || 'https://conference.lawbal.com:9003';
+
+    if (etherdrawManager || !etherDrawBase || !name) {
+        return;
+    }
+    logger.log('Etherdraw is enabled');
+    etherdrawManager
+        = new EtherdrawManager(etherDrawBase, name, eventEmitter);
+
+    etherdrawManager.toggleEtherdraw(null);
+    APP.store.dispatch(setEtherdrawHasInitialzied());
+};
+
+/**
+ * Returns the shared draw manager object.
+ * @return {EtherdrawManager} the shared draw manager object
+ */
+UI.getSharedDrawManager = () => etherdrawManager;
+
+/** ****************Ater********************************/
+
 const EventEmitter = require('events');
 
 UI.messageHandler = messageHandler;
@@ -41,6 +81,9 @@ const UIListeners = new Map([
     ], [
         UIEvents.SHARED_VIDEO_CLICKED,
         () => sharedVideoManager && sharedVideoManager.toggleSharedVideo()
+    ], [
+        UIEvents.ETHERDRAW_CLICKED, /** ****************Ater********************************/
+        id => etherdrawManager && etherdrawManager.toggleEtherdraw(id)
     ], [
         UIEvents.TOGGLE_FILMSTRIP,
         () => UI.toggleFilmstrip()

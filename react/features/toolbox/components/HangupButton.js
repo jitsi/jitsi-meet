@@ -10,6 +10,16 @@ import { connect } from '../../base/redux';
 import { AbstractHangupButton } from '../../base/toolbox';
 import type { AbstractButtonProps } from '../../base/toolbox';
 
+/* Ater */
+import { recordingController } from '../../local-recording/controller';
+import {
+    LocalRecordingInfoDialog
+} from '../../local-recording/components';
+import { openDialog } from '../../base/dialog';
+
+/* Ater */
+
+
 /**
  * The type of the React {@code Component} props of {@link HangupButton}.
  */
@@ -62,7 +72,14 @@ class HangupButton extends AbstractHangupButton<Props, *> {
      * @returns {void}
      */
     _doHangup() {
-        this._hangup();
+
+        /* Ater */
+        if (recordingController.getLocalStats().isRecording) {
+            /* Ater */
+            this.props.dispatch(openDialog(LocalRecordingInfoDialog));
+        } else {
+            this._hangup();
+        }
     }
 }
 

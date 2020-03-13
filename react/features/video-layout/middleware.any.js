@@ -9,6 +9,11 @@ import { SET_DOCUMENT_EDITING_STATUS, toggleDocument } from '../etherpad';
 import { SET_TILE_VIEW } from './actionTypes';
 import { setTileView } from './actions';
 
+/** ****************Ater********************************/
+import { SET_DRAW_EDITING_STATUS, toggleDraw } from '../etherdraw';
+
+/** ****************Ater********************************/
+
 /**
  * Middleware which intercepts actions and updates tile view related state.
  *
@@ -35,6 +40,15 @@ MiddlewareRegistry.register(store => next => action => {
 
         break;
 
+    /** ****************Ater********************************/
+    case SET_DRAW_EDITING_STATUS:
+        if (action.editing) {
+            store.dispatch(setTileView(false));
+        }
+
+        break;
+
+    /** ****************Ater********************************/
     case SET_TILE_VIEW: {
         const state = store.getState();
 
@@ -46,6 +60,13 @@ MiddlewareRegistry.register(store => next => action => {
             if (state['features/etherpad'].editing) {
                 store.dispatch(toggleDocument());
             }
+
+            /** ****************Ater********************************/
+            if (state['features/etherdraw'].editing) {
+                store.dispatch(toggleDraw());
+            }
+
+            /** ****************Ater********************************/
         }
 
         break;

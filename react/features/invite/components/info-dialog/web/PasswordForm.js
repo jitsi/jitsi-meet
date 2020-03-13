@@ -145,6 +145,10 @@ class PasswordForm extends Component<Props, State> {
                         spellCheck = { 'false' }
                         type = 'text'
                         value = { this.state.enteredPassword } />
+
+                    {/* *****************Ater********************************/}
+                    <button onClick = { this._onPasswordSubmit }>确定</button>
+                    {/* *****************Ater********************************/}
                 </form>
             );
         } else if (this.props.locked === LOCKED_LOCALLY) {

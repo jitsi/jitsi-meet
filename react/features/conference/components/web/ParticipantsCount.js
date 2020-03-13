@@ -74,7 +74,7 @@ class ParticipantsCount extends PureComponent<Props> {
                 className = 'participants-count'
                 onClick = { this._onClick }>
                 <span className = 'participants-count-number'>
-                    {this.props.count}
+                    { "在线人数:" + this.props.count}
                 </span>
                 <span className = 'participants-count-icon' />
             </div>

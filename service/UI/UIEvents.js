@@ -12,6 +12,7 @@ export default {
     AUDIO_MUTED: 'UI.audio_muted',
     VIDEO_MUTED: 'UI.video_muted',
     ETHERPAD_CLICKED: 'UI.etherpad_clicked',
+    ETHERDRAW_CLICKED: 'UI.etherdraw_clicked',/** ****************Ater********************************/
     SHARED_VIDEO_CLICKED: 'UI.start_shared_video',
 
     /**
@@ -43,6 +44,7 @@ export default {
     TOGGLE_FILMSTRIP: 'UI.toggle_filmstrip',
 
     TOGGLE_SCREENSHARING: 'UI.toggle_screensharing',
+    TOGGLED_SHARED_DRAW: 'UI.toggled_shared_draw', /** ****************Ater********************************/
     HANGUP: 'UI.hangup',
     LOGOUT: 'UI.logout',
     VIDEO_DEVICE_CHANGED: 'UI.video_device_changed',

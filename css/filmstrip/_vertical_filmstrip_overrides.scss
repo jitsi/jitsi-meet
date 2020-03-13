@@ -10,6 +10,8 @@
  * Overrides for video containers that should not be centered aligned to avoid=
  * clashing with the filmstrip.
  */
+/** ****************Ater********************************/
+.vertical-filmstrip #etherdraw,
 .vertical-filmstrip #etherpad,
 .vertical-filmstrip #sharedvideo {
     text-align: left;

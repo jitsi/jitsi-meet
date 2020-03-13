@@ -1,5 +1,10 @@
 /* @flow */
 
+/** ****************Ater********************************/
+declare var interfaceConfig: Object;
+
+/** ****************Ater********************************/
+
 import { i18next } from '../../base/i18n';
 
 import logger from '../logger';
@@ -327,7 +332,17 @@ class RecordingController {
                     const filename = `session_${sessionToken}`
                         + `_${this._conference.myUserId()}.${format}`;
 
-                    downloadBlob(data, filename);
+                    /** ****************Ater********************************/
+                    const formData = new FormData();
+
+                    formData.append('file', data);
+                    formData.append('conference', this._conference.getName());
+                    formData.append('filename', filename);
+
+                    return formData;
+
+                    /** ****************Ater********************************/
+                    // downloadBlob(data, filename);
                 })
                 .catch(error => {
                     logger.error('Failed to download audio for'
@@ -608,7 +623,6 @@ class RecordingController {
                     this._changeState(ControllerState.IDLE);
                     sessionManager.endSegment(this._currentSessionToken);
                     logger.log('Local recording unengaged.');
-                    this.downloadRecordedData(token);
 
                     const messageKey
                         = this._conference.isModerator()
@@ -618,13 +632,33 @@ class RecordingController {
                         token
                     };
 
+                    /** ****************Ater********************************/
                     if (this._onNotify) {
-                        this._onNotify(messageKey, messageParams);
+                        this._onNotify('正在保存录音,请勿关闭页面', messageParams);
                     }
-                    if (this._onStateChanged) {
-                        this._onStateChanged(false);
-                    }
-                    this._updateStats();
+                    const formData = this.downloadRecordedData(token);
+
+                    fetch(interfaceConfig.LBRECORDUPLOAD, {
+                        method: 'post',
+                        body: formData
+                    }).then(response => {
+                        if (response.ok) {
+                            // if (this._onNotify) {
+                            //     this._onNotify(messageKey, messageParams);
+                            // }
+                            if (this._onNotify) {
+                                this._onNotify('上传成功，您可以离开会议了', messageParams);
+                            }
+                            if (this._onStateChanged) {
+                                this._onStateChanged(false);
+                            }
+                            this._updateStats();
+                        } else {
+                            this._onNotify('程序开小差了, 请重新上传', messageParams);
+                        }
+                    });
+
+                    /** ****************Ater********************************/
                 })
                 .catch(err => {
                     logger.error('Failed to stop local recording.', err);

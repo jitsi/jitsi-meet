@@ -112,20 +112,20 @@ class Toolbox extends PureComponent<Props> {
             <View
                 pointerEvents = 'box-none'
                 style = { styles.toolbar }>
-                {
-                    _chatEnabled
-                        && <ChatButton
-                            styles = { buttonStylesBorderless }
-                            toggledStyles = {
-                                this._getChatButtonToggledStyle(toggledButtonStyles)
-                            } />
-                }
-                {
-                    !_chatEnabled
-                        && <InfoDialogButton
-                            styles = { buttonStyles }
-                            toggledStyles = { toggledButtonStyles } />
-                }
+                {/*{*/}
+                {/*    _chatEnabled*/}
+                {/*        && <ChatButton*/}
+                {/*            styles = { buttonStylesBorderless }*/}
+                {/*            toggledStyles = {*/}
+                {/*                this._getChatButtonToggledStyle(toggledButtonStyles)*/}
+                {/*            } />*/}
+                {/*}*/}
+                {/*{*/}
+                {/*    !_chatEnabled*/}
+                {/*        && <InfoDialogButton*/}
+                {/*            styles = { buttonStyles }*/}
+                {/*            toggledStyles = { toggledButtonStyles } />*/}
+                {/*}*/}
                 <AudioMuteButton
                     styles = { buttonStyles }
                     toggledStyles = { toggledButtonStyles } />

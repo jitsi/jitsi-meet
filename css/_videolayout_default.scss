@@ -225,6 +225,7 @@
 
 #sharedVideo,
 #etherpad,
+#etherdraw,
 #localVideoWrapper video,
 #localVideoWrapper object,
 #localVideoWrapper,
@@ -241,10 +242,12 @@
     height: 100%;
 }
 
+#etherdraw,
 #etherpad {
     text-align: center;
 }
 
+#etherdraw,
 #etherpad {
     z-index: $zindex0;
 }

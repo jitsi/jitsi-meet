@@ -32,7 +32,8 @@ function getPerformanceHints(size) {
 // jitsi-meet such as app.bundle.js and external_api.js.
 const config = {
     devServer: {
-        https: true,
+        https: false,
+        host: '127.0.0.1',
         inline: true,
         proxy: {
             '/': {

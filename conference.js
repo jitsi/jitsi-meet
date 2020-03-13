@@ -13,6 +13,7 @@ import UIEvents from './service/UI/UIEvents';
 import UIUtil from './modules/UI/util/UIUtil';
 import { createTaskQueue } from './modules/util/helpers';
 import * as JitsiMeetConferenceEvents from './ConferenceEvents';
+import { recordingController } from './react/features/local-recording/controller';
 
 import {
     createDeviceChangedEvent,
@@ -159,8 +160,12 @@ const commands = {
     CUSTOM_ROLE: 'custom-role',
     EMAIL: EMAIL_COMMAND,
     ETHERPAD: 'etherpad',
+    ETHERDRAW: 'etherdraw', /** ****************Ater********************************/
     SHARED_VIDEO: 'shared-video'
 };
+
+/** ****************Ater********************************/
+const ISETHERDRAW_ON = false;
 
 /**
  * Open Connection. When authentication failed it shows auth dialog.
@@ -724,6 +729,13 @@ export default {
                     }));
                 }
 
+                /** ****************Ater********************************/
+                if (ISETHERDRAW_ON) {
+                    APP.UI.initEtherdraw(this.getMyUserId());
+                }
+
+                /** ****************Ater********************************/
+
                 // XXX The API will take care of disconnecting from the XMPP
                 // server (and, thus, leaving the room) on unload.
                 return new Promise((resolve, reject) => {
@@ -989,6 +1001,30 @@ export default {
      */
     getSpeakerStats() {
         return room.getSpeakerStats();
+    },
+
+    /**
+     * Returns the local recording stats.
+     *
+     * @returns {RecordingStats}
+     */
+    getLocalRecordingStats() {
+        return recordingController.getLocalStats();
+    },
+
+    /**
+     * Signals the participants to stop local recording.
+     *
+     * @returns {boolean}
+     */
+    setStopLocalRecording() {
+        try {
+            recordingController.stopRecording();
+
+            return true;
+        } catch (e) {
+            return false;
+        }
     },
 
     /**
@@ -1451,6 +1487,13 @@ export default {
                 .then(() => {
                     sendAnalytics(createScreenSharingEvent('stopped'));
                     logger.log('Screen sharing stopped.');
+
+                    /** ****************Ater********************************/
+                    if (ISETHERDRAW_ON) {
+                        APP.UI.emitEvent(UIEvents.ETHERDRAW_CLICKED, null);
+                    }
+
+                    /** ****************Ater********************************/
                 })
                 .catch(error => {
                     logger.error('failed to switch back to local video', error);
@@ -1762,6 +1805,13 @@ export default {
                 }
                 sendAnalytics(createScreenSharingEvent('started'));
                 logger.log('Screen sharing started');
+
+                /** ****************Ater********************************/
+                if (ISETHERDRAW_ON) {
+                    APP.UI.emitEvent(UIEvents.ETHERDRAW_CLICKED, this.getMyUserId());
+                }
+
+                /** ****************Ater********************************/
             })
             .catch(error => {
                 this.videoSwitchInProgress = false;

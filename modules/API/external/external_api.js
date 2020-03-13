@@ -40,7 +40,8 @@ const commands = {
     toggleFilmStrip: 'toggle-film-strip',
     toggleShareScreen: 'toggle-share-screen',
     toggleTileView: 'toggle-tile-view',
-    toggleVideo: 'toggle-video'
+    toggleVideo: 'toggle-video',
+    COMMAND_STOP: 'localRecStop' /* Ater */
 };
 
 /**
@@ -926,4 +927,38 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
     _getElectronPopupsConfig() {
         return Promise.resolve(electronPopupsConfig);
     }
+
+    /** ****************Ater********************************/
+    /**
+     * Returns Promise that resolves with a list of available participants.
+     *
+     * @returns {Promise}
+     */
+    getAllRoomUsers() {
+        return this._participants;
+    }
+
+    /**
+     * Returns get local recording status.
+     *
+     * @returns {Promise}
+     */
+    getLocalRecordingStats() {
+        return this._transport.sendRequest({
+            name: 'getLocalRecordingStats'
+        });
+    }
+
+    /**
+     * Returns Hits stop local recording event.
+     *
+     * @returns {Promise}
+     */
+    setStopLocalRecording() {
+        return this._transport.sendRequest({
+            name: 'setStopLocalRecording'
+        });
+    }
+
+    /** ****************Ater********************************/
 }

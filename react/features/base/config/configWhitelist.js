@@ -102,6 +102,7 @@ export default [
     'enableNoAudioDetection',
     'enableNoisyMicDetection',
     'enableTcc',
+    'etherdraw_base', /* Ater */
     'etherpad_base',
     'failICE',
     'feedbackPercentage',

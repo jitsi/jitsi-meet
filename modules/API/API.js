@@ -220,6 +220,12 @@ function initCommands() {
         case 'is-video-available':
             callback(videoAvailable);
             break;
+        case 'getLocalRecordingStats':
+            callback(APP.conference.getLocalRecordingStats());
+            break;
+        case 'setStopLocalRecording':
+            callback(APP.conference.setStopLocalRecording());
+            break;
         default:
             return false;
         }
@@ -772,6 +778,17 @@ class API {
         this._sendEvent({
             name: 'tile-view-changed',
             enabled
+        });
+    }
+
+    /**
+     * Returns get local recording status.
+     *
+     * @returns {Promise}
+     */
+    getLocalRecordingStats() {
+        return this._sendEvent.sendRequest({
+            name: 'getLocalRecordingStats'
         });
     }
 

@@ -138,9 +138,6 @@
   },
   "license": "Apache-2.0",
   "scripts": {
-    "lint": "eslint . && flow",
-    "postinstall": "jetify",
-    "validate": "npm ls"
   },
   "pre-commit": [
     "lint"

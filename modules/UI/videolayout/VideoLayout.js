@@ -30,6 +30,13 @@ let largeVideo;
  */
 let localFlipX = null;
 
+/** ****************Ater********************************/
+
+const DESKTOP_CONTAINER_TYPE = 'desktop';
+const ETHERDRAW_CONTAINER_TYPE = 'etherdraw';
+
+/** ****************Ater********************************/
+
 /**
  * Handler for local flip X changed event.
  * @param {Object} val
@@ -507,6 +514,13 @@ const VideoLayout = {
         }
         smallVideo.setVideoType(newVideoType);
 
+        /** ****************Ater********************************/
+        if (this.isCurrentlyOnLarge(id) || newVideoType === DESKTOP_CONTAINER_TYPE) {
+            this.updateLargeVideo(id, true);
+        }
+
+        /** ****************Ater********************************/
+
         this._updateLargeVideoIfDisplayed(id, true);
     },
 
@@ -640,8 +654,32 @@ const VideoLayout = {
 
             currentSmallVideo && currentSmallVideo.updateView();
         }
+
+        /** ****************Ater********************************/
+
+        const currentVideoType = this.getRemoteVideoType(id);
+
+        if (largeVideo.getContainer(ETHERDRAW_CONTAINER_TYPE)) {
+            if (currentVideoType === VIDEO_TYPE.DESKTOP) {
+                APP.UI.emitEvent(UIEvents.ETHERDRAW_CLICKED, id);
+            } else {
+                APP.UI.emitEvent(UIEvents.ETHERDRAW_CLICKED, null);
+            }
+        }
+
+        /** ****************Ater********************************/
     },
 
+    /** ****************Ater********************************/
+    showEtherDraw(type, show) {
+        if (!largeVideo) {
+            return Promise.reject();
+        }
+
+        return largeVideo.showEtherDrawContainer(type, show);
+    },
+
+    /** ****************Ater********************************/
     addLargeVideoContainer(type, container) {
         largeVideo && largeVideo.addContainer(type, container);
     },
@@ -687,7 +725,8 @@ const VideoLayout = {
             }
         }
 
-        return largeVideo.showContainer(containerTypeToShow)
+        /** ****************Ater********************************/
+        return largeVideo.showContainer(containerTypeToShow, true)
             .then(() => {
                 if (oldSmallVideo) {
                     oldSmallVideo && oldSmallVideo.updateView();
