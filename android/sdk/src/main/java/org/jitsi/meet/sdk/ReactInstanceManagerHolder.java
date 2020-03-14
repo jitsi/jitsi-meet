@@ -17,7 +17,6 @@
 package org.jitsi.meet.sdk;
 
 import android.app.Activity;
-import android.os.Build;
 
 import androidx.annotation.Nullable;
 
@@ -33,16 +32,11 @@ import com.facebook.react.modules.core.DeviceEventManagerModule;
 import com.facebook.react.uimanager.ViewManager;
 import com.facebook.soloader.SoLoader;
 
-import com.oney.WebRTCModule.EglUtils;
 import com.oney.WebRTCModule.RTCVideoViewManager;
 import com.oney.WebRTCModule.WebRTCModule;
 
-import org.webrtc.DefaultVideoDecoderFactory;
-import org.webrtc.EglBase;
 import org.webrtc.SoftwareVideoDecoderFactory;
 import org.webrtc.SoftwareVideoEncoderFactory;
-import org.webrtc.VideoDecoderFactory;
-import org.webrtc.VideoEncoderFactory;
 import org.webrtc.audio.AudioDeviceModule;
 import org.webrtc.audio.JavaAudioDeviceModule;
 
@@ -91,22 +85,8 @@ class ReactInstanceManagerHolder {
             .createAudioDeviceModule();
         options.setAudioDeviceModule(adm);
 
-        VideoEncoderFactory videoEncoderFactory = new SoftwareVideoEncoderFactory();
-        VideoDecoderFactory videoDecoderFactory = new SoftwareVideoDecoderFactory();
-
-        // Initialize EGL context required for HW acceleration. We are only going to use it for
-        // decoding.
-        // NOTE: We are explicitly skipping Samsung devices because we have observed a high crash
-        // count on them.
-        if (!Build.MANUFACTURER.toLowerCase().contains("samsung")) {
-            EglBase.Context eglContext = EglUtils.getRootEglBaseContext();
-            if (eglContext != null) {
-                videoDecoderFactory = new DefaultVideoDecoderFactory(eglContext);
-            }
-        }
-
-        options.setVideoDecoderFactory(videoDecoderFactory);
-        options.setVideoEncoderFactory(videoEncoderFactory);
+        options.setVideoDecoderFactory(new SoftwareVideoDecoderFactory());
+        options.setVideoEncoderFactory(new SoftwareVideoEncoderFactory());
 
         nativeModules.add(new WebRTCModule(reactContext, options));
 
