@@ -3,7 +3,7 @@
 import { createToolbarEvent, sendAnalytics } from '../../../analytics';
 import { openDialog } from '../../../base/dialog';
 import { translate } from '../../../base/i18n';
-import { IconMicDisabled } from '../../../base/icons';
+import { IconMuteEveryone } from '../../../base/icons';
 import { getLocalParticipant, PARTICIPANT_ROLE } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox';
@@ -33,7 +33,7 @@ type Props = AbstractButtonProps & {
  */
 class MuteEveryoneButton extends AbstractButton<Props, *> {
     accessibilityLabel = 'toolbar.accessibilityLabel.muteEveryone';
-    icon = IconMicDisabled;
+    icon = IconMuteEveryone;
     label = 'toolbar.muteEveryone';
     tooltip = 'toolbar.muteEveryone';
 
