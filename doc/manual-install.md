@@ -140,6 +140,12 @@ server {
         proxy_set_header X-Forwarded-For $remote_addr;
         proxy_set_header Host $http_host;
     }
+    # external_api.js must be accessible from the root of the
+    # installation for the electron version of Jitsi Meet to work
+    # https://github.com/jitsi/jitsi-meet-electron
+    location /external_api.js {
+        alias /srv/jitsi-meet/libs/external_api.min.js;
+    }
 }
 ```
 
