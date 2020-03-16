@@ -613,7 +613,7 @@
             "show": "Im Vordergrund anzeigen",
             "speakerStats": "Sprecherstatistik ein-/ausblenden",
             "tileView": "Kachelansicht ein-/ausschalten",
-            "toggleCamera": "Kamera ein-/ausschalten",
+            "toggleCamera": "Kamera wechseln",
             "videomute": "„Video stummschalten“ ein-/ausschalten",
             "videoblur": "Video-Unschärfe ein-/ausschalten"
         },
