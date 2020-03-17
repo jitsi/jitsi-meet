@@ -1,3 +1,22 @@
+# Intulse Instructions
+
+We will do all our work in our fork of jitsi-meet.  The "intulse" branch is our master branch.
+
+## Update intulse/jitsi-meet from base jitsi/jitsi-meet
+
+* [See this Stack Overflow article for instructions.](https://stackoverflow.com/questions/20984802/how-can-i-keep-my-fork-in-sync-without-adding-a-separate-remote/21131381#21131381)
+
+## Publish intulse/jitsi-meet to meet.intul.se
+
+These instructions are publically visible on Github, do not include any sensative information.
+
+1. SSH to meet.intul.se
+2. Change directory to /usr/local/intulse-jitsi-meet
+3. Update from Git using this command ```git pull --ff-only```
+4. Deploy using this command ```./usr/local/intulse-jitsi-meet_deploy_local.sh```
+
+
+
 # Jitsi Meet - Secure, Simple and Scalable Video Conferences
 
 Jitsi Meet is an open-source (Apache) WebRTC JavaScript application that uses [Jitsi Videobridge](https://jitsi.org/videobridge) to provide high quality, [secure](#security) and scalable video conferences. Jitsi Meet in action can be seen at [here at the session #482 of the VoIP Users Conference](http://youtu.be/7vFUVClsNh0).
