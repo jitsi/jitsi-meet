@@ -1,5 +1,7 @@
 // @flow
 
+import React from 'react';
+
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../base/app';
 import { CONFERENCE_JOINED } from '../base/conference';
 import {
@@ -13,6 +15,7 @@ import { playSound, registerSound, unregisterSound } from '../base/sounds';
 import { hideNotification, showNotification } from '../notifications';
 
 import { setNoAudioSignalNotificationUid } from './actions';
+import DialInLink from './components/DialInLink';
 import { NO_AUDIO_SIGNAL_SOUND_ID } from './constants';
 import { NO_AUDIO_SIGNAL_SOUND_FILE } from './sounds';
 
@@ -48,12 +51,9 @@ MiddlewareRegistry.register(store => next => async action => {
 async function _handleNoAudioSignalNotification({ dispatch, getState }, action) {
 
     const { conference } = action;
-    let confAudioInputState;
 
     conference.on(JitsiConferenceEvents.AUDIO_INPUT_STATE_CHANGE, hasAudioInput => {
         const { noAudioSignalNotificationUid } = getState()['features/no-audio-signal'];
-
-        confAudioInputState = hasAudioInput;
 
         // In case the notification is displayed but the conference detected audio input signal we hide it.
         if (noAudioSignalNotificationUid && hasAudioInput) {
@@ -71,16 +71,7 @@ async function _handleNoAudioSignalNotification({ dispatch, getState }, action) 
             return;
         }
 
-        // Force the flag to false in case AUDIO_INPUT_STATE_CHANGE is received after the notification is displayed,
-        // possibly preventing the notification from displaying because of an outdated state.
-        confAudioInputState = false;
-
-
         const activeDevice = await JitsiMeetJS.getActiveAudioDevice();
-
-        if (confAudioInputState) {
-            return;
-        }
 
         // In case there is a previous notification displayed just hide it.
         const { noAudioSignalNotificationUid } = getState()['features/no-audio-signal'];
@@ -103,7 +94,7 @@ async function _handleNoAudioSignalNotification({ dispatch, getState }, action) 
             // at the point of the implementation the showNotification function only supports doing that for
             // the description.
             // TODO Add support for arguments to showNotification title and customAction strings.
-            customActionNameKey = `Use ${formatDeviceLabel(activeDevice.deviceLabel)}`;
+            customActionNameKey = `Switch to ${formatDeviceLabel(activeDevice.deviceLabel)}`;
             customActionHandler = () => {
                 // Select device callback
                 dispatch(
@@ -119,6 +110,7 @@ async function _handleNoAudioSignalNotification({ dispatch, getState }, action) 
 
         const notification = showNotification({
             titleKey: 'toolbar.noAudioSignalTitle',
+            description: <DialInLink />,
             descriptionKey,
             customActionNameKey,
             customActionHandler

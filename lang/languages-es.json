@@ -3,7 +3,7 @@
     "af": "Africano",
     "bg": "Búlgaro",
     "ca": "Catalán",
-    "cs": "Czech",
+    "cs": "Checo",
     "de": "Alemán",
     "el": "Griego",
     "enGB": "Inglés (Reino Unido)",
@@ -14,7 +14,7 @@
     "fr": "Francés",
     "frCA": "Franco (Canadiense)",
     "hr": "Croata",
-    "hu": "",
+    "hu": "Húngaro",
     "hy": "Armenio",
     "it": "Italiano",
     "ja": "Jopones",
@@ -28,5 +28,5 @@
     "tr": "Turco",
     "vi": "Vietnamita",
     "zhCN": "Chino (China)",
-    "zhTW": "Chino (Taiwán)\"msgstr \""
+    "zhTW": "Chino (Taiwan)\"msgstr \""
 }

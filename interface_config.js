@@ -51,7 +51,7 @@ var interfaceConfig = {
         'fodeviceselection', 'hangup', 'profile', 'info', 'chat', 'recording',
         'livestreaming', 'etherpad', 'sharedvideo', 'settings', 'raisehand',
         'videoquality', 'filmstrip', 'invite', 'feedback', 'stats', 'shortcuts',
-        'tileview', 'videobackgroundblur', 'download', 'help'
+        'tileview', 'videobackgroundblur', 'download', 'help', 'mute-everyone'
     ],
 
     SETTINGS_SECTIONS: [ 'devices', 'language', 'moderator', 'profile', 'calendar' ],
@@ -74,6 +74,7 @@ var interfaceConfig = {
 
     // A html text to be shown to guests on the close page, false disables it
     CLOSE_PAGE_GUEST_HINT: false,
+    SHOW_PROMOTIONAL_CLOSE_PAGE: false,
     RANDOM_AVATAR_URL_PREFIX: false,
     RANDOM_AVATAR_URL_SUFFIX: false,
     FILM_STRIP_MAX_HEIGHT: 120,
@@ -188,7 +189,24 @@ var interfaceConfig = {
      *
      * Note: this mode is experimental and subject to breakage.
      */
-    AUTO_PIN_LATEST_SCREEN_SHARE: 'remote-only'
+    AUTO_PIN_LATEST_SCREEN_SHARE: 'remote-only',
+
+    /**
+     * If true, presence status: busy, calling, connected etc. is not displayed.
+     */
+    DISABLE_PRESENCE_STATUS: false,
+
+    /**
+     * If true, notifications regarding joining/leaving are no longer displayed.
+     */
+    DISABLE_JOIN_LEAVE_NOTIFICATIONS: false,
+
+    /**
+    * Decides whether the chrome extension banner should be rendered on the landing page and during the meeting.
+    * If this is set to false, the banner will not be rendered at all. If set to true, the check for extension(s)
+    * being already installed is done before rendering.
+    */
+    SHOW_CHROME_EXTENSION_BANNER: false
 
     /**
      * How many columns the tile view can expand to. The respected range is

@@ -102,10 +102,11 @@ function _setAudioOnly({ dispatch }, next, action) {
     sendAnalytics(createTrackMutedEvent('video', 'audio-only mode', audioOnly));
 
     // Make sure we mute both the desktop and video tracks.
-    dispatch(setVideoMuted(
-        audioOnly, MEDIA_TYPE.VIDEO, VIDEO_MUTISM_AUTHORITY.AUDIO_ONLY, ensureVideoTrack));
-    dispatch(setVideoMuted(
-        audioOnly, MEDIA_TYPE.PRESENTER, VIDEO_MUTISM_AUTHORITY.AUDIO_ONLY, ensureVideoTrack));
+    dispatch(setVideoMuted(audioOnly, MEDIA_TYPE.VIDEO, VIDEO_MUTISM_AUTHORITY.AUDIO_ONLY, ensureVideoTrack));
+
+    if (navigator.product !== 'ReactNative') {
+        dispatch(setVideoMuted(audioOnly, MEDIA_TYPE.PRESENTER, VIDEO_MUTISM_AUTHORITY.AUDIO_ONLY, ensureVideoTrack));
+    }
 
     return next(action);
 }

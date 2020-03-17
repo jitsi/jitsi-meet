@@ -33,6 +33,8 @@ export default class LocalVideo extends SmallVideo {
         this.streamEndedCallback = streamEndedCallback;
         this.container = this.createContainer();
         this.$container = $(this.container);
+        this.isLocal = true;
+        this._setThumbnailSize();
         this.updateDOMLocation();
 
         this.localVideoId = null;
@@ -40,10 +42,8 @@ export default class LocalVideo extends SmallVideo {
         if (!config.disableLocalVideoFlip) {
             this._buildContextMenu();
         }
-        this.isLocal = true;
         this.emitter = emitter;
-        this.statsPopoverLocation = interfaceConfig.VERTICAL_FILMSTRIP
-            ? 'left top' : 'top center';
+        this.statsPopoverLocation = interfaceConfig.VERTICAL_FILMSTRIP ? 'left top' : 'top center';
 
         Object.defineProperty(this, 'id', {
             get() {

@@ -1,0 +1,9 @@
+Template: jitsi-meet-turnserver/jvb-hostname
+Type: string
+_Description: The hostname of the current installation:
+ The value for the hostname that is set in Jitsi Videobridge installation.
+
+Template: jitsi-videobridge/jvb-hostname
+Type: string
+_Description: The hostname of the current installation:
+ The value for the hostname that is set in Jitsi Videobridge installation.

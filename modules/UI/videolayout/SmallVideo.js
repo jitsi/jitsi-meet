@@ -18,11 +18,9 @@ import {
 import { ConnectionIndicator } from '../../../react/features/connection-indicator';
 import { DisplayName } from '../../../react/features/display-name';
 import {
-    AudioMutedIndicator,
     DominantSpeakerIndicator,
-    ModeratorIndicator,
     RaisedHandIndicator,
-    VideoMutedIndicator
+    StatusIndicators
 } from '../../../react/features/filmstrip';
 import {
     LAYOUTS,
@@ -34,7 +32,6 @@ import {
 
 const logger = require('jitsi-meet-logger').getLogger(__filename);
 
-import UIUtil from '../util/UIUtil';
 import UIEvents from '../../../service/UI/UIEvents';
 
 /**
@@ -85,9 +82,7 @@ export default class SmallVideo {
      * Constructor.
      */
     constructor(VideoLayout) {
-        this._isModerator = false;
         this.isAudioMuted = false;
-        this.hasAvatar = false;
         this.isVideoMuted = false;
         this.videoStream = null;
         this.audioStream = null;
@@ -287,43 +282,16 @@ export default class SmallVideo {
             return;
         }
 
-        const currentLayout = getCurrentLayout(APP.store.getState());
-        let tooltipPosition;
-
-        if (currentLayout === LAYOUTS.TILE_VIEW) {
-            tooltipPosition = 'right';
-        } else if (currentLayout === LAYOUTS.VERTICAL_FILMSTRIP_VIEW) {
-            tooltipPosition = 'left';
-        } else {
-            tooltipPosition = 'top';
-        }
-
         ReactDOM.render(
-            <I18nextProvider i18n = { i18next }>
-                <div>
-                    { this.isAudioMuted
-                        ? <AudioMutedIndicator
-                            tooltipPosition = { tooltipPosition } />
-                        : null }
-                    { this.isVideoMuted
-                        ? <VideoMutedIndicator
-                            tooltipPosition = { tooltipPosition } />
-                        : null }
-                    { this._isModerator && !interfaceConfig.DISABLE_FOCUS_INDICATOR
-                        ? <ModeratorIndicator
-                            tooltipPosition = { tooltipPosition } />
-                        : null }
-                </div>
-            </I18nextProvider>,
+            <Provider store = { APP.store }>
+                <I18nextProvider i18n = { i18next }>
+                    <StatusIndicators
+                        showAudioMutedIndicator = { this.isAudioMuted }
+                        showVideoMutedIndicator = { this.isVideoMuted }
+                        participantID = { this.id } />
+                </I18nextProvider>
+            </Provider>,
             statusBarContainer);
-    }
-
-    /**
-     * Adds the element indicating the moderator(owner) of the conference.
-     */
-    addModeratorIndicator() {
-        this._isModerator = true;
-        this.updateStatusBar();
     }
 
     /**
@@ -379,14 +347,6 @@ export default class SmallVideo {
      */
     _getAudioLevelContainer() {
         return this.container.querySelector('.audioindicator-container');
-    }
-
-    /**
-     * Removes the element indicating the moderator(owner) of the conference.
-     */
-    removeModeratorIndicator() {
-        this._isModerator = false;
-        this.updateStatusBar();
     }
 
     /**
@@ -557,20 +517,9 @@ export default class SmallVideo {
     }
 
     /**
-     * Hides or shows the user's avatar.
-     * This update assumes that large video had been updated and we will
-     * reflect it on this small video.
+     * Updates the css classes of the thumbnail based on the current state.
      */
     updateView() {
-        if (this.id) {
-            // Init / refresh avatar
-            this.initializeAvatar();
-        } else {
-            logger.error('Unable to init avatar - no id', this);
-
-            return;
-        }
-
         this.$container.removeClass((index, classNames) =>
             classNames.split(' ').filter(name => name.startsWith('display-')));
 
@@ -620,8 +569,6 @@ export default class SmallVideo {
     initializeAvatar() {
         const thumbnail = this.$avatar().get(0);
 
-        this.hasAvatar = true;
-
         if (thumbnail) {
             // Maybe add a special case for local participant, as on init of
             // LocalVideo.js the id is set to "local" but will get updated later.
@@ -629,8 +576,7 @@ export default class SmallVideo {
                 <Provider store = { APP.store }>
                     <AvatarDisplay
                         className = 'userAvatar'
-                        participantId = { this.id }
-                        size = { this.$avatar().width() } />
+                        participantId = { this.id } />
                 </Provider>,
                 thumbnail
             );
@@ -801,7 +747,8 @@ export default class SmallVideo {
             return;
         }
 
-        const iconSize = UIUtil.getIndicatorFontSize();
+        const { NORMAL = 8 } = interfaceConfig.INDICATOR_FONT_SIZES || {};
+        const iconSize = NORMAL;
         const showConnectionIndicator = this.videoIsHovered || !interfaceConfig.CONNECTION_INDICATOR_AUTO_HIDE_ENABLED;
         const state = APP.store.getState();
         const currentLayout = getCurrentLayout(state);
@@ -830,11 +777,9 @@ export default class SmallVideo {
                                     connectionStatus = { this._connectionStatus }
                                     iconSize = { iconSize }
                                     isLocalVideo = { this.isLocal }
-                                    enableStatsDisplay
-                                        = { !interfaceConfig.filmStripOnly }
+                                    enableStatsDisplay = { !interfaceConfig.filmStripOnly }
                                     participantId = { this.id }
-                                    statsPopoverPosition
-                                        = { statsPopoverPosition } />
+                                    statsPopoverPosition = { statsPopoverPosition } />
                                 : null }
                             <RaisedHandIndicator
                                 iconSize = { iconSize }
@@ -935,5 +880,68 @@ export default class SmallVideo {
     _onPopoverHover(popoverIsHovered) {
         this._popoverIsHovered = popoverIsHovered;
         this.updateView();
+    }
+
+    /**
+     * Sets the size of the thumbnail.
+     */
+    _setThumbnailSize() {
+        const layout = getCurrentLayout(APP.store.getState());
+        const heightToWidthPercent = 100
+                / (this.isLocal ? interfaceConfig.LOCAL_THUMBNAIL_RATIO : interfaceConfig.REMOTE_THUMBNAIL_RATIO);
+
+        switch (layout) {
+        case LAYOUTS.VERTICAL_FILMSTRIP_VIEW: {
+            this.$container.css('padding-top', `${heightToWidthPercent}%`);
+            this.$avatar().css({
+                height: '50%',
+                width: `${heightToWidthPercent / 2}%`
+            });
+            break;
+        }
+        case LAYOUTS.HORIZONTAL_FILMSTRIP_VIEW: {
+            const state = APP.store.getState();
+            const { local, remote } = state['features/filmstrip'].horizontalViewDimensions;
+            const size = this.isLocal ? local : remote;
+
+            if (typeof size !== 'undefined') {
+                const { height, width } = size;
+                const avatarSize = height / 2;
+
+                this.$container.css({
+                    height: `${height}px`,
+                    'min-height': `${height}px`,
+                    'min-width': `${width}px`,
+                    width: `${width}px`
+                });
+                this.$avatar().css({
+                    height: `${avatarSize}px`,
+                    width: `${avatarSize}px`
+                });
+            }
+            break;
+        }
+        case LAYOUTS.TILE_VIEW: {
+            const state = APP.store.getState();
+            const { thumbnailSize } = state['features/filmstrip'].tileViewDimensions;
+
+            if (typeof thumbnailSize !== 'undefined') {
+                const { height, width } = thumbnailSize;
+                const avatarSize = height / 2;
+
+                this.$container.css({
+                    height: `${height}px`,
+                    'min-height': `${height}px`,
+                    'min-width': `${width}px`,
+                    width: `${width}px`
+                });
+                this.$avatar().css({
+                    height: `${avatarSize}px`,
+                    width: `${avatarSize}px`
+                });
+            }
+            break;
+        }
+        }
     }
 }

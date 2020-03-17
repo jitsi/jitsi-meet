@@ -4,6 +4,8 @@ import { parseURLParams } from '../config';
 import JitsiMeetJS from '../lib-jitsi-meet';
 import { updateSettings } from '../settings';
 
+import logger from './logger';
+
 declare var APP: Object;
 
 /**
@@ -187,6 +189,9 @@ export function setAudioOutputDeviceId(
         dispatch: Function,
         userSelection: boolean = false,
         newLabel: ?string): Promise<*> {
+
+    logger.debug(`setAudioOutputDevice: ${String(newLabel)}[${newId}]`);
+
     return JitsiMeetJS.mediaDevices.setAudioOutputDevice(newId)
         .then(() => {
             const newSettings = {

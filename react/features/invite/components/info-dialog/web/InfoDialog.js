@@ -17,7 +17,8 @@ import {
 import {
     _decodeRoomURI,
     _getDefaultPhoneNumber,
-    getDialInfoPageURL
+    getDialInfoPageURL,
+    shouldDisplayDialIn
 } from '../../../functions';
 import logger from '../../../logger';
 import DialInNumber from './DialInNumber';
@@ -58,7 +59,7 @@ type Props = {
     /**
      * The redux representation of the local participant.
      */
-    _localParticipant: Object,
+    _localParticipantName: ?string,
 
     /**
      * The current location url of the conference.
@@ -315,12 +316,11 @@ class InfoDialog extends Component<Props, State> {
      * @returns {string}
      */
     _getTextToCopy() {
-        const { _localParticipant, liveStreamViewURL, t } = this.props;
-        const shouldDisplayDialIn = this._shouldDisplayDialIn();
+        const { _localParticipantName, liveStreamViewURL, t } = this.props;
         const _inviteURL = _decodeRoomURI(this.props._inviteURL);
 
-        let invite = _localParticipant && _localParticipant.name
-            ? t('info.inviteURLFirstPartPersonal', { name: _localParticipant.name })
+        let invite = _localParticipantName
+            ? t('info.inviteURLFirstPartPersonal', { name: _localParticipantName })
             : t('info.inviteURLFirstPartGeneral');
 
         invite += t('info.inviteURLSecondPart', {
@@ -335,7 +335,7 @@ class InfoDialog extends Component<Props, State> {
             invite = `${invite}\n${liveStream}`;
         }
 
-        if (shouldDisplayDialIn) {
+        if (shouldDisplayDialIn(this.props.dialIn)) {
             const dial = t('info.invitePhone', {
                 number: this.state.phoneNumber,
                 conferenceID: this.props.dialIn.conferenceID
@@ -480,7 +480,7 @@ class InfoDialog extends Component<Props, State> {
      * @returns {null|ReactElement}
      */
     _renderDialInDisplay() {
-        if (!this._shouldDisplayDialIn()) {
+        if (!shouldDisplayDialIn(this.props.dialIn)) {
             return null;
         }
 
@@ -571,23 +571,6 @@ class InfoDialog extends Component<Props, State> {
         );
     }
 
-    /**
-     * Returns whether or not dial-in related UI should be displayed.
-     *
-     * @private
-     * @returns {boolean}
-     */
-    _shouldDisplayDialIn() {
-        const { conferenceID, numbers, numbersEnabled } = this.props.dialIn;
-        const { phoneNumber } = this.state;
-
-        return Boolean(
-            conferenceID
-            && numbers
-            && numbersEnabled
-            && phoneNumber);
-    }
-
     _setCopyElement: () => void;
 
     /**
@@ -630,6 +613,7 @@ class InfoDialog extends Component<Props, State> {
  *     _conference: Object,
  *     _conferenceName: string,
  *     _inviteURL: string,
+ *     _localParticipantName: ?string,
  *     _locationURL: string,
  *     _locked: string,
  *     _password: string
@@ -642,6 +626,7 @@ function _mapStateToProps(state) {
         password,
         room
     } = state['features/base/conference'];
+    const localParticipant = getLocalParticipant(state);
 
     return {
         _canEditPassword: isLocalParticipantModerator(state, state['features/base/config'].lockRoomGuestEnabled),
@@ -649,7 +634,7 @@ function _mapStateToProps(state) {
         _conferenceName: room,
         _passwordNumberOfDigits: state['features/base/config'].roomPasswordNumberOfDigits,
         _inviteURL: getInviteURL(state),
-        _localParticipant: getLocalParticipant(state),
+        _localParticipantName: localParticipant?.name,
         _locationURL: state['features/base/connection'].locationURL,
         _locked: locked,
         _password: password

@@ -44,7 +44,7 @@ case "$1" in
             sed -i 's/ -- "token_verification"/   "token_verification"/g' $PROSODY_HOST_CONFIG
 
             if [ -x "/etc/init.d/prosody" ]; then
-                invoke-rc.d prosody restart
+                invoke-rc.d prosody restart || true
             fi
         fi
 

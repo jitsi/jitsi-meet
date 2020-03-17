@@ -173,17 +173,13 @@
     &__hoverOverlay {
         background: rgba(0,0,0,.6);
         border-radius: $borderRadius;
-        position: relative;
+        position: absolute;
+        top: 0px;
+        left: 0px;
         width: 100%;
         height: 100%;
         visibility: hidden;
         z-index: $zindex2;
-    }
-
-    &.audio-only {
-        .videoThumbnailProblemFilter {
-            filter: none;
-        }
     }
 }
 
@@ -526,13 +522,16 @@
     display: flex;
     justify-content: center;
     height: 50%;
-    overflow: hidden;
     width: auto;
+    overflow: hidden;
 
     .userAvatar {
         height: 100%;
         object-fit: cover;
         width: 100%;
+        top: 0px;
+        left: 0px;
+        position: absolute;
     }
 }
 
@@ -555,6 +554,9 @@
 }
 
 .sharedVideoAvatar {
+    position: absolute;
+    left: 0px;
+    top: 0px;
     height: 100%;
     width: 100%;
     object-fit: cover;
@@ -563,21 +565,6 @@
 .videoMessageFilter {
     -webkit-filter: grayscale(.5) opacity(0.8);
     filter: grayscale(.5) opacity(0.8);
-}
-
-.remoteVideoProblemFilter {
-    -webkit-filter: grayscale(100%);
-    filter: grayscale(100%);
-}
-
-.videoProblemFilter {
-    -webkit-filter: blur(10px) grayscale(.5) opacity(0.8);
-    filter: blur(10px) grayscale(.5) opacity(0.8);
-}
-
-.videoThumbnailProblemFilter {
-    -webkit-filter: grayscale(100%);
-    filter: grayscale(100%);
 }
 
 #remotePresenceMessage,
@@ -608,24 +595,6 @@
 }
 #remoteConnectionMessage {
     display: none;
-}
-
-#localConnectionMessage {
-    display: none;
-    position: absolute;
-    left: 0;
-    width: 100%;
-    top:50%;
-    z-index: $zindex2;
-    font-weight: 600;
-    font-size: 14px;
-    text-align: center;
-    color: #FFF;
-    opacity: .80;
-    text-shadow:    0px 0px 1px rgba(0,0,0,0.3),
-                    0px 1px 1px rgba(0,0,0,0.3),
-                    1px 0px 1px rgba(0,0,0,0.3),
-                    0px 0px 1px rgba(0,0,0,0.3);
 }
 
 .display-avatar-with-name {
