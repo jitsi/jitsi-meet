@@ -10,10 +10,11 @@ We will do all our work in our fork of jitsi-meet.  The "intulse" branch is our 
 
 These instructions are publically visible on Github, do not include any sensative information.
 
-1. SSH to meet.intul.se
+1. SSH to meet.intul.se (DO NOT SUDO)
 2. Change directory to /usr/local/intulse-jitsi-meet
 3. Update from Git using this command ```git pull --ff-only```
-4. Deploy using this command ```./usr/local/intulse-jitsi-meet_deploy_local.sh```
+4. Build the project using this command ```make```
+5. Deploy using this command ```./deploy_local.sh```
 
 
 
