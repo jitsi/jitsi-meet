@@ -56,6 +56,10 @@
         transform: translate3d(0, 0, 0);
     }
 
+    .indicator-icon-container {
+        display: inline-block;
+    }
+
     .indicator-container {
         float: none;
     }

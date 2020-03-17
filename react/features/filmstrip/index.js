@@ -5,3 +5,5 @@ export * from './constants';
 export * from './functions';
 
 import './reducer';
+import './subscriber';
+import './middleware';

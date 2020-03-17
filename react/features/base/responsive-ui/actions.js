@@ -1,9 +1,9 @@
 // @flow
 
-import { SET_ASPECT_RATIO, SET_REDUCED_UI } from './actionTypes';
-import { ASPECT_RATIO_NARROW, ASPECT_RATIO_WIDE } from './constants';
-
 import type { Dispatch } from 'redux';
+
+import { CLIENT_RESIZED, SET_ASPECT_RATIO, SET_REDUCED_UI } from './actionTypes';
+import { ASPECT_RATIO_NARROW, ASPECT_RATIO_WIDE } from './constants';
 
 /**
  * Size threshold for determining if we are in reduced UI mode or not.
@@ -15,6 +15,21 @@ import type { Dispatch } from 'redux';
  * determine whether and how to render it.
  */
 const REDUCED_UI_THRESHOLD = 300;
+
+/**
+ * Indicates a resize of the window.
+ *
+ * @param {number} clientWidth - The width of the window.
+ * @param {number} clientHeight - The height of the window.
+ * @returns {Object}
+ */
+export function clientResized(clientWidth: number, clientHeight: number) {
+    return {
+        type: CLIENT_RESIZED,
+        clientHeight,
+        clientWidth
+    };
+}
 
 /**
  * Sets the aspect ratio of the app's user interface based on specific width and

@@ -5,7 +5,9 @@ import { ReducerRegistry } from '../base/redux';
 import {
     SET_FILMSTRIP_ENABLED,
     SET_FILMSTRIP_HOVERED,
-    SET_FILMSTRIP_VISIBLE
+    SET_FILMSTRIP_VISIBLE,
+    SET_HORIZONTAL_VIEW_DIMENSIONS,
+    SET_TILE_VIEW_DIMENSIONS
 } from './actionTypes';
 
 const DEFAULT_STATE = {
@@ -16,6 +18,22 @@ const DEFAULT_STATE = {
      * @type {boolean}
      */
     enabled: true,
+
+    /**
+     * The horizontal view dimensions.
+     *
+     * @public
+     * @type {Object}
+     */
+    horizontalViewDimensions: {},
+
+    /**
+     * The tile view dimensions.
+     *
+     * @public
+     * @type {Object}
+     */
+    tileViewDimensions: {},
 
     /**
      * The indicator which determines whether the {@link Filmstrip} is visible.
@@ -54,6 +72,17 @@ ReducerRegistry.register(
             return {
                 ...state,
                 visible: action.visible
+            };
+
+        case SET_HORIZONTAL_VIEW_DIMENSIONS:
+            return {
+                ...state,
+                horizontalViewDimensions: action.dimensions
+            };
+        case SET_TILE_VIEW_DIMENSIONS:
+            return {
+                ...state,
+                tileViewDimensions: action.dimensions
             };
         }
 

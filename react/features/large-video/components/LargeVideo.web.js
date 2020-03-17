@@ -68,7 +68,6 @@ class LargeVideo extends Component<Props> {
                 </div>
                 { interfaceConfig.DISABLE_TRANSCRIPTION_SUBTITLES
                     || <Captions /> }
-                <span id = 'localConnectionMessage' />
             </div>
         );
     }

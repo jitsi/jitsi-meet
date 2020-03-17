@@ -121,8 +121,7 @@ class StartLiveStreamDialog
      * @returns {void}
      */
     _onInitializeGoogleApi() {
-        this.props.dispatch(
-            loadGoogleAPI(this.props._googleApiApplicationClientID))
+        this.props.dispatch(loadGoogleAPI())
         .catch(response => this._parseErrorFromResponse(response));
     }
 

@@ -80,7 +80,7 @@ export default class JitsiStreamBlurEffect {
             this._outputCanvasElement,
             this._inputVideoElement,
             this._segmentationData,
-            7, // Constant for background blur, integer values between 0-20
+            15, // Constant for background blur, integer values between 0-20
             7 // Constant for edge blur, integer values between 0-20
         );
     }

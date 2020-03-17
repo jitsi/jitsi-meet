@@ -25,10 +25,10 @@ set -e
 case "$1" in
     remove)
         if [ -x "/etc/init.d/nginx" ]; then
-            invoke-rc.d nginx reload
+            invoke-rc.d nginx reload || true
         fi
         if [ -x "/etc/init.d/apache2" ]; then
-            invoke-rc.d apache2 reload
+            invoke-rc.d apache2 reload || true
         fi
     ;;
     purge)

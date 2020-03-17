@@ -194,16 +194,14 @@ function _conferenceJoined({ getState }, next, action) {
                     _updateCallIntegrationMuted(action.conference, getState());
                 }
             })
-            .catch(error => {
-                // Currently this error code is emitted only by Android.
+            .catch(() => {
+                // Currently errors here are only emitted by Android.
                 //
-                if (error.code === 'CONNECTION_NOT_FOUND_ERROR') {
-                    // Some Samsung devices will fail to fully engage ConnectionService if no SIM card
-                    // was ever installed on the device. We could check for it, but it would require
-                    // the CALL_PHONE permission, which is not something we want to do, so fallback to
-                    // not using ConnectionService.
-                    _handleConnectionServiceFailure(getState());
-                }
+                // Some Samsung devices will fail to fully engage ConnectionService if no SIM card
+                // was ever installed on the device. We could check for it, but it would require
+                // the CALL_PHONE permission, which is not something we want to do, so fallback to
+                // not using ConnectionService.
+                _handleConnectionServiceFailure(getState());
             });
     }
 
@@ -304,9 +302,11 @@ function _conferenceWillJoin({ dispatch, getState }, next, action) {
                         { text: 'OK' }
                     ],
                     { cancelable: false });
-            } else if (error.code === 'SECURITY_ERROR') {
+            } else {
                 // Some devices fail because the CALL_PHONE permission is not granted, which is
                 // nonsense, because it's not needed for self-managed connections.
+                // Some other devices fail because ConnectionService is not supported.
+                // Be that as it may, fallback to non-ConnectionService audio device handling.
 
                 _handleConnectionServiceFailure(state);
             }

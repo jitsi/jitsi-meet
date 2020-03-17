@@ -20,10 +20,7 @@ import {
     REMOTE_CONTROL_MENU_STATES,
     RemoteVideoMenuTriggerButton
 } from '../../../react/features/remote-video-menu';
-import {
-    LAYOUTS,
-    getCurrentLayout
-} from '../../../react/features/video-layout';
+import { LAYOUTS, getCurrentLayout } from '../../../react/features/video-layout';
 /* eslint-enable no-unused-vars */
 
 const logger = require('jitsi-meet-logger').getLogger(__filename);
@@ -129,8 +126,11 @@ export default class RemoteVideo extends SmallVideo {
     addRemoteVideoContainer() {
         this.container = createContainer(this.videoSpanId);
         this.$container = $(this.container);
+        this.initializeAvatar();
+        this._setThumbnailSize();
         this.initBrowserSpecificProperties();
         this.updateRemoteVideoMenu();
+        this.updateStatusBar();
         this.addAudioLevelIndicator();
         this.addPresenceLabel();
 
@@ -189,7 +189,6 @@ export default class RemoteVideo extends SmallVideo {
         // hide volume when in silent mode
         const onVolumeChange
             = APP.store.getState()['features/base/config'].startSilent ? undefined : this._setAudioVolume;
-        const { isModerator } = APP.conference;
         const participantID = this.id;
         const currentLayout = getCurrentLayout(APP.store.getState());
         let remoteMenuPosition;
@@ -209,7 +208,6 @@ export default class RemoteVideo extends SmallVideo {
                         <RemoteVideoMenuTriggerButton
                             initialVolumeValue = { initialVolumeValue }
                             isAudioMuted = { this.isAudioMuted }
-                            isModerator = { isModerator }
                             menuPosition = { remoteMenuPosition }
                             onMenuDisplay
                                 = {this._onRemoteVideoMenuDisplay.bind(this)}
@@ -437,13 +435,6 @@ export default class RemoteVideo extends SmallVideo {
         // Update 'mutedWhileDisconnected' flag
         this._figureOutMutedWhileDisconnected();
         this.updateConnectionStatus(connectionStatus);
-
-        const isInterrupted = connectionStatus === JitsiParticipantConnectionStatus.INTERRUPTED;
-
-        // Toggle thumbnail video problem filter
-
-        this.selectVideoElement().toggleClass('videoThumbnailProblemFilter', isInterrupted);
-        this.$avatar().toggleClass('videoThumbnailProblemFilter', isInterrupted);
     }
 
     /**

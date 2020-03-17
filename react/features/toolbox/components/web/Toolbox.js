@@ -28,7 +28,7 @@ import {
     getParticipants,
     participantUpdated
 } from '../../../base/participants';
-import { connect } from '../../../base/redux';
+import { connect, equals } from '../../../base/redux';
 import { OverflowMenuItem } from '../../../base/toolbox';
 import { getLocalVideoTrack, toggleScreensharing } from '../../../base/tracks';
 import { VideoBlurButton } from '../../../blur';
@@ -78,6 +78,7 @@ import HangupButton from '../HangupButton';
 import HelpButton from '../HelpButton';
 import OverflowMenuButton from './OverflowMenuButton';
 import OverflowMenuProfileItem from './OverflowMenuProfileItem';
+import MuteEveryoneButton from './MuteEveryoneButton';
 import ToolbarButton from './ToolbarButton';
 import VideoMuteButton from '../VideoMuteButton';
 import {
@@ -205,6 +206,10 @@ type State = {
 
 declare var APP: Object;
 declare var interfaceConfig: Object;
+
+// XXX: We are not currently using state here, but in the future, when
+// interfaceConfig is part of redux we will. This will have to be retrieved from the store.
+const visibleButtons = new Set(interfaceConfig.TOOLBAR_BUTTONS);
 
 /**
  * Implements the conference toolbox on React/Web.
@@ -996,6 +1001,10 @@ class Toolbox extends Component<Props, State> {
                 key = 'settings'
                 showLabel = { true }
                 visible = { this._shouldShowButton('settings') } />,
+            <MuteEveryoneButton
+                key = 'mute-everyone'
+                showLabel = { true }
+                visible = { this._shouldShowButton('mute-everyone') } />,
             this._shouldShowButton('stats')
                 && <OverflowMenuItem
                     accessibilityLabel = { t('toolbar.accessibilityLabel.speakerStats') }
@@ -1326,6 +1335,10 @@ function _mapStateToProps(state) {
         }
     }
 
+    // NB: We compute the buttons again here because if URL parameters were used to
+    // override them we'd miss it.
+    const buttons = new Set(interfaceConfig.TOOLBAR_BUTTONS);
+
     return {
         _chatOpen: state['features/chat'].isOpen,
         _conference: conference,
@@ -1347,10 +1360,7 @@ function _mapStateToProps(state) {
             || sharedVideoStatus === 'start'
             || sharedVideoStatus === 'pause',
         _visible: isToolboxVisible(state),
-
-        // XXX: We are not currently using state here, but in the future, when
-        // interfaceConfig is part of redux we will.
-        _visibleButtons: new Set(interfaceConfig.TOOLBAR_BUTTONS)
+        _visibleButtons: equals(visibleButtons, buttons) ? visibleButtons : buttons
     };
 }
 
