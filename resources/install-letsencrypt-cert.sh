@@ -3,7 +3,8 @@
 set -e
 
 DEB_CONF_RESULT=`debconf-show jitsi-meet-web-config | grep jvb-hostname`
-DOMAIN="${DEB_CONF_RESULT##*:}"
+# Allow overriding the domain by setting the DOMAIN environment variable.
+DOMAIN="${DOMAIN-${DEB_CONF_RESULT##*:}}"
 # remove whitespace
 DOMAIN="$(echo -e "${DOMAIN}" | tr -d '[:space:]')"
 
