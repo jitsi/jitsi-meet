@@ -15,7 +15,7 @@ To check the operating system available, you can run `cat /etc/issue` at the com
 
 Debian Wheezy and other older systems may require additional things to be done. Specifically for Wheezy, [libc needs to be updated](http://lists.jitsi.org/pipermail/users/2015-September/010064.html).
 
-Also note that a recent default Ubuntu installation has only the `main` repository enabled, and Jitsi Meet needs packages from `universe`. Check your `/etc/apt/sources.list` file, and if `universe` is not present refer to [Ubuntu's documentation](https://help.ubuntu.com/community/Repositories/Ubuntu) on how to enable it. (Usually it amounts to copying the `main` lines and changing to `universe`.)
+On Ubuntu systems, some Jitsi dependencies require installation from Ubuntu's `universe` package repository.  To ensure this is enabled, run `sudo apt-add-repository universe` at the command-line.
 
 N.B.:
 
