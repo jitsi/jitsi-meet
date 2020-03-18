@@ -1,43 +1,50 @@
 /* eslint-disable no-unused-vars, no-var */
 
 var config = {
+    // Configuration
+    //
+
+    // Alternative location for the configuration.
+    // configLocation: './config.json',
+
+    // Custom function which given the URL path should return a room name.
+    // getroomnode: function (path) { return 'someprefixpossiblybasedonpath'; },
+
+
     // Connection
     //
 
     hosts: {
         // XMPP domain.
-        domain: 'jitsi-meet.example.com',
+        domain: 'meet.jit.si',
 
         // When using authentication, domain for guest users.
-        // anonymousdomain: 'guest.example.com',
+        anonymousdomain: 'guest.meet.jit.si',
 
         // Domain for authenticated users. Defaults to <domain>.
-        // authdomain: 'jitsi-meet.example.com',
+        authdomain: 'meet.jit.si',
 
         // Jirecon recording component domain.
-        // jirecon: 'jirecon.jitsi-meet.example.com',
+        // jirecon: 'jirecon.meet.jitsi',
 
         // Call control component (Jigasi).
-        // call_control: 'callcontrol.jitsi-meet.example.com',
+        // call_control: 'callcontrol.meet.jitsi',
 
         // Focus component domain. Defaults to focus.<domain>.
-        // focus: 'focus.jitsi-meet.example.com',
+        // focus: 'focus.meet.jitsi',
 
         // XMPP MUC domain. FIXME: use XEP-0030 to discover it.
-        muc: 'conference.jitsi-meet.example.com'
+        muc: 'muc.meet.jit.si',
     },
 
     // BOSH URL. FIXME: use XEP-0156 to discover it.
-    bosh: '//jitsi-meet.example.com/http-bind',
-
-    // Websocket URL
-    // websocket: 'wss://jitsi-meet.example.com/xmpp-websocket',
+    bosh: 'https://meet.jit.si/http-bind',
 
     // The name of client node advertised in XEP-0115 'c' stanza
     clientNode: 'http://jitsi.org/jitsimeet',
 
     // The real JID of focus participant - can be overridden here
-    // focusUserJid: 'focus@auth.jitsi-meet.example.com',
+    focusUserJid: 'focus@auth.meet.jit.si',
 
 
     // Testing / experimental features.
@@ -53,10 +60,6 @@ var config = {
 
         // Enables the test specific features consumed by jitsi-meet-torture
         // testMode: false
-
-        // Disables the auto-play behavior of *all* newly created video element.
-        // This is useful when the client runs on a host with limited resources.
-        // noAutoPlayVideo: false
     },
 
     // Disables ICE/UDP by filtering out local and remote UDP candidates in
@@ -75,18 +78,6 @@ var config = {
 
     // Disable measuring of audio levels.
     // disableAudioLevels: false,
-    // audioLevelsInterval: 200,
-
-    // Enabling this will run the lib-jitsi-meet no audio detection module which
-    // will notify the user if the current selected microphone has no audio
-    // input and will suggest another valid device if one is present.
-    enableNoAudioDetection: true,
-
-    // Enabling this will run the lib-jitsi-meet noise detection module which will
-    // notify the user if there is noise, other than voice, coming from the current
-    // selected microphone. The purpose it to let the user know that the input could
-    // be potentially unpleasant for other meeting participants.
-    enableNoisyMicDetection: true,
 
     // Start the conference in audio only mode (no video is being received nor
     // sent).
@@ -131,6 +122,10 @@ var config = {
     // layers are not in use will be suspended (no longer sent) until they
     // are requested again.
     // enableLayerSuspension: false,
+
+    // Suspend sending video if bandwidth estimation is too low. This may cause
+    // problems with audio playback. Disabled until these are fixed.
+    disableSuspendVideo: true,
 
     // Every participant after the Nth will start video muted.
     // startVideoMuted: 10,
@@ -177,17 +172,18 @@ var config = {
     // startScreenSharing: false,
 
     // Recording
+    hiddenDomain: 'recorder.meet.jitsi',
 
     // Whether to enable file recording or not.
-    // fileRecordingsEnabled: false,
+    fileRecordingsEnabled: true,
     // Enable the dropbox integration.
     // dropbox: {
     //     appKey: '<APP_KEY>' // Specify your app key here.
     //     // A URL to redirect the user to, after authenticating
     //     // by default uses:
-    //     // 'https://jitsi-meet.example.com/static/oauth.html'
+    //     // 'https://meet.jitsi/static/oauth.html'
     //     redirectURI:
-    //          'https://jitsi-meet.example.com/subfolder/static/oauth.html'
+    //          'https://meet.jitsi/subfolder/static/oauth.html'
     // },
     // When integrations like dropbox are enabled only that will be shown,
     // by enabling fileRecordingsServiceEnabled, we show both the integrations
@@ -200,14 +196,11 @@ var config = {
     // fileRecordingsServiceSharingEnabled: false,
 
     // Whether to enable live streaming or not.
-    // liveStreamingEnabled: false,
+    liveStreamingEnabled: true,
 
     // Transcription (in interface_config,
     // subtitles and buttons can be configured)
     // transcribingEnabled: false,
-
-    // Enables automatic turning on captions when recording is started
-    // autoCaptionOnRecord: false,
 
     // Misc
 
@@ -302,19 +295,18 @@ var config = {
     // estimation tests.
     // gatherStats: false,
 
-    // The interval at which PeerConnection.getStats() is called. Defaults to 10000
-    // pcStatsInterval: 10000,
-
     // To enable sending statistics to callstats.io you must provide the
     // Application ID and Secret.
     // callStatsID: '',
     // callStatsSecret: '',
 
+    // enables callstatsUsername to be reported as statsId and used
+    // by callstats as repoted remote id
+    // enableStatsID: false
+
     // enables sending participants display name to callstats
     // enableDisplayNameInStats: false
 
-    // enables sending participants email if available to callstats and other analytics
-    // enableEmailInStats: false
 
     // Privacy
     //
@@ -342,8 +334,6 @@ var config = {
 
         // The STUN servers that will be used in the peer to peer connections
         stunServers: [
-
-            // { urls: 'stun:jitsi-meet.example.com:443' },
             { urls: 'stun:stun.l.google.com:19302' },
             { urls: 'stun:stun1.l.google.com:19302' },
             { urls: 'stun:stun2.l.google.com:19302' }
@@ -392,20 +382,6 @@ var config = {
         // userRegion: "asia"
     }
 
-    // Information for the chrome extension banner
-    // chromeExtensionBanner: {
-    //     // The chrome extension to be installed address
-    //     url: 'https://chrome.google.com/webstore/detail/jitsi-meetings/kglhbbefdnlheedjiejgomgmfplipfeb',
-
-    //     // Extensions info which allows checking if they are installed or not
-    //     chromeExtensionsInfo: [
-    //         {
-    //             id: 'kglhbbefdnlheedjiejgomgmfplipfeb',
-    //             path: 'jitsi-logo-48x48.png'
-    //         }
-    //     ]
-    // }
-
     // Local Recording
     //
 
@@ -450,16 +426,6 @@ var config = {
     // A property to disable the right click context menu for localVideo
     // the menu has option to flip the locally seen video for local presentations
     // disableLocalVideoFlip: false
-
-    // Deployment specific URLs.
-    // deploymentUrls: {
-    //    // If specified a 'Help' button will be displayed in the overflow menu with a link to the specified URL for
-    //    // user documentation.
-    //    userDocumentationURL: 'https://docs.example.com/video-meetings.html',
-    //    // If specified a 'Download our apps' button will be displayed in the overflow menu with a link
-    //    // to the specified URL for an app download page.
-    //    downloadAppsUrl: 'https://docs.example.com/our-apps.html'
-    // }
 
     // List of undocumented settings used in jitsi-meet
     /**
