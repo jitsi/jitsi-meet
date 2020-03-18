@@ -1,5 +1,7 @@
 # Jitsi Meet quick install
 
+You only need to do this if you want to ___host your own Jitsi server___. If you just want to have a video conference with someone, use https://meet.jit.si instead.
+
 This document describes the required steps for a quick Jitsi Meet installation on a Debian based GNU/Linux system. Debian 8 (Jessie) or later, and Ubuntu 14.04 or later are supported out-of-the-box.
 
 Debian Wheezy and other older systems may require additional things to be done. Specifically for Wheezy, [libc needs to be updated](http://lists.jitsi.org/pipermail/users/2015-September/010064.html).
@@ -8,9 +10,7 @@ Also note that a recent default Ubuntu installation has only the `main` reposito
 
 N.B.:
 
-a.) All commands are supposed to be run by root. If you are logged in as a regular user with sudo rights, please prepend ___sudo___ to each of the commands.
-
-b.) You only need to do this if you want to ___host your own Jitsi server___. If you just want to have a video conference with someone, use https://meet.jit.si instead.
+All commands are supposed to be run by root. If you are logged in as a regular user with sudo rights, please prepend ___sudo___ to each of the commands.
 
 ## Basic Jitsi Meet install
 
