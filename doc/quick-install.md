@@ -13,9 +13,7 @@ Systems running the following versions are supported by this guide:
 
 To check the operating system available, you can run `cat /etc/issue` at the command-line.
 
-N.B.:
-
-All commands are supposed to be run by root. If you are logged in as a regular user with sudo rights, please prepend ___sudo___ to each of the commands.
+_Note_: All commands require superuser privileges. If you are logged in as a regular user, you may need to prepend `sudo` to each of the commands.
 
 ### Platform-specific notes
 
