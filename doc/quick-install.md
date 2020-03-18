@@ -14,7 +14,7 @@ b.) You only need to do this if you want to ___host your own Jitsi server___. If
 
 ## Basic Jitsi Meet install
 
-### Add the domain name to `/etc/hosts 
+### Add the domain name to `/etc/hosts`
 
 Add the the domain used to host the Jitsi Meet instance in the `/etc/hosts` file :
 
