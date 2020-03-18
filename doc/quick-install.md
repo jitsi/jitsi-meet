@@ -51,9 +51,13 @@ apt-get update
 apt-get -y install jitsi-meet
 ```
 
-During the installation, you will be asked to enter the hostname of the Jitsi Meet instance. If you have a FQDN hostname for the instance already set up in DNS, enter it there. If you don't have a resolvable hostname, you can enter the IP address of the machine (if it is static or doesn't change).
+During the installation, you will be asked to enter the hostname of the Jitsi Meet instance.
 
-This hostname (or IP address) will be used for virtualhost configuration inside the Jitsi Meet and also, you and your correspondents will be using it to access the web conferences.
+If the system has a fully-qualified DNS name (such as `https://jitsi.example.org`), enter it when prompted.
+
+Alternatively, you can enter the IP address of the machine (if it is static or doesn't change).
+
+You'll need to share this hostname or IP address with conference participants who will use your service.
 
 ### Generate a Let's Encrypt certificate
 
