@@ -73,13 +73,15 @@ Alternatively, you can enter the IP address of the machine (if it is static or d
 
 You'll need to share this hostname or IP address with conference participants who will use your service.
 
-### Open a conference
+### Confirm that your installation is working
 
-Launch a web browser (Chrome, Chromium or latest Opera) and enter in the URL bar the hostname (or IP address) you used in the previous step.
+Launch a web browser (Chrome, Chromium or latest Opera) and enter the hostname or IP address from the previous step into the address bar.
 
-Confirm that you trust the self-signed certificate of the newly installed Jitsi Meet.
+If you are using a self-signed certificate, you may need to ask your browser to ignore certificate warnings.
 
-Enjoy!
+You should see a web page prompting you to create a new meeting.  Make sure that you can successfully create a meeting and that other participants are able to join the session.
+
+If this all worked, then congratulations!  You have an operational Jitsi conference service.
 
 #### Advanced configuration
 If installation is on a machine [behind NAT](https://github.com/jitsi/jitsi-meet/blob/master/doc/faq.md) further configuration of jitsi-videobridge is needed in order for it to be accessible.
