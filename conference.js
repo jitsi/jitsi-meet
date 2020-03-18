@@ -2,6 +2,7 @@
 
 import { openConnection } from './connection';
 
+import { ENDPOINT_TEXT_MESSAGE_NAME } from './modules/API/constants';
 import AuthHandler from './modules/UI/authentication/AuthHandler';
 import Recorder from './modules/recorder/Recorder';
 
@@ -2041,7 +2042,22 @@ export default {
 
         room.on(
             JitsiConferenceEvents.ENDPOINT_MESSAGE_RECEIVED,
-            (...args) => APP.store.dispatch(endpointMessageReceived(...args)));
+            (...args) => {
+                APP.store.dispatch(endpointMessageReceived(...args));
+                if (args && args.length >= 2) {
+                    const [ sender, eventData ] = args;
+
+                    if (eventData.name === ENDPOINT_TEXT_MESSAGE_NAME) {
+                        APP.API.notifyEndpointTextMessageReceived({
+                            senderInfo: {
+                                jid: sender._jid,
+                                id: sender._id
+                            },
+                            eventData
+                        });
+                    }
+                }
+            });
 
         room.on(
             JitsiConferenceEvents.LOCK_STATE_CHANGED,
