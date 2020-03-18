@@ -17,7 +17,7 @@ _Note_: All commands require superuser privileges. If you are logged in as a reg
 
 ### Platform-specific notes
 
-On Debian Wheezy, [libc needs to be updated](http://lists.jitsi.org/pipermail/users/2015-September/010064.html).
+On Debian Wheezy, [libc needs to be updated](https://web.archive.org/web/20190423174759/http://lists.jitsi.org/pipermail/users/2015-September/010064.html).
 
 On Ubuntu systems, some Jitsi dependencies require installation from Ubuntu's `universe` package repository.  To ensure this is enabled, run `apt-add-repository universe` at the command-line.
 
