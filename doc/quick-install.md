@@ -61,7 +61,9 @@ You'll need to share this hostname or IP address with conference participants wh
 
 ### Generate a Let's Encrypt certificate
 
-Simply run the following in your shell
+A certificate is required to enable secure communication between conference participants and your service.
+
+To generate a certificate for free using the non-profit [Let's Encrypt](https://letsencrypt.org/) service, run the following command:
 
 ```sh
 /usr/share/jitsi-meet/scripts/install-letsencrypt-cert.sh
