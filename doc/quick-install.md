@@ -14,6 +14,12 @@ b.) You only need to do this if you want to ___host your own Jitsi server___. If
 
 ## Basic Jitsi Meet install
 
+### Add the domain name to `/etc/hosts 
+
+Add the the domain used to host the Jitsi Meet instance in the `/etc/hosts` file :
+
+    127.0.0.1 meet.example.org
+
 ### Add the repository
 ```sh
 echo 'deb https://download.jitsi.org stable/' >> /etc/apt/sources.list.d/jitsi-stable.list
