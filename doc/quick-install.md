@@ -114,6 +114,7 @@ By default, anyone who has access to your jitsi instance will be able to start a
 ```sh
 apt-get -y install jigasi
 ```
+
 or
 
 ```sh
