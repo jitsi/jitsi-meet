@@ -745,7 +745,7 @@
         "privacy": "Confidentialité",
         "recentList": "Récent",
         "recentListDelete": "Supprimer",
-        "recentListEmpty": "Votre liste récente est actuellement vide. Discuter avec votre équipe et vous trouverez toutes vos réunions récentes ici.",
+        "recentListEmpty": "La liste de vos réunions récentes est actuellement vide. Démarrez-en une nouvelle et elle apparaîtra ici.",
         "reducedUIText": "Bienvenue sur {{app}} !",
         "roomname": "Saisissez un nom de salle",
         "roomnameHint": "Entrez le nom ou l'URL de la salle que vous souhaitez rejoindre. Vous pouvez faire un nom, laissez les gens que vous rencontrerez le savoir afin qu'ils entrent le même nom.",
