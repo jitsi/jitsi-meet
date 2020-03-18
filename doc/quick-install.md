@@ -1,6 +1,6 @@
 # Jitsi Meet quick install
 
-You only need to do this if you want to ___host your own Jitsi server___. If you just want to have a video conference with someone, use https://meet.jit.si instead.
+This guide helps you  ___host your own Jitsi server___. If you want to have a video conference without setting up any infrastructure, use https://meet.jit.si instead.
 
 This document describes the required steps for a quick Jitsi Meet installation on a Debian based GNU/Linux system. Debian 8 (Jessie) or later, and Ubuntu 14.04 or later are supported out-of-the-box.
 
