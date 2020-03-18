@@ -13,13 +13,15 @@ Systems running the following versions are supported by this guide:
 
 To check the operating system available, you can run `cat /etc/issue` at the command-line.
 
-Debian Wheezy and other older systems may require additional things to be done. Specifically for Wheezy, [libc needs to be updated](http://lists.jitsi.org/pipermail/users/2015-September/010064.html).
-
-On Ubuntu systems, some Jitsi dependencies require installation from Ubuntu's `universe` package repository.  To ensure this is enabled, run `sudo apt-add-repository universe` at the command-line.
-
 N.B.:
 
 All commands are supposed to be run by root. If you are logged in as a regular user with sudo rights, please prepend ___sudo___ to each of the commands.
+
+### Platform-specific notes
+
+On Debian Wheezy, [libc needs to be updated](http://lists.jitsi.org/pipermail/users/2015-September/010064.html).
+
+On Ubuntu systems, some Jitsi dependencies require installation from Ubuntu's `universe` package repository.  To ensure this is enabled, run `apt-add-repository universe` at the command-line.
 
 ## Basic Jitsi Meet install
 
