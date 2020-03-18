@@ -73,6 +73,14 @@ Alternatively, you can enter the IP address of the machine (if it is static or d
 
 You'll need to share this hostname or IP address with conference participants who will use your service.
 
+### Open a conference
+
+Launch a web browser (Chrome, Chromium or latest Opera) and enter in the URL bar the hostname (or IP address) you used in the previous step.
+
+Confirm that you trust the self-signed certificate of the newly installed Jitsi Meet.
+
+Enjoy!
+
 #### Advanced configuration
 If installation is on a machine [behind NAT](https://github.com/jitsi/jitsi-meet/blob/master/doc/faq.md) further configuration of jitsi-videobridge is needed in order for it to be accessible.
 Provided that all required ports are routed (forwarded) to the machine that it runs on. By default these ports are (TCP/443 or TCP/4443 and UDP 10000).
@@ -94,14 +102,6 @@ DefaultTasksMax=65000
 To load the values and check them look [here](#systemd-details) for details.
 
 By default, anyone who has access to your jitsi instance will be able to start a conference: if your server is open to the world, anyone can have a chat with anyone else. If you want to limit the ability to start a conference to registered users, set up a "secure domain". Follow the instructions at https://github.com/jitsi/jicofo#secure-domain.
-
-### Open a conference
-
-Launch a web browser (Chrome, Chromium or latest Opera) and enter in the URL bar the hostname (or IP address) you used in the previous step.
-
-Confirm that you trust the self-signed certificate of the newly installed Jitsi Meet.
-
-Enjoy!
 
 ## Adding sip-gateway to Jitsi Meet
 
