@@ -27,7 +27,9 @@ On Ubuntu systems, some Jitsi dependencies require installation from Ubuntu's `u
 
 Add the the domain used to host the Jitsi Meet instance in the `/etc/hosts` file :
 
-    127.0.0.1 meet.example.org
+```
+127.0.0.1 meet.example.org
+```
 
 ### Add the repository
 
