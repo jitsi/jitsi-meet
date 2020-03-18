@@ -36,6 +36,16 @@ echo 'deb https://download.jitsi.org stable/' >> /etc/apt/sources.list.d/jitsi-s
 wget -qO -  https://download.jitsi.org/jitsi-key.gpg.key | apt-key add -
 ```
 
+### Generate a Let's Encrypt certificate
+
+A certificate is required to enable secure communication between conference participants and your service.
+
+To generate a certificate for free using the non-profit [Let's Encrypt](https://letsencrypt.org/) service, run the following command:
+
+```sh
+/usr/share/jitsi-meet/scripts/install-letsencrypt-cert.sh
+```
+
 ### Install Jitsi Meet
 
 Note: Something to consider before installation is how you're planning to serve Jitsi Meet. The installer will check if Nginx or Apache is present (with this order) and configure a virtualhost within the web server it finds to serve Jitsi Meet. If none of the above is found it then configures itself to be served via jetty. So if for example you are planning on deploying Jitsi Meet with a web server, you have to make sure to install the server **before** installing jitsi-meet.
@@ -58,16 +68,6 @@ If the system has a fully-qualified DNS name (such as `https://jitsi.example.org
 Alternatively, you can enter the IP address of the machine (if it is static or doesn't change).
 
 You'll need to share this hostname or IP address with conference participants who will use your service.
-
-### Generate a Let's Encrypt certificate
-
-A certificate is required to enable secure communication between conference participants and your service.
-
-To generate a certificate for free using the non-profit [Let's Encrypt](https://letsencrypt.org/) service, run the following command:
-
-```sh
-/usr/share/jitsi-meet/scripts/install-letsencrypt-cert.sh
-```
 
 #### Advanced configuration
 If installation is on a machine [behind NAT](https://github.com/jitsi/jitsi-meet/blob/master/doc/faq.md) further configuration of jitsi-videobridge is needed in order for it to be accessible.
