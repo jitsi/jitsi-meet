@@ -57,7 +57,7 @@ Optionally you can generate a trusted certificate for free using the non-profit 
 Note: Something to consider before installation is how you're planning to serve Jitsi Meet. The installer will check if Nginx or Apache is present (with this order) and configure a virtualhost within the web server it finds to serve Jitsi Meet. If none of the above is found it then configures itself to be served via jetty. So if for example you are planning on deploying Jitsi Meet with a web server, you have to make sure to install the server **before** installing jitsi-meet.
 
 ```sh
-# Ensures that HTTPS transport is enabled for apt repositories
+# Ensure support is available for apt repositories served via HTTPS
 apt-get install apt-transport-https
 
 # Retrieve the latest package versions across all repositories
