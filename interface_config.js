@@ -54,6 +54,14 @@ var interfaceConfig = {
         'tileview', 'videobackgroundblur', 'download', 'help', 'mute-everyone'
     ],
 
+    /**
+     * Label and target of external links to display on the welcome screen.
+     */
+    EXTERNAL_LINKS: {
+        // 'legal information': 'https://your-legal-information',
+        // 'privacy policy': 'https://your-privacy-policy'
+    },
+
     SETTINGS_SECTIONS: [ 'devices', 'language', 'moderator', 'profile', 'calendar' ],
 
     // Determines how the video would fit the screen. 'both' would fit the whole

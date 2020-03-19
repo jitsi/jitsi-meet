@@ -223,6 +223,7 @@ class WelcomePage extends AbstractWelcomePage {
                         </div>
                     </div>
                     { this._renderTabs() }
+                    { this._renderExternalLinks() }
                 </div>
                 { showAdditionalContent
                     ? <div
@@ -306,6 +307,31 @@ class WelcomePage extends AbstractWelcomePage {
                 onSelect = { this._onTabSelected }
                 selected = { this.state.selectedTab }
                 tabs = { tabs } />);
+    }
+
+    /**
+     * Renders external links.
+     *
+     * @returns {ReactElement|null}
+     */
+    _renderExternalLinks() {
+        const labels = Object.keys(interfaceConfig.EXTERNAL_LINKS || {});
+
+        if (labels.length === 0) {
+            return null;
+        }
+
+        return (
+            <div className = 'external-links'>
+                <ul>
+                    {labels.map(label => (<li key = { label }>
+                        <a
+                            href = { interfaceConfig.EXTERNAL_LINKS[label] }
+                            target = '_new'>{label}</a>
+                    </li>))}
+                </ul>
+            </div>
+        );
     }
 
     /**
