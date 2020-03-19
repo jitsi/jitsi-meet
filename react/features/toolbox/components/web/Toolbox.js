@@ -9,15 +9,13 @@ import {
     sendAnalytics
 } from '../../../analytics';
 import { openDialog, toggleDialog } from '../../../base/dialog';
-import { isMobileBrowser } from '../../../base/environment/utils';
 import { translate } from '../../../base/i18n';
 import {
     IconChat,
-    IconCodeBlock,
     IconExitFullScreen,
     IconFeedback,
     IconFullScreen,
-    IconInviteMore,
+    IconInvite,
     IconOpenInNew,
     IconPresentation,
     IconRaisedHand,
@@ -31,14 +29,18 @@ import {
     participantUpdated
 } from '../../../base/participants';
 import { connect, equals } from '../../../base/redux';
-import { OverflowMenuItem } from '../../../base/toolbox/components';
+import { OverflowMenuItem } from '../../../base/toolbox';
 import { getLocalVideoTrack, toggleScreensharing } from '../../../base/tracks';
 import { VideoBlurButton } from '../../../blur';
-import { CHAT_SIZE, ChatCounter, toggleChat } from '../../../chat';
-import { EmbedMeetingDialog } from '../../../embed-meeting';
+import { ChatCounter, toggleChat } from '../../../chat';
 import { SharedDocumentButton } from '../../../etherpad';
 import { openFeedbackDialog } from '../../../feedback';
-import { beginAddPeople } from '../../../invite';
+import {
+    beginAddPeople,
+    InfoDialogButton,
+    isAddPeopleEnabled,
+    isDialOutEnabled
+} from '../../../invite';
 import { openKeyboardShortcutsDialog } from '../../../keyboard-shortcuts';
 import {
     LocalRecordingButton,
@@ -48,7 +50,6 @@ import {
     LiveStreamButton,
     RecordButton
 } from '../../../recording';
-import { SecurityDialogButton } from '../../../security';
 import {
     SETTINGS_TABS,
     SettingsButton,
@@ -57,33 +58,32 @@ import {
 import { toggleSharedVideo } from '../../../shared-video';
 import { SpeakerStats } from '../../../speaker-stats';
 import {
-    ClosedCaptionButton
-} from '../../../subtitles';
-import {
     TileViewButton,
-    shouldDisplayTileView,
     toggleTileView
 } from '../../../video-layout';
 import {
     OverflowMenuVideoQualityItem,
     VideoQualityDialog
 } from '../../../video-quality';
+
 import {
     setFullScreen,
     setOverflowMenuVisible,
     setToolbarHovered
 } from '../../actions';
-import { isToolboxVisible } from '../../functions';
+import AudioMuteButton from '../AudioMuteButton';
 import DownloadButton from '../DownloadButton';
+import { isToolboxVisible } from '../../functions';
 import HangupButton from '../HangupButton';
 import HelpButton from '../HelpButton';
-
-import AudioSettingsButton from './AudioSettingsButton';
-import MuteEveryoneButton from './MuteEveryoneButton';
 import OverflowMenuButton from './OverflowMenuButton';
 import OverflowMenuProfileItem from './OverflowMenuProfileItem';
+import MuteEveryoneButton from './MuteEveryoneButton';
 import ToolbarButton from './ToolbarButton';
-import VideoSettingsButton from './VideoSettingsButton';
+import VideoMuteButton from '../VideoMuteButton';
+import {
+    ClosedCaptionButton
+} from '../../../subtitles';
 
 /**
  * The type of the React {@code Component} props of {@link Toolbox}.
@@ -132,6 +132,12 @@ type Props = {
     _tileViewEnabled: boolean,
 
     /**
+     * Whether or not invite should be hidden, regardless of feature
+     * availability.
+     */
+    _hideInviteButton: boolean,
+
+    /**
      * Whether or not the current user is logged in through a JWT.
      */
     _isGuest: boolean,
@@ -145,12 +151,6 @@ type Props = {
      * The subsection of Redux state for local recording
      */
     _localRecState: Object,
-
-    /**
-     * The value for how the conference is locked (or undefined if not locked)
-     * as defined by room-lock constants.
-     */
-    _locked: boolean,
 
     /**
      * Whether or not the overflow menu is visible.
@@ -241,7 +241,6 @@ class Toolbox extends Component<Props, State> {
         this._onToolbarOpenInvite = this._onToolbarOpenInvite.bind(this);
         this._onToolbarOpenKeyboardShortcuts = this._onToolbarOpenKeyboardShortcuts.bind(this);
         this._onToolbarOpenSpeakerStats = this._onToolbarOpenSpeakerStats.bind(this);
-        this._onToolbarOpenEmbedMeeting = this._onToolbarOpenEmbedMeeting.bind(this);
         this._onToolbarOpenVideoQuality = this._onToolbarOpenVideoQuality.bind(this);
         this._onToolbarToggleChat = this._onToolbarToggleChat.bind(this);
         this._onToolbarToggleFullScreen = this._onToolbarToggleFullScreen.bind(this);
@@ -327,10 +326,6 @@ class Toolbox extends Component<Props, State> {
             this._onSetOverflowVisible(false);
             this.props.dispatch(setToolbarHovered(false));
         }
-
-        if (this.props._chatOpen !== prevProps._chatOpen) {
-            this._onResize();
-        }
     }
 
     /**
@@ -353,9 +348,9 @@ class Toolbox extends Component<Props, State> {
      * @returns {ReactElement}
      */
     render() {
-        const { _chatOpen, _visible, _visibleButtons } = this.props;
+        const { _visible, _visibleButtons } = this.props;
         const rootClassNames = `new-toolbox ${_visible ? 'visible' : ''} ${
-            _visibleButtons.size ? '' : 'no-buttons'} ${_chatOpen ? 'shift-right' : ''}`;
+            _visibleButtons.size ? '' : 'no-buttons'}`;
 
         return (
             <div
@@ -379,16 +374,6 @@ class Toolbox extends Component<Props, State> {
         const { _conference } = this.props;
 
         this.props.dispatch(openFeedbackDialog(_conference));
-    }
-
-    /**
-     * Callback invoked to display {@code FeedbackDialog}.
-     *
-     * @private
-     * @returns {void}
-     */
-    _doOpenEmbedMeeting() {
-        this.props.dispatch(openDialog(EmbedMeetingDialog));
     }
 
     /**
@@ -553,15 +538,10 @@ class Toolbox extends Component<Props, State> {
      * @returns {void}
      */
     _onResize() {
-        let widthToUse = window.innerWidth;
+        const width = window.innerWidth;
 
-        // Take chat size into account when resizing toolbox.
-        if (this.props._chatOpen) {
-            widthToUse -= CHAT_SIZE;
-        }
-
-        if (this.state.windowWidth !== widthToUse) {
-            this.setState({ windowWidth: widthToUse });
+        if (this.state.windowWidth !== width) {
+            this.setState({ windowWidth: width });
         }
     }
 
@@ -730,21 +710,6 @@ class Toolbox extends Component<Props, State> {
         sendAnalytics(createToolbarEvent('shortcuts'));
 
         this._doOpenKeyboardShorcuts();
-    }
-
-    _onToolbarOpenEmbedMeeting: () => void;
-
-    /**
-     * Creates an analytics toolbar event and dispatches an action for opening
-     * the embed meeting modal.
-     *
-     * @private
-     * @returns {void}
-     */
-    _onToolbarOpenEmbedMeeting() {
-        sendAnalytics(createToolbarEvent('embed.meeting'));
-
-        this._doOpenEmbedMeeting();
     }
 
     _onToolbarOpenSpeakerStats: () => void;
@@ -1010,24 +975,37 @@ class Toolbox extends Component<Props, State> {
                     icon = { _fullScreen ? IconExitFullScreen : IconFullScreen }
                     key = 'fullscreen'
                     onClick = { this._onToolbarToggleFullScreen }
-                    text = { _fullScreen ? t('toolbar.exitFullScreen') : t('toolbar.enterFullScreen') } />,
-            <LiveStreamButton
-                key = 'livestreaming'
-                showLabel = { true } />,
-            <RecordButton
-                key = 'record'
-                showLabel = { true } />,
-            this._shouldShowButton('sharedvideo')
-                && <OverflowMenuItem
-                    accessibilityLabel = { t('toolbar.accessibilityLabel.sharedvideo') }
-                    icon = { IconShareVideo }
-                    key = 'sharedvideo'
-                    onClick = { this._onToolbarToggleSharedVideo }
-                    text = { _sharingVideo ? t('toolbar.stopSharedVideo') : t('toolbar.sharedvideo') } />,
-            this._shouldShowButton('etherpad')
-                && <SharedDocumentButton
-                    key = 'etherpad'
-                    showLabel = { true } />,
+                    text = { _fullScreen
+                        ? t('toolbar.exitFullScreen')
+                        : t('toolbar.enterFullScreen') } />,
+
+            // <LiveStreamButton
+            //     key = 'livestreaming'
+            //     showLabel = { true } />,
+            // <RecordButton
+            //     key = 'record'
+            //     showLabel = { true } />,
+            // this._shouldShowButton('sharedvideo')
+            //     && <OverflowMenuItem
+            //         accessibilityLabel =
+            //             { t('toolbar.accessibilityLabel.sharedvideo') }
+            //         icon = { IconShareVideo }
+            //         key = 'sharedvideo'
+            //         onClick = { this._onToolbarToggleSharedVideo }
+            //         text = { _sharingVideo
+            //             ? t('toolbar.stopSharedVideo')
+            //             : t('toolbar.sharedvideo') } />,
+            // this._shouldShowButton('etherpad')
+            //     && _etherpadInitialized
+            //     && <OverflowMenuItem
+            //         accessibilityLabel =
+            //             { t('toolbar.accessibilityLabel.document') }
+            //         icon = { IconShareDoc }
+            //         key = 'etherpad'
+            //         onClick = { this._onToolbarToggleEtherpad }
+            //         text = { _editingDocument
+            //             ? t('toolbar.documentClose')
+            //             : t('toolbar.documentOpen') } />,
             <VideoBlurButton
                 key = 'videobackgroundblur'
                 showLabel = { true }
@@ -1040,43 +1018,31 @@ class Toolbox extends Component<Props, State> {
                 key = 'mute-everyone'
                 showLabel = { true }
                 visible = { this._shouldShowButton('mute-everyone') } />,
-            this._shouldShowButton('stats')
-                && <OverflowMenuItem
-                    accessibilityLabel = { t('toolbar.accessibilityLabel.speakerStats') }
-                    icon = { IconPresentation }
-                    key = 'stats'
-                    onClick = { this._onToolbarOpenSpeakerStats }
-                    text = { t('toolbar.speakerStats') } />,
-            this._shouldShowButton('embedmeeting')
-                && <OverflowMenuItem
-                    accessibilityLabel = { t('toolbar.accessibilityLabel.embedMeeting') }
-                    icon = { IconCodeBlock }
-                    key = 'embed'
-                    onClick = { this._onToolbarOpenEmbedMeeting }
-                    text = { t('toolbar.embedMeeting') } />,
-            this._shouldShowButton('feedback')
-                && _feedbackConfigured
-                && <OverflowMenuItem
-                    accessibilityLabel = { t('toolbar.accessibilityLabel.feedback') }
-                    icon = { IconFeedback }
-                    key = 'feedback'
-                    onClick = { this._onToolbarOpenFeedback }
-                    text = { t('toolbar.feedback') } />,
-            this._shouldShowButton('shortcuts')
-                && <OverflowMenuItem
-                    accessibilityLabel = { t('toolbar.accessibilityLabel.shortcuts') }
-                    icon = { IconOpenInNew }
-                    key = 'shortcuts'
-                    onClick = { this._onToolbarOpenKeyboardShortcuts }
-                    text = { t('toolbar.shortcuts') } />,
-            this._shouldShowButton('download')
-                && <DownloadButton
-                    key = 'download'
-                    showLabel = { true } />,
-            this._shouldShowButton('help')
-                && <HelpButton
-                    key = 'help'
-                    showLabel = { true } />
+            // this._shouldShowButton('stats')
+            //     && <OverflowMenuItem
+            //         accessibilityLabel =
+            //             { t('toolbar.accessibilityLabel.speakerStats') }
+            //         icon = { IconPresentation }
+            //         key = 'stats'
+            //         onClick = { this._onToolbarOpenSpeakerStats }
+            //         text = { t('toolbar.speakerStats') } />,
+            // this._shouldShowButton('feedback')
+            //     && _feedbackConfigured
+            //     && <OverflowMenuItem
+            //         accessibilityLabel =
+            //             { t('toolbar.accessibilityLabel.feedback') }
+            //         icon = { IconFeedback }
+            //         key = 'feedback'
+            //         onClick = { this._onToolbarOpenFeedback }
+            //         text = { t('toolbar.feedback') } />,
+            // this._shouldShowButton('shortcuts')
+            //     && <OverflowMenuItem
+            //         accessibilityLabel =
+            //             { t('toolbar.accessibilityLabel.shortcuts') }
+            //         icon = { IconOpenInNew }
+            //         key = 'shortcuts'
+            //         onClick = { this._onToolbarOpenKeyboardShortcuts }
+            //         text = { t('toolbar.shortcuts') } />
         ];
     }
 
@@ -1129,67 +1095,38 @@ class Toolbox extends Component<Props, State> {
                         } />
                 );
             case 'closedcaptions':
-                return (
-                    <ClosedCaptionButton
-                        key = 'closed-captions'
-                        showLabel = { true } />
-                );
-            case 'security':
-                return (
-                    <SecurityDialogButton
-                        key = 'security'
-                        showLabel = { true } />
-                );
-            case 'invite':
-                return (
-                    <OverflowMenuItem
-                        accessibilityLabel = { t('toolbar.accessibilityLabel.invite') }
-                        icon = { IconInviteMore }
-                        key = 'invite'
-                        onClick = { this._onToolbarOpenInvite }
-                        text = { t('toolbar.invite') } />
-                );
+                return <ClosedCaptionButton showLabel = { true } />;
+
+            // case 'info':
+            //     return <InfoDialogButton showLabel = { true } />;
+            // case 'invite':
+            //     return (
+            //         <OverflowMenuItem
+            //             accessibilityLabel =
+            //                 { t('toolbar.accessibilityLabel.invite') }
+            //             icon = { IconInvite }
+            //             key = 'invite'
+            //             onClick = { this._onToolbarOpenInvite }
+            //             text = { t('toolbar.invite') } />
+            //     );
             case 'tileview':
                 return <TileViewButton showLabel = { true } />;
-            case 'localrecording':
-                return (
-                    <OverflowMenuItem
-                        accessibilityLabel = { t('toolbar.accessibilityLabel.localRecording') }
-                        icon = { IconRec }
-                        key = 'localrecording'
-                        onClick = { this._onToolbarOpenLocalRecordingInfoDialog }
-                        text = { t('localRecording.dialogTitle') } />
-                );
+            // case 'localrecording':
+            //     return (
+            //         <OverflowMenuItem
+            //             accessibilityLabel
+            //                 = { t('toolbar.accessibilityLabel.localRecording') }
+            //             icon = { IconRec }
+            //             key = 'localrecording'
+            //             onClick = {
+            //                 this._onToolbarOpenLocalRecordingInfoDialog
+            //             }
+            //             text = { t('localRecording.dialogTitle') } />
+            //     );
             default:
                 return null;
             }
         });
-    }
-
-    /**
-     * Renders the Audio controlling button.
-     *
-     * @returns {ReactElement}
-     */
-    _renderAudioButton() {
-        return this._shouldShowButton('microphone')
-            ? <AudioSettingsButton
-                key = 'asb'
-                visible = { true } />
-            : null;
-    }
-
-    /**
-     * Renders the Video controlling button.
-     *
-     * @returns {ReactElement}
-     */
-    _renderVideoButton() {
-        return this._shouldShowButton('camera')
-            ? <VideoSettingsButton
-                key = 'vsb'
-                visible = { true } />
-            : null;
     }
 
     /**
@@ -1200,6 +1137,7 @@ class Toolbox extends Component<Props, State> {
     _renderToolboxContent() {
         const {
             _chatOpen,
+            _hideInviteButton,
             _overflowMenuVisible,
             _raisedHand,
             t
@@ -1210,35 +1148,16 @@ class Toolbox extends Component<Props, State> {
         const buttonsLeft = [];
         const buttonsRight = [];
 
-        const smallThreshold = 700;
-        const verySmallThreshold = 500;
-
-        let minSpaceBetweenButtons = 48;
-        let widthPlusPaddingOfButton = 56;
-
-        if (this.state.windowWidth <= verySmallThreshold) {
-            minSpaceBetweenButtons = 26;
-            widthPlusPaddingOfButton = 28;
-        } else if (this.state.windowWidth <= smallThreshold) {
-            minSpaceBetweenButtons = 36;
-            widthPlusPaddingOfButton = 40;
-        }
-
         const maxNumberOfButtonsPerGroup = Math.floor(
             (
                 this.state.windowWidth
                     - 168 // the width of the central group by design
-                    - minSpaceBetweenButtons // the minimum space between the button groups
+                    - 48 // the minimum space between the button groups
             )
-            / widthPlusPaddingOfButton // the width + padding of a button
+            / 56 // the width + padding of a button
             / 2 // divide by the number of groups(left and right group)
         );
 
-        const showOverflowMenu = this.state.windowWidth >= verySmallThreshold || isMobileBrowser();
-
-        if (this._shouldShowButton('chat')) {
-            buttonsLeft.push('chat');
-        }
         if (this._shouldShowButton('desktop')
                 && this._isDesktopSharingButtonVisible()) {
             buttonsLeft.push('desktop');
@@ -1246,19 +1165,21 @@ class Toolbox extends Component<Props, State> {
         if (this._shouldShowButton('raisehand')) {
             buttonsLeft.push('raisehand');
         }
+        if (this._shouldShowButton('chat')) {
+            buttonsLeft.push('chat');
+        }
         if (this._shouldShowButton('closedcaptions')) {
             buttonsLeft.push('closedcaptions');
         }
-        if (overflowHasItems && showOverflowMenu) {
+        if (overflowHasItems) {
             buttonsRight.push('overflowmenu');
         }
-        if (this._shouldShowButton('invite')) {
+        if (this._shouldShowButton('info')) {
+            buttonsRight.push('info');
+        }
+        if (this._shouldShowButton('invite') && !_hideInviteButton) {
             buttonsRight.push('invite');
         }
-        if (this._shouldShowButton('security') || this._shouldShowButton('info')) {
-            buttonsRight.push('security');
-        }
-
         if (this._shouldShowButton('tileview')) {
             buttonsRight.push('tileview');
         }
@@ -1272,13 +1193,13 @@ class Toolbox extends Component<Props, State> {
             movedButtons.push(...buttonsLeft.splice(
                 maxNumberOfButtonsPerGroup,
                 buttonsLeft.length - maxNumberOfButtonsPerGroup));
-            if (buttonsRight.indexOf('overflowmenu') === -1 && showOverflowMenu) {
+            if (buttonsRight.indexOf('overflowmenu') === -1) {
                 buttonsRight.unshift('overflowmenu');
             }
         }
 
         if (buttonsRight.length > maxNumberOfButtonsPerGroup) {
-            if (buttonsRight.indexOf('overflowmenu') === -1 && showOverflowMenu) {
+            if (buttonsRight.indexOf('overflowmenu') === -1) {
                 buttonsRight.unshift('overflowmenu');
             }
 
@@ -1301,6 +1222,15 @@ class Toolbox extends Component<Props, State> {
         return (
             <div className = 'toolbox-content'>
                 <div className = 'button-group-left'>
+                    { buttonsLeft.indexOf('desktop') !== -1
+                        && this._renderDesktopSharingButton() }
+                    { buttonsLeft.indexOf('raisehand') !== -1
+                        && <ToolbarButton
+                            accessibilityLabel = { t('toolbar.accessibilityLabel.raiseHand') }
+                            icon = { IconRaisedHand }
+                            onClick = { this._onToolbarToggleRaiseHand }
+                            toggled = { _raisedHand }
+                            tooltip = { t('toolbar.raiseHand') } /> }
                     { buttonsLeft.indexOf('chat') !== -1
                         && <div className = 'toolbar-button-with-badge'>
                             <ToolbarButton
@@ -1311,25 +1241,18 @@ class Toolbox extends Component<Props, State> {
                                 tooltip = { t('toolbar.chat') } />
                             <ChatCounter />
                         </div> }
-                    { buttonsLeft.indexOf('desktop') !== -1
-                        && this._renderDesktopSharingButton() }
-                    { buttonsLeft.indexOf('raisehand') !== -1
-                        && <ToolbarButton
-                            accessibilityLabel = { t('toolbar.accessibilityLabel.raiseHand') }
-                            icon = { IconRaisedHand }
-                            onClick = { this._onToolbarToggleRaiseHand }
-                            toggled = { _raisedHand }
-                            tooltip = { t('toolbar.raiseHand') } /> }
                     {
                         buttonsLeft.indexOf('closedcaptions') !== -1
                             && <ClosedCaptionButton />
                     }
                 </div>
                 <div className = 'button-group-center'>
-                    { this._renderAudioButton() }
+                    <AudioMuteButton
+                        visible = { this._shouldShowButton('microphone') } />
                     <HangupButton
                         visible = { this._shouldShowButton('hangup') } />
-                    { this._renderVideoButton() }
+                    <VideoMuteButton
+                        visible = { this._shouldShowButton('camera') } />
                 </div>
                 <div className = 'button-group-right'>
                     { buttonsRight.indexOf('localrecording') !== -1
@@ -1344,11 +1267,13 @@ class Toolbox extends Component<Props, State> {
                         && <ToolbarButton
                             accessibilityLabel =
                                 { t('toolbar.accessibilityLabel.invite') }
-                            icon = { IconInviteMore }
+                            icon = { IconInvite }
                             onClick = { this._onToolbarOpenInvite }
                             tooltip = { t('toolbar.invite') } /> }
-                    { buttonsRight.indexOf('security') !== -1
-                        && <SecurityDialogButton customClass = 'security-toolbar-button' /> }
+                    {/* {*/}
+                    {/*    buttonsRight.indexOf('info') !== -1*/}
+                    {/*        && <InfoDialogButton />*/}
+                    {/* }*/}
                     { buttonsRight.indexOf('overflowmenu') !== -1
                         && <OverflowMenuButton
                             isOpen = { _overflowMenuVisible }
@@ -1387,11 +1312,11 @@ class Toolbox extends Component<Props, State> {
  * @returns {{}}
  */
 function _mapStateToProps(state) {
-    const { conference, locked } = state['features/base/conference'];
+    const { conference } = state['features/base/conference'];
     let { desktopSharingEnabled } = state['features/base/conference'];
     const {
         callStatsID,
-        enableFeaturesBasedOnToken
+        iAmRecorder
     } = state['features/base/config'];
     const sharedVideoStatus = state['features/shared-video'].status;
     const {
@@ -1401,10 +1326,12 @@ function _mapStateToProps(state) {
     const localParticipant = getLocalParticipant(state);
     const localRecordingStates = state['features/local-recording'];
     const localVideo = getLocalVideoTrack(state['features/base/tracks']);
+    const addPeopleEnabled = isAddPeopleEnabled(state);
+    const dialOutEnabled = isDialOutEnabled(state);
 
     let desktopSharingDisabledTooltipKey;
 
-    if (enableFeaturesBasedOnToken) {
+    if (state['features/base/config'].enableFeaturesBasedOnToken) {
         // we enable desktop sharing if any participant already have this
         // feature enabled
         desktopSharingEnabled = getParticipants(state)
@@ -1432,12 +1359,13 @@ function _mapStateToProps(state) {
         _desktopSharingDisabledTooltipKey: desktopSharingDisabledTooltipKey,
         _dialog: Boolean(state['features/base/dialog'].component),
         _feedbackConfigured: Boolean(callStatsID),
+        _hideInviteButton:
+            iAmRecorder || (!addPeopleEnabled && !dialOutEnabled),
         _isGuest: state['features/base/jwt'].isGuest,
         _fullScreen: fullScreen,
-        _tileViewEnabled: shouldDisplayTileView(state),
+        _tileViewEnabled: state['features/video-layout'].tileViewEnabled,
         _localParticipantID: localParticipant.id,
         _localRecState: localRecordingStates,
-        _locked: locked,
         _overflowMenuVisible: overflowMenuVisible,
         _raisedHand: localParticipant.raisedHand,
         _screensharing: localVideo && localVideo.videoType === 'desktop',
