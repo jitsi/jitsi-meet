@@ -685,7 +685,7 @@
             "join": "Tap per accedere",
             "roomname": "Inserisci Nome Stanza"
         },
-        "appDescription": "Via avanti, video chatta con l'intero team. In effetti, invita tutti quelli che conosci. {{app}} è una soluzione di video conference totalmente crittografata, 100% open cource, che puoi utilizzare tutto il giorno, ogni giorno, gratuitamente - senza bisogno di un account.",
+        "appDescription": "Via avanti, video chatta con l'intero team. In effetti, invita tutti quelli che conosci. {{app}} è una soluzione di video conference totalmente crittografata, 100% open source, che puoi utilizzare tutto il giorno, ogni giorno, gratuitamente - senza bisogno di un account.",
         "audioVideoSwitch": {
             "audio": "Voce",
             "video": "Video"
