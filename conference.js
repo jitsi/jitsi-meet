@@ -2725,6 +2725,7 @@ export default {
 
             APP.API.notifyReadyToClose();
             APP.store.dispatch(maybeRedirectToWelcomePage(values[0]));
+            window.close();
         });
     },
 

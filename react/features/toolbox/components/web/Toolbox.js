@@ -1096,8 +1096,9 @@ class Toolbox extends Component<Props, State> {
                 );
             case 'closedcaptions':
                 return <ClosedCaptionButton showLabel = { true } />;
-            case 'info':
-                return <InfoDialogButton showLabel = { true } />;
+
+            // case 'info':
+            //     return <InfoDialogButton showLabel = { true } />;
             // case 'invite':
             //     return (
             //         <OverflowMenuItem
@@ -1269,10 +1270,10 @@ class Toolbox extends Component<Props, State> {
                             icon = { IconInvite }
                             onClick = { this._onToolbarOpenInvite }
                             tooltip = { t('toolbar.invite') } /> }
-                    {
-                        buttonsRight.indexOf('info') !== -1
-                            && <InfoDialogButton />
-                    }
+                    {/* {*/}
+                    {/*    buttonsRight.indexOf('info') !== -1*/}
+                    {/*        && <InfoDialogButton />*/}
+                    {/* }*/}
                     { buttonsRight.indexOf('overflowmenu') !== -1
                         && <OverflowMenuButton
                             isOpen = { _overflowMenuVisible }
