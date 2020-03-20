@@ -311,10 +311,10 @@ var config = {
     // callStatsSecret: '',
 
     // enables sending participants display name to callstats
-    // enableDisplayNameInStats: false
+    // enableDisplayNameInStats: false,
 
     // enables sending participants email if available to callstats and other analytics
-    // enableEmailInStats: false
+    // enableEmailInStats: false,
 
     // Privacy
     //
@@ -390,7 +390,7 @@ var config = {
         // shard: "shard1",
         // region: "europe",
         // userRegion: "asia"
-    }
+    },
 
     // Information for the chrome extension banner
     // chromeExtensionBanner: {
@@ -404,7 +404,7 @@ var config = {
     //             path: 'jitsi-logo-48x48.png'
     //         }
     //     ]
-    // }
+    // },
 
     // Local Recording
     //
@@ -422,7 +422,7 @@ var config = {
     //     format: 'flac'
     //
 
-    // }
+    // },
 
     // Options related to end-to-end (participant to participant) ping.
     // e2eping: {
@@ -434,22 +434,22 @@ var config = {
     //   // with the measured RTT will be sent. Defaults to 60000, set
     //   // to <= 0 to disable.
     //   analyticsInterval: 60000,
-    //   }
+    //   },
 
     // If set, will attempt to use the provided video input device label when
     // triggering a screenshare, instead of proceeding through the normal flow
     // for obtaining a desktop stream.
     // NOTE: This option is experimental and is currently intended for internal
     // use only.
-    // _desktopSharingSourceDevice: 'sample-id-or-label'
+    // _desktopSharingSourceDevice: 'sample-id-or-label',
 
     // If true, any checks to handoff to another application will be prevented
     // and instead the app will continue to display in the current browser.
-    // disableDeepLinking: false
+    // disableDeepLinking: false,
 
     // A property to disable the right click context menu for localVideo
     // the menu has option to flip the locally seen video for local presentations
-    // disableLocalVideoFlip: false
+    // disableLocalVideoFlip: false,
 
     // Deployment specific URLs.
     // deploymentUrls: {
@@ -459,7 +459,7 @@ var config = {
     //    // If specified a 'Download our apps' button will be displayed in the overflow menu with a link
     //    // to the specified URL for an app download page.
     //    downloadAppsUrl: 'https://docs.example.com/our-apps.html'
-    // }
+    // },
 
     // List of undocumented settings used in jitsi-meet
     /**
@@ -511,6 +511,11 @@ var config = {
      startBitrate
      */
 
+
+  // Allow all above example options to include a trailing comma and
+  // prevent fear when commenting out the last value.
+  make_json_parser_happy: 'even if last key had a trailing comma'
+  // no configuration value should follow this line.
 };
 
 /* eslint-enable no-unused-vars, no-var */
