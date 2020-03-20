@@ -769,5 +769,9 @@
         "sendFeedback": "Send feedback",
         "terms": "Terms",
         "title": "Secure, fully featured, and completely free video conferencing"
+    },
+    "lonelyMeetingExperience": {
+        "button": "Invite others",
+        "youAreAlone": "You are the only one in the meeting"
     }
 }
