@@ -527,6 +527,7 @@ var config = {
      disableRemoteControl
      displayJids
      etherpad_base
+     openSharedDocumentOnJoin
      externalConnectUrl
      firefox_fake_device
      googleApiApplicationClientID
