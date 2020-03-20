@@ -24,7 +24,18 @@ export class App extends AbstractApp {
      *
      * @override
      */
+    _checkLastVisitedURL(): void {
+        if (window.location.href.indexOf('?jwt=') > -1) {
+            localStorage.setItem('lastVisitedUrl', window.location.href.toString());
+        }
+        if (window.location.href.indexOf('?jwt=') < 0 && localStorage.getItem('lastVisitedUrl')) {
+            window.location.href = localStorage.getItem('lastVisitedUrl');
+        }
+    }
+
     _createMainElement(component, props) {
+        this._checkLastVisitedURL();
+
         return (
             <AtlasKitThemeProvider mode = 'dark'>
                 <ChromeExtensionBanner />
