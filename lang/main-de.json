@@ -21,7 +21,7 @@
         "bluetooth": "Bluetooth",
         "headphones": "Kopfhörer",
         "phone": "Telefon",
-        "speaker": "Sprecher",
+        "speaker": "Lautsprecher",
         "none": "Keine Audiogeräte verfügbar"
     },
     "audioOnly": {
@@ -41,7 +41,7 @@
         "noEvents": "Es sind keine bevorstehenden Veranstaltungen geplant.",
         "ongoingMeeting": "Laufendes Meeting",
         "permissionButton": "Einstellungen öffnen",
-        "permissionMessage": "Die App benötigt Zugriff auf den Kalender um die Termine und Konferenzen anzuzeigen.",
+        "permissionMessage": "Die App benötigt Zugriff auf den Kalender, um die Termine und Konferenzen anzuzeigen.",
         "refresh": "Kalender aktualisieren",
         "today": "Heute"
     },
@@ -50,7 +50,7 @@
         "fieldPlaceHolder": "Geben Sie Ihre Nachricht hier ein",
         "messagebox": "Nachricht eingeben",
         "messageTo": "Private Nachricht an {{recipient}}",
-        "noMessagesMessage": "Es gibt noch keine Nachricht in dieser Konverenz. Starten Sie hier eine Unterhaltung!",
+        "noMessagesMessage": "Es gibt noch keine Nachricht in dieser Konferenz. Starten Sie hier eine Unterhaltung!",
         "nickname": {
             "popover": "Name",
             "title": "Geben Sie einen Alias zum Chatten ein"
@@ -61,7 +61,7 @@
     },
     "chromeExtensionBanner": {
         "installExtensionText": "Installieren Sie die Erweiterung für die Integration von Google Calendar und Office 365",
-        "buttonText": "Chrome Erweiterung installieren",
+        "buttonText": "Chrome-Erweiterung installieren",
         "dontShowAgain": "Hinweis nicht mehr anzeigen"
     },
     "connectingOverlay": {
@@ -119,8 +119,8 @@
         "yesterday": "Gestern"
     },
     "deepLinking": {
-        "appNotInstalled": "Sie benötigen die {{app}} App um der Konferenz auf dem Smartphone beizutreten.",
-        "description": "Nichts passiert? Wir haben versucht die Konferenz in {{app}} zu öffnen. Versuchen Sie es erneut oder treten Sie der Konferenz in {{app}} im Web bei.",
+        "appNotInstalled": "Sie benötigen die {{app}}-App, um der Konferenz auf dem Smartphone beizutreten.",
+        "description": "Nichts passiert? Wir haben versucht, die Konferenz in {{app}} zu öffnen. Versuchen Sie es erneut oder treten Sie der Konferenz in {{app}} im Web bei.",
         "descriptionWithoutWeb": "Ist nichts passiert? Wir haben versucht, Ihre Besprechung in der {{{app}}} Desktop-App zu starten.",
         "downloadApp": "App herunterladen",
         "launchWebButton": "Im Web öffnen",
@@ -224,22 +224,22 @@
         "passwordNotSupported": "Setzen eines Konferenz-Passworts ist nicht unterstützt",
         "passwordNotSupportedTitle": "$t(lockRoomPasswordUppercase) nicht unterstützt",
         "passwordRequired": "$t(lockRoomPasswordUppercase) erforderlich",
-        "popupError": "Ihr Browser blockiert Popups von dieser Website. Bitte aktivieren Sie Popups in den Sicherheitseinstellungen des Browsers und versuchen Sie es erneut.",
-        "popupErrorTitle": "Popup blockiert",
+        "popupError": "Ihr Browser blockiert Pop-ups von dieser Website. Bitte aktivieren Sie Popups in den Sicherheitseinstellungen des Browsers und versuchen Sie es erneut.",
+        "popupErrorTitle": "Pop-up blockiert",
         "recording": "Aufnahme",
-        "recordingDisabledForGuestTooltip": "Gäste können kein Aufzeichnungen starten.",
+        "recordingDisabledForGuestTooltip": "Gäste können keine Aufzeichnungen starten.",
         "recordingDisabledTooltip": "Start der Aufzeichnung deaktiviert.",
         "rejoinNow": "Jetzt erneut beitreten",
         "remoteControlAllowedMessage": "{{user}} hat die Anfrage zur Fernsteuerung angenommen.",
         "remoteControlDeniedMessage": "{{user}} hat die Anfrage zur Fernsteuerung verweigert.",
         "remoteControlErrorMessage": "Beim Anfordern der Fernsteuerungsberechtigung von {{user}} ist ein Fehler aufgetreten.",
         "remoteControlRequestMessage": "Möchten Sie {{user}} erlauben den Computer fernzusteuern?",
-        "remoteControlShareScreenWarning": "Achtung, wenn Sie die Anfrage genehmigen starten Sie die Bildschirmfreigabe!",
+        "remoteControlShareScreenWarning": "Achtung, wenn Sie die Anfrage genehmigen, starten Sie die Bildschirmfreigabe!",
         "remoteControlStopMessage": "Die Fernsteuerung wurde beendet.",
         "remoteControlTitle": "Fernsteuerung",
         "Remove": "Entfernen",
         "removePassword": "$t(lockRoomPassword) entfernen",
-        "removeSharedVideoMsg": "Sind Sie sicher dass Sie das geteilte Video entfernen möchten?",
+        "removeSharedVideoMsg": "Sind Sie sicher, dass Sie das geteilte Video entfernen möchten?",
         "removeSharedVideoTitle": "Freigegebenes Video entfernen",
         "reservationError": "Fehler im Reservationssystem",
         "reservationErrorMsg": "Fehler, Nummer: {{code}}, Nachricht: {{msg}}",
@@ -266,8 +266,8 @@
         "startRemoteControlErrorMessage": "Beim Versuch die Fernsteuerung zu starten ist ein Fehler aufgetreten.",
         "stopLiveStreaming": "Live-Streaming stoppen",
         "stopRecording": "Aufnahme stoppen",
-        "stopRecordingWarning": "Sind Sie sicher dass Sie die Aufnahme stoppen möchten?",
-        "stopStreamingWarning": "Sind Sie sicher dass Sie das Live-Streaming stoppen möchten?",
+        "stopRecordingWarning": "Sind Sie sicher, dass Sie die Aufnahme stoppen möchten?",
+        "stopStreamingWarning": "Sind Sie sicher, dass Sie das Live-Streaming stoppen möchten?",
         "streamKey": "Name/Schlüssel für den Stream",
         "Submit": "OK",
         "thankYou": "Danke für die Verwendung von {{appName}}!",
@@ -290,7 +290,7 @@
         "title": "Freigegebenes Dokument"
     },
     "feedback": {
-        "average": "Durschnittlich",
+        "average": "Durchschnittlich",
         "bad": "Schlecht",
         "detailsLabel": "Sagen Sie uns mehr dazu.",
         "good": "Gut",
@@ -311,7 +311,7 @@
         "cancelPassword": "$t(lockRoomPassword) löschen",
         "conferenceURL": "Link:",
         "country": "Land",
-        "dialANumber": "Um am Metting teilzunehmen, müssen Sie eine dieser Nummern wählen und dann die PIN eingeben.",
+        "dialANumber": "Um am Meeting teilzunehmen, müssen Sie eine dieser Nummern wählen und dann die PIN eingeben.",
         "dialInConferenceID": "PIN:",
         "dialInNotSupported": "Entschuldigung, leider wird das Einwählen derzeit nicht unterstützt.",
         "dialInNumber": "Einwählen:",
@@ -356,10 +356,10 @@
         "keyboardShortcuts": "Tastenkürzel",
         "localRecording": "Lokale Aufzeichnungssteuerelemente ein- oder ausblenden",
         "mute": "Stummschaltung aktivieren oder deaktivieren",
-        "pushToTalk": "Drücken um zu sprechen",
+        "pushToTalk": "Drücken, um zu sprechen",
         "raiseHand": "Hand erheben",
         "showSpeakerStats": "Statistiken für Sprecher anzeigen",
-        "toggleChat": "Chat öffnen oder schliessen",
+        "toggleChat": "Chat öffnen oder schließen",
         "toggleFilmstrip": "Video-Miniaturansichten ein- oder ausblenden",
         "toggleScreensharing": "Zwischen Kamera und Bildschirmfreigabe wechseln",
         "toggleShortcuts": "Tastenkombinationen ein- oder ausblenden",
@@ -575,7 +575,7 @@
     "suspendedoverlay": {
         "rejoinKeyTitle": "Erneut teilnehmen",
         "text": "<i>Erneut teilnehmen</i> Schaltfläche betätigen um erneut zu verbinden.",
-        "title": "Die Konferenz wurde unterbrochen weil der Standbymodus aktiviert wurde."
+        "title": "Die Konferenz wurde unterbrochen, weil der Standbymodus aktiviert wurde."
     },
     "toolbar": {
         "accessibilityLabel": {
@@ -665,7 +665,7 @@
         "startSubtitles": "Untertitel einschalten",
         "stopScreenSharing": "Bildschirmfreigabe stoppen",
         "stopSubtitles": "Untertitel ausschalten",
-        "stopSharedVideo": "YouTube Video stoppen",
+        "stopSharedVideo": "YouTube-Video stoppen",
         "talkWhileMutedPopup": "Versuchen sie zu sprechen? Ihr Mikrofon ist stummgeschaltet.",
         "tileViewToggle": "Kachelansicht ein-/ausschalten",
         "toggleCamera": "Kamera ein-/ausschalten",
@@ -686,16 +686,16 @@
         "tr": "TR"
     },
     "userMedia": {
-        "androidGrantPermissions": "Wählen Sie <b><i>Erlauben</i></b> wenn der Browser um Berechtigungen bittet.",
-        "chromeGrantPermissions": "Wählen Sie <b><i>Erlauben</i></b> wenn der Browser um Berechtigungen bittet.",
-        "edgeGrantPermissions": "Wählen Sie <b><i>Ja</i></b> wenn der Browser um Berechtigungen bittet.",
+        "androidGrantPermissions": "Wählen Sie <b><i>Erlauben</i></b>, wenn der Browser um Berechtigungen bittet.",
+        "chromeGrantPermissions": "Wählen Sie <b><i>Erlauben</i></b>, wenn der Browser um Berechtigungen bittet.",
+        "edgeGrantPermissions": "Wählen Sie <b><i>Ja</i></b>, wenn der Browser um Berechtigungen bittet.",
         "electronGrantPermissions": "Bitte Berechtigungen zur Verwendung der Kamera und des Mikrofons erteilen",
-        "firefoxGrantPermissions": "Wählen Sie <b><i>Markiertes Gerät teilen</i></b> wenn der Browser um Berechtigungen bittet.",
-        "iexplorerGrantPermissions": "Wählen Sie <b><i>OK</i></b> wenn der Browser um Berechtigungen bittet.",
+        "firefoxGrantPermissions": "Wählen Sie <b><i>Markiertes Gerät teilen</i></b>, wenn der Browser um Berechtigungen bittet.",
+        "iexplorerGrantPermissions": "Wählen Sie <b><i>OK</i></b>, wenn der Browser um Berechtigungen bittet.",
         "nwjsGrantPermissions": "Bitte Berechtigungen zur Verwendung der Kamera und des Mikrofons erteilen",
-        "operaGrantPermissions": "Wählen Sie <b><i>Erlauben</i></b> wenn der Browser um Berechtigungen bittet.",
-        "react-nativeGrantPermissions": "Wählen Sie <b><i>Erlauben</i></b> wenn der Browser um Berechtigungen bittet.",
-        "safariGrantPermissions": "Wählen Sie <b><i>OK</i></b> wenn der Browser um Berechtigungen bittet."
+        "operaGrantPermissions": "Wählen Sie <b><i>Erlauben</i></b>, wenn der Browser um Berechtigungen bittet.",
+        "react-nativeGrantPermissions": "Wählen Sie <b><i>Erlauben</i></b>, wenn der Browser um Berechtigungen bittet.",
+        "safariGrantPermissions": "Wählen Sie <b><i>OK</i></b>, wenn der Browser um Berechtigungen bittet."
     },
     "videoSIPGW": {
         "busy": "Es stehen keine freien Ressourcen zur Verfügung. Bitte versuchen Sie es später noch einmal.",
@@ -745,7 +745,7 @@
             "join": "Zum Teilnehmen tippen",
             "roomname": "Konferenzname eingeben"
         },
-        "appDescription": "Auf geht's! Beginne eine Videokonferenz mit dem ganzen Team. Oder eigentlich, lade alle ein die du kennst. {{app}} ist eine vollständig verschlüsselte, aus 100% Open-Source-Software bestehende Videokonferenzlösung die du den ganzen Tag kostenlos verwenden kannst — ohne Registrierung.",
+        "appDescription": "Auf geht's! Beginne eine Videokonferenz mit dem ganzen Team. Oder besser noch, lade alle ein, die du kennst. {{app}} ist eine vollständig verschlüsselte, aus 100% Open-Source-Software bestehende Videokonferenzlösung, die du den ganzen Tag kostenlos verwenden kannst — ohne Registrierung.",
         "audioVideoSwitch": {
             "audio": "Sprache",
             "video": "Video"
@@ -765,7 +765,7 @@
         "recentListEmpty": "Die Liste „Letzte“ ist momentan leer. Chatten Sie mit Ihrem Team. Sie finden all Ihre letzten Meetings hier.",
         "reducedUIText": "Willkommen bei {{app}}!",
         "roomname": "Konferenzname eingeben",
-        "roomnameHint": "Name oder URL der Konferenz der Sie beitreten möchten. Sie können einen Namen erfinden, er muss nur den anderen Teilnehmern übermittelt werden damit sie der gleichen Konferenz beitreten.",
+        "roomnameHint": "Name oder URL der Konferenz, der Sie beitreten möchten. Sie können einen Namen erfinden, er muss nur den anderen Teilnehmern übermittelt werden, damit sie der gleichen Konferenz beitreten.",
         "sendFeedback": "Senden Sie uns Ihr Feedback",
         "terms": "Bedingungen",
         "title": "Sichere, mit umfassenden Funktionen ausgestattete und vollkommen kostenlose Videokonferenzen"
