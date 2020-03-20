@@ -48,3 +48,19 @@
 .toolbox-button-wth-dialog .eYJELv {
     max-height: initial;
 }
+
+/**
+ * Override @atlaskit/InlineDialog styling for the video preview
+ */
+.video-preview .eYJELv {
+    outline: none;
+    padding: 16px;
+}
+
+/**
+ * Override @atlaskit/InlineDialog styling for the audio preview
+ */
+.audio-preview .eYJELv {
+    outline: none;
+    padding: 0;
+}

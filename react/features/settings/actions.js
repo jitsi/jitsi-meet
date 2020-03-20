@@ -4,7 +4,11 @@ import { setFollowMe, setStartMutedPolicy } from '../base/conference';
 import { openDialog } from '../base/dialog';
 import { i18next } from '../base/i18n';
 
-import { SET_SETTINGS_VIEW_VISIBLE } from './actionTypes';
+import {
+    SET_AUDIO_SETTINGS_VISIBILITY,
+    SET_SETTINGS_VIEW_VISIBLE,
+    SET_VIDEO_SETTINGS_VISIBILITY
+} from './actionTypes';
 import { SettingsDialog } from './components';
 import { getMoreTabProps, getProfileTabProps } from './functions';
 
@@ -38,6 +42,31 @@ export function openSettingsDialog(defaultTab: string) {
     return openDialog(SettingsDialog, { defaultTab });
 }
 
+/**
+ * Sets the visiblity of the audio settings.
+ *
+ * @param {boolean} value - The new value.
+ * @returns {Function}
+ */
+function setAudioSettingsVisibility(value: boolean) {
+    return {
+        type: SET_AUDIO_SETTINGS_VISIBILITY,
+        value
+    };
+}
+
+/**
+ * Sets the visiblity of the video settings.
+ *
+ * @param {boolean} value - The new value.
+ * @returns {Function}
+ */
+function setVideoSettingsVisibility(value: boolean) {
+    return {
+        type: SET_VIDEO_SETTINGS_VISIBILITY,
+        value
+    };
+}
 
 /**
  * Submits the settings from the "More" tab of the settings dialog.
@@ -82,5 +111,31 @@ export function submitProfileTab(newState: Object): Function {
         if (newState.email !== currentState.email) {
             APP.conference.changeLocalEmail(newState.email);
         }
+    };
+}
+
+/**
+ * Toggles the visiblity of the audio settings.
+ *
+ * @returns {void}
+ */
+export function toggleAudioSettings() {
+    return (dispatch: Function, getState: Function) => {
+        const value = getState()['features/settings'].audioSettingsVisible;
+
+        dispatch(setAudioSettingsVisibility(!value));
+    };
+}
+
+/**
+ * Toggles the visiblity of the video settings.
+ *
+ * @returns {void}
+ */
+export function toggleVideoSettings() {
+    return (dispatch: Function, getState: Function) => {
+        const value = getState()['features/settings'].videoSettingsVisible;
+
+        dispatch(setVideoSettingsVisibility(!value));
     };
 }
