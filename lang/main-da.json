@@ -746,7 +746,7 @@
             "join": "Tryk for at deltage",
             "roomname": "Skriv møde navn"
         },
-        "appDescription": "Spar CO2 og mindsk smittefare ifm. Coronavirus. Du vil kunne invitere deltagere efter du har startet et møde. Serverne står i København, Danmark. Se mere angående sikkerhed. ",
+        "appDescription": "Chat med hele dit team eller inviter alle du kender. {{app}} er en fuldt krypteret, 100% open source videokonference løsning som du kan bruge hele dagen, hver dag, gratis - uden at du behøver en konto. ",
         "audioVideoSwitch": {
             "audio": "Lyd",
             "video": "Video"
