@@ -141,7 +141,7 @@
         "noPermission": "Tilladelse ikke givet",
         "previewUnavailable": "Forhåndsvisning mangler",
         "selectADevice": "Vælg en enhed",
-        "testAudio": "Afspil en testlyd"
+        "testAudio": "Afspil testlyd"
     },
     "dialog": {
         "accessibilityLabel": {
@@ -172,10 +172,10 @@
         "connectErrorWithMsg": "Det var ikke muligt at forbinde til mødet: {{msg}}",
         "connecting": "Forbinder",
         "contactSupport": "Kontakt support",
-        "copy": "Kopier",
+        "copy": "Kopier invitation",
         "dismiss": "Afbryd",
         "displayNameRequired": "Navn/alias er påkrævet",
-        "done": "Færdig",
+        "done": "Gem",
         "enterDisplayName": "Indtast venligst dit navn/alias",
         "error": "Fejl",
         "externalInstallationMsg": "Du skal installerer vores skærmdelings plugin.",
@@ -354,21 +354,21 @@
         "focusLocal": "Fokusér på din video",
         "focusRemote": "Fokusér på en anden persons video",
         "fullScreen": "Vis eller annullér fuld skærm",
-        "keyboardShortcuts": "Tastatur genveje",
+        "keyboardShortcuts": "Tastaturgenveje",
         "localRecording": "Vis eller skjul optage kontrolknapper",
         "mute": "Slå lyd fra eller til for din mikrofon",
         "pushToTalk": "Tryk for at tale",
         "raiseHand": "Lyft eller sænk din hånd",
-        "showSpeakerStats": "Vi højtaler statistik",
+        "showSpeakerStats": "Vis højtaler statistik",
         "toggleChat": "Åben eller luk chat",
         "toggleFilmstrip": "Vis eller skjul video små billeder",
         "toggleScreensharing": "Skift mellem video og skærmdeling",
-        "toggleShortcuts": "Vis eller skjul tastatur genveje",
+        "toggleShortcuts": "Vis eller skjul tastaturgenveje",
         "videoMute": "Tænd eller sluk dit kamera",
-        "videoQuality": "Indstil opkalds kvalitet"
+        "videoQuality": "Indstil opkaldskvalitet"
     },
     "liveStreaming": {
-        "busy": "Der arbejdes på at frigive streaming resourcer, forsøg venligst igen om et par minutter.",
+        "busy": "Der arbejdes på at frigive streamingresourcer, forsøg venligst igen om et par minutter.",
         "busyTitle": "Alle streamers er optaget",
         "changeSignIn": "Skift konto.",
         "choose": "Vælg en live stream",
@@ -488,7 +488,7 @@
         "authDropboxText": "Upload til Dropbox",
         "availableSpace": "Tilgængelig plads: {{spaceLeft}} MB (plads til ca. {{duration}} minutters optagelse)",
         "beta": "BETA",
-        "busy": "Der arbejdes på at frigive optagelse resourcer. Prøv venligst igen om nogle få minutter.",
+        "busy": "Der arbejdes på at frigive optagelsesresourcer. Prøv venligst igen om nogle få minutter.",
         "busyTitle": "Alle optagere er pt optaget",
         "error": "Fejl under optagelse, forsøg venligst igen om lidt.",
         "expandedOff": "Optagelse er stoppet½",
@@ -601,7 +601,7 @@
             "mute": "Slå lyd til/fra",
             "muteEveryone": "Mute everyone",
             "pip": "Slå Billede-i-billede fra/til",
-            "privateMessage": "Send private message",
+            "privateMessage": "Send privat besked",
             "profile": "Redigér profil",
             "raiseHand": "Slå løft hånden fra/til",
             "recording": "Slå optagelse til/fra",
@@ -629,7 +629,7 @@
         "documentClose": "Luk delt dokument",
         "documentOpen": "Åben delt dokument",
         "download": "Hent vores apps",
-        "enterFullScreen": "Vis fild skærm",
+        "enterFullScreen": "Vis fuld skærm",
         "enterTileView": "Tileview",
         "exitFullScreen": "Luk fuld skærm",
         "exitTileView": "Luk Tileview",
@@ -668,11 +668,11 @@
         "stopSubtitles": "Skjul undertekster",
         "stopSharedVideo": "Stop YouTube video",
         "talkWhileMutedPopup": "Forsøger du at sige noget? Din lyd er slået fra.",
-        "tileViewToggle": "Slå tilview fra/til",
+        "tileViewToggle": "Slå tileview fra/til",
         "toggleCamera": "Slå kamera fra/til",
         "videomute": "Start / Stop kamera",
-        "startvideoblur": "",
-        "stopvideoblur": ""
+        "startvideoblur": "Slå baggrundssløring til",
+        "stopvideoblur": "Slå baggrundssløring fra"
     },
     "transcribing": {
         "ccButtonTooltip": "Start / Stop undertekster",
@@ -746,7 +746,7 @@
             "join": "Tryk for at deltage",
             "roomname": "Skriv møde navn"
         },
-        "appDescription": "Benyt skærmbesøg for at spare CO2 og midske smittefar ved Coronavirus. {{app}} er en fuldt krypteret. Serverne står i København, Danmark ",
+        "appDescription": "Spar CO2 og mindsk smittefare ifm. Coronavirus. Du vil kunne invitere deltagere efter du har startet et møde. Serverne står i København, Danmark. Se mere angående sikkerhed. ",
         "audioVideoSwitch": {
             "audio": "Lyd",
             "video": "Video"
@@ -755,7 +755,7 @@
         "connectCalendarButton": "Forbind til din kalender",
         "connectCalendarText": "",
         "enterRoomTitle": "Start et nyt møde",
-        "go": "GO",
+        "go": "Start",
         "join": "Deltag",
         "info": "Info",
         "privacy": "Privatliv",
@@ -767,6 +767,6 @@
         "roomnameHint": "Indtast mødenavnet, du vil deltage i.",
         "sendFeedback": "Giv tilbagemelding",
         "betingelser": "Betingelser",
-        "title": "Sikkert skærmbesøg"
+        "title": "Skærmbesøg & videomøder"
     }
 }
