@@ -31,7 +31,7 @@
         "addMeetingURL": "Agregar un vínculo a la reunión",
         "confirmAddLink": "¿Quiere añadir un enlace de Jitsi a este evento?",
         "error": {
-            "appConfiguration": "La integración del calendario no se está configurada correctamente",
+            "appConfiguration": "La integración del calendario no está configurada correctamente",
             "generic": "Se ha producido un error. Compruebe la configuración del calendario o pruebe cargarlo nuevamente.",
             "notSignedIn": "Se ha producido un error de autenticación para ver los eventos del calendario. Compruebe la configuración del calendario e intente iniciar sesión de nuevo"
         },
@@ -60,9 +60,9 @@
         "you": "usted"
     },
     "chromeExtensionBanner": {
-        "installExtensionText": "",
-        "buttonText": "",
-        "dontShowAgain": ""
+        "installExtensionText": "Instalar la extensión para Google Calendar y la integración con Office 365",
+        "buttonText": "Instalar extensión de Chrome",
+        "dontShowAgain": "No mostrar nuevamente"
     },
     "connectingOverlay": {
         "joiningRoom": "Conectando a su reunión..."
@@ -77,7 +77,11 @@
         "DISCONNECTED": "Desconectado",
         "DISCONNECTING": "Desconectando",
         "ERROR": "Error",
-        "RECONNECTING": "Ocurrió un problema en la red. Reconectando..."
+        "RECONNECTING": "Ocurrió un problema en la red. Reconectando...",
+        "FETCH_SESSION_ID": "Obteniendo session-id...",
+        "GET_SESSION_ID_ERROR": "Obtener session-id error: {{code}}",
+        "GOT_SESSION_ID": "Obteniendo session-id... Listo",
+        "LOW_BANDWIDTH": "Video para {{displayName}} ha sido deshabilitado para economizar ancho de banda"
     },
     "connectionindicator": {
         "address": "Dirección:",
@@ -125,9 +129,9 @@
         "tryAgainButton": "Intentar de nuevo en el escritorio"
     },
     "defaultLink": "p.ej. {{url}}",
-    "defaultNickname": "p. ej. Jane Pink",
+    "defaultNickname": "p. ej. Juan Pérez",
     "deviceError": {
-        "cameraError": "Error al acceder a su cámara",
+        "cameraError": "Error al acceder a tu cámara",
         "cameraPermission": "Error de permisos en la cámara",
         "microphoneError": "Error al acceder a tu micrófono",
         "microphonePermission": "Error al obtener permiso del micrófono"
@@ -187,7 +191,7 @@
         "kickMessage": "Puede ponerse en contacto con {{participantDisplayName}} para obtener más detalles.",
         "kickParticipantButton": "Expulsar",
         "kickParticipantDialog": "¿Seguro que quiere expulsar a este participante?",
-        "kickParticipantTitle": "Sacar este participante ?",
+        "kickParticipantTitle": "¿Sacar este participante?",
         "kickTitle": "¡Ay! {{participantDisplayName}} te expulsó de la reunión",
         "liveStreaming": "Transmisión en vivo",
         "liveStreamingDisabledForGuestTooltip": "Los invitados no pueden iniciar la transmisión en vivo.",
@@ -205,10 +209,16 @@
         "micNotSendingDataTitle": "Su micrófono está silenciado en la configuración de su sistema",
         "micPermissionDeniedError": "No ha otorgado permisos para usar su micrófono. Puede unirse a la conferencia, pero no lo podrán escuchar. Utilice el botón en la barra de dirección para solucionar esto.",
         "micUnknownError": "No se puede usar su micrófono por motivos desconocidos.",
+        "muteEveryoneElseDialog": "Una vez silenciados, No podrás quitarles el modo en silencio, pero ellos pueden quitárselo en cualquier momento.",
+        "muteEveryoneElseTitle": "¿Silenciar a todos excepto a {{whom}}?",
+        "muteEveryoneDialog": "¿Está seguro que quiere silenciar a todos? No podrás quitarles el modo en silencio, pero ellos pueden quitárselo en cualquier momento.",
+        "muteEveryoneTitle": "¿Silenciar a todos?",
+        "muteEveryoneSelf": "Usted mismo",
+        "muteEveryoneStartMuted": "Todos inician silenciados desde ahora",
         "muteParticipantBody": "No podrás quitarles el modo en silencio, pero ellos pueden quitárselo en cualquier momento.",
         "muteParticipantButton": "Silenciar",
         "muteParticipantDialog": "¿Seguro que quiere silenciar a este participante? No podrá revertir esta acción, pero el participante podrá hacerlo en cualquier momento",
-        "muteParticipantTitle": "Silenciar este participante ?",
+        "muteParticipantTitle": "Silenciar este participante?",
         "Ok": "Aceptar",
         "passwordLabel": "$t(lockRoomPasswordUppercase)",
         "passwordNotSupported": "No se soporta $t(lockRoomPassword) en la reunión",
@@ -220,9 +230,9 @@
         "recordingDisabledForGuestTooltip": "Los invitados no pueden iniciar grabaciones.",
         "recordingDisabledTooltip": "Inicio de grabación desactivado.",
         "rejoinNow": "Reunirse ahora",
-        "remoteControlAllowedMessage": "{{user}} ha aceptado tu solicitud de control remoto!",
-        "remoteControlDeniedMessage": "{{user}} ha rechazado tu solicitud de control remoto!",
-        "remoteControlErrorMessage": "Ha ocurrido un error tratando de solicitar permiso de control remoto de {{user}}!",
+        "remoteControlAllowedMessage": "¡{{user}} ha aceptado tu solicitud de control remoto!",
+        "remoteControlDeniedMessage": "¡{{user}} ha rechazado tu solicitud de control remoto!",
+        "remoteControlErrorMessage": "¡Ha ocurrido un error tratando de solicitar permiso de control remoto de {{user}}!",
         "remoteControlRequestMessage": "¿Permitirá que {{user}} controle remotamente su escritorio?",
         "remoteControlShareScreenWarning": "¡Tenga en cuenta que si presiona \"Permitir\" usted compartirá su pantalla!",
         "remoteControlStopMessage": "¡La sesión de control remoto ha finalizado!",
@@ -242,7 +252,7 @@
         "sendPrivateMessage": "Recientemente ha recibido un mensaje privado. ¿Pretendía responder a eso en privado, o quería enviar su mensaje al grupo?",
         "sendPrivateMessageCancel": "Enviar al grupo",
         "sendPrivateMessageOk": "Enviar en privado",
-        "sendPrivateMessageTitle": "Enviar en privado ?",
+        "sendPrivateMessageTitle": "¿Enviar en privado?",
         "serviceUnavailable": "Servicio no disponible",
         "sessTerminated": "Llamada finalizada",
         "Share": "Compartir",
@@ -310,7 +320,7 @@
         "genericError": "Epa, algo salió mal.",
         "inviteLiveStream": "Para ver la transmisión en vivo de esta reunión, haz clic en este enlace: {{url}}",
         "invitePhone": "Para unirse por teléfono, marque: {{number}},,{{conferenceID}}#\n",
-        "invitePhoneAlternatives": "Busca un número de acceso diferente?\nConsulte los números de acceso a las reuniones : {{url}}\n\n\nSi también marca a través de un teléfono externo, ingrese sin conectarse al audio: {{silentUrl}}",
+        "invitePhoneAlternatives": "¿Busca un número de acceso diferente?\nConsulte los números de acceso a las reuniones : {{url}}\n\n\nSi también marca a través de un teléfono externo, ingrese sin conectarse al audio: {{silentUrl}}",
         "inviteURLFirstPartGeneral": "Estás invitado a unirte a una reunión.",
         "inviteURLFirstPartPersonal": "{{name}} lo invita a una reunión.\n",
         "inviteURLSecondPart": "\nIngrese a la reunión :\n{{url}}\n",
@@ -434,13 +444,13 @@
         "moderator": "Derechos de moderador otorgados.",
         "muted": "Has iniciado la conversación con el silencio activado.",
         "mutedTitle": "Tienes el silencio activado.",
-        "mutedRemotelyTitle": "Su micrófono fue silenciado por {{participantDisplayName}}!",
+        "mutedRemotelyTitle": "¡Su micrófono fue silenciado por {{participantDisplayName}}!",
         "mutedRemotelyDescription": "Siempre puede reactivar sur micrófono cuando esté listo para hablar. Desactívelo de nuevo cuando termine para mantener el ruido al mínimo en la reunión.",
         "passwordRemovedRemotely": "$t(lockRoomPasswordUppercase) retirada por otro participante",
         "passwordSetRemotely": "$t(lockRoomPasswordUppercase) agregada por otro participante",
         "raisedHand": "{{name}} desea hablar.",
         "somebody": "Alguien",
-        "startSilentTitle": "Ingresó sin salida de audio!",
+        "startSilentTitle": "¡Ingresó sin salida de audio!",
         "startSilentDescription": "Vuelva a ingresar para activar el audio",
         "suboptimalBrowserWarning": "Nos tememos que su experiencia de reunión no será tan buena aquí. Estamos buscando formas de mejorar esto, pero hasta entonces, por favor, intente utilizar uno de los <a href='static/recommendedBrowsers.html' target='_blank'>navegadores soportados</a>.",
         "suboptimalExperienceTitle": "Advertencia del navegador",
@@ -464,7 +474,7 @@
         "initializingCall": "Inicializando llamada...",
         "invited": "Invitado",
         "rejected": "Rechazado",
-        "ringing": "Sonando..."
+        "ringing": "Timbrando..."
     },
     "profile": {
         "setDisplayNameLabel": "Configurar su nombre para mostrar",
@@ -546,7 +556,7 @@
         "version": "Versión"
     },
     "share": {
-        "dialInfoText": "\n\n=====\n\nDesea llamar desde su teléfono ?\n\n{{defaultDialInNumber}}La lista de números disponibles para la reunión está disponible aquí : \n{{dialInfoPageUrl}}",
+        "dialInfoText": "\n\n=====\n\n¿Desea llamar desde su teléfono?\n\n{{defaultDialInNumber}}La lista de números disponibles para la reunión está disponible aquí : \n{{dialInfoPageUrl}}",
         "mainText": "Haz clic en el enlace siguiente para unirte a la reunión:\n{{roomUrl}}"
     },
     "speaker": "Altavoz",
@@ -560,7 +570,7 @@
     },
     "startupoverlay": {
         "policyText": " ",
-        "title": "{{app}} tiene que usar el micrófono y la cámara."
+        "title": "{{app}} necesita usar el micrófono y la cámara."
     },
     "suspendedoverlay": {
         "rejoinKeyTitle": "Volver a unirme",
@@ -586,7 +596,9 @@
             "lockRoom": "Alternar contraseña de reunión",
             "moreActions": "Alternar menú de más acciones",
             "moreActionsMenu": "Menú de más acciones",
+            "moreOptions": "Mostrar más opciones",
             "mute": "Alternar silenciar audio",
+            "muteEveryone": "Silenciar a todos",
             "pip": "Alternar modo de imagen en imagen",
             "privateMessage": "Enviar un mensaje privado",
             "profile": "Editar el perfil",
@@ -628,12 +640,16 @@
         "logout": "Cierre de sesión",
         "lowerYourHand": "Bajar la mano",
         "moreActions": "Más acciones",
+        "moreOptions": "Más opciones",
         "mute": "Silenciar/anular silencio",
-        "noAudioSignalTitle": "No hay ninguna entrada que provenga de su micrófono!",
+        "muteEveryone": "Silenciar a todos",
+        "noAudioSignalTitle": "¡No hay ninguna entrada que provenga de su micrófono!",
         "noAudioSignalDesc": "Si no lo silenció intencionalmente desde la configuración del sistema o el hardware, considere la posibilidad de cambiar el dispositivo.",
         "noAudioSignalDescSuggestion": "Si no lo silenció intencionalmente desde la configuración del sistema o el hardware, considere utilizar el siguiente dispositivo:",
-        "noisyAudioInputTitle": "",
-        "noisyAudioInputDesc": "",
+        "noAudioSignalDialInDesc": "Usted puede además llamar usando:",
+        "noAudioSignalDialInLinkDesc" : "Números de llamada",
+        "noisyAudioInputTitle": "Su micrófono parece estar ruidoso",
+        "noisyAudioInputDesc": "Parece que su micráfono está haciendo ruido, por favor considere silenciarlo o cambiar de dispositivo.",
         "openChat": "Abrir chat",
         "pip": "Introducir modo de imagen en imagen",
         "privateMessage": "Enviar un mensaje privado",
@@ -714,6 +730,7 @@
     },
     "videothumbnail": {
         "domute": "Silenciar",
+        "domuteOthers": "Silenciar a todos",
         "flip": "Dar vuelta",
         "kick": "Echar",
         "moderator": "Moderador",
@@ -746,7 +763,7 @@
         "recentList": "Reciente",
         "recentListDelete": "Eliminar",
         "recentListEmpty": "Su lista reciente está actualmente vacía. Abra una sesión de chat con su equipo y encontrará todas sus reuniones recientes aquí.",
-        "reducedUIText": "BIenvenid@ a {{app}}!",
+        "reducedUIText": "¡Bienvenid@ a {{app}}!",
         "roomname": "Introducir nombre de sala",
         "roomnameHint": "Introduce el nombre o la dirección URL de la sala a la que deseas unirte. Puedes inventar un nombre, simplemente infórmaselo a las personas con las que te reunirás para que introduzcan el mismo nombre.",
         "sendFeedback": "Enviar comentario",
