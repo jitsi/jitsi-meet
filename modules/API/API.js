@@ -15,7 +15,7 @@ import { invite } from '../../react/features/invite';
 import { toggleTileView } from '../../react/features/video-layout';
 import { getJitsiMeetTransport } from '../transport';
 
-import { API_ID } from './constants';
+import { API_ID, ENDPOINT_TEXT_MESSAGE_NAME } from './constants';
 import {
     processExternalDeviceRequest
 } from '../../react/features/device-selection/functions';
@@ -155,6 +155,17 @@ function initCommands() {
         'avatar-url': avatarUrl => {
             sendAnalytics(createApiEvent('avatar.url.changed'));
             APP.conference.changeLocalAvatarUrl(avatarUrl);
+        },
+        'send-endpoint-text-message': (to, text) => {
+            logger.debug('Send endpoint message command received');
+            try {
+                APP.conference.sendEndpointMessage(to, {
+                    name: ENDPOINT_TEXT_MESSAGE_NAME,
+                    text
+                });
+            } catch (err) {
+                logger.error('Failed sending endpoint text message', err);
+            }
         }
     };
     transport.on('event', ({ data, name }) => {
@@ -434,6 +445,20 @@ class API {
             name: 'avatar-changed',
             avatarURL,
             id
+        });
+    }
+
+    /**
+     * Notify external application (if API is enabled) that user received
+     * a text message through datachannels.
+     *
+     * @param {Object} data - The event data.
+     * @returns {void}
+     */
+    notifyEndpointTextMessageReceived(data: Object) {
+        this._sendEvent({
+            name: 'endpoint-text-message-received',
+            data
         });
     }
 

@@ -32,6 +32,7 @@ const commands = {
     email: 'email',
     hangup: 'video-hangup',
     password: 'password',
+    sendEndpointTextMessage: 'send-endpoint-text-message',
     sendTones: 'send-tones',
     subject: 'subject',
     submitFeedback: 'submit-feedback',
@@ -55,6 +56,7 @@ const events = {
     'device-list-changed': 'deviceListChanged',
     'display-name-change': 'displayNameChange',
     'email-change': 'emailChange',
+    'endpoint-text-message-received': 'endpointTextMessageReceived',
     'feedback-submitted': 'feedbackSubmitted',
     'feedback-prompt-displayed': 'feedbackPromptDisplayed',
     'filmstrip-display-changed': 'filmstripDisplayChanged',
@@ -300,7 +302,7 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
         const frameName = `jitsiConferenceFrame${id}`;
 
         this._frame = document.createElement('iframe');
-        this._frame.allow = 'camera; microphone';
+        this._frame.allow = 'camera; microphone; display-capture';
         this._frame.src = this._url;
         this._frame.name = frameName;
         this._frame.id = frameName;

@@ -140,6 +140,12 @@ server {
         proxy_set_header X-Forwarded-For $remote_addr;
         proxy_set_header Host $http_host;
     }
+    # external_api.js must be accessible from the root of the
+    # installation for the electron version of Jitsi Meet to work
+    # https://github.com/jitsi/jitsi-meet-electron
+    location /external_api.js {
+        alias /srv/jitsi-meet/libs/external_api.min.js;
+    }
 }
 ```
 
@@ -166,7 +172,12 @@ _NOTE: When installing on older Debian releases keep in mind that you need JRE >
 Create `~/.sip-communicator/sip-communicator.properties` in the home folder of the user that will be starting Jitsi Videobridge:
 ```sh
 mkdir -p ~/.sip-communicator
-echo "org.jitsi.impl.neomedia.transform.srtp.SRTPCryptoContext.checkReplay=false" > ~/.sip-communicator/sip-communicator.properties
+cat > ~/.sip-communicator/sip-communicator.properties << EOF
+org.jitsi.impl.neomedia.transform.srtp.SRTPCryptoContext.checkReplay=false
+# The videobridge uses 443 by default with 4443 as a fallback, but since we're already
+# running nginx on 443 in this example doc, we specify 4443 manually to avoid a race condition
+org.jitsi.videobridge.TCP_HARVESTER_PORT=4443
+EOF
 ```
 
 Start the videobridge with:
