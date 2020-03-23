@@ -14,11 +14,15 @@ b.) You only need to do this if you want to ___host your own Jitsi server___. If
 
 ## Basic Jitsi Meet install
 
-### Add the domain name to `/etc/hosts`
+### Set up the Fully Qualified Domain Name (FQDN) (optional)
 
-Add the the domain used to host the Jitsi Meet instance in the `/etc/hosts` file :
+If the machine used to host the Jitsi Meet instance has a FQDN (for example `meet.example.org`) already set up in DNS, `/etc/hostname` must contain this FQDN; if this is not the case yet, [change the hostname](https://wiki.debian.org/it/HowTo/ChangeHostname).
 
-    127.0.0.1 meet.example.org
+Then add the same FQDN in the `/etc/hosts` file, associating it with the loopback address:
+
+    127.0.0.1 localhost meet.example.org
+
+Finally on the same machine test that you can ping the FQDN with: `ping "$(hostname)"`-
 
 ### Add the repository
 ```sh
