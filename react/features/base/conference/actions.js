@@ -402,7 +402,7 @@ export function conferenceWillLeave(conference: Object) {
             const jwtPayload = jwtDecode(jwt);
             const url = jwtPayload.context.leave_url;
 
-            navigator.sendBeacon(url, jwt);
+            // navigator.sendBeacon(url, jwt);
         }
         dispatch({
             type: CONFERENCE_WILL_LEAVE,
@@ -458,6 +458,7 @@ export function createConference() {
 
         sendLocalParticipant(state, conference);
 
+        console.log(state);
         conference.join(password);
     };
 }
