@@ -392,14 +392,22 @@ export function conferenceWillJoin(conference: Object) {
  * }}
  */
 export function conferenceWillLeave(conference: Object) {
-    const { jwt } = APP.store.getState()['features/base/jwt'];
-    const jwtPayload = jwtDecode(jwt);
-    const url = jwtPayload.context.leave_url;
-    const data = jwt
-    navigator.sendBeacon(url, data);
-    return {
-        type: CONFERENCE_WILL_LEAVE,
-        conference
+
+    return (dispatch: Function, getState: Function) => {
+        const state = getState();
+        const { jwt } = state['features/base/jwt'];
+
+        console.log(jwt);
+        if (jwt) {
+            const jwtPayload = jwtDecode(jwt);
+            const url = jwtPayload.context.leave_url;
+
+            navigator.sendBeacon(url, jwt);
+        }
+        dispatch({
+            type: CONFERENCE_WILL_LEAVE,
+            conference
+        });
     };
 }
 
