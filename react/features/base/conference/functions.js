@@ -159,12 +159,21 @@ export function getConferenceName(stateful: Function | Object): string {
     const { callee } = state['features/base/jwt'];
     const { callDisplayName } = state['features/base/config'];
     const { pendingSubjectChange, room, subject } = state['features/base/conference'];
+    const roomName = safeDecodeURIComponent(room);
+    let prettyRoomName;
+
+    // Only use lodash.startCase for full-ASCII room names.
+    if (/^[\x00-\x7F]*$/.test(roomName)) { // eslint-disable-line no-control-regex
+        prettyRoomName = _.startCase(roomName);
+    } else {
+        prettyRoomName = roomName;
+    }
 
     return pendingSubjectChange
         || subject
         || callDisplayName
         || (callee && callee.name)
-        || _.startCase(safeDecodeURIComponent(room));
+        || prettyRoomName;
 }
 
 /**
