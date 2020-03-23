@@ -512,10 +512,11 @@ var config = {
      */
 
 
-  // Allow all above example options to include a trailing comma and
-  // prevent fear when commenting out the last value.
-  make_json_parser_happy: 'even if last key had a trailing comma'
-  // no configuration value should follow this line.
+    // Allow all above example options to include a trailing comma and
+    // prevent fear when commenting out the last value.
+    makeJsonParserHappy: 'even if last key had a trailing comma'
+
+    // no configuration value should follow this line.
 };
 
 /* eslint-enable no-unused-vars, no-var */
