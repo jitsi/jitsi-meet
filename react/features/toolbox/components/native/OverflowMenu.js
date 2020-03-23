@@ -1,11 +1,12 @@
 // @flow
 
 import React, { PureComponent } from 'react';
-import { Platform } from 'react-native';
+import { Platform, TouchableOpacity, View } from 'react-native';
 import Collapsible from 'react-native-collapsible';
 
 import { ColorSchemeRegistry } from '../../../base/color-scheme';
 import { BottomSheet, hideDialog, isDialogOpen } from '../../../base/dialog';
+import { IconDragHandle } from '../../../base/icons';
 import { CHAT_ENABLED, IOS_RECORDING_ENABLED, getFeatureFlag } from '../../../base/flags';
 import { connect } from '../../../base/redux';
 import { StyleType } from '../../../base/styles';
@@ -23,6 +24,7 @@ import AudioOnlyButton from './AudioOnlyButton';
 import MoreOptionsButton from './MoreOptionsButton';
 import RaiseHandButton from './RaiseHandButton';
 import ToggleCameraButton from './ToggleCameraButton';
+import styles from './styles';
 
 /**
  * The type of the React {@code Component} props of {@link OverflowMenu}.
@@ -99,6 +101,7 @@ class OverflowMenu extends PureComponent<Props, State> {
         this._onCancel = this._onCancel.bind(this);
         this._onSwipe = this._onSwipe.bind(this);
         this._onToggleMenu = this._onToggleMenu.bind(this);
+        this._renderMenuExpandToggle = this._renderMenuExpandToggle.bind(this);
     }
 
     /**
@@ -126,7 +129,8 @@ class OverflowMenu extends PureComponent<Props, State> {
         return (
             <BottomSheet
                 onCancel = { this._onCancel }
-                onSwipe = { this._onSwipe }>
+                onSwipe = { this._onSwipe }
+                renderHeader = { this._renderMenuExpandToggle }>
                 <AudioRouteButton { ...buttonProps } />
                 <ToggleCameraButton { ...buttonProps } />
                 <AudioOnlyButton { ...buttonProps } />
@@ -150,6 +154,28 @@ class OverflowMenu extends PureComponent<Props, State> {
                     <HelpButton { ...buttonProps } />
                 </Collapsible>
             </BottomSheet>
+        );
+    }
+
+    _renderMenuExpandToggle: () => React$Element<any>;
+
+    /**
+     * Function to render the menu toggle in the bottom sheet header area.
+     *
+     * @returns {React$Element}
+     */
+    _renderMenuExpandToggle() {
+        return (
+            <View
+                style = { [
+                    this.props._bottomSheetStyles.sheet,
+                    styles.expandMenuContainer
+                ] }>
+                <TouchableOpacity onPress = { this._onToggleMenu }>
+                    { /* $FlowFixMeProps */ }
+                    <IconDragHandle style = { this.props._bottomSheetStyles.expandIcon } />
+                </TouchableOpacity>
+            </View>
         );
     }
 
