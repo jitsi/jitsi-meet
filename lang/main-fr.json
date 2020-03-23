@@ -728,7 +728,7 @@
             "join": "Touchez pour rejoindre",
             "roomname": "Saisissez un nom de salle"
         },
-        "appDescription": "Allez-y, chat vidéo avec toute l'équipe. En fait, invitez tout le monde que vous connaissez. {{app}} est une solution de visioconférence entièrement cryptée et 100% open source que vous pouvez utiliser toute la journée, tous les jours, gratuitement— aucun compte requis.",
+        "appDescription": "Allez-y, chat vidéo avec toute l'équipe. En fait, invitez tout le monde que vous connaissez. {{app}} est une solution de visioconférence entièrement chiffrée et 100% open source que vous pouvez utiliser toute la journée, tous les jours, gratuitement— aucun compte requis.",
         "audioVideoSwitch": {
             "audio": "Voix",
             "video": "Vidéo"
