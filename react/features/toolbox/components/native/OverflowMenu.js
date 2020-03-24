@@ -6,8 +6,8 @@ import Collapsible from 'react-native-collapsible';
 
 import { ColorSchemeRegistry } from '../../../base/color-scheme';
 import { BottomSheet, hideDialog, isDialogOpen } from '../../../base/dialog';
-import { IconDragHandle } from '../../../base/icons';
 import { IOS_RECORDING_ENABLED, getFeatureFlag } from '../../../base/flags';
+import { IconDragHandle } from '../../../base/icons';
 import { connect } from '../../../base/redux';
 import { StyleType } from '../../../base/styles';
 import { SharedDocumentButton } from '../../../etherpad';

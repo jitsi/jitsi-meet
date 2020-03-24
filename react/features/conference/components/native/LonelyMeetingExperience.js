@@ -4,13 +4,11 @@ import React, { PureComponent } from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
 
 import { ColorSchemeRegistry } from '../../../base/color-scheme';
-import { getFeatureFlag, INVITE_ENABLED } from '../../../base/flags';
 import { connect } from '../../../base/redux';
 import { StyleType } from '../../../base/styles';
 import { translate } from '../../../base/i18n';
 import { getParticipantCount } from '../../../base/participants';
-import { isAddPeopleEnabled, isDialOutEnabled, setAddPeopleDialogVisible } from '../../../invite';
-import { beginShareRoom } from '../../../share-room';
+import { doInvitePeople } from '../../../invite/actions.native';
 
 import styles from './styles';
 import { Icon, IconAddPeople } from '../../../base/icons';
@@ -19,11 +17,6 @@ import { Icon, IconAddPeople } from '../../../base/icons';
  * Props type of the component.
  */
 type Props = {
-
-    /**
-     * True if any of the invite functions are enabled.
-     */
-    _inviteEnabled: boolean,
 
     /**
      * True if it's a lonely meeting (participant count excluding fakes is 1).
@@ -112,13 +105,7 @@ class LonelyMeetingExperience extends PureComponent<Props> {
      * @returns {void}
      */
     _onPress() {
-        const { _inviteEnabled, dispatch } = this.props;
-
-        if (_inviteEnabled) {
-            dispatch(setAddPeopleDialogVisible(true));
-        } else {
-            dispatch(beginShareRoom());
-        }
+        this.props.dispatch(doInvitePeople());
     }
 }
 
@@ -130,11 +117,7 @@ class LonelyMeetingExperience extends PureComponent<Props> {
  * @returns {Props}
  */
 function _mapStateToProps(state): $Shape<Props> {
-    const _inviteEnabled = getFeatureFlag(state, INVITE_ENABLED, true)
-        && (isAddPeopleEnabled(state) || isDialOutEnabled(state));
-
     return {
-        _inviteEnabled,
         _isLonelyMeeting: getParticipantCount(state) === 1,
         _styles: ColorSchemeRegistry.get(state, 'Conference')
     };
