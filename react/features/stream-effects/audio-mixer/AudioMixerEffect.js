@@ -53,7 +53,7 @@ export class AudioMixerEffect {
      */
     startEffect(audioStream: MediaStream) {
         this._audioMixer = JitsiMeetJS.createAudioMixer();
-        this._audioMixer.addJitsiLocalTrack(this._mixAudio);
+        this._audioMixer.addMediaStream(this._mixAudio.stream);
         this._audioMixer.addMediaStream(audioStream);
 
         return this._audioMixer.start();

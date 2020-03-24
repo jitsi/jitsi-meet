@@ -660,10 +660,10 @@ export default {
                     startAudioOnly: config.startAudioOnly,
                     startScreenSharing: config.startScreenSharing,
                     startWithAudioMuted: config.startWithAudioMuted
-                        || config.startSilent
-                        || isUserInteractionRequiredForUnmute(APP.store.getState()),
+                    || config.startSilent
+                    || isUserInteractionRequiredForUnmute(APP.store.getState()),
                     startWithVideoMuted: config.startWithVideoMuted
-                        || isUserInteractionRequiredForUnmute(APP.store.getState())
+                    || isUserInteractionRequiredForUnmute(APP.store.getState())
                 }))
             .then(([ tracks, con ]) => {
                 tracks.forEach(track => {
@@ -1418,7 +1418,7 @@ export default {
      * in case it fails.
      * @private
      */
-    _turnScreenSharingOff(didHaveVideo) {
+    async _turnScreenSharingOff(didHaveVideo) {
         this._untoggleScreenSharing = null;
         this.videoSwitchInProgress = true;
         const { receiver } = APP.remoteControl;
@@ -1447,10 +1447,18 @@ export default {
             }
         });
 
-        // If system audio was also shared stop the AudioMixerEffect.
+        // If system audio was also shared stop the AudioMixerEffect and dispose of the desktop audio track.
         if (this._mixerEffect) {
-            this.localAudio.setEffect(undefined);
+            await this.localAudio.setEffect(undefined);
+            await this._desktopAudioStream.dispose();
             this._mixerEffect = undefined;
+            this._desktopAudioStream = undefined;
+
+        // In case there was no local audio when screen sharing was started the fact that we set the audio stream to
+        // null will take care of the desktop audio stream cleanup.
+        } else if (this._desktopAudioStream) {
+            await this.useAudioStream(null);
+            this._desktopAudioStream = undefined;
         }
 
         if (didHaveVideo) {
@@ -1767,22 +1775,27 @@ export default {
         this.videoSwitchInProgress = true;
 
         return this._createDesktopTrack(options)
-            .then(streams => {
+            .then(async streams => {
                 const desktopVideoStream = streams.find(stream => stream.getType() === MEDIA_TYPE.VIDEO);
 
                 if (desktopVideoStream) {
                     this.useVideoStream(desktopVideoStream);
                 }
 
-                const desktopAudioStream = streams.find(stream => stream.getType() === MEDIA_TYPE.AUDIO);
+                this._desktopAudioStream = streams.find(stream => stream.getType() === MEDIA_TYPE.AUDIO);
 
-                // If there is a localAudio stream, mix in the desktop audio stream captured by the screen sharing api.
-                if (desktopAudioStream && this.localAudio) {
-                    this._mixerEffect = new AudioMixerEffect(desktopAudioStream);
+                if (this._desktopAudioStream) {
+                    // If there is a localAudio stream, mix in the desktop audio stream captured by the screen sharing api.
+                    if (this.localAudio) {
+                        this._mixerEffect = new AudioMixerEffect(this._desktopAudioStream);
 
-                    this.localAudio.setEffect(this._mixerEffect);
+                        await this.localAudio.setEffect(this._mixerEffect);
+                    } else {
+                        // If no local stream is present ( i.e. no input audio devices) we use the screen share audio
+                        // stream as we would use a regular stream.
+                        await this.useAudioStream(this._desktopAudioStream);
+                    }
                 }
-
             })
             .then(() => {
                 this.videoSwitchInProgress = false;
@@ -2316,7 +2329,17 @@ export default {
 
                     return stream;
                 })
-                .then(stream => this.useAudioStream(stream))
+                .then(async stream => {
+                    // In case screen sharing audio is also shared we mix it with new input stream. The old _mixerEffect
+                    // will be cleaned up when the existing track is replaced.
+                    if (this._mixerEffect) {
+                        this._mixerEffect = new AudioMixerEffect(this._desktopAudioStream);
+
+                        await stream.setEffect(this._mixerEffect);
+                    }
+
+                    return this.useAudioStream(stream);
+                })
                 .then(() => {
                     logger.log(`switched local audio device: ${this.localAudio?.getDeviceId()}`);
 
