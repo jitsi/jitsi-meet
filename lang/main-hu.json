@@ -59,6 +59,11 @@
         "title": "Csevegés",
         "you": "neked"
     },
+    "chromeExtensionBanner": {
+        "installExtensionText": "Kiterjesztés telepítése a Google Calendar és az Office 365 integrációjához",
+        "buttonText": "Chrome kiterjesztés telepítése",
+        "dontShowAgain": "Ne jelenjen meg újra"
+    },
     "connectingOverlay": {
         "joiningRoom": "Kapcsolódás az értekezlethez..."
     },
@@ -72,7 +77,10 @@
         "DISCONNECTED": "Szétkapcsolva",
         "DISCONNECTING": "Szétkapcsolódás",
         "ERROR": "Hiba",
-        "RECONNECTING": "Hálózati hiba történt. Újracsatlakozás..."
+        "FETCH_SESSION_ID": "Munkamenet-azonosító beszerzése…",
+        "GET_SESSION_ID_ERROR": "Hiba a munkamenet-azonosítása beszerzése közben: {{code}}",
+        "GOT_SESSION_ID": "Munkamenet-azonosító beszerzése… kész",
+        "LOW_BANDWIDTH": "{{displayName}} videója le lett kapcsolva a sávszélesség csökkentése érdekében"
     },
     "connectionindicator": {
         "address": "Cím:",
@@ -80,6 +88,7 @@
         "bitrate": "Bitsebesség:",
         "bridgeCount": "Kiszolgáló száma: ",
         "connectedTo": "Kapcsolódva ehhez:",
+        "e2e_rtt": "E2E RTT:",
         "framerate": "Képkockasebesség:",
         "less": "Kevesebb megjelenítése",
         "localaddress": "Helyi cím:",
@@ -200,11 +209,17 @@
         "micNotSendingDataTitle": "A mikrofon le van némítva a rendszerbeállításokban",
         "micPermissionDeniedError": "Nem adott engedélyt a mikrofon használatához. Csatlakozhat a beszélgetéshez, de a többiek nem fogják Önt hallani. A címsorban lévő kamera ikonnal lehet ezt helyrehozni.",
         "micUnknownError": "Ismeretlen ok miatt nem lehet a mikrofont használni.",
+        "muteEveryoneElseDialog": "Némítás után már nem fog tudni visszahangosítani, de ő önmagát bármikor vissza tudja hangosítani.",
+        "muteEveryoneElseTitle": "Mindenki elnémítása, kivéve: {{whom}}?",
+        "muteEveryoneDialog": "Valóban mindenki elnémítható? Nem fogja tudni visszahangosítani, de ő önmagát bármikor vissza tudja majd hangosítani.",
+        "muteEveryoneTitle": "Mindenki elnémítása?",
+        "muteEveryoneSelf": "önmagam",
+        "muteEveryoneStartMuted": "Mindenki elnémítva kezd ezután",
         "muteParticipantBody": "Nem fogja tudni visszahangosítani, de ő önmagát bármikor vissza tudja majd hangosítani.",
         "muteParticipantButton": "Némítás",
-        "muteParticipantDialog": "Valóban lenémítható ez a résztvevő? Nem fogja tudni visszahangosítani, de ő önmagát bármikor vissza tudja majd hangosítani.",
-        "muteParticipantTitle": "Lenémítható a résztvevő?",
-        "Ok": "Ok",
+        "muteParticipantDialog": "Valóban elnémítható ez a résztvevő? Nem fogja tudni visszahangosítani, de ő önmagát bármikor vissza tudja majd hangosítani.",
+        "muteParticipantTitle": "Elnémítható a résztvevő?",
+        "Ok": "OK",
         "passwordLabel": "$t(lockRoomPasswordUppercase)",
         "passwordNotSupported": "Az értekezlet $t(lockRoomPassword) beállítása nem támogatott.",
         "passwordNotSupportedTitle": "$t(lockRoomPasswordUppercase) nem támogatott",
@@ -341,7 +356,7 @@
         "keyboardShortcuts": "Gyorsbillentyűk",
         "localRecording": "Helyi rögzítési vezérlőelemek megjelenítése vagy elrejtése",
         "mute": "Mikrofon némítása vagy visszahangosítása",
-        "pushToTalk": "Push to talk",
+        "pushToTalk": "Nyomd, hogy beszélj (adó-vevő)",
         "raiseHand": "Kéz felemelése vagy leengedése",
         "showSpeakerStats": "Beszéd statisztikák megjelenítése",
         "toggleChat": "Csevegés megnyitása vagy bezárása",
@@ -427,9 +442,9 @@
         "kickParticipant": "{{kicked}} résztvevőt kirúgta {{kicker}}",
         "me": "Én",
         "moderator": "Moderátori jogok biztosítva!",
-        "muted": "A beszélgetést lenémítva kezdte meg.",
+        "muted": "A beszélgetést elnémítva kezdte meg.",
         "mutedTitle": "Le lett némítva!",
-        "mutedRemotelyTitle": "{{participantDisplayName}} lenémította Önt!",
+        "mutedRemotelyTitle": "{{participantDisplayName}} elnémította Önt!",
         "mutedRemotelyDescription": "Bármikor visszahangosíthatja magát, ha készen áll a beszédre. Némítsa le magát ismét, ha a felesleges zajoktól meg kívánja védeni az értekezletet.",
         "passwordRemovedRemotely": "$t(lockRoomPasswordUppercase) egy másik résztvevő által eltávolítva",
         "passwordSetRemotely": "$t(lockRoomPasswordUppercase) egy másik résztvevő által beállítva",
@@ -517,8 +532,8 @@
         "selectAudioOutput": "Hangkimenet",
         "selectCamera": "Kamera",
         "selectMic": "Mikrofon",
-        "startAudioMuted": "Mindenki lenémítva kezd",
-        "startVideoMuted": "Mindenki video nélkül kezd",
+        "startAudioMuted": "Mindenki elnémítva kezd",
+        "startVideoMuted": "Mindenki videó nélkül kezd",
         "title": "Beállítások"
     },
     "settingsView": {
@@ -536,7 +551,7 @@
         "profileSection": "Profil",
         "serverURL": "Kiszolgáló URL",
         "showAdvanced": "Speciális beállítások megjelenítése",
-        "startWithAudioMuted": "Kezdés a hang lenémításával",
+        "startWithAudioMuted": "Kezdés a hang elnémításával",
         "startWithVideoMuted": "Kezdés a video letiltásával",
         "version": "Verzió"
     },
@@ -581,7 +596,9 @@
             "lockRoom": "Értekezlet jelszavának átváltása",
             "moreActions": "További műveltek menü átváltása",
             "moreActionsMenu": "További műveltek menü",
+            "moreOptions": "További beállítások megjelenítése",
             "mute": "Hang némításának átváltása",
+            "muteEveryone": "Mindenki elnémítása",
             "pip": "Kép és képben mód átváltása",
             "privateMessage": "Privát üzenet küldése",
             "profile": "Adja meg a profilját",
@@ -623,10 +640,16 @@
         "logout": "Kilépés",
         "lowerYourHand": "Kéz leengedése",
         "moreActions": "További műveltek",
+        "moreOptions": "További beállítások",
         "mute": "Némítás / Visszahangosítás",
+        "muteEveryone": "Minkdeki elnémítása",
         "noAudioSignalTitle": "Nincs bemenet a mikrofonjáról!",
         "noAudioSignalDesc": "Ha nem szándékosan némította el a rendszerbeállításokban vagy az eszközön, akkor fontolja meg az eszköz cseréjét.",
         "noAudioSignalDescSuggestion": "Ha nem szándékosan némította el a rendszerbeállításokban vagy az eszközön, akkor fontolja meg a következő eszköz használatát:",
+        "noAudioSignalDialInDesc": "Be is tárcsázhat:",
+        "noAudioSignalDialInLinkDesc" : "Betárcsázási számok",
+        "noisyAudioInputTitle": "Zajosnak tűnik a mikrofonja!",
+        "noisyAudioInputDesc": "Úgy tűnik, hogy ez a mikrofon zajos. Le kellene némítani vagy cserélni az eszközt.",
         "openChat": "Csevegés megnyitása",
         "pip": "Belépés kép a képben módba",
         "privateMessage": "Privát üzenet küldése",
@@ -707,6 +730,7 @@
     },
     "videothumbnail": {
         "domute": "Némítás",
+        "domuteOthers": "Mindenki más elnémítása",
         "flip": "Tükrözés",
         "kick": "Kirúgás",
         "moderator": "Moderátor",
@@ -724,7 +748,7 @@
         "appDescription": "Gyerünk,csevegjen az egész csapattal. Valóban hívjon meg mindenkit, akit ismer. A {{app}} teljesen titkosított, 100% -ban nyílt forráskódú videokonferencia-megoldás, amelyet egész nap, minden nap ingyenesen használhat - fiók nélkül.",
         "audioVideoSwitch": {
             "audio": "Gyerünk, csevegjen az egész csapattal. Valóban hívjon meg mindenkit akit ismer. A {{app}} teljesen titkosított, 100% -ban nyílt forráskódú videokonferencia-megoldás, amelyet egész nap, minden nap ingyenesen használhat - fiók nélkül.",
-            "video": "Video"
+            "video": "Videó"
         },
         "calendar": "Naptár",
         "connectCalendarButton": "Naptár csatolása",
@@ -745,5 +769,9 @@
         "sendFeedback": "Visszajelzés küldése",
         "terms": "Feltételek",
         "title": "Biztonságos, maradéktalanul felszerelt és teljesen ingyenes videokonferencia"
+    },
+    "lonelyMeetingExperience": {
+        "button": "Mások meghívása",
+        "youAreAlone": "Egyedül van ezen az értekezleten"
     }
 }
