@@ -1006,10 +1006,10 @@ class Toolbox extends Component<Props, State> {
             //         text = { _editingDocument
             //             ? t('toolbar.documentClose')
             //             : t('toolbar.documentOpen') } />,
-            <VideoBlurButton
-                key = 'videobackgroundblur'
-                showLabel = { true }
-                visible = { this._shouldShowButton('videobackgroundblur') && !_screensharing } />,
+            // <VideoBlurButton
+            //     key = 'videobackgroundblur'
+            //     showLabel = { true }
+            //     visible = { this._shouldShowButton('videobackgroundblur') && !_screensharing } />,
             <SettingsButton
                 key = 'settings'
                 showLabel = { true }
