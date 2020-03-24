@@ -111,7 +111,6 @@ import {
     trackRemoved
 } from './react/features/base/tracks';
 import { getJitsiMeetGlobalNS } from './react/features/base/util';
-import { toggleBlurEffect } from './react/features/blur';
 import { showDesktopPicker } from './react/features/desktop-picker';
 import { appendSuffix } from './react/features/display-name';
 import {
@@ -2702,12 +2701,6 @@ export default {
 
         this._stopProxyConnection();
 
-        // Set blur to disabled if it was enabled during the call.
-        const blurEnabled = APP.store.getState()['features/blur']?.blurEnabled;
-
-        if (blurEnabled) {
-            APP.store.dispatch(toggleBlurEffect(false));
-        }
         APP.store.dispatch(destroyLocalTracks());
         this._localTracksInitialized = false;
         this.localVideo = null;
