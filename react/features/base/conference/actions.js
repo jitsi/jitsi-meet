@@ -281,6 +281,9 @@ export function conferenceFailed(conference: Object, error: string, ...params: a
  * }}
  */
 export function conferenceJoined(conference: Object) {
+    // Reset localstorage lastVisitedUrl logic once user joined the conference.
+    localStorage.setItem('lastVisitedUrlRefreshed', 'false');
+
     return {
         type: CONFERENCE_JOINED,
         conference
@@ -412,7 +415,6 @@ export function conferenceWillLeave(conference: Object) {
         const state = getState();
         const { jwt } = state['features/base/jwt'];
 
-        console.log(jwt);
         if (jwt) {
             const jwtPayload = jwtDecode(jwt);
             const url = jwtPayload.context.leave_url;
