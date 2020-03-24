@@ -16,7 +16,7 @@ b.) You only need to do this if you want to ___host your own Jitsi server___. If
 
 ### Set up the Fully Qualified Domain Name (FQDN) (optional)
 
-If the machine used to host the Jitsi Meet instance has a FQDN (for example `meet.example.org`) already set up in DNS, `/etc/hostname` must contain this FQDN; if this is not the case yet, [change the hostname](https://wiki.debian.org/it/HowTo/ChangeHostname).
+If the machine used to host the Jitsi Meet instance has a FQDN (for example `meet.example.org`) already set up in DNS, `/etc/hostname` must contain this FQDN; if this is not the case yet, [change the hostname](https://wiki.debian.org/HowTo/ChangeHostname).
 
 Then add the same FQDN in the `/etc/hosts` file, associating it with the loopback address:
 
