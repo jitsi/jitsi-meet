@@ -1785,7 +1785,8 @@ export default {
                 this._desktopAudioStream = streams.find(stream => stream.getType() === MEDIA_TYPE.AUDIO);
 
                 if (this._desktopAudioStream) {
-                    // If there is a localAudio stream, mix in the desktop audio stream captured by the screen sharing api.
+                    // If there is a localAudio stream, mix in the desktop audio stream captured by the screen sharing
+                    // api.
                     if (this.localAudio) {
                         this._mixerEffect = new AudioMixerEffect(this._desktopAudioStream);
 
