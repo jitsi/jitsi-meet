@@ -128,7 +128,7 @@ var interfaceConfig = {
      * If indicated some of the error dialogs may point to the support URL for
      * help.
      */
-    SUPPORT_URL: 'https://github.com/jitsi/jitsi-meet/issues/new',
+    SUPPORT_URL: 'https://community.jitsi.org/',
 
     /**
      * Whether the connection indicator icon should hide itself based on
