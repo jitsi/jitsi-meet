@@ -164,7 +164,7 @@ export function getConferenceName(stateful: Function | Object): string {
         || subject
         || callDisplayName
         || (callee && callee.name)
-        || _.startCase(safeDecodeURIComponent(room));
+        || safeStartCase(safeDecodeURIComponent(room));
 }
 
 /**
@@ -350,4 +350,20 @@ export function sendLocalParticipant(
     }
 
     conference.setDisplayName(name);
+}
+
+/**
+ * A safe implementation of lodash#startCase that doesn't deburr the string.
+ *
+ * NOTE: According to lodash roadmap, lodash v5 will have this function.
+ *
+ * Code based on https://github.com/lodash/lodash/blob/master/startCase.js.
+ *
+ * @param {string} s - The string to do start case on.
+ * @returns {string}
+ */
+function safeStartCase(s = '') {
+    return _.words(`${s}`.replace(/['\u2019]/g, '')).reduce(
+        (result, word, index) => result + (index ? ' ' : '') + _.upperFirst(word)
+        , '');
 }
