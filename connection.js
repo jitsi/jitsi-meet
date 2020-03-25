@@ -138,7 +138,7 @@ export async function connect(id, password, roomName) {
          *
          */
         function connectionFailedHandler(error, message, credentials, details) {
-        /* eslint-enable max-params */
+            /* eslint-enable max-params */
             APP.store.dispatch(
                 connectionFailed(
                     connection, {
@@ -147,7 +147,7 @@ export async function connect(id, password, roomName) {
                         message,
                         name: error
                     }));
-
+            _checkAndRefreshLastVisitedURL();
             if (isFatalJitsiConnectionError(error)) {
                 connection.removeEventListener(
                     JitsiConnectionEvents.CONNECTION_FAILED,
@@ -195,6 +195,29 @@ export async function connect(id, password, roomName) {
 
         checkForAttachParametersAndConnect(id, password, connection);
     });
+}
+
+/**
+ * Refreshed the browser once when connection failed.If the url doesn't contain any jwt token.
+ * @returns void
+ */
+function _checkAndRefreshLastVisitedURL() {
+    const lastVisitedUrlRefreshed = localStorage.getItem('lastVisitedUrlRefreshed');
+    const lastVisitedUrl = localStorage.getItem('lastVisitedUrl');
+
+    if (window.location.href.indexOf('?jwt=') > -1) {
+        localStorage.setItem('lastVisitedUrl', window.location.href);
+    }
+
+    if (window.location.href.indexOf('?jwt=') < 0 && lastVisitedUrl
+        && (!lastVisitedUrlRefreshed || lastVisitedUrlRefreshed === 'false')) {
+        const roomName = window.location.pathname;
+
+        if (lastVisitedUrl.indexOf(roomName) > -1) {
+            window.location.href = lastVisitedUrl;
+            localStorage.setItem('lastVisitedUrlRefreshed', 'true');
+        }
+    }
 }
 
 /**
