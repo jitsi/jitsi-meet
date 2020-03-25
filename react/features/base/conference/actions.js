@@ -397,15 +397,19 @@ export function conferenceWillJoin(conference: Object) {
 export function conferenceWillLeave(conference: Object) {
 
     return (dispatch: Function, getState: Function) => {
-        const state = getState();
-        const { jwt } = state['features/base/jwt'];
-
+        const { jwt } = APP.store.getState()['features/base/jwt'];
+        const startedAt = APP.store.getState()['features/base/conference'].start;
         if (jwt) {
             const jwtPayload = jwtDecode(jwt);
             const url = jwtPayload.context.leave_url;
-
-            // navigator.sendBeacon(url, jwt);
+            const obj = {
+                jwt: jwt,
+                started_at: startedAt
+            }
+            const data = new Blob([JSON.stringify(obj, null, 2)], { type: 'text/plain; charset=UTF-8' })
+            navigator.sendBeacon(url, data);
         }
+
         dispatch({
             type: CONFERENCE_WILL_LEAVE,
             conference
