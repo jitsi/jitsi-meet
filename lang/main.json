@@ -365,7 +365,8 @@
         "toggleScreensharing": "Switch between camera and screen sharing",
         "toggleShortcuts": "Show or hide keyboard shortcuts",
         "videoMute": "Start or stop your camera",
-        "videoQuality": "Manage call quality"
+        "videoQuality": "Manage call quality",
+        "follow-me": "Toggle everyone following me"
     },
     "liveStreaming": {
         "busy": "We're working on freeing streaming resources. Please try again in a few minutes.",
@@ -458,7 +459,9 @@
         "unmute": "Unmute",
         "newDeviceCameraTitle": "New camera detected",
         "newDeviceAudioTitle": "New audio device detected",
-        "newDeviceAction": "Use"
+        "newDeviceAction": "Use",
+        "followMeOnTitle": "Everyone is following you now",
+        "followMeOffTitle": "Everyone stopped following you now"
     },
     "passwordSetRemotely": "set by another participant",
     "passwordDigitsOnly": "Up to {{number}} digits",
@@ -619,7 +622,8 @@
             "toggleCamera": "Toggle camera",
             "toggleFilmstrip": "Toggle filmstrip",
             "videomute": "Toggle mute video",
-            "videoblur": "Toggle video blur"
+            "videoblur": "Toggle video blur",
+            "follow-me": "Toggle follow-me"
         },
         "addPeople": "Add people to your call",
         "audioOnlyOff": "Disable low bandwidth mode",
@@ -675,7 +679,10 @@
         "toggleCamera": "Toggle camera",
         "videomute": "Start / Stop camera",
         "startvideoblur": "Blur my background",
-        "stopvideoblur": "Disable background blur"
+        "stopvideoblur": "Disable background blur",
+        "follow-me": "Toggle everyone following me",
+        "follow-me-on": "Follow me",
+        "follow-me-off": "Unfollow me"
     },
     "transcribing": {
         "ccButtonTooltip": "Start / Stop subtitles",

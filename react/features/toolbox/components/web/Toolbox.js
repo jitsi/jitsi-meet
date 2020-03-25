@@ -9,6 +9,7 @@ import {
     sendAnalytics
 } from '../../../analytics';
 import { openDialog, toggleDialog } from '../../../base/dialog';
+import { setFollowMe } from '../../../base/conference';
 import { translate } from '../../../base/i18n';
 import {
     IconChat,
@@ -21,11 +22,13 @@ import {
     IconRaisedHand,
     IconRec,
     IconShareDesktop,
-    IconShareVideo
+    IconShareVideo,
+    IconFollowMe
 } from '../../../base/icons';
 import {
     getLocalParticipant,
     getParticipants,
+    isLocalParticipantModerator,
     participantUpdated
 } from '../../../base/participants';
 import { connect, equals } from '../../../base/redux';
@@ -35,6 +38,7 @@ import { VideoBlurButton } from '../../../blur';
 import { ChatCounter, toggleChat } from '../../../chat';
 import { SharedDocumentButton } from '../../../etherpad';
 import { openFeedbackDialog } from '../../../feedback';
+import { NOTIFICATION_TIMEOUT, showNotification } from '../../../notifications';
 import {
     beginAddPeople,
     InfoDialogButton,
@@ -130,6 +134,16 @@ type Props = {
      * Whether or not the tile view is enabled.
      */
     _tileViewEnabled: boolean,
+
+    /**
+     * Whether or not follow-me is enabled.
+     */
+    _followMeEnabled: boolean,
+
+    /**
+     * Whether or the local participant is a moderator
+     */
+    _isModerator: boolean,
 
     /**
      * Whether or not invite should be hidden, regardless of feature
@@ -237,6 +251,7 @@ class Toolbox extends Component<Props, State> {
         this._onShortcutToggleRaiseHand = this._onShortcutToggleRaiseHand.bind(this);
         this._onShortcutToggleScreenshare = this._onShortcutToggleScreenshare.bind(this);
         this._onShortcutToggleVideoQuality = this._onShortcutToggleVideoQuality.bind(this);
+        this._onShortcutToggleFollowMe = this._onShortcutToggleFollowMe.bind(this);
         this._onToolbarOpenFeedback = this._onToolbarOpenFeedback.bind(this);
         this._onToolbarOpenInvite = this._onToolbarOpenInvite.bind(this);
         this._onToolbarOpenKeyboardShortcuts = this._onToolbarOpenKeyboardShortcuts.bind(this);
@@ -249,6 +264,7 @@ class Toolbox extends Component<Props, State> {
         this._onToolbarToggleScreenshare = this._onToolbarToggleScreenshare.bind(this);
         this._onToolbarToggleSharedVideo = this._onToolbarToggleSharedVideo.bind(this);
         this._onToolbarOpenLocalRecordingInfoDialog = this._onToolbarOpenLocalRecordingInfoDialog.bind(this);
+        this._onToolbarToggleFollowMe = this._onToolbarToggleFollowMe.bind(this);
         this._onShortcutToggleTileView = this._onShortcutToggleTileView.bind(this);
 
         this.state = {
@@ -293,6 +309,11 @@ class Toolbox extends Component<Props, State> {
                 character: 'W',
                 exec: this._onShortcutToggleTileView,
                 helpDescription: 'toolbar.tileViewToggle'
+            },
+            this._shouldShowButton('follow-me') && {
+                character: 'P',
+                exec: this._onShortcutToggleFollowMe,
+                helpDescription: 'keyboardShortcuts.follow-me'
             }
         ];
 
@@ -504,6 +525,25 @@ class Toolbox extends Component<Props, State> {
         this.props.dispatch(toggleTileView());
     }
 
+    /**
+     * Dispaches an action to toggle follow-me.
+     *
+     * @private
+     * @returns {void}
+     */
+    _doToggleFollowMe() {
+        const followMeState = !this.props._followMeEnabled;
+        const isModerator = this.props._isModerator;
+        const notifiyKey = followMeState ? 'notify.followMeOnTitle' : 'notify.followMeOffTitle';
+
+        if (isModerator) {
+            this.props.dispatch(showNotification({
+                titleKey: notifiyKey
+            }, NOTIFICATION_TIMEOUT));
+            this.props.dispatch(setFollowMe(followMeState));
+        }
+    }
+
     _onMouseOut: () => void;
 
     /**
@@ -610,6 +650,24 @@ class Toolbox extends Component<Props, State> {
             }));
 
         this._doToggleTileView();
+    }
+
+    _onShortcutToggleFollowMe: () => void;
+
+    /**
+     * Dispatches an action for toggling follow-me.
+     *
+     * @private
+     * @returns {void}
+     */
+    _onShortcutToggleFollowMe() {
+        sendAnalytics(createShortcutEvent(
+            'toggle.follow-me',
+            {
+                enable: !this.props._followMeEnabled
+            }));
+
+        this._doToggleFollowMe();
     }
 
     _onShortcutToggleFullScreen: () => void;
@@ -866,6 +924,23 @@ class Toolbox extends Component<Props, State> {
         this.props.dispatch(openDialog(LocalRecordingInfoDialog));
     }
 
+    _onToolbarToggleFollowMe: () => void;
+
+    /**
+     * Creates an analytics toolbar event and dispatches an action for toggling
+     * follow-me.
+     *
+     * @private
+     * @returns {void}
+     */
+    _onToolbarToggleFollowMe() {
+        sendAnalytics(createToolbarEvent(
+            'toggle.follow-me',
+            { enable: !this.props._followMeEnabled }));
+
+        this._doToggleFollowMe();
+    }
+
     /**
      * Returns true if the the desktop sharing button should be visible and
      * false otherwise.
@@ -1050,6 +1125,7 @@ class Toolbox extends Component<Props, State> {
         const {
             _chatOpen,
             _raisedHand,
+            _followMeEnabled,
             t
         } = this.props;
 
@@ -1069,6 +1145,21 @@ class Toolbox extends Component<Props, State> {
                             t(`toolbar.${
                                 _raisedHand
                                     ? 'lowerYourHand' : 'raiseYourHand'}`
+                            )
+                        } />
+                );
+            case 'follow-me':
+                return (
+                    <OverflowMenuItem
+                        accessibilityLabel =
+                            { t('toolbar.accessibilityLabel.follow-me') }
+                        icon = { IconFollowMe }
+                        key = 'followMeEnabled'
+                        onClick = { this._onToolbarToggleFollowMe }
+                        text = {
+                            t(`toolbar.${
+                                _followMeEnabled
+                                    ? 'follow-me-off' : 'follow-me-on'}`
                             )
                         } />
                 );
@@ -1153,6 +1244,8 @@ class Toolbox extends Component<Props, State> {
             _hideInviteButton,
             _overflowMenuVisible,
             _raisedHand,
+            _followMeEnabled,
+            _isModerator,
             t
         } = this.props;
         const overflowMenuContent = this._renderOverflowMenuContent();
@@ -1177,6 +1270,9 @@ class Toolbox extends Component<Props, State> {
         }
         if (this._shouldShowButton('raisehand')) {
             buttonsLeft.push('raisehand');
+        }
+        if (this._shouldShowButton('follow-me') && _isModerator) {
+            buttonsLeft.push('follow-me');
         }
         if (this._shouldShowButton('chat')) {
             buttonsLeft.push('chat');
@@ -1244,6 +1340,13 @@ class Toolbox extends Component<Props, State> {
                             onClick = { this._onToolbarToggleRaiseHand }
                             toggled = { _raisedHand }
                             tooltip = { t('toolbar.raiseHand') } /> }
+                    { buttonsLeft.indexOf('follow-me') !== -1
+                        && <ToolbarButton
+                            accessibilityLabel = { t('toolbar.accessibilityLabel.follow-me') }
+                            icon = { IconFollowMe }
+                            onClick = { this._onToolbarToggleFollowMe }
+                            toggled = { _followMeEnabled }
+                            tooltip = { t('toolbar.follow-me') } /> }
                     { buttonsLeft.indexOf('chat') !== -1
                         && <div className = 'toolbar-button-with-badge'>
                             <ToolbarButton
@@ -1340,6 +1443,7 @@ function _mapStateToProps(state) {
     const localVideo = getLocalVideoTrack(state['features/base/tracks']);
     const addPeopleEnabled = isAddPeopleEnabled(state);
     const dialOutEnabled = isDialOutEnabled(state);
+    const isModerator = isLocalParticipantModerator(state);
 
     let desktopSharingDisabledTooltipKey;
 
@@ -1376,6 +1480,8 @@ function _mapStateToProps(state) {
         _isGuest: state['features/base/jwt'].isGuest,
         _fullScreen: fullScreen,
         _tileViewEnabled: state['features/video-layout'].tileViewEnabled,
+        _followMeEnabled: state['features/base/conference'].followMeEnabled,
+        _isModerator: isModerator,
         _localParticipantID: localParticipant.id,
         _localRecState: localRecordingStates,
         _overflowMenuVisible: overflowMenuVisible,
