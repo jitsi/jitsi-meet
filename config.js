@@ -459,6 +459,15 @@ var config = {
     //    downloadAppsUrl: 'https://docs.example.com/our-apps.html'
     // },
 
+    // Options related to the remote participant menu.
+    // remoteVideoMenu: {
+    //     // If set to true the 'Kick out' button will be disabled.
+    //     disableKick: true
+    // },
+
+    // If set to true all muting operations of remote participants will be disabled.
+    // disableRemoteMute: true,
+
     // List of undocumented settings used in jitsi-meet
     /**
      _immediateReloadThreshold
