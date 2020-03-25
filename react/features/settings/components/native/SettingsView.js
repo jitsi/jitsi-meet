@@ -35,9 +35,44 @@ type Props = AbstractProps & {
 type State = {
 
     /**
+     * State variable for the disable call integration switch.
+     */
+    disableCallIntegration: boolean,
+
+    /**
+     * State variable for the disable p2p switch.
+     */
+    disableP2P: boolean,
+
+    /**
+     * State variable for the display name field.
+     */
+    displayName: string,
+
+    /**
+     * State variable for the email field.
+     */
+    email: string,
+
+    /**
+     * State variable for the server URL field.
+     */
+    serverURL: string,
+
+    /**
      * Whether to show advanced settings or not.
      */
-    showAdvanced: boolean
+    showAdvanced: boolean,
+
+    /**
+     * State variable for the start with audio muted switch.
+     */
+    startWithAudioMuted: boolean,
+
+    /**
+     * State variable for the start with video muted switch.
+     */
+    startWithVideoMuted: boolean,
 }
 
 /**
@@ -55,9 +90,25 @@ class SettingsView extends AbstractSettingsView<Props, State> {
      */
     constructor(props) {
         super(props);
+        const {
+            disableCallIntegration,
+            disableP2P,
+            displayName,
+            email,
+            serverURL,
+            startWithAudioMuted,
+            startWithVideoMuted
+        } = props._settings || {};
 
         this.state = {
-            showAdvanced: false
+            disableCallIntegration,
+            disableP2P,
+            displayName,
+            email,
+            serverURL,
+            showAdvanced: false,
+            startWithAudioMuted,
+            startWithVideoMuted
         };
 
         // Bind event handlers so they are only bound once per instance.
@@ -103,25 +154,61 @@ class SettingsView extends AbstractSettingsView<Props, State> {
         this._processServerURL(false /* hideOnSuccess */);
     }
 
-    _onChangeDisplayName: (string) => void;
+    /**
+     * Callback to update the display name.
+     *
+     * @param {string} displayName - The new value to set.
+     * @returns {void}
+     */
+    _onChangeDisplayName(displayName) {
+        super._onChangeDisplayName(displayName);
+        this.setState({
+            displayName
+        });
+    }
 
-    _onChangeEmail: (string) => void;
+    /**
+     * Callback to update the email.
+     *
+     * @param {string} email - The new value to set.
+     * @returns {void}
+     */
+    _onChangeEmail(email) {
+        super._onChangeEmail(email);
+        this.setState({
+            email
+        });
+    }
 
-    _onChangeServerURL: (string) => void;
+    /**
+     * Callback to update the server URL.
+     *
+     * @param {string} serverURL - The new value to set.
+     * @returns {void}
+     */
+    _onChangeServerURL(serverURL) {
+        super._onChangeServerURL(serverURL);
+        this.setState({
+            serverURL
+        });
+    }
 
     _onDisableCallIntegration: (boolean) => void;
 
     /**
      * Handles the disable call integration change event.
      *
-     * @param {boolean} newValue - The new value
+     * @param {boolean} disableCallIntegration - The new value
      * option.
      * @private
      * @returns {void}
      */
-    _onDisableCallIntegration(newValue) {
+    _onDisableCallIntegration(disableCallIntegration) {
         this._updateSettings({
-            disableCallIntegration: newValue
+            disableCallIntegration
+        });
+        this.setState({
+            disableCallIntegration
         });
     }
 
@@ -130,14 +217,17 @@ class SettingsView extends AbstractSettingsView<Props, State> {
     /**
      * Handles the disable P2P change event.
      *
-     * @param {boolean} newValue - The new value
+     * @param {boolean} disableP2P - The new value
      * option.
      * @private
      * @returns {void}
      */
-    _onDisableP2P(newValue) {
+    _onDisableP2P(disableP2P) {
         this._updateSettings({
-            disableP2P: newValue
+            disableP2P
+        });
+        this.setState({
+            disableP2P
         });
     }
 
@@ -165,9 +255,31 @@ class SettingsView extends AbstractSettingsView<Props, State> {
         this.setState({ showAdvanced: !this.state.showAdvanced });
     }
 
-    _onStartAudioMutedChange: (boolean) => void;
+    /**
+     * Callback to update the start with audio muted value.
+     *
+     * @param {boolean} startWithAudioMuted - The new value to set.
+     * @returns {void}
+     */
+    _onStartAudioMutedChange(startWithAudioMuted) {
+        super._onStartAudioMutedChange(startWithAudioMuted);
+        this.setState({
+            startWithAudioMuted
+        });
+    }
 
-    _onStartVideoMutedChange: (boolean) => void;
+    /**
+     * Callback to update the start with video muted value.
+     *
+     * @param {boolean} startWithVideoMuted - The new value to set.
+     * @returns {void}
+     */
+    _onStartVideoMutedChange(startWithVideoMuted) {
+        super._onStartVideoMutedChange(startWithVideoMuted);
+        this.setState({
+            startWithVideoMuted
+        });
+    }
 
     /**
      * Processes the server URL. It normalizes it and an error alert is
@@ -199,8 +311,7 @@ class SettingsView extends AbstractSettingsView<Props, State> {
      * @returns {React$Element}
      */
     _renderAdvancedSettings() {
-        const { _settings } = this.props;
-        const { showAdvanced } = this.state;
+        const { disableCallIntegration, disableP2P, showAdvanced } = this.state;
 
         if (!showAdvanced) {
             return (
@@ -221,14 +332,14 @@ class SettingsView extends AbstractSettingsView<Props, State> {
                     label = 'settingsView.disableCallIntegration'>
                     <Switch
                         onValueChange = { this._onDisableCallIntegration }
-                        value = { _settings.disableCallIntegration } />
+                        value = { disableCallIntegration } />
                 </FormRow>
                 <FormRow
                     fieldSeparator = { true }
                     label = 'settingsView.disableP2P'>
                     <Switch
                         onValueChange = { this._onDisableP2P }
-                        value = { _settings.disableP2P } />
+                        value = { disableP2P } />
                 </FormRow>
             </>
         );
@@ -241,7 +352,7 @@ class SettingsView extends AbstractSettingsView<Props, State> {
      * @returns {React$Element}
      */
     _renderBody() {
-        const { _settings } = this.props;
+        const { displayName, email, serverURL, startWithAudioMuted, startWithVideoMuted } = this.state;
 
         return (
             <SafeAreaView style = { styles.settingsForm }>
@@ -255,7 +366,7 @@ class SettingsView extends AbstractSettingsView<Props, State> {
                             autoCorrect = { false }
                             onChangeText = { this._onChangeDisplayName }
                             placeholder = 'John Doe'
-                            value = { _settings.displayName } />
+                            value = { displayName } />
                     </FormRow>
                     <FormRow label = 'settingsView.email'>
                         <TextInput
@@ -264,7 +375,7 @@ class SettingsView extends AbstractSettingsView<Props, State> {
                             keyboardType = { 'email-address' }
                             onChangeText = { this._onChangeEmail }
                             placeholder = 'email@example.com'
-                            value = { _settings.email } />
+                            value = { email } />
                     </FormRow>
                     <FormSectionHeader
                         label = 'settingsView.conferenceSection' />
@@ -277,19 +388,19 @@ class SettingsView extends AbstractSettingsView<Props, State> {
                             onBlur = { this._onBlurServerURL }
                             onChangeText = { this._onChangeServerURL }
                             placeholder = { this.props._serverURL }
-                            value = { _settings.serverURL } />
+                            value = { serverURL } />
                     </FormRow>
                     <FormRow
                         fieldSeparator = { true }
                         label = 'settingsView.startWithAudioMuted'>
                         <Switch
                             onValueChange = { this._onStartAudioMutedChange }
-                            value = { _settings.startWithAudioMuted } />
+                            value = { startWithAudioMuted } />
                     </FormRow>
                     <FormRow label = 'settingsView.startWithVideoMuted'>
                         <Switch
                             onValueChange = { this._onStartVideoMutedChange }
-                            value = { _settings.startWithVideoMuted } />
+                            value = { startWithVideoMuted } />
                     </FormRow>
                     <FormSectionHeader
                         label = 'settingsView.buildInfoSection' />
