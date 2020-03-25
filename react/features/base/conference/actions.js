@@ -412,7 +412,7 @@ export function conferenceWillLeave(conference: Object) {
 
     return (dispatch: Function, getState: Function) => {
         const { jwt } = APP.store.getState()['features/base/jwt'];
-        const { conferenceStartedTime } = APP.store.getState()['features/base/conference'];
+        const { conferenceStartedTime, start } = APP.store.getState()['features/base/conference'];
 
         if (jwt && conferenceStartedTime) {
             const jwtPayload = jwtDecode(jwt);
@@ -421,7 +421,7 @@ export function conferenceWillLeave(conference: Object) {
             const obj = {
                 jwt,
                 // eslint-disable-next-line camelcase
-                started_at: conferenceStartedTime.toISOString()
+                started_at: start
             };
             const data = new Blob([ JSON.stringify(obj, null, 2) ], { type: 'text/plain; charset=UTF-8' });
             // eslint-disable-next-line no-mixed-operators
