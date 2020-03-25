@@ -361,14 +361,17 @@ class SettingsView extends AbstractSettingsView<Props, State> {
                         label = 'settingsView.profileSection' />
                     <FormRow
                         fieldSeparator = { true }
-                        label = 'settingsView.displayName'>
+                        label = 'settingsView.displayName'
+                        layout = 'column'>
                         <TextInput
                             autoCorrect = { false }
                             onChangeText = { this._onChangeDisplayName }
                             placeholder = 'John Doe'
                             value = { displayName } />
                     </FormRow>
-                    <FormRow label = 'settingsView.email'>
+                    <FormRow
+                        label = 'settingsView.email'
+                        layout = 'column'>
                         <TextInput
                             autoCapitalize = 'none'
                             autoCorrect = { false }
@@ -381,7 +384,8 @@ class SettingsView extends AbstractSettingsView<Props, State> {
                         label = 'settingsView.conferenceSection' />
                     <FormRow
                         fieldSeparator = { true }
-                        label = 'settingsView.serverURL'>
+                        label = 'settingsView.serverURL'
+                        layout = 'column'>
                         <TextInput
                             autoCapitalize = 'none'
                             autoCorrect = { false }
