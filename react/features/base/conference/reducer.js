@@ -304,7 +304,8 @@ function _conferenceLeftOrWillLeave(state, { conference, type }) {
 function _conferenceWillJoin(state, { conference }) {
     return assign(state, {
         error: undefined,
-        joining: conference
+        joining: conference,
+        start: new Date().toISOString(),
     });
 }
 
