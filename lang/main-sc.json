@@ -463,15 +463,15 @@
     "passwordDigitsOnly": "Finas a {{number}} tzifras",
     "poweredby": "de",
     "presenceStatus": {
-        "busy": "Ocupat",
+        "busy": "No a disponimentu",
         "calling": "Mutende...",
         "connected": "Connessione istabilida",
         "connecting": "Connetende...",
         "connecting2": "Connetende*...",
         "disconnected": "Disconnètidu",
         "expired": "Iscadidu",
-        "ignored": "Ignorat",
-        "initializingCall": "S'està inicialitzant la trucada...",
+        "ignored": "Ignoradu",
+        "initializingCall": "Aviende sa mutida...",
         "invited": "Invitadu",
         "rejected": "Refudadu",
         "ringing": "Sonende..."
