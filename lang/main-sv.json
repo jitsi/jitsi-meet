@@ -571,7 +571,7 @@
             "show": "",
             "speakerStats": "Stäng eller öppna högstalarstatistik",
             "tileView": "Öppna eller stäng panelvyn",
-            "toggleCamera": "Öppna eller stäng kamera",
+            "toggleCamera": "Byta kamera",
             "videomute": "Sätt på eller stäng av mikrofonen",
             "videoblur": ""
         },
@@ -614,7 +614,7 @@
         "stopSharedVideo": "Pausa YouTube-video",
         "talkWhileMutedPopup": "Försöker du tala? Din mikrofon är tystad.",
         "tileViewToggle": "Öppna eller stäng panelvyn",
-        "toggleCamera": "Öppna eller stäng kamera",
+        "toggleCamera": "Byta kamera",
         "videomute": "Aktivera / avaktivera kameran",
         "startvideoblur": "",
         "stopvideoblur": ""
