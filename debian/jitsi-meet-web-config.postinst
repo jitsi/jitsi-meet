@@ -68,12 +68,11 @@ case "$1" in
             FORCE_APACHE="true"
         fi
 
+        UPLOADED_CERT_CHOICE="I want to use my own certificate"
         # if first time config ask for certs, or if we are reconfiguring
         if [ -z "$JVB_HOSTNAME_OLD" ] || [ "$RECONFIGURING" = "true" ] ; then
-            # SSL for nginx
             db_get jitsi-meet/cert-choice
             CERT_CHOICE="$RET"
-            UPLOADED_CERT_CHOICE="I want to use my own certificate"
 
             if [ "$CERT_CHOICE" = "$UPLOADED_CERT_CHOICE" ] ; then
                 db_set jitsi-meet/cert-path-key "/etc/ssl/$JVB_HOSTNAME.key"
@@ -126,11 +125,14 @@ case "$1" in
                 sed -i "s/org.jitsi.videobridge.TCP_HARVESTER_PORT/#org.jitsi.videobridge.TCP_HARVESTER_PORT/g" $JVB_CONFIG
 
                 if [ -d /run/systemd/system ]; then
-                    systemctl stop jitsi-videobridge2.service >/dev/null || true
+                    systemctl restart jitsi-videobridge2.service >/dev/null || true
                 fi
 
                 # Removing this value will force nginx or apache to be locally configured
                 JVB_HOSTNAME_OLD=""
+
+                db_get jitsi-meet/cert-choice
+                CERT_CHOICE="$RET"
                 # Fix certs on upgrade from jetty
                 if [ "$CERT_CHOICE" = "$UPLOADED_CERT_CHOICE" ] ; then
                     db_get jitsi-meet/cert-path-key
