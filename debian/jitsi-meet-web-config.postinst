@@ -131,6 +131,17 @@ case "$1" in
 
                 # Removing this value will force nginx or apache to be locally configured
                 JVB_HOSTNAME_OLD=""
+                # Fix certs on upgrade from jetty
+                if [ "$CERT_CHOICE" = "$UPLOADED_CERT_CHOICE" ] ; then
+                    db_get jitsi-meet/cert-path-key
+                    CERT_KEY="$RET"
+                    db_get jitsi-meet/cert-path-crt
+                    CERT_CRT="$RET"
+                else
+                    # create self-signed certs
+                    CERT_KEY="/etc/jitsi/meet/$JVB_HOSTNAME.key"
+                    CERT_CRT="/etc/jitsi/meet/$JVB_HOSTNAME.crt"
+                fi
             fi
 
             db_set jitsi-meet/jvb-serve "false"
