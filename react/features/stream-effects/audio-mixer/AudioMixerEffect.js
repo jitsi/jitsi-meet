@@ -2,7 +2,6 @@
 
 import JitsiMeetJS from '../../base/lib-jitsi-meet';
 import { MEDIA_TYPE } from '../../base/media';
-import logger from '../../base/redux/logger';
 
 /**
  * Class Implementing the effect interface expected by a JitsiLocalTrack.
@@ -27,7 +26,7 @@ export class AudioMixerEffect {
      */
     constructor(mixAudio: Object) {
         if (mixAudio.getType() !== MEDIA_TYPE.AUDIO) {
-            logger.warn('AudioMixerEffect only supports audio JitsiLocalTracks; effect will not work!');
+            throw new Error('AudioMixerEffect only supports audio JitsiLocalTracks; effect will not work!');
         }
 
         this._mixAudio = mixAudio;
@@ -53,7 +52,7 @@ export class AudioMixerEffect {
      */
     startEffect(audioStream: MediaStream) {
         this._audioMixer = JitsiMeetJS.createAudioMixer();
-        this._audioMixer.addMediaStream(this._mixAudio.stream);
+        this._audioMixer.addMediaStream(this._mixAudio.getOriginalStream());
         this._audioMixer.addMediaStream(audioStream);
 
         return this._audioMixer.start();
