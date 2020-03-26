@@ -1,7 +1,8 @@
 server_names_hash_bucket_size 64;
 
 server {
-    listen 80;
+    listen 0.0.0.0:80;
+    listen [::]:80;
     server_name jitsi-meet.example.com;
 
     location ^~ /.well-known/acme-challenge/ {
@@ -16,7 +17,8 @@ server {
     }
 }
 server {
-    listen 443 ssl;
+    listen 0.0.0.0:443 ssl http2;
+    listen [::]:443 ssl http2;
     server_name jitsi-meet.example.com;
 
     ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
