@@ -128,6 +128,9 @@ case "$1" in
                 if [ -d /run/systemd/system ]; then
                     systemctl stop jitsi-videobridge2.service >/dev/null || true
                 fi
+
+                # Removing this value will force nginx or apache to be locally configured
+                JVB_HOSTNAME_OLD=""
             fi
 
             db_set jitsi-meet/jvb-serve "false"
