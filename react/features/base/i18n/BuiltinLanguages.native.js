@@ -42,18 +42,18 @@ const _LANGUAGES = {
         languages: require('../../../../lang/languages-es'),
         main: require('../../../../lang/main-es')
     },
-    
+
     // Spanish (Latin America)
     'esUS': {
         languages: require('../../../../lang/languages-esUS'),
         main: require('../../../../lang/main-esUS')
     },
-    
+
     // Estonian
     'et': {
         languages: require('../../../../lang/languages-et'),
         main: require('../../../../lang/main-et')
-    }
+    },
 
     // Estonian
     'et': {
