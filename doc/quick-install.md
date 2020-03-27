@@ -1,14 +1,12 @@
 # Jitsi Meet quick install
 
-This document describes the required steps for a quick Jitsi Meet installation on a Debian based GNU/Linux system. Debian 8 (Jessie) or later, and Ubuntu 14.04 or later are supported out-of-the-box.
+This guide helps you  ___host your own Jitsi server___. If you want to have a video conference without setting up any infrastructure, use https://meet.jit.si instead.
 
-Also note that a recent default Ubuntu installation has only the `main` repository enabled, and Jitsi Meet needs packages from `universe`. Check your `/etc/apt/sources.list` file, and if `universe` is not present refer to [Ubuntu's documentation](https://help.ubuntu.com/community/Repositories/Ubuntu) on how to enable it. (Usually it amounts to copying the `main` lines and changing to `universe`.)
+This document describes the required steps for a quick Jitsi Meet installation on a Debian based GNU/Linux system. Debian 9 (Stretch) or later, and Ubuntu 18.04 (Bionic Beaver) or later are supported out-of-the-box.
 
-N.B.:
+On Ubuntu systems, Jitsi requires dependencies from Ubuntu's `universe` package repository.  To ensure this is enabled, run `apt-add-repository universe` at the command-line.
 
-a.) All commands are supposed to be run by root. If you are logged in as a regular user with sudo rights, please prepend ___sudo___ to each of the commands.
-
-b.) You only need to do this if you want to ___host your own Jitsi server___. If you just want to have a video conference with someone, use https://meet.jit.si instead.
+_Note_: Many of the installation steps require elevated privileges. If you are logged in using a regular user account, you may need to temporarily increase your permissions (for example, by using `sudo` for individual commands).
 
 ## Basic Jitsi Meet install
 
@@ -22,30 +20,24 @@ Then add the same FQDN in the `/etc/hosts` file, associating it with the loopbac
 
 Finally on the same machine test that you can ping the FQDN with: `ping "$(hostname)"`-
 
-### Add the repository
+### Add the Jitsi package repository
 ```sh
 echo 'deb https://download.jitsi.org stable/' >> /etc/apt/sources.list.d/jitsi-stable.list
 wget -qO -  https://download.jitsi.org/jitsi-key.gpg.key | apt-key add -
 ```
 
-### Update the package lists
-
-```sh
-apt-get update
-```
-
-If you get an error:
-E: The method driver /usr/lib/apt/methods/https could not be found.
-run:
-```sh
-apt-get install apt-transport-https
-```
-
 ### Install Jitsi Meet
 
-Note: The installer will check if [Nginx](https://nginx.org/) or [Apache](https://httpd.apache.org/) is present (in that order) and configure a virtualhost within the web server it finds to serve Jitsi Meet. If none of the above is found it then defaults to Nginx.
+_Note_: The installer will check if [Nginx](https://nginx.org/) or [Apache](https://httpd.apache.org/) is present (in that order) and configure a virtualhost within the web server it finds to serve Jitsi Meet. If none of the above is found it then defaults to Nginx.
 
 ```sh
+# Ensure support is available for apt repositories served via HTTPS
+apt-get install apt-transport-https
+
+# Retrieve the latest package versions across all repositories
+apt-get update
+
+# Perform jitsi-meet installation
 apt-get -y install jitsi-meet
 ```
 
@@ -53,9 +45,11 @@ During the installation, you will be asked to enter the hostname of the Jitsi Me
 
 This hostname (or IP address) will be used for virtualhost configuration inside the Jitsi Meet and also, you and your correspondents will be using it to access the web conferences.
 
-### Generate a Let's Encrypt certificate
+### Generate a Let's Encrypt certificate (optional, recommended)
 
 In order to have encrypted communications, you need a [TLS certificate](https://en.wikipedia.org/wiki/Transport_Layer_Security). The easiest way is to use [Let's Encrypt](https://letsencrypt.org/).
+
+_Note_: Jitsi Meet mobile apps *require* a valid certificate signed by a trusted [Certificate Authority](https://en.wikipedia.org/wiki/Certificate_authority) and will not be able to connect to your server if you choose a self-signed certificate.
 
 Simply run the following in your shell:
 
@@ -64,7 +58,6 @@ Simply run the following in your shell:
 ```
 
 Note that this script uses the [HTTP-01 challenge type](https://letsencrypt.org/docs/challenge-types/) and thus your instance needs to be accessible from the public internet. If you want to use a different challenge type, don't use this script and instead choose ___I want to use my own certificate___ during jitsi-meet installation.
-
 
 #### Advanced configuration
 If the installation is on a machine [behind NAT](https://github.com/jitsi/jitsi-meet/blob/master/doc/faq.md) further configuration of jitsi-videobridge is needed in order for it to be accessible from outside.
@@ -88,13 +81,15 @@ To load the values and check them look [here](#systemd-details) for details.
 
 By default, anyone who has access to your jitsi instance will be able to start a conference: if your server is open to the world, anyone can have a chat with anyone else. If you want to limit the ability to start a conference to registered users, set up a "secure domain". Follow the instructions at https://github.com/jitsi/jicofo#secure-domain.
 
-### Open a conference
+### Confirm that your installation is working
 
-Launch a web browser (Chrome, Chromium or latest Opera) and enter in the URL bar the hostname (or IP address) you used in the previous step.
+Launch a web browser (Chrome, Chromium or latest Opera) and enter the hostname or IP address from the previous step into the address bar.
 
 If you used a self-signed certificate (as opposed to using Let's Encrypt), your web browser will ask you to confirm that you trust the certificate.
 
-Enjoy!
+You should see a web page prompting you to create a new meeting.  Make sure that you can successfully create a meeting and that other participants are able to join the session.
+
+If this all worked, then congratulations!  You have an operational Jitsi conference service.
 
 ## Adding sip-gateway to Jitsi Meet
 
