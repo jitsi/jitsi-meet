@@ -28,13 +28,15 @@ wget -qO -  https://download.jitsi.org/jitsi-key.gpg.key | apt-key add -
 
 ### Generate a Let's Encrypt certificate (optional, recommended)
 
-A certificate is required to enable secure communication between conference participants and your service.
+In order to have encrypted communications, you need a [TLS certificate](https://en.wikipedia.org/wiki/Transport_Layer_Security). The easiest way is to use [Let's Encrypt](https://letsencrypt.org/).
 
-To generate a certificate for free using the non-profit [Let's Encrypt](https://letsencrypt.org/) service, run the following command:
+Simply run the following in your shell:
 
 ```sh
 /usr/share/jitsi-meet/scripts/install-letsencrypt-cert.sh
 ```
+
+Note that this script uses the [HTTP-01 challenge type](https://letsencrypt.org/docs/challenge-types/) and thus your instance needs to be accessible from the public internet. If you want to use a different challenge type, don't use this script and instead choose ___I want to use my own certificate___ during jitsi-meet installation.
 
 ### Install Jitsi Meet
 
