@@ -28,7 +28,7 @@ wget -qO -  https://download.jitsi.org/jitsi-key.gpg.key | apt-key add -
 
 ### Install Jitsi Meet
 
-Note: The installer will check if [Nginx](https://nginx.org/) or [Apache](https://httpd.apache.org/) is present (in that order) and configure a virtualhost within the web server it finds to serve Jitsi Meet. If none of the above is found it then defaults to Nginx.
+_Note_: The installer will check if [Nginx](https://nginx.org/) or [Apache](https://httpd.apache.org/) is present (in that order) and configure a virtualhost within the web server it finds to serve Jitsi Meet. If none of the above is found it then defaults to Nginx.
 
 ```sh
 # Ensure support is available for apt repositories served via HTTPS
