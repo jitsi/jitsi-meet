@@ -42,6 +42,65 @@ class ToolbarButton extends AbstractToolbarButton<Props> {
     };
 
     /**
+     * Initializes a new {@code ToolbarButton} instance.
+     *
+     * @param {Object} props - The read-only properties with which the new
+     * instance is to be initialized.
+     */
+    constructor(props) {
+        super(props);
+
+        this._onKeyDown = this._onKeyDown.bind(this);
+        this._onKeyUp = this._onKeyUp.bind(this);
+    }
+
+    /**
+     * Handles 'Enter' key on the button to trigger onClick for accessibility.
+     *
+     * @param {Object} event - The key event.
+     * @private
+     * @returns {void}
+     */
+    _onKeyDown(event) {
+        // If the event coming to the dialog has been subject to preventDefault
+        // we don't handle it here.
+        if (event.defaultPrevented) {
+            return;
+        }
+
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            event.stopPropagation();
+            this.props.onClick();
+        } else if (event.key === ' ') {
+            // Space triggers button onKeyUp but we need to prevent default here
+            event.preventDefault();
+        }
+    }
+
+    /**
+     * Handles ' '(Space) key on the button to trigger onClick for
+     * accessibility.
+     *
+     * @param {Object} event - The key event.
+     * @private
+     * @returns {void}
+     */
+    _onKeyUp(event) {
+        // If the event coming to the dialog has been subject to preventDefault
+        // we don't handle it here.
+        if (event.defaultPrevented) {
+            return;
+        }
+
+        if (event.key === ' ') {
+            event.preventDefault();
+            event.stopPropagation();
+            this.props.onClick();
+        }
+    }
+
+    /**
      * Renders the button of this {@code ToolbarButton}.
      *
      * @param {Object} children - The children, if any, to be rendered inside
@@ -56,6 +115,8 @@ class ToolbarButton extends AbstractToolbarButton<Props> {
                 aria-label = { this.props.accessibilityLabel }
                 className = 'toolbox-button'
                 onClick = { this.props.onClick }
+                onKeyDown = { this._onKeyDown }
+                onKeyUp = { this._onKeyUp }
                 role = 'button'
                 tabIndex = { 0 }>
                 { this.props.tooltip

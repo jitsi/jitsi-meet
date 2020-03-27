@@ -13,6 +13,66 @@ import type { Props } from './AbstractToolboxItem';
  */
 export default class ToolboxItem extends AbstractToolboxItem<Props> {
     /**
+     * Initializes a new {@code ToolboxItem} instance.
+     *
+     * @param {Object} props - The read-only properties with which the new
+     * instance is to be initialized.
+     */
+    constructor(props) {
+        super(props);
+
+        this._onKeyDown = this._onKeyDown.bind(this);
+        this._onKeyUp = this._onKeyUp.bind(this);
+    }
+
+    /**
+     * Handles 'Enter' key on the button to trigger onClick for accessibility.
+     *
+     * @param {Object} event - The key event.
+     * @private
+     * @returns {void}
+     */
+    _onKeyDown(event) {
+        // If the event coming to the dialog has been subject to preventDefault
+        // we don't handle it here.
+        if (event.defaultPrevented) {
+            return;
+        }
+
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            event.stopPropagation();
+            this.props.onClick();
+        } else if (event.key === ' ') {
+            // Space triggers button onKeyUp but we need to prevent PTT here
+            event.preventDefault();
+            event.stopPropagation();
+        }
+    }
+
+    /**
+     * Handles ' ' (Space) key on the button to trigger onClick for
+     * accessibility.
+     *
+     * @param {Object} event - The key event.
+     * @private
+     * @returns {void}
+     */
+    _onKeyUp(event) {
+        // If the event coming to the dialog has been subject to preventDefault
+        // we don't handle it here.
+        if (event.defaultPrevented) {
+            return;
+        }
+
+        if (event.key === ' ') {
+            event.preventDefault();
+            event.stopPropagation();
+            this.props.onClick();
+        }
+    }
+
+    /**
      * Handles rendering of the actual item. If the label is being shown, which
      * is controlled with the `showLabel` prop, the item is rendered for its
      * display in an overflow menu, otherwise it will only have an icon, which
@@ -37,6 +97,8 @@ export default class ToolboxItem extends AbstractToolboxItem<Props> {
             'aria-label': this.accessibilityLabel,
             className: className + (disabled ? ' disabled' : ''),
             onClick: disabled ? undefined : onClick,
+            onKeyDown: this._onKeyDown,
+            onKeyUp: this._onKeyUp,
             tabIndex: 0,
             role: 'button'
         };
