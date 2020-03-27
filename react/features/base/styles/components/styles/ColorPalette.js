@@ -40,5 +40,8 @@ export const ColorPalette = {
     G400: '#00875A', // Slime
     N500: '#42526E', // McFanning
     R400: '#DE350B', // Red dirt
-    Y200: '#FFC400' // Pub mix
+    Y200: '#FFC400', // Pub mix
+
+    /** Jane */
+    jane: '#56bfc8',
 };

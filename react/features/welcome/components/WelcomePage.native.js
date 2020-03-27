@@ -113,6 +113,34 @@ class WelcomePage extends AbstractWelcomePage {
             return this._renderReducedUI();
         }
         */
+        if (true) {
+            const { _headerStyles } = this.props;
+
+            return (
+                <LocalVideoTrackUnderlay style = { styles.welcomePage }>
+                    <View style = { _headerStyles.page }>
+                        <SafeAreaView style = { [ styles.blankPageWrapper, styles.welcomePage ] } >
+                            <Text style = { styles.logo }>
+                                Chat Logo
+                            </Text>
+                            <Text style = { styles.bigText }>
+                                Welcome to
+                                {'\n'}
+                                Jane Online Appointments
+                            </Text>
+                            <View style = { styles.row }>
+                                <Text style={styles.column}>Practitioner Icon</Text>
+                                <Text style={[styles.column, styles.columnText]}>Please go into the appointment in your schedule and click Begin.</Text>
+                            </View>
+                            <View style={styles.row}>
+                                <Text style={styles.column}>Patient Icon</Text>
+                                <Text style={[styles.column, styles.columnText]}>Please go into your 'My Account' and click Begin.</Text>
+                            </View>
+                        </SafeAreaView>
+                    </View>
+                </LocalVideoTrackUnderlay>
+            )
+        }
 
         return this._renderFullUI();
     }

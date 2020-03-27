@@ -2,9 +2,10 @@
 
 import { StyleSheet } from 'react-native';
 
-import { BoxModel, ColorPalette } from '../../base/styles';
+import { BoxModel, ColorPalette, JaneWeb } from '../../base/styles';
 
-export const PLACEHOLDER_TEXT_COLOR = 'rgba(255, 255, 255, 0.5)';
+
+export const PLACEHOLDER_TEXT_COLOR = 'rgba(255, 255, 255, 0.3)';
 
 export const SIDEBAR_AVATAR_SIZE = 100;
 
@@ -304,7 +305,35 @@ export default {
      * The style of the top-level container of {@code WelcomePage}.
      */
     welcomePage: {
-        backgroundColor: ColorPalette.blue,
+        backgroundColor: ColorPalette.jane,
         overflow: 'hidden'
+    },
+
+    logo: {
+        marginBottom: 4 * BoxModel.margin
+    },
+
+    bigText: {
+        ...JaneWeb.h3,
+        color: TEXT_COLOR,
+        textAlign: 'center'
+    },
+
+
+    row: {
+        marginTop: 4 * BoxModel.margin,
+        paddingHorizontal: 4 * BoxModel.padding,
+        flexDirection: 'row'
+    },
+    column: {
+        color: TEXT_COLOR,
+        flex: 1,
+        flexWrap: 'wrap',
+        paddingHorizontal: BoxModel.padding
+    },
+    columnText: {
+        flex: 4
     }
+
+
 };
