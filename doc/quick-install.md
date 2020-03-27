@@ -20,7 +20,7 @@ Then add the same FQDN in the `/etc/hosts` file, associating it with the loopbac
 
 Finally on the same machine test that you can ping the FQDN with: `ping "$(hostname)"`-
 
-### Add the repository
+### Add the Jitsi package repository
 
 ```sh
 echo 'deb https://download.jitsi.org stable/' >> /etc/apt/sources.list.d/jitsi-stable.list
