@@ -4,13 +4,13 @@ This guide helps you  ___host your own Jitsi server___. If you want to have a vi
 
 This document describes the required steps for a quick Jitsi Meet installation on a Debian based GNU/Linux system. Debian 8 (Jessie) or later, and Ubuntu 14.04 or later are supported out-of-the-box.
 
+On Ubuntu systems, some Jitsi dependencies require installation from Ubuntu's `universe` package repository.  To ensure this is enabled, run `apt-add-repository universe` at the command-line.
+
 _Note_: All commands require superuser privileges. If you are logged in as a regular user, you may need to prepend `sudo` to each of the commands.
 
 ### Platform-specific notes
 
 On Debian Wheezy, [libc needs to be updated](https://web.archive.org/web/20190423174759/http://lists.jitsi.org/pipermail/users/2015-September/010064.html).
-
-On Ubuntu systems, some Jitsi dependencies require installation from Ubuntu's `universe` package repository.  To ensure this is enabled, run `apt-add-repository universe` at the command-line.
 
 ## Basic Jitsi Meet install
 
