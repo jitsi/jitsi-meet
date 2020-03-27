@@ -72,7 +72,6 @@ import {
     setToolbarHovered
 } from '../../actions';
 import AudioMuteButton from '../AudioMuteButton';
-import AudioSettingsButton from './AudioSettingsButton';
 import DownloadButton from '../DownloadButton';
 import { isToolboxVisible } from '../../functions';
 import HangupButton from '../HangupButton';
@@ -82,7 +81,6 @@ import OverflowMenuProfileItem from './OverflowMenuProfileItem';
 import MuteEveryoneButton from './MuteEveryoneButton';
 import ToolbarButton from './ToolbarButton';
 import VideoMuteButton from '../VideoMuteButton';
-import VideoSettingsButton from './VideoSettingsButton';
 import {
     ClosedCaptionButton
 } from '../../../subtitles';
@@ -127,11 +125,6 @@ type Props = {
      * Whether or not the app is currently in full screen.
      */
     _fullScreen: boolean,
-
-    /**
-     * Whether or not the prejoin page is enabled.
-     */
-    _prejoinPageEnabled: boolean,
 
     /**
      * Whether or not the tile view is enabled.
@@ -1124,40 +1117,6 @@ class Toolbox extends Component<Props, State> {
     }
 
     /**
-     * Renders the Audio controlling button.
-     *
-     * @returns {ReactElement}
-     */
-    _renderAudioButton() {
-        return this._shouldShowButton('microphone')
-            ? this.props._prejoinPageEnabled
-                ? <AudioSettingsButton
-                    key = 'asb'
-                    visible = { true } />
-                : <AudioMuteButton
-                    key = 'amb'
-                    visible = { true } />
-            : null;
-    }
-
-    /**
-     * Renders the Video controlling button.
-     *
-     * @returns {ReactElement}
-     */
-    _renderVideoButton() {
-        return this._shouldShowButton('camera')
-            ? this.props._prejoinPageEnabled
-                ? <VideoSettingsButton
-                    key = 'vsb'
-                    visible = { true } />
-                : <VideoMuteButton
-                    key = 'vmb'
-                    visible = { true } />
-            : null;
-    }
-
-    /**
      * Renders the toolbox content.
      *
      * @returns {Array<ReactElement>}
@@ -1275,10 +1234,12 @@ class Toolbox extends Component<Props, State> {
                     }
                 </div>
                 <div className = 'button-group-center'>
-                    { this._renderAudioButton() }
+                    <AudioMuteButton
+                        visible = { this._shouldShowButton('microphone') } />
                     <HangupButton
                         visible = { this._shouldShowButton('hangup') } />
-                    { this._renderVideoButton() }
+                    <VideoMuteButton
+                        visible = { this._shouldShowButton('camera') } />
                 </div>
                 <div className = 'button-group-right'>
                     { buttonsRight.indexOf('localrecording') !== -1
@@ -1342,9 +1303,7 @@ function _mapStateToProps(state) {
     let { desktopSharingEnabled } = state['features/base/conference'];
     const {
         callStatsID,
-        enableFeaturesBasedOnToken,
-        iAmRecorder,
-        prejoinPageEnabled
+        iAmRecorder
     } = state['features/base/config'];
     const sharedVideoStatus = state['features/shared-video'].status;
     const {
@@ -1359,7 +1318,7 @@ function _mapStateToProps(state) {
 
     let desktopSharingDisabledTooltipKey;
 
-    if (enableFeaturesBasedOnToken) {
+    if (state['features/base/config'].enableFeaturesBasedOnToken) {
         // we enable desktop sharing if any participant already have this
         // feature enabled
         desktopSharingEnabled = getParticipants(state)
@@ -1395,7 +1354,6 @@ function _mapStateToProps(state) {
         _localParticipantID: localParticipant.id,
         _localRecState: localRecordingStates,
         _overflowMenuVisible: overflowMenuVisible,
-        _prejoinPageEnabled: prejoinPageEnabled,
         _raisedHand: localParticipant.raisedHand,
         _screensharing: localVideo && localVideo.videoType === 'desktop',
         _sharingVideo: sharedVideoStatus === 'playing'

@@ -2,11 +2,7 @@
 
 import { ReducerRegistry } from '../base/redux';
 
-import {
-    SET_AUDIO_SETTINGS_VISIBILITY,
-    SET_SETTINGS_VIEW_VISIBLE,
-    SET_VIDEO_SETTINGS_VISIBILITY
-} from './actionTypes';
+import { SET_SETTINGS_VIEW_VISIBLE } from './actionTypes';
 
 ReducerRegistry.register('features/settings', (state = {}, action) => {
     switch (action.type) {
@@ -14,16 +10,6 @@ ReducerRegistry.register('features/settings', (state = {}, action) => {
         return {
             ...state,
             visible: action.visible
-        };
-    case SET_AUDIO_SETTINGS_VISIBILITY:
-        return {
-            ...state,
-            audioSettingsVisible: action.value
-        };
-    case SET_VIDEO_SETTINGS_VISIBILITY:
-        return {
-            ...state,
-            videoSettingsVisible: action.value
         };
     }
 
