@@ -74,6 +74,7 @@ export class App extends AbstractApp {
         this._onDimensionsChanged = this._onDimensionsChanged.bind(this);
     }
 
+    // eslint-disable-next-line no-use-before-defin
     /**
      * Initializes the color scheme.
      *
@@ -83,7 +84,6 @@ export class App extends AbstractApp {
      */
     componentDidMount() {
         super.componentDidMount();
-
         this._init.then(() => {
             const { dispatch, getState } = this.state.store;
 

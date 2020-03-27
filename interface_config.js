@@ -3,6 +3,11 @@
 
 var interfaceConfig = {
     APP_NAME: 'Jane Video Chat',
+
+    /**
+     * Specify mobile app scheme for opening the app from the mobile browser.
+     */
+    APP_SCHEME: 'com.janeapp',
     AUDIO_LEVEL_PRIMARY_COLOR: 'rgba(255,255,255,0.4)',
     AUDIO_LEVEL_SECONDARY_COLOR: 'rgba(255,255,255,0.2)',
 
@@ -256,11 +261,6 @@ var interfaceConfig = {
     //    IBI: 'com.atlassian.JitsiMeet.ios',
     //    ISI: '1165103905'
     // },
-
-    /**
-     * Specify mobile app scheme for opening the app from the mobile browser.
-     */
-    // APP_SCHEME: 'org.jitsi.meet',
 
     /**
      * Specify the Android app package name.

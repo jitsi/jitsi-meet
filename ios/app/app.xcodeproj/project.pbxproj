@@ -280,9 +280,9 @@
 			productReference = 0BEA5C311F7B8F73000D0AB4 /* JitsiMeetCompanion Extension.appex */;
 			productType = "com.apple.product-type.watchkit2-extension";
 		};
-		13B07F861A680F5B00A75B9A /* jitsi-meet */ = {
+		13B07F861A680F5B00A75B9A /* Jane Online Appointments */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "jitsi-meet" */;
+			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "Jane Online Appointments" */;
 			buildPhases = (
 				B6607F42A5CF0C76E98929E2 /* [CP] Check Pods Manifest.lock */,
 				0BBA83C41EC9F7600075A103 /* Run React packager */,
@@ -303,8 +303,8 @@
 			dependencies = (
 				0BEA5C401F7B8F73000D0AB4 /* PBXTargetDependency */,
 			);
-			name = "jitsi-meet";
-			productName = "Jitsi Meet";
+			name = "Jane Online Appointments";
+			productName = "Jane Online Appointments";
 			productReference = 13B07F961A680F5B00A75B9A /* Jane Online Appointments.app */;
 			productType = "com.apple.product-type.application";
 		};
@@ -354,7 +354,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				13B07F861A680F5B00A75B9A /* jitsi-meet */,
+				13B07F861A680F5B00A75B9A /* Jane Online Appointments */,
 				0BEA5C241F7B8F73000D0AB4 /* JitsiMeetCompanion */,
 				0BEA5C301F7B8F73000D0AB4 /* JitsiMeetCompanion Extension */,
 			);
@@ -935,7 +935,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "jitsi-meet" */ = {
+		13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "Jane Online Appointments" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				13B07F941A680F5B00A75B9A /* Debug */,
