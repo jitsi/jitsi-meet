@@ -44,15 +44,16 @@ class ToolbarButton extends AbstractToolbarButton<Props> {
     /**
      * Initializes a new {@code ToolbarButton} instance.
      *
-     * @param {Object} props - The read-only properties with which the new
-     * instance is to be initialized.
+     * @inheritdoc
      */
-    constructor(props) {
+    constructor(props: Props) {
         super(props);
 
         this._onKeyDown = this._onKeyDown.bind(this);
         this._onKeyUp = this._onKeyUp.bind(this);
     }
+
+    _onKeyDown: (Object) => void;
 
     /**
      * Handles 'Enter' key on the button to trigger onClick for accessibility.
@@ -77,6 +78,8 @@ class ToolbarButton extends AbstractToolbarButton<Props> {
             event.preventDefault();
         }
     }
+
+    _onKeyUp: (Object) => void;
 
     /**
      * Handles ' '(Space) key on the button to trigger onClick for
