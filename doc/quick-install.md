@@ -27,7 +27,7 @@ echo 'deb https://download.jitsi.org stable/' >> /etc/apt/sources.list.d/jitsi-s
 wget -qO -  https://download.jitsi.org/jitsi-key.gpg.key | apt-key add -
 ```
 
-### Generate a Let's Encrypt certificate
+### Generate a Let's Encrypt certificate (optional)
 
 A certificate is required to enable secure communication between conference participants and your service.
 
