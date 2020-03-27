@@ -93,7 +93,11 @@ export function createLocalTracksF(options = {}, firePermissionPromptIsShownEven
         firefox_fake_device, // eslint-disable-line camelcase
         resolution
     } = state['features/base/config'];
-    const constraints = options.constraints ?? state['features/base/config'].constraints;
+    let constraints = options.constraints ?? state['features/base/config'].constraints;
+
+    if (JitsiMeetJS.util.browser.isFirefox()) {
+        constraints = null;
+    }
 
     return (
         loadEffects(store).then(effectsArray => {
