@@ -75,6 +75,7 @@ export class App extends AbstractApp {
         this._onDimensionsChanged = this._onDimensionsChanged.bind(this);
     }
 
+    // eslint-disable-next-line no-use-before-defin
     /**
      * Initializes the color scheme.
      *
