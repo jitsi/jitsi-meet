@@ -6,7 +6,7 @@ This document describes the required steps for a quick Jitsi Meet installation o
 
 On Ubuntu systems, Jitsi requires dependencies from Ubuntu's `universe` package repository.  To ensure this is enabled, run `apt-add-repository universe` at the command-line.
 
-_Note_: All commands require superuser privileges. If you are logged in as a regular user, you may need to prepend `sudo` to each of the commands.
+_Note_: Many of the installation steps require elevated privileges. If you are logged in using a regular user account, you may need to temporarily increase your permissions (for example, by using `sudo` for individual commands).
 
 ## Basic Jitsi Meet install
 
