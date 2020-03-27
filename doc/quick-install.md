@@ -8,9 +8,7 @@ On Ubuntu systems, Jitsi requires dependencies from Ubuntu's `universe` package 
 
 _Note_: All commands require superuser privileges. If you are logged in as a regular user, you may need to prepend `sudo` to each of the commands.
 
-### Platform-specific notes
-
-On Debian Wheezy, [libc needs to be updated](https://web.archive.org/web/20190423174759/http://lists.jitsi.org/pipermail/users/2015-September/010064.html).
+Debian Wheezy and other older systems may require additional things to be done. Specifically for Wheezy, [libc needs to be updated](http://lists.jitsi.org/pipermail/users/2015-September/010064.html).
 
 ## Basic Jitsi Meet install
 
