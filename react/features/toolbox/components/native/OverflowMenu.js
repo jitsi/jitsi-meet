@@ -11,20 +11,21 @@ import { connect } from '../../../base/redux';
 import { StyleType } from '../../../base/styles';
 import { SharedDocumentButton } from '../../../etherpad';
 import { InviteButton } from '../../../invite';
-import { LobbyModeButton } from '../../../lobby/components/native';
 import { AudioRouteButton } from '../../../mobile/audio-mode';
-import { LiveStreamButton, RecordButton } from '../../../recording';
-import { RoomLockButton } from '../../../room-lock';
 import { ClosedCaptionButton } from '../../../subtitles';
 import { TileViewButton } from '../../../video-layout';
-import { VideoShareButton } from '../../../youtube-player/components';
 import HelpButton from '../HelpButton';
 
 import AudioOnlyButton from './AudioOnlyButton';
 import MoreOptionsButton from './MoreOptionsButton';
-import RaiseHandButton from './RaiseHandButton';
-import ToggleCameraButton from './ToggleCameraButton';
 import styles from './styles';
+
+// import { LobbyModeButton } from '../../../lobby/components/native';
+// import { LiveStreamButton, RecordButton } from '../../../recording';
+// import { RoomLockButton } from '../../../room-lock';
+// import { VideoShareButton } from '../../../youtube-player/components';
+// import RaiseHandButton from './RaiseHandButton';
+// import ToggleCameraButton from './ToggleCameraButton';
 
 /**
  * The type of the React {@code Component} props of {@link OverflowMenu}.
@@ -129,17 +130,18 @@ class OverflowMenu extends PureComponent<Props, State> {
                 <AudioRouteButton { ...buttonProps } />
                 <InviteButton { ...buttonProps } />
                 <AudioOnlyButton { ...buttonProps } />
-                <RaiseHandButton { ...buttonProps } />
-                <LobbyModeButton { ...buttonProps } />
-                <MoreOptionsButton { ...moreOptionsButtonProps } />
-                <Collapsible collapsed = { !showMore }>
-                    <ToggleCameraButton { ...buttonProps } />
-                    <TileViewButton { ...buttonProps } />
-                    <RecordButton { ...buttonProps } />
-                    <LiveStreamButton { ...buttonProps } />
-                    <VideoShareButton { ...buttonProps } />
-                    <RoomLockButton { ...buttonProps } />
+                {/* <RaiseHandButton { ...buttonProps } />*/}
+                {/* <LobbyModeButton { ...buttonProps } />*/}
+                <MoreOptionsButton
+                    { ...moreOptionsButtonProps }
+                    visible = { false } />
+                <Collapsible collapsed = { false }>
                     <ClosedCaptionButton { ...buttonProps } />
+                    {/* {*/}
+                    {/*    this.props._recordingEnabled*/}
+                    {/*        && <RecordButton { ...buttonProps } />*/}
+                    {/* }*/}
+                    <TileViewButton { ...buttonProps } />
                     <SharedDocumentButton { ...buttonProps } />
                     <HelpButton { ...buttonProps } />
                 </Collapsible>
