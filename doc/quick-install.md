@@ -45,6 +45,10 @@ apt-get install apt-transport-https
 
 Note: The installer will check if [Nginx](https://nginx.org/) or [Apache](https://httpd.apache.org/) is present (in that order) and configure a virtualhost within the web server it finds to serve Jitsi Meet. If none of the above is found it then defaults to Nginx.
 
+Note: Even tough Nginx will be installed, the JVB will occupy port 443 (by default) if it's not already taken during installation of `jitsi-meet` package. You might need to update the configuration to assure JVB does not take the port 443, therefore denying you the ability to install Let's Encrypt SSL certificates later.
+
+See https://github.com/jitsi/jitsi-videobridge/blob/master/doc/tcp.md
+
 ```sh
 apt-get -y install jitsi-meet
 ```
