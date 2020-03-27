@@ -26,18 +26,6 @@ echo 'deb https://download.jitsi.org stable/' >> /etc/apt/sources.list.d/jitsi-s
 wget -qO -  https://download.jitsi.org/jitsi-key.gpg.key | apt-key add -
 ```
 
-### Generate a Let's Encrypt certificate (optional, recommended)
-
-In order to have encrypted communications, you need a [TLS certificate](https://en.wikipedia.org/wiki/Transport_Layer_Security). The easiest way is to use [Let's Encrypt](https://letsencrypt.org/).
-
-Simply run the following in your shell:
-
-```sh
-/usr/share/jitsi-meet/scripts/install-letsencrypt-cert.sh
-```
-
-Note that this script uses the [HTTP-01 challenge type](https://letsencrypt.org/docs/challenge-types/) and thus your instance needs to be accessible from the public internet. If you want to use a different challenge type, don't use this script and instead choose ___I want to use my own certificate___ during jitsi-meet installation.
-
 ### Install Jitsi Meet
 
 Note: Something to consider before installation is how you're planning to serve Jitsi Meet. The installer will check if [Nginx](https://nginx.org/) or [Apache](https://httpd.apache.org/) is present (in that order) and configure a virtualhost within the web server it finds to serve Jitsi Meet. If none of the above is found it then configures itself to be served via [Jetty](https://www.eclipse.org/jetty/). So if for example you are planning on deploying Jitsi Meet with a web server, you have to make sure to install the server **before** installing jitsi-meet.
@@ -56,6 +44,18 @@ apt-get -y install jitsi-meet
 During the installation, you will be asked to enter the hostname of the Jitsi Meet instance. If you have a [FQDN](https://en.wikipedia.org/wiki/Fully_qualified_domain_name) for the instance already set up in DNS, enter it there. If you don't have a resolvable hostname, you can enter the IP address of the machine (if it is static or doesn't change).
 
 This hostname (or IP address) will be used for virtualhost configuration inside the Jitsi Meet and also, you and your correspondents will be using it to access the web conferences.
+
+### Generate a Let's Encrypt certificate (optional, recommended)
+
+In order to have encrypted communications, you need a [TLS certificate](https://en.wikipedia.org/wiki/Transport_Layer_Security). The easiest way is to use [Let's Encrypt](https://letsencrypt.org/).
+
+Simply run the following in your shell:
+
+```sh
+/usr/share/jitsi-meet/scripts/install-letsencrypt-cert.sh
+```
+
+Note that this script uses the [HTTP-01 challenge type](https://letsencrypt.org/docs/challenge-types/) and thus your instance needs to be accessible from the public internet. If you want to use a different challenge type, don't use this script and instead choose ___I want to use my own certificate___ during jitsi-meet installation.
 
 #### Advanced configuration
 If the installation is on a machine [behind NAT](https://github.com/jitsi/jitsi-meet/blob/master/doc/faq.md) further configuration of jitsi-videobridge is needed in order for it to be accessible from outside.
