@@ -114,8 +114,8 @@ class ToolbarButton extends AbstractToolbarButton<Props> {
     _renderButton(children) {
         return (
             <div
-                aria-checked = { this.props.toggled }
                 aria-label = { this.props.accessibilityLabel }
+                aria-pressed = { this.props.toggled }
                 className = 'toolbox-button'
                 onClick = { this.props.onClick }
                 onKeyDown = { this._onKeyDown }
