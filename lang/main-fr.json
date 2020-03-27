@@ -601,7 +601,7 @@
             "show": "Afficher en premier plan",
             "speakerStats": "Afficher/cacher les statistiques de parole",
             "tileView": "Activer/désactiver la vue mosaïque",
-            "toggleCamera": "Activer/désactiver la caméra",
+            "toggleCamera": "Changer de caméra",
             "videomute": "Activer/désactiver la vidéo",
             "videoblur": "Activer/désactiver le flou de la vidéo"
         },
