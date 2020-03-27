@@ -27,14 +27,20 @@ export default class ToolboxItem extends AbstractToolboxItem<Props> {
             elementAfter,
             onClick,
             showLabel,
-            tooltipPosition
+            tooltipPosition,
+            toggled
         } = this.props;
         const className = showLabel ? 'overflow-menu-item' : 'toolbox-button';
         const props = {
+            'aria-pressed': toggled,
+            'aria-disabled': disabled,
             'aria-label': this.accessibilityLabel,
             className: className + (disabled ? ' disabled' : ''),
-            onClick: disabled ? undefined : onClick
+            onClick: disabled ? undefined : onClick,
+            tabIndex: 0,
+            role: 'button'
         };
+
         const elementType = showLabel ? 'li' : 'div';
         const useTooltip = this.tooltip && this.tooltip.length > 0;
         let children = (

@@ -52,9 +52,12 @@ class ToolbarButton extends AbstractToolbarButton<Props> {
     _renderButton(children) {
         return (
             <div
+                aria-checked = { this.props.toggled }
                 aria-label = { this.props.accessibilityLabel }
                 className = 'toolbox-button'
-                onClick = { this.props.onClick }>
+                onClick = { this.props.onClick }
+                role = 'button'
+                tabIndex = { 0 }>
                 { this.props.tooltip
                     ? <Tooltip
                         content = { this.props.tooltip }
