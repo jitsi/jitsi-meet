@@ -23,6 +23,10 @@ export default {
         replyBorder: 'rgb(219, 197, 200)',
         replyIcon: 'rgb(94, 109, 121)'
     },
+    'Conference': {
+        inviteButtonBackground: 'rgb(0, 119, 225)',
+        onVideoText: 'white'
+    },
     'Dialog': {
         border: 'rgba(0, 3, 6, 0.6)',
         buttonBackground: ColorPalette.blue,

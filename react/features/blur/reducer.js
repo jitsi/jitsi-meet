@@ -1,13 +1,9 @@
 // @flow
 
 import { ReducerRegistry } from '../base/redux';
-import { PersistenceRegistry } from '../base/storage';
 
 import { BLUR_ENABLED, BLUR_DISABLED } from './actionTypes';
 
-PersistenceRegistry.register('features/blur', true, {
-    blurEnabled: false
-});
 
 ReducerRegistry.register('features/blur', (state = {}, action) => {
 

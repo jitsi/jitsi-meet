@@ -128,7 +128,7 @@ var interfaceConfig = {
      * If indicated some of the error dialogs may point to the support URL for
      * help.
      */
-    SUPPORT_URL: 'https://github.com/jitsi/jitsi-meet/issues/new',
+    SUPPORT_URL: 'https://community.jitsi.org/',
 
     /**
      * Whether the connection indicator icon should hide itself based on
@@ -207,6 +207,11 @@ var interfaceConfig = {
     * being already installed is done before rendering.
     */
     SHOW_CHROME_EXTENSION_BANNER: false
+
+    /**
+     * When enabled, the kick participant button will not be presented for users without a JWT
+     */
+    // HIDE_KICK_BUTTON_FOR_GUESTS: false
 
     /**
      * How many columns the tile view can expand to. The respected range is

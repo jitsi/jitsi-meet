@@ -2,6 +2,7 @@
 
 import { openConnection } from './connection';
 
+import { ENDPOINT_TEXT_MESSAGE_NAME } from './modules/API/constants';
 import AuthHandler from './modules/UI/authentication/AuthHandler';
 import Recorder from './modules/recorder/Recorder';
 
@@ -119,6 +120,7 @@ import {
 import { mediaPermissionPromptVisibilityChanged } from './react/features/overlay';
 import { suspendDetected } from './react/features/power-monitor';
 import { setSharedVideoStatus } from './react/features/shared-video';
+import { AudioMixerEffect } from './react/features/stream-effects/audio-mixer/AudioMixerEffect';
 import { createPresenterEffect } from './react/features/stream-effects/presenter';
 import { endpointMessageReceived } from './react/features/subtitles';
 import { createRnnoiseProcessorPromise } from './react/features/rnnoise';
@@ -658,10 +660,10 @@ export default {
                     startAudioOnly: config.startAudioOnly,
                     startScreenSharing: config.startScreenSharing,
                     startWithAudioMuted: config.startWithAudioMuted
-                        || config.startSilent
-                        || isUserInteractionRequiredForUnmute(APP.store.getState()),
+                    || config.startSilent
+                    || isUserInteractionRequiredForUnmute(APP.store.getState()),
                     startWithVideoMuted: config.startWithVideoMuted
-                        || isUserInteractionRequiredForUnmute(APP.store.getState())
+                    || isUserInteractionRequiredForUnmute(APP.store.getState())
                 }))
             .then(([ tracks, con ]) => {
                 tracks.forEach(track => {
@@ -1416,7 +1418,7 @@ export default {
      * in case it fails.
      * @private
      */
-    _turnScreenSharingOff(didHaveVideo) {
+    async _turnScreenSharingOff(didHaveVideo) {
         this._untoggleScreenSharing = null;
         this.videoSwitchInProgress = true;
         const { receiver } = APP.remoteControl;
@@ -1444,6 +1446,20 @@ export default {
                 });
             }
         });
+
+        // If system audio was also shared stop the AudioMixerEffect and dispose of the desktop audio track.
+        if (this._mixerEffect) {
+            await this.localAudio.setEffect(undefined);
+            await this._desktopAudioStream.dispose();
+            this._mixerEffect = undefined;
+            this._desktopAudioStream = undefined;
+
+        // In case there was no local audio when screen sharing was started the fact that we set the audio stream to
+        // null will take care of the desktop audio stream cleanup.
+        } else if (this._desktopAudioStream) {
+            await this.useAudioStream(null);
+            this._desktopAudioStream = undefined;
+        }
 
         if (didHaveVideo) {
             promise = promise.then(() => createLocalTracksF({ devices: [ 'video' ] }))
@@ -1584,26 +1600,31 @@ export default {
                 }
             });
 
-        return getDesktopStreamPromise.then(([ desktopStream ]) => {
+        return getDesktopStreamPromise.then(desktopStreams => {
             // Stores the "untoggle" handler which remembers whether was
             // there any video before and whether was it muted.
             this._untoggleScreenSharing
                 = this._turnScreenSharingOff.bind(this, didHaveVideo);
-            desktopStream.on(
-                JitsiTrackEvents.LOCAL_TRACK_STOPPED,
-                () => {
-                    // If the stream was stopped during screen sharing
-                    // session then we should switch back to video.
-                    this.isSharingScreen
-                        && this._untoggleScreenSharing
-                        && this._untoggleScreenSharing();
-                }
-            );
+
+            const desktopVideoStream = desktopStreams.find(stream => stream.getType() === MEDIA_TYPE.VIDEO);
+
+            if (desktopVideoStream) {
+                desktopVideoStream.on(
+                    JitsiTrackEvents.LOCAL_TRACK_STOPPED,
+                    () => {
+                        // If the stream was stopped during screen sharing
+                        // session then we should switch back to video.
+                        this.isSharingScreen
+                            && this._untoggleScreenSharing
+                            && this._untoggleScreenSharing();
+                    }
+                );
+            }
 
             // close external installation dialog on success.
             externalInstallation && $.prompt.close();
 
-            return desktopStream;
+            return desktopStreams;
         }, error => {
             DSExternalInstallationInProgress = false;
 
@@ -1754,7 +1775,29 @@ export default {
         this.videoSwitchInProgress = true;
 
         return this._createDesktopTrack(options)
-            .then(stream => this.useVideoStream(stream))
+            .then(async streams => {
+                const desktopVideoStream = streams.find(stream => stream.getType() === MEDIA_TYPE.VIDEO);
+
+                if (desktopVideoStream) {
+                    this.useVideoStream(desktopVideoStream);
+                }
+
+                this._desktopAudioStream = streams.find(stream => stream.getType() === MEDIA_TYPE.AUDIO);
+
+                if (this._desktopAudioStream) {
+                    // If there is a localAudio stream, mix in the desktop audio stream captured by the screen sharing
+                    // api.
+                    if (this.localAudio) {
+                        this._mixerEffect = new AudioMixerEffect(this._desktopAudioStream);
+
+                        await this.localAudio.setEffect(this._mixerEffect);
+                    } else {
+                        // If no local stream is present ( i.e. no input audio devices) we use the screen share audio
+                        // stream as we would use a regular stream.
+                        await this.useAudioStream(this._desktopAudioStream);
+                    }
+                }
+            })
             .then(() => {
                 this.videoSwitchInProgress = false;
                 if (config.enableScreenshotCapture) {
@@ -2041,7 +2084,22 @@ export default {
 
         room.on(
             JitsiConferenceEvents.ENDPOINT_MESSAGE_RECEIVED,
-            (...args) => APP.store.dispatch(endpointMessageReceived(...args)));
+            (...args) => {
+                APP.store.dispatch(endpointMessageReceived(...args));
+                if (args && args.length >= 2) {
+                    const [ sender, eventData ] = args;
+
+                    if (eventData.name === ENDPOINT_TEXT_MESSAGE_NAME) {
+                        APP.API.notifyEndpointTextMessageReceived({
+                            senderInfo: {
+                                jid: sender._jid,
+                                id: sender._id
+                            },
+                            eventData
+                        });
+                    }
+                }
+            });
 
         room.on(
             JitsiConferenceEvents.LOCK_STATE_CHANGED,
@@ -2272,7 +2330,17 @@ export default {
 
                     return stream;
                 })
-                .then(stream => this.useAudioStream(stream))
+                .then(async stream => {
+                    // In case screen sharing audio is also shared we mix it with new input stream. The old _mixerEffect
+                    // will be cleaned up when the existing track is replaced.
+                    if (this._mixerEffect) {
+                        this._mixerEffect = new AudioMixerEffect(this._desktopAudioStream);
+
+                        await stream.setEffect(this._mixerEffect);
+                    }
+
+                    return this.useAudioStream(stream);
+                })
                 .then(() => {
                     logger.log(`switched local audio device: ${this.localAudio?.getDeviceId()}`);
 

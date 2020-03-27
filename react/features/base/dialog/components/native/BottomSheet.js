@@ -44,7 +44,12 @@ type Props = {
     /**
      * Callback to be attached to the custom swipe event of the BottomSheet.
      */
-    onSwipe?: Function
+    onSwipe?: Function,
+
+    /**
+     * Function to render a bottom sheet header element, if necessary.
+     */
+    renderHeader: ?Function
 };
 
 /**
@@ -75,7 +80,7 @@ class BottomSheet extends PureComponent<Props> {
      * @returns {ReactElement}
      */
     render() {
-        const { _styles } = this.props;
+        const { _styles, renderHeader } = this.props;
 
         return (
             <SlidingView
@@ -88,6 +93,7 @@ class BottomSheet extends PureComponent<Props> {
                     <View
                         pointerEvents = 'box-none'
                         style = { styles.sheetAreaCover } />
+                    { renderHeader && renderHeader() }
                     <SafeAreaView
                         style = { [
                             styles.sheetItemContainer,
