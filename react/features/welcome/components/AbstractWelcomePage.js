@@ -7,7 +7,6 @@ import type { Dispatch } from 'redux';
 import { createWelcomePageEvent, sendAnalytics } from '../../analytics';
 import { appNavigate } from '../../app';
 import { isCalendarEnabled } from '../../calendar-sync';
-import { isRoomValid } from '../../base/conference';
 
 /**
  * {@code AbstractWelcomePage}'s React {@code Component} prop types.
@@ -153,18 +152,6 @@ export class AbstractWelcomePage extends Component<Props, *> {
     _clearTimeouts() {
         clearTimeout(this.state.animateTimeoutId);
         clearTimeout(this.state.updateTimeoutId);
-    }
-
-    /**
-     * Determines whether the 'Join' button is (to be) disabled i.e. There's no
-     * valid room name typed into the respective text input field.
-     *
-     * @protected
-     * @returns {boolean} If the 'Join' button is (to be) disabled, true;
-     * otherwise, false.
-     */
-    _isJoinDisabled() {
-        return this.state.joining || !isRoomValid(this.state.room);
     }
 
     _onJoin: () => void;
