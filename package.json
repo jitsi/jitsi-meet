@@ -130,6 +130,8 @@
     "jetifier": "1.6.4",
     "metro-react-native-babel-preset": "0.56.0",
     "sass": "1.26.8",
+    "precommit-hook": "3.0.0",
+    "react-native-cli": "^2.0.1",
     "string-replace-loader": "2.1.1",
     "style-loader": "0.19.0",
     "unorm": "1.6.0",
@@ -144,6 +146,8 @@
   },
   "license": "Apache-2.0",
   "scripts": {
+    "ios": "node ./node_modules/react-native-cli run-ios",
+    "ios:sim:8": "node ./node_modules/react-native-cli run-ios --simulator='iPhone 8'",
     "lint": "eslint . && flow",
     "postinstall": "jetify",
     "validate": "npm ls"
