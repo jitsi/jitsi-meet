@@ -2,16 +2,7 @@
 
 This guide helps you  ___host your own Jitsi server___. If you want to have a video conference without setting up any infrastructure, use https://meet.jit.si instead.
 
-## Requirements
-
-The installation steps documented here are intended for Debian-based GNU/Linux systems.
-
-Systems running the following versions are supported by this guide:
-
-1. Debian 8 (Jessie) or later
-1. Ubuntu 14.04 or later
-
-To check the operating system available, you can run `cat /etc/issue` at the command-line.
+This document describes the required steps for a quick Jitsi Meet installation on a Debian based GNU/Linux system. Debian 8 (Jessie) or later, and Ubuntu 14.04 or later are supported out-of-the-box.
 
 _Note_: All commands require superuser privileges. If you are logged in as a regular user, you may need to prepend `sudo` to each of the commands.
 
