@@ -55,7 +55,7 @@
             "title": "Voer een bijnaam in om de chatfunctie te gebruiken"
         },
         "privateNotice": "Privébericht aan {{recipient}}",
-        "title": "Chat"
+        "title": "Chat",
         "you": "jij"
     },
     "connectingOverlay": {
