@@ -61,13 +61,14 @@ Simply run the following in your shell:
 Note that this script uses the [HTTP-01 challenge type](https://letsencrypt.org/docs/challenge-types/) and thus your instance needs to be accessible from the public internet. If you want to use a different challenge type, don't use this script and instead choose ___I want to use my own certificate___ during jitsi-meet installation.
 
 #### Advanced configuration
-If the installation is on a machine [behind NAT](https://github.com/jitsi/jitsi-meet/blob/master/doc/faq.md) further configuration of jitsi-videobridge is needed in order for it to be accessible from outside.
+If the installation is on a machine [behind NAT](https://github.com/jitsi/jitsi-meet/blob/master/doc/faq.md) jitsi-videobridge should configure itself automatically on boot. If three way call does not work further configuration of jitsi-videobridge is needed in order for it to be accessible from outside.
 Provided that all required ports are routed (forwarded) to the machine that it runs on. By default these ports are (TCP/443 or TCP/4443 and UDP/10000).
-The following extra lines need to be added the file `/etc/jitsi/videobridge/sip-communicator.properties`:
+The following extra lines need to be added to the file `/etc/jitsi/videobridge/sip-communicator.properties`:
 ```
 org.ice4j.ice.harvest.NAT_HARVESTER_LOCAL_ADDRESS=<Local.IP.Address>
 org.ice4j.ice.harvest.NAT_HARVESTER_PUBLIC_ADDRESS=<Public.IP.Address>
 ```
+And comment the existing `org.ice4j.ice.harvest.STUN_MAPPING_HARVESTER_ADDRESSES`.
 See [the documentation of ice4j](https://github.com/jitsi/ice4j/blob/master/doc/configuration.md)
 for details.
 
@@ -119,7 +120,7 @@ Enjoy!
 ## Uninstall
 
 ```sh
-apt-get purge jigasi jitsi-meet jitsi-meet-web-config jitsi-meet-prosody jitsi-meet-turnserver jitsi-meet-web jicofo jitsi-videobridge
+apt-get purge jigasi jitsi-meet jitsi-meet-web-config jitsi-meet-prosody jitsi-meet-turnserver jitsi-meet-web jicofo jitsi-videobridge2
 ```
 
 Sometimes the following packages will fail to uninstall properly:
