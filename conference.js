@@ -1288,6 +1288,13 @@ export default {
         options.confID = `${locationURL.host}${locationURL.pathname}`;
         options.createVADProcessor = createRnnoiseProcessorPromise;
 
+        // Disable CallStats, if requessted.
+        if (options.disableThirdPartyRequests) {
+            delete options.callStatsID;
+            delete options.callStatsSecret;
+            delete options.getWiFiStatsMethod;
+        }
+
         return options;
     },
 
