@@ -7,6 +7,7 @@ import type { Dispatch } from 'redux';
 import { createWelcomePageEvent, sendAnalytics } from '../../analytics';
 import { appNavigate } from '../../app';
 import { isCalendarEnabled } from '../../calendar-sync';
+import { isRecentListEnabled } from '../../recent-list/functions';
 
 /**
  * {@code AbstractWelcomePage}'s React {@code Component} prop types.
@@ -17,6 +18,11 @@ type Props = {
      * Whether the calendar functionality is enabled or not.
      */
     _calendarEnabled: boolean,
+
+    /**
+     * Whether the recent list is enabled
+     */
+    _recentListEnabled: Boolean,
 
     /**
      * Room name to join to.
@@ -239,6 +245,7 @@ export class AbstractWelcomePage extends Component<Props, *> {
 export function _mapStateToProps(state: Object) {
     return {
         _calendarEnabled: isCalendarEnabled(state),
+        _recentListEnabled: isRecentListEnabled(),
         _room: state['features/base/conference'].room,
         _settings: state['features/base/settings']
     };
