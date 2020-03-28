@@ -654,7 +654,7 @@
     "videoStatus": {
         "audioOnly": "AUD",
         "audioOnlyExpanded": "Modalita' solo audio attiva. Questa modalità permette di rispamiare banda ma non vedrai gli altri partecipanti.",
-        "callQuality": "Qualità audio",
+        "callQuality": "Qualità video",
         "hd": "HD",
         "highDefinition": "Alta definizione",
         "labelTooiltipNoVideo": "Nessun video",

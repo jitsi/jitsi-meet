@@ -24,7 +24,7 @@ import {
 } from '../../../../base/react';
 import { connect } from '../../../../base/redux';
 
-import { setAddPeopleDialogVisible } from '../../../actions';
+import { setAddPeopleDialogVisible } from '../../../actions.native';
 
 import AbstractAddPeopleDialog, {
     type Props as AbstractProps,

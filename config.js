@@ -110,7 +110,7 @@ var config = {
 
     // w3c spec-compliant video constraints to use for video capture. Currently
     // used by browsers that return true from lib-jitsi-meet's
-    // util#browser#usesNewGumFlow. The constraints are independency from
+    // util#browser#usesNewGumFlow. The constraints are independent from
     // this config's resolution value. Defaults to requesting an ideal aspect
     // ratio of 16:9 with an ideal resolution of 720.
     // constraints: {
@@ -344,9 +344,7 @@ var config = {
         stunServers: [
 
             // { urls: 'stun:jitsi-meet.example.com:443' },
-            { urls: 'stun:stun.l.google.com:19302' },
-            { urls: 'stun:stun1.l.google.com:19302' },
-            { urls: 'stun:stun2.l.google.com:19302' }
+            { urls: 'stun:meet-jit-si-turnrelay.jitsi.net:443' }
         ],
 
         // Sets the ICE transport policy for the p2p connection. At the time
@@ -512,10 +510,11 @@ var config = {
      */
 
 
-  // Allow all above example options to include a trailing comma and
-  // prevent fear when commenting out the last value.
-  make_json_parser_happy: 'even if last key had a trailing comma'
-  // no configuration value should follow this line.
+    // Allow all above example options to include a trailing comma and
+    // prevent fear when commenting out the last value.
+    makeJsonParserHappy: 'even if last key had a trailing comma'
+
+    // no configuration value should follow this line.
 };
 
 /* eslint-enable no-unused-vars, no-var */

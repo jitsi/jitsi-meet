@@ -97,6 +97,7 @@ case "$1" in
             NGINX_STREAM_CONFIG="/etc/nginx/modules-enabled/60-jitsi-meet.conf"
             if [ -f $NGINX_STREAM_CONFIG ] && [ -f $NGINX_CONFIG ] ; then
                 sed -i "s/listen 443 ssl/listen 4444 ssl http2/g" $NGINX_CONFIG
+                sed -i "s/listen \[\:\:\]\:443 ssl/listen \[\:\:\]\:4444 ssl http2/g" $NGINX_CONFIG
                 invoke-rc.d nginx reload || true
             fi
 
