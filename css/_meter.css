@@ -3,21 +3,21 @@
         display: inline-block;
 
         & > svg {
-            fill: #76CF9C;
+            fill: #4E5E6C;
             width: 38px;
         }
     }
 
     &.metr--disabled {
         & > svg {
-            fill: #5E6D7A;
+            fill: #4E5E6C;
         }
     }
 }
 
 .metr-l-0 {
     rect:first-child {
-        fill: #279255;
+        fill: #31B76A;
     }
 }
 
@@ -25,9 +25,6 @@
     .metr-l-#{$i} {
         rect:nth-child(-n+#{$i+1}) {
             fill: #31B76A;
-        }
-        rect:first-child {
-            fill: #279255;
         }
     }
 }

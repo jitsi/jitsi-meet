@@ -153,6 +153,7 @@ class VideoSettingsContent extends Component<Props, State> {
             className,
             key
         };
+        const label = jitsiTrack && jitsiTrack.getTrackLabel();
 
         if (isSelected) {
             props.className = `${className} video-preview-entry--selected`;
@@ -162,6 +163,7 @@ class VideoSettingsContent extends Component<Props, State> {
 
         return (
             <div { ...props }>
+                <div className = 'video-preview-label'>{label}</div>
                 <div className = 'video-preview-overlay' />
                 <Video
                     className = { videoClassName }
@@ -209,7 +211,7 @@ class VideoSettingsContent extends Component<Props, State> {
         const { trackData } = this.state;
 
         return (
-            <div>
+            <div className = 'video-preview'>
                 {trackData.map((data, i) => this._renderPreviewEntry(data, i))}
             </div>
         );
