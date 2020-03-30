@@ -146,8 +146,8 @@
   },
   "license": "Apache-2.0",
   "scripts": {
-    "ios": "node ./node_modules/react-native-cli run-ios",
-    "ios:sim:8": "node ./node_modules/react-native-cli run-ios --simulator='iPhone 8'",
+    "ios": "node ./node_modules/.bin/react-native run-ios",
+    "ios:sim:8": "node ./node_modules/.bin/react-native run-ios --simulator='iPhone 8'",
     "lint": "eslint . && flow",
     "postinstall": "jetify",
     "validate": "npm ls"
