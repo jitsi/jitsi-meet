@@ -120,6 +120,8 @@ case "$1" in
                 echo ""
                 echo "You are using jetty to serve jitsi-meet, we are now upgrading you to use nginx!"
                 echo ""
+                echo "If you are using Let’s Encrypt certificates please re-run the script."
+                echo ""
                 echo "------------------------------------------------"
                 echo ""
 
