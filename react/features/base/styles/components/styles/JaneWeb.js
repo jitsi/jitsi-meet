@@ -1,7 +1,7 @@
 export const JaneWeb = {
   h3: {
     fontSize: 24,
-    //fontFamily: "ProximaNovaLtLight",
+    fontFamily: "ProximaNova-Light",
     lineHeight: 26
   }
 }
