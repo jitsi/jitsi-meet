@@ -2,6 +2,8 @@
 
 import type { Dispatch } from 'redux';
 
+import { isOnline } from '../net-info/selectors';
+
 import JitsiMeetJS from './_';
 import {
     LIB_DID_DISPOSE,
@@ -37,7 +39,8 @@ export function disposeLib() {
  */
 export function initLib() {
     return (dispatch: Dispatch<any>, getState: Function): void => {
-        const config = getState()['features/base/config'];
+        const state = getState();
+        const config = state['features/base/config'];
 
         if (!config) {
             throw new Error('Cannot init lib-jitsi-meet without config');
@@ -49,6 +52,9 @@ export function initLib() {
             JitsiMeetJS.init({
                 enableAnalyticsLogging: isAnalyticsEnabled(getState),
                 ...config
+            });
+            JitsiMeetJS.setNetworkInfo({
+                isOnline: isOnline(state)
             });
             dispatch({ type: LIB_DID_INIT });
         } catch (error) {
