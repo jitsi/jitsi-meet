@@ -133,8 +133,8 @@ When this happens, just run the uninstall command a second time and it should be
 The reason for the failure is that sometimes the uninstall script is faster than the process that stops the daemons. The second run of the uninstall command fixes this, as by then the jigasi or jitsi-videobridge daemons are already stopped.
 
 #### Systemd details
-To reload the systemd changes on a running system execute `systemctl daemon-reload` and `service jitsi-videobridge restart`.
-To check the tasks part execute `service jitsi-videobridge status` and you should see `Tasks: XX (limit: 65000)`.
+To reload the systemd changes on a running system execute `systemctl daemon-reload` and `service jitsi-videobridge2 restart`.
+To check the tasks part execute `service jitsi-videobridge2 status` and you should see `Tasks: XX (limit: 65000)`.
 To check the files and process part execute ```cat /proc/`cat /var/run/jitsi-videobridge/jitsi-videobridge.pid`/limits``` and you should see:
 ```
 Max processes             65000                65000                processes
