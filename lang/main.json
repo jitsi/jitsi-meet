@@ -757,6 +757,7 @@
         "connectCalendarButton": "Connect your calendar",
         "connectCalendarText": "Connect your calendar to view all your meetings in {{app}}. Plus, add {{provider}} meetings to your calendar and start them with one click.",
         "enterRoomTitle": "Start a new meeting",
+        "getHelp": "Get help",
         "roomNameAllowedChars": "Meeting name should not contain any of these characters: ?, &, :, ', \", %, #.",
         "go": "GO",
         "goSmall": "GO",
@@ -776,5 +777,8 @@
     "lonelyMeetingExperience": {
         "button": "Invite others",
         "youAreAlone": "You are the only one in the meeting"
+    },
+    "helpView": {
+        "header": "Help centre"
     }
 }
