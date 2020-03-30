@@ -3,11 +3,7 @@
         "apps": [],
         "details": [
             {
-                "appID": "BQNXB4G3KQ.org.jitsi.JitsiMeet.ios",
-                "paths": [ "*" ]
-            },
-            {
-                "appID": "UPXU4CQZ5P.com.atlassian.JitsiMeet.ios",
+                "appID": "G82747A532.com.janeapp.videochat.qa",
                 "paths": [ "*" ]
             }
         ]
