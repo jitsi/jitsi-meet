@@ -217,6 +217,18 @@ export function setAudioInputDevice(deviceId) {
 }
 
 /**
+ * Updates the output device id.
+ *
+ * @param {string} deviceId - The id of the new output device.
+ * @returns {Function}
+ */
+export function setAudioOutputDevice(deviceId) {
+    return function(dispatch) {
+        return setAudioOutputDeviceId(deviceId, dispatch);
+    };
+}
+
+/**
  * Signals to update the currently used video input device.
  *
  * @param {string} deviceId - The id of the new video input device.

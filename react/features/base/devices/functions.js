@@ -175,6 +175,60 @@ export function formatDeviceLabel(label: string) {
 }
 
 /**
+ * Returns a list of objects containing all the microphone device ids and labels.
+ *
+ * @param {Object} state - The state of the application.
+ * @returns {Object[]}
+ */
+export function getAudioInputDeviceData(state: Object) {
+    return state['features/base/devices'].availableDevices.audioInput.map(
+        ({ deviceId, label }) => {
+            return {
+                deviceId,
+                label
+            };
+        });
+}
+
+/**
+ * Returns a list of objectes containing all the output device ids and labels.
+ *
+ * @param {Object} state - The state of the application.
+ * @returns {Object[]}
+ */
+export function getAudioOutputDeviceData(state: Object) {
+    return state['features/base/devices'].availableDevices.audioOutput.map(
+        ({ deviceId, label }) => {
+            return {
+                deviceId,
+                label
+            };
+        });
+}
+
+/**
+ * Returns a list of all the camera device ids.
+ *
+ * @param {Object} state - The state of the application.
+ * @returns {string[]}
+ */
+export function getVideoDeviceIds(state: Object) {
+    return state['features/base/devices'].availableDevices.videoInput.map(({ deviceId }) => deviceId);
+}
+
+/**
+ * Returns true if there are devices of a specific type.
+ *
+ * @param {Object} state - The state of the application.
+ * @param {string} type - The type of device: VideoOutput | audioOutput | audioInput.
+ *
+ * @returns {boolean}
+ */
+export function hasAvailableDevices(state: Object, type: string) {
+    return state['features/base/devices'].availableDevices[type].length > 0;
+}
+
+/**
  * Set device id of the audio output device which is currently in use.
  * Empty string stands for default device.
  *

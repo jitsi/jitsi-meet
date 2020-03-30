@@ -532,6 +532,7 @@
         "selectAudioOutput": "Audio output",
         "selectCamera": "Camera",
         "selectMic": "Microphone",
+        "speakers": "Speakers",
         "startAudioMuted": "Everyone starts muted",
         "startVideoMuted": "Everyone starts hidden",
         "title": "Settings"
@@ -647,7 +648,7 @@
         "noAudioSignalDesc": "If you did not purposely mute it from system settings or hardware, consider switching the device.",
         "noAudioSignalDescSuggestion": "If you did not purposely mute it from system settings or hardware, consider switching to the suggested device.",
         "noAudioSignalDialInDesc": "You can also dial-in using:",
-        "noAudioSignalDialInLinkDesc" : "Dial-in numbers",
+        "noAudioSignalDialInLinkDesc": "Dial-in numbers",
         "noisyAudioInputTitle": "Your microphone appears to be noisy!",
         "noisyAudioInputDesc": "It sounds like your microphone is making noise, please consider muting or changing the device.",
         "openChat": "Open chat",
