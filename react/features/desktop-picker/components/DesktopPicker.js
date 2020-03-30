@@ -248,7 +248,7 @@ class DesktopPicker extends PureComponent<Props, State> {
         return selectedSource;
     }
 
-    _onCloseModal: (?string, string, boolean) => void;
+    _onCloseModal: (?string, string, ?boolean) => void;
 
     /**
      * Dispatches an action to hide the DesktopPicker and invokes the passed in
@@ -324,6 +324,8 @@ class DesktopPicker extends PureComponent<Props, State> {
             selectedTab: tabIndex
         });
     }
+
+    _onShareAudioChecked: (boolean) => void;
 
     /**
      * Set the screenSharingAudio state indicating whether or not to also share
