@@ -1,8 +1,8 @@
 platform :ios, '11.0'
-workspace 'jitsi-meet'
+workspace 'JaneOnlineAppointments'
 require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
 
-target 'jitsi-meet' do
+target 'Jane Online Appointments' do
   project 'app/app.xcodeproj'
 
   pod 'Firebase/Crashlytics', '~> 6.24.0'

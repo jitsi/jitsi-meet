@@ -30,8 +30,8 @@
     JitsiMeet *jitsiMeet = [JitsiMeet sharedInstance];
 
     jitsiMeet.conferenceActivityType = JitsiMeetConferenceActivityType;
-    jitsiMeet.customUrlScheme = @"com.janeapp";
-    jitsiMeet.universalLinkDomains = @[@"meet.jit.si", @"alpha.jitsi.net", @"beta.meet.jit.si", @'videochat-jwt.jane.qa'];
+    jitsiMeet.customUrlScheme = @"janeoa";
+    jitsiMeet.universalLinkDomains = @[@"jane.app"];
 
     jitsiMeet.defaultConferenceOptions = [JitsiMeetConferenceOptions fromBuilder:^(JitsiMeetConferenceOptionsBuilder *builder) {
         [builder setFeatureFlag:@"resolution" withValue:@(360)];
@@ -108,7 +108,8 @@
     if ([[url absoluteString] containsString:@"google/link/?dismiss=1&is_weak_match=1"]) {
         return NO;
     }
-
+              
+    NSURL *customAppURL = [NSURL URLWithString:@"itms-beta://"];
     NSURL *openUrl = url;
     if ([FIRUtilities appContainsRealServiceInfoPlist]) {
         // Process Firebase Dynamic Links
@@ -117,6 +118,12 @@
         if (firebaseUrl != nil) {
             openUrl = firebaseUrl;
         }
+    }
+              
+
+    if ([[UIApplication sharedApplication] canOpenURL:customAppURL]) {
+         // Special link that includes the app's Apple ID
+         openUrl = [NSURL URLWithString:@"https://beta.itunes.apple.com/v1/app/1504560860"];
     }
 
     return [[JitsiMeet sharedInstance] application:app
