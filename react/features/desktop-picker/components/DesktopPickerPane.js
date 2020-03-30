@@ -1,7 +1,11 @@
 /* @flow */
 
+import { Checkbox } from '@atlaskit/checkbox';
 import Spinner from '@atlaskit/spinner';
 import React, { Component } from 'react';
+
+import { Platform } from '../../base/react';
+import { translate } from '../../base/i18n';
 
 import DesktopSourcePreview from './DesktopSourcePreview';
 
@@ -21,6 +25,11 @@ type Props = {
     onDoubleClick: Function,
 
     /**
+     * The handler to be invoked if the users checks the audio screen sharing checkbox.
+     */
+    onShareAudioChecked: Function,
+
+    /**
      * The id of the DesktopCapturerSource that is currently selected.
      */
     selectedSourceId: string,
@@ -33,7 +42,12 @@ type Props = {
     /**
      * The source type of the DesktopCapturerSources to display.
      */
-    type: string
+    type: string,
+
+    /**
+     * Used to obtain translations.
+     */
+    t: Function
 };
 
 /**
@@ -52,9 +66,11 @@ class DesktopPickerPane extends Component<Props> {
         const {
             onClick,
             onDoubleClick,
+            onShareAudioChecked,
             selectedSourceId,
             sources,
-            type
+            type,
+            t
         } = this.props;
 
         const classNames
@@ -77,12 +93,27 @@ class DesktopPickerPane extends Component<Props> {
                     </div>
                 );
 
+        let checkBox;
+
+        // Only display the share audio checkbox if we're on windows and on
+        // dekstop sharing tab.
+        // App window and Mac OS screen sharing doesn't work with system audio.
+        if (type === 'screen' && Platform.OS === 'windows') {
+            checkBox = (<Checkbox
+                label = { t('dialog.screenSharingAudio') }
+                name = 'share-system-audio'
+                // eslint-disable-next-line react/jsx-no-bind
+                onChange = { ({ target: { checked } }) =>
+                    onShareAudioChecked(checked) } />);
+        }
+
         return (
             <div className = { classNames }>
                 { previews }
+                { checkBox }
             </div>
         );
     }
 }
 
-export default DesktopPickerPane;
+export default translate(DesktopPickerPane);
