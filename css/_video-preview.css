@@ -1,4 +1,7 @@
 .video-preview {
+    max-height: 290px;
+    overflow: auto;
+
     &-entry {
         cursor: pointer;
         height: 135px;
@@ -39,5 +42,24 @@
         justify-content: center;
         position: absolute;
         width: 100%;
+    }
+
+    &-label {
+        color: #fff;
+        font-size: 13px;
+        line-height: 20px;
+        overflow: hidden;
+        padding: 8px;
+        position: absolute;
+        text-align: center;
+        text-overflow: ellipsis;
+        width: 220px;
+        z-index: 2;
+    }
+
+    // Override @atlaskit/InlineDialog container which is made with styled components
+    & > div > div:nth-child(2) > div > div {
+        outline: none;
+        padding: 16px;
     }
 }

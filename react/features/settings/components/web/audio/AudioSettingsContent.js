@@ -243,7 +243,7 @@ class AudioSettingsContent extends Component<Props, State> {
                 <div className = 'audio-preview-content'>
                     <AudioSettingsHeader
                         IconComponent = { IconMicrophoneEmpty }
-                        text = { t('settings.selectMic') } />
+                        text = { t('settings.microphones') } />
                     {microphoneDevices.map((data, i) =>
                         this._renderMicrophoneEntry(data, i),
                     )}
