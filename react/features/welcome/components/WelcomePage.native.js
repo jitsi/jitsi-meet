@@ -1,6 +1,9 @@
+import { faUserMd, faUser } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import React from 'react';
 import {
     Animated,
+    Image,
     Keyboard,
     SafeAreaView,
     TextInput,
@@ -120,26 +123,40 @@ class WelcomePage extends AbstractWelcomePage {
                 <LocalVideoTrackUnderlay style = { styles.welcomePage }>
                     <View style = { _headerStyles.page }>
                         <SafeAreaView style = { [ styles.blankPageWrapper, styles.welcomePage ] } >
-                            <Text style = { styles.logo }>
-                                Chat Logo
-                            </Text>
+                            <Image
+                                style = { styles.logo }
+                                source = { require('../../../../images/logo-janechat-white.png') } />
+
+
                             <Text style = { styles.bigText }>
                                 Welcome to
                                 {'\n'}
                                 Jane Online Appointments
                             </Text>
                             <View style = { styles.row }>
-                                <Text style={styles.column}>Practitioner Icon</Text>
-                                <Text style={[styles.column, styles.columnText]}>Please go into the appointment in your schedule and click Begin.</Text>
+                                <Text style = { styles.column }>
+                                    <FontAwesomeIcon
+                                        icon = { faUserMd }
+                                        size = { 35 }
+                                        color = 'white' />
+                                </Text>
+                                {/* eslint-disable-next-line max-len */}
+                                <Text style = { [ styles.column, styles.columnText ] }>Please go into the appointment in your schedule and click Begin.</Text>
                             </View>
-                            <View style={styles.row}>
-                                <Text style={styles.column}>Patient Icon</Text>
-                                <Text style={[styles.column, styles.columnText]}>Please go into your 'My Account' and click Begin.</Text>
+                            <View style = { styles.row }>
+                                <Text style = { styles.column }>
+                                    <FontAwesomeIcon
+                                        icon = { faUser }
+                                        size = { 35 }
+                                        color = 'white' />
+                                </Text>
+                                {/* eslint-disable-next-line max-len */}
+                                <Text style = { [ styles.column, styles.columnText ] }>Please go into your 'My Account' and click Begin.</Text>
                             </View>
                         </SafeAreaView>
                     </View>
                 </LocalVideoTrackUnderlay>
-            )
+            );
         }
 
         return this._renderFullUI();

@@ -327,7 +327,6 @@ export default {
     },
     column: {
         color: TEXT_COLOR,
-        flex: 1,
         flexWrap: 'wrap',
         paddingHorizontal: BoxModel.padding
     },
