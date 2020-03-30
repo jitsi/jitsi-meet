@@ -90,6 +90,7 @@ export default [
     'disableRemoteControl',
     'disableRtx',
     'disableSuspendVideo',
+    'disableThirdPartyRequests',
     'displayJids',
     'e2eping',
     'enableDisplayNameInStats',

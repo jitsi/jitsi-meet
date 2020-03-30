@@ -75,6 +75,8 @@ class WelcomePage extends AbstractWelcomePage {
     componentDidMount() {
         super.componentDidMount();
 
+        this._updateRoomname();
+
         const { dispatch } = this.props;
 
         if (this.props._settings.startAudioOnly) {
@@ -227,19 +229,12 @@ class WelcomePage extends AbstractWelcomePage {
             );
         }
 
-
-        const buttonDisabled = this._isJoinDisabled();
-
         return (
             <TouchableHighlight
                 accessibilityLabel =
                     { t('welcomepage.accessibilityLabel.join') }
-                disabled = { buttonDisabled }
                 onPress = { this._onJoin }
-                style = { [
-                    styles.button,
-                    buttonDisabled ? styles.buttonDisabled : null
-                ] }
+                style = { styles.button }
                 underlayColor = { ColorPalette.white }>
                 { children }
             </TouchableHighlight>
@@ -268,6 +263,9 @@ class WelcomePage extends AbstractWelcomePage {
                     </Header>
                     <SafeAreaView style = { styles.roomContainer } >
                         <View style = { styles.joinControls } >
+                            <Text style = { styles.enterRoomText }>
+                                { t('welcomepage.roomname') }
+                            </Text>
                             <TextInput
                                 accessibilityLabel = { t(roomnameAccLabel) }
                                 autoCapitalize = 'none'
@@ -278,10 +276,8 @@ class WelcomePage extends AbstractWelcomePage {
                                 onChangeText = { this._onRoomChange }
                                 onFocus = { this._onFieldFocus }
                                 onSubmitEditing = { this._onJoin }
-                                placeholder = { t('welcomepage.roomname') }
-                                placeholderTextColor = {
-                                    PLACEHOLDER_TEXT_COLOR
-                                }
+                                placeholder = { this.state.roomPlaceholder }
+                                placeholderTextColor = { PLACEHOLDER_TEXT_COLOR }
                                 returnKeyType = { 'go' }
                                 style = { styles.textInput }
                                 underlineColorAndroid = 'transparent'
