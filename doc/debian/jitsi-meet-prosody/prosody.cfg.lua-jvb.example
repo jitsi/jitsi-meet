@@ -50,6 +50,8 @@ Component "conference.jitmeet.example.com" "muc"
         -- "token_verification";
     }
     admins = { "focusUser@auth.jitmeet.example.com" }
+    muc_room_locking = false
+    muc_room_default_public_jids = true
 
 -- internal muc component
 Component "internal.auth.jitmeet.example.com" "muc"
