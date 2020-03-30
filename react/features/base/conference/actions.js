@@ -411,7 +411,7 @@ export function conferenceWillLeave(conference: Object) {
             };
             const data = new Blob([ JSON.stringify(obj, null, 2)], { type: 'text/plain; charset=UTF-8' });
 
-            navigator.sendBeacon(url, data);
+            // navigator.sendBeacon(url, data);
         }
 
         dispatch({
