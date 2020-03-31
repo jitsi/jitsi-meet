@@ -13,4 +13,4 @@
   * If you get `Error: EMFILE: too many open files, watch`:
     * `brew update`
     * `brew install watchman`
-2. Run `npm run ios` in `/` (can run `npm run ios:sim:8` to launch in an iPhone 8 simulator)
+2. Run `npm run ios` in `/` (can run `npm run ios:8` to launch in an iPhone 8 simulator)

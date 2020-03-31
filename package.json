@@ -150,7 +150,10 @@
   "license": "Apache-2.0",
   "scripts": {
     "ios": "node ./node_modules/.bin/react-native run-ios",
-    "ios:sim:8": "node ./node_modules/.bin/react-native run-ios --simulator='iPhone 8'",
+    "ios:8": "node ./node_modules/.bin/react-native run-ios --simulator='iPhone 8'",
+    "ios:11": "node ./node_modules/.bin/react-native run-ios --simulator='iPhone 11",
+    "ios:ipadair": "node ./node_modules/.bin/react-native run-ios --simulator='iPad Air (3rd generation)'",
+    "ios:ipadpro": "node ./node_modules/.bin/react-native run-ios --simulator='iPad Pro (12.9-inch) (4th generation)'",
     "lint": "eslint . && flow",
     "postinstall": "jetify",
     "validate": "npm ls"
