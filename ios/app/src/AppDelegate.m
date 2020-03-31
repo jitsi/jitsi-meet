@@ -18,24 +18,33 @@
 #import "AppDelegate.h"
 #import "FIRUtilities.h"
 #import "Types.h"
-#import "ViewController.h"
 
+@import Crashlytics;
+@import Fabric;
 @import Firebase;
 @import JitsiMeet;
+
 
 @implementation AppDelegate
 
 -             (BOOL)application:(UIApplication *)application
   didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+
+    // Initialize Crashlytics and Firebase if a valid GoogleService-Info.plist file was provided.
+    if ([FIRUtilities appContainsRealServiceInfoPlist]) {
+        NSLog(@"Enablign Crashlytics and Firebase");
+        [FIRApp configure];
+        [Fabric with:@[[Crashlytics class]]];
+    }
+
     JitsiMeet *jitsiMeet = [JitsiMeet sharedInstance];
 
     jitsiMeet.conferenceActivityType = JitsiMeetConferenceActivityType;
     jitsiMeet.customUrlScheme = @"janeoa";
-    jitsiMeet.universalLinkDomains = @[@"jane.app"];
+    jitsiMeet.universalLinkDomains = @[@"videochat-jwt.jane.qa",@"videochat-jwt.jane.qa",@"videochat-jwt.jane.qa",@"videochat-us.janeapp.com",@"videochat-ca.janeapp.com",@"videochat-au.janeapp.com",@"videochat-uk.janeapp.com"];
 
     jitsiMeet.defaultConferenceOptions = [JitsiMeetConferenceOptions fromBuilder:^(JitsiMeetConferenceOptionsBuilder *builder) {
-        [builder setFeatureFlag:@"resolution" withValue:@(360)];
-        builder.serverURL = [NSURL URLWithString:@"https://meet.jit.si"];
+        builder.serverURL = [NSURL URLWithString:@"https://videochat.jane.qa"];
         builder.welcomePageEnabled = YES;
 
         // Apple rejected our app because they claim requiring a
@@ -45,24 +54,9 @@
 #endif
     }];
 
-    // Initialize Crashlytics and Firebase if a valid GoogleService-Info.plist file was provided.
-  if ([FIRUtilities appContainsRealServiceInfoPlist]) {
-        NSLog(@"Enabling Firebase");
-        [FIRApp configure];
-        // Crashlytics defaults to disabled wirth the FirebaseCrashlyticsCollectionEnabled Info.plist key.
-        [[FIRCrashlytics crashlytics] setCrashlyticsCollectionEnabled:![jitsiMeet isCrashReportingDisabled]];
-    }
-
     [jitsiMeet application:application didFinishLaunchingWithOptions:launchOptions];
 
     return YES;
-}
-
-- (void) applicationWillTerminate:(UIApplication *)application {
-    NSLog(@"Application will terminate!");
-    // Try to leave the current meeting graceefully.
-    ViewController *rootController = (ViewController *)self.window.rootViewController;
-    [rootController terminate];
 }
 
 #pragma mark Linking delegate methods
