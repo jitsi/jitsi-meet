@@ -39,6 +39,53 @@ import WelcomePageLists from './WelcomePageLists';
 import WelcomePageSideBar from './WelcomePageSideBar';
 import styles, { PLACEHOLDER_TEXT_COLOR } from './styles';
 
+const WelcomePageLayout = ({ _headerStyles }) => (
+    <LocalVideoTrackUnderlay>
+        <View style = { _headerStyles.page }>
+            <SafeAreaView style = { [ styles.blankPageWrapper, styles.welcomePage ] }>
+                <View style = { styles.welcomePageContainer }>
+
+                    <Image
+                        style = { styles.logo }
+                        source = { require('../../../../images/logo-janechat-white.png') } />
+                    <Text style = { styles.bigText }>
+                            Welcome to
+                        {'\n'}
+                            Jane Online Appointments
+                    </Text>
+
+                    <View style = { styles.row }>
+                        <View style = { styles.column }>
+                            <FontAwesomeIcon
+                                icon = { faUserMd }
+                                size = { 45 }
+                                color = 'white' />
+                        </View>
+                        <View style = { [ styles.column, styles.columnText ] }>
+                            {/* eslint-disable-next-line max-len */}
+                            <Text style = { styles.whiteText }>Please go into the appointment in your schedule and click Begin.</Text>
+                        </View>
+                    </View>
+
+                    <View style = { styles.row }>
+                        <View style = { styles.column }>
+                            <FontAwesomeIcon
+                                icon = { faUser }
+                                size = { 45 }
+                                color = 'white' />
+                        </View>
+                        <View style = { [ styles.column, styles.columnText ] }>
+                            <Text style = { styles.whiteText }>Please go into your 'My Account' and click Begin.</Text>
+                        </View>
+                    </View>
+
+                </View>
+            </SafeAreaView>
+        </View>
+    </LocalVideoTrackUnderlay>
+);
+
+
 /**
  * The native container rendering the welcome page.
  *
@@ -116,50 +163,7 @@ class WelcomePage extends AbstractWelcomePage {
             return this._renderReducedUI();
         }
         */
-        if (true) {
-            const { _headerStyles } = this.props;
-
-            return (
-                <LocalVideoTrackUnderlay style = { styles.welcomePage }>
-                    <View style = { _headerStyles.page }>
-                        <SafeAreaView style = { [ styles.blankPageWrapper, styles.welcomePage ] } >
-                            <Image
-                                style = { styles.logo }
-                                source = { require('../../../../images/logo-janechat-white.png') } />
-
-
-                            <Text style = { styles.bigText }>
-                                Welcome to
-                                {'\n'}
-                                Jane Online Appointments
-                            </Text>
-                            <View style = { styles.row }>
-                                <Text style = { styles.column }>
-                                    <FontAwesomeIcon
-                                        icon = { faUserMd }
-                                        size = { 35 }
-                                        color = 'white' />
-                                </Text>
-                                {/* eslint-disable-next-line max-len */}
-                                <Text style = { [ styles.column, styles.columnText ] }>Please go into the appointment in your schedule and click Begin.</Text>
-                            </View>
-                            <View style = { styles.row }>
-                                <Text style = { styles.column }>
-                                    <FontAwesomeIcon
-                                        icon = { faUser }
-                                        size = { 35 }
-                                        color = 'white' />
-                                </Text>
-                                {/* eslint-disable-next-line max-len */}
-                                <Text style = { [ styles.column, styles.columnText ] }>Please go into your 'My Account' and click Begin.</Text>
-                            </View>
-                        </SafeAreaView>
-                    </View>
-                </LocalVideoTrackUnderlay>
-            );
-        }
-
-        return this._renderFullUI();
+        return <WelcomePageLayout _headerStyles = { this.props._headerStyles } />;
     }
 
     /**
