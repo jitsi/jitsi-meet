@@ -41,10 +41,10 @@
 
     jitsiMeet.conferenceActivityType = JitsiMeetConferenceActivityType;
     jitsiMeet.customUrlScheme = @"janeoa";
-    jitsiMeet.universalLinkDomains = @[@"jane.app"];
+    jitsiMeet.universalLinkDomains = @[@"videochat-jwt.jane.qa",@"videochat-jwt.jane.qa",@"videochat-jwt.jane.qa",@"videochat-us.janeapp.com",@"videochat-ca.janeapp.com",@"videochat-au.janeapp.com",@"videochat-uk.janeapp.com"];
 
     jitsiMeet.defaultConferenceOptions = [JitsiMeetConferenceOptions fromBuilder:^(JitsiMeetConferenceOptionsBuilder *builder) {
-        builder.serverURL = [NSURL URLWithString:@"https://meet.jit.si"];
+        builder.serverURL = [NSURL URLWithString:@"https://videochat.jane.qa"];
         builder.welcomePageEnabled = YES;
 
         // Apple rejected our app because they claim requiring a
