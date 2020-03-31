@@ -136,13 +136,7 @@ class OverflowMenu extends PureComponent<Props, State> {
                     { ...moreOptionsButtonProps }
                     visible = { false } />
                 <Collapsible collapsed = { false }>
-                    <ClosedCaptionButton { ...buttonProps } />
-                    {/* {*/}
-                    {/*    this.props._recordingEnabled*/}
-                    {/*        && <RecordButton { ...buttonProps } />*/}
-                    {/* }*/}
                     <TileViewButton { ...buttonProps } />
-                    <SharedDocumentButton { ...buttonProps } />
                     <HelpButton { ...buttonProps } />
                 </Collapsible>
             </BottomSheet>
