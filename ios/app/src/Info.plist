@@ -71,12 +71,22 @@
 	<key>NSCameraUsageDescription</key>
 	<string>Participate in meetings with video.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string/>
+	<string></string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Participate in meetings with voice.</string>
 	<key>NSUserActivityTypes</key>
 	<array>
 		<string>org.jitsi.JitsiMeet.ios.conference</string>
+	</array>
+	<key>UIAppFonts</key>
+	<array>
+		<string>OpenSans-Light-webfont.ttf</string>
+		<string>OpenSans-Light-webfont.woff</string>
+		<string>ProximaNova-Light.otf</string>
+		<string>ProximaNova-Bold.otf</string>
+		<string>ProximaNova-Reg.otf</string>
+		<string>ProximaNova-Sbold.otf</string>
+		<string>ProximaNova-Thin.otf</string>
 	</array>
 	<key>UIBackgroundModes</key>
 	<array>
@@ -101,19 +111,10 @@
 		<string>UIInterfaceOrientationPortrait</string>
 		<string>UIInterfaceOrientationPortraitUpsideDown</string>
 	</array>
+	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
 	<key>firebase_crashlytics_collection_enabled</key>
 	<string>false</string>
-	<key>UIAppFonts</key>
-	<array>
-		<string>OpenSans-Light-webfont.ttf</string>
-		<string>OpenSans-Light-webfont.woff</string>
-		<string>ProximaNova-Light.otf</string>
-		<string>ProximaNova-Bold.otf</string>
-		<string>ProximaNova-Reg.otf</string>
-		<string>ProximaNova-Sbold.otf</string>
-		<string>ProximaNova-Thin.otf</string>
-	</array>
 </dict>
 </plist>
