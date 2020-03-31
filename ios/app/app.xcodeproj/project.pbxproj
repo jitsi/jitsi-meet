@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		011790A9F64D4563B3AD6F24 /* ProximaNova-Light.otf in Resources */ = {isa = PBXBuildFile; fileRef = CACC72166A10497D853A028F /* ProximaNova-Light.otf */; };
 		0B26BE6E1EC5BC3C00EEFB41 /* JitsiMeet.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0B26BE6D1EC5BC3C00EEFB41 /* JitsiMeet.framework */; };
 		0B26BE6F1EC5BC3C00EEFB41 /* JitsiMeet.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 0B26BE6D1EC5BC3C00EEFB41 /* JitsiMeet.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		0B412F1F1EDEE6E800B1A0A6 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0B412F1E1EDEE6E800B1A0A6 /* ViewController.m */; };
@@ -27,18 +28,17 @@
 		13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB11A68108700A75B9A /* LaunchScreen.xib */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
+		443FAC8A751044E38C9EA7AB /* ProximaNova-Thin.otf in Resources */ = {isa = PBXBuildFile; fileRef = 7E545339E87B44E4B8F93CD8 /* ProximaNova-Thin.otf */; };
+		53376CB74B944F44A6D0A187 /* ProximaNova-Reg.otf in Resources */ = {isa = PBXBuildFile; fileRef = 00702F4293D64B59A9731539 /* ProximaNova-Reg.otf */; };
+		5CC1393DFA294862AB59CE62 /* OpenSans-Light-webfont.svg in Resources */ = {isa = PBXBuildFile; fileRef = 41D7B16E683246C09137285D /* OpenSans-Light-webfont.svg */; };
 		6861585DECC03EC434F32148 /* libPods-Jane Online Appointments.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0BBCD32F880EE2F0C2BE031A /* libPods-Jane Online Appointments.a */; };
+		6A63F383534145818B702D84 /* ProximaNova-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 2A6A6C21EE2F4C7298D0E11D /* ProximaNova-Bold.otf */; };
+		6FBF54DE72114B38B3E3D6E0 /* OpenSans-Light-webfont.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 39A351573097466DA5DA80AD /* OpenSans-Light-webfont.ttf */; };
+		B1E8C33997D4498698D52F05 /* ProximaNova-Sbold.otf in Resources */ = {isa = PBXBuildFile; fileRef = F653AD91A1CE42ACA21E3CDD /* ProximaNova-Sbold.otf */; };
 		DE4C456121DE1E4E00EA0709 /* FIRUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = DE4C455F21DE1E4E00EA0709 /* FIRUtilities.m */; };
+		E484E90A2BA7452CBA8EC009 /* OpenSans-Light-webfont.woff in Resources */ = {isa = PBXBuildFile; fileRef = 9D10362D45AE444CAD45A026 /* OpenSans-Light-webfont.woff */; };
 		E588011722789D43008B0561 /* JitsiMeetContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = E58801132278944E008B0561 /* JitsiMeetContext.swift */; };
 		E5C97B63227A1EB400199214 /* JitsiMeetCommands.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5C97B62227A1EB400199214 /* JitsiMeetCommands.swift */; };
-		5CC1393DFA294862AB59CE62 /* OpenSans-Light-webfont.svg in Resources */ = {isa = PBXBuildFile; fileRef = 41D7B16E683246C09137285D /* OpenSans-Light-webfont.svg */; };
-		6FBF54DE72114B38B3E3D6E0 /* OpenSans-Light-webfont.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 39A351573097466DA5DA80AD /* OpenSans-Light-webfont.ttf */; };
-		E484E90A2BA7452CBA8EC009 /* OpenSans-Light-webfont.woff in Resources */ = {isa = PBXBuildFile; fileRef = 9D10362D45AE444CAD45A026 /* OpenSans-Light-webfont.woff */; };
-		011790A9F64D4563B3AD6F24 /* ProximaNova-Light.otf in Resources */ = {isa = PBXBuildFile; fileRef = CACC72166A10497D853A028F /* ProximaNova-Light.otf */; };
-		6A63F383534145818B702D84 /* ProximaNova-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 2A6A6C21EE2F4C7298D0E11D /* ProximaNova-Bold.otf */; };
-		53376CB74B944F44A6D0A187 /* ProximaNova-Reg.otf in Resources */ = {isa = PBXBuildFile; fileRef = 00702F4293D64B59A9731539 /* ProximaNova-Reg.otf */; };
-		B1E8C33997D4498698D52F05 /* ProximaNova-Sbold.otf in Resources */ = {isa = PBXBuildFile; fileRef = F653AD91A1CE42ACA21E3CDD /* ProximaNova-Sbold.otf */; };
-		443FAC8A751044E38C9EA7AB /* ProximaNova-Thin.otf in Resources */ = {isa = PBXBuildFile; fileRef = 7E545339E87B44E4B8F93CD8 /* ProximaNova-Thin.otf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -96,6 +96,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		00702F4293D64B59A9731539 /* ProximaNova-Reg.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "ProximaNova-Reg.otf"; path = "../../fonts/ProximaNova-Reg.otf"; sourceTree = "<group>"; };
 		09AA3B93E4CC62D84B424690 /* Pods-jitsi-meet.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-jitsi-meet.release.xcconfig"; path = "../Pods/Target Support Files/Pods-jitsi-meet/Pods-jitsi-meet.release.xcconfig"; sourceTree = "<group>"; };
 		0B26BE6D1EC5BC3C00EEFB41 /* JitsiMeet.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = JitsiMeet.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		0B412F1D1EDEE6E800B1A0A6 /* ViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
@@ -123,22 +124,21 @@
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		2A6A6C21EE2F4C7298D0E11D /* ProximaNova-Bold.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "ProximaNova-Bold.otf"; path = "../../fonts/ProximaNova-Bold.otf"; sourceTree = "<group>"; };
+		39A351573097466DA5DA80AD /* OpenSans-Light-webfont.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "OpenSans-Light-webfont.ttf"; path = "../../fonts/OpenSans-Light-webfont.ttf"; sourceTree = "<group>"; };
+		41D7B16E683246C09137285D /* OpenSans-Light-webfont.svg */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "OpenSans-Light-webfont.svg"; path = "../../fonts/OpenSans-Light-webfont.svg"; sourceTree = "<group>"; };
 		4670A512A688E2DC34528282 /* Pods-jitsi-meet.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-jitsi-meet.debug.xcconfig"; path = "../Pods/Target Support Files/Pods-jitsi-meet/Pods-jitsi-meet.debug.xcconfig"; sourceTree = "<group>"; };
+		7E545339E87B44E4B8F93CD8 /* ProximaNova-Thin.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "ProximaNova-Thin.otf"; path = "../../fonts/ProximaNova-Thin.otf"; sourceTree = "<group>"; };
 		821146B09B5074FC468D921E /* Pods-Jane Online Appointments.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Jane Online Appointments.release.xcconfig"; path = "../Pods/Target Support Files/Pods-Jane Online Appointments/Pods-Jane Online Appointments.release.xcconfig"; sourceTree = "<group>"; };
+		9D10362D45AE444CAD45A026 /* OpenSans-Light-webfont.woff */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "OpenSans-Light-webfont.woff"; path = "../../fonts/OpenSans-Light-webfont.woff"; sourceTree = "<group>"; };
 		B3B083EB1D4955FF0069CEE7 /* app.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = app.entitlements; sourceTree = "<group>"; };
+		CACC72166A10497D853A028F /* ProximaNova-Light.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "ProximaNova-Light.otf"; path = "../../fonts/ProximaNova-Light.otf"; sourceTree = "<group>"; };
 		DE4C455F21DE1E4E00EA0709 /* FIRUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FIRUtilities.m; sourceTree = "<group>"; };
 		DE4C456021DE1E4E00EA0709 /* FIRUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FIRUtilities.h; sourceTree = "<group>"; };
 		E58801132278944E008B0561 /* JitsiMeetContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JitsiMeetContext.swift; sourceTree = "<group>"; };
 		E5C97B62227A1EB400199214 /* JitsiMeetCommands.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JitsiMeetCommands.swift; sourceTree = "<group>"; };
 		EA4FF8B034C08F7858EC139B /* Pods-Jane Online Appointments.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Jane Online Appointments.debug.xcconfig"; path = "../Pods/Target Support Files/Pods-Jane Online Appointments/Pods-Jane Online Appointments.debug.xcconfig"; sourceTree = "<group>"; };
-		41D7B16E683246C09137285D /* OpenSans-Light-webfont.svg */ = {isa = PBXFileReference; name = "OpenSans-Light-webfont.svg"; path = "../../fonts/OpenSans-Light-webfont.svg"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
-		39A351573097466DA5DA80AD /* OpenSans-Light-webfont.ttf */ = {isa = PBXFileReference; name = "OpenSans-Light-webfont.ttf"; path = "../../fonts/OpenSans-Light-webfont.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
-		9D10362D45AE444CAD45A026 /* OpenSans-Light-webfont.woff */ = {isa = PBXFileReference; name = "OpenSans-Light-webfont.woff"; path = "../../fonts/OpenSans-Light-webfont.woff"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
-		CACC72166A10497D853A028F /* ProximaNova-Light.otf */ = {isa = PBXFileReference; name = "ProximaNova-Light.otf"; path = "../../fonts/ProximaNova-Light.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
-		2A6A6C21EE2F4C7298D0E11D /* ProximaNova-Bold.otf */ = {isa = PBXFileReference; name = "ProximaNova-Bold.otf"; path = "../../fonts/ProximaNova-Bold.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
-		00702F4293D64B59A9731539 /* ProximaNova-Reg.otf */ = {isa = PBXFileReference; name = "ProximaNova-Reg.otf"; path = "../../fonts/ProximaNova-Reg.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
-		F653AD91A1CE42ACA21E3CDD /* ProximaNova-Sbold.otf */ = {isa = PBXFileReference; name = "ProximaNova-Sbold.otf"; path = "../../fonts/ProximaNova-Sbold.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
-		7E545339E87B44E4B8F93CD8 /* ProximaNova-Thin.otf */ = {isa = PBXFileReference; name = "ProximaNova-Thin.otf"; path = "../../fonts/ProximaNova-Thin.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		F653AD91A1CE42ACA21E3CDD /* ProximaNova-Sbold.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "ProximaNova-Sbold.otf"; path = "../../fonts/ProximaNova-Sbold.otf"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -237,6 +237,21 @@
 			name = Pods;
 			sourceTree = "<group>";
 		};
+		61EBBA4656C548EEBB9356FC /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				41D7B16E683246C09137285D /* OpenSans-Light-webfont.svg */,
+				39A351573097466DA5DA80AD /* OpenSans-Light-webfont.ttf */,
+				9D10362D45AE444CAD45A026 /* OpenSans-Light-webfont.woff */,
+				CACC72166A10497D853A028F /* ProximaNova-Light.otf */,
+				2A6A6C21EE2F4C7298D0E11D /* ProximaNova-Bold.otf */,
+				00702F4293D64B59A9731539 /* ProximaNova-Reg.otf */,
+				F653AD91A1CE42ACA21E3CDD /* ProximaNova-Sbold.otf */,
+				7E545339E87B44E4B8F93CD8 /* ProximaNova-Thin.otf */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
@@ -262,22 +277,6 @@
 			);
 			name = Products;
 			sourceTree = "<group>";
-		};
-		61EBBA4656C548EEBB9356FC /* Resources */ = {
-			isa = "PBXGroup";
-			children = (
-				41D7B16E683246C09137285D /* OpenSans-Light-webfont.svg */,
-				39A351573097466DA5DA80AD /* OpenSans-Light-webfont.ttf */,
-				9D10362D45AE444CAD45A026 /* OpenSans-Light-webfont.woff */,
-				CACC72166A10497D853A028F /* ProximaNova-Light.otf */,
-				2A6A6C21EE2F4C7298D0E11D /* ProximaNova-Bold.otf */,
-				00702F4293D64B59A9731539 /* ProximaNova-Reg.otf */,
-				F653AD91A1CE42ACA21E3CDD /* ProximaNova-Sbold.otf */,
-				7E545339E87B44E4B8F93CD8 /* ProximaNova-Thin.otf */,
-			);
-			name = Resources;
-			sourceTree = "<group>";
-			path = "";
 		};
 /* End PBXGroup section */
 
@@ -800,6 +799,7 @@
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 				);
 				INFOPLIST_FILE = src/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				MARKETING_VERSION = 0.0.1;
@@ -811,6 +811,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.janeapp.videochat.qa;
 				PRODUCT_NAME = "Jane Online Appointments";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
@@ -835,6 +836,7 @@
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 				);
 				INFOPLIST_FILE = src/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				MARKETING_VERSION = 0.0.1;
@@ -846,6 +848,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.janeapp.videochat.qa;
 				PRODUCT_NAME = "Jane Online Appointments";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
 		};
