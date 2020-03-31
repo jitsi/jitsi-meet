@@ -1,5 +1,6 @@
 // @flow
 
+import { useWindowDimensions } from 'react-native'
 import { type StyleType } from './functions.any';
 
 export * from './functions.any';
@@ -15,4 +16,8 @@ export function getFixedPlatformStyle(style: StyleType): StyleType {
     // There is nothing to do on mobile - yet.
 
     return style;
+}
+
+export function logDimensions() {
+    console.log(useWindowDimensions())
 }
