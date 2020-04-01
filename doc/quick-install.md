@@ -23,7 +23,7 @@ Finally on the same machine test that you can ping the FQDN with: `ping "$(hostn
 ### Add the Jitsi package repository
 ```sh
 echo 'deb https://download.jitsi.org stable/' >> /etc/apt/sources.list.d/jitsi-stable.list
-wget -qO -  https://download.jitsi.org/jitsi-key.gpg.key | apt-key add -
+wget -qO -  https://download.jitsi.org/jitsi-key.gpg.key | sudo apt-key add -
 ```
 
 ### Install Jitsi Meet
