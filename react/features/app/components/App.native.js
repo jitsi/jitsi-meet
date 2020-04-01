@@ -1,5 +1,19 @@
 // @flow
 
+import '../../google-api';
+import '../../mobile/audio-mode';
+import '../../mobile/back-button';
+import '../../mobile/background';
+import '../../mobile/call-integration';
+import '../../mobile/external-api';
+import '../../mobile/full-screen';
+import '../../mobile/permissions';
+import '../../mobile/picture-in-picture';
+import '../../mobile/proximity';
+import '../../mobile/wake-lock';
+
+// import '../../mobile/watchos';
+
 import React from 'react';
 
 import { setColorScheme } from '../../base/color-scheme';
