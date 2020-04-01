@@ -18,7 +18,7 @@ import { setConferenceTimestamp, setSessionId, setWatchReachable } from './actio
 import { CMD_HANG_UP, CMD_JOIN_CONFERENCE, CMD_SET_MUTED, MAX_RECENT_URLS } from './constants';
 import logger from './logger';
 
-const watchOSEnabled = Platform.OS === 'ios';
+const watchOSEnabled = false;
 
 // Handles the recent URLs state sent to the watch
 watchOSEnabled && StateListenerRegistry.register(
