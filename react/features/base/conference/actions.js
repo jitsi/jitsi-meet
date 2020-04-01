@@ -431,8 +431,7 @@ export function conferenceWillLeave(conference: Object) {
 
             if (leaveUrl && surveyUrl) {
                 if (isIos) {
-                    const redirectBackToJaneLink = `https://${leaveUrl.split('//')[1]}/video_chat_sessions/${room}`;
-                    Linking.openURL(redirectBackToJaneLink).then(() => {
+                    Linking.openURL(surveyUrl).then(() => {
                         sendBeaconRn(leaveUrl, data).then(r => {
                             console.log(r, 'response');
                         })
