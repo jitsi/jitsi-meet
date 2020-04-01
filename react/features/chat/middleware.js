@@ -76,11 +76,11 @@ MiddlewareRegistry.register(store => next => action => {
             } else {
                 // Sending the message if privacy notice doesn't need to be shown.
 
-                if (typeof APP !== 'undefined') {
-                    APP.API.notifySendingChatMessage(action.message);
-                }
-
                 const { privateMessageRecipient } = state['features/chat'];
+
+                if (typeof APP !== 'undefined') {
+                    APP.API.notifySendingChatMessage(action.message, Boolean(privateMessageRecipient));
+                }
 
                 if (privateMessageRecipient) {
                     conference.sendPrivateTextMessage(privateMessageRecipient.id, action.message);
