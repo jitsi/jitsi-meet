@@ -614,6 +614,7 @@
             "speakerStats": "Toggle speaker statistics",
             "tileView": "Toggle tile view",
             "toggleCamera": "Toggle camera",
+            "toggleFilmstrip": "Toggle filmstrip",
             "videomute": "Toggle mute video",
             "videoblur": "Toggle video blur"
         },
