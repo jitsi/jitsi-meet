@@ -40,6 +40,7 @@ import WelcomePageLists from './WelcomePageLists';
 import WelcomePageSideBar from './WelcomePageSideBar';
 import styles, { PLACEHOLDER_TEXT_COLOR } from './styles';
 
+// eslint-disable-next-line react/prop-types
 const WelcomePageLayout = ({ _headerStyles }) => (
     <LocalVideoTrackUnderlay>
         <View style = { _headerStyles.page }>
@@ -47,8 +48,8 @@ const WelcomePageLayout = ({ _headerStyles }) => (
                 <View style = { styles.welcomePageContainer }>
 
                     <Image
-                        style = { styles.logo }
-                        source = { require('../../../../images/jane-video-logo.png') } />
+                        source = { require('../../../../images/jane-video-logo.png') }
+                        style = { styles.logo } />
                     <Text style = { styles.bigText }>
                             Welcome to
                         {'\n'}
@@ -58,29 +59,40 @@ const WelcomePageLayout = ({ _headerStyles }) => (
                     <View style = { styles.row }>
                         <View style = { styles.column }>
                             <FontAwesomeIcon
+                                color = 'white'
                                 icon = { faUserMd }
-                                size = { 45 }
-                                color = 'white' />
+                                size = { 45 } />
                         </View>
                         <View style = { [ styles.column, styles.columnText ] }>
                             {/* eslint-disable-next-line max-len */}
-                            <Text style = { styles.whiteText }>Please go into the appointment in your schedule and click
-                                    Begin.</Text>
+                            <Text style = { styles.whiteText }>Please find the scheduled appointment in a web browser and click Begin.</Text>
                         </View>
                     </View>
 
                     <View style = { styles.row }>
                         <View style = { styles.column }>
                             <FontAwesomeIcon
+                                color = 'white'
                                 icon = { faUser }
-                                size = { 45 }
-                                color = 'white' />
+                                size = { 45 } />
                         </View>
                         <View style = { [ styles.column, styles.columnText ] }>
-                            <Text style = { styles.whiteText }>Please go into your 'My Account' and click Begin.</Text>
+                            {/* eslint-disable-next-line max-len */}
+                            <Text style = { styles.whiteText }>You will receive an email 30 minutes prior to your appointment with a link to begin. You can also sign in to your Jane account with a web browser and tap Begin.</Text>
                         </View>
                     </View>
+                </View>
 
+                <View style = { styles.row }>
+                    <View style = { styles.column }>
+                        <FontAwesomeIcon
+                            color = 'white'
+                            icon = { faUser }
+                            size = { 45 } />
+                    </View>
+                    <View style = { [ styles.column, styles.columnText ] }>
+                        <Text style = { styles.whiteText }>Please go into your 'My Account' and click Begin.</Text>
+                    </View>
                 </View>
             </SafeAreaView>
         </View>
@@ -167,28 +179,8 @@ class WelcomePage extends AbstractWelcomePage {
         }
         */
         return <WelcomePageLayout _headerStyles = { this.props._headerStyles } />;
-    }
 
-    /**
-     * Renders the insecure room name warning.
-     *
-     * @inheritdoc
-     */
-    _doRenderInsecureRoomNameWarning() {
-        return (
-            <View
-                style = { [
-                    styles.messageContainer,
-                    styles.insecureRoomNameWarningContainer
-                ] }>
-                <Icon
-                    src = { IconWarning }
-                    style = { styles.insecureRoomNameWarningIcon } />
-                <Text style = { styles.insecureRoomNameWarningText }>
-                    { this.props.t('security.insecureRoomNameWarning') }
-                </Text>
-            </View>
-        );
+        // return this._renderFullUI(); // use to get access to call in simluator
     }
 
     /**
