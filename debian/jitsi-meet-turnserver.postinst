@@ -36,6 +36,24 @@ case "$1" in
         NGINX_CONFIG="/etc/nginx/sites-available/$JVB_HOSTNAME.conf"
         JITSI_MEET_CONFIG="/etc/jitsi/meet/$JVB_HOSTNAME-config.js"
 
+        NGINX_SITES_ENABLED="/etc/nginx/sites-enabled/"
+        NGINX_CONFIG_ENABLED="${NGINX_SITES_ENABLED}${JVB_HOSTNAME}.conf"
+        for site in ${NGINX_SITES_ENABLED}*; do
+            # if it is not a file continue
+            [ -f "${site}" ] || continue
+            # if it is our config skip
+            [ "${site}" != "${NGINX_CONFIG_ENABLED}" ] || continue
+            # check whether other enabled hosts has listen 443
+            if cat ${site} | grep -v "^[[:space:]]*#" | grep listen | grep -q "^.*[[:space:]:]443[;[:space:]].*" ; then
+                # nothing to do
+                echo ""
+                echo "turnserver not configured as other nginx sites use port 443"
+                echo ""
+                db_stop
+                exit 0
+            fi
+        done
+
         # detect dpkg-reconfigure, just delete old links
         db_get jitsi-meet-turnserver/jvb-hostname
         JVB_HOSTNAME_OLD=$RET
