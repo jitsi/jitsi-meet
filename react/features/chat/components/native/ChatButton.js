@@ -1,6 +1,7 @@
 // @flow
 
 import { IconChat, IconChatUnread } from '../../../base/icons';
+import { setActiveModalId } from '../../../base/modal';
 import { getLocalParticipant } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import {
@@ -9,7 +10,7 @@ import {
 } from '../../../base/toolbox';
 import { openDisplayNamePrompt } from '../../../display-name';
 
-import { toggleChat } from '../../actions';
+import { CHAT_VIEW_MODAL_ID } from '../../constants';
 import { getUnreadCount } from '../../functions';
 
 type Props = AbstractButtonProps & {
@@ -93,7 +94,7 @@ function _mapDispatchToProps(dispatch: Function) {
          * @returns {void}
          */
         _displayChat() {
-            dispatch(toggleChat());
+            dispatch(setActiveModalId(CHAT_VIEW_MODAL_ID));
         },
 
         /**

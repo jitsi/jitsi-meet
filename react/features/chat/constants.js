@@ -1,5 +1,7 @@
 // @flow
 
+export const CHAT_VIEW_MODAL_ID = 'chatView';
+
 /**
  * The audio ID of the audio element for which the {@link playAudio} action is
  * triggered when new chat message is received.
