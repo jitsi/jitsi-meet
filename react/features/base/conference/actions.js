@@ -405,7 +405,7 @@ export function conferenceWillLeave(conference: Object) {
         if (jwt) {
             const jwtPayload = jwtDecode(jwt);
             const url = jwtPayload.context.leave_url;
-            const room = jwtPayload.room;
+            const videoChatSessionId = jwtPayload.context.video_chat_session_id;
             const obj = {
                 jwt,
                 // eslint-disable-next-line camelcase
@@ -413,9 +413,9 @@ export function conferenceWillLeave(conference: Object) {
             };
             const data = new Blob([ JSON.stringify(obj, null, 2) ], { type: 'text/plain; charset=UTF-8' });
 
-            const redirectBackToJaneLink = `https://${url.split('//')[1]}/video_chat_sessions/${room}`;
+            const redirectToJaneSurveyLink = generateSurveyLink(url, videoChatSessionId);
 
-            Linking.openURL(redirectBackToJaneLink).then(() => {
+            Linking.openURL(redirectToJaneSurveyLink).then(() => {
                 sendBeaconRn(url, data).then(r => {
                     console.log(r, 'response');
                 })
@@ -430,6 +430,11 @@ export function conferenceWillLeave(conference: Object) {
             conference
         });
     };
+}
+
+// eslint-disable-next-line require-jsdoc
+function generateSurveyLink(url, videoChatSessionId) {
+    return `https://${url.split('//')[1]}/video_chat_sessions/${videoChatSessionId}/survey`;
 }
 
 // eslint-disable-next-line require-jsdoc,no-unused-vars,no-empty-function
