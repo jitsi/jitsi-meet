@@ -369,12 +369,14 @@ class API {
      * Notify external application (if API is enabled) that message was sent.
      *
      * @param {string} message - Message body.
+     * @param {boolean} privateMessage - True if the message was a private message.
      * @returns {void}
      */
-    notifySendingChatMessage(message: string) {
+    notifySendingChatMessage(message: string, privateMessage: boolean) {
         this._sendEvent({
             name: 'outgoing-message',
-            message
+            message,
+            privateMessage
         });
     }
 
