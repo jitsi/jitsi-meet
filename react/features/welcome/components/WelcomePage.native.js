@@ -17,7 +17,7 @@ import { getName } from '../../app';
 
 import { ColorSchemeRegistry } from '../../base/color-scheme';
 import { translate } from '../../base/i18n';
-import { IconMenu } from '../../base/icons';
+import { Icon, IconMenu } from '../../base/icons';
 import { MEDIA_TYPE } from '../../base/media';
 import { Header, LoadingIndicator, Text } from '../../base/react';
 import { connect } from '../../base/redux';
@@ -63,7 +63,7 @@ const WelcomePageLayout = ({_headerStyles}) => {
                                 <FontAwesomeIcon icon={ faUserMd } size={45} color='white' />
                             </View>
                             <View style={[styles.column, styles.columnText]}>
-                                <Text style={styles.whiteText}>Please go into the appointment in your schedule and click Begin.</Text>
+                                <Text style={styles.whiteText}>Please find the scheduled appointment in a web browser and click Begin.</Text>
                             </View>
                         </View>
                         
@@ -72,7 +72,7 @@ const WelcomePageLayout = ({_headerStyles}) => {
                                 <FontAwesomeIcon icon={ faUser } size={45} color='white' />
                             </View>
                             <View style={[styles.column, styles.columnText]}>
-                                <Text style={styles.whiteText}>Please go into your 'My Account' and click Begin.</Text>
+                                <Text style={styles.whiteText}>You will receive an email 30 minutes prior to your appointment with a link to begin. You can also sign in to your Jane account with a web browser and tap Begin.</Text>
                             </View>
                         </View>
 
@@ -160,6 +160,8 @@ class WelcomePage extends AbstractWelcomePage {
         }
         */
         return <WelcomePageLayout _headerStyles={this.props._headerStyles} />
+
+        // return this._renderFullUI(); // use to get access to call in simluator
     }
 
     /**
