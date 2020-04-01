@@ -11,10 +11,10 @@ PODS:
   - CocoaLumberjack (3.5.3):
     - CocoaLumberjack/Core (= 3.5.3)
   - CocoaLumberjack/Core (3.5.3)
-  - Crashlytics (3.12.0):
-    - Fabric (~> 1.9.0)
+  - Crashlytics (3.14.0):
+    - Fabric (~> 1.10.2)
   - DoubleConversion (1.1.6)
-  - Fabric (1.9.0)
+  - Fabric (1.10.2)
   - FBLazyVector (0.61.5-jitsi.1)
   - FBReactNativeSpec (0.61.5-jitsi.1):
     - Folly (= 2018.10.22.00)
@@ -352,9 +352,9 @@ DEPENDENCIES:
   - Amplitude-iOS (~> 4.0.4)
   - BVLinearGradient (from `../node_modules/react-native-linear-gradient`)
   - CocoaLumberjack (~> 3.5.3)
-  - Crashlytics (~> 3.12.0)
+  - Crashlytics (~> 3.14.0)
   - DoubleConversion (from `../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec`)
-  - Fabric (~> 1.9.0)
+  - Fabric (~> 1.10.2)
   - FBLazyVector (from `../node_modules/react-native/Libraries/FBLazyVector/`)
   - FBReactNativeSpec (from `../node_modules/react-native/Libraries/FBReactNativeSpec/`)
   - Firebase/Core (~> 5.18.0)
@@ -500,9 +500,9 @@ SPEC CHECKSUMS:
   boost-for-react-native: 39c7adb57c4e60d6c5479dd8623128eb5b3f0f2c
   BVLinearGradient: e3aad03778a456d77928f594a649e96995f1c872
   CocoaLumberjack: 2f44e60eb91c176d471fdba43b9e3eae6a721947
-  Crashlytics: 07fb167b1694128c1c9a5a5cc319b0e9c3ca0933
+  Crashlytics: 540b7e5f5da5a042647227a5e3ac51d85eed06df
   DoubleConversion: 5805e889d232975c086db112ece9ed034df7a0b2
-  Fabric: f988e33c97f08930a413e08123064d2e5f68d655
+  Fabric: 706c8b8098fff96c33c0db69cbf81f9c551d0d74
   FBLazyVector: 4a5251159a3ed05dc11cc8b74cf937869935814b
   FBReactNativeSpec: 6fa602a20993212cc9877a81838578ffb0008bc9
   Firebase: 02f3281965c075426141a0ce1277e9de6649cab9
@@ -552,6 +552,6 @@ SPEC CHECKSUMS:
   RNWatch: 09738b339eceb66e4d80a2371633ca5fb380fa42
   Yoga: 7b4209fda2441f99d54dd6cf4c82b094409bb68f
 
-PODFILE CHECKSUM: 2e80376da8e5548cc02930427a8545606de85beb
+PODFILE CHECKSUM: 5c8454ce3370a6b3a69c87b5796eb3a53540b97f
 
 COCOAPODS: 1.9.1
