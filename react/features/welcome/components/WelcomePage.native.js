@@ -48,7 +48,7 @@ const WelcomePageLayout = ({ _headerStyles }) => (
 
                     <Image
                         style = { styles.logo }
-                        source = { require('../../../../images/logo-janechat-white.png') } />
+                        source = { require('../../../../images/jane-video-logo.png') } />
                     <Text style = { styles.bigText }>
                             Welcome to
                         {'\n'}
@@ -64,7 +64,8 @@ const WelcomePageLayout = ({ _headerStyles }) => (
                         </View>
                         <View style = { [ styles.column, styles.columnText ] }>
                             {/* eslint-disable-next-line max-len */}
-                            <Text style = { styles.whiteText }>Please go into the appointment in your schedule and click Begin.</Text>
+                            <Text style = { styles.whiteText }>Please go into the appointment in your schedule and click
+                                    Begin.</Text>
                         </View>
                     </View>
 
@@ -85,7 +86,6 @@ const WelcomePageLayout = ({ _headerStyles }) => (
         </View>
     </LocalVideoTrackUnderlay>
 );
-
 
 /**
  * The native container rendering the welcome page.

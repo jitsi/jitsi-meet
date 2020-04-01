@@ -45,5 +45,5 @@ export const ColorPalette = {
     Y200: '#FFC400', // Pub mix
 
     /** Jane */
-    jane: '#56bfc8',
+    jane: '#00c1ca',
 };
