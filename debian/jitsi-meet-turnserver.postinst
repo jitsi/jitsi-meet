@@ -100,6 +100,13 @@ case "$1" in
         sed -i "s/__turnSecret__/$TURN_SECRET/g" $TURN_CONFIG
         sed -i "s/__external_ip_address__/$JVB_HOSTNAME/g" $TURN_CONFIG
 
+        # Hack Debian Buster coturn to be able to bind privileged port 443
+        COTURN_UNIT_FILE="/lib/systemd/system/coturn.service"
+        if [[ -f $COTURN_UNIT_FILE ]] && ! grep -q "CAP_NET_BIND_SERVICE" "$COTURN_UNIT_FILE" ; then
+            sed -i "s/\[Service\]/\[Service\]\nAmbientCapabilities=CAP_NET_BIND_SERVICE/g" $COTURN_UNIT_FILE
+            systemctl daemon-reload
+        fi
+
         # SSL for nginx
         db_get jitsi-meet/cert-choice
         CERT_CHOICE="$RET"
