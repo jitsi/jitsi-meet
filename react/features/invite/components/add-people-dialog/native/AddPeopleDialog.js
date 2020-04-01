@@ -68,6 +68,11 @@ type Props = AbstractProps & {
 type State = AbstractState & {
 
     /**
+     * Boolean to show if an extra padding needs to be added to the bottom bar.
+     */
+    bottomPadding: boolean,
+
+    /**
      * State variable to keep track of the search field value.
      */
     fieldValue: string,
@@ -94,6 +99,7 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
     defaultState = {
         addToCallError: false,
         addToCallInProgress: false,
+        bottomPadding: false,
         fieldValue: '',
         inviteItems: [],
         searchInprogress: false,
@@ -194,9 +200,11 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
                             </View>
                             <TextInput
                                 autoCorrect = { false }
-                                autoFocus = { true }
+                                autoFocus = { false }
                                 clearButtonMode = 'always' // iOS only
+                                onBlur = { this._onFocused(false) }
                                 onChangeText = { this._onTypeQuery }
+                                onFocus = { this._onFocused(true) }
                                 placeholder = {
                                     this.props.t(`inviteDialog.${placeholderKey}`)
                                 }
@@ -223,7 +231,11 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
                                 renderItem = { this._renderItem } />
                         </View>
                     </SafeAreaView>
-                    <SafeAreaView style = { [ styles.bottomBar, _headerStyles.headerOverlay ] }>
+                    <SafeAreaView
+                        style = { [
+                            styles.bottomBar,
+                            _headerStyles.headerOverlay,
+                            this.state.bottomPadding ? styles.extraBarPadding : null ] }>
                         { this._renderShareMeetingButton() }
                     </SafeAreaView>
                 </KeyboardAvoidingView>
@@ -315,6 +327,22 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
         }
 
         return false;
+    }
+
+    _onFocused: boolean => Function;
+
+    /**
+     * Constructs a callback to be used to update the padding of the field if necessary.
+     *
+     * @param {boolean} focused - True of the field is focused.
+     * @returns {Function}
+     */
+    _onFocused(focused) {
+        return () => {
+            Platform.OS === 'android' && this.setState({
+                bottomPadding: focused
+            });
+        };
     }
 
     _onInvite: () => void
