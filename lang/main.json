@@ -1,21 +1,36 @@
 {
     "addPeople": {
         "add": "Invite",
+        "addContacts": "Invite your contacts",
+        "copyInvite": "Copy meeting invitation",
+        "copyLink": "Copy meeting link",
+        "copyStream": "Copy live streaming link",
         "countryNotSupported": "We do not support this destination yet.",
         "countryReminder": "Calling outside the US? Please make sure you start with the country code!",
+        "defaultEmail": "Your Default Email",
         "disabled": "You can't invite people.",
         "failedToAdd": "Failed to add participants",
         "footerText": "Dialing out is disabled.",
+        "googleEmail": "Google Email",
+        "inviteMoreHeader": "You are the only one in the meeting",
+        "inviteMoreMailSubject": "Join {{appName}} meeting",
+        "inviteMorePrompt": "Invite more people",
+        "linkCopied": "Link copied to clipboard",
         "loading": "Searching for people and phone numbers",
         "loadingNumber": "Validating phone number",
         "loadingPeople": "Searching for people to invite",
         "noResults": "No matching search results",
         "noValidNumbers": "Please enter a phone number",
+        "outlookEmail": "Outlook Email",
         "searchNumbers": "Add phone numbers",
         "searchPeople": "Search for people",
         "searchPeopleAndNumbers": "Search for people or add their phone numbers",
+        "shareInvite": "Share meeting invitation",
+        "shareLink": "Share the meeting link to invite others",
+        "shareStream": "Share the live streaming link",
         "telephone": "Telephone: {{number}}",
-        "title": "Invite people to this meeting"
+        "title": "Invite people to this meeting",
+        "yahooEmail": "Yahoo Email"
     },
     "audioDevices": {
         "bluetooth": "Bluetooth",
@@ -146,6 +161,7 @@
         "accessibilityLabel": {
             "liveStreaming": "Live Stream"
         },
+        "add": "Add",
         "allow": "Allow",
         "alreadySharedVideoMsg": "Another participant is already sharing a video. This conference allows only one shared video at a time.",
         "alreadySharedVideoTitle": "Only one shared video is allowed at a time",
@@ -562,7 +578,9 @@
         "pullToRefresh": "Pull to refresh"
     },
     "security": {
-        "insecureRoomNameWarning": "The room name is insecure. Unwanted participants may join your conference."
+        "about": "You can add a passcode to your meeting. Participants will need to provide the passcode before they are allowed to join the meeting.",
+        "insecureRoomNameWarning": "The room name is insecure. Unwanted participants may join your conference.",
+        "securityOptions": "Security options"
     },
     "settings": {
         "calendar": {
@@ -662,6 +680,7 @@
             "raiseHand": "Toggle raise hand",
             "recording": "Toggle recording",
             "remoteMute": "Mute participant",
+            "security": "Security options",
             "Settings": "Toggle settings",
             "sharedvideo": "Toggle Youtube video sharing",
             "shareRoom": "Invite someone",
@@ -715,6 +734,7 @@
         "profile": "Edit your profile",
         "raiseHand": "Raise / Lower your hand",
         "raiseYourHand": "Raise your hand",
+        "security": "Security options",
         "Settings": "Settings",
         "sharedvideo": "Share a YouTube video",
         "shareRoom": "Invite someone",

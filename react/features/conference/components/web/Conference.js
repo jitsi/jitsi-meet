@@ -25,14 +25,16 @@ import {
 
 import { maybeShowSuboptimalExperienceNotification } from '../../functions';
 
-import Labels from './Labels';
-import { default as Notice } from './Notice';
-import { default as Subject } from './Subject';
 import {
     AbstractConference,
     abstractMapStateToProps
 } from '../AbstractConference';
 import type { AbstractProps } from '../AbstractConference';
+
+import InviteMore from './InviteMore';
+import Labels from './Labels';
+import { default as Notice } from './Notice';
+import { default as Subject } from './Subject';
 
 declare var APP: Object;
 declare var config: Object;
@@ -202,6 +204,7 @@ class Conference extends AbstractConference<Props, *> {
 
                 <Notice />
                 <Subject />
+                <InviteMore />
                 <div id = 'videospace'>
                     <LargeVideo />
                     { hideVideoQualityLabel
