@@ -62,6 +62,7 @@ import {
     sendLocalParticipant
 } from './functions';
 import logger from './logger';
+import { Linking, Platform } from 'react-native';
 
 declare var APP: Object;
 
@@ -413,21 +414,35 @@ export function conferenceWillLeave(conference: Object) {
     return (dispatch: Function, getState: Function) => {
         const { jwt } = APP.store.getState()['features/base/jwt'];
         const { conferenceStartedTime, start } = APP.store.getState()['features/base/conference'];
-
+        const isIos = Platform.OS === 'ios';
         if (jwt && conferenceStartedTime) {
             const jwtPayload = jwtDecode(jwt);
             const leaveUrl = jwtPayload.context.leave_url || null;
             const surveyUrl = jwtPayload.context.survey_url || null;
+            const room = jwtPayload.room || null;
             const obj = {
                 jwt,
                 // eslint-disable-next-line camelcase
-                started_at: start
+                started_at: isIos ? start: conferenceStartedTime
             };
+
             const data = new Blob([ JSON.stringify(obj, null, 2) ], { type: 'text/plain; charset=UTF-8' });
             // eslint-disable-next-line no-mixed-operators
 
             if (leaveUrl && surveyUrl) {
-                navigator.sendBeacon(leaveUrl, data);
+                if (isIos) {
+                    const redirectBackToJaneLink = `https://${leaveUrl.split('//')[1]}/video_chat_sessions/${room}`;
+                    Linking.openURL(redirectBackToJaneLink).then(() => {
+                        sendBeaconRn(leaveUrl, data).then(r => {
+                            console.log(r, 'response');
+                        })
+                            .catch(e => {
+                                console.log(e, 'error');
+                            });
+                    });
+                } else {
+                    navigator.sendBeacon(leaveUrl, data);
+                }
             }
         }
 
@@ -436,6 +451,17 @@ export function conferenceWillLeave(conference: Object) {
             conference
         });
     };
+}
+
+// eslint-disable-next-line require-jsdoc,no-unused-vars,no-empty-function
+function sendBeaconRn(url, data) {
+    return fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'text/plain; charset=UTF-8'
+        },
+        body: data
+    });
 }
 
 /**
