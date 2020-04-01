@@ -39,16 +39,18 @@ import WelcomePageLists from './WelcomePageLists';
 import WelcomePageSideBar from './WelcomePageSideBar';
 import styles, { PLACEHOLDER_TEXT_COLOR } from './styles';
 
-const WelcomePageLayout = ({ _headerStyles }) => (
-    <LocalVideoTrackUnderlay>
-        <View style = { _headerStyles.page }>
-            <SafeAreaView style = { [ styles.blankPageWrapper, styles.welcomePage ] }>
-                <View style = { styles.welcomePageContainer }>
+const WelcomePageLayout = ({_headerStyles}) => {
+    return (
+        <LocalVideoTrackUnderlay>
+            <View style = { _headerStyles.page }>
+                <SafeAreaView style = { [ styles.blankPageWrapper, styles.welcomePage ] }>
+                    <View style={styles.welcomePageContainer}>
 
-                    <Image
-                        style = { styles.logo }
-                        source = { require('../../../../images/logo-janechat-white.png') } />
-                    <Text style = { styles.bigText }>
+                        <Image
+                            style = { styles.logo }
+                            source={require('../../../../images/jane-video-logo.png')}
+                        />
+                        <Text style = { styles.bigText }>
                             Welcome to
                         {'\n'}
                             Jane Online Appointments

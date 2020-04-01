@@ -311,11 +311,14 @@ export default {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        maxWidth: 500, // this keeps it full width on iPhones, but limitted width on iPads
+        maxWidth: 430, // this keeps it full width on iPhones, but limitted width on iPads
         paddingHorizontal: 4 * BoxModel.padding
     },
     logo: {
-        marginBottom: 4 * BoxModel.margin
+        marginBottom: 4 * BoxModel.margin,
+        width: '45%',
+        height: undefined,
+        aspectRatio: 1437 / 1188
     },
     bigText: {
         ...JaneWeb.h3,
