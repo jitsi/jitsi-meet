@@ -50,7 +50,7 @@ const WelcomePageLayout = ({_headerStyles}) => {
 
                         <Image 
                             style = { styles.logo } 
-                            source={require('../../../../images/logo-janechat-white.png')}
+                            source={require('../../../../images/jane-video-logo.png')}
                         />
                         <Text style = { styles.bigText }>
                             Welcome to
