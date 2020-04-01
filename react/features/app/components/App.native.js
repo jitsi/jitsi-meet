@@ -22,7 +22,7 @@ import '../../mobile/permissions';
 import '../../mobile/picture-in-picture';
 import '../../mobile/proximity';
 import '../../mobile/wake-lock';
-import '../../mobile/watchos';
+// import '../../mobile/watchos';
 
 import logger from '../logger';
 import { AbstractApp } from './AbstractApp';
