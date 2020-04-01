@@ -5,8 +5,10 @@ require_relative '../node_modules/@react-native-community/cli-platform-ios/nativ
 target 'Jane Online Appointments' do
   project 'app/app.xcodeproj'
 
-  pod 'Firebase/Crashlytics', '~> 6.24.0'
-  pod 'Firebase/DynamicLinks', '~> 6.24.0'
+  pod 'Fabric', '~> 1.10.2'
+  pod 'Crashlytics', '~> 3.14.0'
+  pod 'Firebase/Core', '~> 5.18.0'
+  pod 'Firebase/DynamicLinks', '~> 5.18.0'
 end
 
 target 'JitsiMeet' do
