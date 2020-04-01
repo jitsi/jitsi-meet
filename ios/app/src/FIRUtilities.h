@@ -22,6 +22,6 @@
 @interface FIRUtilities : NSObject
 
 + (BOOL)appContainsRealServiceInfoPlist;
-+ (NSURL *_Nullable)extractURL: (FIRDynamicLink* _Nullable)dynamicLink;
+//+ (NSURL *_Nullable)extractURL: (FIRDynamicLink* _Nullable)dynamicLink;
 
 @end

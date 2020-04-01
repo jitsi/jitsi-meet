@@ -28,9 +28,6 @@ PODS:
     - FirebaseAnalytics (= 5.7.0)
   - Firebase/CoreOnly (5.18.0):
     - FirebaseCore (= 5.3.1)
-  - Firebase/DynamicLinks (5.18.0):
-    - Firebase/CoreOnly
-    - FirebaseDynamicLinks (= 3.4.1)
   - FirebaseAnalytics (5.7.0):
     - FirebaseCore (~> 5.3)
     - FirebaseInstanceID (~> 3.6)
@@ -40,13 +37,8 @@ PODS:
     - GoogleUtilities/Network (~> 5.2)
     - "GoogleUtilities/NSData+zlib (~> 5.2)"
     - nanopb (~> 0.3)
-  - FirebaseAnalyticsInterop (1.5.0)
   - FirebaseCore (5.3.1):
     - GoogleUtilities/Logger (~> 5.2)
-  - FirebaseDynamicLinks (3.4.1):
-    - FirebaseAnalytics (~> 5.1)
-    - FirebaseAnalyticsInterop (~> 1.0)
-    - FirebaseCore (~> 5.2)
   - FirebaseInstanceID (3.8.1):
     - FirebaseCore (~> 5.2)
     - GoogleUtilities/Environment (~> 5.2)
@@ -358,7 +350,6 @@ DEPENDENCIES:
   - FBLazyVector (from `../node_modules/react-native/Libraries/FBLazyVector/`)
   - FBReactNativeSpec (from `../node_modules/react-native/Libraries/FBReactNativeSpec/`)
   - Firebase/Core (~> 5.18.0)
-  - Firebase/DynamicLinks (~> 5.18.0)
   - Folly (from `../node_modules/react-native/third-party-podspecs/Folly.podspec`)
   - glog (from `../node_modules/react-native/third-party-podspecs/glog.podspec`)
   - ObjectiveDropboxOfficial (~> 3.9.4)
@@ -406,9 +397,7 @@ SPEC REPOS:
     - Fabric
     - Firebase
     - FirebaseAnalytics
-    - FirebaseAnalyticsInterop
     - FirebaseCore
-    - FirebaseDynamicLinks
     - FirebaseInstanceID
     - GoogleAppMeasurement
     - GoogleSignIn
@@ -507,9 +496,7 @@ SPEC CHECKSUMS:
   FBReactNativeSpec: 6fa602a20993212cc9877a81838578ffb0008bc9
   Firebase: 02f3281965c075426141a0ce1277e9de6649cab9
   FirebaseAnalytics: 23851fe602c872130a2c5c55040b302120346cc2
-  FirebaseAnalyticsInterop: 3f86269c38ae41f47afeb43ebf32a001f58fcdae
   FirebaseCore: 52f851b30e11360f1e67cf04b1edfebf0a47a2d3
-  FirebaseDynamicLinks: f209c3caccd82102caa0e91d393e3ccc593501fd
   FirebaseInstanceID: a122b0c258720cf250551bb2bedf48c699f80d90
   Folly: 30e7936e1c45c08d884aa59369ed951a8e68cf51
   glog: 1f3da668190260b06b429bb211bfbee5cd790c28
@@ -552,6 +539,6 @@ SPEC CHECKSUMS:
   RNWatch: 09738b339eceb66e4d80a2371633ca5fb380fa42
   Yoga: 7b4209fda2441f99d54dd6cf4c82b094409bb68f
 
-PODFILE CHECKSUM: 5c8454ce3370a6b3a69c87b5796eb3a53540b97f
+PODFILE CHECKSUM: e898d4f1146fd00b116de658272756d823112009
 
 COCOAPODS: 1.9.1
