@@ -40,7 +40,9 @@ case "$1" in
         db_get jitsi-meet-turnserver/jvb-hostname
         JVB_HOSTNAME_OLD=$RET
         if [ -n "$RET" ] && [ ! "$JVB_HOSTNAME_OLD" = "$JVB_HOSTNAME" ] ; then
-            rm -f $TURN_CONFIG
+            if [[ -f $TURN_CONFIG ]] && grep -q "jitsi-meet coturn config" "$TURN_CONFIG" ; then
+                rm -f $TURN_CONFIG
+            fi
         fi
 
         # this detect only old installations with no nginx
@@ -49,6 +51,14 @@ case "$1" in
             # nothing to do
             echo ""
             echo "turnserver not configured as no nginx found to multiplex traffic"
+            echo ""
+            db_stop
+            exit 0
+        fi
+
+        if [[ -f $TURN_CONFIG ]] ; then
+            echo ""
+            echo "turnserver is already configured on this machine, skipping."
             echo ""
             db_stop
             exit 0
@@ -65,46 +75,45 @@ case "$1" in
         fi
         TURN_SECRET="$RET"
 
-        if [[ -f $TURN_CONFIG ]] && ! grep -q "jitsi-meet coturn config" "$TURN_CONFIG" ; then
-            PUBLIC_IP=$(dig +short myip.opendns.com @resolver1.opendns.com)
-            cp /usr/share/jitsi-meet-turnserver/turnserver.conf $TURN_CONFIG
-            sed -i "s/jitsi-meet.example.com/$JVB_HOSTNAME/g" $TURN_CONFIG
-            sed -i "s/__turnSecret__/$TURN_SECRET/g" $TURN_CONFIG
-            sed -i "s/__external_ip_address__/$JVB_HOSTNAME/g" $TURN_CONFIG
+        # no turn config exists, lt's copy template and fill it in
+        PUBLIC_IP=$(dig +short myip.opendns.com @resolver1.opendns.com)
+        cp /usr/share/jitsi-meet-turnserver/turnserver.conf $TURN_CONFIG
+        sed -i "s/jitsi-meet.example.com/$JVB_HOSTNAME/g" $TURN_CONFIG
+        sed -i "s/__turnSecret__/$TURN_SECRET/g" $TURN_CONFIG
+        sed -i "s/__external_ip_address__/$JVB_HOSTNAME/g" $TURN_CONFIG
 
-            # SSL for nginx
-            db_get jitsi-meet/cert-choice
-            CERT_CHOICE="$RET"
+        # SSL for nginx
+        db_get jitsi-meet/cert-choice
+        CERT_CHOICE="$RET"
 
-            if [ "$CERT_CHOICE" = "I want to use my own certificate" ] ; then
-                db_get jitsi-meet/cert-path-key
-                CERT_KEY="$RET"
-                db_get jitsi-meet/cert-path-crt
-                CERT_CRT="$RET"
+        if [ "$CERT_CHOICE" = "I want to use my own certificate" ] ; then
+            db_get jitsi-meet/cert-path-key
+            CERT_KEY="$RET"
+            db_get jitsi-meet/cert-path-crt
+            CERT_CRT="$RET"
 
-                # replace self-signed certificate paths with user provided ones
-                CERT_KEY_ESC=$(echo $CERT_KEY | sed 's/\./\\\./g')
-                CERT_KEY_ESC=$(echo $CERT_KEY_ESC | sed 's/\//\\\//g')
-                sed -i "s/pkey=\/etc\/jitsi\/meet\/.*key/pkey=$CERT_KEY_ESC/g" $TURN_CONFIG
-                CERT_CRT_ESC=$(echo $CERT_CRT | sed 's/\./\\\./g')
-                CERT_CRT_ESC=$(echo $CERT_CRT_ESC | sed 's/\//\\\//g')
-                sed -i "s/cert=\/etc\/jitsi\/meet\/.*crt/cert=$CERT_CRT_ESC/g" $TURN_CONFIG
-            fi
+            # replace self-signed certificate paths with user provided ones
+            CERT_KEY_ESC=$(echo $CERT_KEY | sed 's/\./\\\./g')
+            CERT_KEY_ESC=$(echo $CERT_KEY_ESC | sed 's/\//\\\//g')
+            sed -i "s/pkey=\/etc\/jitsi\/meet\/.*key/pkey=$CERT_KEY_ESC/g" $TURN_CONFIG
+            CERT_CRT_ESC=$(echo $CERT_CRT | sed 's/\./\\\./g')
+            CERT_CRT_ESC=$(echo $CERT_CRT_ESC | sed 's/\//\\\//g')
+            sed -i "s/cert=\/etc\/jitsi\/meet\/.*crt/cert=$CERT_CRT_ESC/g" $TURN_CONFIG
+        fi
 
-            sed -i "s/#TURNSERVER_ENABLED/TURNSERVER_ENABLED/g" /etc/default/coturn
-            invoke-rc.d coturn restart || true
+        sed -i "s/#TURNSERVER_ENABLED/TURNSERVER_ENABLED/g" /etc/default/coturn
+        invoke-rc.d coturn restart || true
 
-            NGINX_STREAM_CONFIG="/etc/nginx/modules-enabled/60-jitsi-meet.conf"
-            if [ -f $NGINX_STREAM_CONFIG ] && [ -f $NGINX_CONFIG ] ; then
-                sed -i "s/listen 443 ssl/listen 4444 ssl http2/g" $NGINX_CONFIG
-                sed -i "s/listen \[\:\:\]\:443 ssl/listen \[\:\:\]\:4444 ssl http2/g" $NGINX_CONFIG
-                invoke-rc.d nginx reload || true
-            fi
+        NGINX_STREAM_CONFIG="/etc/nginx/modules-enabled/60-jitsi-meet.conf"
+        if [ -f $NGINX_STREAM_CONFIG ] && [ -f $NGINX_CONFIG ] ; then
+            sed -i "s/listen 443 ssl/listen 4444 ssl http2/g" $NGINX_CONFIG
+            sed -i "s/listen \[\:\:\]\:443 ssl/listen \[\:\:\]\:4444 ssl http2/g" $NGINX_CONFIG
+            invoke-rc.d nginx reload || true
+        fi
 
-            # Enable turn server in config.js
-            if [ -f $JITSI_MEET_CONFIG ] ; then
-                sed -i "s/\/\/ useStunTurn: true/useStunTurn: true/g" $JITSI_MEET_CONFIG
-            fi
+        # Enable turn server in config.js
+        if [ -f $JITSI_MEET_CONFIG ] ; then
+            sed -i "s/\/\/ useStunTurn: true/useStunTurn: true/g" $JITSI_MEET_CONFIG
         fi
 
         # and we're done with debconf
