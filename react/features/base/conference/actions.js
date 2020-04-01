@@ -66,6 +66,7 @@ import {
     sendLocalParticipant
 } from './functions';
 import logger from './logger';
+import { Linking } from 'react-native';
 
 declare var APP: Object;
 
@@ -404,14 +405,24 @@ export function conferenceWillLeave(conference: Object) {
         if (jwt) {
             const jwtPayload = jwtDecode(jwt);
             const url = jwtPayload.context.leave_url;
+            const room = jwtPayload.room;
             const obj = {
                 jwt,
                 // eslint-disable-next-line camelcase
                 started_at: startedAt
             };
-            const data = new Blob([ JSON.stringify(obj, null, 2)], { type: 'text/plain; charset=UTF-8' });
+            const data = new Blob([ JSON.stringify(obj, null, 2) ], { type: 'text/plain; charset=UTF-8' });
 
-            // navigator.sendBeacon(url, data);
+            const redirectBackToJaneLink = `https://${url.split('//')[1]}/video_chat_sessions/${room}`;
+
+            Linking.openURL(redirectBackToJaneLink).then(() => {
+                sendBeaconRn(url, data).then(r => {
+                    console.log(r, 'response');
+                })
+                 .catch(e => {
+                     console.log(e, 'error');
+                 });
+            });
         }
 
         dispatch({
@@ -419,6 +430,17 @@ export function conferenceWillLeave(conference: Object) {
             conference
         });
     };
+}
+
+// eslint-disable-next-line require-jsdoc,no-unused-vars,no-empty-function
+function sendBeaconRn(url, data) {
+    return fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'text/plain; charset=UTF-8'
+        },
+        body: data
+    });
 }
 
 /**
