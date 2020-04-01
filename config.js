@@ -152,7 +152,7 @@ var config = {
     // Video
 
     // Sets the preferred resolution (height) for local video. Defaults to 720.
-    // resolution: 720,
+    resolution: 360,
 
     // Specifies whether the raised hand will hide when someone becomes a dominant speaker or not
     // disableRemoveRaisedHandOnFocus: false,
