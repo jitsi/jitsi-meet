@@ -390,6 +390,9 @@ var config = {
         // userRegion: "asia"
     },
 
+    // Decides whether the start/stop recording audio notifications should play on record.
+    // disableRecordAudioNotification: false,
+
     // Information for the chrome extension banner
     // chromeExtensionBanner: {
     //     // The chrome extension to be installed address
