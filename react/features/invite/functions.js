@@ -233,6 +233,58 @@ export function getInviteResultsForQuery(
 }
 
 /**
+ * Creates a message describing how to dial in to the conference.
+ *
+ * @returns {string}
+ */
+export function getInviteText({
+    _conferenceName,
+    _localParticipantName,
+    _inviteUrl,
+    _locationUrl,
+    _dialIn,
+    _liveStreamViewURL,
+    phoneNumber,
+    t
+}: Object) {
+    const inviteURL = _decodeRoomURI(_inviteUrl);
+
+    let invite = _localParticipantName
+        ? t('info.inviteURLFirstPartPersonal', { name: _localParticipantName })
+        : t('info.inviteURLFirstPartGeneral');
+
+    invite += t('info.inviteURLSecondPart', {
+        url: inviteURL
+    });
+
+    if (_liveStreamViewURL) {
+        const liveStream = t('info.inviteLiveStream', {
+            url: _liveStreamViewURL
+        });
+
+        invite = `${invite}\n${liveStream}`;
+    }
+
+    if (shouldDisplayDialIn(_dialIn)) {
+        const dial = t('info.invitePhone', {
+            number: phoneNumber,
+            conferenceID: _dialIn.conferenceID
+        });
+        const moreNumbers = t('info.invitePhoneAlternatives', {
+            url: getDialInfoPageURL(
+                _conferenceName,
+                _locationUrl
+            ),
+            silentUrl: `${inviteURL}#config.startSilent=true`
+        });
+
+        invite = `${invite}\n${dial}\n${moreNumbers}`;
+    }
+
+    return invite;
+}
+
+/**
  * Helper for determining how many of each type of user is being invited. Used
  * for logging and sending analytics related to invites.
  *

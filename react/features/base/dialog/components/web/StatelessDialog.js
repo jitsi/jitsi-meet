@@ -29,7 +29,10 @@ const OK_BUTTON_ID = 'modal-dialog-ok-button';
 type Props = {
     ...DialogProps,
 
-    i18n: Object,
+    /**
+     * Custom dialog header that replaces the standard heading.
+     */
+    customHeader?: React$Element<any> | Function,
 
     /**
      * Disables dismissing the dialog when the blanket is clicked. Enabled
@@ -42,6 +45,8 @@ type Props = {
      * clicking the blanket, will cancel.
      */
     hideCancelButton: boolean,
+
+    i18n: Object,
 
     /**
      * Whether the dialog is modal. This means clicking on the blanket will
@@ -106,6 +111,7 @@ class StatelessDialog extends Component<Props> {
      */
     render() {
         const {
+            customHeader,
             children,
             t /* The following fixes a flow error: */ = _.identity,
             titleString,
@@ -116,8 +122,11 @@ class StatelessDialog extends Component<Props> {
         return (
             <Modal
                 autoFocus = { true }
+                components = {{
+                    Header: customHeader
+                }}
                 footer = { this._renderFooter }
-                heading = { titleString || t(titleKey) }
+                heading = { customHeader ? undefined : titleString || t(titleKey) }
                 i18n = { this.props.i18n }
                 onClose = { this._onDialogDismissed }
                 onDialogDismissed = { this._onDialogDismissed }
