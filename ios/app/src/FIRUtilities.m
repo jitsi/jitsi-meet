@@ -30,19 +30,45 @@
   return containsRealServiceInfoPlist;
 }
 
-+ (NSURL *)extractURL: (FIRDynamicLink*)dynamicLink {
-  NSURL *url = nil;
-  if (dynamicLink != nil) {
-    NSURL *dynamicLinkURL = dynamicLink.url;
-    if (dynamicLinkURL != nil
-        && (dynamicLink.matchType == FIRDLMatchTypeUnique
-            || dynamicLink.matchType == FIRDLMatchTypeDefault)) {
-          // Strong match, process it.
-          url = dynamicLinkURL;
-        }
-  }
+// + (BOOL)containsRealServiceInfoPlistInBundle:(NSBundle *)bundle {
+//   NSString *bundlePath = bundle.bundlePath;
+//   if (!bundlePath.length) {
+//     return NO;
+//   }
+//
+//   NSString *plistFilePath = [bundle pathForResource:kGoogleServiceInfoFileName
+//                                              ofType:kGoogleServiceInfoFileType];
+//   if (!plistFilePath.length) {
+//     return NO;
+//   }
+//
+//   NSDictionary *plist = [NSDictionary dictionaryWithContentsOfFile:plistFilePath];
+//   if (!plist) {
+//     return NO;
+//   }
+//
+//   // Perform a very naive validation by checking to see if the plist has the dummy google app id
+//   NSString *googleAppID = plist[kGoogleAppIDPlistKey];
+//   if (!googleAppID.length) {
+//     return NO;
+//   }
+//
+//   return YES;
+// }
 
-  return url;
-}
+//+ (NSURL *)extractURL: (FIRDynamicLink*)dynamicLink {
+//  NSURL *url = nil;
+//  if (dynamicLink != nil) {
+//    NSURL *dynamicLinkURL = dynamicLink.url;
+//    if (dynamicLinkURL != nil
+//        && (dynamicLink.matchType == FIRDLMatchTypeUnique
+//            || dynamicLink.matchType == FIRDLMatchTypeDefault)) {
+//          // Strong match, process it.
+//          url = dynamicLinkURL;
+//        }
+//  }
+//
+//  return url;
+//}
 
 @end

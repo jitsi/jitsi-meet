@@ -8,7 +8,7 @@ target 'Jane Online Appointments' do
   pod 'Fabric', '~> 1.10.2'
   pod 'Crashlytics', '~> 3.14.0'
   pod 'Firebase/Core', '~> 5.18.0'
-  pod 'Firebase/DynamicLinks', '~> 5.18.0'
+#  pod 'Firebase/DynamicLinks', '~> 5.18.0'
 end
 
 target 'JitsiMeet' do
