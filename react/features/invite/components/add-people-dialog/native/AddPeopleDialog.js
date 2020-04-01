@@ -13,9 +13,18 @@ import {
     View
 } from 'react-native';
 
+import { ColorSchemeRegistry } from '../../../../base/color-scheme';
 import { AlertDialog, openDialog } from '../../../../base/dialog';
 import { translate } from '../../../../base/i18n';
-import { Icon, IconCancelSelection, IconCheck, IconClose, IconPhone, IconSearch } from '../../../../base/icons';
+import {
+    Icon,
+    IconCancelSelection,
+    IconCheck,
+    IconClose,
+    IconPhone,
+    IconSearch,
+    IconShare
+} from '../../../../base/icons';
 import {
     AvatarListItem,
     HeaderWithNavigation,
@@ -23,6 +32,7 @@ import {
     type Item
 } from '../../../../base/react';
 import { connect } from '../../../../base/redux';
+import { beginShareRoom } from '../../../../share-room';
 
 import { setAddPeopleDialogVisible } from '../../../actions.native';
 
@@ -38,6 +48,11 @@ import styles, {
 } from './styles';
 
 type Props = AbstractProps & {
+
+    /**
+     * The color schemed style of the Header.
+     */
+    _headerStyles: Object,
 
     /**
      * True if the invite dialog should be open, false otherwise.
@@ -113,6 +128,7 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
         this._onCloseAddPeopleDialog = this._onCloseAddPeopleDialog.bind(this);
         this._onInvite = this._onInvite.bind(this);
         this._onPressItem = this._onPressItem.bind(this);
+        this._onShareMeeting = this._onShareMeeting.bind(this);
         this._onTypeQuery = this._onTypeQuery.bind(this);
         this._setFieldRef = this._setFieldRef.bind(this);
     }
@@ -137,7 +153,8 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
     render() {
         const {
             _addPeopleEnabled,
-            _dialOutEnabled
+            _dialOutEnabled,
+            _headerStyles
         } = this.props;
         const { inviteItems, selectableItems } = this.state;
 
@@ -205,6 +222,9 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
                                 keyboardShouldPersistTaps = 'always'
                                 renderItem = { this._renderItem } />
                         </View>
+                    </SafeAreaView>
+                    <SafeAreaView style = { [ styles.bottomBar, _headerStyles.headerOverlay ] }>
+                        { this._renderShareMeetingButton() }
                     </SafeAreaView>
                 </KeyboardAvoidingView>
             </SlidingView>
@@ -347,6 +367,22 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
                 });
             }
         };
+    }
+
+    _onShareMeeting: () => void
+
+    /**
+     * Shows the system share sheet to share the meeting information.
+     *
+     * @returns {void}
+     */
+    _onShareMeeting() {
+        if (this.state.inviteItems.length > 0) {
+            // The use probably intended to invite people.
+            this._onInvite();
+        } else {
+            this.props.dispatch(beginShareRoom());
+        }
     }
 
     _onTypeQuery: string => void
@@ -526,6 +562,24 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
         );
     }
 
+    /**
+     * Renders a button to share the meeting info.
+     *
+     * @returns {React#Element<*>}
+     */
+    _renderShareMeetingButton() {
+        const { _headerStyles } = this.props;
+
+        return (
+            <TouchableOpacity
+                onPress = { this._onShareMeeting }>
+                <Icon
+                    src = { IconShare }
+                    style = { [ _headerStyles.headerButtonText, styles.shareIcon ] } />
+            </TouchableOpacity>
+        );
+    }
+
     _setFieldRef: ?TextInput => void
 
     /**
@@ -567,6 +621,7 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
 function _mapStateToProps(state: Object) {
     return {
         ..._abstractMapStateToProps(state),
+        _headerStyles: ColorSchemeRegistry.get(state, 'Header'),
         _isVisible: state['features/invite'].inviteDialogVisible
     };
 }
