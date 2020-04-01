@@ -71,7 +71,6 @@ import {
     setOverflowMenuVisible,
     setToolbarHovered
 } from '../../actions';
-import AudioMuteButton from '../AudioMuteButton';
 import AudioSettingsButton from './AudioSettingsButton';
 import DownloadButton from '../DownloadButton';
 import { isToolboxVisible } from '../../functions';
@@ -81,7 +80,6 @@ import OverflowMenuButton from './OverflowMenuButton';
 import OverflowMenuProfileItem from './OverflowMenuProfileItem';
 import MuteEveryoneButton from './MuteEveryoneButton';
 import ToolbarButton from './ToolbarButton';
-import VideoMuteButton from '../VideoMuteButton';
 import VideoSettingsButton from './VideoSettingsButton';
 import {
     ClosedCaptionButton
@@ -127,11 +125,6 @@ type Props = {
      * Whether or not the app is currently in full screen.
      */
     _fullScreen: boolean,
-
-    /**
-     * Whether or not the prejoin page is enabled.
-     */
-    _prejoinPageEnabled: boolean,
 
     /**
      * Whether or not the tile view is enabled.
@@ -1130,13 +1123,9 @@ class Toolbox extends Component<Props, State> {
      */
     _renderAudioButton() {
         return this._shouldShowButton('microphone')
-            ? this.props._prejoinPageEnabled
-                ? <AudioSettingsButton
-                    key = 'asb'
-                    visible = { true } />
-                : <AudioMuteButton
-                    key = 'amb'
-                    visible = { true } />
+            ? <AudioSettingsButton
+                key = 'asb'
+                visible = { true } />
             : null;
     }
 
@@ -1147,13 +1136,9 @@ class Toolbox extends Component<Props, State> {
      */
     _renderVideoButton() {
         return this._shouldShowButton('camera')
-            ? this.props._prejoinPageEnabled
-                ? <VideoSettingsButton
-                    key = 'vsb'
-                    visible = { true } />
-                : <VideoMuteButton
-                    key = 'vmb'
-                    visible = { true } />
+            ? <VideoSettingsButton
+                key = 'vsb'
+                visible = { true } />
             : null;
     }
 
@@ -1343,8 +1328,7 @@ function _mapStateToProps(state) {
     const {
         callStatsID,
         enableFeaturesBasedOnToken,
-        iAmRecorder,
-        prejoinPageEnabled
+        iAmRecorder
     } = state['features/base/config'];
     const sharedVideoStatus = state['features/shared-video'].status;
     const {
@@ -1395,7 +1379,6 @@ function _mapStateToProps(state) {
         _localParticipantID: localParticipant.id,
         _localRecState: localRecordingStates,
         _overflowMenuVisible: overflowMenuVisible,
-        _prejoinPageEnabled: prejoinPageEnabled,
         _raisedHand: localParticipant.raisedHand,
         _screensharing: localVideo && localVideo.videoType === 'desktop',
         _sharingVideo: sharedVideoStatus === 'playing'
