@@ -23,6 +23,12 @@ export default {
         flex: 1
     },
 
+    bottomBar: {
+        alignItems: 'center',
+        flexDirection: 'row',
+        justifyContent: 'space-around'
+    },
+
     clearButton: {
         alignItems: 'center',
         justifyContent: 'center',
@@ -122,6 +128,10 @@ export default {
         flexDirection: 'row',
         justifyContent: 'center',
         width: ICON_SIZE + 16
+    },
+
+    shareIcon: {
+        fontSize: 42
     },
 
     unselectIcon: {
