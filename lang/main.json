@@ -244,6 +244,7 @@
         "reservationError": "Reservation system error",
         "reservationErrorMsg": "Error code: {{code}}, message: {{msg}}",
         "retry": "Retry",
+        "screenSharingAudio": "Share audio",
         "screenSharingFailedToInstall": "Oops! Your screen sharing extension failed to install.",
         "screenSharingFailedToInstallTitle": "Screen sharing extension failed to install",
         "screenSharingFirefoxPermissionDeniedError": "Something went wrong while we were trying to share your screen. Please make sure that you have given us permission to do so. ",
