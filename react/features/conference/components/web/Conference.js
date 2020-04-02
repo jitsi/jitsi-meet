@@ -8,6 +8,7 @@ import VideoLayout from '../../../../../modules/UI/videolayout/VideoLayout';
 import { connect, disconnect } from '../../../base/connection';
 import { translate } from '../../../base/i18n';
 import { connect as reactReduxConnect } from '../../../base/redux';
+import { getBackendSafeRoomName } from '../../../base/util';
 import { Chat } from '../../../chat';
 import { Filmstrip } from '../../../filmstrip';
 import { CalleeInfoContainer } from '../../../invite';
@@ -78,6 +79,11 @@ type Props = AbstractProps & {
      */
     _layoutClassName: string,
 
+    /**
+     * Name for this conference room.
+     */
+    _roomName: string,
+
     dispatch: Function,
     t: Function
 }
@@ -120,7 +126,7 @@ class Conference extends AbstractConference<Props, *> {
      * @inheritdoc
      */
     componentDidMount() {
-        document.title = interfaceConfig.APP_NAME;
+        document.title = `${this.props._roomName} | ${interfaceConfig.APP_NAME}`;
         this._start();
     }
 
@@ -259,11 +265,13 @@ class Conference extends AbstractConference<Props, *> {
  */
 function _mapStateToProps(state) {
     const currentLayout = getCurrentLayout(state);
+    const roomName = getBackendSafeRoomName(state['features/base/conference'].room);
 
     return {
         ...abstractMapStateToProps(state),
         _iAmRecorder: state['features/base/config'].iAmRecorder,
-        _layoutClassName: LAYOUT_CLASSNAMES[currentLayout]
+        _layoutClassName: LAYOUT_CLASSNAMES[currentLayout],
+        _roomName: roomName
     };
 }
 
