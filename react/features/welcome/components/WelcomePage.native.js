@@ -64,7 +64,7 @@ const WelcomePageLayout = ({_headerStyles}) => {
                             </View>
                             <View style={[styles.column, styles.columnText]}>
                                 <Text style={[styles.whiteText, styles.bold]}>Staff Member</Text>
-                                <Text style={styles.whiteText}>Please find the scheduled appointment in a web browser and click <Text style={styles.bold}>Begin</Text>.</Text>
+                                <Text style={styles.whiteText}>Please find the scheduled appointment in a web browser and tap <Text style={styles.bold}>Begin</Text>.</Text>
                             </View>
                         </View>
                         
