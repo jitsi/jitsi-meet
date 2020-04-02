@@ -404,8 +404,8 @@ export function conferenceWillLeave(conference: Object) {
 
         if (jwt) {
             const jwtPayload = jwtDecode(jwt);
-            const url = jwtPayload.context.leave_url;
-            const videoChatSessionId = jwtPayload.context.video_chat_session_id;
+            const url = jwtPayload.context.leave_url || null;
+            const surveyUrl = jwtPayload.context.survey_url || null;
             const obj = {
                 jwt,
                 // eslint-disable-next-line camelcase
@@ -413,16 +413,18 @@ export function conferenceWillLeave(conference: Object) {
             };
             const data = new Blob([ JSON.stringify(obj, null, 2) ], { type: 'text/plain; charset=UTF-8' });
 
-            const redirectToJaneSurveyLink = generateSurveyLink(url, videoChatSessionId);
+            // eslint-disable-next-line no-mixed-operators
+            if (url && surveyUrl) {
 
-            Linking.openURL(redirectToJaneSurveyLink).then(() => {
-                sendBeaconRn(url, data).then(r => {
-                    console.log(r, 'response');
-                })
-                 .catch(e => {
-                     console.log(e, 'error');
-                 });
-            });
+                Linking.openURL(surveyUrl).then(() => {
+                    sendBeaconRn(url, data).then(r => {
+                        console.log(r, 'response');
+                    })
+                     .catch(e => {
+                         console.log(e, 'error');
+                     });
+                });
+            }
         }
 
         dispatch({
@@ -432,10 +434,6 @@ export function conferenceWillLeave(conference: Object) {
     };
 }
 
-// eslint-disable-next-line require-jsdoc
-function generateSurveyLink(url, videoChatSessionId) {
-    return `https://${url.split('//')[1]}/video_chat_sessions/${videoChatSessionId}/survey`;
-}
 
 // eslint-disable-next-line require-jsdoc,no-unused-vars,no-empty-function
 function sendBeaconRn(url, data) {
