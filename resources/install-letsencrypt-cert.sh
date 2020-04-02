@@ -29,7 +29,7 @@ if [ ! -f certbot-auto ] ; then
 fi
 
 CRON_FILE="/etc/cron.weekly/letsencrypt-renew"
-if [ ! -d $"/etc/cron.weekly" ] ; then
+if [ ! -d "/etc/cron.weekly" ] ; then
     mkdir "/etc/cron.weekly"
 fi
 echo "#!/bin/bash" > $CRON_FILE
