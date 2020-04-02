@@ -6,9 +6,9 @@ server {
     root /srv/jitsi.example.com;
     index index.html;
 
-    location ~ ^/([a-zA-Z0-9=\?]+)$ {
+    location ~ ^/(?!(http-bind|external_api\.|xmpp-websocket))([a-zA-Z0-9=\?]+)$ {
         rewrite ^/(.*)$ / break;
-        }
+    }
 
     location / {
         ssi on;
