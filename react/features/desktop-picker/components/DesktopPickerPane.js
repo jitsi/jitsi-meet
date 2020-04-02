@@ -56,6 +56,31 @@ type Props = {
  * @extends Component
  */
 class DesktopPickerPane extends Component<Props> {
+
+    /**
+     * Initializes a new DesktopPickerPane instance.
+     *
+     * @param {Object} props - The read-only properties with which the new
+     * instance is to be initialized.
+     */
+    constructor(props: Props) {
+        super(props);
+
+        this._onShareAudioCheck = this._onShareAudioCheck.bind(this);
+    }
+
+    _onShareAudioCheck: (Object) => void;
+
+    /**
+     * Function to be called when the Checkbox is used.
+     *
+     * @param {boolean} checked - Checkbox status (checked or not).
+     * @returns {void}
+     */
+    _onShareAudioCheck({ target: { checked } }) {
+        this.props.onShareAudioChecked(checked);
+    }
+
     /**
      * Implements React's {@link Component#render()}.
      *
@@ -66,7 +91,6 @@ class DesktopPickerPane extends Component<Props> {
         const {
             onClick,
             onDoubleClick,
-            onShareAudioChecked,
             selectedSourceId,
             sources,
             type,
@@ -96,15 +120,13 @@ class DesktopPickerPane extends Component<Props> {
         let checkBox;
 
         // Only display the share audio checkbox if we're on windows and on
-        // dekstop sharing tab.
+        // desktop sharing tab.
         // App window and Mac OS screen sharing doesn't work with system audio.
         if (type === 'screen' && Platform.OS === 'windows') {
             checkBox = (<Checkbox
                 label = { t('dialog.screenSharingAudio') }
                 name = 'share-system-audio'
-                // eslint-disable-next-line react/jsx-no-bind
-                onChange = { ({ target: { checked } }) =>
-                    onShareAudioChecked(checked) } />);
+                onChange = { this._onShareAudioCheck } />);
         }
 
         return (
