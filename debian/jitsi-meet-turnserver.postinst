@@ -56,6 +56,12 @@ case "$1" in
             fi
         done
 
+        # if there was a turn config backup it so we can configure
+        # we cannot recognize at the moment is this a user config or default config when installing coturn
+        if [[ -f $TURN_CONFIG ]] && ! grep -q "jitsi-meet coturn config" "$TURN_CONFIG" ; then
+            mv $TURN_CONFIG $TURN_CONFIG.bak
+        fi
+
         # detect dpkg-reconfigure, just delete old links
         db_get jitsi-meet-turnserver/jvb-hostname
         JVB_HOSTNAME_OLD=$RET
