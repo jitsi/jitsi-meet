@@ -328,6 +328,9 @@ export default {
     whiteText: {
         color: TEXT_COLOR
     },
+    bold: {
+        fontWeight: 'bold'
+    },
     row: {
         marginTop: 4 * BoxModel.margin,
         flexDirection: 'row'
@@ -335,7 +338,7 @@ export default {
     column: {
         paddingHorizontal: BoxModel.padding,
         flex: 1,
-        justifyContent: 'center'
+        justifyContent: 'flex-start'
     },
     columnText: {
         flex: 6

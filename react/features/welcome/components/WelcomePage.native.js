@@ -1,5 +1,5 @@
-import { faUserMd, faUser } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
+import { faUserMd, faUser, faIdBadge, faUser } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon, FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import React from 'react';
 import {
     Animated,
@@ -66,6 +66,20 @@ const WelcomePageLayout = ({ _headerStyles }) => (
                         </View>
                     </View>
 
+
+                    <View style = { styles.row }>
+                        <View style = { styles.column }>
+                            <FontAwesomeIcon
+                                icon = { faIdBadge }
+                                size = { 45 }
+                                color = 'white' />
+                        </View>
+                        <View style = { [ styles.column, styles.columnText ] }>
+                            <Text style = { [ styles.whiteText, styles.bold ] }>Staff Member</Text>
+                            <Text style = { styles.whiteText }>Please find the scheduled appointment in a web browser and click <Text style = { styles.bold }>Begin</Text>.</Text>
+                        </View>
+                    </View>
+
                     <View style = { styles.row }>
                         <View style = { styles.column }>
                             <FontAwesomeIcon
@@ -74,7 +88,8 @@ const WelcomePageLayout = ({ _headerStyles }) => (
                                 color = 'white' />
                         </View>
                         <View style = { [ styles.column, styles.columnText ] }>
-                            <Text style = { styles.whiteText }>You will receive an email 30 minutes prior to your appointment with a link to begin. You can also sign in to your Jane account with a web browser and tap Begin.</Text>
+                            <Text style = { [ styles.whiteText, styles.bold ] }>Client</Text>
+                            <Text style = { styles.whiteText }>You will receive an email 30 minutes prior to your appointment with a link to begin. You can also sign in to your Jane account with a web browser and tap <Text style = { styles.bold }>Begin</Text>.</Text>
                         </View>
                     </View>
                 </View>
