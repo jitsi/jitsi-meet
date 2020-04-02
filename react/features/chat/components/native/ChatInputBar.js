@@ -5,7 +5,6 @@ import { TextInput, TouchableOpacity, View } from 'react-native';
 
 import { translate } from '../../../base/i18n';
 import { Icon, IconChatSend } from '../../../base/icons';
-import { Platform } from '../../../base/react';
 
 import styles from './styles';
 
@@ -136,7 +135,7 @@ class ChatInputBar extends Component<Props, State> {
      */
     _onFocused(focused) {
         return () => {
-            Platform.OS === 'android' && this.setState({
+            this.setState({
                 addPadding: focused
             });
         };

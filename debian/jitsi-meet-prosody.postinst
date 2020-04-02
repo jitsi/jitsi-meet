@@ -136,7 +136,7 @@ case "$1" in
             echo -e "\nComponent \"internal.auth.$JVB_HOSTNAME\" \"muc\"" >> $PROSODY_HOST_CONFIG
             echo -e "    storage = \"null\"" >> $PROSODY_HOST_CONFIG
             echo -e "    modules_enabled = { \"ping\"; }" >> $PROSODY_HOST_CONFIG
-            echo -e "    admins = { \"focusUser@auth.jitmeet.example.com\", \"jvb@auth.jitmeet.example.com\" }" >> $PROSODY_HOST_CONFIG
+            echo -e "    admins = { \"$JICOFO_AUTH_USER@auth.$JVB_HOSTNAME\", \"jvb@auth.$JVB_HOSTNAME\" }" >> $PROSODY_HOST_CONFIG
         fi
 
         if [ ! -f /var/lib/prosody/$JVB_HOSTNAME.crt ]; then

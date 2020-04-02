@@ -1,7 +1,7 @@
 {
     "addPeople": {
         "add": "Invitar",
-        "countryNotSupported": "Aun no contamos con soporte a este destino.",
+        "countryNotSupported": "Aún no contamos con soporte a este destino.",
         "countryReminder": "¿Llamando fuera de los Estados Unidos? ¡Por favor, asegúrese de empezar con el código de país!",
         "disabled": "No puede invitar a otras personas.",
         "failedToAdd": "Error al agregar participantes",
@@ -31,7 +31,7 @@
         "addMeetingURL": "Agregar un vínculo a la reunión",
         "confirmAddLink": "¿Quiere añadir un enlace de Jitsi a este evento?",
         "error": {
-            "appConfiguration": "La integración del calendario no se está configurada correctamente",
+            "appConfiguration": "La integración del calendario no está configurada correctamente",
             "generic": "Se ha producido un error. Compruebe la configuración del calendario o pruebe a recargarlo",
             "notSignedIn": "Se ha producido un error de autenticación para ver los eventos del calendario. Compruebe la configuración del calendario e intente iniciar sesión de nuevo"
         },
@@ -713,7 +713,7 @@
         "standardDefinition": "Definición estándar"
     },
     "videothumbnail": {
-        "domute": "Control de escritorio remoto",
+        "domute": "Silenciar",
         "flip": "Voltear",
         "kick": "Expulsar",
         "moderator": "Moderador",

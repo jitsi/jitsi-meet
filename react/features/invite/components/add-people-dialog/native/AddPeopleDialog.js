@@ -13,9 +13,18 @@ import {
     View
 } from 'react-native';
 
+import { ColorSchemeRegistry } from '../../../../base/color-scheme';
 import { AlertDialog, openDialog } from '../../../../base/dialog';
 import { translate } from '../../../../base/i18n';
-import { Icon, IconCancelSelection, IconCheck, IconClose, IconPhone, IconSearch } from '../../../../base/icons';
+import {
+    Icon,
+    IconCancelSelection,
+    IconCheck,
+    IconClose,
+    IconPhone,
+    IconSearch,
+    IconShare
+} from '../../../../base/icons';
 import {
     AvatarListItem,
     HeaderWithNavigation,
@@ -23,8 +32,9 @@ import {
     type Item
 } from '../../../../base/react';
 import { connect } from '../../../../base/redux';
+import { beginShareRoom } from '../../../../share-room';
 
-import { setAddPeopleDialogVisible } from '../../../actions';
+import { setAddPeopleDialogVisible } from '../../../actions.native';
 
 import AbstractAddPeopleDialog, {
     type Props as AbstractProps,
@@ -40,6 +50,11 @@ import styles, {
 type Props = AbstractProps & {
 
     /**
+     * The color schemed style of the Header.
+     */
+    _headerStyles: Object,
+
+    /**
      * True if the invite dialog should be open, false otherwise.
      */
     _isVisible: boolean,
@@ -51,6 +66,11 @@ type Props = AbstractProps & {
 };
 
 type State = AbstractState & {
+
+    /**
+     * Boolean to show if an extra padding needs to be added to the bottom bar.
+     */
+    bottomPadding: boolean,
 
     /**
      * State variable to keep track of the search field value.
@@ -79,6 +99,7 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
     defaultState = {
         addToCallError: false,
         addToCallInProgress: false,
+        bottomPadding: false,
         fieldValue: '',
         inviteItems: [],
         searchInprogress: false,
@@ -113,6 +134,7 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
         this._onCloseAddPeopleDialog = this._onCloseAddPeopleDialog.bind(this);
         this._onInvite = this._onInvite.bind(this);
         this._onPressItem = this._onPressItem.bind(this);
+        this._onShareMeeting = this._onShareMeeting.bind(this);
         this._onTypeQuery = this._onTypeQuery.bind(this);
         this._setFieldRef = this._setFieldRef.bind(this);
     }
@@ -137,7 +159,8 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
     render() {
         const {
             _addPeopleEnabled,
-            _dialOutEnabled
+            _dialOutEnabled,
+            _headerStyles
         } = this.props;
         const { inviteItems, selectableItems } = this.state;
 
@@ -177,16 +200,17 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
                             </View>
                             <TextInput
                                 autoCorrect = { false }
-                                autoFocus = { true }
-                                clearButtonMode = 'always' // iOS only
+                                autoFocus = { false }
+                                onBlur = { this._onFocused(false) }
                                 onChangeText = { this._onTypeQuery }
+                                onFocus = { this._onFocused(true) }
                                 placeholder = {
                                     this.props.t(`inviteDialog.${placeholderKey}`)
                                 }
                                 ref = { this._setFieldRef }
                                 style = { styles.searchField }
                                 value = { this.state.fieldValue } />
-                            { this._renderAndroidClearButton() }
+                            { this._renderClearButton() }
                         </View>
                         { Boolean(inviteItems.length) && <View style = { styles.invitedList }>
                             <FlatList
@@ -205,6 +229,13 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
                                 keyboardShouldPersistTaps = 'always'
                                 renderItem = { this._renderItem } />
                         </View>
+                    </SafeAreaView>
+                    <SafeAreaView
+                        style = { [
+                            styles.bottomBar,
+                            _headerStyles.headerOverlay,
+                            this.state.bottomPadding ? styles.extraBarPadding : null ] }>
+                        { this._renderShareMeetingButton() }
                     </SafeAreaView>
                 </KeyboardAvoidingView>
             </SlidingView>
@@ -297,6 +328,22 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
         return false;
     }
 
+    _onFocused: boolean => Function;
+
+    /**
+     * Constructs a callback to be used to update the padding of the field if necessary.
+     *
+     * @param {boolean} focused - True of the field is focused.
+     * @returns {Function}
+     */
+    _onFocused(focused) {
+        return () => {
+            Platform.OS === 'android' && this.setState({
+                bottomPadding: focused
+            });
+        };
+    }
+
     _onInvite: () => void
 
     /**
@@ -349,6 +396,22 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
         };
     }
 
+    _onShareMeeting: () => void
+
+    /**
+     * Shows the system share sheet to share the meeting information.
+     *
+     * @returns {void}
+     */
+    _onShareMeeting() {
+        if (this.state.inviteItems.length > 0) {
+            // The use probably intended to invite people.
+            this._onInvite();
+        } else {
+            this.props.dispatch(beginShareRoom());
+        }
+    }
+
     _onTypeQuery: string => void
 
     /**
@@ -397,14 +460,12 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
     _query: (string) => Promise<Array<Object>>;
 
     /**
-     * Renders a button to clear the text field on Android.
-     *
-     * NOTE: For the best platform experience we use the native solution on iOS.
+     * Renders a button to clear the text field.
      *
      * @returns {React#Element<*>}
      */
-    _renderAndroidClearButton() {
-        if (Platform.OS !== 'android' || !this.state.fieldValue.length) {
+    _renderClearButton() {
+        if (!this.state.fieldValue.length) {
             return null;
         }
 
@@ -526,6 +587,24 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
         );
     }
 
+    /**
+     * Renders a button to share the meeting info.
+     *
+     * @returns {React#Element<*>}
+     */
+    _renderShareMeetingButton() {
+        const { _headerStyles } = this.props;
+
+        return (
+            <TouchableOpacity
+                onPress = { this._onShareMeeting }>
+                <Icon
+                    src = { IconShare }
+                    style = { [ _headerStyles.headerButtonText, styles.shareIcon ] } />
+            </TouchableOpacity>
+        );
+    }
+
     _setFieldRef: ?TextInput => void
 
     /**
@@ -567,6 +646,7 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
 function _mapStateToProps(state: Object) {
     return {
         ..._abstractMapStateToProps(state),
+        _headerStyles: ColorSchemeRegistry.get(state, 'Header'),
         _isVisible: state['features/invite'].inviteDialogVisible
     };
 }

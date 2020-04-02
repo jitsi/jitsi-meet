@@ -12,6 +12,7 @@ import { Platform } from '../../base/react';
 import '../../base/responsive-ui';
 import { updateSettings } from '../../base/settings';
 import '../../google-api';
+import { HelpView } from '../../help';
 import '../../mobile/audio-mode';
 import '../../mobile/back-button';
 import '../../mobile/background';
@@ -105,6 +106,17 @@ export class App extends AbstractApp {
                 dispatch(updateSettings({ disableCallIntegration: !callIntegrationEnabled }));
             }
         });
+    }
+
+    /**
+     * Renders platform specific extra elements to be added alongside with the main element, if need be.
+     *
+     * @inheritdoc
+     */
+    _createExtraPlatformSpecificElement() {
+        return (
+            <HelpView />
+        );
     }
 
     /**

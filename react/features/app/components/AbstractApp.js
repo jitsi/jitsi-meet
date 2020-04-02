@@ -89,8 +89,20 @@ export class AbstractApp extends BaseApp<Props, *> {
         return (
             <Fragment>
                 <OverlayContainer />
+                { this._createExtraPlatformSpecificElement() }
             </Fragment>
         );
+    }
+
+    /**
+     * Renders platform specific extra elements to be added alongside with the main element, if need be.
+     *
+     * NOTE: Overridden by child components.
+     *
+     * @returns {React$Element}
+     */
+    _createExtraPlatformSpecificElement() {
+        return null;
     }
 
     _createMainElement: (React$Element<*>, Object) => ?React$Element<*>;
