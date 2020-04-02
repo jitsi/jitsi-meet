@@ -79,10 +79,23 @@ const WelcomePageLayout = ({ _headerStyles }) => (
                         </View>
                         <View style = { [ styles.column, styles.columnText ] }>
                             <Text style = { [ styles.whiteText, styles.bold ] }>Staff Member</Text>
-                            <Text style = { styles.whiteText }>Please find the scheduled appointment in a web browser and click <Text style = { styles.bold }>Begin</Text>.</Text>
+                            {/* eslint-disable-next-line max-len */}
+                            <Text style = { styles.whiteText }>Please find the scheduled appointment in a web browser and tap <Text style = { styles.bold }>Begin</Text>.</Text>
                         </View>
                     </View>
-
+                    <View style = { styles.row }>
+                        <View style = { styles.column }>
+                            <FontAwesomeIcon
+                                icon = { faUser }
+                                size = { 45 }
+                                color = 'white' />
+                        </View>
+                        <View style = { [ styles.column, styles.columnText ] }>
+                            <Text style = { [ styles.whiteText, styles.bold ] }>Client</Text>
+                            {/* eslint-disable-next-line max-len */}
+                            <Text style = { styles.whiteText }>You will receive an email 30 minutes prior to your appointment with a link to begin. You can also sign in to your Jane account with a web browser and tap <Text style = { styles.bold }>Begin</Text>.</Text>
+                        </View>
+                    </View>
                     <View style = { styles.row }>
                         <View style = { styles.column }>
                             <FontAwesomeIcon
@@ -91,23 +104,12 @@ const WelcomePageLayout = ({ _headerStyles }) => (
                                 size = { 45 } />
                         </View>
                         <View style = { [ styles.column, styles.columnText ] }>
-                            <Text style = { [ styles.whiteText, styles.bold ] }>Client</Text>
-                            <Text style = { styles.whiteText }>You will receive an email 30 minutes prior to your appointment with a link to begin. You can also sign in to your Jane account with a web browser and tap <Text style = { styles.bold }>Begin</Text>.</Text>
+                            <Text style = { styles.whiteText }>Please go into your 'My Account' and click Begin.</Text>
                         </View>
                     </View>
                 </View>
 
-                <View style = { styles.row }>
-                    <View style = { styles.column }>
-                        <FontAwesomeIcon
-                            color = 'white'
-                            icon = { faUser }
-                            size = { 45 } />
-                    </View>
-                    <View style = { [ styles.column, styles.columnText ] }>
-                        <Text style = { styles.whiteText }>Please go into your 'My Account' and click Begin.</Text>
-                    </View>
-                </View>
+
             </SafeAreaView>
         </View>
     </LocalVideoTrackUnderlay>
