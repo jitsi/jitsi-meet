@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
-import { faUserMd, faUser } from '@fortawesome/free-solid-svg-icons'
+import { faIdBadge, faUser } from '@fortawesome/free-solid-svg-icons'
 
 import { getName } from '../../app';
 
@@ -60,10 +60,11 @@ const WelcomePageLayout = ({_headerStyles}) => {
 
                         <View style = { styles.row }>
                             <View style={styles.column}>
-                                <FontAwesomeIcon icon={ faUserMd } size={45} color='white' />
+                                <FontAwesomeIcon icon={ faIdBadge } size={45} color='white' />
                             </View>
                             <View style={[styles.column, styles.columnText]}>
-                                <Text style={styles.whiteText}>Please find the scheduled appointment in a web browser and click Begin.</Text>
+                                <Text style={[styles.whiteText, styles.bold]}>Staff Member</Text>
+                                <Text style={styles.whiteText}>Please find the scheduled appointment in a web browser and click <Text style={styles.bold}>Begin</Text>.</Text>
                             </View>
                         </View>
                         
@@ -72,7 +73,8 @@ const WelcomePageLayout = ({_headerStyles}) => {
                                 <FontAwesomeIcon icon={ faUser } size={45} color='white' />
                             </View>
                             <View style={[styles.column, styles.columnText]}>
-                                <Text style={styles.whiteText}>You will receive an email 30 minutes prior to your appointment with a link to begin. You can also sign in to your Jane account with a web browser and tap Begin.</Text>
+                                <Text style={[styles.whiteText, styles.bold]}>Client</Text>
+                                <Text style={styles.whiteText}>You will receive an email 30 minutes prior to your appointment with a link to begin. You can also sign in to your Jane account with a web browser and tap <Text style={styles.bold}>Begin</Text>.</Text>
                             </View>
                         </View>
 
