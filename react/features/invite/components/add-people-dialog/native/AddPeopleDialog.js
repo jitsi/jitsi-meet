@@ -201,7 +201,6 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
                             <TextInput
                                 autoCorrect = { false }
                                 autoFocus = { false }
-                                clearButtonMode = 'always' // iOS only
                                 onBlur = { this._onFocused(false) }
                                 onChangeText = { this._onTypeQuery }
                                 onFocus = { this._onFocused(true) }
@@ -211,7 +210,7 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
                                 ref = { this._setFieldRef }
                                 style = { styles.searchField }
                                 value = { this.state.fieldValue } />
-                            { this._renderAndroidClearButton() }
+                            { this._renderClearButton() }
                         </View>
                         { Boolean(inviteItems.length) && <View style = { styles.invitedList }>
                             <FlatList
@@ -461,14 +460,12 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
     _query: (string) => Promise<Array<Object>>;
 
     /**
-     * Renders a button to clear the text field on Android.
-     *
-     * NOTE: For the best platform experience we use the native solution on iOS.
+     * Renders a button to clear the text field.
      *
      * @returns {React#Element<*>}
      */
-    _renderAndroidClearButton() {
-        if (Platform.OS !== 'android' || !this.state.fieldValue.length) {
+    _renderClearButton() {
+        if (!this.state.fieldValue.length) {
             return null;
         }
 
