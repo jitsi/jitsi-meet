@@ -122,7 +122,8 @@ export class App extends AbstractApp {
             dispatch(updateSettings(this.props.userInfo || {}));
 
             // Update settings with feature-flag.
-            const callIntegrationEnabled = this.props.flags[CALL_INTEGRATION_ENABLED];
+            // const callIntegrationEnabled = this.props.flags[CALL_INTEGRATION_ENABLED];
+            const callIntegrationEnabled = false;
 
             if (typeof callIntegrationEnabled !== 'undefined') {
                 dispatch(updateSettings({ disableCallIntegration: !callIntegrationEnabled }));
