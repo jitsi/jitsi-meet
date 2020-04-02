@@ -13,6 +13,7 @@
         padding: 16px;
 
         &-icon {
+            color: #A4B8D1;
             display: inline-block;
         }
 
@@ -65,6 +66,10 @@
 
             .audio-preview-test-button {
                 display: inline-block;
+            }
+
+            .audio-preview-entry-text {
+                max-width: 196px;
             }
         }
 
