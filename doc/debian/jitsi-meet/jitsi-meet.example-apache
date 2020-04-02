@@ -19,6 +19,7 @@
   SSLCipherSuite "EECDH+ECDSA+AESGCM:EECDH+aRSA+AESGCM:EECDH+ECDSA+SHA256:EECDH+aRSA+SHA256:EECDH+ECDSA+SHA384:EECDH+ECDSA+SHA256:EECDH+aRSA+SHA384:EDH+aRSA+AESGCM:EDH+aRSA+SHA256:EDH+aRSA:EECDH:!aNULL:!eNULL:!MEDIUM:!LOW:!3DES:!MD5:!EXP:!PSK:!SRP:!DSS:!RC4:!SEED"
   SSLHonorCipherOrder on
   Header set Strict-Transport-Security "max-age=31536000"
+  Header set X-Robots-Tag "noindex"
 
   DocumentRoot "/usr/share/jitsi-meet"
   <Directory "/usr/share/jitsi-meet">
