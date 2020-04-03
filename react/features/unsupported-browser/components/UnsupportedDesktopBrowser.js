@@ -45,10 +45,10 @@ class UnsupportedDesktopBrowser extends Component<Props> {
                     It looks like you're using a browser we don't support.
                 </h2>
                 <p className = { `${_SNS}__description` }>
-                    Please try again with the latest version of&nbsp;
+                    Please try again with the latest version of a browser based on&nbsp;
                     <a
                         className = { `${_SNS}__link` }
-                        href = { CHROME } >Chrome</a>&nbsp;
+                        href = { CHROMIUM } >Chromium</a>&nbsp;
                     {
                         this._showFirefox() && <>and <a
                             className = { `${_SNS}__link` }
