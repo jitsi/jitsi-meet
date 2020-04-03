@@ -102,7 +102,7 @@ class StreamKeyForm extends AbstractStreamKeyForm<Props> {
      * @returns {void}
      */
     _onOpenHelp() {
-        window.open(this.helpURL, 'noopener');
+        window.open(this.helpURL, '_blank', 'noopener');
     }
 }
 
