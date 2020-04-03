@@ -395,7 +395,9 @@
         "signOut": "Sign out",
         "start": "Start a live stream",
         "streamIdHelp": "What's this?",
-        "unavailableTitle": "Live Streaming unavailable"
+        "unavailableTitle": "Live Streaming unavailable",
+        "youtubeTerms": "YouTube terms of services",
+        "googlePrivacyPolicy": "Google Privacy Policy"
     },
     "localRecording": {
         "clientState": {
