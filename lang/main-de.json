@@ -33,7 +33,7 @@
         "error": {
             "appConfiguration": "Kalenderintegration ist nicht richtig konfiguriert.",
             "generic": "Ein Fehler ist aufgetreten. Prüfen Sie Ihre Kalendereinstellungen oder versuchen Sie, den Kalender zu aktualisieren.",
-            "notSignedIn": "Ein Fehler ist während der Authentifizierung zur Anzeige von Kalenderertermine aufgetreten. Prüfen Sie Ihre Kalendereinstellungen oder versuchen Sie, sich erneut anzumelden."
+            "notSignedIn": "Ein Fehler ist während der Authentifizierung zur Anzeige von Kalenderterminen aufgetreten. Prüfen Sie Ihre Kalendereinstellungen oder versuchen Sie, sich erneut anzumelden."
         },
         "join": "Teilnehmen",
         "joinTooltip": "Am Meeting teilnehmen",
@@ -191,7 +191,7 @@
         "kickMessage": "Sie können sich für weitere Einzelheiten an {{participantDisplayName}}} wenden.",
         "kickParticipantButton": "Entfernen",
         "kickParticipantDialog": "Wollen Sie diesen Teilnehmer wirklich entfernen?",
-        "kickParticipantTitle": "Teilnehmer stummschalten?",
+        "kickParticipantTitle": "Teilnehmer entfernen?",
         "kickTitle": "Autsch! {{participantDisplayName}} hat Sie aus dem Meeting geworfen.",
         "liveStreaming": "Livestreaming",
         "liveStreamingDisabledForGuestTooltip": "Gäste können kein Livestreaming starten.",
@@ -241,7 +241,7 @@
         "removePassword": "$t(lockRoomPassword) entfernen",
         "removeSharedVideoMsg": "Sind Sie sicher, dass Sie das geteilte Video entfernen möchten?",
         "removeSharedVideoTitle": "Freigegebenes Video entfernen",
-        "reservationError": "Fehler im Reservationssystem",
+        "reservationError": "Fehler im Reservierungssystem",
         "reservationErrorMsg": "Fehler, Nummer: {{code}}, Nachricht: {{msg}}",
         "retry": "Wiederholen",
         "screenSharingFailedToInstall": "Oh! Die Erweiterung für die Bildschirmfreigabe konnte nicht installiert werden.",
@@ -315,7 +315,7 @@
         "dialInConferenceID": "PIN:",
         "dialInNotSupported": "Entschuldigung, leider wird das Einwählen derzeit nicht unterstützt.",
         "dialInNumber": "Einwählen:",
-        "dialInSummaryError": "Fehler beim Abrufen der Einwählinformationen. Versuchen Sie es später erneut.",
+        "dialInSummaryError": "Fehler beim Abrufen der Einwahlinformationen. Versuchen Sie es später erneut.",
         "dialInTollFree": "Gebührenfrei",
         "genericError": "Es ist leider etwas schiefgegangen.",
         "inviteLiveStream": "Klicken Sie auf {{url}} um den Livestream dieser Konferenz zu öffnen",
@@ -328,11 +328,11 @@
         "moreNumbers": "Weitere Telefonnummern",
         "noNumbers": "Keine Telefonnummern verfügbar.",
         "noPassword": "Kein",
-        "noRoom": "Keine Konferenz für die Einwähl-Informationen angegeben.",
+        "noRoom": "Keine Konferenz für die Einwahlinformationen angegeben.",
         "numbers": "Einwählnummern",
         "password": "$t(lockRoomPasswordUppercase):",
         "title": "Teilen",
-        "tooltip": "Freigabe-Link und Einwählinformationen für dieses Meeting",
+        "tooltip": "Freigabe-Link und Einwahlinformationen für dieses Meeting",
         "label": "Meeting-Informationen"
     },
     "inviteDialog": {
@@ -367,7 +367,7 @@
         "videoQuality": "Anrufqualität verwalten"
     },
     "liveStreaming": {
-        "busy": "Es werden Resourcen zum Streamen bereitgestellt. Bitte in ein paar Minuten erneut versuchen.",
+        "busy": "Es werden Ressourcen zum Streamen bereitgestellt. Bitte in ein paar Minuten erneut versuchen.",
         "busyTitle": "Alle Streaming-Instanzen sind in Gebrauch",
         "changeSignIn": "Konten wechseln.",
         "choose": "Livestream auswählen",
@@ -405,7 +405,7 @@
         "dialogTitle": "Lokale Aufzeichnungssteuerelemente",
         "duration": "Dauer",
         "durationNA": "N. v.",
-        "encoding": "Codierung",
+        "encoding": "Kodierung",
         "label": "LOR",
         "labelToolTip": "Lokale Aufzeichnung ist aktiviert",
         "localRecording": "Lokale Aufzeichnung",
