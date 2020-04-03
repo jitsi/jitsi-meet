@@ -5,7 +5,7 @@ import React, { Component } from 'react';
 import { isBrowsersOptimal } from '../../base/environment';
 import { translate } from '../../base/i18n';
 
-import { CHROME, FIREFOX } from './browserLinks';
+import { CHROMIUM, FIREFOX } from './browserLinks';
 
 /**
  * The namespace of the CSS styles of UnsupportedDesktopBrowser.
