@@ -79,4 +79,4 @@ The app should be running at https://localhost:8080/
 
 #### Chrome Privacy Error
 
-Newer versions of Chrome may block localhost under https and show `NET::ERR_CERT_INVALID` on the page. To solve this open `chrome://flags/#allow-insecure-localhost` and select Enable, then press Relaunch or quit and restart Chrome.
+Newer versions of Chrome may block localhost under https and show `NET::ERR_CERT_INVALID` on the page. To solve this open [chrome://flags/#allow-insecure-localhost](chrome://flags/#allow-insecure-localhost) and select Enable, then press Relaunch or quit and restart Chrome.
