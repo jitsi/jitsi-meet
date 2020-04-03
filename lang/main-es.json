@@ -628,6 +628,7 @@
         "logout": "Cerrar sesión",
         "lowerYourHand": "Bajar la mano",
         "moreActions": "Más acciones",
+        "moreOptions": "Más opciones",
         "mute": "Activar / Desactivar Silencio",
         "noAudioSignalTitle": "¡No hay entrada proveniente de su micrófono!",
         "noAudioSignalDesc": "Si no lo silenció a propósito desde la configuración del sistema o el dispositivo, considere cambiar el dispositivo.",
@@ -752,5 +753,9 @@
         "sendFeedback": "Enviar comentarios",
         "terms": "Términos",
         "title": "Seguro, lleno de funcionalidades y videoconferencias completamente gratuitas"
+    },
+    "lonelyMeetingExperience": {
+        "button": "Invitar a otros",
+        "youAreAlone": "Eres el único en la reunión"
     }
 }

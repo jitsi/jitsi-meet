@@ -769,5 +769,9 @@
         "sendFeedback": "Feedback senden",
         "terms": "AGB",
         "title": "Sichere, mit umfassenden Funktionen ausgestattete und vollkommen kostenlose Videokonferenzen"
+    },
+    "lonelyMeetingExperience": {
+        "button": "Weitere einladen",
+        "youAreAlone": "Sie sind der einzige in diesem Meeting"
     }
 }

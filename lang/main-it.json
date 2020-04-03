@@ -594,6 +594,7 @@
         "logout": "Logout",
         "lowerYourHand": "Abbassa la mano",
         "moreActions": "Più azioni",
+        "moreOptions": "Più opzioni",
         "mute": "Microfono Attiva / Disattiva",
         "openChat": "Apri una chat",
         "pip": "Abilita visualizzazione immagine nell’immagine",
@@ -707,5 +708,9 @@
         "sendFeedback": "Invia feedback",
         "terms": "Termini di utilizzo",
         "title": "Il sistema di conferenza sicuro, funzionale e completamente gratuito."
+    },
+    "lonelyMeetingExperience": {
+        "button": "Invita gli altri",
+        "youAreAlone": "Sei l'unico in riunione"
     }
 }

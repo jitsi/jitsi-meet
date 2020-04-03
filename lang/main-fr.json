@@ -628,6 +628,7 @@
         "logout": "Déconnexion",
         "lowerYourHand": "Baisser la main",
         "moreActions": "Plus d'actions",
+        "moreOptions": "Plus d'options",
         "mute": "Muet / Actif",
         "noAudioSignalTitle": "Il n'y a pas d'entrée provenant de votre micro !",
         "noAudioSignalDesc": "Si vous n'avez pas délibérément coupé le son des paramètres du système ou du matériel, envisagez de changer le périphérique.",
@@ -752,5 +753,12 @@
         "sendFeedback": "Envoyer votre avis",
         "terms": "Termes",
         "title": "Vidéoconférence Sécurisée, entièrement en vedette et gratuite"
+    },
+    "lonelyMeetingExperience": {
+        "button": "Inviter d'autres personnes",
+        "youAreAlone": "Vous êtes le seul participant de la réunion"
+    },
+    "helpView": {
+        "header": "Centre d'aide"
     }
 }
