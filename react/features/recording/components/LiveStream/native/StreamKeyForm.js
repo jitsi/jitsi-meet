@@ -11,6 +11,7 @@ import { StyleType } from '../../../../base/styles';
 import AbstractStreamKeyForm, {
     type Props as AbstractProps
 } from '../AbstractStreamKeyForm';
+import { GOOGLE_PRIVACY_POLICY, YOUTUBE_TERMS_URL } from '../constants';
 
 type Props = AbstractProps & {
 
@@ -38,7 +39,10 @@ class StreamKeyForm extends AbstractStreamKeyForm<Props> {
         super(props);
 
         // Bind event handlers so they are only bound once per instance.
+        this._onOpenGooglePrivacyPolicy = this._onOpenGooglePrivacyPolicy.bind(this);
         this._onOpenHelp = this._onOpenHelp.bind(this);
+        this._onOpenYoutubeTerms = this._onOpenYoutubeTerms.bind(this);
+
     }
 
     /**
@@ -101,11 +105,51 @@ class StreamKeyForm extends AbstractStreamKeyForm<Props> {
                         </TouchableOpacity>
                     </View>
                 </View>
+                <View>
+                    <TouchableOpacity onPress = { this._onOpenYoutubeTerms }>
+                        <Text
+                            style = { [
+                                _dialogStyles.text,
+                                styles.text,
+                                styles.tcText
+                            ] }>
+                            {
+                                t('liveStreaming.youtubeTerms')
+                            }
+                        </Text>
+                    </TouchableOpacity>
+                </View>
+                <View>
+                    <TouchableOpacity onPress = { this._onOpenGooglePrivacyPolicy }>
+                        <Text
+                            style = { [
+                                _dialogStyles.text,
+                                styles.text,
+                                styles.tcText
+                            ] }>
+                            {
+                                t('liveStreaming.googlePrivacyPolicy')
+                            }
+                        </Text>
+                    </TouchableOpacity>
+                </View>
             </View>
         );
     }
 
     _onInputChange: Object => void
+
+    _onOpenGooglePrivacyPolicy: () => void;
+
+    /**
+     * Opens the Google Privacy Policy web page.
+     *
+     * @private
+     * @returns {void}
+     */
+    _onOpenGooglePrivacyPolicy() {
+        Linking.openURL(GOOGLE_PRIVACY_POLICY);
+    }
 
     _onOpenHelp: () => void
 
@@ -122,6 +166,18 @@ class StreamKeyForm extends AbstractStreamKeyForm<Props> {
         if (typeof helpURL === 'string') {
             Linking.openURL(helpURL);
         }
+    }
+
+    _onOpenYoutubeTerms: () => void;
+
+    /**
+     * Opens the YouTube terms and conditions web page.
+     *
+     * @private
+     * @returns {void}
+     */
+    _onOpenYoutubeTerms() {
+        Linking.openURL(YOUTUBE_TERMS_URL);
     }
 }
 
