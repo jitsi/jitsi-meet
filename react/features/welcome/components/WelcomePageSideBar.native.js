@@ -25,7 +25,7 @@ import styles, { SIDEBAR_AVATAR_SIZE } from './styles';
 /**
  * The URL at which the privacy policy is available to the user.
  */
-const PRIVACY_URL = 'https://jitsi.org/meet/privacy';
+const PRIVACY_URL = 'https://www.hopp-foundation.de/informationen/datenschutz.html';
 
 /**
  * The URL at which the terms (of service/use) are available to the user.
