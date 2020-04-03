@@ -2,7 +2,7 @@
 
 import { setFollowMe, setStartMutedPolicy } from '../base/conference';
 import { openDialog } from '../base/dialog';
-import { i18next } from '../base/i18n';
+import { changeLanguage } from '../base/i18n';
 
 import {
     SET_AUDIO_SETTINGS_VISIBILITY,
@@ -89,7 +89,7 @@ export function submitMoreTab(newState: Object): Function {
         }
 
         if (newState.currentLanguage !== currentState.currentLanguage) {
-            i18next.changeLanguage(newState.currentLanguage);
+            dispatch(changeLanguage(newState.currentLanguage));
         }
     };
 }
