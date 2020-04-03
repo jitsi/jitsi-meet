@@ -759,6 +759,6 @@
         "youAreAlone": "Vous êtes le seul participant de la réunion"
     },
     "helpView": {
-        "Centre d'aide"
+        "header": "Centre d'aide"
     }
 }
