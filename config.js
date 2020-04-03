@@ -757,6 +757,7 @@ var config = {
      peopleSearchUrl
      requireDisplayName
      tokenAuthUrl
+     useRoomAsSharedDocumentName
      */
 
     /**
