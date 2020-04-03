@@ -26,6 +26,10 @@ export class App extends AbstractApp {
      */
     _createMainElement(component, props) {
 
+        // if (window.location.href.indexOf('?jwt=') > -1) {
+        //     localStorage.setItem('lastVisitedUrl', window.location.href);
+        // }
+
         return (
             <AtlasKitThemeProvider mode = 'dark'>
                 <ChromeExtensionBanner />

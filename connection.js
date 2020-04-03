@@ -129,7 +129,7 @@ function connect(id, password, roomName) {
                         message,
                         name: error
                     }));
-            _checkAndRefreshLastVisitedURL();
+            // _checkAndRefreshLastVisitedURL();
             if (isFatalJitsiConnectionError(error)) {
                 connection.removeEventListener(
                     JitsiConnectionEvents.CONNECTION_FAILED,
@@ -183,24 +183,20 @@ function connect(id, password, roomName) {
  * Refreshed the browser once when connection failed.If the url doesn't contain any jwt token.
  * @returns void
  */
-function _checkAndRefreshLastVisitedURL() {
-    const lastVisitedUrlRefreshed = localStorage.getItem('lastVisitedUrlRefreshed');
-    const lastVisitedUrl = localStorage.getItem('lastVisitedUrl');
-
-    if (window.location.href.indexOf('?jwt=') > -1) {
-        localStorage.setItem('lastVisitedUrl', window.location.href);
-    }
-
-    if (window.location.href.indexOf('?jwt=') < 0 && lastVisitedUrl
-        && (!lastVisitedUrlRefreshed || lastVisitedUrlRefreshed === 'false')) {
-        const roomName = window.location.pathname;
-
-        if (lastVisitedUrl.indexOf(roomName) > -1) {
-            window.location.href = lastVisitedUrl;
-            localStorage.setItem('lastVisitedUrlRefreshed', 'true');
-        }
-    }
-}
+// function _checkAndRefreshLastVisitedURL() {
+//     const lastVisitedUrlRefreshed = localStorage.getItem('lastVisitedUrlRefreshed');
+//     const lastVisitedUrl = localStorage.getItem('lastVisitedUrl');
+//
+//     if (window.location.href.indexOf('?jwt=') < 0 && lastVisitedUrl
+//         && (!lastVisitedUrlRefreshed || lastVisitedUrlRefreshed === 'false')) {
+//         const roomName = window.location.pathname;
+//         if (lastVisitedUrl.indexOf(roomName) > -1) {
+//
+//             window.location.href = lastVisitedUrl;
+//             localStorage.setItem('lastVisitedUrlRefreshed', 'true');
+//         }
+//     }
+// }
 
 /**
  * Open JitsiConnection using provided credentials.
