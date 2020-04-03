@@ -109,7 +109,7 @@
     "babel-eslint": "10.0.1",
     "babel-loader": "8.0.4",
     "clean-css": "3.4.25",
-    "css-loader": "0.28.7",
+    "css-loader": "0.28.11",
     "eslint": "5.6.1",
     "eslint-config-jitsi": "github:jitsi/eslint-config-jitsi#1.0.1",
     "eslint-plugin-flowtype": "2.50.3",
