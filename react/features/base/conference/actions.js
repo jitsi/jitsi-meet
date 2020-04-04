@@ -401,13 +401,19 @@ export function conferenceWillLeave(conference: Object) {
         const startedAt = APP.store.getState()['features/base/conference'].start;
         if (jwt) {
             const jwtPayload = jwtDecode(jwt);
-            const url = jwtPayload.context.leave_url;
+            const url = jwtPayload.context.leave_url || null;
+            const surveyUrl = jwtPayload.context.survey_url || null;
             const obj = {
-                jwt: jwt,
+                jwt,
+                // eslint-disable-next-line camelcase
                 started_at: startedAt
+            };
+            const data = new Blob([ JSON.stringify(obj, null, 2) ], { type: 'text/plain; charset=UTF-8' });
+
+            // eslint-disable-next-line no-mixed-operators
+            if (url && surveyUrl) {
+                navigator.sendBeacon(url, data);
             }
-            const data = new Blob([JSON.stringify(obj, null, 2)], { type: 'text/plain; charset=UTF-8' })
-            navigator.sendBeacon(url, data);
         }
 
         dispatch({
