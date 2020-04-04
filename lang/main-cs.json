@@ -133,7 +133,7 @@
     "deepLinking": {
         "appNotInstalled": "Pro připojení k tomuto videohovoru potřebujete mít na svém telefonu aplikaci {{app}}.",
         "description": "Nic se nestalo? Zkusili jsme spustit videohovor v desktopové aplikaci {{app}}. Zkuste to znovu nebo spusťte webovou aplikaci {{app}}.",
-        "descriptionWithoutWeb": "",
+        "descriptionWithoutWeb": "Nic se nestalo? Zkusili jsme spustit videohovor v desktopové aplikaci {{app}}.",
         "downloadApp": "Stažení aplikace",
         "launchWebButton": "",
         "openApp": "",
