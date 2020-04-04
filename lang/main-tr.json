@@ -61,14 +61,13 @@
         "AUTHENTICATING": "Kimlik doğrula",
         "AUTHFAIL": "",
         "CONNECTED": "bağlandı",
-        "CONNECTING": "Bağlantı:",
+        "CONNECTING": "Bağlanıyor",
         "CONNFAIL": "",
         "DISCONNECTED": "bağlantı kesildi",
         "DISCONNECTING": "bağlantı kesildi",
         "ERROR": "Hata",
         "RECONNECTING": ""
     },
-    "\u0005connection": {},
     "connectionindicator": {
         "address": "Adres:",
         "bandwidth": "Tahmini bant genişliği:",
@@ -77,8 +76,10 @@
         "connectedTo": "",
         "framerate": "Çerçeve hızı:",
         "less": "Daha az göster",
-        "localaddress": "Yerel adres:Yerel adresler:",
-        "localport": "Yerel port:Yerel portlar:",
+        "localaddress": "Yerel adres:",
+        "localaddress_plural": "Yerel adresler:",
+        "localport": "Yerel port:",
+        "localport_plural": "Yerel portlar:",
         "more": "Daha fazla göster",
         "packetloss": "Paket kaybı:",
         "quality": {
@@ -88,15 +89,15 @@
             "nonoptimal": "",
             "poor": ""
         },
-        "remoteaddress": "Uzak adres:Uzak adresler:",
-        "remoteport": "Uzak port:Uzak portlar:",
+        "remoteaddress": "Uzak adres:",
+        "remoteaddress_plural": "Uzak adresler:",
+        "remoteport": "Uzak port:",
+        "remoteport_plural": "Uzak portlar:",
         "resolution": "Çözünürlük:",
         "status": "Bağlantı:",
         "transport": "Transport:",
+        "transport_plural": "Transportlar:",
         "turn": ""
-    },
-    "\u0005connectionindicator": {
-        "quality": {}
     },
     "dateUtils": {
         "earlier": "",
@@ -153,7 +154,7 @@
         "confirmYes": "Evet",
         "connectError": "Amanin boo! Birşeyler ters gitti ve görüşmeye bağlanamadık.",
         "connectErrorWithMsg": "Amanin boo! Birşeyler ters gitti ve görüşmeye bağlanamadık: {{msg}}",
-        "connecting": "Bağlantı:",
+        "connecting": "Bağlanıyor",
         "contactSupport": "Destek hattına bağlan",
         "copy": "Kopyala",
         "dismiss": "",
@@ -161,14 +162,14 @@
         "done": "",
         "enterDisplayName": "",
         "error": "Hata",
-        "externalInstallationMsg": "Masaüstü paylaşım eklentisi yüklenemedi",
+        "externalInstallationMsg": "Masaüstü paylaşım uzantımızı yüklemeniz gerekmektedir.",
         "externalInstallationTitle": "",
         "goToStore": "",
         "gracefulShutdown": "Hizmetimiz bakıp için durduruldu. Daha sonra tekrar deneyiniz.",
         "IamHost": "",
         "incorrectRoomLockPassword": "",
         "incorrectPassword": "Kullanıcı adı veya parola hatalı",
-        "inlineInstallationMsg": "Masaüstü paylaşım eklentisi yüklenemedi",
+        "inlineInstallationMsg": "Masaüstü paylaşım uzantımızı yüklemeniz gerekmektedir.",
         "inlineInstallExtension": "",
         "internalError": "",
         "internalErrorTitle": "",
@@ -257,7 +258,6 @@
         "Yes": "Evet",
         "yourEntireScreen": ""
     },
-    "\u0005dialog": {},
     "dialOut": {
         "statusMessage": ""
     },
@@ -337,7 +337,6 @@
         "toggleShortcuts": "",
         "videoMute": "Kamerayı aç veya kapat"
     },
-    "\u0005keyboardShortcuts": {},
     "liveStreaming": {
         "busy": "",
         "busyTitle": "",
@@ -429,7 +428,6 @@
         "newDeviceAudioTitle": "",
         "newDeviceAction": ""
     },
-    "\u0005notify": {},
     "passwordSetRemotely": "Diğer katılımcı tarafından ayarlandı",
     "passwordDigitsOnly": "",
     "poweredby": "Gücünün kaynağı",
@@ -437,8 +435,8 @@
         "busy": "",
         "calling": "",
         "connected": "bağlandı",
-        "connecting": "Bağlantı:",
-        "connecting2": "Bağlantı:",
+        "connecting": "Bağlanıyor...",
+        "connecting2": "Bağlanıyor*...",
         "disconnected": "bağlantı kesildi",
         "expired": "",
         "ignored": "",
@@ -447,14 +445,12 @@
         "rejected": "",
         "ringing": ""
     },
-    "\u0005presenceStatus": {},
     "profile": {
         "setDisplayNameLabel": "Teşhir adınızı ayarlayın",
         "setEmailInput": "E-posta adresinizi girin",
         "setEmailLabel": "Gravatar e-postanızı belirleyin",
         "title": ""
     },
-    "\u0005profile": {},
     "recording": {
         "authDropboxText": "",
         "availableSpace": "",
@@ -506,9 +502,6 @@
         "startVideoMuted": "Herkes gizli başlasın",
         "title": "Ayarlar"
     },
-    "\u0005settings": {
-        "calendar": {}
-    },
     "settingsView": {
         "alertOk": "",
         "alertTitle": "Uyarı",
@@ -546,7 +539,6 @@
         "text": "Tekrar bağlanmak için <i>Geri katıl</i>'a basın.",
         "title": "Görüntülü konuşmanız kesildi, çünkü bilgisayar uyku moduna girdi."
     },
-    "\u0005suspendedoverlay": {},
     "toolbar": {
         "accessibilityLabel": {
             "audioOnly": "",
@@ -626,7 +618,6 @@
         "startvideoblur": "",
         "stopvideoblur": ""
     },
-    "\u0005toolbar": {},
     "transcribing": {
         "ccButtonTooltip": "",
         "error": "",
@@ -643,10 +634,10 @@
         "androidGrantPermissions": "Tarayıcınız izin istediğinde <b><i>İzin Ver</i></b> seçeneğini seçin.",
         "chromeGrantPermissions": "Tarayıcınız izin istediğinde <b><i>İzin Ver</i></b> seçeneğini seçin.",
         "edgeGrantPermissions": "Tarayıcınız izin istediğinde <b><i>Evet</i></b> seçeneğini seçin.",
-        "electronGrantPermissions": "Lütfen kameranızı ve mikrofonunuzu kullanmak için gereken izni sağlayın.",
+        "electronGrantPermissions": "Lütfen kameranızı ve mikrofonunuzu kullanmak için izin verin",
         "firefoxGrantPermissions": "Tarayıcınız izin istediğinde <b><i>Seçilen Aygıtı Paylaş</i></b> seçeneğini seçin.",
         "iexplorerGrantPermissions": "Tarayıcınız izin istediğinde <b><i>Tamam</i></b> seçeneğini seçin.",
-        "nwjsGrantPermissions": "Lütfen kameranızı ve mikrofonunuzu kullanmak için gereken izni sağlayın.",
+        "nwjsGrantPermissions": "Lütfen kameranızı ve mikrofonunuzu kullanmak için izin verin",
         "operaGrantPermissions": "Tarayıcınız izin istediğinde <b><i>İzin Ver</i></b> seçeneğini seçin.",
         "react-nativeGrantPermissions": "Tarayıcınız izin istediğinde <b><i>İzin Ver</i></b> seçeneğini seçin.",
         "safariGrantPermissions": "Tarayıcınız izin istediğinde <b><i>Tamam</i></b> seçeneğini seçin."
@@ -690,7 +681,6 @@
         "show": "",
         "videomute": ""
     },
-    "\u0005videothumbnail": {},
     "welcomepage": {
         "accessibilityLabel": {
             "join": "",
@@ -718,6 +708,5 @@
         "sendFeedback": "Geribildirimde bulun",
         "terms": "Kurallar",
         "title": ""
-    },
-    "\u0005welcomepage": {}
+    }
 }

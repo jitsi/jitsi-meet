@@ -1,37 +1,38 @@
 {
     "addPeople": {
-        "add": "",
-        "countryNotSupported": "",
-        "countryReminder": "",
-        "disabled": "",
-        "failedToAdd": "",
-        "footerText": "",
-        "loading": "",
-        "loadingNumber": "",
-        "loadingPeople": "",
-        "noResults": "",
-        "noValidNumbers": "",
-        "searchNumbers": "",
-        "searchPeople": "",
-        "searchPeopleAndNumbers": "",
-        "telephone": "",
-        "title": ""
+        "add": "Pozvat",
+        "countryNotSupported": "Toto místo zatím nepodporujeme.",
+        "countryReminder": "Voláte mimo USA? Nezapomeňte začít kódem své země!",
+        "disabled": "Nemůžete pozvat lidi.",
+        "failedToAdd": "Nepodařilo se přidat účastníky",
+        "footerText": "Vytáčení je zakázáno.",
+        "loading": "Hledání lidí a telefonních čísel",
+        "loadingNumber": "Ověření telefonního čísla",
+        "loadingPeople": "Hledání lidí pro pozvání",
+        "noResults": "Žádné odpovídající výsledky vyhledávání",
+        "noValidNumbers": "Zadejte telefonní číslo",
+        "searchNumbers": "Přidat telefonní čísla",
+        "searchPeople": "Hledat lidi",
+        "searchPeopleAndNumbers": "Hledat lidi nebo přidat jejich telefonní čísla",
+        "telephone": "Telefonní číslo: {{number}}",
+        "title": "Pozvěte lidi na toto setkání"
     },
     "audioDevices": {
         "bluetooth": "Bluetooth",
         "headphones": "Sluchátka",
         "phone": "Telefon",
-        "speaker": "Řečník"
+        "speaker": "Reproduktor",
+        "none": "Nejsou k dispozici žádná zvuková zařízení"
     },
     "audioOnly": {
-        "audioOnly": "Pouze zvuk"
+        "audioOnly": "Nízká přenosová rychlost"
     },
     "calendarSync": {
-        "addMeetingURL": "",
-        "confirmAddLink": "",
+        "addMeetingURL": "Přidejte odkaz na schůzku",
+        "confirmAddLink": "Chcete k této události přidat odkaz Jitsi?",
         "error": {
-            "appConfiguration": "",
-            "generic": "",
+            "appConfiguration": "Integrace kalendáře není správně nakonfigurována.",
+            "generic": "Došlo k chybě. Zkontrolujte nastavení kalendáře nebo zkuste aktualizovat kalendář.",
             "notSignedIn": ""
         },
         "join": "",
@@ -68,12 +69,11 @@
         "ERROR": "",
         "RECONNECTING": ""
     },
-    "\u0005connection": {},
     "connectionindicator": {
         "address": "Adresa:",
         "bandwidth": "Odhadovaná šířka pásma:",
         "bitrate": "Přenosová rychlost:",
-        "bridgeCount": "Počet serverů:",
+        "bridgeCount": "Počet serverů: ",
         "connectedTo": "",
         "framerate": "Rychlost snímkování:",
         "less": "Zobrazit méně",
@@ -153,7 +153,7 @@
         "close": "Zavřít",
         "conferenceDisconnectMsg": "Možná byste měli zkontrolovat připojení k síti. Znovu se připojíte za {{seconds}} s...",
         "conferenceDisconnectTitle": "Byl jste odhlášen.",
-        "conferenceReloadMsg": "Pokoušíme se to opravit. Znovu se připojíte za  {{seconds}} s...",
+        "conferenceReloadMsg": "Pokoušíme se to opravit. Znovu se připojíte za {{seconds}} s...",
         "conferenceReloadTitle": "Bohužel, něco se pokazilo.",
         "confirm": "",
         "confirmNo": "",
@@ -264,7 +264,6 @@
         "Yes": "",
         "yourEntireScreen": ""
     },
-    "\u0005dialog": {},
     "dialOut": {
         "statusMessage": ""
     },
@@ -298,23 +297,22 @@
         "dialInTollFree": "",
         "genericError": "Ups, něco se pokazilo.",
         "inviteLiveStream": "K zobrazení živého vysílání tohoto meetingu, klikněte na tento odkaz: {{url}}",
-        "invitePhone": "One tap audio Dial In: {{number}},,{{conferenceID}}#",
+        "invitePhone": "Pro připojení telefonicky použijte: {{number}},,{{conferenceID}}#\n",
         "invitePhoneAlternatives": "",
-        "inviteURLFirstPartGeneral": "",
+        "inviteURLFirstPartGeneral": "Připojte se k meetingu.",
         "inviteURLFirstPartPersonal": "",
         "inviteURLSecondPart": "",
         "liveStreamURL": "Živé vysílání:",
-        "moreNumbers": "More numbers",
-        "noNumbers": "No dial-in numbers.",
+        "moreNumbers": "Více čísel",
+        "noNumbers": "Žádná čísla pro připojení po telefonu.",
         "noPassword": "Bez hesla",
-        "noRoom": "No room was specified to dial-in into.",
-        "numbers": "Dial-in Numbers",
+        "noRoom": "Nebyla vybrána místnost pro připojení po telefonu.",
+        "numbers": "Čísla pro připojení telefonicky",
         "password": "Heslo:",
         "title": "Sdílet",
         "tooltip": "Sdílet odkaz k tomuto meetingu",
         "label": "Informace o meetingu"
     },
-    "\u0005info": {},
     "inviteDialog": {
         "alertText": "",
         "header": "",
@@ -345,7 +343,6 @@
         "toggleShortcuts": "Zobrazení / Skrytí klávesových zkratek",
         "videoMute": "Spuštění / Vypnutí vaší kamery"
     },
-    "\u0005keyboardShortcuts": {},
     "liveStreaming": {
         "busy": "",
         "busyTitle": "",
@@ -437,7 +434,6 @@
         "newDeviceAudioTitle": "",
         "newDeviceAction": ""
     },
-    "\u0005notify": {},
     "passwordSetRemotely": "",
     "passwordDigitsOnly": "",
     "poweredby": "Poháněno",
@@ -455,7 +451,6 @@
         "rejected": "Odmítnuto",
         "ringing": "Zvoní..."
     },
-    "\u0005presenceStatus": {},
     "profile": {
         "setDisplayNameLabel": "Nastavte si jméno",
         "setEmailInput": "Zadejte e-mail",
@@ -512,9 +507,6 @@
         "startAudioMuted": "Při připojení všem zlumit zvuk",
         "startVideoMuted": "Všechny připojovat jako skrýté",
         "title": "Nastavení"
-    },
-    "\u0005settings": {
-        "calendar": {}
     },
     "settingsView": {
         "alertOk": "",
@@ -632,9 +624,6 @@
         "startvideoblur": "Rozmazat pozadí",
         "stopvideoblur": "Zrušit rozmazání"
     },
-    "\u0005toolbar": {
-        "accessibilityLabel": {}
-    },
     "transcribing": {
         "ccButtonTooltip": "",
         "error": "",
@@ -701,7 +690,6 @@
         "show": "",
         "videomute": ""
     },
-    "\u0005videothumbnail": {},
     "welcomepage": {
         "accessibilityLabel": {
             "join": "",
