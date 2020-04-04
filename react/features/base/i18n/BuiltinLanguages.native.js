@@ -155,7 +155,7 @@ const _LANGUAGES = {
     'zhTW': {
         languages: require('../../../../lang/languages-zhTW'),
         main: require('../../../../lang/main-zhTW')
-    }
+    },
     
     // Mongolian
     'mn': {
