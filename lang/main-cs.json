@@ -53,7 +53,8 @@
             "title": ""
         },
         "title": "",
-        "fieldPlaceHolder": "Zde napište svou zprávu"
+        "fieldPlaceHolder": "Zde napište svou zprávu",
+        "messageTo": "Soukromá zpráva pro {{recipient}}"
     },
     "connectingOverlay": {
         "joiningRoom": ""
