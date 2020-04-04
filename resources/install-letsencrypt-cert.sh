@@ -91,7 +91,7 @@ elif [ -f /etc/apache2/sites-enabled/$DOMAIN.conf ] ; then
     echo "service apache2 reload" >> $CRON_FILE
     service apache2 reload
 else
-    service jitsi-videobridge stop
+    service jitsi-videobridge2 stop
 
     ./certbot-auto certonly --noninteractive \
     --standalone \
@@ -109,7 +109,7 @@ else
         -srckeystore $CERT_P12 -srcstoretype pkcs12 \
         -noprompt -storepass changeit -srcstorepass changeit
 
-    service jitsi-videobridge start
+    service jitsi-videobridge2 start
 
 fi
 
