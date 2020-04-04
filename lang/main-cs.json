@@ -33,26 +33,27 @@
         "error": {
             "appConfiguration": "Integrace kalendáře není správně nakonfigurována.",
             "generic": "Došlo k chybě. Zkontrolujte nastavení kalendáře nebo zkuste aktualizovat kalendář.",
-            "notSignedIn": ""
+            "notSignedIn": "Při ověřování k zobrazení kalendářových událostí došlo k chybě. Zkontrolujte prosím nastavení kalendáře a zkuste se znovu přihlásit."
         },
-        "join": "",
-        "joinTooltip": "",
-        "nextMeeting": "",
-        "noEvents": "",
-        "ongoingMeeting": "",
-        "permissionButton": "",
-        "permissionMessage": "",
-        "refresh": "",
-        "today": ""
+        "join": "Připojit se",
+        "joinTooltip": "Připojit se k videohovoru",
+        "nextMeeting": "další videohovor",
+        "noEvents": "Nejsou naplánovány žádné události.",
+        "ongoingMeeting": "nejbližší videohovor",
+        "permissionButton": "Otevřít nastavení",
+        "permissionMessage": "K zobrazení videohovorů v aplikaci je potřeba oprávnění Kalendář.",
+        "refresh": "Obnovit kalendář",
+        "today": "Dnes"
     },
     "chat": {
-        "error": "",
-        "messagebox": "Prostor pro zprávu",
+        "error": "Chyba: vaše zpráva nebyla odeslána. Důvod: {{error}}",
+        "messagebox": "Napište zprávu",
         "nickname": {
             "popover": "Zvolte si přezdívku",
             "title": ""
         },
-        "title": ""
+        "title": "",
+        "fieldPlaceHolder": "Zde napište svou zprávu"
     },
     "connectingOverlay": {
         "joiningRoom": ""
@@ -659,50 +660,51 @@
         "safariGrantPermissions": "Pokud se váš prohlížeč ptá na práva, vyberte <b><i>OK</i></b> a potvrďte."
     },
     "videoSIPGW": {
-        "busy": "",
-        "busyTitle": "",
-        "errorAlreadyInvited": "",
-        "errorInvite": "",
-        "errorInviteFailed": "",
-        "errorInviteFailedTitle": "",
-        "errorInviteTitle": "",
-        "pending": ""
+        "busy": "Pracujeme na uvolnění prostředků. Zkuste to prosím znovu za několik minut.",
+        "busyTitle": "Služba Místnost je nyní zaneprázdněna",
+        "errorAlreadyInvited": "{{displayName}} byl(a) již pozván(a)",
+        "errorInvite": "Konference ještě nebyla založena. Zkuste to prosím později.",
+        "errorInviteFailed": "Na vyřešení problému pracujeme. Zkuste to prosím znovu později.",
+        "errorInviteFailedTitle": "Pozvání {{displayName}} selhalo",
+        "errorInviteTitle": "Chyba při pozvání do místnosti",
+        "pending": "{{displayName}} byl(a) pozván(a)"
     },
     "videoStatus": {
         "audioOnly": "AU",
-        "audioOnlyExpanded": "",
+        "audioOnlyExpanded": "Jste v režimu nízké přenosové rychlosti. V tomto režimu je k dispozici jen zvuk a sdílení obrazovky.",
         "callQuality": "Nastavení kvality hovoru",
-        "hd": "",
+        "hd": "HD",
         "hdTooltip": "Sledujete obraz ve vysoké kvalitě",
         "highDefinition": "Vysoká kvalita",
-        "labelTooiltipNoVideo": "",
-        "labelTooltipAudioOnly": "",
-        "ld": "",
+        "labelTooiltipNoVideo": "Žádné video",
+        "labelTooltipAudioOnly": "Zapnut režim nízké přenosové rychlosti",
+        "ld": "LD",
         "ldTooltip": "Sledujete obraz v nízké kvalitě",
         "lowDefinition": "Nizká kvalita",
-        "onlyAudioAvailable": "",
-        "onlyAudioSupported": "",
-        "p2pEnabled": "",
-        "p2pVideoQualityDescription": "",
-        "recHighDefinitionOnly": "",
-        "sd": "",
+        "onlyAudioAvailable": "Je k dispozici jen zvuk",
+        "onlyAudioSupported": "V tomto prohlížeči podporujeme jen zvuk.",
+        "p2pEnabled": "Zapnut režim peer to peer",
+        "p2pVideoQualityDescription": "V režimu peer to peer lze kvalitu videa přepínat jen mezi vysokou a pouhým zvukem. Ostatní nastavení se ignorují, dokud tento režim neopustíte.",
+        "recHighDefinitionOnly": "Bude preferována vysoká kvalita.",
+        "sd": "SD",
         "sdTooltip": "Sledujete obraz v běžné kvalitě",
         "standardDefinition": "Běžná kvalita"
     },
     "videothumbnail": {
-        "domute": "Ztlumený zvuk",
+        "domute": "Umlčet",
         "flip": "Převrátit",
         "kick": "Vyhodit",
         "moderator": "Moderátor",
-        "mute": "",
+        "mute": "Účastník je umlčen",
         "muted": "Ztlumený zvuk",
         "remoteControl": "Vzdálené ovládání",
         "show": "",
-        "videomute": ""
+        "videomute": "Účastník si vypnul kameru",
+        "domuteOthers": "Umlčet všechny ostatní"
     },
     "welcomepage": {
         "accessibilityLabel": {
-            "join": "",
+            "join": "Dotykem se připojíte",
             "roomname": "Zadejte jméno místnosti"
         },
         "appDescription": "Videokonference pro celý Váš tým, zdarma, bez nároků na Vaše data. Do konference můžete pozvat kohokoliv. Veškerá komunikace přes aplikaci {{app}} je plně šifrovaná, 100% open source zajištuje, že aplikaci můžete využívat bez omezení a navíc se nemusíte ani registrovat.",
@@ -711,21 +713,31 @@
             "video": "Obraz"
         },
         "calendar": "Kalendář",
-        "connectCalendarButton": "",
-        "connectCalendarText": "",
+        "connectCalendarButton": "Připojit váš kalendář",
+        "connectCalendarText": "Připojte si kalendář a uvidíte všechny videohovory v {{app}}. Můžete si také přidat videohovory {{provider}} do kalendáře a spouštět je jedním klikem.",
         "enterRoomTitle": "Začít nový videohovor",
         "go": "ZAČÍT",
         "join": "PŘIPOJIT",
-        "info": "",
+        "info": "Informace",
         "privacy": "Soukromí",
-        "recentList": "",
-        "recentListDelete": "",
+        "recentList": "Nedávné",
+        "recentListDelete": "Smazat",
         "recentListEmpty": "Váš seznam nedávných hovorů je prázdný. Spojte se s kolegy z Vašeho týmu, poté zde naleznete seznam nedávných hovorů.",
-        "reducedUIText": "",
+        "reducedUIText": "Vítejte v {{app}}!",
         "roomname": "Zadejte jméno místnosti",
         "roomnameHint": "Zadejte název nebo URL odkaz místnosti ke které se chcete připojit. Pokud jste místnost vytvořili, ujistěte se, že ostatní účastníci schůzky zadají stejné jméno jako vy.",
         "sendFeedback": "Poslat zpětnou vazbu",
         "terms": "Podmínky používání",
-        "title": "Bezpečná, plnohodnotná a zdarma dostupná videokonference"
+        "title": "Bezpečná, plnohodnotná a zdarma dostupná videokonference",
+        "roomNameAllowedChars": "Název videohovoru nesmí obsahovat žádný z těchto znaků: ?, &, :, ', \", %, #.",
+        "getHelp": "Získat pomoc",
+        "goSmall": "ZAČÍT"
+    },
+    "lonelyMeetingExperience": {
+        "youAreAlone": "Jste jediný/á v tomto videohovoru",
+        "button": "Pozvat další"
+    },
+    "helpView": {
+        "header": "Centrum pomoci"
     }
 }
