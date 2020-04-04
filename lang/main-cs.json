@@ -135,10 +135,10 @@
         "description": "Nic se nestalo? Zkusili jsme spustit videohovor v desktopové aplikaci {{app}}. Zkuste to znovu nebo spusťte webovou aplikaci {{app}}.",
         "descriptionWithoutWeb": "Nic se nestalo? Zkusili jsme spustit videohovor v desktopové aplikaci {{app}}.",
         "downloadApp": "Stažení aplikace",
-        "launchWebButton": "",
-        "openApp": "",
-        "title": "",
-        "tryAgainButton": ""
+        "launchWebButton": "Spustit na webu",
+        "openApp": "Pokračovat do aplikace",
+        "title": "Spustit videohovor v {{app}}...",
+        "tryAgainButton": "Zkusit znovu na desktopu"
     },
     "defaultLink": "např. {{url}}",
     "deviceError": {
@@ -155,16 +155,16 @@
     },
     "dialog": {
         "accessibilityLabel": {
-            "liveStreaming": ""
+            "liveStreaming": "Živý stream"
         },
         "allow": "Povolit",
-        "alreadySharedVideoMsg": "",
-        "alreadySharedVideoTitle": "",
-        "applicationWindow": "",
-        "Back": "",
-        "cameraConstraintFailedError": "",
-        "cameraNotFoundError": "",
-        "cameraNotSendingData": "",
+        "alreadySharedVideoMsg": "Video už sdílí jiný účastník. Tato konference umožňuje sdílet jen jedno video současně.",
+        "alreadySharedVideoTitle": "Je povoleno jen jedno sdílené video",
+        "applicationWindow": "Okno aplikace",
+        "Back": "Zpět",
+        "cameraConstraintFailedError": "Vaše kamera nesplňuje některé požadované parametry.",
+        "cameraNotFoundError": "Kamera nebyla nalezena.",
+        "cameraNotSendingData": "Nelze přistupovat ke kameře. Zkontrolujte prosím, zda ji už nepoužívá jiná aplikace, vyberte jiné zařízení v nabídce nastavení nebo zkuste aplikaci znovu načíst.",
         "cameraNotSendingDataTitle": "",
         "cameraPermissionDeniedError": "",
         "cameraUnknownError": "",
@@ -753,5 +753,6 @@
         "dontShowAgain": "Toto už znovu neukazovat",
         "buttonText": "Nainstalovat rozšíření Chrome",
         "installExtensionText": "Nainstalovat rozšíření pro integraci Google Calendar a Office 365"
-    }
+    },
+    "defaultNickname": "Franta Uživatel"
 }
