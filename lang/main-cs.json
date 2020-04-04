@@ -50,33 +50,40 @@
         "messagebox": "Napište zprávu",
         "nickname": {
             "popover": "Zvolte si přezdívku",
-            "title": ""
+            "title": "K zahájení chatu vložte přezdívku"
         },
-        "title": "",
+        "title": "Chat",
         "fieldPlaceHolder": "Zde napište svou zprávu",
-        "messageTo": "Soukromá zpráva pro {{recipient}}"
+        "messageTo": "Soukromá zpráva pro {{recipient}}",
+        "you": "vy",
+        "privateNotice": "Soukromá zpráva pro {{recipient}}",
+        "noMessagesMessage": "V tomto videohovoru ještě nejsou žádné zprávy. Začněte konverzaci!"
     },
     "connectingOverlay": {
-        "joiningRoom": ""
+        "joiningRoom": "Probíhá připojování k videohovoru..."
     },
     "connection": {
-        "ATTACHED": "",
-        "AUTHENTICATING": "Ověřit",
-        "AUTHFAIL": "",
-        "CONNECTED": "",
-        "CONNECTING": "Připojení",
-        "CONNFAIL": "",
-        "DISCONNECTED": "odpojeno",
-        "DISCONNECTING": "odpojeno",
-        "ERROR": "",
-        "RECONNECTING": ""
+        "ATTACHED": "Přiložený",
+        "AUTHENTICATING": "Ověřování",
+        "AUTHFAIL": "Ověřování selhalo",
+        "CONNECTED": "Připojeno",
+        "CONNECTING": "Připojování",
+        "CONNFAIL": "Připojení selhalo",
+        "DISCONNECTED": "Odpojeno",
+        "DISCONNECTING": "Odpojování",
+        "ERROR": "Chyba",
+        "RECONNECTING": "",
+        "LOW_BANDWIDTH": "Video pro {{displayName}} bylo vypnuto pro snížení přenosové rychlosti",
+        "GOT_SESSION_ID": "Získávání session-id... Hotovo",
+        "GET_SESSION_ID_ERROR": "Chyba při získávání session-id: {{code}}",
+        "FETCH_SESSION_ID": "Získává se session-id..."
     },
     "connectionindicator": {
         "address": "Adresa:",
         "bandwidth": "Odhadovaná šířka pásma:",
         "bitrate": "Přenosová rychlost:",
         "bridgeCount": "Počet serverů: ",
-        "connectedTo": "",
+        "connectedTo": "Připojeno k:",
         "framerate": "Rychlost snímkování:",
         "less": "Zobrazit méně",
         "localaddress_0": "Místní adresa:",
@@ -115,15 +122,16 @@
         "transport_2": "Přenosy:",
         "transport_plural_2": "Přenosy:",
         "transport_plural_5": "Přenosů:",
-        "turn": "(otočit)"
+        "turn": "(otočit)",
+        "e2e_rtt": "E2E RTT:"
     },
     "dateUtils": {
-        "earlier": "",
-        "today": "",
-        "yesterday": ""
+        "earlier": "Dříve",
+        "today": "Dnes",
+        "yesterday": "Včera"
     },
     "deepLinking": {
-        "appNotInstalled": "",
+        "appNotInstalled": "Pro připojení k tomuto videohovoru potřebujete mít na svém telefonu aplikaci {{app}}.",
         "description": "",
         "descriptionWithoutWeb": "",
         "downloadApp": "Stažení aplikace",
@@ -740,5 +748,10 @@
     },
     "helpView": {
         "header": "Centrum pomoci"
+    },
+    "chromeExtensionBanner": {
+        "dontShowAgain": "Toto už znovu neukazovat",
+        "buttonText": "Nainstalovat rozšíření Chrome",
+        "installExtensionText": "Nainstalovat rozšíření pro integraci Google Calendar a Office 365"
     }
 }
