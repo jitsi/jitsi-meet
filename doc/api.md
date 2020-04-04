@@ -272,7 +272,7 @@ api.executeCommand('avatarUrl', 'https://avatars0.githubusercontent.com/u/367164
 
 * **sendEndpointTextMessage** - Sends a text message to another participant through the datachannels.
 ```javascript
-api.executeCommand('receiverParticipantId', 'text');
+api.executeCommand('sendEndpointTextMessage', 'receiverParticipantId', 'text');
 ```
 
 You can also execute multiple commands using the `executeCommands` method:
@@ -332,13 +332,15 @@ changes. The listener will receive an object with the following structure:
 The listener will receive an object with the following structure:
 ```javascript
 {
-    senderInfo: {
-        jid: string, // the jid of the sender
-        id: string // the participant id of the sender
-    },
-    eventData: {
-        name: string // the name of the datachannel event: `endpoint-text-message`
-        text: string // the received text from the sender
+    data: {
+        senderInfo: {
+            jid: string, // the jid of the sender
+            id: string // the participant id of the sender
+        },
+        eventData: {
+            name: string // the name of the datachannel event: `endpoint-text-message`
+            text: string // the received text from the sender
+        }
     }
 }
 ```
