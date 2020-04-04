@@ -14,7 +14,7 @@
         "searchNumbers": "Přidat telefonní čísla",
         "searchPeople": "Hledat lidi",
         "searchPeopleAndNumbers": "Hledat lidi nebo přidat jejich telefonní čísla",
-        "telephone": "Telefonní číslo: {{number}}",
+        "telephone": "Telefon: {{number}}",
         "title": "Pozvěte lidi na toto setkání"
     },
     "audioDevices": {
