@@ -1,37 +1,38 @@
 {
     "addPeople": {
-        "add": "",
-        "countryNotSupported": "",
-        "countryReminder": "",
-        "disabled": "",
-        "failedToAdd": "",
-        "footerText": "",
-        "loading": "",
-        "loadingNumber": "",
-        "loadingPeople": "",
-        "noResults": "",
-        "noValidNumbers": "",
-        "searchNumbers": "",
-        "searchPeople": "",
-        "searchPeopleAndNumbers": "",
-        "telephone": "",
-        "title": ""
+        "add": "Pozvat",
+        "countryNotSupported": "Toto místo zatím nepodporujeme.",
+        "countryReminder": "Voláte mimo USA? Nezapomeňte začít kódem své země!",
+        "disabled": "Nemůžete pozvat lidi.",
+        "failedToAdd": "Nepodařilo se přidat účastníky",
+        "footerText": "Vytáčení je zakázáno.",
+        "loading": "Hledání lidí a telefonních čísel",
+        "loadingNumber": "Ověření telefonního čísla",
+        "loadingPeople": "Hledání lidí pro pozvání",
+        "noResults": "Žádné odpovídající výsledky vyhledávání",
+        "noValidNumbers": "Zadejte telefonní číslo",
+        "searchNumbers": "Přidat telefonní čísla",
+        "searchPeople": "Hledat lidi",
+        "searchPeopleAndNumbers": "Hledat lidi nebo přidat jejich telefonní čísla",
+        "telephone": "Telefonní číslo: {{number}}",
+        "title": "Pozvěte lidi na toto setkání"
     },
     "audioDevices": {
         "bluetooth": "Bluetooth",
         "headphones": "Sluchátka",
         "phone": "Telefon",
-        "speaker": "Řečník"
+        "speaker": "Reproduktor",
+        "none": "Nejsou k dispozici žádná zvuková zařízení"
     },
     "audioOnly": {
-        "audioOnly": "Pouze zvuk"
+        "audioOnly": "Nízká přenosová rychlost"
     },
     "calendarSync": {
-        "addMeetingURL": "",
-        "confirmAddLink": "",
+        "addMeetingURL": "Přidejte odkaz na schůzku",
+        "confirmAddLink": "Chcete k této události přidat odkaz Jitsi?",
         "error": {
-            "appConfiguration": "",
-            "generic": "",
+            "appConfiguration": "Integrace kalendáře není správně nakonfigurována.",
+            "generic": "Došlo k chybě. Zkontrolujte nastavení kalendáře nebo zkuste aktualizovat kalendář.",
             "notSignedIn": ""
         },
         "join": "",
