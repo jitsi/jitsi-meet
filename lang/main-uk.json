@@ -216,7 +216,7 @@
         "micUnknownError": "Невідома помилка доступу до мікрофона.",
         "muteEveryoneElseDialog": "Якщо ви вимкнете мікрофон, то не зможете увімкнути його, проте учасник конференції зможе це зробити самостійно.",
         "muteEveryoneElseTitle": "Вимкнути мікрофони всім, крім {{whom}}?",
-        "muteEveryoneDialog": "",
+        "muteEveryoneDialog": "Ви впевнені, що бажаєте вимкнути мікрофони всім. Ви не матимете змоги знову їх увімкнути, проте учасники зможуть це зробити самостійно.",
         "muteEveryoneTitle": "",
         "muteEveryoneSelf": "",
         "muteEveryoneStartMuted": "",
