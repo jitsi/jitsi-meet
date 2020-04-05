@@ -181,4 +181,22 @@ body.welcome-page {
         width: 100%;
         height: 100%;
     }
+
+    .meetings-list-web-clearbutton {
+        margin-top: auto;
+        text-align: center;
+        background: #0074E0;
+        color: #FFF;
+        height: 22px;
+        font-size: 14px;
+        vertical-align: middle;
+        cursor: pointer;
+        margin: auto auto 4px auto;
+        border-radius: 4px;
+        width: 85%;
+    
+        .hide {
+            display: none;
+        }
+    }
 }

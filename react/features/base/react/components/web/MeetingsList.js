@@ -4,9 +4,11 @@ import React, { Component } from 'react';
 
 import {
     getLocalizedDateFormatter,
-    getLocalizedDurationFormatter
+    getLocalizedDurationFormatter,
+    translate
 } from '../../../i18n';
 
+import { connect } from '../../../redux';
 import Container from './Container';
 import Text from './Text';
 
@@ -40,7 +42,12 @@ type Props = {
     /**
      * Defines what happens when  an item in the section list is clicked
      */
-    onItemClick: Function
+    onItemClick: Function,
+
+    /**
+     * Translate function
+     */
+    t: Function
 };
 
 /**
@@ -79,7 +86,7 @@ function _toTimeString(times) {
  *
  * @extends Component
  */
-export default class MeetingsList extends Component<Props> {
+class MeetingsList extends Component<Props> {
     /**
      * Constructor of the MeetingsList component.
      *
@@ -88,8 +95,23 @@ export default class MeetingsList extends Component<Props> {
     constructor(props: Props) {
         super(props);
 
+        this._onClear = this._onClear.bind(this);
         this._onPress = this._onPress.bind(this);
         this._renderItem = this._renderItem.bind(this);
+    }
+
+    _onClear: string => Function;
+
+    /**
+     * Clear all history items and refresh page.
+     *
+     * @private
+     * @returns null
+     */
+    _onClear() {
+        window.localStorage.setItem('features/recent-list', []);
+        window.location.reload();
+        return null;
     }
 
     /**
@@ -98,7 +120,7 @@ export default class MeetingsList extends Component<Props> {
      * @returns {React.ReactNode}
      */
     render() {
-        const { listEmptyComponent, meetings } = this.props;
+        const { listEmptyComponent, meetings, t } = this.props;
 
         /**
          * If there are no recent meetings we don't want to display anything
@@ -112,6 +134,11 @@ export default class MeetingsList extends Component<Props> {
                             ? listEmptyComponent
                             : meetings.map(this._renderItem)
                     }
+                    <div
+                        className = { meetings.length > 0 ? 'meetings-list-web-clearbutton' : 'meetings-list-web-clearbutton hide' }
+                        onClick = { () => { this._onClear() } } >
+                            { t('welcomepage.recentListDeleteAll') }
+                    </div>
                 </Container>
             );
         }
@@ -199,3 +226,14 @@ export default class MeetingsList extends Component<Props> {
         );
     }
 }
+
+/**
+ * Maps redux state to component props.
+ *
+ * @returns { }
+    */
+function _mapStateToProps() {
+    return { };
+}
+
+export default translate(connect(_mapStateToProps)(MeetingsList));

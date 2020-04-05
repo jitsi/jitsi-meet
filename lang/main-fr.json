@@ -746,6 +746,7 @@
         "privacy": "Confidentialité",
         "recentList": "Récent",
         "recentListDelete": "Supprimer",
+        "recentListDeleteAll": "Supprimer l'historique",
         "recentListEmpty": "Votre liste récente est actuellement vide. Discuter avec votre équipe et vous trouverez toutes vos réunions récentes ici.",
         "reducedUIText": "Bienvenue sur {{app}}!",
         "roomname": "Saisissez un nom de salle",
