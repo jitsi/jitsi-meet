@@ -145,12 +145,7 @@ class MeetingsList extends Component<Props> {
                                     : 'meetings-list-web-clear hide'
                             } >
                         <div
-                            className =
-                                {
-                                    meetings.length > 0
-                                        ? 'button'
-                                        : ''
-                                }
+                            className = 'button'
                             onClick = { this._onClear } >
                             { t('welcomepage.recentListDeleteAll') }
                         </div>
