@@ -12,7 +12,7 @@ import { parseURIString, safeDecodeURIComponent } from '../base/util';
  */
 export function toDisplayableList(recentList) {
     return (
-        recentList.slice(-3).reverse()
+        recentList.slice(getNumberOfRecentMeetingsToDisplay()).reverse()
             .map(item => {
                 return {
                     date: item.date,
@@ -22,6 +22,15 @@ export function toDisplayableList(recentList) {
                     url: item.conference
                 };
             }));
+}
+
+/**
+ * Returns the number of recent meetings to display.
+ *
+ * @returns {number} Negative number to slice array.
+ */
+export function getNumberOfRecentMeetingsToDisplay() {
+    return (Math.abs(interfaceConfig.RECENT_LIST_NUMBER_TO_DISPLAY) || 3) * -1;
 }
 
 /**

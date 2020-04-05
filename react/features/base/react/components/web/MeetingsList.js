@@ -100,17 +100,18 @@ class MeetingsList extends Component<Props> {
         this._renderItem = this._renderItem.bind(this);
     }
 
-    _onClear: string => Function;
+    _onClear: void => void;
 
     /**
      * Clear all history items and refresh page.
      *
      * @private
-     * @returns null
+     * @returns {void}
      */
     _onClear() {
         window.localStorage.setItem('features/recent-list', []);
         window.location.reload();
+
         return null;
     }
 
@@ -123,7 +124,9 @@ class MeetingsList extends Component<Props> {
         const { listEmptyComponent, meetings, t } = this.props;
 
         /**
-         * If there are no recent meetings we don't want to display anything
+         * If there are no recent meetings we don't want to display anything.
+         *
+         * @returns {void}
          */
         if (meetings) {
             return (
@@ -135,9 +138,22 @@ class MeetingsList extends Component<Props> {
                             : meetings.map(this._renderItem)
                     }
                     <div
-                        className = { meetings.length > 0 ? 'meetings-list-web-clearbutton' : 'meetings-list-web-clearbutton hide' }
-                        onClick = { () => { this._onClear() } } >
+                        className =
+                            {
+                                meetings.length > 0
+                                    ? 'meetings-list-web-clear'
+                                    : 'meetings-list-web-clear hide'
+                            } >
+                        <div
+                            className =
+                                {
+                                    meetings.length > 0
+                                        ? 'button'
+                                        : ''
+                                }
+                            onClick = { this._onClear } >
                             { t('welcomepage.recentListDeleteAll') }
+                        </div>
                     </div>
                 </Container>
             );
@@ -230,8 +246,8 @@ class MeetingsList extends Component<Props> {
 /**
  * Maps redux state to component props.
  *
- * @returns { }
-    */
+ * @returns {Array}
+ */
 function _mapStateToProps() {
     return { };
 }
