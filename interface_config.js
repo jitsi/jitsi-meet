@@ -176,7 +176,7 @@ var interfaceConfig = {
      *
      * @type {number}
      */
-    RECENT_LIST_NUMBER_TO_DISPLAY: 4,
+    RECENT_LIST_NUMBER_TO_DISPLAY: 3,
 
     // Names of browsers which should show a warning stating the current browser
     // has a suboptimal experience. Browsers which are not listed as optimal or
