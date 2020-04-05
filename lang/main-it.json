@@ -124,7 +124,7 @@
         "noPermission": "Permesso negato",
         "previewUnavailable": "Anteprima non disponibile",
         "selectADevice": "Seleziona un dispositivo",
-        "testAudio": "Riproduci un suono di test"
+        "testAudio": "Riproduci un suono di prova"
     },
     "dialog": {
         "accessibilityLabel": {
@@ -686,7 +686,7 @@
             "join": "Tap per accedere",
             "roomname": "Inserisci Nome Stanza"
         },
-        "appDescription": "Via avanti, video chatta con l'intero team. In effetti, invita tutti quelli che conosci. {{app}} è una soluzione di video conference totalmente crittografata, 100% open source, che puoi utilizzare tutto il giorno, ogni giorno, gratuitamente - senza bisogno di un account.",
+        "appDescription": "Avvia una videochiamata con tutto il team. Invita tutti quelli che conosci.  {{app}} è una soluzione per effettuare videoconferenze totalmente crittografata, 100% open source, che puoi usare sempre, ogni giorno, gratuitamente – senza bisogno di un account.",
         "audioVideoSwitch": {
             "audio": "Voce",
             "video": "Video"
