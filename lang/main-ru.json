@@ -65,7 +65,7 @@
         "dontShowAgain": ""
     },
     "connectingOverlay": {
-        "joiningRoom": "Пытаемся присоединиться к вашей конференции..."
+        "joiningRoom": "Пытаемся присоединиться к вашей конференции…"
     },
     "connection": {
         "ATTACHED": "Прикреплено",
