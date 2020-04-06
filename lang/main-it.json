@@ -146,7 +146,7 @@
         "close": "Chiudi",
         "conferenceDisconnectMsg": "Controlla la tua connessione. Riconnessione in {{seconds}} secondi…",
         "conferenceDisconnectTitle": "Sei stato disconnesso.",
-        "conferenceReloadMsg": "Stiamo cercando di risolvere il problema. Riconnessione in {{seconds}} secondi...",
+        "conferenceReloadMsg": "Stiamo cercando di risolvere il problema. Riconnessione in {{seconds}} secondi…",
         "conferenceReloadTitle": "Purtroppo qualcosa è andato storto.",
         "confirm": "Conferma",
         "confirmNo": "No",
