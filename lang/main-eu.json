@@ -160,9 +160,9 @@
         "cameraUnsupportedResolutionError": "",
         "Cancel": "Utzi",
         "close": "Itxi",
-        "conferenceDisconnectMsg": "Zure sare-konexioa egiaztatu dezakezu. Berriro konektatzen {{seconds}} segundotan...",
+        "conferenceDisconnectMsg": "Zure sare-konexioa egiaztatu dezakezu. Berriro konektatzen {{seconds}} segundotan…",
         "conferenceDisconnectTitle": "Deskonektatu zara.",
-        "conferenceReloadMsg": "Hau konpontzen saiatzen ari gara. Berriro konektatzen {{seconds}} segundotan...",
+        "conferenceReloadMsg": "Hau konpontzen saiatzen ari gara. Berriro konektatzen {{seconds}} segundotan..…",
         "conferenceReloadTitle": "Tamalez, arazoren bat izan da.",
         "confirm": "Berretsi",
         "confirmNo": "Ez",
@@ -782,6 +782,6 @@
         "youAreAlone": ""
     },
     "helpView": {
-        "header": ""
+        "header": "Laguntza gunea"
     }
 }
