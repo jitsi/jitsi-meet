@@ -65,7 +65,7 @@
         "dontShowAgain": "Don’t show me this again"
     },
     "connectingOverlay": {
-        "joiningRoom": "Connecting you to your meeting..."
+        "joiningRoom": "Connecting you to your meeting…"
     },
     "connection": {
         "ATTACHED": "Attached",
@@ -77,9 +77,9 @@
         "DISCONNECTED": "Disconnected",
         "DISCONNECTING": "Disconnecting",
         "ERROR": "Error",
-        "FETCH_SESSION_ID": "Obtaining session-id...",
+        "FETCH_SESSION_ID": "Obtaining session-ID…",
         "GET_SESSION_ID_ERROR": "Get session-id error: {{code}}",
-        "GOT_SESSION_ID": "Obtaining session-id... Done",
+        "GOT_SESSION_ID": "Obtaining session-ID… Done",
         "LOW_BANDWIDTH": "Video for {{displayName}} has been turned off to save bandwidth"
     },
     "connectionindicator": {
@@ -257,7 +257,7 @@
         "serviceUnavailable": "Service unavailable",
         "sessTerminated": "Call terminated",
         "Share": "Share",
-        "shareVideoLinkError": "Please provide a correct youtube link.",
+        "shareVideoLinkError": "Please provide a correct YouTube link.",
         "shareVideoTitle": "Share a video",
         "shareYourScreen": "Share your screen",
         "shareYourScreenDisabled": "Screen sharing disabled.",
@@ -611,7 +611,7 @@
             "recording": "Toggle recording",
             "remoteMute": "Mute participant",
             "Settings": "Toggle settings",
-            "sharedvideo": "Toggle Youtube video sharing",
+            "sharedvideo": "Toggle YouTube video sharing",
             "shareRoom": "Invite someone",
             "shareYourScreen": "Toggle screenshare",
             "shortcuts": "Toggle shortcuts",
@@ -642,8 +642,8 @@
         "hangup": "Leave",
         "help": "Help",
         "invite": "Invite people",
-        "login": "Login",
-        "logout": "Logout",
+        "login": "Log in",
+        "logout": "Log out",
         "lowerYourHand": "Lower your hand",
         "moreActions": "More actions",
         "moreOptions": "More options",
