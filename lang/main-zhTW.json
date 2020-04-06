@@ -111,7 +111,7 @@
         "downloadApp": "下載應用 APP",
         "launchWebButton": "在網路上發起",
         "openApp": "繼續前往此應用程式",
-        "title": "發起您的會議於 {{app}}...",
+        "title": "發起您的會議於 {{app}}…",
         "tryAgainButton": "在桌面上再試一次"
     },
     "defaultLink": "例如 {{url}}",
@@ -652,7 +652,7 @@
         "failedToStart": "轉錄啟動失敗",
         "labelToolTip": "此會議正在轉錄",
         "off": "轉錄已停止",
-        "pending": "準備轉錄會議...",
+        "pending": "準備轉錄會議…",
         "start": "啟動顯示字幕",
         "stop": "停止顯示字幕",
         "tr": "TR 轉錄"
