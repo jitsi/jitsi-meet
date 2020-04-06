@@ -79,7 +79,7 @@
         "ERROR": "Error",
         "FETCH_SESSION_ID": "S'està obtenint un identificador de sessió…",
         "GET_SESSION_ID_ERROR": "S'ha produït un error en obtenir l'identificador de la sessió: {{code}}",
-        "GOT_SESSION_ID": "Obtenció d'identificador de sessió.... Fet",
+        "GOT_SESSION_ID": "Obtenció d'identificador de sessió… Fet",
         "LOW_BANDWIDTH": "S'ha apagat el vídeo de {{displayName}} per a estalviar ample de banda"
     },
     "connectionindicator": {
@@ -125,7 +125,7 @@
         "downloadApp": "Baixa l'aplicació",
         "launchWebButton": "Inicia al web",
         "openApp": "Continua en l'aplicació",
-        "title": "S'està iniciant la reunió en {{app}}....",
+        "title": "S'està iniciant la reunió en {{app}}…",
         "tryAgainButton": "Torna-ho a intentar en l'escriptori"
     },
     "defaultLink": "p. ex. {{url}}",
@@ -686,7 +686,7 @@
         "failedToStart": "No s'ha pogut iniciar la transcripció",
         "labelToolTip": "La reunió s'està transcrivint",
         "off": "La transcripció s'ha aturat",
-        "pending": "S'està preparant per a enregistrar la reunió...",
+        "pending": "S'està preparant per a enregistrar la reunió…",
         "start": "Activa els subtítols",
         "stop": "Desactiva els subtítols",
         "tr": "TR"
