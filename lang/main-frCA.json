@@ -116,7 +116,7 @@
         "downloadApp": "Télécharger l'application",
         "launchWebButton": "Démarrer dans l'application Web",
         "openApp": "Continuer vers l'application",
-        "title": "Démarrage de votre réunion dans {{app}} en cours...",
+        "title": "Démarrage de votre réunion dans {{app}} en cours…",
         "tryAgainButton": "Veuillez réessayer sur votre ordinateur"
     },
     "defaultLink": "p. ex. {{url}}",
@@ -151,7 +151,7 @@
         "cameraUnsupportedResolutionError": "Votre caméra ne prend pas en charge la résolution vidéo nécessaire.",
         "Cancel": "Annuler",
         "close": "Fermer",
-        "conferenceDisconnectMsg": "Vous devriez vérifier votre connexion au réseau. Reconnexion dans {{seconds}} sec...",
+        "conferenceDisconnectMsg": "Vous devriez vérifier votre connexion au réseau. Reconnexion dans {{seconds}} sec…",
         "conferenceDisconnectTitle": "Vous avez été déconnecté.",
         "conferenceReloadMsg": "Nous tentons de résoudre le problème. Reconnexion dans {{seconds}} sec...",
         "conferenceReloadTitle": "Malheureusement, une erreur s'est produite.",
@@ -657,7 +657,7 @@
         "failedToStart": "Échec du démarrage de la transcription",
         "labelToolTip": "La réunion est transcrite",
         "off": "La transcription est arrêtée",
-        "pending": "Préparation de la transcription de la réunion en cours...",
+        "pending": "Préparation de la transcription de la réunion en cours…",
         "start": "Activer l'affichage des sous-titres",
         "stop": "Désactiver l'affichage des sous-titres",
         "tr": "PI"
