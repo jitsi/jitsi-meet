@@ -160,7 +160,7 @@
         "cameraUnsupportedResolutionError": "Myndavélin þín styður ekki umbeðna upplausn myndmerkis.",
         "Cancel": "Hætta við",
         "close": "Loka",
-        "conferenceDisconnectMsg": "Þú ættir kannski að athuga nettenginguna þína. Tengist aftur eftir {{seconds}} sek...",
+        "conferenceDisconnectMsg": "Þú ættir kannski að athuga nettenginguna þína. Tengist aftur eftir {{seconds}} sek…",
         "conferenceDisconnectTitle": "Þú hefur verið aftengd(ur).",
         "conferenceReloadMsg": "Við erum að reyna að laga þetta. Tengist aftur eftir {{seconds}} sek...",
         "conferenceReloadTitle": "Því miður, eitthvað hefur farið úrskeiðis.",
