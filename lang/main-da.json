@@ -79,7 +79,7 @@
         "ERROR": "Fejl",
         "RECONNECTING": "Et netværksproblem opstod. Forbinder igen...",
         "GET_SESSION_ID_ERROR": "Hent session-id fejl: {{code}}",
-        "GOT_SESSION_ID": "HEnter session-id... Udført",
+        "GOT_SESSION_ID": "Henter session-ID… Udført",
         "LOW_BANDWIDTH": "Video for {{displayName}} er slået fra for at spare båndbredde"
     },
     "connectionindicator": {
@@ -126,7 +126,7 @@
         "downloadApp": "Download appen",
         "launchWebButton": "Start på web",
         "openApp": "Fortsæt til appen",
-        "title": "Start dit møde i {{app}}...",
+        "title": "Start dit møde i {{app}}…",
         "tryAgainButton": "Prøv igen"
     },
     "defaultLink": "e.g. {{url}}",
@@ -681,7 +681,7 @@
         "failedToStart": "Transkription kunne ikke starte",
         "labelToolTip": "Mødet transkriberes",
         "off": "Transkription stoppet",
-        "pending": "Forbereder sig til at transkribere mødet ...",
+        "pending": "Forbereder sig til at transkribere mødet …",
         "start": "Begynd at vise undertekster",
         "stop": "Stop med at få vist undertekster",
         "tr": "TR"
