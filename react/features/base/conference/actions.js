@@ -282,8 +282,6 @@ export function conferenceFailed(conference: Object, error: string, ...params: a
  * }}
  */
 export function conferenceJoined(conference: Object) {
-    // Reset localstorage lastVisitedUrl logic once user joined the conference.
-    // localStorage.setItem('lastVisitedUrlRefreshed', 'false');
 
     return {
         type: CONFERENCE_JOINED,

@@ -51,21 +51,21 @@ function _connectionEstablished(store, next, action) {
     // importantly, its params are used not only in jitsi-meet but also in
     // lib-jitsi-meet. Consequenlty, the time to remove the params is
     // determined by when no one needs them anymore.
-    const { history, location } = window;
+    // const { history, location } = window;
 
-    if (history
-            && location
-            && history.length
-            && typeof history.replaceState === 'function') {
-        const replacement = getURLWithoutParams(location);
-
-        if (location !== replacement) {
-            history.replaceState(
-                history.state,
-                (document && document.title) || '',
-                replacement);
-        }
-    }
+    // if (history
+    //         && location
+    //         && history.length
+    //         && typeof history.replaceState === 'function') {
+    //     const replacement = getURLWithoutParams(location);
+    //
+    //     if (location !== replacement) {
+    //         history.replaceState(
+    //             history.state,
+    //             (document && document.title) || '',
+    //             replacement);
+    //     }
+    // }
 
     return result;
 }
