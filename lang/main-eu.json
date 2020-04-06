@@ -33,7 +33,7 @@
         "error": {
             "appConfiguration": "Egutegiaren integrazioa ez dago ondo konfiguratuta.",
             "generic": "Errore bat gertatu da. Egiaztatu zure egutegiaren ezarpenak edo saiatu egutegia eguneratzen.",
-            "notSignedIn": "Errorea gertatu da egutegiaren gertaerak ikusteko autentifikatzerakoan. Egiaztatu egutegiaren ezarpenak eta saiatu berriro saioa hasten."
+            "notSignedIn": "Errorea gertatu da egutegiko gertaerak ikusteko baimentzerakoan. Egiaztatu egutegiaren ezarpenak eta saiatu berriro saioa hasten."
         },
         "join": "Batu",
         "joinTooltip": "Bilerara batu",
