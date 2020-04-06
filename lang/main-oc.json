@@ -115,7 +115,7 @@
         "downloadApp": "Telecargar l’aplicacion",
         "launchWebButton": "Lançar del navigador",
         "openApp": "Telecargar l’aplicacion",
-        "title": "Aviada de vòstra conferéncia dins {{app}}...",
+        "title": "Aviada de vòstra conferéncia dins {{app}}…",
         "tryAgainButton": "Tornar ensajar del burèu"
     },
     "defaultLink": "ex. {{url}}",
@@ -150,7 +150,7 @@
         "cameraUnsupportedResolutionError": "Vòstra camèra pren pas en carga la resolucion vidèo que cal.",
         "Cancel": "Anullar",
         "close": "Tampar",
-        "conferenceDisconnectMsg": "Vos cal benlèu verificar vòstra connexion al malhum. Nòva connexion dins {{seconds}} segondas...",
+        "conferenceDisconnectMsg": "Vos cal benlèu verificar vòstra connexion al malhum. Nòva connexion dins {{seconds}} segondas…",
         "conferenceDisconnectTitle": "Sètz estat desconnectat.",
         "conferenceReloadMsg": "Sèm a reglar aquò ! Nòva connexion dins {{seconds}} segondas...",
         "conferenceReloadTitle": "Malurosament, quicòm truquèt.",
@@ -656,7 +656,7 @@
         "failedToStart": "Fracàs de l’aviada de la transcripcion",
         "labelToolTip": "La conferéncia es a èsser transcricha",
         "off": "Transcripcion arrestada",
-        "pending": "Preparacion de l’enregistrament de la conferéncia...",
+        "pending": "Preparacion de l’enregistrament de la conferéncia…",
         "start": "Mostrar los sostítols",
         "stop": "Levar los sostítols",
         "tr": "TR"
