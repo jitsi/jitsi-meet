@@ -121,7 +121,7 @@
         "downloadApp": "Applikáció letöltése",
         "launchWebButton": "Indítás weben",
         "openApp": "Továbblépés az applikációhoz",
-        "title": "Értekezlet indítása a {{app}} applikációban...",
+        "title": "Értekezlet indítása a {{app}} applikációban…",
         "tryAgainButton": "Újbóli próbálkozás az asztali változatban"
     },
     "defaultLink": "pl.: {{url}}",
@@ -156,7 +156,7 @@
         "cameraUnsupportedResolutionError": "A kamera nem támogatja a szükséges videofelbontást.",
         "Cancel": "Mégsem",
         "close": "Bezárás",
-        "conferenceDisconnectMsg": "Ellenőrizni kellene a hálózati kapcsolatokat. Újracsatlakozás {{seconds}} másodperc múlva...",
+        "conferenceDisconnectMsg": "Ellenőrizni kellene a hálózati kapcsolatokat. Újracsatlakozás {{seconds}} másodperc múlva…",
         "conferenceDisconnectTitle": "Lecsatlakozott.",
         "conferenceReloadMsg": "Próbálkozás a hiba javítására. Újracsatlakozás {{seconds}} másodperc múlva...",
         "conferenceReloadTitle": "Sajnos valami félresikerült.",
@@ -682,7 +682,7 @@
         "failedToStart": "Meghiúsult az átirat kezdése",
         "labelToolTip": "Az értekezlet átirata elkezdődött",
         "off": "Az átirat készítése le lett állítva",
-        "pending": "Előkészület az értekezlet átiratának készítésére...",
+        "pending": "Előkészület az értekezlet átiratának készítésére…",
         "start": "Felirat megjelenítésének kezdése",
         "stop": "Felirat megjelenítésének befejezése",
         "tr": "Átirat"
