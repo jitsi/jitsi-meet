@@ -158,7 +158,7 @@
         "close": "Bezárás",
         "conferenceDisconnectMsg": "Ellenőrizni kellene a hálózati kapcsolatokat. Újracsatlakozás {{seconds}} másodperc múlva…",
         "conferenceDisconnectTitle": "Lecsatlakozott.",
-        "conferenceReloadMsg": "Próbálkozás a hiba javítására. Újracsatlakozás {{seconds}} másodperc múlva...",
+        "conferenceReloadMsg": "Próbálkozás a hiba javítására. Újracsatlakozás {{seconds}} másodperc múlva…",
         "conferenceReloadTitle": "Sajnos valami félresikerült.",
         "confirm": "Megerősítés",
         "confirmNo": "Nem",
