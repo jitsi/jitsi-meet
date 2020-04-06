@@ -145,7 +145,7 @@
         "cameraUnsupportedResolutionError": "Camera của bạn không hỗ trợ độ phân giải video yêu cầu.",
         "Cancel": "Hủy",
         "close": "Đóng",
-        "conferenceDisconnectMsg": "Bạn có thể muốn kiểm tra kết nối mạng của mình. Đang kết nối lại trong {{seconds}} giây...",
+        "conferenceDisconnectMsg": "Bạn có thể muốn kiểm tra kết nối mạng của mình. Đang kết nối lại trong {{seconds}} giây…",
         "conferenceDisconnectTitle": "Bạn đã bị ngắt kết nối.",
         "conferenceReloadMsg": "Chúng tôi đang cố gắng sửa lỗi này. Đang kết nối lại trong {{seconds}} giây...",
         "conferenceReloadTitle": "Thật không may, có điều gì đó đã sai.",
