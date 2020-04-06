@@ -65,7 +65,7 @@
         "dontShowAgain": ""
     },
     "connectingOverlay": {
-        "joiningRoom": "Connexion à la réunion..."
+        "joiningRoom": "Connexion à la réunion…"
     },
     "connection": {
         "ATTACHED": "Attachée",
@@ -594,7 +594,7 @@
             "recording": "Activer/désactiver l'enregistrement",
             "remoteMute": "Désactiver le micro du participant",
             "Settings": "Afficher/masquer le menu des paramètres",
-            "sharedvideo": "Démarrer/arrêter le partage de vidéo Youtube",
+            "sharedvideo": "Démarrer/arrêter le partage de vidéo YouTube",
             "shareRoom": "Inviter quelqu'un",
             "shareYourScreen": "Activer/désactiver le partage d’écran",
             "shortcuts": "Afficher/masquer les raccourcis",
