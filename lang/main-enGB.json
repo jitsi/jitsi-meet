@@ -54,7 +54,7 @@
         "title": "Chat"
     },
     "connectingOverlay": {
-        "joiningRoom": "Connecting you to your meeting..."
+        "joiningRoom": "Connecting you to your meeting…"
     },
     "connection": {
         "ATTACHED": "Attached",
