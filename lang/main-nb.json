@@ -1,7 +1,7 @@
 {
     "addPeople": {
         "add": "Inviter",
-        "countryNotSupported": "",
+        "countryNotSupported": "Vi støtter ikke dette målet enda.",
         "countryReminder": "",
         "disabled": "Du kan ikke invitere folk.",
         "failedToAdd": "Klarte ikke å lagge til deltagere",
@@ -9,7 +9,7 @@
         "loading": "Søker etter folk og telefonnumre",
         "loadingNumber": "Bekrefter telefonnummer",
         "loadingPeople": "Søker etter folk å inviterte",
-        "noResults": "",
+        "noResults": "Resultatløst",
         "noValidNumbers": "Skriv inn et telefonnummer",
         "searchNumbers": "Legg til telefonnumre",
         "searchPeople": "Søk etter folk",
@@ -31,55 +31,60 @@
         "addMeetingURL": "Legg til en møtelenke",
         "confirmAddLink": "Ønsker du å legge til en Jitsi-lenke til denne hendelsen?",
         "error": {
-            "appConfiguration": "",
-            "generic": "",
-            "notSignedIn": ""
+            "appConfiguration": "Kalenderintegrasjon er ikke satt opp rett.",
+            "generic": "En feil har inntruffet. Sjekk kalenderinnstillingene eller prøv å gjenoppfriske kalenderen.",
+            "notSignedIn": "En feil har inntruffet under identitetsbekreftelse for å se kalenderhendelser. Sjekk dine kalenderinnstillinger, og prøv å logge inn igjen."
         },
         "join": "Ta del",
         "joinTooltip": "Ta del i møtet",
         "nextMeeting": "neste møte",
-        "noEvents": "",
+        "noEvents": "Det er ikke planlagt noen hendelser.",
         "ongoingMeeting": "pågående møte",
         "permissionButton": "Åpne innstillinger",
-        "permissionMessage": "",
-        "refresh": "",
+        "permissionMessage": "Kalender-tilgang kreves for å se møtene dine i programmet.",
+        "refresh": "Gjenoppfrisk kalender",
         "today": "I dag"
     },
     "chat": {
-        "error": "",
+        "error": "Feil: Meldingen din ble ikke sendt. Grunn: {{error}}",
         "messagebox": "Skriv en melding",
         "nickname": {
             "popover": "Velg et kallenavn",
-            "title": ""
+            "title": "Skriv inn kallenavn for å bruke sludring"
         },
-        "title": "",
+        "title": "Sludre",
         "messageTo": "Privat melding til {{recipient}}",
-        "fieldPlaceHolder": "Skriv inn din melding her"
+        "fieldPlaceHolder": "Skriv inn din melding her",
+        "you": "deg",
+        "privateNotice": "Privat melding til {{recipient}}",
+        "noMessagesMessage": "Det er ingen meldinger i dette møtet enda. Start en samtale her."
     },
     "connectingOverlay": {
-        "joiningRoom": ""
+        "joiningRoom": "Kobler deg til møtet…"
     },
     "connection": {
         "ATTACHED": "Vedlagt",
         "AUTHENTICATING": "Bekrefter",
-        "AUTHFAIL": "",
+        "AUTHFAIL": "Identitetsbekreftelse mislyktes",
         "CONNECTED": "Tilkoblet",
         "CONNECTING": "Kobler til",
-        "CONNFAIL": "",
+        "CONNFAIL": "Tilkobling mislyktes",
         "DISCONNECTED": "Frakoblet",
         "DISCONNECTING": "Kobler fra",
         "ERROR": "Feil",
         "RECONNECTING": "",
         "GOT_SESSION_ID": "Henter økt-ID… Ferdig",
-        "FETCH_SESSION_ID": "Henter økt-ID…"
+        "FETCH_SESSION_ID": "Henter økt-ID…",
+        "LOW_BANDWIDTH": "Video for {{displayName}} har blitt avskrudd for å lagre båndbredde",
+        "GET_SESSION_ID_ERROR": "Klarte ikke å hente økt-ID: {{code}}"
     },
     "connectionindicator": {
         "address": "Adresse:",
         "bandwidth": "Anslått båndbredde:",
-        "bitrate": "",
-        "bridgeCount": "",
+        "bitrate": "Bitrate:",
+        "bridgeCount": "Tjenerantall: ",
         "connectedTo": "Ansluttet til:",
-        "framerate": "",
+        "framerate": "Bildefrekvens",
         "less": "Vis mindre",
         "localaddress": "Lokal adresse:",
         "localaddress_plural": "Lokale adresser:",
@@ -96,13 +101,14 @@
         },
         "remoteaddress": "Fjernadresser:",
         "remoteaddress_plural": "Fjernadresser:",
-        "remoteport": "",
-        "remoteport_plural": "",
+        "remoteport": "Port annensteds hen:",
+        "remoteport_plural": "Porter annensteds hen:",
         "resolution": "Oppløsning:",
         "status": "Tilknytning:",
-        "transport": "",
-        "transport_plural": "",
-        "turn": ""
+        "transport": "Transport:",
+        "transport_plural": "Transporter:",
+        "turn": "",
+        "e2e_rtt": "E2E RTT:"
     },
     "dateUtils": {
         "earlier": "Tidligere",
@@ -110,21 +116,21 @@
         "yesterday": "I går"
     },
     "deepLinking": {
-        "appNotInstalled": "",
-        "description": "",
-        "descriptionWithoutWeb": "",
+        "appNotInstalled": "Du trenger {{app}}-mobilprogrammet for å ta del i dette møtet på telefonen din.",
+        "description": "Skjedde det ingenting? Møtet ditt ble forsøkt startet i {{app}}-skrivebordsprogrammet. Prøv igjen eller start det i {{app}}-nettleserprogrammet.",
+        "descriptionWithoutWeb": "Skjedde det ingenting? Møtet ditt ble forsøkt startet fra {{app}}-skrivebordsprogrammet.",
         "downloadApp": "Last ned programmet",
-        "launchWebButton": "",
+        "launchWebButton": "Start i nettleser",
         "openApp": "Fortsett til programmet",
-        "title": "",
-        "tryAgainButton": ""
+        "title": "Starter møtet ditt i {{app}}…",
+        "tryAgainButton": "Prøv igjen på skrivebordet"
     },
     "defaultLink": "f.eks.",
     "deviceError": {
-        "cameraError": "",
-        "cameraPermission": "",
-        "microphoneError": "",
-        "microphonePermission": ""
+        "cameraError": "Klarte ikke å få tilgang til kameraet ditt",
+        "cameraPermission": "Klarte ikke å innhente kameratilgang",
+        "microphoneError": "Klarte ikke å få tilgang til mikrofonen din",
+        "microphonePermission": "Klarte ikke å innhente mikrofontilgang"
     },
     "deviceSelection": {
         "noPermission": "Tilgang ikke innvilget",
@@ -134,10 +140,10 @@
     },
     "dialog": {
         "accessibilityLabel": {
-            "liveStreaming": ""
+            "liveStreaming": "Sanntidsstrøm"
         },
         "allow": "Tillat",
-        "alreadySharedVideoMsg": "",
+        "alreadySharedVideoMsg": "En annen deltager deler allerede video. Denne konferansen kan kun ha én videodeling av gangen.",
         "alreadySharedVideoTitle": "",
         "applicationWindow": "",
         "Back": "Tilbake",
@@ -726,6 +732,9 @@
         "title": "Delt dokument"
     },
     "chromeExtensionBanner": {
-        "dontShowAgain": "Ikke vis meg dette igjen"
-    }
+        "dontShowAgain": "Ikke vis meg dette igjen",
+        "buttonText": "Installer Chrome-programtillegg",
+        "installExtensionText": "Installer programtillegget for Google-kalenderen og Office 365-integrasjon"
+    },
+    "defaultNickname": "f.eks. Janne Rosa"
 }
