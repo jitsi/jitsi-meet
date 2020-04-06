@@ -65,7 +65,7 @@
         "dontShowAgain": "No m'ho mostris més"
     },
     "connectingOverlay": {
-        "joiningRoom": "S'està connectat a la reunió..."
+        "joiningRoom": "S'està connectat a la reunió…"
     },
     "connection": {
         "ATTACHED": "Adjunt",
@@ -77,7 +77,7 @@
         "DISCONNECTED": "Desconnectat",
         "DISCONNECTING": "S'està desconnectant",
         "ERROR": "Error",
-        "FETCH_SESSION_ID": "S'està obtenint un identificador de sessió...",
+        "FETCH_SESSION_ID": "S'està obtenint un identificador de sessió…",
         "GET_SESSION_ID_ERROR": "S'ha produït un error en obtenir l'identificador de la sessió: {{code}}",
         "GOT_SESSION_ID": "Obtenció d'identificador de sessió.... Fet",
         "LOW_BANDWIDTH": "S'ha apagat el vídeo de {{displayName}} per a estalviar ample de banda"
