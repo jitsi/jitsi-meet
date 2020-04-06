@@ -158,7 +158,7 @@
         "close": "Fechar",
         "conferenceDisconnectMsg": "Você pode querer verificar sua conexão de rede. Reconectando em {{seconds}} segundos …",
         "conferenceDisconnectTitle": "Você foi desconectado.",
-        "conferenceReloadMsg": "Estamos tentando consertar isto. Reconectando em {{seconds}} segundos...",
+        "conferenceReloadMsg": "Estamos tentando consertar isto. Reconectando em {{seconds}} segundos…",
         "conferenceReloadTitle": "Infelizmente, algo deu errado.",
         "confirm": "Confirmar",
         "confirmNo": "Não",
