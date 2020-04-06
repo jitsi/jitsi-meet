@@ -217,7 +217,7 @@ var interfaceConfig = {
      * How many columns the tile view can expand to. The respected range is
      * between 1 and 5.
      */
-    TILE_VIEW_MAX_COLUMNS: 5
+    // TILE_VIEW_MAX_COLUMNS: 5
 
     /**
      * Specify custom URL for downloading android mobile app.
@@ -252,6 +252,10 @@ var interfaceConfig = {
      MOBILE_DYNAMIC_LINK
      PHONE_NUMBER_REGEX
     */
+
+    // Allow all above example options to include a trailing comma and
+    // prevent fear when commenting out the last value.
+    makeJsonParserHappy: 'even if last key had a trailing comma'
 };
 
 /* eslint-enable no-unused-vars, no-var, max-len */
