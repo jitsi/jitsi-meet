@@ -65,7 +65,7 @@
         "dontShowAgain": ""
     },
     "connectingOverlay": {
-        "joiningRoom": "会议连接中..."
+        "joiningRoom": "会议连接中…"
     },
     "connection": {
         "ATTACHED": "已接入",
@@ -589,7 +589,7 @@
             "recording": "开启 / 停止 视频录制",
             "remoteMute": "静音与会者",
             "Settings": "显示 / 隐藏 设置",
-            "sharedvideo": "开启 / 关闭 Youtube 影片分享",
+            "sharedvideo": "开启 / 关闭 YouTube 影片分享",
             "shareRoom": "邀请他人",
             "shareYourScreen": "开启 / 关闭 屏幕分享",
             "shortcuts": "切换快捷方式",

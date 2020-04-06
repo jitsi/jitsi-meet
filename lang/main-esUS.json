@@ -65,7 +65,7 @@
         "dontShowAgain": "No mostrar nuevamente"
     },
     "connectingOverlay": {
-        "joiningRoom": "Conectando a su reunión..."
+        "joiningRoom": "Conectando a su reunión…"
     },
     "connection": {
         "ATTACHED": "Adjunto",
@@ -78,7 +78,7 @@
         "DISCONNECTING": "Desconectando",
         "ERROR": "Error",
         "RECONNECTING": "Ocurrió un problema en la red. Reconectando...",
-        "FETCH_SESSION_ID": "Obteniendo session-id...",
+        "FETCH_SESSION_ID": "Obteniendo session-ID…",
         "GET_SESSION_ID_ERROR": "Obtener session-id error: {{code}}",
         "GOT_SESSION_ID": "Obteniendo session-id... Listo",
         "LOW_BANDWIDTH": "Video para {{displayName}} ha sido deshabilitado para economizar ancho de banda"
@@ -647,7 +647,7 @@
         "noAudioSignalDesc": "Si no lo silenció intencionalmente desde la configuración del sistema o el hardware, considere la posibilidad de cambiar el dispositivo.",
         "noAudioSignalDescSuggestion": "Si no lo silenció intencionalmente desde la configuración del sistema o el hardware, considere utilizar el siguiente dispositivo:",
         "noAudioSignalDialInDesc": "Usted puede además llamar usando:",
-        "noAudioSignalDialInLinkDesc" : "Números de llamada",
+        "noAudioSignalDialInLinkDesc": "Números de llamada",
         "noisyAudioInputTitle": "Su micrófono parece estar ruidoso",
         "noisyAudioInputDesc": "Parece que su micráfono está haciendo ruido, por favor considere silenciarlo o cambiar de dispositivo.",
         "openChat": "Abrir chat",

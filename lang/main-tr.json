@@ -1,43 +1,44 @@
 {
     "addPeople": {
         "add": "Davet et",
-        "countryNotSupported": "",
-        "countryReminder": "",
-        "disabled": "",
-        "failedToAdd": "",
+        "countryNotSupported": "Bu hedefi henüz desteklemiyoruz.",
+        "countryReminder": "ABD dışından mı arıyorsunuz? Lütfen ülke koduyla başladığınızdan emin olun!",
+        "disabled": "İnsanları davet edemezsiniz.",
+        "failedToAdd": "Katılımcılar eklenemedi",
         "footerText": "",
-        "loading": "",
-        "loadingNumber": "",
-        "loadingPeople": "",
-        "noResults": "",
-        "noValidNumbers": "",
-        "searchNumbers": "",
-        "searchPeople": "",
-        "searchPeopleAndNumbers": "",
-        "telephone": "",
-        "title": ""
+        "loading": "Kişi ve telefon numarası arama",
+        "loadingNumber": "Telefon numarası doğrulanıyor",
+        "loadingPeople": "Davet edilecek kişiler aranıyor",
+        "noResults": "Eşleşen arama sonucu yok",
+        "noValidNumbers": "Lütfen bir telefon numarası girin",
+        "searchNumbers": "Telefon numarası ekleyin",
+        "searchPeople": "Kişileri arayın",
+        "searchPeopleAndNumbers": "Kişi arayın ya da telefon numaralarını ekleyin",
+        "telephone": "Telefon: {{number}}",
+        "title": "Kişileri bu toplantıya davet edin"
     },
     "audioDevices": {
         "bluetooth": "Bluetooth",
         "headphones": "Kulaklık",
         "phone": "Telefon",
-        "speaker": "Konuşmacı"
+        "speaker": "Konuşmacı",
+        "none": "Ses cihazı yok"
     },
     "audioOnly": {
-        "audioOnly": "Yalnızca ses"
+        "audioOnly": "Düşük bant genişliği"
     },
     "calendarSync": {
-        "addMeetingURL": "",
-        "confirmAddLink": "",
+        "addMeetingURL": "Toplantı bağlantısı ekleyin",
+        "confirmAddLink": "Bu etkinliğe bir Jitsi bağlantısı eklemek ister misiniz?",
         "error": {
-            "appConfiguration": "",
-            "generic": "",
-            "notSignedIn": ""
+            "appConfiguration": "Takvim entegrasyonu düzgün yapılandırılmamış.",
+            "generic": "Bir hata oluştu. Lütfen takvim ayarlarınızı kontrol edin veya takvimi yenilemeyi deneyin.",
+            "notSignedIn": "Takvim etkinliklerini görmek için kimlik doğrulaması yapılırken bir hata oluştu. Lütfen takvim ayarlarınızı kontrol edin ve tekrar giriş yapmayı deneyin."
         },
-        "join": "",
-        "joinTooltip": "",
-        "nextMeeting": "",
-        "noEvents": "",
+        "join": "Katıl",
+        "joinTooltip": "Toplantıya katıl",
+        "nextMeeting": "Sıradaki toplantı",
+        "noEvents": "Planlanmış yaklaşan etkinlik yok.",
         "ongoingMeeting": "",
         "permissionButton": "",
         "permissionMessage": "",
@@ -231,7 +232,7 @@
         "serviceUnavailable": "Hizmet kullanım dışı",
         "sessTerminated": "",
         "Share": "Paylaş",
-        "shareVideoLinkError": "Lütfen doğru prezi bağlantısı verin.",
+        "shareVideoLinkError": "Lütfen doğru bir YouTube bağlantısı sağlayın.",
         "shareVideoTitle": "",
         "shareYourScreen": "",
         "shareYourScreenDisabled": "",
@@ -592,7 +593,7 @@
         "hangup": "Ayrıl",
         "invite": "",
         "login": "Oturum aç",
-        "logout": "Oturum kapat",
+        "logout": "Oturumu kapat",
         "lowerYourHand": "",
         "moreActions": "",
         "mute": "Sessiz / Sesli",

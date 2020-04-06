@@ -77,7 +77,7 @@
         "DISCONNECTED": "Getrennt",
         "DISCONNECTING": "Verbindung wird getrennt",
         "ERROR": "Fehler",
-        "FETCH_SESSION_ID": "Sitzungs-ID erhalten...",
+        "FETCH_SESSION_ID": "Sitzungs-ID erhalten…",
         "GET_SESSION_ID_ERROR": "Sitzungs-ID-Fehler erhalten: {{code}}",
         "GOT_SESSION_ID": "Sitzungs-ID erhalten... Beendet",
         "LOW_BANDWIDTH": "Video für {{displayName}} wurde ausgeschaltet, um Bandbreite einzusparen"
@@ -647,7 +647,7 @@
         "noAudioSignalDesc": "Wenn Sie das Gerät nicht absichtlich über die Systemeinstellungen oder die Hardware stumm geschaltet haben, sollten Sie einen Wechsel des Geräts in Erwägung ziehen.",
         "noAudioSignalDescSuggestion": "Wenn Sie das Gerät nicht absichtlich über die Systemeinstellungen oder die Hardware stummgeschaltet haben, sollten Sie einen Wechsel auf das vorgeschlagene Gerät in Erwägung ziehen.",
         "noAudioSignalDialInDesc": "Sie können sich auch über die Einwahlnummer einwählen:",
-        "noAudioSignalDialInLinkDesc" : "Einwahlnummern:",
+        "noAudioSignalDialInLinkDesc": "Einwahlnummern:",
         "noisyAudioInputTitle": "Ihr Mikrofon scheint lärmintensiv zu sein!",
         "noisyAudioInputDesc": "Es klingt, als ob Ihr Mikrofon Störgeräusche verursacht. Bitte überlegen Sie, ob Sie das Gerät stummschalten oder austauschen wollen.",
         "openChat": "Chat öffnen",

@@ -65,7 +65,7 @@
         "dontShowAgain": "Vis ikke dette igen"
     },
     "connectingOverlay": {
-        "joiningRoom": "Forbinder dig til mødet..."
+        "joiningRoom": "Forbinder dig til mødet…"
     },
     "connection": {
         "ATTACHED": "Forbundet",
@@ -607,7 +607,7 @@
             "recording": "Slå optagelse til/fra",
             "remoteMute": "Slå lyd fra for deltager",
             "Settings": "Slå indstillinger fra/til",
-            "sharedvideo": "Slå Youtube video deling fra/til",
+            "sharedvideo": "Slå YouTube video deling fra/til",
             "shareRoom": "Invitér nogen",
             "shareYourScreen": "Slå skærmdeling fra/til",
             "shortcuts": "Slå genveje fra/til",
