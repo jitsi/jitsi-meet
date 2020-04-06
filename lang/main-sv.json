@@ -54,7 +54,7 @@
         "title": "Chatt"
     },
     "connectingOverlay": {
-        "joiningRoom": "Ansluter till mötet ..."
+        "joiningRoom": "Ansluter till mötet …"
     },
     "connection": {
         "ATTACHED": "Ansluten",
@@ -257,7 +257,6 @@
         "Yes": "Ja",
         "yourEntireScreen": "Helskärm"
     },
-    "\u0005dialog": {},
     "dialOut": {
         "statusMessage": "är nu {{status}}"
     },
@@ -365,7 +364,6 @@
         "streamIdHelp": "Vad är det här?",
         "unavailableTitle": "Livesändning otillgänglig"
     },
-    "\u0005liveStreaming": {},
     "localRecording": {
         "clientState": {
             "off": "Av",
@@ -564,7 +562,7 @@
             "recording": "Slå av eller på inspelning",
             "remoteMute": "Tysta deltagare",
             "Settings": "Öppna eller stäng inställningar",
-            "sharedvideo": "Slå av eller på Youtube-videodelning",
+            "sharedvideo": "Slå av eller på YouTube-videodelning",
             "shareRoom": "Bjud in någon",
             "shareYourScreen": "Slå av eller på skärmdelning",
             "shortcuts": "Stäng eller öppna genvägar",
