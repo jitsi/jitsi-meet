@@ -29,7 +29,7 @@ wget -qO -  https://download.jitsi.org/jitsi-key.gpg.key | sudo apt-key add -
 ### Install Jitsi Meet
 
 _Note_: The installer will check if [Nginx](https://nginx.org/) or [Apache](https://httpd.apache.org/) is present (in that order) and configure a virtualhost within the web server it finds to serve Jitsi Meet. If none of the above is found it then defaults to Nginx.
-If you are already running Nginx on port 443 on the same machine you better skip the turnserver configuration as it will conflict with your current port 443, so use the command `apt install --no-install-recommends jitsi-meet`.
+If you are already running Nginx on port 443 on the same machine turnserver configuration will be skipped as it will conflict with your current port 443.
 
 ```sh
 # Ensure support is available for apt repositories served via HTTPS
