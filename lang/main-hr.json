@@ -152,7 +152,7 @@
         "close": "Zatvori",
         "conferenceDisconnectMsg": "Provjerite vašu mrežnu vezu. Ponovno spajanje za {{seconds}} sekundi…",
         "conferenceDisconnectTitle": "Odspojeni ste.",
-        "conferenceReloadMsg": "Pokušavamo popraviti. Ponovno spajanje za {{seconds}} sekundi...",
+        "conferenceReloadMsg": "Pokušavamo popraviti. Ponovno spajanje za {{seconds}} sekundi…",
         "conferenceReloadTitle": "Nažalost, nešto je pošlo po zlu.",
         "confirm": "Potvrdi",
         "confirmNo": "Ne",
