@@ -146,7 +146,7 @@
         "close": "Stäng",
         "conferenceDisconnectMsg": "Kolla din internetanslutning. Återansluter om {{seconds}} sekunder…",
         "conferenceDisconnectTitle": "Du har kopplats ner.",
-        "conferenceReloadMsg": "Vi försöker fixa problemet. Återansluter om {{seconds}} sekunder...",
+        "conferenceReloadMsg": "Vi försöker fixa problemet. Återansluter om {{seconds}} sekunder…",
         "conferenceReloadTitle": "Något gick snett.",
         "confirm": "Bekräfta",
         "confirmNo": "Nej",
