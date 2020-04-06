@@ -160,7 +160,7 @@
         "cameraUnsupportedResolutionError": "Die Kamera unterstützt die erforderliche Auflösung nicht.",
         "Cancel": "Abbrechen",
         "close": "Schließen",
-        "conferenceDisconnectMsg": "Prüfen Sie allenfalls Ihre Netzwerkverbindung. Verbinde in {{seconds}} Sekunden...",
+        "conferenceDisconnectMsg": "Prüfen Sie allenfalls Ihre Netzwerkverbindung. Verbinde in {{seconds}} Sekunden…",
         "conferenceDisconnectTitle": "Ihre Verbindung ist getrennt worden.",
         "conferenceReloadMsg": "Wir versuchen das zu beheben. Verbinde in {{seconds}} Sekunden...",
         "conferenceReloadTitle": "Leider ist etwas schiefgegangen.",
