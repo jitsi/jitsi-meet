@@ -152,7 +152,7 @@
         "close": "Tampar",
         "conferenceDisconnectMsg": "Vos cal benlèu verificar vòstra connexion al malhum. Nòva connexion dins {{seconds}} segondas…",
         "conferenceDisconnectTitle": "Sètz estat desconnectat.",
-        "conferenceReloadMsg": "Sèm a reglar aquò ! Nòva connexion dins {{seconds}} segondas...",
+        "conferenceReloadMsg": "Sèm a reglar aquò ! Nòva connexion dins {{seconds}} segondas…",
         "conferenceReloadTitle": "Malurosament, quicòm truquèt.",
         "confirm": "Confirmar",
         "confirmNo": "Non",
