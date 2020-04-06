@@ -106,7 +106,7 @@
         "downloadApp": "アプリをダウンロードする",
         "launchWebButton": "Webで起動する",
         "openApp": "アプリで続く",
-        "title": "{{app}} で会議を開始する...",
+        "title": "{{app}} で会議を開始する…",
         "tryAgainButton": "デスクトップでもう一度お試しください"
     },
     "defaultLink": "例： {{url}}",
@@ -140,7 +140,7 @@
         "cameraUnsupportedResolutionError": "お使いのカメラは、必要なビデオ解像度をサポートしていません。",
         "Cancel": "キャンセル",
         "close": "閉じる",
-        "conferenceDisconnectMsg": "ネットワーク接続を確認することができます。 {{seconds}} 秒で再接続します...",
+        "conferenceDisconnectMsg": "ネットワーク接続を確認することができます。 {{seconds}} 秒で再接続します…",
         "conferenceDisconnectTitle": "あなたは切断されました。",
         "conferenceReloadMsg": "私たちはこれを解決しようとしています。 {{seconds}} 秒で再接続します...",
         "conferenceReloadTitle": "残念ながら、何かが間違っていました。",
