@@ -71,7 +71,7 @@
         "ATTACHED": "已接入",
         "AUTHENTICATING": "认证中",
         "AUTHFAIL": "认证失败",
-        "CONNECTED": "连接中...",
+        "CONNECTED": "连接中…",
         "CONNECTING": "连接中",
         "CONNFAIL": "连接失败",
         "DISCONNECTED": "已断开连接",
