@@ -153,7 +153,7 @@
         "close": "Fermer",
         "conferenceDisconnectMsg": "Vous devriez vérifier votre connexion au réseau. Reconnexion dans {{seconds}} sec…",
         "conferenceDisconnectTitle": "Vous avez été déconnecté.",
-        "conferenceReloadMsg": "Nous tentons de résoudre le problème. Reconnexion dans {{seconds}} sec...",
+        "conferenceReloadMsg": "Nous tentons de résoudre le problème. Reconnexion dans {{seconds}} sec…",
         "conferenceReloadTitle": "Malheureusement, une erreur s'est produite.",
         "confirm": "Confirmer",
         "confirmNo": "Non",
