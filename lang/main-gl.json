@@ -158,7 +158,7 @@
         "close": "Pechar",
         "conferenceDisconnectMsg": "Pode querer comprobar a conexión de rede. Reconectando en {{seconds}} seg…",
         "conferenceDisconnectTitle": "Foi desconectado.",
-        "conferenceReloadMsg": "Estamos a tentar arranxar isto. Reconectando en {{seconds}} seg...",
+        "conferenceReloadMsg": "Estamos a tentar arranxar isto. Reconectando en {{seconds}} seg…",
         "conferenceReloadTitle": "Lamentablemente, algo foi mal.",
         "confirm": "Confirmar",
         "confirmNo": "Non",
