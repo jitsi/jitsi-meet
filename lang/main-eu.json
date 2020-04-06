@@ -80,7 +80,7 @@
         "FETCH_SESSION_ID": "Saioaren ID-a eskuratzen…",
         "GET_SESSION_ID_ERROR": "Eskuratu saioaren ID errorea: {{code}}",
         "GOT_SESSION_ID": "Saioaren ID-a eskuratzea… Eginda",
-        "LOW_BANDWIDTH": ""
+        "LOW_BANDWIDTH": "{{displayName}}rako bideoa desaktibatu egin da banda-zabalera aurrezteko"
     },
     "connectionindicator": {
         "address": "Helbidea:",
