@@ -17,6 +17,9 @@ set -e
 # for details, see http://www.debian.org/doc/debian-policy/ or
 # the debian-policy package
 
+function generateRandomPassword() {
+    cat /dev/urandom | tr -dc 'a-zA-Z0-9' | head -c 16
+}
 
 case "$1" in
     configure)
@@ -51,7 +54,7 @@ case "$1" in
         db_get jicofo/jicofo-authpassword
         if [ -z "$RET" ] ; then
             # if password is missing generate it, and store it
-            JICOFO_AUTH_PASSWORD=`head -c 8 /dev/urandom | tr '\0-\377' 'a-zA-Z0-9a-zA-Z0-9a-zA-Z0-9a-zA-Z0-9@@@@####'`
+            JICOFO_AUTH_PASSWORD=`generateRandomPassword`
             db_set jicofo/jicofo-authpassword "$JICOFO_AUTH_PASSWORD"
         else
             JICOFO_AUTH_PASSWORD="$RET"
@@ -60,7 +63,7 @@ case "$1" in
         db_get jicofo/jicofosecret
         if [ -z "$RET" ] ; then
             # if secret is missing generate it, and store it
-            JICOFO_SECRET=`head -c 8 /dev/urandom | tr '\0-\377' 'a-zA-Z0-9a-zA-Z0-9a-zA-Z0-9a-zA-Z0-9@@@@####'`
+            JICOFO_SECRET=`generateRandomPassword`
             db_set jicofo/jicofosecret "$JICOFO_SECRET"
         else
             JICOFO_SECRET="$RET"
@@ -83,7 +86,7 @@ case "$1" in
         db_get jitsi-meet-prosody/turn-secret
         if [ -z "$RET" ] ; then
             # 8-chars random secret used for the turnserver
-            TURN_SECRET=`cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 8 | head -n 1`
+            TURN_SECRET=`generateRandomPassword`
             db_set jitsi-meet-prosody/turn-secret "$TURN_SECRET"
         else
             TURN_SECRET="$RET"
