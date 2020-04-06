@@ -60,6 +60,8 @@ Component "internal.auth.jitmeet.example.com" "muc"
       "ping";
     }
     admins = { "focusUser@auth.jitmeet.example.com", "jvb@auth.jitmeet.example.com" }
+    muc_room_locking = false
+    muc_room_default_public_jids = true
 
 VirtualHost "auth.jitmeet.example.com"
     authentication = "internal_plain"
