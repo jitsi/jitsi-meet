@@ -121,7 +121,7 @@
         "downloadApp": "Baixe o Aplicativo",
         "launchWebButton": "Iniciar na web",
         "openApp": "Continue na aplicação",
-        "title": "Iniciando sua reunião no {{app}}...",
+        "title": "Iniciando sua reunião no {{app}}…",
         "tryAgainButton": "Tente novamente no desktop"
     },
     "defaultLink": "ex.: {{url}}",
@@ -156,7 +156,7 @@
         "cameraUnsupportedResolutionError": "Sua câmera não suporta a resolução de vídeo requerida.",
         "Cancel": "Cancelar",
         "close": "Fechar",
-        "conferenceDisconnectMsg": "Você pode querer verificar sua conexão de rede. Reconectando em {{seconds}} segundos ...",
+        "conferenceDisconnectMsg": "Você pode querer verificar sua conexão de rede. Reconectando em {{seconds}} segundos …",
         "conferenceDisconnectTitle": "Você foi desconectado.",
         "conferenceReloadMsg": "Estamos tentando consertar isto. Reconectando em {{seconds}} segundos...",
         "conferenceReloadTitle": "Infelizmente, algo deu errado.",
@@ -682,7 +682,7 @@
         "failedToStart": "Transcrição falhou ao iniciar",
         "labelToolTip": "A reunião esta sendo transcrita",
         "off": "Transcrição parada",
-        "pending": "Preparando a transcrição da reunião...",
+        "pending": "Preparando a transcrição da reunião…",
         "start": "Exibir legendas",
         "stop": "Não exibir legendas",
         "tr": "TR"
