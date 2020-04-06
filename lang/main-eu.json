@@ -9,7 +9,7 @@
         "loading": "Jendea eta telefono zenbakiak bilatzen",
         "loadingNumber": "Telefono zenbakia balioztatzen",
         "loadingPeople": "Gonbidatzeko jendea bilatzen",
-        "noResults": "",
+        "noResults": "Ez dago bat datorren bilaketa-emaitzarik",
         "noValidNumbers": "Sartu telefono zenbakia",
         "searchNumbers": "Gehitu telefono zenbakiak",
         "searchPeople": "Bilatu jendea",
@@ -29,11 +29,11 @@
     },
     "calendarSync": {
         "addMeetingURL": "Bileraren esteka gehitu",
-        "confirmAddLink": "",
+        "confirmAddLink": "Jitsi esteka gertaera honetara gehitu nahi duzu?",
         "error": {
-            "appConfiguration": "",
+            "appConfiguration": "Egutegiaren integrazioa ez dago ondo konfiguratuta.",
             "generic": "Errore bat gertatu da. Egiaztatu zure egutegiaren ezarpenak edo saiatu egutegia eguneratzen.",
-            "notSignedIn": ""
+            "notSignedIn": "Errorea gertatu da egutegiaren gertaerak ikusteko autentifikatzerakoan. Egiaztatu egutegiaren ezarpenak eta saiatu berriro saioa hasten."
         },
         "join": "Batu",
         "joinTooltip": "Bilerara batu",
@@ -41,12 +41,12 @@
         "noEvents": "Ez dago aurreikusitako gertaerarik.",
         "ongoingMeeting": "abian den bilera",
         "permissionButton": "Ireki ezarpenak",
-        "permissionMessage": "",
-        "refresh": "",
+        "permissionMessage": "Egutegirako baimena beharrezkoa da zure bilerak aplikazioan ikusteko.",
+        "refresh": "Freskatu egutegia",
         "today": "Gaur"
     },
     "chat": {
-        "error": "",
+        "error": "Errorea: zure mezua ez da bidali. Arrazoia: {{error}}",
         "fieldPlaceHolder": "Idatzi mezua hemen",
         "messagebox": "Idatzi mezua",
         "messageTo": "Mezu pribatua {{recipient}}(e)ri",
@@ -130,7 +130,7 @@
     "defaultNickname": "adib. Joana Albisu",
     "deviceError": {
         "cameraError": "",
-        "cameraPermission": "",
+        "cameraPermission": "Errorea kameraren baimena eskuratzerakoan",
         "microphoneError": "",
         "microphonePermission": "Errorea mikrofonoaren baimena eskuratzerakoan"
     },
