@@ -76,7 +76,7 @@
         "LOW_BANDWIDTH": "O vídeo de {{displayName}} foi desativado para economizar largura de banda",
         "GOT_SESSION_ID": "Obtendo ID da sessão... Feito",
         "GET_SESSION_ID_ERROR": "Erro ao obter o ID da sessão: {{code}}",
-        "FETCH_SESSION_ID": "Obtendo ID da sessão..."
+        "FETCH_SESSION_ID": "Obtendo ID da sessão…"
     },
     "connectionindicator": {
         "address": "Endereço:",
@@ -605,7 +605,7 @@
             "recording": "Alternar gravação",
             "remoteMute": "Silenciar participante",
             "Settings": "Alternar configurações",
-            "sharedvideo": "Alternar compartilhamento de vídeo do Youtube",
+            "sharedvideo": "Alternar compartilhamento de vídeo do YouTube",
             "shareRoom": "Convidar alguém",
             "shareYourScreen": "Alternar compartilhamento de tela",
             "shortcuts": "Alternar atalhos",
