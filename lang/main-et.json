@@ -79,7 +79,7 @@
         "ERROR": "Viga",
         "FETCH_SESSION_ID": "Sessiooni-ID püüdmine…",
         "GET_SESSION_ID_ERROR": "Sessiooni-ID püüdmisel tekkis viga: {{code}}",
-        "GOT_SESSION_ID": "Sessiooni-ID püüdmine... Tehtud",
+        "GOT_SESSION_ID": "Sessiooni-ID püüdmine… Tehtud",
         "LOW_BANDWIDTH": "Kasutaja {{displayName}} video on ülekandekiiruse parandamiseks välja lülitatud"
     },
     "connectionindicator": {
@@ -125,7 +125,7 @@
         "downloadApp": "Laadi rakendus alla",
         "launchWebButton": "Käivita veebis",
         "openApp": "Jätka töölaua rakendusega",
-        "title": "Kõne avamine rakenduses {{app}}...",
+        "title": "Kõne avamine rakenduses {{app}}…",
         "tryAgainButton": "Proovi töölaua rakendusega uuesti "
     },
     "defaultLink": "nt {{url}}",
@@ -680,7 +680,7 @@
         "failedToStart": "Transkribeerimise alustamine ebaõnnestus",
         "labelToolTip": "Kõne transkribeeritakse",
         "off": "Transkribeerimine peatatud",
-        "pending": "Transkribeerimise ettevalmistus...",
+        "pending": "Transkribeerimise ettevalmistus…",
         "start": "Alusta subtiitrite kuvamist",
         "stop": "Lõpeta subtiitrite kuvamine",
         "tr": "TR"
