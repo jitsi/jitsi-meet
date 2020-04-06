@@ -1,6 +1,16 @@
 // @flow
 
 /**
+ * Action type to signal the deletion of a list.
+ *
+ * {
+ *     type: DELETE_RECENT_LIST,
+ *     entryId: Object
+ * }
+ */
+export const DELETE_RECENT_LIST = 'DELETE_RECENT_LIST';
+
+/**
  * Action type to signal the deletion of a list entry.
  *
  * {

@@ -8,9 +8,11 @@ import {
     translate
 } from '../../../i18n';
 
-import { connect } from '../../../redux';
+import type { Dispatch } from 'redux';
+import { connect } from '../../../../base/redux';
 import Container from './Container';
 import Text from './Text';
+import { deleteRecentList } from '../../../../recent-list/actions';
 
 type Props = {
 
@@ -47,7 +49,12 @@ type Props = {
     /**
      * Translate function
      */
-    t: Function
+    t: Function,
+
+    /**
+     * The redux store's {@code dispatch} function.
+     */
+    dispatch: Dispatch<any>
 };
 
 /**
@@ -109,10 +116,7 @@ class MeetingsList extends Component<Props> {
      * @returns {void}
      */
     _onClear() {
-        window.localStorage.setItem('features/recent-list', []);
-        window.location.reload();
-
-        return null;
+        this.props.dispatch(deleteRecentList());
     }
 
     /**
@@ -238,13 +242,4 @@ class MeetingsList extends Component<Props> {
     }
 }
 
-/**
- * Maps redux state to component props.
- *
- * @returns {Array}
- */
-function _mapStateToProps() {
-    return { };
-}
-
-export default translate(connect(_mapStateToProps)(MeetingsList));
+export default translate(connect()(MeetingsList));

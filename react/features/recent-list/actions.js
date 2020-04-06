@@ -3,8 +3,24 @@
 import {
     _STORE_CURRENT_CONFERENCE,
     _UPDATE_CONFERENCE_DURATION,
-    DELETE_RECENT_LIST_ENTRY
+    DELETE_RECENT_LIST_ENTRY,
+    DELETE_RECENT_LIST
 } from './actionTypes';
+
+/**
+ * Deletes a recent list entry based on url and date.
+ *
+ * @param {Object} entryId - An object constructed of the url and the date of
+ * the entry for easy identification.
+ * @returns {{
+ *     type: DELETE_RECENT_LIST
+ * }}
+ */
+export function deleteRecentList() {
+    return {
+        type: DELETE_RECENT_LIST
+    };
+}
 
 /**
  * Deletes a recent list entry based on url and date.

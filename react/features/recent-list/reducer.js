@@ -7,7 +7,8 @@ import { PersistenceRegistry } from '../base/storage';
 import {
     _STORE_CURRENT_CONFERENCE,
     _UPDATE_CONFERENCE_DURATION,
-    DELETE_RECENT_LIST_ENTRY
+    DELETE_RECENT_LIST_ENTRY,
+    DELETE_RECENT_LIST
 } from './actionTypes';
 import { isRecentListEnabled } from './functions';
 import logger from './logger';
@@ -54,6 +55,8 @@ ReducerRegistry.register(
             switch (action.type) {
             case APP_WILL_MOUNT:
                 return _appWillMount(state);
+            case DELETE_RECENT_LIST:
+                return _deleteRecentList();
             case DELETE_RECENT_LIST_ENTRY:
                 return _deleteRecentListEntry(state, action.entryId);
             case _STORE_CURRENT_CONFERENCE:
@@ -68,6 +71,15 @@ ReducerRegistry.register(
 
         return state;
     });
+
+/**
+ * Deletes a recent list.
+ *
+ * @returns {Array<Object>}
+ */
+function _deleteRecentList(): Array<Object> {
+    return [];
+}
 
 /**
  * Deletes a recent list entry based on the url and date of the item.
