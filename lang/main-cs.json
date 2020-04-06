@@ -74,7 +74,7 @@
         "ERROR": "Chyba",
         "RECONNECTING": "",
         "LOW_BANDWIDTH": "Video pro {{displayName}} bylo vypnuto pro snížení přenosové rychlosti",
-        "GOT_SESSION_ID": "Získávání session-id... Hotovo",
+        "GOT_SESSION_ID": "Získávání session-ID… Hotovo",
         "GET_SESSION_ID_ERROR": "Chyba při získávání session-id: {{code}}",
         "FETCH_SESSION_ID": "Získává se session-ID…"
     },
@@ -137,7 +137,7 @@
         "downloadApp": "Stažení aplikace",
         "launchWebButton": "Spustit na webu",
         "openApp": "Pokračovat do aplikace",
-        "title": "Spustit videohovor v {{app}}...",
+        "title": "Spustit videohovor v {{app}}…",
         "tryAgainButton": "Zkusit znovu na desktopu"
     },
     "defaultLink": "např. {{url}}",
