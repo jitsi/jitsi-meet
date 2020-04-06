@@ -121,7 +121,7 @@
         "downloadApp": "Descargar a aplicación",
         "launchWebButton": "Lanzar en web",
         "openApp": "Continuar coa app",
-        "title": "Lanzando a reunión en {{app}}...",
+        "title": "Lanzando a reunión en {{app}}…",
         "tryAgainButton": "Volver tentar no escritorio"
     },
     "defaultLink": "i.e. {{url}}",
@@ -156,7 +156,7 @@
         "cameraUnsupportedResolutionError": "A cámara non admite a resolución de vídeo requirida.",
         "Cancel": "Anular",
         "close": "Pechar",
-        "conferenceDisconnectMsg": "Pode querer comprobar a conexión de rede. Reconectando en {{seconds}} seg...",
+        "conferenceDisconnectMsg": "Pode querer comprobar a conexión de rede. Reconectando en {{seconds}} seg…",
         "conferenceDisconnectTitle": "Foi desconectado.",
         "conferenceReloadMsg": "Estamos a tentar arranxar isto. Reconectando en {{seconds}} seg...",
         "conferenceReloadTitle": "Lamentablemente, algo foi mal.",
@@ -664,7 +664,7 @@
         "failedToStart": "A transcrición non puido arrincar",
         "labelToolTip": "A reunión está sendo transcrita",
         "off": "Transcrición parada",
-        "pending": "Preparando a transcrición da reunión...",
+        "pending": "Preparando a transcrición da reunión…",
         "start": "Comezar a amosar subtítulos",
         "stop": "Parar a mostra de subtítulos",
         "tr": "TR"
