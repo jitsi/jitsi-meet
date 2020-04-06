@@ -1,7 +1,7 @@
 {
     "addPeople": {
         "add": "Davet et",
-        "countryNotSupported": "",
+        "countryNotSupported": "Bu hedefi henüz desteklemiyoruz.",
         "countryReminder": "",
         "disabled": "",
         "failedToAdd": "",
