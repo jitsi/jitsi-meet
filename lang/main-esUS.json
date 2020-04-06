@@ -80,7 +80,7 @@
         "RECONNECTING": "Ocurrió un problema en la red. Reconectando...",
         "FETCH_SESSION_ID": "Obteniendo session-ID…",
         "GET_SESSION_ID_ERROR": "Obtener session-id error: {{code}}",
-        "GOT_SESSION_ID": "Obteniendo session-id... Listo",
+        "GOT_SESSION_ID": "Obteniendo session-ID… Listo",
         "LOW_BANDWIDTH": "Video para {{displayName}} ha sido deshabilitado para economizar ancho de banda"
     },
     "connectionindicator": {
@@ -125,7 +125,7 @@
         "downloadApp": "Descargar la aplicación",
         "launchWebButton": "Iniciar en la Web",
         "openApp": "Continuar a la aplicación",
-        "title": "Iniciando la reunión en {{app}}...",
+        "title": "Iniciando la reunión en {{app}}…",
         "tryAgainButton": "Intentar de nuevo en el escritorio"
     },
     "defaultLink": "p.ej. {{url}}",
@@ -680,7 +680,7 @@
         "failedToStart": "La transcripción no se pudo iniciar",
         "labelToolTip": "La reunión se está transcribiendo",
         "off": "Transcripción detenida",
-        "pending": "Preparando para transcribir la reunión...",
+        "pending": "Preparando para transcribir la reunión…",
         "start": "Comenzar a mostrar subtítulos",
         "stop": "Dejar de mostrar subtítulos",
         "tr": "TR"
