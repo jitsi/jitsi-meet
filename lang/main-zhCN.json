@@ -116,7 +116,7 @@
         "downloadApp": "下载应用",
         "launchWebButton": "在网页中启动",
         "openApp": "继续",
-        "title": "在 {{app}}中登录会议...",
+        "title": "在 {{app}}中登录会议…",
         "tryAgainButton": "请尝试重启桌面版应用程序"
     },
     "defaultLink": "例如 {{url}}",
@@ -659,7 +659,7 @@
         "failedToStart": "开启转录失败",
         "labelToolTip": "会议正在转录",
         "off": "停止转录",
-        "pending": "正在准备转录会议...",
+        "pending": "正在准备转录会议…",
         "start": "开启显示字幕",
         "stop": "停止显示字幕",
         "tr": "TR"
