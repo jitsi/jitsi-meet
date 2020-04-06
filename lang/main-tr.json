@@ -39,42 +39,51 @@
         "joinTooltip": "Toplantıya katıl",
         "nextMeeting": "Sıradaki toplantı",
         "noEvents": "Planlanmış yaklaşan etkinlik yok.",
-        "ongoingMeeting": "",
-        "permissionButton": "",
-        "permissionMessage": "",
-        "refresh": "",
-        "today": ""
+        "ongoingMeeting": "devam eden toplantı",
+        "permissionButton": "Ayarları aç",
+        "permissionMessage": "Toplantılarınızı uygulamada görmek için Takvim izni gerekir.",
+        "refresh": "Takvimi yenile",
+        "today": "Bugün"
     },
     "chat": {
-        "error": "",
-        "messagebox": "",
+        "error": "Hata: mesajınız gönderilmedi. Gerekçe: {{error}}",
+        "messagebox": "Bir mesaj yazın",
         "nickname": {
             "popover": "Bir takma ad seçin",
-            "title": ""
+            "title": "Sohbette kullanmak için bir takma ad girin"
         },
-        "title": ""
+        "title": "Sohbet",
+        "you": "sen",
+        "privateNotice": "{{recipient}} için özel mesaj",
+        "noMessagesMessage": "Toplantıda henüz mesaj yok. Buradan bir konuşma başlatın!",
+        "messageTo": "{{recipient}} için özel mesaj",
+        "fieldPlaceHolder": "Mesajınızı buraya yazın"
     },
     "connectingOverlay": {
-        "joiningRoom": ""
+        "joiningRoom": "Toplantınıza bağlanılıyor…"
     },
     "connection": {
-        "ATTACHED": "",
-        "AUTHENTICATING": "Kimlik doğrula",
-        "AUTHFAIL": "",
-        "CONNECTED": "bağlandı",
+        "ATTACHED": "Eklenmiş",
+        "AUTHENTICATING": "Kimlik doğrulanıyor",
+        "AUTHFAIL": "Kimlik doğrulama başarısız",
+        "CONNECTED": "Bağlandı",
         "CONNECTING": "Bağlanıyor",
-        "CONNFAIL": "",
-        "DISCONNECTED": "bağlantı kesildi",
-        "DISCONNECTING": "bağlantı kesildi",
+        "CONNFAIL": "Bağlantı başarısız",
+        "DISCONNECTED": "Bağlantı kesildi",
+        "DISCONNECTING": "Bağlantı kesildi",
         "ERROR": "Hata",
-        "RECONNECTING": ""
+        "RECONNECTING": "",
+        "LOW_BANDWIDTH": "Bant genişliğinden tasarruf etmek için {{displayName}} kişisinin videosu kapatıldı",
+        "GOT_SESSION_ID": "Oturum kimliği alınıyor... Tamam",
+        "GET_SESSION_ID_ERROR": "Oturum kimliği alma hatası: {{code}}",
+        "FETCH_SESSION_ID": "Oturum kimliği alınıyor…"
     },
     "connectionindicator": {
         "address": "Adres:",
         "bandwidth": "Tahmini bant genişliği:",
         "bitrate": "Bit hızı:",
-        "bridgeCount": "",
-        "connectedTo": "",
+        "bridgeCount": "Sunucu sayısı: ",
+        "connectedTo": "Bağlı:",
         "framerate": "Çerçeve hızı:",
         "less": "Daha az göster",
         "localaddress": "Yerel adres:",
@@ -84,11 +93,11 @@
         "more": "Daha fazla göster",
         "packetloss": "Paket kaybı:",
         "quality": {
-            "good": "",
+            "good": "İyi",
             "inactive": "Aktif değil",
             "lost": "Kayıp",
-            "nonoptimal": "",
-            "poor": ""
+            "nonoptimal": "Optimal değil",
+            "poor": "Zayıf"
         },
         "remoteaddress": "Uzak adres:",
         "remoteaddress_plural": "Uzak adresler:",
@@ -101,52 +110,52 @@
         "turn": ""
     },
     "dateUtils": {
-        "earlier": "",
-        "today": "",
-        "yesterday": ""
+        "earlier": "Daha erken",
+        "today": "Bugün",
+        "yesterday": "Dün"
     },
     "deepLinking": {
-        "appNotInstalled": "",
-        "description": "",
-        "descriptionWithoutWeb": "",
-        "downloadApp": "",
-        "launchWebButton": "",
-        "openApp": "",
-        "title": "",
-        "tryAgainButton": ""
+        "appNotInstalled": "Bu toplantıya telefonunuzdan katılmak için {{app}} mobil uygulamasına ihtiyacınız var.",
+        "description": "Hiçbir şey olmadı mı? Toplantınızı {{app}} masaüstü uygulamasında başlatmayı denedik. Tekrar deneyin veya {{app}} web uygulamasında başlatın.",
+        "descriptionWithoutWeb": "Hiçbir şey olmadı mı? Toplantınızı {{app}} masaüstü uygulamasında başlatmayı denedik.",
+        "downloadApp": "Uygulamayı indir",
+        "launchWebButton": "Web'de başlat",
+        "openApp": "Uygulamada devam et",
+        "title": "{{app}} konumunda toplantınız başlatılıyor…",
+        "tryAgainButton": "Masaüstünde tekrar deneyin"
     },
-    "defaultLink": "örnek. {{url}}",
+    "defaultLink": "örnek {{url}}",
     "deviceError": {
-        "cameraError": "",
-        "cameraPermission": "",
-        "microphoneError": "",
-        "microphonePermission": ""
+        "cameraError": "Kameranıza erişim sağlanamadı",
+        "cameraPermission": "Kameraya erişim izni alınırken hata oluştu",
+        "microphoneError": "Mikrofonunuza erişim sağlanamadı",
+        "microphonePermission": "Mikrofona erişim izni alınırken hata oluştu"
     },
     "deviceSelection": {
-        "noPermission": "",
-        "previewUnavailable": "",
-        "selectADevice": "",
-        "testAudio": ""
+        "noPermission": "İzin verilmedi",
+        "previewUnavailable": "Önizleme kullanılamıyor",
+        "selectADevice": "Cihaz seçin",
+        "testAudio": "Deneme sesini çal"
     },
     "dialog": {
         "accessibilityLabel": {
-            "liveStreaming": ""
+            "liveStreaming": "Canlı Yayın"
         },
-        "allow": "",
-        "alreadySharedVideoMsg": "",
-        "alreadySharedVideoTitle": "",
-        "applicationWindow": "",
+        "allow": "İzin ver",
+        "alreadySharedVideoMsg": "Başka bir katılımcı zaten bir video paylaşıyor. Bu konferans aynı anda yalnızca bir paylaşılan videoya izin verir.",
+        "alreadySharedVideoTitle": "Aynı anda yalnızca bir paylaşılan videoya izin verilir",
+        "applicationWindow": "Uygulama penceresi",
         "Back": "Geri",
-        "cameraConstraintFailedError": "",
-        "cameraNotFoundError": "",
-        "cameraNotSendingData": "",
-        "cameraNotSendingDataTitle": "",
-        "cameraPermissionDeniedError": "",
-        "cameraUnknownError": "",
-        "cameraUnsupportedResolutionError": "",
+        "cameraConstraintFailedError": "Kameranız gerekli kısıtlamaların bazılarını karşılamıyor.",
+        "cameraNotFoundError": "Kamera bulunamadı.",
+        "cameraNotSendingData": "Kameranıza erişim sağlayamadık. Lütfen başka bir uygulamanın bu cihazı kullanıp kullanmadığını kontrol edin, ayarlar menüsünden başka bir cihaz seçin veya uygulamayı yeniden yüklemeyi deneyin.",
+        "cameraNotSendingDataTitle": "Kameraya erişim sağlanamadı",
+        "cameraPermissionDeniedError": "Kameranızı kullanma izni vermediniz. Yine de konferansa katılabilirsiniz, ancak diğerleri sizi görmez. Bunu düzeltmek için adres çubuğundaki kamera düğmesini kullanın.",
+        "cameraUnknownError": "Bilinmeyen bir nedenden dolayı kamera kullanılamıyor.",
+        "cameraUnsupportedResolutionError": "Kameranız gerekli video çözünürlüğünü desteklemiyor.",
         "Cancel": "İptal",
-        "close": "",
-        "conferenceDisconnectMsg": "",
+        "close": "Kapat",
+        "conferenceDisconnectMsg": "Ağ bağlantınızı kontrol etmek isteyebilirsiniz. {{seconds}} saniye içinde yeniden bağlanılıyor…",
         "conferenceDisconnectTitle": "",
         "conferenceReloadMsg": "",
         "conferenceReloadTitle": "Ne yazık ki bir şeyler ters gitti.",
@@ -709,5 +718,11 @@
         "sendFeedback": "Geribildirimde bulun",
         "terms": "Kurallar",
         "title": ""
+    },
+    "defaultNickname": "örnek Jane Pink",
+    "chromeExtensionBanner": {
+        "dontShowAgain": "Bunu bir daha gösterme",
+        "buttonText": "Chrome Eklentisi'ni indirin",
+        "installExtensionText": "Google Takvim ve Office 365 entegrasyonu için uzantıyı yükleyin"
     }
 }
