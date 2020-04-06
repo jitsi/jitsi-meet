@@ -1,36 +1,28 @@
 // @flow
 
 import React from 'react';
-import { Alert, NativeModules, SafeAreaView, ScrollView, Switch, Text, TextInput, View } from 'react-native';
+import { Alert, NativeModules, ScrollView, Switch, Text, TextInput } from 'react-native';
 
-import { ColorSchemeRegistry } from '../../../base/color-scheme';
 import { translate } from '../../../base/i18n';
-import { HeaderWithNavigation, Modal } from '../../../base/react';
+import { JitsiModal } from '../../../base/modal';
 import { connect } from '../../../base/redux';
+
+import { SETTINGS_VIEW_ID } from '../../constants';
+import { normalizeUserInputURL } from '../../functions';
 
 import {
     AbstractSettingsView,
     _mapStateToProps as _abstractMapStateToProps,
-    type Props as AbstractProps
+    type Props
 } from '../AbstractSettingsView';
-import { setSettingsViewVisible } from '../../actions';
+
 import FormRow from './FormRow';
 import FormSectionHeader from './FormSectionHeader';
-import { normalizeUserInputURL } from '../../functions';
-import styles from './styles';
 
 /**
  * Application information module.
  */
 const { AppInfo } = NativeModules;
-
-type Props = AbstractProps & {
-
-    /**
-     * Color schemed style of the header component.
-     */
-    _headerStyles: Object
-}
 
 type State = {
 
@@ -113,9 +105,9 @@ class SettingsView extends AbstractSettingsView<Props, State> {
 
         // Bind event handlers so they are only bound once per instance.
         this._onBlurServerURL = this._onBlurServerURL.bind(this);
+        this._onClose = this._onClose.bind(this);
         this._onDisableCallIntegration = this._onDisableCallIntegration.bind(this);
         this._onDisableP2P = this._onDisableP2P.bind(this);
-        this._onRequestClose = this._onRequestClose.bind(this);
         this._onShowAdvanced = this._onShowAdvanced.bind(this);
         this._setURLFieldReference = this._setURLFieldReference.bind(this);
         this._showURLAlert = this._showURLAlert.bind(this);
@@ -128,16 +120,78 @@ class SettingsView extends AbstractSettingsView<Props, State> {
      * @returns {ReactElement}
      */
     render() {
+        const { displayName, email, serverURL, startWithAudioMuted, startWithVideoMuted } = this.state;
+
         return (
-            <Modal
-                onRequestClose = { this._onRequestClose }
-                presentationStyle = 'overFullScreen'
-                visible = { this.props._visible }>
-                <View style = { this.props._headerStyles.page }>
-                    { this._renderHeader() }
-                    { this._renderBody() }
-                </View>
-            </Modal>
+            <JitsiModal
+                headerProps = {{
+                    headerLabelKey: 'settingsView.header'
+                }}
+                modalId = { SETTINGS_VIEW_ID }
+                onClose = { this._onClose }>
+                <ScrollView>
+                    <FormSectionHeader
+                        label = 'settingsView.profileSection' />
+                    <FormRow
+                        fieldSeparator = { true }
+                        label = 'settingsView.displayName'
+                        layout = 'column'>
+                        <TextInput
+                            autoCorrect = { false }
+                            onChangeText = { this._onChangeDisplayName }
+                            placeholder = 'John Doe'
+                            value = { displayName } />
+                    </FormRow>
+                    <FormRow
+                        label = 'settingsView.email'
+                        layout = 'column'>
+                        <TextInput
+                            autoCapitalize = 'none'
+                            autoCorrect = { false }
+                            keyboardType = { 'email-address' }
+                            onChangeText = { this._onChangeEmail }
+                            placeholder = 'email@example.com'
+                            value = { email } />
+                    </FormRow>
+                    <FormSectionHeader
+                        label = 'settingsView.conferenceSection' />
+                    <FormRow
+                        fieldSeparator = { true }
+                        label = 'settingsView.serverURL'
+                        layout = 'column'>
+                        <TextInput
+                            autoCapitalize = 'none'
+                            autoCorrect = { false }
+                            onBlur = { this._onBlurServerURL }
+                            onChangeText = { this._onChangeServerURL }
+                            placeholder = { this.props._serverURL }
+                            value = { serverURL } />
+                    </FormRow>
+                    <FormRow
+                        fieldSeparator = { true }
+                        label = 'settingsView.startWithAudioMuted'>
+                        <Switch
+                            onValueChange = { this._onStartAudioMutedChange }
+                            value = { startWithAudioMuted } />
+                    </FormRow>
+                    <FormRow label = 'settingsView.startWithVideoMuted'>
+                        <Switch
+                            onValueChange = { this._onStartVideoMutedChange }
+                            value = { startWithVideoMuted } />
+                    </FormRow>
+                    <FormSectionHeader
+                        label = 'settingsView.buildInfoSection' />
+                    <FormRow
+                        label = 'settingsView.version'>
+                        <Text>
+                            { `${AppInfo.version} build ${AppInfo.buildNumber}` }
+                        </Text>
+                    </FormRow>
+                    <FormSectionHeader
+                        label = 'settingsView.advanced' />
+                    { this._renderAdvancedSettings() }
+                </ScrollView>
+            </JitsiModal>
         );
     }
 
@@ -231,17 +285,18 @@ class SettingsView extends AbstractSettingsView<Props, State> {
         });
     }
 
-    _onRequestClose: () => void;
+    _onClose: () => void;
 
     /**
-     * Handles the back button. Also invokes normalizeUserInputURL to validate
+     * Callback to be invoked on closing the modal. Also invokes normalizeUserInputURL to validate
      * the URL entered by the user.
      *
-     * @returns {void}
+     * @returns {boolean} - True if the modal can be closed.
      */
-    _onRequestClose() {
+    _onClose() {
         this.setState({ showAdvanced: false });
-        this._processServerURL(true /* hideOnSuccess */);
+
+        return this._processServerURL(true /* hideOnSuccess */);
     }
 
     _onShowAdvanced: () => void;
@@ -296,12 +351,13 @@ class SettingsView extends AbstractSettingsView<Props, State> {
 
         if (normalizedURL === null) {
             this._showURLAlert();
-        } else {
-            this._onChangeServerURL(normalizedURL);
-            if (hideOnSuccess) {
-                this.props.dispatch(setSettingsViewVisible(false));
-            }
+
+            return false;
         }
+
+        this._onChangeServerURL(normalizedURL);
+
+        return hideOnSuccess;
     }
 
     /**
@@ -342,97 +398,6 @@ class SettingsView extends AbstractSettingsView<Props, State> {
                         value = { disableP2P } />
                 </FormRow>
             </>
-        );
-    }
-
-    /**
-     * Renders the body (under the header) of {@code SettingsView}.
-     *
-     * @private
-     * @returns {React$Element}
-     */
-    _renderBody() {
-        const { displayName, email, serverURL, startWithAudioMuted, startWithVideoMuted } = this.state;
-
-        return (
-            <SafeAreaView style = { styles.settingsForm }>
-                <ScrollView>
-                    <FormSectionHeader
-                        label = 'settingsView.profileSection' />
-                    <FormRow
-                        fieldSeparator = { true }
-                        label = 'settingsView.displayName'
-                        layout = 'column'>
-                        <TextInput
-                            autoCorrect = { false }
-                            onChangeText = { this._onChangeDisplayName }
-                            placeholder = 'John Doe'
-                            value = { displayName } />
-                    </FormRow>
-                    <FormRow
-                        label = 'settingsView.email'
-                        layout = 'column'>
-                        <TextInput
-                            autoCapitalize = 'none'
-                            autoCorrect = { false }
-                            keyboardType = { 'email-address' }
-                            onChangeText = { this._onChangeEmail }
-                            placeholder = 'email@example.com'
-                            value = { email } />
-                    </FormRow>
-                    <FormSectionHeader
-                        label = 'settingsView.conferenceSection' />
-                    <FormRow
-                        fieldSeparator = { true }
-                        label = 'settingsView.serverURL'
-                        layout = 'column'>
-                        <TextInput
-                            autoCapitalize = 'none'
-                            autoCorrect = { false }
-                            onBlur = { this._onBlurServerURL }
-                            onChangeText = { this._onChangeServerURL }
-                            placeholder = { this.props._serverURL }
-                            value = { serverURL } />
-                    </FormRow>
-                    <FormRow
-                        fieldSeparator = { true }
-                        label = 'settingsView.startWithAudioMuted'>
-                        <Switch
-                            onValueChange = { this._onStartAudioMutedChange }
-                            value = { startWithAudioMuted } />
-                    </FormRow>
-                    <FormRow label = 'settingsView.startWithVideoMuted'>
-                        <Switch
-                            onValueChange = { this._onStartVideoMutedChange }
-                            value = { startWithVideoMuted } />
-                    </FormRow>
-                    <FormSectionHeader
-                        label = 'settingsView.buildInfoSection' />
-                    <FormRow
-                        label = 'settingsView.version'>
-                        <Text>
-                            { `${AppInfo.version} build ${AppInfo.buildNumber}` }
-                        </Text>
-                    </FormRow>
-                    <FormSectionHeader
-                        label = 'settingsView.advanced' />
-                    { this._renderAdvancedSettings() }
-                </ScrollView>
-            </SafeAreaView>
-        );
-    }
-
-    /**
-     * Renders the header of {@code SettingsView}.
-     *
-     * @private
-     * @returns {React$Element}
-     */
-    _renderHeader() {
-        return (
-            <HeaderWithNavigation
-                headerLabelKey = 'settingsView.header'
-                onPressBack = { this._onRequestClose } />
         );
     }
 
@@ -478,14 +443,11 @@ class SettingsView extends AbstractSettingsView<Props, State> {
  * Maps part of the Redux state to the props of this component.
  *
  * @param {Object} state - The Redux state.
- * @returns {{
- *     _headerStyles: Object
- * }}
+ * @returns {Props}
  */
 function _mapStateToProps(state) {
     return {
-        ..._abstractMapStateToProps(state),
-        _headerStyles: ColorSchemeRegistry.get(state, 'Header')
+        ..._abstractMapStateToProps(state)
     };
 }
 
