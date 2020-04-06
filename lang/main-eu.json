@@ -1,7 +1,7 @@
 {
     "addPeople": {
         "add": "Gonbidatu",
-        "countryNotSupported": "",
+        "countryNotSupported": "Oraindik ez dugu helmuga hau onartzen.",
         "countryReminder": "AEBetatik kanpo deitzen? Ziurtatu herrialde-kodearekin hasten zarela!",
         "disabled": "Ezin duzu jendea gonbidatu.",
         "failedToAdd": "Parte-hartzaileak gehitzeak huts egin du",
@@ -15,7 +15,7 @@
         "searchPeople": "Bilatu jendea",
         "searchPeopleAndNumbers": "Bilatu jendea edo gehitu beren telefono zenbakiak",
         "telephone": "Telefonoa: {{number}}",
-        "title": ""
+        "title": "Gonbidatu jendea bilera honetara"
     },
     "audioDevices": {
         "bluetooth": "Bluetooth",
@@ -25,7 +25,7 @@
         "none": "Ez dago audio-gailurik erabilgarri"
     },
     "audioOnly": {
-        "audioOnly": ""
+        "audioOnly": "Banda-zabalera txikia"
     },
     "calendarSync": {
         "addMeetingURL": "Bileraren esteka gehitu",
@@ -38,7 +38,7 @@
         "join": "Batu",
         "joinTooltip": "Bilerara batu",
         "nextMeeting": "hurrengo bilera",
-        "noEvents": "",
+        "noEvents": "Ez dago aurreikusitako gertaerarik.",
         "ongoingMeeting": "abian den bilera",
         "permissionButton": "Ireki ezarpenak",
         "permissionMessage": "",
