@@ -54,7 +54,7 @@
         "title": "Chat"
     },
     "connectingOverlay": {
-        "joiningRoom": "Đang kết nối tới cuộc họp của bạn..."
+        "joiningRoom": "Đang kết nối tới cuộc họp của bạn…"
     },
     "connection": {
         "ATTACHED": "Đã đính kèm",
@@ -563,7 +563,7 @@
             "recording": "Mở/Đóng Ghi hình",
             "remoteMute": "Tắt tiếng người tham gia",
             "Settings": "Mở/Đóng Cấu hình",
-            "sharedvideo": "Mở/Đóng Chia sẻ Youtube",
+            "sharedvideo": "Mở/Đóng Chia sẻ YouTube",
             "shareRoom": "Mời ai đó",
             "shareYourScreen": "Mở/Đóng Chia sẻ màn hình",
             "shortcuts": "Mở/Đóng Phím tắt",
