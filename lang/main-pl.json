@@ -158,7 +158,7 @@
         "close": "Zamknij",
         "conferenceDisconnectMsg": "Być może należy sprawdzić połączenie sieciowe. Ponowne połączenie za {{seconds}} sekund…",
         "conferenceDisconnectTitle": "Zostałeś rozłączony.",
-        "conferenceReloadMsg": "Staramy się to naprawić. Ponowne połączenie za {{seconds}} sekund...",
+        "conferenceReloadMsg": "Staramy się to naprawić. Ponowne połączenie za {{seconds}} sekund…",
         "conferenceReloadTitle": "Niestety, coś poszło nie tak.",
         "confirm": "Potwierdź",
         "confirmNo": "Nie",
