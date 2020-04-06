@@ -60,7 +60,7 @@
         "noMessagesMessage": "V tomto videohovoru ještě nejsou žádné zprávy. Začněte konverzaci!"
     },
     "connectingOverlay": {
-        "joiningRoom": "Probíhá připojování k videohovoru..."
+        "joiningRoom": "Probíhá připojování k videohovoru…"
     },
     "connection": {
         "ATTACHED": "Přiložený",
@@ -76,7 +76,7 @@
         "LOW_BANDWIDTH": "Video pro {{displayName}} bylo vypnuto pro snížení přenosové rychlosti",
         "GOT_SESSION_ID": "Získávání session-id... Hotovo",
         "GET_SESSION_ID_ERROR": "Chyba při získávání session-id: {{code}}",
-        "FETCH_SESSION_ID": "Získává se session-id..."
+        "FETCH_SESSION_ID": "Získává se session-ID…"
     },
     "connectionindicator": {
         "address": "Adresa:",
