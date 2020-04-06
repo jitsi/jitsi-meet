@@ -540,7 +540,7 @@
         "serverURL": "Tjenernettadresse",
         "startWithAudioMuted": "",
         "startWithVideoMuted": "Start with video muted",
-        "version": "",
+        "version": "Versjon",
         "showAdvanced": "Vis avanserte innstillinger",
         "advanced": "Avansert"
     },
@@ -550,10 +550,10 @@
     },
     "speaker": "",
     "speakerStats": {
-        "hours": "",
-        "minutes": "",
+        "hours": "{{count}}t",
+        "minutes": "{{count}}m",
         "name": "",
-        "seconds": "",
+        "seconds": "{{count}}s",
         "speakerStats": "",
         "speakerTime": ""
     },
@@ -562,30 +562,30 @@
         "title": ""
     },
     "suspendedoverlay": {
-        "rejoinKeyTitle": "",
-        "text": "",
+        "rejoinKeyTitle": "Ta del igjen",
+        "text": "Trykk på <i>Ta del igjen</i>-knappen for å vende tilbake",
         "title": ""
     },
     "toolbar": {
         "accessibilityLabel": {
             "audioOnly": "",
-            "audioRoute": "",
-            "callQuality": "",
+            "audioRoute": "Velg lydenhet",
+            "callQuality": "Håndter videokvalitet",
             "cc": "",
             "chat": "",
             "document": "",
-            "feedback": "",
+            "feedback": "Send inn tilbakemelding",
             "fullScreen": "",
             "hangup": "",
-            "invite": "",
-            "kick": "",
+            "invite": "Inviter folk",
+            "kick": "Kast ut deltager",
             "localRecording": "",
             "lockRoom": "",
             "moreActions": "",
             "moreActionsMenu": "",
             "mute": "",
             "pip": "",
-            "profile": "",
+            "profile": "Rediger profilen din",
             "raiseHand": "",
             "recording": "",
             "remoteMute": "",
@@ -599,7 +599,10 @@
             "tileView": "",
             "toggleCamera": "",
             "videomute": "",
-            "videoblur": ""
+            "videoblur": "",
+            "privateMessage": "Send privat melding",
+            "muteEveryone": "Forstum alle",
+            "help": "Hjelp"
         },
         "addPeople": "",
         "audioOnlyOff": "",
