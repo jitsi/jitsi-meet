@@ -152,7 +152,7 @@
         "close": "Sluiten",
         "conferenceDisconnectMsg": "Controleer de netwerkverbinding. Over {{seconds}} sec. wordt opnieuw geprobeerd verbinding te maken…",
         "conferenceDisconnectTitle": "De verbinding is verbroken.",
-        "conferenceReloadMsg": "We proberen het probleem op te lossen. Over {{seconds}} sec. wordt opnieuw geprobeerd verbinding te maken...",
+        "conferenceReloadMsg": "We proberen het probleem op te lossen. Over {{seconds}} sec. wordt opnieuw geprobeerd verbinding te maken…",
         "conferenceReloadTitle": "Er is iets misgegaan.",
         "confirm": "Bevestigen",
         "confirmNo": "Nee",
