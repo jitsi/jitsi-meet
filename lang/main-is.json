@@ -79,7 +79,7 @@
         "ERROR": "Villa",
         "FETCH_SESSION_ID": "Næ í auðkenni setu (session-ID)…",
         "GET_SESSION_ID_ERROR": "Villa við að ná í auðkenni setu: {{code}}",
-        "GOT_SESSION_ID": "Næ í auðkenni setu... Lokið",
+        "GOT_SESSION_ID": "Næ í auðkenni setu… Lokið",
         "LOW_BANDWIDTH": "Slökkt var á myndmerki frá {{displayName}} til að spara bandbreidd"
     },
     "connectionindicator": {
@@ -125,7 +125,7 @@
         "downloadApp": "Ná í forritið",
         "launchWebButton": "Ræsa í vafra",
         "openApp": "Halda áfram í forritið",
-        "title": "Ræsi fundinn þinn í {{app}}...",
+        "title": "Ræsi fundinn þinn í {{app}}…",
         "tryAgainButton": "Prófa aftur í vafra"
     },
     "defaultLink": "t.d. {{url}}",
@@ -686,7 +686,7 @@
         "failedToStart": "Tókst ekki að ræsa umritun",
         "labelToolTip": "Verið er að taka umrita (transcribe) fundinn",
         "off": "Umritun stöðvuð",
-        "pending": "Undirbý að taka umrita fundinn...",
+        "pending": "Undirbý að taka umrita fundinn…",
         "start": "Hefja birtingu skjátexta",
         "stop": "Hætta birtingu skjátexta",
         "tr": "UR"
