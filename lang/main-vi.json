@@ -111,7 +111,7 @@
         "downloadApp": "Tải phần mềm",
         "launchWebButton": "Chạy trên web",
         "openApp": "Tiếp tục ứng dụng này",
-        "title": "Thực hiện cuộc họp trên {{app}}...",
+        "title": "Thực hiện cuộc họp trên {{app}}…",
         "tryAgainButton": "Thử lại trên desktop"
     },
     "defaultLink": "ví dụ: {{url}}",
@@ -625,7 +625,7 @@
         "failedToStart": "Khởi chạy phiên âm thất bại",
         "labelToolTip": "Cuộc họp đang được phiên âm",
         "off": "Phiên âm đã dừng",
-        "pending": "Đang chuẩn bị phiên âm cuộc họp...",
+        "pending": "Đang chuẩn bị phiên âm cuộc họp…",
         "start": "Bắt đầu hiển thị phụ đề",
         "stop": "Dừng hiển thị phụ đề",
         "tr": "TR"
