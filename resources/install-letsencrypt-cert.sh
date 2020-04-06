@@ -14,6 +14,8 @@ echo "- Download certbot-auto from https://dl.eff.org to /usr/local/sbin"
 echo "- Install additional dependencies in order to request Let’s Encrypt certificate"
 echo "- If running with jetty serving web content, will stop Jitsi Videobridge"
 echo "- Configure and reload nginx or apache2, whichever is used"
+echo "- Configure the coturn server to use Let's Encrypt certificate and add required deploy hooks"
+echo "- Add command in weekly cron job to renew certificates regularly"
 echo ""
 echo "You need to agree to the ACME server's Subscriber Agreement (https://letsencrypt.org/documents/LE-SA-v1.1.1-August-1-2016.pdf) "
 echo "by providing an email address for important account notifications"
@@ -40,6 +42,15 @@ CERT_CRT="/etc/letsencrypt/live/$DOMAIN/fullchain.pem"
 
 if [ -f /etc/nginx/sites-enabled/$DOMAIN.conf ] ; then
 
+    TURN_CONFIG="/etc/turnserver.conf"
+    if [ -f $TURN_CONFIG ] && grep -q "jitsi-meet coturn config" "$TURN_CONFIG" ; then
+        TURN_HOOK=/etc/letsencrypt/renewal-hooks/deploy/0000-coturn-certbot-deploy.sh
+
+        cp /usr/share/jitsi-meet-turnserver/coturn-certbot-deploy.sh $TURN_HOOK
+        chmod u+x $TURN_HOOK
+        sed -i "s/jitsi-meet.example.com/$DOMAIN/g" $TURN_HOOK
+    fi
+
     ./certbot-auto certonly --noninteractive \
     --webroot --webroot-path /usr/share/jitsi-meet \
     -d $DOMAIN \
@@ -60,11 +71,10 @@ if [ -f /etc/nginx/sites-enabled/$DOMAIN.conf ] ; then
     echo "service nginx reload" >> $CRON_FILE
     service nginx reload
 
-    TURN_CONFIG="/etc/turnserver.conf"
     if [ -f $TURN_CONFIG ] && grep -q "jitsi-meet coturn config" "$TURN_CONFIG" ; then
         echo "Configuring turnserver"
-        sed -i "s/cert=\/etc\/jitsi\/meet\/.*crt/cert=$CERT_CRT_ESC/g" $TURN_CONFIG
-        sed -i "s/pkey=\/etc\/jitsi\/meet\/.*key/pkey=$CERT_KEY_ESC/g" $TURN_CONFIG
+        sed -i "/^cert/c\cert=\/etc\/coturn\/certs\/$DOMAIN.fullchain.pem" $TURN_CONFIG
+        sed -i "/^pkey/c\pkey=\/etc\/coturn\/certs\/$DOMAIN.privkey.pem" $TURN_CONFIG
 
         echo "service coturn restart" >> $CRON_FILE
         service coturn restart
