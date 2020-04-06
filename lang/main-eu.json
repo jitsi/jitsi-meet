@@ -60,8 +60,8 @@
         "you": "zu"
     },
     "chromeExtensionBanner": {
-        "installExtensionText": "",
-        "buttonText": "",
+        "installExtensionText": "Instalatu luzapena Google Calendar eta Office 365rako integraziorako",
+        "buttonText": "Instalatu Chrome luzapena",
         "dontShowAgain": "Ez erakutsi hau berriro"
     },
     "connectingOverlay": {
@@ -77,7 +77,7 @@
         "DISCONNECTED": "Deskonektatuta",
         "DISCONNECTING": "Deskonektatzen",
         "ERROR": "Errorea",
-        "FETCH_SESSION_ID": "",
+        "FETCH_SESSION_ID": "Saioaren ID-a eskuratzen...",
         "GET_SESSION_ID_ERROR": "",
         "GOT_SESSION_ID": "",
         "LOW_BANDWIDTH": ""
