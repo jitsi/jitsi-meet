@@ -214,6 +214,19 @@ class Conference extends AbstractConference<Props, *> {
     }
 
     /**
+     * Renders JitsiModals that are supposed to be on the conference screen.
+     *
+     * @returns {Array<ReactElement>}
+     */
+    _renderConferenceModals() {
+        return [
+            <AddPeopleDialog key = 'addPeopleDialog' />,
+            <Chat key = 'chat' />,
+            <SharedDocument key = 'sharedDocument' />
+        ];
+    }
+
+    /**
      * Renders the conference notification badge if the feature is enabled.
      *
      * @private
@@ -252,10 +265,6 @@ class Conference extends AbstractConference<Props, *> {
 
         return (
             <>
-                <AddPeopleDialog />
-                <Chat />
-                <SharedDocument />
-
                 {/*
                   * The LargeVideo is the lowermost stacking layer.
                   */
@@ -335,6 +344,8 @@ class Conference extends AbstractConference<Props, *> {
                 <TestConnectionInfo />
 
                 { this._renderConferenceNotification() }
+
+                { this._renderConferenceModals() }
             </>
         );
     }
