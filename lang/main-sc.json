@@ -65,7 +65,7 @@
         "dontShowAgain": "Non ddu torres a ammustrare"
     },
     "connectingOverlay": {
-        "joiningRoom": "Connetende a sa riunione..."
+        "joiningRoom": "Connetende a sa riunione…"
     },
     "connection": {
         "ATTACHED": "Allegados",
@@ -77,7 +77,7 @@
         "DISCONNECTED": "Disconnètidu",
         "DISCONNECTING": "Disconnetende",
         "ERROR": "Faddina",
-        "FETCH_SESSION_ID": "Otenende id de sessione...",
+        "FETCH_SESSION_ID": "Otenende ID de sessione…",
         "GET_SESSION_ID_ERROR": "Faddina in su ritzevimentu de s'ide de sessione: {{code}}",
         "GOT_SESSION_ID": "Otenende id de sessione... Fatu",
         "LOW_BANDWIDTH": "Vìdeu disativadu pro {{displayName}} pro istraviare àmpiu de banda"
@@ -611,7 +611,7 @@
             "recording": "Ativa o disativa sa registratzione",
             "remoteMute": "Pone partetzipante a sa muda",
             "Settings": "Càmbia sa cunfiguratzione",
-            "sharedvideo": "Ativa o disativa sa cumpartzidura de vìdeos de Youtube",
+            "sharedvideo": "Ativa o disativa sa cumpartzidura de vìdeos de YouTube",
             "shareRoom": "Invita una persone",
             "shareYourScreen": "Ativa o disativa sa cumpartzidura de ischermu",
             "shortcuts": "Ativa o disativa incurtzaduras",
