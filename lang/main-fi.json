@@ -111,7 +111,7 @@
         "downloadApp": "Lataa sovellus",
         "launchWebButton": "Käynnistä verkossa",
         "openApp": "Jatka sovellukseen",
-        "title": "Käynnistetään kokousta sovelluksessa {{app}}...",
+        "title": "Käynnistetään kokousta sovelluksessa {{app}}…",
         "tryAgainButton": "Yritä uudelleen työpöytäsovelluksella"
     },
     "defaultLink": "esim. {{url}}",
@@ -625,7 +625,7 @@
         "failedToStart": "Puhtaaksikirjoituksen aloitus epäonnistui",
         "labelToolTip": "Kokousta kirjoitetaan puhtaaksi",
         "off": "Puhtaaksikirjoitus päättyi",
-        "pending": "Kokouksen puhtaaksikirjoitusta valmistellaan...",
+        "pending": "Kokouksen puhtaaksikirjoitusta valmistellaan…",
         "start": "Aloita tekstitys",
         "stop": "Lopeta tekstitys",
         "tr": "TR"
