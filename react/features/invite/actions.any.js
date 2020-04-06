@@ -11,7 +11,6 @@ import {
     BEGIN_ADD_PEOPLE,
     REMOVE_PENDING_INVITE_REQUESTS,
     SET_CALLEE_INFO_VISIBLE,
-    SET_INVITE_DIALOG_VISIBLE,
     UPDATE_DIAL_IN_NUMBERS_FAILED,
     UPDATE_DIAL_IN_NUMBERS_SUCCESS
 } from './actionTypes';
@@ -200,22 +199,6 @@ export function updateDialInNumbers() {
 }
 
 /**
- * Sets the visibility of the invite dialog.
- *
- * @param {boolean} visible - The visibility to set.
- * @returns {{
- *     type: SET_INVITE_DIALOG_VISIBLE,
- *     visible: boolean
- * }}
- */
-export function setAddPeopleDialogVisible(visible: boolean) {
-    return {
-        type: SET_INVITE_DIALOG_VISIBLE,
-        visible
-    };
-}
-
-/**
  * Sets the visibility of {@code CalleeInfo}.
  *
  * @param {boolean|undefined} [calleeInfoVisible] - If {@code CalleeInfo} is
@@ -254,7 +237,6 @@ export function addPendingInviteRequest(
         request
     };
 }
-
 
 /**
  * Removes all pending invite requests.
