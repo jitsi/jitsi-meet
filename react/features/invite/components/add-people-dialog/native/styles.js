@@ -1,6 +1,6 @@
 // @flow
 
-import { BoxModel, ColorPalette } from '../../../../base/styles';
+import { BoxModel } from '../../../../base/styles';
 
 export const AVATAR_SIZE = 40;
 export const DARK_GREY = 'rgb(28, 32, 37)';
@@ -17,10 +17,6 @@ export default {
     avatarText: {
         color: DARK_GREY,
         fontSize: 12
-    },
-
-    avoidingView: {
-        flex: 1
     },
 
     bottomBar: {
@@ -48,14 +44,6 @@ export default {
         justifyContent: 'center',
         height: 24,
         width: 24
-    },
-
-    dialogWrapper: {
-        alignItems: 'stretch',
-        backgroundColor: ColorPalette.white,
-        flex: 1,
-        flexDirection: 'column',
-        justifyContent: 'flex-start'
     },
 
     /**
