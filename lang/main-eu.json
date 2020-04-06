@@ -2,11 +2,11 @@
     "addPeople": {
         "add": "Gonbidatu",
         "countryNotSupported": "",
-        "countryReminder": "",
+        "countryReminder": "AEBetatik kanpo deitzen? Ziurtatu herrialde-kodearekin hasten zarela!",
         "disabled": "Ezin duzu jendea gonbidatu.",
-        "failedToAdd": "",
-        "footerText": "",
-        "loading": "",
+        "failedToAdd": "Parte-hartzaileak gehitzeak huts egin du",
+        "footerText": "Markatzea desgaituta dago.",
+        "loading": "Jendea eta telefono zenbakiak bilatzen",
         "loadingNumber": "Telefono zenbakia balioztatzen",
         "loadingPeople": "Gonbidatzeko jendea bilatzen",
         "noResults": "",
@@ -142,7 +142,7 @@
     },
     "dialog": {
         "accessibilityLabel": {
-            "liveStreaming": ""
+            "liveStreaming": "Zuzeneko Erreprodukzioa"
         },
         "allow": "Baimendu",
         "alreadySharedVideoMsg": "",
