@@ -110,7 +110,7 @@
         "downloadApp": "Scarica l'app",
         "launchWebButton": "Avvia sul web",
         "openApp": "Prosegui verso l'app",
-        "title": "Sto avviando la tua videoconferenza su {{app}}...",
+        "title": "Sto avviando la tua videoconferenza su {{app}}…",
         "tryAgainButton": "Prova di nuovo sul desktop"
     },
     "defaultLink": "es. {{url}}",
@@ -144,7 +144,7 @@
         "cameraUnsupportedResolutionError": "La tua videocamera non supporta la risoluzione richiesta.",
         "Cancel": "Annulla",
         "close": "Chiudi",
-        "conferenceDisconnectMsg": "Controlla la tua connessione. Riconnessione in {{seconds}} secondi...",
+        "conferenceDisconnectMsg": "Controlla la tua connessione. Riconnessione in {{seconds}} secondi…",
         "conferenceDisconnectTitle": "Sei stato disconnesso.",
         "conferenceReloadMsg": "Stiamo cercando di risolvere il problema. Riconnessione in {{seconds}} secondi...",
         "conferenceReloadTitle": "Purtroppo qualcosa è andato storto.",
