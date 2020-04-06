@@ -79,7 +79,7 @@
         "ERROR": "Faddina",
         "FETCH_SESSION_ID": "Otenende ID de sessione…",
         "GET_SESSION_ID_ERROR": "Faddina in su ritzevimentu de s'ide de sessione: {{code}}",
-        "GOT_SESSION_ID": "Otenende id de sessione... Fatu",
+        "GOT_SESSION_ID": "Otenende ID de sessione… Fatu",
         "LOW_BANDWIDTH": "Vìdeu disativadu pro {{displayName}} pro istraviare àmpiu de banda"
     },
     "connectionindicator": {
@@ -125,7 +125,7 @@
         "downloadApp": "Iscàrriga s'aplicatzione",
         "launchWebButton": "Avia in sa web",
         "openApp": "Sighi in s'aplicatzione",
-        "title": "Aviende sa reunione in {{app}}...",
+        "title": "Aviende sa reunione in {{app}}…",
         "tryAgainButton": "Torra·bi a proare in s'aplicatzione de iscrivania"
     },
     "defaultLink": "p. es. {{url}}",
@@ -685,7 +685,7 @@
         "failedToStart": "Faddina in s'aviu de sa trascritzione",
         "labelToolTip": "Trascriende sa riunione",
         "off": "Trascritzione firmada",
-        "pending": "Preparende pro trascrìere sa riunione...",
+        "pending": "Preparende pro trascrìere sa riunione…",
         "start": "Cumintza a ammustrare sutatìtulos",
         "stop": "No ammustres prus sutatìtluos",
         "tr": "TR"
