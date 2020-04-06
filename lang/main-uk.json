@@ -65,7 +65,7 @@
         "dontShowAgain": "Більше не показувати це"
     },
     "connectingOverlay": {
-        "joiningRoom": "З'єднання з конференцією..."
+        "joiningRoom": "З'єднання з конференцією…"
     },
     "connection": {
         "ATTACHED": "Долучено",
@@ -77,9 +77,9 @@
         "DISCONNECTED": "Від'єднано",
         "DISCONNECTING": "Від'єднуємося",
         "ERROR": "Помилка",
-        "FETCH_SESSION_ID": "Отримання ідентифікатора сесії...",
+        "FETCH_SESSION_ID": "Отримання ідентифікатора сесії…",
         "GET_SESSION_ID_ERROR": "Отримання помилки ідентифікатора сесії: {{code}}",
-        "GOT_SESSION_ID": "Отримано ідентифікатора сесії... Виконано",
+        "GOT_SESSION_ID": "Отримано ідентифікатора сесії… Виконано",
         "LOW_BANDWIDTH": "Відео для {{displayName}} було вимкнено для заощадження трафіку"
     },
     "connectionindicator": {
@@ -616,7 +616,7 @@
             "recording": "Увімкнення запису",
             "remoteMute": "Вимкнути учасникові мікрофон",
             "Settings": "Увімкнення меню налаштувань",
-            "sharedvideo": "Активація Youtube-трансляції",
+            "sharedvideo": "Активація YouTube-трансляції",
             "shareRoom": "Надіслати запрошення",
             "shareYourScreen": "Показувати мій екран",
             "shortcuts": "Показувати значки",
