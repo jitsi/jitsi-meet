@@ -60,7 +60,7 @@
         "you": "вие"
     },
     "connectingOverlay": {
-        "joiningRoom": "Свързване с вашата среща..."
+        "joiningRoom": "Свързване с вашата среща…"
     },
     "connection": {
         "ATTACHED": "Прикрепен",
@@ -76,7 +76,7 @@
         "LOW_BANDWIDTH": "Виеото на {{displayName}} беше изключено поради слаба Интернет връзка",
         "GOT_SESSION_ID": "Отваряне на сесията...Завърши",
         "GET_SESSION_ID_ERROR": "Грешка при отваряне на сесията: {{code}}",
-        "FETCH_SESSION_ID": "Отваряне на сесия..."
+        "FETCH_SESSION_ID": "Отваряне на сесия…"
     },
     "connectionindicator": {
         "address": "Адрес:",
