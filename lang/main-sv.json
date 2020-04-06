@@ -110,7 +110,7 @@
         "downloadApp": "Hämta appen",
         "launchWebButton": "Starta på webben",
         "openApp": "Fortsätt till appen",
-        "title": "Startar ditt möte i {{app}} ...",
+        "title": "Startar ditt möte i {{app}} …",
         "tryAgainButton": "Försök igen på skrivbordet"
     },
     "defaultLink": "t ex. {{url}}",
@@ -144,7 +144,7 @@
         "cameraUnsupportedResolutionError": "Din kamera stöder inte den krävda videoupplösningen.",
         "Cancel": "Avbryt",
         "close": "Stäng",
-        "conferenceDisconnectMsg": "Kolla din internetanslutning. Återansluter om  {{seconds}} sekunder...",
+        "conferenceDisconnectMsg": "Kolla din internetanslutning. Återansluter om {{seconds}} sekunder…",
         "conferenceDisconnectTitle": "Du har kopplats ner.",
         "conferenceReloadMsg": "Vi försöker fixa problemet. Återansluter om {{seconds}} sekunder...",
         "conferenceReloadTitle": "Något gick snett.",
@@ -624,7 +624,7 @@
         "failedToStart": "Det gick inte att starta transkribering",
         "labelToolTip": "Mötet transkriberas",
         "off": "Transkribering avslutades",
-        "pending": "Förbereder transkribering av mötet ...",
+        "pending": "Förbereder transkribering av mötet …",
         "start": "Börja visa undertexter",
         "stop": "Sluta visa undertexter",
         "tr": "TR"
