@@ -43,8 +43,9 @@ CERT_CRT="/etc/letsencrypt/live/$DOMAIN/fullchain.pem"
 if [ -f /etc/nginx/sites-enabled/$DOMAIN.conf ] ; then
 
     TURN_CONFIG="/etc/turnserver.conf"
+    TURN_HOOK=/etc/letsencrypt/renewal-hooks/deploy/0000-coturn-certbot-deploy.sh
     if [ -f $TURN_CONFIG ] && grep -q "jitsi-meet coturn config" "$TURN_CONFIG" ; then
-        TURN_HOOK=/etc/letsencrypt/renewal-hooks/deploy/0000-coturn-certbot-deploy.sh
+        mkdir -p $(dirname $TURN_HOOK)
 
         cp /usr/share/jitsi-meet-turnserver/coturn-certbot-deploy.sh $TURN_HOOK
         chmod u+x $TURN_HOOK
@@ -54,7 +55,8 @@ if [ -f /etc/nginx/sites-enabled/$DOMAIN.conf ] ; then
     ./certbot-auto certonly --noninteractive \
     --webroot --webroot-path /usr/share/jitsi-meet \
     -d $DOMAIN \
-    --agree-tos --email $EMAIL
+    --agree-tos --email $EMAIL \
+    --deploy-hook $TURN_HOOK
 
     echo "Configuring nginx"
 
@@ -70,15 +72,6 @@ if [ -f /etc/nginx/sites-enabled/$DOMAIN.conf ] ; then
 
     echo "service nginx reload" >> $CRON_FILE
     service nginx reload
-
-    if [ -f $TURN_CONFIG ] && grep -q "jitsi-meet coturn config" "$TURN_CONFIG" ; then
-        echo "Configuring turnserver"
-        sed -i "/^cert/c\cert=\/etc\/coturn\/certs\/$DOMAIN.fullchain.pem" $TURN_CONFIG
-        sed -i "/^pkey/c\pkey=\/etc\/coturn\/certs\/$DOMAIN.privkey.pem" $TURN_CONFIG
-
-        echo "service coturn restart" >> $CRON_FILE
-        service coturn restart
-    fi
 elif [ -f /etc/apache2/sites-enabled/$DOMAIN.conf ] ; then
 
     ./certbot-auto certonly --noninteractive \
@@ -100,27 +93,6 @@ elif [ -f /etc/apache2/sites-enabled/$DOMAIN.conf ] ; then
 
     echo "service apache2 reload" >> $CRON_FILE
     service apache2 reload
-else
-    service jitsi-videobridge stop
-
-    ./certbot-auto certonly --noninteractive \
-    --standalone \
-    -d $DOMAIN \
-    --agree-tos --email $EMAIL
-
-    echo "Configuring jetty"
-
-    CERT_P12="/etc/jitsi/videobridge/$DOMAIN.p12"
-    CERT_JKS="/etc/jitsi/videobridge/$DOMAIN.jks"
-    # create jks from  certs
-    openssl pkcs12 -export \
-        -in $CERT_CRT -inkey $CERT_KEY -passout pass:changeit > $CERT_P12
-    keytool -importkeystore -destkeystore $CERT_JKS \
-        -srckeystore $CERT_P12 -srcstoretype pkcs12 \
-        -noprompt -storepass changeit -srcstorepass changeit
-
-    service jitsi-videobridge start
-
 fi
 
 # the cron file that will renew certificates

@@ -3,6 +3,7 @@
 set -e
 
 COTURN_CERT_DIR="/etc/coturn/certs"
+TURN_CONFIG="/etc/turnserver.conf"
 
 # create a directory to store certs if it does not exists
 if [ ! -d "$COTURN_CERT_DIR" ]; then
@@ -29,6 +30,12 @@ for domain in $RENEWED_DOMAINS; do
                 chmod 400 "$COTURN_CERT_DIR/$domain.fullchain.pem" \
                         "$COTURN_CERT_DIR/$domain.privkey.pem"
 
+                if [ -f $TURN_CONFIG ] && grep -q "jitsi-meet coturn config" "$TURN_CONFIG" ; then
+                    echo "Configuring turnserver"
+                    sed -i "/^cert/c\cert=\/etc\/coturn\/certs\/${domain}.fullchain.pem" $TURN_CONFIG
+                    sed -i "/^pkey/c\pkey=\/etc\/coturn\/certs\/${domain}.privkey.pem" $TURN_CONFIG
+                fi
+                service coturn restart
                 ;;
         esac
 done
