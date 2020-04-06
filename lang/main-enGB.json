@@ -111,7 +111,7 @@
         "downloadApp": "Download the app",
         "launchWebButton": "Launch in web",
         "openApp": "Continue to the app",
-        "title": "Launching your meeting in {{app}}...",
+        "title": "Launching your meeting in {{app}}…",
         "tryAgainButton": "Try again in desktop"
     },
     "defaultLink": "e.g. {{url}}",
@@ -625,7 +625,7 @@
         "failedToStart": "Transcribing failed to start",
         "labelToolTip": "The meeting is being transcribed",
         "off": "Transcribing stopped",
-        "pending": "Preparing to transcribe the meeting...",
+        "pending": "Preparing to transcribe the meeting…",
         "start": "Start showing subtitles",
         "stop": "Stop showing subtitles",
         "tr": "TR"
