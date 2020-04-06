@@ -40,7 +40,7 @@ server {
     error_page 404 /static/404.html;
 
     gzip on;
-    gzip_types text/plain text/css application/javascript;
+    gzip_types text/plain text/css application/javascript application/json;
 
     location ~* \.(js|css|png|ico)$ {
        expires 30d;
