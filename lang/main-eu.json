@@ -7,22 +7,22 @@
         "failedToAdd": "",
         "footerText": "",
         "loading": "",
-        "loadingNumber": "",
-        "loadingPeople": "",
+        "loadingNumber": "Telefono zenbakia balioztatzen",
+        "loadingPeople": "Gonbidatzeko jendea bilatzen",
         "noResults": "",
-        "noValidNumbers": "",
-        "searchNumbers": "",
-        "searchPeople": "",
-        "searchPeopleAndNumbers": "",
-        "telephone": "",
+        "noValidNumbers": "Sartu telefono zenbakia",
+        "searchNumbers": "Gehitu telefono zenbakiak",
+        "searchPeople": "Bilatu jendea",
+        "searchPeopleAndNumbers": "Bilatu jendea edo gehitu beren telefono zenbakiak",
+        "telephone": "Telefonoa: {{number}}",
         "title": ""
     },
     "audioDevices": {
-        "bluetooth": "",
-        "headphones": "",
-        "phone": "",
-        "speaker": "",
-        "none": ""
+        "bluetooth": "Bluetooth",
+        "headphones": "Entzungailuak",
+        "phone": "Telefonoa",
+        "speaker": "Bozgorailua",
+        "none": "Ez dago audio-gailurik erabilgarri"
     },
     "audioOnly": {
         "audioOnly": ""
@@ -35,48 +35,48 @@
             "generic": "Errore bat gertatu da. Egiaztatu zure egutegiaren ezarpenak edo saiatu egutegia eguneratzen.",
             "notSignedIn": ""
         },
-        "join": "",
-        "joinTooltip": "",
-        "nextMeeting": "",
+        "join": "Batu",
+        "joinTooltip": "Bilerara batu",
+        "nextMeeting": "hurrengo bilera",
         "noEvents": "",
-        "ongoingMeeting": "",
-        "permissionButton": "",
+        "ongoingMeeting": "abian den bilera",
+        "permissionButton": "Ireki ezarpenak",
         "permissionMessage": "",
         "refresh": "",
-        "today": ""
+        "today": "Gaur"
     },
     "chat": {
         "error": "",
-        "fieldPlaceHolder": "",
-        "messagebox": "",
-        "messageTo": "",
-        "noMessagesMessage": "",
+        "fieldPlaceHolder": "Idatzi mezua hemen",
+        "messagebox": "Idatzi mezua",
+        "messageTo": "Mezu pribatua {{recipient}}(e)ri",
+        "noMessagesMessage": "Bileran oraindik mezurik ez dago. Hasi elkarrizketa hemen!",
         "nickname": {
-            "popover": "",
-            "title": ""
+            "popover": "Aukeratu goitizena",
+            "title": "Sartu goitizena txata erabiltzeko"
         },
-        "privateNotice": "",
-        "title": "",
-        "you": ""
+        "privateNotice": "Mezu pribatua {{recipient}}(e)ri",
+        "title": "Txata",
+        "you": "zu"
     },
     "chromeExtensionBanner": {
         "installExtensionText": "",
         "buttonText": "",
-        "dontShowAgain": ""
+        "dontShowAgain": "Ez erakutsi hau berriro"
     },
     "connectingOverlay": {
-        "joiningRoom": ""
+        "joiningRoom": "Zure bilerara konektatzen..."
     },
     "connection": {
-        "ATTACHED": "",
-        "AUTHENTICATING": "",
-        "AUTHFAIL": "",
-        "CONNECTED": "",
-        "CONNECTING": "",
-        "CONNFAIL": "",
-        "DISCONNECTED": "",
-        "DISCONNECTING": "",
-        "ERROR": "",
+        "ATTACHED": "Atxikituta",
+        "AUTHENTICATING": "Autentifikatzea",
+        "AUTHFAIL": "Autentifikatzeak huts egin du",
+        "CONNECTED": "Konektatuta",
+        "CONNECTING": "Konektatzen",
+        "CONNFAIL": "Konexioak huts egin du",
+        "DISCONNECTED": "Deskonektatuta",
+        "DISCONNECTING": "Deskonektatzen",
+        "ERROR": "Errorea",
         "FETCH_SESSION_ID": "",
         "GET_SESSION_ID_ERROR": "",
         "GOT_SESSION_ID": "",
@@ -88,53 +88,56 @@
         "bitrate": "",
         "bridgeCount": "",
         "connectedTo": "",
-        "e2e_rtt": "",
-        "framerate": "",
-        "less": "",
+        "e2e_rtt": "E2E RTT:",
+        "framerate": "Marko-abiadura:",
+        "less": "Erakutsi gutxiago",
         "localaddress": "",
         "localport": "",
-        "more": "",
+        "more": "Erakutsi gehiago",
         "packetloss": "",
         "quality": {
-            "good": "",
-            "inactive": "",
-            "lost": "",
+            "good": "Ondo",
+            "inactive": "Inaktibo",
+            "lost": "Galduta",
             "nonoptimal": "",
-            "poor": ""
+            "poor": "Txarra"
         },
-        "remoteaddress": "",
-        "remoteport": "",
-        "resolution": "",
-        "status": "",
-        "transport": ""
+        "remoteaddress": "Urruneko helbidea:",
+        "remoteaddress_plural": "Urruneko helbideak:",
+        "remoteport": "Urruneko ataka:",
+        "remoteport_plural": "Urruneko atakak:",
+        "resolution": "Ebazpena:",
+        "status": "Konexioa:",
+        "transport": "Garraioa:",
+        "transport_plural": "Garraioak:"
     },
     "dateUtils": {
-        "earlier": "",
-        "today": "",
-        "yesterday": ""
+        "earlier": "Lehenago",
+        "today": "Gaur",
+        "yesterday": "Atzo"
     },
     "deepLinking": {
-        "appNotInstalled": "",
+        "appNotInstalled": "{{app}} mugikor aplikazioa behar duzu bilerara mugikorretik batzeko.",
         "description": "",
         "descriptionWithoutWeb": "",
-        "downloadApp": "",
-        "launchWebButton": "",
-        "openApp": "",
-        "title": "",
-        "tryAgainButton": ""
+        "downloadApp": "Aplikazioa deskargatu",
+        "launchWebButton": "Abiarazi webean",
+        "openApp": "Aplikaziora joan",
+        "title": "Zure bilera {{app}}(e)n abiarazten...",
+        "tryAgainButton": "Saiatu berriro mahaigainean"
     },
-    "defaultLink": "",
-    "defaultNickname": "",
+    "defaultLink": "Adib.: {{url}}",
+    "defaultNickname": "adib. Joana Albisu",
     "deviceError": {
         "cameraError": "",
         "cameraPermission": "",
         "microphoneError": "",
-        "microphonePermission": ""
+        "microphonePermission": "Errorea mikrofonoaren baimena eskuratzerakoan"
     },
     "deviceSelection": {
-        "noPermission": "",
-        "previewUnavailable": "",
-        "selectADevice": "",
+        "noPermission": "Baimena ez emana",
+        "previewUnavailable": "Aurrebista ez erabilgarri",
+        "selectADevice": "Hautatu gailua",
         "testAudio": ""
     },
     "dialog": {
