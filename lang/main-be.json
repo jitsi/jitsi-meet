@@ -65,7 +65,7 @@
         "dontShowAgain": "Не паказваць зноў"
     },
     "connectingOverlay": {
-        "joiningRoom": "Спрабуем далучыцца да вашай канферэнцыі ..."
+        "joiningRoom": "Спрабуем далучыцца да вашай канферэнцыі …"
     },
     "connection": {
         "ATTACHED": "прымацаваны",
@@ -77,9 +77,9 @@
         "DISCONNECTED": "Адлучыць",
         "DISCONNECTING": "Адлучэнне",
         "ERROR": "Памылка",
-        "FETCH_SESSION_ID": "Атрыманне ID сесіі...",
+        "FETCH_SESSION_ID": "Атрыманне ID сесіі…",
         "GET_SESSION_ID_ERROR": "Атрымана памылка session-id: {{code}}",
-        "GOT_SESSION_ID": "Атрыманне ID сесіі... Зроблена",
+        "GOT_SESSION_ID": "Атрыманне ID сесіі… Зроблена",
         "LOW_BANDWIDTH": "Для захавання прапускной здольнасці відэа для {{displayName}} адключана"
     },
     "connectionindicator": {
@@ -616,7 +616,7 @@
             "recording": "Укл/Выкл запіс",
             "remoteMute": "Адключыць ўдзельніку мікрафон",
             "Settings": "",
-            "sharedvideo": "Укл/Выкл Youtube - трансляцыю",
+            "sharedvideo": "Укл/Выкл YouTube - трансляцыю",
             "shareRoom": "Адправіць запрашэнне",
             "shareYourScreen": "Укл/Выкл дэманстрацыю экрана",
             "shortcuts": "Укл/Выкл значкі",
