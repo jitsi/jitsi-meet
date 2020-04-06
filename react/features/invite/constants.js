@@ -1,3 +1,8 @@
+
+/**
+ * Modal ID for the DialInSummary modal.
+ */
+export const DIAL_IN_SUMMARY_VIEW_ID = 'DIAL_IN_SUMMARY_VIEW_ID';
 /**
  * The identifier of the sound to be played when the status of an outgoing call
  * is expired.
