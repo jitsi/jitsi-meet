@@ -454,7 +454,7 @@
         "mutedTitle": "Вы без гуку!",
         "mutedRemotelyTitle": "{{participantDisplayName}} адключыў Вам мікрафон!",
         "mutedRemotelyDescription": "Вы заўсёды можаце ўключыць мікрафон, калі будзеце гатовыя гаварыць. Адключыце яго, калі скончыце, каб не трансляваць шумы ў канферэнцыю.",
-        "passwordRemovedRemotely": "$t(lockRoomPasswordUppercase) выдалены іншым удзельнікам.",
+        "passwordRemovedRemotely": "$t(lockRoomPasswordUppercase) выдалены іншым удзельнікам",
         "passwordSetRemotely": "Іншы ўдзельнік ўсталяваў $t(lockRoomPasswordUppercase)",
         "raisedHand": "{{name}} хацеў бы выступіць.",
         "somebody": "Хтосьці",
