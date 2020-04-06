@@ -738,7 +738,6 @@
         "privacy": "Confidentialité",
         "recentList": "Récent",
         "recentListDelete": "Supprimer",
-        "recentListDeleteAll": "Supprimer l'historique",
         "recentListEmpty": "Votre liste récente est actuellement vide. Clavardez avec votre équipe et vous y trouverez toutes vos réunions récentes.",
         "reducedUIText": "Bienvenue sur {{app}}!",
         "roomname": "Entrer le nom de la salle",
