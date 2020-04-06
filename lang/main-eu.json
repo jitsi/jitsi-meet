@@ -125,7 +125,7 @@
         "downloadApp": "Aplikazioa deskargatu",
         "launchWebButton": "Abiarazi webean",
         "openApp": "Aplikaziora joan",
-        "title": "Zure bilera {{app}}(e)n abiarazten...",
+        "title": "Zure bilera {{app}}(e)n abiarazten…",
         "tryAgainButton": "Saiatu berriro mahaigainean"
     },
     "defaultLink": "Adib.: {{url}}",
