@@ -65,7 +65,7 @@
         "dontShowAgain": "Ez erakutsi hau berriro"
     },
     "connectingOverlay": {
-        "joiningRoom": "Zure bilerara konektatzen..."
+        "joiningRoom": "Zure bilerara konektatzen…"
     },
     "connection": {
         "ATTACHED": "Atxikituta",
@@ -77,7 +77,7 @@
         "DISCONNECTED": "Deskonektatuta",
         "DISCONNECTING": "Deskonektatzen",
         "ERROR": "Errorea",
-        "FETCH_SESSION_ID": "Saioaren ID-a eskuratzen...",
+        "FETCH_SESSION_ID": "Saioaren ID-a eskuratzen…",
         "GET_SESSION_ID_ERROR": "Eskuratu saioaren ID errorea: {{code}}",
         "GOT_SESSION_ID": "Saioaren ID-a eskuratzea... Eginda",
         "LOW_BANDWIDTH": ""
