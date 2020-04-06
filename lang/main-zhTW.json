@@ -146,7 +146,7 @@
         "cameraUnsupportedResolutionError": "您的攝影裝置不支援所需的影像解析度。",
         "Cancel": "取消",
         "close": "關閉",
-        "conferenceDisconnectMsg": "請檢查一下網路連接。將在 {{seconds}} 秒後重新連接...",
+        "conferenceDisconnectMsg": "請檢查一下網路連接。將在 {{seconds}} 秒後重新連接…",
         "conferenceDisconnectTitle": "您已經被中斷連接。",
         "conferenceReloadMsg": "我們正試著修復狀況。重新連接於 {{seconds}} 秒內......",
         "conferenceReloadTitle": "很不幸，有點出錯了。",
