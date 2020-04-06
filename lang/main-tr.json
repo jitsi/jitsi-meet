@@ -74,7 +74,7 @@
         "ERROR": "Hata",
         "RECONNECTING": "",
         "LOW_BANDWIDTH": "Bant genişliğinden tasarruf etmek için {{displayName}} kişisinin videosu kapatıldı",
-        "GOT_SESSION_ID": "Oturum kimliği alınıyor... Tamam",
+        "GOT_SESSION_ID": "Oturum kimliği alınıyor… Tamam",
         "GET_SESSION_ID_ERROR": "Oturum kimliği alma hatası: {{code}}",
         "FETCH_SESSION_ID": "Oturum kimliği alınıyor…"
     },
