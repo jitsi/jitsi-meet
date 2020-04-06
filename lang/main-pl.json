@@ -121,7 +121,7 @@
         "downloadApp": "Pobierz aplikację",
         "launchWebButton": "Uruchom przez przeglądarkę",
         "openApp": "Kontynuuj w aplikacji",
-        "title": "Trwa uruchamianie Twojego spotkania w {{app}}...",
+        "title": "Trwa uruchamianie Twojego spotkania w {{app}}…",
         "tryAgainButton": "Spróbuj ponownie w aplikacji stacjonarnej"
     },
     "defaultLink": "np. {{url}}",
@@ -156,7 +156,7 @@
         "cameraUnsupportedResolutionError": "Twoja kamera nie obsługuje wymaganej rozdzielczości.",
         "Cancel": "Anuluj",
         "close": "Zamknij",
-        "conferenceDisconnectMsg": "Być może należy sprawdzić połączenie sieciowe. Ponowne połączenie za {{seconds}} sekund...",
+        "conferenceDisconnectMsg": "Być może należy sprawdzić połączenie sieciowe. Ponowne połączenie za {{seconds}} sekund…",
         "conferenceDisconnectTitle": "Zostałeś rozłączony.",
         "conferenceReloadMsg": "Staramy się to naprawić. Ponowne połączenie za {{seconds}} sekund...",
         "conferenceReloadTitle": "Niestety, coś poszło nie tak.",
@@ -662,7 +662,7 @@
         "failedToStart": "Błąd uruchomienia transkrypcji",
         "labelToolTip": "Spotkanie jest transkrybowane",
         "off": "Transkrypcja została zatrzymana",
-        "pending": "Przygotowanie do transkrypcji spotkania...",
+        "pending": "Przygotowanie do transkrypcji spotkania…",
         "start": "Rozpocznij wyświetlanie napisów",
         "stop": "Zatrzymaj wyświetlanie napisów",
         "tr": "TR"
