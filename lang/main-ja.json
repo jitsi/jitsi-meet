@@ -142,7 +142,7 @@
         "close": "閉じる",
         "conferenceDisconnectMsg": "ネットワーク接続を確認することができます。 {{seconds}} 秒で再接続します…",
         "conferenceDisconnectTitle": "あなたは切断されました。",
-        "conferenceReloadMsg": "私たちはこれを解決しようとしています。 {{seconds}} 秒で再接続します...",
+        "conferenceReloadMsg": "私たちはこれを解決しようとしています。 {{seconds}} 秒で再接続します…",
         "conferenceReloadTitle": "残念ながら、何かが間違っていました。",
         "confirm": "確認",
         "confirmNo": "いいえ",
