@@ -121,7 +121,7 @@
         "downloadApp": "Descargar la app",
         "launchWebButton": "Iniciar en web",
         "openApp": "Continuar a la aplicación",
-        "title": "Iniciar su reunión en {{app}}...",
+        "title": "Iniciar su reunión en {{app}}…",
         "tryAgainButton": "Intentar de nuevo en el escritorio"
     },
     "defaultLink": "ej. {{url}}",
@@ -665,7 +665,7 @@
         "failedToStart": "No es posible iniciar la transcripción",
         "labelToolTip": "La reunión se esta transcribiendo",
         "off": "Transcripción detenida",
-        "pending": "Preparando la transcripción de la reunión...",
+        "pending": "Preparando la transcripción de la reunión…",
         "start": "Mostrar subtítulos",
         "stop": "Dejar de mostrar subtítulos",
         "tr": "TR"
