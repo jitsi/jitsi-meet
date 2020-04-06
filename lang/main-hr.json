@@ -116,7 +116,7 @@
         "downloadApp": "Preuzmite aplikaciju",
         "launchWebButton": "Pokreni na webu",
         "openApp": "Nastavite do aplikacije",
-        "title": "Pokretanje sastanka u {{app}}...",
+        "title": "Pokretanje sastanka u {{app}}…",
         "tryAgainButton": "Pokušajte ponovo na radnoj površini"
     },
     "defaultLink": "npr. {{url}}",
@@ -150,7 +150,7 @@
         "cameraUnsupportedResolutionError": "Fotoaparat ne podržava potrebnu razlučivost videozapisa.",
         "Cancel": "Odustani",
         "close": "Zatvori",
-        "conferenceDisconnectMsg": "Provjerite vašu mrežnu vezu. Ponovno spajanje za {{seconds}} sekundi...",
+        "conferenceDisconnectMsg": "Provjerite vašu mrežnu vezu. Ponovno spajanje za {{seconds}} sekundi…",
         "conferenceDisconnectTitle": "Odspojeni ste.",
         "conferenceReloadMsg": "Pokušavamo popraviti. Ponovno spajanje za {{seconds}} sekundi...",
         "conferenceReloadTitle": "Nažalost, nešto je pošlo po zlu.",
