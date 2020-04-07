@@ -533,8 +533,8 @@
     },
     "speaker": "スピーカー",
     "speakerStats": {
-        "hours": "{{count}} 秒",
-        "minutes": "{{count}} 秒",
+        "hours": "{{count}} 時間",
+        "minutes": "{{count}} 分",
         "name": "名前",
         "seconds": "{{count}} 秒",
         "speakerStats": "話者の統計",
