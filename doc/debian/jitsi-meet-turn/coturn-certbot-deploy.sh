@@ -7,11 +7,14 @@ TURN_CONFIG="/etc/turnserver.conf"
 
 # create a directory to store certs if it does not exists
 if [ ! -d "$COTURN_CERT_DIR" ]; then
-	mkdir -p /etc/coturn/certs
-	chown -R turnserver:turnserver /etc/coturn/
-	chmod -R 700 /etc/coturn/
+    mkdir -p $COTURN_CERT_DIR
+    chown -R turnserver:turnserver /etc/coturn/
+    chmod -R 700 /etc/coturn/
 fi
 
+# This is a template and when copied to /etc/letsencrypt/renewal-hooks/deploy/
+# during creating the Let's encrypt certs script
+# jitsi-meet.example.com will be replaced with the real domain of deployment
 for domain in $RENEWED_DOMAINS; do
         case $domain in
         jitsi-meet.example.com)
