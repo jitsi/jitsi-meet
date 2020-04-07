@@ -21,9 +21,16 @@ server {
     listen [::]:443 ssl;
     server_name jitsi-meet.example.com;
 
-    ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+    ssl_protocols TLSv1.2;
     ssl_prefer_server_ciphers on;
-    ssl_ciphers "EECDH+ECDSA+AESGCM:EECDH+aRSA+AESGCM:EECDH+ECDSA+SHA256:EECDH+aRSA+SHA256:EECDH+ECDSA+SHA384:EECDH+ECDSA+SHA256:EECDH+aRSA+SHA384:EDH+aRSA+AESGCM:EDH+aRSA+SHA256:EDH+aRSA:EECDH:!aNULL:!eNULL:!MEDIUM:!LOW:!3DES:!MD5:!EXP:!PSK:!SRP:!DSS:!RC4:!SEED";
+    # weaker AES256+EECDH for older iOS/Android
+    ssl_ciphers EECDH+AESGCM:EDH+AESGCM:AES256+EECDH;
+    # requires pregenerated with 'openssl dhparam -out /etc/nginx/dhparam.pem 4096'
+    #ssl_dhparam /etc/nginx/dhparam.pem;
+    ssl_ecdh_curve secp384r1;
+    ssl_session_timeout 10m;
+    ssl_session_cache shared:SSL:10m;
+    ssl_session_tickets off;
 
     add_header Strict-Transport-Security "max-age=31536000";
 

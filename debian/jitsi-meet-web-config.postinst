@@ -153,6 +153,23 @@ case "$1" in
             db_set jitsi-meet/jvb-serve "false"
         fi
 
+        # securing HTTPS with DH parameters
+        if [[ ( "$FORCE_NGINX" = "true" || "$FORCE_APACHE" = "true" ) && ( -z "$JVB_HOSTNAME_OLD" || "$RECONFIGURING" = "true" ) ]] ; then
+            HTTPS_SECURE="true"
+            if [ ! -f /etc/ssl/private/dhparams.pem ] ; then
+                echo ""
+                echo "------------------------------------------------"
+                echo ""
+                echo "Generating random DH parameters for secure HTTPS webserver config."
+                echo ""
+                echo "Stay patient this might take some minutes to gain entropy ..."
+                echo ""
+                echo "------------------------------------------------"
+                echo ""
+                openssl dhparam -out /etc/ssl/private/dhparams.pem 4096
+            fi
+        fi
+
         if [[ "$FORCE_NGINX" = "true" && ( -z "$JVB_HOSTNAME_OLD" || "$RECONFIGURING" = "true" ) ]] ; then
 
             # this is a reconfigure, lets just delete old links
@@ -179,6 +196,12 @@ case "$1" in
                 CERT_CRT_ESC=$(echo $CERT_CRT | sed 's/\./\\\./g')
                 CERT_CRT_ESC=$(echo $CERT_CRT_ESC | sed 's/\//\\\//g')
                 sed -i "s/ssl_certificate\ \/etc\/jitsi\/meet\/.*crt/ssl_certificate\ $CERT_CRT_ESC/g" \
+                    /etc/nginx/sites-available/$JVB_HOSTNAME.conf
+            fi
+
+            if [ "$HTTPS_SECURE" = "true" ] ; then
+                # activated commented ssl_dhparam line for present file
+                sed -i "s/#ssl_dhparam\ \/etc\/ssl\/private\/dhparams.pem;/ssl_dhparam\ \/etc\/ssl\/private\/dhparams.pem;/g" \
                     /etc/nginx/sites-available/$JVB_HOSTNAME.conf
             fi
 
@@ -209,6 +232,12 @@ case "$1" in
                 CERT_CRT_ESC=$(echo $CERT_CRT | sed 's/\./\\\./g')
                 CERT_CRT_ESC=$(echo $CERT_CRT_ESC | sed 's/\//\\\//g')
                 sed -i "s/SSLCertificateFile\ \/etc\/jitsi\/meet\/.*crt/SSLCertificateFile\ $CERT_CRT_ESC/g" \
+                    /etc/apache2/sites-available/$JVB_HOSTNAME.conf
+            fi
+
+            if [ "$HTTPS_SECURE" = "true" ] ; then
+                # activated commented ssl_dhparam line for present file
+                sed -i "s/#SSLOpenSSLConfCmd\ DHParameters\ \/etc\/ssl\/private\/dhparams.pem/SSLOpenSSLConfCmd\ DHParameters\ \/etc\/ssl\/private\/dhparams.pem;/g" \
                     /etc/apache2/sites-available/$JVB_HOSTNAME.conf
             fi
 

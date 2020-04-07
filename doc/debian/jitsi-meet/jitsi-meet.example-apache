@@ -11,13 +11,18 @@
 
   ServerName jitsi-meet.example.com
 
-  SSLProtocol TLSv1 TLSv1.1 TLSv1.2
+  SSLProtocol TLSv1.2
   SSLEngine on
   SSLProxyEngine on
   SSLCertificateFile /etc/jitsi/meet/jitsi-meet.example.com.crt
   SSLCertificateKeyFile /etc/jitsi/meet/jitsi-meet.example.com.key
-  SSLCipherSuite "EECDH+ECDSA+AESGCM:EECDH+aRSA+AESGCM:EECDH+ECDSA+SHA256:EECDH+aRSA+SHA256:EECDH+ECDSA+SHA384:EECDH+ECDSA+SHA256:EECDH+aRSA+SHA384:EDH+aRSA+AESGCM:EDH+aRSA+SHA256:EDH+aRSA:EECDH:!aNULL:!eNULL:!MEDIUM:!LOW:!3DES:!MD5:!EXP:!PSK:!SRP:!DSS:!RC4:!SEED"
+  # weaker AES256+EECDH for older iOS/Android
+  SSLCipherSuite "EECDH+AESGCM:EDH+AESGCM:AES256+EECDH"
   SSLHonorCipherOrder on
+  # requires pregenerated with 'openssl dhparam -out /etc/nginx/dhparam.pem 4096'
+  #SSLOpenSSLConfCmd DHParameters "/etc/ssl/private/dhparams.pem"
+  SSLCompression off
+  SSLSessionTickets Off
   Header set Strict-Transport-Security "max-age=31536000"
 
   DocumentRoot "/usr/share/jitsi-meet"
