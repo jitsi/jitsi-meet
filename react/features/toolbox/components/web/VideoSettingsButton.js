@@ -9,6 +9,7 @@ import { hasAvailableDevices } from '../../../base/devices';
 import { IconArrowDown } from '../../../base/icons';
 import { connect } from '../../../base/redux';
 import { ToolboxButtonWithIcon } from '../../../base/toolbox';
+import { getMediaPermissionPromptVisibility } from '../../../overlay';
 
 type Props = {
 
@@ -16,6 +17,12 @@ type Props = {
      * Click handler for the small icon. Opens video options.
      */
     onVideoOptionsClick: Function,
+
+    /**
+     * Whether the permission prompt is visible or not.
+     * Useful for enabling the button on initial permission grant.
+     */
+    permissionPromptVisibility: boolean,
 
     /**
      * If the user has any video devices.
@@ -81,6 +88,17 @@ class VideoSettingsButton extends Component<Props, State> {
     }
 
     /**
+     * Implements React's {@link Component#componentDidUpdate}.
+     *
+     * @inheritdoc
+     */
+    componentDidUpdate(prevProps) {
+        if (this.props.permissionPromptVisibility !== prevProps.permissionPromptVisibility) {
+            this._updatePermissions();
+        }
+    }
+
+    /**
      * Implements React's {@link Component#render}.
      *
      * @inheritdoc
@@ -110,7 +128,8 @@ class VideoSettingsButton extends Component<Props, State> {
  */
 function mapStateToProps(state) {
     return {
-        hasDevices: hasAvailableDevices(state, 'videoInput')
+        hasDevices: hasAvailableDevices(state, 'videoInput'),
+        permissionPromptVisibility: getMediaPermissionPromptVisibility(state)
     };
 }
 
