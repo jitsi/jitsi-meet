@@ -30,7 +30,7 @@ var config = {
     },
 
     // BOSH URL. FIXME: use XEP-0156 to discover it.
-    bosh: '//jitsi-meet.example.com/http-bind',
+    bosh: '//entrevistaonline-staging.abler.com.br/http-bind',
 
     // Websocket URL
     // websocket: 'wss://jitsi-meet.example.com/xmpp-websocket',
