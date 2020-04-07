@@ -41,12 +41,7 @@ server {
 
     gzip on;
     gzip_types text/plain text/css application/javascript application/json;
-
-    location ~* \.(js|css|png|ico)$ {
-       expires 30d;
-       add_header Cache-Control "public";
-       etag on;
-    }
+    gzip_vary on;
 
     location = /config.js {
         alias /etc/jitsi/meet/jitsi-meet.example.com-config.js;
