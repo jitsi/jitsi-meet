@@ -510,7 +510,8 @@
         "selectMic": "Mikrofon",
         "startAudioMuted": "Herkes gizli başlasın",
         "startVideoMuted": "Herkes gizli başlasın",
-        "title": "Ayarlar"
+        "title": "Ayarlar",
+        "microphones": ""
     },
     "settingsView": {
         "alertOk": "Tamam",
