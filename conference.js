@@ -294,7 +294,11 @@ class ConferenceConnector {
     _onConferenceFailed(err, ...params) {
         APP.store.dispatch(conferenceFailed(room, err, ...params));
         logger.error('CONFERENCE FAILED:', err, ...params);
-
+        bugsnagClient.notify(err, {
+            metaData: {
+                error: 'conference.failed'
+            }, severity: 'error'
+        });
         switch (err) {
 
         case JitsiConferenceErrors.NOT_ALLOWED_ERROR: {
