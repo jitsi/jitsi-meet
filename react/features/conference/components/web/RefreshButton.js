@@ -7,9 +7,9 @@ import React, {Component} from 'react';
  */
 
 /**
- * Subject react component.
+ * RefreshButton react component.
  *
- * @class Subject
+ * @class RefreshButton
  */
 export default class RefreshButton extends Component {
 
@@ -17,14 +17,6 @@ export default class RefreshButton extends Component {
         super(props);
         this.reload = this.reload.bind(this);
     }
-
-
-    /**
-     * Implements React's {@link Component#render()}.
-     *
-     * @inheritdoc
-     * @returns {ReactElement}
-     */
 
     reload() {
         window.location.reload(true);
