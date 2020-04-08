@@ -426,7 +426,7 @@
         "somebody": "Iemand",
         "startSilentTitle": "",
         "startSilentDescription": "",
-        "suboptimalExperienceDescription": " Helaas zal uw {{appName}}-ervaring hier niet optimaal zijn. We proberen dit in de toekomst te verbeteren, maar tot die tijd kunt u proberen een van de <a href='static/recommendedBrowsers.html' target='_blank'>volledig ondersteunde browsers</a> te gebruiken.",
+        "suboptimalExperienceDescription": "Helaas zal uw {{appName}}-ervaring hier niet optimaal zijn. We proberen dit in de toekomst te verbeteren, maar tot die tijd kunt u proberen een van de <a href='static/recommendedBrowsers.html' target='_blank'>volledig ondersteunde browsers</a> te gebruiken.",
         "suboptimalExperienceTitle": "Browserwaarschuwing",
         "unmute": "",
         "newDeviceCameraTitle": "Nieuwe camera gedetecteerd",
