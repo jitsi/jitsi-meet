@@ -254,11 +254,11 @@
         "stopRecordingWarning": "",
         "stopStreamingWarning": "",
         "streamKey": "",
-        "Submit": "",
+        "Submit": "Gönder",
         "thankYou": "",
         "token": "",
         "tokenAuthFailed": "",
-        "tokenAuthFailedTitle": "",
+        "tokenAuthFailedTitle": "Kimlik doğrulama başarısız",
         "transcribing": "",
         "unlockRoom": "",
         "userPassword": "parolanız",
@@ -272,10 +272,10 @@
         "statusMessage": ""
     },
     "feedback": {
-        "average": "",
+        "average": "Ortalama",
         "bad": "",
         "detailsLabel": "",
-        "good": "",
+        "good": "İyi",
         "rateExperience": "",
         "veryBad": "",
         "veryGood": ""
@@ -283,7 +283,7 @@
     "incomingCall": {
         "answer": "",
         "audioCallTitle": "",
-        "decline": "",
+        "decline": "Yoksay",
         "productLabel": "",
         "videoCallTitle": ""
     },
@@ -292,7 +292,7 @@
         "addPassword": "",
         "cancelPassword": "",
         "conferenceURL": "",
-        "country": "",
+        "country": "Ülke",
         "dialANumber": "",
         "dialInConferenceID": "",
         "dialInNotSupported": "",
@@ -309,7 +309,7 @@
         "liveStreamURL": "",
         "moreNumbers": "",
         "noNumbers": "",
-        "noPassword": "",
+        "noPassword": "Yok",
         "noRoom": "",
         "numbers": "",
         "password": "",
@@ -323,12 +323,12 @@
         "searchCallOnlyPlaceholder": "",
         "searchPeopleOnlyPlaceholder": "",
         "searchPlaceholder": "",
-        "send": ""
+        "send": "Gönder"
     },
     "inlineDialogFailure": {
         "msg": "",
         "retry": "",
-        "support": "",
+        "support": "Destek",
         "supportMsg": ""
     },
     "keyboardShortcuts": {
@@ -364,13 +364,13 @@
         "getStreamKeyManually": "",
         "invalidStreamKey": "",
         "off": "",
-        "on": "",
+        "on": "Canlı Yayın",
         "pending": "",
         "serviceName": "",
         "signedInAs": "",
         "signIn": "",
         "signInCTA": "",
-        "signOut": "",
+        "signOut": "Çıkış yap",
         "start": "",
         "streamIdHelp": "",
         "unavailableTitle": ""
@@ -379,7 +379,7 @@
         "clientState": {
             "off": "",
             "on": "",
-            "unknown": ""
+            "unknown": "Bilinmeyen"
         },
         "dialogTitle": "",
         "duration": "",
@@ -405,7 +405,7 @@
         "yes": "Evet"
     },
     "lockRoomPassword": "",
-    "lockRoomPasswordUppercase": "",
+    "lockRoomPasswordUppercase": "Parola",
     "me": "ben",
     "notify": {
         "connectedOneMember": "",
@@ -445,21 +445,21 @@
         "busy": "",
         "calling": "",
         "connected": "bağlandı",
-        "connecting": "Bağlanıyor...",
+        "connecting": "Bağlantı kuruluyor…",
         "connecting2": "Bağlanıyor*...",
         "disconnected": "bağlantı kesildi",
         "expired": "",
         "ignored": "",
         "initializingCall": "",
         "invited": "Davet et",
-        "rejected": "",
+        "rejected": "Reddedildi",
         "ringing": ""
     },
     "profile": {
         "setDisplayNameLabel": "Teşhir adınızı ayarlayın",
         "setEmailInput": "E-posta adresinizi girin",
         "setEmailLabel": "Gravatar e-postanızı belirleyin",
-        "title": ""
+        "title": "Profil"
     },
     "recording": {
         "authDropboxText": "",
@@ -481,8 +481,8 @@
         "rec": "",
         "serviceDescription": "",
         "serviceName": "",
-        "signIn": "",
-        "signOut": "",
+        "signIn": "Giriş yap",
+        "signOut": "Çıkış yap",
         "unavailable": "",
         "unavailableTitle": ""
     },
@@ -495,16 +495,16 @@
             "disconnect": "bağlantı kesildi",
             "microsoftSignIn": "",
             "signedIn": "",
-            "title": ""
+            "title": "Takvim"
         },
-        "devices": "",
+        "devices": "Aygıtlar",
         "followMe": "",
-        "language": "",
+        "language": "Dil",
         "loggedIn": "",
         "moderator": "Moderatör",
         "more": "",
         "name": "Ad",
-        "noDevice": "",
+        "noDevice": "Yok",
         "selectAudioOutput": "",
         "selectCamera": "Kamera",
         "selectMic": "Mikrofon",
@@ -513,19 +513,20 @@
         "title": "Ayarlar"
     },
     "settingsView": {
-        "alertOk": "",
+        "alertOk": "Tamam",
         "alertTitle": "Uyarı",
         "alertURLText": "",
         "buildInfoSection": "",
         "conferenceSection": "",
-        "displayName": "",
-        "email": "",
+        "displayName": "Ekran adı",
+        "email": "E-posta",
         "header": "Ayarlar",
-        "profileSection": "",
+        "profileSection": "Profil",
         "serverURL": "",
         "startWithAudioMuted": "",
         "startWithVideoMuted": "",
-        "version": ""
+        "version": "Sürüm",
+        "advanced": "Gelişmiş"
     },
     "share": {
         "dialInfoText": "",
@@ -582,7 +583,8 @@
             "tileView": "",
             "toggleCamera": "",
             "videomute": "",
-            "videoblur": ""
+            "videoblur": "",
+            "help": "Yardım"
         },
         "addPeople": "Konuşmaya başkalarını da ekle",
         "audioOnlyOff": "",
@@ -626,7 +628,8 @@
         "toggleCamera": "",
         "videomute": "Kamera başlat / durdur",
         "startvideoblur": "",
-        "stopvideoblur": ""
+        "stopvideoblur": "",
+        "help": "Yardım"
     },
     "transcribing": {
         "ccButtonTooltip": "",
@@ -701,7 +704,7 @@
             "audio": "Ses",
             "video": "Görüntü"
         },
-        "calendar": "",
+        "calendar": "Takvim",
         "connectCalendarButton": "",
         "connectCalendarText": "",
         "enterRoomTitle": "",
@@ -710,14 +713,15 @@
         "info": "",
         "privacy": "Gizlilik",
         "recentList": "",
-        "recentListDelete": "",
+        "recentListDelete": "Sil",
         "recentListEmpty": "",
         "reducedUIText": "",
         "roomname": "Oda adı girin",
         "roomnameHint": "Katılmak istediğiniz odanın adını veya URLsini girin. Istediğiniz oda adını uydurabilirsiniz, aynı oda adını yazabilmeleri için buluşmak istediğiniz kişilere bunu iletmeniz yeterli.",
         "sendFeedback": "Geribildirimde bulun",
         "terms": "Kurallar",
-        "title": ""
+        "title": "",
+        "getHelp": "Yardım alın"
     },
     "defaultNickname": "örnek Jane Pink",
     "chromeExtensionBanner": {
