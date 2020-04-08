@@ -60,8 +60,8 @@
         "you": ""
     },
     "chromeExtensionBanner": {
-        "installExtensionText": "",
-        "buttonText": "",
+        "installExtensionText": "Установите расширение для интеграции с Google Календарь и Office 365",
+        "buttonText": "Установить расширения Chrome",
         "dontShowAgain": ""
     },
     "connectingOverlay": {
@@ -77,22 +77,23 @@
         "DISCONNECTED": "Отключено",
         "DISCONNECTING": "Отключение",
         "ERROR": "Ошибка",
-        "RECONNECTING": "Проблема с сетью. Переподключение..."
+        "RECONNECTING": "Проблема с сетью. Переподключение...",
+        "LOW_BANDWIDTH": "Видео для {{displayName}} было выключено для экономии трафика"
     },
     "connectionindicator": {
         "address": "Адрес:",
         "bandwidth": "Средняя скорость:",
         "bitrate": "Битрейт:",
-        "bridgeCount": "Количество серверов:",
+        "bridgeCount": "Количество серверов: ",
         "connectedTo": "Подключен к:",
         "framerate": "Частота кадров:",
         "less": "Краткая информация",
-        "localaddress_0": "Локальные адреса:",
-        "localaddress_1": "Локальные адреса:",
-        "localaddress_2": "Локальные адреса:",
-        "localport_0": "Локальные порты:",
-        "localport_1": "Локальные порты:",
-        "localport_2": "Локальные порты:",
+        "localaddress_0": "Локальный адрес:",
+        "localaddress_1": "Локальных адреса:",
+        "localaddress_2": "Локальных адресов:",
+        "localport_0": "Локальный порт:",
+        "localport_1": "Локальных порта:",
+        "localport_2": "Локальных портов:",
         "more": "Подробная информация",
         "packetloss": "Потери пакетов:",
         "quality": {
@@ -102,17 +103,17 @@
             "nonoptimal": "не оптимально",
             "poor": "плохо"
         },
-        "remoteaddress_0": "Удаленные адреса:",
-        "remoteaddress_1": "Удаленные адреса:",
-        "remoteaddress_2": "Удаленные адреса:",
-        "remoteport_0": "Удаленные порты:",
-        "remoteport_1": "Удаленные порты:",
-        "remoteport_2": "Удаленные порты:",
+        "remoteaddress_0": "Удаленный адрес:",
+        "remoteaddress_1": "Удаленных адреса:",
+        "remoteaddress_2": "Удаленных адресов:",
+        "remoteport_0": "Удаленный порт:",
+        "remoteport_1": "Удаленных порта:",
+        "remoteport_2": "Удаленных портов:",
         "resolution": "Разрешение:",
         "status": "Связь:",
-        "transport_0": "Методы отправки:",
-        "transport_1": "Методы отправки:",
-        "transport_2": "Методы отправки:"
+        "transport_0": "Метод отправки:",
+        "transport_1": "Метода отправки:",
+        "transport_2": "Методов отправки:"
     },
     "dateUtils": {
         "earlier": "Ранее",
@@ -161,9 +162,9 @@
         "cameraUnsupportedResolutionError": "Ваша камера не поддерживает необходимое разрешение видео.",
         "Cancel": "Отмена",
         "close": "Закрыть",
-        "conferenceDisconnectMsg": "Следует проверить интернет-соединение. Попытка восстановления связи через {{seconds}} с.",
+        "conferenceDisconnectMsg": "Следует проверить интернет-соединение. Попытка восстановления связи через {{seconds}} с…",
         "conferenceDisconnectTitle": "Вы отключены.",
-        "conferenceReloadMsg": "Мы стараемся это исправить. Восстановление связи через {{seconds}} с.",
+        "conferenceReloadMsg": "Мы стараемся это исправить. Восстановление связи через {{seconds}} с…",
         "conferenceReloadTitle": "К сожалению, что-то пошло не так.",
         "confirm": "Подтвердить",
         "confirmNo": "Нет",
@@ -191,7 +192,7 @@
         "internalErrorTitle": "Внутренняя ошибка",
         "kickMessage": "Вы можете связаться с {{participantDisplayName}} для получения более подробной информации.",
         "kickParticipantButton": "Выгнать",
-        "kickParticipantDialog": "Вы уверены, что хотите  выгнать этого участника?",
+        "kickParticipantDialog": "Вы уверены, что хотите выгнать этого участника?",
         "kickParticipantTitle": "Выгнать этого участника?",
         "kickTitle": "Ай! {{participantDisplayName}} выгнал вас из конференции.",
         "liveStreaming": "Трансляция",
@@ -212,7 +213,7 @@
         "micUnknownError": "Неизвестная ошибка использования микрофона.",
         "muteParticipantBody": "Вы не можете включить им звук, но они могут сделать это сами в любое время.",
         "muteParticipantButton": "Выключить звук",
-        "muteParticipantDialog": "Вы уверены, что хотите отключить микрофон у данного пользователя? Вы не сможете отменить это действие,  однако он сможет сам снова включить микрофон в любое время.",
+        "muteParticipantDialog": "Вы уверены, что хотите отключить микрофон у данного пользователя? Вы не сможете отменить это действие, однако он сможет сам снова включить микрофон в любое время.",
         "muteParticipantTitle": "Приглушить этого участника?",
         "Ok": "Ok",
         "passwordLabel": "$t(lockRoomPasswordUppercase)",
@@ -227,7 +228,7 @@
         "rejoinNow": "Подключиться снова",
         "remoteControlAllowedMessage": "{{user}} принял ваш запрос на удаленное управление!",
         "remoteControlDeniedMessage": "{{user}} отклонил ваш запрос на удаленное управление!",
-        "remoteControlErrorMessage": "Произошла ошибка при попытке запросить разрешения удаленного управления от {{user}}.",
+        "remoteControlErrorMessage": "Произошла ошибка при попытке запросить разрешения удаленного управления от {{user}}!",
         "remoteControlRequestMessage": "Разрешить {{user}} удаленное управление вашим рабочим столом?",
         "remoteControlShareScreenWarning": "Если нажмете \"Разрешить\", то поделитесь своим экраном!",
         "remoteControlStopMessage": "Сессия удаленного управления завершена!",
@@ -241,7 +242,7 @@
         "retry": "Повторить",
         "screenSharingFailedToInstall": "Ошибка установки расширения для показа экрана.",
         "screenSharingFailedToInstallTitle": "Расширение для показа экрана не установлено",
-        "screenSharingFirefoxPermissionDeniedError": "Что-то пошло не так, когда мы пытались поделиться вашим экраном. Пожалуйста, убедитесь, что вы дали нам разрешение на это.",
+        "screenSharingFirefoxPermissionDeniedError": "Что-то пошло не так, когда мы пытались поделиться вашим экраном. Пожалуйста, убедитесь, что вы дали нам разрешение на это. ",
         "screenSharingFirefoxPermissionDeniedTitle": "Ошибка показа экрана!",
         "screenSharingPermissionDeniedError": "Ошибка доступа к вашему расширению для показа экрана. Пожалуйста, перезапустите браузер и попробуйте снова.",
         "sendPrivateMessage": "Вы недавно получили личное сообщение. Вы хотели ответить на него, или отправить свое сообщение группе?",
@@ -274,9 +275,12 @@
         "userPassword": "пароль пользователя",
         "WaitForHostMsg": "Конференция <b>{{room}}</b> еще не началась. Если вы организатор, пожалуйста, авторизируйтесь. В противном случае дождитесь организатора.",
         "WaitForHostMsgWOk": "Конференция <b>{{room}}</b> еще не началась. Если вы организатор, пожалуйста, нажмите Ok для аутентификации. В противном случае, дождитесь организатора.",
-        "WaitingForHost": "Ждем организатора...",
+        "WaitingForHost": "В ожидании организатора…",
         "Yes": "Да",
-        "yourEntireScreen": "Весь экран"
+        "yourEntireScreen": "Весь экран",
+        "muteEveryoneElseTitle": "Заглушить всех, за исключением {{whom}}?",
+        "screenSharingAudio": "Поделиться аудио",
+        "muteEveryoneSelf": "себя"
     },
     "dialOut": {
         "statusMessage": "сейчас {{status}}"
@@ -347,7 +351,7 @@
     "keyboardShortcuts": {
         "focusLocal": "Фокус на ваше видео",
         "focusRemote": "Фокус на видео другого участника",
-        "fullScreen": "Вкл/выкл полноэкранный режим ",
+        "fullScreen": "Вкл/выкл полноэкранный режим",
         "keyboardShortcuts": "Комбинации клавиш",
         "localRecording": "Отобразить или скрыть элементы управления локальной записи",
         "mute": "Микрофон (вкл./выкл.)",
@@ -366,14 +370,14 @@
         "busyTitle": "Все ресурсы для трансляции уже задействованы",
         "changeSignIn": "Переключить аккаунты.",
         "choose": "Выбрать трансляцию",
-        "chooseCTA": "Выберите трансляцию. Вы вошли в систему как {{email}}. ",
+        "chooseCTA": "Выберите трансляцию. Вы вошли в систему как {{email}}.",
         "enterStreamKey": "Введите ваш ключ трансляции YouTube.",
         "error": "Ошибка трансляции. Пожалуйста, попробуйте снова.",
         "errorAPI": "Произошла ошибка при доступе к вашим трансляциям на YouTube. Повторите попытку входа в систему.",
         "errorLiveStreamNotEnabled": "Трансляция не подключена на {{email}}. Пожалуйста подключите трансляцию или войдите в аккаунт с подключенной трансляцией.",
         "expandedOff": "Прямая трансляция остановлена",
         "expandedOn": "В настоящий момент конференция транслируется на YouTube.",
-        "expandedPending": "Начинается прямая трансляция..",
+        "expandedPending": "Начинается прямая трансляция…",
         "failedToStart": "Ошибка трансляции видео",
         "getStreamKeyManually": "Прямые трансляций не найдены. Попробуйте получить ключ прямой трансляции от YouTube.",
         "invalidStreamKey": "Похоже ключ прямой трансляции неверен.",
@@ -381,7 +385,7 @@
         "offBy": "{{name}} остановил прямую трансляцию",
         "on": "Трансляция",
         "onBy": "{{name}} начал прямую трансляцию",
-        "pending": "Начинаем трансляцию...",
+        "pending": "Начинаем трансляцию…",
         "serviceName": "Служба трансляции",
         "signedInAs": "В настоящее время вы вошли в систему как:",
         "signIn": "Войти через Google",
@@ -431,10 +435,10 @@
         "focus": "Фокус встречи",
         "focusFail": "{{component}} недоступен, повторите через {{ms}} с",
         "grantedTo": "{{to}} получил права модератора!",
-        "invitedOneMember": "{{displayName}} был приглашен",
+        "invitedOneMember": "{{name}} был приглашен",
         "invitedThreePlusMembers": "Приглашены {{name}} и {{count}} других пользователей(ля)",
         "invitedTwoMembers": "{{first}} и {{second}} присоединились к конференции",
-        "kickParticipant": "{{kicker}} выгнал {{kicked}} ",
+        "kickParticipant": "{{kicker}} выгнал {{kicked}}",
         "me": "Я",
         "moderator": "Получены права модератора!",
         "muted": "Вы начали разговор без звука.",
@@ -448,7 +452,7 @@
         "startSilentTitle": "У вас отсутствует звук!",
         "startSilentDescription": "Перезайдите в конференцию, чтобы включить звук",
         "suboptimalBrowserWarning": "К сожалению, ваш браузер не полностью поддерживает данную систему вэбконференций. Мы работаем над проблемой, однако, пока рекомендуем вам воспользоваться <a href='static/recommendedBrowsers.html' target='_blank'> следующими браузерами</a>.",
-        "suboptimalExperienceTitle": "К сожалению, этот браузер может не подойти для работы с {{appName}}. Мы работаем над проблемой, а пока попробуйте один из <a href='static/recommendedBrowsers.html 'target='_blank'>полностью поддерживаемых браузеров</a>.",
+        "suboptimalExperienceTitle": "Предупреждение браузера",
         "unmute": "Включить микрофон",
         "newDeviceCameraTitle": "Обнаружена новая камера",
         "newDeviceAudioTitle": "Обнаружено новое аудиоустройство",
@@ -469,7 +473,7 @@
         "initializingCall": "Инициализация звонка. . .",
         "invited": "Приглашенный",
         "rejected": "Отклонен",
-        "ringing": "Звоню. . ."
+        "ringing": "Звоню…"
     },
     "profile": {
         "setDisplayNameLabel": "Отображаемое имя",
@@ -529,7 +533,8 @@
         "selectMic": "Микрофон",
         "startAudioMuted": "Все начинают с выключенным звуком",
         "startVideoMuted": "Все начинают в скрытом режиме",
-        "title": "Настройки"
+        "title": "Настройки",
+        "speakers": "Динамики"
     },
     "settingsView": {
         "advanced": "Дополнительные",
@@ -608,7 +613,8 @@
             "tileView": "Вкл/выкл плитку",
             "toggleCamera": "Вкл/выкл камеру",
             "videomute": "Вкл/Выкл видео",
-            "videoblur": "Вкл./выкл. размытие фона"
+            "videoblur": "Вкл./выкл. размытие фона",
+            "moreOptions": "Показать дополнительные параметры"
         },
         "addPeople": "Добавить людей к вашему сеансу связи",
         "audioOnlyOff": "Отключить режим экономии пропуской способности",
@@ -636,7 +642,7 @@
         "mute": "Микрофон (вкл./выкл.)",
         "noAudioSignalTitle": "От вашего микрофона не идет звуковой сигнал!",
         "noAudioSignalDesc": "Если вы специально не отключали микрофон в системных настройках, подумайте о том, чтобы поменять его.",
-        "noAudioSignalDescSuggestion": "Если вы специально не отключали микрофон в системных настройках, вы можете попробовать использовать следующее устройство:",
+        "noAudioSignalDescSuggestion": "Если вы специально не отключали микрофон в системных настройках, вы можете попробовать использовать предлагаемое устройство.",
         "noisyAudioInputTitle": "",
         "noisyAudioInputDesc": "",
         "openChat": "Открыть чат",
@@ -660,7 +666,8 @@
         "toggleCamera": "Вкл/выкл камеру",
         "videomute": "Камера",
         "startvideoblur": "Размыть фон на видео",
-        "stopvideoblur": "Отключить размытие фона"
+        "stopvideoblur": "Отключить размытие фона",
+        "moreOptions": "Дополнительные параметры"
     },
     "transcribing": {
         "ccButtonTooltip": "Вкл. / Выкл. субтитры",
@@ -757,5 +764,8 @@
         "sendFeedback": "Обратная связь",
         "terms": "Условия",
         "title": "Защищенная, полнофункциональная и совершенно бесплатная система видеоконференций"
+    },
+    "lonelyMeetingExperience": {
+        "button": "Пригласить других"
     }
 }
