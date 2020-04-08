@@ -27,6 +27,7 @@ import { maybeShowSuboptimalExperienceNotification } from '../../functions';
 import Labels from './Labels';
 import { default as Notice } from './Notice';
 import { default as Subject } from './Subject';
+import { default as RefreshButton } from './RefreshButton';
 import {
     AbstractConference,
     abstractMapStateToProps
@@ -189,6 +190,7 @@ class Conference extends AbstractConference<Props, *> {
                 id = 'videoconference_page'
                 onMouseMove = { this._onShowToolbar }>
                 <Notice />
+                <RefreshButton />
                 <Subject />
                 <div id = 'videospace'>
                     <LargeVideo />
