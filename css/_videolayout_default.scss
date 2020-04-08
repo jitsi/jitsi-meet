@@ -190,6 +190,33 @@
     }
 }
 
+.refreshButtonWrapper {
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 600;
+    width: 100%;
+
+    .refreshButtonContainer {
+        display: flex;
+        padding: 10px;
+        flex-direction: column;
+        align-items: flex-end;
+        @media all and (max-width: 800px) {
+            align-items: center;
+        }
+
+        .refreshButton {
+            background: #FFAB00;
+            padding: 7px 10px;
+            border-radius: 3px;
+            color: #202B3D;
+            box-shadow: 0 20px 32px -8px rgba(9, 30, 66, 0.25);
+            transition: background-color 200ms;
+        }
+    }
+}
+
 #localVideoWrapper {
     display:inline-block;
 }
