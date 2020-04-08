@@ -69,12 +69,15 @@ case "$1" in
                    echo "Failed to install basexx - try installing it manually"
                 fi
 
-                PR11_INSTALL_CHECK="$(dpkg-query -f '${Status}' -W 'prosody-0.11' 2>/dev/null | awk '{print $3}' || true)"
+                PR10_INSTALL_CHECK="$(dpkg-query -f '${Status}' -W 'prosody-0.10' 2>/dev/null | awk '{print $3}' || true)"
+                PRTRUNK_INSTALL_CHECK="$(dpkg-query -f '${Status}' -W 'prosody-trunk' 2>/dev/null | awk '{print $3}' || true)"
                 PR_VER_INSTALLED=$(dpkg-query -f='${Version}\n' --show prosody  2>/dev/null || true)
-                if [ "$PR11_INSTALL_CHECK" = "installed" ] \
-                    || [ "$PR11_INSTALL_CHECK" = "unpacked" ] \
-                    || dpkg --compare-versions "$PR_VER_INSTALLED" gt "0.11" ; then
-                    sed -i 's/module:hook/module:hook_global/g' /usr/share/jitsi-meet/prosody-plugins/mod_auth_token.lua
+                if [ "$PR10_INSTALL_CHECK" = "installed" ] \
+                    || "$PR10_INSTALL_CHECK" = "unpacked"  \
+                    || "$PRTRUNK_INSTALL_CHECK" = "installed"  \
+                    || "$PRTRUNK_INSTALL_CHECK" = "unpacked"  \
+                    || dpkg --compare-versions "$PR_VER_INSTALLED" lt "0.11" ; then
+                    sed -i 's/module:hook_global(/module:hook(/g' /usr/share/jitsi-meet/prosody-plugins/mod_auth_token.lua
                 fi
 
                 if [ -x "/etc/init.d/prosody" ]; then
