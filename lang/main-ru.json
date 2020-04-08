@@ -393,7 +393,9 @@
         "signOut": "Выход",
         "start": "Начать трансляцию",
         "streamIdHelp": "Что это?",
-        "unavailableTitle": "Трансляция недоступна"
+        "unavailableTitle": "Трансляция недоступна",
+        "googlePrivacyPolicy": "",
+        "youtubeTerms": ""
     },
     "localRecording": {
         "clientState": {
@@ -534,7 +536,8 @@
         "startAudioMuted": "Все начинают с выключенным звуком",
         "startVideoMuted": "Все начинают в скрытом режиме",
         "title": "Настройки",
-        "speakers": "Динамики"
+        "speakers": "Динамики",
+        "microphones": ""
     },
     "settingsView": {
         "advanced": "Дополнительные",
@@ -667,7 +670,8 @@
         "videomute": "Камера",
         "startvideoblur": "Размыть фон на видео",
         "stopvideoblur": "Отключить размытие фона",
-        "moreOptions": "Дополнительные параметры"
+        "moreOptions": "Дополнительные параметры",
+        "noAudioSignalDialInLinkDesc": ""
     },
     "transcribing": {
         "ccButtonTooltip": "Вкл. / Выкл. субтитры",
@@ -763,7 +767,8 @@
         "roomnameHint": "Укажите название комнаты или ее адрес. Можете сами создать название и передать его будущим участникам встречи, чтобы они использовали именно его.",
         "sendFeedback": "Обратная связь",
         "terms": "Условия",
-        "title": "Защищенная, полнофункциональная и совершенно бесплатная система видеоконференций"
+        "title": "Защищенная, полнофункциональная и совершенно бесплатная система видеоконференций",
+        "getHelp": ""
     },
     "lonelyMeetingExperience": {
         "button": "Пригласить других"
