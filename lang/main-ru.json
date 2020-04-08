@@ -62,7 +62,7 @@
     "chromeExtensionBanner": {
         "installExtensionText": "Установите расширение для интеграции с Google Календарь и Office 365",
         "buttonText": "Установить расширение Chrome",
-        "dontShowAgain": ""
+        "dontShowAgain": "Не показывай мне это снова"
     },
     "connectingOverlay": {
         "joiningRoom": "Пытаемся присоединиться к вашей конференции…"
@@ -78,7 +78,9 @@
         "DISCONNECTING": "Отключение",
         "ERROR": "Ошибка",
         "RECONNECTING": "Проблема с сетью. Переподключение...",
-        "LOW_BANDWIDTH": "Видео для {{displayName}} было выключено для экономии трафика"
+        "LOW_BANDWIDTH": "Видео для {{displayName}} было выключено для экономии трафика",
+        "GOT_SESSION_ID": "Получение идентификатора сеанса ... Готово",
+        "GET_SESSION_ID_ERROR": "Ошибка получения идентификатора сеанса: {{code}}"
     },
     "connectionindicator": {
         "address": "Адрес:",
@@ -671,7 +673,7 @@
         "startvideoblur": "Размыть фон на видео",
         "stopvideoblur": "Отключить размытие фона",
         "moreOptions": "Дополнительные параметры",
-        "noAudioSignalDialInLinkDesc": ""
+        "noAudioSignalDialInLinkDesc": "Номера для набора"
     },
     "transcribing": {
         "ccButtonTooltip": "Вкл. / Выкл. субтитры",
@@ -735,7 +737,7 @@
         "moderator": "Модератор",
         "mute": "Без звука",
         "muted": "Звук выключен",
-        "remoteControl": "",
+        "remoteControl": "Начать / Остановить дистанционный контроль",
         "show": "Показать крупным планом",
         "videomute": "Участник отключил камеру"
     },
@@ -771,6 +773,7 @@
         "getHelp": "Получить помощь"
     },
     "lonelyMeetingExperience": {
-        "button": "Пригласить других"
+        "button": "Пригласить других",
+        "youAreAlone": "Вы единственный участник конференции"
     }
 }
