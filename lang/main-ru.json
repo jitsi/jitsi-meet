@@ -57,11 +57,11 @@
         },
         "privateNotice": "Личное сообщение пользователю {{recipient}}",
         "title": "Чат",
-        "you": ""
+        "you": "вы"
     },
     "chromeExtensionBanner": {
         "installExtensionText": "Установите расширение для интеграции с Google Календарь и Office 365",
-        "buttonText": "Установить расширения Chrome",
+        "buttonText": "Установить расширение Chrome",
         "dontShowAgain": ""
     },
     "connectingOverlay": {
@@ -394,8 +394,8 @@
         "start": "Начать трансляцию",
         "streamIdHelp": "Что это?",
         "unavailableTitle": "Трансляция недоступна",
-        "googlePrivacyPolicy": "",
-        "youtubeTerms": ""
+        "googlePrivacyPolicy": "Политика конфиденциальности Google",
+        "youtubeTerms": "Условия использования YouTube"
     },
     "localRecording": {
         "clientState": {
@@ -465,14 +465,14 @@
     "poweredby": "работает на",
     "presenceStatus": {
         "busy": "Занят",
-        "calling": "Вызываю . . .",
+        "calling": "Звоню…",
         "connected": "Подключено",
-        "connecting": "Подключение. . .",
+        "connecting": "Подключение…",
         "connecting2": "Подключение*...",
         "disconnected": "Отключено",
         "expired": "Истек",
         "ignored": "Проигнорирован",
-        "initializingCall": "Инициализация звонка. . .",
+        "initializingCall": "Инициализация звонка…",
         "invited": "Приглашенный",
         "rejected": "Отклонен",
         "ringing": "Звоню…"
@@ -493,7 +493,7 @@
         "error": "Ошибка записи. Пожалуйста, попробуйте позже.",
         "expandedOff": "Запись остановлена",
         "expandedOn": "Данная конференция записывается.",
-        "expandedPending": "Начинаем запись конференции...",
+        "expandedPending": "Начинаем запись конференции…",
         "failedToStart": "Ошибка начала записи",
         "fileSharingdescription": "Поделиться записью с участниками конференции",
         "live": "Прямая трансляция",
@@ -502,7 +502,7 @@
         "offBy": "{{name}} остановил запись",
         "on": "Запись",
         "onBy": "{{name}} включил запись",
-        "pending": "Подготовка записи конференции. . .",
+        "pending": "Подготовка записи конференции…",
         "rec": "Идет запись",
         "serviceDescription": "Ваша запись будет сохранена соответствующей службой",
         "serviceName": "Служба записи",
@@ -537,7 +537,7 @@
         "startVideoMuted": "Все начинают в скрытом режиме",
         "title": "Настройки",
         "speakers": "Динамики",
-        "microphones": ""
+        "microphones": "Микрофоны"
     },
     "settingsView": {
         "advanced": "Дополнительные",
@@ -680,7 +680,7 @@
         "failedToStart": "Неудалось начать расшифровку",
         "labelToolTip": "Создается транскрипция конференции.",
         "off": "Расшифровка остановлена",
-        "pending": "Подготовка расшифровки конференции. . .",
+        "pending": "Подготовка расшифровки конференции…",
         "start": "Вкл/Выкл показ субтитров",
         "stop": "Вкл/Выкл показ субтитров",
         "tr": ""
@@ -768,7 +768,7 @@
         "sendFeedback": "Обратная связь",
         "terms": "Условия",
         "title": "Защищенная, полнофункциональная и совершенно бесплатная система видеоконференций",
-        "getHelp": ""
+        "getHelp": "Получить помощь"
     },
     "lonelyMeetingExperience": {
         "button": "Пригласить других"
