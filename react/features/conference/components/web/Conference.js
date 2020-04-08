@@ -30,6 +30,7 @@ import type { AbstractProps } from '../AbstractConference';
 
 import ConferenceInfo from './ConferenceInfo';
 import { default as Notice } from './Notice';
+import { default as RefreshButton } from './RefreshButton';
 
 declare var APP: Object;
 declare var interfaceConfig: Object;
@@ -225,7 +226,7 @@ class Conference extends AbstractConference<Props, *> {
                     onMouseMove = { this._onShowToolbar }
                     ref = { this._setBackground }>
                     <ConferenceInfo />
-
+                    <RefreshButton />
                     <Notice />
                     <div id = 'videospace'>
                         <LargeVideo />
