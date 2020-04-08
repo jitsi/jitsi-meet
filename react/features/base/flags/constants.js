@@ -48,3 +48,9 @@ export const PIP_ENABLED = 'pip.enabled';
  * Default: disabled (false).
  */
 export const WELCOME_PAGE_ENABLED = 'welcomepage.enabled';
+
+/**
+* Flag indicating if the invite others feature should be enabled
+* Default: enabled (true)
+*/
+export const INVITE_OTHERS_ENABLED = "invite.others.enabled";

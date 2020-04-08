@@ -5,7 +5,8 @@ import { NativeModules, SafeAreaView, StatusBar } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 
 import { appNavigate } from '../../../app';
-import { PIP_ENABLED, getFeatureFlag } from '../../../base/flags';
+import { PIP_ENABLED, INVITE_OTHERS_ENABLED, getFeatureFlag } from '../../../base/flags';
+
 import { Container, LoadingIndicator, TintedView } from '../../../base/react';
 import { connect } from '../../../base/redux';
 import {
@@ -106,6 +107,11 @@ type Props = AbstractProps & {
      * @private
      */
     _toolboxVisible: boolean,
+
+    /**
+    * Wheater invite others feature is enabled
+    */
+    _inviteOthersEnabled: boolean,
 
     /**
      * The redux {@code dispatch} function.
@@ -254,7 +260,8 @@ class Conference extends AbstractConference<Props, *> {
             _largeVideoParticipantId,
             _reducedUI,
             _shouldDisplayTileView,
-            _toolboxVisible
+            _toolboxVisible,
+            _inviteOthersEnabled
         } = this.props;
         const showGradient = _toolboxVisible;
         const applyGradientStretching = _filmstripVisible && isNarrowAspectRatio(this) && !_shouldDisplayTileView;
@@ -314,9 +321,12 @@ class Conference extends AbstractConference<Props, *> {
                     <Captions onPress = { this._onClick } />
 
                     { _shouldDisplayTileView || <DisplayNameLabel participantId = { _largeVideoParticipantId } /> }
-
-                    <LonelyMeetingExperience />
-
+                    
+                    {
+                        _inviteOthersEnabled &&
+                             <LonelyMeetingExperience />
+                    }
+                    
                     {/*
                       * The Toolbox is in a stacking layer below the Filmstrip.
                       */}
@@ -502,7 +512,15 @@ function _mapStateToProps(state) {
          * @private
          * @type {boolean}
          */
-        _toolboxVisible: isToolboxVisible(state)
+        _toolboxVisible: isToolboxVisible(state),
+
+        /**
+        * Wheater invite others feature is enabled
+        * 
+        * @private
+        * @type {boolean}
+        */
+        _inviteOthersEnabled: getFeatureFlag(state, INVITE_OTHERS_ENABLED, true)
     };
 }
 

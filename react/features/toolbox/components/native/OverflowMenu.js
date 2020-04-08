@@ -6,7 +6,7 @@ import Collapsible from 'react-native-collapsible';
 
 import { ColorSchemeRegistry } from '../../../base/color-scheme';
 import { BottomSheet, hideDialog, isDialogOpen } from '../../../base/dialog';
-import { IOS_RECORDING_ENABLED, getFeatureFlag } from '../../../base/flags';
+import { IOS_RECORDING_ENABLED, INVITE_OTHERS_ENABLED, getFeatureFlag } from '../../../base/flags';
 import { IconDragHandle } from '../../../base/icons';
 import { connect } from '../../../base/redux';
 import { StyleType } from '../../../base/styles';
@@ -45,6 +45,11 @@ type Props = {
      * Whether the recoding button should be enabled or not.
      */
     _recordingEnabled: boolean,
+
+    /**
+    * Wheater invite others feature is enabled
+    */
+    _inviteOthersEnabled: boolean,
 
     /**
      * Used for hiding the dialog when the selection was completed.
@@ -127,7 +132,10 @@ class OverflowMenu extends PureComponent<Props, State> {
                 onSwipe = { this._onSwipe }
                 renderHeader = { this._renderMenuExpandToggle }>
                 <AudioRouteButton { ...buttonProps } />
-                <InviteButton { ...buttonProps } />
+                {
+                        this.props._inviteOthersEnabled
+                            && <InviteButton { ...buttonProps } />
+                }
                 <AudioOnlyButton { ...buttonProps } />
                 <RaiseHandButton { ...buttonProps } />
                 <MoreOptionsButton { ...moreOptionsButtonProps } />
@@ -241,7 +249,8 @@ function _mapStateToProps(state) {
     return {
         _bottomSheetStyles: ColorSchemeRegistry.get(state, 'BottomSheet'),
         _isOpen: isDialogOpen(state, OverflowMenu_),
-        _recordingEnabled: Platform.OS !== 'ios' || getFeatureFlag(state, IOS_RECORDING_ENABLED)
+        _recordingEnabled: Platform.OS !== 'ios' || getFeatureFlag(state, IOS_RECORDING_ENABLED),
+        _inviteOthersEnabled: getFeatureFlag(state, INVITE_OTHERS_ENABLED, true)
     };
 }
 

@@ -4,7 +4,7 @@ import React, { PureComponent } from 'react';
 import { View } from 'react-native';
 
 import { ColorSchemeRegistry } from '../../../base/color-scheme';
-import { CHAT_ENABLED, getFeatureFlag } from '../../../base/flags';
+import { CHAT_ENABLED, INVITE_OTHERS_ENABLED, getFeatureFlag } from '../../../base/flags';
 import { Container } from '../../../base/react';
 import { connect } from '../../../base/redux';
 import { StyleType } from '../../../base/styles';
@@ -39,6 +39,11 @@ type Props = {
      * The indicator which determines whether the toolbox is visible.
      */
     _visible: boolean,
+
+    /**
+    * Wheater invite others feature is enabled
+    */
+    _inviteOthersEnabled: boolean,
 
     /**
      * The redux {@code dispatch} function.
@@ -105,7 +110,7 @@ class Toolbox extends PureComponent<Props> {
      * @returns {React$Node}
      */
     _renderToolbar() {
-        const { _chatEnabled, _styles } = this.props;
+        const { _chatEnabled, _inviteOthersEnabled, _styles } = this.props;
         const { buttonStyles, buttonStylesBorderless, hangupButtonStyles, toggledButtonStyles } = _styles;
 
         return (
@@ -121,11 +126,11 @@ class Toolbox extends PureComponent<Props> {
                             } />
                 }
                 {
-                    !_chatEnabled
+                    !_chatEnabled && _inviteOthersEnabled
                         && <InviteButton
                             styles = { buttonStyles }
                             toggledStyles = { toggledButtonStyles } />
-                }
+                } 
                 <AudioMuteButton
                     styles = { buttonStyles }
                     toggledStyles = { toggledButtonStyles } />
@@ -159,7 +164,8 @@ function _mapStateToProps(state: Object): Object {
     return {
         _chatEnabled: getFeatureFlag(state, CHAT_ENABLED, true),
         _styles: ColorSchemeRegistry.get(state, 'Toolbox'),
-        _visible: isToolboxVisible(state)
+        _visible: isToolboxVisible(state),
+        _inviteOthersEnabled: getFeatureFlag(state, INVITE_OTHERS_ENABLED, true)
     };
 }
 
