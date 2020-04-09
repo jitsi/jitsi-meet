@@ -121,7 +121,7 @@
     "deepLinking": {
         "appNotInstalled": "Sie benötigen die „{{app}}“-App, um der Konferenz auf dem Smartphone beizutreten.",
         "description": "Nichts passiert? Wir haben versucht, die Konferenz in {{app}} zu öffnen. Versuchen Sie es erneut oder treten Sie der Konferenz in {{app}} im Web bei.",
-        "descriptionWithoutWeb": "Ist nichts passiert? Wir haben versucht, Ihre Besprechung in der „{{{app}}}“-Desktop-App zu starten.",
+        "descriptionWithoutWeb": "Ist nichts passiert? Wir haben versucht, Ihre Besprechung in der „{{app}}“-Desktop-App zu starten.",
         "downloadApp": "App herunterladen",
         "launchWebButton": "Im Web öffnen",
         "openApp": "In der App fortfahren",
@@ -263,7 +263,7 @@
         "shareYourScreenDisabledForGuest": "Gäste können den Bildschirm nicht freigeben.",
         "startLiveStreaming": "Einen Livestream starten",
         "startRecording": "Aufnahme starten",
-        "startRemoteControlErrorMessage": "Beim Versuch die Fernsteuerung zu starten ist ein Fehler aufgetreten!",
+        "startRemoteControlErrorMessage": "Beim Versuch, die Fernsteuerung zu starten, ist ein Fehler aufgetreten!",
         "stopLiveStreaming": "Livestreaming stoppen",
         "stopRecording": "Aufnahme stoppen",
         "stopRecordingWarning": "Sind Sie sicher, dass Sie die Aufnahme stoppen möchten?",
@@ -321,7 +321,7 @@
         "genericError": "Es ist leider etwas schiefgegangen.",
         "inviteLiveStream": "Klicken Sie auf {{url}} um den Livestream dieser Konferenz zu öffnen",
         "invitePhone": "Wenn Sie stattdessen per Telefon beitreten möchten, tippen Sie hier: {{number}},,{{conferenceID}}#\n",
-        "invitePhoneAlternatives": "Suche nach einer anderen Einwahlnummer?\nMeetings-Einwahlnummern sehen: {{{url}}\n\n\nWenn Sie sich auch über ein Raumtelefon einwählen, nehmen Sie teil, ohne sich mit dem Ton zu verbinden: {{silentUrl}}",
+        "invitePhoneAlternatives": "Suche nach einer anderen Einwahlnummer?\nMeetings-Einwahlnummern sehen: {{url}}\n\n\nWenn Sie sich auch über ein Raumtelefon einwählen, nehmen Sie teil, ohne sich mit dem Ton zu verbinden: {{silentUrl}}",
         "inviteURLFirstPartGeneral": "Sie wurden zur Teilnahme an einem Meeting eingeladen.",
         "inviteURLFirstPartPersonal": "{{name}} lädt Sie zu einem Meeting ein.\n",
         "inviteURLSecondPart": "\nAm Meeting teilnehmen:\n{{url}}\n",
@@ -439,7 +439,7 @@
         "focus": "Konferenz-Organisator",
         "focusFail": "{{component}} ist im Moment nicht verfügbar - wiederholen in {{ms}} Sekunden",
         "grantedTo": "Moderatorenrechte an {{to}} vergeben!",
-        "invitedOneMember": "{{displayName}} wurde eingeladen",
+        "invitedOneMember": "{{name}} wurde eingeladen",
         "invitedThreePlusMembers": "{{name}} und {{count}} andere wurden eingeladen",
         "invitedTwoMembers": "{{first}} und {{second}} wurden eingeladen",
         "kickParticipant": "{{kicked}} wurde von {{kicker}} ausgewiesen",
@@ -562,7 +562,7 @@
         "version": "Version"
     },
     "share": {
-        "dialInfoText": "\n\n=====\n\nWollen Sie sich nur auf Ihrem Telefon einwählen?\n\n{{{defaultDialInNumber}}}Klicken Sie auf diesen Link, um die eingewählten Telefonnummern für dieses Meeting zu sehen\n{{dialInfoPageUrl}}",
+        "dialInfoText": "\n\n=====\n\nWollen Sie sich nur auf Ihrem Telefon einwählen?\n\n{{defaultDialInNumber}}Klicken Sie auf diesen Link, um die eingewählten Telefonnummern für dieses Meeting zu sehen\n{{dialInfoPageUrl}}",
         "mainText": "Klicken Sie auf den folgenden Link, um dem Meeting beizutreten:\n{{roomUrl}}"
     },
     "speaker": "Sprecher",
