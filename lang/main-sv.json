@@ -451,7 +451,8 @@
         "unmute": "",
         "newDeviceCameraTitle": "Ny kamera hittad",
         "newDeviceAudioTitle": "Ny ljudenhet hittad",
-        "newDeviceAction": "Använd"
+        "newDeviceAction": "Använd",
+        "suboptimalBrowserWarning": ""
     },
     "passwordSetRemotely": "satt av en annan deltagare",
     "passwordDigitsOnly": "",
