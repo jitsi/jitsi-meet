@@ -745,7 +745,7 @@
         "remoteControl": "",
         "show": "Afficher en premier plan",
         "videomute": "Le participant a arrêté la caméra",
-        "domuteOthers": ""
+        "domuteOthers": "Mettre tous les autres en sourdine"
     },
     "welcomepage": {
         "accessibilityLabel": {
