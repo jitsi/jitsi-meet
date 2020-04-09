@@ -311,7 +311,7 @@
         "dialInTollFree": "Avgiftsfritt nummer",
         "genericError": "Oj då, något gick fel.",
         "inviteLiveStream": "Om du vill se livesändningen av mötet klickar du här: {{url}}",
-        "invitePhone": "",
+        "invitePhone": "För att gå med via telefon istället trycker du in: {{number}} ,, {{conferenceID}} #\n",
         "invitePhoneAlternatives": "",
         "inviteURLFirstPartGeneral": "Du är inbjuden till ett möte.",
         "inviteURLFirstPartPersonal": "",
