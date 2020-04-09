@@ -72,6 +72,7 @@ export default class ToolboxItem extends AbstractToolboxItem<Props> {
         return (
             <TouchableHighlight
                 accessibilityLabel = { this.accessibilityLabel }
+                accessibilityRole = 'button'
                 disabled = { disabled }
                 onPress = { onClick }
                 style = { style }
