@@ -396,7 +396,8 @@
         "start": "Einen Livestream starten",
         "streamIdHelp": "Was ist das?",
         "unavailableTitle": "Livestreaming nicht verfügbar",
-        "youtubeTerms": "YouTube-Nutzungsbedingungen"
+        "youtubeTerms": "YouTube-Nutzungsbedingungen",
+        "googlePrivacyPolicy": ""
     },
     "localRecording": {
         "clientState": {
