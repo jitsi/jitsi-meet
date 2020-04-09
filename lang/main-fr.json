@@ -62,7 +62,7 @@
     "chromeExtensionBanner": {
         "installExtensionText": "Installer l'extension pour l'intégration de Google Calendar et Office 365",
         "buttonText": "Installer l'extension Chrome",
-        "dontShowAgain": "Ne me montrez plus cela"
+        "dontShowAgain": "Ne plus me montrer ceci"
     },
     "connectingOverlay": {
         "joiningRoom": "Connexion à la réunion…"
