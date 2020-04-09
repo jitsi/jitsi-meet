@@ -140,7 +140,7 @@
         "cameraUnsupportedResolutionError": "Ձեր տեսախցիկը չունի պահանջվող վիդեո-չափ",
         "Cancel": "Չեղարկել",
         "close": "",
-        "conferenceDisconnectMsg": "Ստուգեք ցանցային միացումը։ Վերամիացում՝  {{seconds}} վ…",
+        "conferenceDisconnectMsg": "Ստուգեք ցանցային միացումը։ Վերամիացում՝ {{seconds}} վ…",
         "conferenceDisconnectTitle": "Ձեր կապը անջատվել է",
         "conferenceReloadMsg": "Փորձում ենք վերականգնել կապը։ Վերամիացում՝ {{seconds}} վ…",
         "conferenceReloadTitle": "Ցավոք, ինչ֊որ բան այն չէ",
@@ -149,7 +149,7 @@
         "confirmYes": "Այո",
         "connectError": "Օհո՜։ Ինչ֊որ բան այն չէ և մենք չկարողացանք միանալ կոնֆերանսին",
         "connectErrorWithMsg": "Օհո՜։ Ինչ֊որ բան այն չէ և մենք չկարողացանք միանալ կոնֆերանսին {{msg}}",
-        "connecting": "Միանում է...",
+        "connecting": "Միանում է…",
         "contactSupport": "Կապվեք սպասարկող թիմի հետ",
         "copy": "Պատճենել",
         "dismiss": "Հեռացնել",
@@ -249,7 +249,7 @@
         "userPassword": "օգտագործողի գաղտնաբառը",
         "WaitForHostMsg": "",
         "WaitForHostMsgWOk": "",
-        "WaitingForHost": "Սպասում է հյուրընկալողի ...",
+        "WaitingForHost": "Սպասում է հյուրընկալողի …",
         "Yes": "Այո",
         "yourEntireScreen": ""
     },
@@ -430,7 +430,7 @@
         "busy": "",
         "calling": "",
         "connected": "Միացված է",
-        "connecting": "Միանում է...",
+        "connecting": "Միանում է…",
         "connecting2": "Միանում է...",
         "disconnected": "Անջատված է",
         "expired": "",
@@ -443,7 +443,7 @@
     "profile": {
         "setDisplayNameLabel": "Նշանակել Ձեր երևացող անունը",
         "setEmailInput": "Մուտքագրեք էլ.հասցե",
-        "setEmailLabel": "Սահմանեք Ձեր gravatar էլ.փոստը",
+        "setEmailLabel": "Սահմանեք Ձեր Gravatar էլ.փոստը",
         "title": "Պրոֆայլ"
     },
     "recording": {
