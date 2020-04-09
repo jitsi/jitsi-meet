@@ -553,7 +553,7 @@
     },
     "share": {
         "dialInfoText": "\n\n=====\n\nVill du istället ringa in via telefon?\n\n{{defaultDialInNumber}} Klicka på den här länken för att se telefonnumret för detta möte\n{{DialInfoPageUrl}}",
-        "mainText": ""
+        "mainText": "Klicka på länken för att delta i mötet:\n{{roomUrl}}"
     },
     "speaker": "Talare",
     "speakerStats": {
@@ -606,7 +606,8 @@
             "tileView": "Öppna eller stäng panelvyn",
             "toggleCamera": "Växla kamera",
             "videomute": "Sätt på eller stäng av mikrofonen",
-            "videoblur": ""
+            "videoblur": "",
+            "muteEveryone": "Tysta alla"
         },
         "addPeople": "Lägg till personer i samtal",
         "audioOnlyOff": "Avsluta ljudläget",
@@ -649,8 +650,11 @@
         "tileViewToggle": "Öppna eller stäng panelvyn",
         "toggleCamera": "Byta kamera",
         "videomute": "Aktivera / avaktivera kameran",
-        "startvideoblur": "",
-        "stopvideoblur": ""
+        "startvideoblur": "Blurra min bakgrund",
+        "stopvideoblur": "",
+        "noisyAudioInputDesc": "Din mikrofon skapar brus, tysta din mikrofon eller byt ljudenhet.",
+        "noAudioSignalTitle": "Det kommer inget ljud från din mikrofon!",
+        "muteEveryone": "Tysta alla"
     },
     "transcribing": {
         "ccButtonTooltip": "Starta / Avsluta undertexter",
