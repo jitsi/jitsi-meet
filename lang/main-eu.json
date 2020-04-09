@@ -377,7 +377,7 @@
         "error": "Zuzeneko transmisioak huts egin du. Saiatu berriro.",
         "errorAPI": "Errorea gertatu da zure YouTube igorpenetan sartzerakoan. Saiatu berriro saioa hasten.",
         "errorLiveStreamNotEnabled": "{{email}} e-postan ez dago zuzeneko transmisioa gaituta. Gaitu zuzeneko transmisioa edo hasi saioa zuzeneko transmisioa gaituta duen kontu batean.",
-        "expandedOff": "",
+        "expandedOff": "Zuzeneko transmisioa gelditu da",
         "expandedOn": "",
         "expandedPending": "",
         "failedToStart": "",
