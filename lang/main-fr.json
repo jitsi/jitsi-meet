@@ -388,7 +388,7 @@
         "offBy": "{{name}} a arrêté la diffusion en continu",
         "on": "Direct",
         "onBy": "{{name}}  démarré la diffusion en continu",
-        "pending": "Commencer le direct...",
+        "pending": "Lancement du direct…",
         "serviceName": "Service de diffusion en direct",
         "signedInAs": "Vous êtes connecté en tant que :",
         "signIn": "Se connecter avec Google",
