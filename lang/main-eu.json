@@ -493,7 +493,7 @@
         "busy": "Grabazio baliabideak libratzen ari gara. Saiatu berriro minutu batzuk barru.",
         "busyTitle": "Grabatzaile guztiak okupatuta daude",
         "error": "Grabazioak huts egin du. Saiatu berriro.",
-        "expandedOff": "",
+        "expandedOff": "Grabazioa gelditu da",
         "expandedOn": "",
         "expandedPending": "",
         "failedToStart": "",
