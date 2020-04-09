@@ -338,21 +338,21 @@
     },
     "inviteDialog": {
         "alertText": "Ezin izan da parte hartzaile batzuk gonbidatu.",
-        "header": "",
-        "searchCallOnlyPlaceholder": "",
+        "header": "Gonbidatu",
+        "searchCallOnlyPlaceholder": "Sartu telefono zenbakia",
         "searchPeopleOnlyPlaceholder": "Bilatu parte-hartzaileak",
         "searchPlaceholder": "Parte-hartzailea edo telefono zenbakia",
         "send": "Bidali"
     },
     "inlineDialogFailure": {
         "msg": "",
-        "retry": "",
+        "retry": "Saiatu berriro",
         "support": "Laguntza",
-        "supportMsg": ""
+        "supportMsg": "Hau gertatzen jarraituz gero, jarri gurekin harremanetan"
     },
     "keyboardShortcuts": {
-        "focusLocal": "",
-        "focusRemote": "",
+        "focusLocal": "Arreta jarri zure bideoan",
+        "focusRemote": "Arreta jarri beste pertsona baten bideoan",
         "fullScreen": "Ikusi edo irten pantaila osotik",
         "keyboardShortcuts": "Teklatu lasterbideak",
         "localRecording": "Erakutsi edo ezkutatu grabazio-kontrol lokalak",
@@ -390,14 +390,14 @@
         "pending": "Zuzeneko transmisioa abian…",
         "serviceName": "Zuzeneko transmisioa zerbitzua",
         "signedInAs": "Honela hasi duzu saioa:",
-        "signIn": "",
+        "signIn": "Hasi saioa Google-ekin",
         "signInCTA": "Hasi saioa edo sartu zure zuzeneko transmisioaren gakoa YouTube-tik.",
         "signOut": "Itxi saioa",
         "start": "Hasi zuzeneko transmisioa",
         "streamIdHelp": "Zer da hau?",
         "unavailableTitle": "Zuzeneko transmisioa ez dago erabilgarri",
         "youtubeTerms": "",
-        "googlePrivacyPolicy": ""
+        "googlePrivacyPolicy": "Google-en pribatutasun-politika"
     },
     "localRecording": {
         "clientState": {
@@ -548,7 +548,7 @@
         "alertURLText": "",
         "buildInfoSection": "Konpilazioaren informazioa",
         "conferenceSection": "",
-        "disableCallIntegration": "",
+        "disableCallIntegration": "Desgaitu jatorrizko deien integrazioa",
         "disableP2P": "",
         "displayName": "",
         "email": "",
@@ -598,7 +598,7 @@
             "invite": "",
             "kick": "",
             "localRecording": "",
-            "lockRoom": "",
+            "lockRoom": "Aldatu bileraren pasahitza",
             "moreActions": "",
             "moreActionsMenu": "",
             "moreOptions": "",
@@ -656,7 +656,7 @@
         "noAudioSignalDialInLinkDesc": "",
         "noisyAudioInputTitle": "",
         "noisyAudioInputDesc": "",
-        "openChat": "",
+        "openChat": "Ireki txata",
         "pip": "",
         "privateMessage": "Bidali mezu pribatua",
         "profile": "Editatu zure profila",
