@@ -423,14 +423,14 @@
         "no": "",
         "participant": "",
         "participantStats": "Parte-hartzaileen estatistikak",
-        "sessionToken": "",
+        "sessionToken": "Saioaren token-a",
         "start": "",
         "stop": "",
         "yes": ""
     },
     "lockRoomPassword": "",
     "lockRoomPasswordUppercase": "",
-    "me": "",
+    "me": "ni",
     "notify": {
         "connectedOneMember": "{{name}} bilerara sartu da",
         "connectedThreePlusMembers": "{{name}} eta beste {{count}} bilerara sartu dira",
