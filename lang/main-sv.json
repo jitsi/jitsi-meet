@@ -4,7 +4,7 @@
         "countryNotSupported": "Vi stöder inte den här platsen ännu.",
         "countryReminder": "Ringer du till utlandsnummer? Börja alltid med landskoden.",
         "disabled": "Du kan inte bjuda in andra.",
-        "failedToAdd": "",
+        "failedToAdd": "Kunde inte lägga till deltagare",
         "footerText": "Utringningsfunktionen är avstängd.",
         "loading": "Söker efter personer och telefonnummer",
         "loadingNumber": "Bekräftar telefonnummer",
@@ -22,7 +22,7 @@
         "headphones": "Hörlurar",
         "phone": "Telefon",
         "speaker": "Talare",
-        "none": ""
+        "none": "Inga ljudenheter tillgängliga"
     },
     "audioOnly": {
         "audioOnly": "Enbart ljud"
@@ -46,18 +46,18 @@
         "today": "Idag"
     },
     "chat": {
-        "error": "",
+        "error": "Fel: ditt meddelande skickades inte. Orsak: {{error}}",
         "messagebox": "Skriv ett meddelande",
         "nickname": {
             "popover": "Välj ett namn",
             "title": "Skriv in ett namn för att börja använda chatten"
         },
         "title": "Chatt",
-        "you": "",
-        "privateNotice": "",
-        "noMessagesMessage": "",
-        "messageTo": "",
-        "fieldPlaceHolder": ""
+        "you": "du",
+        "privateNotice": "Privat meddelande till {{recipient}}",
+        "noMessagesMessage": "Det finns ännu inga meddelanden i mötet. Påbörja en konversation!",
+        "messageTo": "Privat meddelande till {{recipient}}",
+        "fieldPlaceHolder": "Skriv ditt meddelande här"
     },
     "connectingOverlay": {
         "joiningRoom": "Ansluter till mötet …"
@@ -660,7 +660,7 @@
         "noisyAudioInputDesc": "Din mikrofon skapar brus, tysta din mikrofon eller byt ljudenhet.",
         "noAudioSignalTitle": "Det kommer inget ljud från din mikrofon!",
         "muteEveryone": "Tysta alla",
-        "privateMessage": "",
+        "privateMessage": "Skicka privat meddelande",
         "noisyAudioInputTitle": "",
         "noAudioSignalDialInLinkDesc": "",
         "noAudioSignalDialInDesc": "",
@@ -716,8 +716,8 @@
         "lowDefinition": "Low definition",
         "onlyAudioAvailable": "Enbart ljud tillgängligt",
         "onlyAudioSupported": "Vi stöder bara ljud i denna webbläsare",
-        "p2pEnabled": "Peer to peer används",
-        "p2pVideoQualityDescription": "",
+        "p2pEnabled": "Peer to peer-läget används",
+        "p2pVideoQualityDescription": "I peer to peer-läget kan mottagen videokvalitet bara växlas mellan hög kvalitet eller enbart ljud. Andra inställningar kommer inte att aktiveras förrän peer to peer-läget har avslutats.",
         "recHighDefinitionOnly": "Föredrar high definition.",
         "sd": "SD",
         "standardDefinition": "Standard definition",
@@ -733,7 +733,7 @@
         "muted": "Tystad",
         "remoteControl": "Fjärrkontroll",
         "show": "",
-        "videomute": ""
+        "videomute": "Deltagaren har stäng av kameran"
     },
     "welcomepage": {
         "accessibilityLabel": {
