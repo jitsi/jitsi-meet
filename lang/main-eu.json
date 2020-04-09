@@ -337,7 +337,7 @@
         "label": ""
     },
     "inviteDialog": {
-        "alertText": "",
+        "alertText": "Ezin izan da parte hartzaile batzuk gonbidatu.",
         "header": "",
         "searchCallOnlyPlaceholder": "",
         "searchPeopleOnlyPlaceholder": "",
