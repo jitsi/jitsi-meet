@@ -775,5 +775,9 @@
     "documentSharing": {
         "title": ""
     },
-    "raisedHand": "Jag vill prata"
+    "raisedHand": "Jag vill prata",
+    "lonelyMeetingExperience": {
+        "youAreAlone": "",
+        "button": ""
+    }
 }
