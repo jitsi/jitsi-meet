@@ -488,7 +488,7 @@
     "raisedHand": "Hitz egin nahiko luke",
     "recording": {
         "authDropboxText": "",
-        "availableSpace": "",
+        "availableSpace": "Leku erabilgarria: {{spaceLeft}} MB (gutxi gorabehera {{duration}} grabazio minutuak)",
         "beta": "",
         "busy": "",
         "busyTitle": "Grabatzaile guztiak okupatuta daude",
