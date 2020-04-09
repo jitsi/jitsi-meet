@@ -385,7 +385,7 @@
         "start": "Starta en livesändning",
         "streamIdHelp": "Vad är det här?",
         "unavailableTitle": "Livesändning otillgänglig",
-        "offBy": ""
+        "offBy": "{{name}} stoppade direktströmningen"
     },
     "localRecording": {
         "clientState": {
