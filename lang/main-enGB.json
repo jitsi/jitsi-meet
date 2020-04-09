@@ -547,7 +547,11 @@
         "serverURL": "Server URL",
         "startWithAudioMuted": "Start with audio muted",
         "startWithVideoMuted": "Start with video muted",
-        "version": "Version"
+        "version": "Version",
+        "showAdvanced": "Show advanced settings",
+        "disableP2P": "Disable Peer-To-Peer mode",
+        "disableCallIntegration": "Disable native call integration",
+        "advanced": "Advanced"
     },
     "share": {
         "dialInfoText": "\n\n=====\n\nJust want to dial in on your phone?\n\n{{defaultDialInNumber}}Click this link to see the dial in phone numbers for this meeting\n{{dialInfoPageUrl}}",
@@ -595,16 +599,21 @@
             "recording": "Toggle recording",
             "remoteMute": "Mute participant",
             "Settings": "Toggle settings",
-            "sharedvideo": "Toggle Youtube video sharing",
+            "sharedvideo": "Toggle YouTube video sharing",
             "shareRoom": "Invite someone",
             "shareYourScreen": "Toggle screenshare",
             "shortcuts": "Toggle shortcuts",
-            "show": "",
+            "show": "Show on stage",
             "speakerStats": "Toggle speaker statistics",
             "tileView": "Toggle tile view",
             "toggleCamera": "Toggle camera",
             "videomute": "Toggle mute video",
-            "videoblur": ""
+            "videoblur": "",
+            "privateMessage": "Send private message",
+            "muteEveryone": "Mute everyone",
+            "moreOptions": "Show more options",
+            "help": "Help",
+            "download": "Download our apps"
         },
         "addPeople": "Add people to your call",
         "audioOnlyOff": "Disable audio only mode",
