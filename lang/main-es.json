@@ -77,7 +77,11 @@
         "DISCONNECTED": "Desconectado",
         "DISCONNECTING": "Desconectando",
         "ERROR": "Error",
-        "RECONNECTING": "Ocurrió un problema en la red. Reconectando..."
+        "RECONNECTING": "Ocurrió un problema en la red. Reconectando...",
+        "LOW_BANDWIDTH": "",
+        "GOT_SESSION_ID": "",
+        "GET_SESSION_ID_ERROR": "",
+        "FETCH_SESSION_ID": ""
     },
     "connectionindicator": {
         "address": "Dirección:",
@@ -271,7 +275,8 @@
         "WaitForHostMsgWOk": "La conferencia <b> {{room}} </b> aún no ha comenzado. Si usted es el anfitrión, presione Ok para autenticar. De lo contrario, espere a que llegue el anfitrión.",
         "WaitingForHost": "Esperando al anfitrión …",
         "Yes": "Sí",
-        "yourEntireScreen": "Su pantalla completa"
+        "yourEntireScreen": "Su pantalla completa",
+        "muteEveryoneDialog": ""
     },
     "dialOut": {
         "statusMessage": "esta {{status}}"
