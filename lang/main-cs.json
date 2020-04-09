@@ -468,22 +468,22 @@
     "poweredby": "Poháněno",
     "presenceStatus": {
         "busy": "Obsazeno",
-        "calling": "Vytáčím...",
+        "calling": "Vytáčím…",
         "connected": "Spojování",
-        "connecting": "Spojování...",
+        "connecting": "Spojování…",
         "connecting2": "Spojování*...",
         "disconnected": "Odpojeno",
         "expired": "Spojení vypršelo",
         "ignored": "Spojení ignorováno",
-        "initializingCall": "Nastavuji hovor...",
+        "initializingCall": "Nastavuji hovor…",
         "invited": "Pozván",
         "rejected": "Odmítnuto",
-        "ringing": "Zvoní..."
+        "ringing": "Zvoní…"
     },
     "profile": {
         "setDisplayNameLabel": "Nastavte si jméno",
         "setEmailInput": "Zadejte e-mail",
-        "setEmailLabel": "Nastavte si email vašeho gravataru",
+        "setEmailLabel": "Nastavte si e-mail vašeho Gravataru",
         "title": "Profil"
     },
     "recording": {
