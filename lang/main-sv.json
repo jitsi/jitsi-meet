@@ -762,7 +762,7 @@
         "sendFeedback": "Ge återkoppling",
         "terms": "Termer",
         "title": "Säkra, välutrustade och helt kostnadsfria videokonferenser",
-        "roomNameAllowedChars": "",
+        "roomNameAllowedChars": "Mötesnamn kan inte innehålla dessa tecken: ?, &,:, ', \",%, #.",
         "getHelp": ""
     },
     "defaultNickname": "",
