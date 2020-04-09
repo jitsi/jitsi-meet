@@ -704,7 +704,7 @@
         "safariGrantPermissions": "Hautatu <b><i>Ados</i></b> zure nabigatzaileak baimenak eskatzen dituenean."
     },
     "videoSIPGW": {
-        "busy": "",
+        "busy": "Baliabideak askatzeko lanetan gabiltza. Mesedez, saiatu berriro minutu batzuk barru.",
         "busyTitle": "",
         "errorAlreadyInvited": "{{displayName}} jada gonbidatuta dago",
         "errorInvite": "",
