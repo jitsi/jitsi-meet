@@ -529,7 +529,8 @@
         "startAudioMuted": "Alla börjar tystade",
         "startVideoMuted": "Alla börjar osynliga",
         "title": "Inställningar",
-        "speakers": "Talare"
+        "speakers": "Talare",
+        "microphones": ""
     },
     "settingsView": {
         "alertOk": "OK",
@@ -545,7 +546,10 @@
         "startWithAudioMuted": "Starta med ljudet avstängt",
         "startWithVideoMuted": "Starta med videon avstängd",
         "version": "Version",
-        "disableCallIntegration": "Tillåt inte deltagande via telefon"
+        "disableCallIntegration": "Tillåt inte deltagande via telefon",
+        "showAdvanced": "",
+        "disableP2P": "",
+        "advanced": ""
     },
     "share": {
         "dialInfoText": "",
