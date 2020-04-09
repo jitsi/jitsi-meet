@@ -382,7 +382,7 @@
         "expandedPending": "Zuzeneko transmisioa abian da…",
         "failedToStart": "Zuzeneko transmisioak ezin izan du hasi",
         "getStreamKeyManually": "",
-        "invalidStreamKey": "",
+        "invalidStreamKey": "Zuzeneko transmisioaren gakoa okerra izan daiteke.",
         "off": "",
         "offBy": "{{name}} erabiltzaileak zuzeneko emanaldia gelditu du",
         "on": "",
