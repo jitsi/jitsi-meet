@@ -775,7 +775,8 @@
         "roomnameHint": "Entrez le nom ou l'URL de la salle que vous souhaitez rejoindre. Vous pouvez faire un nom, laissez les gens que vous rencontrerez le savoir afin qu'ils entrent le même nom.",
         "sendFeedback": "Envoyer votre avis",
         "terms": "Termes",
-        "title": "Vidéoconférence Sécurisée, entièrement en vedette et gratuite"
+        "title": "Vidéoconférence Sécurisée, entièrement en vedette et gratuite",
+        "getHelp": ""
     },
     "lonelyMeetingExperience": {
         "button": "Inviter d'autres personnes",
