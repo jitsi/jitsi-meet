@@ -539,7 +539,8 @@
         "startAudioMuted": "Tout le monde commence en muet",
         "startVideoMuted": "Tout le monde commence sans vidéo",
         "title": "Paramètres",
-        "microphones": "Microphones"
+        "microphones": "Microphones",
+        "speakers": ""
     },
     "settingsView": {
         "advanced": "Avancé",
@@ -618,7 +619,9 @@
             "tileView": "Activer/désactiver la vue mosaïque",
             "toggleCamera": "Changer de caméra",
             "videomute": "Activer/désactiver la vidéo",
-            "videoblur": "Activer/désactiver le flou de la vidéo"
+            "videoblur": "Activer/désactiver le flou de la vidéo",
+            "muteEveryone": "",
+            "moreOptions": ""
         },
         "addPeople": "Ajouter des personnes à votre appel",
         "audioOnlyOff": "Désactiver le mode bande passante réduite",
