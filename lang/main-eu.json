@@ -368,7 +368,7 @@
         "videoQuality": "Kudeatu deiaren kalitatea"
     },
     "liveStreaming": {
-        "busy": "",
+        "busy": "Transmisio baliabideak libratzen ari gara. Saiatu berriro minutu batzuk barru.",
         "busyTitle": "Zuzeneko emanaldia egin dezaketen guztiak okupatuta daude",
         "changeSignIn": "",
         "choose": "",
