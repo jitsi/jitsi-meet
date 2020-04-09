@@ -378,7 +378,7 @@
         "invalidStreamKey": "Live stream key may be incorrect.",
         "off": "Live Streaming stopped",
         "on": "Live Streaming",
-        "pending": "Starting Live Stream…",
+        "pending": "Starting Live Stream...",
         "serviceName": "Live Streaming service",
         "signedInAs": "You are currently signed in as:",
         "signIn": "Sign in with Google",
