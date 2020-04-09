@@ -73,10 +73,10 @@
         "DISCONNECTING": "Kopplar från",
         "ERROR": "Fel",
         "RECONNECTING": "Ett nätverksproblem uppstod. Återansluter...",
-        "LOW_BANDWIDTH": "",
-        "GOT_SESSION_ID": "",
-        "GET_SESSION_ID_ERROR": "",
-        "FETCH_SESSION_ID": ""
+        "LOW_BANDWIDTH": "Video för {{displayName}} har stängts av för att spara bandbredd",
+        "GOT_SESSION_ID": "Hämta sessions-id ... Klart",
+        "GET_SESSION_ID_ERROR": "Hämta sessions-id-fel: {{code}}",
+        "FETCH_SESSION_ID": "Hämtar sessions-id …"
     },
     "connectionindicator": {
         "address": "Adress:",
@@ -106,8 +106,9 @@
         "resolution": "Upplösning:",
         "status": "Anslutning:",
         "transport": "Transport:",
+        "transport_plural": "Transporter:",
         "turn": " (turn)",
-        "e2e_rtt": ""
+        "e2e_rtt": "E2E RTT:"
     },
     "dateUtils": {
         "earlier": "Tidigare",
@@ -117,7 +118,7 @@
     "deepLinking": {
         "appNotInstalled": "Du behöver mobilappen {{app}} för att gå med i det här mötet från din telefon.",
         "description": "Hände inget? Vi försökte starta mötet i programmet {{app}} i din skrivbordsapp. Försök igen eller starta det i webbappen {{app}}.",
-        "descriptionWithoutWeb": "",
+        "descriptionWithoutWeb": "Händer inget? Vi försökte starta mötet i {{app}}-skrivbordsappen.",
         "downloadApp": "Hämta appen",
         "launchWebButton": "Starta på webben",
         "openApp": "Fortsätt till appen",
@@ -142,7 +143,7 @@
             "liveStreaming": "Livesändning"
         },
         "allow": "Tillåt",
-        "alreadySharedVideoMsg": "",
+        "alreadySharedVideoMsg": "En annan deltagare delar redan en video. Konferensen tillåter bara en video-delning åt gången.",
         "alreadySharedVideoTitle": "Endast en delad video åt gången tillåts",
         "applicationWindow": "Applikationsfönster",
         "Back": "Tillbaka",
@@ -168,22 +169,22 @@
         "contactSupport": "Kontakta kundtjänst",
         "copy": "Kopiera",
         "dismiss": "Förkasta",
-        "displayNameRequired": "",
+        "displayNameRequired": "Hej, vilket är ditt namn?",
         "done": "Klar",
-        "enterDisplayName": "",
+        "enterDisplayName": "Ange namn",
         "error": "Fel",
         "externalInstallationMsg": "Misslyckades att installera skrivbordsdelnings-tillägget.",
         "externalInstallationTitle": "Tillägg krävs",
         "goToStore": "Gå till appbutiken",
         "gracefulShutdown": "Vår tjänst är för tillfället nedstängd för underhåll. Vänligen försök senare.",
         "IamHost": "Jag är värd",
-        "incorrectRoomLockPassword": "",
+        "incorrectRoomLockPassword": "Felaktigt lösenord",
         "incorrectPassword": "Fel användarnamn eller lösenord",
         "inlineInstallationMsg": "Misslyckades att installera skrivbordsdelnings-tillägget.",
         "inlineInstallExtension": "Installera nu",
         "internalError": "Ett fel uppstod. Fel: {{error}}",
         "internalErrorTitle": "Internt fel",
-        "kickMessage": "",
+        "kickMessage": "Du kan kontakta {{participantDisplayName}} för mer information.",
         "kickParticipantButton": "Sparka ut",
         "kickParticipantDialog": "Vill du sparka ut den här deltagaren?",
         "kickParticipantTitle": "Tysta deltagaren?",
@@ -210,7 +211,7 @@
         "muteParticipantTitle": "Tysta deltagaren?",
         "Ok": "Ok",
         "passwordLabel": "Mötet har låsts av en deltagare. Ange $t(lockRoomPassword) för att gå med.",
-        "passwordNotSupported": "Att sätta ett lösenord för konferensrummet stöds inte.",
+        "passwordNotSupported": "Att sätta ett $t(lockRoomPassword) för mötesrummet stöds ej.",
         "passwordNotSupportedTitle": "$t(lockRoomPasswordUppercase) stöds inte",
         "passwordRequired": "$t(lockRoomPasswordUppercase) krävs",
         "popupError": "Din webbläsare blockerar pop-up-fönster från sajten. Tillåt pop-up-fönster från den här sajten i inställningarna och försök igen.",
@@ -262,13 +263,13 @@
         "transcribing": "Transkriberar",
         "unlockRoom": "Ta bort möte $t(lockRoomPassword)",
         "userPassword": "användarlösenord",
-        "WaitForHostMsg": "Konferensen <b>{{room}}<b> har inte börjat än. Autentisera konferensen om du är värd. Vänta annars på att värden startar konferensen.",
-        "WaitForHostMsgWOk": "Konferensen <b>{{room}}<b> har inte börjat än. Om du är värd, autentisera konferensen genom att trycka på Ok. Vänta annars på att värden startar konferensen.",
+        "WaitForHostMsg": "Konferensen <b>{{room}}</b> har inte börjat än. Autentisera konferensen om du är värd. Vänta annars på att värden startar konferensen.",
+        "WaitForHostMsgWOk": "Konferensen <b>{{room}}</b> har inte börjat än. Om du är värd, autentisera konferensen genom att trycka på Ok. Vänta annars på att värden startar konferensen.",
         "WaitingForHost": "Väntar på värden …",
         "Yes": "Ja",
         "yourEntireScreen": "Helskärm",
         "muteEveryoneElseDialog": "När någon tystats kan du inte slå på mikrofonen, men de kan själva slå på sin egen mikrofon när som helst.",
-        "muteEveryoneElseTitle": "Tysta alla utom {{vem}}?",
+        "muteEveryoneElseTitle": "Tysta alla utom {{whom}}?",
         "muteEveryoneDialog": "Är du säker på att du vill tysta alla? Du kan inte slå på mikrofonen åt dem, men de kan själva slå på sin egen mikrofon när som helst.",
         "muteEveryoneStartMuted": "Alla börjar tystade",
         "muteEveryoneTitle": "Tysta alla?",
@@ -486,7 +487,7 @@
         "error": "Inspelningen misslyckades. Försök igen.",
         "expandedOff": "Inspelningen har avslutats",
         "expandedOn": "Mötet spelas nu in.",
-        "expandedPending": "Inspelningen startar …",
+        "expandedPending": "Inspelningen påbörjas …",
         "failedToStart": "Inspelningen kunde inte påbörjas",
         "fileSharingdescription": "Dela inspelningen med mötesdeltagare",
         "live": "LIVE",
@@ -552,7 +553,7 @@
         "advanced": ""
     },
     "share": {
-        "dialInfoText": "\n\n=====\n\nVill du istället ringa in via telefon?\n\n{{defaultDialInNumber}} Klicka på den här länken för att se telefonnumret för detta möte\n{{DialInfoPageUrl}}",
+        "dialInfoText": "\n\n=====\n\nVill du istället ringa in via telefon?\n\n{{defaultDialInNumber}} Klicka på den här länken för att se telefonnumret för detta möte\n{{dialInfoPageUrl}}",
         "mainText": "Klicka på länken för att delta i mötet:\n{{roomUrl}}"
     },
     "speaker": "Talare",
@@ -715,7 +716,7 @@
         "ld": "LD",
         "lowDefinition": "Low definition",
         "onlyAudioAvailable": "Enbart ljud tillgängligt",
-        "onlyAudioSupported": "Vi stöder bara ljud i denna webbläsare",
+        "onlyAudioSupported": "Vi stöder bara ljud i denna webbläsare.",
         "p2pEnabled": "Peer to peer-läget används",
         "p2pVideoQualityDescription": "I peer to peer-läget kan mottagen videokvalitet bara växlas mellan hög kvalitet eller enbart ljud. Andra inställningar kommer inte att aktiveras förrän peer to peer-läget har avslutats.",
         "recHighDefinitionOnly": "Föredrar high definition.",
@@ -766,18 +767,18 @@
         "getHelp": "",
         "goSmall": "BÖRJA"
     },
-    "defaultNickname": "",
+    "defaultNickname": "till exempel Julia Eriksson",
     "chromeExtensionBanner": {
-        "dontShowAgain": "",
-        "buttonText": "",
-        "installExtensionText": ""
+        "dontShowAgain": "Visa inte det här igen",
+        "buttonText": "Installera Chrome-utökningen",
+        "installExtensionText": "Installera utökning för Google Kalender och integrationen av Office 365"
     },
     "documentSharing": {
         "title": ""
     },
     "raisedHand": "Jag vill prata",
     "lonelyMeetingExperience": {
-        "youAreAlone": "",
-        "button": ""
+        "youAreAlone": "Du är ensam i mötet",
+        "button": "Bjud in andra"
     }
 }
