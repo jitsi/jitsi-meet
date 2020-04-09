@@ -47,10 +47,10 @@
     },
     "chat": {
         "error": "錯誤：您的訊息未被傳送。原因： {{error}}",
-        "fieldPlaceHolder": "",
+        "fieldPlaceHolder": "在此輸入您的訊息",
         "messagebox": "輸入訊息",
         "messageTo": "私人訊息傳送至 {{recipient}}",
-        "noMessagesMessage": "",
+        "noMessagesMessage": "會議中還沒有訊息。在此開始對話！",
         "nickname": {
             "popover": "選擇名稱",
             "title": "輸入名稱來使用交談"
@@ -72,7 +72,10 @@
         "DISCONNECTED": "已經中斷連接",
         "DISCONNECTING": "中斷連接中",
         "ERROR": "錯誤",
-        "RECONNECTING": "網路發生問題。重新連線中........."
+        "RECONNECTING": "網路發生問題。重新連線中.........",
+        "GOT_SESSION_ID": "正在取得 session-id… 完成",
+        "GET_SESSION_ID_ERROR": "取得 session-id 時發生錯誤：{{code}}",
+        "FETCH_SESSION_ID": "正在取得 session-id…"
     },
     "connectionindicator": {
         "address": "位址：",
@@ -200,7 +203,7 @@
         "muteParticipantDialog": "確定要將這位參與者設為靜音？您無法為他們解除，但他們可以隨時自行解除靜音。",
         "muteParticipantTitle": "將這位參與者設為靜音？",
         "Ok": "OK",
-        "passwordLabel": "$t(lockRoomPasswordUppercase)",
+        "passwordLabel": "會議已被參與者鎖定。請輸入 $t(lockRoomPassword) 以加入。",
         "passwordNotSupported": "設置會議密碼 $t(lockRoomPassword) 尚未支援 。",
         "passwordNotSupportedTitle": "$t(lockRoomPasswordUppercase) 尚未支援",
         "passwordRequired": "$t(lockRoomPasswordUppercase) 必須要有",
@@ -226,7 +229,7 @@
         "retry": "重試",
         "screenSharingFailedToInstall": "喔哦！螢幕分享擴充程式安裝失敗。",
         "screenSharingFailedToInstallTitle": "螢幕分享擴充安裝失敗",
-        "screenSharingFirefoxPermissionDeniedError": "嘗試進行螢幕分享時遇到問題。請確認您有將權限允許。",
+        "screenSharingFirefoxPermissionDeniedError": "嘗試進行螢幕分享時遇到問題。請確認您有授予權限以分享。 ",
         "screenSharingFirefoxPermissionDeniedTitle": "喔哦！我們無法啟動螢幕分享！",
         "screenSharingPermissionDeniedError": "噢喔！您的影像分享擴充權限發生問題。請重新載入，再試一次。",
         "sendPrivateMessage": "您最近有收到私人訊息。您要進行私人回覆，或是要將自己的訊息發佈至群組？",
@@ -658,7 +661,7 @@
         "tr": "TR 轉錄"
     },
     "userMedia": {
-        "androidGrantPermissions": "當瀏覽器要求權限允許時，請選擇 <b><i>允許</i></b>",
+        "androidGrantPermissions": "當瀏覽器要求權限時，請選擇 <b><i>允許</i></b>",
         "chromeGrantPermissions": "當瀏覽器要求權限允許時，請選擇 <b><i>允許</i></b>",
         "edgeGrantPermissions": "當瀏覽器要求權限允許時，請選擇 <b><i>是的</i></b>",
         "electronGrantPermissions": "請允許權限使用您的攝影裝置和麥克風",
@@ -740,5 +743,10 @@
         "sendFeedback": "發送回報",
         "terms": "條款",
         "title": "安全、全功能、完全免費的視訊會議"
+    },
+    "chromeExtensionBanner": {
+        "dontShowAgain": "不再顯示此訊息",
+        "buttonText": "安裝 Chrome 擴充套件",
+        "installExtensionText": "安裝適用於 Google 行事曆及 Office 365 整合的擴充套件"
     }
 }
