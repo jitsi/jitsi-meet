@@ -202,7 +202,7 @@
         "muteParticipantButton": "靜音",
         "muteParticipantDialog": "確定要將這位參與者設為靜音？您無法為他們解除，但他們可以隨時自行解除靜音。",
         "muteParticipantTitle": "將這位參與者設為靜音？",
-        "Ok": "OK",
+        "Ok": "確定",
         "passwordLabel": "會議已被參與者鎖定。請輸入 $t(lockRoomPassword) 以加入。",
         "passwordNotSupported": "設置會議密碼 $t(lockRoomPassword) 尚未支援 。",
         "passwordNotSupportedTitle": "$t(lockRoomPasswordUppercase) 尚未支援",
@@ -258,10 +258,10 @@
         "tokenAuthFailed": "抱歉，您未被允許加入此會議。",
         "tokenAuthFailedTitle": "認證失敗",
         "transcribing": "轉錄中",
-        "unlockRoom": "移除會議  $t(lockRoomPassword)",
+        "unlockRoom": "移除會議 $t(lockRoomPassword)",
         "userPassword": "用戶密碼",
         "WaitForHostMsg": "此會議 <b>{{room}}</b> 尚未啟動。如果您是會議主人，請進行認證；否者，請等待會議主人到達。",
-        "WaitForHostMsgWOk": "此會議 <b>{{room}}</b> 尚未啟動。如果您是會議主人，請按 OK 進行認證；否者，請等待會議主人到達。",
+        "WaitForHostMsgWOk": "此會議 <b>{{room}}</b> 尚未啟動。如果您是會議主人，請按 [確定] 進行認證；否者，請等待會議主人到達。",
         "WaitingForHost": "等侯主辦人 ...",
         "Yes": "是的",
         "yourEntireScreen": "自己的全螢幕"
@@ -305,7 +305,7 @@
         "invitePhone": "要用電話參加會議，請使用： {{number}},,{{conferenceID}}#\n",
         "invitePhoneAlternatives": "要找另一組撥入號碼？\n請見會議撥入號碼： {{url}}\n\n\n如果也要用室內電話撥打，不用連接語音進行加入： {{silentUrl}}",
         "inviteURLFirstPartGeneral": "您受邀參加會議。",
-        "inviteURLFirstPartPersonal": "{{name}}  正在邀請您加入會議。\n",
+        "inviteURLFirstPartPersonal": "{{name}} 正在邀請您加入會議。\n",
         "inviteURLSecondPart": "\n加入會議：\n{{url}}\n",
         "liveStreamURL": "直播串流：",
         "moreNumbers": "更多成員",
@@ -313,7 +313,7 @@
         "noPassword": "無",
         "noRoom": "沒有會議室是指定要播打進入。",
         "numbers": "播入號碼",
-        "password": "$t(lockRoomPasswordUppercase):",
+        "password": "$t(lockRoomPasswordUppercase)：",
         "title": "分享",
         "tooltip": "顯示此會議的連結及電話播入號碼",
         "label": "會議資訊"
@@ -366,9 +366,9 @@
         "getStreamKeyManually": "我們無法解析任何直播串流，請從 YouTube 取得您的直播串流 Key 。",
         "invalidStreamKey": "直播串流 Key 可能不正確。",
         "off": "直播串流已經停止",
-        "offBy": "{{name}}  停止了直播串流",
+        "offBy": "{{name}} 停止了直播串流",
         "on": "直播串流中",
-        "onBy": "{{name}}  啟動了直播串流",
+        "onBy": "{{name}} 啟動了直播串流",
         "pending": "啟動直播串流...",
         "serviceName": "直播串流服務",
         "signedInAs": "您目前登入名稱為：",
@@ -403,7 +403,7 @@
         "no": "否",
         "participant": "參與者",
         "participantStats": "參與者狀態",
-        "sessionToken": "階段標記",
+        "sessionToken": "工作階段標記",
         "start": "啟動錄影",
         "stop": "停止錄影",
         "yes": "是的"
@@ -412,7 +412,7 @@
     "lockRoomPasswordUppercase": "密碼",
     "me": "我",
     "notify": {
-        "connectedOneMember": "{{name}}  加入了會議",
+        "connectedOneMember": "{{name}} 加入了會議",
         "connectedThreePlusMembers": "{{name}} 及 {{count}} 位人員加入了會議",
         "connectedTwoMembers": "{{first}} 及 {{second}} 加入了會議",
         "disconnected": "已經中斷連接",
@@ -521,7 +521,7 @@
     },
     "settingsView": {
         "advanced": "",
-        "alertOk": "OK",
+        "alertOk": "確定",
         "alertTitle": "警告",
         "alertURLText": "所輸入的伺服器 URL 是無效的",
         "buildInfoSection": "建立資訊",
@@ -540,7 +540,7 @@
     },
     "share": {
         "dialInfoText": "\n\n=====\n\n正要撥入您的會議電話？\n\n{{defaultDialInNumber}} 點按此連結來查看此會議的電話撥入號碼\n{{dialInfoPageUrl}}",
-        "mainText": "點按以下連結參加會議：{{roomUrl}}\n"
+        "mainText": "按一下下方連結加入會議：\n{{roomUrl}}"
     },
     "speaker": "發言者",
     "speakerStats": {
@@ -661,16 +661,16 @@
         "tr": "TR 轉錄"
     },
     "userMedia": {
-        "androidGrantPermissions": "當瀏覽器要求權限時，請選擇 <b><i>允許</i></b>",
-        "chromeGrantPermissions": "當瀏覽器要求權限允許時，請選擇 <b><i>允許</i></b>",
-        "edgeGrantPermissions": "當瀏覽器要求權限允許時，請選擇 <b><i>是的</i></b>",
+        "androidGrantPermissions": "當瀏覽器要求權限時，請選擇 <b><i>允許</i></b>。",
+        "chromeGrantPermissions": "當瀏覽器要求權限時，請選擇 <b><i>允許</i></b>。",
+        "edgeGrantPermissions": "當瀏覽器要求權限時，請選擇 <b><i>是的</i></b>。",
         "electronGrantPermissions": "請允許權限使用您的攝影裝置和麥克風",
-        "firefoxGrantPermissions": "當瀏覽器要求權限允許時，請選擇<b><i>分享裝置</i></b> ",
-        "iexplorerGrantPermissions": "當瀏覽器要求權限允許時，請選擇 <b><i>OK</i></b>",
+        "firefoxGrantPermissions": "當瀏覽器請求權限時，請選擇<b><i>分享選取裝置</i></b>。",
+        "iexplorerGrantPermissions": "當瀏覽器要求權限時，請選擇 <b><i>確定</i></b>。",
         "nwjsGrantPermissions": "請允許權限使用您的攝影裝置和麥克風",
-        "operaGrantPermissions": "當瀏覽器要求權限允許時，請選擇 <b><i>允許</i></b>",
-        "react-nativeGrantPermissions": "當瀏覽器要求權限允許時，請選擇 <b><i>允許</i></b>",
-        "safariGrantPermissions": "當瀏覽器要求權限允許時，請選擇 <b><i>OK</i></b>"
+        "operaGrantPermissions": "當瀏覽器要求權限時，請選擇 <b><i>允許</i></b>。",
+        "react-nativeGrantPermissions": "當瀏覽器要求權限時，請選擇 <b><i>允許</i></b>。",
+        "safariGrantPermissions": "當瀏覽器要求權限時，請選擇 <b><i>確定</i></b>。"
     },
     "videoSIPGW": {
         "busy": "我們正在清理釋放資源。請過幾分鐘後再試。",
