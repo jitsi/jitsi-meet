@@ -25,8 +25,8 @@ server {
     ssl_prefer_server_ciphers on;
     # weaker AES256+EECDH for older iOS/Android
     ssl_ciphers EECDH+AESGCM:EDH+AESGCM:AES256+EECDH;
-    # requires pregenerated with 'openssl dhparam -out /etc/nginx/dhparam.pem 4096'
-    #ssl_dhparam /etc/nginx/dhparam.pem;
+    # requires pregenerated with 'openssl dhparam -out /etc/ssl/private/dhparams.pem 4096'
+    #ssl_dhparam /etc/ssl/private/dhparams.pem;
     ssl_ecdh_curve secp384r1;
     ssl_session_timeout 10m;
     ssl_session_cache shared:SSL:10m;

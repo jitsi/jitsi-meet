@@ -19,7 +19,7 @@
   # weaker AES256+EECDH for older iOS/Android
   SSLCipherSuite "EECDH+AESGCM:EDH+AESGCM:AES256+EECDH"
   SSLHonorCipherOrder on
-  # requires pregenerated with 'openssl dhparam -out /etc/nginx/dhparam.pem 4096'
+  # requires pregenerated with 'openssl dhparam -out /etc/ssl/private/dhparams.pem 4096'
   #SSLOpenSSLConfCmd DHParameters "/etc/ssl/private/dhparams.pem"
   SSLCompression off
   SSLSessionTickets Off

@@ -237,7 +237,7 @@ case "$1" in
 
             if [ "$HTTPS_SECURE" = "true" ] ; then
                 # activated commented ssl_dhparam line for present file
-                sed -i "s/#SSLOpenSSLConfCmd\ DHParameters\ \/etc\/ssl\/private\/dhparams.pem/SSLOpenSSLConfCmd\ DHParameters\ \/etc\/ssl\/private\/dhparams.pem;/g" \
+                sed -i "s/#SSLOpenSSLConfCmd\ DHParameters\ \/etc\/ssl\/private\/dhparams.pem/SSLOpenSSLConfCmd\ DHParameters\ \/etc\/ssl\/private\/dhparams.pem/g" \
                     /etc/apache2/sites-available/$JVB_HOSTNAME.conf
             fi
 
