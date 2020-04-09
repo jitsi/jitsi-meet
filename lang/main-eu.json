@@ -758,7 +758,7 @@
         },
         "calendar": "",
         "connectCalendarButton": "",
-        "connectCalendarText": "",
+        "connectCalendarText": "Konektatu egutegia zure bilera guztiak {{app}}en ikusteko. Gainera, gehitu {{provider}} bilerak zure egutegian eta hasi klik bakar batekin.",
         "enterRoomTitle": "Hasi bilera berria",
         "getHelp": "Lortu laguntza",
         "roomNameAllowedChars": "Bileraren izenak ez du honelako karaktererik eduki behar: ?, &,:, ', \",%, #.",
