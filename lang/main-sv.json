@@ -267,7 +267,7 @@
         "WaitingForHost": "Väntar på värden …",
         "Yes": "Ja",
         "yourEntireScreen": "Helskärm",
-        "muteEveryoneElseDialog": ""
+        "muteEveryoneElseDialog": "När någon tystats kan du inte slå på mikrofonen, men de kan själva slå på sin egen mikrofon när som helst."
     },
     "dialOut": {
         "statusMessage": "är nu {{status}}"
