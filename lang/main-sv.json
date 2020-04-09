@@ -387,7 +387,8 @@
         "unavailableTitle": "Livesändning otillgänglig",
         "offBy": "{{name}} stoppade direktströmningen",
         "onBy": "{{name}} startade direktströmningen",
-        "youtubeTerms": "Tjänstevillkor för YouTube"
+        "youtubeTerms": "Tjänstevillkor för YouTube",
+        "googlePrivacyPolicy": ""
     },
     "localRecording": {
         "clientState": {
