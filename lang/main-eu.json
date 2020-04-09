@@ -376,7 +376,7 @@
         "enterStreamKey": "Sartu zure YouTube zuzeneko transmisioaren gakoa hemen.",
         "error": "Zuzeneko transmisioak huts egin du. Saiatu berriro.",
         "errorAPI": "Errorea gertatu da zure YouTube igorpenetan sartzerakoan. Saiatu berriro saioa hasten.",
-        "errorLiveStreamNotEnabled": "",
+        "errorLiveStreamNotEnabled": "{{email}} e-postan ez dago zuzeneko transmisioa gaituta. Gaitu zuzeneko transmisioa edo hasi saioa zuzeneko transmisioa gaituta duen kontu batean.",
         "expandedOff": "",
         "expandedOn": "",
         "expandedPending": "",
