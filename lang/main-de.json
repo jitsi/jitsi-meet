@@ -281,7 +281,8 @@
         "WaitForHostMsgWOk": "Die Konferenz <b>{{room}}</b> wurde noch nicht gestartet. Wenn Sie der Organisator sind, drücken Sie zum Authentifizieren auf OK. Warten Sie andernfalls, bis der Veranstalter erscheint.",
         "WaitingForHost": "Warten auf den Organisator …",
         "Yes": "Ja",
-        "yourEntireScreen": "Ganzer Bildschirm"
+        "yourEntireScreen": "Ganzer Bildschirm",
+        "screenSharingAudio": ""
     },
     "dialOut": {
         "statusMessage": "ist jetzt {{status}}"
@@ -394,7 +395,8 @@
         "signOut": "Abmelden",
         "start": "Einen Livestream starten",
         "streamIdHelp": "Was ist das?",
-        "unavailableTitle": "Livestreaming nicht verfügbar"
+        "unavailableTitle": "Livestreaming nicht verfügbar",
+        "youtubeTerms": ""
     },
     "localRecording": {
         "clientState": {
