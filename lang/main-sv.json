@@ -720,7 +720,9 @@
         "p2pVideoQualityDescription": "",
         "recHighDefinitionOnly": "Föredrar high definition.",
         "sd": "SD",
-        "standardDefinition": "Standard definition"
+        "standardDefinition": "Standard definition",
+        "ldTooltip": "",
+        "hdTooltip": ""
     },
     "videothumbnail": {
         "domute": "Tysta",
