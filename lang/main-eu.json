@@ -383,7 +383,7 @@
         "failedToStart": "Zuzeneko transmisioak ezin izan du hasi",
         "getStreamKeyManually": "",
         "invalidStreamKey": "Zuzeneko transmisioaren gakoa okerra izan daiteke.",
-        "off": "",
+        "off": "Zuzeneko transmisioa gelditu da",
         "offBy": "{{name}} erabiltzaileak zuzeneko emanaldia gelditu du",
         "on": "",
         "onBy": "{{name}} erabiltzaileak zuzeneko emanaldia hasi du",
