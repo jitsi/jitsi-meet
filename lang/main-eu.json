@@ -330,9 +330,9 @@
         "noNumbers": "",
         "noPassword": "Bat ere ez",
         "noRoom": "",
-        "numbers": "",
+        "numbers": "Markatze-zenbakiak",
         "password": "$t(lockRoomPasswordUppercase):",
-        "title": "",
+        "title": "Partekatu",
         "tooltip": "",
         "label": ""
     },
