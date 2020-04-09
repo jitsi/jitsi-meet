@@ -21,7 +21,8 @@
         "bluetooth": "Bluetooth",
         "headphones": "Headphones",
         "phone": "Phone",
-        "speaker": "Speaker"
+        "speaker": "Speaker",
+        "none": ""
     },
     "audioOnly": {
         "audioOnly": "Audio only"
@@ -51,7 +52,12 @@
             "popover": "Choose a nickname",
             "title": "Enter a nickname to use chat"
         },
-        "title": "Chat"
+        "title": "Chat",
+        "you": "",
+        "privateNotice": "",
+        "noMessagesMessage": "",
+        "messageTo": "",
+        "fieldPlaceHolder": ""
     },
     "connectingOverlay": {
         "joiningRoom": "Connecting you to your meeting…"
@@ -66,7 +72,11 @@
         "DISCONNECTED": "Disconnected",
         "DISCONNECTING": "Disconnecting",
         "ERROR": "Error",
-        "RECONNECTING": "A network problem occurred. Reconnecting..."
+        "RECONNECTING": "A network problem occurred. Reconnecting...",
+        "LOW_BANDWIDTH": "",
+        "GOT_SESSION_ID": "",
+        "GET_SESSION_ID_ERROR": "",
+        "FETCH_SESSION_ID": ""
     },
     "connectionindicator": {
         "address": "Address:",
@@ -97,7 +107,8 @@
         "status": "Connection:",
         "transport": "Transport:",
         "transport_plural": "Transports:",
-        "turn": " (turn)"
+        "turn": " (turn)",
+        "e2e_rtt": ""
     },
     "dateUtils": {
         "earlier": "Earlier",
@@ -256,7 +267,18 @@
         "WaitForHostMsgWOk": "The conference <b>{{room}}</b> has not yet started. If you are the host then please press Ok to authenticate. Otherwise, please wait for the host to arrive.",
         "WaitingForHost": "Waiting for the host …",
         "Yes": "Yes",
-        "yourEntireScreen": "Your entire screen"
+        "yourEntireScreen": "Your entire screen",
+        "sendPrivateMessageTitle": "",
+        "sendPrivateMessageOk": "",
+        "sendPrivateMessageCancel": "",
+        "sendPrivateMessage": "",
+        "screenSharingAudio": "",
+        "muteEveryoneStartMuted": "",
+        "muteEveryoneSelf": "",
+        "muteEveryoneTitle": "",
+        "muteEveryoneDialog": "",
+        "muteEveryoneElseTitle": "",
+        "muteEveryoneElseDialog": ""
     },
     "dialOut": {
         "statusMessage": "is now {{status}}"
@@ -335,7 +357,8 @@
         "toggleFilmstrip": "Show or hide video thumbnails",
         "toggleScreensharing": "Switch between camera and screen sharing",
         "toggleShortcuts": "Show or hide keyboard shortcuts",
-        "videoMute": "Start or stop your camera"
+        "videoMute": "Start or stop your camera",
+        "videoQuality": ""
     },
     "liveStreaming": {
         "busy": "We're working on freeing streaming resources. Please try again in a few minutes.",
@@ -363,7 +386,9 @@
         "signOut": "Sign out",
         "start": "Start a live stream",
         "streamIdHelp": "What's this?",
-        "unavailableTitle": "Live Streaming unavailable"
+        "unavailableTitle": "Live Streaming unavailable",
+        "onBy": "",
+        "offBy": ""
     },
     "localRecording": {
         "clientState": {
@@ -708,5 +733,14 @@
         "sendFeedback": "Send feedback",
         "terms": "Terms",
         "title": "Secure, fully featured, and completely free video conferencing"
+    },
+    "documentSharing": {
+        "title": ""
+    },
+    "defaultNickname": "",
+    "chromeExtensionBanner": {
+        "dontShowAgain": "",
+        "buttonText": "",
+        "installExtensionText": ""
     }
 }
