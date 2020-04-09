@@ -266,7 +266,8 @@
         "WaitForHostMsgWOk": "Konferensen <b>{{room}}<b> har inte börjat än. Om du är värd, autentisera konferensen genom att trycka på Ok. Vänta annars på att värden startar konferensen.",
         "WaitingForHost": "Väntar på värden …",
         "Yes": "Ja",
-        "yourEntireScreen": "Helskärm"
+        "yourEntireScreen": "Helskärm",
+        "muteEveryoneElseDialog": ""
     },
     "dialOut": {
         "statusMessage": "är nu {{status}}"
