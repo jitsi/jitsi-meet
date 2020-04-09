@@ -607,7 +607,12 @@
             "toggleCamera": "Växla kamera",
             "videomute": "Sätt på eller stäng av mikrofonen",
             "videoblur": "",
-            "muteEveryone": "Tysta alla"
+            "muteEveryone": "Tysta alla",
+            "toggleFilmstrip": "",
+            "privateMessage": "",
+            "moreOptions": "",
+            "help": "",
+            "download": ""
         },
         "addPeople": "Lägg till personer i samtal",
         "audioOnlyOff": "Avsluta ljudläget",
@@ -654,7 +659,16 @@
         "stopvideoblur": "",
         "noisyAudioInputDesc": "Din mikrofon skapar brus, tysta din mikrofon eller byt ljudenhet.",
         "noAudioSignalTitle": "Det kommer inget ljud från din mikrofon!",
-        "muteEveryone": "Tysta alla"
+        "muteEveryone": "Tysta alla",
+        "privateMessage": "",
+        "noisyAudioInputTitle": "",
+        "noAudioSignalDialInLinkDesc": "",
+        "noAudioSignalDialInDesc": "",
+        "noAudioSignalDescSuggestion": "",
+        "noAudioSignalDesc": "",
+        "moreOptions": "",
+        "help": "",
+        "download": ""
     },
     "transcribing": {
         "ccButtonTooltip": "Starta / Avsluta undertexter",
