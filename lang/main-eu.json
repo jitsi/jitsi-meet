@@ -692,9 +692,9 @@
         "tr": ""
     },
     "userMedia": {
-        "androidGrantPermissions": "",
-        "chromeGrantPermissions": "",
-        "edgeGrantPermissions": "",
+        "androidGrantPermissions": "Hautatu <b><i>Baimendu</i></b> zure nabigatzaileak baimenak eskatzen dituenean.",
+        "chromeGrantPermissions": "Hautatu <b><i>Baimendu</i></b> zure nabigatzaileak baimenak eskatzen dituenean.",
+        "edgeGrantPermissions": "Hautatu <b><i>Bai</i></b> zure nabigatzaileak baimenak eskatzen dituenean.",
         "electronGrantPermissions": "",
         "firefoxGrantPermissions": "",
         "iexplorerGrantPermissions": "",
