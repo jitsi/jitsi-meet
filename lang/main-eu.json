@@ -293,10 +293,10 @@
     "feedback": {
         "average": "Normala",
         "bad": "Txarra",
-        "detailsLabel": "",
+        "detailsLabel": "Esaguzu gehiago horren inguruan.",
         "good": "Ona",
-        "rateExperience": "",
-        "veryBad": "",
+        "rateExperience": "Puntuatu zure bileraren esperientzia",
+        "veryBad": "Oso Txarra",
         "veryGood": "Oso ona"
     },
     "incomingCall": {
