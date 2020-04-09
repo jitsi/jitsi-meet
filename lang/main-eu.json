@@ -394,15 +394,15 @@
         "signInCTA": "Hasi saioa edo sartu zure zuzeneko transmisioaren gakoa YouTube-tik.",
         "signOut": "Itxi saioa",
         "start": "Hasi zuzeneko transmisioa",
-        "streamIdHelp": "",
-        "unavailableTitle": "",
+        "streamIdHelp": "Zer da hau?",
+        "unavailableTitle": "Zuzeneko transmisioa ez dago erabilgarri",
         "youtubeTerms": "",
         "googlePrivacyPolicy": ""
     },
     "localRecording": {
         "clientState": {
-            "off": "",
-            "on": "",
+            "off": "Itzalita",
+            "on": "Piztuta",
             "unknown": ""
         },
         "dialogTitle": "",
