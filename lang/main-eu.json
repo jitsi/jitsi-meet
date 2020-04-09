@@ -480,8 +480,8 @@
         "ringing": "Deitzen…"
     },
     "profile": {
-        "setDisplayNameLabel": "",
-        "setEmailInput": "",
+        "setDisplayNameLabel": "Ezarri zure bistaratze-izena",
+        "setEmailInput": "Sartu e-posta",
         "setEmailLabel": "",
         "title": ""
     },
