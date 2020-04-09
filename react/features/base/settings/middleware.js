@@ -137,8 +137,9 @@ function _updateLocalParticipantFromUrl({ dispatch, getState }) {
     const urlParams
         = parseURLParams(getState()['features/base/connection'].locationURL);
     const urlEmail = urlParams['userInfo.email'];
+    const urlDisplayName = urlParams['userInfo.displayName'];
 
-    if (!urlEmail) {
+    if (!urlEmail && !urlDisplayName) {
         return;
     }
 
@@ -147,7 +148,8 @@ function _updateLocalParticipantFromUrl({ dispatch, getState }) {
     if (localParticipant) {
         dispatch(participantUpdated({
             ...localParticipant,
-            email: _.escape(urlEmail)
+            email: _.escape(urlEmail),
+            name: _.escape(urlDisplayName)
         }));
     }
 }
