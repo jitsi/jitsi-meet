@@ -60,8 +60,8 @@
         "you": "vostede"
     },
     "chromeExtensionBanner": {
-        "installExtensionText": "",
-        "buttonText": "",
+        "installExtensionText": "Instala a extensión para a integración con Google Calendar e Office 365",
+        "buttonText": "Instalar Extensión Chrome",
         "dontShowAgain": ""
     },
     "connectingOverlay": {
