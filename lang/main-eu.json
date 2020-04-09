@@ -475,9 +475,9 @@
         "expired": "Iraungita",
         "ignored": "",
         "initializingCall": "Deia hasieratzen…",
-        "invited": "",
+        "invited": "Gonbidatua",
         "rejected": "",
-        "ringing": ""
+        "ringing": "Deitzen…"
     },
     "profile": {
         "setDisplayNameLabel": "",
