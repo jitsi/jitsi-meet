@@ -753,11 +753,11 @@
         },
         "appDescription": "",
         "audioVideoSwitch": {
-            "audio": "",
+            "audio": "Ahotsa",
             "video": ""
         },
-        "calendar": "",
-        "connectCalendarButton": "",
+        "calendar": "Egutegia",
+        "connectCalendarButton": "Konektatu zure egutegia",
         "connectCalendarText": "Konektatu egutegia zure bilera guztiak {{app}}en ikusteko. Gainera, gehitu {{provider}} bilerak zure egutegian eta hasi klik bakar batekin.",
         "enterRoomTitle": "Hasi bilera berria",
         "getHelp": "Lortu laguntza",
