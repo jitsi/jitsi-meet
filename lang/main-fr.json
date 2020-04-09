@@ -278,7 +278,7 @@
         "Yes": "Oui",
         "yourEntireScreen": "Votre écran entier",
         "muteEveryoneElseDialog": "Une fois mis en sourdine, vous ne pourrez pas les réactiver, mais ils peuvent se réactiver eux-mêmes à tout moment.",
-        "muteEveryoneElseTitle": ""
+        "muteEveryoneElseTitle": "Mettre tout le monde en sourdine sauf {{whom}} ?"
     },
     "dialOut": {
         "statusMessage": "est maintenant {{status}}"
