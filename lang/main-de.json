@@ -2,7 +2,7 @@
     "addPeople": {
         "add": "Einladen",
         "countryNotSupported": "Wir unterstützen dieses Land noch nicht.",
-        "countryReminder": "Telefonnummer nicht in den USA? Bitte sicherstellen, dass die Telefonnummer mit dem Ländercode beginnt.",
+        "countryReminder": "Telefonnummer nicht in den USA? Bitte sicherstellen, dass die Telefonnummer mit dem Ländercode beginnt!",
         "disabled": "Sie können keine Teilnehmer einladen.",
         "failedToAdd": "Fehler beim Hinzufügen von Teilnehmern",
         "footerText": "Abgehender Ruf ist deaktiviert.",
@@ -144,7 +144,7 @@
     },
     "dialog": {
         "accessibilityLabel": {
-            "liveStreaming": "Livestream:"
+            "liveStreaming": "Livestream"
         },
         "allow": "Erlauben",
         "alreadySharedVideoMsg": "Ein anderer Teilnehmer gibt bereits ein Video weiter. Bei dieser Konferenz ist jeweils nur ein geteiltes Video möglich.",
@@ -192,7 +192,7 @@
         "kickParticipantButton": "Entfernen",
         "kickParticipantDialog": "Wollen Sie diesen Teilnehmer wirklich entfernen?",
         "kickParticipantTitle": "Teilnehmer entfernen?",
-        "kickTitle": "Autsch! {{participantDisplayName}} hat Sie aus dem Meeting geworfen.",
+        "kickTitle": "Autsch! {{participantDisplayName}} hat Sie aus dem Meeting geworfen",
         "liveStreaming": "Livestreaming",
         "liveStreamingDisabledForGuestTooltip": "Gäste können kein Livestreaming starten.",
         "liveStreamingDisabledTooltip": "Starten des Livestreams deaktiviert.",
@@ -205,8 +205,8 @@
         "maxUsersLimitReachedTitle": "Maximales Teilnehmerlimit erreicht",
         "micConstraintFailedError": "Ihr Mikrofon erfüllt die notwendigen Anforderungen nicht.",
         "micNotFoundError": "Mikrofon nicht gefunden.",
-        "micNotSendingData": "Gehen Sie zu den Einstellungen Ihres Computers, um die Stummschaltung Ihres Mikrofons aufzuheben und seinen Pegel einzustellen.",
-        "micNotSendingDataTitle": "Ihr Mikrofon ist durch Ihre Systemeinstellungen stumm geschaltet.",
+        "micNotSendingData": "Gehen Sie zu den Einstellungen Ihres Computers, um die Stummschaltung Ihres Mikrofons aufzuheben und seinen Pegel einzustellen",
+        "micNotSendingDataTitle": "Ihr Mikrofon ist durch Ihre Systemeinstellungen stumm geschaltet",
         "micPermissionDeniedError": "Die Berechtigung zur Verwendung des Mikrofons wurde nicht erteilt. Sie können trotzdem an der Konferenz teilnehmen, aber die anderen Teilnehmer können Sie nicht hören. Verwenden Sie die Kamera-Schaltfläche in der Adressleiste um die Berechtigungen zu erteilen.",
         "micUnknownError": "Das Mikrofon kann aus einem unbekannten Grund nicht verwendet werden.",
         "muteEveryoneElseDialog": "Einmal stummgeschaltet, können Sie deren Stummschaltung nicht mehr beenden, aber sie können ihre Stummschaltung jederzeit selbst beenden.",
@@ -220,8 +220,8 @@
         "muteParticipantDialog": "Wollen Sie diesen Teilnehmer wirklich stummschalten? Sie können die Stummschaltung nicht wieder aufheben, der Teilnehmer kann dies aber jederzeit selbst tun.",
         "muteParticipantTitle": "Teilnehmer stummschalten?",
         "Ok": "OK",
-        "passwordLabel": "$t(lockRoomPasswordUppercase)",
-        "passwordNotSupported": "Setzen eines Konferenz-Passworts ist nicht unterstützt",
+        "passwordLabel": "Das Treffen wurde von einem Teilnehmer geslerrt. Bitte geben Sie die $t(lockRoomPassword) zu verbinden.",
+        "passwordNotSupported": "Das Festlegen von einem $t(lockRoomPassword) für das Meeting wird nicht unterstützt.",
         "passwordNotSupportedTitle": "$t(lockRoomPasswordUppercase) nicht unterstützt",
         "passwordRequired": "$t(lockRoomPasswordUppercase) erforderlich",
         "popupError": "Ihr Browser blockiert Pop-ups von dieser Website. Bitte aktivieren Sie Pop-ups in den Sicherheitseinstellungen des Browsers und versuchen Sie es erneut.",
@@ -230,12 +230,12 @@
         "recordingDisabledForGuestTooltip": "Gäste können keine Aufzeichnungen starten.",
         "recordingDisabledTooltip": "Start der Aufzeichnung deaktiviert.",
         "rejoinNow": "Jetzt erneut beitreten",
-        "remoteControlAllowedMessage": "{{user}} hat die Anfrage zur Fernsteuerung angenommen.",
-        "remoteControlDeniedMessage": "{{user}} hat die Anfrage zur Fernsteuerung verweigert.",
-        "remoteControlErrorMessage": "Beim Anfordern der Fernsteuerungsberechtigung von {{user}} ist ein Fehler aufgetreten.",
+        "remoteControlAllowedMessage": "{{user}} hat die Anfrage zur Fernsteuerung angenommen!",
+        "remoteControlDeniedMessage": "{{user}} hat die Anfrage zur Fernsteuerung verweigert!",
+        "remoteControlErrorMessage": "Beim Anfordern der Fernsteuerungsberechtigung von {{user}} ist ein Fehler aufgetreten!",
         "remoteControlRequestMessage": "Möchten Sie {{user}} erlauben, den Computer fernzusteuern?",
         "remoteControlShareScreenWarning": "Achtung, wenn Sie die Anfrage genehmigen, starten Sie die Bildschirmfreigabe!",
-        "remoteControlStopMessage": "Die Fernsteuerung wurde beendet.",
+        "remoteControlStopMessage": "Die Fernsteuerung wurde beendet!",
         "remoteControlTitle": "Fernsteuerung",
         "Remove": "Entfernen",
         "removePassword": "$t(lockRoomPassword) entfernen",
@@ -246,8 +246,8 @@
         "retry": "Wiederholen",
         "screenSharingFailedToInstall": "Oh! Die Erweiterung für die Bildschirmfreigabe konnte nicht installiert werden.",
         "screenSharingFailedToInstallTitle": "Bildschirmfreigabe-Erweiterung konnte nicht installiert werden",
-        "screenSharingFirefoxPermissionDeniedError": "Die Bildschirmfreigabe ist leider fehlgeschlagen. Bitte stellen Sie sicher, dass die Berechtigung für die Bildschirmfreigabe im Browser erteilt wurde.",
-        "screenSharingFirefoxPermissionDeniedTitle": "Die Bildschirmfreigabe konnte nicht gestartet werden.",
+        "screenSharingFirefoxPermissionDeniedError": "Die Bildschirmfreigabe ist leider fehlgeschlagen. Bitte stellen Sie sicher, dass die Berechtigung für die Bildschirmfreigabe im Browser erteilt wurde. ",
+        "screenSharingFirefoxPermissionDeniedTitle": "Die Bildschirmfreigabe konnte nicht gestartet werden!",
         "screenSharingPermissionDeniedError": "Oh! Beim Anfordern der Bildschirmfreigabe-Berechtigungen hat etwas nicht funktioniert. Bitte aktualisieren und erneut versuchen.",
         "sendPrivateMessage": "Sie haben kürzlich eine private Nachricht erhalten. Hatten Sie die Absicht, darauf privat zu antworten, oder wollen Sie Ihre Nachricht an die Gruppe senden?",
         "sendPrivateMessageCancel": "An die Gruppe senden",
@@ -263,7 +263,7 @@
         "shareYourScreenDisabledForGuest": "Gäste können den Bildschirm nicht freigeben.",
         "startLiveStreaming": "Einen Livestream starten",
         "startRecording": "Aufnahme starten",
-        "startRemoteControlErrorMessage": "Beim Versuch die Fernsteuerung zu starten ist ein Fehler aufgetreten.",
+        "startRemoteControlErrorMessage": "Beim Versuch die Fernsteuerung zu starten ist ein Fehler aufgetreten!",
         "stopLiveStreaming": "Livestreaming stoppen",
         "stopRecording": "Aufnahme stoppen",
         "stopRecordingWarning": "Sind Sie sicher, dass Sie die Aufnahme stoppen möchten?",
@@ -282,7 +282,7 @@
         "WaitingForHost": "Warten auf den Organisator …",
         "Yes": "Ja",
         "yourEntireScreen": "Ganzer Bildschirm",
-        "screenSharingAudio": ""
+        "screenSharingAudio": "Audio austauschen"
     },
     "dialOut": {
         "statusMessage": "ist jetzt {{status}}"
@@ -321,7 +321,7 @@
         "genericError": "Es ist leider etwas schiefgegangen.",
         "inviteLiveStream": "Klicken Sie auf {{url}} um den Livestream dieser Konferenz zu öffnen",
         "invitePhone": "Wenn Sie stattdessen per Telefon beitreten möchten, tippen Sie hier: {{number}},,{{conferenceID}}#\n",
-        "invitePhoneAlternatives": "Suche nach einer anderen Einwahlnummer?\nMeetings-Einwahlnummern sehen: {{{url}}\n\n\n\nWenn Sie sich auch über ein Raumtelefon einwählen, nehmen Sie teil, ohne sich mit dem Ton zu verbinden: {{silentUrl}}",
+        "invitePhoneAlternatives": "Suche nach einer anderen Einwahlnummer?\nMeetings-Einwahlnummern sehen: {{{url}}\n\n\nWenn Sie sich auch über ein Raumtelefon einwählen, nehmen Sie teil, ohne sich mit dem Ton zu verbinden: {{silentUrl}}",
         "inviteURLFirstPartGeneral": "Sie wurden zur Teilnahme an einem Meeting eingeladen.",
         "inviteURLFirstPartPersonal": "{{name}} lädt Sie zu einem Meeting ein.\n",
         "inviteURLSecondPart": "\nAm Meeting teilnehmen:\n{{url}}\n",
@@ -397,7 +397,7 @@
         "streamIdHelp": "Was ist das?",
         "unavailableTitle": "Livestreaming nicht verfügbar",
         "youtubeTerms": "YouTube-Nutzungsbedingungen",
-        "googlePrivacyPolicy": ""
+        "googlePrivacyPolicy": "Google-Datenschutzerklärung"
     },
     "localRecording": {
         "clientState": {
@@ -414,7 +414,7 @@
         "localRecording": "Lokale Aufzeichnung",
         "me": "Ich",
         "messages": {
-            "engaged": "Lokale Aufzeichnung ist aktiviert",
+            "engaged": "Lokale Aufzeichnung ist aktiviert.",
             "finished": "Aufzeichnung der Sitzung {{token}} ist beendet. Senden Sie die aufgezeichnete Datei an den Moderator.",
             "finishedModerator": "Aufzeichnung der Sitzung {{token}} ist beendet. Die Aufzeichnung des lokalen Verlaufs wurde gespeichert. Bitten Sie die anderen Teilnehmer, ihre Aufzeichnungen zu übermitteln.",
             "notModerator": "Sie sind nicht der Moderator. Sie können die lokale Aufzeichnung nicht starten oder stoppen."
@@ -438,13 +438,13 @@
         "disconnected": "getrennt",
         "focus": "Konferenz-Organisator",
         "focusFail": "{{component}} ist im Moment nicht verfügbar - wiederholen in {{ms}} Sekunden",
-        "grantedTo": "Moderatorenrechte an {{to}} vergeben.",
+        "grantedTo": "Moderatorenrechte an {{to}} vergeben!",
         "invitedOneMember": "{{displayName}} wurde eingeladen",
         "invitedThreePlusMembers": "{{name}} und {{count}} andere wurden eingeladen",
         "invitedTwoMembers": "{{first}} und {{second}} wurden eingeladen",
-        "kickParticipant": "Sie können sich für weitere Einzelheiten an {{participantDisplayName}}} wenden.",
+        "kickParticipant": "{{kicked}} wurde von {{kicker}} ausgewiesen",
         "me": "Ich",
-        "moderator": "Moderatorenrechte vergeben",
+        "moderator": "Moderatorenrechte vergeben!",
         "muted": "Der Konferenz wurde stumm beigetreten.",
         "mutedTitle": "Stummschaltung aktiv!",
         "mutedRemotelyTitle": "Sie wurden von {{participantDisplayName}} stummgeschaltet!",
@@ -650,7 +650,7 @@
         "noAudioSignalDesc": "Wenn Sie das Gerät nicht absichtlich über die Systemeinstellungen oder die Hardware stumm geschaltet haben, sollten Sie einen Wechsel des Geräts in Erwägung ziehen.",
         "noAudioSignalDescSuggestion": "Wenn Sie das Gerät nicht absichtlich über die Systemeinstellungen oder die Hardware stummgeschaltet haben, sollten Sie einen Wechsel auf das vorgeschlagene Gerät in Erwägung ziehen.",
         "noAudioSignalDialInDesc": "Sie können sich auch über die Einwahlnummer einwählen:",
-        "noAudioSignalDialInLinkDesc": "Einwahlnummern:",
+        "noAudioSignalDialInLinkDesc": "Einwahlnummern",
         "noisyAudioInputTitle": "Ihr Mikrofon scheint lärmintensiv zu sein!",
         "noisyAudioInputDesc": "Es klingt, als ob Ihr Mikrofon Störgeräusche verursacht. Bitte überlegen Sie, ob Sie das Gerät stummschalten oder austauschen wollen.",
         "openChat": "Chat öffnen",
