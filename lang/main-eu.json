@@ -463,7 +463,7 @@
         "newDeviceAction": "Erabilera"
     },
     "passwordSetRemotely": "beste parte-hartzaile batek ezarrita",
-    "passwordDigitsOnly": "",
+    "passwordDigitsOnly": "{{number}} digitu arte",
     "poweredby": "garatzailea:",
     "presenceStatus": {
         "busy": "Okupatuta",
