@@ -280,9 +280,9 @@
         "userPassword": "erabiltzailearen pasahitza",
         "WaitForHostMsg": "<b>{{room}}</b> konferentzia oraindik ez da hasi. Ostalaria bazara, autentifikatu. Bestela, itxaron ostalaria iritsi arte.",
         "WaitForHostMsgWOk": "<b>{{room}}</b> konferentzia oraindik ez da hasi. Ostalaria bazara, sakatu Ados autentifikatu ahal izateko. Bestela, itxaron ostalaria iritsi arte.",
-        "WaitingForHost": "",
-        "Yes": "",
-        "yourEntireScreen": ""
+        "WaitingForHost": "Ostalariaren zain …",
+        "Yes": "Bai",
+        "yourEntireScreen": "Zure pantaila osoa"
     },
     "dialOut": {
         "statusMessage": ""
