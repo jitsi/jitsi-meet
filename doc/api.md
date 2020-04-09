@@ -85,14 +85,15 @@ const options = {
 const api = new JitsiMeetExternalAPI(domain, options);
  ```
 
-You can set the userInfo(email) for the call:
+You can set the userInfo(email, display name) for the call:
 
 ```javascript
 var domain = "meet.jit.si";
 var options = {
     ...
     userInfo: {
-        email: 'email@jitsiexamplemail.com'
+        email: 'email@jitsiexamplemail.com',
+        displayName: 'John Doe'
     }
 }
 var api = new JitsiMeetExternalAPI(domain, options);
