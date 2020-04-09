@@ -562,7 +562,7 @@
     },
     "share": {
         "dialInfoText": "",
-        "mainText": ""
+        "mainText": "Egin klik hurrengo estekan bilerara elkartzeko:\n{{roomUrl}}"
     },
     "speaker": "",
     "speakerStats": {
@@ -574,7 +574,7 @@
         "speakerTime": ""
     },
     "startupoverlay": {
-        "policyText": "",
+        "policyText": " ",
         "title": "{{app}} aplikazioak zure mikrofonoa eta kamara erabili behar ditu."
     },
     "suspendedoverlay": {
@@ -643,8 +643,8 @@
         "help": "",
         "invite": "",
         "login": "",
-        "logout": "",
-        "lowerYourHand": "",
+        "logout": "Itxi saioa",
+        "lowerYourHand": "Jaitsi eskua",
         "moreActions": "",
         "moreOptions": "",
         "mute": "",
