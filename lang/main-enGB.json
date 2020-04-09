@@ -378,7 +378,7 @@
         "invalidStreamKey": "Live stream key may be incorrect.",
         "off": "Live Streaming stopped",
         "on": "Live Streaming",
-        "pending": "Starting Live Stream...",
+        "pending": "Starting Live Stream…",
         "serviceName": "Live Streaming service",
         "signedInAs": "You are currently signed in as:",
         "signIn": "Sign in with Google",
@@ -388,7 +388,9 @@
         "streamIdHelp": "What's this?",
         "unavailableTitle": "Live Streaming unavailable",
         "onBy": "",
-        "offBy": ""
+        "offBy": "",
+        "googlePrivacyPolicy": "Google Privacy Policy",
+        "youtubeTerms": "YouTube terms of services"
     },
     "localRecording": {
         "clientState": {
@@ -439,19 +441,20 @@
         "muted": "You have started the conversation muted.",
         "mutedTitle": "You're muted!",
         "mutedRemotelyTitle": "You have been muted by {{participantDisplayName}}!",
-        "mutedRemotelyDescription": "",
-        "passwordRemovedRemotely": "",
-        "passwordSetRemotely": "",
+        "mutedRemotelyDescription": "You can always unmute when you're ready to speak. Mute back when you're done to keep noise away from the meeting.",
+        "passwordRemovedRemotely": "$t(lockRoomPasswordUppercase) removed by another participant",
+        "passwordSetRemotely": "$t(lockRoomPasswordUppercase) set by another participant",
         "raisedHand": "{{name}} would like to speak.",
         "somebody": "Somebody",
-        "startSilentTitle": "",
-        "startSilentDescription": "",
+        "startSilentTitle": "You joined with no audio output!",
+        "startSilentDescription": "Rejoin the meeting to enable audio",
         "suboptimalExperienceDescription": "Eer... we are afraid your experience with {{appName}} isn't going to be that great here. We are looking for ways to improve this but, until then, please try using one of the <a href='static/recommendedBrowsers.html' target='_blank'>fully supported browsers</a>.",
         "suboptimalExperienceTitle": "Browser Warning",
-        "unmute": "",
+        "unmute": "Unmute",
         "newDeviceCameraTitle": "New camera detected",
         "newDeviceAudioTitle": "New audio device detected",
-        "newDeviceAction": "Use"
+        "newDeviceAction": "Use",
+        "suboptimalBrowserWarning": "We are afraid your meeting experience isn't going to be that great here. We are looking for ways to improve this, but until then please try using one of the <a href='static/recommendedBrowsers.html' target='_blank'>fully supported browsers</a>."
     },
     "passwordSetRemotely": "set by another member",
     "passwordDigitsOnly": "Up to {{number}} digits",
@@ -499,7 +502,9 @@
         "signIn": "Sign in",
         "signOut": "Sign out",
         "unavailable": "Oops! The {{serviceName}} is currently unavailable. We're working on resolving the issue. Please try again later.",
-        "unavailableTitle": "Recording unavailable"
+        "unavailableTitle": "Recording unavailable",
+        "onBy": "{{name}} started the recording",
+        "offBy": "{{name}} stopped the recording"
     },
     "sectionList": {
         "pullToRefresh": "Pull to refresh"
@@ -525,7 +530,9 @@
         "selectMic": "Microphone",
         "startAudioMuted": "Everyone starts muted",
         "startVideoMuted": "Everyone starts hidden",
-        "title": "Settings"
+        "title": "Settings",
+        "speakers": "Speakers",
+        "microphones": "Microphones"
     },
     "settingsView": {
         "alertOk": "OK",
@@ -742,5 +749,6 @@
         "dontShowAgain": "",
         "buttonText": "",
         "installExtensionText": ""
-    }
+    },
+    "raisedHand": "Would like to speak"
 }
