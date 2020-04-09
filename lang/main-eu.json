@@ -452,7 +452,7 @@
         "passwordRemovedRemotely": "$t(lockRoomPasswordUppercase) beste erabiltzaile batek kendu du",
         "passwordSetRemotely": "$t(lockRoomPasswordUppercase) beste erabiltzaile batek ezarri du",
         "raisedHand": "{{name}} erabiltzaileak hitz egin nahi du.",
-        "somebody": "",
+        "somebody": "Norbait",
         "startSilentTitle": "",
         "startSilentDescription": "Batu berriro audioa gaitzeko",
         "suboptimalBrowserWarning": "",
