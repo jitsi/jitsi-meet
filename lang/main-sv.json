@@ -656,7 +656,7 @@
         "toggleCamera": "Byta kamera",
         "videomute": "Aktivera / avaktivera kameran",
         "startvideoblur": "Blurra min bakgrund",
-        "stopvideoblur": "",
+        "stopvideoblur": "Inaktivera bakgrundsblurr",
         "noisyAudioInputDesc": "Din mikrofon skapar brus, tysta din mikrofon eller byt ljudenhet.",
         "noAudioSignalTitle": "Det kommer inget ljud från din mikrofon!",
         "muteEveryone": "Tysta alla",
@@ -707,7 +707,7 @@
     "videoStatus": {
         "audioOnly": "AUD",
         "audioOnlyExpanded": "Du använder ljudläget. Läget sparar bandbredd men du kan inte se andras videor.",
-        "callQuality": "",
+        "callQuality": "Videokvalitet",
         "hd": "HD",
         "highDefinition": "High definition",
         "labelTooiltipNoVideo": "Ingen video",
