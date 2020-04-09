@@ -282,7 +282,8 @@
         "muteEveryoneDialog": "Êtes-vous sûr·e de vouloir mettre tout le monde en sourdine ? Vous ne pourrez pas défaire cette action, mais ils peuvent le faire eux-mêmes à tout moment.",
         "muteEveryoneStartMuted": "Tout le monde commence en sourdine à partir de maintenant",
         "muteEveryoneSelf": "",
-        "muteEveryoneTitle": ""
+        "muteEveryoneTitle": "",
+        "screenSharingAudio": ""
     },
     "dialOut": {
         "statusMessage": "est maintenant {{status}}"
