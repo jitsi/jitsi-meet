@@ -397,7 +397,8 @@
         "start": "Démarrer la diffusion en direct",
         "streamIdHelp": "Qu'est-ce que c'est?",
         "unavailableTitle": "Le Streaming est indisponible",
-        "youtubeTerms": "Conditions d’utilisation des services YouTube"
+        "youtubeTerms": "Conditions d’utilisation des services YouTube",
+        "googlePrivacyPolicy": ""
     },
     "localRecording": {
         "clientState": {
