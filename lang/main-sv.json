@@ -274,7 +274,9 @@
         "muteEveryoneTitle": "Tysta alla?",
         "sendPrivateMessage": "Du har fått ett privat meddelande. Tänkte du svara på det privat, eller vill du skicka ditt meddelande till alla deltagare?",
         "screenSharingAudio": "",
-        "sendPrivateMessageCancel": "Skicka till alla deltagare"
+        "sendPrivateMessageCancel": "Skicka till alla deltagare",
+        "sendPrivateMessageTitle": "",
+        "sendPrivateMessageOk": ""
     },
     "dialOut": {
         "statusMessage": "är nu {{status}}"
@@ -732,5 +734,8 @@
         "dontShowAgain": "",
         "buttonText": "",
         "installExtensionText": ""
+    },
+    "documentSharing": {
+        "title": ""
     }
 }
