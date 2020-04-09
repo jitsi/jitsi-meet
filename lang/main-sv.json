@@ -201,7 +201,7 @@
         "micConstraintFailedError": "Din mikrofon uppfyller inte kraven för användning.",
         "micNotFoundError": "Hittar ingen mikrofon.",
         "micNotSendingData": "",
-        "micNotSendingDataTitle": "",
+        "micNotSendingDataTitle": "Din mikrofon är tystad av dina systeminställningar",
         "micPermissionDeniedError": "Du har inte tillåtit användning av din mikrofon. Du kan gå med i mötet men de andra kan då inte höra dej. Om du vill tillåta användning av din mikrofon gör du det via mikrofonknappen i URL-fältet.",
         "micUnknownError": "Av okänd anledning kan inte din mikrofon användas.",
         "muteParticipantBody": "Du kan inte aktivera deras mikrofoner, men de kan göra det själva.",
