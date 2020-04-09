@@ -21,7 +21,8 @@
         "bluetooth": "Bluetooth",
         "headphones": "Hörlurar",
         "phone": "Telefon",
-        "speaker": "Talare"
+        "speaker": "Talare",
+        "none": ""
     },
     "audioOnly": {
         "audioOnly": "Enbart ljud"
@@ -51,7 +52,12 @@
             "popover": "Välj ett namn",
             "title": "Skriv in ett namn för att börja använda chatten"
         },
-        "title": "Chatt"
+        "title": "Chatt",
+        "you": "",
+        "privateNotice": "",
+        "noMessagesMessage": "",
+        "messageTo": "",
+        "fieldPlaceHolder": ""
     },
     "connectingOverlay": {
         "joiningRoom": "Ansluter till mötet …"
@@ -66,7 +72,11 @@
         "DISCONNECTED": "Frånkopplad",
         "DISCONNECTING": "Kopplar från",
         "ERROR": "Fel",
-        "RECONNECTING": "Ett nätverksproblem uppstod. Återansluter..."
+        "RECONNECTING": "Ett nätverksproblem uppstod. Återansluter...",
+        "LOW_BANDWIDTH": "",
+        "GOT_SESSION_ID": "",
+        "GET_SESSION_ID_ERROR": "",
+        "FETCH_SESSION_ID": ""
     },
     "connectionindicator": {
         "address": "Adress:",
@@ -96,7 +106,8 @@
         "resolution": "Upplösning:",
         "status": "Anslutning:",
         "transport": "Transport:",
-        "turn": " (turn)"
+        "turn": " (turn)",
+        "e2e_rtt": ""
     },
     "dateUtils": {
         "earlier": "Tidigare",
@@ -707,5 +718,11 @@
         "sendFeedback": "Ge återkoppling",
         "terms": "Termer",
         "title": "Säkra, välutrustade och helt kostnadsfria videokonferenser"
+    },
+    "defaultNickname": "",
+    "chromeExtensionBanner": {
+        "dontShowAgain": "",
+        "buttonText": "",
+        "installExtensionText": ""
     }
 }
