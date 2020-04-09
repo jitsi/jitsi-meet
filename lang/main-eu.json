@@ -303,8 +303,8 @@
         "answer": "Erantzun",
         "audioCallTitle": "Sarrerako deia",
         "decline": "Baztertu",
-        "productLabel": "",
-        "videoCallTitle": ""
+        "productLabel": "Jitsi Meet-etik",
+        "videoCallTitle": "Bideo-deia sartzen"
     },
     "info": {
         "accessibilityLabel": "Erakutsi informazioa",
@@ -416,11 +416,11 @@
         "messages": {
             "engaged": "",
             "finished": "",
-            "finishedModerator": "",
+            "finishedModerator": "{{token}} grabazio saioa amaitu da. Pista lokalaren grabazioa gorde da. Eskatu gainerako parte-hartzaileei bere grabazioak bidaltzeko.",
             "notModerator": ""
         },
         "moderator": "",
-        "no": "",
+        "no": "Ez",
         "participant": "",
         "participantStats": "Parte-hartzaileen estatistikak",
         "sessionToken": "Saioaren token-a",
@@ -596,7 +596,7 @@
             "hangup": "",
             "help": "",
             "invite": "",
-            "kick": "",
+            "kick": "Kanporatu parte-hartzailea",
             "localRecording": "",
             "lockRoom": "Aldatu bileraren pasahitza",
             "moreActions": "",
