@@ -620,7 +620,7 @@
             "toggleCamera": "Changer de caméra",
             "videomute": "Activer/désactiver la vidéo",
             "videoblur": "Activer/désactiver le flou de la vidéo",
-            "muteEveryone": "",
+            "muteEveryone": "Mettre tout le monde en sourdine",
             "moreOptions": ""
         },
         "addPeople": "Ajouter des personnes à votre appel",
