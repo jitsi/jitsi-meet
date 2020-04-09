@@ -384,7 +384,8 @@
         "signOut": "Logga ut",
         "start": "Starta en livesändning",
         "streamIdHelp": "Vad är det här?",
-        "unavailableTitle": "Livesändning otillgänglig"
+        "unavailableTitle": "Livesändning otillgänglig",
+        "offBy": ""
     },
     "localRecording": {
         "clientState": {
