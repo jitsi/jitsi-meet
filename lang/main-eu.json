@@ -372,7 +372,7 @@
         "busyTitle": "Zuzeneko emanaldia egin dezaketen guztiak okupatuta daude",
         "changeSignIn": "",
         "choose": "Aukeratu zuzeneko transmisioa",
-        "chooseCTA": "",
+        "chooseCTA": "Aukeratu transmisio-aukera. Une honetan {{email}} gisa saioa hasi duzu.",
         "enterStreamKey": "",
         "error": "",
         "errorAPI": "",
