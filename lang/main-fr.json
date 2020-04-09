@@ -277,7 +277,7 @@
         "WaitingForHost": "En attente de l'hôte ...",
         "Yes": "Oui",
         "yourEntireScreen": "Votre écran entier",
-        "muteEveryoneElseDialog": ""
+        "muteEveryoneElseDialog": "Une fois mis en sourdine, vous ne pourrez pas les réactiver, mais ils peuvent se réactiver eux-mêmes à tout moment."
     },
     "dialOut": {
         "statusMessage": "est maintenant {{status}}"
