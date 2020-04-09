@@ -235,7 +235,7 @@
         "remoteControlErrorMessage": "Errora gertatu da {{user}}(r)en urruneko kontrol-baimenak  eskatzen saiatzerakoan!",
         "remoteControlRequestMessage": "{{user}} baimendu nahi duzu zure mahaigaina urrunetik kontrolatzeko?",
         "remoteControlShareScreenWarning": "",
-        "remoteControlStopMessage": "",
+        "remoteControlStopMessage": "Urruneko kontrol saioa amaitu da!",
         "remoteControlTitle": "",
         "Remove": "Kendu",
         "removePassword": "Kendu $t(lockRoomPassword)",
