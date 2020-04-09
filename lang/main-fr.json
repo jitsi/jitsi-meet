@@ -279,7 +279,10 @@
         "yourEntireScreen": "Votre écran entier",
         "muteEveryoneElseDialog": "Une fois mis en sourdine, vous ne pourrez pas les réactiver, mais ils peuvent se réactiver eux-mêmes à tout moment.",
         "muteEveryoneElseTitle": "Mettre tout le monde en sourdine sauf {{whom}} ?",
-        "muteEveryoneDialog": "Êtes-vous sûr·e de vouloir mettre tout le monde en sourdine ? Vous ne pourrez pas défaire cette action, mais ils peuvent le faire eux-mêmes à tout moment."
+        "muteEveryoneDialog": "Êtes-vous sûr·e de vouloir mettre tout le monde en sourdine ? Vous ne pourrez pas défaire cette action, mais ils peuvent le faire eux-mêmes à tout moment.",
+        "muteEveryoneStartMuted": "",
+        "muteEveryoneSelf": "",
+        "muteEveryoneTitle": ""
     },
     "dialOut": {
         "statusMessage": "est maintenant {{status}}"
