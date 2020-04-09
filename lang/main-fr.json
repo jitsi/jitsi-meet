@@ -79,7 +79,7 @@
         "ERROR": "Erreur",
         "RECONNECTING": "Un problème réseau est survenue. Reconnexion en cours...",
         "FETCH_SESSION_ID": "Obtention d’un identifiant de session…",
-        "GET_SESSION_ID_ERROR": ""
+        "GET_SESSION_ID_ERROR": "Obtenir une erreur d’identifiant de session : {{code}}"
     },
     "connectionindicator": {
         "address": "Adresse :",
