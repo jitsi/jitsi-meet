@@ -3,5 +3,3 @@ files:
     translation: /lang/languages-%two_letters_code%.json
   - source: /lang/main.json
     translation: /lang/main-%two_letters_code%.json
-  - source: /android/**/values/strings.xml
-    translation: /android/**/values/%file_name%-%two_letters_code%.%file_extension%
