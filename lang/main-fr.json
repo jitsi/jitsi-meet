@@ -60,9 +60,9 @@
         "you": "vous"
     },
     "chromeExtensionBanner": {
-        "installExtensionText": "",
-        "buttonText": "",
-        "dontShowAgain": ""
+        "installExtensionText": "Installer l'extension pour l'intégration de Google Calendar et Office 365",
+        "buttonText": "Installer l'extension Chrome",
+        "dontShowAgain": "Ne me montrez plus cela"
     },
     "connectingOverlay": {
         "joiningRoom": "Connexion à la réunion…"
