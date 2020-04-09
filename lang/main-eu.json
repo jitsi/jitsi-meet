@@ -385,7 +385,7 @@
         "invalidStreamKey": "Zuzeneko transmisioaren gakoa okerra izan daiteke.",
         "off": "Zuzeneko transmisioa gelditu da",
         "offBy": "{{name}} erabiltzaileak zuzeneko emanaldia gelditu du",
-        "on": "",
+        "on": "Zuzeneko transmisioa",
         "onBy": "{{name}} erabiltzaileak zuzeneko emanaldia hasi du",
         "pending": "",
         "serviceName": "",
