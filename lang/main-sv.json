@@ -192,7 +192,7 @@
         "liveStreamingDisabledForGuestTooltip": "Gäster kan inte starta en livesändning.",
         "liveStreamingDisabledTooltip": "Starta livesändning har inaktiverats.",
         "lockMessage": "Misslyckades att låsa konferensen.",
-        "lockRoom": "",
+        "lockRoom": "Lägg till möte $t(lockRoomPasswordUppercase)",
         "lockTitle": "Låsning misslyckades",
         "logoutQuestion": "Är du säker på att du vill logga ut och stoppa konferensen?",
         "logoutTitle": "Logga ut",
