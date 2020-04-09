@@ -585,7 +585,7 @@
     "toolbar": {
         "accessibilityLabel": {
             "audioOnly": "",
-            "audioRoute": "",
+            "audioRoute": "Hautatu soinu-gailua",
             "callQuality": "",
             "cc": "",
             "chat": "",
