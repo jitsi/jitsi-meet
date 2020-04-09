@@ -4,10 +4,19 @@ import { generateRoomWithoutSeparator } from 'js-utils/random';
 import { Component } from 'react';
 import type { Dispatch } from 'redux';
 
-import { createWelcomePageEvent, sendAnalytics } from '../../analytics';
-import { appNavigate } from '../../app';
-import { isCalendarEnabled } from '../../calendar-sync';
-import { isRecentListEnabled } from '../../recent-list/functions';
+import {
+    createWelcomePageEvent,
+    sendAnalytics
+} from '../../analytics';
+import {
+    appNavigate
+} from '../../app';
+import {
+    isCalendarEnabled
+} from '../../calendar-sync';
+import {
+    isRecentListEnabled
+} from '../../recent-list/functions';
 
 /**
  * {@code AbstractWelcomePage}'s React {@code Component} prop types.
@@ -45,8 +54,8 @@ type Props = {
  *
  * @abstract
  */
-export class AbstractWelcomePage extends Component<Props, *> {
-    _mounted: ?boolean;
+export class AbstractWelcomePage extends Component < Props, * > {
+    _mounted: ? boolean;
 
     /**
      * Implements React's {@link Component#getDerivedStateFromProps()}.
@@ -55,7 +64,9 @@ export class AbstractWelcomePage extends Component<Props, *> {
      */
     static getDerivedStateFromProps(props: Props, state: Object) {
         return {
-            room: props._room || state.room
+						name: props._name || state.name,
+						email: props._email || state.email,
+						room: props._room || state.room
         };
     }
 
@@ -76,6 +87,8 @@ export class AbstractWelcomePage extends Component<Props, *> {
         animateTimeoutId: undefined,
         generatedRoomname: '',
         joining: false,
+        name: '',
+        email: '',
         room: '',
         roomPlaceholder: '',
         updateTimeoutId: undefined
@@ -91,9 +104,10 @@ export class AbstractWelcomePage extends Component<Props, *> {
         super(props);
 
         // Bind event handlers so they are only bound once per instance.
-        this._animateRoomnameChanging
-            = this._animateRoomnameChanging.bind(this);
+        this._animateRoomnameChanging = this._animateRoomnameChanging.bind(this);
         this._onJoin = this._onJoin.bind(this);
+        this._onNameChange = this._onNameChange.bind(this);
+        this._onEmailChange = this._onEmailChange.bind(this);
         this._onRoomChange = this._onRoomChange.bind(this);
         this._updateRoomname = this._updateRoomname.bind(this);
     }
@@ -106,7 +120,9 @@ export class AbstractWelcomePage extends Component<Props, *> {
      */
     componentDidMount() {
         this._mounted = true;
-        sendAnalytics(createWelcomePageEvent('viewed', undefined, { value: 1 }));
+        sendAnalytics(createWelcomePageEvent('viewed', undefined, {
+            value: 1
+        }));
     }
 
     /**
@@ -132,7 +148,8 @@ export class AbstractWelcomePage extends Component<Props, *> {
      */
     _animateRoomnameChanging(word: string) {
         let animateTimeoutId;
-        const roomPlaceholder = this.state.roomPlaceholder + word.substr(0, 1);
+        const roomPlaceholder = this.state.roomPlaceholder + word.substr(0,
+            1);
 
         if (word.length > 1) {
             animateTimeoutId
@@ -179,16 +196,52 @@ export class AbstractWelcomePage extends Component<Props, *> {
             }));
 
         if (room) {
-            this.setState({ joining: true });
+            this.setState({
+                joining: true
+            });
 
             // By the time the Promise of appNavigate settles, this component
             // may have already been unmounted.
-            const onAppNavigateSettled
-                = () => this._mounted && this.setState({ joining: false });
+            const onAppNavigateSettled = () => this._mounted && this
+                .setState({
+                    joining: false
+                });
 
             this.props.dispatch(appNavigate(room))
                 .then(onAppNavigateSettled, onAppNavigateSettled);
         }
+    }
+
+    _onNameChange: (string) => void;
+
+    /**
+     * Handles 'change' event for the name text input field.
+     *
+     * @param {string} value - The text typed into the respective text input
+     * field.
+     * @protected
+     * @returns {void}
+     */
+    _onNameChange(value: string) {
+        this.setState({
+            name: value
+        });
+    }
+
+    _onEmailChange: (string) => void;
+
+    /**
+     * Handles 'change' event for the room email text input field.
+     *
+     * @param {string} value - The text typed into the respective text input
+     * field.
+     * @protected
+     * @returns {void}
+     */
+    _onEmailChange(value: string) {
+        this.setState({
+            email: value
+        });
     }
 
     _onRoomChange: (string) => void;
@@ -202,7 +255,9 @@ export class AbstractWelcomePage extends Component<Props, *> {
      * @returns {void}
      */
     _onRoomChange(value: string) {
-        this.setState({ room: value });
+        this.setState({
+            room: value
+        });
     }
 
     _updateRoomname: () => void;
@@ -220,13 +275,11 @@ export class AbstractWelcomePage extends Component<Props, *> {
         const updateTimeoutId = setTimeout(this._updateRoomname, 10000);
 
         this._clearTimeouts();
-        this.setState(
-            {
-                generatedRoomname,
-                roomPlaceholder,
-                updateTimeoutId
-            },
-            () => this._animateRoomnameChanging(generatedRoomname));
+        this.setState({
+            generatedRoomname,
+            roomPlaceholder,
+            updateTimeoutId
+        }, () => this._animateRoomnameChanging(generatedRoomname));
     }
 }
 
