@@ -761,7 +761,9 @@
         "roomnameHint": "Ange namnet eller URL:en till mötesrummet du vill ansluta till. Du kan hitta på ett nytt namn, berätta då för de andra du tänker möta så de anger samma namn.",
         "sendFeedback": "Ge återkoppling",
         "terms": "Termer",
-        "title": "Säkra, välutrustade och helt kostnadsfria videokonferenser"
+        "title": "Säkra, välutrustade och helt kostnadsfria videokonferenser",
+        "roomNameAllowedChars": "",
+        "getHelp": ""
     },
     "defaultNickname": "",
     "chromeExtensionBanner": {
