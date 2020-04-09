@@ -380,7 +380,7 @@
         "expandedOff": "Zuzeneko transmisioa gelditu da",
         "expandedOn": "",
         "expandedPending": "Zuzeneko transmisioa abian da…",
-        "failedToStart": "",
+        "failedToStart": "Zuzeneko transmisioak ezin izan du hasi",
         "getStreamKeyManually": "",
         "invalidStreamKey": "",
         "off": "",
