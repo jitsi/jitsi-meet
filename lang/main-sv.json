@@ -500,7 +500,9 @@
         "signIn": "Logga in",
         "signOut": "Logga ut",
         "unavailable": "{{serviceName}} är inte tillgänglig. Vi försöker åtgärda felet. Försök igen senare.",
-        "unavailableTitle": "Inspelning kan inte göras"
+        "unavailableTitle": "Inspelning kan inte göras",
+        "onBy": "{{name}} påbörjade inspelningen",
+        "offBy": "{{name}} avslutade inspelningen"
     },
     "sectionList": {
         "pullToRefresh": "Dra för att uppdatera"
@@ -526,7 +528,8 @@
         "selectMic": "Mikrofon",
         "startAudioMuted": "Alla börjar tystade",
         "startVideoMuted": "Alla börjar osynliga",
-        "title": "Inställningar"
+        "title": "Inställningar",
+        "speakers": "Talare"
     },
     "settingsView": {
         "alertOk": "OK",
@@ -541,7 +544,8 @@
         "serverURL": "Serverlänk",
         "startWithAudioMuted": "Starta med ljudet avstängt",
         "startWithVideoMuted": "Starta med videon avstängd",
-        "version": "Version"
+        "version": "Version",
+        "disableCallIntegration": "Tillåt inte deltagande via telefon"
     },
     "share": {
         "dialInfoText": "",
@@ -744,5 +748,5 @@
     "documentSharing": {
         "title": ""
     },
-    "raisedHand": ""
+    "raisedHand": "Jag vill prata"
 }
