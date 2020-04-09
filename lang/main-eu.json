@@ -379,7 +379,7 @@
         "errorLiveStreamNotEnabled": "{{email}} e-postan ez dago zuzeneko transmisioa gaituta. Gaitu zuzeneko transmisioa edo hasi saioa zuzeneko transmisioa gaituta duen kontu batean.",
         "expandedOff": "Zuzeneko transmisioa gelditu da",
         "expandedOn": "",
-        "expandedPending": "",
+        "expandedPending": "Zuzeneko transmisioa abian da…",
         "failedToStart": "",
         "getStreamKeyManually": "",
         "invalidStreamKey": "",
