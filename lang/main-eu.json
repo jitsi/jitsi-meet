@@ -748,13 +748,13 @@
     },
     "welcomepage": {
         "accessibilityLabel": {
-            "join": "",
-            "roomname": ""
+            "join": "Klik batzeko",
+            "roomname": "Sartu gelaren izena"
         },
         "appDescription": "",
         "audioVideoSwitch": {
             "audio": "Ahotsa",
-            "video": ""
+            "video": "Bideoa"
         },
         "calendar": "Egutegia",
         "connectCalendarButton": "Konektatu zure egutegia",
