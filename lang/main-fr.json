@@ -677,7 +677,7 @@
         "startvideoblur": "Flouter mon arrière plan",
         "stopvideoblur": "Désactiver le flou d'arrière-plan",
         "muteEveryone": "Mettre tout le monde en sourdine",
-        "noAudioSignalDialInDesc": ""
+        "noAudioSignalDialInDesc": "Vous pouvez également composer un numéro en utilisant :"
     },
     "transcribing": {
         "ccButtonTooltip": "Activer/Désactiver les sous-titres",
