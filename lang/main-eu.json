@@ -487,10 +487,10 @@
     },
     "raisedHand": "Hitz egin nahiko luke",
     "recording": {
-        "authDropboxText": "",
+        "authDropboxText": "Kargatu Dropbox-era",
         "availableSpace": "Leku erabilgarria: {{spaceLeft}} MB (gutxi gorabehera {{duration}} grabazio minutuak)",
-        "beta": "",
-        "busy": "",
+        "beta": "BETA",
+        "busy": "Grabazio baliabideak libratzen ari gara. Saiatu berriro minutu batzuk barru.",
         "busyTitle": "Grabatzaile guztiak okupatuta daude",
         "error": "",
         "expandedOff": "",
