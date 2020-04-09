@@ -451,6 +451,14 @@ var config = {
     // the menu has option to flip the locally seen video for local presentations
     // disableLocalVideoFlip: false,
 
+    // Mainly privacy related settings
+
+    // Disables all invite functions from the app (share, invite, dial out...etc)
+    // disableInviteFunctions: true,
+
+    // Disables storing the room name to the recents list
+    // doNotStoreRoom: true,
+
     // Deployment specific URLs.
     // deploymentUrls: {
     //    // If specified a 'Help' button will be displayed in the overflow menu with a link to the specified URL for
