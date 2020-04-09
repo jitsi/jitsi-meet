@@ -79,7 +79,7 @@
         "ERROR": "Ошибка",
         "RECONNECTING": "Проблема с сетью. Переподключение...",
         "LOW_BANDWIDTH": "Видео для {{displayName}} было выключено для экономии трафика",
-        "GOT_SESSION_ID": "Получение идентификатора сеанса ... Готово",
+        "GOT_SESSION_ID": "Получение идентификатора сеанса … Готово",
         "GET_SESSION_ID_ERROR": "Ошибка получения идентификатора сеанса: {{code}}"
     },
     "connectionindicator": {
@@ -483,7 +483,7 @@
     "profile": {
         "setDisplayNameLabel": "Отображаемое имя",
         "setEmailInput": "Введите e-mail",
-        "setEmailLabel": "E-mail для gravatar",
+        "setEmailLabel": "E-mail для Gravatar",
         "title": "Профиль"
     },
     "raisedHand": "Хочет говорить",
