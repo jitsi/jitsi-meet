@@ -511,7 +511,7 @@
         "signIn": "",
         "signOut": "",
         "unavailable": "",
-        "unavailableTitle": ""
+        "unavailableTitle": "Grabazioa ez dago eskuragarri"
     },
     "sectionList": {
         "pullToRefresh": ""
