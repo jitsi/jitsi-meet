@@ -373,7 +373,7 @@
         "changeSignIn": "",
         "choose": "Aukeratu zuzeneko transmisioa",
         "chooseCTA": "Aukeratu transmisio-aukera. Une honetan {{email}} gisa saioa hasi duzu.",
-        "enterStreamKey": "",
+        "enterStreamKey": "Sartu zure YouTube zuzeneko transmisioaren gakoa hemen.",
         "error": "",
         "errorAPI": "",
         "errorLiveStreamNotEnabled": "",
