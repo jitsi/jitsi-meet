@@ -291,7 +291,7 @@
         "title": ""
     },
     "feedback": {
-        "average": "",
+        "average": "Normala",
         "bad": "",
         "detailsLabel": "",
         "good": "",
@@ -588,7 +588,7 @@
             "audioRoute": "Hautatu soinu-gailua",
             "callQuality": "Kudeatu bideoaren kalitatea",
             "cc": "",
-            "chat": "",
+            "chat": "Txandakatu txat leihoa",
             "document": "",
             "download": "",
             "feedback": "",
