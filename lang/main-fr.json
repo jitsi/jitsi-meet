@@ -621,7 +621,8 @@
             "videomute": "Activer/désactiver la vidéo",
             "videoblur": "Activer/désactiver le flou de la vidéo",
             "muteEveryone": "Mettre tout le monde en sourdine",
-            "moreOptions": ""
+            "moreOptions": "",
+            "toggleFilmstrip": ""
         },
         "addPeople": "Ajouter des personnes à votre appel",
         "audioOnlyOff": "Désactiver le mode bande passante réduite",
@@ -674,7 +675,8 @@
         "toggleCamera": "Activer/désactiver la caméra",
         "videomute": "Démarrer / Arrêter la caméra",
         "startvideoblur": "Flouter mon arrière plan",
-        "stopvideoblur": "Désactiver le flou d'arrière-plan"
+        "stopvideoblur": "Désactiver le flou d'arrière-plan",
+        "muteEveryone": ""
     },
     "transcribing": {
         "ccButtonTooltip": "Activer/Désactiver les sous-titres",
