@@ -285,10 +285,10 @@
         "yourEntireScreen": "Zure pantaila osoa"
     },
     "dialOut": {
-        "statusMessage": ""
+        "statusMessage": "{{status}} dago"
     },
     "documentSharing": {
-        "title": ""
+        "title": "Partekatutako dokumentua"
     },
     "feedback": {
         "average": "Normala",
@@ -301,8 +301,8 @@
     },
     "incomingCall": {
         "answer": "Erantzun",
-        "audioCallTitle": "",
-        "decline": "",
+        "audioCallTitle": "Sarrerako deia",
+        "decline": "Baztertu",
         "productLabel": "",
         "videoCallTitle": ""
     },
@@ -507,9 +507,9 @@
         "pending": "Bilera grabatzeko prestatzen…",
         "rec": "GRB",
         "serviceDescription": "Zure grabazioa grabazio-zerbitzuan gordeko da",
-        "serviceName": "",
+        "serviceName": "Grabazio-zerbitzua",
         "signIn": "",
-        "signOut": "",
+        "signOut": "Itxi saioa",
         "unavailable": "",
         "unavailableTitle": "Grabazioa ez dago eskuragarri"
     },
@@ -519,8 +519,8 @@
     "settings": {
         "calendar": {
             "about": "",
-            "disconnect": "",
-            "microsoftSignIn": "",
+            "disconnect": "Deskonektatu",
+            "microsoftSignIn": "Saioa hasi Microsoftekin",
             "signedIn": "",
             "title": ""
         },
@@ -735,13 +735,13 @@
         "standardDefinition": ""
     },
     "videothumbnail": {
-        "domute": "",
-        "domuteOthers": "",
-        "flip": "",
-        "kick": "",
+        "domute": "Mututu",
+        "domuteOthers": "Mututu beste guztiak",
+        "flip": "Irauli",
+        "kick": "Bota",
         "moderator": "Moderatzailea",
-        "mute": "",
-        "muted": "",
+        "mute": "Parte-hartzailea mutututa dago",
+        "muted": "Mutututa",
         "remoteControl": "",
         "show": "",
         "videomute": ""
