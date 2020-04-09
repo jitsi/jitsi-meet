@@ -387,7 +387,7 @@
         "offBy": "{{name}} erabiltzaileak zuzeneko emanaldia gelditu du",
         "on": "Zuzeneko transmisioa",
         "onBy": "{{name}} erabiltzaileak zuzeneko emanaldia hasi du",
-        "pending": "",
+        "pending": "Zuzeneko transmisioa abian…",
         "serviceName": "",
         "signedInAs": "",
         "signIn": "",
