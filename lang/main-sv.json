@@ -355,7 +355,8 @@
         "toggleFilmstrip": "Visa eller dölj videominiatyrer",
         "toggleScreensharing": "Växla mellan kamera och skärmdelning",
         "toggleShortcuts": "Visa eller dölj kortkommandon",
-        "videoMute": "Aktivera / avaktivera din kamera"
+        "videoMute": "Aktivera / avaktivera din kamera",
+        "videoQuality": ""
     },
     "liveStreaming": {
         "busy": "Vi försöker frigöra fler strömningsresurser. Försök igen senare.",
