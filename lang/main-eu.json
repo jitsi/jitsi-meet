@@ -278,7 +278,7 @@
         "transcribing": "Transkripzioa",
         "unlockRoom": "Kendu bileraren $t(lockRoomPassword)",
         "userPassword": "erabiltzailearen pasahitza",
-        "WaitForHostMsg": "",
+        "WaitForHostMsg": "<b>{{room}}</b> konferentzia oraindik ez da hasi. Ostalaria bazara, autentifikatu. Bestela, itxaron ostalaria iritsi arte.",
         "WaitForHostMsgWOk": "",
         "WaitingForHost": "",
         "Yes": "",
