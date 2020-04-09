@@ -372,7 +372,7 @@
         "expandedOn": "Mötet livesänds just nu på YouTube.",
         "expandedPending": "Livesändningen startas …",
         "failedToStart": "Strömningen kunde inte påbörjas",
-        "getStreamKeyManually": "",
+        "getStreamKeyManually": "Vi kunde inte hämta några direktströmmar. Försök att få din direktströmningsnyckel från YouTube.",
         "invalidStreamKey": "Livesändningslösenordet kan vara felaktigt.",
         "off": "Strömning avslutad",
         "on": "Strömma",
