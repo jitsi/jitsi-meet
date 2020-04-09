@@ -14,6 +14,7 @@ import '../../power-monitor';
 import '../../room-lock';
 import '../../talk-while-muted';
 import '../../video-layout';
+import '../../old-client-notification';
 
 import { AbstractApp } from './AbstractApp';
 
