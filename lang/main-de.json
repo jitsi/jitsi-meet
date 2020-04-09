@@ -460,7 +460,8 @@
         "unmute": "Stummschaltung aufheben",
         "newDeviceCameraTitle": "Neue Kamera erkannt",
         "newDeviceAudioTitle": "Neues Audiogerät erkannt",
-        "newDeviceAction": "Verwenden"
+        "newDeviceAction": "Verwenden",
+        "suboptimalBrowserWarning": ""
     },
     "passwordSetRemotely": "von einem anderen Teilnehmer gesetzt",
     "passwordDigitsOnly": "Bis zu {{number}} Ziffern",
@@ -537,7 +538,9 @@
         "selectMic": "Mikrofon",
         "startAudioMuted": "Alle Teilnehmer treten stumm geschaltet bei",
         "startVideoMuted": "Alle Teilnehmer treten ohne Video bei",
-        "title": "Einstellungen"
+        "title": "Einstellungen",
+        "speakers": "",
+        "microphones": ""
     },
     "settingsView": {
         "advanced": "Erweitert",
@@ -618,7 +621,8 @@
             "tileView": "Kachelansicht ein-/ausschalten",
             "toggleCamera": "Kamera wechseln",
             "videomute": "„Video stummschalten“ ein-/ausschalten",
-            "videoblur": "Video-Unschärfe ein-/ausschalten"
+            "videoblur": "Video-Unschärfe ein-/ausschalten",
+            "toggleFilmstrip": ""
         },
         "addPeople": "Teilnehmer zur Konferenz hinzufügen",
         "audioOnlyOff": "Modus „Nur Audio“ deaktivieren",
@@ -771,10 +775,14 @@
         "roomnameHint": "Name oder URL der Konferenz, der Sie beitreten möchten. Sie können einen Namen erfinden, er muss nur den anderen Teilnehmern übermittelt werden, damit diese der gleichen Konferenz beitreten.",
         "sendFeedback": "Feedback senden",
         "terms": "AGB",
-        "title": "Sichere, mit umfassenden Funktionen ausgestattete und vollkommen kostenlose Videokonferenzen"
+        "title": "Sichere, mit umfassenden Funktionen ausgestattete und vollkommen kostenlose Videokonferenzen",
+        "getHelp": ""
     },
     "lonelyMeetingExperience": {
         "button": "Weitere einladen",
         "youAreAlone": "Sie sind der einzige in diesem Meeting"
+    },
+    "helpView": {
+        "header": ""
     }
 }
