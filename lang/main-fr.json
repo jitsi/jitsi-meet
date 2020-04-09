@@ -80,7 +80,8 @@
         "RECONNECTING": "Un problème réseau est survenue. Reconnexion en cours...",
         "FETCH_SESSION_ID": "Obtention d’un identifiant de session…",
         "GET_SESSION_ID_ERROR": "Obtenir une erreur d’identifiant de session : {{code}}",
-        "GOT_SESSION_ID": "Obtention d’un identifiant de session… Terminée"
+        "GOT_SESSION_ID": "Obtention d’un identifiant de session… Terminée",
+        "LOW_BANDWIDTH": ""
     },
     "connectionindicator": {
         "address": "Adresse :",
@@ -110,7 +111,8 @@
         "resolution": "Résolution :",
         "status": "Connexion:",
         "transport": "Transport :",
-        "transport_plural": "Transports :"
+        "transport_plural": "Transports :",
+        "e2e_rtt": ""
     },
     "dateUtils": {
         "earlier": "Plus tôt",
@@ -274,7 +276,8 @@
         "WaitForHostMsgWOk": "La conférence <b>{{room}}</b> n'a pas encore commencé. Si vous en êtes l'hôte, veuillez appuyer sur Ok pour vous authentifier. Sinon, veuillez attendre son arrivée.",
         "WaitingForHost": "En attente de l'hôte ...",
         "Yes": "Oui",
-        "yourEntireScreen": "Votre écran entier"
+        "yourEntireScreen": "Votre écran entier",
+        "muteEveryoneElseDialog": ""
     },
     "dialOut": {
         "statusMessage": "est maintenant {{status}}"
