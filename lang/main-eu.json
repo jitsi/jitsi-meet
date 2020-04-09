@@ -224,7 +224,7 @@
         "passwordNotSupported": "$t(lockRoomPassword) bilera ezartzea ez da onartzen.",
         "passwordNotSupportedTitle": "$t(lockRoomPasswordUppercase) ezin da erabili",
         "passwordRequired": "$t(lockRoomPasswordUppercase) beharrezkoa da",
-        "popupError": "",
+        "popupError": "Zure nabigatzaileak gune honetako pop-up leihoak blokeatzen ditu. Aktibatu pop-upak arakatzailearen segurtasun-ezarpenetan eta saiatu berriro.",
         "popupErrorTitle": "Laster-leihoa blokeatuta",
         "recording": "Grabatzen",
         "recordingDisabledForGuestTooltip": "Gonbidatuek ezin dute grabaketarik hasi.",
