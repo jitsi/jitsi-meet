@@ -72,7 +72,11 @@
         "DISCONNECTED": "Desconnectat",
         "DISCONNECTING": "Desconnexion en cors",
         "ERROR": "Error",
-        "RECONNECTING": "Un problèma ret s'es produita. Reconnexion en cors..."
+        "RECONNECTING": "Un problèma ret s'es produita. Reconnexion en cors...",
+        "LOW_BANDWIDTH": "",
+        "GOT_SESSION_ID": "",
+        "GET_SESSION_ID_ERROR": "",
+        "FETCH_SESSION_ID": ""
     },
     "connectionindicator": {
         "address": "Adreça :",
@@ -101,7 +105,9 @@
         "remoteport_plural": "Pòrts distants :",
         "resolution": "Resolucion :",
         "status": "Connexion :",
-        "transport": "Transpòrt :"
+        "transport": "Transpòrt :",
+        "transport_plural": "",
+        "e2e_rtt": ""
     },
     "dateUtils": {
         "earlier": "Mai d’ora",
@@ -265,7 +271,14 @@
         "WaitForHostMsgWOk": "La conferéncia <b>{{room}}</b> a pas encara començat. Se sètz l’òst volgatz ben clicar Ok per vos identificar. Autrament esperatz qu’arribe l’òste.",
         "WaitingForHost": "Òm pòt pas que partejar una vidèo a l'encòp",
         "Yes": "Òc",
-        "yourEntireScreen": "Vòstre ecran complet"
+        "yourEntireScreen": "Vòstre ecran complet",
+        "screenSharingAudio": "",
+        "muteEveryoneStartMuted": "",
+        "muteEveryoneSelf": "",
+        "muteEveryoneTitle": "",
+        "muteEveryoneDialog": "",
+        "muteEveryoneElseTitle": "",
+        "muteEveryoneElseDialog": ""
     },
     "dialOut": {
         "statusMessage": "ara es {{status}}"
@@ -378,7 +391,9 @@
         "signOut": "Se desconnectar",
         "start": "Aviar una difusion en dirècte",
         "streamIdHelp": "Qu’es aquò ?",
-        "unavailableTitle": "Difusion en dirècte indisponibla"
+        "unavailableTitle": "Difusion en dirècte indisponibla",
+        "googlePrivacyPolicy": "",
+        "youtubeTerms": ""
     },
     "localRecording": {
         "clientState": {
@@ -518,7 +533,9 @@
         "selectMic": "Microfòn",
         "startAudioMuted": "Començan totes sens son",
         "startVideoMuted": "Començan totes sens vidèo",
-        "title": "Paramètres"
+        "title": "Paramètres",
+        "speakers": "",
+        "microphones": ""
     },
     "settingsView": {
         "advanced": "Avançat",
@@ -597,7 +614,9 @@
             "tileView": "Activar/Desactivar la vista en mosaïc",
             "toggleCamera": "Passar a la camèra",
             "videomute": "Silenciar la vidèo",
-            "videoblur": "Enfoscar o non la vidèo"
+            "videoblur": "Enfoscar o non la vidèo",
+            "muteEveryone": "",
+            "moreOptions": ""
         },
         "addPeople": "Ajustar de monde a vòstra sonada",
         "audioOnlyOff": "Desactivar lo mòde connexion febla",
@@ -647,7 +666,13 @@
         "toggleCamera": "Passar a la camèra",
         "videomute": "Aviar / Arrestar la camèra",
         "startvideoblur": "Trebolar mon rèire-plan",
-        "stopvideoblur": "Desactivar lo borrolatge del rèire-plan"
+        "stopvideoblur": "Desactivar lo borrolatge del rèire-plan",
+        "noisyAudioInputDesc": "",
+        "noisyAudioInputTitle": "",
+        "noAudioSignalDialInLinkDesc": "",
+        "noAudioSignalDialInDesc": "",
+        "muteEveryone": "",
+        "moreOptions": ""
     },
     "transcribing": {
         "ccButtonTooltip": "Aviar / Arrestat los sostítols",
@@ -713,7 +738,8 @@
         "muted": "Mut",
         "remoteControl": "Contraròtle alonhat",
         "show": "Mostrar davant",
-        "videomute": "Lo participant a arrestat la camèra"
+        "videomute": "Lo participant a arrestat la camèra",
+        "domuteOthers": ""
     },
     "welcomepage": {
         "accessibilityLabel": {
@@ -743,6 +769,19 @@
         "roomnameHint": "Picatz lo nom o l’URL de la sala que volètz jónher. Podètz inventar un nom, cal pas que lo monde que volètz convidar lo sàpian. ",
         "sendFeedback": "Mandar vòstra opinion",
         "terms": "Tèrmes",
-        "title": "Conferéncias vidèo securizadas amb plen de foncionalitats e complètament gratuitas"
+        "title": "Conferéncias vidèo securizadas amb plen de foncionalitats e complètament gratuitas",
+        "getHelp": ""
+    },
+    "helpView": {
+        "header": ""
+    },
+    "lonelyMeetingExperience": {
+        "youAreAlone": "",
+        "button": ""
+    },
+    "chromeExtensionBanner": {
+        "dontShowAgain": "",
+        "buttonText": "",
+        "installExtensionText": ""
     }
 }
