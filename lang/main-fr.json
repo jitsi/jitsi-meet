@@ -283,7 +283,7 @@
         "muteEveryoneStartMuted": "Tout le monde commence en sourdine à partir de maintenant",
         "muteEveryoneSelf": "",
         "muteEveryoneTitle": "",
-        "screenSharingAudio": ""
+        "screenSharingAudio": "Partager l’audio"
     },
     "dialOut": {
         "statusMessage": "est maintenant {{status}}"
