@@ -268,7 +268,8 @@
         "Yes": "Ja",
         "yourEntireScreen": "Helskärm",
         "muteEveryoneElseDialog": "När någon tystats kan du inte slå på mikrofonen, men de kan själva slå på sin egen mikrofon när som helst.",
-        "muteEveryoneElseTitle": "Tysta alla utom {{vem}}?"
+        "muteEveryoneElseTitle": "Tysta alla utom {{vem}}?",
+        "muteEveryoneDialog": ""
     },
     "dialOut": {
         "statusMessage": "är nu {{status}}"
