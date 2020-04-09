@@ -300,14 +300,14 @@
         "veryGood": "Oso ona"
     },
     "incomingCall": {
-        "answer": "",
+        "answer": "Erantzun",
         "audioCallTitle": "",
         "decline": "",
         "productLabel": "",
         "videoCallTitle": ""
     },
     "info": {
-        "accessibilityLabel": "",
+        "accessibilityLabel": "Erakutsi informazioa",
         "addPassword": "Gehitu $t(lockRoomPassword)",
         "cancelPassword": "Utzi $t(lockRoomPassword)",
         "conferenceURL": "Esteka:",
@@ -321,13 +321,13 @@
         "genericError": "Hara! Arazoren bat egon da.",
         "inviteLiveStream": "Bilera honen zuzeneko erreprodukzioa ikusteko, egin klik esteka honetan: {{url}}",
         "invitePhone": "",
-        "invitePhoneAlternatives": "",
-        "inviteURLFirstPartGeneral": "",
+        "invitePhoneAlternatives": "Markatze-zenbaki ezberdin baten bila?\nIkusi bilera markatze-zenbakiak: {{url}}\n\n\nGela-telefono baten bidez markatzen ari bazara, batu audioa konektatu gabe: {{silentUrl}}",
+        "inviteURLFirstPartGeneral": "Bilera batera batzeko gonbidapena luzatu zaizu.",
         "inviteURLFirstPartPersonal": "{{name}} erabiltzaileak bilera batera gonbidatu zaitu.\n",
         "inviteURLSecondPart": "\nBilerara sartu:\n{{url}}\n",
         "liveStreamURL": "Zuzeneko erreprodukzioa:",
         "moreNumbers": "Zenbaki gehiago",
-        "noNumbers": "",
+        "noNumbers": "Markatze-zenbakirik ez.",
         "noPassword": "Bat ere ez",
         "noRoom": "",
         "numbers": "Markatze-zenbakiak",
@@ -347,7 +347,7 @@
     "inlineDialogFailure": {
         "msg": "",
         "retry": "",
-        "support": "",
+        "support": "Laguntza",
         "supportMsg": ""
     },
     "keyboardShortcuts": {
