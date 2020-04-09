@@ -552,7 +552,7 @@
         "advanced": ""
     },
     "share": {
-        "dialInfoText": "",
+        "dialInfoText": "\n\n=====\n\nVill du istället ringa in via telefon?\n\n{{defaultDialInNumber}} Klicka på den här länken för att se telefonnumret för detta möte\n{{DialInfoPageUrl}}",
         "mainText": ""
     },
     "speaker": "Talare",
