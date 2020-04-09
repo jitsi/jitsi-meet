@@ -187,7 +187,7 @@
         "kickParticipantButton": "Sparka ut",
         "kickParticipantDialog": "Vill du sparka ut den här deltagaren?",
         "kickParticipantTitle": "Tysta deltagaren?",
-        "kickTitle": "",
+        "kickTitle": "Aj! {{participantDisplayName}} sparkade ut dig ur mötet",
         "liveStreaming": "Strömma",
         "liveStreamingDisabledForGuestTooltip": "Gäster kan inte starta en livesändning.",
         "liveStreamingDisabledTooltip": "Starta livesändning har inaktiverats.",
