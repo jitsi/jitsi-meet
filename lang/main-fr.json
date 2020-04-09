@@ -742,7 +742,7 @@
         "moderator": "Moderateur",
         "mute": "Un participant a coupé son micro",
         "muted": "Muet",
-        "remoteControl": "",
+        "remoteControl": "Démarrer / Arrêter le contrôle à distance",
         "show": "Afficher en premier plan",
         "videomute": "Le participant a arrêté la caméra",
         "domuteOthers": "Mettre tous les autres en sourdine"
