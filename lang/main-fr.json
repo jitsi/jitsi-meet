@@ -677,7 +677,8 @@
         "startvideoblur": "Flouter mon arrière plan",
         "stopvideoblur": "Désactiver le flou d'arrière-plan",
         "muteEveryone": "Mettre tout le monde en sourdine",
-        "noAudioSignalDialInDesc": "Vous pouvez également composer un numéro en utilisant :"
+        "noAudioSignalDialInDesc": "Vous pouvez également composer un numéro en utilisant :",
+        "noAudioSignalDialInLinkDesc": ""
     },
     "transcribing": {
         "ccButtonTooltip": "Activer/Désactiver les sous-titres",
@@ -743,7 +744,8 @@
         "muted": "Muet",
         "remoteControl": "",
         "show": "Afficher en premier plan",
-        "videomute": "Le participant a arrêté la caméra"
+        "videomute": "Le participant a arrêté la caméra",
+        "domuteOthers": ""
     },
     "welcomepage": {
         "accessibilityLabel": {
