@@ -197,7 +197,7 @@
         "logoutQuestion": "Är du säker på att du vill logga ut och stoppa konferensen?",
         "logoutTitle": "Logga ut",
         "maxUsersLimitReached": "",
-        "maxUsersLimitReachedTitle": "",
+        "maxUsersLimitReachedTitle": "Maximal deltagarantal uppnått",
         "micConstraintFailedError": "Din mikrofon uppfyller inte kraven för användning.",
         "micNotFoundError": "Hittar ingen mikrofon.",
         "micNotSendingData": "",
