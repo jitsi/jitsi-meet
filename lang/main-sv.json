@@ -433,7 +433,7 @@
         "invitedOneMember": "",
         "invitedThreePlusMembers": "",
         "invitedTwoMembers": "",
-        "kickParticipant": "",
+        "kickParticipant": "{{kicked}} sparkades ut av {{kicker}}",
         "me": "Jag",
         "moderator": "Moderatorsrättigheter tilldelades!",
         "muted": "Du har startat konversationen utan mikrofon.",
