@@ -5,5 +5,3 @@ files:
     translation: /lang/main-%two_letters_code%.json
   - source: /android/**/values/strings.xml
     translation: /android/**/values/%file_name%-%two_letters_code%.%file_extension%
-    translate_attributes: 0
-    content_segmentation: 0
