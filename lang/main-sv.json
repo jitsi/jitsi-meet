@@ -209,10 +209,10 @@
         "muteParticipantDialog": "Vill du tysta den här deltagaren? Du kan inte aktivera mikrofonen igen, men deltagaren kan när som helst göra det själv.",
         "muteParticipantTitle": "Tysta deltagaren?",
         "Ok": "Ok",
-        "passwordLabel": "",
+        "passwordLabel": "Mötet har låsts av en deltagare. Ange $t(lockRoomPassword) för att gå med.",
         "passwordNotSupported": "Att sätta ett lösenord för konferensrummet stöds inte.",
-        "passwordNotSupportedTitle": "",
-        "passwordRequired": "",
+        "passwordNotSupportedTitle": "$t(lockRoomPasswordUppercase) stöds inte",
+        "passwordRequired": "$t(lockRoomPasswordUppercase) krävs",
         "popupError": "Din webbläsare blockerar pop-up-fönster från sajten. Tillåt pop-up-fönster från den här sajten i inställningarna och försök igen.",
         "popupErrorTitle": "Pop-up blockerad",
         "recording": "Inspelning",
@@ -227,7 +227,7 @@
         "remoteControlStopMessage": "Fjärrstyrningssessionen avslutades.",
         "remoteControlTitle": "Anslutning till fjärrskrivbord",
         "Remove": "Ta bort",
-        "removePassword": "",
+        "removePassword": "Ta bort $t(lockRoomPassword)",
         "removeSharedVideoMsg": "Är du säker på att du vill ta bort din delade video?",
         "removeSharedVideoTitle": "Ta bort den delade videon",
         "reservationError": "Fel i reservationssystemet",
@@ -269,7 +269,9 @@
         "yourEntireScreen": "Helskärm",
         "muteEveryoneElseDialog": "När någon tystats kan du inte slå på mikrofonen, men de kan själva slå på sin egen mikrofon när som helst.",
         "muteEveryoneElseTitle": "Tysta alla utom {{vem}}?",
-        "muteEveryoneDialog": ""
+        "muteEveryoneDialog": "Är du säker på att du vill tysta alla? Du kan inte slå på mikrofonen åt dem, men de kan själva slå på sin egen mikrofon när som helst.",
+        "muteEveryoneStartMuted": "Alla börjar tystade",
+        "muteEveryoneTitle": "Tysta alla?"
     },
     "dialOut": {
         "statusMessage": "är nu {{status}}"
