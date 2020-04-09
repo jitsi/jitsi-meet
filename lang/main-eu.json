@@ -374,7 +374,7 @@
         "choose": "Aukeratu zuzeneko transmisioa",
         "chooseCTA": "Aukeratu transmisio-aukera. Une honetan {{email}} gisa saioa hasi duzu.",
         "enterStreamKey": "Sartu zure YouTube zuzeneko transmisioaren gakoa hemen.",
-        "error": "",
+        "error": "Zuzeneko transmisioak huts egin du. Saiatu berriro.",
         "errorAPI": "",
         "errorLiveStreamNotEnabled": "",
         "expandedOff": "",
