@@ -380,7 +380,7 @@
         "errorLiveStreamNotEnabled": "La diffusion en direct n'est pas activée pour {{email}}. Merci de l'activer ou de vous connecter avec un compte où elle est déjà activée.",
         "expandedOff": "La diffusion en direct a été arrêtée",
         "expandedOn": "La conférence est en cours de diffusion sur YouTube.",
-        "expandedPending": "La diffusion en direct est démarrée…",
+        "expandedPending": "La diffusion en direct a commencé…",
         "failedToStart": "Le Streaming n'as pas réussi à démarrer",
         "getStreamKeyManually": "Nous n'avons pu récupérer aucun flux en direct. Essayez d’obtenir votre clé de diffusion en direct sur YouTube.",
         "invalidStreamKey": "La clé de diffusion en direct n'est peut-être pas correcte.",
