@@ -260,7 +260,7 @@
         "tokenAuthFailed": "Du är inte behörig att delta i det här samtalet.",
         "tokenAuthFailedTitle": "Autentisering misslyckades",
         "transcribing": "Transkriberar",
-        "unlockRoom": "",
+        "unlockRoom": "Ta bort möte $t(lockRoomPassword)",
         "userPassword": "användarlösenord",
         "WaitForHostMsg": "Konferensen <b>{{room}}<b> har inte börjat än. Autentisera konferensen om du är värd. Vänta annars på att värden startar konferensen.",
         "WaitForHostMsgWOk": "Konferensen <b>{{room}}<b> har inte börjat än. Om du är värd, autentisera konferensen genom att trycka på Ok. Vänta annars på att värden startar konferensen.",
@@ -272,8 +272,9 @@
         "muteEveryoneDialog": "Är du säker på att du vill tysta alla? Du kan inte slå på mikrofonen åt dem, men de kan själva slå på sin egen mikrofon när som helst.",
         "muteEveryoneStartMuted": "Alla börjar tystade",
         "muteEveryoneTitle": "Tysta alla?",
-        "sendPrivateMessage": "",
-        "screenSharingAudio": ""
+        "sendPrivateMessage": "Du har fått ett privat meddelande. Tänkte du svara på det privat, eller vill du skicka ditt meddelande till alla deltagare?",
+        "screenSharingAudio": "",
+        "sendPrivateMessageCancel": "Skicka till alla deltagare"
     },
     "dialOut": {
         "statusMessage": "är nu {{status}}"
@@ -296,8 +297,8 @@
     },
     "info": {
         "accessibilityLabel": "Visa info",
-        "addPassword": "",
-        "cancelPassword": "",
+        "addPassword": "Lägg till $t(lockRoomPassword)",
+        "cancelPassword": "Avbryt $t(lockRoomPassword)",
         "conferenceURL": "Länk:",
         "country": "Land",
         "dialANumber": "Om du vill gå med i mötet ringer du något av dessa nummer och fyller sedan i PIN-koden.",
