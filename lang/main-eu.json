@@ -586,7 +586,7 @@
         "accessibilityLabel": {
             "audioOnly": "",
             "audioRoute": "Hautatu soinu-gailua",
-            "callQuality": "",
+            "callQuality": "Kudeatu bideoaren kalitatea",
             "cc": "",
             "chat": "",
             "document": "",
