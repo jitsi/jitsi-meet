@@ -72,7 +72,11 @@
         "DISCONNECTED": "已經中斷連接",
         "DISCONNECTING": "中斷連接中",
         "ERROR": "錯誤",
-        "RECONNECTING": "網路發生問題。重新連線中........."
+        "RECONNECTING": "網路發生問題。重新連線中.........",
+        "LOW_BANDWIDTH": "",
+        "GOT_SESSION_ID": "",
+        "GET_SESSION_ID_ERROR": "",
+        "FETCH_SESSION_ID": ""
     },
     "connectionindicator": {
         "address": "位址：",
@@ -97,7 +101,8 @@
         "remoteport": "遠端端口：",
         "resolution": "解析度：",
         "status": "連接：",
-        "transport": "傳輸："
+        "transport": "傳輸：",
+        "e2e_rtt": ""
     },
     "dateUtils": {
         "earlier": "稍早",
@@ -740,5 +745,10 @@
         "sendFeedback": "發送回報",
         "terms": "條款",
         "title": "安全、全功能、完全免費的視訊會議"
+    },
+    "chromeExtensionBanner": {
+        "dontShowAgain": "",
+        "buttonText": "",
+        "installExtensionText": ""
     }
 }
