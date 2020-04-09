@@ -774,11 +774,11 @@
         "roomname": "",
         "roomnameHint": "",
         "sendFeedback": "",
-        "terms": "",
+        "terms": "Baldintzak",
         "title": ""
     },
     "lonelyMeetingExperience": {
-        "button": "",
+        "button": "Gonbidatu beste batzuk",
         "youAreAlone": "Bileran dagoen bakarra zara"
     },
     "helpView": {
