@@ -361,11 +361,11 @@
         "raiseHand": "Altxa edo jaitsi eskua",
         "showSpeakerStats": "",
         "toggleChat": "Ireki edo itxi txata",
-        "toggleFilmstrip": "",
+        "toggleFilmstrip": "Erakutsi edo ezkutatu bideoaren miniaturak",
         "toggleScreensharing": "",
         "toggleShortcuts": "Erakutsi edo ezkutatu teklatu lasterbideak",
         "videoMute": "Abiarazi edo gelditu zure kamera",
-        "videoQuality": ""
+        "videoQuality": "Kudeatu deiaren kalitatea"
     },
     "liveStreaming": {
         "busy": "",
