@@ -457,9 +457,9 @@
         "startSilentDescription": "",
         "suboptimalBrowserWarning": "",
         "suboptimalExperienceTitle": "",
-        "unmute": "",
-        "newDeviceCameraTitle": "",
-        "newDeviceAudioTitle": "",
+        "unmute": "Desmututu",
+        "newDeviceCameraTitle": "Kamera berria hauteman da",
+        "newDeviceAudioTitle": "Audio-gailu berria hauteman da",
         "newDeviceAction": "Erabilera"
     },
     "passwordSetRemotely": "beste parte-hartzaile batek ezarrita",
