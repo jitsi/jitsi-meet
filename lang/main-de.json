@@ -77,9 +77,9 @@
         "DISCONNECTED": "Getrennt",
         "DISCONNECTING": "Verbindung wird getrennt",
         "ERROR": "Fehler",
-        "FETCH_SESSION_ID": "Sitzungs-ID erhalten…",
+        "FETCH_SESSION_ID": "Sitzungs-ID erhalten …",
         "GET_SESSION_ID_ERROR": "Sitzungs-ID-Fehler erhalten: {{code}}",
-        "GOT_SESSION_ID": "Sitzungs-ID erhalten… Beendet",
+        "GOT_SESSION_ID": "Sitzungs-ID erhalten … Beendet",
         "LOW_BANDWIDTH": "Video für {{displayName}} wurde ausgeschaltet, um Bandbreite einzusparen"
     },
     "connectionindicator": {
@@ -464,7 +464,7 @@
     "poweredby": "Betrieben von",
     "presenceStatus": {
         "busy": "Beschäftigt",
-        "calling": "Wird angerufen…",
+        "calling": "Wird angerufen …",
         "connected": "Verbunden",
         "connecting": "Verbindung wird hergestellt…",
         "connecting2": "Wird verbunden*…",
@@ -474,7 +474,7 @@
         "initializingCall": "Anruf wird initialisiert…",
         "invited": "Einladen",
         "rejected": "Abgelehnt",
-        "ringing": "Es klingelt…"
+        "ringing": "Es klingelt …"
     },
     "profile": {
         "setDisplayNameLabel": "Anzeigename festlegen",
