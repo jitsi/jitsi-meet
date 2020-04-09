@@ -271,7 +271,9 @@
         "muteEveryoneElseTitle": "Tysta alla utom {{vem}}?",
         "muteEveryoneDialog": "Är du säker på att du vill tysta alla? Du kan inte slå på mikrofonen åt dem, men de kan själva slå på sin egen mikrofon när som helst.",
         "muteEveryoneStartMuted": "Alla börjar tystade",
-        "muteEveryoneTitle": "Tysta alla?"
+        "muteEveryoneTitle": "Tysta alla?",
+        "sendPrivateMessage": "",
+        "screenSharingAudio": ""
     },
     "dialOut": {
         "statusMessage": "är nu {{status}}"
