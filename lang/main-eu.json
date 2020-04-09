@@ -340,9 +340,9 @@
         "alertText": "Ezin izan da parte hartzaile batzuk gonbidatu.",
         "header": "",
         "searchCallOnlyPlaceholder": "",
-        "searchPeopleOnlyPlaceholder": "",
-        "searchPlaceholder": "",
-        "send": ""
+        "searchPeopleOnlyPlaceholder": "Bilatu parte-hartzaileak",
+        "searchPlaceholder": "Parte-hartzailea edo telefono zenbakia",
+        "send": "Bidali"
     },
     "inlineDialogFailure": {
         "msg": "",
