@@ -75,7 +75,8 @@
         "RECONNECTING": "網路發生問題。重新連線中.........",
         "GOT_SESSION_ID": "正在取得 session-id… 完成",
         "GET_SESSION_ID_ERROR": "取得 session-id 時發生錯誤：{{code}}",
-        "FETCH_SESSION_ID": "正在取得 session-id…"
+        "FETCH_SESSION_ID": "正在取得 session-id…",
+        "LOW_BANDWIDTH": "已關閉 {{displayName}} 的影片以節省流量"
     },
     "connectionindicator": {
         "address": "位址：",
@@ -100,7 +101,13 @@
         "remoteport": "遠端端口：",
         "resolution": "解析度：",
         "status": "連接：",
-        "transport": "傳輸："
+        "transport": "傳輸：",
+        "transport_plural": "傳輸：",
+        "remoteport_plural": "遠端連線埠：",
+        "remoteaddress_plural": "遠端位址：",
+        "localport_plural": "本機連線埠：",
+        "localaddress_plural": "本機位址：",
+        "e2e_rtt": "E2E RTT："
     },
     "dateUtils": {
         "earlier": "稍早",
@@ -264,7 +271,14 @@
         "WaitForHostMsgWOk": "此會議 <b>{{room}}</b> 尚未啟動。如果您是會議主人，請按 [確定] 進行認證；否者，請等待會議主人到達。",
         "WaitingForHost": "等侯主辦人 ...",
         "Yes": "是的",
-        "yourEntireScreen": "自己的全螢幕"
+        "yourEntireScreen": "自己的全螢幕",
+        "screenSharingAudio": "分享音訊",
+        "muteEveryoneStartMuted": "現在所有人皆已靜音",
+        "muteEveryoneSelf": "您自己",
+        "muteEveryoneTitle": "靜音所有人？",
+        "muteEveryoneDialog": "是否要靜音所有人？您將不能解除對方的靜音，但對方可以隨時解除自己的靜音狀態。",
+        "muteEveryoneElseTitle": "是否要讓除了 {{whom}} 以外的人靜音？",
+        "muteEveryoneElseDialog": "靜音後，你就不能再解除對方的靜音，但對方可以隨時解除自己的靜音狀態。"
     },
     "dialOut": {
         "statusMessage": "現在狀態為 {{status}}"
@@ -377,7 +391,9 @@
         "signOut": "登出",
         "start": "啟動直播串流",
         "streamIdHelp": "這是什麼？",
-        "unavailableTitle": "直播串流無法使用"
+        "unavailableTitle": "直播串流無法使用",
+        "googlePrivacyPolicy": "Google 隱私權政策",
+        "youtubeTerms": "YouTube 服務條款"
     },
     "localRecording": {
         "clientState": {
@@ -517,23 +533,25 @@
         "selectMic": "麥克風",
         "startAudioMuted": "全部人啟動時處於靜音",
         "startVideoMuted": "全部人啟動時處於隱藏",
-        "title": "設置"
+        "title": "設置",
+        "speakers": "揚聲器",
+        "microphones": "麥克風"
     },
     "settingsView": {
-        "advanced": "",
+        "advanced": "進階",
         "alertOk": "確定",
         "alertTitle": "警告",
         "alertURLText": "所輸入的伺服器 URL 是無效的",
         "buildInfoSection": "建立資訊",
         "conferenceSection": "會議",
-        "disableCallIntegration": "",
-        "disableP2P": "",
+        "disableCallIntegration": "停用原生電話整合",
+        "disableP2P": "停用端對端模式",
         "displayName": "顯示名稱",
         "email": "電子郵件",
         "header": "設置",
         "profileSection": "簡介",
         "serverURL": "伺服器 URL",
-        "showAdvanced": "",
+        "showAdvanced": "顯示進階設定",
         "startWithAudioMuted": "啟動並靜音",
         "startWithVideoMuted": "啟動並關閉影像",
         "version": "版本"
@@ -596,7 +614,10 @@
             "tileView": "切換平鋪檢視",
             "toggleCamera": "切換攝影機",
             "videomute": "切換無影像",
-            "videoblur": "切換影像模糊"
+            "videoblur": "切換影像模糊",
+            "toggleFilmstrip": "切換幻燈片",
+            "muteEveryone": "靜音所有人",
+            "moreOptions": "顯示更多選項"
         },
         "addPeople": "新增人員到您的通話中",
         "audioOnlyOff": "停用低頻寬模式",
@@ -622,9 +643,9 @@
         "lowerYourHand": "放下舉手",
         "moreActions": "更多動作",
         "mute": "靜音 / 解除靜音",
-        "noAudioSignalTitle": "",
-        "noAudioSignalDesc": "",
-        "noAudioSignalDescSuggestion": "",
+        "noAudioSignalTitle": "您的麥克風沒有輸入訊號！",
+        "noAudioSignalDesc": "如果您沒有特別從系統設定或硬體靜音，請考慮更換裝置。",
+        "noAudioSignalDescSuggestion": "如果您沒有特別從系統設定或硬體靜音，請考慮切換至建議裝置。",
         "openChat": "開啟交談",
         "pip": "進入子母畫面模式",
         "privateMessage": "發送私人訊息",
@@ -646,7 +667,13 @@
         "toggleCamera": "切換攝影機",
         "videomute": "啟動/停止 攝影裝置",
         "startvideoblur": "模糊我的背景畫面",
-        "stopvideoblur": "停用背景模糊畫面"
+        "stopvideoblur": "停用背景模糊畫面",
+        "noisyAudioInputDesc": "噪音聽起來是從麥克風傳來的，請考慮靜音或更換裝置。",
+        "noisyAudioInputTitle": "您的麥克風疑似有雜音！",
+        "noAudioSignalDialInLinkDesc": "播入號碼",
+        "noAudioSignalDialInDesc": "您亦可使用下述方式撥入：",
+        "muteEveryone": "靜音所有人",
+        "moreOptions": "更多選項"
     },
     "transcribing": {
         "ccButtonTooltip": "啟動/停止 字幕",
@@ -712,7 +739,8 @@
         "muted": "處於靜音",
         "remoteControl": "遠端控制",
         "show": "顯示在台上",
-        "videomute": "參與者已經停止攝影裝置"
+        "videomute": "參與者已經停止攝影裝置",
+        "domuteOthers": "靜音其他所有人"
     },
     "welcomepage": {
         "accessibilityLabel": {
@@ -731,7 +759,7 @@
         "roomNameAllowedChars": "會議的名稱不可包含這些字元: ?, &, :, ', \", %, #.",
         "go": "開始",
         "goSmall": "開始",
-        "join": "",
+        "join": "建立 / 加入",
         "info": "資訊",
         "privacy": "隱私",
         "recentList": "最近使用",
@@ -742,11 +770,19 @@
         "roomnameHint": "請輸入您想加入的會議室名稱或 URL 網址。您可以用個名稱來建立會議室，只要其他人輸入相同的名稱就能加入會議室喔。",
         "sendFeedback": "發送回報",
         "terms": "條款",
-        "title": "安全、全功能、完全免費的視訊會議"
+        "title": "安全、全功能、完全免費的視訊會議",
+        "getHelp": "取得協助"
     },
     "chromeExtensionBanner": {
         "dontShowAgain": "不再顯示此訊息",
         "buttonText": "安裝 Chrome 擴充套件",
         "installExtensionText": "安裝適用於 Google 行事曆及 Office 365 整合的擴充套件"
+    },
+    "helpView": {
+        "header": "說明中心"
+    },
+    "lonelyMeetingExperience": {
+        "youAreAlone": "您是會議中的唯一一個人",
+        "button": "邀請其他人"
     }
 }
