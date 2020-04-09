@@ -676,7 +676,8 @@
         "videomute": "Démarrer / Arrêter la caméra",
         "startvideoblur": "Flouter mon arrière plan",
         "stopvideoblur": "Désactiver le flou d'arrière-plan",
-        "muteEveryone": "Mettre tout le monde en sourdine"
+        "muteEveryone": "Mettre tout le monde en sourdine",
+        "noAudioSignalDialInDesc": ""
     },
     "transcribing": {
         "ccButtonTooltip": "Activer/Désactiver les sous-titres",
