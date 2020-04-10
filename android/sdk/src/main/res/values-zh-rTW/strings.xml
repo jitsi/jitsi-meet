@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="ongoing_notification_text">您正在會議中。按一下返回會議。</string>
-    <string name="ongoing_notification_title">傳出會議</string>
-    <string name="app_name">Jitsi Meet SDK</string>
-</resources>
