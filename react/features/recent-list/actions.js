@@ -8,10 +8,8 @@ import {
 } from './actionTypes';
 
 /**
- * Deletes a recent list entry based on url and date.
+ * Deletes the recent meeting list.
  *
- * @param {Object} entryId - An object constructed of the url and the date of
- * the entry for easy identification.
  * @returns {{
  *     type: DELETE_RECENT_LIST
  * }}

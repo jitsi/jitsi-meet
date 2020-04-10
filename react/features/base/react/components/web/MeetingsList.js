@@ -8,11 +8,8 @@ import {
     translate
 } from '../../../i18n';
 
-import type { Dispatch } from 'redux';
-import { connect } from '../../../../base/redux';
 import Container from './Container';
 import Text from './Text';
-import { deleteRecentList } from '../../../../recent-list/actions';
 
 type Props = {
 
@@ -30,6 +27,7 @@ type Props = {
      * Function to be invoked when an item is pressed. The item's URL is passed.
      */
     onPress: Function,
+    onClear: Function,
 
     /**
      * Rendered when the list is empty. Should be a rendered element.
@@ -49,12 +47,7 @@ type Props = {
     /**
      * Translate function
      */
-    t: Function,
-
-    /**
-     * The redux store's {@code dispatch} function.
-     */
-    dispatch: Dispatch<any>
+    t: Function
 };
 
 /**
@@ -102,21 +95,8 @@ class MeetingsList extends Component<Props> {
     constructor(props: Props) {
         super(props);
 
-        this._onClear = this._onClear.bind(this);
         this._onPress = this._onPress.bind(this);
         this._renderItem = this._renderItem.bind(this);
-    }
-
-    _onClear: void => void;
-
-    /**
-     * Clear all history items and refresh page.
-     *
-     * @private
-     * @returns {void}
-     */
-    _onClear() {
-        this.props.dispatch(deleteRecentList());
     }
 
     /**
@@ -125,7 +105,7 @@ class MeetingsList extends Component<Props> {
      * @returns {React.ReactNode}
      */
     render() {
-        const { listEmptyComponent, meetings, t } = this.props;
+        const { listEmptyComponent, meetings, onClear, t } = this.props;
 
         /**
          * If there are no recent meetings we don't want to display anything.
@@ -141,19 +121,16 @@ class MeetingsList extends Component<Props> {
                             ? listEmptyComponent
                             : meetings.map(this._renderItem)
                     }
-                    <div
-                        className =
-                            {
-                                meetings.length > 0
-                                    ? 'meetings-list-web-clear'
-                                    : 'meetings-list-web-clear hide'
-                            } >
-                        <div
-                            className = 'button'
-                            onClick = { this._onClear } >
-                            { t('welcomepage.recentListDeleteAll') }
+                    { onClear
+                        && meetings.length > 0
+                        && <div className = 'meetings-list-web-clear'>
+                            <div
+                                className = 'button'
+                                onClick = { onClear } >
+                                { t('welcomepage.recentListDeleteAll') }
+                            </div>
                         </div>
-                    </div>
+                    }
                 </Container>
             );
         }
@@ -242,4 +219,4 @@ class MeetingsList extends Component<Props> {
     }
 }
 
-export default translate(connect()(MeetingsList));
+export default translate(MeetingsList);

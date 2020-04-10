@@ -9,6 +9,7 @@ import { connect } from '../../base/redux';
 
 import AbstractRecentList from './AbstractRecentList';
 import { isRecentListEnabled, toDisplayableList } from '../functions';
+import { deleteRecentList } from '../actions';
 
 /**
  * The type of the React {@code Component} props of {@link RecentList}
@@ -42,6 +43,7 @@ type Props = {
  */
 class RecentList extends AbstractRecentList<Props> {
     _getRenderListEmptyComponent: () => React$Node;
+    _onClear: void => Function;
     _onPress: string => {};
 
     /**
@@ -54,7 +56,18 @@ class RecentList extends AbstractRecentList<Props> {
 
         this._getRenderListEmptyComponent
             = this._getRenderListEmptyComponent.bind(this);
+        this._onClear = this._onClear.bind(this);
         this._onPress = this._onPress.bind(this);
+    }
+
+    /**
+     * Clear all the recent meetings in the history.
+     *
+     * @private
+     * @returns {void}
+     */
+    _onClear() {
+        this.props.dispatch(deleteRecentList());
     }
 
     /**
@@ -78,6 +91,7 @@ class RecentList extends AbstractRecentList<Props> {
                 hideURL = { true }
                 listEmptyComponent = { this._getRenderListEmptyComponent() }
                 meetings = { recentList }
+                onClear = { this._onClear }
                 onPress = { this._onPress } />
         );
     }
