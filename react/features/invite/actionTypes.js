@@ -42,26 +42,6 @@ export const REMOVE_PENDING_INVITE_REQUESTS
 export const SET_CALLEE_INFO_VISIBLE = 'SET_CALLEE_INFO_VISIBLE';
 
 /**
- * The type of Redux action to set the visibility of the dial in summary.
- *
- * {
- *     type: SET_DIAL_IN_SUMMARY_VISIBLE,
- *     visible: boolean
- * }
- */
-export const SET_DIAL_IN_SUMMARY_VISIBLE = 'SET_DIAL_IN_SUMMARY_VISIBLE';
-
-/**
- * The type of redux action which sets the invite dialog visible or invisible.
- *
- * {
- *     type: SET_INVITE_DIALOG_VISIBLE,
- *     visible: boolean
- * }
- */
-export const SET_INVITE_DIALOG_VISIBLE = 'SET_INVITE_DIALOG_VISIBLE';
-
-/**
  * The type of the action which signals an error occurred while requesting dial-
  * in numbers.
  *

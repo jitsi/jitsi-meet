@@ -8,7 +8,7 @@ import { IconArrowDown } from '../../../base/icons';
 import JitsiMeetJS from '../../../base/lib-jitsi-meet/_';
 import { ToolboxButtonWithIcon } from '../../../base/toolbox';
 import { connect } from '../../../base/redux';
-
+import { getMediaPermissionPromptVisibility } from '../../../overlay';
 import { AudioSettingsPopup, toggleAudioSettings } from '../../../settings';
 
 type Props = {
@@ -17,6 +17,12 @@ type Props = {
      * Click handler for the small icon. Opens audio options.
      */
     onAudioOptionsClick: Function,
+
+    /**
+     * Whether the permission prompt is visible or not.
+     * Useful for enabling the button on permission grant.
+     */
+    permissionPromptVisibility: boolean,
 
     /**
      * If the user has audio input or audio output devices.
@@ -82,6 +88,17 @@ class AudioSettingsButton extends Component<Props, State> {
     }
 
     /**
+     * Implements React's {@link Component#componentDidUpdate}.
+     *
+     * @inheritdoc
+     */
+    componentDidUpdate(prevProps) {
+        if (this.props.permissionPromptVisibility !== prevProps.permissionPromptVisibility) {
+            this._updatePermissions();
+        }
+    }
+
+    /**
      * Implements React's {@link Component#render}.
      *
      * @inheritdoc
@@ -113,7 +130,8 @@ function mapStateToProps(state) {
     return {
         hasDevices:
             hasAvailableDevices(state, 'audioInput')
-            || hasAvailableDevices(state, 'audioOutput')
+            || hasAvailableDevices(state, 'audioOutput'),
+        permissionPromptVisibility: getMediaPermissionPromptVisibility(state)
     };
 }
 

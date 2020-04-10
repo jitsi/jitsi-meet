@@ -104,8 +104,8 @@
             "nonoptimal": "Ikke optimal",
             "poor": "Dårlig"
         },
-        "remoteaddress": "Fjern adresse:",
-        "remoteaddress_plural": "Fjern adresser:",
+        "remoteaddress": "Fjernadresse:",
+        "remoteaddress_plural": "Fjernadresser:",
         "remoteport": "Fjern port:",
         "remoteport_plural": "Fjern porte:",
         "resolution": "Opløsning:",
