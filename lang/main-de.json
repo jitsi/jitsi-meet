@@ -188,7 +188,7 @@
         "inlineInstallExtension": "Jetzt installieren",
         "internalError": "Oh! Es hat etwas nicht funktioniert. Der folgende Fehler ist aufgetreten: {{error}}",
         "internalErrorTitle": "Interner Fehler",
-        "kickMessage": "Sie können sich für weitere Einzelheiten an {{participantDisplayName}}} wenden.",
+        "kickMessage": "Sie können sich für weitere Einzelheiten an {{participantDisplayName}} wenden.",
         "kickParticipantButton": "Entfernen",
         "kickParticipantDialog": "Wollen Sie diesen Teilnehmer wirklich entfernen?",
         "kickParticipantTitle": "Teilnehmer entfernen?",
