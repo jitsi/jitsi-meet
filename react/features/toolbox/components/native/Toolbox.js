@@ -110,6 +110,7 @@ class Toolbox extends PureComponent<Props> {
 
         return (
             <View
+                accessibilityRole = 'toolbar'
                 pointerEvents = 'box-none'
                 style = { styles.toolbar }>
                 {
