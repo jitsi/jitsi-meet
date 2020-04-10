@@ -285,7 +285,7 @@ class WelcomePage extends AbstractWelcomePage {
             return null;
         }
 
-        const { _calendarEnabled, t } = this.props;
+        const { _calendarEnabled, _recentListEnabled, t } = this.props;
 
         const tabs = [];
 
@@ -296,10 +296,16 @@ class WelcomePage extends AbstractWelcomePage {
             });
         }
 
-        tabs.push({
-            label: t('welcomepage.recentList'),
-            content: <RecentList />
-        });
+        if (_recentListEnabled) {
+            tabs.push({
+                label: t('welcomepage.recentList'),
+                content: <RecentList />
+            });
+        }
+
+        if (tabs.length === 0) {
+            return null;
+        }
 
         return (
             <Tabs

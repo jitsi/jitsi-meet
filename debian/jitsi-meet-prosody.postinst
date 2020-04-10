@@ -17,6 +17,9 @@ set -e
 # for details, see http://www.debian.org/doc/debian-policy/ or
 # the debian-policy package
 
+function generateRandomPassword() {
+    cat /dev/urandom | tr -dc 'a-zA-Z0-9' | head -c 16
+}
 
 case "$1" in
     configure)
@@ -51,7 +54,7 @@ case "$1" in
         db_get jicofo/jicofo-authpassword
         if [ -z "$RET" ] ; then
             # if password is missing generate it, and store it
-            JICOFO_AUTH_PASSWORD=`head -c 8 /dev/urandom | tr '\0-\377' 'a-zA-Z0-9a-zA-Z0-9a-zA-Z0-9a-zA-Z0-9@@@@####'`
+            JICOFO_AUTH_PASSWORD=`generateRandomPassword`
             db_set jicofo/jicofo-authpassword "$JICOFO_AUTH_PASSWORD"
         else
             JICOFO_AUTH_PASSWORD="$RET"
@@ -60,7 +63,7 @@ case "$1" in
         db_get jicofo/jicofosecret
         if [ -z "$RET" ] ; then
             # if secret is missing generate it, and store it
-            JICOFO_SECRET=`head -c 8 /dev/urandom | tr '\0-\377' 'a-zA-Z0-9a-zA-Z0-9a-zA-Z0-9a-zA-Z0-9@@@@####'`
+            JICOFO_SECRET=`generateRandomPassword`
             db_set jicofo/jicofosecret "$JICOFO_SECRET"
         else
             JICOFO_SECRET="$RET"
@@ -83,7 +86,7 @@ case "$1" in
         db_get jitsi-meet-prosody/turn-secret
         if [ -z "$RET" ] ; then
             # 8-chars random secret used for the turnserver
-            TURN_SECRET=`cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 8 | head -n 1`
+            TURN_SECRET=`generateRandomPassword`
             db_set jitsi-meet-prosody/turn-secret "$TURN_SECRET"
         else
             TURN_SECRET="$RET"
@@ -134,9 +137,9 @@ case "$1" in
         # as we are migrating configs
         if [ -f $PROSODY_HOST_CONFIG ] && ! grep -q "internal.auth.$JVB_HOSTNAME" $PROSODY_HOST_CONFIG; then
             echo -e "\nComponent \"internal.auth.$JVB_HOSTNAME\" \"muc\"" >> $PROSODY_HOST_CONFIG
-            echo -e "    storage = \"null\"" >> $PROSODY_HOST_CONFIG
+            echo -e "    storage = \"memory\"" >> $PROSODY_HOST_CONFIG
             echo -e "    modules_enabled = { \"ping\"; }" >> $PROSODY_HOST_CONFIG
-            echo -e "    admins = { \"focusUser@auth.jitmeet.example.com\", \"jvb@auth.jitmeet.example.com\" }" >> $PROSODY_HOST_CONFIG
+            echo -e "    admins = { \"$JICOFO_AUTH_USER@auth.$JVB_HOSTNAME\", \"jvb@auth.$JVB_HOSTNAME\" }" >> $PROSODY_HOST_CONFIG
         fi
 
         if [ ! -f /var/lib/prosody/$JVB_HOSTNAME.crt ]; then
@@ -148,14 +151,13 @@ case "$1" in
             ln -sf /var/lib/prosody/$JVB_HOSTNAME.crt /etc/prosody/certs/$JVB_HOSTNAME.crt
         fi
 
-        PR11_INSTALL_CHECK="$(dpkg-query -f '${Status}' -W 'prosody-0.11' 2>/dev/null | awk '{print $3}' || true)"
+        PRTRUNK_INSTALL_CHECK="$(dpkg-query -f '${Status}' -W 'prosody-trunk' 2>/dev/null | awk '{print $3}' || true)"
         PR10_INSTALL_CHECK="$(dpkg-query -f '${Status}' -W 'prosody-0.10' 2>/dev/null | awk '{print $3}' || true)"
         PR_VER_INSTALLED=$(dpkg-query -f='${Version}\n' --show prosody  2>/dev/null || true)
-        if [ "$PR11_INSTALL_CHECK" = "installed" ] \
-            || [ "$PR11_INSTALL_CHECK" = "unpacked" ] \
-            || dpkg --compare-versions "$PR_VER_INSTALLED" gt "0.11" ; then
+        if [ "$PRTRUNK_INSTALL_CHECK" = "installed" ] \
+            || [ "$PRTRUNK_INSTALL_CHECK" = "unpacked" ] ; then
             if [ -f $PROSODY_HOST_CONFIG ]; then
-                sed -i 's/storage = \"null\"/storage = \"memory\"/g' $PROSODY_HOST_CONFIG
+                sed -i 's/storage = \"memory\"/storage = \"null\"/g' $PROSODY_HOST_CONFIG
 
                 # trigger a restart
                 PROSODY_CONFIG_PRESENT="false"
@@ -168,7 +170,7 @@ case "$1" in
             # if the version is 0.10.X (>0.10 and <0.11)
             if [ -f $PROSODY_HOST_CONFIG ] \
                 && dpkg --compare-versions "$PR_VER_INSTALLED" lt "0.11" ; then
-                sed -i 's/storage = \"null\"/storage = \"none\"/g' $PROSODY_HOST_CONFIG
+                sed -i 's/storage = \"memory\"/storage = \"none\"/g' $PROSODY_HOST_CONFIG
 
                 # trigger a restart
                 PROSODY_CONFIG_PRESENT="false"

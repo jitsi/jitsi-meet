@@ -1,11 +1,10 @@
 // @flow
 
 import React, { Component } from 'react';
-import { TextInput, TouchableOpacity, View } from 'react-native';
+import { Platform, TextInput, TouchableOpacity, View } from 'react-native';
 
 import { translate } from '../../../base/i18n';
 import { Icon, IconChatSend } from '../../../base/icons';
-import { Platform } from '../../../base/react';
 
 import styles from './styles';
 

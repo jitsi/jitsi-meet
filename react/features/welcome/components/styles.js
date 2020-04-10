@@ -4,7 +4,7 @@ import { StyleSheet } from 'react-native';
 
 import { BoxModel, ColorPalette } from '../../base/styles';
 
-export const PLACEHOLDER_TEXT_COLOR = 'rgba(255, 255, 255, 0.3)';
+export const PLACEHOLDER_TEXT_COLOR = 'rgba(255, 255, 255, 0.5)';
 
 export const SIDEBAR_AVATAR_SIZE = 100;
 
@@ -65,14 +65,6 @@ export default {
     },
 
     /**
-     * Renders the button visually disabled.
-     */
-    buttonDisabled: {
-        backgroundColor: '#cccccc',
-        borderColor: '#999999'
-    },
-
-    /**
      * Join button text style.
      */
     buttonText: {
@@ -89,6 +81,12 @@ export default {
         fontSize: 16,
         marginTop: BoxModel.margin,
         textAlign: 'center'
+    },
+
+    enterRoomText: {
+        color: TEXT_COLOR,
+        fontSize: 18,
+        marginBottom: BoxModel.margin
     },
 
     /**

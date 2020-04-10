@@ -594,6 +594,7 @@
         "logout": "Logout",
         "lowerYourHand": "Abbassa la mano",
         "moreActions": "Più azioni",
+        "moreOptions": "Più opzioni",
         "mute": "Microfono Attiva / Disattiva",
         "openChat": "Apri una chat",
         "pip": "Abilita visualizzazione immagine nell’immagine",
@@ -654,7 +655,7 @@
     "videoStatus": {
         "audioOnly": "AUD",
         "audioOnlyExpanded": "Modalita' solo audio attiva. Questa modalità permette di rispamiare banda ma non vedrai gli altri partecipanti.",
-        "callQuality": "Qualità audio",
+        "callQuality": "Qualità video",
         "hd": "HD",
         "highDefinition": "Alta definizione",
         "labelTooiltipNoVideo": "Nessun video",
@@ -707,5 +708,9 @@
         "sendFeedback": "Invia feedback",
         "terms": "Termini di utilizzo",
         "title": "Il sistema di conferenza sicuro, funzionale e completamente gratuito."
+    },
+    "lonelyMeetingExperience": {
+        "button": "Invita gli altri",
+        "youAreAlone": "Sei l'unico in riunione"
     }
 }

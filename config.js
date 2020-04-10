@@ -110,12 +110,11 @@ var config = {
 
     // w3c spec-compliant video constraints to use for video capture. Currently
     // used by browsers that return true from lib-jitsi-meet's
-    // util#browser#usesNewGumFlow. The constraints are independency from
-    // this config's resolution value. Defaults to requesting an ideal aspect
-    // ratio of 16:9 with an ideal resolution of 720.
+    // util#browser#usesNewGumFlow. The constraints are independent from
+    // this config's resolution value. Defaults to requesting an ideal
+    // resolution of 720p.
     // constraints: {
     //     video: {
-    //         aspectRatio: 16 / 9,
     //         height: {
     //             ideal: 720,
     //             max: 720,
@@ -343,10 +342,8 @@ var config = {
         // The STUN servers that will be used in the peer to peer connections
         stunServers: [
 
-            // { urls: 'stun:jitsi-meet.example.com:443' },
-            { urls: 'stun:stun.l.google.com:19302' },
-            { urls: 'stun:stun1.l.google.com:19302' },
-            { urls: 'stun:stun2.l.google.com:19302' }
+            // { urls: 'stun:jitsi-meet.example.com:4446' },
+            { urls: 'stun:meet-jit-si-turnrelay.jitsi.net:443' }
         ],
 
         // Sets the ICE transport policy for the p2p connection. At the time
@@ -391,6 +388,9 @@ var config = {
         // region: "europe",
         // userRegion: "asia"
     },
+
+    // Decides whether the start/stop recording audio notifications should play on record.
+    // disableRecordAudioNotification: false,
 
     // Information for the chrome extension banner
     // chromeExtensionBanner: {
@@ -460,6 +460,15 @@ var config = {
     //    // to the specified URL for an app download page.
     //    downloadAppsUrl: 'https://docs.example.com/our-apps.html'
     // },
+
+    // Options related to the remote participant menu.
+    // remoteVideoMenu: {
+    //     // If set to true the 'Kick out' button will be disabled.
+    //     disableKick: true
+    // },
+
+    // If set to true all muting operations of remote participants will be disabled.
+    // disableRemoteMute: true,
 
     // List of undocumented settings used in jitsi-meet
     /**

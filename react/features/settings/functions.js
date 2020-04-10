@@ -2,6 +2,7 @@
 import { toState } from '../base/redux';
 import { parseStandardURIString } from '../base/util';
 import { i18next, DEFAULT_LANGUAGE, LANGUAGES } from '../base/i18n';
+import { createLocalTrack } from '../base/lib-jitsi-meet/functions';
 import {
     getLocalParticipant,
     isLocalParticipantModerator
@@ -129,4 +130,74 @@ export function getProfileTabProps(stateful: Object | Function) {
         displayName: localParticipant.name,
         email: localParticipant.email
     };
+}
+
+/**
+ * Returns a promise which resolves with a list of objects containing
+ * all the video jitsiTracks and appropriate errors for the given device ids.
+ *
+ * @param {string[]} ids - The list of the camera ids for wich to create tracks.
+ *
+ * @returns {Promise<Object[]>}
+ */
+export function createLocalVideoTracks(ids: string[]) {
+    return Promise.all(ids.map(deviceId => createLocalTrack('video', deviceId)
+                   .then(jitsiTrack => {
+                       return {
+                           jitsiTrack,
+                           deviceId
+                       };
+                   })
+                   .catch(() => {
+                       return {
+                           jitsiTrack: null,
+                           deviceId,
+                           error: 'deviceSelection.previewUnavailable'
+                       };
+                   })));
+}
+
+
+/**
+ * Returns a promise which resolves with an object containing the corresponding
+ * the audio jitsiTrack/error.
+ *
+ * @param {string} deviceId - The deviceId for the current microphone.
+ *
+ * @returns {Promise<Object>}
+ */
+export function createLocalAudioTrack(deviceId: string) {
+    return createLocalTrack('audio', deviceId)
+                   .then(jitsiTrack => {
+                       return {
+                           hasError: false,
+                           jitsiTrack
+                       };
+                   })
+                   .catch(() => {
+                       return {
+                           hasError: true,
+                           jitsiTrack: null
+                       };
+                   });
+}
+
+/**
+ * Returns the visibility state of the audio settings.
+ *
+ * @param {Object} state - The state of the application.
+ * @returns {boolean}
+ */
+export function getAudioSettingsVisibility(state: Object) {
+    return state['features/settings'].audioSettingsVisible;
+}
+
+/**
+ * Returns the visibility state of the video settings.
+ *
+ * @param {Object} state - The state of the application.
+ * @returns {boolean}
+ */
+export function getVideoSettingsVisibility(state: Object) {
+    return state['features/settings'].videoSettingsVisible;
 }

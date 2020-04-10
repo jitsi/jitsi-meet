@@ -14,11 +14,6 @@ export default {
     },
 
     webView: {
-        flex: 1
-    },
-
-    webViewWrapper: {
-        flex: 1,
-        flexDirection: 'column'
+        backgroundColor: 'rgb(242, 242, 242)'
     }
 };

@@ -21,16 +21,16 @@
         "bluetooth": "Bluetooth",
         "headphones": "Hoofdtelefoon",
         "phone": "Telefoon",
-        "speaker": "Spreker"
+        "speaker": "Speaker"
     },
     "audioOnly": {
         "audioOnly": "Alleen audio"
     },
     "calendarSync": {
         "addMeetingURL": "Een link naar de vergadering toevoegen",
-        "confirmAddLink": "Wilt u een Jitsi-link naar deze gebeurtenis toevoegen?",
+        "confirmAddLink": "Wilt u een Jitsi-link aan deze gebeurtenis toevoegen?",
         "error": {
-            "appConfiguration": "De Agenda-integratie is niet naar behoren geconfigureerd.",
+            "appConfiguration": "De agenda-integratie is niet juist ingesteld.",
             "generic": "Er is een fout opgetreden. Controleer de agenda-instellingen of vernieuw de agenda.",
             "notSignedIn": "Er is een fout opgetreden tijdens de verificatie voor het weergeven van agendagebeurtenissen. Controleer de agenda-instellingen en probeer u opnieuw aan te melden."
         },
@@ -40,18 +40,23 @@
         "noEvents": "Er zijn geen gebeurtenissen gepland.",
         "ongoingMeeting": "actieve vergadering",
         "permissionButton": "Instellingen openen",
-        "permissionMessage": "U hebt een machtiging voor Agenda nodig om uw vergaderingen weer te geven in de app.",
+        "permissionMessage": "U hebt een machtiging voor Agenda nodig om uw afspraken weer te geven in de app.",
         "refresh": "Agenda vernieuwen",
         "today": "Vandaag"
     },
     "chat": {
         "error": "Fout: uw bericht \"{{originalText}}\" is niet verzonden. Reden: {{error}}",
+        "fieldPlaceHolder": "Type hier je bericht",
         "messagebox": "Typ een bericht",
+        "messageTo": "Privébericht aan {{recipient}}",
+        "noMessagesMessage": "Er zijn nog geen berichten in deze bijkeenkomst. Begin een gesprek!",
         "nickname": {
             "popover": "Kies een bijnaam",
             "title": "Voer een bijnaam in om de chatfunctie te gebruiken"
         },
-        "title": "Chat"
+        "privateNotice": "Privébericht aan {{recipient}}",
+        "title": "Chat",
+        "you": "jij"
     },
     "connectingOverlay": {
         "joiningRoom": "Er wordt verbinding gemaakt met de vergadering..."
@@ -132,7 +137,7 @@
             "liveStreaming": "Livestream"
         },
         "allow": "Toestaan",
-        "alreadySharedVideoMsg": "Er wordt al een video gedeeld door een ander lid. In deze vergadering kan slechts één video tegelijkertijd worden gedeeld.",
+        "alreadySharedVideoMsg": "Er wordt al een video gedeeld door een andere deelnemer. In deze vergadering kan slechts één video tegelijkertijd worden gedeeld.",
         "alreadySharedVideoTitle": "Slechts één gedeelde video tegelijkertijd toegestaan",
         "applicationWindow": "Toepassingsvenster",
         "Back": "Terug",
@@ -176,10 +181,10 @@
         "kickMessage": "U bent uit de vergadering verwijderd.",
         "kickParticipantButton": "Verwijderen",
         "kickParticipantDialog": "Weet u zeker dat u deze deelnemer wilt verwijderen?",
-        "kickParticipantTitle": "Dit lid verwijderen?",
+        "kickParticipantTitle": "Deze deelnemer verwijderen?",
         "kickTitle": "Verwijderd uit vergadering",
         "liveStreaming": "Livestream",
-        "liveStreamingDisabledForGuestTooltip": "Gasten kunnen livestream niet starten.",
+        "liveStreamingDisabledForGuestTooltip": "Gasten kunnen de livestream niet starten.",
         "liveStreamingDisabledTooltip": "Het starten van de livestream is uitgeschakeld.",
         "lockMessage": "Het vergrendelen van de vergadering is mislukt.",
         "lockRoom": "Wachtwoord voor vergadering toevoegen",
@@ -188,7 +193,7 @@
         "logoutTitle": "Afmelden",
         "maxUsersLimitReached": "Het maximale aantal leden is bereikt. De vergadering is vol. Neem contact op met de eigenaar van de vergadering of probeer het later opnieuw.",
         "maxUsersLimitReachedTitle": "Maximaal aantal leden bereikt",
-        "micConstraintFailedError": "Uw microfoon voldoet niet aan alle vereiste beperkingen.",
+        "micConstraintFailedError": "Uw microfoon voldoet niet aan alle vereiste randvoorwaarden.",
         "micNotFoundError": "Microfoon niet gevonden.",
         "micNotSendingData": "Er is geen toegang tot uw microfoon verkregen. Selecteer een ander apparaat in de instellingen of laad de toepassing opnieuw.",
         "micNotSendingDataTitle": "Geen toegang tot de microfoon",
@@ -196,8 +201,8 @@
         "micUnknownError": "Kan de microfoon om een onbekende reden niet gebruiken.",
         "muteParticipantBody": "U kunt het dempen van anderen niet opheffen, maar zij kunnen dit wel op elk gewenst moment voor zichzelf doen.",
         "muteParticipantButton": "Dempen",
-        "muteParticipantDialog": "Weet u zeker dat u deze deelnemer wilt dempen? U kunt het dempen niet opheffen, maar dit kan deze persoon wel op elk gewenst moment zelf doen.",
-        "muteParticipantTitle": "Dit lid dempen?",
+        "muteParticipantDialog": "Weet u zeker dat u deze deelnemer wilt dempen? U kunt het dempen niet opheffen, maar deze deelnemer kan dat wel op elk gewenst moment zelf doen.",
+        "muteParticipantTitle": "Deze deelnemer dempen?",
         "Ok": "OK",
         "passwordLabel": "Wachtwoord",
         "passwordNotSupported": "Het instellen van een wachtwoord voor een vergadering wordt niet ondersteund.",
@@ -227,7 +232,7 @@
         "screenSharingFailedToInstallTitle": "Installatie van extensie voor het delen van het scherm is mislukt",
         "screenSharingFirefoxPermissionDeniedError": "Er is iets misgegaan tijdens het delen van uw scherm. Controleer of u hier toestemming voor hebt verleend.",
         "screenSharingFirefoxPermissionDeniedTitle": "Scherm delen kan niet worden gestart.",
-        "screenSharingPermissionDeniedError": "Er is iets misgegaan met de machtigingen voor de extensie voor het delen van het scherm. Laad de toepassing opnieuw en probeer het nog eens.",
+        "screenSharingPermissionDeniedError": "Er is iets misgegaan met de permissies voor het delen van het scherm. Laad de toepassing opnieuw en probeer het nog eens.",
         "serviceUnavailable": "Service niet beschikbaar",
         "sessTerminated": "Gesprek beëindigd",
         "Share": "Delen",
@@ -332,13 +337,13 @@
         "raiseHand": "Uw hand opsteken of laten zakken",
         "showSpeakerStats": "Sprekerstatistieken weergeven",
         "toggleChat": "Chatgesprek openen of sluiten",
-        "toggleFilmstrip": "Videominiaturen weergeven of verbergen",
+        "toggleFilmstrip": "Toon of verberg videominiaturen",
         "toggleScreensharing": "Schakelen tussen camera en het delen van het scherm",
         "toggleShortcuts": "Sneltoetsen weergeven of verbergen",
         "videoMute": "Uw camera starten of stoppen"
     },
     "liveStreaming": {
-        "busy": "Er worden streamingresources vrijgemaakt. Probeer het over enkele minuten opnieuw.",
+        "busy": "We werken aan het vrijmaken van streaming-middelen. Probeer het over enkele minuten opnieuw.",
         "busyTitle": "Alle streamers zijn momenteel bezet",
         "changeSignIn": "Wissel van account.",
         "choose": "Een livestream kiezen",
@@ -421,16 +426,16 @@
         "somebody": "Iemand",
         "startSilentTitle": "",
         "startSilentDescription": "",
-        "suboptimalExperienceDescription": "Helaas zal uw {{appName}}-ervaring hier niet optimaal zijn. Mogelijk wordt dit in de toekomst verbeterd, maar tot die tijd vragen we u een van de <a href='static/recommendedBrowsers.html' target='_blank'>volledig ondersteunde browsers</a> te gebruiken.",
+        "suboptimalExperienceDescription": "Helaas zal uw {{appName}}-ervaring hier niet optimaal zijn. We proberen dit in de toekomst te verbeteren, maar tot die tijd kunt u proberen een van de <a href='static/recommendedBrowsers.html' target='_blank'>volledig ondersteunde browsers</a> te gebruiken.",
         "suboptimalExperienceTitle": "Browserwaarschuwing",
         "unmute": "",
         "newDeviceCameraTitle": "Nieuwe camera gedetecteerd",
         "newDeviceAudioTitle": "Nieuw audioapparaat gedetecteerd",
         "newDeviceAction": "Gebruik"
     },
-    "passwordSetRemotely": "ingesteld door een ander lid",
+    "passwordSetRemotely": "ingesteld door een andere deelnemer",
     "passwordDigitsOnly": "Maximaal {{number}} cijfers",
-    "poweredby": "powered by",
+    "poweredby": "mogelijk gemaakt door",
     "presenceStatus": {
         "busy": "Bezet",
         "calling": "Bellen...",
@@ -503,16 +508,18 @@
         "title": "Instellingen"
     },
     "settingsView": {
+        "advanced": "Geavanceerd",
         "alertOk": "OK",
         "alertTitle": "Waarschuwing",
         "alertURLText": "De ingevoerde server-URL is ongeldig",
-        "buildInfoSection": "Buildgegevens",
-        "conferenceSection": "Conferentie",
+        "buildInfoSection": "Versiegegevens",
+        "conferenceSection": "Bijeenkomsten",
         "displayName": "Weergavenaam",
         "email": "E‑mail",
         "header": "Instellingen",
         "profileSection": "Profiel",
         "serverURL": "Server-URL",
+        "showAdvanced": "Toon geavanceerde instellingen",
         "startWithAudioMuted": "Starten met audio gedempt",
         "startWithVideoMuted": "Starten met video gedempt",
         "version": "Versie"
@@ -595,6 +602,7 @@
         "logout": "Afmelden",
         "lowerYourHand": "Uw hand laten zakken",
         "moreActions": "Meer acties",
+        "moreOptions": "Meer opties",
         "mute": "Dempen/dempen opheffen",
         "openChat": "Chat openen",
         "pip": "Beeld-in-beeld-modus activeren",
@@ -675,11 +683,11 @@
         "flip": "Omslaan",
         "kick": "Verwijderen",
         "moderator": "Moderator",
-        "mute": "Lid is gedempt",
+        "mute": "Deelnemer is gedempt",
         "muted": "Gedempt",
         "remoteControl": "Extern beheer",
         "show": "",
-        "videomute": "Lid heeft de camera gestopt"
+        "videomute": "Deelnemer heeft de camera gestopt"
     },
     "welcomepage": {
         "accessibilityLabel": {
@@ -705,8 +713,12 @@
         "reducedUIText": "",
         "roomname": "Naam van ruimte invoeren",
         "roomnameHint": "Voer de naam of URL in van de ruimte die u wilt betreden. U kunt een naam verzinnen, maar geef de naam wel door aan de andere deelnemers, zodat zij dezelfde naam kunnen invoeren.",
-        "sendFeedback": "Feedback verzenden",
+        "sendFeedback": "Feedback sturen",
         "terms": "Voorwaarden",
         "title": "Veilige, volledig uitgeruste en geheel gratis videovergaderingen"
+    },
+    "lonelyMeetingExperience": {
+        "button": "Anderen uitnodigen",
+        "youAreAlone": "Je bent de enige in dit gesprek"
     }
 }

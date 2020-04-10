@@ -71,7 +71,7 @@ export default class JitsiStreamBlurEffect {
     async _renderMask() {
         this._maskInProgress = true;
         this._segmentationData = await this._bpModel.segmentPerson(this._inputVideoElement, {
-            internalResolution: 'low', // resized to 0.25 times of the original resolution before inference
+            internalResolution: 'medium', // resized to 0.5 times of the original resolution before inference
             maxDetections: 1, // max. number of person poses to detect per image
             segmentationThreshold: 0.7 // represents probability that a pixel belongs to a person
         });
@@ -80,7 +80,7 @@ export default class JitsiStreamBlurEffect {
             this._outputCanvasElement,
             this._inputVideoElement,
             this._segmentationData,
-            15, // Constant for background blur, integer values between 0-20
+            12, // Constant for background blur, integer values between 0-20
             7 // Constant for edge blur, integer values between 0-20
         );
     }

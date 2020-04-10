@@ -6,8 +6,8 @@ muc_mapper_domain_base = "jitmeet.example.com";
 turncredentials_secret = "__turnSecret__";
 
 turncredentials = {
-  { type = "stun", host = "jitmeet.example.com", port = "443" },
-  { type = "turn", host = "jitmeet.example.com", port = "443", transport = "udp" },
+  { type = "stun", host = "jitmeet.example.com", port = "4446" },
+  { type = "turn", host = "jitmeet.example.com", port = "4446", transport = "udp" },
   { type = "turns", host = "jitmeet.example.com", port = "443", transport = "tcp" }
 };
 
@@ -43,21 +43,25 @@ VirtualHost "jitmeet.example.com"
         c2s_require_encryption = false
 
 Component "conference.jitmeet.example.com" "muc"
-    storage = "null"
+    storage = "memory"
     modules_enabled = {
         "muc_meeting_id";
         "muc_domain_mapper";
         -- "token_verification";
     }
     admins = { "focusUser@auth.jitmeet.example.com" }
+    muc_room_locking = false
+    muc_room_default_public_jids = true
 
 -- internal muc component
 Component "internal.auth.jitmeet.example.com" "muc"
-    storage = "null"
+    storage = "memory"
     modules_enabled = {
       "ping";
     }
     admins = { "focusUser@auth.jitmeet.example.com", "jvb@auth.jitmeet.example.com" }
+    muc_room_locking = false
+    muc_room_default_public_jids = true
 
 VirtualHost "auth.jitmeet.example.com"
     authentication = "internal_plain"

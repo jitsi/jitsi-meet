@@ -86,27 +86,31 @@ function _appWillMount({ dispatch, getState }, next, action) {
  * @returns {*} The result returned by {@code next(action)}.
  */
 function _conferenceWillLeave({ dispatch, getState }, next, action) {
-    let locationURL;
+    const { doNotStoreRoom } = getState()['features/base/config'];
 
-    /**
-     * FIXME:
-     * It is better to use action.conference[JITSI_CONFERENCE_URL_KEY]
-     * in order to make sure we get the url the conference is leaving
-     * from (i.e. the room we are leaving from) because if the order of events
-     * is different, we cannot be guranteed that the location URL in base
-     * connection is the url we are leaving from... not the one we are going to
-     * (the latter happens on mobile -- if we use the web implementation);
-     * however, the conference object on web does not have
-     * JITSI_CONFERENCE_URL_KEY so we cannot call it and must use the other way
-     */
-    if (typeof APP === 'undefined') {
-        locationURL = action.conference[JITSI_CONFERENCE_URL_KEY];
-    } else {
-        locationURL = getState()['features/base/connection'].locationURL;
+    if (!doNotStoreRoom) {
+        let locationURL;
+
+        /**
+         * FIXME:
+         * It is better to use action.conference[JITSI_CONFERENCE_URL_KEY]
+         * in order to make sure we get the url the conference is leaving
+         * from (i.e. the room we are leaving from) because if the order of events
+         * is different, we cannot be guranteed that the location URL in base
+         * connection is the url we are leaving from... not the one we are going to
+         * (the latter happens on mobile -- if we use the web implementation);
+         * however, the conference object on web does not have
+         * JITSI_CONFERENCE_URL_KEY so we cannot call it and must use the other way
+         */
+        if (typeof APP === 'undefined') {
+            locationURL = action.conference[JITSI_CONFERENCE_URL_KEY];
+        } else {
+            locationURL = getState()['features/base/connection'].locationURL;
+        }
+        dispatch(
+            _updateConferenceDuration(
+                locationURL));
     }
-    dispatch(
-        _updateConferenceDuration(
-            locationURL));
 
     return next(action);
 }
@@ -122,7 +126,9 @@ function _conferenceWillLeave({ dispatch, getState }, next, action) {
  * @returns {*} The result returned by {@code next(action)}.
  */
 function _setRoom({ dispatch, getState }, next, action) {
-    if (action.room) {
+    const { doNotStoreRoom } = getState()['features/base/config'];
+
+    if (!doNotStoreRoom && action.room) {
         const { locationURL } = getState()['features/base/connection'];
 
         if (locationURL) {
