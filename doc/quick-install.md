@@ -25,6 +25,14 @@ Finally on the same machine test that you can ping the FQDN with: `ping "$(hostn
 echo 'deb https://download.jitsi.org stable/' >> /etc/apt/sources.list.d/jitsi-stable.list
 wget -qO -  https://download.jitsi.org/jitsi-key.gpg.key | sudo apt-key add -
 ```
+### Open ports in your firewall
+
+Open the following ports in your firewall, to allow traffic to the machine running jitsi:
+
+ - 80 TCP
+ - 443 TCP
+ - 10000 UDP
+
 
 ### Install Jitsi Meet
 
