@@ -5,14 +5,14 @@
  *
  * @type {string}
  */
-export const CHROME = 'http://google.com/chrome';
+export const CHROME = 'https://www.google.com/chrome/';
 
 /**
  * The URL at which Chromium is available for download.
  *
  * @type {string}
  */
-export const CHROMIUM = 'http://www.chromium.org/';
+export const CHROMIUM = 'https://www.chromium.org/';
 
 /**
  * The URL at which Microsoft Edge is available for download.
@@ -27,7 +27,7 @@ export const EDGE
  *
  * @type {string}
  */
-export const FIREFOX = 'http://www.getfirefox.com/';
+export const FIREFOX = 'https://www.getfirefox.com/';
 
 /**
  * The URL at which Safari is available for download.
