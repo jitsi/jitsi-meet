@@ -22,6 +22,7 @@ import {
     createDesiredLocalTracks,
     destroyLocalTracks
 } from '../../base/tracks';
+import { HelpView } from '../../help';
 import { DialInSummary } from '../../invite';
 import { SettingsView } from '../../settings';
 
@@ -288,10 +289,9 @@ class WelcomePage extends AbstractWelcomePage {
                         </View>
                     </SafeAreaView>
                     <WelcomePageLists disabled = { this.state._fieldFocused } />
-                    <SettingsView />
-                    <DialInSummary />
                 </View>
                 <WelcomePageSideBar />
+                { this._renderWelcomePageModals() }
             </LocalVideoTrackUnderlay>
         );
     }
@@ -311,6 +311,19 @@ class WelcomePage extends AbstractWelcomePage {
                 </Text>
             </View>
         );
+    }
+
+    /**
+     * Renders JitsiModals that are supposed to be on the welcome page.
+     *
+     * @returns {Array<ReactElement>}
+     */
+    _renderWelcomePageModals() {
+        return [
+            <HelpView key = 'helpView' />,
+            <DialInSummary key = 'dialInSummary' />,
+            <SettingsView key = 'settings' />
+        ];
     }
 }
 

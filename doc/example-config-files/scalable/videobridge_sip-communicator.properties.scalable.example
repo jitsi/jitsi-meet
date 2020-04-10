@@ -1,0 +1,19 @@
+org.ice4j.ice.harvest.DISABLE_AWS_HARVESTER=true
+org.ice4j.ice.harvest.STUN_MAPPING_HARVESTER_ADDRESSES=meet-jit-si-turnrelay.jitsi.net:443
+
+org.jitsi.jicofo.ALWAYS_TRUST_MODE_ENABLED=true
+
+org.jitsi.videobridge.ENABLE_REST_SHUTDOWN=true
+
+# Enable broadcasting stats/presence in a MUC
+org.jitsi.videobridge.ENABLE_STATISTICS=true
+org.jitsi.videobridge.STATISTICS_TRANSPORT=muc,colibri,rest
+org.jitsi.videobridge.STATISTICS_INTERVAL=5000
+
+org.jitsi.videobridge.xmpp.user.shard-1.HOSTNAME=meet.example.com
+org.jitsi.videobridge.xmpp.user.shard-1.DOMAIN=auth.meet.example.com
+org.jitsi.videobridge.xmpp.user.shard-1.USERNAME=jvb
+org.jitsi.videobridge.xmpp.user.shard-1.PASSWORD=$VB_PASSWORD
+org.jitsi.videobridge.xmpp.user.shard-1.MUC_JIDS=JvbBrewery@internal.auth.meet.example.com
+org.jitsi.videobridge.xmpp.user.shard-1.MUC_NICKNAME=$NICKNAME_OF_VB
+org.jitsi.videobridge.xmpp.user.shard-1.DISABLE_CERTIFICATE_VERIFICATION=true

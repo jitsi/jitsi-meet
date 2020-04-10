@@ -38,6 +38,7 @@ case "$1" in
 
         NGINX_SITES_ENABLED="/etc/nginx/sites-enabled/"
         NGINX_CONFIG_ENABLED="${NGINX_SITES_ENABLED}${JVB_HOSTNAME}.conf"
+        NGINX_MULTIPLEXING="true"
         for site in ${NGINX_SITES_ENABLED}*; do
             # if it is not a file continue
             [ -f "${site}" ] || continue
@@ -48,11 +49,10 @@ case "$1" in
                 # nothing to do
                 echo "------------------------------------------------"
                 echo ""
-                echo "turnserver not configured as other nginx sites use port 443"
+                echo "turnserver is listening on tcp 4445 as other nginx sites use port 443"
                 echo ""
                 echo "------------------------------------------------"
-                db_stop
-                exit 0
+                NGINX_MULTIPLEXING="false"
             fi
         done
 
@@ -77,7 +77,7 @@ case "$1" in
             # nothing to do
             echo "------------------------------------------------"
             echo ""
-            echo "turnserver not configured as no nginx found to multiplex traffic"
+            echo "turnserver not configured"
             echo ""
             echo "------------------------------------------------"
             db_stop
@@ -106,18 +106,19 @@ case "$1" in
         TURN_SECRET="$RET"
 
         # no turn config exists, lt's copy template and fill it in
-        PUBLIC_IP=$(dig +short myip.opendns.com @resolver1.opendns.com)
+        PUBLIC_IP=$(dig +short myip.opendns.com @resolver1.opendns.com) || true
+        if [ -z "$PUBLIC_IP" ] ; then
+            PUBLIC_IP="127.0.0.1"
+            echo "------------------------------------------------"
+            echo "Warning! Could not resolve your external ip address! Error:^"
+            echo "Your turn server will not work till you edit your $TURN_CONFIG config file."
+            echo "You need to set your external ip address in external-ip and restart coturn service."
+            echo "------------------------------------------------"
+        fi
         cp /usr/share/jitsi-meet-turnserver/turnserver.conf $TURN_CONFIG
         sed -i "s/jitsi-meet.example.com/$JVB_HOSTNAME/g" $TURN_CONFIG
         sed -i "s/__turnSecret__/$TURN_SECRET/g" $TURN_CONFIG
-        sed -i "s/__external_ip_address__/$JVB_HOSTNAME/g" $TURN_CONFIG
-
-        # Hack Debian Buster coturn to be able to bind privileged port 443
-        COTURN_UNIT_FILE="/lib/systemd/system/coturn.service"
-        if [[ -f $COTURN_UNIT_FILE ]] && ! grep -q "CAP_NET_BIND_SERVICE" "$COTURN_UNIT_FILE" ; then
-            sed -i "s/\[Service\]/\[Service\]\nAmbientCapabilities=CAP_NET_BIND_SERVICE/g" $COTURN_UNIT_FILE
-            systemctl daemon-reload
-        fi
+        sed -i "s/__external_ip_address__/$PUBLIC_IP/g" $TURN_CONFIG
 
         # SSL for nginx
         db_get jitsi-meet/cert-choice
@@ -142,11 +143,18 @@ case "$1" in
         invoke-rc.d coturn restart || true
 
         NGINX_STREAM_CONFIG="/etc/nginx/modules-enabled/60-jitsi-meet.conf"
-        if [ ! -f $NGINX_STREAM_CONFIG ] && [ -f $NGINX_CONFIG ] ; then
+        if [ $NGINX_MULTIPLEXING = "true" ] && [ ! -f $NGINX_STREAM_CONFIG ] && [ -f $NGINX_CONFIG ] ; then
             ln -s /usr/share/jitsi-meet-turnserver/jitsi-meet.conf $NGINX_STREAM_CONFIG
             sed -i "s/listen 443 ssl/listen 4444 ssl http2/g" $NGINX_CONFIG
             sed -i "s/listen \[\:\:\]\:443 ssl/listen \[\:\:\]\:4444 ssl http2/g" $NGINX_CONFIG
             invoke-rc.d nginx reload || true
+        else
+            PROSODY_HOST_CONFIG="/etc/prosody/conf.avail/$JVB_HOSTNAME.cfg.lua"
+            if [ -f $PROSODY_HOST_CONFIG ] ; then
+                # If we are not multiplexing we need to change the port in prosody config
+                sed -i 's/"443"/"4445"/g' $PROSODY_HOST_CONFIG
+                invoke-rc.d prosody restart || true
+            fi
         fi
 
         # Enable turn server in config.js

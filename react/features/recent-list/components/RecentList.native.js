@@ -5,10 +5,11 @@ import type { Dispatch } from 'redux';
 
 import { getDefaultURL } from '../../app';
 import { translate } from '../../base/i18n';
+import { setActiveModalId } from '../../base/modal';
 import { NavigateSectionList, type Section } from '../../base/react';
 import { connect } from '../../base/redux';
 import { ColorPalette } from '../../base/styles';
-import { showDialInSummary } from '../../invite';
+import { DIAL_IN_SUMMARY_VIEW_ID } from '../../invite/constants';
 
 import { deleteRecentListEntry } from '../actions';
 import { isRecentListEnabled, toDisplayableList } from '../functions';
@@ -124,7 +125,7 @@ class RecentList extends AbstractRecentList<Props> {
      * @returns {void}
      */
     _onShowDialInInfo(itemId) {
-        this.props.dispatch(showDialInSummary(itemId.url));
+        this.props.dispatch(setActiveModalId(DIAL_IN_SUMMARY_VIEW_ID, { summaryUrl: itemId.url }));
     }
 }
 

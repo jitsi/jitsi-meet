@@ -6,30 +6,12 @@ import { i18next } from '../base/i18n';
 
 import {
     SET_AUDIO_SETTINGS_VISIBILITY,
-    SET_SETTINGS_VIEW_VISIBLE,
     SET_VIDEO_SETTINGS_VISIBILITY
 } from './actionTypes';
 import { SettingsDialog } from './components';
 import { getMoreTabProps, getProfileTabProps } from './functions';
 
 declare var APP: Object;
-
-/**
- * Sets the visibility of the view/UI which renders the app's settings.
- *
- * @param {boolean} visible - If the view/UI which renders the app's settings is
- * to be made visible, {@code true}; otherwise, {@code false}.
- * @returns {{
- *     type: SET_SETTINGS_VIEW_VISIBLE,
- *     visible: boolean
- * }}
- */
-export function setSettingsViewVisible(visible: boolean) {
-    return {
-        type: SET_SETTINGS_VIEW_VISIBLE,
-        visible
-    };
-}
 
 /**
  * Opens {@code SettingsDialog}.
