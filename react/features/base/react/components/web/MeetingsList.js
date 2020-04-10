@@ -27,6 +27,10 @@ type Props = {
      * Function to be invoked when an item is pressed. The item's URL is passed.
      */
     onPress: Function,
+
+    /**
+     * Function to be invoked when clear history button is pressed.
+     */
     onClear: Function,
 
     /**
