@@ -50,7 +50,7 @@ This hostname (or IP address) will be used for virtualhost configuration inside 
 
 In order to have encrypted communications, you need a [TLS certificate](https://en.wikipedia.org/wiki/Transport_Layer_Security). The easiest way is to use [Let's Encrypt](https://letsencrypt.org/).
 
-_Note_: Jitsi Meet mobile apps *require* a valid certificate signed by a trusted [Certificate Authority](https://en.wikipedia.org/wiki/Certificate_authority) and will not be able to connect to your server if you choose a self-signed certificate.
+_Note_: Jitsi Meet mobile apps *require* a valid certificate signed by a trusted [Certificate Authority](https://en.wikipedia.org/wiki/Certificate_authority) (such as a Let's Encrypt certificate) and will not be able to connect to your server if you choose a self-signed certificate.
 
 Simply run the following in your shell:
 
