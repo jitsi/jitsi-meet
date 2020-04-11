@@ -29,7 +29,7 @@
     },
     "calendarSync": {
         "addMeetingURL": "Meeting-Link hinzufügen",
-        "confirmAddLink": "Wollen Sie einen Jitsi-Link zu diesem Termin hinzufügen?",
+        "confirmAddLink": "Möchten Sie einen Jitsi-Link zu diesem Termin hinzufügen?",
         "error": {
             "appConfiguration": "Kalenderintegration ist nicht richtig konfiguriert.",
             "generic": "Ein Fehler ist aufgetreten. Prüfen Sie Ihre Kalendereinstellungen oder versuchen Sie, den Kalender zu aktualisieren.",
@@ -188,7 +188,7 @@
         "inlineInstallExtension": "Jetzt installieren",
         "internalError": "Oh! Es hat etwas nicht funktioniert. Der folgende Fehler ist aufgetreten: {{error}}",
         "internalErrorTitle": "Interner Fehler",
-        "kickMessage": "Sie können sich für weitere Einzelheiten an {{participantDisplayName}} wenden.",
+        "kickMessage": "Sie können sich für mehr Details an {{participantDisplayName}} wenden.",
         "kickParticipantButton": "Entfernen",
         "kickParticipantDialog": "Wollen Sie diesen Teilnehmer wirklich entfernen?",
         "kickParticipantTitle": "Teilnehmer entfernen?",
@@ -439,7 +439,7 @@
         "invitedOneMember": "{{displayName}} wurde eingeladen",
         "invitedThreePlusMembers": "{{name}} und {{count}} andere wurden eingeladen",
         "invitedTwoMembers": "{{first}} und {{second}} wurden eingeladen",
-        "kickParticipant": "Sie können sich für weitere Einzelheiten an {{participantDisplayName}}} wenden.",
+        "kickParticipant": "Sie können sich für mehr Details an {{participantDisplayName}} wenden.",
         "me": "Ich",
         "moderator": "Moderatorenrechte vergeben",
         "muted": "Der Konferenz wurde stumm beigetreten.",
