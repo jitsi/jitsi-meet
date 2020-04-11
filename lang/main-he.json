@@ -21,10 +21,11 @@
         "bluetooth": "בלוטות'",
         "headphones": "אוזניות",
         "phone": "טלפון",
-        "speaker": "רמקול"
+        "speaker": "רמקול",
+		"none": "אין התקן שמע זמין"
     },
     "audioOnly": {
-        "audioOnly": "שמע בלבד"
+        "audioOnly": "רוחב פס נמוך"
     },
     "calendarSync": {
         "addMeetingURL": "הוסף קישור מפגש",
@@ -46,12 +47,22 @@
     },
     "chat": {
         "error": "שגיאה: ההודעה שלך \"{{originalText}}\" לא נשלחה. סיבה: {{error}}",
+		"fieldPlaceHolder": "הקלד הודעתך כאו",
         "messagebox": "הקלד הודעה",
+		"messageTo": "הודעה פרטית אל {{recipient}}",
+        "noMessagesMessage": "אין עדיין הודעות בפגישה. התחל שיחה כאן!",
         "nickname": {
             "popover": "בחר שם משתמש",
             "title": "נא להזין שם משתמש בכדי להשתמש בצ'אט"
         },
-        "title": "צ'אט"
+        "privateNotice": "הודעה פרטית אל {{recipient}}",
+        "title": "צ'אט",
+        "you": "אתה"
+    },
+    "chromeExtensionBanner": {
+        "installExtensionText": "התקן את התוסף לשילוב Google Calendar ו-Office 365",
+        "buttonText": "התקן את תוסף Chrome",
+        "dontShowAgain": "אל תציג לי זאת שוב"
     },
     "connectingOverlay": {
         "joiningRoom": "מחבר אותך למפגש שלך..."
@@ -66,7 +77,10 @@
         "DISCONNECTED": "לא מחובר",
         "DISCONNECTING": "מתנתק",
         "ERROR": "שגיאה",
-        "RECONNECTING": "התרחשה שגיאת רשת, מתחבר מחדש..."
+        "FETCH_SESSION_ID": "השגת מזהה הפעלה...",
+        "GET_SESSION_ID_ERROR": "התקבלה שגיאה מזהה הפעלה: {{code}}",
+        "GOT_SESSION_ID": "השגת מזהה הפעלה... בוצע",
+        "LOW_BANDWIDTH": "הווידאו עבור {{displayName}} כבה כדי לשמור על רוחב הפס"
     },
     "connectionindicator": {
         "address": "כתובת:",
@@ -74,6 +88,7 @@
         "bitrate": "קצב סיביות:",
         "bridgeCount": "מספר שרתים: ",
         "connectedTo": "מחובר אל:",
+        "e2e_rtt": "E2E RTT:",
         "framerate": "קצב מסגרת:",
         "less": "הצג פחות",
         "localaddress": "כתובת מקומית:",
@@ -96,8 +111,7 @@
         "resolution": "פתרון הבעיה:",
         "status": "מחובר:",
         "transport": "תעבורה:",
-        "transport_plural": "תעבורות:",
-        "turn": " (תור)"
+        "transport_plural": "תעבורות:"
     },
     "dateUtils": {
         "earlier": "מוקדם יותר",
@@ -115,6 +129,7 @@
         "tryAgainButton": "נסה שוב במחשב"
     },
     "defaultLink": "למשל {{url}}",
+	"defaultNickname": "למשל אליאנה שליו",
     "deviceError": {
         "cameraError": "הגישה למצלמה שלך כשלה",
         "cameraPermission": "שגיאה בקבלת הרשאת מצלמה",
@@ -194,6 +209,12 @@
         "micNotSendingDataTitle": "לא ניתן לגשת למיקרופון",
         "micPermissionDeniedError": "לא נתת הרשאה להשתמש במיקרופון שלך. אתה עדיין יכול להצטרף לוועידה אך אחרים לא ישמעו אותך. השתמש בלחצן המצלמה בסרגל הכתובות כדי לתקן זאת.",
         "micUnknownError": "לא ניתן להשתמש במיקרופון מסיבה לא ידועה.",
+        "muteEveryoneElseDialog": "לאחר שתושתק, לא תוכל להשתיק אותם, אך הם יכולים להשתיק את עצמם בכל עת.",
+        "muteEveryoneElseTitle": "השתק את כולם מלבד {{whom}}?",
+        "muteEveryoneDialog": "האם אתה בטוח שברצונך להשתיק את כולם? לא תוכל לבטל את השתקתם, אך הם יכולים לבטל את השתקת עצמם בכל עת.",
+        "muteEveryoneTitle": "להשתיק את כולם?",
+        "muteEveryoneSelf": "עצמך",
+        "muteEveryoneStartMuted": "כולם מושתקים מעתה והילך",
         "muteParticipantBody": "לא תוכל לבטל את השתקתם, אך הם יכולים לבטל את השתקת עצמם בכל עת.",
         "muteParticipantButton": "השתק",
         "muteParticipantDialog": "האם אתה בטוח שברצונך להשתיק משתתף זה? לא תוכל לבטל את השתקתם, אך הם יוכלו לבטל את השתקת עצמם בכל עת.",
@@ -223,11 +244,16 @@
         "reservationError": "שגיאת מערכת הזמנות",
         "reservationErrorMsg": "קוד שגיאה: {{code}}, הודעה: {{msg}}",
         "retry": "נסה שוב",
+		"screenSharingAudio": "שתף שמע",
         "screenSharingFailedToInstall": "אופס! התקנת הרחבת שיתוף המסך כשלה.",
         "screenSharingFailedToInstallTitle": "התקנת הרחבת שיתוף המסך כשלה",
         "screenSharingFirefoxPermissionDeniedError": "משהו השתבש בזמן שניסינו לשתף את המסך שלך. אנא וודא כי נתת לנו אישור לכך.",
         "screenSharingFirefoxPermissionDeniedTitle": "אופס! לא הצלחנו להתחיל בשיתוף המסך!",
         "screenSharingPermissionDeniedError": "אופס! משהו השתבש בהרשאות התוסף שלך לשיתוף המסך. טען מחדש ונסה שוב.",
+		"sendPrivateMessage": "לאחרונה קיבלת הודעה פרטית. האם התכוונת להשיב על כך באופן פרטי, או שאתה רוצה לשלוח את ההודעה שלך לקבוצה?",
+        "sendPrivateMessageCancel": "שלח לקבוצה",
+        "sendPrivateMessageOk": "שלח לפרטי",
+        "sendPrivateMessageTitle": "לשלוח לפרטי?",
         "serviceUnavailable": "שירותים אינם זמינים",
         "sessTerminated": "השיחה הסתיימה",
         "Share": "שתף",
@@ -260,6 +286,9 @@
     },
     "dialOut": {
         "statusMessage": "אתה כעת {{status}}"
+    },
+    "documentSharing": {
+        "title": "שתף מסמך"
     },
     "feedback": {
         "average": "ממוצע",
@@ -335,7 +364,8 @@
         "toggleFilmstrip": "הצג או הסתר תמונות ממוזערות של וידאו",
         "toggleScreensharing": "מעבר בין מצלמה לשיתוף מסך",
         "toggleShortcuts": "הצג או הסתר קיצורי דרך במקלדת",
-        "videoMute": "הפעל או כבה את המצלמה"
+        "videoMute": "הפעל או כבה את המצלמה",
+        "videoQuality": "נהל איכות שיחה"
     },
     "liveStreaming": {
         "busy": "אנו עובדים על שחרור משאבי הזרמה. אנא נסה שוב בעוד מספר דקות.",
@@ -354,7 +384,9 @@
         "getStreamKeyManually": "לא הצלחנו להשיג הזרמה של שידור חי, נסה להשיג את מפתח שידור החי מיוטיוב.",
         "invalidStreamKey": "מפתח השידור החי עשוי להיות שגוי.",
         "off": "שידור חי הופסק",
+		"offBy": "{{name}} הפסיק את השידור החי",
         "on": "שידור חי",
+		"onBy": "{{name}} הפעיל את השידור החי",
         "pending": "מתחיל שידור חי...",
         "serviceName": "שירותי שידור חי",
         "signedInAs": "אתה מחובר כעת כ:",
@@ -363,7 +395,9 @@
         "signOut": "התנתק",
         "start": "התחל שידור חי",
         "streamIdHelp": "מה זה?",
-        "unavailableTitle": "שידור חי לא זמין"
+        "unavailableTitle": "שידור חי לא זמין",
+		"youtubeTerms": "תנאי השירות של יוטיוב",
+        "googlePrivacyPolicy": "מדיניות הפרטיות של גוגל"
     },
     "localRecording": {
         "clientState": {
@@ -419,14 +453,18 @@
         "passwordSetRemotely": "",
         "raisedHand": "{{name}} מעוניין לדבר.",
         "somebody": "מישהו",
-        "startSilentTitle": "",
-        "startSilentDescription": "",
+        "startSilentTitle": "הצטרפת ללא פלט שמע!",
+        "startSilentDescription": "הצטרף שוב לפגישה כדי לאפשר שמע",
         "suboptimalExperienceDescription": "אופ... אנו חוששים שהחוויה שלך עם {{appName}} לא תהיה נהדרת כאן. אנו מחפשים דרכים לשפר זאת, אך עד אז, נסה להשתמש באחד מה<a href='static/recommendedBrowsers.html' target='_blank'>דפדפנים הנתמכים לחלוטין</a>.",
         "suboptimalExperienceTitle": "אזהרת דפדפן",
-        "unmute": "",
+        "unmute": "בטל השתקה",
         "newDeviceCameraTitle": "זוהתה מצלמה חדשה",
         "newDeviceAudioTitle": "זוהה התקן שמע חדש",
-        "newDeviceAction": "השתמש"
+        "newDeviceAction": "השתמש",
+        "OldElectronAPPTitle": "פגיעות אבטחה!",
+        "oldElectronClientDescription1": "נראה שאתה משתמש בגירסה ישנה של לקוח Jitsi Meet עם פגיעויות אבטחה ידועות. אנא וודא שאתה מעדכן ",
+        "oldElectronClientDescription2": "לגירסה האחרונה",
+        "oldElectronClientDescription3": " כעת!"
     },
     "passwordSetRemotely": "נקבע על ידי חבר אחר",
     "passwordDigitsOnly": "עד {{number}} ספרות",
@@ -451,6 +489,7 @@
         "setEmailLabel": "הזן את כתובת הדואר האלקטרוני של gravatar",
         "title": "פרופיל"
     },
+	"raisedHand": "רוצה לדבר",
     "recording": {
         "authDropboxText": "העלאה אל Dropbox",
         "availableSpace": "שטח זמין: {{spaceLeft}} מ\"ב (בערך {{duration}} דקות הקלטה)",
@@ -466,7 +505,9 @@
         "live": "חי",
         "loggedIn": "מחובר כ-{{userName}}",
         "off": "ההקלטה הופסקה",
+		"offBy": "{{name}} עצר את ההקלטה",
         "on": "מקליט",
+        "onBy": "{{name}} הפעיל את ההקלטה",
         "pending": "מתכונן להקליט את הפגישה...",
         "rec": "מקליט",
         "serviceDescription": "ההקלטה שלך תישמר על ידי שירותי ההקלטה",
@@ -491,6 +532,7 @@
         "followMe": "כולם עוקבים אחריי",
         "language": "שפה",
         "loggedIn": "מחובר כ-{{name}}",
+		"microphones": "מיקרופונים",
         "moderator": "מנחה",
         "more": "עוד",
         "name": "שם",
@@ -498,21 +540,26 @@
         "selectAudioOutput": "פלט שמע",
         "selectCamera": "מצלמה",
         "selectMic": "מיקרופון",
+		"speakers": "דוברים",
         "startAudioMuted": "כולם יתחילו מושתקים",
         "startVideoMuted": "כולם יתחילו מוסתרים",
         "title": "הגדרות"
     },
     "settingsView": {
+		"advanced": "מתקדם",
         "alertOk": "אישור",
         "alertTitle": "אזהרה",
         "alertURLText": "כתובת האתר של השרת שהוזנה אינה חוקית",
         "buildInfoSection": "מידע בנייה",
         "conferenceSection": "ועידה",
+		"disableCallIntegration": "השבת אינטגרציה של שיחות מקוריות",
+        "disableP2P": "כבה מצב עמית לעמית",
         "displayName": "שם תצוגה",
         "email": "דוא\"ל",
         "header": "הגדרות",
         "profileSection": "פרופיל",
         "serverURL": "כתובת שרת",
+		"showAdvanced": "הצג הגדרות מתקדמות",
         "startWithAudioMuted": "התחל עם שמע מושתק",
         "startWithVideoMuted": "התחל עם וידאו מושתק",
         "version": "גרסה"
@@ -547,17 +594,22 @@
             "cc": "שנה כתוביות",
             "chat": "שנה חלון צ'אט",
             "document": "שנה מסמך משותף",
+			"download": "הורד את היישום שלנו",
             "feedback": "השאר משוב",
             "fullScreen": "שנה מסך מלא",
             "hangup": "עזוב את השיחה",
+			"help": "עזרה",
             "invite": "הזמן אנשים",
             "kick": "גרש משתתף",
             "localRecording": "שנה פקדי הקלטה מקומיים",
             "lockRoom": "שנה את סיסמת הפגישה",
             "moreActions": "שנה תפריט פעולות נוספות",
             "moreActionsMenu": "תפריט פעולות נוספות",
+			"moreOptions": "הצג אפשרויות נוספות",
             "mute": "שנה השתקת שמע",
+			"muteEveryone": "השתק את כולם",
             "pip": "שנה מצב תמונה בתוך תמונה",
+			"privateMessage": "שלח הודעה פרטית",
             "profile": "ערוך את הפרופיל שלך",
             "raiseHand": "שנה הרמת יד",
             "recording": "שנה הקלטה",
@@ -567,12 +619,13 @@
             "shareRoom": "הזמן מישהו",
             "shareYourScreen": "שנה שיתוף מסך",
             "shortcuts": "שנה קיצורי דרך",
-            "show": "",
+            "show": "הצג על הבמה",
             "speakerStats": "שנה סטטיסטיקות דוברים",
             "tileView": "שנה תצוגת אריחים",
             "toggleCamera": "שנה מצלמה",
+			"toggleFilmstrip": "שנה את הסרט",
             "videomute": "שנה השתקת וידאו",
-            "videoblur": ""
+            "videoblur": "שנה טשטוש וידאו"
         },
         "addPeople": "הוסף אנשים לשיחה שלך",
         "audioOnlyOff": "כבה מצב שמע בלבד",
@@ -584,21 +637,33 @@
         "closeChat": "סגור צ'אט",
         "documentClose": "סגור מסמך משותף",
         "documentOpen": "פתח מסמך משותף",
+		"download": "הורד את היישום שלנו",
         "enterFullScreen": "הצג מסך מלא",
         "enterTileView": "היכנס לתצוגת אריחים",
         "exitFullScreen": "צא ממסך מלא",
         "exitTileView": "צא מתצוגת אריחים",
         "feedback": "השאר משוב",
         "hangup": "עזוב",
+		"help": "עזרה",
         "invite": "הזמן אנשים",
         "login": "התחבר",
         "logout": "התנתק",
         "lowerYourHand": "הורד את היד",
         "moreActions": "פעולות נוספות",
+		"moreOptions": "אפשרויות נוספות",
         "mute": "השתק / בטל השתקה",
+		"muteEveryone": "השתק את כולם",
+        "noAudioSignalTitle": "אין שום קלט שמגיע מהמיקרופון שלך!",
+        "noAudioSignalDesc": "אם לא השתקת אותו בכוונה מהגדרות המערכת או החומרה, שקול להחליף את ההתקן.",
+        "noAudioSignalDescSuggestion": "אם לא השתקת אותה בכוונה מהגדרות המערכת או החומרה, שקול לעבור להתקן המוצע.",
+        "noAudioSignalDialInDesc": "אתה יכול גם לחייג באמצעות:",
+        "noAudioSignalDialInLinkDesc": "מספרי חיוג",
+        "noisyAudioInputTitle": "נראה שהמיקרופון שלך רועש!",
+        "noisyAudioInputDesc": "זה נשמע כאילו המיקרופון שלך עושה רעש, אנא שקול להשתיק או לשנות את ההתקן.",
         "openChat": "פתח צ'אט",
         "pip": "הכנס למצב תמונה בתוך תמונה",
         "profile": "ערוך את הפרופיל שלך",
+		"privateMessage": "שלח הודעה פרטית",
         "raiseHand": "הרם / הורד את היד",
         "raiseYourHand": "הרם את היד",
         "Settings": "הגדרות",
@@ -615,8 +680,8 @@
         "tileViewToggle": "שנה לתצוגת אריחים",
         "toggleCamera": "שנה מצלמה",
         "videomute": "הפעל / כבה מצלמה",
-        "startvideoblur": "",
-        "stopvideoblur": ""
+        "startvideoblur": "טשטש את הרקע שלי",
+        "stopvideoblur": "כבה את טשטוש הרקע"
     },
     "transcribing": {
         "ccButtonTooltip": "הפעל / כבה כתוביות",
@@ -657,21 +722,25 @@
         "audioOnlyExpanded": "אתה נמצא במצב שמע בלבד. מצב זה חוסך רוחב פס אך לא תראה קטעי וידאו של אחרים.",
         "callQuality": "איכות שיחה",
         "hd": "HD",
-        "highDefinition": "אבחנה גבוהה",
+		"hdTooltip": "צופה בוידיאו בהבחנה גבוהה",
+        "highDefinition": "הבחנה גבוהה",
         "labelTooiltipNoVideo": "ללא וידאו",
         "labelTooltipAudioOnly": "מצב שמע בלבד מופעל",
         "ld": "LD",
-        "lowDefinition": "אבחנה נמוכה",
+		"ldTooltip": "צופה בוידאו בהבחנה נמוכה",
+        "lowDefinition": "הבחנה נמוכה",
         "onlyAudioAvailable": "שמע בלבד זמין",
         "onlyAudioSupported": "אנו תומכים בשמע בלבד בדפדפן זה.",
         "p2pEnabled": "עמית לעמית מופעל",
         "p2pVideoQualityDescription": "במצב עמית לעמית ניתן להחליף איכות שיחה שמתקבלת בין גבוה לשמע בלבד. הגדרות אחרות לא יכובדו עד ליציאת עמית לעמית.",
-        "recHighDefinitionOnly": "מומלץ אבחנה גבוהה.",
+        "recHighDefinitionOnly": "מומלץ הבחנה גבוהה.",
         "sd": "SD",
-        "standardDefinition": "אבחנה רגילה"
+		"sdTooltip": "צופה בוידאו בהבחנה רגילה",
+        "standardDefinition": "הבחנה רגילה"
     },
     "videothumbnail": {
         "domute": "השתק",
+		"domuteOthers": "השתק גם את כולם",
         "flip": "הפוך",
         "kick": "גרש החוצה",
         "moderator": "מנחה",
@@ -695,18 +764,28 @@
         "connectCalendarButton": "התחבר ללוח השנה שלך",
         "connectCalendarText": "",
         "enterRoomTitle": "התחל פגישה חדשה",
+		"getHelp": "השג עזרה",
+		"roomNameAllowedChars": "שם הפגישה לא אמור להכיל אף אחת מהתווים הבאים: ?, &, :, ', \", %, #.",
         "go": "סע",
-        "join": "הצטרף",
+		"goSmall": "סע",
+        "join": "צור / הצטרף",
         "info": "מידע",
         "privacy": "פרטיות",
         "recentList": "לאחרונה",
         "recentListDelete": "מחק",
         "recentListEmpty": "הרשימה האחרונה שלך ריקה כרגע. שוחח בצ'אט עם הצוות שלך ותמצא כאן את כל הפגישות האחרונות שלך.",
-        "reducedUIText": "",
+        "reducedUIText": "ברוכים הבאים אל {{app}}!",
         "roomname": "הזן שם חדר",
         "roomnameHint": "הזן את שם או כתובת האתר של החדר שאליו ברצונך להצטרף. אתה רשאי להגדיר שם, רק יידע את האנשים שאתה מעוניין להפגש איתם לדעת על כך, כדי שהם ייכנסו לאותו שם.",
         "sendFeedback": "שלח משוב",
         "terms": "תנאים",
         "title": "ועידת וידיאו מאובטחת, אפשרויות מלאות ומוצגת בחינם"
+    },
+    "lonelyMeetingExperience": {
+        "button": "הזמן אחרים",
+        "youAreAlone": "אתה היחידי במפגש זה"
+    },
+    "helpView": {
+        "header": "מרכז העזרה"	  					   
     }
 }
