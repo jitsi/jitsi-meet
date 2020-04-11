@@ -20,30 +20,30 @@
     "audioDevices": {
         "bluetooth": "Bluetooth",
         "headphones": "Headphones",
-        "phone": "Phone",
-        "speaker": "Speaker",
-        "none": "No audio devices available"
+        "phone": "Telepon",
+        "speaker": "Pengeras suara",
+        "none": "Perangkat suara tidak tersedia"
     },
     "audioOnly": {
-        "audioOnly": "Low bandwidth"
+        "audioOnly": "Suara saja"
     },
     "calendarSync": {
-        "addMeetingURL": "Add a meeting link",
-        "confirmAddLink": "Do you want to add a Jitsi link to this event?",
+        "addMeetingURL": "Buat link pertemuan",
+        "confirmAddLink": "Tambahkan link Jitsi pada event ini?",
         "error": {
-            "appConfiguration": "Calendar integration is not properly configured.",
-            "generic": "An error has occurred. Please check your calendar settings or try refreshing the calendar.",
-            "notSignedIn": "An error occurred while authenticating to see calendar events. Please check your calendar settings and try logging in again."
+            "appConfiguration": "Ada konfigurasi yang tidak tepat.",
+            "generic": "Kesalahan terjadi. Cek pengaturan atau coba lakukan refresh.",
+            "notSignedIn": "Kesalahan berkaitan dengan autentikasi pada event. Cek pengaturan dan coba lagi"
         },
-        "join": "Join",
-        "joinTooltip": "Join the meeting",
-        "nextMeeting": "next meeting",
-        "noEvents": "There are no upcoming events scheduled.",
-        "ongoingMeeting": "ongoing meeting",
-        "permissionButton": "Open settings",
-        "permissionMessage": "The Calendar permission is required to see your meetings in the app.",
-        "refresh": "Refresh calendar",
-        "today": "Today"
+        "join": "Gabung",
+        "joinTooltip": "Gabung di pertemuan",
+        "nextMeeting": "Pertemuan Berikutnya",
+        "noEvents": "Belum ada event tersedia.",
+        "ongoingMeeting": "Pertemuan yang sedang berjalan",
+        "permissionButton": "Buka Pengaturan",
+        "permissionMessage": "Setelan permisi diperlukan untuk melihat pertemuan.",
+        "refresh": "Muat ulang",
+        "today": "Hari ini"
     },
     "chat": {
         "error": "Error: your message was not sent. Reason: {{error}}",
