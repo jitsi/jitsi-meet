@@ -28,6 +28,7 @@ import {
     setTileView,
     shouldDisplayTileView
 } from '../../../react/features/video-layout';
+import { CLIENT_RESIZED } from '../../../react/features/base/responsive-ui';
 /* eslint-enable no-unused-vars */
 
 const logger = require('jitsi-meet-logger').getLogger(__filename);
@@ -556,8 +557,37 @@ export default class SmallVideo {
         }
 
         if (this.displayMode !== oldDisplayMode) {
+            this.reArrangeVideos();
             logger.debug(`Displaying ${displayModeString} for ${this.id}, data: [${JSON.stringify(displayModeInput)}]`);
         }
+    }
+
+    /**
+     * Change the order of the element, based on displayMode
+     * If is sharing screen/streaming order should be < 10
+     * Else order > 10
+     * Also adds special className 'without-camera' to apply
+     * different styles (smaller width and height)
+     */
+    reArrangeVideos() {
+        if (!this.isLocal
+            && (this.displayMode === DISPLAY_VIDEO || this.displayMode === DISPLAY_VIDEO_WITH_NAME)) {
+            this.container.style.order = 1;
+            this.$container.removeClass('without-camera');
+        } else if (!this.isLocal
+            && (this.displayMode === DISPLAY_AVATAR_WITH_NAME || this.displayMode === DISPLAY_AVATAR)) {
+            this.container.style.order = 11;
+            this.$container.addClass('without-camera');
+        }
+
+        // Force rerender for filmstrip
+        const { clientHeight, clientWidth } = APP.store.getState()['features/base/responsive-ui'];
+
+        APP.store.dispatch({
+            type: CLIENT_RESIZED,
+            clientWidth,
+            clientHeight
+        });
     }
 
     /**

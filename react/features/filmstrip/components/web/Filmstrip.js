@@ -242,6 +242,8 @@ class Filmstrip extends Component <Props> {
                             onMouseOver = { this._onMouseOver }
                             style = { filmstripRemoteVideosContainerStyle }>
                             <div id = 'localVideoTileViewContainer' />
+                            {/* Empty line between smaller and bigger videos */}
+                            <div id = 'videosDelimiter' />
                         </div>
                     </div>
                 </div>

@@ -92,6 +92,11 @@
         video {
             object-fit: contain;
         }
+
+        #videosDelimiter {
+            order: 10;
+            width: 100%;
+        }
     }
 
     .has-overflow#filmstripRemoteVideosContainer {

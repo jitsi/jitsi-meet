@@ -39,29 +39,50 @@ const Filmstrip = {
         const thumbs = this._getThumbs(!forceUpdate);
         const avatarSize = height / 2;
 
-        if (thumbs.localThumb) {
-            thumbs.localThumb.css({
-                'padding-top': '',
-                height: `${height}px`,
-                'min-height': `${height}px`,
-                'min-width': `${width}px`,
-                width: `${width}px`
-            });
-        }
+        const bigVideoCSS = {
+            'padding-top': '',
+            height: `${height}px`,
+            'min-height': `${height}px`,
+            'min-width': `${width}px`,
+            width: `${width}px`
+        };
 
-        if (thumbs.remoteThumbs) {
-            thumbs.remoteThumbs.css({
-                'padding-top': '',
-                height: `${height}px`,
-                'min-height': `${height}px`,
-                'min-width': `${width}px`,
-                width: `${width}px`
-            });
+        if (thumbs.localThumb) {
+            thumbs.localThumb.css(bigVideoCSS);
         }
 
         $('.avatar-container').css({
             height: `${avatarSize}px`,
             width: `${avatarSize}px`
+        });
+
+        Array.from(thumbs.remoteThumbs).forEach(videoThumb => {
+            const $thumb = $(videoThumb);
+
+            // Smaller video
+            if ($thumb.hasClass('without-camera')) {
+                const ratio = width / height;
+
+                // Everything is relative to vw ; width is 15%
+                const smallVideoWidthPercent = 15;
+                const smallVideoHeight = smallVideoWidthPercent / ratio;
+                const smallVideoAvatar = smallVideoHeight / 2.5;
+
+                $thumb.css({
+                    'padding-top': '',
+                    height: `${smallVideoHeight}vw`,
+                    'min-height': `${smallVideoHeight}vw`,
+                    'min-width': `${smallVideoWidthPercent}vw`,
+                    width: `${smallVideoWidthPercent}vw`
+                });
+                $thumb.find('.avatar-container')
+                    .css({
+                        height: `${smallVideoAvatar}vw`,
+                        width: `${smallVideoAvatar}vw`
+                    });
+            } else { // Normal video
+                $thumb.css(bigVideoCSS);
+            }
         });
     },
 
