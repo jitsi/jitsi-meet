@@ -93,6 +93,7 @@ export default [
     'disableRemoteControl',
     'disableRemoteMute',
     'disableRtx',
+    'disableSimulcast',
     'disableSuspendVideo',
     'disableThirdPartyRequests',
     'displayJids',
