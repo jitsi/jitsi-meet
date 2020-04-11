@@ -1161,15 +1161,15 @@ class Toolbox extends Component<Props, State> {
         const buttonsLeft = [];
         const buttonsRight = [];
 
-        const maxNumberOfButtonsPerGroup = Math.floor(
+        const maxNumberOfButtonsPerGroup = Math.max(0, Math.floor(
             (
                 this.state.windowWidth
-                    - 168 // the width of the central group by design
+                    - 194 // the width of the central group by design
                     - 48 // the minimum space between the button groups
             )
             / 56 // the width + padding of a button
             / 2 // divide by the number of groups(left and right group)
-        );
+        ));
 
         if (this._shouldShowButton('desktop')
                 && this._isDesktopSharingButtonVisible()) {
