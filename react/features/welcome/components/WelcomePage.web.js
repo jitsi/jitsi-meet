@@ -3,7 +3,6 @@
 import React from 'react';
 
 import { translate } from '../../base/i18n';
-import { Watermarks } from '../../base/react';
 import { connect } from '../../base/redux';
 import { isMobileBrowser } from '../../base/environment/utils';
 import { CalendarList } from '../../calendar-sync';
@@ -66,6 +65,10 @@ class WelcomePage extends AbstractWelcomePage {
          */
         this._additionalContentRef = null;
 
+        this._nameInputRef = null;
+
+        this._emailInputRef = null;
+
         this._roomInputRef = null;
 
         /**
@@ -101,8 +104,11 @@ class WelcomePage extends AbstractWelcomePage {
         // Bind event handlers so they are only bound once per instance.
         this._onFormSubmit = this._onFormSubmit.bind(this);
         this._onRoomChange = this._onRoomChange.bind(this);
-        this._setAdditionalContentRef
-            = this._setAdditionalContentRef.bind(this);
+        this._onNameChange = this._onNameChange.bind(this);
+        this._onEmailChange = this._onEmailChange.bind(this);
+        this._setAdditionalContentRef = this._setAdditionalContentRef.bind(this);
+        this._setNameInputRef = this._setNameInputRef.bind(this);
+        this._setEmailInputRef = this._setEmailInputRef.bind(this);
         this._setRoomInputRef = this._setRoomInputRef.bind(this);
         this._setAdditionalToolbarContentRef
             = this._setAdditionalToolbarContentRef.bind(this);
@@ -169,7 +175,16 @@ class WelcomePage extends AbstractWelcomePage {
                     ? 'with-content' : 'without-content'}` }
                 id = 'welcome_page'>
                 <div className = 'welcome-watermark'>
-                    <Watermarks />
+                    <div>
+                        <a
+                            href = 'https://abler.com.br'
+                            target = '_new'>
+                            <img
+                                className = 'watermark-home'
+                                src = '../../../../images/brandIndex.png' />
+                        </a>
+                    </div>
+                    {/* <Watermarks /> */}
                 </div>
                 <div className = 'header'>
                     <div className = 'welcome-page-settings'>
@@ -182,47 +197,76 @@ class WelcomePage extends AbstractWelcomePage {
                             : null
                         }
                     </div>
-                    <div className = 'header-image' />
-                    <div className = 'header-text'>
-                        <h1 className = 'header-text-title'>
-                            { t('welcomepage.title') }
-                        </h1>
-                        <p className = 'header-text-description'>
-                            { t('welcomepage.appDescription',
-                                { app: APP_NAME }) }
-                        </p>
-                    </div>
-                    <div id = 'enter_room'>
-                        <div className = 'enter-room-input-container'>
-                            <div className = 'enter-room-title'>
-                                { t('welcomepage.enterRoomTitle') }
+                    {/* <div className = 'header-image' /> */}
+
+                    <div className = 'enter-room-main'>
+                        <img
+                            className = 'enter-room-illo enter-room-illo--left'
+                            src = '../../../../images/illustraOne.svg' />
+                        <img
+                            className = 'enter-room-illo enter-room-illo--right'
+                            src = '../../../../images/illustraTwo.svg' />
+                        <div className = 'header-text'>
+                            <h1 className = 'header-text-title'>
+                                { t('welcomepage.title') }
+                            </h1>
+                            <p className = 'header-text-description'>
+                                { t('welcomepage.appDescription',
+																	{ app: APP_NAME }) }
+                            </p>
+                        </div>
+                        <div id = 'enter_room'>
+                            <div className = 'enter-room-input-container'>
+                                <div className = 'enter-room-title'>
+                                    { t('welcomepage.enterRoomTitle') }
+                                </div>
+                                <form onSubmit = { this._onFormSubmit }>
+                                    <div className = 'enter-room-info-hubspot'>
+                                        <input
+                                            autoFocus = { true }
+                                            className = 'enter-room-input'
+                                            id = 'enter_room_field_name'
+                                            onChange = { this._onNameChange }
+                                            placeholder = 'Nome'
+                                            ref = { this._setNameInputRef }
+                                            type = 'text'
+                                            value = { this.state.name } />
+                                        <input
+                                            autoFocus = { true }
+                                            className = 'enter-room-input'
+                                            id = 'enter_room_field_email'
+                                            onChange = { this._onEmailChange }
+                                            placeholder = 'E-mail'
+                                            ref = { this._setEmailInputRef }
+                                            type = 'text'
+                                            value = { this.state.email } />
+                                    </div>
+                                    <input
+                                        autoFocus = { true }
+                                        className = 'enter-room-input'
+                                        id = 'enter_room_field'
+                                        onChange = { this._onRoomChange }
+                                        pattern = { ROOM_NAME_VALIDATE_PATTERN_STR }
+                                        placeholder = { this.state.roomPlaceholder }
+                                        ref = { this._setRoomInputRef }
+                                        title = { t('welcomepage.roomNameAllowedChars') }
+                                        type = 'text'
+                                        value = { this.state.room } />
+                                </form>
                             </div>
-                            <form onSubmit = { this._onFormSubmit }>
-                                <input
-                                    autoFocus = { true }
-                                    className = 'enter-room-input'
-                                    id = 'enter_room_field'
-                                    onChange = { this._onRoomChange }
-                                    pattern = { ROOM_NAME_VALIDATE_PATTERN_STR }
-                                    placeholder = { this.state.roomPlaceholder }
-                                    ref = { this._setRoomInputRef }
-                                    title = { t('welcomepage.roomNameAllowedChars') }
-                                    type = 'text'
-                                    value = { this.state.room } />
-                            </form>
+                            <div
+                                className = 'welcome-page-button'
+                                id = 'enter_room_button'
+                                onClick = { this._onFormSubmit }>
+                                {
+                                    showResponsiveText
+                                        ? t('welcomepage.goSmall')
+                                        : t('welcomepage.go')
+                                }
+                            </div>
                         </div>
-                        <div
-                            className = 'welcome-page-button'
-                            id = 'enter_room_button'
-                            onClick = { this._onFormSubmit }>
-                            {
-                                showResponsiveText
-                                    ? t('welcomepage.goSmall')
-                                    : t('welcomepage.go')
-                            }
-                        </div>
+                        { this._renderTabs() }
                     </div>
-                    { this._renderTabs() }
                 </div>
                 { showAdditionalContent
                     ? <div
@@ -246,6 +290,34 @@ class WelcomePage extends AbstractWelcomePage {
         if (!this._roomInputRef || this._roomInputRef.reportValidity()) {
             this._onJoin();
         }
+    }
+
+    /**
+     * Overrides the super to account for the differences in the argument types
+     * provided by HTML and React Native text inputs.
+     *
+     * @inheritdoc
+     * @override
+     * @param {Event} event - The (HTML) Event which details the change such as
+     * the EventTarget.
+     * @protected
+     */
+    _onNameChange(event) {
+        super._onNameChange(event.target.value);
+    }
+
+    /**
+     * Overrides the super to account for the differences in the argument types
+     * provided by HTML and React Native text inputs.
+     *
+     * @inheritdoc
+     * @override
+     * @param {Event} event - The (HTML) Event which details the change such as
+     * the EventTarget.
+     * @protected
+     */
+    _onEmailChange(event) {
+        super._onEmailChange(event.target.value);
     }
 
     /**
@@ -338,6 +410,30 @@ class WelcomePage extends AbstractWelcomePage {
      */
     _setAdditionalToolbarContentRef(el) {
         this._additionalToolbarContentRef = el;
+    }
+
+    /**
+     * Sets the internal reference to the HTMLInputElement used to hold the
+     * welcome page input name element.
+     *
+     * @param {HTMLInputElement} el - The HTMLElement for the input of the name name on the welcome page.
+     * @private
+     * @returns {void}
+     */
+    _setNameInputRef(el) {
+        this._nameInputRef = el;
+    }
+
+    /**
+     * Sets the internal reference to the HTMLInputElement used to hold the
+     * welcome page input email element.
+     *
+     * @param {HTMLInputElement} el - The HTMLElement for the input of the email name on the welcome page.
+     * @private
+     * @returns {void}
+     */
+    _setEmailInputRef(el) {
+        this._emailInputRef = el;
     }
 
     /**

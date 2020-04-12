@@ -299,7 +299,7 @@
         "answer": "Responder",
         "audioCallTitle": "Chamada recebida",
         "decline": "Dispensar",
-        "productLabel": "do Jitsi Meet",
+        "productLabel": "do Abler Entrevista Online",
         "videoCallTitle": "Chamada de vídeo recebida"
     },
     "info": {
@@ -747,7 +747,7 @@
             "join": "Toque para entrar",
             "roomname": "Digite o nome da sala"
         },
-        "appDescription": "Vá em frente, converse por vídeo com toda a equipe. De fato, convide todos que você conhece. {{app}} é uma solução de videoconferência totalmente criptografada e 100% de código aberto que você pode usar todos os dias, a cada dia, gratuitamente — sem necessidade de conta.",
+        "appDescription": "Faça entrevistas totalmente online com seguranca e disponibilize via Google Drive, Dropbox ou OneDrive. Entrevista Online é uma solução desenvolvida by Abler para o mercado de Recrutamento e Selecao Digital.",
         "audioVideoSwitch": {
             "audio": "Voz",
             "video": "Vídeo"
@@ -755,9 +755,9 @@
         "calendar": "Calendário",
         "connectCalendarButton": "Conectar seu calendário",
         "connectCalendarText": "Conecte seu calendário para ver todas as reuniões em {{app}}. Além disso, adicione reuniões de {{provider}} ao seu calendário e inicie-as com apenas um clique.",
-        "enterRoomTitle": "Iniciar uma nova reunião",
+        "enterRoomTitle": "Iniciar uma nova sala de vídeo entrevista",
         "roomNameAllowedChars": "Nome da reunião não deve conter qualquer um destes caracteres: ?. &, :, ', \", %, #.",
-        "go": "IR",
+        "go": "Entrar",
         "goSmall": "IR",
         "join": "CRIAR / ENTRAR",
         "info": "Informações",
@@ -770,7 +770,7 @@
         "roomnameHint": "Digite o nome ou a URL da sala que você deseja entrar. Você pode digitar um nome, e apenas deixe para as pessoas que você quer se reunir digitem o mesmo nome.",
         "sendFeedback": "Enviar comentários",
         "terms": "Termos",
-        "title": "Videoconferências mais seguras, flexíveis e totalmente gratuitas",
+        "title": "Video entrevistas mais seguras, flexíveis e totalmente gratuitas",
         "getHelp": "Obter ajuda"
     },
     "helpView": {

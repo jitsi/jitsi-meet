@@ -34,7 +34,7 @@ body {
 }
 
 .jitsi-icon svg {
-    fill: white;
+    fill: #AC6EAB;
 }
 
 .jitsi-icon.gray svg {
@@ -107,6 +107,19 @@ form {
     top: 15;
     width: $watermarkWidth;
     height: $watermarkHeight;
+    background-size: contain;
+    background-repeat: no-repeat;
+    z-index: $zindex2;
+}
+
+.watermark-home {
+    display: block;
+    position: absolute;
+    top: 15;
+    left: 32px; 
+    top: 32px; 
+    width: 166px; 
+    height: 73px;
     background-size: contain;
     background-repeat: no-repeat;
     z-index: $zindex2;

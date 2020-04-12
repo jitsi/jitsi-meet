@@ -97,7 +97,7 @@ $chatPrivateMessageBackgroundColor: rgb(153, 69, 77);
 $chatRemoteMessageBackgroundColor:  rgb(86, 101, 114);
 $sidebarWidth: 375px;
 
- /**
+/**
  * Misc.
  */
 $borderRadius: 4px;
@@ -168,10 +168,10 @@ $watermarkHeight: 74px;
 /**
  * Welcome page variables.
  */
-$welcomePageDescriptionColor: #fff;
+$welcomePageDescriptionColor: #242938;
 $welcomePageFontFamily: inherit;
-$welcomePageBackground: linear-gradient(-90deg, #1251AE 0%, #0074FF 50%, #1251AE 100%);
-$welcomePageTitleColor: #fff;
+$welcomePageBackground: #fff;
+$welcomePageTitleColor: #AC6EAB;
 
 $welcomePageHeaderBackground: none;
 $welcomePageHeaderBackgroundSmall: none;
@@ -196,7 +196,8 @@ $welcomePageHeaderTextDescriptionLineHeight: 24px;
 $welcomePageHeaderTextDescriptionMarginBottom: 20px;
 $welcomePageHeaderTextDescriptionAlignSelf: inherit;
 
-$welcomePageEnterRoomWidth: 680px;
+$welcomePageEnterRoomWidth: 620px;
+// $welcomePageEnterRoomWidth: 680px;
 $welcomePageEnterRoomPadding: 25px 30px;
 $welcomePageEnterRoomBorderRadius: 0px;
 
@@ -212,12 +213,12 @@ $welcomePageTabContentDisplay: inherit;
 $welcomePageTabButtonsDisplay: flex;
 $welcomePageTabDisplay: block;
 
-$welcomePageButtonWidth: 51px;
+$welcomePageButtonWidth: 40%;
 $welcomePageButtonMinWidth: inherit;
 $welcomePageButtonFontSize: 14px;
 $welcomePageButtonHeight: 35px;
 $welcomePageButtonFontWeight: inherit;
-$welcomePageButtonBorderRadius: 4px;
+$welcomePageButtonBorderRadius: 50px;
 $welcomePageButtonLineHeight: 35px;
 
 /**
