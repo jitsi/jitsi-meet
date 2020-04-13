@@ -341,6 +341,7 @@ class ConnectionIndicator extends AbstractConnectionIndicator<Props, State> {
             bandwidth,
             bitrate,
             bridgeCount,
+            codec,
             e2eRtt,
             framerate,
             packetLoss,
@@ -355,6 +356,7 @@ class ConnectionIndicator extends AbstractConnectionIndicator<Props, State> {
                 bandwidth = { bandwidth }
                 bitrate = { bitrate }
                 bridgeCount = { bridgeCount }
+                codec = { codec }
                 connectionSummary = { this._getConnectionStatusTip() }
                 e2eRtt = { e2eRtt }
                 framerate = { framerate }
