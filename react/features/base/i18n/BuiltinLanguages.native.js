@@ -133,17 +133,20 @@ const _LANGUAGES = {
         main: require('../../../../lang/main-ru')
     },
 
+    
     // Swedish
     'sv': {
         languages: require('../../../../lang/languages-sv'),
         main: require('../../../../lang/main-sv')
     },
 
-     // Turkish
+    
+    // Turkish
     'tr': {
         languages: require('../../../../lang/languages-tr'),
         main: require('../../../../lang/main-tr')
     },
+
     
     // Vietnamese
     'vi': {
