@@ -532,7 +532,7 @@
 				CODE_SIGN_ENTITLEMENTS = app.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 10;
+				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = NO;
 				DEVELOPMENT_TEAM = G82747A532;
 				ENABLE_BITCODE = NO;
@@ -542,13 +542,13 @@
 					"@executable_path/Frameworks",
 				);
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
-				MARKETING_VERSION = 0.0.1;
+				MARKETING_VERSION = 1.0.1;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.janeapp.videochat.qa;
+				PRODUCT_BUNDLE_IDENTIFIER = com.janeapp.videochat.prod;
 				PRODUCT_NAME = "Jane Video";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 			};
@@ -563,7 +563,7 @@
 				CODE_SIGN_ENTITLEMENTS = app.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 10;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = G82747A532;
 				ENABLE_BITCODE = YES;
 				INFOPLIST_FILE = src/Info.plist;
@@ -572,13 +572,13 @@
 					"@executable_path/Frameworks",
 				);
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
-				MARKETING_VERSION = 0.0.1;
+				MARKETING_VERSION = 1.0.1;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.janeapp.videochat.qa;
+				PRODUCT_BUNDLE_IDENTIFIER = com.janeapp.videochat.prod;
 				PRODUCT_NAME = "Jane Video";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 			};
