@@ -91,10 +91,14 @@ case "$1" in
                 CERT_CRT="/etc/jitsi/meet/$JVB_HOSTNAME.crt"
                 HOST="$( (hostname -s; echo localhost) | head -n 1)"
                 DOMAIN="$( (hostname -d; echo localdomain) | head -n 1)"
-                openssl req -new -newkey rsa:4096 -days 365 -nodes -x509 -subj \
+                openssl req -new -newkey rsa:4096 -days 3650 -nodes -x509 -subj \
                     "/O=$DOMAIN/OU=$HOST/CN=$JVB_HOSTNAME/emailAddress=webmaster@$HOST.$DOMAIN" \
                     -keyout $CERT_KEY \
-                    -out $CERT_CRT
+                    -out $CERT_CRT \
+                    -reqexts SAN \
+                    -extensions SAN \
+                    -config <(cat /etc/ssl/openssl.cnf \
+                        <(printf '[SAN]\nsubjectAltName=DNS:localhost,DNS:$JVB_HOSTNAME,IP:$JVB_HOSTNAME')) \
             fi
         fi
 
