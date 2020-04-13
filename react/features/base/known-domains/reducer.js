@@ -20,8 +20,8 @@ export const DEFAULT_STATE = [
     'videochat-jwt.jane.qa',
     'videochat-us.janeapp.com',
     'videochat-ca.janeapp.com',
-    'videochat-uk.janeapp.com',
-    'videochat-au.janeapp.com'
+    'videochat.janeapp.com.au',
+    'videochat.janeapp.co.uk',
 ];
 
 const STORE_NAME = 'features/base/known-domains';
