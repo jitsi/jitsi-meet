@@ -10,9 +10,17 @@ _Note_: Many of the installation steps require elevated privileges. If you are l
 
 ## Basic Jitsi Meet install
 
+### Decide the domain of your server and set up DNS
+
+Decide what domain your server will use. For example, meet.example.org.
+
+Set a DNS A record for that domain, using:
+- your server's public IP address, if it has its own public IP; or
+- the public IP address of your router, if your server has a private (RFC1918) IP address (e.g. 192.168.1.2) and connects through your router via Network Address Translation (NAT).
+
 ### Set up the Fully Qualified Domain Name (FQDN) (optional)
 
-If the machine used to host the Jitsi Meet instance has a FQDN (for example `meet.example.org`) already set up in DNS, `/etc/hostname` must contain this FQDN; if this is not the case yet, [change the hostname](https://wiki.debian.org/HowTo/ChangeHostname).
+If the machine used to host the Jitsi Meet instance has a FQDN (for example `meet.example.org`) already set up in DNS (perhaps because you have followed the step above), `/etc/hostname` must contain this FQDN; if this is not the case yet, [change the hostname](https://wiki.debian.org/HowTo/ChangeHostname).
 
 Then add the same FQDN in the `/etc/hosts` file, associating it with the loopback address:
 
@@ -25,14 +33,18 @@ Finally on the same machine test that you can ping the FQDN with: `ping "$(hostn
 echo 'deb https://download.jitsi.org stable/' >> /etc/apt/sources.list.d/jitsi-stable.list
 wget -qO -  https://download.jitsi.org/jitsi-key.gpg.key | sudo apt-key add -
 ```
-### Open ports in your firewall
+### Open ports in your firewall / forward ports via your router
 
 Open the following ports in your firewall, to allow traffic to the machine running jitsi:
 
- - 80 TCP
  - 443 TCP
  - 10000 UDP
+ 
+(If you are setting up Let's Encrypt for the first time, you may also need to permit traffic to port 80 TCP.)
 
+If you are running Jitsi Meet on a server behind NAT, forward the ports on your router to your server's IP address.
+
+_Note_: if participants cannot see or hear each other, double check your firewall / NAT rules.
 
 ### Install Jitsi Meet
 
@@ -89,13 +101,13 @@ DefaultTasksMax=65000
 ```
 To load the values and check them look [here](#systemd-details) for details.
 
-By default, anyone who has access to your jitsi instance will be able to start a conference: if your server is open to the world, anyone can have a chat with anyone else. If you want to limit the ability to start a conference to registered users, set up a "secure domain". Follow the instructions at https://github.com/jitsi/jicofo#secure-domain.
+_Note_: By default, anyone who has access to your jitsi instance will be able to start a conference: if your server is open to the world, anyone can have a chat with anyone else. If you want to limit the ability to start a conference to registered users, set up a "secure domain". Follow the instructions at https://github.com/jitsi/jicofo#secure-domain.
 
 ### Confirm that your installation is working
 
 Launch a web browser (Chrome, Chromium or latest Opera) and enter the hostname or IP address from the previous step into the address bar.
 
-If you used a self-signed certificate (as opposed to using Let's Encrypt), your web browser will ask you to confirm that you trust the certificate.
+If you used a self-signed certificate (as opposed to using Let's Encrypt), your web browser will ask you to confirm that you trust the certificate. If you are testing from the iOS or Android app, it will probably fail at this point, if you are using a self-signed certificate.
 
 You should see a web page prompting you to create a new meeting.  Make sure that you can successfully create a meeting and that other participants are able to join the session.
 
