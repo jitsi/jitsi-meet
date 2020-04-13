@@ -41,7 +41,7 @@
 
     jitsiMeet.conferenceActivityType = JitsiMeetConferenceActivityType;
     jitsiMeet.customUrlScheme = @"janeoa";
-    jitsiMeet.universalLinkDomains = @[@"videochat-jwt.jane.qa",@"videochat.jane.qa",@"videochat-us.janeapp.com",@"videochat-ca.janeapp.com",@"videochat-au.janeapp.com",@"videochat-uk.janeapp.com"];
+    jitsiMeet.universalLinkDomains = @[@"videochat-jwt.jane.qa",@"videochat.jane.qa",@"videochat-us.janeapp.com",@"videochat-ca.janeapp.com",@"videochat.janeapp.com.au",@"videochat.janeapp.co.uk"];
 
     jitsiMeet.defaultConferenceOptions = [JitsiMeetConferenceOptions fromBuilder:^(JitsiMeetConferenceOptionsBuilder *builder) {
         builder.serverURL = [NSURL URLWithString:@"https://videochat.jane.qa"];
