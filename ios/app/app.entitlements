@@ -8,8 +8,8 @@
 		<string>applinks:videochat-jwt.jane.qa</string>
 		<string>applinks:videochat-us.janeapp.com</string>
 		<string>applinks:videochat-ca.janeapp.com</string>
-		<string>applinks:videochat-au.janeapp.com</string>
-		<string>applinks:videochat-uk.janeapp.com</string>
+		<string>applinks:videochat.janeapp.com.au</string>
+		<string>applinks:videochat.janeapp.co.uk</string>
 	</array>
 	<key>com.apple.developer.siri</key>
 	<true/>
