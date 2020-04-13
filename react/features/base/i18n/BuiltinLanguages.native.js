@@ -19,6 +19,12 @@ const _LANGUAGES = {
         main: require('../../../../lang/main-bg')
     },
 
+    // Catalan
+    'ca': {
+        languages: require('../../../../lang/languages-ca'),
+        main: require('../../../../lang/main-ca')
+    },
+    
     // German
     'de': {
         languages: require('../../../../lang/languages-de'),
