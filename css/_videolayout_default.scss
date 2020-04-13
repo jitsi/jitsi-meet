@@ -193,7 +193,7 @@
 .refreshButtonWrapper {
     position: absolute;
     left: 0;
-    top: 0;
+    bottom: 90px;
     z-index: 600;
     width: 100%;
 
@@ -201,10 +201,7 @@
         display: flex;
         padding: 10px;
         flex-direction: column;
-        align-items: flex-end;
-        @media all and (max-width: 800px) {
-            align-items: center;
-        }
+        align-items: center;
 
         .refreshButton {
             background: #FFAB00;
