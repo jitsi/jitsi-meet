@@ -291,7 +291,7 @@
         "dialInTollFree": "Toll Free",
         "genericError": "Whoops, something went wrong.",
         "inviteLiveStream": "To view the live stream of this meeting, click this link: {{url}}",
-        "invitePhone": "One tap audio Dial In: {{number}},,{{conferenceID}}#",
+        "invitePhone": "One tap audio Dial In: {{number}}, {{conferenceID}}#",
         "invitePhoneAlternatives": "",
         "inviteURLFirstPartGeneral": "You are invited to join a meeting.",
         "inviteURLFirstPartPersonal": "{{name}} is inviting you to a meeting.\n",
@@ -686,7 +686,7 @@
             "join": "Tap to join",
             "roomname": "Enter room name"
         },
-        "appDescription": "Go ahead, video chat with the whole team. In fact, invite everyone you know. {{app}} is a fully encrypted, 100% open source video conferencing solution that you can use all day, every day, for free — with no account needed.",
+        "appDescription": "Go ahead, video chat with the whole team. In fact, invite everyone you know. {{app}} is a fully encrypted, 100 % open source video conferencing solution that you can use all day, every day, for free — with no account needed.",
         "audioVideoSwitch": {
             "audio": "Voice",
             "video": "Video"
