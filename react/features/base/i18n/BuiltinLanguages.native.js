@@ -127,6 +127,12 @@ const _LANGUAGES = {
         main: require('../../../../lang/main-ptBR')
     },
 
+    // Sardinian (Sardinia)
+    'sc': {
+        languages: require('../../../../lang/languages-sc'),
+        main: require('../../../../lang/main-sc')
+    },
+    
     // Russian
     'ru': {
         languages: require('../../../../lang/languages-ru'),
