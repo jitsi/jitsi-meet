@@ -63,7 +63,8 @@ class LargeVideo extends Component<Props> {
                         <video
                             autoPlay = { !this.props._noAutoPlayVideo }
                             id = 'largeVideo'
-                            muted = { true } />
+                            muted = { true }
+                            playsInline = { true } /* for Safari on iOS to work */ />
                     </div>
                 </div>
                 { interfaceConfig.DISABLE_TRANSCRIPTION_SUBTITLES
