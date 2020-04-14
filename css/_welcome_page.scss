@@ -78,7 +78,7 @@ body.welcome-page {
                 .enter-room-title {
                     display: $welcomePageEnterRoomTitleDisplay;
                     font-size: 18px;
-                    font-weight: bold;
+                    font-weight: 500;
                     padding-bottom: 5px;
                 }
 
@@ -102,13 +102,15 @@ body.welcome-page {
             text-align: left;
             min-height: 354px;
             width: 710px;
-            background: #75A7E7;
+            background: #C2C4CF;
             display: $welcomePageTabContainerDisplay;
             flex-direction: column;
+            border-bottom-right-radius: 12px;
+            border-bottom-left-radius: 12px;
 
             .tab-content{
                 display: $welcomePageTabContentDisplay;
-                margin: 5px 0px;
+                margin: 0px;
                 overflow: hidden;
                 flex-grow: 1;
                 position: relative;
@@ -154,8 +156,9 @@ body.welcome-page {
         height: $welcomePageButtonHeight;
         font-size: $welcomePageButtonFontSize;
         font-weight: $welcomePageButtonFontWeight;
-        background: #0074E0;
+        background: #FB542B;
         border-radius: $welcomePageButtonBorderRadius;
+        padding: 0px 10px;
         color: #FFFFFF;
         text-align: center;
         vertical-align: middle;
