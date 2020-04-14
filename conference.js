@@ -19,7 +19,6 @@ import {
     createDeviceChangedEvent,
     createStartSilentEvent,
     createScreenSharingEvent,
-    createStreamSwitchDelayEvent,
     createTrackMutedEvent,
     sendAnalytics
 } from './react/features/analytics';
@@ -2231,18 +2230,6 @@ export default {
                 }
             });
         });
-
-        /* eslint-disable max-params */
-        APP.UI.addListener(
-            UIEvents.RESOLUTION_CHANGED,
-            (id, oldResolution, newResolution, delay) => {
-                sendAnalytics(createStreamSwitchDelayEvent(
-                    {
-                        'old_resolution': oldResolution,
-                        'new_resolution': newResolution,
-                        value: delay
-                    }));
-            });
 
         APP.UI.addListener(UIEvents.AUTH_CLICKED, () => {
             AuthHandler.authenticate(room);

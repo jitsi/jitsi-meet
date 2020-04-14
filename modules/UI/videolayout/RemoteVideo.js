@@ -494,10 +494,6 @@ export default class RemoteVideo extends SmallVideo {
 
         isVideo ? this.videoStream = stream : this.audioStream = stream;
 
-        if (isVideo) {
-            this.setVideoType(stream.videoType);
-        }
-
         if (!stream.getOriginalStream()) {
             logger.debug('Remote video stream has no original stream');
 
