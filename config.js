@@ -44,9 +44,6 @@ var config = {
     //
 
     testing: {
-        // Enables experimental simulcast support on Firefox.
-        enableFirefoxSimulcast: false,
-
         // P2P test mode disables automatic switching to P2P when there are 2
         // participants in the conference.
         p2pTestMode: false
