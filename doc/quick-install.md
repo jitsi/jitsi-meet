@@ -4,7 +4,7 @@ This guide helps you  ___host your own Jitsi server___. If you want to have a vi
 
 This document describes the required steps for a quick Jitsi Meet installation on a Debian based GNU/Linux system. Debian 9 (Stretch) or later, and Ubuntu 18.04 (Bionic Beaver) or later are supported out-of-the-box.
 
-On Ubuntu systems, Jitsi requires dependencies from Ubuntu's `universe` package repository.  To ensure this is enabled, run `apt-add-repository universe` at the command-line.
+On Ubuntu systems, Jitsi requires dependencies from Ubuntu's `universe` package repository.  To ensure this is enabled, run `sudo apt-add-repository universe` at the command-line.
 
 _Note_: Many of the installation steps require elevated privileges. If you are logged in using a regular user account, you may need to temporarily increase your permissions (for example, by using `sudo` for individual commands).
 
@@ -22,7 +22,7 @@ Finally on the same machine test that you can ping the FQDN with: `ping "$(hostn
 
 ### Add the Jitsi package repository
 ```sh
-echo 'deb https://download.jitsi.org stable/' >> /etc/apt/sources.list.d/jitsi-stable.list
+echo 'deb https://download.jitsi.org stable/' | sudo tee /etc/apt/sources.list.d/jitsi-stable.list
 wget -qO -  https://download.jitsi.org/jitsi-key.gpg.key | sudo apt-key add -
 ```
 ### Open ports in your firewall
@@ -41,13 +41,13 @@ If you are already running Nginx on port 443 on the same machine turnserver conf
 
 ```sh
 # Ensure support is available for apt repositories served via HTTPS
-apt-get install apt-transport-https
+sudo apt-get install apt-transport-https
 
 # Retrieve the latest package versions across all repositories
-apt-get update
+sudo apt-get update
 
 # Perform jitsi-meet installation
-apt-get -y install jitsi-meet
+sudo apt-get -y install jitsi-meet
 ```
 
 During the installation, you will be asked to enter the hostname of the Jitsi Meet instance. If you have a [FQDN](https://en.wikipedia.org/wiki/Fully_qualified_domain_name) for the instance already set up in DNS, enter it there. If you don't have a resolvable hostname, you can enter the IP address of the machine (if it is static or doesn't change).
@@ -63,7 +63,7 @@ _Note_: Jitsi Meet mobile apps *require* a valid certificate signed by a trusted
 Simply run the following in your shell:
 
 ```sh
-/usr/share/jitsi-meet/scripts/install-letsencrypt-cert.sh
+sudo /usr/share/jitsi-meet/scripts/install-letsencrypt-cert.sh
 ```
 
 Note that this script uses the [HTTP-01 challenge type](https://letsencrypt.org/docs/challenge-types/) and thus your instance needs to be accessible from the public internet. If you want to use a different challenge type, don't use this script and instead choose ___I want to use my own certificate___ during jitsi-meet installation.
@@ -108,13 +108,13 @@ If this all worked, then congratulations!  You have an operational Jitsi confere
 Jigasi is a server-side application acting as a gateway to Jitsi Meet conferences. It allows regular [SIP](https://en.wikipedia.org/wiki/Session_Initiation_Protocol) clients to join meetings and provides transcription capabilities.
 
 ```sh
-apt-get -y install jigasi
+sudo apt-get -y install jigasi
 ```
 or
 
 ```sh
 wget https://download.jitsi.org/unstable/jigasi_1.0-107_amd64.deb
-dpkg -i jigasi_1.0-107_amd64.deb
+sudo dpkg -i jigasi_1.0-107_amd64.deb
 ```
 
 During the installation, you will be asked to enter your SIP account and password. This account will be used to invite the other SIP participants.
@@ -128,7 +128,7 @@ Enjoy!
 ## Uninstall
 
 ```sh
-apt-get purge jigasi jitsi-meet jitsi-meet-web-config jitsi-meet-prosody jitsi-meet-turnserver jitsi-meet-web jicofo jitsi-videobridge2
+sudo apt-get purge jigasi jitsi-meet jitsi-meet-web-config jitsi-meet-prosody jitsi-meet-turnserver jitsi-meet-web jicofo jitsi-videobridge2
 ```
 
 Sometimes the following packages will fail to uninstall properly:
