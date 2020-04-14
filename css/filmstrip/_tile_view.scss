@@ -92,6 +92,11 @@
         video {
             object-fit: contain;
         }
+
+        #videosDelimiter {
+            order: 10;
+            width: 100%;
+        }
     }
 
     .has-overflow#filmstripRemoteVideosContainer {
@@ -110,5 +115,13 @@
      */
     .has-overflow #localVideoContainer {
         margin-bottom: 100px !important;
+    }
+
+    .without-camera {
+        order: 11;
+    }
+
+    .with-camera {
+        order: 1;
     }
 }
