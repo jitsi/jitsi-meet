@@ -46,10 +46,11 @@ export function getMaxColumnCount() {
  * rows, and visible rows (the rest should overflow) for the tile view layout.
  */
 export function getTileViewGridDimensions(state: Object, maxColumns: number = getMaxColumnCount()) {
-    // When in tile view mode, we must discount ourselves (the local participant) because our
-    // tile is not visible.
-    const { iAmRecorder } = state['features/base/config'];
-    const numberOfParticipants = state['features/base/participants'].length - (iAmRecorder ? 1 : 0);
+
+    // This is needed to calculate the size of large videos, therefore, numberOfParticipants
+    // should be only the number of people who are streaming
+    const streamingParticipantsSelector = 'span.videocontainer:not(.without-camera)';
+    const numberOfParticipants = document.querySelectorAll(streamingParticipantsSelector).length || 1;
 
     const columnsToMaintainASquare = Math.ceil(Math.sqrt(numberOfParticipants));
     const columns = Math.min(columnsToMaintainASquare, maxColumns);
