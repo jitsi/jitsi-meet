@@ -232,13 +232,19 @@ class ConnectionStatsTable extends Component<Props> {
             return;
         }
 
-        const codecString = Object.keys(codec || {})
-            .map(ssrc => {
+        let codecString;
+
+        // Only report one codec, in case there are multiple for a user.
+        Object.keys(codec || {})
+            .forEach(ssrc => {
                 const { audio, video } = codec[ssrc];
 
-                return `${audio}, ${video}`;
-            })
-            .join(', ') || 'N/A';
+                codecString = `${audio}, ${video}`;
+            });
+
+        if (!codecString) {
+            codecString = 'N/A';
+        }
 
         return (
             <tr>
