@@ -113,3 +113,12 @@ location = /http-bind {
 ```
 
 You could also use ```add_header 'Access-Control-Allow-Origin' '*';```, but this is not recommended.
+
+#### Building .debs
+To make a deb you can easily deploy to a public test server, ensure you have the lib-jitsi-meet sources you wish, then:
+```
+make
+dpkg-buildpackage -A -rfakeroot -us -uc -tc
+```
+
+You'll have a bunch of .deb files in the parent directory, and can push the updated source to your server and install it with the jitsi-meet-web deb file.
