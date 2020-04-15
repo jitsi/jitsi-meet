@@ -54,6 +54,23 @@ During the installation, you will be asked to enter the hostname of the Jitsi Me
 
 This hostname (or IP address) will be used for virtualhost configuration inside the Jitsi Meet and also, you and your correspondents will be using it to access the web conferences.
 
+### Check your firewall rules
+
+Jitsi needs the ports `443/tcp` and `10000/udp` to be open for
+incoming connexions.
+
+#### With `ufw`
+
+If you are using `ufw` this can be checked with:
+```
+sudo ufw status verbose
+```
+If these ports are not open, issue:
+```
+sudo ufw allow in 443/tcp
+sudo ufw allow in 10000/udp
+```
+
 ### Generate a Let's Encrypt certificate (optional, recommended)
 
 In order to have encrypted communications, you need a [TLS certificate](https://en.wikipedia.org/wiki/Transport_Layer_Security). The easiest way is to use [Let's Encrypt](https://letsencrypt.org/).
