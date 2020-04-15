@@ -40,8 +40,11 @@ server {
     error_page 404 /static/404.html;
 
     gzip on;
-    gzip_types text/plain text/css application/javascript application/json;
+    gzip_types text/plain text/css application/javascript application/json image/jpeg image/png image/x-icon application/octet-stream audio/mpeg audio/mpeg;
     gzip_vary on;
+    gzip_proxied no-cache no-store private expired auth;
+    gzip_min_length 1000;
+    gzip_disable "MSIE [1-6]\.(?!.*SV1)";
 
     location = /config.js {
         alias /etc/jitsi/meet/jitsi-meet.example.com-config.js;
@@ -56,6 +59,7 @@ server {
     {
         add_header 'Access-Control-Allow-Origin' '*';
         alias /usr/share/jitsi-meet/$1/$2;
+        expires 1y;
     }
 
     # BOSH
