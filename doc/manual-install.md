@@ -8,6 +8,8 @@ change references to that to match your host, and generate some passwords for
 
 There are also some complete [example config files](https://github.com/jitsi/jitsi-meet/tree/master/doc/example-config-files/) available, mentioned in each section.
 
+There are additional configurations to be done for a [scalable installation](https://github.com/jitsi/jitsi-meet/tree/master/doc/scalable-installation.md)
+
 ## Network description
 
 This is how the network looks:

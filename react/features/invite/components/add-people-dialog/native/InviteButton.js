@@ -38,5 +38,20 @@ class InviteButton extends AbstractButton<Props, *> {
     }
 }
 
+/**
+ * Maps part of the Redux state to the props of this component.
+ *
+ * @param {Object} state - The Redux state.
+ * @param {Props} ownProps - The own props of the component.
+ * @returns {Props}
+ */
+function _mapStateToProps(state, ownProps: Props) {
+    const { disableInviteFunctions } = state['features/base/config'];
 
-export default translate(connect()(InviteButton));
+    return {
+        visible: !disableInviteFunctions && ownProps.visible
+    };
+}
+
+
+export default translate(connect(_mapStateToProps)(InviteButton));
