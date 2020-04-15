@@ -9,8 +9,7 @@ const DEFAULT_OPTIMAL_BROWSERS = [
     'chrome',
     'electron',
     'firefox',
-    'nwjs',
-    'safari'
+    'nwjs'
 ];
 
 const DEFAULT_UNSUPPORTED_BROWSERS = [];
