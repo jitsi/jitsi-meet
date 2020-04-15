@@ -198,7 +198,7 @@
         "liveStreamingDisabledForGuestTooltip": "Гости не могут начать трансляцию",
         "liveStreamingDisabledTooltip": "Возможность трансляции отключена",
         "lockMessage": "Не удалось запереть конференцию",
-        "lockRoom": "Добавить конференцию $t(lockRoomPasswordUppercase)",
+        "lockRoom": "Добавить в конференцию пароль",
         "lockTitle": "Блокировка не удалась",
         "logoutQuestion": "Уверены, что хотите выйти и остановить встречу?",
         "logoutTitle": "Завершить сеанс",
