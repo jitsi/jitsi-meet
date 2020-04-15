@@ -219,8 +219,8 @@ class ConnectionStatsTable extends Component<Props> {
     }
 
     /**
-     * Creates a a table row as a ReactElement for displaying bitrate related
-     * statistics.
+     * Creates a a table row as a ReactElement for displaying codec, if present.
+     * This will typically be something like "Codecs (A/V): opus, vp8".
      *
      * @private
      * @returns {ReactElement}
