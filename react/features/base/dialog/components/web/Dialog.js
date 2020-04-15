@@ -14,6 +14,11 @@ import StatelessDialog from './StatelessDialog';
 type Props = AbstractDialogProps & {
 
     /**
+     * True if listening for the Enter key should be disabled.
+     */
+    disableEnter: boolean,
+
+    /**
      * Whether the dialog is modal. This means clicking on the blanket will
      * leave the dialog open. No cancel button.
      */

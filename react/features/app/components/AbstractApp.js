@@ -7,6 +7,7 @@ import '../../base/lastn'; // Register lastN middleware
 import { toURLString } from '../../base/util';
 import '../../follow-me';
 import { OverlayContainer } from '../../overlay';
+import '../../lobby'; // Import lobby function
 import '../../rejoin'; // Enable rejoin analytics
 import { appNavigate } from '../actions';
 import { getDefaultURL } from '../functions';

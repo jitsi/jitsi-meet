@@ -675,6 +675,7 @@
             "help": "Help",
             "invite": "Invite people",
             "kick": "Kick participant",
+            "lobbyButton": "Enable/disable lobby mode",
             "localRecording": "Toggle local recording controls",
             "lockRoom": "Toggle meeting password",
             "moreActions": "Toggle more actions menu",
@@ -722,6 +723,8 @@
         "hangup": "Leave",
         "help": "Help",
         "invite": "Invite people",
+        "lobbyButtonDisable": "Disable lobby mode",
+        "lobbyButtonEnable": "Enable lobby mode",
         "login": "Login",
         "logout": "Logout",
         "lowerYourHand": "Lower your hand",
@@ -861,5 +864,29 @@
     },
     "helpView": {
         "header": "Help center"
+    },
+    "lobby": {
+        "allow": "Allow",
+        "backToKnockModeButton": "No password, knock instead",
+        "dialogTitle": "Lobby mode",
+        "disableDialogContent": "Lobby mode is currently enabled. This feature ensures that unwanted participants can't join your meeting. Do you want to disable it?",
+        "disableDialogSubmit": "Disable",
+        "emailField": "Enter your email address",
+        "enableDialogPasswordField": "Set password (optional)",
+        "enableDialogSubmit": "Enable",
+        "enableDialogText": "Lobby mode lets you protect your meeting by only allowing people to enter after a formal approve of a moderator or by entering an optional predefined password.",
+        "enterPasswordButton": "Enter meeting password",
+        "joiningMessage": "You'll join the meeting as soon as someone accepts your request",
+        "joinWithPasswordMessage": "Trying to join with password, please wait...",
+        "joinRejectedMessage": "Your join request was rejected by a moderator.",
+        "joinTitle": "Join Meeting",
+        "joiningTitle": "Asking to join",
+        "joiningWithPasswordTitle": "Joining",
+        "knockButton": "Ask to Join",
+        "knockTitle": "Someone wants to join the meeting",
+        "nameField": "Enter your name",
+        "passwordField": "Enter password",
+        "passwordJoinButton": "Join",
+        "reject": "Reject"
     }
 }

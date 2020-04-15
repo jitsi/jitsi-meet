@@ -34,7 +34,7 @@ class BaseSubmitDialog<P: Props, S: *> extends BaseDialog<P, S> {
      * @returns {string}
      */
     _getSubmitButtonKey() {
-        return 'dialog.Ok';
+        return this.props.okKey || 'dialog.Ok';
     }
 
     /**

@@ -256,7 +256,7 @@ export function authStatusChanged(authEnabled: boolean, authLogin: string) {
  * }}
  * @public
  */
-export function conferenceFailed(conference: Object, error: string) {
+export function conferenceFailed(conference: Object, error: string, ...params: any) {
     return {
         type: CONFERENCE_FAILED,
         conference,
@@ -265,6 +265,7 @@ export function conferenceFailed(conference: Object, error: string) {
         // jitsi-meet needs it).
         error: {
             name: error,
+            params,
             recoverable: undefined
         }
     };

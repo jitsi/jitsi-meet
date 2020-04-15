@@ -22,6 +22,7 @@ import {
 } from '../../../filmstrip';
 import { AddPeopleDialog, CalleeInfoContainer } from '../../../invite';
 import { LargeVideo } from '../../../large-video';
+import { KnockingParticipantList } from '../../../lobby';
 import { BackButtonRegistry } from '../../../mobile/back-button';
 import { Captions } from '../../../subtitles';
 import { isToolboxVisible, setToolboxVisible, Toolbox } from '../../../toolbox';
@@ -320,6 +321,7 @@ class Conference extends AbstractConference<Props, *> {
                     style = { styles.navBarSafeView }>
                     <NavigationBar />
                     { this._renderNotificationsContainer() }
+                    <KnockingParticipantList />
                 </SafeAreaView>
 
                 <TestConnectionInfo />
@@ -414,6 +416,7 @@ function _mapStateToProps(state) {
     const {
         conference,
         joining,
+        membersOnly,
         leaving
     } = state['features/base/conference'];
     const { aspectRatio, reducedUI } = state['features/base/responsive-ui'];
@@ -428,7 +431,7 @@ function _mapStateToProps(state) {
     // - the XMPP connection is connected and we have no conference yet, nor we
     //   are leaving one.
     const connecting_
-        = connecting || (connection && (joining || (!conference && !leaving)));
+        = connecting || (connection && (!membersOnly && (joining || (!conference && !leaving))));
 
     return {
         ...abstractMapStateToProps(state),

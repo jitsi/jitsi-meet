@@ -119,7 +119,7 @@ export function connect(id: ?string, password: ?string) {
          */
         function _onConnectionDisconnected(message: string) {
             unsubscribe();
-            dispatch(_connectionDisconnected(connection, message));
+            dispatch(connectionDisconnected(connection, message));
         }
 
         /**
@@ -195,7 +195,7 @@ export function connect(id: ?string, password: ?string) {
  *     message: string
  * }}
  */
-function _connectionDisconnected(connection: Object, message: string) {
+export function connectionDisconnected(connection: Object, message: string) {
     return {
         type: CONNECTION_DISCONNECTED,
         connection,

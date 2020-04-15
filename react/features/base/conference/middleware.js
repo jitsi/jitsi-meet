@@ -8,7 +8,8 @@ import {
     sendAnalytics
 } from '../../analytics';
 import { openDisplayNamePrompt } from '../../display-name';
-import { CONNECTION_ESTABLISHED, CONNECTION_FAILED } from '../connection';
+import { showErrorNotification } from '../../notifications';
+import { CONNECTION_ESTABLISHED, CONNECTION_FAILED, connectionDisconnected } from '../connection';
 import { JitsiConferenceErrors } from '../lib-jitsi-meet';
 import { MEDIA_TYPE } from '../media';
 import {
@@ -140,13 +141,41 @@ StateListenerRegistry.register(
  * @private
  * @returns {Object} The value returned by {@code next(action)}.
  */
-function _conferenceFailed(store, next, action) {
+function _conferenceFailed({ dispatch, getState }, next, action) {
     const result = next(action);
-
     const { conference, error } = action;
 
     if (error.name === JitsiConferenceErrors.OFFER_ANSWER_FAILED) {
         sendAnalytics(createOfferAnswerFailedEvent());
+    }
+
+    // Handle specific failure reasons.
+    switch (error.name) {
+    case JitsiConferenceErrors.CONFERENCE_DESTROYED: {
+        const [ reason ] = error.params;
+
+        dispatch(showErrorNotification({
+            description: reason,
+            titleKey: 'dialog.sessTerminated'
+        }));
+
+        if (typeof APP !== 'undefined') {
+            APP.UI.hideStats();
+        }
+        break;
+    }
+    case JitsiConferenceErrors.CONNECTION_ERROR: {
+        const [ msg ] = error.params;
+
+        dispatch(connectionDisconnected(getState()['features/base/connection'].connection, 'Disconnected'));
+        dispatch(showErrorNotification({
+            descriptionArguments: { msg },
+            descriptionKey: msg ? 'dialog.connectErrorWithMsg' : 'dialog.connectError',
+            titleKey: 'connection.CONNFAIL'
+        }));
+
+        break;
+    }
     }
 
     // FIXME: Workaround for the web version. Currently, the creation of the

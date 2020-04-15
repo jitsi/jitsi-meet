@@ -296,12 +296,6 @@ class ConferenceConnector {
         logger.error('CONFERENCE FAILED:', err, ...params);
 
         switch (err) {
-        case JitsiConferenceErrors.CONNECTION_ERROR: {
-            const [ msg ] = params;
-
-            APP.UI.notifyConnectionFailed(msg);
-            break;
-        }
 
         case JitsiConferenceErrors.NOT_ALLOWED_ERROR: {
             // let's show some auth not allowed page
@@ -335,14 +329,6 @@ class ConferenceConnector {
         case JitsiConferenceErrors.GRACEFUL_SHUTDOWN:
             APP.UI.notifyGracefulShutdown();
             break;
-
-        case JitsiConferenceErrors.CONFERENCE_DESTROYED: {
-            const [ reason ] = params;
-
-            APP.UI.hideStats();
-            APP.UI.notifyConferenceDestroyed(reason);
-            break;
-        }
 
         // FIXME FOCUS_DISCONNECTED is a confusing event name.
         // What really happens there is that the library is not ready yet,
