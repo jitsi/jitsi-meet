@@ -299,7 +299,7 @@
         "dialANumber": "若要加入会议，请拨打其中一个号码，然后输入pin码。",
         "dialInConferenceID": "PIN:",
         "dialInNotSupported": "抱歉，不支持电话呼入。",
-        "dialInNumber": "播入：",
+        "dialInNumber": "拨入：",
         "dialInSummaryError": "获取拨入信息时出错。请稍后再试。",
         "dialInTollFree": "免费电话",
         "genericError": "糟糕！出错了。",

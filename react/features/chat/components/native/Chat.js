@@ -1,7 +1,6 @@
 // @flow
 
 import React from 'react';
-import { KeyboardAvoidingView } from 'react-native';
 
 import { translate } from '../../../base/i18n';
 import { JitsiModal } from '../../../base/modal';
@@ -18,7 +17,6 @@ import AbstractChat, {
 import ChatInputBar from './ChatInputBar';
 import MessageContainer from './MessageContainer';
 import MessageRecipient from './MessageRecipient';
-import styles from './styles';
 
 /**
  * Implements a React native component that renders the chat window (modal) of
@@ -33,15 +31,13 @@ class Chat extends AbstractChat<Props> {
     render() {
         return (
             <JitsiModal
-                headerLabelKey = 'chat.title'
+                headerProps = {{
+                    headerLabelKey: 'chat.title'
+                }}
                 modalId = { CHAT_VIEW_MODAL_ID }>
-                <KeyboardAvoidingView
-                    behavior = 'padding'
-                    style = { styles.chatContainer }>
-                    <MessageContainer messages = { this.props._messages } />
-                    <MessageRecipient />
-                    <ChatInputBar onSend = { this.props._onSendMessage } />
-                </KeyboardAvoidingView>
+                <MessageContainer messages = { this.props._messages } />
+                <MessageRecipient />
+                <ChatInputBar onSend = { this.props._onSendMessage } />
             </JitsiModal>
         );
     }

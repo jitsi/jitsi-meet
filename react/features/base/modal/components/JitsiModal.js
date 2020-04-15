@@ -1,7 +1,7 @@
 // @flow
 
 import React, { PureComponent } from 'react';
-import { SafeAreaView, View } from 'react-native';
+import { KeyboardAvoidingView, SafeAreaView } from 'react-native';
 
 import { ColorSchemeRegistry } from '../../color-scheme';
 import { HeaderWithNavigation, SlidingView } from '../../react';
@@ -40,9 +40,16 @@ type Props = {
     dispatch: Function,
 
     /**
-     * The i18n label key of the header title.
+     * Optional function that renders a footer component, if needed.
      */
-    headerLabelKey: string,
+    footerComponent?: Function,
+
+    /**
+     * Props to be passed over to the header.
+     *
+     * See {@code HeaderWithNavigation} for more details.
+     */
+    headerProps: Object,
 
     /**
      * The ID of the modal that is being rendered. This is used to show/hide the modal.
@@ -58,7 +65,12 @@ type Props = {
      * The position from where the modal should be opened. This is derived from the
      * props of the {@code SlidingView} with the same name.
      */
-    position?: string
+    position?: string,
+
+    /**
+     * Additional style to be appended to the View containing the content of the modal.
+     */
+    style?: StyleType
 };
 
 /**
@@ -87,25 +99,28 @@ class JitsiModal extends PureComponent<Props> {
      * @inheritdoc
      */
     render() {
-        const { _headerStyles, _show, _styles, children, headerLabelKey, position } = this.props;
+        const { _headerStyles, _show, _styles, children, footerComponent, headerProps, position, style } = this.props;
 
         return (
             <SlidingView
                 onHide = { this._onRequestClose }
                 position = { position }
                 show = { _show }>
-                <View
+                <KeyboardAvoidingView
+                    behavior = 'padding'
                     style = { [
                         _headerStyles.page,
-                        _styles.page
+                        _styles.page,
+                        style
                     ] }>
                     <HeaderWithNavigation
-                        headerLabelKey = { headerLabelKey }
+                        { ...headerProps }
                         onPressBack = { this._onRequestClose } />
                     <SafeAreaView style = { styles.safeArea }>
                         { children }
                     </SafeAreaView>
-                </View>
+                    { footerComponent && footerComponent() }
+                </KeyboardAvoidingView>
             </SlidingView>
         );
     }
@@ -119,14 +134,15 @@ class JitsiModal extends PureComponent<Props> {
      */
     _onRequestClose() {
         const { _show, dispatch, onClose } = this.props;
+        let shouldCloseModal = true;
 
         if (_show) {
             if (typeof onClose === 'function') {
-                onClose();
+                shouldCloseModal = onClose();
             }
-            dispatch(setActiveModalId());
+            shouldCloseModal && dispatch(setActiveModalId());
 
-            return true;
+            return shouldCloseModal;
         }
 
         return false;

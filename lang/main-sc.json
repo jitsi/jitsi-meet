@@ -220,7 +220,7 @@
         "muteParticipantDialog": "Seguru chi boles pònnere custa persone a sa muda? No as a pòdere torrare a ativare s'àudio issoro, però is utentes ddu ant a pòdere ativare in cale si siat momentu.",
         "muteParticipantTitle": "Boles pònnere custa persone a sa muda?",
         "Ok": "AB",
-        "passwordLabel": "Unu partetzipante at blocadu sa riunione. Inserta sa $t(lockRoomPassword) pro intrare.",
+        "passwordLabel": "$t(lockRoomPasswordUppercase)",
         "passwordNotSupported": "No est possìbile istabilire una $t(lockRoomPassword).",
         "passwordNotSupportedTitle": "$t(lockRoomPasswordUppercase) non suportadu",
         "passwordRequired": "$t(lockRoomPasswordUppercase) rechèdida",
