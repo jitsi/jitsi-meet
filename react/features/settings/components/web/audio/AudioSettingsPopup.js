@@ -8,7 +8,7 @@ import { toggleAudioSettings } from '../../../actions';
 import {
     getAudioInputDeviceData,
     getAudioOutputDeviceData,
-    setAudioInputDevice as setAudioInputDeviceAction,
+    setAudioInputDeviceAndUpdateSettings,
     setAudioOutputDevice as setAudioOutputDeviceAction
 } from '../../../../base/devices';
 import { connect } from '../../../../base/redux';
@@ -90,7 +90,7 @@ function mapStateToProps(state) {
 
 const mapDispatchToProps = {
     onClose: toggleAudioSettings,
-    setAudioInputDevice: setAudioInputDeviceAction,
+    setAudioInputDevice: setAudioInputDeviceAndUpdateSettings,
     setAudioOutputDevice: setAudioOutputDeviceAction
 };
 

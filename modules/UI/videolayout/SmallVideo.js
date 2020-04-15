@@ -189,6 +189,7 @@ export default class SmallVideo {
 
         if (isVideo) {
             element.setAttribute('muted', 'true');
+            element.setAttribute('playsInline', 'true'); /* for Safari on iOS to work */
         } else if (config.startSilent) {
             element.muted = true;
         }

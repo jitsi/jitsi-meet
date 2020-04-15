@@ -4,13 +4,13 @@
         "countryNotSupported": "Non supportiamo ancora questa destinazione.",
         "countryReminder": "Stai chiamando fuori dagli Stati Uniti? Assicurati d'inserire il prefisso internazionale!",
         "disabled": "Non puoi invitare persone.",
-        "failedToAdd": "",
-        "footerText": "La chiamata dall'esterno è disabilitata.",
-        "loading": "Cercando persone e numeri di telefono",
+        "failedToAdd": "L'aggiunta di nuovi membri è fallita",
+        "footerText": "La chiamata all'esterno è disabilitata.",
+        "loading": "Sto cercando persone e numeri di telefono",
         "loadingNumber": "Sto validando il numero di telefono",
-        "loadingPeople": "Ricerca delle persone da invitare",
+        "loadingPeople": "Sto cercando le persone da invitare",
         "noResults": "Nessun risultato corrispondente",
-        "noValidNumbers": "Inserire un numero di telefono",
+        "noValidNumbers": "Per favore inserire un numero di telefono",
         "searchNumbers": "Aggiungi numeri di telefono",
         "searchPeople": "Cerca persone",
         "searchPeopleAndNumbers": "Cerca persone o aggiungi i loro numeri di telefono",
@@ -28,10 +28,10 @@
     },
     "calendarSync": {
         "addMeetingURL": "Aggiungi un collegamento alla conferenza",
-        "confirmAddLink": "Vuoi aggiungere un collegamento a ANDI Conference a questo evento?",
+        "confirmAddLink": "Vuoi aggiungere un collegamento Jitsi a questo evento?",
         "error": {
             "appConfiguration": "L'integrazione del calendario non è configurata in modo appropriato.",
-            "generic": "È stato riscontrato un errore. Controllare le impostazioni del calendario e ricaricare la pagina.",
+            "generic": "È stato riscontrato un errore. Controllare le impostazioni del calendario o ricaricare la pagina.",
             "notSignedIn": "È stato riscontrato un errore durante l'autenticazione per la visualizzazione degli eventi del calendario. Controllare le impostazioni del calendario e provare a ripetere l'accesso."
         },
         "join": "Partecipa",
@@ -45,7 +45,7 @@
         "today": "Oggi"
     },
     "chat": {
-        "error": "Errore: il tuo messaggio “{{originalText}}” non e’ stato inviato. Ragione: {{error}}",
+        "error": "Errore: il tuo messaggio “{{originalText}}” non e’ stato inviato. Motivo: {{error}}",
         "messagebox": "Digitare un messaggio",
         "nickname": {
             "popover": "Scegli un nickname",
@@ -54,7 +54,7 @@
         "title": "Chat"
     },
     "connectingOverlay": {
-        "joiningRoom": "Collegamento al meeting in corso…"
+        "joiningRoom": "Collegamento al tuo meeting in corso…"
     },
     "connection": {
         "ATTACHED": "Collegato",
@@ -63,7 +63,7 @@
         "CONNECTED": "Connesso",
         "CONNECTING": "Connessione",
         "CONNFAIL": "Connessione non riuscita",
-        "DISCONNECTED": "Occupato",
+        "DISCONNECTED": "Disconnesso",
         "DISCONNECTING": "Disconnessione in corso",
         "ERROR": "Errore",
         "RECONNECTING": "Si è verificato un problema di rete. Riconnessione..."
@@ -124,7 +124,7 @@
         "noPermission": "Permesso negato",
         "previewUnavailable": "Anteprima non disponibile",
         "selectADevice": "Seleziona un dispositivo",
-        "testAudio": "Riproduci un suono di test"
+        "testAudio": "Riproduci un suono di prova"
     },
     "dialog": {
         "accessibilityLabel": {
@@ -498,7 +498,7 @@
         "selectCamera": "Videocamera",
         "selectMic": "Microfono",
         "startAudioMuted": "Tutti cominciano con il microfono disattivato",
-        "startVideoMuted": "Tutti cominciano con il video video",
+        "startVideoMuted": "Tutti cominciano con il video disattivato",
         "title": "Impostazioni"
     },
     "settingsView": {
@@ -686,7 +686,7 @@
             "join": "Tap per accedere",
             "roomname": "Inserisci Nome Stanza"
         },
-        "appDescription": "Via avanti, video chatta con l'intero team. In effetti, invita tutti quelli che conosci. {{app}} è una soluzione di video conference totalmente crittografata, 100% open source, che puoi utilizzare tutto il giorno, ogni giorno, gratuitamente - senza bisogno di un account.",
+        "appDescription": "Avvia una videochiamata con tutto il team. Invita tutti quelli che conosci.  {{app}} è una soluzione per effettuare videoconferenze totalmente crittografata, 100% open source, che puoi usare sempre, ogni giorno, gratuitamente – senza bisogno di un account.",
         "audioVideoSwitch": {
             "audio": "Voce",
             "video": "Video"

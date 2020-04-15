@@ -107,9 +107,7 @@ export default class MicrophoneEntry extends Component<Props, State> {
      * @returns {void}
      */
     _stopListening(jitsiTrack) {
-        jitsiTrack && jitsiTrack.off(
-            JitsiTrackEvents.TRACK_AUDIO_LEVEL_CHANGED,
-            this._updateLevel);
+        jitsiTrack && jitsiTrack.off(JitsiTrackEvents.TRACK_AUDIO_LEVEL_CHANGED, this._updateLevel);
         this.setState({
             level: -1
         });

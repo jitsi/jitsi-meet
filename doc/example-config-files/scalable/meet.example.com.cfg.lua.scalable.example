@@ -1,0 +1,88 @@
+plugin_paths = { "/usr/share/jitsi-meet/prosody-plugins/" }
+
+-- domain mapper options, must at least have domain base set to use the mapper
+muc_mapper_domain_base = "meet.example.com";
+
+turncredentials_secret = "turncredentials_secret_test";
+
+turncredentials = {
+  { type = "stun", host = "meet.example.com", port = "443" },
+  { type = "turn", host = "meet.example.com", port = "443", transport = "udp" },
+  { type = "turns", host = "meet.example.com", port = "443", transport = "tcp" }
+};
+
+cross_domain_bosh = false;
+consider_bosh_secure = true;
+
+VirtualHost "meet.example.com"
+        -- enabled = false -- Remove this line to enable this host
+        authentication = "anonymous"
+        -- Properties below are modified by jitsi-meet-tokens package config
+        -- and authentication above is switched to "token"
+        --app_id="example_app_id"
+        --app_secret="example_app_secret"
+        -- Assign this host a certificate for TLS, otherwise it would use the one
+        -- set in the global section (if any).
+        -- Note that old-style SSL on port 5223 only supports one certificate, and will always
+        -- use the global one.
+        ssl = {
+                key = "/etc/prosody/certs/meet.example.com.key";
+                certificate = "/etc/prosody/certs/meet.example.com.crt";
+        }
+        speakerstats_component = "speakerstats.meet.example.com"
+        conference_duration_component = "conferenceduration.meet.example.com"
+        -- we need bosh
+        modules_enabled = {
+            "bosh";
+            "pubsub";
+            "ping"; -- Enable mod_ping
+            "speakerstats";
+            "turncredentials";
+            "conference_duration";
+        }
+        c2s_require_encryption = false
+
+Component "conference.meet.example.com" "muc"
+    storage = "memory"
+    modules_enabled = {
+        "muc_meeting_id";
+        "muc_domain_mapper";
+        -- "token_verification";
+    }
+    admins = { "focus@auth.meet.example.com" }
+    muc_room_locking = false
+    muc_room_default_public_jids = true
+
+-- internal muc component
+-- Note: This is also used from jibris
+Component "internal.auth.meet.example.com" "muc"
+    storage = "memory"
+    modules_enabled = {
+      "ping";
+    }
+    admins = { "focus@auth.meet.example.com", "jvb@auth.meet.example.com" }
+
+VirtualHost "auth.meet.example.com"
+    ssl = {
+        key = "/etc/prosody/certs/auth.meet.example.com.key";
+        certificate = "/etc/prosody/certs/auth.meet.example.com.crt";
+    }
+    authentication = "internal_plain"
+
+Component "focus.meet.example.com"
+    component_secret = "jicofo_secret_test"
+
+Component "speakerstats.meet.example.com" "speakerstats_component"
+    muc_component = "conference.meet.example.com"
+
+
+Component "conferenceduration.meet.example.com" "conference_duration_component"
+    muc_component = "conference.meet.example.com"
+
+-- for Jibri
+VirtualHost "recorder.meet.example.com"
+    modules_enabled = {
+        "ping";
+    }
+    authentication = "internal_plain"
+    c2s_require_encryption = false
