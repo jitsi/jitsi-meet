@@ -525,6 +525,7 @@
         "followMe": "Follow-me für alle Teilnehmer",
         "language": "Sprache",
         "loggedIn": "Als {{name}} angemeldet",
+        "microphones": "Mikrofon",
         "moderator": "Moderator",
         "more": "Mehr",
         "name": "Name",
@@ -532,6 +533,7 @@
         "selectAudioOutput": "Audioausgabe",
         "selectCamera": "Kamera",
         "selectMic": "Mikrofon",
+        "speakers": "Lautsprecher",
         "startAudioMuted": "Alle Teilnehmer treten stumm geschaltet bei",
         "startVideoMuted": "Alle Teilnehmer treten ohne Video bei",
         "title": "Einstellungen"
