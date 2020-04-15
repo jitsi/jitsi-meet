@@ -78,7 +78,6 @@
         "GET_SESSION_ID_ERROR": "Chyba při získávání session-id: {{code}}",
         "FETCH_SESSION_ID": "Získává se session-ID…"
     },
-
     "connectionindicator": {
         "address": "Adresa:",
         "bandwidth": "Odhadovaná šířka pásma:",
