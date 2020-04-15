@@ -38,6 +38,7 @@ import { SharedDocumentButton } from '../../../etherpad';
 import { openFeedbackDialog } from '../../../feedback';
 import { beginAddPeople } from '../../../invite';
 import { openKeyboardShortcutsDialog } from '../../../keyboard-shortcuts';
+import { LobbyModeButton } from '../../../lobby';
 import {
     LocalRecordingButton,
     LocalRecordingInfoDialog
@@ -1188,6 +1189,9 @@ class Toolbox extends Component<Props, State> {
         if (this._shouldShowButton('closedcaptions')) {
             buttonsLeft.push('closedcaptions');
         }
+        if (this._shouldShowButton('lobby')) {
+            buttonsRight.push('lobby');
+        }
         if (overflowHasItems) {
             buttonsRight.push('overflowmenu');
         }
@@ -1271,6 +1275,8 @@ class Toolbox extends Component<Props, State> {
                     { this._renderVideoButton() }
                 </div>
                 <div className = 'button-group-right'>
+                    { (buttonsRight.indexOf('lobby') !== -1)
+                        && <LobbyModeButton /> }
                     { buttonsRight.indexOf('localrecording') !== -1
                         && <LocalRecordingButton
                             onClick = {

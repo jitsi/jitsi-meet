@@ -33,6 +33,11 @@ type Props = {
      */
     customHeader?: React$Element<any> | Function,
 
+    /*
+     * True if listening for the Enter key should be disabled.
+     */
+    disableEnter: boolean,
+
     /**
      * Disables dismissing the dialog when the blanket is clicked. Enabled
      * by default.
@@ -313,7 +318,7 @@ class StatelessDialog extends Component<Props> {
             return;
         }
 
-        if (event.key === 'Enter') {
+        if (event.key === 'Enter' && !this.props.disableEnter) {
             event.preventDefault();
             event.stopPropagation();
 

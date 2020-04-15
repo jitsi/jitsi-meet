@@ -12,6 +12,7 @@ import { Chat } from '../../../chat';
 import { Filmstrip } from '../../../filmstrip';
 import { CalleeInfoContainer } from '../../../invite';
 import { LargeVideo } from '../../../large-video';
+import { KnockingParticipantList } from '../../../lobby';
 import { Prejoin, isPrejoinPageVisible } from '../../../prejoin';
 import {
     Toolbox,
@@ -198,8 +199,8 @@ class Conference extends AbstractConference<Props, *> {
                 <InviteMore />
                 <div id = 'videospace'>
                     <LargeVideo />
-                    { hideLabels
-                        || <Labels /> }
+                    <KnockingParticipantList />
+                    { hideLabels || <Labels /> }
                     <Filmstrip filmstripOnly = { filmstripOnly } />
                 </div>
 

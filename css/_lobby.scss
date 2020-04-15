@@ -1,0 +1,211 @@
+#lobby-screen {
+    align-items: center;
+    color: $overflowMenuItemColor;
+    display: flex;
+    flex-direction: column;
+    font-size: 1.2em;
+    margin: 48px 36px;
+
+    span {
+        padding: 8px 0;
+    }
+
+    .title {
+        color: $defaultColor;
+        font-size: 2em;
+    }
+
+    .roomName {
+        font-size: 1em;
+    }
+
+    .participantInfo {
+        align-items: center;
+        align-self: stretch;
+        border: 1px solid #B8C7E0;
+        border-radius: 4px;
+        display: flex;
+        flex-direction: column;
+        margin: 24px 0;
+        padding: 34px 0;
+
+        &:hover {
+            padding-top: 0px;
+
+            .editButton {
+                display: flex;
+            }
+        }
+
+        .editButton {
+            align-self: stretch;
+            display: none;
+            justify-content: flex-end;
+            padding: 5px;
+            position: relative;
+
+            button {
+                background-color: transparent;
+                border-width: 0;
+                margin: 0;
+                padding: 0;
+            }
+        }
+
+        .displayName {
+            color: $defaultColor;
+            font-size: 1.3em;
+        }
+    }
+
+    .form {
+        align-self: stretch;
+        display: flex;
+        flex-direction: column;
+        margin: 32px 0;
+
+        input {
+            margin: 5px 0 15px 0;
+        }
+
+        span {
+            color: white;
+            font-size: 1.3em;
+            text-align: center;
+        }
+    }
+
+    .joiningContainer {
+        align-items: center;
+        display: flex;
+        flex-direction: column;
+        margin: 36px 0;
+
+        span {
+            margin-top: 36px;
+            text-align: center;
+        }
+    }
+}
+
+#lobby-dialog {
+    align-self: stretch;
+    display: flex;
+    flex-direction: column;
+    margin: 32px 0;
+
+    .description {
+        margin-bottom: 18px;
+    }
+
+    .field {
+        display: flex;
+        flex-direction: row;
+
+        :first-child {
+            align-items: center;
+            display: flex;
+            padding-right: 15px;
+        }
+
+        :last-child {
+            flex: 1;
+        }
+    }
+}
+
+#knocking-participant-list {
+    background-color: $newToolbarBackgroundColor;
+    border: 1px solid rgba(255, 255, 255, .4);
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    left: 0;
+    margin: 20px;
+    position: fixed;
+    top: 20;
+    transition: top 1s ease;
+    z-index: 100;
+
+    &.toolbox-visible {
+        // Same as toolbox subject position
+        top: 120px;
+    }
+
+    .title {
+        background-color: rgba(0, 0, 0, .2);
+        font-size: 1.2em;
+        padding: 15px
+    }
+
+    ul {
+        list-style-type: none;
+        padding: 0 15px 15px 15px;
+
+        li {
+            align-items: center;
+            display: flex;
+            flex-direction: row;
+            margin: 8px 0;
+
+            .details {
+                display: flex;
+                flex: 1;
+                flex-direction: column;
+                justify-content: space-evenly;
+                margin: 0 30px 0 10px;
+            }
+
+            button {
+                align-self: unset;
+                margin: 0 5px;
+            }
+        }
+    }
+}
+
+// Common styles
+
+#lobby-dialog, #lobby-screen, #knocking-participant-list {
+    input {
+        align-self: stretch;
+        background-color: transparent;
+        border: 1px solid #B8C7E0;
+        border-radius: 4px;
+        color: white;
+        padding: 12px 8px;
+
+        &:focus {
+            border-color: rgb(3, 118, 218);
+        }
+    }
+
+    button {
+        align-self: stretch;
+        margin: 8px 0;
+        padding: 12px;
+        transition: .2s transform ease;
+
+        &:disabled {
+            opacity: .5;
+        }
+
+        &:hover {
+            transform: scale(1.05);
+
+            &:disabled {
+                transform: none;
+            }
+        }
+
+        &.borderLess {
+            background-color: transparent;
+            border-width: 0;
+        }
+
+        &.primary {
+            background-color: rgb(3, 118, 218);
+            border-width: 0;
+        }
+    }
+}

@@ -36,6 +36,7 @@ const DEFAULT_STATE = {
     leaving: undefined,
     locked: undefined,
     maxReceiverVideoQuality: VIDEO_QUALITY_LEVELS.HIGH,
+    membersOnly: undefined,
     password: undefined,
     passwordRequired: undefined,
     preferredVideoQuality: VIDEO_QUALITY_LEVELS.HIGH
@@ -161,11 +162,17 @@ function _conferenceFailed(state, { conference, error }) {
     }
 
     let authRequired;
+    let membersOnly;
     let passwordRequired;
 
     switch (error.name) {
     case JitsiConferenceErrors.AUTHENTICATION_REQUIRED:
         authRequired = conference;
+        break;
+
+    case JitsiConferenceErrors.CONFERENCE_ACCESS_DENIED:
+    case JitsiConferenceErrors.MEMBERS_ONLY_ERROR:
+        membersOnly = conference;
         break;
 
     case JitsiConferenceErrors.PASSWORD_REQUIRED:
@@ -189,6 +196,7 @@ function _conferenceFailed(state, { conference, error }) {
          * @type {string}
          */
         locked: passwordRequired ? LOCKED_REMOTELY : undefined,
+        membersOnly,
         password: undefined,
 
         /**
@@ -232,6 +240,7 @@ function _conferenceJoined(state, { conference }) {
         e2eeSupported: conference.isE2EESupported(),
 
         joining: undefined,
+        membersOnly: undefined,
         leaving: undefined,
 
         /**
