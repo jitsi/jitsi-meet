@@ -210,7 +210,7 @@
         "micPermissionDeniedError": "No ha otorgado permisos para usar su micrófono. Puede unirse a la conferencia, pero no lo podrán escuchar. Utilice el botón en la barra de dirección para solucionar esto.",
         "micUnknownError": "No se puede usar su micrófono por motivos desconocidos.",
         "muteEveryoneElseDialog": "Una vez silenciados, No podrás quitarles el modo silencio, pero ellos podrán hacerlo en cualquier momento.",
-        "muteEveryoneElseTitle": "Silenciar a todos los participantes excepto a {{whom}}?",
+        "muteEveryoneElseTitle": "¿Silenciar a todos los participantes excepto a {{whom}}?",
         "muteEveryoneDialog": "¿Estás seguro de silenciar a todos los participantes? No podrás quitarles el modo en silencio, pero ellos podrán hacerlo en cualquier momento.",
         "muteEveryoneTitle": "¿Silenciar a todos los participantes?",
         "muteEveryoneSelf": "A ti mismo",
