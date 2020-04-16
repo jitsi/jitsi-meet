@@ -1,0 +1,255 @@
+.prejoin {
+    &-full-page {
+        background: #1C2025;
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        z-index: $toolbarZ + 1;
+    }
+
+    &-input-area-container {
+        position: absolute;
+        bottom: 128px;
+        width: 100%;
+        z-index: 1;
+    }
+
+    &-input-area {
+        margin: 0 auto;
+        text-align: center;
+        width: 320px;
+    }
+
+    &-title {
+        color: #fff;
+        font-size: 24px;
+        line-height: 32px;
+        margin-bottom: 16px;
+    }
+
+    &-btn {
+        border-radius: 3px;
+        color: #fff;
+        cursor: pointer;
+        display: inline-block;
+        font-size: 15px;
+        line-height: 24px;
+        margin-bottom: 16px;
+        padding: 7px 16px;
+        text-align: center;
+        width: 286px;
+
+        &--primary {
+            background: #0376DA;
+            border: 1px solid #0376DA;
+        }
+
+        &--secondary {
+            background: #2A3A4B;
+            border: 1px solid #5E6D7A;
+        }
+
+        &--text {
+            width: auto;
+            margin: 0;
+            padding: 0;
+        }
+    }
+
+    &-text-btns {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    &-input-label {
+        color: #A4B8D1;
+        font-size: 13px;
+        line-height: 20px;
+        margin-top: 32px 0 8px 0;
+        text-align: center;
+        width: 100%;
+    }
+}
+
+@mixin name-placeholder {
+    color: #fff;
+    font-weight: 300;
+    opacity: 0.6;
+}
+
+.prejoin-preview {
+    height: 100%;
+    position: absolute;
+    width: 100%;
+
+    &--no-video {
+        background: radial-gradient(50% 50% at 50% 50%, #5B6F80 0%, #365067 100%), #FFFFFF;
+        text-align: center;
+    }
+
+    &-video {
+        height: 100%;
+        object-fit: cover;
+        position: absolute;
+        width: 100%;
+    }
+
+    &-name {
+        color: #fff;
+        font-size: 19px;
+        line-height: 28px;
+
+        &--editable {
+            background: none;
+            border: 0;
+            border-bottom: 1px solid #D1DBE8;
+            margin: 24px 0 16px 0;
+            outline: none;
+            text-align: center;
+            width: 100%;
+
+            &::-webkit-input-placeholder {
+                @include name-placeholder;
+            }
+            &::-moz-placeholder {
+                @include name-placeholder;
+            }
+            &:-ms-input-placeholder {
+                @include name-placeholder;
+            }
+        }
+    }
+
+    &-avatar.avatar {
+        background: #A4B8D1;
+        margin: 200px auto 0 auto;
+    }
+
+    &-btn-container {
+        display: flex;
+        justify-content: center;
+        position: absolute;
+        bottom: 50px;
+        width: 100%;
+        z-index: 1;
+
+        &> div {
+            margin: 0 12px;
+        }
+
+        .settings-button-small-icon {
+            right: -8px;
+
+            &--hovered {
+                right: -10px;
+            }
+        }
+    }
+
+    &-overlay {
+        height: 100%;
+        position: absolute;
+        width: 100%;
+        z-index: 1;
+        background: linear-gradient(0deg, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), linear-gradient(360deg, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0) 54.25%);
+    }
+
+    &-status {
+        align-items: center;
+        bottom: 0;
+        color: #fff;
+        display: flex;
+        font-size: 13px;
+        min-height: 24px;
+        justify-content: center;
+        position: absolute;
+        text-align: center;
+        width: 100%;
+        z-index: 1;
+
+        &--warning {
+            background: rgba(241, 173, 51, 0.5)
+        }
+        &--ok {
+            background: rgba(49, 183, 106, 0.5);
+        }
+    }
+
+    &-icon {
+        background-position: center;
+        background-repeat: no-repeat;
+        display: inline-block;
+        height: 16px;
+        margin-right: 8px;
+        width: 16px;
+    }
+
+    &-error-desc {
+        margin-right: 4px;
+    }
+
+    .settings-button-container {
+        width: 49px;
+        margin: 0 8px;
+    }
+}
+
+.prejoin-copy {
+    &-meeting {
+        cursor: pointer;
+        color: #fff;
+        font-size: 15px;
+        font-weight: 300;
+        line-height: 24px;
+        position: relative;
+    }
+
+    &-url {
+        max-width: 278px;
+        padding: 8px 10px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    &-badge {
+        border-radius: 4px;
+        height: 100%;
+        line-height: 38px;
+        position: absolute;
+        padding-left: 10px;
+        text-align: left;
+        top: 0;
+        width: 100%;
+
+        &--hover {
+            background: #1C2025;
+        }
+
+        &--done {
+            background: #31B76A;
+        }
+    }
+
+    &-icon {
+        position: absolute;
+        right: 8px;
+        top: 8px;
+
+       &--white {
+           &> svg > path {
+               fill: #fff
+           }
+       }
+
+       &--light {
+           &> svg > path {
+               fill: #D1DBE8;
+           }
+       }
+    }
+
+    &-textarea {
+        position: absolute;
+        left: -9999px;
+    }
+}

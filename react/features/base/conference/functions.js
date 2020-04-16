@@ -247,6 +247,16 @@ export function getNearestReceiverVideoQualityLevel(availableHeight: number) {
 }
 
 /**
+ * Returns the stored room name.
+ *
+ * @param {Object} state - The current state of the app.
+ * @returns {string}
+ */
+export function getRoomName(state: Object): string {
+    return state['features/base/conference'].room;
+}
+
+/**
  * Handle an error thrown by the backend (i.e. {@code lib-jitsi-meet}) while
  * manipulating a conference participant (e.g. Pin or select participant).
  *

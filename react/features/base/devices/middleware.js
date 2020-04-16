@@ -18,6 +18,8 @@ import {
     SET_AUDIO_INPUT_DEVICE,
     SET_VIDEO_INPUT_DEVICE
 } from './actionTypes';
+import { replaceAudioTrackById, replaceVideoTrackById } from '../../prejoin/actions';
+import { isPrejoinPageVisible } from '../../prejoin/functions';
 import { showNotification, showWarningNotification } from '../../notifications';
 import { updateSettings } from '../settings';
 import { formatDeviceLabel, setAudioOutputDeviceId } from './functions';
@@ -98,10 +100,18 @@ MiddlewareRegistry.register(store => next => action => {
         break;
     }
     case SET_AUDIO_INPUT_DEVICE:
-        APP.UI.emitEvent(UIEvents.AUDIO_DEVICE_CHANGED, action.deviceId);
+        if (isPrejoinPageVisible(store.getState())) {
+            store.dispatch(replaceAudioTrackById(action.deviceId));
+        } else {
+            APP.UI.emitEvent(UIEvents.AUDIO_DEVICE_CHANGED, action.deviceId);
+        }
         break;
     case SET_VIDEO_INPUT_DEVICE:
-        APP.UI.emitEvent(UIEvents.VIDEO_DEVICE_CHANGED, action.deviceId);
+        if (isPrejoinPageVisible(store.getState())) {
+            store.dispatch(replaceVideoTrackById(action.deviceId));
+        } else {
+            APP.UI.emitEvent(UIEvents.VIDEO_DEVICE_CHANGED, action.deviceId);
+        }
         break;
     case CHECK_AND_NOTIFY_FOR_NEW_DEVICE:
         _checkAndNotifyForNewDevice(store, action.newDevices, action.oldDevices);
@@ -110,7 +120,6 @@ MiddlewareRegistry.register(store => next => action => {
 
     return next(action);
 });
-
 
 /**
  * Does extra sync up on properties that may need to be updated after the
