@@ -1,6 +1,7 @@
 <manifest
     xmlns:android="http://schemas.android.com/apk/res/android"
     package="org.jitsi.meet">
+    <!-- Change package -->
   <application
       android:allowBackup="true"
       android:icon="@mipmap/ic_launcher"
@@ -27,7 +28,7 @@
         <data android:host="alpha.jitsi.net" android:scheme="https" />
         <data android:host="beta.meet.jit.si" android:scheme="https" />
         <data android:host="meet.jit.si" android:scheme="https" />
-        <data android:host="jitsi.mannheim.ccc.de" android:scheme="https" />
+        <data android:host="jitsi.hopp-foundation.de" android:scheme="https" />
       </intent-filter>
       <intent-filter>
         <action android:name="android.intent.action.VIEW" />
