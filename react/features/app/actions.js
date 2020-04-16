@@ -30,6 +30,8 @@ import {
 import logger from './logger';
 
 declare var APP: Object;
+declare var interfaceConfig: Object;
+
 
 /**
  * Triggers an in-app navigation to a specific route. Allows navigation to be
@@ -171,7 +173,7 @@ export function redirectToStaticPage(pathname: string) {
             // fine but pointless to include it because contextRoot is the current
             // directory.
             newPathname.startsWith('./')
-            && (newPathname = newPathname.substring(2));
+                && (newPathname = newPathname.substring(2));
             newPathname = getLocationContextRoot(windowLocation) + newPathname;
         }
 
@@ -215,7 +217,7 @@ export function reloadWithStoredParams() {
         windowLocation.replace(locationURL.toString());
 
         if (window.self !== window.top
-                && locationURL.search === oldSearchString) {
+            && locationURL.search === oldSearchString) {
             // NOTE: Assuming that only the hash or search part of the URL will
             // be changed!
             // location.reload will not trigger redirect/reload for iframe when
@@ -254,8 +256,15 @@ export function maybeRedirectToWelcomePage(options: Object = {}) {
             // to close page
             window.sessionStorage.setItem('guest', isGuest);
 
-            dispatch(redirectToStaticPage(`static/${
-                options.feedbackSubmitted ? 'close.html' : 'close2.html'}`));
+            let path = 'close.html';
+
+            if (interfaceConfig.SHOW_PROMOTIONAL_CLOSE_PAGE) {
+                path = 'close3.html';
+            } else if (!options.feedbackSubmitted) {
+                path = 'close2.html';
+            }
+
+            dispatch(redirectToStaticPage(`static/${path}`));
 
             return;
         }
@@ -279,4 +288,3 @@ export function maybeRedirectToWelcomePage(options: Object = {}) {
         }
     };
 }
-

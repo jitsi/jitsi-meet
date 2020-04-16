@@ -9,7 +9,7 @@ import { Container } from '../../../base/react';
 import { connect } from '../../../base/redux';
 import { StyleType } from '../../../base/styles';
 import { ChatButton } from '../../../chat';
-import { InfoDialogButton } from '../../../invite';
+import { InviteButton } from '../../../invite';
 
 import { isToolboxVisible } from '../../functions';
 
@@ -39,11 +39,6 @@ type Props = {
      * Whether the hangup feature has been enabled.
      */
     _hangupEnabled: boolean,
-
-    /**
-     * Whether the info dialog feature has been enabled.
-     */
-    _infoDialogEnabled: boolean,
 
     /**
      * Whether the overflow menu feature has been enabled.
@@ -130,12 +125,13 @@ class Toolbox extends PureComponent<Props> {
      * @returns {React$Node}
      */
     _renderToolbar() {
-        const { _audioMuteEnabled, _chatEnabled, _hangupEnabled, _infoDialogEnabled, _overflowMenuEnabled, _styles,
+        const { _audioMuteEnabled, _chatEnabled, _hangupEnabled, _overflowMenuEnabled, _styles,
             _videoMuteEnabled } = this.props;
         const { buttonStyles, buttonStylesBorderless, hangupButtonStyles, toggledButtonStyles } = _styles;
 
         return (
             <View
+                accessibilityRole = 'toolbar'
                 pointerEvents = 'box-none'
                 style = { styles.toolbar }>
                 {
@@ -147,8 +143,8 @@ class Toolbox extends PureComponent<Props> {
                             } />
                 }
                 {
-                    !_chatEnabled && _infoDialogEnabled
-                        && <InfoDialogButton
+                    !_chatEnabled
+                        && <InviteButton
                             styles = { buttonStyles }
                             toggledStyles = { toggledButtonStyles } />
                 }
@@ -191,7 +187,6 @@ class Toolbox extends PureComponent<Props> {
  *     _audioMuteEnabled: boolean,
  *     _chatEnabled: boolean,
  *     _hangupEnabled: boolean,
- *     _infoDialogEnabled: boolean,
  *     _overflowMenuEnabled: boolean,
  *     _styles: StyleType,
  *     _videoMuteEnabled: boolean,
@@ -205,7 +200,6 @@ function _mapStateToProps(state: Object): Object {
         _audioMuteEnabled: toolbarButtons.includes('audiomute'),
         _chatEnabled: getFeatureFlag(state, CHAT_ENABLED, true),
         _hangupEnabled: toolbarButtons.includes('hangup'),
-        _infoDialogEnabled: toolbarButtons.includes('infodialog'),
         _overflowMenuEnabled: toolbarButtons.includes('overflowmenu'),
         _styles: ColorSchemeRegistry.get(state, 'Toolbox'),
         _videoMuteEnabled: toolbarButtons.includes('videomute'),

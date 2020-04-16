@@ -47,10 +47,10 @@
     },
     "chat": {
         "error": "Erro: sua mensagem não foi enviada. Motivo: {{error}}",
-        "fieldPlaceHolder": "",
+        "fieldPlaceHolder": "Digite sua mensagem aqui",
         "messagebox": "Digite uma mensagem",
         "messageTo": "Mensagem privada para {{recipient}}",
-        "noMessagesMessage": "",
+        "noMessagesMessage": "Não há mensagens na reunião ainda. Inicie uma conversa aqui!",
         "nickname": {
             "popover": "Escolha um apelido",
             "title": "Digite um apelido para usar o bate-papo"
@@ -72,7 +72,11 @@
         "DISCONNECTED": "Desconectado",
         "DISCONNECTING": "Desconectando",
         "ERROR": "Erro",
-        "RECONNECTING": "Ocorreu um problema de rede. Reconectando..."
+        "RECONNECTING": "Ocorreu um problema de rede. Reconectando...",
+        "LOW_BANDWIDTH": "O vídeo de {{displayName}} foi desativado para economizar largura de banda",
+        "GOT_SESSION_ID": "Obtendo ID da sessão... Feito",
+        "GET_SESSION_ID_ERROR": "Erro ao obter o ID da sessão: {{code}}",
+        "FETCH_SESSION_ID": "Obtendo ID da sessão..."
     },
     "connectionindicator": {
         "address": "Endereço:",
@@ -102,7 +106,8 @@
         "resolution": "Resolução:",
         "status": "Conexão:",
         "transport": "Transporte:",
-        "transport_plural": "Transportes:"
+        "transport_plural": "Transportes:",
+        "e2e_rtt": "E2E RTT:"
     },
     "dateUtils": {
         "earlier": "Mais cedo",
@@ -205,7 +210,7 @@
         "muteParticipantDialog": "Tem certeza de que deseja silenciar este participante? Você não poderá desfazer isso, mas o participante pode reabilitar o áudio a qualquer momento.",
         "muteParticipantTitle": "Deixar mudo este participante?",
         "Ok": "Ok",
-        "passwordLabel": "$t(lockRoomPasswordUppercase)",
+        "passwordLabel": "A reunião foi travada por um participante. Por favor, insira a $t(lockRoomPassword) para entrar.",
         "passwordNotSupported": "A configuração de uma reunião $t(lockRoomPassword) não é suportada.",
         "passwordNotSupportedTitle": "$t(lockRoomPasswordUppercase) não suportado",
         "passwordRequired": "$t(lockRoomPasswordUppercase) requerido",
@@ -232,7 +237,7 @@
         "screenSharingFailedToInstall": "Oops! Falhou a instalação da extensão de compartilhamento de tela.",
         "screenSharingFailedToInstallTitle": "A extensão de compartilhamento de tela falhou ao instalar",
         "screenSharingFirefoxPermissionDeniedError": "Algo deu errado enquanto estávamos tentando compartilhar sua tela. Por favor, certifique-se de que você nos deu permissão para fazê-lo. ",
-        "screenSharingFirefoxPermissionDeniedTitle": "Opa! Não foi possível iniciar o compartilhamento de tela.",
+        "screenSharingFirefoxPermissionDeniedTitle": "Opa! Não foi possível iniciar o compartilhamento de tela!",
         "screenSharingPermissionDeniedError": "Oops! Alguma coisa está errada com suas permissões de compartilhamento de tela. Recarregue e tente de novo.",
         "sendPrivateMessage": "Você enviou uma mensagem privada recentemente. Tem intenção de responder em privado, ou deseja enviar sua mensagem para o grupo?",
         "sendPrivateMessageCancel": "Enviar para o grupo",
@@ -266,7 +271,14 @@
         "WaitForHostMsgWOk": "A conferência <b>{{room}}</b> ainda não começou. Se você é o anfitrião, pressione Ok para autenticar. Do contrário, aguarde a chegada do anfitrião.",
         "WaitingForHost": "Esperando o hospedeiro...",
         "Yes": "Sim",
-        "yourEntireScreen": "Toda sua tela"
+        "yourEntireScreen": "Toda sua tela",
+        "screenSharingAudio": "Compartilhar áudio",
+        "muteEveryoneStartMuted": "Todos iniciam silenciados daqui para frente",
+        "muteEveryoneSelf": "a si próprio",
+        "muteEveryoneDialog": "Tem certeza que deseja silenciar todos? Você não poderá ativar o som deles, mas eles podem ativar o som eles mesmo a qualquer momento.",
+        "muteEveryoneTitle": "Silenciar todos?",
+        "muteEveryoneElseTitle": "Silenciar todo mundo exceto {{whom}}?",
+        "muteEveryoneElseDialog": "Uma vez silenciados, você não poderá reativar o som deles, mas eles poderão reativar o som a qualquer momento."
     },
     "dialOut": {
         "statusMessage": "está agora {{status}}"
@@ -304,7 +316,7 @@
         "dialInTollFree": "Chamada gratuita",
         "genericError": "Oops, alguma coisa deu errado.",
         "inviteLiveStream": "Para ver a transmissão ao vivo da reunião, clique no link: {{url}}",
-        "invitePhone": "Para participar por telefone, toque aqui: {{number}} ,, {{conferenceID}} # \\ n",
+        "invitePhone": "Para participar por telefone, toque aqui: {{number}},,{{conferenceID}}#\n",
         "invitePhoneAlternatives": "Procurando um número de discagem diferente?\nVeja os números de discagem da reunião: {{url}} \n\n\nSe você também estiver discando através de um telefone da sala, participe sem conectar-se ao áudio: {{silentUrl}}",
         "inviteURLFirstPartGeneral": "Você foi convidado para uma reunião.",
         "inviteURLFirstPartPersonal": "{{name}} está convidando você para uma reunião.\n",
@@ -379,7 +391,9 @@
         "signOut": "Sair",
         "start": "Iniciar uma transmissão ao vivo",
         "streamIdHelp": "O que é isso?",
-        "unavailableTitle": "Transmissão ao vivo indisponível"
+        "unavailableTitle": "Transmissão ao vivo indisponível",
+        "googlePrivacyPolicy": "Política de Privacidade do Google",
+        "youtubeTerms": "Termos de serviços do YouTube"
     },
     "localRecording": {
         "clientState": {
@@ -419,9 +433,9 @@
         "connectedTwoMembers": "{{first}} e {{second}} entraram na reunião",
         "disconnected": "desconectado",
         "focus": "Foco da conferência",
-        "focusFail": "{{component}} não disponĩvel - tente em {{ms}} seg.",
+        "focusFail": "{{component}} não disponível - tente em {{ms}} seg",
         "grantedTo": "Direitos de moderador concedido para {{to}}!",
-        "invitedOneMember": "{{displayName}} foi convidado",
+        "invitedOneMember": "{{name}} foi convidado(a)",
         "invitedThreePlusMembers": "{{name}} e {{count}} outros foram convidados",
         "invitedTwoMembers": "{{first}} e {{second}} foram convidados",
         "kickParticipant": "{{kicked}} foi chutado por {{kicker}}",
@@ -469,7 +483,7 @@
     },
     "raisedHand": "Gostaria de falar",
     "recording": {
-        "authDropboxText": "Enviar para o Dropbox.",
+        "authDropboxText": "Enviar para o Dropbox",
         "availableSpace": "Espaço disponível: {{spaceLeft}} MB (aproximadamente {{duration}} minutos de gravação)",
         "beta": "BETA",
         "busy": "Estamos trabalhando para liberar recursos de gravação. Tente novamente em alguns minutos.",
@@ -519,30 +533,32 @@
         "selectMic": "Microfone",
         "startAudioMuted": "Todos iniciam mudos",
         "startVideoMuted": "Todos iniciam ocultos",
-        "title": "Configurações"
+        "title": "Configurações",
+        "speakers": "Alto-faltantes",
+        "microphones": "Microfones"
     },
     "settingsView": {
-        "advanced": "",
+        "advanced": "Avançado",
         "alertOk": "OK",
         "alertTitle": "Atenção",
         "alertURLText": "A URL digitada do servidor é inválida",
         "buildInfoSection": "Informações de compilação",
         "conferenceSection": "Conferência",
-        "disableCallIntegration": "",
-        "disableP2P": "",
+        "disableCallIntegration": "Desativar integração de chamada nativa",
+        "disableP2P": "Desativar modo ponto a ponto",
         "displayName": "Nome de exibição",
         "email": "E-mail",
         "header": "Configurações",
         "profileSection": "Perfil",
         "serverURL": "URL do servidor",
-        "showAdvanced": "",
+        "showAdvanced": "Mostrar configurações avançadas",
         "startWithAudioMuted": "Iniciar sem áudio",
         "startWithVideoMuted": "Iniciar sem vídeo",
         "version": "Versão"
     },
     "share": {
         "dialInfoText": "\n\n=====\n\nDeseja apenas discar no seu telefone?\n\n{{defaultDialInNumber}}Clique neste link para ver os números de telefone para esta reunião\n{{dialInfoPageUrl}}",
-        "mainText": "Clique no seguinte link para entrar na reunião:{{roomUrl}}\n"
+        "mainText": "Clique no seguinte link para entrar na reunião:\n{{roomUrl}}"
     },
     "speaker": "Alto-falantes",
     "speakerStats": {
@@ -598,7 +614,10 @@
             "tileView": "Alternar visualização em blocos",
             "toggleCamera": "Alternar câmera",
             "videomute": "Alternar mudo do vídeo",
-            "videoblur": "Alternar desfoque de vídeo"
+            "videoblur": "Alternar desfoque de vídeo",
+            "toggleFilmstrip": "Alterar tira de filme",
+            "muteEveryone": "Silenciar todos",
+            "moreOptions": "Mostrar mais opções"
         },
         "addPeople": "Adicionar pessoas à sua chamada",
         "audioOnlyOff": "Desabilitar modo de largura de banda baixa",
@@ -624,9 +643,9 @@
         "lowerYourHand": "Baixar a mão",
         "moreActions": "Mais ações",
         "mute": "Mudo / Não mudo",
-        "noAudioSignalTitle": "",
-        "noAudioSignalDesc": "",
-        "noAudioSignalDescSuggestion": "",
+        "noAudioSignalTitle": "Não há entrada de áudio vindo do seu microfone!",
+        "noAudioSignalDesc": "Se você não o desativou propositalmente das configurações do sistema ou do hardware, considere trocar o dispositivo.",
+        "noAudioSignalDescSuggestion": "Se você não o desativou propositalmente das configurações do sistema ou do hardware, considere trocar para o dispositivo sugerido.",
         "openChat": "Abrir chat",
         "pip": "Entrar em modo Quadro-a-Quadro",
         "privateMessage": "Enviar mensagem privada",
@@ -648,7 +667,13 @@
         "toggleCamera": "Alternar câmera",
         "videomute": "Iniciar ou parar a câmera",
         "startvideoblur": "Desfocar meu plano de fundo",
-        "stopvideoblur": "Desativar desfoque de fundo"
+        "stopvideoblur": "Desativar desfoque de fundo",
+        "noisyAudioInputDesc": "Parece que o microfone está fazendo barulho, considere silenciar ou alterar o dispositivo.",
+        "noisyAudioInputTitle": "O seu microfone parece estar barulhento!",
+        "noAudioSignalDialInLinkDesc": "Discar números",
+        "noAudioSignalDialInDesc": "Você também pode discar usando:",
+        "muteEveryone": "Silenciar todos",
+        "moreOptions": "Mais opções"
     },
     "transcribing": {
         "ccButtonTooltip": "Iniciar/parar legendas",
@@ -700,7 +725,7 @@
         "onlyAudioSupported": "Suportamos somente áudio neste navegador.",
         "p2pEnabled": "Ponto-a-ponto habilitada",
         "p2pVideoQualityDescription": "No modo ponto a ponto, a qualidade do vídeo recebido só pode ser alternada entre alta e apenas áudio. Outras configurações não serão respeitadas até que o ponto a ponto seja encerrado.",
-        "recHighDefinitionOnly": "Preferência para alta definição",
+        "recHighDefinitionOnly": "Preferência para alta definição.",
         "sd": "SD",
         "sdTooltip": "Ver vídeo em definição padrão",
         "standardDefinition": "Definição padrão"
@@ -714,14 +739,15 @@
         "muted": "Mudo",
         "remoteControl": "Controle remoto",
         "show": "Mostrar no palco",
-        "videomute": "O participante parou a câmera"
+        "videomute": "O participante parou a câmera",
+        "domuteOthers": "Silenciar todos os demais"
     },
     "welcomepage": {
         "accessibilityLabel": {
             "join": "Toque para entrar",
             "roomname": "Digite o nome da sala"
         },
-        "appDescription": "Vá em frente, converse por vídeo com toda a equipe. De fato, convide todos que você conhece. {{app}} é uma solução de videoconferência totalmente criptografada e 100% de código aberto que você pode usar todos os dias, a cada dia, gratuitamente  — sem necessidade de conta.",
+        "appDescription": "Vá em frente, converse por vídeo com toda a equipe. De fato, convide todos que você conhece. {{app}} é uma solução de videoconferência totalmente criptografada e 100% de código aberto que você pode usar todos os dias, a cada dia, gratuitamente — sem necessidade de conta.",
         "audioVideoSwitch": {
             "audio": "Voz",
             "video": "Vídeo"
@@ -733,7 +759,7 @@
         "roomNameAllowedChars": "Nome da reunião não deve conter qualquer um destes caracteres: ?. &, :, ', \", %, #.",
         "go": "IR",
         "goSmall": "IR",
-        "join": "",
+        "join": "CRIAR / ENTRAR",
         "info": "Informações",
         "privacy": "Política de Privacidade",
         "recentList": "Recente",
@@ -744,6 +770,19 @@
         "roomnameHint": "Digite o nome ou a URL da sala que você deseja entrar. Você pode digitar um nome, e apenas deixe para as pessoas que você quer se reunir digitem o mesmo nome.",
         "sendFeedback": "Enviar comentários",
         "terms": "Termos",
-        "title": "Videoconferências mais seguras, flexíveis e totalmente gratuitas"
+        "title": "Videoconferências mais seguras, flexíveis e totalmente gratuitas",
+        "getHelp": "Obter ajuda"
+    },
+    "helpView": {
+        "header": "Centro de ajuda"
+    },
+    "lonelyMeetingExperience": {
+        "youAreAlone": "Você é o único na reunião",
+        "button": "Convidar outros"
+    },
+    "chromeExtensionBanner": {
+        "dontShowAgain": "Não me mostre isso de novo",
+        "buttonText": "Instalar extensão do Chrome",
+        "installExtensionText": "Instale a extensão par integração com Google Calendar e Office 365"
     }
 }

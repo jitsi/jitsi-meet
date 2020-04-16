@@ -31,7 +31,7 @@ var interfaceConfig = {
     APP_NAME: 'Jitsi Meet',
     NATIVE_APP_NAME: 'Jitsi Meet',
     PROVIDER_NAME: 'Jitsi',
-    LANG_DETECTION: false, // Allow i18n to detect the system language
+    LANG_DETECTION: true, // Allow i18n to detect the system language
     INVITATION_POWERED_BY: true,
 
     /**
@@ -51,7 +51,7 @@ var interfaceConfig = {
         'fodeviceselection', 'hangup', 'profile', 'info', 'chat', 'recording',
         'livestreaming', 'etherpad', 'sharedvideo', 'settings', 'raisehand',
         'videoquality', 'filmstrip', 'invite', 'feedback', 'stats', 'shortcuts',
-        'tileview', 'videobackgroundblur', 'download', 'help'
+        'tileview', 'videobackgroundblur', 'download', 'help', 'mute-everyone'
     ],
 
     SETTINGS_SECTIONS: [ 'devices', 'language', 'moderator', 'profile', 'calendar' ],
@@ -74,6 +74,7 @@ var interfaceConfig = {
 
     // A html text to be shown to guests on the close page, false disables it
     CLOSE_PAGE_GUEST_HINT: false,
+    SHOW_PROMOTIONAL_CLOSE_PAGE: false,
     RANDOM_AVATAR_URL_PREFIX: false,
     RANDOM_AVATAR_URL_SUFFIX: false,
     FILM_STRIP_MAX_HEIGHT: 120,
@@ -127,7 +128,7 @@ var interfaceConfig = {
      * If indicated some of the error dialogs may point to the support URL for
      * help.
      */
-    SUPPORT_URL: 'https://github.com/jitsi/jitsi-meet/issues/new',
+    SUPPORT_URL: 'https://community.jitsi.org/',
 
     /**
      * Whether the connection indicator icon should hide itself based on
@@ -206,6 +207,11 @@ var interfaceConfig = {
     * being already installed is done before rendering.
     */
     SHOW_CHROME_EXTENSION_BANNER: false
+
+    /**
+     * When enabled, the kick participant button will not be presented for users without a JWT
+     */
+    // HIDE_KICK_BUTTON_FOR_GUESTS: false
 
     /**
      * How many columns the tile view can expand to. The respected range is

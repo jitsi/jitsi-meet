@@ -6,6 +6,7 @@ local generate_uuid = require "util.uuid".generate;
 local new_sasl = require "util.sasl".new;
 local sasl = require "util.sasl";
 local token_util = module:require "token/util".new(module);
+local sessions = prosody.full_sessions;
 
 -- no token configuration
 if token_util == nil then
@@ -25,6 +26,10 @@ function init_session(event)
 	if query ~= nil then
         local params = formdecode(query);
         session.auth_token = query and params.token or nil;
+        -- previd is used together with https://modules.prosody.im/mod_smacks.html
+        -- the param is used to find resumed session and re-use anonymous(random) user id
+        -- (see get_username_from_token)
+        session.previd = query and params.previd or nil;
 
         -- The room name and optional prefix from the bosh query
         session.jitsi_bosh_query_room = params.room;
@@ -32,8 +37,8 @@ function init_session(event)
     end
 end
 
-module:hook("bosh-session", init_session);
-module:hook("websocket-session", init_session);
+module:hook_global("bosh-session", init_session);
+module:hook_global("websocket-session", init_session);
 
 function provider.test_password(username, password)
 	return nil, "Password based auth not supported";
@@ -75,6 +80,13 @@ function provider.get_sasl_handler(session)
 
         if (customUsername) then
             self.username = customUsername;
+        elseif (session.previd ~= nil) then
+            for _, session1 in pairs(sessions) do
+                if (session1.resumption_token == session.previd) then
+                    self.username = session1.username;
+                    break;
+                end
+        	end
         else
             self.username = message;
         end
@@ -95,10 +107,11 @@ local function anonymous(self, message)
 	local result, err, msg = self.profile.anonymous(self, username, self.realm);
 
 	if result == true then
-		self.username = username;
+		if (self.username == nil) then
+			self.username = username;
+		end
 		return "success";
 	else
-
 		return "failure", err, msg;
 	end
 end

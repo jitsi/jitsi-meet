@@ -9,6 +9,7 @@ import { connect } from '../../../base/redux';
 
 import {
     MuteButton,
+    MuteEveryoneElseButton,
     KickButton,
     PrivateMessageMenuButton,
     RemoteControlButton,
@@ -24,6 +25,16 @@ declare var interfaceConfig: Object;
  * {@link RemoteVideoMenuTriggerButton}.
  */
 type Props = {
+
+    /**
+     * Whether or not to display the kick button.
+     */
+    _disableKick: boolean,
+
+    /**
+     * Whether or not to display the remote mute buttons.
+     */
+    _disableRemoteMute: Boolean,
 
     /**
      * Whether or not the participant is a conference moderator.
@@ -156,6 +167,8 @@ class RemoteVideoMenuTriggerButton extends Component<Props> {
      */
     _renderRemoteVideoMenu() {
         const {
+            _disableKick,
+            _disableRemoteMute,
             _isModerator,
             initialVolumeValue,
             isAudioMuted,
@@ -168,17 +181,27 @@ class RemoteVideoMenuTriggerButton extends Component<Props> {
         const buttons = [];
 
         if (_isModerator) {
-            buttons.push(
-                <MuteButton
-                    isAudioMuted = { isAudioMuted }
-                    key = 'mute'
-                    participantID = { participantID } />
-            );
-            buttons.push(
-                <KickButton
-                    key = 'kick'
-                    participantID = { participantID } />
-            );
+            if (!_disableRemoteMute) {
+                buttons.push(
+                    <MuteButton
+                        isAudioMuted = { isAudioMuted }
+                        key = 'mute'
+                        participantID = { participantID } />
+                );
+                buttons.push(
+                    <MuteEveryoneElseButton
+                        key = 'mute-others'
+                        participantID = { participantID } />
+                );
+            }
+
+            if (!_disableKick) {
+                buttons.push(
+                    <KickButton
+                        key = 'kick'
+                        participantID = { participantID } />
+                );
+            }
         }
 
         if (remoteControlState) {
@@ -230,9 +253,13 @@ class RemoteVideoMenuTriggerButton extends Component<Props> {
  */
 function _mapStateToProps(state) {
     const participant = getLocalParticipant(state);
+    const { remoteVideoMenu = {}, disableRemoteMute } = state['features/base/config'];
+    const { disableKick } = remoteVideoMenu;
 
     return {
-        _isModerator: Boolean(participant?.role === PARTICIPANT_ROLE.MODERATOR)
+        _isModerator: Boolean(participant?.role === PARTICIPANT_ROLE.MODERATOR),
+        _disableKick: Boolean(disableKick),
+        _disableRemoteMute: Boolean(disableRemoteMute)
     };
 }
 

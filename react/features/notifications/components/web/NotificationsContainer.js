@@ -6,11 +6,19 @@ import React from 'react';
 import { connect } from '../../../base/redux';
 
 import AbstractNotificationsContainer, {
-    _abstractMapStateToProps as _mapStateToProps,
-    type Props
+    _abstractMapStateToProps,
+    type Props as AbstractProps
 } from '../AbstractNotificationsContainer';
 
 import Notification from './Notification';
+
+type Props = AbstractProps & {
+
+    /**
+     * Whther we are a SIP gateway or not.
+     */
+     _iAmSipGateway: boolean
+};
 
 /**
  * Implements a React {@link Component} which displays notifications and handles
@@ -28,6 +36,10 @@ class NotificationsContainer extends AbstractNotificationsContainer<Props> {
      * @returns {ReactElement}
      */
     render() {
+        if (this.props._iAmSipGateway) {
+            return null;
+        }
+
         return (
             <FlagGroup onDismissed = { this._onDismissed }>
                 { this._renderFlags() }
@@ -64,5 +76,22 @@ class NotificationsContainer extends AbstractNotificationsContainer<Props> {
         });
     }
 }
+
+/**
+ * Maps (parts of) the Redux state to the associated props for this component.
+ *
+ * @param {Object} state - The Redux state.
+ * @private
+ * @returns {Props}
+ */
+function _mapStateToProps(state) {
+    const { iAmSipGateway } = state['features/base/config'];
+
+    return {
+        ..._abstractMapStateToProps(state),
+        _iAmSipGateway: Boolean(iAmSipGateway)
+    };
+}
+
 
 export default connect(_mapStateToProps)(NotificationsContainer);

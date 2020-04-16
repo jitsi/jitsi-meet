@@ -5,10 +5,10 @@ require_relative '../node_modules/@react-native-community/cli-platform-ios/nativ
 target 'jitsi-meet' do
   project 'app/app.xcodeproj'
 
-  pod 'Crashlytics', '~> 3.12.0'
-  pod 'Fabric', '~> 1.9.0'
-  pod 'Firebase/Core', '~> 5.18.0'
-  pod 'Firebase/DynamicLinks', '~> 5.18.0'
+  pod 'Crashlytics', '~> 3.14.0'
+  pod 'Fabric', '~> 1.10.2'
+  pod 'Firebase/Core', '~> 6.16.0'
+  pod 'Firebase/DynamicLinks', '~> 6.16.0'
 end
 
 target 'JitsiMeet' do

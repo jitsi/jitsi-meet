@@ -17,12 +17,18 @@ export const CALL_INTEGRATION_ENABLED = 'call-integration.enabled';
  * Flag indicating if chat should be enabled.
  * Default: enabled (true).
  */
+export const CLOSE_CAPTIONS_ENABLED = 'close-captions.enabled';
+
+/**
+ * Flag indicating if chat should be enabled.
+ * Default: enabled (true).
+ */
 export const CHAT_ENABLED = 'chat.enabled';
 
 /**
  * Default toolbar buttons to display.
  */
-export const DEFAULT_TOOLBAR_BUTTONS = 'audiomute,audioonly,audioroute,closedcaption,hangup,infodialog,invite'
+export const DEFAULT_TOOLBAR_BUTTONS = 'audiomute,audioonly,audioroute,closedcaption,hangup,invite'
 + 'recording,livestream,overflowmenu,raisehand,roomlock,tileview,togglecamera,videomute,shareddocument,help';
 
 /**

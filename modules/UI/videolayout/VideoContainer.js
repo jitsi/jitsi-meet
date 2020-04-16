@@ -206,6 +206,8 @@ export class VideoContainer extends LargeContainer {
          */
         this._hideBackground = true;
 
+        this._isHidden = false;
+
         /**
          * Flag indicates whether or not the avatar is currently displayed.
          * @type {boolean}
@@ -561,6 +563,8 @@ export class VideoContainer extends LargeContainer {
                 FADE_DURATION_MS,
                 1,
                 () => {
+                    this._isHidden = false;
+                    this._updateBackground();
                     resolve();
                 }
             );
@@ -578,6 +582,8 @@ export class VideoContainer extends LargeContainer {
         return new Promise(resolve => {
             this.$wrapperParent.fadeTo(FADE_DURATION_MS, 0, () => {
                 this.$wrapperParent.css('visibility', 'hidden');
+                this._isHidden = true;
+                this._updateBackground();
                 resolve();
             });
         });
@@ -629,13 +635,13 @@ export class VideoContainer extends LargeContainer {
         // explicitly disabled.
         if (interfaceConfig.DISABLE_VIDEO_BACKGROUND
                 || browser.isFirefox()
-                || browser.isSafariWithWebrtc()) {
+                || browser.isSafari()) {
             return;
         }
 
         ReactDOM.render(
             <LargeVideoBackground
-                hidden = { this._hideBackground }
+                hidden = { this._hideBackground || this._isHidden }
                 mirror = {
                     this.stream
                     && this.stream.isLocal()

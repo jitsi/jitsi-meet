@@ -343,7 +343,9 @@ function _participantJoinedOrUpdated({ dispatch, getState }, next, action) {
     // to the new avatar and emit out change events if necessary.
     const result = next(action);
 
-    if (avatarURL || email || id || name) {
+    const { disableThirdPartyRequests } = getState()['features/base/config'];
+
+    if (!disableThirdPartyRequests && (avatarURL || email || id || name)) {
         const participantId = !id && local ? getLocalParticipant(getState()).id : id;
         const updatedParticipant = getParticipantById(getState(), participantId);
 

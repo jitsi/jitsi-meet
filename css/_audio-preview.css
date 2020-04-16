@@ -1,0 +1,135 @@
+.audio-preview {
+    &-content {
+        font-size: 15px;
+        line-height: 24px;
+        max-height: 456px;
+        overflow: auto;
+        width: 328px;
+    }
+
+    &-header {
+        color: #fff;
+        display: flex;
+        padding: 16px;
+
+        &-icon {
+            color: #A4B8D1;
+            display: inline-block;
+        }
+
+        &-text {
+            font-weight: bold;
+            margin-left: 8px;
+        }
+    }
+
+    &-entry {
+        align-items: center;
+        color: #fff;
+        cursor: pointer;
+        display: flex;
+        padding: 12px 0;
+        margin-left: 48px;
+
+        &--selected {
+            background: rgba(28,32,37,0.5);
+            cursor: initial;
+            margin-left: 0;
+            padding-left: 21px;
+        }
+
+        &-text {
+            color: #fff;
+            font-size: 15px;
+            display: inline-block;
+            line-height: 24px;
+            text-overflow: ellipsis;
+            max-width: 213px;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+    }
+
+    &-speaker {
+        position: relative;
+
+        &:hover {
+            .audio-preview-entry {
+                background: rgba(255,255,255, 0.2);
+                margin-left: 0;
+                padding-left: 48px;
+
+                &--selected {
+                    padding-left: 21px;
+                }
+            }
+
+            .audio-preview-test-button {
+                display: inline-block;
+            }
+
+            .audio-preview-entry-text {
+                max-width: 196px;
+            }
+        }
+
+        .audio-preview-entry-text {
+            max-width: 256px;
+        }
+    }
+
+    &-microphone {
+        position: relative;
+    }
+
+
+    &-icon {
+        border-radius: 50%;
+        display: inline-block;
+        width: 14px;
+
+        & svg {
+            fill: #1C2025;
+        }
+
+        &--check {
+            background: #31B76A;
+            margin-right: 13px;
+        }
+
+        &--exclamation {
+            margin-left: 6px;
+            & svg {
+                fill: #E54B4B;
+            }
+        }
+    }
+
+    &-test-button {
+        display: none;
+        background: #FFF;
+        border: 1px solid #D1DBE8;
+        border-radius: 3px;
+        color: #1C2025;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 15px;
+        line-height: 24px;
+        padding: 4px 16px;
+        position: absolute;
+        right: 16px;
+        top: 8px;
+    }
+
+    &-meter-mic {
+        position: absolute;
+        right: 16px;
+        top: 18px;
+    }
+
+   // Override @atlaskit/InlineDialog container which is made with styled components
+    & > div > div:nth-child(2) > div > div {
+        outline: none;
+        padding: 0;
+    }
+}

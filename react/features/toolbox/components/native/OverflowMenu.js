@@ -6,13 +6,13 @@ import Collapsible from 'react-native-collapsible';
 
 import { ColorSchemeRegistry } from '../../../base/color-scheme';
 import { BottomSheet, hideDialog, isDialogOpen } from '../../../base/dialog';
-import { CHAT_ENABLED, DEFAULT_TOOLBAR_BUTTONS, IOS_RECORDING_ENABLED, TOOLBAR_BUTTONS,
+import { DEFAULT_TOOLBAR_BUTTONS, IOS_RECORDING_ENABLED, TOOLBAR_BUTTONS,
     getFeatureFlag } from '../../../base/flags';
 import { IconDragHandle } from '../../../base/icons';
 import { connect } from '../../../base/redux';
 import { StyleType } from '../../../base/styles';
 import { SharedDocumentButton } from '../../../etherpad';
-import { InfoDialogButton, InviteButton } from '../../../invite';
+import { InviteButton } from '../../../invite';
 import { AudioRouteButton } from '../../../mobile/audio-mode';
 import { LiveStreamButton, RecordButton } from '../../../recording';
 import { RoomLockButton } from '../../../room-lock';
@@ -22,6 +22,7 @@ import { TileViewButton } from '../../../video-layout';
 import HelpButton from '../HelpButton';
 
 import AudioOnlyButton from './AudioOnlyButton';
+import MoreOptionsButton from './MoreOptionsButton';
 import RaiseHandButton from './RaiseHandButton';
 import ToggleCameraButton from './ToggleCameraButton';
 import styles from './styles';
@@ -47,11 +48,6 @@ type Props = {
     _bottomSheetStyles: StyleType,
 
     /**
-     * Whether the chat feature has been enabled. The meeting info button will be displayed in its place when disabled.
-     */
-    _chatEnabled: boolean,
-
-    /**
      * Whether the closed caption feature has been enabled.
      */
     _closedCaptionEnabled: boolean,
@@ -60,11 +56,6 @@ type Props = {
      * Whether the help button has been enabled.
      */
     _helpButton: boolean,
-
-    /**
-     * Whether the info dialog feature has been enabled.
-     */
-    _infoDialogEnabled: boolean,
 
     /**
      * Whether the invite feature has been enabled.
@@ -180,10 +171,14 @@ class OverflowMenu extends PureComponent<Props, State> {
             styles: _bottomSheetStyles.buttons
         };
 
-        const isMoreButtonsAvailable = this.props._roomLockEnabled || this.props._closedCaptionEnabled
-        || this.props._recordingEnabled || this.props._liveStreamEnabled || this.props._tileViewEnabled
-        || this.props._inviteEnabled || this.props._raiseHandEnabled || this.props._sharedDocumentButton
-        || this.props._helpButton || (this.props._chatEnabled && this.props._infoDialogEnabled);
+        const moreOptionsButtonProps = {
+            ...buttonProps,
+            afterClick: this._onToggleMenu,
+            visible: !showMore
+        };
+        const isMoreButtonsAvailable = this.props._toggleCameraEnabled || this.props._tileViewEnabled
+        || this.props._recordingEnabled || this.props._liveStreamEnabled || this.props._roomLockEnabled
+        || this.props._closedCaptionEnabled || this.props._sharedDocumentButton || this.props._helpButton;
 
         return (
             <BottomSheet
@@ -195,21 +190,28 @@ class OverflowMenu extends PureComponent<Props, State> {
                         && <AudioRouteButton { ...buttonProps } />
                 }
                 {
-                    this.props._toggleCameraEnabled
-                        && <ToggleCameraButton { ...buttonProps } />
+                    this.props._inviteEnabled
+                        && <InviteButton { ...buttonProps } />
                 }
                 {
                     this.props._audioOnlyEnabled
                         && <AudioOnlyButton { ...buttonProps } />
                 }
+                {
+                    this.props._raiseHandEnabled
+                        && <RaiseHandButton { ...buttonProps } />
+                }
+                {
+                    isMoreButtonsAvailable && <MoreOptionsButton { ...moreOptionsButtonProps } />
+                }
                 <Collapsible collapsed = { !showMore }>
                     {
-                        this.props._roomLockEnabled
-                            && <RoomLockButton { ...buttonProps } />
+                        this.props._toggleCameraEnabled
+                        && <ToggleCameraButton { ...buttonProps } />
                     }
                     {
-                        this.props._closedCaptionEnabled
-                            && <ClosedCaptionButton { ...buttonProps } />
+                        this.props._tileViewEnabled
+                            && <TileViewButton { ...buttonProps } />
                     }
                     {
                         this.props._recordingEnabled
@@ -220,20 +222,12 @@ class OverflowMenu extends PureComponent<Props, State> {
                             && <LiveStreamButton { ...buttonProps } />
                     }
                     {
-                        this.props._tileViewEnabled
-                            && <TileViewButton { ...buttonProps } />
+                        this.props._roomLockEnabled
+                            && <RoomLockButton { ...buttonProps } />
                     }
                     {
-                        this.props._inviteEnabled
-                            && <InviteButton { ...buttonProps } />
-                    }
-                    {
-                        this.props._chatEnabled && this.props._infoDialogEnabled
-                            && <InfoDialogButton { ...buttonProps } />
-                    }
-                    {
-                        this.props._raiseHandEnabled
-                            && <RaiseHandButton { ...buttonProps } />
+                        this.props._closedCaptionEnabled
+                            && <ClosedCaptionButton { ...buttonProps } />
                     }
                     {
                         this.props._sharedDocumentButton
@@ -345,12 +339,9 @@ function _mapStateToProps(state) {
     return {
         _audioOnlyEnabled: overflowButtons.includes('audioonly'),
         _audioRouteEnabled: overflowButtons.includes('audioroute'),
-        _bottomSheetStyles:
-            ColorSchemeRegistry.get(state, 'BottomSheet'),
-        _chatEnabled: getFeatureFlag(state, CHAT_ENABLED, true),
+        _bottomSheetStyles: ColorSchemeRegistry.get(state, 'BottomSheet'),
         _closedCaptionEnabled: overflowButtons.includes('closedcaption'),
         _helpButton: overflowButtons.includes('help'),
-        _infoDialogEnabled: overflowButtons.includes('infodialog'),
         _inviteEnabled: overflowButtons.includes('invite'),
         _isOpen: isDialogOpen(state, OverflowMenu_),
         _liveStreamEnabled: overflowButtons.includes('livestream'),

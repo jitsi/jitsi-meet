@@ -1,7 +1,7 @@
 {
     "addPeople": {
         "add": "Invitar",
-        "countryNotSupported": "Aun no contamos con soporte a este destino.",
+        "countryNotSupported": "Aún no contamos con soporte a este destino.",
         "countryReminder": "¿Llamando fuera de los Estados Unidos? ¡Por favor, asegúrese de empezar con el código de país!",
         "disabled": "No puede invitar a otras personas.",
         "failedToAdd": "Error al agregar participantes",
@@ -31,7 +31,7 @@
         "addMeetingURL": "Agregar un vínculo a la reunión",
         "confirmAddLink": "¿Quiere añadir un enlace de Jitsi a este evento?",
         "error": {
-            "appConfiguration": "La integración del calendario no se está configurada correctamente",
+            "appConfiguration": "La integración del calendario no está configurada correctamente",
             "generic": "Se ha producido un error. Compruebe la configuración del calendario o pruebe a recargarlo",
             "notSignedIn": "Se ha producido un error de autenticación para ver los eventos del calendario. Compruebe la configuración del calendario e intente iniciar sesión de nuevo"
         },
@@ -170,7 +170,7 @@
         "copy": "Copiar",
         "dismiss": "Descartar",
         "displayNameRequired": "¡Hola! ¿Cuál es tu nombre?",
-        "done": "Por favor ingresa tu nombre aquí",
+        "done": "Listo",
         "enterDisplayName": "Por favor ingresa tu nombre aquí",
         "error": "Error",
         "externalInstallationMsg": "Necesita instalar nuestra extensión para compartir escritorio.",
@@ -628,6 +628,7 @@
         "logout": "Cerrar sesión",
         "lowerYourHand": "Bajar la mano",
         "moreActions": "Más acciones",
+        "moreOptions": "Más opciones",
         "mute": "Activar / Desactivar Silencio",
         "noAudioSignalTitle": "¡No hay entrada proveniente de su micrófono!",
         "noAudioSignalDesc": "Si no lo silenció a propósito desde la configuración del sistema o el dispositivo, considere cambiar el dispositivo.",
@@ -713,7 +714,7 @@
         "standardDefinition": "Definición estándar"
     },
     "videothumbnail": {
-        "domute": "Control de escritorio remoto",
+        "domute": "Silenciar",
         "flip": "Voltear",
         "kick": "Expulsar",
         "moderator": "Moderador",
@@ -752,5 +753,9 @@
         "sendFeedback": "Enviar comentarios",
         "terms": "Términos",
         "title": "Seguro, lleno de funcionalidades y videoconferencias completamente gratuitas"
+    },
+    "lonelyMeetingExperience": {
+        "button": "Invitar a otros",
+        "youAreAlone": "Eres el único en la reunión"
     }
 }

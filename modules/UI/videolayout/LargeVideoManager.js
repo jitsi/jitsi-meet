@@ -184,7 +184,7 @@ export default class LargeVideoManager {
 
             this.newStreamData = null;
 
-            logger.info('hover in %s', id);
+            logger.info(`hover in ${id}`);
             this.state = videoType;
             // eslint-disable-next-line no-shadow
             const container = this.getCurrentContainer();

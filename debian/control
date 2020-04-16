@@ -16,8 +16,7 @@ Description: WebRTC JavaScript video conferences
  Videobridge to provide high quality, scalable video conferences.
  .
  It is a web interface to Jitsi Videobridge for audio and video
- forwarding and relaying, configured to work with jetty instance
- running embedded into Jitsi Videobridge
+ forwarding and relaying.
 
 Package: jitsi-meet-web-config
 Architecture: all
@@ -27,9 +26,7 @@ Description: Configuration for web serving of Jitsi Meet
  Videobridge to provide high quality, scalable video conferences.
  .
  It is a web interface to Jitsi Videobridge for audio and video
- forwarding and relaying, configured to work with jetty instance
- running embedded into Jitsi Videobridge or using a webserver Nginx or
- Apache2.
+ forwarding and relaying, using a webserver Nginx or Apache2.
  .
  This package contains configuration for Nginx to be used with
  Jitsi Meet.
@@ -43,8 +40,7 @@ Description: Prosody configuration for Jitsi Meet
  Videobridge to provide high quality, scalable video conferences.
  .
  It is a web interface to Jitsi Videobridge for audio and video
- forwarding and relaying, configured to work with jetty instance
- running embedded into Jitsi Videobridge
+ forwarding and relaying.
  .
  This package contains configuration for Prosody to be used with
  Jitsi Meet.
@@ -56,5 +52,7 @@ Description: Prosody token authentication plugin for Jitsi Meet
 
 Package: jitsi-meet-turnserver
 Architecture: all
+Breaks: apache2
+Pre-Depends: jitsi-meet-web-config
 Depends: ${misc:Depends}, nginx (>= 1.13.10) | nginx-full (>= 1.13.10) | nginx-extras (>= 1.13.10), jitsi-meet-prosody, coturn, dnsutils
 Description: Configures coturn to be used with Jitsi Meet

@@ -12,6 +12,8 @@ import AbstractKickButton, {
 
 import RemoteVideoMenuButton from './RemoteVideoMenuButton';
 
+declare var interfaceConfig: Object;
+
 /**
  * Implements a React {@link Component} which displays a button for kicking out
  * a participant from the conference.
@@ -41,7 +43,11 @@ class KickButton extends AbstractKickButton {
      * @returns {ReactElement}
      */
     render() {
-        const { participantID, t } = this.props;
+        const { participantID, t, visible } = this.props;
+
+        if (!visible) {
+            return null;
+        }
 
         return (
             <RemoteVideoMenuButton
@@ -57,4 +63,21 @@ class KickButton extends AbstractKickButton {
     _handleClick: () => void
 }
 
-export default translate(connect()(KickButton));
+/**
+ * Maps (parts of) the redux state to {@link KickButton}'s React {@code Component}
+ * props.
+ *
+ * @param {Object} state - The redux store/state.
+ * @private
+ * @returns {Object}
+ */
+function _mapStateToProps(state: Object) {
+    const shouldHide = interfaceConfig.HIDE_KICK_BUTTON_FOR_GUESTS && state['features/base/jwt'].isGuest;
+
+    return {
+        visible: !shouldHide
+    };
+}
+
+export default translate(connect(_mapStateToProps)(KickButton));
+

@@ -44,9 +44,6 @@ export default class JitsiStreamPresenterEffect {
         this._canvas = document.createElement('canvas');
         this._ctx = this._canvas.getContext('2d');
 
-        if (document.body !== null) {
-            document.body.appendChild(this._canvas);
-        }
         this._desktopElement = document.createElement('video');
         this._videoElement = document.createElement('video');
         videoDiv.appendChild(this._videoElement);

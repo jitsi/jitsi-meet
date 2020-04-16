@@ -11,8 +11,6 @@ import {
     BEGIN_ADD_PEOPLE,
     REMOVE_PENDING_INVITE_REQUESTS,
     SET_CALLEE_INFO_VISIBLE,
-    SET_DIAL_IN_SUMMARY_VISIBLE,
-    SET_INVITE_DIALOG_VISIBLE,
     UPDATE_DIAL_IN_NUMBERS_FAILED,
     UPDATE_DIAL_IN_NUMBERS_SUCCESS
 } from './actionTypes';
@@ -201,22 +199,6 @@ export function updateDialInNumbers() {
 }
 
 /**
- * Sets the visibility of the invite dialog.
- *
- * @param {boolean} visible - The visibility to set.
- * @returns {{
- *     type: SET_INVITE_DIALOG_VISIBLE,
- *     visible: boolean
- * }}
- */
-export function setAddPeopleDialogVisible(visible: boolean) {
-    return {
-        type: SET_INVITE_DIALOG_VISIBLE,
-        visible
-    };
-}
-
-/**
  * Sets the visibility of {@code CalleeInfo}.
  *
  * @param {boolean|undefined} [calleeInfoVisible] - If {@code CalleeInfo} is
@@ -257,15 +239,6 @@ export function addPendingInviteRequest(
 }
 
 /**
- * Action to hide the dial in summary.
- *
- * @returns {showDialInSummary}
- */
-export function hideDialInSummary() {
-    return showDialInSummary(undefined);
-}
-
-/**
  * Removes all pending invite requests.
  *
  * @returns {{
@@ -275,21 +248,5 @@ export function hideDialInSummary() {
 export function removePendingInviteRequests() {
     return {
         type: REMOVE_PENDING_INVITE_REQUESTS
-    };
-}
-
-/**
- * Action to set the dial in summary url (and show it).
- *
- * @param {?string} locationUrl - The location URL to show the dial in summary for.
- * @returns {{
- *     type: SET_DIAL_IN_SUMMARY_VISIBLE,
- *     summaryUrl: ?string
- * }}
- */
-export function showDialInSummary(locationUrl: ?string) {
-    return {
-        type: SET_DIAL_IN_SUMMARY_VISIBLE,
-        summaryUrl: locationUrl
     };
 }

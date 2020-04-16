@@ -85,14 +85,15 @@ const options = {
 const api = new JitsiMeetExternalAPI(domain, options);
  ```
 
-You can set the userInfo(email) for the call:
+You can set the userInfo(email, display name) for the call:
 
 ```javascript
 var domain = "meet.jit.si";
 var options = {
     ...
     userInfo: {
-        email: 'email@jitsiexamplemail.com'
+        email: 'email@jitsiexamplemail.com',
+        displayName: 'John Doe'
     }
 }
 var api = new JitsiMeetExternalAPI(domain, options);
@@ -270,6 +271,11 @@ api.executeCommand('email', 'example@example.com');
 api.executeCommand('avatarUrl', 'https://avatars0.githubusercontent.com/u/3671647');
 ```
 
+* **sendEndpointTextMessage** - Sends a text message to another participant through the datachannels.
+```javascript
+api.executeCommand('receiverParticipantId', 'text');
+```
+
 You can also execute multiple commands using the `executeCommands` method:
 ```javascript
 api.executeCommands(commands);
@@ -320,6 +326,21 @@ changes. The listener will receive an object with the following structure:
 ```javascript
 {
     muted: boolean // new muted status - boolean
+}
+```
+
+* **endpointTextMessageReceived** - event notifications about a text message received through datachannels.
+The listener will receive an object with the following structure:
+```javascript
+{
+    senderInfo: {
+        jid: string, // the jid of the sender
+        id: string // the participant id of the sender
+    },
+    eventData: {
+        name: string // the name of the datachannel event: `endpoint-text-message`
+        text: string // the received text from the sender
+    }
 }
 ```
 
