@@ -68,6 +68,12 @@ Simply run the following in your shell:
 
 Note that this script uses the [HTTP-01 challenge type](https://letsencrypt.org/docs/challenge-types/) and thus your instance needs to be accessible from the public internet. If you want to use a different challenge type, don't use this script and instead choose ___I want to use my own certificate___ during jitsi-meet installation.
 
+### Fix Nginx config
+The next step is a quick fix to the nginx config so it listens on port 443 instead of 4444 for HTTPS requests:
+```
+sed -i 's/:4444 ssl/:443 ssl/g' /etc/nginx/sites-enabled/*.conf
+```
+
 #### Advanced configuration
 If the installation is on a machine [behind NAT](https://github.com/jitsi/jitsi-meet/blob/master/doc/faq.md) jitsi-videobridge should configure itself automatically on boot. If three way call does not work further configuration of jitsi-videobridge is needed in order for it to be accessible from outside.
 Provided that all required ports are routed (forwarded) to the machine that it runs on. By default these ports are (TCP/443 or TCP/4443 and UDP/10000).
