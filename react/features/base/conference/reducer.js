@@ -31,6 +31,7 @@ import { isRoomValid } from './functions';
 
 const DEFAULT_STATE = {
     conference: undefined,
+    e2eeSupported: undefined,
     joining: undefined,
     leaving: undefined,
     locked: undefined,
@@ -175,6 +176,7 @@ function _conferenceFailed(state, { conference, error }) {
     return assign(state, {
         authRequired,
         conference: undefined,
+        e2eeSupported: undefined,
         error,
         joining: undefined,
         leaving: undefined,
@@ -226,6 +228,9 @@ function _conferenceJoined(state, { conference }) {
          * @type {JitsiConference}
          */
         conference,
+
+        e2eeSupported: conference.isE2EESupported(),
+
         joining: undefined,
         leaving: undefined,
 
