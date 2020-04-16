@@ -15,10 +15,10 @@ server {
     }
 
     gzip on;
-    gzip_types text/plain text/css application/javascript application/json image/x-icon application/octet-stream;
+    gzip_types text/plain text/css application/javascript application/json image/x-icon application/octet-stream application/wasm;
     gzip_vary on;
     gzip_proxied no-cache no-store private expired auth;
-    gzip_min_length 1000;
+    gzip_min_length 512;
 
     # BOSH
     location /http-bind {
