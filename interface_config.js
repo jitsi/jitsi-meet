@@ -258,6 +258,10 @@ var interfaceConfig = {
      */
     // ENFORCE_NOTIFICATION_AUTO_DISMISS_TIMEOUT: 15000,
 
+    // Aeternity custom settings
+    CHAT_ALWAYS_OPEN: false,
+    TILE_VIEW_ALWAYS_OPEN: false
+
     // List of undocumented settings
     /**
      INDICATOR_FONT_SIZES

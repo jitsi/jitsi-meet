@@ -17,6 +17,8 @@ import DisplayNameForm from './DisplayNameForm';
 import MessageContainer from './MessageContainer';
 import MessageRecipient from './MessageRecipient';
 
+declare var interfaceConfig: Object;
+
 /**
  * React Component for holding the chat feature in a side panel that slides in
  * and out of view.
@@ -164,7 +166,8 @@ class Chat extends AbstractChat<Props> {
             ? null
             : (
                 <>
-                    { this._renderChatHeader() }
+                    { !interfaceConfig.CHAT_ALWAYS_OPEN
+                        && this._renderChatHeader() }
                     { _showNamePrompt
                         ? <DisplayNameForm /> : this._renderChat() }
                 </>
