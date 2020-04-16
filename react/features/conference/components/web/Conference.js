@@ -13,6 +13,7 @@ import { Chat } from '../../../chat';
 import { Filmstrip } from '../../../filmstrip';
 import { CalleeInfoContainer } from '../../../invite';
 import { LargeVideo } from '../../../large-video';
+import { Prejoin, isPrejoinPageVisible } from '../../../prejoin';
 import { LAYOUTS, getCurrentLayout } from '../../../video-layout';
 
 import {
@@ -83,6 +84,11 @@ type Props = AbstractProps & {
      * Name for this conference room.
      */
     _roomName: string,
+
+    /**
+     * If prejoin page is visible or not.
+     */
+    _showPrejoin: boolean,
 
     dispatch: Function,
     t: Function
@@ -178,16 +184,22 @@ class Conference extends AbstractConference<Props, *> {
             // interfaceConfig is obsolete but legacy support is required.
             filmStripOnly: filmstripOnly
         } = interfaceConfig;
+        const {
+            _iAmRecorder,
+            _layoutClassName,
+            _showPrejoin
+        } = this.props;
         const hideVideoQualityLabel
             = filmstripOnly
                 || VIDEO_QUALITY_LABEL_DISABLED
-                || this.props._iAmRecorder;
+                || _iAmRecorder;
 
         return (
             <div
-                className = { this.props._layoutClassName }
+                className = { _layoutClassName }
                 id = 'videoconference_page'
                 onMouseMove = { this._onShowToolbar }>
+
                 <Notice />
                 <Subject />
                 <div id = 'videospace'>
@@ -197,10 +209,12 @@ class Conference extends AbstractConference<Props, *> {
                     <Filmstrip filmstripOnly = { filmstripOnly } />
                 </div>
 
-                { filmstripOnly || <Toolbox /> }
+                { filmstripOnly || _showPrejoin || <Toolbox /> }
                 { filmstripOnly || <Chat /> }
 
                 { this.renderNotificationsContainer() }
+
+                { !filmstripOnly && _showPrejoin && <Prejoin />}
 
                 <CalleeInfoContainer />
             </div>
@@ -268,7 +282,8 @@ function _mapStateToProps(state) {
         ...abstractMapStateToProps(state),
         _iAmRecorder: state['features/base/config'].iAmRecorder,
         _layoutClassName: LAYOUT_CLASSNAMES[getCurrentLayout(state)],
-        _roomName: getConferenceNameForTitle(state)
+        _roomName: getConferenceNameForTitle(state),
+        _showPrejoin: isPrejoinPageVisible(state)
     };
 }
 
