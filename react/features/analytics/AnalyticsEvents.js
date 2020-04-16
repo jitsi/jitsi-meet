@@ -258,6 +258,20 @@ export function createDeviceChangedEvent(mediaType, deviceType) {
 }
 
 /**
+ * Creates an event indicating that an action related to E2EE occurred.
+ *
+ * @param {string} action - The action which occurred.
+ * @returns {Object} The event in a format suitable for sending via
+ * sendAnalytics.
+ */
+export function createE2EEEvent(action) {
+    return {
+        action,
+        actionSubject: 'e2ee'
+    };
+}
+
+/**
  * Creates an event which specifies that the feedback dialog has been opened.
  *
  * @returns {Object} The event in a format suitable for sending via
