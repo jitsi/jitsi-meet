@@ -54,7 +54,7 @@
     "jquery-i18next": "1.2.1",
     "js-md5": "0.6.1",
     "js-utils": "github:jitsi/js-utils#df68966e3c65b5c57fcd2670da1326a2c77518d1",
-    "jsrsasign": "8.0.12",
+    "jsrsasign": "^8.0.15",
     "jwt-decode": "2.2.0",
     "lib-jitsi-meet": "github:jitsi/lib-jitsi-meet#3e205750488a11df9c5d95ce028e50761b30447d",
     "libflacjs": "github:mmig/libflac.js#93d37e7f811f01cf7d8b6a603e38bd3c3810907d",
@@ -127,7 +127,7 @@
     "string-replace-loader": "2.1.1",
     "style-loader": "0.19.0",
     "unorm": "1.6.0",
-    "webpack": "4.27.1",
+    "webpack": "^4.42.1",
     "webpack-bundle-analyzer": "3.4.1",
     "webpack-cli": "3.1.2",
     "webpack-dev-server": "3.8.2"
