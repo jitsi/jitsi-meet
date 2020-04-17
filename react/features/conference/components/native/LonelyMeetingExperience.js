@@ -2,7 +2,7 @@
 
 import React, { PureComponent } from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
-
+import { INVITE_ENABLED, getFeatureFlag } from '../../../base/flags';
 import { ColorSchemeRegistry } from '../../../base/color-scheme';
 import { connect } from '../../../base/redux';
 import { StyleType } from '../../../base/styles';
@@ -41,7 +41,13 @@ type Props = {
     /**
      * Function to be used to translate i18n labels.
      */
-    t: Function
+    t: Function,
+
+    /**
+     * Whether the invite people button is visible.
+     * Default: Visible (true)
+     */
+    _inviteEnabled: boolean,
 };
 
 /**
@@ -65,7 +71,13 @@ class LonelyMeetingExperience extends PureComponent<Props> {
      * @inheritdoc
      */
     render() {
-        const { _isInviteFunctionsDiabled, _isLonelyMeeting, _styles, t } = this.props;
+        const {
+            _isInviteFunctionsDiabled,
+            _isLonelyMeeting,
+            _styles,
+            t,
+            _inviteEnabled
+        } = this.props;
 
         if (!_isLonelyMeeting) {
             return null;
@@ -80,7 +92,7 @@ class LonelyMeetingExperience extends PureComponent<Props> {
                     ] }>
                     { t('lonelyMeetingExperience.youAreAlone') }
                 </Text>
-                { !_isInviteFunctionsDiabled && (
+                { !_isInviteFunctionsDiabled && _inviteEnabled && (
                     <TouchableOpacity
                         onPress = { this._onPress }
                         style = { [
@@ -129,7 +141,8 @@ function _mapStateToProps(state): $Shape<Props> {
     return {
         _isInviteFunctionsDiabled: disableInviteFunctions,
         _isLonelyMeeting: getParticipantCount(state) === 1,
-        _styles: ColorSchemeRegistry.get(state, 'Conference')
+        _styles: ColorSchemeRegistry.get(state, 'Conference'),
+        _inviteEnabled: getFeatureFlag(state, INVITE_ENABLED, true)
     };
 }
 

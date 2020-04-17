@@ -6,7 +6,7 @@ import Collapsible from 'react-native-collapsible';
 
 import { ColorSchemeRegistry } from '../../../base/color-scheme';
 import { BottomSheet, hideDialog, isDialogOpen } from '../../../base/dialog';
-import { IOS_RECORDING_ENABLED, getFeatureFlag } from '../../../base/flags';
+import { IOS_RECORDING_ENABLED, getFeatureFlag, INVITE_ENABLED } from '../../../base/flags';
 import { IconDragHandle } from '../../../base/icons';
 import { connect } from '../../../base/redux';
 import { StyleType } from '../../../base/styles';
@@ -49,7 +49,13 @@ type Props = {
     /**
      * Used for hiding the dialog when the selection was completed.
      */
-    dispatch: Function
+    dispatch: Function,
+
+    /**
+     * Whether the invite people button is visible.
+     * Default: Visible (true)
+     */
+    _inviteEnabled: boolean,
 };
 
 type State = {
@@ -127,7 +133,10 @@ class OverflowMenu extends PureComponent<Props, State> {
                 onSwipe = { this._onSwipe }
                 renderHeader = { this._renderMenuExpandToggle }>
                 <AudioRouteButton { ...buttonProps } />
-                <InviteButton { ...buttonProps } />
+                {
+                    this.props._inviteEnabled
+                    && <InviteButton { ...buttonProps } />
+                }
                 <AudioOnlyButton { ...buttonProps } />
                 <RaiseHandButton { ...buttonProps } />
                 <MoreOptionsButton { ...moreOptionsButtonProps } />
@@ -241,7 +250,8 @@ function _mapStateToProps(state) {
     return {
         _bottomSheetStyles: ColorSchemeRegistry.get(state, 'BottomSheet'),
         _isOpen: isDialogOpen(state, OverflowMenu_),
-        _recordingEnabled: Platform.OS !== 'ios' || getFeatureFlag(state, IOS_RECORDING_ENABLED)
+        _recordingEnabled: Platform.OS !== 'ios' || getFeatureFlag(state, IOS_RECORDING_ENABLED),
+        _inviteEnabled: getFeatureFlag(state, INVITE_ENABLED, true)
     };
 }
 
