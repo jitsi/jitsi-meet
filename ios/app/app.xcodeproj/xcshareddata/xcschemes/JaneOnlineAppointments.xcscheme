@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-               BuildableName = "Jane Online Appointments.app"
+               BuildableName = "Jane Video.app"
                BlueprintName = "Jane Online Appointments"
                ReferencedContainer = "container:app.xcodeproj">
             </BuildableReference>
@@ -45,7 +45,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "Jane Online Appointments.app"
+            BuildableName = "Jane Video.app"
             BlueprintName = "Jane Online Appointments"
             ReferencedContainer = "container:app.xcodeproj">
          </BuildableReference>
@@ -62,7 +62,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "Jane Online Appointments.app"
+            BuildableName = "Jane Video.app"
             BlueprintName = "Jane Online Appointments"
             ReferencedContainer = "container:app.xcodeproj">
          </BuildableReference>
