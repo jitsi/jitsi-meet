@@ -90,13 +90,13 @@ export default class RemoteVideo extends SmallVideo {
         this._isRemoteControlSessionActive = false;
 
         /**
-         * The flag is set to <tt>true</tt> after the 'onplay' event has been
+         * The flag is set to <tt>true</tt> after the 'canplay' event has been
          * triggered on the current video element. It goes back to <tt>false</tt>
          * when the stream is removed. It is used to determine whether the video
          * playback has ever started.
          * @type {boolean}
          */
-        this.wasVideoPlayed = false;
+        this._canPlayEventReceived = false;
 
         /**
          * The flag is set to <tt>true</tt> if remote participant's video gets muted
@@ -366,7 +366,7 @@ export default class RemoteVideo extends SmallVideo {
 
         select.remove();
         if (isVideo) {
-            this.wasVideoPlayed = false;
+            this._canPlayEventReceived = false;
         }
 
         logger.info(`${isVideo ? 'Video' : 'Audio'} removed ${this.id}`, select);
@@ -390,13 +390,10 @@ export default class RemoteVideo extends SmallVideo {
     }
 
     /**
-     * The remote video is considered "playable" once the stream has started
-     * according to the {@link #hasVideoStarted} result.
-     * It will be allowed to display video also in
-     * {@link JitsiParticipantConnectionStatus.INTERRUPTED} if the video was ever
-     *  played and was not muted while not in ACTIVE state. This basically means
-     * that there is stalled video image cached that could be displayed. It's used
-     * to show "grey video image" in user's thumbnail when there are connectivity
+     * The remote video is considered "playable" once the can play event has been received. It will be allowed to
+     * display video also in {@link JitsiParticipantConnectionStatus.INTERRUPTED} if the video has received the canplay
+     * event and was not muted while not in ACTIVE state. This basically means that there is stalled video image cached
+     * that could be displayed. It's used to show "grey video image" in user's thumbnail when there are connectivity
      * issues.
      *
      * @inheritdoc
@@ -406,7 +403,7 @@ export default class RemoteVideo extends SmallVideo {
         const connectionState = APP.conference.getParticipantConnectionStatus(this.id);
 
         return super.isVideoPlayable()
-            && this.hasVideoStarted()
+            && this._canPlayEventReceived
             && (connectionState === JitsiParticipantConnectionStatus.ACTIVE
                 || (connectionState === JitsiParticipantConnectionStatus.INTERRUPTED && !this.mutedWhileDisconnected));
     }
@@ -459,24 +456,14 @@ export default class RemoteVideo extends SmallVideo {
             return;
         }
 
-        streamElement.onplaying = () => {
-            this.wasVideoPlayed = true;
+        streamElement.oncanplay = () => {
+            this._canPlayEventReceived = true;
             this.VideoLayout.remoteVideoActive(streamElement, this.id);
-            streamElement.onplaying = null;
+            streamElement.oncanplay = undefined;
 
             // Refresh to show the video
             this.updateView();
         };
-    }
-
-    /**
-     * Checks whether the video stream has started for this RemoteVideo instance.
-     *
-     * @returns {boolean} true if this RemoteVideo has a video stream for which
-     * the playback has been started.
-     */
-    hasVideoStarted() {
-        return this.wasVideoPlayed;
     }
 
     /**
@@ -504,10 +491,10 @@ export default class RemoteVideo extends SmallVideo {
             return;
         }
 
-        const streamElement = SmallVideo.createStreamElement(stream);
+        let streamElement = SmallVideo.createStreamElement(stream);
 
         // Put new stream element always in front
-        UIUtils.prependChild(this.container, streamElement);
+        streamElement = UIUtils.prependChild(this.container, streamElement);
 
         $(streamElement).hide();
 

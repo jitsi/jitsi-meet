@@ -500,7 +500,7 @@ export default class SmallVideo {
             hasVideo: Boolean(this.selectVideoElement().length),
             connectionStatus: APP.conference.getParticipantConnectionStatus(this.id),
             mutedWhileDisconnected: this.mutedWhileDisconnected,
-            wasVideoPlayed: this.wasVideoPlayed,
+            canPlayEventReceived: this._canPlayEventReceived,
             videoStream: Boolean(this.videoStream),
             isVideoMuted: this.isVideoMuted,
             videoStreamMuted: this.videoStream ? this.videoStream.isMuted() : 'no stream'
