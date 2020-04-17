@@ -133,6 +133,12 @@ const _LANGUAGES = {
         main: require('../../../../lang/main-ru')
     },
 
+    // Slovak
+    'sk': {
+        languages: require('../../../../lang/languages-sk'),
+        main: require('../../../../lang/main-sk')
+    },
+
     // Swedish
     'sv': {
         languages: require('../../../../lang/languages-sv'),
