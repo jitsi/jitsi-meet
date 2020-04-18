@@ -16,6 +16,8 @@ or anyone who wishes to deploy and operate their own Jitsi Meet instance.
 
 Work in progress.
 
+* [Spanish version](https://github.com/jitsi/jitsi-meet/blob/master/doc/userguide/userguide-es.md) 
+
 ## Developer guide
 
 ### Web
