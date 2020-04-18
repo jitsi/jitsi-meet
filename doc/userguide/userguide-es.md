@@ -1,10 +1,10 @@
-#Guía de usuario
+# Guía de usuario
 
-```
-Guía basada en la versión inglesa de la guía creada por [Peter E. Humphries](https://community.jitsi.org/u/phumphries/summary): [https://community.jitsi.org/t/end-user-web-conference-guide-for-jitsi/28974](https://community.jitsi.org/t/end-user-web-conference-guide-for-jitsi/28974)
-```
+| Guía basada en la versión inglesa de la guía creada por [Peter E. Humphries](https://community.jitsi.org/u/phumphries/summary): [https://community.jitsi.org/t/end-user-web-conference-guide-for-jitsi/28974](https://community.jitsi.org/t/end-user-web-conference-guide-for-jitsi/28974) |
+| ------------- |
 
-##Introducción
+
+## Introducción
 
 Tú puedes crear o atender a reuniones en Jitsi desde tu navegador o desde la aplicación de Jitsi en un dispositivo móvil.
 
@@ -12,7 +12,7 @@ Para más información sobre Jitsi Meet, puedes ir a [https://jitsi.org/](https:
 
 Jitsi puede gestionar hasta 75 participants en una sala. Para un número mayor de participantes, Jitsi ofrece integración con el servicio de transmisiones en directo de YouTube.
 
-##Crear una reunión
+## Crear una reunión
 
 * Ver a https://meet.jit.si/ o haz clic en "See it in Action! Start a meeting" en la página principal de Jitsi, [https://jitsi.org/](https://jitsi.org/). Puedes añadir ?lang=es-es a la URL o utilizar el menú de Ajustes (![menú ajustes](./settings-icon.png)) para cambiar el idioma en que se visualiza Jitsi Meet.
 
