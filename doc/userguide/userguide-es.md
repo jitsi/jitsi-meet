@@ -1,6 +1,6 @@
 # Guía de usuario
 
-| Guía basada en la versión inglesa de la guía creada por [Peter E. Humphries](https://community.jitsi.org/u/phumphries/summary): [https://community.jitsi.org/t/end-user-web-conference-guide-for-jitsi/28974](https://community.jitsi.org/t/end-user-web-conference-guide-for-jitsi/28974) |
+| Basada en la versión inglesa de la guía creada por [Peter E. Humphries](https://community.jitsi.org/u/phumphries/summary): [https://community.jitsi.org/t/end-user-web-conference-guide-for-jitsi/28974](https://community.jitsi.org/t/end-user-web-conference-guide-for-jitsi/28974) |
 | ------------- |
 
 
