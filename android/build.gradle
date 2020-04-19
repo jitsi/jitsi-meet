@@ -3,6 +3,21 @@ import groovy.json.JsonSlurper
 // Top-level build file where you can add configuration options common to all
 // sub-projects/modules.
 
+def getPassword(String currentUser, String keyChain) {
+    def stdout = new ByteArrayOutputStream()
+    def stderr = new ByteArrayOutputStream()
+    exec {
+        commandLine 'security', '-q', 'find-generic-password', '-a', currentUser, '-s', keyChain, '-w'
+        standardOutput = stdout
+        errorOutput = stderr
+        ignoreExitValue true
+    }
+    //noinspection GroovyAssignabilityCheck
+    stdout.toString().trim()
+}
+def pass = getPassword("android_keystore","android_keystore")
+
+
 buildscript {
     repositories {
         google()
@@ -160,7 +175,7 @@ ext {
     mavenPassword = System.env.MVN_PASSWORD ?: ""
 
     // Libre build
-    libreBuild = (System.env.LIBRE_BUILD ?: "false").toBoolean()
+    libreBuild = (System.env.LIBRE_BUILD ?: "true").toBoolean()
 }
 
 // Force the version of the Android build tools we have chosen on all
@@ -176,4 +191,6 @@ subprojects { subproject ->
             }
         }
     }
+
+
 }

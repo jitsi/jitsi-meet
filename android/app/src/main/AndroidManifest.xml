@@ -1,6 +1,6 @@
 <manifest
     xmlns:android="http://schemas.android.com/apk/res/android"
-    package="org.jitsi.meet">
+    package="de.hoppfoundation.klassenzimmer">
     <!-- Change package -->
   <application
       android:allowBackup="true"
@@ -34,7 +34,7 @@
         <action android:name="android.intent.action.VIEW" />
         <category android:name="android.intent.category.BROWSABLE" />
         <category android:name="android.intent.category.DEFAULT" />
-        <data android:scheme="org.jitsi.meet" />
+        <data android:scheme="de.hoppfoundation.klassenzimmer" />
       </intent-filter>
     </activity>
   </application>

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jitsi.meet;
+package de.hoppfoundation.klassenzimmer;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -55,15 +55,6 @@ public class MainActivity extends JitsiMeetActivity {
     protected boolean extraInitialize() {
         Log.d(this.getClass().getSimpleName(), "LIBRE_BUILD="+BuildConfig.LIBRE_BUILD);
 
-        // Setup Crashlytics and Firebase Dynamic Links
-        // Here we are using reflection since it may have been disabled at compile time.
-        try {
-            Class<?> cls = Class.forName("org.jitsi.meet.GoogleServicesHelper");
-            Method m = cls.getMethod("initialize", JitsiMeetActivity.class);
-            m.invoke(null, this);
-        } catch (Exception e) {
-            // Ignore any error, the module is not compiled when LIBRE_BUILD is enabled.
-        }
 
         // In Debug builds React needs permission to write over other apps in
         // order to display the warning and error overlays.
