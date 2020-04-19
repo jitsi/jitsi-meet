@@ -642,7 +642,7 @@
         "logout": "Encerrar sessão",
         "lowerYourHand": "Baixar a mão",
         "moreActions": "Mais ações",
-        "mute": "Mudo / Não mudo",
+        "mute": "Ativar / Desativar microfone",
         "noAudioSignalTitle": "Não há entrada de áudio vindo do seu microfone!",
         "noAudioSignalDesc": "Se você não o desativou propositalmente das configurações do sistema ou do hardware, considere trocar o dispositivo.",
         "noAudioSignalDescSuggestion": "Se você não o desativou propositalmente das configurações do sistema ou do hardware, considere trocar para o dispositivo sugerido.",

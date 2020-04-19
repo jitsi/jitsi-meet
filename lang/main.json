@@ -656,7 +656,7 @@
         "lowerYourHand": "Lower your hand",
         "moreActions": "More actions",
         "moreOptions": "More options",
-        "mute": "Mute / Unmute",
+        "mute": "Mute / Unmute microphone",
         "muteEveryone": "Mute everyone",
         "noAudioSignalTitle": "There is no input coming from your mic!",
         "noAudioSignalDesc": "If you did not purposely mute it from system settings or hardware, consider switching the device.",
