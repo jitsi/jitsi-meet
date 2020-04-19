@@ -2,6 +2,7 @@
 
 import React from 'react';
 import {
+    KeyboardAvoidingView,
     Text,
     TouchableOpacity,
     TouchableWithoutFeedback,
@@ -16,6 +17,7 @@ import AbstractDialog, {
     type State
 } from '../AbstractDialog';
 import { brandedDialog as styles } from './styles';
+import { Platform } from '../../../react';
 
 export type Props = AbstractProps & {
 
@@ -53,7 +55,8 @@ class BaseDialog<P: Props, S: State> extends AbstractDialog<P, S> {
 
         return (
             <TouchableWithoutFeedback>
-                <View
+                <KeyboardAvoidingView
+                    behavior = { Platform.OS === 'ios' ? 'padding' : 'height' }
                     style = { [
                         styles.overlay,
                         style
@@ -73,7 +76,7 @@ class BaseDialog<P: Props, S: State> extends AbstractDialog<P, S> {
                         </TouchableOpacity>
                         { this._renderContent() }
                     </View>
-                </View>
+                </KeyboardAvoidingView>
             </TouchableWithoutFeedback>
         );
     }
