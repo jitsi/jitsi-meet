@@ -25,7 +25,7 @@
         "none": "Keine Audiogeräte verfügbar"
     },
     "audioOnly": {
-        "audioOnly": "Nur Audio"
+        "audioOnly": "Geringe Bandbreite"
     },
     "calendarSync": {
         "addMeetingURL": "Meeting-Link hinzufügen",
@@ -69,7 +69,7 @@
     },
     "connection": {
         "ATTACHED": "Angehängt",
-        "AUTHENTICATING": "Anmeldung läuft",
+        "AUTHENTICATING": "Authentifizierung läuft",
         "AUTHFAIL": "Authentifizierung fehlgeschlagen",
         "CONNECTED": "Verbunden",
         "CONNECTING": "Verbindung wird hergestellt",
@@ -268,7 +268,7 @@
         "stopRecording": "Aufnahme stoppen",
         "stopRecordingWarning": "Sind Sie sicher, dass Sie die Aufnahme stoppen möchten?",
         "stopStreamingWarning": "Sind Sie sicher, dass Sie das Livestreaming stoppen möchten?",
-        "streamKey": "Name/Schlüssel für den Stream",
+        "streamKey": "Streamschlüssel",
         "Submit": "OK",
         "thankYou": "Danke für die Verwendung von {{appName}}!",
         "token": "Token",
@@ -372,7 +372,7 @@
         "changeSignIn": "Konten wechseln.",
         "choose": "Livestream auswählen",
         "chooseCTA": "Streaming-Option auswählen. Sie sind aktuell als {{email}} angemeldet.",
-        "enterStreamKey": "Name/Schlüssel für den YouTube-Livestream hier eingeben.",
+        "enterStreamKey": "Streamschlüssel für den YouTube-Livestream hier eingeben.",
         "error": "Das Livestreaming ist fehlgeschlagen. Bitte versuchen Sie es erneut.",
         "errorAPI": "Beim Abrufen der YouTube-Livestreams ist ein Fehler aufgetreten. Bitte versuchen Sie, sich erneut anzumelden.",
         "errorLiveStreamNotEnabled": "Livestreaming ist für {{email}} nicht aktiviert. Aktivieren Sie das Livestreaming oder melden Sie sich bei einem Konto mit aktiviertem Livestreaming an.",
@@ -390,7 +390,7 @@
         "serviceName": "Livestreaming-Dienst",
         "signedInAs": "Sie sind derzeit angemeldet als:",
         "signIn": "Mit Google anmelden",
-        "signInCTA": "Anmelden oder den Namen/Schlüssel des YouTube-Livestreams eingeben.",
+        "signInCTA": "Anmelden oder den Streamschlüssel des YouTube-Livestreams eingeben.",
         "signOut": "Abmelden",
         "start": "Einen Livestream starten",
         "streamIdHelp": "Was ist das?",
