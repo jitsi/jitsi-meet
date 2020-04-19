@@ -648,7 +648,7 @@
         "lowerYourHand": "Baisser la main",
         "moreActions": "Plus d'actions",
         "moreOptions": "Plus d'options",
-        "mute": "Muet / Actif",
+        "mute": "Activer / Désactiver le micro",
         "muteEveryone": "Couper le micro de tout le monde",
         "noAudioSignalTitle": "Il n'y a pas d'entrée provenant de votre micro !",
         "noAudioSignalDesc": "Si vous n'avez pas délibérément coupé le son des paramètres du système ou du matériel, envisagez de changer le périphérique.",
