@@ -85,13 +85,13 @@ class LonelyMeetingExperience extends PureComponent<Props> {
 
         return (
             <View style = { styles.lonelyMeetingContainer }>
-                <Text
+                { _inviteEnabled && (<Text
                     style = { [
                         styles.lonelyMessage,
                         _styles.lonelyMessage
                     ] }>
                     { t('lonelyMeetingExperience.youAreAlone') }
-                </Text>
+                </Text>) }
                 { !_isInviteFunctionsDiabled && _inviteEnabled && (
                     <TouchableOpacity
                         onPress = { this._onPress }
