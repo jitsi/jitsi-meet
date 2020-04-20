@@ -7,12 +7,18 @@ import { FieldTextStateless as TextField } from '@atlaskit/field-text';
 import { createE2EEEvent, sendAnalytics } from '../../analytics';
 import { Dialog } from '../../base/dialog';
 import { translate, translateToHTML } from '../../base/i18n';
+import { getParticipants } from '../../base/participants';
 import { connect } from '../../base/redux';
 
 import { setE2EEKey } from '../actions';
 
 
 type Props = {
+
+    /**
+     * Indicates whether all participants in the conference currently support E2EE.
+     */
+    _everyoneSupportsE2EE: boolean,
 
     /**
      * The current E2EE key.
@@ -70,7 +76,7 @@ class E2EEDialog extends Component<Props, State> {
      * @returns {ReactElement}
      */
     render() {
-        const { t } = this.props;
+        const { _everyoneSupportsE2EE, t } = this.props;
 
         return (
             <Dialog
@@ -81,6 +87,12 @@ class E2EEDialog extends Component<Props, State> {
                 <div className = 'e2ee-destription'>
                     { translateToHTML(t, 'dialog.e2eeDescription') }
                 </div>
+                {
+                    !_everyoneSupportsE2EE
+                        && <div className = 'e2ee-warn'>
+                            { translateToHTML(t, 'dialog.e2eeWarning') }
+                        </div>
+                }
                 <TextField
                     autoFocus = { true }
                     compact = { true }
@@ -133,8 +145,10 @@ class E2EEDialog extends Component<Props, State> {
  */
 function mapStateToProps(state) {
     const { e2eeKey } = state['features/e2ee'];
+    const participants = getParticipants(state).filter(p => !p.local);
 
     return {
+        _everyoneSupportsE2EE: participants.every(p => Boolean(p.e2eeSupported)),
         _key: e2eeKey || ''
     };
 }

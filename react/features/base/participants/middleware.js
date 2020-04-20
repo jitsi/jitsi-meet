@@ -196,6 +196,13 @@ StateListenerRegistry.register(
                 JitsiConferenceEvents.PARTICIPANT_PROPERTY_CHANGED,
                 (participant, propertyName, oldValue, newValue) => {
                     switch (propertyName) {
+                    case 'features_e2ee':
+                        store.dispatch(participantUpdated({
+                            conference,
+                            id: participant.getId(),
+                            e2eeSupported: newValue
+                        }));
+                        break;
                     case 'features_jigasi':
                         store.dispatch(participantUpdated({
                             conference,
