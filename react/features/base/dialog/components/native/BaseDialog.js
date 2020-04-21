@@ -17,7 +17,6 @@ import AbstractDialog, {
     type State
 } from '../AbstractDialog';
 import { brandedDialog as styles } from './styles';
-import { Platform } from '../../../react';
 
 export type Props = AbstractProps & {
 
@@ -56,7 +55,7 @@ class BaseDialog<P: Props, S: State> extends AbstractDialog<P, S> {
         return (
             <TouchableWithoutFeedback>
                 <KeyboardAvoidingView
-                    behavior = { Platform.OS === 'ios' ? 'padding' : 'height' }
+                    behavior = 'height'
                     style = { [
                         styles.overlay,
                         style
