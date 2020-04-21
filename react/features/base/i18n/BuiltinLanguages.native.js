@@ -132,7 +132,7 @@ const _LANGUAGES = {
         languages: require('../../../../lang/languages-sc'),
         main: require('../../../../lang/main-sc')
     },
-
+    
     // Russian
     'ru': {
         languages: require('../../../../lang/languages-ru'),
