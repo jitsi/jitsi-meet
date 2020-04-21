@@ -60,7 +60,8 @@ export function getDeepLinkingPage(state) {
 
     // eslint-disable-next-line no-unused-vars
     const OS = Platform.OS;
-    const isUsingMobileBrowser = OS === 'ios' || false;
+    const isIpad = navigator.maxTouchPoints > 0 && OS === 'macos';
+    const isUsingMobileBrowser = OS === 'ios' || isIpad || false;
 
     if (isUsingMobileBrowser) { // mobile
         const mobileAppPromo
