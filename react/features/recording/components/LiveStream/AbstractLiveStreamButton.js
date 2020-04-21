@@ -96,13 +96,15 @@ export function _mapStateToProps(state: Object, ownProps: Props) {
         // If the containing component provides the visible prop, that is one
         // above all, but if not, the button should be autonomus and decide on
         // its own to be visible or not.
+        const isModerator = isLocalParticipantModerator(state);
         const {
             enableFeaturesBasedOnToken,
             liveStreamingEnabled
         } = state['features/base/config'];
         const { features = {} } = getLocalParticipant(state);
 
-        visible = liveStreamingEnabled;
+        visible = isModerator
+            && liveStreamingEnabled;
 
         if (enableFeaturesBasedOnToken) {
             visible = visible && String(features.livestreaming) === 'true';
