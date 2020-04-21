@@ -189,14 +189,15 @@ var config = {
     // by enabling fileRecordingsServiceEnabled, we show both the integrations
     // and the generic recording service (its configuration and storage type
     // depends on jibri configuration)
-    // fileRecordingsServiceEnabled: false,
+    fileRecordingsServiceEnabled: true,
     // Whether to show the possibility to share file recording with other people
     // (e.g. meeting participants), based on the actual implementation
     // on the backend.
     // fileRecordingsServiceSharingEnabled: false,
 
     // Whether to enable live streaming or not.
-    // liveStreamingEnabled: false,
+    liveStreamingEnabled: true,
+    hiddenDomain: "recorder.meet.roundesk.io",
 
     // Transcription (in interface_config,
     // subtitles and buttons can be configured)
