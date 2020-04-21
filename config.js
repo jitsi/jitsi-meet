@@ -6,7 +6,9 @@ var config = {
 
     hosts: {
         // XMPP domain.
-        domain: 'jitsi-meet.example.com',
+        domain: "meet.roundesk.io",
+        bridge: "jitsi-videobridge.meet.roundesk.io",
+        focus: "focus.meet.roundesk.io",
 
         // When using authentication, domain for guest users.
         // anonymousdomain: 'guest.example.com',
@@ -24,21 +26,20 @@ var config = {
         // focus: 'focus.jitsi-meet.example.com',
 
         // XMPP MUC domain. FIXME: use XEP-0030 to discover it.
-        muc: 'conference.jitsi-meet.example.com'
+        muc: "conference.meet.roundesk.io",
     },
 
     // BOSH URL. FIXME: use XEP-0156 to discover it.
-    bosh: '//jitsi-meet.example.com/http-bind',
+    bosh: "//meet.roundesk.io/http-bind",
 
     // Websocket URL
     // websocket: 'wss://jitsi-meet.example.com/xmpp-websocket',
 
     // The name of client node advertised in XEP-0115 'c' stanza
-    clientNode: 'http://jitsi.org/jitsimeet',
+    clientNode: "http://jitsi.org/jitsimeet",
 
     // The real JID of focus participant - can be overridden here
     // focusUserJid: 'focus@auth.jitsi-meet.example.com',
-
 
     // Testing / experimental features.
     //
@@ -46,7 +47,7 @@ var config = {
     testing: {
         // P2P test mode disables automatic switching to P2P when there are 2
         // participants in the conference.
-        p2pTestMode: false
+        p2pTestMode: false,
 
         // Enables the test specific features consumed by jitsi-meet-torture
         // testMode: false
@@ -63,7 +64,6 @@ var config = {
     // Disables ICE/TCP by filtering out local and remote TCP candidates in
     // signalling.
     // webrtcIceTcpDisable: false,
-
 
     // Media
     //
@@ -155,10 +155,10 @@ var config = {
 
     // The media sources to use when using screen sharing with the Chrome
     // extension.
-    desktopSharingChromeSources: [ 'screen', 'window', 'tab' ],
+    desktopSharingChromeSources: ["screen", "window", "tab"],
 
     // Required version of Chrome extension
-    desktopSharingChromeMinExtVersion: '0.1',
+    desktopSharingChromeMinExtVersion: "0.1",
 
     // Whether desktop sharing should be disabled on Firefox.
     // desktopSharingFirefoxDisabled: false,
@@ -242,7 +242,6 @@ var config = {
     // open any channel).
     // openBridgeChannel: true,
 
-
     // UI
     //
 
@@ -320,7 +319,6 @@ var config = {
     // will not function.
     // disableThirdPartyRequests: false,
 
-
     // Peer-To-Peer mode: used (if enabled) when there are just 2 participants.
     //
 
@@ -338,9 +336,8 @@ var config = {
 
         // The STUN servers that will be used in the peer to peer connections
         stunServers: [
-
             // { urls: 'stun:jitsi-meet.example.com:4446' },
-            { urls: 'stun:meet-jit-si-turnrelay.jitsi.net:443' }
+            { urls: "stun:meet-jit-si-turnrelay.jitsi.net:443" },
         ],
 
         // Sets the ICE transport policy for the p2p connection. At the time
@@ -353,7 +350,7 @@ var config = {
 
         // If set to true, it will prefer to use H.264 for P2P calls (if H.264
         // is supported).
-        preferH264: true
+        preferH264: true,
 
         // If set to true, disable H.264 video codec by stripping it out of the
         // SDP.
@@ -367,10 +364,8 @@ var config = {
     analytics: {
         // The Google Analytics Tracking ID:
         // googleAnalyticsTrackingId: 'your-tracking-id-UA-123456-1'
-
         // The Amplitude APP Key:
         // amplitudeAPPKey: '<APP_KEY>'
-
         // Array of script URLs to load as lib-jitsi-meet "analytics handlers".
         // scriptURLs: [
         //      "libs/analytics-ga.min.js", // google-analytics
@@ -525,10 +520,9 @@ var config = {
      startBitrate
      */
 
-
     // Allow all above example options to include a trailing comma and
     // prevent fear when commenting out the last value.
-    makeJsonParserHappy: 'even if last key had a trailing comma'
+    makeJsonParserHappy: "even if last key had a trailing comma",
 
     // no configuration value should follow this line.
 };
