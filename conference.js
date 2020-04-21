@@ -1816,7 +1816,7 @@ export default {
                 const desktopVideoStream = streams.find(stream => stream.getType() === MEDIA_TYPE.VIDEO);
 
                 if (desktopVideoStream) {
-                    this.useVideoStream(desktopVideoStream);
+                    await this.useVideoStream(desktopVideoStream);
                 }
 
                 this._desktopAudioStream = streams.find(stream => stream.getType() === MEDIA_TYPE.AUDIO);
