@@ -2,7 +2,10 @@
 
 import { openDialog } from '../../../base/dialog';
 import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
-import { getLocalParticipant } from '../../../base/participants';
+import {
+    getLocalParticipant,
+    isLocalParticipantModerator
+} from '../../../base/participants';
 import {
     AbstractButton,
     type AbstractButtonProps
