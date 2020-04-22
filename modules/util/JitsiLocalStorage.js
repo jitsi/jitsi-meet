@@ -37,11 +37,11 @@ class JitsiLocalStorage extends DummyLocalStorage {
         let storage = null;
 
         try {
-          if (isIFrame()) {
-            storage = top.localStorage;
-          } else {
-            storage = window.localStorage;
-          }
+            if (this.isIFrame()) {
+                storage = top.localStorage;
+            } else {
+              storage = window.localStorage;
+            }
         } catch (error) {
             logger.error(error);
         }
@@ -78,7 +78,7 @@ class JitsiLocalStorage extends DummyLocalStorage {
     }
 
     isIFrame() {
-      return window != top;
+        return window != top;
     }
 }
 
