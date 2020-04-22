@@ -34,7 +34,7 @@ class JitsiLocalStorage extends DummyLocalStorage {
      */
     constructor() {
         super();
-        let storage = null;
+        let storage;
 
         try {
             if (this.isIFrame()) {
@@ -77,8 +77,11 @@ class JitsiLocalStorage extends DummyLocalStorage {
         return this.storage.removeItem(keyName);
     }
 
+    /**
+     * Validate if windows is the parent element
+     */
     isIFrame() {
-        return window != top;
+        return window !== top;
     }
 }
 
