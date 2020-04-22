@@ -352,7 +352,7 @@
     "keyboardShortcuts": {
         "focusLocal": "Lokales Video fokussieren",
         "focusRemote": "Auf das Video eines anderen Teilnehmers fokussieren",
-        "fullScreen": "Vollbildmodus aktivieren / deaktivieren",
+        "fullScreen": "Vollbildmodus aktivieren oder deaktivieren",
         "keyboardShortcuts": "Tastenkürzel",
         "localRecording": "Lokale Aufzeichnungssteuerelemente ein- oder ausblenden",
         "mute": "Stummschaltung aktivieren oder deaktivieren",
