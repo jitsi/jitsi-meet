@@ -34,10 +34,14 @@ class JitsiLocalStorage extends DummyLocalStorage {
      */
     constructor() {
         super();
-        let storage;
+        let storage = null;
 
         try {
+          if (isIFrame()) {
+            storage = top.localStorage;
+          } else {
             storage = window.localStorage;
+          }
         } catch (error) {
             logger.error(error);
         }
@@ -71,6 +75,10 @@ class JitsiLocalStorage extends DummyLocalStorage {
      */
     removeItem(keyName) {
         return this.storage.removeItem(keyName);
+    }
+
+    isIFrame() {
+      return window != top;
     }
 }
 
