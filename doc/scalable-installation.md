@@ -107,7 +107,7 @@ Open to world:
 Open to the videobridges only
 
 * 5222 TCP (for Prosody)
-* 5437 TCP (for Jicofo)
+* 5347 TCP (for Jicofo)
 
 
 #### NGINX
