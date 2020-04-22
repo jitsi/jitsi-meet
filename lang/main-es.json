@@ -82,10 +82,10 @@
     "connectionindicator": {
         "address": "Dirección:",
         "bandwidth": "Ancho de banda estimado:",
-        "bitrate": "Tasa de bits:",
+        "bitrate": "Tasa de transferencia:",
         "bridgeCount": "Contador del servidor: ",
         "connectedTo": "Conectado a:",
-        "framerate": "Tasa de cuadros:",
+        "framerate": "Fotogramas por segundo:",
         "less": "Mostrar menos",
         "localaddress": "Dirección local:",
         "localaddress_plural": "Direcciones locales:",
@@ -96,8 +96,8 @@
         "quality": {
             "good": "Bueno",
             "inactive": "Inactivo",
-            "lost": "Perdida",
-            "nonoptimal": "No óptima",
+            "lost": "Perdido",
+            "nonoptimal": "No óptimo",
             "poor": "Pobre"
         },
         "remoteaddress": "Dirección remota:",
@@ -105,7 +105,7 @@
         "remoteport": "Puerto remoto:",
         "remoteport_plural": "Puertos remotos:",
         "resolution": "Resolución:",
-        "status": "Conexión:",
+        "status": "Estado:",
         "transport": "Transporte:",
         "transport_plural": "Transportes:"
     },
@@ -322,7 +322,7 @@
         "numbers": "Números de marcado",
         "password": "$t(lockRoomPasswordUppercase):",
         "title": "Compartir",
-        "tooltip": "Compartir el enlace y la información de acceso telefónico para esta reunión",
+        "tooltip": "Compartir el enlace y acceso telefónico para esta reunión",
         "label": "Información de la reunión"
     },
     "inviteDialog": {
@@ -345,10 +345,10 @@
         "fullScreen": "Ver o salir de pantalla completa",
         "keyboardShortcuts": "Atajos de teclado",
         "localRecording": "Mostrar u ocultar controles de grabación locales",
-        "mute": "Activar o desactivar micrófono",
+        "mute": "Activar o silenciar el micrófono",
         "pushToTalk": "Presione para hablar",
         "raiseHand": "Levantar o bajar la mano",
-        "showSpeakerStats": "Mostrar estadísticas del locutor",
+        "showSpeakerStats": "Estadísticas de participantes",
         "toggleChat": "Abrir o cerrar panel de chat",
         "toggleFilmstrip": "Mostrar/Ocultar miniaturas de video",
         "toggleScreensharing": "Cambiar entre cámara y compartir pantalla",
@@ -522,8 +522,8 @@
         "selectAudioOutput": "Salida de audio",
         "selectCamera": "Cámara",
         "selectMic": "Micrófono",
-        "startAudioMuted": "Todos inician en silencio",
-        "startVideoMuted": "Todos inician ocultos",
+        "startAudioMuted": "Todos inician silenciados",
+        "startVideoMuted": "Todos inician con cámara desactivada",
         "title": "Ajustes"
     },
     "settingsView": {
@@ -549,14 +549,14 @@
         "dialInfoText": "\n\n===== \\ n\n¿Solo quieres marcar en tu teléfono? \\ N\n{{defaultDialInNumber}} Haga clic en este enlace para ver el marcado en los números de teléfono de esta reunión\n{{dialInfoPageUrl}}",
         "mainText": "Presione en el siguiente enlace para unirse a la reunión:\n{{roomUrl}}"
     },
-    "speaker": "Orador",
+    "speaker": "Participante",
     "speakerStats": {
         "hours": "{{count}}h",
         "minutes": "{{count}}m",
         "name": "Nombre",
         "seconds": "{{count}}s",
-        "speakerStats": "Estadísticas del locutor",
-        "speakerTime": "Tiempo del locutor"
+        "speakerStats": "Estadísticas de participantes",
+        "speakerTime": "Tiempo hablado"
     },
     "startupoverlay": {
         "policyText": " ",
