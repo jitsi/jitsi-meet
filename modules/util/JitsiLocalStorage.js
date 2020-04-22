@@ -78,7 +78,8 @@ class JitsiLocalStorage extends DummyLocalStorage {
     }
 
     /**
-     * Validate if windows is the parent element
+     * Validate if the current window is the parent element
+     * or is into the other page as iframe element
      */
     isIFrame() {
         return window !== top;
