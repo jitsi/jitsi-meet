@@ -75,6 +75,7 @@ var interfaceConfig = {
         "help",
         "mute-everyone",
         "e2ee",
+        "localrecording",
     ],
 
     SETTINGS_SECTIONS: [

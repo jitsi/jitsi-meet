@@ -9,7 +9,7 @@ var config = {
         domain: "meet.roundesk.io",
         bridge: "jitsi-videobridge.meet.roundesk.io",
         focus: "focus.meet.roundesk.io",
-
+        muc: "conference.meet.roundesk.io",
         // When using authentication, domain for guest users.
         // anonymousdomain: 'guest.example.com',
 
@@ -26,7 +26,6 @@ var config = {
         // focus: 'focus.jitsi-meet.example.com',
 
         // XMPP MUC domain. FIXME: use XEP-0030 to discover it.
-        muc: "conference.meet.roundesk.io",
     },
 
     // BOSH URL. FIXME: use XEP-0156 to discover it.
@@ -87,14 +86,14 @@ var config = {
 
     // Start the conference in audio only mode (no video is being received nor
     // sent).
-    // startAudioOnly: false,
+    startAudioOnly: true,
 
     // Every participant after the Nth will start audio muted.
-    // startAudioMuted: 10,
+    //startAudioMuted: 10,
 
     // Start calls with audio muted. Unlike the option above, this one is only
     // applied locally. FIXME: having these 2 options is confusing.
-    // startWithAudioMuted: false,
+    startWithAudioMuted: true,
 
     // Enabling it (with #params) will disable local audio output of remote
     // participants and to enable it back a reload is needed.
@@ -133,7 +132,7 @@ var config = {
 
     // Start calls with video muted. Unlike the option above, this one is only
     // applied locally. FIXME: having these 2 options is confusing.
-    // startWithVideoMuted: false,
+    startWithVideoMuted: true,
 
     // If set to true, prefer to use the H.264 video codec (if supported).
     // Note that it's not recommended to do this because simulcast is not
@@ -264,7 +263,7 @@ var config = {
     // disable1On1Mode: false,
 
     // Default language for the user interface.
-    // defaultLanguage: 'en',
+    defaultLanguage: "en",
 
     // If true all users without a token will be considered guests and all users
     // with token will be considered non-guests. Only guests will be allowed to
@@ -275,7 +274,7 @@ var config = {
     // enableFeaturesBasedOnToken: false,
 
     // Enable lock room for all moderators, even when userRolesBasedOnToken is enabled and participants are guests.
-    // lockRoomGuestEnabled: false,
+    lockRoomGuestEnabled: true,
 
     // When enabled the password used for locking a room is restricted to up to the number of digits specified
     // roomPasswordNumberOfDigits: 10,
@@ -287,7 +286,7 @@ var config = {
 
     // Enables calendar integration, depends on googleApiApplicationClientID
     // and microsoftApiApplicationClientID
-    // enableCalendarIntegration: false,
+    enableCalendarIntegration: true,
 
     // Stats
     //
@@ -402,20 +401,19 @@ var config = {
     // Local Recording
     //
 
-    // localRecording: {
-    // Enables local recording.
-    // Additionally, 'localrecording' (all lowercase) needs to be added to
-    // TOOLBAR_BUTTONS in interface_config.js for the Local Recording
-    // button to show up on the toolbar.
-    //
-    //     enabled: true,
-    //
+    localRecording: {
+        // Enables local recording.
+        // Additionally, 'localrecording' (all lowercase) needs to be added to
+        // TOOLBAR_BUTTONS in interface_config.js for the Local Recording
+        // button to show up on the toolbar.
+        //
+        enabled: true,
+        //
 
-    // The recording format, can be one of 'ogg', 'flac' or 'wav'.
-    //     format: 'flac'
-    //
-
-    // },
+        // The recording format, can be one of 'ogg', 'flac' or 'wav'.
+        format: "flac",
+        //
+    },
 
     // Options related to end-to-end (participant to participant) ping.
     // e2eping: {
