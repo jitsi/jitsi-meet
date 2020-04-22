@@ -1,48 +1,47 @@
 // @flow
 
-import { ColorSchemeRegistry, schemeColor } from '../../../base/color-scheme';
-import { BoxModel, ColorPalette } from '../../../base/styles';
+import { ColorSchemeRegistry, schemeColor } from "../../../base/color-scheme";
+import { BoxModel, ColorPalette } from "../../../base/styles";
 
 // XXX The "standard" {@code BoxModel.padding} has been deemed insufficient in
 // the special case(s) of the recording feature bellow.
 const _PADDING = BoxModel.padding * 1.5;
 
-export const DROPBOX_LOGO = require('../../../../../images/dropboxLogo_square.png');
+export const DROPBOX_LOGO = require("../../../../../images/dropboxLogo_square.png");
 
-export const ICON_SHARE = require('../../../../../images/icon-users.png');
+export const ICON_SHARE = require("../../../../../images/icon-users.png");
 
-export const JITSI_LOGO = require('../../../../../images/jitsiLogo_square.png');
+export const JITSI_LOGO = require("../../../../../images/rdLogo_square.png");
 
 /**
  * Color schemed styles for the @{code StartRecordingDialogContent} component.
  */
-ColorSchemeRegistry.register('StartRecordingDialogContent', {
-
+ColorSchemeRegistry.register("StartRecordingDialogContent", {
     container: {
         flex: 0,
-        flexDirection: 'column'
+        flexDirection: "column",
     },
 
     controlDisabled: {
-        opacity: 0.5
+        opacity: 0.5,
     },
 
     header: {
-        alignItems: 'center',
+        alignItems: "center",
         flex: 0,
-        flexDirection: 'row',
-        justifyContent: 'space-between',
+        flexDirection: "row",
+        justifyContent: "space-between",
         paddingBottom: _PADDING,
-        paddingTop: _PADDING
+        paddingTop: _PADDING,
     },
 
     loggedIn: {
-        paddingBottom: _PADDING
+        paddingBottom: _PADDING,
     },
 
     recordingIcon: {
         width: 24,
-        height: 24
+        height: 24,
     },
 
     signButton: {
@@ -50,22 +49,22 @@ ColorSchemeRegistry.register('StartRecordingDialogContent', {
         color: ColorPalette.white,
         fontSize: 16,
         borderRadius: 5,
-        padding: BoxModel.padding * 0.5
+        padding: BoxModel.padding * 0.5,
     },
 
     switch: {
-        color: ColorPalette.white
+        color: ColorPalette.white,
     },
 
     title: {
         flex: 1,
         fontSize: 16,
-        fontWeight: 'bold',
-        textAlign: 'left',
-        paddingLeft: BoxModel.padding
+        fontWeight: "bold",
+        textAlign: "left",
+        paddingLeft: BoxModel.padding,
     },
 
     text: {
-        color: schemeColor('text')
-    }
+        color: schemeColor("text"),
+    },
 });
