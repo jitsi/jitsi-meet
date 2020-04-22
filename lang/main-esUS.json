@@ -89,7 +89,7 @@
         "bitrate": "Tasa de transferencia:",
         "bridgeCount": "Contador del servidor: ",
         "connectedTo": "Conectado a:",
-        "framerate": "Cuadros por segundo:",
+        "framerate": "Fotogramas por segundo:",
         "less": "Mostrar menos",
         "localaddress": "Dirección local:",
         "localaddress_plural": "Direcciones locales:",
@@ -109,7 +109,7 @@
         "remoteport": "Puerto remoto:",
         "remoteport_plural": "Puertos remotos:",
         "resolution": "Resolución:",
-        "status": "Conexión:",
+        "status": "Estado:",
         "transport": "Transporte:",
         "transport_plural": "Transportes:"
     },
@@ -332,8 +332,8 @@
         "numbers": "Números de marcación desde afuera",
         "password": "$t(lockRoomPasswordUppercase):",
         "title": "Compartir",
-        "tooltip": "Compartir el enlace y la información de marcación desde afuera para esta reunión",
-        "label": "Información de reunión"
+        "tooltip": "Compartir el enlace y acceso telefónico para esta reunión",
+        "label": "Información de la reunión"
     },
     "inviteDialog": {
         "alertText": "No se pudieron invitar a algunos participantes.",
@@ -532,8 +532,8 @@
         "selectAudioOutput": "Salida de audio",
         "selectCamera": "Cámara",
         "selectMic": "Micrófono",
-        "startAudioMuted": "Todos comienzan con el silencio activado",
-        "startVideoMuted": "Todos comienzan ocultos",
+        "startAudioMuted": "Todos comienzan con silenciados",
+        "startVideoMuted": "Todos comienzan con cámara desactivada",
         "title": "Configuración"
     },
     "settingsView": {
@@ -559,14 +559,14 @@
         "dialInfoText": "\n\n=====\n\n¿Desea llamar desde su teléfono?\n\n{{defaultDialInNumber}}La lista de números disponibles para la reunión está disponible aquí : \n{{dialInfoPageUrl}}",
         "mainText": "Haz clic en el enlace siguiente para unirte a la reunión:\n{{roomUrl}}"
     },
-    "speaker": "Altavoz",
+    "speaker": "Participante",
     "speakerStats": {
         "hours": "{{count}} h",
         "minutes": "{{count}} min",
         "name": "Nombre",
         "seconds": "{{count}} s",
-        "speakerStats": "Estadísticas del altavoz",
-        "speakerTime": "Hora del altavoz"
+        "speakerStats": "Estadísticas de participantes",
+        "speakerTime": "Tiempo hablado"
     },
     "startupoverlay": {
         "policyText": " ",
@@ -641,7 +641,7 @@
         "lowerYourHand": "Bajar la mano",
         "moreActions": "Más acciones",
         "moreOptions": "Más opciones",
-        "mute": "Silenciar/anular silencio",
+        "mute": "Activar o silenciar el micrófono",
         "muteEveryone": "Silenciar a todos",
         "noAudioSignalTitle": "¡No hay ninguna entrada que provenga de su micrófono!",
         "noAudioSignalDesc": "Si no lo silenció intencionalmente desde la configuración del sistema o el hardware, considere la posibilidad de cambiar el dispositivo.",
@@ -660,7 +660,7 @@
         "sharedvideo": "Compartir un video de YouTube",
         "shareRoom": "Invitar a alguien",
         "shortcuts": "Ver accesos directos",
-        "speakerStats": "Estadísticas del altavoz",
+        "speakerStats": "Estadísticas de participantes",
         "startScreenSharing": "Iniciar uso compartido de pantalla",
         "startSubtitles": "Iniciar subtítulos",
         "stopScreenSharing": "Detener uso compartido de pantalla",
