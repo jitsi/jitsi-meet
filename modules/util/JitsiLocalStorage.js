@@ -40,7 +40,7 @@ class JitsiLocalStorage extends DummyLocalStorage {
             if (this.isIFrame()) {
                 storage = top.localStorage;
             } else {
-              storage = window.localStorage;
+                storage = window.localStorage;
             }
         } catch (error) {
             logger.error(error);
