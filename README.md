@@ -1,6 +1,6 @@
 # Jitsi Meet - Secure, Simple and Scalable Video Conferences
 
-Jitsi Meet is an open-source (Apache) WebRTC JavaScript application that uses [Jitsi Videobridge](https://jitsi.org/videobridge) to provide high quality, [secure](#security) and scalable video conferences. Jitsi Meet in action can be seen at [here at the session #482 of the VoIP Users Conference](http://youtu.be/7vFUVClsNh0).
+Jitsi Meet is an open-source (Apache) WebRTC JavaScript application that uses [Jitsi Videobridge](https://jitsi.org/videobridge) to provide high quality, [secure](https://jitsi.org/security) and scalable video conferences. Jitsi Meet in action can be seen at [here at the session #482 of the VoIP Users Conference](http://youtu.be/7vFUVClsNh0).
 
 The Jitsi Meet client runs in your browser, without installing anything else on your computer. You can try it out at https://meet.jit.si.
 
@@ -61,17 +61,9 @@ Jitsi Meet provides a very flexible way of embedding in external applications by
 
 ## Security
 
-WebRTC does not (yet) provide a way of conducting multi-party conversations with end-to-end encryption. 
-Unless you consistently compare DTLS fingerprints with your peers vocally, the same goes for one-to-one calls.
-As a result, your stream is encrypted on the network but decrypted on the machine that hosts the bridge when using Jitsi Meet.
+The security section here was starting to feel a bit too succinct for the complexity of the topic, so we created a post that covers the topic much more broadly here: https://jitsi.org/security
 
-The Jitsi Meet architecture allows you to deploy your own version, including
-all server components. In that case, your security guarantees will be roughly
-equivalent to a direct one-to-one WebRTC call. This is the uniqueness of
-Jitsi Meet in terms of security.
-
-The [meet.jit.si](https://meet.jit.si) service is maintained by the Jitsi team
-at [8x8](https://8x8.com).
+The section on end-to-end encryption in that document is likely going to be one of the key points of interest: https://jitsi.org/security/#e2ee
 
 ## Security issues
 
