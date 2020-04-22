@@ -907,7 +907,7 @@ class Toolbox extends Component<Props, State> {
                 <OverflowMenuItem
                     accessibilityLabel
                         = { t('toolbar.accessibilityLabel.shareYourScreen') }
-                    disabled = { _desktopSharingEnabled }
+                    disabled = { !_desktopSharingEnabled }
                     icon = { IconShareDesktop }
                     iconId = 'share-desktop'
                     key = 'desktop'
