@@ -2,6 +2,7 @@
 
 import { LAYOUTS } from './constants';
 import { getPinnedParticipant } from '../base/participants';
+import { TILE_ASPECT_RATIO } from '../filmstrip/constants';
 
 declare var interfaceConfig: Object;
 
@@ -35,30 +36,89 @@ export function getMaxColumnCount() {
 }
 
 /**
- * Returns the cell count dimensions for tile view. Tile view tries to uphold
- * equal count of tiles for height and width, until maxColumn is reached in
+ * Returns the cell count dimensions for tile view. Tile view tries to
+ * maximize the size of the tiles, until maxColumn is reached in
  * which rows will be added but no more columns.
  *
  * @param {Object} state - The redux store state.
  * @param {number} maxColumns - The maximum number of columns that can be
  * displayed.
  * @returns {Object} An object is return with the desired number of columns,
- * rows, and visible rows (the rest should overflow) for the tile view layout.
+ * rows, and visible rows (the rest might overflow) for the tile view layout.
  */
 export function getTileViewGridDimensions(state: Object, maxColumns: number = getMaxColumnCount()) {
     // When in tile view mode, we must discount ourselves (the local participant) because our
     // tile is not visible.
     const { iAmRecorder } = state['features/base/config'];
     const numberOfParticipants = state['features/base/participants'].length - (iAmRecorder ? 1 : 0);
+    const { clientHeight, clientWidth } = state['features/base/responsive-ui'];
 
-    const columnsToMaintainASquare = Math.ceil(Math.sqrt(numberOfParticipants));
-    const columns = Math.min(columnsToMaintainASquare, maxColumns);
-    const rows = Math.ceil(numberOfParticipants / columns);
-    const visibleRows = Math.min(maxColumns, rows);
+    // calculate available width and height for tile view.
+    // copied from calculateThumbnailSizeForTileView (one variable was dropped)
+    const topBottomPadding = 200;
+    const sideMargins = 30 * 2;
+    const viewWidth = clientWidth - sideMargins;
+    const viewHeight = clientHeight - topBottomPadding;
+
+    const viewAspectRatio = viewWidth / viewHeight;
+    const ratioOfRatios = TILE_ASPECT_RATIO / viewAspectRatio;
+
+    const tileGrid = calcTileGrid(ratioOfRatios, numberOfParticipants);
+    let { columns } = tileGrid;
+    const { rows, availableTiles } = tileGrid;
+
+    // maybe remove a column, for aesthetics.
+    if (rows <= availableTiles - numberOfParticipants) {
+        columns -= 1;
+    }
+
+    const columnsOverflowed = columns > maxColumns;
+
+    columns = Math.min(columns, maxColumns);
+    let visibleRows = Math.ceil(numberOfParticipants / columns);
+
+    if (columnsOverflowed) {
+        visibleRows = Math.min(visibleRows, maxColumns);
+    }
 
     return {
         columns,
         visibleRows
+    };
+}
+
+/**
+ * Returns an efficient grid for tiling rectangles of the same size and aspect ratio in a rectangular container.
+ *
+ * @param {number} ratio - Ratio of the tile's aspect-ratio / the container's aspect-ratio
+ * @param {number} tilesParam - the number of tiles to calculate the grid for
+ * @returns {Object} An object containing the number of rows, columns, rows * columns , and tiles
+ */
+export function calcTileGrid(ratio: number, tilesParam: number) {
+    let rows = 1;
+    let columns = 1;
+    let availableTiles = 1;
+    let tiles = tilesParam;
+
+    // Someone could give you ratio = 0 and/or tiles = Infinity
+    if (tiles > 65536) {
+        tiles = 1;
+    }
+
+    while (availableTiles < tiles) {
+        if ((columns + 1) * ratio < rows + 1) {
+            columns++;
+        } else {
+            rows++;
+        }
+        availableTiles = rows * columns;
+    }
+
+    return {
+        rows,
+        columns,
+        availableTiles,
+        tiles
     };
 }
 
