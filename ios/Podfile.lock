@@ -416,13 +416,11 @@ DEPENDENCIES:
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
 SPEC REPOS:
-  https://github.com/CocoaPods/Specs.git:
+  trunk:
     - Amplitude-iOS
+    - AppAuth
     - boost-for-react-native
     - CocoaLumberjack
-    - ObjectiveDropboxOfficial
-  trunk:
-    - AppAuth
     - Crashlytics
     - Fabric
     - Firebase
@@ -442,6 +440,7 @@ SPEC REPOS:
     - GTMAppAuth
     - GTMSessionFetcher
     - nanopb
+    - ObjectiveDropboxOfficial
     - PromisesObjC
 
 EXTERNAL SOURCES:

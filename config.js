@@ -86,14 +86,14 @@ var config = {
 
     // Start the conference in audio only mode (no video is being received nor
     // sent).
-    startAudioOnly: true,
+    startAudioOnly: false,
 
     // Every participant after the Nth will start audio muted.
     //startAudioMuted: 10,
 
     // Start calls with audio muted. Unlike the option above, this one is only
     // applied locally. FIXME: having these 2 options is confusing.
-    startWithAudioMuted: true,
+    startWithAudioMuted: false,
 
     // Enabling it (with #params) will disable local audio output of remote
     // participants and to enable it back a reload is needed.
@@ -132,7 +132,7 @@ var config = {
 
     // Start calls with video muted. Unlike the option above, this one is only
     // applied locally. FIXME: having these 2 options is confusing.
-    startWithVideoMuted: true,
+    startWithVideoMuted: false,
 
     // If set to true, prefer to use the H.264 video codec (if supported).
     // Note that it's not recommended to do this because simulcast is not
@@ -176,14 +176,14 @@ var config = {
     // Whether to enable file recording or not.
     fileRecordingsEnabled: true,
     // Enable the dropbox integration.
-    // dropbox: {
-    //     appKey: '<APP_KEY>' // Specify your app key here.
-    //     // A URL to redirect the user to, after authenticating
-    //     // by default uses:
-    //     // 'https://jitsi-meet.example.com/static/oauth.html'
-    //     redirectURI:
-    //          'https://jitsi-meet.example.com/subfolder/static/oauth.html'
-    // },
+    dropbox: {
+        appKey: 'nhv4nfxofg8cbie' // Specify your app key here.
+        // A URL to redirect the user to, after authenticating
+        // by default uses:
+        // 'https://jitsi-meet.example.com/static/oauth.html'
+        redirectURI:
+             'https://meet.roundesk.io/static/oauth.html'
+    },
     // When integrations like dropbox are enabled only that will be shown,
     // by enabling fileRecordingsServiceEnabled, we show both the integrations
     // and the generic recording service (its configuration and storage type
@@ -192,7 +192,7 @@ var config = {
     // Whether to show the possibility to share file recording with other people
     // (e.g. meeting participants), based on the actual implementation
     // on the backend.
-    // fileRecordingsServiceSharingEnabled: false,
+    fileRecordingsServiceSharingEnabled: false,
 
     // Whether to enable live streaming or not.
     liveStreamingEnabled: true,
@@ -448,7 +448,7 @@ var config = {
     // disableInviteFunctions: true,
 
     // Disables storing the room name to the recents list
-    // doNotStoreRoom: true,
+    doNotStoreRoom: true,
 
     // Deployment specific URLs.
     // deploymentUrls: {
