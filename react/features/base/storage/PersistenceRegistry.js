@@ -3,6 +3,7 @@
 import md5 from 'js-md5';
 
 import logger from './logger';
+import jitsiLocalStorage from '../../../../modules/util/JitsiLocalStorage';
 
 declare var __DEV__;
 
@@ -225,7 +226,7 @@ class PersistenceRegistry {
      * @returns {Object}
      */
     _getPersistedSubtree(subtreeName, subtreeConfig, subtreeDefaults) {
-        let persistedSubtree = window.localStorage.getItem(subtreeName);
+        let persistedSubtree = jitsiLocalStorage.getItem(subtreeName);
 
         if (persistedSubtree) {
             try {
