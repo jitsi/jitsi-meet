@@ -10,6 +10,11 @@ class DummyLocalStorage {
     /**
      * Empty function
      */
+    _initializing() { }
+
+    /**
+     * Empty function
+     */
     getItem() { }
 
     /**

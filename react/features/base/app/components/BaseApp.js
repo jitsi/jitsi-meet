@@ -18,6 +18,7 @@ import { PersistenceRegistry } from '../../storage';
 
 import { appWillMount, appWillUnmount } from '../actions';
 import logger from '../logger';
+import jitsiLocalStorage from '../../../../../modules/util/JitsiLocalStorage';
 
 declare var APP: Object;
 
@@ -110,7 +111,7 @@ export default class BaseApp extends Component<*, State> {
      * @returns {Promise}
      */
     _initStorage(): Promise<*> {
-        const { _initializing } = window.localStorage;
+        const { _initializing } = jitsiLocalStorage;
 
         return _initializing || Promise.resolve();
     }
