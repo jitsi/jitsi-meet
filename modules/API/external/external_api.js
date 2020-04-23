@@ -316,7 +316,7 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
         this._frame.style.border = 0;
         this._frame.setAttribute('data-cookiescript', 'accepted');
         this._frame.setAttribute('data-cookiecategory', 'functionality');
-        this._frame.alt = "Please accept cookie policy first";
+        this._frame.alt = 'Please accept cookie policy first';
 
         if (onload) {
             // waits for iframe resources to load
