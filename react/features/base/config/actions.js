@@ -8,6 +8,7 @@ import { parseURIString } from '../util';
 import { CONFIG_WILL_LOAD, LOAD_CONFIG_ERROR, SET_CONFIG } from './actionTypes';
 import { _CONFIG_STORE_PREFIX } from './constants';
 import { setConfigFromURLParams } from './functions';
+import jitsiLocalStorage from '../../../../modules/util/JitsiLocalStorage';
 
 /**
  * Signals that the configuration (commonly known in Jitsi Meet as config.js)
@@ -111,7 +112,7 @@ export function storeConfig(baseURL: string, config: Object) {
         try {
             if (typeof window.config === 'undefined'
                     || window.config !== config) {
-                window.localStorage.setItem(
+                jitsiLocalStorage.setItem(
                     `${_CONFIG_STORE_PREFIX}/${baseURL}`,
                     JSON.stringify(config));
                 b = true;
