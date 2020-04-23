@@ -1,6 +1,7 @@
 // @flow
 
 import { getCurrentConference } from '../base/conference';
+import { getLocalParticipant, participantUpdated } from '../base/participants';
 import { MiddlewareRegistry, StateListenerRegistry } from '../base/redux';
 
 import { SET_E2EE_KEY } from './actionTypes';
@@ -13,7 +14,7 @@ import logger from './logger';
  * @param {Store} store - The redux store.
  * @returns {Function}
  */
-MiddlewareRegistry.register(({ getState }) => next => action => {
+MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
     switch (action.type) {
     case SET_E2EE_KEY: {
         const conference = getCurrentConference(getState);
@@ -21,6 +22,15 @@ MiddlewareRegistry.register(({ getState }) => next => action => {
         if (conference) {
             logger.debug(`New E2EE key: ${action.key}`);
             conference.setE2EEKey(action.key);
+
+            // Broadccast that we enabled / disabled E2EE.
+            const participant = getLocalParticipant(getState);
+
+            dispatch(participantUpdated({
+                e2eeEnabled: Boolean(action.key),
+                id: participant.id,
+                local: true
+            }));
         }
 
         break;
