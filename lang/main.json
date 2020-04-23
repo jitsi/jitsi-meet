@@ -294,6 +294,9 @@
     "documentSharing": {
         "title": "Shared Document"
     },
+    "e2ee": {
+        "labelToolTip": "All participants in this meeting have enabled End-to-End encryption"
+    },
     "feedback": {
         "average": "Average",
         "bad": "Bad",
