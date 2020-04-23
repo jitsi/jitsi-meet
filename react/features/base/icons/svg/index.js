@@ -27,6 +27,7 @@ export { default as IconDeviceSpeaker } from './volume.svg';
 export { default as IconDominantSpeaker } from './dominant-speaker.svg';
 export { default as IconDownload } from './download.svg';
 export { default as IconDragHandle } from './drag-handle.svg';
+export { default as IconE2EE } from './e2ee.svg';
 export { default as IconEventNote } from './event_note.svg';
 export { default as IconExclamation } from './exclamation.svg';
 export { default as IconExclamationSolid } from './exclamation-solid.svg';
