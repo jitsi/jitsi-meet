@@ -36,6 +36,7 @@ case "$1" in
         JVB_HOSTNAME=$RET
         if [ -n "$RET" ]; then
             rm -f /etc/jitsi/meet/$JVB_HOSTNAME-config.js
+            rm -f /etc/jitsi/meet/$JVB_HOSTNAME-interface_config.js
             rm -f /etc/nginx/sites-available/$JVB_HOSTNAME.conf
             rm -f /etc/nginx/sites-enabled/$JVB_HOSTNAME.conf
             rm -f /etc/apache2/sites-available/$JVB_HOSTNAME.conf

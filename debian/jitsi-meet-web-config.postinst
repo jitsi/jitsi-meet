@@ -40,6 +40,7 @@ case "$1" in
         if [ -n "$RET" ] && [ ! "$JVB_HOSTNAME_OLD" = "$JVB_HOSTNAME" ] ; then
             RECONFIGURING="true"
             rm -f /etc/jitsi/meet/$JVB_HOSTNAME_OLD-config.js
+            rm -f /etc/jitsi/meet/$JVB_HOSTNAME_OLD-interface_config.js
         fi
 
         JVB_SERVE="false"
@@ -109,6 +110,11 @@ case "$1" in
             sed -i "s/jitsi-meet.example.com/$JVB_HOSTNAME/g" $JITSI_MEET_CONFIG
         fi
 
+        JITSI_MEET_INTERFACE_CONFIG="/etc/jitsi/meet/$JVB_HOSTNAME-interface_config.js"
+        if [ ! -f $JITSI_MEET_INTERFACE_CONFIG ] ; then
+            cp /usr/share/jitsi-meet-web-config/interface_config.js $JITSI_MEET_INTERFACE_CONFIG
+        fi
+
         # getting rid of jetty serving web
         if [[ "$JVB_SERVE" = "true" ]] ; then
             JVB_CONFIG="/etc/jitsi/videobridge/sip-communicator.properties"
@@ -159,6 +165,7 @@ case "$1" in
             if [ "$RECONFIGURING" = "true" ] ; then
                 rm -f /etc/nginx/sites-enabled/$JVB_HOSTNAME_OLD.conf
                 rm -f /etc/jitsi/meet/$JVB_HOSTNAME_OLD-config.js
+                rm -f /etc/jitsi/meet/$JVB_HOSTNAME_OLD-interface_config.js
             fi
 
             # nginx conf
@@ -189,6 +196,7 @@ case "$1" in
             if [ "$RECONFIGURING" = "true" ] ; then
                 a2dissite $JVB_HOSTNAME_OLD.conf
                 rm -f /etc/jitsi/meet/$JVB_HOSTNAME_OLD-config.js
+                rm -f /etc/jitsi/meet/$JVB_HOSTNAME_OLD-interface_config.js
             fi
 
             # apache2 config
