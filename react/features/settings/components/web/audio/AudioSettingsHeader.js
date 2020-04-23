@@ -29,7 +29,6 @@ export default function AudioSettingsHeader({ IconComponent, text }: Props) {
         <div className = 'audio-preview-header'>
             <div className = 'audio-preview-header-icon'>
                 { <Icon
-                    color = '#A4B8D1'
                     size = { 24 }
                     src = { IconComponent } />}
             </div>

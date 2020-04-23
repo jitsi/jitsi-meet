@@ -5,7 +5,6 @@ import React from 'react';
 import {
     ActivityIndicator,
     FlatList,
-    KeyboardAvoidingView,
     Platform,
     SafeAreaView,
     TextInput,
@@ -25,16 +24,15 @@ import {
     IconSearch,
     IconShare
 } from '../../../../base/icons';
+import { JitsiModal, setActiveModalId } from '../../../../base/modal';
 import {
     AvatarListItem,
-    HeaderWithNavigation,
-    SlidingView,
     type Item
 } from '../../../../base/react';
 import { connect } from '../../../../base/redux';
 import { beginShareRoom } from '../../../../share-room';
 
-import { setAddPeopleDialogVisible } from '../../../actions.native';
+import { ADD_PEOPLE_DIALOG_VIEW_ID } from '../../../constants';
 
 import AbstractAddPeopleDialog, {
     type Props as AbstractProps,
@@ -131,11 +129,11 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
         this._renderItem = this._renderItem.bind(this);
         this._renderSeparator = this._renderSeparator.bind(this);
         this._onClearField = this._onClearField.bind(this);
-        this._onCloseAddPeopleDialog = this._onCloseAddPeopleDialog.bind(this);
         this._onInvite = this._onInvite.bind(this);
         this._onPressItem = this._onPressItem.bind(this);
         this._onShareMeeting = this._onShareMeeting.bind(this);
         this._onTypeQuery = this._onTypeQuery.bind(this);
+        this._renderShareMeetingButton = this._renderShareMeetingButton.bind(this);
         this._setFieldRef = this._setFieldRef.bind(this);
     }
 
@@ -159,8 +157,7 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
     render() {
         const {
             _addPeopleEnabled,
-            _dialOutEnabled,
-            _headerStyles
+            _dialOutEnabled
         } = this.props;
         const { inviteItems, selectableItems } = this.state;
 
@@ -173,72 +170,58 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
         }
 
         return (
-            <SlidingView
-                onHide = { this._onCloseAddPeopleDialog }
-                position = 'bottom'
-                show = { this.props._isVisible } >
-                <HeaderWithNavigation
-                    forwardDisabled = { this._isAddDisabled() }
-                    forwardLabelKey = 'inviteDialog.send'
-                    headerLabelKey = 'inviteDialog.header'
-                    onPressBack = { this._onCloseAddPeopleDialog }
-                    onPressForward = { this._onInvite } />
-                <KeyboardAvoidingView
-                    behavior = 'padding'
-                    style = { styles.avoidingView }>
-                    <SafeAreaView style = { styles.dialogWrapper }>
-                        <View
-                            style = { styles.searchFieldWrapper }>
-                            <View style = { styles.searchIconWrapper }>
-                                { this.state.searchInprogress
-                                    ? <ActivityIndicator
-                                        color = { DARK_GREY }
-                                        size = 'small' />
-                                    : <Icon
-                                        src = { IconSearch }
-                                        style = { styles.searchIcon } />}
-                            </View>
-                            <TextInput
-                                autoCorrect = { false }
-                                autoFocus = { false }
-                                onBlur = { this._onFocused(false) }
-                                onChangeText = { this._onTypeQuery }
-                                onFocus = { this._onFocused(true) }
-                                placeholder = {
-                                    this.props.t(`inviteDialog.${placeholderKey}`)
-                                }
-                                ref = { this._setFieldRef }
-                                style = { styles.searchField }
-                                value = { this.state.fieldValue } />
-                            { this._renderClearButton() }
-                        </View>
-                        { Boolean(inviteItems.length) && <View style = { styles.invitedList }>
-                            <FlatList
-                                data = { inviteItems }
-                                horizontal = { true }
-                                keyExtractor = { this._keyExtractor }
-                                keyboardShouldPersistTaps = 'always'
-                                renderItem = { this._renderInvitedItem } />
-                        </View> }
-                        <View style = { styles.resultList }>
-                            <FlatList
-                                ItemSeparatorComponent = { this._renderSeparator }
-                                data = { selectableItems }
-                                extraData = { inviteItems }
-                                keyExtractor = { this._keyExtractor }
-                                keyboardShouldPersistTaps = 'always'
-                                renderItem = { this._renderItem } />
-                        </View>
-                    </SafeAreaView>
-                    <SafeAreaView
-                        style = { [
-                            styles.bottomBar,
-                            _headerStyles.headerOverlay,
-                            this.state.bottomPadding ? styles.extraBarPadding : null ] }>
-                        { this._renderShareMeetingButton() }
-                    </SafeAreaView>
-                </KeyboardAvoidingView>
-            </SlidingView>
+            <JitsiModal
+                footerComponent = { this._renderShareMeetingButton }
+                headerProps = {{
+                    forwardDisabled: this._isAddDisabled(),
+                    forwardLabelKey: 'inviteDialog.send',
+                    headerLabelKey: 'inviteDialog.header',
+                    onPressForward: this._onInvite
+                }}
+                modalId = { ADD_PEOPLE_DIALOG_VIEW_ID }>
+                <View
+                    style = { styles.searchFieldWrapper }>
+                    <View style = { styles.searchIconWrapper }>
+                        { this.state.searchInprogress
+                            ? <ActivityIndicator
+                                color = { DARK_GREY }
+                                size = 'small' />
+                            : <Icon
+                                src = { IconSearch }
+                                style = { styles.searchIcon } />}
+                    </View>
+                    <TextInput
+                        autoCorrect = { false }
+                        autoFocus = { false }
+                        onBlur = { this._onFocused(false) }
+                        onChangeText = { this._onTypeQuery }
+                        onFocus = { this._onFocused(true) }
+                        placeholder = {
+                            this.props.t(`inviteDialog.${placeholderKey}`)
+                        }
+                        ref = { this._setFieldRef }
+                        style = { styles.searchField }
+                        value = { this.state.fieldValue } />
+                    { this._renderClearButton() }
+                </View>
+                { Boolean(inviteItems.length) && <View style = { styles.invitedList }>
+                    <FlatList
+                        data = { inviteItems }
+                        horizontal = { true }
+                        keyExtractor = { this._keyExtractor }
+                        keyboardShouldPersistTaps = 'always'
+                        renderItem = { this._renderInvitedItem } />
+                </View> }
+                <View style = { styles.resultList }>
+                    <FlatList
+                        ItemSeparatorComponent = { this._renderSeparator }
+                        data = { selectableItems }
+                        extraData = { inviteItems }
+                        keyExtractor = { this._keyExtractor }
+                        keyboardShouldPersistTaps = 'always'
+                        renderItem = { this._renderItem } />
+                </View>
+            </JitsiModal>
         );
     }
 
@@ -311,23 +294,6 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
         this._onTypeQuery('');
     }
 
-    _onCloseAddPeopleDialog: () => boolean
-
-    /**
-     * Closes the dialog.
-     *
-     * @returns {boolean}
-     */
-    _onCloseAddPeopleDialog() {
-        if (this.props._isVisible) {
-            this.props.dispatch(setAddPeopleDialogVisible(false));
-
-            return true;
-        }
-
-        return false;
-    }
-
     _onFocused: boolean => Function;
 
     /**
@@ -360,7 +326,7 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
                     });
                     this._showFailedInviteAlert();
                 } else {
-                    this._onCloseAddPeopleDialog();
+                    this.props.dispatch(setActiveModalId());
                 }
             });
     }
@@ -587,6 +553,8 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
         );
     }
 
+    _renderShareMeetingButton: () => React$Element<any>;
+
     /**
      * Renders a button to share the meeting info.
      *
@@ -596,12 +564,19 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
         const { _headerStyles } = this.props;
 
         return (
-            <TouchableOpacity
-                onPress = { this._onShareMeeting }>
-                <Icon
-                    src = { IconShare }
-                    style = { [ _headerStyles.headerButtonText, styles.shareIcon ] } />
-            </TouchableOpacity>
+            <SafeAreaView
+                style = { [
+                    styles.bottomBar,
+                    _headerStyles.headerOverlay,
+                    this.state.bottomPadding ? styles.extraBarPadding : null
+                ] }>
+                <TouchableOpacity
+                    onPress = { this._onShareMeeting }>
+                    <Icon
+                        src = { IconShare }
+                        style = { [ _headerStyles.headerButtonText, styles.shareIcon ] } />
+                </TouchableOpacity>
+            </SafeAreaView>
         );
     }
 
@@ -647,7 +622,7 @@ function _mapStateToProps(state: Object) {
     return {
         ..._abstractMapStateToProps(state),
         _headerStyles: ColorSchemeRegistry.get(state, 'Header'),
-        _isVisible: state['features/invite'].inviteDialogVisible
+        _isVisible: state['features/base/modal'].activeModalId === ADD_PEOPLE_DIALOG_VIEW_ID
     };
 }
 

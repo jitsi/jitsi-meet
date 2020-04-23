@@ -19,7 +19,7 @@ There are 2 ways to integrate the SDK into your project:
 
 Follow the instructions [here](https://github.com/jitsi/jitsi-meet-ios-sdk-releases/blob/master/README.md).
 
-### Builduing it yourself
+### Building it yourself
 
 1. Install all required [dependencies](https://github.com/jitsi/jitsi-meet/blob/master/doc/mobile.md).
 

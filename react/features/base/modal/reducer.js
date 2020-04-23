@@ -9,7 +9,8 @@ ReducerRegistry.register('features/base/modal', (state = {}, action) => {
     case SET_ACTIVE_MODAL_ID:
         return {
             ...state,
-            activeModalId: action.activeModalId
+            activeModalId: action.activeModalId,
+            modalProps: action.modalProps
         };
     }
 
