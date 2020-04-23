@@ -3,6 +3,7 @@ import { APP_WILL_MOUNT } from '../base/app';
 import { getURLWithoutParamsNormalized } from '../base/connection';
 import { ReducerRegistry } from '../base/redux';
 import { PersistenceRegistry } from '../base/storage';
+import jitsiLocalStorage from '../../../modules/util/JitsiLocalStorage';
 
 import {
     _STORE_CURRENT_CONFERENCE,
@@ -20,7 +21,7 @@ import logger from './logger';
 const DEFAULT_STATE = [];
 
 /**
- * The name of the {@code window.localStorage} item where recent rooms are
+ * The name of the {@code jitsiLocalStorage} item where recent rooms are
  * stored.
  *
  * @type {string}
@@ -120,7 +121,7 @@ function _appWillMount(state) {
  */
 function _getLegacyRecentRoomList(): Array<Object> {
     try {
-        const str = window.localStorage.getItem(LEGACY_STORAGE_KEY);
+        const str = jitsiLocalStorage.getItem(LEGACY_STORAGE_KEY);
 
         if (str) {
             return JSON.parse(str);
