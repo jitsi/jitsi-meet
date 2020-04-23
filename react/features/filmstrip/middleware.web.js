@@ -7,7 +7,8 @@ import Filmstrip from '../../../modules/UI/videolayout/Filmstrip';
 import {
     getCurrentLayout,
     LAYOUTS,
-    shouldDisplayTileView
+    shouldDisplayTileView,
+    getTileViewGridDimensions
 } from '../video-layout';
 
 import { setHorizontalViewDimensions, setTileViewDimensions } from './actions';
@@ -26,7 +27,7 @@ MiddlewareRegistry.register(store => next => action => {
 
         switch (layout) {
         case LAYOUTS.TILE_VIEW: {
-            const { gridDimensions } = state['features/filmstrip'].tileViewDimensions;
+            const gridDimensions = getTileViewGridDimensions(state);
             const { clientHeight, clientWidth } = state['features/base/responsive-ui'];
 
             store.dispatch(setTileViewDimensions(gridDimensions, {
