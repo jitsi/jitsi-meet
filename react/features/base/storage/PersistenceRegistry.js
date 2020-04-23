@@ -64,8 +64,7 @@ class PersistenceRegistry {
 
         // legacy
         if (Object.keys(filteredPersistedState).length === 0) {
-            const { localStorage } = window;
-            let persistedState = localStorage.getItem(PERSISTED_STATE_NAME);
+            let persistedState = jitsiLocalStorage.getItem(PERSISTED_STATE_NAME);
 
             if (persistedState) {
                 try {
@@ -83,7 +82,7 @@ class PersistenceRegistry {
                 // Store into the new format and delete the old format so that
                 // it's not used again.
                 this.persistState(filteredPersistedState);
-                localStorage.removeItem(PERSISTED_STATE_NAME);
+                jitsiLocalStorage.removeItem(PERSISTED_STATE_NAME);
             }
         }
 
@@ -111,9 +110,10 @@ class PersistenceRegistry {
         if (checksum !== this._checksum) {
             for (const subtreeName of Object.keys(filteredState)) {
                 try {
-                    window.localStorage.setItem(
+                    jitsiLocalStorage.setItem(
                         subtreeName,
-                        JSON.stringify(filteredState[subtreeName]));
+                        JSON.stringify(filteredState[subtreeName])
+                    );
                 } catch (error) {
                     logger.error(
                         'Error persisting redux subtree',
