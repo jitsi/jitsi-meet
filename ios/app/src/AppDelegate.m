@@ -102,8 +102,7 @@
     if ([[url absoluteString] containsString:@"google/link/?dismiss=1&is_weak_match=1"]) {
         return NO;
     }
-              
-    NSURL *customAppURL = [NSURL URLWithString:@"itms-beta://"];
+
     NSURL *openUrl = url;
 //    if ([FIRUtilities appContainsRealServiceInfoPlist]) {
 //        // Process Firebase Dynamic Links
@@ -113,12 +112,6 @@
 //            openUrl = firebaseUrl;
 //        }
 //    }
-              
-
-    if ([[UIApplication sharedApplication] canOpenURL:customAppURL]) {
-         // Special link that includes the app's Apple ID
-         openUrl = [NSURL URLWithString:@"https://beta.itunes.apple.com/v1/app/1504560860"];
-    }
 
     return [[JitsiMeet sharedInstance] application:app
                                            openURL:openUrl
