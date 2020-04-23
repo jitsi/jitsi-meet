@@ -7,6 +7,7 @@ import { _CONFIG_STORE_PREFIX } from './constants';
 import INTERFACE_CONFIG_WHITELIST from './interfaceConfigWhitelist';
 import parseURLParams from './parseURLParams';
 import logger from './logger';
+import jitsiLocalStorage from '../../../../modules/util/JitsiLocalStorage';
 
 // XXX The functions getRoomName and parseURLParams are split out of
 // functions.js because they are bundled in both app.bundle and
@@ -142,7 +143,7 @@ export function restoreConfig(baseURL: string): ?Object {
     try {
         // XXX Even reading the property localStorage of window may throw an
         // error (which is user agent-specific behavior).
-        storage = window.localStorage;
+        storage = jitsiLocalStorage;
 
         const config = storage.getItem(key);
 
