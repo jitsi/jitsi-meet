@@ -74,8 +74,8 @@ export function getTileViewGridDimensions(state: Object, maxColumns: number = ge
 
     const columnsOverflowed = columns > maxColumns;
 
-    columns = Math.min(columns, maxColumns);
-    let visibleRows = Math.ceil(numberOfParticipants / columns);
+    columns = Math.min(columns, maxColumns) || 1;
+    let visibleRows = Math.ceil(numberOfParticipants / columns) || 1;
 
     if (columnsOverflowed) {
         visibleRows = Math.min(visibleRows, maxColumns);
