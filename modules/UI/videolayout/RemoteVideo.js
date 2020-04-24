@@ -456,14 +456,16 @@ export default class RemoteVideo extends SmallVideo {
             return;
         }
 
-        streamElement.oncanplay = () => {
+        const listener = () => {
             this._canPlayEventReceived = true;
             this.VideoLayout.remoteVideoActive(streamElement, this.id);
-            streamElement.oncanplay = undefined;
+            streamElement.removeEventListener('canplay', listener);
 
             // Refresh to show the video
             this.updateView();
         };
+
+        streamElement.addEventListener('canplay', listener);
     }
 
     /**
