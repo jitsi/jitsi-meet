@@ -90,7 +90,15 @@
  		elseif opcode == 0x9 then -- Ping frame
  			frame.opcode = 0xA;
  			conn:write(build_frame(frame));
-@@ -276,7 +276,7 @@ function handle_request(event)
+@@ -257,6 +257,7 @@ function handle_request(event)
+ 	c2s_listener.onconnect(conn);
+ 
+ 	local session = sessions[conn];
++	module:fire_event("websocket-session", { session = session, request = request });
+ 
+ 	-- Use upstream IP if a HTTP proxy was used
+ 	-- See mod_http and #540
+@@ -276,7 +277,7 @@ function handle_request(event)
  
  		while frame do
  			frameBuffer = frameBuffer:sub(length + 1);
