@@ -106,10 +106,9 @@ case "$1" in
         TURN_SECRET="$RET"
 
         # no turn config exists, lt's copy template and fill it in
-        PUBLIC_IPv4=$(dig -4 +short myip.opendns.com a @resolver1.opendns.com) || true
-        PUBLIC_IPv6=$(dig -6 +short myip.opendns.com aaaa @resolver1.opendns.com) || true
-        if [ -z "$PUBLIC_IPv4" -a -z "$PUBLIC_IPv6" ] ; then
-            PUBLIC_IPv4="127.0.0.1"
+        PUBLIC_IP=$(dig -4 +short myip.opendns.com a @resolver1.opendns.com) || true
+        if [ -z "$PUBLIC_IP" ] ; then
+            PUBLIC_IP="127.0.0.1"
             echo "------------------------------------------------"
             echo "Warning! Could not resolve your external ip address! Error:^"
             echo "Your turn server will not work till you edit your $TURN_CONFIG config file."
@@ -119,16 +118,7 @@ case "$1" in
         cp /usr/share/jitsi-meet-turnserver/turnserver.conf $TURN_CONFIG
         sed -i "s/jitsi-meet.example.com/$JVB_HOSTNAME/g" $TURN_CONFIG
         sed -i "s/__turnSecret__/$TURN_SECRET/g" $TURN_CONFIG
-        if [ ! -z "$PUBLIC_IPv4" ] ; then
-            sed -i "s/__external_ipv4_address__/$PUBLIC_IPv4/g" $TURN_CONFIG
-        else
-            sed -i "/__external_ipv4_address__/d" $TURN_CONFIG
-        fi
-        if [ ! -z "$PUBLIC_IPv6" ] ; then
-            sed -i "s/__external_ipv6_address__/$PUBLIC_IPv6/g" $TURN_CONFIG
-        else
-            sed -i "/__external_ipv6_address__/d" $TURN_CONFIG
-        fi
+        sed -i "s/__external_ip_address__/$PUBLIC_IP/g" $TURN_CONFIG
 
         # SSL for nginx
         db_get jitsi-meet/cert-choice
