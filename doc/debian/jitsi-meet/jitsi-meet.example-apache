@@ -11,7 +11,7 @@
 
   ServerName jitsi-meet.example.com
 
-  SSLProtocol TLSv1 TLSv1.1 TLSv1.2
+  SSLProtocol TLSv1 TLSv1.1 TLSv1.2 TLSv1.3
   SSLEngine on
   SSLProxyEngine on
   SSLCertificateFile /etc/jitsi/meet/jitsi-meet.example.com.crt
