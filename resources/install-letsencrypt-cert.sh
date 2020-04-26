@@ -38,7 +38,8 @@ echo "#!/bin/bash" > $CRON_FILE
 echo "/usr/local/sbin/certbot-auto renew >> /var/log/le-renew.log" >> $CRON_FILE
 
 CERT_KEY="/etc/letsencrypt/live/$DOMAIN/privkey.pem"
-CERT_CRT="/etc/letsencrypt/live/$DOMAIN/fullchain.pem"
+CERT_CRT="/etc/letsencrypt/live/$DOMAIN/cert.pem"
+CERT_FULLCHAIN="/etc/letsencrypt/live/$DOMAIN/fullchain.pem"
 
 if [ -f /etc/nginx/sites-enabled/$DOMAIN.conf ] ; then
 
@@ -95,6 +96,11 @@ elif [ -f /etc/apache2/sites-enabled/$DOMAIN.conf ] ; then
     CERT_CRT_ESC=$(echo $CERT_CRT_ESC | sed 's/\//\\\//g')
     sed -i "s/SSLCertificateFile\ \/etc\/jitsi\/meet\/.*crt/SSLCertificateFile\ $CERT_CRT_ESC/g" \
         $CONF_FILE
+    CERT_FULLCHAIN_ESC=$(echo $CERT_FULLCHAIN | sed 's/\./\\\./g')
+    CERT_FULLCHAIN_ESC=$(echo $CERT_FULLCHAIN_ESC | sed 's/\//\\\//g')
+    sed '/^$CERT_CRT_ESC/a $CERT_FULLCHAIN_ESC/g' $CONF_FILE
+    
+        
 
     echo "service apache2 reload" >> $CRON_FILE
     service apache2 reload
