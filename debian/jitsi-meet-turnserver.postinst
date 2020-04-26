@@ -46,13 +46,21 @@ case "$1" in
             # check whether other enabled hosts has listen 443
             if cat ${site} | grep -v "^[[:space:]]*#" | grep listen | grep -q "^.*[[:space:]:]443[;[:space:]].*" ; then
                 # nothing to do
+                echo "------------------------------------------------"
                 echo ""
                 echo "turnserver not configured as other nginx sites use port 443"
                 echo ""
+                echo "------------------------------------------------"
                 db_stop
                 exit 0
             fi
         done
+
+        # if there was a turn config backup it so we can configure
+        # we cannot recognize at the moment is this a user config or default config when installing coturn
+        if [[ -f $TURN_CONFIG ]] && ! grep -q "jitsi-meet coturn config" "$TURN_CONFIG" ; then
+            mv $TURN_CONFIG $TURN_CONFIG.bak
+        fi
 
         # detect dpkg-reconfigure, just delete old links
         db_get jitsi-meet-turnserver/jvb-hostname
@@ -67,17 +75,21 @@ case "$1" in
         db_get jitsi-meet/jvb-serve || true
         if [ ! -f $NGINX_CONFIG -o "$RET" = "true" ] ; then
             # nothing to do
+            echo "------------------------------------------------"
             echo ""
             echo "turnserver not configured as no nginx found to multiplex traffic"
             echo ""
+            echo "------------------------------------------------"
             db_stop
             exit 0
         fi
 
         if [[ -f $TURN_CONFIG ]] ; then
+            echo "------------------------------------------------"
             echo ""
             echo "turnserver is already configured on this machine, skipping."
             echo ""
+            echo "------------------------------------------------"
             db_stop
             exit 0
         fi
@@ -130,7 +142,8 @@ case "$1" in
         invoke-rc.d coturn restart || true
 
         NGINX_STREAM_CONFIG="/etc/nginx/modules-enabled/60-jitsi-meet.conf"
-        if [ -f $NGINX_STREAM_CONFIG ] && [ -f $NGINX_CONFIG ] ; then
+        if [ ! -f $NGINX_STREAM_CONFIG ] && [ -f $NGINX_CONFIG ] ; then
+            ln -s /usr/share/jitsi-meet-turnserver/jitsi-meet.conf $NGINX_STREAM_CONFIG
             sed -i "s/listen 443 ssl/listen 4444 ssl http2/g" $NGINX_CONFIG
             sed -i "s/listen \[\:\:\]\:443 ssl/listen \[\:\:\]\:4444 ssl http2/g" $NGINX_CONFIG
             invoke-rc.d nginx reload || true

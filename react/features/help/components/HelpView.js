@@ -31,7 +31,9 @@ class HelpView extends PureComponent<Props> {
     render() {
         return (
             <JitsiModal
-                headerLabelKey = 'helpView.header'
+                headerProps = {{
+                    headerLabelKey: 'helpView.header'
+                }}
                 modalId = { HELP_VIEW_MODAL_ID }>
                 <WebView source = {{ uri: this.props._url }} />
             </JitsiModal>

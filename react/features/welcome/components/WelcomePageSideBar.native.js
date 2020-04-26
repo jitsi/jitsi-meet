@@ -16,7 +16,7 @@ import {
 } from '../../base/react';
 import { connect } from '../../base/redux';
 import { HELP_VIEW_MODAL_ID } from '../../help';
-import { setSettingsViewVisible } from '../../settings';
+import { SETTINGS_VIEW_ID } from '../../settings';
 
 import { setSideBarVisible } from '../actions';
 import SideBarItem from './SideBarItem';
@@ -157,7 +157,7 @@ class WelcomePageSideBar extends Component<Props> {
         const { dispatch } = this.props;
 
         dispatch(setSideBarVisible(false));
-        dispatch(setSettingsViewVisible(true));
+        dispatch(setActiveModalId(SETTINGS_VIEW_ID));
     }
 }
 

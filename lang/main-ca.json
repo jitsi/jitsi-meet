@@ -22,7 +22,7 @@
         "headphones": "Auriculars",
         "phone": "Telèfon",
         "speaker": "Altaveu",
-        "none": "No hi ha disponible cap aparell d'àudio "
+        "none": "No hi ha disponible cap aparell d'àudio"
     },
     "audioOnly": {
         "audioOnly": "Poc ample de banda"
@@ -220,7 +220,7 @@
         "muteParticipantDialog": "Esteu segur que voleu silenciar aquest participant? No podreu activar-li el micròfon, però sí que podrà fer-ho ell mateix en qualsevol moment.",
         "muteParticipantTitle": "Voleu silenciar aquest participant?",
         "Ok": "D'acord",
-        "passwordLabel": "$t(lockRoomPasswordUppercase)",
+        "passwordLabel": "Un participant ha blocat la reunió. Introduïu una $t(lockRoomPassword) per a unirvos-hi.",
         "passwordNotSupported": "No és possible definir una $t(lockRoomPassword).",
         "passwordNotSupportedTitle": "No se suporta la $t(lockRoomPassword)",
         "passwordRequired": "Es requereix una $t(lockRoomPassword)",
@@ -246,7 +246,7 @@
         "retry": "Torna a intentar-ho",
         "screenSharingFailedToInstall": "Vaja! No s'ha pogut instal·lar l'extensió de compartició de pantalla.",
         "screenSharingFailedToInstallTitle": "No s'ha pogut instal·lar l'extensió de compartició de pantalla",
-        "screenSharingFirefoxPermissionDeniedError": "Alguna cosa no ha anat bé en intentar compartir la pantalla. Assegureu-vos que heu donat el permís per a fer-ho.",
+        "screenSharingFirefoxPermissionDeniedError": "Alguna cosa no ha anat bé en intentar compartir la pantalla. Assegureu-vos que heu donat el permís per a fer-ho. ",
         "screenSharingFirefoxPermissionDeniedTitle": "Vaja! No hem pogut iniciar la compartició de pantalla!",
         "screenSharingPermissionDeniedError": "Vaja! Alguna cosa no ha anat bé amb els permisos de l'extensió de compartició de pantalla. Torneu a carregar i intenteu-ho una altra vegada.",
         "sendPrivateMessage": "Fa poc que heu rebut un missatge privat. Voleu respondre'l de forma privada, o voleu enviar el missatge al grup?",
@@ -281,7 +281,8 @@
         "WaitForHostMsgWOk": "La conferència <b>{{room}}</b> encara no ha començat. Si sou l'amfitrió aleshores pitgeu «D'acord» per a autenticar-vos. Altrament, espereu que arribi l'amfitrió.",
         "WaitingForHost": "S'està esperant l'amfitrió...",
         "Yes": "Sí",
-        "yourEntireScreen": "La pantalla sencera"
+        "yourEntireScreen": "La pantalla sencera",
+        "screenSharingAudio": "Comparteix l'àudio"
     },
     "dialOut": {
         "statusMessage": "ara és {{status}}"
@@ -394,7 +395,9 @@
         "signOut": "Tanca la sessió",
         "start": "Inicia la transmissió en directe",
         "streamIdHelp": "Què és això?",
-        "unavailableTitle": "La transmissió en directe no és disponible"
+        "unavailableTitle": "La transmissió en directe no és disponible",
+        "googlePrivacyPolicy": "Política de privadesa de Google",
+        "youtubeTerms": "Condicions de servei del Youtube"
     },
     "localRecording": {
         "clientState": {
@@ -448,7 +451,7 @@
         "mutedRemotelyDescription": "Sempre podeu activar el micròfon quan hàgiu de parlar. Torneu a silenciar-lo quan hàgiu acabat per a mantenir el soroll lluny de la reunió.",
         "passwordRemovedRemotely": "Un altre participant ha suprimit $t(lockRoomPasswordUppercase)",
         "passwordSetRemotely": "Un altre participant ha establert la $t(lockRoomPassword)",
-        "raisedHand": " {{name}} vol parlar.",
+        "raisedHand": "{{name}} vol parlar.",
         "somebody": "Algú",
         "startSilentTitle": "Us hi heu unit sense cap sortida d'àudio!",
         "startSilentDescription": "Torneu a entrar per a activar l'àudio",
@@ -534,7 +537,9 @@
         "selectMic": "Micròfon",
         "startAudioMuted": "Tothom comença silenciat",
         "startVideoMuted": "Tothom comença amagat",
-        "title": "Configuració"
+        "title": "Configuració",
+        "speakers": "Altaveus",
+        "microphones": "Micròfons"
     },
     "settingsView": {
         "advanced": "Avançat",
@@ -569,7 +574,8 @@
         "speakerTime": "Temps de l'interlocutor"
     },
     "startupoverlay": {
-        "title": "{{app}} requereix usar el micròfon i la càmera."
+        "title": "{{app}} requereix usar el micròfon i la càmera.",
+        "policyText": " "
     },
     "suspendedoverlay": {
         "rejoinKeyTitle": "Torna a entrar",
@@ -614,7 +620,8 @@
             "tileView": "Activa o desactiva el mode mosaic",
             "toggleCamera": "Activa o desactiva la càmera",
             "videomute": "Activa o desactiva el vídeo",
-            "videoblur": "Activa o desactiva el difuminat"
+            "videoblur": "Activa o desactiva el difuminat",
+            "toggleFilmstrip": "Activa o desactiva la tira"
         },
         "addPeople": "Afegeix persones a la trucada",
         "audioOnlyOff": "Desactiva el mode de poc ample de banda",
@@ -646,7 +653,7 @@
         "noAudioSignalDesc": "Si no l'heu silenciat intencionadament en la configuració del sistema o per maquinari, considereu canviar l'aparell.",
         "noAudioSignalDescSuggestion": "Si no l'heu silenciat intencionadament en la configuració del sistema o per maquinari, considereu canviar a l'aparell suggerit.",
         "noAudioSignalDialInDesc": "També podeu marcar usant:",
-        "noAudioSignalDialInLinkDesc" : "Números de marcatge",
+        "noAudioSignalDialInLinkDesc": "Números de marcatge",
         "noisyAudioInputTitle": "Sembla que el micròfon fa soroll!",
         "noisyAudioInputDesc": "Sembla que el vostre micròfon fa soroll, considereu de silenciar-lo o canviar l'aparell.",
         "openChat": "Obre el xat",
@@ -719,7 +726,7 @@
         "ldTooltip": "Vídeo en baixa definició",
         "lowDefinition": "Baixa definició",
         "onlyAudioAvailable": "Només hi ha disponible l'àudio",
-        "onlyAudioSupported": "Només es permet àudio en aquest navegador",
+        "onlyAudioSupported": "Només es permet àudio en aquest navegador.",
         "p2pEnabled": "Mode d'igual a igual activat",
         "p2pVideoQualityDescription": "En el mode d'igual a igual, la qualitat del vídeo rebut només es pot canviar entre alta i només àudio. La resta de configuracions no es compliran fins sortir del mode d'igual a igual.",
         "recHighDefinitionOnly": "L'alta definició serà preferent.",
@@ -767,10 +774,14 @@
         "roomnameHint": "Introduïu el nom o l'URL de la sala on voleu entrar. Podeu crear un nom, només cal que les persones amb qui us reuniu el coneguin i introdueixin el mateix nom.",
         "sendFeedback": "Envia comentaris",
         "terms": "Condicions",
-        "title": "Videoconferència segura, plena de funcionalitats i completament gratuïta i lliure"
+        "title": "Videoconferència segura, plena de funcionalitats i completament gratuïta i lliure",
+        "getHelp": "Ajuda"
     },
     "lonelyMeetingExperience": {
         "button": "Convideu altres persones",
         "youAreAlone": "Sou l'únic participant de la reunió"
+    },
+    "helpView": {
+        "header": "Centre d'ajuda"
     }
 }

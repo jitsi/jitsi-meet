@@ -19,6 +19,11 @@ import { Icon, IconAddPeople } from '../../../base/icons';
 type Props = {
 
     /**
+     * True if the invite functions (dial out, invite, share...etc) are disabled.
+     */
+    _isInviteFunctionsDiabled: boolean,
+
+    /**
      * True if it's a lonely meeting (participant count excluding fakes is 1).
      */
     _isLonelyMeeting: boolean,
@@ -60,7 +65,7 @@ class LonelyMeetingExperience extends PureComponent<Props> {
      * @inheritdoc
      */
     render() {
-        const { _isLonelyMeeting, _styles, t } = this.props;
+        const { _isInviteFunctionsDiabled, _isLonelyMeeting, _styles, t } = this.props;
 
         if (!_isLonelyMeeting) {
             return null;
@@ -75,24 +80,26 @@ class LonelyMeetingExperience extends PureComponent<Props> {
                     ] }>
                     { t('lonelyMeetingExperience.youAreAlone') }
                 </Text>
-                <TouchableOpacity
-                    onPress = { this._onPress }
-                    style = { [
-                        styles.lonelyButton,
-                        _styles.lonelyButton
-                    ] }>
-                    <Icon
-                        size = { 24 }
-                        src = { IconAddPeople }
-                        style = { styles.lonelyButtonComponents } />
-                    <Text
+                { !_isInviteFunctionsDiabled && (
+                    <TouchableOpacity
+                        onPress = { this._onPress }
                         style = { [
-                            styles.lonelyButtonComponents,
-                            _styles.lonelyMessage
+                            styles.lonelyButton,
+                            _styles.lonelyButton
                         ] }>
-                        { t('lonelyMeetingExperience.button') }
-                    </Text>
-                </TouchableOpacity>
+                        <Icon
+                            size = { 24 }
+                            src = { IconAddPeople }
+                            style = { styles.lonelyButtonComponents } />
+                        <Text
+                            style = { [
+                                styles.lonelyButtonComponents,
+                                _styles.lonelyMessage
+                            ] }>
+                            { t('lonelyMeetingExperience.button') }
+                        </Text>
+                    </TouchableOpacity>
+                ) }
             </View>
         );
     }
@@ -117,7 +124,10 @@ class LonelyMeetingExperience extends PureComponent<Props> {
  * @returns {Props}
  */
 function _mapStateToProps(state): $Shape<Props> {
+    const { disableInviteFunctions } = state['features/base/config'];
+
     return {
+        _isInviteFunctionsDiabled: disableInviteFunctions,
         _isLonelyMeeting: getParticipantCount(state) === 1,
         _styles: ColorSchemeRegistry.get(state, 'Conference')
     };

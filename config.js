@@ -111,11 +111,10 @@ var config = {
     // w3c spec-compliant video constraints to use for video capture. Currently
     // used by browsers that return true from lib-jitsi-meet's
     // util#browser#usesNewGumFlow. The constraints are independent from
-    // this config's resolution value. Defaults to requesting an ideal aspect
-    // ratio of 16:9 with an ideal resolution of 720.
+    // this config's resolution value. Defaults to requesting an ideal
+    // resolution of 720p.
     // constraints: {
     //     video: {
-    //         aspectRatio: 16 / 9,
     //         height: {
     //             ideal: 720,
     //             max: 720,
@@ -262,7 +261,7 @@ var config = {
 
     // Enabling the close page will ignore the welcome page redirection when
     // a call is hangup.
-    // enableClosePage: false,
+    enableClosePage: true,
 
     // Disable hiding of remote thumbnails when in a 1-on-1 conference call.
     // disable1On1Mode: false,
@@ -322,7 +321,7 @@ var config = {
     // If third party requests are disabled, no other server will be contacted.
     // This means avatars will be locally generated and callstats integration
     // will not function.
-    // disableThirdPartyRequests: false,
+    disableThirdPartyRequests: true,
 
 
     // Peer-To-Peer mode: used (if enabled) when there are just 2 participants.
