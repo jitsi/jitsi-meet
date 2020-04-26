@@ -116,7 +116,7 @@ class DeepLinkingMobilePage extends Component<Props> {
                 <div className = 'header'>
                     <img
                         className = 'logo'
-                        src = 'images/logo-deep-linking.png' />
+                        src = 'images/watermark.png' />
                 </div>
                 <div className = { `${_SNS}__body` }>
                     {
