@@ -25,7 +25,7 @@ Its constructor gets a number of options:
     * **parentNode**: (optional) HTML DOM Element where the iframe will be added as a child.
     * **configOverwrite**: (optional) JS object with overrides for options defined in [config.js].
     * **interfaceConfigOverwrite**: (optional) JS object with overrides for options defined in [interface_config.js].
-    * **noSSL**: (optional, defaults to true) Boolean indicating if the server should be contacted using HTTP or HTTPS.
+    * **noSsl**: (optional, defaults to true) Boolean indicating if the server should be contacted using HTTP or HTTPS.
     * **jwt**: (optional) [JWT](https://jwt.io/) token.
     * **onload**: (optional) handler for the iframe onload event.
     * **invitees**: (optional) Array of objects containing information about new participants that will be invited in the call.
