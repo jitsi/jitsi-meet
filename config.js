@@ -261,7 +261,7 @@ var config = {
 
     // Enabling the close page will ignore the welcome page redirection when
     // a call is hangup.
-    // enableClosePage: false,
+    enableClosePage: true,
 
     // Disable hiding of remote thumbnails when in a 1-on-1 conference call.
     // disable1On1Mode: false,
@@ -321,7 +321,7 @@ var config = {
     // If third party requests are disabled, no other server will be contacted.
     // This means avatars will be locally generated and callstats integration
     // will not function.
-    // disableThirdPartyRequests: false,
+    disableThirdPartyRequests: true,
 
 
     // Peer-To-Peer mode: used (if enabled) when there are just 2 participants.

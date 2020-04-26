@@ -50,7 +50,7 @@ import Foundation
 
     /// Enables the proxy in between CallKit and the consumers of the SDK.
     /// Defaults to enabled, set to false when you don't want to use CallKit.
-    @objc public static var enabled: Bool = true {
+    @objc public static var enabled: Bool = false {
         didSet {
             provider.invalidate()
             if enabled {

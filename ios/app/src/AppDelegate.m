@@ -30,18 +30,13 @@
 -             (BOOL)application:(UIApplication *)application
   didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
 
-    // Initialize Crashlytics and Firebase if a valid GoogleService-Info.plist file was provided.
-    if ([FIRUtilities appContainsRealServiceInfoPlist]) {
-        NSLog(@"Enablign Crashlytics and Firebase");
-        [FIRApp configure];
-        [Fabric with:@[[Crashlytics class]]];
-    }
+ 
 
     JitsiMeet *jitsiMeet = [JitsiMeet sharedInstance];
 
     jitsiMeet.conferenceActivityType = JitsiMeetConferenceActivityType;
-    jitsiMeet.customUrlScheme = @"org.jitsi.meet";
-    jitsiMeet.universalLinkDomains = @[@"meet.jit.si", @"alpha.jitsi.net", @"beta.meet.jit.si", @"jitsi.hopp-foundation.de"];
+    jitsiMeet.customUrlScheme = @"de.hoppfoundation.klassenzimer";
+    jitsiMeet.universalLinkDomains = @[@"meet.jit.si", @"alpha.jitsi.net", @"beta.meet.jit.si", @"jitsi.hopp-foundation.de",@"jitsi.mannheim.ccc.de"];
 
     jitsiMeet.defaultConferenceOptions = [JitsiMeetConferenceOptions fromBuilder:^(JitsiMeetConferenceOptionsBuilder *builder) {
         builder.serverURL = [NSURL URLWithString:@"https://jitsi.hopp-foundation.de"];

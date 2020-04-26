@@ -73,6 +73,7 @@ CallIntegration && MiddlewareRegistry.register(store => next => action => {
     // Android not always supports two simultaneous calls at the same time
     // (even though it should according to the spec).
     case CONFERENCE_LEFT:
+        return _conferenceLeft(store, next, action);
     case CONFERENCE_WILL_LEAVE:
         return _conferenceLeft(store, next, action);
 
