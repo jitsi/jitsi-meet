@@ -50,7 +50,8 @@ import {
     SET_PASSWORD_FAILED,
     SET_ROOM,
     SET_PENDING_SUBJECT_CHANGE,
-    SET_START_MUTED_POLICY
+    SET_START_MUTED_POLICY,
+    CONFERENCE_STARTED_TIME_CHANGED
 } from './actionTypes';
 import {
     AVATAR_ID_COMMAND,
@@ -395,22 +396,21 @@ export function conferenceWillJoin(conference: Object) {
 export function conferenceWillLeave(conference: Object) {
 
     return (dispatch: Function, getState: Function) => {
-        const { jwt } = APP.store.getState()['features/base/jwt'];
-        const startedAt = APP.store.getState()['features/base/conference'].start;
+        const {jwt} = APP.store.getState()['features/base/jwt'];
+        const {conferenceStartedTime} = APP.store.getState()['features/base/conference'];
         if (jwt) {
             const jwtPayload = jwtDecode(jwt);
-            const url = jwtPayload.context.leave_url || null;
+            const leaveUrl = jwtPayload.context.leave_url || null;
             const surveyUrl = jwtPayload.context.survey_url || null;
             const obj = {
                 jwt,
                 // eslint-disable-next-line camelcase
-                started_at: startedAt
+                started_at: conferenceStartedTime.toISOString()
             };
-            const data = new Blob([ JSON.stringify(obj, null, 2) ], { type: 'text/plain; charset=UTF-8' });
-
+            const data = new Blob([JSON.stringify(obj, null, 2)], {type: 'text/plain; charset=UTF-8'});
             // eslint-disable-next-line no-mixed-operators
-            if (url && surveyUrl) {
-                navigator.sendBeacon(url, data);
+            if (leaveUrl && surveyUrl && conferenceStartedTime) {
+                navigator.sendBeacon(leaveUrl, data);
             }
         }
 
@@ -763,5 +763,13 @@ export function setSubject(subject: string) {
                 subject
             });
         }
+    };
+}
+
+
+export function conferenceStartedTimeChanged(conferenceStartedTime: any) {
+    return {
+        type: CONFERENCE_STARTED_TIME_CHANGED,
+        conferenceStartedTime
     };
 }

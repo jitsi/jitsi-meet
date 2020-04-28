@@ -6,6 +6,9 @@ import { renderConferenceTimer } from '../';
 import { getConferenceTimestamp } from '../../base/conference/functions';
 import { getLocalizedDurationFormatter } from '../../base/i18n';
 import { connect } from '../../base/redux';
+import { getParticipantCount } from '../../base/participants';
+import { getRemoteTracks } from '../../base/tracks';
+import { conferenceStartedTimeChanged } from '../../base/conference';
 
 /**
  * The type of the React {@code Component} props of {@link ConferenceTimer}.
@@ -67,9 +70,9 @@ class ConferenceTimer extends Component<Props, State> {
      *
      * @inheritdoc
      */
-    componentDidMount() {
-        this._startTimer();
-    }
+    // componentDidMount() {
+    //     this._startTimer();
+    // }
 
     /**
      * Stops the conference timer when component will be
@@ -79,6 +82,16 @@ class ConferenceTimer extends Component<Props, State> {
      */
     componentWillUnmount() {
         this._stopTimer();
+    }
+
+    componentDidUpdate(prevProps, prevState) {
+        if (prevProps.conferenceHasStarted !== this.props.conferenceHasStarted && !prevProps.conferenceHasStarted) {
+            this.props.dispatch(conferenceStartedTimeChanged(new Date()));
+            this._startTimer();
+        }
+        if (prevProps.conferenceHasStarted !== this.props.conferenceHasStarted && prevProps.conferenceHasStarted) {
+            this._stopTimer();
+        }
     }
 
     /**
@@ -131,13 +144,15 @@ class ConferenceTimer extends Component<Props, State> {
      * @returns {void}
      */
     _startTimer() {
-        if (!this._interval) {
+        this.setState({
+            timerValue: getLocalizedDurationFormatter(0)
+        }, () => {
             this._setStateFromUTC(this.props._startTimestamp, (new Date()).getTime());
 
             this._interval = setInterval(() => {
                 this._setStateFromUTC(this.props._startTimestamp, (new Date()).getTime());
             }, 1000);
-        }
+        });
     }
 
     /**
@@ -149,10 +164,6 @@ class ConferenceTimer extends Component<Props, State> {
         if (this._interval) {
             clearInterval(this._interval);
         }
-
-        this.setState({
-            timerValue: getLocalizedDurationFormatter(0)
-        });
     }
 }
 
@@ -168,8 +179,11 @@ class ConferenceTimer extends Component<Props, State> {
  */
 export function _mapStateToProps(state: Object) {
 
+    const participantCount = getParticipantCount(state);
+    const remoteTracks = getRemoteTracks(state['features/base/tracks']);
     return {
-        _startTimestamp: getConferenceTimestamp(state)
+        _startTimestamp: getConferenceTimestamp(state),
+        conferenceHasStarted: participantCount > 1 && remoteTracks.length > 0,
     };
 }
 

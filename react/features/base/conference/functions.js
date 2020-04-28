@@ -186,9 +186,9 @@ export function getConferenceNameForTitle(stateful: Function | Object) {
 */
 export function getConferenceTimestamp(stateful: Function | Object): number {
     const state = toState(stateful);
-    const { conferenceTimestamp } = state['features/base/conference'];
-
-    return conferenceTimestamp;
+    //conferenceTimestamp is from JVB,  so we can not get the time due to we are under p2p mode.
+    const { conferenceTimestamp, conferenceStartedTime } = state['features/base/conference'];
+    return conferenceTimestamp || conferenceStartedTime;
 }
 
 /**

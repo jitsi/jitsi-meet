@@ -22,7 +22,8 @@ import {
     SET_PENDING_SUBJECT_CHANGE,
     SET_ROOM,
     SET_SIP_GATEWAY_ENABLED,
-    SET_START_MUTED_POLICY
+    SET_START_MUTED_POLICY,
+    CONFERENCE_STARTED_TIME_CHANGED
 } from './actionTypes';
 import { isRoomValid } from './functions';
 
@@ -103,6 +104,9 @@ ReducerRegistry.register(
                 startAudioMutedPolicy: action.startAudioMutedPolicy,
                 startVideoMutedPolicy: action.startVideoMutedPolicy
             };
+
+        case CONFERENCE_STARTED_TIME_CHANGED:
+            return set(state, 'conferenceStartedTime', action.conferenceStartedTime);
         }
 
         return state;
