@@ -326,6 +326,7 @@
         "inviteLiveStream": "To view the live stream of this meeting, click this link: {{url}}",
         "invitePhone": "To join by phone instead, tap this: {{number}},,{{conferenceID}}#\n",
         "invitePhoneAlternatives": "Looking for a different dial-in number?\nSee meeting dial-in numbers: {{url}}\n\n\nIf also dialing-in through a room phone, join without connecting to audio: {{silentUrl}}",
+        "inviteSupportMsg": "\n\nSupporting information is available here: {{url}}",
         "inviteURLFirstPartGeneral": "You are invited to join a meeting.",
         "inviteURLFirstPartPersonal": "{{name}} is inviting you to a meeting.\n",
         "inviteURLSecondPart": "\nJoin the meeting:\n{{url}}\n",

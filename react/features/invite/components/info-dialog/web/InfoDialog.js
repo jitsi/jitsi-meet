@@ -24,6 +24,7 @@ import logger from '../../../logger';
 import DialInNumber from './DialInNumber';
 import PasswordForm from './PasswordForm';
 
+declare var interfaceConfig: Object;
 
 /**
  * The type of the React {@code Component} props of {@link InfoDialog}.
@@ -318,6 +319,7 @@ class InfoDialog extends Component<Props, State> {
     _getTextToCopy() {
         const { _localParticipantName, liveStreamViewURL, t } = this.props;
         const _inviteURL = _decodeRoomURI(this.props._inviteURL);
+        const supportLink = interfaceConfig.SUPPORT_URL;
 
         let invite = _localParticipantName
             ? t('info.inviteURLFirstPartPersonal', { name: _localParticipantName })
@@ -349,6 +351,14 @@ class InfoDialog extends Component<Props, State> {
             });
 
             invite = `${invite}\n${dial}\n${moreNumbers}`;
+        }
+
+        if (supportLink) {
+            const msg = t('info.inviteSupportMsg', {
+                url: supportLink
+            });
+
+            invite += msg;
         }
 
         return invite;

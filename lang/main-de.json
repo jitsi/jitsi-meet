@@ -321,6 +321,7 @@
         "inviteLiveStream": "Klicken Sie auf {{url}} um den Livestream dieser Konferenz zu öffnen",
         "invitePhone": "Wenn Sie stattdessen per Telefon beitreten möchten, tippen Sie hier: {{number}},,{{conferenceID}}#\n",
         "invitePhoneAlternatives": "Suche nach einer anderen Einwahlnummer?\nMeetings-Einwahlnummern sehen: {{{url}}\n\n\n\nWenn Sie sich auch über ein Raumtelefon einwählen, nehmen Sie teil, ohne sich mit dem Ton zu verbinden: {{silentUrl}}",
+        "inviteSupportMsg": "\n\nUnterstützende Informationen sind hier verfügbar: {{url}}",
         "inviteURLFirstPartGeneral": "Sie wurden zur Teilnahme an einem Meeting eingeladen.",
         "inviteURLFirstPartPersonal": "{{name}} lädt Sie zu einem Meeting ein.\n",
         "inviteURLSecondPart": "\nAm Meeting teilnehmen:\n{{url}}\n",
