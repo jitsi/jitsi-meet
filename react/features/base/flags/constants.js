@@ -48,3 +48,9 @@ export const PIP_ENABLED = 'pip.enabled';
  * Default: disabled (false).
  */
 export const WELCOME_PAGE_ENABLED = 'welcomepage.enabled';
+
+/**
+ * Flag indicating if the toolbox should be always be visible
+ * Default: disabled (false).
+ */
+export const TOOLBOX_ALWAYS_VISIBLE = 'toolbox.alwaysVisible';
