@@ -20,7 +20,8 @@ import {
     SET_PASSWORD,
     SET_PENDING_SUBJECT_CHANGE,
     SET_ROOM,
-    SET_START_MUTED_POLICY
+    SET_START_MUTED_POLICY,
+    CONFERENCE_STARTED_TIME_CHANGED
 } from './actionTypes';
 import { isRoomValid } from './functions';
 
@@ -95,6 +96,9 @@ ReducerRegistry.register(
                 startAudioMutedPolicy: action.startAudioMutedPolicy,
                 startVideoMutedPolicy: action.startVideoMutedPolicy
             };
+
+        case CONFERENCE_STARTED_TIME_CHANGED:
+            return set(state, 'conferenceStartedTime', action.conferenceStartedTime);
         }
 
         return state;
@@ -297,7 +301,7 @@ function _conferenceWillJoin(state, { conference }) {
     return assign(state, {
         error: undefined,
         joining: conference,
-        start: new Date().toISOString(),
+        start: new Date().toISOString()
     });
 }
 
