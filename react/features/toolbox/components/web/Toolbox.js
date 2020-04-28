@@ -20,6 +20,7 @@ import {
     haveParticipantWithScreenSharingFeature,
     raiseHand
 } from '../../../base/participants';
+import { Platform } from '../../../base/react';
 import { connect } from '../../../base/redux';
 import { getLocalVideoTrack } from '../../../base/tracks';
 import { toggleChat } from '../../../chat';
@@ -1170,8 +1171,13 @@ class Toolbox extends Component<Props> {
             _desktopSharingEnabled,
             _desktopSharingDisabledTooltipKey
         } = this.props;
+        const isAndroid = Platform.OS === 'android';
 
-        return _desktopSharingEnabled || _desktopSharingDisabledTooltipKey;
+        return (
+            (_desktopSharingEnabled
+            || _desktopSharingDisabledTooltipKey)
+            && !isAndroid
+        );
     }
 
     /**
