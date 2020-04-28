@@ -65,16 +65,6 @@ class ConferenceTimer extends Component<Props, State> {
     }
 
     /**
-     * Starts the conference timer when component will be
-     * mounted.
-     *
-     * @inheritdoc
-     */
-    // componentDidMount() {
-    //     this._startTimer();
-    // }
-
-    /**
      * Stops the conference timer when component will be
      * unmounted.
      *
