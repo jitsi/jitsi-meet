@@ -1,3 +1,7 @@
+--This module performs features checking when a transcription is requested.
+--If the transcription feature is not allowed, the tag indicating that a
+--transcription is being requested will be stripped from the presence stanza.
+--The module must be enabled under the muc component.
 local is_feature_allowed = module:require "util".is_feature_allowed;
 
 module:log("info", "Loading mod_muc_transcription_filter!");
