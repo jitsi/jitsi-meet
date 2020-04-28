@@ -501,7 +501,7 @@
         "selectMic": "오디오",
         "startAudioMuted": "모두가 음소거를 시작합니다",
         "startVideoMuted": "모두가 비디오 비활성화로 시작합니다",
-        "title": "세티"
+        "title": "설정"
     },
     "\u0005settings": {
         "calendar": {}
@@ -514,7 +514,7 @@
         "conferenceSection": "회의",
         "displayName": "유저이름",
         "email": "이메일",
-        "header": "세티",
+        "header": "설정",
         "profileSection": "프로필",
         "serverURL": "서버 URL",
         "startWithAudioMuted": "오디오 음소거 상태로 시작",
@@ -605,7 +605,7 @@
         "profile": "",
         "raiseHand": "말하기 요청/해제",
         "raiseYourHand": "",
-        "Settings": "세티",
+        "Settings": "설정",
         "sharedvideo": "",
         "shareRoom": "",
         "shortcuts": "",
