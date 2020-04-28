@@ -50,6 +50,7 @@ import {
     LiveStreamButton,
     RecordButton
 } from '../../../recording';
+import { Platform } from '../../../base/react';
 import {
     SETTINGS_TABS,
     SettingsButton,
@@ -877,8 +878,8 @@ class Toolbox extends Component<Props, State> {
             _desktopSharingEnabled,
             _desktopSharingDisabledTooltipKey
         } = this.props;
-
-        return _desktopSharingEnabled || _desktopSharingDisabledTooltipKey;
+        const isAndroid = Platform.OS === 'android';
+        return (_desktopSharingEnabled || _desktopSharingDisabledTooltipKey) && !isAndroid;
     }
 
     /**
