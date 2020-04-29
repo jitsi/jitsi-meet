@@ -217,12 +217,6 @@ module.exports = [
         },
         performance: getPerformanceHints(5 * 1024)
     }),
-    Object.assign({}, config, {
-        entry: {
-            'analytics-matomo': './react/features/analytics/handlers/MatomoHandler.js'
-        },
-        performance: getPerformanceHints(5 * 1024)
-    }),
 
     // Because both video-blur-effect and rnnoise-processor modules are loaded
     // in a lazy manner using the loadScript function with a hard coded name,

@@ -10,7 +10,7 @@ import {
     checkChromeExtensionsInstalled,
     isMobileBrowser
 } from '../base/environment/utils';
-import { AmplitudeHandler } from './handlers';
+import { AmplitudeHandler, MatomoHandler } from './handlers';
 import logger from './logger';
 
 /**
@@ -91,6 +91,13 @@ export function createHandlers({ getState }: { getState: Function }) {
         const amplitude = new AmplitudeHandler(handlerConstructorOptions);
 
         handlers.push(amplitude);
+    // eslint-disable-next-line no-empty
+    } catch (e) {}
+
+    try {
+        const matomo = new MatomoHandler(handlerConstructorOptions);
+
+        handlers.push(matomo);
     // eslint-disable-next-line no-empty
     } catch (e) {}
 

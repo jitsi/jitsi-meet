@@ -380,9 +380,8 @@ var config = {
 
         // Array of script URLs to load as lib-jitsi-meet "analytics handlers".
         // scriptURLs: [
-        //     "libs/analytics-ga.min.js",     // google-analytics
-        //     "libs/analytics-matomo.min.js", // Matomo
-        //     "https://example.com/my-custom-analytics.js"
+        //      "libs/analytics-ga.min.js", // google-analytics
+        //      "https://example.com/my-custom-analytics.js"
         // ],
     },
 
