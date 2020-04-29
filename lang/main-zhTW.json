@@ -50,7 +50,7 @@
         "fieldPlaceHolder": "在此輸入您的訊息",
         "messagebox": "輸入訊息",
         "messageTo": "私人訊息傳送至 {{recipient}}",
-        "noMessagesMessage": "會議中還沒有訊息。在此開始對話！",
+        "noMessagesMessage": "此會議尚無訊息。在此開始對話交談！",
         "nickname": {
             "popover": "選擇名稱",
             "title": "輸入名稱來使用交談"
@@ -484,11 +484,11 @@
     "raisedHand": "請求發言",
     "recording": {
         "authDropboxText": "上傳至 Dropbox",
-        "availableSpace": "可用空間： {{spaceLeft}} MB (大約錄影時間 {{duration}} 分鐘)",
+        "availableSpace": "可用空間： {{spaceLeft}} MB (錄影時間大約 {{duration}} 分鐘)",
         "beta": "BETA",
         "busy": "我們正在釋放錄影資源。請過幾分鐘後再試。",
         "busyTitle": "全部錄影目前忙碌",
-        "error": "錄影失敗。請再次重試。",
+        "error": "錄影失敗。請重試。",
         "expandedOff": "錄影已經停止",
         "expandedOn": "此會議目前正在錄影。",
         "expandedPending": "錄影正在啟動...",
@@ -605,7 +605,7 @@
             "recording": "切換錄影",
             "remoteMute": "靜音參與者",
             "Settings": "切換設定",
-            "sharedvideo": "切換 Youtube 影片分享",
+            "sharedvideo": "切換 YouTube 影片分享",
             "shareRoom": "邀請某人",
             "shareYourScreen": "切換螢幕分享",
             "shortcuts": "切換快捷鍵",
