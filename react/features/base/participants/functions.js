@@ -373,27 +373,27 @@ export function shouldRenderParticipantVideo(stateful: Object | Function, id: st
  * @returns {?string}
  */
 async function _getFirstLoadableAvatarUrl(participant) {
-    for (let i = 0; i < AVATAR_CHECKER_FUNCTIONS.length; i++) {
-        const url = AVATAR_CHECKER_FUNCTIONS[i](participant);
-
-        if (url) {
-            if (AVATAR_CHECKED_URLS.has(url)) {
-                if (AVATAR_CHECKED_URLS.get(url)) {
-                    return url;
-                }
-            } else {
-                try {
-                    const finalUrl = await preloadImage(url);
-
-                    AVATAR_CHECKED_URLS.set(finalUrl, true);
-
-                    return finalUrl;
-                } catch (e) {
-                    AVATAR_CHECKED_URLS.set(url, false);
-                }
-            }
-        }
-    }
+    // for (let i = 0; i < AVATAR_CHECKER_FUNCTIONS.length; i++) {
+    //     const url = AVATAR_CHECKER_FUNCTIONS[i](participant);
+    //
+    //     if (url) {
+    //         if (AVATAR_CHECKED_URLS.has(url)) {
+    //             if (AVATAR_CHECKED_URLS.get(url)) {
+    //                 return url;
+    //             }
+    //         } else {
+    //             try {
+    //                 const finalUrl = await preloadImage(url);
+    //
+    //                 AVATAR_CHECKED_URLS.set(finalUrl, true);
+    //
+    //                 return finalUrl;
+    //             } catch (e) {
+    //                 AVATAR_CHECKED_URLS.set(url, false);
+    //             }
+    //         }
+    //     }
+    // }
 
     return undefined;
 }
