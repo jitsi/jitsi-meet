@@ -7,7 +7,7 @@ import AbstractHandler from './AbstractHandler';
 /**
  * Analytics handler for Matomo.
  */
-class MatomoHandler extends AbstractHandler {
+export default class MatomoHandler extends AbstractHandler {
 
     /**
      * Creates new instance of the Matomo handler.
