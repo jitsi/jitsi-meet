@@ -8,7 +8,7 @@ import { getConferenceTimestamp } from '../../base/conference/functions';
 import { renderConferenceTimer } from '../';
 import {getParticipantCount} from '../../base/participants';
 import {getRemoteTracks} from '../../base/tracks';
-import {conferenceStartedTimeChanged} from '../../base/conference';
+import {setConferenceStartTime} from '../../base/conference';
 
 /**
  * The type of the React {@code Component} props of {@link ConferenceTimer}.
@@ -76,7 +76,7 @@ class ConferenceTimer extends Component<Props, State> {
 
     componentDidUpdate(prevProps, prevState) {
         if (prevProps.conferenceHasStarted !== this.props.conferenceHasStarted && !prevProps.conferenceHasStarted) {
-            this.props.dispatch(conferenceStartedTimeChanged(new Date()));
+            this.props.dispatch(setConferenceStartTime(new Date()));
             this._startTimer();
         }
         if (prevProps.conferenceHasStarted !== this.props.conferenceHasStarted && prevProps.conferenceHasStarted) {
