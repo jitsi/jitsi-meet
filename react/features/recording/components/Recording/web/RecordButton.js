@@ -40,7 +40,7 @@ class RecordButton extends AbstractRecordButton<Props> {
      * @returns {string}
      */
     _getTooltip() {
-        return this.tooltip || '';
+        return this.props._fileRecordingsDisabledTooltipKey || '';
     }
 
     /**
@@ -74,28 +74,27 @@ export function _mapStateToProps(state: Object, ownProps: Props): Object {
     const abstractProps = _abstractMapStateToProps(state, ownProps);
     let { visible } = ownProps;
 
-    const _disabledByFeatures = abstractProps.disabledByFeatures;
-    let _disabled = false;
+    let { _disabled } = abstractProps;
     let _fileRecordingsDisabledTooltipKey;
 
-    if (!abstractProps.visible
-            && _disabledByFeatures !== undefined && !_disabledByFeatures) {
+    if (!abstractProps.visible && _disabled !== undefined && !_disabled) {
         _disabled = true;
 
         // button and tooltip
         if (state['features/base/jwt'].isGuest) {
-            _fileRecordingsDisabledTooltipKey
-                = 'dialog.recordingDisabledForGuestTooltip';
+            _fileRecordingsDisabledTooltipKey = 'dialog.recordingDisabledForGuestTooltip';
         } else {
-            _fileRecordingsDisabledTooltipKey
-                = 'dialog.recordingDisabledTooltip';
+            _fileRecordingsDisabledTooltipKey = 'dialog.recordingDisabledTooltip';
         }
+    } else if (_disabled) {
+        _fileRecordingsDisabledTooltipKey = 'dialog.recordingDisabledBecauseOfActiveLiveStreamingTooltip';
+    } else {
+        _disabled = false;
     }
 
     if (typeof visible === 'undefined') {
         visible = interfaceConfig.TOOLBAR_BUTTONS.includes('recording')
-            && (abstractProps.visible
-                    || Boolean(_fileRecordingsDisabledTooltipKey));
+            && (abstractProps.visible || Boolean(_fileRecordingsDisabledTooltipKey));
     }
 
     return {
