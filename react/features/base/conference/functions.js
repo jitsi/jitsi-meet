@@ -168,6 +168,17 @@ export function getConferenceName(stateful: Function | Object): string {
 }
 
 /**
+ * Returns the name of the conference formated for the title.
+ *
+ * @param {Function | Object} stateful - Reference that can be resolved to Redux state with the {@code toState}
+ * function.
+ * @returns {string} - The name of the conference formated for the title.
+ */
+export function getConferenceNameForTitle(stateful: Function | Object) {
+    return safeStartCase(safeDecodeURIComponent(toState(stateful)['features/base/conference'].room));
+}
+
+/**
 * Returns the UTC timestamp when the first participant joined the conference.
 *
 * @param {Function | Object} stateful - Reference that can be resolved to Redux
