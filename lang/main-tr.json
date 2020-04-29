@@ -21,10 +21,11 @@
         "bluetooth": "Bluetooth",
         "headphones": "Kulaklık",
         "phone": "Telefon",
-        "speaker": "Konuşmacı"
+        "speaker": "Konuşmacı",
+        "none": "Ses cihazı yok"
     },
     "audioOnly": {
-        "audioOnly": "Yalnızca ses"
+        "audioOnly": "Düşük bant genişliği"
     },
     "calendarSync": {
         "addMeetingURL": "Toplantı bağlantısı ekle",
@@ -45,28 +46,37 @@
         "today": "Bugün"
     },
     "chat": {
-        "error": "Hata: Şu mesajınız gönderilemedi: \"{{originalText}}\" Sebep: {{error}}",
-        "messagebox": "Bir mesaj yaz",
+        "error": "Hata: mesajınız gönderilmedi. Gerekçe: {{error}}",
+        "messagebox": "Bir mesaj yazın",
         "nickname": {
             "popover": "Bir takma ad seçin",
-            "title": "Mesajlaşmada kullanmak için bir takma ad girin"
+            "title": "Sohbette kullanmak için bir takma ad girin"
         },
-        "title": "Mesajlaşma"
+        "title": "Sohbet",
+        "you": "sen",
+        "privateNotice": "{{recipient}} için özel mesaj",
+        "noMessagesMessage": "Toplantıda henüz mesaj yok. Buradan bir konuşma başlatın!",
+        "messageTo": "{{recipient}} için özel mesaj",
+        "fieldPlaceHolder": "Mesajınızı buraya yazın"
     },
     "connectingOverlay": {
         "joiningRoom": "Toplantınıza bağlanılıyor.."
     },
     "connection": {
-        "ATTACHED": "Eklendi",
-        "AUTHENTICATING": "Doğrulanıyor",
-        "AUTHFAIL": "Doğrulama başarısız",
+        "ATTACHED": "Eklenmiş",
+        "AUTHENTICATING": "Kimlik doğrulanıyor",
+        "AUTHFAIL": "Kimlik doğrulama başarısız",
         "CONNECTED": "Bağlandı",
         "CONNECTING": "Bağlanıyor",
         "CONNFAIL": "Bağlantı başarısız",
         "DISCONNECTED": "Bağlantı kesildi",
-        "DISCONNECTING": "Bağlantı kesiliyor",
+        "DISCONNECTING": "Bağlantı kesildi",
         "ERROR": "Hata",
-        "RECONNECTING": "Bir bağlantı hatası oluştu. Tekrar bağlanıyor..."
+        "RECONNECTING": "Bir bağlantı hatası oluştu. Tekrar bağlanıyor...",
+        "LOW_BANDWIDTH": "Bant genişliğinden tasarruf etmek için {{displayName}} kişisinin videosu kapatıldı",
+        "GOT_SESSION_ID": "Oturum kimliği alınıyor… Tamam",
+        "GET_SESSION_ID_ERROR": "Oturum kimliği alma hatası: {{code}}",
+        "FETCH_SESSION_ID": "Oturum kimliği alınıyor…"
     },
     "connectionindicator": {
         "address": "Adres:",
@@ -707,6 +717,13 @@
         "roomnameHint": "Katılmak istediğiniz odanın adını veya bağlantısını girin. İstediğiniz oda adını uydurabilirsiniz. Aynı odada buluşmak için görüşmek istediğiniz kişilere bunu iletmeniz yeterli.",
         "sendFeedback": "Geri bildirim gönder",
         "terms": "Kurallar",
-        "title": "Güvenli, tüm özelliklere erişimli ve tamamen ücretsiz görüntülü arama"
+        "title": "Güvenli, tüm özelliklere erişimli ve tamamen ücretsiz görüntülü arama",
+        "getHelp": "Yardım alın"
+    },
+    "defaultNickname": "örnek Jane Pink",
+    "chromeExtensionBanner": {
+        "dontShowAgain": "Bunu bir daha gösterme",
+        "buttonText": "Chrome Eklentisi'ni indirin",
+        "installExtensionText": "Google Takvim ve Office 365 entegrasyonu için uzantıyı yükleyin"
     }
 }

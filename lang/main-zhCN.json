@@ -65,13 +65,13 @@
         "dontShowAgain": ""
     },
     "connectingOverlay": {
-        "joiningRoom": "会议连接中..."
+        "joiningRoom": "会议连接中…"
     },
     "connection": {
         "ATTACHED": "已接入",
         "AUTHENTICATING": "认证中",
         "AUTHFAIL": "认证失败",
-        "CONNECTED": "连接中...",
+        "CONNECTED": "连接中…",
         "CONNECTING": "连接中",
         "CONNFAIL": "连接失败",
         "DISCONNECTED": "已断开连接",
@@ -116,7 +116,7 @@
         "downloadApp": "下载应用",
         "launchWebButton": "在网页中启动",
         "openApp": "继续",
-        "title": "在 {{app}}中登录会议...",
+        "title": "在 {{app}}中登录会议…",
         "tryAgainButton": "请尝试重启桌面版应用程序"
     },
     "defaultLink": "例如 {{url}}",
@@ -416,10 +416,10 @@
     "notify": {
         "connectedOneMember": "{{name}} 加入会议",
         "connectedThreePlusMembers": "{{name}} 和其他 {{count}} 人加入会议",
-        "connectedTwoMembers": "{{first}} 和  {{second}} 加入会议",
+        "connectedTwoMembers": "{{first}} 和 {{second}} 加入会议",
         "disconnected": "已断开连接",
         "focus": "会议聚焦",
-        "focusFail": "{{component}} 不可用 -  在{{ms}}秒后重试",
+        "focusFail": "{{component}} 不可用 - 在{{ms}}秒后重试",
         "grantedTo": "主持权限已授予{{to}}！",
         "invitedOneMember": "{{name}} 已被邀请",
         "invitedThreePlusMembers": "",
@@ -449,17 +449,17 @@
     "poweredby": "技术支持",
     "presenceStatus": {
         "busy": "忙碌",
-        "calling": "通话中...",
-        "connected": "连接中...",
-        "connecting": "连接中...",
+        "calling": "通话中…",
+        "connected": "连接中…",
+        "connecting": "连接中…",
         "connecting2": "连接中...",
         "disconnected": "已断开连接",
         "expired": "已过期",
         "ignored": "已忽略",
-        "initializingCall": "初始化呼叫...",
+        "initializingCall": "初始化呼叫…",
         "invited": "邀请",
         "rejected": "拒绝",
-        "ringing": "响铃..."
+        "ringing": "响铃…"
     },
     "profile": {
         "setDisplayNameLabel": "设定您的显示名称",
@@ -477,7 +477,7 @@
         "error": "录制失败。请重新尝试。",
         "expandedOff": "录制已停止",
         "expandedOn": "此会议正在被录制。",
-        "expandedPending": "录制正在启动...",
+        "expandedPending": "录制正在启动…",
         "failedToStart": "录制启动失败",
         "fileSharingdescription": "跟与会者分享录制",
         "live": "直播",
@@ -486,7 +486,7 @@
         "offBy": "",
         "on": "录制中",
         "onBy": "",
-        "pending": "正在准备录制会议....",
+        "pending": "正在准备录制会议…",
         "rec": "REC录制",
         "serviceDescription": "录制服务将保存您的录制",
         "serviceName": "录制服务",
@@ -589,7 +589,7 @@
             "recording": "开启 / 停止 视频录制",
             "remoteMute": "静音与会者",
             "Settings": "显示 / 隐藏 设置",
-            "sharedvideo": "开启 / 关闭 Youtube 影片分享",
+            "sharedvideo": "开启 / 关闭 YouTube 影片分享",
             "shareRoom": "邀请他人",
             "shareYourScreen": "开启 / 关闭 屏幕分享",
             "shortcuts": "切换快捷方式",
@@ -659,7 +659,7 @@
         "failedToStart": "开启转录失败",
         "labelToolTip": "会议正在转录",
         "off": "停止转录",
-        "pending": "正在准备转录会议...",
+        "pending": "正在准备转录会议…",
         "start": "开启显示字幕",
         "stop": "停止显示字幕",
         "tr": "TR"
