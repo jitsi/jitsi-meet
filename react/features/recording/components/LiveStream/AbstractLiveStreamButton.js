@@ -26,6 +26,11 @@ export type Props = AbstractButtonProps & {
     _isLiveStreamRunning: boolean,
 
     /**
+     * True if the button needs to be disabled.
+     */
+    _disabled: Boolean,
+
+    /**
      * The redux {@code dispatch} function.
      */
     dispatch: Function,
@@ -80,6 +85,7 @@ export default class AbstractLiveStreamButton<P: Props>
  * @param {Props} ownProps - The own props of the Component.
  * @private
  * @returns {{
+ *     _disabled: boolean,
  *     _isLiveStreamRunning: boolean,
  *     visible: boolean
  * }}
@@ -87,9 +93,9 @@ export default class AbstractLiveStreamButton<P: Props>
 export function _mapStateToProps(state: Object, ownProps: Props) {
     let { visible } = ownProps;
 
-    // a button can be disabled/enabled only if enableFeaturesBasedOnToken
-    // is on
-    let disabledByFeatures;
+    // A button can be disabled/enabled only if enableFeaturesBasedOnToken
+    // is on or if the recording is running.
+    let _disabled;
 
     if (typeof visible === 'undefined') {
         // If the containing component provides the visible prop, that is one
@@ -105,14 +111,19 @@ export function _mapStateToProps(state: Object, ownProps: Props) {
 
         if (enableFeaturesBasedOnToken) {
             visible = visible && String(features.livestreaming) === 'true';
-            disabledByFeatures = String(features.livestreaming) === 'disabled';
+            _disabled = String(features.livestreaming) === 'disabled';
         }
     }
 
+    // disable the button if the recording is running.
+    if (getActiveSession(state, JitsiRecordingConstants.mode.FILE)) {
+        _disabled = true;
+    }
+
     return {
+        _disabled,
         _isLiveStreamRunning: Boolean(
             getActiveSession(state, JitsiRecordingConstants.mode.STREAM)),
-        disabledByFeatures,
         visible
     };
 }

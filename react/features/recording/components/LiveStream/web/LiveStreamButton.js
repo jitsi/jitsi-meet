@@ -74,12 +74,10 @@ function _mapStateToProps(state: Object, ownProps: Props) {
     const abstractProps = _abstractMapStateToProps(state, ownProps);
     let { visible } = ownProps;
 
-    const _disabledByFeatures = abstractProps.disabledByFeatures;
-    let _disabled = false;
+    let { _disabled } = abstractProps;
     let _liveStreamDisabledTooltipKey;
 
-    if (!abstractProps.visible
-            && _disabledByFeatures !== undefined && !_disabledByFeatures) {
+    if (!abstractProps.visible && _disabled !== undefined && !_disabled) {
         _disabled = true;
 
         // button and tooltip
@@ -90,12 +88,15 @@ function _mapStateToProps(state: Object, ownProps: Props) {
             _liveStreamDisabledTooltipKey
                 = 'dialog.liveStreamingDisabledTooltip';
         }
+    } else if (_disabled) {
+        _liveStreamDisabledTooltipKey = 'dialog.liveStreamingDisabledBecauseOfActiveRecordingTooltip';
+    } else {
+        _disabled = false;
     }
 
     if (typeof visible === 'undefined') {
         visible = interfaceConfig.TOOLBAR_BUTTONS.includes('livestreaming')
-            && (abstractProps.visible
-                    || Boolean(_liveStreamDisabledTooltipKey));
+            && (abstractProps.visible || Boolean(_liveStreamDisabledTooltipKey));
     }
 
     return {

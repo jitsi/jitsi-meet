@@ -25,6 +25,11 @@ import { StartRecordingDialog, StopRecordingDialog } from './_';
 export type Props = AbstractButtonProps & {
 
     /**
+     * True if the button needs to be disabled.
+     */
+    _disabled: Boolean,
+
+    /**
      * True if there is a running active recording, false otherwise.
      */
     _isRecordingRunning: boolean,
@@ -103,17 +108,17 @@ export default class AbstractRecordButton<P: Props>
  * @param {Props} ownProps - The own props of the Component.
  * @private
  * @returns {{
+ *     _disabled: boolean,
  *     _isRecordingRunning: boolean,
- *     disabledByFeatures: boolean,
  *     visible: boolean
  * }}
  */
 export function _mapStateToProps(state: Object, ownProps: Props): Object {
     let { visible } = ownProps;
 
-    // a button can be disabled/enabled only if enableFeaturesBasedOnToken
-    // is on
-    let disabledByFeatures;
+    // a button can be disabled/enabled if enableFeaturesBasedOnToken
+    // is on or if the livestreaming is running.
+    let _disabled;
 
     if (typeof visible === 'undefined') {
         // If the containing component provides the visible prop, that is one
@@ -126,19 +131,22 @@ export function _mapStateToProps(state: Object, ownProps: Props): Object {
         } = state['features/base/config'];
         const { features = {} } = getLocalParticipant(state);
 
-        visible = isModerator
-            && fileRecordingsEnabled;
+        visible = isModerator && fileRecordingsEnabled;
 
         if (enableFeaturesBasedOnToken) {
             visible = visible && String(features.recording) === 'true';
-            disabledByFeatures = String(features.recording) === 'disabled';
+            _disabled = String(features.recording) === 'disabled';
         }
     }
 
+    // disable the button if the livestreaming is running.
+    if (getActiveSession(state, JitsiRecordingConstants.mode.STREAM)) {
+        _disabled = true;
+    }
+
     return {
-        _isRecordingRunning:
-            Boolean(getActiveSession(state, JitsiRecordingConstants.mode.FILE)),
-        disabledByFeatures,
+        _disabled,
+        _isRecordingRunning: Boolean(getActiveSession(state, JitsiRecordingConstants.mode.FILE)),
         visible
     };
 }
