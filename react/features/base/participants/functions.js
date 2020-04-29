@@ -429,28 +429,29 @@ export function shouldRenderParticipantVideo(stateful: Object | Function, id: st
  * @param {Store} store - Redux store.
  * @returns {?string}
  */
+// eslint-disable-next-line no-unused-vars,require-jsdoc
 async function _getFirstLoadableAvatarUrl(participant, store) {
-    for (let i = 0; i < AVATAR_CHECKER_FUNCTIONS.length; i++) {
-        const url = AVATAR_CHECKER_FUNCTIONS[i](participant, store);
-
-        if (url !== null) {
-            if (AVATAR_CHECKED_URLS.has(url)) {
-                if (AVATAR_CHECKED_URLS.get(url)) {
-                    return url;
-                }
-            } else {
-                try {
-                    const finalUrl = await preloadImage(url);
-
-                    AVATAR_CHECKED_URLS.set(finalUrl, true);
-
-                    return finalUrl;
-                } catch (e) {
-                    AVATAR_CHECKED_URLS.set(url, false);
-                }
-            }
-        }
-    }
+    // for (let i = 0; i < AVATAR_CHECKER_FUNCTIONS.length; i++) {
+    //     const url = AVATAR_CHECKER_FUNCTIONS[i](participant, store);
+    //
+    //     if (url !== null) {
+    //         if (AVATAR_CHECKED_URLS.has(url)) {
+    //             if (AVATAR_CHECKED_URLS.get(url)) {
+    //                 return url;
+    //             }
+    //         } else {
+    //             try {
+    //                 const finalUrl = await preloadImage(url);
+    //
+    //                 AVATAR_CHECKED_URLS.set(finalUrl, true);
+    //
+    //                 return finalUrl;
+    //             } catch (e) {
+    //                 AVATAR_CHECKED_URLS.set(url, false);
+    //             }
+    //         }
+    //     }
+    // }
 
     return undefined;
 }
