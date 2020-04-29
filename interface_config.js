@@ -207,12 +207,12 @@ var interfaceConfig = {
     * If this is set to false, the banner will not be rendered at all. If set to true, the check for extension(s)
     * being already installed is done before rendering.
     */
-    SHOW_CHROME_EXTENSION_BANNER: false
+    SHOW_CHROME_EXTENSION_BANNER: false,
 
     /**
      * When enabled, the kick participant button will not be presented for users without a JWT
      */
-    // HIDE_KICK_BUTTON_FOR_GUESTS: false
+    // HIDE_KICK_BUTTON_FOR_GUESTS: false,
 
     /**
      * How many columns the tile view can expand to. The respected range is
@@ -253,6 +253,12 @@ var interfaceConfig = {
      MOBILE_DYNAMIC_LINK
      PHONE_NUMBER_REGEX
     */
+
+    // Allow all above example options to include a trailing comma and
+    // prevent fear when commenting out the last value.
+    makeJsonParserHappy: 'even if last key had a trailing comma'
+
+    // no configuration value should follow this line.
 };
 
 /* eslint-enable no-unused-vars, no-var, max-len */
