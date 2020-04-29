@@ -322,15 +322,6 @@ UI.inputDisplayNameHandler = function(newDisplayName) {
     eventEmitter.emit(UIEvents.NICKNAME_CHANGED, newDisplayName);
 };
 
-/**
- * Return the type of the remote video.
- * @param jid the jid for the remote video
- * @returns the video type video or screen.
- */
-UI.getRemoteVideoType = function(jid) {
-    return VideoLayout.getRemoteVideoType(jid);
-};
-
 // FIXME check if someone user this
 UI.showLoginPopup = function(callback) {
     logger.log('password is required');
