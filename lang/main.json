@@ -251,7 +251,7 @@
         "screenSharingAudio": "Share audio",
         "screenSharingFailedToInstall": "Oops! Your screen sharing extension failed to install.",
         "screenSharingFailedToInstallTitle": "Screen sharing extension failed to install",
-        "screenSharingFirefoxPermissionDeniedError": "Something went wrong while we were trying to share your screen. Please make sure that you have given us permission to do so. ",
+        "screenSharingFirefoxPermissionDeniedError": "Something went wrong while we were trying to share your screen. Please make sure that you have given us permission to do so.",
         "screenSharingFirefoxPermissionDeniedTitle": "Oops! We weren’t able to start screen sharing!",
         "screenSharingPermissionDeniedError": "Oops! Something went wrong with your screen sharing extension permissions. Please reload and try again.",
         "sendPrivateMessage": "You recently received a private message. Did you intend to reply to that privately, or you want to send your message to the group?",
@@ -795,6 +795,6 @@
         "youAreAlone": "You are the only one in the meeting"
     },
     "helpView": {
-        "header": "Help centre"
+        "header": "Help center"
     }
 }
