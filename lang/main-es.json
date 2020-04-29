@@ -19,9 +19,9 @@
     },
     "audioDevices": {
         "bluetooth": "Bluetooth",
-        "headphones": "Audífonos",
+        "headphones": "Auriculares",
         "phone": "Teléfono",
-        "speaker": "Orador",
+        "speaker": "Altavoz",
         "none": "No hay dispositivos de audio disponibles"
     },
     "audioOnly": {
@@ -35,11 +35,11 @@
             "generic": "Se ha producido un error. Compruebe la configuración del calendario o pruebe a recargarlo",
             "notSignedIn": "Se ha producido un error de autenticación para ver los eventos del calendario. Compruebe la configuración del calendario e intente iniciar sesión de nuevo"
         },
-        "join": "Unir",
+        "join": "Unirse",
         "joinTooltip": "Unirse a la reunión",
         "nextMeeting": "próxima reunión",
         "noEvents": "No hay eventos próximos programados.",
-        "ongoingMeeting": "reunión en proceso",
+        "ongoingMeeting": "reunión en curso",
         "permissionButton": "Abrir ajustes",
         "permissionMessage": "Los permisos al calendario son necesarios para ver sus reuniones en la aplicación.",
         "refresh": "Actualizar calendario",
@@ -115,7 +115,7 @@
         "yesterday": "Ayer"
     },
     "deepLinking": {
-        "appNotInstalled": "Usted necesita la aplicación móvil {{app}} para unirse a esta reunión en su teléfono.",
+        "appNotInstalled": "Necesita la aplicación móvil {{app}} para unirse a esta reunión en su teléfono.",
         "description": "¿No pasó nada? Hemos intentado iniciar su reunión en la aplicación de escritorio {{app}}. intente de nuevo o inicie en la aplicación web {{app}}.",
         "descriptionWithoutWeb": "¿No pasó nada? Intentamos iniciar su reunión en la aplicación de escritorio {{app}}.",
         "downloadApp": "Descargar la app",
@@ -651,7 +651,7 @@
         "stopScreenSharing": "Dejar de compartir pantalla",
         "stopSubtitles": "Detener subtítulos",
         "stopSharedVideo": "Detener vídeo de YouTube",
-        "talkWhileMutedPopup": "Tratas de hablar? Estás silenciado.",
+        "talkWhileMutedPopup": "¿Tratas de hablar? Estás silenciado.",
         "tileViewToggle": "Alternar vista de mosaico",
         "toggleCamera": "Alternar cámara",
         "videomute": "Iniciar / detener cámara",
