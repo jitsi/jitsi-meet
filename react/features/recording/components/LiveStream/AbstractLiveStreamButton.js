@@ -1,6 +1,7 @@
 // @flow
 
 import { openDialog } from '../../../base/dialog';
+import { IconLiveStreaming } from '../../../base/icons';
 import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
 import { getLocalParticipant } from '../../../base/participants';
 import {
@@ -31,6 +32,11 @@ export type Props = AbstractButtonProps & {
     _disabled: Boolean,
 
     /**
+     * The tooltip to display when hovering over the button.
+     */
+    _tooltip: ?String,
+
+    /**
      * The redux {@code dispatch} function.
      */
     dispatch: Function,
@@ -44,11 +50,21 @@ export type Props = AbstractButtonProps & {
 /**
  * An abstract class of a button for starting and stopping live streaming.
  */
-export default class AbstractLiveStreamButton<P: Props>
-    extends AbstractButton<P, *> {
+export default class AbstractLiveStreamButton<P: Props> extends AbstractButton<P, *> {
     accessibilityLabel = 'dialog.accessibilityLabel.liveStreaming';
+    icon = IconLiveStreaming;
     label = 'dialog.startLiveStreaming';
     toggledLabel = 'dialog.stopLiveStreaming';
+
+    /**
+     * Returns the tooltip that should be displayed when the button is disabled.
+     *
+     * @private
+     * @returns {string}
+     */
+    _getTooltip() {
+        return this.props._tooltip || '';
+    }
 
     /**
      * Handles clicking / pressing the button.
@@ -63,6 +79,16 @@ export default class AbstractLiveStreamButton<P: Props>
         dispatch(openDialog(
             _isLiveStreamRunning ? StopLiveStreamDialog : StartLiveStreamDialog
         ));
+    }
+
+    /**
+     * Returns a boolean value indicating if this button is disabled or not.
+     *
+     * @protected
+     * @returns {boolean}
+     */
+    _isDisabled() {
+        return this.props._disabled;
     }
 
     /**
@@ -96,6 +122,7 @@ export function _mapStateToProps(state: Object, ownProps: Props) {
     // A button can be disabled/enabled only if enableFeaturesBasedOnToken
     // is on or if the recording is running.
     let _disabled;
+    let _tooltip = '';
 
     if (typeof visible === 'undefined') {
         // If the containing component provides the visible prop, that is one
@@ -112,18 +139,32 @@ export function _mapStateToProps(state: Object, ownProps: Props) {
         if (enableFeaturesBasedOnToken) {
             visible = visible && String(features.livestreaming) === 'true';
             _disabled = String(features.livestreaming) === 'disabled';
+
+            if (!visible && !_disabled) {
+                _disabled = true;
+                visible = true;
+
+                // button and tooltip
+                if (state['features/base/jwt'].isGuest) {
+                    _tooltip = 'dialog.liveStreamingDisabledForGuestTooltip';
+                } else {
+                    _tooltip = 'dialog.liveStreamingDisabledTooltip';
+                }
+            }
         }
     }
 
     // disable the button if the recording is running.
     if (getActiveSession(state, JitsiRecordingConstants.mode.FILE)) {
         _disabled = true;
+        _tooltip = 'dialog.liveStreamingDisabledBecauseOfActiveRecordingTooltip';
     }
 
     return {
         _disabled,
         _isLiveStreamRunning: Boolean(
             getActiveSession(state, JitsiRecordingConstants.mode.STREAM)),
+        _tooltip,
         visible
     };
 }
