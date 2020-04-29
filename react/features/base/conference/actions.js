@@ -51,7 +51,7 @@ import {
     SET_ROOM,
     SET_PENDING_SUBJECT_CHANGE,
     SET_START_MUTED_POLICY,
-    CONFERENCE_STARTED_TIME_CHANGED
+    SET_CONFERENCE_START_TIME
 } from './actionTypes';
 import {
     AVATAR_ID_COMMAND,
@@ -767,9 +767,9 @@ export function setSubject(subject: string) {
 }
 
 
-export function conferenceStartedTimeChanged(conferenceStartedTime: any) {
+export function setConferenceStartTime(conferenceStartedTime: any) {
     return {
-        type: CONFERENCE_STARTED_TIME_CHANGED,
+        type: SET_CONFERENCE_START_TIME,
         conferenceStartedTime
     };
 }
