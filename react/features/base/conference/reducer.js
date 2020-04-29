@@ -24,7 +24,8 @@ import {
     SET_PREFERRED_RECEIVER_VIDEO_QUALITY,
     SET_ROOM,
     SET_SIP_GATEWAY_ENABLED,
-    SET_START_MUTED_POLICY
+    SET_START_MUTED_POLICY,
+    SET_CONFERENCE_START_TIME
 } from './actionTypes';
 import { VIDEO_QUALITY_LEVELS } from './constants';
 import { isRoomValid } from './functions';
@@ -118,6 +119,9 @@ ReducerRegistry.register(
                 startAudioMutedPolicy: action.startAudioMutedPolicy,
                 startVideoMutedPolicy: action.startVideoMutedPolicy
             };
+
+        case SET_CONFERENCE_START_TIME:
+            return set(state, 'conferenceStartedTime', action.conferenceStartedTime);
         }
 
         return state;
