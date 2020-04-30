@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Video Conference Example</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script defer src='https://meet.jit.si/external_api.js'></script>
+
+    <style>
+        textarea {
+                background-color: black;
+                color:white;
+                border-radius:5px;
+                font-family: Monaco;
+                padding:10px;
+                font-size: 12px;
+        }
+        body {
+                margin:20px;
+        }
+    </style>
+</head>
+<body>
+
+<script>
+// You can pass options as query parameter like :
+//      meet.html?w=800&h=800&m=meeting_name,d=domain_name
+
+// query param parser
+ let getQueryParams = () => {
+  const query = location.search.substr(1);
+  let result = {};
+  query.split("&").forEach(function(part) {
+       const item = part.split("=");
+       result[item[0]] = decodeURIComponent(item[1]);
+  });
+  return result;
+ };
+// refer: https://github.com/jitsi/jitsi-meet/blob/master/doc/api.md
+const qp = getQueryParams();
+const domain =  qp.d || 'meet.jit.si'; 
+const meetingName = qp.m || 'awesomeMeeting' 
+const width =  parseInt(qp.w) || 600;
+const height =  parseInt(qp.h) || 600;
+
+let api; // to keep it global to do debug
+document.addEventListener("DOMContentLoaded", () =>{
+       const outputEle = document.getElementById('output');
+       const opts = {
+                roomName: meetingName,
+                width:width, height: height,
+                parentNode: document.getElementById('meet')
+        } 
+       api = new JitsiMeetExternalAPI(domain, opts);
+
+
+       api.getAvailableDevices().then(devices => {
+               outputEle.value = JSON.stringify(devices, null, 4)
+       });
+});
+
+</script>
+ <div class="row">
+  <div class="col-sm"> <div id="meet"></div> </div>   
+  <div class="col-sm"> <textarea rows='32' cols='70' id='output'></textarea></div> 
+ </div>
+</body>
+</html>
