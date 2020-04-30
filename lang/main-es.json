@@ -208,8 +208,8 @@
         "micNotSendingData": "Vaya a la configuración de su computadora para activar el micrófono y ajustar su nivel",
         "micNotSendingDataTitle": "Su micrófono está silenciado en la configuración de su sistema",
         "micPermissionDeniedError": "No ha otorgado permisos para usar su micrófono. Puede unirse a la conferencia, pero no lo podrán escuchar. Utilice el botón en la barra de dirección para solucionar esto.",
-        "micUnknownError": "No se puede usar su micrófono por motivos desconocidos.",
-        "muteEveryoneElseDialog": "Una vez silenciados, No podrás quitarles el modo silencio, pero ellos podrán hacerlo en cualquier momento.",
+        "micUnknownError": "No se puede usar el micrófono por motivos desconocidos.",
+        "muteEveryoneElseDialog": "Una vez silenciados, no podrás quitarles el modo silencio, pero ellos podrán hacerlo en cualquier momento.",
         "muteEveryoneElseTitle": "¿Silenciar a todos los participantes excepto a {{whom}}?",
         "muteEveryoneDialog": "¿Estás seguro de silenciar a todos los participantes? No podrás quitarles el modo en silencio, pero ellos podrán hacerlo en cualquier momento.",
         "muteEveryoneTitle": "¿Silenciar a todos los participantes?",
@@ -282,10 +282,10 @@
         "WaitingForHost": "Esperando al anfitrión …",
         "Yes": "Sí",
         "yourEntireScreen": "Su pantalla completa",
-        "muteEveryoneDialog": ""
+        "muteEveryoneDialog": "Silenciar a todos"
     },
     "dialOut": {
-        "statusMessage": "esta {{status}}"
+        "statusMessage": "está {{status}}"
     },
     "documentSharing": {
         "title": "Compartir documento"
@@ -640,7 +640,8 @@
         "lowerYourHand": "Bajar la mano",
         "moreActions": "Más acciones",
         "moreOptions": "Más opciones",
-        "mute": "Activar / Desactivar Silencio",
+        "mute": "Activar o silenciar el micrófono",
+        "muteEveryone": "Silenciar a todos",
         "noAudioSignalTitle": "¡No hay entrada proveniente de su micrófono!",
         "noAudioSignalDesc": "Si no lo silenció a propósito desde la configuración del sistema o el dispositivo, considere cambiar el dispositivo.",
         "noAudioSignalDescSuggestion": "Si no lo silenció a propósito desde la configuración del sistema o el dispositivo, considere usar el siguiente dispositivo:",
@@ -725,13 +726,14 @@
         "standardDefinition": "Definición estándar"
     },
     "videothumbnail": {
-        "domute": "Silenciar",
+        "domute": "Silenciar",        
+        "domuteOthers": "Silenciar a todos",
         "flip": "Voltear",
         "kick": "Expulsar",
         "moderator": "Moderador",
         "mute": "Participante está silenciado",
         "muted": "Silenciado",
-        "remoteControl": "",
+        "remoteControl": "Control remoto",
         "show": "Mostrar en escena",
         "videomute": "El participante ha detenido la cámara."
     },
@@ -763,7 +765,7 @@
         "roomnameHint": "Introduce el nombre o URL de la sala a la que quieres unirte. Puedes crear un nombre nuevo, sólo tienes que hacer llegar este nombre al resto de participantes para que puedan unirse a esta sala.",
         "sendFeedback": "Enviar comentarios",
         "terms": "Términos",
-        "title": "Seguro, lleno de funcionalidades y videoconferencias completamente gratuitas"
+        "title": "Videoconferencias seguras, con gran variedad de funcionalidades y completamente gratuitas"
     },
     "lonelyMeetingExperience": {
         "button": "Invitar a otros",
