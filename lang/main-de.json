@@ -328,7 +328,7 @@
         "liveStreamURL": "Livestream:",
         "moreNumbers": "Weitere Telefonnummern",
         "noNumbers": "Keine Telefonnummern verfügbar.",
-        "noPassword": "Kein",
+        "noPassword": "Keines",
         "noRoom": "Keine Konferenz für die Einwahlinformationen angegeben.",
         "numbers": "Einwählnummern",
         "password": "$t(lockRoomPasswordUppercase):",
