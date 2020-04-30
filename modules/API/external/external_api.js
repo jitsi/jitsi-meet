@@ -32,6 +32,7 @@ const commands = {
     e2eeKey: 'e2ee-key',
     email: 'email',
     hangup: 'video-hangup',
+    muteEveryone: 'mute-everyone',
     password: 'password',
     sendEndpointTextMessage: 'send-endpoint-text-message',
     sendTones: 'send-tones',

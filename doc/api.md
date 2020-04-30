@@ -276,6 +276,11 @@ api.executeCommand('avatarUrl', 'https://avatars0.githubusercontent.com/u/367164
 api.executeCommand('receiverParticipantId', 'text');
 ```
 
+* **muteEveryone** - Mute all the other participants. It can only be executed by a moderator. No arguments are required.
+```javascript
+api.executeCommand('muteEveryone');
+```
+
 You can also execute multiple commands using the `executeCommands` method:
 ```javascript
 api.executeCommands(commands);
