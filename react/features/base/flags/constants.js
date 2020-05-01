@@ -76,6 +76,12 @@ export const PIP_ENABLED = 'pip.enabled';
 export const RECORDING_ENABLED = 'recording.enabled';
 
 /**
+ * Flag indicating if tile view feature should be enabled.
+ * Default: auto-detected.
+ */
+export const TILE_VIEW_ENABLED = 'tile-view.enabled';
+
+/**
  * Flag indicating if the welcome page should be enabled.
  * Default: disabled (false).
  */
