@@ -7,6 +7,7 @@ import {
     getLocalParticipant,
     isLocalParticipantModerator
 } from '../base/participants';
+import { isFollowMeActive } from '../follow-me';
 
 declare var interfaceConfig: Object;
 
@@ -85,7 +86,7 @@ export function getMoreTabProps(stateful: Object | Function) {
         startAudioMutedPolicy,
         startVideoMutedPolicy
     } = state['features/base/conference'];
-    const followMeActive = Boolean(state['features/follow-me'].moderator);
+    const followMeActive = isFollowMeActive(state);
     const configuredTabs = interfaceConfig.SETTINGS_SECTIONS || [];
 
     // The settings sections to display.

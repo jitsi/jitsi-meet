@@ -2,6 +2,7 @@
 
 import type { Dispatch } from 'redux';
 
+import { getFeatureFlag, INVITE_ENABLED } from '../../../../base/flags';
 import { translate } from '../../../../base/i18n';
 import { IconAddPeople } from '../../../../base/icons';
 import { connect } from '../../../../base/redux';
@@ -47,9 +48,10 @@ class InviteButton extends AbstractButton<Props, *> {
  */
 function _mapStateToProps(state, ownProps: Props) {
     const { disableInviteFunctions } = state['features/base/config'];
+    const flag = getFeatureFlag(state, INVITE_ENABLED, true);
 
     return {
-        visible: !disableInviteFunctions && ownProps.visible
+        visible: flag && !disableInviteFunctions && ownProps.visible
     };
 }
 

@@ -19,7 +19,6 @@ import {
     createDeviceChangedEvent,
     createStartSilentEvent,
     createScreenSharingEvent,
-    createStreamSwitchDelayEvent,
     createTrackMutedEvent,
     sendAnalytics
 } from './react/features/analytics';
@@ -113,6 +112,7 @@ import {
 import { getJitsiMeetGlobalNS } from './react/features/base/util';
 import { showDesktopPicker } from './react/features/desktop-picker';
 import { appendSuffix } from './react/features/display-name';
+import { setE2EEKey } from './react/features/e2ee';
 import {
     maybeOpenFeedbackDialog,
     submitFeedback
@@ -469,11 +469,6 @@ export default {
      * @type {JitsiLocalTrack|null}
      */
     localVideo: null,
-
-    /**
-     * The key used for End-To-End Encryption.
-     */
-    e2eeKey: undefined,
 
     /**
      * Creates local media tracks and connects to a room. Will show error
@@ -1202,11 +1197,14 @@ export default {
             items[key] = param[1];
         }
 
-        this.e2eeKey = items.e2eekey;
+        if (typeof items.e2eekey !== undefined) {
+            APP.store.dispatch(setE2EEKey(items.e2eekey));
 
-        logger.debug(`New E2EE key: ${this.e2eeKey}`);
+            // Clean URL in browser history.
+            const cleanUrl = window.location.href.split('#')[0];
 
-        this._room.setE2EEKey(this.e2eeKey);
+            history.replaceState(history.state, document.title, cleanUrl);
+        }
     },
 
     /**
@@ -1818,7 +1816,7 @@ export default {
                 const desktopVideoStream = streams.find(stream => stream.getType() === MEDIA_TYPE.VIDEO);
 
                 if (desktopVideoStream) {
-                    this.useVideoStream(desktopVideoStream);
+                    await this.useVideoStream(desktopVideoStream);
                 }
 
                 this._desktopAudioStream = streams.find(stream => stream.getType() === MEDIA_TYPE.AUDIO);
@@ -2263,18 +2261,6 @@ export default {
                 }
             });
         });
-
-        /* eslint-disable max-params */
-        APP.UI.addListener(
-            UIEvents.RESOLUTION_CHANGED,
-            (id, oldResolution, newResolution, delay) => {
-                sendAnalytics(createStreamSwitchDelayEvent(
-                    {
-                        'old_resolution': oldResolution,
-                        'new_resolution': newResolution,
-                        value: delay
-                    }));
-            });
 
         APP.UI.addListener(UIEvents.AUTH_CLICKED, () => {
             AuthHandler.authenticate(room);
@@ -2843,7 +2829,7 @@ export default {
     leaveRoomAndDisconnect() {
         APP.store.dispatch(conferenceWillLeave(room));
 
-        if (room.isJoined()) {
+        if (room && room.isJoined()) {
             return room.leave().then(disconnect, disconnect);
         }
 
