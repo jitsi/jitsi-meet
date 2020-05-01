@@ -121,6 +121,11 @@
             .videocontainer {
                 height: 0px;
                 width: 100%;
+
+                &.hidden-container {
+                    display: none;
+                    overflow: hidden;
+                }
             }
         }
     }

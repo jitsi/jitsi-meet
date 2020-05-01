@@ -45,11 +45,12 @@ MiddlewareRegistry.register(store => next => action => {
 
     case PARTICIPANT_JOINED:
         if (!action.participant.local) {
-            // CUSTOM: Condition to display remote participant only if it's a moderator (or user is a moderator)
-            if (action.participant.role === 'moderator' || isLocalParticipantModerator(store.getState)) {
-                VideoLayout.addRemoteParticipantContainer(
-                    getParticipantById(store.getState(), action.participant.id));
-            }
+            // CUSTOM: Condition to add class to remote participant video container
+            // only if it's not a moderator (or user is not a moderator)
+            VideoLayout.addRemoteParticipantContainer(
+                getParticipantById(store.getState(), action.participant.id),
+                action.participant.role === 'moderator'
+                || isLocalParticipantModerator(store.getState) ? '' : 'hidden-container');
         }
         break;
 
