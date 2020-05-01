@@ -330,7 +330,7 @@
         "noNumbers": "Keine Telefonnummern verfügbar.",
         "noPassword": "Keines",
         "noRoom": "Keine Konferenz für die Einwahlinformationen angegeben.",
-        "numbers": "Einwählnummern",
+        "numbers": "Einwahlnummern",
         "password": "$t(lockRoomPasswordUppercase):",
         "title": "Teilen",
         "tooltip": "Freigabe-Link und Einwahlinformationen für dieses Meeting",
