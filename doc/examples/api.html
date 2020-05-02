@@ -6,7 +6,7 @@
     <body>
         <script src="https://meet.jit.si/external_api.js"></script>
         <script>
-            var domain = "meet.jit.si";
+            var domain = "localhost:8080";
             var options = {
                 roomName: "JitsiMeetAPIExample",
                 width: 700,
@@ -14,7 +14,10 @@
                 parentNode: undefined,
                 configOverwrite: {},
                 interfaceConfigOverwrite: {
-                    filmStripOnly: true
+                    filmStripOnly: true,
+                    DISABLE_DOMINANT_SPEAKER_INDICATOR: true,
+                    SUBJECT_ALWAYS_HIDDEN: true,
+                    VERTICAL_FILMSTRIP: false
                 }
             }
             var api = new JitsiMeetExternalAPI(domain, options);
