@@ -1186,6 +1186,9 @@ class Toolbox extends Component<Props, State> {
         if (this._shouldShowButton('chat')) {
             buttonsLeft.push('chat');
         }
+        if (this._shouldShowButton('invite') && !_hideInviteButton) {
+            buttonsLeft.push('invite');
+        }
         if (this._shouldShowButton('closedcaptions')) {
             buttonsLeft.push('closedcaptions');
         }
@@ -1194,9 +1197,6 @@ class Toolbox extends Component<Props, State> {
         }
         if (this._shouldShowButton('info')) {
             buttonsRight.push('info');
-        }
-        if (this._shouldShowButton('invite') && !_hideInviteButton) {
-            buttonsRight.push('invite');
         }
         if (this._shouldShowButton('tileview')) {
             buttonsRight.push('tileview');
@@ -1263,6 +1263,13 @@ class Toolbox extends Component<Props, State> {
                         buttonsLeft.indexOf('closedcaptions') !== -1
                             && <ClosedCaptionButton />
                     }
+                    { buttonsLeft.indexOf('invite') !== -1
+                        && <ToolbarButton
+                            accessibilityLabel =
+                                { t('toolbar.accessibilityLabel.invite') }
+                            icon = { IconInvite }
+                            onClick = { this._onToolbarOpenInvite }
+                            tooltip = { t('toolbar.invite') } /> }
                 </div>
                 <div className = 'button-group-center'>
                     { this._renderAudioButton() }
@@ -1279,13 +1286,6 @@ class Toolbox extends Component<Props, State> {
                     }
                     { buttonsRight.indexOf('tileview') !== -1
                         && <TileViewButton /> }
-                    { buttonsRight.indexOf('invite') !== -1
-                        && <ToolbarButton
-                            accessibilityLabel =
-                                { t('toolbar.accessibilityLabel.invite') }
-                            icon = { IconInvite }
-                            onClick = { this._onToolbarOpenInvite }
-                            tooltip = { t('toolbar.invite') } /> }
                     {
                         buttonsRight.indexOf('info') !== -1
                             && <InfoDialogButton />
