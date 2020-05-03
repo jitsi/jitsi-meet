@@ -294,6 +294,10 @@ You can add event listeners to the embedded Jitsi Meet using the `addEventListen
 ```javascript
 api.addEventListener(event, listener);
 ```
+or, via the more modern method:
+```javascript
+api.addListener(event, listener);
+```
 
 The `event` parameter is a String object with the name of the event.
 The `listener` parameter is a Function object with one argument that will be notified when the event occurs with data related to the event.
@@ -537,6 +541,10 @@ If you want to remove a listener you can use `removeEventListener` method with a
 **NOTE: This method still exists but it is deprecated. JitsiMeetExternalAPI class extends [EventEmitter]. Use [EventEmitter] methods( `removeListener`).**
 ```javascript
 api.removeEventListener('incomingMessage');
+```
+or, via the more modern method:
+```javascript
+api.removeAllListeners('incomingMessage')
 ```
 
 If you want to remove more than one event you can use `removeEventListeners` method with an Array with the names of the events as an argument.
