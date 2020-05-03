@@ -1,5 +1,6 @@
 // @flow
 
+import { jitsiLocalStorage } from 'js-utils';
 import _ from 'lodash';
 
 import CONFIG_WHITELIST from './configWhitelist';
@@ -136,22 +137,16 @@ function _getWhitelistedJSON(configName, configJSON) {
  * otherwise, {@code undefined}.
  */
 export function restoreConfig(baseURL: string): ?Object {
-    let storage;
     const key = `${_CONFIG_STORE_PREFIX}/${baseURL}`;
+    const config = jitsiLocalStorage.getItem(key);
 
-    try {
-        // XXX Even reading the property localStorage of window may throw an
-        // error (which is user agent-specific behavior).
-        storage = window.localStorage;
-
-        const config = storage.getItem(key);
-
-        if (config) {
+    if (config) {
+        try {
             return JSON.parse(config) || undefined;
+        } catch (e) {
+            // Somehow incorrect data ended up in the storage. Clean it up.
+            jitsiLocalStorage.removeItem(key);
         }
-    } catch (e) {
-        // Somehow incorrect data ended up in the storage. Clean it up.
-        storage && storage.removeItem(key);
     }
 
     return undefined;
