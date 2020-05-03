@@ -1,12 +1,9 @@
 // @flow
 
 import React, { PureComponent } from 'react';
-import { TouchableOpacity, View } from 'react-native';
-import Collapsible from 'react-native-collapsible';
 
 import { ColorSchemeRegistry } from '../../../base/color-scheme';
 import { BottomSheet, hideDialog, isDialogOpen } from '../../../base/dialog';
-import { IconDragHandle } from '../../../base/icons';
 import { connect } from '../../../base/redux';
 import { StyleType } from '../../../base/styles';
 import { SharedDocumentButton } from '../../../etherpad';
@@ -20,10 +17,8 @@ import { TileViewButton } from '../../../video-layout';
 import HelpButton from '../HelpButton';
 
 import AudioOnlyButton from './AudioOnlyButton';
-import MoreOptionsButton from './MoreOptionsButton';
 import RaiseHandButton from './RaiseHandButton';
 import ToggleCameraButton from './ToggleCameraButton';
-import styles from './styles';
 
 /**
  * The type of the React {@code Component} props of {@link OverflowMenu}.
@@ -54,14 +49,9 @@ type Props = {
 type State = {
 
     /**
-     * True if the bottom scheet is scrolled to the top.
+     * True if the bottom sheet is scrolled to the top.
      */
     scrolledToTop: boolean,
-
-    /**
-     * True if the 'more' button set needas to be rendered.
-     */
-    showMore: boolean
 }
 
 /**
@@ -87,15 +77,12 @@ class OverflowMenu extends PureComponent<Props, State> {
         super(props);
 
         this.state = {
-            scrolledToTop: true,
-            showMore: false
+            scrolledToTop: true
         };
 
         // Bind event handlers so they are only bound once per instance.
         this._onCancel = this._onCancel.bind(this);
         this._onSwipe = this._onSwipe.bind(this);
-        this._onToggleMenu = this._onToggleMenu.bind(this);
-        this._renderMenuExpandToggle = this._renderMenuExpandToggle.bind(this);
     }
 
     /**
@@ -106,7 +93,6 @@ class OverflowMenu extends PureComponent<Props, State> {
      */
     render() {
         const { _bottomSheetStyles } = this.props;
-        const { showMore } = this.state;
 
         const buttonProps = {
             afterClick: this._onCancel,
@@ -114,55 +100,23 @@ class OverflowMenu extends PureComponent<Props, State> {
             styles: _bottomSheetStyles.buttons
         };
 
-        const moreOptionsButtonProps = {
-            ...buttonProps,
-            afterClick: this._onToggleMenu,
-            visible: !showMore
-        };
-
         return (
             <BottomSheet
                 onCancel = { this._onCancel }
-                onSwipe = { this._onSwipe }
-                renderHeader = { this._renderMenuExpandToggle }>
-                <AudioRouteButton { ...buttonProps } />
-                <InviteButton { ...buttonProps } />
-                <AudioOnlyButton { ...buttonProps } />
+                onSwipe = { this._onSwipe }>
                 <RaiseHandButton { ...buttonProps } />
-                <MoreOptionsButton { ...moreOptionsButtonProps } />
-                <Collapsible collapsed = { !showMore }>
-                    <ToggleCameraButton { ...buttonProps } />
-                    <TileViewButton { ...buttonProps } />
-                    <RecordButton { ...buttonProps } />
-                    <LiveStreamButton { ...buttonProps } />
-                    <RoomLockButton { ...buttonProps } />
-                    <ClosedCaptionButton { ...buttonProps } />
-                    <SharedDocumentButton { ...buttonProps } />
-                    <HelpButton { ...buttonProps } />
-                </Collapsible>
+                <ToggleCameraButton { ...buttonProps } />
+                <TileViewButton { ...buttonProps } />
+                <AudioRouteButton { ...buttonProps } />
+                <AudioOnlyButton { ...buttonProps } />
+                <RecordButton { ...buttonProps } />
+                <InviteButton { ...buttonProps } />
+                <RoomLockButton { ...buttonProps } />
+                <LiveStreamButton { ...buttonProps } />
+                <SharedDocumentButton { ...buttonProps } />
+                <ClosedCaptionButton { ...buttonProps } />
+                <HelpButton { ...buttonProps } />
             </BottomSheet>
-        );
-    }
-
-    _renderMenuExpandToggle: () => React$Element<any>;
-
-    /**
-     * Function to render the menu toggle in the bottom sheet header area.
-     *
-     * @returns {React$Element}
-     */
-    _renderMenuExpandToggle() {
-        return (
-            <View
-                style = { [
-                    this.props._bottomSheetStyles.sheet,
-                    styles.expandMenuContainer
-                ] }>
-                <TouchableOpacity onPress = { this._onToggleMenu }>
-                    { /* $FlowFixMeProps */ }
-                    <IconDragHandle style = { this.props._bottomSheetStyles.expandIcon } />
-                </TouchableOpacity>
-            </View>
         );
     }
 
@@ -194,36 +148,12 @@ class OverflowMenu extends PureComponent<Props, State> {
      * @returns {boolean}
      */
     _onSwipe(direction) {
-        const { showMore } = this.state;
-
         switch (direction) {
-        case 'up':
-            !showMore && this.setState({
-                showMore: true
-            });
-
-            return !showMore;
         case 'down':
-            showMore && this.setState({
-                showMore: false
-            });
-
-            return showMore;
+            return this._onCancel();
         }
     }
 
-    _onToggleMenu: () => void;
-
-    /**
-     * Callback to be invoked when the expand menu button is pressed.
-     *
-     * @returns {void}
-     */
-    _onToggleMenu() {
-        this.setState({
-            showMore: !this.state.showMore
-        });
-    }
 }
 
 /**
