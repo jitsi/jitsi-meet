@@ -273,7 +273,7 @@ api.executeCommand('avatarUrl', 'https://avatars0.githubusercontent.com/u/367164
 
 * **sendEndpointTextMessage** - Sends a text message to another participant through the datachannels.
 ```javascript
-api.executeCommand('receiverParticipantId', 'text');
+api.executeCommand('sendEndpointTextMessage', 'receiverParticipantId', 'text');
 ```
 
 You can also execute multiple commands using the `executeCommands` method:
