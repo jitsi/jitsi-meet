@@ -25,6 +25,11 @@ export const PREJOIN_START_CONFERENCE = 'PREJOIN_START_CONFERENCE';
 export const SET_DEVICE_STATUS = 'SET_DEVICE_STATUS';
 
 /**
+ * Action type to set the visiblity of the prejoin page for the future.
+ */
+export const SET_FUTURE_PAGE_VISIBILITY = 'SET_FUTURE_PAGE_VISIBILITY';
+
+/**
  * Action type to set the visiblity of the 'JoinByPhone' dialog.
  */
 export const SET_JOIN_BY_PHONE_DIALOG_VISIBLITY = 'SET_JOIN_BY_PHONE_DIALOG_VISIBLITY';
@@ -63,3 +68,8 @@ export const SET_PREJOIN_VIDEO_DISABLED = 'SET_PREJOIN_VIDEO_DISABLED';
  * Action type to mute/unmute the video while on prejoin page.
  */
 export const SET_PREJOIN_VIDEO_MUTED = 'SET_PREJOIN_VIDEO_MUTED';
+
+/**
+ * Action type to set the visiblity of the prejoin page based on previous user option.
+ */
+export const SET_USER_OPTION_PAGE_VISIBILITY = 'SET_USER_OPTION_PAGE_VISIBILITY';

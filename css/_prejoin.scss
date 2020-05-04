@@ -51,6 +51,7 @@
 
         &--text {
             width: auto;
+            font-size: 13px;
             margin: 0;
             padding: 0;
         }
@@ -68,6 +69,24 @@
         margin-top: 32px 0 8px 0;
         text-align: center;
         width: 100%;
+    }
+
+    &-checkbox {
+        border: 0;
+        height: 16px;
+        margin-right: 8px;
+        padding: 0;
+        width: 16px;
+    }
+
+    &-checkbox-container {
+        align-items: center;
+        color: #fff;
+        display: flex;
+        font-size: 13px;
+        justify-content: center;
+        line-height: 20px;
+        margin-top: 24px;
     }
 }
 

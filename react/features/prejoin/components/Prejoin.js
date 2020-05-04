@@ -4,6 +4,7 @@ import React, { Component } from 'react';
 import {
     joinConference as joinConferenceAction,
     joinConferenceWithoutAudio as joinConferenceWithoutAudioAction,
+    setFuturePageVisibility as setFuturePageVisibilityAction,
     setJoinByPhoneDialogVisiblity as setJoinByPhoneDialogVisiblityAction,
     setPrejoinName
 } from '../actions';
@@ -62,7 +63,12 @@ type Props = {
     roomName: string,
 
     /**
-     * Sets visibilit of the 'JoinByPhoneDialog'.
+     * Sets visibility of the prejoin page for the next sessions.
+     */
+    setFuturePageVisibility: Function,
+
+    /**
+     * Sets visibility of the 'JoinByPhoneDialog'.
      */
     setJoinByPhoneDialogVisiblity: Function,
 
@@ -95,6 +101,19 @@ class Prejoin extends Component<Props> {
         super(props);
 
         this._showDialog = this._showDialog.bind(this);
+        this._onCheckboxChange = this._onCheckboxChange.bind(this);
+    }
+
+    _onCheckboxChange: () => void;
+
+    /**
+     * Handler for the checkbox.
+     *
+     * @param {Object} e - The synthetic event.
+     * @returns {undefined}
+     */
+    _onCheckboxChange(e) {
+        this.props.setFuturePageVisibility(e.target.checked);
     }
 
     _showDialog: () => void;
@@ -125,7 +144,7 @@ class Prejoin extends Component<Props> {
             showJoinByPhoneButtons,
             t
         } = this.props;
-        const { _showDialog } = this;
+        const { _onCheckboxChange, _showDialog } = this;
 
         return (
             <div className = 'prejoin-full-page'>
@@ -158,6 +177,13 @@ class Prejoin extends Component<Props> {
                                     { t('prejoin.joinAudioByPhone') }
                                 </ActionButton>
                             </div>}
+                        <div className = 'prejoin-checkbox-container'>
+                            <input
+                                className = 'prejoin-checkbox'
+                                onChange = { _onCheckboxChange }
+                                type = 'checkbox' />
+                            <span>{t('prejoin.doNotShow')}</span>
+                        </div>
                     </div>
                 </div>
                 <div className = 'prejoin-preview-btn-container'>
@@ -191,6 +217,7 @@ const mapDispatchToProps = {
     joinConferenceWithoutAudio: joinConferenceWithoutAudioAction,
     joinConference: joinConferenceAction,
     setJoinByPhoneDialogVisiblity: setJoinByPhoneDialogVisiblityAction,
+    setFuturePageVisibility: setFuturePageVisibilityAction,
     setName: setPrejoinName
 };
 

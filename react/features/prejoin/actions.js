@@ -6,6 +6,7 @@ import {
     ADD_PREJOIN_VIDEO_TRACK,
     PREJOIN_START_CONFERENCE,
     SET_DEVICE_STATUS,
+    SET_FUTURE_PAGE_VISIBILITY,
     SET_JOIN_BY_PHONE_DIALOG_VISIBLITY,
     SET_PREJOIN_AUDIO_DISABLED,
     SET_PREJOIN_AUDIO_MUTED,
@@ -13,7 +14,8 @@ import {
     SET_PREJOIN_NAME,
     SET_PREJOIN_PAGE_VISIBILITY,
     SET_PREJOIN_VIDEO_DISABLED,
-    SET_PREJOIN_VIDEO_MUTED
+    SET_PREJOIN_VIDEO_MUTED,
+    SET_USER_OPTION_PAGE_VISIBILITY
 } from './actionTypes';
 import { createLocalTrack } from '../base/lib-jitsi-meet';
 import { getAudioTrack, getVideoTrack } from './functions';
@@ -240,6 +242,33 @@ export function setAudioDisabled() {
         type: SET_PREJOIN_AUDIO_DISABLED
     };
 }
+
+/**
+ * Action used to set future visibility of the prejoin page.
+ *
+ * @param {boolean} value - The value to set.
+ * @returns {Object}
+ */
+export function setFuturePageVisibility(value: boolean) {
+    return {
+        type: SET_FUTURE_PAGE_VISIBILITY,
+        value
+    };
+}
+
+/**
+ * Action used to set the prejoin visiblity based on previous user option.
+ *
+ * @param {boolean} value - The value to set.
+ * @returns {Object}
+ */
+export function setUserOptionPageVisibility(value: boolean) {
+    return {
+        type: SET_USER_OPTION_PAGE_VISIBILITY,
+        value
+    };
+}
+
 
 /**
  * Sets the device status as OK with the corresponding text.

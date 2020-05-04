@@ -12,7 +12,8 @@ import {
     SET_PREJOIN_NAME,
     SET_PREJOIN_PAGE_VISIBILITY,
     SET_PREJOIN_VIDEO_DISABLED,
-    SET_PREJOIN_VIDEO_MUTED
+    SET_PREJOIN_VIDEO_MUTED,
+    SET_USER_OPTION_PAGE_VISIBILITY
 } from './actionTypes';
 
 const DEFAULT_STATE = {
@@ -23,6 +24,7 @@ const DEFAULT_STATE = {
     deviceStatusText: 'prejoin.configuringDevices',
     deviceStatusType: 'ok',
     showPrejoin: true,
+    showPrejoinUserOption: true,
     showJoinByPhoneDialog: false,
     videoTrack: null,
     audioTrack: null,
@@ -118,6 +120,13 @@ ReducerRegistry.register(
             return {
                 ...state,
                 showJoinByPhoneDialog: action.value
+            };
+        }
+
+        case SET_USER_OPTION_PAGE_VISIBILITY: {
+            return {
+                ...state,
+                showPrejoinUserOption: action.value
             };
         }
 

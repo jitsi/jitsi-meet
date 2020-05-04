@@ -214,7 +214,8 @@ export function isJoinByPhoneDialogVisible(state: Object): boolean {
  * @returns {boolean}
  */
 export function isPrejoinPageEnabled(state: Object): boolean {
-    return state['features/base/config'].prejoinPageEnabled;
+    return state['features/base/config'].prejoinPageEnabled
+        && state['features/prejoin'].showPrejoinUserOption;
 }
 
 /**
