@@ -257,9 +257,12 @@ export function getConferenceOptions(stateful: Function | Object) {
 */
 export function getConferenceTimestamp(stateful: Function | Object): number {
     const state = toState(stateful);
-    const { conferenceTimestamp, conferenceStartedTime } = getConferenceState(state);
 
-    return conferenceTimestamp || conferenceStartedTime;
+    // conferenceTimestamp is from Prosody server, it returns the "room" initialize
+    // time as the conference start time. it is not a correct start time.
+    const { conferenceStartedTime } = state['features/base/conference'];
+
+    return conferenceStartedTime;
 }
 
 /**
