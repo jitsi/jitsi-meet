@@ -104,7 +104,7 @@ class RaiseHandButton extends AbstractButton<Props, *> {
 function _mapStateToProps(state, ownProps): Object {
     const _localParticipant = getLocalParticipant(state);
     const enabled = getFeatureFlag(state, RAISE_HAND_ENABLED, true);
-    const { visible = enabled } = ownProps; 
+    const { visible = enabled } = ownProps;
 
     return {
         _localParticipant,
