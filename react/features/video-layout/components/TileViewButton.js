@@ -84,7 +84,7 @@ class TileViewButton<P: Props> extends AbstractButton<P, *> {
  * {@code TileViewButton} component.
  *
  * @param {Object} state - The Redux state.
- * * @param {Object} ownProps - The properties explicitly passed to the component instance.
+ * @param {Object} ownProps - The properties explicitly passed to the component instance.
  * @returns {Props}
  */
 function _mapStateToProps(state, ownProps) {
