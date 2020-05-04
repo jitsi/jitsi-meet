@@ -18,7 +18,6 @@ var interfaceConfig = {
     DEFAULT_LOCAL_DISPLAY_NAME: 'me',
     SHOW_JITSI_WATERMARK: true,
     JITSI_WATERMARK_LINK: 'https://jitsi.org',
-    SUBJECT_ALWAYS_HIDDEN: false,
 
     // if watermark is disabled by default, it can be shown only for guests
     SHOW_WATERMARK_FOR_GUESTS: true,

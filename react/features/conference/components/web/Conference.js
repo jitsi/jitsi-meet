@@ -172,7 +172,6 @@ class Conference extends AbstractConference<Props, *> {
      */
     render() {
         const {
-            SUBJECT_ALWAYS_HIDDEN,
             VIDEO_QUALITY_LABEL_DISABLED,
 
             // XXX The character casing of the name filmStripOnly utilized by
@@ -190,7 +189,7 @@ class Conference extends AbstractConference<Props, *> {
                 id = 'videoconference_page'
                 onMouseMove = { this._onShowToolbar }>
                 <Notice />
-                {SUBJECT_ALWAYS_HIDDEN || <Subject />}
+                { filmstripOnly || <Subject /> }
                 <div id = 'videospace'>
                     <LargeVideo />
                     { hideVideoQualityLabel
