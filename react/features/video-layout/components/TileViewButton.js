@@ -84,10 +84,12 @@ class TileViewButton<P: Props> extends AbstractButton<P, *> {
  * {@code TileViewButton} component.
  *
  * @param {Object} state - The Redux state.
+ * * @param {Object} ownProps - The properties explicitly passed to the component instance.
  * @returns {Props}
  */
-function _mapStateToProps(state) {
-    const visible = getFeatureFlag(state, TILE_VIEW_ENABLED, true);
+function _mapStateToProps(state, ownProps) {
+    const enabled = getFeatureFlag(state, TILE_VIEW_ENABLED, true);
+    const { visible = enabled } = ownProps;
 
     return {
         _tileViewEnabled: state['features/video-layout'].tileViewEnabled,

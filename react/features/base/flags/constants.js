@@ -77,7 +77,7 @@ export const RECORDING_ENABLED = 'recording.enabled';
 
 /**
  * Flag indicating if tile view feature should be enabled.
- * Default: auto-detected.
+ * Default: enabled.
  */
 export const TILE_VIEW_ENABLED = 'tile-view.enabled';
 
