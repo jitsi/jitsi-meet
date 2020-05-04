@@ -34,6 +34,7 @@ Work in progress.
 
 * [Quick install](https://github.com/jitsi/jitsi-meet/blob/master/doc/quick-install.md)
 * [Docker install](https://github.com/jitsi/docker-jitsi-meet/blob/master/README.md)
+* [Ansible install](https://github.com/tderflinger/jitsi-deployment)
 * [Google Calendar, MS Calendar, Dropbox integrations](https://github.com/jitsi/jitsi-meet/blob/master/doc/integrations.md)
 * [Video tutorials on deployment and scalability](https://jitsi.org/tutorials/)
 * [Configuring a video SIP gateway](https://github.com/jitsi/jitsi-meet/blob/master/doc/sipgw-config.md)
