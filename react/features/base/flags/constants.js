@@ -71,7 +71,7 @@ export const PIP_ENABLED = 'pip.enabled';
 
 /**
  * Flag indicating if raise hand feature should be enabled.
- * Default: auto-detected.
+ * Default: enabled.
  */
 export const RAISE_HAND_ENABLED = 'raise-hand.enabled';
 
