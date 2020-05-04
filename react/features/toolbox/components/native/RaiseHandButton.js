@@ -97,12 +97,14 @@ class RaiseHandButton extends AbstractButton<Props, *> {
  * Maps part of the Redux state to the props of this component.
  *
  * @param {Object} state - The Redux state.
+ * @param {Object} ownProps - The properties explicitly passed to the component instance.
  * @private
  * @returns {Props}
  */
-function _mapStateToProps(state): Object {
+function _mapStateToProps(state, ownProps): Object {
     const _localParticipant = getLocalParticipant(state);
-    const visible = getFeatureFlag(state, RAISE_HAND_ENABLED, true);
+    const enabled = getFeatureFlag(state, RAISE_HAND_ENABLED, true);
+    const { visible = enabled } = ownProps; 
 
     return {
         _localParticipant,
