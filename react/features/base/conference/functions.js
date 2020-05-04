@@ -186,9 +186,9 @@ export function getConferenceNameForTitle(stateful: Function | Object) {
 */
 export function getConferenceTimestamp(stateful: Function | Object): number {
     const state = toState(stateful);
-    //conferenceTimestamp is from JVB,  so we can not get the time due to we are under p2p mode.
+    // conferenceTimestamp is from Prosody server, it returns the "room" initialize time as the conference start time. it is not a correct start time.
     const { conferenceTimestamp, conferenceStartedTime } = state['features/base/conference'];
-    return conferenceTimestamp || conferenceStartedTime;
+    return conferenceStartedTime;
 }
 
 /**
