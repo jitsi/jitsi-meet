@@ -2,6 +2,8 @@
 
 import { NativeModules } from 'react-native';
 
+import DefaultPreference from 'react-native-default-preference';
+
 export * from './functions.any';
 
 const { AudioMode } = NativeModules;
@@ -18,4 +20,9 @@ export function handleCallIntegrationChange(disabled: boolean) {
     if (AudioMode.setUseConnectionService) {
         AudioMode.setUseConnectionService(!disabled);
     }
+}
+
+export function handleCrashReportingChange(disabled: boolean) {
+    DefaultPreference.setName('jitsi-default-preferences').then(
+        DefaultPreference.set('isCrashReportingDisabled', disabled.toString()));
 }

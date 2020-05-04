@@ -10,6 +10,7 @@ import { MiddlewareRegistry } from '../redux';
 
 import { SETTINGS_UPDATED } from './actionTypes';
 import { handleCallIntegrationChange } from './functions';
+import { handleCrashReportingChange } from './functions';
 
 /**
  * The middleware of the feature base/settings. Distributes changes to the state
@@ -30,6 +31,7 @@ MiddlewareRegistry.register(store => next => action => {
         _maybeHandleCallIntegrationChange(action);
         _maybeSetAudioOnly(store, action);
         _updateLocalParticipant(store, action);
+        _maybeCrashReportingChange(action);
         break;
     case SET_LOCATION_URL:
         _updateLocalParticipantFromUrl(store);
@@ -81,6 +83,12 @@ function _mapSettingsFieldToParticipant(settingsField) {
 function _maybeHandleCallIntegrationChange({ settings: { disableCallIntegration } }) {
     if (typeof disableCallIntegration === 'boolean') {
         handleCallIntegrationChange(disableCallIntegration);
+    }
+}
+
+function _maybeCrashReportingChange({ settings: { disableCrashReporting } }) {
+ if (typeof disableCrashReporting === 'boolean') {
+        handleCrashReportingChange(disableCrashReporting);
     }
 }
 
