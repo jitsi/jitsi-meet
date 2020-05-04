@@ -70,6 +70,12 @@ export const MEETING_PASSWORD_ENABLED = 'meeting-password.enabled';
 export const PIP_ENABLED = 'pip.enabled';
 
 /**
+ * Flag indicating if raise hand feature should be enabled.
+ * Default: enabled.
+ */
+export const RAISE_HAND_ENABLED = 'raise-hand.enabled';
+
+/**
  * Flag indicating if recording should be enabled.
  * Default: auto-detected.
  */
