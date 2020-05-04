@@ -125,14 +125,14 @@ class OverflowMenu extends PureComponent<Props, State> {
                 onCancel = { this._onCancel }
                 onSwipe = { this._onSwipe }
                 renderHeader = { this._renderMenuExpandToggle }>
-                <AudioRouteButton { ...buttonProps } />
-                <InviteButton { ...buttonProps } />
-                <AudioOnlyButton { ...buttonProps } />
                 <RaiseHandButton { ...buttonProps } />
+                <TileViewButton { ...buttonProps } />
+                <ToggleCameraButton { ...buttonProps } />
+                <InviteButton { ...buttonProps } />
                 <MoreOptionsButton { ...moreOptionsButtonProps } />
                 <Collapsible collapsed = { !showMore }>
-                    <ToggleCameraButton { ...buttonProps } />
-                    <TileViewButton { ...buttonProps } />
+                    <AudioOnlyButton { ...buttonProps } />
+                    <AudioRouteButton { ...buttonProps } />
                     <RecordButton { ...buttonProps } />
                     <LiveStreamButton { ...buttonProps } />
                     <RoomLockButton { ...buttonProps } />
@@ -159,7 +159,7 @@ class OverflowMenu extends PureComponent<Props, State> {
                     styles.expandMenuContainer
                 ] }>
                 <TouchableOpacity onPress = { this._onToggleMenu }>
-                    { /* $FlowFixMeProps */ }
+                    { /* $FlowFixMeProps */}
                     <IconDragHandle style = { this.props._bottomSheetStyles.expandIcon } />
                 </TouchableOpacity>
             </View>
