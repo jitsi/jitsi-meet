@@ -6,6 +6,8 @@ all.css
 *css.map
 .remote-sync.json
 .sync-config.cson
+.env
+jitsi-meet.tar.bz2
 
 # CocoaPods
 Pods/
@@ -83,4 +85,3 @@ android/app/dropbox.key
 android/app/google-services.json
 ios/app/dropbox.key
 ios/app/GoogleService-Info.plist
-
