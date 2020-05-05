@@ -440,11 +440,11 @@ class API {
     }
 
     /**
-     * Notify external application (if API is enabled) that user role has
-     * changed.
+     * Notify external application (if API is enabled) that the user role
+     * has changed.
      *
      * @param {string} id - User id.
-     * @param (string) role - User's new role.
+     * @param (string) role - The new user role.
      * @returns {void}
      */
     notifyUserRoleChanged(id: string, role: string) {
