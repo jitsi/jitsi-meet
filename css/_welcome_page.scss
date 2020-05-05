@@ -4,7 +4,7 @@ body.welcome-page {
 }
 
 .welcome {
-    background-image: $welcomePageBackground;
+    background-color: $welcomePageBackgroundColor;
     display: flex;
     flex-direction: column;
     font-family: $welcomePageFontFamily;
@@ -102,7 +102,7 @@ body.welcome-page {
             text-align: left;
             min-height: 354px;
             width: 710px;
-            background: #75A7E7;
+            background: linear-gradient(135deg,#aeaefd 0%,#aed0fd 100%);
             display: $welcomePageTabContainerDisplay;
             flex-direction: column;
 
@@ -154,7 +154,7 @@ body.welcome-page {
         height: $welcomePageButtonHeight;
         font-size: $welcomePageButtonFontSize;
         font-weight: $welcomePageButtonFontWeight;
-        background: #0074E0;
+        background: #3a4a66;
         border-radius: $welcomePageButtonBorderRadius;
         color: #FFFFFF;
         text-align: center;
