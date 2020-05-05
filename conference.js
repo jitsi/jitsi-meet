@@ -2093,6 +2093,7 @@ export default {
                 logger.info(`My role changed, new role: ${role}`);
 
                 APP.store.dispatch(localParticipantRoleChanged(role));
+                APP.API.notifyUserRoleChanged(id, role);
             } else {
                 APP.store.dispatch(participantRoleChanged(id, role));
             }

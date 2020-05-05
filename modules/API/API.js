@@ -440,6 +440,22 @@ class API {
     }
 
     /**
+     * Notify external application (if API is enabled) that the user role
+     * has changed.
+     *
+     * @param {string} id - User id.
+     * @param {string} role - The new user role.
+     * @returns {void}
+     */
+    notifyUserRoleChanged(id: string, role: string) {
+        this._sendEvent({
+            name: 'participant-role-changed',
+            id,
+            role
+        });
+    }
+
+    /**
      * Notify external application (if API is enabled) that user changed their
      * avatar.
      *
