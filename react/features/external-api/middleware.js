@@ -157,7 +157,7 @@ MiddlewareRegistry.register(store => next => action => {
 
         break;
     }
-    
+
     case PARTICIPANT_ROLE_CHANGED:
         APP.API.notifyUserRoleChanged(action.participant.id, action.participant.role);
         break;

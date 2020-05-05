@@ -444,7 +444,7 @@ class API {
      * changed.
      *
      * @param {string} id - User id.
-     * @param (string) role - user's new role.
+     * @param (string) role - User's new role.
      * @returns {void}
      */
     notifyUserRoleChanged(id: string, role: string) {
@@ -454,7 +454,7 @@ class API {
             role
         });
     }
-    
+
     /**
      * Notify external application (if API is enabled) that user changed their
      * avatar.
