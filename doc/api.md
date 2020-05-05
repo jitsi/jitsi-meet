@@ -465,6 +465,14 @@ changes. The listener will receive an object with the following structure:
 }
 ```
 
+* **participantRoleChanged** - event notification fired when the role of the local user has changed (none, moderator, participant). The listener will receive an object with the following structure:
+```javascript
+{
+    id: string // the id of the participant
+    role: string // the new role of the participant
+}
+```
+
 * **passwordRequired** - event notifications fired when failing to join a room because it has a password.
 
 * **videoConferenceJoined** - event notifications fired when the local user has joined the video conference. The listener will receive an object with the following structure:
