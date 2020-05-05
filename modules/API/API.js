@@ -444,7 +444,7 @@ class API {
      * has changed.
      *
      * @param {string} id - User id.
-     * @param (string) role - The new user role.
+     * @param {string} role - The new user role.
      * @returns {void}
      */
     notifyUserRoleChanged(id: string, role: string) {
