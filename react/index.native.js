@@ -1,17 +1,8 @@
 // @flow
 
-// FIXME The bundler-related (and the browser-related) polyfills were born at
-// the very early days of prototyping the execution of lib-jitsi-meet on
-// react-native. Today, the feature base/lib-jitsi-meet should not be
-// responsible for such polyfills because it is not the only feature relying on
-// them. Additionally, the polyfills are usually necessary earlier than the
-// execution of base/lib-jitsi-meet (which is understandable given that the
-// polyfills are globals). The remaining problem to be solved here is where to
-// collect the polyfills' files.
-import './features/base/lib-jitsi-meet/native/polyfills-bundler';
-
-// Polyfill localStorage early so any library that requires it sees it available.
-import './features/base/storage/native/polyfills-browser';
+// Apply all necessary polyfills as early as possible to make sure anything imported henceforth
+// sees them.
+import './features/mobile/polyfills';
 
 import React, { PureComponent } from 'react';
 import { AppRegistry } from 'react-native';
