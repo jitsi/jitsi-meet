@@ -12,6 +12,7 @@ services:
             - ${CONFIG}/web:/config:Z
             - ${CONFIG}/web/letsencrypt:/etc/letsencrypt:Z
             - ${CONFIG}/transcripts:/usr/share/jitsi-meet/transcripts:Z
+            - ${JITSI_SOURCE_PATH}/config.js:/config/config.js
             - ${JITSI_SOURCE_PATH}/interface_config.js:/config/interface_config.js
             - ${JITSI_SOURCE_PATH}:/usr/share/jitsi-meet
         environment:
