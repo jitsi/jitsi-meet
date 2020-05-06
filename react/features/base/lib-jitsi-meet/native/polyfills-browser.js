@@ -3,14 +3,6 @@ import '@webcomponents/url'; // Polyfill for URL constructor
 
 import { Platform } from '../../react';
 
-// XXX The library lib-jitsi-meet utilizes window.localStorage at the time of
-// this writing and, consequently, the browser-related polyfills implemented
-// here by the feature base/lib-jitsi-meet for the purposes of the library
-// lib-jitsi-meet are incomplete without the Web Storage API! Should the library
-// lib-jitsi-meet (and its dependencies) stop utilizing window.localStorage,
-// the following import may be removed:
-import '../../storage';
-
 /**
  * Gets the first common prototype of two specified Objects (treating the
  * objects themselves as prototypes as well).
