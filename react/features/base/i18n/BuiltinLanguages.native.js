@@ -157,6 +157,12 @@ const _LANGUAGES = {
         main: require('../../../../lang/main-sv')
     },
 
+    // Slovenian
+    'sl': {
+        languages: require('../../../../lang/languages-sl'),
+        main: require('../../../../lang/main-sl')
+    },
+
     // Turkish
     'tr': {
         languages: require('../../../../lang/languages-tr'),
