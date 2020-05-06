@@ -10,6 +10,9 @@
 // collect the polyfills' files.
 import './features/base/lib-jitsi-meet/native/polyfills-bundler';
 
+// Polyfill localStorage early so any library that requires it sees it available.
+import './features/base/storage/native/polyfills-browser';
+
 import React, { PureComponent } from 'react';
 import { AppRegistry } from 'react-native';
 
