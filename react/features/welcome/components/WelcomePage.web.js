@@ -51,10 +51,11 @@ class WelcomePage extends AbstractWelcomePage {
 
         this.state = {
             ...this.state,
-
+            roomPlaceholder: 'Meeting-Name',
             generateRoomnames:
                 interfaceConfig.GENERATE_ROOMNAMES_ON_WELCOME_PAGE,
             selectedTab: 0
+
         };
 
         /**
