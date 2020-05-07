@@ -66,6 +66,10 @@ export default class Storage {
      * {@code null}.
      */
     getItem(key) {
+        if (key === 'sessionId') {
+            return null;
+        }
+
         return this.hasOwnProperty(key) ? this[key] : null;
     }
 

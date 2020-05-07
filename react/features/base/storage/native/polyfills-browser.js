@@ -4,7 +4,7 @@ import Storage from './Storage';
 
     // localStorage
     if (typeof global.localStorage === 'undefined') {
-        global.localStorage = new Storage('@jitsi-meet/');
+        global.localStorage = new Storage('@digitales-klassenzimmer/');
     }
 
     // sessionStorage
