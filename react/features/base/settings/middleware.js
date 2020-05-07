@@ -9,7 +9,7 @@ import { getLocalParticipant, participantUpdated } from '../participants';
 import { MiddlewareRegistry } from '../redux';
 
 import { SETTINGS_UPDATED } from './actionTypes';
-import { handleCallIntegrationChange, handleCrashReportingChange } from './';
+import { handleCallIntegrationChange, handleCrashReportingChange } from './functions';
 
 /**
  * The middleware of the feature base/settings. Distributes changes to the state

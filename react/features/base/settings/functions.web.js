@@ -41,3 +41,13 @@ export function getCurrentOutputDeviceId(state: Object) {
  */
 export function handleCallIntegrationChange(disabled: boolean) { // eslint-disable-line no-unused-vars
 }
+
+/**
+ * Handles changes to the `disableCrashReporting` setting.
+ * Noop on web.
+ *
+ * @param {boolean} disabled - Whether crash reporting is disabled or not.
+ * @returns {void}
+ */
+export function handleCrashReportingChange(disabled: boolean) { // eslint-disable-line no-unused-vars
+}

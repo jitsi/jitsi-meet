@@ -72,6 +72,7 @@ dependencies {
     implementation project(':react-native-calendar-events')
     implementation project(':react-native-community-async-storage')
     implementation project(':react-native-community_netinfo')
+    implementation project(':react-native-default-preference')
     implementation project(':react-native-immersive')
     implementation project(':react-native-keep-awake')
     implementation project(':react-native-linear-gradient')
@@ -79,7 +80,6 @@ dependencies {
     implementation project(':react-native-svg')
     implementation project(':react-native-webrtc')
     implementation project(':react-native-webview')
-    implementation project(':react-native-default-preference')
 
     testImplementation 'junit:junit:4.12'
 }

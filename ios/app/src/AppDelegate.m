@@ -48,8 +48,8 @@
     // Initialize Crashlytics and Firebase if a valid GoogleService-Info.plist file was provided.
     if ([FIRUtilities appContainsRealServiceInfoPlist] && ![jitsiMeet isCrashReportingDisabled]) {
         NSLog(@"Enabling Crashlytics and Firebase");
-    [FIRApp configure];
-    [Fabric with:@[[Crashlytics class]]];
+        [FIRApp configure];
+        [Fabric with:@[[Crashlytics class]]];
     }
 
     [jitsiMeet application:application didFinishLaunchingWithOptions:launchOptions];
