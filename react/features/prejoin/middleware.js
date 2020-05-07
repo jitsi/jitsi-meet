@@ -6,11 +6,10 @@ import {
     PREJOIN_START_CONFERENCE
 } from './actionTypes';
 import { setPrejoinAudioMuted, setPrejoinVideoMuted } from './actions';
-import { SET_AUDIO_MUTED, SET_VIDEO_MUTED } from '../base/media';
-import { participantUpdated, getLocalParticipant } from '../base/participants';
-import { MiddlewareRegistry } from '../base/redux';
 import { updateSettings } from '../base/settings';
-import { getAllPrejoinConfiguredTracks, getPrejoinName } from './functions';
+import { SET_AUDIO_MUTED, SET_VIDEO_MUTED } from '../base/media';
+import { MiddlewareRegistry } from '../base/redux';
+import { getAllPrejoinConfiguredTracks } from './functions';
 
 declare var APP: Object;
 
@@ -51,10 +50,16 @@ MiddlewareRegistry.register(store => next => async action => {
     }
 
     case PREJOIN_START_CONFERENCE: {
-        const { dispatch, getState } = store;
+        const { getState, dispatch } = store;
+        const state = getState();
+        const { userSelectedSkipPrejoin } = state['features/prejoin'];
 
-        _syncParticipantName(dispatch, getState);
-        const tracks = await getAllPrejoinConfiguredTracks(getState());
+        userSelectedSkipPrejoin && dispatch(updateSettings({
+            userSelectedSkipPrejoin
+        }));
+
+
+        const tracks = await getAllPrejoinConfiguredTracks(state);
 
         APP.conference.prejoinStart(tracks);
 
@@ -70,26 +75,8 @@ MiddlewareRegistry.register(store => next => async action => {
         store.dispatch(setPrejoinVideoMuted(Boolean(action.muted)));
         break;
     }
+
     }
 
     return next(action);
 });
-
-/**
- * Sets the local participant name if one is present.
- *
- * @param {Function} dispatch - The redux dispatch function.
- * @param {Function} getState - Gets the current state.
- * @returns {undefined}
- */
-function _syncParticipantName(dispatch, getState) {
-    const state = getState();
-    const name = getPrejoinName(state);
-
-    name && dispatch(
-            participantUpdated({
-                ...getLocalParticipant(state),
-                name
-            }),
-    );
-}

@@ -6,11 +6,11 @@ import {
     ADD_PREJOIN_VIDEO_TRACK,
     PREJOIN_START_CONFERENCE,
     SET_DEVICE_STATUS,
+    SET_SKIP_PREJOIN,
     SET_JOIN_BY_PHONE_DIALOG_VISIBLITY,
     SET_PREJOIN_AUDIO_DISABLED,
     SET_PREJOIN_AUDIO_MUTED,
     SET_PREJOIN_DEVICE_ERRORS,
-    SET_PREJOIN_NAME,
     SET_PREJOIN_PAGE_VISIBILITY,
     SET_PREJOIN_VIDEO_DISABLED,
     SET_PREJOIN_VIDEO_MUTED
@@ -273,6 +273,18 @@ export function setDeviceStatusWarning(deviceStatusText: string) {
     };
 }
 
+/**
+ * Sets the visibility of the prejoin page for future uses.
+ *
+ * @param {boolean} value - The visibility value.
+ * @returns {Object}
+ */
+export function setSkipPrejoin(value: boolean) {
+    return {
+        type: SET_SKIP_PREJOIN,
+        value
+    };
+}
 
 /**
  * Action used to set the visiblitiy of the 'JoinByPhoneDialog'.
@@ -296,19 +308,6 @@ export function setJoinByPhoneDialogVisiblity(value: boolean) {
 export function setPrejoinDeviceErrors(value: Object) {
     return {
         type: SET_PREJOIN_DEVICE_ERRORS,
-        value
-    };
-}
-
-/**
- * Action used to set the name of the guest user.
- *
- * @param {string} value - The name.
- * @returns {Object}
- */
-export function setPrejoinName(value: string) {
-    return {
-        type: SET_PREJOIN_NAME,
         value
     };
 }

@@ -147,16 +147,6 @@ export function isPrejoinAudioMuted(state: Object): boolean {
 }
 
 /**
- * Selector for getting the name that the user filled while configuring.
- *
- * @param {Object} state - The state of the app.
- * @returns {boolean}
- */
-export function getPrejoinName(state: Object): string {
-    return state['features/prejoin'].name;
-}
-
-/**
  * Selector for getting the mute status of the prejoin video.
  *
  * @param {Object} state - The state of the app.
@@ -214,7 +204,8 @@ export function isJoinByPhoneDialogVisible(state: Object): boolean {
  * @returns {boolean}
  */
 export function isPrejoinPageEnabled(state: Object): boolean {
-    return state['features/base/config'].prejoinPageEnabled;
+    return state['features/base/config'].prejoinPageEnabled
+        && !state['features/base/settings'].userSelectedSkipPrejoin;
 }
 
 /**

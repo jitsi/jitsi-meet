@@ -18,7 +18,7 @@ import {
     SET_AUDIO_INPUT_DEVICE,
     SET_VIDEO_INPUT_DEVICE
 } from './actionTypes';
-import { replaceAudioTrackById, replaceVideoTrackById } from '../../prejoin/actions';
+import { replaceAudioTrackById, replaceVideoTrackById, setDeviceStatusWarning } from '../../prejoin/actions';
 import { isPrejoinPageVisible } from '../../prejoin/functions';
 import { showNotification, showWarningNotification } from '../../notifications';
 import { updateSettings } from '../settings';
@@ -65,13 +65,18 @@ MiddlewareRegistry.register(store => next => action => {
             || JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP
                 .camera[JitsiTrackErrors.GENERAL];
         const additionalCameraErrorMsg = cameraJitsiTrackErrorMsg ? null : message;
+        const titleKey = name === JitsiTrackErrors.PERMISSION_DENIED
+            ? 'deviceError.cameraPermission' : 'deviceError.cameraError';
 
         store.dispatch(showWarningNotification({
             description: additionalCameraErrorMsg,
             descriptionKey: cameraErrorMsg,
-            titleKey: name === JitsiTrackErrors.PERMISSION_DENIED
-                ? 'deviceError.cameraPermission' : 'deviceError.cameraError'
+            titleKey
         }));
+
+        if (isPrejoinPageVisible(store.getState())) {
+            store.dispatch(setDeviceStatusWarning(titleKey));
+        }
 
         break;
     }
@@ -88,14 +93,19 @@ MiddlewareRegistry.register(store => next => action => {
             || JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP
                 .microphone[JitsiTrackErrors.GENERAL];
         const additionalMicErrorMsg = micJitsiTrackErrorMsg ? null : message;
+        const titleKey = name === JitsiTrackErrors.PERMISSION_DENIED
+            ? 'deviceError.microphonePermission'
+            : 'deviceError.microphoneError';
 
         store.dispatch(showWarningNotification({
             description: additionalMicErrorMsg,
             descriptionKey: micErrorMsg,
-            titleKey: name === JitsiTrackErrors.PERMISSION_DENIED
-                ? 'deviceError.microphonePermission'
-                : 'deviceError.microphoneError'
+            titleKey
         }));
+
+        if (isPrejoinPageVisible(store.getState())) {
+            store.dispatch(setDeviceStatusWarning(titleKey));
+        }
 
         break;
     }

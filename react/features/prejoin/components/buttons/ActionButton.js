@@ -1,6 +1,8 @@
 // @flow
 
 import React from 'react';
+import { Icon, IconArrowDown } from '../../../base/icons';
+
 const classNameByType = {
     primary: 'prejoin-btn--primary',
     secondary: 'prejoin-btn--secondary',
@@ -20,6 +22,11 @@ type Props = {
     className?: string,
 
     /**
+     * If the button has options.
+     */
+    hasOptions?: boolean,
+
+    /**
      * The type of th button: primary, secondary, text.
      */
     type: string,
@@ -28,6 +35,11 @@ type Props = {
      * OnClick button handler.
      */
     onClick: Function,
+
+    /**
+     * Click handler for options.
+     */
+    onOptionsClick?: Function
 };
 
 /**
@@ -35,7 +47,7 @@ type Props = {
  *
  * @returns {ReactElement}
  */
-function ActionButton({ children, className, type, onClick }: Props) {
+function ActionButton({ children, className, hasOptions, type, onClick, onOptionsClick }: Props) {
     const ownClassName = `prejoin-btn ${classNameByType[type]}`;
     const cls = className ? `${className} ${ownClassName}` : ownClassName;
 
@@ -44,6 +56,15 @@ function ActionButton({ children, className, type, onClick }: Props) {
             className = { cls }
             onClick = { onClick }>
             {children}
+            {hasOptions && <div
+                className = 'prejoin-btn-options'
+                onClick = { onOptionsClick }>
+                <Icon
+                    className = 'prejoin-btn-icon'
+                    size = { 14 }
+                    src = { IconArrowDown } />
+            </div>
+            }
         </div>
     );
 }
