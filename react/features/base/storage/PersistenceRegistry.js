@@ -1,6 +1,7 @@
 // @flow
 
 import md5 from 'js-md5';
+import { jitsiLocalStorage } from 'js-utils';
 
 import logger from './logger';
 
@@ -63,8 +64,7 @@ class PersistenceRegistry {
 
         // legacy
         if (Object.keys(filteredPersistedState).length === 0) {
-            const { localStorage } = window;
-            let persistedState = localStorage.getItem(PERSISTED_STATE_NAME);
+            let persistedState = jitsiLocalStorage.getItem(PERSISTED_STATE_NAME);
 
             if (persistedState) {
                 try {
@@ -82,7 +82,7 @@ class PersistenceRegistry {
                 // Store into the new format and delete the old format so that
                 // it's not used again.
                 this.persistState(filteredPersistedState);
-                localStorage.removeItem(PERSISTED_STATE_NAME);
+                jitsiLocalStorage.removeItem(PERSISTED_STATE_NAME);
             }
         }
 
@@ -110,18 +110,12 @@ class PersistenceRegistry {
         if (checksum !== this._checksum) {
             for (const subtreeName of Object.keys(filteredState)) {
                 try {
-                    window.localStorage.setItem(
-                        subtreeName,
-                        JSON.stringify(filteredState[subtreeName]));
+                    jitsiLocalStorage.setItem(subtreeName, JSON.stringify(filteredState[subtreeName]));
                 } catch (error) {
-                    logger.error(
-                        'Error persisting redux subtree',
-                        subtreeName,
-                        error);
+                    logger.error('Error persisting redux subtree', subtreeName, error);
                 }
             }
-            logger.info(
-                `redux state persisted. ${this._checksum} -> ${checksum}`);
+            logger.info(`redux state persisted. ${this._checksum} -> ${checksum}`);
             this._checksum = checksum;
         }
     }
@@ -225,7 +219,7 @@ class PersistenceRegistry {
      * @returns {Object}
      */
     _getPersistedSubtree(subtreeName, subtreeConfig, subtreeDefaults) {
-        let persistedSubtree = window.localStorage.getItem(subtreeName);
+        let persistedSubtree = jitsiLocalStorage.getItem(subtreeName);
 
         if (persistedSubtree) {
             try {

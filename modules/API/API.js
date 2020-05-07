@@ -11,6 +11,7 @@ import {
     setSubject
 } from '../../react/features/base/conference';
 import { parseJWTFromURLParams } from '../../react/features/base/jwt';
+import { setE2EEKey } from '../../react/features/e2ee';
 import { invite } from '../../react/features/invite';
 import { toggleTileView } from '../../react/features/video-layout';
 import { getJitsiMeetTransport } from '../transport';
@@ -166,6 +167,10 @@ function initCommands() {
             } catch (err) {
                 logger.error('Failed sending endpoint text message', err);
             }
+        },
+        'e2ee-key': key => {
+            logger.debug('Set E2EE key command received');
+            APP.store.dispatch(setE2EEKey(key));
         }
     };
     transport.on('event', ({ data, name }) => {
@@ -431,6 +436,22 @@ class API {
         this._sendEvent({
             name: 'participant-left',
             id
+        });
+    }
+
+    /**
+     * Notify external application (if API is enabled) that the user role
+     * has changed.
+     *
+     * @param {string} id - User id.
+     * @param {string} role - The new user role.
+     * @returns {void}
+     */
+    notifyUserRoleChanged(id: string, role: string) {
+        this._sendEvent({
+            name: 'participant-role-changed',
+            id,
+            role
         });
     }
 

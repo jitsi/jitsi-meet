@@ -39,6 +39,10 @@ server {
     index index.html index.htm;
     error_page 404 /static/404.html;
 
+    gzip on;
+    gzip_types text/plain text/css application/javascript application/json;
+    gzip_vary on;
+
     location = /config.js {
         alias /etc/jitsi/meet/jitsi-meet.example.com-config.js;
     }

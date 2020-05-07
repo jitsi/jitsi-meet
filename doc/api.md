@@ -85,14 +85,15 @@ const options = {
 const api = new JitsiMeetExternalAPI(domain, options);
  ```
 
-You can set the userInfo(email) for the call:
+You can set the userInfo(email, display name) for the call:
 
 ```javascript
 var domain = "meet.jit.si";
 var options = {
     ...
     userInfo: {
-        email: 'email@jitsiexamplemail.com'
+        email: 'email@jitsiexamplemail.com',
+        displayName: 'John Doe'
     }
 }
 var api = new JitsiMeetExternalAPI(domain, options);
@@ -461,6 +462,14 @@ changes. The listener will receive an object with the following structure:
 ```javascript
 {
     id: string // the id of the participant
+}
+```
+
+* **participantRoleChanged** - event notification fired when the role of the local user has changed (none, moderator, participant). The listener will receive an object with the following structure:
+```javascript
+{
+    id: string // the id of the participant
+    role: string // the new role of the participant
 }
 ```
 

@@ -41,3 +41,5 @@ Work in progress.
 * [Enabling TURN](https://github.com/jitsi/jitsi-meet/blob/master/doc/turn.md)
 * [Networking FAQ](https://github.com/jitsi/jitsi-meet/blob/master/doc/faq.md)
 * [Cloud APIs](https://github.com/jitsi/jitsi-meet/blob/master/doc/cloud-api.md)
+* [Manual Installation](https://github.com/jitsi/jitsi-meet/blob/master/doc/manual-install.md)
+* [Scalable Installation](https://github.com/jitsi/jitsi-meet/blob/master/doc/scalable-installation.md)

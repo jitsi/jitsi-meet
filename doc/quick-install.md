@@ -22,14 +22,22 @@ Finally on the same machine test that you can ping the FQDN with: `ping "$(hostn
 
 ### Add the Jitsi package repository
 ```sh
-echo 'deb https://download.jitsi.org stable/' >> /etc/apt/sources.list.d/jitsi-stable.list
+echo 'deb https://download.jitsi.org stable/' | sudo tee /etc/apt/sources.list.d/jitsi-stable.list
 wget -qO -  https://download.jitsi.org/jitsi-key.gpg.key | sudo apt-key add -
 ```
+### Open ports in your firewall
+
+Open the following ports in your firewall, to allow traffic to the machine running jitsi:
+
+ - 80 TCP
+ - 443 TCP
+ - 10000 UDP
+
 
 ### Install Jitsi Meet
 
 _Note_: The installer will check if [Nginx](https://nginx.org/) or [Apache](https://httpd.apache.org/) is present (in that order) and configure a virtualhost within the web server it finds to serve Jitsi Meet. If none of the above is found it then defaults to Nginx.
-If you are already running Nginx on port 443 on the same machine you better skip the turnserver configuration as it will conflict with your current port 443, so use the command `apt install --no-install-recommends jitsi-meet`.
+If you are already running Nginx on port 443 on the same machine turnserver configuration will be skipped as it will conflict with your current port 443.
 
 ```sh
 # Ensure support is available for apt repositories served via HTTPS
@@ -50,7 +58,7 @@ This hostname (or IP address) will be used for virtualhost configuration inside 
 
 In order to have encrypted communications, you need a [TLS certificate](https://en.wikipedia.org/wiki/Transport_Layer_Security). The easiest way is to use [Let's Encrypt](https://letsencrypt.org/).
 
-_Note_: Jitsi Meet mobile apps *require* a valid certificate signed by a trusted [Certificate Authority](https://en.wikipedia.org/wiki/Certificate_authority) and will not be able to connect to your server if you choose a self-signed certificate.
+_Note_: Jitsi Meet mobile apps *require* a valid certificate signed by a trusted [Certificate Authority](https://en.wikipedia.org/wiki/Certificate_authority) (such as a Let's Encrypt certificate) and will not be able to connect to your server if you choose a self-signed certificate.
 
 Simply run the following in your shell:
 
