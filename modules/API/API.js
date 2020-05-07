@@ -19,7 +19,7 @@ import {
     processExternalDeviceRequest
 } from '../../react/features/device-selection/functions';
 import { isEnabled as isDropboxEnabled } from '../../react/features/dropbox';
-import { setE2EEKey } from '../../react/features/e2ee';
+import { toggleE2EE } from '../../react/features/e2ee/actions';
 import { invite } from '../../react/features/invite';
 import { toggleLobbyMode } from '../../react/features/lobby/actions.web';
 import { RECORDING_TYPES } from '../../react/features/recording/constants';
@@ -191,9 +191,9 @@ function initCommands() {
                 logger.error('Failed sending endpoint text message', err);
             }
         },
-        'e2ee-key': key => {
-            logger.debug('Set E2EE key command received');
-            APP.store.dispatch(setE2EEKey(key));
+        'toggle-e2ee': enabled => {
+            logger.debug('Toggle E2EE key command received');
+            APP.store.dispatch(toggleE2EE(enabled));
         },
         'set-video-quality': frameHeight => {
             logger.debug('Set video quality command received');

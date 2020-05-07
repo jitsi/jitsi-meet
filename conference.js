@@ -110,7 +110,6 @@ import {
 } from './react/features/base/util';
 import { showDesktopPicker } from './react/features/desktop-picker';
 import { appendSuffix } from './react/features/display-name';
-import { setE2EEKey } from './react/features/e2ee';
 import {
     maybeOpenFeedbackDialog,
     submitFeedback
@@ -746,8 +745,6 @@ export default {
 
         this.roomName = roomName;
 
-        window.addEventListener('hashchange', this.onHashChange.bind(this), false);
-
         try {
             // Initialize the device list first. This way, when creating tracks
             // based on preferred devices, loose label matching can be done in
@@ -1237,34 +1234,6 @@ export default {
             bubbles: true,
             cancelable: false
         }));
-    },
-
-    /**
-     * Handled location hash change events.
-     */
-    onHashChange() {
-        const items = {};
-        const parts = window.location.hash.substr(1).split('&');
-
-        for (const part of parts) {
-            const param = part.split('=');
-            const key = param[0];
-
-            if (!key) {
-                continue; // eslint-disable-line no-continue
-            }
-
-            items[key] = param[1];
-        }
-
-        if (typeof items.e2eekey !== 'undefined') {
-            APP.store.dispatch(setE2EEKey(items.e2eekey));
-
-            // Clean URL in browser history.
-            const cleanUrl = window.location.href.split('#')[0];
-
-            history.replaceState(history.state, document.title, cleanUrl);
-        }
     },
 
     /**
