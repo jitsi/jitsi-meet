@@ -275,6 +275,10 @@ api.executeCommand('avatarUrl', 'https://avatars0.githubusercontent.com/u/367164
 ```javascript
 api.executeCommand('receiverParticipantId', 'text');
 ```
+* **setVideoQuality** - Sets the send and receive video resolution. This command requires one argument - the resolution height to be set.
+```javascript
+api.executeCommand('setVideoQuality', 720);
+```
 
 You can also execute multiple commands using the `executeCommands` method:
 ```javascript
