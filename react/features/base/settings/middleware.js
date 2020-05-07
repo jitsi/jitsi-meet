@@ -3,7 +3,7 @@ import _ from 'lodash';
 
 import { APP_WILL_MOUNT } from '../app';
 import { setAudioOnly } from '../audio-only';
-import parseURLParams from '../config/parseURLParams'; // minimize imports to avoid circular imports
+import { parseURLParams } from '../util';
 import { SET_LOCATION_URL } from '../connection/actionTypes'; // minimize imports to avoid circular imports
 import { getLocalParticipant, participantUpdated } from '../participants';
 import { MiddlewareRegistry } from '../redux';
