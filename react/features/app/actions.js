@@ -13,8 +13,11 @@ import {
 } from '../base/config';
 import { connect, disconnect, setLocationURL } from '../base/connection';
 import { loadConfig } from '../base/lib-jitsi-meet';
-import { createDesiredLocalTracks } from '../base/tracks';
+import { MEDIA_TYPE } from '../base/media';
+import { toState } from '../base/redux';
+import { createDesiredLocalTracks, isLocalVideoTrackMuted, isLocalTrackMuted } from '../base/tracks';
 import {
+    addHashParamsToURL,
     getBackendSafeRoomName,
     getLocationContextRoot,
     parseURIString,
@@ -191,16 +194,40 @@ export function reloadNow() {
     return (dispatch: Dispatch<Function>, getState: Function) => {
         dispatch(setFatalError(undefined));
 
-        const { locationURL } = getState()['features/base/connection'];
+        const state = getState();
+        const { locationURL } = state['features/base/connection'];
+
+        // Preserve the local tracks muted state after the reload.
+        const newURL = addTrackStateToURL(locationURL, state);
 
         logger.info(`Reloading the conference using URL: ${locationURL}`);
 
         if (navigator.product === 'ReactNative') {
-            dispatch(appNavigate(toURLString(locationURL)));
+            dispatch(appNavigate(toURLString(newURL)));
         } else {
             dispatch(reloadWithStoredParams());
         }
     };
+}
+
+/**
+ * Adds the current track state to the passed URL.
+ *
+ * @param {URL} url - The URL that will be modified.
+ * @param {Function|Object} stateful - The redux store or {@code getState} function.
+ * @returns {URL} - Returns the modified URL.
+ */
+function addTrackStateToURL(url, stateful) {
+    const state = toState(stateful);
+    const tracks = state['features/base/tracks'];
+    const isVideoMuted = isLocalVideoTrackMuted(tracks);
+    const isAudioMuted = isLocalTrackMuted(tracks, MEDIA_TYPE.AUDIO);
+
+    return addHashParamsToURL(new URL(url), { // use new URL object in order to not pollute the passed parameter.
+        'config.startWithAudioMuted': isAudioMuted,
+        'config.startWithVideoMuted': isVideoMuted
+    });
+
 }
 
 /**
@@ -210,17 +237,20 @@ export function reloadNow() {
  */
 export function reloadWithStoredParams() {
     return (dispatch: Dispatch<any>, getState: Function) => {
-        const { locationURL } = getState()['features/base/connection'];
+        const state = getState();
+        const { locationURL } = state['features/base/connection'];
+
+        // Preserve the local tracks muted states.
+        const newURL = addTrackStateToURL(locationURL, state);
         const windowLocation = window.location;
         const oldSearchString = windowLocation.search;
 
-        windowLocation.replace(locationURL.toString());
+        windowLocation.replace(newURL.toString());
 
-        if (window.self !== window.top
-            && locationURL.search === oldSearchString) {
+        if (newURL.search === oldSearchString) {
             // NOTE: Assuming that only the hash or search part of the URL will
             // be changed!
-            // location.reload will not trigger redirect/reload for iframe when
+            // location.replace will not trigger redirect/reload when
             // only the hash params are changed. That's why we need to call
             // reload in addition to replace.
             windowLocation.reload();
