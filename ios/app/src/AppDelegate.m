@@ -19,7 +19,6 @@
 #import "FIRUtilities.h"
 #import "Types.h"
 
-@import Crashlytics;
 @import Fabric;
 @import Firebase;
 @import JitsiMeet;
@@ -35,7 +34,7 @@
     JitsiMeet *jitsiMeet = [JitsiMeet sharedInstance];
 
     jitsiMeet.conferenceActivityType = JitsiMeetConferenceActivityType;
-    jitsiMeet.customUrlScheme = @"de.hoppfoundation.klassenzimer";
+    jitsiMeet.customUrlScheme = @"de.hopp-foundation.klassenzimmer";
     jitsiMeet.universalLinkDomains = @[@"meet.jit.si", @"alpha.jitsi.net", @"beta.meet.jit.si", @"jitsi.hopp-foundation.de",@"jitsi.mannheim.ccc.de"];
 
     jitsiMeet.defaultConferenceOptions = [JitsiMeetConferenceOptions fromBuilder:^(JitsiMeetConferenceOptionsBuilder *builder) {

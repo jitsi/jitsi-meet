@@ -22,7 +22,7 @@ const DEFAULT_STATE = {
     avatarID: undefined,
     avatarURL: undefined,
     cameraDeviceId: undefined,
-    disableCallIntegration: undefined,
+    disableCallIntegration: true,
     disableP2P: undefined,
     displayName: undefined,
     email: undefined,
