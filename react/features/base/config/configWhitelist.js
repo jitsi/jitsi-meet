@@ -101,6 +101,7 @@ export default [
     'e2eping',
     'enableDisplayNameInStats',
     'enableEmailInStats',
+    'enableIceRestart',
     'enableLayerSuspension',
     'enableLipSync',
     'enableRemb',
