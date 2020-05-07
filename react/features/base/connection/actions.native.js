@@ -9,6 +9,7 @@ import {
     getCurrentConference
 } from '../conference';
 import JitsiMeetJS, { JitsiConnectionEvents } from '../lib-jitsi-meet';
+import { setDesktopSharingEnabled } from '../conference';
 import {
     getBackendSafeRoomName,
     parseURIString
@@ -132,6 +133,10 @@ export function connect(id: ?string, password: ?string) {
             connection.removeEventListener(
                 JitsiConnectionEvents.CONNECTION_ESTABLISHED,
                 _onConnectionEstablished);
+            // Enable desktop sharing.
+            const isDesktopSharingEnabled = JitsiMeetJS.isDesktopSharingEnabled();
+            dispatch(setDesktopSharingEnabled(isDesktopSharingEnabled));
+
             dispatch(connectionEstablished(connection, Date.now()));
         }
 

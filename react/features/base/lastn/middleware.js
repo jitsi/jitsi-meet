@@ -10,6 +10,8 @@ import { CONFERENCE_JOINED } from '../conference/actionTypes';
 import { getParticipantById } from '../participants/functions';
 import { MiddlewareRegistry } from '../redux';
 
+import { getLocalVideoTrack } from '../tracks';
+
 import logger from './logger';
 
 declare var APP: Object;
@@ -58,7 +60,8 @@ function _updateLastN({ getState }) {
     let lastN = defaultLastN;
 
     if (appState !== 'active') {
-        lastN = 0;
+        const localVideo = getLocalVideoTrack(state['features/base/tracks']);
+        lastN = localVideo && localVideo.videoType === 'desktop' ? 1 : 0;
     } else if (audioOnly) {
         const { screenShares, tileViewEnabled } = state['features/video-layout'];
         const largeVideoParticipantId = state['features/large-video'].participantId;

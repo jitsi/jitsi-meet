@@ -21,7 +21,7 @@ const browserNameToCheck = {
     electron: browser.isElectron.bind(browser),
     firefox: browser.isFirefox.bind(browser),
     nwjs: browser.isNWJS.bind(browser),
-    opera: browser.isOpera.bind(browser),
+    opera: (browser._isOpera || browser.isOpera).bind(browser),
     safari: browser.isSafari.bind(browser)
 };
 
