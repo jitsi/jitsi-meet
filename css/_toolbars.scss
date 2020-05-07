@@ -27,9 +27,8 @@
     left: 0;
     position: absolute;
     right: 0;
+    margin: 15px;
     transition: bottom .3s ease-in;
-    width: 100%;
-
 
     &.visible {
         bottom: 0;
@@ -55,11 +54,12 @@
 
     .toolbox-content {
         box-sizing: border-box;
+        background-color: #f2150d;
         display: flex;
         justify-content: space-between;
         margin-left: auto;
         margin-right: auto;
-        padding: 20px 16px;
+        padding: 8px;
         position: relative;
         width: 100%;
         z-index: $toolbarZ;
