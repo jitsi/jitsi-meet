@@ -38,7 +38,8 @@ const DEFAULT_STATE = {
     userSelectedMicDeviceId: undefined,
     userSelectedAudioOutputDeviceLabel: undefined,
     userSelectedCameraDeviceLabel: undefined,
-    userSelectedMicDeviceLabel: undefined
+    userSelectedMicDeviceLabel: undefined,
+    userSelectedSkipPrejoin: undefined
 };
 
 const STORE_NAME = 'features/base/settings';

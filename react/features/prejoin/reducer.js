@@ -6,10 +6,10 @@ import {
     ADD_PREJOIN_VIDEO_TRACK,
     SET_DEVICE_STATUS,
     SET_JOIN_BY_PHONE_DIALOG_VISIBLITY,
+    SET_SKIP_PREJOIN,
     SET_PREJOIN_AUDIO_DISABLED,
     SET_PREJOIN_AUDIO_MUTED,
     SET_PREJOIN_DEVICE_ERRORS,
-    SET_PREJOIN_NAME,
     SET_PREJOIN_PAGE_VISIBILITY,
     SET_PREJOIN_VIDEO_DISABLED,
     SET_PREJOIN_VIDEO_MUTED
@@ -24,11 +24,11 @@ const DEFAULT_STATE = {
     deviceStatusType: 'ok',
     showPrejoin: true,
     showJoinByPhoneDialog: false,
+    userSelectedSkipPrejoin: false,
     videoTrack: null,
     audioTrack: null,
     contentSharingTrack: null,
-    rawError: '',
-    name: ''
+    rawError: ''
 };
 
 /**
@@ -58,10 +58,10 @@ ReducerRegistry.register(
             };
         }
 
-        case SET_PREJOIN_NAME: {
+        case SET_SKIP_PREJOIN: {
             return {
                 ...state,
-                name: action.value
+                userSelectedSkipPrejoin: action.value
             };
         }
 

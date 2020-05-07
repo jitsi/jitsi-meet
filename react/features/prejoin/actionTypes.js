@@ -25,6 +25,11 @@ export const PREJOIN_START_CONFERENCE = 'PREJOIN_START_CONFERENCE';
 export const SET_DEVICE_STATUS = 'SET_DEVICE_STATUS';
 
 /**
+ * Action type to set the visiblity of the prejoin page for the future.
+ */
+export const SET_SKIP_PREJOIN = 'SET_SKIP_PREJOIN';
+
+/**
  * Action type to set the visiblity of the 'JoinByPhone' dialog.
  */
 export const SET_JOIN_BY_PHONE_DIALOG_VISIBLITY = 'SET_JOIN_BY_PHONE_DIALOG_VISIBLITY';
@@ -43,11 +48,6 @@ export const SET_PREJOIN_AUDIO_MUTED = 'SET_PREJOIN_AUDIO_MUTED';
  * Action type to set the errors while creating the prejoin streams.
  */
 export const SET_PREJOIN_DEVICE_ERRORS = 'SET_PREJOIN_DEVICE_ERRORS';
-
-/**
- * Action type to set the name of the user.
- */
-export const SET_PREJOIN_NAME = 'SET_PREJOIN_NAME';
 
 /**
  * Action type to set the visibility of the prejoin page.

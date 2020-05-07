@@ -9,9 +9,9 @@
 
     &-input-area-container {
         position: absolute;
-        bottom: 128px;
+        bottom: 48px;
         width: 100%;
-        z-index: 1;
+        z-index: 2;
     }
 
     &-input-area {
@@ -34,8 +34,8 @@
         display: inline-block;
         font-size: 15px;
         line-height: 24px;
-        margin-bottom: 16px;
         padding: 7px 16px;
+        position: relative;
         text-align: center;
         width: 286px;
 
@@ -51,9 +51,22 @@
 
         &--text {
             width: auto;
+            font-size: 13px;
             margin: 0;
             padding: 0;
         }
+    }
+
+    &-btn-options {
+        align-items: center;
+        border-left: 1px solid #fff;
+        display: flex;
+        height: 100%;
+        justify-content: center;
+        position: absolute;
+        right: 0;
+        top: 0;
+        width: 40px;
     }
 
     &-text-btns {
@@ -67,6 +80,25 @@
         line-height: 20px;
         margin-top: 32px 0 8px 0;
         text-align: center;
+        width: 100%;
+    }
+
+    &-checkbox {
+        border: 0;
+        height: 16px;
+        margin-right: 8px;
+        padding: 0;
+        width: 16px;
+    }
+
+    &-checkbox-container {
+        align-items: center;
+        color: #fff;
+        display: none;
+        font-size: 13px;
+        justify-content: center;
+        line-height: 20px;
+        margin-top: 16px;
         width: 100%;
     }
 }
@@ -128,10 +160,8 @@
     &-btn-container {
         display: flex;
         justify-content: center;
-        position: absolute;
-        bottom: 50px;
+        margin-top: 32px;
         width: 100%;
-        z-index: 1;
 
         &> div {
             margin: 0 12px;
@@ -151,7 +181,16 @@
         position: absolute;
         width: 100%;
         z-index: 1;
-        background: linear-gradient(0deg, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), linear-gradient(360deg, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0) 54.25%);
+        background: linear-gradient(0deg, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3));
+    }
+
+    &-bottom-overlay {
+        background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.9) 100%);
+        bottom: 0;
+        height: 50%;
+        position: absolute;
+        width: 100%;
+        z-index: 1;
     }
 
     &-status {
@@ -192,6 +231,43 @@
         width: 49px;
         margin: 0 8px;
     }
+
+    &-dropdown-btns {
+        width: 320px;
+        padding: 8px 0;
+    }
+
+    &-dropdown-btn {
+        align-items: center;
+        color: #1C2025;
+        cursor: pointer;
+        display: flex;
+        height: 40px;
+        font-size: 15px;
+        line-height: 24px;
+        padding: 0 16px;
+
+        &:hover {
+            background-color: #DAEBFA;
+        }
+    }
+
+    &-dropdown-icon {
+        display: inline-block;
+        margin-right: 16px;
+
+        & > svg {
+            fill:  #1C2025;
+        }
+    }
+
+    &-dropdown-container {
+        & > div > div:nth-child(2) > div > div {
+            background: #fff;
+            padding: 0;
+        }
+    }
+
 }
 
 .prejoin-copy {
