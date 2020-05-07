@@ -9,8 +9,7 @@ import { getLocalParticipant, participantUpdated } from '../participants';
 import { MiddlewareRegistry } from '../redux';
 
 import { SETTINGS_UPDATED } from './actionTypes';
-import { handleCallIntegrationChange } from './functions';
-import { handleCrashReportingChange } from './functions';
+import { handleCallIntegrationChange, handleCrashReportingChange } from './';
 
 /**
  * The middleware of the feature base/settings. Distributes changes to the state
@@ -86,8 +85,15 @@ function _maybeHandleCallIntegrationChange({ settings: { disableCallIntegration 
     }
 }
 
+/**
+ * Handles a change in the `disableCrashReporting` setting.
+ *
+ * @param {Object} action - The redux action.
+ * @private
+ * @returns {void}
+ */
 function _maybeCrashReportingChange({ settings: { disableCrashReporting } }) {
- if (typeof disableCrashReporting === 'boolean') {
+    if (typeof disableCrashReporting === 'boolean') {
         handleCrashReportingChange(disableCrashReporting);
     }
 }

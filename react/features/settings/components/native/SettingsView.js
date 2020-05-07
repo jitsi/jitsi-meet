@@ -295,20 +295,20 @@ class SettingsView extends AbstractSettingsView<Props, State> {
 
     _onDisableCrashReporting: (boolean) => void;
 
-        /**
-         * Handles the disable crash reporting change event.
-         *
-         * @param {boolean} disableCrashReporting - The new value
-         * option.
-         * @private
-         * @returns {void}
-         */
+    /**
+     * Handles the disable crash reporting change event.
+     *
+     * @param {boolean} disableCrashReporting - The new value
+     * option.
+     * @private
+     * @returns {void}
+     */
     _onDisableCrashReporting(disableCrashReporting) {
         if (disableCrashReporting) {
             this._showCrashReportingDisableAlert();
         } else {
-            this._disableCrashReporting(disableCrashReporting)
-         }
+            this._disableCrashReporting(disableCrashReporting);
+        }
     }
 
     _onClose: () => void;
@@ -427,11 +427,11 @@ class SettingsView extends AbstractSettingsView<Props, State> {
                     <FormRow
                         fieldSeparator = { true }
                         label = 'settingsView.disableCrashReporting'>
-                         <Switch
-                             onValueChange = { this._onDisableCrashReporting }
-                             value = { disableCrashReporting } />
-                     </FormRow>
-                 )}
+                        <Switch
+                            onValueChange = { this._onDisableCrashReporting }
+                            value = { disableCrashReporting } />
+                    </FormRow>
+                )}
             </>
         );
     }
@@ -471,31 +471,37 @@ class SettingsView extends AbstractSettingsView<Props, State> {
         );
     }
 
-     /**
-      * Shows an alert warning the user about disabling crash reporting.
-      *
-      * @returns {void}
-      */
+    /**
+     * Shows an alert warning the user about disabling crash reporting.
+     *
+     * @returns {void}
+     */
     _showCrashReportingDisableAlert() {
         const { t } = this.props;
 
         Alert.alert(
-                t('settingsView.alertTitle'),
-                t('settingsView.disableCrashReportingWarning'),
-                [
-                    {
-                        onPress: () => this._disableCrashReporting(true),
-                        text: t('settingsView.alertOk')
-                    },
-                    {
-                     text: t('settingsView.alertCancel')
-                    }
-                ]
-            );
-        }
+            t('settingsView.alertTitle'),
+            t('settingsView.disableCrashReportingWarning'),
+            [
+                {
+                    onPress: () => this._disableCrashReporting(true),
+                    text: t('settingsView.alertOk')
+                },
+                {
+                    text: t('settingsView.alertCancel')
+                }
+            ]
+        );
+    }
 
     _updateSettings: (Object) => void;
 
+    /**
+     * Updates the settings and sets state for disableCrashReporting.
+     *
+     * @param {boolean} disableCrashReporting - Whether crash reporting is disabled or not.
+     * @returns {void}
+     */
     _disableCrashReporting(disableCrashReporting) {
         this._updateSettings({ disableCrashReporting });
         this.setState({ disableCrashReporting });
