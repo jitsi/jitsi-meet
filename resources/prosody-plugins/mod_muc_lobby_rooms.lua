@@ -196,7 +196,7 @@ process_host_module(main_muc_component_config, function(host_module, host)
     host_module:hook('muc-occupant-pre-join', function (event)
         local room, stanza = event.room, event.stanza;
 
-        if is_healthcheck_room(room) then
+        if is_healthcheck_room(room) or not room:get_members_only() then
             return;
         end
 
@@ -232,17 +232,15 @@ process_host_module(main_muc_component_config, function(host_module, host)
         end
 
         -- we want to add the custom lobbyroom field to fill in the lobby room jid
-        if room._data.members_only then
-            local invitee = event.stanza.attr.from;
-            local affiliation = room:get_affiliation(invitee);
-            if not affiliation or affiliation == 'none' then
-                local reply = st.error_reply(stanza, 'auth', 'registration-required'):up();
-                reply.tags[1].attr.code = '407';
-                reply:tag('x', {xmlns = MUC_NS}):up();
-                reply:tag('lobbyroom'):text(room._data.lobbyroom);
-                event.origin.send(reply:tag('x', {xmlns = MUC_NS}));
-                return true;
-            end
+        local invitee = event.stanza.attr.from;
+        local affiliation = room:get_affiliation(invitee);
+        if not affiliation or affiliation == 'none' then
+            local reply = st.error_reply(stanza, 'auth', 'registration-required'):up();
+            reply.tags[1].attr.code = '407';
+            reply:tag('x', {xmlns = MUC_NS}):up();
+            reply:tag('lobbyroom'):text(room._data.lobbyroom);
+            event.origin.send(reply:tag('x', {xmlns = MUC_NS}));
+            return true;
         end
     end, -4); -- the default hook on members_only module is on -5
 end);
