@@ -8,7 +8,7 @@
 -- lobby_muc = "lobby.jitmeet.example.com"
 -- main_muc = "conference.jitmeet.example.com"
 --
--- Component "lobbyrooms.damencho.jitsi.net" "muc"
+-- Component "lobby.jitmeet.example.com" "muc"
 --     storage = "memory"
 --     muc_room_cache_size = 1000
 --     restrict_room_creation = true
@@ -41,6 +41,8 @@ if lobby_muc_component_config == nil then
     module:log('error', 'lobby not enabled missing lobby_muc config');
     return ;
 end
+
+local whitelist = module:get_option_set("muc_lobby_whitelist", {});
 
 local lobby_muc_service;
 local main_muc_service;
@@ -165,16 +167,6 @@ end);
 process_host_module(main_muc_component_config, function(host_module, host)
     main_muc_service = prosody.hosts[host].modules.muc;
 
-    -- adds new field to the form so moderators can use it to set shared password
-    host_module:hook('muc-config-form', function(event)
-        table.insert(event.form, {
-            name = 'muc#roomconfig_lobbypassword';
-            type = 'text-private';
-            label = 'Shared Password';
-            value = '';
-        });
-    end, 90-4);
-
     -- hooks when lobby is enabled to create its room, only done here or by admin
     host_module:hook('muc-config-submitted', function(event)
         local members_only = event.fields['muc#roomconfig_membersonly'] and true or nil;
@@ -187,11 +179,6 @@ process_host_module(main_muc_component_config, function(host_module, host)
                 new_room.main_room = event.room;
                 event.room._data.lobbyroom = lobby_room_jid;
                 event.status_codes["104"] = true;
-
-                local lobby_password = event.fields['muc#roomconfig_lobbypassword'];
-                if lobby_password then
-                    new_room.main_room.lobby_password = lobby_password;
-                end
             end
         end
     end);
@@ -218,18 +205,34 @@ process_host_module(main_muc_component_config, function(host_module, host)
             return;
         end
 
-        local password = join:get_child_text("lobbySharedPassword");
-        if password and event.room.lobby_password and password == room.lobby_password then
-            local invitee = event.stanza.attr.from;
+        local invitee = event.stanza.attr.from;
+        local invitee_bare_jid = jid_bare(invitee);
+        local _, invitee_domain = jid_split(invitee);
+        local whitelistJoin = false;
+
+        -- whitelist participants
+        if whitelist:contains(invitee_domain) or whitelist:contains(invitee_bare_jid) then
+            whitelistJoin = true;
+        end
+
+        local password = join:get_child_text('password', MUC_NS);
+        if password and room:get_password() and password == room:get_password() then
+            whitelistJoin = true;
+        end
+
+        if whitelistJoin then
             local affiliation = room:get_affiliation(invitee);
             if not affiliation or affiliation == 0 then
                 event.occupant.role = 'participant';
-                room:set_affiliation(true, jid_bare(invitee), "member");
+                room:set_affiliation(true, invitee_bare_jid, "member");
                 room:save();
+
+                return;
             end
+        end
 
         -- we want to add the custom lobbyroom field to fill in the lobby room jid
-        elseif room._data.members_only then
+        if room._data.members_only then
             local invitee = event.stanza.attr.from;
             local affiliation = room:get_affiliation(invitee);
             if not affiliation or affiliation == 'none' then
