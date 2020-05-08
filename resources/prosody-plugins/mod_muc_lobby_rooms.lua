@@ -169,17 +169,26 @@ process_host_module(main_muc_component_config, function(host_module, host)
 
     -- hooks when lobby is enabled to create its room, only done here or by admin
     host_module:hook('muc-config-submitted', function(event)
+        local room = event.room;
         local members_only = event.fields['muc#roomconfig_membersonly'] and true or nil;
         if members_only then
-            local node = jid_split(event.room.jid);
+            local node = jid_split(room.jid);
 
             local lobby_room_jid = node .. '@' .. lobby_muc_component_config;
             if not lobby_muc_service.get_room_from_jid(lobby_room_jid) then
                 local new_room = lobby_muc_service.create_room(lobby_room_jid);
-                new_room.main_room = event.room;
-                event.room._data.lobbyroom = lobby_room_jid;
+                new_room.main_room = room;
+                room._data.lobbyroom = new_room;
                 event.status_codes["104"] = true;
             end
+        elseif room._data.lobbyroom then
+            room._data.lobbyroom:destroy();
+        end
+    end);
+    host_module:hook("muc-room-destroyed",function(event)
+        local room = event.room;
+        if room._data.lobbyroom then
+            room._data.lobbyroom:destroy();
         end
     end);
     host_module:hook("muc-disco#info", function (event)
@@ -189,7 +198,7 @@ process_host_module(main_muc_component_config, function(host_module, host)
                 label = "Lobby room jid";
                 value = "";
             });
-            event.formdata["muc#roominfo_lobbyroom"] = event.room._data.lobbyroom;
+            event.formdata["muc#roominfo_lobbyroom"] = event.room._data.lobbyroom.jid;
         end
     end);
 
@@ -238,7 +247,7 @@ process_host_module(main_muc_component_config, function(host_module, host)
             local reply = st.error_reply(stanza, 'auth', 'registration-required'):up();
             reply.tags[1].attr.code = '407';
             reply:tag('x', {xmlns = MUC_NS}):up();
-            reply:tag('lobbyroom'):text(room._data.lobbyroom);
+            reply:tag('lobbyroom'):text(room._data.lobbyroom.jid);
             event.origin.send(reply:tag('x', {xmlns = MUC_NS}));
             return true;
         end
