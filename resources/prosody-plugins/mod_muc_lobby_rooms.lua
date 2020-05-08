@@ -182,13 +182,13 @@ process_host_module(main_muc_component_config, function(host_module, host)
                 event.status_codes["104"] = true;
             end
         elseif room._data.lobbyroom then
-            room._data.lobbyroom:destroy();
+            room._data.lobbyroom:destroy(nil, 'Lobby room closed.');
         end
     end);
     host_module:hook("muc-room-destroyed",function(event)
         local room = event.room;
         if room._data.lobbyroom then
-            room._data.lobbyroom:destroy();
+            room._data.lobbyroom:destroy(nil, 'Lobby room closed.');
         end
     end);
     host_module:hook("muc-disco#info", function (event)
