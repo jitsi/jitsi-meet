@@ -10,7 +10,7 @@ DOMAIN="$(echo -e "${DOMAIN}" | tr -d '[:space:]')"
 echo "-------------------------------------------------------------------------"
 echo "This script will:"
 echo "- Need a working DNS record pointing to this machine(for domain ${DOMAIN})"
-echo "- Download certbot-auto from https://dl.eff.org to /usr/local/sbin"
+echo "- Download certbot from the debian package manager"
 echo "- Install additional dependencies in order to request Let’s Encrypt certificate"
 echo "- If running with jetty serving web content, will stop Jitsi Videobridge"
 echo "- Configure and reload nginx or apache2, whichever is used"
@@ -25,9 +25,10 @@ read EMAIL
 
 cd /usr/local/sbin
 
-if [ ! -f certbot-auto ] ; then
-  wget https://dl.eff.org/certbot-auto
-  chmod a+x ./certbot-auto
+if [ ! command -v certbot ] ; then
+    sudo add-apt-repository universe
+    sudo apt-get update
+    sudo apt-get -y install software-properties-common certbot
 fi
 
 CRON_FILE="/etc/cron.weekly/letsencrypt-renew"
@@ -51,13 +52,13 @@ if [ -f /etc/nginx/sites-enabled/$DOMAIN.conf ] ; then
         chmod u+x $TURN_HOOK
         sed -i "s/jitsi-meet.example.com/$DOMAIN/g" $TURN_HOOK
 
-        ./certbot-auto certonly --noninteractive \
+        certbot certonly --noninteractive \
         --webroot --webroot-path /usr/share/jitsi-meet \
         -d $DOMAIN \
         --agree-tos --email $EMAIL \
         --deploy-hook $TURN_HOOK
     else
-        ./certbot-auto certonly --noninteractive \
+        certbot certonly --noninteractive \
         --webroot --webroot-path /usr/share/jitsi-meet \
         -d $DOMAIN \
         --agree-tos --email $EMAIL
@@ -79,7 +80,7 @@ if [ -f /etc/nginx/sites-enabled/$DOMAIN.conf ] ; then
     service nginx reload
 elif [ -f /etc/apache2/sites-enabled/$DOMAIN.conf ] ; then
 
-    ./certbot-auto certonly --noninteractive \
+    certbot certonly --noninteractive \
     --webroot --webroot-path /usr/share/jitsi-meet \
     -d $DOMAIN \
     --agree-tos --email $EMAIL
