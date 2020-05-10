@@ -64,7 +64,7 @@
     "pixelmatch": "5.1.0",
     "react": "16.9",
     "react-dom": "16.9",
-    "react-emoji-render": "1.0.0",
+    "react-emoji-render": "1.2.4",
     "react-i18next": "10.11.4",
     "react-linkify": "1.0.0-alpha",
     "react-native": "github:jitsi/react-native#efd2aff5661d75a230e36406b698cfe0ee545be2",
