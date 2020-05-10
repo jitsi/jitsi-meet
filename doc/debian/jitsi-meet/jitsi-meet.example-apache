@@ -46,5 +46,6 @@
   ProxyPassReverse /http-bind http://localhost:5280/http-bind/
 
   RewriteEngine on
-  RewriteRule ^/([a-zA-Z0-9]+)$ /index.html
+  RewriteCond %{REQUEST_URI} !^/http-bind$
+  RewriteRule ^/([a-zA-Z0-9_-]+)$ /index.html
 </VirtualHost>
