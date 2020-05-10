@@ -96,6 +96,8 @@ var config = {
     // applied locally. FIXME: having these 2 options is confusing.
     // startWithAudioMuted: false,
 
+    audioPermissionRequired: true,
+
     // Enabling it (with #params) will disable local audio output of remote
     // participants and to enable it back a reload is needed.
     // startSilent: false

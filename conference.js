@@ -495,9 +495,14 @@ export default {
      */
     createInitialLocalTracks(options = {}) {
         const errors = {};
-        const initialDevices = [ 'audio' ];
-        const requestedAudio = true;
+        const initialDevices = [];
+        let requestedAudio = false;
         let requestedVideo = false;
+
+        if (options.audioPermissionRequired) {
+            initialDevices.push('audio');
+            requestedAudio = true;
+        }
 
         // Always get a handle on the audio input device so that we have statistics even if the user joins the
         // conference muted. Previous implementation would only acquire the handle when the user first unmuted,
@@ -744,6 +749,7 @@ export default {
      */
     async init({ roomName }) {
         const initialOptions = {
+            audioPermissionRequired: config.audioPermissionRequired,
             startAudioOnly: config.startAudioOnly,
             startScreenSharing: config.startScreenSharing,
             startWithAudioMuted: config.startWithAudioMuted
