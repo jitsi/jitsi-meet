@@ -2,7 +2,7 @@
 
 ## Building the sources
 
-Node.js >= 10 and npm >= 6 are required.
+Node.js >= 12 and npm >= 6 are required.
 
 On Debian/Ubuntu systems, the required packages can be installed with:
 ```
