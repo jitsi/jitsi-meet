@@ -81,11 +81,17 @@ See [the documentation of ice4j](https://github.com/jitsi/ice4j/blob/master/doc/
 for details.
 
 Default deployments on systems using systemd will have low default values for maximum processes and open files. If the used bridge will expect higher number of participants the default values need to be adjusted (the default values are good for less than 100 participants).
-To update the values edit `/etc/systemd/system.conf` and make sure you have the following values:
+To update the values edit `/etc/systemd/system.conf` and make sure you have the following values if values are smaller, if not do not update.
 ```
 DefaultLimitNOFILE=65000
 DefaultLimitNPROC=65000
 DefaultTasksMax=65000
+```
+To check values just run :
+```
+systemctl show --property DefaultLimitNPROC
+systemctl show --property DefaultLimitNOFILE
+systemctl show --property DefaultTasksMax
 ```
 To load the values and check them look [here](#systemd-details) for details.
 
