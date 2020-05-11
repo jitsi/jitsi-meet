@@ -93,7 +93,7 @@ export async function getAllPrejoinConfiguredTracks(state: Object): Promise<Obje
  * @returns {Object}
  */
 export function getAudioTrack(state: Object): Object {
-    return state['features/prejoin'].audioTrack;
+    return state['features/prejoin']?.audioTrack;
 }
 
 /**
@@ -103,7 +103,7 @@ export function getAudioTrack(state: Object): Object {
  * @returns {Object}
  */
 export function getContentSharingTrack(state: Object): Object {
-    return state['features/prejoin'].contentSharingTrack;
+    return state['features/prejoin']?.contentSharingTrack;
 }
 
 /**
@@ -113,7 +113,7 @@ export function getContentSharingTrack(state: Object): Object {
  * @returns {string}
  */
 export function getDeviceStatusText(state: Object): string {
-    return state['features/prejoin'].deviceStatusText;
+    return state['features/prejoin']?.deviceStatusText;
 }
 
 /**
@@ -123,7 +123,7 @@ export function getDeviceStatusText(state: Object): string {
  * @returns {string}
  */
 export function getDeviceStatusType(state: Object): string {
-    return state['features/prejoin'].deviceStatusType;
+    return state['features/prejoin']?.deviceStatusType;
 }
 
 /**
@@ -133,7 +133,7 @@ export function getDeviceStatusType(state: Object): string {
  * @returns {Object}
  */
 export function getVideoTrack(state: Object): Object {
-    return state['features/prejoin'].videoTrack;
+    return state['features/prejoin']?.videoTrack;
 }
 
 /**
@@ -143,7 +143,7 @@ export function getVideoTrack(state: Object): Object {
  * @returns {boolean}
  */
 export function isPrejoinAudioMuted(state: Object): boolean {
-    return state['features/prejoin'].audioMuted;
+    return state['features/prejoin']?.audioMuted;
 }
 
 /**
@@ -153,7 +153,7 @@ export function isPrejoinAudioMuted(state: Object): boolean {
  * @returns {boolean}
  */
 export function isPrejoinVideoMuted(state: Object): boolean {
-    return state['features/prejoin'].videoMuted;
+    return state['features/prejoin']?.videoMuted;
 }
 
 /**
@@ -163,7 +163,7 @@ export function isPrejoinVideoMuted(state: Object): boolean {
  * @returns {string}
  */
 export function getRawError(state: Object): string {
-    return state['features/prejoin'].rawError;
+    return state['features/prejoin']?.rawError;
 }
 
 /**
@@ -173,7 +173,7 @@ export function getRawError(state: Object): string {
  * @returns {boolean}
  */
 export function isAudioDisabled(state: Object): Object {
-    return state['features/prejoin'].audioDisabled;
+    return state['features/prejoin']?.audioDisabled;
 }
 
 /**
@@ -183,7 +183,7 @@ export function isAudioDisabled(state: Object): Object {
  * @returns {boolean}
  */
 export function isPrejoinVideoDisabled(state: Object): Object {
-    return state['features/prejoin'].videoDisabled;
+    return state['features/prejoin']?.videoDisabled;
 }
 
 /**
@@ -193,7 +193,7 @@ export function isPrejoinVideoDisabled(state: Object): Object {
  * @returns {boolean}
  */
 export function isJoinByPhoneDialogVisible(state: Object): boolean {
-    return state['features/prejoin'].showJoinByPhoneDialog;
+    return state['features/prejoin']?.showJoinByPhoneDialog;
 }
 
 /**
@@ -215,5 +215,5 @@ export function isPrejoinPageEnabled(state: Object): boolean {
  * @returns {boolean}
  */
 export function isPrejoinPageVisible(state: Object): boolean {
-    return isPrejoinPageEnabled(state) && state['features/prejoin'].showPrejoin;
+    return isPrejoinPageEnabled(state) && state['features/prejoin']?.showPrejoin;
 }
