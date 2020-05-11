@@ -8,6 +8,8 @@ change references to that to match your host, and generate some passwords for
 
 There are also some complete [example config files](https://github.com/jitsi/jitsi-meet/tree/master/doc/example-config-files/) available, mentioned in each section.
 
+There are additional configurations to be done for a [scalable installation](https://github.com/jitsi/jitsi-meet/tree/master/doc/scalable-installation.md)
+
 ## Network description
 
 This is how the network looks:
@@ -224,6 +226,8 @@ cd jitsi-meet
 npm install
 make
 ```
+
+_NOTE: When installing on older distributions keep in mind that you need Node.js >= 12 and npm >= 6._
 
 Edit host names in `/srv/jitsi-meet/config.js` (see also the example config file):
 ```

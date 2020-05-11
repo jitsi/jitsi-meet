@@ -39,6 +39,7 @@ export default {
         statusBarContent: ColorPalette.white,
         text: ColorPalette.white
     },
+    'Modal': {},
     'LargeVideo': {
         background: 'rgb(42, 58, 75)'
     },

@@ -7,9 +7,10 @@ import {
     VIDEO_QUALITY_LEVELS,
     conferenceLeft,
     getCurrentConference,
-    setPreferredReceiverVideoQuality
+    setPreferredVideoQuality
 } from '../base/conference';
 import { hideDialog, isDialogOpen } from '../base/dialog';
+import { setActiveModalId } from '../base/modal';
 import { pinParticipant } from '../base/participants';
 import { SET_REDUCED_UI } from '../base/responsive-ui';
 import { MiddlewareRegistry, StateListenerRegistry } from '../base/redux';
@@ -31,7 +32,7 @@ MiddlewareRegistry.register(store => next => action => {
         dispatch(setFilmstripEnabled(!reducedUI));
 
         dispatch(
-            setPreferredReceiverVideoQuality(
+            setPreferredVideoQuality(
                 reducedUI
                     ? VIDEO_QUALITY_LEVELS.LOW
                     : VIDEO_QUALITY_LEVELS.HIGH));
@@ -84,5 +85,8 @@ StateListenerRegistry.register(
                 // dialog we might have open.
                 dispatch(hideDialog());
             }
+
+            // We want to close all modals.
+            dispatch(setActiveModalId());
         }
     });

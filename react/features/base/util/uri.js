@@ -1,5 +1,6 @@
 // @flow
 
+import { parseURLParams } from './parseURLParams';
 import { normalizeNFKC } from './strings';
 
 /**
@@ -550,4 +551,25 @@ export function urlObjectToString(o: Object): ?string {
     url.hash = hash;
 
     return url.toString() || undefined;
+}
+
+/**
+ * Adds hash params to URL.
+ *
+ * @param {URL} url - The URL.
+ * @param {Object} hashParamsToAdd - A map with the parameters to be set.
+ * @returns {URL} - The new URL.
+ */
+export function addHashParamsToURL(url: URL, hashParamsToAdd: Object = {}) {
+    const params = parseURLParams(url);
+    const urlParamsArray = _objectToURLParamsArray({
+        ...params,
+        ...hashParamsToAdd
+    });
+
+    if (urlParamsArray.length) {
+        url.hash = `#${urlParamsArray.join('&')}`;
+    }
+
+    return url;
 }

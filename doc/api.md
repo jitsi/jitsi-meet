@@ -85,14 +85,15 @@ const options = {
 const api = new JitsiMeetExternalAPI(domain, options);
  ```
 
-You can set the userInfo(email) for the call:
+You can set the userInfo(email, display name) for the call:
 
 ```javascript
 var domain = "meet.jit.si";
 var options = {
     ...
     userInfo: {
-        email: 'email@jitsiexamplemail.com'
+        email: 'email@jitsiexamplemail.com',
+        displayName: 'John Doe'
     }
 }
 var api = new JitsiMeetExternalAPI(domain, options);
@@ -273,6 +274,10 @@ api.executeCommand('avatarUrl', 'https://avatars0.githubusercontent.com/u/367164
 * **sendEndpointTextMessage** - Sends a text message to another participant through the datachannels.
 ```javascript
 api.executeCommand('receiverParticipantId', 'text');
+```
+* **setVideoQuality** - Sets the send and receive video resolution. This command requires one argument - the resolution height to be set.
+```javascript
+api.executeCommand('setVideoQuality', 720);
 ```
 
 You can also execute multiple commands using the `executeCommands` method:
@@ -461,6 +466,14 @@ changes. The listener will receive an object with the following structure:
 ```javascript
 {
     id: string // the id of the participant
+}
+```
+
+* **participantRoleChanged** - event notification fired when the role of the local user has changed (none, moderator, participant). The listener will receive an object with the following structure:
+```javascript
+{
+    id: string // the id of the participant
+    role: string // the new role of the participant
 }
 ```
 

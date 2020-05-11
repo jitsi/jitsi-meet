@@ -2,6 +2,7 @@
 
 import type { Dispatch } from 'redux';
 
+import { getFeatureFlag, INVITE_ENABLED } from '../../../../base/flags';
 import { translate } from '../../../../base/i18n';
 import { IconAddPeople } from '../../../../base/icons';
 import { connect } from '../../../../base/redux';
@@ -38,5 +39,21 @@ class InviteButton extends AbstractButton<Props, *> {
     }
 }
 
+/**
+ * Maps part of the Redux state to the props of this component.
+ *
+ * @param {Object} state - The Redux state.
+ * @param {Props} ownProps - The own props of the component.
+ * @returns {Props}
+ */
+function _mapStateToProps(state, ownProps: Props) {
+    const { disableInviteFunctions } = state['features/base/config'];
+    const flag = getFeatureFlag(state, INVITE_ENABLED, true);
 
-export default translate(connect()(InviteButton));
+    return {
+        visible: flag && !disableInviteFunctions && ownProps.visible
+    };
+}
+
+
+export default translate(connect(_mapStateToProps)(InviteButton));

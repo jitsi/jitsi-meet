@@ -22,6 +22,7 @@ import {
     createDesiredLocalTracks,
     destroyLocalTracks
 } from '../../base/tracks';
+import { HelpView } from '../../help';
 import { DialInSummary } from '../../invite';
 import { SettingsView } from '../../settings';
 
@@ -74,6 +75,8 @@ class WelcomePage extends AbstractWelcomePage {
      */
     componentDidMount() {
         super.componentDidMount();
+
+        this._updateRoomname();
 
         const { dispatch } = this.props;
 
@@ -227,19 +230,12 @@ class WelcomePage extends AbstractWelcomePage {
             );
         }
 
-
-        const buttonDisabled = this._isJoinDisabled();
-
         return (
             <TouchableHighlight
                 accessibilityLabel =
                     { t('welcomepage.accessibilityLabel.join') }
-                disabled = { buttonDisabled }
                 onPress = { this._onJoin }
-                style = { [
-                    styles.button,
-                    buttonDisabled ? styles.buttonDisabled : null
-                ] }
+                style = { styles.button }
                 underlayColor = { ColorPalette.white }>
                 { children }
             </TouchableHighlight>
@@ -268,6 +264,9 @@ class WelcomePage extends AbstractWelcomePage {
                     </Header>
                     <SafeAreaView style = { styles.roomContainer } >
                         <View style = { styles.joinControls } >
+                            <Text style = { styles.enterRoomText }>
+                                { t('welcomepage.roomname') }
+                            </Text>
                             <TextInput
                                 accessibilityLabel = { t(roomnameAccLabel) }
                                 autoCapitalize = 'none'
@@ -278,10 +277,8 @@ class WelcomePage extends AbstractWelcomePage {
                                 onChangeText = { this._onRoomChange }
                                 onFocus = { this._onFieldFocus }
                                 onSubmitEditing = { this._onJoin }
-                                placeholder = { t('welcomepage.roomname') }
-                                placeholderTextColor = {
-                                    PLACEHOLDER_TEXT_COLOR
-                                }
+                                placeholder = { this.state.roomPlaceholder }
+                                placeholderTextColor = { PLACEHOLDER_TEXT_COLOR }
                                 returnKeyType = { 'go' }
                                 style = { styles.textInput }
                                 underlineColorAndroid = 'transparent'
@@ -292,10 +289,9 @@ class WelcomePage extends AbstractWelcomePage {
                         </View>
                     </SafeAreaView>
                     <WelcomePageLists disabled = { this.state._fieldFocused } />
-                    <SettingsView />
-                    <DialInSummary />
                 </View>
                 <WelcomePageSideBar />
+                { this._renderWelcomePageModals() }
             </LocalVideoTrackUnderlay>
         );
     }
@@ -315,6 +311,19 @@ class WelcomePage extends AbstractWelcomePage {
                 </Text>
             </View>
         );
+    }
+
+    /**
+     * Renders JitsiModals that are supposed to be on the welcome page.
+     *
+     * @returns {Array<ReactElement>}
+     */
+    _renderWelcomePageModals() {
+        return [
+            <HelpView key = 'helpView' />,
+            <DialInSummary key = 'dialInSummary' />,
+            <SettingsView key = 'settings' />
+        ];
     }
 }
 

@@ -75,6 +75,11 @@ type Props = {
 type State = {
 
     /**
+     * The state of the audio screen share checkbox.
+     */
+    screenShareAudio: boolean,
+
+    /**
      * The currently higlighted DesktopCapturerSource.
      */
     selectedSource: Object,
@@ -128,6 +133,7 @@ class DesktopPicker extends PureComponent<Props, State> {
     _poller = null;
 
     state = {
+        screenShareAudio: false,
         selectedSource: {},
         selectedTab: 0,
         sources: {},
@@ -153,6 +159,7 @@ class DesktopPicker extends PureComponent<Props, State> {
         // Bind event handlers so they are only bound once per instance.
         this._onCloseModal = this._onCloseModal.bind(this);
         this._onPreviewClick = this._onPreviewClick.bind(this);
+        this._onShareAudioChecked = this._onShareAudioChecked.bind(this);
         this._onSubmit = this._onSubmit.bind(this);
         this._onTabSelected = this._onTabSelected.bind(this);
         this._updateSources = this._updateSources.bind(this);
@@ -241,7 +248,7 @@ class DesktopPicker extends PureComponent<Props, State> {
         return selectedSource;
     }
 
-    _onCloseModal: (?string, string) => void;
+    _onCloseModal: (?string, string, ?boolean) => void;
 
     /**
      * Dispatches an action to hide the DesktopPicker and invokes the passed in
@@ -251,10 +258,12 @@ class DesktopPicker extends PureComponent<Props, State> {
      * the onSourceChoose callback.
      * @param {string} type - The type of the DesktopCapturerSource to pass into
      * the onSourceChoose callback.
+     * @param {boolean} screenShareAudio - Whether or not to add system audio to
+     * screen sharing session.
      * @returns {void}
      */
-    _onCloseModal(id = '', type) {
-        this.props.onSourceChoose(id, type);
+    _onCloseModal(id = '', type, screenShareAudio = false) {
+        this.props.onSourceChoose(id, type, screenShareAudio);
         this.props.dispatch(hideDialog());
     }
 
@@ -285,9 +294,9 @@ class DesktopPicker extends PureComponent<Props, State> {
      * @returns {void}
      */
     _onSubmit() {
-        const { id, type } = this.state.selectedSource;
+        const { selectedSource: { id, type }, screenShareAudio } = this.state;
 
-        this._onCloseModal(id, type);
+        this._onCloseModal(id, type, screenShareAudio);
     }
 
     _onTabSelected: () => void;
@@ -306,10 +315,27 @@ class DesktopPicker extends PureComponent<Props, State> {
         const { types, sources } = this.state;
 
         this._selectedTabType = types[tabIndex];
+
+        // When we change tabs also reset the screenShareAudio state so we don't
+        // use the option from one tab when sharing from another.
         this.setState({
+            screenShareAudio: false,
             selectedSource: this._getSelectedSource(sources),
             selectedTab: tabIndex
         });
+    }
+
+    _onShareAudioChecked: (boolean) => void;
+
+    /**
+     * Set the screenSharingAudio state indicating whether or not to also share
+     * system audio.
+     *
+     * @param {boolean} checked - Share audio or not.
+     * @returns {void}
+     */
+    _onShareAudioChecked(checked) {
+        this.setState({ screenShareAudio: checked });
     }
 
     /**
@@ -328,7 +354,8 @@ class DesktopPicker extends PureComponent<Props, State> {
                         content: <DesktopPickerPane
                             key = { type }
                             onClick = { this._onPreviewClick }
-                            onDoubleClick = { this._onCloseModal }
+                            onDoubleClick = { this._onSubmit }
+                            onShareAudioChecked = { this._onShareAudioChecked }
                             selectedSourceId = { selectedSource.id }
                             sources = { sources[type] }
                             type = { type } />,

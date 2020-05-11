@@ -1,0 +1,70 @@
+.video-preview {
+    background: none;
+    max-height: 290px;
+
+    &-container {
+        overflow: auto;
+        padding: 16px;
+    }
+
+    &-entry {
+        cursor: pointer;
+        height: 135px;
+        margin-bottom: 16px;
+        position: relative;
+        width: 240px;
+
+        &:last-child {
+            margin-bottom: 0;
+        }
+
+        &--selected {
+            border: 3px solid #31B76A;
+            cursor: default;
+            height: 129px;
+            width: 234px;
+        }
+    }
+
+    &-video {
+        height: 100%;
+        object-fit: cover;
+        width: 100%;
+    }
+
+    &-overlay {
+        background: rgba(42, 58, 75, 0.6);
+        height: 100%;
+        position: absolute;
+        width: 100%;
+        z-index: 1;
+    }
+
+    &-error {
+        align-items: center;
+        display: flex;
+        height: 100%;
+        justify-content: center;
+        position: absolute;
+        width: 100%;
+    }
+
+    &-label {
+        color: #fff;
+        font-size: 13px;
+        line-height: 20px;
+        overflow: hidden;
+        padding: 8px;
+        position: absolute;
+        text-align: center;
+        text-overflow: ellipsis;
+        width: 220px;
+        z-index: 2;
+    }
+
+    // Override @atlaskit/InlineDialog container which is made with styled components
+    & > div > div:nth-child(2) > div > div {
+        outline: none;
+        padding: 0;
+    }
+}

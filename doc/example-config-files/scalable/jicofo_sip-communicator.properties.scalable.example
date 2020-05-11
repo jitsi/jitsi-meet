@@ -1,0 +1,6 @@
+
+org.jitsi.jicofo.BRIDGE_MUC=JvbBrewery@internal.auth.meet.example.com
+org.jitsi.jicofo.ALWAYS_TRUST_MODE_ENABLED=true
+
+org.jitsi.jicofo.jibri.BREWERY=JibriBrewery@internal.auth.meet.example.com
+org.jitsi.jicofo.jibri.PENDING_TIMEOUT=90

@@ -1,0 +1,30 @@
+.jitsi-icon {
+    &.metr {
+        display: inline-block;
+
+        & > svg {
+            fill: #4E5E6C;
+            width: 38px;
+        }
+    }
+
+    &.metr--disabled {
+        & > svg {
+            fill: #4E5E6C;
+        }
+    }
+}
+
+.metr-l-0 {
+    rect:first-child {
+        fill: #31B76A;
+    }
+}
+
+@for $i from 1 through 7 {
+    .metr-l-#{$i} {
+        rect:nth-child(-n+#{$i+1}) {
+            fill: #31B76A;
+        }
+    }
+}

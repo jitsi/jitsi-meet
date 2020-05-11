@@ -44,9 +44,6 @@ var config = {
     //
 
     testing: {
-        // Enables experimental simulcast support on Firefox.
-        enableFirefoxSimulcast: false,
-
         // P2P test mode disables automatic switching to P2P when there are 2
         // participants in the conference.
         p2pTestMode: false
@@ -110,12 +107,11 @@ var config = {
 
     // w3c spec-compliant video constraints to use for video capture. Currently
     // used by browsers that return true from lib-jitsi-meet's
-    // util#browser#usesNewGumFlow. The constraints are independency from
-    // this config's resolution value. Defaults to requesting an ideal aspect
-    // ratio of 16:9 with an ideal resolution of 720.
+    // util#browser#usesNewGumFlow. The constraints are independent from
+    // this config's resolution value. Defaults to requesting an ideal
+    // resolution of 720p.
     // constraints: {
     //     video: {
-    //         aspectRatio: 16 / 9,
     //         height: {
     //             ideal: 720,
     //             max: 720,
@@ -230,6 +226,14 @@ var config = {
     // disabled, then bandwidth estimations are disabled.
     // enableRemb: false,
 
+    // Enables ICE restart logic in LJM and displays the page reload overlay on
+    // ICE failure. Current disabled by default because it's causing issues with
+    // signaling when Octo is enabled. Also when we do an "ICE restart"(which is
+    // not a real ICE restart), the client maintains the TCC sequence number
+    // counter, but the bridge resets it. The bridge sends media packets with
+    // TCC sequence numbers starting from 0.
+    // enableIceRestart: false,
+
     // Defines the minimum number of participants to start a call (the default
     // is set in Jicofo and set to 2).
     // minParticipants: 2,
@@ -293,6 +297,9 @@ var config = {
     // and microsoftApiApplicationClientID
     // enableCalendarIntegration: false,
 
+    // When 'true', it shows an intermediate page before joining, where the user can  configure its devices.
+    // prejoinPageEnabled: false,
+
     // Stats
     //
 
@@ -343,10 +350,8 @@ var config = {
         // The STUN servers that will be used in the peer to peer connections
         stunServers: [
 
-            // { urls: 'stun:jitsi-meet.example.com:443' },
-            { urls: 'stun:stun.l.google.com:19302' },
-            { urls: 'stun:stun1.l.google.com:19302' },
-            { urls: 'stun:stun2.l.google.com:19302' }
+            // { urls: 'stun:jitsi-meet.example.com:4446' },
+            { urls: 'stun:meet-jit-si-turnrelay.jitsi.net:443' }
         ],
 
         // Sets the ICE transport policy for the p2p connection. At the time
@@ -374,6 +379,10 @@ var config = {
         // The Google Analytics Tracking ID:
         // googleAnalyticsTrackingId: 'your-tracking-id-UA-123456-1'
 
+        // Matomo configuration:
+        // matomoEndpoint: 'https://your-matomo-endpoint/',
+        // matomoSiteID: '42',
+
         // The Amplitude APP Key:
         // amplitudeAPPKey: '<APP_KEY>'
 
@@ -391,6 +400,9 @@ var config = {
         // region: "europe",
         // userRegion: "asia"
     },
+
+    // Decides whether the start/stop recording audio notifications should play on record.
+    // disableRecordAudioNotification: false,
 
     // Information for the chrome extension banner
     // chromeExtensionBanner: {
@@ -451,6 +463,14 @@ var config = {
     // the menu has option to flip the locally seen video for local presentations
     // disableLocalVideoFlip: false,
 
+    // Mainly privacy related settings
+
+    // Disables all invite functions from the app (share, invite, dial out...etc)
+    // disableInviteFunctions: true,
+
+    // Disables storing the room name to the recents list
+    // doNotStoreRoom: true,
+
     // Deployment specific URLs.
     // deploymentUrls: {
     //    // If specified a 'Help' button will be displayed in the overflow menu with a link to the specified URL for
@@ -460,6 +480,15 @@ var config = {
     //    // to the specified URL for an app download page.
     //    downloadAppsUrl: 'https://docs.example.com/our-apps.html'
     // },
+
+    // Options related to the remote participant menu.
+    // remoteVideoMenu: {
+    //     // If set to true the 'Kick out' button will be disabled.
+    //     disableKick: true
+    // },
+
+    // If set to true all muting operations of remote participants will be disabled.
+    // disableRemoteMute: true,
 
     // List of undocumented settings used in jitsi-meet
     /**

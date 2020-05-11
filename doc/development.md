@@ -2,7 +2,7 @@
 
 ## Building the sources
 
-Node.js >= 10 and npm >= 6 are required.
+Node.js >= 12 and npm >= 6 are required.
 
 On Debian/Ubuntu systems, the required packages can be installed with:
 ```
@@ -69,10 +69,14 @@ Use it at the CLI, type
 make dev
 ```
 
-By default the backend deployment used is `beta.meet.jit.si`. You can point the Jitsi-Meet app at a different backend by using a proxy server. To do this, set the WEBPACK_DEV_SERVER_PROXY_TARGET variable:
+By default the backend deployment used is `alpha.jitsi.net`. You can point the Jitsi-Meet app at a different backend by using a proxy server. To do this, set the WEBPACK_DEV_SERVER_PROXY_TARGET variable:
 ```
 export WEBPACK_DEV_SERVER_PROXY_TARGET=https://your-example-server.com
 make dev
 ```
 
 The app should be running at https://localhost:8080/
+
+#### Chrome Privacy Error
+
+Newer versions of Chrome may block localhost under https and show `NET::ERR_CERT_INVALID` on the page. To solve this open [chrome://flags/#allow-insecure-localhost](chrome://flags/#allow-insecure-localhost) and select Enable, then press Relaunch or quit and restart Chrome.

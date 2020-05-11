@@ -286,6 +286,6 @@ export function abstractMapStateToProps(state: Object) {
         details: fatalError && fatalError.details,
         isNetworkFailure:
             fatalError === configError || fatalError === connectionError,
-        reason: fatalError && fatalError.message
+        reason: fatalError && (fatalError.message || fatalError.name)
     };
 }

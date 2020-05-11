@@ -7,8 +7,10 @@ Jitsi Meet can be built as a standalone app for Android or iOS. It uses the
 
 First make sure the [React Native dependencies] are installed.
 
-**NOTE**: This document assumes the app is being built on a macOS system.
-**NOTE**: Node 10.X and npm 6.X are recommended for building.
+**NOTE**: This document assumes the app is being built on a macOS system. GNU/Linux is also
+supported for building the Android app and Windows **is not supported at alll**.
+
+**NOTE**: Node 12.X and npm 6.X are recommended for building.
 
 
 ## iOS

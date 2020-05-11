@@ -79,14 +79,15 @@ export default class StatelessAvatar extends AbstractStatelessAvatar<Props> {
                         viewBox = '0 0 100 100'
                         xmlns = 'http://www.w3.org/2000/svg'
                         xmlnsXlink = 'http://www.w3.org/1999/xlink'>
-                        <foreignObject
-                            height = '100%'
-                            width = '100%'>
-                            <span
-                                className = 'avatar-foreign'>
-                                { initials }
-                            </span>
-                        </foreignObject>
+                        <text
+                            dominantBaseline = 'central'
+                            fill = 'rgba(255,255,255,.6)'
+                            fontSize = '40pt'
+                            textAnchor = 'middle'
+                            x = '50'
+                            y = '50'>
+                            { initials }
+                        </text>
                     </svg>
                 </div>
             );

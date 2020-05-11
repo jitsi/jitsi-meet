@@ -1,10 +1,10 @@
-name: Linter
+name: Simple CI
 
 on: [pull_request]
 
 jobs:
-  run-linter:
-    name: Run Linter
+  run-ci:
+    name: Build Frontend
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
@@ -13,3 +13,4 @@ jobs:
         node-version: '12.x'
     - run: npm install
     - run: npm run lint
+    - run: make
