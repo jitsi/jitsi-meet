@@ -1,5 +1,4 @@
 // @flow
-
 import type { Dispatch } from 'redux';
 
 import {
@@ -58,13 +57,15 @@ export function selectParticipant() {
 export function selectParticipantInLargeVideo() {
     return (dispatch: Dispatch<any>, getState: Function) => {
         const state = getState();
-        const participantId = _electParticipantInLargeVideo(state);
+        const { participantId, isFakeParticipant } = _electParticipantInLargeVideo(state);
+
         const largeVideo = state['features/large-video'];
 
         if (participantId !== largeVideo.participantId) {
             dispatch({
                 type: SELECT_LARGE_VIDEO_PARTICIPANT,
-                participantId
+                participantId,
+                isFakeParticipant
             });
 
             dispatch(selectParticipant());
@@ -121,6 +122,7 @@ function _electParticipantInLargeVideo(state) {
     const participants = state['features/base/participants'];
     let participant = participants.find(p => p.pinned);
     let id = participant && participant.id;
+    const isFakeParticipant = participant && participant.isFakeParticipant;
 
     if (!id) {
         // 2. No participant is pinned so get the dominant speaker. But the
@@ -160,5 +162,6 @@ function _electParticipantInLargeVideo(state) {
         }
     }
 
-    return id;
+    return { participantId: id,
+        isFakeParticipant };
 }

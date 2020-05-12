@@ -150,44 +150,44 @@ function Thumbnail(props: Props) {
 
             <ParticipantView
                 avatarSize = { AVATAR_SIZE }
-                disableVideo = { isScreenShare }
+                disableVideo = { isScreenShare || participant.isFakeParticipant }
                 participantId = { participantId }
                 style = { _styles.participantViewStyle }
                 tintEnabled = { participantInLargeVideo && !disableTint }
                 tintStyle = { _styles.activeThumbnailTint }
                 zOrder = { 1 } />
 
-            { renderDisplayName && <DisplayNameLabel participantId = { participantId } /> }
+            {renderDisplayName && <DisplayNameLabel participantId = { participantId } />}
 
-            { renderModeratorIndicator
+            {renderModeratorIndicator
                 && <View style = { styles.moderatorIndicatorContainer }>
                     <ModeratorIndicator />
-                </View> }
+                </View>}
 
-            <View
+            { !participant.isFakeParticipant && <View
                 style = { [
                     styles.thumbnailTopIndicatorContainer,
                     styles.thumbnailTopLeftIndicatorContainer
                 ] }>
                 <RaisedHandIndicator participantId = { participant.id } />
-                { renderDominantSpeakerIndicator && <DominantSpeakerIndicator /> }
-            </View>
+                {renderDominantSpeakerIndicator && <DominantSpeakerIndicator /> }
+            </View> }
 
-            <View
+            { !participant.isFakeParticipant && <View
                 style = { [
                     styles.thumbnailTopIndicatorContainer,
                     styles.thumbnailTopRightIndicatorContainer
                 ] }>
                 <ConnectionIndicator participantId = { participant.id } />
-            </View>
+            </View> }
 
-            <Container style = { styles.thumbnailIndicatorContainer }>
+            { !participant.isFakeParticipant && <Container style = { styles.thumbnailIndicatorContainer }>
                 { audioMuted
                     && <AudioMutedIndicator /> }
 
                 { videoMuted
                     && <VideoMutedIndicator /> }
-            </Container>
+            </Container> }
 
         </Container>
     );
