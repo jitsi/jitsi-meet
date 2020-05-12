@@ -47,6 +47,10 @@ if (CallKit) {
                     delegate._onPerformEndCallAction,
                     context),
                 CallKit.addListener(
+                    'performSetHeldCallAction',
+                    delegate._onPerformSetHeldCallAction,
+                    context),
+                CallKit.addListener(
                     'performSetMutedCallAction',
                     delegate._onPerformSetMutedCallAction,
                     context),

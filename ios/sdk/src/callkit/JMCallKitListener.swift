@@ -26,6 +26,8 @@ import Foundation
 
     @objc optional func performEndCall(UUID: UUID)
 
+    @objc optional func performSetHeldCall(UUID: UUID, isOnHold: Bool)
+
     @objc optional func performSetMutedCall(UUID: UUID, isMuted: Bool)
 
     @objc optional func performStartCall(UUID: UUID, isVideo: Bool)

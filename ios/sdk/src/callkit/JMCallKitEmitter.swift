@@ -71,6 +71,15 @@ internal final class JMCallKitEmitter: NSObject, CXProviderDelegate {
         action.fulfill()
     }
 
+    func provider(_ provider: CXProvider, perform action: CXSetHeldCallAction) {
+        listeners.forEach {
+            let listener = $0 as! JMCallKitListener
+            listener.performSetHeldCall?(UUID: action.callUUID, isOnHold: action.isOnHold)
+        }
+
+        action.fulfill()
+    }
+
     func provider(_ provider: CXProvider, perform action: CXSetMutedCallAction) {
         let uuid = pendingMuteActions.remove(action.uuid)
 

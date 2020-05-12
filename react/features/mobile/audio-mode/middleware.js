@@ -10,12 +10,13 @@ import {
     CONFERENCE_JOINED,
     getCurrentConference
 } from '../../base/conference';
-import { MiddlewareRegistry } from '../../base/redux';
+import { getParticipantCount } from '../../base/participants';
+import { MiddlewareRegistry, StateListenerRegistry } from '../../base/redux';
 
 import { _SET_AUDIOMODE_DEVICES, _SET_AUDIOMODE_SUBSCRIPTIONS } from './actionTypes';
 import logger from './logger';
 
-const { AudioMode } = NativeModules;
+const { AudioMode, RNCallKit } = NativeModules;
 const AudioModeEmitter = new NativeEventEmitter(AudioMode);
 
 /**
@@ -42,7 +43,7 @@ MiddlewareRegistry.register(store => next => action => {
     }
     case APP_WILL_MOUNT:
         _appWillMount(store);
-    case CONFERENCE_FAILED: // eslint-disable-line no-fallthrough
+    case CONFERENCE_FAILED:
     case CONFERENCE_LEFT:
 
     /*
@@ -65,6 +66,16 @@ MiddlewareRegistry.register(store => next => action => {
     return next(action);
 });
 
+StateListenerRegistry.register(
+    /* selector */ state => {
+        const conference = getCurrentConference(state);
+        const participantCount = getParticipantCount(state);
+
+        return conference && participantCount > 1;
+    },
+    /* listener */ (enableAudio, store) => _maybeEnableAudio(enableAudio, store)
+);
+
 /**
  * Notifies this feature that the action {@link APP_WILL_MOUNT} is being
  * dispatched within a specific redux {@code store}.
@@ -83,6 +94,28 @@ function _appWillMount(store) {
         type: _SET_AUDIOMODE_SUBSCRIPTIONS,
         subscriptions
     });
+}
+
+/**
+ * Applies only to iOS. Enables / disables the Audio Unit. When the audio unit is
+ * enabled audio will flow on both directions.
+ *
+ * @param {boolean} enabled - Whether audio should be enabled or not.
+ * @param {Store} store - The redux store.
+ * @private
+ * @returns {void}
+ */
+function _maybeEnableAudio(enabled, { getState }) {
+    // XXX: Ideally we'd want to call AudioMode.setAudioEnabled here, but that too won't work
+    // without telling CallKit to hold the call. Yeah, I know we don't support it, but hey
+    // thiss was the only workaround that ddid the job.
+    if (RNCallKit) {
+        const conference = getCurrentConference(getState);
+
+        if (conference && conference.callUUID) {
+            RNCallKit.setCallOnHold(conference.callUUID, !enabled);
+        }
+    }
 }
 
 /**

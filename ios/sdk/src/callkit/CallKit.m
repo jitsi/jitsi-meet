@@ -38,6 +38,8 @@ static NSString * const RNCallKitPerformAnswerCallAction
     = @"performAnswerCallAction";
 static NSString * const RNCallKitPerformEndCallAction
     = @"performEndCallAction";
+static NSString * const RNCallKitPerformSetHeldCallAction
+    = @"performSetHeldCallAction";
 static NSString * const RNCallKitPerformSetMutedCallAction
     = @"performSetMutedCallAction";
 static NSString * const RNCallKitProviderDidReset
@@ -54,6 +56,7 @@ RCT_EXPORT_MODULE();
     return @[
         RNCallKitPerformAnswerCallAction,
         RNCallKitPerformEndCallAction,
+        RNCallKitPerformSetHeldCallAction,
         RNCallKitPerformSetMutedCallAction,
         RNCallKitProviderDidReset
     ];
@@ -118,6 +121,25 @@ RCT_EXPORT_METHOD(setProviderConfiguration:(NSDictionary *)dictionary) {
 
     // register to receive CallKit proxy events
     [JMCallKitProxy addListener:self];
+}
+
+RCT_EXPORT_METHOD(setCallOnHold:(NSString *)callUUID
+                         onHold:(BOOL)onHold
+                        resolve:(RCTPromiseResolveBlock)resolve
+                         reject:(RCTPromiseRejectBlock)reject) {
+    DDLogInfo(@"[RNCallKit][startCall] setCallOnHold = %@", callUUID);
+
+    NSUUID *callUUID_ = [[NSUUID alloc] initWithUUIDString:callUUID];
+
+    if (!callUUID_) {
+        reject(nil, [NSString stringWithFormat:@"Invalid UUID: %@", callUUID], nil);
+        return;
+    }
+
+    CXSetHeldCallAction *action
+        = [[CXSetHeldCallAction alloc] initWithCallUUID:callUUID_ onHold:onHold];
+    CXTransaction *transaction = [[CXTransaction alloc] initWithAction:action];
+    [self requestTransaction:transaction resolve:resolve reject:reject];
 }
 
 // Start outgoing call
@@ -293,6 +315,18 @@ RCT_EXPORT_METHOD(updateCall:(NSString *)callUUID
 
     [self sendEventWithName:RNCallKitPerformEndCallAction
                        body:@{ @"callUUID": UUID.UUIDString }];
+}
+
+// Handle holdd from CallKit view
+- (void) performSetHeldCallWithUUID:(NSUUID *)UUID
+                           isOnHold:(BOOL)isOnHold {
+    DDLogInfo(@"[RNCallKit][CXProviderDelegate][provider:performSetHeldCallAction:]");
+
+    [self sendEventWithName:RNCallKitPerformSetHeldCallAction
+                       body:@{
+                           @"callUUID": UUID.UUIDString,
+                           @"onHold": @(isOnHold)
+                       }];
 }
 
 // Handle audio mute from CallKit view

@@ -115,6 +115,9 @@ RCT_EXPORT_MODULE();
 
         RTCAudioSession *session = [RTCAudioSession sharedInstance];
         [session addDelegate:self];
+
+        // Don't let WebRTC manage the audio unit, we'll do it by hand.
+        session.useManualAudio = YES;
     }
 
     return self;
@@ -154,6 +157,8 @@ RCT_EXPORT_METHOD(setMode:(int)mode
         forceSpeaker = NO;
         forceEarpiece = NO;
     }
+
+    DDLogInfo(@"[AudioMode] setMode: %d", mode);
 
     activeMode = mode;
 
@@ -227,6 +232,47 @@ RCT_EXPORT_METHOD(setAudioDevice:(NSString *)device
         resolve(nil);
     } else {
         reject(@"setAudioDevice", error != nil ? error.localizedDescription : @"", error);
+    }
+}
+
+RCT_EXPORT_METHOD(setAudioEnabled:(BOOL)enabled) {
+    DDLogInfo(@"[AudioMode] setAudioEnabled");
+
+    RTCAudioSession *session = [RTCAudioSession sharedInstance];
+
+    if (enabled) {
+        // CallKit should have activated the session, but it's possible it got deeactivated when
+        // a user who was in a conferene is left alone for a long period of time (~10 minutes).
+        if (!session.isActive) {
+            DDLogInfo(@"[AudioMode][setAudioEnabled] Session is not active, activating...");
+
+            // Pretend an interruption ended so RTCAudioSession updates its own internal state.
+            // It will re-activate by itself. We need to do this because otherwisse there is no
+            // way to get rid of an internal `isInterrupted` flag.
+            NSDictionary *userInfo
+                = @{
+                    AVAudioSessionInterruptionTypeKey: [NSNumber numberWithInt:AVAudioSessionInterruptionTypeEnded],
+                    AVAudioSessionInterruptionOptionKey: [NSNumber numberWithInt:AVAudioSessionInterruptionOptionShouldResume]
+                };
+            [[NSNotificationCenter defaultCenter] postNotificationName:AVAudioSessionInterruptionNotification object:nil userInfo:userInfo];
+
+            RTCAudioSessionConfiguration *config = [self configForMode:activeMode];
+            NSError *error = nil;
+
+            [self setConfig:config error:&error];
+            if (error != nil) {
+                DDLogError(@"[AudioMode][setAudioEnabled] setConfig: %@", error);
+            }
+        }
+
+        // Make sure the Audio Unit is started. This is idempotent, so we don't need to worry about always setting it.
+        DDLogInfo(@"[AudioMode][setAudioEnabled] Enabling Audio Unit, current sttate: %d", session.isAudioEnabled);
+        session.isAudioEnabled = YES;
+    } else {
+        DDLogInfo(@"[AudioMode][setAudioEnabled] Disabling Audio Unit, current sttate: %d", session.isAudioEnabled);
+        session.isAudioEnabled = NO;
+
+        // Ignore the AVAudioSession activation state. CallKit or the system will disable it.
     }
 }
 

@@ -113,6 +113,7 @@ function _appWillMount({ dispatch, getState }, next, action) {
     };
 
     const delegate = {
+        _onPerformSetHeldCallAction,
         _onPerformSetMutedCallAction,
         _onPerformEndCallAction
     };
@@ -360,6 +361,24 @@ function _onPerformEndCallAction({ callUUID }) {
         // Accept".
         delete conference.callUUID;
         dispatch(appNavigate(undefined));
+    }
+}
+
+/**
+ * Handles CallKit's event {@code performSetHeldCallAction}.
+ *
+ * @param {Object} event - The details of the CallKit event
+ * {@code performSetHeldCallAction}.
+ * @returns {void}
+ */
+function _onPerformSetHeldCallAction({ callUUID, onHold }) {
+    const { getState } = this; // eslint-disable-line no-invalid-this
+    const conference = getCurrentConference(getState);
+
+    if (conference && conference.callUUID === callUUID) {
+        if (AudioMode.setAudioEnabled) {
+            AudioMode.setAudioEnabled(!onHold);
+        }
     }
 }
 
