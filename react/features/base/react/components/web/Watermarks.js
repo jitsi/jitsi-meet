@@ -172,27 +172,26 @@ class Watermarks extends Component<Props, State> {
      * @returns {ReactElement|null}
      */
     _renderJitsiWatermark() {
-        let reactElement = null;
-
-        if (this.state.showJitsiWatermark
-                || (this.props._isGuest
-                    && this.state.showJitsiWatermarkForGuests)) {
-            reactElement = <div className = 'watermark leftwatermark' />;
-
-            const { jitsiWatermarkLink } = this.state;
-
-            if (jitsiWatermarkLink) {
-                reactElement = (
-                    <a
-                        href = { "http://jane.app" }
-                        target = '_new'>
-                        { reactElement }
-                    </a>
-                );
-            }
-        }
-
-        return reactElement;
+        // let reactElement = null;
+        //
+        // if (this.state.showJitsiWatermark
+        //         || (this.props._isGuest
+        //             && this.state.showJitsiWatermarkForGuests)) {
+        //     reactElement = <div className = 'watermark leftwatermark' />;
+        //
+        //     const { jitsiWatermarkLink } = this.state;
+        //
+        //     if (jitsiWatermarkLink) {
+        //         reactElement = (
+        //             <a
+        //                 href = { "http://jane.app" }
+        //                 target = '_new'>
+        //                 { reactElement }
+        //             </a>
+        //         );
+        //     }
+        // }
+        return <div className = 'watermark leftwatermark' />;;
     }
 
     /**
