@@ -116,12 +116,6 @@ Jigasi is a server-side application acting as a gateway to Jitsi Meet conference
 ```sh
 sudo apt install jigasi
 ```
-or
-
-```sh
-wget https://download.jitsi.org/stable/jigasi_1.1-107-g6928850-1_amd64.deb
-sudo dpkg -i jigasi_1.1-107-g6928850-1_amd64.deb
-```
 
 During the installation, you will be asked to enter your SIP account and password. This account will be used to invite the other SIP participants.
 
