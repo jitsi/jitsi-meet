@@ -59,7 +59,6 @@ export function getLocalizedDurationFormatter(duration: number) {
     // states v2.19 so maybe locale on moment's duration was introduced in
     // between?
     //
-    console.log('getLocalizedDuration:', moment.duration(duration).format('h:mm:ss'));
 
     // If the conference is under an hour long we want to display it without
     // showing the hour and we want to include the hour if the conference is
