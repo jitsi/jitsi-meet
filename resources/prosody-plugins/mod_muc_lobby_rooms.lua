@@ -182,7 +182,7 @@ process_host_module(main_muc_component_config, function(host_module, host)
                 event.status_codes["104"] = true;
             end
         elseif room._data.lobbyroom then
-            room._data.lobbyroom:destroy(nil, 'Lobby room closed.');
+            room._data.lobbyroom:destroy(room.jid, 'Lobby room closed.');
             room._data.lobbyroom = nil;
         end
     end);
