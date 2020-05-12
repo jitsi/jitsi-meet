@@ -209,7 +209,7 @@ process_host_module(main_muc_component_config, function(host_module, host)
     host_module:hook('muc-occupant-pre-join', function (event)
         local room, stanza = event.room, event.stanza;
 
-        if is_healthcheck_room(room) then
+        if is_healthcheck_room(room.jid) then
             return;
         end
 
