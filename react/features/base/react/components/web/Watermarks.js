@@ -183,13 +183,15 @@ class Watermarks extends Component<Props, State> {
         //
         //     if (jitsiWatermarkLink) {
         //         reactElement = (
-        //             { reactElement }
+        //             <a
+        //                 href = { "http://jane.app" }
+        //                 target = '_new'>
+        //                 { reactElement }
+        //             </a>
         //         );
         //     }
         // }
-        //
-        // return reactElement;
-        return <div className = 'watermark leftwatermark' />;
+        return <div className = 'watermark leftwatermark' />;;
     }
 
     /**
