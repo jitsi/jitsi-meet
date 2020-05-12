@@ -334,7 +334,8 @@
         "toggleFilmstrip": "동영상 표시 또는 숨기기",
         "toggleScreensharing": "카메라와 화면 공유간에 전환",
         "toggleShortcuts": "도움말 메뉴 표시 또는 숨기기",
-        "videoMute": "카메라 시작 또는 중지"
+        "videoMute": "카메라 시작 또는 중지",
+        "videoQuality": "품질 설정하기"
     },
     "liveStreaming": {
         "busy": "스트리밍 자원을 확보하기 위해 노력하고 있습니다. 몇 분 후에 다시 시도하십시오.",
@@ -708,8 +709,8 @@
         "info": "",
         "privacy": "개인정보",
         "recentList": "",
-        "recentListDelete": "",
-        "recentListEmpty": "",
+        "recentListDelete": "삭제",
+        "recentListEmpty": "채팅 기록이 비었습니다. 최근 채팅 목록이 여기에 표시됩니다.",
         "reducedUIText": "",
         "roomname": "방 이름 입력",
         "roomnameHint": "",
