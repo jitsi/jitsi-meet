@@ -608,9 +608,9 @@
         "raiseHand": "말하기 요청/해제",
         "raiseYourHand": "",
         "Settings": "설정",
-        "sharedvideo": "",
+        "sharedvideo": "유튜브 비디오 공유",
         "shareRoom": "",
-        "shortcuts": "",
+        "shortcuts": "단축키 보기",
         "speakerStats": "접속자 통계",
         "startScreenSharing": "",
         "startSubtitles": "",
@@ -618,11 +618,11 @@
         "stopSubtitles": "",
         "stopSharedVideo": "",
         "talkWhileMutedPopup": "",
-        "tileViewToggle": "",
+        "tileViewToggle": "타일뷰 토글",
         "toggleCamera": "카메라 토글",
         "videomute": "카메라 켜기/끄기",
-        "startvideoblur": "",
-        "stopvideoblur": ""
+        "startvideoblur": "배경 흐리게",
+        "stopvideoblur": "배경 흐리게 취소"
     },
     "\u0005toolbar": {},
     "transcribing": {
