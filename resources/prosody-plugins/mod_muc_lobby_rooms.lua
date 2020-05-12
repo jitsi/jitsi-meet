@@ -194,13 +194,14 @@ process_host_module(main_muc_component_config, function(host_module, host)
         end
     end);
     host_module:hook("muc-disco#info", function (event)
-        if (event.room._data.lobbyroom) then
+        local room = event.room;
+        if (room._data.lobbyroom and room:get_members_only()) then
             table.insert(event.form, {
                 name = "muc#roominfo_lobbyroom";
                 label = "Lobby room jid";
                 value = "";
             });
-            event.formdata["muc#roominfo_lobbyroom"] = event.room._data.lobbyroom.jid;
+            event.formdata["muc#roominfo_lobbyroom"] = room._data.lobbyroom.jid;
         end
     end);
 
