@@ -41,13 +41,13 @@ If you are already running Nginx on port 443 on the same machine turnserver conf
 
 ```sh
 # Ensure support is available for apt repositories served via HTTPS
-apt-get install apt-transport-https
+sudo apt install apt-transport-https
 
 # Retrieve the latest package versions across all repositories
-apt-get update
+sudo apt update
 
 # Perform jitsi-meet installation
-apt-get -y install jitsi-meet
+sudo apt install jitsi-meet
 ```
 
 During the installation, you will be asked to enter the hostname of the Jitsi Meet instance. If you have a [FQDN](https://en.wikipedia.org/wiki/Fully_qualified_domain_name) for the instance already set up in DNS, enter it there. If you don't have a resolvable hostname, you can enter the IP address of the machine (if it is static or doesn't change).
@@ -63,7 +63,7 @@ _Note_: Jitsi Meet mobile apps *require* a valid certificate signed by a trusted
 Simply run the following in your shell:
 
 ```sh
-/usr/share/jitsi-meet/scripts/install-letsencrypt-cert.sh
+sudo /usr/share/jitsi-meet/scripts/install-letsencrypt-cert.sh
 ```
 
 Note that this script uses the [HTTP-01 challenge type](https://letsencrypt.org/docs/challenge-types/) and thus your instance needs to be accessible from the public internet. If you want to use a different challenge type, don't use this script and instead choose ___I want to use my own certificate___ during jitsi-meet installation.
@@ -114,13 +114,7 @@ If this all worked, then congratulations!  You have an operational Jitsi confere
 Jigasi is a server-side application acting as a gateway to Jitsi Meet conferences. It allows regular [SIP](https://en.wikipedia.org/wiki/Session_Initiation_Protocol) clients to join meetings and provides transcription capabilities.
 
 ```sh
-apt-get -y install jigasi
-```
-or
-
-```sh
-wget https://download.jitsi.org/unstable/jigasi_1.0-107_amd64.deb
-dpkg -i jigasi_1.0-107_amd64.deb
+sudo apt install jigasi
 ```
 
 During the installation, you will be asked to enter your SIP account and password. This account will be used to invite the other SIP participants.
@@ -134,7 +128,7 @@ Enjoy!
 ## Uninstall
 
 ```sh
-apt-get purge jigasi jitsi-meet jitsi-meet-web-config jitsi-meet-prosody jitsi-meet-turnserver jitsi-meet-web jicofo jitsi-videobridge2
+sudo apt purge jigasi jitsi-meet jitsi-meet-web-config jitsi-meet-prosody jitsi-meet-turnserver jitsi-meet-web jicofo jitsi-videobridge2
 ```
 
 Sometimes the following packages will fail to uninstall properly:
@@ -147,8 +141,8 @@ When this happens, just run the uninstall command a second time and it should be
 The reason for the failure is that sometimes the uninstall script is faster than the process that stops the daemons. The second run of the uninstall command fixes this, as by then the jigasi or jitsi-videobridge daemons are already stopped.
 
 #### Systemd details
-To reload the systemd changes on a running system execute `systemctl daemon-reload` and `service jitsi-videobridge2 restart`.
-To check the tasks part execute `service jitsi-videobridge2 status` and you should see `Tasks: XX (limit: 65000)`.
+To reload the systemd changes on a running system execute `sudo systemctl daemon-reload` and `sudo systemctl restart jitsi-videobridge2`.
+To check the tasks part execute `sudo systemctl status jitsi-videobridge2` and you should see `Tasks: XX (limit: 65000)`.
 To check the files and process part execute ```cat /proc/`cat /var/run/jitsi-videobridge/jitsi-videobridge.pid`/limits``` and you should see:
 ```
 Max processes             65000                65000                processes
