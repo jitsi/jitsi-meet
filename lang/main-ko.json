@@ -177,7 +177,7 @@
         "liveStreamingDisabledForGuestTooltip": "",
         "liveStreamingDisabledTooltip": "",
         "lockMessage": "회의를 비공개하지 못했습니다",
-        "lockRoom": "",
+        "lockRoom": "$t(lockRoomPasswordUppercase) 추가",
         "lockTitle": "비공개 실패",
         "logoutQuestion": "로그 아웃하고 컨퍼런스를 중지하시겠습니까?",
         "logoutTitle": "로그아웃",
@@ -395,8 +395,8 @@
         "yes": ""
     },
     "\u0005localRecording": {},
-    "lockRoomPassword": "패스워드",
-    "lockRoomPasswordUppercase": "패스워드",
+    "lockRoomPassword": "비밀번호",
+    "lockRoomPasswordUppercase": "비밀번호",
     "me": "Me",
     "notify": {
         "connectedOneMember": "",
