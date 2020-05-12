@@ -51,7 +51,8 @@ type Props = {
  * @returns {string}
  */
 function _toDateString(date) {
-    return getLocalizedDateFormatter(date).format('MMM Do, YYYY');
+    // return getLocalizedDateFormatter(date).format('MMM Do, YYYY');
+    return getLocalizedDateFormatter(date).format('ll');
 }
 
 

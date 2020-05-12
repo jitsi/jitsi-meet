@@ -17,6 +17,7 @@ require('moment/locale/es');
 require('moment/locale/fr');
 require('moment/locale/hy-am');
 require('moment/locale/it');
+require('moment/locale/ko');
 require('moment/locale/nb');
 
 // OC is not available. Please submit OC translation to the MomentJS project.
