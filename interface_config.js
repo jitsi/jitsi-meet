@@ -224,6 +224,7 @@ var interfaceConfig = {
      * Specify custom URL for downloading android mobile app.
      */
     // MOBILE_DOWNLOAD_LINK_ANDROID: 'https://play.google.com/store/apps/details?id=org.jitsi.meet',
+    MOBILE_DOWNLOAD_LINK_ANDROID: 'https://f-droid.org/en/packages/org.jitsi.meet/'
 
     /**
      * Specify URL for downloading ios mobile app.
