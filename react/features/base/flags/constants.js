@@ -44,13 +44,13 @@ export const IOS_RECORDING_ENABLED = 'ios.recording.enabled';
 export const PIP_ENABLED = 'pip.enabled';
 
 /**
- * Flag indicating if the welcome page should be enabled.
- * Default: disabled (false).
- */
-export const WELCOME_PAGE_ENABLED = 'welcomepage.enabled';
-
-/**
  * Flag indicating if the toolbox should be always be visible
  * Default: disabled (false).
  */
 export const TOOLBOX_ALWAYS_VISIBLE = 'toolbox.alwaysVisible';
+
+/**
+ * Flag indicating if the welcome page should be enabled.
+ * Default: disabled (false).
+ */
+export const WELCOME_PAGE_ENABLED = 'welcomepage.enabled';
