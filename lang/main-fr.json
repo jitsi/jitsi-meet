@@ -81,7 +81,7 @@
         "FETCH_SESSION_ID": "Obtention d’un identifiant de session…",
         "GET_SESSION_ID_ERROR": "Obtenir une erreur d’identifiant de session : {{code}}",
         "GOT_SESSION_ID": "Obtention d’un identifiant de session… Terminée",
-        "LOW_BANDWIDTH": "La vidéo de {{displayName}} a été désactivée pour économiser de la ba de passante"
+        "LOW_BANDWIDTH": "La vidéo de {{displayName}} a été désactivée pour économiser de la bande passante"
     },
     "connectionindicator": {
         "address": "Adresse :",
