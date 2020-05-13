@@ -30,11 +30,7 @@
     "calendarSync": {
         "addMeetingURL": "Legg til en møtelenke",
         "confirmAddLink": "Ønsker du å legge til en Jitsi-lenke til denne hendelsen?",
-        "error": {
-            "appConfiguration": "",
-            "generic": "",
-            "notSignedIn": ""
-        },
+        "join": "",
         "join": "Ta del",
         "joinTooltip": "Ta del i møtet",
         "nextMeeting": "neste møte",
@@ -55,9 +51,6 @@
         "title": "",
         "messageTo": "Privat melding til {{recipient}}",
         "fieldPlaceHolder": "Skriv inn din melding her"
-    },
-    "connectingOverlay": {
-        "joiningRoom": ""
     },
     "connection": {
         "ATTACHED": "Vedlagt",
@@ -110,14 +103,8 @@
         "yesterday": "I går"
     },
     "deepLinking": {
-        "appNotInstalled": "",
-        "description": "",
-        "descriptionWithoutWeb": "",
         "downloadApp": "Last ned programmet",
-        "launchWebButton": "",
         "openApp": "Fortsett til programmet",
-        "title": "",
-        "tryAgainButton": ""
     },
     "defaultLink": "f.eks.",
     "deviceError": {

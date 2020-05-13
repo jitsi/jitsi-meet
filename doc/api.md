@@ -275,6 +275,10 @@ api.executeCommand('avatarUrl', 'https://avatars0.githubusercontent.com/u/367164
 ```javascript
 api.executeCommand('receiverParticipantId', 'text');
 ```
+* **setVideoQuality** - Sets the send and receive video resolution. This command requires one argument - the resolution height to be set.
+```javascript
+api.executeCommand('setVideoQuality', 720);
+```
 
 You can also execute multiple commands using the `executeCommands` method:
 ```javascript
@@ -462,6 +466,14 @@ changes. The listener will receive an object with the following structure:
 ```javascript
 {
     id: string // the id of the participant
+}
+```
+
+* **participantRoleChanged** - event notification fired when the role of the local user has changed (none, moderator, participant). The listener will receive an object with the following structure:
+```javascript
+{
+    id: string // the id of the participant
+    role: string // the new role of the participant
 }
 ```
 

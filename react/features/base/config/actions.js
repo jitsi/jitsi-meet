@@ -1,5 +1,6 @@
 // @flow
 
+import { jitsiLocalStorage } from 'js-utils';
 import type { Dispatch } from 'redux';
 
 import { addKnownDomains } from '../known-domains';
@@ -109,11 +110,8 @@ export function storeConfig(baseURL: string, config: Object) {
         let b = false;
 
         try {
-            if (typeof window.config === 'undefined'
-                    || window.config !== config) {
-                window.localStorage.setItem(
-                    `${_CONFIG_STORE_PREFIX}/${baseURL}`,
-                    JSON.stringify(config));
+            if (typeof window.config === 'undefined' || window.config !== config) {
+                jitsiLocalStorage.setItem(`${_CONFIG_STORE_PREFIX}/${baseURL}`, JSON.stringify(config));
                 b = true;
             }
         } catch (e) {

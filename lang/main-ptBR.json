@@ -478,7 +478,7 @@
     "profile": {
         "setDisplayNameLabel": "Definir seu nome de exibição",
         "setEmailInput": "Digite e-mail",
-        "setEmailLabel": "Definir seu email de gravatar",
+        "setEmailLabel": "Definir seu e-mail de Gravatar",
         "title": "Perfil"
     },
     "raisedHand": "Gostaria de falar",
@@ -605,7 +605,7 @@
             "recording": "Alternar gravação",
             "remoteMute": "Silenciar participante",
             "Settings": "Alternar configurações",
-            "sharedvideo": "Alternar compartilhamento de vídeo do Youtube",
+            "sharedvideo": "Alternar compartilhamento de vídeo do YouTube",
             "shareRoom": "Convidar alguém",
             "shareYourScreen": "Alternar compartilhamento de tela",
             "shortcuts": "Alternar atalhos",

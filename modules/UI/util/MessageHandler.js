@@ -1,7 +1,7 @@
 /* global $, APP */
 const logger = require('jitsi-meet-logger').getLogger(__filename);
 
-import jitsiLocalStorage from '../../util/JitsiLocalStorage';
+import { jitsiLocalStorage } from 'js-utils';
 
 import {
     NOTIFICATION_TIMEOUT,

@@ -251,7 +251,7 @@
         "screenSharingAudio": "Share audio",
         "screenSharingFailedToInstall": "Oops! Your screen sharing extension failed to install.",
         "screenSharingFailedToInstallTitle": "Screen sharing extension failed to install",
-        "screenSharingFirefoxPermissionDeniedError": "Something went wrong while we were trying to share your screen. Please make sure that you have given us permission to do so. ",
+        "screenSharingFirefoxPermissionDeniedError": "Something went wrong while we were trying to share your screen. Please make sure that you have given us permission to do so.",
         "screenSharingFirefoxPermissionDeniedTitle": "Oops! We weren’t able to start screen sharing!",
         "screenSharingPermissionDeniedError": "Oops! Something went wrong with your screen sharing extension permissions. Please reload and try again.",
         "sendPrivateMessage": "You recently received a private message. Did you intend to reply to that privately, or you want to send your message to the group?",
@@ -293,6 +293,9 @@
     },
     "documentSharing": {
         "title": "Shared Document"
+    },
+    "e2ee": {
+        "labelToolTip": "All participants in this meeting have enabled End-to-End encryption"
     },
     "feedback": {
         "average": "Average",
@@ -466,13 +469,41 @@
         "newDeviceAudioTitle": "New audio device detected",
         "newDeviceAction": "Use",
         "OldElectronAPPTitle": "Security vulnerability!",
-        "oldElectronClientDescription1": "You appear to be using an old verion of the Jitsi Meet client which has known security vulnerabilities. Please make sure you update to our ",
+        "oldElectronClientDescription1": "You appear to be using an old version of the Jitsi Meet client which has known security vulnerabilities. Please make sure you update to our ",
         "oldElectronClientDescription2": "latest build",
         "oldElectronClientDescription3": " now!"
     },
     "passwordSetRemotely": "set by another participant",
     "passwordDigitsOnly": "Up to {{number}} digits",
     "poweredby": "powered by",
+    "prejoin": {
+        "audioAndVideoError": "Audio and video error:",
+        "audioOnlyError": "Audio error:",
+        "audioTrackError": "Could not create audio track.",
+        "callMe": "Call me",
+        "callMeAtNumber": "Call me at this number:",
+        "configuringDevices": "Configuring devices...",
+        "connectedWithAudioQ": "You’re connected with audio?",
+        "copyAndShare": "Copy & share meeting link",
+        "dialInMeeting": "Dial into the meeting",
+        "dialInPin": "Dial into the meeting and enter PIN code:",
+        "dialing": "Dialing",
+        "doNotShow": "Don't show this again",
+        "iWantToDialIn": "I want to dial in",
+        "joinAudioByPhone": "Join with phone audio",
+        "joinMeeting": "Join meeting",
+        "joinWithoutAudio": "Join without audio",
+        "initiated": "Call initiated",
+        "linkCopied": "Link copied to clipboard",
+        "lookGood": "It sounds like your microphone is working properly",
+        "or": "or",
+        "calling": "Calling",
+        "startWithPhone": "Start with phone audio",
+        "screenSharingError": "Screen sharing error:",
+        "videoOnlyError": "Video error:",
+        "videoTrackError": "Could not create video track.",
+        "viewAllNumbers": "view all numbers"
+    },
     "presenceStatus": {
         "busy": "Busy",
         "calling": "Calling...",
@@ -552,12 +583,15 @@
     "settingsView": {
         "advanced": "Advanced",
         "alertOk": "OK",
+        "alertCancel": "Cancel",
         "alertTitle": "Warning",
         "alertURLText": "The entered server URL is invalid",
         "buildInfoSection": "Build Information",
         "conferenceSection": "Conference",
         "disableCallIntegration": "Disable native call integration",
         "disableP2P": "Disable Peer-To-Peer mode",
+        "disableCrashReporting": "Disable crash reporting",
+        "disableCrashReportingWarning": "Are you sure you want to disable crash reporting? The setting will be applied after you restart the app.",
         "displayName": "Display name",
         "email": "Email",
         "header": "Settings",
@@ -792,6 +826,6 @@
         "youAreAlone": "You are the only one in the meeting"
     },
     "helpView": {
-        "header": "Help centre"
+        "header": "Help center"
     }
 }

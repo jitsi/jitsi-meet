@@ -114,14 +114,17 @@ StateListenerRegistry.register(
         const {
             conference,
             maxReceiverVideoQuality,
-            preferredReceiverVideoQuality
+            preferredVideoQuality
         } = currentState;
         const changedPreferredVideoQuality
-            = preferredReceiverVideoQuality !== previousState.preferredReceiverVideoQuality;
+            = preferredVideoQuality !== previousState.preferredVideoQuality;
         const changedMaxVideoQuality = maxReceiverVideoQuality !== previousState.maxReceiverVideoQuality;
 
         if (changedPreferredVideoQuality || changedMaxVideoQuality) {
-            _setReceiverVideoConstraint(conference, preferredReceiverVideoQuality, maxReceiverVideoQuality);
+            _setReceiverVideoConstraint(conference, preferredVideoQuality, maxReceiverVideoQuality);
+        }
+        if (changedPreferredVideoQuality) {
+            _setSenderVideoConstraint(conference, preferredVideoQuality);
         }
     });
 
@@ -434,6 +437,24 @@ function _setReceiverVideoConstraint(conference, preferred, max) {
 }
 
 /**
+ * Helper function for updating the preferred sender video constraint, based
+ * on the user preference.
+ *
+ * @param {JitsiConference} conference - The JitsiConference instance for the
+ * current call.
+ * @param {number} preferred - The user preferred max frame height.
+ * @returns {void}
+ */
+function _setSenderVideoConstraint(conference, preferred) {
+    if (conference) {
+        conference.setSenderVideoConstraint(preferred)
+            .catch(err => {
+                logger.error(`Changing sender resolution to ${preferred} failed - ${err} `);
+            });
+    }
+}
+
+/**
  * Notifies the feature base/conference that the action
  * {@code SET_ROOM} is being dispatched within a specific
  *  redux store.
@@ -502,12 +523,12 @@ function _syncReceiveVideoQuality({ getState }, next, action) {
     const {
         conference,
         maxReceiverVideoQuality,
-        preferredReceiverVideoQuality
+        preferredVideoQuality
     } = getState()['features/base/conference'];
 
     _setReceiverVideoConstraint(
         conference,
-        preferredReceiverVideoQuality,
+        preferredVideoQuality,
         maxReceiverVideoQuality);
 
     return next(action);

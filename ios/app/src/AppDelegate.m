@@ -24,19 +24,10 @@
 @import Firebase;
 @import JitsiMeet;
 
-
 @implementation AppDelegate
 
 -             (BOOL)application:(UIApplication *)application
   didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-
-    // Initialize Crashlytics and Firebase if a valid GoogleService-Info.plist file was provided.
-    if ([FIRUtilities appContainsRealServiceInfoPlist]) {
-        NSLog(@"Enablign Crashlytics and Firebase");
-        [FIRApp configure];
-        [Fabric with:@[[Crashlytics class]]];
-    }
-
     JitsiMeet *jitsiMeet = [JitsiMeet sharedInstance];
 
     jitsiMeet.conferenceActivityType = JitsiMeetConferenceActivityType;
@@ -53,6 +44,13 @@
         [builder setFeatureFlag:@"ios.recording.enabled" withBoolean:YES];
 #endif
     }];
+
+    // Initialize Crashlytics and Firebase if a valid GoogleService-Info.plist file was provided.
+    if ([FIRUtilities appContainsRealServiceInfoPlist] && ![jitsiMeet isCrashReportingDisabled]) {
+        NSLog(@"Enabling Crashlytics and Firebase");
+        [FIRApp configure];
+        [Fabric with:@[[Crashlytics class]]];
+    }
 
     [jitsiMeet application:application didFinishLaunchingWithOptions:launchOptions];
 

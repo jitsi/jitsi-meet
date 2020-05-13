@@ -220,7 +220,7 @@
         "muteParticipantDialog": "Seguru chi boles pònnere custa persone a sa muda? No as a pòdere torrare a ativare s'àudio issoro, però is utentes ddu ant a pòdere ativare in cale si siat momentu.",
         "muteParticipantTitle": "Boles pònnere custa persone a sa muda?",
         "Ok": "AB",
-        "passwordLabel": "$t(lockRoomPasswordUppercase)",
+        "passwordLabel": "Unu partetzipante at blocadu sa riunione. Inserta sa $t(lockRoomPassword) pro intrare.",
         "passwordNotSupported": "No est possìbile istabilire una $t(lockRoomPassword).",
         "passwordNotSupportedTitle": "$t(lockRoomPasswordUppercase) non suportadu",
         "passwordRequired": "$t(lockRoomPasswordUppercase) rechèdida",
@@ -482,7 +482,7 @@
     "profile": {
         "setDisplayNameLabel": "Cunfigura su nòmine visìbile tuo",
         "setEmailInput": "Inserta posta eletrònica",
-        "setEmailLabel": "Cunfigura indiritzu eletrònicu de gravatar",
+        "setEmailLabel": "Cunfigura indiritzu eletrònicu de Gravatar",
         "title": "Profilu"
     },
     "raisedHand": "Bògio chistionare",
@@ -611,7 +611,7 @@
             "recording": "Ativa o disativa sa registratzione",
             "remoteMute": "Pone partetzipante a sa muda",
             "Settings": "Càmbia sa cunfiguratzione",
-            "sharedvideo": "Ativa o disativa sa cumpartzidura de vìdeos de Youtube",
+            "sharedvideo": "Ativa o disativa sa cumpartzidura de vìdeos de YouTube",
             "shareRoom": "Invita una persone",
             "shareYourScreen": "Ativa o disativa sa cumpartzidura de ischermu",
             "shortcuts": "Ativa o disativa incurtzaduras",

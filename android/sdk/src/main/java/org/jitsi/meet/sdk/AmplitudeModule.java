@@ -66,6 +66,10 @@ class AmplitudeModule
         String android_id = sharedPreferences.getString(AMPLITUDE_DEVICE_ID_KEY, "");
         if (!TextUtils.isEmpty(android_id)) {
             Amplitude.getInstance(instanceName).setDeviceId(android_id);
+        } else {
+            String amplitudeId = Amplitude.getInstance(instanceName).getDeviceId();
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putString(JITSI_PREFERENCES, amplitudeId).apply();
         }
     }
 

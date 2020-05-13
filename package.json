@@ -53,10 +53,10 @@
     "jquery-contextmenu": "2.4.5",
     "jquery-i18next": "1.2.1",
     "js-md5": "0.6.1",
-    "js-utils": "github:jitsi/js-utils#df68966e3c65b5c57fcd2670da1326a2c77518d1",
+    "js-utils": "github:jitsi/js-utils#cf11996bd866fdb47326c59a5d3bc24be17282d4",
     "jsrsasign": "8.0.12",
     "jwt-decode": "2.2.0",
-    "lib-jitsi-meet": "github:jitsi/lib-jitsi-meet#f97c37d0140a0f12644ae29f4dd93757b8b8610f",
+    "lib-jitsi-meet": "github:jitsi/lib-jitsi-meet#46691d8442b2db389170f9e67d8d1b84b164a493",
     "libflacjs": "github:mmig/libflac.js#93d37e7f811f01cf7d8b6a603e38bd3c3810907d",
     "lodash": "4.17.13",
     "moment": "2.19.4",
@@ -72,6 +72,7 @@
     "react-native-calendar-events": "github:jitsi/react-native-calendar-events#902e6e92d6bae450a6052f76ba4d02f977ffd8f2",
     "react-native-callstats": "3.61.0",
     "react-native-collapsible": "1.5.1",
+    "react-native-default-preference": "1.4.2",
     "react-native-immersive": "2.0.0",
     "react-native-keep-awake": "4.0.0",
     "react-native-linear-gradient": "2.5.6",
@@ -123,7 +124,6 @@
     "jetifier": "1.6.4",
     "metro-react-native-babel-preset": "0.56.0",
     "node-sass": "4.13.1",
-    "precommit-hook": "3.0.0",
     "string-replace-loader": "2.1.1",
     "style-loader": "0.19.0",
     "unorm": "1.6.0",
@@ -142,9 +142,6 @@
     "postinstall": "jetify",
     "validate": "npm ls"
   },
-  "pre-commit": [
-    "lint"
-  ],
   "browser": {
     "jQuery-Impromptu": "jQuery-Impromptu/src/jquery-impromptu.js"
   }
