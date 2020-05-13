@@ -94,7 +94,7 @@ function connect(id, password, roomName) {
 
     const connection
         = new JitsiMeetJS.JitsiConnection(
-            null,
+            'vmeeting_app_id',
             jwt && issuer && issuer !== 'anonymous' ? jwt : undefined,
             connectionConfig);
 

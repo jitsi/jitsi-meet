@@ -771,7 +771,6 @@
         "connectCalendarText": "Connect your calendar to view all your meetings in {{app}}. Plus, add {{provider}} meetings to your calendar and start them with one click.",
         "enterRoomTitle": "Start a new meeting",
         "getHelp": "Get help",
-        "roomNameAllowedChars": "Meeting name should not contain any of these characters: ?, &, :, ', \", %, #.",
         "go": "GO",
         "goSmall": "GO",
         "join": "CREATE / JOIN",
@@ -783,6 +782,7 @@
         "reducedUIText": "Welcome to {{app}}!",
         "roomname": "Enter room name",
         "roomnameHint": "Enter the name or URL of the room you want to join. You may make a name up, just let the people you are meeting know it so that they enter the same name.",
+        "roomNameAllowedChars": "Meeting name should not contain any of these characters: ?, &, :, ', \", %, #.",
         "sendFeedback": "Send feedback",
         "terms": "Terms",
         "title": "Vmeeting: Secure and completely free video conferencing"

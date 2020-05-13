@@ -66,7 +66,7 @@ function LoginDialog(successCallback, cancelCallback) {
             buttons: loginButtons,
             focus: ':input:first',
             html: getPasswordInputHtml(),
-            titleKey: 'dialog.passwordRequired',
+            titleKey: 'toolbar.login',
 
             submit(e, v, m, f) { // eslint-disable-line max-params
                 e.preventDefault();
