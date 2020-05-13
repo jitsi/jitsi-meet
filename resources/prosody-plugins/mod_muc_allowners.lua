@@ -3,7 +3,7 @@ local is_healthcheck_room = module:require "util".is_healthcheck_room;
 module:hook("muc-occupant-joined", function (event)
     local room, occupant = event.room, event.occupant;
 
-    if is_healthcheck_room(room) then
+    if is_healthcheck_room(room.jid) then
         return;
     end
 
@@ -13,7 +13,7 @@ end, 2);
 module:hook("muc-occupant-left", function (event)
     local room, occupant = event.room, event.occupant;
 
-    if is_healthcheck_room(room) then
+    if is_healthcheck_room(room.jid) then
         return;
     end
 

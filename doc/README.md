@@ -16,7 +16,7 @@ or anyone who wishes to deploy and operate their own Jitsi Meet instance.
 
 Work in progress.
 
-## Developer guide
+## Developer guides
 
 ### Web
 
@@ -30,12 +30,14 @@ Work in progress.
 * [Enabling Dropbox support](https://github.com/jitsi/jitsi-meet/blob/master/doc/mobile-dropbox.md)
 * [Enabling Google authentication](https://github.com/jitsi/jitsi-meet/blob/master/doc/mobile-google-auth.md)
 
-## DevOps guide
+## DevOps guides
 
 * [Quick install](https://github.com/jitsi/jitsi-meet/blob/master/doc/quick-install.md)
 * [Docker install](https://github.com/jitsi/docker-jitsi-meet/blob/master/README.md)
 * [Google Calendar, MS Calendar, Dropbox integrations](https://github.com/jitsi/jitsi-meet/blob/master/doc/integrations.md)
-* [Video tutorials on deployment and scalability](https://jitsi.org/tutorials/)
+* [Video: Installing Jitsi Meet on your own Linux Server](https://jitsi.org/news/new-tutorial-installing-jitsi-meet-on-your-own-linux-server/)
+* [Video: How to Load Balance Jitsi Meet](https://jitsi.org/blog/tutorial-video-how-to-load-balance-jitsi-meet/)
+* [Video: Scaling Jitsi Meet in the Cloud](https://jitsi.org/blog/new-tutorial-video-scaling-jitsi-meet-in-the-cloud/)
 * [Configuring a video SIP gateway](https://github.com/jitsi/jitsi-meet/blob/master/doc/sipgw-config.md)
 * [Enabling speaker stats](https://github.com/jitsi/jitsi-meet/blob/master/doc/speakerstats-prosody.md)
 * [Enabling TURN](https://github.com/jitsi/jitsi-meet/blob/master/doc/turn.md)
