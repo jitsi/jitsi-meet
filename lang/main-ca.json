@@ -727,9 +727,6 @@
         "lowDefinition": "Baixa definició",
         "onlyAudioAvailable": "Només hi ha disponible l'àudio",
         "onlyAudioSupported": "Només es permet àudio en aquest navegador.",
-        "p2pEnabled": "Mode d'igual a igual activat",
-        "p2pVideoQualityDescription": "En el mode d'igual a igual, la qualitat del vídeo rebut només es pot canviar entre alta i només àudio. La resta de configuracions no es compliran fins sortir del mode d'igual a igual.",
-        "recHighDefinitionOnly": "L'alta definició serà preferent.",
         "sd": "SD",
         "sdTooltip": "Vídeo en definició estàndard",
         "standardDefinition": "Definició estàndard"

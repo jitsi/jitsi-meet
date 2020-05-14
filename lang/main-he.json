@@ -731,9 +731,6 @@
         "lowDefinition": "הבחנה נמוכה",
         "onlyAudioAvailable": "שמע בלבד זמין",
         "onlyAudioSupported": "אנו תומכים בשמע בלבד בדפדפן זה.",
-        "p2pEnabled": "עמית לעמית מופעל",
-        "p2pVideoQualityDescription": "במצב עמית לעמית ניתן להחליף איכות שיחה שמתקבלת בין גבוה לשמע בלבד. הגדרות אחרות לא יכובדו עד ליציאת עמית לעמית.",
-        "recHighDefinitionOnly": "מומלץ הבחנה גבוהה.",
         "sd": "SD",
 		"sdTooltip": "צופה בוידאו בהבחנה רגילה",
         "standardDefinition": "הבחנה רגילה"

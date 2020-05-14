@@ -732,9 +732,6 @@
         "lowDefinition": "Низька якість",
         "onlyAudioAvailable": "Лише звук",
         "onlyAudioSupported": "У цьому браузері дозволено лише звук.",
-        "p2pEnabled": "Увімкнено режим peer-to-peer",
-        "p2pVideoQualityDescription": "У режимі peer-to-peer можно перемикатися лише між режимами \"Лише звук\" та \"Висока якість\". Інші параметри будуть доступні, коли ви вийдете з цього режиму.",
-        "recHighDefinitionOnly": "Переважно висока якість.",
         "sd": "SD",
         "sdTooltip": "Відео стандартної якості",
         "standardDefinition": "Стандартна якість"

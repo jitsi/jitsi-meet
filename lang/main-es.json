@@ -718,9 +718,6 @@
         "lowDefinition": "Baja definición",
         "onlyAudioAvailable": "Solo hay audio disponible",
         "onlyAudioSupported": "Solo soportamos audio en este navegador.",
-        "p2pEnabled": "Punto a Punto Activado",
-        "p2pVideoQualityDescription": "En el modo punto a punto, la calidad de video recibida solo se puede alternar entre calidad alta y solo audio. No se respetarán otras configuraciones hasta que se salga del modo punto a punto.",
-        "recHighDefinitionOnly": "Preferirá alta definición.",
         "sd": "SD",
         "sdTooltip": "Visualizando vídeo en definición estándar",
         "standardDefinition": "Definición estándar"

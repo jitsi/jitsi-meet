@@ -664,9 +664,6 @@
         "lowDefinition": "Bassa definizione",
         "onlyAudioAvailable": "È disponibile solo l'audio",
         "onlyAudioSupported": "Per questo browser è supportato solo l'audio.",
-        "p2pEnabled": "Peer to Peer abilitato",
-        "p2pVideoQualityDescription": "",
-        "recHighDefinitionOnly": "Preferisci alta risoluzione.",
         "sd": "SD",
         "standardDefinition": "Definizione standard"
     },

@@ -664,9 +664,6 @@
         "lowDefinition": "Alhainen kuvanlaatu",
         "onlyAudioAvailable": "Vain ääni -tila on käytettävissä",
         "onlyAudioSupported": "Tässä selaimessa tuemme vain ääntä.",
-        "p2pEnabled": "Vertaisverkko käytössä",
-        "p2pVideoQualityDescription": "",
-        "recHighDefinitionOnly": "Suositaan teräväpiirtoa.",
         "sd": "SD",
         "standardDefinition": "Vakiopiirto"
     },

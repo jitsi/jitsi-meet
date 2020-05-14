@@ -721,9 +721,6 @@
         "lowDefinition": "Madal",
         "onlyAudioAvailable": "Saab kasutada ainult heli",
         "onlyAudioSupported": "Selles veebilehitsejas on toetatud ainult heli.",
-        "p2pEnabled": "Otseühendus on sisse lülitatud",
-        "p2pVideoQualityDescription": "Otseühenduse režiimis saab vastuvõetava kõne heli olla “ainult heli“, või kõrge. Teisi seadistusi ei saa valida.",
-        "recHighDefinitionOnly": "Eelistan kõrgresolutsiooni.",
         "sd": "SD",
         "sdTooltip": "Video vaatamine vaikekvaliteediga",
         "standardDefinition": "Vaike resolutsioon"

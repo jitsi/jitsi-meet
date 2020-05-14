@@ -715,9 +715,6 @@
         "lowDefinition": "Zema kvalitāte",
         "onlyAudioAvailable": "Tikai skaņa",
         "onlyAudioSupported": "Šis pārlūks atbalsta tikai skaņu (bez video).",
-        "p2pEnabled": "Iespējots tiešais (P2P) režīms \"peer-to-peer jeb viens-pret-vienu\"",
-        "p2pVideoQualityDescription": "Tiešā P2P (kanāla) režīmā sapulces dalībniekiem, iepējams izvēlēties tikai starp \"tikai audio\" un\ “augstas kvalitātes\" iespējām. Pārējās iespējas pieejamas, tiklīdz iziets no šī režīma.",
-        "recHighDefinitionOnly": "Priekšroka augstai kvalitātei.",
         "sd": "SD",
         "sdTooltip": "Standarta izšķirtspējas video",
         "standardDefinition": "Standarta kvalitāte (SD)"

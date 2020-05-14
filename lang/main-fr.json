@@ -729,9 +729,6 @@
         "lowDefinition": "Basse définition",
         "onlyAudioAvailable": "Seul l'audio est disponible",
         "onlyAudioSupported": "Nous ne supportons que l'audio sur ce navigateur.",
-        "p2pEnabled": "Peer to Peer activé",
-        "p2pVideoQualityDescription": "En mode peer to peer, la qualité vidéo reçue ne peut être basculée qu'entre haute et audio uniquement. Les autres paramètres ne seront pas pris en compte jusqu'à ce que vous quittiez le mode peer to peer.",
-        "recHighDefinitionOnly": "Va préférer la haute définition.",
         "sd": "MD",
         "sdTooltip": "Regardez la vidéo en définition standard",
         "standardDefinition": "Moyenne Définition"

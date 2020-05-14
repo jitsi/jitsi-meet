@@ -673,9 +673,6 @@
         "lowDefinition": "Lage resolutie",
         "onlyAudioAvailable": "Alleen audio is beschikbaar",
         "onlyAudioSupported": "In deze browser wordt alleen audio ondersteund.",
-        "p2pEnabled": "Peer-to-peer ingeschakeld",
-        "p2pVideoQualityDescription": "In de peer-to-peer-modus kan de kwaliteit van het gesprek alleen worden geschakeld tussen hoge resolutie en alleen audio. Andere instellingen zijn pas beschikbaar nadat peer-to-peer is gesloten.",
-        "recHighDefinitionOnly": "Voorkeur voor hoge resolutie",
         "sd": "SD",
         "standardDefinition": "Standaardresolutie"
     },

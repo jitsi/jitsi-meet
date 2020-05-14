@@ -698,9 +698,6 @@
         "lowDefinition": "Basse définition",
         "onlyAudioAvailable": "Seulement l'audio est disponible",
         "onlyAudioSupported": "Ce navigateur prend seulement l'audio en charge.",
-        "p2pEnabled": "Pair à pair activé",
-        "p2pVideoQualityDescription": "En mode pair à pair, il est possible de basculer entre la haute qualité d'appel entrant et l'audio seulement. Certains paramètres ne seront pas activés tant que vous ne quittez le mode pair à pair.",
-        "recHighDefinitionOnly": "La haute définition est préférable.",
         "sd": "SD",
         "sdTooltip": "Visionnement de vidéo en définition standard",
         "standardDefinition": "Définition standard"

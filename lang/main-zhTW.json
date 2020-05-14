@@ -723,9 +723,6 @@
         "lowDefinition": "低解析度 LD",
         "onlyAudioAvailable": "僅有音訊可以使用",
         "onlyAudioSupported": "在此瀏覽器我們僅支援音訊功能。",
-        "p2pEnabled": "點對點功能已經啟用",
-        "p2pVideoQualityDescription": "在點對點模式下收到的影像品質只能在高檔及僅有語音間切換。其他的設定必須在點對點退出後才會生效。",
-        "recHighDefinitionOnly": "將會偏好使用高解析度 HD。",
         "sd": "SD",
         "sdTooltip": "觀看標準解析度影像 SD",
         "standardDefinition": "標準解析度 SD"

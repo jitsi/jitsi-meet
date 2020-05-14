@@ -705,9 +705,6 @@
         "lowDefinition": "Baixa definición",
         "onlyAudioAvailable": "Soamente está dispoñíbel o son",
         "onlyAudioSupported": "Soamente está dispoñíbel o son neste navegador.",
-        "p2pEnabled": "Activado entre pares",
-        "p2pVideoQualityDescription": "No modo entre pares, a calidade de recepción de vídeo soamente pode escollerse entre alta ou soamente con son. Calquera outra configuración non se admitirá ata que se saia do modo entre pares. ",
-        "recHighDefinitionOnly": "Preferir alta definición.",
         "sd": "MD",
         "sdTooltip": "Ver un vídeo en definición estándar",
         "standardDefinition": "Definición estándar"

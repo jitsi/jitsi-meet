@@ -705,9 +705,6 @@
         "lowDefinition": "Nizká kvalita",
         "onlyAudioAvailable": "Je k dispozici jen zvuk",
         "onlyAudioSupported": "V tomto prohlížeči podporujeme jen zvuk.",
-        "p2pEnabled": "Zapnut režim peer to peer",
-        "p2pVideoQualityDescription": "V režimu peer to peer lze kvalitu videa přepínat jen mezi vysokou a pouhým zvukem. Ostatní nastavení se ignorují, dokud tento režim neopustíte.",
-        "recHighDefinitionOnly": "Bude preferována vysoká kvalita.",
         "sd": "SD",
         "sdTooltip": "Sledujete obraz v běžné kvalitě",
         "standardDefinition": "Běžná kvalita"
