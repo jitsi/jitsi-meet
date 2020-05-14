@@ -121,6 +121,22 @@ class DeepLinkingMobilePage extends Component<Props> {
                     <p className = { `${_SNS}__text` }>
                         { t(`${_TNS}.appNotInstalled`, { app: NATIVE_APP_NAME }) }
                     </p>
+                    <p className = { `${_SNS}__text` }>
+                        { t(`${_TNS}.ifHaveApp`) }
+                    </p>
+                    <a
+                        { ...onOpenLinkProperties }
+                        className = { `${_SNS}__href` }
+                        href = { generateDeepLinkingURL() }
+                        onClick = { this._onOpenApp }
+                        target = '_top'>
+                        <button className = { `${_SNS}__button ${_SNS}__button_primary` }>
+                            { t(`${_TNS}.joinInApp`) }
+                        </button>
+                    </a>
+                    <p className = { `${_SNS}__text` }>
+                        { t(`${_TNS}.ifDoNotHaveApp`) }
+                    </p>
                     <a
                         { ...onOpenLinkProperties }
                         href = { this._generateDownloadURL() }
@@ -129,16 +145,6 @@ class DeepLinkingMobilePage extends Component<Props> {
                         <button className = { downloadButtonClassName }>
                             { t(`${_TNS}.downloadApp`) }
                         </button>
-                    </a>
-                    <a
-                        { ...onOpenLinkProperties }
-                        className = { `${_SNS}__href` }
-                        href = { generateDeepLinkingURL() }
-                        onClick = { this._onOpenApp }
-                        target = '_top'>
-                        {/* <button className = { `${_SNS}__button` }> */}
-                        { t(`${_TNS}.openApp`) }
-                        {/* </button> */}
                     </a>
                     { renderPromotionalFooter() }
                     <DialInSummary

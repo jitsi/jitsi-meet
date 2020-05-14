@@ -138,8 +138,10 @@
         "description": "Nothing happened? We tried launching your meeting in the {{app}} desktop app. Try again or launch it in the {{app}} web app.",
         "descriptionWithoutWeb": "Nothing happened? We tried launching your meeting in the {{app}} desktop app.",
         "downloadApp": "Download the app",
+        "ifDoNotHaveApp": "If you don't have the app yet:",
+        "ifHaveApp": "If you already have the app:",
+        "joinInApp": "Join this meeting using the app",
         "launchWebButton": "Launch in web",
-        "openApp": "Continue to the app",
         "title": "Launching your meeting in {{app}}...",
         "tryAgainButton": "Try again in desktop"
     },
