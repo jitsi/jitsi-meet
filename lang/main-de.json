@@ -123,8 +123,10 @@
         "description": "Nichts passiert? Wir haben versucht, die Konferenz in {{app}} zu öffnen. Versuchen Sie es erneut oder treten Sie der Konferenz in {{app}} im Web bei.",
         "descriptionWithoutWeb": "Ist nichts passiert? Wir haben versucht, Ihre Besprechung in der „{{app}}“-Desktop-App zu starten.",
         "downloadApp": "App herunterladen",
+        "ifDoNotHaveApp": "Wenn Sie die App noch nicht haben:",
+        "ifHaveApp": "Wenn Sie die App bereits haben:",
+        "joinInApp": "An dem Meeting teilnehmen mit der App",
         "launchWebButton": "Im Web öffnen",
-        "openApp": "In der App fortfahren",
         "title": "Die Konferenz wird in {{app}} geöffnet...",
         "tryAgainButton": "Erneut mit der nativen Applikation versuchen"
     },
