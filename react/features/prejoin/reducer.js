@@ -5,6 +5,9 @@ import {
     ADD_PREJOIN_CONTENT_SHARING_TRACK,
     ADD_PREJOIN_VIDEO_TRACK,
     SET_DEVICE_STATUS,
+    SET_DIALOUT_NUMBER,
+    SET_DIALOUT_COUNTRY,
+    SET_DIALOUT_STATUS,
     SET_JOIN_BY_PHONE_DIALOG_VISIBLITY,
     SET_SKIP_PREJOIN,
     SET_PREJOIN_AUDIO_DISABLED,
@@ -18,17 +21,26 @@ import {
 const DEFAULT_STATE = {
     audioDisabled: false,
     audioMuted: false,
-    videoMuted: false,
-    videoDisabled: false,
+    audioTrack: null,
+    contentSharingTrack: null,
+    country: '',
     deviceStatusText: 'prejoin.configuringDevices',
     deviceStatusType: 'ok',
+    dialOutCountry: {
+        name: 'United States',
+        dialCode: '1',
+        code: 'us'
+    },
+    dialOutNumber: '',
+    dialOutStatus: 'prejoin.dialing',
+    name: '',
+    rawError: '',
     showPrejoin: true,
     showJoinByPhoneDialog: false,
     userSelectedSkipPrejoin: false,
     videoTrack: null,
-    audioTrack: null,
-    contentSharingTrack: null,
-    rawError: ''
+    videoDisabled: false,
+    videoMuted: false
 };
 
 /**
@@ -111,6 +123,27 @@ ReducerRegistry.register(
             return {
                 ...state,
                 audioDisabled: true
+            };
+        }
+
+        case SET_DIALOUT_NUMBER: {
+            return {
+                ...state,
+                dialOutNumber: action.value
+            };
+        }
+
+        case SET_DIALOUT_COUNTRY: {
+            return {
+                ...state,
+                dialOutCountry: action.value
+            };
+        }
+
+        case SET_DIALOUT_STATUS: {
+            return {
+                ...state,
+                dialOutStatus: action.value
             };
         }
 

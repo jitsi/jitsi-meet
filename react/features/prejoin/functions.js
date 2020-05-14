@@ -1,5 +1,7 @@
 // @flow
 
+import { getRoomName } from '../base/conference';
+import { getDialOutStatusUrl, getDialOutUrl } from '../base/config/functions';
 
 /**
  * Mutes or unmutes a track.
@@ -27,7 +29,7 @@ function applyMuteOptionsToTrack(track, shouldMute) {
  * @returns {boolean}
  */
 export function areJoinByPhoneButtonsVisible(state: Object): boolean {
-    return state['features/prejoin'].buttonsVisible;
+    return Boolean(getDialOutUrl(state) && getDialOutStatusUrl(state));
 }
 
 /**
@@ -124,6 +126,59 @@ export function getDeviceStatusText(state: Object): string {
  */
 export function getDeviceStatusType(state: Object): string {
     return state['features/prejoin']?.deviceStatusType;
+}
+
+/**
+ * Returns the 'conferenceUrl' used for dialing out.
+ *
+ * @param {Object} state - The state of the app.
+ * @returns {string}
+ */
+export function getDialOutConferenceUrl(state: Object): string {
+    return `${getRoomName(state)}@${state['features/base/config'].hosts.muc}`;
+}
+
+/**
+ * Selector for getting the dial out country.
+ *
+ * @param {Object} state - The state of the app.
+ * @returns {Object}
+ */
+export function getDialOutCountry(state: Object): Object {
+    return state['features/prejoin'].dialOutCountry;
+}
+
+/**
+ * Selector for getting the dial out number (without prefix).
+ *
+ * @param {Object} state - The state of the app.
+ * @returns {string}
+ */
+export function getDialOutNumber(state: Object): string {
+    return state['features/prejoin'].dialOutNumber;
+}
+
+/**
+ * Selector for getting the dial out status while calling.
+ *
+ * @param {Object} state - The state of the app.
+ * @returns {string}
+ */
+export function getDialOutStatus(state: Object): string {
+    return state['features/prejoin'].dialOutStatus;
+}
+
+/**
+ * Returns the full dial out number (containing country code and +).
+ *
+ * @param {Object} state - The state of the app.
+ * @returns {string}
+ */
+export function getFullDialOutNumber(state: Object): string {
+    const dialOutNumber = getDialOutNumber(state);
+    const country = getDialOutCountry(state);
+
+    return `+${country.dialCode}${dialOutNumber}`;
 }
 
 /**
