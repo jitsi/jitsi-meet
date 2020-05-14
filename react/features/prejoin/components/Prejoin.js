@@ -25,6 +25,8 @@ import DeviceStatus from './preview/DeviceStatus';
 import ParticipantName from './preview/ParticipantName';
 import Preview from './preview/Preview';
 import { VideoSettingsButton, AudioSettingsButton } from '../../toolbox';
+import JoinByPhoneDialog from './dialogs/JoinByPhoneDialog';
+
 
 type Props = {
 
@@ -112,6 +114,8 @@ class Prejoin extends Component<Props, State> {
         this.state = {
             showJoinByPhoneButtons: false
         };
+
+        this._closeDialog = this._closeDialog.bind(this);
         this._showDialog = this._showDialog.bind(this);
         this._onCheckboxChange = this._onCheckboxChange.bind(this);
         this._onDropdownClose = this._onDropdownClose.bind(this);
@@ -174,6 +178,17 @@ class Prejoin extends Component<Props, State> {
         });
     }
 
+    _closeDialog: () => void;
+
+    /**
+     * Closes the join by phone dialog.
+     *
+     * @returns {undefined}
+     */
+    _closeDialog() {
+        this.props.setJoinByPhoneDialogVisiblity(false);
+    }
+
     _showDialog: () => void;
 
     /**
@@ -183,6 +198,7 @@ class Prejoin extends Component<Props, State> {
      */
     _showDialog() {
         this.props.setJoinByPhoneDialogVisiblity(true);
+        this._onDropdownClose();
     }
 
     /**
@@ -199,9 +215,11 @@ class Prejoin extends Component<Props, State> {
             joinConferenceWithoutAudio,
             name,
             hasJoinByPhoneButtons,
+            showDialog,
             t
         } = this.props;
-        const { _onCheckboxChange, _onDropdownClose, _onOptionsClick, _setName, _showDialog } = this;
+
+        const { _closeDialog, _onCheckboxChange, _onDropdownClose, _onOptionsClick, _setName, _showDialog } = this;
         const { showJoinByPhoneButtons } = this.state;
 
         return (
@@ -271,6 +289,11 @@ class Prejoin extends Component<Props, State> {
                 </div>
 
                 { deviceStatusVisible && <DeviceStatus /> }
+                { showDialog && (
+                    <JoinByPhoneDialog
+                        joinConferenceWithoutAudio = { joinConferenceWithoutAudio }
+                        onClose = { _closeDialog } />
+                )}
             </div>
         );
     }

@@ -30,6 +30,21 @@ export const SET_DEVICE_STATUS = 'SET_DEVICE_STATUS';
 export const SET_SKIP_PREJOIN = 'SET_SKIP_PREJOIN';
 
 /**
+ * Action type to set the country to dial out to.
+ */
+export const SET_DIALOUT_COUNTRY = 'SET_DIALOUT_COUNTRY';
+
+/**
+ * Action type to set the dial out number.
+ */
+export const SET_DIALOUT_NUMBER = 'SET_DIALOUT_NUMBER';
+
+/**
+ * Action type to set the dial out status while dialing.
+ */
+export const SET_DIALOUT_STATUS = 'SET_DIALOUT_STATUS';
+
+/**
  * Action type to set the visiblity of the 'JoinByPhone' dialog.
  */
 export const SET_JOIN_BY_PHONE_DIALOG_VISIBLITY = 'SET_JOIN_BY_PHONE_DIALOG_VISIBLITY';
