@@ -2829,7 +2829,7 @@ export default {
     leaveRoomAndDisconnect() {
         APP.store.dispatch(conferenceWillLeave(room));
 
-        if (room.isJoined()) {
+        if (room && room.isJoined()) {
             return room.leave().then(disconnect, disconnect);
         }
 
