@@ -722,9 +722,6 @@
         "lowDefinition": "Žema kokybė",
         "onlyAudioAvailable": "Galimas tik garso perdavimas",
         "onlyAudioSupported": "Mes palaikome tik garso perdavimą šioje naršyklėje.",
-        "p2pEnabled": "Peer to Peer įjungtas",
-        "p2pVideoQualityDescription": "„Peer to peer“ režimu gauto vaizdo įrašo kokybę galima perjungti tik į aukštą ir į garso įrašą. Kiti nustatymai nebus toleruojami, kol nebus išjungtas „Peer to peer“.",
-        "recHighDefinitionOnly": "Norima aukšta kokybė.",
         "sd": "SD",
         "sdTooltip": "Vidutinės kokybės video peržiūra",
         "standardDefinition": "Vidutinė kokybė"

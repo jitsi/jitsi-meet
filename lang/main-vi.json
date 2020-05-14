@@ -664,9 +664,6 @@
         "lowDefinition": "Phân giải thấp",
         "onlyAudioAvailable": "Chỉ có âm thanh sẵn sàng",
         "onlyAudioSupported": "Chỉ hỗ trợ âm thanh trên trình duyệt này.",
-        "p2pEnabled": "Peer to Peer đã bật",
-        "p2pVideoQualityDescription": "",
-        "recHighDefinitionOnly": "Ưu tiên phân giải HD.",
         "sd": "SD",
         "standardDefinition": "Phân giải SD"
     },

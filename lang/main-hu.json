@@ -723,9 +723,6 @@
         "lowDefinition": "Alacsony felbontású",
         "onlyAudioAvailable": "„Csak hang” mód elérhető",
         "onlyAudioSupported": "Csak a hang támogatott ebben a böngészőben.",
-        "p2pEnabled": "Egyenrangú kapcsolat engedélyezve",
-        "p2pVideoQualityDescription": "Az egyenrangú (peer to peer) módban a kapott videominőség csak a magas felbontású és a „csak hang” mód között váltható. A további beállítások nem lesznek figyelembe véve az egyenrangú kapcsolat alatt.",
-        "recHighDefinitionOnly": "Lehetőleg magas felbontású.",
         "sd": "SF",
         "sdTooltip": "Szabványos felbontású videó megtekintése",
         "standardDefinition": "Szabványos felbontású"

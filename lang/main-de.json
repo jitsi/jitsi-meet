@@ -726,9 +726,6 @@
         "lowDefinition": "Niedrige Auflösung",
         "onlyAudioAvailable": "Nur Ton",
         "onlyAudioSupported": "In diesem Browser wird nur Audio unterstützt.",
-        "p2pEnabled": "Ende-zu-Ende aktiviert",
-        "p2pVideoQualityDescription": "Im Ende-zu-Ende-Modus kann die empfangene Videoqualität nur zwischen „Hoch“ und „Nur Audio“ umgeschaltet werden. Andere Einstellungen werden erst beim Verlassen des Ende-zu-Ende-Modus berücksichtigt.",
-        "recHighDefinitionOnly": "Hohe Qualität wird bevorzugt.",
         "sd": "SD",
         "sdTooltip": "Video wird in Standardauflösung angezeigt",
         "standardDefinition": "Standardauflösung"

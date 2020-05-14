@@ -705,9 +705,6 @@
         "lowDefinition": "Low definition",
         "onlyAudioAvailable": "Only audio is available",
         "onlyAudioSupported": "We only support audio in this browser.",
-        "p2pEnabled": "Peer to Peer Enabled",
-        "p2pVideoQualityDescription": "In peer to peer mode, received call quality can only be toggled between high and audio only. Other settings will not be honoured until peer to peer is exited.",
-        "recHighDefinitionOnly": "Will prefer high definition.",
         "sd": "SD",
         "standardDefinition": "Standard definition"
     },

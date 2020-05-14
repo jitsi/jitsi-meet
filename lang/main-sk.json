@@ -722,9 +722,6 @@
         "lowDefinition": "Nízka kvalita",
         "onlyAudioAvailable": "Iba zvuk je k dispozícií",
         "onlyAudioSupported": "Na vašom prehliadači podporujeme iba zvuk.",
-        "p2pEnabled": "Prenos medzi koncovými používateľmi",
-        "p2pVideoQualityDescription": "Pri prenose medzi koncovými používateľmi sa dá video kvalita nastaviť iba na vysokú alebo iba zvukový prenos. Ostatné nastavenia sa budú používať iba ak prenose medzi koncovými používateľmi bude ukončený",
-        "recHighDefinitionOnly": "Uprednostňovať vysokú kvalitu",
         "sd": "SD",
         "sdTooltip": "Sledujete obraz v štandardnej kvalite",
         "standardDefinition": "Štandardná kvalita"

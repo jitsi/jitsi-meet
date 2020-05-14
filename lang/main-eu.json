@@ -770,9 +770,6 @@
         "lowDefinition": "Behe-definizioa",
         "onlyAudioAvailable": "Soilik audioa dago erabilgarri",
         "onlyAudioSupported": "Arakatzaile honetan soilik onartzen dugu audioa.",
-        "p2pEnabled": "Peer-to-peer modua aktibatuta",
-        "p2pVideoQualityDescription": "Peer-to-peer moduan, jasotako bideoaren kalitatea, kalitate handiko eta audiosolik moduen artean txandakatu. Beste aukera batzuk ez dira prest egongo puntuz puntuko modutik irten arte.",
-        "recHighDefinitionOnly": "Definizio handiagoa nahiago izango duzu.",
         "sd": "SD",
         "sdTooltip": "Definizio estandarrean bideoa ikusten",
         "standardDefinition": "Definizio estandarra"

@@ -674,9 +674,6 @@
         "lowDefinition": "Düşük çözünürlük",
         "onlyAudioAvailable": "Yalnızca ses kullanılabilir",
         "onlyAudioSupported": "Bu tarayıcıda yalnızca sesi destekliyoruz.",
-        "p2pEnabled": "Peer to peer Etkin",
-        "p2pVideoQualityDescription": "Peer to peer modunda, arama kalitesi yalnızca yüksek çözünürlük ve yalnızca ses arasında değiştirilebilir. Peer to peer modundan çıkılmadıkça diğer ayarlar kabul edilmez.",
-        "recHighDefinitionOnly": "Yalnızca yüksek çözünürlüğü tercih et.",
         "sd": "SD",
         "standardDefinition": "Standart çözünürlük"
     },

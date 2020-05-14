@@ -722,9 +722,6 @@
         "lowDefinition": "Lav opløsning",
         "onlyAudioAvailable": "Kun-lyd er tilgængelig",
         "onlyAudioSupported": "Vi understøtter kun-lyd i denne browser.",
-        "p2pEnabled": "Peer to Peer slået til",
-        "p2pVideoQualityDescription": "I peer-to-peer tilstand kan den modtagne opkaldskvalitet kun skiftes mellem høj og kun-lyd. Andre indstillinger vil ikke virke, før peer to peer er afsluttet.",
-        "recHighDefinitionOnly": "Foretrækker høj opløsning.",
         "sd": "SD",
         "sdTooltip": "Vider normal opløsnings video",
         "standardDefinition": "Standard opløsning"
