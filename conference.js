@@ -408,7 +408,7 @@ function disconnect() {
         return Promise.resolve();
     };
 
-    return connection.disconnect().then(onDisconnected, onDisconnected);
+    return connection && connection.disconnect().then(onDisconnected, onDisconnected);
 }
 
 /**
