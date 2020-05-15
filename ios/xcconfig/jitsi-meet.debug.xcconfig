@@ -1,0 +1,2 @@
+#include "Identity.xcconfig"
+#include "../Pods/Target Support Files/Pods-jitsi-meet/Pods-jitsi-meet.debug.xcconfig"

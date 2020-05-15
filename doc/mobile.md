@@ -69,10 +69,7 @@ supported for building the Android app and Windows **is not supported at alll**.
 
 3. Other remarks
 
-    It's likely you'll need to change the bundle ID for deploying to a device.
-    This can be changed in the "General" tab.  Under "Identity" set
-    "Bundle Identifier" to a different value, and adjust the "Team" in the
-    "Signing" section to match your own.
+	Adjust the `ios/xcconfig/Identity.xcconfig` file in your favorite editor to provide your TeamID and change the bundle Identifier base to be able to build on devices.
 
 
 ## Android

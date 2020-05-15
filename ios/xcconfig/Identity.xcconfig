@@ -1,0 +1,8 @@
+// Change to yours (you find the id by 'security find-identity -v' it is the one inside the brackets, )
+// and then make git ignore it by
+// git update-index --skip-worktree BuildConfig/Identity.xcconfig
+DEVELOPMENT_TEAM = FC967L3QRG
+CODE_SIGN_IDENTITY = Apple Development
+
+// Also change this (e.g. prepend your org) to build on your account
+APP_BUNDLEIDENTIFIER_BASE = org.jitsi
