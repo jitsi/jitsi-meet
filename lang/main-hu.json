@@ -451,7 +451,7 @@
         "somebody": "Valaki",
         "startSilentTitle": "Hang nélkül csatlakozott!",
         "startSilentDescription": "Csatlakozzon újra a hang engedélyezéséhez",
-        "suboptimalBrowserWarning": "Sajnáljuk, de nem nagy élmény így csatlakozni a konferenciához. Keressük a megoldást, de addig is, érdemes inkább egy <a href='static/recommendedBrowsers.html' target='_blank'>teljesen támogatott böngészővel</a> csatlakozni.",
+        "suboptimalBrowserWarning": "Sajnáljuk, de nem nagy élmény így csatlakozni a konferenciához. Keressük a megoldást, de addig is, érdemes inkább egy <a href='{{recommendedBrowserPageLink}}' target='_blank'>teljesen támogatott böngészővel</a> csatlakozni.",
         "suboptimalExperienceTitle": "Böngészőhiba",
         "unmute": "Visszahangosítás",
         "newDeviceCameraTitle": "Új kamera észlelve",

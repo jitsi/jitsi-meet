@@ -453,7 +453,7 @@
         "somebody": "Nogen",
         "startSilentTitle": "",
         "startSilentDescription": "",
-        "suboptimalExperienceDescription": "Hmmm... vi er bange for at din oplevelse med {{appName}} ikke vil være optimal. Vi arbejder på at forbedre dette, men indtil da så forsøg venligst at bruge en af følgende <a href='static/recommendedBrowsers.html' target='_blank'>fuldt understøttede internet browsere</a>.",
+        "suboptimalExperienceDescription": "Hmmm... vi er bange for at din oplevelse med {{appName}} ikke vil være optimal. Vi arbejder på at forbedre dette, men indtil da så forsøg venligst at bruge en af følgende <a href='{{recommendedBrowserPageLink}}' target='_blank'>fuldt understøttede internet browsere</a>.",
         "suboptimalExperienceTitle": "Browser Advarsel",
         "unmute": "",
         "newDeviceCameraTitle": "Nyt kamerat fundet",

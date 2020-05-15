@@ -455,7 +455,7 @@
         "somebody": "Einhver",
         "startSilentTitle": "Þú mættir með ekkert hljóðúttak!",
         "startSilentDescription": "Tengstu fundinum aftur til að virkja hljóð",
-        "suboptimalBrowserWarning": "Við erum ekki viss um að upplifun þín af fundinum verði neitt sérstök. Við erum alltaf að reyna að bæta þetta, en þangað til ættirðu frekar að nota einhvern af <a href='static/recommendedBrowsers.html' target='_blank'>þeim vöfrum sem eru studdir að fullu</a>.",
+        "suboptimalBrowserWarning": "Við erum ekki viss um að upplifun þín af fundinum verði neitt sérstök. Við erum alltaf að reyna að bæta þetta, en þangað til ættirðu frekar að nota einhvern af <a href='{{recommendedBrowserPageLink}}' target='_blank'>þeim vöfrum sem eru studdir að fullu</a>.",
         "suboptimalExperienceTitle": "Aðvörun vafra",
         "unmute": "Afþagga",
         "newDeviceCameraTitle": "Ný myndavél fannst",

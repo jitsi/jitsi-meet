@@ -450,7 +450,7 @@
         "somebody": "Някой",
         "startSilentTitle": "Влязохте с опция да не чувате аудио!",
         "startSilentDescription": "Влезте повторно за да пуснете звука",
-        "suboptimalBrowserWarning": "Опасяваме се, че няма да можете да се насладите на срещата. Работим по въпроса, междувременно използвайте някой от <a href='static/recommendedBrowsers.html' target='_blank'>напълно поддържаните браузъри</a>.",
+        "suboptimalBrowserWarning": "Опасяваме се, че няма да можете да се насладите на срещата. Работим по въпроса, междувременно използвайте някой от <a href='{{recommendedBrowserPageLink}}' target='_blank'>напълно поддържаните браузъри</a>.",
         "suboptimalExperienceTitle": "Внимание",
         "unmute": "Пускане на микрофона",
         "newDeviceCameraTitle": "Засечена е нова камера",

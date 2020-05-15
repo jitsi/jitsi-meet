@@ -451,7 +451,7 @@
         "somebody": "某人",
         "startSilentTitle": "您加入了會議而無聲音輸出！",
         "startSilentDescription": "重新加入會議以啟用語音",
-        "suboptimalBrowserWarning": "恐怕您本次會議體驗並不太好，我們會想辦法改進的。但在此之前，敬請使用 <a href='static/recommendedBrowsers.html' target='_blank'>完全支援的瀏覽器</a> 。",
+        "suboptimalBrowserWarning": "恐怕您本次會議體驗並不太好，我們會想辦法改進的。但在此之前，敬請使用 <a href='{{recommendedBrowserPageLink}}' target='_blank'>完全支援的瀏覽器</a> 。",
         "suboptimalExperienceTitle": "瀏覽器警告",
         "unmute": "取消靜音",
         "newDeviceCameraTitle": "偵測到新的攝影裝置",

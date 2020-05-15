@@ -442,7 +442,7 @@
         "somebody": "Alguén",
         "startSilentTitle": "Vostede uniuse sen saída de son!",
         "startSilentDescription": "Volva a unirse para activar o son",
-        "suboptimalBrowserWarning": "Lamentamos que a súa experiencia non estea a ser boa. Procuramos maneiras de mellorala mais, ata entón, probe utilizar un dos <a href='static/recommendedBrowsers.html' target='_blank'>navegadores totalmente compatíbeis</a>.",
+        "suboptimalBrowserWarning": "Lamentamos que a súa experiencia non estea a ser boa. Procuramos maneiras de mellorala mais, ata entón, probe utilizar un dos <a href='{{recommendedBrowserPageLink}}' target='_blank'>navegadores totalmente compatíbeis</a>.",
         "suboptimalExperienceTitle": "Aviso verbo do navegador",
         "unmute": "Activar o son",
         "newDeviceCameraTitle": "Detectada unha nova cámara",

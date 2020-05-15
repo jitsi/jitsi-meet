@@ -437,7 +437,7 @@
         "somebody": "Quelqu'un",
         "startSilentTitle": "Vous avez rejoint sans sortie audio!",
         "startSilentDescription": "Rejoignez la réunion de nouveau pour activer l'audio",
-        "suboptimalBrowserWarning": "Nous craignons que votre expérience de réunion en ligne ne soit bonne ici. Nous cherchons des moyens d’améliorer cela, mais d’ici-là, essayez d’utiliser l’un des <a href='static/recommendedBrowsers.html' target='_blank'>navigateurs supportés</a>.",
+        "suboptimalBrowserWarning": "Nous craignons que votre expérience de réunion en ligne ne soit bonne ici. Nous cherchons des moyens d’améliorer cela, mais d’ici-là, essayez d’utiliser l’un des <a href='{{recommendedBrowserPageLink}}' target='_blank'>navigateurs supportés</a>.",
         "suboptimalExperienceTitle": "Avertissement de navigateur",
         "unmute": "Rétablir le son",
         "newDeviceCameraTitle": "Nouvelle caméra détectée",

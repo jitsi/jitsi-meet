@@ -453,7 +453,7 @@
         "somebody": "Alguien",
         "startSilentTitle": "¡Te uniste sin salida de audio!",
         "startSilentDescription": "Vuelva a unirse a la reunión para habilitar el audio",
-        "suboptimalBrowserWarning": "Tememos que su experiencia en la reunión no sea tan buena. Estamos buscando formas de mejorar esto, pero hasta entonces intente utilizar uno de los <a href='static/recommendedBrowsers.html' target='_blank'>navegadores totalmente compatibles</a>.",
+        "suboptimalBrowserWarning": "Tememos que su experiencia en la reunión no sea tan buena. Estamos buscando formas de mejorar esto, pero hasta entonces intente utilizar uno de los <a href='{{recommendedBrowserPageLink}}' target='_blank'>navegadores totalmente compatibles</a>.",
         "suboptimalExperienceTitle": "Advertencia del Explorador",
         "unmute": "Dejar de silenciar",
         "newDeviceCameraTitle": "Se ha detectado una nueva cámara",
@@ -723,7 +723,7 @@
         "standardDefinition": "Definición estándar"
     },
     "videothumbnail": {
-        "domute": "Silenciar",        
+        "domute": "Silenciar",
         "domuteOthers": "Silenciar a todos",
         "flip": "Voltear",
         "kick": "Expulsar",

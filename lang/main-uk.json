@@ -460,7 +460,7 @@
         "somebody": "Хтось",
         "startSilentTitle": "У вас відсутній звук!",
         "startSilentDescription": "Перезайдіть до конференції, щоб увімкнути звук",
-        "suboptimalBrowserWarning": "На жаль, ваш браузер не повністю підтримує цю систему вебконференції. Ми працюємо  над проблемою, поки що рекомендуємо скористатися <a href='static/recommendedBrowsers.html' target='_blank'> такими браузерами</a>.",
+        "suboptimalBrowserWarning": "На жаль, ваш браузер не повністю підтримує цю систему вебконференції. Ми працюємо  над проблемою, поки що рекомендуємо скористатися <a href='{{recommendedBrowserPageLink}}' target='_blank'> такими браузерами</a>.",
         "suboptimalExperienceTitle": "Повідомлення щодо доступу з браузера",
         "unmute": "Увімкнути мікрофон",
         "newDeviceCameraTitle": "Знайдено нову камеру",

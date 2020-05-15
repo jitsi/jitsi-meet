@@ -23,7 +23,10 @@ export function maybeShowSuboptimalExperienceNotification(dispatch, t) {
                     titleKey: 'notify.suboptimalExperienceTitle',
                     description: translateToHTML(
                         t,
-                        'notify.suboptimalBrowserWarning'
+                        'notify.suboptimalBrowserWarning',
+                        {
+                            recommendedBrowserPageLink: `${window.location.origin}/static/recommendedBrowsers.html`
+                        }
                     )
                 }
             )

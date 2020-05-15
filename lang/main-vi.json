@@ -421,7 +421,7 @@
         "somebody": "Ai đó",
         "startSilentTitle": "",
         "startSilentDescription": "",
-        "suboptimalExperienceDescription": "Chúng tôi lo rằng trải nghiệm của bạn với  {{appName}}  đang không tốt. Chúng tôi đang tìm cách cải thiện, hiện tại thử một trong <a href='static/recommendedBrowsers.html' target='_blank'>các trình duyệt được hỗ trợ</a>.",
+        "suboptimalExperienceDescription": "Chúng tôi lo rằng trải nghiệm của bạn với  {{appName}}  đang không tốt. Chúng tôi đang tìm cách cải thiện, hiện tại thử một trong <a href='{{recommendedBrowserPageLink}}' target='_blank'>các trình duyệt được hỗ trợ</a>.",
         "suboptimalExperienceTitle": "Cảnh báo trình duyệt",
         "unmute": "",
         "newDeviceCameraTitle": "Camera mới được phát hiện",

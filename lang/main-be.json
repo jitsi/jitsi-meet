@@ -460,7 +460,7 @@
         "somebody": "Хтосьці",
         "startSilentTitle": "У вас адсутнічае гук!",
         "startSilentDescription": "Перазайдзiце ў канферэнцыю, каб уключыць гук",
-        "suboptimalBrowserWarning": "На жаль, ваш браўзэр не цалкам падтрымлівае дадзеную сістэму вэб-канференцый. Мы працуем над праблемай, аднак, пакуль рэкамендуем вам скарыстацца <a href='static/recommendedBrowsers.html' target='_blank'> наступнымі браўзэрамі</a >.",
+        "suboptimalBrowserWarning": "На жаль, ваш браўзэр не цалкам падтрымлівае дадзеную сістэму вэб-канференцый. Мы працуем над праблемай, аднак, пакуль рэкамендуем вам скарыстацца <a href='{{recommendedBrowserPageLink}}' target='_blank'> наступнымі браўзэрамі</a >.",
         "suboptimalExperienceTitle": "Папярэджанне браўзэра",
         "unmute": "Уключыць мікрафон",
         "newDeviceCameraTitle": "Выяўлена новая камера",
