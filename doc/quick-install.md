@@ -2,55 +2,96 @@
 
 This guide helps you  ___host your own Jitsi server___. If you want to have a video conference without setting up any infrastructure, use https://meet.jit.si instead.
 
-This document describes the required steps for a quick Jitsi Meet installation on a Debian based GNU/Linux system. Debian 9 (Stretch) or later, and Ubuntu 18.04 (Bionic Beaver) or later are supported out-of-the-box.
+This document describes the required steps for a quick Jitsi Meet installation on a Debian-based GNU/Linux system. Debian 10 (Buster) or later, and Ubuntu 18.04 (Bionic Beaver) or later are supported out-of-the-box.
 
-On Ubuntu systems, Jitsi requires dependencies from Ubuntu's `universe` package repository.  To ensure this is enabled, run `apt-add-repository universe` at the command-line.
+_Note_: Many of the installation steps require elevated privileges. If you are logged in using a regular user account, you may need to temporarily increase your permissions (for example, by using `sudo` for individual commands or `sudo -s` before issuing several commands). 
 
-_Note_: Many of the installation steps require elevated privileges. If you are logged in using a regular user account, you may need to temporarily increase your permissions (for example, by using `sudo` for individual commands).
+## Required packages and repository updates
+
+On minimal Debian server installs (eg. LXC container), you may already be running as root. You will also need to install `gnupg2` and `sudo` packages.
+
+Make sure your system is up-to-date and required packages are installed :
+
+```sh
+# Retrieve the latest package versions across all repositories
+apt update
+
+# Ensure support is available for apt repositories served via HTTPS
+sudo apt install apt-transport-https
+```
+
+On Ubuntu systems, Jitsi requires dependencies from Ubuntu's `universe` package repository.  To ensure this is enabled, run this command :
+
+```sh 
+sudo apt-add-repository universe`
+
+# Retrieve the latest package versions across all repositories
+sudo apt update
+```
 
 ## Basic Jitsi Meet install
 
 ### Set up the Fully Qualified Domain Name (FQDN) (optional)
 
-If the machine used to host the Jitsi Meet instance has a FQDN (for example `meet.example.org`) already set up in DNS, `/etc/hostname` must contain this FQDN; if this is not the case yet, [change the hostname](https://wiki.debian.org/HowTo/ChangeHostname).
+If the machine used to host the Jitsi Meet instance has a FQDN (for example `meet.example.org`) already set up in DNS, you can set it with the following command :
+
+`sudo hostnamectl set-hostname meet.example.org`
 
 Then add the same FQDN in the `/etc/hosts` file, associating it with the loopback address:
 
     127.0.0.1 localhost meet.example.org
 
-Finally on the same machine test that you can ping the FQDN with: `ping "$(hostname)"`-
+Finally on the same machine test that you can ping the FQDN with:
 
-### Add the Jitsi package repository
+`ping "$(hostname)"`
+
+### Add the Jitsi package repository and update the list of available packages
+
+This will modify your Debian or Ubuntu system package sources to make available the Jitsi Meet packages.
+
 ```sh
 echo 'deb https://download.jitsi.org stable/' | sudo tee /etc/apt/sources.list.d/jitsi-stable.list
 wget -qO -  https://download.jitsi.org/jitsi-key.gpg.key | sudo apt-key add -
-```
-### Open ports in your firewall
-
-Open the following ports in your firewall, to allow traffic to the machine running jitsi:
-
- - 80 TCP
- - 443 TCP
- - 10000 UDP
-
-
-### Install Jitsi Meet
-
-_Note_: The installer will check if [Nginx](https://nginx.org/) or [Apache](https://httpd.apache.org/) is present (in that order) and configure a virtualhost within the web server it finds to serve Jitsi Meet. If none of the above is found it then defaults to Nginx.
-If you are already running Nginx on port 443 on the same machine turnserver configuration will be skipped as it will conflict with your current port 443.
-
-```sh
-# Ensure support is available for apt repositories served via HTTPS
-sudo apt install apt-transport-https
 
 # Retrieve the latest package versions across all repositories
 sudo apt update
+```
 
+### Setup and configure your firewall
+
+The following ports need to be open in your firewall, to allow traffic to the Jitsi Meet server :
+
+* 80 TCP - for SSL certificate verification / renewal
+* 443 TCP - for general access to Jitsi Meet
+* 10000 UDP - for general network video/audio communications
+* 22 TCP - if you access you server using SSH (change the port accordingly if it's not 22)
+
+ If you are using `ufw`, you can use the following commands :
+ 
+```sh
+sudo ufw allow 80/tcp
+sudo ufw allow 443/tcp
+sudo ufw allow 4443/tcp
+sudo ufw allow 10000/udp
+sudo ufw allow 22/tcp
+sudo ufw enable
+```
+
+For more details on using and hardening SSH access, see the corresponding [Debian](https://wiki.debian.org/SSH) or [Ubuntu](https://help.ubuntu.com/community/SSH/OpenSSH/Configuring) documentation.
+
+### Install Jitsi Meet
+
+_Note_: The installer will check if [Nginx](https://nginx.org/) or [Apache](https://httpd.apache.org/) are present (in that order) and configure a virtual host within the web server it finds to serve Jitsi Meet. If none of the above is found it then defaults to Nginx.
+
+If you are already running Nginx on port 443 on the same machine turnserver configuration will be skipped as it will conflict with your current port 443.
+
+```sh
 # Perform jitsi-meet installation
 sudo apt install jitsi-meet
 ```
+You will be asked about SSL certificate generation. Keep the default answer, "Generate a new self-signed certificate" unless you opt not to use an SSL certificate from LetsEncrypt or if you use other challenge types when validating LetsEncrypt certificates (see below).
 
-During the installation, you will be asked to enter the hostname of the Jitsi Meet instance. If you have a [FQDN](https://en.wikipedia.org/wiki/Fully_qualified_domain_name) for the instance already set up in DNS, enter it there. If you don't have a resolvable hostname, you can enter the IP address of the machine (if it is static or doesn't change).
+You will also be asked to enter the hostname of the Jitsi Meet instance. If you have a [FQDN](https://en.wikipedia.org/wiki/Fully_qualified_domain_name) for the instance already set up in DNS, enter it there. If you don't have a resolvable hostname, you can enter the IP address of the machine (if it is static or doesn't change).
 
 This hostname (or IP address) will be used for virtualhost configuration inside the Jitsi Meet and also, you and your correspondents will be using it to access the web conferences.
 
@@ -65,8 +106,7 @@ Simply run the following in your shell:
 ```sh
 sudo /usr/share/jitsi-meet/scripts/install-letsencrypt-cert.sh
 ```
-
-Note that this script uses the [HTTP-01 challenge type](https://letsencrypt.org/docs/challenge-types/) and thus your instance needs to be accessible from the public internet. If you want to use a different challenge type, don't use this script and instead choose ___I want to use my own certificate___ during jitsi-meet installation.
+Note that this script uses the [HTTP-01 challenge type](https://letsencrypt.org/docs/challenge-types/) and thus your instance needs to be accessible from the public internet on both ports 80 and 443. If you want to use a different challenge type, don't use this script and instead choose ___I want to use my own certificate___ during `jitsi-meet` installation.
 
 #### Advanced configuration
 If the installation is on a machine [behind NAT](https://github.com/jitsi/jitsi-meet/blob/master/doc/faq.md) jitsi-videobridge should configure itself automatically on boot. If three way call does not work further configuration of jitsi-videobridge is needed in order for it to be accessible from outside.
