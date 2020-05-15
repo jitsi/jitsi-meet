@@ -447,13 +447,13 @@
         "somebody": "Någon",
         "startSilentTitle": "Du gick med utan ljud aktiverat!",
         "startSilentDescription": "Anslut till mötet igen för att aktivera ljud",
-        "suboptimalExperienceDescription": "Hmm... din upplevelse med {{appName}} kommer inte att bli särskilt bra. Vi försöker hitta sätt att förbättra det, men till dess använd en av <a href='static/recommendedBrowsers.html' target='_blank'>de helt stödda webbläsarna</a>.",
+        "suboptimalExperienceDescription": "Hmm... din upplevelse med {{appName}} kommer inte att bli särskilt bra. Vi försöker hitta sätt att förbättra det, men till dess använd en av <a href='{{recommendedBrowserPageLink}}' target='_blank'>de helt stödda webbläsarna</a>.",
         "suboptimalExperienceTitle": "Webbläsarvarning",
         "unmute": "Slå på mikrofonen",
         "newDeviceCameraTitle": "Ny kamera hittad",
         "newDeviceAudioTitle": "Ny ljudenhet hittad",
         "newDeviceAction": "Använd",
-        "suboptimalBrowserWarning": "Din mötesupplevelse kommer tyvärr inte att bli så bra. Vi letar efter sätt att förbättra detta, men fram till dess kan du försöka använda en av de <a href='static/recommendedBrowsers.html' target='_blank'> fullt stödda webbläsarna </a>."
+        "suboptimalBrowserWarning": "Din mötesupplevelse kommer tyvärr inte att bli så bra. Vi letar efter sätt att förbättra detta, men fram till dess kan du försöka använda en av de <a href='{{recommendedBrowserPageLink}}' target='_blank'> fullt stödda webbläsarna </a>."
     },
     "passwordSetRemotely": "satt av en annan deltagare",
     "passwordDigitsOnly": "",

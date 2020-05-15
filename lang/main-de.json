@@ -455,7 +455,7 @@
         "somebody": "Jemand",
         "startSilentTitle": "Sie sind ohne Audioausgabe beigetreten!",
         "startSilentDescription": "Treten Sie dem Meeting noch einmal bei, um Ihr Audio zu aktivieren",
-        "suboptimalBrowserWarning": "Tut uns leid, aber die Konferenz wird mit {{appName}} kein großartiges Erlebnis. Wir versuchen immer die Situation zu verbessern, bis dahin empfehlen wir aber die Verwendung einer der <a href=\"static/recommendedBrowsers.html\" target=\"_blank\">vollständig unterstützen Browser</a>.",
+        "suboptimalBrowserWarning": "Tut uns leid, aber die Konferenz wird mit {{appName}} kein großartiges Erlebnis. Wir versuchen immer die Situation zu verbessern, bis dahin empfehlen wir aber die Verwendung einer der <a href=\"{{recommendedBrowserPageLink}}\" target=\"_blank\">vollständig unterstützen Browser</a>.",
         "suboptimalExperienceTitle": "Browserwarnung",
         "unmute": "Stummschaltung aufheben",
         "newDeviceCameraTitle": "Neue Kamera erkannt",

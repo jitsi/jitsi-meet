@@ -455,7 +455,7 @@
         "somebody": "Algú",
         "startSilentTitle": "Us hi heu unit sense cap sortida d'àudio!",
         "startSilentDescription": "Torneu a entrar per a activar l'àudio",
-        "suboptimalBrowserWarning": "Ens sap greu que la vostra experiència de reunió aquí no serà gaire bona. Cerquem maneres per a millorar-la, però fins aleshores, proveu de fer servir algun dels <a href='static/recommendedBrowsers.html' target='_blank'>navegadors completament compatibles</a>.",
+        "suboptimalBrowserWarning": "Ens sap greu que la vostra experiència de reunió aquí no serà gaire bona. Cerquem maneres per a millorar-la, però fins aleshores, proveu de fer servir algun dels <a href='{{recommendedBrowserPageLink}}' target='_blank'>navegadors completament compatibles</a>.",
         "suboptimalExperienceTitle": "Avís del navegador",
         "unmute": "Activa el so",
         "newDeviceCameraTitle": "S'ha detectat una càmera nova",

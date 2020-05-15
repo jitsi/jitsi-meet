@@ -462,7 +462,7 @@
         "somebody": "Norbait",
         "startSilentTitle": "Audio irteerarik gabe batu zara!",
         "startSilentDescription": "Batu berriro audioa gaitzeko",
-        "suboptimalBrowserWarning": "Bilera ez da ona izaten ari. Saiatu nabigatzaile egokiak erabiltzen <a href='static/recommendedBrowsers.html' target='_blank'/a>.",
+        "suboptimalBrowserWarning": "Bilera ez da ona izaten ari. Saiatu nabigatzaile egokiak erabiltzen <a href='{{recommendedBrowserPageLink}}' target='_blank'/a>.",
         "suboptimalExperienceTitle": "Nabigatzailearen abisua",
         "unmute": "Desmututu",
         "newDeviceCameraTitle": "Kamera berria hauteman da",

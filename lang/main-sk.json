@@ -453,7 +453,7 @@
         "somebody": "Niekto",
         "startSilentTitle": "Pripojili ste sa bez zvukového výstupu!",
         "startSilentDescription": "Pripojte sa k stretnutiu ešte raz, aby ste aktivovali zvuk.",
-        "suboptimalBrowserWarning": "Obávame sa, že dojem z tohto stretnutia nebude až taký dobrý. Hladáme spôsob ako to zlepšiť, ale dovtedy prosím skúste jeden z <a href='static/recommendedBrowsers.html' target='_blank'>plne podporovaných prehliadačov</a>.",
+        "suboptimalBrowserWarning": "Obávame sa, že dojem z tohto stretnutia nebude až taký dobrý. Hladáme spôsob ako to zlepšiť, ale dovtedy prosím skúste jeden z <a href='{{recommendedBrowserPageLink}}' target='_blank'>plne podporovaných prehliadačov</a>.",
         "suboptimalExperienceTitle": "Prehliadačové varovanie",
         "unmute": "Zapnúť mikrofón",
         "newDeviceCameraTitle": "Bola zistená nová kamera",

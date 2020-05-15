@@ -455,7 +455,7 @@
         "somebody": "Calicunu",
         "startSilentTitle": "Ses intradu sena àudio.",
         "startSilentDescription": "Torra a intrare pro ativare s'àudio",
-        "suboptimalBrowserWarning": "Timimus chi s'esperièntzia tua de custa riunione no at a èssere bona meda. Semus chirchende de megiorare custu, però in su mentras proa de impreare unu de is <a href='static/recommendedBrowsers.html' target='_blank'>navigadores cumpatìbiles</a>.",
+        "suboptimalBrowserWarning": "Timimus chi s'esperièntzia tua de custa riunione no at a èssere bona meda. Semus chirchende de megiorare custu, però in su mentras proa de impreare unu de is <a href='{{recommendedBrowserPageLink}}' target='_blank'>navigadores cumpatìbiles</a>.",
         "suboptimalExperienceTitle": "Avisu subra de su navigadore",
         "unmute": "Ativa su sonu",
         "newDeviceCameraTitle": "Càmera noa rilevada",

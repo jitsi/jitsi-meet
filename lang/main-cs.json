@@ -456,7 +456,7 @@
         "somebody": "Někdo",
         "startSilentTitle": "",
         "startSilentDescription": "",
-        "suboptimalExperienceDescription": "Sakra... všimli jsme si, že vaše zkušenost s {{appName}} není úplně skvělá. Hledáme cesty, jak bychom to mohli zlepšit. Než se tak stane, vyzkoušejte některý z <a href='static/recommendedBrowsers.html' target='_blank'>plně podporovaných prohlížečů</a>.",
+        "suboptimalExperienceDescription": "Sakra... všimli jsme si, že vaše zkušenost s {{appName}} není úplně skvělá. Hledáme cesty, jak bychom to mohli zlepšit. Než se tak stane, vyzkoušejte některý z <a href='{{recommendedBrowserPageLink}}' target='_blank'>plně podporovaných prohlížečů</a>.",
         "suboptimalExperienceTitle": "Varování prohlížeče",
         "unmute": "",
         "newDeviceCameraTitle": "Detekována nová kamera",

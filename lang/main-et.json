@@ -452,7 +452,7 @@
         "somebody": "Keegi",
         "startSilentTitle": "Ühinesid ilma mikrofonita!",
         "startSilentDescription": "Mikrofoni kasutamiseks ühine kõnega uuesti",
-        "suboptimalExperienceDescription": "Rakenduse {{appName}}  parima kvaliteedi tagamiseks palun kasuta <a href='static/recommendedBrowsers.html' target='_blank'>ühte nendest veebilehitsejatest</a>.",
+        "suboptimalExperienceDescription": "Rakenduse {{appName}}  parima kvaliteedi tagamiseks palun kasuta <a href='{{recommendedBrowserPageLink}}' target='_blank'>ühte nendest veebilehitsejatest</a>.",
         "suboptimalExperienceTitle": "Veebilehitseja hoiatus",
         "unmute": "Lülita mikrofon sisse",
         "newDeviceCameraTitle": "Leitud uus kaamera",

@@ -416,7 +416,7 @@
         "somebody": "누군가",
         "startSilentTitle": "",
         "startSilentDescription": "",
-        "suboptimalExperienceDescription": "{{appName}}에 대한 귀하의 경험이 없으시다면 <a href='static/recommendedBrowsers.html' target='_blank'>완벽하게 지원되는 브라우저</a> 중 하나를 사용해보십시오.",
+        "suboptimalExperienceDescription": "{{appName}}에 대한 귀하의 경험이 없으시다면 <a href='{{recommendedBrowserPageLink}}' target='_blank'>완벽하게 지원되는 브라우저</a> 중 하나를 사용해보십시오.",
         "suboptimalExperienceTitle": "브라우저 경고",
         "unmute": "",
         "newDeviceCameraTitle": "",

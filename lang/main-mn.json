@@ -452,7 +452,7 @@
         "somebody": "Хэн нэгэн",
         "startSilentTitle": "Та ямар ч аудио төхөөрөмжгүй нэгдсэн!",
         "startSilentDescription": "Дууг идэвхжүүлэхийн тулд хуралд дахин нэгдээрэй",
-        "suboptimalBrowserWarning": "Таны хөтөч дээр бүрэн дэмжлэг ороогүй байна. Та бүрэн дэмжигдсэн <a href='static/recommendedBrowsers.html' target='_blank'>хөтөчийг</a> ашиглана уу.",
+        "suboptimalBrowserWarning": "Таны хөтөч дээр бүрэн дэмжлэг ороогүй байна. Та бүрэн дэмжигдсэн <a href='{{recommendedBrowserPageLink}}' target='_blank'>хөтөчийг</a> ашиглана уу.",
         "suboptimalExperienceTitle": "Хөтөчийн анхааруулга",
         "unmute": "Дуутай",
         "newDeviceCameraTitle": "Шинэ камер",

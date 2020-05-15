@@ -421,7 +421,7 @@
         "somebody": "Iemand",
         "startSilentTitle": "",
         "startSilentDescription": "",
-        "suboptimalExperienceDescription": "Gits... ons is bevrees u ervaring met {{appName}} gaan nie so goed wees hier nie. Ons soek maniere om dit die hoof te bied, maar probeer intussen een van die <a href='static/recommendedBrowsers.html' target='_blank'>volledig ondersteunde blaaiers</a>.",
+        "suboptimalExperienceDescription": "Gits... ons is bevrees u ervaring met {{appName}} gaan nie so goed wees hier nie. Ons soek maniere om dit die hoof te bied, maar probeer intussen een van die <a href='{{recommendedBrowserPageLink}}' target='_blank'>volledig ondersteunde blaaiers</a>.",
         "suboptimalExperienceTitle": "Blaaierwaarskuwing",
         "unmute": "",
         "newDeviceCameraTitle": "",

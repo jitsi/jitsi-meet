@@ -455,7 +455,7 @@
         "somebody": "מישהו",
         "startSilentTitle": "הצטרפת ללא פלט שמע!",
         "startSilentDescription": "הצטרף שוב לפגישה כדי לאפשר שמע",
-        "suboptimalExperienceDescription": "אופ... אנו חוששים שהחוויה שלך עם {{appName}} לא תהיה נהדרת כאן. אנו מחפשים דרכים לשפר זאת, אך עד אז, נסה להשתמש באחד מה<a href='static/recommendedBrowsers.html' target='_blank'>דפדפנים הנתמכים לחלוטין</a>.",
+        "suboptimalExperienceDescription": "אופ... אנו חוששים שהחוויה שלך עם {{appName}} לא תהיה נהדרת כאן. אנו מחפשים דרכים לשפר זאת, אך עד אז, נסה להשתמש באחד מה<a href='{{recommendedBrowserPageLink}}' target='_blank'>דפדפנים הנתמכים לחלוטין</a>.",
         "suboptimalExperienceTitle": "אזהרת דפדפן",
         "unmute": "בטל השתקה",
         "newDeviceCameraTitle": "זוהתה מצלמה חדשה",
@@ -783,6 +783,6 @@
         "youAreAlone": "אתה היחידי במפגש זה"
     },
     "helpView": {
-        "header": "מרכז העזרה"	  					   
+        "header": "מרכז העזרה"
     }
 }

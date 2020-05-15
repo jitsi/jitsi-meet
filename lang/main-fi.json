@@ -421,7 +421,7 @@
         "somebody": "Joku",
         "startSilentTitle": "",
         "startSilentDescription": "",
-        "suboptimalExperienceDescription": "Valitettavasti {{appName}} ei taida toimia kovin hyvin täällä. Yritämme löytää parannuskeinoja, mutta sillä välin kannattaa käyttää jotain <a href='static/recommendedBrowsers.html' target='_blank'>täysin tuettua selainta</a>.",
+        "suboptimalExperienceDescription": "Valitettavasti {{appName}} ei taida toimia kovin hyvin täällä. Yritämme löytää parannuskeinoja, mutta sillä välin kannattaa käyttää jotain <a href='{{recommendedBrowserPageLink}}' target='_blank'>täysin tuettua selainta</a>.",
         "suboptimalExperienceTitle": "Selainvaroitus",
         "unmute": "",
         "newDeviceCameraTitle": "Uusi kamera havaittu",

@@ -437,7 +437,7 @@
         "somebody": "Alguém",
         "startSilentTitle": "Você entrou sem saída de áudio!",
         "startSilentDescription": "Volte à reunião para habilitar o áudio",
-        "suboptimalBrowserWarning": "Tememos que sua experiência de reunião não seja tão boa aqui. Estamos procurando maneiras de melhorar isso, mas até então, tente usar um dos <a href='static/recommendedBrowsers.html' target='_blank'>navegadores completamente suportados</a>.",
+        "suboptimalBrowserWarning": "Tememos que sua experiência de reunião não seja tão boa aqui. Estamos procurando maneiras de melhorar isso, mas até então, tente usar um dos <a href='{{recommendedBrowserPageLink}}' target='_blank'>navegadores completamente suportados</a>.",
         "suboptimalExperienceTitle": "Alerta do navegador",
         "unmute": "Ativar som",
         "newDeviceCameraTitle": "Nova câmera detectada",
