@@ -679,7 +679,6 @@
         "videomute": "Démarrer / Arrêter la caméra",
         "startvideoblur": "Flouter mon arrière plan",
         "stopvideoblur": "Désactiver le flou d'arrière-plan",
-        "muteEveryone": "Mettre tout le monde en sourdine",
         "noAudioSignalDialInDesc": "Vous pouvez également composer un numéro en utilisant :",
         "noAudioSignalDialInLinkDesc": "Numéros d'appel"
     },
