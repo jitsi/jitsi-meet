@@ -16,6 +16,7 @@ import {
 
 import { setTileView } from '../actions';
 import logger from '../logger';
+import { TILE_VIEW_ENABLED, getFeatureFlag } from '../../base/flags';
 
 /**
  * The type of the React {@code Component} props of {@link TileViewButton}.
@@ -83,13 +84,16 @@ class TileViewButton<P: Props> extends AbstractButton<P, *> {
  * {@code TileViewButton} component.
  *
  * @param {Object} state - The Redux state.
- * @returns {{
- *     _tileViewEnabled: boolean
- * }}
+ * @param {Object} ownProps - The properties explicitly passed to the component instance.
+ * @returns {Props}
  */
-function _mapStateToProps(state) {
+function _mapStateToProps(state, ownProps) {
+    const enabled = getFeatureFlag(state, TILE_VIEW_ENABLED, true);
+    const { visible = enabled } = ownProps;
+
     return {
-        _tileViewEnabled: state['features/video-layout'].tileViewEnabled
+        _tileViewEnabled: state['features/video-layout'].tileViewEnabled,
+        visible
     };
 }
 
