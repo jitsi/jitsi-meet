@@ -36,6 +36,7 @@
     text-align: left;
     width: $sidebarWidth;
     word-wrap: break-word;
+    background: $chatBackgroundColor;
 
     a {
         display: block;
@@ -109,6 +110,16 @@
     width: 100%;
     z-index: 1;
 
+    h4.chat-title{
+        text-align: center;
+        padding: 10px 0 10px 0;
+        font-weight: 400;
+        font-size: 20px;
+        color: white;
+        background: inherit;
+        width: 100%
+    }
+
     .chat-close {
         align-items: center;
         bottom: 8px;
@@ -134,9 +145,10 @@
     border-top: 1px solid $chatInputSeparatorColor;
     display: flex;
     padding: 5px 10px;
+    background: $chatBackgroundColor;
 
     * {
-        background-color: transparent;
+        background-color: white;
     }
 }
 
@@ -152,7 +164,7 @@
     border: 0px none;
     border-radius:0;
     box-shadow: none;
-    color: white;
+    color: $ADFC-color;
     font-size: 15px;
     padding: 10px;
     overflow-y: auto;
@@ -334,6 +346,13 @@
 
         .timestamp {
             text-align: right;
+            color: $ADFC-color;
+        }
+    }
+
+    &.remote {
+        .timestamp {
+            color: $ADFC-color;
         }
     }
 

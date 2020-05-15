@@ -1,6 +1,7 @@
 .meetings-list {
     font-size: 14px;
-    color: #253858;
+    color: $ADFC-color;
+    background-color: $ADFC-lightGrey;
     line-height: 20px;
     text-align: left;
     text-overflow: ellipsis;
@@ -12,6 +13,7 @@
     overflow: auto;
 
     .meetings-list-empty {
+        background-color: $ADFC-lightGrey;
         text-align: center;
         align-items: center;
         justify-content: center;
@@ -26,9 +28,9 @@
     }
 
     .button {
-        background: #0074E0;
+        background-color: $buttonBackground;
         border-radius: 4px;
-        color: #FFFFFF;
+        color: $buttonColor;
         display: flex;
         justify-content: center;
         align-items: center;
@@ -43,7 +45,7 @@
     }
 
     .item {
-        background: rgba(255,255,255,0.50);
+        background-color: $ADFC-grey;
         box-sizing: border-box;
         display: inline-flex;
         margin-top: 5px;
@@ -99,7 +101,7 @@
         }
 
         &.with-click-handler:hover {
-            background-color: #75A7E7;
+            background-color: darken( $ADFC-grey, 10% );
         }
 
         .add-button {

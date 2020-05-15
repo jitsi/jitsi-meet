@@ -9,31 +9,31 @@ export default {
     '_defaultTheme': {
         // Generic app theme colors that are used accross the entire app.
         // All scheme definitions below inherit these values.
-        background: 'rgb(255, 255, 255)',
+        background: ColorPalette.white,
         errorText: ColorPalette.red,
-        icon: 'rgb(28, 32, 37)',
-        text: 'rgb(28, 32, 37)'
+        icon: ColorPalette.AdfcTextColor,
+        text: ColorPalette.AdfcTextColor
     },
     'Chat': {
-        displayName: 'rgb(94, 109, 121)',
+        displayName: ColorPalette.AdfcBlue,
         localMsgBackground: 'rgb(215, 230, 249)',
         privateMsgBackground: 'rgb(250, 219, 219)',
         privateMsgNotice: 'rgb(186, 39, 58)',
         remoteMsgBackground: 'rgb(241, 242, 246)',
-        replyBorder: 'rgb(219, 197, 200)',
-        replyIcon: 'rgb(94, 109, 121)'
+        replyBorder: ColorPalette.AdfcOrange,
+        replyIcon: ColorPalette.AdfcOrange
     },
     'Conference': {
         inviteButtonBackground: 'rgb(0, 119, 225)',
-        onVideoText: 'white'
+        onVideoText: ColorPalette.white
     },
     'Dialog': {
-        border: 'rgba(0, 3, 6, 0.6)',
-        buttonBackground: ColorPalette.blue,
+        border: ColorPalette.AdfcBackgroundColor,
+        buttonBackground: ColorPalette.AdfcOrange,
         buttonLabel: ColorPalette.white
     },
     'Header': {
-        background: ColorPalette.blue,
+        background: ColorPalette.AdfcBackgroundColor,
         icon: ColorPalette.white,
         statusBar: ColorPalette.blueHighlight,
         statusBarContent: ColorPalette.white,

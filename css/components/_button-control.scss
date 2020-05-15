@@ -14,6 +14,7 @@
     font-size: 14px;
     margin-left: 10px;
     color: $buttonColor;
+    background-color: $buttonBackground;
     font-weight: $buttonFontWeight;
     @include transition(background-color .1s ease-out);
 
@@ -86,12 +87,17 @@
     }
 
     &_close {
-        color: $defaultFontColor;
+        color: $buttonSecondaryColor;
+        background-color: $buttonSecondaryBackground;
+        &:hover {
+            background-color: $buttonSecondaryHoverBackground;
+        }
     }
     &_submit {
-        color: $linkFontColor;
+        color: $buttonPrimaryColor;
+        background-color: $buttonPrimaryBackground;
         &:hover {
-            color: $linkHoverFontColor;
+            background-color: $buttonPrimaryHoverBackground;
         }
     }
 

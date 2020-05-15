@@ -714,7 +714,7 @@ export default class SmallVideo {
             <Provider store = { APP.store }>
                 <I18nextProvider i18n = { i18next }>
                     <div>
-                        <AtlasKitThemeProvider mode = 'dark'>
+                        <AtlasKitThemeProvider mode = 'light'>
                             { this._showConnectionIndicator
                                 ? <ConnectionIndicator
                                     alwaysVisible = { showConnectionIndicator }

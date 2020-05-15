@@ -240,7 +240,7 @@ export default class DeviceSelectionPopup {
 
         ReactDOM.render(
             <I18nextProvider i18n = { this._i18next }>
-                <AtlasKitThemeProvider mode = 'dark'>
+                <AtlasKitThemeProvider mode = 'light'>
                     <DialogWithTabs
                         closeDialog = { this.close }
                         cssClassName = 'settings-dialog'

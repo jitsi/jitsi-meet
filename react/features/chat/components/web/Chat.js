@@ -136,6 +136,7 @@ class Chat extends AbstractChat<Props> {
     _renderChatHeader() {
         return (
             <div className = 'chat-header'>
+                <h4 class = 'chat-title'>Chat</h4>
                 <div
                     className = 'chat-close'
                     onClick = { this.props._onToggleChat }>

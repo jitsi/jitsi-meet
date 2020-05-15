@@ -127,7 +127,7 @@ var config = {
     // Enable / disable layer suspension.  If enabled, endpoints whose HD
     // layers are not in use will be suspended (no longer sent) until they
     // are requested again.
-    // enableLayerSuspension: false,
+    enableLayerSuspension: true,
 
     // Every participant after the Nth will start video muted.
     // startVideoMuted: 10,

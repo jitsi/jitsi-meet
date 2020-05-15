@@ -279,11 +279,73 @@ module.exports = [
  * target, undefined; otherwise, the path to the local file to be served.
  */
 function devServerProxyBypass({ path }) {
-    if (path.startsWith('/css/') || path.startsWith('/doc/')
-            || path.startsWith('/fonts/') || path.startsWith('/images/')
-            || path.startsWith('/sounds/')
-            || path.startsWith('/static/')
-            || path.endsWith('.wasm')) {
+    /*
+    * Paths to be served locally
+    */
+    const localPaths = [
+        '/css/',
+        '/doc/',
+        '/fonts/',
+        '/images/',
+        '/sounds/',
+        '/static/',
+        '/lang/'
+    ];
+
+    /*
+    * File extensions to be served locally
+    */
+    const localExtensions = [
+        '.wasm',
+        '.html'
+    ];
+
+    /*
+    * Files to be served locally
+    */
+    const localFiles = [
+        '/config.js',
+        '/interface_config.js',
+        '/logging_config.js',
+        '/favicon.ico'
+    ];
+
+    /*
+    * Preprocessed files to be served locally
+    */
+    const localPreprocessedFiles = [
+        '/index.html'
+    ];
+
+    /*
+    ** set default file
+    */
+    if ( path === '/' ) {
+        // eslint-disable-next-line no-param-reassign
+        path = '/index.html';
+    }
+
+    /*
+    ** Do checks
+    */
+    if ( localPreprocessedFiles.some(p => {
+        return path === p;
+    } ) ) {
+        return '/libs/html' + path;
+    }
+    if ( localPaths.some(p => {
+        return path.startsWith(p);
+    } ) ) {
+        return path;
+    }
+    if ( localExtensions.some(p => {
+        return path.endsWith(p);
+    } ) ) {
+        return path;
+    }
+    if ( localFiles.some(p => {
+        return path === p;
+    } ) ) {
         return path;
     }
 
@@ -316,4 +378,6 @@ function devServerProxyBypass({ path }) {
     if (path.startsWith('/libs/')) {
         return path;
     }
+
+console.log( 'proxy: ' + path );
 }

@@ -204,7 +204,7 @@ export default class RemoteVideo extends SmallVideo {
         ReactDOM.render(
             <Provider store = { APP.store }>
                 <I18nextProvider i18n = { i18next }>
-                    <AtlasKitThemeProvider mode = 'dark'>
+                    <AtlasKitThemeProvider mode = 'light'>
                         <RemoteVideoMenuTriggerButton
                             initialVolumeValue = { initialVolumeValue }
                             isAudioMuted = { this.isAudioMuted }

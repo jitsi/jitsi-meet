@@ -1,3 +1,29 @@
+ .tOoji {
+    color: black !important;
+    background-color: white !important;
+
+    a {
+        color:#4C9AFF;
+    } 
+    a:hover {
+        color:#2684FF;
+    } 
+    a:active {
+        color:#4C9AFF;
+    } 
+    a:focus {
+        outline-color:#2684FF;
+    } 
+    
+    h1, h2, h3, h4, h5, h6 {
+        color:#B8C7E0;
+    } 
+    
+    small { 
+        color:#8C9CB8;
+    }
+ }
+
 /**
  * Move the @atlaskit/flag container up a little bit so it does not cover the
  * toolbar with the first notification.
@@ -15,6 +41,100 @@
     -webkit-animation: cbfRuT 0s !important;
 }
 
+.eoRGoR {
+    background-color: $ADFC-lightGrey !important;
+    border-radius: 3px;
+    box-shadow: 0 0 0 1px rgba(115,115,115,0.08),0 2px 1px rgba(115,115,155,0.08), 0 0 20px -6px rgba(115,115,115,0.31) !important;
+    color: $ADFC-color !important;
+}
+
+/* Tab */
+.iphdyc {
+
+    /* Active Tab */
+    .detEWQ {
+        background-color: $ADFC-blue;
+        color: white;
+        border-radius: 5px 5px 0 0;
+
+        &:hover {
+            background-color: darken( $ADFC-blue, 10% );
+            color: white;
+        }
+    }
+
+    /* Inactive Tab */
+    .goIJer {
+        background-color: $ADFC-orange;
+        color: white;
+        border-radius: 5px 5px 0 0;
+
+        &:hover {
+            background-color: darken( $ADFC-orange, 10% );
+            color: white;
+        }
+    }
+}
+
+/* Textbox */
+.hqyPWx {
+    background-color: white;
+    border-color: $ADFC-blue;
+    
+    &:hover, &:active {
+        background-color: darken( $ADFC-orange, 10% );
+        color: white;
+    }
+}
+
+.iqNwPx {
+    color: $ADFC-blue !important;
+}
+
+.bHNyBH {
+    background-color:$ADFC-blue !important;
+}
+
+.oQiLZ {
+    color: $ADFC-orange !important;
+}
+
+.ybfvp {
+    background-color: $ADFC-blue !important;
+}
+
+button.iuZaWk {
+    color: $buttonColor !important;
+    background-color: $buttonBackground !important;
+
+    &:hover {
+        background-color: darken( $buttonColor, 10% ) !important;
+    }
+}
+
+/* Ok-Button */
+button.jnSiSs {
+    color: $buttonPrimaryColor !important;
+    background-color: $buttonPrimaryBackground !important;
+}
+
+button.kCrkDy {
+    color: $buttonColor !important;
+    background-color: $buttonPrimaryHoverBackground !important;
+}
+
+/* Cancel-Button */
+button.lgCCLh {
+    color: $buttonSecondaryColor !important;
+    background-color: $buttonSecondaryBackground !important;
+}
+
+button.cIYSWk {
+    color: $buttonSecondaryColor !important;
+    background-color: $buttonSecondaryHoverBackground !important;
+}
+
+
 .modal-dialog-form {
     /**
      * Update the @atlaskit/dropdown-menu trigger wrapper to make sure it looks
@@ -29,7 +149,7 @@
      * dropdown backgrounds clash with the modal backgrounds.
      */
     .cksvax[data-role=droplistContent] {
-        border: 1px solid #455166;
+        border: 1px solid darken( $ADFC-darkGrey, 20% );
     }
 }
 

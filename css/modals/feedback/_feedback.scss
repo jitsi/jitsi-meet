@@ -52,6 +52,19 @@
         }
     }
 
+    .dvocAg {
+        -webkit-align-items: center;
+        -webkit-box-align: center;
+        -ms-flex-align: center;
+        align-items: center;
+        background-color: inherit;
+        border-color: inherit;
+
+        &:hover, &:active {
+            border-color: $ADFC-orange;
+        }
+    }
+
     .input-control {
         background-color: $feedbackInputBg;
         color: $feedbackInputTextColor;
@@ -71,6 +84,8 @@
         line-height: 1.2;
         margin-top: 10px;
         text-align: center;
+        color: $ADFC-blue;
+        fill: $ADFC-blue;
 
         .star-label {
             font-size: 14px;
@@ -90,9 +105,15 @@
             &.active,
             &:hover,
             &.starHover {
-                color: #36B37E;
+                color: $ADFC-orange;
             };
 
         }
+
+        .htUIbT {
+            color: currentColor;
+            fill: $ADFC-blue;
+            line-height: 1;
+        }        
     }
 }

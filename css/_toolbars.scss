@@ -77,39 +77,39 @@
             .toolbox-button {
 
                 .toolbox-icon {
-                    background-color: #fff;
+                    background-color: $ADFC-orange;
                     border-radius: 50%;
-                    border: 1px solid #d1dbe8;
+                    border: 1px solid darken( $ADFC-orange, 20% );
                     margin: 0px 4px;
                     width: 38px;
                     height: 38px;
         
                     &:hover {
-                        background-color: #daebfa;
-                        border: 1px solid #daebfa;
+                        background-color: darken( $ADFC-orange, 10% );
+                        border: 1px solid darken( $ADFC-orange, 20% );
                     }
         
                     &.toggled {
-                        background: #2a3a4b;
-                        border: 1px solid #5e6d7a;
+                        background: $ADFC-blue;
+                        border: 1px solid darken( $ADFC-blue, 20%);
     
                         svg {
                             fill: #fff;
                         }
         
                         &:hover {
-                            background-color: #5e6d7a;
+                            background-color: darken( $ADFC-blue, 10%);
                         }
                     }
         
                     &.disabled, .disabled & {
                         cursor: initial;
                         color: #fff;
-                        background-color: #a4b8d1;
+                        background-color: $ADFC-darkGrey;
                     }
     
                     svg {
-                        fill: #5e6d7a;
+                        fill: white;
                     }
                 }
 
@@ -174,7 +174,7 @@
                 }
                 &.disabled {
                     cursor: initial;
-                    color: #3b475c;
+                    color: $ADFC-darkGrey;
                 }
             }
 
@@ -206,7 +206,8 @@
                 }
 
                 svg {
-                    fill: #B8C7E0 !important;
+                    color: overflowMenuItemColor;
+                    fill: overflowMenuBG !important;
                 }
             }
 

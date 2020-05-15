@@ -25,12 +25,12 @@ import styles, { SIDEBAR_AVATAR_SIZE } from './styles';
 /**
  * The URL at which the privacy policy is available to the user.
  */
-const PRIVACY_URL = 'https://jitsi.org/meet/privacy';
+const PRIVACY_URL = 'https://static.adfc-intern.de/privacy';
 
 /**
  * The URL at which the terms (of service/use) are available to the user.
  */
-const TERMS_URL = 'https://jitsi.org/meet/terms';
+const TERMS_URL = 'https://static.adfc-intern.de/terms';
 
 type Props = {
 

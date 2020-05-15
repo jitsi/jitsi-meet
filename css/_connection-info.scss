@@ -1,9 +1,12 @@
 %connection-info {
     font-size: 12px;
     font-weight: 400;
+    background: $ADFC-lightGrey;
 
     td {
         padding: 2px 0;
+        color: $ADFC-color;
+        background: $ADFC-lightGrey;
     }
 }
 

@@ -1,0 +1,136 @@
+/**
+ * Base
+ */
+$baseLight: #FFFFFF;
+
+$ADFC-blue: #004b7c;
+$ADFC-orange: #ee7f00;
+$ADFC-color: #36454d;
+
+$ADFC-lightGrey: #F2F2F2;
+$ADFC-grey: #EBEBEB;
+$ADFC-darkGrey: #737373;
+$ADFC-footerColor: #737373;
+
+/**
+* Controls
+*/
+$controlBackground: $baseLight;
+$controlColor: #333333;
+$sliderTrackBackground: #474747;
+$sliderThumbBackground: #3572b0;
+
+/**
+* Buttons
+*/
+$buttonBackground: $ADFC-orange;
+$buttonHoverBackground: darken($buttonBackground, 10%);
+$buttonBorder: transparent;
+$buttonHoverBorder: transparent;
+$buttonColor: $baseLight;
+
+$buttonSecondaryBackground: $ADFC-blue;
+$buttonSecondaryHoverBackground: darken($buttonSecondaryBackground, 10%);
+$buttonSecondaryBorder: transparent;
+$buttonSecondaryHoverBorder: transparent;
+$buttonSecondaryColor: $baseLight;
+
+$buttonPrimaryBackground: $ADFC-orange;
+$buttonPrimaryHoverBackground: darken($buttonPrimaryBackground, 10%);
+$buttonPrimaryBorder: transparent;
+$buttonPrimaryHoverBorder: transparent;
+$buttonPrimaryColor: $baseLight;
+
+$buttonLightBackground: $ADFC-lightGrey;
+$buttonLightHoverBackground: darken($buttonLightBackground, 10%);
+$buttonLightBorder: $ADFC-blue;
+$buttonLightHoverBorder: lighten($buttonBackground, 10%);
+
+$buttonLinkBackground: transparent;
+$buttonLinkColor: $ADFC-orange;
+
+$primaryButtonBackground: $ADFC-orange;
+$primaryButtonHoverBackground: lighten($primaryButtonBackground, 20%);
+$primaryButtonColor: $baseLight;
+$primaryButtonFontWeight: 400;
+
+$buttonShadowColor: darken($ADFC-darkGrey, 80%);
+
+$overlayButtonBg: $ADFC-blue;
+
+/**
+* Color variables
+**/
+$defaultBackground: $ADFC-darkGrey;
+$filmstripOnlyOverlayBg: #000;
+$reloadProgressBarBg: $ADFC-blue;
+
+/**
+ * Dialog colors
+ **/
+$auiDialogColor: #eceef1;
+$auiDialogBg: #253858;
+$auiDialogContentBg: #344563;
+$auiBorderColor: #253858;
+$dialogTitleFontWeight: 400;
+$dialogErrorText: #344563;
+
+/**
+* Inlay colors
+**/
+$inlayColorBg: lighten($defaultBackground, 20%);
+$inlayBorderColor: lighten($baseLight, 10%);
+$inlayIconBg: #000;
+$inlayIconColor: #fff;
+$inlayFilmstripOnlyColor: #474747;
+$inlayFilmstripOnlyBg: #fff;
+
+// Main controls
+$placeHolderColor: #a7a7a7;
+$readOnlyInputColor:$ADFC-darkGrey;
+$defaultDarkSelectionColor: #ccc;
+$buttonFontWeight: 400;
+$labelFontWeight: 300;
+$hintFontSize: em(13, 14);
+$linkFontColor: #3572b0;
+$linkHoverFontColor: darken(#3572b0, 10%);
+$dropdownColor: #333;
+$errorColor: #c61600;
+
+// Feedback colors
+$feedbackCancelFontColor: #333;
+
+// Popover colors
+$popoverBg: $ADFC-lightGrey;
+$popoverFontColor: white !important;
+$popupMenuColor: white !important;
+$popupMenuHoverColor: white !important;
+$popupMenuHoverBackground: rgba(255, 255, 255, 0.1);
+$popupSliderColor: #0376da;
+
+// Toolbar
+$secondaryToolbarBg: rgba(0, 0, 0, 0.5);
+// TOFIX: Once moved to react rename to match the side panel class name.
+$sideToolbarContainerBg: rgba(0, 0, 0, 0.75);
+$toolbarBackground: rgba(0, 0, 0, 0.5);
+$toolbarBadgeBackground: #165ECC;
+$toolbarBadgeColor: #FFFFFF;
+$toolbarButtonColor: #FFFFFF;
+$toolbarSelectBackground: rgba(0, 0, 0, .6);
+$toolbarTitleColor: #FFFFFF;
+$toolbarToggleBackground: #12499C;
+
+
+/**
+ * Forms
+ */
+//dropdown
+$selectFontColor: $controlColor;
+$selectBg: $controlBackground;
+$selectActiveBg: darken($controlBackground, 5%);
+$selectActiveItemBg: darken($controlBackground, 20%);
+
+/**
+ * TODO: Replace by themed component.
+ */
+$videoQualityActive: #4C9AFF;

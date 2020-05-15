@@ -10,7 +10,7 @@ export const ColorPalette = {
     /**
      * The application's background color.
      */
-    appBackground: BLACK,
+    appBackground: '#FFFFFF',
 
     /**
      * The application's definition of the default color black. Generally,
@@ -22,7 +22,7 @@ export const ColorPalette = {
     blue: '#17A0DB',
     blueHighlight: '#1081b2',
     buttonUnderlay: '#495258',
-    darkGrey: '#555555',
+    darkGrey: '#737373',
     green: '#40b183',
     lightGrey: '#AAAAAA',
     overflowMenuItemUnderlay: '#EEEEEE',
@@ -30,6 +30,17 @@ export const ColorPalette = {
     transparent: 'rgba(0, 0, 0, 0)',
     warning: 'rgb(215, 121, 118)',
     white: '#FFFFFF',
+
+    AdfcBlue: '#004b7c',
+    AdfcOrange: '#ee7f00',
+    AdfcTextColor: '#36454d',
+    
+    AdfcLightGrey: '#F2F2F2',
+    AdfcGrey: '#EBEBEB',
+    AdfcDarkGrey: '#737373',
+    AdfcBackgroundColor: '#FFFFFF',
+
+    AdfcFooterColor: '#737373',
 
     /**
      * These are colors from the atlaskit to be used on mobile, when needed.

@@ -185,11 +185,14 @@ class WelcomePage extends AbstractWelcomePage {
                     <div className = 'header-image' />
                     <div className = 'header-text'>
                         <h1 className = 'header-text-title'>
-                            { t('welcomepage.title') }
+                            ADFC Meet - Das ADFC Onlinekonferenzsystem
                         </h1>
                         <p className = 'header-text-description'>
-                            { t('welcomepage.appDescription',
-                                { app: APP_NAME }) }
+                            Starte mit Deiner ADFC-Gliederung oder Deinem ADFC-Arbeitskreis eine Videokonferenz.
+                            Registrierte und angemeldete Moderator*innen starten die virtuelle Sitzung und
+                            laden die anderen Teilnehmer*innen ein.
+                            Die Konferenz wird im Internet verschlüsselt übertragen.
+                            Die Nutzung von ADFC Meet für Vereinszwecke des ADFC ist kostenlos.
                         </p>
                     </div>
                     <div id = 'enter_room'>
@@ -217,8 +220,8 @@ class WelcomePage extends AbstractWelcomePage {
                             onClick = { this._onFormSubmit }>
                             {
                                 showResponsiveText
-                                    ? t('welcomepage.goSmall')
-                                    : t('welcomepage.go')
+                                    ? 'Los'
+                                    : 'Los >'
                             }
                         </div>
                     </div>

@@ -2,6 +2,10 @@
     min-height: 100%;
 }
 
+#videoconference_page .leftwatermark {
+    background-image: url($altWatermarkLink);
+}
+
 #videospace {
     display: block;
     height: 100%;

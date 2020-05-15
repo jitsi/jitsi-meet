@@ -28,13 +28,191 @@ body {
     overflow: hidden;
     color: $defaultColor;
     background: $defaultBackground;
+    display: flex;
+    flex-direction: column;
+
     &.filmstrip-only {
         background: transparent;
     }
 }
+  
+header {
+    display: block;
+
+    .section-header {
+        width: 100%;
+        background-color: $ADFC-orange;
+        position: relative;
+        height: auto;
+    }
+
+    section {
+        width: 100%;
+        clear: both;
+        background-size: cover;
+        background-position: 50%;
+        position: relative;
+        display: block;
+    }
+
+    /* media query */
+    .sectioncontainer {
+        width: 80%;
+    }
+
+    .sectioncontainer {
+        position: relative;
+        height: auto;
+        width: 90%;
+        margin: 0 auto;
+        max-width: 1440px;
+        padding-top: 0.5rem;
+        padding-bottom: 0.5rem;
+    }
+
+    h4 {
+        font-weight: 300;
+        color: $baseLight;
+        line-height: 2rem;
+        letter-spacing: .05rem;
+        font-size: 1rem;
+    }    
+}
+
+main {
+    flex: 1;
+}
+
+footer {
+    display: block;
+
+    .section-footer {
+        width: 100%;
+        background-color: $ADFC-footerColor;
+        position: relative;
+        height: auto;
+    }
+
+    section {
+        width: 100%;
+        clear: both;
+        background-size: cover;
+        background-position: 50%;
+        position: relative;
+        display: block;
+    }
+
+    /* media query */
+    .sectioncontainer {
+        width: 80%;
+    }
+
+    .sectioncontainer {
+        position: relative;
+        height: auto;
+        width: 90%;
+        margin: 0 auto;
+        max-width: 1440px;
+        padding-top: 0.5rem;
+        padding-bottom: 0.1rem;
+    }
+
+    li, ul {
+        margin: 0;
+        padding: 0;
+    }
+
+    ul {
+        display:inline-block;        
+        list-style: none;
+        position: relative;
+        bottom: 0.1rem;
+        margin: 0 0 1rem 1.25rem;
+        list-style-type: none;
+        list-style-position: outside;
+        line-height: 1.6;
+    }
+
+    li {
+        float: left;
+        line-height: 1rem;
+        padding-right: 1rem;
+        margin: 0;
+        padding: 0 0 0 2rem;
+        font-size: inherit;
+        color: $baseLight;
+        background-color: transparent;
+    }
+
+    a, a:hover {
+        color: $baseLight;
+        padding-bottom: 0;
+        font-size: 12px;
+        text-decoration: none;
+        line-height: inherit;
+        cursor: pointer;
+        background-color: transparent;
+        -webkit-text-decoration-skip: objects;
+    }
+}
+
+.h4, h4 {
+    font-size: 22px;
+    font-variant-ligatures: none;
+    font-weight: 100;
+}
+
+.h3, .h4, h3, h4 {
+    font-family: roboto, arial, sans-serif;
+}
+
+h2 {
+    font-size: 36px;
+    font-variant-ligatures: none;
+    font-weight: 100;
+    line-height: 1.2em;
+    padding-top: 2rem;
+    padding-bottom: 1rem;
+    position: relative;
+    text-align: left;
+}
+h2 {
+    font-variant-ligatures: none;
+    font-family: roboto, arial, sans-serif;
+    font-weight: 100;
+    color: #000;
+    text-align: left;
+    font-size: 22px;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    position: relative;
+}
+
+blockquote, dd, div, dl, dt, form, h1, h2, h3, h4, h5, h6, li, ol, p, pre, td, th, ul {
+    margin: 0;
+    padding: 0;
+        padding-top: 0px;
+        padding-bottom: 0px;
+}
+h2 {
+    font-size: 2.5rem;
+}
+h2 {
+    font-size: 1.25rem;
+    line-height: 1.4;
+    margin-top: 0;
+    margin-bottom: .5rem;
+}
+h1, h2, h3, h4, h5, h6 {
+    font-family: "Helvetica Neue", Helvetica, Roboto, Arial, sans-serif;
+    font-style: normal;
+    font-weight: 400;
+    color: inherit;
+    text-rendering: optimizeLegibility;
+}
 
 .jitsi-icon svg {
-    fill: white;
+    fill: $ADFC-orange;
 }
 
 .jitsi-icon.gray svg {
@@ -48,6 +226,7 @@ body {
  * override this behavior is specific to where the AtlasKitThemeProvider might
  * be placed within the app hierarchy.
  */
+
 .filmstrip-only #react > .ckAJgx {
     background: transparent;
 }
