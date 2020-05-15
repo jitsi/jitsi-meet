@@ -3,9 +3,9 @@
 import React, { Component } from 'react';
 
 import { Avatar } from '../../../base/avatar';
+import { translate } from '../../../base/i18n';
 import { getLocalParticipant } from '../../../base/participants';
 import { connect } from '../../../base/redux';
-import { translate } from '../../../base/i18n';
 
 declare var interfaceConfig: Object;
 
