@@ -565,13 +565,13 @@
         "dialInfoText": "\n\n=====\n\nVolètz sonar de vòstre telefòn estant ?\n\n{{defaultDialInNumber}}Clicatz lo ligam per veire los numèros de telefòn d’aquesta conferéncia\n{{dialInfoPageUrl}}",
         "mainText": "Copiatz lo ligam seguent per dintrar dins la conferéncia :\n{{roomUrl}}"
     },
-    "speaker": "Parlaire
+    "speaker": "Orator",
     "speakerStats": {
         "hours": "{{count}} oras",
         "minutes": "{{count}} minutas",
         "name": "Escais",
         "seconds": "{{count}} segondas",
-        "speakerStats": "Estatisticas parladors",
+        "speakerStats": "Estatisticas orator",
         "speakerTime": "Temps de paraula"
     },
     "startupoverlay": {
