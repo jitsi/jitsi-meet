@@ -94,10 +94,10 @@
         "packetloss": "Pèrda de paquets :",
         "quality": {
             "good": "Bona",
-            "inactive": "Inactiva
-            "lost": "Perduda
+            "inactive": "Inactiva",
+            "lost": "Perduda",
             "nonoptimal": "Pas optimala",
-            "poor": "Marrida
+            "poor": "Marrida"
         },
         "remoteaddress": "Adreça distanta :",
         "remoteaddress_plural": "Adreças distantas :",
@@ -436,13 +436,13 @@
         "disconnected": "desconnectat",
         "focus": "Focus de conferéncia",
         "focusFail": "{{component}} es pas disponible - ensajatz tornamai dins {{ms}} sec",
-        "grantedTo": "Dreits moderator acordats a {{to}} !",
+        "grantedTo": "Dreches moderator acordats a {{to}} !",
         "invitedOneMember": "{{name}} es estat convidat",
         "invitedThreePlusMembers": "{{name}} e {{count}} autres son estats convidats",
         "invitedTwoMembers": "{{first}} e {{second}} son estats convidats",
         "kickParticipant": "{{kicked}} es estat expulsat per {{kicker}}",
         "me": "Ieu",
-        "moderator": "Dreits moderator acordats !",
+        "moderator": "Dreches moderator acordats !",
         "muted": "Avètz començat la conversacion en mut.",
         "mutedTitle": "Sètz en mut !",
         "mutedRemotelyTitle": "{{participantDisplayName}} vos a mes en silenci !",
