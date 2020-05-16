@@ -129,6 +129,8 @@ MiddlewareRegistry.register(store => next => action => {
         // TODO Remove the following calls to APP.UI once components interested
         // in track mute changes are moved into React and/or redux.
         if (typeof APP !== 'undefined') {
+            const result = next(action);
+
             const { jitsiTrack } = action.track;
             const muted = jitsiTrack.isMuted();
             const participantID = jitsiTrack.getParticipantId();
@@ -151,6 +153,8 @@ MiddlewareRegistry.register(store => next => action => {
             } else {
                 APP.UI.setAudioMuted(participantID, muted);
             }
+
+            return result;
         }
 
     }

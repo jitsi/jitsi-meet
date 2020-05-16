@@ -3,8 +3,6 @@
 import { NativeModules } from 'react-native';
 import { RTCPeerConnection, RTCSessionDescription } from 'react-native-webrtc';
 
-import logger from '../logger';
-
 /* eslint-disable no-unused-vars */
 
 // Address families.
@@ -87,7 +85,7 @@ _RTCPeerConnection.prototype._invokeQueuedOnaddstream = function(q) {
             // TODO Determine whether the combination of the standard
             // setRemoteDescription and onaddstream results in a similar
             // swallowing of errors.
-            _LOGE(e);
+            console.error(e);
         }
     });
 };
@@ -101,23 +99,13 @@ _RTCPeerConnection.prototype.setRemoteDescription = function(description) {
     return (
         _synthesizeIPv6Addresses(description)
             .catch(reason => {
-                reason && _LOGE(reason);
+                reason && console.error(reason);
 
                 return description;
             })
             .then(value => _setRemoteDescription.bind(this)(value)));
 
 };
-
-/**
- * Logs at error level.
- *
- * @private
- * @returns {void}
- */
-function _LOGE(...args) {
-    logger.error(...args);
-}
 
 /**
  * Adapts react-native-webrtc's {@link RTCPeerConnection#setRemoteDescription}

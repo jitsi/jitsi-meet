@@ -2,7 +2,7 @@
 
 import type { Dispatch } from 'redux';
 
-import { getFeatureFlag, INVITE_ENABLED } from '../base/flags';
+import { getFeatureFlag, ADD_PEOPLE_ENABLED } from '../base/flags';
 import { setActiveModalId } from '../base/modal';
 import { beginShareRoom } from '../share-room';
 
@@ -20,7 +20,7 @@ export * from './actions.any';
 export function doInvitePeople() {
     return (dispatch: Dispatch<any>, getState: Function) => {
         const state = getState();
-        const addPeopleEnabled = getFeatureFlag(state, INVITE_ENABLED, true)
+        const addPeopleEnabled = getFeatureFlag(state, ADD_PEOPLE_ENABLED, true)
             && (isAddPeopleEnabled(state) || isDialOutEnabled(state));
 
         if (addPeopleEnabled) {

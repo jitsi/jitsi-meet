@@ -17,6 +17,8 @@
 package org.jitsi.meet.sdk;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.provider.Settings;
 import android.text.TextUtils;
 
@@ -40,6 +42,8 @@ class AmplitudeModule
         extends ReactContextBaseJavaModule {
 
     public static final String NAME = "Amplitude";
+    public static final String JITSI_PREFERENCES = "jitsi-preferences";
+    public static final String AMPLITUDE_DEVICE_ID_KEY = "amplitudeDeviceId";
 
     public AmplitudeModule(ReactApplicationContext reactContext) {
         super(reactContext);
@@ -58,10 +62,14 @@ class AmplitudeModule
         Amplitude.getInstance(instanceName).initialize(getCurrentActivity(), apiKey);
 
         // Set the device ID to something consistent.
-        String android_id
-            = Settings.Secure.getString(getReactApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID);
+        SharedPreferences sharedPreferences = getReactApplicationContext().getSharedPreferences(JITSI_PREFERENCES, Context.MODE_PRIVATE);
+        String android_id = sharedPreferences.getString(AMPLITUDE_DEVICE_ID_KEY, "");
         if (!TextUtils.isEmpty(android_id)) {
             Amplitude.getInstance(instanceName).setDeviceId(android_id);
+        } else {
+            String amplitudeId = Amplitude.getInstance(instanceName).getDeviceId();
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putString(JITSI_PREFERENCES, amplitudeId).apply();
         }
     }
 

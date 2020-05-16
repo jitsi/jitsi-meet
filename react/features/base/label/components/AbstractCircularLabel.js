@@ -1,12 +1,13 @@
 // @flow
+
 import { Component } from 'react';
 
 export type Props = {
 
     /**
-     * String that will be rendered as the label itself.
+     * String or component that will be rendered as the label itself.
      */
-    label: string
+    label: string | React$Node
 };
 
 /**

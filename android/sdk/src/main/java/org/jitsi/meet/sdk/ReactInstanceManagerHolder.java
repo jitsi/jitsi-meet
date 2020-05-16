@@ -190,6 +190,7 @@ class ReactInstanceManagerHolder {
                 new com.corbt.keepawake.KCKeepAwakePackage(),
                 new com.facebook.react.shell.MainReactPackage(),
                 new com.horcrux.svg.SvgPackage(),
+                new com.kevinresol.react_native_default_preference.RNDefaultPreferencePackage(),
                 new com.ocetnik.timer.BackgroundTimerPackage(),
                 new com.reactnativecommunity.asyncstorage.AsyncStoragePackage(),
                 new com.reactnativecommunity.netinfo.NetInfoPackage(),

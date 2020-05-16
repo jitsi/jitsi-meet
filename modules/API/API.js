@@ -14,6 +14,7 @@ import { parseJWTFromURLParams } from '../../react/features/base/jwt';
 import { setE2EEKey } from '../../react/features/e2ee';
 import { invite } from '../../react/features/invite';
 import { toggleTileView } from '../../react/features/video-layout';
+import { setVideoQuality } from '../../react/features/video-quality';
 import { getJitsiMeetTransport } from '../transport';
 
 import { API_ID, ENDPOINT_TEXT_MESSAGE_NAME } from './constants';
@@ -171,6 +172,11 @@ function initCommands() {
         'e2ee-key': key => {
             logger.debug('Set E2EE key command received');
             APP.store.dispatch(setE2EEKey(key));
+        },
+        'set-video-quality': frameHeight => {
+            logger.debug('Set video quality command received');
+            sendAnalytics(createApiEvent('set.video.quality'));
+            APP.store.dispatch(setVideoQuality(frameHeight));
         }
     };
     transport.on('event', ({ data, name }) => {
@@ -436,6 +442,22 @@ class API {
         this._sendEvent({
             name: 'participant-left',
             id
+        });
+    }
+
+    /**
+     * Notify external application (if API is enabled) that the user role
+     * has changed.
+     *
+     * @param {string} id - User id.
+     * @param {string} role - The new user role.
+     * @returns {void}
+     */
+    notifyUserRoleChanged(id: string, role: string) {
+        this._sendEvent({
+            name: 'participant-role-changed',
+            id,
+            role
         });
     }
 

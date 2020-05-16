@@ -58,6 +58,19 @@ export const PARTICIPANT_DISPLAY_NAME_CHANGED
 export const PARTICIPANT_ID_CHANGED = 'PARTICIPANT_ID_CHANGED';
 
 /**
+ * Action to signal that participant role has changed. e.
+ *
+ * {
+ *     type: PARTICIPANT_ROLE_CHANGED,
+ *     participant: {
+ *         id: string
+ *     }
+ *     role: string
+ * }
+ */
+export const PARTICIPANT_ROLE_CHANGED = 'PARTICIPANT_ROLE_CHANGED';
+
+/**
  * Action to signal that a participant has joined.
  *
  * {

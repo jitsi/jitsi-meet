@@ -37,6 +37,11 @@ type State = {
     disableP2P: boolean,
 
     /**
+     * State variable for the disable crash reporting switch.
+     */
+    disableCrashReporting: boolean,
+
+    /**
      * State variable for the display name field.
      */
     displayName: string,
@@ -84,6 +89,7 @@ class SettingsView extends AbstractSettingsView<Props, State> {
         super(props);
         const {
             disableCallIntegration,
+            disableCrashReporting,
             disableP2P,
             displayName,
             email,
@@ -94,6 +100,7 @@ class SettingsView extends AbstractSettingsView<Props, State> {
 
         this.state = {
             disableCallIntegration,
+            disableCrashReporting,
             disableP2P,
             displayName,
             email,
@@ -107,6 +114,7 @@ class SettingsView extends AbstractSettingsView<Props, State> {
         this._onBlurServerURL = this._onBlurServerURL.bind(this);
         this._onClose = this._onClose.bind(this);
         this._onDisableCallIntegration = this._onDisableCallIntegration.bind(this);
+        this._onDisableCrashReporting = this._onDisableCrashReporting.bind(this);
         this._onDisableP2P = this._onDisableP2P.bind(this);
         this._onShowAdvanced = this._onShowAdvanced.bind(this);
         this._setURLFieldReference = this._setURLFieldReference.bind(this);
@@ -285,6 +293,24 @@ class SettingsView extends AbstractSettingsView<Props, State> {
         });
     }
 
+    _onDisableCrashReporting: (boolean) => void;
+
+    /**
+     * Handles the disable crash reporting change event.
+     *
+     * @param {boolean} disableCrashReporting - The new value
+     * option.
+     * @private
+     * @returns {void}
+     */
+    _onDisableCrashReporting(disableCrashReporting) {
+        if (disableCrashReporting) {
+            this._showCrashReportingDisableAlert();
+        } else {
+            this._disableCrashReporting(disableCrashReporting);
+        }
+    }
+
     _onClose: () => void;
 
     /**
@@ -367,7 +393,7 @@ class SettingsView extends AbstractSettingsView<Props, State> {
      * @returns {React$Element}
      */
     _renderAdvancedSettings() {
-        const { disableCallIntegration, disableP2P, showAdvanced } = this.state;
+        const { disableCallIntegration, disableP2P, disableCrashReporting, showAdvanced } = this.state;
 
         if (!showAdvanced) {
             return (
@@ -397,6 +423,15 @@ class SettingsView extends AbstractSettingsView<Props, State> {
                         onValueChange = { this._onDisableP2P }
                         value = { disableP2P } />
                 </FormRow>
+                {AppInfo.GOOGLE_SERVICES_ENABLED && (
+                    <FormRow
+                        fieldSeparator = { true }
+                        label = 'settingsView.disableCrashReporting'>
+                        <Switch
+                            onValueChange = { this._onDisableCrashReporting }
+                            value = { disableCrashReporting } />
+                    </FormRow>
+                )}
             </>
         );
     }
@@ -436,7 +471,41 @@ class SettingsView extends AbstractSettingsView<Props, State> {
         );
     }
 
+    /**
+     * Shows an alert warning the user about disabling crash reporting.
+     *
+     * @returns {void}
+     */
+    _showCrashReportingDisableAlert() {
+        const { t } = this.props;
+
+        Alert.alert(
+            t('settingsView.alertTitle'),
+            t('settingsView.disableCrashReportingWarning'),
+            [
+                {
+                    onPress: () => this._disableCrashReporting(true),
+                    text: t('settingsView.alertOk')
+                },
+                {
+                    text: t('settingsView.alertCancel')
+                }
+            ]
+        );
+    }
+
     _updateSettings: (Object) => void;
+
+    /**
+     * Updates the settings and sets state for disableCrashReporting.
+     *
+     * @param {boolean} disableCrashReporting - Whether crash reporting is disabled or not.
+     * @returns {void}
+     */
+    _disableCrashReporting(disableCrashReporting) {
+        this._updateSettings({ disableCrashReporting });
+        this.setState({ disableCrashReporting });
+    }
 }
 
 /**

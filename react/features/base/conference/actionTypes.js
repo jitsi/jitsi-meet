@@ -212,15 +212,14 @@ export const SET_PENDING_SUBJECT_CHANGE = 'SET_PENDING_SUBJECT_CHANGE';
 
 /**
  * The type of (redux) action which sets the preferred maximum video height that
- * should be received from remote participants.
+ * should be sent to and received from remote participants.
  *
  * {
- *     type: SET_PREFERRED_RECEIVER_VIDEO_QUALITY,
- *     preferredReceiverVideoQuality: number
+ *     type: SET_PREFERRED_VIDEO_QUALITY,
+ *     preferredVideoQuality: number
  * }
  */
-export const SET_PREFERRED_RECEIVER_VIDEO_QUALITY
-    = 'SET_PREFERRED_RECEIVER_VIDEO_QUALITY';
+export const SET_PREFERRED_VIDEO_QUALITY = 'SET_PREFERRED_VIDEO_QUALITY';
 
 /**
  * The type of (redux) action which sets the name of the room of the

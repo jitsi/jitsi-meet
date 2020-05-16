@@ -7,7 +7,7 @@ local hex = require "util.hex";
 local jwt = require "luajwtjitsi";
 local http = require "net.http";
 local jid = require "util.jid";
-local json = require "cjson";
+local json_safe = require "cjson.safe";
 local path = require "util.paths";
 local sha256 = require "util.hashes".sha256;
 local timer = require "util.timer";
@@ -255,7 +255,10 @@ function Util:process_and_verify_token(session)
     if self.asapKeyServer and session.auth_token ~= nil then
         local dotFirst = session.auth_token:find("%.");
         if not dotFirst then return nil, "Invalid token" end
-        local header = json.decode(basexx.from_url64(session.auth_token:sub(1,dotFirst-1)));
+        local header, err = json_safe.decode(basexx.from_url64(session.auth_token:sub(1,dotFirst-1)));
+        if err then
+            return false, "not-allowed", "bad token format";
+        end
         local kid = header["kid"];
         if kid == nil then
             return false, "not-allowed", "'kid' claim is missing";

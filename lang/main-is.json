@@ -455,7 +455,7 @@
         "somebody": "Einhver",
         "startSilentTitle": "Þú mættir með ekkert hljóðúttak!",
         "startSilentDescription": "Tengstu fundinum aftur til að virkja hljóð",
-        "suboptimalBrowserWarning": "Við erum ekki viss um að upplifun þín af fundinum verði neitt sérstök. Við erum alltaf að reyna að bæta þetta, en þangað til ættirðu frekar að nota einhvern af <a href='static/recommendedBrowsers.html' target='_blank'>þeim vöfrum sem eru studdir að fullu</a>.",
+        "suboptimalBrowserWarning": "Við erum ekki viss um að upplifun þín af fundinum verði neitt sérstök. Við erum alltaf að reyna að bæta þetta, en þangað til ættirðu frekar að nota einhvern af <a href='{{recommendedBrowserPageLink}}' target='_blank'>þeim vöfrum sem eru studdir að fullu</a>.",
         "suboptimalExperienceTitle": "Aðvörun vafra",
         "unmute": "Afþagga",
         "newDeviceCameraTitle": "Ný myndavél fannst",
@@ -727,9 +727,6 @@
         "lowDefinition": "Lággæði",
         "onlyAudioAvailable": "Aðeins hljóð er í boði",
         "onlyAudioSupported": "Við styðjum aðeins við hljóð í þessum vafra.",
-        "p2pEnabled": "Jafningjahamur (peer-to-peer) virkur",
-        "p2pVideoQualityDescription": "Í jafningjaham (peer-to-peer) eru gæði myndmerkis takmörkuð við að víxla á milli hágæða og einungis hljóðs. Aðrar stillingar eru ekki virtar nema að fara út úr jafningjaham.",
-        "recHighDefinitionOnly": "Kýs frekar myndmerki í hágæðum.",
         "sd": "SD",
         "sdTooltip": "Skoða myndmerki í staðalgæðum",
         "standardDefinition": "Staðalgæði"

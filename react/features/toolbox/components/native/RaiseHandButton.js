@@ -15,6 +15,7 @@ import {
 import { connect } from '../../../base/redux';
 import { AbstractButton } from '../../../base/toolbox';
 import type { AbstractButtonProps } from '../../../base/toolbox';
+import { RAISE_HAND_ENABLED, getFeatureFlag } from '../../../base/flags';
 
 /**
  * The type of the React {@code Component} props of {@link RaiseHandButton}.
@@ -96,17 +97,19 @@ class RaiseHandButton extends AbstractButton<Props, *> {
  * Maps part of the Redux state to the props of this component.
  *
  * @param {Object} state - The Redux state.
+ * @param {Object} ownProps - The properties explicitly passed to the component instance.
  * @private
- * @returns {{
- *     _raisedHand: boolean
- * }}
+ * @returns {Props}
  */
-function _mapStateToProps(state): Object {
+function _mapStateToProps(state, ownProps): Object {
     const _localParticipant = getLocalParticipant(state);
+    const enabled = getFeatureFlag(state, RAISE_HAND_ENABLED, true);
+    const { visible = enabled } = ownProps;
 
     return {
         _localParticipant,
-        _raisedHand: _localParticipant.raisedHand
+        _raisedHand: _localParticipant.raisedHand,
+        visible
     };
 }
 

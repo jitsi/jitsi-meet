@@ -689,21 +689,6 @@ export function createStartMutedConfigurationEvent(
 }
 
 /**
- * Creates an event which indicates the delay for switching between simulcast
- * streams.
- *
- * @param {Object} attributes - Attributes to attach to the event.
- * @returns {Object} The event in a format suitable for sending via
- * sendAnalytics.
- */
-export function createStreamSwitchDelayEvent(attributes) {
-    return {
-        action: 'stream.switch.delay',
-        attributes
-    };
-}
-
-/**
  * Automatically changing the mute state of a media track in order to match
  * the current stored state in redux.
  *
