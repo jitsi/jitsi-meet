@@ -9,7 +9,7 @@ import { translate } from '../../base/i18n';
 import { connect } from '../../base/redux';
 import { AbstractHangupButton } from '../../base/toolbox';
 import type { AbstractButtonProps } from '../../base/toolbox';
-
+import { jitsiLocalStorage } from 'js-utils';
 /**
  * The type of the React {@code Component} props of {@link HangupButton}.
  */
@@ -44,7 +44,7 @@ class HangupButton extends AbstractHangupButton<Props, *> {
 
         this._hangup = _.once(() => {
             sendAnalytics(createToolbarEvent('hangup'));
-
+            jitsiLocalStorage.removeItem('sessionId'); // we want to force teachers to re enter the password
             // FIXME: these should be unified.
             if (navigator.product === 'ReactNative') {
                 this.props.dispatch(appNavigate(undefined));
