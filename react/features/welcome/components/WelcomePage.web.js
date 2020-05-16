@@ -211,7 +211,7 @@ class WelcomePage extends AbstractWelcomePage {
                                     value = { this.state.room } />
                             </form>
                         </div>
-                        <div
+                        <button
                             className = 'welcome-page-button'
                             id = 'enter_room_button'
                             onClick = { this._onFormSubmit }>
@@ -220,7 +220,7 @@ class WelcomePage extends AbstractWelcomePage {
                                     ? t('welcomepage.goSmall')
                                     : t('welcomepage.go')
                             }
-                        </div>
+                        </button>
                     </div>
                     { this._renderTabs() }
                 </div>
