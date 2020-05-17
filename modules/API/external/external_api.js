@@ -697,6 +697,18 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
     }
 
     /**
+     * Obtains current P2P ICE connection state.
+     *
+     * @returns {Promise} - Resolves with ICE connection state or 
+     * <tt>null</tt> if there's no P2P connection
+     */
+    getP2PConnectionState() {
+        return this._transport.sendRequest({
+            name: 'get-p2p-connection-state'
+        });
+    }
+
+    /**
      * Returns Promise that resolves with true if the device change is available
      * and with false if not.
      *

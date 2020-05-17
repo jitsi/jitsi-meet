@@ -242,6 +242,8 @@ function initCommands() {
         case 'is-video-available':
             callback(videoAvailable);
             break;
+        case 'get-p2p-connection-state':
+            callback(APP.conference.getP2PConnectionState());
         default:
             return false;
         }
