@@ -383,7 +383,7 @@ export function sendLocalParticipant(
  * @param {string} s - The string to do start case on.
  * @returns {string}
  */
-function safeStartCase(s = '') {
+export function safeStartCase(s = '') {
     return _.words(`${s}`.replace(/['\u2019]/g, '')).reduce(
         (result, word, index) => result + (index ? ' ' : '') + _.upperFirst(word)
         , '');

@@ -7,6 +7,9 @@ import {
 } from '../../../react/features/base/lib-jitsi-meet';
 import UIUtil from '../util/UIUtil';
 
+import { safeDecodeURIComponent } from '../../../react/features/base/util';
+import { safeStartCase } from '../../../react/features/base/conference/functions';
+
 import LoginDialog from './LoginDialog';
 
 const logger = require('jitsi-meet-logger').getLogger(__filename);
@@ -241,7 +244,8 @@ function requireAuth(room, lockPassword) {
     }
 
     authRequiredDialog = LoginDialog.showAuthRequiredDialog(
-        room.getName(), authenticate.bind(null, room, lockPassword)
+        safeStartCase(safeDecodeURIComponent(room.getName())),
+        authenticate.bind(null, room, lockPassword)
     );
 }
 
