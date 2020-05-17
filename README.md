@@ -52,7 +52,7 @@ Release notes for Jitsi Meet are maintained on [this repository](https://github.
 
 ## Development
 
-For web development see [here](doc/development.md), and for mobile see [here](doc/mobile.md).
+For web development see [here](https://jitsi.github.io/handbook/docs/dev-guide/dev-guide-web), and for mobile see [here](https://jitsi.github.io/handbook/docs/dev-guide/dev-guide-mobile).
 
 ## Contributing
 
