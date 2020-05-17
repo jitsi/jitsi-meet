@@ -363,8 +363,18 @@
     }
 }
 
+@keyframes raisehandanimation {
+  from {background: $raiseHandBg;}
+  to {background-color: red;}
+  to {background-color: red; transform: scale(1.1);}
+}
+
 .raisehandindicator {
-  background: $raiseHandBg;
+  animation-name: raisehandanimation;
+  animation-duration: 2s;
+  animation-direction: alternate;
+  animation-delay: 5s;
+  animation-iteration-count: infinite;
 }
 
 .connection-indicator {
