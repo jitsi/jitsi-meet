@@ -699,7 +699,7 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
     /**
      * Obtains current P2P ICE connection state.
      *
-     * @returns {Promise} - Resolves with ICE connection state or 
+     * @returns {Promise} - Resolves with ICE connection state or
      * <tt>null</tt> if there's no P2P connection
      */
     getP2PConnectionState() {

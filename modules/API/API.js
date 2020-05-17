@@ -244,6 +244,7 @@ function initCommands() {
             break;
         case 'get-p2p-connection-state':
             callback(APP.conference.getP2PConnectionState());
+            break;
         default:
             return false;
         }
