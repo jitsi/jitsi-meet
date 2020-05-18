@@ -295,7 +295,7 @@
         "title": "Shared Document"
     },
     "e2ee": {
-        "labelToolTip": "All participants in this meeting have enabled End-to-End encryption"
+        "labelToolTip": "Audio and Video Communication on this call is end-to-end encrypted"
     },
     "feedback": {
         "average": "Average",
