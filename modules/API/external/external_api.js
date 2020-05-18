@@ -848,9 +848,9 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
             name: 'is-video-muted'
         });
     }
-    
+
     /**
-     * Returns current tileview status
+     * Returns current tileview status.
      *
      * @returns {Promise} - Resolves with the current tileview status and rejects on failure.
      */
@@ -859,7 +859,7 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
             name: 'is-tileview-enabled'
         });
     }
-    
+
     /**
      * Removes event listener.
      *
