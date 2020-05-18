@@ -43,6 +43,11 @@ const KeyboardShortcut = {
             if (!enabled) {
                 return;
             }
+
+            if (e.metaKey) {
+                return;
+            }
+
             const key = this._getKeyboardKey(e).toUpperCase();
             const num = parseInt(key, 10);
 
@@ -62,6 +67,11 @@ const KeyboardShortcut = {
             if (!enabled) {
                 return;
             }
+
+            if (e.metaKey) {
+                return;
+            }
+
             if (!($(':focus').is('input[type=text]')
                 || $(':focus').is('input[type=password]')
                 || $(':focus').is('textarea'))) {
