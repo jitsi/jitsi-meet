@@ -298,9 +298,8 @@ export function invitePeopleAndChatRooms( // eslint-disable-line max-params
  */
 export function isAddPeopleEnabled(state: Object): boolean {
     const { peopleSearchUrl } = state['features/base/config'];
-    const { isGuest } = state['features/base/jwt'];
 
-    return !isGuest && Boolean(peopleSearchUrl);
+    return !isGuest(state) && Boolean(peopleSearchUrl);
 }
 
 /**
@@ -314,6 +313,16 @@ export function isDialOutEnabled(state: Object): boolean {
 
     return isLocalParticipantModerator(state)
         && conference && conference.isSIPCallingSupported();
+}
+
+/**
+ * Determines if the current user is guest or not.
+ *
+ * @param {Object} state - Current state.
+ * @returns {boolean}
+ */
+export function isGuest(state: Object): boolean {
+    return state['features/base/jwt'].isGuest;
 }
 
 /**

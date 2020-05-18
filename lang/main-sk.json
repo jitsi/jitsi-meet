@@ -453,7 +453,7 @@
         "somebody": "Niekto",
         "startSilentTitle": "Pripojili ste sa bez zvukového výstupu!",
         "startSilentDescription": "Pripojte sa k stretnutiu ešte raz, aby ste aktivovali zvuk.",
-        "suboptimalBrowserWarning": "Obávame sa, že dojem z tohto stretnutia nebude až taký dobrý. Hladáme spôsob ako to zlepšiť, ale dovtedy prosím skúste jeden z <a href='static/recommendedBrowsers.html' target='_blank'>plne podporovaných prehliadačov</a>.",
+        "suboptimalBrowserWarning": "Obávame sa, že dojem z tohto stretnutia nebude až taký dobrý. Hladáme spôsob ako to zlepšiť, ale dovtedy prosím skúste jeden z <a href='{{recommendedBrowserPageLink}}' target='_blank'>plne podporovaných prehliadačov</a>.",
         "suboptimalExperienceTitle": "Prehliadačové varovanie",
         "unmute": "Zapnúť mikrofón",
         "newDeviceCameraTitle": "Bola zistená nová kamera",
@@ -722,9 +722,6 @@
         "lowDefinition": "Nízka kvalita",
         "onlyAudioAvailable": "Iba zvuk je k dispozícií",
         "onlyAudioSupported": "Na vašom prehliadači podporujeme iba zvuk.",
-        "p2pEnabled": "Prenos medzi koncovými používateľmi",
-        "p2pVideoQualityDescription": "Pri prenose medzi koncovými používateľmi sa dá video kvalita nastaviť iba na vysokú alebo iba zvukový prenos. Ostatné nastavenia sa budú používať iba ak prenose medzi koncovými používateľmi bude ukončený",
-        "recHighDefinitionOnly": "Uprednostňovať vysokú kvalitu",
         "sd": "SD",
         "sdTooltip": "Sledujete obraz v štandardnej kvalite",
         "standardDefinition": "Štandardná kvalita"

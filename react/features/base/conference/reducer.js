@@ -21,7 +21,7 @@ import {
     SET_MAX_RECEIVER_VIDEO_QUALITY,
     SET_PASSWORD,
     SET_PENDING_SUBJECT_CHANGE,
-    SET_PREFERRED_RECEIVER_VIDEO_QUALITY,
+    SET_PREFERRED_VIDEO_QUALITY,
     SET_ROOM,
     SET_SIP_GATEWAY_ENABLED,
     SET_START_MUTED_POLICY
@@ -38,7 +38,7 @@ const DEFAULT_STATE = {
     maxReceiverVideoQuality: VIDEO_QUALITY_LEVELS.HIGH,
     password: undefined,
     passwordRequired: undefined,
-    preferredReceiverVideoQuality: VIDEO_QUALITY_LEVELS.HIGH
+    preferredVideoQuality: VIDEO_QUALITY_LEVELS.HIGH
 };
 
 /**
@@ -101,11 +101,11 @@ ReducerRegistry.register(
         case SET_PENDING_SUBJECT_CHANGE:
             return set(state, 'pendingSubjectChange', action.subject);
 
-        case SET_PREFERRED_RECEIVER_VIDEO_QUALITY:
+        case SET_PREFERRED_VIDEO_QUALITY:
             return set(
                 state,
-                'preferredReceiverVideoQuality',
-                action.preferredReceiverVideoQuality);
+                'preferredVideoQuality',
+                action.preferredVideoQuality);
 
         case SET_ROOM:
             return _setRoom(state, action);

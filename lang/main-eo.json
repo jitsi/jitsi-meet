@@ -253,12 +253,9 @@
         "userPassword": "uzantopasvorto",
         "WaitForHostMsg": "",
         "WaitForHostMsgWOk": "",
-        "WaitingForHost": "Atendanta la gastigan komputilon ...",
+        "WaitingForHost": "Atendanta la gastigan komputilon …",
         "Yes": "Jes",
         "yourEntireScreen": "Via tuta ekrano"
-    },
-    "\u0005dialog": {
-        "accessibilityLabel": {}
     },
     "dialOut": {
         "statusMessage": "nun estas {{status}}"
@@ -272,7 +269,6 @@
         "veryBad": "Tre malbona",
         "veryGood": "Tre bona"
     },
-    "\u0005feedback": {},
     "incomingCall": {
         "answer": "",
         "audioCallTitle": "",
@@ -310,7 +306,6 @@
         "tooltip": "",
         "label": ""
     },
-    "\u0005info": {},
     "inviteDialog": {
         "alertText": "",
         "header": "",
@@ -341,7 +336,6 @@
         "toggleShortcuts": "",
         "videoMute": "Ŝalti aŭ malŝalti vian kameraon"
     },
-    "\u0005keyboardShortcuts": {},
     "liveStreaming": {
         "busy": "Ni penas liberigi tujajn elsendilojn. Bonvolu reprovi post kelkaj minutoj.",
         "busyTitle": "Ĉiuj elsendiloj nun okupiĝas",
@@ -360,7 +354,7 @@
         "invalidStreamKey": "",
         "off": "Tuja elsendfluo finiĝis",
         "on": "Tuja Elsendfluo",
-        "pending": "Komencanta Tujan Elsendfluon...",
+        "pending": "Komencanta Tujan Elsendfluon…",
         "serviceName": "",
         "signedInAs": "",
         "signIn": "",
@@ -370,7 +364,6 @@
         "streamIdHelp": "",
         "unavailableTitle": "Tuja elsendfluo ne disponeblas"
     },
-    "\u0005liveStreaming": {},
     "localRecording": {
         "clientState": {
             "off": "",
@@ -400,7 +393,6 @@
         "stop": "Fini registradon",
         "yes": "Jes"
     },
-    "\u0005localRecording": {},
     "lockRoomPassword": "Pasvorto",
     "lockRoomPasswordUppercase": "Pasvorto",
     "me": "mi",
@@ -452,7 +444,6 @@
         "rejected": "",
         "ringing": ""
     },
-    "\u0005presenceStatus": {},
     "profile": {
         "setDisplayNameLabel": "Agordi vian videblan nomon",
         "setEmailInput": "Enigu retpoŝtadreson",
@@ -484,7 +475,6 @@
         "unavailable": "",
         "unavailableTitle": "Registrado ne disponeblas"
     },
-    "\u0005recording": {},
     "sectionList": {
         "pullToRefresh": ""
     },
@@ -510,9 +500,6 @@
         "startAudioMuted": "Ĉiuj komenciĝas silentaj",
         "startVideoMuted": "Ĉiuj komenciĝas kaŝitaj",
         "title": "Agordoj"
-    },
-    "\u0005settings": {
-        "calendar": {}
     },
     "settingsView": {
         "alertOk": "",
@@ -630,9 +617,6 @@
         "startvideoblur": "",
         "stopvideoblur": ""
     },
-    "\u0005toolbar": {
-        "accessibilityLabel": {}
-    },
     "transcribing": {
         "ccButtonTooltip": "",
         "error": "Registrado malsukcesis. Bonvolu provi denove.",
@@ -645,7 +629,6 @@
         "stop": "",
         "tr": ""
     },
-    "\u0005transcribing": {},
     "userMedia": {
         "androidGrantPermissions": "Elektu <b><i>Permesi</i></b> kiam via foliumilo petos permesojn.",
         "chromeGrantPermissions": "Elektu <b><i>Permesi</i></b> kiam via foliumilo petos permesojn.",
@@ -680,9 +663,6 @@
         "lowDefinition": "Malaltkvalito distingivo",
         "onlyAudioAvailable": "",
         "onlyAudioSupported": "",
-        "p2pEnabled": "Samtavola reĝimo ŝaltita",
-        "p2pVideoQualityDescription": "",
-        "recHighDefinitionOnly": "Preferos altkvalitan distingivon.",
         "sd": "ND",
         "standardDefinition": "Normalkvalita distingivo"
     },

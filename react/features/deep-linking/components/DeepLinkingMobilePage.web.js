@@ -165,7 +165,7 @@ class DeepLinkingMobilePage extends Component<Props> {
     _generateDownloadURL() {
         const url = _URLS[Platform.OS];
 
-        if (url) {
+        if (url && typeof interfaceConfig.MOBILE_DYNAMIC_LINK === 'undefined') {
             return url;
         }
 
@@ -175,12 +175,15 @@ class DeepLinkingMobilePage extends Component<Props> {
         const {
             APN = 'org.jitsi.meet',
             APP_CODE = 'w2atb',
+            CUSTOM_DOMAIN = undefined,
             IBI = 'com.atlassian.JitsiMeet.ios',
             ISI = '1165103905'
         } = interfaceConfig.MOBILE_DYNAMIC_LINK || {};
+
+        const domain = CUSTOM_DOMAIN ?? `https://${APP_CODE}.app.goo.gl`;
         const IUS = interfaceConfig.APP_SCHEME || 'org.jitsi.meet';
 
-        return `https://${APP_CODE}.app.goo.gl/?link=${
+        return `${domain}/?link=${
             encodeURIComponent(window.location.href)}&apn=${
             APN}&ibi=${
             IBI}&isi=${
