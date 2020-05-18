@@ -242,6 +242,9 @@ function initCommands() {
         case 'is-video-available':
             callback(videoAvailable);
             break;
+        case 'is-tileview-enabled':
+            callback(APP.store.getState()['features/video-layout']);
+            break;
         default:
             return false;
         }
