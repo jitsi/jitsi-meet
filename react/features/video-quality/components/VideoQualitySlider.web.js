@@ -139,7 +139,7 @@ class VideoQualitySlider extends Component<Props> {
      * @returns {ReactElement}
      */
     render() {
-        const { _audioOnly, _p2p, _videoSupported, t } = this.props;
+        const { _videoSupported, t } = this.props;
         const activeSliderOption = this._mapCurrentQualityToSliderValue();
 
         let classNames = 'video-quality-dialog';
@@ -148,8 +148,6 @@ class VideoQualitySlider extends Component<Props> {
         if (!_videoSupported) {
             classNames += ' video-not-supported';
             warning = this._renderAudioOnlyLockedMessage();
-        } else if (_p2p && !_audioOnly) {
-            warning = this._renderP2PMessage();
         }
 
         return (
@@ -201,24 +199,6 @@ class VideoQualitySlider extends Component<Props> {
             <InlineMessage
                 title = { t('videoStatus.onlyAudioAvailable') }>
                 { t('videoStatus.onlyAudioSupported') }
-            </InlineMessage>
-        );
-    }
-
-    /**
-     * Creates React Elements for notifying that peer to peer is enabled.
-     *
-     * @private
-     * @returns {ReactElement}
-     */
-    _renderP2PMessage() {
-        const { t } = this.props;
-
-        return (
-            <InlineMessage
-                secondaryText = { t('videoStatus.recHighDefinitionOnly') }
-                title = { t('videoStatus.p2pEnabled') }>
-                { t('videoStatus.p2pVideoQualityDescription') }
             </InlineMessage>
         );
     }

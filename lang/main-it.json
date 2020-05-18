@@ -420,7 +420,7 @@
         "somebody": "Qualcuno",
         "startSilentTitle": "",
         "startSilentDescription": "",
-        "suboptimalExperienceDescription": "Ehm... temiamo che la tua esperienza con {{appName}} non sarà granché su questo browser. Stiamo cercando di migliorare la situazione ma, per il momento, prova ad utilizzare uno di questi <a href='static/recommendedBrowsers.html' target='_blank'>browser supportati</a>.",
+        "suboptimalExperienceDescription": "Ehm... temiamo che la tua esperienza con {{appName}} non sarà granché su questo browser. Stiamo cercando di migliorare la situazione ma, per il momento, prova ad utilizzare uno di questi <a href='{{recommendedBrowserPageLink}}' target='_blank'>browser supportati</a>.",
         "suboptimalExperienceTitle": "Problemi con il browser",
         "unmute": "",
         "newDeviceCameraTitle": "Trovata nuova videocamera",
@@ -664,9 +664,6 @@
         "lowDefinition": "Bassa definizione",
         "onlyAudioAvailable": "È disponibile solo l'audio",
         "onlyAudioSupported": "Per questo browser è supportato solo l'audio.",
-        "p2pEnabled": "Peer to Peer abilitato",
-        "p2pVideoQualityDescription": "",
-        "recHighDefinitionOnly": "Preferisci alta risoluzione.",
         "sd": "SD",
         "standardDefinition": "Definizione standard"
     },

@@ -13,6 +13,7 @@ turncredentials = {
 
 cross_domain_bosh = false;
 consider_bosh_secure = true;
+-- https_ports = { }; -- Remove this line to prevent listening on port 5284
 
 VirtualHost "jitmeet.example.com"
         -- enabled = false -- Remove this line to enable this host

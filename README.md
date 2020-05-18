@@ -46,9 +46,13 @@ You can also sign up for our open beta testing here:
 * [Android](https://play.google.com/apps/testing/org.jitsi.meet)
 * [iOS](https://testflight.apple.com/join/isy6ja7S)
 
+## Release notes
+
+Release notes for Jitsi Meet are maintained on [this repository](https://github.com/jitsi/jitsi-meet-release-notes).
+
 ## Development
 
-For web development see [here](doc/development.md), and for mobile see [here](doc/mobile.md).
+For web development see [here](https://jitsi.github.io/handbook/docs/dev-guide/dev-guide-web), and for mobile see [here](https://jitsi.github.io/handbook/docs/dev-guide/dev-guide-mobile).
 
 ## Contributing
 

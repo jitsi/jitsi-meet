@@ -659,9 +659,6 @@
         "lowDefinition": "低画質",
         "onlyAudioAvailable": "音声のみ利用可能",
         "onlyAudioSupported": "このブラウザでは音声のみをサポートしています。",
-        "p2pEnabled": "ピア・ツー・ピアモード有効している",
-        "p2pVideoQualityDescription": "",
-        "recHighDefinitionOnly": "",
         "sd": "SD",
         "standardDefinition": "標準画質"
     },
