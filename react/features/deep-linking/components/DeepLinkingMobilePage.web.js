@@ -23,22 +23,15 @@ declare var interfaceConfig: Object;
 const _SNS = 'deep-linking-mobile';
 
 /**
- * The map of platforms to URLs at which the mobile app for the associated
- * platform is available for download.
- *
- * @private
- * @type {Array<string>}
- */
-const _URLS = {
-    android: interfaceConfig.MOBILE_DOWNLOAD_LINK_ANDROID,
-    ios: interfaceConfig.MOBILE_DOWNLOAD_LINK_IOS
-};
-
-/**
  * The type of the React {@code Component} props of
  * {@link DeepLinkingMobilePage}.
  */
 type Props = {
+
+    /**
+     * Application download URL.
+     */
+    _downloadUrl: ?string,
 
     /**
      * The name of the conference attempting to being joined.
@@ -89,13 +82,13 @@ class DeepLinkingMobilePage extends Component<Props> {
      * @returns {ReactElement}
      */
     render() {
-        const { _room, t } = this.props;
+        const { _downloadUrl, _room, t } = this.props;
         const { NATIVE_APP_NAME, SHOW_DEEP_LINKING_IMAGE } = interfaceConfig;
         const downloadButtonClassName
             = `${_SNS}__button ${_SNS}__button_primary`;
 
 
-        const onOpenLinkProperties = _URLS[Platform.OS]
+        const onOpenLinkProperties = _downloadUrl
             ? {
                 // When opening a link to the download page, we want to let the
                 // OS itself handle intercepting and opening the appropriate
@@ -163,7 +156,7 @@ class DeepLinkingMobilePage extends Component<Props> {
      * @returns {string} - The URL for downloading the app.
      */
     _generateDownloadURL() {
-        const url = _URLS[Platform.OS];
+        const { _downloadUrl: url } = this.props;
 
         if (url && typeof interfaceConfig.MOBILE_DYNAMIC_LINK === 'undefined') {
             return url;
@@ -226,12 +219,11 @@ class DeepLinkingMobilePage extends Component<Props> {
  *
  * @param {Object} state - The Redux state.
  * @private
- * @returns {{
- *     _room: string
- * }}
+ * @returns {Props}
  */
 function _mapStateToProps(state) {
     return {
+        _downloadUrl: interfaceConfig[`MOBILE_DOWNLOAD_LINK_${Platform.OS.toUpperCase()}`],
         _room: decodeURIComponent(state['features/base/conference'].room)
     };
 }
