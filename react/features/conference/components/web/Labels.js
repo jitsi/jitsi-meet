@@ -95,6 +95,9 @@ class Labels extends AbstractLabels<Props, State> {
                     this.props._showVideoQualityLabel
                         && this._renderVideoQualityLabel()
                 }
+                {
+                    this._renderInsecureRoomNameLabel()
+                }
             </div>
         );
     }
@@ -106,6 +109,8 @@ class Labels extends AbstractLabels<Props, State> {
     _renderRecordingLabel: string => React$Element<*>;
 
     _renderTranscribingLabel: () => React$Element<*>;
+
+    _renderInsecureRoomNameLabel: () => React$Element<any>;
 
     _renderVideoQualityLabel: () => React$Element<*>;
 }
