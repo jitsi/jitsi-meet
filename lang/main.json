@@ -561,6 +561,9 @@
     "sectionList": {
         "pullToRefresh": "Pull to refresh"
     },
+    "security": {
+        "insecureRoomNameWarning": "The room name is insecure. Unwanted participants may join your conference."
+    },
     "settings": {
         "calendar": {
             "about": "The {{appName}} calendar integration is used to securely access your calendar so it can read upcoming events.",

@@ -1,6 +1,30 @@
 // @flow
 
 /**
+ * A helper function that behaves similar to Object.assign, but only reassigns a
+ * property in target if it's defined in source.
+ *
+ * @param {Object} target - The target object to assign the values into.
+ * @param {Object} source - The source object.
+ * @returns {Object}
+ */
+export function assignIfDefined(target: Object, source: Object) {
+    const to = Object(target);
+
+    for (const nextKey in source) {
+        if (source.hasOwnProperty(nextKey)) {
+            const value = source[nextKey];
+
+            if (typeof value !== 'undefined') {
+                to[nextKey] = value;
+            }
+        }
+    }
+
+    return to;
+}
+
+/**
  * Creates a deferred object.
  *
  * @returns {{promise, resolve, reject}}
@@ -70,30 +94,6 @@ export function getJitsiMeetGlobalNS() {
     }
 
     return window.JitsiMeetJS.app;
-}
-
-/**
- * A helper function that behaves similar to Object.assign, but only reassigns a
- * property in target if it's defined in source.
- *
- * @param {Object} target - The target object to assign the values into.
- * @param {Object} source - The source object.
- * @returns {Object}
- */
-export function assignIfDefined(target: Object, source: Object) {
-    const to = Object(target);
-
-    for (const nextKey in source) {
-        if (source.hasOwnProperty(nextKey)) {
-            const value = source[nextKey];
-
-            if (typeof value !== 'undefined') {
-                to[nextKey] = value;
-            }
-        }
-    }
-
-    return to;
 }
 
 /**
