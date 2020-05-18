@@ -15,10 +15,12 @@ import {
     TRACK_REMOVED,
     TRACK_UPDATED
 } from '../base/tracks';
+import { LIB_WILL_INIT } from '../base/lib-jitsi-meet';
 
 import { createLocalTracksDurationEvent, createNetworkInfoEvent } from './AnalyticsEvents';
 import { UPDATE_LOCAL_TRACKS_DURATION } from './actionTypes';
-import { createHandlers, initAnalytics, resetAnalytics, sendAnalytics } from './functions';
+import { createHandlers, initAnalytics, getAmplitudeIdentity, resetAnalytics, sendAnalytics } from './functions';
+import RTCStats from './RTCStats';
 
 /**
  * Calculates the duration of the local tracks.
@@ -80,6 +82,10 @@ function calculateLocalTrackDuration(state) {
  */
 MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
+    case LIB_WILL_INIT:
+        RTCStats.init({ rtcServerAddress: 'wss://localhost:3000',
+            pollInterval: 1000 });
+        break;
     case SET_CONFIG:
         if (navigator.product === 'ReactNative') {
             // Reseting the analytics is currently not needed for web because
@@ -109,6 +115,10 @@ MiddlewareRegistry.register(store => next => action => {
     case CONFERENCE_JOINED: {
         const { dispatch, getState } = store;
         const state = getState();
+
+        RTCStats.connect();
+        RTCStats.sendIdentityData({ ...getAmplitudeIdentity(),
+            ...state['features/base/config'] });
 
         dispatch({
             type: UPDATE_LOCAL_TRACKS_DURATION,

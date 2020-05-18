@@ -15,6 +15,8 @@ export default class AmplitudeHandler extends AbstractHandler {
     constructor(options) {
         super(options);
 
+        // const { amplitudeAPPKey = '43df878c9fd741a83e0c80bec3a5ddf4', host, user } = options;
+
         const { amplitudeAPPKey, host, user } = options;
 
         if (!amplitudeAPPKey) {
@@ -64,5 +66,18 @@ export default class AmplitudeHandler extends AbstractHandler {
         amplitude.getInstance(this._amplitudeOptions).logEvent(
             this._extractName(event),
             event);
+    }
+
+    /**
+     * Stuff.
+     *
+     * @returns {Object}
+     */
+    getIdentityProps() {
+        return {
+            sessionId: amplitude.getInstance(this._amplitudeOptions).getSessionId(),
+            deviceId: amplitude.getInstance(this._amplitudeOptions).options.deviceId,
+            userId: amplitude.getInstance(this._amplitudeOptions).options.userId
+        };
     }
 }
