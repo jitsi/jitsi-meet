@@ -50,9 +50,10 @@ export function generateDeepLinkingURL() {
  */
 export function getDeepLinkingPage(state) {
     const { room } = state['features/base/conference'];
+    const { launchInWeb } = state['features/deep-linking'];
 
     // Show only if we are about to join a conference.
-    if (!room || state['features/base/config'].disableDeepLinking) {
+    if (launchInWeb || !room || state['features/base/config'].disableDeepLinking) {
         return Promise.resolve();
     }
 
@@ -64,13 +65,6 @@ export function getDeepLinkingPage(state) {
         return Promise.resolve(
             typeof mobileAppPromo === 'undefined' || Boolean(mobileAppPromo)
                 ? DeepLinkingMobilePage : NoMobileApp);
-    }
-
-    // desktop
-    const { launchInWeb } = state['features/deep-linking'];
-
-    if (launchInWeb) {
-        return Promise.resolve();
     }
 
     return _openDesktopApp(state).then(

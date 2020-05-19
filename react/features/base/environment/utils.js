@@ -2,6 +2,8 @@
 
 import Platform from '../react/Platform';
 
+const { browser } = JitsiMeetJS.util;
+
 /**
  * Returns whether or not the current environment is a mobile device.
  *
@@ -9,6 +11,12 @@ import Platform from '../react/Platform';
  */
 export function isMobileBrowser() {
     return Platform.OS === 'android' || Platform.OS === 'ios';
+}
+
+export function isMobileBrowserSupported() {
+    return (Platform.OS === 'android' && browser.isChrome())
+        || (Platform.OS === 'android' && browser.isFirefox())
+        || (Platform.OS === 'ios' && browser.isSafari());
 }
 
 /**
