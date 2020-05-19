@@ -2,8 +2,10 @@
 
 const CircularDependencyPlugin = require('circular-dependency-plugin');
 const process = require('process');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 
+const cacheVersionNumber = Math.random().toString(36).substr(2, 5);
 /**
  * The URL of the Jitsi Meet deployment to be proxy to in the context of
  * development with webpack-dev-server.
@@ -167,7 +169,15 @@ const config = {
                 allowAsyncCycles: false,
                 exclude: /node_modules/,
                 failOnError: false
-            })
+            }),
+        new HtmlWebpackPlugin({
+            script1: `libs/lib-jitsi-meet.min.js?v=${cacheVersionNumber}`,
+            script2: `libs/app.bundle.min.js?v=${cacheVersionNumber}`,
+            css: `css/all.css?v=${cacheVersionNumber}`,
+            template: 'index.html',
+            minify: true,
+            inject: false,
+        })
     ].filter(Boolean),
     resolve: {
         alias: {
