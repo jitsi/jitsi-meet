@@ -16,7 +16,7 @@ import { invite } from '../../react/features/invite';
 import { toggleTileView } from '../../react/features/video-layout';
 import { setVideoQuality } from '../../react/features/video-quality';
 import { getJitsiMeetTransport } from '../transport';
-
+import { muteAllParticipants } from '../../react/features/remote-video-menu/actions';
 import { API_ID, ENDPOINT_TEXT_MESSAGE_NAME } from './constants';
 import {
     processExternalDeviceRequest
@@ -70,6 +70,16 @@ function initCommands() {
         'display-name': displayName => {
             sendAnalytics(createApiEvent('display.name.changed'));
             APP.conference.changeLocalDisplayName(displayName);
+        },
+        'mute-everyone': () => {
+            sendAnalytics(createApiEvent('muted-everyone'));
+            const participants = APP.store.getState()['features/base/participants'];
+            const localIds = participants
+                .filter(participant => participant.local)
+                .filter(participant => participant.role === 'moderator')
+                .map(participant => participant.id);
+
+            APP.store.dispatch(muteAllParticipants(localIds));
         },
         'password': password => {
             const { conference, passwordRequired }
