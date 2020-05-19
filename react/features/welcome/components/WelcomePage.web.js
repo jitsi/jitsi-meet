@@ -214,14 +214,16 @@ class WelcomePage extends AbstractWelcomePage {
                             </form>
                         </div>
                         <div
-                            className = 'welcome-page-button'
+                            className = 'welcome-page-button welcome-page-button-go'
                             id = 'enter_room_button'
                             onClick = { this._onFormSubmit }>
-                            {
-                                showResponsiveText
-                                    ? t('welcomepage.goSmall')
-                                    : t('welcomepage.go')
-                            }
+                            <span className = 'welcome-page-button-go--text'>
+                                {
+                                    showResponsiveText
+                                        ? t('welcomepage.goSmall')
+                                        : t('welcomepage.go')
+                                }
+                            </span>
                         </div>
                     </div>
                     { this._renderTabs() }

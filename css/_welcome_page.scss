@@ -71,6 +71,7 @@ body.welcome-page {
                 text-align: left;
                 color: #253858;
                 height: fit-content;
+                white-space: nowrap; /* See: #6747 */
 
                 .enter-room-title {
                     display: $welcomePageEnterRoomTitleDisplay;
@@ -172,6 +173,31 @@ body.welcome-page {
         vertical-align: middle;
         line-height: $welcomePageButtonLineHeight;
         cursor: pointer;
+
+        &-go {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: $welcomePageGoButtonMinHeight;
+            font-size: $welcomePageGoButtonFontSize;
+            font-weight: $welcomePageGoButtonFontWeight;
+            border-radius: $welcomePageGoButtonBorderRadius;
+            padding: 0 7px;
+
+            // Unset common properties and values
+            // TODO: Specify common declarations inside .welcome-page-button to cancel unset
+            width: unset;
+            min-width: unset;
+            height: unset;
+            text-align: unset;
+            vertical-align: unset;
+            line-height: unset;
+
+            &--text {
+                min-width: $welcomePageGoButtonTextMinWidth; /* Keep the current width for "GO" */
+                white-space: nowrap;
+            }
+        }
     }
 
     .welcome-page-settings {
