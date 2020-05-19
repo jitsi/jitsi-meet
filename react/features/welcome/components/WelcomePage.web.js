@@ -163,6 +163,7 @@ class WelcomePage extends AbstractWelcomePage {
         const showAdditionalContent = this._shouldShowAdditionalContent();
         const showAdditionalToolbarContent = this._shouldShowAdditionalToolbarContent();
         const showResponsiveText = this._shouldShowResponsiveText();
+        const showStartANewMeetingBox = this._shouldShowStartANewMeetingBox();
 
         return (
             <div
@@ -193,37 +194,39 @@ class WelcomePage extends AbstractWelcomePage {
                                 { app: APP_NAME }) }
                         </p>
                     </div>
-                    <div id = 'enter_room'>
-                        <div className = 'enter-room-input-container'>
-                            <div className = 'enter-room-title'>
-                                { t('welcomepage.enterRoomTitle') }
+                    { showStartANewMeetingBox ?
+                        <div id = 'enter_room'>
+                            <div className = 'enter-room-input-container'>
+                                <div className = 'enter-room-title'>
+                                    { t('welcomepage.enterRoomTitle') }
+                                </div>
+                                <form onSubmit = { this._onFormSubmit }>
+                                    <input
+                                        autoFocus = { true }
+                                        className = 'enter-room-input'
+                                        id = 'enter_room_field'
+                                        onChange = { this._onRoomChange }
+                                        pattern = { ROOM_NAME_VALIDATE_PATTERN_STR }
+                                        placeholder = { this.state.roomPlaceholder }
+                                        ref = { this._setRoomInputRef }
+                                        title = { t('welcomepage.roomNameAllowedChars') }
+                                        type = 'text'
+                                        value = { this.state.room } />
+                                    { this._renderInsecureRoomNameWarning() }
+                                </form>
                             </div>
-                            <form onSubmit = { this._onFormSubmit }>
-                                <input
-                                    autoFocus = { true }
-                                    className = 'enter-room-input'
-                                    id = 'enter_room_field'
-                                    onChange = { this._onRoomChange }
-                                    pattern = { ROOM_NAME_VALIDATE_PATTERN_STR }
-                                    placeholder = { this.state.roomPlaceholder }
-                                    ref = { this._setRoomInputRef }
-                                    title = { t('welcomepage.roomNameAllowedChars') }
-                                    type = 'text'
-                                    value = { this.state.room } />
-                                { this._renderInsecureRoomNameWarning() }
-                            </form>
+                            <div
+                                className = 'welcome-page-button'
+                                id = 'enter_room_button'
+                                onClick = { this._onFormSubmit }>
+                                {
+                                    showResponsiveText
+                                        ? t('welcomepage.goSmall')
+                                        : t('welcomepage.go')
+                                }
+                            </div>
                         </div>
-                        <div
-                            className = 'welcome-page-button'
-                            id = 'enter_room_button'
-                            onClick = { this._onFormSubmit }>
-                            {
-                                showResponsiveText
-                                    ? t('welcomepage.goSmall')
-                                    : t('welcomepage.go')
-                            }
-                        </div>
-                    </div>
+                    : null }
                     { this._renderTabs() }
                 </div>
                 { showAdditionalContent
@@ -409,6 +412,17 @@ class WelcomePage extends AbstractWelcomePage {
         const { innerWidth } = window;
 
         return innerWidth <= WINDOW_WIDTH_THRESHOLD;
+    }
+
+    /**
+     * Returns whether or not the field box
+     * where the user enter a new room name
+     *
+     * @private
+     * @returns {boolean}
+     */
+    _shouldShowStartANewMeetingBox() {
+      return interfaceConfig.DISPLAY_START_A_NEW_MEETING_BOX;
     }
 
 }
