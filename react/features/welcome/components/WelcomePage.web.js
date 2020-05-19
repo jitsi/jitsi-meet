@@ -194,8 +194,8 @@ class WelcomePage extends AbstractWelcomePage {
                                 { app: APP_NAME }) }
                         </p>
                     </div>
-                    { showStartANewMeetingBox ?
-                        <div id = 'enter_room'>
+                    { showStartANewMeetingBox
+                        ? <div id = 'enter_room'>
                             <div className = 'enter-room-input-container'>
                                 <div className = 'enter-room-title'>
                                     { t('welcomepage.enterRoomTitle') }
@@ -226,7 +226,8 @@ class WelcomePage extends AbstractWelcomePage {
                                 }
                             </div>
                         </div>
-                    : null }
+                        : null
+                    }
                     { this._renderTabs() }
                 </div>
                 { showAdditionalContent
@@ -416,13 +417,13 @@ class WelcomePage extends AbstractWelcomePage {
 
     /**
      * Returns whether or not the field box
-     * where the user enter a new room name
+     * where the user enter a new room name.
      *
      * @private
      * @returns {boolean}
      */
     _shouldShowStartANewMeetingBox() {
-      return interfaceConfig.DISPLAY_START_A_NEW_MEETING_BOX;
+        return interfaceConfig.DISPLAY_START_A_NEW_MEETING_BOX;
     }
 
 }
