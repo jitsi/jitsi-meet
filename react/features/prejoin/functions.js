@@ -23,12 +23,12 @@ function applyMuteOptionsToTrack(track, shouldMute) {
 }
 
 /**
- * Selector for the visibility of the 'join by phone' buttons.
+ * Selector for the visibility of the 'join by phone' button.
  *
  * @param {Object} state - The state of the app.
  * @returns {boolean}
  */
-export function areJoinByPhoneButtonsVisible(state: Object): boolean {
+export function isJoinByPhoneButtonVisible(state: Object): boolean {
     return Boolean(getDialOutUrl(state) && getDialOutStatusUrl(state));
 }
 

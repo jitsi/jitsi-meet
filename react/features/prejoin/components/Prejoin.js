@@ -15,7 +15,7 @@ import { connect } from '../../base/redux';
 import { getDisplayName, updateSettings } from '../../base/settings';
 import ActionButton from './buttons/ActionButton';
 import {
-    areJoinByPhoneButtonsVisible,
+    isJoinByPhoneButtonVisible,
     isDeviceStatusVisible,
     isJoinByPhoneDialogVisible
 } from '../functions';
@@ -34,6 +34,11 @@ type Props = {
      * Flag signaling if the device status is visible or not.
      */
     deviceStatusVisible: boolean,
+
+    /**
+     * If join by phone button should be visible.
+     */
+    hasJoinByPhoneButton: boolean,
 
     /**
      * Flag signaling if a user is logged in or not.
@@ -79,11 +84,6 @@ type Props = {
      * If 'JoinByPhoneDialog' is visible or not.
      */
     showDialog: boolean,
-
-    /**
-     * If join by phone buttons should be visible.
-     */
-    hasJoinByPhoneButtons: boolean,
 
     /**
      * Used for translation.
@@ -210,11 +210,11 @@ class Prejoin extends Component<Props, State> {
     render() {
         const {
             deviceStatusVisible,
+            hasJoinByPhoneButton,
             isAnonymousUser,
             joinConference,
             joinConferenceWithoutAudio,
             name,
-            hasJoinByPhoneButtons,
             showDialog,
             t
         } = this.props;
@@ -251,7 +251,7 @@ class Prejoin extends Component<Props, State> {
                                             src = { IconVolumeOff } />
                                         { t('prejoin.joinWithoutAudio') }
                                     </div>
-                                    <div
+                                    {hasJoinByPhoneButton && <div
                                         className = 'prejoin-preview-dropdown-btn'
                                         onClick = { _showDialog }>
                                         <Icon
@@ -259,12 +259,13 @@ class Prejoin extends Component<Props, State> {
                                             size = { 24 }
                                             src = { IconPhone } />
                                         { t('prejoin.joinAudioByPhone') }
-                                    </div>
+                                    </div>}
                                 </div> }
                                 isOpen = { showJoinByPhoneButtons }
                                 onClose = { _onDropdownClose }>
                                 <ActionButton
-                                    hasOptions = { hasJoinByPhoneButtons }
+                                    disabled = { !name }
+                                    hasOptions = { true }
                                     onClick = { joinConference }
                                     onOptionsClick = { _onOptionsClick }
                                     type = 'primary'>
@@ -312,7 +313,7 @@ function mapStateToProps(state): Object {
         name: getDisplayName(state),
         roomName: getRoomName(state),
         showDialog: isJoinByPhoneDialogVisible(state),
-        hasJoinByPhoneButtons: areJoinByPhoneButtonsVisible(state)
+        hasJoinByPhoneButton: isJoinByPhoneButtonVisible(state)
     };
 }
 
