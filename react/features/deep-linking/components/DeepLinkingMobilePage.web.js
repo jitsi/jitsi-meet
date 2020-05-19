@@ -129,6 +129,7 @@ class DeepLinkingMobilePage extends Component<Props> {
                         <button className = { downloadButtonClassName }>
                             { t(`${_TNS}.downloadApp`) }
                         </button>
+                        target = '_top'
                     </a>
                     <a
                         { ...onOpenLinkProperties }
@@ -138,6 +139,7 @@ class DeepLinkingMobilePage extends Component<Props> {
                         {/* <button className = { `${_SNS}__button` }> */}
                         { t(`${_TNS}.openApp`) }
                         {/* </button> */}
+                        target = '_top'
                     </a>
                     { renderPromotionalFooter() }
                     <DialInSummary
