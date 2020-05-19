@@ -1,9 +1,13 @@
 /* global __dirname */
 
 const CircularDependencyPlugin = require('circular-dependency-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 const process = require('process');
 const webpack = require('webpack');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
+
+const cacheVersionNumber = Math.random().toString(36)
+.substr(2, 5);
 
 /**
  * The URL of the Jitsi Meet deployment to be proxy to in the context of
@@ -184,6 +188,14 @@ const config = {
             allowAsyncCycles: false,
             exclude: /node_modules/,
             failOnError: false
+        }),
+        new HtmlWebpackPlugin({
+            jitsiLib: `libs/lib-jitsi-meet.min.js?v=${cacheVersionNumber}`,
+            appBundle: `libs/app.bundle.min.js?v=${cacheVersionNumber}`,
+            css: `css/all.css?v=${cacheVersionNumber}`,
+            template: 'index.html',
+            minify: true,
+            inject: false
         })
     ].filter(Boolean),
     resolve: {
@@ -245,7 +257,7 @@ module.exports = [
             ...config.plugins,
             ...getBundleAnalyzerPlugin('do_external_connect')
         ],
-        performance: getPerformanceHints(5 * 1024)
+        performance: getPerformanceHints(10 * 1024)
     }),
     Object.assign({}, config, {
         entry: {
@@ -255,7 +267,7 @@ module.exports = [
             ...config.plugins,
             ...getBundleAnalyzerPlugin('flacEncodeWorker')
         ],
-        performance: getPerformanceHints(5 * 1024)
+        performance: getPerformanceHints(10 * 1024)
     }),
     Object.assign({}, config, {
         entry: {
@@ -265,7 +277,7 @@ module.exports = [
             ...config.plugins,
             ...getBundleAnalyzerPlugin('analytics-ga')
         ],
-        performance: getPerformanceHints(5 * 1024)
+        performance: getPerformanceHints(10 * 1024)
     }),
     Object.assign({}, config, {
         entry: {

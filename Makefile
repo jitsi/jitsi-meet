@@ -53,6 +53,7 @@ deploy-appbundle:
 		$(BUILD_DIR)/analytics-ga.min.map \
 		$(BUILD_DIR)/close3.min.js \
 		$(BUILD_DIR)/close3.min.map \
+		$(BUILD_DIR)/index.html \
 		$(DEPLOY_DIR)
 
 deploy-lib-jitsi-meet:
@@ -83,12 +84,12 @@ deploy-rnnoise-binary:
 deploy-tflite:
 	cp \
 		$(TFLITE_WASM)/*.wasm \
-		$(DEPLOY_DIR)		
+		$(DEPLOY_DIR)
 
 deploy-meet-models:
 	cp \
 		$(MEET_MODELS_DIR)/*.tflite \
-		$(DEPLOY_DIR)	
+		$(DEPLOY_DIR)
 
 deploy-css:
 	$(NODE_SASS) $(STYLES_MAIN) $(STYLES_BUNDLE) && \
@@ -106,5 +107,6 @@ source-package:
 	mkdir -p source_package/jitsi-meet/css && \
 	cp -r *.js *.html resources/*.txt connection_optimization favicon.ico fonts images libs static sounds LICENSE lang source_package/jitsi-meet && \
 	cp css/all.css source_package/jitsi-meet/css && \
+	cp libs/index.html source_package/jitsi-meet && \
 	(cd source_package ; tar cjf ../jitsi-meet.tar.bz2 jitsi-meet) && \
 	rm -rf source_package
