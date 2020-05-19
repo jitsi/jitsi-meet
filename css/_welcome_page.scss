@@ -163,16 +163,19 @@ body.welcome-page {
         cursor: pointer;
     }
 
-    .welcome-page-settings {
-        color: $welcomePageDescriptionColor;
+    .header-toolbars {
         position: absolute;
         top: 32px;
         right: 32px;
         z-index: $zindex2;
 
-        * {
-            cursor: pointer;
-            font-size: 32px;
+        .welcome-page-settings {
+            color: $welcomePageDescriptionColor;
+    
+            * {
+                cursor: pointer;
+                font-size: 32px;
+            }
         }
     }
 

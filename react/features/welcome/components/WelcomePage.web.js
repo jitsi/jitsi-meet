@@ -1,14 +1,20 @@
 /* global interfaceConfig */
 
+import Button, { ButtonGroup } from '@atlaskit/button';
 import React from 'react';
 
+import { openDialog } from '../../base/dialog';
 import { translate } from '../../base/i18n';
+import { updateSettings } from '../../base/settings';
+import { LoginDialog } from '../../login';
+import { RegisterDialog } from '../../register';
 import { Watermarks } from '../../base/react';
 import { connect } from '../../base/redux';
 import { isMobileBrowser } from '../../base/environment/utils';
 import { CalendarList } from '../../calendar-sync';
 import { RecentList } from '../../recent-list';
-import { SettingsButton, SETTINGS_TABS } from '../../settings';
+import { SETTINGS_TABS } from '../../settings';
+import { openSettingsDialog } from '../../settings/actions';
 
 import { AbstractWelcomePage, _mapStateToProps } from './AbstractWelcomePage';
 import Tabs from './Tabs';
@@ -54,7 +60,8 @@ class WelcomePage extends AbstractWelcomePage {
 
             generateRoomnames:
                 interfaceConfig.GENERATE_ROOMNAMES_ON_WELCOME_PAGE,
-            selectedTab: 0
+            selectedTab: 0,
+            submitting: false
         };
 
         /**
@@ -107,6 +114,10 @@ class WelcomePage extends AbstractWelcomePage {
         this._setAdditionalToolbarContentRef
             = this._setAdditionalToolbarContentRef.bind(this);
         this._onTabSelected = this._onTabSelected.bind(this);
+        this._onLogin = this._onLogin.bind(this);
+        this._onLogout = this._onLogout.bind(this);
+        this._onOpenSettings = this._onOpenSettings.bind(this);
+        this._onRegister = this._onRegister.bind(this);
     }
 
     /**
@@ -151,17 +162,100 @@ class WelcomePage extends AbstractWelcomePage {
     }
 
     /**
+     * Login handler.
+     *
+     * @inheritdoc
+     * @returns {void}
+     */
+    _onLogin() {
+        const { dispatch } = this.props;
+
+        dispatch(openDialog(LoginDialog));
+    }
+
+    /**
+     * Login handler.
+     *
+     * @inheritdoc
+     * @returns {void}
+     */
+    _onLogout() {
+        const { dispatch } = this.props;
+
+        this.setState({ submitting: true });
+
+        return new Promise(resolve => setTimeout(resolve, 2000)).then(() => {
+            dispatch(updateSettings({ displayName: '' }));
+            dispatch(updateSettings({ email: '' }));
+            this.setState({ submitting: false });
+        });
+    }
+
+    /**
+     * Settings handler.
+     *
+     * @inheritdoc
+     * @returns {void}
+     */
+    _onOpenSettings() {
+        const { dispatch } = this.props;
+        const defaultTab = SETTINGS_TABS.DEVICES;
+
+        dispatch(openSettingsDialog(defaultTab));
+    }
+
+    /**
+     * Register handler.
+     *
+     * @inheritdoc
+     * @returns {void}
+     */
+    _onRegister() {
+        const { dispatch } = this.props;
+
+        dispatch(openDialog(RegisterDialog));
+    }
+
+    /**
      * Implements React's {@link Component#render()}.
      *
      * @inheritdoc
      * @returns {ReactElement|null}
      */
     render() {
-        const { t } = this.props;
+        const { _settings, t } = this.props;
+        const { submitting } = this.state;
         const { APP_NAME } = interfaceConfig;
         const showAdditionalContent = this._shouldShowAdditionalContent();
         const showAdditionalToolbarContent = this._shouldShowAdditionalToolbarContent();
         const showResponsiveText = this._shouldShowResponsiveText();
+        const buttons = [];
+
+        if (_settings.displayName) {
+            buttons.push(
+                <Button
+                    appearance = 'subtle'
+                    isLoading = { submitting }
+                    onClick = { this._onLogout }>
+                    {t('toolbar.logout')}
+                </Button>
+            );
+        } else {
+            buttons.push(
+                <Button
+                    appearance = 'primary'
+                    onClick = { this._onRegister }>
+                    { t('toolbar.Register') }
+                </Button>
+            );
+            buttons.push(
+                <Button
+                    appearance = 'subtle'
+                    onClick = { this._onLogin }>
+                    {t('toolbar.login')}
+                </Button>
+            );
+        }
 
         return (
             <div
@@ -172,15 +266,21 @@ class WelcomePage extends AbstractWelcomePage {
                     <Watermarks />
                 </div>
                 <div className = 'header'>
-                    <div className = 'welcome-page-settings'>
-                        <SettingsButton
-                            defaultTab = { SETTINGS_TABS.CALENDAR } />
-                        { showAdditionalToolbarContent
-                            ? <div
-                                className = 'settings-toolbar-content'
-                                ref = { this._setAdditionalToolbarContentRef } />
-                            : null
-                        }
+                    <div className = 'header-toolbars'>
+                        <ButtonGroup>
+                            { buttons }
+                            <Button
+                                appearance = 'subtle'
+                                onClick = { this._onOpenSettings }>
+                                { t('toolbar.Settings') }
+                            </Button>
+                            { showAdditionalToolbarContent
+                                ? <div
+                                    className = 'settings-toolbar-content'
+                                    ref = { this._setAdditionalToolbarContentRef } />
+                                : null
+                            }
+                        </ButtonGroup>
                     </div>
                     <div className = 'header-image' />
                     <div className = 'header-text'>
