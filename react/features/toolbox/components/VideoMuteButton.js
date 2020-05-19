@@ -21,7 +21,7 @@ import {
     isPrejoinPageVisible,
     isPrejoinVideoDisabled,
     isPrejoinVideoMuted
-} from '../../prejoin';
+} from '../../prejoin/functions';
 import UIEvents from '../../../../service/UI/UIEvents';
 
 declare var APP: Object;

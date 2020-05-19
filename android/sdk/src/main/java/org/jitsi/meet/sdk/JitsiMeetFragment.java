@@ -58,22 +58,6 @@ public class JitsiMeetFragment extends Fragment {
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        JitsiMeetActivityDelegate.onActivityResult(
-                getActivity(), requestCode, resultCode, data);
-    }
-
-    @Override
-    public void onDestroyView() {
-        if (view != null) {
-            view.dispose();
-            view = null;
-        }
-
-        super.onDestroyView();
-    }
-
-    @Override
     public void onDestroy() {
         super.onDestroy();
 

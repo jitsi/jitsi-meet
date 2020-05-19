@@ -14,11 +14,13 @@ android {
     buildTypes {
         debug {
             buildConfigField "boolean", "LIBRE_BUILD", "${rootProject.ext.libreBuild}"
+            buildConfigField "boolean", "GOOGLE_SERVICES_ENABLED", "${rootProject.ext.googleServicesEnabled}"
         }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             buildConfigField "boolean", "LIBRE_BUILD", "${rootProject.ext.libreBuild}"
+            buildConfigField "boolean", "GOOGLE_SERVICES_ENABLED", "${rootProject.ext.googleServicesEnabled}"
         }
     }
 
@@ -70,6 +72,7 @@ dependencies {
     implementation project(':react-native-calendar-events')
     implementation project(':react-native-community-async-storage')
     implementation project(':react-native-community_netinfo')
+    implementation project(':react-native-default-preference')
     implementation project(':react-native-immersive')
     implementation project(':react-native-keep-awake')
     implementation project(':react-native-linear-gradient')

@@ -5,11 +5,14 @@ import {
     ADD_PREJOIN_CONTENT_SHARING_TRACK,
     ADD_PREJOIN_VIDEO_TRACK,
     SET_DEVICE_STATUS,
+    SET_DIALOUT_NUMBER,
+    SET_DIALOUT_COUNTRY,
+    SET_DIALOUT_STATUS,
     SET_JOIN_BY_PHONE_DIALOG_VISIBLITY,
+    SET_SKIP_PREJOIN,
     SET_PREJOIN_AUDIO_DISABLED,
     SET_PREJOIN_AUDIO_MUTED,
     SET_PREJOIN_DEVICE_ERRORS,
-    SET_PREJOIN_NAME,
     SET_PREJOIN_PAGE_VISIBILITY,
     SET_PREJOIN_VIDEO_DISABLED,
     SET_PREJOIN_VIDEO_MUTED
@@ -18,17 +21,26 @@ import {
 const DEFAULT_STATE = {
     audioDisabled: false,
     audioMuted: false,
-    videoMuted: false,
-    videoDisabled: false,
-    deviceStatusText: 'prejoin.configuringDevices',
-    deviceStatusType: 'ok',
-    showPrejoin: true,
-    showJoinByPhoneDialog: false,
-    videoTrack: null,
     audioTrack: null,
     contentSharingTrack: null,
+    country: '',
+    deviceStatusText: 'prejoin.configuringDevices',
+    deviceStatusType: 'ok',
+    dialOutCountry: {
+        name: 'United States',
+        dialCode: '1',
+        code: 'us'
+    },
+    dialOutNumber: '',
+    dialOutStatus: 'prejoin.dialing',
+    name: '',
     rawError: '',
-    name: ''
+    showPrejoin: true,
+    showJoinByPhoneDialog: false,
+    userSelectedSkipPrejoin: false,
+    videoTrack: null,
+    videoDisabled: false,
+    videoMuted: false
 };
 
 /**
@@ -58,10 +70,10 @@ ReducerRegistry.register(
             };
         }
 
-        case SET_PREJOIN_NAME: {
+        case SET_SKIP_PREJOIN: {
             return {
                 ...state,
-                name: action.value
+                userSelectedSkipPrejoin: action.value
             };
         }
 
@@ -111,6 +123,27 @@ ReducerRegistry.register(
             return {
                 ...state,
                 audioDisabled: true
+            };
+        }
+
+        case SET_DIALOUT_NUMBER: {
+            return {
+                ...state,
+                dialOutNumber: action.value
+            };
+        }
+
+        case SET_DIALOUT_COUNTRY: {
+            return {
+                ...state,
+                dialOutCountry: action.value
+            };
+        }
+
+        case SET_DIALOUT_STATUS: {
+            return {
+                ...state,
+                dialOutStatus: action.value
             };
         }
 

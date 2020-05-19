@@ -4,7 +4,7 @@ import React from 'react';
 import { Avatar } from '../../../base/avatar';
 import { Video } from '../../../base/media';
 import { connect } from '../../../base/redux';
-import { getActiveVideoTrack, getPrejoinName, isPrejoinVideoMuted } from '../../functions';
+import { getActiveVideoTrack, isPrejoinVideoMuted } from '../../functions';
 
 export type Props = {
 
@@ -41,6 +41,7 @@ function Preview(props: Props) {
         return (
             <div className = 'prejoin-preview'>
                 <div className = 'prejoin-preview-overlay' />
+                <div className = 'prejoin-preview-bottom-overlay' />
                 <Video
                     className = 'flipVideoX prejoin-preview-video'
                     videoTrack = {{ jitsiTrack: videoTrack }} />
@@ -66,7 +67,6 @@ function Preview(props: Props) {
  */
 function mapStateToProps(state) {
     return {
-        name: getPrejoinName(state),
         videoTrack: getActiveVideoTrack(state),
         showCameraPreview: !isPrejoinVideoMuted(state)
     };

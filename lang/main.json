@@ -295,7 +295,7 @@
         "title": "Shared Document"
     },
     "e2ee": {
-        "labelToolTip": "All participants in this meeting have enabled End-to-End encryption"
+        "labelToolTip": "Audio and Video Communication on this call is end-to-end encrypted"
     },
     "feedback": {
         "average": "Average",
@@ -462,7 +462,7 @@
         "somebody": "Somebody",
         "startSilentTitle": "You joined with no audio output!",
         "startSilentDescription": "Rejoin the meeting to enable audio",
-        "suboptimalBrowserWarning": "We are afraid your meeting experience isn't going to be that great here. We are looking for ways to improve this, but until then please try using one of the <a href='static/recommendedBrowsers.html' target='_blank'>fully supported browsers</a>.",
+        "suboptimalBrowserWarning": "We are afraid your meeting experience isn't going to be that great here. We are looking for ways to improve this, but until then please try using one of the <a href='{{recommendedBrowserPageLink}}' target='_blank'>fully supported browsers</a>.",
         "suboptimalExperienceTitle": "Browser Warning",
         "unmute": "Unmute",
         "newDeviceCameraTitle": "New camera detected",
@@ -488,13 +488,20 @@
         "dialInMeeting": "Dial into the meeting",
         "dialInPin": "Dial into the meeting and enter PIN code:",
         "dialing": "Dialing",
+        "doNotShow": "Don't show this again",
+        "errorDialOut": "Could not dial out",
+        "errorDialOutDisconnected": "Could not dial out. Disconnected",
+        "errorDialOutFailed": "Could not dial out. Call failed",
+        "errorDialOutStatus": "Error getting dial out status",
+        "errorStatusCode": "Error dialing out, status code: {{status}}",
+        "errorValidation": "Number validation failed",
         "iWantToDialIn": "I want to dial in",
         "joinAudioByPhone": "Join with phone audio",
         "joinMeeting": "Join meeting",
         "joinWithoutAudio": "Join without audio",
         "initiated": "Call initiated",
         "linkCopied": "Link copied to clipboard",
-        "lookGood": "Speaker and microphone look good",
+        "lookGood": "It sounds like your microphone is working properly",
         "or": "or",
         "calling": "Calling",
         "startWithPhone": "Start with phone audio",
@@ -554,6 +561,9 @@
     "sectionList": {
         "pullToRefresh": "Pull to refresh"
     },
+    "security": {
+        "insecureRoomNameWarning": "The room name is insecure. Unwanted participants may join your conference."
+    },
     "settings": {
         "calendar": {
             "about": "The {{appName}} calendar integration is used to securely access your calendar so it can read upcoming events.",
@@ -582,12 +592,15 @@
     "settingsView": {
         "advanced": "Advanced",
         "alertOk": "OK",
+        "alertCancel": "Cancel",
         "alertTitle": "Warning",
         "alertURLText": "The entered server URL is invalid",
         "buildInfoSection": "Build Information",
         "conferenceSection": "Conference",
         "disableCallIntegration": "Disable native call integration",
         "disableP2P": "Disable Peer-To-Peer mode",
+        "disableCrashReporting": "Disable crash reporting",
+        "disableCrashReportingWarning": "Are you sure you want to disable crash reporting? The setting will be applied after you restart the app.",
         "displayName": "Display name",
         "email": "Email",
         "header": "Settings",
@@ -767,9 +780,6 @@
         "lowDefinition": "Low definition",
         "onlyAudioAvailable": "Only audio is available",
         "onlyAudioSupported": "We only support audio in this browser.",
-        "p2pEnabled": "Peer to Peer Enabled",
-        "p2pVideoQualityDescription": "In peer to peer mode, received video quality can only be toggled between high and audio only. Other settings will not be honored until peer to peer is exited.",
-        "recHighDefinitionOnly": "Will prefer high definition.",
         "sd": "SD",
         "sdTooltip": "Viewing standard definition video",
         "standardDefinition": "Standard definition"

@@ -82,6 +82,18 @@ export const RAISE_HAND_ENABLED = 'raise-hand.enabled';
 export const RECORDING_ENABLED = 'recording.enabled';
 
 /**
+ * Flag indicating if tile view feature should be enabled.
+ * Default: enabled.
+ */
+export const TILE_VIEW_ENABLED = 'tile-view.enabled';
+
+/**
+ * Flag indicating if the toolbox should be always be visible
+ * Default: disabled (false).
+ */
+export const TOOLBOX_ALWAYS_VISIBLE = 'toolbox.alwaysVisible';
+
+/**
  * Flag indicating if the welcome page should be enabled.
  * Default: disabled (false).
  */

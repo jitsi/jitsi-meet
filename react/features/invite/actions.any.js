@@ -165,9 +165,10 @@ export function updateDialInNumbers() {
         const state = getState();
         const { dialInConfCodeUrl, dialInNumbersUrl, hosts }
             = state['features/base/config'];
+        const { numbersFetched } = state['features/invite'];
         const mucURL = hosts && hosts.muc;
 
-        if (!dialInConfCodeUrl || !dialInNumbersUrl || !mucURL) {
+        if (numbersFetched || !dialInConfCodeUrl || !dialInNumbersUrl || !mucURL) {
             // URLs for fetching dial in numbers not defined
             return;
         }

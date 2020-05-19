@@ -170,6 +170,7 @@ class CopyMeetingUrl extends Component<Props, State> {
                 </div>}
                 <Icon
                     className = { `prejoin-copy-icon ${iconCls}` }
+                    onClick = { _copyUrl }
                     size = { 24 }
                     src = { src } />
                 <textarea

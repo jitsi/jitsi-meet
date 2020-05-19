@@ -1,6 +1,6 @@
 // @flow
 
-import { parseURLParams } from '../config';
+import { parseURLParams } from '../util';
 import JitsiMeetJS from '../lib-jitsi-meet';
 import { updateSettings } from '../settings';
 
