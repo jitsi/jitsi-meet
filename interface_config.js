@@ -176,7 +176,7 @@ var interfaceConfig = {
     // has a suboptimal experience. Browsers which are not listed as optimal or
     // unsupported are considered suboptimal. Valid values are:
     // chrome, chromium, edge, electron, firefox, nwjs, opera, safari
-    OPTIMAL_BROWSERS: [ 'chrome', 'chromium', 'firefox', 'nwjs', 'electron' ],
+    OPTIMAL_BROWSERS: [ 'chrome', 'chromium', 'firefox', 'nwjs', 'electron', 'safari' ],
 
     // Browsers, in addition to those which do not fully support WebRTC, that
     // are not supported and should show the unsupported browser page.
@@ -207,12 +207,12 @@ var interfaceConfig = {
     * If this is set to false, the banner will not be rendered at all. If set to true, the check for extension(s)
     * being already installed is done before rendering.
     */
-    SHOW_CHROME_EXTENSION_BANNER: false
+    SHOW_CHROME_EXTENSION_BANNER: false,
 
     /**
      * When enabled, the kick participant button will not be presented for users without a JWT
      */
-    // HIDE_KICK_BUTTON_FOR_GUESTS: false
+    // HIDE_KICK_BUTTON_FOR_GUESTS: false,
 
     /**
      * How many columns the tile view can expand to. The respected range is
@@ -229,6 +229,17 @@ var interfaceConfig = {
      * Specify URL for downloading ios mobile app.
      */
     // MOBILE_DOWNLOAD_LINK_IOS: 'https://itunes.apple.com/us/app/jitsi-meet/id1165103905',
+
+    /**
+     * Specify Firebase dynamic link properties for the mobile apps.
+     */
+    // MOBILE_DYNAMIC_LINK: {
+    //    APN: 'org.jitsi.meet',
+    //    APP_CODE: 'w2atb',
+    //    CUSTOM_DOMAIN: undefined,
+    //    IBI: 'com.atlassian.JitsiMeet.ios',
+    //    ISI: '1165103905'
+    // },
 
     /**
      * Specify mobile app scheme for opening the app from the mobile browser.
@@ -253,6 +264,12 @@ var interfaceConfig = {
      MOBILE_DYNAMIC_LINK
      PHONE_NUMBER_REGEX
     */
+
+    // Allow all above example options to include a trailing comma and
+    // prevent fear when commenting out the last value.
+    makeJsonParserHappy: 'even if last key had a trailing comma'
+
+    // no configuration value should follow this line.
 };
 
 /* eslint-enable no-unused-vars, no-var, max-len */

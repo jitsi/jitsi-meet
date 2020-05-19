@@ -54,7 +54,7 @@
         "title": "Chat"
     },
     "connectingOverlay": {
-        "joiningRoom": "Đang kết nối tới cuộc họp của bạn..."
+        "joiningRoom": "Đang kết nối tới cuộc họp của bạn…"
     },
     "connection": {
         "ATTACHED": "Đã đính kèm",
@@ -111,7 +111,7 @@
         "downloadApp": "Tải phần mềm",
         "launchWebButton": "Chạy trên web",
         "openApp": "Tiếp tục ứng dụng này",
-        "title": "Thực hiện cuộc họp trên {{app}}...",
+        "title": "Thực hiện cuộc họp trên {{app}}…",
         "tryAgainButton": "Thử lại trên desktop"
     },
     "defaultLink": "ví dụ: {{url}}",
@@ -145,9 +145,9 @@
         "cameraUnsupportedResolutionError": "Camera của bạn không hỗ trợ độ phân giải video yêu cầu.",
         "Cancel": "Hủy",
         "close": "Đóng",
-        "conferenceDisconnectMsg": "Bạn có thể muốn kiểm tra kết nối mạng của mình. Đang kết nối lại trong {{seconds}} giây...",
+        "conferenceDisconnectMsg": "Bạn có thể muốn kiểm tra kết nối mạng của mình. Đang kết nối lại trong {{seconds}} giây…",
         "conferenceDisconnectTitle": "Bạn đã bị ngắt kết nối.",
-        "conferenceReloadMsg": "Chúng tôi đang cố gắng sửa lỗi này. Đang kết nối lại trong {{seconds}} giây...",
+        "conferenceReloadMsg": "Chúng tôi đang cố gắng sửa lỗi này. Đang kết nối lại trong {{seconds}} giây…",
         "conferenceReloadTitle": "Thật không may, có điều gì đó đã sai.",
         "confirm": "Xác nhận",
         "confirmNo": "Không",
@@ -254,7 +254,7 @@
         "userPassword": "mật khẩu người dùng",
         "WaitForHostMsg": "Cuộc họp <b>{{room}}</b> chưa được khởi tạo. Nếu bạn là chủ nghị vui lòng xác thực. Nếu không, vui lòng đợi chủ nghị.",
         "WaitForHostMsgWOk": "Cuộc họp <b>{{room}}</b> chưa được khởi tạo. Nếu bạn là chủ nghị vui lòng nhấn OK để xác thực. Nếu không, vui lòng đợi chủ nghị.",
-        "WaitingForHost": "Đang đợi chủ nghị ...",
+        "WaitingForHost": "Đang đợi chủ nghị …",
         "Yes": "Có",
         "yourEntireScreen": "Toàn bộ màn hình của bạn"
     },
@@ -290,7 +290,7 @@
         "dialInSummaryError": "Lỗi nạp thông tin quay số. Vui lòng thử lại.",
         "dialInTollFree": "Miễn phí",
         "genericError": "Chà, có gì đó không ổn.",
-        "inviteLiveStream": "Để xem phát trực tuyến cuộc họp này, chọn liên kết:  {{url}}",
+        "inviteLiveStream": "Để xem phát trực tuyến cuộc họp này, chọn liên kết: {{url}}",
         "invitePhone": "",
         "invitePhoneAlternatives": "",
         "inviteURLFirstPartGeneral": "Bạn được mời tham gia một cuộc họp.",
@@ -346,16 +346,16 @@
         "enterStreamKey": "Nhập key trực tuyến Youtube của bạn.",
         "error": "Phát trực tuyến thất bại. Xin vui lòng thử lại.",
         "errorAPI": "Lỗi xảy ra khi truy cập phát sóng Youtube của bạn. Vui lòng truy cập lại.",
-        "errorLiveStreamNotEnabled": "Phát trực tuyến không được bật với email {{email}}.  Vui lòng bật phát trực tuyến hoặc truy cập một tài khoản đã bật phát trực tuyến.",
+        "errorLiveStreamNotEnabled": "Phát trực tuyến không được bật với email {{email}}. Vui lòng bật phát trực tuyến hoặc truy cập một tài khoản đã bật phát trực tuyến.",
         "expandedOff": "Phát trực tuyến đã dừng",
         "expandedOn": "Cuộc họp đang được phát trên Youtube.",
-        "expandedPending": "Phát trực tuyến đang bắt đầu...",
+        "expandedPending": "Phát trực tuyến đang bắt đầu…",
         "failedToStart": "Không thể bắt đầu phát trực tuyến",
         "getStreamKeyManually": "Không thể thu nhận phát trực tuyến nào. Thử lấy mã phát trực tuyến từ Youtube.",
         "invalidStreamKey": "Mã phát trực tuyến có thể sai.",
         "off": "Phát trực tuyến đã dừng",
         "on": "Phát trực tuyến",
-        "pending": "Đang bắt đầu phát trực tuyến...",
+        "pending": "Đang bắt đầu phát trực tuyến…",
         "serviceName": "Dịch vụ Phát trực tuyến",
         "signedInAs": "Bạn đang đăng nhập theo:",
         "signIn": "Đăng nhập với Google",
@@ -398,7 +398,7 @@
     "lockRoomPasswordUppercase": "Mật khẩu",
     "me": "Tôi",
     "notify": {
-        "connectedOneMember": "{{name}}  đã tham gia cuộc họp",
+        "connectedOneMember": "{{name}} đã tham gia cuộc họp",
         "connectedThreePlusMembers": "{{name}} và{{count}} khác đã tham gia cuộc họp",
         "connectedTwoMembers": "{{first}} và{{second}} đã tham gia cuộc họp",
         "disconnected": "đã ngắt kết nối",
@@ -421,7 +421,7 @@
         "somebody": "Ai đó",
         "startSilentTitle": "",
         "startSilentDescription": "",
-        "suboptimalExperienceDescription": "Chúng tôi lo rằng trải nghiệm của bạn với  {{appName}}  đang không tốt. Chúng tôi đang tìm cách cải thiện, hiện tại thử một trong <a href='static/recommendedBrowsers.html' target='_blank'>các trình duyệt được hỗ trợ</a>.",
+        "suboptimalExperienceDescription": "Chúng tôi lo rằng trải nghiệm của bạn với  {{appName}}  đang không tốt. Chúng tôi đang tìm cách cải thiện, hiện tại thử một trong <a href='{{recommendedBrowserPageLink}}' target='_blank'>các trình duyệt được hỗ trợ</a>.",
         "suboptimalExperienceTitle": "Cảnh báo trình duyệt",
         "unmute": "",
         "newDeviceCameraTitle": "Camera mới được phát hiện",
@@ -433,22 +433,22 @@
     "poweredby": "Được hỗ trợ bởi",
     "presenceStatus": {
         "busy": "Bận",
-        "calling": "Đang gọi...",
+        "calling": "Đang gọi…",
         "connected": "Đã kết nối",
-        "connecting": "Đang kết nối...",
+        "connecting": "Đang kết nối…",
         "connecting2": "Đang kết nối*...",
         "disconnected": "Đã ngắt kết nối",
         "expired": "Hết hạn",
         "ignored": "Đã bỏ qua",
-        "initializingCall": "Đang tạo cuộc gọi...",
+        "initializingCall": "Đang tạo cuộc gọi…",
         "invited": "Đã mời",
         "rejected": "Đã từ chối",
-        "ringing": "Đang đổ chuông..."
+        "ringing": "Đang đổ chuông…"
     },
     "profile": {
         "setDisplayNameLabel": "Nhập tên hiển thị của bạn",
         "setEmailInput": "Nhập địa chỉ e-mail",
-        "setEmailLabel": "Nhập địa chỉ gravatar email của bạn",
+        "setEmailLabel": "Nhập địa chỉ Gravatar thư điện tử của bạn",
         "title": "Hồ sơ"
     },
     "recording": {
@@ -460,14 +460,14 @@
         "error": "Ghi âm không thành công. Vui lòng thử lại.",
         "expandedOff": "Ghi hình đã dừng",
         "expandedOn": "Cuộc họp đang được ghi hình.",
-        "expandedPending": "Ghi hình đang khởi động...",
+        "expandedPending": "Ghi hình đang khởi động…",
         "failedToStart": "Khởi động ghi âm thất bại",
         "fileSharingdescription": "Chia sẻ ghi hình với người tham gia họp",
         "live": "Trực tuyến",
         "loggedIn": "Đã đăng nhập dưới tên {{userName}}",
         "off": "Đã ngừng ghi âm",
         "on": "Đang ghi âm",
-        "pending": "Đang chuẩn bị để ghi hình cuộc họp...",
+        "pending": "Đang chuẩn bị để ghi hình cuộc họp…",
         "rec": "REC",
         "serviceDescription": "Ghi hình của bạn sẽ được lưu bởi dịch vụ ghi hình",
         "serviceName": "Dịch vụ ghi hình",
@@ -563,7 +563,7 @@
             "recording": "Mở/Đóng Ghi hình",
             "remoteMute": "Tắt tiếng người tham gia",
             "Settings": "Mở/Đóng Cấu hình",
-            "sharedvideo": "Mở/Đóng Chia sẻ Youtube",
+            "sharedvideo": "Mở/Đóng Chia sẻ YouTube",
             "shareRoom": "Mời ai đó",
             "shareYourScreen": "Mở/Đóng Chia sẻ màn hình",
             "shortcuts": "Mở/Đóng Phím tắt",
@@ -625,7 +625,7 @@
         "failedToStart": "Khởi chạy phiên âm thất bại",
         "labelToolTip": "Cuộc họp đang được phiên âm",
         "off": "Phiên âm đã dừng",
-        "pending": "Đang chuẩn bị phiên âm cuộc họp...",
+        "pending": "Đang chuẩn bị phiên âm cuộc họp…",
         "start": "Bắt đầu hiển thị phụ đề",
         "stop": "Dừng hiển thị phụ đề",
         "tr": "TR"
@@ -650,7 +650,7 @@
         "errorInviteFailed": "Chúng tôi đang xử lý vấn đề. Vui lòng thử lại sau.",
         "errorInviteFailedTitle": "Mời {{displayName}} thất bại",
         "errorInviteTitle": "Lỗi mời họp",
-        "pending": "{{displayName}}  đã được mời"
+        "pending": "{{displayName}} đã được mời"
     },
     "videoStatus": {
         "audioOnly": "AUD",
@@ -664,9 +664,6 @@
         "lowDefinition": "Phân giải thấp",
         "onlyAudioAvailable": "Chỉ có âm thanh sẵn sàng",
         "onlyAudioSupported": "Chỉ hỗ trợ âm thanh trên trình duyệt này.",
-        "p2pEnabled": "Peer to Peer đã bật",
-        "p2pVideoQualityDescription": "",
-        "recHighDefinitionOnly": "Ưu tiên phân giải HD.",
         "sd": "SD",
         "standardDefinition": "Phân giải SD"
     },

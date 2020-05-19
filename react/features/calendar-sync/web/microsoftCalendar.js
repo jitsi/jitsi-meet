@@ -6,8 +6,7 @@ import type { Dispatch } from 'redux';
 
 import { createDeferred } from '../../../../modules/util/helpers';
 
-import parseURLParams from '../../base/config/parseURLParams';
-import { parseStandardURIString } from '../../base/util';
+import { parseStandardURIString, parseURLParams } from '../../base/util';
 import { getShareInfoText } from '../../invite';
 
 import { setCalendarAPIAuthState } from '../actions';

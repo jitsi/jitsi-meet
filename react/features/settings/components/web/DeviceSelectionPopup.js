@@ -20,8 +20,8 @@ import {
     setVideoInputDevice
 } from '../../../../../modules/API/external/functions';
 
-import parseURLParams from '../../../base/config/parseURLParams';
 import DialogWithTabs from '../../../base/dialog/components/web/DialogWithTabs';
+import { parseURLParams } from '../../../base/util/parseURLParams';
 import DeviceSelection from '../../../device-selection/components/DeviceSelection';
 
 /**

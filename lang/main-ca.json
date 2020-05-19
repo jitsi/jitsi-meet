@@ -65,7 +65,7 @@
         "dontShowAgain": "No m'ho mostris més"
     },
     "connectingOverlay": {
-        "joiningRoom": "S'està connectat a la reunió..."
+        "joiningRoom": "S'està connectat a la reunió…"
     },
     "connection": {
         "ATTACHED": "Adjunt",
@@ -77,9 +77,9 @@
         "DISCONNECTED": "Desconnectat",
         "DISCONNECTING": "S'està desconnectant",
         "ERROR": "Error",
-        "FETCH_SESSION_ID": "S'està obtenint un identificador de sessió...",
+        "FETCH_SESSION_ID": "S'està obtenint un identificador de sessió…",
         "GET_SESSION_ID_ERROR": "S'ha produït un error en obtenir l'identificador de la sessió: {{code}}",
-        "GOT_SESSION_ID": "Obtenció d'identificador de sessió.... Fet",
+        "GOT_SESSION_ID": "Obtenció d'identificador de sessió… Fet",
         "LOW_BANDWIDTH": "S'ha apagat el vídeo de {{displayName}} per a estalviar ample de banda"
     },
     "connectionindicator": {
@@ -125,7 +125,7 @@
         "downloadApp": "Baixa l'aplicació",
         "launchWebButton": "Inicia al web",
         "openApp": "Continua en l'aplicació",
-        "title": "S'està iniciant la reunió en {{app}}....",
+        "title": "S'està iniciant la reunió en {{app}}…",
         "tryAgainButton": "Torna-ho a intentar en l'escriptori"
     },
     "defaultLink": "p. ex. {{url}}",
@@ -160,9 +160,9 @@
         "cameraUnsupportedResolutionError": "La vostra càmera no permet la resolució de vídeo requerida.",
         "Cancel": "Cancel·la",
         "close": "Tanca",
-        "conferenceDisconnectMsg": "Potser vulgueu comprovar la connexió a la xarxa. Es tornarà a connecta en {{seconds}} segons...",
+        "conferenceDisconnectMsg": "Potser vulgueu comprovar la connexió a la xarxa. Es tornarà a connecta en {{seconds}} segons…",
         "conferenceDisconnectTitle": "Esteu desconnectat.",
-        "conferenceReloadMsg": "Estem intentat de corregir-ho. Tornem a connectar en  {{seconds}} segons...",
+        "conferenceReloadMsg": "Estem intentat de corregir-ho. Tornem a connectar en {{seconds}} segons…",
         "conferenceReloadTitle": "Malauradament, alguna cosa no ha anat bé.",
         "confirm": "Confirmo",
         "confirmNo": "No",
@@ -188,7 +188,7 @@
         "inlineInstallExtension": "Instal·la-ho ara",
         "internalError": "Vaja! Alguna cosa no ha anat bé. S'ha produït l'error següent: {{error}}",
         "internalErrorTitle": "Error intern",
-        "kickMessage": "Per a més detalls, podeu contactar amb  {{participantDisplayName}}.",
+        "kickMessage": "Per a més detalls, podeu contactar amb {{participantDisplayName}}.",
         "kickParticipantButton": "Expulsa",
         "kickParticipantDialog": "Esteu segur que voleu expulsar aquest participant?",
         "kickParticipantTitle": "Voleu expulsar aquest participant?",
@@ -279,7 +279,7 @@
         "userPassword": "contrasenya d'usuari",
         "WaitForHostMsg": "La conferència <b>{{room}}</b> encara no ha començat. Si en sou l'amfitrió autentiqueu-vos. Altrament, espereu que arribi l'amfitrió.",
         "WaitForHostMsgWOk": "La conferència <b>{{room}}</b> encara no ha començat. Si sou l'amfitrió aleshores pitgeu «D'acord» per a autenticar-vos. Altrament, espereu que arribi l'amfitrió.",
-        "WaitingForHost": "S'està esperant l'amfitrió...",
+        "WaitingForHost": "S'està esperant l'amfitrió…",
         "Yes": "Sí",
         "yourEntireScreen": "La pantalla sencera",
         "screenSharingAudio": "Comparteix l'àudio"
@@ -321,7 +321,7 @@
         "genericError": "Vaja, alguna cosa no ha anat bé.",
         "inviteLiveStream": "Per a veure la transmissió en directe d'aquesta reunió, feu clic en aquest enllaç: {{url}}",
         "invitePhone": "Per a unir-vos per telèfon, toqueu això: {{number}},,{{conferenceID}}#\n",
-        "invitePhoneAlternatives": "Esteu cercant un número de marcatge diferent?\nVegeu els números de marcatge de la reunió:  {{url}}\n\n\nSi també truqueu via un telèfon de reunió, uniu-vos-hi sense connectar l'àudio: {{silentUrl}}",
+        "invitePhoneAlternatives": "Esteu cercant un número de marcatge diferent?\nVegeu els números de marcatge de la reunió: {{url}}\n\n\nSi també truqueu via un telèfon de reunió, uniu-vos-hi sense connectar l'àudio: {{silentUrl}}",
         "inviteURLFirstPartGeneral": "Us han convidat a unir-vos a una reunió.",
         "inviteURLFirstPartPersonal": "{{name}} us convida a una reunió.\n",
         "inviteURLSecondPart": "\nUniu-vos a la reunió:\n{{url}}\n",
@@ -379,7 +379,7 @@
         "errorLiveStreamNotEnabled": "La transmissió en directe no està activada a ̣{{email}}. Activeu-la o inicieu sessió en un compte que tingui la transmissió en directe activada.",
         "expandedOff": "S'ha aturat la transmissió en directe",
         "expandedOn": "Ara mateix, la reunió s'està transmetent a Youtube.",
-        "expandedPending": "S'ha iniciat la transmissió en directe...",
+        "expandedPending": "S'ha iniciat la transmissió en directe…",
         "failedToStart": "No s'ha pogut iniciar la transmissió en directe",
         "getStreamKeyManually": "No hem pogut obtenir cap transmissió en directe. Intenteu d'obtenir la clau de transmissió en directe del YouTube.",
         "invalidStreamKey": "La clau de transmissió en directe pot ser incorrecta.",
@@ -387,7 +387,7 @@
         "offBy": "{{name}} ha aturat la transmissió en directe",
         "on": "Transmissió en directe",
         "onBy": "{{name}} ha iniciat la transmissió en directe",
-        "pending": "S'està iniciant la transmissió en directe...",
+        "pending": "S'està iniciant la transmissió en directe…",
         "serviceName": "Servei de transmissió en directe",
         "signedInAs": "Teniu sessió iniciada com a:",
         "signIn": "Inicia sessió amb Google",
@@ -455,7 +455,7 @@
         "somebody": "Algú",
         "startSilentTitle": "Us hi heu unit sense cap sortida d'àudio!",
         "startSilentDescription": "Torneu a entrar per a activar l'àudio",
-        "suboptimalBrowserWarning": "Ens sap greu que la vostra experiència de reunió aquí no serà gaire bona. Cerquem maneres per a millorar-la, però fins aleshores, proveu de fer servir algun dels <a href='static/recommendedBrowsers.html' target='_blank'>navegadors completament compatibles</a>.",
+        "suboptimalBrowserWarning": "Ens sap greu que la vostra experiència de reunió aquí no serà gaire bona. Cerquem maneres per a millorar-la, però fins aleshores, proveu de fer servir algun dels <a href='{{recommendedBrowserPageLink}}' target='_blank'>navegadors completament compatibles</a>.",
         "suboptimalExperienceTitle": "Avís del navegador",
         "unmute": "Activa el so",
         "newDeviceCameraTitle": "S'ha detectat una càmera nova",
@@ -467,9 +467,9 @@
     "poweredby": "funciona amb",
     "presenceStatus": {
         "busy": "Ocupat",
-        "calling": "S'està trucant...",
+        "calling": "S'està trucant…",
         "connected": "Connectat",
-        "connecting": "Està connectant...",
+        "connecting": "Està connectant…",
         "connecting2": "Està connectant*...",
         "disconnected": "Desconnectat",
         "expired": "Ha expirat",
@@ -510,7 +510,7 @@
         "serviceName": "Servei d'enregistrament",
         "signIn": "Inicia la sessió",
         "signOut": "Tanca la sessió",
-        "unavailable": "Vaja! El servei  {{serviceName}} ara mateix no és disponible. Treballem per a resoldre el problema. Torneu-ho a intentar més tard.",
+        "unavailable": "Vaja! El servei {{serviceName}} ara mateix no és disponible. Treballem per a resoldre el problema. Torneu-ho a intentar més tard.",
         "unavailableTitle": "L'enregistrament no és disponible"
     },
     "sectionList": {
@@ -561,7 +561,7 @@
         "version": "Versió"
     },
     "share": {
-        "dialInfoText": "\n\n=====\n\nNomés voleu marcar en el telèfon?\n\n{{defaultDialInNumber}}Feu clic en aquest enllaç per a veure el marcatge de números de telèfon per a aquesta reunió{{dialInfoPageUrl}}",
+        "dialInfoText": "\n\n=====\n\nNomés voleu marcar en el telèfon?\n\n{{defaultDialInNumber}}Feu clic en aquest enllaç per a veure el marcatge de números de telèfon per a aquesta reunió\n{{dialInfoPageUrl}}",
         "mainText": "Feu clic a l'enllaç següent per a unir-vos a la reunió:\n{{roomUrl}}"
     },
     "speaker": "Altaveu",
@@ -686,7 +686,7 @@
         "failedToStart": "No s'ha pogut iniciar la transcripció",
         "labelToolTip": "La reunió s'està transcrivint",
         "off": "La transcripció s'ha aturat",
-        "pending": "S'està preparant per a enregistrar la reunió...",
+        "pending": "S'està preparant per a enregistrar la reunió…",
         "start": "Activa els subtítols",
         "stop": "Desactiva els subtítols",
         "tr": "TR"
@@ -727,9 +727,6 @@
         "lowDefinition": "Baixa definició",
         "onlyAudioAvailable": "Només hi ha disponible l'àudio",
         "onlyAudioSupported": "Només es permet àudio en aquest navegador.",
-        "p2pEnabled": "Mode d'igual a igual activat",
-        "p2pVideoQualityDescription": "En el mode d'igual a igual, la qualitat del vídeo rebut només es pot canviar entre alta i només àudio. La resta de configuracions no es compliran fins sortir del mode d'igual a igual.",
-        "recHighDefinitionOnly": "L'alta definició serà preferent.",
         "sd": "SD",
         "sdTooltip": "Vídeo en definició estàndard",
         "standardDefinition": "Definició estàndard"
@@ -751,7 +748,7 @@
             "join": "Toqueu per a unir-vos-hi",
             "roomname": "Introduïu el nom de la sala"
         },
-        "appDescription": "Endavant, xat de vídeo amb tot l'equip. De fet, convideu tothom que conegueu. {{app}} és una solució de videoconferència de codi obert 100% completament xifrada que podeu utilitzar durant tot el dia, tots els dies,  gratuïtament, sense necessitat de compte.",
+        "appDescription": "Endavant, xat de vídeo amb tot l'equip. De fet, convideu tothom que conegueu. {{app}} és una solució de videoconferència de codi obert 100% completament xifrada que podeu utilitzar durant tot el dia, tots els dies, gratuïtament, sense necessitat de compte.",
         "audioVideoSwitch": {
             "audio": "Veu",
             "video": "Vídeo"

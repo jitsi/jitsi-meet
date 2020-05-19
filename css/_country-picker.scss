@@ -1,0 +1,75 @@
+.cpick {
+    border: 1px solid #A4B8D1;
+    color: #fff;
+    display: flex;
+    font-size: 15px;
+    height: 38px;
+    line-height: 24px;
+
+    &-selector {
+        align-items: center;
+        background-color: #283447;
+        border-right: 1px solid #A4B8D1;
+        cursor: pointer;
+        display: flex;
+        padding: 8px 10px;
+        position: relative;
+        width: 88px;
+    }
+
+    &-icon {
+        margin-right: 8px;
+        position: absolute;
+        right: 0;
+        top: 12px;
+
+        & > svg {
+            fill: #fff;
+        }
+    }
+
+    &-input {
+        padding: 8px;
+        background: #1C2025;
+        border: 0;
+        margin: 0;
+        color: #fff;
+        caret-color: #0376DA;
+        flex-grow: 1;
+    }
+
+    &-dropdown {
+        height: 190px;
+        overflow-y: auto;
+        width: 343px;
+    }
+
+    &-dropdown-entry {
+        align-items: center;
+        cursor: pointer;
+        display: flex;
+        height: 40px;
+        padding: 0 10px;
+
+        &:hover {
+            background-color: #66768b;
+        }
+
+        &-text {
+            color: #fff;
+            flex-grow: 1;
+            font-size: 15px;
+            line-height: 24px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+
+        }
+    }
+}
+
+// Override @Atlaskit/inline-dialog styles
+.cpick-container > div > div:nth-child(2) > div > div {
+    outline: none;
+    padding: 8px 0 0 0;
+}

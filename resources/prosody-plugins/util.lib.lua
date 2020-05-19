@@ -66,7 +66,7 @@ function async_handler_wrapper(event, handler)
     end
 
     local runner = async.runner;
-    
+
     -- Grab a local response so that we can send the http response when
     -- the handler is done.
     local response = event.response;
@@ -172,8 +172,22 @@ function is_feature_allowed(session, feature)
     end
 end
 
+function starts_with(str, start)
+    return str:sub(1, #start) == start
+end
+
+-- healthcheck rooms in jicofo starts with a string '__jicofo-health-check'
+function is_healthcheck_room(room_jid)
+    if starts_with(room_jid, "__jicofo-health-check") then
+        return true;
+    end
+
+    return false;
+end
+
 return {
     is_feature_allowed = is_feature_allowed;
+    is_healthcheck_room = is_healthcheck_room;
     get_room_from_jid = get_room_from_jid;
     async_handler_wrapper = async_handler_wrapper;
     room_jid_match_rewrite = room_jid_match_rewrite;
