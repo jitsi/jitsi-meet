@@ -11,12 +11,12 @@ import {
     setSubject
 } from '../../react/features/base/conference';
 import { parseJWTFromURLParams } from '../../react/features/base/jwt';
+import { participantUpdated } from '../../react/features/base/participants';
 import { setE2EEKey } from '../../react/features/e2ee';
 import { invite } from '../../react/features/invite';
 import { toggleTileView } from '../../react/features/video-layout';
 import { setVideoQuality } from '../../react/features/video-quality';
 import { getJitsiMeetTransport } from '../transport';
-
 import { API_ID, ENDPOINT_TEXT_MESSAGE_NAME } from './constants';
 import {
     processExternalDeviceRequest
@@ -145,6 +145,14 @@ function initCommands() {
             sendAnalytics(createApiEvent('tile-view.toggled'));
 
             APP.store.dispatch(toggleTileView());
+        },
+        'toggle-raise-hand': () => {
+            sendAnalytics(createApiEvent('raise-hand.toggled'));
+            APP.store.dispatch(participantUpdated({
+                id: APP.conference.getMyUserId(),
+                local: true,
+                raisedHand: !APP.conference._room.getLocalParticipantProperty('raisedHand')
+            }));
         },
         'video-hangup': (showFeedbackDialog = true) => {
             sendAnalytics(createApiEvent('video.hangup'));
