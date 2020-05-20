@@ -23,6 +23,7 @@ compile:
 clean:
 	rm -fr $(BUILD_DIR)
 
+.NOTPARALLEL:
 deploy: deploy-init deploy-appbundle deploy-rnnoise-binary deploy-lib-jitsi-meet deploy-libflac deploy-css deploy-local
 
 deploy-init:
@@ -86,6 +87,7 @@ dev-deploy-html:
 	mkdir -p $(HTML_DIR)
 	$(PREPROCESSHTML) index.html $(HTML_DIR)/index.html
 
+.NOTPARALLEL:
 dev: deploy-init deploy-css deploy-rnnoise-binary deploy-lib-jitsi-meet deploy-libflac dev-deploy-html
 	$(WEBPACK_DEV_SERVER)
 

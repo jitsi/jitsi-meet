@@ -2,6 +2,7 @@
 
 import { i18next } from '../base/i18n';
 import { isLocalParticipantModerator } from '../base/participants';
+import { toState } from '../base/redux';
 import { doGetJSON, parseURIString } from '../base/util';
 
 import logger from './logger';
@@ -615,4 +616,70 @@ export function _decodeRoomURI(url: string) {
     }
 
     return roomUrl;
+}
+
+/**
+ * Returns the stored conference id.
+ *
+ * @param {Object | Function} stateful - The Object or Function that can be
+ * resolved to a Redux state object with the toState function.
+ * @returns {string}
+ */
+export function getConferenceId(stateful: Object | Function) {
+    return toState(stateful)['features/invite'].conferenceID;
+}
+
+/**
+ * Returns the default dial in number from the store.
+ *
+ * @param {Object | Function} stateful - The Object or Function that can be
+ * resolved to a Redux state object with the toState function.
+ * @returns {string | null}
+ */
+export function getDefaultDialInNumber(stateful: Object | Function) {
+    return _getDefaultPhoneNumber(toState(stateful)['features/invite'].numbers);
+}
+
+/**
+ * Executes the dial out request.
+ *
+ * @param {string} url - The url for dialing out.
+ * @param {Object} body - The body of the request.
+ * @param {string} reqId - The unique request id.
+ * @returns {Object}
+ */
+export async function executeDialOutRequest(url: string, body: Object, reqId: string) {
+    const res = await fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'request-id': reqId
+        },
+        body: JSON.stringify(body)
+    });
+
+    const json = await res.json();
+
+    return res.ok ? json : Promise.reject(json);
+}
+
+/**
+ * Executes the dial out status request.
+ *
+ * @param {string} url - The url for dialing out.
+ * @param {string} reqId - The unique request id used on the dial out request.
+ * @returns {Object}
+ */
+export async function executeDialOutStatusRequest(url: string, reqId: string) {
+    const res = await fetch(url, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'request-id': reqId
+        }
+    });
+
+    const json = await res.json();
+
+    return res.ok ? json : Promise.reject(json);
 }

@@ -96,7 +96,7 @@ class ParticipantName extends Component<Props> {
                 value = { value } />
         )
             : <div
-                className = 'prejoin-preview-name'
+                className = 'prejoin-preview-name prejoin-preview-name--text'
                 onKeyDown = { _onKeyDown }
                 tabIndex = '0' >
                 {value}

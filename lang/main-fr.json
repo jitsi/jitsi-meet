@@ -456,7 +456,7 @@
         "somebody": "Quelqu'un",
         "startSilentTitle": "Vous avez rejoint sans sortie audio !",
         "startSilentDescription": "Rejoignez la réunion de nouveau pour activer l'audio",
-        "suboptimalBrowserWarning": "Nous craignons que votre expérience de réunion en ligne ne soit bonne ici. Nous cherchons des moyens d’améliorer cela, mais d’ici-là, essayez d’utiliser l’un des <a href='static/recommendedBrowsers.html' target='_blank'>navigateurs supportés</a>.",
+        "suboptimalBrowserWarning": "Nous craignons que votre expérience de réunion en ligne ne soit bonne ici. Nous cherchons des moyens d’améliorer cela, mais d’ici-là, essayez d’utiliser l’un des <a href='{{recommendedBrowserPageLink}}' target='_blank'>navigateurs supportés</a>.",
         "suboptimalExperienceTitle": "Avertissement du navigateur",
         "unmute": "Rétablir le son",
         "newDeviceCameraTitle": "Nouvelle caméra détectée",
@@ -729,9 +729,6 @@
         "lowDefinition": "Basse définition",
         "onlyAudioAvailable": "Seul l'audio est disponible",
         "onlyAudioSupported": "Nous ne supportons que l'audio sur ce navigateur.",
-        "p2pEnabled": "Peer to Peer activé",
-        "p2pVideoQualityDescription": "En mode peer to peer, la qualité vidéo reçue ne peut être basculée qu'entre haute et audio uniquement. Les autres paramètres ne seront pas pris en compte jusqu'à ce que vous quittiez le mode peer to peer.",
-        "recHighDefinitionOnly": "Va préférer la haute définition.",
         "sd": "MD",
         "sdTooltip": "Regardez la vidéo en définition standard",
         "standardDefinition": "Moyenne Définition"
