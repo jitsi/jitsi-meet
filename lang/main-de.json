@@ -359,7 +359,7 @@
         "mute": "Stummschaltung aktivieren oder deaktivieren",
         "pushToTalk": "Push-to-Talk (Sprechtaste)",
         "raiseHand": "Hand erheben",
-        "showSpeakerStats": "Statistiken für Sprecher anzeigen",
+        "showSpeakerStats": "Sprecherstatistik anzeigen",
         "toggleChat": "Chat öffnen oder schließen",
         "toggleFilmstrip": "Video-Miniaturansichten ein- oder ausblenden",
         "toggleScreensharing": "Zwischen Kamera und Bildschirmfreigabe wechseln",
@@ -570,8 +570,8 @@
         "minutes": "{{count}}m",
         "name": "Name",
         "seconds": "{{count}}s",
-        "speakerStats": "Sprecher-Statistiken",
-        "speakerTime": "Sprecher-Zeit"
+        "speakerStats": "Sprecherstatistik",
+        "speakerTime": "Sprecherzeit"
     },
     "startupoverlay": {
         "policyText": " ",
@@ -665,7 +665,7 @@
         "sharedvideo": "YouTube-Video teilen",
         "shareRoom": "Person einladen",
         "shortcuts": "Tastenkürzel anzeigen",
-        "speakerStats": "Sprecher-Statistiken",
+        "speakerStats": "Sprecherstatistik",
         "startScreenSharing": "Bildschirmfreigabe starten",
         "startSubtitles": "Untertitel einschalten",
         "stopScreenSharing": "Bildschirmfreigabe stoppen",
