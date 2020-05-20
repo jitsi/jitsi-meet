@@ -11,7 +11,6 @@ import { JitsiRecordingConstants } from '../../../../base/lib-jitsi-meet';
 import { getLocalParticipant } from '../../../../base/participants';
 import { connect } from '../../../../base/redux';
 import { getActiveSession } from '../../../../recording';
-
 import { updateDialInNumbers } from '../../../actions';
 import { _getDefaultPhoneNumber, getInviteText, isAddPeopleEnabled, isDialOutEnabled } from '../../../functions';
 

@@ -1,7 +1,9 @@
 // @flow
 
 import React from 'react';
+
 import { countries } from '../../utils';
+
 import CountryRow from './CountryRow';
 
 type Props = {

@@ -1,3 +1,5 @@
+import { ReducerRegistry } from '../redux';
+
 import {
     ADD_PENDING_DEVICE_REQUEST,
     REMOVE_PENDING_DEVICE_REQUESTS,
@@ -6,9 +8,6 @@ import {
     UPDATE_DEVICE_LIST
 } from './actionTypes';
 import { groupDevicesByKind } from './functions';
-
-import { ReducerRegistry } from '../redux';
-
 import logger from './logger';
 
 const DEFAULT_STATE = {

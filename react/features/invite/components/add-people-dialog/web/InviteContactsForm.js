@@ -10,7 +10,6 @@ import { Icon, IconPhone } from '../../../../base/icons';
 import { getLocalParticipant } from '../../../../base/participants';
 import { MultiSelectAutocomplete } from '../../../../base/react';
 import { connect } from '../../../../base/redux';
-
 import AbstractAddPeopleDialog, {
     type Props as AbstractProps,
     type State,

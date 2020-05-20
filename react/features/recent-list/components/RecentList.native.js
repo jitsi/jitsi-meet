@@ -10,9 +10,9 @@ import { NavigateSectionList, type Section } from '../../base/react';
 import { connect } from '../../base/redux';
 import { ColorPalette } from '../../base/styles';
 import { DIAL_IN_SUMMARY_VIEW_ID } from '../../invite/constants';
-
 import { deleteRecentListEntry } from '../actions';
 import { isRecentListEnabled, toDisplayableList } from '../functions';
+
 import AbstractRecentList from './AbstractRecentList';
 
 /**

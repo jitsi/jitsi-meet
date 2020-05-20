@@ -3,7 +3,6 @@
 import { Component } from 'react';
 
 import { JitsiRecordingConstants } from '../../base/lib-jitsi-meet';
-
 import { getSessionStatusToShow } from '../functions';
 
 /**

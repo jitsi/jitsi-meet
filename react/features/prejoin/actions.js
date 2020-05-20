@@ -3,6 +3,12 @@
 import uuid from 'uuid';
 
 import { getRoomName } from '../base/conference';
+import { getDialOutStatusUrl, getDialOutUrl } from '../base/config/functions';
+import { createLocalTrack } from '../base/lib-jitsi-meet';
+import { openURLInBrowser } from '../base/util';
+import { executeDialOutRequest, executeDialOutStatusRequest, getDialInfoPageURL } from '../invite/functions';
+import { showErrorNotification } from '../notifications';
+
 import {
     ADD_PREJOIN_AUDIO_TRACK,
     ADD_PREJOIN_CONTENT_SHARING_TRACK,
@@ -21,13 +27,6 @@ import {
     SET_PREJOIN_VIDEO_DISABLED,
     SET_PREJOIN_VIDEO_MUTED
 } from './actionTypes';
-import { getDialOutStatusUrl, getDialOutUrl } from '../base/config/functions';
-import { createLocalTrack } from '../base/lib-jitsi-meet';
-import { openURLInBrowser } from '../base/util';
-import { executeDialOutRequest, executeDialOutStatusRequest, getDialInfoPageURL } from '../invite/functions';
-import logger from './logger';
-import { showErrorNotification } from '../notifications';
-
 import {
     getFullDialOutNumber,
     getAudioTrack,
@@ -36,6 +35,7 @@ import {
     getVideoTrack,
     isJoinByPhoneDialogVisible
 } from './functions';
+import logger from './logger';
 
 const dialOutStatusToKeyMap = {
     INITIATED: 'presenceStatus.calling',

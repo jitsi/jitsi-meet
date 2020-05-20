@@ -15,8 +15,8 @@ import { connect } from '../../redux';
 import type { StyleType } from '../../styles';
 import { TestHint } from '../../testing/components';
 import { getTrackByMediaTypeAndParticipant } from '../../tracks';
-
 import { shouldRenderParticipantVideo } from '../functions';
+
 import styles from './styles';
 
 /**

@@ -1,5 +1,5 @@
-import { BoxModel, ColorPalette, fixAndroidViewClipping } from '../../../base/styles';
 import { ColorSchemeRegistry, schemeColor } from '../../../base/color-scheme';
+import { BoxModel, ColorPalette, fixAndroidViewClipping } from '../../../base/styles';
 import { FILMSTRIP_SIZE } from '../../../filmstrip';
 
 export const NAVBAR_GRADIENT_COLORS = [ '#000000FF', '#00000000' ];

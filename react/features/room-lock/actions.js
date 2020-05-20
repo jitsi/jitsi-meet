@@ -12,6 +12,7 @@ import {
     setPassword
 } from '../base/conference';
 import { hideDialog, openDialog } from '../base/dialog';
+
 import { PasswordRequiredPrompt, RoomLockPrompt } from './components';
 
 declare var APP: Object;

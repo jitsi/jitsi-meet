@@ -5,7 +5,6 @@ import { translate } from '../../../base/i18n';
 import { IconLockPassword, IconUnlockPassword } from '../../../base/icons';
 import { connect } from '../../../base/redux';
 import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox';
-
 import { openSecurityDialog } from '../../actions';
 
 

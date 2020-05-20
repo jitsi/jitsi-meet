@@ -2,7 +2,6 @@ import { ModalTransition } from '@atlaskit/modal-dialog';
 import React from 'react';
 
 import { connect } from '../../../redux';
-
 import AbstractDialogContainer, {
     abstractMapStateToProps
 } from '../AbstractDialogContainer';

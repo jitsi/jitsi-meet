@@ -1,17 +1,15 @@
 // @flow
 import { generateRoomWithoutSeparator } from 'js-utils/random';
-
 import type { Dispatch } from 'redux';
 
 import { getDefaultURL } from '../app';
 import { openDialog } from '../base/dialog';
 
 import { refreshCalendar } from './actions';
-import { addLinkToCalendarEntry } from './functions.native';
-
 import {
     UpdateCalendarEventDialog
 } from './components';
+import { addLinkToCalendarEntry } from './functions.native';
 
 export * from './actions.any';
 

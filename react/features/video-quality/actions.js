@@ -1,9 +1,11 @@
 // @flow
 
+import type { Dispatch } from 'redux';
+
 import { VIDEO_QUALITY_LEVELS } from '../base/conference';
+
 import logger from './logger';
 
-import type { Dispatch } from 'redux';
 
 /**
  * Sets the maximum video size the local participant should send and receive from

@@ -8,9 +8,7 @@ import { colors } from '@atlaskit/theme';
 import React from 'react';
 
 import { translate } from '../../../base/i18n';
-
 import { NOTIFICATION_TYPE } from '../../constants';
-
 import AbstractNotification, {
     type Props
 } from '../AbstractNotification';

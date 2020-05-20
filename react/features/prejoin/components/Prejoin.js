@@ -1,31 +1,33 @@
 // @flow
 
-import React, { Component } from 'react';
 import InlineDialog from '@atlaskit/inline-dialog';
+import React, { Component } from 'react';
+
+import { getRoomName } from '../../base/conference';
+import { translate } from '../../base/i18n';
+import { Icon, IconPhone, IconVolumeOff } from '../../base/icons';
+import { connect } from '../../base/redux';
+import { getDisplayName, updateSettings } from '../../base/settings';
+import { isGuest } from '../../invite';
+import { VideoSettingsButton, AudioSettingsButton } from '../../toolbox';
 import {
     joinConference as joinConferenceAction,
     joinConferenceWithoutAudio as joinConferenceWithoutAudioAction,
     setSkipPrejoin as setSkipPrejoinAction,
     setJoinByPhoneDialogVisiblity as setJoinByPhoneDialogVisiblityAction
 } from '../actions';
-import { getRoomName } from '../../base/conference';
-import { Icon, IconPhone, IconVolumeOff } from '../../base/icons';
-import { translate } from '../../base/i18n';
-import { connect } from '../../base/redux';
-import { getDisplayName, updateSettings } from '../../base/settings';
-import ActionButton from './buttons/ActionButton';
 import {
     isJoinByPhoneButtonVisible,
     isDeviceStatusVisible,
     isJoinByPhoneDialogVisible
 } from '../functions';
-import { isGuest } from '../../invite';
+
+import ActionButton from './buttons/ActionButton';
+import JoinByPhoneDialog from './dialogs/JoinByPhoneDialog';
 import CopyMeetingUrl from './preview/CopyMeetingUrl';
 import DeviceStatus from './preview/DeviceStatus';
 import ParticipantName from './preview/ParticipantName';
 import Preview from './preview/Preview';
-import { VideoSettingsButton, AudioSettingsButton } from '../../toolbox';
-import JoinByPhoneDialog from './dialogs/JoinByPhoneDialog';
 
 
 type Props = {

@@ -1,5 +1,7 @@
 // @flow
 
+import Logger from 'jitsi-meet-logger';
+
 import * as JitsiMeetConferenceEvents from '../../ConferenceEvents';
 import {
     createApiEvent,
@@ -11,18 +13,19 @@ import {
     setSubject
 } from '../../react/features/base/conference';
 import { parseJWTFromURLParams } from '../../react/features/base/jwt';
-import { setE2EEKey } from '../../react/features/e2ee';
-import { invite } from '../../react/features/invite';
-import { toggleTileView } from '../../react/features/video-layout';
-import { setVideoQuality } from '../../react/features/video-quality';
-import { getJitsiMeetTransport } from '../transport';
-import { muteAllParticipants } from '../../react/features/remote-video-menu/actions';
-import { API_ID, ENDPOINT_TEXT_MESSAGE_NAME } from './constants';
 import {
     processExternalDeviceRequest
 } from '../../react/features/device-selection/functions';
+import { setE2EEKey } from '../../react/features/e2ee';
+import { invite } from '../../react/features/invite';
+import { muteAllParticipants } from '../../react/features/remote-video-menu/actions';
+import { toggleTileView } from '../../react/features/video-layout';
+import { setVideoQuality } from '../../react/features/video-quality';
+import { getJitsiMeetTransport } from '../transport';
 
-const logger = require('jitsi-meet-logger').getLogger(__filename);
+import { API_ID, ENDPOINT_TEXT_MESSAGE_NAME } from './constants';
+
+const logger = Logger.getLogger(__filename);
 
 declare var APP: Object;
 

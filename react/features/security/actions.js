@@ -1,6 +1,7 @@
 // @flow
 
 import { openDialog } from '../base/dialog';
+
 import { SecurityDialog } from './components/security-dialog';
 
 /**

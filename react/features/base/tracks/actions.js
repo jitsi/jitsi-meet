@@ -2,8 +2,8 @@ import {
     createTrackMutedEvent,
     sendAnalytics
 } from '../../analytics';
-import { JitsiTrackErrors, JitsiTrackEvents } from '../lib-jitsi-meet';
 import { showErrorNotification, showNotification } from '../../notifications';
+import { JitsiTrackErrors, JitsiTrackEvents } from '../lib-jitsi-meet';
 import {
     CAMERA_FACING_MODE,
     MEDIA_TYPE,

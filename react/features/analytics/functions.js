@@ -1,15 +1,16 @@
 // @flow
 
+import {
+    checkChromeExtensionsInstalled,
+    isMobileBrowser
+} from '../base/environment/utils';
 import JitsiMeetJS, {
     analytics,
     browser,
     isAnalyticsEnabled
 } from '../base/lib-jitsi-meet';
 import { getJitsiMeetGlobalNS, loadScript } from '../base/util';
-import {
-    checkChromeExtensionsInstalled,
-    isMobileBrowser
-} from '../base/environment/utils';
+
 import { AmplitudeHandler, MatomoHandler } from './handlers';
 import logger from './logger';
 
