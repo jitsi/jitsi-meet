@@ -761,6 +761,17 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
     }
 
     /**
+     * Returns screen sharing status.
+     *
+     * @returns {Promise} - Resolves with screensharing status and rejects on failure.
+     */
+    isSharingScreen() {
+        return this._transport.sendRequest({
+            name: 'is-sharing-screen'
+        });
+    }
+
+    /**
      * Returns the avatar URL of a participant.
      *
      * @param {string} participantId - The id of the participant.
