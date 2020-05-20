@@ -3,23 +3,45 @@
         color: #fff;
         font-size: 15px;
         line-height: 24px;
-        
-        &.password {
+
+        &.password-section {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
+            flex-direction: column;
 
-            &-actions {
-                a {
-                    cursor: pointer;
-                    text-decoration: none;
-                    font-size: 14px;
-                    color: #6FB1EA;
-                }
+            .password {
+                align-items: center;
+                display: flex;
+                justify-content: space-between;
+                margin-top: 15px;
 
-                & > :first-child:not(:last-child) {
-                    margin-right: 24px;
+                &-actions {
+                    a {
+                        cursor: pointer;
+                        text-decoration: none;
+                        font-size: 14px;
+                        color: #6FB1EA;
+                    }
+
+                    &>a+a {
+                        margin-left: 24px;
+                    }
                 }
+            }
+        }
+
+        &> :first-child:not(:last-child) {
+            margin-right: 24px;
+        }
+
+        .separator-line {
+            margin: 24px 0 24px -20px;
+            padding: 0 20px;
+            width: 100%;
+            height: 1px;
+            background: #5E6D7A;
+
+            &:last-child {
+                display: none;
             }
         }
     }

@@ -3,20 +3,14 @@
 import { PureComponent } from 'react';
 
 import { isLocalParticipantModerator } from '../../base/participants';
-import { isToolboxVisible } from '../../toolbox';
 import { setKnockingParticipantApproval } from '../actions';
 
-type Props = {
+export type Props = {
 
     /**
      * The list of participants.
      */
     _participants: Array<Object>,
-
-    /**
-     * True if the toolbox is visible, so we need to adjust the position.
-     */
-    _toolboxVisible: boolean,
 
     /**
      * True if the list should be rendered.
@@ -37,13 +31,13 @@ type Props = {
 /**
  * Abstract class to encapsulate the platform common code of the {@code KnockingParticipantList}.
  */
-export default class AbstractKnockingParticipantList extends PureComponent<Props> {
+export default class AbstractKnockingParticipantList<P: Props = Props> extends PureComponent<P> {
     /**
      * Instantiates a new component.
      *
      * @inheritdoc
      */
-    constructor(props: Props) {
+    constructor(props: P) {
         super(props);
 
         this._onRespondToParticipant = this._onRespondToParticipant.bind(this);
@@ -72,11 +66,10 @@ export default class AbstractKnockingParticipantList extends PureComponent<Props
  * @returns {Props}
  */
 export function mapStateToProps(state: Object): $Shape<Props> {
-    const _participants = state['features/lobby'].knockingParticipants;
+    const { knockingParticipants, lobbyEnabled } = state['features/lobby'];
 
     return {
-        _participants,
-        _toolboxVisible: isToolboxVisible(state),
-        _visible: isLocalParticipantModerator(state) && Boolean(_participants?.length)
+        _participants: knockingParticipants,
+        _visible: lobbyEnabled && isLocalParticipantModerator(state) && Boolean(knockingParticipants.length)
     };
 }

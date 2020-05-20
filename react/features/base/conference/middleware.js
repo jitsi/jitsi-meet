@@ -145,10 +145,6 @@ function _conferenceFailed({ dispatch, getState }, next, action) {
     const result = next(action);
     const { conference, error } = action;
 
-    if (error.name === JitsiConferenceErrors.OFFER_ANSWER_FAILED) {
-        sendAnalytics(createOfferAnswerFailedEvent());
-    }
-
     // Handle specific failure reasons.
     switch (error.name) {
     case JitsiConferenceErrors.CONFERENCE_DESTROYED: {
@@ -167,7 +163,7 @@ function _conferenceFailed({ dispatch, getState }, next, action) {
     case JitsiConferenceErrors.CONNECTION_ERROR: {
         const [ msg ] = error.params;
 
-        dispatch(connectionDisconnected(getState()['features/base/connection'].connection, 'Disconnected'));
+        dispatch(connectionDisconnected(getState()['features/base/connection'].connection));
         dispatch(showErrorNotification({
             descriptionArguments: { msg },
             descriptionKey: msg ? 'dialog.connectErrorWithMsg' : 'dialog.connectError',
@@ -176,6 +172,9 @@ function _conferenceFailed({ dispatch, getState }, next, action) {
 
         break;
     }
+    case JitsiConferenceErrors.OFFER_ANSWER_FAILED:
+        sendAnalytics(createOfferAnswerFailedEvent());
+        break;
     }
 
     // FIXME: Workaround for the web version. Currently, the creation of the

@@ -1,22 +1,6 @@
 // @flow
 
-declare var interfaceConfig: Object;
-
-/**
- * Returns a displayable name for the knocking participant.
- *
- * @param {string} name - The received name.
- * @returns {string}
- */
-export function getKnockingParticipantDisplayName(name: string) {
-    if (name) {
-        return name;
-    }
-
-    return typeof interfaceConfig === 'object'
-        ? interfaceConfig.DEFAULT_REMOTE_DISPLAY_NAME
-        : 'Fellow Jitster';
-}
+import { getCurrentConference } from '../base/conference';
 
 /**
  * Approves (lets in) or rejects a knocking participant.
@@ -27,7 +11,7 @@ export function getKnockingParticipantDisplayName(name: string) {
  * @returns {Function}
  */
 export function setKnockingParticipantApproval(getState: Function, id: string, approved: boolean) {
-    const { conference } = getState()['features/base/conference'];
+    const conference = getCurrentConference(getState());
 
     if (conference) {
         if (approved) {

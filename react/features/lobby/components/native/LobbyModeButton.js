@@ -1,11 +1,12 @@
 // @flow
 
-import { translate } from '../../base/i18n';
-import { IconMeetingUnlocked, IconMeetingLocked } from '../../base/icons';
-import { isLocalParticipantModerator } from '../../base/participants';
-import { connect } from '../../base/redux';
-import AbstractButton, { type Props as AbstractProps } from '../../base/toolbox/components/AbstractButton';
-import { showDisableLobbyModeDialog, showEnableLobbyModeDialog } from '../actions';
+import { getCurrentConference } from '../../../base/conference';
+import { translate } from '../../../base/i18n';
+import { IconMeetingUnlocked, IconMeetingLocked } from '../../../base/icons';
+import { isLocalParticipantModerator } from '../../../base/participants';
+import { connect } from '../../../base/redux';
+import AbstractButton, { type Props as AbstractProps } from '../../../base/toolbox/components/AbstractButton';
+import { showDisableLobbyModeDialog, showEnableLobbyModeDialog } from '../../actions.native';
 
 type Props = AbstractProps & {
 
@@ -63,7 +64,7 @@ class LobbyModeButton extends AbstractButton<Props, any> {
  * @returns {Props}
  */
 export function _mapStateToProps(state: Object): $Shape<Props> {
-    const { conference } = state['features/base/conference'];
+    const conference = getCurrentConference(state);
     const { lobbyEnabled } = state['features/lobby'];
     const lobbySupported = conference && conference.isLobbySupported();
 

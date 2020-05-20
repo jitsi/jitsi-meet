@@ -1,20 +1,22 @@
 // @flow
 
 import { CONFERENCE_FAILED, CONFERENCE_JOINED } from '../base/conference';
-import { hideDialog } from '../base/dialog';
 import { JitsiConferenceErrors, JitsiConferenceEvents } from '../base/lib-jitsi-meet';
 import { getFirstLoadableAvatarUrl } from '../base/participants';
 import { MiddlewareRegistry, StateListenerRegistry } from '../base/redux';
 import { NOTIFICATION_TYPE, showNotification } from '../notifications';
+import { isPrejoinPageEnabled } from '../prejoin/functions';
 
 import { KNOCKING_PARTICIPANT_ARRIVED_OR_UPDATED } from './actionTypes';
 import {
+    hideLobbyScreen,
     knockingParticipantLeft,
     openLobbyScreen,
     participantIsKnockingOrUpdated,
-    setLobbyModeEnabled
+    setLobbyModeEnabled,
+    startKnocking,
+    setPasswordJoinFailed
 } from './actions';
-import { LobbyScreen } from './components';
 
 MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
@@ -76,25 +78,38 @@ StateListenerRegistry.register(
  * @param {Object} action - The Redux action.
  * @returns {Object}
  */
-function _conferenceFailed({ dispatch }, next, action) {
+function _conferenceFailed({ dispatch, getState }, next, action) {
     const { error } = action;
+    const state = getState();
+    const nonFirstFailure = Boolean(state['features/base/conference'].membersOnly);
 
     if (error.name === JitsiConferenceErrors.MEMBERS_ONLY_ERROR) {
         if (typeof error.recoverable === 'undefined') {
             error.recoverable = true;
         }
 
-        dispatch(openLobbyScreen());
-    } else {
-        dispatch(hideDialog(LobbyScreen));
+        const result = next(action);
 
-        if (error.name === JitsiConferenceErrors.CONFERENCE_ACCESS_DENIED) {
-            dispatch(showNotification({
-                appearance: NOTIFICATION_TYPE.ERROR,
-                hideErrorSupportLink: true,
-                titleKey: 'lobby.joinRejectedMessage'
-            }));
+        dispatch(openLobbyScreen());
+
+        if (isPrejoinPageEnabled(state) && !state['features/lobby'].knocking) {
+            // prejoin is enabled, so we knock automatically
+            dispatch(startKnocking());
         }
+
+        dispatch(setPasswordJoinFailed(nonFirstFailure));
+
+        return result;
+    }
+
+    dispatch(hideLobbyScreen());
+
+    if (error.name === JitsiConferenceErrors.CONFERENCE_ACCESS_DENIED) {
+        dispatch(showNotification({
+            appearance: NOTIFICATION_TYPE.ERROR,
+            hideErrorSupportLink: true,
+            titleKey: 'lobby.joinRejectedMessage'
+        }));
     }
 
     return next(action);
@@ -109,7 +124,7 @@ function _conferenceFailed({ dispatch }, next, action) {
  * @returns {Object}
  */
 function _conferenceJoined({ dispatch }, next, action) {
-    dispatch(hideDialog(LobbyScreen));
+    dispatch(hideLobbyScreen());
 
     return next(action);
 }
@@ -123,8 +138,9 @@ function _conferenceJoined({ dispatch }, next, action) {
  */
 function _findLoadableAvatarForKnockingParticipant({ dispatch, getState }, { id }) {
     const updatedParticipant = getState()['features/lobby'].knockingParticipants.find(p => p.id === id);
+    const { disableThirdPartyRequests } = getState()['features/base/config'];
 
-    if (updatedParticipant && !updatedParticipant.loadableAvatarUrl) {
+    if (!disableThirdPartyRequests && updatedParticipant && !updatedParticipant.loadableAvatarUrl) {
         getFirstLoadableAvatarUrl(updatedParticipant).then(loadableAvatarUrl => {
             if (loadableAvatarUrl) {
                 dispatch(participantIsKnockingOrUpdated({

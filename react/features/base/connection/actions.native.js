@@ -113,13 +113,12 @@ export function connect(id: ?string, password: ?string) {
          * Dispatches {@code CONNECTION_DISCONNECTED} action when connection is
          * disconnected.
          *
-         * @param {string} message - Disconnect reason.
          * @private
          * @returns {void}
          */
-        function _onConnectionDisconnected(message: string) {
+        function _onConnectionDisconnected() {
             unsubscribe();
-            dispatch(connectionDisconnected(connection, message));
+            dispatch(connectionDisconnected(connection));
         }
 
         /**
@@ -187,19 +186,16 @@ export function connect(id: ?string, password: ?string) {
  *
  * @param {JitsiConnection} connection - The {@code JitsiConnection} which
  * disconnected.
- * @param {string} message - Error message.
  * @private
  * @returns {{
  *     type: CONNECTION_DISCONNECTED,
- *     connection: JitsiConnection,
- *     message: string
+ *     connection: JitsiConnection
  * }}
  */
-export function connectionDisconnected(connection: Object, message: string) {
+export function connectionDisconnected(connection: Object) {
     return {
         type: CONNECTION_DISCONNECTED,
-        connection,
-        message
+        connection
     };
 }
 

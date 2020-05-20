@@ -3,17 +3,18 @@
 import { type Dispatch } from 'redux';
 
 import { appNavigate, maybeRedirectToWelcomePage } from '../app';
-import { conferenceLeft, conferenceWillJoin, getCurrentConference } from '../base/conference';
-import { openDialog } from '../base/dialog';
+import { conferenceWillJoin, getCurrentConference, setPassword } from '../base/conference';
+import { hideDialog, openDialog } from '../base/dialog';
 import { getLocalParticipant } from '../base/participants';
 
 import {
     KNOCKING_PARTICIPANT_ARRIVED_OR_UPDATED,
     KNOCKING_PARTICIPANT_LEFT,
     SET_KNOCKING_STATE,
-    SET_LOBBY_MODE_ENABLED
+    SET_LOBBY_MODE_ENABLED,
+    SET_PASSWORD_JOIN_FAILED
 } from './actionTypes';
-import { DisableLobbyModeDialog, EnableLobbyModeDialog, LobbyScreen } from './components';
+import { LobbyScreen } from './components';
 
 declare var APP: Object;
 
@@ -23,7 +24,7 @@ declare var APP: Object;
  * @returns {Function}
  */
 export function cancelKnocking() {
-    return async (dispatch: Dispatch<any>, getState: Function) => {
+    return async (dispatch: Dispatch<any>) => {
         if (typeof APP !== 'undefined') {
             // when we are redirecting the library should handle any
             // unload and clean of the connection.
@@ -33,8 +34,30 @@ export function cancelKnocking() {
             return;
         }
 
-        dispatch(conferenceLeft(getCurrentConference(getState)));
         dispatch(appNavigate(undefined));
+    };
+}
+
+/**
+ * Action to hide the lobby screen.
+ *
+ * @returns {hideDialog}
+ */
+export function hideLobbyScreen() {
+    return hideDialog(LobbyScreen);
+}
+
+/**
+ * Tries to join with a preset password.
+ *
+ * @param {string} password - The password to join with.
+ * @returns {Function}
+ */
+export function joinWithPassword(password: string) {
+    return async (dispatch: Dispatch<any>, getState: Function) => {
+        const conference = getCurrentConference(getState);
+
+        dispatch(setPassword(conference, conference.join, password));
     };
 }
 
@@ -55,47 +78,12 @@ export function knockingParticipantLeft(id: string) {
 }
 
 /**
- * Action to set the knocking state of the participant.
- *
- * @param {boolean} knocking - The new state.
- * @returns {{
- *     state: boolean,
- *     type: SET_KNOCKING_STATE
- * }}
- */
-export function setKnockingState(knocking: boolean) {
-    return {
-        knocking,
-        type: SET_KNOCKING_STATE
-    };
-}
-
-/**
- * Starts knocking and waiting for approval.
- *
- * @param {string} password - The password to bypass knocking, if any.
- * @returns {Function}
- */
-export function startKnocking(password?: string) {
-    return async (dispatch: Dispatch<any>, getState: Function) => {
-        const state = getState();
-        const { membersOnly } = state['features/base/conference'];
-        const localParticipant = getLocalParticipant(state);
-
-        dispatch(setKnockingState(true));
-        dispatch(conferenceWillJoin(membersOnly));
-        membersOnly
-            && membersOnly.joinLobby(localParticipant.name, localParticipant.email, password ? password : undefined);
-    };
-}
-
-/**
  * Action to open the lobby screen.
  *
  * @returns {openDialog}
  */
 export function openLobbyScreen() {
-    return openDialog(LobbyScreen);
+    return openDialog(LobbyScreen, {}, true);
 }
 
 /**
@@ -123,7 +111,7 @@ export function participantIsKnockingOrUpdated(participant: Object) {
  */
 export function setKnockingParticipantApproval(id: string, approved: boolean) {
     return async (dispatch: Dispatch<any>, getState: Function) => {
-        const { conference } = getState()['features/base/conference'];
+        const conference = getCurrentConference(getState);
 
         if (conference) {
             if (approved) {
@@ -132,6 +120,22 @@ export function setKnockingParticipantApproval(id: string, approved: boolean) {
                 conference.lobbyDenyAccess(id);
             }
         }
+    };
+}
+
+/**
+ * Action to set the knocking state of the participant.
+ *
+ * @param {boolean} knocking - The new state.
+ * @returns {{
+ *     state: boolean,
+ *     type: SET_KNOCKING_STATE
+ * }}
+ */
+export function setKnockingState(knocking: boolean) {
+    return {
+        knocking,
+        type: SET_KNOCKING_STATE
     };
 }
 
@@ -152,36 +156,50 @@ export function setLobbyModeEnabled(enabled: boolean) {
 }
 
 /**
- * Action to show the dialog to disable lobby mode.
+ * Action to be dispatched when we failed to join with a password.
  *
- * @returns {showNotification}
+ * @param {boolean} failed - True of recent password join failed.
+ * @returns {{
+ *     failed: boolean,
+ *     type: SET_PASSWORD_JOIN_FAILED
+ * }}
  */
-export function showDisableLobbyModeDialog() {
-    return openDialog(DisableLobbyModeDialog);
+export function setPasswordJoinFailed(failed: boolean) {
+    return {
+        failed,
+        type: SET_PASSWORD_JOIN_FAILED
+    };
 }
 
 /**
- * Action to show the dialog to enable lobby mode.
+ * Starts knocking and waiting for approval.
  *
- * @returns {showNotification}
+ * @returns {Function}
  */
-export function showEnableLobbyModeDialog() {
-    return openDialog(EnableLobbyModeDialog);
+export function startKnocking() {
+    return async (dispatch: Dispatch<any>, getState: Function) => {
+        const state = getState();
+        const { membersOnly } = state['features/base/conference'];
+        const localParticipant = getLocalParticipant(state);
+
+        dispatch(conferenceWillJoin(membersOnly));
+        membersOnly.joinLobby(localParticipant.name, localParticipant.email);
+        dispatch(setKnockingState(true));
+    };
 }
 
 /**
  * Action to toggle lobby mode on or off.
  *
  * @param {boolean} enabled - The desired (new) state of the lobby mode.
- * @param {string} password - Optional password to be set.
  * @returns {Function}
  */
-export function toggleLobbyMode(enabled: boolean, password?: string) {
+export function toggleLobbyMode(enabled: boolean) {
     return async (dispatch: Dispatch<any>, getState: Function) => {
-        const { conference } = getState()['features/base/conference'];
+        const conference = getCurrentConference(getState);
 
         if (enabled) {
-            conference.enableLobby(password);
+            conference.enableLobby();
         } else {
             conference.disableLobby();
         }

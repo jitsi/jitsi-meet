@@ -209,9 +209,9 @@ class Conference extends AbstractConference<Props, *> {
 
                 { this.renderNotificationsContainer() }
 
-                { !filmstripOnly && _showPrejoin && <Prejoin />}
-
                 <CalleeInfoContainer />
+
+                { !filmstripOnly && _showPrejoin && <Prejoin />}
             </div>
         );
     }

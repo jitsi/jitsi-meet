@@ -1,37 +1,50 @@
 // @flow
 
-import React from 'react';
-import { Text, TextInput, View } from 'react-native';
+import React, { PureComponent } from 'react';
+import { Text, View } from 'react-native';
 
 import { ColorSchemeRegistry } from '../../../base/color-scheme';
 import { CustomSubmitDialog } from '../../../base/dialog';
 import { translate } from '../../../base/i18n';
 import { connect } from '../../../base/redux';
-import { StyleType } from '../../../base/styles';
-import AbstractEnableLobbyModeDialog, { type Props as AbstractProps } from '../AbstractEnableLobbyModeDialog';
+import { toggleLobbyMode } from '../../actions';
 
 import styles from './styles';
 
-type Props = AbstractProps & {
+type Props = {
 
     /**
-     * Color schemed common style of the dialog feature.
+     * The Redux Dispatch function.
      */
-    _dialogStyles: StyleType
+    dispatch: Function,
+
+    /**
+     * Function to be used to translate i18n labels.
+     */
+    t: Function
 };
 
 /**
  * Implements a dialog that lets the user enable the lobby mode.
  */
-class EnableLobbyModeDialog extends AbstractEnableLobbyModeDialog<Props> {
+class EnableLobbyModeDialog extends PureComponent<Props> {
+    /**
+     * Instantiates a new component.
+     *
+     * @inheritdoc
+     */
+    constructor(props: Props) {
+        super(props);
+
+        this._onEnableLobbyMode = this._onEnableLobbyMode.bind(this);
+    }
+
     /**
      * Implements {@code PureComponent#render}.
      *
      * @inheritdoc
      */
     render() {
-        const { _dialogStyles, t } = this.props;
-
         return (
             <CustomSubmitDialog
                 okKey = 'lobby.enableDialogSubmit'
@@ -39,27 +52,25 @@ class EnableLobbyModeDialog extends AbstractEnableLobbyModeDialog<Props> {
                 titleKey = 'lobby.dialogTitle'>
                 <View style = { styles.formWrapper }>
                     <Text>
-                        { t('lobby.enableDialogText') }
+                        { this.props.t('lobby.enableDialogText') }
                     </Text>
-                    <View style = { styles.fieldRow }>
-                        <Text>
-                            { t('lobby.enableDialogPasswordField') }
-                        </Text>
-                        <TextInput
-                            autoCapitalize = 'none'
-                            autoCompleteType = 'off'
-                            onChangeText = { this._onChangePassword }
-                            secureTextEntry = { true }
-                            style = { _dialogStyles.field } />
-                    </View>
                 </View>
             </CustomSubmitDialog>
         );
     }
 
-    _onChangePassword: Object => void;
-
     _onEnableLobbyMode: () => void;
+
+    /**
+     * Callback to be invoked when the user initiates the lobby mode enable flow.
+     *
+     * @returns {void}
+     */
+    _onEnableLobbyMode() {
+        this.props.dispatch(toggleLobbyMode(true));
+
+        return true;
+    }
 }
 
 /**

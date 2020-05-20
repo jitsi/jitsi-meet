@@ -21,7 +21,8 @@ ReducerRegistry.register('features/base/dialog', (state = {}, action) => {
         if (typeof component === 'undefined' || state.component === component) {
             return assign(state, {
                 component: undefined,
-                componentProps: undefined
+                componentProps: undefined,
+                rawDialog: false
             });
         }
         break;
@@ -30,7 +31,8 @@ ReducerRegistry.register('features/base/dialog', (state = {}, action) => {
     case OPEN_DIALOG:
         return assign(state, {
             component: action.component,
-            componentProps: action.componentProps
+            componentProps: action.componentProps,
+            rawDialog: action.rawDialog
         });
     }
 

@@ -10,7 +10,7 @@ declare var APP: Object;
 /**
  * List of errors that are not fatal (or handled differently) so then the overlays won't kick in.
  */
-const NON_FATAR_ERRORS = [
+const NON_OVERLAY_ERRORS = [
     JitsiConferenceErrors.CONFERENCE_ACCESS_DENIED,
     JitsiConferenceErrors.CONFERENCE_DESTROYED,
     JitsiConferenceErrors.CONNECTION_ERROR
@@ -31,7 +31,7 @@ StateListenerRegistry.register(
     },
     /* listener */ (error, { dispatch }) => {
         error
-            && NON_FATAR_ERRORS.indexOf(error.name) === -1
+            && NON_OVERLAY_ERRORS.indexOf(error.name) === -1
             && typeof error.recoverable === 'undefined'
             && dispatch(setFatalError(error));
     }
