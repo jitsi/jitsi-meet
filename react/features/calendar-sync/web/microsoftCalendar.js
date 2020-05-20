@@ -1,7 +1,8 @@
 // @flow
 
 import { Client } from '@microsoft/microsoft-graph-client';
-import rs from 'jsrsasign';
+import base64js from 'base64-js';
+
 import type { Dispatch } from 'redux';
 
 import { createDeferred } from '../../../../modules/util/helpers';
@@ -452,8 +453,13 @@ function getValidatedTokenParts(tokenInfo, guids, appId) {
         return null;
     }
 
-    const payload
-         = rs.KJUR.jws.JWS.readSafeJSONString(rs.b64utoutf8(tokenParts[1]));
+    let payload;
+
+    try {
+        payload = JSON.parse(b64utoutf8(tokenParts[1]));
+    } catch (e) {
+        return null;
+    }
 
     if (payload.nonce !== guids.authNonce
         || payload.aud !== appId
@@ -595,4 +601,41 @@ function s4(num) {
     }
 
     return ret;
+}
+
+/**
+ * Convert a Base64URL encoded string to a UTF-8 encoded string including CJK or Latin.
+ *
+ * @param {string} str - The string that needs conversion.
+ * @private
+ * @returns {string} - The converted string.
+ */
+function b64utoutf8(str) {
+    let s = str;
+
+    // Convert from Base64URL to Base64.
+
+    if (s.length % 4 === 2) {
+        s += '==';
+    } else if (s.length % 4 === 3) {
+        s += '=';
+    }
+
+    s = s.replace(/-/g, '+').replace(/_/g, '/');
+
+    // Convert Base64 to a byte array.
+
+    const bytes = base64js.toByteArray(s);
+
+    // Convert bytes to hex.
+
+    s = bytes.reduce((str_, byte) => str_ + byte.toString(16).padStart(2, '0'), '');
+
+    // Convert a hexadecimal string to a URLComponent string
+
+    s = s.replace(/(..)/g, '%$1');
+
+    // Decodee the URI component
+
+    return decodeURIComponent(s);
 }
