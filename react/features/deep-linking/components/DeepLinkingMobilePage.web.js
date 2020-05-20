@@ -125,7 +125,8 @@ class DeepLinkingMobilePage extends Component<Props> {
                     <a
                         { ...onOpenLinkProperties }
                         href = { this._generateDownloadURL() }
-                        onClick = { this._onDownloadApp }>
+                        onClick = { this._onDownloadApp }
+                        target = '_top'>
                         <button className = { downloadButtonClassName }>
                             { t(`${_TNS}.downloadApp`) }
                         </button>
@@ -134,7 +135,8 @@ class DeepLinkingMobilePage extends Component<Props> {
                         { ...onOpenLinkProperties }
                         className = { `${_SNS}__href` }
                         href = { generateDeepLinkingURL() }
-                        onClick = { this._onOpenApp }>
+                        onClick = { this._onOpenApp }
+                        target = '_top'>
                         {/* <button className = { `${_SNS}__button` }> */}
                         { t(`${_TNS}.openApp`) }
                         {/* </button> */}
