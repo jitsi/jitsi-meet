@@ -437,7 +437,7 @@
         "somebody": "Alguém",
         "startSilentTitle": "Você entrou sem saída de áudio!",
         "startSilentDescription": "Volte à reunião para habilitar o áudio",
-        "suboptimalBrowserWarning": "Tememos que sua experiência de reunião não seja tão boa aqui. Estamos procurando maneiras de melhorar isso, mas até então, tente usar um dos <a href='static/recommendedBrowsers.html' target='_blank'>navegadores completamente suportados</a>.",
+        "suboptimalBrowserWarning": "Tememos que sua experiência de reunião não seja tão boa aqui. Estamos procurando maneiras de melhorar isso, mas até então, tente usar um dos <a href='{{recommendedBrowserPageLink}}' target='_blank'>navegadores completamente suportados</a>.",
         "suboptimalExperienceTitle": "Alerta do navegador",
         "unmute": "Ativar som",
         "newDeviceCameraTitle": "Nova câmera detectada",
@@ -698,9 +698,6 @@
         "lowDefinition": "Baixa definição (LD)",
         "onlyAudioAvailable": "Somente áudio disponível",
         "onlyAudioSupported": "Suportamos somente áudio neste navegador.",
-        "p2pEnabled": "Ponto-a-ponto habilitada",
-        "p2pVideoQualityDescription": "No modo ponto a ponto, a qualidade do vídeo recebido só pode ser alternada entre alta e apenas áudio. Outras configurações não serão respeitadas até que o ponto a ponto seja encerrado.",
-        "recHighDefinitionOnly": "Preferência para alta definição",
         "sd": "SD",
         "sdTooltip": "Ver vídeo em definição padrão",
         "standardDefinition": "Definição padrão"

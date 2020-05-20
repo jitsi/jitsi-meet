@@ -18,25 +18,17 @@
 #import "AppDelegate.h"
 #import "FIRUtilities.h"
 #import "Types.h"
+#import "ViewController.h"
 
 @import Crashlytics;
 @import Fabric;
 @import Firebase;
 @import JitsiMeet;
 
-
 @implementation AppDelegate
 
 -             (BOOL)application:(UIApplication *)application
   didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-
-    // Initialize Crashlytics and Firebase if a valid GoogleService-Info.plist file was provided.
-    if ([FIRUtilities appContainsRealServiceInfoPlist]) {
-        NSLog(@"Enablign Crashlytics and Firebase");
-        [FIRApp configure];
-        [Fabric with:@[[Crashlytics class]]];
-    }
-
     JitsiMeet *jitsiMeet = [JitsiMeet sharedInstance];
 
     jitsiMeet.conferenceActivityType = JitsiMeetConferenceActivityType;
@@ -54,9 +46,23 @@
 #endif
     }];
 
+    // Initialize Crashlytics and Firebase if a valid GoogleService-Info.plist file was provided.
+    if ([FIRUtilities appContainsRealServiceInfoPlist] && ![jitsiMeet isCrashReportingDisabled]) {
+        NSLog(@"Enabling Crashlytics and Firebase");
+        [FIRApp configure];
+        [Fabric with:@[[Crashlytics class]]];
+    }
+
     [jitsiMeet application:application didFinishLaunchingWithOptions:launchOptions];
 
     return YES;
+}
+
+- (void) applicationWillTerminate:(UIApplication *)application {
+    NSLog(@"Application will terminate!");
+    // Try to leave the current meeting graceefully.
+    ViewController *rootController = (ViewController *)self.window.rootViewController;
+    [rootController terminate];
 }
 
 #pragma mark Linking delegate methods

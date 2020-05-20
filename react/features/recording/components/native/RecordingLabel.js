@@ -6,7 +6,6 @@ import { translate } from '../../../base/i18n';
 import { CircularLabel } from '../../../base/label';
 import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
 import { connect } from '../../../base/redux';
-
 import AbstractRecordingLabel, {
     _mapStateToProps
 } from '../AbstractRecordingLabel';

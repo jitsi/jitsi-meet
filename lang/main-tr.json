@@ -21,10 +21,11 @@
         "bluetooth": "Bluetooth",
         "headphones": "Kulaklık",
         "phone": "Telefon",
-        "speaker": "Konuşmacı"
+        "speaker": "Konuşmacı",
+        "none": "Ses cihazı yok"
     },
     "audioOnly": {
-        "audioOnly": "Yalnızca ses"
+        "audioOnly": "Düşük bant genişliği"
     },
     "calendarSync": {
         "addMeetingURL": "Toplantı bağlantısı ekle",
@@ -45,28 +46,37 @@
         "today": "Bugün"
     },
     "chat": {
-        "error": "Hata: Şu mesajınız gönderilemedi: \"{{originalText}}\" Sebep: {{error}}",
-        "messagebox": "Bir mesaj yaz",
+        "error": "Hata: mesajınız gönderilmedi. Gerekçe: {{error}}",
+        "messagebox": "Bir mesaj yazın",
         "nickname": {
             "popover": "Bir takma ad seçin",
-            "title": "Mesajlaşmada kullanmak için bir takma ad girin"
+            "title": "Sohbette kullanmak için bir takma ad girin"
         },
-        "title": "Mesajlaşma"
+        "title": "Sohbet",
+        "you": "sen",
+        "privateNotice": "{{recipient}} için özel mesaj",
+        "noMessagesMessage": "Toplantıda henüz mesaj yok. Buradan bir konuşma başlatın!",
+        "messageTo": "{{recipient}} için özel mesaj",
+        "fieldPlaceHolder": "Mesajınızı buraya yazın"
     },
     "connectingOverlay": {
         "joiningRoom": "Toplantınıza bağlanılıyor.."
     },
     "connection": {
-        "ATTACHED": "Eklendi",
-        "AUTHENTICATING": "Doğrulanıyor",
-        "AUTHFAIL": "Doğrulama başarısız",
+        "ATTACHED": "Eklenmiş",
+        "AUTHENTICATING": "Kimlik doğrulanıyor",
+        "AUTHFAIL": "Kimlik doğrulama başarısız",
         "CONNECTED": "Bağlandı",
         "CONNECTING": "Bağlanıyor",
         "CONNFAIL": "Bağlantı başarısız",
         "DISCONNECTED": "Bağlantı kesildi",
-        "DISCONNECTING": "Bağlantı kesiliyor",
+        "DISCONNECTING": "Bağlantı kesildi",
         "ERROR": "Hata",
-        "RECONNECTING": "Bir bağlantı hatası oluştu. Tekrar bağlanıyor..."
+        "RECONNECTING": "Bir bağlantı hatası oluştu. Tekrar bağlanıyor...",
+        "LOW_BANDWIDTH": "Bant genişliğinden tasarruf etmek için {{displayName}} kişisinin videosu kapatıldı",
+        "GOT_SESSION_ID": "Oturum kimliği alınıyor… Tamam",
+        "GET_SESSION_ID_ERROR": "Oturum kimliği alma hatası: {{code}}",
+        "FETCH_SESSION_ID": "Oturum kimliği alınıyor…"
     },
     "connectionindicator": {
         "address": "Adres:",
@@ -182,7 +192,7 @@
         "liveStreamingDisabledForGuestTooltip": "Konuklar canlı akışa başlayamaz.",
         "liveStreamingDisabledTooltip": "Canlı akışı başlatma devre dışı.",
         "lockMessage": "Toplantı kilitlenemedi.",
-        "lockRoom": "Toplantı şifresi ekle",
+        "lockRoom": "Toplantı parolası ekle",
         "lockTitle": "Kilitlenemedi",
         "logoutQuestion": "Oturumu kapatmak ve toplantıyı durdurmak istediğinizden emin misiniz?",
         "logoutTitle": "Oturumu kapat",
@@ -199,10 +209,10 @@
         "muteParticipantDialog": "Bu katılımcının sesini kapatmak istediğinizden emin misiniz? Bunların sesini açamazsınız, ancak istedikleri zaman kendileri seslerini açabilirler.",
         "muteParticipantTitle": "Bu katılımcı susturulsun mu?",
         "Ok": "Tamam",
-        "passwordLabel": "Şifre",
-        "passwordNotSupported": "Toplantı şifresi ayarlama desteklenmiyor.",
-        "passwordNotSupportedTitle": "Şifre desteklenmiyor",
-        "passwordRequired": "Şifre gerekli",
+        "passwordLabel": "Parola",
+        "passwordNotSupported": "Toplantı parolası ayarlama desteklenmiyor.",
+        "passwordNotSupportedTitle": "Parola desteklenmiyor",
+        "passwordRequired": "Parola gerekli",
         "popupError": "Tarayıcınız bu siteden açılan pencereleri engelliyor. Lütfen tarayıcınızın güvenlik ayarlarından açılır pencereleri etkinleştirin ve tekrar deneyin.",
         "popupErrorTitle": "Açılır pencere engellendi",
         "recording": "Kaydediliyor",
@@ -250,8 +260,8 @@
         "tokenAuthFailed": "Üzgünüz, bu görüşmeye katılmanıza izin verilmiyor.",
         "tokenAuthFailedTitle": "Kimlik doğrulama başarısız",
         "transcribing": "Deşifre ediliyor",
-        "unlockRoom": "Toplantı şifresini kaldır",
-        "userPassword": "kullancı şifresi",
+        "unlockRoom": "Toplantı parolasını kaldır",
+        "userPassword": "kullancı parolası",
         "WaitForHostMsg": "<b>{{room}}</b> toplantısı henüz başlamadı. Toplantı sahibi sizseniz, lütfen kimlik doğrulaması yapın. Değilseniz lütfen toplantı sahibinin gelmesini bekleyin.",
         "WaitForHostMsgWOk": "<b>{{room}}</b> toplantısı henüz başlamadı. Toplantı sahibi sizseniz, kimlik doğrulaması için Tamam butonuna basın. Değilseniz lütfen toplantı sahibinin gelmesini bekleyin.",
         "WaitingForHost": "Toplantı sahibi bekleniyor...",
@@ -394,8 +404,8 @@
         "stop": "Kaydı durdur",
         "yes": "Evet"
     },
-    "lockRoomPassword": "şifre",
-    "lockRoomPasswordUppercase": "Şifre",
+    "lockRoomPassword": "parola",
+    "lockRoomPasswordUppercase": "Parola",
     "me": "ben",
     "notify": {
         "connectedOneMember": "{{name}} toplantıya katıldı",
@@ -421,7 +431,7 @@
         "somebody": "Birisi",
         "startSilentTitle": "",
         "startSilentDescription": "",
-        "suboptimalExperienceDescription": "Mmm... {{appName}} ile olan deneyiminizin burada çok iyi olmayacağından korkuyoruz. Bunu iyileştirmenin yollarını arıyoruz, ancak o zamana kadar lütfen şunlardan birini deneyin: <a href='static/recommendedBrowsers.html' target='_blank'>fully supported browsers</a>.",
+        "suboptimalExperienceDescription": "Mmm... {{appName}} ile olan deneyiminizin burada çok iyi olmayacağından korkuyoruz. Bunu iyileştirmenin yollarını arıyoruz, ancak o zamana kadar lütfen şunlardan birini deneyin: <a href='{{recommendedBrowserPageLink}}' target='_blank'>fully supported browsers</a>.",
         "suboptimalExperienceTitle": "Tarayıcı Uyarısı",
         "unmute": "",
         "newDeviceCameraTitle": "Yeni kamera algılandı",
@@ -553,7 +563,7 @@
             "invite": "İnsanları davet et",
             "kick": "Katılımcı çıkar",
             "localRecording": "Kayıt denetimlerini aç/kapat",
-            "lockRoom": "Toplantı şifresini aç/kapat",
+            "lockRoom": "Toplantı parolasını aç/kapat",
             "moreActions": "Diğer işlemler menüsünü aç/kapat",
             "moreActionsMenu": "Diğer işlemler menüsü",
             "mute": "Sesi aç/kapat",
@@ -664,9 +674,6 @@
         "lowDefinition": "Düşük çözünürlük",
         "onlyAudioAvailable": "Yalnızca ses kullanılabilir",
         "onlyAudioSupported": "Bu tarayıcıda yalnızca sesi destekliyoruz.",
-        "p2pEnabled": "Peer to peer Etkin",
-        "p2pVideoQualityDescription": "Peer to peer modunda, arama kalitesi yalnızca yüksek çözünürlük ve yalnızca ses arasında değiştirilebilir. Peer to peer modundan çıkılmadıkça diğer ayarlar kabul edilmez.",
-        "recHighDefinitionOnly": "Yalnızca yüksek çözünürlüğü tercih et.",
         "sd": "SD",
         "standardDefinition": "Standart çözünürlük"
     },
@@ -686,7 +693,7 @@
             "join": "Katılmak için dokunun",
             "roomname": "Oda adı girin"
         },
-        "appDescription": "Durma ve tüm ekiple görüntülü sohbet et. Hatta tanıdığın herkesi davet et. {{app}} tüm gün, her gün ücretsiz olarak kullanabileceğiniz, hesap gerektirmeden kullanbilieceğiniz tamamen şifrelenmiş, % 100 açık kaynaklı bir video konferans çözümüdür.",
+        "appDescription": "Durma ve tüm ekiple görüntülü sohbet et. Hatta tanıdığın herkesi davet et. {{app}} tüm gün, her gün ücretsiz olarak kullanabileceğiniz, hesap gerektirmeden kullanbilieceğiniz tamamen şifrelenmiş, % 100 özgür bir video konferans çözümüdür.",
         "audioVideoSwitch": {
             "audio": "Ses",
             "video": "Görüntü"
@@ -707,6 +714,13 @@
         "roomnameHint": "Katılmak istediğiniz odanın adını veya bağlantısını girin. İstediğiniz oda adını uydurabilirsiniz. Aynı odada buluşmak için görüşmek istediğiniz kişilere bunu iletmeniz yeterli.",
         "sendFeedback": "Geri bildirim gönder",
         "terms": "Kurallar",
-        "title": "Güvenli, tüm özelliklere erişimli ve tamamen ücretsiz görüntülü arama"
+        "title": "Güvenli, tüm özelliklere erişimli ve tamamen ücretsiz görüntülü arama",
+        "getHelp": "Yardım alın"
+    },
+    "defaultNickname": "örnek Jane Pink",
+    "chromeExtensionBanner": {
+        "dontShowAgain": "Bunu bir daha gösterme",
+        "buttonText": "Chrome Eklentisi'ni indirin",
+        "installExtensionText": "Google Takvim ve Office 365 entegrasyonu için uzantıyı yükleyin"
     }
 }

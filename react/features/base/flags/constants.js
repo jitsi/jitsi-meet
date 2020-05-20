@@ -1,6 +1,12 @@
 // @flow
 
 /**
+ * Flag indicating if add-people functionality should be enabled.
+ * Default: enabled (true).
+ */
+export const ADD_PEOPLE_ENABLED = 'add-people.enabled';
+
+/**
  * Flag indicating if calendar integration should be enabled.
  * Default: enabled (true) on Android, auto-detected on iOS.
  */
@@ -38,10 +44,54 @@ export const INVITE_ENABLED = 'invite.enabled';
 export const IOS_RECORDING_ENABLED = 'ios.recording.enabled';
 
 /**
+ * Flag indicating if live-streaming should be enabled.
+ * Default: auto-detected.
+ */
+export const LIVE_STREAMING_ENABLED = 'live-streaming.enabled';
+
+/**
+ * Flag indicating if displaying the meeting name should be enabled.
+ * Default: enabled (true).
+ */
+export const MEETING_NAME_ENABLED = 'meeting-name.enabled';
+
+/**
+ * Flag indicating if the meeting password button should be enabled.
+ * Note that this flag just decides on the buttton, if a meeting has a password
+ * set, the password ddialog will still show up.
+ * Default: enabled (true).
+ */
+export const MEETING_PASSWORD_ENABLED = 'meeting-password.enabled';
+
+/**
  * Flag indicating if Picture-in-Picture should be enabled.
  * Default: auto-detected.
  */
 export const PIP_ENABLED = 'pip.enabled';
+
+/**
+ * Flag indicating if raise hand feature should be enabled.
+ * Default: enabled.
+ */
+export const RAISE_HAND_ENABLED = 'raise-hand.enabled';
+
+/**
+ * Flag indicating if recording should be enabled.
+ * Default: auto-detected.
+ */
+export const RECORDING_ENABLED = 'recording.enabled';
+
+/**
+ * Flag indicating if tile view feature should be enabled.
+ * Default: enabled.
+ */
+export const TILE_VIEW_ENABLED = 'tile-view.enabled';
+
+/**
+ * Flag indicating if the toolbox should be always be visible
+ * Default: disabled (false).
+ */
+export const TOOLBOX_ALWAYS_VISIBLE = 'toolbox.alwaysVisible';
 
 /**
  * Flag indicating if the welcome page should be enabled.

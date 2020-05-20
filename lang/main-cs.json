@@ -456,7 +456,7 @@
         "somebody": "Někdo",
         "startSilentTitle": "",
         "startSilentDescription": "",
-        "suboptimalExperienceDescription": "Sakra... všimli jsme si, že vaše zkušenost s {{appName}} není úplně skvělá. Hledáme cesty, jak bychom to mohli zlepšit. Než se tak stane, vyzkoušejte některý z <a href='static/recommendedBrowsers.html' target='_blank'>plně podporovaných prohlížečů</a>.",
+        "suboptimalExperienceDescription": "Sakra... všimli jsme si, že vaše zkušenost s {{appName}} není úplně skvělá. Hledáme cesty, jak bychom to mohli zlepšit. Než se tak stane, vyzkoušejte některý z <a href='{{recommendedBrowserPageLink}}' target='_blank'>plně podporovaných prohlížečů</a>.",
         "suboptimalExperienceTitle": "Varování prohlížeče",
         "unmute": "",
         "newDeviceCameraTitle": "Detekována nová kamera",
@@ -483,7 +483,7 @@
     "profile": {
         "setDisplayNameLabel": "Nastavte si jméno",
         "setEmailInput": "Zadejte e-mail",
-        "setEmailLabel": "Nastavte si email vašeho gravataru",
+        "setEmailLabel": "Nastavte si e-mail vašeho Gravataru",
         "title": "Profil"
     },
     "recording": {
@@ -705,9 +705,6 @@
         "lowDefinition": "Nizká kvalita",
         "onlyAudioAvailable": "Je k dispozici jen zvuk",
         "onlyAudioSupported": "V tomto prohlížeči podporujeme jen zvuk.",
-        "p2pEnabled": "Zapnut režim peer to peer",
-        "p2pVideoQualityDescription": "V režimu peer to peer lze kvalitu videa přepínat jen mezi vysokou a pouhým zvukem. Ostatní nastavení se ignorují, dokud tento režim neopustíte.",
-        "recHighDefinitionOnly": "Bude preferována vysoká kvalita.",
         "sd": "SD",
         "sdTooltip": "Sledujete obraz v běžné kvalitě",
         "standardDefinition": "Běžná kvalita"

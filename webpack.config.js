@@ -179,7 +179,7 @@ module.exports = [
         entry: {
             'app.bundle': './app.js'
         },
-        performance: getPerformanceHints(3 * 1024 * 1024)
+        performance: getPerformanceHints(4 * 1024 * 1024)
     }),
     Object.assign({}, config, {
         entry: {
@@ -281,6 +281,7 @@ module.exports = [
 function devServerProxyBypass({ path }) {
     if (path.startsWith('/css/') || path.startsWith('/doc/')
             || path.startsWith('/fonts/') || path.startsWith('/images/')
+            || path.startsWith('/lang/')
             || path.startsWith('/sounds/')
             || path.startsWith('/static/')
             || path.endsWith('.wasm')) {

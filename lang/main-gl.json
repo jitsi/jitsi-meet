@@ -60,12 +60,12 @@
         "you": "vostede"
     },
     "chromeExtensionBanner": {
-        "installExtensionText": "",
-        "buttonText": "",
+        "installExtensionText": "Instala a extensión para a integración con Google Calendar e Office 365",
+        "buttonText": "Instalar Extensión Chrome",
         "dontShowAgain": ""
     },
     "connectingOverlay": {
-        "joiningRoom": "Está a conectar coa reunión..."
+        "joiningRoom": "Está a conectar coa reunión…"
     },
     "connection": {
         "ATTACHED": "Unido",
@@ -121,7 +121,7 @@
         "downloadApp": "Descargar a aplicación",
         "launchWebButton": "Lanzar en web",
         "openApp": "Continuar coa app",
-        "title": "Lanzando a reunión en {{app}}...",
+        "title": "Lanzando a reunión en {{app}}…",
         "tryAgainButton": "Volver tentar no escritorio"
     },
     "defaultLink": "i.e. {{url}}",
@@ -156,9 +156,9 @@
         "cameraUnsupportedResolutionError": "A cámara non admite a resolución de vídeo requirida.",
         "Cancel": "Anular",
         "close": "Pechar",
-        "conferenceDisconnectMsg": "Pode querer comprobar a conexión de rede. Reconectando en {{seconds}} seg...",
+        "conferenceDisconnectMsg": "Pode querer comprobar a conexión de rede. Reconectando en {{seconds}} seg…",
         "conferenceDisconnectTitle": "Foi desconectado.",
-        "conferenceReloadMsg": "Estamos a tentar arranxar isto. Reconectando en {{seconds}} seg...",
+        "conferenceReloadMsg": "Estamos a tentar arranxar isto. Reconectando en {{seconds}} seg…",
         "conferenceReloadTitle": "Lamentablemente, algo foi mal.",
         "confirm": "Confirmar",
         "confirmNo": "Non",
@@ -269,7 +269,7 @@
         "userPassword": "contrasinal do usuario",
         "WaitForHostMsg": "A sala <b>{{room}}</b> aínda non comezou. Se vostede é o anfitrión, autentíquese. Se non, agarde a que o anfitrión chegue.",
         "WaitForHostMsgWOk": "A sala <b>{{room}}</b> aínda non comezou. Se vostede é o anfitrión, prema en Aceptar para autenticar. Se non, agarde a que o anfitrión chegue.",
-        "WaitingForHost": "Agardando polo anfitrión...",
+        "WaitingForHost": "Agardando polo anfitrión…",
         "Yes": "Si",
         "yourEntireScreen": "A pantalla completa"
     },
@@ -310,7 +310,7 @@
         "genericError": "Vaia, algo foi mal.",
         "inviteLiveStream": "Para ver o vídeo ao vivo desta reunión, prema esta ligazón: {{url}}",
         "invitePhone": "Para unirse vía teléfono, escriba isto: {{number}},,{{conferenceID}}#\n",
-        "invitePhoneAlternatives": "Para unirse vía teléfono, escriba isto: {{number}},,{{conferenceID}}#\n",
+        "invitePhoneAlternatives": "Para unirse vía teléfono, escriba isto:\nVexa os números de marcación de encontros: {{url}}\n\n\nSe tamén marca o teléfono mediante a habitación, únete sen conectarse ao audio: {{silentUrl}}",
         "inviteURLFirstPartGeneral": "Convidárono a unirse á reunión.",
         "inviteURLFirstPartPersonal": "{{name}} invítao a unha reunión.\n",
         "inviteURLSecondPart": "\nUnirse á reunión:\n{{url}}\n",
@@ -368,7 +368,7 @@
         "errorLiveStreamNotEnabled": "A difusión ao vivo non está activada en {{email}}. Active a difusión ao vivo ou inicie sesión nunha conta con esa opción activada.",
         "expandedOff": "Parouse a difusión ao vivo",
         "expandedOn": "A reunión está actualmente sendo difundida via YouTube.",
-        "expandedPending": "A difusión ao vivo está arrincando...",
+        "expandedPending": "A difusión ao vivo está arrincando…",
         "failedToStart": "Fallou o inicio da difusión ao vivo",
         "getStreamKeyManually": "Non foi posíbel recuperar ningunha difusión ao vivo. Tente obter a súa clave de difusión de YouTube",
         "invalidStreamKey": "A clave de difusión ao vivo puider ser incorrecta.",
@@ -376,7 +376,7 @@
         "offBy": "{{name}} parou a difusión ao vivo",
         "on": "Difusión ao vivo",
         "onBy": "{{name}} comezou a difusión ao vivo",
-        "pending": "Arrincando a difusión ao vivo...",
+        "pending": "Arrincando a difusión ao vivo…",
         "serviceName": "Servizo de difusión ao vivo",
         "signedInAs": "Está conectado como:",
         "signIn": "Iniciar sesión con Google",
@@ -442,7 +442,7 @@
         "somebody": "Alguén",
         "startSilentTitle": "Vostede uniuse sen saída de son!",
         "startSilentDescription": "Volva a unirse para activar o son",
-        "suboptimalBrowserWarning": "Lamentamos que a súa experiencia non estea a ser boa. Procuramos maneiras de mellorala mais, ata entón, probe utilizar un dos <a href='static/recommendedBrowsers.html' target='_blank'>navegadores totalmente compatíbeis</a>.",
+        "suboptimalBrowserWarning": "Lamentamos que a súa experiencia non estea a ser boa. Procuramos maneiras de mellorala mais, ata entón, probe utilizar un dos <a href='{{recommendedBrowserPageLink}}' target='_blank'>navegadores totalmente compatíbeis</a>.",
         "suboptimalExperienceTitle": "Aviso verbo do navegador",
         "unmute": "Activar o son",
         "newDeviceCameraTitle": "Detectada unha nova cámara",
@@ -454,22 +454,22 @@
     "poweredby": "fornecido por",
     "presenceStatus": {
         "busy": "Ocupado",
-        "calling": "Chamando...",
+        "calling": "Chamando…",
         "connected": "Conectado",
-        "connecting": "Conectando...",
+        "connecting": "Conectando…",
         "connecting2": "Conectando*...",
         "disconnected": "Desconectado",
         "expired": "Expirou",
         "ignored": "Ignorado",
-        "initializingCall": "Facendo chamada...",
+        "initializingCall": "Facendo chamada…",
         "invited": "Convidado/a",
         "rejected": "Rexeitada",
-        "ringing": "Chamando..."
+        "ringing": "Chamando…"
     },
     "profile": {
         "setDisplayNameLabel": "Escoller o seu nome en pantalla",
         "setEmailInput": "Escribir correo-e",
-        "setEmailLabel": "Estabelecer o seu correo gravatar",
+        "setEmailLabel": "Estabelecer o seu correo Gravatar",
         "title": "Perfil"
     },
     "raisedHand": "Gustaríalle falar",
@@ -482,7 +482,7 @@
         "error": "Fallou a gravación. Ténteo de novo.",
         "expandedOff": "A gravación parouse",
         "expandedOn": "Esta reunión está actualmente sendo gravada",
-        "expandedPending": "A gravación está a comezar...",
+        "expandedPending": "A gravación está a comezar…",
         "failedToStart": "Fallou o arrinque da gravación",
         "fileSharingdescription": "Compartir a gravación cos participantes na reunión",
         "live": "VIVO",
@@ -491,7 +491,7 @@
         "offBy": "{{name}} parou a gravación",
         "on": "Gravando",
         "onBy": "{{name}} comezou a gravación",
-        "pending": "Preparando a gravación da reunión...",
+        "pending": "Preparando a gravación da reunión…",
         "rec": "GRA",
         "serviceDescription": "A súa gravación será gardada polo servizo de gravación",
         "serviceName": "Servizo de gravación",
@@ -664,7 +664,7 @@
         "failedToStart": "A transcrición non puido arrincar",
         "labelToolTip": "A reunión está sendo transcrita",
         "off": "Transcrición parada",
-        "pending": "Preparando a transcrición da reunión...",
+        "pending": "Preparando a transcrición da reunión…",
         "start": "Comezar a amosar subtítulos",
         "stop": "Parar a mostra de subtítulos",
         "tr": "TR"
@@ -705,9 +705,6 @@
         "lowDefinition": "Baixa definición",
         "onlyAudioAvailable": "Soamente está dispoñíbel o son",
         "onlyAudioSupported": "Soamente está dispoñíbel o son neste navegador.",
-        "p2pEnabled": "Activado entre pares",
-        "p2pVideoQualityDescription": "No modo entre pares, a calidade de recepción de vídeo soamente pode escollerse entre alta ou soamente con son. Calquera outra configuración non se admitirá ata que se saia do modo entre pares. ",
-        "recHighDefinitionOnly": "Preferir alta definición.",
         "sd": "MD",
         "sdTooltip": "Ver un vídeo en definición estándar",
         "standardDefinition": "Definición estándar"
@@ -728,7 +725,7 @@
             "join": "Tocar para unirse",
             "roomname": "Escriba o nome da sala"
         },
-        "appDescription": "Adiante, chat de vídeo co equipo enteiro. De feito, convidar a todos os que coñece. {{app}} está totalmente cifrado, unha solución de videoconferencia 100% de código aberto que pode utilizar todo o día, cada día, de balde — sen sequera unha conta.  ",
+        "appDescription": "Adiante, chat de vídeo co equipo enteiro. De feito, convidar a todos os que coñece. {{app}} está totalmente cifrado, unha solución de videoconferencia 100% de código aberto que pode utilizar todo o día, cada día, de balde — sen sequera unha conta.",
         "audioVideoSwitch": {
             "audio": "Voz",
             "video": "Vídeo"

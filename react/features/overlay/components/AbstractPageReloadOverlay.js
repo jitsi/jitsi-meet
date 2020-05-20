@@ -13,8 +13,8 @@ import {
     isFatalJitsiConferenceError,
     isFatalJitsiConnectionError
 } from '../../base/lib-jitsi-meet';
-
 import logger from '../logger';
+
 import ReloadButton from './web/ReloadButton';
 
 declare var APP: Object;
@@ -286,6 +286,6 @@ export function abstractMapStateToProps(state: Object) {
         details: fatalError && fatalError.details,
         isNetworkFailure:
             fatalError === configError || fatalError === connectionError,
-        reason: fatalError && fatalError.message
+        reason: fatalError && (fatalError.message || fatalError.name)
     };
 }

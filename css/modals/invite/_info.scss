@@ -3,47 +3,6 @@
     display: flex;
     font-size: 14px;
 
-    .info-dialog-action-link {
-        display: inline-block;
-        line-height: 1.5em;
-
-        a {
-            cursor: pointer;
-            vertical-align: middle;
-        }
-    }
-
-    .info-dialog-action-link:before {
-        color: $linkFontColor;
-        content: '\2022';
-        font-size: 1.5em;
-        padding: 0 10px;
-        vertical-align: middle;
-    }
-
-    .info-dialog-action-link:first-child:before {
-        content: '';
-        padding: 0;
-    }
-
-    .info-dialog-action-links {
-        font-weight: bold;
-        margin-top: 10px;
-        white-space: nowrap;
-    }
-
-    .info-dialog-action-separator {
-        display: inline-block;
-    }
-
-    .info-dialog-copy-element {
-        opacity: 0;
-        pointer-events: none;
-        position: absolute;
-        -webkit-user-select: text;
-        user-select: text;
-    }
-
     .info-dialog-column {
         margin-right: 10px;
         overflow: hidden;
@@ -54,52 +13,6 @@
         a:hover {
             text-decoration: none;
         }
-    }
-
-    .info-dialog-conference-url,
-    .info-dialog-live-stream-url {
-        width: max-content;
-        width: -moz-max-content;
-        width: -webkit-max-content;
-        word-break: break-all;
-        max-width: 400px;
-        display: flex;
-        align-items: center;
-    }
-
-    .info-dialog-dial-in {
-        word-break: break-all;
-
-        .conference-id,
-        .phone-number {
-            user-select: text;
-        }
-    }
-
-    .info-dialog-icon {
-        color: #6453C0;
-        font-size: 16px;
-        min-width: 30px;
-    }
-
-    .info-dialog-url-text,
-    .info-dialog-url-text:hover {
-        color: inherit;
-        cursor: inherit;
-    }
-
-    .info-dialog-url-icon {
-        display: inline-block;
-        margin-left: 5px;
-
-        svg {
-            cursor: pointer;
-        }
-    }
-
-    .info-dialog-title {
-        font-weight: bold;
-        margin-bottom: 10px;
     }
 
     .info-dialog-password,
@@ -222,11 +135,5 @@
         user-select: text;
         -moz-user-select: text;
         -webkit-user-select: text;
-    }
-
-    .info-dialog-url-text-unselectable {
-        user-select: none;
-        -moz-user-select: none;
-        -webkit-user-select: none;
     }
 }

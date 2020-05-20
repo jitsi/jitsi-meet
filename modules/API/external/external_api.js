@@ -29,11 +29,14 @@ const ALWAYS_ON_TOP_FILENAMES = [
 const commands = {
     avatarUrl: 'avatar-url',
     displayName: 'display-name',
+    e2eeKey: 'e2ee-key',
     email: 'email',
     hangup: 'video-hangup',
+    muteEveryone: 'mute-everyone',
     password: 'password',
     sendEndpointTextMessage: 'send-endpoint-text-message',
     sendTones: 'send-tones',
+    setVideoQuality: 'set-video-quality',
     subject: 'subject',
     submitFeedback: 'submit-feedback',
     toggleAudio: 'toggle-audio',
@@ -66,6 +69,7 @@ const events = {
     'participant-joined': 'participantJoined',
     'participant-kicked-out': 'participantKickedOut',
     'participant-left': 'participantLeft',
+    'participant-role-changed': 'participantRoleChanged',
     'password-required': 'passwordRequired',
     'proxy-connection-event': 'proxyConnectionEvent',
     'video-ready-to-close': 'readyToClose',
@@ -236,6 +240,8 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      * information about the initial devices that will be used in the call.
      * @param {Object} [options.userInfo] - Object containing information about
      * the participant opening the meeting.
+     * @param {string}  [options.e2eeKey] - The key used for End-to-End encryption.
+     * THIS IS EXPERIMENTAL.
      */
     constructor(domain, ...args) {
         super();
@@ -251,7 +257,8 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
             onload = undefined,
             invitees,
             devices,
-            userInfo
+            userInfo,
+            e2eeKey
         } = parseArguments(args);
 
         this._parentNode = parentNode;
@@ -276,6 +283,7 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
         if (Array.isArray(invitees) && invitees.length > 0) {
             this.invite(invitees);
         }
+        this._tmpE2EEKey = e2eeKey;
         this._isLargeVideoVisible = true;
         this._numberOfParticipants = 0;
         this._participants = {};
@@ -429,11 +437,17 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
             const userID = data.id;
 
             switch (name) {
-            case 'video-conference-joined':
+            case 'video-conference-joined': {
+                if (typeof this._tmpE2EEKey !== 'undefined') {
+                    this.executeCommand(commands.e2eeKey, this._tmpE2EEKey);
+                    this._tmpE2EEKey = undefined;
+                }
+
                 this._myUserID = userID;
                 this._participants[userID] = {
                     avatarURL: data.avatarURL
                 };
+            }
 
             // eslint-disable-next-line no-fallthrough
             case 'participant-joined': {

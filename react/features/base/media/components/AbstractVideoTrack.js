@@ -4,8 +4,8 @@ import React, { Component } from 'react';
 import type { Dispatch } from 'redux';
 
 import { trackVideoStarted } from '../../tracks';
-
 import { shouldRenderVideoTrack } from '../functions';
+
 import { Video } from './_';
 
 /**

@@ -53,10 +53,6 @@ export default {
      */
     LOCAL_FLIPX_CHANGED: 'UI.local_flipx_changed',
 
-    // An event which indicates that the resolution of a remote video has
-    // changed.
-    RESOLUTION_CHANGED: 'UI.resolution_changed',
-
     /**
      * Notifies that the button "Cancel" is pressed on the dialog for
      * external extension installation.

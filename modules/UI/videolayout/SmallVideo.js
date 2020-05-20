@@ -1,15 +1,16 @@
 /* global $, APP, config, interfaceConfig */
 
 /* eslint-disable no-unused-vars */
+import { AtlasKitThemeProvider } from '@atlaskit/theme';
+import Logger from 'jitsi-meet-logger';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { I18nextProvider } from 'react-i18next';
-import { AtlasKitThemeProvider } from '@atlaskit/theme';
 import { Provider } from 'react-redux';
 
-import { i18next } from '../../../react/features/base/i18n';
 import { AudioLevelIndicator } from '../../../react/features/audio-level-indicator';
 import { Avatar as AvatarDisplay } from '../../../react/features/base/avatar';
+import { i18next } from '../../../react/features/base/i18n';
 import {
     getParticipantCount,
     getPinnedParticipant,
@@ -30,9 +31,7 @@ import {
 } from '../../../react/features/video-layout';
 /* eslint-enable no-unused-vars */
 
-const logger = require('jitsi-meet-logger').getLogger(__filename);
-
-import UIEvents from '../../../service/UI/UIEvents';
+const logger = Logger.getLogger(__filename);
 
 /**
  * Display mode constant used when video is being displayed on the small video.
@@ -156,28 +155,6 @@ export default class SmallVideo {
      */
     isVisible() {
         return this.$container.is(':visible');
-    }
-
-    /**
-     * Sets the type of the video displayed by this instance.
-     * Note that this is a string without clearly defined or checked values, and
-     * it is NOT one of the strings defined in service/RTC/VideoType in
-     * lib-jitsi-meet.
-     * @param videoType 'camera' or 'desktop', or 'sharedvideo'.
-     */
-    setVideoType(videoType) {
-        this.videoType = videoType;
-    }
-
-    /**
-     * Returns the type of the video displayed by this instance.
-     * Note that this is a string without clearly defined or checked values, and
-     * it is NOT one of the strings defined in service/RTC/VideoType in
-     * lib-jitsi-meet.
-     * @returns {String} 'camera', 'screen', 'sharedvideo', or undefined.
-     */
-    getVideoType() {
-        return this.videoType;
     }
 
     /**
@@ -452,7 +429,7 @@ export default class SmallVideo {
      * or <tt>false</tt> otherwise.
      */
     isCurrentlyOnLargeVideo() {
-        return this.VideoLayout.isCurrentlyOnLarge(this.id);
+        return APP.store.getState()['features/large-video']?.participantId === this.id;
     }
 
     /**
@@ -500,7 +477,7 @@ export default class SmallVideo {
             hasVideo: Boolean(this.selectVideoElement().length),
             connectionStatus: APP.conference.getParticipantConnectionStatus(this.id),
             mutedWhileDisconnected: this.mutedWhileDisconnected,
-            wasVideoPlayed: this.wasVideoPlayed,
+            canPlayEventReceived: this._canPlayEventReceived,
             videoStream: Boolean(this.videoStream),
             isVideoMuted: this.isVideoMuted,
             videoStreamMuted: this.videoStream ? this.videoStream.isMuted() : 'no stream'
@@ -638,39 +615,6 @@ export default class SmallVideo {
 
         this._showRaisedHand = show;
         this.updateIndicators();
-    }
-
-    /**
-     * Adds a listener for onresize events for this video, which will monitor for
-     * resolution changes, will calculate the delay since the moment the listened
-     * is added, and will fire a RESOLUTION_CHANGED event.
-     */
-    waitForResolutionChange() {
-        const beforeChange = window.performance.now();
-        const videos = this.selectVideoElement();
-
-        if (!videos || !videos.length || videos.length <= 0) {
-            return;
-        }
-        const video = videos[0];
-        const oldWidth = video.videoWidth;
-        const oldHeight = video.videoHeight;
-
-        video.onresize = () => {
-            // eslint-disable-next-line eqeqeq
-            if (video.videoWidth != oldWidth || video.videoHeight != oldHeight) {
-                // Only run once.
-                video.onresize = null;
-
-                const delay = window.performance.now() - beforeChange;
-                const emitter = this.VideoLayout.getEventEmitter();
-
-                if (emitter) {
-                    emitter.emit(UIEvents.RESOLUTION_CHANGED, this.getId(), `${oldWidth}x${oldHeight}`,
-                        `${video.videoWidth}x${video.videoHeight}`, delay);
-                }
-            }
-        };
     }
 
     /**

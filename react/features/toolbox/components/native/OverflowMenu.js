@@ -1,12 +1,11 @@
 // @flow
 
 import React, { PureComponent } from 'react';
-import { Platform, TouchableOpacity, View } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 import Collapsible from 'react-native-collapsible';
 
 import { ColorSchemeRegistry } from '../../../base/color-scheme';
 import { BottomSheet, hideDialog, isDialogOpen } from '../../../base/dialog';
-import { IOS_RECORDING_ENABLED, getFeatureFlag } from '../../../base/flags';
 import { IconDragHandle } from '../../../base/icons';
 import { connect } from '../../../base/redux';
 import { StyleType } from '../../../base/styles';
@@ -17,7 +16,6 @@ import { LiveStreamButton, RecordButton } from '../../../recording';
 import { RoomLockButton } from '../../../room-lock';
 import { ClosedCaptionButton } from '../../../subtitles';
 import { TileViewButton } from '../../../video-layout';
-
 import HelpButton from '../HelpButton';
 
 import AudioOnlyButton from './AudioOnlyButton';
@@ -134,10 +132,7 @@ class OverflowMenu extends PureComponent<Props, State> {
                 <Collapsible collapsed = { !showMore }>
                     <ToggleCameraButton { ...buttonProps } />
                     <TileViewButton { ...buttonProps } />
-                    {
-                        this.props._recordingEnabled
-                            && <RecordButton { ...buttonProps } />
-                    }
+                    <RecordButton { ...buttonProps } />
                     <LiveStreamButton { ...buttonProps } />
                     <RoomLockButton { ...buttonProps } />
                     <ClosedCaptionButton { ...buttonProps } />
@@ -240,8 +235,7 @@ class OverflowMenu extends PureComponent<Props, State> {
 function _mapStateToProps(state) {
     return {
         _bottomSheetStyles: ColorSchemeRegistry.get(state, 'BottomSheet'),
-        _isOpen: isDialogOpen(state, OverflowMenu_),
-        _recordingEnabled: Platform.OS !== 'ios' || getFeatureFlag(state, IOS_RECORDING_ENABLED)
+        _isOpen: isDialogOpen(state, OverflowMenu_)
     };
 }
 

@@ -1,6 +1,6 @@
 # Jitsi Meet - Secure, Simple and Scalable Video Conferences
 
-Jitsi Meet is an open-source (Apache) WebRTC JavaScript application that uses [Jitsi Videobridge](https://jitsi.org/videobridge) to provide high quality, [secure](#security) and scalable video conferences. Jitsi Meet in action can be seen at [here at the session #482 of the VoIP Users Conference](http://youtu.be/7vFUVClsNh0).
+Jitsi Meet is an open-source (Apache) WebRTC JavaScript application that uses [Jitsi Videobridge](https://jitsi.org/videobridge) to provide high quality, [secure](https://jitsi.org/security) and scalable video conferences. Jitsi Meet in action can be seen at [here at the session #482 of the VoIP Users Conference](http://youtu.be/7vFUVClsNh0).
 
 The Jitsi Meet client runs in your browser, without installing anything else on your computer. You can try it out at https://meet.jit.si.
 
@@ -10,9 +10,11 @@ Jitsi Meet allows very efficient collaboration. Users can stream their desktop o
 
 On the client side, no installation is necessary. You just point your browser to the URL of your deployment. This section is about installing a Jitsi Meet suite on your server and hosting your own conferencing service.
 
-Installing Jitsi Meet is a simple experience. For Debian-based system, following the [quick-install](https://github.com/jitsi/jitsi-meet/blob/master/doc/quick-install.md) document, which uses the package system. You can also see a demonstration of the process in [this tutorial video](https://jitsi.org/tutorial).
+Installing Jitsi Meet is a simple experience. For Debian-based system, following the [quick install](https://jitsi.github.io/handbook/docs/devops-guide/devops-guide-quickstart) document, which uses the package system. You can also see a demonstration of the process in [this tutorial video](https://jitsi.org/tutorial).
 
-For other systems, or if you wish to install all components manually, see the [detailed manual installation instructions](https://github.com/jitsi/jitsi-meet/blob/master/doc/manual-install.md).
+For other systems, or if you wish to install all components manually, see the [detailed manual installation instructions](https://jitsi.github.io/handbook/docs/devops-guide/devops-guide-manual).
+
+Installation with Docker is also available. Please see the [instruction](https://jitsi.github.io/handbook/docs/devops-guide/devops-guide-docker).
 
 ## Download
 
@@ -46,9 +48,13 @@ You can also sign up for our open beta testing here:
 * [Android](https://play.google.com/apps/testing/org.jitsi.meet)
 * [iOS](https://testflight.apple.com/join/isy6ja7S)
 
+## Release notes
+
+Release notes for Jitsi Meet are maintained on [this repository](https://github.com/jitsi/jitsi-meet-release-notes).
+
 ## Development
 
-For web development see [here](doc/development.md), and for mobile see [here](doc/mobile.md).
+For web development see [here](https://jitsi.github.io/handbook/docs/dev-guide/dev-guide-web), and for mobile see [here](https://jitsi.github.io/handbook/docs/dev-guide/dev-guide-mobile).
 
 ## Contributing
 
@@ -61,25 +67,13 @@ Jitsi Meet provides a very flexible way of embedding in external applications by
 
 ## Security
 
-WebRTC does not (yet) provide a way of conducting multi-party conversations with end-to-end encryption. 
-Unless you consistently compare DTLS fingerprints with your peers vocally, the same goes for one-to-one calls.
-As a result, your stream is encrypted on the network but decrypted on the machine that hosts the bridge when using Jitsi Meet.
+The security section here was starting to feel a bit too succinct for the complexity of the topic, so we created a post that covers the topic much more broadly here: https://jitsi.org/security
 
-The Jitsi Meet architecture allows you to deploy your own version, including
-all server components. In that case, your security guarantees will be roughly
-equivalent to a direct one-to-one WebRTC call. This is the uniqueness of
-Jitsi Meet in terms of security.
-
-The [meet.jit.si](https://meet.jit.si) service is maintained by the Jitsi team
-at [8x8](https://8x8.com).
+The section on end-to-end encryption in that document is likely going to be one of the key points of interest: https://jitsi.org/security/#e2ee
 
 ## Security issues
 
-We take security very seriously and develop all Jitsi projects to be secure and safe.
-
-If you find (or simply suspect) a security issue in any of the Jitsi projects, please send us an email to security@jitsi.org.
-
-**We encourage responsible disclosure for the sake of our users, so please reach out before posting in a public space.**
+For information on reporting security vulnerabilities in Jitsi Meet, see [SECURITY.md](./SECURITY.md).
 
 ## Acknowledgements
 
