@@ -4,7 +4,6 @@ import Tabs from '@atlaskit/tabs';
 import React, { Component } from 'react';
 
 import { translate } from '../../../i18n/functions';
-
 import logger from '../../logger';
 
 import StatelessDialog from './StatelessDialog';

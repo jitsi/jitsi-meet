@@ -3,7 +3,6 @@
 import Sound from 'react-native-sound';
 
 import logger from '../../logger';
-
 import AbstractAudio from '../AbstractAudio';
 
 /**

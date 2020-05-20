@@ -1,6 +1,7 @@
 // @flow
 
 import React from 'react';
+
 import { Avatar } from '../../../base/avatar';
 import { Video } from '../../../base/media';
 import { connect } from '../../../base/redux';

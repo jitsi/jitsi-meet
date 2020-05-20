@@ -4,9 +4,9 @@ import React from 'react';
 
 import { translate } from '../../../base/i18n';
 import { Icon, IconClose } from '../../../base/icons';
+import Label from '../Label';
 import ActionButton from '../buttons/ActionButton';
 import CountryPicker from '../country-picker/CountryPicker';
-import Label from '../Label';
 
 type Props = {
 

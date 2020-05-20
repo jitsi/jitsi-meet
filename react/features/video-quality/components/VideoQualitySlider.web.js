@@ -10,7 +10,6 @@ import { VIDEO_QUALITY_LEVELS, setPreferredVideoQuality } from '../../base/confe
 import { translate } from '../../base/i18n';
 import JitsiMeetJS from '../../base/lib-jitsi-meet';
 import { connect } from '../../base/redux';
-
 import logger from '../logger';
 
 const {

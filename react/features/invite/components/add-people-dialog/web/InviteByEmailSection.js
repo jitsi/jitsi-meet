@@ -1,7 +1,7 @@
 // @flow
 
-import React, { useState } from 'react';
 import Tooltip from '@atlaskit/tooltip';
+import React, { useState } from 'react';
 
 import { translate } from '../../../../base/i18n';
 import {

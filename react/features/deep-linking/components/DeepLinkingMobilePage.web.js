@@ -1,13 +1,12 @@
 // @flow
 
 import React, { Component } from 'react';
-import { connect } from '../../base/redux';
 
 import { createDeepLinkingPageEvent, sendAnalytics } from '../../analytics';
 import { translate } from '../../base/i18n';
 import { Platform } from '../../base/react';
+import { connect } from '../../base/redux';
 import { DialInSummary } from '../../invite';
-
 import { _TNS } from '../constants';
 import { generateDeepLinkingURL } from '../functions';
 import { renderPromotionalFooter } from '../renderPromotionalFooter';

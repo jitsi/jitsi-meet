@@ -1,11 +1,11 @@
 // @flow
 
+import { hasAvailableDevices } from '../base/devices';
 import {
     isAudioDisabled,
     isPrejoinPageVisible,
     isPrejoinVideoDisabled
 } from '../prejoin';
-import { hasAvailableDevices } from '../base/devices';
 
 declare var interfaceConfig: Object;
 

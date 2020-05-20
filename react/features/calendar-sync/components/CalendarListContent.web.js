@@ -2,12 +2,12 @@
 
 import React, { Component } from 'react';
 
-import { appNavigate } from '../../app';
 import {
     createCalendarClickedEvent,
     createCalendarSelectedEvent,
     sendAnalytics
 } from '../../analytics';
+import { appNavigate } from '../../app';
 import { MeetingsList } from '../../base/react';
 import { connect } from '../../base/redux';
 

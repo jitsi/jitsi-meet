@@ -3,7 +3,6 @@
 import React from 'react';
 
 import { translate } from '../../../../base/i18n';
-
 import { getDialInfoPageURL } from '../../../functions';
 
 import DialInNumber from './DialInNumber';

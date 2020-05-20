@@ -5,7 +5,6 @@ import { Text } from 'react-native';
 
 import { translate } from '../../../i18n';
 import { connect } from '../../../redux';
-
 import { _abstractMapStateToProps } from '../../functions';
 
 import { type Props as AbstractProps } from './BaseDialog';

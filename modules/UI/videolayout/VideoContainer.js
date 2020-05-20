@@ -8,11 +8,11 @@ import { browser } from '../../../react/features/base/lib-jitsi-meet';
 import { ORIENTATION, LargeVideoBackground } from '../../../react/features/large-video';
 import { LAYOUTS, getCurrentLayout } from '../../../react/features/video-layout';
 /* eslint-enable no-unused-vars */
+import UIEvents from '../../../service/UI/UIEvents';
+import UIUtil from '../util/UIUtil';
 
 import Filmstrip from './Filmstrip';
 import LargeContainer from './LargeContainer';
-import UIEvents from '../../../service/UI/UIEvents';
-import UIUtil from '../util/UIUtil';
 
 // FIXME should be 'video'
 export const VIDEO_CONTAINER_TYPE = 'camera';

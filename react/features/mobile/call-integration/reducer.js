@@ -1,8 +1,8 @@
 import { assign, ReducerRegistry } from '../../base/redux';
 
-import { _SET_CALL_INTEGRATION_SUBSCRIPTIONS } from './actionTypes';
 import CallKit from './CallKit';
 import ConnectionService from './ConnectionService';
+import { _SET_CALL_INTEGRATION_SUBSCRIPTIONS } from './actionTypes';
 
 (CallKit || ConnectionService) && ReducerRegistry.register(
     'features/call-integration',

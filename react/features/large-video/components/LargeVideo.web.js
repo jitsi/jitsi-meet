@@ -3,8 +3,8 @@
 import React, { Component } from 'react';
 
 import { Watermarks } from '../../base/react';
-import { Captions } from '../../subtitles/';
 import { connect } from '../../base/redux';
+import { Captions } from '../../subtitles/';
 
 declare var interfaceConfig: Object;
 

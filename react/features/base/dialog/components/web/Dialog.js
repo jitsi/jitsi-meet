@@ -3,9 +3,9 @@
 import React from 'react';
 
 import { connect } from '../../../redux';
-
 import AbstractDialog from '../AbstractDialog';
 import type { Props as AbstractDialogProps, State } from '../AbstractDialog';
+
 import StatelessDialog from './StatelessDialog';
 
 /**

@@ -2,8 +2,8 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { I18nextProvider } from 'react-i18next';
 
-import { i18next } from '../../../base/i18n';
 import { isMobileBrowser } from '../../../base/environment/utils';
+import { i18next } from '../../../base/i18n';
 import { parseURLParams } from '../../../base/util/parseURLParams';
 import { DialInSummary } from '../dial-in-summary';
 

@@ -2,17 +2,14 @@
 
 import { Client } from '@microsoft/microsoft-graph-client';
 import base64js from 'base64-js';
-
 import type { Dispatch } from 'redux';
+import { findWindows } from 'windows-iana';
 
 import { createDeferred } from '../../../../modules/util/helpers';
-
 import { parseStandardURIString, parseURLParams } from '../../base/util';
 import { getShareInfoText } from '../../invite';
-
 import { setCalendarAPIAuthState } from '../actions';
 
-import { findWindows } from 'windows-iana';
 
 /**
  * Constants used for interacting with the Microsoft API.

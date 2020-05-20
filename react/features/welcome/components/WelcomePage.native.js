@@ -10,7 +10,6 @@ import {
 } from 'react-native';
 
 import { getName } from '../../app';
-
 import { ColorSchemeRegistry } from '../../base/color-scheme';
 import { translate } from '../../base/i18n';
 import { Icon, IconMenu, IconWarning } from '../../base/icons';
@@ -25,7 +24,6 @@ import {
 import { HelpView } from '../../help';
 import { DialInSummary } from '../../invite';
 import { SettingsView } from '../../settings';
-
 import { setSideBarVisible } from '../actions';
 
 import {
@@ -33,10 +31,10 @@ import {
     _mapStateToProps as _abstractMapStateToProps
 } from './AbstractWelcomePage';
 import LocalVideoTrackUnderlay from './LocalVideoTrackUnderlay';
-import styles, { PLACEHOLDER_TEXT_COLOR } from './styles';
 import VideoSwitch from './VideoSwitch';
 import WelcomePageLists from './WelcomePageLists';
 import WelcomePageSideBar from './WelcomePageSideBar';
+import styles, { PLACEHOLDER_TEXT_COLOR } from './styles';
 
 /**
  * The native container rendering the welcome page.

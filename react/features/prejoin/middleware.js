@@ -1,14 +1,15 @@
 // @flow
 
+import { SET_AUDIO_MUTED, SET_VIDEO_MUTED } from '../base/media';
+import { MiddlewareRegistry } from '../base/redux';
+import { updateSettings } from '../base/settings';
+
 import {
     ADD_PREJOIN_AUDIO_TRACK,
     ADD_PREJOIN_VIDEO_TRACK,
     PREJOIN_START_CONFERENCE
 } from './actionTypes';
 import { setPrejoinAudioMuted, setPrejoinVideoMuted } from './actions';
-import { updateSettings } from '../base/settings';
-import { SET_AUDIO_MUTED, SET_VIDEO_MUTED } from '../base/media';
-import { MiddlewareRegistry } from '../base/redux';
 import { getAllPrejoinConfiguredTracks } from './functions';
 
 declare var APP: Object;

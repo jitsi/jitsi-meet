@@ -5,8 +5,8 @@ import { RTCView } from 'react-native-webrtc';
 
 import { Pressable } from '../../../react';
 
-import styles from './styles';
 import VideoTransform from './VideoTransform';
+import styles from './styles';
 
 /**
  * The type of the React {@code Component} props of {@link Video}.

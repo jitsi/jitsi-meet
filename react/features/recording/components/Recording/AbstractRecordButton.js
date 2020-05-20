@@ -4,7 +4,6 @@ import {
     createToolbarEvent,
     sendAnalytics
 } from '../../../analytics';
-
 import { openDialog } from '../../../base/dialog';
 import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
 import {
@@ -15,7 +14,6 @@ import {
     AbstractButton,
     type AbstractButtonProps
 } from '../../../base/toolbox';
-
 import { getActiveSession } from '../../functions';
 
 import { StartRecordingDialog, StopRecordingDialog } from './_';

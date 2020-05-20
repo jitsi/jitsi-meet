@@ -7,7 +7,6 @@ import { translate } from '../../../base/i18n';
 import { IconWarning } from '../../../base/icons';
 import { CircularLabel } from '../../../base/label';
 import { connect } from '../../../base/redux';
-
 import AbstractInsecureRoomNameLabel, { _mapStateToProps } from '../AbstractInsecureRoomNameLabel';
 
 /**

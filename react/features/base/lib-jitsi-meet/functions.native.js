@@ -3,6 +3,7 @@
 import { NativeModules } from 'react-native';
 
 import { loadScript } from '../util';
+
 import logger from './logger';
 
 export * from './functions.any';
