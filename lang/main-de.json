@@ -220,7 +220,7 @@
         "muteParticipantDialog": "Wollen Sie diesen Teilnehmer wirklich stummschalten? Sie können die Stummschaltung nicht wieder aufheben, der Teilnehmer kann dies aber jederzeit selbst tun.",
         "muteParticipantTitle": "Teilnehmer stummschalten?",
         "Ok": "OK",
-        "passwordLabel": "Das Treffen wurde von einem Teilnehmer geslerrt. Bitte geben Sie die $t(lockRoomPassword) zu verbinden.",
+        "passwordLabel": "Dieses Meeting wurde von einem Teilnehmer gesichert. Bitte geben Sie das $t(lockRoomPassword) ein, um dem Meeting beizutreten.",
         "passwordNotSupported": "Das Festlegen von einem $t(lockRoomPassword) für das Meeting wird nicht unterstützt.",
         "passwordNotSupportedTitle": "$t(lockRoomPasswordUppercase) nicht unterstützt",
         "passwordRequired": "$t(lockRoomPasswordUppercase) erforderlich",
