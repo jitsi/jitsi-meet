@@ -1,16 +1,17 @@
 // @flow
 
+import {
+    checkChromeExtensionsInstalled,
+    isMobileBrowser
+} from '../base/environment/utils';
 import JitsiMeetJS, {
     analytics,
     browser,
     isAnalyticsEnabled
 } from '../base/lib-jitsi-meet';
 import { getJitsiMeetGlobalNS, loadScript } from '../base/util';
-import {
-    checkChromeExtensionsInstalled,
-    isMobileBrowser
-} from '../base/environment/utils';
-import { AmplitudeHandler } from './handlers';
+
+import { AmplitudeHandler, MatomoHandler } from './handlers';
 import logger from './logger';
 
 /**
@@ -65,6 +66,8 @@ export function createHandlers({ getState }: { getState: Function }) {
         blackListedEvents,
         scriptURLs,
         googleAnalyticsTrackingId,
+        matomoEndpoint,
+        matomoSiteID,
         whiteListedEvents
     } = analyticsConfig;
     const { group, user } = state['features/base/jwt'];
@@ -73,6 +76,8 @@ export function createHandlers({ getState }: { getState: Function }) {
         blackListedEvents,
         envType: (deploymentInfo && deploymentInfo.envType) || 'dev',
         googleAnalyticsTrackingId,
+        matomoEndpoint,
+        matomoSiteID,
         group,
         host,
         product: deploymentInfo && deploymentInfo.product,
@@ -90,12 +95,19 @@ export function createHandlers({ getState }: { getState: Function }) {
     // eslint-disable-next-line no-empty
     } catch (e) {}
 
+    try {
+        const matomo = new MatomoHandler(handlerConstructorOptions);
+
+        handlers.push(matomo);
+    // eslint-disable-next-line no-empty
+    } catch (e) {}
+
     return (
         _loadHandlers(scriptURLs, handlerConstructorOptions)
             .then(externalHandlers => {
                 handlers.push(...externalHandlers);
                 if (handlers.length === 0) {
-                    // Throwing an error in  order to dispose the analytics in the catch clause due to the lack of any
+                    // Throwing an error in order to dispose the analytics in the catch clause due to the lack of any
                     // analytics handlers.
                     throw new Error('No analytics handlers created!');
                 }

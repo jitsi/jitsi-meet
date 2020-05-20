@@ -106,7 +106,6 @@
         "transport": "Prenos:",
         "turn": ""
     },
-    "\u0005connectionindicator": {},
     "dateUtils": {
         "earlier": "",
         "today": "",
@@ -262,11 +261,10 @@
         "userPassword": "uporabniško geslo",
         "WaitForHostMsg": "",
         "WaitForHostMsgWOk": "",
-        "WaitingForHost": "Čakanje na gostitelja ...",
+        "WaitingForHost": "Čakanje na gostitelja …",
         "Yes": "Da",
         "yourEntireScreen": ""
     },
-    "\u0005dialog": {},
     "dialOut": {
         "statusMessage": ""
     },
@@ -346,7 +344,6 @@
         "toggleShortcuts": "",
         "videoMute": ""
     },
-    "\u0005keyboardShortcuts": {},
     "liveStreaming": {
         "busy": "",
         "busyTitle": "",
@@ -455,7 +452,6 @@
         "rejected": "",
         "ringing": ""
     },
-    "\u0005presenceStatus": {},
     "profile": {
         "setDisplayNameLabel": "",
         "setEmailInput": "",
@@ -512,9 +508,6 @@
         "startAudioMuted": "",
         "startVideoMuted": "",
         "title": "Nastavitve"
-    },
-    "\u0005settings": {
-        "calendar": {}
     },
     "settingsView": {
         "alertOk": "",
@@ -632,7 +625,6 @@
         "startvideoblur": "",
         "stopvideoblur": ""
     },
-    "\u0005toolbar": {},
     "transcribing": {
         "ccButtonTooltip": "",
         "error": "",
@@ -679,9 +671,6 @@
         "lowDefinition": "",
         "onlyAudioAvailable": "",
         "onlyAudioSupported": "",
-        "p2pEnabled": "",
-        "p2pVideoQualityDescription": "",
-        "recHighDefinitionOnly": "",
         "sd": "",
         "standardDefinition": ""
     },

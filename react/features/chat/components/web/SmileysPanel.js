@@ -2,6 +2,7 @@
 
 import React, { PureComponent } from 'react';
 import Emoji from 'react-emoji-render';
+
 import { smileys } from '../../smileys';
 
 /**

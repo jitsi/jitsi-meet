@@ -19,6 +19,12 @@ const _LANGUAGES = {
         main: require('../../../../lang/main-bg')
     },
 
+    // Catalan
+    'ca': {
+        languages: require('../../../../lang/languages-ca'),
+        main: require('../../../../lang/main-ca')
+    },
+
     // German
     'de': {
         languages: require('../../../../lang/languages-de'),
@@ -127,16 +133,34 @@ const _LANGUAGES = {
         main: require('../../../../lang/main-ptBR')
     },
 
+    // Sardinian (Sardinia)
+    'sc': {
+        languages: require('../../../../lang/languages-sc'),
+        main: require('../../../../lang/main-sc')
+    },
+
     // Russian
     'ru': {
         languages: require('../../../../lang/languages-ru'),
         main: require('../../../../lang/main-ru')
     },
 
+    // Slovak
+    'sk': {
+        languages: require('../../../../lang/languages-sk'),
+        main: require('../../../../lang/main-sk')
+    },
+
     // Swedish
     'sv': {
         languages: require('../../../../lang/languages-sv'),
         main: require('../../../../lang/main-sv')
+    },
+
+    // Turkish
+    'tr': {
+        languages: require('../../../../lang/languages-tr'),
+        main: require('../../../../lang/main-tr')
     },
 
     // Vietnamese

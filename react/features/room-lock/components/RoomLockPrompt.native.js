@@ -5,7 +5,6 @@ import type { Dispatch } from 'redux';
 
 import { InputDialog } from '../../base/dialog';
 import { connect } from '../../base/redux';
-
 import { endRoomLockRequest } from '../actions';
 
 /**

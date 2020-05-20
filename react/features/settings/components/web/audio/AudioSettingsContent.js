@@ -2,10 +2,11 @@
 
 import React, { Component } from 'react';
 
-import AudioSettingsHeader from './AudioSettingsHeader';
 import { translate } from '../../../../base/i18n';
 import { IconMicrophoneEmpty, IconVolumeEmpty } from '../../../../base/icons';
 import { createLocalAudioTrack } from '../../../functions';
+
+import AudioSettingsHeader from './AudioSettingsHeader';
 import MicrophoneEntry from './MicrophoneEntry';
 import SpeakerEntry from './SpeakerEntry';
 

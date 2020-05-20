@@ -1,8 +1,8 @@
 /* global interfaceConfig */
 
-import { URI_PROTOCOL_PATTERN } from '../base/util';
 import { isMobileBrowser } from '../base/environment/utils';
 import { Platform } from '../base/react';
+import { URI_PROTOCOL_PATTERN } from '../base/util';
 
 import {
     DeepLinkingDesktopPage,

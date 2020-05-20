@@ -3,7 +3,6 @@
 import React, { Component } from 'react';
 
 import { connect } from '../../redux';
-
 import { ASPECT_RATIO_NARROW, ASPECT_RATIO_WIDE } from '../constants';
 
 /**

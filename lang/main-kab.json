@@ -68,7 +68,6 @@
         "ERROR": "",
         "RECONNECTING": ""
     },
-    "\u0005connection": {},
     "connectionindicator": {
         "address": "Tansa:",
         "bandwidth": "",
@@ -115,7 +114,6 @@
         "title": "",
         "tryAgainButton": ""
     },
-    "\u0005deepLinking": {},
     "defaultLink": "md. {{url}}",
     "deviceError": {
         "cameraError": "Ugur deg unekcum i tkamirat-inek",
@@ -260,7 +258,6 @@
         "Yes": "",
         "yourEntireScreen": ""
     },
-    "\u0005dialog": {},
     "dialOut": {
         "statusMessage": ""
     },
@@ -273,7 +270,6 @@
         "veryBad": "Diri-t maḍi",
         "veryGood": "Yelha maḍi"
     },
-    "\u0005feedback": {},
     "incomingCall": {
         "answer": "",
         "audioCallTitle": "",
@@ -337,11 +333,10 @@
         "showSpeakerStats": "Sken addaden n umendid",
         "toggleChat": "Ldi neɣ mdel agalis n usqardec",
         "toggleFilmstrip": "Sken neɣ ffer tinfulin n tvidyut",
-        "toggleScreensharing": "Uɣal gar tkamiṛat d beṭṭu n ugdil  ",
+        "toggleScreensharing": "Uɣal gar tkamiṛat d beṭṭu n ugdil",
         "toggleShortcuts": "Sken neɣ ffer inegzumen n unasiw",
         "videoMute": "Sekker neɣ ḥbes takamiṛat innek"
     },
-    "\u0005keyboardShortcuts": {},
     "liveStreaming": {
         "busy": "",
         "busyTitle": "",
@@ -370,7 +365,6 @@
         "streamIdHelp": "",
         "unavailableTitle": ""
     },
-    "\u0005liveStreaming": {},
     "localRecording": {
         "clientState": {
             "off": "",
@@ -451,7 +445,6 @@
         "rejected": "",
         "ringing": ""
     },
-    "\u0005presenceStatus": {},
     "profile": {
         "setDisplayNameLabel": "Fernet azun",
         "setEmailInput": "Sekcem amayel",
@@ -508,9 +501,6 @@
         "startAudioMuted": "",
         "startVideoMuted": "",
         "title": "Iɣewwaren"
-    },
-    "\u0005settings": {
-        "calendar": {}
     },
     "settingsView": {
         "alertOk": "",
@@ -628,9 +618,6 @@
         "startvideoblur": "",
         "stopvideoblur": ""
     },
-    "\u0005toolbar": {
-        "accessibilityLabel": {}
-    },
     "transcribing": {
         "ccButtonTooltip": "",
         "error": "",
@@ -648,14 +635,13 @@
         "chromeGrantPermissions": "Fren <b><i>Sireg</i></b> Mara d-yessuter yiminig-ik tisurag.",
         "edgeGrantPermissions": "Fren <b><i>OK</i></b> mara d-yessuter yiminig tisurag.",
         "electronGrantPermissions": "Ttxil-k efk-d tasiregt n beṭṭu n tkamiṛat d umikṛufun-ik",
-        "firefoxGrantPermissions": "Fren <b><i>Bḍu abenk yettwafernen</i></i></b> Mara d-yessuter yiminig-ik tisurag.",
+        "firefoxGrantPermissions": "Fren <b><i>Bḍu abenk yettwafernen</i></b> mara d-yessuter yiminig-ik tisurag.",
         "iexplorerGrantPermissions": "Fren <b><i>OK</i></b> mara d-yessuter yiminig tisurag.",
         "nwjsGrantPermissions": "Ttxil-k efk-d tasiregt n beṭṭu n tkamiṛat d umikṛufun-ik",
         "operaGrantPermissions": "Fren <b><i>Sireg</i></b> Mara d-yessuter yiminig-ik tisurag.",
         "react-nativeGrantPermissions": "Fren <b><i>Sireg</i></b> Mara d-yessuter yiminig-ik tisurag.",
         "safariGrantPermissions": "Fren <b><i>OK</i></b> mara d-yessuter yiminig tisurag."
     },
-    "\u0005userMedia": {},
     "videoSIPGW": {
         "busy": "",
         "busyTitle": "",
@@ -678,9 +664,6 @@
         "lowDefinition": "",
         "onlyAudioAvailable": "",
         "onlyAudioSupported": "",
-        "p2pEnabled": "",
-        "p2pVideoQualityDescription": "",
-        "recHighDefinitionOnly": "",
         "sd": "",
         "standardDefinition": ""
     },
@@ -695,7 +678,6 @@
         "show": "",
         "videomute": ""
     },
-    "\u0005videothumbnail": {},
     "welcomepage": {
         "accessibilityLabel": {
             "join": "Sit iwakken ad tedduḍ",
@@ -723,6 +705,5 @@
         "sendFeedback": "Azen rray-ik",
         "terms": "Tiwtilin",
         "title": ""
-    },
-    "\u0005welcomepage": {}
+    }
 }

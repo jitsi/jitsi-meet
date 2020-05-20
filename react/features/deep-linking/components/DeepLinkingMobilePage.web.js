@@ -1,13 +1,12 @@
 // @flow
 
 import React, { Component } from 'react';
-import { connect } from '../../base/redux';
 
 import { createDeepLinkingPageEvent, sendAnalytics } from '../../analytics';
 import { translate } from '../../base/i18n';
 import { Platform } from '../../base/react';
+import { connect } from '../../base/redux';
 import { DialInSummary } from '../../invite';
-
 import { _TNS } from '../constants';
 import { generateDeepLinkingURL } from '../functions';
 import { renderPromotionalFooter } from '../renderPromotionalFooter';
@@ -23,22 +22,15 @@ declare var interfaceConfig: Object;
 const _SNS = 'deep-linking-mobile';
 
 /**
- * The map of platforms to URLs at which the mobile app for the associated
- * platform is available for download.
- *
- * @private
- * @type {Array<string>}
- */
-const _URLS = {
-    android: interfaceConfig.MOBILE_DOWNLOAD_LINK_ANDROID,
-    ios: interfaceConfig.MOBILE_DOWNLOAD_LINK_IOS
-};
-
-/**
  * The type of the React {@code Component} props of
  * {@link DeepLinkingMobilePage}.
  */
 type Props = {
+
+    /**
+     * Application download URL.
+     */
+    _downloadUrl: ?string,
 
     /**
      * The name of the conference attempting to being joined.
@@ -89,13 +81,13 @@ class DeepLinkingMobilePage extends Component<Props> {
      * @returns {ReactElement}
      */
     render() {
-        const { _room, t } = this.props;
+        const { _downloadUrl, _room, t } = this.props;
         const { NATIVE_APP_NAME, SHOW_DEEP_LINKING_IMAGE } = interfaceConfig;
         const downloadButtonClassName
             = `${_SNS}__button ${_SNS}__button_primary`;
 
 
-        const onOpenLinkProperties = _URLS[Platform.OS]
+        const onOpenLinkProperties = _downloadUrl
             ? {
                 // When opening a link to the download page, we want to let the
                 // OS itself handle intercepting and opening the appropriate
@@ -132,7 +124,8 @@ class DeepLinkingMobilePage extends Component<Props> {
                     <a
                         { ...onOpenLinkProperties }
                         href = { this._generateDownloadURL() }
-                        onClick = { this._onDownloadApp }>
+                        onClick = { this._onDownloadApp }
+                        target = '_top'>
                         <button className = { downloadButtonClassName }>
                             { t(`${_TNS}.downloadApp`) }
                         </button>
@@ -141,7 +134,8 @@ class DeepLinkingMobilePage extends Component<Props> {
                         { ...onOpenLinkProperties }
                         className = { `${_SNS}__href` }
                         href = { generateDeepLinkingURL() }
-                        onClick = { this._onOpenApp }>
+                        onClick = { this._onOpenApp }
+                        target = '_top'>
                         {/* <button className = { `${_SNS}__button` }> */}
                         { t(`${_TNS}.openApp`) }
                         {/* </button> */}
@@ -163,9 +157,9 @@ class DeepLinkingMobilePage extends Component<Props> {
      * @returns {string} - The URL for downloading the app.
      */
     _generateDownloadURL() {
-        const url = _URLS[Platform.OS];
+        const { _downloadUrl: url } = this.props;
 
-        if (url) {
+        if (url && typeof interfaceConfig.MOBILE_DYNAMIC_LINK === 'undefined') {
             return url;
         }
 
@@ -175,12 +169,15 @@ class DeepLinkingMobilePage extends Component<Props> {
         const {
             APN = 'org.jitsi.meet',
             APP_CODE = 'w2atb',
+            CUSTOM_DOMAIN = undefined,
             IBI = 'com.atlassian.JitsiMeet.ios',
             ISI = '1165103905'
         } = interfaceConfig.MOBILE_DYNAMIC_LINK || {};
+
+        const domain = CUSTOM_DOMAIN ?? `https://${APP_CODE}.app.goo.gl`;
         const IUS = interfaceConfig.APP_SCHEME || 'org.jitsi.meet';
 
-        return `https://${APP_CODE}.app.goo.gl/?link=${
+        return `${domain}/?link=${
             encodeURIComponent(window.location.href)}&apn=${
             APN}&ibi=${
             IBI}&isi=${
@@ -223,12 +220,11 @@ class DeepLinkingMobilePage extends Component<Props> {
  *
  * @param {Object} state - The Redux state.
  * @private
- * @returns {{
- *     _room: string
- * }}
+ * @returns {Props}
  */
 function _mapStateToProps(state) {
     return {
+        _downloadUrl: interfaceConfig[`MOBILE_DOWNLOAD_LINK_${Platform.OS.toUpperCase()}`],
         _room: decodeURIComponent(state['features/base/conference'].room)
     };
 }

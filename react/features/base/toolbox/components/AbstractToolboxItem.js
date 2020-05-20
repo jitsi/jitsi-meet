@@ -36,6 +36,12 @@ export type Props = {
     accessibilityLabel: string,
 
     /**
+     * An extra class name to be added at the end of the element's class name
+     * in order to enable custom styling.
+     */
+    customClass?: string,
+
+    /**
      * Whether this item is disabled or not. When disabled, clicking an the item
      * has no effect, and it may reflect on its style.
      */
