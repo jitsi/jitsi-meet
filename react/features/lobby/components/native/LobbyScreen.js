@@ -54,6 +54,8 @@ class LobbyScreen extends AbstractLobbyScreen {
 
     _onEnableEdit: () => void;
 
+    _onJoinWithPassword: () => void;
+
     _onSwitchToKnockMode: () => void;
 
     _onSwitchToPasswordMode: () => void;
@@ -74,6 +76,7 @@ class LobbyScreen extends AbstractLobbyScreen {
                 <Text style = { styles.joiningMessage }>
                     { this.props.t('lobby.joiningMessage') }
                 </Text>
+                { this._renderStandardButtons() }
             </>
         );
     }
@@ -126,8 +129,7 @@ class LobbyScreen extends AbstractLobbyScreen {
                 </TouchableOpacity>
                 <Avatar
                     participantId = { this.props._participantId }
-                    size = { 64 }
-                    style = { styles.avatar } />
+                    size = { 64 } />
                 <Text style = { styles.displayNameText }>
                     { displayName }
                 </Text>
@@ -144,6 +146,8 @@ class LobbyScreen extends AbstractLobbyScreen {
      * @inheritdoc
      */
     _renderPasswordForm() {
+        const { _passwordJoinFailed, t } = this.props;
+
         return (
             <View style = { styles.formWrapper }>
                 <Text style = { styles.fieldLabel }>
@@ -156,6 +160,9 @@ class LobbyScreen extends AbstractLobbyScreen {
                     secureTextEntry = { true }
                     style = { styles.field }
                     value = { this.state.password } />
+                { _passwordJoinFailed && <Text style = { styles.fieldError }>
+                    { t('lobby.invalidPassword') }
+                </Text> }
             </View>
         );
     }
@@ -172,7 +179,7 @@ class LobbyScreen extends AbstractLobbyScreen {
             <>
                 <TouchableOpacity
                     disabled = { !this.state.password }
-                    onPress = { this._onAskToJoin }
+                    onPress = { this._onJoinWithPassword }
                     style = { [
                         styles.button,
                         styles.primaryButton
@@ -201,11 +208,11 @@ class LobbyScreen extends AbstractLobbyScreen {
      * @inheritdoc
      */
     _renderStandardButtons() {
-        const { t } = this.props;
+        const { _knocking, t } = this.props;
 
         return (
             <>
-                <TouchableOpacity
+                { _knocking || <TouchableOpacity
                     disabled = { !this.state.displayName }
                     onPress = { this._onAskToJoin }
                     style = { [
@@ -215,7 +222,7 @@ class LobbyScreen extends AbstractLobbyScreen {
                     <Text style = { styles.primaryButtonText }>
                         { t('lobby.knockButton') }
                     </Text>
-                </TouchableOpacity>
+                </TouchableOpacity> }
                 <TouchableOpacity
                     onPress = { this._onSwitchToPasswordMode }
                     style = { [

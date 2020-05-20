@@ -1,115 +1,48 @@
 #lobby-screen {
-    align-items: center;
-    color: $overflowMenuItemColor;
-    display: flex;
-    flex-direction: column;
-    font-size: 1.2em;
-    margin: 48px 36px;
+    .content {
 
-    span {
-        padding: 8px 0;
-    }
+        .container {
+            align-items: center;
+            display: flex;
+            flex-direction: column;
 
-    .title {
-        color: $defaultColor;
-        font-size: 2em;
-    }
-
-    .roomName {
-        font-size: 1em;
-    }
-
-    .participantInfo {
-        align-items: center;
-        align-self: stretch;
-        border: 1px solid #B8C7E0;
-        border-radius: 4px;
-        display: flex;
-        flex-direction: column;
-        margin: 24px 0;
-        padding: 34px 0;
-
-        &:hover {
-            padding-top: 0px;
-
-            .editButton {
-                display: flex;
+            .spinner {
+                margin: 30px;
+            }
+    
+            .joining-message {
+                margin: 10px;
             }
         }
 
-        .editButton {
-            align-self: stretch;
-            display: none;
-            justify-content: flex-end;
-            padding: 5px;
-            position: relative;
-
-            button {
-                background-color: transparent;
-                border-width: 0;
-                margin: 0;
-                padding: 0;
-            }
+        .form {
+            align-items: stretch;
+            display: flex;
+            flex-direction: column;
+            min-width: 400px;
         }
 
-        .displayName {
-            color: $defaultColor;
-            font-size: 1.3em;
-        }
-    }
-
-    .form {
-        align-self: stretch;
-        display: flex;
-        flex-direction: column;
-        margin: 32px 0;
-
-        input {
-            margin: 5px 0 15px 0;
-        }
-
-        span {
-            color: white;
-            font-size: 1.3em;
-            text-align: center;
-        }
-    }
-
-    .joiningContainer {
-        align-items: center;
-        display: flex;
-        flex-direction: column;
-        margin: 36px 0;
-
-        span {
-            margin-top: 36px;
-            text-align: center;
+        .participant-info {
+            align-items: center;
+            display: flex;
+            flex-direction: column;
         }
     }
 }
 
-#lobby-dialog {
-    align-self: stretch;
+#lobby-section {
     display: flex;
     flex-direction: column;
-    margin: 32px 0;
 
-    .description {
-        margin-bottom: 18px;
-    }
-
-    .field {
+    .control-row {
         display: flex;
         flex-direction: row;
+        justify-content: space-between;
+        margin-top: 15px;
 
-        :first-child {
-            align-items: center;
-            display: flex;
-            padding-right: 15px;
-        }
-
-        :last-child {
-            flex: 1;
+        label {
+            font-size: 14px;
+            font-weight: bold;
         }
     }
 }
@@ -162,11 +95,7 @@
             }
         }
     }
-}
 
-// Common styles
-
-#lobby-dialog, #lobby-screen, #knocking-participant-list {
     input {
         align-self: stretch;
         background-color: transparent;

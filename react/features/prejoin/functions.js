@@ -259,7 +259,8 @@ export function isJoinByPhoneDialogVisible(state: Object): boolean {
  * @returns {boolean}
  */
 export function isPrejoinPageEnabled(state: Object): boolean {
-    return state['features/base/config'].prejoinPageEnabled
+    return navigator.product !== 'ReactNative'
+        && state['features/base/config'].prejoinPageEnabled
         && !state['features/base/settings'].userSelectedSkipPrejoin;
 }
 

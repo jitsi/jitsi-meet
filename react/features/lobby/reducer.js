@@ -1,19 +1,21 @@
 // @flow
 
-import { CONFERENCE_FAILED, CONFERENCE_JOINED, CONFERENCE_LEFT } from '../base/conference';
+import { CONFERENCE_JOINED, CONFERENCE_LEFT, SET_PASSWORD } from '../base/conference';
 import { ReducerRegistry } from '../base/redux';
 
 import {
     KNOCKING_PARTICIPANT_ARRIVED_OR_UPDATED,
     KNOCKING_PARTICIPANT_LEFT,
     SET_KNOCKING_STATE,
-    SET_LOBBY_MODE_ENABLED
+    SET_LOBBY_MODE_ENABLED,
+    SET_PASSWORD_JOIN_FAILED
 } from './actionTypes';
 
 const DEFAULT_STATE = {
     knocking: false,
     knockingParticipants: [],
-    lobbyEnabled: false
+    lobbyEnabled: false,
+    passwordJoinFailed: false
 };
 
 /**
@@ -26,12 +28,12 @@ const DEFAULT_STATE = {
  */
 ReducerRegistry.register('features/lobby', (state = DEFAULT_STATE, action) => {
     switch (action.type) {
-    case CONFERENCE_FAILED:
     case CONFERENCE_JOINED:
     case CONFERENCE_LEFT:
         return {
             ...state,
-            knocking: false
+            knocking: false,
+            passwordJoinFailed: false
         };
     case KNOCKING_PARTICIPANT_ARRIVED_OR_UPDATED:
         return _knockingParticipantArrivedOrUpdated(action.participant, state);
@@ -43,12 +45,23 @@ ReducerRegistry.register('features/lobby', (state = DEFAULT_STATE, action) => {
     case SET_KNOCKING_STATE:
         return {
             ...state,
-            knocking: action.knocking
+            knocking: action.knocking,
+            passwordJoinFailed: false
         };
     case SET_LOBBY_MODE_ENABLED:
         return {
             ...state,
             lobbyEnabled: action.enabled
+        };
+    case SET_PASSWORD:
+        return {
+            ...state,
+            passwordJoinFailed: false
+        };
+    case SET_PASSWORD_JOIN_FAILED:
+        return {
+            ...state,
+            passwordJoinFailed: action.failed
         };
     }
 

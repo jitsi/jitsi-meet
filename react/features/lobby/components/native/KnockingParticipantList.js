@@ -6,7 +6,10 @@ import { ScrollView, Text, View, TouchableOpacity } from 'react-native';
 import { Avatar } from '../../../base/avatar';
 import { translate } from '../../../base/i18n';
 import { connect } from '../../../base/redux';
-import AbstractKnockingParticipantList, { mapStateToProps } from '../AbstractKnockingParticipantList';
+import AbstractKnockingParticipantList, {
+    mapStateToProps as abstractMapStateToProps,
+    type Props
+} from '../AbstractKnockingParticipantList';
 
 import styles from './styles';
 
@@ -20,15 +23,16 @@ class KnockingParticipantList extends AbstractKnockingParticipantList {
      * @inheritdoc
      */
     render() {
-        const { _participants, t } = this.props;
+        const { _participants, _visible, t } = this.props;
 
-        // On mobile we only show a portion of the list for screen real estate reasons
-        const participants = _participants.slice(0, 2);
+        if (!_visible) {
+            return null;
+        }
 
         return (
             <ScrollView
                 style = { styles.knockingParticipantList }>
-                { participants.map(p => (
+                { _participants.map(p => (
                     <View
                         key = { p.id }
                         style = { styles.knockingParticipantListEntry }>
@@ -75,4 +79,21 @@ class KnockingParticipantList extends AbstractKnockingParticipantList {
     _onRespondToParticipant: (string, boolean) => Function;
 }
 
-export default translate(connect(mapStateToProps)(KnockingParticipantList));
+/**
+ * Maps part of the Redux state to the props of this component.
+ *
+ * @param {Object} state - The Redux state.
+ * @returns {Props}
+ */
+function _mapStateToProps(state: Object): $Shape<Props> {
+    const abstractProps = abstractMapStateToProps(state);
+
+    return {
+        ...abstractProps,
+
+        // On mobile we only show a portion of the list for screen real estate reasons
+        _participants: abstractProps._participants.slice(0, 2)
+    };
+}
+
+export default translate(connect(_mapStateToProps)(KnockingParticipantList));

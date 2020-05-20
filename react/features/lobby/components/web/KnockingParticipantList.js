@@ -5,12 +5,24 @@ import React from 'react';
 import { Avatar } from '../../../base/avatar';
 import { translate } from '../../../base/i18n';
 import { connect } from '../../../base/redux';
-import AbstractKnockingParticipantList, { mapStateToProps } from '../AbstractKnockingParticipantList';
+import { isToolboxVisible } from '../../../toolbox';
+import AbstractKnockingParticipantList, {
+    mapStateToProps as abstractMapStateToProps,
+    type Props as AbstractProps
+} from '../AbstractKnockingParticipantList';
+
+type Props = AbstractProps & {
+
+    /**
+     * True if the toolbox is visible, so we need to adjust the position.
+     */
+    _toolboxVisible: boolean,
+};
 
 /**
  * Component to render a list for the actively knocking participants.
  */
-class KnockingParticipantList extends AbstractKnockingParticipantList {
+class KnockingParticipantList extends AbstractKnockingParticipantList<Props> {
     /**
      * Implements {@code PureComponent#render}.
      *
@@ -69,4 +81,17 @@ class KnockingParticipantList extends AbstractKnockingParticipantList {
     _onRespondToParticipant: (string, boolean) => Function;
 }
 
-export default translate(connect(mapStateToProps)(KnockingParticipantList));
+/**
+ * Maps part of the Redux state to the props of this component.
+ *
+ * @param {Object} state - The Redux state.
+ * @returns {Props}
+ */
+function _mapStateToProps(state: Object): $Shape<Props> {
+    return {
+        ...abstractMapStateToProps(state),
+        _toolboxVisible: isToolboxVisible(state)
+    };
+}
+
+export default translate(connect(_mapStateToProps)(KnockingParticipantList));

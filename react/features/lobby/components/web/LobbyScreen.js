@@ -2,13 +2,13 @@
 
 import React from 'react';
 
-import { Avatar } from '../../../base/avatar';
-import { Dialog } from '../../../base/dialog';
 import { translate } from '../../../base/i18n';
-import { Icon, IconEdit } from '../../../base/icons';
+import { ActionButton, InputField, PreMeetingScreen } from '../../../base/premeeting';
 import { LoadingIndicator } from '../../../base/react';
 import { connect } from '../../../base/redux';
-import AbstractLobbyScreen, { _mapStateToProps } from '../AbstractLobbyScreen';
+import AbstractLobbyScreen, {
+    _mapStateToProps
+} from '../AbstractLobbyScreen';
 
 /**
  * Implements a waiting screen that represents the participant being in the lobby.
@@ -20,27 +20,10 @@ class LobbyScreen extends AbstractLobbyScreen {
      * @inheritdoc
      */
     render() {
-        const { _meetingName, t } = this.props;
-
         return (
-            <Dialog
-                disableBlanketClickDismiss = { false }
-                disableEnter = { true }
-                hideCancelButton = { true }
-                isModal = { false }
-                onCancel = { this._onCancel }
-                submitDisabled = { true }
-                width = 'small'>
-                <div id = 'lobby-screen'>
-                    <span className = 'title'>
-                        { t(this._getScreenTitleKey()) }
-                    </span>
-                    <span className = 'roomName'>
-                        { _meetingName }
-                    </span>
-                    { this._renderContent() }
-                </div>
-            </Dialog>
+            <PreMeetingScreen title = { this.props.t(this._getScreenTitleKey()) }>
+                { this._renderContent() }
+            </PreMeetingScreen>
         );
     }
 
@@ -58,6 +41,8 @@ class LobbyScreen extends AbstractLobbyScreen {
 
     _onEnableEdit: () => void;
 
+    _onJoinWithPassword: () => void;
+
     _onSubmit: () => boolean;
 
     _onSwitchToKnockMode: () => void;
@@ -71,42 +56,16 @@ class LobbyScreen extends AbstractLobbyScreen {
      *
      * @inheritdoc
      */
-    _renderJoining(withPassword) {
+    _renderJoining() {
         return (
-            <div className = 'joiningContainer'>
-                <LoadingIndicator />
-                <span>
-                    { this.props.t(`lobby.${withPassword ? 'joinWithPasswordMessage' : 'joiningMessage'}`) }
+            <div className = 'container'>
+                <div className = 'spinner'>
+                    <LoadingIndicator size = 'large' />
+                </div>
+                <span className = 'joining-message'>
+                    { this.props.t('lobby.joiningMessage') }
                 </span>
-            </div>
-        );
-    }
-
-    /**
-     * Renders the participant form to let the knocking participant enter its details.
-     *
-     * @inheritdoc
-     */
-    _renderParticipantForm() {
-        const { t } = this.props;
-        const { displayName, email } = this.state;
-
-        return (
-            <div className = 'form'>
-                <span>
-                    { t('lobby.nameField') }
-                </span>
-                <input
-                    onChange = { this._onChangeDisplayName }
-                    type = 'text'
-                    value = { displayName } />
-                <span>
-                    { t('lobby.emailField') }
-                </span>
-                <input
-                    onChange = { this._onChangeEmail }
-                    type = 'email'
-                    value = { email } />
+                { this._renderStandardButtons() }
             </div>
         );
     }
@@ -118,26 +77,21 @@ class LobbyScreen extends AbstractLobbyScreen {
      */
     _renderParticipantInfo() {
         const { displayName, email } = this.state;
-        const { _participantId } = this.props;
+        const { t } = this.props;
 
         return (
-            <div className = 'participantInfo'>
-                <div className = 'editButton'>
-                    <button
-                        onClick = { this._onEnableEdit }
-                        type = 'button'>
-                        <Icon src = { IconEdit } />
-                    </button>
+            <div className = 'participant-info'>
+                <div className = 'form'>
+                    <InputField
+                        onChange = { this._onChangeDisplayName }
+                        placeHolder = { t('lobby.nameField') }
+                        value = { displayName } />
+
+                    <InputField
+                        onChange = { this._onChangeEmail }
+                        placeHolder = { t('lobby.emailField') }
+                        value = { email } />
                 </div>
-                <Avatar
-                    participantId = { _participantId }
-                    size = { 64 } />
-                <span className = 'displayName'>
-                    { displayName }
-                </span>
-                <span className = 'email'>
-                    { email }
-                </span>
             </div>
         );
     }
@@ -148,13 +102,14 @@ class LobbyScreen extends AbstractLobbyScreen {
      * @inheritdoc
      */
     _renderPasswordForm() {
+        const { _passwordJoinFailed, t } = this.props;
+
         return (
             <div className = 'form'>
-                <span>
-                    { this.props.t('lobby.passwordField') }
-                </span>
-                <input
+                <InputField
+                    className = { _passwordJoinFailed ? 'error' : '' }
                     onChange = { this._onChangePassword }
+                    placeHolder = { _passwordJoinFailed ? t('lobby.invalidPassword') : t('lobby.passwordField') }
                     type = 'password'
                     value = { this.state.password } />
             </div>
@@ -171,19 +126,17 @@ class LobbyScreen extends AbstractLobbyScreen {
 
         return (
             <>
-                <button
-                    className = 'primary'
+                <ActionButton
                     disabled = { !this.state.password }
-                    onClick = { this._onAskToJoin }
-                    type = 'submit'>
+                    onClick = { this._onJoinWithPassword }
+                    type = 'primary'>
                     { t('lobby.passwordJoinButton') }
-                </button>
-                <button
-                    className = 'borderLess'
+                </ActionButton>
+                <ActionButton
                     onClick = { this._onSwitchToKnockMode }
-                    type = 'button'>
+                    type = 'secondary'>
                     { t('lobby.backToKnockModeButton') }
-                </button>
+                </ActionButton>
             </>
         );
     }
@@ -194,23 +147,21 @@ class LobbyScreen extends AbstractLobbyScreen {
      * @inheritdoc
      */
     _renderStandardButtons() {
-        const { t } = this.props;
+        const { _knocking, t } = this.props;
 
         return (
             <>
-                <button
-                    className = 'primary'
+                { _knocking || <ActionButton
                     disabled = { !this.state.displayName }
                     onClick = { this._onAskToJoin }
-                    type = 'submit'>
+                    type = 'primary'>
                     { t('lobby.knockButton') }
-                </button>
-                <button
-                    className = 'borderLess'
+                </ActionButton> }
+                <ActionButton
                     onClick = { this._onSwitchToPasswordMode }
-                    type = 'button'>
+                    type = 'secondary'>
                     { t('lobby.enterPasswordButton') }
-                </button>
+                </ActionButton>
             </>
         );
     }

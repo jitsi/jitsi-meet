@@ -1,12 +1,10 @@
 // @flow
 
+import { ColorPalette } from '../../../base/styles';
+
 const SECONDARY_COLOR = '#B8C7E0';
 
 export default {
-    avatar: {
-        borderColor: 'red'
-    },
-
     button: {
         alignItems: 'center',
         borderRadius: 4,
@@ -47,6 +45,11 @@ export default {
         borderWidth: 1,
         marginVertical: 8,
         padding: 8
+    },
+
+    fieldError: {
+        color: ColorPalette.warning,
+        fontSize: 10
     },
 
     fieldRow: {
