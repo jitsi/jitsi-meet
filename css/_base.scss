@@ -8,6 +8,27 @@
     user-select: none;
 }
 
+@font-face {
+    font-family: 'ProximaNovaLtLight';
+    font-weight: normal;
+    font-style: normal;
+    src: url('../fonts/ProximaNova-Light-webfont.eot');
+    src: url('../fonts/ProximaNova-Light-webfont.eot?#iefix') format('embedded-opentype'),
+    url('../fonts/ProximaNova-Light-webfont.woff') format('woff'),
+    url('../fonts/ProximaNova-Light-webfont.ttf') format('truetype'),
+    url('../fonts/ProximaNova-Light-webfont.svg#ProximaNovaLtLight') format('svg');
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+}
+
+.animate-flicker {
+    animation: fadeIn 1s infinite alternate;
+}
+
 input,
 textarea {
     -webkit-user-select: text;
@@ -81,7 +102,7 @@ body, input, textarea, keygen, select, button {
 }
 
 #nowebrtc {
-    display:none;
+    display: none;
 }
 
 button, input, select, textarea {
@@ -122,9 +143,18 @@ form {
 }
 
 .watermark {
-    display: block;
+    position: relative;
+    top: 32px;
+    left: 32px;
+    min-width: 120px;
+    height: 74px;
+    z-index: 2;
+}
+
+.leftwatermark {
     position: absolute;
-    top: 15;
+    background-image: url($defaultWatermarkLink);
+    background-position: center left;
     width: $watermarkWidth;
     height: $watermarkHeight;
     background-size: contain;
@@ -132,12 +162,37 @@ form {
     z-index: $zindex2;
 }
 
-.leftwatermark {
-    left: 32px;
-    top: 32px;
-    background-position: center left;
-    background-repeat: no-repeat;
-    background-size: contain;
+.waitingMessage {
+    padding-left: 120px;
+    padding-top: 5px;
+    text-align: left;
+    color: $defaultDarkColor !important;
+
+    p {
+        font-family: "ProximaNovaLtLight";
+
+        &:first-child {
+            font-size: 24px;
+        }
+
+        &:last-child {
+            font-size: 18px;
+        }
+    }
+
+    @media all and (max-width: 800px) {
+        padding-left: 0;
+        padding-top: 85px;
+        p {
+            &:first-child {
+                font-size: 16px;
+            }
+
+            &:last-child {
+                font-size: 14px;
+            }
+        }
+    }
 }
 
 .rightwatermark {
@@ -151,7 +206,7 @@ form {
     left: 25;
     bottom: 7;
     font-size: 11pt;
-    color: rgba(255,255,255,.50);
+    color: rgba(255, 255, 255, .50);
     text-decoration: none;
     z-index: $poweredByZ;
 }
