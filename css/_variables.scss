@@ -102,6 +102,7 @@ $sidebarWidth: 315px;
  * Misc.
  */
 $borderRadius: 4px;
+$defaultWatermarkLink: '../images/watermark.png';
 $popoverMenuPadding: 13px;
 $happySoftwareBackground: transparent;
 $desktopAppDragBarHeight: 25px;
@@ -167,8 +168,8 @@ $unsupportedDesktopBrowserTextFontSize: 21px;
 /**
  * The size of the default watermark.
  */
-$watermarkWidth: 71px;
-$watermarkHeight: 32px;
+$watermarkWidth: 100px;
+$watermarkHeight: 70px;
 
 $welcomePageWatermarkWidth: 71px;
 $welcomePageWatermarkHeight: 32px;
