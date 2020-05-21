@@ -1,13 +1,12 @@
-Jitsi Meet Translation
+Jitsi Meet localization
 ==========================
 Jitsi Meet uses [i18next](http://i18next.com) library for translation.
 i18next uses separate json files for each language.
 
 
-Translating Jitsi Meet
+Localizing Jitsi Meet
 ======================
-The translation of Jitsi Meet is integrated with Pootle. You can translate Jitsi Meet via our Pootle user interface on
-[http://translate.jitsi.org](http://translate.jitsi.org).
+The translation of Jitsi Meet is done manually by editing language resource files. This requires a good understading of git source management and a digital signature of the CLA (https://jitsi.org/icla for individuals and https://jitsi.org/ccla for corporations).  If you want to contribute by improving or adding support to a specific language, edit the appropriate file and submit a pull request for it. 
 
 **WARNING: Please don't create or edit manually the language files! Please use our Pootle user interface!**
 
