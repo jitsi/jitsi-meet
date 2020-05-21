@@ -137,12 +137,14 @@ class Watermarks extends Component<Props, State> {
      * @returns {ReactElement|null}
      */
     _renderWatermark() {
-        const {conferenceHasStarted} = this.props;
+        const {conferenceHasStarted, isWelcomePage} = this.props;
         return <div className="watermark ">
             <div
-                className={`leftwatermark ${conferenceHasStarted ? '' : 'animate-flicker'}`}>
+                className={`leftwatermark ${(conferenceHasStarted || isWelcomePage) ? '' : 'animate-flicker'}`}>
             </div>
-            <WaitingMessage/>
+            {
+                !isWelcomePage && <WaitingMessage />
+            }
         </div>;
     }
 }
