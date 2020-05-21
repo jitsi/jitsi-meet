@@ -24,7 +24,8 @@ const minimize
  */
 function getPerformanceHints(size) {
     return {
-        hints: minimize ? 'error' : false,
+        // hints: minimize ? 'error' : false,
+        hints: minimize ? 'warning' : false,
         maxAssetSize: size,
         maxEntrypointSize: size
     };
@@ -163,7 +164,7 @@ const config = {
             appBundle: `libs/app.bundle.min.js?v=${cacheVersionNumber}`,
             css: `css/all.css?v=${cacheVersionNumber}`,
             template: 'index.html',
-            minify: true,
+            minify: false,
             inject: false,
         })
     ].filter(Boolean),
