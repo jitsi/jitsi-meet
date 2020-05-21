@@ -190,7 +190,7 @@ class Conference extends AbstractConference<Props, *> {
                 id = 'videoconference_page'
                 onMouseMove = { this._onShowToolbar }>
                 <Notice />
-                <RefreshButton />
+                {/*<RefreshButton />*/}
                 <Subject />
                 <div id = 'videospace'>
                     <LargeVideo />

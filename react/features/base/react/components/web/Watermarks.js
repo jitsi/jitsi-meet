@@ -1,9 +1,12 @@
 /* @flow */
 
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 
-import { translate } from '../../../i18n';
-import { connect } from '../../../redux';
+import {translate} from '../../../i18n';
+import {connect} from '../../../redux';
+import {getParticipantCount} from '../../../participants';
+import {getRemoteTracks} from '../../../tracks';
+import WaitingMessage from './WaitingMessage';
 
 declare var interfaceConfig: Object;
 
@@ -121,100 +124,26 @@ class Watermarks extends Component<Props, State> {
         return (
             <div>
                 {
-                    this._renderJitsiWatermark()
-                }
-                {
-                    this._renderBrandWatermark()
-                }
-                {
-                    this._renderPoweredBy()
+                    this._renderWatermark()
                 }
             </div>
         );
     }
 
     /**
-     * Renders a brand watermark if it is enabled.
-     *
-     * @private
-     * @returns {ReactElement|null} Watermark element or null.
-     */
-    _renderBrandWatermark() {
-        let reactElement = null;
-
-        if (this.state.showBrandWatermark) {
-            reactElement = (
-                <div
-                    className = 'watermark rightwatermark'
-                    style = { _RIGHT_WATERMARK_STYLE } />
-            );
-
-            const { brandWatermarkLink } = this.state;
-
-            if (brandWatermarkLink) {
-                reactElement = (
-                    <a
-                        href = { brandWatermarkLink }
-                        target = '_new'>
-                        { reactElement }
-                    </a>
-                );
-            }
-        }
-
-        return reactElement;
-    }
-
-    /**
-     * Renders a Jitsi watermark if it is enabled.
+     * Renders a watermark if it is enabled.
      *
      * @private
      * @returns {ReactElement|null}
      */
-    _renderJitsiWatermark() {
-        // let reactElement = null;
-        //
-        // if (this.state.showJitsiWatermark
-        //         || (this.props._isGuest
-        //             && this.state.showJitsiWatermarkForGuests)) {
-        //     reactElement = <div className = 'watermark leftwatermark' />;
-        //
-        //     const { jitsiWatermarkLink } = this.state;
-        //
-        //     if (jitsiWatermarkLink) {
-        //         reactElement = (
-        //             <a
-        //                 href = { "http://jane.app" }
-        //                 target = '_new'>
-        //                 { reactElement }
-        //             </a>
-        //         );
-        //     }
-        // }
-        return <div className = 'watermark leftwatermark' />;;
-    }
-
-    /**
-     * Renders a powered by block if it is enabled.
-     *
-     * @private
-     * @returns {ReactElement|null}
-     */
-    _renderPoweredBy() {
-        if (this.state.showPoweredBy) {
-            const { t } = this.props;
-
-            return (
-                <a
-                    className = 'poweredby'
-                    href = 'http://jitsi.org'
-                    target = '_new'>
-                    <span>{ t('poweredby') } jitsi.org</span>
-                </a>
-            );
-        }
-
-        return null;
+    _renderWatermark() {
+        const {conferenceHasStarted} = this.props;
+        return <div className="watermark ">
+            <div
+                className={`leftwatermark ${conferenceHasStarted ? '' : 'animate-flicker'}`}>
+            </div>
+            <WaitingMessage/>
+        </div>;
     }
 }
 
@@ -227,17 +156,12 @@ class Watermarks extends Component<Props, State> {
  * }}
  */
 function _mapStateToProps(state) {
-    const { isGuest } = state['features/base/jwt'];
-
+    const {isGuest} = state['features/base/jwt'];
+    const participantCount = getParticipantCount(state);
+    const remoteTracks = getRemoteTracks(state['features/base/tracks']);
     return {
-        /**
-         * The indicator which determines whether the local participant is a
-         * guest in the conference.
-         *
-         * @private
-         * @type {boolean}
-         */
-        _isGuest: isGuest
+        _isGuest: isGuest,
+        conferenceHasStarted: participantCount > 1 && remoteTracks.length > 0
     };
 }
 

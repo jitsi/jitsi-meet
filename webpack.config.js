@@ -159,8 +159,8 @@ const config = {
                 generateStatsFile: true
             }),
         new HtmlWebpackPlugin({
-            script1: `libs/lib-jitsi-meet.min.js?v=${cacheVersionNumber}`,
-            script2: `libs/app.bundle.min.js?v=${cacheVersionNumber}`,
+            jitsiLib: `libs/lib-jitsi-meet.min.js?v=${cacheVersionNumber}`,
+            appBundle: `libs/app.bundle.min.js?v=${cacheVersionNumber}`,
             css: `css/all.css?v=${cacheVersionNumber}`,
             template: 'index.html',
             minify: true,
