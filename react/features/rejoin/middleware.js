@@ -1,5 +1,4 @@
 import { createRejoinedEvent, sendAnalytics } from '../analytics';
-
 import { StateListenerRegistry } from '../base/redux';
 
 StateListenerRegistry.register(

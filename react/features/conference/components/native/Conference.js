@@ -23,22 +23,22 @@ import {
     isFilmstripVisible,
     TileView
 } from '../../../filmstrip';
+import { AddPeopleDialog, CalleeInfoContainer } from '../../../invite';
 import { LargeVideo } from '../../../large-video';
 import { BackButtonRegistry } from '../../../mobile/back-button';
-import { AddPeopleDialog, CalleeInfoContainer } from '../../../invite';
 import { Captions } from '../../../subtitles';
 import { isToolboxVisible, setToolboxVisible, Toolbox } from '../../../toolbox';
-
 import {
     AbstractConference,
     abstractMapStateToProps
 } from '../AbstractConference';
+import type { AbstractProps } from '../AbstractConference';
+
 import Labels from './Labels';
 import LonelyMeetingExperience from './LonelyMeetingExperience';
 import NavigationBar from './NavigationBar';
 import styles, { NAVBAR_GRADIENT_COLORS } from './styles';
 
-import type { AbstractProps } from '../AbstractConference';
 
 /**
  * The type of the React {@code Component} props of {@link Conference}.

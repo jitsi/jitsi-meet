@@ -1,6 +1,7 @@
 // @flow
 
 import JitsiMeetJS from '../lib-jitsi-meet';
+
 import { isMobileBrowser } from './utils';
 
 const { browser } = JitsiMeetJS.util;

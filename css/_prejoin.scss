@@ -55,6 +55,23 @@
             margin: 0;
             padding: 0;
         }
+
+        &--disabled {
+            background: #5E6D7A;
+            border: 1px solid #5E6D7A;
+            color: #AFB6BC;
+            cursor: initial;
+
+            .prejoin-btn-icon {
+                & > svg {
+                    fill: #AFB6BC;
+                }
+            }
+
+            .prejoin-btn-options {
+                border-left: 1px solid #AFB6BC;
+            }
+        }
     }
 
     &-btn-options {
@@ -149,6 +166,11 @@
             &:-ms-input-placeholder {
                 @include name-placeholder;
             }
+        }
+
+        &--text {
+            margin: 16px 0;
+            outline: none;
         }
     }
 

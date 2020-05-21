@@ -104,8 +104,10 @@
         "description": "何も起こりませんでしたか？ {{app}} デスクトップアプリで会議を開始しようとしました。 再度試してみるか、{{app}} Webアプリで起動してください。",
         "descriptionWithoutWeb": "",
         "downloadApp": "アプリをダウンロードする",
+        "ifDoNotHaveApp": "まだアプリを持っていない場合は、",
+        "ifHaveApp": "すでにアプリを持っている場合は、",
+        "joinInApp": "アプリで会議に参加する",
         "launchWebButton": "Webで起動する",
-        "openApp": "アプリで続く",
         "title": "{{app}} で会議を開始する…",
         "tryAgainButton": "デスクトップでもう一度お試しください"
     },

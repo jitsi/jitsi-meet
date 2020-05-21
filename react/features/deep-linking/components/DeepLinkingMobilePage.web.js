@@ -1,13 +1,12 @@
 // @flow
 
 import React, { Component } from 'react';
-import { connect } from '../../base/redux';
 
 import { createDeepLinkingPageEvent, sendAnalytics } from '../../analytics';
 import { translate } from '../../base/i18n';
 import { Platform } from '../../base/react';
+import { connect } from '../../base/redux';
 import { DialInSummary } from '../../invite';
-
 import { _TNS } from '../constants';
 import { generateDeepLinkingURL } from '../functions';
 import { renderPromotionalFooter } from '../renderPromotionalFooter';
@@ -122,22 +121,30 @@ class DeepLinkingMobilePage extends Component<Props> {
                     <p className = { `${_SNS}__text` }>
                         { t(`${_TNS}.appNotInstalled`, { app: NATIVE_APP_NAME }) }
                     </p>
-                    <a
-                        { ...onOpenLinkProperties }
-                        href = { this._generateDownloadURL() }
-                        onClick = { this._onDownloadApp }>
-                        <button className = { downloadButtonClassName }>
-                            { t(`${_TNS}.downloadApp`) }
-                        </button>
-                    </a>
+                    <p className = { `${_SNS}__text` }>
+                        { t(`${_TNS}.ifHaveApp`) }
+                    </p>
                     <a
                         { ...onOpenLinkProperties }
                         className = { `${_SNS}__href` }
                         href = { generateDeepLinkingURL() }
-                        onClick = { this._onOpenApp }>
-                        {/* <button className = { `${_SNS}__button` }> */}
-                        { t(`${_TNS}.openApp`) }
-                        {/* </button> */}
+                        onClick = { this._onOpenApp }
+                        target = '_top'>
+                        <button className = { `${_SNS}__button ${_SNS}__button_primary` }>
+                            { t(`${_TNS}.joinInApp`) }
+                        </button>
+                    </a>
+                    <p className = { `${_SNS}__text` }>
+                        { t(`${_TNS}.ifDoNotHaveApp`) }
+                    </p>
+                    <a
+                        { ...onOpenLinkProperties }
+                        href = { this._generateDownloadURL() }
+                        onClick = { this._onDownloadApp }
+                        target = '_top'>
+                        <button className = { downloadButtonClassName }>
+                            { t(`${_TNS}.downloadApp`) }
+                        </button>
                     </a>
                     { renderPromotionalFooter() }
                     <DialInSummary

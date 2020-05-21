@@ -2,7 +2,6 @@
 
 import { createToolbarEvent, sendAnalytics } from '../../analytics';
 import { AbstractButton, type AbstractButtonProps } from '../../base/toolbox';
-
 import { toggleRequestingSubtitles } from '../actions';
 
 export type AbstractProps = AbstractButtonProps & {

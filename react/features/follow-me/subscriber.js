@@ -1,11 +1,11 @@
 // @flow
 
-import { StateListenerRegistry } from '../base/redux';
 import { getCurrentConference } from '../base/conference';
 import {
     getPinnedParticipant,
     isLocalParticipantModerator
 } from '../base/participants';
+import { StateListenerRegistry } from '../base/redux';
 
 import { FOLLOW_ME_COMMAND } from './constants';
 

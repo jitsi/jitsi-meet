@@ -3,8 +3,8 @@
 import React, { Component } from 'react';
 
 import { translate } from '../../../../base/i18n';
-import { equals } from '../../../../base/redux';
 import Video from '../../../../base/media/components/Video';
+import { equals } from '../../../../base/redux';
 import { createLocalVideoTracks } from '../../../functions';
 
 

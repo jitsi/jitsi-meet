@@ -1,14 +1,7 @@
 /* global $, APP, YT, interfaceConfig, onPlayerReady, onPlayerStateChange,
 onPlayerError */
 
-const logger = require('jitsi-meet-logger').getLogger(__filename);
-
-import UIUtil from '../util/UIUtil';
-import UIEvents from '../../../service/UI/UIEvents';
-
-import VideoLayout from '../videolayout/VideoLayout';
-import LargeContainer from '../videolayout/LargeContainer';
-import Filmstrip from '../videolayout/Filmstrip';
+import Logger from 'jitsi-meet-logger';
 
 import {
     createSharedVideoEvent as createEvent,
@@ -24,6 +17,13 @@ import {
     getToolboxHeight,
     showToolbox
 } from '../../../react/features/toolbox';
+import UIEvents from '../../../service/UI/UIEvents';
+import UIUtil from '../util/UIUtil';
+import Filmstrip from '../videolayout/Filmstrip';
+import LargeContainer from '../videolayout/LargeContainer';
+import VideoLayout from '../videolayout/VideoLayout';
+
+const logger = Logger.getLogger(__filename);
 
 export const SHARED_VIDEO_CONTAINER_TYPE = 'sharedvideo';
 

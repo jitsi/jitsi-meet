@@ -3,8 +3,8 @@
 import type { Dispatch } from 'redux';
 
 import { getInviteURL } from '../base/connection';
-import { inviteVideoRooms } from '../videosipgw';
 import { getParticipants } from '../base/participants';
+import { inviteVideoRooms } from '../videosipgw';
 
 import {
     ADD_PENDING_INVITE_REQUEST,

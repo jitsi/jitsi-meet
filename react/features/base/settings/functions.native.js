@@ -1,7 +1,6 @@
 // @flow
 
 import { NativeModules } from 'react-native';
-
 import DefaultPreference from 'react-native-default-preference';
 
 export * from './functions.any';

@@ -1,7 +1,7 @@
 // @flow
 
-import { createScreenshotCaptureEffect } from '../../stream-effects/screenshot-capture';
 import { getBlurEffect } from '../../blur';
+import { createScreenshotCaptureEffect } from '../../stream-effects/screenshot-capture';
 
 import logger from './logger';
 

@@ -1,4 +1,6 @@
 import logger from '../../logger';
+import { AbstractAudioContextAdapter } from '../AbstractAudioContextAdapter';
+
 import {
     DEBUG,
     MAIN_THREAD_FINISH,
@@ -8,7 +10,6 @@ import {
     WORKER_LIBFLAC_READY
 } from './messageTypes';
 
-import { AbstractAudioContextAdapter } from '../AbstractAudioContextAdapter';
 
 /**
  * Recording adapter that uses libflac.js in the background.

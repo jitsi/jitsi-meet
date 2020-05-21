@@ -1,15 +1,15 @@
 // @flow
 
-import React, { PureComponent } from 'react';
 import InlineDialog from '@atlaskit/inline-dialog';
+import React, { PureComponent } from 'react';
 
 import { connect } from '../../../base/redux';
 import { setDialOutCountry, setDialOutNumber } from '../../actions';
 import { getDialOutCountry, getDialOutNumber } from '../../functions';
 import { getCountryFromDialCodeText } from '../../utils';
 
-import CountrySelector from './CountrySelector';
 import CountryDropDown from './CountryDropdown';
+import CountrySelector from './CountrySelector';
 
 const PREFIX_REG = /^(00)|\+/;
 

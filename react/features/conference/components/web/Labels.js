@@ -4,7 +4,6 @@ import React from 'react';
 
 import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
 import { connect } from '../../../base/redux';
-
 import AbstractLabels, {
     _abstractMapStateToProps as _mapStateToProps,
     type Props

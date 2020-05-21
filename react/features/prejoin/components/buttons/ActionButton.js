@@ -1,6 +1,7 @@
 // @flow
 
 import React from 'react';
+
 import { Icon, IconArrowDown } from '../../../base/icons';
 
 const classNameByType = {
@@ -20,6 +21,11 @@ type Props = {
      * Text css class of the button.
      */
     className?: string,
+
+    /**
+     * If the button is disabled or not.
+     */
+    disabled?: boolean,
 
     /**
      * If the button has options.
@@ -47,18 +53,28 @@ type Props = {
  *
  * @returns {ReactElement}
  */
-function ActionButton({ children, className, hasOptions, type, onClick, onOptionsClick }: Props) {
-    const ownClassName = `prejoin-btn ${classNameByType[type]}`;
+function ActionButton({ children, className, disabled, hasOptions, type, onClick, onOptionsClick }: Props) {
+    let ownClassName = 'prejoin-btn';
+    let clickHandler = onClick;
+    let optionsClickHandler = onOptionsClick;
+
+    if (disabled) {
+        clickHandler = null;
+        optionsClickHandler = null;
+        ownClassName = `${ownClassName} prejoin-btn--disabled`;
+    } else {
+        ownClassName = `${ownClassName} ${classNameByType[type]}`;
+    }
     const cls = className ? `${className} ${ownClassName}` : ownClassName;
 
     return (
         <div
             className = { cls }
-            onClick = { onClick }>
+            onClick = { clickHandler }>
             {children}
             {hasOptions && <div
                 className = 'prejoin-btn-options'
-                onClick = { onOptionsClick }>
+                onClick = { optionsClickHandler }>
                 <Icon
                     className = 'prejoin-btn-icon'
                     size = { 14 }

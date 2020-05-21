@@ -1,31 +1,33 @@
 // @flow
 
-import React, { Component } from 'react';
 import InlineDialog from '@atlaskit/inline-dialog';
+import React, { Component } from 'react';
+
+import { getRoomName } from '../../base/conference';
+import { translate } from '../../base/i18n';
+import { Icon, IconPhone, IconVolumeOff } from '../../base/icons';
+import { connect } from '../../base/redux';
+import { getDisplayName, updateSettings } from '../../base/settings';
+import { isGuest } from '../../invite';
+import { VideoSettingsButton, AudioSettingsButton } from '../../toolbox';
 import {
     joinConference as joinConferenceAction,
     joinConferenceWithoutAudio as joinConferenceWithoutAudioAction,
     setSkipPrejoin as setSkipPrejoinAction,
     setJoinByPhoneDialogVisiblity as setJoinByPhoneDialogVisiblityAction
 } from '../actions';
-import { getRoomName } from '../../base/conference';
-import { Icon, IconPhone, IconVolumeOff } from '../../base/icons';
-import { translate } from '../../base/i18n';
-import { connect } from '../../base/redux';
-import { getDisplayName, updateSettings } from '../../base/settings';
-import ActionButton from './buttons/ActionButton';
 import {
-    areJoinByPhoneButtonsVisible,
+    isJoinByPhoneButtonVisible,
     isDeviceStatusVisible,
     isJoinByPhoneDialogVisible
 } from '../functions';
-import { isGuest } from '../../invite';
+
+import ActionButton from './buttons/ActionButton';
+import JoinByPhoneDialog from './dialogs/JoinByPhoneDialog';
 import CopyMeetingUrl from './preview/CopyMeetingUrl';
 import DeviceStatus from './preview/DeviceStatus';
 import ParticipantName from './preview/ParticipantName';
 import Preview from './preview/Preview';
-import { VideoSettingsButton, AudioSettingsButton } from '../../toolbox';
-import JoinByPhoneDialog from './dialogs/JoinByPhoneDialog';
 
 
 type Props = {
@@ -34,6 +36,11 @@ type Props = {
      * Flag signaling if the device status is visible or not.
      */
     deviceStatusVisible: boolean,
+
+    /**
+     * If join by phone button should be visible.
+     */
+    hasJoinByPhoneButton: boolean,
 
     /**
      * Flag signaling if a user is logged in or not.
@@ -79,11 +86,6 @@ type Props = {
      * If 'JoinByPhoneDialog' is visible or not.
      */
     showDialog: boolean,
-
-    /**
-     * If join by phone buttons should be visible.
-     */
-    hasJoinByPhoneButtons: boolean,
 
     /**
      * Used for translation.
@@ -210,11 +212,11 @@ class Prejoin extends Component<Props, State> {
     render() {
         const {
             deviceStatusVisible,
+            hasJoinByPhoneButton,
             isAnonymousUser,
             joinConference,
             joinConferenceWithoutAudio,
             name,
-            hasJoinByPhoneButtons,
             showDialog,
             t
         } = this.props;
@@ -251,7 +253,7 @@ class Prejoin extends Component<Props, State> {
                                             src = { IconVolumeOff } />
                                         { t('prejoin.joinWithoutAudio') }
                                     </div>
-                                    <div
+                                    {hasJoinByPhoneButton && <div
                                         className = 'prejoin-preview-dropdown-btn'
                                         onClick = { _showDialog }>
                                         <Icon
@@ -259,12 +261,13 @@ class Prejoin extends Component<Props, State> {
                                             size = { 24 }
                                             src = { IconPhone } />
                                         { t('prejoin.joinAudioByPhone') }
-                                    </div>
+                                    </div>}
                                 </div> }
                                 isOpen = { showJoinByPhoneButtons }
                                 onClose = { _onDropdownClose }>
                                 <ActionButton
-                                    hasOptions = { hasJoinByPhoneButtons }
+                                    disabled = { !name }
+                                    hasOptions = { true }
                                     onClick = { joinConference }
                                     onOptionsClick = { _onOptionsClick }
                                     type = 'primary'>
@@ -312,7 +315,7 @@ function mapStateToProps(state): Object {
         name: getDisplayName(state),
         roomName: getRoomName(state),
         showDialog: isJoinByPhoneDialogVisible(state),
-        hasJoinByPhoneButtons: areJoinByPhoneButtonsVisible(state)
+        hasJoinByPhoneButton: isJoinByPhoneButtonVisible(state)
     };
 }
 

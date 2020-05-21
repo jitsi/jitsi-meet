@@ -14,12 +14,11 @@ import {
 } from '../../../recording';
 import { TranscribingExpandedLabel } from '../../../transcribing';
 import { VideoQualityExpandedLabel } from '../../../video-quality';
-
+import { shouldDisplayNotifications } from '../../functions';
 import AbstractLabels, {
     _abstractMapStateToProps,
     type Props as AbstractLabelsProps
 } from '../AbstractLabels';
-import { shouldDisplayNotifications } from '../../functions';
 
 import InsecureRoomNameExpandedLabel from './InsecureRoomNameExpandedLabel';
 import styles from './styles';

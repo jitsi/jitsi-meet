@@ -11,8 +11,8 @@ import {
     getDropboxData,
     isEnabled as isDropboxEnabled
 } from '../../../dropbox';
-import { RECORDING_TYPES } from '../../constants';
 import { toggleRequestingSubtitles } from '../../../subtitles';
+import { RECORDING_TYPES } from '../../constants';
 
 type Props = {
 

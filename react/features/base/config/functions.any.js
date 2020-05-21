@@ -3,10 +3,11 @@
 import { jitsiLocalStorage } from 'js-utils';
 import _ from 'lodash';
 
+import { parseURLParams } from '../util';
+
 import CONFIG_WHITELIST from './configWhitelist';
 import { _CONFIG_STORE_PREFIX } from './constants';
 import INTERFACE_CONFIG_WHITELIST from './interfaceConfigWhitelist';
-import { parseURLParams } from '../util';
 import logger from './logger';
 
 // XXX The function getRoomName is split out of

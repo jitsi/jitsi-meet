@@ -6,6 +6,7 @@ import {
     createToolbarEvent,
     sendAnalytics
 } from '../../analytics';
+import { TILE_VIEW_ENABLED, getFeatureFlag } from '../../base/flags';
 import { translate } from '../../base/i18n';
 import { IconTileView } from '../../base/icons';
 import { connect } from '../../base/redux';
@@ -13,10 +14,8 @@ import {
     AbstractButton,
     type AbstractButtonProps
 } from '../../base/toolbox';
-
 import { setTileView } from '../actions';
 import logger from '../logger';
-import { TILE_VIEW_ENABLED, getFeatureFlag } from '../../base/flags';
 
 /**
  * The type of the React {@code Component} props of {@link TileViewButton}.
