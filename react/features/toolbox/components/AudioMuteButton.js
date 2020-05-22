@@ -7,16 +7,12 @@ import {
     sendAnalytics
 } from '../../analytics';
 import { translate } from '../../base/i18n';
-import { MEDIA_TYPE } from '../../base/media';
+import { isAudioMuted, MEDIA_TYPE } from '../../base/media';
 import { connect } from '../../base/redux';
 import { AbstractAudioMuteButton } from '../../base/toolbox';
 import type { AbstractButtonProps } from '../../base/toolbox';
 import { isLocalTrackMuted } from '../../base/tracks';
-import {
-    isPrejoinAudioMuted,
-    isAudioDisabled,
-    isPrejoinPageVisible
-} from '../../prejoin/functions';
+import { isAudioDisabled, isPrejoinPageVisible } from '../../prejoin/functions';
 import { muteLocal } from '../../remote-video-menu/actions';
 
 declare var APP: Object;
@@ -158,7 +154,7 @@ function _mapStateToProps(state): Object {
     let _disabled;
 
     if (isPrejoinPageVisible(state)) {
-        _audioMuted = isPrejoinAudioMuted(state);
+        _audioMuted = isAudioMuted(state);
         _disabled = state['features/base/config'].startSilent;
     } else {
         const tracks = state['features/base/tracks'];

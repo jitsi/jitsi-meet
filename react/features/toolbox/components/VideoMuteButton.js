@@ -12,17 +12,14 @@ import { setAudioOnly } from '../../base/audio-only';
 import { translate } from '../../base/i18n';
 import {
     VIDEO_MUTISM_AUTHORITY,
+    isVideoMutedByUser,
     setVideoMuted
 } from '../../base/media';
 import { connect } from '../../base/redux';
 import { AbstractVideoMuteButton } from '../../base/toolbox';
 import type { AbstractButtonProps } from '../../base/toolbox';
 import { getLocalVideoType, isLocalVideoTrackMuted } from '../../base/tracks';
-import {
-    isPrejoinPageVisible,
-    isPrejoinVideoDisabled,
-    isPrejoinVideoMuted
-} from '../../prejoin/functions';
+import { isPrejoinPageVisible, isPrejoinVideoDisabled } from '../../prejoin/functions';
 
 declare var APP: Object;
 
@@ -195,7 +192,7 @@ function _mapStateToProps(state): Object {
     let _videoDisabled = false;
 
     if (isPrejoinPageVisible(state)) {
-        _videoMuted = isPrejoinVideoMuted(state);
+        _videoMuted = isVideoMutedByUser(state);
         _videoDisabled = isPrejoinVideoDisabled(state);
     }
 

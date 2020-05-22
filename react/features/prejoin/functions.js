@@ -2,6 +2,7 @@
 
 import { getRoomName } from '../base/conference';
 import { getDialOutStatusUrl, getDialOutUrl } from '../base/config/functions';
+import { isAudioMuted, isVideoMutedByUser } from '../base/media';
 
 /**
  * Mutes or unmutes a track.
@@ -40,7 +41,7 @@ export function isJoinByPhoneButtonVisible(state: Object): boolean {
  */
 export function isDeviceStatusVisible(state: Object): boolean {
     return !((isAudioDisabled(state) && isPrejoinVideoDisabled(state))
-        || (isPrejoinAudioMuted(state) && isPrejoinVideoMuted(state)));
+        || (isAudioMuted(state) && isVideoMutedByUser(state)));
 }
 
 /**
@@ -75,13 +76,12 @@ export async function getAllPrejoinConfiguredTracks(state: Object): Promise<Obje
     if (csTrack) {
         tracks.push(csTrack);
     } else if (videoTrack) {
-        await applyMuteOptionsToTrack(videoTrack, isPrejoinVideoMuted(state));
+        await applyMuteOptionsToTrack(videoTrack, isVideoMutedByUser(state));
         tracks.push(videoTrack);
     }
 
     if (audioTrack) {
-        await applyMuteOptionsToTrack(audioTrack, isPrejoinAudioMuted(state));
-        isPrejoinAudioMuted(state) && audioTrack.mute();
+        await applyMuteOptionsToTrack(audioTrack, isAudioMuted(state));
         tracks.push(audioTrack);
     }
 
@@ -189,26 +189,6 @@ export function getFullDialOutNumber(state: Object): string {
  */
 export function getVideoTrack(state: Object): Object {
     return state['features/prejoin']?.videoTrack;
-}
-
-/**
- * Selector for getting the mute status of the prejoin audio.
- *
- * @param {Object} state - The state of the app.
- * @returns {boolean}
- */
-export function isPrejoinAudioMuted(state: Object): boolean {
-    return state['features/prejoin']?.audioMuted;
-}
-
-/**
- * Selector for getting the mute status of the prejoin video.
- *
- * @param {Object} state - The state of the app.
- * @returns {boolean}
- */
-export function isPrejoinVideoMuted(state: Object): boolean {
-    return state['features/prejoin']?.videoMuted;
 }
 
 /**

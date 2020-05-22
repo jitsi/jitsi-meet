@@ -1,6 +1,6 @@
 // @flow
 
-import { SET_AUDIO_MUTED, SET_VIDEO_MUTED } from '../base/media';
+import { SET_VIDEO_MUTED } from '../base/media';
 import { MiddlewareRegistry } from '../base/redux';
 import { updateSettings } from '../base/settings';
 
@@ -9,8 +9,8 @@ import {
     ADD_PREJOIN_VIDEO_TRACK,
     PREJOIN_START_CONFERENCE
 } from './actionTypes';
-import { setPrejoinAudioMuted, setPrejoinVideoMuted } from './actions';
-import { getAllPrejoinConfiguredTracks } from './functions';
+import { mutePrejoinVideo } from './actions';
+import { getAllPrejoinConfiguredTracks, isPrejoinPageVisible } from './functions';
 
 declare var APP: Object;
 
@@ -22,6 +22,7 @@ declare var APP: Object;
  */
 MiddlewareRegistry.register(store => next => async action => {
     switch (action.type) {
+
     case ADD_PREJOIN_AUDIO_TRACK: {
         const { value: audioTrack } = action;
 
@@ -67,13 +68,12 @@ MiddlewareRegistry.register(store => next => async action => {
         break;
     }
 
-    case SET_AUDIO_MUTED: {
-        store.dispatch(setPrejoinAudioMuted(Boolean(action.muted)));
-        break;
-    }
-
     case SET_VIDEO_MUTED: {
-        store.dispatch(setPrejoinVideoMuted(Boolean(action.muted)));
+        // Don't forward mute video action if not on prejoin page
+        if (isPrejoinPageVisible(store.getState())) {
+            store.dispatch(mutePrejoinVideo());
+        }
+
         break;
     }
 

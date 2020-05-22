@@ -5,6 +5,7 @@ import uuid from 'uuid';
 import { getRoomName } from '../base/conference';
 import { getDialOutStatusUrl, getDialOutUrl } from '../base/config/functions';
 import { createLocalTrack } from '../base/lib-jitsi-meet';
+import { getCurrentCameraDeviceId } from '../base/settings/functions';
 import { openURLInBrowser } from '../base/util';
 import { executeDialOutRequest, executeDialOutStatusRequest, getDialInfoPageURL } from '../invite/functions';
 import { showErrorNotification } from '../notifications';
@@ -21,11 +22,9 @@ import {
     SET_SKIP_PREJOIN,
     SET_JOIN_BY_PHONE_DIALOG_VISIBLITY,
     SET_PREJOIN_AUDIO_DISABLED,
-    SET_PREJOIN_AUDIO_MUTED,
     SET_PREJOIN_DEVICE_ERRORS,
     SET_PREJOIN_PAGE_VISIBILITY,
-    SET_PREJOIN_VIDEO_DISABLED,
-    SET_PREJOIN_VIDEO_MUTED
+    SET_PREJOIN_VIDEO_DISABLED
 } from './actionTypes';
 import {
     getFullDialOutNumber,
@@ -369,20 +368,6 @@ export function replaceVideoTrackById(deviceId: Object) {
     };
 }
 
-
-/**
- * Action used to mark audio muted.
- *
- * @param {boolean} value - True for muted.
- * @returns {Object}
- */
-export function setPrejoinAudioMuted(value: boolean) {
-    return {
-        type: SET_PREJOIN_AUDIO_MUTED,
-        value
-    };
-}
-
 /**
  * Action used to mark video disabled.
  *
@@ -392,20 +377,6 @@ export function setPrejoinAudioMuted(value: boolean) {
 export function setPrejoinVideoDisabled(value: boolean) {
     return {
         type: SET_PREJOIN_VIDEO_DISABLED,
-        value
-    };
-}
-
-
-/**
- * Action used to mark video muted.
- *
- * @param {boolean} value - True for muted.
- * @returns {Object}
- */
-export function setPrejoinVideoMuted(value: boolean) {
-    return {
-        type: SET_PREJOIN_VIDEO_MUTED,
         value
     };
 }
@@ -552,5 +523,28 @@ export function setPrejoinPageVisibility(value: boolean) {
 function startConference() {
     return {
         type: PREJOIN_START_CONFERENCE
+    };
+}
+
+/**
+ * Action used to mute/unmute prejoin video.
+ * It destroys/recreates prejoin video tracks.
+ *
+ * @returns {Function}
+ */
+export function mutePrejoinVideo() {
+    return async function(dispatch: Function, getState: Function) {
+        const state = getState();
+        const videoTrack = getVideoTrack(state);
+
+        if (videoTrack === undefined) {
+            return;
+        }
+
+        if (videoTrack === null) {
+            await dispatch(replaceVideoTrackById(getCurrentCameraDeviceId(state)));
+        } else {
+            await dispatch(replacePrejoinVideoTrack(null));
+        }
     };
 }

@@ -14,13 +14,11 @@ import {
     SET_PREJOIN_AUDIO_MUTED,
     SET_PREJOIN_DEVICE_ERRORS,
     SET_PREJOIN_PAGE_VISIBILITY,
-    SET_PREJOIN_VIDEO_DISABLED,
-    SET_PREJOIN_VIDEO_MUTED
+    SET_PREJOIN_VIDEO_DISABLED
 } from './actionTypes';
 
 const DEFAULT_STATE = {
     audioDisabled: false,
-    audioMuted: false,
     audioTrack: null,
     contentSharingTrack: null,
     country: '',
@@ -38,9 +36,8 @@ const DEFAULT_STATE = {
     showPrejoin: true,
     showJoinByPhoneDialog: false,
     userSelectedSkipPrejoin: false,
-    videoTrack: null,
-    videoDisabled: false,
-    videoMuted: false
+    videoTrack: undefined,
+    videoDisabled: false
 };
 
 /**
@@ -64,9 +61,11 @@ ReducerRegistry.register(
         }
 
         case ADD_PREJOIN_VIDEO_TRACK: {
+            const videoTrack = action.value;
+
             return {
                 ...state,
-                videoTrack: action.value
+                videoTrack
             };
         }
 
@@ -89,12 +88,6 @@ ReducerRegistry.register(
                 videoDisabled: action.value
             };
         }
-
-        case SET_PREJOIN_VIDEO_MUTED:
-            return {
-                ...state,
-                videoMuted: action.value
-            };
 
         case SET_PREJOIN_AUDIO_MUTED:
             return {
