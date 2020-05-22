@@ -5,12 +5,20 @@ import type { Dispatch } from 'redux';
 
 import { getDefaultURL } from '../../app';
 import { updateSettings } from '../../base/settings';
+import { isServerURLChangeAllowed } from '../functions';
 
 /**
  * The type of the React {@code Component} props of
  * {@link AbstractSettingsView}.
  */
 export type Props = {
+
+    /**
+     * Flag indicating if URL can be changed by user.
+     *
+     * @protected
+     */
+    _serverURLChangeAllowed: boolean,
 
     /**
      * The default URL for when there is no custom URL set in the settings.
@@ -168,6 +176,7 @@ export class AbstractSettingsView<P: Props, S: *> extends Component<P, S> {
  * @param {Object} state - The redux state.
  * @protected
  * @returns {{
+ *     _serverURLChangeAllowed: boolean,
  *     _serverURL: string,
  *     _settings: Object,
  *     _visible: boolean
@@ -175,6 +184,7 @@ export class AbstractSettingsView<P: Props, S: *> extends Component<P, S> {
  */
 export function _mapStateToProps(state: Object) {
     return {
+        _serverURLChangeAllowed: isServerURLChangeAllowed(state),
         _serverURL: getDefaultURL(state),
         _settings: state['features/base/settings'],
         _visible: state['features/settings'].visible

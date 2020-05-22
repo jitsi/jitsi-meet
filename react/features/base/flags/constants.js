@@ -98,3 +98,9 @@ export const TOOLBOX_ALWAYS_VISIBLE = 'toolbox.alwaysVisible';
  * Default: disabled (false).
  */
 export const WELCOME_PAGE_ENABLED = 'welcomepage.enabled';
+
+/**
+ * Flag indicating if server URL change is allowed.
+ * Default: enabled (true)
+ */
+export const SERVER_URL_CHANGE_ALLOWED = 'server-url-change.allowed';

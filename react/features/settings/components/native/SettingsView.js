@@ -171,6 +171,7 @@ class SettingsView extends AbstractSettingsView<Props, State> {
                             onBlur = { this._onBlurServerURL }
                             onChangeText = { this._onChangeServerURL }
                             placeholder = { this.props._serverURL }
+                            editable = { this.props._serverURLChangeAllowed }
                             value = { serverURL } />
                     </FormRow>
                     <FormRow
