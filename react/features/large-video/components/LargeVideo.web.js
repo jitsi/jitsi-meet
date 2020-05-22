@@ -5,10 +5,28 @@ import React, { Component } from 'react';
 import { Watermarks } from '../../base/react';
 import { connect } from '../../base/redux';
 import { Captions } from '../../subtitles/';
+import { fetchCustomBrandingData } from '../../user-customization';
 
 declare var interfaceConfig: Object;
 
+const DEFAULT_BACKGROUND_COLOR = '#474747';
+
 type Props = {
+
+    /**
+     * The user selected background color.
+     */
+     _customBackgroundColor: string,
+
+    /**
+     * The user selected background image url.
+     */
+     _customBackgroundImageUrl: string,
+
+    /**
+     * Fetches the branding data.
+     */
+    _fetchCustomBrandingData: Function,
 
     /**
      * Used to determine the value of the autoplay attribute of the underlying
@@ -25,16 +43,28 @@ type Props = {
  */
 class LargeVideo extends Component<Props> {
     /**
+     * Implements React's {@link Component#componentDidMount}.
+     *
+     * @inheritdoc
+     */
+    componentDidMount() {
+        this.props._fetchCustomBrandingData();
+    }
+
+    /**
      * Implements React's {@link Component#render()}.
      *
      * @inheritdoc
      * @returns {React$Element}
      */
     render() {
+        const style = this._getCustomSyles();
+
         return (
             <div
                 className = 'videocontainer'
-                id = 'largeVideoContainer'>
+                id = 'largeVideoContainer'
+                style = { style }>
                 <div id = 'sharedVideo'>
                     <div id = 'sharedVideoIFrame' />
                 </div>
@@ -72,6 +102,26 @@ class LargeVideo extends Component<Props> {
             </div>
         );
     }
+
+    /**
+     * Creates the custom styles object.
+     *
+     * @private
+     * @returns {Object}
+     */
+    _getCustomSyles() {
+        const styles = {};
+        const { _customBackgroundColor, _customBackgroundImageUrl } = this.props;
+
+        styles.backgroundColor = _customBackgroundColor || DEFAULT_BACKGROUND_COLOR;
+
+        if (_customBackgroundImageUrl) {
+            styles.backgroundImage = `url(${_customBackgroundImageUrl})`;
+            styles.backgroundSize = 'cover';
+        }
+
+        return styles;
+    }
 }
 
 
@@ -81,16 +131,24 @@ class LargeVideo extends Component<Props> {
  * @param {Object} state - The Redux state.
  * @private
  * @returns {{
- *     _noAutoPlayVideo: boolean
+ *     _noAutoPlayVideo: boolean,
+ *     _customBackgroundColor: string,
+ *     _customBackgroundImageUrl: string
  * }}
  */
 function _mapStateToProps(state) {
     const testingConfig = state['features/base/config'].testing;
+    const { backgroundColor, backgroundImageUrl } = state['features/user-customization'];
 
     return {
-        _noAutoPlayVideo: testingConfig?.noAutoPlayVideo
+        _noAutoPlayVideo: testingConfig?.noAutoPlayVideo,
+        _customBackgroundColor: backgroundColor,
+        _customBackgroundImageUrl: backgroundImageUrl
     };
 }
 
+const _mapDispatchToProps = {
+    _fetchCustomBrandingData: fetchCustomBrandingData
+};
 
-export default connect(_mapStateToProps)(LargeVideo);
+export default connect(_mapStateToProps, _mapDispatchToProps)(LargeVideo);
