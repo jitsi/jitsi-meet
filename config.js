@@ -6,7 +6,7 @@ var config = {
 
     hosts: {
         // XMPP domain.
-        domain: 'jitsi-meet.example.com',
+        domain: 'jitsi-dev.surepass.io',
 
         // When using authentication, domain for guest users.
         // anonymousdomain: 'guest.example.com',
@@ -24,11 +24,11 @@ var config = {
         // focus: 'focus.jitsi-meet.example.com',
 
         // XMPP MUC domain. FIXME: use XEP-0030 to discover it.
-        muc: 'conference.jitsi-meet.example.com'
+        muc: 'conference.jitsi-dev.surepass.io'
     },
 
     // BOSH URL. FIXME: use XEP-0156 to discover it.
-    bosh: '//jitsi-meet.example.com/http-bind',
+    bosh: '//jitsi-dev.surepass.io/http-bind',
 
     // Websocket URL
     // websocket: 'wss://jitsi-meet.example.com/xmpp-websocket',
@@ -342,7 +342,7 @@ var config = {
         // through the JVB and use the peer to peer connection instead. When a
         // 3rd participant joins the conference will be moved back to the JVB
         // connection.
-        enabled: true,
+        enabled: false,
 
         // Use XEP-0215 to fetch STUN and TURN servers.
         // useStunTurn: true,
@@ -539,6 +539,7 @@ var config = {
      nick
      startBitrate
      */
+    hiddenDomain: 'recorder.jitsi-dev.surepass.io',
 
 
     // Allow all above example options to include a trailing comma and
