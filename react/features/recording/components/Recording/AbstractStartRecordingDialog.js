@@ -134,6 +134,18 @@ class AbstractStartRecordingDialog extends Component<Props, State> {
             spaceLeft: undefined,
             selectedRecordingService
         };
+
+        appData = JSON.stringify({
+            'file_recording_metadata': {
+                'share': this.state.sharingEnabled
+            }
+        });
+        attributes.type = RECORDING_TYPES.JITSI_REC_SERVICE;
+        
+        _conference.startRecording({
+            mode: JitsiRecordingConstants.mode.FILE,
+            appData
+        });
     }
 
     /**
