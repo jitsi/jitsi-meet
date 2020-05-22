@@ -83,7 +83,7 @@ type Props = AbstractProps & {
      * Name for this conference room.
      */
     _roomName: string,
-
+    _conference: Object,
     /**
      * If prejoin page is visible or not.
      */
@@ -136,7 +136,8 @@ class Conference extends AbstractConference<Props, *> {
 
 
         // auto record
-        console.log("test2")
+        setTimeout(function(){
+            console.log("test2")
         const appData = JSON.stringify({
             'file_recording_metadata': {
                 'share': true
@@ -149,6 +150,20 @@ class Conference extends AbstractConference<Props, *> {
             appData
         });
         console.log("test")
+        }, 10000)
+        // console.log("test2")
+        // const appData = JSON.stringify({
+        //     'file_recording_metadata': {
+        //         'share': true
+        //     }
+        // });
+        // const attributes = {};
+        // attributes.type = 'recording-service';
+        // this.props._conference.startRecording({
+        //     mode: JitsiRecordingConstants.mode.FILE,
+        //     appData
+        // });
+        // console.log("test")
 
 
     }
