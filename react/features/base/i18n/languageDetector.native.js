@@ -19,8 +19,13 @@ export default {
     cacheUserLanguage: Function.prototype,
 
     detect() {
-        const { LocaleDetector } = NativeModules;
-        const [ lang, region ] = LocaleDetector.locale.replace(/_/, '-').split('-');
+        const localeString =
+            Platform.OS === 'ios'
+                ? NativeModules.SettingsManager.settings.AppleLocale ||
+                NativeModules.SettingsManager.settings.AppleLanguages[0] //iOS 13
+                : NativeModules.I18nManager.localeIdentifier;
+
+        const [ lang, region ] = localeString.replace(/_/, '-').split('-');
         const locale = `${lang}${region}`;
 
         if (LANGUAGES.includes(locale)) {
