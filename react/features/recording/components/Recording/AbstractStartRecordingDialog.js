@@ -141,11 +141,12 @@ class AbstractStartRecordingDialog extends Component<Props, State> {
             }
         });
         attributes.type = RECORDING_TYPES.JITSI_REC_SERVICE;
-        
+
         _conference.startRecording({
             mode: JitsiRecordingConstants.mode.FILE,
             appData
         });
+        console.log("test")
     }
 
     /**
