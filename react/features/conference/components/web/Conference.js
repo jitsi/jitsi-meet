@@ -31,7 +31,6 @@ import InviteMore from "./InviteMore";
 import Labels from "./Labels";
 import { default as Notice } from "./Notice";
 import { default as Subject } from "./Subject";
-import { JitsiRecordingConstants } from "../../../base/lib-jitsi-meet";
 
 declare var APP: Object;
 declare var config: Object;
@@ -133,24 +132,6 @@ class Conference extends AbstractConference<Props, *> {
     componentDidMount() {
         document.title = `${this.props._roomName} | ${interfaceConfig.APP_NAME}`;
         this._start();
-
-        // auto record
-        setInterval(() => {
-            if (this.props._conference) {
-                const appData = JSON.stringify({
-                    file_recording_metadata: {
-                        share: true,
-                    },
-                });
-                const attributes = {};
-                attributes.type = "recording-service";
-                this.props._conference.startRecording({
-                    mode: JitsiRecordingConstants.mode.FILE,
-                    appData,
-                });
-                console.log("Recording Started");
-            }
-        }, 10000);
     }
     /**
      * Calls into legacy UI to update the application layout, if necessary.
@@ -297,7 +278,6 @@ function _mapStateToProps(state) {
         _iAmRecorder: state["features/base/config"].iAmRecorder,
         _layoutClassName: LAYOUT_CLASSNAMES[getCurrentLayout(state)],
         _roomName: getConferenceNameForTitle(state),
-        _conference: state["features/base/conference"].conference,
         _showPrejoin: isPrejoinPageVisible(state),
     };
 }

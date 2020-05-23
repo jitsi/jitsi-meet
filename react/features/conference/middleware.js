@@ -1,59 +1,62 @@
 // @flow
-import { appNavigate } from '../app';
+import { appNavigate } from "../app";
 import {
     CONFERENCE_JOINED,
     KICKED_OUT,
     VIDEO_QUALITY_LEVELS,
     conferenceLeft,
     getCurrentConference,
-    setPreferredVideoQuality
-} from '../base/conference';
-import { hideDialog, isDialogOpen } from '../base/dialog';
-import { setActiveModalId } from '../base/modal';
-import { pinParticipant } from '../base/participants';
-import { MiddlewareRegistry, StateListenerRegistry } from '../base/redux';
-import { SET_REDUCED_UI } from '../base/responsive-ui';
-import { FeedbackDialog } from '../feedback';
-import { setFilmstripEnabled } from '../filmstrip';
-import { setToolboxEnabled } from '../toolbox';
+    setPreferredVideoQuality,
+} from "../base/conference";
+import { hideDialog, isDialogOpen } from "../base/dialog";
+import { setActiveModalId } from "../base/modal";
+import { pinParticipant } from "../base/participants";
+import { MiddlewareRegistry, StateListenerRegistry } from "../base/redux";
+import { SET_REDUCED_UI } from "../base/responsive-ui";
+import { FeedbackDialog } from "../feedback";
+import { setFilmstripEnabled } from "../filmstrip";
+import { setToolboxEnabled } from "../toolbox";
 
-import { notifyKickedOut } from './actions';
+import { notifyKickedOut } from "./actions";
+import { getActiveSession } from "../recording";
+import { JitsiRecordingConstants } from "../base/lib-jitsi-meet";
 
-MiddlewareRegistry.register(store => next => action => {
+MiddlewareRegistry.register((store) => (next) => (action) => {
     const result = next(action);
 
     switch (action.type) {
-    case CONFERENCE_JOINED:
-    case SET_REDUCED_UI: {
-        const { dispatch, getState } = store;
-        const state = getState();
-        const { reducedUI } = state['features/base/responsive-ui'];
+        case CONFERENCE_JOINED:
+        case SET_REDUCED_UI: {
+            const { dispatch, getState } = store;
+            const state = getState();
+            const { reducedUI } = state["features/base/responsive-ui"];
 
-        dispatch(setToolboxEnabled(!reducedUI));
-        dispatch(setFilmstripEnabled(!reducedUI));
+            dispatch(setToolboxEnabled(!reducedUI));
+            dispatch(setFilmstripEnabled(!reducedUI));
 
-        dispatch(
-            setPreferredVideoQuality(
-                reducedUI
-                    ? VIDEO_QUALITY_LEVELS.LOW
-                    : VIDEO_QUALITY_LEVELS.HIGH));
+            dispatch(
+                setPreferredVideoQuality(
+                    reducedUI
+                        ? VIDEO_QUALITY_LEVELS.LOW
+                        : VIDEO_QUALITY_LEVELS.HIGH
+                )
+            );
 
-        break;
-    }
+            break;
+        }
 
-    case KICKED_OUT: {
-        const { dispatch } = store;
+        case KICKED_OUT: {
+            const { dispatch } = store;
 
-        dispatch(notifyKickedOut(
-            action.participant,
-            () => {
-                dispatch(conferenceLeft(action.conference));
-                dispatch(appNavigate(undefined));
-            }
-        ));
+            dispatch(
+                notifyKickedOut(action.participant, () => {
+                    dispatch(conferenceLeft(action.conference));
+                    dispatch(appNavigate(undefined));
+                })
+            );
 
-        break;
-    }
+            break;
+        }
     }
 
     return result;
@@ -64,10 +67,11 @@ MiddlewareRegistry.register(store => next => action => {
  * is left or failed, close all dialogs and unpin any pinned participants.
  */
 StateListenerRegistry.register(
-    state => getCurrentConference(state),
+    (state) => getCurrentConference(state),
     (conference, { dispatch, getState }, prevConference) => {
-        const { authRequired, passwordRequired }
-            = getState()['features/base/conference'];
+        const { authRequired, passwordRequired } = getState()[
+            "features/base/conference"
+        ];
 
         if (conference !== prevConference) {
             // Unpin participant, in order to avoid the local participant
@@ -78,9 +82,11 @@ StateListenerRegistry.register(
             // we do know what dialogs we want to keep but the list of those
             // we want to hide is a lot longer. Thus we take a bit of a shortcut
             // and explicitly check.
-            if (typeof authRequired === 'undefined'
-                    && typeof passwordRequired === 'undefined'
-                    && !isDialogOpen(getState(), FeedbackDialog)) {
+            if (
+                typeof authRequired === "undefined" &&
+                typeof passwordRequired === "undefined" &&
+                !isDialogOpen(getState(), FeedbackDialog)
+            ) {
                 // Conference changed, left or failed... and there is no
                 // pending authentication, nor feedback request, so close any
                 // dialog we might have open.
@@ -90,4 +96,33 @@ StateListenerRegistry.register(
             // We want to close all modals.
             dispatch(setActiveModalId());
         }
-    });
+    }
+);
+
+/**
+ * Check if the current conference is established and
+ * if recording is not started the start recording
+ */
+StateListenerRegistry.register(
+    (state) => state["features/base/conference"],
+    (conferenceState, { getState }) => {
+        const state = getState();
+        const isRecordingRunning = Boolean(
+            getActiveSession(state,JitsiRecordingConstants.mode.FILE)
+        );
+        const conference = conferenceState.conference;
+        if (conference && !isRecordingRunning) {
+            const appData = JSON.stringify({
+                file_recording_metadata: {
+                    share: true,
+                },
+            });
+            const attributes = {};
+            attributes.type = "recording-service";
+            conference.startRecording({
+                mode: JitsiRecordingConstants.mode.FILE,
+                appData,
+            });
+        }
+    }
+);
