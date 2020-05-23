@@ -1,5 +1,7 @@
 // @flow
 
+import UIEvents from '../../../../service/UI/UIEvents';
+import { hideNotification } from '../../notifications';
 import {
     CAMERA_FACING_MODE,
     MEDIA_TYPE,
@@ -10,21 +12,19 @@ import {
     TOGGLE_CAMERA_FACING_MODE,
     toggleCameraFacingMode
 } from '../media';
-import { hideNotification } from '../../notifications';
 import { MiddlewareRegistry } from '../redux';
-import UIEvents from '../../../../service/UI/UIEvents';
 
-import {
-    createLocalTracksA,
-    showNoDataFromSourceVideoError,
-    trackNoDataFromSourceNotificationInfoChanged
-} from './actions';
 import {
     TOGGLE_SCREENSHARING,
     TRACK_NO_DATA_FROM_SOURCE,
     TRACK_REMOVED,
     TRACK_UPDATED
 } from './actionTypes';
+import {
+    createLocalTracksA,
+    showNoDataFromSourceVideoError,
+    trackNoDataFromSourceNotificationInfoChanged
+} from './actions';
 import {
     getLocalTrack,
     getTrackByJitsiTrack,
@@ -129,6 +129,8 @@ MiddlewareRegistry.register(store => next => action => {
         // TODO Remove the following calls to APP.UI once components interested
         // in track mute changes are moved into React and/or redux.
         if (typeof APP !== 'undefined') {
+            const result = next(action);
+
             const { jitsiTrack } = action.track;
             const muted = jitsiTrack.isMuted();
             const participantID = jitsiTrack.getParticipantId();
@@ -151,6 +153,8 @@ MiddlewareRegistry.register(store => next => action => {
             } else {
                 APP.UI.setAudioMuted(participantID, muted);
             }
+
+            return result;
         }
 
     }

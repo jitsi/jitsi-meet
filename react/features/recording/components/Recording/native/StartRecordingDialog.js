@@ -2,10 +2,9 @@
 
 import React from 'react';
 
-import { translate } from '../../../../base/i18n';
 import { CustomSubmitDialog } from '../../../../base/dialog';
+import { translate } from '../../../../base/i18n';
 import { connect } from '../../../../base/redux';
-
 import AbstractStartRecordingDialog, {
     mapStateToProps
 } from '../AbstractStartRecordingDialog';

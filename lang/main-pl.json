@@ -60,7 +60,7 @@
         "you": "Ty"
     },
     "connectingOverlay": {
-        "joiningRoom": "Łączenie z Twoim spotkaniem..."
+        "joiningRoom": "Łączenie z Twoim spotkaniem…"
     },
     "connection": {
         "ATTACHED": "Załącznik",
@@ -121,7 +121,7 @@
         "downloadApp": "Pobierz aplikację",
         "launchWebButton": "Uruchom przez przeglądarkę",
         "openApp": "Kontynuuj w aplikacji",
-        "title": "Trwa uruchamianie Twojego spotkania w {{app}}...",
+        "title": "Trwa uruchamianie Twojego spotkania w {{app}}…",
         "tryAgainButton": "Spróbuj ponownie w aplikacji stacjonarnej"
     },
     "defaultLink": "np. {{url}}",
@@ -156,9 +156,9 @@
         "cameraUnsupportedResolutionError": "Twoja kamera nie obsługuje wymaganej rozdzielczości.",
         "Cancel": "Anuluj",
         "close": "Zamknij",
-        "conferenceDisconnectMsg": "Być może należy sprawdzić połączenie sieciowe. Ponowne połączenie za {{seconds}} sekund...",
+        "conferenceDisconnectMsg": "Być może należy sprawdzić połączenie sieciowe. Ponowne połączenie za {{seconds}} sekund…",
         "conferenceDisconnectTitle": "Zostałeś rozłączony.",
-        "conferenceReloadMsg": "Staramy się to naprawić. Ponowne połączenie za {{seconds}} sekund...",
+        "conferenceReloadMsg": "Staramy się to naprawić. Ponowne połączenie za {{seconds}} sekund…",
         "conferenceReloadTitle": "Niestety, coś poszło nie tak.",
         "confirm": "Potwierdź",
         "confirmNo": "Nie",
@@ -269,7 +269,7 @@
         "userPassword": "hasło użytkownika",
         "WaitForHostMsg": "Konferencja <b>{{room}}</b> jeszcze się nie rozpoczęła. Jeśli jesteś gospodarzem, prosimy o uwierzytelnienie. Jeśli nie, prosimy czekać na przybycie gospodarza.",
         "WaitForHostMsgWOk": "Konferencja <b>{{room}}</b> jeszcze się nie zaczęła. Jeśli jesteś jej gospodarzem, wybierz Ok, aby się uwierzytelnić. Jeśli nie, prosimy czekać na przybycie gospodarza.",
-        "WaitingForHost": "Oczekiwanie na gospodarza...",
+        "WaitingForHost": "Oczekiwanie na gospodarza…",
         "Yes": "Tak",
         "yourEntireScreen": "Cały Twój ekran"
     },
@@ -368,7 +368,7 @@
         "errorLiveStreamNotEnabled": "",
         "expandedOff": "Transmisja na żywo została zatrzymana",
         "expandedOn": "Spotkanie jest obecnie transmitowane na YouTube.",
-        "expandedPending": "Transmisja na żywo rozpoczyna się...",
+        "expandedPending": "Transmisja na żywo rozpoczyna się…",
         "failedToStart": "Transmitowanie na żywo nie uruchomiło się",
         "getStreamKeyManually": "Nie byliśmy w stanie pobrać żadnych transmisji na żywo. Spróbuj uzyskać klucz do transmisji na żywo z YouTube.",
         "invalidStreamKey": "Klucz transmisji na żywo może być nieprawidłowy.",
@@ -376,7 +376,7 @@
         "offBy": "{{name}} zatrzymał transmisję na żywo",
         "on": "Strumień live",
         "onBy": "{{name}} rozpoczął transmisję na żywo",
-        "pending": "Start strumieniowania live...",
+        "pending": "Start strumieniowania live…",
         "serviceName": "Usługa transmisji na żywo",
         "signedInAs": "Jesteś obecnie zalogowany jako:",
         "signIn": "Zaloguj się z Google",
@@ -454,22 +454,22 @@
     "poweredby": "napędzane dzięki",
     "presenceStatus": {
         "busy": "Zajęte",
-        "calling": "Dzwonienie...",
+        "calling": "Dzwonienie…",
         "connected": "Połączono",
-        "connecting": "Łączenie...",
+        "connecting": "Łączenie…",
         "connecting2": "Łączenie*...",
         "disconnected": "Rozłączony",
         "expired": "Wygasłe",
         "ignored": "Zignorowane",
-        "initializingCall": "Inicjalizacja połączenia...",
+        "initializingCall": "Inicjalizacja połączenia…",
         "invited": "Zaproszony",
         "rejected": "Odrzucony",
-        "ringing": "Dzwonek..."
+        "ringing": "Dzwonek…"
     },
     "profile": {
         "setDisplayNameLabel": "Podaj swoją wyświetlaną nazwę",
         "setEmailInput": "Wprowadź adres e-mail",
-        "setEmailLabel": "Ustaw email swojego gravatara",
+        "setEmailLabel": "Ustaw adres poczty elektronicznej swojego Gravatara",
         "title": "Profil"
     },
     "raisedHand": "Chcesz się odezwać ?",
@@ -482,7 +482,7 @@
         "error": "Nagranie się nie powiodło. Proszę spróbować ponownie.",
         "expandedOff": "Nagrywanie zostało zatrzymane",
         "expandedOn": "Spotkanie jest obecnie nagrywane.",
-        "expandedPending": "Nagrywanie się rozpoczyna...",
+        "expandedPending": "Nagrywanie się rozpoczyna…",
         "failedToStart": "Nagrywanie nie jest możliwe",
         "fileSharingdescription": "Współdziel nagranie z uczestnikami spotkania",
         "live": "NA ŻYWO",
@@ -491,7 +491,7 @@
         "offBy": "{{name}} zatrzymał nagrywanie",
         "on": "Nagrywanie",
         "onBy": "{{name}} rozpoczął nagrywanie",
-        "pending": "Przygotowanie do nagrania spotkania...",
+        "pending": "Przygotowanie do nagrania spotkania…",
         "rec": "NAGRYWANIE",
         "serviceDescription": "Twoje nagranie zostanie zapisane przez usługę nagrywania",
         "serviceName": "Usługa nagrywania",
@@ -662,7 +662,7 @@
         "failedToStart": "Błąd uruchomienia transkrypcji",
         "labelToolTip": "Spotkanie jest transkrybowane",
         "off": "Transkrypcja została zatrzymana",
-        "pending": "Przygotowanie do transkrypcji spotkania...",
+        "pending": "Przygotowanie do transkrypcji spotkania…",
         "start": "Rozpocznij wyświetlanie napisów",
         "stop": "Zatrzymaj wyświetlanie napisów",
         "tr": "TR"
@@ -703,9 +703,6 @@
         "lowDefinition": "Niska rozdzielczość",
         "onlyAudioAvailable": "Dostępny jest tylko dźwięk",
         "onlyAudioSupported": "Obsługujemy tylko dźwięk w tej przeglądarce.",
-        "p2pEnabled": "Połączenie Peer to Peer włączone",
-        "p2pVideoQualityDescription": "",
-        "recHighDefinitionOnly": "Preferowana wysoka rozdzielczość.",
         "sd": "SD",
         "sdTooltip": "Podgląd obrazu w standardowej rozdzielczości",
         "standardDefinition": "Standardowa rozdzielczość"

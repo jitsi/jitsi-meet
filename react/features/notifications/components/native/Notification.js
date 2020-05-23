@@ -5,7 +5,6 @@ import { Text, TouchableOpacity, View } from 'react-native';
 
 import { translate } from '../../../base/i18n';
 import { Icon, IconClose } from '../../../base/icons';
-
 import AbstractNotification, {
     type Props
 } from '../AbstractNotification';

@@ -1,13 +1,21 @@
--- Copyright (c) 2015 &yet <https://andyet.com>
--- https://github.com/otalk/mod_muc_allowners/blob/9a86266a25ed32ade150742cc79f5a1669765a8f/mod_muc_allowners.lua
---
--- Used under the terms of the MIT License
--- https://github.com/otalk/mod_muc_allowners/blob/9a86266a25ed32ade150742cc79f5a1669765a8f/LICENSE
+local is_healthcheck_room = module:require "util".is_healthcheck_room;
 
-local muc_service = module:depends("muc");
-local room_mt = muc_service.room_mt;
+module:hook("muc-occupant-joined", function (event)
+    local room, occupant = event.room, event.occupant;
 
+    if is_healthcheck_room(room.jid) then
+        return;
+    end
 
-room_mt.get_affiliation = function (room, jid)
-    return "owner";
-end
+    room:set_affiliation(true, occupant.bare_jid, "owner");
+end, 2);
+
+module:hook("muc-occupant-left", function (event)
+    local room, occupant = event.room, event.occupant;
+
+    if is_healthcheck_room(room.jid) then
+        return;
+    end
+
+    room:set_affiliation(true, occupant.bare_jid, nil);
+end, 2);

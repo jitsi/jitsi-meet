@@ -2,8 +2,8 @@
 
 // We need to reference these files directly to avoid loading things that are not available
 // in this environment (e.g. JitsiMeetJS or interfaceConfig)
-import AbstractHangupButton from '../base/toolbox/components/AbstractHangupButton';
 import type { Props } from '../base/toolbox/components/AbstractButton';
+import AbstractHangupButton from '../base/toolbox/components/AbstractHangupButton';
 
 const { api } = window.alwaysOnTop;
 

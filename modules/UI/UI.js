@@ -1,16 +1,10 @@
 /* global APP, $, config, interfaceConfig */
 
-const logger = require('jitsi-meet-logger').getLogger(__filename);
 
 const UI = {};
 
-import messageHandler from './util/MessageHandler';
-import UIUtil from './util/UIUtil';
-import UIEvents from '../../service/UI/UIEvents';
-import EtherpadManager from './etherpad/Etherpad';
-import SharedVideoManager from './shared_video/SharedVideo';
-
-import VideoLayout from './videolayout/VideoLayout';
+import EventEmitter from 'events';
+import Logger from 'jitsi-meet-logger';
 
 import { getLocalParticipant } from '../../react/features/base/participants';
 import { toggleChat } from '../../react/features/chat';
@@ -22,8 +16,15 @@ import {
     setToolboxEnabled,
     showToolbox
 } from '../../react/features/toolbox';
+import UIEvents from '../../service/UI/UIEvents';
 
-const EventEmitter = require('events');
+import EtherpadManager from './etherpad/Etherpad';
+import SharedVideoManager from './shared_video/SharedVideo';
+import messageHandler from './util/MessageHandler';
+import UIUtil from './util/UIUtil';
+import VideoLayout from './videolayout/VideoLayout';
+
+const logger = Logger.getLogger(__filename);
 
 UI.messageHandler = messageHandler;
 
@@ -320,15 +321,6 @@ UI.toggleChat = () => APP.store.dispatch(toggleChat());
  */
 UI.inputDisplayNameHandler = function(newDisplayName) {
     eventEmitter.emit(UIEvents.NICKNAME_CHANGED, newDisplayName);
-};
-
-/**
- * Return the type of the remote video.
- * @param jid the jid for the remote video
- * @returns the video type video or screen.
- */
-UI.getRemoteVideoType = function(jid) {
-    return VideoLayout.getRemoteVideoType(jid);
 };
 
 // FIXME check if someone user this

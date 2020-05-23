@@ -65,7 +65,7 @@
         "dontShowAgain": "No mostrar nuevamente"
     },
     "connectingOverlay": {
-        "joiningRoom": "Conectando a su reunión..."
+        "joiningRoom": "Conectando a su reunión…"
     },
     "connection": {
         "ATTACHED": "Adjunto",
@@ -78,9 +78,9 @@
         "DISCONNECTING": "Desconectando",
         "ERROR": "Error",
         "RECONNECTING": "Ocurrió un problema en la red. Reconectando...",
-        "FETCH_SESSION_ID": "Obteniendo session-id...",
+        "FETCH_SESSION_ID": "Obteniendo session-ID…",
         "GET_SESSION_ID_ERROR": "Obtener session-id error: {{code}}",
-        "GOT_SESSION_ID": "Obteniendo session-id... Listo",
+        "GOT_SESSION_ID": "Obteniendo session-ID… Listo",
         "LOW_BANDWIDTH": "Video para {{displayName}} ha sido deshabilitado para economizar ancho de banda"
     },
     "connectionindicator": {
@@ -89,7 +89,7 @@
         "bitrate": "Tasa de transferencia:",
         "bridgeCount": "Contador del servidor: ",
         "connectedTo": "Conectado a:",
-        "framerate": "Cuadros por segundo:",
+        "framerate": "Fotogramas por segundo:",
         "less": "Mostrar menos",
         "localaddress": "Dirección local:",
         "localaddress_plural": "Direcciones locales:",
@@ -109,7 +109,7 @@
         "remoteport": "Puerto remoto:",
         "remoteport_plural": "Puertos remotos:",
         "resolution": "Resolución:",
-        "status": "Conexión:",
+        "status": "Estado:",
         "transport": "Transporte:",
         "transport_plural": "Transportes:"
     },
@@ -125,7 +125,7 @@
         "downloadApp": "Descargar la aplicación",
         "launchWebButton": "Iniciar en la Web",
         "openApp": "Continuar a la aplicación",
-        "title": "Iniciando la reunión en {{app}}...",
+        "title": "Iniciando la reunión en {{app}}…",
         "tryAgainButton": "Intentar de nuevo en el escritorio"
     },
     "defaultLink": "p.ej. {{url}}",
@@ -160,9 +160,9 @@
         "cameraUnsupportedResolutionError": "La cámara no admite la resolución de video requerida.",
         "Cancel": "Cancelar",
         "close": "Cerrar",
-        "conferenceDisconnectMsg": "Se recomienda que compruebes la conexión de la red. Reconectando en {{seconds}} segundos...",
+        "conferenceDisconnectMsg": "Se recomienda que compruebes la conexión de la red. Reconectando en {{seconds}} segundos…",
         "conferenceDisconnectTitle": "Ha sido desconectado.",
-        "conferenceReloadMsg": "Estamos tratando de arreglar esto. Reconectando en {{seconds}} segundos...",
+        "conferenceReloadMsg": "Estamos tratando de arreglar esto. Reconectando en {{seconds}} segundos…",
         "conferenceReloadTitle": "Desafortunadamente, algo salió mal.",
         "confirm": "Confirmar",
         "confirmNo": "No",
@@ -279,7 +279,7 @@
         "userPassword": "contraseña de usuario",
         "WaitForHostMsg": "La conferencia <b>{{room}}</b> aún no ha comenzado. Si eres el anfitrión, inicia la autenticación. De lo contrario, espera a que llegue el anfitrión.",
         "WaitForHostMsgWOk": "La conferencia <b>{{room}}</b> aún no ha comenzado. Si eres el anfitrión, presiona Aceptar para autenticar. De lo contrario, espera a que llegue el anfitrión.",
-        "WaitingForHost": "Esperando al anfitrión...",
+        "WaitingForHost": "Esperando al anfitrión…",
         "Yes": "Sí",
         "yourEntireScreen": "Toda su pantalla"
     },
@@ -332,8 +332,8 @@
         "numbers": "Números de marcación desde afuera",
         "password": "$t(lockRoomPasswordUppercase):",
         "title": "Compartir",
-        "tooltip": "Compartir el enlace y la información de marcación desde afuera para esta reunión",
-        "label": "Información de reunión"
+        "tooltip": "Compartir el enlace y acceso telefónico para esta reunión",
+        "label": "Información de la reunión"
     },
     "inviteDialog": {
         "alertText": "No se pudieron invitar a algunos participantes.",
@@ -378,7 +378,7 @@
         "errorLiveStreamNotEnabled": "La transmisión en vivo no está habilitada en {{email}}. Habilítala o inicia sesión en una cuenta con la transmisión en vivo habilitada.",
         "expandedOff": "La transmisión en vivo se ha detenido",
         "expandedOn": "La reunión se está transmitiendo actualmente a YouTube.",
-        "expandedPending": "La transmisión en vivo se está iniciando...",
+        "expandedPending": "La transmisión en vivo se está iniciando…",
         "failedToStart": "La transmisión en vivo no se pudo iniciar",
         "getStreamKeyManually": "No pudimos obtener ninguna transmisión en vivo. Intenta obtener la clave de transmisión en vivo de YouTube.",
         "invalidStreamKey": "Es posible que la clave de transmisión en vivo sea incorrecta.",
@@ -386,7 +386,7 @@
         "offBy": "{{name}} detuvo el streaming en directo",
         "on": "Transmisión en vivo",
         "onBy": "{{name}} inició el streaming en directo",
-        "pending": "Iniciando transmisión en vivo...",
+        "pending": "Iniciando transmisión en vivo…",
         "serviceName": "Servicio de transmisión en vivo",
         "signedInAs": "Actualmente, la sesión está iniciada como:",
         "signIn": "Iniciar sesión con Google",
@@ -452,7 +452,7 @@
         "somebody": "Alguien",
         "startSilentTitle": "¡Ingresó sin salida de audio!",
         "startSilentDescription": "Vuelva a ingresar para activar el audio",
-        "suboptimalBrowserWarning": "Nos tememos que su experiencia de reunión no será tan buena aquí. Estamos buscando formas de mejorar esto, pero hasta entonces, por favor, intente utilizar uno de los <a href='static/recommendedBrowsers.html' target='_blank'>navegadores soportados</a>.",
+        "suboptimalBrowserWarning": "Nos tememos que su experiencia de reunión no será tan buena aquí. Estamos buscando formas de mejorar esto, pero hasta entonces, por favor, intente utilizar uno de los <a href='{{recommendedBrowserPageLink}}' target='_blank'>navegadores soportados</a>.",
         "suboptimalExperienceTitle": "Advertencia del navegador",
         "unmute": "Reactivar el sonido",
         "newDeviceCameraTitle": "Se detectó una cámara nueva",
@@ -464,17 +464,17 @@
     "poweredby": "con tecnología de",
     "presenceStatus": {
         "busy": "Ocupado",
-        "calling": "Llamando...",
+        "calling": "Llamando…",
         "connected": "Conectado",
-        "connecting": "Conectando...",
+        "connecting": "Conectando…",
         "connecting2": "Conectando*...",
         "disconnected": "Desconectado",
         "expired": "Vencido",
         "ignored": "Omitido",
-        "initializingCall": "Inicializando llamada...",
+        "initializingCall": "Inicializando llamada…",
         "invited": "Invitado",
         "rejected": "Rechazado",
-        "ringing": "Timbrando..."
+        "ringing": "Timbrando…"
     },
     "profile": {
         "setDisplayNameLabel": "Configurar su nombre para mostrar",
@@ -492,7 +492,7 @@
         "error": "Error de grabación. Vuelve a intentarlo.",
         "expandedOff": "La grabación se ha detenido",
         "expandedOn": "La reunión se está grabando en este momento.",
-        "expandedPending": "La grabación se está iniciando...",
+        "expandedPending": "La grabación se está iniciando…",
         "failedToStart": "La grabación no se pudo iniciar",
         "fileSharingdescription": "Compartir grabación con participantes de la reunión",
         "live": "EN VIVO",
@@ -501,7 +501,7 @@
         "offBy": "{{name}} paró la grabación",
         "on": "Grabación",
         "onBy": "{{name}} inició la grabación",
-        "pending": "Preparando para grabar la reunión...",
+        "pending": "Preparando para grabar la reunión…",
         "rec": "REC",
         "serviceDescription": "El servicio de grabación guardará la grabación",
         "serviceName": "Servicio de grabación",
@@ -532,8 +532,8 @@
         "selectAudioOutput": "Salida de audio",
         "selectCamera": "Cámara",
         "selectMic": "Micrófono",
-        "startAudioMuted": "Todos comienzan con el silencio activado",
-        "startVideoMuted": "Todos comienzan ocultos",
+        "startAudioMuted": "Todos comienzan con silenciados",
+        "startVideoMuted": "Todos comienzan con cámara desactivada",
         "title": "Configuración"
     },
     "settingsView": {
@@ -559,14 +559,14 @@
         "dialInfoText": "\n\n=====\n\n¿Desea llamar desde su teléfono?\n\n{{defaultDialInNumber}}La lista de números disponibles para la reunión está disponible aquí : \n{{dialInfoPageUrl}}",
         "mainText": "Haz clic en el enlace siguiente para unirte a la reunión:\n{{roomUrl}}"
     },
-    "speaker": "Altavoz",
+    "speaker": "Participante",
     "speakerStats": {
         "hours": "{{count}} h",
         "minutes": "{{count}} min",
         "name": "Nombre",
         "seconds": "{{count}} s",
-        "speakerStats": "Estadísticas del altavoz",
-        "speakerTime": "Hora del altavoz"
+        "speakerStats": "Estadísticas de participantes",
+        "speakerTime": "Tiempo hablado"
     },
     "startupoverlay": {
         "policyText": " ",
@@ -641,13 +641,13 @@
         "lowerYourHand": "Bajar la mano",
         "moreActions": "Más acciones",
         "moreOptions": "Más opciones",
-        "mute": "Silenciar/anular silencio",
+        "mute": "Activar o silenciar el micrófono",
         "muteEveryone": "Silenciar a todos",
         "noAudioSignalTitle": "¡No hay ninguna entrada que provenga de su micrófono!",
         "noAudioSignalDesc": "Si no lo silenció intencionalmente desde la configuración del sistema o el hardware, considere la posibilidad de cambiar el dispositivo.",
         "noAudioSignalDescSuggestion": "Si no lo silenció intencionalmente desde la configuración del sistema o el hardware, considere utilizar el siguiente dispositivo:",
         "noAudioSignalDialInDesc": "Usted puede además llamar usando:",
-        "noAudioSignalDialInLinkDesc" : "Números de llamada",
+        "noAudioSignalDialInLinkDesc": "Números de llamada",
         "noisyAudioInputTitle": "Su micrófono parece estar ruidoso",
         "noisyAudioInputDesc": "Parece que su micráfono está haciendo ruido, por favor considere silenciarlo o cambiar de dispositivo.",
         "openChat": "Abrir chat",
@@ -660,7 +660,7 @@
         "sharedvideo": "Compartir un video de YouTube",
         "shareRoom": "Invitar a alguien",
         "shortcuts": "Ver accesos directos",
-        "speakerStats": "Estadísticas del altavoz",
+        "speakerStats": "Estadísticas de participantes",
         "startScreenSharing": "Iniciar uso compartido de pantalla",
         "startSubtitles": "Iniciar subtítulos",
         "stopScreenSharing": "Detener uso compartido de pantalla",
@@ -680,7 +680,7 @@
         "failedToStart": "La transcripción no se pudo iniciar",
         "labelToolTip": "La reunión se está transcribiendo",
         "off": "Transcripción detenida",
-        "pending": "Preparando para transcribir la reunión...",
+        "pending": "Preparando para transcribir la reunión…",
         "start": "Comenzar a mostrar subtítulos",
         "stop": "Dejar de mostrar subtítulos",
         "tr": "TR"
@@ -721,9 +721,6 @@
         "lowDefinition": "Baja definición",
         "onlyAudioAvailable": "Modo de solo audio disponible",
         "onlyAudioSupported": "Solo admitimos audio en este navegador.",
-        "p2pEnabled": "Punto a punto habilitado",
-        "p2pVideoQualityDescription": "En el modo \"peer to peer\", la calidad de vídeo recibida sólo se puede alternar entre alta y sólo audio. No se respetarán otros ajustes hasta que se salga del modo \"peer to peer\".",
-        "recHighDefinitionOnly": "Preferiré alta definición.",
         "sd": "SD",
         "sdTooltip": "Vista de video en definición estándar",
         "standardDefinition": "Definición estándar"

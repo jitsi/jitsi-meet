@@ -3,8 +3,8 @@
 import React, { Component } from 'react';
 
 import { translate } from '../../../../base/i18n';
-import { equals } from '../../../../base/redux';
 import Video from '../../../../base/media/components/Video';
+import { equals } from '../../../../base/redux';
 import { createLocalVideoTracks } from '../../../functions';
 
 
@@ -211,8 +211,10 @@ class VideoSettingsContent extends Component<Props, State> {
         const { trackData } = this.state;
 
         return (
-            <div className = 'video-preview'>
-                {trackData.map((data, i) => this._renderPreviewEntry(data, i))}
+            <div className = 'video-preview-container'>
+                <div className = 'video-preview'>
+                    {trackData.map((data, i) => this._renderPreviewEntry(data, i))}
+                </div>
             </div>
         );
     }

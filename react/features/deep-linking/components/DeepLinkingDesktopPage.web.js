@@ -3,13 +3,12 @@
 import Button, { ButtonGroup } from '@atlaskit/button';
 import { AtlasKitThemeProvider } from '@atlaskit/theme';
 import React, { Component } from 'react';
-import { connect } from '../../base/redux';
 import type { Dispatch } from 'redux';
 
 import { createDeepLinkingPageEvent, sendAnalytics } from '../../analytics';
 import { isSupportedBrowser } from '../../base/environment';
 import { translate } from '../../base/i18n';
-
+import { connect } from '../../base/redux';
 import {
     openWebApp,
     openDesktopApp

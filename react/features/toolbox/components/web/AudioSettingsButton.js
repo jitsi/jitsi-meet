@@ -2,14 +2,14 @@
 
 import React, { Component } from 'react';
 
-import AudioMuteButton from '../AudioMuteButton';
-import { hasAvailableDevices } from '../../../base/devices';
 import { IconArrowDown } from '../../../base/icons';
 import JitsiMeetJS from '../../../base/lib-jitsi-meet/_';
-import { ToolboxButtonWithIcon } from '../../../base/toolbox';
 import { connect } from '../../../base/redux';
+import { ToolboxButtonWithIcon } from '../../../base/toolbox';
 import { getMediaPermissionPromptVisibility } from '../../../overlay';
 import { AudioSettingsPopup, toggleAudioSettings } from '../../../settings';
+import { isAudioSettingsButtonDisabled } from '../../functions';
+import AudioMuteButton from '../AudioMuteButton';
 
 type Props = {
 
@@ -25,9 +25,9 @@ type Props = {
     permissionPromptVisibility: boolean,
 
     /**
-     * If the user has audio input or audio output devices.
+     * If the button should be disabled.
      */
-    hasDevices: boolean,
+    isDisabled: boolean,
 
     /**
      * Flag controlling the visibility of the button.
@@ -49,6 +49,8 @@ type State = {
  * @returns {ReactElement}
  */
 class AudioSettingsButton extends Component<Props, State> {
+    _isMounted: boolean;
+
     /**
      * Initializes a new {@code AudioSettingsButton} instance.
      *
@@ -58,6 +60,7 @@ class AudioSettingsButton extends Component<Props, State> {
     constructor(props) {
         super(props);
 
+        this._isMounted = true;
         this.state = {
             hasPermissions: false
         };
@@ -73,7 +76,7 @@ class AudioSettingsButton extends Component<Props, State> {
             'audio',
         );
 
-        this.setState({
+        this._isMounted && this.setState({
             hasPermissions
         });
     }
@@ -99,13 +102,22 @@ class AudioSettingsButton extends Component<Props, State> {
     }
 
     /**
+     * Implements React's {@link Component#componentWillUnmount}.
+     *
+     * @inheritdoc
+     */
+    componentWillUnmount() {
+        this._isMounted = false;
+    }
+
+    /**
      * Implements React's {@link Component#render}.
      *
      * @inheritdoc
      */
     render() {
-        const { hasDevices, onAudioOptionsClick, visible } = this.props;
-        const settingsDisabled = !this.state.hasPermissions || !hasDevices;
+        const { isDisabled, onAudioOptionsClick, visible } = this.props;
+        const settingsDisabled = !this.state.hasPermissions || isDisabled;
 
         return visible ? (
             <AudioSettingsPopup>
@@ -128,9 +140,7 @@ class AudioSettingsButton extends Component<Props, State> {
  */
 function mapStateToProps(state) {
     return {
-        hasDevices:
-            hasAvailableDevices(state, 'audioInput')
-            || hasAvailableDevices(state, 'audioOutput'),
+        isDisabled: isAudioSettingsButtonDisabled(state),
         permissionPromptVisibility: getMediaPermissionPromptVisibility(state)
     };
 }

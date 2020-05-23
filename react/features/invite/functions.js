@@ -2,6 +2,7 @@
 
 import { i18next } from '../base/i18n';
 import { isLocalParticipantModerator } from '../base/participants';
+import { toState } from '../base/redux';
 import { doGetJSON, parseURIString } from '../base/util';
 
 import logger from './logger';
@@ -232,6 +233,58 @@ export function getInviteResultsForQuery(
 }
 
 /**
+ * Creates a message describing how to dial in to the conference.
+ *
+ * @returns {string}
+ */
+export function getInviteText({
+    _conferenceName,
+    _localParticipantName,
+    _inviteUrl,
+    _locationUrl,
+    _dialIn,
+    _liveStreamViewURL,
+    phoneNumber,
+    t
+}: Object) {
+    const inviteURL = _decodeRoomURI(_inviteUrl);
+
+    let invite = _localParticipantName
+        ? t('info.inviteURLFirstPartPersonal', { name: _localParticipantName })
+        : t('info.inviteURLFirstPartGeneral');
+
+    invite += t('info.inviteURLSecondPart', {
+        url: inviteURL
+    });
+
+    if (_liveStreamViewURL) {
+        const liveStream = t('info.inviteLiveStream', {
+            url: _liveStreamViewURL
+        });
+
+        invite = `${invite}\n${liveStream}`;
+    }
+
+    if (shouldDisplayDialIn(_dialIn)) {
+        const dial = t('info.invitePhone', {
+            number: phoneNumber,
+            conferenceID: _dialIn.conferenceID
+        });
+        const moreNumbers = t('info.invitePhoneAlternatives', {
+            url: getDialInfoPageURL(
+                _conferenceName,
+                _locationUrl
+            ),
+            silentUrl: `${inviteURL}#config.startSilent=true`
+        });
+
+        invite = `${invite}\n${dial}\n${moreNumbers}`;
+    }
+
+    return invite;
+}
+
+/**
  * Helper for determining how many of each type of user is being invited. Used
  * for logging and sending analytics related to invites.
  *
@@ -298,9 +351,8 @@ export function invitePeopleAndChatRooms( // eslint-disable-line max-params
  */
 export function isAddPeopleEnabled(state: Object): boolean {
     const { peopleSearchUrl } = state['features/base/config'];
-    const { isGuest } = state['features/base/jwt'];
 
-    return !isGuest && Boolean(peopleSearchUrl);
+    return !isGuest(state) && Boolean(peopleSearchUrl);
 }
 
 /**
@@ -314,6 +366,16 @@ export function isDialOutEnabled(state: Object): boolean {
 
     return isLocalParticipantModerator(state)
         && conference && conference.isSIPCallingSupported();
+}
+
+/**
+ * Determines if the current user is guest or not.
+ *
+ * @param {Object} state - Current state.
+ * @returns {boolean}
+ */
+export function isGuest(state: Object): boolean {
+    return state['features/base/jwt'].isGuest;
 }
 
 /**
@@ -606,4 +668,70 @@ export function _decodeRoomURI(url: string) {
     }
 
     return roomUrl;
+}
+
+/**
+ * Returns the stored conference id.
+ *
+ * @param {Object | Function} stateful - The Object or Function that can be
+ * resolved to a Redux state object with the toState function.
+ * @returns {string}
+ */
+export function getConferenceId(stateful: Object | Function) {
+    return toState(stateful)['features/invite'].conferenceID;
+}
+
+/**
+ * Returns the default dial in number from the store.
+ *
+ * @param {Object | Function} stateful - The Object or Function that can be
+ * resolved to a Redux state object with the toState function.
+ * @returns {string | null}
+ */
+export function getDefaultDialInNumber(stateful: Object | Function) {
+    return _getDefaultPhoneNumber(toState(stateful)['features/invite'].numbers);
+}
+
+/**
+ * Executes the dial out request.
+ *
+ * @param {string} url - The url for dialing out.
+ * @param {Object} body - The body of the request.
+ * @param {string} reqId - The unique request id.
+ * @returns {Object}
+ */
+export async function executeDialOutRequest(url: string, body: Object, reqId: string) {
+    const res = await fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'request-id': reqId
+        },
+        body: JSON.stringify(body)
+    });
+
+    const json = await res.json();
+
+    return res.ok ? json : Promise.reject(json);
+}
+
+/**
+ * Executes the dial out status request.
+ *
+ * @param {string} url - The url for dialing out.
+ * @param {string} reqId - The unique request id used on the dial out request.
+ * @returns {Object}
+ */
+export async function executeDialOutStatusRequest(url: string, reqId: string) {
+    const res = await fetch(url, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'request-id': reqId
+        }
+    });
+
+    const json = await res.json();
+
+    return res.ok ? json : Promise.reject(json);
 }

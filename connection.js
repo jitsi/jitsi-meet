@@ -1,8 +1,9 @@
 /* global APP, JitsiMeetJS, config */
 
-import AuthHandler from './modules/UI/authentication/AuthHandler';
-import jitsiLocalStorage from './modules/util/JitsiLocalStorage';
+import Logger from 'jitsi-meet-logger';
+import { jitsiLocalStorage } from 'js-utils';
 
+import AuthHandler from './modules/UI/authentication/AuthHandler';
 import {
     connectionEstablished,
     connectionFailed
@@ -13,7 +14,7 @@ import {
     JitsiConnectionEvents
 } from './react/features/base/lib-jitsi-meet';
 
-const logger = require('jitsi-meet-logger').getLogger(__filename);
+const logger = Logger.getLogger(__filename);
 
 /**
  * The feature announced so we can distinguish jibri participants.

@@ -16,8 +16,8 @@ import {
     TRACK_UPDATED
 } from '../base/tracks';
 
-import { UPDATE_LOCAL_TRACKS_DURATION } from './actionTypes';
 import { createLocalTracksDurationEvent, createNetworkInfoEvent } from './AnalyticsEvents';
+import { UPDATE_LOCAL_TRACKS_DURATION } from './actionTypes';
 import { createHandlers, initAnalytics, resetAnalytics, sendAnalytics } from './functions';
 
 /**

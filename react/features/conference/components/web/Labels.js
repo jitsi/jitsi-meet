@@ -4,7 +4,6 @@ import React from 'react';
 
 import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
 import { connect } from '../../../base/redux';
-
 import AbstractLabels, {
     _abstractMapStateToProps as _mapStateToProps,
     type Props
@@ -75,6 +74,9 @@ class Labels extends AbstractLabels<Props, State> {
         return (
             <div className = { className } >
                 {
+                    this._renderE2EELabel()
+                }
+                {
                     this._renderRecordingLabel(
                         JitsiRecordingConstants.mode.FILE)
                 }
@@ -92,15 +94,22 @@ class Labels extends AbstractLabels<Props, State> {
                     this.props._showVideoQualityLabel
                         && this._renderVideoQualityLabel()
                 }
+                {
+                    this._renderInsecureRoomNameLabel()
+                }
             </div>
         );
     }
+
+    _renderE2EELabel: () => React$Element<*>;
 
     _renderLocalRecordingLabel: () => React$Element<*>;
 
     _renderRecordingLabel: string => React$Element<*>;
 
     _renderTranscribingLabel: () => React$Element<*>;
+
+    _renderInsecureRoomNameLabel: () => React$Element<any>;
 
     _renderVideoQualityLabel: () => React$Element<*>;
 }

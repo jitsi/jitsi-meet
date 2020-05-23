@@ -10,8 +10,8 @@ import {
 } from '../participants';
 import { MiddlewareRegistry } from '../redux';
 
-import { setJWT } from './actions';
 import { SET_JWT } from './actionTypes';
+import { setJWT } from './actions';
 import { parseJWTFromURLParams } from './functions';
 
 declare var APP: Object;

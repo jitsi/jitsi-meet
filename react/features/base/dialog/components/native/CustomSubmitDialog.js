@@ -2,7 +2,6 @@
 
 import { translate } from '../../../i18n';
 import { connect } from '../../../redux';
-
 import { _abstractMapStateToProps } from '../../functions';
 
 import { type Props as BaseProps } from './BaseDialog';

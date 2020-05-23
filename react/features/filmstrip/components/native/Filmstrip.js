@@ -9,12 +9,11 @@ import {
     isNarrowAspectRatio,
     makeAspectRatioAware
 } from '../../../base/responsive-ui';
-
 import { isFilmstripVisible } from '../../functions';
 
 import LocalThumbnail from './LocalThumbnail';
-import styles from './styles';
 import Thumbnail from './Thumbnail';
+import styles from './styles';
 
 /**
  * Filmstrip component's property types.
