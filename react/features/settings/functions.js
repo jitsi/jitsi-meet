@@ -25,7 +25,7 @@ export function isSettingEnabled(settingName: string) {
 }
 
 /**
- * Returns true if user is allowed to change Server URL
+ * Returns true if user is allowed to change Server URL.
  *
  * @param {(Function|Object)} stateful - The (whole) redux state, or redux's
  * {@code getState} function to be used to retrieve the state.

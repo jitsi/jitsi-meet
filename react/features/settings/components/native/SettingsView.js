@@ -168,10 +168,10 @@ class SettingsView extends AbstractSettingsView<Props, State> {
                         <TextInput
                             autoCapitalize = 'none'
                             autoCorrect = { false }
+                            editable = { this.props._serverURLChangeAllowed }
                             onBlur = { this._onBlurServerURL }
                             onChangeText = { this._onChangeServerURL }
                             placeholder = { this.props._serverURL }
-                            editable = { this.props._serverURLChangeAllowed }
                             value = { serverURL } />
                     </FormRow>
                     <FormRow
