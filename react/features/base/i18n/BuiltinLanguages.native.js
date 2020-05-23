@@ -12,7 +12,7 @@ const _LANGUAGES = {
         languages: require('../../../../lang/languages-af'),
         main: require('../../../../lang/main-af')
     },
-    
+
     // Arabic
     'ar': {
         languages: require('../../../../lang/languages-ar'),
