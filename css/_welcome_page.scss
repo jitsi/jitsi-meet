@@ -43,6 +43,10 @@ body.welcome-page {
             line-height: $welcomePageHeaderTextTitleLineHeight;
             margin-bottom: $welcomePageHeaderTextTitleMarginBottom;
             opacity: $welcomePageHeaderTextTitleOpacity;
+
+            // Fix #4814: refer _base.scss
+            -webkit-user-select: text;
+            user-select: text;
         }
 
         .header-text-description {
@@ -53,6 +57,10 @@ body.welcome-page {
             line-height: $welcomePageHeaderTextDescriptionLineHeight;
             margin-bottom: $welcomePageHeaderTextDescriptionMarginBottom;
             align-self: $welcomePageHeaderTextDescriptionAlignSelf;
+
+            // Fix #4814: refer _base.scss
+            -webkit-user-select: text;
+            user-select: text;
         }
 
         #enter_room {
