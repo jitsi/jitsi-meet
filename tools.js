@@ -9,8 +9,7 @@ const argv = parseArgs(process.argv.slice(2));
 const target = argv._[0];
 
 const spawn = async (cmd, args) => new Promise((resolve, reject) => {
-    const result = _spawn(cmd, args, { shell: process.platform === 'win32',
-        encoding: 'utf8' });
+    const result = _spawn(cmd, args, { shell: process.platform === 'win32' });
 
     result.stdout.on('data', data => {
         console.log(data.toString());
@@ -43,8 +42,13 @@ const runPromise = asyncCallback => {
     const handle = setTimeout(() => {
         console.log('time out!');
     }, 100000000);
+    const startWorker = async () => {
+        if (process.platform === 'win32') {
+            return spawn('cmd', [ '/c', 'chcp', '65001', '>', 'nul' ]);
+        }
+    };
 
-    spawn('cmd', [ '/c', 'chcp', '65001', '>', 'nul' ])
+    startWorker()
         .then(() => asyncCallback())
         .then(() => {
             console.log(`${target} success.`);
