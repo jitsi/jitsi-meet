@@ -29,7 +29,7 @@ const minimize
  */
 function getPerformanceHints(size) {
     return {
-        hints: minimize && !analyzeBundle ? 'error' : false,
+        hints: minimize && !analyzeBundle ? 'warning' : false,
         maxAssetSize: size,
         maxEntrypointSize: size
     };
