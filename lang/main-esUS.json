@@ -267,7 +267,7 @@
         "reservationError": "Error del sistema de reservaciones",
         "reservationErrorMsg": "Código de error: {{code}}, mensaje: {{msg}}",
         "retry": "Volver a intentar",
-        "screenSharingAudio": "Share audio",
+        "screenSharingAudio": "Compartir audio",
         "screenSharingFailedToInstall": "¡Uy! La extensión de uso compartido de pantalla no se pudo instalar.",
         "screenSharingFailedToInstallTitle": "La extensión de uso compartido de pantalla no se pudo instalar",
         "screenSharingFirefoxPermissionDeniedError": "Algo salió mal cuando intentamos compartir su pantalla. Asegúrese de habernos dado permiso para hacerlo.",
