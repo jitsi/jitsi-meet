@@ -103,4 +103,4 @@ export const WELCOME_PAGE_ENABLED = 'welcomepage.enabled';
  * Flag indicating if server URL change is allowed.
  * Default: enabled (true)
  */
-export const SERVER_URL_CHANGE_ALLOWED = 'server-url-change.allowed';
+export const SERVER_URL_CHANGE_ALLOWED = 'server-url-change.enabled';
