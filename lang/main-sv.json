@@ -21,7 +21,7 @@
         "bluetooth": "Bluetooth",
         "headphones": "Hörlurar",
         "phone": "Telefon",
-        "speaker": "Talare",
+        "speaker": "Högtalare",
         "none": "Inga ljudenheter tillgängliga"
     },
     "audioOnly": {
@@ -60,7 +60,7 @@
         "fieldPlaceHolder": "Skriv ditt meddelande här"
     },
     "connectingOverlay": {
-        "joiningRoom": "Ansluter till mötet …"
+        "joiningRoom": "Ansluter till mötet…"
     },
     "connection": {
         "ATTACHED": "Ansluten",
@@ -72,7 +72,7 @@
         "DISCONNECTED": "Frånkopplad",
         "DISCONNECTING": "Kopplar från",
         "ERROR": "Fel",
-        "RECONNECTING": "Ett nätverksproblem uppstod. Återansluter...",
+        "RECONNECTING": "Ett nätverksproblem uppstod. Återansluter…",
         "LOW_BANDWIDTH": "Video för {{displayName}} har stängts av för att spara bandbredd",
         "GOT_SESSION_ID": "Hämta sessions-id ... Klart",
         "GET_SESSION_ID_ERROR": "Hämta sessions-id-fel: {{code}}",
@@ -169,7 +169,7 @@
         "contactSupport": "Kontakta kundtjänst",
         "copy": "Kopiera",
         "dismiss": "Förkasta",
-        "displayNameRequired": "Hej, vilket är ditt namn?",
+        "displayNameRequired": "Hej, vad heter du?",
         "done": "Klar",
         "enterDisplayName": "Ange namn",
         "error": "Fel",
@@ -242,7 +242,7 @@
         "serviceUnavailable": "Tjänsten otillgänglig",
         "sessTerminated": "Konferensen avslutades",
         "Share": "Dela",
-        "shareVideoLinkError": "Skriv in en fungerande Youtube-länk.",
+        "shareVideoLinkError": "Skriv in en fungerande YouTube-länk.",
         "shareVideoTitle": "Ta bort en delad video",
         "shareYourScreen": "Dela din skärm",
         "shareYourScreenDisabled": "Skärmdelning har inaktiverats.",
@@ -294,7 +294,7 @@
     "incomingCall": {
         "answer": "Svara",
         "audioCallTitle": "Inkommande samtal",
-        "decline": "Förkasta",
+        "decline": "Avvisa",
         "productLabel": "från Jitsi Meet",
         "videoCallTitle": "Inkommande videosamtal"
     },
@@ -429,11 +429,11 @@
         "connectedTwoMembers": "{{first}} och {{second}} har gått med i mötet",
         "disconnected": "frånkopplad",
         "focus": "Konferensfokus",
-        "focusFail": "{{component}} inte tillgänglig - försöker igen om {{ms}} sek",
+        "focusFail": "{{component}} inte tillgänglig – försöker igen om {{ms}} sek",
         "grantedTo": "Moderatorsrättigheter tilldelat till {{to}}!",
-        "invitedOneMember": "",
-        "invitedThreePlusMembers": "",
-        "invitedTwoMembers": "",
+        "invitedOneMember": "{{name}} har bjudits in",
+        "invitedThreePlusMembers": "{{name}} och {{count}} andra har bjudits in",
+        "invitedTwoMembers": "{{first}} och {{second}} har bjudits in",
         "kickParticipant": "{{kicked}} sparkades ut av {{kicker}}",
         "me": "Jag",
         "moderator": "Moderatorsrättigheter tilldelades!",
@@ -447,7 +447,7 @@
         "somebody": "Någon",
         "startSilentTitle": "Du gick med utan ljud aktiverat!",
         "startSilentDescription": "Anslut till mötet igen för att aktivera ljud",
-        "suboptimalExperienceDescription": "Hmm... din upplevelse med {{appName}} kommer inte att bli särskilt bra. Vi försöker hitta sätt att förbättra det, men till dess använd en av <a href='{{recommendedBrowserPageLink}}' target='_blank'>de helt stödda webbläsarna</a>.",
+        "suboptimalExperienceDescription": "Hmm… din upplevelse med {{appName}} kommer inte att bli särskilt bra. Vi försöker hitta sätt att förbättra det, men till dess använd en av <a href='{{recommendedBrowserPageLink}}' target='_blank'>de helt stödda webbläsarna</a>.",
         "suboptimalExperienceTitle": "Webbläsarvarning",
         "unmute": "Slå på mikrofonen",
         "newDeviceCameraTitle": "Ny kamera hittad",
@@ -457,20 +457,20 @@
     },
     "passwordSetRemotely": "satt av en annan deltagare",
     "passwordDigitsOnly": "",
-    "poweredby": "drivs av",
+    "poweredby": "drivs med",
     "presenceStatus": {
         "busy": "Upptagen",
-        "calling": "Ringer …",
+        "calling": "Ringer…",
         "connected": "Ansluten",
-        "connecting": "Ansluter …",
-        "connecting2": "Ansluter* ...",
+        "connecting": "Ansluter…",
+        "connecting2": "Ansluter*…",
         "disconnected": "Frånkopplad",
         "expired": "Utgången",
         "ignored": "Ignorerad",
-        "initializingCall": "Startar samtal …",
+        "initializingCall": "Startar samtal…",
         "invited": "Inbjuden",
         "rejected": "Avvisad",
-        "ringing": "Ringer …"
+        "ringing": "Ringer…"
     },
     "profile": {
         "setDisplayNameLabel": "Ange ditt visningsnamn",
@@ -480,21 +480,21 @@
     },
     "recording": {
         "authDropboxText": "Ladda upp till Dropbox",
-        "availableSpace": "Tillgängligt utrymme: {{spaceLeft}} MB (ungefär {{duration}} minuters inspelning)",
+        "availableSpace": "Tillgängligt utrymme: {{spaceLeft}} MB (ungefär {{duration}} minuter inspelning)",
         "beta": "BETA",
         "busy": "Vi arbetar med att frigöra inspelningsresurser. Försök igen om några minuter.",
         "busyTitle": "Alla inspelare är upptagna",
         "error": "Inspelningen misslyckades. Försök igen.",
         "expandedOff": "Inspelningen har avslutats",
         "expandedOn": "Mötet spelas nu in.",
-        "expandedPending": "Inspelningen påbörjas …",
+        "expandedPending": "Inspelningen påbörjas…",
         "failedToStart": "Inspelningen kunde inte påbörjas",
         "fileSharingdescription": "Dela inspelningen med mötesdeltagare",
         "live": "LIVE",
         "loggedIn": "Inloggad som {{userName}}",
         "off": "Inspelningen avslutades",
         "on": "Inspelning",
-        "pending": "Förbereder inspelning av mötet …",
+        "pending": "Förbereder inspelning av mötet…",
         "rec": "REC",
         "serviceDescription": "Din inspelning kommer att sparas av inspelningstjänsten",
         "serviceName": "Inspelningstjänst",
@@ -530,8 +530,8 @@
         "startAudioMuted": "Alla börjar tystade",
         "startVideoMuted": "Alla börjar osynliga",
         "title": "Inställningar",
-        "speakers": "Talare",
-        "microphones": ""
+        "speakers": "Högtalare",
+        "microphones": "Mikrofoner"
     },
     "settingsView": {
         "alertOk": "OK",
@@ -550,7 +550,7 @@
         "disableCallIntegration": "Tillåt inte deltagande via telefon",
         "showAdvanced": "Visa avancerade inställningar",
         "disableP2P": "",
-        "advanced": ""
+        "advanced": "Avancerat"
     },
     "share": {
         "dialInfoText": "\n\n=====\n\nVill du istället ringa in via telefon?\n\n{{defaultDialInNumber}} Klicka på den här länken för att se telefonnumret för detta möte\n{{dialInfoPageUrl}}",
@@ -558,10 +558,10 @@
     },
     "speaker": "Talare",
     "speakerStats": {
-        "hours": "{{count}}h",
-        "minutes": "{{count}}m",
+        "hours": "{{count}} h",
+        "minutes": "{{count}} m",
         "name": "Namn",
-        "seconds": "{{count}}s",
+        "seconds": "{{count}} s",
         "speakerStats": "Talarstatistik",
         "speakerTime": "Talartid"
     },
@@ -582,7 +582,7 @@
             "cc": "Slå av eller på undertexter",
             "chat": "Öppna eller stäng chattfönster",
             "document": "Öppna eller stäng delat dokument",
-            "feedback": "Lämna feedback",
+            "feedback": "Lämna återkoppling",
             "fullScreen": "Öppna eller stäng fullskärm",
             "hangup": "Lämna samtalet",
             "invite": "Bjud in andra",
@@ -611,8 +611,8 @@
             "muteEveryone": "Tysta alla",
             "toggleFilmstrip": "",
             "privateMessage": "",
-            "moreOptions": "",
-            "help": "",
+            "moreOptions": "Visa fler alternativ",
+            "help": "Hjälp",
             "download": ""
         },
         "addPeople": "Lägg till personer i samtal",
@@ -620,7 +620,7 @@
         "audioOnlyOn": "Starta ljudläget",
         "audioRoute": "Välj ljudenhet",
         "authenticate": "Autentisera",
-        "callQuality": "",
+        "callQuality": "Hantera videokvalitet",
         "chat": "Öppna / stäng chatten",
         "closeChat": "Stäng chatt",
         "documentClose": "Stäng delat dokument",
@@ -629,7 +629,7 @@
         "enterTileView": "Öppna panelvy",
         "exitFullScreen": "Stäng fullskärm",
         "exitTileView": "Stäng panelvy",
-        "feedback": "Lämna feedback",
+        "feedback": "Lämna återkoppling",
         "hangup": "Lämna",
         "invite": "Bjud in andra",
         "login": "Logga in",
@@ -643,7 +643,7 @@
         "raiseHand": "Räck upp / ta ner din hand",
         "raiseYourHand": "Räck upp handen",
         "Settings": "Inställningar",
-        "sharedvideo": "Dela en Youtube-video",
+        "sharedvideo": "Dela en YouTube-video",
         "shareRoom": "Bjud in någon",
         "shortcuts": "Visa genvägar",
         "speakerStats": "Talarstatistik",
@@ -658,7 +658,7 @@
         "videomute": "Aktivera / avaktivera kameran",
         "startvideoblur": "Blurra min bakgrund",
         "stopvideoblur": "Inaktivera bakgrundsblurr",
-        "noisyAudioInputDesc": "Din mikrofon skapar brus, tysta din mikrofon eller byt ljudenhet.",
+        "noisyAudioInputDesc": "Din mikrofon skapar brus, tysta din mikrofon eller byt ljudenhet!",
         "noAudioSignalTitle": "Det kommer inget ljud från din mikrofon!",
         "muteEveryone": "Tysta alla",
         "privateMessage": "Skicka privat meddelande",
@@ -710,15 +710,15 @@
         "audioOnlyExpanded": "Du använder ljudläget. Läget sparar bandbredd men du kan inte se andras videor.",
         "callQuality": "Videokvalitet",
         "hd": "HD",
-        "highDefinition": "High definition",
+        "highDefinition": "Hög upplösning",
         "labelTooiltipNoVideo": "Ingen video",
-        "labelTooltipAudioOnly": "Enbart ljud-läge aktiverat",
+        "labelTooltipAudioOnly": "Läge med enbart ljud aktiverat",
         "ld": "LD",
-        "lowDefinition": "Low definition",
+        "lowDefinition": "Låg upplösning",
         "onlyAudioAvailable": "Enbart ljud tillgängligt",
         "onlyAudioSupported": "Vi stöder bara ljud i denna webbläsare.",
         "sd": "SD",
-        "standardDefinition": "Standard definition",
+        "standardDefinition": "Normal upplösning",
         "ldTooltip": "",
         "hdTooltip": ""
     },
@@ -738,7 +738,7 @@
             "join": "Tryck för att gå med",
             "roomname": "Skriv in rumsnamn"
         },
-        "appDescription": "Sätt igång, videochatta med hela gruppen. Bjud in alla du känner. {{app}} är en helt krypterad , open source videokonferenslösning som du kan använda obegränsat utan kostnad — inte ens ett användarkonto behövs.",
+        "appDescription": "Sätt igång, videochatta med hela teamet. Eller bjud in alla du känner. {{app}} är en helt krypterad, öppen källkod videokonferenslösning som du kan använda obegränsat utan kostnad – inget användarkonto behövs.",
         "audioVideoSwitch": {
             "audio": "Ljud",
             "video": "Video"
@@ -758,7 +758,7 @@
         "roomname": "Skriv in rumsnamn",
         "roomnameHint": "Ange namnet eller URL:en till mötesrummet du vill ansluta till. Du kan hitta på ett nytt namn, berätta då för de andra du tänker möta så de anger samma namn.",
         "sendFeedback": "Ge återkoppling",
-        "terms": "Termer",
+        "terms": "Villkor",
         "title": "Säkra, välutrustade och helt kostnadsfria videokonferenser",
         "roomNameAllowedChars": "Mötesnamn kan inte innehålla dessa tecken: ?, &,:, ', \",%, #.",
         "getHelp": "",
@@ -767,8 +767,8 @@
     "defaultNickname": "till exempel Julia Eriksson",
     "chromeExtensionBanner": {
         "dontShowAgain": "Visa inte det här igen",
-        "buttonText": "Installera Chrome-utökningen",
-        "installExtensionText": "Installera utökning för Google Kalender och integrationen av Office 365"
+        "buttonText": "Installera Chrome-tillägg",
+        "installExtensionText": "Installera tillägget för integration med Google Kalender och Office 365"
     },
     "documentSharing": {
         "title": ""
