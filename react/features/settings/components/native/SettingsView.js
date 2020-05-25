@@ -71,11 +71,25 @@ type State = {
 }
 
 /**
+ * The type of the React {@code Component} props of
+ * {@link SettingsView}.
+ */
+type NativeProps = Props & {
+
+    /**
+     * Flag indicating if URL can be changed by user.
+     *
+     * @protected
+     */
+    _serverURLChangeEnabled: boolean
+}
+
+/**
  * The native container rendering the app settings page.
  *
  * @extends AbstractSettingsView
  */
-class SettingsView extends AbstractSettingsView<Props, State> {
+class SettingsView extends AbstractSettingsView<NativeProps, State> {
     _urlField: Object;
 
     /**
