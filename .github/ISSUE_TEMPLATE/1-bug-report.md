@@ -40,7 +40,7 @@ General questions regarding usage, installation, etc. should be posted at https:
 
 ### Client information:
 
-- Browser version:
+- Browser / app version:
 - Operating System:
 
 ### Additional information:
