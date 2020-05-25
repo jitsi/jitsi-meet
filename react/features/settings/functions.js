@@ -1,5 +1,5 @@
 // @flow
-import { SERVER_URL_CHANGE_ALLOWED, getFeatureFlag } from '../base/flags';
+import { SERVER_URL_CHANGE_ENABLED, getFeatureFlag } from '../base/flags';
 import { i18next, DEFAULT_LANGUAGE, LANGUAGES } from '../base/i18n';
 import { createLocalTrack } from '../base/lib-jitsi-meet/functions';
 import {
@@ -34,7 +34,7 @@ export function isSettingEnabled(settingName: string) {
  */
 export function isServerURLChangeEnabled(stateful: Object | Function) {
     const state = toState(stateful);
-    const flag = getFeatureFlag(state, SERVER_URL_CHANGE_ALLOWED, true);
+    const flag = getFeatureFlag(state, SERVER_URL_CHANGE_ENABLED, true);
 
     return flag;
 }

@@ -6,7 +6,7 @@ import '../../analytics';
 import '../../authentication';
 import { setColorScheme } from '../../base/color-scheme';
 import { DialogContainer } from '../../base/dialog';
-import { CALL_INTEGRATION_ENABLED, SERVER_URL_CHANGE_ALLOWED, updateFlags } from '../../base/flags';
+import { CALL_INTEGRATION_ENABLED, SERVER_URL_CHANGE_ENABLED, updateFlags } from '../../base/flags';
 import '../../base/jwt';
 import { Platform } from '../../base/react';
 import '../../base/responsive-ui';
@@ -95,9 +95,9 @@ export class App extends AbstractApp {
             const { dispatch } = this.state.store;
 
             // Check if serverURL is configured externally and not allowed to change.
-            const serverURLChangeAllowed = this.props.flags[SERVER_URL_CHANGE_ALLOWED];
+            const serverURLChangeEnabled = this.props.flags[SERVER_URL_CHANGE_ENABLED];
 
-            if (!serverURLChangeAllowed) {
+            if (!serverURLChangeEnabled) {
                 // As serverURL is provided externally, so we push it to settings.
                 if (typeof this.props.url !== 'undefined') {
                     const { serverURL } = this.props.url;

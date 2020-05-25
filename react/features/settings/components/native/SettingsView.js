@@ -7,7 +7,7 @@ import { translate } from '../../../base/i18n';
 import { JitsiModal } from '../../../base/modal';
 import { connect } from '../../../base/redux';
 import { SETTINGS_VIEW_ID } from '../../constants';
-import { normalizeUserInputURL } from '../../functions';
+import { normalizeUserInputURL, isServerURLChangeEnabled } from '../../functions';
 import {
     AbstractSettingsView,
     _mapStateToProps as _abstractMapStateToProps,
@@ -168,7 +168,7 @@ class SettingsView extends AbstractSettingsView<Props, State> {
                         <TextInput
                             autoCapitalize = 'none'
                             autoCorrect = { false }
-                            editable = { this.props._serverURLChangeAllowed }
+                            editable = { this.props._serverURLChangeEnabled }
                             onBlur = { this._onBlurServerURL }
                             onChangeText = { this._onChangeServerURL }
                             placeholder = { this.props._serverURL }
@@ -515,6 +515,7 @@ class SettingsView extends AbstractSettingsView<Props, State> {
  */
 function _mapStateToProps(state) {
     return {
+        _serverURLChangeEnabled: isServerURLChangeEnabled(state),
         ..._abstractMapStateToProps(state)
     };
 }
