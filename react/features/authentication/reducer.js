@@ -4,6 +4,7 @@ import { assign, ReducerRegistry } from '../base/redux';
 
 import {
     CANCEL_LOGIN,
+    UPDATE_USER_INFO,
     STOP_WAIT_FOR_OWNER,
     UPGRADE_ROLE_FINISHED,
     UPGRADE_ROLE_STARTED,
@@ -18,6 +19,9 @@ ReducerRegistry.register('features/authentication', (state = {}, action) => {
             progress: undefined,
             thenableWithCancel: undefined
         });
+
+    case UPDATE_USER_INFO:
+        return assign(state, { user: action.user });
 
     case STOP_WAIT_FOR_OWNER:
         return assign(state, {

@@ -1,5 +1,6 @@
 /* global interfaceConfig */
 
+import axios from 'axios';
 import Button, { ButtonGroup } from '@atlaskit/button';
 import React from 'react';
 
@@ -15,9 +16,11 @@ import { CalendarList } from '../../calendar-sync';
 import { RecentList } from '../../recent-list';
 import { SETTINGS_TABS } from '../../settings';
 import { openSettingsDialog } from '../../settings/actions';
+import { NotificationsContainer } from '../../notifications/components';
 
 import { AbstractWelcomePage, _mapStateToProps } from './AbstractWelcomePage';
 import Tabs from './Tabs';
+import { updateCurrentUser } from '../../base/auth';
 
 /**
  * The pattern used to validate room name.
@@ -147,6 +150,8 @@ class WelcomePage extends AbstractWelcomePage {
                 this._additionalToolbarContentTemplate.content.cloneNode(true)
             );
         }
+
+        this._getCurrentUser();
     }
 
     /**
@@ -184,9 +189,10 @@ class WelcomePage extends AbstractWelcomePage {
 
         this.setState({ submitting: true });
 
-        return new Promise(resolve => setTimeout(resolve, 2000)).then(() => {
+        return axios.get('/auth/logout').then(() => {
             dispatch(updateSettings({ displayName: '' }));
             dispatch(updateSettings({ email: '' }));
+            dispatch(updateCurrentUser());
             this.setState({ submitting: false });
         });
     }
@@ -223,7 +229,7 @@ class WelcomePage extends AbstractWelcomePage {
      * @returns {ReactElement|null}
      */
     render() {
-        const { _settings, t } = this.props;
+        const { _user, t } = this.props;
         const { submitting } = this.state;
         const { APP_NAME } = interfaceConfig;
         const showAdditionalContent = this._shouldShowAdditionalContent();
@@ -231,7 +237,7 @@ class WelcomePage extends AbstractWelcomePage {
         const showResponsiveText = this._shouldShowResponsiveText();
         const buttons = [];
 
-        if (_settings.displayName) {
+        if (_user) {
             buttons.push(
                 <Button
                     appearance = 'subtle'
@@ -292,36 +298,38 @@ class WelcomePage extends AbstractWelcomePage {
                                 { app: APP_NAME }) }
                         </p>
                     </div>
-                    <div id = 'enter_room'>
-                        <div className = 'enter-room-input-container'>
-                            <div className = 'enter-room-title'>
-                                { t('welcomepage.enterRoomTitle') }
+                    { _user && (
+                        <div id = 'enter_room'>
+                            <div className = 'enter-room-input-container'>
+                                <div className = 'enter-room-title'>
+                                    { t('welcomepage.enterRoomTitle') }
+                                </div>
+                                <form onSubmit = { this._onFormSubmit }>
+                                    <input
+                                        autoFocus = { true }
+                                        className = 'enter-room-input'
+                                        id = 'enter_room_field'
+                                        onChange = { this._onRoomChange }
+                                        pattern = { ROOM_NAME_VALIDATE_PATTERN_STR }
+                                        placeholder = { this.state.roomPlaceholder }
+                                        ref = { this._setRoomInputRef }
+                                        title = { t('welcomepage.roomNameAllowedChars') }
+                                        type = 'text'
+                                        value = { this.state.room } />
+                                </form>
                             </div>
-                            <form onSubmit = { this._onFormSubmit }>
-                                <input
-                                    autoFocus = { true }
-                                    className = 'enter-room-input'
-                                    id = 'enter_room_field'
-                                    onChange = { this._onRoomChange }
-                                    pattern = { ROOM_NAME_VALIDATE_PATTERN_STR }
-                                    placeholder = { this.state.roomPlaceholder }
-                                    ref = { this._setRoomInputRef }
-                                    title = { t('welcomepage.roomNameAllowedChars') }
-                                    type = 'text'
-                                    value = { this.state.room } />
-                            </form>
+                            <div
+                                className = 'welcome-page-button'
+                                id = 'enter_room_button'
+                                onClick = { this._onFormSubmit }>
+                                {
+                                    showResponsiveText
+                                        ? t('welcomepage.goSmall')
+                                        : t('welcomepage.go')
+                                }
+                            </div>
                         </div>
-                        <div
-                            className = 'welcome-page-button'
-                            id = 'enter_room_button'
-                            onClick = { this._onFormSubmit }>
-                            {
-                                showResponsiveText
-                                    ? t('welcomepage.goSmall')
-                                    : t('welcomepage.go')
-                            }
-                        </div>
-                    </div>
+                    )}
                     { this._renderTabs() }
                 </div>
                 { showAdditionalContent
@@ -329,6 +337,7 @@ class WelcomePage extends AbstractWelcomePage {
                         className = 'welcome-page-content'
                         ref = { this._setAdditionalContentRef } />
                     : null }
+                <NotificationsContainer />
             </div>
         );
     }
@@ -493,6 +502,23 @@ class WelcomePage extends AbstractWelcomePage {
         return innerWidth <= WINDOW_WIDTH_THRESHOLD;
     }
 
+    /**
+     * Retrieve current user info.
+     *
+     * @private
+     * @returns {void}
+     */
+    _getCurrentUser() {
+        const { dispatch } = this.props;
+
+        axios.get('/auth/current-user', { withCredentials: true }).then(resp => {
+            const { data: user } = resp;
+
+            dispatch(updateSettings({ displayName: user.name }));
+            dispatch(updateSettings({ email: user.email }));
+            dispatch(updateCurrentUser(user));
+        });
+    }
 }
 
 export default translate(connect(_mapStateToProps)(WelcomePage));

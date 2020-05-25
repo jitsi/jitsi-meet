@@ -18,6 +18,8 @@ export const CANCEL_LOGIN = 'CANCEL_LOGIN';
  */
 export const STOP_WAIT_FOR_OWNER = 'STOP_WAIT_FOR_OWNER';
 
+export const UPDATE_USER_INFO = 'UPDATE_USER_INFO';
+
 /**
  * The type of (redux) action which informs that the authentication and role
  * upgrade process has finished either with success or with a specific error.

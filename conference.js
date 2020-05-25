@@ -1264,10 +1264,9 @@ export default {
     },
 
     _createRoom(localTracks) {
-        room
-            = connection.initJitsiConference(
-                APP.conference.roomName,
-                this._getConferenceOptions());
+        room = connection.initJitsiConference(
+            APP.conference.roomName,
+            this._getConferenceOptions());
 
         APP.store.dispatch(conferenceWillJoin(room));
         this._setLocalAudioVideoStreams(localTracks);

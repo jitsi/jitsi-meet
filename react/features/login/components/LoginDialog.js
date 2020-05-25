@@ -1,6 +1,7 @@
 /* eslint-disable no-confusing-arrow */
 // @flow
 
+import axios from 'axios';
 import Form, {
     CheckboxField,
     ErrorMessage,
@@ -20,6 +21,7 @@ import { hideDialog } from '../../base/dialog';
 import { translate } from '../../base/i18n';
 import { connect } from '../../base/redux';
 import { updateSettings } from '../../base/settings';
+import { updateCurrentUser } from '../../base/auth';
 
 declare var interfaceConfig: Object;
 
@@ -57,11 +59,19 @@ type Props = {
 let LoginDialog_; // eslint-disable-line prefer-const
 
 /**
+ * The type of the React {@code Component} state of {@link LoginDialog}.
+ */
+type State = {
+  errorCode: string,
+  errorMessage: string
+};
+
+/**
  * React component for displaying a list of speaker stats.
  *
  * @extends Component
  */
-class LoginDialog extends Component<Props> {
+class LoginDialog extends Component<Props, State> {
 
     _dialogElement: ?HTMLElement;
 
@@ -74,6 +84,10 @@ class LoginDialog extends Component<Props> {
     constructor(props) {
         super(props);
 
+        this.state = {
+            errorCode: '',
+            errorMessage: ''
+        };
         this._onSubmit = this._onSubmit.bind(this);
         this._onCancel = this._onCancel.bind(this);
         this._onDialogDismissed = this._onDialogDismissed.bind(this);
@@ -93,13 +107,26 @@ class LoginDialog extends Component<Props> {
 
         console.log('form data', data);
 
-        return new Promise(resolve => setTimeout(resolve, 2000)).then(() => {
-            const name = '테스트';
-
-            dispatch(updateSettings({ displayName: name }));
-            dispatch(updateSettings({ email: 'test@postech.ac.kr' }));
-            this._onCancel();
+        this.setState({
+            errorCode: '',
+            errorMessage: ''
         });
+
+        return axios.post('/auth/login', data)
+            .then(resp => {
+                const { data: user } = resp;
+
+                dispatch(updateSettings({ displayName: user.name }));
+                dispatch(updateSettings({ email: user.email }));
+                dispatch(updateCurrentUser(user));
+                this._onCancel();
+            })
+            .catch(error => {
+                this.setState({
+                    errorCode: error?.response?.headers?.['www-authenticate'],
+                    errorMessage: error.message
+                });
+            });
     }
 
     _onCancel: () => void;
@@ -144,6 +171,7 @@ class LoginDialog extends Component<Props> {
      */
     render() {
         const { t } = this.props;
+        const { errorCode, errorMessage } = this.state;
 
         return (
             <Modal
@@ -179,6 +207,11 @@ class LoginDialog extends Component<Props> {
                                             { error && (
                                                 <ErrorMessage>
                                                     { t('dialog.usernameErrTooShort') }
+                                                </ErrorMessage>
+                                            )}
+                                            { errorCode === 'user_not_found' && (
+                                                <ErrorMessage>
+                                                    { t('dialog.usernameErrInvalid') }
                                                 </ErrorMessage>
                                             )}
                                         </Fragment>
@@ -222,6 +255,11 @@ class LoginDialog extends Component<Props> {
                                             label = { t('dialog.rememberMe') } />
                                     )}
                                 </CheckboxField>
+                                { !errorCode && errorMessage && (
+                                    <ErrorMessage>
+                                        { errorMessage }
+                                    </ErrorMessage>
+                                )}
                                 <FormFooter>
                                     <ButtonGroup>
                                         <Button
