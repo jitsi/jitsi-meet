@@ -50,6 +50,7 @@ deploy-appbundle:
 		$(BUILD_DIR)/video-blur-effect.min.map \
 		$(BUILD_DIR)/rnnoise-processor.min.js \
 		$(BUILD_DIR)/rnnoise-processor.min.map \
+		$(BUILD_DIR)/index.html \
 		$(DEPLOY_DIR)
 
 deploy-lib-jitsi-meet:
@@ -86,5 +87,6 @@ source-package:
 	mkdir -p source_package/jitsi-meet/css && \
 	cp -r *.js *.html connection_optimization favicon.ico fonts images libs static sounds LICENSE lang source_package/jitsi-meet && \
 	cp css/all.css source_package/jitsi-meet/css && \
+	cp libs/index.html source_package/jitsi-meet && \
 	(cd source_package ; tar cjf ../jitsi-meet.tar.bz2 jitsi-meet) && \
 	rm -rf source_package

@@ -1,8 +1,10 @@
 /* global __dirname */
 
 const process = require('process');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 
+const cacheVersionNumber = Math.random().toString(36).substr(2, 5);
 /**
  * The URL of the Jitsi Meet deployment to be proxy to in the context of
  * development with webpack-dev-server.
@@ -22,7 +24,7 @@ const minimize
  */
 function getPerformanceHints(size) {
     return {
-        hints: minimize ? 'error' : false,
+        hints: minimize ? 'warning' : false,
         maxAssetSize: size,
         maxEntrypointSize: size
     };
@@ -155,7 +157,15 @@ const config = {
             && new BundleAnalyzerPlugin({
                 analyzerMode: 'disabled',
                 generateStatsFile: true
-            })
+            }),
+        new HtmlWebpackPlugin({
+            jitsiLib: `libs/lib-jitsi-meet.min.js?v=${cacheVersionNumber}`,
+            appBundle: `libs/app.bundle.min.js?v=${cacheVersionNumber}`,
+            css: `css/all.css?v=${cacheVersionNumber}`,
+            template: 'index.html',
+            minify: false,
+            inject: false,
+        })
     ].filter(Boolean),
     resolve: {
         alias: {
