@@ -50,7 +50,7 @@
             "generic": "Se ha producido un error. Compruebe la configuración del calendario o pruebe cargarlo nuevamente.",
             "notSignedIn": "Se ha producido un error de autenticación para ver los eventos del calendario. Compruebe la configuración del calendario e intente iniciar sesión de nuevo"
         },
-        "join": "Unir",
+        "join": "Unirse",
         "joinTooltip": "Unirse a la reunión",
         "nextMeeting": "próxima reunión",
         "noEvents": "No hay eventos próximos programados.",
