@@ -314,7 +314,7 @@
         "title": "Documento Compartido"
     },
     "e2ee": {
-        "labelToolTip": "La comunicación de Audio y Video en esta reunión está cifrada Punto-a-Punto"
+        "labelToolTip": "La comunicación de Audio y Video en esta reunión está cifrada Extremo-a-Extremo"
     },
     "feedback": {
         "average": "Promedio",
