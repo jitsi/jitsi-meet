@@ -13,6 +13,12 @@ const _LANGUAGES = {
         main: require('../../../../lang/main-af')
     },
 
+    // Arabic
+    'ar': {
+        languages: require('../../../../lang/languages-ar'),
+        main: require('../../../../lang/main-ar')
+    },
+
     // Bulgarian
     'bg': {
         languages: require('../../../../lang/languages-bg'),
