@@ -46,7 +46,7 @@ class WaitingMessage extends Component<Props, State> {
             const appointmentStartTimeStamp = new Date(start_at).getTime();
             const now = new Date().getTime();
 
-            if (appointmentStartTimeStamp - now > 0) {
+            if (now < appointmentStartTimeStamp) {
                 this.setState({
                     beforeAppointmentStart: true,
                     appointmentStartAt: start_at
@@ -60,7 +60,8 @@ class WaitingMessage extends Component<Props, State> {
     _setInterval(appointmentStartTimeStamp) {
         this._interval = setInterval(() => {
             const {conferenceHasStarted} = this.props;
-            if ((appointmentStartTimeStamp - new Date().getTime() < 0) || conferenceHasStarted) {
+            const now = new Date().getTime();
+            if ((appointmentStartTimeStamp < now) || conferenceHasStarted) {
                 this.setState({
                     beforeAppointmentStart: false
                 }, () => {
