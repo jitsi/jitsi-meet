@@ -32,7 +32,7 @@ export function isSettingEnabled(settingName: string) {
  * @returns {boolean} True to indicate that user can change Server URL, false
  * otherwise.
  */
-export function isServerURLChangeAllowed(stateful: Object | Function) {
+export function isServerURLChangeEnabled(stateful: Object | Function) {
     const state = toState(stateful);
     const flag = getFeatureFlag(state, SERVER_URL_CHANGE_ALLOWED, true);
 
