@@ -6,6 +6,7 @@ import type { Dispatch } from 'redux';
 
 import { createWelcomePageEvent, sendAnalytics } from '../../analytics';
 import { appNavigate } from '../../app';
+import isInsecureRoomName from '../../base/util/isInsecureRoomName';
 import { isCalendarEnabled } from '../../calendar-sync';
 import { isRecentListEnabled } from '../../recent-list/functions';
 
@@ -75,6 +76,7 @@ export class AbstractWelcomePage extends Component<Props, *> {
     state = {
         animateTimeoutId: undefined,
         generatedRoomname: '',
+        insecureRoomName: false,
         joining: false,
         room: '',
         roomPlaceholder: '',
@@ -95,6 +97,7 @@ export class AbstractWelcomePage extends Component<Props, *> {
             = this._animateRoomnameChanging.bind(this);
         this._onJoin = this._onJoin.bind(this);
         this._onRoomChange = this._onRoomChange.bind(this);
+        this._renderInsecureRoomNameWarning = this._renderInsecureRoomNameWarning.bind(this);
         this._updateRoomname = this._updateRoomname.bind(this);
     }
 
@@ -160,6 +163,13 @@ export class AbstractWelcomePage extends Component<Props, *> {
         clearTimeout(this.state.updateTimeoutId);
     }
 
+    /**
+     * Renders the insecure room name warning.
+     *
+     * @returns {ReactElement}
+     */
+    _doRenderInsecureRoomNameWarning: () => React$Component<any>;
+
     _onJoin: () => void;
 
     /**
@@ -202,7 +212,25 @@ export class AbstractWelcomePage extends Component<Props, *> {
      * @returns {void}
      */
     _onRoomChange(value: string) {
-        this.setState({ room: value });
+        this.setState({
+            room: value,
+            insecureRoomName: value && isInsecureRoomName(value)
+        });
+    }
+
+    _renderInsecureRoomNameWarning: () => React$Component<any>;;
+
+    /**
+     * Renders the insecure room name warning if needed.
+     *
+     * @returns {ReactElement}
+     */
+    _renderInsecureRoomNameWarning() {
+        if (this.state.insecureRoomName) {
+            return this._doRenderInsecureRoomNameWarning();
+        }
+
+        return null;
     }
 
     _updateRoomname: () => void;

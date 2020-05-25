@@ -3,7 +3,6 @@
 import React from 'react';
 
 import { connect } from '../../../redux';
-
 import AbstractVideoTrack from '../AbstractVideoTrack';
 import type { Props as AbstractVideoTrackProps } from '../AbstractVideoTrack';
 

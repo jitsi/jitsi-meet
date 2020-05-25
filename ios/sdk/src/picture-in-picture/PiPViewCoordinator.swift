@@ -1,5 +1,5 @@
 /*
- * Copyright @ 2017-present Atlassian Pty Ltd
+ * Copyright @ 2017-present 8x8, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -46,18 +46,9 @@ public class PiPViewCoordinator {
     
     public var initialPositionInSuperview = Position.lowerRightCorner
     
-    /// The size ratio of the view when in PiP mode
-    public var pipSizeRatio: CGFloat = {
-        let deviceIdiom = UIScreen.main.traitCollection.userInterfaceIdiom
-        switch deviceIdiom {
-        case .pad:
-            return 0.25
-        case .phone:
-            return 0.33
-        default:
-            return 0.25
-        }
-    }()
+    // Unused. Remove on the next major release.
+    @available(*, deprecated, message: "The PiP window size is now fixed to 150px.")
+    public var c: CGFloat = 0.0
     
     public weak var delegate: PiPViewCoordinatorDelegate?
 
@@ -212,8 +203,7 @@ public class PiPViewCoordinator {
 
         // resize to suggested ratio and position to the bottom right
         let adjustedBounds = bounds.inset(by: dragBoundInsets)
-        let size = CGSize(width: bounds.size.width * pipSizeRatio,
-                          height: bounds.size.height * pipSizeRatio)
+        let size = CGSize(width: 150, height: 150)
         let origin = initialPositionFor(pipSize: size, bounds: adjustedBounds)
         return CGRect(x: origin.x, y: origin.y, width: size.width, height: size.height)
     }

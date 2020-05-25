@@ -3,7 +3,6 @@
 import React, { Component } from 'react';
 
 import { connect } from '../../base/redux';
-
 import { getOverlayToRender } from '../functions';
 
 declare var interfaceConfig: Object;

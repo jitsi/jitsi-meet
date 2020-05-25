@@ -11,11 +11,11 @@ import {
 
 import { Icon, IconClose } from '../../../icons';
 import { StyleType } from '../../../styles';
-
 import AbstractDialog, {
     type Props as AbstractProps,
     type State
 } from '../AbstractDialog';
+
 import { brandedDialog as styles } from './styles';
 
 export type Props = AbstractProps & {

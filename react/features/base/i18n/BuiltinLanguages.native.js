@@ -13,6 +13,12 @@ const _LANGUAGES = {
         main: require('../../../../lang/main-af')
     },
 
+    // Arabic
+    'ar': {
+        languages: require('../../../../lang/languages-ar'),
+        main: require('../../../../lang/main-ar')
+    },
+
     // Bulgarian
     'bg': {
         languages: require('../../../../lang/languages-bg'),
@@ -155,6 +161,12 @@ const _LANGUAGES = {
     'sv': {
         languages: require('../../../../lang/languages-sv'),
         main: require('../../../../lang/main-sv')
+    },
+
+    // Slovenian
+    'sl': {
+        languages: require('../../../../lang/languages-sl'),
+        main: require('../../../../lang/main-sl')
     },
 
     // Turkish

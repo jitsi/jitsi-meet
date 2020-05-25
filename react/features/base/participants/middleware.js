@@ -1,10 +1,8 @@
 // @flow
 
 import UIEvents from '../../../../service/UI/UIEvents';
-
 import { NOTIFICATION_TIMEOUT, showNotification } from '../../notifications';
 import { CALLING, INVITED } from '../../presence-status';
-
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../app';
 import {
     CONFERENCE_WILL_JOIN,
@@ -16,14 +14,6 @@ import { MiddlewareRegistry, StateListenerRegistry } from '../redux';
 import { playSound, registerSound, unregisterSound } from '../sounds';
 
 import {
-    localParticipantIdChanged,
-    localParticipantJoined,
-    localParticipantLeft,
-    participantLeft,
-    participantUpdated,
-    setLoadableAvatarUrl
-} from './actions';
-import {
     DOMINANT_SPEAKER_CHANGED,
     KICK_PARTICIPANT,
     MUTE_REMOTE_PARTICIPANT,
@@ -32,6 +22,14 @@ import {
     PARTICIPANT_LEFT,
     PARTICIPANT_UPDATED
 } from './actionTypes';
+import {
+    localParticipantIdChanged,
+    localParticipantJoined,
+    localParticipantLeft,
+    participantLeft,
+    participantUpdated,
+    setLoadableAvatarUrl
+} from './actions';
 import {
     LOCAL_PARTICIPANT_DEFAULT_ID,
     PARTICIPANT_JOINED_SOUND_ID,

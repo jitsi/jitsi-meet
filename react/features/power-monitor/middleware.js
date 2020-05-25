@@ -1,21 +1,22 @@
 // @flow
 
-import {
-    setTransport,
-    suspendDetected
-} from './actions';
-import { SUSPEND_DETECTED } from './actionTypes';
 
+import {
+    PostMessageTransportBackend,
+    Transport
+} from '../../../modules/transport';
 import {
     CONFERENCE_JOINED,
     CONFERENCE_LEFT
 } from '../base/conference';
 import { MiddlewareRegistry } from '../base/redux';
-import {
-    PostMessageTransportBackend,
-    Transport
-} from '../../../modules/transport';
 import { destroyLocalTracks } from '../base/tracks';
+
+import { SUSPEND_DETECTED } from './actionTypes';
+import {
+    setTransport,
+    suspendDetected
+} from './actions';
 
 declare var APP: Object;
 

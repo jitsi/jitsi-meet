@@ -113,7 +113,7 @@ end
 function room_created(event)
     local room = event.room;
 
-    if is_healthcheck_room(room) then
+    if is_healthcheck_room(room.jid) then
         return;
     end
 
@@ -124,7 +124,7 @@ end
 function occupant_joined(event)
     local room = event.room;
 
-    if is_healthcheck_room(room) then
+    if is_healthcheck_room(room.jid) then
         return;
     end
 
@@ -184,7 +184,7 @@ end
 function occupant_leaving(event)
     local room = event.room;
 
-    if is_healthcheck_room(room) then
+    if is_healthcheck_room(room.jid) then
         return;
     end
 
@@ -205,7 +205,7 @@ end
 function room_destroyed(event)
     local room = event.room;
 
-    if is_healthcheck_room(room) then
+    if is_healthcheck_room(room.jid) then
         return;
     end
 

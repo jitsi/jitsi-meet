@@ -1,15 +1,14 @@
 /* @flow */
 
+import { FieldTextStateless as TextField } from '@atlaskit/field-text';
 import React, { Component } from 'react';
 import type { Dispatch } from 'redux';
-import { FieldTextStateless as TextField } from '@atlaskit/field-text';
 
 import { createE2EEEvent, sendAnalytics } from '../../analytics';
 import { Dialog } from '../../base/dialog';
 import { translate, translateToHTML } from '../../base/i18n';
 import { getParticipants } from '../../base/participants';
 import { connect } from '../../base/redux';
-
 import { setE2EEKey } from '../actions';
 
 

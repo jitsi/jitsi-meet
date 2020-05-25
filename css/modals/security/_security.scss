@@ -1,0 +1,37 @@
+.security {
+    &-dialog {
+        color: #fff;
+        font-size: 15px;
+        line-height: 24px;
+        
+        &.password {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            &-actions {
+                a {
+                    cursor: pointer;
+                    text-decoration: none;
+                    font-size: 14px;
+                    color: #6FB1EA;
+                }
+
+                & > a + a {
+                    margin-left: 24px;
+                }
+            }
+        }
+    }
+}
+
+.new-toolbox .toolbox-content .toolbox-icon.security-toolbar-button,
+.new-toolbox .toolbox-content .toolbox-icon.toggled.security-toolbar-button {
+    background: rgba(241, 173, 51, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+
+    &:hover {
+        background: rgba(241, 173, 51, 0.7);
+        border: 1px solid rgba(255, 255, 255, 0.4);
+    }
+}

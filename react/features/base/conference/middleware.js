@@ -1,7 +1,5 @@
 // @flow
 
-import { openDisplayNamePrompt } from '../../display-name';
-
 import {
     ACTION_PINNED,
     ACTION_UNPINNED,
@@ -9,8 +7,10 @@ import {
     createPinnedEvent,
     sendAnalytics
 } from '../../analytics';
+import { openDisplayNamePrompt } from '../../display-name';
 import { CONNECTION_ESTABLISHED, CONNECTION_FAILED } from '../connection';
 import { JitsiConferenceErrors } from '../lib-jitsi-meet';
+import { MEDIA_TYPE } from '../media';
 import {
     getLocalParticipant,
     getParticipantById,
@@ -22,12 +22,6 @@ import { MiddlewareRegistry, StateListenerRegistry } from '../redux';
 import { TRACK_ADDED, TRACK_REMOVED } from '../tracks';
 
 import {
-    conferenceFailed,
-    conferenceWillLeave,
-    createConference,
-    setSubject
-} from './actions';
-import {
     CONFERENCE_FAILED,
     CONFERENCE_JOINED,
     CONFERENCE_SUBJECT_CHANGED,
@@ -38,13 +32,18 @@ import {
     SET_ROOM
 } from './actionTypes';
 import {
+    conferenceFailed,
+    conferenceWillLeave,
+    createConference,
+    setSubject
+} from './actions';
+import {
     _addLocalTracksToConference,
     _removeLocalTracksFromConference,
     forEachConference,
     getCurrentConference
 } from './functions';
 import logger from './logger';
-import { MEDIA_TYPE } from '../media';
 
 declare var APP: Object;
 

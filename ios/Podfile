@@ -66,6 +66,7 @@ target 'JitsiMeet' do
   pod 'RNSound', :path => '../node_modules/react-native-sound'
   pod 'RNSVG', :path => '../node_modules/react-native-svg'
   pod 'RNWatch', :path => '../node_modules/react-native-watch-connectivity'
+  pod 'RNDefaultPreference', :path => '../node_modules/react-native-default-preference'
 
   # Native pod dependencies
   #

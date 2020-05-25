@@ -1,10 +1,11 @@
 // @flow
 
 import React, { Component } from 'react';
-import { connect } from '../../../base/redux';
-import { translate } from '../../../base/i18n';
+
 import { getCurrentConferenceUrl } from '../../../base/connection';
+import { translate } from '../../../base/i18n';
 import { Icon, IconCopy, IconCheck } from '../../../base/icons';
+import { connect } from '../../../base/redux';
 import logger from '../../logger';
 
 type Props = {
@@ -170,6 +171,7 @@ class CopyMeetingUrl extends Component<Props, State> {
                 </div>}
                 <Icon
                     className = { `prejoin-copy-icon ${iconCls}` }
+                    onClick = { _copyUrl }
                     size = { 24 }
                     src = { src } />
                 <textarea

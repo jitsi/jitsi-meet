@@ -8,7 +8,6 @@ import { IconAddPeople } from '../../../../base/icons';
 import { connect } from '../../../../base/redux';
 import { AbstractButton } from '../../../../base/toolbox';
 import type { AbstractButtonProps } from '../../../../base/toolbox';
-
 import { doInvitePeople } from '../../../actions.native';
 
 type Props = AbstractButtonProps & {

@@ -455,7 +455,7 @@
         "somebody": "Calicunu",
         "startSilentTitle": "Ses intradu sena àudio.",
         "startSilentDescription": "Torra a intrare pro ativare s'àudio",
-        "suboptimalBrowserWarning": "Timimus chi s'esperièntzia tua de custa riunione no at a èssere bona meda. Semus chirchende de megiorare custu, però in su mentras proa de impreare unu de is <a href='static/recommendedBrowsers.html' target='_blank'>navigadores cumpatìbiles</a>.",
+        "suboptimalBrowserWarning": "Timimus chi s'esperièntzia tua de custa riunione no at a èssere bona meda. Semus chirchende de megiorare custu, però in su mentras proa de impreare unu de is <a href='{{recommendedBrowserPageLink}}' target='_blank'>navigadores cumpatìbiles</a>.",
         "suboptimalExperienceTitle": "Avisu subra de su navigadore",
         "unmute": "Ativa su sonu",
         "newDeviceCameraTitle": "Càmera noa rilevada",
@@ -726,9 +726,6 @@
         "lowDefinition": "Definitzione bàscia (LD)",
         "onlyAudioAvailable": "Isceti àudio a disponimentu",
         "onlyAudioSupported": "Custu navigadore est isceti cumpatìbile cun s'àudio.",
-        "p2pEnabled": "Rete a nodu terminale (p2p) ativada",
-        "p2pVideoQualityDescription": "In sa modalidade a nodu terminale (p2p), sa calidade de vìdeu retzida podet èssere cambiada intre arta calidade e isceti àudio. Depes essire de sa modalidade a nodu terminale pro pòdere cunfigurare àteras optziones.",
-        "recHighDefinitionOnly": "S'arta definitzione (HD) at a èssere preferida.",
         "sd": "SD",
         "sdTooltip": "Vìdeu in definitzione istandard (SD)",
         "standardDefinition": "Definitzione istàndard (SD)"

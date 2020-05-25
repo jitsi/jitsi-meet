@@ -431,7 +431,7 @@
         "somebody": "Birisi",
         "startSilentTitle": "",
         "startSilentDescription": "",
-        "suboptimalExperienceDescription": "Mmm... {{appName}} ile olan deneyiminizin burada çok iyi olmayacağından korkuyoruz. Bunu iyileştirmenin yollarını arıyoruz, ancak o zamana kadar lütfen şunlardan birini deneyin: <a href='static/recommendedBrowsers.html' target='_blank'>fully supported browsers</a>.",
+        "suboptimalExperienceDescription": "Mmm... {{appName}} ile olan deneyiminizin burada çok iyi olmayacağından korkuyoruz. Bunu iyileştirmenin yollarını arıyoruz, ancak o zamana kadar lütfen şunlardan birini deneyin: <a href='{{recommendedBrowserPageLink}}' target='_blank'>fully supported browsers</a>.",
         "suboptimalExperienceTitle": "Tarayıcı Uyarısı",
         "unmute": "",
         "newDeviceCameraTitle": "Yeni kamera algılandı",
@@ -674,9 +674,6 @@
         "lowDefinition": "Düşük çözünürlük",
         "onlyAudioAvailable": "Yalnızca ses kullanılabilir",
         "onlyAudioSupported": "Bu tarayıcıda yalnızca sesi destekliyoruz.",
-        "p2pEnabled": "Peer to peer Etkin",
-        "p2pVideoQualityDescription": "Peer to peer modunda, arama kalitesi yalnızca yüksek çözünürlük ve yalnızca ses arasında değiştirilebilir. Peer to peer modundan çıkılmadıkça diğer ayarlar kabul edilmez.",
-        "recHighDefinitionOnly": "Yalnızca yüksek çözünürlüğü tercih et.",
         "sd": "SD",
         "standardDefinition": "Standart çözünürlük"
     },

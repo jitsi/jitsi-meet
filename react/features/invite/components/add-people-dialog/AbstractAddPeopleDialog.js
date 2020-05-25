@@ -3,7 +3,10 @@
 import { Component } from 'react';
 
 import { createInviteDialogEvent, sendAnalytics } from '../../../analytics';
-
+import {
+    NOTIFICATION_TIMEOUT,
+    showNotification
+} from '../../../notifications';
 import { invite } from '../../actions';
 import {
     getInviteResultsForQuery,
@@ -11,11 +14,6 @@ import {
     isAddPeopleEnabled,
     isDialOutEnabled
 } from '../../functions';
-import {
-    NOTIFICATION_TIMEOUT,
-    showNotification
-} from '../../../notifications';
-
 import logger from '../../logger';
 
 export type Props = {
