@@ -364,7 +364,7 @@ var config = {
 
         // If set to true, it will prefer to use H.264 for P2P calls (if H.264
         // is supported).
-        preferH264: true
+        // preferH264: true
 
         // If set to true, disable H.264 video codec by stripping it out of the
         // SDP.
