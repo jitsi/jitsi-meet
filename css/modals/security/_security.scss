@@ -1,9 +1,14 @@
 .security {
     &-dialog {
-        color: #fff;
+        color: $ADFC-color;
         font-size: 15px;
         line-height: 24px;
         
+        .info-dialog-password{
+            margin-right: 5px;
+            max-width: 200px;
+        }
+
         &.password {
             display: flex;
             justify-content: space-between;
@@ -14,7 +19,12 @@
                     cursor: pointer;
                     text-decoration: none;
                     font-size: 14px;
-                    color: #6FB1EA;
+                    background: $ADFC-blue;
+                    border: 1px solid darken( $ADFC-blue, 20% );
+                    color: white;
+                    margin-right: 5px;
+                    padding: 5px;
+                    border-radius: 3px 3px 0 0;
                 }
 
                 & > :first-child:not(:last-child) {
@@ -22,16 +32,22 @@
                 }
             }
         }
+
+        .info-password-input {
+            padding: 3px;
+            border:  1px solid darken( $ADFC-blue, 20% );
+            margin-right: 10px;
+        }
     }
 }
 
 .new-toolbox .toolbox-content .toolbox-icon.security-toolbar-button,
 .new-toolbox .toolbox-content .toolbox-icon.toggled.security-toolbar-button {
-    background: rgba(241, 173, 51, 0.7);
-    border: 1px solid rgba(255, 255, 255, 0.4);
+    background: $ADFC-orange;
+    border: 1px solid darken( $ADFC-orange, 20% );
 
     &:hover {
-        background: rgba(241, 173, 51, 0.7);
-        border: 1px solid rgba(255, 255, 255, 0.4);
+        background: darken( $ADFC-orange, 10% );
+        border: 1px solid darken( $ADFC-orange, 20% );
     }
 }

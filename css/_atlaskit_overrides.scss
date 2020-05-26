@@ -116,22 +116,26 @@ button.iuZaWk {
 button.jnSiSs {
     color: $buttonPrimaryColor !important;
     background-color: $buttonPrimaryBackground !important;
+    background: $buttonPrimaryBackground !important;
 }
 
 button.kCrkDy {
     color: $buttonColor !important;
     background-color: $buttonPrimaryHoverBackground !important;
+    background: $buttonPrimaryHoverBackground !important;
 }
 
 /* Cancel-Button */
 button.lgCCLh {
     color: $buttonSecondaryColor !important;
     background-color: $buttonSecondaryBackground !important;
+    background: $buttonSecondaryBackground !important;
 }
 
 button.cIYSWk {
     color: $buttonSecondaryColor !important;
     background-color: $buttonSecondaryHoverBackground !important;
+    background: $buttonSecondaryHoverBackground !important;
 }
 
 
@@ -167,4 +171,17 @@ button.cIYSWk {
  */
 .toolbox-button-wth-dialog .eYJELv {
     max-height: initial;
+}
+
+.cliqcn .izxwZe {
+    color: $ADFC-blue;
+}
+
+.modal-dialog-form .hRySvC {
+    color: $ADFC-blue;
+
+    .bmtzwF {
+        color: white;
+        background: $ADFC-blue;
+    }
 }

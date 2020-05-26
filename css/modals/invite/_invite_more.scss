@@ -1,6 +1,6 @@
 .invite-more {
     &-container {
-        color: #fff;
+        color: $ADFC-blue;
         font-weight: 600;
         position: absolute;
         width: 100%;
@@ -14,6 +14,7 @@
     }
 
     &-header {
+        color: white;
         font-size: 19px;
         line-height: 28px;
         margin: 24px 0 16px 0;
@@ -26,14 +27,15 @@
         width: fit-content;
         width: -moz-fit-content;
         height: 24px;
-        background: #0376DA;
+        color: white;
+        background: $ADFC-blue;
         border-radius: 3px;
         font-size: 14px;
         line-height: 24px;
         cursor: pointer;
 
         &:hover {
-            background: #278ADF;
+            background: darken( $ADFC-blue, 10% );
         }
 
         &-text {
@@ -43,7 +45,8 @@
         }
     }
     &-dialog {
-        color: #fff;
+        background: white;
+        color: $ADFC-color;
         font-size: 15px;
         line-height: 24px;
 
@@ -56,14 +59,14 @@
             justify-content: space-between;
             margin: 16px 16px 24px;
             width: calc(100% - 32px);
-            color: #fff;
+            color: $ADFC-blue;
             font-weight: 600;
             font-size: 24px;
             line-height: 32px;
 
             & > div > svg {
                 cursor: pointer;
-                fill: #A4B8D1;
+                fill: $ADFC-orange;
             }
         }
 
@@ -76,13 +79,19 @@
             width: calc(100% - 24px);
             height: 24px;
 
-            background: #0376DA;
+            background: $ADFC-blue;
+            color: white;
+
             border-radius: 4px;
             cursor: pointer;
 
             &:hover {
-                background: #278ADF;
+                background: darken( $ADFC-blue, 10% );
                 font-weight: 600;
+
+                &:hover div {
+                    background: darken( $ADFC-blue, 10% );
+                }
             }
 
             &-text {
@@ -91,17 +100,33 @@
                 white-space: nowrap;
                 max-width: 292px;
 
+                background: $ADFC-blue;
+                color: white;
+
+                &:hover {
+                    background: lighten( $ADFC-blue, 10% );
+                    font-weight: 600;
+
+                    div.copy-link-text {
+                        background: lighten( $ADFC-blue, 10% );
+                    }
+                }
+
                 &.selected {
                     font-weight: 600;
                 }
             }
 
             &.clicked {
-                background: #31B76A;
+                background: $ADFC-orange;
+
+                div.copy-link-text {
+                    background: $ADFC-orange;
+                }
             }
 
             & > div > svg > path {
-                fill: #fff;
+                fill: $baseLight;
             }
         }
 
@@ -110,7 +135,7 @@
             padding: 0 20px;
             width: 100%;
             height: 1px;
-            background: #5E6D7A;
+            background: $ADFC-darkGrey;
         }
 
         &.email-container {
@@ -122,28 +147,53 @@
             width: calc(100% - 26px);
             height: 22px;
 
-            background: #2A3A4B;
-            border: 1px solid #5E6D7A;
+            background: $ADFC-blue;
+            color: white;
+            border: 1px solid darken( $ADFC-blue, 20% );
             border-radius: 3px;
             cursor: pointer;
 
+            &:hover {
+                background: darken( $ADFC-blue, 10% );
+                font-weight: 600;
+
+                &:hover div {
+                    background: darken( $ADFC-blue, 10% );
+                }
+            }
+
             &.active {
                 border-radius: 3px 3px 0 0;
+            }
+
+            & > div > svg > path {
+                color: $ADFC-color;
+                fill: $ADFC-lightGrey;
             }
         }
 
         &.icon-container {
             display: none;
+            background: $ADFC-darkGrey;
+            color: white;
+
+            .jitsi-icon {
+                color: white;
+                border: 1px solid darken( $ADFC-blue, 20% );
+
+                & > div > svg > path {
+                    fill: white;
+                }
+            }
 
             &.active {
                 display: flex;
                 width: calc(100% - 26px);
                 padding: 8px 8px 8px 16px;
 
-                background: #2A3A4B;
-                border: 1px solid #5E6D7A;
                 border-top: none;
                 border-radius: 0 0 3px 3px;
+                background-color: $ADFC-darkGrey;
 
                 & > * {
                     display: flex;
@@ -153,18 +203,23 @@
                     width: 40px;
                     border-radius: 4px;
                     cursor: pointer;
+                    background-color: $ADFC-blue;
+                    border-color: darken( $ADFC-blue, 20% );
                 }
     
                 &:hover > div:hover {
-                    background-color: rgba(255, 255, 255, 0.2);
+                    background-color: lighten( $ADFC-blue, 10% );
                 }
     
                 & > :not(:last-child) {
                     margin-right: 16px;
                 }
 
-                .copy-invite-icon > div > svg > path {
-                    fill: #A4B8D1;
+                .copy-invite-icon > div {
+
+                    & > svg > path {
+                        fill: white;
+                    }
                 }
             }
         }

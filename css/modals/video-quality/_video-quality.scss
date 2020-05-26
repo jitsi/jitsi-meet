@@ -26,7 +26,7 @@
             @mixin sliderTrackStyles() {
                 height: 15px;
                 border-radius: 10px;
-                background: rgb(14, 22, 36);
+                background: $ADFC-darkGrey;
             }
 
             &::-ms-track {
