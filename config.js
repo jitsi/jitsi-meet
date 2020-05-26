@@ -352,7 +352,7 @@ var config = {
 
             // { urls: 'stun:jitsi-meet.example.com:4446' },
             { urls: 'stun:meet-jit-si-turnrelay.jitsi.net:443' }
-        ],
+        ]
 
         // Sets the ICE transport policy for the p2p connection. At the time
         // of this writing the list of possible values are 'all' and 'relay',
