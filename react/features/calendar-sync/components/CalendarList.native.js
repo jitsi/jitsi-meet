@@ -3,15 +3,14 @@
 import React from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
 
-import { openSettings } from '../../mobile/permissions';
 import { translate } from '../../base/i18n';
 import { AbstractPage } from '../../base/react';
 import { connect } from '../../base/redux';
-
+import { openSettings } from '../../mobile/permissions';
 import { refreshCalendar } from '../actions';
-import styles from './styles';
 
 import CalendarListContent from './CalendarListContent';
+import styles from './styles';
 
 /**
  * The tyoe of the React {@code Component} props of {@link CalendarList}.

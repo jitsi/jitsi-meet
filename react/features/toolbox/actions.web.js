@@ -3,15 +3,15 @@
 import type { Dispatch } from 'redux';
 
 import {
+    FULL_SCREEN_CHANGED,
+    SET_FULL_SCREEN
+} from './actionTypes';
+import {
     clearToolboxTimeout,
     setToolboxTimeout,
     setToolboxTimeoutMS,
     setToolboxVisible
 } from './actions.native';
-import {
-    FULL_SCREEN_CHANGED,
-    SET_FULL_SCREEN
-} from './actionTypes';
 
 declare var interfaceConfig: Object;
 

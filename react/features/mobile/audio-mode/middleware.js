@@ -2,8 +2,8 @@
 
 import { NativeEventEmitter, NativeModules } from 'react-native';
 
-import { SET_AUDIO_ONLY } from '../../base/audio-only';
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../../base/app';
+import { SET_AUDIO_ONLY } from '../../base/audio-only';
 import {
     CONFERENCE_FAILED,
     CONFERENCE_LEFT,

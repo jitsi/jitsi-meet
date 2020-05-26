@@ -1,5 +1,4 @@
 // @flow
-import { notifyKickedOut } from './actions';
 import { appNavigate } from '../app';
 import {
     CONFERENCE_JOINED,
@@ -12,11 +11,13 @@ import {
 import { hideDialog, isDialogOpen } from '../base/dialog';
 import { setActiveModalId } from '../base/modal';
 import { pinParticipant } from '../base/participants';
-import { SET_REDUCED_UI } from '../base/responsive-ui';
 import { MiddlewareRegistry, StateListenerRegistry } from '../base/redux';
+import { SET_REDUCED_UI } from '../base/responsive-ui';
 import { FeedbackDialog } from '../feedback';
 import { setFilmstripEnabled } from '../filmstrip';
 import { setToolboxEnabled } from '../toolbox';
+
+import { notifyKickedOut } from './actions';
 
 MiddlewareRegistry.register(store => next => action => {
     const result = next(action);

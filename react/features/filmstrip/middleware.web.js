@@ -1,17 +1,17 @@
 // @flow
 
+import Filmstrip from '../../../modules/UI/videolayout/Filmstrip';
 import { getNearestReceiverVideoQualityLevel, setMaxReceiverVideoQuality } from '../base/conference';
 import { MiddlewareRegistry } from '../base/redux';
 import { CLIENT_RESIZED } from '../base/responsive-ui';
-import Filmstrip from '../../../modules/UI/videolayout/Filmstrip';
 import {
     getCurrentLayout,
     LAYOUTS,
     shouldDisplayTileView
 } from '../video-layout';
 
-import { setHorizontalViewDimensions, setTileViewDimensions } from './actions';
 import { SET_HORIZONTAL_VIEW_DIMENSIONS, SET_TILE_VIEW_DIMENSIONS } from './actionTypes';
+import { setHorizontalViewDimensions, setTileViewDimensions } from './actions';
 
 /**
  * The middleware of the feature Filmstrip.

@@ -6,10 +6,6 @@ import ReactDOM from 'react-dom';
 import { I18nextProvider } from 'react-i18next';
 
 import {
-    PostMessageTransportBackend,
-    Transport
-} from '../../../../../modules/transport';
-import {
     getAvailableDevices,
     getCurrentDevices,
     isDeviceChangeAvailable,
@@ -19,7 +15,10 @@ import {
     setAudioOutputDevice,
     setVideoInputDevice
 } from '../../../../../modules/API/external/functions';
-
+import {
+    PostMessageTransportBackend,
+    Transport
+} from '../../../../../modules/transport';
 import DialogWithTabs from '../../../base/dialog/components/web/DialogWithTabs';
 import { parseURLParams } from '../../../base/util/parseURLParams';
 import DeviceSelection from '../../../device-selection/components/DeviceSelection';

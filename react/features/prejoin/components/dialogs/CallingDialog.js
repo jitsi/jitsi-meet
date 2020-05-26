@@ -1,6 +1,7 @@
 // @flow
 
 import React from 'react';
+
 import { Avatar } from '../../../base/avatar';
 import { translate } from '../../../base/i18n';
 import { Icon, IconClose } from '../../../base/icons';

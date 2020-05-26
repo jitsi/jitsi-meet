@@ -8,15 +8,13 @@ import { Container } from '../../../base/react';
 import { connect } from '../../../base/redux';
 import { StyleType } from '../../../base/styles';
 import { ChatButton } from '../../../chat';
-
 import { isToolboxVisible } from '../../functions';
-
 import AudioMuteButton from '../AudioMuteButton';
 import HangupButton from '../HangupButton';
+import VideoMuteButton from '../VideoMuteButton';
 
 import OverflowMenuButton from './OverflowMenuButton';
 import styles from './styles';
-import VideoMuteButton from '../VideoMuteButton';
 
 /**
  * The type of {@link Toolbox}'s React {@code Component} props.

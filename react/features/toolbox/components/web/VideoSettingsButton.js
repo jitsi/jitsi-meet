@@ -1,14 +1,15 @@
 // @flow
 
 import React, { Component } from 'react';
-import { isVideoSettingsButtonDisabled } from '../../functions';
-import { toggleVideoSettings, VideoSettingsPopup } from '../../../settings';
-import VideoMuteButton from '../VideoMuteButton';
-import JitsiMeetJS from '../../../base/lib-jitsi-meet/_';
+
 import { IconArrowDown } from '../../../base/icons';
+import JitsiMeetJS from '../../../base/lib-jitsi-meet/_';
 import { connect } from '../../../base/redux';
 import { ToolboxButtonWithIcon } from '../../../base/toolbox';
 import { getMediaPermissionPromptVisibility } from '../../../overlay';
+import { toggleVideoSettings, VideoSettingsPopup } from '../../../settings';
+import { isVideoSettingsButtonDisabled } from '../../functions';
+import VideoMuteButton from '../VideoMuteButton';
 
 type Props = {
 

@@ -9,8 +9,8 @@ import { getFeatureFlag, MEETING_NAME_ENABLED } from '../../../base/flags';
 import { connect } from '../../../base/redux';
 import { PictureInPictureButton } from '../../../mobile/picture-in-picture';
 import { isToolboxVisible } from '../../../toolbox';
-
 import ConferenceTimer from '../ConferenceTimer';
+
 import styles, { NAVBAR_GRADIENT_COLORS } from './styles';
 
 type Props = {

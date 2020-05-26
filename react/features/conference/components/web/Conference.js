@@ -4,35 +4,33 @@ import _ from 'lodash';
 import React from 'react';
 
 import VideoLayout from '../../../../../modules/UI/videolayout/VideoLayout';
-
+import { getConferenceNameForTitle } from '../../../base/conference';
 import { connect, disconnect } from '../../../base/connection';
 import { translate } from '../../../base/i18n';
 import { connect as reactReduxConnect } from '../../../base/redux';
-import { getConferenceNameForTitle } from '../../../base/conference';
 import { Chat } from '../../../chat';
 import { Filmstrip } from '../../../filmstrip';
 import { CalleeInfoContainer } from '../../../invite';
 import { LargeVideo } from '../../../large-video';
 import { Prejoin, isPrejoinPageVisible } from '../../../prejoin';
-import { LAYOUTS, getCurrentLayout } from '../../../video-layout';
-
 import {
     Toolbox,
     fullScreenChanged,
     setToolboxAlwaysVisible,
     showToolbox
 } from '../../../toolbox';
-
+import { LAYOUTS, getCurrentLayout } from '../../../video-layout';
 import { maybeShowSuboptimalExperienceNotification } from '../../functions';
-
-import Labels from './Labels';
-import { default as Notice } from './Notice';
-import { default as Subject } from './Subject';
 import {
     AbstractConference,
     abstractMapStateToProps
 } from '../AbstractConference';
 import type { AbstractProps } from '../AbstractConference';
+
+import InviteMore from './InviteMore';
+import Labels from './Labels';
+import { default as Notice } from './Notice';
+import { default as Subject } from './Subject';
 
 declare var APP: Object;
 declare var config: Object;
@@ -202,6 +200,7 @@ class Conference extends AbstractConference<Props, *> {
 
                 <Notice />
                 <Subject />
+                <InviteMore />
                 <div id = 'videospace'>
                     <LargeVideo />
                     { hideVideoQualityLabel

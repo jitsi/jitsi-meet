@@ -1,16 +1,15 @@
 /* global APP */
 
-import { CONFERENCE_JOINED } from '../conference';
-import { processExternalDeviceRequest } from '../../device-selection';
-import { MiddlewareRegistry } from '../redux';
 import UIEvents from '../../../../service/UI/UIEvents';
+import { processExternalDeviceRequest } from '../../device-selection';
+import { showNotification, showWarningNotification } from '../../notifications';
+import { replaceAudioTrackById, replaceVideoTrackById, setDeviceStatusWarning } from '../../prejoin/actions';
+import { isPrejoinPageVisible } from '../../prejoin/functions';
+import { CONFERENCE_JOINED } from '../conference';
 import { JitsiTrackErrors } from '../lib-jitsi-meet';
+import { MiddlewareRegistry } from '../redux';
+import { updateSettings } from '../settings';
 
-import {
-    removePendingDeviceRequests,
-    setAudioInputDevice,
-    setVideoInputDevice
-} from './actions';
 import {
     CHECK_AND_NOTIFY_FOR_NEW_DEVICE,
     NOTIFY_CAMERA_ERROR,
@@ -18,10 +17,11 @@ import {
     SET_AUDIO_INPUT_DEVICE,
     SET_VIDEO_INPUT_DEVICE
 } from './actionTypes';
-import { replaceAudioTrackById, replaceVideoTrackById, setDeviceStatusWarning } from '../../prejoin/actions';
-import { isPrejoinPageVisible } from '../../prejoin/functions';
-import { showNotification, showWarningNotification } from '../../notifications';
-import { updateSettings } from '../settings';
+import {
+    removePendingDeviceRequests,
+    setAudioInputDevice,
+    setVideoInputDevice
+} from './actions';
 import { formatDeviceLabel, setAudioOutputDeviceId } from './functions';
 import logger from './logger';
 

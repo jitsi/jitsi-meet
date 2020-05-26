@@ -1,6 +1,7 @@
 // @flow
 
 import { toState } from '../redux';
+
 import JitsiMeetJS from './_';
 
 const JitsiConferenceErrors = JitsiMeetJS.errors.conference;

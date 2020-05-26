@@ -1,8 +1,8 @@
 {
     "addPeople": {
         "add": "Inviter",
-        "countryNotSupported": "Nous ne supportons pas encore cette destination.",
-        "countryReminder": "Appel hors des États-Unis ? Veuillez commencer avec le code du pays !",
+        "countryNotSupported": "Cette destination n'est pas actuellement supportée.",
+        "countryReminder": "Appel hors des États-Unis ? Veuillez débuter par le code du pays !",
         "disabled": "Vous ne pouvez pas inviter quelqu'un.",
         "failedToAdd": "Erreur lors de l'ajout des participants",
         "footerText": "Appels sortants désactivés.",
@@ -33,7 +33,7 @@
         "error": {
             "appConfiguration": "L'intégration du calendrier n'est pas correctement configurée.",
             "generic": "Une erreur s'est produite. Veuillez vérifier les paramètres de votre calendrier ou tenter de l'actualiser.",
-            "notSignedIn": "Une erreur s'est produite lors de l'authentification permettant d'afficher les événements du calendrier. Veuillez vérifier les paramètres de votre calendrier et essayer de vous reconnecter."
+            "notSignedIn": "Une erreur d'authentification s'est produite lors de la tentative d'afficher les événements du calendrier. Veuillez vérifier les paramètres de votre calendrier et essayer de nouveau."
         },
         "join": "Joindre",
         "joinTooltip": "Rejoindre la réunion",
@@ -156,7 +156,7 @@
         "cameraNotFoundError": "La caméra n'a pas été trouvée.",
         "cameraNotSendingData": "Nous sommes incapables d'accéder à votre caméra. Veuillez sélectionner un autre périphérique dans les paramètres ou rafraîchir la page.",
         "cameraNotSendingDataTitle": "Impossible d'accéder à votre caméra",
-        "cameraPermissionDeniedError": "Vous n'avez pas autorisé l'utilisation de votre caméra. Vous pouvez toujours participer à la conférence, mais les autres ne vont pas vous voir. Utilisez le bouton de la caméra dans la barre d'adresse pour résoudre ce problème.",
+        "cameraPermissionDeniedError": "Vous n'avez pas autorisé l'utilisation de votre caméra. Vous pouvez toujours participer à la conférence, mais les autres ne pourront pas vous voir. Utilisez le bouton de la caméra dans la barre d'adresse pour résoudre ce problème.",
         "cameraUnknownError": "Vous ne pouvez pas utiliser la caméra pour une raison inconnue.",
         "cameraUnsupportedResolutionError": "Votre appareil ne prend pas en charge la résolution vidéo requise.",
         "Cancel": "Annuler",
@@ -304,7 +304,7 @@
         "answer": "Répondre",
         "audioCallTitle": "Appel entrant",
         "decline": "Rejeter",
-        "productLabel": "de Jitsi Meet",
+        "productLabel": "via Jitsi Meet",
         "videoCallTitle": "Appel vidéo entrant"
     },
     "info": {
@@ -327,8 +327,8 @@
         "inviteURLFirstPartPersonal": "{{name}} vous invite à une réunion.\n",
         "inviteURLSecondPart": "\nRejoindre la réunion :\n{{url}}\n",
         "liveStreamURL": "Diffusion en direct :",
-        "moreNumbers": "Plus de numéros",
-        "noNumbers": "Aucun numéro à composer.",
+        "moreNumbers": "Plus de numéros ",
+        "noNumbers": "Numéros non trouvés",
         "noPassword": "Aucun",
         "noRoom": "Aucune réunion n'a été spécifiée pour l'appel entrant.",
         "numbers": "Numéros d'appel",
@@ -349,7 +349,7 @@
         "msg": "Nous avons trébuché un peu.",
         "retry": "Réessayer",
         "support": "Support",
-        "supportMsg": "Si cela continue, prenez contact avec"
+        "supportMsg": "Si ceci persiste, contactez"
     },
     "keyboardShortcuts": {
         "focusLocal": "Épingler ma vidéo",
@@ -369,11 +369,13 @@
         "videoQuality": "Accorder la qualité des appels"
     },
     "liveStreaming": {
-        "busy": "Nous travaillons sur la libération des ressources de Streaming. Veuillez réessayez dans quelques minutes.",
-        "busyTitle": "Tous les streamers sont actuellement occupés",
+        "busy": "Nous tentons de libérer des ressources de diffusion. Veuillez réessayez dans quelques minutes.",
+        "busyTitle": "Tous les flux sont actuellement occupés",
         "changeSignIn": "Changer de compte.",
-        "choose": "Choisir un flux live",
+        "choose": "Choisir un flux en direct",
         "chooseCTA": "Choisissez une option de diffusion. Vous êtes actuellement connecté comme {{email}}.",
+        "enterStreamKey": "Entrez votre clé de diffusion Youtube ici",
+        "error": "La diffusion a échouée. Veuillez réessayer ultérieurement.",
         "enterStreamKey": "Entrez votre clé de flux direct YouTube ici.",
         "error": "Le Streaming a échoué. Veuillez réessayer.",
         "errorAPI": "Une erreur s'est produite lors de l'accès à vos diffusions YouTube. Veuillez réessayer de vous connecter.",
@@ -381,7 +383,7 @@
         "expandedOff": "La diffusion en direct a été arrêtée",
         "expandedOn": "La conférence est en cours de diffusion sur YouTube.",
         "expandedPending": "La diffusion en direct a commencé...",
-        "failedToStart": "Le Streaming n'as pas réussi à démarrer",
+        "failedToStart": "La diffusion n'as pas réussi à démarrer",
         "getStreamKeyManually": "Nous n'avons pu récupérer aucun flux en direct. Essayez d’obtenir votre clé de diffusion en direct sur YouTube.",
         "invalidStreamKey": "La clé de diffusion en direct n'est peut-être pas correcte.",
         "off": "Le Streaming a été arrêté",
@@ -392,12 +394,12 @@
         "serviceName": "Service de diffusion en direct",
         "signedInAs": "Vous êtes connecté en tant que :",
         "signIn": "Se connecter avec Google",
-        "signInCTA": "Connectez vous ou entrez votre clé de flux live provenant de Youtube.",
+        "signInCTA": "Connectez vous ou saisissez votre clé de diffusion Youtube.",
         "signOut": "Se déconnecter",
         "start": "Démarrer la diffusion en direct",
-        "streamIdHelp": "Qu'est-ce que c'est ?",
-        "unavailableTitle": "Le Streaming est indisponible",
-        "youtubeTerms": "Conditions d’utilisation des services YouTube",
+        "streamIdHelp": "Qu'est-ce que c'est ?",
+        "unavailableTitle": "La diffusion est indisponible",
+        "youtubeTerms": "Conditions d’utilisation de YouTube",
         "googlePrivacyPolicy": "Politique de confidentialité de Google"
     },
     "localRecording": {
@@ -511,7 +513,7 @@
         "serviceName": "Service d'enregistrement",
         "signIn": "Se connecter",
         "signOut": "Se déconnecter",
-        "unavailable": "Oups ! Le {{serviceName}} est actuellement indisponible. Nous travaillons sur la résolution du problème. Veuillez réessayer plus tard.",
+        "unavailable": "Oups! Le {{serviceName}} est actuellement indisponible. Nous tentons de résoudre le problème. Veuillez réessayer plus tard.",
         "unavailableTitle": "Enregistrement indisponible"
     },
     "sectionList": {
@@ -648,13 +650,13 @@
         "lowerYourHand": "Baisser la main",
         "moreActions": "Plus d'actions",
         "moreOptions": "Plus d'options",
-        "mute": "Activer / Désactiver le micro",
-        "muteEveryone": "Couper le micro de tout le monde",
-        "noAudioSignalTitle": "Il n'y a pas d'entrée provenant de votre micro !",
-        "noAudioSignalDesc": "Si vous n'avez pas délibérément coupé le son des paramètres du système ou du matériel, envisagez de changer le périphérique.",
-        "noAudioSignalDescSuggestion": "Si vous n'avez pas délibérément coupé le son des paramètres du système ou du matériel, pensez à utiliser le périphérique suivant.",
+        "mute": "Muet / Actif",
+        "muteEveryone": "Couper le micro à tout le monde",
+        "noAudioSignalTitle": "Il n'y a pas de signal provenant de votre micro !",
+        "noAudioSignalDesc": "Si vous n'avez pas délibérément coupé le son des paramètres du système ou du matériel, envisagez de changer de périphérique utilisé.",
+        "noAudioSignalDescSuggestion": "Si vous n'avez pas délibérément coupé le son des paramètres du système ou du matériel, pensez à utiliser le périphérique suivant :",
         "noisyAudioInputTitle": "Votre microphone semble être bruyant !",
-        "noisyAudioInputDesc": "Il semble que votre microphone fasse du bruit, pensez à le mettre en sourdine ou à changer d'appareil.",
+        "noisyAudioInputDesc": "Il semble que votre microphone fasse du bruit, veuillez le couper ou changer de périphérique.",
         "openChat": "Ouvrir le chat",
         "pip": "Entrer en mode Picture-in-Picture",
         "privateMessage": "Envoyer un message privé",
@@ -694,23 +696,23 @@
         "tr": "TR"
     },
     "userMedia": {
-        "androidGrantPermissions": "Sélectionnez <b><i>Autoriser</i></b> lorsque votre navigateur demande des autorisations.",
-        "chromeGrantPermissions": "Sélectionnez <b><i>Autoriser</i></b> lorsque votre navigateur demande des autorisations.",
-        "edgeGrantPermissions": "Sélectionnez <b><i>Oui</i></b> quand le navigateur demande les permissions.",
-        "electronGrantPermissions": "Merci d'autoriser le partage de votre camera et microphone",
-        "firefoxGrantPermissions": "Sélectionnez <b><i>Partager le périphérique sélectionné</i></b> lorsque votre navigateur demande des autorisations.",
-        "iexplorerGrantPermissions": "Sélectionnez <b><i>OK</i></b> quand le navigateur demande les permissions.",
-        "nwjsGrantPermissions": "Merci d'autoriser le partage de votre camera et microphone",
-        "operaGrantPermissions": "Sélectionnez <b><i>Autoriser</i></b> lorsque votre navigateur demande des autorisations.",
-        "react-nativeGrantPermissions": "Sélectionnez <b><i>Autoriser</i></b> lorsque votre navigateur demande des autorisations.",
-        "safariGrantPermissions": "Sélectionnez <b><i>OK</i></b> quand le navigateur demande les permissions."
+        "androidGrantPermissions": "Sélectionnez <b><i>Autoriser</i></b> lorsque votre navigateur demande votre autorisation.",
+        "chromeGrantPermissions": "Sélectionnez <b><i>Autoriser</i></b> lorsque votre navigateur demande votre autorisation.",
+        "edgeGrantPermissions": "Sélectionnez <b><i>Oui</i></b> quand le navigateur demande votre autorisation.",
+        "electronGrantPermissions": "Veuillez autoriser le partage de votre camera et microphone.",
+        "firefoxGrantPermissions": "Sélectionnez <b><i>Partager le périphérique sélectionné</i></b> lorsque votre navigateur demande votre autorisation.",
+        "iexplorerGrantPermissions": "Sélectionnez <b><i>OK</i></b> quand le navigateur demande votre autorisation.",
+        "nwjsGrantPermissions": "Veuillez autoriser le partage de votre camera et microphone.",
+        "operaGrantPermissions": "Sélectionnez <b><i>Autoriser</i></b> lorsque votre navigateur demande votre autorisation.",
+        "react-nativeGrantPermissions": "Sélectionnez <b><i>Autoriser</i></b> lorsque votre navigateur demande votre autorisation.",
+        "safariGrantPermissions": "Sélectionnez <b><i>OK</i></b> quand le navigateur demande votre autorisation."
     },
     "videoSIPGW": {
-        "busy": "Nous travaillons sur la libération des ressources. Veuillez réessayez dans quelques minutes.",
+        "busy": "Nous tentons de libérer les ressources requises. Veuillez réessayez dans quelques minutes.",
         "busyTitle": "Le service du Salon est actuellement occupé",
         "errorAlreadyInvited": "{{displayName}} est déjà invité(e)",
         "errorInvite": "La conférence n'est pas encore établie. Veuillez réessayer plus tard.",
-        "errorInviteFailed": "Nous travaillons sur la résolution du problème. Veuillez réessayer plus tard.",
+        "errorInviteFailed": "Nous tentons de résoudre le problème. Veuillez réessayer plus tard.",
         "errorInviteFailedTitle": "l'invitation de {{displayName}} a échoué",
         "errorInviteTitle": "Erreur lors de l'invitation",
         "pending": "{{displayName}} a été invité(e)"
@@ -750,7 +752,7 @@
             "join": "Touchez pour rejoindre",
             "roomname": "Saisissez un nom de salle"
         },
-        "appDescription": "Allez-y, chat vidéo avec toute l'équipe. En fait, invitez tout le monde que vous connaissez. {{app}} est une solution de visioconférence entièrement chiffrée et 100% open source que vous pouvez utiliser toute la journée, tous les jours, gratuitement— aucun compte requis.",
+        "appDescription": "Foncez tchater en vidéo avec toute le monde. En fait, vous pouvez inviter tout ceux que vous connaissez. {{app}} est une solution de visioconférence entièrement chiffrée et 100% libre que vous pouvez utiliser en permanence, chaque jours, et sans aucun compte requis.",
         "audioVideoSwitch": {
             "audio": "Voix",
             "video": "Vidéo"
@@ -773,7 +775,7 @@
         "roomnameHint": "Entrez le nom ou l'URL de la salle que vous souhaitez rejoindre. Vous pouvez faire un nom, laissez les gens que vous rencontrerez le savoir afin qu'ils entrent le même nom.",
         "sendFeedback": "Envoyer votre avis",
         "terms": "Termes",
-        "title": "Vidéoconférence Sécurisée, entièrement en vedette et gratuite",
+        "title": "Système de vidéoconférence sécurisé, riche en fonctionnalités et gratuit",
         "getHelp": "Obtenir de l'aide"
     },
     "lonelyMeetingExperience": {
