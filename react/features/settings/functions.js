@@ -1,4 +1,5 @@
 // @flow
+
 import { SERVER_URL_CHANGE_ENABLED, getFeatureFlag } from '../base/flags';
 import { i18next, DEFAULT_LANGUAGE, LANGUAGES } from '../base/i18n';
 import { createLocalTrack } from '../base/lib-jitsi-meet/functions';
@@ -29,8 +30,7 @@ export function isSettingEnabled(settingName: string) {
  *
  * @param {(Function|Object)} stateful - The (whole) redux state, or redux's
  * {@code getState} function to be used to retrieve the state.
- * @returns {boolean} True to indicate that user can change Server URL, false
- * otherwise.
+ * @returns {boolean} True to indicate that user can change Server URL, false otherwise.
  */
 export function isServerURLChangeEnabled(stateful: Object | Function) {
     const state = toState(stateful);

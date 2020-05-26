@@ -11,7 +11,7 @@ import { normalizeUserInputURL, isServerURLChangeEnabled } from '../../functions
 import {
     AbstractSettingsView,
     _mapStateToProps as _abstractMapStateToProps,
-    type Props
+    type Props as AbstractProps
 } from '../AbstractSettingsView';
 
 import FormRow from './FormRow';
@@ -74,7 +74,7 @@ type State = {
  * The type of the React {@code Component} props of
  * {@link SettingsView}.
  */
-type NativeProps = Props & {
+type Props = AbstractProps & {
 
     /**
      * Flag indicating if URL can be changed by user.
@@ -89,7 +89,7 @@ type NativeProps = Props & {
  *
  * @extends AbstractSettingsView
  */
-class SettingsView extends AbstractSettingsView<NativeProps, State> {
+class SettingsView extends AbstractSettingsView<Props, State> {
     _urlField: Object;
 
     /**
@@ -529,8 +529,8 @@ class SettingsView extends AbstractSettingsView<NativeProps, State> {
  */
 function _mapStateToProps(state) {
     return {
-        _serverURLChangeEnabled: isServerURLChangeEnabled(state),
-        ..._abstractMapStateToProps(state)
+        ..._abstractMapStateToProps(state),
+        _serverURLChangeEnabled: isServerURLChangeEnabled(state)
     };
 }
 

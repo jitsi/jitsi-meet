@@ -37,7 +37,7 @@ import org.jitsi.meet.sdk.JitsiMeetConferenceOptions;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.List;
+import java.util.Collection;
 import java.util.Map;
 
 /**
@@ -116,6 +116,8 @@ public class MainActivity extends JitsiMeetActivity {
         broadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
+                // As new restrictions including server URL are received,
+                // conference should be restarted with new configuration.
                 leave();
                 recreate();
             }
@@ -154,16 +156,19 @@ public class MainActivity extends JitsiMeetActivity {
         RestrictionsManager manager =
             (RestrictionsManager) getSystemService(Context.RESTRICTIONS_SERVICE);
         Bundle restrictions = manager.getApplicationRestrictions();
-        List<RestrictionEntry> entries = manager.getManifestRestrictions(
+        Collection<RestrictionEntry> entries = manager.getManifestRestrictions(
             getApplicationContext().getPackageName());
-        for (RestrictionEntry entry : entries) {
-            String key = entry.getKey();
-            if (key.equals(RESTRICTION_SERVER_URL)) {
-                if (restrictions != null && restrictions.containsKey(RESTRICTION_SERVER_URL)) {
+        for (RestrictionEntry restrictionEntry : entries) {
+            String key = restrictionEntry.getKey();
+            if (RESTRICTION_SERVER_URL.equals(key)) {
+                // If restrictions are passed to the application.
+                if (restrictions != null &&
+                    restrictions.containsKey(RESTRICTION_SERVER_URL)) {
                     defaultURL = restrictions.getString(RESTRICTION_SERVER_URL);
                     configurationByRestrictions = true;
+                // Otherwise use default URL from app-restrictions.xml.
                 } else {
-                    defaultURL = entry.getSelectedString();
+                    defaultURL = restrictionEntry.getSelectedString();
                     configurationByRestrictions = false;
                 }
             }
