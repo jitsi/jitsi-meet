@@ -56,7 +56,7 @@ function InviteMore({
                     className = 'invite-more-button'
                     onClick = { onClick }>
                     <Icon src = { IconInviteMore } />
-                    <div className = 'invite-more-text'>
+                    <div className = 'invite-more-button-text'>
                         {t('addPeople.inviteMorePrompt')}
                     </div>
                 </div>

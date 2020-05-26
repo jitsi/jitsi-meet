@@ -21,11 +21,10 @@
 
     &-button {
         display: flex;
-        justify-content: space-between;
-        align-items: center;
         margin: auto;
         padding: 8px 16px;
-        width: 152px;
+        width: fit-content;
+        width: -moz-fit-content;
         height: 24px;
         background: #0376DA;
         border-radius: 3px;
@@ -38,6 +37,7 @@
         }
 
         &-text {
+            margin-left: 8px;
             font-size: 15px;
             line-height: 24px;
         }

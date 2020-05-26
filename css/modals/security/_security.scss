@@ -17,8 +17,8 @@
                     color: #6FB1EA;
                 }
 
-                & > a + a {
-                    margin-left: 24px;
+                & > :first-child:not(:last-child) {
+                    margin-right: 24px;
                 }
             }
         }
