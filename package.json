@@ -50,7 +50,7 @@
     "i18next-xhr-backend": "3.0.0",
     "jQuery-Impromptu": "github:trentrichardson/jQuery-Impromptu#v6.0.0",
     "jitsi-meet-logger": "github:jitsi/jitsi-meet-logger#5ec92357570dc8f0b7ffc1528820721c84c6af8b",
-    "jquery": "3.4.0",
+    "jquery": "3.5.1",
     "jquery-contextmenu": "2.4.5",
     "jquery-i18next": "1.2.1",
     "js-md5": "0.6.1",
@@ -124,14 +124,14 @@
     "imports-loader": "0.7.1",
     "jetifier": "1.6.4",
     "metro-react-native-babel-preset": "0.56.0",
-    "node-sass": "4.13.1",
+    "node-sass": "4.14.1",
     "string-replace-loader": "2.1.1",
     "style-loader": "0.19.0",
     "unorm": "1.6.0",
     "webpack": "4.27.1",
     "webpack-bundle-analyzer": "3.4.1",
-    "webpack-cli": "3.1.2",
-    "webpack-dev-server": "3.8.2"
+    "webpack-cli": "3.3.11",
+    "webpack-dev-server": "3.11.0"
   },
   "engines": {
     "node": ">=8.0.0",
