@@ -1,3 +1,4 @@
+// @flow
 import { ReducerRegistry } from '../base/redux';
 
 import { SET_SHARED_VIDEO_STATUS, SET_SHARED_VIDEO_OWNER } from './actionTypes';

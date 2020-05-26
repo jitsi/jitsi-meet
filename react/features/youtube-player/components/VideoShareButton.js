@@ -6,10 +6,7 @@ import { toggleSharedVideo } from '../actions';
 import { translate } from '../../base/i18n';
 import { IconShareVideo } from '../../base/icons';
 import { connect } from '../../base/redux';
-import {
-    AbstractButton,
-    AbstractButtonProps
-} from '../../base/toolbox';
+import { AbstractButton, AbstractButtonProps } from '../../base/toolbox';
 
 import { getLocalParticipant } from '../../base/participants';
 
@@ -81,8 +78,7 @@ class VideoShareButton extends AbstractButton<Props, *> {
  * @returns {Props}
  */
 function _mapStateToProps(state): Object {
-    const sharedVideoStatus = state['features/youtube-player'].status;
-    const { ownerId } = state['features/youtube-player'];
+    const { ownerId, status: sharedVideoStatus } = state['features/youtube-player'];
     const localParticipantId = getLocalParticipant(state).id;
 
     if (ownerId !== localParticipantId) {

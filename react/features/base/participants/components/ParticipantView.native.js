@@ -15,7 +15,6 @@ import { connect } from '../../redux';
 import type { StyleType } from '../../styles';
 import { TestHint } from '../../testing/components';
 import { getTrackByMediaTypeAndParticipant } from '../../tracks';
-import { shouldRenderParticipantVideo } from '../functions';
 import { shouldRenderParticipantVideo, getParticipantById } from '../functions';
 
 import styles from './styles';
@@ -44,11 +43,11 @@ type Props = {
     _participantName: string,
 
     /**
-     * The participant (to be) depicted by {@link ParticipantView}.
+     * True is the participant which this component represents is fake.
      *
      * @private
      */
-    _participant: Object,
+    _isFakeParticipant: string,
 
     /**
      * True if the video should be rendered, false otherwise.
@@ -195,7 +194,8 @@ class ParticipantView extends Component<Props> {
             _videoTrack: videoTrack,
             onPress,
             tintStyle,
-            disableVideo
+            disableVideo,
+            _isFakeParticipant
         } = this.props;
 
         // If the connection has problems, we will "tint" the video / avatar.
@@ -209,9 +209,7 @@ class ParticipantView extends Component<Props> {
                 ? this.props.testHintId
                 : `org.jitsi.meet.Participant#${this.props.participantId}`;
 
-        const isFakeParticipant = this.props._participant && this.props._participant.isFakeParticipant;
-
-        const renderYoutubeLargeVideo = isFakeParticipant && !disableVideo;
+        const renderYoutubeLargeVideo = _isFakeParticipant && !disableVideo;
 
         return (
             <Container
@@ -227,9 +225,9 @@ class ParticipantView extends Component<Props> {
                     onPress = { renderYoutubeLargeVideo ? undefined : onPress }
                     value = '' />
 
-                { renderYoutubeLargeVideo && <ConnectedYoutubeLargeVideo youtubeId = { this.props.participantId } /> }
+                { renderYoutubeLargeVideo && <YoutubeLargeVideo youtubeId = { this.props.participantId } /> }
 
-                { !isFakeParticipant && renderVideo
+                { !_isFakeParticipant && renderVideo
                     && <VideoTrack
                         onPress = { onPress }
                         videoTrack = { videoTrack }
@@ -270,15 +268,16 @@ class ParticipantView extends Component<Props> {
  */
 function _mapStateToProps(state, ownProps) {
     const { disableVideo, participantId } = ownProps;
+    const participant = getParticipantById(state, participantId);
     let connectionStatus;
     let participantName;
 
     return {
         _connectionStatus:
             connectionStatus
-            || JitsiParticipantConnectionStatus.ACTIVE,
+                || JitsiParticipantConnectionStatus.ACTIVE,
         _participantName: participantName,
-        _participant: getParticipantById(state, participantId),
+        _isFakeParticipant: participant && participant.isFakeParticipant,
         _renderVideo: shouldRenderParticipantVideo(state, participantId) && !disableVideo,
         _videoTrack:
             getTrackByMediaTypeAndParticipant(

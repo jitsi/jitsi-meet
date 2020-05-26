@@ -23,8 +23,7 @@ export type Props = {
 /**
  * Implements an abstract class for {@code EnterVideoLinkPrompt}.
  */
-export default class AbstractEnterVideoLinkPrompt<S: *>
-    extends Component < Props, S > {
+export default class AbstractEnterVideoLinkPrompt<S: *> extends Component < Props, S > {
     /**
      * Instantiates a new component.
      *

@@ -1,6 +1,9 @@
 // @flow
+
 import { SET_SHARED_VIDEO_STATUS, SET_SHARED_VIDEO_OWNER } from './actionTypes';
+
 import { openDialog } from '../base/dialog';
+
 import { EnterVideoLinkPrompt } from './components';
 
 /**
@@ -10,7 +13,8 @@ import { EnterVideoLinkPrompt } from './components';
  * @param {value} time - The current position of the YouTube video being shared.
  * @returns {{
  *     type: SET_SHARED_VIDEO_STATUS,
- *     status: string
+ *     status: string,
+ *     time: string 
  * }}
  */
 export function setSharedVideoStatus(status, time) {

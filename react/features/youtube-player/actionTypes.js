@@ -9,6 +9,15 @@
  */
 export const SET_SHARED_VIDEO_STATUS = 'SET_SHARED_VIDEO_STATUS';
 
+/**
+ * The type of the action which signals to update the current known state of the
+ * shared YouTube video owner id.
+ *
+ * {
+ *     type: SET_SHARED_VIDEO_OWNER,
+ *     owner: string
+ * }
+ */
 export const SET_SHARED_VIDEO_OWNER = 'SET_SHARED_VIDEO_OWNER';
 
 /**

@@ -1,132 +1,122 @@
 // @flow
+
 import React, { useRef, useEffect } from 'react';
 import YoutubePlayer from 'react-native-youtube-iframe';
 import { setSharedVideoStatus } from '../../actions';
-import { useSelector, useDispatch, useStore } from 'react-redux';
+import { connect } from '../../../base/redux';
 import { getLocalParticipant } from '../../../base/participants';
 
-type YoutubeLargeVideoProps = {
-    youtubeId: string
-}
+/**
+ * The type of the React {@link Component} props of {@link YoutubeLargeVideo}.
+ */
+type Props = {
 
-const YoutubeLargeVideo = React.forwardRef(({ isPlaying, youtubeId, enableControls }, playerRef) => {
+    /**
+     * The ID of the participant (to be) depicted by LargeVideo.
+     *
+     * @private
+     */
+    isPlaying: string,
+
+    /**
+     * The color-schemed stylesheet of the feature.
+     */
+    seek: string,
+
+    enableControls: Boolean,
+
+    /**
+     * Callback to invoke when the {@code LargeVideo} is clicked/pressed.
+     */
+    onVideoReady: ?Function,
+
+    onVideoChangeEvent: ?Function,
+
+    youtubeId: string
+};
+
+const YoutubeLargeVideo = (props: Props) => {
+    const playerRef = useRef(null);
+    useEffect(() => {
+        if(!props.isOwner) {
+            playerRef.current.seekTo(props.seek);
+        }
+    }, [props.seek]);
+
+    const onChangeState = e => props.onVideoChangeEvent(e, playerRef.current.getCurrentTime());
+    const onReady = () => props.onVideoReady(playerRef.current.getCurrentTime())
 
     return (<YoutubePlayer
         height = '100%'
         initialPlayerParams = {{
-            controls: enableControls,
+            controls: props.enableControls,
             modestbranding: true
         }}
-        onChangeState = {  e => onVideoChangeEvent(e, playerRef) }
-        onReady = { onVideoReady() }
-        play = { isPlaying }
+        onChangeState = { onChangeState }
+        onReady = {  onReady }
+        play = { props.isPlaying }
         playbackRate = { 1 }
         ref = { playerRef }
-        videoId = { youtubeId }
+        videoId = { props.youtubeId }
         volume = { 50 }
         width = '100%' />);
-});
-
-const ConnectedYoutubeLargeVideo = ({ youtubeId }: YoutubeLargeVideoProps) => {
-    const playerRef = useRef(null);
-    const isPlaying = useSelector(state => getIsPlaying(state));
-    const seek = useSelector(state => getSeek(state));
-    const enableControls = useSelector(state => shouldEnableControls(state));
-
-    useEffect(() => {
-        playerRef.current.seekTo(seek);
-    });
-
-    return (<YoutubeLargeVideo
-        enableControls = { enableControls }
-        isPlaying = { isPlaying }
-        ref = { playerRef }
-        youtubeId = { youtubeId } />);
 };
 
-export default ConnectedYoutubeLargeVideo;
-
 /**
- * Dispatches video status 'playing' if the local user is the one sharing the video.
+ * Maps (parts of) the Redux state to the associated YoutubeLargeVideo's props.
  *
+ * @param {Object} state - Redux state.
  * @private
- * @param {string} dispatch - Todo add doc.
- * @param {string} store - Todo add doc.
- * @returns {void}
+ * @returns {Props}
  */
-function onVideoReady() {
-    const dispatch = useDispatch();
-    const state = useStore().getState();
-
-    const { ownerId } = state['features/youtube-player'];
-    const localParticipantId = getLocalParticipant(state).id;
-
-    if (ownerId === localParticipantId) {
-        dispatch(setSharedVideoStatus('playing'));
-    }
-}
-
-/**
- * Dispatches video status 'playing' if the local user is the one sharing the video.
- *
- * @private
- * @param {string} event - Todo add doc.
- * @param {string} playerRef - Todo add doc.
- * @returns {void}
- */
-function onVideoChangeEvent(event, playerRef) {
-    const dispatch = useDispatch();
-    const state = useStore().getState();
-    const { ownerId } = state['features/youtube-player'];
-    const localParticipantId = getLocalParticipant(state).id;
-
-    if (ownerId === localParticipantId) {
-        switch (event) {
-        case 'playing':
-            dispatch(setSharedVideoStatus('playing', playerRef.current.getCurrentTime()));
-            break;
-        case 'paused':
-            dispatch(setSharedVideoStatus('paused', playerRef.current.getCurrentTime()));
-            break;
-        }
-    }
-}
-
-/**
- * Dispatches video status 'playing' if the local user is the one sharing the video.
- *
- * @private
- * @param {string} state - Todo add doc.
- * @returns {string}
- */
-function getIsPlaying(state) {
-    const { status } = state['features/youtube-player'];
-
-    return status === 'playing';
-}
-
-/**
- * Dispatches video status 'playing' if the local user is the one sharing the video.
- *
- * @private
- * @param {string} state - Todo add doc.
- * @returns {string}
- */
-function getSeek(state) {
-
-    return state['features/youtube-player'].time;
-}
-
-/**
- * Dispatches video status 'playing' if the local user is the one sharing the video.
- *
- * @private
- * @param {string} state - Todo add doc.
- * @returns {boolean}
- */
-function shouldEnableControls(state) {
-    const { ownerId } = state['features/youtube-player'];
+function _mapStateToProps(state) {
+    const { ownerId, status, time } = state['features/youtube-player'];
     const localParticipant = getLocalParticipant(state);
 
-    return ownerId === localParticipant.id;
+    return {
+        isPlaying: status === 'playing',
+        seek: time,
+        enableControls: ownerId === localParticipant.id,
+        isOwner: ownerId === localParticipant.id
+    };
 }
+
+/**
+ * Maps dispatching of some action to React component props.
+ *
+ * @param {Function} dispatch - Redux action dispatcher.
+ * @private
+ * @returns {{
+ *     onVideoChangeEvent: Function,
+ *     onVideoReady: Function
+ * }}
+ */
+function _mapDispatchToProps(dispatch) {
+    return {
+        onVideoChangeEvent: (status, time) => {
+            time.then( t => {
+                if (!['playing', 'paused'].includes(status)) {
+                    return;
+                }
+                dispatch(setSharedVideoStatus(status, t));
+            } );
+        },
+        onVideoReady: (time) => { 
+            time.then( t => { dispatch(setSharedVideoStatus('playing', t)) }) }
+    }
+}
+
+/**
+ * Maps (parts of) the Redux state to the associated YoutubeLargeVideo's props.
+ *
+ * @private
+ * @returns {Props}
+ */
+function _mergeProps( { isOwner, ...stateProps }, { onVideoChangeEvent, onVideoReady }) {
+    return Object.assign(stateProps, {
+        onVideoChangeEvent: isOwner ? onVideoChangeEvent : () => {},
+        onVideoReady: isOwner ? onVideoReady : () => {}
+    });
+}
+
+export default connect(_mapStateToProps, _mapDispatchToProps, _mergeProps)(YoutubeLargeVideo);

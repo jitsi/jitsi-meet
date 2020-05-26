@@ -1,6 +1,7 @@
 // @flow
 
 import React from 'react';
+
 import { connect } from '../../../base/redux';
 
 import { InputDialog } from '../../../base/dialog';

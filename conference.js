@@ -2515,6 +2515,8 @@ export default {
                 if (state === 'stop'
                         || state === 'start'
                         || state === 'playing') {
+                    const localParticipant = getLocalParticipant(APP.store.getState());
+
                     room.removeCommand(this.commands.defaults.SHARED_VIDEO);
                     room.sendCommandOnce(this.commands.defaults.SHARED_VIDEO, {
                         value: url,
@@ -2522,7 +2524,8 @@ export default {
                             state,
                             time,
                             muted: isMuted,
-                            volume
+                            volume,
+                            from: localParticipant.id
                         }
                     });
                 } else {
@@ -2550,7 +2553,7 @@ export default {
                 } else if (attributes.state === 'start') {
                     APP.UI.onSharedVideoStart(id, value, attributes);
                 } else if (attributes.state === 'playing'
-                    || attributes.state === 'pause') {
+                    || attributes.state === 'paused') {
                     APP.UI.onSharedVideoUpdate(id, value, attributes);
                 }
             });
