@@ -1,10 +1,9 @@
 // @flow
 
+import { LIVE_STREAMING_ENABLED, getFeatureFlag } from '../../../../base/flags';
 import { translate } from '../../../../base/i18n';
 import { IconLiveStreaming } from '../../../../base/icons';
-import { LIVE_STREAMING_ENABLED, getFeatureFlag } from '../../../../base/flags';
 import { connect } from '../../../../base/redux';
-
 import AbstractLiveStreamButton, {
     _mapStateToProps as _abstractMapStateToProps,
     type Props

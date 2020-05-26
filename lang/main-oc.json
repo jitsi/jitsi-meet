@@ -722,9 +722,6 @@
         "lowDefinition": "Bassa definicion",
         "onlyAudioAvailable": "Pas que l’àudio es disponible",
         "onlyAudioSupported": "Sèm compatibles solament amb l’àudio dins aqueste navigator.",
-        "p2pEnabled": "Connexion par a par activada",
-        "p2pVideoQualityDescription": "En mòde par a par, la qualitat vidèo que recebètz pòt solament passar de nauta a àudio solament. Los autres paramètres seràn pas preses en compte fins que quitetz lo mòde par a par.",
-        "recHighDefinitionOnly": "Nauta definicion preferida.",
         "sd": "SD",
         "sdTooltip": "Difusion vidèo en definicion estandard",
         "standardDefinition": "Definicion estandard"

@@ -14,12 +14,13 @@ import {
 } from '../../../recording';
 import { TranscribingExpandedLabel } from '../../../transcribing';
 import { VideoQualityExpandedLabel } from '../../../video-quality';
-
+import { shouldDisplayNotifications } from '../../functions';
 import AbstractLabels, {
     _abstractMapStateToProps,
     type Props as AbstractLabelsProps
 } from '../AbstractLabels';
-import { shouldDisplayNotifications } from '../../functions';
+
+import InsecureRoomNameExpandedLabel from './InsecureRoomNameExpandedLabel';
 import styles from './styles';
 
 /**
@@ -31,14 +32,6 @@ type Props = AbstractLabelsProps & {
      * Function to translate i18n labels.
      */
     t: Function,
-
-    /**
-     * The indicator which determines whether the UI is reduced (to accommodate
-     * smaller display areas).
-     *
-     * @private
-     */
-    _reducedUI: boolean,
 
     /**
      * True if the labels should be visible, false otherwise.
@@ -85,6 +78,7 @@ const LABEL_ID_QUALITY = 'quality';
 const LABEL_ID_RECORDING = 'recording';
 const LABEL_ID_STREAMING = 'streaming';
 const LABEL_ID_TRANSCRIBING = 'transcribing';
+const LABEL_ID_INSECURE_ROOM_NAME = 'insecure-room-name';
 
 /**
  * The {@code ExpandedLabel} components to be rendered for the individual
@@ -104,7 +98,8 @@ const EXPANDED_LABELS = {
             mode: JitsiRecordingConstants.mode.STREAM
         }
     },
-    transcribing: TranscribingExpandedLabel
+    transcribing: TranscribingExpandedLabel,
+    'insecure-room-name': InsecureRoomNameExpandedLabel
 };
 
 /**
@@ -159,7 +154,7 @@ class Labels extends AbstractLabels<Props, State> {
         }
 
         const wide = !isNarrowAspectRatio(this);
-        const { _filmstripVisible, _reducedUI } = this.props;
+        const { _filmstripVisible } = this.props;
 
         return (
             <View
@@ -200,24 +195,24 @@ class Labels extends AbstractLabels<Props, State> {
                             this._renderTranscribingLabel()
                         }
                     </TouchableOpacity>
-                    {/*
-                      * Emil, Lyubomir, Nichole, and Zoli said that the Labels
-                      * should not be rendered in Picture-in-Picture. Saul
-                      * argued that the recording Labels should be rendered. As
-                      * a temporary compromise, don't render the
-                      * VideoQualityLabel at least because it's not that
-                      * important.
-                      */
-                        _reducedUI || (
-                            <TouchableOpacity
-                                onLayout = {
-                                    this._createOnLayout(LABEL_ID_QUALITY) }
-                                onPress = {
-                                    this._createOnPress(LABEL_ID_QUALITY) } >
-                                { this._renderVideoQualityLabel() }
-                            </TouchableOpacity>
-                        )
-                    }
+                    <TouchableOpacity
+                        onLayout = {
+                            this._createOnLayout(LABEL_ID_INSECURE_ROOM_NAME)
+                        }
+                        onPress = {
+                            this._createOnPress(LABEL_ID_INSECURE_ROOM_NAME)
+                        } >
+                        {
+                            this._renderInsecureRoomNameLabel()
+                        }
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        onLayout = {
+                            this._createOnLayout(LABEL_ID_QUALITY) }
+                        onPress = {
+                            this._createOnPress(LABEL_ID_QUALITY) } >
+                        { this._renderVideoQualityLabel() }
+                    </TouchableOpacity>
                 </View>
                 <View
                     style = { [
@@ -339,11 +334,13 @@ class Labels extends AbstractLabels<Props, State> {
         return null;
     }
 
-    _renderRecordingLabel: string => React$Element<*>;
+    _renderRecordingLabel: string => React$Element<any>;
 
-    _renderTranscribingLabel: () => React$Element<*>
+    _renderTranscribingLabel: () => React$Element<any>;
 
-    _renderVideoQualityLabel: () => React$Element<*>;
+    _renderInsecureRoomNameLabel: () => React$Element<any>;
+
+    _renderVideoQualityLabel: () => React$Element<any>;
 }
 
 /**
@@ -352,16 +349,11 @@ class Labels extends AbstractLabels<Props, State> {
  *
  * @param {Object} state - The redux state.
  * @private
- * @returns {{
- *     _filmstripVisible: boolean,
- *     _reducedUI: boolean,
- *     _visible: boolean
- * }}
+ * @returns {Props}
  */
 function _mapStateToProps(state) {
     return {
         ..._abstractMapStateToProps(state),
-        _reducedUI: state['features/base/responsive-ui'].reducedUI,
         _visible: !shouldDisplayNotifications(state)
     };
 }

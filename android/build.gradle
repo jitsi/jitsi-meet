@@ -161,7 +161,9 @@ ext {
     mavenPassword = System.env.MVN_PASSWORD ?: ""
 
     // Libre build
-    libreBuild = (System.env.LIBRE_BUILD ?: "true").toBoolean()
+    libreBuild = true
+    googleServicesEnabled = false
+
 }
 
 // Force the version of the Android build tools we have chosen on all

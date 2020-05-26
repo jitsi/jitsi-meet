@@ -10,7 +10,6 @@ import { translate } from '../../../../base/i18n';
 import { JitsiModal, setActiveModalId } from '../../../../base/modal';
 import { LoadingIndicator } from '../../../../base/react';
 import { connect } from '../../../../base/redux';
-
 import { DIAL_IN_SUMMARY_VIEW_ID } from '../../../constants';
 import { getDialInfoPageURLForURIString } from '../../../functions';
 

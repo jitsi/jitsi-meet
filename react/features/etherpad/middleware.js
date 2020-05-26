@@ -1,9 +1,9 @@
 // @flow
 
+import UIEvents from '../../../service/UI/UIEvents';
 import { getCurrentConference } from '../base/conference';
 import { setActiveModalId } from '../base/modal';
 import { MiddlewareRegistry, StateListenerRegistry } from '../base/redux';
-import UIEvents from '../../../service/UI/UIEvents';
 
 import { TOGGLE_DOCUMENT_EDITING } from './actionTypes';
 import { setDocumentEditingState, setDocumentUrl } from './actions';

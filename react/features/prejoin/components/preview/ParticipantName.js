@@ -1,6 +1,7 @@
 // @flow
 
 import React, { Component } from 'react';
+
 import { translate } from '../../../base/i18n';
 
 type Props = {
@@ -9,6 +10,11 @@ type Props = {
      * Flag signaling if the name is ediable or not.
      */
     isEditable: boolean,
+
+    /**
+     * Joins the current meeting.
+     */
+    joinConference: Function,
 
     /**
      * Sets the name for the joining user.
@@ -32,6 +38,7 @@ type Props = {
  * @returns {ReactElement}
  */
 class ParticipantName extends Component<Props> {
+
     /**
      * Initializes a new {@code ParticipantName} instance.
      *
@@ -41,7 +48,22 @@ class ParticipantName extends Component<Props> {
     constructor(props) {
         super(props);
 
+        this._onKeyDown = this._onKeyDown.bind(this);
         this._onNameChange = this._onNameChange.bind(this);
+    }
+
+    _onKeyDown: () => void;
+
+    /**
+     * Joins the conference on 'Enter'.
+     *
+     * @param {Event} event - Key down event object.
+     * @returns {void}
+     */
+    _onKeyDown(event) {
+        if (event.key === 'Enter') {
+            this.props.joinConference();
+        }
     }
 
     _onNameChange: () => void;
@@ -63,15 +85,23 @@ class ParticipantName extends Component<Props> {
      */
     render() {
         const { value, isEditable, t } = this.props;
+        const { _onKeyDown, _onNameChange } = this;
 
         return isEditable ? (
             <input
+                autoFocus = { true }
                 className = 'prejoin-preview-name prejoin-preview-name--editable'
-                onChange = { this._onNameChange }
+                onChange = { _onNameChange }
+                onKeyDown = { _onKeyDown }
                 placeholder = { t('dialog.enterDisplayName') }
                 value = { value } />
         )
-            : <div className = 'prejoin-preview-name'>{value}</div>
+            : <div
+                className = 'prejoin-preview-name prejoin-preview-name--text'
+                onKeyDown = { _onKeyDown }
+                tabIndex = '0' >
+                {value}
+            </div>
         ;
     }
 }

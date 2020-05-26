@@ -8,10 +8,8 @@ import React, { PureComponent } from 'react';
 import { AppRegistry } from 'react-native';
 
 import { App } from './features/app';
-import { IncomingCallApp } from './features/mobile/incoming-call';
-
-// It's crucial that the native loggers are created ASAP, not to lose any data.
 import { _initLogging } from './features/base/logging/functions';
+import { IncomingCallApp } from './features/mobile/incoming-call';
 
 declare var __DEV__;
 

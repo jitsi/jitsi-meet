@@ -9,7 +9,6 @@ import {
 } from 'react-native';
 
 import { BackButtonRegistry } from '../../../../mobile/back-button';
-
 import { type StyleType } from '../../../styles';
 
 import styles from './slidingviewstyles';

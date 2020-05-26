@@ -6,13 +6,13 @@ import { Text, TouchableOpacity, View } from 'react-native';
 import { ColorSchemeRegistry } from '../../../base/color-scheme';
 import { getFeatureFlag, INVITE_ENABLED } from '../../../base/flags';
 import { translate } from '../../../base/i18n';
+import { Icon, IconAddPeople } from '../../../base/icons';
+import { getParticipantCount } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import { StyleType } from '../../../base/styles';
-import { getParticipantCount } from '../../../base/participants';
 import { doInvitePeople } from '../../../invite/actions.native';
 
 import styles from './styles';
-import { Icon, IconAddPeople } from '../../../base/icons';
 
 /**
  * Props type of the component.

@@ -20,6 +20,7 @@ const DEFAULT_STATE = {
      */
     calleeInfoVisible: false,
     numbersEnabled: true,
+    numbersFetched: false,
     pendingInviteRequests: []
 };
 
@@ -59,7 +60,8 @@ ReducerRegistry.register('features/invite', (state = DEFAULT_STATE, action) => {
                 ...state,
                 conferenceID: action.conferenceID,
                 numbers: action.dialInNumbers,
-                numbersEnabled: true
+                numbersEnabled: true,
+                numbersFetched: true
             };
         }
 
@@ -72,7 +74,8 @@ ReducerRegistry.register('features/invite', (state = DEFAULT_STATE, action) => {
             ...state,
             conferenceID: action.conferenceID,
             numbers: action.dialInNumbers,
-            numbersEnabled
+            numbersEnabled,
+            numbersFetched: true
         };
     }
     }

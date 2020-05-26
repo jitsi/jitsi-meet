@@ -2,14 +2,12 @@
 
 import React, { Component, Fragment } from 'react';
 
+import { statsEmitter } from '../../../connection-indicator';
 import { getLocalParticipant } from '../../participants';
 import { connect } from '../../redux';
-
-// FIXME this imports feature to 'base'
-import { statsEmitter } from '../../../connection-indicator';
+import { isTestModeEnabled } from '../functions';
 
 import { TestHint } from './index';
-import { isTestModeEnabled } from '../functions';
 
 /**
  * Defines the TestConnectionInfo's properties.

@@ -20,6 +20,7 @@ import {
     unregisterSound
 } from '../base/sounds';
 
+import { RECORDING_SESSION_UPDATED } from './actionTypes';
 import {
     clearRecordingSessions,
     hidePendingRecordingNotification,
@@ -29,7 +30,6 @@ import {
     showStoppedRecordingNotification,
     updateRecordingSessionData
 } from './actions';
-import { RECORDING_SESSION_UPDATED } from './actionTypes';
 import {
     LIVE_STREAMING_OFF_SOUND_ID,
     LIVE_STREAMING_ON_SOUND_ID,

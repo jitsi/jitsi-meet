@@ -1,10 +1,16 @@
 apply plugin: 'com.android.application'
 
+    apply plugin: 'io.fabric'
+// automagically activated with google-services.json
+// Crashlytics integration is done as part of Firebase now, so it gets
+if (googleServicesEnabled) {
+}
+
 // Use the number of seconds/10 since Jan 1 2019 as the versionCode.
 // This lets us upload a new build at most every 10 seconds for the
 // next ~680 years.
 // https://stackoverflow.com/a/38643838
-def vcode = (int)(((new Date().getTime()/1000) - 1546297200) / 10)
+def vcode = (int) (((new Date().getTime() / 1000) - 1546297200) / 10)
 
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
@@ -133,8 +139,8 @@ gradle.projectsEvaluated {
         def targetName = variant.name.capitalize()
 
         def currentRunPackagerTask = tasks.create(
-                name: "run${targetName}ReactPackager",
-                type: Exec) {
+            name: "run${targetName}ReactPackager",
+            type: Exec) {
             group = "react"
             description = "Run the React packager."
 
@@ -164,4 +170,7 @@ gradle.projectsEvaluated {
 
 }
 
+if (googleServicesEnabled) {
+    apply plugin: 'com.google.gms.google-services'
+}
 
