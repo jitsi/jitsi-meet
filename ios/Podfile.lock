@@ -287,7 +287,7 @@ PODS:
   - React-jsinspector (0.61.5-jitsi.1)
   - react-native-background-timer (2.1.1):
     - React
-  - react-native-calendar-events (1.7.3):
+  - react-native-calendar-events (2.0.0):
     - React
   - react-native-keep-awake (4.0.0):
     - React
@@ -566,7 +566,7 @@ SPEC CHECKSUMS:
   React-jsiexecutor: de1c37cf59ae9adcbf2be82eea0e090dc3f3205e
   React-jsinspector: b76c4e84a7833bb4c90549d59ed53ec299ff912b
   react-native-background-timer: 0d34748e53a972507c66963490c775321a88f6f2
-  react-native-calendar-events: 2fe35a9294af05de0ed819d3a1b5dac048d2c010
+  react-native-calendar-events: 1442fad71a00388f933cfa25512588fec300fcf8
   react-native-keep-awake: eba3137546b10003361b37c761f6c429b59814ae
   react-native-netinfo: 8d8db463bcc5db66a8ac5c48a7d86beb3b92f61a
   react-native-webrtc: 86d841823e66d68cc1f86712db1c2956056bf0c2
