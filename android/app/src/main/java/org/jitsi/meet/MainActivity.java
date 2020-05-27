@@ -131,13 +131,13 @@ public class MainActivity extends JitsiMeetActivity {
     }
 
     @Override
-    public void finish() {
+    public void onDestroy() {
         if (broadcastReceiver != null) {
             unregisterReceiver(broadcastReceiver);
             broadcastReceiver = null;
         }
 
-        super.finish();
+        super.onDestroy();
     }
 
     private void setJitsiMeetConferenceDefaultOptions() {
