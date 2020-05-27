@@ -27,7 +27,7 @@
         "shareLink": "Teilen Sie den Meeting-Link, um andere einzuladen",
         "shareStream": "Den Live-Streaming-Link freigeben",
         "telephone": "Telefon: {{number}}",
-        "title": "Teilnehmer zu dieser Konferenz einladen" 
+        "title": "Teilnehmer zu dieser Konferenz einladen"
     },
     "audioDevices": {
         "bluetooth": "Bluetooth",
