@@ -80,7 +80,7 @@
     "react-native-svg": "9.7.1",
     "react-native-svg-transformer": "0.13.0",
     "react-native-swipeout": "2.3.6",
-    "react-native-watch-connectivity": "0.2.0",
+    "react-native-watch-connectivity": "0.4.3",
     "react-native-webrtc": "1.75.3",
     "react-native-webview": "7.4.1",
     "react-redux": "7.1.0",
