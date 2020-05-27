@@ -21,6 +21,11 @@ type Props = {
     _calendarEnabled: boolean,
 
     /**
+     * Whether the insecure room name functionality is enabled or not.
+     */
+    _enableInsecureRoomNameWarning: boolean,
+
+    /**
      * Whether the recent list is enabled
      */
     _recentListEnabled: Boolean,
@@ -214,7 +219,7 @@ export class AbstractWelcomePage extends Component<Props, *> {
     _onRoomChange(value: string) {
         this.setState({
             room: value,
-            insecureRoomName: value && isInsecureRoomName(value)
+            insecureRoomName: this.props._enableInsecureRoomNameWarning && value && isInsecureRoomName(value)
         });
     }
 
@@ -226,7 +231,7 @@ export class AbstractWelcomePage extends Component<Props, *> {
      * @returns {ReactElement}
      */
     _renderInsecureRoomNameWarning() {
-        if (this.state.insecureRoomName) {
+        if (this.props._enableInsecureRoomNameWarning && this.state.insecureRoomName) {
             return this._doRenderInsecureRoomNameWarning();
         }
 
@@ -273,6 +278,7 @@ export class AbstractWelcomePage extends Component<Props, *> {
 export function _mapStateToProps(state: Object) {
     return {
         _calendarEnabled: isCalendarEnabled(state),
+        _enableInsecureRoomNameWarning: state['features/base/config'].enableInsecureRoomNameWarning || false,
         _recentListEnabled: isRecentListEnabled(),
         _room: state['features/base/conference'].room,
         _settings: state['features/base/settings']
