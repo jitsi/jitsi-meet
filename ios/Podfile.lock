@@ -365,7 +365,7 @@ PODS:
     - React
   - RNSVG (9.7.1):
     - React
-  - RNWatch (0.2.0):
+  - RNWatch (0.4.3):
     - React
   - Yoga (1.14.0)
 
@@ -586,7 +586,7 @@ SPEC CHECKSUMS:
   RNGoogleSignin: 39336070b35fc4cea6a98cf111e00480317be0ae
   RNSound: c980916b596cc15c8dcd2f6ecd3b13c4881dbe20
   RNSVG: aac12785382e8fd4f28d072fe640612e34914631
-  RNWatch: 09738b339eceb66e4d80a2371633ca5fb380fa42
+  RNWatch: a5320c959c75e72845c07985f3e935e58998f1d3
   Yoga: 7b4209fda2441f99d54dd6cf4c82b094409bb68f
 
 PODFILE CHECKSUM: 082858daebbe170e7a490de433e7f2a99e0c3701
