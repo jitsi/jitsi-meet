@@ -1,7 +1,6 @@
 /* global interfaceConfig */
 
 import axios from 'axios';
-import Avatar from '@atlaskit/avatar';
 import Button, { ButtonGroup } from '@atlaskit/button';
 import DropdownMenu, {
     DropdownItem,
