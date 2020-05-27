@@ -7,7 +7,6 @@ import { ColorSchemeRegistry } from '../../color-scheme';
 import { HeaderWithNavigation, SlidingView } from '../../react';
 import { connect } from '../../redux';
 import { StyleType } from '../../styles';
-
 import { setActiveModalId } from '../actions';
 
 import styles from './styles';

@@ -6,8 +6,9 @@ import {
     SectionList as ReactNativeSectionList
 } from 'react-native';
 
-import styles from './styles';
 import type { Section } from '../../Types';
+
+import styles from './styles';
 
 /**
  * The type of the React {@code Component} props of {@link SectionList}

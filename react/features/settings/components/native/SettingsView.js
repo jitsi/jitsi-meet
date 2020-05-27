@@ -6,10 +6,8 @@ import { Alert, NativeModules, ScrollView, Switch, Text, TextInput } from 'react
 import { translate } from '../../../base/i18n';
 import { JitsiModal } from '../../../base/modal';
 import { connect } from '../../../base/redux';
-
 import { SETTINGS_VIEW_ID } from '../../constants';
 import { normalizeUserInputURL } from '../../functions';
-
 import {
     AbstractSettingsView,
     _mapStateToProps as _abstractMapStateToProps,

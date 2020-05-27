@@ -1,5 +1,6 @@
 // @flow
 
+import UIEvents from '../../../../service/UI/UIEvents';
 import {
     ACTION_SHORTCUT_TRIGGERED,
     VIDEO_MUTE,
@@ -21,8 +22,7 @@ import {
     isPrejoinPageVisible,
     isPrejoinVideoDisabled,
     isPrejoinVideoMuted
-} from '../../prejoin';
-import UIEvents from '../../../../service/UI/UIEvents';
+} from '../../prejoin/functions';
 
 declare var APP: Object;
 

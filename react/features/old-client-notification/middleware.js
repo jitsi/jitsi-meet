@@ -6,8 +6,8 @@ import { APP_WILL_MOUNT } from '../base/app';
 import { MiddlewareRegistry } from '../base/redux';
 import { showErrorNotification } from '../notifications';
 
-import { isOldJitsiMeetElectronApp } from './functions';
 import { OldElectronAPPNotificationDescription } from './components';
+import { isOldJitsiMeetElectronApp } from './functions';
 
 declare var interfaceConfig: Object;
 

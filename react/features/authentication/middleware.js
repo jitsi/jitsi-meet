@@ -17,16 +17,16 @@ import {
 import { MiddlewareRegistry } from '../base/redux';
 
 import {
+    CANCEL_LOGIN,
+    STOP_WAIT_FOR_OWNER,
+    WAIT_FOR_OWNER
+} from './actionTypes';
+import {
     _openLoginDialog,
     _openWaitForOwnerDialog,
     stopWaitForOwner,
     waitForOwner
 } from './actions';
-import {
-    CANCEL_LOGIN,
-    STOP_WAIT_FOR_OWNER,
-    WAIT_FOR_OWNER
-} from './actionTypes';
 import { LoginDialog, WaitForOwnerDialog } from './components';
 
 /**

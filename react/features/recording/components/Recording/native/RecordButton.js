@@ -6,7 +6,6 @@ import { IOS_RECORDING_ENABLED, RECORDING_ENABLED, getFeatureFlag } from '../../
 import { translate } from '../../../../base/i18n';
 import { IconToggleRecording } from '../../../../base/icons';
 import { connect } from '../../../../base/redux';
-
 import AbstractRecordButton, {
     _mapStateToProps as _abstractMapStateToProps,
     type Props

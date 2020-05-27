@@ -1,21 +1,36 @@
 {
     "addPeople": {
         "add": "Invite",
+        "addContacts": "Invite your contacts",
+        "copyInvite": "Copy meeting invitation",
+        "copyLink": "Copy meeting link",
+        "copyStream": "Copy live streaming link",
         "countryNotSupported": "We do not support this destination yet.",
         "countryReminder": "Calling outside the US? Please make sure you start with the country code!",
+        "defaultEmail": "Your Default Email",
         "disabled": "You can't invite people.",
         "failedToAdd": "Failed to add participants",
         "footerText": "Dialing out is disabled.",
+        "googleEmail": "Google Email",
+        "inviteMoreHeader": "You are the only one in the meeting",
+        "inviteMoreMailSubject": "Join {{appName}} meeting",
+        "inviteMorePrompt": "Invite more people",
+        "linkCopied": "Link copied to clipboard",
         "loading": "Searching for people and phone numbers",
         "loadingNumber": "Validating phone number",
         "loadingPeople": "Searching for people to invite",
         "noResults": "No matching search results",
         "noValidNumbers": "Please enter a phone number",
+        "outlookEmail": "Outlook Email",
         "searchNumbers": "Add phone numbers",
         "searchPeople": "Search for people",
         "searchPeopleAndNumbers": "Search for people or add their phone numbers",
+        "shareInvite": "Share meeting invitation",
+        "shareLink": "Share the meeting link to invite others",
+        "shareStream": "Share the live streaming link",
         "telephone": "Telephone: {{number}}",
-        "title": "Invite people to this meeting"
+        "title": "Invite people to this meeting",
+        "yahooEmail": "Yahoo Email"
     },
     "audioDevices": {
         "bluetooth": "Bluetooth",
@@ -123,8 +138,10 @@
         "description": "Nothing happened? We tried launching your meeting in the {{app}} desktop app. Try again or launch it in the {{app}} web app.",
         "descriptionWithoutWeb": "Nothing happened? We tried launching your meeting in the {{app}} desktop app.",
         "downloadApp": "Download the app",
+        "ifDoNotHaveApp": "If you don't have the app yet:",
+        "ifHaveApp": "If you already have the app:",
+        "joinInApp": "Join this meeting using the app",
         "launchWebButton": "Launch in web",
-        "openApp": "Continue to the app",
         "title": "Launching your meeting in {{app}}...",
         "tryAgainButton": "Try again in desktop"
     },
@@ -146,6 +163,7 @@
         "accessibilityLabel": {
             "liveStreaming": "Live Stream"
         },
+        "add": "Add",
         "allow": "Allow",
         "alreadySharedVideoMsg": "Another participant is already sharing a video. This conference allows only one shared video at a time.",
         "alreadySharedVideoTitle": "Only one shared video is allowed at a time",
@@ -223,7 +241,7 @@
         "muteParticipantButton": "Mute",
         "muteParticipantDialog": "Are you sure you want to mute this participant? You won't be able to unmute them, but they can unmute themselves at any time.",
         "muteParticipantTitle": "Mute this participant?",
-        "Ok": "Ok",
+        "Ok": "OK",
         "passwordLabel": "The meeting has been locked by a participant. Please enter the $t(lockRoomPassword) to join.",
         "passwordNotSupported": "Setting a meeting $t(lockRoomPassword) is not supported.",
         "passwordNotSupportedTitle": "$t(lockRoomPasswordUppercase) not supported",
@@ -295,7 +313,7 @@
         "title": "Shared Document"
     },
     "e2ee": {
-        "labelToolTip": "All participants in this meeting have enabled End-to-End encryption"
+        "labelToolTip": "Audio and Video Communication on this call is end-to-end encrypted"
     },
     "feedback": {
         "average": "Average",
@@ -462,7 +480,7 @@
         "somebody": "Somebody",
         "startSilentTitle": "You joined with no audio output!",
         "startSilentDescription": "Rejoin the meeting to enable audio",
-        "suboptimalBrowserWarning": "We are afraid your meeting experience isn't going to be that great here. We are looking for ways to improve this, but until then please try using one of the <a href='static/recommendedBrowsers.html' target='_blank'>fully supported browsers</a>.",
+        "suboptimalBrowserWarning": "We are afraid your meeting experience isn't going to be that great here. We are looking for ways to improve this, but until then please try using one of the <a href='{{recommendedBrowserPageLink}}' target='_blank'>fully supported browsers</a>.",
         "suboptimalExperienceTitle": "Browser Warning",
         "unmute": "Unmute",
         "newDeviceCameraTitle": "New camera detected",
@@ -488,13 +506,20 @@
         "dialInMeeting": "Dial into the meeting",
         "dialInPin": "Dial into the meeting and enter PIN code:",
         "dialing": "Dialing",
+        "doNotShow": "Don't show this again",
+        "errorDialOut": "Could not dial out",
+        "errorDialOutDisconnected": "Could not dial out. Disconnected",
+        "errorDialOutFailed": "Could not dial out. Call failed",
+        "errorDialOutStatus": "Error getting dial out status",
+        "errorStatusCode": "Error dialing out, status code: {{status}}",
+        "errorValidation": "Number validation failed",
         "iWantToDialIn": "I want to dial in",
         "joinAudioByPhone": "Join with phone audio",
         "joinMeeting": "Join meeting",
         "joinWithoutAudio": "Join without audio",
         "initiated": "Call initiated",
         "linkCopied": "Link copied to clipboard",
-        "lookGood": "Speaker and microphone look good",
+        "lookGood": "It sounds like your microphone is working properly",
         "or": "or",
         "calling": "Calling",
         "startWithPhone": "Start with phone audio",
@@ -553,6 +578,11 @@
     },
     "sectionList": {
         "pullToRefresh": "Pull to refresh"
+    },
+    "security": {
+        "about": "You can add a passcode to your meeting. Participants will need to provide the passcode before they are allowed to join the meeting.",
+        "insecureRoomNameWarning": "The room name is insecure. Unwanted participants may join your conference.",
+        "securityOptions": "Security options"
     },
     "settings": {
         "calendar": {
@@ -652,6 +682,7 @@
             "raiseHand": "Toggle raise hand",
             "recording": "Toggle recording",
             "remoteMute": "Mute participant",
+            "security": "Security options",
             "Settings": "Toggle settings",
             "sharedvideo": "Toggle Youtube video sharing",
             "shareRoom": "Invite someone",
@@ -705,6 +736,7 @@
         "profile": "Edit your profile",
         "raiseHand": "Raise / Lower your hand",
         "raiseYourHand": "Raise your hand",
+        "security": "Security options",
         "Settings": "Settings",
         "sharedvideo": "Share a YouTube video",
         "shareRoom": "Invite someone",
@@ -770,9 +802,6 @@
         "lowDefinition": "Low definition",
         "onlyAudioAvailable": "Only audio is available",
         "onlyAudioSupported": "We only support audio in this browser.",
-        "p2pEnabled": "Peer to Peer Enabled",
-        "p2pVideoQualityDescription": "In peer to peer mode, received video quality can only be toggled between high and audio only. Other settings will not be honored until peer to peer is exited.",
-        "recHighDefinitionOnly": "Will prefer high definition.",
         "sd": "SD",
         "sdTooltip": "Viewing standard definition video",
         "standardDefinition": "Standard definition"

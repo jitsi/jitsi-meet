@@ -453,7 +453,7 @@
         "somebody": "Nogen",
         "startSilentTitle": "",
         "startSilentDescription": "",
-        "suboptimalExperienceDescription": "Hmmm... vi er bange for at din oplevelse med {{appName}} ikke vil være optimal. Vi arbejder på at forbedre dette, men indtil da så forsøg venligst at bruge en af følgende <a href='static/recommendedBrowsers.html' target='_blank'>fuldt understøttede internet browsere</a>.",
+        "suboptimalExperienceDescription": "Hmmm... vi er bange for at din oplevelse med {{appName}} ikke vil være optimal. Vi arbejder på at forbedre dette, men indtil da så forsøg venligst at bruge en af følgende <a href='{{recommendedBrowserPageLink}}' target='_blank'>fuldt understøttede internet browsere</a>.",
         "suboptimalExperienceTitle": "Browser Advarsel",
         "unmute": "",
         "newDeviceCameraTitle": "Nyt kamerat fundet",
@@ -722,9 +722,6 @@
         "lowDefinition": "Lav opløsning",
         "onlyAudioAvailable": "Kun-lyd er tilgængelig",
         "onlyAudioSupported": "Vi understøtter kun-lyd i denne browser.",
-        "p2pEnabled": "Peer to Peer slået til",
-        "p2pVideoQualityDescription": "I peer-to-peer tilstand kan den modtagne opkaldskvalitet kun skiftes mellem høj og kun-lyd. Andre indstillinger vil ikke virke, før peer to peer er afsluttet.",
-        "recHighDefinitionOnly": "Foretrækker høj opløsning.",
         "sd": "SD",
         "sdTooltip": "Vider normal opløsnings video",
         "standardDefinition": "Standard opløsning"

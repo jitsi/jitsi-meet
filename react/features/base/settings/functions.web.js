@@ -33,6 +33,17 @@ export function getCurrentOutputDeviceId(state: Object) {
 }
 
 /**
+ * Returns the saved display name.
+ *
+ * @param {Object} state - The state of the application.
+ * @returns {string}
+ */
+export function getDisplayName(state: Object): string {
+    return state['features/base/settings'].displayName || '';
+}
+
+
+/**
  * Handles changes to the `disableCallIntegration` setting.
  * Noop on web.
  *

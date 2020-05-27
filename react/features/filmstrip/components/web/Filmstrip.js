@@ -9,15 +9,13 @@ import {
     createToolbarEvent,
     sendAnalytics
 } from '../../../analytics';
-import { Icon, IconMenuDown, IconMenuUp } from '../../../base/icons';
 import { translate } from '../../../base/i18n';
+import { Icon, IconMenuDown, IconMenuUp } from '../../../base/icons';
 import { connect } from '../../../base/redux';
 import { dockToolbox } from '../../../toolbox';
-
+import { getCurrentLayout, LAYOUTS } from '../../../video-layout';
 import { setFilmstripHovered, setFilmstripVisible } from '../../actions';
 import { shouldRemoteVideosBeVisible } from '../../functions';
-
-import { getCurrentLayout, LAYOUTS } from '../../../video-layout';
 
 import Toolbar from './Toolbar';
 

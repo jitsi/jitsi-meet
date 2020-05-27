@@ -1,5 +1,7 @@
 // @flow
 
+import { getRoomName } from '../base/conference';
+import { getDialOutStatusUrl, getDialOutUrl } from '../base/config/functions';
 
 /**
  * Mutes or unmutes a track.
@@ -21,13 +23,13 @@ function applyMuteOptionsToTrack(track, shouldMute) {
 }
 
 /**
- * Selector for the visibility of the 'join by phone' buttons.
+ * Selector for the visibility of the 'join by phone' button.
  *
  * @param {Object} state - The state of the app.
  * @returns {boolean}
  */
-export function areJoinByPhoneButtonsVisible(state: Object): boolean {
-    return state['features/prejoin'].buttonsVisible;
+export function isJoinByPhoneButtonVisible(state: Object): boolean {
+    return Boolean(getDialOutUrl(state) && getDialOutStatusUrl(state));
 }
 
 /**
@@ -93,7 +95,7 @@ export async function getAllPrejoinConfiguredTracks(state: Object): Promise<Obje
  * @returns {Object}
  */
 export function getAudioTrack(state: Object): Object {
-    return state['features/prejoin'].audioTrack;
+    return state['features/prejoin']?.audioTrack;
 }
 
 /**
@@ -103,7 +105,7 @@ export function getAudioTrack(state: Object): Object {
  * @returns {Object}
  */
 export function getContentSharingTrack(state: Object): Object {
-    return state['features/prejoin'].contentSharingTrack;
+    return state['features/prejoin']?.contentSharingTrack;
 }
 
 /**
@@ -113,7 +115,7 @@ export function getContentSharingTrack(state: Object): Object {
  * @returns {string}
  */
 export function getDeviceStatusText(state: Object): string {
-    return state['features/prejoin'].deviceStatusText;
+    return state['features/prejoin']?.deviceStatusText;
 }
 
 /**
@@ -123,7 +125,60 @@ export function getDeviceStatusText(state: Object): string {
  * @returns {string}
  */
 export function getDeviceStatusType(state: Object): string {
-    return state['features/prejoin'].deviceStatusType;
+    return state['features/prejoin']?.deviceStatusType;
+}
+
+/**
+ * Returns the 'conferenceUrl' used for dialing out.
+ *
+ * @param {Object} state - The state of the app.
+ * @returns {string}
+ */
+export function getDialOutConferenceUrl(state: Object): string {
+    return `${getRoomName(state)}@${state['features/base/config'].hosts.muc}`;
+}
+
+/**
+ * Selector for getting the dial out country.
+ *
+ * @param {Object} state - The state of the app.
+ * @returns {Object}
+ */
+export function getDialOutCountry(state: Object): Object {
+    return state['features/prejoin'].dialOutCountry;
+}
+
+/**
+ * Selector for getting the dial out number (without prefix).
+ *
+ * @param {Object} state - The state of the app.
+ * @returns {string}
+ */
+export function getDialOutNumber(state: Object): string {
+    return state['features/prejoin'].dialOutNumber;
+}
+
+/**
+ * Selector for getting the dial out status while calling.
+ *
+ * @param {Object} state - The state of the app.
+ * @returns {string}
+ */
+export function getDialOutStatus(state: Object): string {
+    return state['features/prejoin'].dialOutStatus;
+}
+
+/**
+ * Returns the full dial out number (containing country code and +).
+ *
+ * @param {Object} state - The state of the app.
+ * @returns {string}
+ */
+export function getFullDialOutNumber(state: Object): string {
+    const dialOutNumber = getDialOutNumber(state);
+    const country = getDialOutCountry(state);
+
+    return `+${country.dialCode}${dialOutNumber}`;
 }
 
 /**
@@ -133,7 +188,7 @@ export function getDeviceStatusType(state: Object): string {
  * @returns {Object}
  */
 export function getVideoTrack(state: Object): Object {
-    return state['features/prejoin'].videoTrack;
+    return state['features/prejoin']?.videoTrack;
 }
 
 /**
@@ -143,17 +198,7 @@ export function getVideoTrack(state: Object): Object {
  * @returns {boolean}
  */
 export function isPrejoinAudioMuted(state: Object): boolean {
-    return state['features/prejoin'].audioMuted;
-}
-
-/**
- * Selector for getting the name that the user filled while configuring.
- *
- * @param {Object} state - The state of the app.
- * @returns {boolean}
- */
-export function getPrejoinName(state: Object): string {
-    return state['features/prejoin'].name;
+    return state['features/prejoin']?.audioMuted;
 }
 
 /**
@@ -163,7 +208,7 @@ export function getPrejoinName(state: Object): string {
  * @returns {boolean}
  */
 export function isPrejoinVideoMuted(state: Object): boolean {
-    return state['features/prejoin'].videoMuted;
+    return state['features/prejoin']?.videoMuted;
 }
 
 /**
@@ -173,7 +218,7 @@ export function isPrejoinVideoMuted(state: Object): boolean {
  * @returns {string}
  */
 export function getRawError(state: Object): string {
-    return state['features/prejoin'].rawError;
+    return state['features/prejoin']?.rawError;
 }
 
 /**
@@ -183,7 +228,7 @@ export function getRawError(state: Object): string {
  * @returns {boolean}
  */
 export function isAudioDisabled(state: Object): Object {
-    return state['features/prejoin'].audioDisabled;
+    return state['features/prejoin']?.audioDisabled;
 }
 
 /**
@@ -193,7 +238,7 @@ export function isAudioDisabled(state: Object): Object {
  * @returns {boolean}
  */
 export function isPrejoinVideoDisabled(state: Object): Object {
-    return state['features/prejoin'].videoDisabled;
+    return state['features/prejoin']?.videoDisabled;
 }
 
 /**
@@ -203,7 +248,7 @@ export function isPrejoinVideoDisabled(state: Object): Object {
  * @returns {boolean}
  */
 export function isJoinByPhoneDialogVisible(state: Object): boolean {
-    return state['features/prejoin'].showJoinByPhoneDialog;
+    return state['features/prejoin']?.showJoinByPhoneDialog;
 }
 
 /**
@@ -214,7 +259,8 @@ export function isJoinByPhoneDialogVisible(state: Object): boolean {
  * @returns {boolean}
  */
 export function isPrejoinPageEnabled(state: Object): boolean {
-    return state['features/base/config'].prejoinPageEnabled;
+    return state['features/base/config'].prejoinPageEnabled
+        && !state['features/base/settings'].userSelectedSkipPrejoin;
 }
 
 /**
@@ -224,5 +270,5 @@ export function isPrejoinPageEnabled(state: Object): boolean {
  * @returns {boolean}
  */
 export function isPrejoinPageVisible(state: Object): boolean {
-    return isPrejoinPageEnabled(state) && state['features/prejoin'].showPrejoin;
+    return isPrejoinPageEnabled(state) && state['features/prejoin']?.showPrejoin;
 }

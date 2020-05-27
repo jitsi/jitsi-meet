@@ -10,7 +10,6 @@ import {
     type AbstractButtonProps
 } from '../../../base/toolbox';
 import { openDisplayNamePrompt } from '../../../display-name';
-
 import { CHAT_VIEW_MODAL_ID } from '../../constants';
 import { getUnreadCount } from '../../functions';
 

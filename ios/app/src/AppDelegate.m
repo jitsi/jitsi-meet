@@ -18,6 +18,7 @@
 #import "AppDelegate.h"
 #import "FIRUtilities.h"
 #import "Types.h"
+#import "ViewController.h"
 
 @import Crashlytics;
 @import Fabric;
@@ -55,6 +56,13 @@
     [jitsiMeet application:application didFinishLaunchingWithOptions:launchOptions];
 
     return YES;
+}
+
+- (void) applicationWillTerminate:(UIApplication *)application {
+    NSLog(@"Application will terminate!");
+    // Try to leave the current meeting graceefully.
+    ViewController *rootController = (ViewController *)self.window.rootViewController;
+    [rootController terminate];
 }
 
 #pragma mark Linking delegate methods

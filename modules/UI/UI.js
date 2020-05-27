@@ -1,16 +1,10 @@
 /* global APP, $, config, interfaceConfig */
 
-const logger = require('jitsi-meet-logger').getLogger(__filename);
 
 const UI = {};
 
-import messageHandler from './util/MessageHandler';
-import UIUtil from './util/UIUtil';
-import UIEvents from '../../service/UI/UIEvents';
-import EtherpadManager from './etherpad/Etherpad';
-import SharedVideoManager from './shared_video/SharedVideo';
-
-import VideoLayout from './videolayout/VideoLayout';
+import EventEmitter from 'events';
+import Logger from 'jitsi-meet-logger';
 
 import { getLocalParticipant } from '../../react/features/base/participants';
 import { toggleChat } from '../../react/features/chat';
@@ -22,8 +16,15 @@ import {
     setToolboxEnabled,
     showToolbox
 } from '../../react/features/toolbox';
+import UIEvents from '../../service/UI/UIEvents';
 
-const EventEmitter = require('events');
+import EtherpadManager from './etherpad/Etherpad';
+import SharedVideoManager from './shared_video/SharedVideo';
+import messageHandler from './util/MessageHandler';
+import UIUtil from './util/UIUtil';
+import VideoLayout from './videolayout/VideoLayout';
+
+const logger = Logger.getLogger(__filename);
 
 UI.messageHandler = messageHandler;
 

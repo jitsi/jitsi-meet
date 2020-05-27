@@ -452,7 +452,7 @@
         "somebody": "Kažkas",
         "startSilentTitle": "Jūs prisijungėte be jokios garso išvesties!",
         "startSilentDescription": "Persijunkite prie susitikimo, kad įjungtumėte garsą",
-        "suboptimalBrowserWarning": "Mes apgailėstaujame, kad jūsų susitikimo įspūdžiai nėra tokie, kokių tikėjotės. Mes visada ieškome būdų kaip patobulėti, bet kol kas bandykite tai <a href='static/recommendedBrowsers.html' target='_blank'>fully supported browsers</a>.",
+        "suboptimalBrowserWarning": "Mes apgailėstaujame, kad jūsų susitikimo įspūdžiai nėra tokie, kokių tikėjotės. Mes visada ieškome būdų kaip patobulėti, bet kol kas bandykite tai <a href='{{recommendedBrowserPageLink}}' target='_blank'>fully supported browsers</a>.",
         "suboptimalExperienceTitle": "Naršyklės įspėjimas",
         "unmute": "Įjungti garsą",
         "newDeviceCameraTitle": "Aptikta nauja kamera",
@@ -722,9 +722,6 @@
         "lowDefinition": "Žema kokybė",
         "onlyAudioAvailable": "Galimas tik garso perdavimas",
         "onlyAudioSupported": "Mes palaikome tik garso perdavimą šioje naršyklėje.",
-        "p2pEnabled": "Peer to Peer įjungtas",
-        "p2pVideoQualityDescription": "„Peer to peer“ režimu gauto vaizdo įrašo kokybę galima perjungti tik į aukštą ir į garso įrašą. Kiti nustatymai nebus toleruojami, kol nebus išjungtas „Peer to peer“.",
-        "recHighDefinitionOnly": "Norima aukšta kokybė.",
         "sd": "SD",
         "sdTooltip": "Vidutinės kokybės video peržiūra",
         "standardDefinition": "Vidutinė kokybė"

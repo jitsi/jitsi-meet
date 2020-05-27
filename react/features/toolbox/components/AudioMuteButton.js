@@ -16,7 +16,7 @@ import {
     isPrejoinAudioMuted,
     isAudioDisabled,
     isPrejoinPageVisible
-} from '../../prejoin';
+} from '../../prejoin/functions';
 import { muteLocal } from '../../remote-video-menu/actions';
 
 declare var APP: Object;
