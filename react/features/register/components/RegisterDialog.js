@@ -118,7 +118,7 @@ class RegisterDialog extends Component<Props, State> {
             errorMessage: ''
         });
 
-        return axios.post('/auth/signup', data)
+        return axios.post('/auth/api/signup', data)
             .then(resp => {
                 const { data: user } = resp;
 

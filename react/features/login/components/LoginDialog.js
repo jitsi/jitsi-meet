@@ -47,6 +47,8 @@ type Props = {
 
   i18n: Object,
 
+  onSuccess: Function,
+
   /**
    * The function to translate human-readable text.
    */
@@ -103,7 +105,7 @@ class LoginDialog extends Component<Props, State> {
      * @returns {void}
      */
     _onSubmit(data) {
-        const { dispatch } = this.props;
+        const { dispatch, onSuccess } = this.props;
 
         console.log('form data', data);
 
@@ -112,7 +114,7 @@ class LoginDialog extends Component<Props, State> {
             errorMessage: ''
         });
 
-        return axios.post('/auth/login', data)
+        return axios.post('/auth/api/login', data)
             .then(resp => {
                 const { data: user } = resp;
 
@@ -120,6 +122,8 @@ class LoginDialog extends Component<Props, State> {
                 dispatch(updateSettings({ email: user.email }));
                 dispatch(updateCurrentUser(user));
                 this._onCancel();
+
+                onSuccess && onSuccess();
             })
             .catch(error => {
                 this.setState({
