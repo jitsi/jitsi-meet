@@ -1,11 +1,20 @@
 {
     "addPeople": {
         "add": "Einladen",
+        "addContacts": "Laden Sie Ihre Kontakte ein",
+        "copyInvite": "Sitzungseinladung kopieren",
+        "copyLink": "Meeting-Link kopieren",
+        "copyStream": "Live-Streaming-Link kopieren",
         "countryNotSupported": "Wir unterstützen dieses Land noch nicht.",
         "countryReminder": "Telefonnummer nicht in den USA? Bitte sicherstellen, dass die Telefonnummer mit dem Ländercode beginnt.",
+        "defaultEmail": "Ihre Standard-E-Mail",
         "disabled": "Sie können keine Teilnehmer einladen.",
         "failedToAdd": "Fehler beim Hinzufügen von Teilnehmern",
         "footerText": "Abgehender Ruf ist deaktiviert.",
+        "inviteMoreHeader": "Sie sind alleine in der Sitzung",
+        "inviteMoreMailSubject": "An {{appName}} Meeting teilnehmen",
+        "inviteMorePrompt": "Mehr Leute einladen",
+        "linkCopied": "Link in die Zwischenablage kopiert",
         "loading": "Suche nach Teilnehmern und Telefonnummern",
         "loadingNumber": "Telefonnummer wird überprüft",
         "loadingPeople": "Suche nach einzuladenden Teilnehmern",
@@ -14,6 +23,9 @@
         "searchNumbers": "Telefonnummern hinzufügen",
         "searchPeople": "Nach Teilnehmern suchen",
         "searchPeopleAndNumbers": "Nach Teilnehmen suchen oder deren Telefonnummern hinzufügen",
+        "shareInvite": "Einladung zur Versammlung teilen",
+        "shareLink": "Teilen Sie den Meeting-Link, um andere einzuladen",
+        "shareStream": "Den Live-Streaming-Link freigeben",
         "telephone": "Telefon: {{number}}",
         "title": "Teilnehmer zu dieser Konferenz einladen"
     },
@@ -518,6 +530,11 @@
     "sectionList": {
         "pullToRefresh": "Ziehen, um zu aktualisieren"
     },
+    "security": {
+        "about": "Sie können einen Passwort zu Ihrer Sitzung hinzufügen. Die Teilnehmer müssen dieses ebenfalls eingeben, bevor sie an der Sitzung teilnehmen dürfen",
+        "insecureRoomNameWarning": "Der Raumname ist unsicher. Unerwünschte Teilnehmer könnten Ihrer Konferenz beitreten",
+        "securityOptions": "Sicherheitsoptionen"
+    },
     "settings": {
         "calendar": {
             "about": "Die Kalenderintegration von {{appName}} wird verwendet, um ein sicheres Zugreifen auf Ihren Kalender und Auslesen der bevorstehenden Termine zu ermöglichen.",
@@ -612,6 +629,7 @@
             "raiseHand": "„Melden“ ein-/ausschalten",
             "recording": "Aufzeichnung ein-/ausschalten",
             "remoteMute": "Teilnehmer stummschalten",
+            "security": "Sicherheitsoptionen",
             "Settings": "Einstellungen ein-/ausschalten",
             "sharedvideo": "YouTube-Videofreigabe ein-/ausschalten",
             "shareRoom": "Person einladen",
@@ -663,6 +681,7 @@
         "profile": "Profil bearbeiten",
         "raiseHand": "Hand erheben",
         "raiseYourHand": "Melden",
+        "security": "Sicherheitsoptionen",
         "Settings": "Einstellungen",
         "sharedvideo": "YouTube-Video teilen",
         "shareRoom": "Person einladen",
