@@ -3,6 +3,7 @@
 import React, { Component } from 'react';
 import { Text, View } from 'react-native';
 
+import { YoutubeLargeVideo } from '../../../youtube-player';
 import { Avatar } from '../../avatar';
 import { translate } from '../../i18n';
 import { JitsiParticipantConnectionStatus } from '../../lib-jitsi-meet';
@@ -18,8 +19,6 @@ import { getTrackByMediaTypeAndParticipant } from '../../tracks';
 import { shouldRenderParticipantVideo, getParticipantById } from '../functions';
 
 import styles from './styles';
-
-import { YoutubeLargeVideo } from '../../../youtube-player';
 
 /**
  * The type of the React {@link Component} props of {@link ParticipantView}.

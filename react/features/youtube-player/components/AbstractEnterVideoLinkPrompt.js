@@ -77,6 +77,7 @@ export default class AbstractEnterVideoLinkPrompt<S: *> extends Component < Prop
  */
 function getYoutubeLink(url) {
     const p = /^(?:https?:\/\/)?(?:www\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))((\w|-){11})(?:\S+)?$/;// eslint-disable-line max-len
+    const result = url.match(p);
 
-    return url.match(p) ? RegExp.$1 : false;
+    return result ? result[1] : false;
 }

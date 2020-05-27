@@ -2,9 +2,10 @@
 
 import React, { useRef, useEffect } from 'react';
 import YoutubePlayer from 'react-native-youtube-iframe';
-import { setSharedVideoStatus } from '../../actions';
-import { connect } from '../../../base/redux';
+
 import { getLocalParticipant } from '../../../base/participants';
+import { connect } from '../../../base/redux';
+import { setSharedVideoStatus } from '../../actions';
 
 /**
  * The type of the React {@link Component} props of {@link YoutubeLargeVideo}.
@@ -19,32 +20,59 @@ type Props = {
     isPlaying: string,
 
     /**
-     * The color-schemed stylesheet of the feature.
+     * Seek time in seconds.
+     *
+     * @private
      */
     seek: string,
 
+    /**
+     * Display the youtube controls on the player.
+     *
+     * @private
+     */
     enableControls: Boolean,
 
     /**
-     * Callback to invoke when the {@code LargeVideo} is clicked/pressed.
+     * Callback to invoke when the {@code YoutLargeVideo} is ready to play.
+     *
+     * @private
      */
-    onVideoReady: ?Function,
+    onVideoReady: Function,
 
-    onVideoChangeEvent: ?Function,
+    /**
+     * Callback to invoke when the {@code YoutubeLargeVideo} changes status.
+     *
+     * @private
+     */
+    onVideoChangeEvent: Function,
 
-    youtubeId: string
+    /**
+     * Youtube id of the video to be played.
+     *
+     * @private
+     */
+    youtubeId: string,
+
+    /**
+     * Is the video shared by the local user.
+     *
+     * @private
+     */
+    isOwner: Boolean
 };
 
 const YoutubeLargeVideo = (props: Props) => {
     const playerRef = useRef(null);
-    useEffect(() => {
-        if(!props.isOwner) {
-            playerRef.current.seekTo(props.seek);
-        }
-    }, [props.seek]);
 
-    const onChangeState = e => props.onVideoChangeEvent(e, playerRef.current.getCurrentTime());
-    const onReady = () => props.onVideoReady(playerRef.current.getCurrentTime())
+    useEffect(() => {
+        if (!props.isOwner) {
+            playerRef.current && playerRef.current.seekTo(props.seek);
+        }
+    }, [ props.seek ]);
+
+    const onChangeState = e => props.onVideoChangeEvent(e, playerRef.current && playerRef.current.getCurrentTime());
+    const onReady = () => props.onVideoReady(playerRef.current && playerRef.current.getCurrentTime());
 
     return (<YoutubePlayer
         height = '100%'
@@ -52,8 +80,10 @@ const YoutubeLargeVideo = (props: Props) => {
             controls: props.enableControls,
             modestbranding: true
         }}
+        /* eslint-disable react/jsx-no-bind */
         onChangeState = { onChangeState }
-        onReady = {  onReady }
+        /* eslint-disable react/jsx-no-bind */
+        onReady = { onReady }
         play = { props.isPlaying }
         playbackRate = { 1 }
         ref = { playerRef }
@@ -94,16 +124,17 @@ function _mapStateToProps(state) {
 function _mapDispatchToProps(dispatch) {
     return {
         onVideoChangeEvent: (status, time) => {
-            time.then( t => {
-                if (!['playing', 'paused'].includes(status)) {
+            time.then(t => {
+                if (![ 'playing', 'paused' ].includes(status)) {
                     return;
                 }
                 dispatch(setSharedVideoStatus(status, t));
-            } );
+            });
         },
-        onVideoReady: (time) => { 
-            time.then( t => { dispatch(setSharedVideoStatus('playing', t)) }) }
-    }
+        onVideoReady: time => {
+            time.then(t => dispatch(setSharedVideoStatus('playing', t)));
+        }
+    };
 }
 
 /**
@@ -112,10 +143,10 @@ function _mapDispatchToProps(dispatch) {
  * @private
  * @returns {Props}
  */
-function _mergeProps( { isOwner, ...stateProps }, { onVideoChangeEvent, onVideoReady }) {
+function _mergeProps({ isOwner, ...stateProps }, { onVideoChangeEvent, onVideoReady }) {
     return Object.assign(stateProps, {
-        onVideoChangeEvent: isOwner ? onVideoChangeEvent : () => {},
-        onVideoReady: isOwner ? onVideoReady : () => {}
+        onVideoChangeEvent: isOwner ? onVideoChangeEvent : () => { /* do nothing */ },
+        onVideoReady: isOwner ? onVideoReady : () => { /* do nothing */ }
     });
 }
 

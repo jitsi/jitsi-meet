@@ -1,9 +1,8 @@
 // @flow
 
-import { SET_SHARED_VIDEO_STATUS, SET_SHARED_VIDEO_OWNER } from './actionTypes';
-
 import { openDialog } from '../base/dialog';
 
+import { SET_SHARED_VIDEO_STATUS, SET_SHARED_VIDEO_OWNER } from './actionTypes';
 import { EnterVideoLinkPrompt } from './components';
 
 /**
@@ -14,10 +13,10 @@ import { EnterVideoLinkPrompt } from './components';
  * @returns {{
  *     type: SET_SHARED_VIDEO_STATUS,
  *     status: string,
- *     time: string 
+ *     time: string
  * }}
  */
-export function setSharedVideoStatus(status, time) {
+export function setSharedVideoStatus(status: string, time: string) {
     return {
         type: SET_SHARED_VIDEO_STATUS,
         status,
@@ -34,7 +33,7 @@ export function setSharedVideoStatus(status, time) {
  *     ownerId: string
  * }}
  */
-export function setSharedVideoOwner(ownerId) {
+export function setSharedVideoOwner(ownerId: string) {
     return {
         type: SET_SHARED_VIDEO_OWNER,
         ownerId
