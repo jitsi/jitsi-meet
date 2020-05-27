@@ -1,21 +1,36 @@
 {
     "addPeople": {
         "add": "Einladen",
+        "addContacts": "Invite your contacts",
+        "copyInvite": "Konferenzeinladung kopieren",
+        "copyLink": "Konferenzlink kopieren",
+        "copyStream": "Livestream-Link kopieren",
         "countryNotSupported": "Wir unterstützen dieses Land noch nicht.",
         "countryReminder": "Telefonnummer nicht in den USA? Bitte sicherstellen, dass die Telefonnummer mit dem Ländercode beginnt.",
+        "defaultEmail": "Ihre Default-Emailadresse",
         "disabled": "Sie können keine Teilnehmer einladen.",
         "failedToAdd": "Fehler beim Hinzufügen von Teilnehmern",
         "footerText": "Abgehender Ruf ist deaktiviert.",
+        "googleEmail": "Google Email",
+        "inviteMoreHeader": "Sie sind der einzige Teilnehmer in dieser Konferenz",
+        "inviteMoreMailSubject": "Konferenz {{appName}} beitreten",
+        "inviteMorePrompt": "Mehr Leute einladen",
+        "linkCopied": "Link in die Zwischenablage kopiert",
         "loading": "Suche nach Teilnehmern und Telefonnummern",
         "loadingNumber": "Telefonnummer wird überprüft",
         "loadingPeople": "Suche nach einzuladenden Teilnehmern",
         "noResults": "Keine passenden Ergebnisse",
         "noValidNumbers": "Telefonnummer eingeben",
+        "outlookEmail": "Outlook Email",
         "searchNumbers": "Telefonnummern hinzufügen",
         "searchPeople": "Nach Teilnehmern suchen",
-        "searchPeopleAndNumbers": "Nach Teilnehmen suchen oder deren Telefonnummern hinzufügen",
+        "searchPeopleAndNumbers": "Nach Teilnehmern suchen oder deren Telefonnummern hinzufügen",
+        "shareInvite": "Konferenzeinladung teilen",
+        "shareLink": "Teilen Sie den Konferenzlink, um andere einzuladen",
+        "shareStream": "Teilen Sie den Link zum Livestream",
         "telephone": "Telefon: {{number}}",
-        "title": "Teilnehmer zu dieser Konferenz einladen"
+        "title": "Teilnehmer zu dieser Konferenz einladen",
+        "yahooEmail": "Yahoo Email"
     },
     "audioDevices": {
         "bluetooth": "Bluetooth",
@@ -148,6 +163,7 @@
         "accessibilityLabel": {
             "liveStreaming": "Livestream"
         },
+        "add": "Hinzufügen",
         "allow": "Erlauben",
         "alreadySharedVideoMsg": "Ein anderer Teilnehmer gibt bereits ein Video weiter. Bei dieser Konferenz ist jeweils nur ein geteiltes Video möglich.",
         "alreadySharedVideoTitle": "Nur ein geteiltes Video gleichzeitig",
@@ -177,6 +193,10 @@
         "dismiss": "OK",
         "displayNameRequired": "Hallo! Wie ist Ihr Name?",
         "done": "Fertig",
+        "e2eeDescription": "<p>Ende-zuo-Ende-Verschlüsselung ist derzeit <strong>EXPERIMENTELL</strong>. Bitte schauen Sie in <a href='https://jitsi.org/blog/e2ee/' target='_blank'>diesem Beitrag</a> für Details.</p><br/><p>Bitte beachten Sie, dass das Einschalten der Ende-zu-Ende-Verschlüsselung serverseitige Dienste wie Aufnahme, Livestreams und Telefonanbindung unmöglich macht. Beachten Sie weiterhin, dass die Konferenz nur für Teilnehmer mit Browsern gelingt, die „insertable streams“ unterstützen.</p>",
+        "e2eeLabel": "Schlüssel",
+        "e2eeTitle": "Ende-zuo-Ende-Verschlüsselung",
+        "e2eeWarning": "<br /><p><strong>WARNUNG:</strong>Nicht alle Teilnehmer in dieser Konferenz scheinen die Ende-zuo-Ende-Verschlüsselung zu unterstützen. Wenn Sie sie einschalten, werden diese Teilnehmer Sie weder hören noch sehen können.</p>",
         "enterDisplayName": "Bitte geben Sie hier Ihren Namen ein",
         "error": "Fehler",
         "externalInstallationMsg": "Die Bildschirmfreigabe-Erweiterung muss installiert werden.",
@@ -246,6 +266,7 @@
         "reservationError": "Fehler im Reservierungssystem",
         "reservationErrorMsg": "Fehler, Nummer: {{code}}, Nachricht: {{msg}}",
         "retry": "Wiederholen",
+        "screenSharingAudio": "Teile Audio",
         "screenSharingFailedToInstall": "Oh! Die Erweiterung für die Bildschirmfreigabe konnte nicht installiert werden.",
         "screenSharingFailedToInstallTitle": "Bildschirmfreigabe-Erweiterung konnte nicht installiert werden",
         "screenSharingFirefoxPermissionDeniedError": "Die Bildschirmfreigabe ist leider fehlgeschlagen. Bitte stellen Sie sicher, dass die Berechtigung für die Bildschirmfreigabe im Browser erteilt wurde. ",
@@ -283,14 +304,16 @@
         "WaitForHostMsgWOk": "Die Konferenz <b>{{room}}</b> wurde noch nicht gestartet. Wenn Sie der Organisator sind, drücken Sie zum Authentifizieren auf OK. Warten Sie andernfalls, bis der Organisator erscheint.",
         "WaitingForHost": "Warten auf den Organisator...",
         "Yes": "Ja",
-        "yourEntireScreen": "Ganzer Bildschirm",
-        "screenSharingAudio": "Audio austauschen"
+        "yourEntireScreen": "Ganzer Bildschirm"
     },
     "dialOut": {
         "statusMessage": "ist jetzt {{status}}"
     },
     "documentSharing": {
         "title": "Freigegebenes Dokument"
+    },
+    "e2ee": {
+        "labelToolTip": "Die Audio- und Videokommunikation in dieser Konferenz ist Ende-zu-Ende verschlüsselt"
     },
     "feedback": {
         "average": "Durchschnittlich",
@@ -462,11 +485,49 @@
         "unmute": "Stummschaltung aufheben",
         "newDeviceCameraTitle": "Neue Kamera erkannt",
         "newDeviceAudioTitle": "Neues Audiogerät erkannt",
-        "newDeviceAction": "Verwenden"
+        "newDeviceAction": "Verwenden",
+        "OldElectronAPPTitle": "Sicherheitslücke!",
+        "oldElectronClientDescription1": "Sie scheinen eine alte Version vom Jitsi Meet Client zu verwenden, von der Sicherheitslücken bekannt sind. Bitte stellen Sie sicher, dass sie auf unsere App updaten ",
+        "oldElectronClientDescription2": "letzter Stand",
+        "oldElectronClientDescription3": " jetzt!"
     },
     "passwordSetRemotely": "von einem anderen Teilnehmer gesetzt",
     "passwordDigitsOnly": "Bis zu {{number}} Ziffern",
     "poweredby": "Betrieben von",
+    "prejoin": {
+        "audioAndVideoError": "Audio- und Videofehler:",
+        "audioOnlyError": "Audiofehler:",
+        "audioTrackError": "Konnte Audiospur nicht erzeugen.",
+        "callMe": "Anrufen",
+        "callMeAtNumber": "Rufen Sie mich unter dieser Nummer an:",
+        "configuringDevices": "Konfiguriere Geräte...",
+        "connectedWithAudioQ": "Sind Sie per Audio verbunden?",
+        "copyAndShare": "Konferenzlink kopieren & teilen",
+        "dialInMeeting": "In die Konferenz einwählen",
+        "dialInPin": "In die Konferenz einwählen und PIN eingeben:",
+        "dialing": "Wähle",
+        "doNotShow": "Diesen Hinweis nicht mehr anzeigen",
+        "errorDialOut": "Konnte nicht wählen",
+        "errorDialOutDisconnected": "Konnte nicht wählen. Nicht verbunden.",
+        "errorDialOutFailed": "Konnte nicht wählen. Anruf gescheitert",
+        "errorDialOutStatus": "Fehler beim Ermitteln des Wählstatus",
+        "errorStatusCode": "Fehler beim Wählen, Statuscode: {{status}}",
+        "errorValidation": "Überprüfung der Nummer gescheitert",
+        "iWantToDialIn": "Ich möchte mich einwählen",
+        "joinAudioByPhone": "Mit Audio-Telefon beitreten",
+        "joinMeeting": "Konferenz beitreten",
+        "joinWithoutAudio": "Konferenz ohne Audio beitreten",
+        "initiated": "Anruf gestartet",
+        "linkCopied": "Link in die Zwischenablage kopiert",
+        "lookGood": "Es klingt so, als funktioniert Ihr Mikrofon richtig",
+        "or": "oder",
+        "calling": "Rufe an.",
+        "startWithPhone": "Starte mit Audio-Telefon",
+        "screenSharingError": "Fehler beim Teilen des Bildschirms:",
+        "videoOnlyError": "Videofehler:",
+        "videoTrackError": "Konnte Videospur nicht erzeugen.",
+        "viewAllNumbers": "Alle Nummern anzeigen"
+    },
     "presenceStatus": {
         "busy": "Beschäftigt",
         "calling": "Wird angerufen …",
@@ -518,6 +579,11 @@
     "sectionList": {
         "pullToRefresh": "Ziehen, um zu aktualisieren"
     },
+    "security": {
+        "about": "Sie können Ihrer Konferenz einen Zugriffscode hinzufügen. Teilnehmer müssen diesen Zugangscode eingeben, bevor sie der Konferenz beitreten dürfen.",
+        "insecureRoomNameWarning": "Der Raumname ist unsicher. Unerwünschte Teilnehmer könnten an Ihrer Konferenz teilnehmen.",
+        "securityOptions": "Sicherheitsoptionen"
+    },
     "settings": {
         "calendar": {
             "about": "Die Kalenderintegration von {{appName}} wird verwendet, um ein sicheres Zugreifen auf Ihren Kalender und Auslesen der bevorstehenden Termine zu ermöglichen.",
@@ -546,12 +612,15 @@
     "settingsView": {
         "advanced": "Erweitert",
         "alertOk": "OK",
+        "alertCancel": "Abbrechen",
         "alertTitle": "Warnung",
         "alertURLText": "Die angegebene Server-URL ist ungültig",
         "buildInfoSection": "Build-Informationen",
         "conferenceSection": "Konferenz",
         "disableCallIntegration": "Native Anrufintegration deaktivieren",
         "disableP2P": "Ende-zu-Ende-Modus deaktivieren",
+        "disableCrashReporting": "Absturzreports deaktivieren",
+        "disableCrashReportingWarning": "Sind Sie sicher, dass Sie die Absturzreports deaktivieren möchten? Diese Einstellung wird erst nach dem Neustart der App übernommen.",
         "displayName": "Anzeigename",
         "email": "E-Mail",
         "header": "Einstellungen",
@@ -593,6 +662,7 @@
             "chat": "Chatfenster ein-/ausblenden",
             "document": "Geteiltes Dokument schließen",
             "download": "Unsere Apps herunterladen",
+            "e2ee": "Ende-zu-Ende-Verschlüsselung",
             "feedback": "Feedback hinterlassen",
             "fullScreen": "Vollbildmodus aktivieren/deaktivieren",
             "hangup": "Anruf beenden",
@@ -612,6 +682,7 @@
             "raiseHand": "„Melden“ ein-/ausschalten",
             "recording": "Aufzeichnung ein-/ausschalten",
             "remoteMute": "Teilnehmer stummschalten",
+            "security": "Sicherheitseinstellungen",
             "Settings": "Einstellungen ein-/ausschalten",
             "sharedvideo": "YouTube-Videofreigabe ein-/ausschalten",
             "shareRoom": "Person einladen",
@@ -621,6 +692,7 @@
             "speakerStats": "Sprecherstatistik ein-/ausblenden",
             "tileView": "Kachelansicht ein-/ausschalten",
             "toggleCamera": "Kamera wechseln",
+            "toggleFilmstrip": "Filmstreifenansicht wechseln",
             "videomute": "„Video stummschalten“ ein-/ausschalten",
             "videoblur": "Video-Unschärfe ein-/ausschalten"
         },
@@ -635,6 +707,7 @@
         "documentClose": "Geteiltes Dokument schließen",
         "documentOpen": "Geteiltes Dokument öffnen",
         "download": "Unsere Apps herunterladen",
+        "e2ee": "Ende-zu-Ende-Verschlüsselung",
         "enterFullScreen": "Vollbildmodus",
         "enterTileView": "Kachelansicht einschalten",
         "exitFullScreen": "Vollbildmodus verlassen",
@@ -663,6 +736,7 @@
         "profile": "Profil bearbeiten",
         "raiseHand": "Hand erheben",
         "raiseYourHand": "Melden",
+        "security": "Sicherheitseinstellungen",
         "Settings": "Einstellungen",
         "sharedvideo": "YouTube-Video teilen",
         "shareRoom": "Person einladen",
@@ -758,6 +832,7 @@
         "connectCalendarButton": "Kalender verbinden",
         "connectCalendarText": "Verbinden Sie Ihren Kalender, um all Ihre Meetings in {{app}} anzuzeigen. Fügen Sie zudem {{provider}}-Meetings in Ihren Kalender ein und starten Sie sie mit nur einem Klick.",
         "enterRoomTitle": "Neues Meeting starten",
+        "getHelp": "Hilfe anfordern",
         "roomNameAllowedChars": "Der Meeting-Name sollte keines der folgenden Zeichen enthalten: ?, &, :, ', \", %, #.",
         "go": "Los >",
         "goSmall": "Los",
@@ -777,5 +852,8 @@
     "lonelyMeetingExperience": {
         "button": "Andere einladen",
         "youAreAlone": "Nur Sie sind in diesem Meeting"
+    },
+    "helpView": {
+        "header": "Hilfe-Center"
     }
 }
