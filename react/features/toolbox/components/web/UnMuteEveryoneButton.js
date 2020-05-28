@@ -9,7 +9,7 @@ import {
 } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox';
-import { muteAllParticipants } from "../../../remote-video-menu/actions";
+import { unMuteAllParticipants } from "../../../remote-video-menu/actions";
 
 type Props = AbstractButtonProps & {
 
@@ -35,14 +35,14 @@ type Props = AbstractButtonProps & {
 };
 
 /**
- * Implements a React {@link Component} which displays a button for audio muting
+ * Implements a React {@link Component} which displays a button for audio un muting
  * every participant (except the local one)
  */
-class MuteEveryoneButton extends AbstractButton<Props, *> {
-    accessibilityLabel = 'toolbar.accessibilityLabel.muteEveryone';
+class UnMuteEveryoneButton extends AbstractButton<Props, *> {
+    accessibilityLabel = 'toolbar.accessibilityLabel.unMuteEveryone';
     icon = IconMuteEveryone;
-    label = 'toolbar.muteEveryone';
-    tooltip = 'toolbar.muteEveryone';
+    label = 'toolbar.unMuteEveryone';
+    tooltip = 'toolbar.unMuteEveryone';
 
     /**
      * Handles clicking / pressing the button, and opens a confirmation dialog.
@@ -53,7 +53,7 @@ class MuteEveryoneButton extends AbstractButton<Props, *> {
     _handleClick() {
         const { dispatch, moderators } = this.props;
 
-        dispatch(muteAllParticipants(moderators));
+        dispatch(unMuteAllParticipants(moderators));
     }
 }
 
@@ -68,15 +68,15 @@ function _mapStateToProps(state: Object, ownProps: Props) {
     const localParticipant = getLocalParticipant(state);
     const isModerator = localParticipant.role === PARTICIPANT_ROLE.MODERATOR;
     const { visible } = ownProps;
-    const { disableRemoteMute } = state['features/base/config'];
+    const { disableRemoteUnMute } = state['features/base/config'];
     const moderators = getAllModeratorParticipantsId(state);
 
     return {
         isModerator,
         localParticipantId: localParticipant.id,
-        visible: visible && isModerator && !disableRemoteMute,
-        moderators
+        moderators,
+        visible: visible && isModerator && !disableRemoteUnMute
     };
 }
 
-export default translate(connect(_mapStateToProps)(MuteEveryoneButton));
+export default translate(connect(_mapStateToProps)(UnMuteEveryoneButton));

@@ -33,6 +33,16 @@ export const KICK_PARTICIPANT = 'KICK_PARTICIPANT';
 export const MUTE_REMOTE_PARTICIPANT = 'MUTE_REMOTE_PARTICIPANT';
 
 /**
+ * Create an action for un muting a remote participant.
+ *
+ * {
+ *     type: UN_MUTE_REMOTE_PARTICIPANT,
+ *     id: string
+ * }
+ */
+export const UN_MUTE_REMOTE_PARTICIPANT = 'UN_MUTE_REMOTE_PARTICIPANT';
+
+/**
  * Create an action for when the local participant's display name is updated.
  *
  * {

@@ -13,7 +13,8 @@ import {
     PARTICIPANT_LEFT,
     PARTICIPANT_UPDATED,
     PIN_PARTICIPANT,
-    SET_LOADABLE_AVATAR_URL
+    SET_LOADABLE_AVATAR_URL,
+    UN_MUTE_REMOTE_PARTICIPANT
 } from './actionTypes';
 import {
     getLocalParticipant,
@@ -180,6 +181,22 @@ export function localParticipantRoleChanged(role) {
 export function muteRemoteParticipant(id) {
     return {
         type: MUTE_REMOTE_PARTICIPANT,
+        id
+    };
+}
+
+/**
+ * Create an action for un muting another participant in the conference.
+ *
+ * @param {string} id - Participant's ID.
+ * @returns {{
+ *     type: UN_MUTE_REMOTE_PARTICIPANT,
+ *     id: string
+ * }}
+ */
+export function unMuteRemoteParticipant(id) {
+    return {
+        type: UN_MUTE_REMOTE_PARTICIPANT,
         id
     };
 }
@@ -399,6 +416,29 @@ export function participantMutedUs(participant) {
         dispatch(showNotification({
             descriptionKey: 'notify.mutedRemotelyDescription',
             titleKey: 'notify.mutedRemotelyTitle',
+            titleArguments: {
+                participantDisplayName:
+                    getParticipantDisplayName(getState, participant.getId())
+            }
+        }));
+    };
+}
+
+/**
+ * Action to signal that a participant has un muted us.
+ *
+ * @param {JitsiParticipant} participant - Information about participant.
+ * @returns {Promise}
+ */
+export function participantUnMutedUs(participant) {
+    return (dispatch, getState) => {
+        if (!participant) {
+            return;
+        }
+
+        dispatch(showNotification({
+            descriptionKey: 'notify.unMutedRemotelyDescription',
+            titleKey: 'notify.unMutedRemotelyTitle',
             titleArguments: {
                 participantDisplayName:
                     getParticipantDisplayName(getState, participant.getId())

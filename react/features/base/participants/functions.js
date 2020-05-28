@@ -262,6 +262,29 @@ export function isEveryoneModerator(stateful: Object | Function) {
 }
 
 /**
+ * Returns all moderators
+ *
+ * @param stateful
+ * @returns {Array<$NonMaybeType<T>>|Array<T>}
+ */
+export function getAllModeratorParticipants(stateful: Object | Function) {
+    const participants = _getAllParticipants(stateful);
+
+    return participants.filter((x) => x.role === PARTICIPANT_ROLE.MODERATOR)
+}
+
+/**
+ * Returns all moderators id
+ *
+ * @param stateful
+ * @returns {Array<string>}
+ */
+export function getAllModeratorParticipantsId(stateful: Object | Function) {
+    return getAllModeratorParticipants(stateful)
+        .map(x => x.id);
+}
+
+/**
  * Checks a value and returns true if it's a preloaded icon object.
  *
  * @param {?string | ?Object} icon - The icon to check.
