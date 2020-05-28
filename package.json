@@ -110,6 +110,7 @@
     "@babel/runtime": "7.5.5",
     "babel-eslint": "10.0.1",
     "babel-loader": "8.0.4",
+    "circular-dependency-plugin": "5.2.0",
     "clean-css": "3.4.25",
     "css-loader": "0.28.7",
     "eslint": "5.6.1",
