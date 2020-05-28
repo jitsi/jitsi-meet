@@ -9,6 +9,8 @@ import AbstractLabels, {
     type Props
 } from '../AbstractLabels';
 
+declare var interfaceConfig: Object;
+
 /**
  * The type of the React {@code Component} state of {@link Labels}.
  */
@@ -67,6 +69,7 @@ class Labels extends AbstractLabels<Props, State> {
     render() {
         const { _filmstripVisible } = this.props;
         const { filmstripBecomingVisible } = this.state;
+        const { VIDEO_QUALITY_LABEL_DISABLED } = interfaceConfig;
         const className = `large-video-labels ${
             filmstripBecomingVisible ? 'opening' : ''} ${
             _filmstripVisible ? 'with-filmstrip' : 'without-filmstrip'}`;
@@ -91,7 +94,7 @@ class Labels extends AbstractLabels<Props, State> {
                     this._renderTranscribingLabel()
                 }
                 {
-                    this.props._showVideoQualityLabel
+                    this.props._showVideoQualityLabel && !VIDEO_QUALITY_LABEL_DISABLED
                         && this._renderVideoQualityLabel()
                 }
                 {
