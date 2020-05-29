@@ -29,7 +29,7 @@
     },
     "calendarSync": {
         "addMeetingURL": "הוסף קישור מפגש",
-        "confirmAddLink": "האם ברצונך הוסיף קישור Jitsi לאירוע זה?",
+        "confirmAddLink": "האם ברצונך להוסיף קישור Jitsi לאירוע זה?",
         "error": {
             "appConfiguration": "שילוב לוח השנה אינו מוגדר כראוי.",
             "generic": "אירעה שגיאה. אנא בדוק את הגדרות לוח השנה שלך או נסה לרענן את לוח השנה.",
@@ -432,7 +432,7 @@
     "lockRoomPasswordUppercase": "סיסמה",
     "me": "אני",
     "notify": {
-        "connectedOneMember": "{{name}} הצטרף למפדש",
+        "connectedOneMember": "{{name}} הצטרף למפגש",
         "connectedThreePlusMembers": "{{name}} ו-{{count}} אחרים הצטרפו למפגש",
         "connectedTwoMembers": "{{first}} ו-{{second}} הצטרפו למפגש",
         "disconnected": "מנותק",
@@ -669,7 +669,7 @@
         "Settings": "הגדרות",
         "sharedvideo": "שתף וידאו מיוטיוב",
         "shareRoom": "הזמן מישהו",
-        "shortcuts": "הצד קיצורי דרך",
+        "shortcuts": "הצג קיצורי דרך",
         "speakerStats": "סטטיסטיקות דובר",
         "startScreenSharing": "התחל שיתוף מסך",
         "startSubtitles": "התחל כתוביות",
