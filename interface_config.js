@@ -260,7 +260,7 @@ var interfaceConfig = {
 
     // Aeternity custom settings
     CHAT_ALWAYS_OPEN: false,
-    TILE_VIEW_ALWAYS_OPEN: false
+    TILE_VIEW_ALWAYS_OPEN: false,
 
     // List of undocumented settings
     /**
