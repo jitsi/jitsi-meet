@@ -1261,7 +1261,7 @@ export default {
             items[key] = param[1];
         }
 
-        if (typeof items.e2eekey !== undefined) {
+        if (typeof items.e2eekey !== 'undefined') {
             APP.store.dispatch(setE2EEKey(items.e2eekey));
 
             // Clean URL in browser history.
