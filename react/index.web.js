@@ -10,6 +10,7 @@ import { getLogger } from './features/base/logging/functions';
 import { Platform } from './features/base/react';
 import { getJitsiMeetGlobalNS } from './features/base/util';
 import PrejoinApp from './features/prejoin/components/PrejoinApp';
+import { receiveIsBraveCheck, isBrave } from './features/base/environment';
 
 const logger = getLogger('index.web');
 const OS = Platform.OS;
@@ -17,11 +18,13 @@ const OS = Platform.OS;
 /**
  * Renders the app when the DOM tree has been loaded.
  */
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
     const now = window.performance.now();
 
     APP.connectionTimes['document.ready'] = now;
     logger.log('(TIME) document ready:\t', now);
+
+    receiveIsBraveCheck(await isBrave());
 });
 
 // Workaround for the issue when returning to a page with the back button and

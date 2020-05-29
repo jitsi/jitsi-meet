@@ -7,8 +7,8 @@ $baseLight: #FFFFFF;
 * Controls
 */
 $controlBackground: $baseLight;
-$controlColor: #333333;
-$sliderTrackBackground: #474747;
+$controlColor: #3B3E4F;
+$sliderTrackBackground: #5E6175;
 $sliderThumbBackground: #3572b0;
 
 /**
@@ -35,22 +35,22 @@ $primaryButtonFontWeight: 400;
 
 $buttonShadowColor: #192d4f;
 
-$overlayButtonBg: #0074E0;
+$overlayButtonBg: #353DAB;
 
 /**
 * Color variables
 **/
-$defaultBackground: #474747;
-$filmstripOnlyOverlayBg: #000;
-$reloadProgressBarBg: #0074E0;
+$defaultBackground: #3B3E4F;
+$filmstripOnlyOverlayBg: #1E2029;
+$reloadProgressBarBg: #222985;
 
 /**
  * Dialog colors
  **/
-$auiDialogColor: #eceef1;
-$auiDialogBg: #253858;
-$auiDialogContentBg: #344563;
-$auiBorderColor: #253858;
+$auiDialogColor: #344563;
+$auiDialogBg: #eceef1;
+$auiDialogContentBg: #eceef1;
+$auiBorderColor: none;
 $dialogTitleFontWeight: 400;
 $dialogErrorText: #344563;
 

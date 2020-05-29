@@ -285,7 +285,8 @@ export function _handleParticipantError(err: { message: ?string }) {
  * false.
  */
 export function isRoomValid(room: ?string) {
-    return typeof room === 'string' && room !== '';
+    // e.g., "abcdefghijklmnopqrstuvwxyz0123456789-_ABCDE"
+    return typeof room === 'string' && room.match(/^[A-Za-z0-9-_]{43}$/);
 }
 
 /**

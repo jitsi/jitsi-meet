@@ -117,7 +117,7 @@ function _getWebWelcomePageRoute(state): Promise<Route> {
     const route = _getEmptyRoute();
 
     if (isWelcomePageUserEnabled(state)) {
-        if (isSupportedBrowser()) {
+        if (isSupportedBrowser() || !isRoomValid(state['features/base/conference'].room)) {
             route.component = WelcomePage;
         } else {
             route.component = UnsupportedDesktopBrowser;

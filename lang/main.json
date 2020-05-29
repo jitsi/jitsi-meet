@@ -830,7 +830,7 @@
             "join": "Tap to join",
             "roomname": "Enter room name"
         },
-        "appDescription": "Go ahead, video chat with the whole team. In fact, invite everyone you know. {{app}} is a fully encrypted, 100% open source video conferencing solution that you can use all day, every day, for free — with no account needed.",
+        "appDescription": "Private and unlimited video calling by Brave.",
         "audioVideoSwitch": {
             "audio": "Voice",
             "video": "Video"
@@ -839,9 +839,12 @@
         "connectCalendarButton": "Connect your calendar",
         "connectCalendarText": "Connect your calendar to view all your meetings in {{app}}. Plus, add {{provider}} meetings to your calendar and start them with one click.",
         "enterRoomTitle": "Start a new meeting",
+        "footerText": "Requires ",
         "getHelp": "Get help",
-        "go": "GO",
-        "goSmall": "GO",
+        "roomNameAllowedChars": "Meeting name should not contain any of these characters: ?, &, :, ', \", %, #.",
+        "go": "Start video call",
+        "goSmall": "Start video call",
+        "join": "CREATE / JOIN",
         "info": "Info",
         "join": "CREATE / JOIN",
         "moderatedMessage": "Or <a href=\"{{url}}\" rel=\"noopener noreferrer\" target=\"_blank\">book a meeting URL</a> in advance where you are the only moderator.",
@@ -855,7 +858,7 @@
         "roomnameHint": "Enter the name or URL of the room you want to join. You may make a name up, just let the people you are meeting know it so that they enter the same name.",
         "sendFeedback": "Send feedback",
         "terms": "Terms",
-        "title": "Secure, fully featured, and completely free video conferencing"
+        "title": "Start a private video call with your friends and colleagues."
     },
     "lonelyMeetingExperience": {
         "button": "Invite others",

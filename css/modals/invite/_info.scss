@@ -1,7 +1,7 @@
 .info-dialog {
     cursor: default;
     display: flex;
-    font-size: 14px;
+    font-size: 16px;
 
     .info-dialog-column {
         margin-right: 10px;
@@ -24,6 +24,8 @@
 
     .info-label {
         font-weight: bold;
+        text-overflow: ellipsis;
+        white-space: nowrap;
     }
 
     .info-password-field {

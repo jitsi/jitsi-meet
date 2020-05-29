@@ -2,10 +2,11 @@
 
 import React, { Component } from 'react';
 
-import { isBrowsersOptimal } from '../../base/environment';
+import { isBrowsersOptimal, isBraveBrowser } from '../../base/environment';
+import { isMobileBrowser } from '../../base/environment/utils';
 import { translate } from '../../base/i18n';
 
-import { CHROME, FIREFOX } from './browserLinks';
+import { BRAVE_DOWNLOAD, BRAVE_SITE } from './browserLinks';
 
 /**
  * The namespace of the CSS styles of UnsupportedDesktopBrowser.
@@ -39,21 +40,26 @@ class UnsupportedDesktopBrowser extends Component<Props> {
      * @returns {ReactElement}
      */
     render() {
+        if (isBraveBrowser() && isMobileBrowser()) {
+            // temporary...
+            return (
+                <div className = { _SNS }>
+                    <h2 className = { `${_SNS}__title` }>
+                        Sorry! At present, mobile browsers are not supported.
+                    </h2>
+                </div>
+            );
+        }
+
         return (
             <div className = { _SNS }>
                 <h2 className = { `${_SNS}__title` }>
-                    It looks like you're using a browser we don't support.
+                    <a href = { BRAVE_DOWNLOAD } >Download Brave</a> to join this call.
                 </h2>
                 <p className = { `${_SNS}__description` }>
-                    Please try again with the latest version of&nbsp;
                     <a
                         className = { `${_SNS}__link` }
-                        href = { CHROME } >Chrome</a>&nbsp;
-                    {
-                        this._showFirefox() && <>or <a
-                            className = { `${_SNS}__link` }
-                            href = { FIREFOX }>Firefox</a></>
-                    }
+                        href = { BRAVE_SITE } >Learn more.</a>&nbsp;
                 </p>
             </div>
         );

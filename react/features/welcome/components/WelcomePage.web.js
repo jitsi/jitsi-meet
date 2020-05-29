@@ -5,7 +5,6 @@ import React from 'react';
 import { isMobileBrowser } from '../../base/environment/utils';
 import { translate, translateToHTML } from '../../base/i18n';
 import { Icon, IconWarning } from '../../base/icons';
-import { Watermarks } from '../../base/react';
 import { connect } from '../../base/redux';
 import { CalendarList } from '../../calendar-sync';
 import { RecentList } from '../../recent-list';
@@ -13,6 +12,7 @@ import { SettingsButton, SETTINGS_TABS } from '../../settings';
 
 import { AbstractWelcomePage, _mapStateToProps } from './AbstractWelcomePage';
 import Tabs from './Tabs';
+import { isBraveBrowser } from '../../base/environment';
 
 /**
  * The pattern used to validate room name.
@@ -100,14 +100,11 @@ class WelcomePage extends AbstractWelcomePage {
         );
 
         // Bind event handlers so they are only bound once per instance.
-        this._onFormSubmit = this._onFormSubmit.bind(this);
-        this._onRoomChange = this._onRoomChange.bind(this);
         this._setAdditionalContentRef
             = this._setAdditionalContentRef.bind(this);
         this._setRoomInputRef = this._setRoomInputRef.bind(this);
         this._setAdditionalToolbarContentRef
             = this._setAdditionalToolbarContentRef.bind(this);
-        this._onTabSelected = this._onTabSelected.bind(this);
     }
 
     /**
@@ -169,11 +166,11 @@ class WelcomePage extends AbstractWelcomePage {
                 className = { `welcome ${showAdditionalContent
                     ? 'with-content' : 'without-content'}` }
                 id = 'welcome_page'>
-                <div className = 'welcome-watermark'>
-                    <Watermarks />
-                </div>
+                <a
+                    className = 'welcome-watermark'
+                    href = { 'https://brave.com/download/' } />
                 <div className = 'header'>
-                    <div className = 'welcome-page-settings'>
+                    { isBraveBrowser() ? <div className = 'welcome-page-settings'>
                         <SettingsButton
                             defaultTab = { SETTINGS_TABS.CALENDAR } />
                         { showAdditionalToolbarContent
@@ -182,41 +179,25 @@ class WelcomePage extends AbstractWelcomePage {
                                 ref = { this._setAdditionalToolbarContentRef } />
                             : null
                         }
-                    </div>
-                    <div className = 'header-image' />
+                    </div> : null}
+                    <div className = 'header-today-logo' />
                     <div className = 'header-text'>
                         <h1 className = 'header-text-title'>
                             { t('welcomepage.title') }
                         </h1>
                         <p className = 'header-text-description'>
-                            { t('welcomepage.appDescription',
-                                { app: APP_NAME }) }
+                            { t('welcomepage.appDescription') }
+                            &nbsp;Learn about&nbsp;
+                            <a href = { 'https://brave.com/privacy/#brave-together-learn' }>
+                                privacy protection and data use.
+                            </a>
                         </p>
                     </div>
                     <div id = 'enter_room'>
-                        <div className = 'enter-room-input-container'>
-                            <div className = 'enter-room-title'>
-                                { t('welcomepage.enterRoomTitle') }
-                            </div>
-                            <form onSubmit = { this._onFormSubmit }>
-                                <input
-                                    autoFocus = { true }
-                                    className = 'enter-room-input'
-                                    id = 'enter_room_field'
-                                    onChange = { this._onRoomChange }
-                                    pattern = { ROOM_NAME_VALIDATE_PATTERN_STR }
-                                    placeholder = { this.state.roomPlaceholder }
-                                    ref = { this._setRoomInputRef }
-                                    title = { t('welcomepage.roomNameAllowedChars') }
-                                    type = 'text'
-                                    value = { this.state.room } />
-                                { this._renderInsecureRoomNameWarning() }
-                            </form>
-                        </div>
                         <div
                             className = 'welcome-page-button'
                             id = 'enter_room_button'
-                            onClick = { this._onFormSubmit }>
+                            onClick = { this._onLaunchCall }>
                             {
                                 showResponsiveText
                                     ? t('welcomepage.goSmall')
@@ -262,44 +243,22 @@ class WelcomePage extends AbstractWelcomePage {
     }
 
     /**
-     * Prevents submission of the form and delegates join logic.
+     * Redirects to call with new random name.
      *
-     * @param {Event} event - The HTML Event which details the form submission.
-     * @private
-     * @returns {void}
+     * @returns {ReactElement|null}
      */
-    _onFormSubmit(event) {
-        event.preventDefault();
+    _onLaunchCall() {
+        const windowCrypto = typeof window !== 'undefined' && (window.crypto || window.msCrypto);
+        const buf = new Uint8Array(32);
 
-        if (!this._roomInputRef || this._roomInputRef.reportValidity()) {
-            this._onJoin();
-        }
-    }
+        windowCrypto.getRandomValues(buf);
 
-    /**
-     * Overrides the super to account for the differences in the argument types
-     * provided by HTML and React Native text inputs.
-     *
-     * @inheritdoc
-     * @override
-     * @param {Event} event - The (HTML) Event which details the change such as
-     * the EventTarget.
-     * @protected
-     */
-    _onRoomChange(event) {
-        super._onRoomChange(event.target.value);
-    }
+        const name = btoa(String.fromCharCode.apply(null, buf))
+            .replace(/\+/g, '-')
+            .replace(/\//g, '_')
+            .replace(/=/g, '');
 
-    /**
-     * Callback invoked when the desired tab to display should be changed.
-     *
-     * @param {number} tabIndex - The index of the tab within the array of
-     * displayed tabs.
-     * @private
-     * @returns {void}
-     */
-    _onTabSelected(tabIndex) {
-        this.setState({ selectedTab: tabIndex });
+        window.open(`https://together.brave.com/${name}`, '_self');
     }
 
     /**

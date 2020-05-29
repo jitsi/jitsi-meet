@@ -7,18 +7,14 @@ import { isMobileBrowser } from './utils';
 
 const { browser } = JitsiMeetJS.util;
 
-const DEFAULT_OPTIMAL_BROWSERS = [
-    'chrome',
-    'electron',
-    'firefox',
-    'nwjs',
-    'safari'
-];
+const DEFAULT_OPTIMAL_BROWSERS = [];
 
-const DEFAULT_UNSUPPORTED_BROWSERS = [];
+// const DEFAULT_UNSUPPORTED_BROWSERS = [];
+let checkedIsBrave = false;
 
 const browserNameToCheck = {
-    chrome: browser.isChrome.bind(browser),
+    brave: () => checkedIsBrave,
+    chrome: () => checkedIsBrave,
     chromium: browser.isChromiumBased.bind(browser),
     electron: browser.isElectron.bind(browser),
     firefox: browser.isFirefox.bind(browser),
@@ -39,6 +35,44 @@ declare var interfaceConfig: Object;
 export function isBrowsersOptimal(browserName: string) {
     return (interfaceConfig.OPTIMAL_BROWSERS || DEFAULT_OPTIMAL_BROWSERS)
         .includes(browserName);
+}
+
+
+/**
+ * Resolves as true when browser is brave.
+ *
+ * @returns {Promise<boolean>}
+ */
+/* eslint-disable */
+export async function isBrave(): Promise<boolean> {
+    try {
+        const nav: any = navigator;
+        const isBraveCheck = await nav.brave.isBrave();
+
+        return isBraveCheck;
+    } catch (e) {
+        return false;
+    }
+}
+/* eslint-enable */
+
+/**
+ * Reverse sets the brave boolean to allow for a sync function.
+ *
+ * @param {boolean} externalBraveCheck - Whether or not the browser is brave.
+ * @returns {void}
+ */
+export function receiveIsBraveCheck(externalBraveCheck: boolean) { // eslint-disable-line
+    checkedIsBrave = externalBraveCheck;
+}
+
+/**
+ * Returns whether or not the current browser is the Brave browser.
+ *
+ * @returns {boolean}
+ */
+export function isBraveBrowser() {
+    return checkedIsBrave;
 }
 
 /**
@@ -69,6 +103,15 @@ export function isSupportedBrowser() {
         return false;
     }
 
+
+    if (checkedIsBrave) {
+        // at present, only desktop browser supported
+        return !isMobileBrowser();
+    }
+
+    return false;
+
+/*
     // Blacklists apply to desktop browsers only right now.
     if (!isMobileBrowser() && _isCurrentBrowserInList(
         interfaceConfig.UNSUPPORTED_BROWSERS || DEFAULT_UNSUPPORTED_BROWSERS
@@ -81,6 +124,7 @@ export function isSupportedBrowser() {
     // - if the URL points to a conference then deep-linking will take
     //   care of it.
     return isMobileBrowser() || JitsiMeetJS.isWebRtcSupported();
+ */
 }
 
 /**

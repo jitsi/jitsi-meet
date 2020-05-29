@@ -4,7 +4,7 @@ body.welcome-page {
 }
 
 .welcome {
-    background-image: $welcomePageBackground;
+    background-color: $welcomePageBackground;
     display: flex;
     flex-direction: column;
     font-family: $welcomePageFontFamily;
@@ -26,13 +26,20 @@ body.welcome-page {
         position: relative;
         text-align: center;
 
+        .header-today-logo {
+            background: url('../images/togetherLogo.svg');
+            width: 120px;
+            height: 120px;
+            margin: 100px auto 50px auto;
+        }
+
         .header-text {
             display: flex;
             flex-direction: column;
             margin-top: $watermarkHeight + $welcomePageHeaderTextMarginTop;
             margin-bottom: $welcomePageHeaderTextMarginBottom;
             max-width: calc(100% - 40px);
-            width: 650px;
+            width: 570px;
             z-index: $zindex2;
         }
 
@@ -46,14 +53,14 @@ body.welcome-page {
         }
 
         .header-text-description {
-            display: $welcomePageHeaderTextDescriptionDisplay;
+            display: block;
+            text-align: center;
             color: $welcomePageDescriptionColor;
             font-size: $welcomePageHeaderTextDescriptionFontSize;
             font-weight: $welcomePageHeaderTextDescriptionFontWeight;
             line-height: $welcomePageHeaderTextDescriptionLineHeight;
             margin-bottom: $welcomePageHeaderTextDescriptionMarginBottom;
             align-self: $welcomePageHeaderTextDescriptionAlignSelf;
-        }
 
         #enter_room {
             display: flex;
@@ -108,8 +115,8 @@ body.welcome-page {
                     color: #253858;
                 }
             }
-
         }
+    }
 
         #moderated-meetings {
             max-width: calc(100% - 40px);
@@ -149,44 +156,19 @@ body.welcome-page {
                 }
             }
 
-            .tab-buttons {
-                font-size: 18px;
-                color: #FFFFFF;
-                display: $welcomePageTabButtonsDisplay;
-                flex-grow: 0;
-                flex-direction: row;
-                min-height: 54px;
-                width: 100%;
-
-                .tab {
-                    display: $welcomePageTabDisplay;
-                    text-align: center;
-                    background: rgba(9,30,66,0.37);
-                    height: 55px;
-                    line-height: 54px;
-                    flex-grow: 1;
-                    cursor: pointer;
-
-                    &.selected, &:hover {
-                        background: rgba(9,30,66,0.71);
-                    }
-
-                    &:last-child {
-                        margin-left: 1px;
-                    }
-                }
-            }
+        a {
+            color: #212529;
+            text-decoration: none;
         }
     }
 
     .welcome-page-button {
-        width: $welcomePageButtonWidth;
-        min-width: $welcomePageButtonMinWidth;
-        height: $welcomePageButtonHeight;
         font-size: $welcomePageButtonFontSize;
         font-weight: $welcomePageButtonFontWeight;
-        background: #0074E0;
-        border-radius: $welcomePageButtonBorderRadius;
+        width: 231px;
+        background: #4C54D2;
+        border-radius: 100px;
+        padding: 10px 0;
         color: #FFFFFF;
         text-align: center;
         vertical-align: middle;
@@ -197,8 +179,8 @@ body.welcome-page {
     .welcome-page-settings {
         color: $welcomePageDescriptionColor;
         position: absolute;
-        top: 32px;
-        right: 32px;
+        top: 24px;
+        right: 24px;
         z-index: $zindex2;
 
         * {
@@ -208,8 +190,43 @@ body.welcome-page {
     }
 
     .welcome-watermark {
+        display: block;
         position: absolute;
-        width: 100%;
-        height: 100%;
+        background: url('../images/brave_logo.svg');
+        width: 131px;
+        height: 40px;
+        top: 24px;
+        left: 24px;
+        outline: none;
+
+        a {
+            display: block;
+        }
+    }
+}
+
+@media (prefers-color-scheme: dark) {
+    .welcome {
+        background-color: #17171F;
+    
+        .header {
+            .header-today-logo {
+                background: url('../images/togetherLogo_dark.svg');
+            }
+    
+            .header-text-title {
+                color: #F8F9FA;
+            }
+        }
+    
+        .footer-text {
+            a {
+                color: #F8F9FA;
+            }
+        }
+
+        .welcome-watermark {
+            background: url('../images/brave_logo_dark.svg');
+        }
     }
 }
