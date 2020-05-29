@@ -23,24 +23,36 @@ echo "by providing an email address for important account notifications"
 echo -n "Enter your email and press [ENTER]: "
 read EMAIL
 
-cd /usr/local/sbin
-
-if [ ! -f certbot-auto ] ; then
-  wget https://dl.eff.org/certbot-auto
-  chmod a+x ./certbot-auto
+if [ ! -x "$(command -v certbot)" ] ; then
+    DISTRO=$(lsb_release -is)
+    DISTRO_VERSION=$(lsb_release -rs)
+    if [ "$DISTRO" = "Debian" ]; then
+        apt-get update
+        apt-get -y install certbot
+    elif [ "$DISTRO" = "Ubuntu" ]; then
+        if [ "$DISTRO_VERSION" = "20.04" ] || [ "$DISTRO_VERSION" = "19.10" ]; then
+                apt-get update
+                apt-get -y install software-properties-common
+                add-apt-repository -y universe
+                apt-get update
+                apt-get -y install certbot
+        elif [ "$DISTRO_VERSION" = "18.04" ]; then
+                apt-get update
+                apt-get -y install software-properties-common
+                add-apt-repository -y universe
+                add-apt-repository -y ppa:certbot/certbot
+                apt-get update
+                apt-get -y install certbot
+        fi
+    fi
 fi
-
-CRON_FILE="/etc/cron.weekly/letsencrypt-renew"
-if [ ! -d "/etc/cron.weekly" ] ; then
-    mkdir "/etc/cron.weekly"
-fi
-echo "#!/bin/bash" > $CRON_FILE
-echo "/usr/local/sbin/certbot-auto renew >> /var/log/le-renew.log" >> $CRON_FILE
 
 CERT_KEY="/etc/letsencrypt/live/$DOMAIN/privkey.pem"
 CERT_CRT="/etc/letsencrypt/live/$DOMAIN/fullchain.pem"
 
 if [ -f /etc/nginx/sites-enabled/$DOMAIN.conf ] ; then
+
+    NGINX_HOOK=/etc/letsencrypt/renewal-hooks/deploy/0001-nginx-certbot-deploy.sh
 
     TURN_CONFIG="/etc/turnserver.conf"
     TURN_HOOK=/etc/letsencrypt/renewal-hooks/deploy/0000-coturn-certbot-deploy.sh
@@ -51,13 +63,17 @@ if [ -f /etc/nginx/sites-enabled/$DOMAIN.conf ] ; then
         chmod u+x $TURN_HOOK
         sed -i "s/jitsi-meet.example.com/$DOMAIN/g" $TURN_HOOK
 
-        ./certbot-auto certonly --noninteractive \
+        cp /usr/share/jitsi-meet-certbot-config/0001-nginx-certbot-deploy.sh $NGINX_HOOK
+        chmod u+x $NGINX_HOOK
+
+        certbot certonly --noninteractive \
         --webroot --webroot-path /usr/share/jitsi-meet \
         -d $DOMAIN \
         --agree-tos --email $EMAIL \
-        --deploy-hook $TURN_HOOK
+        --deploy-hook $TURN_HOOK \
+        --deploy-hook $NGINX_HOOK \
     else
-        ./certbot-auto certonly --noninteractive \
+        certbot certonly --noninteractive \
         --webroot --webroot-path /usr/share/jitsi-meet \
         -d $DOMAIN \
         --agree-tos --email $EMAIL
@@ -75,14 +91,20 @@ if [ -f /etc/nginx/sites-enabled/$DOMAIN.conf ] ; then
     sed -i "s/ssl_certificate\ \/etc\/jitsi\/meet\/.*crt/ssl_certificate\ $CERT_CRT_ESC/g" \
         $CONF_FILE
 
-    echo "service nginx reload" >> $CRON_FILE
-    service nginx reload
+    systemctl reload nginx.service
 elif [ -f /etc/apache2/sites-enabled/$DOMAIN.conf ] ; then
 
-    ./certbot-auto certonly --noninteractive \
+    APACHE_HOOK=/etc/letsencrypt/renewal-hooks/deploy/0002-apache2-certbot-deploy.sh
+
+    mkdir -p $(dirname $APACHE_HOOK)
+    cp /usr/share/jitsi-meet-certbot-config/0002-apache-certbot-deploy.sh $APACHE_HOOK
+    chmod u+x $APACHE_HOOK
+
+    certbot certonly --noninteractive \
     --webroot --webroot-path /usr/share/jitsi-meet \
     -d $DOMAIN \
-    --agree-tos --email $EMAIL
+    --agree-tos --email $EMAIL \
+    --deploy-hook $APACHE_HOOK \
 
     echo "Configuring apache2"
 
@@ -96,9 +118,5 @@ elif [ -f /etc/apache2/sites-enabled/$DOMAIN.conf ] ; then
     sed -i "s/SSLCertificateFile\ \/etc\/jitsi\/meet\/.*crt/SSLCertificateFile\ $CERT_CRT_ESC/g" \
         $CONF_FILE
 
-    echo "service apache2 reload" >> $CRON_FILE
-    service apache2 reload
+    systemctl reload apache2.service
 fi
-
-# the cron file that will renew certificates
-chmod a+x $CRON_FILE
