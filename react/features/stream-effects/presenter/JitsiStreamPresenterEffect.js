@@ -64,7 +64,7 @@ export default class JitsiStreamPresenterEffect {
 
         // Bind event handler so it is only bound once for every instance.
         this._onVideoFrameTimer = this._onVideoFrameTimer.bind(this);
-        this._videoFrameTimerWorker = new Worker(timerWorkerScript);
+        this._videoFrameTimerWorker = new Worker(timerWorkerScript, { name: 'Presenter effect worker' });
         this._videoFrameTimerWorker.onmessage = this._onVideoFrameTimer;
     }
 

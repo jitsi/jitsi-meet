@@ -107,7 +107,7 @@
     JitsiMeetConferenceOptions *conferenceOptions = [JitsiMeetConferenceOptions fromBuilder:^(JitsiMeetConferenceOptionsBuilder *builder) {
         builder.room = [url absoluteString];
     }];
-    
+
     return [JitsiMeetView setPropsInViews:[conferenceOptions asProps]];
 }
 
@@ -130,6 +130,11 @@
     }
 
     return nil;
+}
+
+- (BOOL)isCrashReportingDisabled {
+    NSUserDefaults *userDefaults = [[NSUserDefaults alloc] initWithSuiteName:@"jitsi-default-preferences"];
+    return [userDefaults stringForKey:@"isCrashReportingDisabled"];
 }
 
 - (JitsiMeetConferenceOptions *)optionsFromUserActivity:(NSUserActivity *)userActivity {

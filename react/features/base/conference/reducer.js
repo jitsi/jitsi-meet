@@ -1,9 +1,9 @@
 // @flow
 
+import { LOCKED_LOCALLY, LOCKED_REMOTELY } from '../../room-lock';
 import { CONNECTION_WILL_CONNECT, SET_LOCATION_URL } from '../connection';
 import { JitsiConferenceErrors } from '../lib-jitsi-meet';
 import { assign, ReducerRegistry, set } from '../redux';
-import { LOCKED_LOCALLY, LOCKED_REMOTELY } from '../../room-lock';
 
 import {
     AUTH_STATUS_CHANGED,
@@ -21,7 +21,7 @@ import {
     SET_MAX_RECEIVER_VIDEO_QUALITY,
     SET_PASSWORD,
     SET_PENDING_SUBJECT_CHANGE,
-    SET_PREFERRED_RECEIVER_VIDEO_QUALITY,
+    SET_PREFERRED_VIDEO_QUALITY,
     SET_ROOM,
     SET_SIP_GATEWAY_ENABLED,
     SET_START_MUTED_POLICY
@@ -31,13 +31,14 @@ import { isRoomValid } from './functions';
 
 const DEFAULT_STATE = {
     conference: undefined,
+    e2eeSupported: undefined,
     joining: undefined,
     leaving: undefined,
     locked: undefined,
     maxReceiverVideoQuality: VIDEO_QUALITY_LEVELS.HIGH,
     password: undefined,
     passwordRequired: undefined,
-    preferredReceiverVideoQuality: VIDEO_QUALITY_LEVELS.HIGH
+    preferredVideoQuality: VIDEO_QUALITY_LEVELS.HIGH
 };
 
 /**
@@ -100,11 +101,11 @@ ReducerRegistry.register(
         case SET_PENDING_SUBJECT_CHANGE:
             return set(state, 'pendingSubjectChange', action.subject);
 
-        case SET_PREFERRED_RECEIVER_VIDEO_QUALITY:
+        case SET_PREFERRED_VIDEO_QUALITY:
             return set(
                 state,
-                'preferredReceiverVideoQuality',
-                action.preferredReceiverVideoQuality);
+                'preferredVideoQuality',
+                action.preferredVideoQuality);
 
         case SET_ROOM:
             return _setRoom(state, action);
@@ -175,6 +176,7 @@ function _conferenceFailed(state, { conference, error }) {
     return assign(state, {
         authRequired,
         conference: undefined,
+        e2eeSupported: undefined,
         error,
         joining: undefined,
         leaving: undefined,
@@ -226,6 +228,9 @@ function _conferenceJoined(state, { conference }) {
          * @type {JitsiConference}
          */
         conference,
+
+        e2eeSupported: conference.isE2EESupported(),
+
         joining: undefined,
         leaving: undefined,
 

@@ -1,9 +1,5 @@
 // @flow
 
-import {
-    setFollowMeModerator,
-    setFollowMeState
-} from './actions';
 import { CONFERENCE_WILL_JOIN } from '../base/conference';
 import {
     getParticipantById,
@@ -15,7 +11,12 @@ import { MiddlewareRegistry } from '../base/redux';
 import { setFilmstripVisible } from '../filmstrip';
 import { setTileView } from '../video-layout';
 
+import {
+    setFollowMeModerator,
+    setFollowMeState
+} from './actions';
 import { FOLLOW_ME_COMMAND } from './constants';
+import { isFollowMeActive } from './functions';
 import logger from './logger';
 
 declare var APP: Object;
@@ -111,7 +112,7 @@ function _onFollowMeCommand(attributes = {}, id, store) {
         return;
     }
 
-    if (!state['features/follow-me'].moderator) {
+    if (!isFollowMeActive(state)) {
         store.dispatch(setFollowMeModerator(id));
     }
 

@@ -1,7 +1,8 @@
 // @flow
 
-import { LAYOUTS } from './constants';
 import { getPinnedParticipant } from '../base/participants';
+
+import { LAYOUTS } from './constants';
 
 declare var interfaceConfig: Object;
 

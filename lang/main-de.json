@@ -1,11 +1,20 @@
 {
     "addPeople": {
         "add": "Einladen",
+        "addContacts": "Laden Sie Ihre Kontakte ein",
+        "copyInvite": "Sitzungseinladung kopieren",
+        "copyLink": "Meeting-Link kopieren",
+        "copyStream": "Live-Streaming-Link kopieren",
         "countryNotSupported": "Wir unterstützen dieses Land noch nicht.",
         "countryReminder": "Telefonnummer nicht in den USA? Bitte sicherstellen, dass die Telefonnummer mit dem Ländercode beginnt.",
+        "defaultEmail": "Ihre Standard-E-Mail",
         "disabled": "Sie können keine Teilnehmer einladen.",
         "failedToAdd": "Fehler beim Hinzufügen von Teilnehmern",
         "footerText": "Abgehender Ruf ist deaktiviert.",
+        "inviteMoreHeader": "Sie sind alleine in der Sitzung",
+        "inviteMoreMailSubject": "An {{appName}} Meeting teilnehmen",
+        "inviteMorePrompt": "Mehr Leute einladen",
+        "linkCopied": "Link in die Zwischenablage kopiert",
         "loading": "Suche nach Teilnehmern und Telefonnummern",
         "loadingNumber": "Telefonnummer wird überprüft",
         "loadingPeople": "Suche nach einzuladenden Teilnehmern",
@@ -14,6 +23,9 @@
         "searchNumbers": "Telefonnummern hinzufügen",
         "searchPeople": "Nach Teilnehmern suchen",
         "searchPeopleAndNumbers": "Nach Teilnehmen suchen oder deren Telefonnummern hinzufügen",
+        "shareInvite": "Einladung zur Versammlung teilen",
+        "shareLink": "Teilen Sie den Meeting-Link, um andere einzuladen",
+        "shareStream": "Den Live-Streaming-Link freigeben",
         "telephone": "Telefon: {{number}}",
         "title": "Teilnehmer zu dieser Konferenz einladen"
     },
@@ -25,11 +37,11 @@
         "none": "Keine Audiogeräte verfügbar"
     },
     "audioOnly": {
-        "audioOnly": "Nur Audio"
+        "audioOnly": "Geringe Bandbreite"
     },
     "calendarSync": {
         "addMeetingURL": "Meeting-Link hinzufügen",
-        "confirmAddLink": "Wollen Sie einen Jitsi-Link zu diesem Termin hinzufügen?",
+        "confirmAddLink": "Möchten Sie einen Jitsi-Link zu diesem Termin hinzufügen?",
         "error": {
             "appConfiguration": "Kalenderintegration ist nicht richtig konfiguriert.",
             "generic": "Ein Fehler ist aufgetreten. Prüfen Sie Ihre Kalendereinstellungen oder versuchen Sie, den Kalender zu aktualisieren.",
@@ -69,7 +81,7 @@
     },
     "connection": {
         "ATTACHED": "Angehängt",
-        "AUTHENTICATING": "Anmeldung läuft",
+        "AUTHENTICATING": "Authentifizierung läuft",
         "AUTHFAIL": "Authentifizierung fehlgeschlagen",
         "CONNECTED": "Verbunden",
         "CONNECTING": "Verbindung wird hergestellt",
@@ -121,10 +133,12 @@
     "deepLinking": {
         "appNotInstalled": "Sie benötigen die „{{app}}“-App, um der Konferenz auf dem Smartphone beizutreten.",
         "description": "Nichts passiert? Wir haben versucht, die Konferenz in {{app}} zu öffnen. Versuchen Sie es erneut oder treten Sie der Konferenz in {{app}} im Web bei.",
-        "descriptionWithoutWeb": "Ist nichts passiert? Wir haben versucht, Ihre Besprechung in der „{{{app}}}“-Desktop-App zu starten.",
+        "descriptionWithoutWeb": "Ist nichts passiert? Wir haben versucht, Ihre Besprechung in der „{{app}}“-Desktop-App zu starten.",
         "downloadApp": "App herunterladen",
+        "ifDoNotHaveApp": "Wenn Sie die App noch nicht haben:",
+        "ifHaveApp": "Wenn Sie die App bereits haben:",
+        "joinInApp": "An dem Meeting teilnehmen mit der App",
         "launchWebButton": "Im Web öffnen",
-        "openApp": "In der App fortfahren",
         "title": "Die Konferenz wird in {{app}} geöffnet...",
         "tryAgainButton": "Erneut mit der nativen Applikation versuchen"
     },
@@ -144,7 +158,7 @@
     },
     "dialog": {
         "accessibilityLabel": {
-            "liveStreaming": "Livestream:"
+            "liveStreaming": "Livestream"
         },
         "allow": "Erlauben",
         "alreadySharedVideoMsg": "Ein anderer Teilnehmer gibt bereits ein Video weiter. Bei dieser Konferenz ist jeweils nur ein geteiltes Video möglich.",
@@ -155,7 +169,7 @@
         "cameraNotFoundError": "Kamera nicht gefunden.",
         "cameraNotSendingData": "Die Kamera ist nicht verfügbar. Bitte prüfen, ob eine andere Applikation die Kamera verwendet, eine andere Kamera vom Einstellungs-Menü auswählen oder die Applikation neu laden.",
         "cameraNotSendingDataTitle": "Zugriff auf Kamera nicht möglich",
-        "cameraPermissionDeniedError": "Die Berechtigung zur Verwendung der Kamera wurde nicht erteilt. Sie können trotzdem an der Konferenz teilnehmen, aber die anderen Teilnehmer können Sie nicht sehen. Verwenden Sie die Kamera-Schaltfläche in der Adressleiste um die Berechtigungen zu erteilen.",
+        "cameraPermissionDeniedError": "Die Berechtigung zur Verwendung der Kamera wurde nicht erteilt. Sie können trotzdem an der Konferenz teilnehmen, aber die anderen Teilnehmer können Sie nicht sehen. Verwenden Sie die Kamera-Schaltfläche in der Adressleiste, um die Berechtigungen zu erteilen.",
         "cameraUnknownError": "Die Kamera kann aus einem unbekannten Grund nicht verwendet werden.",
         "cameraUnsupportedResolutionError": "Die Kamera unterstützt die erforderliche Auflösung nicht.",
         "Cancel": "Abbrechen",
@@ -188,16 +202,16 @@
         "inlineInstallExtension": "Jetzt installieren",
         "internalError": "Oh! Es hat etwas nicht funktioniert. Der folgende Fehler ist aufgetreten: {{error}}",
         "internalErrorTitle": "Interner Fehler",
-        "kickMessage": "Sie können sich für weitere Einzelheiten an {{participantDisplayName}}} wenden.",
+        "kickMessage": "Sie können sich für mehr Details an {{participantDisplayName}} wenden.",
         "kickParticipantButton": "Entfernen",
         "kickParticipantDialog": "Wollen Sie diesen Teilnehmer wirklich entfernen?",
         "kickParticipantTitle": "Teilnehmer entfernen?",
-        "kickTitle": "Autsch! {{participantDisplayName}} hat Sie aus dem Meeting geworfen.",
+        "kickTitle": "Autsch! {{participantDisplayName}} hat Sie aus dem Meeting geworfen",
         "liveStreaming": "Livestreaming",
         "liveStreamingDisabledForGuestTooltip": "Gäste können kein Livestreaming starten.",
         "liveStreamingDisabledTooltip": "Starten des Livestreams deaktiviert.",
         "lockMessage": "Die Konferenz konnte nicht gesperrt werden.",
-        "lockRoom": "Meeting $t(lockRoomPasswordUppercase) hinzufügen",
+        "lockRoom": "Meeting-$t(lockRoomPasswordUppercase) hinzufügen",
         "lockTitle": "Sperren fehlgeschlagen",
         "logoutQuestion": "Sind Sie sicher, dass Sie sich abmelden und die Konferenz verlassen möchten?",
         "logoutTitle": "Abmelden",
@@ -205,9 +219,9 @@
         "maxUsersLimitReachedTitle": "Maximales Teilnehmerlimit erreicht",
         "micConstraintFailedError": "Ihr Mikrofon erfüllt die notwendigen Anforderungen nicht.",
         "micNotFoundError": "Mikrofon nicht gefunden.",
-        "micNotSendingData": "Gehen Sie zu den Einstellungen Ihres Computers, um die Stummschaltung Ihres Mikrofons aufzuheben und seinen Pegel einzustellen.",
-        "micNotSendingDataTitle": "Ihr Mikrofon ist durch Ihre Systemeinstellungen stumm geschaltet.",
-        "micPermissionDeniedError": "Die Berechtigung zur Verwendung des Mikrofons wurde nicht erteilt. Sie können trotzdem an der Konferenz teilnehmen, aber die anderen Teilnehmer können Sie nicht hören. Verwenden Sie die Kamera-Schaltfläche in der Adressleiste um die Berechtigungen zu erteilen.",
+        "micNotSendingData": "Gehen Sie zu den Einstellungen Ihres Computers, um die Stummschaltung Ihres Mikrofons aufzuheben und seinen Pegel einzustellen",
+        "micNotSendingDataTitle": "Ihr Mikrofon ist durch Ihre Systemeinstellungen stumm geschaltet",
+        "micPermissionDeniedError": "Die Berechtigung zur Verwendung des Mikrofons wurde nicht erteilt. Sie können trotzdem an der Konferenz teilnehmen, aber die anderen Teilnehmer können Sie nicht hören. Verwenden Sie die Kamera-Schaltfläche in der Adressleiste, um die Berechtigungen zu erteilen.",
         "micUnknownError": "Das Mikrofon kann aus einem unbekannten Grund nicht verwendet werden.",
         "muteEveryoneElseDialog": "Einmal stummgeschaltet, können Sie deren Stummschaltung nicht mehr beenden, aber sie können ihre Stummschaltung jederzeit selbst beenden.",
         "muteEveryoneElseTitle": "Alle außer {{whom}} stummschaten?",
@@ -220,8 +234,8 @@
         "muteParticipantDialog": "Wollen Sie diesen Teilnehmer wirklich stummschalten? Sie können die Stummschaltung nicht wieder aufheben, der Teilnehmer kann dies aber jederzeit selbst tun.",
         "muteParticipantTitle": "Teilnehmer stummschalten?",
         "Ok": "OK",
-        "passwordLabel": "$t(lockRoomPasswordUppercase)",
-        "passwordNotSupported": "Setzen eines Konferenz-Passworts ist nicht unterstützt",
+        "passwordLabel": "Dieses Meeting wurde von einem Teilnehmer gesichert. Bitte geben Sie das $t(lockRoomPassword) ein, um dem Meeting beizutreten.",
+        "passwordNotSupported": "Das Festlegen von einem $t(lockRoomPassword) für das Meeting wird nicht unterstützt.",
         "passwordNotSupportedTitle": "$t(lockRoomPasswordUppercase) nicht unterstützt",
         "passwordRequired": "$t(lockRoomPasswordUppercase) erforderlich",
         "popupError": "Ihr Browser blockiert Pop-ups von dieser Website. Bitte aktivieren Sie Pop-ups in den Sicherheitseinstellungen des Browsers und versuchen Sie es erneut.",
@@ -230,12 +244,12 @@
         "recordingDisabledForGuestTooltip": "Gäste können keine Aufzeichnungen starten.",
         "recordingDisabledTooltip": "Start der Aufzeichnung deaktiviert.",
         "rejoinNow": "Jetzt erneut beitreten",
-        "remoteControlAllowedMessage": "{{user}} hat die Anfrage zur Fernsteuerung angenommen.",
-        "remoteControlDeniedMessage": "{{user}} hat die Anfrage zur Fernsteuerung verweigert.",
-        "remoteControlErrorMessage": "Beim Anfordern der Fernsteuerungsberechtigung von {{user}} ist ein Fehler aufgetreten.",
+        "remoteControlAllowedMessage": "{{user}} hat die Anfrage zur Fernsteuerung angenommen!",
+        "remoteControlDeniedMessage": "{{user}} hat die Anfrage zur Fernsteuerung verweigert!",
+        "remoteControlErrorMessage": "Beim Anfordern der Fernsteuerungsberechtigung von {{user}} ist ein Fehler aufgetreten!",
         "remoteControlRequestMessage": "Möchten Sie {{user}} erlauben, den Computer fernzusteuern?",
         "remoteControlShareScreenWarning": "Achtung, wenn Sie die Anfrage genehmigen, starten Sie die Bildschirmfreigabe!",
-        "remoteControlStopMessage": "Die Fernsteuerung wurde beendet.",
+        "remoteControlStopMessage": "Die Fernsteuerung wurde beendet!",
         "remoteControlTitle": "Fernsteuerung",
         "Remove": "Entfernen",
         "removePassword": "$t(lockRoomPassword) entfernen",
@@ -246,8 +260,8 @@
         "retry": "Wiederholen",
         "screenSharingFailedToInstall": "Oh! Die Erweiterung für die Bildschirmfreigabe konnte nicht installiert werden.",
         "screenSharingFailedToInstallTitle": "Bildschirmfreigabe-Erweiterung konnte nicht installiert werden",
-        "screenSharingFirefoxPermissionDeniedError": "Die Bildschirmfreigabe ist leider fehlgeschlagen. Bitte stellen Sie sicher, dass die Berechtigung für die Bildschirmfreigabe im Browser erteilt wurde.",
-        "screenSharingFirefoxPermissionDeniedTitle": "Die Bildschirmfreigabe konnte nicht gestartet werden.",
+        "screenSharingFirefoxPermissionDeniedError": "Die Bildschirmfreigabe ist leider fehlgeschlagen. Bitte stellen Sie sicher, dass die Berechtigung für die Bildschirmfreigabe im Browser erteilt wurde. ",
+        "screenSharingFirefoxPermissionDeniedTitle": "Die Bildschirmfreigabe konnte nicht gestartet werden!",
         "screenSharingPermissionDeniedError": "Oh! Beim Anfordern der Bildschirmfreigabe-Berechtigungen hat etwas nicht funktioniert. Bitte aktualisieren und erneut versuchen.",
         "sendPrivateMessage": "Sie haben kürzlich eine private Nachricht erhalten. Hatten Sie die Absicht, darauf privat zu antworten, oder wollen Sie Ihre Nachricht an die Gruppe senden?",
         "sendPrivateMessageCancel": "An die Gruppe senden",
@@ -263,25 +277,26 @@
         "shareYourScreenDisabledForGuest": "Gäste können den Bildschirm nicht freigeben.",
         "startLiveStreaming": "Einen Livestream starten",
         "startRecording": "Aufnahme starten",
-        "startRemoteControlErrorMessage": "Beim Versuch die Fernsteuerung zu starten ist ein Fehler aufgetreten.",
+        "startRemoteControlErrorMessage": "Beim Versuch, die Fernsteuerung zu starten, ist ein Fehler aufgetreten!",
         "stopLiveStreaming": "Livestreaming stoppen",
         "stopRecording": "Aufnahme stoppen",
         "stopRecordingWarning": "Sind Sie sicher, dass Sie die Aufnahme stoppen möchten?",
         "stopStreamingWarning": "Sind Sie sicher, dass Sie das Livestreaming stoppen möchten?",
-        "streamKey": "Name/Schlüssel für den Stream",
+        "streamKey": "Streamschlüssel",
         "Submit": "OK",
         "thankYou": "Danke für die Verwendung von {{appName}}!",
         "token": "Token",
         "tokenAuthFailed": "Sie sind nicht berechtigt, dieser Konferenz beizutreten.",
         "tokenAuthFailedTitle": "Authentifizierung fehlgeschlagen",
         "transcribing": "Wird transkribiert",
-        "unlockRoom": "Meeting $t(lockRoomPassword) entfernen",
+        "unlockRoom": "Meeting-$t(lockRoomPassword) entfernen",
         "userPassword": "Benutzerpasswort",
-        "WaitForHostMsg": "Die Konferenz <b>{{room}}</b> wurde noch nicht gestartet. Wenn Sie der Organisator sind, authentifizieren Sie sich. Warten Sie andernfalls, bis der Veranstalter erscheint.",
-        "WaitForHostMsgWOk": "Die Konferenz <b>{{room}}</b> wurde noch nicht gestartet. Wenn Sie der Organisator sind, drücken Sie zum Authentifizieren auf OK. Warten Sie andernfalls, bis der Veranstalter erscheint.",
+        "WaitForHostMsg": "Die Konferenz <b>{{room}}</b> wurde noch nicht gestartet. Wenn Sie der Organisator sind, authentifizieren Sie sich. Warten Sie andernfalls, bis der Organisator erscheint.",
+        "WaitForHostMsgWOk": "Die Konferenz <b>{{room}}</b> wurde noch nicht gestartet. Wenn Sie der Organisator sind, drücken Sie zum Authentifizieren auf OK. Warten Sie andernfalls, bis der Organisator erscheint.",
         "WaitingForHost": "Warten auf den Organisator...",
         "Yes": "Ja",
-        "yourEntireScreen": "Ganzer Bildschirm"
+        "yourEntireScreen": "Ganzer Bildschirm",
+        "screenSharingAudio": "Audio austauschen"
     },
     "dialOut": {
         "statusMessage": "ist jetzt {{status}}"
@@ -318,18 +333,18 @@
         "dialInSummaryError": "Fehler beim Abrufen der Einwahlinformationen. Versuchen Sie es später erneut.",
         "dialInTollFree": "Gebührenfrei",
         "genericError": "Es ist leider etwas schiefgegangen.",
-        "inviteLiveStream": "Klicken Sie auf {{url}} um den Livestream dieser Konferenz zu öffnen",
-        "invitePhone": "Wenn Sie stattdessen per Telefon beitreten möchten, tippen Sie hier: {{number}},,{{conferenceID}}#\n",
-        "invitePhoneAlternatives": "Suche nach einer anderen Einwahlnummer?\nMeetings-Einwahlnummern sehen: {{{url}}\n\n\n\nWenn Sie sich auch über ein Raumtelefon einwählen, nehmen Sie teil, ohne sich mit dem Ton zu verbinden: {{silentUrl}}",
+        "inviteLiveStream": "Klicken Sie auf {{url}}, um den Livestream dieser Konferenz zu öffnen",
+        "invitePhone": "Wenn Sie stattdessen per Telefon beitreten möchten, wählen sie: {{number}},,{{conferenceID}}#\n",
+        "invitePhoneAlternatives": "Suchen Sie nach einer anderen Einwahlnummer ?\nMeeting-Einwahlnummern anzeigen: {{url}}\n\n\nWenn Sie sich auch über ein Raumtelefon einwählen, nehmen Sie teil, ohne sich mit dem Ton zu verbinden: {{silentUrl}}",
         "inviteURLFirstPartGeneral": "Sie wurden zur Teilnahme an einem Meeting eingeladen.",
         "inviteURLFirstPartPersonal": "{{name}} lädt Sie zu einem Meeting ein.\n",
         "inviteURLSecondPart": "\nAm Meeting teilnehmen:\n{{url}}\n",
         "liveStreamURL": "Livestream:",
         "moreNumbers": "Weitere Telefonnummern",
         "noNumbers": "Keine Telefonnummern verfügbar.",
-        "noPassword": "Kein",
+        "noPassword": "Kein Passwort benötigt",
         "noRoom": "Keine Konferenz für die Einwahlinformationen angegeben.",
-        "numbers": "Einwählnummern",
+        "numbers": "Einwahlnummern",
         "password": "$t(lockRoomPasswordUppercase):",
         "title": "Teilen",
         "tooltip": "Freigabe-Link und Einwahlinformationen für dieses Meeting",
@@ -352,13 +367,13 @@
     "keyboardShortcuts": {
         "focusLocal": "Lokales Video fokussieren",
         "focusRemote": "Auf das Video eines anderen Teilnehmers fokussieren",
-        "fullScreen": "Vollbildmodus aktivieren / deaktivieren",
+        "fullScreen": "Vollbildmodus aktivieren oder deaktivieren",
         "keyboardShortcuts": "Tastenkürzel",
         "localRecording": "Lokale Aufzeichnungssteuerelemente ein- oder ausblenden",
         "mute": "Stummschaltung aktivieren oder deaktivieren",
         "pushToTalk": "Push-to-Talk (Sprechtaste)",
         "raiseHand": "Hand erheben",
-        "showSpeakerStats": "Statistiken für Sprecher anzeigen",
+        "showSpeakerStats": "Sprecherstatistik anzeigen",
         "toggleChat": "Chat öffnen oder schließen",
         "toggleFilmstrip": "Video-Miniaturansichten ein- oder ausblenden",
         "toggleScreensharing": "Zwischen Kamera und Bildschirmfreigabe wechseln",
@@ -372,7 +387,7 @@
         "changeSignIn": "Konten wechseln.",
         "choose": "Livestream auswählen",
         "chooseCTA": "Streaming-Option auswählen. Sie sind aktuell als {{email}} angemeldet.",
-        "enterStreamKey": "Name/Schlüssel für den YouTube-Livestream hier eingeben.",
+        "enterStreamKey": "Streamschlüssel für den YouTube-Livestream hier eingeben.",
         "error": "Das Livestreaming ist fehlgeschlagen. Bitte versuchen Sie es erneut.",
         "errorAPI": "Beim Abrufen der YouTube-Livestreams ist ein Fehler aufgetreten. Bitte versuchen Sie, sich erneut anzumelden.",
         "errorLiveStreamNotEnabled": "Livestreaming ist für {{email}} nicht aktiviert. Aktivieren Sie das Livestreaming oder melden Sie sich bei einem Konto mit aktiviertem Livestreaming an.",
@@ -390,11 +405,13 @@
         "serviceName": "Livestreaming-Dienst",
         "signedInAs": "Sie sind derzeit angemeldet als:",
         "signIn": "Mit Google anmelden",
-        "signInCTA": "Anmelden oder den Namen/Schlüssel des YouTube-Livestreams eingeben.",
+        "signInCTA": "Anmelden oder den Streamschlüssel des YouTube-Livestreams eingeben.",
         "signOut": "Abmelden",
         "start": "Einen Livestream starten",
         "streamIdHelp": "Was ist das?",
-        "unavailableTitle": "Livestreaming nicht verfügbar"
+        "unavailableTitle": "Livestreaming nicht verfügbar",
+        "youtubeTerms": "YouTube-Nutzungsbedingungen",
+        "googlePrivacyPolicy": "Google-Datenschutzerklärung"
     },
     "localRecording": {
         "clientState": {
@@ -411,7 +428,7 @@
         "localRecording": "Lokale Aufzeichnung",
         "me": "Ich",
         "messages": {
-            "engaged": "Lokale Aufzeichnung ist aktiviert",
+            "engaged": "Lokale Aufzeichnung ist aktiviert.",
             "finished": "Aufzeichnung der Sitzung {{token}} ist beendet. Senden Sie die aufgezeichnete Datei an den Moderator.",
             "finishedModerator": "Aufzeichnung der Sitzung {{token}} ist beendet. Die Aufzeichnung des lokalen Verlaufs wurde gespeichert. Bitten Sie die anderen Teilnehmer, ihre Aufzeichnungen zu übermitteln.",
             "notModerator": "Sie sind nicht der Moderator. Sie können die lokale Aufzeichnung nicht starten oder stoppen."
@@ -435,24 +452,24 @@
         "disconnected": "getrennt",
         "focus": "Konferenz-Organisator",
         "focusFail": "{{component}} ist im Moment nicht verfügbar - wiederholen in {{ms}} Sekunden",
-        "grantedTo": "Moderatorenrechte an {{to}} vergeben.",
-        "invitedOneMember": "{{displayName}} wurde eingeladen",
+        "grantedTo": "Moderatorenrechte an {{to}} vergeben!",
+        "invitedOneMember": "{{name}} wurde eingeladen",
         "invitedThreePlusMembers": "{{name}} und {{count}} andere wurden eingeladen",
         "invitedTwoMembers": "{{first}} und {{second}} wurden eingeladen",
-        "kickParticipant": "Sie können sich für weitere Einzelheiten an {{participantDisplayName}}} wenden.",
+        "kickParticipant": "{{kicked}} wurde von {{kicker}} ausgewiesen",
         "me": "Ich",
-        "moderator": "Moderatorenrechte vergeben",
+        "moderator": "Moderatorenrechte vergeben!",
         "muted": "Der Konferenz wurde stumm beigetreten.",
         "mutedTitle": "Stummschaltung aktiv!",
         "mutedRemotelyTitle": "Sie wurden von {{participantDisplayName}} stummgeschaltet!",
-        "mutedRemotelyDescription": "Sie können jederzeit die Stummschaltung aufheben, wenn Sie bereit sind zu sprechen. Wenn Sie fertig sind, können sich wieder stummschalten, um Geräusche vom Meeting fernzuhalten.",
+        "mutedRemotelyDescription": "Sie können jederzeit die Stummschaltung aufheben, wenn Sie bereit sind zu sprechen. Wenn Sie fertig sind, können Sie sich wieder stummschalten, um Geräusche vom Meeting fernzuhalten.",
         "passwordRemovedRemotely": "$t(lockRoomPasswordUppercase) von einem anderen Teilnehmer entfernt",
         "passwordSetRemotely": "$t(lockRoomPasswordUppercase) von einem anderen Teilnehmer gesetzt",
         "raisedHand": "{{name}} möchte sprechen.",
         "somebody": "Jemand",
         "startSilentTitle": "Sie sind ohne Audioausgabe beigetreten!",
         "startSilentDescription": "Treten Sie dem Meeting noch einmal bei, um Ihr Audio zu aktivieren",
-        "suboptimalExperienceDescription": "Tut uns leid, aber die Konferenz wird mit {{appName}} kein großartiges Erlebnis. Wir versuchen immer die Situation zu verbessern, bis dahin empfehlen wir aber die Verwendung einer der <a href=\"static/recommendedBrowsers.html\" target=\"_blank\">vollständig unterstützen Browser</a>.",
+        "suboptimalBrowserWarning": "Tut uns leid, aber die Konferenz wird mit {{appName}} kein großartiges Erlebnis. Wir versuchen immer die Situation zu verbessern, bis dahin empfehlen wir aber die Verwendung einer der <a href=\"{{recommendedBrowserPageLink}}\" target=\"_blank\">vollständig unterstützen Browser</a>.",
         "suboptimalExperienceTitle": "Browserwarnung",
         "unmute": "Stummschaltung aufheben",
         "newDeviceCameraTitle": "Neue Kamera erkannt",
@@ -464,9 +481,9 @@
     "poweredby": "Betrieben von",
     "presenceStatus": {
         "busy": "Beschäftigt",
-        "calling": "Wird angerufen…",
+        "calling": "Wird angerufen …",
         "connected": "Verbunden",
-        "connecting": "Verbindung wird hergestellt",
+        "connecting": "Verbindung wird hergestellt…",
         "connecting2": "Wird verbunden*…",
         "disconnected": "Getrennt",
         "expired": "Abgelaufen",
@@ -474,7 +491,7 @@
         "initializingCall": "Anruf wird initialisiert…",
         "invited": "Einladen",
         "rejected": "Abgelehnt",
-        "ringing": "Es klingelt…"
+        "ringing": "Es klingelt …"
     },
     "profile": {
         "setDisplayNameLabel": "Anzeigename festlegen",
@@ -513,6 +530,11 @@
     "sectionList": {
         "pullToRefresh": "Ziehen, um zu aktualisieren"
     },
+    "security": {
+        "about": "Sie können einen Passwort zu Ihrer Sitzung hinzufügen. Die Teilnehmer müssen dieses ebenfalls eingeben, bevor sie an der Sitzung teilnehmen dürfen",
+        "insecureRoomNameWarning": "Der Raumname ist unsicher. Unerwünschte Teilnehmer könnten Ihrer Konferenz beitreten",
+        "securityOptions": "Sicherheitsoptionen"
+    },
     "settings": {
         "calendar": {
             "about": "Die Kalenderintegration von {{appName}} wird verwendet, um ein sicheres Zugreifen auf Ihren Kalender und Auslesen der bevorstehenden Termine zu ermöglichen.",
@@ -525,6 +547,7 @@
         "followMe": "Follow-me für alle Teilnehmer",
         "language": "Sprache",
         "loggedIn": "Als {{name}} angemeldet",
+        "microphones": "Mikrofon",
         "moderator": "Moderator",
         "more": "Mehr",
         "name": "Name",
@@ -532,6 +555,7 @@
         "selectAudioOutput": "Audioausgabe",
         "selectCamera": "Kamera",
         "selectMic": "Mikrofon",
+        "speakers": "Lautsprecher",
         "startAudioMuted": "Alle Teilnehmer treten stumm geschaltet bei",
         "startVideoMuted": "Alle Teilnehmer treten ohne Video bei",
         "title": "Einstellungen"
@@ -556,7 +580,7 @@
         "version": "Version"
     },
     "share": {
-        "dialInfoText": "\n\n=====\n\nWollen Sie sich nur auf Ihrem Telefon einwählen?\n\n{{{defaultDialInNumber}}}Klicken Sie auf diesen Link, um die eingewählten Telefonnummern für dieses Meeting zu sehen\n{{dialInfoPageUrl}}",
+        "dialInfoText": "\n\n=====\n\nWollen Sie sich nur auf Ihrem Telefon einwählen?\n\n{{defaultDialInNumber}}Klicken Sie auf diesen Link, um die eingewählten Telefonnummern für dieses Meeting zu sehen\n{{dialInfoPageUrl}}",
         "mainText": "Klicken Sie auf den folgenden Link, um dem Meeting beizutreten:\n{{roomUrl}}"
     },
     "speaker": "Sprecher",
@@ -565,8 +589,8 @@
         "minutes": "{{count}}m",
         "name": "Name",
         "seconds": "{{count}}s",
-        "speakerStats": "Sprecher-Statistiken",
-        "speakerTime": "Sprecher-Zeit"
+        "speakerStats": "Sprecherstatistik",
+        "speakerTime": "Sprecherzeit"
     },
     "startupoverlay": {
         "policyText": " ",
@@ -605,6 +629,7 @@
             "raiseHand": "„Melden“ ein-/ausschalten",
             "recording": "Aufzeichnung ein-/ausschalten",
             "remoteMute": "Teilnehmer stummschalten",
+            "security": "Sicherheitsoptionen",
             "Settings": "Einstellungen ein-/ausschalten",
             "sharedvideo": "YouTube-Videofreigabe ein-/ausschalten",
             "shareRoom": "Person einladen",
@@ -647,7 +672,7 @@
         "noAudioSignalDesc": "Wenn Sie das Gerät nicht absichtlich über die Systemeinstellungen oder die Hardware stumm geschaltet haben, sollten Sie einen Wechsel des Geräts in Erwägung ziehen.",
         "noAudioSignalDescSuggestion": "Wenn Sie das Gerät nicht absichtlich über die Systemeinstellungen oder die Hardware stummgeschaltet haben, sollten Sie einen Wechsel auf das vorgeschlagene Gerät in Erwägung ziehen.",
         "noAudioSignalDialInDesc": "Sie können sich auch über die Einwahlnummer einwählen:",
-        "noAudioSignalDialInLinkDesc" : "Einwahlnummern:",
+        "noAudioSignalDialInLinkDesc": "Einwahlnummern",
         "noisyAudioInputTitle": "Ihr Mikrofon scheint lärmintensiv zu sein!",
         "noisyAudioInputDesc": "Es klingt, als ob Ihr Mikrofon Störgeräusche verursacht. Bitte überlegen Sie, ob Sie das Gerät stummschalten oder austauschen wollen.",
         "openChat": "Chat öffnen",
@@ -656,11 +681,12 @@
         "profile": "Profil bearbeiten",
         "raiseHand": "Hand erheben",
         "raiseYourHand": "Melden",
+        "security": "Sicherheitsoptionen",
         "Settings": "Einstellungen",
         "sharedvideo": "YouTube-Video teilen",
         "shareRoom": "Person einladen",
         "shortcuts": "Tastenkürzel anzeigen",
-        "speakerStats": "Sprecher-Statistiken",
+        "speakerStats": "Sprecherstatistik",
         "startScreenSharing": "Bildschirmfreigabe starten",
         "startSubtitles": "Untertitel einschalten",
         "stopScreenSharing": "Bildschirmfreigabe stoppen",
@@ -686,14 +712,14 @@
         "tr": "TR"
     },
     "userMedia": {
-        "androidGrantPermissions": "Wählen Sie <b><i>Erlauben</i></b>, wenn der Browser um Berechtigungen bittet.",
-        "chromeGrantPermissions": "Wählen Sie <b><i>Erlauben</i></b>, wenn der Browser um Berechtigungen bittet.",
+        "androidGrantPermissions": "Wählen Sie <b><i>Zulassen</i></b>, wenn der Browser um Berechtigungen bittet.",
+        "chromeGrantPermissions": "Wählen Sie <b><i>Zulassen</i></b>, wenn der Browser um Berechtigungen bittet.",
         "edgeGrantPermissions": "Wählen Sie <b><i>Ja</i></b>, wenn der Browser um Berechtigungen bittet.",
         "electronGrantPermissions": "Bitte Berechtigungen zur Verwendung der Kamera und des Mikrofons erteilen",
-        "firefoxGrantPermissions": "Wählen Sie <b><i>Markiertes Gerät teilen</i></b>, wenn der Browser um Berechtigungen bittet.",
+        "firefoxGrantPermissions": "Wählen Sie <b><i>Erlauben</i></b>, wenn der Browser um Berechtigungen bittet.",
         "iexplorerGrantPermissions": "Wählen Sie <b><i>OK</i></b>, wenn der Browser um Berechtigungen bittet.",
         "nwjsGrantPermissions": "Bitte Berechtigungen zur Verwendung der Kamera und des Mikrofons erteilen",
-        "operaGrantPermissions": "Wählen Sie <b><i>Erlauben</i></b>, wenn der Browser um Berechtigungen bittet.",
+        "operaGrantPermissions": "Wählen Sie <b><i>Zulassen</i></b>, wenn der Browser um Berechtigungen bittet.",
         "react-nativeGrantPermissions": "Wählen Sie <b><i>Erlauben</i></b>, wenn der Browser um Berechtigungen bittet.",
         "safariGrantPermissions": "Wählen Sie <b><i>OK</i></b>, wenn der Browser um Berechtigungen bittet."
     },
@@ -721,9 +747,6 @@
         "lowDefinition": "Niedrige Auflösung",
         "onlyAudioAvailable": "Nur Ton",
         "onlyAudioSupported": "In diesem Browser wird nur Audio unterstützt.",
-        "p2pEnabled": "Ende-zu-Ende aktiviert",
-        "p2pVideoQualityDescription": "Im Ende-zu-Ende-Modus kann die empfangene Videoqualität nur zwischen „Hoch“ und „Nur Audio“ umgeschaltet werden. Andere Einstellungen werden erst beim Verlassen des Ende-zu-Ende-Modus berücksichtigt.",
-        "recHighDefinitionOnly": "Hohe Qualität wird bevorzugt.",
         "sd": "SD",
         "sdTooltip": "Video wird in Standardauflösung angezeigt",
         "standardDefinition": "Standardauflösung"
@@ -745,7 +768,7 @@
             "join": "Zum Teilnehmen tippen",
             "roomname": "Konferenzname eingeben"
         },
-        "appDescription": "Auf geht's! Starten Sie eine Videokonferenz mit dem ganzen Team. Oder besser noch: Laden Sie alle ein, die Sie kennen. {{app}} ist eine vollständig verschlüsselte, aus 100% Open-Source-Software bestehende Videokonferenzlösung, die Sie den ganzen Tag kostenlos verwenden können — ohne Registrierung.",
+        "appDescription": "Auf geht's! Starten Sie eine Videokonferenz mit dem ganzen Team. Oder besser noch: Laden Sie alle ein, die Sie kennen. {{app}} ist eine vollständig verschlüsselte, aus 100 % Open-Source-Software bestehende Videokonferenzlösung, die Sie den ganzen Tag kostenlos verwenden können — ohne Registrierung.",
         "audioVideoSwitch": {
             "audio": "Audio",
             "video": "Video"
@@ -771,7 +794,7 @@
         "title": "Sichere, mit umfassenden Funktionen ausgestattete und vollkommen kostenlose Videokonferenzen"
     },
     "lonelyMeetingExperience": {
-        "button": "Weitere einladen",
-        "youAreAlone": "Sie sind der einzige in diesem Meeting"
+        "button": "Andere einladen",
+        "youAreAlone": "Nur Sie sind in diesem Meeting"
     }
 }

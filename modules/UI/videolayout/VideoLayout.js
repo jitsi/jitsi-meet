@@ -1,22 +1,25 @@
 /* global APP, $, interfaceConfig  */
-const logger = require('jitsi-meet-logger').getLogger(__filename);
 
-import { VIDEO_TYPE } from '../../../react/features/base/media';
+import Logger from 'jitsi-meet-logger';
+
+import { MEDIA_TYPE, VIDEO_TYPE } from '../../../react/features/base/media';
 import {
     getLocalParticipant as getLocalParticipantFromStore,
     getPinnedParticipant,
+    getParticipantById,
     pinParticipant
 } from '../../../react/features/base/participants';
+import { getTrackByMediaTypeAndParticipant } from '../../../react/features/base/tracks';
+import UIEvents from '../../../service/UI/UIEvents';
 import { SHARED_VIDEO_CONTAINER_TYPE } from '../shared_video/SharedVideo';
 import SharedVideoThumb from '../shared_video/SharedVideoThumb';
 
-import UIEvents from '../../../service/UI/UIEvents';
-
-import RemoteVideo from './RemoteVideo';
 import LargeVideoManager from './LargeVideoManager';
+import LocalVideo from './LocalVideo';
+import RemoteVideo from './RemoteVideo';
 import { VIDEO_CONTAINER_TYPE } from './VideoContainer';
 
-import LocalVideo from './LocalVideo';
+const logger = Logger.getLogger(__filename);
 
 const remoteVideos = {};
 let localVideoThumbnail = null;
@@ -73,9 +76,6 @@ const VideoLayout = {
             emitter,
             this._updateLargeVideoIfDisplayed.bind(this));
 
-        // sets default video type of local video
-        // FIXME container type is totally different thing from the video type
-        localVideoThumbnail.setVideoType(VIDEO_CONTAINER_TYPE);
         this.registerListeners();
     },
 
@@ -221,10 +221,16 @@ const VideoLayout = {
      * @returns {String} the video type video or screen.
      */
     getRemoteVideoType(id) {
-        const smallVideo = VideoLayout.getSmallVideo(id);
+        const state = APP.store.getState();
+        const participant = getParticipantById(state, id);
 
+        if (participant?.isFakeParticipant) {
+            return SHARED_VIDEO_CONTAINER_TYPE;
+        }
 
-        return smallVideo ? smallVideo.getVideoType() : null;
+        const videoTrack = getTrackByMediaTypeAndParticipant(state['features/base/tracks'], MEDIA_TYPE.VIDEO, id);
+
+        return videoTrack?.videoType;
     },
 
     isPinned(id) {
@@ -307,12 +313,6 @@ const VideoLayout = {
      */
     addRemoteVideoContainer(id, remoteVideo) {
         remoteVideos[id] = remoteVideo;
-
-        if (!remoteVideo.getVideoType()) {
-            // make video type the default one (camera)
-            // FIXME container type is not a video type
-            remoteVideo.setVideoType(VIDEO_CONTAINER_TYPE);
-        }
 
         // Initialize the view
         remoteVideo.updateView();
@@ -491,22 +491,6 @@ const VideoLayout = {
 
         logger.info('Peer video type changed: ', id, newVideoType);
 
-        let smallVideo;
-
-        if (APP.conference.isLocalId(id)) {
-            if (!localVideoThumbnail) {
-                logger.warn('Local video not ready yet');
-
-                return;
-            }
-            smallVideo = localVideoThumbnail;
-        } else if (remoteVideos[id]) {
-            smallVideo = remoteVideos[id];
-        } else {
-            return;
-        }
-        smallVideo.setVideoType(newVideoType);
-
         this._updateLargeVideoIfDisplayed(id, true);
     },
 
@@ -584,17 +568,16 @@ const VideoLayout = {
         }
         const currentContainer = largeVideo.getCurrentContainer();
         const currentContainerType = largeVideo.getCurrentContainerType();
-        const currentId = largeVideo.id;
         const isOnLarge = this.isCurrentlyOnLarge(id);
-        const smallVideo = this.getSmallVideo(id);
+        const state = APP.store.getState();
+        const videoTrack = getTrackByMediaTypeAndParticipant(state['features/base/tracks'], MEDIA_TYPE.VIDEO, id);
+        const videoStream = videoTrack?.jitsiTrack;
 
         if (isOnLarge && !forceUpdate
                 && LargeVideoManager.isVideoContainer(currentContainerType)
-                && smallVideo) {
+                && videoStream) {
             const currentStreamId = currentContainer.getStreamID();
-            const newStreamId
-                = smallVideo.videoStream
-                    ? smallVideo.videoStream.getId() : null;
+            const newStreamId = videoStream?.getId() || null;
 
             // FIXME it might be possible to get rid of 'forceUpdate' argument
             if (currentStreamId !== newStreamId) {
@@ -603,42 +586,17 @@ const VideoLayout = {
             }
         }
 
-        if ((!isOnLarge || forceUpdate) && smallVideo) {
+        if (!isOnLarge || forceUpdate) {
             const videoType = this.getRemoteVideoType(id);
 
-            // FIXME video type is not the same thing as container type
-
-            if (id !== currentId && videoType === VIDEO_CONTAINER_TYPE) {
-                APP.API.notifyOnStageParticipantChanged(id);
-            }
-
-            let oldSmallVideo;
-
-            if (currentId) {
-                oldSmallVideo = this.getSmallVideo(currentId);
-            }
-
-            smallVideo.waitForResolutionChange();
-            if (oldSmallVideo) {
-                oldSmallVideo.waitForResolutionChange();
-            }
 
             largeVideo.updateLargeVideo(
                 id,
-                smallVideo.videoStream,
+                videoStream,
                 videoType || VIDEO_TYPE.CAMERA
-            ).then(() => {
-                // update current small video and the old one
-                smallVideo.updateView();
-                oldSmallVideo && oldSmallVideo.updateView();
-            }, () => {
-                // use clicked other video during update, nothing to do.
+            ).catch(() => {
+                // do nothing
             });
-
-        } else if (currentId) {
-            const currentSmallVideo = this.getSmallVideo(currentId);
-
-            currentSmallVideo && currentSmallVideo.updateView();
         }
     },
 
@@ -721,10 +679,6 @@ const VideoLayout = {
      */
     setLocalFlipX(val) {
         this.localFlipX = val;
-    },
-
-    getEventEmitter() {
-        return eventEmitter;
     },
 
     /**

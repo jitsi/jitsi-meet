@@ -1,5 +1,6 @@
 // @flow
 
+import UIEvents from '../../../../service/UI/UIEvents';
 import {
     ACTION_SHORTCUT_TRIGGERED,
     VIDEO_MUTE,
@@ -17,7 +18,11 @@ import { connect } from '../../base/redux';
 import { AbstractVideoMuteButton } from '../../base/toolbox';
 import type { AbstractButtonProps } from '../../base/toolbox';
 import { getLocalVideoType, isLocalVideoTrackMuted } from '../../base/tracks';
-import UIEvents from '../../../../service/UI/UIEvents';
+import {
+    isPrejoinPageVisible,
+    isPrejoinVideoDisabled,
+    isPrejoinVideoMuted
+} from '../../prejoin/functions';
 
 declare var APP: Object;
 
@@ -40,6 +45,11 @@ type Props = AbstractButtonProps & {
      * Whether video is currently muted or not.
      */
     _videoMuted: boolean,
+
+    /**
+     * Whether video button is disabled or not.
+     */
+    _videoDisabled: boolean,
 
     /**
      * The redux {@code dispatch} function.
@@ -94,6 +104,17 @@ class VideoMuteButton extends AbstractVideoMuteButton<Props, *> {
     componentWillUnmount() {
         typeof APP === 'undefined'
             || APP.keyboardshortcut.unregisterShortcut('V');
+    }
+
+    /**
+     * Indicates if video is currently disabled or not.
+     *
+     * @override
+     * @protected
+     * @returns {boolean}
+     */
+    _isDisabled() {
+        return this.props._videoDisabled;
     }
 
     /**
@@ -170,11 +191,19 @@ class VideoMuteButton extends AbstractVideoMuteButton<Props, *> {
 function _mapStateToProps(state): Object {
     const { enabled: audioOnly } = state['features/base/audio-only'];
     const tracks = state['features/base/tracks'];
+    let _videoMuted = isLocalVideoTrackMuted(tracks);
+    let _videoDisabled = false;
+
+    if (isPrejoinPageVisible(state)) {
+        _videoMuted = isPrejoinVideoMuted(state);
+        _videoDisabled = isPrejoinVideoDisabled(state);
+    }
 
     return {
         _audioOnly: Boolean(audioOnly),
+        _videoDisabled,
         _videoMediaType: getLocalVideoType(tracks),
-        _videoMuted: isLocalVideoTrackMuted(tracks)
+        _videoMuted
     };
 }
 

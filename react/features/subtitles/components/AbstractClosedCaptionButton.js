@@ -2,7 +2,6 @@
 
 import { createToolbarEvent, sendAnalytics } from '../../analytics';
 import { AbstractButton, type AbstractButtonProps } from '../../base/toolbox';
-
 import { toggleRequestingSubtitles } from '../actions';
 
 export type AbstractProps = AbstractButtonProps & {
@@ -84,8 +83,9 @@ export class AbstractClosedCaptionButton
  */
 export function _abstractMapStateToProps(state: Object, ownProps: Object) {
     const { _requestingSubtitles } = state['features/subtitles'];
+    const { isGuest = true } = state['features/base/jwt'];
     const { transcribingEnabled } = state['features/base/config'];
-    const { visible = Boolean(transcribingEnabled) } = ownProps;
+    const { visible = Boolean(transcribingEnabled && !isGuest) } = ownProps;
 
     return {
         _requestingSubtitles,

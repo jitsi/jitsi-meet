@@ -8,7 +8,6 @@ import {
 } from '../../analytics';
 import { getName } from '../../app';
 import { endpointMessageReceived } from '../../subtitles';
-
 import { JITSI_CONNECTION_CONFERENCE_KEY } from '../connection';
 import { JitsiConferenceEvents } from '../lib-jitsi-meet';
 import { setAudioMuted, setVideoMuted } from '../media';
@@ -25,6 +24,7 @@ import {
 } from '../participants';
 import { getLocalTracks, trackAdded, trackRemoved } from '../tracks';
 import {
+    getBackendSafePath,
     getBackendSafeRoomName,
     getJitsiMeetGlobalNS
 } from '../util';
@@ -48,7 +48,7 @@ import {
     SET_MAX_RECEIVER_VIDEO_QUALITY,
     SET_PASSWORD,
     SET_PASSWORD_FAILED,
-    SET_PREFERRED_RECEIVER_VIDEO_QUALITY,
+    SET_PREFERRED_VIDEO_QUALITY,
     SET_ROOM,
     SET_PENDING_SUBJECT_CHANGE,
     SET_START_MUTED_POLICY
@@ -418,7 +418,9 @@ export function createConference() {
         }
 
         const config = state['features/base/config'];
+        const { tenant } = state['features/base/jwt'];
         const { email, name: nick } = getLocalParticipant(state);
+
         const conference
             = connection.initJitsiConference(
 
@@ -426,7 +428,8 @@ export function createConference() {
                     ...config,
                     applicationName: getName(),
                     getWiFiStatsMethod: getJitsiMeetGlobalNS().getWiFiStats,
-                    confID: `${locationURL.host}${locationURL.pathname}`,
+                    confID: `${locationURL.host}${getBackendSafePath(locationURL.pathname)}`,
+                    siteID: tenant,
                     statisticsDisplayName: config.enableDisplayNameInStats ? nick : undefined,
                     statisticsId: config.enableEmailInStats ? email : undefined
                 });
@@ -699,21 +702,20 @@ export function setPassword(
 }
 
 /**
- * Sets the max frame height the user prefers to receive from remote participant
- * videos.
+ * Sets the max frame height the user prefers to send and receive from the
+ * remote participants.
  *
- * @param {number} preferredReceiverVideoQuality - The max video resolution to
+ * @param {number} preferredVideoQuality - The max video resolution to send and
  * receive.
  * @returns {{
- *     type: SET_PREFERRED_RECEIVER_VIDEO_QUALITY,
- *     preferredReceiverVideoQuality: number
+ *     type: SET_PREFERRED_VIDEO_QUALITY,
+ *     preferredVideoQuality: number
  * }}
  */
-export function setPreferredReceiverVideoQuality(
-        preferredReceiverVideoQuality: number) {
+export function setPreferredVideoQuality(preferredVideoQuality: number) {
     return {
-        type: SET_PREFERRED_RECEIVER_VIDEO_QUALITY,
-        preferredReceiverVideoQuality
+        type: SET_PREFERRED_VIDEO_QUALITY,
+        preferredVideoQuality
     };
 }
 

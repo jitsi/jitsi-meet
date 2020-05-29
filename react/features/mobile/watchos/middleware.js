@@ -4,7 +4,6 @@ import { Platform } from 'react-native';
 import * as watch from 'react-native-watch-connectivity';
 
 import { appNavigate } from '../../app';
-
 import { APP_WILL_MOUNT } from '../../base/app';
 import { CONFERENCE_JOINED } from '../../base/conference';
 import { getCurrentConferenceUrl } from '../../base/connection';

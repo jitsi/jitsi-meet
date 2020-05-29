@@ -44,9 +44,6 @@ var config = {
     //
 
     testing: {
-        // Enables experimental simulcast support on Firefox.
-        enableFirefoxSimulcast: false,
-
         // P2P test mode disables automatic switching to P2P when there are 2
         // participants in the conference.
         p2pTestMode: false
@@ -229,6 +226,14 @@ var config = {
     // disabled, then bandwidth estimations are disabled.
     // enableRemb: false,
 
+    // Enables ICE restart logic in LJM and displays the page reload overlay on
+    // ICE failure. Current disabled by default because it's causing issues with
+    // signaling when Octo is enabled. Also when we do an "ICE restart"(which is
+    // not a real ICE restart), the client maintains the TCC sequence number
+    // counter, but the bridge resets it. The bridge sends media packets with
+    // TCC sequence numbers starting from 0.
+    // enableIceRestart: false,
+
     // Defines the minimum number of participants to start a call (the default
     // is set in Jicofo and set to 2).
     // minParticipants: 2,
@@ -292,6 +297,9 @@ var config = {
     // and microsoftApiApplicationClientID
     // enableCalendarIntegration: false,
 
+    // When 'true', it shows an intermediate page before joining, where the user can  configure its devices.
+    // prejoinPageEnabled: false,
+
     // Stats
     //
 
@@ -344,7 +352,7 @@ var config = {
 
             // { urls: 'stun:jitsi-meet.example.com:4446' },
             { urls: 'stun:meet-jit-si-turnrelay.jitsi.net:443' }
-        ],
+        ]
 
         // Sets the ICE transport policy for the p2p connection. At the time
         // of this writing the list of possible values are 'all' and 'relay',
@@ -356,7 +364,7 @@ var config = {
 
         // If set to true, it will prefer to use H.264 for P2P calls (if H.264
         // is supported).
-        preferH264: true
+        // preferH264: true
 
         // If set to true, disable H.264 video codec by stripping it out of the
         // SDP.
@@ -370,6 +378,10 @@ var config = {
     analytics: {
         // The Google Analytics Tracking ID:
         // googleAnalyticsTrackingId: 'your-tracking-id-UA-123456-1'
+
+        // Matomo configuration:
+        // matomoEndpoint: 'https://your-matomo-endpoint/',
+        // matomoSiteID: '42',
 
         // The Amplitude APP Key:
         // amplitudeAPPKey: '<APP_KEY>'
@@ -450,6 +462,14 @@ var config = {
     // A property to disable the right click context menu for localVideo
     // the menu has option to flip the locally seen video for local presentations
     // disableLocalVideoFlip: false,
+
+    // Mainly privacy related settings
+
+    // Disables all invite functions from the app (share, invite, dial out...etc)
+    // disableInviteFunctions: true,
+
+    // Disables storing the room name to the recents list
+    // doNotStoreRoom: true,
 
     // Deployment specific URLs.
     // deploymentUrls: {

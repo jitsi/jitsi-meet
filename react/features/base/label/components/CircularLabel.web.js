@@ -2,6 +2,8 @@
 
 import React from 'react';
 
+import Icon from '../../icons/components/Icon';
+
 import AbstractCircularLabel, {
     type Props as AbstractProps
 } from './AbstractCircularLabel';
@@ -44,15 +46,22 @@ export default class CircularLabel extends AbstractCircularLabel<Props, {}> {
     render() {
         const {
             className,
+            icon,
             id,
             label
         } = this.props;
+
+        const labelComponent = icon
+            ? (
+                <Icon
+                    src = { icon } />
+            ) : label;
 
         return (
             <div
                 className = { `circular-label ${className}` }
                 id = { id }>
-                { label }
+                { labelComponent }
             </div>
         );
     }
