@@ -106,7 +106,7 @@ case "$1" in
         TURN_SECRET="$RET"
 
         # no turn config exists, lt's copy template and fill it in
-        PUBLIC_IP=$(dig +short myip.opendns.com @resolver1.opendns.com) || true
+        PUBLIC_IP=$(dig -4 +short myip.opendns.com a @resolver1.opendns.com) || true
         if [ -z "$PUBLIC_IP" ] ; then
             PUBLIC_IP="127.0.0.1"
             echo "------------------------------------------------"

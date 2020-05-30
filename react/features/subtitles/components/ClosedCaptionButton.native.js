@@ -32,7 +32,8 @@ class ClosedCaptionButton
  */
 export function mapStateToProps(state: Object, ownProps: Object) {
     const { transcribingEnabled } = state['features/base/config'];
-    const enabled = getFeatureFlag(state, CLOSE_CAPTIONS_ENABLED, true) && transcribingEnabled;
+    const { isGuest = true } = state['features/base/jwt'];
+    const enabled = getFeatureFlag(state, CLOSE_CAPTIONS_ENABLED, true) && transcribingEnabled && !isGuest;
     const { visible = enabled } = ownProps;
 
     return {
