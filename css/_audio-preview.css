@@ -8,12 +8,12 @@
     }
 
     &-header {
-        color: #fff;
+        color: $ADFC-blue;
         display: flex;
         padding: 16px;
 
         &-icon {
-            color: #A4B8D1;
+            color: $ADFC-orange;
             display: inline-block;
         }
 
@@ -25,21 +25,21 @@
 
     &-entry {
         align-items: center;
-        color: #fff;
+        color: $ADFC-blue;
         cursor: pointer;
         display: flex;
         padding: 12px 0;
         margin-left: 48px;
 
         &--selected {
-            background: rgba(28,32,37,0.5);
+            color: $ADFC-orange;
             cursor: initial;
             margin-left: 0;
             padding-left: 21px;
         }
 
         &-text {
-            color: #fff;
+            color: $ADFC-blue;
             font-size: 15px;
             display: inline-block;
             line-height: 24px;
@@ -89,7 +89,8 @@
         width: 14px;
 
         & svg {
-            fill: #1C2025;
+            color: $ADFC-orange;
+            fill: $ADFC-blue;
         }
 
         &--check {
@@ -100,17 +101,18 @@
         &--exclamation {
             margin-left: 6px;
             & svg {
-                fill: #E54B4B;
+                color: $ADFC-blue;
+                fill: $ADFC-orange;
             }
         }
     }
 
     &-test-button {
         display: none;
-        background: #FFF;
-        border: 1px solid #D1DBE8;
+        background: $ADFC-blue;
+        border: 1px solid darken( $ADFC-blue, 20%);
         border-radius: 3px;
-        color: #1C2025;
+        color: white;
         cursor: pointer;
         font-weight: 600;
         font-size: 15px;
