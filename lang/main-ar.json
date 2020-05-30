@@ -15,7 +15,8 @@
         "searchPeople": "البحث عن شخص",
         "searchPeopleAndNumbers": "البحث عن أشخاص أو إضافة أرقام هواتفهم",
         "telephone": "الهاتف: {{number}}",
-        "title": "دعوة شخص إلى هذا الإجتماع"
+        "title": "دعوة شخص إلى هذا الإجتماع",
+        "copyInvite": "نسخ دعوة الاجتماع"
     },
     "audioDevices": {
         "bluetooth": "بلوتوث",
