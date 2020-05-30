@@ -102,11 +102,11 @@ $feedbackCancelFontColor: #333;
 
 // Popover colors
 $popoverBg: $ADFC-lightGrey;
-$popoverFontColor: white !important;
-$popupMenuColor: white !important;
-$popupMenuHoverColor: white !important;
+$popoverFontColor: $ADFC-blue !important;
+$popupMenuColor: $ADFC-blue !important;
+$popupMenuHoverColor: $ADFC-blue !important;
 $popupMenuHoverBackground: rgba(255, 255, 255, 0.1);
-$popupSliderColor: #0376da;
+$popupSliderColor: $ADFC-blue;
 
 // Toolbar
 $secondaryToolbarBg: rgba(0, 0, 0, 0.5);
