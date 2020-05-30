@@ -16,7 +16,13 @@
         "searchPeopleAndNumbers": "البحث عن أشخاص أو إضافة أرقام هواتفهم",
         "telephone": "الهاتف: {{number}}",
         "title": "دعوة شخص إلى هذا الإجتماع",
-        "copyInvite": "نسخ دعوة الاجتماع"
+        "copyInvite": "نسخ دعوة الاجتماع",
+        "shareInvite": "مشاركة دعوة الاجتماع",
+        "inviteMoreMailSubject": "انضم إلى اجتماع {{appName}}",
+        "inviteMoreHeader": "أنت الوحيد في الاجتماع",
+        "defaultEmail": "بريدك الإلكتروني الافتراضي",
+        "copyStream": "انسخ رابط البث المباشر",
+        "copyLink": "نسخ رابط الاجتماع"
     },
     "audioDevices": {
         "bluetooth": "بلوتوث",
