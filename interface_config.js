@@ -190,10 +190,12 @@ var interfaceConfig = {
      */
     TOOLBAR_BUTTONS: [
         'microphone', 'camera', 'closedcaptions', 'desktop', 'fullscreen',
-        'fodeviceselection', 'hangup', 'profile', 'chat', 'recording',
+        'fodeviceselection', 'hangup', 'profile', 'chat', 
+//                                                        'recording',
         'livestreaming', 'etherpad', 'sharedvideo', 'settings', 'raisehand',
         'videoquality', 'filmstrip', 'invite', 'feedback', 'stats', 'shortcuts',
-        'tileview', 'videobackgroundblur', 'download', 'help', 'mute-everyone', 'security'
+        'tileview',                        'download', 'help', 'mute-everyone', 'security'
+//                  'videobackgroundblur',
     ],
 
     TOOLBAR_TIMEOUT: 4000,
