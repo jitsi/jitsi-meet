@@ -21,7 +21,8 @@
         "bluetooth": "Bluetooth",
         "headphones": "Căști",
         "phone": "Telefon",
-        "speaker": "Difuzor"
+        "speaker": "Difuzor",
+        "none": ""
     },
     "audioOnly": {
         "audioOnly": "Doar audio"
@@ -51,7 +52,12 @@
             "popover": "Alegeți un pseudonim",
             "title": "Introduceți un pseudonim pentru a conversa"
         },
-        "title": "Apel video"
+        "title": "Apel video",
+        "you": "",
+        "privateNotice": "",
+        "noMessagesMessage": "",
+        "messageTo": "",
+        "fieldPlaceHolder": ""
     },
     "connectingOverlay": {
         "joiningRoom": "Sunteți conectat la conversația dumneavoastră ..."
@@ -66,7 +72,11 @@
         "DISCONNECTED": "Deconectat",
         "DISCONNECTING": "Se deconectează",
         "ERROR": "Eroare",
-        "RECONNECTING": "A apărut o eroare de rețea. Reconectare..."
+        "RECONNECTING": "A apărut o eroare de rețea. Reconectare...",
+        "LOW_BANDWIDTH": "",
+        "GOT_SESSION_ID": "",
+        "GET_SESSION_ID_ERROR": "",
+        "FETCH_SESSION_ID": ""
     },
     "connectionindicator": {
         "address": "Adresă:",
@@ -97,7 +107,8 @@
         "status": "Conexiune:",
         "transport": "Mod Transport:",
         "transport_plural": "Moduri Transport:",
-        "turn": " (turn)"
+        "turn": " (turn)",
+        "e2e_rtt": ""
     },
     "dateUtils": {
         "earlier": "Mai devreme",
@@ -109,6 +120,8 @@
         "description": "Nu s-a întâmplat nimic? Am încercat să vă deschidem conversația în {{app}} aplicația pentru desktop. Încercați din nou sau deschideți {{app}} aplicația web.",
         "descriptionWithoutWeb": "",
         "downloadApp": "Descărcați aplicația",
+        "ifDoNotHaveApp": "Dacă nu aveti încă aplicația atunci:",
+        "ifHaveApp": "Dacă aveti deja aplicația:",
         "launchWebButton": "Deschideți în browser",
         "openApp": "Continuați spre aplicație",
         "title": "Deschidere apel video în {{app}}...",
@@ -256,13 +269,24 @@
         "WaitForHostMsgWOk": "Conferința {{room}} nu a început. Daca sunteți moderatorul, apăsați butonul OK pentru autentificare. Dacă nu, așteptați ca moderatorul să înceapă conferința.",
         "WaitingForHost": "Așteptare moderator conferință ...",
         "Yes": "Da",
-        "yourEntireScreen": "Întregul ecran"
+        "yourEntireScreen": "Întregul ecran",
+        "sendPrivateMessageTitle": "",
+        "sendPrivateMessageOk": "",
+        "sendPrivateMessageCancel": "",
+        "sendPrivateMessage": "",
+        "screenSharingAudio": "",
+        "muteEveryoneStartMuted": "",
+        "muteEveryoneSelf": "",
+        "muteEveryoneTitle": "",
+        "muteEveryoneDialog": "",
+        "muteEveryoneElseTitle": "",
+        "muteEveryoneElseDialog": ""
     },
     "dialOut": {
         "statusMessage": "Este {{status}}"
     },
     "feedback": {
-        "average": "Mediu",
+        "average": "Medie",
         "bad": "Rău",
         "detailsLabel": "Spuneți-ne mai multe despre experiența dumneavoastră.",
         "good": "Bine",
@@ -335,7 +359,8 @@
         "toggleFilmstrip": "Afișați sau ascundeți imagini video",
         "toggleScreensharing": "Comutați între cameră și partajare ecran",
         "toggleShortcuts": "Arătați sau ascundeți comenzi rapide tastatură",
-        "videoMute": "Porniți sau opriți camera"
+        "videoMute": "Porniți sau opriți camera",
+        "videoQuality": ""
     },
     "liveStreaming": {
         "busy": "Lucrăm la eliberarea resurselor de transmitere. Vă rugam să încercați din nou în câteva minute.",
@@ -363,7 +388,11 @@
         "signOut": "Deconectare",
         "start": "Începeți o transmitere live",
         "streamIdHelp": "Ce înseamnă acest lucru?",
-        "unavailableTitle": "Transmitere live indisponibilă"
+        "unavailableTitle": "Transmitere live indisponibilă",
+        "onBy": "",
+        "offBy": "",
+        "googlePrivacyPolicy": "Politica de confidențialitate Google",
+        "youtubeTerms": "Termeni și condiții Youtube"
     },
     "localRecording": {
         "clientState": {
@@ -426,9 +455,10 @@
         "unmute": "",
         "newDeviceCameraTitle": "A fost detectată o cameră noua",
         "newDeviceAudioTitle": "A fost detectat un dispozitiv audio nou",
-        "newDeviceAction": "Utilizați"
+        "newDeviceAction": "Utilizați",
+        "suboptimalBrowserWarning": "Folosind acest browser nu veți beneficia de cea mai bună experiență pentru aceste apeluri video. În timp ce lucrăm la asta, vă recomandăm să folosiți unul din <a href='{{recommendedBrowserPageLink}}' target='_blank'>browser-ele suportate</a>."
     },
-    "passwordSetRemotely": "Setat de un alt membru",
+    "passwordSetRemotely": "Setată de un alt membru",
     "passwordDigitsOnly": "Până la {{number}} cifre",
     "poweredby": "cu sprijinul",
     "presenceStatus": {
@@ -474,7 +504,9 @@
         "signIn": "Conectare",
         "signOut": "Deconectare",
         "unavailable": "Oops! Serviciul {{serviceName}} este indisponibil momentan. Se lucrează la remedierea acestei probleme. Vă rugam să încercați mai tărziu.",
-        "unavailableTitle": "Înregistrare indisponibilă"
+        "unavailableTitle": "Înregistrare indisponibilă",
+        "onBy": "{{name}} a pornit înregistrarea",
+        "offBy": "{{name}} a oprit înregistrarea"
     },
     "sectionList": {
         "pullToRefresh": "Trageți pentru a reîmprospătă"
@@ -499,8 +531,10 @@
         "selectCamera": "Cameră",
         "selectMic": "Microfon",
         "startAudioMuted": "Toată lumea începe cu sunetul dezactivat",
-        "startVideoMuted": "Toată lumea începe cu sunetul dezactivat",
-        "title": "Setări"
+        "startVideoMuted": "Toată lumea începe cu fară video",
+        "title": "Setări",
+        "speakers": "Difuzoare",
+        "microphones": "Microfoane"
     },
     "settingsView": {
         "alertOk": "OK",
@@ -515,7 +549,11 @@
         "serverURL": "Server URL",
         "startWithAudioMuted": "Începeți cu sunetul dezactivat",
         "startWithVideoMuted": "Începeți cu video dezactivat",
-        "version": "Version"
+        "version": "Version",
+        "showAdvanced": "Arată setările avansate",
+        "disableP2P": "Dezactivează modul Peer-To-Peer",
+        "disableCallIntegration": "Dezactivează integrarea cu apelurile native",
+        "advanced": "Avansat"
     },
     "share": {
         "dialInfoText": "\n\n=====\n\nVreti doar să apelați telefonic?\n\n{{defaultDialInNumber}}Faceți click pe acest link pentru a vizualiza numerele pentru apelare în acest apel video\n{{dialInfoPageUrl}}",
@@ -525,10 +563,10 @@
     "speakerStats": {
         "hours": "{{count}}h",
         "minutes": "{{count}}m",
-        "name": "Name",
+        "name": "Nume",
         "seconds": "{{count}}s",
-        "speakerStats": "Parametrii difuzorului",
-        "speakerTime": "Durată participant"
+        "speakerStats": "Statistici participanți",
+        "speakerTime": "Durată vorbire participant"
     },
     "startupoverlay": {
         "policyText": " ",
@@ -572,9 +610,14 @@
             "tileView": "Afișați/ascundeți miniatura video",
             "toggleCamera": "Afișați / ascundeți camera",
             "videomute": "Activați / dezactivați înregistrarea",
-            "videoblur": ""
+            "videoblur": "",
+            "privateMessage": "Trimite un mesaj privat",
+            "muteEveryone": "Oprește microfonul tuturor",
+            "moreOptions": "Arată mai multe opțiuni",
+            "help": "Ajutor",
+            "download": "Descarcă aplicațiile noastre"
         },
-        "addPeople": "Adaugați persoane în apel",
+        "addPeople": "Adăugați persoane în apel",
         "audioOnlyOff": "Dezactivați modul 'doar audio'",
         "audioOnlyOn": "Activați modul 'doar audio'",
         "audioRoute": "Selectați dispozitivul pentru sunet",
@@ -664,9 +707,6 @@
         "lowDefinition": "Calitate redusă",
         "onlyAudioAvailable": "Doar audio este disponibil",
         "onlyAudioSupported": "În acest navigator este suportat doar 'mod audio'.",
-        "p2pEnabled": "Peer-to-Peer activat",
-        "p2pVideoQualityDescription": "În modul peer-to-peer pentru calitatea apelurilor primite puteți alege doar între calitate superioară sau 'mod audio'. Alte setări nu pot fi activate până când modul peer-to-peer nu este dezactivat.",
-        "recHighDefinitionOnly": "Este de preferat o calitate superioară.",
         "sd": "SD",
         "standardDefinition": "Calitate standard"
     },
@@ -698,7 +738,7 @@
         "go": "ÎNCEPEȚI",
         "join": "ACCESARE",
         "info": "Informații",
-        "privacy": "Securitate",
+        "privacy": "Confidențialitate",
         "recentList": "Recent",
         "recentListDelete": "Ștergeți",
         "recentListEmpty": "Lista dumneavoastră recentă este momentan goală. Discutați cu echipa dumneavoastră și veți găsi toate conversațiile aici.",
@@ -707,13 +747,16 @@
         "roomnameHint": "Introduceți numele sau adresa web a ședinței la care doriți să vă conectați. Puteți asocia un nume, dar transmiteți și celorlalți participanți acest nume.",
         "sendFeedback": "Lăsați-ne feedback",
         "terms": "Termeni",
-        "title": "Video-conferință securizata, cu opțiuni multiple și complet gratuită "
+        "title": "Video-conferință securizată, cu multiple funcționalități și complet gratuită"
     },
-    "lonelyMeetingExperience": {
-        "button": "Invită alte persoane",
-        "youAreAlone": "Ești singura persoană din acest apel"
+    "documentSharing": {
+        "title": ""
     },
-    "helpView": {
-        "header": "Centru de ajutor"
-    }
+    "defaultNickname": "",
+    "chromeExtensionBanner": {
+        "dontShowAgain": "",
+        "buttonText": "",
+        "installExtensionText": ""
+    },
+    "raisedHand": "Ar dori să vorbească"
 }
