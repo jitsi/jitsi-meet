@@ -88,6 +88,11 @@ import VideoSettingsButton from './VideoSettingsButton';
 type Props = {
 
     /**
+     * Whether the local participant is in minimized mode
+     */
+    _isMinimized: boolean,
+
+    /**
      * Whether or not the chat feature is currently displayed.
      */
     _chatOpen: boolean,
@@ -208,6 +213,10 @@ declare var interfaceConfig: Object;
 // interfaceConfig is part of redux we will. This will have to be retrieved from the store.
 const visibleButtons = new Set(interfaceConfig.TOOLBAR_BUTTONS);
 
+const minimizedButtonsWhitelist = [
+    'microphone', 'camera', 'hangup', 'raisehand'
+];
+
 /**
  * Implements the conference toolbox on React/Web.
  *
@@ -260,6 +269,7 @@ class Toolbox extends Component<Props, State> {
      * @returns {void}
      */
     componentDidMount() {
+        // TODO: Disable some of this based on the minimized mode
         const KEYBOARD_SHORTCUTS = [
             this._shouldShowButton('videoquality') && {
                 character: 'A',
@@ -973,12 +983,14 @@ class Toolbox extends Component<Props, State> {
                     key = 'fullscreen'
                     onClick = { this._onToolbarToggleFullScreen }
                     text = { _fullScreen ? t('toolbar.exitFullScreen') : t('toolbar.enterFullScreen') } />,
-            <LiveStreamButton
-                key = 'livestreaming'
-                showLabel = { true } />,
-            <RecordButton
-                key = 'record'
-                showLabel = { true } />,
+            this._shouldShowButton('livestreaming')
+                && <LiveStreamButton
+                    key = 'livestreaming'
+                    showLabel = { true } />,
+            this._shouldShowButton('record')
+                && <RecordButton
+                    key = 'record'
+                    showLabel = { true } />,
             this._shouldShowButton('sharedvideo')
                 && <OverflowMenuItem
                     accessibilityLabel = { t('toolbar.accessibilityLabel.sharedvideo') }
@@ -990,18 +1002,21 @@ class Toolbox extends Component<Props, State> {
                 && <SharedDocumentButton
                     key = 'etherpad'
                     showLabel = { true } />,
-            <VideoBlurButton
-                key = 'videobackgroundblur'
-                showLabel = { true }
-                visible = { this._shouldShowButton('videobackgroundblur') && !_screensharing } />,
-            <SettingsButton
-                key = 'settings'
-                showLabel = { true }
-                visible = { this._shouldShowButton('settings') } />,
-            <MuteEveryoneButton
-                key = 'mute-everyone'
-                showLabel = { true }
-                visible = { this._shouldShowButton('mute-everyone') } />,
+            this._shouldShowButton('videobackgroundblur')
+                && <VideoBlurButton
+                    key = 'videobackgroundblur'
+                    showLabel = { true }
+                    visible = { this._shouldShowButton('videobackgroundblur') && !_screensharing } />,
+            this._shouldShowButton('settings')
+                && <SettingsButton
+                    key = 'settings'
+                    showLabel = { true }
+                    visible = { this._shouldShowButton('settings') } />,
+            this._shouldShowButton('mute-everyone')
+                && <MuteEveryoneButton
+                    key = 'mute-everyone'
+                    showLabel = { true }
+                    visible = { this._shouldShowButton('mute-everyone') } />,
             this._shouldShowButton('stats')
                 && <OverflowMenuItem
                     accessibilityLabel = { t('toolbar.accessibilityLabel.speakerStats') }
@@ -1313,7 +1328,17 @@ class Toolbox extends Component<Props, State> {
      * @returns {boolean} True if the button should be displayed.
      */
     _shouldShowButton(buttonName) {
+        if (this.props._isMinimized) {
+            return this._visibleWhenMinimized(buttonName)
+        }
         return this.props._visibleButtons.has(buttonName);
+    }
+
+    _visibleWhenMinimized(buttonName) {
+        if (minimizedButtonsWhitelist.includes(buttonName)) {
+            return this.props._visibleButtons.has(buttonName);
+        }
+        return false;
     }
 }
 
@@ -1366,6 +1391,7 @@ function _mapStateToProps(state) {
 
     return {
         _chatOpen: state['features/chat'].isOpen,
+        _isMinimized: state['features/minimized'].enabled,
         _conference: conference,
         _desktopSharingEnabled: desktopSharingEnabled,
         _desktopSharingDisabledTooltipKey: desktopSharingDisabledTooltipKey,

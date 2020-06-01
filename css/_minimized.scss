@@ -1,0 +1,18 @@
+.minimized-mode {
+    .filmstrip {
+        display: none;
+    }
+    .settings-button-small-icon {
+        display: none;
+    }
+    .new-toolbox .toolbox-content .button-group-center .toolbox-button .toolbox-icon,
+    .new-toolbox .toolbox-content .button-group-right .toolbox-button .toolbox-icon,
+    .new-toolbox .toolbox-content .button-group-left .toolbox-button .toolbox-icon {
+        width: 16px;
+        height: 16px;
+        svg {
+            width: 14px;
+            height: 14px;
+        }
+    }
+}

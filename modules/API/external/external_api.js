@@ -39,6 +39,7 @@ const commands = {
     setVideoQuality: 'set-video-quality',
     subject: 'subject',
     submitFeedback: 'submit-feedback',
+    toggleMinimized: 'toggle-minimized',
     toggleAudio: 'toggle-audio',
     toggleChat: 'toggle-chat',
     toggleFilmStrip: 'toggle-film-strip',

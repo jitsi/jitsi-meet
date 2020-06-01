@@ -10,6 +10,7 @@ import { getLocalParticipant } from '../../react/features/base/participants';
 import { toggleChat } from '../../react/features/chat';
 import { setDocumentUrl } from '../../react/features/etherpad';
 import { setFilmstripVisible } from '../../react/features/filmstrip';
+import { setMinimizedEnabled } from '../../react/features/minimized';
 import { joinLeaveNotificationsDisabled, setNotificationsEnabled } from '../../react/features/notifications';
 import {
     dockToolbox,
@@ -309,6 +310,15 @@ UI.toggleFilmstrip = function() {
     const { visible } = APP.store.getState()['features/filmstrip'];
 
     APP.store.dispatch(setFilmstripVisible(!visible));
+};
+
+/**
+ * Toggles minimized.
+ */
+UI.toggleMinimized = function() {
+    const { enabled } = APP.store.getState()['features/minimized'];
+
+    APP.store.dispatch(setMinimizedEnabled(!enabled));
 };
 
 /**

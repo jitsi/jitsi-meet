@@ -136,6 +136,10 @@ function initCommands() {
             sendAnalytics(createApiEvent('film.strip.toggled'));
             APP.UI.toggleFilmstrip();
         },
+        'toggle-minimized': () => {
+            sendAnalytics(createApiEvent('minimized.toggled'));
+            APP.UI.toggleMinimized();
+        },
         'toggle-chat': () => {
             sendAnalytics(createApiEvent('chat.toggled'));
             APP.UI.toggleChat();

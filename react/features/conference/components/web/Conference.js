@@ -68,6 +68,11 @@ const LAYOUT_CLASSNAMES = {
 type Props = AbstractProps & {
 
     /**
+     * Whether the local participant is in minimized mode
+     */
+    _isMinimized: boolean,
+
+    /**
      * Whether the local participant is recording the conference.
      */
     _iAmRecorder: boolean,
@@ -181,21 +186,27 @@ class Conference extends AbstractConference<Props, *> {
             filmStripOnly: filmstripOnly
         } = interfaceConfig;
         const {
+            _isMinimized,
             _iAmRecorder,
             _layoutClassName,
             _showPrejoin
         } = this.props;
-        const hideLabels = filmstripOnly || _iAmRecorder;
+        const hideLabels = filmstripOnly || _iAmRecorder || _isMinimized;
+        let _minimizedClassName = '';
+        if (_isMinimized) {
+            _minimizedClassName = ' minimized-mode';
+        }
+
 
         return (
             <div
-                className = { _layoutClassName }
+                className = { _layoutClassName + _minimizedClassName }
                 id = 'videoconference_page'
                 onMouseMove = { this._onShowToolbar }>
 
                 <Notice />
                 <Subject />
-                <InviteMore />
+                { _isMinimized || <InviteMore />}
                 <div id = 'videospace'>
                     <LargeVideo />
                     { hideLabels
@@ -204,7 +215,7 @@ class Conference extends AbstractConference<Props, *> {
                 </div>
 
                 { filmstripOnly || _showPrejoin || <Toolbox /> }
-                { filmstripOnly || <Chat /> }
+                { _isMinimized || filmstripOnly || <Chat /> }
 
                 { this.renderNotificationsContainer() }
 
@@ -274,6 +285,7 @@ class Conference extends AbstractConference<Props, *> {
 function _mapStateToProps(state) {
     return {
         ...abstractMapStateToProps(state),
+        _isMinimized: state['features/minimized'].enabled,
         _iAmRecorder: state['features/base/config'].iAmRecorder,
         _layoutClassName: LAYOUT_CLASSNAMES[getCurrentLayout(state)],
         _roomName: getConferenceNameForTitle(state),
