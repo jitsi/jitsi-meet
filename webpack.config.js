@@ -3,6 +3,7 @@
 const CircularDependencyPlugin = require('circular-dependency-plugin');
 const process = require('process');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
+const path = require('path');
 
 /**
  * The URL of the Jitsi Meet deployment to be proxy to in the context of
@@ -109,7 +110,13 @@ const config = {
             test: /\.css$/,
             use: [
                 'style-loader',
-                'css-loader'
+                {
+                    loader: 'css-loader',
+                    options: {
+                        sourceMap: true,
+                        modules: true
+                    }
+                }
             ]
         }, {
             test: /\/node_modules\/@atlaskit\/modal-dialog\/.*\.js$/,
@@ -132,6 +139,15 @@ const config = {
                 options: {
                     dimensions: false,
                     expandProps: 'start'
+                }
+            } ]
+        }, {
+            test: /\.(jpg|png)$/,
+            use: [ {
+                loader: 'url-loader',
+                options: {
+                    limit: 11000,
+                    name: 'img/[name].[hash:8].[ext]'
                 }
             } ]
         } ]
@@ -167,7 +183,8 @@ const config = {
     ].filter(Boolean),
     resolve: {
         alias: {
-            jquery: `jquery/dist/jquery${minimize ? '.min' : ''}.js`
+            jquery: `jquery/dist/jquery${minimize ? '.min' : ''}.js`,
+            '!images': path.join(__dirname, '/images')
         },
         aliasFields: [
             'browser'

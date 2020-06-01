@@ -72,11 +72,6 @@ deploy-rnnoise-binary:
 		$(RNNOISE_WASM_DIR)/rnnoise.wasm \
 		$(DEPLOY_DIR)
 
-deploy-css:
-	$(NODE_SASS) $(STYLES_MAIN) $(STYLES_BUNDLE) && \
-	$(CLEANCSS) $(STYLES_BUNDLE) > $(STYLES_DESTINATION) ; \
-	rm $(STYLES_BUNDLE)
-
 deploy-local:
 	([ ! -x deploy-local.sh ] || ./deploy-local.sh)
 
