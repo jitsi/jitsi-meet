@@ -22,7 +22,7 @@ clean:
 	rm -fr $(BUILD_DIR)
 
 .NOTPARALLEL:
-deploy: deploy-init deploy-appbundle deploy-rnnoise-binary deploy-lib-jitsi-meet deploy-libflac deploy-css deploy-local
+deploy: deploy-init deploy-appbundle deploy-rnnoise-binary deploy-lib-jitsi-meet deploy-libflac deploy-local
 
 deploy-init:
 	rm -fr $(DEPLOY_DIR)
@@ -76,7 +76,7 @@ deploy-local:
 	([ ! -x deploy-local.sh ] || ./deploy-local.sh)
 
 .NOTPARALLEL:
-dev: deploy-init deploy-css deploy-rnnoise-binary deploy-lib-jitsi-meet deploy-libflac
+dev: deploy-init deploy-rnnoise-binary deploy-lib-jitsi-meet deploy-libflac
 	$(WEBPACK_DEV_SERVER)
 
 source-package:

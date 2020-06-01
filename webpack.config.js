@@ -1,9 +1,10 @@
 /* global __dirname */
 
 const CircularDependencyPlugin = require('circular-dependency-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const path = require('path');
 const process = require('process');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
-const path = require('path');
 
 /**
  * The URL of the Jitsi Meet deployment to be proxy to in the context of
@@ -18,6 +19,9 @@ const detectCircularDeps = process.argv.indexOf('--detect-circular-deps') !== -1
 const minimize
     = process.argv.indexOf('-p') !== -1
         || process.argv.indexOf('--optimize-minimize') !== -1;
+
+// const isDevelopment = process.env.NODE_ENV !== 'production' || process.argv.indexOf('-p') === -1;
+const isDevelopment = true;
 
 /**
  * Build a Performance configuration object for the given size.
@@ -105,16 +109,27 @@ const config = {
             loader: 'expose-loader?$!expose-loader?jQuery',
             test: /\/node_modules\/jquery\/.*\.js$/
         }, {
-            // Allow CSS to be imported into JavaScript.
-
-            test: /\.css$/,
+            test: /\.scss$/,
             use: [
-                'style-loader',
+                {
+                    loader: isDevelopment ? 'style-loader' : MiniCssExtractPlugin.loader
+                },
                 {
                     loader: 'css-loader',
                     options: {
-                        sourceMap: true,
+                        // sourceMap: isDevelopment,
                         modules: true
+                    }
+                }, {
+                    loader: 'resolve-url-loader',
+                    options: {
+                        sourceMap: isDevelopment,
+                        keepQuery: true
+                    }
+                }, {
+                    loader: 'sass-loader',
+                    options: {
+                        sourceMap: isDevelopment
                     }
                 }
             ]
@@ -147,7 +162,16 @@ const config = {
                 loader: 'url-loader',
                 options: {
                     limit: 11000,
-                    name: 'img/[name].[hash:8].[ext]'
+                    name: `images/${isDevelopment ? '[name].[ext]' : '[name].[hash:8].[ext]'}`
+                }
+            } ]
+        }, {
+            test: /\.(ttf|eot|woff|woff2)$/,
+            use: [ {
+                loader: 'url-loader',
+                options: {
+                    limit: 50000,
+                    name: `fonts/${isDevelopment ? '[name].[ext]' : '[name].[hash:8].[ext]'}`
                 }
             } ]
         } ]
@@ -179,12 +203,18 @@ const config = {
                 allowAsyncCycles: false,
                 exclude: /node_modules/,
                 failOnError: false
+            }),
+        MiniCssExtractPlugin
+            && new MiniCssExtractPlugin({
+                filename: isDevelopment ? '[name].css' : '[name].[hash].css',
+                chunkFilename: isDevelopment ? '[id].css' : '[id].[hash].css'
             })
     ].filter(Boolean),
     resolve: {
         alias: {
             jquery: `jquery/dist/jquery${minimize ? '.min' : ''}.js`,
-            '!images': path.join(__dirname, '/images')
+            '!images': path.join(__dirname, 'images'),
+            '!fonts': path.join(__dirname, 'fonts')
         },
         aliasFields: [
             'browser'
