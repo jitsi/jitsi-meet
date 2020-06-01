@@ -176,6 +176,20 @@ body.welcome-page {
         cursor: pointer;
     }
 
+    .welcome-page-button-download {
+        font-size: $welcomePageButtonFontSize;
+        font-weight: $welcomePageButtonFontWeight;
+        width: 231px;
+        background: #EA3A0D;
+        border-radius: 100px;
+        padding: 10px 0;
+        color: #FFFFFF;
+        text-align: center;
+        vertical-align: middle;
+        line-height: $welcomePageButtonLineHeight;
+        cursor: pointer;
+    }
+
     .welcome-page-settings {
         color: $welcomePageDescriptionColor;
         position: absolute;

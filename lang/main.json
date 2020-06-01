@@ -838,6 +838,7 @@
         "calendar": "Calendar",
         "connectCalendarButton": "Connect your calendar",
         "connectCalendarText": "Connect your calendar to view all your meetings in {{app}}. Plus, add {{provider}} meetings to your calendar and start them with one click.",
+        "download": "Download Brave",
         "enterRoomTitle": "Start a new meeting",
         "footerText": "Requires ",
         "getHelp": "Get help",

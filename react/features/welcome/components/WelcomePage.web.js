@@ -13,6 +13,7 @@ import { SettingsButton, SETTINGS_TABS } from '../../settings';
 import { AbstractWelcomePage, _mapStateToProps } from './AbstractWelcomePage';
 import Tabs from './Tabs';
 import { isBraveBrowser } from '../../base/environment';
+import { BRAVE_DOWNLOAD } from '../../unsupported-browser/components/browserLinks';
 
 /**
  * The pattern used to validate room name.
@@ -194,7 +195,7 @@ class WelcomePage extends AbstractWelcomePage {
                         </p>
                     </div>
                     <div id = 'enter_room'>
-                        <div
+                        { isBraveBrowser() ? <div
                             className = 'welcome-page-button'
                             id = 'enter_room_button'
                             onClick = { this._onLaunchCall }>
@@ -203,7 +204,12 @@ class WelcomePage extends AbstractWelcomePage {
                                     ? t('welcomepage.goSmall')
                                     : t('welcomepage.go')
                             }
-                        </div>
+                        </div> : <div
+                            className = 'welcome-page-button-download'
+                            id = 'download_button'
+                            onClick = { this._onDownloadBrave }>
+                            { t('welcomepage.download') }
+                        </div> }
                     </div>
                     { _moderatedRoomServiceUrl && (
                         <div id = 'moderated-meetings'>
@@ -259,6 +265,15 @@ class WelcomePage extends AbstractWelcomePage {
             .replace(/=/g, '');
 
         window.open(`https://together.brave.com/${name}`, '_self');
+    }
+
+    /**
+     * Redirects to Brave download page
+     *
+     * @returns {ReactElement|null}
+     */
+    _onDownloadBrave() {
+        window.open(BRAVE_DOWNLOAD, '_self');
     }
 
     /**
