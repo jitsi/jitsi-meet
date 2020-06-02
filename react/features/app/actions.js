@@ -23,12 +23,10 @@ import {
     parseURIString,
     toURLString
 } from '../base/util';
-import { showNotification } from '../notifications';
 import { setFatalError } from '../overlay';
 
 import {
-    getDefaultURL,
-    getName
+    getDefaultURL
 } from './functions';
 import logger from './logger';
 
@@ -297,14 +295,6 @@ export function maybeRedirectToWelcomePage(options: Object = {}) {
             dispatch(redirectToStaticPage(`static/${path}`));
 
             return;
-        }
-
-        // else: show thankYou dialog only if there is no feedback
-        if (options.showThankYou) {
-            dispatch(showNotification({
-                titleArguments: { appName: getName() },
-                titleKey: 'dialog.thankYou'
-            }));
         }
 
         // if Welcome page is enabled redirect to welcome page after 3 sec, if

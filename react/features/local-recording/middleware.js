@@ -4,11 +4,9 @@ import { createShortcutEvent, sendAnalytics } from '../analytics';
 import { APP_WILL_UNMOUNT } from '../base/app';
 import { CONFERENCE_JOINED } from '../base/conference';
 import { toggleDialog } from '../base/dialog';
-import { i18next } from '../base/i18n';
 import { SET_AUDIO_MUTED } from '../base/media';
 import { MiddlewareRegistry } from '../base/redux';
 import { SETTINGS_UPDATED } from '../base/settings/actionTypes';
-import { showNotification } from '../notifications';
 
 import { localRecordingEngaged, localRecordingUnengaged } from './actions';
 import { LocalRecordingInfoDialog } from './components';
@@ -42,20 +40,6 @@ MiddlewareRegistry.register(({ getState, dispatch }) => next => action => {
             } else {
                 dispatch(localRecordingUnengaged());
             }
-        };
-
-        recordingController.onWarning = (messageKey, messageParams) => {
-            dispatch(showNotification({
-                title: i18next.t('localRecording.localRecording'),
-                description: i18next.t(messageKey, messageParams)
-            }, 10000));
-        };
-
-        recordingController.onNotify = (messageKey, messageParams) => {
-            dispatch(showNotification({
-                title: i18next.t('localRecording.localRecording'),
-                description: i18next.t(messageKey, messageParams)
-            }, 10000));
         };
 
         typeof APP === 'object' && typeof APP.keyboardshortcut === 'object'

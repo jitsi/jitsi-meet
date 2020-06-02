@@ -10,14 +10,9 @@ import {
 import { hideDialog } from '../base/dialog';
 import { JitsiConferenceErrors } from '../base/lib-jitsi-meet';
 import { MiddlewareRegistry } from '../base/redux';
-import {
-    NOTIFICATION_TIMEOUT,
-    showNotification
-} from '../notifications';
 
 import { _openPasswordRequiredPrompt } from './actions';
 import { PasswordRequiredPrompt, RoomLockPrompt } from './components';
-import { LOCKED_REMOTELY } from './constants';
 import logger from './logger';
 
 declare var APP: Object;
@@ -44,25 +39,7 @@ MiddlewareRegistry.register(store => next => action => {
             APP.UI.emitEvent(UIEvents.TOGGLE_ROOM_LOCK, action.locked);
         }
 
-        const previousLockedState = store.getState()['features/base/conference'].locked;
-
-        const result = next(action);
-
-        const currentLockedState = store.getState()['features/base/conference'].locked;
-
-        if (currentLockedState === LOCKED_REMOTELY) {
-            store.dispatch(
-                showNotification({
-                    titleKey: 'notify.passwordSetRemotely'
-                }, NOTIFICATION_TIMEOUT));
-        } else if (previousLockedState === LOCKED_REMOTELY && !currentLockedState) {
-            store.dispatch(
-                showNotification({
-                    titleKey: 'notify.passwordRemovedRemotely'
-                }, NOTIFICATION_TIMEOUT));
-        }
-
-        return result;
+        return next(action);
     }
     case SET_PASSWORD_FAILED:
         return _setPasswordFailed(store, next, action);

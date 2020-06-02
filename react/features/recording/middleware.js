@@ -11,7 +11,6 @@ import JitsiMeetJS, {
     JitsiConferenceEvents,
     JitsiRecordingConstants
 } from '../base/lib-jitsi-meet';
-import { getParticipantDisplayName } from '../base/participants';
 import { MiddlewareRegistry, StateListenerRegistry } from '../base/redux';
 import {
     playSound,
@@ -24,10 +23,7 @@ import { RECORDING_SESSION_UPDATED } from './actionTypes';
 import {
     clearRecordingSessions,
     hidePendingRecordingNotification,
-    showPendingRecordingNotification,
     showRecordingError,
-    showStartedRecordingNotification,
-    showStoppedRecordingNotification,
     updateRecordingSessionData
 } from './actions';
 import {
@@ -140,20 +136,14 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
 
         const updatedSessionData
             = getSessionById(getState(), action.sessionData.id);
-        const { initiator, mode, terminator } = updatedSessionData;
+        const { mode } = updatedSessionData;
         const { PENDING, OFF, ON } = JitsiRecordingConstants.status;
 
-        if (updatedSessionData.status === PENDING
-            && (!oldSessionData || oldSessionData.status !== PENDING)) {
-            dispatch(showPendingRecordingNotification(mode));
-        } else if (updatedSessionData.status !== PENDING) {
+        if (updatedSessionData.status !== PENDING) {
             dispatch(hidePendingRecordingNotification(mode));
 
             if (updatedSessionData.status === ON
                 && (!oldSessionData || oldSessionData.status !== ON)) {
-                const initiatorName = initiator && getParticipantDisplayName(getState, initiator.getId());
-
-                initiatorName && dispatch(showStartedRecordingNotification(mode, initiatorName));
                 sendAnalytics(createRecordingEvent('start', mode));
 
                 if (disableRecordAudioNotification) {
@@ -173,8 +163,6 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
                 }
             } else if (updatedSessionData.status === OFF
                 && (!oldSessionData || oldSessionData.status !== OFF)) {
-                dispatch(showStoppedRecordingNotification(
-                    mode, terminator && getParticipantDisplayName(getState, terminator.getId())));
                 let duration = 0, soundOff, soundOn;
 
                 if (oldSessionData && oldSessionData.timestamp) {

@@ -2,7 +2,7 @@ import {
     createTrackMutedEvent,
     sendAnalytics
 } from '../../analytics';
-import { showErrorNotification, showNotification } from '../../notifications';
+import { showErrorNotification } from '../../notifications';
 import { JitsiTrackErrors, JitsiTrackEvents } from '../lib-jitsi-meet';
 import {
     CAMERA_FACING_MODE,
@@ -355,21 +355,7 @@ export function trackAdded(track) {
             isReceivingData = track.isReceivingData();
             track.on(JitsiTrackEvents.NO_DATA_FROM_SOURCE, () => dispatch(noDataFromSource({ jitsiTrack: track })));
             if (!isReceivingData) {
-                if (mediaType === MEDIA_TYPE.AUDIO) {
-                    const notificationAction = showNotification({
-                        descriptionKey: 'dialog.micNotSendingData',
-                        titleKey: 'dialog.micNotSendingDataTitle'
-                    });
-
-                    dispatch(notificationAction);
-
-                    // Set the notification ID so that other parts of the application know that this was
-                    // displayed in the context of the current device.
-                    // I.E. The no-audio-signal notification shouldn't be displayed if this was already shown.
-                    dispatch(setNoSrcDataNotificationUid(notificationAction.uid));
-
-                    noDataFromSourceNotificationInfo = { uid: notificationAction.uid };
-                } else {
+                if (mediaType !== MEDIA_TYPE.AUDIO) {
                     const timeout = setTimeout(() => dispatch(showNoDataFromSourceVideoError(track)), 5000);
 
                     noDataFromSourceNotificationInfo = { timeout };

@@ -1,7 +1,6 @@
 // @flow
 
 import UIEvents from '../../../../service/UI/UIEvents';
-import { NOTIFICATION_TIMEOUT, showNotification } from '../../notifications';
 import { CALLING, INVITED } from '../../presence-status';
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../app';
 import {
@@ -39,8 +38,7 @@ import {
     getFirstLoadableAvatarUrl,
     getLocalParticipant,
     getParticipantById,
-    getParticipantCount,
-    getParticipantDisplayName
+    getParticipantCount
 } from './functions';
 import { PARTICIPANT_JOINED_FILE, PARTICIPANT_LEFT_FILE } from './sounds';
 
@@ -413,7 +411,7 @@ function _participantJoinedOrUpdated({ dispatch, getState }, next, action) {
  * @param {boolean} newValue - The new value of the raise hand status.
  * @returns {void}
  */
-function _raiseHandUpdated({ dispatch, getState }, conference, participantId, newValue) {
+function _raiseHandUpdated({ dispatch }, conference, participantId, newValue) {
     const raisedHand = newValue === 'true';
 
     dispatch(participantUpdated({
@@ -421,15 +419,6 @@ function _raiseHandUpdated({ dispatch, getState }, conference, participantId, ne
         id: participantId,
         raisedHand
     }));
-
-    if (raisedHand) {
-        dispatch(showNotification({
-            titleArguments: {
-                name: getParticipantDisplayName(getState, participantId)
-            },
-            titleKey: 'notify.raisedHand'
-        }, NOTIFICATION_TIMEOUT));
-    }
 }
 
 /**

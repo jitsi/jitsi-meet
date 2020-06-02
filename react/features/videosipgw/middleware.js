@@ -8,7 +8,6 @@ import {
 import { MiddlewareRegistry } from '../base/redux';
 import {
     showErrorNotification,
-    showNotification,
     showWarningNotification
 } from '../notifications';
 
@@ -144,14 +143,6 @@ function _inviteRooms(rooms, conference, dispatch) {
 function _sessionStateChanged(
         event: Object) {
     switch (event.newState) {
-    case JitsiSIPVideoGWStatus.STATE_PENDING: {
-        return showNotification({
-            titleKey: 'videoSIPGW.pending',
-            titleArguments: {
-                displayName: event.displayName
-            }
-        }, 2000);
-    }
     case JitsiSIPVideoGWStatus.STATE_FAILED: {
         return showErrorNotification({
             titleKey: 'videoSIPGW.errorInviteFailedTitle',

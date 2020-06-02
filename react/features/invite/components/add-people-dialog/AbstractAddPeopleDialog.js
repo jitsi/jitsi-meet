@@ -3,10 +3,6 @@
 import { Component } from 'react';
 
 import { createInviteDialogEvent, sendAnalytics } from '../../../analytics';
-import {
-    NOTIFICATION_TIMEOUT,
-    showNotification
-} from '../../../notifications';
 import { invite } from '../../actions';
 import {
     getInviteResultsForQuery,
@@ -122,7 +118,7 @@ export default class AbstractAddPeopleDialog<P: Props, S: State>
             addToCallInProgress: true
         });
 
-        const { _callFlowsEnabled, dispatch } = this.props;
+        const { dispatch } = this.props;
 
         return dispatch(invite(invitees))
             .then(invitesLeftToSend => {
@@ -147,39 +143,6 @@ export default class AbstractAddPeopleDialog<P: Props, S: State>
                     this.setState({
                         addToCallError: true
                     });
-                } else if (!_callFlowsEnabled) {
-                    const invitedCount = invitees.length;
-                    let notificationProps;
-
-                    if (invitedCount >= 3) {
-                        notificationProps = {
-                            titleArguments: {
-                                name: invitees[0].name,
-                                count: invitedCount - 1
-                            },
-                            titleKey: 'notify.invitedThreePlusMembers'
-                        };
-                    } else if (invitedCount === 2) {
-                        notificationProps = {
-                            titleArguments: {
-                                first: invitees[0].name,
-                                second: invitees[1].name
-                            },
-                            titleKey: 'notify.invitedTwoMembers'
-                        };
-                    } else if (invitedCount) {
-                        notificationProps = {
-                            titleArguments: {
-                                name: invitees[0].name
-                            },
-                            titleKey: 'notify.invitedOneMember'
-                        };
-                    }
-
-                    if (notificationProps) {
-                        dispatch(
-                            showNotification(notificationProps, NOTIFICATION_TIMEOUT));
-                    }
                 }
 
                 return invitesLeftToSend;
