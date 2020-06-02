@@ -6,8 +6,10 @@ import {
     SET_ROOM
 } from '../base/conference';
 import { SET_CONFIG } from '../base/config';
+import { LIB_WILL_INIT } from '../base/lib-jitsi-meet';
 import { SET_NETWORK_INFO } from '../base/net-info';
 import { MiddlewareRegistry } from '../base/redux';
+import logger from '../base/redux/logger';
 import {
     getLocalAudioTrack,
     getLocalVideoTrack,
@@ -15,13 +17,11 @@ import {
     TRACK_REMOVED,
     TRACK_UPDATED
 } from '../base/tracks';
-import { LIB_WILL_INIT } from '../base/lib-jitsi-meet';
 
 import { createLocalTracksDurationEvent, createNetworkInfoEvent } from './AnalyticsEvents';
 import { UPDATE_LOCAL_TRACKS_DURATION } from './actionTypes';
 import { createHandlers, initAnalytics, getAmplitudeIdentity, resetAnalytics, sendAnalytics } from './functions';
 import RTCStats from './RTCStats';
-import logger from '../base/redux/logger';
 
 /**
  * Calculates the duration of the local tracks.
