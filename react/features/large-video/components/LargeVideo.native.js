@@ -118,18 +118,15 @@ class LargeVideo extends PureComponent<Props, State> {
         } = this.props;
 
         return (
-            <DimensionsDetector
-                onDimensionsChanged = { this._onDimensionsChanged } >
-                <ParticipantView
-                    avatarSize = { avatarSize }
-                    onPress = { onClick }
-                    participantId = { _participantId }
-                    style = { _styles.largeVideo }
-                    testHintId = 'org.jitsi.meet.LargeVideo'
-                    useConnectivityInfoLabel = { useConnectivityInfoLabel }
-                    zOrder = { 0 }
-                    zoomEnabled = { true } />
-            </DimensionsDetector>
+            <ParticipantView
+                avatarSize = { avatarSize }
+                onPress = { onClick }
+                participantId = { _participantId }
+                style = { _styles.largeVideo }
+                testHintId = 'org.jitsi.meet.LargeVideo'
+                useConnectivityInfoLabel = { useConnectivityInfoLabel }
+                zOrder = { 0 }
+                zoomEnabled = { true } />
         );
     }
 }
@@ -147,7 +144,7 @@ function _mapStateToProps(state) {
     return {
         _height: height,
         _participantId: state['features/large-video'].participantId,
-        _styles: ColorSchemeRegistry.get(state, 'LargeVideo')
+        _styles: ColorSchemeRegistry.get(state, 'LargeVideo'),
         _width: width
     };
 }
