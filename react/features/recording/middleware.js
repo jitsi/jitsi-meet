@@ -22,7 +22,6 @@ import {
 import { RECORDING_SESSION_UPDATED } from './actionTypes';
 import {
     clearRecordingSessions,
-    hidePendingRecordingNotification,
     showRecordingError,
     updateRecordingSessionData
 } from './actions';
@@ -140,8 +139,6 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
         const { PENDING, OFF, ON } = JitsiRecordingConstants.status;
 
         if (updatedSessionData.status !== PENDING) {
-            dispatch(hidePendingRecordingNotification(mode));
-
             if (updatedSessionData.status === ON
                 && (!oldSessionData || oldSessionData.status !== ON)) {
                 sendAnalytics(createRecordingEvent('start', mode));
