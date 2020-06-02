@@ -406,6 +406,12 @@ var config = {
         // The Amplitude APP Key:
         // amplitudeAPPKey: '<APP_KEY>'
 
+        // Configuration for the rtcstats server:
+        // rtcstatsEnabled: true,
+        // rtcstatsEndpoint: wss://rtcstats-server-pilot.jitsi.net/,
+        // rtcstats will poll using getStats at this configured rate in ms. (defaults to 1000)
+        // rtcstatsPolIInterval: 1000
+
         // Array of script URLs to load as lib-jitsi-meet "analytics handlers".
         // scriptURLs: [
         //      "libs/analytics-ga.min.js", // google-analytics

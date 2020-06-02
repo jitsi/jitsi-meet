@@ -101,7 +101,7 @@ export function createHandlers({ getState }: { getState: Function }) {
     try {
         const amplitude = new AmplitudeHandler(handlerConstructorOptions);
 
-        analytics.amplitudeIdentityProps = { ...amplitude.getIdentityProps() };
+        analytics.amplitudeIdentityProps = amplitude.getIdentityProps();
 
         handlers.push(amplitude);
     // eslint-disable-next-line no-empty
