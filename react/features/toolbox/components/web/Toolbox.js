@@ -26,7 +26,9 @@ import {
 import {
     getLocalParticipant,
     getParticipants,
-    participantUpdated
+    participantUpdated,
+    getParticipantById,
+    PARTICIPANT_ROLE
 } from '../../../base/participants';
 import { connect, equals } from '../../../base/redux';
 import { OverflowMenuItem } from '../../../base/toolbox';
@@ -957,6 +959,9 @@ class Toolbox extends Component<Props, State> {
             t
         } = this.props;
 
+        const localParticipant = getParticipantById(this.props._localParticipantID);
+        const isModerator = localParticipant && localParticipant.role === PARTICIPANT_ROLE.MODERATOR;
+
         return [
             this._isProfileVisible()
                 && <OverflowMenuProfileItem
@@ -979,7 +984,7 @@ class Toolbox extends Component<Props, State> {
             <RecordButton
                 key = 'record'
                 showLabel = { true } />,
-            !this._shouldShowButton('sharedvideo')
+            isModerator && !this._shouldShowButton('sharedvideo')
                 && <OverflowMenuItem
                     accessibilityLabel = { t('toolbar.accessibilityLabel.sharedvideo') }
                     icon = { IconShareVideo }
