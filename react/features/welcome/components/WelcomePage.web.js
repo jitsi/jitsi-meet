@@ -192,6 +192,9 @@ class WelcomePage extends AbstractWelcomePage {
                             { t('welcomepage.appDescription',
                                 { app: APP_NAME }) }
                         </p>
+                        <p className = 'header-text-prompt'>
+                            { t('welcomepage.prompt') }
+                        </p>
                     </div>
                     <div id = 'enter_room'>
                         <div className = 'enter-room-input-container'>

@@ -55,6 +55,15 @@ body.welcome-page {
             align-self: $welcomePageHeaderTextDescriptionAlignSelf;
         }
 
+        .header-text-prompt {
+            color: $welcomePageDescriptionColor;
+            font-size: $welcomePageHeaderTextDescriptionFontSize;
+            font-weight: $welcomePageHeaderTextDescriptionFontWeight;
+            line-height: $welcomePageHeaderTextDescriptionLineHeight;
+            margin-bottom: $welcomePageHeaderTextDescriptionMarginBottom;
+            align-self: $welcomePageHeaderTextDescriptionAlignSelf;
+        }
+
         #enter_room {
             display: flex;
             align-items: center;
