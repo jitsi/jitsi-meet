@@ -37,7 +37,7 @@
         "headphones": "ヘッドフォン",
         "phone": "電話",
         "speaker": "スピーカー",
-        "none": "No audio devices available"
+        "none": "オーディオデバイスは利用できません"
     },
     "audioOnly": {
         "audioOnly": "オーディオのみ"
@@ -466,7 +466,7 @@
         "connectedTwoMembers": "{{first}} and {{second}} 参加しました the ミーティング",
         "disconnected": "切断されました",
         "focus": "Conference focus",
-        "focusFail": "{{component}} not available - retry in {{ms}} sec",
+        "focusFail": "{{component}} 利用できません - retry in {{ms}} sec",
         "grantedTo": "{{to}} へモデレーターの権利が付与されました！",
         "invitedOneMember": "{{name}} has been invited",
         "invitedThreePlusMembers": "{{name}} and {{count}} others have been invited",
@@ -555,7 +555,7 @@
     "raisedHand": "Would like to speak",
     "recording": {
         "authDropboxText": "Dropboxにアップロード",
-        "availableSpace": "Available space: {{spaceLeft}} MB (approximately {{duration}} minutes of recording)",
+        "availableSpace": "利用可能な space: {{spaceLeft}} MB (approximately {{duration}} minutes of recording)",
         "beta": "BETA",
         "busy": "録画リソースを整理しています。数分後にもう一度お試しください。",
         "busyTitle": "すべてのレコーダーが現在ビジー状態です",
