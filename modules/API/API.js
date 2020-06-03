@@ -14,8 +14,8 @@ import {
     setSubject
 } from '../../react/features/base/conference';
 import { parseJWTFromURLParams } from '../../react/features/base/jwt';
-import { participantUpdated } from '../../react/features/base/participants';
 import { JitsiRecordingConstants } from '../../react/features/base/lib-jitsi-meet';
+import { participantUpdated } from '../../react/features/base/participants';
 import {
     processExternalDeviceRequest
 } from '../../react/features/device-selection/functions';
