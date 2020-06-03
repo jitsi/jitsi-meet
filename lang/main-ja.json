@@ -1,7 +1,7 @@
 {
     "addPeople": {
         "add": "招待",
-        "addContacts": "Invite your contacts",
+        "addContacts": "招待する your contacts",
         "copyInvite": "Copy ミーティング invitation",
         "copyLink": "Copy ミーティング link",
         "copyStream": "Copy live streaming link",
@@ -14,7 +14,7 @@
         "googleEmail": "Google Email",
         "inviteMoreHeader": "You are the only one in the ミーティング",
         "inviteMoreMailSubject": "Join {{appName}} ミーティング",
-        "inviteMorePrompt": "Invite more people",
+        "inviteMorePrompt": "招待する more people",
         "linkCopied": "Link copied to clipboard",
         "loading": "人と電話番号を検索する",
         "loadingNumber": "電話番号を検証しています",
@@ -26,7 +26,7 @@
         "searchPeople": "人を検索する",
         "searchPeopleAndNumbers": "人を検索するか、電話番号を追加する",
         "shareInvite": "Share ミーティング invitation",
-        "shareLink": "Share the ミーティング link to invite others",
+        "shareLink": "Share the ミーティング link to 招待する others",
         "shareStream": "Share the live streaming link",
         "telephone": "電話： {{number}}",
         "title": "このミーティングに人を招待する",
@@ -364,7 +364,7 @@
         "tooltip": "このミーティングのリンクを相手に伝えてください"
     },
     "inviteDialog": {
-        "alertText": "Failed to invite some participants.",
+        "alertText": "Failed to 招待する some participants.",
         "header": "招待",
         "searchCallOnlyPlaceholder": "携帯番号を入力してください",
         "searchPeopleOnlyPlaceholder": "参加者を検索する",
@@ -856,7 +856,7 @@
         "title": "安全、機能豊富で、完全にフリーのビデオミーティング"
     },
     "lonelyMeetingExperience": {
-        "button": "Invite others",
+        "button": "招待する others",
         "youAreAlone": "You are the only one in the ミーティング"
     },
     "helpView": {
