@@ -53,7 +53,7 @@
         "join": "参加",
         "joinTooltip": "ミーティングに参加",
         "nextMeeting": "次のミーティング",
-        "noEvents": "There are no upcoming events scheduled.",
+        "noEvents": "次のミーティングの予定はありません。",
         "ongoingMeeting": "ミーティング中",
         "permissionButton": "設定を開く",
         "permissionMessage": "アプリにミーティングを表示するには、カレンダーのアクセス許可が必要です。",
@@ -75,7 +75,7 @@
         "you": "you"
     },
     "chromeExtensionBanner": {
-        "installExtensionText": "Install the extension for Google Calendar and Office 365 統合",
+        "installExtensionText": "Install the extension for Google カレンダー and Office 365 統合",
         "buttonText": "Install Chrome Extension",
         "dontShowAgain": "Don’t show me this again"
     },
@@ -592,10 +592,10 @@
     },
     "settings": {
         "calendar": {
-            "about": "The {{appName}} calendar 統合 is used to securely access あなたの calendar so it can read upcoming events.",
+            "about": "The {{appName}} カレンダー 統合 is used to securely access あなたの カレンダー so it can read ミーティングの予定.",
             "disconnect": "切断されました",
             "microsoftSignIn": "マイクロソフトアカウントでログイン",
-            "signedIn": "Currently accessing calendar events for {{email}}. Click the Disconnect button below to stop accessing calendar events.",
+            "signedIn": "Currently accessing カレンダー events for {{email}}. Click the Disconnect button below to stop accessing カレンダー events.",
             "title": "カレンダー"
         },
         "devices": "端末",
@@ -836,7 +836,7 @@
         },
         "calendar": "カレンダー",
         "connectCalendarButton": "カレンダーに接続",
-        "connectCalendarText": "Connect あなたの calendar to view all あなたの ミーティングs in {{app}}. Plus, add {{provider}} ミーティングs to あなたの calendar and start them with one click.",
+        "connectCalendarText": "Connect あなたの カレンダー to view all あなたの ミーティングs in {{app}}. Plus, add {{provider}} ミーティングs to あなたの カレンダー and start them with one click.",
         "enterRoomTitle": "新しいミーテイングを開始",
         "getHelp": "Get help",
         "go": "GO",
