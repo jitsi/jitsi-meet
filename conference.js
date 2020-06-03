@@ -48,6 +48,7 @@ import {
 import {
     checkAndNotifyForNewDevice,
     getAvailableDevices,
+    getDefaultDeviceId,
     notifyCameraError,
     notifyMicError,
     setAudioOutputDeviceId,
@@ -2434,11 +2435,20 @@ export default {
             micDeviceId => {
                 const audioWasMuted = this.isLocalAudioMuted();
 
+                // When the 'default' mic needs to be selected, we need to
+                // pass the real device id to gUM instead of 'default' in order
+                // to get the correct MediaStreamTrack from chrome because of the
+                // following bug.
+                // https://bugs.chromium.org/p/chromium/issues/detail?id=997689
+                const hasDefaultMicChanged = micDeviceId === 'default';
+
                 sendAnalytics(createDeviceChangedEvent('audio', 'input'));
                 createLocalTracksF({
                     devices: [ 'audio' ],
                     cameraDeviceId: null,
-                    micDeviceId
+                    micDeviceId: hasDefaultMicChanged
+                        ? getDefaultDeviceId(APP.store.getState(), 'audioInput')
+                        : micDeviceId
                 })
                 .then(([ stream ]) => {
                     // if audio was muted before changing the device, mute
@@ -2462,6 +2472,12 @@ export default {
                     return this.useAudioStream(stream);
                 })
                 .then(() => {
+                    if (hasDefaultMicChanged) {
+                        // workaround for the default device to be shown as selected in the
+                        // settings even when the real device id was passed to gUM because of the
+                        // above mentioned chrome bug.
+                        this.localAudio._realDeviceId = this.localAudio.deviceId = 'default';
+                    }
                     logger.log(`switched local audio device: ${this.localAudio?.getDeviceId()}`);
 
                     this._updateAudioDeviceId();
@@ -2763,11 +2779,20 @@ export default {
                 checkAndNotifyForNewDevice(newAvailDevices.videoInput, oldDevices.videoInput));
         }
 
+        // When the 'default' mic needs to be selected, we need to
+        // pass the real device id to gUM instead of 'default' in order
+        // to get the correct MediaStreamTrack from chrome because of the
+        // following bug.
+        // https://bugs.chromium.org/p/chromium/issues/detail?id=997689
+        const hasDefaultMicChanged = newDevices.audioinput === 'default';
+
         promises.push(
             mediaDeviceHelper.createLocalTracksAfterDeviceListChanged(
                     createLocalTracksF,
                     newDevices.videoinput,
-                    newDevices.audioinput)
+                    hasDefaultMicChanged
+                        ? getDefaultDeviceId(APP.store.getState(), 'audioInput')
+                        : newDevices.audioinput)
                 .then(tracks => {
                     // If audio or video muted before, or we unplugged current
                     // device and selected new one, then mute new track.
@@ -2792,6 +2817,12 @@ export default {
                                     // Use the new stream or null if we failed to obtain it.
                                     return useStream(tracks.find(track => track.getType() === mediaType) || null)
                                         .then(() => {
+                                            if (hasDefaultMicChanged) {
+                                                // workaround for the default device to be shown as selected in the
+                                                // settings even when the real device id was passed to gUM because of
+                                                // the above mentioned chrome bug.
+                                                this.localAudio._realDeviceId = this.localAudio.deviceId = 'default';
+                                            }
                                             mediaType === 'audio'
                                                 ? this._updateAudioDeviceId()
                                                 : this._updateVideoDeviceId();
