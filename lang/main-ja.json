@@ -1,17 +1,17 @@
 {
     "addPeople": {
         "add": "招待",
-        "addContacts": "招待する あなたの contacts",
+        "addContacts": "招待する あなたの 連絡先",
         "copyInvite": "コピー ミーティング 招待",
         "copyLink": "コピー ミーティング リンク",
         "copyStream": "コピー ライブストリーミング リンク",
         "countryNotSupported": "私たちはこの宛先をまだサポートしていません。",
         "countryReminder": "米国外にコールしますか？ 国コードで始まることを確認してください！",
-        "defaultEmail": "あなたの Default Email",
+        "defaultEmail": "あなたの Default メール",
         "disabled": "人を招待することはできません。",
         "failedToAdd": "Failed to add participants",
         "footerText": "ダイヤルアウトが無効です。",
-        "googleEmail": "Google Email",
+        "googleEmail": "Google メール",
         "inviteMoreHeader": "You are the only one in the ミーティング",
         "inviteMoreMailSubject": "Join {{appName}} ミーティング",
         "inviteMorePrompt": "招待する more people",
@@ -21,7 +21,7 @@
         "loadingPeople": "招待する人を検索しています",
         "noResults": "一致する検索結果がありません",
         "noValidNumbers": "電話番号を入力してください",
-        "outlookEmail": "Outlook Email",
+        "outlookEmail": "Outlook メール",
         "searchNumbers": "電話番号を追加",
         "searchPeople": "人を検索する",
         "searchPeopleAndNumbers": "人を検索するか、電話番号を追加する",
@@ -30,7 +30,7 @@
         "shareStream": "Share ライブストリーミング リンク",
         "telephone": "電話： {{number}}",
         "title": "このミーティングに人を招待する",
-        "yahooEmail": "Yahoo Email"
+        "yahooEmail": "Yahoo メール"
     },
     "audioDevices": {
         "bluetooth": "Bluetooth",
