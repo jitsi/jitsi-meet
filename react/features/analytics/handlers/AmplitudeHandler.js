@@ -15,8 +15,6 @@ export default class AmplitudeHandler extends AbstractHandler {
     constructor(options) {
         super(options);
 
-        // const { amplitudeAPPKey = '43df878c9fd741a83e0c80bec3a5ddf4', host, user } = options;
-
         const { amplitudeAPPKey, host, user } = options;
 
         if (!amplitudeAPPKey) {
