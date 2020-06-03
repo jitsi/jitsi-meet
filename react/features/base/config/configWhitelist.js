@@ -129,6 +129,7 @@ export default [
     'minParticipants',
     'nick',
     'openBridgeChannel',
+    'openSharedDocumentOnJoin',
     'p2p',
     'pcStatsInterval',
     'preferH264',

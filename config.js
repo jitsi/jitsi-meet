@@ -322,6 +322,13 @@ var config = {
     // When 'true', it shows an intermediate page before joining, where the user can  configure its devices.
     // prejoinPageEnabled: false,
 
+    // If etherpad integration is enabled, setting this to true will
+    // automatically open the etherpad when a participant joins.  This
+    // does not affect the mobile app since opening an etherpad
+    // obscures the conference controls -- it's better to let users
+    // choose to open the pad on their own in that case.
+    // openSharedDocumentOnJoin: false,
+
     // Stats
     //
 
@@ -527,7 +534,6 @@ var config = {
      disableRemoteControl
      displayJids
      etherpad_base
-     openSharedDocumentOnJoin
      externalConnectUrl
      firefox_fake_device
      googleApiApplicationClientID
