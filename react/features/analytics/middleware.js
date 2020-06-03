@@ -19,9 +19,9 @@ import {
 } from '../base/tracks';
 
 import { createLocalTracksDurationEvent, createNetworkInfoEvent } from './AnalyticsEvents';
+import RTCStats from './RTCStats';
 import { UPDATE_LOCAL_TRACKS_DURATION } from './actionTypes';
 import { createHandlers, initAnalytics, getAmplitudeIdentity, resetAnalytics, sendAnalytics } from './functions';
-import RTCStats from './RTCStats';
 
 /**
  * Calculates the duration of the local tracks.
@@ -137,7 +137,7 @@ MiddlewareRegistry.register(store => next => action => {
     case CONFERENCE_JOINED: {
         const { dispatch, getState } = store;
         const state = getState();
-        const config = state['features/base/config']
+        const config = state['features/base/config'];
         const { analytics } = config;
 
         if (analytics.rtcstatsEnabled) {

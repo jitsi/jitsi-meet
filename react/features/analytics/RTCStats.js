@@ -1,5 +1,5 @@
-import traceInit from 'rtcstats/trace-ws';
 import rtcstatsInit from 'rtcstats/rtcstats';
+import traceInit from 'rtcstats/trace-ws';
 
 /**
  * Class that controls the rtcstats flow, because it overwrites and proxies global function it should only be
