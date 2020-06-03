@@ -31,7 +31,8 @@ export function sendAnalytics(event: Object) {
 }
 
 /**
- * TODO Comment stuff here.
+ * Return saved amplitude identity info such as session id, device id and user id. We assume these do not change for
+ * the duration of the conference.
  *
  * @returns {Object}
  */

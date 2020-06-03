@@ -67,7 +67,7 @@ export default class AmplitudeHandler extends AbstractHandler {
     }
 
     /**
-     * Stuff.
+     * Return amplitude identity information.
      *
      * @returns {Object}
      */
