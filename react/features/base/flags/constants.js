@@ -26,6 +26,12 @@ export const CALL_INTEGRATION_ENABLED = 'call-integration.enabled';
 export const CLOSE_CAPTIONS_ENABLED = 'close-captions.enabled';
 
 /**
+ * Flag indicating if conference timer should be enabled.
+ * Default: enabled (true).
+ */
+export const CONFERENCE_TIMER_ENABLED = 'conference-timer.enabled';
+
+/**
  * Flag indicating if chat should be enabled.
  * Default: enabled (true).
  */
