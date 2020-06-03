@@ -65,7 +65,7 @@
         "fieldPlaceHolder": "入力 メッセージ ここに",
         "messagebox": "メッセージを書いてください",
         "messageTo": "{{recipient}}にメッセージを送る",
-        "noMessagesMessage": "There are no メッセージ in the ミーティング yet. Start a conversation ここに!",
+        "noMessagesMessage": "There are no メッセージ in the ミーティング まだ. Start a conversation ここに!",
         "nickname": {
             "popover": "ニックネームを入力",
             "title": "チャットのニックネームを記入してください"
@@ -624,8 +624,8 @@
         "buildInfoSection": "Build Information",
         "conferenceSection": "ミーティング",
         "disableCallIntegration": "Disable native call 統合",
-        "disableCrashReporting": "Disable crash reporting",
-        "disableCrashReportingWarning": "Are you sure you want to disable crash reporting? The setting will be applied after you restart the app.",
+        "disableCrashReporting": "Disable クラッシュレポート",
+        "disableCrashReportingWarning": "Are you sure you want to disable クラッシュレポート? The setting will be applied after you restart the app.",
         "disableP2P": "Disable Peer-To-Peer mode",
         "displayName": "表示名",
         "email": "Eメール",
