@@ -3,8 +3,8 @@
         "add": "招待",
         "addContacts": "招待する あなたの 連絡先",
         "copyInvite": "コピー ミーティング 招待",
-        "copyLink": "コピー ミーティング リンク",
-        "copyStream": "コピー ライブストリーミング リンク",
+        "copyLink": "コピー ミーティングのリンク",
+        "copyStream": "コピー ライブストリーミングのリンク",
         "countryNotSupported": "私たちはこの宛先をまだサポートしていません。",
         "countryReminder": "米国外にコールしますか？ 国コードで始まることを確認してください！",
         "defaultEmail": "あなたの 初期設定 メール",
@@ -26,8 +26,8 @@
         "searchPeople": "人を検索",
         "searchPeopleAndNumbers": "人を検索するか、電話番号を追加する",
         "shareInvite": "共有 ミーティング 招待",
-        "shareLink": "共有 the ミーティング リンク to 招待する others",
-        "shareStream": "共有 ライブストリーミング リンク",
+        "shareLink": "共有 the ミーティングのリンク to 招待する others",
+        "shareStream": "共有 ライブストリーミングのリンク",
         "telephone": "電話： {{number}}",
         "title": "ミーティングに招待",
         "yahooEmail": "Yahoo メール"
@@ -506,7 +506,7 @@
         "callMeAtNumber": "Call me at this number:",
         "configuringDevices": "Configuring devices...",
         "connectedWithAudioQ": "You’re connected with audio?",
-        "copyAndShare": "コピーして共有 ミーティング リンク",
+        "copyAndShare": "コピーして共有 ミーティングのリンク",
         "dialInMeeting": "Dial into the ミーティング",
         "dialInPin": "Dial into the ミーティング and enter PIN code:",
         "dialing": "Dialing",
@@ -638,8 +638,8 @@
         "version": "バージョン"
     },
     "share": {
-        "dialInfoText": "\n\n=====\n\nJust want to dial in on あなたの phone?\n\n{{defaultDialInNumber}}Click this リンク to see the dial in phone numbers for this ミーティング\n{{dialInfoPageUrl}}",
-        "mainText": "Click the following リンク to ミーティングに参加：\n{{roomUrl}}"
+        "dialInfoText": "\n\n=====\n\nJust want to dial in on あなたの phone?\n\n{{defaultDialInNumber}}Click thisのリンク to see the dial in phone numbers for this ミーティング\n{{dialInfoPageUrl}}",
+        "mainText": "Click the followingのリンク to ミーティングに参加：\n{{roomUrl}}"
     },
     "speaker": "スピーカー",
     "speakerStats": {
