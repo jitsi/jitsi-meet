@@ -3,8 +3,8 @@
         "add": "招待",
         "addContacts": "招待する your contacts",
         "copyInvite": "コピー ミーティング 招待",
-        "copyLink": "コピー ミーティング link",
-        "copyStream": "コピー ライブストリーミング link",
+        "copyLink": "コピー ミーティング リンク",
+        "copyStream": "コピー ライブストリーミング リンク",
         "countryNotSupported": "私たちはこの宛先をまだサポートしていません。",
         "countryReminder": "米国外にコールしますか？ 国コードで始まることを確認してください！",
         "defaultEmail": "Your Default Email",
@@ -15,7 +15,7 @@
         "inviteMoreHeader": "You are the only one in the ミーティング",
         "inviteMoreMailSubject": "Join {{appName}} ミーティング",
         "inviteMorePrompt": "招待する more people",
-        "linkCopied": "Link copied to clipboard",
+        "linkCopied": "リンク copied to clipboard",
         "loading": "人と電話番号を検索する",
         "loadingNumber": "電話番号を検証しています",
         "loadingPeople": "招待する人を検索しています",
@@ -26,8 +26,8 @@
         "searchPeople": "人を検索する",
         "searchPeopleAndNumbers": "人を検索するか、電話番号を追加する",
         "shareInvite": "Share ミーティング 招待",
-        "shareLink": "Share the ミーティング link to 招待する others",
-        "shareStream": "Share ライブストリーミング link",
+        "shareLink": "Share the ミーティング リンク to 招待する others",
+        "shareStream": "Share ライブストリーミング リンク",
         "telephone": "電話： {{number}}",
         "title": "このミーティングに人を招待する",
         "yahooEmail": "Yahoo Email"
@@ -506,7 +506,7 @@
         "callMeAtNumber": "Call me at this number:",
         "configuringDevices": "Configuring devices...",
         "connectedWithAudioQ": "You’re connected with audio?",
-        "copyAndShare": "コピー & share ミーティング link",
+        "copyAndShare": "コピー & share ミーティング リンク",
         "dialInMeeting": "Dial into the ミーティング",
         "dialInPin": "Dial into the ミーティング and enter PIN code:",
         "dialing": "Dialing",
@@ -522,7 +522,7 @@
         "joinMeeting": "Join ミーティング",
         "joinWithoutAudio": "Join without audio",
         "initiated": "Call initiated",
-        "linkCopied": "Link copied to clipboard",
+        "linkCopied": "リンク copied to clipboard",
         "lookGood": "It sounds like your microphone is working properly",
         "or": "or",
         "calling": "Calling",
@@ -638,8 +638,8 @@
         "version": "バージョン"
     },
     "share": {
-        "dialInfoText": "\n\n=====\n\nJust want to dial in on your phone?\n\n{{defaultDialInNumber}}Click this link to see the dial in phone numbers for this ミーティング\n{{dialInfoPageUrl}}",
-        "mainText": "Click the following link to ミーティングに参加する:\n{{roomUrl}}"
+        "dialInfoText": "\n\n=====\n\nJust want to dial in on your phone?\n\n{{defaultDialInNumber}}Click this リンク to see the dial in phone numbers for this ミーティング\n{{dialInfoPageUrl}}",
+        "mainText": "Click the following リンク to ミーティングに参加する:\n{{roomUrl}}"
     },
     "speaker": "スピーカー",
     "speakerStats": {
