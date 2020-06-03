@@ -2,7 +2,7 @@
     "addPeople": {
         "add": "招待",
         "addContacts": "招待する your contacts",
-        "copyInvite": "Copy ミーティング invitation",
+        "copyInvite": "Copy ミーティング 招待",
         "copyLink": "Copy ミーティング link",
         "copyStream": "Copy live streaming link",
         "countryNotSupported": "私たちはこの宛先をまだサポートしていません。",
@@ -25,7 +25,7 @@
         "searchNumbers": "電話番号を追加",
         "searchPeople": "人を検索する",
         "searchPeopleAndNumbers": "人を検索するか、電話番号を追加する",
-        "shareInvite": "Share ミーティング invitation",
+        "shareInvite": "Share ミーティング 招待",
         "shareLink": "Share the ミーティング link to 招待する others",
         "shareStream": "Share the live streaming link",
         "telephone": "電話： {{number}}",
