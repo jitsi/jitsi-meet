@@ -9,7 +9,7 @@
         "countryReminder": "米国外にコールしますか？ 国コードで始まることを確認してください！",
         "defaultEmail": "あなたの 初期設定 メール",
         "disabled": "人を招待することはできません。",
-        "failedToAdd": "Failed to add 参加者",
+        "failedToAdd": "参加者の$t(addPeople.add)に失敗しました",
         "footerText": "ダイヤルアウトが無効です。",
         "googleEmail": "Google メール",
         "inviteMoreHeader": "You are the only one in the ミーティング",
