@@ -75,7 +75,7 @@
         "you": "you"
     },
     "chromeExtensionBanner": {
-        "installExtensionText": "Install the extension for Google Calendar and Office 365 integration",
+        "installExtensionText": "Install the extension for Google Calendar and Office 365 統合",
         "buttonText": "Install Chrome Extension",
         "dontShowAgain": "Don’t show me this again"
     },
@@ -351,7 +351,7 @@
         "invitePhoneAlternatives": "Looking for a different dial-in number?\nSee ミーティング dial-in numbers: {{url}}\n\n\nIf also dialing-in through a room phone, join without connecting to audio: {{silentUrl}}",
         "inviteURLFirstPartGeneral": "You are invited to join a ミーティング.",
         "inviteURLFirstPartPersonal": "{{name}} is inviting you to a ミーティング.\n",
-        "inviteURLSecondPart": "\nJoin the ミーティング:\n{{url}}\n",
+        "inviteURLSecondPart": "\nミーティングに参加する:\n{{url}}\n",
         "label": "ミーティング情報",
         "liveStreamURL": "ライブストリーム：",
         "moreNumbers": "その他の番号",
@@ -489,7 +489,7 @@
         "passwordSetRemotely": "$t(lockRoomPasswordUppercase) set by another participant",
         "raisedHand": "{{name}} would like to speak.",
         "somebody": "誰か",
-        "startSilentDescription": "Rejoin the ミーティング to enable audio",
+        "startSilentDescription": "Reミーティングに参加する to enable audio",
         "startSilentTitle": "You joined with no audio output!",
         "suboptimalBrowserWarning": "We are afraid your ミーティング experience isn't going to be that great here. We are looking for ways to improve this, but until then please try using one of the <a href='{{recommendedBrowserPageLink}}' target='_blank'>fully supported browsers</a>.",
         "suboptimalExperienceTitle": "Browser Warning",
@@ -586,13 +586,13 @@
         "pullToRefresh": "プルしてリフレッシュする"
     },
     "security": {
-        "about": "You can add a passcode to your ミーティング. Participants will need to provide the passcode before they are allowed to join the ミーティング.",
+        "about": "You can add a passcode to your ミーティング. Participants will need to provide the passcode before they are allowed to ミーティングに参加する.",
         "insecureRoomNameWarning": "The room name is insecure. Unwanted participants may join your conference.",
         "securityOptions": "Security options"
     },
     "settings": {
         "calendar": {
-            "about": "The {{appName}} calendar integration is used to securely access your calendar so it can read upcoming events.",
+            "about": "The {{appName}} calendar 統合 is used to securely access your calendar so it can read upcoming events.",
             "disconnect": "切断されました",
             "microsoftSignIn": "マイクロソフトアカウントでログイン",
             "signedIn": "Currently accessing calendar events for {{email}}. Click the Disconnect button below to stop accessing calendar events.",
@@ -623,7 +623,7 @@
         "alertURLText": "入力されたサーバーのURLは無効です",
         "buildInfoSection": "Build Information",
         "conferenceSection": "ミーティング",
-        "disableCallIntegration": "Disable native call integration",
+        "disableCallIntegration": "Disable native call 統合",
         "disableCrashReporting": "Disable crash reporting",
         "disableCrashReportingWarning": "Are you sure you want to disable crash reporting? The setting will be applied after you restart the app.",
         "disableP2P": "Disable Peer-To-Peer mode",
@@ -639,7 +639,7 @@
     },
     "share": {
         "dialInfoText": "\n\n=====\n\nJust want to dial in on your phone?\n\n{{defaultDialInNumber}}Click this link to see the dial in phone numbers for this ミーティング\n{{dialInfoPageUrl}}",
-        "mainText": "Click the following link to join the ミーティング:\n{{roomUrl}}"
+        "mainText": "Click the following link to ミーティングに参加する:\n{{roomUrl}}"
     },
     "speaker": "スピーカー",
     "speakerStats": {
