@@ -97,8 +97,8 @@ MiddlewareRegistry.register(store => next => action => {
                 // Initialize but don't connect to the rtcstats server wss, as it will start sending data for all
                 // media calls made even before the conference started.
                 RTCStats.init({
-                    rtcstatsServerAddress: analytics.rtcstatsEndpoint,
-                    pollInterval: analytics.rtcstatsPolIInterval || 1000
+                    rtcstatsEndpoint: analytics.rtcstatsEndpoint,
+                    rtcstatsPollInterval: analytics.rtcstatsPollInterval
                 });
             } catch (error) {
                 logger.error('Failed to initialize RTCStats: ', error);

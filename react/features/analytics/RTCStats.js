@@ -15,17 +15,17 @@ class RTCStats {
      *
      * @param {Object} options -.
      * @param {string} options.rtcstatsEndpoint - The Amplitude app key required.
-     * @param {number} options.rtcstatsPolIInterval - The getstats poll interval in ms.
+     * @param {number} options.rtcstatsPollInterval - The getstats poll interval in ms.
      * @returns {void}
      */
     init(options) {
         this.trace = traceInit(options.rtcstatsEndpoint);
-        rtcstatsInit(this.trace, options.rtcstatsPolIInterval, [ '', 'webkit', 'moz' ]);
+        rtcstatsInit(this.trace, options.rtcstatsPollInterval, [ '', 'webkit', 'moz' ]);
     }
 
     /**
      * Send identity data to rtcstats server, this will be reflected in the identity section of the stats dump.
-     * It can be generally used to send additional metadata that might be relevant such as amplitude user data 
+     * It can be generally used to send additional metadata that might be relevant such as amplitude user data
      * or deployment specific information.
      *
      * @param {Object} identityData - Metadata object to send as identity.

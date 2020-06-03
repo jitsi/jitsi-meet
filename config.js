@@ -409,7 +409,7 @@ var config = {
         // Configuration for the rtcstats server:
         // rtcstatsEnabled: true,
         // rtcstatsEndpoint: wss://rtcstats-server-pilot.jitsi.net/,
-        // rtcstats will poll using getStats at this configured rate in ms. (defaults to 1000)
+        // By not providing a poll interval rtcstats won't send any getstats data.
         // rtcstatsPolIInterval: 1000
 
         // Array of script URLs to load as lib-jitsi-meet "analytics handlers".
