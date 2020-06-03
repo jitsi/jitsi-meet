@@ -10,9 +10,9 @@
         "defaultEmail": "あなたの 初期設定 メール",
         "disabled": "人を招待することはできません。",
         "failedToAdd": "参加者の$t(addPeople.add)に失敗しました",
-        "footerText": "ダイヤルアウトが無効です。",
+        "footerText": "ダイヤルアウトは無効です。",
         "googleEmail": "Google メール",
-        "inviteMoreHeader": "You are the only one in the ミーティング",
+        "inviteMoreHeader": "ミーティングに誰も参加していません",
         "inviteMoreMailSubject": "参加 {{appName}} ミーティング",
         "inviteMorePrompt": "招待する more 人",
         "linkCopied": "リンクをクリップボードにコピーしました",
@@ -23,13 +23,13 @@
         "noValidNumbers": "電話番号を入力してください",
         "outlookEmail": "Outlook メール",
         "searchNumbers": "電話番号を追加",
-        "searchPeople": "人を検索する",
+        "searchPeople": "人を検索",
         "searchPeopleAndNumbers": "人を検索するか、電話番号を追加する",
         "shareInvite": "共有 ミーティング 招待",
         "shareLink": "共有 the ミーティング リンク to 招待する others",
         "shareStream": "共有 ライブストリーミング リンク",
         "telephone": "電話： {{number}}",
-        "title": "このミーティングに人を招待する",
+        "title": "ミーティングに招待",
         "yahooEmail": "Yahoo メール"
     },
     "audioDevices": {
@@ -669,7 +669,7 @@
             "document": "全画面に切り替える",
             "download": "Download our apps",
             "e2ee": "End-to-End Encryption",
-            "feedback": "フィードバックを残す",
+            "feedback": "フィードバックを送信",
             "fullScreen": "全画面に切り替える",
             "hangup": "電話を切る",
             "help": "ヘルプ",
@@ -857,7 +857,7 @@
     },
     "lonelyMeetingExperience": {
         "button": "招待する others",
-        "youAreAlone": "You are the only one in the ミーティング"
+        "youAreAlone": "$t(addPeople.inviteMoreHeader)"
     },
     "helpView": {
         "header": "Help center"
