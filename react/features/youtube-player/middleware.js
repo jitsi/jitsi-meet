@@ -43,7 +43,7 @@ MiddlewareRegistry.register(store => next => action => {
         }
         break;
     case SET_SHARED_VIDEO_STATUS:
-        if (localParticipantId === ownerId && [ 'playing', 'paused' ].includes(status)) {
+        if (localParticipantId === ownerId && [ 'playing', 'pause' ].includes(status)) {
             const fakeParticipant = state['features/base/participants'].filter(p => p.isFakeParticipant)[0];
 
             sendShareVideoCommand(fakeParticipant.id, status, conference, localParticipantId, action.time);
@@ -84,9 +84,9 @@ StateListenerRegistry.register(
                             dispatch(setSharedVideoStatus('playing', attributes.time));
                         }
                         break;
-                    case 'paused':
+                    case 'pause':
                         if (localParticipantId !== attributes.from) {
-                            dispatch(setSharedVideoStatus('paused', attributes.time));
+                            dispatch(setSharedVideoStatus('pause', attributes.time));
                         }
                         break;
                     case 'stop':
@@ -117,8 +117,7 @@ function _toggleSharedVideo(store, next, action) {
     const { status } = state['features/youtube-player'];
     const fakeParticipant = state['features/base/participants'].filter(p => p.isFakeParticipant)[0];
 
-    console.log(status);
-    if (status === 'playing' || status === 'start' || status === 'paused') {
+    if (status === 'playing' || status === 'start' || status === 'pause') {
         if (ownerId === localParticipant.id) {
             sendShareVideoCommand(fakeParticipant.id, 'stop', conference);
         }

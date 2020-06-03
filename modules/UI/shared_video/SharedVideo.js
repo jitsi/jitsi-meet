@@ -367,7 +367,7 @@ export default class SharedVideoManager {
                 player.playVideo();
             }
             // eslint-disable-next-line eqeqeq
-        } else if (attributes.state == 'paused') {
+        } else if (attributes.state == 'pause') {
             // if its not paused, pause it
             player.pauseVideo();
 
@@ -420,7 +420,7 @@ export default class SharedVideoManager {
 
         if (state === YT.PlayerState.PAUSED && sendPauseEvent) {
             this.emitter.emit(UIEvents.UPDATE_SHARED_VIDEO,
-                this.url, 'paused', this.player.getCurrentTime());
+                this.url, 'pause', this.player.getCurrentTime());
         } else if (state === YT.PlayerState.PLAYING) {
             // if its playing and it was paused - send update with time
             // if its playing and was playing just send update with time

@@ -2,7 +2,10 @@
 
 import { openDialog } from '../base/dialog';
 
-import { SET_SHARED_VIDEO_STATUS, SET_SHARED_VIDEO_OWNER } from './actionTypes';
+import {
+    SET_SHARED_VIDEO_STATUS,
+    SET_SHARED_VIDEO_OWNER,
+    SET_TOOLBOX_VISIBLE } from './actionTypes';
 import { EnterVideoLinkPrompt } from './components';
 
 /**
@@ -61,4 +64,20 @@ export function toggleSharedVideo() {
  */
 export function showEnterVideoLinkPrompt(onPostSubmit: ?Function) {
     return openDialog(EnterVideoLinkPrompt, { onPostSubmit });
+}
+
+/**
+ * Shows/hides the toolbox.
+ *
+ * @param {boolean} visible - True to show the toolbox or false to hide it.
+ * @returns {{
+ *     type: SET_TOOLBOX_VISIBLE,
+ *     visible: boolean
+ * }}
+ */
+export function setToolboxVisible(visible: boolean): Object {
+    return {
+        type: SET_TOOLBOX_VISIBLE,
+        visible
+    };
 }

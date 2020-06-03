@@ -88,7 +88,7 @@ function _mapStateToProps(state): Object {
     return {
         _sharingVideo: sharedVideoStatus === 'playing'
             || sharedVideoStatus === 'start'
-            || sharedVideoStatus === 'paused'
+            || sharedVideoStatus === 'pause'
     };
 }
 

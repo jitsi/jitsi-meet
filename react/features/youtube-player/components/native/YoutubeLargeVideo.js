@@ -1,11 +1,15 @@
 // @flow
 
 import React, { useRef, useEffect } from 'react';
+import { View } from 'react-native';
 import YoutubePlayer from 'react-native-youtube-iframe';
 
 import { getLocalParticipant } from '../../../base/participants';
 import { connect } from '../../../base/redux';
-import { setSharedVideoStatus } from '../../actions';
+import { ASPECT_RATIO_WIDE } from '../../../base/responsive-ui/constants';
+import { setSharedVideoStatus, setToolboxVisible } from '../../actions';
+
+import styles from './styles';
 
 /**
  * The type of the React {@link Component} props of {@link YoutubeLargeVideo}.
@@ -59,7 +63,35 @@ type Props = {
      *
      * @private
      */
-    isOwner: Boolean
+    isOwner: Boolean,
+
+    /**
+     * The width of the screen.
+     *
+     * @private
+     */
+    screenWidth: number,
+
+    /**
+     * The height of the screen.
+     *
+     * @private
+     */
+    screenHeight: number,
+
+    /**
+     * True if in landscape mode.
+     *
+     * @private
+     */
+    isWideScreen: Boolean,
+
+    /**
+     * Callback to invoke when { @code isWideScreen} changes.
+     *
+     * @private
+     */
+    onWideScreenChanged: Function
 };
 
 const YoutubeLargeVideo = (props: Props) => {
@@ -67,29 +99,53 @@ const YoutubeLargeVideo = (props: Props) => {
 
     useEffect(() => {
         if (!props.isOwner) {
-            playerRef.current && playerRef.current.seekTo(props.seek);
+            playerRef.current && playerRef.current.getCurrentTime().then(t => {
+                if (props.seek - t > 0.5) {
+                    playerRef.current && playerRef.current.seekTo(props.seek);
+                }
+            });
         }
     }, [ props.seek ]);
+
+    useEffect(() => {
+        props.onWideScreenChanged(props.isWideScreen);
+    }, [ props.isWideScreen ]);
 
     const onChangeState = e => props.onVideoChangeEvent(e, playerRef.current && playerRef.current.getCurrentTime());
     const onReady = () => props.onVideoReady(playerRef.current && playerRef.current.getCurrentTime());
 
-    return (<YoutubePlayer
-        height = '100%'
-        initialPlayerParams = {{
-            controls: props.enableControls,
-            modestbranding: true
-        }}
-        /* eslint-disable react/jsx-no-bind */
-        onChangeState = { onChangeState }
-        /* eslint-disable react/jsx-no-bind */
-        onReady = { onReady }
-        play = { props.isPlaying }
-        playbackRate = { 1 }
-        ref = { playerRef }
-        videoId = { props.youtubeId }
-        volume = { 50 }
-        width = '100%' />);
+    let playerHeight, playerWidth;
+
+    if (props.isWideScreen) {
+        playerHeight = props.screenHeight;
+        playerWidth = playerHeight * 16 / 9;
+    } else {
+        playerWidth = props.screenWidth;
+        playerHeight = playerWidth * 9 / 16;
+    }
+
+    return (<View style = { styles.youtubeVideoContainer } >
+        <YoutubePlayer
+            height = { playerHeight }
+            initialPlayerParams = {{
+                controls: props.enableControls,
+                modestbranding: true
+            }}
+            /* eslint-disable react/jsx-no-bind */
+            onChangeState = { onChangeState }
+            /* eslint-disable react/jsx-no-bind */
+            onReady = { onReady }
+            play = { props.isPlaying }
+            playbackRate = { 1 }
+            ref = { playerRef }
+            videoId = { props.youtubeId }
+            volume = { 50 }
+            webViewProps = {{
+                bounces: false,
+                scrollEnabled: false
+            }}
+            width = { playerWidth } />
+    </View>);
 };
 
 /**
@@ -102,12 +158,18 @@ const YoutubeLargeVideo = (props: Props) => {
 function _mapStateToProps(state) {
     const { ownerId, status, time } = state['features/youtube-player'];
     const localParticipant = getLocalParticipant(state);
+    const responsiveUi = state['features/base/responsive-ui'];
+    const screenHeight = responsiveUi.clientHeight;
+    const screenWidth = responsiveUi.clientWidth;
 
     return {
         isPlaying: status === 'playing',
         seek: time,
         enableControls: ownerId === localParticipant.id,
-        isOwner: ownerId === localParticipant.id
+        isOwner: ownerId === localParticipant.id,
+        isWideScreen: responsiveUi.aspectRatio === ASPECT_RATIO_WIDE,
+        screenHeight,
+        screenWidth
     };
 }
 
@@ -128,11 +190,14 @@ function _mapDispatchToProps(dispatch) {
                 if (![ 'playing', 'paused' ].includes(status)) {
                     return;
                 }
-                dispatch(setSharedVideoStatus(status, t));
+                dispatch(setSharedVideoStatus(translateStatus(status), t));
             });
         },
         onVideoReady: time => {
             time.then(t => dispatch(setSharedVideoStatus('playing', t)));
+        },
+        onWideScreenChanged: isWideScreen => {
+            dispatch(setToolboxVisible(!isWideScreen));
         }
     };
 }
@@ -148,6 +213,21 @@ function _mergeProps({ isOwner, ...stateProps }, { onVideoChangeEvent, onVideoRe
         onVideoChangeEvent: isOwner ? onVideoChangeEvent : () => { /* do nothing */ },
         onVideoReady: isOwner ? onVideoReady : () => { /* do nothing */ }
     });
+}
+
+/**
+ * In case the status is 'paused', it is translated to 'pause' to match the web functionality.
+ *
+ * @param {string} status - The status of the shared video.
+ * @private
+ * @returns {string}
+ */
+function translateStatus(status) {
+    if (status === 'paused') {
+        return 'pause';
+    }
+
+    return status;
 }
 
 export default connect(_mapStateToProps, _mapDispatchToProps, _mergeProps)(YoutubeLargeVideo);

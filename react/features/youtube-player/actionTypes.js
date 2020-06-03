@@ -29,3 +29,13 @@ export const SET_SHARED_VIDEO_OWNER = 'SET_SHARED_VIDEO_OWNER';
  * }
  */
 export const TOGGLE_SHARED_VIDEO = 'TOGGLE_SHARED_VIDEO';
+
+/**
+ * The type of the (redux) action which shows/hides the Toolbox.
+ *
+ * {
+ *     type: SET_TOOLBOX_VISIBLE,
+ *     visible: boolean
+ * }
+ */
+export const SET_TOOLBOX_VISIBLE = 'SET_TOOLBOX_VISIBLE';
