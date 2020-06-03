@@ -25,9 +25,9 @@
         "searchNumbers": "電話番号を追加",
         "searchPeople": "人を検索する",
         "searchPeopleAndNumbers": "人を検索するか、電話番号を追加する",
-        "shareInvite": "Share ミーティング 招待",
-        "shareLink": "Share the ミーティング リンク to 招待する others",
-        "shareStream": "Share ライブストリーミング リンク",
+        "shareInvite": "共有 ミーティング 招待",
+        "shareLink": "共有 the ミーティング リンク to 招待する others",
+        "shareStream": "共有 ライブストリーミング リンク",
         "telephone": "電話： {{number}}",
         "title": "このミーティングに人を招待する",
         "yahooEmail": "Yahoo メール"
@@ -165,7 +165,7 @@
         },
         "add": "追加",
         "allow": "許可",
-        "alreadySharedVideoMsg": "Another 参加者 is already sharing a video. This conference allows only one shared video at a time.",
+        "alreadySharedVideoMsg": "Another 参加者 is already sharing a video. This conference allows only one 共有された video at a time.",
         "alreadySharedVideoTitle": "一度に1つの共有ビデオのみが許可されます",
         "applicationWindow": "アプリケーションウィンドウ",
         "Back": "戻る",
@@ -268,10 +268,10 @@
         "reservationError": "予約システムエラー",
         "reservationErrorMsg": "エラーコード: {{code}}, メッセージ: {{msg}}",
         "retry": "再試行",
-        "screenSharingAudio": "Share audio",
+        "screenSharingAudio": "共有 audio",
         "screenSharingFailedToInstall": "おっと！画面共有拡張機能のインストールに失敗しました。",
         "screenSharingFailedToInstallTitle": "画面共有拡張機能のインストールに失敗しました",
-        "screenSharingFirefoxPermissionDeniedError": "問題が発生しました while we were trying to share あなたの screen. Please make sure that you have given us permission to do so.",
+        "screenSharingFirefoxPermissionDeniedError": "問題が発生しました while we were trying to 共有 あなたの screen. Please make sure that you have given us permission to do so.",
         "screenSharingFirefoxPermissionDeniedTitle": "おっと！画面共有を開始できませんでした！",
         "screenSharingPermissionDeniedError": "おっと！画面共有の拡張アクセス許可で問題が発生しました。再読み込みしてもう一度お試しください。",
         "sendPrivateMessage": "You recently received a private message. Did you intend to reply to that privately, or you want to send あなたの message to the group?",
@@ -312,7 +312,7 @@
         "statusMessage": "は現在 {{status}} です"
     },
     "documentSharing": {
-        "title": "Shared Document"
+        "title": "共有された Document"
     },
     "e2ee": {
         "labelToolTip": "Audio and Video Communication on this call is end-to-end encrypted"
@@ -506,7 +506,7 @@
         "callMeAtNumber": "Call me at this number:",
         "configuringDevices": "Configuring devices...",
         "connectedWithAudioQ": "You’re connected with audio?",
-        "copyAndShare": "コピー & share ミーティング リンク",
+        "copyAndShare": "コピーして共有 ミーティング リンク",
         "dialInMeeting": "Dial into the ミーティング",
         "dialInPin": "Dial into the ミーティング and enter PIN code:",
         "dialing": "Dialing",
