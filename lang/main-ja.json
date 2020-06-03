@@ -62,10 +62,10 @@
     },
     "chat": {
         "error": "エラー: メッセージが送信されませんでした。エラーの理由： {{error}}",
-        "fieldPlaceHolder": "Type あなたの メッセージ here",
+        "fieldPlaceHolder": "入力 あなたの メッセージ ここに",
         "messagebox": "メッセージを書いてください",
         "messageTo": "Private メッセージ to {{recipient}}",
-        "noMessagesMessage": "There are no メッセージs in the ミーティング yet. Start a conversation here!",
+        "noMessagesMessage": "There are no メッセージ in the ミーティング yet. Start a conversation ここに!",
         "nickname": {
             "popover": "ニックネームを入力",
             "title": "チャットのニックネームを記入してください"
@@ -197,7 +197,7 @@
         "e2eeLabel": "Key",
         "e2eeTitle": "End-to-End Encryption",
         "e2eeWarning": "<br /><p><strong>WARNING:</strong> Not all 参加者 in this ミーティング seem to have support for End-to-End encryption. If you enable it they won't be able to see nor hear you.</p>",
-        "enterDisplayName": "Please enter あなたの name here",
+        "enterDisplayName": "Please enter あなたの name ここに",
         "error": "エラー",
         "externalInstallationMsg": "デスクトップ共有拡張機能をインストールする必要があります。",
         "externalInstallationTitle": "拡張機能が必要です",
@@ -491,7 +491,7 @@
         "somebody": "誰か",
         "startSilentDescription": "ミーティングに再参加する to enable audio",
         "startSilentTitle": "You 参加しました with no audio output!",
-        "suboptimalBrowserWarning": "We are afraid あなたの ミーティング experience isn't going to be that great here. We are looking for ways to improve this, but until then please try using one of the <a href='{{recommendedBrowserPageLink}}' target='_blank'>fully supported browsers</a>.",
+        "suboptimalBrowserWarning": "We are afraid あなたの ミーティング experience isn't going to be that great ここに. We are looking for ways to improve this, but until then please try using one of the <a href='{{recommendedBrowserPageLink}}' target='_blank'>fully supported browsers</a>.",
         "suboptimalExperienceTitle": "Browser Warning",
         "unmute": "Unmute"
     },
