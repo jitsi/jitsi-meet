@@ -71,7 +71,7 @@
             "title": "チャットのニックネームを記入してください"
         },
         "privateNotice": "Private message to {{recipient}}",
-        "title": "チャット"
+        "title": "チャット",
         "you": "you"
     },
     "chromeExtensionBanner": {
@@ -99,7 +99,7 @@
     },
     "connectionindicator": {
         "address": "アドレス：",
-        "bandwidth": "推定帯域幅"：,
+        "bandwidth": "推定帯域幅：",
         "bitrate": "ビットレート：",
         "bridgeCount": "サーバー数：",
         "connectedTo": "接続先：",
@@ -155,7 +155,7 @@
     },
     "deviceSelection": {
         "noPermission": "許可されていません",
-        "previewUnavailable": "プレビューできません",,
+        "previewUnavailable": "プレビューできません",
         "selectADevice": "デバイスを選択",
         "testAudio": "テスト再生"
     },
@@ -352,7 +352,7 @@
         "inviteURLFirstPartGeneral": "You are invited to join a meeting.",
         "inviteURLFirstPartPersonal": "{{name}} is inviting you to a meeting.\n",
         "inviteURLSecondPart": "\nJoin the meeting:\n{{url}}\n",
-        "label": "ミーティング情報"
+        "label": "ミーティング情報",
         "liveStreamURL": "ライブストリーム：",
         "moreNumbers": "その他の番号",
         "noNumbers": "ダイヤルイン番号はありません。",
@@ -361,7 +361,7 @@
         "numbers": "ダイヤルイン番号",
         "password": "$t(lockRoomPasswordUppercase):",
         "title": "ミーティングURL",
-        "tooltip": "このミーティングのリンクを相手に伝えてください",
+        "tooltip": "このミーティングのリンクを相手に伝えてください"
     },
     "inviteDialog": {
         "alertText": "Failed to invite some participants.",
@@ -484,7 +484,7 @@
         "OldElectronAPPTitle": "Security vulnerability!",
         "oldElectronClientDescription1": "You appear to be using an old version of the Jitsi Meet client which has known security vulnerabilities. Please make sure you update to our ",
         "oldElectronClientDescription2": "latest build",
-        "oldElectronClientDescription3": " now!"
+        "oldElectronClientDescription3": " now!",
         "passwordRemovedRemotely": "$t(lockRoomPasswordUppercase) removed by another participant",
         "passwordSetRemotely": "$t(lockRoomPasswordUppercase) set by another participant",
         "raisedHand": "{{name}} would like to speak.",
@@ -699,7 +699,7 @@
             "tileView": "Toggle tile view",
             "toggleCamera": "カメラを切り替える",
             "toggleFilmstrip": "Toggle filmstrip",
-            "videoblur": "Toggle video blur"
+            "videoblur": "Toggle video blur",
             "videomute": "ビデオのミュートを切り替える"
         },
         "addPeople": "ミーティングに人を追加する",
@@ -754,11 +754,11 @@
         "stopScreenSharing": "画面共有を停止",
         "stopSharedVideo": "YouTubeの動画を停止",
         "stopSubtitles": "字幕を停止",
-        "stopvideoblur": "背景を元に戻す"
+        "stopvideoblur": "背景を元に戻す",
         "talkWhileMutedPopup": "話そうとしていますか？ あなたはミュートされています。",
         "tileViewToggle": "Toggle tile view",
         "toggleCamera": "カメラを切り替える",
-        "videomute": "カメラを開始/停止",
+        "videomute": "カメラを開始/停止"
     },
     "transcribing": {
         "ccButtonTooltip": "字幕を表示/非表示",
@@ -854,7 +854,7 @@
         "sendFeedback": "フィードバックを送信",
         "terms": "利用規約",
         "title": "安全、機能豊富で、完全にフリーのビデオミーティング"
-    }
+    },
     "lonelyMeetingExperience": {
         "button": "Invite others",
         "youAreAlone": "You are the only one in the meeting"
