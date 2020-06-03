@@ -50,8 +50,9 @@ export default class AbstractInsecureRoomNameLabel extends PureComponent<Props> 
  */
 export function _mapStateToProps(state: Object): $Shape<Props> {
     const { room } = state['features/base/conference'];
+    const { enableInsecureRoomNameWarning = false } = state['features/base/config'];
 
     return {
-        _visible: room && isInsecureRoomName(room)
+        _visible: enableInsecureRoomNameWarning && room && isInsecureRoomName(room)
     };
 }

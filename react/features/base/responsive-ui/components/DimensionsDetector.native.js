@@ -1,13 +1,9 @@
 // @flow
 
 import React, { PureComponent } from 'react';
-import { View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
-import styles from './styles';
 
-/**
- * AspectRatioDetector component's property types.
- */
 type Props = {
 
     /**
@@ -64,7 +60,7 @@ export default class DimensionsDetector extends PureComponent<Props> {
         return (
             <View
                 onLayout = { this._onLayout }
-                style = { styles.dimensionsDetector } >
+                style = { StyleSheet.absoluteFillObject } >
                 { this.props.children }
             </View>
         );
