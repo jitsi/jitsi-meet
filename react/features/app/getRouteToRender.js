@@ -3,6 +3,7 @@
 import { generateRoomWithoutSeparator } from 'js-utils/random';
 import type { Component } from 'react';
 
+import UIUtil from '../../../modules/UI/util/UIUtil';
 import { isRoomValid } from '../base/conference';
 import { isSupportedBrowser } from '../base/environment';
 import { toState } from '../base/redux';
@@ -15,6 +16,8 @@ import {
     isWelcomePageAppEnabled,
     isWelcomePageUserEnabled
 } from '../welcome';
+
+declare var interfaceConfig: Object;
 
 /**
  * Object describing application route.
@@ -93,7 +96,23 @@ function _getWebConferenceRoute(state): ?Promise<Route> {
         return Promise.resolve(route);
     }
 
-    return getDeepLinkingPage(state)
+    const shouldWaitForRedirect = window.waitForRedirect
+        && window.waitForRedirect instanceof Promise
+        && interfaceConfig.PREJOIN_REDIRECT_URL;
+
+    const waitForRedirect = shouldWaitForRedirect
+        ? window.waitForRedirect
+        : Promise.reject();
+
+    return waitForRedirect
+        .then(
+            () => {
+                UIUtil.redirect(interfaceConfig.PREJOIN_REDIRECT_URL);
+
+                return Promise.reject();
+            },
+            () => getDeepLinkingPage(state)
+        )
         .then(deepLinkComponent => {
             if (deepLinkComponent) {
                 route.component = deepLinkComponent;

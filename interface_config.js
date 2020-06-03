@@ -198,6 +198,14 @@ var interfaceConfig = {
     DISABLE_PRESENCE_STATUS: false,
 
     /**
+     * If window.waitForRedirect exists, is a Promise and resolves
+     * successfully, this is the URL that the page will be redirected to,
+     * effectively shortcircuiting the conference - useful in cases where
+     * the meeting join needs to be delegated to another context / deployment
+     */
+    PREJOIN_REDIRECT_URL: undefined,
+
+    /**
      * If true, notifications regarding joining/leaving are no longer displayed.
      */
     DISABLE_JOIN_LEAVE_NOTIFICATIONS: false,
