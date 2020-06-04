@@ -2553,7 +2553,7 @@ export default {
                 } else if (attributes.state === 'start') {
                     APP.UI.onSharedVideoStart(id, value, attributes);
                 } else if (attributes.state === 'playing'
-                    || attributes.state === 'paused') {
+                    || attributes.state === 'pause') {
                     APP.UI.onSharedVideoUpdate(id, value, attributes);
                 }
             });
