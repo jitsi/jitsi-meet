@@ -165,7 +165,7 @@
         },
         "add": "追加",
         "allow": "許可",
-        "alreadySharedVideoMsg": "Another 参加者 is already sharing a 動画. This conference allows only one 共有された 動画 at a time.",
+        "alreadySharedVideoMsg": "他の参加者がすでに動画を共有しています。This ミーティング allows only one 共有された 動画 at a time.",
         "alreadySharedVideoTitle": "一度に1つの共有動画のみが許可されます",
         "applicationWindow": "アプリケーションウィンドウ",
         "Back": "戻る",
@@ -224,7 +224,7 @@
         "lockTitle": "ロックに失敗しました",
         "logoutQuestion": "ログアウトしてミーティングを停止してもよろしいですか？",
         "logoutTitle": "ログアウト",
-        "maxUsersLimitReached": "The limit for maximum number of 参加者 has been reached. The conference is full. Please contact the ミーティング owner or try again later!",
+        "maxUsersLimitReached": "The limit for maximum number of 参加者 has been reached. The ミーティング is full. Please contact the ミーティング owner or try again later!",
         "maxUsersLimitReachedTitle": "Maximum 参加者 limit reached",
         "micConstraintFailedError": "あなたのマイクは、必要な制約のいくつかを満たしていません。",
         "micNotFoundError": "マイクが見つかりませんでした。",
@@ -465,7 +465,7 @@
         "connectedThreePlusMembers": "{{name}} and {{count}} others 参加しました the ミーティング",
         "connectedTwoMembers": "{{first}} and {{second}} 参加しました the ミーティング",
         "disconnected": "切断されました",
-        "focus": "Conference focus",
+        "focus": "ミーティング focus",
         "focusFail": "{{component}} 利用できません - retry in {{ms}} sec",
         "grantedTo": "{{to}} へモデレーターの権利が付与されました！",
         "invitedOneMember": "{{name}} has been invited",
@@ -587,7 +587,7 @@
     },
     "security": {
         "about": "You can add a passcode to ミーティング. 参加者 will need to provide the passcode before they are allowed to ミーティングに参加する.",
-        "insecureRoomNameWarning": "The room name is insecure. Unwanted 参加者 may 参加する conference.",
+        "insecureRoomNameWarning": "The room name is insecure. Unwanted 参加者 may 参加する ミーティング.",
         "securityOptions": "Security options"
     },
     "settings": {
