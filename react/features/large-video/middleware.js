@@ -18,6 +18,8 @@ import {
 
 import { selectParticipant, selectParticipantInLargeVideo } from './actions';
 
+import './subscriber';
+
 /**
  * Middleware that catches actions related to participants and tracks and
  * dispatches an action to select a participant depicted by LargeVideo.

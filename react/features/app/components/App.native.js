@@ -2,31 +2,20 @@
 
 import React from 'react';
 
-import '../../analytics';
-import '../../authentication';
 import { setColorScheme } from '../../base/color-scheme';
 import { DialogContainer } from '../../base/dialog';
 import { CALL_INTEGRATION_ENABLED, updateFlags } from '../../base/flags';
-import '../../base/jwt';
 import { Platform } from '../../base/react';
 import { DimensionsDetector, clientResized } from '../../base/responsive-ui';
 import { updateSettings } from '../../base/settings';
-import '../../google-api';
-import '../../mobile/audio-mode';
-import '../../mobile/back-button';
-import '../../mobile/background';
-import '../../mobile/call-integration';
-import '../../mobile/external-api';
-import '../../mobile/full-screen';
-import '../../mobile/permissions';
-import '../../mobile/picture-in-picture';
-import '../../mobile/proximity';
-import '../../mobile/wake-lock';
-import '../../mobile/watchos';
 import logger from '../logger';
 
 import { AbstractApp } from './AbstractApp';
 import type { Props as AbstractAppProps } from './AbstractApp';
+
+// Register middlewares and reducers.
+import '../middlewares';
+import '../reducers';
 
 declare var __DEV__;
 

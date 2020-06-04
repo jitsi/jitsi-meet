@@ -1,6 +1,6 @@
 // @flow
 
-import { CONFERENCE_WILL_JOIN } from '../base/conference';
+import { CONFERENCE_WILL_JOIN } from '../base/conference/actionTypes';
 import {
     getParticipantById,
     getPinnedParticipant,
@@ -18,6 +18,8 @@ import {
 import { FOLLOW_ME_COMMAND } from './constants';
 import { isFollowMeActive } from './functions';
 import logger from './logger';
+
+import './subscriber';
 
 declare var APP: Object;
 

@@ -3,11 +3,8 @@
 import _ from 'lodash';
 import type { Dispatch } from 'redux';
 
-import {
-    conferenceLeft,
-    conferenceWillLeave,
-    getCurrentConference
-} from '../conference';
+import { conferenceLeft, conferenceWillLeave } from '../conference/actions';
+import { getCurrentConference } from '../conference/functions';
 import JitsiMeetJS, { JitsiConnectionEvents } from '../lib-jitsi-meet';
 import {
     getBackendSafeRoomName,

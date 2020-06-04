@@ -5,7 +5,7 @@ import { Component } from 'react';
 import type { Dispatch } from 'redux';
 
 import { createWelcomePageEvent, sendAnalytics } from '../../analytics';
-import { appNavigate } from '../../app';
+import { appNavigate } from '../../app/actions';
 import isInsecureRoomName from '../../base/util/isInsecureRoomName';
 import { isCalendarEnabled } from '../../calendar-sync';
 import { isRecentListEnabled } from '../../recent-list/functions';

@@ -3,7 +3,7 @@
 import _ from 'lodash';
 
 import { createToolbarEvent, sendAnalytics } from '../../analytics';
-import { appNavigate } from '../../app';
+import { appNavigate } from '../../app/actions';
 import { disconnect } from '../../base/connection';
 import { translate } from '../../base/i18n';
 import { connect } from '../../base/redux';

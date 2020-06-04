@@ -22,7 +22,7 @@ import {
     maybeRedirectToWelcomePage,
     redirectToStaticPage,
     reloadWithStoredParams
-} from './react/features/app';
+} from './react/features/app/actions';
 import {
     AVATAR_ID_COMMAND,
     AVATAR_URL_COMMAND,
