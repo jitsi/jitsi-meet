@@ -95,7 +95,7 @@
         "FETCH_SESSION_ID": "セッションIDを取得しています…",
         "GET_SESSION_ID_ERROR": "セッションIDエラー: {{code}}",
         "GOT_SESSION_ID": "セッションIDを取得しました",
-        "LOW_BANDWIDTH": "動画 for {{displayName}} has been turned off to save bandwidth"
+        "LOW_BANDWIDTH": "帯域幅節約のため{{displayName}}の動画は無効化されています"
     },
     "connectionindicator": {
         "address": "アドレス：",
