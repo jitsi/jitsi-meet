@@ -75,9 +75,9 @@
         "you": "あなた"
     },
     "chromeExtensionBanner": {
-        "installExtensionText": "Install the extension for Google カレンダー and Office 365 統合",
-        "buttonText": "Install Chrome Extension",
-        "dontShowAgain": "Don’t show me this again"
+        "installExtensionText": "GoogleカレンダーとOffice 365向け拡張機能をインストール",
+        "buttonText": "Chrome拡張機能をインストール",
+        "dontShowAgain": "再度表示しない"
     },
     "connectingOverlay": {
         "joiningRoom": "ミーティングに参加しています…"
