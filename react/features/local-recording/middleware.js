@@ -1,14 +1,14 @@
 /* @flow */
 
 import { createShortcutEvent, sendAnalytics } from '../analytics';
-import { APP_WILL_UNMOUNT } from '../base/app';
-import { CONFERENCE_JOINED } from '../base/conference';
-import { toggleDialog } from '../base/dialog';
+import { APP_WILL_UNMOUNT } from '../base/app/actionTypes';
+import { CONFERENCE_JOINED } from '../base/conference/actionTypes';
+import { toggleDialog } from '../base/dialog/actions';
 import { i18next } from '../base/i18n';
-import { SET_AUDIO_MUTED } from '../base/media';
+import { SET_AUDIO_MUTED } from '../base/media/actionTypes';
 import { MiddlewareRegistry } from '../base/redux';
 import { SETTINGS_UPDATED } from '../base/settings/actionTypes';
-import { showNotification } from '../notifications';
+import { showNotification } from '../notifications/actions';
 
 import { localRecordingEngaged, localRecordingUnengaged } from './actions';
 import { LocalRecordingInfoDialog } from './components';
