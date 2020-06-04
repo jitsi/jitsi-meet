@@ -194,7 +194,7 @@
         "displayNameRequired": "こんにちは！お名前は何ですか？",
         "done": "完了",
         "e2eeDescription": "<p>End-to-End Encryption is currently <strong>EXPERIMENTAL</strong>. Please see <a href='https://jitsi.org/blog/e2ee/' target='_blank'>this post</a> for details.</p><br/><p>Please keep in mind that turning on end-to-end encryption will effectively disable server-side provided services such as: recording, ライブストリーミング and phone participation. Also keep in mind that the ミーティング will only work for 人 参加するing from browsers with support for insertable streams.</p>",
-        "e2eeLabel": "Key",
+        "e2eeLabel": "",
         "e2eeTitle": "End-to-End Encryption",
         "e2eeWarning": "<br /><p><strong>WARNING:</strong> Not all 参加者 in this ミーティング seem to have support for End-to-End encryption. If you enable it they won't be able to see nor hear you.</p>",
         "enterDisplayName": "Please enter nameを ここに",
@@ -312,7 +312,7 @@
         "statusMessage": "は現在 {{status}} です"
     },
     "documentSharing": {
-        "title": "共有された Document"
+        "title": "共有ドキュメント"
     },
     "e2ee": {
         "labelToolTip": "Audio and 動画 Communication on this call is end-to-end encrypted"
