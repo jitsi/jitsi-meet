@@ -44,7 +44,7 @@
     },
     "calendarSync": {
         "addMeetingURL": "ミーティングリンクを追加する",
-        "confirmAddLink": "このイベントにビデオミーティングリンクを張り付けますか？",
+        "confirmAddLink": "このイベントに動画ミーティングリンクを張り付けますか？",
         "error": {
             "appConfiguration": "カレンダー機能が正しく設定されていません。",
             "generic": "エラーが発生しました。カレンダー機能設定を確認するか、カレンダーを更新してください。",
@@ -83,7 +83,7 @@
         "joiningRoom": "ミーティングに参加しています…"
     },
     "connection": {
-        "ATTACHED": "Attached",
+        "ATTACHED": "接続完了",
         "AUTHENTICATING": "認証中",
         "AUTHFAIL": "認証に失敗しました",
         "CONNECTED": "接続が完了しました",
@@ -92,10 +92,10 @@
         "DISCONNECTED": "切断されました",
         "DISCONNECTING": "切断しています",
         "ERROR": "エラー",
-        "FETCH_SESSION_ID": "Obtaining session-id...",
-        "GET_SESSION_ID_ERROR": "Get session-id error: {{code}}",
-        "GOT_SESSION_ID": "Obtaining session-id... Done",
-        "LOW_BANDWIDTH": "Video for {{displayName}} has been turned off to save bandwidth"
+        "FETCH_SESSION_ID": "セッションIDを取得しています…",
+        "GET_SESSION_ID_ERROR": "セッションIDエラー: {{code}}",
+        "GOT_SESSION_ID": "セッションIDを取得しました",
+        "LOW_BANDWIDTH": "動画 for {{displayName}} has been turned off to save bandwidth"
     },
     "connectionindicator": {
         "address": "アドレス：",
@@ -165,8 +165,8 @@
         },
         "add": "追加",
         "allow": "許可",
-        "alreadySharedVideoMsg": "Another 参加者 is already sharing a video. This conference allows only one 共有された video at a time.",
-        "alreadySharedVideoTitle": "一度に1つの共有ビデオのみが許可されます",
+        "alreadySharedVideoMsg": "Another 参加者 is already sharing a 動画. This conference allows only one 共有された 動画 at a time.",
+        "alreadySharedVideoTitle": "一度に1つの共有動画のみが許可されます",
         "applicationWindow": "アプリケーションウィンドウ",
         "Back": "戻る",
         "cameraConstraintFailedError": "カメラが必要な制約を満たしていません。",
@@ -175,7 +175,7 @@
         "cameraNotSendingDataTitle": "カメラにアクセスできません",
         "cameraPermissionDeniedError": "カメラの使用が許可されていません。ミーティングには参加できますが、他の参加者があなたを見ることはできません。この問題を解決するには、アドレスバーのカメラボタンを使用します。",
         "cameraUnknownError": "不明な理由でカメラが使用できません。",
-        "cameraUnsupportedResolutionError": "お使いのカメラは、必要なビデオ解像度をサポートしていません。",
+        "cameraUnsupportedResolutionError": "お使いのカメラは、必要な動画解像度をサポートしていません。",
         "Cancel": "キャンセル",
         "close": "閉じる",
         "conferenceDisconnectMsg": "ネットワーク接続を確認してください。{{seconds}} 秒で再接続します…",
@@ -263,8 +263,8 @@
         "remoteControlTitle": "リモートデスクトップコントロール",
         "Remove": "除去",
         "removePassword": "$t(lockRoomPassword)を除去する",
-        "removeSharedVideoMsg": "共有ビデオを削除してもよろしいですか？",
-        "removeSharedVideoTitle": "共有ビデオを削除する",
+        "removeSharedVideoMsg": "共有動画を削除してもよろしいですか？",
+        "removeSharedVideoTitle": "共有動画を削除する",
         "reservationError": "予約システムエラー",
         "reservationErrorMsg": "エラーコード: {{code}}, メッセージ: {{msg}}",
         "retry": "再試行",
@@ -315,14 +315,14 @@
         "title": "共有された Document"
     },
     "e2ee": {
-        "labelToolTip": "Audio and Video Communication on this call is end-to-end encrypted"
+        "labelToolTip": "Audio and 動画 Communication on this call is end-to-end encrypted"
     },
     "feedback": {
         "average": "普通",
         "bad": "悪い",
         "detailsLabel": "それについてもっと教えてください。",
         "good": "良い",
-        "rateExperience": "ビデオ通話を評価してください",
+        "rateExperience": "ミーティングを評価",
         "veryBad": "とても悪い",
         "veryGood": "とても良い"
     },
@@ -331,7 +331,7 @@
         "audioCallTitle": "Incoming call",
         "decline": "却下",
         "productLabel": "from Jitsi Meet",
-        "videoCallTitle": "ビデオ通話着信"
+        "videoCallTitle": "動画通話着信"
     },
     "info": {
         "accessibilityLabel": "情報を表示",
@@ -378,8 +378,8 @@
         "supportMsg": "これが起こっている場合は、次までご連絡ください。"
     },
     "keyboardShortcuts": {
-        "focusLocal": "自分のビデオにフォーカス",
-        "focusRemote": "他のメンバーのビデオにフォーカス",
+        "focusLocal": "自分の動画にフォーカス",
+        "focusRemote": "他のメンバーの動画にフォーカス",
         "fullScreen": "全画面表示/終了",
         "keyboardShortcuts": "キーボードショートカット",
         "localRecording": "ローカル録画コントロールの表示/非表示",
@@ -499,7 +499,7 @@
     "passwordDigitsOnly": "Up to {{number}} digits",
     "poweredby": "powered by",
     "prejoin": {
-        "audioAndVideoError": "Audio and video error:",
+        "audioAndVideoError": "Audio and 動画 error:",
         "audioOnlyError": "Audio error:",
         "audioTrackError": "Could not create audio track.",
         "callMe": "Call me",
@@ -528,8 +528,8 @@
         "calling": "Calling",
         "startWithPhone": "Start with phone audio",
         "screenSharingError": "Screen sharing error:",
-        "videoOnlyError": "Video error:",
-        "videoTrackError": "Could not create video track.",
+        "videoOnlyError": "動画 error:",
+        "videoTrackError": "Could not create 動画 track.",
         "viewAllNumbers": "view all numbers"
     },
     "presenceStatus": {
@@ -575,7 +575,7 @@
         "onBy": "{{name}} started the recording",
         "pending": "ミーティングの登録を準備しています…",
         "rec": "REC",
-        "serviceDescription": "ビデオは録画サービスで録画されます",
+        "serviceDescription": "動画は録画サービスで録画されます",
         "serviceName": "録画サービス",
         "signIn": "サインイン",
         "signOut": "サインアウト",
@@ -633,8 +633,8 @@
         "profileSection": "プロフィール",
         "serverURL": "サーバーのURL",
         "showAdvanced": "Show advanced settings",
-        "startWithAudioMuted": "オーディオをミュートで開始",
-        "startWithVideoMuted": "ビデオをミュートで開始",
+        "startWithAudioMuted": "音声をミュートして開始",
+        "startWithVideoMuted": "動画をミュートして開始",
         "version": "バージョン"
     },
     "share": {
@@ -657,13 +657,13 @@
     "suspendedoverlay": {
         "rejoinKeyTitle": "再参加",
         "text": "再接続するには、<i>再参加</i> ボタンを押してください。",
-        "title": "このコンピュータがスリープ状態になったため、ビデオ通話が中断されました。"
+        "title": "このコンピュータがスリープ状態になったため、動画通話が中断されました。"
     },
     "toolbar": {
         "accessibilityLabel": {
             "audioOnly": "音声のみに切り替える",
             "audioRoute": "サウンドデバイスを選択する",
-            "callQuality": "Manage video quality",
+            "callQuality": "Manage 動画 quality",
             "cc": "サブタイトルに切り替える",
             "chat": "チャット画面に切り替える",
             "document": "全画面に切り替える",
@@ -690,7 +690,7 @@
             "remoteMute": "参加者をミュート",
             "security": "Security options",
             "Settings": "設定を切り替える",
-            "sharedvideo": "YouTubeビデオ共有に切り替える",
+            "sharedvideo": "YouTube動画共有に切り替える",
             "shareRoom": "招待する",
             "shareYourScreen": "画面共有に切り替える",
             "shortcuts": "ショートカットに切り替える",
@@ -699,8 +699,8 @@
             "tileView": "Toggle tile view",
             "toggleCamera": "カメラを切り替える",
             "toggleFilmstrip": "Toggle filmstrip",
-            "videoblur": "Toggle video blur",
-            "videomute": "ビデオのミュートを切り替える"
+            "videoblur": "動画のぼかしを切り替える",
+            "videomute": "動画のミュートを切り替える"
         },
         "addPeople": "ミーティングに人を追加する",
         "audioOnlyOff": "音声のみモードを無効にする",
@@ -799,17 +799,17 @@
         "audioOnlyExpanded": "音声のみ送っています。このモードでは音声と画面共有のみを受信します。",
         "callQuality": "通信品質",
         "hd": "HD",
-        "hdTooltip": "高画質の映像を受信中",
+        "hdTooltip": "高画質の動画を受信中",
         "highDefinition": "高画質",
-        "labelTooiltipNoVideo": "ビデオなし",
+        "labelTooiltipNoVideo": "動画なし",
         "labelTooltipAudioOnly": "音声のみ",
         "ld": "LD",
-        "ldTooltip": "低画質の映像を受信中",
+        "ldTooltip": "低画質の動画を受信中",
         "lowDefinition": "低画質",
         "onlyAudioAvailable": "音声のみ利用可能",
         "onlyAudioSupported": "このブラウザでは音声のみをサポートしています。",
         "sd": "SD",
-        "sdTooltip": "標準画質の映像を受信中",
+        "sdTooltip": "標準画質の動画を受信中",
         "standardDefinition": "標準画質"
     },
     "videothumbnail": {
@@ -822,17 +822,17 @@
         "muted": "ミュート中",
         "remoteControl": "リモートコントロール",
         "show": "Show on stage",
-        "videomute": "ビデオ停止中"
+        "videomute": "動画停止中"
     },
     "welcomepage": {
         "accessibilityLabel": {
             "join": "タップして参加",
             "roomname": "ルーム名を入力してください"
         },
-        "appDescription": "チームでビデオチャットしましょう。あなたの知り合いを招待してください。{{app}}は完全に暗号化された100％オープンソースのビデオミーティングソリューションで、いつでも無料でご利用いただけます。アカウントは必要ありません。",
+        "appDescription": "チームで動画チャットしましょう。あなたの知り合いを招待してください。{{app}}は完全に暗号化された100％オープンソースの動画ミーティングソリューションで、いつでも無料でご利用いただけます。アカウントは必要ありません。",
         "audioVideoSwitch": {
             "audio": "音声",
-            "video": "映像"
+            "video": "動画"
         },
         "calendar": "カレンダー",
         "connectCalendarButton": "カレンダーに接続",
@@ -853,7 +853,7 @@
         "roomnameHint": "参加したい部屋の名前またはURLを入力します。あなたが名前を付け、ミーティングの参加者に知らせて、同じ名前を入力してもらえば参加できます。",
         "sendFeedback": "フィードバックを送信",
         "terms": "利用規約",
-        "title": "安全、機能豊富で、完全にフリーのビデオミーティング"
+        "title": "安全、機能豊富で、完全にフリーの動画ミーティング"
     },
     "lonelyMeetingExperience": {
         "button": "招待する others",
