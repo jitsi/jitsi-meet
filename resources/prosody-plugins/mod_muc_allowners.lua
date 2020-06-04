@@ -16,7 +16,7 @@ load_config();
 --      -> false
 --      -> true, subdomain, nil (in case of matching by subdomain)
 --      -> true, nil, room_name (if matched by room name)
-local function isModerated(room_jid)
+local function is_moderated(room_jid)
     local room_node = jid.node(room_jid);
     -- parses bare room address, for multidomain expected format is:
     -- [subdomain]roomName@conference.domain
@@ -55,7 +55,7 @@ do
 
         local actor_node = jid.node(actor);
         if actor_node == 'focus' and item.attr.affiliation == 'owner' then
-            local moderated = isModerated(room_jid);
+            local moderated = is_moderated(room_jid);
 
             if moderated then
                 module:log('debug', 'skip focus setting owner for: %s in %s', item.attr.jid, room_jid);
@@ -73,7 +73,7 @@ module:hook("muc-occupant-joined", function (event)
         return;
     end
 
-    local moderated, subdomain, room_name = isModerated(room.jid);
+    local moderated, subdomain, room_name = is_moderated(room.jid);
     if moderated then
         local session = event.origin;
         local token = session.auth_token;
