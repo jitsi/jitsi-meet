@@ -134,16 +134,16 @@
         "yesterday": "昨日"
     },
     "deepLinking": {
-        "appNotInstalled": "このミーティングに参加するには、{{app}} モバイルアプリが必要です。",
-        "description": "何も起こりませんでしたか？ {{app}} デスクトップアプリでミーティングを開始しようとしました。再度試してみるか、{{app}} Webアプリで起動してください。",
-        "descriptionWithoutWeb": "何も起こりませんでしたか？ {{app}} デスクトップアプリでミーティングを開始しようとしました。",
+        "appNotInstalled": "このミーティングに参加するには、{{app}}のモバイルアプリが必要です。",
+        "description": "何も起こりませんでしたか？ {{app}}のデスクトップアプリでミーティングを開始しようとしました。再度試してみるか、{{app}}のWebアプリで起動してください。",
+        "descriptionWithoutWeb": "何も起こりませんでしたか？{{app}}のデスクトップアプリでミーティングを開始しようとしました。",
         "downloadApp": "アプリをダウンロードする",
         "ifDoNotHaveApp": "まだアプリを持っていない場合は、",
         "ifHaveApp": "すでにアプリを持っている場合は、",
         "joinInApp": "アプリでミーティングに参加する",
         "launchWebButton": "Webで起動する",
         "title": "{{app}} でミーティングを開始しています…",
-        "tryAgainButton": "Try again in desktop"
+        "tryAgainButton": "デスクトップで再試行"
     },
     "defaultLink": "例： {{url}}",
     "defaultNickname": "例：山田太郎",
