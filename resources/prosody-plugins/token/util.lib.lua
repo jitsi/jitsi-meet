@@ -368,36 +368,29 @@ function Util:verify_room(session, room_address)
     end
 
     local auth_domain = session.jitsi_meet_domain;
-    local subdomain_to_check;
+    local domain_to_check;
+    if auth_domain == '*' then
+        -- check for wildcard in JWT claim, allow access if found
+        domain_to_check = self.muc_domain;
+    else
+        -- no wildcard in JWT claim, so check against component_prefix + domain from token
+        domain_to_check = self.muc_domain_prefix.."."..auth_domain;
+    end
+
     if target_subdomain then
-        if auth_domain == '*' then
-            -- check for wildcard in JWT claim, allow access if found
-            subdomain_to_check = target_subdomain;
-        else
-            -- no wildcard in JWT claim, so check subdomain against sub in token
-            subdomain_to_check = auth_domain;
-        end
-        -- from this point we depend on muc_domain_base,
-        -- deny access if option is missing
-        if not self.muc_domain_base then
-            module:log("warn", "No 'muc_domain_base' option set, denying access!");
+        local auth_sub_domain = session.jitsi_meet_context_group;
+        if not auth_sub_domain then
+            module:log("warn", "No 'group' in jwt when trying to join room in subdomain, denying access!");
             return false;
         end
 
         return room_address_to_verify == jid.join(
-            "["..string.lower(subdomain_to_check).."]"..string.lower(room_to_check), self.muc_domain);
+            "["..string.lower(auth_sub_domain).."]"..string.lower(room_to_check), domain_to_check);
     else
-        if auth_domain == '*' then
-            -- check for wildcard in JWT claim, allow access if found
-            subdomain_to_check = self.muc_domain;
-        else
-            -- no wildcard in JWT claim, so check subdomain against sub in token
-            subdomain_to_check = self.muc_domain_prefix.."."..auth_domain;
-        end
         -- we do not have a domain part (multidomain is not enabled)
         -- verify with info from the token
         return room_address_to_verify == jid.join(
-            string.lower(room_to_check), string.lower(subdomain_to_check));
+            string.lower(room_to_check), string.lower(domain_to_check));
     end
 end
 
