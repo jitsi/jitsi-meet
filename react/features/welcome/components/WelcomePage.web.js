@@ -8,11 +8,8 @@ import DropdownMenu, {
 } from '@atlaskit/dropdown-menu';
 import React from 'react';
 
-import { openDialog } from '../../base/dialog';
 import { translate } from '../../base/i18n';
 import { updateSettings } from '../../base/settings';
-import { LoginDialog } from '../../login';
-import { RegisterDialog } from '../../register';
 import { Watermarks } from '../../base/react';
 import { connect } from '../../base/redux';
 import { isMobileBrowser } from '../../base/environment/utils';
@@ -123,11 +120,8 @@ class WelcomePage extends AbstractWelcomePage {
         this._setAdditionalToolbarContentRef
             = this._setAdditionalToolbarContentRef.bind(this);
         this._onTabSelected = this._onTabSelected.bind(this);
-        this._onLogin = this._onLogin.bind(this);
-        this._onLoggedIn = this._onLoggedIn.bind(this);
         this._onLogout = this._onLogout.bind(this);
         this._onOpenSettings = this._onOpenSettings.bind(this);
-        this._onRegister = this._onRegister.bind(this);
     }
 
     /**
@@ -174,35 +168,7 @@ class WelcomePage extends AbstractWelcomePage {
     }
 
     /**
-     * Login handler.
-     *
-     * @inheritdoc
-     * @returns {void}
-     */
-    _onLogin() {
-        const { dispatch } = this.props;
-
-        dispatch(openDialog(LoginDialog, { onSuccess: this._onLoggedIn }));
-    }
-
-    /**
-     * Logged In handler.
-     *
-     * @inheritdoc
-     * @returns {void}
-     */
-    _onLoggedIn() {
-        if (this._redirectRoom) {
-            this._redirectRoom = false;
-
-            if (!this._roomInputRef || this._roomInputRef.reportValidity()) {
-                this._onJoin();
-            }
-        }
-    }
-
-    /**
-     * Login handler.
+     * Logout handler.
      *
      * @inheritdoc
      * @returns {void}
@@ -234,18 +200,6 @@ class WelcomePage extends AbstractWelcomePage {
     }
 
     /**
-     * Register handler.
-     *
-     * @inheritdoc
-     * @returns {void}
-     */
-    _onRegister() {
-        const { dispatch } = this.props;
-
-        dispatch(openDialog(RegisterDialog));
-    }
-
-    /**
      * Implements React's {@link Component#render()}.
      *
      * @inheritdoc
@@ -273,7 +227,7 @@ class WelcomePage extends AbstractWelcomePage {
                     }
                     triggerType = 'button'>
                     <DropdownItemGroup>
-                        <DropdownItem href = '/auth/page/profile'>{ t('profile.title') }</DropdownItem>
+                        <DropdownItem href = '/auth/page/account'>{ t('welcomepage.account') }</DropdownItem>
                         <DropdownItem onClick = { this._onLogout }>{ t('toolbar.logout') }</DropdownItem>
                     </DropdownItemGroup>
                 </DropdownMenu>
@@ -282,15 +236,14 @@ class WelcomePage extends AbstractWelcomePage {
             buttons.push(
                 <Button
                     appearance = 'primary'
-                    href = '/auth/page/register'
-                    onClick = { this._onRegister }>
+                    href = '/auth/page/register'>
                     { t('toolbar.Register') }
                 </Button>
             );
             buttons.push(
                 <Button
                     appearance = 'subtle'
-                    onClick = { this._onLogin }>
+                    href = '/auth/page/login'>
                     {t('toolbar.login')}
                 </Button>
             );
@@ -333,13 +286,21 @@ class WelcomePage extends AbstractWelcomePage {
                     </div>
                     <div id = 'enter_room'>
                         <div className = 'enter-room-input-container'>
-                            <div className = 'enter-room-title'>
-                                { t('welcomepage.enterRoomTitle') }
+                            <div className = 'enter-room-title-container'>
+                                <div className = 'enter-room-title'>
+                                    { t('welcomepage.enterRoomTitle') }
+                                </div>
+                                { !_user && (
+                                    <span className = 'enter-room-login-required'>
+                                        ({ t('welcomepage.loginRequired') })
+                                    </span>
+                                )}
                             </div>
                             <form onSubmit = { this._onFormSubmit }>
                                 <input
                                     autoFocus = { true }
                                     className = 'enter-room-input'
+                                    disabled = { !_user }
                                     id = 'enter_room_field'
                                     onChange = { this._onRoomChange }
                                     pattern = { ROOM_NAME_VALIDATE_PATTERN_STR }
@@ -351,7 +312,7 @@ class WelcomePage extends AbstractWelcomePage {
                             </form>
                         </div>
                         <div
-                            className = 'welcome-page-button'
+                            className = { `welcome-page-button ${!_user && 'disabled'}` }
                             id = 'enter_room_button'
                             onClick = { this._onFormSubmit }>
                             {
@@ -381,14 +342,9 @@ class WelcomePage extends AbstractWelcomePage {
      * @returns {void}
      */
     _onFormSubmit(event) {
-        const { _user } = this.props;
-
         event.preventDefault();
 
-        if (!_user) {
-            this._redirectRoom = true;
-            this._onLogin();
-        } else if (!this._roomInputRef || this._roomInputRef.reportValidity()) {
+        if (!this._roomInputRef || this._roomInputRef.reportValidity()) {
             this._onJoin();
         }
     }

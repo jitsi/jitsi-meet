@@ -33,7 +33,7 @@ body.welcome-page {
             margin-bottom: $welcomePageHeaderTextMarginBottom;
             max-width: calc(100% - 40px);
             width: 650px;
-            z-index: $zindex2;
+            // z-index: $zindex2;
         }
 
         .header-text-title {
@@ -75,8 +75,20 @@ body.welcome-page {
                 border-style: $welcomePageEnterRoomInputContainerBorderStyle;
                 border-image: $welcomePageEnterRoomInputContainerBorderImage;
 
+                .enter-room-title-container {
+                    vertical-align: bottom;
+
+                    :first-child {
+                        margin-right: 10px;
+                    }
+
+                    .enter-room-login-required {
+                        color: $chatPrivateMessageBackgroundColor;
+                    }
+                }
+
                 .enter-room-title {
-                    display: $welcomePageEnterRoomTitleDisplay;
+                    display: inline-block;
                     font-size: 18px;
                     font-weight: bold;
                     padding-bottom: 5px;
@@ -161,6 +173,13 @@ body.welcome-page {
         vertical-align: middle;
         line-height: $welcomePageButtonLineHeight;
         cursor: pointer;
+
+        &.disabled {
+          color: rgba(0,0,0,0.65);
+          background: #f5f5f5;
+          border-color: #d9d9d9;
+          pointer-events: none;
+        }
     }
 
     .header-toolbars {

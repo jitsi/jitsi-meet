@@ -783,6 +783,7 @@
             "join": "Tap to join",
             "roomname": "Enter room name"
         },
+        "account": "Account Settings",
         "appDescription": "Go ahead, video chat with the whole team. In fact, invite everyone you know. {{app}} is a fully encrypted, 100% open source video conferencing solution that you can use all day, every day, for free — with no account needed.",
         "audioVideoSwitch": {
             "audio": "Voice",
@@ -798,6 +799,7 @@
         "join": "CREATE / JOIN",
         "info": "Info",
         "login": "Login",
+        "loginRequired": "Login is required.",
         "privacy": "Privacy",
         "recentList": "Recent",
         "recentListDelete": "Delete",

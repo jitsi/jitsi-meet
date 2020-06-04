@@ -2,6 +2,8 @@
 
 import { ReducerRegistry } from '../redux';
 
+// import { PersistenceRegistry } from '../storage';
+
 import { CURRENT_USER_UPDATED } from './actionTypes';
 
 /**
@@ -14,6 +16,8 @@ const DEFAULT_STATE = {
 };
 
 const STORE_NAME = 'features/base/auth';
+
+// PersistenceRegistry.register(STORE_NAME);
 
 ReducerRegistry.register(STORE_NAME, (state = DEFAULT_STATE, action) => {
     switch (action.type) {
