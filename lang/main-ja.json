@@ -14,7 +14,7 @@
         "googleEmail": "Googleメール",
         "inviteMoreHeader": "ミーティングに誰も参加していません",
         "inviteMoreMailSubject": "{{appName}}のミーティングに参加",
-        "inviteMorePrompt": "さらに招待",
+        "inviteMorePrompt": "$t(addPeople.add)",
         "linkCopied": "リンクをクリップボードにコピーしました",
         "loading": "人と電話番号を検索",
         "loadingNumber": "電話番号を検証しています",
