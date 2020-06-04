@@ -5,7 +5,7 @@
         "copyInvite": "ミーティングの招待をコピー",
         "copyLink": "ミーティングのリンクをコピー",
         "copyStream": "ライブストリーミングのリンクをコピー",
-        "countryNotSupported": "私たちはこの宛先をまだサポートしていません。",
+        "countryNotSupported": "この宛先をまだサポートしていません。",
         "countryReminder": "米国外にコールしますか？ 国コードで始まることを確認してください！",
         "defaultEmail": "初期設定のメール",
         "disabled": "人を招待することはできません。",
@@ -372,7 +372,7 @@
         "send": "送信"
     },
     "inlineDialogFailure": {
-        "msg": "私たちは少しつまずきました。",
+        "msg": "少しつまずきました。",
         "retry": "再試行する",
         "support": "サポート",
         "supportMsg": "これが起こっている場合は、次までご連絡ください。"
@@ -579,7 +579,7 @@
         "serviceName": "録画サービス",
         "signIn": "サインイン",
         "signOut": "サインアウト",
-        "unavailable": "おっと！ {{serviceName}} は現在使用できません。私たちはこの問題の解決に取り組んでいます。後でもう一度お試しください。",
+        "unavailable": "おっと！ {{serviceName}} は現在使用できません。この問題の解決に取り組んでいます。後でもう一度お試しください。",
         "unavailableTitle": "録画できません"
     },
     "sectionList": {
