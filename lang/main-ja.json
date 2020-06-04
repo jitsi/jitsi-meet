@@ -315,7 +315,7 @@
         "title": "共有ドキュメント"
     },
     "e2ee": {
-        "labelToolTip": "Audio and 動画 Communication on this call is end-to-end encrypted"
+        "labelToolTip": "このミーティングの音声と動画通信は端末間で暗号化されています"
     },
     "feedback": {
         "average": "普通",
@@ -327,10 +327,10 @@
         "veryGood": "とても良い"
     },
     "incomingCall": {
-        "answer": "Answer",
-        "audioCallTitle": "Incoming call",
-        "decline": "却下",
-        "productLabel": "from Jitsi Meet",
+        "answer": "応答",
+        "audioCallTitle": "着信",
+        "decline": "拒否",
+        "productLabel": "Jitsi Meetから",
         "videoCallTitle": "動画通話着信"
     },
     "info": {
