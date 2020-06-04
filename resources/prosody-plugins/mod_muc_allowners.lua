@@ -1,4 +1,5 @@
 local jid = require "util.jid";
+local um_is_admin = require "core.usermanager".is_admin;
 local is_healthcheck_room = module:require "util".is_healthcheck_room;
 
 local moderated_subdomains;
@@ -9,6 +10,10 @@ local function load_config()
     moderated_rooms = module:get_option_set("allowners_moderated_rooms", {})
 end
 load_config();
+
+local function is_admin(jid)
+    return um_is_admin(jid, module.host);
+end
 
 -- Checks whether the jid is moderated, the room name is in moderated_rooms
 -- or if the subdomain is in the moderated_subdomains
@@ -36,7 +41,7 @@ end
 module:hook("muc-occupant-joined", function (event)
     local room, occupant = event.room, event.occupant;
 
-    if is_healthcheck_room(room.jid) then
+    if is_healthcheck_room(room.jid) or is_admin(occupant.jid) then
         return;
     end
 
