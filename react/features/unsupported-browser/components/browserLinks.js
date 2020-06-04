@@ -5,7 +5,7 @@
  *
  * @type {string}
  */
-export const BRAVE_DOWNLOAD = 'https://brave.com/LVT920';
+export const BRAVE_DOWNLOAD = 'https://brave.com/download/bravetogether';
 export const BRAVE_SITE = 'https://brave.com/';
 
 /**
