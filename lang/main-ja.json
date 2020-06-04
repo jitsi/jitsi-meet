@@ -62,17 +62,17 @@
     },
     "chat": {
         "error": "エラー: メッセージが送信されませんでした。エラーの理由： {{error}}",
-        "fieldPlaceHolder": "入力 メッセージ ここに",
+        "fieldPlaceHolder": "ここにメッセージを入力",
         "messagebox": "メッセージを書いてください",
         "messageTo": "{{recipient}}にメッセージを送る",
-        "noMessagesMessage": "There are no メッセージ in the ミーティング まだ. Start a conversation ここに!",
+        "noMessagesMessage": "まだメッセージがありません。チャットを始めましょう！",
         "nickname": {
             "popover": "ニックネームを入力",
             "title": "チャットのニックネームを記入してください"
         },
-        "privateNotice": "メッセージ to {{recipient}}",
+        "privateNotice": "{{recipient}}へメッセージ",
         "title": "チャット",
-        "you": "you"
+        "you": "あなた"
     },
     "chromeExtensionBanner": {
         "installExtensionText": "Install the extension for Google カレンダー and Office 365 統合",
@@ -197,7 +197,7 @@
         "e2eeLabel": "Key",
         "e2eeTitle": "End-to-End Encryption",
         "e2eeWarning": "<br /><p><strong>WARNING:</strong> Not all 参加者 in this ミーティング seem to have support for End-to-End encryption. If you enable it they won't be able to see nor hear you.</p>",
-        "enterDisplayName": "Please enter name ここに",
+        "enterDisplayName": "Please enter nameを ここに",
         "error": "エラー",
         "externalInstallationMsg": "デスクトップ共有拡張機能をインストールする必要があります。",
         "externalInstallationTitle": "拡張機能が必要です",
@@ -474,7 +474,7 @@
         "kickParticipant": "{{kicked}} was kicked by {{kicker}}",
         "me": "あなた",
         "moderator": "モデレーターの権利が付与されました！",
-        "muted": "You have started the conversation muted.",
+        "muted": "You have started 会話 muted.",
         "mutedRemotelyDescription": "You can always unmute when you're ready to speak. Mute back when you're done to keep noise away from the ミーティング.",
         "mutedRemotelyTitle": "You have been muted by {{participantDisplayName}}!",
         "mutedTitle": "あなたはミュートされています！",
