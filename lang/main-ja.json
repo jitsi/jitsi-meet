@@ -364,7 +364,7 @@
         "tooltip": "このミーティングのリンクを相手に伝えてください"
     },
     "inviteDialog": {
-        "alertText": "Failed to 招待する some 参加者.",
+        "alertText": "参加者を招待できませんでした。",
         "header": "招待",
         "searchCallOnlyPlaceholder": "携帯番号を入力してください",
         "searchPeopleOnlyPlaceholder": "参加者を検索する",
