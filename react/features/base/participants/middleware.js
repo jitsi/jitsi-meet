@@ -27,6 +27,7 @@ import {
     DOMINANT_SPEAKER_CHANGED,
     KICK_PARTICIPANT,
     MUTE_REMOTE_PARTICIPANT,
+    UN_MUTE_REMOTE_PARTICIPANT,
     PARTICIPANT_DISPLAY_NAME_CHANGED,
     PARTICIPANT_JOINED,
     PARTICIPANT_LEFT,
@@ -99,6 +100,12 @@ MiddlewareRegistry.register(store => next => action => {
         const { conference } = store.getState()['features/base/conference'];
 
         conference.muteParticipant(action.id);
+        break;
+    }
+
+    case UN_MUTE_REMOTE_PARTICIPANT: {
+        const { conference } = store.getState()['features/base/conference'];
+        conference.muteParticipant(action.id, false);
         break;
     }
 

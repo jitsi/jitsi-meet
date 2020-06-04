@@ -450,6 +450,8 @@
         "mutedTitle": "Вы без звука!",
         "mutedRemotelyTitle": "{{participantDisplayName}} отключил Вам микрофон!",
         "mutedRemotelyDescription": "Вы всегда можете включить микрофон, когда будете готовы говорить. Отключите его, когда закончите, чтобы не транслировать шумы в конференцию.",
+        "unMutedRemotelyTitle": "{{participantDisplayName}} включил Вам микрофон!",
+        "unMutedRemotelyDescription": "Вы всегда можете отключить микрофон, когда будете не готовы говорить",
         "passwordRemovedRemotely": "$t(lockRoomPasswordUppercase) удален другим участником.",
         "passwordSetRemotely": "Другой участник установил $t(lockRoomPasswordUppercase)",
         "raisedHand": "{{name}} хотел бы выступить.",
@@ -621,6 +623,7 @@
             "toggleCamera": "Вкл/Выкл камеру",
             "videomute": "Вкл/Выкл видео",
             "muteEveryone": "Выкл. микрофон у всех",
+            "unMuteEveryone": "Вкл. микрофон у всех",
             "videoblur": "Вкл/Выкл размытие фона"
         },
         "addPeople": "Добавить людей к вашему сеансу связи",
@@ -730,6 +733,7 @@
     },
     "videothumbnail": {
         "domute": "Выключить звук",
+        "doUnMute": "Включить звук",
         "domuteOthers": "Выключить остальных",
         "flip": "Отразить",
         "kick": "Выкинуть",

@@ -80,6 +80,7 @@ import HelpButton from '../HelpButton';
 import OverflowMenuButton from './OverflowMenuButton';
 import OverflowMenuProfileItem from './OverflowMenuProfileItem';
 import MuteEveryoneButton from './MuteEveryoneButton';
+import UnMuteEveryoneButton from "./UnMuteEveryoneButton";
 import ToolbarButton from './ToolbarButton';
 import VideoSettingsButton from './VideoSettingsButton';
 import {
@@ -1006,6 +1007,10 @@ class Toolbox extends Component<Props, State> {
                 key = 'mute-everyone'
                 showLabel = { true }
                 visible = { this._shouldShowButton('mute-everyone') } />,
+            <UnMuteEveryoneButton
+                key = 'unmute-everyone'
+                showLabel = { true }
+                visible = { true } />,
             this._shouldShowButton('stats')
                 && <OverflowMenuItem
                     accessibilityLabel = { t('toolbar.accessibilityLabel.speakerStats') }
