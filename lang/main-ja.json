@@ -409,7 +409,7 @@
         "expandedPending": "$t(dialog.liveStreaming)を開始しています…",
         "failedToStart": "$t(dialog.liveStreaming)の開始に失敗しました",
         "getStreamKeyManually": "$t(dialog.liveStreaming)を取得できませんでした。YouTubeで$t(dialog.liveStreaming)キーを取得してください。",
-        "googlePrivacyPolicy": "Google プライバシーポリシー",
+        "googlePrivacyPolicy": "Googleプライバシーポリシー",
         "invalidStreamKey": "$t(dialog.liveStreaming)キーが誤っているかもしれません。",
         "limitNotificationDescriptionNative": "$t(dialog.liveStreaming)は{{limit}}分に制限されています。無制限の$t(dialog.liveStreaming)には{{app}}をお試しください。",
         "limitNotificationDescriptionWeb": "混雑のため$t(dialog.liveStreaming)は{{limit}}分に制限されています。無制限の$t(dialog.liveStreaming)には<a href={{url}} rel='noopener noreferrer' target='_blank'>{{app}}</a>をお試しください。",
