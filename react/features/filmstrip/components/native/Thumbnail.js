@@ -157,9 +157,9 @@ function Thumbnail(props: Props) {
                 tintStyle = { _styles.activeThumbnailTint }
                 zOrder = { 1 } />
 
-            {renderDisplayName && <DisplayNameLabel participantId = { participantId } />}
+            { renderDisplayName && <DisplayNameLabel participantId = { participantId } /> }
 
-            {renderModeratorIndicator
+            { renderModeratorIndicator
                 && <View style = { styles.moderatorIndicatorContainer }>
                     <ModeratorIndicator />
                 </View>}
@@ -170,7 +170,7 @@ function Thumbnail(props: Props) {
                     styles.thumbnailTopLeftIndicatorContainer
                 ] }>
                 <RaisedHandIndicator participantId = { participant.id } />
-                {renderDominantSpeakerIndicator && <DominantSpeakerIndicator /> }
+                { renderDominantSpeakerIndicator && <DominantSpeakerIndicator /> }
             </View> }
 
             { !participant.isFakeParticipant && <View

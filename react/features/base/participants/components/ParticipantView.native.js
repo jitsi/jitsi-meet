@@ -46,7 +46,7 @@ type Props = {
      *
      * @private
      */
-    _isFakeParticipant: string,
+    _isFakeParticipant: boolean,
 
     /**
      * True if the video should be rendered, false otherwise.
@@ -189,12 +189,12 @@ class ParticipantView extends Component<Props> {
     render() {
         const {
             _connectionStatus: connectionStatus,
+            _isFakeParticipant,
             _renderVideo: renderVideo,
             _videoTrack: videoTrack,
-            onPress,
-            tintStyle,
             disableVideo,
-            _isFakeParticipant
+            onPress,
+            tintStyle
         } = this.props;
 
         // If the connection has problems, we will "tint" the video / avatar.

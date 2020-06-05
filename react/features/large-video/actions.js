@@ -58,7 +58,7 @@ export function selectParticipant() {
 export function selectParticipantInLargeVideo() {
     return (dispatch: Dispatch<any>, getState: Function) => {
         const state = getState();
-        const { participantId } = _electParticipantInLargeVideo(state);
+        const participantId = _electParticipantInLargeVideo(state);
 
         const largeVideo = state['features/large-video'];
 
@@ -161,5 +161,5 @@ function _electParticipantInLargeVideo(state) {
         }
     }
 
-    return { participantId: id };
+    return id;
 }

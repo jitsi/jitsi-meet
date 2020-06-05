@@ -19,7 +19,10 @@ class EnterVideoLinkPrompt extends AbstractEnterVideoLinkPrompt<*> {
         return (
             <InputDialog
                 contentKey = 'dialog.shareVideoTitle'
-                onSubmit = { this._onSetVideoLink } />
+                onSubmit = { this._onSetVideoLink }
+                textInputProps = {{
+                    placeholder: 'https://youtu.be/TB7LlM4erx8'
+                }} />
         );
     }
 

@@ -16,6 +16,11 @@ import { toggleSharedVideo } from '../actions';
 type Props = AbstractButtonProps & {
 
     /**
+     * Whether or not the button is disabled.
+     */
+    _isDisabled: boolean,
+
+    /**
      * Whether or not the local participant is sharing a YouTube video.
      */
     _sharingVideo: boolean,
@@ -60,6 +65,17 @@ class VideoShareButton extends AbstractButton<Props, *> {
     }
 
     /**
+     * Indicates whether this button is disabled or not.
+     *
+     * @override
+     * @protected
+     * @returns {boolean}
+     */
+    _isDisabled() {
+        return this.props._isDisabled;
+    }
+
+    /**
      * Dispatches an action to toggle YouTube video sharing.
      *
      * @private
@@ -82,7 +98,11 @@ function _mapStateToProps(state): Object {
     const localParticipantId = getLocalParticipant(state).id;
 
     if (ownerId !== localParticipantId) {
-        return { _sharingVideo: false };
+        return {
+            _isDisabled: sharedVideoStatus === 'playing'
+            || sharedVideoStatus === 'start'
+            || sharedVideoStatus === 'pause',
+            _sharingVideo: false };
     }
 
     return {

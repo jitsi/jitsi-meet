@@ -5,9 +5,9 @@
  */
 export default {
     youtubeVideoContainer: {
-        flex: 1,
         alignItems: 'center',
-        justifyContent: 'center',
-        flexDirection: 'column'
+        flex: 1,
+        flexDirection: 'column',
+        justifyContent: 'center'
     }
 };

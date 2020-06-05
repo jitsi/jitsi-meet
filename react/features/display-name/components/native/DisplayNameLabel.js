@@ -5,9 +5,9 @@ import { Text, View } from 'react-native';
 
 import {
     getLocalParticipant,
+    getParticipantById,
     getParticipantDisplayName,
-    shouldRenderParticipantVideo,
-    getParticipantById
+    shouldRenderParticipantVideo
 } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 
