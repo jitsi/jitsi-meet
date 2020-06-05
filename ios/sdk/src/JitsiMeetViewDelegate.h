@@ -55,4 +55,29 @@
  */
 - (void)enterPictureInPicture:(NSDictionary *)data;
 
+/**
+ * Called when someone else joins the conference
+ *
+ * The `data` dictionary contains:
+ *    `id`: id of the new user as String
+ *    `participants`: number of participants in conference, including the 
+ *                    new participant.
+ *                    NOTE: If you are just initiating the call, you may
+ *                    not have joined yourself, so this number is 1 in case
+ *                    you are still initiating the call - wait for 
+ *                    `conferenceJoined` above...
+ */
+- (void)participantJoined:(NSDictionary *)data;
+
+/**
+ * Called when a participant has left or was kicked out of the conference, 
+ * respectively
+ *
+ * The `data` dictionary contains:
+ *    `id`: id of the participant who left
+ *    `participants`: number of participants *after* the participant left
+ *                    or was kciked out, respectively
+ */
+- (void)participantLeft:(NSDictionary *)data;
+- (void)participantKicked:(NSDictionary *)data;
 @end
