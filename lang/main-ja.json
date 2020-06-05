@@ -320,7 +320,7 @@
     "feedback": {
         "average": "普通",
         "bad": "悪い",
-        "detailsLabel": "それについてもっと教えてください。",
+        "detailsLabel": "詳細を記入してください。",
         "good": "良い",
         "rateExperience": "ミーティングを評価",
         "veryBad": "とても悪い",
