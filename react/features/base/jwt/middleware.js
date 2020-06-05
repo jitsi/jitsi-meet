@@ -141,11 +141,12 @@ function _setJWT(store, next, action) {
                 action.jwt = jwt;
                 action.issuer = iss;
                 if (context) {
-                    const user = _user2participant(context.user);
+                    const user = _user2participant(context.user || {});
 
                     action.callee = context.callee;
                     action.group = context.group;
                     action.server = context.server;
+                    action.tenant = context.tenant;
                     action.user = user;
 
                     user && _overwriteLocalParticipant(
