@@ -176,8 +176,6 @@ class Conference extends AbstractConference<Props, *> {
      */
     render() {
         const {
-            VIDEO_QUALITY_LABEL_DISABLED,
-
             // XXX The character casing of the name filmStripOnly utilized by
             // interfaceConfig is obsolete but legacy support is required.
             filmStripOnly: filmstripOnly
@@ -187,10 +185,7 @@ class Conference extends AbstractConference<Props, *> {
             _layoutClassName,
             _showPrejoin
         } = this.props;
-        const hideVideoQualityLabel
-            = filmstripOnly
-                || VIDEO_QUALITY_LABEL_DISABLED
-                || _iAmRecorder;
+        const hideLabels = filmstripOnly || _iAmRecorder;
 
         return (
             <div
@@ -203,7 +198,7 @@ class Conference extends AbstractConference<Props, *> {
                 <InviteMore />
                 <div id = 'videospace'>
                     <LargeVideo />
-                    { hideVideoQualityLabel
+                    { hideLabels
                         || <Labels /> }
                     <Filmstrip filmstripOnly = { filmstripOnly } />
                 </div>

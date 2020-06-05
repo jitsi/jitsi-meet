@@ -216,6 +216,7 @@
         "kickParticipantTitle": "Kick this participant?",
         "kickTitle": "Ouch! {{participantDisplayName}} kicked you out of the meeting",
         "liveStreaming": "Live Streaming",
+        "liveStreamingDisabledBecauseOfActiveRecordingTooltip": "Not possible while recording is active",
         "liveStreamingDisabledForGuestTooltip": "Guests can't start live streaming.",
         "liveStreamingDisabledTooltip": "Start live stream disabled.",
         "lockMessage": "Failed to lock the conference.",
@@ -249,6 +250,7 @@
         "popupError": "Your browser is blocking pop-up windows from this site. Please enable pop-ups in your browser's security settings and try again.",
         "popupErrorTitle": "Pop-up blocked",
         "recording": "Recording",
+        "recordingDisabledBecauseOfActiveLiveStreamingTooltip": "Not possible while a live stream is active",
         "recordingDisabledForGuestTooltip": "Guests can't start recordings.",
         "recordingDisabledTooltip": "Start recording disabled.",
         "rejoinNow": "Rejoin now",
@@ -393,6 +395,8 @@
         "videoQuality": "Manage call quality"
     },
     "liveStreaming": {
+        "limitNotificationDescriptionWeb": "Due to high demand your streaming will be limited to {{limit}} min. For unlimited streaming try <a href={{url}} rel='noopener noreferrer' target='_blank'>{{app}}</a>.",
+        "limitNotificationDescriptionNative": "Your streaming will be limited to {{limit}} min. For unlimited streaming try {{app}}.",
         "busy": "We're working on freeing streaming resources. Please try again in a few minutes.",
         "busyTitle": "All streamers are currently busy",
         "changeSignIn": "Switch accounts.",
@@ -550,6 +554,8 @@
     },
     "raisedHand": "Would like to speak",
     "recording": {
+        "limitNotificationDescriptionWeb": "Due to high demand your recording will be limited to {{limit}} min. For unlimited recordings try <a href={{url}} rel='noopener noreferrer' target='_blank'>{{app}}</a>.",
+        "limitNotificationDescriptionNative": "Due to high demand your recording will be limited to {{limit}} min. For unlimited recordings try <3>{{app}}</3>.",
         "authDropboxText": "Upload to Dropbox",
         "availableSpace": "Available space: {{spaceLeft}} MB (approximately {{duration}} minutes of recording)",
         "beta": "BETA",
