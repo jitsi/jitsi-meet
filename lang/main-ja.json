@@ -425,7 +425,7 @@
         "signOut": "サインアウト",
         "start": "$t(dialog.liveStreaming)を開始",
         "streamIdHelp": "ヘルプ",
-        "unavailableTitle": "$t(dialog.liveStreaming)は利用できません",
+        "unavailableTitle": "$t(dialog.liveStreaming)が利用できません",
         "youtubeTerms": "YouTube利用規約"
     },
     "localRecording": {
