@@ -128,7 +128,8 @@ export default {
         justifyContent: 'space-between',
         paddingHorizontal: 14
     },
-
+    
+    /** editlater */ 
     roomTimer: {
         color: ColorPalette.white,
         fontSize: 15,

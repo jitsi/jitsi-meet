@@ -12,6 +12,7 @@ import { isToolboxVisible } from '../../functions';
 import AudioMuteButton from '../AudioMuteButton';
 import HangupButton from '../HangupButton';
 import VideoMuteButton from '../VideoMuteButton';
+import ToggleCameraButton from './ToggleCameraButton';
 
 import OverflowMenuButton from './OverflowMenuButton';
 import styles from './styles';
@@ -104,20 +105,23 @@ class Toolbox extends PureComponent<Props> {
                 accessibilityRole = 'toolbar'
                 pointerEvents = 'box-none'
                 style = { styles.toolbar }>
-                <ChatButton
+                {/* <ChatButton
                     styles = { buttonStylesBorderless }
-                    toggledStyles = { this._getChatButtonToggledStyle(toggledButtonStyles) } />
-                <AudioMuteButton
-                    styles = { buttonStyles }
-                    toggledStyles = { toggledButtonStyles } />
-                <HangupButton
-                    styles = { hangupButtonStyles } />
+                    toggledStyles = { this._getChatButtonToggledStyle(toggledButtonStyles) } /> */}
                 <VideoMuteButton
                     styles = { buttonStyles }
                     toggledStyles = { toggledButtonStyles } />
-                <OverflowMenuButton
-                    styles = { buttonStylesBorderless }
+                <AudioMuteButton
+                    styles = { buttonStyles }
                     toggledStyles = { toggledButtonStyles } />
+                <ToggleCameraButton
+                    styles = { buttonStyles } 
+                    toggledStyles = { toggledButtonStyles } />
+                <HangupButton
+                    styles = { hangupButtonStyles } />
+                {/* <OverflowMenuButton
+                    styles = { buttonStylesBorderless }
+                    toggledStyles = { toggledButtonStyles } /> */}
             </View>
         );
     }

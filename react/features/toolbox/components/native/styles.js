@@ -28,9 +28,10 @@ const toolbarButton = {
 /**
  * The icon style of the toolbar buttons.
  */
+/** editlater */
 const toolbarButtonIcon = {
     alignSelf: 'center',
-    color: ColorPalette.darkGrey,
+    color: ColorPalette.green,
     fontSize: 22
 };
 
@@ -48,6 +49,14 @@ const whiteToolbarButton = {
 const whiteToolbarButtonIcon = {
     ...toolbarButtonIcon,
     color: ColorPalette.white
+};
+
+/**
+ * The icon style of toolbar buttons which display white icons.
+ */
+const greenToolbarButtonIcon = {
+    ...toolbarButtonIcon,
+    color: ColorPalette.green
 };
 
 /**
@@ -133,7 +142,7 @@ ColorSchemeRegistry.register('Toolbox', {
      * Styles for toggled buttons in the toolbar.
      */
     toggledButtonStyles: {
-        iconStyle: whiteToolbarButtonIcon,
+        iconStyle: greenToolbarButtonIcon,
         style: {
             ...whiteToolbarButton,
             borderColor: schemeColor('buttonToggledBorder'),
