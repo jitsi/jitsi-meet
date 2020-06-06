@@ -43,7 +43,6 @@ import {
     LocalRecordingInfoDialog
 } from '../../../local-recording';
 import {
-    LiveStreamButton,
     RecordButton
 } from '../../../recording';
 import { SecurityDialogButton } from '../../../security';
@@ -973,9 +972,6 @@ class Toolbox extends Component<Props, State> {
                     key = 'fullscreen'
                     onClick = { this._onToolbarToggleFullScreen }
                     text = { _fullScreen ? t('toolbar.exitFullScreen') : t('toolbar.enterFullScreen') } />,
-            <LiveStreamButton
-                key = 'livestreaming'
-                showLabel = { true } />,
             <RecordButton
                 key = 'record'
                 showLabel = { true } />,
