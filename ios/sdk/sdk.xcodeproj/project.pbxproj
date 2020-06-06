@@ -42,6 +42,8 @@
 		C69EFA0E209A0F660027712B /* JMCallKitListener.swift in Sources */ = {isa = PBXBuildFile; fileRef = C69EFA0B209A0F660027712B /* JMCallKitListener.swift */; };
 		C6A34261204EF76800E062DD /* DragGestureController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6A3425E204EF76800E062DD /* DragGestureController.swift */; };
 		C6CC49AF207412CF000DFA42 /* PiPViewCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6CC49AE207412CF000DFA42 /* PiPViewCoordinator.swift */; };
+		C8AFD27F2462C613000293D2 /* InfoPlistUtil.h in Headers */ = {isa = PBXBuildFile; fileRef = C8AFD27D2462C613000293D2 /* InfoPlistUtil.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		C8AFD2802462C613000293D2 /* InfoPlistUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = C8AFD27E2462C613000293D2 /* InfoPlistUtil.m */; };
 		DE438CDA2350934700DD541D /* JavaScriptSandbox.m in Sources */ = {isa = PBXBuildFile; fileRef = DE438CD82350934700DD541D /* JavaScriptSandbox.m */; };
 		DE65AACA2317FFCD00290BEC /* LogUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = DE65AAC92317FFCD00290BEC /* LogUtils.h */; };
 		DE65AACC2318028300290BEC /* JitsiMeetBaseLogHandler+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = DE65AACB2318028300290BEC /* JitsiMeetBaseLogHandler+Private.h */; };
@@ -105,6 +107,8 @@
 		C6A3425E204EF76800E062DD /* DragGestureController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DragGestureController.swift; sourceTree = "<group>"; };
 		C6CC49AE207412CF000DFA42 /* PiPViewCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PiPViewCoordinator.swift; sourceTree = "<group>"; };
 		C6F99C13204DB63D0001F710 /* JitsiMeetView+Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "JitsiMeetView+Private.h"; sourceTree = "<group>"; };
+		C8AFD27D2462C613000293D2 /* InfoPlistUtil.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = InfoPlistUtil.h; sourceTree = "<group>"; };
+		C8AFD27E2462C613000293D2 /* InfoPlistUtil.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = InfoPlistUtil.m; sourceTree = "<group>"; };
 		DE438CD82350934700DD541D /* JavaScriptSandbox.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JavaScriptSandbox.m; sourceTree = "<group>"; };
 		DE65AAC92317FFCD00290BEC /* LogUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LogUtils.h; sourceTree = "<group>"; };
 		DE65AACB2318028300290BEC /* JitsiMeetBaseLogHandler+Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "JitsiMeetBaseLogHandler+Private.h"; sourceTree = "<group>"; };
@@ -223,6 +227,8 @@
 				DEFE535521FB2E8300011A3A /* ReactUtils.m */,
 				0B93EF7C1EC9DDCD0030D24D /* RCTBridgeWrapper.h */,
 				0B93EF7D1EC9DDCD0030D24D /* RCTBridgeWrapper.m */,
+				C8AFD27D2462C613000293D2 /* InfoPlistUtil.h */,
+				C8AFD27E2462C613000293D2 /* InfoPlistUtil.m */,
 			);
 			path = src;
 			sourceTree = "<group>";
@@ -303,6 +309,7 @@
 				DE81A2D42316AC4D00AE1940 /* JitsiMeetLogger.h in Headers */,
 				DE65AACA2317FFCD00290BEC /* LogUtils.h in Headers */,
 				DEAD3226220C497000E93636 /* JitsiMeetConferenceOptions.h in Headers */,
+				C8AFD27F2462C613000293D2 /* InfoPlistUtil.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -482,6 +489,7 @@
 				0B93EF7F1EC9DDCD0030D24D /* RCTBridgeWrapper.m in Sources */,
 				0BA13D311EE83FF8007BEF7F /* ExternalAPI.m in Sources */,
 				0BCA49601EC4B6C600B793EE /* POSIX.m in Sources */,
+				C8AFD2802462C613000293D2 /* InfoPlistUtil.m in Sources */,
 				C6CC49AF207412CF000DFA42 /* PiPViewCoordinator.swift in Sources */,
 				DEFC743F21B178FA00E4DD96 /* LocaleDetector.m in Sources */,
 				0BCA495F1EC4B6C600B793EE /* AudioMode.m in Sources */,

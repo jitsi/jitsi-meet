@@ -2,10 +2,10 @@
 
 import { Dropbox } from 'dropbox';
 
-import { parseURLParams } from '../base/config';
 import {
     getJitsiMeetGlobalNS,
-    parseStandardURIString
+    parseStandardURIString,
+    parseURLParams
 } from '../base/util';
 
 /**

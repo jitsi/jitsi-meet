@@ -71,9 +71,6 @@ body.welcome-page {
                 text-align: left;
                 color: #253858;
                 height: fit-content;
-                border-width: $welcomePageEnterRoomInputContainerBorderWidth;
-                border-style: $welcomePageEnterRoomInputContainerBorderStyle;
-                border-image: $welcomePageEnterRoomInputContainerBorderImage;
 
                 .enter-room-title {
                     display: $welcomePageEnterRoomTitleDisplay;
@@ -83,10 +80,24 @@ body.welcome-page {
                 }
 
                 .enter-room-input {
-                    border: none;
+                    border-width: $welcomePageEnterRoomInputContainerBorderWidth;
+                    border-style: $welcomePageEnterRoomInputContainerBorderStyle;
+                    border-image: $welcomePageEnterRoomInputContainerBorderImage;
                     display: inline-block;
                     width: 100%;
                     font-size: 14px;
+                }
+
+                .insecure-room-name-warning {
+                    align-items: center;
+                    color: $defaultWarningColor;
+                    display: flex;
+                    flex-direction: row;
+                    margin-top: 5px;
+
+                    svg {
+                        fill: $defaultWarningColor
+                    }
                 }
 
                 ::placeholder {

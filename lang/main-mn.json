@@ -452,7 +452,7 @@
         "somebody": "Хэн нэгэн",
         "startSilentTitle": "Та ямар ч аудио төхөөрөмжгүй нэгдсэн!",
         "startSilentDescription": "Дууг идэвхжүүлэхийн тулд хуралд дахин нэгдээрэй",
-        "suboptimalBrowserWarning": "Таны хөтөч дээр бүрэн дэмжлэг ороогүй байна. Та бүрэн дэмжигдсэн <a href='static/recommendedBrowsers.html' target='_blank'>хөтөчийг</a> ашиглана уу.",
+        "suboptimalBrowserWarning": "Таны хөтөч дээр бүрэн дэмжлэг ороогүй байна. Та бүрэн дэмжигдсэн <a href='{{recommendedBrowserPageLink}}' target='_blank'>хөтөчийг</a> ашиглана уу.",
         "suboptimalExperienceTitle": "Хөтөчийн анхааруулга",
         "unmute": "Дуутай",
         "newDeviceCameraTitle": "Шинэ камер",
@@ -721,9 +721,6 @@
         "lowDefinition": "Бага нягтаршил",
         "onlyAudioAvailable": "Зөвхөн аудио ашиглах боломжтой",
         "onlyAudioSupported": "Энэ хөтчид аудио ашиглах боломжтой.",
-        "p2pEnabled": "P2P идэвхтэй",
-        "p2pVideoQualityDescription": "P2P горим дээр зөвхөн өндөр нягтаршилтай видео болон аудио хооронд л шилжүүлэх боломжтой. P2P гарах хүртэл бусад тохиргоог хийх боломжгүй.",
-        "recHighDefinitionOnly": "Өндөр нягтаршилтайг илүүд үздэг.",
         "sd": "SD",
         "sdTooltip": "Стандарт нарийвчлалтай видео үзэж байна",
         "standardDefinition": "Стандарт нягтаршил"

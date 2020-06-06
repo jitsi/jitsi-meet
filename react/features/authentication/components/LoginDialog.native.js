@@ -18,7 +18,6 @@ import {
 import { translate } from '../../base/i18n';
 import { JitsiConnectionErrors } from '../../base/lib-jitsi-meet';
 import type { StyleType } from '../../base/styles';
-
 import { authenticateAndUpgradeRole, cancelLogin } from '../actions';
 
 // Register styles.

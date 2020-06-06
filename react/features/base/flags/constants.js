@@ -20,7 +20,7 @@ export const CALENDAR_ENABLED = 'calendar.enabled';
 export const CALL_INTEGRATION_ENABLED = 'call-integration.enabled';
 
 /**
- * Flag indicating if chat should be enabled.
+ * Flag indicating if close captions should be enabled.
  * Default: enabled (true).
  */
 export const CLOSE_CAPTIONS_ENABLED = 'close-captions.enabled';
@@ -86,6 +86,12 @@ export const RECORDING_ENABLED = 'recording.enabled';
  * Default: enabled.
  */
 export const TILE_VIEW_ENABLED = 'tile-view.enabled';
+
+/**
+ * Flag indicating if the toolbox should be always be visible
+ * Default: disabled (false).
+ */
+export const TOOLBOX_ALWAYS_VISIBLE = 'toolbox.alwaysVisible';
 
 /**
  * Flag indicating if the welcome page should be enabled.

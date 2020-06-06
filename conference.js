@@ -1,20 +1,16 @@
 /* global $, APP, JitsiMeetJS, config, interfaceConfig */
 
-import { openConnection } from './connection';
+import EventEmitter from 'events';
+import Logger from 'jitsi-meet-logger';
 
+import * as JitsiMeetConferenceEvents from './ConferenceEvents';
+import { openConnection } from './connection';
 import { ENDPOINT_TEXT_MESSAGE_NAME } from './modules/API/constants';
 import AuthHandler from './modules/UI/authentication/AuthHandler';
-import Recorder from './modules/recorder/Recorder';
-
-import mediaDeviceHelper from './modules/devices/mediaDeviceHelper';
-
-import * as RemoteControlEvents
-    from './service/remotecontrol/RemoteControlEvents';
-import UIEvents from './service/UI/UIEvents';
 import UIUtil from './modules/UI/util/UIUtil';
+import mediaDeviceHelper from './modules/devices/mediaDeviceHelper';
+import Recorder from './modules/recorder/Recorder';
 import { createTaskQueue } from './modules/util/helpers';
-import * as JitsiMeetConferenceEvents from './ConferenceEvents';
-
 import {
     createDeviceChangedEvent,
     createStartSilentEvent,
@@ -27,16 +23,6 @@ import {
     redirectToStaticPage,
     reloadWithStoredParams
 } from './react/features/app';
-import {
-    initPrejoin,
-    isPrejoinPageEnabled,
-    isPrejoinPageVisible,
-    replacePrejoinAudioTrack,
-    replacePrejoinVideoTrack
-} from './react/features/prejoin';
-
-import EventEmitter from 'events';
-
 import {
     AVATAR_ID_COMMAND,
     AVATAR_URL_COMMAND,
@@ -86,7 +72,6 @@ import {
     setVideoAvailable,
     setVideoMuted
 } from './react/features/base/media';
-import { showNotification } from './react/features/notifications';
 import {
     dominantSpeakerChanged,
     getLocalParticipant,
@@ -116,7 +101,10 @@ import {
     trackAdded,
     trackRemoved
 } from './react/features/base/tracks';
-import { getJitsiMeetGlobalNS } from './react/features/base/util';
+import {
+    getBackendSafePath,
+    getJitsiMeetGlobalNS
+} from './react/features/base/util';
 import { showDesktopPicker } from './react/features/desktop-picker';
 import { appendSuffix } from './react/features/display-name';
 import { setE2EEKey } from './react/features/e2ee';
@@ -124,16 +112,27 @@ import {
     maybeOpenFeedbackDialog,
     submitFeedback
 } from './react/features/feedback';
+import { showNotification } from './react/features/notifications';
 import { mediaPermissionPromptVisibilityChanged } from './react/features/overlay';
 import { suspendDetected } from './react/features/power-monitor';
+import {
+    initPrejoin,
+    isPrejoinPageEnabled,
+    isPrejoinPageVisible,
+    replacePrejoinAudioTrack,
+    replacePrejoinVideoTrack
+} from './react/features/prejoin';
+import { createRnnoiseProcessorPromise } from './react/features/rnnoise';
+import { toggleScreenshotCaptureEffect } from './react/features/screenshot-capture';
 import { setSharedVideoStatus } from './react/features/shared-video';
 import { AudioMixerEffect } from './react/features/stream-effects/audio-mixer/AudioMixerEffect';
 import { createPresenterEffect } from './react/features/stream-effects/presenter';
 import { endpointMessageReceived } from './react/features/subtitles';
-import { createRnnoiseProcessorPromise } from './react/features/rnnoise';
-import { toggleScreenshotCaptureEffect } from './react/features/screenshot-capture';
+import UIEvents from './service/UI/UIEvents';
+import * as RemoteControlEvents
+    from './service/remotecontrol/RemoteControlEvents';
 
-const logger = require('jitsi-meet-logger').getLogger(__filename);
+const logger = Logger.getLogger(__filename);
 
 const eventEmitter = new EventEmitter();
 
@@ -1262,7 +1261,7 @@ export default {
             items[key] = param[1];
         }
 
-        if (typeof items.e2eekey !== undefined) {
+        if (typeof items.e2eekey !== 'undefined') {
             APP.store.dispatch(setE2EEKey(items.e2eekey));
 
             // Clean URL in browser history.
@@ -1368,7 +1367,13 @@ export default {
         const options = config;
         const { email, name: nick } = getLocalParticipant(APP.store.getState());
 
-        const { locationURL } = APP.store.getState()['features/base/connection'];
+        const state = APP.store.getState();
+        const { locationURL } = state['features/base/connection'];
+        const { tenant } = state['features/base/jwt'];
+
+        if (tenant) {
+            options.siteID = tenant;
+        }
 
         if (options.enableDisplayNameInStats && nick) {
             options.statisticsDisplayName = nick;
@@ -1380,7 +1385,7 @@ export default {
 
         options.applicationName = interfaceConfig.APP_NAME;
         options.getWiFiStatsMethod = this._getWiFiStatsMethod;
-        options.confID = `${locationURL.host}${locationURL.pathname}`;
+        options.confID = `${locationURL.host}${getBackendSafePath(locationURL.pathname)}`;
         options.createVADProcessor = createRnnoiseProcessorPromise;
 
         // Disable CallStats, if requessted.

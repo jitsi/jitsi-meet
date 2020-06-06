@@ -1,8 +1,8 @@
 // @flow
 
+import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../app';
 import { ReducerRegistry } from '../redux';
 
-import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../app';
 import { USER_INTERACTION_RECEIVED } from './actionTypes';
 
 ReducerRegistry.register('features/base/user-interaction', (state = {}, action) => {

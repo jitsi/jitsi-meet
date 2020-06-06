@@ -6,9 +6,9 @@ import type { Dispatch } from 'redux';
 import { translate } from '../../base/i18n';
 import { MeetingsList } from '../../base/react';
 import { connect } from '../../base/redux';
+import { isRecentListEnabled, toDisplayableList } from '../functions';
 
 import AbstractRecentList from './AbstractRecentList';
-import { isRecentListEnabled, toDisplayableList } from '../functions';
 
 /**
  * The type of the React {@code Component} props of {@link RecentList}

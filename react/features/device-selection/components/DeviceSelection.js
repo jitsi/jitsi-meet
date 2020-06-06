@@ -8,7 +8,6 @@ import AbstractDialogTab, {
 import { translate } from '../../base/i18n/functions';
 import JitsiMeetJS from '../../base/lib-jitsi-meet/_';
 import { createLocalTrack } from '../../base/lib-jitsi-meet/functions';
-
 import logger from '../logger';
 
 import AudioInputPreview from './AudioInputPreview';

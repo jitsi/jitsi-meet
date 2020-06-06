@@ -24,6 +24,7 @@ const DEFAULT_STATE = {
     avatarURL: undefined,
     cameraDeviceId: undefined,
     disableCallIntegration: undefined,
+    disableCrashReporting: undefined,
     disableP2P: undefined,
     displayName: undefined,
     email: undefined,
@@ -38,7 +39,8 @@ const DEFAULT_STATE = {
     userSelectedMicDeviceId: undefined,
     userSelectedAudioOutputDeviceLabel: undefined,
     userSelectedCameraDeviceLabel: undefined,
-    userSelectedMicDeviceLabel: undefined
+    userSelectedMicDeviceLabel: undefined,
+    userSelectedSkipPrejoin: undefined
 };
 
 const STORE_NAME = 'features/base/settings';

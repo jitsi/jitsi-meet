@@ -1,15 +1,16 @@
 /* global $, APP, config, interfaceConfig */
 
 /* eslint-disable no-unused-vars */
+import { AtlasKitThemeProvider } from '@atlaskit/theme';
+import Logger from 'jitsi-meet-logger';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { I18nextProvider } from 'react-i18next';
-import { AtlasKitThemeProvider } from '@atlaskit/theme';
 import { Provider } from 'react-redux';
 
-import { i18next } from '../../../react/features/base/i18n';
 import { AudioLevelIndicator } from '../../../react/features/audio-level-indicator';
 import { Avatar as AvatarDisplay } from '../../../react/features/base/avatar';
+import { i18next } from '../../../react/features/base/i18n';
 import {
     getParticipantCount,
     getPinnedParticipant,
@@ -30,7 +31,7 @@ import {
 } from '../../../react/features/video-layout';
 /* eslint-enable no-unused-vars */
 
-const logger = require('jitsi-meet-logger').getLogger(__filename);
+const logger = Logger.getLogger(__filename);
 
 /**
  * Display mode constant used when video is being displayed on the small video.

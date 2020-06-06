@@ -5,7 +5,6 @@ import React from 'react';
 import { translate } from '../../../base/i18n';
 import { IconKick } from '../../../base/icons';
 import { connect } from '../../../base/redux';
-
 import AbstractKickButton, {
     type Props
 } from '../AbstractKickButton';

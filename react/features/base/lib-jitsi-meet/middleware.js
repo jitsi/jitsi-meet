@@ -6,8 +6,8 @@ import { PARTICIPANT_LEFT } from '../participants';
 import { MiddlewareRegistry } from '../redux';
 
 import JitsiMeetJS from './_';
-import { disposeLib, initLib } from './actions';
 import { LIB_WILL_INIT } from './actionTypes';
+import { disposeLib, initLib } from './actions';
 
 declare var APP: Object;
 

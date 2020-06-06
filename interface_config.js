@@ -48,11 +48,11 @@ var interfaceConfig = {
      */
     TOOLBAR_BUTTONS: [
         'microphone', 'camera', 'closedcaptions', 'desktop', 'fullscreen',
-        'fodeviceselection', 'hangup', 'profile', 'info', 'chat', 'recording',
+        'fodeviceselection', 'hangup', 'profile', 'chat', 'recording',
         'livestreaming', 'etherpad', 'sharedvideo', 'settings', 'raisehand',
         'videoquality', 'filmstrip', 'invite', 'feedback', 'stats', 'shortcuts',
         'tileview', 'videobackgroundblur', 'download', 'help', 'mute-everyone',
-        'e2ee'
+        'e2ee', 'security'
     ],
 
     SETTINGS_SECTIONS: [ 'devices', 'language', 'moderator', 'profile', 'calendar' ],
@@ -229,6 +229,17 @@ var interfaceConfig = {
      * Specify URL for downloading ios mobile app.
      */
     // MOBILE_DOWNLOAD_LINK_IOS: 'https://itunes.apple.com/us/app/jitsi-meet/id1165103905',
+
+    /**
+     * Specify Firebase dynamic link properties for the mobile apps.
+     */
+    // MOBILE_DYNAMIC_LINK: {
+    //    APN: 'org.jitsi.meet',
+    //    APP_CODE: 'w2atb',
+    //    CUSTOM_DOMAIN: undefined,
+    //    IBI: 'com.atlassian.JitsiMeet.ios',
+    //    ISI: '1165103905'
+    // },
 
     /**
      * Specify mobile app scheme for opening the app from the mobile browser.

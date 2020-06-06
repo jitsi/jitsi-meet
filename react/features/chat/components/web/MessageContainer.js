@@ -3,7 +3,6 @@
 import React from 'react';
 
 import { MESSAGE_TYPE_REMOTE } from '../../constants';
-
 import AbstractMessageContainer, { type Props }
     from '../AbstractMessageContainer';
 
