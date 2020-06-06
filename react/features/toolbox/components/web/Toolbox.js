@@ -958,7 +958,7 @@ class Toolbox extends Component<Props, State> {
             t
         } = this.props;
 
-        const localParticipant = getParticipantById(this.props._localParticipantID);
+        const localParticipant = getParticipantById(APP.store.getState(), this.props._localParticipantID);
         const isModerator = localParticipant && localParticipant.role === PARTICIPANT_ROLE.MODERATOR;
 
         return [
