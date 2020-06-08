@@ -4,7 +4,7 @@ import { ReducerRegistry } from '../redux';
 
 // import { PersistenceRegistry } from '../storage';
 
-import { CURRENT_USER_UPDATED } from './actionTypes';
+import { SET_CURRENT_USER } from './actionTypes';
 
 /**
  * The default/initial redux state of the feature {@code base/settings}.
@@ -21,7 +21,7 @@ const STORE_NAME = 'features/base/auth';
 
 ReducerRegistry.register(STORE_NAME, (state = DEFAULT_STATE, action) => {
     switch (action.type) {
-    case CURRENT_USER_UPDATED:
+    case SET_CURRENT_USER:
         return {
             ...state,
             user: action.user

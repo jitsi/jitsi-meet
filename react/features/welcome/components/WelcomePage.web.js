@@ -21,7 +21,7 @@ import { NotificationsContainer } from '../../notifications/components';
 
 import { AbstractWelcomePage, _mapStateToProps } from './AbstractWelcomePage';
 import Tabs from './Tabs';
-import { updateCurrentUser } from '../../base/auth';
+import { setCurrentUser } from '../../base/auth';
 
 /**
  * The pattern used to validate room name.
@@ -151,8 +151,6 @@ class WelcomePage extends AbstractWelcomePage {
                 this._additionalToolbarContentTemplate.content.cloneNode(true)
             );
         }
-
-        this._getCurrentUser();
     }
 
     /**
@@ -181,7 +179,7 @@ class WelcomePage extends AbstractWelcomePage {
         return axios.get('/auth/api/logout').then(() => {
             dispatch(updateSettings({ displayName: '' }));
             dispatch(updateSettings({ email: '' }));
-            dispatch(updateCurrentUser());
+            dispatch(setCurrentUser());
             this.setState({ submitting: false });
         });
     }
@@ -492,24 +490,6 @@ class WelcomePage extends AbstractWelcomePage {
         const { innerWidth } = window;
 
         return innerWidth <= WINDOW_WIDTH_THRESHOLD;
-    }
-
-    /**
-     * Retrieve current user info.
-     *
-     * @private
-     * @returns {void}
-     */
-    _getCurrentUser() {
-        const { dispatch } = this.props;
-
-        axios.get('/auth/api/current-user', { withCredentials: true }).then(resp => {
-            const { data: user } = resp;
-
-            dispatch(updateSettings({ displayName: user.name }));
-            dispatch(updateSettings({ email: user.email }));
-            dispatch(updateCurrentUser(user));
-        });
     }
 }
 

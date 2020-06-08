@@ -22,6 +22,7 @@ import {
 } from '../base/util';
 import { showNotification } from '../notifications';
 import { setFatalError } from '../overlay';
+import { loadCurrentUser } from '../base/auth';
 
 import {
     getDefaultURL,
@@ -123,6 +124,9 @@ export function appNavigate(uri: ?string) {
 
             return;
         }
+
+        // Load current logged in user
+        dispatch(loadCurrentUser());
 
         dispatch(setLocationURL(locationURL));
         dispatch(setConfig(config));

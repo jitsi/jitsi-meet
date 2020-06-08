@@ -2,10 +2,11 @@
 
 import { openConnection } from '../../../connection';
 import { setJWT } from '../../../react/features/base/jwt';
-import {
-    JitsiConnectionErrors
-} from '../../../react/features/base/lib-jitsi-meet';
+import { toJid } from '../../../react/features/base/connection';
+
+// import { JitsiConnectionErrors } from '../../../react/features/base/lib-jitsi-meet';
 import UIUtil from '../util/UIUtil';
+import { getCurrentUser } from '../../../react/features/base/auth/functions';
 
 import LoginDialog from './LoginDialog';
 
@@ -265,21 +266,34 @@ function closeAuth() {
  */
 function showXmppPasswordPrompt(roomName, connect) {
     return new Promise((resolve, reject) => {
-        const authDialog = LoginDialog.showAuthDialog(
-            (id, password) => {
-                connect(id, password, roomName).then(connection => {
-                    authDialog.close();
-                    resolve(connection);
-                }, err => {
-                    if (err === JitsiConnectionErrors.PASSWORD_REQUIRED) {
-                        authDialog.displayError(err);
-                    } else {
-                        authDialog.close();
-                        reject(err);
-                    }
-                });
-            }
-        );
+        const user = getCurrentUser(APP.store.getState());
+
+        if (user) {
+            connect(toJid(user.username, config.hosts), user.id, roomName)
+            .then(connection => {
+                resolve(connection);
+            }, err => {
+                reject(err);
+            });
+        } else {
+            window.location.href = `/auth/page/login?next=${encodeURIComponent(`/${roomName}`)}`;
+        }
+
+        // const authDialog = LoginDialog.showAuthDialog(
+        //     (id, password) => {
+        //         connect(id, password, roomName).then(connection => {
+        //             authDialog.close();
+        //             resolve(connection);
+        //         }, err => {
+        //             if (err === JitsiConnectionErrors.PASSWORD_REQUIRED) {
+        //                 authDialog.displayError(err);
+        //             } else {
+        //                 authDialog.close();
+        //                 reject(err);
+        //             }
+        //         });
+        //     }
+        // );
     });
 }
 

@@ -21,7 +21,7 @@ import { hideDialog } from '../../base/dialog';
 import { translate } from '../../base/i18n';
 import { connect } from '../../base/redux';
 import { updateSettings } from '../../base/settings';
-import { updateCurrentUser } from '../../base/auth';
+import { setCurrentUser } from '../../base/auth';
 
 declare var interfaceConfig: Object;
 
@@ -120,7 +120,7 @@ class LoginDialog extends Component<Props, State> {
 
                 dispatch(updateSettings({ displayName: user.name }));
                 dispatch(updateSettings({ email: user.email }));
-                dispatch(updateCurrentUser(user));
+                dispatch(setCurrentUser(user));
                 this._onCancel();
 
                 onSuccess && onSuccess();
