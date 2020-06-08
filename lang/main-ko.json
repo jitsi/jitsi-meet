@@ -627,6 +627,8 @@
         "moreActions": "추가 액션",
         "mute": "음소거 토글",
         "muteEveryone": "전원 음소거",
+        "noisyAudioInputTitle": "마이크 잡음이 있습니다!",
+        "noisyAudioInputDesc": "마이크 잡음이 있습니다. 장치를 음소거하거나 변경하세요.",
         "openChat": "대화 열기",
         "pip": "PIP 모드 시작",
         "profile": "프로필 편집",

@@ -9,7 +9,6 @@ import DropdownMenu, {
 import React from 'react';
 
 import { translate } from '../../base/i18n';
-import { updateSettings } from '../../base/settings';
 import { Watermarks } from '../../base/react';
 import { connect } from '../../base/redux';
 import { isMobileBrowser } from '../../base/environment/utils';
@@ -177,8 +176,6 @@ class WelcomePage extends AbstractWelcomePage {
         this.setState({ submitting: true });
 
         return axios.get('/auth/api/logout').then(() => {
-            dispatch(updateSettings({ displayName: '' }));
-            dispatch(updateSettings({ email: '' }));
             dispatch(setCurrentUser());
             this.setState({ submitting: false });
         });

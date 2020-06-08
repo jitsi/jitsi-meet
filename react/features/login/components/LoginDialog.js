@@ -20,7 +20,6 @@ import type { Dispatch } from 'redux';
 import { hideDialog } from '../../base/dialog';
 import { translate } from '../../base/i18n';
 import { connect } from '../../base/redux';
-import { updateSettings } from '../../base/settings';
 import { setCurrentUser } from '../../base/auth';
 
 declare var interfaceConfig: Object;
@@ -116,11 +115,7 @@ class LoginDialog extends Component<Props, State> {
 
         return axios.post('/auth/api/login', data)
             .then(resp => {
-                const { data: user } = resp;
-
-                dispatch(updateSettings({ displayName: user.name }));
-                dispatch(updateSettings({ email: user.email }));
-                dispatch(setCurrentUser(user));
+                dispatch(setCurrentUser(resp.data));
                 this._onCancel();
 
                 onSuccess && onSuccess();
