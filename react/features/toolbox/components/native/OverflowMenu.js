@@ -2,28 +2,39 @@
 
 import React, { PureComponent } from 'react';
 import { TouchableOpacity, View } from 'react-native';
-import Collapsible from 'react-native-collapsible';
+
+// import Collapsible from 'react-native-collapsible';
 
 import { ColorSchemeRegistry } from '../../../base/color-scheme';
 import { BottomSheet, hideDialog, isDialogOpen } from '../../../base/dialog';
 import { IconDragHandle } from '../../../base/icons';
 import { connect } from '../../../base/redux';
 import { StyleType } from '../../../base/styles';
-import { SharedDocumentButton } from '../../../etherpad';
-import { InviteButton } from '../../../invite';
-import { AudioRouteButton } from '../../../mobile/audio-mode';
-import { LiveStreamButton, RecordButton } from '../../../recording';
-import { RoomLockButton } from '../../../room-lock';
-import { ClosedCaptionButton } from '../../../subtitles';
-import { TileViewButton } from '../../../video-layout';
 
-import HelpButton from '../HelpButton';
+// import { SharedDocumentButton } from '../../../etherpad';
+// import { InviteButton } from '../../../invite';
+
+import { AudioRouteButton } from '../../../mobile/audio-mode';
+
+// import { LiveStreamButton, RecordButton } from '../../../recording';
+// import { RoomLockButton } from '../../../room-lock';
+// import { ClosedCaptionButton } from '../../../subtitles';
+// import { TileViewButton } from '../../../video-layout';
+
+// import HelpButton from '../HelpButton';
 
 import AudioOnlyButton from './AudioOnlyButton';
-import MoreOptionsButton from './MoreOptionsButton';
+
+// import MoreOptionsButton from './MoreOptionsButton';
+
+// import MuteEveryoneButton from "./MuteEveryoneButton";
+
+import MuteGuestsButton from './MuteGuestsButton';
+
 import RaiseHandButton from './RaiseHandButton';
 import ToggleCameraButton from './ToggleCameraButton';
 import styles from './styles';
+import UnMuteGuestsButton from "./UnMuteGuestsButton";
 
 /**
  * The type of the React {@code Component} props of {@link OverflowMenu}.
@@ -106,7 +117,8 @@ class OverflowMenu extends PureComponent<Props, State> {
      */
     render() {
         const { _bottomSheetStyles } = this.props;
-        const { showMore } = this.state;
+
+        // const { showMore } = this.state;
 
         const buttonProps = {
             afterClick: this._onCancel,
@@ -114,24 +126,31 @@ class OverflowMenu extends PureComponent<Props, State> {
             styles: _bottomSheetStyles.buttons
         };
 
-        const moreOptionsButtonProps = {
-            ...buttonProps,
-            afterClick: this._onToggleMenu,
-            visible: !showMore
-        };
+        // const moreOptionsButtonProps = {
+        //     ...buttonProps,
+        //     afterClick: this._onToggleMenu,
+        //     visible: !showMore
+        // };
 
         return (
             <BottomSheet
                 onCancel = { this._onCancel }
                 onSwipe = { this._onSwipe }
                 renderHeader = { this._renderMenuExpandToggle }>
+                <ToggleCameraButton { ...buttonProps } />
                 <AudioRouteButton { ...buttonProps } />
-                <InviteButton { ...buttonProps } />
+
                 <AudioOnlyButton { ...buttonProps } />
                 <RaiseHandButton { ...buttonProps } />
+                <MuteGuestsButton { ...buttonProps } />
+                <UnMuteGuestsButton { ...buttonProps } />
+
+                { /* <MuteEveryoneButton { ...buttonProps } /> */ }
+
+                { /*
                 <MoreOptionsButton { ...moreOptionsButtonProps } />
+                <InviteButton { ...buttonProps } />
                 <Collapsible collapsed = { !showMore }>
-                    <ToggleCameraButton { ...buttonProps } />
                     <TileViewButton { ...buttonProps } />
                     <RecordButton { ...buttonProps } />
                     <LiveStreamButton { ...buttonProps } />
@@ -140,6 +159,7 @@ class OverflowMenu extends PureComponent<Props, State> {
                     <SharedDocumentButton { ...buttonProps } />
                     <HelpButton { ...buttonProps } />
                 </Collapsible>
+                */ }
             </BottomSheet>
         );
     }

@@ -1,7 +1,7 @@
 // @flow
 
 import React from 'react';
-import { NativeModules, SafeAreaView, StatusBar } from 'react-native';
+import { NativeModules, SafeAreaView, StatusBar, View, Text } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 
 import { appNavigate } from '../../../app';
@@ -28,13 +28,21 @@ import { BackButtonRegistry } from '../../../mobile/back-button';
 import { AddPeopleDialog, CalleeInfoContainer } from '../../../invite';
 import { Captions } from '../../../subtitles';
 import { isToolboxVisible, setToolboxVisible, Toolbox } from '../../../toolbox';
+import MuteAllButton from './MuteAllButton';
+
+import { getParticipantCount } from '../../../base/participants';
+import { Icon, IconUserGroups } from '../../../base/icons';
+
+import { getLocalParticipant, PARTICIPANT_ROLE } from '../../../base/participants';
 
 import {
     AbstractConference,
     abstractMapStateToProps
 } from '../AbstractConference';
 import Labels from './Labels';
-import LonelyMeetingExperience from './LonelyMeetingExperience';
+
+// import LonelyMeetingExperience from './LonelyMeetingExperience';
+
 import NavigationBar from './NavigationBar';
 import styles, { NAVBAR_GRADIENT_COLORS } from './styles';
 
@@ -110,13 +118,27 @@ type Props = AbstractProps & {
     /**
      * The redux {@code dispatch} function.
      */
-    dispatch: Function
+    dispatch: Function,
+
+    /**
+     * Number of the conference participants.
+     */
+    count: string,
+
+    /*
+     ** Whether the local participant is a moderator or not.
+     */
+    isModerator: Boolean,
+};
+
+type State = {
+    muteTooltipVisible: boolean
 };
 
 /**
  * The conference page of the mobile (i.e. React Native) application.
  */
-class Conference extends AbstractConference<Props, *> {
+class Conference extends AbstractConference<Props, State, *> {
     /**
      * Initializes a new Conference instance.
      *
@@ -130,7 +152,13 @@ class Conference extends AbstractConference<Props, *> {
         this._onClick = this._onClick.bind(this);
         this._onHardwareBackPress = this._onHardwareBackPress.bind(this);
         this._setToolboxVisible = this._setToolboxVisible.bind(this);
+        this.onMuteAllClick = this.onMuteAllClick.bind(this);
     }
+
+
+    state = {
+        muteTooltipVisible: true
+    };
 
     /**
      * Implements {@link Component#componentDidMount()}. Invoked immediately
@@ -141,6 +169,12 @@ class Conference extends AbstractConference<Props, *> {
      */
     componentDidMount() {
         BackButtonRegistry.addListener(this._onHardwareBackPress);
+
+        setTimeout(() => {
+            this.setState({
+                muteTooltipVisible: false
+            });
+        }, 10000);
     }
 
     /**
@@ -263,6 +297,55 @@ class Conference extends AbstractConference<Props, *> {
             return this._renderContentForReducedUi();
         }
 
+        const topActionsBtnStyles = {
+            style: styles.topActionsBtn,
+            iconStyle: styles.topActionsBtnIcon
+        };
+
+        const muteTooltipWrapper = {
+            position: 'relative'
+        };
+
+        const muteTooltip = {
+            position: 'absolute',
+            top: 0,
+            right: 60,
+            backgroundColor: '#ffffff',
+            borderRadius: 10,
+            width: 150,
+            padding: 15
+        };
+
+        const muteTooltipTitle = {
+            fontWeight: 'bold',
+            textAlign: 'center',
+            color: '#000000',
+            marginBottom: 5,
+            fontSize: 16
+        };
+
+        const muteTooltipText = {
+            textAlign: 'center',
+            color: '#000000',
+            lineHeight: 20
+        };
+
+        const muteTooltipArrow = {
+            position: 'absolute',
+            right: -6,
+            top: 22,
+            width: 0,
+            height: 0,
+            backgroundColor: 'transparent',
+            borderStyle: 'solid',
+            borderLeftWidth: 6,
+            borderTopWidth: 5,
+            borderBottomWidth: 5,
+            borderLeftColor: '#ffffff',
+            borderTopColor: 'transparent',
+            borderBottomColor: 'transparent'
+        };
+
         return (
             <>
                 {/*
@@ -313,9 +396,11 @@ class Conference extends AbstractConference<Props, *> {
 
                     <Captions onPress = { this._onClick } />
 
-                    { _shouldDisplayTileView || <DisplayNameLabel participantId = { _largeVideoParticipantId } /> }
+                    { _shouldDisplayTileView || <DisplayNameLabel
+                        largeVideo = { true }
+                        participantId = { _largeVideoParticipantId } /> }
 
-                    <LonelyMeetingExperience />
+                    { /* <LonelyMeetingExperience /> */ }
 
                     {/*
                       * The Toolbox is in a stacking layer below the Filmstrip.
@@ -339,6 +424,37 @@ class Conference extends AbstractConference<Props, *> {
                     style = { styles.navBarSafeView }>
                     <NavigationBar />
                     { this._renderNotificationsContainer() }
+                </SafeAreaView>
+
+                {
+                    (this.props.isModerator && this.props._toolboxVisible)
+                    && <SafeAreaView style = { styles.topActions }>
+                        <View style = { styles.topActionsInner }>
+                            <View style = { muteTooltipWrapper }>
+                                {
+                                    this.state.muteTooltipVisible && <View style = { muteTooltip }>
+                                        <Text style = { muteTooltipTitle }>Tap this button to mute all.</Text>
+                                        <Text style = { muteTooltipText }>Try it now!</Text>
+                                        <View style = { muteTooltipArrow } />
+                                    </View>
+                                }
+
+                                <MuteAllButton
+                                    afterClick = { this.onMuteAllClick }
+                                    styles = { topActionsBtnStyles } />
+                            </View>
+                        </View>
+
+                    </SafeAreaView>
+                }
+
+                <SafeAreaView style = { styles.participantsCountSafeView }>
+                    <View style = { styles.participantsCount }>
+                        <Text style = { styles.participantsCountText }>{this.props.count}</Text>
+                        <Icon
+                            src = { IconUserGroups }
+                            style = { styles.participantsCountIcon } />
+                    </View>
                 </SafeAreaView>
 
                 <TestConnectionInfo />
@@ -417,6 +533,14 @@ class Conference extends AbstractConference<Props, *> {
     _setToolboxVisible(visible) {
         this.props.dispatch(setToolboxVisible(visible));
     }
+
+    // eslint-disable-next-line require-jsdoc
+    onMuteAllClick: () => void;
+
+    // eslint-disable-next-line require-jsdoc
+    onMuteAllClick() {
+        this.setState({ muteTooltipVisible: false });
+    }
 }
 
 /**
@@ -446,6 +570,9 @@ function _mapStateToProps(state) {
     //   are leaving one.
     const connecting_
         = connecting || (connection && (joining || (!conference && !leaving)));
+
+    const localParticipant = getLocalParticipant(state);
+    const isModerator = localParticipant.role === PARTICIPANT_ROLE.MODERATOR;
 
     return {
         ...abstractMapStateToProps(state),
@@ -502,7 +629,9 @@ function _mapStateToProps(state) {
          * @private
          * @type {boolean}
          */
-        _toolboxVisible: isToolboxVisible(state)
+        _toolboxVisible: isToolboxVisible(state),
+        count: getParticipantCount(state),
+        isModerator
     };
 }
 

@@ -11,6 +11,7 @@ import {
 import { connect } from '../../../base/redux';
 
 import styles from './styles';
+import { isToolboxVisible } from '../../../toolbox';
 
 type Props = {
 
@@ -27,30 +28,46 @@ type Props = {
     /**
      * The ID of the participant to render the label for.
      */
-    participantId: string
+    participantId: string,
+
+    /**
+     * Type of layout
+     */
+    largeVideo: boolean,
+
+    /**
+     * The indicator which determines whether the toolbox is visible.
+     */
+    _visible: boolean
 }
 
 /**
  * Renders a label with the display name of the on-stage participant.
  */
 class DisplayNameLabel extends Component<Props> {
+    static defaultProps = {
+        largeVideo: false
+    };
+
     /**
      * Implements {@code Component#render}.
      *
      * @inheritdoc
      */
     render() {
-        if (!this.props._render) {
-            return null;
-        }
+        const { _visible = true } = this.props;
 
-        return (
-            <View style = { styles.displayNameBackdrop }>
-                <Text style = { styles.displayNameText }>
+        return _visible ? (
+            <View
+                style = { [ styles.displayNameBackdrop,
+                    this.props.largeVideo ? styles.displayNameBackdropLargeVideo : {} ] }>
+                <Text
+                    numberOfLines = { 1 }
+                    style = { styles.displayNameText }>
                     { this.props._participantName }
                 </Text>
             </View>
-        );
+        ) : null;
     }
 }
 
@@ -76,7 +93,8 @@ function _mapStateToProps(state: Object, ownProps: Props) {
     return {
         _participantName:
             getParticipantDisplayName(state, participantId),
-        _render
+        _render,
+        _visible: isToolboxVisible(state)
     };
 }
 

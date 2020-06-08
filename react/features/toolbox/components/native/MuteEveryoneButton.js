@@ -1,15 +1,11 @@
 // @flow
 
 import { translate } from '../../../base/i18n';
-import { IconMuteEveryone } from '../../../base/icons';
-import {
-    getAllModeratorParticipantsId,
-    getLocalParticipant,
-    PARTICIPANT_ROLE
-} from '../../../base/participants';
+import { IconMicDisabled } from '../../../base/icons';
+import { getLocalParticipant, PARTICIPANT_ROLE } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox';
-import { muteAllParticipants } from "../../../remote-video-menu/actions";
+import { muteAllParticipants } from '../../../remote-video-menu/actions';
 
 type Props = AbstractButtonProps & {
 
@@ -18,20 +14,15 @@ type Props = AbstractButtonProps & {
      */
     dispatch: Function,
 
-    /**
-     * Whether the local participant is a moderator or not.
+    /*
+     ** Whether the local participant is a moderator or not.
      */
     isModerator: Boolean,
 
     /**
      * The ID of the local participant.
      */
-    localParticipantId: string,
-
-    /**
-     * Moderators id
-     */
-    moderators: Array<string>
+    localParticipantId: string
 };
 
 /**
@@ -39,10 +30,10 @@ type Props = AbstractButtonProps & {
  * every participant (except the local one)
  */
 class MuteEveryoneButton extends AbstractButton<Props, *> {
-    accessibilityLabel = 'toolbar.accessibilityLabel.muteAll';
-    icon = IconMuteEveryone;
-    label = 'toolbar.muteAll';
-    tooltip = 'toolbar.muteAll';
+    accessibilityLabel = 'toolbar.accessibilityLabel.muteEveryone';
+    icon = IconMicDisabled;
+    label = 'toolbar.muteEveryone';
+    tooltip = 'toolbar.muteEveryone';
 
     /**
      * Handles clicking / pressing the button, and opens a confirmation dialog.
@@ -51,9 +42,9 @@ class MuteEveryoneButton extends AbstractButton<Props, *> {
      * @returns {void}
      */
     _handleClick() {
-        const { dispatch, moderators } = this.props;
+        const { dispatch, localParticipantId } = this.props;
 
-        dispatch(muteAllParticipants(moderators));
+        dispatch(muteAllParticipants([ localParticipantId ]));
     }
 }
 
@@ -61,21 +52,16 @@ class MuteEveryoneButton extends AbstractButton<Props, *> {
  * Maps part of the redux state to the component's props.
  *
  * @param {Object} state - The redux store/state.
- * @param {Props} ownProps - The component's own props.
  * @returns {Object}
  */
-function _mapStateToProps(state: Object, ownProps: Props) {
+function _mapStateToProps(state: Object) {
     const localParticipant = getLocalParticipant(state);
     const isModerator = localParticipant.role === PARTICIPANT_ROLE.MODERATOR;
-    const { visible } = ownProps;
-    const { disableRemoteMute } = state['features/base/config'];
-    const moderators = getAllModeratorParticipantsId(state);
 
     return {
         isModerator,
         localParticipantId: localParticipant.id,
-        visible: visible && isModerator && !disableRemoteMute,
-        moderators
+        visible: isModerator
     };
 }
 

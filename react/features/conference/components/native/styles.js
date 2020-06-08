@@ -170,9 +170,64 @@ export default {
         top: BoxModel.margin * 3
     },
 
+    participantsCountSafeView: {
+        position: 'absolute',
+        right: 75,
+        top: 0
+    },
+
+    participantsCount: {
+        marginTop: 14,
+        marginLeft: 0,
+        flexDirection: 'row',
+        backgroundColor: '#ffffff',
+        paddingVertical: 2,
+        paddingHorizontal: 4,
+        borderRadius: 3,
+        alignItems: 'center'
+    },
+
+    participantsCountText: {
+        color: '#000000',
+        fontSize: 12,
+        fontWeight: 'bold',
+        marginRight: 2
+    },
+
+    participantsCountIcon: {
+        fontSize: 12
+    },
+
     insecureRoomNameLabel: {
         backgroundColor: INSECURE_ROOM_NAME_LABEL_COLOR
+    },
+
+    topActions: {
+        position: 'absolute',
+        right: 10,
+        top: 0
+    },
+
+    topActionsInner: {
+        marginTop: 50
+    },
+
+    topActionsBtn: {
+        width: 50,
+        height: 50,
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        borderWidth: 0,
+        flexDirection: 'row',
+        justifyContent: 'center',
+        borderRadius: 25,
+        marginBottom: 15
+    },
+
+    topActionsBtnIcon: {
+        alignSelf: 'center',
+        fontSize: 24
     }
+
 };
 
 ColorSchemeRegistry.register('Conference', {

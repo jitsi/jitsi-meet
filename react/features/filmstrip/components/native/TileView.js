@@ -19,6 +19,9 @@ import {
     makeAspectRatioAware
 } from '../../../base/responsive-ui';
 
+import { getTrackByMediaTypeAndParticipant } from '../../../base/tracks';
+import { MEDIA_TYPE } from '../../../base/media';
+
 import Thumbnail from './Thumbnail';
 import styles from './styles';
 
@@ -40,7 +43,12 @@ type Props = {
     /**
      * Callback to invoke when tile view is tapped.
      */
-    onClick: Function
+    onClick: Function,
+
+    /**
+     * The tracks in the conference.
+     */
+    _tracks: Array<Object>
 };
 
 /**
@@ -190,6 +198,15 @@ class TileView extends Component<Props, State> {
         let localParticipant;
 
         for (const participant of this.props._participants) {
+
+            const videoTrack = getTrackByMediaTypeAndParticipant(this.props._tracks, MEDIA_TYPE.VIDEO, participant.id);
+
+            if (videoTrack) {
+                participant.videoMuted = videoTrack.muted;
+            } else {
+                participant.videoMuted = true;
+            }
+
             if (participant.local) {
                 localParticipant = participant;
             } else {
@@ -197,7 +214,9 @@ class TileView extends Component<Props, State> {
             }
         }
 
-        localParticipant && participants.push(localParticipant);
+        participants.sort((a, b) => a.videoMuted - b.videoMuted);
+
+        localParticipant && participants.unshift(localParticipant);
 
         return participants;
     }
@@ -332,7 +351,8 @@ class TileView extends Component<Props, State> {
  */
 function _mapStateToProps(state) {
     return {
-        _participants: state['features/base/participants']
+        _participants: state['features/base/participants'],
+        _tracks: state['features/base/tracks']
     };
 }
 

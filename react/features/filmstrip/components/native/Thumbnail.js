@@ -126,7 +126,8 @@ function Thumbnail(props: Props) {
         _videoTrack: videoTrack,
         disableTint,
         participant,
-        renderDisplayName,
+
+        // renderDisplayName,
         tileView
     } = props;
 
@@ -157,7 +158,9 @@ function Thumbnail(props: Props) {
                 tintStyle = { _styles.activeThumbnailTint }
                 zOrder = { 1 } />
 
-            { renderDisplayName && <DisplayNameLabel participantId = { participantId } /> }
+            { /* { renderDisplayName && <DisplayNameLabel participantId = { participantId } /> } */ }
+
+            <DisplayNameLabel participantId = { participantId } />
 
             { renderModeratorIndicator
                 && <View style = { styles.moderatorIndicatorContainer }>

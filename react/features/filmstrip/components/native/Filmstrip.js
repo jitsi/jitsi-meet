@@ -16,6 +16,9 @@ import LocalThumbnail from './LocalThumbnail';
 import styles from './styles';
 import Thumbnail from './Thumbnail';
 
+import { getTrackByMediaTypeAndParticipant } from '../../../base/tracks';
+import { MEDIA_TYPE } from '../../../base/media';
+
 /**
  * Filmstrip component's property types.
  */
@@ -40,7 +43,12 @@ type Props = {
      *
      * @private
      */
-    _visible: boolean
+    _visible: boolean,
+
+    /**
+     * The tracks in the conference.
+     */
+    _tracks: Array<Object>
 };
 
 /**
@@ -165,6 +173,19 @@ class Filmstrip extends Component<Props> {
             ...participants
         ];
 
+        for (const participant of sortedParticipants) {
+
+            const videoTrack = getTrackByMediaTypeAndParticipant(this.props._tracks, MEDIA_TYPE.VIDEO, participant.id);
+
+            if (videoTrack) {
+                participant.videoMuted = videoTrack.muted;
+            } else {
+                participant.videoMuted = true;
+            }
+        }
+
+        sortedParticipants.sort((a, b) => a.videoMuted - b.videoMuted);
+
         if (isNarrowAspectRatio_) {
             // When the narrow aspect ratio is used, we want to have the remote
             // participants from right to left with the newest added/joined to
@@ -215,7 +236,9 @@ function _mapStateToProps(state) {
          * @private
          * @type {boolean}
          */
-        _visible: isFilmstripVisible(state)
+        _visible: isFilmstripVisible(state),
+
+        _tracks: state['features/base/tracks']
     };
 }
 

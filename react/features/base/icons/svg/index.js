@@ -84,6 +84,7 @@ export { default as IconVideoQualityHD } from './HD.svg';
 export { default as IconVideoQualityLD } from './LD.svg';
 export { default as IconVideoQualitySD } from './SD.svg';
 export { default as IconVolume } from './volume.svg';
+export { default as IconUserGroups } from './user-groups.svg';
 export { default as IconVolumeEmpty } from './volume-empty.svg';
 export { default as IconVolumeOff } from './volume-off.svg';
 export { default as IconWarning } from './warning.svg';

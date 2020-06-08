@@ -9,14 +9,15 @@ import { BottomSheet, isDialogOpen } from '../../../base/dialog';
 import { getParticipantDisplayName } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import { StyleType } from '../../../base/styles';
-import { PrivateMessageButton } from '../../../chat';
+
+// import { PrivateMessageButton } from '../../../chat';
 
 import { hideRemoteVideoMenu } from '../../actions';
 
 import KickButton from './KickButton';
-import MuteButton from './MuteButton';
 import PinButton from './PinButton';
 import styles from './styles';
+import ToggleMuteButton from "./ToggleMuteButton";
 
 /**
  * Size of the rendered avatar in the menu.
@@ -96,7 +97,7 @@ class RemoteVideoMenu extends Component<Props> {
         const buttons = [];
 
         if (!_disableRemoteMute) {
-            buttons.push(<MuteButton { ...buttonProps } />);
+            buttons.push(<ToggleMuteButton { ...buttonProps } />);
         }
 
         if (!_disableKick) {
@@ -104,7 +105,8 @@ class RemoteVideoMenu extends Component<Props> {
         }
 
         buttons.push(<PinButton { ...buttonProps } />);
-        buttons.push(<PrivateMessageButton { ...buttonProps } />);
+
+        { /* buttons.push(<PrivateMessageButton { ...buttonProps } />); */ }
 
         return (
             <BottomSheet onCancel = { this._onCancel }>
