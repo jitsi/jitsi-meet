@@ -46,6 +46,9 @@ if [ ! -x "$(command -v certbot)" ] ; then
                 apt-get update
                 apt-get -y install certbot
         fi
+    else
+        echo "$DISTRO $DISTRO_VERSION is not supported"
+        echo "Only Debian 9,10 and Ubuntu 18.04,19.10,20.04 are supported"
     fi
 fi
 
