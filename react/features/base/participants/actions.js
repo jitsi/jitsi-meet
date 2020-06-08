@@ -425,7 +425,7 @@ export function participantMutedUs(participant) {
 }
 
 /**
- * Action to signal that a participant has un muted us.
+ * Action to signal that a participant has unmuted us.
  *
  * @param {JitsiParticipant} participant - Information about participant.
  * @returns {Promise}
