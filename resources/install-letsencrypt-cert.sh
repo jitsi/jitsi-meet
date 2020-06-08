@@ -23,8 +23,6 @@ echo "by providing an email address for important account notifications"
 echo -n "Enter your email and press [ENTER]: "
 read EMAIL
 
-cd /usr/local/sbin
-
 if [ ! -x "$(command -v certbot)" ] ; then
     DISTRO=$(lsb_release -is)
     DISTRO_VERSION=$(lsb_release -rs)
