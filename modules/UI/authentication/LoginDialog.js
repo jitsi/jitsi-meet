@@ -229,7 +229,7 @@ export default {
             { room }
         );
         const buttonTxt = APP.translation.generateTranslationHTML(
-            'dialog.IamHost'
+            'dialog.login'
         );
         const buttons = [ {
             title: buttonTxt,
