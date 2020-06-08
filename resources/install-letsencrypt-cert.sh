@@ -47,6 +47,7 @@ if [ ! -x "$(command -v certbot)" ] ; then
     else
         echo "$DISTRO $DISTRO_VERSION is not supported"
         echo "Only Debian 9,10 and Ubuntu 18.04,19.10,20.04 are supported"
+        exit 1
     fi
 fi
 
