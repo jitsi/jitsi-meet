@@ -28,12 +28,11 @@ import { BackButtonRegistry } from '../../../mobile/back-button';
 import { AddPeopleDialog, CalleeInfoContainer } from '../../../invite';
 import { Captions } from '../../../subtitles';
 import { isToolboxVisible, setToolboxVisible, Toolbox } from '../../../toolbox';
-import MuteAllButton from './MuteAllButton';
 
 import { getParticipantCount } from '../../../base/participants';
 import { Icon, IconUserGroups } from '../../../base/icons';
 
-import { getLocalParticipant, PARTICIPANT_ROLE } from '../../../base/participants';
+import { getLocalParticipant } from '../../../base/participants';
 
 import {
     AbstractConference,
@@ -123,22 +122,13 @@ type Props = AbstractProps & {
     /**
      * Number of the conference participants.
      */
-    count: string,
-
-    /*
-     ** Whether the local participant is a moderator or not.
-     */
-    isModerator: Boolean,
-};
-
-type State = {
-    muteTooltipVisible: boolean
+    count: string
 };
 
 /**
  * The conference page of the mobile (i.e. React Native) application.
  */
-class Conference extends AbstractConference<Props, State, *> {
+class Conference extends AbstractConference<Props, *> {
     /**
      * Initializes a new Conference instance.
      *
@@ -152,13 +142,7 @@ class Conference extends AbstractConference<Props, State, *> {
         this._onClick = this._onClick.bind(this);
         this._onHardwareBackPress = this._onHardwareBackPress.bind(this);
         this._setToolboxVisible = this._setToolboxVisible.bind(this);
-        this.onMuteAllClick = this.onMuteAllClick.bind(this);
     }
-
-
-    state = {
-        muteTooltipVisible: true
-    };
 
     /**
      * Implements {@link Component#componentDidMount()}. Invoked immediately
@@ -169,12 +153,6 @@ class Conference extends AbstractConference<Props, State, *> {
      */
     componentDidMount() {
         BackButtonRegistry.addListener(this._onHardwareBackPress);
-
-        setTimeout(() => {
-            this.setState({
-                muteTooltipVisible: false
-            });
-        }, 10000);
     }
 
     /**
@@ -297,55 +275,6 @@ class Conference extends AbstractConference<Props, State, *> {
             return this._renderContentForReducedUi();
         }
 
-        const topActionsBtnStyles = {
-            style: styles.topActionsBtn,
-            iconStyle: styles.topActionsBtnIcon
-        };
-
-        const muteTooltipWrapper = {
-            position: 'relative'
-        };
-
-        const muteTooltip = {
-            position: 'absolute',
-            top: 0,
-            right: 60,
-            backgroundColor: '#ffffff',
-            borderRadius: 10,
-            width: 150,
-            padding: 15
-        };
-
-        const muteTooltipTitle = {
-            fontWeight: 'bold',
-            textAlign: 'center',
-            color: '#000000',
-            marginBottom: 5,
-            fontSize: 16
-        };
-
-        const muteTooltipText = {
-            textAlign: 'center',
-            color: '#000000',
-            lineHeight: 20
-        };
-
-        const muteTooltipArrow = {
-            position: 'absolute',
-            right: -6,
-            top: 22,
-            width: 0,
-            height: 0,
-            backgroundColor: 'transparent',
-            borderStyle: 'solid',
-            borderLeftWidth: 6,
-            borderTopWidth: 5,
-            borderBottomWidth: 5,
-            borderLeftColor: '#ffffff',
-            borderTopColor: 'transparent',
-            borderBottomColor: 'transparent'
-        };
-
         return (
             <>
                 {/*
@@ -425,28 +354,6 @@ class Conference extends AbstractConference<Props, State, *> {
                     <NavigationBar />
                     { this._renderNotificationsContainer() }
                 </SafeAreaView>
-
-                {
-                    (this.props.isModerator && this.props._toolboxVisible)
-                    && <SafeAreaView style = { styles.topActions }>
-                        <View style = { styles.topActionsInner }>
-                            <View style = { muteTooltipWrapper }>
-                                {
-                                    this.state.muteTooltipVisible && <View style = { muteTooltip }>
-                                        <Text style = { muteTooltipTitle }>Tap this button to mute all.</Text>
-                                        <Text style = { muteTooltipText }>Try it now!</Text>
-                                        <View style = { muteTooltipArrow } />
-                                    </View>
-                                }
-
-                                <MuteAllButton
-                                    afterClick = { this.onMuteAllClick }
-                                    styles = { topActionsBtnStyles } />
-                            </View>
-                        </View>
-
-                    </SafeAreaView>
-                }
 
                 <SafeAreaView style = { styles.participantsCountSafeView }>
                     <View style = { styles.participantsCount }>
@@ -533,14 +440,6 @@ class Conference extends AbstractConference<Props, State, *> {
     _setToolboxVisible(visible) {
         this.props.dispatch(setToolboxVisible(visible));
     }
-
-    // eslint-disable-next-line require-jsdoc
-    onMuteAllClick: () => void;
-
-    // eslint-disable-next-line require-jsdoc
-    onMuteAllClick() {
-        this.setState({ muteTooltipVisible: false });
-    }
 }
 
 /**
@@ -570,9 +469,6 @@ function _mapStateToProps(state) {
     //   are leaving one.
     const connecting_
         = connecting || (connection && (joining || (!conference && !leaving)));
-
-    const localParticipant = getLocalParticipant(state);
-    const isModerator = localParticipant.role === PARTICIPANT_ROLE.MODERATOR;
 
     return {
         ...abstractMapStateToProps(state),
@@ -630,8 +526,7 @@ function _mapStateToProps(state) {
          * @type {boolean}
          */
         _toolboxVisible: isToolboxVisible(state),
-        count: getParticipantCount(state),
-        isModerator
+        count: getParticipantCount(state)
     };
 }
 
