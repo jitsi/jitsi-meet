@@ -2,12 +2,11 @@
 
 import React, {Component} from 'react';
 
-import {translate} from '../../../i18n';
+import {getLocalizedDateFormatter, translate} from '../../../i18n';
 import {connect} from '../../../redux';
 import {getParticipantCount} from '../../../participants';
 import {getRemoteTracks} from '../../../tracks';
 import jwtDecode from 'jwt-decode';
-import moment from 'moment';
 
 type Props = {
     _isGuest: boolean,
@@ -100,7 +99,7 @@ class WaitingMessage extends Component<Props, State> {
 
         if (beforeAppointmentStart && appointmentStartAt) {
             header = <p>Your appointment will begin
-                at {moment.utc(appointmentStartAt).format('hh:mm A')}</p>;
+                at {getLocalizedDateFormatter(appointmentStartAt).format('hh:mm A')}</p>;
         }
 
         return <div className="waitingMessage">
