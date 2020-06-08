@@ -5,7 +5,6 @@ import React, { Component, Fragment } from 'react';
 import { I18nextProvider } from 'react-i18next';
 import { Provider } from 'react-redux';
 import { compose, createStore } from 'redux';
-import { logger } from 'redux-logger';
 import Thunk from 'redux-thunk';
 
 import { i18next } from '../../i18n';
@@ -18,6 +17,7 @@ import { SoundCollection } from '../../sounds';
 import { PersistenceRegistry } from '../../storage';
 
 import { appWillMount, appWillUnmount } from '../actions';
+import logger from '../logger';
 
 declare var APP: Object;
 
@@ -186,7 +186,7 @@ export default class BaseApp extends Component<*, State> {
         // additional 3rd party middleware:
         // - Thunk - allows us to dispatch async actions easily. For more info
         // @see https://github.com/gaearon/redux-thunk.
-        let middleware = MiddlewareRegistry.applyMiddleware(logger, Thunk);
+        let middleware = MiddlewareRegistry.applyMiddleware(Thunk);
 
         // Try to enable Redux DevTools Chrome extension in order to make it
         // available for the purposes of facilitating development.
