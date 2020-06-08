@@ -20,8 +20,8 @@ import {
 } from '../../base/connection';
 import {
     PARTICIPANT_JOINED,
-    PARTICIPANT_LEFT,
     PARTICIPANT_KICKED,
+    PARTICIPANT_LEFT,
     getParticipantCount
 } from '../../base/participants';
 import { MiddlewareRegistry } from '../../base/redux';
