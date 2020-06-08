@@ -1,6 +1,6 @@
 /* global config */
 
-import { MiddlewareRegistry } from '../base/redux';
+import { MiddlewareRegistry } from '../redux';
 import { updateSettings } from '../settings';
 import jitsiLocalStorage from '../../../../modules/util/JitsiLocalStorage';
 import { toJid } from '../connection';
