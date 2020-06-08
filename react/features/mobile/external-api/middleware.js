@@ -100,7 +100,7 @@ MiddlewareRegistry.register(store => next => action => {
             store,
             type,
             /* data */ {
-                id: id,
+                id,
                 participants: numParticipants
             });
         break;
