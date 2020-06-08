@@ -288,17 +288,11 @@ class WelcomePage extends AbstractWelcomePage {
                                 <div className = 'enter-room-title'>
                                     { t('welcomepage.enterRoomTitle') }
                                 </div>
-                                { !_user && (
-                                    <span className = 'enter-room-login-required'>
-                                        ({ t('welcomepage.loginRequired') })
-                                    </span>
-                                )}
                             </div>
                             <form onSubmit = { this._onFormSubmit }>
                                 <input
                                     autoFocus = { true }
                                     className = 'enter-room-input'
-                                    disabled = { !_user }
                                     id = 'enter_room_field'
                                     onChange = { this._onRoomChange }
                                     pattern = { ROOM_NAME_VALIDATE_PATTERN_STR }
@@ -310,7 +304,7 @@ class WelcomePage extends AbstractWelcomePage {
                             </form>
                         </div>
                         <div
-                            className = { `welcome-page-button ${!_user && 'disabled'}` }
+                            className = 'welcome-page-button'
                             id = 'enter_room_button'
                             onClick = { this._onFormSubmit }>
                             {

@@ -269,8 +269,8 @@
         "usernameErrTooShort": "아이디 길이는 5자 이상이어야 합니다.",
         "usernameMsg": "영문자, 숫자, 점 기호를 조합해서 사용해야 합니다.",
         "userPassword": "사용자 비밀번호",
-        "WaitForHostMsg": "",
-        "WaitForHostMsgWOk": "",
+        "WaitForHostMsg": "미팅 <b>{{room}}</b> 이 아직 시작되지 않았습니다. 호스트가 도착할 때까지 대기하거나 로그인해서 호스트가 되세요.",
+        "WaitForHostMsgWOk": "미팅 <b>{{room}}</b> 이 아직 시작되지 않았습니다. 호스트가 도착할 때까지 대기하거나 로그인을 위해서 확인을 누르세요.",
         "WaitingForHost": "호스트를 기다리는 중입니다...",
         "Yes": "",
         "yourEntireScreen": "전체 화면"
