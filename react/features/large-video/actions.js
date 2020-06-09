@@ -59,7 +59,6 @@ export function selectParticipantInLargeVideo() {
     return (dispatch: Dispatch<any>, getState: Function) => {
         const state = getState();
         const participantId = _electParticipantInLargeVideo(state);
-
         const largeVideo = state['features/large-video'];
 
         if (participantId !== largeVideo.participantId) {

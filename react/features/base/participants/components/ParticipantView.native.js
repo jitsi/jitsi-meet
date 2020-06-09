@@ -42,7 +42,7 @@ type Props = {
     _participantName: string,
 
     /**
-     * True is the participant which this component represents is fake.
+     * True if the participant which this component represents is fake.
      *
      * @private
      */
