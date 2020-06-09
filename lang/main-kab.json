@@ -1,12 +1,12 @@
 {
     "addPeople": {
-        "add": "",
-        "countryNotSupported": "",
-        "countryReminder": "",
-        "disabled": "",
-        "failedToAdd": "",
-        "footerText": "",
-        "loading": "",
+        "add": "rnu",
+        "countryNotSupported": "tamurt ur nettunfrak ara",
+        "countryReminder": "asmekti n tmurt",
+        "disabled": "insa",
+        "failedToAdd": "timerna ur teddi ara",
+        "footerText": "aḍris n uḍar",
+        "loading": "tulya",
         "loadingNumber": "",
         "loadingPeople": "",
         "noResults": "",
@@ -27,31 +27,31 @@
         "audioOnly": "Imesli kan"
     },
     "calendarSync": {
-        "addMeetingURL": "",
-        "confirmAddLink": "",
+        "addMeetingURL": "rnu URL n temlilit",
+        "confirmAddLink": "sentem timerna n useɣwen",
         "error": {
             "appConfiguration": "",
             "generic": "",
             "notSignedIn": ""
         },
-        "join": "",
+        "join": "tekki",
         "joinTooltip": "",
-        "nextMeeting": "",
-        "noEvents": "",
+        "nextMeeting": "timlilit tuḍfirt",
+        "noEvents": "ulac tidyanin",
         "ongoingMeeting": "",
         "permissionButton": "",
         "permissionMessage": "",
-        "refresh": "",
-        "today": ""
+        "refresh": "smiren",
+        "today": "ass-a"
     },
     "chat": {
-        "error": "",
-        "messagebox": "",
+        "error": "tuccḍa",
+        "messagebox": "tabbaṭ n iznan",
         "nickname": {
             "popover": "Fren meffer isem",
-            "title": ""
+            "title": "azwel"
         },
-        "title": ""
+        "title": "azwel"
     },
     "connectingOverlay": {
         "joiningRoom": ""
@@ -73,7 +73,7 @@
         "bandwidth": "",
         "bitrate": "",
         "bridgeCount": "",
-        "connectedTo": "",
+        "connectedTo": "iqqen ɣer",
         "framerate": "",
         "less": "Sken-d drus",
         "localaddress_plural": "",
@@ -100,19 +100,19 @@
         "turn": ""
     },
     "dateUtils": {
-        "earlier": "",
-        "today": "",
-        "yesterday": ""
+        "earlier": "uqbel",
+        "today": "ass-a",
+        "yesterday": "iḍelli"
     },
     "deepLinking": {
         "appNotInstalled": "",
-        "description": "",
+        "description": "aglam",
         "descriptionWithoutWeb": "",
         "downloadApp": "Zdem asnas",
         "launchWebButton": "",
-        "openApp": "",
-        "title": "",
-        "tryAgainButton": ""
+        "openApp": "ldi asnas",
+        "title": "azwel",
+        "tryAgainButton": "εreḍ tikkelt-nniḍen"
     },
     "defaultLink": "md. {{url}}",
     "deviceError": {
