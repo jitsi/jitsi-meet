@@ -91,7 +91,7 @@ MiddlewareRegistry.register(store => next => action => {
 
     case PARTICIPANT_JOINED:
     case PARTICIPANT_LEFT: {
-        const { participant:{ id, name, email, avatarURL, role } } = action;
+        const { participant: { id, name, email, avatarURL, role } } = action;
         const { getState } = store;
         const numParticipants = getParticipantCount(getState);
 
@@ -99,7 +99,13 @@ MiddlewareRegistry.register(store => next => action => {
             store,
             type,
             /* data */ {
-                participant: { id, name,  email, avatarURL, role },
+                participant: {
+                    id,
+                    name,
+                    email,
+                    avatarURL,
+                    role
+                },
                 numParticipants
             });
         break;
