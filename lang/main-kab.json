@@ -83,7 +83,7 @@
         "more": "Sken-d ugar",
         "packetloss": "",
         "quality": {
-            "good": "Yelha",
+            "good": "Telha",
             "inactive": "D arurmid",
             "lost": "Yexser",
             "nonoptimal": "",
@@ -94,7 +94,7 @@
         "remoteport_plural": "",
         "remoteport": "",
         "resolution": "",
-        "status": "Tuqqna",
+        "status": "Tuqqna:",
         "transport_plural": "Tumnayt:",
         "transport": "Tumnayin:",
         "turn": ""
@@ -108,7 +108,7 @@
         "appNotInstalled": "",
         "description": "",
         "descriptionWithoutWeb": "",
-        "downloadApp": "Zdem asnas",
+        "downloadApp": "Sider-d asnas",
         "launchWebButton": "",
         "openApp": "",
         "title": "",
@@ -116,9 +116,9 @@
     },
     "defaultLink": "md. {{url}}",
     "deviceError": {
-        "cameraError": "Ugur deg unekcum i tkamirat-inek",
+        "cameraError": "Ugur deg unekcum ɣer tkamirat-inek",
         "cameraPermission": "Ugur deg usɛay n tsiregt n tkamirat",
-        "microphoneError": "Ugur deg unekcum i usawaḍ-inek",
+        "microphoneError": "Ugur deg unekcum ɣer usawaḍ-inek",
         "microphonePermission": "Ugur deg usɛay n tsiregt n usawaḍ"
     },
     "deviceSelection": {
@@ -137,13 +137,13 @@
         "applicationWindow": "",
         "Back": "",
         "cameraConstraintFailedError": "",
-        "cameraNotFoundError": "Ur tettwawef ara tkamirat.",
+        "cameraNotFoundError": "Ur nufi ara takamirat.",
         "cameraNotSendingData": "",
         "cameraNotSendingDataTitle": "",
         "cameraPermissionDeniedError": "",
         "cameraUnknownError": "",
         "cameraUnsupportedResolutionError": "",
-        "Cancel": "Semmet",
+        "Cancel": "Sefsex",
         "close": "",
         "conferenceDisconnectMsg": "",
         "conferenceDisconnectTitle": "",
@@ -154,7 +154,7 @@
         "confirmYes": "",
         "connectError": "",
         "connectErrorWithMsg": "",
-        "connecting": "Tuqqna",
+        "connecting": "Yetteqqen",
         "contactSupport": "Anermis n tallelt",
         "copy": "Nɣel",
         "dismiss": "",
@@ -316,23 +316,23 @@
         "send": ""
     },
     "inlineDialogFailure": {
-        "msg": "Yewwet-aɣ-tt wugur ciṭṭuḥ",
-        "retry": "Ɛreḍ daɣen",
+        "msg": "Yewwet-aɣ-tt ciṭṭuḥ wugur.",
+        "retry": "Ɛreḍ tikelt-nniḍen",
         "support": "Tallalt",
         "supportMsg": ""
     },
     "keyboardShortcuts": {
         "focusLocal": "Asersi n tavidiyut innu",
         "focusRemote": "Asersi n tivdyutin n wiyaḍ",
-        "fullScreen": "Rmed neɣ kkes agdil aččuran",
+        "fullScreen": "Rmed neɣ ffeɣ seg ugdil aččuran",
         "keyboardShortcuts": "Inegzumen n unasiw ",
         "localRecording": "Sken neɣ ffer isenqaden idiganen n usekles",
         "mute": "Rmed neɣ sens asawaḍ",
         "pushToTalk": "Sit akken ad temmeslayeḍ",
-        "raiseHand": "sali neɣ ṣub afus-ik",
+        "raiseHand": "Sali neɣ ṣub afus-ik",
         "showSpeakerStats": "Sken addaden n umendid",
         "toggleChat": "Ldi neɣ mdel agalis n usqardec",
-        "toggleFilmstrip": "Sken neɣ ffer tinfulin n tvidyut",
+        "toggleFilmstrip": "Sken neɣ ffer tinfulin n tvidyutin",
         "toggleScreensharing": "Uɣal gar tkamiṛat d beṭṭu n ugdil",
         "toggleShortcuts": "Sken neɣ ffer inegzumen n unasiw",
         "videoMute": "Sekker neɣ ḥbes takamiṛat innek"
@@ -411,7 +411,7 @@
         "kickParticipant": "",
         "me": "Nekk",
         "moderator": "",
-        "muted": "Tebdam asqerdec deg tsusmi.",
+        "muted": "Tebdiḍ asqerdec s tsusmi.",
         "mutedTitle": "",
         "mutedRemotelyTitle": "",
         "mutedRemotelyDescription": "",
@@ -430,13 +430,13 @@
     },
     "passwordSetRemotely": "Yettwaɛeyyen sɣur yimekki nniḍen",
     "passwordDigitsOnly": "",
-    "poweredby": "Yemmug-d sɣur",
+    "poweredby": "yemmug-d sɣur",
     "presenceStatus": {
         "busy": "",
         "calling": "",
         "connected": "Yeqqen",
-        "connecting": "Tuqqna",
-        "connecting2": "Tuqqna",
+        "connecting": "Yetteqqen…",
+        "connecting2": "Yetteqqen*…",
         "disconnected": "Yeffeɣ",
         "expired": "",
         "ignored": "",
@@ -446,9 +446,9 @@
         "ringing": ""
     },
     "profile": {
-        "setDisplayNameLabel": "Fernet azun",
-        "setEmailInput": "Sekcem amayel",
-        "setEmailLabel": "Fernet amayel-nwen Gravatar",
+        "setDisplayNameLabel": "Fren azun",
+        "setEmailInput": "Sekcem-d imayl",
+        "setEmailLabel": "Fren imayl-inek n Gravatar",
         "title": "Amaɣnu"
     },
     "recording": {
@@ -488,7 +488,7 @@
             "title": ""
         },
         "devices": "",
-        "followMe": "Yal amdan iy-ṭararen",
+        "followMe": "Yal amdan iy-ṭṭafaren",
         "language": "",
         "loggedIn": "",
         "moderator": "",
@@ -536,7 +536,7 @@
     },
     "suspendedoverlay": {
         "rejoinKeyTitle": "Kcem",
-        "text": "Sit deg <i>Kcem</i> d taqeffalt ad teqqneḍ.",
+        "text": "Sit deg taqeffalt <i>Kcem</i> akken ad teqqneḍ.",
         "title": "Asarag-inek s uvidyu yettwaseḥbes acku aselkim-agi igen."
     },
     "toolbar": {
@@ -545,7 +545,7 @@
             "audioRoute": "",
             "callQuality": "",
             "cc": "",
-            "chat": "Eg-d asfaylu n udiwenni",
+            "chat": "Ffer/Sken-d asfaylu n udiwenni",
             "document": "Ldi / Mdel zzmam yettwabḍan",
             "feedback": "",
             "fullScreen": "",
@@ -574,7 +574,7 @@
             "videomute": "",
             "videoblur": ""
         },
-        "addPeople": "Rnut-d imdanen i tiɣri-nwen",
+        "addPeople": "Rnu-d imdanen ɣer tiɣri-inek",
         "audioOnlyOff": "",
         "audioOnlyOn": "",
         "audioRoute": "",
@@ -589,17 +589,17 @@
         "exitFullScreen": "",
         "exitTileView": "",
         "feedback": "",
-        "hangup": "Eǧǧ",
+        "hangup": "Ffeɣ",
         "invite": "",
-        "login": "Kcem",
+        "login": "Qqen",
         "logout": "",
         "lowerYourHand": "",
         "moreActions": "",
-        "mute": "D asusam / D arasusam",
+        "mute": "Sgugem / Kkes tigugmi",
         "openChat": "",
         "pip": "",
         "profile": "Ẓreg amaɣnu-ik ",
-        "raiseHand": "sali neɣ ṣub afus-ik",
+        "raiseHand": "Sali / Ṣub afus-ik",
         "raiseYourHand": "",
         "Settings": "Iɣewwaren",
         "sharedvideo": "Bḍu tavidyut n Youtube",
@@ -631,16 +631,16 @@
         "tr": ""
     },
     "userMedia": {
-        "androidGrantPermissions": "Fren <b><i>Sireg</i></b> Mara d-yessuter yiminig-ik tisurag.",
-        "chromeGrantPermissions": "Fren <b><i>Sireg</i></b> Mara d-yessuter yiminig-ik tisurag.",
-        "edgeGrantPermissions": "Fren <b><i>OK</i></b> mara d-yessuter yiminig tisurag.",
+        "androidGrantPermissions": "Fren <b><i>Sireg</i></b> mara d-yessuter yiminig-ik tisurag.",
+        "chromeGrantPermissions": "Fren <b><i>Sireg</i></b> mara d-yessuter yiminig-ik tisurag.",
+        "edgeGrantPermissions": "Fren <b><i>Ih</i></b> mara d-yessuter yiminig tisurag.",
         "electronGrantPermissions": "Ttxil-k efk-d tasiregt n beṭṭu n tkamiṛat d umikṛufun-ik",
         "firefoxGrantPermissions": "Fren <b><i>Bḍu abenk yettwafernen</i></b> mara d-yessuter yiminig-ik tisurag.",
-        "iexplorerGrantPermissions": "Fren <b><i>OK</i></b> mara d-yessuter yiminig tisurag.",
+        "iexplorerGrantPermissions": "Fren <b><i>Ih</i></b> mara d-yessuter yiminig tisurag.",
         "nwjsGrantPermissions": "Ttxil-k efk-d tasiregt n beṭṭu n tkamiṛat d umikṛufun-ik",
         "operaGrantPermissions": "Fren <b><i>Sireg</i></b> Mara d-yessuter yiminig-ik tisurag.",
-        "react-nativeGrantPermissions": "Fren <b><i>Sireg</i></b> Mara d-yessuter yiminig-ik tisurag.",
-        "safariGrantPermissions": "Fren <b><i>OK</i></b> mara d-yessuter yiminig tisurag."
+        "react-nativeGrantPermissions": "Fren <b><i>Sireg</i></b> mara d-yessuter yiminig-ik tisurag.",
+        "safariGrantPermissions": "Fren <b><i>Ih</i></b> mara d-yessuter yiminig tisurag."
     },
     "videoSIPGW": {
         "busy": "",
@@ -673,7 +673,7 @@
         "kick": "",
         "moderator": "",
         "mute": "",
-        "muted": "Kkes imesli",
+        "muted": "Tettwasgugem",
         "remoteControl": "Asenqed agemmaḍ",
         "show": "",
         "videomute": ""
@@ -681,7 +681,7 @@
     "welcomepage": {
         "accessibilityLabel": {
             "join": "Sit iwakken ad tedduḍ",
-            "roomname": "Aru isem n tzeqqa"
+            "roomname": "Sekcem-d isem n tzeqqa"
         },
         "appDescription": "",
         "audioVideoSwitch": {
@@ -693,14 +693,14 @@
         "connectCalendarText": "",
         "enterRoomTitle": "",
         "go": "DDU",
-        "join": "KCEM",
+        "join": "SNULFU-D / KCEM",
         "info": "",
         "privacy": "Tabaḍnit",
         "recentList": "",
         "recentListDelete": "",
         "recentListEmpty": "",
         "reducedUIText": "",
-        "roomname": "Aru isem n tzeqqa",
+        "roomname": "Sekcem-d isem n tzeqqa",
         "roomnameHint": "Sekcem isem neɣ URL n texxamt wuɣur tebɣiḍ ad tedduḍ. Tzemreḍ ad tgeḍ isem, eǧǧ kan imdanen ara temlileḍ ad t-isinen iwakken ad skecmen yiwen n yisem.",
         "sendFeedback": "Azen rray-ik",
         "terms": "Tiwtilin",
