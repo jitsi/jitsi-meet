@@ -28,6 +28,7 @@ body.welcome-page {
             display: $welcomePageHeaderContainerDisplay;
             flex-direction: column;
             margin: $welcomePageHeaderContainerMargin;
+            max-width: calc(100% - 40px);
             z-index: $zindex2;
         }
 

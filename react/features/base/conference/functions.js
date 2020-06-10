@@ -1,5 +1,4 @@
 // @flow
-
 import _ from 'lodash';
 
 import { getName } from '../../app/functions';

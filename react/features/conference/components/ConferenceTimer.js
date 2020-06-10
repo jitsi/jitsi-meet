@@ -1,5 +1,4 @@
 // @flow
-
 import { Component } from 'react';
 
 import { renderConferenceTimer } from '../';
@@ -10,7 +9,6 @@ import { getParticipantCount } from '../../base/participants';
 import { connect } from '../../base/redux';
 import { getRemoteTracks } from '../../base/tracks';
 
-
 /**
  * The type of the React {@code Component} props of {@link ConferenceTimer}.
  */
@@ -20,6 +18,7 @@ type Props = {
      * The UTC timestamp representing the time when first participant joined.
      */
     _startTimestamp: ?number,
+    conferenceHasStarted: boolean,
 
     /**
      * Style to be applied to the rendered text.
@@ -175,7 +174,6 @@ class ConferenceTimer extends Component<Props, State> {
  * }}
  */
 export function _mapStateToProps(state: Object) {
-
     const participantCount = getParticipantCount(state);
     const remoteTracks = getRemoteTracks(state['features/base/tracks']);
 

@@ -1,5 +1,4 @@
 /* @flow */
-
 import React, { Component } from 'react';
 
 import { translate } from '../../../i18n';
@@ -12,14 +11,15 @@ import WaitingMessage from './WaitingMessage';
 
 declare var interfaceConfig: Object;
 
-/**
- * The CSS style of the element with CSS class {@code rightwatermark}.
- *
- * @private
- */
-const _RIGHT_WATERMARK_STYLE = {
-    backgroundImage: 'url(images/rightwatermark.png)'
-};
+//
+// /**
+//  * The CSS style of the element with CSS class {@code rightwatermark}.
+//  *
+//  * @private
+//  */
+// const _RIGHT_WATERMARK_STYLE = {
+//     backgroundImage: 'url(images/rightwatermark.png)'
+// };
 
 /**
  * The type of the React {@code Component} props of {@link Watermarks}.
@@ -45,6 +45,9 @@ type Props = {
      * The default value for the Jitsi logo URL.
      */
     defaultJitsiLogoURL: ?string,
+    _isGuest: boolean,
+    conferenceHasStarted: boolean,
+    isWelcomePage: boolean,
 
     /**
      * Invoked to obtain translated strings.

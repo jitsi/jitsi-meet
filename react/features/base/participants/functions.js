@@ -1,5 +1,4 @@
 // @flow
-
 import { getGravatarURL } from '@jitsi/js-utils/avatar';
 import type { Store } from 'redux';
 
@@ -14,7 +13,8 @@ import {
     MAX_DISPLAY_NAME_LENGTH,
     PARTICIPANT_ROLE
 } from './constants';
-import { preloadImage } from './preloadImage';
+
+// import { preloadImage } from './preloadImage';
 
 declare var interfaceConfig: Object;
 
@@ -22,7 +22,8 @@ declare var interfaceConfig: Object;
  * Temp structures for avatar urls to be checked/preloaded.
  */
 const AVATAR_QUEUE = [];
-const AVATAR_CHECKED_URLS = new Map();
+
+// const AVATAR_CHECKED_URLS = new Map();
 /* eslint-disable arrow-body-style, no-unused-vars */
 const AVATAR_CHECKER_FUNCTIONS = [
     (participant, _) => {
