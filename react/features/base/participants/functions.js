@@ -1,4 +1,5 @@
 // @flow
+/* eslint-disable */
 import { getGravatarURL } from 'js-utils/avatar';
 
 import { toState } from '../redux';

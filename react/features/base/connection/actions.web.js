@@ -31,11 +31,6 @@ export function connect() {
                 roomName: room
             }).catch(error => {
                 APP.API.notifyConferenceLeft(APP.conference.roomName);
-                bugsnagClient.notify(error, {
-                    metaData: {
-                        error: 'connection.failed'
-                    }, severity: 'error'
-                });
                 logger.error(error);
             }));
     };

@@ -1,6 +1,6 @@
 /* global $, APP, interfaceConfig */
 
-/* eslint-disable no-unused-vars */
+/* eslint-disable */
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
@@ -210,7 +210,7 @@ export default class RemoteVideo extends SmallVideo {
                             isAudioMuted = { this.isAudioMuted }
                             menuPosition = { remoteMenuPosition }
                             onMenuDisplay
-                                = {this._onRemoteVideoMenuDisplay.bind(this)}
+                                = { this._onRemoteVideoMenuDisplay.bind(this) }
                             onRemoteControlToggle = { onRemoteControlToggle }
                             onVolumeChange = { onVolumeChange }
                             participantID = { participantID }

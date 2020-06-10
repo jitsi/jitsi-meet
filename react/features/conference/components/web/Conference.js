@@ -27,7 +27,6 @@ import { maybeShowSuboptimalExperienceNotification } from '../../functions';
 import Labels from './Labels';
 import { default as Notice } from './Notice';
 import { default as Subject } from './Subject';
-import { default as RefreshButton } from './RefreshButton';
 import {
     AbstractConference,
     abstractMapStateToProps

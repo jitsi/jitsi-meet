@@ -1,5 +1,4 @@
-/* @flow */
-
+/* eslint-disable */
 import React, {Component} from 'react';
 import {getParticipantCount} from '../../../base/participants';
 import {connect} from '../../../base/redux';
@@ -37,14 +36,15 @@ class RefreshButton extends Component<Props> {
             return null;
         }
         return (
-            <div className={`refreshButtonWrapper`}>
-                <div className='refreshButtonContainer'>
-                    <div className={`refreshButton`}
-                         style={{cursor: 'pointer'}}
-                         onClick={this.reload}>
-                <span>
+            <div className = { `refreshButtonWrapper` }>
+                <div className = 'refreshButtonContainer'>
+                    <div
+                        className = { `refreshButton` }
+                        style = {{cursor: 'pointer'}}
+                        onClick = { this.reload }>
+                        <span>
                     Trouble Connecting? <strong>Reconnect</strong>
-                </span>
+                        </span>
                     </div>
                 </div>
             </div>
