@@ -1,3 +1,4 @@
+/* eslint-disable */
 /* global config, createConnectionExternally */
 
 import getRoomName from '../react/features/base/config/getRoomName';

@@ -21,7 +21,7 @@ export default class NoMobileApp extends Component<*> {
         sendAnalytics(
             createDeepLinkingPageEvent(
                 'displayed', 'noMobileApp', { isMobileBrowser: true }));
-        window.location = "https://apps.apple.com/us/app/jane-online-appointments/id1505867614?ls=1";
+        window.location = 'https://apps.apple.com/us/app/jane-online-appointments/id1505867614?ls=1';
     }
 
     /**
@@ -34,16 +34,16 @@ export default class NoMobileApp extends Component<*> {
 
         return (
             <div className = { ns }>
-                {/*<h2 className = { `${ns}__title` }>*/}
+                {/* <h2 className = { `${ns}__title` }>*/}
                 {/*    Video chat isn't available on mobile.*/}
-                {/*</h2>*/}
+                {/* </h2>*/}
                 <h2>
                     Redirecting to the app store…
                 </h2>
-                {/*<p className = { `${ns}__description` }>*/}
+                {/* <p className = { `${ns}__description` }>*/}
                 {/*    Please use { interfaceConfig.NATIVE_APP_NAME } on desktop to*/}
                 {/*    join calls.*/}
-                {/*</p>*/}
+                {/* </p>*/}
             </div>
         );
     }

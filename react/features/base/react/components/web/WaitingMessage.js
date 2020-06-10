@@ -1,17 +1,18 @@
-/* @flow */
+// @flow
+/* eslint-disable */
+import React, { Component } from 'react';
 
-import React, {Component} from 'react';
-
-import {getLocalizedDateFormatter, translate} from '../../../i18n';
-import {connect} from '../../../redux';
-import {getParticipantCount} from '../../../participants';
-import {getRemoteTracks} from '../../../tracks';
+import { getLocalizedDateFormatter, translate } from '../../../i18n';
+import { connect } from '../../../redux';
+import { getParticipantCount } from '../../../participants';
+import { getRemoteTracks } from '../../../tracks';
 import jwtDecode from 'jwt-decode';
 
 type Props = {
     _isGuest: boolean,
     jwt: Object,
-    conferenceHasStarted: boolean
+    conferenceHasStarted: boolean,
+    isWelcomePage: boolean
 };
 
 type State = {
@@ -29,7 +30,7 @@ class WaitingMessage extends Component<Props, State> {
 
         this.state = {
             beforeAppointmentStart: false,
-            appointmentStartAt: null
+            appointmentStartAt: ''
         };
     }
 
@@ -38,10 +39,11 @@ class WaitingMessage extends Component<Props, State> {
     }
 
     _startTimer() {
-        const {jwt, conferenceHasStarted} = this.props;
+        const { jwt, conferenceHasStarted } = this.props;
         const jwtPayload = jwt && jwtDecode(jwt);
+
         if (jwtPayload && jwtPayload.context && !conferenceHasStarted) {
-            const {start_at} = jwtPayload.context || 0;
+            const { start_at } = jwtPayload.context || 0;
             const appointmentStartTimeStamp = new Date(start_at).getTime();
             const now = new Date().getTime();
 
@@ -58,8 +60,9 @@ class WaitingMessage extends Component<Props, State> {
 
     _setInterval(appointmentStartTimeStamp) {
         this._interval = setInterval(() => {
-            const {conferenceHasStarted} = this.props;
+            const { conferenceHasStarted } = this.props;
             const now = new Date().getTime();
+
             if ((appointmentStartTimeStamp < now) || conferenceHasStarted) {
                 this.setState({
                     beforeAppointmentStart: false
@@ -77,7 +80,7 @@ class WaitingMessage extends Component<Props, State> {
     }
 
     render() {
-        const {conferenceHasStarted} = this.props;
+        const { conferenceHasStarted } = this.props;
 
         if (conferenceHasStarted) {
             return null;
@@ -93,28 +96,30 @@ class WaitingMessage extends Component<Props, State> {
     }
 
     _renderWaitingMessage() {
-        const {beforeAppointmentStart, appointmentStartAt} = this.state;
+        const { beforeAppointmentStart, appointmentStartAt } = this.state;
 
         let header = <p>Waiting for the other participant to join...</p>;
 
         if (beforeAppointmentStart && appointmentStartAt) {
-            header = <p>Your appointment will begin
-                at {getLocalizedDateFormatter(appointmentStartAt).format('hh:mm A')}</p>;
+            header = (<p>Your appointment will begin
+                at {getLocalizedDateFormatter(appointmentStartAt).format('hh:mm A')}</p>);
         }
 
-        return <div className="waitingMessage">
+        return (<div className = 'waitingMessage'>
             {
                 header
             }
             <p>Sit back, relax and take a moment for yourself.</p>
-        </div>;
+        </div>);
     }
 }
 
 function _mapStateToProps(state) {
-    const {jwt} = state['features/base/jwt'];
+    const { jwt } = state['features/base/jwt'];
     const participantCount = getParticipantCount(state);
     const remoteTracks = getRemoteTracks(state['features/base/tracks']);
+
+
     return {
         jwt,
         conferenceHasStarted: participantCount > 1 && remoteTracks.length > 0

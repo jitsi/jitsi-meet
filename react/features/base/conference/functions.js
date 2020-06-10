@@ -1,5 +1,5 @@
 // @flow
-
+/* eslint-disable */
 import _ from 'lodash';
 
 import { JitsiTrackErrors } from '../lib-jitsi-meet';
@@ -186,8 +186,11 @@ export function getConferenceNameForTitle(stateful: Function | Object) {
 */
 export function getConferenceTimestamp(stateful: Function | Object): number {
     const state = toState(stateful);
+
     // conferenceTimestamp is from Prosody server, it returns the "room" initialize time as the conference start time. it is not a correct start time.
     const { conferenceTimestamp, conferenceStartedTime } = state['features/base/conference'];
+
+
     return conferenceStartedTime;
 }
 

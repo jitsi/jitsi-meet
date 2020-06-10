@@ -1,5 +1,5 @@
 // @flow
-
+/* eslint-disable */
 import { getGravatarURL } from '@jitsi/js-utils/avatar';
 
 import { JitsiParticipantConnectionStatus } from '../lib-jitsi-meet';

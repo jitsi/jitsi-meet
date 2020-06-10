@@ -1,6 +1,5 @@
 /* global $, APP, interfaceConfig */
-
-/* eslint-disable no-unused-vars */
+/* eslint-disable */
 import { AtlasKitThemeProvider } from '@atlaskit/theme';
 import Logger from 'jitsi-meet-logger';
 import React from 'react';
@@ -22,7 +21,6 @@ import {
     RemoteVideoMenuTriggerButton
 } from '../../../react/features/remote-video-menu';
 import { LAYOUTS, getCurrentLayout } from '../../../react/features/video-layout';
-/* eslint-enable no-unused-vars */
 import UIUtils from '../util/UIUtil';
 
 import SmallVideo from './SmallVideo';
@@ -210,7 +208,7 @@ export default class RemoteVideo extends SmallVideo {
                             isAudioMuted = { this.isAudioMuted }
                             menuPosition = { remoteMenuPosition }
                             onMenuDisplay
-                                = {this._onRemoteVideoMenuDisplay.bind(this)}
+                                = { this._onRemoteVideoMenuDisplay.bind(this) }
                             onRemoteControlToggle = { onRemoteControlToggle }
                             onVolumeChange = { onVolumeChange }
                             participantID = { participantID }

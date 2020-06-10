@@ -5,7 +5,9 @@ const process = require('process');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 
-const cacheVersionNumber = Math.random().toString(36).substr(2, 5);
+const cacheVersionNumber = Math.random().toString(36)
+.substr(2, 5);
+
 /**
  * The URL of the Jitsi Meet deployment to be proxy to in the context of
  * development with webpack-dev-server.
@@ -176,7 +178,7 @@ const config = {
             css: `css/all.css?v=${cacheVersionNumber}`,
             template: 'index.html',
             minify: false,
-            inject: false,
+            inject: false
         })
     ].filter(Boolean),
     resolve: {

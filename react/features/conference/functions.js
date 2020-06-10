@@ -16,7 +16,8 @@ import { getOverlayToRender } from '../overlay';
  */
 export function maybeShowSuboptimalExperienceNotification(dispatch, t) {
     if (isSuboptimalBrowser()) {
-        return
+        return;
+        // eslint-disable-next-line no-unreachable
         dispatch(
             showWarningNotification(
                 {

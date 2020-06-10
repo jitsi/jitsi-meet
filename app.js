@@ -1,7 +1,7 @@
 /* application specific logic */
 
-import bugsnag from '@bugsnag/js'
-window.bugsnagClient = bugsnag('a0c8e2c65bed338af650acd9c2192855')
+import bugsnag from '@bugsnag/js';
+window.bugsnagClient = bugsnag('a0c8e2c65bed338af650acd9c2192855');
 import 'jquery';
 import 'jquery-contextmenu';
 import 'jQuery-Impromptu';

@@ -20,7 +20,6 @@ import { LAYOUTS, getCurrentLayout } from '../../../video-layout';
 import { maybeShowSuboptimalExperienceNotification } from '../../functions';
 
 import { default as Subject } from './Subject';
-import { default as RefreshButton } from './RefreshButton';
 import {
     AbstractConference,
     abstractMapStateToProps

@@ -1,4 +1,5 @@
 /* global $, APP, config, interfaceConfig */
+/* eslint-disable */
 
 /* eslint-disable no-unused-vars */
 import { AtlasKitThemeProvider } from '@atlaskit/theme';
@@ -29,7 +30,6 @@ import {
     setTileView,
     shouldDisplayTileView
 } from '../../../react/features/video-layout';
-/* eslint-enable no-unused-vars */
 
 const logger = Logger.getLogger(__filename);
 
@@ -332,7 +332,7 @@ export default class SmallVideo {
         const audioLevelContainer = this._getAudioLevelContainer();
 
         if (audioLevelContainer) {
-            ReactDOM.render(<AudioLevelIndicator audioLevel = { lvl }/>, audioLevelContainer);
+            ReactDOM.render(<AudioLevelIndicator audioLevel = { lvl } />, audioLevelContainer);
         }
     }
 

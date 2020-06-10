@@ -401,7 +401,7 @@ export default class LargeVideoManager {
         ReactDOM.render(
             <Provider store = { APP.store }>
                 <Avatar
-                    id = "dominantSpeakerAvatar"
+                    id = 'dominantSpeakerAvatar'
                     participantId = { this.id }
                     size = { 200 } />
             </Provider>,
@@ -443,8 +443,8 @@ export default class LargeVideoManager {
                 <Provider store = { APP.store }>
                     <I18nextProvider i18n = { i18next }>
                         <PresenceLabel
-                            participantID = { id }
-                            className = 'presence-label' />
+                            className = 'presence-label'
+                            participantID = { id } />
                     </I18nextProvider>
                 </Provider>,
                 presenceLabelContainer.get(0));

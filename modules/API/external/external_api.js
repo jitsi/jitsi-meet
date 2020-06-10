@@ -681,6 +681,7 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      */
     executeCommand(name, ...args) {
         if (!(name in commands)) {
+            // eslint-disable-next-line no-console
             console.error('Not supported command name.');
 
             return;

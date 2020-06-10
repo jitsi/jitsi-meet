@@ -1,3 +1,4 @@
+/* eslint-disable */
 /* global interfaceConfig */
 
 import React from 'react';
@@ -48,7 +49,6 @@ class WelcomePage extends AbstractWelcomePage {
      * instance is to be initialized.
      */
     constructor(props) {
-        console.log()
         super(props);
 
         this.state = {
@@ -171,7 +171,7 @@ class WelcomePage extends AbstractWelcomePage {
                     ? 'with-content' : 'without-content'}` }
                 id = 'welcome_page'>
                 <div className = 'welcome-watermark'>
-                    <Watermarks isWelcomePage/>
+                    <Watermarks isWelcomePage = { true } />
                 </div>
                 <div className = 'header'>
                     <div className = 'welcome-page-settings'>

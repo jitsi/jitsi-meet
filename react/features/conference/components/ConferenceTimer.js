@@ -1,5 +1,5 @@
 // @flow
-
+/* eslint-disable */
 import { Component } from 'react';
 
 import { renderConferenceTimer } from '../';
@@ -19,6 +19,7 @@ type Props = {
      * The UTC timestamp representing the time when first participant joined.
      */
     _startTimestamp: ?number,
+    conferenceHasStarted: boolean,
 
     /**
      * The redux {@code dispatch} function.
@@ -171,9 +172,11 @@ export function _mapStateToProps(state: Object) {
 
     const participantCount = getParticipantCount(state);
     const remoteTracks = getRemoteTracks(state['features/base/tracks']);
+
+
     return {
         _startTimestamp: getConferenceTimestamp(state),
-        conferenceHasStarted: participantCount > 1 && remoteTracks.length > 0,
+        conferenceHasStarted: participantCount > 1 && remoteTracks.length > 0
     };
 }
 
