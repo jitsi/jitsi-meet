@@ -1,0 +1,12 @@
+#!/usr/bin/with-contenv bash
+
+# make our folders
+mkdir -p \
+    /config/nginx \
+    /run \
+    /var/lib/nginx/tmp/client_body \
+    /var/tmp/nginx
+
+# copy config files
+cp /defaults/nginx.conf /config/nginx/nginx.conf
+tpl /defaults/meet.conf > /config/nginx/meet.conf
