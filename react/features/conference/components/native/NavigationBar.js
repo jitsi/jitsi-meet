@@ -79,7 +79,7 @@ class NavigationBar extends Component<Props> {
                         </Text>
                     }
                     {
-                        this.props._conferenceTimerEnabled ? <ConferenceTimer /> : null
+                        this.props._conferenceTimerEnabled && <ConferenceTimer />
                     }
                 </View>
             </View>
