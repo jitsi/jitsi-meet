@@ -14,10 +14,10 @@ var interfaceConfig = {
     INITIAL_TOOLBAR_TIMEOUT: 20000,
     TOOLBAR_TIMEOUT: 4000,
     TOOLBAR_ALWAYS_VISIBLE: false,
-    DEFAULT_REMOTE_DISPLAY_NAME: 'Fellow Jitster',
+    DEFAULT_REMOTE_DISPLAY_NAME: 'Agent',
     DEFAULT_LOCAL_DISPLAY_NAME: 'me',
     SHOW_JITSI_WATERMARK: true,
-    JITSI_WATERMARK_LINK: 'https://jitsi.org',
+    JITSI_WATERMARK_LINK: 'https://flowboard.in/',
 
     // if watermark is disabled by default, it can be shown only for guests
     SHOW_WATERMARK_FOR_GUESTS: true,
@@ -28,9 +28,9 @@ var interfaceConfig = {
     GENERATE_ROOMNAMES_ON_WELCOME_PAGE: true,
     DISPLAY_WELCOME_PAGE_CONTENT: true,
     DISPLAY_WELCOME_PAGE_TOOLBAR_ADDITIONAL_CONTENT: false,
-    APP_NAME: 'Jitsi Meet',
-    NATIVE_APP_NAME: 'Jitsi Meet',
-    PROVIDER_NAME: 'Jitsi',
+    APP_NAME: 'Flowboard Meet',
+    NATIVE_APP_NAME: 'Flowboard Meet',
+    PROVIDER_NAME: 'Flowboard',
     LANG_DETECTION: true, // Allow i18n to detect the system language
     INVITATION_POWERED_BY: true,
 
@@ -47,12 +47,10 @@ var interfaceConfig = {
      * jwt.
      */
     TOOLBAR_BUTTONS: [
-        'microphone', 'camera', 'closedcaptions', 'desktop', 'fullscreen',
-        'fodeviceselection', 'hangup', 'profile', 'chat', 'recording',
-        'livestreaming', 'etherpad', 'sharedvideo', 'settings', 'raisehand',
-        'videoquality', 'filmstrip', 'invite', 'feedback', 'stats', 'shortcuts',
-        'tileview', 'videobackgroundblur', 'download', 'help', 'mute-everyone',
-        'e2ee', 'security'
+        'camera', 'closedcaptions', 'fullscreen',
+        'fodeviceselection', 'hangup', 'profile', 'info', 'chat', 'recording',
+        'etherpad', 'settings', 'filmstrip', 'feedback',
+        'tileview' , 'download', 'help',
     ],
 
     SETTINGS_SECTIONS: [ 'devices', 'language', 'moderator', 'profile', 'calendar' ],
@@ -229,17 +227,6 @@ var interfaceConfig = {
      * Specify URL for downloading ios mobile app.
      */
     // MOBILE_DOWNLOAD_LINK_IOS: 'https://itunes.apple.com/us/app/jitsi-meet/id1165103905',
-
-    /**
-     * Specify Firebase dynamic link properties for the mobile apps.
-     */
-    // MOBILE_DYNAMIC_LINK: {
-    //    APN: 'org.jitsi.meet',
-    //    APP_CODE: 'w2atb',
-    //    CUSTOM_DOMAIN: undefined,
-    //    IBI: 'com.atlassian.JitsiMeet.ios',
-    //    ISI: '1165103905'
-    // },
 
     /**
      * Specify mobile app scheme for opening the app from the mobile browser.
