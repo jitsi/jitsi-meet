@@ -107,11 +107,7 @@ const YoutubeLargeVideo = (props: Props) => {
 
     useEffect(() => {
         if (!props._isOwner) {
-            playerRef.current && playerRef.current.getCurrentTime().then(t => {
-                if (props._seek - t > 0.5) {
-                    playerRef.current && playerRef.current.seekTo(props._seek);
-                }
-            });
+            playerRef.current && playerRef.current.seekTo(props._seek);
         }
     }, [ props._seek ]);
 
@@ -119,9 +115,20 @@ const YoutubeLargeVideo = (props: Props) => {
         props._onWideScreenChanged(props._isWideScreen);
     }, [ props._isWideScreen ]);
 
-    const onChangeState = e => props._onVideoChangeEvent(e, playerRef.current
-        && playerRef.current.getCurrentTime(), props._ownerId);
-    const onReady = () => props._onVideoReady(playerRef.current && playerRef.current.getCurrentTime(), props._ownerId);
+    const onChangeState = e =>
+        playerRef.current && playerRef.current.getCurrentTime().then(time => {
+            if (props._isOwner && e !== 'buffering') {
+                props._onVideoChangeEvent(props.youtubeId, e, time, props._ownerId);
+            }
+        });
+    const onReady = () => {
+        if (props._isOwner) {
+            props._onVideoReady(
+                props.youtubeId,
+                playerRef.current && playerRef.current.getCurrentTime(),
+                props._ownerId);
+        }
+    };
 
     let playerHeight, playerWidth;
 
@@ -133,28 +140,34 @@ const YoutubeLargeVideo = (props: Props) => {
         playerHeight = playerWidth * 9 / 16;
     }
 
-    return (<View style = { styles.youtubeVideoContainer } >
-        <YoutubePlayer
-            height = { playerHeight }
-            initialPlayerParams = {{
-                controls: props._enableControls,
-                modestbranding: true
-            }}
-            /* eslint-disable react/jsx-no-bind */
-            onChangeState = { onChangeState }
-            /* eslint-disable react/jsx-no-bind */
-            onReady = { onReady }
-            play = { props._isPlaying }
-            playbackRate = { 1 }
-            ref = { playerRef }
-            videoId = { props.youtubeId }
-            volume = { 50 }
-            webViewProps = {{
-                bounces: false,
-                scrollEnabled: false
-            }}
-            width = { playerWidth } />
-    </View>);
+    return (
+        <View
+            pointerEvents = { props._enableControls ? 'auto' : 'none' }
+            style = { styles.youtubeVideoContainer } >
+            <YoutubePlayer
+                height = { playerHeight }
+                initialPlayerParams = {{
+                    controls: props._enableControls,
+                    modestbranding: true,
+                    preventFullScreen: true
+                }}
+                /* eslint-disable react/jsx-no-bind */
+                onChangeState = { onChangeState }
+                /* eslint-disable react/jsx-no-bind */
+                onReady = { onReady }
+                play = { props._isPlaying }
+                playbackRate = { 1 }
+                ref = { playerRef }
+                videoId = { props.youtubeId }
+                volume = { 50 }
+                webViewProps = {{
+                    bounces: false,
+                    mediaPlaybackRequiresUserAction: false,
+                    scrollEnabled: false,
+                    userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.97 Safari/537.36' // eslint-disable-line max-len
+                }}
+                width = { playerWidth } />
+        </View>);
 };
 
 /**
@@ -196,16 +209,14 @@ function _mapStateToProps(state) {
  */
 function _mapDispatchToProps(dispatch) {
     return {
-        _onVideoChangeEvent: (status, time, ownerId) => {
-            time.then(t => {
-                if (![ 'playing', 'paused' ].includes(status)) {
-                    return;
-                }
-                dispatch(setSharedVideoStatus(translateStatus(status), t, ownerId));
-            });
+        _onVideoChangeEvent: (videoId, status, time, ownerId) => {
+            if (![ 'playing', 'paused' ].includes(status)) {
+                return;
+            }
+            dispatch(setSharedVideoStatus(videoId, translateStatus(status), time, ownerId));
         },
-        _onVideoReady: (time, ownerId) => {
-            time.then(t => dispatch(setSharedVideoStatus('playing', t, ownerId)));
+        _onVideoReady: (videoId, time, ownerId) => {
+            time.then(t => dispatch(setSharedVideoStatus(videoId, 'playing', t, ownerId)));
         },
         _onWideScreenChanged: isWideScreen => {
             dispatch(setToolboxVisible(!isWideScreen));

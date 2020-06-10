@@ -8,19 +8,22 @@ import { EnterVideoLinkPrompt } from './components';
 /**
  * Updates the current known status of the shared YouTube video.
  *
+ * @param {string} videoId - The youtubeId of the video to be shared.
  * @param {string} status - The current status of the YouTube video being shared.
- * @param {string} time - The current position of the YouTube video being shared.
+ * @param {number} time - The current position of the YouTube video being shared.
  * @param {string} ownerId - The participantId of the user sharing the YouTube video.
  * @returns {{
  *     type: SET_SHARED_VIDEO_STATUS,
+ *     videoId: string,
  *     status: string,
- *     time: string,
+ *     time: number,
  *     ownerId: string
  * }}
  */
-export function setSharedVideoStatus(status: string, time: string, ownerId: string) {
+export function setSharedVideoStatus(videoId: string, status: string, time: number, ownerId: string) {
     return {
         type: SET_SHARED_VIDEO_STATUS,
+        videoId,
         status,
         time,
         ownerId

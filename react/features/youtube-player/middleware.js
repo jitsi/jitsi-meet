@@ -1,10 +1,9 @@
 // @flow
 
-import { getCurrentConference } from '../base/conference';
+import { CONFERENCE_LEFT, getCurrentConference } from '../base/conference';
 import {
     PARTICIPANT_LEFT,
     getLocalParticipant,
-    getYoutubeParticipant,
     participantJoined,
     participantLeft,
     pinParticipant
@@ -27,24 +26,24 @@ MiddlewareRegistry.register(store => next => action => {
     const { dispatch, getState } = store;
     const state = getState();
     const conference = getCurrentConference(state);
-    const status = action.status;
-    const localParticipant = getLocalParticipant(state);
-    const localParticipantId = localParticipant?.id;
+    const localParticipantId = getLocalParticipant(state)?.id;
+    const { videoId, status, ownerId, time } = action;
 
     switch (action.type) {
     case TOGGLE_SHARED_VIDEO:
         _toggleSharedVideo(store, next, action);
         break;
+    case CONFERENCE_LEFT:
+        dispatch(setSharedVideoStatus('', 'stop', 0, ''));
+        break;
     case PARTICIPANT_LEFT:
         if (action.participant.id === action.ownerId) {
-            dispatch(setSharedVideoStatus('stop', '', action.ownerId));
+            dispatch(setSharedVideoStatus('', 'stop', 0, ''));
         }
         break;
     case SET_SHARED_VIDEO_STATUS:
-        if (localParticipantId === action.ownerId && [ 'playing', 'pause' ].includes(status)) {
-            const fakeParticipant = getYoutubeParticipant(state);
-
-            sendShareVideoCommand(fakeParticipant.id, status, conference, localParticipantId, action.time);
+        if (localParticipantId === ownerId) {
+            sendShareVideoCommand(videoId, status, conference, localParticipantId, time);
         }
         break;
     }
@@ -59,66 +58,81 @@ MiddlewareRegistry.register(store => next => action => {
  */
 StateListenerRegistry.register(
     state => getCurrentConference(state),
-    (conference, { dispatch, getState }, previousConference) => {
+    (conference, store, previousConference) => {
         if (conference && conference !== previousConference) {
             conference.addCommandListener(SHARED_VIDEO,
                 ({ value, attributes }) => {
-                    const localParticipantId = getLocalParticipant(getState()).id;
 
-                    switch (attributes.state) {
-                    case 'start':
-                        dispatch(participantJoined({
-                            conference,
-                            id: value,
-                            isFakeParticipant: true,
-                            avatarURL: `https://img.youtube.com/vi/${value}/0.jpg`,
-                            name: 'YouTube'
-                        }));
-                        dispatch(setSharedVideoStatus('start', attributes.time, attributes.from));
-                        dispatch(pinParticipant(value));
-                        break;
-                    case 'playing':
-                        if (localParticipantId !== attributes.from) {
-                            dispatch(setSharedVideoStatus('playing', attributes.time, attributes.from));
-                        }
-                        break;
-                    case 'pause':
-                        if (localParticipantId !== attributes.from) {
-                            dispatch(setSharedVideoStatus('pause', attributes.time, attributes.from));
-                        }
-                        break;
-                    case 'stop':
-                        dispatch(setSharedVideoStatus('stop', '', attributes.from));
+                    const { dispatch, getState } = store;
+                    const { from } = attributes;
+                    const localParticipantId = getLocalParticipant(getState()).id;
+                    const status = attributes.state;
+
+                    if ([ 'playing', 'pause', 'start' ].includes(status)) {
+                        handleSharingVideoStatus(store, value, attributes, conference);
+                    } else if (status === 'stop') {
                         dispatch(participantLeft(value, conference));
-                        break;
+                        if (localParticipantId !== from) {
+                            dispatch(setSharedVideoStatus(value, 'stop', 0, from));
+                        }
                     }
                 }
             );
         }
     });
 
+/**
+ * Handles the playing, pause and start statuses for the shared video.
+ * Dispatches participantJoined event and, if necessary, pins it.
+ * Sets the SharedVideoStatus if the event was triggered by the local user.
+ *
+ * @param {Store} store - The redux store.
+ * @param {string} videoId - The YoutubeId of the video to the shared.
+ * @param {Object} attributes - The attributes received from the share video command.
+ * @param {JitsiConference} conference - The current conference.
+ * @returns {void}
+ */
+function handleSharingVideoStatus(store, videoId, { state, time, from }, conference) {
+    const { dispatch, getState } = store;
+    const localParticipantId = getLocalParticipant(getState()).id;
+    const oldStatus = getState()['features/youtube-player']?.status;
+
+    if (state === 'start' || ![ 'playing', 'pause', 'start' ].includes(oldStatus)) {
+        dispatch(participantJoined({
+            conference,
+            id: videoId,
+            isFakeParticipant: true,
+            avatarURL: `https://img.youtube.com/vi/${videoId}/0.jpg`,
+            name: 'YouTube'
+        }));
+
+        dispatch(pinParticipant(videoId));
+    }
+
+    if (localParticipantId !== from) {
+        dispatch(setSharedVideoStatus(videoId, state, time, from));
+    }
+}
 
 /**
  * Dispatches shared video status.
  *
  * @param {Store} store - The redux store.
- * @param {string} next - Todo add doc.
- * @param {string} action - Todo add doc.
+ * @param {Dispatch} next - The redux {@code dispatch} function to dispatch the
+ * specified {@code action} in the specified {@code store}.
+ * @param {Action} action - The redux action which is
+ * being dispatched in the specified {@code store}.
  * @returns {Function}
  */
 function _toggleSharedVideo(store, next, action) {
     const { dispatch, getState } = store;
     const state = getState();
-    const { ownerId } = state['features/youtube-player'];
+    const { videoId, ownerId, status } = state['features/youtube-player'];
     const localParticipant = getLocalParticipant(state);
-
-    const conference = getCurrentConference(state);
-    const { status } = state['features/youtube-player'];
-    const fakeParticipant = getYoutubeParticipant(state);
 
     if (status === 'playing' || status === 'start' || status === 'pause') {
         if (ownerId === localParticipant.id) {
-            sendShareVideoCommand(fakeParticipant.id, 'stop', conference, ownerId);
+            dispatch(setSharedVideoStatus(videoId, 'stop', 0, localParticipant.id));
         }
     } else {
         dispatch(showEnterVideoLinkPrompt(id => _onVideoLinkEntered(store, id)));
@@ -135,12 +149,13 @@ function _toggleSharedVideo(store, next, action) {
  * @returns {void}
  */
 function _onVideoLinkEntered(store, id) {
-    const conference = getCurrentConference(store.getState());
+    const { dispatch, getState } = store;
+    const conference = getCurrentConference(getState());
 
     if (conference) {
-        const localParticipant = getLocalParticipant(store.getState());
+        const localParticipant = getLocalParticipant(getState());
 
-        sendShareVideoCommand(id, 'start', conference, localParticipant.id);
+        dispatch(setSharedVideoStatus(id, 'start', 0, localParticipant.id));
     }
 }
 

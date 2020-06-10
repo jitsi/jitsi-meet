@@ -99,17 +99,24 @@ function _mapStateToProps(state): Object {
 
     if (ownerId !== localParticipantId) {
         return {
-            _isDisabled: sharedVideoStatus === 'playing'
-            || sharedVideoStatus === 'start'
-            || sharedVideoStatus === 'pause',
+            _isDisabled: isSharingStatus(sharedVideoStatus),
             _sharingVideo: false };
     }
 
     return {
-        _sharingVideo: sharedVideoStatus === 'playing'
-            || sharedVideoStatus === 'start'
-            || sharedVideoStatus === 'pause'
+        _sharingVideo: isSharingStatus(sharedVideoStatus)
     };
+}
+
+/**
+ * Checks if the status id one that is actually sharing the video - playing, pause or start.
+ *
+ * @param {string} status - The shared video status.
+ * @private
+ * @returns {boolean}
+ */
+function isSharingStatus(status) {
+    return [ 'playing', 'pause', 'start' ].includes(status);
 }
 
 export default translate(connect(_mapStateToProps)(VideoShareButton));
