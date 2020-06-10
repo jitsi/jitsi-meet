@@ -1,14 +1,14 @@
 // @flow
-
+/* eslint-disable */
 import { Component } from 'react';
 
 import { connect } from '../../base/redux';
 import { getLocalizedDurationFormatter } from '../../base/i18n';
 import { getConferenceTimestamp } from '../../base/conference/functions';
 import { renderConferenceTimer } from '../';
-import {getParticipantCount} from '../../base/participants';
-import {getRemoteTracks} from '../../base/tracks';
-import {setConferenceStartTime} from '../../base/conference';
+import { getParticipantCount } from '../../base/participants';
+import { getRemoteTracks } from '../../base/tracks';
+import { setConferenceStartTime } from '../../base/conference';
 
 /**
  * The type of the React {@code Component} props of {@link ConferenceTimer}.
@@ -19,6 +19,7 @@ type Props = {
      * The UTC timestamp representing the time when first participant joined.
      */
     _startTimestamp: ?number,
+    conferenceHasStarted: boolean,
 
     /**
      * The redux {@code dispatch} function.
@@ -171,9 +172,11 @@ export function _mapStateToProps(state: Object) {
 
     const participantCount = getParticipantCount(state);
     const remoteTracks = getRemoteTracks(state['features/base/tracks']);
+
+
     return {
         _startTimestamp: getConferenceTimestamp(state),
-        conferenceHasStarted: participantCount > 1 && remoteTracks.length > 0,
+        conferenceHasStarted: participantCount > 1 && remoteTracks.length > 0
     };
 }
 

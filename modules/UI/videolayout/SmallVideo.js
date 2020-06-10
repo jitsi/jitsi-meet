@@ -1,6 +1,6 @@
 /* global $, APP, config, interfaceConfig */
 
-/* eslint-disable no-unused-vars */
+/* eslint-disable */
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { I18nextProvider } from 'react-i18next';
@@ -335,7 +335,7 @@ export default class SmallVideo {
         const audioLevelContainer = this._getAudioLevelContainer();
 
         if (audioLevelContainer) {
-            ReactDOM.render(<AudioLevelIndicator audioLevel = { lvl }/>, audioLevelContainer);
+            ReactDOM.render(<AudioLevelIndicator audioLevel = { lvl } />, audioLevelContainer);
         }
     }
 

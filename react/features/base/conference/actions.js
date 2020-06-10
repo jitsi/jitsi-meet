@@ -1,4 +1,4 @@
-// @flow
+/* eslint-disable */
 
 import type { Dispatch } from 'redux';
 
@@ -396,8 +396,9 @@ export function conferenceWillJoin(conference: Object) {
 export function conferenceWillLeave(conference: Object) {
 
     return (dispatch: Function, getState: Function) => {
-        const {jwt} = APP.store.getState()['features/base/jwt'];
-        const {conferenceStartedTime} = APP.store.getState()['features/base/conference'];
+        const { jwt } = APP.store.getState()['features/base/jwt'];
+        const { conferenceStartedTime } = APP.store.getState()['features/base/conference'];
+
         if (jwt) {
             const jwtPayload = jwtDecode(jwt);
             const leaveUrl = jwtPayload.context.leave_url || null;
@@ -407,8 +408,9 @@ export function conferenceWillLeave(conference: Object) {
                 // eslint-disable-next-line camelcase
                 started_at: conferenceStartedTime.toISOString()
             };
-            const data = new Blob([JSON.stringify(obj, null, 2)], {type: 'text/plain; charset=UTF-8'});
+            const data = new Blob([ JSON.stringify(obj, null, 2) ], { type: 'text/plain; charset=UTF-8' });
             // eslint-disable-next-line no-mixed-operators
+
             if (leaveUrl && surveyUrl && conferenceStartedTime) {
                 navigator.sendBeacon(leaveUrl, data);
             }
