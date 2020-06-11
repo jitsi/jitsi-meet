@@ -1,13 +1,17 @@
 // @flow
 
 import {
-    showErrorNotification
+    NOTIFICATION_TIMEOUT,
+    hideNotification,
+    showErrorNotification,
+    showNotification
 } from '../notifications';
 
 import {
     _POTENTIAL_TRANSCRIBER_JOINED,
     _TRANSCRIBER_JOINED,
-    _TRANSCRIBER_LEFT
+    _TRANSCRIBER_LEFT,
+    SET_PENDING_TRANSCRIBING_NOTIFICATION_UID
 } from './actionTypes';
 
 /**
@@ -57,6 +61,76 @@ export function potentialTranscriberJoined(participantId: string) {
         transcriberJID: participantId
     };
 }
+
+/**
+ * Signals that the pending transcribing notification should be shown on the
+ * screen.
+ *
+ * @returns {Function}
+ */
+export function showPendingTranscribingNotification() {
+    return (dispatch: Function) => {
+        const showNotificationAction = showNotification({
+            descriptionKey: 'transcribing.pending',
+            isDismissAllowed: false,
+            titleKey: 'dialog.transcribing'
+        });
+
+        dispatch(showNotificationAction);
+
+        dispatch(setPendingTranscribingNotificationUid(
+            showNotificationAction.uid));
+    };
+}
+
+/**
+ * Sets UID of the the pending transcribing notification to use it when hiding
+ * the notification is necessary, or unsets it when undefined (or no param) is
+ * passed.
+ *
+ * @param {?number} uid - The UID of the notification.
+ * @returns {{
+ *     type: SET_PENDING_TRANSCRIBING_NOTIFICATION_UID,
+ *     uid: number
+ * }}
+ */
+export function setPendingTranscribingNotificationUid(uid: ?number) {
+    return {
+        type: SET_PENDING_TRANSCRIBING_NOTIFICATION_UID,
+        uid
+    };
+}
+
+/**
+ * Signals that the pending transcribing notification should be removed from the
+ * screen.
+ *
+ * @returns {Function}
+ */
+export function hidePendingTranscribingNotification() {
+    return (dispatch: Function, getState: Function) => {
+        const { pendingNotificationUid } = getState()['features/transcribing'];
+
+        if (pendingNotificationUid) {
+            dispatch(hideNotification(pendingNotificationUid));
+            dispatch(setPendingTranscribingNotificationUid());
+        }
+    };
+}
+
+/**
+ * Signals that the stopped transcribing notification should be shown on the
+ * screen.
+ *
+ * @returns {showNotification}
+ */
+export function showStoppedTranscribingNotification() {
+    return showNotification({
+        descriptionKey: 'transcribing.off',
+        titleKey: 'dialog.transcribing'
+    }, NOTIFICATION_TIMEOUT);
+}
+
 
 /**
  * Signals that the transcribing error notification should be shown.

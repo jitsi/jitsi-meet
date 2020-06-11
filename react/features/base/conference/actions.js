@@ -17,6 +17,7 @@ import {
     getNormalizedDisplayName,
     participantConnectionStatusChanged,
     participantKicked,
+    participantMutedUs,
     participantPresenceChanged,
     participantRoleChanged,
     participantUpdated
@@ -148,6 +149,14 @@ function _addConferenceListeners(conference, dispatch) {
     conference.on(
         JitsiConferenceEvents.TRACK_REMOVED,
         t => t && !t.isLocal() && dispatch(trackRemoved(t)));
+
+    conference.on(
+        JitsiConferenceEvents.TRACK_MUTE_CHANGED,
+        (_, participantThatMutedUs) => {
+            if (participantThatMutedUs) {
+                dispatch(participantMutedUs(participantThatMutedUs));
+            }
+        });
 
     // Dispatches into features/base/participants follow:
     conference.on(

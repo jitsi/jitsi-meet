@@ -291,6 +291,15 @@ UI.updateUserStatus = (user, status) => {
     if (!status || calleeInfoVisible || joinLeaveNotificationsDisabled()) {
         return;
     }
+
+    const displayName = user.getDisplayName();
+
+    messageHandler.participantNotification(
+        displayName,
+        '',
+        'connected',
+        'dialOut.statusMessage',
+        { status: UIUtil.escapeHtml(status) });
 };
 
 /**
@@ -468,6 +477,18 @@ UI.notifyMaxUsersLimitReached = function() {
     });
 };
 
+/**
+ * Notify user that he was automatically muted when joned the conference.
+ */
+UI.notifyInitiallyMuted = function() {
+    messageHandler.participantNotification(
+        null,
+        'notify.mutedTitle',
+        'connected',
+        'notify.muted',
+        null);
+};
+
 UI.handleLastNEndpoints = function(leavingIds, enteringIds) {
     VideoLayout.onLastNEndpointsChanged(leavingIds, enteringIds);
 };
@@ -500,6 +521,15 @@ UI.notifyInternalError = function(error) {
         descriptionKey: 'dialog.internalError',
         titleKey: 'dialog.internalErrorTitle'
     });
+};
+
+UI.notifyFocusDisconnected = function(focus, retrySec) {
+    messageHandler.participantNotification(
+        null, 'notify.focus',
+        'disconnected', 'notify.focusFail',
+        { component: focus,
+            ms: retrySec }
+    );
 };
 
 /**

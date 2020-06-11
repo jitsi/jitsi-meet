@@ -1,6 +1,7 @@
 // @flow
 
 import UIEvents from '../../../../service/UI/UIEvents';
+import { hideNotification } from '../../notifications';
 import {
     CAMERA_FACING_MODE,
     MEDIA_TYPE,
@@ -16,6 +17,7 @@ import { MiddlewareRegistry } from '../redux';
 import {
     TOGGLE_SCREENSHARING,
     TRACK_NO_DATA_FROM_SOURCE,
+    TRACK_REMOVED,
     TRACK_UPDATED
 } from './actionTypes';
 import {
@@ -48,6 +50,10 @@ MiddlewareRegistry.register(store => next => action => {
         _handleNoDataFromSourceErrors(store, action);
 
         return result;
+    }
+    case TRACK_REMOVED: {
+        _removeNoDataFromSourceNotification(store, action.track);
+        break;
     }
     case SET_AUDIO_MUTED:
         if (!action.muted
@@ -176,6 +182,10 @@ function _handleNoDataFromSourceErrors(store, action) {
 
     const { jitsiTrack } = track;
 
+    if (track.mediaType === MEDIA_TYPE.AUDIO && track.isReceivingData) {
+        _removeNoDataFromSourceNotification(store, action.track);
+    }
+
     if (track.mediaType === MEDIA_TYPE.VIDEO) {
         const { noDataFromSourceNotificationInfo = {} } = track;
 
@@ -185,6 +195,8 @@ function _handleNoDataFromSourceErrors(store, action) {
                 dispatch(trackNoDataFromSourceNotificationInfoChanged(jitsiTrack, undefined));
             }
 
+            // try to remove the notification if there is one.
+            _removeNoDataFromSourceNotification(store, action.track);
         } else {
             if (noDataFromSourceNotificationInfo.timeout) {
                 return;
@@ -223,6 +235,23 @@ function _getLocalTrack(
             getState()['features/base/tracks'],
             mediaType,
             includePending));
+}
+
+/**
+ * Removes the no data from source notification associated with the JitsiTrack if displayed.
+ *
+ * @param {Store} store - The redux store.
+ * @param {Track} track - The redux action dispatched in the specified store.
+ * @returns {void}
+ */
+function _removeNoDataFromSourceNotification({ getState, dispatch }, track) {
+    const t = getTrackByJitsiTrack(getState()['features/base/tracks'], track.jitsiTrack);
+    const { jitsiTrack, noDataFromSourceNotificationInfo = {} } = t || {};
+
+    if (noDataFromSourceNotificationInfo && noDataFromSourceNotificationInfo.uid) {
+        dispatch(hideNotification(noDataFromSourceNotificationInfo.uid));
+        dispatch(trackNoDataFromSourceNotificationInfoChanged(jitsiTrack, undefined));
+    }
 }
 
 /**

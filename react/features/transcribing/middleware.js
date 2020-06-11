@@ -8,7 +8,12 @@ import {
     PARTICIPANT_UPDATED
 } from './../base/participants';
 import {
+    _TRANSCRIBER_LEFT
+} from './actionTypes';
+import {
+    hidePendingTranscribingNotification,
     potentialTranscriberJoined,
+    showStoppedTranscribingNotification,
     transcriberJoined,
     transcriberLeft
 } from './actions';
@@ -29,6 +34,9 @@ MiddlewareRegistry.register(store => next => action => {
     } = store.getState()['features/transcribing'];
 
     switch (action.type) {
+    case _TRANSCRIBER_LEFT:
+        store.dispatch(showStoppedTranscribingNotification());
+        break;
     case HIDDEN_PARTICIPANT_JOINED:
         if (action.displayName
                 && action.displayName === TRANSCRIBER_DISPLAY_NAME) {
@@ -49,6 +57,7 @@ MiddlewareRegistry.register(store => next => action => {
         if (potentialTranscriberJIDs.includes(participant.id)
             && participant.name === TRANSCRIBER_DISPLAY_NAME) {
             store.dispatch(transcriberJoined(participant.id));
+            store.dispatch(hidePendingTranscribingNotification());
         }
 
         break;

@@ -1,3 +1,4 @@
+import { NOTIFICATION_TIMEOUT, showNotification } from '../../notifications';
 import { set } from '../redux';
 
 import {
@@ -16,7 +17,8 @@ import {
 } from './actionTypes';
 import {
     getLocalParticipant,
-    getNormalizedDisplayName
+    getNormalizedDisplayName,
+    getParticipantDisplayName
 } from './functions';
 
 /**
@@ -383,6 +385,29 @@ export function participantUpdated(participant = {}) {
 }
 
 /**
+ * Action to signal that a participant has muted us.
+ *
+ * @param {JitsiParticipant} participant - Information about participant.
+ * @returns {Promise}
+ */
+export function participantMutedUs(participant) {
+    return (dispatch, getState) => {
+        if (!participant) {
+            return;
+        }
+
+        dispatch(showNotification({
+            descriptionKey: 'notify.mutedRemotelyDescription',
+            titleKey: 'notify.mutedRemotelyTitle',
+            titleArguments: {
+                participantDisplayName:
+                    getParticipantDisplayName(getState, participant.getId())
+            }
+        }));
+    };
+}
+
+/**
  * Action to signal that a participant had been kicked.
  *
  * @param {JitsiParticipant} kicker - Information about participant performing the kick.
@@ -390,13 +415,23 @@ export function participantUpdated(participant = {}) {
  * @returns {Promise}
  */
 export function participantKicked(kicker, kicked) {
-    return dispatch => {
+    return (dispatch, getState) => {
 
         dispatch({
             type: PARTICIPANT_KICKED,
             kicked: kicked.getId(),
             kicker: kicker.getId()
         });
+
+        dispatch(showNotification({
+            titleArguments: {
+                kicked:
+                    getParticipantDisplayName(getState, kicked.getId()),
+                kicker:
+                    getParticipantDisplayName(getState, kicker.getId())
+            },
+            titleKey: 'notify.kickParticipant'
+        }, NOTIFICATION_TIMEOUT * 2)); // leave more time for this
     };
 }
 

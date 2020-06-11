@@ -81,6 +81,7 @@ import {
     localParticipantRoleChanged,
     participantConnectionStatusChanged,
     participantKicked,
+    participantMutedUs,
     participantPresenceChanged,
     participantRoleChanged,
     participantUpdated
@@ -111,6 +112,7 @@ import {
     maybeOpenFeedbackDialog,
     submitFeedback
 } from './react/features/feedback';
+import { showNotification } from './react/features/notifications';
 import { mediaPermissionPromptVisibilityChanged } from './react/features/overlay';
 import { suspendDetected } from './react/features/power-monitor';
 import {
@@ -338,6 +340,17 @@ class ConferenceConnector {
 
             APP.UI.hideStats();
             APP.UI.notifyConferenceDestroyed(reason);
+            break;
+        }
+
+        // FIXME FOCUS_DISCONNECTED is a confusing event name.
+        // What really happens there is that the library is not ready yet,
+        // because Jicofo is not available, but it is going to give it another
+        // try.
+        case JitsiConferenceErrors.FOCUS_DISCONNECTED: {
+            const [ focus, retrySec ] = params;
+
+            APP.UI.notifyFocusDisconnected(focus, retrySec);
             break;
         }
 
@@ -707,6 +720,10 @@ export default {
 
         if (config.startSilent) {
             sendAnalytics(createStartSilentEvent());
+            APP.store.dispatch(showNotification({
+                descriptionKey: 'notify.startSilentDescription',
+                titleKey: 'notify.startSilentTitle'
+            }));
         }
 
         // XXX The API will take care of disconnecting from the XMPP
@@ -2122,6 +2139,12 @@ export default {
             APP.UI.setAudioLevel(id, newLvl);
         });
 
+        room.on(JitsiConferenceEvents.TRACK_MUTE_CHANGED, (track, participantThatMutedUs) => {
+            if (participantThatMutedUs) {
+                APP.store.dispatch(participantMutedUs(participantThatMutedUs));
+            }
+        });
+
         room.on(JitsiConferenceEvents.SUBJECT_CHANGED,
             subject => APP.store.dispatch(conferenceSubjectChanged(subject)));
 
@@ -2307,6 +2330,10 @@ export default {
                     onStartMutedPolicyChanged(audio, video));
             }
         );
+        room.on(JitsiConferenceEvents.STARTED_MUTED, () => {
+            (room.isStartAudioMuted() || room.isStartVideoMuted())
+                && APP.UI.notifyInitiallyMuted();
+        });
 
         room.on(
             JitsiConferenceEvents.DATA_CHANNEL_OPENED, () => {

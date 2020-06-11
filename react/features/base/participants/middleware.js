@@ -1,6 +1,7 @@
 // @flow
 
 import UIEvents from '../../../../service/UI/UIEvents';
+import { NOTIFICATION_TIMEOUT, showNotification } from '../../notifications';
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../app';
 import {
     CONFERENCE_WILL_JOIN,
@@ -33,7 +34,8 @@ import {
 import {
     getFirstLoadableAvatarUrl,
     getLocalParticipant,
-    getParticipantById
+    getParticipantById,
+    getParticipantDisplayName
 } from './functions';
 
 declare var APP: Object;
@@ -365,7 +367,7 @@ function _participantJoinedOrUpdated({ dispatch, getState }, next, action) {
  * @param {boolean} newValue - The new value of the raise hand status.
  * @returns {void}
  */
-function _raiseHandUpdated({ dispatch }, conference, participantId, newValue) {
+function _raiseHandUpdated({ dispatch, getState }, conference, participantId, newValue) {
     const raisedHand = newValue === 'true';
 
     dispatch(participantUpdated({
@@ -373,4 +375,13 @@ function _raiseHandUpdated({ dispatch }, conference, participantId, newValue) {
         id: participantId,
         raisedHand
     }));
+
+    if (raisedHand) {
+        dispatch(showNotification({
+            titleArguments: {
+                name: getParticipantDisplayName(getState, participantId)
+            },
+            titleKey: 'notify.raisedHand'
+        }, NOTIFICATION_TIMEOUT));
+    }
 }

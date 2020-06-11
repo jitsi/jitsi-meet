@@ -449,6 +449,7 @@ const messageHandler = {
      * @param messageKey the key from the language file for the text of the
      * message.
      * @param messageArguments object with the arguments for the message.
+     * @param enabledNotifications flag to enable/disable notifications.
      * @param optional configurations for the notification (e.g. timeout)
      */
     participantNotification( // eslint-disable-line max-params
@@ -457,14 +458,17 @@ const messageHandler = {
             cls,
             messageKey,
             messageArguments,
+            enabledNotifications,
             timeout = NOTIFICATION_TIMEOUT) {
-        APP.store.dispatch(showNotification({
-            descriptionArguments: messageArguments,
-            descriptionKey: messageKey,
-            titleKey: displayNameKey,
-            title: displayName
-        },
-        timeout));
+        if (enabledNotifications) {
+            APP.store.dispatch(showNotification({
+                descriptionArguments: messageArguments,
+                descriptionKey: messageKey,
+                titleKey: displayNameKey,
+                title: displayName
+            },
+                timeout));
+        }
     },
 
     /**
