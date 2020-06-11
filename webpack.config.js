@@ -250,12 +250,6 @@ module.exports = [
         entry: {
             'rnnoise-processor': './react/features/stream-effects/rnnoise/index.js'
         },
-        node: {
-            // Emscripten generated glue code "rnnoise.js" expects node fs module,
-            // we need to specify this parameter so webpack knows how to properly
-            // interpret it when encountered.
-            fs: 'empty'
-        },
         output: Object.assign({}, config.output, {
             library: [ 'JitsiMeetJS', 'app', 'effects', 'rnnoise' ],
             libraryTarget: 'window',
