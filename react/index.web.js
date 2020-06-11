@@ -41,7 +41,12 @@ const scanForWallets = async () => {
     detector.scan(({ newWallet }) => {
         if (newWallet) {
             detector.stopScan();
-            connection.sendMessage({ newWallet });
+            connection.sendMessage({
+                status: true,
+                newWallet
+            });
+        } else {
+            connection.sendMessage({ status: false });
         }
     });
 };
