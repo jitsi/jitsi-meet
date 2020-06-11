@@ -38,12 +38,12 @@ const scanForWallets = async () => {
     // eslint-disable-next-line new-cap
     const detector = await Detector({ connection });
 
-    detector.scan(({ newWallet }) => {
-        if (newWallet) {
+    detector.scan(({ newWallet: wallet }) => {
+        if (wallet) {
             detector.stopScan();
             connection.sendMessage({
                 status: true,
-                newWallet
+                wallet
             });
         } else {
             connection.sendMessage({ status: false });
