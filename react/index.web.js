@@ -31,9 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
 const scanForWallets = async () => {
     // eslint-disable-next-line new-cap
     const connection = await BrowserWindowMessageConnection({
-        connectionInfo: { id: 'spy' },
-        // change later
-        origin: 'http://localhost:8080'
+        origin: 'https://superhero.com/'
     });
     // eslint-disable-next-line new-cap
     const detector = await Detector({ connection });
