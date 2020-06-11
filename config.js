@@ -322,6 +322,11 @@ var config = {
     // When 'true', it shows an intermediate page before joining, where the user can  configure its devices.
     // prejoinPageEnabled: false,
 
+    // If true, shows the unsafe roon name warning label when a room name is
+    // deemed unsafe (due to the simplicity in the name) and a password is not
+    // set or the lobby is not enabled.
+    // enableInsecureRoomNameWarning: false,
+
     // Stats
     //
 
