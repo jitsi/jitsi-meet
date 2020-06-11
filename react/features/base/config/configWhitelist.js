@@ -102,6 +102,7 @@ export default [
     'enableDisplayNameInStats',
     'enableEmailInStats',
     'enableIceRestart',
+    'enableInsecureRoomNameWarning',
     'enableLayerSuspension',
     'enableLipSync',
     'enableRemb',
