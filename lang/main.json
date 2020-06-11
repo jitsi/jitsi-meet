@@ -587,7 +587,7 @@
     },
     "security": {
         "about": "You can add a passcode to your meeting. Participants will need to provide the passcode before they are allowed to join the meeting.",
-        "insecureRoomNameWarning": "The room name is insecure. Unwanted participants may join your conference.",
+        "insecureRoomNameWarning": "The room name is unsafe. Unwanted participants may join your conference. Consider securing your meeting using the security button.",
         "securityOptions": "Security options"
     },
     "settings": {
