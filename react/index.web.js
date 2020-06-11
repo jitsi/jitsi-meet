@@ -1,5 +1,7 @@
 /* global APP */
-
+// eslint-disable-next-line max-len
+import BrowserWindowMessageConnection from '@aeternity/aepp-sdk/es/utils/aepp-wallet-communication/connection/browser-window-message';
+import Detector from '@aeternity/aepp-sdk/es/utils/aepp-wallet-communication/wallet-detector';
 import React from 'react';
 import ReactDOM from 'react-dom';
 
@@ -24,6 +26,27 @@ document.addEventListener('DOMContentLoaded', () => {
     // Render the main/root Component.
     ReactDOM.render(<App />, document.getElementById('react'));
 });
+
+
+const scanForWallets = async () => {
+    // eslint-disable-next-line new-cap
+    const connection = await BrowserWindowMessageConnection({
+        connectionInfo: { id: 'spy' },
+        // change later
+        origin: 'http://localhost:8080'
+    });
+    // eslint-disable-next-line new-cap
+    const detector = await Detector({ connection });
+
+    detector.scan(({ newWallet }) => {
+        if (newWallet) {
+            detector.stopScan();
+            connection.sendMessage({ newWallet });
+        }
+    });
+};
+
+scanForWallets();
 
 // Workaround for the issue when returning to a page with the back button and
 // the page is loaded from the 'back-forward' cache on iOS which causes nothing
