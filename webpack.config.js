@@ -333,6 +333,7 @@ module.exports = [
  * @returns {string|undefined} If the request is to be served by the proxy
  * target, undefined; otherwise, the path to the local file to be served.
  */
+// eslint-disable-next-line no-shadow,require-jsdoc
 function devServerProxyBypass({ path }) {
     if (path.startsWith('/css/') || path.startsWith('/doc/')
             || path.startsWith('/fonts/') || path.startsWith('/images/')
