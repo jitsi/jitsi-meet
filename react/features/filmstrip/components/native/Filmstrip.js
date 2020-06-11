@@ -2,6 +2,7 @@
 
 import React, { Component } from 'react';
 import { ScrollView } from 'react-native';
+import _ from "lodash";
 
 import { Container, Platform } from '../../../base/react';
 import { connect } from '../../../base/redux';
@@ -169,29 +170,27 @@ class Filmstrip extends Component<Props> {
         // XXX Array.prototype.sort() is not appropriate because (1) it operates
         // in place and (2) it is not necessarily stable.
 
-        const sortedParticipants = [
+        let sortedParticipants = [
             ...participants
         ];
 
         for (const participant of sortedParticipants) {
+            let sortWeight = 0;
 
             const videoTrack = getTrackByMediaTypeAndParticipant(this.props._tracks, MEDIA_TYPE.VIDEO, participant.id);
-
-            if (videoTrack) {
-                participant.videoMuted = videoTrack.muted;
-            } else {
-                participant.videoMuted = true;
+            if(!videoTrack.muted) {
+                sortWeight -= 1;
             }
+            if(participant.raisedHand) {
+                sortWeight -= 2;
+            }
+            if(participant.role === "moderator") {
+                sortWeight -= 4;
+            }
+            participant.sortWeight = sortWeight;
         }
 
-        sortedParticipants.sort((a, b) => a.videoMuted - b.videoMuted);
-
-        if (isNarrowAspectRatio_) {
-            // When the narrow aspect ratio is used, we want to have the remote
-            // participants from right to left with the newest added/joined to
-            // the leftmost side. The local participant is the leftmost item.
-            sortedParticipants.reverse();
-        }
+        sortedParticipants = _.sortBy(participants, "sortWeight");
 
         return sortedParticipants;
     }

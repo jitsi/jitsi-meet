@@ -1,6 +1,7 @@
 // @flow
 
 import React, { Component } from 'react';
+import _ from "lodash";
 import {
     ScrollView,
     TouchableWithoutFeedback,
@@ -194,18 +195,23 @@ class TileView extends Component<Props, State> {
      * @returns {Participant[]}
      */
     _getSortedParticipants() {
-        const participants = [];
+        let participants = [];
         let localParticipant;
 
         for (const participant of this.props._participants) {
+            let sortWeight = 0;
 
             const videoTrack = getTrackByMediaTypeAndParticipant(this.props._tracks, MEDIA_TYPE.VIDEO, participant.id);
-
-            if (videoTrack) {
-                participant.videoMuted = videoTrack.muted;
-            } else {
-                participant.videoMuted = true;
+            if(!videoTrack.muted) {
+                sortWeight -= 1;
             }
+            if(participant.raisedHand) {
+                sortWeight -= 2;
+            }
+            if(participant.role === "moderator") {
+                sortWeight -= 4;
+            }
+            participant.sortWeight = sortWeight;
 
             if (participant.local) {
                 localParticipant = participant;
@@ -214,7 +220,7 @@ class TileView extends Component<Props, State> {
             }
         }
 
-        participants.sort((a, b) => a.videoMuted - b.videoMuted);
+        participants = _.sortBy(participants, "sortWeight");
 
         localParticipant && participants.unshift(localParticipant);
 
