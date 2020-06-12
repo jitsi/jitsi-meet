@@ -9,6 +9,8 @@ import { connect } from '../../../base/redux';
 import { beginAddPeople } from '../../../invite';
 import { isToolboxVisible } from '../../../toolbox';
 
+declare var interfaceConfig: Object;
+
 type Props = {
 
     /**
@@ -77,7 +79,8 @@ function mapStateToProps(state) {
 
     return {
         _tileViewEnabled: state['features/video-layout'].tileViewEnabled,
-        _visible: isToolboxVisible(state) && participantCount === 1
+        _visible: isToolboxVisible(state) && participantCount === 1 && interfaceConfig.TOOLBAR_BUTTONS.includes('invite'),
+
     };
 }
 
@@ -92,3 +95,4 @@ const mapDispatchToProps = {
 };
 
 export default translate(connect(mapStateToProps, mapDispatchToProps)(InviteMore));
+
