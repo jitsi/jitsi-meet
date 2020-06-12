@@ -7,6 +7,7 @@ import { Dialog } from '../../../base/dialog';
 import { translate } from '../../../base/i18n';
 import { isLocalParticipantModerator } from '../../../base/participants';
 import { connect } from '../../../base/redux';
+import { LobbySection } from '../../../lobby';
 
 import Header from './Header';
 import PasswordSection from './PasswordSection';
@@ -62,8 +63,7 @@ function SecurityDialog({
     _locked,
     _password,
     _passwordNumberOfDigits,
-    setPassword,
-    t
+    setPassword
 }: Props) {
     const [ passwordEditEnabled, setPasswordEditEnabled ] = useState(false);
 
@@ -81,8 +81,8 @@ function SecurityDialog({
             titleKey = 'security.securityOptions'
             width = { 'small' }>
             <div className = 'security-dialog'>
-                { t('security.about') }
-                <div className = 'invite-more-dialog separator' />
+                <LobbySection />
+                <div className = 'separator-line' />
                 <PasswordSection
                     canEditPassword = { _canEditPassword }
                     conference = { _conference }

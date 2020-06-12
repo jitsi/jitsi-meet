@@ -2,10 +2,10 @@
 
 import React, { Component } from 'react';
 
-import { getCurrentConferenceUrl } from '../../../base/connection';
-import { translate } from '../../../base/i18n';
-import { Icon, IconCopy, IconCheck } from '../../../base/icons';
-import { connect } from '../../../base/redux';
+import { getCurrentConferenceUrl } from '../../../connection';
+import { translate } from '../../../i18n';
+import { Icon, IconCopy, IconCheck } from '../../../icons';
+import { connect } from '../../../redux';
 import logger from '../../logger';
 
 type Props = {
@@ -108,7 +108,8 @@ class CopyMeetingUrl extends Component<Props, State> {
      */
     _hideCopyLink() {
         this.setState({
-            showCopyLink: false
+            showCopyLink: false,
+            showLinkCopied: false
         });
     }
 
@@ -122,7 +123,8 @@ class CopyMeetingUrl extends Component<Props, State> {
      */
     _showCopyLink() {
         this.setState({
-            showCopyLink: true
+            showCopyLink: true,
+            showLinkCopied: false
         });
     }
 
@@ -152,35 +154,30 @@ class CopyMeetingUrl extends Component<Props, State> {
         const { url, t } = this.props;
         const { _copyUrl, _showCopyLink, _hideCopyLink } = this;
         const src = showLinkCopied ? IconCheck : IconCopy;
-        const iconCls = showCopyLink || showCopyLink ? 'prejoin-copy-icon--white' : 'prejoin-copy-icon--light';
 
         return (
             <div
-                className = 'prejoin-copy-meeting'
+                className = 'copy-meeting'
                 onMouseEnter = { _showCopyLink }
                 onMouseLeave = { _hideCopyLink }>
-                <div className = 'prejoin-copy-url'>{url}</div>
-                {showCopyLink && <div
-                    className = 'prejoin-copy-badge prejoin-copy-badge--hover'
-                    onClick = { _copyUrl }>
-                    {t('prejoin.copyAndShare')}
-                </div>}
-                {showLinkCopied && <div
-                    className = 'prejoin-copy-badge prejoin-copy-badge--done'>
-                    {t('prejoin.linkCopied')}
-                </div>}
-                <Icon
-                    className = { `prejoin-copy-icon ${iconCls}` }
-                    onClick = { _copyUrl }
-                    size = { 24 }
-                    src = { src } />
+                <div
+                    className = { `url ${showLinkCopied ? 'done' : ''}` }
+                    onClick = { _copyUrl } >
+                    { !showCopyLink && !showLinkCopied && url }
+                    { showCopyLink && t('prejoin.copyAndShare') }
+                    { showLinkCopied && t('prejoin.linkCopied') }
+                    <Icon
+                        onClick = { _copyUrl }
+                        size = { 24 }
+                        src = { src } />
+                </div>
                 <textarea
-                    className = 'prejoin-copy-textarea'
                     readOnly = { true }
                     ref = { this.textarea }
                     tabIndex = '-1'
                     value = { url } />
-            </div>);
+            </div>
+        );
     }
 }
 

@@ -66,7 +66,7 @@ MiddlewareRegistry.register(store => next => action => {
 StateListenerRegistry.register(
     state => getCurrentConference(state),
     (conference, { dispatch, getState }, prevConference) => {
-        const { authRequired, passwordRequired }
+        const { authRequired, membersOnly, passwordRequired }
             = getState()['features/base/conference'];
 
         if (conference !== prevConference) {
@@ -80,6 +80,7 @@ StateListenerRegistry.register(
             // and explicitly check.
             if (typeof authRequired === 'undefined'
                     && typeof passwordRequired === 'undefined'
+                    && typeof membersOnly === 'undefined'
                     && !isDialogOpen(getState(), FeedbackDialog)) {
                 // Conference changed, left or failed... and there is no
                 // pending authentication, nor feedback request, so close any

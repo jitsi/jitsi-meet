@@ -8,6 +8,12 @@ import logger from './logger';
 
 declare var APP: Object;
 
+const webrtcKindToJitsiKindTranslator = {
+    audioinput: 'audioInput',
+    audiooutput: 'audioOutput',
+    videoinput: 'videoInput'
+};
+
 /**
  * Detects the use case when the labels are not available if the A/V permissions
  * are not yet granted.
@@ -42,6 +48,29 @@ export function getAudioOutputDeviceId() {
 }
 
 /**
+ * Finds the real device id of the default device of the given type.
+ *
+ * @param {Object} state - The redux state.
+ * @param {*} kind - The type of the device. One of "audioInput",
+ * "audioOutput", and "videoInput". Also supported is all lowercase versions
+ * of the preceding types.
+ * @returns {string|undefined}
+ */
+export function getDefaultDeviceId(state: Object, kind: string) {
+    const kindToSearch = webrtcKindToJitsiKindTranslator[kind] || kind;
+    const defaultDevice = (state['features/base/devices'].availableDevices[kindToSearch] || [])
+        .find(d => d.deviceId === 'default');
+
+    // Find the device with a matching group id.
+    const matchingDevice = (state['features/base/devices'].availableDevices[kindToSearch] || [])
+        .find(d => d.deviceId !== 'default' && d.groupId === defaultDevice.groupId);
+
+    if (matchingDevice) {
+        return matchingDevice.deviceId;
+    }
+}
+
+/**
  * Finds a device with a label that matches the passed label and returns its id.
  *
  * @param {Object} state - The redux state.
@@ -52,12 +81,6 @@ export function getAudioOutputDeviceId() {
  * @returns {string|undefined}
  */
 export function getDeviceIdByLabel(state: Object, label: string, kind: string) {
-    const webrtcKindToJitsiKindTranslator = {
-        audioinput: 'audioInput',
-        audiooutput: 'audioOutput',
-        videoinput: 'videoInput'
-    };
-
     const kindToSearch = webrtcKindToJitsiKindTranslator[kind] || kind;
 
     const device
@@ -80,12 +103,6 @@ export function getDeviceIdByLabel(state: Object, label: string, kind: string) {
  * @returns {string|undefined}
  */
 export function getDeviceLabelById(state: Object, id: string, kind: string) {
-    const webrtcKindToJitsiKindTranslator = {
-        audioinput: 'audioInput',
-        audiooutput: 'audioOutput',
-        videoinput: 'videoInput'
-    };
-
     const kindToSearch = webrtcKindToJitsiKindTranslator[kind] || kind;
 
     const device

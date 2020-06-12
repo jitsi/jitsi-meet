@@ -1,0 +1,194 @@
+/**
+ * Shared style for full screen local track based dialogs/modals.
+ */
+ .premeeting-screen {
+    align-items: stretch;
+    background: #1C2025;
+    bottom: 0;
+    display: flex;
+    flex-direction: column;
+    font-size: 1.3em;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+    z-index: $toolbarZ + 1;
+
+    .content {
+        align-items: center;
+        background-image: linear-gradient(transparent, black);
+        display: flex;
+        flex: 1;
+        flex-direction: column;
+        justify-content: flex-end;
+        z-index: $toolbarZ + 2;
+
+        .title {
+            color: #fff;
+            font-size: 24px;
+            line-height: 32px;
+            margin-bottom: 16px;
+        }
+
+        .copy-meeting {
+            align-items: center;
+            cursor: pointer;
+            color: #fff;
+            display: flex;
+            flex-direction: row;
+            font-size: 15px;
+            font-weight: 300;
+            justify-content: center;
+            line-height: 24px;
+
+            .url {
+                display: flex;
+                padding: 8px 10px;
+
+                &:hover {
+                    background: #1C2025;
+                    border-radius: 4px;
+                }
+
+                &.done {
+                    background: #31B76A;
+                }
+
+                .jitsi-icon {
+                    margin-left: 10px;
+                }
+            }
+
+            &:hover {
+                align-self: stretch;
+            }
+
+            textarea {
+                border-width: 0;
+                height: 0;
+                opacity: 0;
+                padding: 0;
+                width: 0;
+            }
+        }
+
+        input.field {
+            background-color: transparent;
+            border: 1px solid transparent;
+            color: white;
+            outline-width: 0;
+            padding: 20px;
+            text-align: center;
+
+            &.focused {
+                border-bottom: 1px solid white;
+            }
+
+            &.error::placeholder {
+                color: $defaultWarningColor;
+            }
+        }
+
+        .action-btn {
+            border-radius: 3px;
+            color: #fff;
+            cursor: pointer;
+            display: inline-block;
+            font-size: 15px;
+            line-height: 24px;
+            margin: 10px;
+            padding: 7px 16px;
+            position: relative;
+            text-align: center;
+            width: 286px;
+    
+            &.primary {
+                background: #0376DA;
+                border: 1px solid #0376DA;
+            }
+    
+            &.secondary {
+                background: transparent;
+                border: 1px solid #5E6D7A;
+            }
+    
+            &.text {
+                width: auto;
+                font-size: 13px;
+                margin: 0;
+                padding: 0;
+            }
+    
+            &.disabled {
+                background: #5E6D7A;
+                border: 1px solid #5E6D7A;
+                color: #AFB6BC;
+                cursor: initial;
+    
+                .icon {
+                    & > svg {
+                        fill: #AFB6BC;
+                    }
+                }
+    
+                .options {
+                    border-left: 1px solid #AFB6BC;
+                }
+            }
+
+            .options {
+                align-items: center;
+                border-left: 1px solid #fff;
+                display: flex;
+                height: 100%;
+                justify-content: center;
+                position: absolute;
+                right: 0;
+                top: 0;
+                width: 40px;
+            }
+        }
+    }
+
+    .media-btn-container {
+        display: flex;
+        justify-content: center;
+        margin: 32px 0;
+        width: 100%;
+
+        &> div {
+            margin: 0 12px;
+        }
+
+        .settings-button-small-icon {
+            right: -8px;
+
+            &--hovered {
+                right: -10px;
+            }
+        }
+    }
+}
+
+#preview {
+    height: 100%;
+    position: absolute;
+    width: 100%;
+
+    &.no-video {
+        background: radial-gradient(50% 50% at 50% 50%, #5B6F80 0%, #365067 100%), #FFFFFF;
+        text-align: center;
+    }
+
+    .avatar {
+        background: #A4B8D1;
+        margin: 200px auto 0 auto;
+    }
+
+    video {
+        height: 100%;
+        object-fit: cover;
+        position: absolute;
+        width: 100%;
+    }
+}

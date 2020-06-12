@@ -5,8 +5,7 @@
  *
  * {
  *     type: CONNECTION_DISCONNECTED,
- *     connection: JitsiConnection,
- *     message: string
+ *     connection: JitsiConnection
  * }
  */
 export const CONNECTION_DISCONNECTED = 'CONNECTION_DISCONNECTED';

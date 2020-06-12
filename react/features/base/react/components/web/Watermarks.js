@@ -22,9 +22,25 @@ const _RIGHT_WATERMARK_STYLE = {
 type Props = {
 
     /**
+     * The user selected url used to navigate to on logo click.
+     */
+    _customLogoLink: string,
+
+    /**
+     * The url of the user selected logo.
+     */
+    _customLogoUrl: string,
+
+    /**
      * Whether or not the current user is logged in through a JWT.
      */
     _isGuest: boolean,
+
+    /**
+     * Flag used to signal that the logo can be displayed.
+     * It becomes true after the user customization options are fetched.
+     */
+    _readyToDisplayJitsiWatermark: boolean,
 
     /**
      * Invoked to obtain translated strings.
@@ -134,6 +150,26 @@ class Watermarks extends Component<Props, State> {
     }
 
     /**
+     * Returns true if the watermark is ready to be displayed.
+     *
+     * @private
+     * @returns {boolean}
+     */
+    _canDisplayJitsiWatermark() {
+        const {
+            showJitsiWatermark,
+            showJitsiWatermarkForGuests
+        } = this.state;
+        const {
+            _isGuest,
+            _readyToDisplayJitsiWatermark
+        } = this.props;
+
+        return _readyToDisplayJitsiWatermark
+            && (showJitsiWatermark || (_isGuest && showJitsiWatermarkForGuests));
+    }
+
+    /**
      * Renders a brand watermark if it is enabled.
      *
      * @private
@@ -173,18 +209,27 @@ class Watermarks extends Component<Props, State> {
      */
     _renderJitsiWatermark() {
         let reactElement = null;
+        const {
+            _customLogoUrl,
+            _customLogoLink
+        } = this.props;
 
-        if (this.state.showJitsiWatermark
-                || (this.props._isGuest
-                    && this.state.showJitsiWatermarkForGuests)) {
-            reactElement = <div className = 'watermark leftwatermark' />;
+        if (this._canDisplayJitsiWatermark()) {
+            const link = _customLogoLink || this.state.jitsiWatermarkLink;
+            const style = {
+                backgroundImage: `url(${_customLogoUrl || interfaceConfig.DEFAULT_LOGO_URL})`,
+                maxWidth: 140,
+                maxHeight: 70
+            };
 
-            const { jitsiWatermarkLink } = this.state;
+            reactElement = (<div
+                className = 'watermark leftwatermark'
+                style = { style } />);
 
-            if (jitsiWatermarkLink) {
+            if (link) {
                 reactElement = (
                     <a
-                        href = { jitsiWatermarkLink }
+                        href = { link }
                         target = '_new'>
                         { reactElement }
                     </a>
@@ -223,12 +268,11 @@ class Watermarks extends Component<Props, State> {
  * Maps parts of Redux store to component prop types.
  *
  * @param {Object} state - Snapshot of Redux store.
- * @returns {{
- *      _isGuest: boolean
- * }}
+ * @returns {Props}
  */
 function _mapStateToProps(state) {
     const { isGuest } = state['features/base/jwt'];
+    const { customizationReady, logoClickUrl, logoImageUrl } = state['features/dynamic-branding'];
 
     return {
         /**
@@ -238,7 +282,10 @@ function _mapStateToProps(state) {
          * @private
          * @type {boolean}
          */
-        _isGuest: isGuest
+        _customLogoLink: logoClickUrl,
+        _customLogoUrl: logoImageUrl,
+        _isGuest: isGuest,
+        _readyToDisplayJitsiWatermark: customizationReady
     };
 }
 

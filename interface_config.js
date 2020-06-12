@@ -1,9 +1,8 @@
 /* eslint-disable no-unused-vars, no-var, max-len */
 
 var interfaceConfig = {
-    // TO FIX: this needs to be handled from SASS variables. There are some
-    // methods allowing to use variables both in css and js.
     DEFAULT_BACKGROUND: '#474747',
+    DEFAULT_LOGO_URL: '../images/watermark.png',
 
     /**
      * Whether or not the blurred video background for large video should be

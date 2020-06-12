@@ -57,14 +57,13 @@ class BaseDialog<P: Props, S: State> extends AbstractDialog<P, S> {
                 <KeyboardAvoidingView
                     behavior = 'height'
                     style = { [
-                        styles.overlay,
-                        style
+                        styles.overlay
                     ] }>
                     <View
                         pointerEvents = 'box-none'
                         style = { [
                             _dialogStyles.dialog,
-                            this.props.style
+                            style
                         ] }>
                         <TouchableOpacity
                             onPress = { this._onCancel }
