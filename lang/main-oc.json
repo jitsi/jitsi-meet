@@ -15,7 +15,19 @@
         "searchPeople": "Cercar de monde",
         "searchPeopleAndNumbers": "Cercar de monde o apondre lor numèros de telefòn",
         "telephone": "Telefòn : {{number}}",
-        "title": "Convidatz de monde a vòstra conferéncia"
+        "title": "Convidatz de monde a vòstra conferéncia",
+        "yahooEmail": "Corrièl Yahoo",
+        "outlookEmail": "Corrièl Outlook",
+        "shareInvite": "Partejar invitacion conferéncia",
+        "inviteMorePrompt": "Convidar mai de monde",
+        "inviteMoreMailSubject": "Rejónher la conferéncia {{appName}}",
+        "inviteMoreHeader": "Sètz l’unica persona de la conferéncia",
+        "googleEmail": "Google Email",
+        "defaultEmail": "Vòstre email per defaut",
+        "copyStream": "Copiar lo ligam de la difusion en dirèct",
+        "copyLink": "Copiar lo ligam de la conferéncia",
+        "copyInvite": "Copiar l’invitacion a la conferéncia",
+        "addContacts": "Convidar vòstres contactes"
     },
     "audioDevices": {
         "bluetooth": "Bluetooth",
@@ -274,13 +286,14 @@
         "yourEntireScreen": "Vòstre ecran complet",
         "screenSharingAudio": "Partejar l’àudio",
         "muteEveryoneStartMuted": "",
-        "muteEveryoneSelf": "",
+        "muteEveryoneSelf": "vos",
         "muteEveryoneTitle": "",
         "muteEveryoneDialog": "",
         "muteEveryoneElseTitle": "Copar lo son a totes levat {{whom}} ?",
         "muteEveryoneElseDialog": "",
         "e2eeTitle": "Chiframent del cap a la fin",
-        "e2eeLabel": "Clau"
+        "e2eeLabel": "Clau",
+        "add": "Ajustar"
     },
     "dialOut": {
         "statusMessage": "ara es {{status}}"
@@ -622,7 +635,8 @@
             "videoblur": "Enfoscar o non la vidèo",
             "muteEveryone": "",
             "moreOptions": "Mostrar mai d’opcions",
-            "e2ee": "Chiframent del cap a la fin"
+            "e2ee": "Chiframent del cap a la fin",
+            "security": "Opcions de seguretat"
         },
         "addPeople": "Ajustar de monde a vòstra sonada",
         "audioOnlyOff": "Desactivar lo mòde connexion febla",
@@ -674,12 +688,13 @@
         "startvideoblur": "Trebolar mon rèire-plan",
         "stopvideoblur": "Desactivar lo borrolatge del rèire-plan",
         "noisyAudioInputDesc": "",
-        "noisyAudioInputTitle": "",
+        "noisyAudioInputTitle": "Vòstre microfòn sembla brusent !",
         "noAudioSignalDialInLinkDesc": "",
         "noAudioSignalDialInDesc": "",
         "muteEveryone": "",
         "moreOptions": "Autras opcions",
-        "e2ee": "Chiframent del cap a la fin"
+        "e2ee": "Chiframent del cap a la fin",
+        "security": "Opcions de seguretat"
     },
     "transcribing": {
         "ccButtonTooltip": "Aviar / Arrestat los sostítols",
@@ -780,8 +795,8 @@
         "header": "Centre d’ajuda"
     },
     "lonelyMeetingExperience": {
-        "youAreAlone": "",
-        "button": ""
+        "youAreAlone": "Sètz l’unica persona de la conferéncia",
+        "button": "Convidar d’autres"
     },
     "chromeExtensionBanner": {
         "dontShowAgain": "Me mostrar pas mai aquò",
@@ -798,6 +813,11 @@
         "callMe": "Sona-me",
         "audioTrackError": "Creacion impossibla de la pista àudio.",
         "audioOnlyError": "Error àudio :",
-        "audioAndVideoError": "Error àudio e vidèo :"
+        "audioAndVideoError": "Error àudio e vidèo :",
+        "videoOnlyError": "Error vidèo :",
+        "linkCopied": "Ligam copiat al quichapapièrs"
+    },
+    "security": {
+        "securityOptions": "Opcions de seguretat"
     }
 }
