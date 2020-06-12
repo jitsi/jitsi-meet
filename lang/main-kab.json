@@ -19,7 +19,7 @@
     },
     "audioDevices": {
         "bluetooth": "Bluetooth",
-        "headphones": "",
+        "headphones": "Casque",
         "phone": "Tiliɣri",
         "speaker": "Asawaḍ"
     },
@@ -34,7 +34,7 @@
             "generic": "",
             "notSignedIn": ""
         },
-        "join": "",
+        "join": "Semlil",
         "joinTooltip": "",
         "nextMeeting": "",
         "noEvents": "",
@@ -42,7 +42,7 @@
         "permissionButton": "",
         "permissionMessage": "",
         "refresh": "",
-        "today": ""
+        "today": "Ass-a"
     },
     "chat": {
         "error": "",
@@ -51,7 +51,7 @@
             "popover": "Fren meffer isem",
             "title": ""
         },
-        "title": ""
+        "title": "Asqerdec"
     },
     "connectingOverlay": {
         "joiningRoom": ""
@@ -62,16 +62,16 @@
         "AUTHFAIL": "",
         "CONNECTED": "Yeqqen",
         "CONNECTING": "Tuqqna",
-        "CONNFAIL": "",
-        "DISCONNECTED": "Yeffeɣ",
-        "DISCONNECTING": "Yeffeɣ",
-        "ERROR": "",
+        "CONNFAIL": "La connexion a échoué",
+        "DISCONNECTED": "Ur yeqqin ara",
+        "DISCONNECTING": "Tufɣa",
+        "ERROR": "Tuccḍa",
         "RECONNECTING": ""
     },
     "connectionindicator": {
         "address": "Tansa:",
         "bandwidth": "",
-        "bitrate": "",
+        "bitrate": "Aktum imisin",
         "bridgeCount": "",
         "connectedTo": "",
         "framerate": "",
@@ -101,8 +101,8 @@
     },
     "dateUtils": {
         "earlier": "",
-        "today": "",
-        "yesterday": ""
+        "today": "Ass-a",
+        "yesterday": "Iḍelli"
     },
     "deepLinking": {
         "appNotInstalled": "",
@@ -135,7 +135,7 @@
         "alreadySharedVideoMsg": "",
         "alreadySharedVideoTitle": "",
         "applicationWindow": "",
-        "Back": "",
+        "Back": "Retour",
         "cameraConstraintFailedError": "",
         "cameraNotFoundError": "Ur nufi ara takamirat.",
         "cameraNotSendingData": "",
@@ -144,24 +144,24 @@
         "cameraUnknownError": "",
         "cameraUnsupportedResolutionError": "",
         "Cancel": "Sefsex",
-        "close": "",
+        "close": "Mdel",
         "conferenceDisconnectMsg": "",
-        "conferenceDisconnectTitle": "",
+        "conferenceDisconnectTitle": "Suffren-k.",
         "conferenceReloadMsg": "",
         "conferenceReloadTitle": "",
-        "confirm": "",
-        "confirmNo": "",
-        "confirmYes": "",
+        "confirm": "Sentem",
+        "confirmNo": "Uhu",
+        "confirmYes": "Ih",
         "connectError": "",
         "connectErrorWithMsg": "",
         "connecting": "Yetteqqen",
         "contactSupport": "Anermis n tallelt",
         "copy": "Nɣel",
-        "dismiss": "",
+        "dismiss": "Agwi",
         "displayNameRequired": "",
         "done": "Ula d yiwen ",
         "enterDisplayName": "",
-        "error": "",
+        "error": "Tuccḍa",
         "externalInstallationMsg": "",
         "externalInstallationTitle": "",
         "goToStore": "",
@@ -172,7 +172,7 @@
         "inlineInstallationMsg": "",
         "inlineInstallExtension": "Sbedd tura",
         "internalError": "",
-        "internalErrorTitle": "",
+        "internalErrorTitle": "Agul zdaxel",
         "kickMessage": "",
         "kickParticipantButton": "",
         "kickParticipantDialog": "",
@@ -185,7 +185,7 @@
         "lockRoom": "",
         "lockTitle": "",
         "logoutQuestion": "",
-        "logoutTitle": "",
+        "logoutTitle": "Tufɣa",
         "maxUsersLimitReached": "",
         "maxUsersLimitReachedTitle": "",
         "micConstraintFailedError": "",
@@ -198,14 +198,14 @@
         "muteParticipantButton": "Kkes imesli",
         "muteParticipantDialog": "",
         "muteParticipantTitle": "",
-        "Ok": "",
+        "Ok": "IH",
         "passwordLabel": "",
         "passwordNotSupported": "",
         "passwordNotSupportedTitle": "",
         "passwordRequired": "",
         "popupError": "",
         "popupErrorTitle": "",
-        "recording": "",
+        "recording": "Asekles",
         "recordingDisabledForGuestTooltip": "",
         "recordingDisabledTooltip": "",
         "rejoinNow": "",
@@ -222,7 +222,7 @@
         "removeSharedVideoTitle": "",
         "reservationError": "",
         "reservationErrorMsg": "",
-        "retry": "",
+        "retry": "Ɛreḍ tikkelt nniḍen",
         "screenSharingFailedToInstall": "",
         "screenSharingFailedToInstallTitle": "",
         "screenSharingFirefoxPermissionDeniedError": "",
@@ -230,7 +230,7 @@
         "screenSharingPermissionDeniedError": "",
         "serviceUnavailable": "",
         "sessTerminated": "",
-        "Share": "",
+        "Share": "Bḍu",
         "shareVideoLinkError": "",
         "shareVideoTitle": "Bḍu tavidyut",
         "shareYourScreen": "Bḍut agdil-nwen",
@@ -244,7 +244,7 @@
         "stopRecordingWarning": "",
         "stopStreamingWarning": "",
         "streamKey": "",
-        "Submit": "",
+        "Submit": "Azen",
         "thankYou": "",
         "token": "",
         "tokenAuthFailed": "",
@@ -255,8 +255,10 @@
         "WaitForHostMsg": "",
         "WaitForHostMsgWOk": "",
         "WaitingForHost": "",
-        "Yes": "",
-        "yourEntireScreen": ""
+        "Yes": "Ih",
+        "yourEntireScreen": "",
+        "add": "Rnu",
+        "e2eeLabel": "Tasarut"
     },
     "dialOut": {
         "statusMessage": ""
@@ -271,18 +273,18 @@
         "veryGood": "Yelha maḍi"
     },
     "incomingCall": {
-        "answer": "",
+        "answer": "Tiririt",
         "audioCallTitle": "",
-        "decline": "",
+        "decline": "Agwi",
         "productLabel": "",
         "videoCallTitle": ""
     },
     "info": {
-        "accessibilityLabel": "",
+        "accessibilityLabel": "Sken talɣut",
         "addPassword": "",
         "cancelPassword": "",
-        "conferenceURL": "",
-        "country": "",
+        "conferenceURL": "Aseγwen:",
+        "country": "Tamurt",
         "dialANumber": "",
         "dialInConferenceID": "",
         "dialInNotSupported": "",
@@ -303,21 +305,21 @@
         "noRoom": "",
         "numbers": "",
         "password": "",
-        "title": "",
+        "title": "Bḍu",
         "tooltip": "",
         "label": ""
     },
     "inviteDialog": {
         "alertText": "",
-        "header": "",
+        "header": "Nced…",
         "searchCallOnlyPlaceholder": "",
         "searchPeopleOnlyPlaceholder": "",
         "searchPlaceholder": "",
-        "send": ""
+        "send": "Azen"
     },
     "inlineDialogFailure": {
         "msg": "Yewwet-aɣ-tt ciṭṭuḥ wugur.",
-        "retry": "Ɛreḍ tikelt-nniḍen",
+        "retry": "Ɛreḍ tikkelt nniḍen",
         "support": "Tallalt",
         "supportMsg": ""
     },
@@ -358,23 +360,23 @@
         "pending": "",
         "serviceName": "",
         "signedInAs": "",
-        "signIn": "",
+        "signIn": "Qqen s Google",
         "signInCTA": "",
-        "signOut": "",
+        "signOut": "Ffeɣ",
         "start": "",
-        "streamIdHelp": "",
+        "streamIdHelp": "D acu wa?",
         "unavailableTitle": ""
     },
     "localRecording": {
         "clientState": {
-            "off": "",
+            "off": "Insa",
             "on": "",
-            "unknown": ""
+            "unknown": "D arussin"
         },
         "dialogTitle": "",
-        "duration": "",
-        "durationNA": "",
-        "encoding": "",
+        "duration": "Tanzagt",
+        "durationNA": "N/A",
+        "encoding": "Encodage",
         "label": "",
         "labelToolTip": "",
         "localRecording": "",
@@ -385,17 +387,17 @@
             "finishedModerator": "",
             "notModerator": ""
         },
-        "moderator": "",
-        "no": "",
+        "moderator": "Aseɣyad",
+        "no": "Uhu",
         "participant": "",
         "participantStats": "",
         "sessionToken": "",
         "start": "",
         "stop": "",
-        "yes": ""
+        "yes": "Ih"
     },
-    "lockRoomPassword": "",
-    "lockRoomPasswordUppercase": "",
+    "lockRoomPassword": "awal uffir",
+    "lockRoomPasswordUppercase": "Mot de passe",
     "me": "nek",
     "notify": {
         "connectedOneMember": "",
@@ -423,10 +425,10 @@
         "startSilentDescription": "",
         "suboptimalExperienceDescription": "",
         "suboptimalExperienceTitle": "",
-        "unmute": "",
+        "unmute": "Susem",
         "newDeviceCameraTitle": "",
         "newDeviceAudioTitle": "",
-        "newDeviceAction": ""
+        "newDeviceAction": "Seqdec"
     },
     "passwordSetRemotely": "Yettwaɛeyyen sɣur yimekki nniḍen",
     "passwordDigitsOnly": "",
@@ -438,11 +440,11 @@
         "connecting": "Yetteqqen…",
         "connecting2": "Yetteqqen*…",
         "disconnected": "Yeffeɣ",
-        "expired": "",
-        "ignored": "",
+        "expired": "Yemmut",
+        "ignored": "Ignoré",
         "initializingCall": "",
         "invited": "",
-        "rejected": "",
+        "rejected": "Yerrad",
         "ringing": ""
     },
     "profile": {
@@ -466,13 +468,13 @@
         "live": "",
         "loggedIn": "",
         "off": "",
-        "on": "",
+        "on": "Asekles",
         "pending": "",
         "rec": "",
         "serviceDescription": "",
         "serviceName": "",
-        "signIn": "",
-        "signOut": "",
+        "signIn": "Qqen",
+        "signOut": "Ffeɣ",
         "unavailable": "",
         "unavailableTitle": ""
     },
@@ -485,15 +487,15 @@
             "disconnect": "Yeffeɣ",
             "microsoftSignIn": "",
             "signedIn": "",
-            "title": ""
+            "title": "Awitay"
         },
-        "devices": "",
+        "devices": "Périphériques",
         "followMe": "Yal amdan iy-ṭṭafaren",
-        "language": "",
+        "language": "Langue ",
         "loggedIn": "",
-        "moderator": "",
-        "more": "",
-        "name": "",
+        "moderator": "Aseɣyad",
+        "more": "Ugar",
+        "name": "ISem",
         "noDevice": "Ula d yiwen ",
         "selectAudioOutput": "",
         "selectCamera": "Takamiṛatt",
@@ -503,19 +505,21 @@
         "title": "Iɣewwaren"
     },
     "settingsView": {
-        "alertOk": "",
-        "alertTitle": "",
+        "alertOk": "IH",
+        "alertTitle": "Asmigel",
         "alertURLText": "",
         "buildInfoSection": "",
         "conferenceSection": "",
-        "displayName": "",
-        "email": "",
+        "displayName": "Isem n uskan",
+        "email": "Imayl",
         "header": "Iɣewwaren",
         "profileSection": "Amaɣnu",
-        "serverURL": "",
+        "serverURL": "URL n uqeddac",
         "startWithAudioMuted": "",
         "startWithVideoMuted": "",
-        "version": ""
+        "version": "Version",
+        "alertCancel": "Semmet",
+        "advanced": "Talqayt"
     },
     "share": {
         "dialInfoText": "",
@@ -525,13 +529,13 @@
     "speakerStats": {
         "hours": "",
         "minutes": "",
-        "name": "",
+        "name": "ISem",
         "seconds": "",
         "speakerStats": "",
         "speakerTime": ""
     },
     "startupoverlay": {
-        "policyText": "",
+        "policyText": " ",
         "title": "{{app}} yesra ad yesseqdec asawaḍ d tkamirat-inek."
     },
     "suspendedoverlay": {
@@ -544,7 +548,7 @@
             "audioOnly": "Rmed/Sens imesli kan",
             "audioRoute": "",
             "callQuality": "",
-            "cc": "",
+            "cc": "Commuter les sous-titres",
             "chat": "Ffer/Sken-d asfaylu n udiwenni",
             "document": "Ldi / Mdel zzmam yettwabḍan",
             "feedback": "",
@@ -572,7 +576,9 @@
             "tileView": "",
             "toggleCamera": "",
             "videomute": "",
-            "videoblur": ""
+            "videoblur": "",
+            "privateMessage": "Azen izen uslig",
+            "help": "Tallelt"
         },
         "addPeople": "Rnu-d imdanen ɣer tiɣri-inek",
         "audioOnlyOff": "",
@@ -592,9 +598,9 @@
         "hangup": "Ffeɣ",
         "invite": "",
         "login": "Qqen",
-        "logout": "",
+        "logout": "Tufɣa",
         "lowerYourHand": "",
-        "moreActions": "",
+        "moreActions": "Ugar n tigawin",
         "mute": "Sgugem / Kkes tigugmi",
         "openChat": "",
         "pip": "",
@@ -616,7 +622,10 @@
         "toggleCamera": "",
         "videomute": "Seqleɛ / Seḥbes takamirat",
         "startvideoblur": "",
-        "stopvideoblur": ""
+        "stopvideoblur": "",
+        "privateMessage": "Azen izen uslig",
+        "moreOptions": "Ugar n textirin",
+        "help": "Tallelt"
     },
     "transcribing": {
         "ccButtonTooltip": "",
@@ -669,9 +678,9 @@
     },
     "videothumbnail": {
         "domute": "Kkes imesli",
-        "flip": "",
+        "flip": "Tuttya",
         "kick": "",
-        "moderator": "",
+        "moderator": "Aseɣyad",
         "mute": "",
         "muted": "Tettwasgugem",
         "remoteControl": "Asenqed agemmaḍ",
@@ -688,22 +697,28 @@
             "audio": "Taɣect",
             "video": "Tavidyut"
         },
-        "calendar": "",
+        "calendar": "Awitay",
         "connectCalendarButton": "Qqen awitay-inek",
         "connectCalendarText": "",
         "enterRoomTitle": "",
         "go": "DDU",
         "join": "SNULFU-D / KCEM",
-        "info": "",
+        "info": "Talɣut",
         "privacy": "Tabaḍnit",
-        "recentList": "",
-        "recentListDelete": "",
+        "recentList": "Melmi kan",
+        "recentListDelete": "Kkes",
         "recentListEmpty": "",
         "reducedUIText": "",
         "roomname": "Sekcem-d isem n tzeqqa",
         "roomnameHint": "Sekcem isem neɣ URL n texxamt wuɣur tebɣiḍ ad tedduḍ. Tzemreḍ ad tgeḍ isem, eǧǧ kan imdanen ara temlileḍ ad t-isinen iwakken ad skecmen yiwen n yisem.",
         "sendFeedback": "Azen rray-ik",
         "terms": "Tiwtilin",
-        "title": ""
+        "title": "",
+        "goSmall": "Ddu",
+        "getHelp": "Awi tallelt"
+    },
+    "prejoin": {
+        "or": "neɣ",
+        "doNotShow": "Ur d-skan ara tikkelt-nniḍen"
     }
 }
