@@ -175,8 +175,8 @@ function sendShareVideoCommand(id, status, conference, localParticipantId, time)
     conference.sendCommandOnce(SHARED_VIDEO, {
         value: id,
         attributes: {
-            state: status,
             from: localParticipantId,
+            state: status,
             time
         }
     });

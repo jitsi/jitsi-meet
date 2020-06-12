@@ -14,19 +14,19 @@ import { EnterVideoLinkPrompt } from './components';
  * @param {string} ownerId - The participantId of the user sharing the YouTube video.
  * @returns {{
  *     type: SET_SHARED_VIDEO_STATUS,
- *     videoId: string,
+ *     ownerId: string,
  *     status: string,
  *     time: number,
- *     ownerId: string
+ *     videoId: string
  * }}
  */
 export function setSharedVideoStatus(videoId: string, status: string, time: number, ownerId: string) {
     return {
         type: SET_SHARED_VIDEO_STATUS,
-        videoId,
+        ownerId,
         status,
         time,
-        ownerId
+        videoId
     };
 }
 

@@ -13,6 +13,13 @@ import { setSharedVideoStatus } from '../../actions';
 import styles from './styles';
 
 /**
+ * Passed to the webviewProps in order to avoid the usage of the ios player on which we cannot hide the controls.
+ *
+ * @private
+ */
+const webviewUserAgent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.97 Safari/537.36'; // eslint-disable-line max-len
+
+/**
  * The type of the React {@link Component} props of {@link YoutubeLargeVideo}.
  */
 type Props = {
@@ -106,9 +113,13 @@ const YoutubeLargeVideo = (props: Props) => {
     const playerRef = useRef(null);
 
     useEffect(() => {
-        if (!props._isOwner) {
-            playerRef.current && playerRef.current.seekTo(props._seek);
-        }
+        playerRef.current && playerRef.current.getCurrentTime().then(time => {
+            const { _seek } = props;
+
+            if (shouldSeekToPosition(_seek, time)) {
+                playerRef.current && playerRef.current.seekTo(_seek);
+            }
+        });
     }, [ props._seek ]);
 
     useEffect(() => {
@@ -117,7 +128,13 @@ const YoutubeLargeVideo = (props: Props) => {
 
     const onChangeState = e =>
         playerRef.current && playerRef.current.getCurrentTime().then(time => {
-            if (props._isOwner && e !== 'buffering') {
+            const {
+                _isOwner,
+                _isPlaying,
+                _seek
+            } = props;
+
+            if (shouldSetNewStatus(_isOwner, e, _isPlaying, time, _seek)) {
                 props._onVideoChangeEvent(props.youtubeId, e, time, props._ownerId);
             }
         });
@@ -164,11 +181,49 @@ const YoutubeLargeVideo = (props: Props) => {
                     bounces: false,
                     mediaPlaybackRequiresUserAction: false,
                     scrollEnabled: false,
-                    userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.97 Safari/537.36' // eslint-disable-line max-len
+                    userAgent: webviewUserAgent
                 }}
                 width = { playerWidth } />
         </View>);
 };
+
+/* eslint-disable max-params */
+
+/**
+ * Return true if the user is the owner and
+ * the status has changed or the seek time difference from the previous set is larger than 5 seconds.
+ *
+ * @param {boolean} isOwner - Whether the local user is sharing the video.
+ * @param {string} status - The new status.
+ * @param {boolean} isPlaying - Whether the component is playing at the moment.
+ * @param {number} newTime - The new seek time.
+ * @param {number} previousTime - The old seek time.
+ * @private
+ * @returns {boolean}
+*/
+function shouldSetNewStatus(isOwner, status, isPlaying, newTime, previousTime) {
+    if (!isOwner || status === 'buffering') {
+        return false;
+    }
+
+    if ((isPlaying && status === 'paused') || (!isPlaying && status === 'playing')) {
+        return true;
+    }
+
+    return shouldSeekToPosition(newTime, previousTime);
+}
+
+/**
+ * Return true if the diffenrece between the two timees is larger than 5.
+ *
+ * @param {number} newTime - The current time.
+ * @param {number} previousTime - The previous time.
+ * @private
+ * @returns {boolean}
+*/
+function shouldSeekToPosition(newTime, previousTime) {
+    return Math.abs(newTime - previousTime) > 5;
+}
 
 /**
  * Maps (parts of) the Redux state to the associated YoutubeLargeVideo's props.

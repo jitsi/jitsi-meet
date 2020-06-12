@@ -35,18 +35,18 @@ type Props = {
     _connectionStatus: string,
 
     /**
-     * The name of the participant which this component represents.
-     *
-     * @private
-     */
-    _participantName: string,
-
-    /**
      * True if the participant which this component represents is fake.
      *
      * @private
      */
     _isFakeParticipant: boolean,
+
+    /**
+     * The name of the participant which this component represents.
+     *
+     * @private
+     */
+    _participantName: string,
 
     /**
      * True if the video should be rendered, false otherwise.
@@ -275,8 +275,8 @@ function _mapStateToProps(state, ownProps) {
         _connectionStatus:
             connectionStatus
                 || JitsiParticipantConnectionStatus.ACTIVE,
-        _participantName: participantName,
         _isFakeParticipant: participant && participant.isFakeParticipant,
+        _participantName: participantName,
         _renderVideo: shouldRenderParticipantVideo(state, participantId) && !disableVideo,
         _videoTrack:
             getTrackByMediaTypeAndParticipant(
