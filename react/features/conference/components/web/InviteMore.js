@@ -1,17 +1,16 @@
 // @flow
 
-import React from "react";
+import React from 'react';
 
-import { translate } from "../../../base/i18n";
-import { Icon, IconInviteMore } from "../../../base/icons";
-import { getParticipantCount } from "../../../base/participants";
-import { connect } from "../../../base/redux";
-import { beginAddPeople } from "../../../invite";
-import { isToolboxVisible } from "../../../toolbox";
-
-declare var interfaceConfig: Object;
+import { translate } from '../../../base/i18n';
+import { Icon, IconInviteMore } from '../../../base/icons';
+import { getParticipantCount } from '../../../base/participants';
+import { connect } from '../../../base/redux';
+import { beginAddPeople } from '../../../invite';
+import { isToolboxVisible } from '../../../toolbox';
 
 type Props = {
+
     /**
      * Whether tile view is enabled.
      */
@@ -31,8 +30,8 @@ type Props = {
     /**
      * Invoked to obtain translated strings.
      */
-    t: Function,
-};
+    t: Function
+}
 
 /**
  * Represents a replacement for the subject, prompting the
@@ -41,24 +40,28 @@ type Props = {
  * @param {Object} props - The props of the component.
  * @returns {React$Element<any>}
  */
-function InviteMore({ _tileViewEnabled, _visible, onClick, t }: Props) {
-    return _visible ? (
-        <div
-            className={`invite-more-container${
-                _tileViewEnabled ? " elevated" : ""
-            }`}
-        >
-            <div className="invite-more-header">
-                {t("addPeople.inviteMoreHeader")}
-            </div>
-            <div className="invite-more-button" onClick={onClick}>
-                <Icon src={IconInviteMore} />
-                <div className="invite-more-button-text">
-                    {t("addPeople.inviteMorePrompt")}
+function InviteMore({
+    _tileViewEnabled,
+    _visible,
+    onClick,
+    t
+}: Props) {
+    return (
+        _visible
+            ? <div className = { `invite-more-container${_tileViewEnabled ? ' elevated' : ''}` }>
+                <div className = 'invite-more-header'>
+                    {t('addPeople.inviteMoreHeader')}
                 </div>
-            </div>
-        </div>
-    ) : null;
+                <div
+                    className = 'invite-more-button'
+                    onClick = { onClick }>
+                    <Icon src = { IconInviteMore } />
+                    <div className = 'invite-more-button-text'>
+                        {t('addPeople.inviteMorePrompt')}
+                    </div>
+                </div>
+            </div> : null
+    );
 }
 
 /**
@@ -73,11 +76,8 @@ function mapStateToProps(state) {
     const participantCount = getParticipantCount(state);
 
     return {
-        _tileViewEnabled: state["features/video-layout"].tileViewEnabled,
-        _visible:
-            isToolboxVisible(state) &&
-            participantCount === 1 &&
-            interfaceConfig.TOOLBAR_BUTTONS.includes("invite"),
+        _tileViewEnabled: state['features/video-layout'].tileViewEnabled,
+        _visible: isToolboxVisible(state) && participantCount === 1
     };
 }
 
@@ -88,9 +88,7 @@ function mapStateToProps(state) {
  * @returns {Props}
  */
 const mapDispatchToProps = {
-    onClick: () => beginAddPeople(),
+    onClick: () => beginAddPeople()
 };
 
-export default translate(
-    connect(mapStateToProps, mapDispatchToProps)(InviteMore)
-);
+export default translate(connect(mapStateToProps, mapDispatchToProps)(InviteMore));
