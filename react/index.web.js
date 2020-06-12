@@ -27,24 +27,40 @@ document.addEventListener('DOMContentLoaded', () => {
     ReactDOM.render(<App />, document.getElementById('react'));
 });
 
+function inIframe () {
+    try {
+        return window.self !== window.top;
+    } catch (e) {
+        return true;
+    }
+}
 
 const scanForWallets = async () => {
+    // console.log({ test: 'test' });
     // eslint-disable-next-line new-cap
-    const connection = await BrowserWindowMessageConnection({
-        origin: 'https://superhero.com/'
+    const connectionToPlugin = await BrowserWindowMessageConnection({
+        // origin: 'http://localhost:8080',
+        connectionInfo: { id: 'spy' }
     });
+
     // eslint-disable-next-line new-cap
-    const detector = await Detector({ connection });
+    const detector = await Detector({ connectionToPlugin });
+
+    const connectionToParent = await BrowserWindowMessageConnection({
+        origin: 'http://localhost:8080'
+    });
 
     detector.scan(({ newWallet: wallet }) => {
         if (wallet) {
+            if (inIframe()) {
+                connectionToParent.sendMessage({
+                    status: true,
+                    wallet
+                });
+            }
             detector.stopScan();
-            connection.sendMessage({
-                status: true,
-                wallet
-            });
-        } else {
-            connection.sendMessage({ status: false });
+        } else if (inIframe()) {
+            connectionToParent.sendMessage({ status: false });
         }
     });
 };
