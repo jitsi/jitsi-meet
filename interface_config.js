@@ -39,6 +39,11 @@ var interfaceConfig = {
     AUTHENTICATION_ENABLE: true,
 
     /**
+     * If we should show authentication block in profile
+     */
+    SHOW_INVITE_MORE_HEADER: true,
+
+    /**
      * The name of the toolbar buttons to display in the toolbar. If present,
      * the button will display. Exceptions are "livestreaming" and "recording"
      * which also require being a moderator and some values in config.js to be

@@ -78,7 +78,7 @@ function mapStateToProps(state) {
     const participantCount = getParticipantCount(state);
     const isAlone =participantCount === 1
 
-    const inviteToolbarConfig = interfaceConfig.TOOLBAR_BUTTONS.includes('invite')
+    const inviteToolbarConfig = interfaceConfig.SHOW_INVITE_MORE_HEADER
 
     return {
         _tileViewEnabled: state['features/video-layout'].tileViewEnabled,
