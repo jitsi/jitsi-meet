@@ -1,9 +1,12 @@
 /* global APP */
+import { RpcAepp, Node } from '@aeternity/aepp-sdk/es';
 // eslint-disable-next-line max-len
 import BrowserWindowMessageConnection from '@aeternity/aepp-sdk/es/utils/aepp-wallet-communication/connection/browser-window-message';
 import Detector from '@aeternity/aepp-sdk/es/utils/aepp-wallet-communication/wallet-detector';
 import React from 'react';
 import ReactDOM from 'react-dom';
+
+import { setJWT } from 'react/features/base/jwt/actions';
 
 import { getJitsiMeetTransport } from '../modules/transport';
 
@@ -27,45 +30,66 @@ document.addEventListener('DOMContentLoaded', () => {
     ReactDOM.render(<App />, document.getElementById('react'));
 });
 
-function inIframe () {
-    try {
-        return window.self !== window.top;
-    } catch (e) {
-        return true;
-    }
+
+const sign = async function() {
+    const message = `I would like to generate JWT token at ${new Date().toUTCString()}`;
+    let signature;
+    let address;
+
+    const nodeUrl = 'https://mainnet.aeternity.io';
+    const compilerUrl = 'https://latest.compiler.aepps.com';
+
+    // eslint-disable-next-line new-cap
+    const client = await RpcAepp({
+        name: 'Superhero-Jitsi',
+        nodes: [ {
+            name: 'mainnet',
+            instance: await Node({
+                url: nodeUrl,
+                internalUrl: nodeUrl
+            })
+        } ],
+        compilerUrl
+    });
+
+    signature = await client.signMessage(message);
+    address = client.rpcClient.getCurrentAccount();
+
+    const token = await (await fetch('https://jwt.z52da5wt.xyz/claim ', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            address,
+            message,
+            signature
+        })
+    })).text();
+
+    APP.store.dispatch(setJWT(token));
 }
 
+
 const scanForWallets = async () => {
-    // console.log({ test: 'test' });
     // eslint-disable-next-line new-cap
     const connectionToPlugin = await BrowserWindowMessageConnection({
-        // origin: 'http://localhost:8080',
         connectionInfo: { id: 'spy' }
     });
 
     // eslint-disable-next-line new-cap
     const detector = await Detector({ connectionToPlugin });
 
-    const connectionToParent = await BrowserWindowMessageConnection({
-        origin: 'http://localhost:8080'
-    });
-
     detector.scan(({ newWallet: wallet }) => {
         if (wallet) {
-            if (inIframe()) {
-                connectionToParent.sendMessage({
-                    status: true,
-                    wallet
-                });
-            }
             detector.stopScan();
-        } else if (inIframe()) {
-            connectionToParent.sendMessage({ status: false });
+            sign();
         }
     });
 };
 
 scanForWallets();
+
 
 // Workaround for the issue when returning to a page with the back button and
 // the page is loaded from the 'back-forward' cache on iOS which causes nothing
