@@ -4,7 +4,7 @@
     "bg": "Bulgar",
     "ca": "Catalan",
     "cs": "Chèc",
-    "de": "Aleman",
+    "de": "Alemand",
     "el": "Grèc",
     "enGB": "Anglés (Reialme Unit)",
     "eo": "Esperanto",
@@ -38,5 +38,8 @@
     "lt": "Lituanian",
     "id": "Indonesian",
     "he": "Ebrèu",
-    "eu": "Basc"
+    "eu": "Basc",
+    "sl": "Eslovèn",
+    "ro": "Romanés",
+    "ar": "Arab"
 }
