@@ -39,7 +39,7 @@ var interfaceConfig = {
     AUTHENTICATION_ENABLE: true,
 
     /**
-     * If we should show authentication block in profile
+     * If you are alone in the meeting, show an invite prompt in the header
      */
     SHOW_INVITE_MORE_HEADER: true,
 
