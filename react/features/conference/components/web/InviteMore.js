@@ -76,14 +76,13 @@ function InviteMore({
  */
 function mapStateToProps(state) {
     const participantCount = getParticipantCount(state);
-    const isAlone =participantCount === 1
+    const isAlone = participantCount === 1;
 
-    const inviteToolbarConfig = interfaceConfig.SHOW_INVITE_MORE_HEADER
+    const inviteToolbarConfig = interfaceConfig.SHOW_INVITE_MORE_HEADER;
 
     return {
         _tileViewEnabled: state['features/video-layout'].tileViewEnabled,
-        _visible: isToolboxVisible(state) && isAlone && inviteToolbarConfig,
-
+        _visible: isToolboxVisible(state) && isAlone && inviteToolbarConfig
     };
 }
 
