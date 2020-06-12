@@ -115,7 +115,7 @@ const config = {
                     loader: isDevelopment ? 'style-loader' : MiniCssExtractPlugin.loader
                 },
                 {
-                    loader: 'css-loader',
+                    loader: 'css-loader?url=false',
                     options: {
                         // sourceMap: isDevelopment,
                         modules: true
@@ -127,7 +127,7 @@ const config = {
                         keepQuery: true
                     }
                 }, {
-                    loader: 'sass-loader',
+                    loader: 'sass-loader?url=false',
                     options: {
                         sourceMap: isDevelopment
                     }
