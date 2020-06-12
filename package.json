@@ -83,6 +83,7 @@
     "react-native-watch-connectivity": "0.4.3",
     "react-native-webrtc": "1.75.3",
     "react-native-webview": "7.4.1",
+    "react-native-youtube-iframe": "1.2.3",
     "react-redux": "7.1.0",
     "react-textarea-autosize": "7.1.0",
     "react-transition-group": "2.4.0",
