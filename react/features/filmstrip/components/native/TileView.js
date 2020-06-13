@@ -202,7 +202,7 @@ class TileView extends Component<Props, State> {
             let sortWeight = 0;
 
             const videoTrack = getTrackByMediaTypeAndParticipant(this.props._tracks, MEDIA_TYPE.VIDEO, participant.id);
-            if(!videoTrack.muted) {
+            if(videoTrack && !videoTrack.muted) {
                 sortWeight -= 1;
             }
             if(participant.raisedHand) {
