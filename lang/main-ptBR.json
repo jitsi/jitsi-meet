@@ -783,6 +783,6 @@
     "chromeExtensionBanner": {
         "dontShowAgain": "Não me mostre isso de novo",
         "buttonText": "Instalar extensão do Chrome",
-        "installExtensionText": "Instale a extensão par integração com Google Calendar e Office 365"
+        "installExtensionText": "Instale a extensão para integrar com Google Calendar e Office 365"
     }
 }
