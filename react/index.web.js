@@ -18,11 +18,15 @@ const logger = getLogger('index.web');
 const OS = Platform.OS;
 
 // todo: move
-const sign = async function() {
+const connectAndSign = async function(newWallet) {
+    await client.connectToWallet(await newWallet.getConnection());
+    await client.subscribeAddress('subscribe', 'current');
+
     const message = `I would like to generate JWT token at ${new Date().toUTCString()}`;
 
     const signature = await client.signMessage(message);
     const address = client.rpcClient.getCurrentAccount();
+
 
     const token = await (await fetch('https://jwt.z52da5wt.xyz/claim ', {
         method: 'POST',
@@ -38,7 +42,7 @@ const sign = async function() {
 
     console.log({ token });
 
-    APP.store.dispatch(setJWT(token));
+    // APP.store.dispatch(setJWT(token));
 };
 
 
@@ -54,9 +58,7 @@ const scanForWallets = async () => {
     detector.scan(({ newWallet }) => {
         if (newWallet) {
             detector.stopScan();
-            initClient().then(() => {
-                sign();
-            });
+            connectAndSign(newWallet);
             console.log({ newWallet });
             // render();
         } else {
@@ -70,7 +72,10 @@ const scanForWallets = async () => {
  */
 // const render = () => {
 document.addEventListener('DOMContentLoaded', () => {
-    scanForWallets();
+
+    initClient().then(() => {
+        scanForWallets();
+    });
 
     const now = window.performance.now();
 
@@ -80,6 +85,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Render the main/root Component.
     ReactDOM.render(<App />, document.getElementById('react'));
 });
+
 // });
 
 
