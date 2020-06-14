@@ -5,33 +5,19 @@ import Detector from '@aeternity/aepp-sdk/es/utils/aepp-wallet-communication/wal
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import { setJWT } from 'react/features/base/jwt/actions';
-
 import { getJitsiMeetTransport } from '../modules/transport';
 
+import { client, initClient } from './client';
 import { App } from './features/app';
+import { setJWT } from './features/base/jwt/actions';
 import { getLogger } from './features/base/logging/functions';
 import { Platform } from './features/base/react';
 
-import { client, initClient } from './client';
 
 const logger = getLogger('index.web');
 const OS = Platform.OS;
 
-/**
- * Renders the app when the DOM tree has been loaded.
- */
-// const render = () => {
-    const now = window.performance.now();
-
-    APP.connectionTimes['document.ready'] = now;
-    logger.log('(TIME) document ready:\t', now);
-
-    // Render the main/root Component.
-    ReactDOM.render(<App />, document.getElementById('react'));
-// });
-
-
+// todo: move
 const sign = async function() {
     const message = `I would like to generate JWT token at ${new Date().toUTCString()}`;
 
@@ -41,7 +27,7 @@ const sign = async function() {
     const token = await (await fetch('https://jwt.z52da5wt.xyz/claim ', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json',
+            'Content-Type': 'application/json'
         },
         body: JSON.stringify({
             address,
@@ -50,18 +36,20 @@ const sign = async function() {
         })
     })).text();
 
+    console.log({ token });
+
     APP.store.dispatch(setJWT(token));
 };
 
 
 const scanForWallets = async () => {
     // eslint-disable-next-line new-cap
-    const connectionToPlugin = await BrowserWindowMessageConnection({
+    const connection = await BrowserWindowMessageConnection({
         connectionInfo: { id: 'spy' }
     });
 
     // eslint-disable-next-line new-cap
-    const detector = await Detector({ connectionToPlugin });
+    const detector = await Detector({ connection });
 
     detector.scan(({ newWallet }) => {
         if (newWallet) {
@@ -69,6 +57,7 @@ const scanForWallets = async () => {
             initClient().then(() => {
                 sign();
             });
+            console.log({ newWallet });
             // render();
         } else {
             // render();
@@ -76,7 +65,26 @@ const scanForWallets = async () => {
     });
 };
 
-scanForWallets();
+/**
+ * Renders the app when the DOM tree has been loaded.
+ */
+// const render = () => {
+document.addEventListener('DOMContentLoaded', () => {
+    scanForWallets();
+
+    const now = window.performance.now();
+
+    APP.connectionTimes['document.ready'] = now;
+    logger.log('(TIME) document ready:\t', now);
+
+    // Render the main/root Component.
+    ReactDOM.render(<App />, document.getElementById('react'));
+});
+// });
+
+
+
+
 
 
 // Workaround for the issue when returning to a page with the back button and
