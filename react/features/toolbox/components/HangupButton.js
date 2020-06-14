@@ -21,23 +21,34 @@ type Props = AbstractButtonProps & {
      */
     dispatch: Function
 };
+
 /**
- * This function allows the user to download a string
+ * Download string as text.
+ *
+ * @param {string} text - The text to be stored in the string.
+ * @param {string} fileType - The fileType to be saved.
+ * @param {string} fileName - The name of the file to be saved.
+ * @returns {void}
  */
 function downloadString(text, fileType, fileName) {
-    let blob = new Blob([text], { type: fileType });
-    let a = document.createElement('a');
+    const blob = new Blob([ text ], { type: fileType });
+    const a = document.createElement('a');
+
     a.download = fileName;
     a.href = URL.createObjectURL(blob);
     a.dataset.downloadurl = [ fileType, a.download, a.href ].join(':');
     a.style.display = 'none';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    setTimeout(() => { 
-        URL.revokeObjectURL(a.href); 
+    const body = document.body;
+
+    if (body) {
+        body.appendChild(a);
+        a.click();
+        body.removeChild(a);
+    }
+    setTimeout(() => {
+        URL.revokeObjectURL(a.href);
     }, 1500);
-  }
+}
 
 
 /**
@@ -83,8 +94,9 @@ class HangupButton extends AbstractHangupButton<Props, *> {
     _doHangup() {
         const transcript = chatHistory();
         const date = new Date();
-        const fileName = 'Jitsi Meet ' + date.getDate() + '/' +(date.getMonth()+1) + '.txt';
-        console.log(date);
+
+        const fileName = `Jisti Meet ${date.getDate()}/${date.getMonth() + 1}.txt`;
+
         downloadString(transcript, 'text', fileName);
         this._hangup();
     }

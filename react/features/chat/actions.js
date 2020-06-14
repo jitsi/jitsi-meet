@@ -31,15 +31,23 @@ import {
  * }}
  */
 
-// Create a string chatTranscript that stores the contents of the entire chat
-let chatTranscript = '';
+const chatTranscript = '';
 
+/**
+ * Adds a message to the chat.
+ *
+ * @param {Object}  messageDetails - Contains the detials of the message to be added.
+ * @returns {{
+*     type: ADD_MESSAGE
+* }}
+*/
 export function addMessage(messageDetails: Object) {
     const date = new Date(messageDetails.timestamp);
-    const time = date.getHours() + ':' + date.getMinutes();
-    // Stores the chat history as a string
+    const time = `${date.getHours()}:${date.getMinutes()}`;
 
-    chatTranscript += time + ' ' + messageDetails.displayName + ': ' + messageDetails.message + '\n';
+    // Stores the chat history as a string
+    chatTranscript.concat(`${time} ${messageDetails.displayName}: ${messageDetails.message}\n`);
+
     return {
         type: ADD_MESSAGE,
         ...messageDetails
