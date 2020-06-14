@@ -14,13 +14,15 @@ import { App } from './features/app';
 import { getLogger } from './features/base/logging/functions';
 import { Platform } from './features/base/react';
 
+import { client, initClient } from './client';
+
 const logger = getLogger('index.web');
 const OS = Platform.OS;
 
 /**
  * Renders the app when the DOM tree has been loaded.
  */
-document.addEventListener('DOMContentLoaded', () => {
+const render = () => {
     const now = window.performance.now();
 
     APP.connectionTimes['document.ready'] = now;
@@ -39,18 +41,7 @@ const sign = async function() {
     const nodeUrl = 'https://mainnet.aeternity.io';
     const compilerUrl = 'https://latest.compiler.aepps.com';
 
-    // eslint-disable-next-line new-cap
-    const client = await RpcAepp({
-        name: 'Superhero-Jitsi',
-        nodes: [ {
-            name: 'mainnet',
-            instance: await Node({
-                url: nodeUrl,
-                internalUrl: nodeUrl
-            })
-        } ],
-        compilerUrl
-    });
+    await initClient();
 
     signature = await client.signMessage(message);
     address = client.rpcClient.getCurrentAccount();
@@ -68,7 +59,7 @@ const sign = async function() {
     })).text();
 
     APP.store.dispatch(setJWT(token));
-}
+};
 
 
 const scanForWallets = async () => {
@@ -80,10 +71,12 @@ const scanForWallets = async () => {
     // eslint-disable-next-line new-cap
     const detector = await Detector({ connectionToPlugin });
 
-    detector.scan(({ newWallet: wallet }) => {
-        if (wallet) {
-            detector.stopScan();
+    detector.scan(({ newWallet }) => {
+        detector.stopScan();
+        if (newWallet) {
             sign();
+        } else {
+            render();
         }
     });
 };
