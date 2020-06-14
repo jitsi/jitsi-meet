@@ -53,6 +53,7 @@ export type Props = {
  * Implements an abstract chat panel.
  */
 export default class AbstractChat<P: Props> extends Component<P> {}
+
 /**
  * Maps redux actions to the props of the component.
  *
@@ -87,6 +88,7 @@ export function _mapDispatchToProps(dispatch: Dispatch<any>) {
         }
     };
 }
+
 /**
  * Maps (parts of) the redux state to {@link Chat} React {@code Component}
  * props.
