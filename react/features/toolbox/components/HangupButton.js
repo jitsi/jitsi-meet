@@ -9,6 +9,7 @@ import { translate } from '../../base/i18n';
 import { connect } from '../../base/redux';
 import { AbstractHangupButton } from '../../base/toolbox';
 import type { AbstractButtonProps } from '../../base/toolbox';
+import { chatHistory } from '../../chat/actions.js';
 
 /**
  * The type of the React {@code Component} props of {@link HangupButton}.
@@ -20,6 +21,21 @@ type Props = AbstractButtonProps & {
      */
     dispatch: Function
 };
+
+function downloadString(text, fileType, fileName) {
+    var blob = new Blob([text], { type: fileType });
+  
+    var a = document.createElement('a');
+    a.download = fileName;
+    a.href = URL.createObjectURL(blob);
+    a.dataset.downloadurl = [fileType, a.download, a.href].join(':');
+    a.style.display = "none";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(function() { URL.revokeObjectURL(a.href); }, 1500);
+  }
+
 
 /**
  * Component that renders a toolbar button for leaving the current conference.
@@ -62,6 +78,11 @@ class HangupButton extends AbstractHangupButton<Props, *> {
      * @returns {void}
      */
     _doHangup() {
+        let transcript = chatHistory();
+        let date = new Date();
+        let fileName = "Jitsi Meet "+date.getDate()+"/"+(date.getMonth()+1)+".txt";
+        console.log(date);
+        downloadString(transcript, "text", fileName);
         this._hangup();
     }
 }

@@ -30,11 +30,30 @@ import {
  *     timestamp: string,
  * }}
  */
+
+ // Create a string chatTranscript that stores the contents of the entire chat
+ let chatTranscript = "";
+
 export function addMessage(messageDetails: Object) {
+    let date = new Date(messageDetails.timestamp);
+    let time = date.getHours() + ":" + date.getMinutes();
+    // Stores the chat history as a string
+    chatTranscript += time + " " + messageDetails.displayName + ": " + messageDetails.message + "\n";
     return {
         type: ADD_MESSAGE,
-        ...messageDetails
+        ...messageDetails,
     };
+}
+
+/**
+ * Sends the string containing the chat history of the meet.
+ *
+ *  @returns {{
+*     type: chatTranscript
+* }}
+*/
+export function chatHistory() {
+    return chatTranscript;
 }
 
 /**
