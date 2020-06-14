@@ -35,9 +35,6 @@ const OS = Platform.OS;
 const sign = async function() {
     const message = `I would like to generate JWT token at ${new Date().toUTCString()}`;
 
-    // todo: move
-    await initClient();
-
     const signature = await client.signMessage(message);
     const address = client.rpcClient.getCurrentAccount();
 
@@ -69,7 +66,9 @@ const scanForWallets = async () => {
     detector.scan(({ newWallet }) => {
         if (newWallet) {
             detector.stopScan();
-            sign();
+            initClient().then(() => {
+                sign();
+            });
             // render();
         } else {
             // render();
