@@ -1,5 +1,4 @@
 /* global APP */
-import { RpcAepp, Node } from '@aeternity/aepp-sdk/es';
 // eslint-disable-next-line max-len
 import BrowserWindowMessageConnection from '@aeternity/aepp-sdk/es/utils/aepp-wallet-communication/connection/browser-window-message';
 import Detector from '@aeternity/aepp-sdk/es/utils/aepp-wallet-communication/wallet-detector';
@@ -22,7 +21,7 @@ const OS = Platform.OS;
 /**
  * Renders the app when the DOM tree has been loaded.
  */
-const render = () => {
+// const render = () => {
     const now = window.performance.now();
 
     APP.connectionTimes['document.ready'] = now;
@@ -30,21 +29,17 @@ const render = () => {
 
     // Render the main/root Component.
     ReactDOM.render(<App />, document.getElementById('react'));
-});
+// });
 
 
 const sign = async function() {
     const message = `I would like to generate JWT token at ${new Date().toUTCString()}`;
-    let signature;
-    let address;
 
-    const nodeUrl = 'https://mainnet.aeternity.io';
-    const compilerUrl = 'https://latest.compiler.aepps.com';
-
+    // todo: move
     await initClient();
 
-    signature = await client.signMessage(message);
-    address = client.rpcClient.getCurrentAccount();
+    const signature = await client.signMessage(message);
+    const address = client.rpcClient.getCurrentAccount();
 
     const token = await (await fetch('https://jwt.z52da5wt.xyz/claim ', {
         method: 'POST',
@@ -72,11 +67,12 @@ const scanForWallets = async () => {
     const detector = await Detector({ connectionToPlugin });
 
     detector.scan(({ newWallet }) => {
-        detector.stopScan();
         if (newWallet) {
+            detector.stopScan();
             sign();
+            // render();
         } else {
-            render();
+            // render();
         }
     });
 };
