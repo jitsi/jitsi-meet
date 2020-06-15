@@ -7,6 +7,7 @@ import React from 'react';
 
 import VideoLayout from '../../../../../modules/UI/videolayout/VideoLayout';
 import { client, initClient } from '../../../../client';
+import { createDeepLinkUrl } from '../../../../util';
 import { getConferenceNameForTitle } from '../../../base/conference';
 import { connect, disconnect } from '../../../base/connection';
 import { translate } from '../../../base/i18n';
@@ -140,6 +141,9 @@ class Conference extends AbstractConference<Props, *> {
             this.scanForWallets();
         });
 
+        // console.log(this.props.location.query);
+
+
         this._start();
     }
 
@@ -187,18 +191,22 @@ class Conference extends AbstractConference<Props, *> {
         // eslint-disable-next-line new-cap
         const detector = await Detector({ connection });
 
+        // fallback to deepLinks
+        const fallback = setTimeout(() => {
+            this.signDeepLink();
+        }, 6300);
+
         detector.scan(async ({ newWallet }) => {
             if (newWallet) {
                 detector.stopScan();
+                clearTimeout(fallback);
+                this.setState({ useSDK: true });
                 await client.connectToWallet(await newWallet.getConnection());
                 await client.subscribeAddress('subscribe', 'current');
                 this.sign();
-                console.log({ newWallet });
-                // render();
-            } else {
-                // render();
             }
         });
+
     }
 
     // eslint-disable-next-line require-jsdoc
@@ -221,6 +229,25 @@ class Conference extends AbstractConference<Props, *> {
         })).text();
 
         this.props.dispatch(setJWT(token));
+    }
+
+    // eslint-disable-next-line require-jsdoc
+    signDeepLink() {
+        // todo: does we need auth before
+        const currentUrl = new URL(window.location);
+
+        currentUrl.search = '';
+
+        window.location = createDeepLinkUrl({
+            type: '`sign-message`',
+            message: `I would like to generate JWT token at ${new Date().toUTCString()}`,
+            'x-success': `${currentUrl}?result=success&signature={signature}&fromWallet=true`
+        });
+
+        // window.location = createDeepLinkUrl({
+        //     type: 'address',
+        //     'x-success': `${signLink}?address={address}&balance={balance}&result=success`
+        // });
     }
 
     /**
