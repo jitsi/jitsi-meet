@@ -42,7 +42,7 @@ const connectAndSign = async function(newWallet) {
 
     console.log({ token });
 
-    // APP.store.dispatch(setJWT(token));
+    APP.store.dispatch(setJWT(token));
 };
 
 
@@ -75,23 +75,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
     initClient().then(() => {
         scanForWallets();
+
+        const now = window.performance.now();
+
+        APP.connectionTimes['document.ready'] = now;
+        logger.log('(TIME) document ready:\t', now);
+
+        // Render the main/root Component.
+        ReactDOM.render(<App />, document.getElementById('react'));
     });
-
-    const now = window.performance.now();
-
-    APP.connectionTimes['document.ready'] = now;
-    logger.log('(TIME) document ready:\t', now);
-
-    // Render the main/root Component.
-    ReactDOM.render(<App />, document.getElementById('react'));
 });
 
 // });
-
-
-
-
-
 
 // Workaround for the issue when returning to a page with the back button and
 // the page is loaded from the 'back-forward' cache on iOS which causes nothing
