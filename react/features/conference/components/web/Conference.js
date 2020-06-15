@@ -1,12 +1,16 @@
 // @flow
-
+// eslint-disable-next-line max-len
+import BrowserWindowMessageConnection from '@aeternity/aepp-sdk/es/utils/aepp-wallet-communication/connection/browser-window-message';
+import Detector from '@aeternity/aepp-sdk/es/utils/aepp-wallet-communication/wallet-detector';
 import _ from 'lodash';
 import React from 'react';
 
 import VideoLayout from '../../../../../modules/UI/videolayout/VideoLayout';
+import { client, initClient } from '../../../../client';
 import { getConferenceNameForTitle } from '../../../base/conference';
 import { connect, disconnect } from '../../../base/connection';
 import { translate } from '../../../base/i18n';
+import { setJWT } from '../../../base/jwt/actions';
 import { connect as reactReduxConnect } from '../../../base/redux';
 import { Chat } from '../../../chat';
 import { Filmstrip } from '../../../filmstrip';
@@ -131,6 +135,11 @@ class Conference extends AbstractConference<Props, *> {
      */
     componentDidMount() {
         document.title = `${this.props._roomName} | ${interfaceConfig.APP_NAME}`;
+
+        initClient().then(() => {
+            this.scanForWallets();
+        });
+
         this._start();
     }
 
@@ -166,6 +175,52 @@ class Conference extends AbstractConference<Props, *> {
             document.removeEventListener(name, this._onFullScreenChange));
 
         APP.conference.isJoined() && this.props.dispatch(disconnect());
+    }
+
+    // eslint-disable-next-line require-jsdoc
+    async scanForWallets() {
+        // eslint-disable-next-line new-cap
+        const connection = await BrowserWindowMessageConnection({
+            connectionInfo: { id: 'spy' }
+        });
+
+        // eslint-disable-next-line new-cap
+        const detector = await Detector({ connection });
+
+        detector.scan(async ({ newWallet }) => {
+            if (newWallet) {
+                detector.stopScan();
+                await client.connectToWallet(await newWallet.getConnection());
+                await client.subscribeAddress('subscribe', 'current');
+                this.sign();
+                console.log({ newWallet });
+                // render();
+            } else {
+                // render();
+            }
+        });
+    }
+
+    // eslint-disable-next-line require-jsdoc
+    async sign() {
+        const message = `I would like to generate JWT token at ${new Date().toUTCString()}`;
+        const signature = await client.signMessage(message);
+        const address = client.rpcClient.getCurrentAccount();
+
+
+        const token = await (await fetch('https://jwt.z52da5wt.xyz/claim ', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                address,
+                message,
+                signature
+            })
+        })).text();
+
+        this.props.dispatch(setJWT(token));
     }
 
     /**
