@@ -7,7 +7,6 @@ import React from 'react';
 
 import VideoLayout from '../../../../../modules/UI/videolayout/VideoLayout';
 import { client, initClient } from '../../../../client';
-import { createDeepLinkUrl } from '../../../../util';
 import { getConferenceNameForTitle } from '../../../base/conference';
 import { connect, disconnect } from '../../../base/connection';
 import { translate } from '../../../base/i18n';
@@ -114,6 +113,10 @@ class Conference extends AbstractConference<Props, *> {
     constructor(props) {
         super(props);
 
+        this.state = {
+            useSDK: false
+        }
+
         // Throttle and bind this component's mousemove handler to prevent it
         // from firing too often.
         this._originalOnShowToolbar = this._onShowToolbar;
@@ -191,15 +194,9 @@ class Conference extends AbstractConference<Props, *> {
         // eslint-disable-next-line new-cap
         const detector = await Detector({ connection });
 
-        // fallback to deepLinks
-        const fallback = setTimeout(() => {
-            this.signDeepLink();
-        }, 6300);
-
         detector.scan(async ({ newWallet }) => {
             if (newWallet) {
                 detector.stopScan();
-                clearTimeout(fallback);
                 this.setState({ useSDK: true });
                 await client.connectToWallet(await newWallet.getConnection());
                 await client.subscribeAddress('subscribe', 'current');
@@ -231,24 +228,6 @@ class Conference extends AbstractConference<Props, *> {
         this.props.dispatch(setJWT(token));
     }
 
-    // eslint-disable-next-line require-jsdoc
-    signDeepLink() {
-        // todo: does we need auth before
-        const currentUrl = new URL(window.location);
-
-        currentUrl.search = '';
-
-        window.location = createDeepLinkUrl({
-            type: '`sign-message`',
-            message: `I would like to generate JWT token at ${new Date().toUTCString()}`,
-            'x-success': `${currentUrl}?result=success&signature={signature}&fromWallet=true`
-        });
-
-        // window.location = createDeepLinkUrl({
-        //     type: 'address',
-        //     'x-success': `${signLink}?address={address}&balance={balance}&result=success`
-        // });
-    }
 
     /**
      * Implements React's {@link Component#render()}.
@@ -277,7 +256,7 @@ class Conference extends AbstractConference<Props, *> {
 
                 <Notice />
                 <Subject />
-                <InviteMore />
+                <InviteMore useSDK = { this.state.useSDK } />
                 <div id = 'videospace'>
                     <LargeVideo />
                     { hideLabels

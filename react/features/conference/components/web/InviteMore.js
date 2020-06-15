@@ -9,6 +9,8 @@ import { connect } from '../../../base/redux';
 import { beginAddPeople } from '../../../invite';
 import { isToolboxVisible } from '../../../toolbox';
 
+import WebLogin from './WebLoginButton';
+
 type Props = {
 
     /**
@@ -44,7 +46,8 @@ function InviteMore({
     _tileViewEnabled,
     _visible,
     onClick,
-    t
+    t,
+    useSDK
 }: Props) {
     return (
         _visible
@@ -60,6 +63,7 @@ function InviteMore({
                         {t('addPeople.inviteMorePrompt')}
                     </div>
                 </div>
+                { !useSDK && <WebLogin /> }
             </div> : null
     );
 }
