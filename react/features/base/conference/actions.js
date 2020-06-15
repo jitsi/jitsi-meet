@@ -399,7 +399,7 @@ export function conferenceWillLeave(conference: Object) {
         const { jwt } = APP.store.getState()['features/base/jwt'];
         const { conferenceStartedTime } = APP.store.getState()['features/base/conference'];
 
-        if (jwt) {
+        if (jwt && conferenceStartedTime) {
             const jwtPayload = jwtDecode(jwt);
             const leaveUrl = jwtPayload.context.leave_url || null;
             const surveyUrl = jwtPayload.context.survey_url || null;
@@ -411,7 +411,7 @@ export function conferenceWillLeave(conference: Object) {
             const data = new Blob([ JSON.stringify(obj, null, 2) ], { type: 'text/plain; charset=UTF-8' });
             // eslint-disable-next-line no-mixed-operators
 
-            if (leaveUrl && surveyUrl && conferenceStartedTime) {
+            if (leaveUrl && surveyUrl) {
                 navigator.sendBeacon(leaveUrl, data);
             }
         }
