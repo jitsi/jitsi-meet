@@ -254,7 +254,9 @@ class WelcomePage extends AbstractWelcomePage {
      * @returns {ReactElement|null}
      */
     _onLaunchCall() {
-        const windowCrypto = typeof window !== 'undefined' && (window.crypto || window.msCrypto);
+        const { location, crypto, msCrypto } = window
+        const { protocol, host } = location
+        const windowCrypto = typeof window !== 'undefined' && (crypto || msCrypto);
         const buf = new Uint8Array(32);
 
         windowCrypto.getRandomValues(buf);
@@ -264,7 +266,7 @@ class WelcomePage extends AbstractWelcomePage {
             .replace(/\//g, '_')
             .replace(/=/g, '');
 
-        window.open(`https://together.brave.com/${name}`, '_self');
+        window.open(`${protocol}//${host}/${name}`, '_self');
     }
 
     /**
