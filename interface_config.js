@@ -31,12 +31,6 @@ var interfaceConfig = {
     NATIVE_APP_NAME: 'Jitsi Meet',
     PROVIDER_NAME: 'Jitsi',
     LANG_DETECTION: true, // Allow i18n to detect the system language
-    INVITATION_POWERED_BY: true,
-
-    /**
-     * If we should show authentication block in profile
-     */
-    AUTHENTICATION_ENABLE: true,
 
     /**
      * Hide the invite prompt in the header when alone in the meeting.
@@ -80,8 +74,6 @@ var interfaceConfig = {
     // A html text to be shown to guests on the close page, false disables it
     CLOSE_PAGE_GUEST_HINT: false,
     SHOW_PROMOTIONAL_CLOSE_PAGE: false,
-    RANDOM_AVATAR_URL_PREFIX: false,
-    RANDOM_AVATAR_URL_SUFFIX: false,
     FILM_STRIP_MAX_HEIGHT: 120,
 
     // Enables feedback star animation.
@@ -265,7 +257,6 @@ var interfaceConfig = {
     // List of undocumented settings
     /**
      INDICATOR_FONT_SIZES
-     MOBILE_DYNAMIC_LINK
      PHONE_NUMBER_REGEX
     */
 
