@@ -1,6 +1,6 @@
 /* eslint-disable */
 // @flow
-
+import JitsiMeetJS from '../../../base/lib-jitsi-meet';
 import React, { Component } from 'react';
 
 import {
