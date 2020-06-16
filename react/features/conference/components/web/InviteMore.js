@@ -78,7 +78,7 @@ function mapStateToProps(state) {
     const participantCount = getParticipantCount(state);
     const isAlone = participantCount === 1;
 
-    const inviteToolbarConfig = interfaceConfig.HIDE_INVITE_MORE_HEADER;
+    const hide = interfaceConfig.HIDE_INVITE_MORE_HEADER;
 
     return {
         _tileViewEnabled: state['features/video-layout'].tileViewEnabled,
@@ -97,4 +97,3 @@ const mapDispatchToProps = {
 };
 
 export default translate(connect(mapStateToProps, mapDispatchToProps)(InviteMore));
-
