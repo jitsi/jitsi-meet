@@ -7,7 +7,10 @@ import { Icon, IconInviteMore } from '../../../base/icons';
 import { getParticipantCount } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import { beginAddPeople } from '../../../invite';
-import { isToolboxVisible } from '../../../toolbox';
+import {
+    isButtonEnabled,
+    isToolboxVisible
+} from '../../../toolbox';
 
 declare var interfaceConfig: Object;
 
@@ -81,7 +84,7 @@ function mapStateToProps(state) {
 
     return {
         _tileViewEnabled: state['features/video-layout'].tileViewEnabled,
-        _visible: isToolboxVisible(state) && isAlone && !hide
+        _visible: isToolboxVisible(state) && isButtonEnabled('invite') && isAlone && !hide
     };
 }
 
