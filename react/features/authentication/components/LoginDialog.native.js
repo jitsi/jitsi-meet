@@ -264,7 +264,7 @@ class LoginDialog extends Component<Props, State> {
      */
     _onUsernameChange(text) {
         this.setState({
-            username: text
+            username: text.trim()
         });
     }
 
