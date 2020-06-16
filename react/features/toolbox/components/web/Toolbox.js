@@ -1,8 +1,6 @@
 /* eslint-disable */
 // @flow
-
 import React, { Component, Fragment } from 'react';
-
 import keyboardShortcut from '../../../../../modules/keyboardshortcut/keyboardshortcut';
 import {
     ACTION_SHORTCUT_TRIGGERED,
