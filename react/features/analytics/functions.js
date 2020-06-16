@@ -1,5 +1,6 @@
 // @flow
 
+import { API_ID } from '../../../modules/API';
 import {
     checkChromeExtensionsInstalled,
     isMobileBrowser
@@ -155,6 +156,12 @@ export function initAnalytics({ getState }: { getState: Function }, handlers: Ar
     //  Report if user is using websocket
     permanentProperties.websocket = navigator.product !== 'ReactNative' && typeof config.websocket === 'string';
 
+    // permanentProperties is external api
+    permanentProperties.externalApi = typeof API_ID === 'number';
+
+    // Report if we are loaded in iframe
+    permanentProperties.inIframe = _inIframe();
+
     // Optionally, include local deployment information based on the
     // contents of window.config.deploymentInfo.
     if (deploymentInfo) {
@@ -181,6 +188,24 @@ export function initAnalytics({ getState }: { getState: Function }, handlers: Ar
                 });
             }
         });
+    }
+}
+
+/**
+ * Checks whether we are loaded in iframe.
+ *
+ * @returns {boolean} Returns {@code true} if loaded in iframe.
+ * @private
+ */
+function _inIframe() {
+    if (navigator.product === 'ReactNative') {
+        return false;
+    }
+
+    try {
+        return window.self !== window.top;
+    } catch (e) {
+        return true;
     }
 }
 
