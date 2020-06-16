@@ -41,7 +41,7 @@ var interfaceConfig = {
     /**
      * If you are alone in the meeting, show an invite prompt in the header
      */
-    SHOW_INVITE_MORE_HEADER: true,
+    HIDE_INVITE_MORE_HEADER: false,
 
     /**
      * The name of the toolbar buttons to display in the toolbar. If present,
