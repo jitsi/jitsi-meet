@@ -9,6 +9,8 @@ import { connect } from '../../../base/redux';
 import { beginAddPeople } from '../../../invite';
 import { isToolboxVisible } from '../../../toolbox';
 
+declare var interfaceConfig: Object;
+
 type Props = {
 
     /**
@@ -74,10 +76,12 @@ function InviteMore({
  */
 function mapStateToProps(state) {
     const participantCount = getParticipantCount(state);
+    const isAlone = participantCount === 1;
+    const hide = interfaceConfig.HIDE_INVITE_MORE_HEADER;
 
     return {
         _tileViewEnabled: state['features/video-layout'].tileViewEnabled,
-        _visible: isToolboxVisible(state) && participantCount === 1
+        _visible: isToolboxVisible(state) && isAlone && !hide
     };
 }
 

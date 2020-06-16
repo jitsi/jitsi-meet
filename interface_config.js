@@ -39,6 +39,11 @@ var interfaceConfig = {
     AUTHENTICATION_ENABLE: true,
 
     /**
+     * Hide the invite prompt in the header when alone in the meeting.
+     */
+    HIDE_INVITE_MORE_HEADER: false,
+
+    /**
      * The name of the toolbar buttons to display in the toolbar. If present,
      * the button will display. Exceptions are "livestreaming" and "recording"
      * which also require being a moderator and some values in config.js to be
