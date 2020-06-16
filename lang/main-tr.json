@@ -406,7 +406,7 @@
         "off": "Canlı Akış durduruldu",
         "offBy": "{{name}} canlı akışı durdurdu",
         "on": "Canlı Akış",
-        "onBy": "{{name}} canlı akışı başlattı,
+        "onBy": "{{name}} canlı akışı başlattı",
         "pending": "Canlı Akış başlatılıyor...",
         "serviceName": "Canlı Akış hizmeti",
         "signedInAs": "Şu anda oturum açmış durumdasınız:",
