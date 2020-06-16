@@ -208,7 +208,7 @@
         "kickParticipantButton": "Çıkar",
         "kickParticipantDialog": "Bu katılımcıyı çıkarmak istediğinizden emin misiniz?",
         "kickParticipantTitle": "Bu katılımcı çıkarılsın mı?",
-        "kickTitle": "Ah! {{participantDisplayName}} sizi toplantıdan çıkardı.
+        "kickTitle": "Ah! {{participantDisplayName}} sizi toplantıdan çıkardı.",
         "liveStreaming": "Canlı akış",
         "liveStreamingDisabledBecauseOfActiveRecordingTooltip": "Kayıt etkinken mümkün değil",
         "liveStreamingDisabledForGuestTooltip": "Konuklar canlı akışa başlayamaz.",
