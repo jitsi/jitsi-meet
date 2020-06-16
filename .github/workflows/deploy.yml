@@ -19,11 +19,13 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: sa-east-1
+          aws-region: ${{ secrets.AWS_REGION }}
 
       - name: make
+        env:
+          instance-id: ${{ secrets.INSTANCE_ID }}
         run:
           aws ssm send-command
-            --instance-ids "i-003ae889cc0367550"
+            --instance-ids "$instance-id"
             --document-name "AWS-RunShellScript"
             --parameters "commands=sudo su && cd /usr/share/jitsi-meet && git pull && npm install && make"
