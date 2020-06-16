@@ -77,7 +77,6 @@ function InviteMore({
 function mapStateToProps(state) {
     const participantCount = getParticipantCount(state);
     const isAlone = participantCount === 1;
-
     const hide = interfaceConfig.HIDE_INVITE_MORE_HEADER;
 
     return {
