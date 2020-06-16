@@ -82,7 +82,7 @@ function mapStateToProps(state) {
 
     return {
         _tileViewEnabled: state['features/video-layout'].tileViewEnabled,
-        _visible: isToolboxVisible(state) && isAlone && inviteToolbarConfig
+        _visible: isToolboxVisible(state) && isAlone && !hide
     };
 }
 
