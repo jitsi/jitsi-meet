@@ -171,6 +171,7 @@ class LoginDialog extends Component<Props, State> {
                         underlineColorAndroid = { FIELD_UNDERLINE }
                         value = { this.state.username } />
                     <TextInput
+                        autoCapitalize = { 'none' }
                         onChangeText = { this._onPasswordChange }
                         placeholder = { t('dialog.userPassword') }
                         placeholderTextColor = { PLACEHOLDER_COLOR }
