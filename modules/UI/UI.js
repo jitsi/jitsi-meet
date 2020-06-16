@@ -99,19 +99,6 @@ UI.notifyReservationError = function(code, msg) {
 };
 
 /**
- * Notify user that conference was destroyed.
- * @param reason {string} the reason text
- */
-UI.notifyConferenceDestroyed = function(reason) {
-    // FIXME: use Session Terminated from translation, but
-    // 'reason' text comes from XMPP packet and is not translated
-    messageHandler.showError({
-        description: reason,
-        titleKey: 'dialog.sessTerminated'
-    });
-};
-
-/**
  * Change nickname for the user.
  * @param {string} id user id
  * @param {string} displayName new nickname

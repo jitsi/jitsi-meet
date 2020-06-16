@@ -1,0 +1,140 @@
+#lobby-screen {
+    .content {
+
+        .container {
+            align-items: center;
+            display: flex;
+            flex-direction: column;
+
+            .spinner {
+                margin: 30px;
+            }
+    
+            .joining-message {
+                margin: 10px;
+            }
+        }
+
+        .form {
+            align-items: stretch;
+            display: flex;
+            flex-direction: column;
+            min-width: 400px;
+        }
+
+        .participant-info {
+            align-items: center;
+            display: flex;
+            flex-direction: column;
+        }
+    }
+}
+
+#lobby-section {
+    display: flex;
+    flex-direction: column;
+
+    .control-row {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        margin-top: 15px;
+
+        label {
+            font-size: 14px;
+            font-weight: bold;
+        }
+    }
+}
+
+#knocking-participant-list {
+    background-color: $newToolbarBackgroundColor;
+    border: 1px solid rgba(255, 255, 255, .4);
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    left: 0;
+    margin: 20px;
+    position: fixed;
+    top: 20;
+    transition: top 1s ease;
+    z-index: 100;
+
+    &.toolbox-visible {
+        // Same as toolbox subject position
+        top: 120px;
+    }
+
+    .title {
+        background-color: rgba(0, 0, 0, .2);
+        font-size: 1.2em;
+        padding: 15px
+    }
+
+    ul {
+        list-style-type: none;
+        padding: 0 15px 15px 15px;
+
+        li {
+            align-items: center;
+            display: flex;
+            flex-direction: row;
+            margin: 8px 0;
+
+            .details {
+                display: flex;
+                flex: 1;
+                flex-direction: column;
+                justify-content: space-evenly;
+                margin: 0 30px 0 10px;
+            }
+
+            button {
+                align-self: unset;
+                margin: 0 5px;
+            }
+        }
+    }
+
+    input {
+        align-self: stretch;
+        background-color: transparent;
+        border: 1px solid #B8C7E0;
+        border-radius: 4px;
+        color: white;
+        padding: 12px 8px;
+
+        &:focus {
+            border-color: rgb(3, 118, 218);
+        }
+    }
+
+    button {
+        align-self: stretch;
+        margin: 8px 0;
+        padding: 12px;
+        transition: .2s transform ease;
+
+        &:disabled {
+            opacity: .5;
+        }
+
+        &:hover {
+            transform: scale(1.05);
+
+            &:disabled {
+                transform: none;
+            }
+        }
+
+        &.borderLess {
+            background-color: transparent;
+            border-width: 0;
+        }
+
+        &.primary {
+            background-color: rgb(3, 118, 218);
+            border-width: 0;
+        }
+    }
+}

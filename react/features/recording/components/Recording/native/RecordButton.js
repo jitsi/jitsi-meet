@@ -4,19 +4,8 @@ import { Platform } from 'react-native';
 
 import { IOS_RECORDING_ENABLED, RECORDING_ENABLED, getFeatureFlag } from '../../../../base/flags';
 import { translate } from '../../../../base/i18n';
-import { IconToggleRecording } from '../../../../base/icons';
 import { connect } from '../../../../base/redux';
-import AbstractRecordButton, {
-    _mapStateToProps as _abstractMapStateToProps,
-    type Props
-} from '../AbstractRecordButton';
-
-/**
- * An implementation of a button for starting and stopping recording.
- */
-class RecordButton extends AbstractRecordButton<Props> {
-    icon = IconToggleRecording;
-}
+import AbstractRecordButton, { _mapStateToProps as _abstractMapStateToProps } from '../AbstractRecordButton';
 
 /**
  * Maps (parts of) the redux state to the associated props for this component.
@@ -38,4 +27,4 @@ export function mapStateToProps(state: Object, ownProps: Object) {
     };
 }
 
-export default translate(connect(mapStateToProps)(RecordButton));
+export default translate(connect(mapStateToProps)(AbstractRecordButton));

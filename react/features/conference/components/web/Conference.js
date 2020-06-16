@@ -12,6 +12,7 @@ import { Chat } from '../../../chat';
 import { Filmstrip } from '../../../filmstrip';
 import { CalleeInfoContainer } from '../../../invite';
 import { LargeVideo } from '../../../large-video';
+import { KnockingParticipantList } from '../../../lobby';
 import { Prejoin, isPrejoinPageVisible } from '../../../prejoin';
 import {
     Toolbox,
@@ -176,8 +177,6 @@ class Conference extends AbstractConference<Props, *> {
      */
     render() {
         const {
-            VIDEO_QUALITY_LABEL_DISABLED,
-
             // XXX The character casing of the name filmStripOnly utilized by
             // interfaceConfig is obsolete but legacy support is required.
             filmStripOnly: filmstripOnly
@@ -187,10 +186,7 @@ class Conference extends AbstractConference<Props, *> {
             _layoutClassName,
             _showPrejoin
         } = this.props;
-        const hideVideoQualityLabel
-            = filmstripOnly
-                || VIDEO_QUALITY_LABEL_DISABLED
-                || _iAmRecorder;
+        const hideLabels = filmstripOnly || _iAmRecorder;
 
         return (
             <div
@@ -203,8 +199,8 @@ class Conference extends AbstractConference<Props, *> {
                 <InviteMore />
                 <div id = 'videospace'>
                     <LargeVideo />
-                    { hideVideoQualityLabel
-                        || <Labels /> }
+                    <KnockingParticipantList />
+                    { hideLabels || <Labels /> }
                     <Filmstrip filmstripOnly = { filmstripOnly } />
                 </div>
 
@@ -213,9 +209,9 @@ class Conference extends AbstractConference<Props, *> {
 
                 { this.renderNotificationsContainer() }
 
-                { !filmstripOnly && _showPrejoin && <Prejoin />}
-
                 <CalleeInfoContainer />
+
+                { !filmstripOnly && _showPrejoin && <Prejoin />}
             </div>
         );
     }

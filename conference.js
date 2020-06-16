@@ -48,6 +48,7 @@ import {
 import {
     checkAndNotifyForNewDevice,
     getAvailableDevices,
+    getDefaultDeviceId,
     notifyCameraError,
     notifyMicError,
     setAudioOutputDeviceId,
@@ -101,7 +102,10 @@ import {
     trackAdded,
     trackRemoved
 } from './react/features/base/tracks';
-import { getJitsiMeetGlobalNS } from './react/features/base/util';
+import {
+    getBackendSafePath,
+    getJitsiMeetGlobalNS
+} from './react/features/base/util';
 import { showDesktopPicker } from './react/features/desktop-picker';
 import { appendSuffix } from './react/features/display-name';
 import { setE2EEKey } from './react/features/e2ee';
@@ -292,12 +296,6 @@ class ConferenceConnector {
         logger.error('CONFERENCE FAILED:', err, ...params);
 
         switch (err) {
-        case JitsiConferenceErrors.CONNECTION_ERROR: {
-            const [ msg ] = params;
-
-            APP.UI.notifyConnectionFailed(msg);
-            break;
-        }
 
         case JitsiConferenceErrors.NOT_ALLOWED_ERROR: {
             // let's show some auth not allowed page
@@ -331,14 +329,6 @@ class ConferenceConnector {
         case JitsiConferenceErrors.GRACEFUL_SHUTDOWN:
             APP.UI.notifyGracefulShutdown();
             break;
-
-        case JitsiConferenceErrors.CONFERENCE_DESTROYED: {
-            const [ reason ] = params;
-
-            APP.UI.hideStats();
-            APP.UI.notifyConferenceDestroyed(reason);
-            break;
-        }
 
         // FIXME FOCUS_DISCONNECTED is a confusing event name.
         // What really happens there is that the library is not ready yet,
@@ -1258,7 +1248,7 @@ export default {
             items[key] = param[1];
         }
 
-        if (typeof items.e2eekey !== undefined) {
+        if (typeof items.e2eekey !== 'undefined') {
             APP.store.dispatch(setE2EEKey(items.e2eekey));
 
             // Clean URL in browser history.
@@ -1364,7 +1354,13 @@ export default {
         const options = config;
         const { email, name: nick } = getLocalParticipant(APP.store.getState());
 
-        const { locationURL } = APP.store.getState()['features/base/connection'];
+        const state = APP.store.getState();
+        const { locationURL } = state['features/base/connection'];
+        const { tenant } = state['features/base/jwt'];
+
+        if (tenant) {
+            options.siteID = tenant;
+        }
 
         if (options.enableDisplayNameInStats && nick) {
             options.statisticsDisplayName = nick;
@@ -1376,7 +1372,7 @@ export default {
 
         options.applicationName = interfaceConfig.APP_NAME;
         options.getWiFiStatsMethod = this._getWiFiStatsMethod;
-        options.confID = `${locationURL.host}${locationURL.pathname}`;
+        options.confID = `${locationURL.host}${getBackendSafePath(locationURL.pathname)}`;
         options.createVADProcessor = createRnnoiseProcessorPromise;
 
         // Disable CallStats, if requessted.
@@ -2425,11 +2421,20 @@ export default {
             micDeviceId => {
                 const audioWasMuted = this.isLocalAudioMuted();
 
+                // When the 'default' mic needs to be selected, we need to
+                // pass the real device id to gUM instead of 'default' in order
+                // to get the correct MediaStreamTrack from chrome because of the
+                // following bug.
+                // https://bugs.chromium.org/p/chromium/issues/detail?id=997689
+                const hasDefaultMicChanged = micDeviceId === 'default';
+
                 sendAnalytics(createDeviceChangedEvent('audio', 'input'));
                 createLocalTracksF({
                     devices: [ 'audio' ],
                     cameraDeviceId: null,
-                    micDeviceId
+                    micDeviceId: hasDefaultMicChanged
+                        ? getDefaultDeviceId(APP.store.getState(), 'audioInput')
+                        : micDeviceId
                 })
                 .then(([ stream ]) => {
                     // if audio was muted before changing the device, mute
@@ -2453,6 +2458,12 @@ export default {
                     return this.useAudioStream(stream);
                 })
                 .then(() => {
+                    if (hasDefaultMicChanged) {
+                        // workaround for the default device to be shown as selected in the
+                        // settings even when the real device id was passed to gUM because of the
+                        // above mentioned chrome bug.
+                        this.localAudio._realDeviceId = this.localAudio.deviceId = 'default';
+                    }
                     logger.log(`switched local audio device: ${this.localAudio?.getDeviceId()}`);
 
                     this._updateAudioDeviceId();
@@ -2506,6 +2517,8 @@ export default {
                 if (state === 'stop'
                         || state === 'start'
                         || state === 'playing') {
+                    const localParticipant = getLocalParticipant(APP.store.getState());
+
                     room.removeCommand(this.commands.defaults.SHARED_VIDEO);
                     room.sendCommandOnce(this.commands.defaults.SHARED_VIDEO, {
                         value: url,
@@ -2513,7 +2526,8 @@ export default {
                             state,
                             time,
                             muted: isMuted,
-                            volume
+                            volume,
+                            from: localParticipant.id
                         }
                     });
                 } else {
@@ -2754,11 +2768,20 @@ export default {
                 checkAndNotifyForNewDevice(newAvailDevices.videoInput, oldDevices.videoInput));
         }
 
+        // When the 'default' mic needs to be selected, we need to
+        // pass the real device id to gUM instead of 'default' in order
+        // to get the correct MediaStreamTrack from chrome because of the
+        // following bug.
+        // https://bugs.chromium.org/p/chromium/issues/detail?id=997689
+        const hasDefaultMicChanged = newDevices.audioinput === 'default';
+
         promises.push(
             mediaDeviceHelper.createLocalTracksAfterDeviceListChanged(
                     createLocalTracksF,
                     newDevices.videoinput,
-                    newDevices.audioinput)
+                    hasDefaultMicChanged
+                        ? getDefaultDeviceId(APP.store.getState(), 'audioInput')
+                        : newDevices.audioinput)
                 .then(tracks => {
                     // If audio or video muted before, or we unplugged current
                     // device and selected new one, then mute new track.
@@ -2783,6 +2806,12 @@ export default {
                                     // Use the new stream or null if we failed to obtain it.
                                     return useStream(tracks.find(track => track.getType() === mediaType) || null)
                                         .then(() => {
+                                            if (hasDefaultMicChanged) {
+                                                // workaround for the default device to be shown as selected in the
+                                                // settings even when the real device id was passed to gUM because of
+                                                // the above mentioned chrome bug.
+                                                this.localAudio._realDeviceId = this.localAudio.deviceId = 'default';
+                                            }
                                             mediaType === 'audio'
                                                 ? this._updateAudioDeviceId()
                                                 : this._updateVideoDeviceId();

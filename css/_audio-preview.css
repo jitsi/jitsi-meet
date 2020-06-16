@@ -1,5 +1,6 @@
 .audio-preview {
     &-content {
+        background: #2A3A4B;
         font-size: 15px;
         line-height: 24px;
         max-height: 456px;
@@ -32,7 +33,7 @@
         margin-left: 48px;
 
         &--selected {
-            background: rgba(28,32,37,0.5);
+            background: #1C2025;
             cursor: initial;
             margin-left: 0;
             padding-left: 21px;
@@ -55,7 +56,7 @@
 
         &:hover {
             .audio-preview-entry {
-                background: rgba(255,255,255, 0.2);
+                background: #3F4E5E;
                 margin-left: 0;
                 padding-left: 48px;
 
@@ -80,8 +81,23 @@
 
     &-microphone {
         position: relative;
-    }
 
+        &:hover {
+            .audio-preview-entry {
+                background: #3F4E5E;
+                margin-left: 0;
+                padding-left: 48px;
+
+                &--selected {
+                    padding-left: 21px;
+                }
+            }
+        }
+
+        .audio-preview-entry-text {
+            max-width: 196px;
+        }
+    }
 
     &-icon {
         border-radius: 50%;

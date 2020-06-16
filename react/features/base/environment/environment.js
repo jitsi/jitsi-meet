@@ -1,6 +1,7 @@
 // @flow
 
 import JitsiMeetJS from '../lib-jitsi-meet';
+import Platform from '../react/Platform';
 
 import { isMobileBrowser } from './utils';
 
@@ -80,6 +81,18 @@ export function isSupportedBrowser() {
     // - if the URL points to a conference then deep-linking will take
     //   care of it.
     return isMobileBrowser() || JitsiMeetJS.isWebRtcSupported();
+}
+
+/**
+ * Returns whether or not the current environment is a supported
+ * browser on a mobile device.
+ *
+ * @returns {boolean}
+ */
+export function isSupportedMobileBrowser() {
+    return (Platform.OS === 'android' && browser.isChromiumBased())
+        || (Platform.OS === 'android' && browser.isFirefox())
+        || (Platform.OS === 'ios' && browser.isSafari());
 }
 
 /**

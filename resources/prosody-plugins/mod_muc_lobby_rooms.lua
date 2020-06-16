@@ -8,7 +8,7 @@
 -- lobby_muc = "lobby.jitmeet.example.com"
 -- main_muc = "conference.jitmeet.example.com"
 --
--- Component "lobbyrooms.damencho.jitsi.net" "muc"
+-- Component "lobby.jitmeet.example.com" "muc"
 --     storage = "memory"
 --     muc_room_cache_size = 1000
 --     restrict_room_creation = true
@@ -41,6 +41,8 @@ if lobby_muc_component_config == nil then
     module:log('error', 'lobby not enabled missing lobby_muc config');
     return ;
 end
+
+local whitelist = module:get_option_set("muc_lobby_whitelist", {});
 
 local lobby_muc_service;
 local main_muc_service;
@@ -165,51 +167,48 @@ end);
 process_host_module(main_muc_component_config, function(host_module, host)
     main_muc_service = prosody.hosts[host].modules.muc;
 
-    -- adds new field to the form so moderators can use it to set shared password
-    host_module:hook('muc-config-form', function(event)
-        table.insert(event.form, {
-            name = 'muc#roomconfig_lobbypassword';
-            type = 'text-private';
-            label = 'Shared Password';
-            value = '';
-        });
-    end, 90-4);
-
     -- hooks when lobby is enabled to create its room, only done here or by admin
     host_module:hook('muc-config-submitted', function(event)
+        local room = event.room;
         local members_only = event.fields['muc#roomconfig_membersonly'] and true or nil;
         if members_only then
-            local node = jid_split(event.room.jid);
+            local node = jid_split(room.jid);
 
             local lobby_room_jid = node .. '@' .. lobby_muc_component_config;
             if not lobby_muc_service.get_room_from_jid(lobby_room_jid) then
                 local new_room = lobby_muc_service.create_room(lobby_room_jid);
-                new_room.main_room = event.room;
-                event.room._data.lobbyroom = lobby_room_jid;
+                new_room.main_room = room;
+                room._data.lobbyroom = new_room;
                 event.status_codes["104"] = true;
-
-                local lobby_password = event.fields['muc#roomconfig_lobbypassword'];
-                if lobby_password then
-                    new_room.main_room.lobby_password = lobby_password;
-                end
             end
+        elseif room._data.lobbyroom then
+            room._data.lobbyroom:destroy(room.jid, 'Lobby room closed.');
+            room._data.lobbyroom = nil;
+        end
+    end);
+    host_module:hook("muc-room-destroyed",function(event)
+        local room = event.room;
+        if room._data.lobbyroom then
+            room._data.lobbyroom:destroy(nil, 'Lobby room closed.');
+            room._data.lobbyroom = nil;
         end
     end);
     host_module:hook("muc-disco#info", function (event)
-        if (event.room._data.lobbyroom) then
+        local room = event.room;
+        if (room._data.lobbyroom and room:get_members_only()) then
             table.insert(event.form, {
                 name = "muc#roominfo_lobbyroom";
                 label = "Lobby room jid";
                 value = "";
             });
-            event.formdata["muc#roominfo_lobbyroom"] = event.room._data.lobbyroom;
+            event.formdata["muc#roominfo_lobbyroom"] = room._data.lobbyroom.jid;
         end
     end);
 
     host_module:hook('muc-occupant-pre-join', function (event)
         local room, stanza = event.room, event.stanza;
 
-        if is_healthcheck_room(room.jid) then
+        if is_healthcheck_room(room.jid) or not room:get_members_only() then
             return;
         end
 
@@ -218,28 +217,42 @@ process_host_module(main_muc_component_config, function(host_module, host)
             return;
         end
 
-        local password = join:get_child_text("lobbySharedPassword");
-        if password and event.room.lobby_password and password == room.lobby_password then
-            local invitee = event.stanza.attr.from;
+        local invitee = event.stanza.attr.from;
+        local invitee_bare_jid = jid_bare(invitee);
+        local _, invitee_domain = jid_split(invitee);
+        local whitelistJoin = false;
+
+        -- whitelist participants
+        if whitelist:contains(invitee_domain) or whitelist:contains(invitee_bare_jid) then
+            whitelistJoin = true;
+        end
+
+        local password = join:get_child_text('password', MUC_NS);
+        if password and room:get_password() and password == room:get_password() then
+            whitelistJoin = true;
+        end
+
+        if whitelistJoin then
             local affiliation = room:get_affiliation(invitee);
             if not affiliation or affiliation == 0 then
                 event.occupant.role = 'participant';
-                room:set_affiliation(true, jid_bare(invitee), "member");
+                room:set_affiliation(true, invitee_bare_jid, "member");
                 room:save();
+
+                return;
             end
+        end
 
         -- we want to add the custom lobbyroom field to fill in the lobby room jid
-        elseif room._data.members_only then
-            local invitee = event.stanza.attr.from;
-            local affiliation = room:get_affiliation(invitee);
-            if not affiliation or affiliation == 'none' then
-                local reply = st.error_reply(stanza, 'auth', 'registration-required'):up();
-                reply.tags[1].attr.code = '407';
-                reply:tag('x', {xmlns = MUC_NS}):up();
-                reply:tag('lobbyroom'):text(room._data.lobbyroom);
-                event.origin.send(reply:tag('x', {xmlns = MUC_NS}));
-                return true;
-            end
+        local invitee = event.stanza.attr.from;
+        local affiliation = room:get_affiliation(invitee);
+        if not affiliation or affiliation == 'none' then
+            local reply = st.error_reply(stanza, 'auth', 'registration-required'):up();
+            reply.tags[1].attr.code = '407';
+            reply:tag('x', {xmlns = MUC_NS}):up();
+            reply:tag('lobbyroom'):text(room._data.lobbyroom.jid);
+            event.origin.send(reply:tag('x', {xmlns = MUC_NS}));
+            return true;
         end
     end, -4); -- the default hook on members_only module is on -5
 end);
