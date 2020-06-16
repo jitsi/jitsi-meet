@@ -39,7 +39,7 @@ var interfaceConfig = {
     AUTHENTICATION_ENABLE: true,
 
     /**
-     * If you are alone in the meeting, show an invite prompt in the header
+     * Hide the invite prompt in the header when alone in the meeting.
      */
     HIDE_INVITE_MORE_HEADER: false,
 
