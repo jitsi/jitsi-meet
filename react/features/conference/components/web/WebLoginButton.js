@@ -4,38 +4,30 @@ import { createDeepLinkUrl } from '../../../../util';
 
 const signDeepLink = () => {
     // todo:
-    // const currentUrl = new URL(window.location);
-    // currentUrl.search = '';
-    // const signLink = createDeepLinkUrl({
-    //     type: '`sign-message`',
-    //     message: `I would like to generate JWT token at ${new Date().toUTCString()}`,
-    //     'x-success': `${currentUrl}?result=success&signature={signature}&fromWallet=true`,
-    // });
 
-    // window.location = createDeepLinkUrl({
-    //     type: 'address',
-    //     'x-success': `${signLink}?address={address}&balance={balance}&result=success`,
-    // });
-
-    // todo: does we need auth before
     const currentUrl = new URL(window.location);
 
     currentUrl.search = '';
 
-    window.location = createDeepLinkUrl({
-        type: '`sign-message`',
+    const signLink = createDeepLinkUrl({
+        type: 'sign-message',
         message: `I would like to generate JWT token at ${new Date().toUTCString()}`,
-        'x-success': `${currentUrl}?result=success&signature={signature}&fromWallet=true`
+        'x-success': `${currentUrl}?address={address}&result=success&signature={signature}&fromWallet=true`
     });
 
-    // window.location = createDeepLinkUrl({
-    //     type: 'address',
-    //     'x-success': `${signLink}?address={address}&balance={balance}&result=success`
-    // });
+    return createDeepLinkUrl({
+        type: 'address',
+        'x-success': signLink
+    });
 };
 
 const Button = () => (
-    <button onClick={signDeepLink}>Searching for an extention... <br/>Login with web wallet</button>
+    <a
+        className = 'invite-more-button'
+        href = { signDeepLink() }
+        style = {{ color: 'white', marginTop: 10 }} >
+            Login with web wallet
+    </a>
 );
 
 export default Button;
