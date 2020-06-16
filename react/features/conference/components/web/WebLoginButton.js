@@ -1,10 +1,8 @@
 import React from 'react';
 
-import { createDeepLinkUrl } from '../../../../util';
+import { createDeepLinkUrl } from '../../../base/util/createDeepLinkUrl';
 
 const signDeepLink = () => {
-    // todo:
-
     const currentUrl = new URL(window.location);
 
     currentUrl.search = '';
@@ -12,7 +10,7 @@ const signDeepLink = () => {
     const signLink = createDeepLinkUrl({
         type: 'sign-message',
         message: `I would like to generate JWT token at ${new Date().toUTCString()}`,
-        'x-success': `${currentUrl}?address={address}&result=success&signature={signature}&fromWallet=true`
+        'x-success': `${currentUrl}?address={address}&result=success&signature={signature}`
     });
 
     return createDeepLinkUrl({

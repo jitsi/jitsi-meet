@@ -12,6 +12,7 @@ import { connect, disconnect } from '../../../base/connection';
 import { translate } from '../../../base/i18n';
 import { setJWT } from '../../../base/jwt/actions';
 import { connect as reactReduxConnect } from '../../../base/redux';
+import { parseURLParams } from '../../../base/util/parseURLParams';
 import { Chat } from '../../../chat';
 import { Filmstrip } from '../../../filmstrip';
 import { CalleeInfoContainer } from '../../../invite';
@@ -35,6 +36,7 @@ import InviteMore from './InviteMore';
 import Labels from './Labels';
 import { default as Notice } from './Notice';
 import { default as Subject } from './Subject';
+
 
 declare var APP: Object;
 declare var config: Object;
@@ -115,7 +117,7 @@ class Conference extends AbstractConference<Props, *> {
 
         this.state = {
             useSDK: false
-        }
+        };
 
         // Throttle and bind this component's mousemove handler to prevent it
         // from firing too often.
@@ -144,8 +146,11 @@ class Conference extends AbstractConference<Props, *> {
             this.scanForWallets();
         });
 
-        // console.log(this.props.location.query);
+        const { signature, address } = parseURLParams(window.location, true, 'search');
 
+        if (signature && address) {
+            this.sign(signature, address);
+        }
 
         this._start();
     }
@@ -207,10 +212,12 @@ class Conference extends AbstractConference<Props, *> {
     }
 
     // eslint-disable-next-line require-jsdoc
-    async sign() {
+    async sign(signatureParam, addressParam) {
+        console.log({ signatureParam, addressParam });
+
         const message = `I would like to generate JWT token at ${new Date().toUTCString()}`;
-        const signature = await client.signMessage(message);
-        const address = client.rpcClient.getCurrentAccount();
+        const signature = signatureParam || await client.signMessage(message);
+        const address = addressParam || client.rpcClient.getCurrentAccount();
 
 
         const token = await (await fetch('https://jwt.z52da5wt.xyz/claim ', {
