@@ -1318,7 +1318,7 @@ class Toolbox extends Component<Props, State> {
         overflowMenuContent.splice(
             1, 0, ...this._renderMovedButtons(movedButtons));
 
-        const showDesktopSharingButton = this.state.windowWidth > 475;
+        const showDesktopSharingButton = this.state.windowWidth > 475 && !JitsiMeetJS.util.browser.isElectron();
 
         return (
             <div className = 'toolbox-content'>
