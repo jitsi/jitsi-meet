@@ -406,7 +406,7 @@
         "off": "Canlı Akış durduruldu",
         "offBy": "{{name}} canlı akışı durdurdu",
         "on": "Canlı Akış",
-        "onBy": "{{name}} canlı akışı başlattı
+        "onBy": "{{name}} canlı akışı başlattı,
         "pending": "Canlı Akış başlatılıyor...",
         "serviceName": "Canlı Akış hizmeti",
         "signedInAs": "Şu anda oturum açmış durumdasınız:",
@@ -481,7 +481,7 @@
         "unmute": "Sessizden çıkar",
         "newDeviceCameraTitle": "Yeni kamera algılandı",
         "newDeviceAudioTitle": "Yeni ses aygıtı algılandı",
-        "newDeviceAction": "Kullan"
+        "newDeviceAction": "Kullan",
         "OldElectronAPPTitle": "Güvenlik açığı!",
         "oldElectronClientDescription1": "Güvenlik açıkları bilinen Jitsi Meet istemcisinin eski bir sürümünü kullanıyor görünüyorsunuz. Lütfen güncellediğinizden emin olun.",
         "oldElectronClientDescription2": "son yapı",
