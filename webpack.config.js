@@ -2,7 +2,6 @@
 
 const CircularDependencyPlugin = require('circular-dependency-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const path = require('path');
 const process = require('process');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 
@@ -18,10 +17,7 @@ const detectCircularDeps = process.argv.indexOf('--detect-circular-deps') !== -1
 
 const minimize
     = process.argv.indexOf('-p') !== -1
-        || process.argv.indexOf('--optimize-minimize') !== -1;
-
-// const isDevelopment = process.env.NODE_ENV !== 'production' || process.argv.indexOf('-p') === -1;
-const isDevelopment = true;
+    || process.argv.indexOf('--optimize-minimize') !== -1;
 
 /**
  * Build a Performance configuration object for the given size.
@@ -109,29 +105,42 @@ const config = {
             loader: 'expose-loader?$!expose-loader?jQuery',
             test: /\/node_modules\/jquery\/.*\.js$/
         }, {
-            test: /\.scss$/,
-            use: [
+            test: /\.module\.s(a|c)ss$/,
+            loader: [
+                'style-loader',
                 {
-                    loader: isDevelopment ? 'style-loader' : MiniCssExtractPlugin.loader
+                    loader: 'css-loader',
+                    options: {
+                        modules: true,
+                        sourceMap: true
+                    }
                 },
                 {
-                    loader: 'css-loader?url=false',
+                    loader: 'sass-loader',
                     options: {
-                        // sourceMap: isDevelopment,
-                        modules: true
-                    }
-                }, {
-                    loader: 'resolve-url-loader',
-                    options: {
-                        sourceMap: isDevelopment,
-                        keepQuery: true
-                    }
-                }, {
-                    loader: 'sass-loader?url=false',
-                    options: {
-                        sourceMap: isDevelopment
+                        sourceMap: true
                     }
                 }
+            ]
+        }, {
+            test: /\.s(a|c)ss$/,
+            exclude: /\.module.(s(a|c)ss)$/,
+            loader: [
+                'style-loader',
+                'css-loader',
+                {
+                    loader: 'sass-loader',
+                    options: {
+                        sourceMap: true
+                    }
+                }
+            ]
+        }, {
+            // Allow CSS to be imported into JavaScript.
+            test: /\.css$/,
+            use: [
+                'style-loader',
+                'css-loader'
             ]
         }, {
             test: /\/node_modules\/@atlaskit\/modal-dialog\/.*\.js$/,
@@ -147,31 +156,27 @@ const config = {
                     'react-focus-lock': `${__dirname}/node_modules/react-focus-lock`
                 }
             }
-        }, {
+        },/* {
+            test: /\.(jpe?g|png|gif|woff|woff2|eot|ttf|svg)(\?[a-z0-9=.]+)?$/,
+            loader: 'url-loader?limit=100000'
+        },*/
+        {
+            test: /\.(jpe?g|png|gif|woff|woff2|eot|ttf|svg)$/,
+            use: [ {
+                loader: 'url-loader',
+                options: {
+                    limit: 500000,
+                    name: '*/[name].[ext]'
+                }
+            } ]
+        },
+        {
             test: /\.svg$/,
             use: [ {
                 loader: '@svgr/webpack',
                 options: {
                     dimensions: false,
                     expandProps: 'start'
-                }
-            } ]
-        }, {
-            test: /\.(jpg|png)$/,
-            use: [ {
-                loader: 'url-loader',
-                options: {
-                    limit: 11000,
-                    name: `images/${isDevelopment ? '[name].[ext]' : '[name].[hash:8].[ext]'}`
-                }
-            } ]
-        }, {
-            test: /\.(ttf|eot|woff|woff2)$/,
-            use: [ {
-                loader: 'url-loader',
-                options: {
-                    limit: 50000,
-                    name: `fonts/${isDevelopment ? '[name].[ext]' : '[name].[hash:8].[ext]'}`
                 }
             } ]
         } ]
@@ -194,27 +199,24 @@ const config = {
     },
     plugins: [
         analyzeBundle
-            && new BundleAnalyzerPlugin({
-                analyzerMode: 'disabled',
-                generateStatsFile: true
-            }),
+        && new BundleAnalyzerPlugin({
+            analyzerMode: 'disabled',
+            generateStatsFile: true
+        }),
         detectCircularDeps
-            && new CircularDependencyPlugin({
-                allowAsyncCycles: false,
-                exclude: /node_modules/,
-                failOnError: false
-            }),
-        MiniCssExtractPlugin
-            && new MiniCssExtractPlugin({
-                filename: isDevelopment ? '[name].css' : '[name].[hash].css',
-                chunkFilename: isDevelopment ? '[id].css' : '[id].[hash].css'
-            })
+        && new CircularDependencyPlugin({
+            allowAsyncCycles: false,
+            exclude: /node_modules/,
+            failOnError: false
+        }),
+        new MiniCssExtractPlugin({
+            filename: '[name].css',
+            chunkFilename: '[id].css'
+        })
     ].filter(Boolean),
     resolve: {
         alias: {
-            jquery: `jquery/dist/jquery${minimize ? '.min' : ''}.js`,
-            '!images': path.join(__dirname, 'images'),
-            '!fonts': path.join(__dirname, 'fonts')
+            jquery: `jquery/dist/jquery${minimize ? '.min' : ''}.js`
         },
         aliasFields: [
             'browser'
@@ -224,7 +226,8 @@ const config = {
 
             // Webpack defaults:
             '.js',
-            '.json'
+            '.json',
+            '.scss'
         ]
     }
 };
@@ -240,7 +243,7 @@ module.exports = [
         entry: {
             'device_selection_popup_bundle': './react/features/settings/popup.js'
         },
-        performance: getPerformanceHints(700 * 1024)
+        performance: getPerformanceHints(750 * 1024)
     }),
     Object.assign({}, config, {
         entry: {
@@ -297,12 +300,6 @@ module.exports = [
         entry: {
             'rnnoise-processor': './react/features/stream-effects/rnnoise/index.js'
         },
-        node: {
-            // Emscripten generated glue code "rnnoise.js" expects node fs module,
-            // we need to specify this parameter so webpack knows how to properly
-            // interpret it when encountered.
-            fs: 'empty'
-        },
         output: Object.assign({}, config.output, {
             library: [ 'JitsiMeetJS', 'app', 'effects', 'rnnoise' ],
             libraryTarget: 'window',
@@ -333,14 +330,15 @@ module.exports = [
  * @returns {string|undefined} If the request is to be served by the proxy
  * target, undefined; otherwise, the path to the local file to be served.
  */
-// eslint-disable-next-line no-shadow,require-jsdoc
 function devServerProxyBypass({ path }) {
     if (path.startsWith('/css/') || path.startsWith('/doc/')
-            || path.startsWith('/fonts/') || path.startsWith('/images/')
-            || path.startsWith('/lang/')
-            || path.startsWith('/sounds/')
-            || path.startsWith('/static/')
-            || path.endsWith('.wasm')) {
+        || path.startsWith('/fonts/')
+        || path.startsWith('/images/')
+        || path.startsWith('/lang/')
+        || path.startsWith('/sounds/')
+        || path.startsWith('/static/')
+        || path.endsWith('.wasm')) {
+
         return path;
     }
 
@@ -349,24 +347,24 @@ function devServerProxyBypass({ path }) {
     /* eslint-disable array-callback-return, indent */
 
     if ((Array.isArray(configs) ? configs : Array(configs)).some(c => {
-            if (path.startsWith(c.output.publicPath)) {
-                    if (!minimize) {
-                        // Since webpack-dev-server is serving non-minimized
-                        // artifacts, serve them even if the minimized ones are
-                        // requested.
-                        return Object.keys(c.entry).some(e => {
-                            const name = `${e}.min.js`;
+        if (path.startsWith(c.output.publicPath)) {
+            if (!minimize) {
+                // Since webpack-dev-server is serving non-minimized
+                // artifacts, serve them even if the minimized ones are
+                // requested.
+                return Object.keys(c.entry).some(e => {
+                    const name = `${e}.min.js`;
 
-                            if (path.indexOf(name) !== -1) {
-                                // eslint-disable-next-line no-param-reassign
-                                path = path.replace(name, `${e}.js`);
+                    if (path.indexOf(name) !== -1) {
+                        // eslint-disable-next-line no-param-reassign
+                        path = path.replace(name, `${e}.js`);
 
-                                return true;
-                            }
-                        });
+                        return true;
                     }
-                }
-            })) {
+                });
+            }
+        }
+    })) {
         return path;
     }
 
