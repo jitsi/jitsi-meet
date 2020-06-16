@@ -150,6 +150,7 @@ export default [
     'useIPv6',
     'useNicks',
     'useStunTurn',
+    'useTurnUdp',
     'webrtcIceTcpDisable',
     'webrtcIceUdpDisable'
 ].concat(extraConfigWhitelist);

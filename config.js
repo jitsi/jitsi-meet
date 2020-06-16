@@ -260,8 +260,14 @@ var config = {
     // is set in Jicofo and set to 2).
     // minParticipants: 2,
 
-    // Use XEP-0215 to fetch STUN and TURN servers.
+    // Use the TURN servers discovered via XEP-0215 for the jitsi-videobridge
+    // connection
     // useStunTurn: true,
+
+    // Use TURN/UDP servers for the jitsi-videobridge connection (by default
+    // we filter out TURN/UDP because it is usually not needed since the
+    // bridge itself is reachable via UDP)
+    // useTurnUdp: false
 
     // Enable IPv6 support.
     // useIPv6: true,
