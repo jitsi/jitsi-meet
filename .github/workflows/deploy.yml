@@ -1,0 +1,31 @@
+name: deploy
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  make:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+
+      - name: configure aws credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: make
+        env:
+          instance-id: ${{ secrets.INSTANCE_ID }}
+        run:
+          aws ssm send-command
+            --instance-ids "$instance-id"
+            --document-name "AWS-RunShellScript"
+            --parameters "commands=sudo su && cd /usr/share/jitsi-meet && git pull && npm install && make"
