@@ -19,8 +19,11 @@
   font-style: normal;
   font-weight: normal;
 
-  src: url("~!fonts/context-menu-icons.eot?2qmzf");
-  src: url("~!fonts/context-menu-icons.eot?2qmzf#iefix") format("embedded-opentype"), url("~!fonts/context-menu-icons.woff2?2qmzf") format("woff2"), url("~!fonts/context-menu-icons.woff?2qmzf") format("woff"), url("~!fonts/context-menu-icons.ttf?2qmzf") format("truetype");
+  src: url("~jquery-contextmenu/dist/font/context-menu-icons.eot?2qmzf");
+  src: url("~jquery-contextmenu/dist/font/context-menu-icons.eot?2qmzf#iefix") format("embedded-opentype"),
+    url("~jquery-contextmenu/dist/font/context-menu-icons.woff2?2qmzf") format("woff2"),
+    url("~jquery-contextmenu/dist/font/context-menu-icons.woff?2qmzf") format("woff"),
+    url("~jquery-contextmenu/dist/font/context-menu-icons.ttf?2qmzf") format("truetype");
 }
 
 .context-menu-icon:before {
