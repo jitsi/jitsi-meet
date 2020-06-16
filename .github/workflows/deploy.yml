@@ -23,9 +23,9 @@ jobs:
 
       - name: make
         env:
-          instance-id: ${{ secrets.INSTANCE_ID }}
+          instance: ${{ secrets.INSTANCE }}
         run:
           aws ssm send-command
-            --instance-ids "$instance-id"
+            --instance-ids "$instance"
             --document-name "AWS-RunShellScript"
             --parameters "commands=sudo su && cd /usr/share/jitsi-meet && git pull && npm install && make"
