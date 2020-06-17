@@ -46,6 +46,13 @@ type Props = {
     _isPlaying: string,
 
     /**
+     * Set to true when the status is set to stop and the view should not react to further changes.
+     *
+     * @private
+     */
+    _isStopped: boolean,
+
+    /**
      * True if in landscape mode.
      *
      * @private
@@ -102,13 +109,6 @@ type Props = {
     _seek: number,
 
     /**
-     * Set to true when the status is set to stop and the view should not react to further changes.
-     *
-     * @private
-     */
-    _shouldPrepareForStop: boolean,
-
-    /**
      * Youtube id of the video to be played.
      *
      * @private
@@ -138,11 +138,11 @@ const YoutubeLargeVideo = (props: Props) => {
             const {
                 _isOwner,
                 _isPlaying,
-                _shouldPrepareForStop,
+                _isStopped,
                 _seek
             } = props;
 
-            if (shouldSetNewStatus(_shouldPrepareForStop, _isOwner, e, _isPlaying, time, _seek)) {
+            if (shouldSetNewStatus(_isStopped, _isOwner, e, _isPlaying, time, _seek)) {
                 props._onVideoChangeEvent(props.youtubeId, e, time, props._ownerId);
             }
         });
@@ -201,7 +201,7 @@ const YoutubeLargeVideo = (props: Props) => {
  * Return true if the user is the owner and
  * the status has changed or the seek time difference from the previous set is larger than 5 seconds.
  *
- * @param {boolean} shouldPrepareForStop - Once the status was set to stop, all the other statuses should be ignored.
+ * @param {boolean} isStopped - Once the status was set to stop, all the other statuses should be ignored.
  * @param {boolean} isOwner - Whether the local user is sharing the video.
  * @param {string} status - The new status.
  * @param {boolean} isPlaying - Whether the component is playing at the moment.
@@ -210,8 +210,8 @@ const YoutubeLargeVideo = (props: Props) => {
  * @private
  * @returns {boolean}
 */
-function shouldSetNewStatus(shouldPrepareForStop, isOwner, status, isPlaying, newTime, previousTime) {
-    if  (shouldPrepareForStop) {
+function shouldSetNewStatus(isStopped, isOwner, status, isPlaying, newTime, previousTime) {
+    if (isStopped) {
         return false;
     }
 
@@ -256,12 +256,12 @@ function _mapStateToProps(state) {
         _enableControls: ownerId === localParticipant.id,
         _isOwner: ownerId === localParticipant.id,
         _isPlaying: status === 'playing',
+        _isStopped: status === 'stop',
         _isWideScreen: responsiveUi.aspectRatio === ASPECT_RATIO_WIDE,
         _ownerId: ownerId,
         _screenHeight: screenHeight,
         _screenWidth: screenWidth,
-        _seek: time,
-        _shouldPrepareForStop: status === 'stop'
+        _seek: time
     };
 }
 
