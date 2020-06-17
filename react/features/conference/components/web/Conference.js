@@ -2,6 +2,7 @@
 // eslint-disable-next-line max-len
 import BrowserWindowMessageConnection from '@aeternity/aepp-sdk/es/utils/aepp-wallet-communication/connection/browser-window-message';
 import Detector from '@aeternity/aepp-sdk/es/utils/aepp-wallet-communication/wallet-detector';
+import { jitsiLocalStorage } from 'js-utils';
 import _ from 'lodash';
 import React from 'react';
 
@@ -12,6 +13,7 @@ import { connect, disconnect } from '../../../base/connection';
 import { translate } from '../../../base/i18n';
 import { setJWT } from '../../../base/jwt/actions';
 import { connect as reactReduxConnect } from '../../../base/redux';
+import { createDeepLinkUrl } from '../../../base/util/createDeepLinkUrl';
 import { parseURLParams } from '../../../base/util/parseURLParams';
 import { Chat } from '../../../chat';
 import { Filmstrip } from '../../../filmstrip';
@@ -146,10 +148,28 @@ class Conference extends AbstractConference<Props, *> {
             this.scanForWallets();
         });
 
-        const { signature, address } = parseURLParams(window.location, true, 'search');
+        const { signature: signatureParam, address: addressParam } = parseURLParams(window.location, true, 'search');
 
-        if (signature && address) {
-            this.sign(signature, address);
+        if (addressParam) {
+            const currentUrl = window.location.href.split('?')[0];
+
+            const signLink = createDeepLinkUrl({
+                type: 'sign-message',
+                message: `I would like to generate JWT token at ${new Date().toUTCString()}`,
+                'x-success': `${currentUrl}?result=success&signature={signature}`
+            });
+
+            jitsiLocalStorage.setItem('address', addressParam);
+
+            window.location = signLink;
+        }
+
+        const addressStorage = jitsiLocalStorage.getItem('address');
+
+        console.log({ signatureParam, addressStorage });
+
+        if (signatureParam && addressStorage) {
+            this.sign(signatureParam, addressStorage);
         }
 
         this._start();

@@ -7,15 +7,9 @@ const signDeepLink = () => {
 
     currentUrl.search = '';
 
-    const signLink = createDeepLinkUrl({
-        type: 'sign-message',
-        message: `I would like to generate JWT token at ${new Date().toUTCString()}`,
-        'x-success': `${currentUrl}?address={address}&result=success&signature={signature}`
-    });
-
     return createDeepLinkUrl({
         type: 'address',
-        'x-success': signLink
+        'x-success': `${currentUrl}?address={address}`
     });
 };
 
