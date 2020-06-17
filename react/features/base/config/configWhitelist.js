@@ -147,7 +147,6 @@ export default [
     'stereo',
     'subject',
     'testing',
-    'useIPv6',
     'useNicks',
     'useStunTurn',
     'useTurnUdp',

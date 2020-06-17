@@ -269,9 +269,6 @@ var config = {
     // bridge itself is reachable via UDP)
     // useTurnUdp: false
 
-    // Enable IPv6 support.
-    // useIPv6: true,
-
     // Enables / disables a data communication channel with the Videobridge.
     // Values can be 'datachannel', 'websocket', true (treat it as
     // 'datachannel'), undefined (treat it as 'datachannel') and false (don't
