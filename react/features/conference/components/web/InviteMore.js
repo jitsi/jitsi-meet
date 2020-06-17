@@ -47,7 +47,7 @@ function InviteMore({
     _visible,
     onClick,
     t,
-    useSDK
+    showDeeplink
 }: Props) {
     return (
         _visible
@@ -63,7 +63,7 @@ function InviteMore({
                         {t('addPeople.inviteMorePrompt')}
                     </div>
                 </div>
-                { !useSDK && <WebLogin /> }
+                { showDeeplink && <WebLogin /> }
             </div> : null
     );
 }

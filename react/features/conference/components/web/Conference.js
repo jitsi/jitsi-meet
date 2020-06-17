@@ -39,7 +39,6 @@ import Labels from './Labels';
 import { default as Notice } from './Notice';
 import { default as Subject } from './Subject';
 
-
 declare var APP: Object;
 declare var config: Object;
 declare var interfaceConfig: Object;
@@ -118,7 +117,7 @@ class Conference extends AbstractConference<Props, *> {
         super(props);
 
         this.state = {
-            useSDK: false
+            showDeeplink: true
         };
 
         // Throttle and bind this component's mousemove handler to prevent it
@@ -151,25 +150,25 @@ class Conference extends AbstractConference<Props, *> {
         const { signature: signatureParam, address: addressParam } = parseURLParams(window.location, true, 'search');
 
         if (addressParam) {
+            const message = `I would like to generate JWT token at ${new Date().toUTCString()}`;
             const currentUrl = window.location.href.split('?')[0];
-
             const signLink = createDeepLinkUrl({
                 type: 'sign-message',
-                message: `I would like to generate JWT token at ${new Date().toUTCString()}`,
+                message,
                 'x-success': `${currentUrl}?result=success&signature={signature}`
             });
 
             jitsiLocalStorage.setItem('address', addressParam);
+            jitsiLocalStorage.setItem('message', message);
 
             window.location = signLink;
         }
 
         const addressStorage = jitsiLocalStorage.getItem('address');
+        const messageStorage = jitsiLocalStorage.getItem('message');
 
-        console.log({ signatureParam, addressStorage });
-
-        if (signatureParam && addressStorage) {
-            this.sign(signatureParam, addressStorage);
+        if (signatureParam && addressStorage && messageStorage) {
+            this.sign(signatureParam, addressStorage, messageStorage);
         }
 
         this._start();
@@ -222,7 +221,7 @@ class Conference extends AbstractConference<Props, *> {
         detector.scan(async ({ newWallet }) => {
             if (newWallet) {
                 detector.stopScan();
-                this.setState({ useSDK: true });
+                this.setState({ showDeeplink: true });
                 await client.connectToWallet(await newWallet.getConnection());
                 await client.subscribeAddress('subscribe', 'current');
                 this.sign();
@@ -232,13 +231,12 @@ class Conference extends AbstractConference<Props, *> {
     }
 
     // eslint-disable-next-line require-jsdoc
-    async sign(signatureParam, addressParam) {
-        const message = `I would like to generate JWT token at ${new Date().toUTCString()}`;
+    async sign(signatureParam, addressParam, messageParam) {
+        const message = messageParam || `I would like to generate JWT token at ${new Date().toUTCString()}`;
         const signature = signatureParam || await client.signMessage(message);
         const address = addressParam || client.rpcClient.getCurrentAccount();
 
-
-        const token = await (await fetch('https://jwt.z52da5wt.xyz/claim ', {
+        const token = await (await fetch('http://localhost:3000/claim ', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -251,6 +249,7 @@ class Conference extends AbstractConference<Props, *> {
         })).text();
 
         this.props.dispatch(setJWT(token));
+        this.setState({ showDeeplink: false });
     }
 
 
@@ -281,7 +280,7 @@ class Conference extends AbstractConference<Props, *> {
 
                 <Notice />
                 <Subject />
-                <InviteMore useSDK = { this.state.useSDK } />
+                <InviteMore showDeeplink = { this.state.showDeeplink } />
                 <div id = 'videospace'>
                     <LargeVideo />
                     { hideLabels
