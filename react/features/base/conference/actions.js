@@ -6,7 +6,7 @@ import {
     createStartMutedConfigurationEvent,
     sendAnalytics
 } from '../../analytics';
-import { getName } from '../../app';
+import { getName } from '../../app/functions';
 import { endpointMessageReceived } from '../../subtitles';
 import { JITSI_CONNECTION_CONFERENCE_KEY } from '../connection';
 import { JitsiConferenceEvents } from '../lib-jitsi-meet';

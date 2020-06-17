@@ -1,6 +1,6 @@
 import { NativeModules, NativeEventEmitter } from 'react-native';
 
-import { getName } from '../../app';
+import { getName } from '../../app/functions';
 
 /**
  * Thin wrapper around Apple's CallKit functionality.

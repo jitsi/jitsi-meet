@@ -22,7 +22,7 @@ import {
     maybeRedirectToWelcomePage,
     redirectToStaticPage,
     reloadWithStoredParams
-} from './react/features/app';
+} from './react/features/app/actions';
 import {
     AVATAR_ID_COMMAND,
     AVATAR_URL_COMMAND,
@@ -2517,6 +2517,8 @@ export default {
                 if (state === 'stop'
                         || state === 'start'
                         || state === 'playing') {
+                    const localParticipant = getLocalParticipant(APP.store.getState());
+
                     room.removeCommand(this.commands.defaults.SHARED_VIDEO);
                     room.sendCommandOnce(this.commands.defaults.SHARED_VIDEO, {
                         value: url,
@@ -2524,7 +2526,8 @@ export default {
                             state,
                             time,
                             muted: isMuted,
-                            volume
+                            volume,
+                            from: localParticipant.id
                         }
                     });
                 } else {

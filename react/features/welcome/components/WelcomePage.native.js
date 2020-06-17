@@ -9,7 +9,7 @@ import {
     View
 } from 'react-native';
 
-import { getName } from '../../app';
+import { getName } from '../../app/functions';
 import { ColorSchemeRegistry } from '../../base/color-scheme';
 import { translate } from '../../base/i18n';
 import { Icon, IconMenu, IconWarning } from '../../base/icons';

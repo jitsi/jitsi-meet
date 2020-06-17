@@ -4,7 +4,7 @@ import React from 'react';
 import { NativeModules, SafeAreaView, StatusBar } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 
-import { appNavigate } from '../../../app';
+import { appNavigate } from '../../../app/actions';
 import { PIP_ENABLED, getFeatureFlag } from '../../../base/flags';
 import { Container, LoadingIndicator, TintedView } from '../../../base/react';
 import { connect } from '../../../base/redux';
