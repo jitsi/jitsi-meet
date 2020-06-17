@@ -92,6 +92,8 @@ export default class InputField extends PureComponent<Props, State> {
                 value
             };
         }
+
+        return null;
     }
 
     /**
