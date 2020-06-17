@@ -47,13 +47,10 @@
     }
 }
 
-.new-toolbox .toolbox-content .toolbox-icon.security-toolbar-button,
 .new-toolbox .toolbox-content .toolbox-icon.toggled.security-toolbar-button {
-    background: rgba(241, 173, 51, 0.7);
-    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-width: 0;
 
-    &:hover {
-        background: rgba(241, 173, 51, 0.7);
-        border: 1px solid rgba(255, 255, 255, 0.4);
+    &:not(:hover) {
+        background: unset;
     }
 }
