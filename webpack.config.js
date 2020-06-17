@@ -20,6 +20,15 @@ const minimize
     = process.argv.indexOf('-p') !== -1
         || process.argv.indexOf('--optimize-minimize') !== -1;
 
+const generateIndexHtml = new HtmlWebpackPlugin({
+    jitsiLib: `libs/lib-jitsi-meet.min.js?v=${cacheVersionNumber}`,
+    appBundle: `libs/app.bundle.min.js?v=${cacheVersionNumber}`,
+    css: `css/all.css?v=${cacheVersionNumber}`,
+    template: 'index.html',
+    minify: false,
+    inject: false
+})
+
 /**
  * Build a Performance configuration object for the given size.
  * See: https://webpack.js.org/configuration/performance/
@@ -156,17 +165,9 @@ const config = {
     },
     plugins: [
         analyzeBundle
-            && new BundleAnalyzerPlugin({
-                analyzerMode: 'disabled',
-                generateStatsFile: true
-            }),
-        new HtmlWebpackPlugin({
-            jitsiLib: `libs/lib-jitsi-meet.min.js?v=${cacheVersionNumber}`,
-            appBundle: `libs/app.bundle.min.js?v=${cacheVersionNumber}`,
-            css: `css/all.css?v=${cacheVersionNumber}`,
-            template: 'index.html',
-            minify: false,
-            inject: false
+        && new BundleAnalyzerPlugin({
+            analyzerMode: 'disabled',
+            generateStatsFile: true
         })
     ].filter(Boolean),
     resolve: {
@@ -186,8 +187,10 @@ const config = {
     }
 };
 
+const appBundleConfig = {...config, plugins: [...config.plugins, generateIndexHtml]};
+
 module.exports = [
-    Object.assign({}, config, {
+    Object.assign({}, appBundleConfig, {
         entry: {
             'app.bundle': './app.js'
         },
