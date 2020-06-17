@@ -673,7 +673,8 @@
         "muted": "ミュート",
         "remoteControl": "リモートコントロール",
         "show": "",
-        "videomute": ""
+        "videomute": "",
+        "pin": ""
     },
     "welcomepage": {
         "accessibilityLabel": {

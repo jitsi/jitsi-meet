@@ -740,7 +740,8 @@
         "muted": "A sa muda",
         "remoteControl": "Avia o firma su controllu remotu",
         "show": "Ammustra in s'iscena",
-        "videomute": "Custa persone at firmadu sa càmera"
+        "videomute": "Custa persone at firmadu sa càmera",
+        "pin": ""
     },
     "welcomepage": {
         "accessibilityLabel": {

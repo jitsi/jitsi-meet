@@ -806,7 +806,8 @@
         "muted": "Utišan",
         "remoteControl": "Oddaljeni nadzor",
         "show": "Prikaži na sceni",
-        "videomute": "Udeleženec je zaustavil kamero"
+        "videomute": "Udeleženec je zaustavil kamero",
+        "pin": ""
     },
     "welcomepage": {
         "accessibilityLabel": {

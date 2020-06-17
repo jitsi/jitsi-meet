@@ -18,7 +18,7 @@
         "linkCopied": "Link copiado al portapapeles",
         "loading": "Buscando por contacto y número telefónico",
         "loadingNumber": "Validando el número telefónico",
-        "loadingPeople": "Buscando contactos a invitar",        
+        "loadingPeople": "Buscando contactos a invitar",
         "noResults": "No se encontraron coincidencias",
         "noValidNumbers": "Por favor ingrese un número de teléfono",
         "outlookEmail": "Correo de Outlook",
@@ -814,7 +814,8 @@
         "muted": "Silenciado",
         "remoteControl": "Control remoto",
         "show": "Mostrar en escena",
-        "videomute": "El participante ha detenido la cámara."
+        "videomute": "El participante ha detenido la cámara.",
+        "pin": ""
     },
     "welcomepage": {
         "accessibilityLabel": {

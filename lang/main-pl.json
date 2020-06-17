@@ -716,7 +716,8 @@
         "muted": "Wyciszony",
         "remoteControl": "Kontrola zdalna",
         "show": "",
-        "videomute": "Uczestnik zatrzymał kamerę"
+        "videomute": "Uczestnik zatrzymał kamerę",
+        "pin": ""
     },
     "welcomepage": {
         "accessibilityLabel": {

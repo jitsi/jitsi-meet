@@ -736,7 +736,8 @@
         "muted": "Lyd slået fra",
         "remoteControl": "Fjernbetjening",
         "show": "",
-        "videomute": "Deltageren har stoppet kameraet"
+        "videomute": "Deltageren har stoppet kameraet",
+        "pin": ""
     },
     "welcomepage": {
         "accessibilityLabel": {

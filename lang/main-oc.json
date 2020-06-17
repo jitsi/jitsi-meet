@@ -743,7 +743,8 @@
         "remoteControl": "Contraròtle alonhat",
         "show": "Mostrar davant",
         "videomute": "Lo participant a arrestat la camèra",
-        "domuteOthers": ""
+        "domuteOthers": "",
+        "pin": ""
     },
     "welcomepage": {
         "accessibilityLabel": {

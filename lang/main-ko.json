@@ -671,7 +671,8 @@
         "muted": "음소거됨",
         "remoteControl": "원격 제어",
         "show": "",
-        "videomute": ""
+        "videomute": "",
+        "pin": ""
     },
     "welcomepage": {
         "accessibilityLabel": {

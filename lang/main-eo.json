@@ -675,7 +675,8 @@
         "muted": "Silentigita",
         "remoteControl": "Defora rego",
         "show": "",
-        "videomute": ""
+        "videomute": "",
+        "pin": ""
     },
     "welcomepage": {
         "accessibilityLabel": {

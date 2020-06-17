@@ -686,7 +686,8 @@
         "muted": "Sessiz",
         "remoteControl": "Uzaktan kontrol",
         "show": "",
-        "videomute": "Katılımcı kamerayı durdurdu"
+        "videomute": "Katılımcı kamerayı durdurdu",
+        "pin": ""
     },
     "welcomepage": {
         "accessibilityLabel": {

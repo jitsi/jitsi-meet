@@ -676,7 +676,8 @@
         "muted": "Gedemp",
         "remoteControl": "",
         "show": "",
-        "videomute": ""
+        "videomute": "",
+        "pin": ""
     },
     "welcomepage": {
         "accessibilityLabel": {

@@ -741,7 +741,8 @@
         "muted": "Þaggað",
         "remoteControl": "Ræsa / Stöðva fjarstýringu",
         "show": "Birta í glugga",
-        "videomute": "Þátttakandi hefur stöðvað myndavél"
+        "videomute": "Þátttakandi hefur stöðvað myndavél",
+        "pin": ""
     },
     "welcomepage": {
         "accessibilityLabel": {

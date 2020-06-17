@@ -745,7 +745,8 @@
         "muted": "מושתק",
         "remoteControl": "שליטה מרחוק",
         "show": "",
-        "videomute": "החבר עצר את המצלמה"
+        "videomute": "החבר עצר את המצלמה",
+        "pin": ""
     },
     "welcomepage": {
         "accessibilityLabel": {

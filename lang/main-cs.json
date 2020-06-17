@@ -719,7 +719,8 @@
         "remoteControl": "Vzdálené ovládání",
         "show": "",
         "videomute": "Účastník si vypnul kameru",
-        "domuteOthers": "Umlčet všechny ostatní"
+        "domuteOthers": "Umlčet všechny ostatní",
+        "pin": ""
     },
     "welcomepage": {
         "accessibilityLabel": {

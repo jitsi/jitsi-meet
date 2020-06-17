@@ -671,7 +671,8 @@
         "muted": "Ձայնը անջատված է",
         "remoteControl": "Հեռակառավարում",
         "show": "",
-        "videomute": ""
+        "videomute": "",
+        "pin": ""
     },
     "welcomepage": {
         "accessibilityLabel": {

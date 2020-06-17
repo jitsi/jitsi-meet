@@ -687,7 +687,8 @@
         "muted": "Gedempt",
         "remoteControl": "Extern beheer",
         "show": "",
-        "videomute": "Deelnemer heeft de camera gestopt"
+        "videomute": "Deelnemer heeft de camera gestopt",
+        "pin": ""
     },
     "welcomepage": {
         "accessibilityLabel": {

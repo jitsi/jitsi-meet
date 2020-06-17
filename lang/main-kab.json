@@ -676,7 +676,8 @@
         "muted": "Kkes imesli",
         "remoteControl": "Asenqed agemmaḍ",
         "show": "",
-        "videomute": ""
+        "videomute": "",
+        "pin": ""
     },
     "welcomepage": {
         "accessibilityLabel": {

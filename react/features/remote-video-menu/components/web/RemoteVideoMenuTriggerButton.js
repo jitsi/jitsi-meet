@@ -16,6 +16,7 @@ import {
     RemoteVideoMenu,
     VolumeSlider
 } from './';
+import PinButton from "./PinButton";
 
 declare var $: Object;
 declare var interfaceConfig: Object;
@@ -202,6 +203,11 @@ class RemoteVideoMenuTriggerButton extends Component<Props> {
                         participantID = { participantID } />
                 );
             }
+            buttons.push(
+                <PinButton
+                    key = 'pin'
+                    participantID = { participantID } />
+            );
         }
 
         if (remoteControlState) {

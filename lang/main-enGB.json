@@ -719,7 +719,8 @@
         "muted": "Muted",
         "remoteControl": "Remote control",
         "show": "",
-        "videomute": "Member has stopped the camera"
+        "videomute": "Member has stopped the camera",
+        "pin": "Pin participant"
     },
     "welcomepage": {
         "accessibilityLabel": {

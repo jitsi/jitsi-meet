@@ -735,7 +735,8 @@
         "muted": "Vypnutý mikrofón",
         "remoteControl": "Vzdialené ovládanie",
         "show": "Ukázať v popredí",
-        "videomute": "Účastník vypol kameru"
+        "videomute": "Účastník vypol kameru",
+        "pin": ""
     },
     "welcomepage": {
         "accessibilityLabel": {

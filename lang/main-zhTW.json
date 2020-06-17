@@ -737,7 +737,8 @@
         "remoteControl": "遠端控制",
         "show": "顯示在台上",
         "videomute": "參與者已經停止攝影裝置",
-        "domuteOthers": "靜音其他所有人"
+        "domuteOthers": "靜音其他所有人",
+        "pin": ""
     },
     "welcomepage": {
         "accessibilityLabel": {

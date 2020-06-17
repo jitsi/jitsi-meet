@@ -735,7 +735,8 @@
         "muted": "Mikrofon välja lülitatud",
         "remoteControl": "Kaugjuhtimine",
         "show": "Näita laval",
-        "videomute": "Kasutaja on kaamera peatanud"
+        "videomute": "Kasutaja on kaamera peatanud",
+        "pin": ""
     },
     "welcomepage": {
         "accessibilityLabel": {

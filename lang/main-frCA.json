@@ -711,7 +711,8 @@
         "muted": "Discrétion",
         "remoteControl": "Contrôle à distance",
         "show": "Afficher en premier plan",
-        "videomute": "Le membre a arrêté la caméra"
+        "videomute": "Le membre a arrêté la caméra",
+        "pin": ""
     },
     "welcomepage": {
         "accessibilityLabel": {

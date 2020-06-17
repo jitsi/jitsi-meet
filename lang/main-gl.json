@@ -718,7 +718,8 @@
         "muted": "Silenciado",
         "remoteControl": "",
         "show": "Amosar en primeiro plano",
-        "videomute": "O participante parou a cámara"
+        "videomute": "O participante parou a cámara",
+        "pin": ""
     },
     "welcomepage": {
         "accessibilityLabel": {

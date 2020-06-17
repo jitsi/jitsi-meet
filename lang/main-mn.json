@@ -735,7 +735,8 @@
         "muted": "Дуугүй",
         "remoteControl": "Алсын удирдлагыг эхлүүлэх / зогсоох",
         "show": "Үзүүлэх",
-        "videomute": "Оролцогч камераа зогсоосон байна"
+        "videomute": "Оролцогч камераа зогсоосон байна",
+        "pin": ""
     },
     "welcomepage": {
         "accessibilityLabel": {

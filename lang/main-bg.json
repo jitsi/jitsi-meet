@@ -736,7 +736,8 @@
         "remoteControl": "Отдалечено управление",
         "show": "Покажи на главния екран",
         "videomute": "Участник е спрял камерата си",
-        "domuteOthers": "Заглушете всички останали"
+        "domuteOthers": "Заглушете всички останали",
+        "pin": ""
     },
     "welcomepage": {
         "accessibilityLabel": {

@@ -745,7 +745,8 @@
         "muted": "Muet",
         "remoteControl": "Démarrer / Arrêter le contrôle à distance",
         "show": "Afficher en premier plan",
-        "videomute": "Le participant a arrêté la caméra"
+        "videomute": "Le participant a arrêté la caméra",
+        "pin": ""
     },
     "welcomepage": {
         "accessibilityLabel": {

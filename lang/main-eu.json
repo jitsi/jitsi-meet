@@ -784,7 +784,8 @@
         "muted": "Mutututa",
         "remoteControl": "Hasi / Gelditu urruneko kontrola",
         "show": "Erakutsi",
-        "videomute": "Parte-hartzaileak kamera geldiarazi du."
+        "videomute": "Parte-hartzaileak kamera geldiarazi du.",
+        "pin": ""
     },
     "welcomepage": {
         "accessibilityLabel": {

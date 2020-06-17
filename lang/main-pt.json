@@ -711,7 +711,8 @@
         "muted": "Mudo",
         "remoteControl": "Controle remoto",
         "show": "Mostrar no palco",
-        "videomute": "O participante parou a câmera"
+        "videomute": "O participante parou a câmera",
+        "pin": ""
     },
     "welcomepage": {
         "accessibilityLabel": {

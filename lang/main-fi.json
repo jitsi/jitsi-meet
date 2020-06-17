@@ -676,7 +676,8 @@
         "muted": "Mykistetty",
         "remoteControl": "Etäkäyttö",
         "show": "",
-        "videomute": ""
+        "videomute": "",
+        "pin": ""
     },
     "welcomepage": {
         "accessibilityLabel": {

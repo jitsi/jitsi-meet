@@ -728,7 +728,8 @@
         "muted": "Noklusināts (bez skaņas)",
         "remoteControl": "Ieslēgt/izslēgt tālvadību",
         "show": "Parādīt tuvplānu",
-        "videomute": "Dalībnieks atslēdzis kameru"
+        "videomute": "Dalībnieks atslēdzis kameru",
+        "pin": ""
     },
     "welcomepage": {
         "accessibilityLabel": {

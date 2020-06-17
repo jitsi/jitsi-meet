@@ -731,7 +731,8 @@
         "muted": "Tystad",
         "remoteControl": "Fjärrkontroll",
         "show": "",
-        "videomute": "Deltagaren har stäng av kameran"
+        "videomute": "Deltagaren har stäng av kameran",
+        "pin": ""
     },
     "welcomepage": {
         "accessibilityLabel": {

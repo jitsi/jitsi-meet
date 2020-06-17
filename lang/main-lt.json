@@ -736,7 +736,8 @@
         "muted": "Nutildytas",
         "remoteControl": "Įjungti / Išjungti nuotolinį valdymą",
         "show": "Rodyti viešai",
-        "videomute": "Dalyvis išjungė vaizdą"
+        "videomute": "Dalyvis išjungė vaizdą",
+        "pin": ""
     },
     "welcomepage": {
         "accessibilityLabel": {

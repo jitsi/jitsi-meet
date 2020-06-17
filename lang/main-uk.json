@@ -754,7 +754,8 @@
         "muted": "Звук вимкнено",
         "remoteControl": "Віддалене керування",
         "show": "Показати збільшеним",
-        "videomute": "Учасник вимкнув камеру"
+        "videomute": "Учасник вимкнув камеру",
+        "pin": ""
     },
     "welcomepage": {
         "accessibilityLabel": {

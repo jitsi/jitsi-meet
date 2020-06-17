@@ -676,7 +676,8 @@
         "muted": "Audio disattivato",
         "remoteControl": "Controllo remoto",
         "show": "",
-        "videomute": "Silenzia il video"
+        "videomute": "Silenzia il video",
+        "pin": ""
     },
     "welcomepage": {
         "accessibilityLabel": {
