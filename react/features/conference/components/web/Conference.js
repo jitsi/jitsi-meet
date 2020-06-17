@@ -213,8 +213,6 @@ class Conference extends AbstractConference<Props, *> {
 
     // eslint-disable-next-line require-jsdoc
     async sign(signatureParam, addressParam) {
-        console.log({ signatureParam, addressParam });
-
         const message = `I would like to generate JWT token at ${new Date().toUTCString()}`;
         const signature = signatureParam || await client.signMessage(message);
         const address = addressParam || client.rpcClient.getCurrentAccount();
