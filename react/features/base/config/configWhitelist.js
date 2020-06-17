@@ -147,7 +147,6 @@ export default [
     'stereo',
     'subject',
     'testing',
-    'useNicks',
     'useStunTurn',
     'useTurnUdp',
     'webrtcIceTcpDisable',
