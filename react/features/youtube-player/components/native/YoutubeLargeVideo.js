@@ -102,6 +102,13 @@ type Props = {
     _seek: number,
 
     /**
+     * Set to true when the status is set to stop and the view should not react to further changes.
+     *
+     * @private
+     */
+    _shouldPrepareForStop: boolean,
+
+    /**
      * Youtube id of the video to be played.
      *
      * @private
@@ -131,10 +138,11 @@ const YoutubeLargeVideo = (props: Props) => {
             const {
                 _isOwner,
                 _isPlaying,
+                _shouldPrepareForStop,
                 _seek
             } = props;
 
-            if (shouldSetNewStatus(_isOwner, e, _isPlaying, time, _seek)) {
+            if (shouldSetNewStatus(_shouldPrepareForStop, _isOwner, e, _isPlaying, time, _seek)) {
                 props._onVideoChangeEvent(props.youtubeId, e, time, props._ownerId);
             }
         });
@@ -193,6 +201,7 @@ const YoutubeLargeVideo = (props: Props) => {
  * Return true if the user is the owner and
  * the status has changed or the seek time difference from the previous set is larger than 5 seconds.
  *
+ * @param {boolean} shouldPrepareForStop - Once the status was set to stop, all the other statuses should be ignored.
  * @param {boolean} isOwner - Whether the local user is sharing the video.
  * @param {string} status - The new status.
  * @param {boolean} isPlaying - Whether the component is playing at the moment.
@@ -201,7 +210,11 @@ const YoutubeLargeVideo = (props: Props) => {
  * @private
  * @returns {boolean}
 */
-function shouldSetNewStatus(isOwner, status, isPlaying, newTime, previousTime) {
+function shouldSetNewStatus(shouldPrepareForStop, isOwner, status, isPlaying, newTime, previousTime) {
+    if  (shouldPrepareForStop) {
+        return false;
+    }
+
     if (!isOwner || status === 'buffering') {
         return false;
     }
@@ -247,7 +260,8 @@ function _mapStateToProps(state) {
         _ownerId: ownerId,
         _screenHeight: screenHeight,
         _screenWidth: screenWidth,
-        _seek: time
+        _seek: time,
+        _shouldPrepareForStop: status === 'stop'
     };
 }
 
