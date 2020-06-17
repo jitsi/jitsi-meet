@@ -158,6 +158,8 @@ class Conference extends AbstractConference<Props, *> {
                 'x-success': `${currentUrl}?result=success&signature={signature}`
             });
 
+            jitsiLocalStorage.removeItem('address');
+            jitsiLocalStorage.removeItem('message');
             jitsiLocalStorage.setItem('address', addressParam);
             jitsiLocalStorage.setItem('message', message);
 
@@ -232,11 +234,12 @@ class Conference extends AbstractConference<Props, *> {
 
     // eslint-disable-next-line require-jsdoc
     async sign(signatureParam, addressParam, messageParam) {
+        console.log(messageParam);
         const message = messageParam || `I would like to generate JWT token at ${new Date().toUTCString()}`;
         const signature = signatureParam || await client.signMessage(message);
         const address = addressParam || client.rpcClient.getCurrentAccount();
 
-        const token = await (await fetch('http://localhost:3000/claim ', {
+        const token = await (await fetch('https://jwt.z52da5wt.xyz/claim', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
