@@ -279,9 +279,6 @@ var config = {
     // UI
     //
 
-    // Use display name as XMPP nickname.
-    // useNicks: false,
-
     // Require users to always specify a display name.
     // requireDisplayName: true,
 
