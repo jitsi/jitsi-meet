@@ -603,7 +603,8 @@
             "tileView": "Trocar a vista en mosaico",
             "toggleCamera": "Trocar a cámara",
             "videomute": "Trocar o activador de vídeo",
-            "videoblur": "Trocar o difuminador de vídeo"
+            "videoblur": "Trocar o difuminador de vídeo",
+            "pin": "",
         },
         "addPeople": "Engadir xente á súa chamada",
         "audioOnlyOff": "Desactivar o modo de largo de banda reducido",

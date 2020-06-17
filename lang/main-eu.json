@@ -663,7 +663,8 @@
             "toggleCamera": "Txandakatu kamera",
             "toggleFilmstrip": "Txandakatu film-zerrenda",
             "videomute": "Txandakatu mutututako bideoa",
-            "videoblur": "Txandakatu bideoaren lausotzea"
+            "videoblur": "Txandakatu bideoaren lausotzea",
+            "pin": ""
         },
         "addPeople": "Gehitu jendea zure deira",
         "audioOnlyOff": "Gaitu audioa soilik modua",

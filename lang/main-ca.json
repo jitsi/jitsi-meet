@@ -621,7 +621,8 @@
             "toggleCamera": "Activa o desactiva la càmera",
             "videomute": "Activa o desactiva el vídeo",
             "videoblur": "Activa o desactiva el difuminat",
-            "toggleFilmstrip": "Activa o desactiva la tira"
+            "toggleFilmstrip": "Activa o desactiva la tira",
+            "pin": ""
         },
         "addPeople": "Afegeix persones a la trucada",
         "audioOnlyOff": "Desactiva el mode de poc ample de banda",

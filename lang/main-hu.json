@@ -617,7 +617,8 @@
             "videoblur": "Videoelmosás átváltása",
             "toggleFilmstrip": "Filmszalag átváltása",
             "muteEveryone": "Mindenki elnémítása",
-            "moreOptions": "További beállítások megjelenítése"
+            "moreOptions": "További beállítások megjelenítése",
+            "pin": ""
         },
         "addPeople": "Személy hozzáadása a híváshoz",
         "audioOnlyOff": "Alacsony sávszélességű mód letiltása",

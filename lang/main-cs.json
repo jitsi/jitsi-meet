@@ -611,7 +611,8 @@
             "tileView": "Přepnout režim zobrazení",
             "toggleCamera": "",
             "videomute": "",
-            "videoblur": ""
+            "videoblur": "",
+            "pin": ""
         },
         "addPeople": "Přidat účastníky vašeho hovoru",
         "audioOnlyOff": "",

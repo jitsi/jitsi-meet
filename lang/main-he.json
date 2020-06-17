@@ -625,7 +625,8 @@
             "toggleCamera": "שנה מצלמה",
 			"toggleFilmstrip": "שנה את הסרט",
             "videomute": "שנה השתקת וידאו",
-            "videoblur": "שנה טשטוש וידאו"
+            "videoblur": "שנה טשטוש וידאו",
+            "pin": ""
         },
         "addPeople": "הוסף אנשים לשיחה שלך",
         "audioOnlyOff": "כבה מצב שמע בלבד",

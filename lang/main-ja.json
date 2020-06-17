@@ -569,7 +569,8 @@
             "tileView": "",
             "toggleCamera": "カメラを切り替える",
             "videomute": "ミュートビデオに切り替える",
-            "videoblur": ""
+            "videoblur": "",
+            "pin": ""
         },
         "addPeople": "あなたの通話に人を追加する",
         "audioOnlyOff": "音声のみモードを無効にする",

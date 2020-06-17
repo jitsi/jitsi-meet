@@ -616,7 +616,8 @@
             "tileView": "Prepnúť dlaždicové zobrazenie",
             "toggleCamera": "Zmeniť kameru",
             "videomute": "„Video odpojiť“ zapnúť/vypnúť",
-            "videoblur": "Rozmazanie pozadia zapnúť/vypnúť"
+            "videoblur": "Rozmazanie pozadia zapnúť/vypnúť",
+            "pin": ""
         },
         "addPeople": "Pridať účastníka do konferencie",
         "audioOnlyOff": "Mód „Iba zvuk“ deaktivovať",

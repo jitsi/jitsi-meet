@@ -567,7 +567,8 @@
             "tileView": "",
             "toggleCamera": "카메라 토ㄱ",
             "videomute": "",
-            "videoblur": ""
+            "videoblur": "",
+            "pin": ""
         },
         "addPeople": "통화에 사용자 추가",
         "audioOnlyOff": "음성전용 모드 끄기",

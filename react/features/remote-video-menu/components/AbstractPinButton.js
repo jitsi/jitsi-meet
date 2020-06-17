@@ -32,9 +32,9 @@ export type Props = AbstractButtonProps & {
  * An abstract remote video menu button which kicks the remote participant.
  */
 export default class AbstractPinButton extends AbstractButton<Props, *> {
-    accessibilityLabel = 'toolbar.accessibilityLabel.show';
+    accessibilityLabel = 'toolbar.accessibilityLabel.pin';
     icon = IconPin;
-    label = 'videothumbnail.show';
+    label = 'videothumbnail.pin';
 
     /**
      * Handles clicking / pressing the button, and kicks the participant.

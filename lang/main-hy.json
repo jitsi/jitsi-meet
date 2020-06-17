@@ -567,7 +567,8 @@
             "tileView": "",
             "toggleCamera": "",
             "videomute": "",
-            "videoblur": ""
+            "videoblur": "",
+            "pin": ""
         },
         "addPeople": "Ավելացնել մասնակից",
         "audioOnlyOff": "",

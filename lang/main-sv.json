@@ -613,7 +613,8 @@
             "privateMessage": "",
             "moreOptions": "Visa fler alternativ",
             "help": "Hjälp",
-            "download": ""
+            "download": "",
+            "pin": ""
         },
         "addPeople": "Lägg till personer i samtal",
         "audioOnlyOff": "Avsluta ljudläget",

@@ -598,7 +598,8 @@
             "tileView": "Alternar visualização em blocos",
             "toggleCamera": "Alternar câmera",
             "videomute": "Alternar mudo do vídeo",
-            "videoblur": "Alternar desfoque de vídeo"
+            "videoblur": "Alternar desfoque de vídeo",
+            "pin": ""
         },
         "addPeople": "Adicionar pessoas à sua chamada",
         "audioOnlyOff": "Desabilitar modo de largura de banda baixa",

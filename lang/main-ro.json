@@ -572,7 +572,8 @@
             "tileView": "Afișați/ascundeți miniatura video",
             "toggleCamera": "Afișați / ascundeți camera",
             "videomute": "Activați / dezactivați înregistrarea",
-            "videoblur": ""
+            "videoblur": "",
+            "pin": ""
         },
         "addPeople": "Adaugați persoane în apel",
         "audioOnlyOff": "Dezactivați modul 'doar audio'",

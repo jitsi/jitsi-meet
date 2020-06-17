@@ -616,7 +616,8 @@
             "toggleCamera": "",
             "toggleFilmstrip": "",
             "videomute": "",
-            "videoblur": ""
+            "videoblur": "",
+            "pin": ""
         },
         "addPeople": "",
         "audioOnlyOff": "",

@@ -692,7 +692,8 @@
             "toggleCamera": "Alternar cámara",
             "toggleFilmstrip": "Alternar mosaicos",
             "videomute": "Alternar silencio de video",
-            "videoblur": "Alternar desenfoque de video"
+            "videoblur": "Alternar desenfoque de video",
+            "pin": ""
         },
         "addPeople": "Agregar personas a su llamada",
         "audioOnlyOff": "Deshabilitar el modo de ancho de banda bajo",

@@ -622,7 +622,8 @@
             "videoblur": "Enfoscar o non la vidèo",
             "muteEveryone": "",
             "moreOptions": "Mostrar mai d’opcions",
-            "e2ee": "Chiframent del cap a la fin"
+            "e2ee": "Chiframent del cap a la fin",
+            "pin": ""
         },
         "addPeople": "Ajustar de monde a vòstra sonada",
         "audioOnlyOff": "Desactivar lo mòde connexion febla",

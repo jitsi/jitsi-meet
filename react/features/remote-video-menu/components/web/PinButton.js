@@ -36,7 +36,7 @@ export type Props = AbstractButtonProps & {
 /**
  * A remote video menu button which pins a participant and exist the tile view.
  */
-class PinButton extends AbstractPinButton<Props, *> {
+class PinButton extends AbstractPinButton {
     /**
      * Instantiates a new {@code Component}.
      *
