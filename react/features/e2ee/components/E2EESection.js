@@ -1,11 +1,9 @@
 /* @flow */
 
-import { FieldTextStateless as TextField } from '@atlaskit/field-text';
 import React, { Component } from 'react';
 import type { Dispatch } from 'redux';
 
 import { createE2EEEvent, sendAnalytics } from '../../analytics';
-import { Dialog } from '../../base/dialog';
 import { translate, translateToHTML } from '../../base/i18n';
 import { getParticipants } from '../../base/participants';
 import { connect } from '../../base/redux';
@@ -38,18 +36,25 @@ type Props = {
 type State = {
 
     /**
+     * True if the key is being edited.
+     */
+    editing: boolean,
+
+    /**
      * The current E2EE key.
      */
     key: string
 };
 
 /**
- * Implements a React {@code Component} for displaying a dialog with a field
+ * Implements a React {@code Component} for displaying a security dialog section with a field
  * for setting the E2EE key.
  *
  * @extends Component
  */
-class E2EEDialog extends Component<Props, State> {
+class E2EESection extends Component<Props, State> {
+    fieldRef: Object;
+
     /**
      * Initializes a new {@code E2EEDialog  } instance.
      *
@@ -59,13 +64,17 @@ class E2EEDialog extends Component<Props, State> {
     constructor(props: Props) {
         super(props);
 
+        this.fieldRef = React.createRef();
+
         this.state = {
+            editing: false,
             key: this.props._key
         };
 
         // Bind event handlers so they are only bound once for every instance.
         this._onKeyChange = this._onKeyChange.bind(this);
-        this._onSubmit = this._onSubmit.bind(this);
+        this._onSet = this._onSet.bind(this);
+        this._onToggleSetKey = this._onToggleSetKey.bind(this);
     }
 
     /**
@@ -76,32 +85,43 @@ class E2EEDialog extends Component<Props, State> {
      */
     render() {
         const { _everyoneSupportsE2EE, t } = this.props;
+        const { editing } = this.state;
 
         return (
-            <Dialog
-                isModal = { false }
-                onSubmit = { this._onSubmit }
-                titleKey = 'dialog.e2eeTitle'
-                width = 'small'>
-                <div className = 'e2ee-destription'>
+            <div id = 'e2ee-section'>
+                <p className = 'title'>
+                    { t('dialog.e2eeTitle') }
+                </p>
+                <p className = 'description'>
                     { translateToHTML(t, 'dialog.e2eeDescription') }
-                </div>
+                </p>
                 {
                     !_everyoneSupportsE2EE
-                        && <div className = 'e2ee-warn'>
-                            { translateToHTML(t, 'dialog.e2eeWarning') }
-                        </div>
+                        && <span className = 'warning'>
+                            { t('dialog.e2eeWarning') }
+                        </span>
                 }
-                <TextField
-                    autoFocus = { true }
-                    compact = { true }
-                    label = { t('dialog.e2eeLabel') }
-                    name = 'e2eeKey'
-                    onChange = { this._onKeyChange }
-                    shouldFitContainer = { true }
-                    type = 'password'
-                    value = { this.state.key } />
-            </Dialog>);
+                <div className = 'key-field'>
+                    <label>
+                        { t('dialog.e2eeLabel') }:
+                    </label>
+                    <input
+                        disabled = { !editing }
+                        name = 'e2eeKey'
+                        onChange = { this._onKeyChange }
+                        placeholder = { t('dialog.e2eeNoKey') }
+                        ref = { this.fieldRef }
+                        type = 'password'
+                        value = { this.state.key } />
+                    { editing && <a onClick = { this._onSet }>
+                        { t('dialog.e2eeSet') }
+                    </a> }
+                    { !editing && <a onClick = { this._onToggleSetKey }>
+                        { t('dialog.e2eeToggleSet') }
+                    </a> }
+                </div>
+            </div>
+        );
     }
 
     _onKeyChange: (Object) => void;
@@ -117,21 +137,38 @@ class E2EEDialog extends Component<Props, State> {
         this.setState({ key: event.target.value.trim() });
     }
 
-    _onSubmit: () => boolean;
+    _onSet: () => void;
 
     /**
-     * Dispatches an action to update the E2EE key.
+     * Dispatches an action to set/unset the E2EE key.
      *
      * @private
-     * @returns {boolean}
+     * @returns {void}
      */
-    _onSubmit() {
+    _onSet() {
         const { key } = this.state;
 
         sendAnalytics(createE2EEEvent(`key.${key ? 'set' : 'unset'}`));
         this.props.dispatch(setE2EEKey(key));
 
-        return true;
+        this.setState({
+            editing: false
+        });
+    }
+
+    _onToggleSetKey: () => void;
+
+    /**
+     * Sets the section into edit mode so then the user can set the key.
+     *
+     * @returns {void}
+     */
+    _onToggleSetKey() {
+        this.setState({
+            editing: true
+        }, () => {
+            this.fieldRef.current.focus();
+        });
     }
 }
 
@@ -152,4 +189,4 @@ function mapStateToProps(state) {
     };
 }
 
-export default translate(connect(mapStateToProps)(E2EEDialog));
+export default translate(connect(mapStateToProps)(E2EESection));

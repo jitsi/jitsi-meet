@@ -7,6 +7,7 @@ import { Dialog } from '../../../base/dialog';
 import { translate } from '../../../base/i18n';
 import { isLocalParticipantModerator } from '../../../base/participants';
 import { connect } from '../../../base/redux';
+import { E2EESection } from '../../../e2ee/components';
 import { LobbySection } from '../../../lobby';
 
 import Header from './Header';
@@ -92,6 +93,8 @@ function SecurityDialog({
                     passwordNumberOfDigits = { _passwordNumberOfDigits }
                     setPassword = { setPassword }
                     setPasswordEditEnabled = { setPasswordEditEnabled } />
+                <div className = 'separator-line' />
+                <E2EESection />
             </div>
         </Dialog>
     );
