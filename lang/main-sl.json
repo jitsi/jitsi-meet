@@ -192,7 +192,7 @@
         "e2eeDescription": "<p>End-to-End Encryption is currently <strong>EXPERIMENTAL</strong>. Please see <a href='https://jitsi.org/blog/e2ee/' target='_blank'>this post</a> for details.</p><br/><p>Please keep in mind that turning on end-to-end encryption will effectively disable server-side provided services such as: recording, live streaming and phone participation. Also keep in mind that the meeting will only work for people joining from browsers with support for insertable streams.</p>",
         "e2eeLabel": "Key",
         "e2eeTitle": "End-to-End Encryption",
-        "e2eeWarning": "<br /><p><strong>WARNING:</strong> Not all participants in this meeting seem to have support for End-to-End encryption. If you enable it they won't be able to see nor hear you.</p>",
+        "e2eeWarning": "WARNING: Not all participants in this meeting seem to have support for End-to-End encryption. If you enable it they won't be able to see nor hear you.",
         "enterDisplayName": "Prosimo vnesite svoje ime",
         "error": "Napaka",
         "externalInstallationMsg": "Potrebno je namestiti razširitev za deljenje namizja.",
