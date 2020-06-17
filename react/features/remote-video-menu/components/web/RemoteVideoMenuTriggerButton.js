@@ -7,6 +7,8 @@ import { getLocalParticipant, PARTICIPANT_ROLE } from '../../../base/participant
 import { Popover } from '../../../base/popover';
 import { connect } from '../../../base/redux';
 
+import PinButton from './PinButton';
+
 import {
     MuteButton,
     MuteEveryoneElseButton,
@@ -16,7 +18,6 @@ import {
     RemoteVideoMenu,
     VolumeSlider
 } from './';
-import PinButton from "./PinButton";
 
 declare var $: Object;
 declare var interfaceConfig: Object;
