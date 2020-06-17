@@ -158,8 +158,6 @@ class Conference extends AbstractConference<Props, *> {
                 'x-success': `${currentUrl}?result=success&signature={signature}`
             });
 
-            jitsiLocalStorage.removeItem('address');
-            jitsiLocalStorage.removeItem('message');
             jitsiLocalStorage.setItem('address', addressParam);
             jitsiLocalStorage.setItem('message', message);
 
