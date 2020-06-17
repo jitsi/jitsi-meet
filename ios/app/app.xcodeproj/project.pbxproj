@@ -27,6 +27,7 @@
 		13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB11A68108700A75B9A /* LaunchScreen.xib */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
+		3A987EFB24789C0B00B71A3A /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 0BEA5C3E1F7B8F73000D0AB4 /* Info.plist */; };
 		695AF3ED6F686F9C5EE40F9A /* libPods-jitsi-meet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 489E8EFE2C720D10F5961AEF /* libPods-jitsi-meet.a */; };
 		DE4C456121DE1E4E00EA0709 /* FIRUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = DE4C455F21DE1E4E00EA0709 /* FIRUtilities.m */; };
 		E588011722789D43008B0561 /* JitsiMeetContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = E58801132278944E008B0561 /* JitsiMeetContext.swift */; };
@@ -319,16 +320,16 @@
 				TargetAttributes = {
 					0BEA5C241F7B8F73000D0AB4 = {
 						CreatedOnToolsVersion = 9.0;
-						DevelopmentTeam = FC967L3QRG;
+						DevelopmentTeam = FJBXS39GMN;
 						ProvisioningStyle = Automatic;
 					};
 					0BEA5C301F7B8F73000D0AB4 = {
 						CreatedOnToolsVersion = 9.0;
-						DevelopmentTeam = FC967L3QRG;
+						DevelopmentTeam = FJBXS39GMN;
 						ProvisioningStyle = Automatic;
 					};
 					13B07F861A680F5B00A75B9A = {
-						DevelopmentTeam = FC967L3QRG;
+						DevelopmentTeam = FJBXS39GMN;
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.SafariKeychain = {
@@ -368,6 +369,7 @@
 			files = (
 				0BEA5C2B1F7B8F73000D0AB4 /* Assets.xcassets in Resources */,
 				0BEA5C291F7B8F73000D0AB4 /* Interface.storyboard in Resources */,
+				3A987EFB24789C0B00B71A3A /* Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -609,11 +611,11 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_STYLE = Automatic;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = FC967L3QRG;
+				DEVELOPMENT_TEAM = FJBXS39GMN;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				IBSC_MODULE = JitsiMeetCompanion_Extension;
 				INFOPLIST_FILE = watchos/app/Info.plist;
-				PRODUCT_BUNDLE_IDENTIFIER = org.jitsi.meet.watchkit;
+				PRODUCT_BUNDLE_IDENTIFIER = org.pluma.jitsi.meet.watchkit;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
@@ -644,11 +646,11 @@
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = FC967L3QRG;
+				DEVELOPMENT_TEAM = FJBXS39GMN;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				IBSC_MODULE = JitsiMeetCompanion_Extension;
 				INFOPLIST_FILE = watchos/app/Info.plist;
-				PRODUCT_BUNDLE_IDENTIFIER = org.jitsi.meet.watchkit;
+				PRODUCT_BUNDLE_IDENTIFIER = org.pluma.jitsi.meet.watchkit;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
@@ -676,11 +678,11 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_STYLE = Automatic;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = FC967L3QRG;
+				DEVELOPMENT_TEAM = FJBXS39GMN;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = watchos/extension/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = org.jitsi.meet.watchkit.extension;
+				PRODUCT_BUNDLE_IDENTIFIER = org.pluma.jitsi.meet.watchkit.extension;
 				PRODUCT_NAME = "${TARGET_NAME}";
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
@@ -710,11 +712,11 @@
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = FC967L3QRG;
+				DEVELOPMENT_TEAM = FJBXS39GMN;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = watchos/extension/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = org.jitsi.meet.watchkit.extension;
+				PRODUCT_BUNDLE_IDENTIFIER = org.pluma.jitsi.meet.watchkit.extension;
 				PRODUCT_NAME = "${TARGET_NAME}";
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
@@ -736,7 +738,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = NO;
-				DEVELOPMENT_TEAM = FC967L3QRG;
+				DEVELOPMENT_TEAM = FJBXS39GMN;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -754,7 +756,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = org.jitsi.meet;
+				PRODUCT_BUNDLE_IDENTIFIER = org.pluma.jitsi.meet;
 				PRODUCT_NAME = "jitsi-meet";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 			};
@@ -770,7 +772,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = FC967L3QRG;
+				DEVELOPMENT_TEAM = FJBXS39GMN;
 				ENABLE_BITCODE = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -788,7 +790,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = org.jitsi.meet;
+				PRODUCT_BUNDLE_IDENTIFIER = org.pluma.jitsi.meet;
 				PRODUCT_NAME = "jitsi-meet";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 			};
