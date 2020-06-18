@@ -104,8 +104,6 @@ export function createLocalTracksF(options = {}, firePermissionPromptIsShownEven
                 {
                     cameraDeviceId,
                     constraints,
-                    desktopSharingExtensionExternalInstallation:
-                        options.desktopSharingExtensionExternalInstallation,
                     desktopSharingFrameRate,
                     desktopSharingSourceDevice:
                         options.desktopSharingSourceDevice,
