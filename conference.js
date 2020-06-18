@@ -2130,6 +2130,11 @@ export default {
             if (participantThatMutedUs) {
                 APP.store.dispatch(participantMutedUs(participantThatMutedUs));
             }
+            APP.API.notifyParticipantMuteStatusChanged(
+                track.getParticipantId(),
+                track.type,
+                track.isMuted()
+            );
         });
 
         room.on(JitsiConferenceEvents.SUBJECT_CHANGED,

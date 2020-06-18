@@ -723,6 +723,25 @@ class API {
     }
 
     /**
+     * Notify external application (if API is enabled) that user changed mute
+     * status for a track.
+     *
+     * @param {string} id  - User id.
+     * @param {string} type - 'audio' or 'video' (track type).
+     * @param {boolean} muted - Muted state.
+     * @returns {void}
+     */
+    notifyParticipantMuteStatusChanged(id: string, type: string, muted: boolean) {
+        logger.log('participant-mute-status-changed', id, type, muted);
+        this._sendEvent({
+            name: 'participant-mute-status-changed',
+            id,
+            type,
+            muted
+        });
+    }
+
+    /**
      * Notify external application (if API is enabled) for audio muted status
      * changed.
      *

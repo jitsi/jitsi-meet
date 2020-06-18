@@ -71,6 +71,7 @@ const events = {
     'participant-joined': 'participantJoined',
     'participant-kicked-out': 'participantKickedOut',
     'participant-left': 'participantLeft',
+    'participant-mute-status-changed': 'participantMuteStatusChanged',
     'participant-role-changed': 'participantRoleChanged',
     'password-required': 'passwordRequired',
     'proxy-connection-event': 'proxyConnectionEvent',
