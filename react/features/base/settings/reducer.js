@@ -33,6 +33,7 @@ const DEFAULT_STATE = {
     startAudioOnly: false,
     startWithAudioMuted: false,
     startWithVideoMuted: false,
+    useWidescreen: false,
     userSelectedAudioOutputDeviceId: undefined,
     userSelectedCameraDeviceId: undefined,
     userSelectedMicDeviceId: undefined,

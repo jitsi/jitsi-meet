@@ -55,6 +55,11 @@ type State = {
     serverURL: string,
 
     /**
+     * Whether to show video tiles in widecsreen or not.
+     */
+    useWidescreen: boolean,
+
+    /**
      * Whether to show advanced settings or not.
      */
     showAdvanced: boolean,
@@ -92,6 +97,7 @@ class SettingsView extends AbstractSettingsView<Props, State> {
             displayName,
             email,
             serverURL,
+            useWidescreen,
             startWithAudioMuted,
             startWithVideoMuted
         } = props._settings || {};
@@ -103,6 +109,7 @@ class SettingsView extends AbstractSettingsView<Props, State> {
             displayName,
             email,
             serverURL,
+            useWidescreen,
             showAdvanced: false,
             startWithAudioMuted,
             startWithVideoMuted
@@ -117,6 +124,7 @@ class SettingsView extends AbstractSettingsView<Props, State> {
         this._onShowAdvanced = this._onShowAdvanced.bind(this);
         this._setURLFieldReference = this._setURLFieldReference.bind(this);
         this._showURLAlert = this._showURLAlert.bind(this);
+        this._onUseWidescreen = this._onUseWidescreen.bind(this);
     }
 
     /**
@@ -334,6 +342,23 @@ class SettingsView extends AbstractSettingsView<Props, State> {
         this.setState({ showAdvanced: !this.state.showAdvanced });
     }
 
+    _onUseWidescreen: (boolean) => void;
+
+    /**
+     * Callback to update the use widescreen value.
+     *
+     * @param {boolean} useWidescreen - The new value to set.
+     * @returns {void}
+     */
+    _onUseWidescreen(useWidescreen) {
+        this._updateSettings({
+            useWidescreen
+        });
+        this.setState({
+            useWidescreen
+        });
+    }
+
     /**
      * Callback to update the start with audio muted value.
      *
@@ -391,7 +416,7 @@ class SettingsView extends AbstractSettingsView<Props, State> {
      * @returns {React$Element}
      */
     _renderAdvancedSettings() {
-        const { disableCallIntegration, disableP2P, disableCrashReporting, showAdvanced } = this.state;
+        const { disableCallIntegration, disableP2P, disableCrashReporting, showAdvanced, useWidescreen } = this.state;
 
         if (!showAdvanced) {
             return (
@@ -407,6 +432,13 @@ class SettingsView extends AbstractSettingsView<Props, State> {
 
         return (
             <>
+                <FormRow
+                    fieldSeparator = { true }
+                    label = 'settingsView.useWidescreen'>
+                    <Switch
+                        onValueChange = { this._onUseWidescreen }
+                        value = { useWidescreen } />
+                </FormRow>
                 <FormRow
                     fieldSeparator = { true }
                     label = 'settingsView.disableCallIntegration'>

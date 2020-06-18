@@ -14,6 +14,7 @@ import {
 } from '../../../base/conference';
 import { connect } from '../../../base/redux';
 import { ASPECT_RATIO_NARROW } from '../../../base/responsive-ui/constants';
+import { getPropertyValue } from '../../../base/settings';
 
 import Thumbnail from './Thumbnail';
 import styles from './styles';
@@ -51,7 +52,12 @@ type Props = {
     /**
      * Callback to invoke when tile view is tapped.
      */
-    onClick: Function
+    onClick: Function,
+
+    /**
+     * Indicate whether the tile view should be in widescreen mode
+     */
+    _useWideScreen: boolean
 };
 
 /**
@@ -64,12 +70,12 @@ type Props = {
 const MARGIN = 10;
 
 /**
- * The aspect ratio the tiles should display in.
+ * The standard aspect ratio the tiles should display in.
  *
  * @private
  * @type {number}
  */
-const TILE_ASPECT_RATIO = 16 / 9;
+const STANDARD_TILE_ASPECT_RATIO = 1;
 
 /**
  * Implements a React {@link Component} which displays thumbnails in a two
@@ -174,6 +180,10 @@ class TileView extends Component<Props> {
         return participants;
     }
 
+    _getTileAspectRatio() {
+        return this.props._useWideScreen ? 16 / 9 : STANDARD_TILE_ASPECT_RATIO;
+    }
+
     /**
      * Calculate the height and width for the tiles.
      *
@@ -197,7 +207,7 @@ class TileView extends Component<Props> {
         }
 
         return {
-            height: tileWidth / TILE_ASPECT_RATIO,
+            height: tileWidth / this._getTileAspectRatio(),
             width: tileWidth
         };
     }
@@ -241,7 +251,7 @@ class TileView extends Component<Props> {
      */
     _renderThumbnails() {
         const styleOverrides = {
-            aspectRatio: TILE_ASPECT_RATIO,
+            aspectRatio: this._getTileAspectRatio(),
             flex: 0,
             height: this._getTileDimensions().height,
             width: null
@@ -287,7 +297,8 @@ function _mapStateToProps(state) {
         _aspectRatio: responsiveUi.aspectRatio,
         _height: responsiveUi.clientHeight,
         _participants: state['features/base/participants'],
-        _width: responsiveUi.clientWidth
+        _width: responsiveUi.clientWidth,
+        _useWideScreen: state['features/base/settings'].useWidescreen
     };
 }
 
