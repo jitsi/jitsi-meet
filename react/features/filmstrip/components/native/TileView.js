@@ -14,7 +14,6 @@ import {
 } from '../../../base/conference';
 import { connect } from '../../../base/redux';
 import { ASPECT_RATIO_NARROW } from '../../../base/responsive-ui/constants';
-import { getPropertyValue } from '../../../base/settings';
 
 import Thumbnail from './Thumbnail';
 import styles from './styles';
@@ -180,6 +179,13 @@ class TileView extends Component<Props> {
         return participants;
     }
 
+    /**
+     * Return the aspect ratio of the tile view to use with respect to the
+     * widescreen setting.
+     *
+     * @private
+     * @returns {number}
+     */
     _getTileAspectRatio() {
         return this.props._useWideScreen ? 16 / 9 : STANDARD_TILE_ASPECT_RATIO;
     }
