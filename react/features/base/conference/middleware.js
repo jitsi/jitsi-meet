@@ -615,13 +615,14 @@ function _updateLocalParticipantInConference({ dispatch, getState }, next, actio
             conference.setDisplayName(participant.name);
         }
 
-        const { pendingSubjectChange, subject } = getState()['features/base/conference'];
-        const isModerator = participant.role === PARTICIPANT_ROLE.MODERATOR;
+        if ('role' in participant && participant.role === PARTICIPANT_ROLE.MODERATOR) {
+            const { pendingSubjectChange, subject } = getState()['features/base/conference'];
 
-        // when local user role is updated to moderator and we have a pending subject change
-        // which was not reflected we need to set it (the first time we tried was before becoming moderator)
-        if (isModerator && pendingSubjectChange !== subject) {
-            dispatch(setSubject(pendingSubjectChange));
+            // When the local user role is updated to moderator and we have a pending subject change
+            // which was not reflected we need to set it (the first time we tried was before becoming moderator).
+            if (pendingSubjectChange !== subject) {
+                dispatch(setSubject(pendingSubjectChange));
+            }
         }
     }
 
