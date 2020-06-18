@@ -1,7 +1,13 @@
+// @flow
+
 import React from 'react';
 
 import { createDeepLinkUrl } from '../../../base/util/createDeepLinkUrl';
 
+/**
+ * Create a link with createDeepLinkUrl (window.URL) method.
+ * @returns {object}
+ */
 const signDeepLink = () => {
     const currentUrl = new URL(window.location);
 

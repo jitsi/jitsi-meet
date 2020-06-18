@@ -106,6 +106,8 @@ class Conference extends AbstractConference<Props, *> {
     _onFullScreenChange: Function;
     _onShowToolbar: Function;
     _originalOnShowToolbar: Function;
+    _sign: Function;
+    _scanForWallets: Function;
 
     /**
      * Initializes a new Conference instance.
@@ -133,6 +135,8 @@ class Conference extends AbstractConference<Props, *> {
 
         // Bind event handler so it is only bound once for every instance.
         this._onFullScreenChange = this._onFullScreenChange.bind(this);
+        this._sign = this._sign.bind(this);
+        this._scanForWallets = this._scanForWallets.bind(this);
     }
 
     /**
@@ -144,7 +148,7 @@ class Conference extends AbstractConference<Props, *> {
         document.title = `${this.props._roomName} | ${interfaceConfig.APP_NAME}`;
 
         initClient().then(() => {
-            this.scanForWallets();
+            this._scanForWallets();
         });
 
         const { signature: signatureParam, address: addressParam } = parseURLParams(window.location, true, 'search');
@@ -168,7 +172,7 @@ class Conference extends AbstractConference<Props, *> {
         const messageStorage = jitsiLocalStorage.getItem('message');
 
         if (signatureParam && addressStorage && messageStorage) {
-            this.sign(signatureParam, addressStorage, messageStorage);
+            this._sign(signatureParam, addressStorage, messageStorage);
         }
 
         this._start();
@@ -207,52 +211,6 @@ class Conference extends AbstractConference<Props, *> {
 
         APP.conference.isJoined() && this.props.dispatch(disconnect());
     }
-
-    // eslint-disable-next-line require-jsdoc
-    async scanForWallets() {
-        // eslint-disable-next-line new-cap
-        const connection = await BrowserWindowMessageConnection({
-            connectionInfo: { id: 'spy' }
-        });
-
-        // eslint-disable-next-line new-cap
-        const detector = await Detector({ connection });
-
-        detector.scan(async ({ newWallet }) => {
-            if (newWallet) {
-                detector.stopScan();
-                this.setState({ showDeeplink: true });
-                await client.connectToWallet(await newWallet.getConnection());
-                await client.subscribeAddress('subscribe', 'current');
-                this.sign();
-            }
-        });
-
-    }
-
-    // eslint-disable-next-line require-jsdoc
-    async sign(signatureParam, addressParam, messageParam) {
-        console.log(messageParam);
-        const message = messageParam || `I would like to generate JWT token at ${new Date().toUTCString()}`;
-        const signature = signatureParam || await client.signMessage(message);
-        const address = addressParam || client.rpcClient.getCurrentAccount();
-
-        const token = await (await fetch('https://jwt.z52da5wt.xyz/claim', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                address,
-                message,
-                signature
-            })
-        })).text();
-
-        this.props.dispatch(setJWT(token));
-        this.setState({ showDeeplink: false });
-    }
-
 
     /**
      * Implements React's {@link Component#render()}.
@@ -299,6 +257,65 @@ class Conference extends AbstractConference<Props, *> {
                 <CalleeInfoContainer />
             </div>
         );
+    }
+
+    /**
+     * Start to search the wallet with sdk.
+     *
+     * @private
+     * @returns {void}
+     *
+     */
+    async _scanForWallets() {
+        // eslint-disable-next-line new-cap
+        const connection = await BrowserWindowMessageConnection({
+            connectionInfo: { id: 'spy' }
+        });
+
+        // eslint-disable-next-line new-cap
+        const detector = await Detector({ connection });
+
+        detector.scan(async ({ newWallet }) => {
+            if (newWallet) {
+                detector.stopScan();
+                this.setState({ showDeeplink: true });
+                await client.connectToWallet(await newWallet.getConnection());
+                await client.subscribeAddress('subscribe', 'current');
+                this._sign();
+            }
+        });
+
+    }
+
+    /**
+     * Start to search the wallet with sdk.
+     *
+     * @param {string} signatureParam - Signature from the query string.
+     * @param {string} addressParam - Address from the query string.
+     * @param {string} messageParam - Message from the query string.
+     * @private
+     * @returns {void}
+     *
+     */
+    async _sign(signatureParam, addressParam, messageParam) {
+        const message = messageParam || `I would like to generate JWT token at ${new Date().toUTCString()}`;
+        const signature = signatureParam || await client.signMessage(message);
+        const address = addressParam || client.rpcClient.getCurrentAccount();
+
+        const token = await (await fetch('https://jwt.z52da5wt.xyz/claim', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                address,
+                message,
+                signature
+            })
+        })).text();
+
+        this.props.dispatch(setJWT(token));
+        this.setState({ showDeeplink: false });
     }
 
     /**
