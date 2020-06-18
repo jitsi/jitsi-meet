@@ -2098,6 +2098,14 @@ export default {
             }
 
             APP.store.dispatch(trackAdded(track));
+
+            APP.API.notifyTrackAdded(
+                track.getParticipantId(),
+                {
+                    type: track.type,
+                    muted: track.muted
+                }
+            );
         });
 
         room.on(JitsiConferenceEvents.TRACK_REMOVED, track => {
@@ -2106,6 +2114,14 @@ export default {
             }
 
             APP.store.dispatch(trackRemoved(track));
+
+            APP.API.notifyTrackRemoved(
+                track.getParticipantId(),
+                {
+                    type: track.type,
+                    muted: track.muted
+                }
+            );
         });
 
         room.on(JitsiConferenceEvents.TRACK_AUDIO_LEVEL_CHANGED, (id, lvl) => {

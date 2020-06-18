@@ -588,6 +588,38 @@ class API {
     }
 
     /**
+     * Notify external application (if API is enabled) that the user has
+     * added a track.
+     *
+     * @param {string} id - User id.
+     * @param {Object} track - The track type and muted state.
+     * @returns {void}
+     */
+    notifyTrackAdded(id: string, track: Object) {
+        this._sendEvent({
+            name: 'track-added',
+            id,
+            track
+        });
+    }
+
+    /**
+     * Notify external application (if API is enabled) that the user has
+     * removed a track.
+     *
+     * @param {string} id - User id.
+     * @param {Object} track - The track type and muted state.
+     * @returns {void}
+     */
+    notifyTrackRemoved(id: string, track: Object) {
+        this._sendEvent({
+            name: 'track-removed',
+            id,
+            track
+        });
+    }
+
+    /**
      * Notify external application (if API is enabled) that user changed their
      * avatar.
      *
