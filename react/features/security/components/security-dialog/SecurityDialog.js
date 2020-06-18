@@ -43,6 +43,11 @@ type Props = {
     _passwordNumberOfDigits: ?number,
 
     /**
+     * Indicates whether e2ee will be displayed or not.
+     */
+    _showE2ee: boolean,
+
+    /**
      * Action that sets the conference password.
      */
     setPassword: Function,
@@ -64,6 +69,7 @@ function SecurityDialog({
     _locked,
     _password,
     _passwordNumberOfDigits,
+    _showE2ee,
     setPassword
 }: Props) {
     const [ passwordEditEnabled, setPasswordEditEnabled ] = useState(false);
@@ -93,8 +99,13 @@ function SecurityDialog({
                     passwordNumberOfDigits = { _passwordNumberOfDigits }
                     setPassword = { setPassword }
                     setPasswordEditEnabled = { setPasswordEditEnabled } />
-                <div className = 'separator-line' />
-                <E2EESection />
+                {
+                    _showE2ee ? <>
+                        <div className = 'separator-line' />
+                        <E2EESection />
+                    </> : null
+                }
+
             </div>
         </Dialog>
     );
@@ -111,6 +122,7 @@ function SecurityDialog({
 function mapStateToProps(state) {
     const {
         conference,
+        e2eeSupported,
         locked,
         password
     } = state['features/base/conference'];
@@ -120,7 +132,8 @@ function mapStateToProps(state) {
         _conference: conference,
         _dialIn: state['features/invite'],
         _locked: locked,
-        _password: password
+        _password: password,
+        _showE2ee: Boolean(e2eeSupported)
     };
 }
 
