@@ -47,7 +47,7 @@
   ProxyPassReverse /http-bind http://localhost:5280/http-bind/
 
   RewriteEngine on
-  RewriteRule ^/([a-zA-Z0-9]+)$ /index.html
+  RewriteRule ^/([a-zA-Z0-9\s]+)$ /index.html
 </VirtualHost>
 
 # Mozilla Guideline v5.4, Apache 2.4.41, OpenSSL 1.1.1d, intermediate configuration, no OCSP
