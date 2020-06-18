@@ -1,5 +1,4 @@
 export const createDeepLinkUrl = ({ type, ...params }) => {
-    // const url = new URL(`${process.env.VUE_APP_WALLET_URL}/${type}`);
     const url = new URL(`https://wallet.superhero.com/${type}`);
 
     url.searchParams.set('x-success', window.location);
