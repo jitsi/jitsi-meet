@@ -763,12 +763,12 @@ export function setStartMutedPolicy(
  * @param {string} subject - The new subject.
  * @returns {void}
  */
-export function setSubject(subject: string = '') {
+export function setSubject(subject: string) {
     return (dispatch: Dispatch<any>, getState: Function) => {
         const { conference } = getState()['features/base/conference'];
 
         if (conference) {
-            conference.setSubject(subject);
+            conference.setSubject(subject || '');
         } else {
             dispatch({
                 type: SET_PENDING_SUBJECT_CHANGE,
