@@ -226,7 +226,7 @@ class TileView extends Component<Props, State> {
                 localParticipant = participant;
             } else if (
                 !participant.local && !otherParticipant &&
-                isModerator && !isVideoMuted
+                !isModerator && !isVideoMuted
             ) {
                 otherParticipant = participant;
             } else {
