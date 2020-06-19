@@ -166,6 +166,7 @@ var interfaceConfig = {
      * @type {boolean}
      */
     RECENT_LIST_ENABLED: true,
+    RECENT_LIST_DEPTH: 3,
 
     // Names of browsers which should show a warning stating the current browser
     // has a suboptimal experience. Browsers which are not listed as optimal or
