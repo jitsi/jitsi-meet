@@ -118,10 +118,7 @@ import { mediaPermissionPromptVisibilityChanged } from './react/features/overlay
 import { suspendDetected } from './react/features/power-monitor';
 import {
     initPrejoin,
-    isPrejoinPageEnabled,
-    isPrejoinPageVisible,
-    replacePrejoinAudioTrack,
-    replacePrejoinVideoTrack
+    isPrejoinPageEnabled
 } from './react/features/prejoin';
 import { createRnnoiseProcessorPromise } from './react/features/rnnoise';
 import { toggleScreenshotCaptureEffect } from './react/features/screenshot-capture';
@@ -1409,18 +1406,6 @@ export default {
     useVideoStream(newStream) {
         return new Promise((resolve, reject) => {
             _replaceLocalVideoTrackQueue.enqueue(onFinish => {
-                /**
-                 * When the prejoin page is visible there is no conference object
-                 * created. The prejoin tracks are managed separately,
-                 * so this updates the prejoin video track.
-                 */
-                if (isPrejoinPageVisible(APP.store.getState())) {
-                    return APP.store.dispatch(replacePrejoinVideoTrack(newStream))
-                        .then(resolve)
-                        .catch(reject)
-                        .then(onFinish);
-                }
-
                 APP.store.dispatch(
                 replaceLocalTrack(this.localVideo, newStream, room))
                     .then(() => {
@@ -1474,18 +1459,6 @@ export default {
     useAudioStream(newStream) {
         return new Promise((resolve, reject) => {
             _replaceLocalAudioTrackQueue.enqueue(onFinish => {
-                /**
-                 * When the prejoin page is visible there is no conference object
-                 * created. The prejoin tracks are managed separately,
-                 * so this updates the prejoin audio stream.
-                 */
-                if (isPrejoinPageVisible(APP.store.getState())) {
-                    return APP.store.dispatch(replacePrejoinAudioTrack(newStream))
-                        .then(resolve)
-                        .catch(reject)
-                        .then(onFinish);
-                }
-
                 APP.store.dispatch(
                 replaceLocalTrack(this.localAudio, newStream, room))
                     .then(() => {

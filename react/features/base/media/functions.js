@@ -5,6 +5,17 @@ import { toState } from '../redux';
 import { VIDEO_MUTISM_AUTHORITY } from './constants';
 
 /**
+ * Determines whether audio is currently muted.
+ *
+ * @param {Function|Object} stateful - The redux store, state, or
+ * {@code getState} function.
+ * @returns {boolean}
+ */
+export function isAudioMuted(stateful: Function | Object) {
+    return Boolean(toState(stateful)['features/base/media'].audio.muted);
+}
+
+/**
  * Determines whether video is currently muted by the audio-only authority.
  *
  * @param {Function|Object} stateful - The redux store, state, or

@@ -6,9 +6,11 @@ import React, { Component } from 'react';
 import { getRoomName } from '../../base/conference';
 import { translate } from '../../base/i18n';
 import { Icon, IconPhone, IconVolumeOff } from '../../base/icons';
+import { isVideoMutedByUser } from '../../base/media';
 import { ActionButton, InputField, PreMeetingScreen } from '../../base/premeeting';
 import { connect } from '../../base/redux';
 import { getDisplayName, updateSettings } from '../../base/settings';
+import { getLocalJitsiVideoTrack } from '../../base/tracks';
 import {
     joinConference as joinConferenceAction,
     joinConferenceWithoutAudio as joinConferenceWithoutAudioAction,
@@ -16,11 +18,9 @@ import {
     setJoinByPhoneDialogVisiblity as setJoinByPhoneDialogVisiblityAction
 } from '../actions';
 import {
-    getActiveVideoTrack,
     isJoinByPhoneButtonVisible,
     isDeviceStatusVisible,
-    isJoinByPhoneDialogVisible,
-    isPrejoinVideoMuted
+    isJoinByPhoneDialogVisible
 } from '../functions';
 
 import JoinByPhoneDialog from './dialogs/JoinByPhoneDialog';
@@ -315,8 +315,8 @@ function mapStateToProps(state): Object {
         roomName: getRoomName(state),
         showDialog: isJoinByPhoneDialogVisible(state),
         hasJoinByPhoneButton: isJoinByPhoneButtonVisible(state),
-        showCameraPreview: !isPrejoinVideoMuted(state),
-        videoTrack: getActiveVideoTrack(state)
+        showCameraPreview: !isVideoMutedByUser(state),
+        videoTrack: getLocalJitsiVideoTrack(state)
     };
 }
 
