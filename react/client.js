@@ -9,7 +9,7 @@ export const initClient = async () => {
 
     // eslint-disable-next-line new-cap
     client = await RpcAepp({
-        name: 'Superhero',
+        name: 'Superhero-league',
         nodes: [ {
             name: 'mainnet',
             instance: await Node({
