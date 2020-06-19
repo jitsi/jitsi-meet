@@ -34,9 +34,9 @@ log("debug",
 	tostring(token_util.allowEmptyToken));
 
 -- option to disable room modification (sending muc config form) for guest that do not provide token
-local disable_room_moderation_on_empty_token;
+local require_token_for_moderation;
 local function load_config()
-    disable_room_moderation_on_empty_token = module:get_option_boolean("disable_room_moderation_on_empty_token");
+    require_token_for_moderation = module:get_option_boolean("token_verification_require_token_for_moderation");
 end
 load_config();
 
@@ -89,7 +89,7 @@ for event_name, method in pairs {
 
         -- if disable room mod is false we pass it through, default behaviour
         -- or the request is coming from admin (focus)
-        if not disable_room_moderation_on_empty_token or is_admin(stanza.attr.from) then
+        if not require_token_for_moderation or is_admin(stanza.attr.from) then
             return;
         end
 
