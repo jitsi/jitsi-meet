@@ -33,6 +33,13 @@ log("debug",
 	tostring(host), tostring(token_util.appId), tostring(token_util.appSecret),
 	tostring(token_util.allowEmptyToken));
 
+-- option to disable room modification (sending muc config form) for guest that do not provide token
+local disable_room_moderation_on_empty_token;
+local function load_config()
+    disable_room_moderation_on_empty_token = module:get_option_boolean("disable_room_moderation_on_empty_token");
+end
+load_config();
+
 local function verify_user(session, stanza)
 	log("debug", "Session token: %s, session room: %s",
 		tostring(session.auth_token),
@@ -70,3 +77,30 @@ module:hook("muc-occupant-pre-join", function(event)
 	log("debug", "pre join: %s %s", tostring(room), tostring(stanza));
 	return verify_user(origin, stanza);
 end);
+
+for event_name, method in pairs {
+    -- Normal room interactions
+    ["iq-set/bare/http://jabber.org/protocol/muc#owner:query"] = "handle_owner_query_set_to_room" ;
+    -- Host room
+    ["iq-set/host/http://jabber.org/protocol/muc#owner:query"] = "handle_owner_query_set_to_room" ;
+} do
+    module:hook(event_name, function (event)
+        local session, stanza = event.origin, event.stanza;
+
+        -- if disable room mod is false we pass it through, default behaviour
+        -- or the request is coming from admin (focus)
+        if not disable_room_moderation_on_empty_token or is_admin(stanza.attr.from) then
+            return;
+        end
+
+        if not session.auth_token then
+            session.send(
+                st.error_reply(
+                    stanza, "cancel", "not-allowed", "Room modification disabled for guests"));
+            return true;
+        end
+
+    end, -1);  -- the default prosody hook is on -2
+end
+
+module:hook_global('config-reloaded', load_config);
