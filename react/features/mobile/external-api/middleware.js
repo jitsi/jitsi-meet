@@ -18,6 +18,12 @@ import {
     JITSI_CONNECTION_URL_KEY,
     getURLWithoutParams
 } from '../../base/connection';
+import {
+    PARTICIPANT_JOINED,
+    PARTICIPANT_KICKED,
+    PARTICIPANT_LEFT,
+    getParticipantCount
+} from '../../base/participants';
 import { MiddlewareRegistry } from '../../base/redux';
 import { ENTER_PICTURE_IN_PICTURE } from '../picture-in-picture';
 
@@ -67,6 +73,43 @@ MiddlewareRegistry.register(store => next => action => {
     case CONFERENCE_WILL_JOIN:
         _sendConferenceEvent(store, action);
         break;
+
+    case PARTICIPANT_KICKED: {
+        const { kicked } = action;
+        const { getState } = store;
+        const numParticipants = getParticipantCount(getState);
+
+        sendEvent(
+            store,
+            type,
+            /* data */ {
+                id: kicked,
+                numParticipants
+            });
+        break;
+    }
+
+    case PARTICIPANT_JOINED:
+    case PARTICIPANT_LEFT: {
+        const { participant: { id, name, email, avatarURL, role } } = action;
+        const { getState } = store;
+        const numParticipants = getParticipantCount(getState);
+
+        sendEvent(
+            store,
+            type,
+            /* data */ {
+                participant: {
+                    id,
+                    name,
+                    email,
+                    avatarURL,
+                    role
+                },
+                numParticipants
+            });
+        break;
+    }
 
     case CONNECTION_DISCONNECTED: {
         // FIXME: This is a hack. See the description in the JITSI_CONNECTION_CONFERENCE_KEY constant definition.

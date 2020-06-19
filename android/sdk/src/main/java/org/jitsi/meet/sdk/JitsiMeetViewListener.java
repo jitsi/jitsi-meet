@@ -47,4 +47,60 @@ public interface JitsiMeetViewListener {
      * @param data Map with a "url" key with the conference URL.
      */
     void onConferenceWillJoin(Map<String, Object> data);
+
+    /**
+     * Called when someone else joins the conference
+     *
+     * @param data Map containing:
+     *    "participant": A JSON structure describing the participant
+     *      "id": id of the new particpant
+     *      "name": name of the new participant
+     *      "email": email of the new participant (if any)
+     *      "role": role of the participant (participant | moderator)
+     *      "avatarURL": avatarURL of the participant, if any
+     *
+     *      NOTE: Except for "id", not all fields are always available.
+     *      If e.g. no "email" was set, that field will not show up at all.
+     *
+     *    "numParticipants": number of participants in conference, including the
+     *                       new participant.
+     *
+     *  NOTE: If you are just initiating the call, you may
+     *        not have joined yourself, so this number is 1 in case
+     *        you are still initiating the call - wait for
+     *        "onConferenceJoined" above...
+     */
+    void onParticipantJoined(Map<String, Object> data);
+
+    /**
+     * Called when a participant (not you) leaves the conference
+     *
+     * @param data Map containing:
+     *    "participant": A JSON structure describing the participant
+     *      "id": id of the new particpant
+     *      "name": name of the new participant
+     *      "email": email of the new participant (if any)
+     *      "role": role of the participant (participant | moderator)
+     *      "avatarURL": avatarURL of the participant, if any
+     *
+     *      NOTE: Except for "id", not all fields are always available.
+     *      If e.g. no "email" was set, that field will not show up at all.
+     *
+     *    "numParticipants": number of participants in conference, after the
+     *                       participant left
+     *
+     *    NOTE: If "numParticipants" is 1, that means that you are the only
+     *    participant left in the call.
+     */
+    void onParticipantLeft(Map<String, Object> data);
+
+    /**
+     * Called when a participant was kicked out of the conference.
+     *
+     * @param data Map containing:
+     *    "id": id of the participant who was kicked out
+     *    "numParticipants": number of participants *after* the participant
+     *                    was kciked out.
+     */
+    void onParticipantKicked(Map<String, Object> data);
 }
