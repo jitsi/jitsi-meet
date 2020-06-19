@@ -234,7 +234,7 @@ export function getVideoDeviceIds(state: Object) {
 }
 
 /**
- * Returns true if there are devices of a specific type.
+ * Returns true if there are devices of a specific type or on native platform.
  *
  * @param {Object} state - The state of the application.
  * @param {string} type - The type of device: VideoOutput | audioOutput | audioInput.
@@ -242,6 +242,10 @@ export function getVideoDeviceIds(state: Object) {
  * @returns {boolean}
  */
 export function hasAvailableDevices(state: Object, type: string) {
+    if (state['features/base/devices'] === undefined) {
+        return true;
+    }
+
     return state['features/base/devices'].availableDevices[type].length > 0;
 }
 
