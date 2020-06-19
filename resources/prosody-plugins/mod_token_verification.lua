@@ -87,7 +87,7 @@ for event_name, method in pairs {
     module:hook(event_name, function (event)
         local session, stanza = event.origin, event.stanza;
 
-        -- if disable room mod is false we pass it through, default behaviour
+        -- if we do not require token we pass it through(default behaviour)
         -- or the request is coming from admin (focus)
         if not require_token_for_moderation or is_admin(stanza.attr.from) then
             return;
