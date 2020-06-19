@@ -201,6 +201,18 @@ export function getLocalVideoType(tracks) {
 }
 
 /**
+ * Returns the stored local video track.
+ *
+ * @param {Object} state - The redux state.
+ * @returns {Object}
+ */
+export function getLocalJitsiVideoTrack(state) {
+    const track = getLocalVideoTrack(state['features/base/tracks']);
+
+    return track?.jitsiTrack;
+}
+
+/**
  * Returns track of specified media type for specified participant id.
  *
  * @param {Track[]} tracks - List of all tracks.
