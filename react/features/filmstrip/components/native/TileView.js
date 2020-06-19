@@ -22,6 +22,7 @@ import {
 
 import { getTrackByMediaTypeAndParticipant } from '../../../base/tracks';
 import { MEDIA_TYPE } from '../../../base/media';
+import { PARTICIPANT_ROLE } from '../../../base/participants'
 
 import Thumbnail from './Thumbnail';
 import styles from './styles';
@@ -200,26 +201,32 @@ class TileView extends Component<Props, State> {
         let otherParticipant;
 
         for (const participant of this.props._participants) {
-            let sortWeight = 0;
+            const videoTrack = getTrackByMediaTypeAndParticipant(
+                this.props._tracks, MEDIA_TYPE.VIDEO, participant.id
+            );
+            const isVideoMuted = Boolean(videoTrack && videoTrack.muted);
+            const isModerator = Boolean(
+                participant &&
+                participant.role === PARTICIPANT_ROLE.MODERATOR
+            );
 
-            const videoTrack = getTrackByMediaTypeAndParticipant(this.props._tracks, MEDIA_TYPE.VIDEO, participant.id);
-            if(videoTrack && !videoTrack.muted) {
+            let sortWeight = 0;
+            if (!isVideoMuted) {
                 sortWeight -= 1;
             }
-            if(participant.raisedHand) {
+            if (participant.raisedHand) {
                 sortWeight -= 2;
             }
-            if(participant.role === "moderator") {
+            if (isModerator) {
                 sortWeight -= 4;
             }
             participant.sortWeight = sortWeight;
 
             if (participant.local) {
                 localParticipant = participant;
-            } else if(
-                !participant.local &&
-                !otherParticipant &&
-                participant.role !== "moderator"
+            } else if (
+                !participant.local && !otherParticipant &&
+                isModerator && !isVideoMuted
             ) {
                 otherParticipant = participant;
             } else {
