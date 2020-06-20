@@ -89,6 +89,11 @@ function initCommands() {
 
             APP.store.dispatch(muteAllParticipants(localIds));
         },
+        'enable-lobby': () => {
+            const { conference } = APP.store.getState()['features/base/conference'];
+
+            conference.enableLobby();
+        },
         'password': password => {
             const { conference, passwordRequired }
                 = APP.store.getState()['features/base/conference'];
