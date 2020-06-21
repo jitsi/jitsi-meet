@@ -6,7 +6,8 @@ import { createDeepLinkUrl } from '../../../base/util/createDeepLinkUrl';
 
 /**
  * Create a link with createDeepLinkUrl (window.URL) method.
- * @returns {object}
+ *
+ * @returns {Object}
  */
 const signDeepLink = () => {
     const currentUrl = new URL(window.location);
@@ -15,15 +16,14 @@ const signDeepLink = () => {
 
     return createDeepLinkUrl({
         type: 'address',
-        'x-success': `${currentUrl}?address={address}`
+        'x-success': `${currentUrl.toString()}?address={address}`
     });
 };
 
 const Button = () => (
     <a
         className = 'invite-more-button'
-        href = { signDeepLink() }
-        style = {{ color: 'white', marginTop: 10 }} >
+        href = { signDeepLink() } >
             Login with web wallet
     </a>
 );
