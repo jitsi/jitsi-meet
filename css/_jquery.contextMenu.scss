@@ -16,18 +16,20 @@
  */
 @font-face {
   font-family: "context-menu-icons";
-  font-style: normal; 
+  font-style: normal;
   font-weight: normal;
-
-  src: url("font/context-menu-icons.eot?2qmzf");
-  src: url("font/context-menu-icons.eot?2qmzf#iefix") format("embedded-opentype"), url("font/context-menu-icons.woff2?2qmzf") format("woff2"), url("font/context-menu-icons.woff?2qmzf") format("woff"), url("font/context-menu-icons.ttf?2qmzf") format("truetype");
+  src: url("~jquery-contextmenu/dist/font/context-menu-icons.eot?2qmzf");
+  src: url("~jquery-contextmenu/dist/font/context-menu-icons.eot?2qmzf#iefix") format("embedded-opentype"),
+    url("~jquery-contextmenu/dist/font/context-menu-icons.woff2?2qmzf") format("woff2"),
+    url("~jquery-contextmenu/dist/font/context-menu-icons.woff?2qmzf") format("woff"),
+    url("~jquery-contextmenu/dist/font/context-menu-icons.ttf?2qmzf") format("truetype");
 }
 
 .context-menu-icon:before {
   position: absolute;
   top: 50%;
   left: 0;
-  width: 28px; 
+  width: 28px;
   font-family: "context-menu-icons";
   font-size: 16px;
   font-style: normal;
@@ -77,7 +79,7 @@
 }
 
 .context-menu-list {
-  position: absolute; 
+  position: absolute;
   display: inline-block;
   min-width: 180px;
   max-width: 360px;
@@ -100,12 +102,12 @@
   -webkit-user-select: none;
      -moz-user-select: none;
       -ms-user-select: none;
-          user-select: none; 
+          user-select: none;
   background-color: #fff;
 }
 
 .context-menu-separator {
-  padding: 0; 
+  padding: 0;
   margin: 5px 0;
   border-bottom: 1px solid #e6e6e6;
 }
@@ -120,12 +122,12 @@
 
 .context-menu-item.context-menu-hover {
   color: #fff;
-  cursor: pointer; 
+  cursor: pointer;
   background-color: #2980b9;
 }
 
 .context-menu-item.context-menu-disabled {
-  color: #626262; 
+  color: #626262;
   background-color: #fff;
 }
 
@@ -135,7 +137,7 @@
 
 .context-menu-input.context-menu-hover,
 .context-menu-item.context-menu-disabled.context-menu-hover {
-  cursor: default; 
+  cursor: default;
   background-color: #eee;
 }
 
@@ -180,7 +182,7 @@
 .context-menu-input > label > textarea,
 .context-menu-input > label > select {
   display: block;
-  width: 100%; 
+  width: 100%;
   -webkit-box-sizing: border-box;
      -moz-box-sizing: border-box;
           box-sizing: border-box;
@@ -191,7 +193,7 @@
 }
 
 .context-menu-item > .context-menu-list {
-  top: 5px; 
+  top: 5px;
   /* re-positioned by js */
   right: -5px;
   display: none;
