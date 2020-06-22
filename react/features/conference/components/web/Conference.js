@@ -1,6 +1,6 @@
 // @flow
 // eslint-disable-next-line max-len
-import BrowserWindowMessageConnection from '@aeternity/aepp-sdk/es/utils/aepp-wallet-communication/connection/browser-window-message';
+import browserWindowMessageConnection from '@aeternity/aepp-sdk/es/utils/aepp-wallet-communication/connection/browser-window-message';
 import Detector from '@aeternity/aepp-sdk/es/utils/aepp-wallet-communication/wallet-detector';
 import { jitsiLocalStorage } from 'js-utils';
 import _ from 'lodash';
@@ -267,8 +267,7 @@ class Conference extends AbstractConference<Props, *> {
      *
      */
     async _scanForWallets() {
-        // eslint-disable-next-line new-cap
-        const connection = await BrowserWindowMessageConnection({
+        const connection = await browserWindowMessageConnection({
             connectionInfo: { id: 'spy' }
         });
 
