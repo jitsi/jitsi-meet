@@ -1,5 +1,5 @@
 /* global interfaceConfig */
-
+import BrowserWindowMessageConnection from '@aeternity/aepp-sdk/es/utils/aepp-wallet-communication/connection/browser-window-message';
 import React from 'react';
 
 import { isMobileBrowser } from '../../base/environment/utils';
@@ -10,6 +10,7 @@ import { connect } from '../../base/redux';
 import { CalendarList } from '../../calendar-sync';
 import { RecentList } from '../../recent-list';
 import { SettingsButton, SETTINGS_TABS } from '../../settings';
+import isinIframe from '../../base/util/inIframe';
 
 import { AbstractWelcomePage, _mapStateToProps } from './AbstractWelcomePage';
 import Tabs from './Tabs';
@@ -258,10 +259,18 @@ class WelcomePage extends AbstractWelcomePage {
      * @private
      * @returns {void}
      */
-    _onFormSubmit(event) {
+    async _onFormSubmit(event) {
         event.preventDefault();
 
+
+
         if (!this._roomInputRef || this._roomInputRef.reportValidity()) {
+            if (isinIframe()) {
+                const connection = await BrowserWindowMessageConnection();
+
+                const room = this.state.room || this.state.generatedRoomname;
+                connection.sendMessage({ room });
+            }
             this._onJoin();
         }
     }
