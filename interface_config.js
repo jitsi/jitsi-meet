@@ -2,7 +2,7 @@
 
 var interfaceConfig = {
     DEFAULT_BACKGROUND: '#474747',
-    DEFAULT_LOGO_URL: '../images/watermark.png',
+    DEFAULT_LOGO_URL: 'images/watermark.png',
 
     /**
      * Whether or not the blurred video background for large video should be
