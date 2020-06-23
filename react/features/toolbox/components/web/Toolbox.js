@@ -944,7 +944,7 @@ class Toolbox extends Component<Props, State> {
     }
 
     /**
-     * Returns true if user is moderator.
+     * Returns true if user is the moderator.
      *
      * @returns {boolean}
      */
@@ -969,8 +969,6 @@ class Toolbox extends Component<Props, State> {
             t
         } = this.props;
 
-        const localParticipant = getParticipantById(APP.store.getState(), this.props._localParticipantID);
-        const isModerator = localParticipant && localParticipant.role === PARTICIPANT_ROLE.MODERATOR;
 
         return [
             this._isProfileVisible()
@@ -991,7 +989,7 @@ class Toolbox extends Component<Props, State> {
             <RecordButton
                 key = 'record'
                 showLabel = { true } />,
-            isModerator && this._shouldShowButton('sharedvideo')
+            this._isModerator() && this._shouldShowButton('sharedvideo')
                 && <OverflowMenuItem
                     accessibilityLabel = { t('toolbar.accessibilityLabel.sharedvideo') }
                     icon = { IconShareVideo }
