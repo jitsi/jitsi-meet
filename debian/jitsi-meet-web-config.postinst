@@ -98,7 +98,7 @@ case "$1" in
                     -reqexts SAN \
                     -extensions SAN \
                     -config <(cat /etc/ssl/openssl.cnf \
-                        <(printf '[SAN]\nsubjectAltName=DNS:localhost,DNS:$JVB_HOSTNAME,IP:$JVB_HOSTNAME')) \
+                        <(printf '[SAN]\nsubjectAltName=DNS:localhost,DNS:$JVB_HOSTNAME,IP:$JVB_HOSTNAME'))
             fi
         fi
 
