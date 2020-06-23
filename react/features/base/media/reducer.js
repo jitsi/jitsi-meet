@@ -1,8 +1,8 @@
 import { combineReducers } from 'redux';
 
-import { CONFERENCE_FAILED, CONFERENCE_LEFT } from '../conference';
+import { CONFERENCE_FAILED, CONFERENCE_LEFT } from '../conference/actionTypes';
 import { ReducerRegistry } from '../redux';
-import { TRACK_REMOVED } from '../tracks';
+import { TRACK_REMOVED } from '../tracks/actionTypes';
 
 import {
     SET_AUDIO_AVAILABLE,

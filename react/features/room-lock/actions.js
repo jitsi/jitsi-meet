@@ -5,13 +5,14 @@ import type { Dispatch } from 'redux';
 import {
     appNavigate,
     maybeRedirectToWelcomePage
-} from '../app';
+} from '../app/actions';
 import {
     conferenceLeft,
     JITSI_CONFERENCE_URL_KEY,
     setPassword
 } from '../base/conference';
 import { hideDialog, openDialog } from '../base/dialog';
+
 import { PasswordRequiredPrompt, RoomLockPrompt } from './components';
 
 declare var APP: Object;

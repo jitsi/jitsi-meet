@@ -3,7 +3,7 @@
     "af": "",
     "az": "",
     "bg": "",
-    "cs": "",
+    "cs": "Tsjekkisk",
     "de": "Tysk",
     "el": "Gresk",
     "eo": "",
@@ -15,7 +15,7 @@
     "ko": "Koreansk",
     "nb": "",
     "oc": "",
-    "pl": "",
+    "pl": "Polsk",
     "ptBR": "",
     "ru": "Russisk",
     "sk": "",
@@ -24,5 +24,8 @@
     "tr": "Tyrkisk",
     "vi": "Vietnamesisk",
     "zhCN": "",
-    "da": "Dansk"
+    "da": "Dansk",
+    "hu": "Ungarsk",
+    "hr": "Kroatisk",
+    "fi": "Finsk"
 }

@@ -1,6 +1,7 @@
 // @flow
 
 import * as bodyPix from '@tensorflow-models/body-pix';
+
 import {
     CLEAR_INTERVAL,
     INTERVAL_TIMEOUT,
@@ -43,7 +44,7 @@ export default class JitsiStreamBlurEffect {
         this._outputCanvasElement.getContext('2d');
         this._inputVideoElement = document.createElement('video');
 
-        this._maskFrameTimerWorker = new Worker(timerWorkerScript);
+        this._maskFrameTimerWorker = new Worker(timerWorkerScript, { name: 'Blur effect worker' });
         this._maskFrameTimerWorker.onmessage = this._onMaskFrameTimer;
     }
 

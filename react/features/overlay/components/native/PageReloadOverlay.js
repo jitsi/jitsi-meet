@@ -3,15 +3,13 @@
 import React from 'react';
 import { Text } from 'react-native';
 
-import { appNavigate, reloadNow } from '../../../app';
+import { appNavigate, reloadNow } from '../../../app/actions';
 import { ColorSchemeRegistry } from '../../../base/color-scheme';
 import { ConfirmDialog } from '../../../base/dialog';
 import { translate } from '../../../base/i18n';
 import { connect } from '../../../base/redux';
 import { StyleType } from '../../../base/styles';
-
 import { setFatalError } from '../../actions';
-
 import AbstractPageReloadOverlay, {
     abstractMapStateToProps,
     type Props as AbstractProps

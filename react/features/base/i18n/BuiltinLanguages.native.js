@@ -13,10 +13,22 @@ const _LANGUAGES = {
         main: require('../../../../lang/main-af')
     },
 
+    // Arabic
+    'ar': {
+        languages: require('../../../../lang/languages-ar'),
+        main: require('../../../../lang/main-ar')
+    },
+
     // Bulgarian
     'bg': {
         languages: require('../../../../lang/languages-bg'),
         main: require('../../../../lang/main-bg')
+    },
+
+    // Catalan
+    'ca': {
+        languages: require('../../../../lang/languages-ca'),
+        main: require('../../../../lang/main-ca')
     },
 
     // German
@@ -127,16 +139,46 @@ const _LANGUAGES = {
         main: require('../../../../lang/main-ptBR')
     },
 
+    // Sardinian (Sardinia)
+    'sc': {
+        languages: require('../../../../lang/languages-sc'),
+        main: require('../../../../lang/main-sc')
+    },
+
+    // Romanian
+    'ro': {
+        languages: require('../../../../lang/languages-ro'),
+        main: require('../../../../lang/main-ro')
+    },
+
     // Russian
     'ru': {
         languages: require('../../../../lang/languages-ru'),
         main: require('../../../../lang/main-ru')
     },
 
+    // Slovak
+    'sk': {
+        languages: require('../../../../lang/languages-sk'),
+        main: require('../../../../lang/main-sk')
+    },
+
     // Swedish
     'sv': {
         languages: require('../../../../lang/languages-sv'),
         main: require('../../../../lang/main-sv')
+    },
+
+    // Slovenian
+    'sl': {
+        languages: require('../../../../lang/languages-sl'),
+        main: require('../../../../lang/main-sl')
+    },
+
+    // Turkish
+    'tr': {
+        languages: require('../../../../lang/languages-tr'),
+        main: require('../../../../lang/main-tr')
     },
 
     // Vietnamese

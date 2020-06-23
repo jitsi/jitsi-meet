@@ -1,14 +1,13 @@
 // @flow
 
+import type { PanResponderInstance } from 'PanResponder';
 import React, { Component } from 'react';
 import { PanResponder, PixelRatio, View } from 'react-native';
 import { type Dispatch } from 'redux';
 
 import { connect } from '../../../redux';
-
-import type { PanResponderInstance } from 'PanResponder';
-
 import { storeVideoTransform } from '../../actions';
+
 import styles from './styles';
 
 /**

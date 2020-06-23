@@ -35,6 +35,10 @@
                 cursor: initial;
                 color: #fff;
                 background-color: #a4b8d1;
+
+                &:hover {
+                    background-color: #a4b8d1;
+                }
             }
 
             svg {
@@ -57,6 +61,7 @@
         width: 16px;
 
         &> svg {
+            fill: #5e6d7a;
             margin-top: 5px;
         }
 

@@ -12,6 +12,7 @@ import {
     PARTICIPANT_KICKED,
     PARTICIPANT_LEFT,
     PARTICIPANT_JOINED,
+    PARTICIPANT_ROLE_CHANGED,
     SET_LOADABLE_AVATAR_URL,
     getLocalParticipant,
     getParticipantById
@@ -21,6 +22,8 @@ import { getBaseUrl } from '../base/util';
 import { appendSuffix } from '../display-name';
 import { SUBMIT_FEEDBACK_ERROR, SUBMIT_FEEDBACK_SUCCESS } from '../feedback';
 import { SET_FILMSTRIP_VISIBLE } from '../filmstrip';
+
+import './subscriber';
 
 declare var APP: Object;
 declare var interfaceConfig: Object;
@@ -156,6 +159,10 @@ MiddlewareRegistry.register(store => next => action => {
 
         break;
     }
+
+    case PARTICIPANT_ROLE_CHANGED:
+        APP.API.notifyUserRoleChanged(action.participant.id, action.participant.role);
+        break;
 
     case SET_FILMSTRIP_VISIBLE:
         APP.API.notifyFilmstripDisplayChanged(action.visible);

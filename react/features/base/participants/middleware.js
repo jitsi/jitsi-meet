@@ -1,10 +1,8 @@
 // @flow
 
 import UIEvents from '../../../../service/UI/UIEvents';
-
 import { NOTIFICATION_TIMEOUT, showNotification } from '../../notifications';
 import { CALLING, INVITED } from '../../presence-status';
-
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../app';
 import {
     CONFERENCE_WILL_JOIN,
@@ -16,14 +14,6 @@ import { MiddlewareRegistry, StateListenerRegistry } from '../redux';
 import { playSound, registerSound, unregisterSound } from '../sounds';
 
 import {
-    localParticipantIdChanged,
-    localParticipantJoined,
-    localParticipantLeft,
-    participantLeft,
-    participantUpdated,
-    setLoadableAvatarUrl
-} from './actions';
-import {
     DOMINANT_SPEAKER_CHANGED,
     KICK_PARTICIPANT,
     MUTE_REMOTE_PARTICIPANT,
@@ -32,6 +22,14 @@ import {
     PARTICIPANT_LEFT,
     PARTICIPANT_UPDATED
 } from './actionTypes';
+import {
+    localParticipantIdChanged,
+    localParticipantJoined,
+    localParticipantLeft,
+    participantLeft,
+    participantUpdated,
+    setLoadableAvatarUrl
+} from './actions';
 import {
     LOCAL_PARTICIPANT_DEFAULT_ID,
     PARTICIPANT_JOINED_SOUND_ID,
@@ -196,6 +194,16 @@ StateListenerRegistry.register(
                 JitsiConferenceEvents.PARTICIPANT_PROPERTY_CHANGED,
                 (participant, propertyName, oldValue, newValue) => {
                     switch (propertyName) {
+                    case 'e2eeEnabled':
+                        _e2eeUpdated(store, conference, participant.getId(), newValue);
+                        break;
+                    case 'features_e2ee':
+                        store.dispatch(participantUpdated({
+                            conference,
+                            id: participant.getId(),
+                            e2eeSupported: newValue
+                        }));
+                        break;
                     case 'features_jigasi':
                         store.dispatch(participantUpdated({
                             conference,
@@ -211,8 +219,7 @@ StateListenerRegistry.register(
                         }));
                         break;
                     case 'raisedHand': {
-                        _raiseHandUpdated(
-                            store, conference, participant.getId(), newValue);
+                        _raiseHandUpdated(store, conference, participant.getId(), newValue);
                         break;
                     }
                     default:
@@ -222,12 +229,33 @@ StateListenerRegistry.register(
 
                 });
         } else {
-            // We left the conference, raise hand of the local participant must be updated.
-            _raiseHandUpdated(
-                store, conference, undefined, false);
+            const localParticipantId = getLocalParticipant(store.getState).id;
+
+            // We left the conference, the local participant must be updated.
+            _e2eeUpdated(store, conference, localParticipantId, false);
+            _raiseHandUpdated(store, conference, localParticipantId, false);
         }
     }
 );
+
+/**
+ * Handles a E2EE enabled status update.
+ *
+ * @param {Function} dispatch - The Redux dispatch function.
+ * @param {Object} conference - The conference for which we got an update.
+ * @param {string} participantId - The ID of the participant from which we got an update.
+ * @param {boolean} newValue - The new value of the E2EE enabled     status.
+ * @returns {void}
+ */
+function _e2eeUpdated({ dispatch }, conference, participantId, newValue) {
+    const e2eeEnabled = newValue === 'true';
+
+    dispatch(participantUpdated({
+        conference,
+        id: participantId,
+        e2eeEnabled
+    }));
+}
 
 /**
  * Initializes the local participant and signals that it joined.
@@ -324,7 +352,7 @@ function _maybePlaySounds({ getState, dispatch }, action) {
  * @returns {Object} The value returned by {@code next(action)}.
  */
 function _participantJoinedOrUpdated({ dispatch, getState }, next, action) {
-    const { participant: { avatarURL, email, id, local, name, raisedHand } } = action;
+    const { participant: { avatarURL, e2eeEnabled, email, id, local, name, raisedHand } } = action;
 
     // Send an external update of the local participant's raised hand state
     // if a new raised hand state is defined in the action.
@@ -336,6 +364,16 @@ function _participantJoinedOrUpdated({ dispatch, getState }, next, action) {
                 && conference.setLocalParticipantProperty(
                     'raisedHand',
                     raisedHand);
+        }
+    }
+
+    // Send an external update of the local participant's E2EE enabled state
+    // if a new state is defined in the action.
+    if (typeof e2eeEnabled !== 'undefined') {
+        if (local) {
+            const { conference } = getState()['features/base/conference'];
+
+            conference && conference.setLocalParticipantProperty('e2eeEnabled', e2eeEnabled);
         }
     }
 
@@ -371,25 +409,23 @@ function _participantJoinedOrUpdated({ dispatch, getState }, next, action) {
  *
  * @param {Function} dispatch - The Redux dispatch function.
  * @param {Object} conference - The conference for which we got an update.
- * @param {string?} participantId - The ID of the participant from which we got an update. If undefined,
- * we update the local participant.
+ * @param {string} participantId - The ID of the participant from which we got an update.
  * @param {boolean} newValue - The new value of the raise hand status.
  * @returns {void}
  */
 function _raiseHandUpdated({ dispatch, getState }, conference, participantId, newValue) {
     const raisedHand = newValue === 'true';
-    const pid = participantId || getLocalParticipant(getState()).id;
 
     dispatch(participantUpdated({
         conference,
-        id: pid,
+        id: participantId,
         raisedHand
     }));
 
     if (raisedHand) {
         dispatch(showNotification({
             titleArguments: {
-                name: getParticipantDisplayName(getState, pid)
+                name: getParticipantDisplayName(getState, participantId)
             },
             titleKey: 'notify.raisedHand'
         }, NOTIFICATION_TIMEOUT));

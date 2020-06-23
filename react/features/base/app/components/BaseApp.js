@@ -1,5 +1,6 @@
 // @flow
 
+import { jitsiLocalStorage } from 'js-utils';
 import _ from 'lodash';
 import React, { Component, Fragment } from 'react';
 import { I18nextProvider } from 'react-i18next';
@@ -10,12 +11,11 @@ import Thunk from 'redux-thunk';
 import { i18next } from '../../i18n';
 import {
     MiddlewareRegistry,
+    PersistenceRegistry,
     ReducerRegistry,
     StateListenerRegistry
 } from '../../redux';
 import { SoundCollection } from '../../sounds';
-import { PersistenceRegistry } from '../../storage';
-
 import { appWillMount, appWillUnmount } from '../actions';
 import logger from '../logger';
 
@@ -110,7 +110,7 @@ export default class BaseApp extends Component<*, State> {
      * @returns {Promise}
      */
     _initStorage(): Promise<*> {
-        const { _initializing } = window.localStorage;
+        const _initializing = jitsiLocalStorage.getItem('_initializing');
 
         return _initializing || Promise.resolve();
     }

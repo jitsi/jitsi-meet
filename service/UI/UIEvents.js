@@ -53,16 +53,6 @@ export default {
      */
     LOCAL_FLIPX_CHANGED: 'UI.local_flipx_changed',
 
-    // An event which indicates that the resolution of a remote video has
-    // changed.
-    RESOLUTION_CHANGED: 'UI.resolution_changed',
-
-    /**
-     * Notifies that the button "Cancel" is pressed on the dialog for
-     * external extension installation.
-     */
-    EXTERNAL_INSTALLATION_CANCELED: 'UI.external_installation_canceled',
-
     /**
      * Notifies that the side toolbar container has been toggled. The actual
      * event must contain the identifier of the container that has been toggled

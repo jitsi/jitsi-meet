@@ -21,6 +21,7 @@ compile:
 clean:
 	rm -fr $(BUILD_DIR)
 
+.NOTPARALLEL:
 deploy: deploy-init deploy-appbundle deploy-rnnoise-binary deploy-lib-jitsi-meet deploy-libflac deploy-css deploy-local
 
 deploy-init:
@@ -79,8 +80,9 @@ deploy-css:
 deploy-local:
 	([ ! -x deploy-local.sh ] || ./deploy-local.sh)
 
+.NOTPARALLEL:
 dev: deploy-init deploy-css deploy-rnnoise-binary deploy-lib-jitsi-meet deploy-libflac
-	$(WEBPACK_DEV_SERVER)
+	$(WEBPACK_DEV_SERVER) --detect-circular-deps
 
 source-package:
 	mkdir -p source_package/jitsi-meet/css && \

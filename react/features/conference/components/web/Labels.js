@@ -4,11 +4,12 @@ import React from 'react';
 
 import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
 import { connect } from '../../../base/redux';
-
 import AbstractLabels, {
     _abstractMapStateToProps as _mapStateToProps,
     type Props
 } from '../AbstractLabels';
+
+declare var interfaceConfig: Object;
 
 /**
  * The type of the React {@code Component} state of {@link Labels}.
@@ -40,8 +41,7 @@ class Labels extends AbstractLabels<Props, State> {
      */
     static getDerivedStateFromProps(props: Props, prevState: State) {
         return {
-            filmstripBecomingVisible: !prevState.filmstripBecomingVisible
-                && props._filmstripVisible
+            filmstripBecomingVisible: !prevState.filmstripBecomingVisible && props._filmstripVisible
         };
     }
 
@@ -68,12 +68,16 @@ class Labels extends AbstractLabels<Props, State> {
     render() {
         const { _filmstripVisible } = this.props;
         const { filmstripBecomingVisible } = this.state;
+        const { VIDEO_QUALITY_LABEL_DISABLED } = interfaceConfig;
         const className = `large-video-labels ${
             filmstripBecomingVisible ? 'opening' : ''} ${
             _filmstripVisible ? 'with-filmstrip' : 'without-filmstrip'}`;
 
         return (
             <div className = { className } >
+                {
+                    this._renderE2EELabel()
+                }
                 {
                     this._renderRecordingLabel(
                         JitsiRecordingConstants.mode.FILE)
@@ -89,18 +93,25 @@ class Labels extends AbstractLabels<Props, State> {
                     this._renderTranscribingLabel()
                 }
                 {
-                    this.props._showVideoQualityLabel
+                    this.props._showVideoQualityLabel && !VIDEO_QUALITY_LABEL_DISABLED
                         && this._renderVideoQualityLabel()
+                }
+                {
+                    this._renderInsecureRoomNameLabel()
                 }
             </div>
         );
     }
+
+    _renderE2EELabel: () => React$Element<*>;
 
     _renderLocalRecordingLabel: () => React$Element<*>;
 
     _renderRecordingLabel: string => React$Element<*>;
 
     _renderTranscribingLabel: () => React$Element<*>;
+
+    _renderInsecureRoomNameLabel: () => React$Element<any>;
 
     _renderVideoQualityLabel: () => React$Element<*>;
 }
