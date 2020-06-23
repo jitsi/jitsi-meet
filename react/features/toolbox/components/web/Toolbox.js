@@ -45,7 +45,6 @@ import {
     LocalRecordingInfoDialog
 } from '../../../local-recording';
 import {
-    LiveStreamButton,
     RecordButton
 } from '../../../recording';
 import { SecurityDialogButton } from '../../../security';
@@ -970,6 +969,9 @@ class Toolbox extends Component<Props, State> {
             t
         } = this.props;
 
+        const localParticipant = getParticipantById(APP.store.getState(), this.props._localParticipantID);
+        const isModerator = localParticipant && localParticipant.role === PARTICIPANT_ROLE.MODERATOR;
+
         return [
             this._isProfileVisible()
                 && <OverflowMenuProfileItem
@@ -986,13 +988,10 @@ class Toolbox extends Component<Props, State> {
                     key = 'fullscreen'
                     onClick = { this._onToolbarToggleFullScreen }
                     text = { _fullScreen ? t('toolbar.exitFullScreen') : t('toolbar.enterFullScreen') } />,
-            <LiveStreamButton
-                key = 'livestreaming'
-                showLabel = { true } />,
             <RecordButton
                 key = 'record'
                 showLabel = { true } />,
-            this._shouldShowButton('sharedvideo')
+            isModerator && this._shouldShowButton('sharedvideo')
                 && <OverflowMenuItem
                     accessibilityLabel = { t('toolbar.accessibilityLabel.sharedvideo') }
                     icon = { IconShareVideo }
