@@ -944,6 +944,8 @@ class Toolbox extends Component<Props, State> {
         return this.props._isGuest && this._shouldShowButton('profile');
     }
 
+    _isModerator: () => boolean;
+
     /**
      * Returns true if user is the moderator.
      *
