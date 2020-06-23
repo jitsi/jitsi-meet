@@ -131,12 +131,6 @@ var interfaceConfig = {
     NATIVE_APP_NAME: 'Jitsi Meet',
 
 
-    /**
-     * Whether to show a warnning if the the current browser has a suboptimal
-     * experience.
-     */
-    SHOW_BROWSER_SUBOPTIMAL_WARNNING: false,
-
     // Names of browsers which should show a warning stating the current browser
     // has a suboptimal experience. Browsers which are not listed as optimal or
     // unsupported are considered suboptimal. Valid values are:
@@ -156,6 +150,12 @@ var interfaceConfig = {
 
     SETTINGS_SECTIONS: [ 'devices', 'language', 'moderator', 'profile', 'calendar' ],
     SHOW_BRAND_WATERMARK: false,
+
+    /**
+     * Whether to show a warning if the the current browser has a suboptimal
+     * experience.
+     */
+    SHOW_BROWSER_SUBOPTIMAL_WARNING: false,
 
     /**
     * Decides whether the chrome extension banner should be rendered on the landing page and during the meeting.

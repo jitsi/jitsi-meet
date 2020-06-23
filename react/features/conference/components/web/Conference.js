@@ -258,7 +258,7 @@ class Conference extends AbstractConference<Props, *> {
         dispatch(connect());
 
 
-        interfaceConfig.SHOW_BROWSER_SUBOPTIMAL_WARNNING
+        interfaceConfig.SHOW_BROWSER_SUBOPTIMAL_WARNING
             && maybeShowSuboptimalExperienceNotification(dispatch, t);
 
         interfaceConfig.filmStripOnly
