@@ -209,7 +209,7 @@ var interfaceConfig = {
      *
      * @type {boolean}
      */
-    VIDEO_QUALITY_LABEL_DISABLED: false
+    VIDEO_QUALITY_LABEL_DISABLED: false,
 
     /**
      * When enabled, the kick participant button will not be presented for users without a JWT
@@ -265,6 +265,13 @@ var interfaceConfig = {
      INDICATOR_FONT_SIZES
      PHONE_NUMBER_REGEX
     */
+
+    // Allow all above example options to include a trailing comma and
+    // prevent fear when commenting out the last value.
+    // eslint-disable-next-line sort-keys
+    makeJsonParserHappy: 'even if last key had a trailing comma'
+
+    // No configuration value should follow this line.
 };
 
 /* eslint-enable no-unused-vars, no-var, max-len */
