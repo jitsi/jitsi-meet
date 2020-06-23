@@ -42,6 +42,8 @@ type Props = {
      */
     _readyToDisplayJitsiWatermark: boolean,
 
+    _welcomePageIsVisible: boolean,
+
     /**
      * Invoked to obtain translated strings.
      */
@@ -162,11 +164,13 @@ class Watermarks extends Component<Props, State> {
         } = this.state;
         const {
             _isGuest,
-            _readyToDisplayJitsiWatermark
+            _readyToDisplayJitsiWatermark,
+            _welcomePageIsVisible
         } = this.props;
 
-        return _readyToDisplayJitsiWatermark
-            && (showJitsiWatermark || (_isGuest && showJitsiWatermarkForGuests));
+        return (_readyToDisplayJitsiWatermark
+            && (showJitsiWatermark || (_isGuest && showJitsiWatermarkForGuests)))
+            || _welcomePageIsVisible;
     }
 
     /**
@@ -273,6 +277,7 @@ class Watermarks extends Component<Props, State> {
 function _mapStateToProps(state) {
     const { isGuest } = state['features/base/jwt'];
     const { customizationReady, logoClickUrl, logoImageUrl } = state['features/dynamic-branding'];
+    const { room } = state['features/base/conference'];
 
     return {
         /**
@@ -285,7 +290,8 @@ function _mapStateToProps(state) {
         _customLogoLink: logoClickUrl,
         _customLogoUrl: logoImageUrl,
         _isGuest: isGuest,
-        _readyToDisplayJitsiWatermark: customizationReady
+        _readyToDisplayJitsiWatermark: customizationReady,
+        _welcomePageIsVisible: !room
     };
 }
 
