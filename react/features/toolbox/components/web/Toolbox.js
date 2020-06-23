@@ -26,7 +26,9 @@ import {
 import {
     getLocalParticipant,
     getParticipants,
-    participantUpdated
+    participantUpdated,
+    getParticipantById,
+    PARTICIPANT_ROLE
 } from '../../../base/participants';
 import { connect, equals } from '../../../base/redux';
 import { OverflowMenuItem } from '../../../base/toolbox';
@@ -943,6 +945,17 @@ class Toolbox extends Component<Props, State> {
     }
 
     /**
+     * Returns true if user is moderator.
+     *
+     * @returns {boolean}
+     */
+    _isModerator() {
+        const localParticipant = getParticipantById(APP.store.getState(), this.props._localParticipantID);
+
+        return localParticipant?.role === PARTICIPANT_ROLE.MODERATOR;
+    }
+
+    /**
      * Renders the list elements of the overflow menu.
      *
      * @private
@@ -1240,7 +1253,7 @@ class Toolbox extends Component<Props, State> {
         return (
             <div className = 'toolbox-content'>
                 <div className = 'button-group-left'>
-                    { buttonsLeft.indexOf('desktop') !== -1
+                    { this._isModerator() && buttonsLeft.indexOf('desktop') !== -1
                         && this._renderDesktopSharingButton() }
                     { buttonsLeft.indexOf('raisehand') !== -1
                         && <ToolbarButton
