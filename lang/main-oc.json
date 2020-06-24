@@ -27,7 +27,10 @@
         "copyStream": "Copiar lo ligam de la difusion en dirèct",
         "copyLink": "Copiar lo ligam de la conferéncia",
         "copyInvite": "Copiar l’invitacion a la conferéncia",
-        "addContacts": "Convidar vòstres contactes"
+        "addContacts": "Convidar vòstres contactes",
+        "shareStream": "Partejar la ligam de la difusion en dirècte",
+        "shareLink": "Partejar lo ligam de la conferéncia per convidar de monde",
+        "linkCopied": "Ligam copiat al quichapapièrs"
     },
     "audioDevices": {
         "bluetooth": "Bluetooth",
@@ -134,7 +137,10 @@
         "launchWebButton": "Lançar del navigador",
         "openApp": "Telecargar l’aplicacion",
         "title": "Aviada de vòstra conferéncia dins {{app}}…",
-        "tryAgainButton": "Tornar ensajar del burèu"
+        "tryAgainButton": "Tornar ensajar del burèu",
+        "joinInApp": "Jónher la conferéncia en utilizant l’aplicacion",
+        "ifHaveApp": "S’avètz ja l’aplicacion :",
+        "ifDoNotHaveApp": "S’avètz pas encara l’aplicacion :"
     },
     "defaultLink": "ex. {{url}}",
     "defaultNickname": "ex. Joan Delpuèch",
@@ -285,15 +291,18 @@
         "Yes": "Òc",
         "yourEntireScreen": "Vòstre ecran complet",
         "screenSharingAudio": "Partejar l’àudio",
-        "muteEveryoneStartMuted": "",
+        "muteEveryoneStartMuted": "D'ara enlà tot lo monde comença mut",
         "muteEveryoneSelf": "vos",
-        "muteEveryoneTitle": "",
+        "muteEveryoneTitle": "Rendre mut tot lo monde ?",
         "muteEveryoneDialog": "",
         "muteEveryoneElseTitle": "Copar lo son a totes levat {{whom}} ?",
         "muteEveryoneElseDialog": "",
         "e2eeTitle": "Chiframent del cap a la fin",
         "e2eeLabel": "Clau",
-        "add": "Ajustar"
+        "add": "Ajustar",
+        "recordingDisabledBecauseOfActiveLiveStreamingTooltip": "Impossible quand una difusion en dirècte es en cors",
+        "e2eeWarning": "<br /><p><strong>ATENCION :</strong> pas totes los participants d’aquesta conferéncia semblan poder utilizar lo chiframent del cap a la fin. Se l’activatz poiràn pas veire nimai vos entendre.</p>",
+        "liveStreamingDisabledBecauseOfActiveRecordingTooltip": "Impossible quand un enregistrament es en cors"
     },
     "dialOut": {
         "statusMessage": "ara es {{status}}"
@@ -633,7 +642,7 @@
             "toggleCamera": "Passar a la camèra",
             "videomute": "Silenciar la vidèo",
             "videoblur": "Enfoscar o non la vidèo",
-            "muteEveryone": "",
+            "muteEveryone": "Rendre mut tot lo monde",
             "moreOptions": "Mostrar mai d’opcions",
             "e2ee": "Chiframent del cap a la fin",
             "security": "Opcions de seguretat"
@@ -691,7 +700,7 @@
         "noisyAudioInputTitle": "Vòstre microfòn sembla brusent !",
         "noAudioSignalDialInLinkDesc": "",
         "noAudioSignalDialInDesc": "",
-        "muteEveryone": "",
+        "muteEveryone": "Rendre mut tot lo monde",
         "moreOptions": "Autras opcions",
         "e2ee": "Chiframent del cap a la fin",
         "security": "Opcions de seguretat"
@@ -815,9 +824,13 @@
         "audioOnlyError": "Error àudio :",
         "audioAndVideoError": "Error àudio e vidèo :",
         "videoOnlyError": "Error vidèo :",
-        "linkCopied": "Ligam copiat al quichapapièrs"
+        "linkCopied": "Ligam copiat al quichapapièrs",
+        "viewAllNumbers": "veire totes los numèros"
     },
     "security": {
         "securityOptions": "Opcions de seguretat"
+    },
+    "e2ee": {
+        "labelToolTip": "La comunicacion àudio e vidèo d’aquesta sonada es chifrada del cap a la fin"
     }
 }
