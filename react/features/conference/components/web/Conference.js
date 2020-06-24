@@ -200,8 +200,8 @@ class Conference extends AbstractConference<Props, *> {
                 <div id = 'videospace'>
                     <LargeVideo />
                     <KnockingParticipantList />
-                    { hideLabels || <Labels /> }
                     <Filmstrip filmstripOnly = { filmstripOnly } />
+                    { hideLabels || <Labels /> }
                 </div>
 
                 { filmstripOnly || _showPrejoin || <Toolbox /> }
