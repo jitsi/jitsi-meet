@@ -109,6 +109,7 @@ class E2EESection extends Component<Props, State> {
                         disabled = { !editing }
                         name = 'e2eeKey'
                         onChange = { this._onKeyChange }
+                        onKeyDown = { this._onKeyDown }
                         placeholder = { t('dialog.e2eeNoKey') }
                         ref = { this.fieldRef }
                         type = 'password'
@@ -135,6 +136,20 @@ class E2EESection extends Component<Props, State> {
      */
     _onKeyChange(event) {
         this.setState({ key: event.target.value.trim() });
+    }
+
+    _onKeyDown: (Object) => void;
+
+    /**
+     * Handler for the keydown event on the form, preventing the closing of the dialog.
+     *
+     * @param {Object} event - The DOM event triggered by keydown events.
+     * @returns {void}
+     */
+    _onKeyDown(event) {
+        if (event.key === 'Enter') {
+            event.preventDefault();
+        }
     }
 
     _onSet: () => void;

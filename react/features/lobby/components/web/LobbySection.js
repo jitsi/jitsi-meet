@@ -86,17 +86,20 @@ class LobbySection extends PureComponent<Props, State> {
         }
 
         return (
-            <div id = 'lobby-section'>
-                { t('lobby.enableDialogText') }
-                <div className = 'control-row'>
-                    <label>
-                        { t('lobby.toggleLabel') }
-                    </label>
-                    <Switch
-                        onValueChange = { this._onToggleLobby }
-                        value = { this.state.lobbyEnabled } />
+            <>
+                <div id = 'lobby-section'>
+                    { t('lobby.enableDialogText') }
+                    <div className = 'control-row'>
+                        <label>
+                            { t('lobby.toggleLabel') }
+                        </label>
+                        <Switch
+                            onValueChange = { this._onToggleLobby }
+                            value = { this.state.lobbyEnabled } />
+                    </div>
                 </div>
-            </div>
+                <div className = 'separator-line' />
+            </>
         );
     }
 
