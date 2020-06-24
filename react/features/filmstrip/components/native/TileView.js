@@ -26,6 +26,7 @@ import { PARTICIPANT_ROLE } from '../../../base/participants'
 
 import Thumbnail from './Thumbnail';
 import styles from './styles';
+import {JitsiParticipantConnectionStatus} from "../../../base/lib-jitsi-meet";
 
 /**
  * The type of the React {@link Component} props of {@link TileView}.
@@ -200,10 +201,14 @@ class TileView extends Component<Props, State> {
         let localParticipant;
         let otherParticipant;
 
+        const { INACTIVE, INTERRUPTED } = JitsiParticipantConnectionStatus;
+
         for (const participant of this.props._participants) {
             const videoTrack = getTrackByMediaTypeAndParticipant(
                 this.props._tracks, MEDIA_TYPE.VIDEO, participant.id
             );
+            const connectionStatus = APP.conference.getParticipantConnectionStatus(participant.id);
+
             const isVideoMuted = Boolean(videoTrack && videoTrack.muted);
             const isModerator = Boolean(
                 participant &&
@@ -211,7 +216,9 @@ class TileView extends Component<Props, State> {
             );
 
             let sortWeight = 0;
-            if (!isVideoMuted) {
+            if (!isVideoMuted &&
+                connectionStatus !== INACTIVE &&
+                connectionStatus !== INTERRUPTED) {
                 sortWeight -= 1;
             }
             if (participant.raisedHand) {

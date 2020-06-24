@@ -19,6 +19,8 @@ import Thumbnail from './Thumbnail';
 
 import { getTrackByMediaTypeAndParticipant } from '../../../base/tracks';
 import { MEDIA_TYPE } from '../../../base/media';
+import { JitsiParticipantConnectionStatus } from "../../../base/lib-jitsi-meet";
+import { PARTICIPANT_ROLE } from "../../../base/participants";
 
 /**
  * Filmstrip component's property types.
@@ -169,22 +171,31 @@ class Filmstrip extends Component<Props> {
     _sort(participants, isNarrowAspectRatio_) {
         // XXX Array.prototype.sort() is not appropriate because (1) it operates
         // in place and (2) it is not necessarily stable.
-
+        const { INACTIVE, INTERRUPTED } = JitsiParticipantConnectionStatus;
         let sortedParticipants = [
             ...participants
         ];
 
         for (const participant of sortedParticipants) {
-            let sortWeight = 0;
-
             const videoTrack = getTrackByMediaTypeAndParticipant(this.props._tracks, MEDIA_TYPE.VIDEO, participant.id);
-            if(videoTrack && !videoTrack.muted) {
+            const connectionStatus = APP.conference.getParticipantConnectionStatus(participant.id);
+
+            const isVideoMuted = Boolean(videoTrack && videoTrack.muted);
+            const isModerator = Boolean(
+                participant &&
+                participant.role === PARTICIPANT_ROLE.MODERATOR
+            );
+
+            let sortWeight = 0;
+            if(!isVideoMuted &&
+                connectionStatus !== INACTIVE &&
+                connectionStatus !== INTERRUPTED) {
                 sortWeight -= 1;
             }
             if(participant.raisedHand) {
                 sortWeight -= 2;
             }
-            if(participant.role === "moderator") {
+            if(isModerator) {
                 sortWeight -= 4;
             }
             participant.sortWeight = sortWeight;
