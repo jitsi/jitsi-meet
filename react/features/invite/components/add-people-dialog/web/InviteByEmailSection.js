@@ -13,9 +13,7 @@ import {
     IconOutlook,
     IconYahoo
 } from '../../../../base/icons';
-import { openURLInBrowser } from '../../../../base/util';
-
-import { copyText } from './utils';
+import { copyText, openURLInBrowser } from '../../../../base/util';
 
 type Props = {
 
