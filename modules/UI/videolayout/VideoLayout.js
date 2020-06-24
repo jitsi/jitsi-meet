@@ -71,12 +71,12 @@ function getSortedParticipants() {
 
         const isModerator = Boolean( participant && participant.role === "moderator");
         const isVideoMuted = participantThumb.isVideoMuted;
+        const isVideoEnabled = !isVideoMuted &&
+            connectionStatus !== INACTIVE &&
+            connectionStatus !== INTERRUPTED;
 
         let sortWeight = 0;
-        if (!isVideoMuted &&
-            connectionStatus !== INACTIVE &&
-            connectionStatus !== INTERRUPTED
-        ) {
+        if (isVideoEnabled) {
             sortWeight -= 1;
         }
         if (participant.raisedHand) {
@@ -89,7 +89,7 @@ function getSortedParticipants() {
 
         if (
             !participant.local && !otherParticipant &&
-            !isModerator && !isVideoMuted
+            !isModerator && isVideoEnabled
         ) {
             otherParticipant = participant;
         } else {

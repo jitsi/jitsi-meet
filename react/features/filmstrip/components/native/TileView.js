@@ -204,21 +204,22 @@ class TileView extends Component<Props, State> {
         const { INACTIVE, INTERRUPTED } = JitsiParticipantConnectionStatus;
 
         for (const participant of this.props._participants) {
+            const { connectionStatus } = participant;
             const videoTrack = getTrackByMediaTypeAndParticipant(
                 this.props._tracks, MEDIA_TYPE.VIDEO, participant.id
             );
-            const connectionStatus = APP.conference.getParticipantConnectionStatus(participant.id);
-
             const isVideoMuted = Boolean(videoTrack && videoTrack.muted);
+            const isVideoEnabled = !isVideoMuted &&
+                connectionStatus !== INACTIVE &&
+                connectionStatus !== INTERRUPTED;
+
             const isModerator = Boolean(
                 participant &&
                 participant.role === PARTICIPANT_ROLE.MODERATOR
             );
 
             let sortWeight = 0;
-            if (!isVideoMuted &&
-                connectionStatus !== INACTIVE &&
-                connectionStatus !== INTERRUPTED) {
+            if (isVideoEnabled) {
                 sortWeight -= 1;
             }
             if (participant.raisedHand) {
@@ -233,7 +234,7 @@ class TileView extends Component<Props, State> {
                 localParticipant = participant;
             } else if (
                 !participant.local && !otherParticipant &&
-                !isModerator && !isVideoMuted
+                !isModerator && isVideoEnabled
             ) {
                 otherParticipant = participant;
             } else {
