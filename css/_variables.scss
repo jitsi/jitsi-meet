@@ -102,6 +102,7 @@ $sidebarWidth: 375px;
  */
 $borderRadius: 4px;
 $defaultWatermarkLink: '../images/superhero.com_league_slogan.png';
+$welcomePageTopBackground: '../images/home-background.png';
 $popoverMenuPadding: 13px;
 $happySoftwareBackground: transparent;
 $desktopAppDragBarHeight: 25px;
@@ -168,10 +169,11 @@ $watermarkHeight: 100px;
 /**
  * Welcome page variables.
  */
-$welcomePageDescriptionColor: #0074E0;
+$welcomePageDescriptionColor: #babac0;
 $welcomePageFontFamily: inherit;
 $welcomePageBackground: #21222c;
-$welcomePageTitleColor: #0074E0;
+$welcomePageTitleColor: #2a9cff;
+$welcomeBorderColor: #1c1c24;
 
 $welcomePageHeaderBackground: none;
 $welcomePageHeaderBackgroundSmall: none;
@@ -184,15 +186,16 @@ $welcomePageHeaderTextMarginTop: 35px;
 $welcomePageHeaderTextMarginBottom: 35px;
 
 $welcomePageHeaderTextTitleMarginBottom: 16px;
-$welcomePageHeaderTextTitleFontSize: 2.5rem;
+$welcomePageHeaderTextTitleFontFamily: Roboto, sans-serif;
+$welcomePageHeaderTextTitleFontSize: 30px;
 $welcomePageHeaderTextTitleFontWeight: 500;
-$welcomePageHeaderTextTitleLineHeight: 1.18;
+$welcomePageHeaderTextTitleLineHeight: 1.2;
 $welcomePageHeaderTextTitleOpacity: 1;
 
 $welcomePageHeaderTextDescriptionDisplay: inherit;
-$welcomePageHeaderTextDescriptionFontSize: 1rem;
-$welcomePageHeaderTextDescriptionFontWeight: 400;
-$welcomePageHeaderTextDescriptionLineHeight: 24px;
+$welcomePageHeaderTextDescriptionFontSize: 17px;
+$welcomePageHeaderTextDescriptionFontWeight: 500;
+$welcomePageHeaderTextDescriptionLineHeight: 1.47;
 $welcomePageHeaderTextDescriptionMarginBottom: 20px;
 $welcomePageHeaderTextDescriptionAlignSelf: inherit;
 
