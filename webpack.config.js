@@ -20,8 +20,7 @@ const minimize
     = process.argv.indexOf('-p') !== -1
     || process.argv.indexOf('--optimize-minimize') !== -1;
 
-// const isDevelopment = process.env.NODE_ENV !== 'production' || process.argv.indexOf('-p') === -1;
-const isDevelopment = true;
+const isDevelopment = process.env.NODE_ENV !== 'production' || process.argv.indexOf('-p') === -1;
 
 /**
  * Build a Performance configuration object for the given size.
