@@ -616,7 +616,8 @@
             "tileView": "Slå tileview fra/til",
             "toggleCamera": "Slå kamera fra/til",
             "videomute": "Slå video fra/til",
-            "videoblur": "Slå baggrundsløring fra/til"
+            "videoblur": "Slå baggrundsløring fra/til",
+            "pin": ""
         },
         "addPeople": "Tilføj deltager til mødet",
         "audioOnlyOff": "Slå kun-lyd møder fra",
@@ -736,7 +737,8 @@
         "muted": "Lyd slået fra",
         "remoteControl": "Fjernbetjening",
         "show": "",
-        "videomute": "Deltageren har stoppet kameraet"
+        "videomute": "Deltageren har stoppet kameraet",
+        "pin": ""
     },
     "welcomepage": {
         "accessibilityLabel": {

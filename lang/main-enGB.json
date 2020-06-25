@@ -615,7 +615,8 @@
             "muteEveryone": "Mute everyone",
             "moreOptions": "Show more options",
             "help": "Help",
-            "download": "Download our apps"
+            "download": "Download our apps",
+            "pin": ""
         },
         "addPeople": "Add people to your call",
         "audioOnlyOff": "Disable audio only mode",
@@ -719,7 +720,8 @@
         "muted": "Muted",
         "remoteControl": "Remote control",
         "show": "",
-        "videomute": "Member has stopped the camera"
+        "videomute": "Member has stopped the camera",
+        "pin": "Pin participant"
     },
     "welcomepage": {
         "accessibilityLabel": {

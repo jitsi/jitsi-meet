@@ -625,7 +625,8 @@
             "toggleCamera": "Toggle camera",
             "toggleFilmstrip": "Toggle filmstrip",
             "videomute": "Toggle mute video",
-            "videoblur": "Toggle video blur"
+            "videoblur": "Toggle video blur",
+            "pin": ""
         },
         "addPeople": "Add people to your call",
         "audioOnlyOff": "Disable low bandwidth mode",
@@ -745,7 +746,8 @@
         "muted": "Muted",
         "remoteControl": "Start / Stop remote control",
         "show": "Show on stage",
-        "videomute": "Participant has stopped the camera"
+        "videomute": "Participant has stopped the camera",
+        "pin": ""
     },
     "welcomepage": {
         "accessibilityLabel": {

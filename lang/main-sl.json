@@ -683,7 +683,8 @@
             "toggleCamera": "Preklopi kamero",
             "toggleFilmstrip": "Toggle filmstrip",
             "videoblur": "Preklopi zabrisovanje videa",
-            "videomute": "Preklopi izklop videa"
+            "videomute": "Preklopi izklop videa",
+            "pin": ""
         },
         "addPeople": "Dodaj druge udeležence v vaš klic",
         "audioOnlyOff": "Onemogoči način nizke pasovne širine",
@@ -806,7 +807,8 @@
         "muted": "Utišan",
         "remoteControl": "Oddaljeni nadzor",
         "show": "Prikaži na sceni",
-        "videomute": "Udeleženec je zaustavil kamero"
+        "videomute": "Udeleženec je zaustavil kamero",
+        "pin": ""
     },
     "welcomepage": {
         "accessibilityLabel": {

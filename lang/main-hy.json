@@ -567,7 +567,8 @@
             "tileView": "",
             "toggleCamera": "",
             "videomute": "",
-            "videoblur": ""
+            "videoblur": "",
+            "pin": ""
         },
         "addPeople": "Ավելացնել մասնակից",
         "audioOnlyOff": "",
@@ -671,7 +672,8 @@
         "muted": "Ձայնը անջատված է",
         "remoteControl": "Հեռակառավարում",
         "show": "",
-        "videomute": ""
+        "videomute": "",
+        "pin": ""
     },
     "welcomepage": {
         "accessibilityLabel": {

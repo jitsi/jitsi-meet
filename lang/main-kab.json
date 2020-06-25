@@ -572,7 +572,8 @@
             "tileView": "",
             "toggleCamera": "",
             "videomute": "",
-            "videoblur": ""
+            "videoblur": "",
+            "pin": ""
         },
         "addPeople": "Rnut-d imdanen i tiɣri-nwen",
         "audioOnlyOff": "",
@@ -676,7 +677,8 @@
         "muted": "Kkes imesli",
         "remoteControl": "Asenqed agemmaḍ",
         "show": "",
-        "videomute": ""
+        "videomute": "",
+        "pin": ""
     },
     "welcomepage": {
         "accessibilityLabel": {

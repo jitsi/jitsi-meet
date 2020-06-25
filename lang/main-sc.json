@@ -620,7 +620,8 @@
             "tileView": "Càmbia a visualizatzione in mosàicu",
             "toggleCamera": "Càmbia càmera",
             "videomute": "Ativa o disativa su vìdeu",
-            "videoblur": "Ativa o disativa isfocadu"
+            "videoblur": "Ativa o disativa isfocadu",
+            "pin": ""
         },
         "addPeople": "Agiunghe gente a sa mutida",
         "audioOnlyOff": "Disativa modalidade de àmpiu de banda bàsciu",
@@ -740,7 +741,8 @@
         "muted": "A sa muda",
         "remoteControl": "Avia o firma su controllu remotu",
         "show": "Ammustra in s'iscena",
-        "videomute": "Custa persone at firmadu sa càmera"
+        "videomute": "Custa persone at firmadu sa càmera",
+        "pin": ""
     },
     "welcomepage": {
         "accessibilityLabel": {

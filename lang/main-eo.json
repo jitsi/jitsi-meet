@@ -571,7 +571,8 @@
             "tileView": "",
             "toggleCamera": "",
             "videomute": "",
-            "videoblur": ""
+            "videoblur": "",
+            "pin": ""
         },
         "addPeople": "Aldoni homojn al via voko",
         "audioOnlyOff": "",
@@ -675,7 +676,8 @@
         "muted": "Silentigita",
         "remoteControl": "Defora rego",
         "show": "",
-        "videomute": ""
+        "videomute": "",
+        "pin": ""
     },
     "welcomepage": {
         "accessibilityLabel": {

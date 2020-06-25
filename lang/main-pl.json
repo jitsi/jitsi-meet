@@ -603,7 +603,8 @@
             "tileView": "Przełącz widok kafelkowy",
             "toggleCamera": "Przełączanie kamery",
             "videomute": "Przełączanie wyciszonego filmu wideo",
-            "videoblur": "Przełącz rozmazanie obrazu"
+            "videoblur": "Przełącz rozmazanie obrazu",
+            "pin": ""
         },
         "addPeople": "Dodaj ludzi do swojego telefonu",
         "audioOnlyOff": "Wyłącz tryb słabego łącza",
@@ -716,7 +717,8 @@
         "muted": "Wyciszony",
         "remoteControl": "Kontrola zdalna",
         "show": "",
-        "videomute": "Uczestnik zatrzymał kamerę"
+        "videomute": "Uczestnik zatrzymał kamerę",
+        "pin": ""
     },
     "welcomepage": {
         "accessibilityLabel": {
