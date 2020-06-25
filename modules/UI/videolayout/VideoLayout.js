@@ -61,46 +61,43 @@ function getAllThumbnails() {
 function getSortedParticipants() {
     const participants = APP.store.getState()["features/base/participants"];
     let sortedParticipants = [],
+        moderators = [],
         otherParticipant;
-    const { INACTIVE, INTERRUPTED } = JitsiParticipantConnectionStatus;
+    const {INACTIVE} = JitsiParticipantConnectionStatus;
+
 
     for (const participant of participants) {
         const participantThumb = remoteVideos[participant.id];
         const connectionStatus = APP.conference.getParticipantConnectionStatus(participant.id);
-        if(!participantThumb || participant.local) continue;
+        if (!participantThumb || participant.local) continue;
 
-        const isModerator = Boolean( participant && participant.role === "moderator");
+        const isModerator = Boolean(participant && participant.role === "moderator");
         const isVideoMuted = participantThumb.isVideoMuted;
-        const isVideoEnabled = !isVideoMuted &&
-            connectionStatus !== INACTIVE &&
-            connectionStatus !== INTERRUPTED;
 
-        let sortWeight = 0;
-        if (isVideoEnabled) {
-            sortWeight -= 1;
-        }
-        if (participant.raisedHand) {
-            sortWeight -= 2;
-        }
         if (isModerator) {
-            sortWeight -= 4;
-        }
-        participant.sortWeight = sortWeight;
-
-        if (
-            !participant.local && !otherParticipant &&
-            !isModerator && isVideoEnabled
-        ) {
-            otherParticipant = participant;
+            moderators.push(participant);
         } else {
+            let sortWeight = 0;
+
+            if (isVideoMuted || !connectionStatus || connectionStatus === INACTIVE) {
+                sortWeight = 1;
+            }
+
+            if (participant.raisedHand) {
+                sortWeight -= 1;
+            }
+
+            participant.sortWeight = sortWeight;
+
             sortedParticipants.push(participant);
         }
     }
 
     sortedParticipants = _.sortBy(sortedParticipants, "sortWeight");
+    otherParticipant = sortedParticipants.shift();
 
-    otherParticipant && sortedParticipants.unshift(otherParticipant);
-    return sortedParticipants;
+    return [otherParticipant, ...moderators, ...sortedParticipants]
+            .filter(Boolean);
 }
 
 /**
