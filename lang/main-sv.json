@@ -613,7 +613,8 @@
             "privateMessage": "",
             "moreOptions": "Visa fler alternativ",
             "help": "Hjälp",
-            "download": ""
+            "download": "",
+            "pin": ""
         },
         "addPeople": "Lägg till personer i samtal",
         "audioOnlyOff": "Avsluta ljudläget",
@@ -731,7 +732,8 @@
         "muted": "Tystad",
         "remoteControl": "Fjärrkontroll",
         "show": "",
-        "videomute": "Deltagaren har stäng av kameran"
+        "videomute": "Deltagaren har stäng av kameran",
+        "pin": ""
     },
     "welcomepage": {
         "accessibilityLabel": {

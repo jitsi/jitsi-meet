@@ -618,7 +618,8 @@
             "toggleCamera": "",
             "toggleFilmstrip": "",
             "videomute": "",
-            "videoblur": ""
+            "videoblur": "",
+            "pin": ""
         },
         "addPeople": "",
         "audioOnlyOff": "",
@@ -738,7 +739,8 @@
         "muted": "",
         "remoteControl": "",
         "show": "",
-        "videomute": ""
+        "videomute": "",
+        "pin": ""
     },
     "welcomepage": {
         "accessibilityLabel": {

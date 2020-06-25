@@ -3,7 +3,7 @@ name: Deploy to staging
 on:
   push:
     branches:
-      - master
+      - develop
 
 jobs:
   run-ci:
@@ -25,3 +25,10 @@ jobs:
       with:
         src: 'source_package/jitsi-meet/'
         dest: ${{ secrets.DEPLOY_DEST }}
+    - name: Deploy Lua scripts to Staging server
+      uses: Pendect/action-rsyncer@v1.1.0
+      env:
+          DEPLOY_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+      with:
+          src: 'resources/prosody-plugins/'
+          dest: ${{ secrets.DEPLOY_PROSODY_PLUGIN_DEST }}

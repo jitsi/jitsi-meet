@@ -572,7 +572,8 @@
             "tileView": "Mở/Đóng Xem dạng lưới",
             "toggleCamera": "Mở/Đóng Camera",
             "videomute": "Mở/Đóng Tiếng, Hình",
-            "videoblur": ""
+            "videoblur": "",
+            "pin": ""
         },
         "addPeople": "Thêm người vào cuộc gọi",
         "audioOnlyOff": "Chế độ chỉ tắt tiếng",
@@ -676,7 +677,8 @@
         "muted": "Đã tắt tiếng",
         "remoteControl": "Điều khiển từ xa",
         "show": "",
-        "videomute": ""
+        "videomute": "",
+        "pin": ""
     },
     "welcomepage": {
         "accessibilityLabel": {

@@ -617,7 +617,8 @@
             "videoblur": "切換影像模糊",
             "toggleFilmstrip": "切換幻燈片",
             "muteEveryone": "靜音所有人",
-            "moreOptions": "顯示更多選項"
+            "moreOptions": "顯示更多選項",
+            "pin": ""
         },
         "addPeople": "新增人員到您的通話中",
         "audioOnlyOff": "停用低頻寬模式",
@@ -737,7 +738,8 @@
         "remoteControl": "遠端控制",
         "show": "顯示在台上",
         "videomute": "參與者已經停止攝影裝置",
-        "domuteOthers": "靜音其他所有人"
+        "domuteOthers": "靜音其他所有人",
+        "pin": ""
     },
     "welcomepage": {
         "accessibilityLabel": {

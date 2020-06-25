@@ -582,7 +582,8 @@
             "tileView": "Döşeme görünümünü aç/kapat",
             "toggleCamera": "Kamerayı aç/kapat",
             "videomute": "Sessiz videoyu aç/kapat",
-            "videoblur": ""
+            "videoblur": "",
+            "pin": ""
         },
         "addPeople": "Aramanıza kişi ekleyin",
         "audioOnlyOff": "Yalnızca ses modunu devre dışı bırak",
@@ -686,7 +687,8 @@
         "muted": "Sessiz",
         "remoteControl": "Uzaktan kontrol",
         "show": "",
-        "videomute": "Katılımcı kamerayı durdurdu"
+        "videomute": "Katılımcı kamerayı durdurdu",
+        "pin": ""
     },
     "welcomepage": {
         "accessibilityLabel": {

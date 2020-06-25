@@ -7,6 +7,8 @@ import { getLocalParticipant, PARTICIPANT_ROLE } from '../../../base/participant
 import { Popover } from '../../../base/popover';
 import { connect } from '../../../base/redux';
 
+import PinButton from './PinButton';
+
 import {
     MuteButton,
     MuteEveryoneElseButton,
@@ -202,6 +204,11 @@ class RemoteVideoMenuTriggerButton extends Component<Props> {
                         participantID = { participantID } />
                 );
             }
+            buttons.push(
+                <PinButton
+                    key = 'pin'
+                    participantID = { participantID } />
+            );
         }
 
         if (remoteControlState) {

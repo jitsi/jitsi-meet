@@ -11,6 +11,8 @@ import keyboardshortcut from './modules/keyboardshortcut/keyboardshortcut';
 import remoteControl from './modules/remotecontrol/RemoteControl';
 import translation from './modules/translation/translation';
 
+import './css/main.scss';
+
 window.APP = {
     API,
     conference,

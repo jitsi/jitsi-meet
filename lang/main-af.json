@@ -572,7 +572,8 @@
             "tileView": "Wissel teëlaansig",
             "toggleCamera": "Wissel kamera",
             "videomute": "",
-            "videoblur": ""
+            "videoblur": "",
+            "pin": ""
         },
         "addPeople": "Voeg mense by die oproep",
         "audioOnlyOff": "Deaktiveer Net klank-modus",
@@ -676,7 +677,8 @@
         "muted": "Gedemp",
         "remoteControl": "",
         "show": "",
-        "videomute": ""
+        "videomute": "",
+        "pin": ""
     },
     "welcomepage": {
         "accessibilityLabel": {

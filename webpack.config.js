@@ -1,6 +1,8 @@
 /* global __dirname */
 
 const CircularDependencyPlugin = require('circular-dependency-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const path = require('path');
 const process = require('process');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 
@@ -16,7 +18,9 @@ const detectCircularDeps = process.argv.indexOf('--detect-circular-deps') !== -1
 
 const minimize
     = process.argv.indexOf('-p') !== -1
-        || process.argv.indexOf('--optimize-minimize') !== -1;
+    || process.argv.indexOf('--optimize-minimize') !== -1;
+
+const isDevelopment = process.env.NODE_ENV !== 'production' || process.argv.indexOf('-p') === -1;
 
 /**
  * Build a Performance configuration object for the given size.
@@ -104,12 +108,29 @@ const config = {
             loader: 'expose-loader?$!expose-loader?jQuery',
             test: /\/node_modules\/jquery\/.*\.js$/
         }, {
-            // Allow CSS to be imported into JavaScript.
-
-            test: /\.css$/,
+            test: /\.scss$/,
             use: [
-                'style-loader',
-                'css-loader'
+                {
+                    loader: isDevelopment ? 'style-loader' : MiniCssExtractPlugin.loader
+                },
+                {
+                    loader: 'css-loader?url=false',
+                    options: {
+                        // sourceMap: isDevelopment,
+                        modules: true
+                    }
+                }, {
+                    loader: 'resolve-url-loader',
+                    options: {
+                        sourceMap: isDevelopment,
+                        keepQuery: true
+                    }
+                }, {
+                    loader: 'sass-loader?url=false',
+                    options: {
+                        sourceMap: isDevelopment
+                    }
+                }
             ]
         }, {
             test: /\/node_modules\/@atlaskit\/modal-dialog\/.*\.js$/,
@@ -132,6 +153,24 @@ const config = {
                 options: {
                     dimensions: false,
                     expandProps: 'start'
+                }
+            } ]
+        }, {
+            test: /\.(jpg|png)$/,
+            use: [ {
+                loader: 'url-loader',
+                options: {
+                    limit: 11000,
+                    name: `images/${isDevelopment ? '[name].[ext]' : '[name].[hash:8].[ext]'}`
+                }
+            } ]
+        }, {
+            test: /\.(ttf|eot|woff|woff2)$/,
+            use: [ {
+                loader: 'url-loader',
+                options: {
+                    limit: 50000,
+                    name: `fonts/${isDevelopment ? '[name].[ext]' : '[name].[hash:8].[ext]'}`
                 }
             } ]
         } ]
@@ -163,11 +202,18 @@ const config = {
                 allowAsyncCycles: false,
                 exclude: /node_modules/,
                 failOnError: false
+            }),
+        MiniCssExtractPlugin
+            && new MiniCssExtractPlugin({
+                filename: isDevelopment ? '[name].css' : '[name].[hash].css',
+                chunkFilename: isDevelopment ? '[id].css' : '[id].[hash].css'
             })
     ].filter(Boolean),
     resolve: {
         alias: {
-            jquery: `jquery/dist/jquery${minimize ? '.min' : ''}.js`
+            jquery: `jquery/dist/jquery${minimize ? '.min' : ''}.js`,
+            '!images': path.join(__dirname, 'images'),
+            '!fonts': path.join(__dirname, 'fonts')
         },
         aliasFields: [
             'browser'
@@ -177,7 +223,8 @@ const config = {
 
             // Webpack defaults:
             '.js',
-            '.json'
+            '.json',
+            '.scss'
         ]
     }
 };
@@ -187,13 +234,13 @@ module.exports = [
         entry: {
             'app.bundle': './app.js'
         },
-        performance: getPerformanceHints(4 * 1024 * 1024)
+        performance: getPerformanceHints(10 * 1024 * 1024)
     }),
     Object.assign({}, config, {
         entry: {
             'device_selection_popup_bundle': './react/features/settings/popup.js'
         },
-        performance: getPerformanceHints(700 * 1024)
+        performance: getPerformanceHints(750 * 1024)
     }),
     Object.assign({}, config, {
         entry: {
@@ -286,13 +333,16 @@ module.exports = [
  * @returns {string|undefined} If the request is to be served by the proxy
  * target, undefined; otherwise, the path to the local file to be served.
  */
+// eslint-disable-next-line no-shadow,require-jsdoc
 function devServerProxyBypass({ path }) {
     if (path.startsWith('/css/') || path.startsWith('/doc/')
-            || path.startsWith('/fonts/') || path.startsWith('/images/')
-            || path.startsWith('/lang/')
-            || path.startsWith('/sounds/')
-            || path.startsWith('/static/')
-            || path.endsWith('.wasm')) {
+        || path.startsWith('/fonts/')
+        || path.startsWith('/images/')
+        || path.startsWith('/lang/')
+        || path.startsWith('/sounds/')
+        || path.startsWith('/static/')
+        || path.endsWith('.wasm')) {
+
         return path;
     }
 
@@ -301,24 +351,24 @@ function devServerProxyBypass({ path }) {
     /* eslint-disable array-callback-return, indent */
 
     if ((Array.isArray(configs) ? configs : Array(configs)).some(c => {
-            if (path.startsWith(c.output.publicPath)) {
-                    if (!minimize) {
-                        // Since webpack-dev-server is serving non-minimized
-                        // artifacts, serve them even if the minimized ones are
-                        // requested.
-                        return Object.keys(c.entry).some(e => {
-                            const name = `${e}.min.js`;
+        if (path.startsWith(c.output.publicPath)) {
+            if (!minimize) {
+                // Since webpack-dev-server is serving non-minimized
+                // artifacts, serve them even if the minimized ones are
+                // requested.
+                return Object.keys(c.entry).some(e => {
+                    const name = `${e}.min.js`;
 
-                            if (path.indexOf(name) !== -1) {
-                                // eslint-disable-next-line no-param-reassign
-                                path = path.replace(name, `${e}.js`);
+                    if (path.indexOf(name) !== -1) {
+                        // eslint-disable-next-line no-param-reassign
+                        path = path.replace(name, `${e}.js`);
 
-                                return true;
-                            }
-                        });
+                        return true;
                     }
-                }
-            })) {
+                });
+            }
+        }
+    })) {
         return path;
     }
 
