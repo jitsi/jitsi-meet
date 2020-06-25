@@ -193,37 +193,37 @@ class WelcomePage extends AbstractWelcomePage {
                                 { app: APP_NAME }) }
                         </p>
                     </div>
-                    <div id = 'enter_room'>
-                        <div className = 'enter-room-input-container'>
+                    <form
+                        id = 'enter_room'
+                        onSubmit = { this._onFormSubmit } >
+                        <label className = 'enter-room-input-container'>
                             <div className = 'enter-room-title'>
                                 { t('welcomepage.enterRoomTitle') }
                             </div>
-                            <form onSubmit = { this._onFormSubmit }>
-                                <input
-                                    autoFocus = { true }
-                                    className = 'enter-room-input'
-                                    id = 'enter_room_field'
-                                    onChange = { this._onRoomChange }
-                                    pattern = { ROOM_NAME_VALIDATE_PATTERN_STR }
-                                    placeholder = { this.state.roomPlaceholder }
-                                    ref = { this._setRoomInputRef }
-                                    title = { t('welcomepage.roomNameAllowedChars') }
-                                    type = 'text'
-                                    value = { this.state.room } />
-                                { this._renderInsecureRoomNameWarning() }
-                            </form>
-                        </div>
-                        <div
+                            <input
+                                autoFocus = { true }
+                                className = 'enter-room-input'
+                                id = 'enter_room_field'
+                                onChange = { this._onRoomChange }
+                                pattern = { ROOM_NAME_VALIDATE_PATTERN_STR }
+                                placeholder = { this.state.roomPlaceholder }
+                                ref = { this._setRoomInputRef }
+                                title = { t('welcomepage.roomNameAllowedChars') }
+                                type = 'text'
+                                value = { this.state.room } />
+                            { this._renderInsecureRoomNameWarning() }
+                        </label>
+                        <button
                             className = 'welcome-page-button'
                             id = 'enter_room_button'
-                            onClick = { this._onFormSubmit }>
+                            type = 'submit'>
                             {
                                 showResponsiveText
                                     ? t('welcomepage.goSmall')
                                     : t('welcomepage.go')
                             }
-                        </div>
-                    </div>
+                        </button>
+                    </form>
                     { this._renderTabs() }
                 </div>
                 { showAdditionalContent
