@@ -171,7 +171,7 @@ function PasswordSection({
     return (
         <div className = 'security-dialog password-section'>
             <p className = 'description'>
-                { t('security.about') }
+                { t(canEditPassword ? 'security.about' : 'security.aboutReadOnly') }
             </p>
             <div className = 'security-dialog password'>
                 <div

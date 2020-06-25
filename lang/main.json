@@ -582,7 +582,8 @@
         "pullToRefresh": "Pull to refresh"
     },
     "security": {
-        "about": "You can add a passcode to your meeting. Participants will need to provide the passcode before they are allowed to join the meeting.",
+        "about": "You can add a $t(lockRoomPassword) to your meeting. Participants will need to provide the $t(lockRoomPassword) before they are allowed to join the meeting.",
+        "aboutReadOnly": "Moderator participants can add a $t(lockRoomPassword) to the meeting. Participants will need to provide the $t(lockRoomPassword) before they are allowed to join the meeting.",
         "insecureRoomNameWarning": "The room name is unsafe. Unwanted participants may join your conference. Consider securing your meeting using the security button.",
         "securityOptions": "Security options"
     },
