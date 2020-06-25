@@ -15,6 +15,7 @@
   "author": "",
   "readmeFilename": "README.md",
   "dependencies": {
+    "@aeternity/aepp-sdk": "^7.4.1",
     "@atlaskit/button": "10.1.1",
     "@atlaskit/checkbox": "5.0.10",
     "@atlaskit/dropdown-menu": "6.1.25",
