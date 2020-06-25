@@ -278,9 +278,7 @@
         "muteEveryoneTitle": "",
         "muteEveryoneDialog": "",
         "muteEveryoneElseTitle": "Copar lo son a totes levat {{whom}} ?",
-        "muteEveryoneElseDialog": "",
-        "e2eeTitle": "Chiframent del cap a la fin",
-        "e2eeLabel": "Clau"
+        "muteEveryoneElseDialog": ""
     },
     "dialOut": {
         "statusMessage": "ara es {{status}}"
