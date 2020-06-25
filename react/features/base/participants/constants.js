@@ -37,7 +37,7 @@ export const LOCAL_PARTICIPANT_DEFAULT_ID = 'local';
  *
  * @type {string}
  */
-export const MAX_DISPLAY_NAME_LENGTH = 50;
+export const MAX_DISPLAY_NAME_LENGTH = 54;
 
 /**
  * The identifier of the sound to be played when new remote participant joins
