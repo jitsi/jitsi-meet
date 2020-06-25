@@ -170,7 +170,9 @@ function PasswordSection({
 
     return (
         <div className = 'security-dialog password-section'>
-            { t('security.about') }
+            <p className = 'description'>
+                { t('security.about') }
+            </p>
             <div className = 'security-dialog password'>
                 <div
                     className = 'info-dialog info-dialog-column info-dialog-password'

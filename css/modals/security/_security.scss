@@ -8,6 +8,10 @@
             display: flex;
             flex-direction: column;
 
+            .description {
+                font-size: 13px;
+            }
+
             .password {
                 align-items: center;
                 display: flex;
@@ -23,10 +27,6 @@
                     }
                 }
             }
-        }
-
-        & > :first-child:not(:last-child) {
-            margin-right: 24px;
         }
 
         .separator-line {

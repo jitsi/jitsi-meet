@@ -88,7 +88,9 @@ class LobbySection extends PureComponent<Props, State> {
         return (
             <>
                 <div id = 'lobby-section'>
-                    { t('lobby.enableDialogText') }
+                    <p className = 'description'>
+                        { t('lobby.enableDialogText') }
+                    </p>
                     <div className = 'control-row'>
                         <label>
                             { t('lobby.toggleLabel') }

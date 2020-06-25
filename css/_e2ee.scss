@@ -4,8 +4,13 @@
     }
 
     .description {
-        font-size: .8em;
+        font-size: 13px;
         margin: 15px 0;
+
+        .read-more {
+            cursor: pointer;
+            opacity: .7;
+        }
     }
 
     .key-field {
@@ -14,6 +19,7 @@
         flex-direction: row;
 
         label {
+            font-size: 14px;
             font-weight: 700;
         }
 
