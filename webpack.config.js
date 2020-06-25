@@ -51,7 +51,7 @@ const config = {
             }
         }
     },
-    devtool: 'source-map',
+    devtool: minimize ? false : 'source-map',
     mode: minimize ? 'production' : 'development',
     module: {
         rules: [ {
