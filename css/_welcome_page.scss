@@ -95,8 +95,12 @@ body.welcome-page {
                     flex-direction: row;
                     margin-top: 5px;
 
-                    svg {
-                        fill: $defaultWarningColor
+                    .jitsi-icon {
+                        margin-right: 15px;
+
+                        svg {
+                            fill: $defaultWarningColor
+                        }
                     }
                 }
 
