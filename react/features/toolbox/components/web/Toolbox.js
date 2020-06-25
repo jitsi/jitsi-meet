@@ -468,7 +468,7 @@ class Toolbox extends Component<Props, State> {
      * @returns {void}
      */
     _doToggleScreenshare() {
-        if (this.props._desktopSharingEnabled) {
+        if (this.props._desktopSharingEnabled && this._isModerator()) {
             this.props.dispatch(toggleScreensharing());
         }
     }
