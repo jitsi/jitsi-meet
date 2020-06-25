@@ -176,27 +176,36 @@ export function createLocalVideoTracks(ids: string[]) {
 
 
 /**
- * Returns a promise which resolves with an object containing the corresponding
- * the audio jitsiTrack/error.
+ * Returns a promise which resolves with a list of objects containing
+ * the audio track and the corresponding audio device information.
  *
- * @param {string} deviceId - The deviceId for the current microphone.
- *
- * @returns {Promise<Object>}
+ * @param {Object[]} devices - A list of microphone devices.
+ * @returns {Promise<{
+ *   deviceId: string,
+ *   hasError: boolean,
+ *   jitsiTrack: Object,
+ *   label: string
+ * }[]>}
  */
-export function createLocalAudioTrack(deviceId: string) {
-    return createLocalTrack('audio', deviceId)
-                   .then(jitsiTrack => {
-                       return {
-                           hasError: false,
-                           jitsiTrack
-                       };
-                   })
-                   .catch(() => {
-                       return {
-                           hasError: true,
-                           jitsiTrack: null
-                       };
-                   });
+export function createLocalAudioTracks(devices: Object[]) {
+    return Promise.all(
+        devices.map(async ({ deviceId, label }) => {
+            let jitsiTrack = null;
+            let hasError = false;
+
+            try {
+                jitsiTrack = await createLocalTrack('audio', deviceId);
+            } catch (err) {
+                hasError = true;
+            }
+
+            return {
+                deviceId,
+                hasError,
+                jitsiTrack,
+                label
+            };
+        }));
 }
 
 /**
