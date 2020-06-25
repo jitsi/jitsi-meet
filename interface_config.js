@@ -88,6 +88,8 @@ var interfaceConfig = {
     DISPLAY_WELCOME_PAGE_CONTENT: true,
     DISPLAY_WELCOME_PAGE_TOOLBAR_ADDITIONAL_CONTENT: false,
 
+    ENABLE_DIAL_OUT: true,
+
     ENABLE_FEEDBACK_ANIMATION: false, // Enables feedback star animation.
 
     FILM_STRIP_MAX_HEIGHT: 120,
