@@ -31,9 +31,13 @@ function init_session(event)
         -- (see get_username_from_token)
         session.previd = query and params.previd or nil;
 
-        -- The room name and optional prefix from the bosh query
-        session.jitsi_bosh_query_room = params.room;
-        session.jitsi_bosh_query_prefix = params.prefix or "";
+        -- The room name and optional prefix from the web query
+        session.jitsi_web_query_room = params.room;
+        session.jitsi_web_query_prefix = params.prefix or "";
+
+        -- Deprecated, you should use jitsi_web_query_room and jitsi_web_query_prefix
+        session.jitsi_bosh_query_room = session.jitsi_web_query_room;
+        session.jitsi_bosh_query_prefix = session.jitsi_web_query_prefix;
     end
 end
 
