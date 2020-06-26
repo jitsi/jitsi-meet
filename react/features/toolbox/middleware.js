@@ -7,6 +7,7 @@ import {
     SET_TOOLBOX_TIMEOUT,
     SET_FULL_SCREEN
 } from './actionTypes';
+import {CONFERENCE_JOINED} from "../base/conference";
 
 declare var APP: Object;
 
@@ -19,6 +20,13 @@ declare var APP: Object;
  */
 MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
+    case CONFERENCE_JOINED: {
+        console.log("ZZZ Toolbox CONFERENCE_JOINED");
+        //Logic for add lock for toggle mute button
+        return next(action);
+        break;
+    }
+
     case CLEAR_TOOLBOX_TIMEOUT: {
         const { timeoutID } = store.getState()['features/toolbox'];
 

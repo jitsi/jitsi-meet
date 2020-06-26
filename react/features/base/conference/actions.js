@@ -51,7 +51,7 @@ import {
     SET_PREFERRED_VIDEO_QUALITY,
     SET_ROOM,
     SET_PENDING_SUBJECT_CHANGE,
-    SET_START_MUTED_POLICY
+    SET_START_MUTED_POLICY, LOCK_UNMUTE_STATE_CHANGED, SET_LOCK_UNMUTE
 } from './actionTypes';
 import {
     AVATAR_ID_COMMAND,
@@ -517,6 +517,27 @@ export function lockStateChanged(conference: Object, locked: boolean) {
         locked
     };
 }
+/**
+ * Signals that the lock state of a specific JitsiConference changed.
+ *
+ * @param {JitsiConference} conference - The JitsiConference which had its lock
+ * state changed.
+ * @param {boolean} locked - If the specified conference became locked, true;
+ * otherwise, false.
+ * @returns {{
+ *     type: LOCK_UNMUTE_STATE_CHANGED,
+ *     conference: JitsiConference,
+ *     locked: boolean
+ * }}
+ */
+export function lockUnMuteStateChanged(conference: Object, locked: boolean) {
+    console.log("ZZZ lockUnMuteStateChanged", {conference, locked})
+    return {
+        type: LOCK_UNMUTE_STATE_CHANGED,
+        conference,
+        locked
+    };
+}
 
 /**
  * Updates the known state of start muted policies.
@@ -689,6 +710,49 @@ export function setPassword(
                             type: SET_PASSWORD_FAILED,
                             error
                         }))
+                );
+            }
+
+            return Promise.reject();
+        }
+        }
+    };
+}
+
+/**
+ *
+ * @param conference
+ * @param method
+ * @param status
+ * @returns {function(...[*]=)}
+ */
+export function setToggleLockUnMute(
+        conference: Object,
+        method: Function,
+        status: boolean) {
+    return (dispatch: Dispatch<any>, getState: Function): ?Promise<void> => {
+        console.log("ZZZ setToggleLockUnMute", {conference, method, status})
+
+        switch (method) {
+        case conference.join: {
+            console.log("ZZZ conference.join")
+            break;
+        }
+
+        case conference.lockUnMute: {
+            const state = getState()['features/base/conference'];
+            if (state.conference === conference) {
+                return (
+                    method.call(conference, status)
+                        .then(() =>
+                            dispatch({
+                                type: SET_LOCK_UNMUTE,
+                                conference,
+                                method,
+                                status
+                            })
+                        )
+                        .catch(error => console.log("setToggleLockUnMute catch"))
                 );
             }
 

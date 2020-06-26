@@ -101,6 +101,8 @@ function _setConfig({ dispatch, getState }, next, action) {
 
     // Update the config with user defined settings.
     const settings = state['features/base/settings'];
+
+    console.log("ZZZ _setConfig", {settings})
     const config = {};
 
     if (typeof settings.disableP2P !== 'undefined') {
