@@ -1,5 +1,5 @@
 /* global APP */
-
+// eslint-disable-next-line max-len
 import React from 'react';
 import ReactDOM from 'react-dom';
 
@@ -9,12 +9,15 @@ import { App } from './features/app';
 import { getLogger } from './features/base/logging/functions';
 import { Platform } from './features/base/react';
 
+
 const logger = getLogger('index.web');
 const OS = Platform.OS;
+
 
 /**
  * Renders the app when the DOM tree has been loaded.
  */
+// const render = () => {
 document.addEventListener('DOMContentLoaded', () => {
     const now = window.performance.now();
 
@@ -24,6 +27,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // Render the main/root Component.
     ReactDOM.render(<App />, document.getElementById('react'));
 });
+
+// });
 
 // Workaround for the issue when returning to a page with the back button and
 // the page is loaded from the 'back-forward' cache on iOS which causes nothing

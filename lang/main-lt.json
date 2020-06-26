@@ -616,7 +616,8 @@
             "toggleCamera": "Perjungti kamerą",
             "toggleFilmstrip": "Toggle filmstrip",
             "videomute": "Perjungti vaizdo išjungimą",
-            "videoblur": "Įjungti fono suliejimą"
+            "videoblur": "Įjungti fono suliejimą",
+            "pin": ""
         },
         "addPeople": "Pridėti žmonių prie pokalbio",
         "audioOnlyOff": "Atjungti žemo pralaidumo rėžimą",
@@ -736,7 +737,8 @@
         "muted": "Nutildytas",
         "remoteControl": "Įjungti / Išjungti nuotolinį valdymą",
         "show": "Rodyti viešai",
-        "videomute": "Dalyvis išjungė vaizdą"
+        "videomute": "Dalyvis išjungė vaizdą",
+        "pin": ""
     },
     "welcomepage": {
         "accessibilityLabel": {

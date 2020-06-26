@@ -572,7 +572,8 @@
             "tileView": "Afișați/ascundeți miniatura video",
             "toggleCamera": "Afișați / ascundeți camera",
             "videomute": "Activați / dezactivați înregistrarea",
-            "videoblur": ""
+            "videoblur": "",
+            "pin": ""
         },
         "addPeople": "Adaugați persoane în apel",
         "audioOnlyOff": "Dezactivați modul 'doar audio'",
@@ -679,7 +680,8 @@
         "muted": "Microfon dezactivat",
         "remoteControl": "Control la distanță",
         "show": "",
-        "videomute": "Un membru a oprit camera"
+        "videomute": "Un membru a oprit camera",
+        "pin": ""
     },
     "welcomepage": {
         "accessibilityLabel": {

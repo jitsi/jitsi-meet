@@ -581,7 +581,8 @@
             "tileView": "Tegelweergave schakelen",
             "toggleCamera": "Camera schakelen",
             "videomute": "Video dempen schakelen",
-            "videoblur": ""
+            "videoblur": "",
+            "pin": ""
         },
         "addPeople": "Personen aan uw gesprek toevoegen",
         "audioOnlyOff": "Modus 'Alleen audio' uitschakelen",
@@ -687,7 +688,8 @@
         "muted": "Gedempt",
         "remoteControl": "Extern beheer",
         "show": "",
-        "videomute": "Deelnemer heeft de camera gestopt"
+        "videomute": "Deelnemer heeft de camera gestopt",
+        "pin": ""
     },
     "welcomepage": {
         "accessibilityLabel": {

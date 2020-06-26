@@ -611,7 +611,8 @@
             "tileView": "Přepnout režim zobrazení",
             "toggleCamera": "",
             "videomute": "",
-            "videoblur": ""
+            "videoblur": "",
+            "pin": ""
         },
         "addPeople": "Přidat účastníky vašeho hovoru",
         "audioOnlyOff": "",
@@ -719,7 +720,8 @@
         "remoteControl": "Vzdálené ovládání",
         "show": "",
         "videomute": "Účastník si vypnul kameru",
-        "domuteOthers": "Umlčet všechny ostatní"
+        "domuteOthers": "Umlčet všechny ostatní",
+        "pin": ""
     },
     "welcomepage": {
         "accessibilityLabel": {

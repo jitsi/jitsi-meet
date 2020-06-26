@@ -572,7 +572,8 @@
             "tileView": "Säädä ruudukkonäkymää",
             "toggleCamera": "Säädä kameraa",
             "videomute": "Säädä videon mykistystä",
-            "videoblur": ""
+            "videoblur": "",
+            "pin": ""
         },
         "addPeople": "Lisää osanottajia puheluun",
         "audioOnlyOff": "Poista Vain ääni -tila käytöstä",
@@ -676,7 +677,8 @@
         "muted": "Mykistetty",
         "remoteControl": "Etäkäyttö",
         "show": "",
-        "videomute": ""
+        "videomute": "",
+        "pin": ""
     },
     "welcomepage": {
         "accessibilityLabel": {
