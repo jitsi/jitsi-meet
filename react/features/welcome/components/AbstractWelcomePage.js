@@ -253,6 +253,6 @@ export function _mapStateToProps(state: Object) {
         _recentListEnabled: isRecentListEnabled(),
         _room: state['features/base/conference'].room,
         _settings: state['features/base/settings'],
-        _user: state['features/base/auth'].user
+        _user: state['features/base/jwt'].user
     };
 }
