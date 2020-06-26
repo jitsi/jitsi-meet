@@ -45,6 +45,7 @@ import {
     LocalRecordingInfoDialog
 } from '../../../local-recording';
 import {
+    LiveStreamButton,
     RecordButton
 } from '../../../recording';
 import { SecurityDialogButton } from '../../../security';
@@ -989,7 +990,10 @@ class Toolbox extends Component<Props, State> {
                     key = 'fullscreen'
                     onClick = { this._onToolbarToggleFullScreen }
                     text = { _fullScreen ? t('toolbar.exitFullScreen') : t('toolbar.enterFullScreen') } />,
-            <RecordButton
+            <LiveStreamButton
+                key = 'livestreaming'
+                showLabel = { true } />,
+            this._isModerator() && <RecordButton
                 key = 'record'
                 showLabel = { true } />,
             this._isModerator() && this._shouldShowButton('sharedvideo')
