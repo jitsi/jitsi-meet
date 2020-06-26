@@ -1,9 +1,11 @@
+/* eslint-disable no-unused-vars */
 /* global config */
 
 import { MiddlewareRegistry } from '../redux';
-import { updateSettings } from '../settings';
-import jitsiLocalStorage from '../../../../modules/util/JitsiLocalStorage';
-import { toJid } from '../connection';
+
+// import { updateSettings } from '../settings';
+// import jitsiLocalStorage from '../../../../modules/util/JitsiLocalStorage';
+// import { toJid } from '../connection';
 
 import { SET_CURRENT_USER } from './actionTypes';
 

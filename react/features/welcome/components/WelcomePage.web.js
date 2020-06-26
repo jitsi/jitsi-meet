@@ -1,4 +1,4 @@
-/* global interfaceConfig */
+/* global interfaceConfig, process */
 
 import axios from 'axios';
 import Button, { ButtonGroup } from '@atlaskit/button';
@@ -20,7 +20,9 @@ import { NotificationsContainer } from '../../notifications/components';
 
 import { AbstractWelcomePage, _mapStateToProps } from './AbstractWelcomePage';
 import Tabs from './Tabs';
+
 // import { setCurrentUser } from '../../base/auth';
+import { setJWT } from '../../base/jwt';
 
 /**
  * The pattern used to validate room name.
@@ -179,8 +181,8 @@ class WelcomePage extends AbstractWelcomePage {
         this.setState({ submitting: true });
 
         return axios.get(`${AUTH_API_BASE}/logout`).then(() => {
-            dispatch(setJWT());
             // dispatch(setCurrentUser());
+            dispatch(setJWT());
             this.setState({ submitting: false });
         });
     }
@@ -226,7 +228,7 @@ class WelcomePage extends AbstractWelcomePage {
                     }
                     triggerType = 'button'>
                     <DropdownItemGroup>
-                        <DropdownItem href = {`${AUTH_PAGE_BASE}/account`}>{ t('welcomepage.account') }</DropdownItem>
+                        <DropdownItem href = { `${AUTH_PAGE_BASE}/account` }>{ t('welcomepage.account') }</DropdownItem>
                         <DropdownItem onClick = { this._onLogout }>{ t('toolbar.logout') }</DropdownItem>
                     </DropdownItemGroup>
                 </DropdownMenu>
@@ -235,14 +237,14 @@ class WelcomePage extends AbstractWelcomePage {
             buttons.push(
                 <Button
                     appearance = 'primary'
-                    href = {`${AUTH_PAGE_BASE}/register`}>
+                    href = { `${AUTH_PAGE_BASE}/register` }>
                     { t('toolbar.Register') }
                 </Button>
             );
             buttons.push(
                 <Button
                     appearance = 'subtle'
-                    href = {`${AUTH_PAGE_BASE}/login`}>
+                    href = { `${AUTH_PAGE_BASE}/login` }>
                     {t('toolbar.login')}
                 </Button>
             );

@@ -1,7 +1,10 @@
+/* global process */
 // import axios from 'axios';
 
 // import logger from './logger';
 import { SET_CURRENT_USER } from './actionTypes';
+import jitsiLocalStorage from '../../../../modules/util/JitsiLocalStorage';
+import { setJWT } from '../jwt';
 
 // const AUTH_API_BASE = process.env.REACT_APP_AUTH_API_BASE;
 const AUTH_JWT_TOKEN = process.env.REACT_APP_JWT_TOKEN;
@@ -20,7 +23,8 @@ export function loadCurrentUser() {
         //     logger.warn('Failed to load current user.', err);
         //     dispatch(setCurrentUser());
         // }
-        const token = window.localStorage.getItem(AUTH_JWT_TOKEN);
+        const token = jitsiLocalStorage.getItem(AUTH_JWT_TOKEN);
+
         if (token) {
             dispatch(setJWT(token));
         }

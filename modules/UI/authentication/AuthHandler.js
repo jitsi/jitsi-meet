@@ -1,4 +1,4 @@
-/* global APP, config, JitsiMeetJS, Promise */
+/* global APP, config, JitsiMeetJS, Promise, process */
 
 import { openConnection } from '../../../connection';
 import { setJWT } from '../../../react/features/base/jwt';
