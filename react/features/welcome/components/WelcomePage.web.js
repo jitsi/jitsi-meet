@@ -22,6 +22,7 @@ import { AbstractWelcomePage, _mapStateToProps } from './AbstractWelcomePage';
 import Tabs from './Tabs';
 
 // import { setCurrentUser } from '../../base/auth';
+import jitsiLocalStorage from '../../../../modules/util/JitsiLocalStorage';
 import { setJWT } from '../../base/jwt';
 
 /**
@@ -32,6 +33,7 @@ export const ROOM_NAME_VALIDATE_PATTERN_STR = '^[^?&:\u0022\u0027%#]+$';
 
 const AUTH_PAGE_BASE = process.env.REACT_APP_AUTH_PAGE_BASE;
 const AUTH_API_BASE = process.env.REACT_APP_AUTH_API_BASE;
+const AUTH_JWT_TOKEN = process.env.REACT_APP_JWT_TOKEN;
 
 /**
  * Maximum number of pixels corresponding to a mobile layout.
@@ -182,6 +184,7 @@ class WelcomePage extends AbstractWelcomePage {
 
         return axios.get(`${AUTH_API_BASE}/logout`).then(() => {
             // dispatch(setCurrentUser());
+            jitsiLocalStorage.removeItem(AUTH_JWT_TOKEN);
             dispatch(setJWT());
             this.setState({ submitting: false });
         });
