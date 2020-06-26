@@ -211,6 +211,18 @@ export function getLocalJitsiVideoTrack(state) {
 }
 
 /**
+ * Returns the stored local audio track.
+ *
+ * @param {Object} state - The redux state.
+ * @returns {Object}
+ */
+export function getLocalJitsiAudioTrack(state) {
+    const track = getLocalAudioTrack(state['features/base/tracks']);
+
+    return track?.jitsiTrack;
+}
+
+/**
  * Returns track of specified media type for specified participant id.
  *
  * @param {Track[]} tracks - List of all tracks.

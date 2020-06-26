@@ -95,6 +95,8 @@ import {
     createLocalPresenterTrack,
     createLocalTracksF,
     destroyLocalTracks,
+    getLocalJitsiAudioTrack,
+    getLocalJitsiVideoTrack,
     isLocalVideoTrackMuted,
     isLocalTrackMuted,
     isUserInteractionRequiredForUnmute,
@@ -118,7 +120,8 @@ import { mediaPermissionPromptVisibilityChanged } from './react/features/overlay
 import { suspendDetected } from './react/features/power-monitor';
 import {
     initPrejoin,
-    isPrejoinPageEnabled
+    isPrejoinPageEnabled,
+    isPrejoinPageVisible
 } from './react/features/prejoin';
 import { createRnnoiseProcessorPromise } from './react/features/rnnoise';
 import { toggleScreenshotCaptureEffect } from './react/features/screenshot-capture';
@@ -1400,19 +1403,32 @@ export default {
     /**
      * Start using provided video stream.
      * Stops previous video stream.
-     * @param {JitsiLocalTrack} [stream] new stream to use or null
+     * @param {JitsiLocalTrack} newTrack - new track to use or null
      * @returns {Promise}
      */
-    useVideoStream(newStream) {
+    useVideoStream(newTrack) {
         return new Promise((resolve, reject) => {
             _replaceLocalVideoTrackQueue.enqueue(onFinish => {
+                const state = APP.store.getState();
+
+                // When the prejoin page is displayed localVideo is not set
+                // so just replace the video track from the store with the new one.
+                if (isPrejoinPageVisible(state)) {
+                    const oldTrack = getLocalJitsiVideoTrack(state);
+
+                    return APP.store.dispatch(replaceLocalTrack(oldTrack, newTrack))
+                        .then(resolve)
+                        .catch(reject)
+                        .then(onFinish);
+                }
+
                 APP.store.dispatch(
-                replaceLocalTrack(this.localVideo, newStream, room))
+                replaceLocalTrack(this.localVideo, newTrack, room))
                     .then(() => {
-                        this.localVideo = newStream;
-                        this._setSharingScreen(newStream);
-                        if (newStream) {
-                            APP.UI.addLocalVideoStream(newStream);
+                        this.localVideo = newTrack;
+                        this._setSharingScreen(newTrack);
+                        if (newTrack) {
+                            APP.UI.addLocalVideoStream(newTrack);
                         }
                         this.setVideoMuteStatus(this.isLocalVideoMuted());
                     })
@@ -1453,16 +1469,29 @@ export default {
     /**
      * Start using provided audio stream.
      * Stops previous audio stream.
-     * @param {JitsiLocalTrack} [stream] new stream to use or null
+     * @param {JitsiLocalTrack} newTrack - new track to use or null
      * @returns {Promise}
      */
-    useAudioStream(newStream) {
+    useAudioStream(newTrack) {
         return new Promise((resolve, reject) => {
             _replaceLocalAudioTrackQueue.enqueue(onFinish => {
+                const state = APP.store.getState();
+
+                // When the prejoin page is displayed localAudio is not set
+                // so just replace the audio track from the store with the new one.
+                if (isPrejoinPageVisible(state)) {
+                    const oldTrack = getLocalJitsiAudioTrack(state);
+
+                    return APP.store.dispatch(replaceLocalTrack(oldTrack, newTrack))
+                        .then(resolve)
+                        .catch(reject)
+                        .then(onFinish);
+                }
+
                 APP.store.dispatch(
-                replaceLocalTrack(this.localAudio, newStream, room))
+                replaceLocalTrack(this.localAudio, newTrack, room))
                     .then(() => {
-                        this.localAudio = newStream;
+                        this.localAudio = newTrack;
                         this.setAudioMuteStatus(this.isLocalAudioMuted());
                     })
                     .then(resolve)
