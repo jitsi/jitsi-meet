@@ -14,24 +14,24 @@ MiddlewareRegistry.register(store => next => action => {
 
     switch (action.type) {
     case SET_CURRENT_USER: {
-        const { user } = action;
+        // const { user } = action;
 
-        if (user) {
-            dispatch(updateSettings({
-                displayName: user.name,
-                email: user.email
-            }));
-            jitsiLocalStorage.setItem('xmpp_username_override', toJid(user.username, config.hosts));
-            jitsiLocalStorage.setItem('xmpp_password_override', user.id);
-        } else {
-            dispatch(updateSettings({
-                displayName: '',
-                email: ''
-            }));
-            jitsiLocalStorage.removeItem('xmpp_username_override');
-            jitsiLocalStorage.removeItem('xmpp_password_override');
-            jitsiLocalStorage.removeItem('sessionId');
-        }
+        // if (user) {
+        //     dispatch(updateSettings({
+        //         displayName: user.name,
+        //         email: user.email
+        //     }));
+        //     jitsiLocalStorage.setItem('xmpp_username_override', toJid(user.username, config.hosts));
+        //     jitsiLocalStorage.setItem('xmpp_password_override', user.id);
+        // } else {
+        //     dispatch(updateSettings({
+        //         displayName: '',
+        //         email: ''
+        //     }));
+        //     jitsiLocalStorage.removeItem('xmpp_username_override');
+        //     jitsiLocalStorage.removeItem('xmpp_password_override');
+        //     jitsiLocalStorage.removeItem('sessionId');
+        // }
         break;
     }
     }

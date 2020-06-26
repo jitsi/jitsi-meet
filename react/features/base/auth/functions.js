@@ -11,7 +11,7 @@ import { toState } from '../redux';
  */
 export function getCurrentUser(stateful: Function | Object): string {
     const state = toState(stateful);
-    const { user } = state['features/base/auth'];
+    const { user } = state['features/base/jwt'];
 
     return user;
 }

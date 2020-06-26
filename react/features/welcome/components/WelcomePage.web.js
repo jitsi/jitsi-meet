@@ -20,13 +20,16 @@ import { NotificationsContainer } from '../../notifications/components';
 
 import { AbstractWelcomePage, _mapStateToProps } from './AbstractWelcomePage';
 import Tabs from './Tabs';
-import { setCurrentUser } from '../../base/auth';
+// import { setCurrentUser } from '../../base/auth';
 
 /**
  * The pattern used to validate room name.
  * @type {string}
  */
 export const ROOM_NAME_VALIDATE_PATTERN_STR = '^[^?&:\u0022\u0027%#]+$';
+
+const AUTH_PAGE_BASE = process.env.REACT_APP_AUTH_PAGE_BASE;
+const AUTH_API_BASE = process.env.REACT_APP_AUTH_API_BASE;
 
 /**
  * Maximum number of pixels corresponding to a mobile layout.
@@ -175,8 +178,9 @@ class WelcomePage extends AbstractWelcomePage {
 
         this.setState({ submitting: true });
 
-        return axios.get('/auth/api/logout').then(() => {
-            dispatch(setCurrentUser());
+        return axios.get(`${AUTH_API_BASE}/logout`).then(() => {
+            dispatch(setJWT());
+            // dispatch(setCurrentUser());
             this.setState({ submitting: false });
         });
     }
@@ -222,7 +226,7 @@ class WelcomePage extends AbstractWelcomePage {
                     }
                     triggerType = 'button'>
                     <DropdownItemGroup>
-                        <DropdownItem href = '/auth/page/account'>{ t('welcomepage.account') }</DropdownItem>
+                        <DropdownItem href = {`${AUTH_PAGE_BASE}/account`}>{ t('welcomepage.account') }</DropdownItem>
                         <DropdownItem onClick = { this._onLogout }>{ t('toolbar.logout') }</DropdownItem>
                     </DropdownItemGroup>
                 </DropdownMenu>
@@ -231,14 +235,14 @@ class WelcomePage extends AbstractWelcomePage {
             buttons.push(
                 <Button
                     appearance = 'primary'
-                    href = '/auth/page/register'>
+                    href = {`${AUTH_PAGE_BASE}/register`}>
                     { t('toolbar.Register') }
                 </Button>
             );
             buttons.push(
                 <Button
                     appearance = 'subtle'
-                    href = '/auth/page/login'>
+                    href = {`${AUTH_PAGE_BASE}/login`}>
                     {t('toolbar.login')}
                 </Button>
             );

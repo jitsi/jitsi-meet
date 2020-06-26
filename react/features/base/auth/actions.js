@@ -3,6 +3,9 @@ import axios from 'axios';
 import { SET_CURRENT_USER } from './actionTypes';
 import logger from './logger';
 
+const AUTH_JWT_TOKEN = process.env.REACT_APP_JWT_TOKEN;
+const AUTH_API_BASE = process.env.REACT_APP_AUTH_API_BASE;
+
 /**
  * Load current logged in user.
  *
@@ -10,13 +13,16 @@ import logger from './logger';
  */
 export function loadCurrentUser() {
     return async dispatch => {
-        try {
-            const resp = await axios.get('/auth/api/current-user', { withCredentials: true });
-
-            dispatch(setCurrentUser(resp.data));
-        } catch (err) {
-            logger.warn('Failed to load current user.', err);
-            dispatch(setCurrentUser());
+        // try {
+        //     const resp = await axios.get(`${AUTH_API_BASE}/current-user`, { withCredentials: true });
+        //     dispatch(setCurrentUser(resp.data));
+        // } catch (err) {
+        //     logger.warn('Failed to load current user.', err);
+        //     dispatch(setCurrentUser());
+        // }
+        const token = window.localStorage.getItem(AUTH_JWT_TOKEN);
+        if (token) {
+            dispatch(setJWT(token));
         }
     };
 }

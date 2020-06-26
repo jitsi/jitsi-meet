@@ -11,6 +11,7 @@ import { getCurrentUser } from '../../../react/features/base/auth/functions';
 import LoginDialog from './LoginDialog';
 
 const logger = require('jitsi-meet-logger').getLogger(__filename);
+const AUTH_PAGE_BASE = process.env.REACT_APP_AUTH_PAGE_BASE;
 
 let externalAuthWindow;
 let authRequiredDialog;
@@ -161,7 +162,7 @@ function initJWTTokenListener(room) {
  * @param {string} [lockPassword] password to use if the conference is locked
  */
 function doXmppAuth(room) {
-    window.location.href = `/auth/page/login?next=${encodeURIComponent(`/${room.getName()}`)}`;
+    window.location.href = `${AUTH_PAGE_BASE}/login?next=${encodeURIComponent(`/${room.getName()}`)}`;
 
     // const loginDialog = LoginDialog.showAuthDialog(
     //     /* successCallback */ (id, password) => {
@@ -278,7 +279,7 @@ function showXmppPasswordPrompt(roomName, connect) {
                 reject(err);
             });
         } else {
-            window.location.href = `/auth/page/login?next=${encodeURIComponent(`/${roomName}`)}`;
+            window.location.href = `${AUTH_PAGE_BASE}/login?next=${encodeURIComponent(`/${roomName}`)}`;
         }
 
         // const authDialog = LoginDialog.showAuthDialog(
