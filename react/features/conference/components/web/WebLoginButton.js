@@ -14,18 +14,22 @@ const signDeepLink = () => {
 
     currentUrl.search = '';
 
-    return createDeepLinkUrl({
+    const forward = createDeepLinkUrl({
         type: 'address',
         'x-success': `${currentUrl.toString()}?address={address}`
     });
+
+    window.location = forward;
 };
 
 const Button = () => (
-    <a
-        className = 'invite-more-button'
-        href = { signDeepLink() } >
+    <div
+        className = 'invite-more-button invite-more-deeplink'
+        onClick = { signDeepLink } >
+        <div className = 'invite-more-button-text'>
             Login with web wallet
-    </a>
+        </div>
+    </div>
 );
 
 export default Button;
