@@ -981,7 +981,7 @@ class Toolbox extends Component<Props, State> {
                     key = 'fullscreen'
                     onClick = { this._onToolbarToggleFullScreen }
                     text = { _fullScreen ? t('toolbar.exitFullScreen') : t('toolbar.enterFullScreen') } />,
-            this._isModerator() && <LiveStreamButton
+            this.props._isModerator && <LiveStreamButton
                 key = 'livestreaming'
                 showLabel = { true } />,
             <RecordButton
