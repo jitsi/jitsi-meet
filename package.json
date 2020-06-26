@@ -45,6 +45,7 @@
     "amplitude-js": "4.5.2",
     "axios": "^0.19.2",
     "bc-css-flags": "3.0.0",
+    "dotenv": "^8.2.0",
     "dropbox": "4.0.9",
     "i18n-iso-countries": "3.7.8",
     "i18next": "17.0.6",

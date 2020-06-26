@@ -1,6 +1,9 @@
 /* global __dirname */
 
 const process = require('process');
+const webpack = require('webpack');
+const dotenv = require('dotenv');
+
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 
 /**
@@ -15,6 +18,15 @@ const analyzeBundle = process.argv.indexOf('--analyze-bundle') !== -1;
 const minimize
     = process.argv.indexOf('-p') !== -1
         || process.argv.indexOf('--optimize-minimize') !== -1;
+
+const env = dotenv.config().parsed;
+
+// reduce it to a nice object, the same as before
+const envKeys = Object.keys(env).reduce((prev, next) => {
+    prev[`process.env.${next}`] = JSON.stringify(env[next]);
+
+    return prev;
+}, {});
 
 /**
  * Build a Performance configuration object for the given size.
@@ -155,7 +167,8 @@ const config = {
             && new BundleAnalyzerPlugin({
                 analyzerMode: 'disabled',
                 generateStatsFile: true
-            })
+            }),
+        new webpack.DefinePlugin(envKeys)
     ].filter(Boolean),
     resolve: {
         alias: {
