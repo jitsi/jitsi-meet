@@ -100,9 +100,11 @@ function _setConfigOrLocationURL({ dispatch, getState }, next, action) {
     const result = next(action);
 
     const { locationURL } = getState()['features/base/connection'];
+    const jwt = parseJWTFromURLParams(locationURL);
 
-    dispatch(
-        setJWT(locationURL ? parseJWTFromURLParams(locationURL) : undefined));
+    if (jwt) {
+        dispatch(setJWT(jwt));
+    }
 
     return result;
 }
