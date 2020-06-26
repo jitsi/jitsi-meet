@@ -6,6 +6,7 @@ all.css
 *css.map
 .remote-sync.json
 .sync-config.cson
+.env
 
 # CocoaPods
 Pods/
