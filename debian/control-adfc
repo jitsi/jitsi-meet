@@ -1,0 +1,18 @@
+Source: jitsi-meet-web
+Section: net
+Priority: extra
+Maintainer: ADFC Jitsi Team <jitsi-technik@adfc-nrw.de>
+Build-Depends: debhelper (>= 8.0.0)
+Standards-Version: 3.9.6
+Homepage: https://portal.adfc-intern.de/
+
+Package: jitsi-meet-web
+Replaces: jitsi-meet (<= 1.0.1525-1)
+Architecture: all
+Depends: ${misc:Depends}
+Description: WebRTC JavaScript video conferences
+ Jitsi Meet is a WebRTC JavaScript application that uses Jitsi
+ Videobridge to provide high quality, scalable video conferences.
+ .
+ It is a web interface to Jitsi Videobridge for audio and video
+ forwarding and relaying.
