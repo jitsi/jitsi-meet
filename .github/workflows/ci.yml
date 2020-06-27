@@ -1,0 +1,38 @@
+name: ADFC Build Debian Package
+
+on: [push]
+
+jobs:
+  run-ci:
+    name: Build Frontend package
+    runs-on: ubuntu-latest
+    steps:
+    - name: Apt update
+      run: "sudo apt update"
+    - name: Apt install debhelper and devscripts
+      run: "sudo apt install debhelper devscripts"
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: Setup Nodejs
+      uses: actions/setup-node@v1
+      with:
+        node-version: '12.x'
+    - name: npm install
+      run: npm install
+    - name: Run Make
+      run: make
+    - name: Run dch
+      run: |
+        cp debian/control-adfc debian/control
+        dch  --newversion $( cat version.txt) -m "Automatic relase ${{ github.sha }}"
+        dch -r ''
+      env:
+        DEBEMAIL: "jitsi-technik@adfc-nrw.de"
+        DEBFULLNAME: "ADFC Jitsi Team"
+    - name: dpkg-buildpackage
+      run: "dpkg-buildpackage --no-sign --build=binary -rfakeroot"
+    - name: Upload Debian Package
+      uses: actions/upload-artifact@v2
+      with:
+        name: Debian Package
+        path: /home/runner/work/jitsi-meet/jitsi-meet-web*
