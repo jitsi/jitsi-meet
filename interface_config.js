@@ -114,7 +114,7 @@ var interfaceConfig = {
     LOCAL_THUMBNAIL_RATIO: 16 / 9, // 16:9
 
     /**
-     * Maximum coeficient of the ratio of the large video to the visible area
+     * Maximum coefficient of the ratio of the large video to the visible area
      * after the large video is scaled to fit the window.
      *
      * @type {number}
