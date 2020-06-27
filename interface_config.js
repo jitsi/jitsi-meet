@@ -153,9 +153,11 @@ var interfaceConfig = {
     SHOW_BRAND_WATERMARK: false,
 
     /**
-    * Decides whether the chrome extension banner should be rendered on the landing page and during the meeting.
-    * If this is set to false, the banner will not be rendered at all. If set to true, the check for extension(s)
-    * being already installed is done before rendering.
+    * Decides whether the banner for the Jitsi Meetings Chrome extension
+    * (https://chrome.google.com/webstore/detail/jitsi-meetings/kglhbbefdnlheedjiejgomgmfplipfeb)
+    * should be rendered on the landing page and during the meeting. If set to false,
+    * the banner will not be rendered at all. If set to true, the check for
+    * extension(s) being already installed is done before rendering.
     */
     SHOW_CHROME_EXTENSION_BANNER: false,
 
@@ -199,10 +201,12 @@ var interfaceConfig = {
      */
     VERTICAL_FILMSTRIP: true,
 
-    // Determines how the video would fit the screen. 'both' would fit the whole
-    // screen, 'height' would fit the original video height to the height of the
-    // screen, 'width' would fit the original video width to the width of the
-    // screen respecting ratio.
+    /**
+     * Determines how the video would fit the screen. 'both' would fit the whole
+     * screen, 'height' would fit the original video height to the height of the
+     * screen, and 'width' would fit the original video width to the width of the
+     * screen respecting ratio.
+     */
     VIDEO_LAYOUT_FIT: 'both',
 
     /**
