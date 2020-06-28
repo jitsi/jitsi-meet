@@ -8,39 +8,33 @@
 
     .circular-label {
         align-items: center;
+        background: $toolBarDesktopBackground;
         color: $subjectTextColor;
         display: flex;
         font-weight: bold;
         justify-content: center;
         margin-left: 8px;
         opacity: 0.8;
-    }
 
-    .circular-label {
-        background: $toolBarDesktopBackground;
-    }
+        &.e2ee {
+            align-items: center;
+            background: #76CF9C;
+            display: flex;
+            justify-content: center;
+        }
 
-    .circular-label.e2ee {
-        align-items: center;
-        background: #76CF9C;
-        display: flex;
-        justify-content: center;
-    }
+        &.file,
+        &.local-rec {
+            background: #FF5630;
+        }
 
-    .circular-label.file {
-        background: #FF5630;
-    }
+        &.stream {
+            background: #0065FF;
+        }
 
-    .circular-label.local-rec {
-        background: #FF5630;
-    }
-
-    .circular-label.stream {
-        background: #0065FF;
-    }
-
-    .circular-label.insecure {
-        background: $defaultWarningColor;
+        &.insecure {
+            background: $defaultWarningColor;
+        }
     }
 
     .recording-label.center-message {
