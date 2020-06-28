@@ -2,7 +2,7 @@
 
 import React, { PureComponent } from 'react';
 
-import { AudioSettingsButton, VideoSettingsButton } from '../../../../toolbox';
+import { AudioSettingsButton, VideoSettingsButton, HangupButton } from '../../../../toolbox';
 
 import CopyMeetingUrl from './CopyMeetingUrl';
 import Preview from './Preview';
@@ -63,6 +63,7 @@ export default class PreMeetingScreen extends PureComponent<Props> {
                     { this.props.children }
                     <div className = 'media-btn-container'>
                         <AudioSettingsButton visible = { true } />
+		        <HangupButton visible = { true } />
                         <VideoSettingsButton visible = { true } />
                     </div>
                     { this.props.footer }
