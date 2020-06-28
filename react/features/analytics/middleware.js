@@ -6,10 +6,8 @@ import {
     SET_ROOM
 } from '../base/conference';
 import { SET_CONFIG } from '../base/config';
-import { LIB_WILL_INIT } from '../base/lib-jitsi-meet';
 import { SET_NETWORK_INFO } from '../base/net-info';
 import { MiddlewareRegistry } from '../base/redux';
-import logger from '../base/redux/logger';
 import {
     getLocalAudioTrack,
     getLocalVideoTrack,
@@ -19,9 +17,8 @@ import {
 } from '../base/tracks';
 
 import { createLocalTracksDurationEvent, createNetworkInfoEvent } from './AnalyticsEvents';
-import RTCStats from './RTCStats';
 import { UPDATE_LOCAL_TRACKS_DURATION } from './actionTypes';
-import { createHandlers, initAnalytics, getAmplitudeIdentity, resetAnalytics, sendAnalytics } from './functions';
+import { createHandlers, initAnalytics, resetAnalytics, sendAnalytics } from './functions';
 
 /**
  * Calculates the duration of the local tracks.
@@ -83,31 +80,6 @@ function calculateLocalTrackDuration(state) {
  */
 MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
-    case LIB_WILL_INIT: {
-        const { getState } = store;
-        const state = getState();
-        const { analytics } = state['features/base/config'];
-
-        if (analytics.rtcstatsEnabled) {
-            // RTCStats "proxies" WebRTC functions such as GUM and RTCPeerConnection by rewriting the global
-            // window functions. Because lib-jitsi-meet uses references to those functions that are taken on
-            // init, we need to add these proxies before it initializes, otherwise lib-jitsi-meet will use the
-            // original non proxy versions of these functions.
-            try {
-                // Initialize but don't connect to the rtcstats server wss, as it will start sending data for all
-                // media calls made even before the conference started.
-                RTCStats.init({
-                    rtcstatsEndpoint: analytics.rtcstatsEndpoint,
-                    rtcstatsPollInterval: analytics.rtcstatsPollInterval
-                });
-            } catch (error) {
-                logger.error('Failed to initialize RTCStats: ', error);
-            }
-        }
-
-
-        break;
-    }
     case SET_CONFIG:
         if (navigator.product === 'ReactNative') {
             // Reseting the analytics is currently not needed for web because
@@ -137,26 +109,6 @@ MiddlewareRegistry.register(store => next => action => {
     case CONFERENCE_JOINED: {
         const { dispatch, getState } = store;
         const state = getState();
-        const config = state['features/base/config'];
-        const { analytics } = config;
-
-        if (analytics.rtcstatsEnabled) {
-            // Once the conference started connect to the rtcstats server and send data.
-            try {
-                RTCStats.connect();
-
-                // The current implementation of rtcstats-server is configured to send data to amplitude, thus
-                // we add identity specific information so we can corelate on the amplitude side. If amplitude is
-                // not configured an empty object will be sent.
-                RTCStats.sendIdentityData({
-                    ...getAmplitudeIdentity(),
-                    ...config
-                });
-            } catch (error) {
-                // If the connection failed do not impact jitsi-meet just silently fail.
-                logger.error('RTCStats connect failed with: ', error);
-            }
-        }
 
         dispatch({
             type: UPDATE_LOCAL_TRACKS_DURATION,

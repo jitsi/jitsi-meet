@@ -7,6 +7,7 @@ import { toURLString } from '../../base/util';
 import { OverlayContainer } from '../../overlay';
 import { appNavigate } from '../actions';
 import { getDefaultURL } from '../functions';
+import '../../rtcstats'; // Enable rtcstats
 
 /**
  * The type of React {@code Component} props of {@link AbstractApp}.

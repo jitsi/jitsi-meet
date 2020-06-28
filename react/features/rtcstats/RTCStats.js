@@ -2,6 +2,22 @@ import rtcstatsInit from 'rtcstats/rtcstats';
 import traceInit from 'rtcstats/trace-ws';
 
 /**
+ * Filter out RTCPeerConnection that are created by callstats.io.
+ *
+ * @param {*} config - Config object sent to the PC c'tor.
+ * @returns {boolean}
+ */
+function connectionFilter(config) {
+    if (config && config.iceServers[0] && config.iceServers[0].urls) {
+        for (const iceUrl of config.iceServers[0].urls) {
+            if (iceUrl.indexOf('taas.callstats.io') >= 0) {
+                return true;
+            }
+        }
+    }
+}
+
+/**
  * Class that controls the rtcstats flow, because it overwrites and proxies global function it should only be
  * initialized once.
  */
@@ -20,7 +36,7 @@ class RTCStats {
      */
     init(options) {
         this.trace = traceInit(options.rtcstatsEndpoint);
-        rtcstatsInit(this.trace, options.rtcstatsPollInterval, [ '', 'webkit', 'moz' ]);
+        rtcstatsInit(this.trace, options.rtcstatsPollInterval, [ '', 'webkit', 'moz' ], connectionFilter);
     }
 
     /**

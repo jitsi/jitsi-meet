@@ -407,7 +407,7 @@ var config = {
         // amplitudeAPPKey: '<APP_KEY>'
 
         // Configuration for the rtcstats server:
-        // rtcstatsEnabled: true,
+        // In order to enable rtcstats one needs to provide a endpoint url.
         // rtcstatsEndpoint: wss://rtcstats-server-pilot.jitsi.net/,
         // By not providing a poll interval rtcstats won't send any getstats data.
         // rtcstatsPolIInterval: 1000
