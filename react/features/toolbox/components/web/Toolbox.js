@@ -27,8 +27,7 @@ import {
     getLocalParticipant,
     getParticipants,
     participantUpdated,
-    getParticipantById,
-    PARTICIPANT_ROLE
+    isLocalParticipantModerator
 } from '../../../base/participants';
 import { connect, equals } from '../../../base/redux';
 import { OverflowMenuItem } from '../../../base/toolbox';
@@ -45,6 +44,7 @@ import {
     LocalRecordingInfoDialog
 } from '../../../local-recording';
 import {
+    LiveStreamButton,
     RecordButton
 } from '../../../recording';
 import { SecurityDialogButton } from '../../../security';
@@ -188,7 +188,12 @@ type Props = {
     /**
      * Invoked to obtain translated strings.
      */
-    t: Function
+    t: Function,
+
+    /**
+     * Flag showing whether local participant is moderator.
+     */
+    _isModerator: boolean
 };
 
 /**
@@ -248,7 +253,6 @@ class Toolbox extends Component<Props, State> {
         this._onToolbarToggleSharedVideo = this._onToolbarToggleSharedVideo.bind(this);
         this._onToolbarOpenLocalRecordingInfoDialog = this._onToolbarOpenLocalRecordingInfoDialog.bind(this);
         this._onShortcutToggleTileView = this._onShortcutToggleTileView.bind(this);
-        this._isModerator = this._isModerator.bind(this);
 
         this.state = {
             windowWidth: window.innerWidth
@@ -468,7 +472,7 @@ class Toolbox extends Component<Props, State> {
      * @returns {void}
      */
     _doToggleScreenshare() {
-        if (this.props._desktopSharingEnabled && this._isModerator()) {
+        if (this.props._desktopSharingEnabled && this.props._isModerator) {
             this.props.dispatch(toggleScreensharing());
         }
     }
@@ -944,19 +948,6 @@ class Toolbox extends Component<Props, State> {
         return this.props._isGuest && this._shouldShowButton('profile');
     }
 
-    _isModerator: () => boolean;
-
-    /**
-     * Returns true if user is the moderator.
-     *
-     * @returns {boolean}
-     */
-    _isModerator() {
-        const localParticipant = getParticipantById(APP.store.getState(), this.props._localParticipantID);
-
-        return localParticipant?.role === PARTICIPANT_ROLE.MODERATOR;
-    }
-
     /**
      * Renders the list elements of the overflow menu.
      *
@@ -969,7 +960,8 @@ class Toolbox extends Component<Props, State> {
             _fullScreen,
             _screensharing,
             _sharingVideo,
-            t
+            t,
+            _isModerator
         } = this.props;
 
 
@@ -989,10 +981,13 @@ class Toolbox extends Component<Props, State> {
                     key = 'fullscreen'
                     onClick = { this._onToolbarToggleFullScreen }
                     text = { _fullScreen ? t('toolbar.exitFullScreen') : t('toolbar.enterFullScreen') } />,
+            _isModerator && <LiveStreamButton
+                key = 'livestreaming'
+                showLabel = { true } />,
             <RecordButton
                 key = 'record'
                 showLabel = { true } />,
-            this._isModerator() && this._shouldShowButton('sharedvideo')
+            _isModerator && this._shouldShowButton('sharedvideo')
                 && <OverflowMenuItem
                     accessibilityLabel = { t('toolbar.accessibilityLabel.sharedvideo') }
                     icon = { IconShareVideo }
@@ -1170,7 +1165,8 @@ class Toolbox extends Component<Props, State> {
             _chatOpen,
             _overflowMenuVisible,
             _raisedHand,
-            t
+            t,
+            _isModerator
         } = this.props;
         const overflowMenuContent = this._renderOverflowMenuContent();
         const overflowHasItems = Boolean(overflowMenuContent.filter(child => child).length);
@@ -1253,7 +1249,7 @@ class Toolbox extends Component<Props, State> {
         return (
             <div className = 'toolbox-content'>
                 <div className = 'button-group-left'>
-                    { this._isModerator() && buttonsLeft.indexOf('desktop') !== -1
+                    { _isModerator && buttonsLeft.indexOf('desktop') !== -1
                         && this._renderDesktopSharingButton() }
                     { buttonsLeft.indexOf('raisehand') !== -1
                         && <ToolbarButton
@@ -1397,7 +1393,8 @@ function _mapStateToProps(state) {
             || sharedVideoStatus === 'start'
             || sharedVideoStatus === 'pause',
         _visible: isToolboxVisible(state),
-        _visibleButtons: equals(visibleButtons, buttons) ? visibleButtons : buttons
+        _visibleButtons: equals(visibleButtons, buttons) ? visibleButtons : buttons,
+        _isModerator: isLocalParticipantModerator(state)
     };
 }
 
