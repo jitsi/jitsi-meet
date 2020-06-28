@@ -4,7 +4,7 @@
     "bg": "Bulgar",
     "ca": "Catalan",
     "cs": "Chèc",
-    "de": "Alemand",
+    "de": "Aleman",
     "el": "Grèc",
     "enGB": "Anglés (Reialme Unit)",
     "eo": "Esperanto",
@@ -39,7 +39,10 @@
     "id": "Indonesian",
     "he": "Ebrèu",
     "eu": "Basc",
+    "mr": "Marathi",
     "sl": "Eslovèn",
-    "ro": "Romanés",
-    "ar": "Arab"
+    "ro": "RomanianName",
+    "ar": "Arabi"
 }
+
+
