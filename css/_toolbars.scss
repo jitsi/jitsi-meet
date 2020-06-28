@@ -42,27 +42,19 @@
         display: none;
     }
 
-    .toolbox-background {
-        background-image: linear-gradient(to top, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0));
-        transition: bottom .3s ease-in;
-        height: 160px;
-        width: 100%;
-        bottom: -160px;
-        pointer-events: none;
-        position: absolute;
-        z-index: $toolbarBackgroundZ;
-    }
-
     .toolbox-content {
         box-sizing: border-box;
         display: flex;
         justify-content: space-between;
+        align-items: center;
         margin-left: auto;
         margin-right: auto;
         padding: 20px 16px;
         position: relative;
         width: 100%;
+        height: 70px;
         z-index: $toolbarZ;
+        background: $toolBarDesktopBackground;
 
         .button-group-center,
         .button-group-left,
@@ -79,53 +71,42 @@
                 .toolbox-icon {
                     background-color: #fff;
                     border-radius: 50%;
-                    border: 1px solid #d1dbe8;
+                    border: 2px solid $toolBoxIconBorderColor;
                     margin: 0px 4px;
-                    width: 38px;
-                    height: 38px;
-        
-                    &:hover {
-                        background-color: #daebfa;
-                        border: 1px solid #daebfa;
-                    }
-        
+                    width: 40px;
+                    height: 40px;
+
                     &.toggled {
-                        background: #2a3a4b;
-                        border: 1px solid #5e6d7a;
-    
+                        background: $toolBoxIconToggled;
+                        border: 2px solid $toolBoxIconToggled;
+
                         svg {
                             fill: #fff;
                         }
-        
-                        &:hover {
-                            background-color: #5e6d7a;
-                        }
                     }
-        
+
                     &.disabled, .disabled & {
                         cursor: initial;
                         color: #fff;
                         background-color: #a4b8d1;
                     }
-    
+
                     svg {
-                        fill: #5e6d7a;
+                        fill: $toolBarDesktopBackground;
                     }
                 }
 
                 &:nth-child(2) {
+                    order: 3;
+
                     .toolbox-icon {
                         background-color: $hangupColor;
-                        border: 1px solid $hangupColor;
+                        border: 2px solid $hangupColor;
                         width: 40px;
                         height: 40px;
-                
-                        &:hover {
-                            background-color: $hangupColor;
-                        }
 
                         svg {
-                            fill: #fff;
+                            fill: $cellPhoneColor;
                         }
                     }
                 }
@@ -257,7 +238,7 @@
             &:hover, &.toggled {
                 background: $newToolbarButtonHoverColor;
             }
-    
+
             &.disabled {
                 cursor: initial !important;
                 background-color: #a4b8d1 !important;

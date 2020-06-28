@@ -4,7 +4,7 @@
  * Style variables
  */
 $baseFontFamily: -apple-system, BlinkMacSystemFont, 'open_sanslight', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-$hangupColor: #bf2117;
+$hangupColor: #2A2B35;
 $hangupFontSize: 2em;
 
 /**
@@ -35,6 +35,14 @@ $presence-busy: rgb(233, 0, 27);
 $presence-idle: rgb(172, 172, 172);
 
 /**
+ * Subject
+ */
+$participantsCountColor: #fff;
+$participantsCountBackground: #21222C;
+$subjectTextColor: #727278;
+
+
+/**
  * Toolbar
  */
 $newToolbarBackgroundColor: rgba(22, 38, 55, 0.8);
@@ -51,12 +59,16 @@ $overflowMenuBG: initial;
 $overflowMenuItemHoverBG: #313D52;
 $overflowMenuItemHoverColor: #B8C7E0;
 $overflowMenuItemColor: #B8C7E0;
+$toolBarDesktopBackground: #21222C;
+$toolBoxIconBorderColor: #BABAC0;
+$toolBoxIconToggled: #2A2B35;
+$cellPhoneColor: #FF4952;
 
 /**
  * Video layout
  */
 $videoThumbnailHovered: rgba(22, 94, 204, .4);
-$videoThumbnailSelected: #165ECC;
+$videoThumbnailSelected: #67F7B8;
 $participantNameColor: #fff;
 $thumbnailPictogramColor: #fff;
 $dominantSpeakerBg: #165ecc;

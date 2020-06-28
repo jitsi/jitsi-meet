@@ -1,9 +1,12 @@
 .participants-count {
-    background: #fff;
+    background: $participantsCountBackground;
     border-radius: 4px;
-    color: #5e6d7a;
+    color: $participantsCountColor;
     cursor: pointer;
-    display: inline-block;
+    display: flex;
+    justify-content: center;
+    width: 52px;
+    margin-top: 10px;
     font-size: 13px;
     line-height: 20px;
     margin-left: 16px;
@@ -11,7 +14,7 @@
     pointer-events: auto;
 
     &-number {
-        margin-right: 8px;
+        margin-left: 5px;
         vertical-align: middle;
     }
 
@@ -19,8 +22,10 @@
         background: url('../images/user-groups.svg');
         background-repeat: no-repeat;
         display: inline-block;
+        align-self: center;
         height: 16px;
         width: 16px;
         vertical-align: middle;
+        order: -1;
     }
 }

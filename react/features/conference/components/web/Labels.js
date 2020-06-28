@@ -23,7 +23,12 @@ type State = {
      *
      * @type {boolean}
      */
-    filmstripBecomingVisible: boolean
+    filmstripBecomingVisible: boolean,
+
+    /**
+     * The width of the browser's window.
+     */
+    windowWidth: number
 };
 
 /**
@@ -56,7 +61,8 @@ class Labels extends AbstractLabels<Props, State> {
         super(props);
 
         this.state = {
-            filmstripBecomingVisible: false
+            filmstripBecomingVisible: false,
+            windowWidth: window.innerWidth
         };
     }
 
@@ -68,9 +74,10 @@ class Labels extends AbstractLabels<Props, State> {
      */
     render() {
         const { _filmstripVisible } = this.props;
-        const { filmstripBecomingVisible } = this.state;
+        const { filmstripBecomingVisible, windowWidth } = this.state;
         const { VIDEO_QUALITY_LABEL_DISABLED } = interfaceConfig;
-        const className = `large-video-labels ${
+        const largeVideo = windowWidth > 620 ? 'large-video-labels' : 'large-video-labels-small';
+        const className = `${largeVideo} ${
             filmstripBecomingVisible ? 'opening' : ''} ${
             _filmstripVisible ? 'with-filmstrip' : 'without-filmstrip'}`;
 

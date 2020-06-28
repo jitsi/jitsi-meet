@@ -66,7 +66,12 @@ type State = {
     /**
      * Whether or not the show the "powered by Jitsi.org" link.
      */
-    showPoweredBy: boolean
+    showPoweredBy: boolean,
+
+    /**
+     * The width of the browser's window.
+     */
+    windowWidth: number
 };
 
 /**
@@ -95,7 +100,7 @@ class Watermarks extends Component<Props, State> {
             showBrandWatermark = interfaceConfig.SHOW_BRAND_WATERMARK;
             showJitsiWatermark = interfaceConfig.SHOW_JITSI_WATERMARK;
             showJitsiWatermarkForGuests
-                = interfaceConfig.SHOW_WATERMARK_FOR_GUESTS;
+                    = interfaceConfig.SHOW_WATERMARK_FOR_GUESTS;
         }
 
         this.state = {
@@ -107,7 +112,8 @@ class Watermarks extends Component<Props, State> {
             showBrandWatermark,
             showJitsiWatermark,
             showJitsiWatermarkForGuests,
-            showPoweredBy: interfaceConfig.SHOW_POWERED_BY
+            showPoweredBy: interfaceConfig.SHOW_POWERED_BY,
+            windowWidth: window.innerWidth
         };
     }
 
@@ -173,10 +179,10 @@ class Watermarks extends Component<Props, State> {
      */
     _renderJitsiWatermark() {
         let reactElement = null;
+        const hasGuestWatermark = this.props._isGuest && this.state.showJitsiWatermarkForGuests;
+        const hasWatermark = this.state.showJitsiWatermark || hasGuestWatermark;
 
-        if (this.state.showJitsiWatermark
-                || (this.props._isGuest
-                    && this.state.showJitsiWatermarkForGuests)) {
+        if (this.state.windowWidth > 620 && hasWatermark) {
             reactElement = <div className = 'watermark leftwatermark' />;
 
             const { jitsiWatermarkLink } = this.state;
