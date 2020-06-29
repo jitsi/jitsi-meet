@@ -27,6 +27,11 @@ import MuteEveryoneElseButton from './MuteEveryoneElseButton';
 
 import { jitsiLocalStorage } from 'js-utils';
 
+import { requireNativeComponent } from 'react-native';
+
+const RecordNativeComponent = requireNativeComponent('RecordComponent');
+
+
 /**
  * The type of the React {@code Component} props of {@link OverflowMenu}.
  */
@@ -157,7 +162,8 @@ class OverflowMenu extends PureComponent<Props, State> {
                 {this._renderModeratorButtons(buttonProps)}          
                     <ToggleCameraButton { ...buttonProps } />
                     <TileViewButton { ...buttonProps } />
-                    <RecordButton { ...buttonProps } />
+                    <RecordNativeComponent style={{width: 50, height: 50}} ref={comp => {this.recordComponent = comp; console.log(this.recordComponent)}} />
+                    {/* <RecordButton { ...buttonProps } /> */}
                     <LiveStreamButton { ...buttonProps } />
                     <RoomLockButton { ...buttonProps } />
                     <ClosedCaptionButton { ...buttonProps } />

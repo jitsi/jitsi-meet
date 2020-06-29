@@ -5,6 +5,7 @@ PODS:
     - AppAuth/ExternalUserAgent (= 1.2.0)
   - AppAuth/Core (1.2.0)
   - AppAuth/ExternalUserAgent (1.2.0)
+  - BlueSocket (1.0.52)
   - boost-for-react-native (1.63.0)
   - BVLinearGradient (2.5.6):
     - React
@@ -115,6 +116,7 @@ PODS:
   - GTMSessionFetcher/Core (1.2.2)
   - GTMSessionFetcher/Full (1.2.2):
     - GTMSessionFetcher/Core (= 1.2.2)
+  - JitsiMeetSDK (2.9.0)
   - nanopb (0.3.9011):
     - nanopb/decode (= 0.3.9011)
     - nanopb/encode (= 0.3.9011)
@@ -371,6 +373,7 @@ PODS:
 
 DEPENDENCIES:
   - Amplitude-iOS (~> 4.0.4)
+  - BlueSocket
   - BVLinearGradient (from `../node_modules/react-native-linear-gradient`)
   - CocoaLumberjack (~> 3.5.3)
   - Crashlytics (~> 3.14.0)
@@ -382,6 +385,7 @@ DEPENDENCIES:
   - Firebase/DynamicLinks (~> 6.16.0)
   - Folly (from `../node_modules/react-native/third-party-podspecs/Folly.podspec`)
   - glog (from `../node_modules/react-native/third-party-podspecs/glog.podspec`)
+  - JitsiMeetSDK
   - ObjectiveDropboxOfficial (~> 3.9.4)
   - RCTRequired (from `../node_modules/react-native/Libraries/RCTRequired/`)
   - RCTTypeSafety (from `../node_modules/react-native/Libraries/TypeSafety/`)
@@ -422,6 +426,7 @@ SPEC REPOS:
   trunk:
     - Amplitude-iOS
     - AppAuth
+    - BlueSocket
     - boost-for-react-native
     - CocoaLumberjack
     - Crashlytics
@@ -442,6 +447,7 @@ SPEC REPOS:
     - GoogleUtilities
     - GTMAppAuth
     - GTMSessionFetcher
+    - JitsiMeetSDK
     - nanopb
     - ObjectiveDropboxOfficial
     - PromisesObjC
@@ -527,6 +533,7 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   Amplitude-iOS: 2ad4d7270c99186236c1272a3a9425463b1ae1a7
   AppAuth: bce82c76043657c99d91e7882e8a9e1a93650cd4
+  BlueSocket: 1acd943acb07b55905291d608649fcfbf8cbd57d
   boost-for-react-native: 39c7adb57c4e60d6c5479dd8623128eb5b3f0f2c
   BVLinearGradient: e3aad03778a456d77928f594a649e96995f1c872
   CocoaLumberjack: 2f44e60eb91c176d471fdba43b9e3eae6a721947
@@ -553,6 +560,7 @@ SPEC CHECKSUMS:
   GoogleUtilities: ad0f3b691c67909d03a3327cc205222ab8f42e0e
   GTMAppAuth: 4deac854479704f348309e7b66189e604cf5e01e
   GTMSessionFetcher: 61bb0f61a4cb560030f1222021178008a5727a23
+  JitsiMeetSDK: e108ea68ed0ea9a59c4c90b057c5840db10ff069
   nanopb: 18003b5e52dab79db540fe93fe9579f399bd1ccd
   ObjectiveDropboxOfficial: a5afefc83f6467c42c45f2253f583f2ad1ffc701
   PromisesObjC: c119f3cd559f50b7ae681fa59dc1acd19173b7e6
@@ -589,6 +597,6 @@ SPEC CHECKSUMS:
   RNWatch: 09738b339eceb66e4d80a2371633ca5fb380fa42
   Yoga: 7b4209fda2441f99d54dd6cf4c82b094409bb68f
 
-PODFILE CHECKSUM: 082858daebbe170e7a490de433e7f2a99e0c3701
+PODFILE CHECKSUM: d89173f05e6ccb1c5b5eee7c1f8ab93ac38b5034
 
-COCOAPODS: 1.9.1
+COCOAPODS: 1.8.4

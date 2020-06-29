@@ -34,7 +34,8 @@
 
     JitsiMeetView *view = (JitsiMeetView *) self.view;
     view.delegate = self;
-
+    NSLog(@"----------------------");
+    NSLog(@"%@", [[JitsiMeet sharedInstance] getInitialConferenceOptions]);
     [view join:[[JitsiMeet sharedInstance] getInitialConferenceOptions]];
 }
 
