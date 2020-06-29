@@ -45,7 +45,14 @@ if lobby_muc_component_config == nil then
     return ;
 end
 
-local whitelist = module:get_option_set("muc_lobby_whitelist", {});
+local whitelist;
+local check_display_name_required;
+local function load_config()
+    whitelist = module:get_option_set("muc_lobby_whitelist", {});
+    check_display_name_required
+        = module:get_option_boolean("muc_lobby_check_display_name_required", true);
+end
+load_config();
 
 local lobby_muc_service;
 local main_muc_service;
@@ -137,7 +144,10 @@ function process_lobby_muc_loaded(lobby_muc, host_module)
 
     host_module:hook("host-disco-info-node", function (event)
         local session, reply, node = event.origin, event.reply, event.node;
-        if node == LOBBY_IDENTITY_TYPE and session.jitsi_web_query_room and main_muc_service then
+        if node == LOBBY_IDENTITY_TYPE
+            and session.jitsi_web_query_room
+            and main_muc_service
+            and check_display_name_required then
             local room = main_muc_service.get_room_from_jid(
                 jid_bare(session.jitsi_web_query_room .. '@' .. main_muc_component_config));
             if room and room._data.lobbyroom then
@@ -297,3 +307,4 @@ end
 
 module:hook_global("bosh-session", update_session);
 module:hook_global("websocket-session", update_session);
+module:hook_global('config-reloaded', load_config);
