@@ -111,6 +111,22 @@ body.welcome-page {
 
         }
 
+        #moderated-meetings {
+            max-width: calc(100% - 40px);
+            padding: 16px 0 39px 0;
+            width: $welcomePageEnterRoomWidth;
+
+            p {
+                color: $welcomePageDescriptionColor;
+                text-align: left;
+
+                a {
+                    color: inherit;
+                    font-weight: 600;
+                }
+            }
+        }
+
         .tab-container {
             font-size: 16px;
             position: relative;

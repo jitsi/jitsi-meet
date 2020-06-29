@@ -518,6 +518,11 @@ var config = {
     */
     // brandingDataUrl: '',
 
+    // The URL of the moderated rooms microservice, if available. If it
+    // is present, a link to the service will be rendered on the welcome page,
+    // otherwise the app doesn't render it.
+    // moderatedRoomServiceUrl: 'https://moderated.jitsi-meet.example.com',
+
     // List of undocumented settings used in jitsi-meet
     /**
      _immediateReloadThreshold
