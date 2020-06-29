@@ -93,7 +93,8 @@ for event_name, method in pairs {
             return;
         end
 
-        if not session.auth_token then
+        -- jitsi_meet_room is set after the token had been verified
+        if not session.auth_token or not session.jitsi_meet_room then
             session.send(
                 st.error_reply(
                     stanza, "cancel", "not-allowed", "Room modification disabled for guests"));
