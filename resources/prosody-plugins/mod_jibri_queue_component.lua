@@ -61,6 +61,9 @@ if queueServiceURL == nil then
     return;
 end
 
+-- option to enable/disable token verifications
+local disableTokenVerification
+    = module:get_option_boolean("disable_jibri_queue_token_verification", false);
 
 local http_headers = {
     ["User-Agent"] = "Prosody ("..prosody.version.."; "..prosody.platform..")",
@@ -261,7 +264,7 @@ module:log("info", "Loading jibri_queue_component");
 -- @param group name of the group (optional)
 -- @param session the session to use for storing token specific fields
 -- @return true if values are ok or false otherwise
-function verify_token(token, room_name, group, session)
+function verify_token(token, room_name, session)
     if disableTokenVerification then
         return true;
     end
@@ -301,49 +304,33 @@ end
 --- Handles request for updating jibri queue status
 -- @param event the http event, holds the request query
 -- @return GET response, containing a json with response details
-function handle_update_jibri_queue (event)
+function handle_update_jibri_queue(event)
     if (not event.request.url.query) then
         return { status_code = 400; };
     end
 
     local params = parse(event.request.url.query);
-    local user_id = params["user"];
-    local room_name = params["room"];
-    local group = params["group"];
-    local status = params["status"];
-    local call_id = params["callid"];
+    local user_jid = params["user"];
+    local roomAddress = params["room"];
 
-    local call_cancel = false
-    if params["callcancel"] == "true" then
-       call_cancel = true;
-    end
-
-    if not verify_token(params["token"], room_name, group, {}) then
+    if not verify_token(params["token"], roomAddress, {}) then
         return { status_code = 403; };
     end
 
-    local room = get_room(room_name, group);
+    local room = get_room_from_jid(room_jid_match_rewrite(roomAddress));
     if (not room) then
-        log("error", "no room found %s", room_name);
+        log("error", "no room found %s", roomAddress);
         return { status_code = 404; };
     end
 
-    local username = poltergeist.get_username(room, user_id);
-    if (not username) then
+    local occupant = room:get_occupant_by_real_jid(user_jid);
+    if not occupant then
+        log("warn", "No occupant %s found for %s", user_jid, roomAddress);
         return { status_code = 404; };
     end
 
-    local call_details = {
-        ["cancel"] = call_cancel;
-        ["id"] = call_id;
-    };
+    -- TODO: actually implement udpate code here
 
-    local nick = poltergeist.create_nick(username);
-    if (not poltergeist.occupies(room, nick)) then
-       return { status_code = 404; };
-    end
-
-    poltergeist.update(room, nick, status, call_details);
     return { status_code = 200; };
 end
 
