@@ -72,3 +72,24 @@ export function getSessionStatusToShow(state: Object, mode: string): ?string {
 
     return status;
 }
+
+export const startLiveStream = (state, streamKey = '') => {
+    const key =  (streamKey || '').trim();
+    const isLiveStreamRunning =  Boolean(
+        getActiveSession(state, JitsiRecordingConstants.mode.STREAM));
+    const conference = state['features/base/conference'].conference
+
+    if(!key &&
+        isLiveStreamRunning &&
+        conference
+    ) return false;
+
+
+    conference.startRecording({
+        broadcastId: undefined,
+        mode: JitsiRecordingConstants.mode.STREAM,
+        streamId: key
+    });
+
+    return true;
+}

@@ -6,7 +6,11 @@ import {
     sendAnalytics
 } from '../analytics';
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../base/app';
-import { CONFERENCE_WILL_JOIN, getCurrentConference } from '../base/conference';
+import {
+    CONFERENCE_JOINED,
+    CONFERENCE_WILL_JOIN,
+    getCurrentConference
+} from '../base/conference';
 import JitsiMeetJS, {
     JitsiConferenceEvents,
     JitsiRecordingConstants
@@ -36,13 +40,14 @@ import {
     RECORDING_OFF_SOUND_ID,
     RECORDING_ON_SOUND_ID
 } from './constants';
-import { getSessionById } from './functions';
+import {getSessionById, startLiveStream} from './functions';
 import {
     LIVE_STREAMING_OFF_SOUND_FILE,
     LIVE_STREAMING_ON_SOUND_FILE,
     RECORDING_OFF_SOUND_FILE,
     RECORDING_ON_SOUND_FILE
 } from './sounds';
+import jwtDecode from "jwt-decode";
 
 /**
  * StateListenerRegistry provides a reliable way to detect the leaving of a
@@ -100,6 +105,19 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
         dispatch(unregisterSound(RECORDING_ON_SOUND_ID));
 
         break;
+
+    case CONFERENCE_JOINED: {
+        const state = getState()
+
+        const jwt = state['features/base/jwt'];
+        const jwtPayload = jwtDecode(jwt.jwt) || {};
+        const {event, room, moderator} = jwtPayload
+        if(event && event.watch_mode && room && moderator) {
+            startLiveStream(state, room)
+        }
+
+        break;
+    }
 
     case CONFERENCE_WILL_JOIN: {
         const { conference } = action;
