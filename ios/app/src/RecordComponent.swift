@@ -25,7 +25,7 @@ class RecordComponent: RCTViewManager {
   
   override func view() -> UIView! {
     if #available(iOS 12.0, *) {
-      let pickerView = RPSystemBroadcastPickerView(
+      let pickerView = CustomBroadcastPickerView(
                frame: CGRect(x: 0, y: 0, width: 50, height: 50))
       pickerView.preferredExtension = "de.hopp-foundation.screenshare.ScreenRecorderHopp"
       pickerView.translatesAutoresizingMaskIntoConstraints = false
@@ -58,14 +58,14 @@ class RecordComponent: RCTViewManager {
               }
               var buffer = Data.init()
               print("----------- trying to read")
-              print("---------- \(buffer.count)")
               let firstContact = try connSock.read(into: &buffer)
               print("----------- \(firstContact)")
-              self.frameQueue.enqueue(buffer.base64EncodedString())
-//              print("----------- \(buffer.base64EncodedString())")
+              pickerView.frameRecieved(buffer.base64EncodedString())
+//              self.frameQueue.enqueue(buffer.base64EncodedString())
               print("----------- its over")
             } catch {
               print("catch innsideee  innsideee \(error)")
+//              break
             }
           } while true
         } catch {

@@ -162,7 +162,7 @@ class OverflowMenu extends PureComponent<Props, State> {
                 {this._renderModeratorButtons(buttonProps)}          
                     <ToggleCameraButton { ...buttonProps } />
                     <TileViewButton { ...buttonProps } />
-                    <RecordNativeComponent style={{width: 50, height: 50}} ref={comp => {this.recordComponent = comp; console.log(this.recordComponent)}} />
+                    <RecordNativeComponent onUpdate={event => console.log(event.nativeEvent.frameData.length)} style={{width: 50, height: 50}} ref={comp => {this.recordComponent = comp}} />
                     {/* <RecordButton { ...buttonProps } /> */}
                     <LiveStreamButton { ...buttonProps } />
                     <RoomLockButton { ...buttonProps } />
