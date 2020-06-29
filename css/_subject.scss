@@ -31,6 +31,12 @@
     &-conference-timer {
         display: block;
         font-size: 15px;
-        opacity: 0.6;
+        margin-left: 10px;
+    }
+
+    .wrapper {
+        display: flex;
+        align-items: center;
+        margin-top: 15px;
     }
 }

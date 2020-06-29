@@ -480,6 +480,10 @@
     pointer-events: none;
 }
 
+#mixedstream {
+    display:none !important;
+}
+
 #dominantSpeaker {
     visibility: hidden;
     width: 300px;
@@ -488,33 +492,36 @@
     position: relative;
     top: 50%;
     transform: translateY(-50%);
-}
 
-#mixedstream {
-    display:none !important;
-}
+    #dominantSpeakerAvatarContainer, #dominantSpeakerAvatarContainerSmall {
+        width: 200px;
+        height: 200px;
+        top: 50px;
+        margin: auto;
+        position: relative;
+        overflow: hidden;
+        visibility: inherit;
+    }
 
-#dominantSpeakerAvatarContainer,
-.dynamic-shadow {
-    width: 200px;
-    height: 200px;
-}
+    .dynamic-shadow, .dynamic-shadow-small {
+        width: 200px;
+        height: 200px;
+        border-radius: 50%;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        margin: -100px 0 0 -100px;
+        transition: box-shadow 0.3s ease;
+    }
 
-#dominantSpeakerAvatarContainer {
-    top: 50px;
-    margin: auto;
-    position: relative;
-    overflow: hidden;
-    visibility: inherit;
-}
+    #dominantSpeakerAvatarContainerSmall, .dynamic-shadow-small {
+        width: 140px;
+        height: 140px;
+    }
 
-.dynamic-shadow {
-    border-radius: 50%;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    margin: -100px 0 0 -100px;
-    transition: box-shadow 0.3s ease;
+    .dynamic-shadow-small {
+        left: 60%;
+    }
 }
 
 .avatar-container {

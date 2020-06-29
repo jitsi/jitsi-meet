@@ -31,6 +31,10 @@ class LargeVideo extends Component<Props> {
      * @returns {React$Element}
      */
     render() {
+        const windowWidth = window.innerWidth > 620;
+        const dominantSpeaker = windowWidth ? 'dominantSpeakerAvatarContainer' : 'dominantSpeakerAvatarContainerSmall';
+        const dynamicShadow = windowWidth ? 'dynamic-shadow' : 'dynamic-shadow-small';
+
         return (
             <div
                 className = 'videocontainer'
@@ -43,8 +47,8 @@ class LargeVideo extends Component<Props> {
                 <Watermarks />
 
                 <div id = 'dominantSpeaker'>
-                    <div className = 'dynamic-shadow' />
-                    <div id = 'dominantSpeakerAvatarContainer' />
+                    <div className = { dynamicShadow } />
+                    <div id = { dominantSpeaker } />
                 </div>
                 <div id = 'remotePresenceMessage' />
                 <span id = 'remoteConnectionMessage' />

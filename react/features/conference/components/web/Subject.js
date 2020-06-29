@@ -51,8 +51,10 @@ class Subject extends Component<Props> {
         return (
             <div className = { `subject ${_visible ? 'visible' : ''}` }>
                 <span className = 'subject-text'>{ _subject }</span>
-                { _showParticipantCount && <ParticipantsCount /> }
-                <ConferenceTimer />
+                <div className = 'wrapper'>
+                    { _showParticipantCount && <ParticipantsCount /> }
+                    <ConferenceTimer />
+                </div>
             </div>
         );
     }

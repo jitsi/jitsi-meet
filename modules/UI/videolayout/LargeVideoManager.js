@@ -96,7 +96,8 @@ export default class LargeVideoManager {
         this.videoContainer.addResizeListener(this._onVideoResolutionUpdate);
 
         this._dominantSpeakerAvatarContainer
-            = document.getElementById('dominantSpeakerAvatarContainer');
+            = document.getElementById('dominantSpeakerAvatarContainer')
+            || document.getElementById('dominantSpeakerAvatarContainerSmall');
     }
 
     /**

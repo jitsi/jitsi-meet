@@ -371,7 +371,11 @@ export class VideoContainer extends LargeContainer {
      */
     _positionParticipantStatus($element) {
         if (this.avatarDisplayed) {
-            const $avatarImage = $('#dominantSpeakerAvatarContainer');
+            const windowWidth = window.innerWidth;
+            const avatarId = windowWidth > 620
+                ? '#dominantSpeakerAvatarContainer'
+                : '#dominantSpeakerAvatarContainerSmall';
+            const $avatarImage = $(avatarId);
 
             $element.css(
                 'top',
