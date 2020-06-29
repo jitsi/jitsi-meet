@@ -25,6 +25,12 @@ function init_session(event)
 
 	if query ~= nil then
         local params = formdecode(query);
+
+        -- The following fields are filled in the session, by extracting them
+        -- from the query and no validation is beeing done.
+        -- After validating auth_token will be cleaned in case of error and few
+        -- other fields will be extracted from the token and set in the session
+
         session.auth_token = query and params.token or nil;
         -- previd is used together with https://modules.prosody.im/mod_smacks.html
         -- the param is used to find resumed session and re-use anonymous(random) user id

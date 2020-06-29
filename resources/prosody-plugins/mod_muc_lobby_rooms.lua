@@ -94,10 +94,8 @@ function filter_stanza(stanza)
             end
 
             return nil;
-        end
-
-        -- allow disco info from the lobby component
-        if stanza.name == 'iq' and stanza:get_child('query', DISCO_INFO_NS) then
+        elseif stanza.name == 'iq' and stanza:get_child('query', DISCO_INFO_NS) then
+            -- allow disco info from the lobby component
             return stanza;
         end
 
@@ -142,6 +140,8 @@ function process_lobby_muc_loaded(lobby_muc, host_module)
     -- Advertise lobbyrooms support on main domain so client can pick up the address and use it
     module:add_identity('component', LOBBY_IDENTITY_TYPE, lobby_muc_component_config);
 
+    -- Tag the disco#info response with a feature that display name is required
+    -- when the conference name from the web request has a lobby enabled.
     host_module:hook("host-disco-info-node", function (event)
         local session, reply, node = event.origin, event.reply, event.node;
         if node == LOBBY_IDENTITY_TYPE
