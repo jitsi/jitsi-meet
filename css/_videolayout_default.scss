@@ -493,7 +493,7 @@
     top: 50%;
     transform: translateY(-50%);
 
-    #dominantSpeakerAvatarContainer, #dominantSpeakerAvatarContainerSmall {
+    #dominantSpeakerAvatarContainer {
         width: 200px;
         height: 200px;
         top: 50px;
@@ -503,7 +503,7 @@
         visibility: inherit;
     }
 
-    .dynamic-shadow, .dynamic-shadow-small {
+    .dynamic-shadow {
         width: 200px;
         height: 200px;
         border-radius: 50%;
@@ -514,13 +514,16 @@
         transition: box-shadow 0.3s ease;
     }
 
-    #dominantSpeakerAvatarContainerSmall, .dynamic-shadow-small {
-        width: 140px;
-        height: 140px;
-    }
+    @media (max-width: $desktopWidth) {
+        #dominantSpeakerAvatarContainer,
+        .dynamic-shadow {
+            width: 140px;
+            height: 140px;
+        }
 
-    .dynamic-shadow-small {
-        left: 60%;
+        .dynamic-shadow {
+            left: 60%;
+        }
     }
 }
 
@@ -534,9 +537,9 @@
     overflow: hidden;
 
     .userAvatar {
-        height: 100%;
+        height: 100% !important;
         object-fit: cover;
-        width: 100%;
+        width: 100% !important;
         top: 0px;
         left: 0px;
         position: absolute;

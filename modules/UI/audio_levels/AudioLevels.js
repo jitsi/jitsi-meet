@@ -63,9 +63,7 @@ const AudioLevels = {
         let level = parseFloat(audioLevel);
 
         level = isNaN(level) ? 0 : level;
-        const windowWidth = window.innerWidth;
-        const shadowClass = windowWidth > 620 ? 'dynamic-shadow' : 'dynamic-shadow-small';
-        let shadowElement = element.getElementsByClassName(shadowClass);
+        let shadowElement = element.getElementsByClassName('dynamic-shadow');
 
         if (shadowElement && shadowElement.length > 0) {
             shadowElement = shadowElement[0];

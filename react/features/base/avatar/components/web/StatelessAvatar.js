@@ -112,16 +112,12 @@ export default class StatelessAvatar extends AbstractStatelessAvatar<Props> {
      */
     _getAvatarStyle(color) {
         const { size } = this.props;
-        const windowWidth = window.innerWidth;
-        const windowSize = windowWidth > 620;
-        const mainAvatarSize = windowSize ? size : 140;
-        const avatarSize = size ? mainAvatarSize : undefined;
 
         return {
             backgroundColor: color || undefined,
             fontSize: size ? size * 0.5 : '180%',
-            height: avatarSize || '100%',
-            width: avatarSize || '100%'
+            height: size || '100%',
+            width: size || '100%'
         };
     }
 

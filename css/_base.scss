@@ -110,6 +110,10 @@ form {
     background-size: contain;
     background-repeat: no-repeat;
     z-index: $zindex2;
+
+    @media (max-width: $desktopWidth) {
+        display: none;
+    }
 }
 
 .leftwatermark {

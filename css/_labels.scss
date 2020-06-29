@@ -6,6 +6,10 @@
     transition: right 0.5s;
     z-index: $zindex3;
 
+    @media (max-width: $desktopWidth) {
+        position: static;
+    }
+
     .circular-label {
         align-items: center;
         background: $toolBarDesktopBackground;
@@ -15,6 +19,14 @@
         justify-content: center;
         margin-left: 8px;
         opacity: 0.8;
+
+        @media (max-width: $desktopWidth) {
+            position: absolute;
+            z-index: $zindex10;
+            top: 16px;
+            left: 24px;
+            opacity: 1;
+        }
 
         &.e2ee {
             align-items: center;
@@ -59,35 +71,4 @@
     line-height: $videoStateIndicatorSize;
     text-align: center;
     min-width: $videoStateIndicatorSize;
-}
-
-.large-video-labels-small {
-    display: flex;
-    top: 30px;
-    right: 30px;
-    transition: right 0.5s;
-    z-index: $zindex3;
-
-    .circular-label-small {
-        align-items: center;
-        color: $subjectTextColor;
-        display: flex;
-        font-weight: bold;
-        justify-content: center;
-        margin-left: 8px;
-        position: absolute;
-        z-index: $zindex10;
-        top: 16px;
-        left: 24px;
-        opacity: 1;
-        background: $videoStateIndicatorBackground;
-        border-radius: 50%;
-        box-sizing: border-box;
-        cursor: default;
-        font-size: 13px;
-        height: $videoStateIndicatorSize;
-        line-height: $videoStateIndicatorSize;
-        text-align: center;
-        min-width: $videoStateIndicatorSize;
-    }
 }
