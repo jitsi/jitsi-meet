@@ -25,6 +25,16 @@ type Props = {
     name?: string,
 
     /**
+     * Indicates whether the avatar should be shown when video is off
+     */
+    showAvatar: boolean,
+
+    /**
+     * Indicates whether the label and copy url action should be shown
+     */
+    showConferenceInfo: boolean,
+
+    /**
      * Title of the screen.
      */
     title: string,
@@ -46,12 +56,22 @@ type Props = {
  */
 export default class PreMeetingScreen extends PureComponent<Props> {
     /**
+     * Default values for {@code Prejoin} component's properties.
+     *
+     * @static
+     */
+    static defaultProps = {
+        showAvatar: true,
+        showConferenceInfo: true
+    };
+
+    /**
      * Implements {@code PureComponent#render}.
      *
      * @inheritdoc
      */
     render() {
-        const { name, title, videoMuted, videoTrack } = this.props;
+        const { name, showAvatar, showConferenceInfo, title, videoMuted, videoTrack } = this.props;
 
         return (
             <div
@@ -59,13 +79,19 @@ export default class PreMeetingScreen extends PureComponent<Props> {
                 id = 'lobby-screen'>
                 <Preview
                     name = { name }
+                    showAvatar = { showAvatar }
                     videoMuted = { videoMuted }
                     videoTrack = { videoTrack } />
+                {!videoMuted && <div className = 'preview-overlay' />}
                 <div className = 'content'>
-                    <div className = 'title'>
-                        { title }
-                    </div>
-                    <CopyMeetingUrl />
+                    {showConferenceInfo && (
+                        <>
+                            <div className = 'title'>
+                                { title }
+                            </div>
+                            <CopyMeetingUrl />
+                        </>
+                    )}
                     { this.props.children }
                     <div className = 'media-btn-container'>
                         <AudioSettingsButton visible = { true } />
