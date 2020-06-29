@@ -7,10 +7,30 @@ local socket = require "socket";
 local uuid_gen = require "util.uuid".generate;
 local jwt = require "luajwtjitsi";
 local it = require "util.iterators";
+local neturl = require "net.url";
+local parse = neturl.parseQuery;
 
 local get_room_from_jid = module:require "util".get_room_from_jid;
 local room_jid_match_rewrite = module:require "util".room_jid_match_rewrite;
 local is_healthcheck_room = module:require "util".is_healthcheck_room;
+
+local async_handler_wrapper = module:require "util".async_handler_wrapper;
+
+-- this basically strips the domain from the conference.domain address
+local parentHostName = string.gmatch(tostring(module.host), "%w+.(%w.+)")();
+if parentHostName == nil then
+    log("error", "Failed to start - unable to get parent hostname");
+    return;
+end
+
+local parentCtx = module:context(parentHostName);
+if parentCtx == nil then
+    log("error",
+        "Failed to start - unable to get parent context for host: %s",
+        tostring(parentHostName));
+    return;
+end
+local token_util = module:require "token/util".new(parentCtx);
 
 
 local ASAPKeyPath
@@ -32,6 +52,15 @@ local ASAPTTL_THRESHOLD
     = module:get_option_number("asap_ttl_threshold", 600);
 
 local ASAPKey;
+
+local queueServiceURL
+    = module:get_option_string("jibri_queue_url");
+
+if queueServiceURL == nil then
+    log("error", "No jibri_queue_url specified. No service to contact!");
+    return;
+end
+
 
 local http_headers = {
     ["User-Agent"] = "Prosody ("..prosody.version.."; "..prosody.platform..")",
@@ -70,14 +99,6 @@ end
 -- TODO: Figure out a less arbitrary default cache size.
 local jwtKeyCacheSize = module:get_option_number("jwt_pubkey_cache_size", 128);
 local jwtKeyCache = require"util.cache".new(jwtKeyCacheSize);
-
-local queueServiceURL
-    = module:get_option_string("jibri_queue_url");
-
-if queueServiceURL == nil then
-    log("error", "No jibri_queue_url specified. No service to contact!");
-    return;
-end
 
 local function round(num, numDecimalPlaces)
     local mult = 10^(numDecimalPlaces or 0)
@@ -233,3 +254,104 @@ else
 end
 
 module:log("info", "Loading jibri_queue_component");
+
+--- Verifies room name, domain name with the values in the token
+-- @param token the token we received
+-- @param room_name the room name
+-- @param group name of the group (optional)
+-- @param session the session to use for storing token specific fields
+-- @return true if values are ok or false otherwise
+function verify_token(token, room_name, group, session)
+    if disableTokenVerification then
+        return true;
+    end
+
+    -- if not disableTokenVerification and we do not have token
+    -- stop here, cause the main virtual host can have guest access enabled
+    -- (allowEmptyToken = true) and we will allow access to rooms info without
+    -- a token
+    if token == nil then
+        log("warn", "no token provided");
+        return false;
+    end
+
+    session.auth_token = token;
+    local verified, reason = token_util:process_and_verify_token(session);
+    if not verified then
+        log("warn", "not a valid token %s", tostring(reason));
+        return false;
+    end
+
+    local room_address = jid.join(room_name, module:get_host());
+    -- if there is a group we are in multidomain mode and that group is not
+    -- our parent host
+    if group and group ~= "" and group ~= parentHostName then
+        room_address = "["..group.."]"..room_address;
+    end
+
+    if not token_util:verify_room(session, room_address) then
+        log("warn", "Token %s not allowed to join: %s",
+            tostring(token), tostring(room_address));
+        return false;
+    end
+
+    return true;
+end
+
+--- Handles request for updating jibri queue status
+-- @param event the http event, holds the request query
+-- @return GET response, containing a json with response details
+function handle_update_jibri_queue (event)
+    if (not event.request.url.query) then
+        return { status_code = 400; };
+    end
+
+    local params = parse(event.request.url.query);
+    local user_id = params["user"];
+    local room_name = params["room"];
+    local group = params["group"];
+    local status = params["status"];
+    local call_id = params["callid"];
+
+    local call_cancel = false
+    if params["callcancel"] == "true" then
+       call_cancel = true;
+    end
+
+    if not verify_token(params["token"], room_name, group, {}) then
+        return { status_code = 403; };
+    end
+
+    local room = get_room(room_name, group);
+    if (not room) then
+        log("error", "no room found %s", room_name);
+        return { status_code = 404; };
+    end
+
+    local username = poltergeist.get_username(room, user_id);
+    if (not username) then
+        return { status_code = 404; };
+    end
+
+    local call_details = {
+        ["cancel"] = call_cancel;
+        ["id"] = call_id;
+    };
+
+    local nick = poltergeist.create_nick(username);
+    if (not poltergeist.occupies(room, nick)) then
+       return { status_code = 404; };
+    end
+
+    poltergeist.update(room, nick, status, call_details);
+    return { status_code = 200; };
+end
+
+module:depends("http");
+module:provides("http", {
+    default_path = "/";
+    name = "jibriqueue";
+    route = {
+        ["GET /jibriqueue/update"] = function (event) return async_handler_wrapper(event,handle_update_jibri_queue) end;
+    };
+});
