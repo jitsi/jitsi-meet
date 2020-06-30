@@ -9,6 +9,7 @@ import AbstractLiveStreamButton, {
     _mapStateToProps as _abstractMapStateToProps,
     type Props
 } from '../AbstractLiveStreamButton';
+import {getLocalParticipant} from "../../../../base/participants";
 
 /**
  * An implementation of a button for starting and stopping live streaming.
@@ -29,10 +30,13 @@ class LiveStreamButton extends AbstractLiveStreamButton<Props> {
 export function mapStateToProps(state: Object, ownProps: Object) {
     const enabled = getFeatureFlag(state, LIVE_STREAMING_ENABLED, true);
     const abstractProps = _abstractMapStateToProps(state, ownProps);
+    const localParticipant = getLocalParticipant(state);
 
     return {
         ...abstractProps,
-        visible: enabled && abstractProps.visible
+        visible: enabled &&
+            abstractProps.visible &&
+            localParticipant.role === "moderator"
     };
 }
 

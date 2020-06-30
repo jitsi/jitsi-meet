@@ -111,7 +111,8 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
 
         const jwt = state['features/base/jwt'];
         const jwtPayload = jwtDecode(jwt.jwt) || {};
-        const {event, room, moderator} = jwtPayload
+        const {event, room, moderator} = jwtPayload;
+
         if(event && event.watch_mode && room && moderator) {
             startLiveStream(state, room)
         }
