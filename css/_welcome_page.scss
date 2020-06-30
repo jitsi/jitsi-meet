@@ -30,7 +30,7 @@ body.welcome-page {
             display: flex;
             flex-direction: column;
             margin-top: $watermarkHeight;
-            max-width: 500px;
+            max-width: 100%;
             z-index: $zindex2;
             background-image: url($welcomePageTopBackground);
             background-size: cover;
