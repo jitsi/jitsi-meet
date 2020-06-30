@@ -118,7 +118,7 @@ form {
 
 .leftwatermark {
     left: 32px;
-    top: 32px;
+    top: $watermarkTop;
     background-image: url($defaultWatermarkLink);
     background-position: center left;
 }
