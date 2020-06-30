@@ -29,13 +29,11 @@ body.welcome-page {
         .header-text {
             display: flex;
             flex-direction: column;
-            margin-top: $watermarkHeight;
-            max-width: 500px;
-            z-index: $zindex2;
+            padding: $watermarkHeight + $watermarkTop 50px 50px;
+            max-width: 100%;
             background-image: url($welcomePageTopBackground);
             background-size: cover;
             background-repeat: no-repeat;
-            padding: 50px;
         }
 
         .header-text-title {

@@ -148,7 +148,8 @@
   "scripts": {
     "lint": "eslint . && flow",
     "postinstall": "jetify",
-    "validate": "npm ls"
+    "validate": "npm ls",
+    "watch-styles": "node-sass --watch ./css/main.scss ./css/all.css"
   },
   "browser": {
     "jQuery-Impromptu": "jQuery-Impromptu/src/jquery-impromptu.js"

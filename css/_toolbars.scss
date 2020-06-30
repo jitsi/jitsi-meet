@@ -236,7 +236,9 @@
             width: $newToolbarSize;
 
             &:hover, &.toggled {
-                background: $newToolbarButtonHoverColor;
+                svg {
+                    fill: $toolBoxIconsToggled;
+                }
             }
 
             &.disabled {

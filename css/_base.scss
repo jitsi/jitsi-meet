@@ -110,11 +110,15 @@ form {
     background-size: contain;
     background-repeat: no-repeat;
     z-index: $zindex2;
+
+    @media (max-width: $desktopWidth) {
+        display: none;
+    }
 }
 
 .leftwatermark {
     left: 32px;
-    top: 32px;
+    top: $watermarkTop;
     background-image: url($defaultWatermarkLink);
     background-position: center left;
 }

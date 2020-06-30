@@ -51,9 +51,6 @@ export default class CircularLabel extends AbstractCircularLabel<Props, {}> {
             label
         } = this.props;
 
-        const windowWidth = window.innerWidth;
-        const circularLabel = windowWidth > 620 ? 'circular-label' : 'circular-label-small';
-
         const labelComponent = icon
             ? (
                 <Icon
@@ -62,7 +59,7 @@ export default class CircularLabel extends AbstractCircularLabel<Props, {}> {
 
         return (
             <div
-                className = { `${circularLabel} ${className}` }
+                className = { `circular-label ${className}` }
                 id = { id }>
                 { labelComponent }
             </div>
