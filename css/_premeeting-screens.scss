@@ -40,6 +40,7 @@
             font-weight: 300;
             justify-content: center;
             line-height: 24px;
+            margin-bottom: 16px;
 
             .url {
                 display: flex;
@@ -57,6 +58,13 @@
                 .jitsi-icon {
                     margin-left: 10px;
                 }
+            }
+
+            .copy-meeting-text {
+                width: 266px;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
             }
 
             &:hover {
@@ -77,8 +85,9 @@
             border: 1px solid transparent;
             color: white;
             outline-width: 0;
-            padding: 20px;
+            padding: 8px 0;
             text-align: center;
+            width: 100%;
 
             &.focused {
                 border-bottom: 1px solid white;
@@ -96,41 +105,41 @@
             display: inline-block;
             font-size: 15px;
             line-height: 24px;
-            margin: 10px;
+            margin-top: 16px;
             padding: 7px 16px;
             position: relative;
             text-align: center;
             width: 286px;
-    
+
             &.primary {
                 background: #0376DA;
                 border: 1px solid #0376DA;
             }
-    
+
             &.secondary {
                 background: transparent;
                 border: 1px solid #5E6D7A;
             }
-    
+
             &.text {
                 width: auto;
                 font-size: 13px;
                 margin: 0;
                 padding: 0;
             }
-    
+
             &.disabled {
                 background: #5E6D7A;
                 border: 1px solid #5E6D7A;
                 color: #AFB6BC;
                 cursor: initial;
-    
+
                 .icon {
                     & > svg {
                         fill: #AFB6BC;
                     }
                 }
-    
+
                 .options {
                     border-left: 1px solid #AFB6BC;
                 }

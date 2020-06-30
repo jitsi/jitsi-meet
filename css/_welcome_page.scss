@@ -95,8 +95,12 @@ body.welcome-page {
                     flex-direction: row;
                     margin-top: 5px;
 
-                    svg {
-                        fill: $defaultWarningColor
+                    .jitsi-icon {
+                        margin-right: 15px;
+
+                        svg {
+                            fill: $defaultWarningColor
+                        }
                     }
                 }
 
@@ -105,6 +109,22 @@ body.welcome-page {
                 }
             }
 
+        }
+
+        #moderated-meetings {
+            max-width: calc(100% - 40px);
+            padding: 16px 0 39px 0;
+            width: $welcomePageEnterRoomWidth;
+
+            p {
+                color: $welcomePageDescriptionColor;
+                text-align: left;
+
+                a {
+                    color: inherit;
+                    font-weight: 600;
+                }
+            }
         }
 
         .tab-container {

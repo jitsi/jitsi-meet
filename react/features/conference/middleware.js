@@ -1,5 +1,5 @@
 // @flow
-import { appNavigate } from '../app';
+import { appNavigate } from '../app/actions';
 import {
     CONFERENCE_JOINED,
     KICKED_OUT,

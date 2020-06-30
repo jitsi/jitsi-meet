@@ -4,7 +4,7 @@ import { Alert, NativeModules, Platform } from 'react-native';
 import uuid from 'uuid';
 
 import { createTrackMutedEvent, sendAnalytics } from '../../analytics';
-import { appNavigate } from '../../app';
+import { appNavigate } from '../../app/actions';
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../../base/app';
 import { SET_AUDIO_ONLY } from '../../base/audio-only';
 import {

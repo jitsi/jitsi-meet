@@ -2,7 +2,7 @@
 
 import React, { Component } from 'react';
 
-import { reloadNow } from '../../../app';
+import { reloadNow } from '../../../app/actions';
 import { translate } from '../../../base/i18n';
 import { connect } from '../../../base/redux';
 

@@ -7,7 +7,7 @@ import AuthHandler from './modules/UI/authentication/AuthHandler';
 import {
     connectionEstablished,
     connectionFailed
-} from './react/features/base/connection';
+} from './react/features/base/connection/actions';
 import {
     isFatalJitsiConnectionError,
     JitsiConnectionErrors,

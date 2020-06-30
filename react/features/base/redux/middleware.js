@@ -2,9 +2,9 @@
 
 import _ from 'lodash';
 
-import { MiddlewareRegistry, toState } from '../redux';
-
+import MiddlewareRegistry from './MiddlewareRegistry';
 import PersistenceRegistry from './PersistenceRegistry';
+import { toState } from './functions';
 
 /**
  * The delay in milliseconds that passes between the last state change and the

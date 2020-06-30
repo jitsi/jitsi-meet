@@ -5,7 +5,7 @@ import type { Dispatch } from 'redux';
 import {
     appNavigate,
     maybeRedirectToWelcomePage
-} from '../app';
+} from '../app/actions';
 import {
     conferenceLeft,
     JITSI_CONFERENCE_URL_KEY,

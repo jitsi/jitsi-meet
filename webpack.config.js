@@ -193,7 +193,7 @@ module.exports = [
         entry: {
             'device_selection_popup_bundle': './react/features/settings/popup.js'
         },
-        performance: getPerformanceHints(700 * 1024)
+        performance: getPerformanceHints(750 * 1024)
     }),
     Object.assign({}, config, {
         entry: {
@@ -249,12 +249,6 @@ module.exports = [
     Object.assign({}, config, {
         entry: {
             'rnnoise-processor': './react/features/stream-effects/rnnoise/index.js'
-        },
-        node: {
-            // Emscripten generated glue code "rnnoise.js" expects node fs module,
-            // we need to specify this parameter so webpack knows how to properly
-            // interpret it when encountered.
-            fs: 'empty'
         },
         output: Object.assign({}, config.output, {
             library: [ 'JitsiMeetJS', 'app', 'effects', 'rnnoise' ],

@@ -295,20 +295,7 @@
         "muteEveryoneSelf": "vos",
         "muteEveryoneTitle": "Rendre mut tot lo monde ?",
         "muteEveryoneDialog": "Volètz vertadièrament copar lo son a tot lo monde ? Poiretz pas lo restablir, mas eles poiràn o far quora que vòlgan.",
-        "muteEveryoneElseTitle": "Copar lo son a totes levat {{whom}} ?",
-        "muteEveryoneElseDialog": "Un còp lo son copat, poiretz pas mai lo restablir, mas eles poiràn o far quora que vòlgan.",
-        "recordingDisabledBecauseOfActiveLiveStreamingTooltip": "Impossible quand una difusion en dirècte es en cors",
-        "e2eeDescription": "Lo chiframanent del cap a la fin es actualament EXPERIMENTAL. Ajatz a l’esperit qu’activar lo chiframent del cap a la fin desactivarà de servicis gerits costat servidor coma : l’enregistrament, la difusion en dirècte e la participacion via telefòn. Sabètz tanben que lo chiframent foncionarà pas que pels participants amb un navigador compatible.",
-        "screenSharingFailedTitle": "Fracàs del partatge de l’ecran !",
-        "screenSharingFailed": "Ops ! Quicòm a trucat, avèm pas pogut partejar l’ecran !",
-        "readMore": "mai",
-        "liveStreamingDisabledBecauseOfActiveRecordingTooltip": "Impossible quand un enregistrament es en cors",
-        "e2eeWarning": "ATENCION :pas totes los participants d’aquesta conferéncia semblan poder utilizar lo chiframent del cap a la fin. Se l’activatz poiràn pas veire nimai vos entendre.",
-        "e2eeSet": "Definir",
-        "e2eeToggleSet": "Definir la clau",
-        "e2eeNoKey": "Cap",
-        "e2eeLabel": "Clau E2EE",
-        "add": "Ajustar"
+        "muteEveryoneElseTitle": "Copar lo son a totes levat {{whom}} ?"
     },
     "dialOut": {
         "statusMessage": "ara es {{status}}"

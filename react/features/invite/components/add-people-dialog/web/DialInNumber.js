@@ -4,9 +4,8 @@ import React, { Component } from 'react';
 
 import { translate } from '../../../../base/i18n';
 import { Icon, IconCopy } from '../../../../base/icons';
+import { copyText } from '../../../../base/util';
 import { _formatConferenceIDPin } from '../../../_utils';
-
-import { copyText } from './utils';
 
 /**
  * The type of the React {@code Component} props of {@link DialInNumber}.

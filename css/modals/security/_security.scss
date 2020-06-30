@@ -8,6 +8,10 @@
             display: flex;
             flex-direction: column;
 
+            .description {
+                font-size: 13px;
+            }
+
             .password {
                 align-items: center;
                 display: flex;
@@ -21,16 +25,8 @@
                         font-size: 14px;
                         color: #6FB1EA;
                     }
-
-                    &>a+a {
-                        margin-left: 24px;
-                    }
                 }
             }
-        }
-
-        &> :first-child:not(:last-child) {
-            margin-right: 24px;
         }
 
         .separator-line {
@@ -47,13 +43,10 @@
     }
 }
 
-.new-toolbox .toolbox-content .toolbox-icon.security-toolbar-button,
 .new-toolbox .toolbox-content .toolbox-icon.toggled.security-toolbar-button {
-    background: rgba(241, 173, 51, 0.7);
-    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-width: 0;
 
-    &:hover {
-        background: rgba(241, 173, 51, 0.7);
-        border: 1px solid rgba(255, 255, 255, 0.4);
+    &:not(:hover) {
+        background: unset;
     }
 }

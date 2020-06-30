@@ -128,6 +128,8 @@ export default class AbstractLobbyScreen<P: Props = Props> extends PureComponent
                 passwordJoinFailed: true
             };
         }
+
+        return null;
     }
 
     /**

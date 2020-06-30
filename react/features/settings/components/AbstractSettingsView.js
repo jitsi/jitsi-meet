@@ -3,7 +3,7 @@
 import { Component } from 'react';
 import type { Dispatch } from 'redux';
 
-import { getDefaultURL } from '../../app';
+import { getDefaultURL } from '../../app/functions';
 import { updateSettings } from '../../base/settings';
 
 /**

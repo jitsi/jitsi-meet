@@ -5,7 +5,7 @@ import ReactDOM from 'react-dom';
 
 import { getJitsiMeetTransport } from '../modules/transport';
 
-import { App } from './features/app';
+import { App } from './features/app/components';
 import { getLogger } from './features/base/logging/functions';
 import { Platform } from './features/base/react';
 
