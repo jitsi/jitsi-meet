@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 import type { Dispatch } from 'redux';
 
 import { createE2EEEvent, sendAnalytics } from '../../analytics';
-import { translate, translateToHTML } from '../../base/i18n';
+import { translate } from '../../base/i18n';
 import { getParticipants } from '../../base/participants';
 import { connect } from '../../base/redux';
 import { setE2EEKey } from '../actions';
@@ -41,6 +41,11 @@ type State = {
     editing: boolean,
 
     /**
+     * True if the section description should be expanded, false otherwise.
+     */
+    expand: boolean,
+
+    /**
      * The current E2EE key.
      */
     key: string
@@ -68,10 +73,12 @@ class E2EESection extends Component<Props, State> {
 
         this.state = {
             editing: false,
+            expand: false,
             key: this.props._key
         };
 
         // Bind event handlers so they are only bound once for every instance.
+        this._onExpand = this._onExpand.bind(this);
         this._onKeyChange = this._onKeyChange.bind(this);
         this._onSet = this._onSet.bind(this);
         this._onToggleSetKey = this._onToggleSetKey.bind(this);
@@ -85,15 +92,19 @@ class E2EESection extends Component<Props, State> {
      */
     render() {
         const { _everyoneSupportsE2EE, t } = this.props;
-        const { editing } = this.state;
+        const { editing, expand } = this.state;
+        const description = t('dialog.e2eeDescription');
 
         return (
             <div id = 'e2ee-section'>
-                <p className = 'title'>
-                    { t('dialog.e2eeTitle') }
-                </p>
                 <p className = 'description'>
-                    { translateToHTML(t, 'dialog.e2eeDescription') }
+                    { expand && description }
+                    { !expand && description.substring(0, 100) }
+                    { !expand && <span
+                        className = 'read-more'
+                        onClick = { this._onExpand }>
+                            ... { t('dialog.readMore') }
+                    </span> }
                 </p>
                 {
                     !_everyoneSupportsE2EE
@@ -109,6 +120,7 @@ class E2EESection extends Component<Props, State> {
                         disabled = { !editing }
                         name = 'e2eeKey'
                         onChange = { this._onKeyChange }
+                        onKeyDown = { this._onKeyDown }
                         placeholder = { t('dialog.e2eeNoKey') }
                         ref = { this.fieldRef }
                         type = 'password'
@@ -124,6 +136,19 @@ class E2EESection extends Component<Props, State> {
         );
     }
 
+    _onExpand: () => void;
+
+    /**
+     * Callback to be invoked when the description is expanded.
+     *
+     * @returns {void}
+     */
+    _onExpand() {
+        this.setState({
+            expand: true
+        });
+    }
+
     _onKeyChange: (Object) => void;
 
     /**
@@ -135,6 +160,20 @@ class E2EESection extends Component<Props, State> {
      */
     _onKeyChange(event) {
         this.setState({ key: event.target.value.trim() });
+    }
+
+    _onKeyDown: (Object) => void;
+
+    /**
+     * Handler for the keydown event on the form, preventing the closing of the dialog.
+     *
+     * @param {Object} event - The DOM event triggered by keydown events.
+     * @returns {void}
+     */
+    _onKeyDown(event) {
+        if (event.key === 'Enter') {
+            event.preventDefault();
+        }
     }
 
     _onSet: () => void;

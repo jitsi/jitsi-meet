@@ -42,6 +42,11 @@ export const REMOVE_PENDING_INVITE_REQUESTS
 export const SET_CALLEE_INFO_VISIBLE = 'SET_CALLEE_INFO_VISIBLE';
 
 /**
+ * The type of redux action to signal that the {@code AddPeopleDialog} should close.
+ */
+export const HIDE_ADD_PEOPLE_DIALOG = 'HIDE_ADD_PEOPLE_DIALOG';
+
+/**
  * The type of the action which signals an error occurred while requesting dial-
  * in numbers.
  *

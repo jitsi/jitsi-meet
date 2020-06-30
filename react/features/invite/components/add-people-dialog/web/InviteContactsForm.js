@@ -10,6 +10,7 @@ import { Icon, IconPhone } from '../../../../base/icons';
 import { getLocalParticipant } from '../../../../base/participants';
 import { MultiSelectAutocomplete } from '../../../../base/react';
 import { connect } from '../../../../base/redux';
+import { hideAddPeopleDialog } from '../../../actions';
 import AbstractAddPeopleDialog, {
     type Props as AbstractProps,
     type State,
@@ -72,6 +73,7 @@ class InviteContactsForm extends AbstractAddPeopleDialog<Props, State> {
         this._parseQueryResults = this._parseQueryResults.bind(this);
         this._setMultiSelectElement = this._setMultiSelectElement.bind(this);
         this._renderFooterText = this._renderFooterText.bind(this);
+        this._onKeyDown = this._onKeyDown.bind(this);
 
         this._resourceClient = {
             makeQuery: this._query,
@@ -135,7 +137,9 @@ class InviteContactsForm extends AbstractAddPeopleDialog<Props, State> {
         }
 
         return (
-            <div className = 'add-people-form-wrap'>
+            <div
+                className = 'add-people-form-wrap'
+                onKeyDown = { this._onKeyDown }>
                 { this._renderErrorMessage() }
                 <MultiSelectAutocomplete
                     footer = { footerText }
@@ -217,9 +221,28 @@ class InviteContactsForm extends AbstractAddPeopleDialog<Props, State> {
                         this._multiselect.setSelectedItems(itemsToSelect);
                     }
                 } else {
-                    // Do nothing.
+                    this.props.dispatch(hideAddPeopleDialog());
                 }
             });
+    }
+
+    _onKeyDown: (Object) => void;
+
+    /**
+     * Handles 'Enter' key in the form to trigger the invite.
+     *
+     * @param {Object} event - The key event.
+     * @returns {void}
+     */
+    _onKeyDown(event) {
+        const { inviteItems } = this.state;
+
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            if (!this._isAddDisabled() && inviteItems.length) {
+                this._onSubmit();
+            }
+        }
     }
 
     _parseQueryResults: (?Array<Object>) => Array<Object>;
@@ -380,7 +403,7 @@ class InviteContactsForm extends AbstractAddPeopleDialog<Props, State> {
         }
 
         return (
-            <div className = 'invite-more-dialog invite-buttons'>
+            <div className = { `invite-more-dialog invite-buttons${this._isAddDisabled() ? ' disabled' : ''}` }>
                 <a
                     className = 'invite-more-dialog invite-buttons-cancel'
                     onClick = { this._onClearItems }>

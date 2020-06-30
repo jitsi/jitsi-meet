@@ -4,8 +4,8 @@ import React, { useState } from 'react';
 
 import { translate } from '../../../../base/i18n';
 import { Icon, IconCheck, IconCopy } from '../../../../base/icons';
+import { copyText } from '../../../../base/util';
 
-import { copyText } from './utils';
 
 type Props = {
 

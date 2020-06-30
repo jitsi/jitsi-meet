@@ -82,6 +82,12 @@ export const RAISE_HAND_ENABLED = 'raise-hand.enabled';
 export const RECORDING_ENABLED = 'recording.enabled';
 
 /**
+ * Flag indicating if server URL change is enabled.
+ * Default: enabled (true)
+ */
+export const SERVER_URL_CHANGE_ENABLED = 'server-url-change.enabled';
+
+/**
  * Flag indicating if tile view feature should be enabled.
  * Default: enabled.
  */

@@ -26,6 +26,11 @@ type Props = {
     _enableInsecureRoomNameWarning: boolean,
 
     /**
+     * URL for the moderated rooms microservice, if available.
+     */
+    _moderatedRoomServiceUrl: ?string,
+
+    /**
      * Whether the recent list is enabled
      */
     _recentListEnabled: Boolean,
@@ -269,16 +274,13 @@ export class AbstractWelcomePage extends Component<Props, *> {
  *
  * @param {Object} state - The redux state.
  * @protected
- * @returns {{
- *     _calendarEnabled: boolean,
- *     _room: string,
- *     _settings: Object
- * }}
+ * @returns {Props}
  */
 export function _mapStateToProps(state: Object) {
     return {
         _calendarEnabled: isCalendarEnabled(state),
         _enableInsecureRoomNameWarning: state['features/base/config'].enableInsecureRoomNameWarning || false,
+        _moderatedRoomServiceUrl: state['features/base/config'].moderatedRoomServiceUrl,
         _recentListEnabled: isRecentListEnabled(),
         _room: state['features/base/conference'].room,
         _settings: state['features/base/settings']
