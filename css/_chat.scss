@@ -1,5 +1,4 @@
 #sideToolbarContainer {
-    background-color: $newToolbarBackgroundColor;
     box-sizing: border-box;
     color: #FFF;
     display: flex;
@@ -36,6 +35,7 @@
     text-align: left;
     width: $sidebarWidth;
     word-wrap: break-word;
+    background: $chatConversationBackground;
 
     a {
         display: block;
@@ -103,8 +103,8 @@
 }
 
 .chat-header {
-    background-color: $chatHeaderBackgroundColor;
-    height: 70px;
+    background-color: $chatInputBackground;
+    height: 40px;
     position: relative;
     width: 100%;
     z-index: 1;
@@ -119,10 +119,14 @@
         height: 40px;
         justify-content: center;
         line-height: 15px;
-        padding: 4px;
+        top: 0px;
         position: absolute;
         right: 5px;
         width: 40px;
+
+        svg {
+            fill: $chatInputTextColor;
+        }
 
         &:hover {
             color: rgba(255, 255, 255, 0.8);
@@ -131,9 +135,12 @@
 }
 
 #chat-input {
-    border-top: 1px solid $chatInputSeparatorColor;
+    background: $chatInputBackground;
     display: flex;
     padding: 5px 10px;
+    height: 60px;
+    align-items: center;
+    color: $chatInputTextColor;
 
     * {
         background-color: transparent;
@@ -188,11 +195,11 @@
         white-space: nowrap;
         text-overflow: ellipsis;
         overflow: hidden;
+        color: $displayNameColor;
     }
 }
 
 .chatmessage {
-    background-color: $chatRemoteMessageBackgroundColor;
     border-radius: 0px 6px 6px 6px;
     box-sizing: border-box;
     color: white;
@@ -255,6 +262,11 @@
     max-height: 150px;
     min-height: 35px;
     overflow: hidden;
+    border: 2px solid $smileysAreaBorderColor;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    align-items: center;
 }
 
 .smiley-input {
@@ -316,15 +328,21 @@
     display: flex;
     flex-direction: column;
 
+    &.remote{
+        .replywrapper {
+            border-radius: 0 10% 10% 10%;
+        }
+    }
+
     &.local {
         align-items: flex-end;
 
         .chatmessage {
-            background-color: $chatLocalMessageBackgroundColor;
             border-radius: 6px 0px 6px 6px;
 
-            &.privatemessage {
-                background-color: $chatPrivateMessageBackgroundColor;
+            .replywrapper {
+                border: 1px dashed $borderColor;
+                border-radius: 10% 0 10% 10%;
             }
         }
 
@@ -334,6 +352,7 @@
 
         .timestamp {
             text-align: right;
+            color: $chatInputTextColor;
         }
     }
 
@@ -350,12 +369,17 @@
     }
 
     .chatmessage-wrapper {
-        max-width: 100%;
+        max-width: 50%;
+
+        .timestamp {
+            color: $chatInputTextColor;
+        }
 
         .replywrapper {
             display: flex;
             flex-direction: row;
             align-items: center;
+            background: $chatInputBackground;
 
             .messageactions {
                 align-self: stretch;
@@ -373,14 +397,9 @@
     }
 
     .chatmessage {
-        background-color: $chatRemoteMessageBackgroundColor;
         border-radius: 0px 6px 6px 6px;
         display: inline-block;
         margin-top: 3px;
         color: white;
-
-        &.privatemessage {
-            background-color: $chatPrivateMessageBackgroundColor;
-        }
     }
 }
