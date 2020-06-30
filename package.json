@@ -113,7 +113,7 @@
     "babel-loader": "8.0.4",
     "circular-dependency-plugin": "5.2.0",
     "clean-css-cli": "4.3.0",
-    "css-loader": "0.28.7",
+    "css-loader": "3.6.0",
     "eslint": "5.6.1",
     "eslint-config-jitsi": "github:jitsi/eslint-config-jitsi#1.0.3",
     "eslint-plugin-flowtype": "2.50.3",
