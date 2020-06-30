@@ -12,12 +12,14 @@ import { connect } from '../../base/redux';
 import { AbstractAudioMuteButton } from '../../base/toolbox';
 import type { AbstractButtonProps } from '../../base/toolbox';
 import { isLocalTrackMuted } from '../../base/tracks';
+import { isLocalParticipantModerator } from '../../base/participants';
 import {
     isPrejoinAudioMuted,
     isAudioDisabled,
     isPrejoinPageVisible
 } from '../../prejoin/functions';
 import { muteLocal } from '../../remote-video-menu/actions';
+
 
 declare var APP: Object;
 
@@ -35,6 +37,16 @@ type Props = AbstractButtonProps & {
      * Whether the button is disabled.
      */
     _disabled: boolean,
+
+    /**
+     * Whether the button is disabled.
+     */
+    _unMuteLocked: boolean,
+
+    /**
+     * If local participant is moderator
+     */
+    _isModerator: boolean,
 
     /**
      * The redux {@code dispatch} function.
@@ -138,7 +150,7 @@ class AudioMuteButton extends AbstractAudioMuteButton<Props, *> {
      * @returns {boolean}
      */
     _isDisabled() {
-        return this.props._disabled;
+        return this.props._disabled || (this.props._unMuteLocked && !this.props._isModerator);
     }
 }
 
@@ -156,6 +168,8 @@ class AudioMuteButton extends AbstractAudioMuteButton<Props, *> {
 function _mapStateToProps(state): Object {
     let _audioMuted;
     let _disabled;
+    const _unMuteLocked = state['features/base/conference'].unMuteLocked;
+    const _isModerator = isLocalParticipantModerator(state);
 
     if (isPrejoinPageVisible(state)) {
         _audioMuted = isPrejoinAudioMuted(state);
@@ -169,7 +183,9 @@ function _mapStateToProps(state): Object {
 
     return {
         _audioMuted,
-        _disabled
+        _disabled,
+        _unMuteLocked,
+        _isModerator
     };
 }
 

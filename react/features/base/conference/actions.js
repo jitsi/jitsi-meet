@@ -517,6 +517,7 @@ export function lockStateChanged(conference: Object, locked: boolean) {
         locked
     };
 }
+
 /**
  * Signals that the lock state of a specific JitsiConference changed.
  *
@@ -531,9 +532,9 @@ export function lockStateChanged(conference: Object, locked: boolean) {
  * }}
  */
 export function lockUnMuteStateChanged(conference: Object, locked: boolean) {
-    console.log("ZZZ lockUnMuteStateChanged", {conference, locked})
+
     return {
-        type: LOCK_UNMUTE_STATE_CHANGED,
+        type: SET_LOCK_UNMUTE,
         conference,
         locked
     };
@@ -731,34 +732,25 @@ export function setToggleLockUnMute(
         method: Function,
         status: boolean) {
     return (dispatch: Dispatch<any>, getState: Function): ?Promise<void> => {
-        console.log("ZZZ setToggleLockUnMute", {conference, method, status})
 
-        switch (method) {
-        case conference.join: {
-            console.log("ZZZ conference.join")
-            break;
+        const state = getState()['features/base/conference'];
+
+        if (state.conference === conference) {
+            return (
+                method.call(conference, status)
+                    .then(() =>
+                        dispatch({
+                            type: SET_LOCK_UNMUTE,
+                            conference,
+                            method,
+                            status
+                        })
+                    )
+                    .catch(error => console.log('setToggleLockUnMute catch'))
+            );
         }
 
-        case conference.lockUnMute: {
-            const state = getState()['features/base/conference'];
-            if (state.conference === conference) {
-                return (
-                    method.call(conference, status)
-                        .then(() =>
-                            dispatch({
-                                type: SET_LOCK_UNMUTE,
-                                conference,
-                                method,
-                                status
-                            })
-                        )
-                        .catch(error => console.log("setToggleLockUnMute catch"))
-                );
-            }
-
-            return Promise.reject();
-        }
-        }
+        return Promise.reject();
     };
 }
 

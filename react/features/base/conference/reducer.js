@@ -431,20 +431,15 @@ function _setPassword(state, { conference, method, password }) {
  * @returns {Object} The new state of the feature base/conference after the
  * reduction of the specified action.
  */
-function _setLockUnMute(state,  { conference, method, status }) {
-    switch (method) {
-        case conference.join:
-            console.log("ZZZ reducer _setLockUnMute")
-            break;
+function _setLockUnMute(state, { locked }) {
 
-        case conference.lockUnMute:
-            return assign(state, {
-                unMuteLocked: status
-            });
-    }
+    const nextState = assign(state, {
+        unMuteLocked: locked
+    });
 
-    return state;
+    return nextState;
 }
+
 /**
  * Reduces a specific Redux action SET_ROOM of the feature base/conference.
  *

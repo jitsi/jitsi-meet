@@ -58,7 +58,9 @@ class LockUnMuteGuestsButton extends AbstractButton<Props, *> {
      * @returns {void}
      */
     _handleClick() {
+
         const { dispatch, conference, unMuteLocked } = this.props;
+
         dispatch(
             setToggleLockUnMute(
                 conference,
@@ -86,8 +88,6 @@ function _mapStateToProps(state: Object, ownProps: Props) {
     const isModerator = localParticipant.role === PARTICIPANT_ROLE.MODERATOR;
     const { visible } = ownProps;
     const { disableRemoteMute } = state['features/base/config'];
-
-    //console.log("ZZZ", {unMuteLocked})
 
     return {
         isModerator,
