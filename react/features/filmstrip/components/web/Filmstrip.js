@@ -223,6 +223,8 @@ class Filmstrip extends Component <Props> {
             toolbar = this.props._filmstripOnly ? <Toolbar /> : this._renderToggleButton();
         }
 
+        filmstripStyle.background = this.props._visible ? 'rgba(33,34,44, 0.66)' : 'none';
+
         return (
             <div
                 className = { `filmstrip ${this.props._className}` }

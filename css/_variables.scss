@@ -6,6 +6,8 @@
 $baseFontFamily: -apple-system, BlinkMacSystemFont, 'open_sanslight', 'Helvetica Neue', Helvetica, Arial, sans-serif;
 $hangupColor: #2A2B35;
 $hangupFontSize: 2em;
+$popOverBackground: #12121B;
+$popupMenuSliderBackground: #67F7B8;
 
 /**
  * Size variables.
@@ -61,13 +63,14 @@ $overflowMenuItemHoverColor: #B8C7E0;
 $overflowMenuItemColor: #B8C7E0;
 $toolBarDesktopBackground: #21222C;
 $toolBoxIconBorderColor: #BABAC0;
+$toolBoxIconsToggled: #67F7B8;
 $toolBoxIconToggled: #2A2B35;
 $cellPhoneColor: #FF4952;
 
 /**
  * Video layout
  */
-$videoThumbnailHovered: rgba(22, 94, 204, .4);
+$videoThumbnailHovered: rgba(103, 247, 184, .4);
 $videoThumbnailSelected: #67F7B8;
 $participantNameColor: #fff;
 $thumbnailPictogramColor: #fff;
@@ -108,6 +111,13 @@ $chatLocalMessageBackgroundColor: rgb(4, 98, 178);
 $chatPrivateMessageBackgroundColor: rgb(153, 69, 77);
 $chatRemoteMessageBackgroundColor:  rgb(86, 101, 114);
 $sidebarWidth: 375px;
+$sidebarDesktopWidth: 370px;
+$chatInputBackground: #12121B;
+$chatInputTextColor: #727278;
+$smileysAreaBorderColor: #292A34;
+$chatConversationBackground: rgba(33, 34, 44, 0.95);
+$displayNameColor: #2A9CFF;
+$borderColor: #707070;
 
  /**
  * Misc.
