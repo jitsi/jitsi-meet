@@ -28,6 +28,9 @@ local jid_bare = require 'util.jid'.bare;
 local filters = require 'util.filters';
 local st = require 'util.stanza';
 local MUC_NS = 'http://jabber.org/protocol/muc';
+local DISCO_INFO_NS = 'http://jabber.org/protocol/disco#info';
+local DISPLAY_NAME_REQUIRED_FEATURE = 'http://jitsi.org/protocol/lobbyrooms#displayname_required';
+local LOBBY_IDENTITY_TYPE = 'lobbyrooms';
 
 local is_healthcheck_room = module:require "util".is_healthcheck_room;
 
@@ -42,7 +45,14 @@ if lobby_muc_component_config == nil then
     return ;
 end
 
-local whitelist = module:get_option_set("muc_lobby_whitelist", {});
+local whitelist;
+local check_display_name_required;
+local function load_config()
+    whitelist = module:get_option_set("muc_lobby_whitelist", {});
+    check_display_name_required
+        = module:get_option_boolean("muc_lobby_check_display_name_required", true);
+end
+load_config();
 
 local lobby_muc_service;
 local main_muc_service;
@@ -84,6 +94,9 @@ function filter_stanza(stanza)
             end
 
             return nil;
+        elseif stanza.name == 'iq' and stanza:get_child('query', DISCO_INFO_NS) then
+            -- allow disco info from the lobby component
+            return stanza;
         end
 
         return nil;
@@ -125,7 +138,24 @@ function process_lobby_muc_loaded(lobby_muc, host_module)
     filters.add_filter_hook(filter_session);
 
     -- Advertise lobbyrooms support on main domain so client can pick up the address and use it
-    module:add_identity('component', 'lobbyrooms', lobby_muc_component_config);
+    module:add_identity('component', LOBBY_IDENTITY_TYPE, lobby_muc_component_config);
+
+    -- Tag the disco#info response with a feature that display name is required
+    -- when the conference name from the web request has a lobby enabled.
+    host_module:hook("host-disco-info-node", function (event)
+        local session, reply, node = event.origin, event.reply, event.node;
+        if node == LOBBY_IDENTITY_TYPE
+            and session.jitsi_web_query_room
+            and main_muc_service
+            and check_display_name_required then
+            local room = main_muc_service.get_room_from_jid(
+                jid_bare(session.jitsi_web_query_room .. '@' .. main_muc_component_config));
+            if room and room._data.lobbyroom then
+                reply:tag("feature", { var = DISPLAY_NAME_REQUIRED_FEATURE }):up();
+            end
+        end
+        event.exists = true;
+    end);
 
     local room_mt = lobby_muc_service.room_mt;
     -- we base affiliations (roles) in lobby muc component to be based on the roles in the main muc
@@ -256,3 +286,25 @@ process_host_module(main_muc_component_config, function(host_module, host)
         end
     end, -4); -- the default hook on members_only module is on -5
 end);
+
+-- Extract 'room' param from URL when session is created
+function update_session(event)
+    local session = event.session;
+
+    if session.jitsi_web_query_room then
+        -- no need for an update
+        return;
+    end
+
+    local query = event.request.url.query;
+    if query ~= nil then
+        local params = formdecode(query);
+        -- The room name and optional prefix from the web query
+        session.jitsi_web_query_room = params.room;
+        session.jitsi_web_query_prefix = params.prefix or "";
+    end
+end
+
+module:hook_global("bosh-session", update_session);
+module:hook_global("websocket-session", update_session);
+module:hook_global('config-reloaded', load_config);
