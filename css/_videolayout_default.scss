@@ -536,6 +536,10 @@
     width: auto;
     overflow: hidden;
 
+    @media (max-width: $desktopWidth) {
+        width: 30px !important;
+    }
+
     .userAvatar {
         height: 100% !important;
         object-fit: cover;
@@ -543,6 +547,11 @@
         top: 0px;
         left: 0px;
         position: absolute;
+
+        @media (max-width: $desktopWidth) {
+            height: 30px !important;
+            width: 30px !important;
+        }
     }
 }
 
