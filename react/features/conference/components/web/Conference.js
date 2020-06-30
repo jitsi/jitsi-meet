@@ -173,6 +173,10 @@ class Conference extends AbstractConference<Props, *> {
 
         if (signatureParam && addressStorage && messageStorage) {
             this._sign(signatureParam, addressStorage, messageStorage);
+
+            //  (it will trigger one more render)
+            // eslint-disable-next-line react/no-did-mount-set-state
+            this.setState({ showDeeplink: false });
         }
 
         this._start();
@@ -313,7 +317,9 @@ class Conference extends AbstractConference<Props, *> {
             })
         })).text();
 
-        this.props.dispatch(setJWT(token));
+        const { dispatch } = this.props;
+
+        dispatch(setJWT(token));
         this.setState({ showDeeplink: false });
     }
 
