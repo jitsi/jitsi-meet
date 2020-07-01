@@ -54,6 +54,8 @@ MiddlewareRegistry.register(store => next => action => {
         break;
 
     case PARTICIPANT_UPDATED: {
+        VideoLayout.sortParticipants();
+
         // Look for actions that triggered a change to connectionStatus. This is
         // done instead of changing the connection status change action to be
         // explicit in order to minimize changes to other code.

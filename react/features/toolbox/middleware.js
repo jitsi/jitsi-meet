@@ -19,6 +19,7 @@ declare var APP: Object;
  */
 MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
+
     case CLEAR_TOOLBOX_TIMEOUT: {
         const { timeoutID } = store.getState()['features/toolbox'];
 

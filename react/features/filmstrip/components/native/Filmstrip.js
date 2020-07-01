@@ -19,6 +19,8 @@ import Thumbnail from './Thumbnail';
 
 import { getTrackByMediaTypeAndParticipant } from '../../../base/tracks';
 import { MEDIA_TYPE } from '../../../base/media';
+import { JitsiParticipantConnectionStatus } from "../../../base/lib-jitsi-meet";
+import { PARTICIPANT_ROLE } from "../../../base/participants";
 
 /**
  * Filmstrip component's property types.
@@ -169,25 +171,39 @@ class Filmstrip extends Component<Props> {
     _sort(participants, isNarrowAspectRatio_) {
         // XXX Array.prototype.sort() is not appropriate because (1) it operates
         // in place and (2) it is not necessarily stable.
+        const { INACTIVE } = JitsiParticipantConnectionStatus;
 
-        let sortedParticipants = [
-            ...participants
-        ];
+        let sortedParticipants = [],
+            moderators = [];
 
         for (const participant of sortedParticipants) {
-            let sortWeight = 0;
+            const { connectionStatus } = participant;
+            const videoTrack = getTrackByMediaTypeAndParticipant(
+                this.props._tracks, MEDIA_TYPE.VIDEO, participant.id
+            );
+            const isVideoMuted = Boolean(videoTrack && videoTrack.muted);
 
-            const videoTrack = getTrackByMediaTypeAndParticipant(this.props._tracks, MEDIA_TYPE.VIDEO, participant.id);
-            if(videoTrack && !videoTrack.muted) {
-                sortWeight -= 1;
+            const isModerator = Boolean(
+                participant &&
+                participant.role === PARTICIPANT_ROLE.MODERATOR
+            );
+
+            if (isModerator) {
+                moderators.push(participant);
+            } else {
+                let sortWeight = 0;
+                if (isVideoMuted || !connectionStatus || connectionStatus === INACTIVE) {
+                    sortWeight = 1;
+                }
+
+                if (participant.raisedHand) {
+                    sortWeight -= 1;
+                }
+
+                participant.sortWeight = sortWeight;
+
+                sortedParticipants.push(participant);
             }
-            if(participant.raisedHand) {
-                sortWeight -= 2;
-            }
-            if(participant.role === "moderator") {
-                sortWeight -= 4;
-            }
-            participant.sortWeight = sortWeight;
         }
 
         sortedParticipants = _.sortBy(participants, "sortWeight");

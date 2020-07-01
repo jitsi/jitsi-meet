@@ -21,6 +21,8 @@ import { AudioRouteButton } from '../../../mobile/audio-mode';
 // import { ClosedCaptionButton } from '../../../subtitles';
 // import { TileViewButton } from '../../../video-layout';
 
+import LockUnMuteGuestsButton from "./LockUnMuteGuestsButton";
+
 // import HelpButton from '../HelpButton';
 
 import AudioOnlyButton from './AudioOnlyButton';
@@ -144,6 +146,7 @@ class OverflowMenu extends PureComponent<Props, State> {
                 <RaiseHandButton { ...buttonProps } />
                 <MuteGuestsButton { ...buttonProps } />
                 <UnMuteGuestsButton { ...buttonProps } />
+                <LockUnMuteGuestsButton { ...buttonProps } />
 
                 { /* <MuteEveryoneButton { ...buttonProps } /> */ }
 

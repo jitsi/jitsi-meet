@@ -86,6 +86,7 @@ import VideoSettingsButton from './VideoSettingsButton';
 import {
     ClosedCaptionButton
 } from '../../../subtitles';
+import LockUnMuteGuestsButton from "./LockUnMuteGuestsButton";
 
 /**
  * The type of the React {@code Component} props of {@link Toolbox}.
@@ -1009,6 +1010,10 @@ class Toolbox extends Component<Props, State> {
                 visible = { this._shouldShowButton('mute-everyone') } />,
             <UnMuteEveryoneButton
                 key = 'unmute-everyone'
+                showLabel = { true }
+                visible = { true } />,
+            <LockUnMuteGuestsButton
+                key = 'lock-unmute-everyone'
                 showLabel = { true }
                 visible = { true } />,
             this._shouldShowButton('stats')

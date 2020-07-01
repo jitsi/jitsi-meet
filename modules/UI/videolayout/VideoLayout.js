@@ -1,6 +1,8 @@
 /* global APP, $, interfaceConfig  */
-const logger = require('jitsi-meet-logger').getLogger(__filename);
+import {JitsiParticipantConnectionStatus} from "../../../react/features/base/lib-jitsi-meet";
 
+const logger = require('jitsi-meet-logger').getLogger(__filename);
+import _ from "lodash";
 import { MEDIA_TYPE, VIDEO_TYPE } from '../../../react/features/base/media';
 import {
     getLocalParticipant as getLocalParticipantFromStore,
@@ -20,7 +22,7 @@ import { VIDEO_CONTAINER_TYPE } from './VideoContainer';
 
 import LocalVideo from './LocalVideo';
 
-const remoteVideos = {};
+let remoteVideos = {};
 let localVideoThumbnail = null;
 
 let eventEmitter = null;
@@ -54,6 +56,48 @@ function getAllThumbnails() {
         localVideoThumbnail,
         ...Object.values(remoteVideos)
     ];
+}
+
+function getSortedParticipants() {
+    const participants = APP.store.getState()["features/base/participants"];
+    let sortedParticipants = [],
+        moderators = [],
+        otherParticipant;
+
+    const {INACTIVE} = JitsiParticipantConnectionStatus;
+
+
+    for (const participant of participants) {
+        const participantThumb = remoteVideos[participant.id];
+        const connectionStatus = APP.conference.getParticipantConnectionStatus(participant.id);
+        if (!participantThumb || participant.local) continue;
+
+        const isModerator = Boolean(participant && participant.role === "moderator");
+        const isVideoMuted = participantThumb.isVideoMuted;
+
+        if (isModerator) {
+            moderators.push(participant);
+        } else {
+            let sortWeight = 0;
+
+            if (isVideoMuted || !connectionStatus || connectionStatus === INACTIVE) {
+                sortWeight = 1;
+            }
+
+            if (participant.raisedHand) {
+                sortWeight -= 1;
+            }
+
+            participant.sortWeight = sortWeight;
+
+            sortedParticipants.push(participant);
+        }
+    }
+    sortedParticipants = _.sortBy(sortedParticipants, "sortWeight");
+    otherParticipant = sortedParticipants.shift();
+
+    return [otherParticipant, ...moderators, ...sortedParticipants]
+            .filter(Boolean);
 }
 
 /**
@@ -808,6 +852,19 @@ const VideoLayout = {
     _updateLargeVideoIfDisplayed(participantId, force = false) {
         if (this.isCurrentlyOnLarge(participantId)) {
             this.updateLargeVideo(participantId, force);
+        }
+    },
+
+    sortParticipants() {
+        const sortedParticipants = getSortedParticipants();
+
+        $("#localVideoTileViewContainer").css({order: -1})
+        if(!_.isEmpty(sortedParticipants)) {
+            _.map(sortedParticipants, (participant, orderKey) => {
+                const $participant = $('.remote-videos-container')
+                    .find(`#participant_${participant.id}`);
+                $participant.css({order: orderKey})
+            })
         }
     },
 

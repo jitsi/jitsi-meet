@@ -118,6 +118,18 @@ export const KICKED_OUT = 'KICKED_OUT';
 export const LOCK_STATE_CHANGED = 'LOCK_STATE_CHANGED';
 
 /**
+ * The type of (redux) action which signals that the lock state of a specific
+ * {@code JitsiConference} changed.
+ *
+ * {
+ *     type: LOCK_UNMUTE_STATE_CHANGED,
+ *     conference: JitsiConference,
+ *     locked: boolean
+ * }
+ */
+export const LOCK_UNMUTE_STATE_CHANGED = 'LOCK_UNMUTE_STATE_CHANGED';
+
+/**
  * The type of (redux) action which sets the peer2peer flag for the current
  * conference.
  *
@@ -199,6 +211,19 @@ export const SET_PASSWORD = 'SET_PASSWORD';
  * }
  */
 export const SET_PASSWORD_FAILED = 'SET_PASSWORD_FAILED';
+
+/**
+ * The type of (redux) action which sets the lock unmute
+ * {@code JitsiConference}.
+ *
+ * {
+ *     type: SET_LOCK_UNMUTE,
+ *     conference: JitsiConference,
+ *     method: Function
+ *     password: string
+ * }
+ */
+export const SET_LOCK_UNMUTE = "SET_LOCK_UNMUTE"
 
 /**
  * The type of (redux) action which signals for pending subject changes.

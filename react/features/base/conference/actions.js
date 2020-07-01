@@ -51,7 +51,7 @@ import {
     SET_PREFERRED_VIDEO_QUALITY,
     SET_ROOM,
     SET_PENDING_SUBJECT_CHANGE,
-    SET_START_MUTED_POLICY
+    SET_START_MUTED_POLICY, LOCK_UNMUTE_STATE_CHANGED, SET_LOCK_UNMUTE
 } from './actionTypes';
 import {
     AVATAR_ID_COMMAND,
@@ -92,6 +92,12 @@ function _addConferenceListeners(conference, dispatch) {
     conference.on(
         JitsiConferenceEvents.CONFERENCE_JOINED,
         (...args) => dispatch(conferenceJoined(conference, ...args)));
+    conference.on(
+        JitsiConferenceEvents.LOCK_UNMUTE_STATE_CHANGED,
+        (...args) => {
+            dispatch(lockUnMuteStateChanged(conference, ...args));
+        }
+    );
     conference.on(
         JitsiConferenceEvents.CONFERENCE_LEFT,
         (...args) => {
@@ -519,6 +525,28 @@ export function lockStateChanged(conference: Object, locked: boolean) {
 }
 
 /**
+ * Signals that the lock state of a specific JitsiConference changed.
+ *
+ * @param {JitsiConference} conference - The JitsiConference which had its lock
+ * state changed.
+ * @param {boolean} locked - If the specified conference became locked, true;
+ * otherwise, false.
+ * @returns {{
+ *     type: LOCK_UNMUTE_STATE_CHANGED,
+ *     conference: JitsiConference,
+ *     locked: boolean
+ * }}
+ */
+export function lockUnMuteStateChanged(conference: Object, locked: boolean) {
+
+    return {
+        type: SET_LOCK_UNMUTE,
+        conference,
+        locked
+    };
+}
+
+/**
  * Updates the known state of start muted policies.
  *
  * @param {boolean} audioMuted - Whether or not members will join the conference
@@ -695,6 +723,40 @@ export function setPassword(
             return Promise.reject();
         }
         }
+    };
+}
+
+/**
+ *
+ * @param conference
+ * @param method
+ * @param status
+ * @returns {function(...[*]=)}
+ */
+export function setToggleLockUnMute(
+        conference: Object,
+        method: Function,
+        status: boolean) {
+    return (dispatch: Dispatch<any>, getState: Function): ?Promise<void> => {
+
+        const state = getState()['features/base/conference'];
+
+        if (state.conference === conference) {
+            return (
+                method.call(conference, status)
+                    .then(() =>
+                        dispatch({
+                            type: SET_LOCK_UNMUTE,
+                            conference,
+                            method,
+                            status
+                        })
+                    )
+                    .catch(error => console.log('setToggleLockUnMute catch'))
+            );
+        }
+
+        return Promise.reject();
     };
 }
 

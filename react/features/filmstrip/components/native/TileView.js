@@ -26,6 +26,7 @@ import { PARTICIPANT_ROLE } from '../../../base/participants'
 
 import Thumbnail from './Thumbnail';
 import styles from './styles';
+import {JitsiParticipantConnectionStatus} from "../../../base/lib-jitsi-meet";
 
 /**
  * The type of the React {@link Component} props of {@link TileView}.
@@ -196,50 +197,52 @@ class TileView extends Component<Props, State> {
      * @returns {Participant[]}
      */
     _getSortedParticipants() {
-        let participants = [];
-        let localParticipant;
-        let otherParticipant;
+        let sortedParticipants = [],
+            moderators = [],
+            localParticipant,
+            otherParticipant;
+
+        const { INACTIVE } = JitsiParticipantConnectionStatus;
 
         for (const participant of this.props._participants) {
+            const { connectionStatus } = participant;
             const videoTrack = getTrackByMediaTypeAndParticipant(
                 this.props._tracks, MEDIA_TYPE.VIDEO, participant.id
             );
             const isVideoMuted = Boolean(videoTrack && videoTrack.muted);
+
             const isModerator = Boolean(
                 participant &&
                 participant.role === PARTICIPANT_ROLE.MODERATOR
             );
-
-            let sortWeight = 0;
-            if (!isVideoMuted) {
-                sortWeight -= 1;
-            }
-            if (participant.raisedHand) {
-                sortWeight -= 2;
-            }
-            if (isModerator) {
-                sortWeight -= 4;
-            }
-            participant.sortWeight = sortWeight;
-
-            if (participant.local) {
+            if(participant.local && !localParticipant) {
                 localParticipant = participant;
-            } else if (
-                !participant.local && !otherParticipant &&
-                !isModerator && !isVideoMuted
-            ) {
-                otherParticipant = participant;
+            } else if (isModerator) {
+                moderators.push(participant);
             } else {
-                participants.push(participant);
+                let sortWeight = 0;
+
+                if (isVideoMuted || !connectionStatus || connectionStatus === INACTIVE) {
+                    sortWeight = 1;
+                }
+
+                if (participant.raisedHand) {
+                    sortWeight -= 1;
+                }
+
+                participant.sortWeight = sortWeight;
+
+                sortedParticipants.push(participant);
             }
         }
 
-        participants = _.sortBy(participants, "sortWeight");
+        sortedParticipants = _.sortBy(sortedParticipants, "sortWeight");
 
-        otherParticipant && participants.unshift(otherParticipant);
-        localParticipant && participants.unshift(localParticipant);
+        sortedParticipants = _.sortBy(sortedParticipants, "sortWeight");
+        otherParticipant = sortedParticipants.shift();
 
-        return participants;
+        return [localParticipant, otherParticipant, ...moderators, ...sortedParticipants]
+            .filter(Boolean);
     }
 
     /**

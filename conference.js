@@ -54,6 +54,7 @@ import {
     dataChannelOpened,
     kickedOut,
     lockStateChanged,
+    lockUnMuteStateChanged,
     onStartMutedPolicyChanged,
     p2pStatusChanged,
     sendLocalParticipant,
@@ -2036,6 +2037,7 @@ export default {
      * Setup interaction between conference and UI.
      */
     _setupListeners() {
+
         // add local streams when joined to the conference
         room.on(JitsiConferenceEvents.CONFERENCE_JOINED, () => {
             this._onConferenceJoined();
@@ -2236,6 +2238,13 @@ export default {
         room.on(
             JitsiConferenceEvents.LOCK_STATE_CHANGED,
             (...args) => APP.store.dispatch(lockStateChanged(room, ...args)));
+
+        room.on(
+            JitsiConferenceEvents.LOCK_UNMUTE_STATE_CHANGED,
+            (...args) => {
+                APP.store.dispatch(lockUnMuteStateChanged(room, ...args));
+            }
+        );
 
         APP.remoteControl.on(RemoteControlEvents.ACTIVE_CHANGED, isActive => {
             room.setLocalParticipantProperty(
@@ -2482,6 +2491,7 @@ export default {
             // case unmute when not track exists the things have to go through
             // muteVideo logic in such case.
             const tracks = APP.store.getState()['features/base/tracks'];
+
             const isTrackInRedux
                 = Boolean(
                     tracks.find(

@@ -5,6 +5,7 @@ import {
     CONFERENCE_JOINED,
     KICKED_OUT,
     VIDEO_QUALITY_LEVELS,
+    SET_LOCK_UNMUTE,
     conferenceLeft,
     getCurrentConference,
     setPreferredVideoQuality
@@ -17,6 +18,8 @@ import { MiddlewareRegistry, StateListenerRegistry } from '../base/redux';
 import { FeedbackDialog } from '../feedback';
 import { setFilmstripEnabled } from '../filmstrip';
 import { setToolboxEnabled } from '../toolbox';
+import { setAudioMuted } from '../base/media';
+import { isLocalParticipantModerator } from '../base/participants';
 
 MiddlewareRegistry.register(store => next => action => {
     const result = next(action);
@@ -36,6 +39,18 @@ MiddlewareRegistry.register(store => next => action => {
                 reducedUI
                     ? VIDEO_QUALITY_LEVELS.LOW
                     : VIDEO_QUALITY_LEVELS.HIGH));
+
+        break;
+    }
+
+    case SET_LOCK_UNMUTE: {
+        const { dispatch, getState } = store;
+        const state = getState();
+        const { unMuteLocked } = state['features/base/conference'];
+
+        if (unMuteLocked && !isLocalParticipantModerator(state)) {
+            dispatch(setAudioMuted(unMuteLocked));
+        }
 
         break;
     }
