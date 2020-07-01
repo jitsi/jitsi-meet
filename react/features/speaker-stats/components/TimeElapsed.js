@@ -67,7 +67,7 @@ class TimeElapsed extends Component<Props> {
         timeElapsed.push(secondsPassed);
 
         return (
-            <div>
+            <div className = 'time' >
                 { timeElapsed }
             </div>
         );
