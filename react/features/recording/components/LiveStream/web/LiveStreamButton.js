@@ -8,6 +8,7 @@ import AbstractLiveStreamButton, {
     _mapStateToProps as _abstractMapStateToProps,
     type Props as AbstractProps
 } from '../AbstractLiveStreamButton';
+import {getLocalParticipant} from "../../../../base/participants";
 
 declare var interfaceConfig: Object;
 
@@ -74,6 +75,7 @@ class LiveStreamButton extends AbstractLiveStreamButton<Props> {
 function _mapStateToProps(state: Object, ownProps: Props) {
     const abstractProps = _abstractMapStateToProps(state, ownProps);
     let { visible } = ownProps;
+    const localParticipant = getLocalParticipant(state);
 
     const _disabledByFeatures = abstractProps.disabledByFeatures;
     let _disabled = false;
@@ -103,7 +105,7 @@ function _mapStateToProps(state: Object, ownProps: Props) {
         ...abstractProps,
         _disabled,
         _liveStreamDisabledTooltipKey,
-        visible
+        visible: visible && localParticipant.role === "moderator"
     };
 }
 

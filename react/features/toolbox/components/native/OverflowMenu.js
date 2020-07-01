@@ -37,6 +37,7 @@ import RaiseHandButton from './RaiseHandButton';
 import ToggleCameraButton from './ToggleCameraButton';
 import styles from './styles';
 import UnMuteGuestsButton from "./UnMuteGuestsButton";
+import { LiveStreamButton } from '../../../recording';
 
 /**
  * The type of the React {@code Component} props of {@link OverflowMenu}.
@@ -140,8 +141,8 @@ class OverflowMenu extends PureComponent<Props, State> {
                 onSwipe = { this._onSwipe }
                 renderHeader = { this._renderMenuExpandToggle }>
                 <ToggleCameraButton { ...buttonProps } />
+                <LiveStreamButton { ...buttonProps } />
                 <AudioRouteButton { ...buttonProps } />
-
                 <AudioOnlyButton { ...buttonProps } />
                 <RaiseHandButton { ...buttonProps } />
                 <MuteGuestsButton { ...buttonProps } />
