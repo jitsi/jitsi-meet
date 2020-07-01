@@ -23,6 +23,7 @@ if not have_async then
     return;
 end
 
+local formdecode = require "util.http".formdecode;
 local jid_split = require 'util.jid'.split;
 local jid_bare = require 'util.jid'.bare;
 local json = require 'util.json';
