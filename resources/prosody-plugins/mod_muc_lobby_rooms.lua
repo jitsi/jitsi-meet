@@ -16,16 +16,16 @@
 --     muc_room_default_public_jids = true
 --
 -- we use async to detect Prosody 0.10 and earlier
-local have_async = pcall(require, "util.async");
+local have_async = pcall(require, 'util.async');
 
 if not have_async then
-    module:log("warn", "Lobby rooms will not work with Prosody version 0.10 or less.");
+    module:log('warn', 'Lobby rooms will not work with Prosody version 0.10 or less.');
     return;
 end
 
 local jid_split = require 'util.jid'.split;
 local jid_bare = require 'util.jid'.bare;
-local json = require "util.json";
+local json = require 'util.json';
 local filters = require 'util.filters';
 local st = require 'util.stanza';
 local MUC_NS = 'http://jabber.org/protocol/muc';
@@ -37,7 +37,7 @@ local NOTIFY_LOBBY_ENABLED = 'LOBBY-ENABLED';
 local NOTIFY_LOBBY_ACCESS_GRANTED = 'LOBBY-ACCESS-GRANTED';
 local NOTIFY_LOBBY_ACCESS_DENIED = 'LOBBY-ACCESS-DENIED';
 
-local is_healthcheck_room = module:require "util".is_healthcheck_room;
+local is_healthcheck_room = module:require 'util'.is_healthcheck_room;
 
 local main_muc_component_config = module:get_option_string('main_muc');
 if main_muc_component_config == nil then
@@ -53,9 +53,9 @@ end
 local whitelist;
 local check_display_name_required;
 local function load_config()
-    whitelist = module:get_option_set("muc_lobby_whitelist", {});
+    whitelist = module:get_option_set('muc_lobby_whitelist', {});
     check_display_name_required
-        = module:get_option_boolean("muc_lobby_check_display_name_required", true);
+        = module:get_option_boolean('muc_lobby_check_display_name_required', true);
 end
 load_config();
 
@@ -84,7 +84,7 @@ function broadcast_json_msg(room, from, json_msg)
     if occupant then
         room:broadcast_message(
             st.message({ type = 'groupchat', from = occupant.nick })
-              :tag("json-message", {xmlns='http://jitsi.org/jitmeet'})
+              :tag('json-message', {xmlns='http://jitsi.org/jitmeet'})
               :text(json.encode(json_msg)):up());
     end
 end
@@ -183,7 +183,7 @@ function process_lobby_muc_loaded(lobby_muc, host_module)
 
     -- Tag the disco#info response with a feature that display name is required
     -- when the conference name from the web request has a lobby enabled.
-    host_module:hook("host-disco-info-node", function (event)
+    host_module:hook('host-disco-info-node', function (event)
         local session, reply, node = event.origin, event.reply, event.node;
         if node == LOBBY_IDENTITY_TYPE
             and session.jitsi_web_query_room
@@ -192,7 +192,7 @@ function process_lobby_muc_loaded(lobby_muc, host_module)
             local room = main_muc_service.get_room_from_jid(
                 jid_bare(session.jitsi_web_query_room .. '@' .. main_muc_component_config));
             if room and room._data.lobbyroom then
-                reply:tag("feature", { var = DISPLAY_NAME_REQUIRED_FEATURE }):up();
+                reply:tag('feature', { var = DISPLAY_NAME_REQUIRED_FEATURE }):up();
             end
         end
         event.exists = true;
@@ -259,7 +259,7 @@ process_host_module(main_muc_component_config, function(host_module, host)
                 local new_room = lobby_muc_service.create_room(lobby_room_jid);
                 new_room.main_room = room;
                 room._data.lobbyroom = new_room;
-                event.status_codes["104"] = true;
+                event.status_codes['104'] = true;
                 notify_lobby_enabled(room, actor, true);
             end
         elseif room._data.lobbyroom then
@@ -268,22 +268,22 @@ process_host_module(main_muc_component_config, function(host_module, host)
             notify_lobby_enabled(room, actor, false);
         end
     end);
-    host_module:hook("muc-room-destroyed",function(event)
+    host_module:hook('muc-room-destroyed',function(event)
         local room = event.room;
         if room._data.lobbyroom then
             room._data.lobbyroom:destroy(nil, 'Lobby room closed.');
             room._data.lobbyroom = nil;
         end
     end);
-    host_module:hook("muc-disco#info", function (event)
+    host_module:hook('muc-disco#info', function (event)
         local room = event.room;
         if (room._data.lobbyroom and room:get_members_only()) then
             table.insert(event.form, {
-                name = "muc#roominfo_lobbyroom";
-                label = "Lobby room jid";
-                value = "";
+                name = 'muc#roominfo_lobbyroom';
+                label = 'Lobby room jid';
+                value = '';
             });
-            event.formdata["muc#roominfo_lobbyroom"] = room._data.lobbyroom.jid;
+            event.formdata['muc#roominfo_lobbyroom'] = room._data.lobbyroom.jid;
         end
     end);
 
@@ -294,7 +294,7 @@ process_host_module(main_muc_component_config, function(host_module, host)
             return;
         end
 
-        local join = stanza:get_child("x", MUC_NS);
+        local join = stanza:get_child('x', MUC_NS);
         if not join then
             return;
         end
@@ -318,7 +318,7 @@ process_host_module(main_muc_component_config, function(host_module, host)
             local affiliation = room:get_affiliation(invitee);
             if not affiliation or affiliation == 0 then
                 event.occupant.role = 'participant';
-                room:set_affiliation(true, invitee_bare_jid, "member");
+                room:set_affiliation(true, invitee_bare_jid, 'member');
                 room:save();
 
                 return;
@@ -342,8 +342,8 @@ process_host_module(main_muc_component_config, function(host_module, host)
     host_module:hook('muc-invite', function(event)
         local room, stanza = event.room, event.stanza;
         local invitee = stanza.attr.to;
-        local from = stanza:get_child("x", "http://jabber.org/protocol/muc#user")
-            :get_child("invite").attr.from;
+        local from = stanza:get_child('x', 'http://jabber.org/protocol/muc#user')
+            :get_child('invite').attr.from;
 
         notify_lobby_access(room, from, invitee, true);
     end);
@@ -363,10 +363,10 @@ function update_session(event)
         local params = formdecode(query);
         -- The room name and optional prefix from the web query
         session.jitsi_web_query_room = params.room;
-        session.jitsi_web_query_prefix = params.prefix or "";
+        session.jitsi_web_query_prefix = params.prefix or '';
     end
 end
 
-module:hook_global("bosh-session", update_session);
-module:hook_global("websocket-session", update_session);
+module:hook_global('bosh-session', update_session);
+module:hook_global('websocket-session', update_session);
 module:hook_global('config-reloaded', load_config);
