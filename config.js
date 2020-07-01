@@ -6,47 +6,53 @@ var config = {
 
     hosts: {
         // XMPP domain.
-        domain: 'jitsi-meet.example.com',
+        domain: '<!--# echo var="domain" default="" -->',
 
         // When using authentication, domain for guest users.
-        // anonymousdomain: 'guest.example.com',
+        anonymousdomain: 'guest.<!--# echo var="domain" default="" -->',
 
         // Domain for authenticated users. Defaults to <domain>.
-        // authdomain: 'jitsi-meet.example.com',
+        // authdomain: 'auth.test.league.aeternity.org',
 
         // Jirecon recording component domain.
-        // jirecon: 'jirecon.jitsi-meet.example.com',
+        // jirecon: 'jirecon.league.superhero.com',
 
         // Call control component (Jigasi).
-        // call_control: 'callcontrol.jitsi-meet.example.com',
+        // call_control: 'callcontrol.league.superhero.com',
 
         // Focus component domain. Defaults to focus.<domain>.
-        // focus: 'focus.jitsi-meet.example.com',
+        // focus: 'focus.league.superhero.com',
 
         // XMPP MUC domain. FIXME: use XEP-0030 to discover it.
-        muc: 'conference.jitsi-meet.example.com'
+        muc: 'conference.<!--# echo var="subdomain" default="" --><!--# echo var="domain" default="" -->'
     },
 
     // BOSH URL. FIXME: use XEP-0156 to discover it.
-    bosh: '//jitsi-meet.example.com/http-bind',
+    bosh: '//<!--# echo var="domain" default="" -->/http-bind',
 
     // Websocket URL
-    // websocket: 'wss://jitsi-meet.example.com/xmpp-websocket',
+    websocket: 'wss://<!--# echo var="domain" default="" -->/xmpp-websocket',
 
     // The name of client node advertised in XEP-0115 'c' stanza
     clientNode: 'http://jitsi.org/jitsimeet',
 
     // The real JID of focus participant - can be overridden here
-    // focusUserJid: 'focus@auth.jitsi-meet.example.com',
+    // focusUserJid: 'focus@auth.league.superhero.com',
 
 
     // Testing / experimental features.
     //
 
     testing: {
+        // Enables experimental simulcast support on Firefox.
+        enableFirefoxSimulcast: false,
+
         // P2P test mode disables automatic switching to P2P when there are 2
         // participants in the conference.
-        p2pTestMode: false
+        p2pTestMode: true,
+        octo: {
+            probability: 1
+        }
 
         // Enables the test specific features consumed by jitsi-meet-torture
         // testMode: false
@@ -77,13 +83,13 @@ var config = {
     // Enabling this will run the lib-jitsi-meet no audio detection module which
     // will notify the user if the current selected microphone has no audio
     // input and will suggest another valid device if one is present.
-    enableNoAudioDetection: true,
+    enableNoAudioDetection: false,
 
     // Enabling this will run the lib-jitsi-meet noise detection module which will
     // notify the user if there is noise, other than voice, coming from the current
     // selected microphone. The purpose it to let the user know that the input could
     // be potentially unpleasant for other meeting participants.
-    enableNoisyMicDetection: true,
+    enableNoisyMicDetection: false,
 
     // Start the conference in audio only mode (no video is being received nor
     // sent).
@@ -94,7 +100,7 @@ var config = {
 
     // Start calls with audio muted. Unlike the option above, this one is only
     // applied locally. FIXME: having these 2 options is confusing.
-    // startWithAudioMuted: false,
+    startWithAudioMuted: true,
 
     // Enabling it (with #params) will disable local audio output of remote
     // participants and to enable it back a reload is needed.
@@ -108,10 +114,11 @@ var config = {
     // w3c spec-compliant video constraints to use for video capture. Currently
     // used by browsers that return true from lib-jitsi-meet's
     // util#browser#usesNewGumFlow. The constraints are independent from
-    // this config's resolution value. Defaults to requesting an ideal
-    // resolution of 720p.
+    // this config's resolution value. Defaults to requesting an ideal aspect
+    // ratio of 16:9 with an ideal resolution of 720.
     // constraints: {
     //     video: {
+    //         aspectRatio: 16 / 9,
     //         height: {
     //             ideal: 720,
     //             max: 720,
@@ -133,7 +140,7 @@ var config = {
 
     // Start calls with video muted. Unlike the option above, this one is only
     // applied locally. FIXME: having these 2 options is confusing.
-    // startWithVideoMuted: false,
+    startWithVideoMuted: true,
 
     // If set to true, prefer to use the H.264 video codec (if supported).
     // Note that it's not recommended to do this because simulcast is not
@@ -175,15 +182,15 @@ var config = {
     // Recording
 
     // Whether to enable file recording or not.
-    // fileRecordingsEnabled: false,
+    fileRecordingsEnabled: true,
     // Enable the dropbox integration.
     // dropbox: {
     //     appKey: '<APP_KEY>' // Specify your app key here.
     //     // A URL to redirect the user to, after authenticating
     //     // by default uses:
-    //     // 'https://jitsi-meet.example.com/static/oauth.html'
+    //     // 'https://league.superhero.com/static/oauth.html'
     //     redirectURI:
-    //          'https://jitsi-meet.example.com/subfolder/static/oauth.html'
+    //          'https://league.superhero.com/subfolder/static/oauth.html'
     // },
     // When integrations like dropbox are enabled only that will be shown,
     // by enabling fileRecordingsServiceEnabled, we show both the integrations
@@ -196,7 +203,7 @@ var config = {
     // fileRecordingsServiceSharingEnabled: false,
 
     // Whether to enable live streaming or not.
-    // liveStreamingEnabled: false,
+    liveStreamingEnabled: true,
 
     // Transcription (in interface_config,
     // subtitles and buttons can be configured)
@@ -208,7 +215,7 @@ var config = {
     // Misc
 
     // Default value for the channel "last N" attribute. -1 for unlimited.
-    channelLastN: -1,
+    channelLastN: 8,
 
     // Disables or enables RTX (RFC 4588) (defaults to false).
     // disableRtx: false,
@@ -226,20 +233,12 @@ var config = {
     // disabled, then bandwidth estimations are disabled.
     // enableRemb: false,
 
-    // Enables ICE restart logic in LJM and displays the page reload overlay on
-    // ICE failure. Current disabled by default because it's causing issues with
-    // signaling when Octo is enabled. Also when we do an "ICE restart"(which is
-    // not a real ICE restart), the client maintains the TCC sequence number
-    // counter, but the bridge resets it. The bridge sends media packets with
-    // TCC sequence numbers starting from 0.
-    // enableIceRestart: false,
-
     // Defines the minimum number of participants to start a call (the default
     // is set in Jicofo and set to 2).
     // minParticipants: 2,
 
     // Use XEP-0215 to fetch STUN and TURN servers.
-    // useStunTurn: true,
+    useStunTurn: true,
 
     // Enable IPv6 support.
     // useIPv6: true,
@@ -248,17 +247,17 @@ var config = {
     // Values can be 'datachannel', 'websocket', true (treat it as
     // 'datachannel'), undefined (treat it as 'datachannel') and false (don't
     // open any channel).
-    // openBridgeChannel: true,
+    openBridgeChannel: 'websocket',
 
 
     // UI
     //
 
     // Use display name as XMPP nickname.
-    // useNicks: false,
+    useNicks: false,
 
     // Require users to always specify a display name.
-    // requireDisplayName: true,
+    requireDisplayName: false,
 
     // Whether to use a welcome page or not. In case it's false a random room
     // will be joined when no room is specified.
@@ -277,13 +276,13 @@ var config = {
     // If true all users without a token will be considered guests and all users
     // with token will be considered non-guests. Only guests will be allowed to
     // edit their profile.
-    enableUserRolesBasedOnToken: false,
+    enableUserRolesBasedOnToken: true,
 
     // Whether or not some features are checked based on token.
-    // enableFeaturesBasedOnToken: false,
+    enableFeaturesBasedOnToken: false,
 
     // Enable lock room for all moderators, even when userRolesBasedOnToken is enabled and participants are guests.
-    // lockRoomGuestEnabled: false,
+    lockRoomGuestEnabled: true,
 
     // When enabled the password used for locking a room is restricted to up to the number of digits specified
     // roomPasswordNumberOfDigits: 10,
@@ -296,9 +295,6 @@ var config = {
     // Enables calendar integration, depends on googleApiApplicationClientID
     // and microsoftApiApplicationClientID
     // enableCalendarIntegration: false,
-
-    // When 'true', it shows an intermediate page before joining, where the user can  configure its devices.
-    // prejoinPageEnabled: false,
 
     // Stats
     //
@@ -342,7 +338,7 @@ var config = {
         // through the JVB and use the peer to peer connection instead. When a
         // 3rd participant joins the conference will be moved back to the JVB
         // connection.
-        enabled: true,
+        enabled: false,
 
         // Use XEP-0215 to fetch STUN and TURN servers.
         // useStunTurn: true,
@@ -350,9 +346,11 @@ var config = {
         // The STUN servers that will be used in the peer to peer connections
         stunServers: [
 
-            // { urls: 'stun:jitsi-meet.example.com:4446' },
-            { urls: 'stun:meet-jit-si-turnrelay.jitsi.net:443' }
-        ]
+            { urls: 'stun:turn.aeternity.org:443' }
+            // { urls: 'stun:stun.l.google.com:19302' },
+            // { urls: 'stun:stun1.l.google.com:19302' },
+            // { urls: 'stun:stun2.l.google.com:19302' }
+        ],
 
         // Sets the ICE transport policy for the p2p connection. At the time
         // of this writing the list of possible values are 'all' and 'relay',
@@ -364,7 +362,7 @@ var config = {
 
         // If set to true, it will prefer to use H.264 for P2P calls (if H.264
         // is supported).
-        // preferH264: true
+        preferH264: true
 
         // If set to true, disable H.264 video codec by stripping it out of the
         // SDP.
@@ -379,10 +377,6 @@ var config = {
         // The Google Analytics Tracking ID:
         // googleAnalyticsTrackingId: 'your-tracking-id-UA-123456-1'
 
-        // Matomo configuration:
-        // matomoEndpoint: 'https://your-matomo-endpoint/',
-        // matomoSiteID: '42',
-
         // The Amplitude APP Key:
         // amplitudeAPPKey: '<APP_KEY>'
 
@@ -396,13 +390,10 @@ var config = {
     // Information about the jitsi-meet instance we are connecting to, including
     // the user region as seen by the server.
     deploymentInfo: {
-        // shard: "shard1",
-        // region: "europe",
-        // userRegion: "asia"
+        shard: "shard_eu-central-1",
+        region: "eu-central-1",
+        userRegion: "<!--#echo var = "user_aws_region" -->"
     },
-
-    // Decides whether the start/stop recording audio notifications should play on record.
-    // disableRecordAudioNotification: false,
 
     // Information for the chrome extension banner
     // chromeExtensionBanner: {
@@ -463,14 +454,6 @@ var config = {
     // the menu has option to flip the locally seen video for local presentations
     // disableLocalVideoFlip: false,
 
-    // Mainly privacy related settings
-
-    // Disables all invite functions from the app (share, invite, dial out...etc)
-    // disableInviteFunctions: true,
-
-    // Disables storing the room name to the recents list
-    // doNotStoreRoom: true,
-
     // Deployment specific URLs.
     // deploymentUrls: {
     //    // If specified a 'Help' button will be displayed in the overflow menu with a link to the specified URL for
@@ -480,16 +463,8 @@ var config = {
     //    // to the specified URL for an app download page.
     //    downloadAppsUrl: 'https://docs.example.com/our-apps.html'
     // },
-
-    // Options related to the remote participant menu.
-    // remoteVideoMenu: {
-    //     // If set to true the 'Kick out' button will be disabled.
-    //     disableKick: true
-    // },
-
-    // If set to true all muting operations of remote participants will be disabled.
-    // disableRemoteMute: true,
-
+    hiddenDomain: 'recorder.<!--# echo var="domain" default="" -->',
+    disableRecordAudioNotification: true,
     // List of undocumented settings used in jitsi-meet
     /**
      _immediateReloadThreshold
