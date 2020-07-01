@@ -93,6 +93,12 @@ function _addConferenceListeners(conference, dispatch) {
         JitsiConferenceEvents.CONFERENCE_JOINED,
         (...args) => dispatch(conferenceJoined(conference, ...args)));
     conference.on(
+        JitsiConferenceEvents.LOCK_UNMUTE_STATE_CHANGED,
+        (...args) => {
+            dispatch(lockUnMuteStateChanged(conference, ...args));
+        }
+    );
+    conference.on(
         JitsiConferenceEvents.CONFERENCE_LEFT,
         (...args) => {
             dispatch(conferenceTimestampChanged(0));

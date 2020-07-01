@@ -737,8 +737,8 @@
         "videomute": "Start / Stop camera",
         "startvideoblur": "Blur my background",
         "stopvideoblur": "Disable background blur",
-        "lockUnMuteGuests": "Lock self unmute",
-        "unLockUnMuteGuest": "Unlock self unmute"
+        "lockUnMuteGuests": "Lock unmute",
+        "unLockUnMuteGuest": "Unlock unmute"
     },
     "transcribing": {
         "ccButtonTooltip": "Start / Stop subtitles",

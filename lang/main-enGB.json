@@ -661,8 +661,8 @@
         "videomute": "Start / Stop camera",
         "startvideoblur": "",
         "stopvideoblur": "",
-        "lockUnMuteGuests": "Lock self unmute",
-        "unLockUnMuteGuest": "Unlock self unmute"
+        "lockUnMuteGuests": "Lock unmute",
+        "unLockUnMuteGuest": "Unlock unmute"
     },
     "transcribing": {
         "ccButtonTooltip": "Start / Stop subtitles",

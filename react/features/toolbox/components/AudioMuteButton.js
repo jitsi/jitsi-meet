@@ -150,7 +150,7 @@ class AudioMuteButton extends AbstractAudioMuteButton<Props, *> {
      * @returns {boolean}
      */
     _isDisabled() {
-        return this.props._disabled || (this.props._unMuteLocked && !this.props._isModerator);
+        return this.props._disabled || (this.props._unMuteLocked && !this.props._isModerator && this._isAudioMuted());
     }
 }
 
