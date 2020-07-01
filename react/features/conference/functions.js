@@ -1,7 +1,6 @@
-import { translateToHTML } from '../base/i18n';
 import { isSuboptimalBrowser } from '../base/environment';
+import { translateToHTML } from '../base/i18n';
 import { toState } from '../base/redux';
-
 import {
     areThereNotifications,
     showWarningNotification

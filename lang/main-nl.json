@@ -113,9 +113,11 @@
         "appNotInstalled": "U hebt de mobiele app {{app}} nodig om op uw telefoon aan deze vergadering deel te nemen.",
         "description": "Gebeurt er niets? Er is geprobeerd uw vergadering te starten in de desktop-app {{app}}. Probeer het opnieuw of start de vergadering in de web-app {{app}}.",
         "descriptionWithoutWeb": "",
-        "downloadApp": "De app downloaden",
+        "downloadApp": "Download de app",
+        "ifDoNotHaveApp": "Als u de app nog niet heeft:",
+        "ifHaveApp": "Als u de app al heeft:",
+        "joinInApp": "Neem deel aan de vergadering met de app",
         "launchWebButton": "Starten via web",
-        "openApp": "Doorgaan naar de app",
         "title": "Uw vergadering wordt gestart in {{app}}…",
         "tryAgainButton": "Opnieuw proberen op desktop"
     },

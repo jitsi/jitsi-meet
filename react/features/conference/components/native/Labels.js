@@ -5,21 +5,17 @@ import { TouchableOpacity, View } from 'react-native';
 
 import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
 import { connect } from '../../../base/redux';
-import {
-    isNarrowAspectRatio,
-    makeAspectRatioAware
-} from '../../../base/responsive-ui';
+import { ASPECT_RATIO_WIDE } from '../../../base/responsive-ui/constants';
 import {
     RecordingExpandedLabel
 } from '../../../recording';
 import { TranscribingExpandedLabel } from '../../../transcribing';
 import { VideoQualityExpandedLabel } from '../../../video-quality';
-
+import { shouldDisplayNotifications } from '../../functions';
 import AbstractLabels, {
     _abstractMapStateToProps,
     type Props as AbstractLabelsProps
 } from '../AbstractLabels';
-import { shouldDisplayNotifications } from '../../functions';
 
 import InsecureRoomNameExpandedLabel from './InsecureRoomNameExpandedLabel';
 import styles from './styles';
@@ -30,14 +26,19 @@ import styles from './styles';
 type Props = AbstractLabelsProps & {
 
     /**
-     * Function to translate i18n labels.
+     * Application's aspect ratio.
      */
-    t: Function,
+    _aspectRatio: Symbol,
 
     /**
      * True if the labels should be visible, false otherwise.
      */
-    _visible: boolean
+    _visible: boolean,
+
+    /**
+     * Function to translate i18n labels.
+     */
+    t: Function
 };
 
 type State = {
@@ -150,12 +151,13 @@ class Labels extends AbstractLabels<Props, State> {
      * @inheritdoc
      */
     render() {
-        if (!this.props._visible) {
+        const { _aspectRatio, _filmstripVisible, _visible } = this.props;
+
+        if (!_visible) {
             return null;
         }
 
-        const wide = !isNarrowAspectRatio(this);
-        const { _filmstripVisible } = this.props;
+        const wide = _aspectRatio === ASPECT_RATIO_WIDE;
 
         return (
             <View
@@ -355,8 +357,9 @@ class Labels extends AbstractLabels<Props, State> {
 function _mapStateToProps(state) {
     return {
         ..._abstractMapStateToProps(state),
+        _aspectRatio: state['features/base/responsive-ui'].aspectRatio,
         _visible: !shouldDisplayNotifications(state)
     };
 }
 
-export default connect(_mapStateToProps)(makeAspectRatioAware(Labels));
+export default connect(_mapStateToProps)(Labels);

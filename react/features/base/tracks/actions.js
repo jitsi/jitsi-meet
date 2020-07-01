@@ -2,8 +2,8 @@ import {
     createTrackMutedEvent,
     sendAnalytics
 } from '../../analytics';
-import { JitsiTrackErrors, JitsiTrackEvents } from '../lib-jitsi-meet';
 import { showErrorNotification, showNotification } from '../../notifications';
+import { JitsiTrackErrors, JitsiTrackEvents } from '../lib-jitsi-meet';
 import {
     CAMERA_FACING_MODE,
     MEDIA_TYPE,
@@ -267,56 +267,70 @@ export function toggleScreensharing() {
  * @returns {Function}
  */
 export function replaceLocalTrack(oldTrack, newTrack, conference) {
-    return (dispatch, getState) => {
+    return async (dispatch, getState) => {
         conference
 
             // eslint-disable-next-line no-param-reassign
             || (conference = getState()['features/base/conference'].conference);
 
-        return conference.replaceTrack(oldTrack, newTrack)
+        if (conference) {
+            await conference.replaceTrack(oldTrack, newTrack);
+        }
+
+        return dispatch(replaceStoredTracks(oldTrack, newTrack));
+    };
+}
+
+/**
+ * Replaces a stored track with another.
+ *
+ * @param {JitsiLocalTrack|null} oldTrack - The track to dispose.
+ * @param {JitsiLocalTrack|null} newTrack - The track to use instead.
+ * @returns {Function}
+ */
+function replaceStoredTracks(oldTrack, newTrack) {
+    return dispatch => {
+        // We call dispose after doing the replace because dispose will
+        // try and do a new o/a after the track removes itself. Doing it
+        // after means the JitsiLocalTrack.conference is already
+        // cleared, so it won't try and do the o/a.
+        const disposePromise
+              = oldTrack
+                  ? dispatch(_disposeAndRemoveTracks([ oldTrack ]))
+                  : Promise.resolve();
+
+        return disposePromise
             .then(() => {
-                // We call dispose after doing the replace because dispose will
-                // try and do a new o/a after the track removes itself. Doing it
-                // after means the JitsiLocalTrack.conference is already
-                // cleared, so it won't try and do the o/a.
-                const disposePromise
-                    = oldTrack
-                        ? dispatch(_disposeAndRemoveTracks([ oldTrack ]))
-                        : Promise.resolve();
+                if (newTrack) {
+                    // The mute state of the new track should be
+                    // reflected in the app's mute state. For example,
+                    // if the app is currently muted and changing to a
+                    // new track that is not muted, the app's mute
+                    // state should be falsey. As such, emit a mute
+                    // event here to set up the app to reflect the
+                    // track's mute state. If this is not done, the
+                    // current mute state of the app will be reflected
+                    // on the track, not vice-versa.
+                    const setMuted
+                          = newTrack.isVideoTrack()
+                              ? setVideoMuted
+                              : setAudioMuted;
+                    const isMuted = newTrack.isMuted();
 
-                return disposePromise
-                    .then(() => {
-                        if (newTrack) {
-                            // The mute state of the new track should be
-                            // reflected in the app's mute state. For example,
-                            // if the app is currently muted and changing to a
-                            // new track that is not muted, the app's mute
-                            // state should be falsey. As such, emit a mute
-                            // event here to set up the app to reflect the
-                            // track's mute state. If this is not done, the
-                            // current mute state of the app will be reflected
-                            // on the track, not vice-versa.
-                            const setMuted
-                                = newTrack.isVideoTrack()
-                                    ? setVideoMuted
-                                    : setAudioMuted;
-                            const isMuted = newTrack.isMuted();
+                    sendAnalytics(createTrackMutedEvent(
+                        newTrack.getType(),
+                        'track.replaced',
+                        isMuted));
+                    logger.log(`Replace ${newTrack.getType()} track - ${
+                        isMuted ? 'muted' : 'unmuted'}`);
 
-                            sendAnalytics(createTrackMutedEvent(
-                                newTrack.getType(),
-                                'track.replaced',
-                                isMuted));
-                            logger.log(`Replace ${newTrack.getType()} track - ${
-                                isMuted ? 'muted' : 'unmuted'}`);
-
-                            return dispatch(setMuted(isMuted));
-                        }
-                    })
-                    .then(() => {
-                        if (newTrack) {
-                            return dispatch(_addTracks([ newTrack ]));
-                        }
-                    });
+                    return dispatch(setMuted(isMuted));
+                }
+            })
+            .then(() => {
+                if (newTrack) {
+                    return dispatch(_addTracks([ newTrack ]));
+                }
             });
     };
 }

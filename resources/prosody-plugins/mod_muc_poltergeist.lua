@@ -106,8 +106,8 @@ prosody.events.add_handler("pre-jitsi-authentication", function(session)
 
     if (session.jitsi_meet_context_user) then
         local room = get_room(
-            session.jitsi_bosh_query_room,
-            session.jitsi_bosh_query_prefix);
+            session.jitsi_web_query_room,
+            session.jitsi_web_query_prefix);
 
         if (not room) then
             return nil;

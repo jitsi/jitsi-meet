@@ -11,7 +11,6 @@ import {
 import { translate } from '../../base/i18n';
 import { Icon, IconAdd } from '../../base/icons';
 import { connect } from '../../base/redux';
-
 import { updateCalendarEvent } from '../actions';
 
 /**

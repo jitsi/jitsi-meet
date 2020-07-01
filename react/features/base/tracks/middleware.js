@@ -1,5 +1,9 @@
 // @flow
 
+import UIEvents from '../../../../service/UI/UIEvents';
+import { hideNotification } from '../../notifications';
+import { isPrejoinPageVisible } from '../../prejoin/functions';
+import { getAvailableDevices } from '../devices/actions';
 import {
     CAMERA_FACING_MODE,
     MEDIA_TYPE,
@@ -10,21 +14,20 @@ import {
     TOGGLE_CAMERA_FACING_MODE,
     toggleCameraFacingMode
 } from '../media';
-import { hideNotification } from '../../notifications';
 import { MiddlewareRegistry } from '../redux';
-import UIEvents from '../../../../service/UI/UIEvents';
 
 import {
-    createLocalTracksA,
-    showNoDataFromSourceVideoError,
-    trackNoDataFromSourceNotificationInfoChanged
-} from './actions';
-import {
+    TRACK_ADDED,
     TOGGLE_SCREENSHARING,
     TRACK_NO_DATA_FROM_SOURCE,
     TRACK_REMOVED,
     TRACK_UPDATED
 } from './actionTypes';
+import {
+    createLocalTracksA,
+    showNoDataFromSourceVideoError,
+    trackNoDataFromSourceNotificationInfoChanged
+} from './actions';
 import {
     getLocalTrack,
     getTrackByJitsiTrack,
@@ -44,6 +47,15 @@ declare var APP: Object;
  */
 MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
+    case TRACK_ADDED: {
+        // The devices list needs to be refreshed when no initial video permissions
+        // were granted and a local video track is added by umuting the video.
+        if (action.track.local) {
+            store.dispatch(getAvailableDevices());
+        }
+
+        break;
+    }
     case TRACK_NO_DATA_FROM_SOURCE: {
         const result = next(action);
 
@@ -281,7 +293,7 @@ function _setMuted(store, { ensureTrack, authority, muted }, mediaType: MEDIA_TY
         // anymore, unless it is muted by audioOnly.
         jitsiTrack && (jitsiTrack.videoType !== 'desktop' || isAudioOnly)
             && setTrackMuted(jitsiTrack, muted);
-    } else if (!muted && ensureTrack && typeof APP === 'undefined') {
+    } else if (!muted && ensureTrack && (typeof APP === 'undefined' || isPrejoinPageVisible(store.getState()))) {
         // FIXME: This only runs on mobile now because web has its own way of
         // creating local tracks. Adjust the check once they are unified.
         store.dispatch(createLocalTracksA({ devices: [ mediaType ] }));

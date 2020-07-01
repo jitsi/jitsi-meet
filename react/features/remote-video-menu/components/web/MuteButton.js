@@ -5,7 +5,6 @@ import React from 'react';
 import { translate } from '../../../base/i18n';
 import { IconMicDisabled } from '../../../base/icons';
 import { connect } from '../../../base/redux';
-
 import AbstractMuteButton, {
     _mapStateToProps,
     type Props

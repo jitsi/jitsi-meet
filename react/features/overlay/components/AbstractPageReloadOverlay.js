@@ -8,13 +8,13 @@ import {
     createPageReloadScheduledEvent,
     sendAnalytics
 } from '../../analytics';
-import { reloadNow } from '../../app';
+import { reloadNow } from '../../app/actions';
 import {
     isFatalJitsiConferenceError,
     isFatalJitsiConnectionError
 } from '../../base/lib-jitsi-meet';
-
 import logger from '../logger';
+
 import ReloadButton from './web/ReloadButton';
 
 declare var APP: Object;

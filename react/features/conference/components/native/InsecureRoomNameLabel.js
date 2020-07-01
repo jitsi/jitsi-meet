@@ -5,7 +5,6 @@ import React from 'react';
 import { IconWarning } from '../../../base/icons';
 import { CircularLabel } from '../../../base/label';
 import { connect } from '../../../base/redux';
-
 import AbstractInsecureRoomNameLabel, { _mapStateToProps } from '../AbstractInsecureRoomNameLabel';
 
 import styles from './styles';

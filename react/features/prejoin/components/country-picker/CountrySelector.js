@@ -1,6 +1,7 @@
 // @flow
 
 import React from 'react';
+
 import { Icon, IconArrowDown } from '../../../base/icons';
 
 type Props = {

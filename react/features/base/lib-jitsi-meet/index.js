@@ -27,6 +27,3 @@ export const JitsiTrackEvents = JitsiMeetJS.events.track;
 export * from './actions';
 export * from './actionTypes';
 export * from './functions';
-
-import './middleware';
-import './reducer';

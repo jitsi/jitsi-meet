@@ -27,8 +27,8 @@ import AudioMutedIndicator from './AudioMutedIndicator';
 import DominantSpeakerIndicator from './DominantSpeakerIndicator';
 import ModeratorIndicator from './ModeratorIndicator';
 import RaisedHandIndicator from './RaisedHandIndicator';
-import styles, { AVATAR_SIZE } from './styles';
 import VideoMutedIndicator from './VideoMutedIndicator';
+import styles, { AVATAR_SIZE } from './styles';
 
 /**
  * Thumbnail component's property types.
@@ -150,7 +150,7 @@ function Thumbnail(props: Props) {
 
             <ParticipantView
                 avatarSize = { AVATAR_SIZE }
-                disableVideo = { isScreenShare }
+                disableVideo = { isScreenShare || participant.isFakeParticipant }
                 participantId = { participantId }
                 style = { _styles.participantViewStyle }
                 tintEnabled = { participantInLargeVideo && !disableTint }
@@ -162,32 +162,32 @@ function Thumbnail(props: Props) {
             { renderModeratorIndicator
                 && <View style = { styles.moderatorIndicatorContainer }>
                     <ModeratorIndicator />
-                </View> }
+                </View>}
 
-            <View
+            { !participant.isFakeParticipant && <View
                 style = { [
                     styles.thumbnailTopIndicatorContainer,
                     styles.thumbnailTopLeftIndicatorContainer
                 ] }>
                 <RaisedHandIndicator participantId = { participant.id } />
                 { renderDominantSpeakerIndicator && <DominantSpeakerIndicator /> }
-            </View>
+            </View> }
 
-            <View
+            { !participant.isFakeParticipant && <View
                 style = { [
                     styles.thumbnailTopIndicatorContainer,
                     styles.thumbnailTopRightIndicatorContainer
                 ] }>
                 <ConnectionIndicator participantId = { participant.id } />
-            </View>
+            </View> }
 
-            <Container style = { styles.thumbnailIndicatorContainer }>
+            { !participant.isFakeParticipant && <Container style = { styles.thumbnailIndicatorContainer }>
                 { audioMuted
                     && <AudioMutedIndicator /> }
 
                 { videoMuted
                     && <VideoMutedIndicator /> }
-            </Container>
+            </Container> }
 
         </Container>
     );

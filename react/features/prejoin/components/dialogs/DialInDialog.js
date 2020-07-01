@@ -1,10 +1,11 @@
 // @flow
 
 import React from 'react';
+
 import { translate } from '../../../base/i18n';
 import { Icon, IconArrowLeft } from '../../../base/icons';
+import { ActionButton } from '../../../base/premeeting';
 import { getCountryCodeFromPhone } from '../../utils';
-import ActionButton from '../buttons/ActionButton';
 import Label from '../Label';
 
 type Props = {

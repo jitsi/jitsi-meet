@@ -23,7 +23,7 @@ import {
     parseURIString,
     toURLString
 } from '../base/util';
-import { showNotification } from '../notifications';
+import { clearNotifications, showNotification } from '../notifications';
 import { setFatalError } from '../overlay';
 
 import {
@@ -78,6 +78,10 @@ export function appNavigate(uri: ?string) {
         if (navigator.product === 'ReactNative') {
             dispatch(disconnect());
         }
+
+        // There are notifications now that gets displayed after we technically left
+        // the conference, but we're still on the conference screen.
+        dispatch(clearNotifications());
 
         dispatch(configWillLoad(locationURL, room));
 

@@ -1,7 +1,8 @@
 // @flow
 
-import ScreenshotCaptureEffect from './ScreenshotCaptureEffect';
 import { toState } from '../../base/redux';
+
+import ScreenshotCaptureEffect from './ScreenshotCaptureEffect';
 
 /**
  * Creates a new instance of ScreenshotCaptureEffect.

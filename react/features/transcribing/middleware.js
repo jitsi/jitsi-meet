@@ -3,6 +3,11 @@
 import { MiddlewareRegistry } from '../base/redux';
 
 import {
+    HIDDEN_PARTICIPANT_JOINED,
+    HIDDEN_PARTICIPANT_LEFT,
+    PARTICIPANT_UPDATED
+} from './../base/participants';
+import {
     _TRANSCRIBER_LEFT
 } from './actionTypes';
 import {
@@ -12,11 +17,6 @@ import {
     transcriberJoined,
     transcriberLeft
 } from './actions';
-import {
-    HIDDEN_PARTICIPANT_JOINED,
-    HIDDEN_PARTICIPANT_LEFT,
-    PARTICIPANT_UPDATED
-} from './../base/participants';
 
 const TRANSCRIBER_DISPLAY_NAME = 'Transcriber';
 

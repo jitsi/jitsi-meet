@@ -4,7 +4,6 @@ import { SET_FILMSTRIP_ENABLED } from '../../filmstrip/actionTypes';
 import { SELECT_LARGE_VIDEO_PARTICIPANT } from '../../large-video/actionTypes';
 import { APP_STATE_CHANGED } from '../../mobile/background/actionTypes';
 import { SCREEN_SHARE_PARTICIPANTS_UPDATED, SET_TILE_VIEW } from '../../video-layout/actionTypes';
-
 import { SET_AUDIO_ONLY } from '../audio-only/actionTypes';
 import { CONFERENCE_JOINED } from '../conference/actionTypes';
 import { getParticipantById } from '../participants/functions';
@@ -44,7 +43,7 @@ function _updateLastN({ getState }) {
     const state = getState();
     const { conference } = state['features/base/conference'];
     const { enabled: audioOnly } = state['features/base/audio-only'];
-    const { appState } = state['features/background'];
+    const { appState } = state['features/background'] || {};
     const { enabled: filmStripEnabled } = state['features/filmstrip'];
     const config = state['features/base/config'];
 
@@ -57,7 +56,7 @@ function _updateLastN({ getState }) {
     const defaultLastN = typeof config.channelLastN === 'undefined' ? -1 : config.channelLastN;
     let lastN = defaultLastN;
 
-    if (appState !== 'active') {
+    if (typeof appState !== 'undefined' && appState !== 'active') {
         lastN = 0;
     } else if (audioOnly) {
         const { screenShares, tileViewEnabled } = state['features/video-layout'];

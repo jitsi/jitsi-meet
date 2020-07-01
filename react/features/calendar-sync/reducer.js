@@ -1,7 +1,6 @@
 // @flow
 
-import { ReducerRegistry, set } from '../base/redux';
-import { PersistenceRegistry } from '../base/storage';
+import { PersistenceRegistry, ReducerRegistry, set } from '../base/redux';
 
 import {
     CLEAR_CALENDAR_INTEGRATION,

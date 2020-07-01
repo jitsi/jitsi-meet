@@ -1,4 +1,5 @@
 import logger from '../logger';
+
 import { AbstractAudioContextAdapter } from './AbstractAudioContextAdapter';
 
 const WAV_BITS_PER_SAMPLE = 16;

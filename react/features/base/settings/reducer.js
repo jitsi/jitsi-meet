@@ -4,10 +4,9 @@ import { jitsiLocalStorage } from 'js-utils';
 import { randomHexString } from 'js-utils/random';
 import _ from 'lodash';
 
-import { APP_WILL_MOUNT } from '../app';
+import { APP_WILL_MOUNT } from '../app/actionTypes';
 import { browser } from '../lib-jitsi-meet';
-import { ReducerRegistry } from '../redux';
-import { PersistenceRegistry } from '../storage';
+import { PersistenceRegistry, ReducerRegistry } from '../redux';
 import { assignIfDefined } from '../util';
 
 import { SETTINGS_UPDATED } from './actionTypes';
