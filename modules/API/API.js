@@ -370,6 +370,7 @@ function initCommands() {
             break;
         case 'is-tileview-enabled':
             callback(APP.store.getState()['features/video-layout']);
+            break;
         case 'is-sharing-screen':
             callback(Boolean(APP.conference.isSharingScreen));
             break;
