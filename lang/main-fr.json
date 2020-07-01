@@ -783,5 +783,32 @@
     },
     "helpView": {
         "header": "Centre d'aide"
+    },
+    "lobby": {
+        "allow": "Autoriser",
+        "backToKnockModeButton": "Aucun mot de passe, demander à rejoindre plutôt",
+        "dialogTitle": "Mode lobby",
+        "disableDialogContent": "Le mode lobby est actuellement activé. Cette fonctionnalité garantit que les participants indésirables ne peuvent pas rejoindre votre réunion. Souhaitez-vous la désactiver?",
+        "disableDialogSubmit": "Désactiver",
+        "emailField": "Saisissez votre adresse email",
+        "enableDialogPasswordField": "Définir le mot de passe (optionel)",
+        "enableDialogSubmit": "Activer",
+        "enableDialogText": "Le mode lobby vous permet de protéger votre réunion en n'autorisant les personnes à entrer qu'après l'approbation formelle d'un modérateur.",
+        "enterPasswordButton": "Saisissez un mot de passe de réunion",
+        "enterPasswordTitle": "Saisissez le mot de passe pour rejoindre la réunion",
+        "invalidPassword": "Mot de passe invalide",
+        "joiningMessage": "Vous allez rejoindre une réunion dès que quelqu'un aura accepté votre demande",
+        "joinWithPasswordMessage": "Tentative de rejoindre avec mot de passe, patientez s'il vous plait...",
+        "joinRejectedMessage": "Votre requête pour rejoindre une réunion a été refusée par un modérateur.",
+        "joinTitle": "Rejoindre une réunion",
+        "joiningTitle": "Demander à rejoindre une réunion...",
+        "joiningWithPasswordTitle": "Rejoindre avec mot de passe...",
+        "knockButton": "Demander à rejoindre",
+        "knockTitle": "Quelqu'un souhaite rejoindre la réunion",
+        "nameField": "Saisissez votre nom",
+        "passwordField": "Saisissez le mot de passe de la réunion",
+        "passwordJoinButton": "Rejoindre",
+        "reject": "Refuser",
+        "toggleLabel": "Activer le lobby"
     }
 }
