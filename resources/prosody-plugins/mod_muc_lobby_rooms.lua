@@ -25,12 +25,17 @@ end
 
 local jid_split = require 'util.jid'.split;
 local jid_bare = require 'util.jid'.bare;
+local json = require "util.json";
 local filters = require 'util.filters';
 local st = require 'util.stanza';
 local MUC_NS = 'http://jabber.org/protocol/muc';
 local DISCO_INFO_NS = 'http://jabber.org/protocol/disco#info';
 local DISPLAY_NAME_REQUIRED_FEATURE = 'http://jitsi.org/protocol/lobbyrooms#displayname_required';
 local LOBBY_IDENTITY_TYPE = 'lobbyrooms';
+local NOTIFY_JSON_MESSAGE_TYPE = 'lobby-notify';
+local NOTIFY_LOBBY_ENABLED = 'LOBBY-ENABLED';
+local NOTIFY_LOBBY_ACCESS_GRANTED = 'LOBBY-ACCESS-GRANTED';
+local NOTIFY_LOBBY_ACCESS_DENIED = 'LOBBY-ACCESS-DENIED';
 
 local is_healthcheck_room = module:require "util".is_healthcheck_room;
 
@@ -57,19 +62,55 @@ load_config();
 local lobby_muc_service;
 local main_muc_service;
 
--- Checks whether there is self-status 110 of the <x node
-function check_self_status(muc_x)
+-- Checks whether there is status in the <x node
+function check_status(muc_x, status)
     if not muc_x then
         return false;
     end
 
-    for status in muc_x:childtags('status') do
-        if status.attr.code == '110' then
+    for statusNode in muc_x:childtags('status') do
+        if statusNode.attr.code == status then
             return true;
         end
     end
 
     return false;
+end
+
+function broadcast_json_msg(room, from, json_msg)
+    json_msg.type = NOTIFY_JSON_MESSAGE_TYPE;
+
+    local occupant = room:get_occupant_by_real_jid(from);
+    if occupant then
+        room:broadcast_message(
+            st.message({ type = 'groupchat', from = occupant.nick })
+              :tag("json-message", {xmlns='http://jitsi.org/jitmeet'})
+              :text(json.encode(json_msg)):up());
+    end
+end
+
+-- Sends a json message notifying for lobby enabled/disable
+-- the message from is the actor that did the operation
+function notify_lobby_enabled(room, actor, value)
+    broadcast_json_msg(room, actor, {
+        event = NOTIFY_LOBBY_ENABLED,
+        value = value
+    });
+end
+
+-- Sends a json message notifying that the jid was granted/denied access in lobby
+-- the message from is the actor that did the operation
+function notify_lobby_access(room, actor, jid, granted)
+    local notify_json = {
+        value = jid
+    };
+    if granted then
+        notify_json.event = NOTIFY_LOBBY_ACCESS_GRANTED;
+    else
+        notify_json.event = NOTIFY_LOBBY_ACCESS_DENIED;
+    end
+
+    broadcast_json_msg(room, actor, notify_json);
 end
 
 function filter_stanza(stanza)
@@ -83,7 +124,7 @@ function filter_stanza(stanza)
         if stanza.name == 'presence' then
             local muc_x = stanza:get_child('x', MUC_NS..'#user');
 
-            if muc_x and check_self_status(muc_x) then
+            if check_status(muc_x, '110') then
                 return stanza;
             end
 
@@ -173,6 +214,15 @@ function process_lobby_muc_loaded(lobby_muc, host_module)
 
         return 'none';
     end
+
+    -- listens for kicks in lobby room, 307 is the status for kick according to xep-0045
+    host_module:hook('muc-broadcast-presence', function (event)
+        local actor, occupant, room, x = event.actor, event.occupant, event.room, event.x;
+        if check_status(x, '307') then
+            -- we need to notify in the main room
+            notify_lobby_access(room.main_room, actor, occupant.jid, false);
+        end
+    end);
 end
 
 -- process or waits to process the lobby muc component
@@ -199,7 +249,7 @@ process_host_module(main_muc_component_config, function(host_module, host)
 
     -- hooks when lobby is enabled to create its room, only done here or by admin
     host_module:hook('muc-config-submitted', function(event)
-        local room = event.room;
+        local actor, room = event.actor, event.room;
         local members_only = event.fields['muc#roomconfig_membersonly'] and true or nil;
         if members_only then
             local node = jid_split(room.jid);
@@ -210,10 +260,12 @@ process_host_module(main_muc_component_config, function(host_module, host)
                 new_room.main_room = room;
                 room._data.lobbyroom = new_room;
                 event.status_codes["104"] = true;
+                notify_lobby_enabled(room, actor, true);
             end
         elseif room._data.lobbyroom then
             room._data.lobbyroom:destroy(room.jid, 'Lobby room closed.');
             room._data.lobbyroom = nil;
+            notify_lobby_enabled(room, actor, false);
         end
     end);
     host_module:hook("muc-room-destroyed",function(event)
@@ -285,6 +337,16 @@ process_host_module(main_muc_component_config, function(host_module, host)
             return true;
         end
     end, -4); -- the default hook on members_only module is on -5
+
+    -- listens for invites for participants to join the main room
+    host_module:hook('muc-invite', function(event)
+        local room, stanza = event.room, event.stanza;
+        local invitee = stanza.attr.to;
+        local from = stanza:get_child("x", "http://jabber.org/protocol/muc#user")
+            :get_child("invite").attr.from;
+
+        notify_lobby_access(room, from, invitee, true);
+    end);
 end);
 
 -- Extract 'room' param from URL when session is created
