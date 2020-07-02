@@ -38,5 +38,10 @@
         display: flex;
         align-items: center;
         margin-top: 15px;
+
+        .time {
+            font-size: 15px;
+            margin-left: 15px;
+        }
     }
 }
