@@ -280,7 +280,7 @@ class Conference extends AbstractConference<Props, *> {
                 this.setState({ showDeeplink: true });
                 await client.connectToWallet(await newWallet.getConnection());
                 await client.subscribeAddress('subscribe', 'current');
-                await this._signAndReconnect();
+                this._signAndReconnect();
             }
         });
 
