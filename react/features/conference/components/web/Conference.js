@@ -313,7 +313,7 @@ class Conference extends AbstractConference<Props, *> {
             })
         })).text();
 
-        // if user will ckick "reject" the code will stops before that line
+        // if user will click the "reject" button the code will stops before that line
         this.props.dispatch(setJWT(token));
         await APP.conference.leaveRoomAndDisconnect();
         APP.UI.unbindEvents();
