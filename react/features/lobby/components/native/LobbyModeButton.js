@@ -1,7 +1,7 @@
 // @flow
 
 import { getCurrentConference } from '../../../base/conference';
-import { getFeatureFlag, LOBBY_MODE_ENABLED } from "../../../base/flags";
+import { getFeatureFlag, LOBBY_MODE_ENABLED } from '../../../base/flags';
 import { translate } from '../../../base/i18n';
 import { IconMeetingUnlocked, IconMeetingLocked } from '../../../base/icons';
 import { isLocalParticipantModerator } from '../../../base/participants';
@@ -10,6 +10,7 @@ import AbstractButton, { type Props as AbstractProps } from '../../../base/toolb
 import { showDisableLobbyModeDialog, showEnableLobbyModeDialog } from '../../actions.native';
 
 type Props = AbstractProps & {
+
     /**
      * The Redux Dispatch function.
      */
@@ -72,7 +73,7 @@ export function _mapStateToProps(state: Object, ownProps): $Shape<Props> {
 
     return {
         lobbyEnabled,
-        visible: lobbySupported && isLocalParticipantModerator(state) && visible,
+        visible: lobbySupported && isLocalParticipantModerator(state) && visible
     };
 }
 
