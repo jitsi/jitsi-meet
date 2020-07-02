@@ -9,7 +9,7 @@ import React from 'react';
 import VideoLayout from '../../../../../modules/UI/videolayout/VideoLayout';
 import { client, initClient } from '../../../../client';
 import { getConferenceNameForTitle } from '../../../base/conference';
-import { connect, disconnect, silentDisconnect } from '../../../base/connection';
+import { connect, disconnect } from '../../../base/connection';
 import { translate } from '../../../base/i18n';
 import { setJWT } from '../../../base/jwt/actions';
 import { connect as reactReduxConnect } from '../../../base/redux';
@@ -177,9 +177,10 @@ class Conference extends AbstractConference<Props, *> {
             //  (it will trigger one more render)
             // eslint-disable-next-line react/no-did-mount-set-state
             this.setState({ showDeeplink: false });
-            // todo:
-            // this.props.dispatch(silentDisconnect());
-            this.props.dispatch(connect());
+            APP.conference.silentDisconnect().then(() => {
+                this.props.dispatch(connect());
+            });
+
         }
 
         this._start();
@@ -287,7 +288,9 @@ class Conference extends AbstractConference<Props, *> {
                 this.setState({ showDeeplink: true });
                 await client.connectToWallet(await newWallet.getConnection());
                 await client.subscribeAddress('subscribe', 'current');
-                this._sign();
+                await this._sign();
+                await APP.conference.silentDisconnect();
+                this._start();
             }
         });
 
@@ -321,7 +324,7 @@ class Conference extends AbstractConference<Props, *> {
         })).text();
 
         this.props.dispatch(setJWT(token));
-        this._start();
+        // this._start();
         this.setState({ showDeeplink: false });
     }
 
