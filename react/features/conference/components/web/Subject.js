@@ -145,7 +145,11 @@ class Subject extends Component<Props, State> {
                 <span className = 'subject-text'>{ _subject }</span>
                 <div className = 'wrapper'>
                     { _showParticipantCount && <ParticipantsCount /> }
-                    {time !== 0 && <TimeElapsed time = { time } /> }
+                    {time !== 0 && (
+                        <TimeElapsed
+                            parent = 'subject'
+                            time = { time } />
+                    )}
                 </div>
             </div>
         );
