@@ -64,7 +64,7 @@ class LobbyModeButton extends AbstractButton<Props, any> {
  * @param {Props} ownProps - The own props of the component.
  * @returns {Props}
  */
-export function _mapStateToProps(state: Object, ownProps): $Shape<Props> {
+export function _mapStateToProps(state: Object, ownProps: Props): $Shape<Props> {
     const conference = getCurrentConference(state);
     const { lobbyEnabled } = state['features/lobby'];
     const lobbySupported = conference && conference.isLobbySupported();
