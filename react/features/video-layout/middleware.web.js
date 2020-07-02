@@ -54,7 +54,7 @@ MiddlewareRegistry.register(store => next => action => {
         break;
 
     case PARTICIPANT_UPDATED: {
-        VideoLayout.sortParticipants();
+        // VideoLayout.sortParticipants();
 
         // Look for actions that triggered a change to connectionStatus. This is
         // done instead of changing the connection status change action to be

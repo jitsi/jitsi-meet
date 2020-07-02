@@ -98,6 +98,7 @@ type Props = AbstractProps & {
  * The conference page of the Web application.
  */
 class Conference extends AbstractConference<Props, *> {
+    _sortInterval: IntervalID;
     _onFullScreenChange: Function;
     _onShowToolbar: Function;
     _originalOnShowToolbar: Function;
@@ -134,6 +135,10 @@ class Conference extends AbstractConference<Props, *> {
     componentDidMount() {
         document.title = `${this.props._roomName} | ${interfaceConfig.APP_NAME}`;
         this._start();
+
+        this._sortInterval = setInterval(() => {
+            VideoLayout.sortParticipants();
+        }, 5000)
     }
 
     /**
@@ -168,6 +173,8 @@ class Conference extends AbstractConference<Props, *> {
             document.removeEventListener(name, this._onFullScreenChange));
 
         APP.conference.isJoined() && this.props.dispatch(disconnect());
+
+        clearInterval(this._sortInterval)
     }
 
     /**

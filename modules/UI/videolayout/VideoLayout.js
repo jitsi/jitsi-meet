@@ -80,7 +80,7 @@ function getSortedParticipants() {
         } else {
             let sortWeight = 0;
 
-            if (isVideoMuted || !connectionStatus || connectionStatus === INACTIVE) {
+            if (isVideoMuted || connectionStatus === INACTIVE) {
                 sortWeight = 1;
             }
 

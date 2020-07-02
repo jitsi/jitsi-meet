@@ -96,8 +96,12 @@ const TILE_ASPECT_RATIO = 1;
 class TileView extends Component<Props, State> {
     state = {
         height: 0,
-        width: 0
+        width: 0,
+
+        sortedParticipants: []
     };
+
+    sortInterval: IntervalID;
 
     /**
      * Initializes a new {@code TileView} instance.
@@ -119,6 +123,17 @@ class TileView extends Component<Props, State> {
      */
     componentDidMount() {
         this._updateReceiverQuality();
+
+        this.sortInterval = setInterval(() => {
+
+            this.setState({
+                sortedParticipants: this._getSortedParticipants()
+            });
+        }, 5000);
+    }
+
+    componentWillUnmount() {
+        clearInterval(this.sortInterval);
     }
 
     /**
@@ -222,7 +237,7 @@ class TileView extends Component<Props, State> {
             } else {
                 let sortWeight = 0;
 
-                if (isVideoMuted || !connectionStatus || connectionStatus === INACTIVE) {
+                if (isVideoMuted || connectionStatus === INACTIVE) {
                     sortWeight = 1;
                 }
 
@@ -236,9 +251,7 @@ class TileView extends Component<Props, State> {
             }
         }
 
-        sortedParticipants = _.sortBy(sortedParticipants, "sortWeight");
-
-        sortedParticipants = _.sortBy(sortedParticipants, "sortWeight");
+        sortedParticipants = _.sortBy(sortedParticipants, 'sortWeight');
         otherParticipant = sortedParticipants.shift();
 
         return [localParticipant, otherParticipant, ...moderators, ...sortedParticipants]
@@ -331,14 +344,14 @@ class TileView extends Component<Props, State> {
      * @returns {ReactElement[]}
      */
     _renderThumbnails() {
+        const {sortedParticipants} = this.state;
         const styleOverrides = {
             aspectRatio: TILE_ASPECT_RATIO,
             flex: 0,
             height: this._getTileDimensions().height,
             width: null
         };
-
-        return this._getSortedParticipants()
+        return sortedParticipants
             .map(participant => (
                 <Thumbnail
                     disableTint = { true }
