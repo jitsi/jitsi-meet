@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 
 import TimeElapsed from '../../../../features/speaker-stats/components/TimeElapsed';
 import { getConferenceName } from '../../../base/conference/functions';
-import { getParticipantCount, getDominantSpeaker } from '../../../base/participants/functions';
+import { getParticipantCount, getDominantSpeaker } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import { isToolboxVisible } from '../../../toolbox';
 
@@ -39,7 +39,7 @@ type Props = {
     /**
      * Dominant speaker id
      */
-    id: string
+    _id: string
 };
 
 /**
@@ -51,11 +51,6 @@ type State = {
      * The stats summary provided by the JitsiConference.
      */
     stats: Object,
-
-    /**
-     * Dominant speaker id
-     */
-    id: string,
 
     /**
      * Dominant speaker stats
@@ -87,7 +82,6 @@ class Subject extends Component<Props, State> {
 
         this.state = {
             stats: props.conference && props.conference.getSpeakerStats(),
-            id: props.id,
             statsModel: undefined,
             time: 0
         };
@@ -123,14 +117,14 @@ class Subject extends Component<Props, State> {
      * @private
      */
     _updateStats() {
-        const newStats = this.props.conference && this.props.conference.getSpeakerStats();
-        const newId = this.props.id;
-        const newStatsModel = this.state.stats && this.state.id && this.state.stats[this.state.id];
-        const newTime = this.state.statsModel && this.state.statsModel.getTotalDominantSpeakerTime();
+        const { conference, _id } = this.props;
+
+        const newStats = conference && conference.getSpeakerStats();
+        const newStatsModel = newStats && _id && newStats[_id];
+        const newTime = (newStatsModel && newStatsModel.getTotalDominantSpeakerTime()) || 0;
 
         this.setState({
             stats: newStats,
-            id: newId,
             statsModel: newStatsModel,
             time: newTime
         });
@@ -151,7 +145,7 @@ class Subject extends Component<Props, State> {
                 <span className = 'subject-text'>{ _subject }</span>
                 <div className = 'wrapper'>
                     { _showParticipantCount && <ParticipantsCount /> }
-                    {time && <TimeElapsed time = { time } /> }
+                    {time !== 0 && <TimeElapsed time = { time } /> }
                 </div>
             </div>
         );
@@ -174,7 +168,7 @@ function _mapStateToProps(state) {
     const domainSpeaker = getDominantSpeaker(state);
 
     return {
-        id: domainSpeaker && domainSpeaker.id,
+        _id: domainSpeaker?.id ?? '',
         conference: state['features/base/conference'].conference,
         _showParticipantCount: participantCount > 2,
         _subject: getConferenceName(state),
