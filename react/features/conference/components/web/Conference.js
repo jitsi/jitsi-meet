@@ -277,7 +277,6 @@ class Conference extends AbstractConference<Props, *> {
         detector.scan(async ({ newWallet }) => {
             if (newWallet) {
                 detector.stopScan();
-                this.setState({ showDeeplink: true });
                 await client.connectToWallet(await newWallet.getConnection());
                 await client.subscribeAddress('subscribe', 'current');
                 this._signAndReconnect();
