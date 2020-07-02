@@ -2,13 +2,14 @@ import { ReducerRegistry } from '../base/redux';
 
 import {
     SET_DEVICE_STATUS,
-    SET_DIALOUT_NUMBER,
     SET_DIALOUT_COUNTRY,
+    SET_DIALOUT_NUMBER,
     SET_DIALOUT_STATUS,
     SET_JOIN_BY_PHONE_DIALOG_VISIBLITY,
-    SET_SKIP_PREJOIN,
     SET_PREJOIN_DEVICE_ERRORS,
-    SET_PREJOIN_PAGE_VISIBILITY
+    SET_PREJOIN_DISPLAY_NAME_REQUIRED,
+    SET_PREJOIN_PAGE_VISIBILITY,
+    SET_SKIP_PREJOIN
 } from './actionTypes';
 
 const DEFAULT_STATE = {
@@ -22,6 +23,7 @@ const DEFAULT_STATE = {
     },
     dialOutNumber: '',
     dialOutStatus: 'prejoin.dialing',
+    isDisplayNameRequired: false,
     name: '',
     rawError: '',
     showPrejoin: true,
@@ -91,6 +93,13 @@ ReducerRegistry.register(
             return {
                 ...state,
                 showJoinByPhoneDialog: action.value
+            };
+        }
+
+        case SET_PREJOIN_DISPLAY_NAME_REQUIRED: {
+            return {
+                ...state,
+                isDisplayNameRequired: true
             };
         }
 

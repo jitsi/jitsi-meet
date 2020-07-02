@@ -26,6 +26,17 @@ export function isDeviceStatusVisible(state: Object): boolean {
 }
 
 /**
+ * Selector for determining if the display name is mandatory.
+ *
+ * @param {Object} state - The state of the app.
+ * @returns {boolean}
+ */
+export function isDisplayNameRequired(state: Object): boolean {
+    return state['features/prejoin'].isDisplayNameRequired
+        || state['features/base/config'].requireDisplayName;
+}
+
+/**
  * Returns the text for the prejoin status bar.
  *
  * @param {Object} state - The state of the app.
