@@ -20,9 +20,9 @@ type Props = {
     time: number,
 
     /**
-     * Parent component
+     * Themplate name.
      */
-    parent?: string
+    template?: string
 };
 
 /**
@@ -40,7 +40,7 @@ class TimeElapsed extends Component<Props> {
      * @returns {ReactElement}
      */
     render() {
-        const { time, parent } = this.props;
+        const { time, template } = this.props;
         const hours = _getHoursCount(time);
         const minutes = _getMinutesCount(time);
         const seconds = _getSecondsCount(time);
@@ -71,7 +71,7 @@ class TimeElapsed extends Component<Props> {
 
         timeElapsed.push(secondsPassed);
 
-        const subjectTime = parent === 'subject' && _getSubjectTime(seconds, minutes);
+        const subjectTime = template === 'subject' && _getSubjectTime(seconds, minutes);
 
         return (
             <div className = 'time' >

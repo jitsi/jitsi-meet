@@ -147,7 +147,7 @@ class Subject extends Component<Props, State> {
                     { _showParticipantCount && <ParticipantsCount /> }
                     {time !== 0 && (
                         <TimeElapsed
-                            parent = 'subject'
+                            template = 'subject'
                             time = { time } />
                     )}
                 </div>
