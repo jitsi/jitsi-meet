@@ -218,7 +218,7 @@ class Filmstrip extends Component<Props, State> {
                 moderators.push(participant);
             } else {
                 let sortWeight = 0;
-                if (isVideoMuted || !connectionStatus || connectionStatus === INACTIVE) {
+                if (isVideoMuted || connectionStatus === INACTIVE) {
                     sortWeight = 1;
                 }
 
