@@ -21,6 +21,7 @@ import {
     SET_DIALOUT_COUNTRY,
     SET_DIALOUT_NUMBER,
     SET_DIALOUT_STATUS,
+    SET_PREJOIN_DISPLAY_NAME_REQUIRED,
     SET_SKIP_PREJOIN,
     SET_JOIN_BY_PHONE_DIALOG_VISIBLITY,
     SET_PREJOIN_DEVICE_ERRORS,
@@ -339,6 +340,17 @@ export function setDialOutCountry(value: Object) {
     return {
         type: SET_DIALOUT_COUNTRY,
         value
+    };
+}
+
+/**
+ * Action used to set the stance of the display name.
+ *
+ * @returns {Object}
+ */
+export function setPrejoinDisplayNameRequired() {
+    return {
+        type: SET_PREJOIN_DISPLAY_NAME_REQUIRED
     };
 }
 
