@@ -106,7 +106,7 @@ class Conference extends AbstractConference<Props, *> {
     _onFullScreenChange: Function;
     _onShowToolbar: Function;
     _originalOnShowToolbar: Function;
-    _sign: Function;
+    _signAndReconnect: Function;
     _scanForWallets: Function;
 
     /**
@@ -135,7 +135,7 @@ class Conference extends AbstractConference<Props, *> {
 
         // Bind event handler so it is only bound once for every instance.
         this._onFullScreenChange = this._onFullScreenChange.bind(this);
-        this._sign = this._sign.bind(this);
+        this._signAndReconnect = this._signAndReconnect.bind(this);
         this._scanForWallets = this._scanForWallets.bind(this);
     }
 
@@ -172,15 +172,7 @@ class Conference extends AbstractConference<Props, *> {
         const messageStorage = jitsiLocalStorage.getItem('message');
 
         if (signatureParam && addressStorage && messageStorage) {
-            this._sign(signatureParam, addressStorage, messageStorage);
-
-            //  (it will trigger one more render)
-            // eslint-disable-next-line react/no-did-mount-set-state
-            this.setState({ showDeeplink: false });
-            APP.conference.silentDisconnect().then(() => {
-                this._start();
-            });
-
+            this._signAndReconnect(signatureParam, addressStorage, messageStorage);
         }
 
         this._start();
@@ -288,9 +280,7 @@ class Conference extends AbstractConference<Props, *> {
                 this.setState({ showDeeplink: true });
                 await client.connectToWallet(await newWallet.getConnection());
                 await client.subscribeAddress('subscribe', 'current');
-                await this._sign();
-                await APP.conference.leaveRoomAndDisconnect();
-                this._start();
+                await this._signAndReconnect();
             }
         });
 
@@ -306,7 +296,7 @@ class Conference extends AbstractConference<Props, *> {
      * @returns {void}
      *
      */
-    async _sign(signatureParam, addressParam, messageParam) {
+    async _signAndReconnect(signatureParam, addressParam, messageParam) {
         const message = messageParam || `I would like to generate JWT token at ${new Date().toUTCString()}`;
         const signature = signatureParam || await client.signMessage(message);
         const address = addressParam || client.rpcClient.getCurrentAccount();
@@ -323,9 +313,14 @@ class Conference extends AbstractConference<Props, *> {
             })
         })).text();
 
+        // if user will ckick "reject" the code will stops before that line
         this.props.dispatch(setJWT(token));
-        // this._start();
+        await APP.conference.leaveRoomAndDisconnect();
+        APP.UI.unbindEvents();
+        FULL_SCREEN_EVENTS.forEach(name =>
+            document.removeEventListener(name, this._onFullScreenChange));
         this.setState({ showDeeplink: false });
+        this._start();
     }
 
     /**
