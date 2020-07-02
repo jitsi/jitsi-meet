@@ -173,9 +173,9 @@ class Conference extends AbstractConference<Props, *> {
 
         if (signatureParam && addressStorage && messageStorage) {
             this._signAndReconnect(signatureParam, addressStorage, messageStorage);
+        } else {
+            this._start();
         }
-
-        this._start();
     }
 
     /**
