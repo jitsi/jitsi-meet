@@ -50,6 +50,12 @@ export const IOS_RECORDING_ENABLED = 'ios.recording.enabled';
 export const LIVE_STREAMING_ENABLED = 'live-streaming.enabled';
 
 /**
+ * Flag indicating if lobby mode should be enabled.
+ * Default: enabled (true).
+ */
+export const LOBBY_MODE_ENABLED = 'lobby-mode.enabled';
+
+/**
  * Flag indicating if displaying the meeting name should be enabled.
  * Default: enabled (true).
  */
