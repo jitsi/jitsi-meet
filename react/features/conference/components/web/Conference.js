@@ -178,7 +178,7 @@ class Conference extends AbstractConference<Props, *> {
             // eslint-disable-next-line react/no-did-mount-set-state
             this.setState({ showDeeplink: false });
             APP.conference.silentDisconnect().then(() => {
-                this.props.dispatch(connect());
+                this._start();
             });
 
         }
@@ -289,7 +289,7 @@ class Conference extends AbstractConference<Props, *> {
                 await client.connectToWallet(await newWallet.getConnection());
                 await client.subscribeAddress('subscribe', 'current');
                 await this._sign();
-                await APP.conference.silentDisconnect();
+                await APP.conference.leaveRoomAndDisconnect();
                 this._start();
             }
         });

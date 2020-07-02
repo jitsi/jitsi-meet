@@ -2917,17 +2917,6 @@ export default {
     },
 
     /**
-     * Disconnect user but stay at the same view
-     *
-     * @returns {void}
-     */
-    async silentDisconnect() {
-        await disconnect();
-        await this.leaveRoomAndDisconnect();
-        this._stopProxyConnection();
-    },
-
-    /**
      * Leaves the room and calls JitsiConnection.disconnect.
      *
      * @returns {Promise}
