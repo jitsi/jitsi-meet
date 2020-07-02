@@ -13,26 +13,26 @@ var interfaceConfig = {
 
     INITIAL_TOOLBAR_TIMEOUT: 20000,
     TOOLBAR_TIMEOUT: 4000,
-    TOOLBAR_ALWAYS_VISIBLE: false,
-    DEFAULT_REMOTE_DISPLAY_NAME: 'Fellow Jitster',
+    TOOLBAR_ALWAYS_VISIBLE: true,
+    DEFAULT_REMOTE_DISPLAY_NAME: 'Fellow Superhero',
     DEFAULT_LOCAL_DISPLAY_NAME: 'me',
     SHOW_JITSI_WATERMARK: true,
-    JITSI_WATERMARK_LINK: 'https://jitsi.org',
+    JITSI_WATERMARK_LINK: 'https://league.superhero.com',
 
     // if watermark is disabled by default, it can be shown only for guests
-    SHOW_WATERMARK_FOR_GUESTS: true,
+    SHOW_WATERMARK_FOR_GUESTS: false,
     SHOW_BRAND_WATERMARK: false,
-    BRAND_WATERMARK_LINK: '',
+    BRAND_WATERMARK_LINK: 'https://league.superhero.com/',
     SHOW_POWERED_BY: false,
     SHOW_DEEP_LINKING_IMAGE: false,
     GENERATE_ROOMNAMES_ON_WELCOME_PAGE: true,
     DISPLAY_WELCOME_PAGE_CONTENT: true,
     DISPLAY_WELCOME_PAGE_TOOLBAR_ADDITIONAL_CONTENT: false,
-    APP_NAME: 'Jitsi Meet',
+    APP_NAME: 'Superhero League',
     NATIVE_APP_NAME: 'Jitsi Meet',
     PROVIDER_NAME: 'Jitsi',
     LANG_DETECTION: true, // Allow i18n to detect the system language
-    INVITATION_POWERED_BY: true,
+    INVITATION_POWERED_BY: false,
 
     /**
      * If we should show authentication block in profile
@@ -48,11 +48,11 @@ var interfaceConfig = {
      */
     TOOLBAR_BUTTONS: [
         'microphone', 'camera', 'closedcaptions', 'desktop', 'fullscreen',
-        'fodeviceselection', 'hangup', 'profile', 'chat', 'recording',
+        'fodeviceselection', 'hangup', 'profile', 'info', 'chat', 'recording',
         'livestreaming', 'etherpad', 'sharedvideo', 'settings', 'raisehand',
         'videoquality', 'filmstrip', 'invite', 'feedback', 'stats', 'shortcuts',
         'tileview', 'videobackgroundblur', 'download', 'help', 'mute-everyone',
-        'e2ee', 'security'
+        'security'
     ],
 
     SETTINGS_SECTIONS: [ 'devices', 'language', 'moderator', 'profile', 'calendar' ],
@@ -195,30 +195,30 @@ var interfaceConfig = {
     /**
      * If true, presence status: busy, calling, connected etc. is not displayed.
      */
-    DISABLE_PRESENCE_STATUS: false,
+    DISABLE_PRESENCE_STATUS: true,
 
     /**
      * If true, notifications regarding joining/leaving are no longer displayed.
      */
-    DISABLE_JOIN_LEAVE_NOTIFICATIONS: false,
+    DISABLE_JOIN_LEAVE_NOTIFICATIONS: true,
 
     /**
-    * Decides whether the chrome extension banner should be rendered on the landing page and during the meeting.
-    * If this is set to false, the banner will not be rendered at all. If set to true, the check for extension(s)
-    * being already installed is done before rendering.
-    */
+     * Decides whether the chrome extension banner should be rendered on the landing page and during the meeting.
+     * If this is set to false, the banner will not be rendered at all. If set to true, the check for extension(s)
+     * being already installed is done before rendering.
+     */
     SHOW_CHROME_EXTENSION_BANNER: false,
 
     /**
      * When enabled, the kick participant button will not be presented for users without a JWT
      */
-    // HIDE_KICK_BUTTON_FOR_GUESTS: false,
+    HIDE_KICK_BUTTON_FOR_GUESTS: true,
 
     /**
      * How many columns the tile view can expand to. The respected range is
      * between 1 and 5.
      */
-    // TILE_VIEW_MAX_COLUMNS: 5,
+    TILE_VIEW_MAX_COLUMNS: 3,
 
     /**
      * Specify custom URL for downloading android mobile app.
