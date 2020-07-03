@@ -1,0 +1,29 @@
+name: Cleanup feature branch
+
+on: ['delete']
+
+jobs:
+  run-ci:
+    name: Perform cleanup
+    runs-on: ubuntu-latest
+    steps:
+      # strip 'refs/heads/' from GITHUB_REF and export as ${{ steps.get_branch.outputs.branch }}
+      - name: Get branch name
+        id: get_branch
+        run: echo "::set-output name=branch::${GITHUB_REF##*/}"
+      - name: Remove deployed branch and restart services
+        uses: JimCronqvist/action-ssh@master
+        with:
+          hosts: ${{ secrets.TEST_DEPLOY_HOST }}
+          privateKey: ${{ secrets.DEPLOY_SSH_KEY }}
+          command: |
+            rm -rf ${{ secrets.TEST_BRANCHES_PROSODY_DEST }}/${{ steps.get_branch.outputs.branch }}
+            rm -rf ${{ secrets.TEST_BRANCHES_DEST }}/${{ steps.get_branch.outputs.branch }}
+            sudo systemctl restart nginx prosody jicofo jitsi-videobridge2
+      - name: Inactivate deployment
+        uses: bobheadxi/deployments@master
+        with:
+          step: deactivate-env
+          token: ${{ github.token }}
+          env: ${{ steps.get_branch.outputs.branch }}
+          desc: Deployment was pruned
