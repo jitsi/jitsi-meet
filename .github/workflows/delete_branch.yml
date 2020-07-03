@@ -1,7 +1,11 @@
 name: Cleanup feature branch
 
-on: ['delete']
-
+on:
+  pull_request:
+    types: [close]
+    branches:
+      - !master
+      - !develop
 jobs:
   run-ci:
     name: Perform cleanup
@@ -9,8 +13,10 @@ jobs:
     steps:
       # strip 'refs/heads/' from GITHUB_REF and export as ${{ steps.get_branch.outputs.branch }}
       - name: Get branch name
+        env:
+          BRANCH_REF: ${{ github.head_ref }}
         id: get_branch
-        run: echo "::set-output name=branch::${GITHUB_REF##*/}"
+        run: echo "::set-output name=branch::${BRANCH_REF##*/}"
       - name: Remove deployed branch and restart services
         uses: JimCronqvist/action-ssh@master
         with:
