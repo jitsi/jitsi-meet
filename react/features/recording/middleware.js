@@ -107,16 +107,18 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
         break;
 
     case CONFERENCE_JOINED: {
-        const state = getState()
+        const state = getState();
 
         const jwt = state['features/base/jwt'];
-        const jwtPayload = jwtDecode(jwt.jwt) || {};
-        const {event, room, moderator} = jwtPayload;
 
-        if(event && event.watch_mode && room && moderator) {
-            startLiveStream(state, room)
+        if (jwt.jwt) {
+            const jwtPayload = jwtDecode(jwt.jwt) || {};
+            const { event, room, moderator } = jwtPayload;
+
+            if (event && event.watch_mode && room && moderator) {
+                startLiveStream(state, room);
+            }
         }
-
         break;
     }
 
