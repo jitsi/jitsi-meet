@@ -173,12 +173,12 @@ class DeepLinkingMobilePage extends Component<Props> {
         // interfaceConfig.MOBILE_DYNAMIC_LINK check:
         // https://firebase.google.com/docs/dynamic-links/create-manually
         const {
-            APN = 'org.jitsi.meet',
+            APN = 'org.postech.vmeeting',
             APP_CODE = 'w2atb',
             IBI = 'com.atlassian.JitsiMeet.ios',
             ISI = '1165103905'
         } = interfaceConfig.MOBILE_DYNAMIC_LINK || {};
-        const IUS = interfaceConfig.APP_SCHEME || 'org.jitsi.meet';
+        const IUS = interfaceConfig.APP_SCHEME || 'org.postech.vmeeting';
 
         return `https://${APP_CODE}.app.goo.gl/?link=${
             encodeURIComponent(window.location.href)}&apn=${

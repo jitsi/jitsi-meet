@@ -4,9 +4,8 @@
 <dict>
 	<key>com.apple.developer.associated-domains</key>
 	<array>
-		<string>applinks:alpha.jitsi.net</string>
-		<string>applinks:beta.meet.jit.si</string>
-		<string>applinks:meet.jit.si</string>
+		<string>applinks:devmeet.postech.ac.kr</string>
+		<string>applinks:vmeeting.postech.ac.kr</string>
 	</array>
 	<key>com.apple.developer.siri</key>
 	<true/>

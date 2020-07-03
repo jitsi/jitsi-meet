@@ -125,11 +125,11 @@ export function appNavigate(uri: ?string) {
             return;
         }
 
-        // Load current logged in user
-        dispatch(loadCurrentUser());
-
         dispatch(setLocationURL(locationURL));
         dispatch(setConfig(config));
+
+        // Load current logged in user
+        dispatch(loadCurrentUser());
         dispatch(setRoom(room));
 
         // FIXME: unify with web, currently the connection and track creation happens in conference.js.

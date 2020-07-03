@@ -1,23 +1,23 @@
 {
   "images" : [
     {
+      "filename" : "Icon-App-20x20@2x.png",
       "idiom" : "universal",
-      "filename" : "CallKit@1x.png",
       "scale" : "1x"
     },
     {
+      "filename" : "Icon-App-40x40@2x.png",
       "idiom" : "universal",
-      "filename" : "CallKit@2x.png",
       "scale" : "2x"
     },
     {
+      "filename" : "Icon-App-40x40@3x.png",
       "idiom" : "universal",
-      "filename" : "CallKit@3x.png",
       "scale" : "3x"
     }
   ],
   "info" : {
-    "version" : 1,
-    "author" : "xcode"
+    "author" : "xcode",
+    "version" : 1
   }
 }

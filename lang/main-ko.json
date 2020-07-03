@@ -4,8 +4,8 @@
         "countryNotSupported": "아직 해당 지역을 지원하지 않습니다",
         "countryReminder": "미국 이외의 지역으로 전화하시겠습니까? 국가 번호로 시작해야합니다!",
         "disabled": "사람들을 초대 할 수 없습니다",
-        "failedToAdd": "",
-        "footerText": "",
+        "failedToAdd": "참가자 추가 실패",
+        "footerText": "전화 걸기가 비활성화되어 있습니다.",
         "loading": "사람 및 전화번호 검색",
         "loadingNumber": "전화번호 확인 중",
         "loadingPeople": "초대할 사람 찾기",
@@ -21,40 +21,51 @@
         "bluetooth": "블루투스",
         "headphones": "헤드폰",
         "phone": "폰",
-        "speaker": "스피커"
+        "speaker": "스피커",
+        "none": "사용 가능한 오디오 장치가 없습니다"
     },
     "audioOnly": {
-        "audioOnly": "음성 전용"
+        "audioOnly": "낮은 대역폭"
     },
     "calendarSync": {
-        "addMeetingURL": "",
-        "confirmAddLink": "",
+        "addMeetingURL": "회의 링크 추가",
+        "confirmAddLink": "이 이벤트에 회의 링크를 추가 하시겠습니까?",
         "error": {
-            "appConfiguration": "",
-            "generic": "",
-            "notSignedIn": ""
+            "appConfiguration": "캘린더 통합이 올바르게 구성되지 않았습니다.",
+            "generic": "오류가 발생했습니다. 캘린더 설정을 확인하거나 캘린더를 새로 고침하세요.",
+            "notSignedIn": "캘린더 일정을 확인하기 위해 인증하는 동안 오류가 발생했습니다. 캘린더 설정을 확인하고 다시 로그인하십시오."
         },
-        "join": "",
-        "joinTooltip": "",
+        "join": "참여",
+        "joinTooltip": "회의에 참여합니다",
         "nextMeeting": "다음 회의",
-        "noEvents": "",
-        "ongoingMeeting": "",
+        "noEvents": "예정된 이벤트가 없습니다.",
+        "ongoingMeeting": "진행중인 회의",
         "permissionButton": "설정 열기",
-        "permissionMessage": "앱에 회의를 나열하려면 캘린더 권한이 필요합니다",
-        "refresh": "",
-        "today": ""
+        "permissionMessage": "앱에 회의를 나열하려면 캘린더 권한이 필요합니다.",
+        "refresh": "캘린더 새로고침",
+        "today": "오늘"
     },
     "chat": {
-        "error": "",
-        "messagebox": "",
+        "error": "오류 : 메시지가 전송되지 않았습니다. 이유 : {{error}}",
+        "fieldPlaceHolder": "여기에 메시지를 입력하세요",
+        "messagebox": "메시지 입력",
+        "messageTo": "{{recipient}}에게 개인메시지",
+        "noMessagesMessage": "회의에 아직 메시지가 없습니다. 여기서 대화를 시작하십시오!",
         "nickname": {
-            "popover": "닉네임을 선택하세요",
-            "title": ""
+            "popover": "별명을 선택하세요",
+            "title": "채팅에 사용할 별명 입력"
         },
-        "title": ""
+        "privateNotice": "{{recipient}}에게 개인메시지",
+        "title": "채팅",
+        "you": "you"
+    },
+    "chromeExtensionBanner": {
+        "installExtensionText": "Google 캘린더 및 Office 365 통합 용 확장 프로그램 설치",
+        "buttonText": "Chrome 확장 프로그램 설치",
+        "dontShowAgain": "다시 보지 않기"
     },
     "connectingOverlay": {
-        "joiningRoom": ""
+        "joiningRoom": "회의에 연결하는 중..."
     },
     "connection": {
         "ATTACHED": "첨부",
@@ -65,39 +76,43 @@
         "CONNFAIL": "연결 실패",
         "DISCONNECTED": "연결 끊김",
         "DISCONNECTING": "연결 종료 중",
-        "ERROR": "에러",
+        "ERROR": "오류",
         "RECONNECTING": "네트워크 문제가 발생했습니다. 다시 연결 중..."
     },
     "connectionindicator": {
         "address": "주소:",
         "bandwidth": "예상 대역폭:",
         "bitrate": "전송률:",
-        "bridgeCount": "",
-        "connectedTo": "",
+        "bridgeCount": "서버 개수:",
+        "connectedTo": "연결:",
         "framerate": "프레임 속도:",
         "less": "간략히 보기",
-        "localaddress": "",
-        "localport": "",
+        "localaddress": "내부 주소:",
+        "localaddress_plural": "내부 주소:",
+        "localport": "내부 포트:",
+        "localport_plural": "내부 포트:",
         "more": "자세히 보기",
         "packetloss": "패킷 손실:",
         "quality": {
             "good": "좋음",
-            "inactive": "Inactive",
-            "lost": "Lost",
-            "nonoptimal": "Nonoptimal",
-            "poor": "Poor"
+            "inactive": "비활성화",
+            "lost": "끊김",
+            "nonoptimal": "최적상태가 아님",
+            "poor": "나쁨"
         },
-        "remoteaddress": "",
-        "remoteport": "",
+        "remoteaddress": "원격 주소:",
+        "remoteaddress_plural": "원격 주소:",
+        "remoteport": "원격 포트",
         "resolution": "해상도:",
         "status": "연결:",
-        "transport": "",
+        "transport": "트랜스포트:",
+        "transport_plural": "트랜스포트:",
         "turn": " (turn)"
     },
     "dateUtils": {
-        "earlier": "",
-        "today": "",
-        "yesterday": ""
+        "earlier": "더 이전",
+        "today": "오늘",
+        "yesterday": "어제"
     },
     "deepLinking": {
         "appNotInstalled": "중계 서비스에 참여하려면 모바일 앱 설치가 필요합니다",
@@ -421,35 +436,39 @@
     "lockRoomPasswordUppercase": "비밀번호",
     "me": "Me",
     "notify": {
-        "connectedOneMember": "",
-        "connectedThreePlusMembers": "",
-        "connectedTwoMembers": "",
+        "connectedOneMember": "{{name}}님이 회의에 참석했습니다",
+        "connectedThreePlusMembers": "{{name}}님과 그외 {{count}}명이 회의에 참석했습니다",
+        "connectedTwoMembers": "{{first}}님과 {{second}}님이 회의에 참석했습니다",
         "disconnected": "연결이 끊김",
         "focus": "컨퍼런스 포커스",
         "focusFail": "{{component}}을 사용할 수 없음 - {{ms}} 초 후에 다시 시도하십시오",
         "grantedTo": "{{to}}에게 방장 권한이 부여되었습니다!",
-        "invitedOneMember": "",
-        "invitedThreePlusMembers": "",
-        "invitedTwoMembers": "",
-        "kickParticipant": "",
-        "me": "",
+        "invitedOneMember": "{{name}}님이 초대되었습니다",
+        "invitedThreePlusMembers": "{{name}}님과 그외 {{count}}명이 초대되었습니다",
+        "invitedTwoMembers": "{{first}}님과 {{second}}님이 초대되었습니다",
+        "kickParticipant": "{{kicker}}님이 {{kicked}}님을 내보냈습니다",
+        "me": "나",
         "moderator": "방장 권한이 부여되었습니다!",
         "muted": "음소거로 대화가 시작되었습니다",
         "mutedTitle": "음소거 상태입니다!",
-        "mutedRemotelyTitle": "",
-        "mutedRemotelyDescription": "",
-        "passwordRemovedRemotely": "",
-        "passwordSetRemotely": "",
+        "mutedRemotelyTitle": "{{participantDisplayName}}님에 의해 음소거 되었습니다!",
+        "mutedRemotelyDescription": "말할 준비가되면 언제든지 음소거를 해제 할 수 있습니다. 회의에서 소음을 피하기 위해 끝나면 음소거합니다.",
+        "passwordRemovedRemotely": "다른 참여자가 $t(lockRoomPasswordUppercase)를 삭제했습니다",
+        "passwordSetRemotely": "다른 참여자가 $t(lockRoomPasswordUppercase)를 설정했습니다",
         "raisedHand": "{{name}}님이 말하기를 요청합니다.",
         "somebody": "누군가",
-        "startSilentTitle": "",
-        "startSilentDescription": "",
+        "startSilentTitle": "음소거 상태로 참여했습니다!",
+        "startSilentDescription": "음소거를 해제하려면 회의에 다시 참여하세요",
         "suboptimalExperienceDescription": "{{appName}}에 대한 귀하의 경험이 없으시다면 <a href='static/recommendedBrowsers.html' target='_blank'>완벽하게 지원되는 브라우저</a> 중 하나를 사용해보십시오.",
         "suboptimalExperienceTitle": "브라우저 경고",
-        "unmute": "",
-        "newDeviceCameraTitle": "",
-        "newDeviceAudioTitle": "",
-        "newDeviceAction": ""
+        "unmute": "음소거 해제",
+        "newDeviceCameraTitle": "새로운 카메라 감지",
+        "newDeviceAudioTitle": "새로운 오디오 장치 감지",
+        "newDeviceAction": "사용",
+        "OldElectronAPPTitle": "보안 취약점!",
+        "oldElectronClientDescription1": "보안 취약점이 알려진 이전 버전의 클라이언트를 사용하고있는 것 같습니다. 지금 업데이트하십시오",
+        "oldElectronClientDescription2": "최근 빌드",
+        "oldElectronClientDescription3": " 지금!"
     },
     "passwordSetRemotely": "",
     "passwordDigitsOnly": "",
@@ -515,7 +534,7 @@
         "followMe": "모두 나와 같은 설정 상태로",
         "language": "언어",
         "loggedIn": "",
-        "moderator": "",
+        "moderator": "방장",
         "more": "기타",
         "name": "이름",
         "noDevice": "없음",
@@ -709,14 +728,15 @@
     },
     "videothumbnail": {
         "domute": "음소거",
+        "domuteOthers": "모두 음소거",
         "flip": "플립",
         "kick": "내보내기",
-        "moderator": "",
-        "mute": "",
+        "moderator": "방장",
+        "mute": "참가자가 음소거 되었음",
         "muted": "음소거됨",
-        "remoteControl": "원격 제어",
-        "show": "",
-        "videomute": ""
+        "remoteControl": "원격 제어 시작 / 종료",
+        "show": "화면에 표시",
+        "videomute": "참가자 카메라가 중지됨"
     },
     "welcomepage": {
         "accessibilityLabel": {
