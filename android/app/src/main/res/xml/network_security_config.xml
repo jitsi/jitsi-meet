@@ -1,6 +1,12 @@
-<network-security-config>
-    <domain-config cleartextTrafficPermitted="true">
-        <domain includeSubdomains="false">localhost</domain>
-        <domain includeSubdomains="false">10.0.2.2</domain>
-    </domain-config>
+<network-security-config> 
+   <base-config> 
+      <trust-anchors> 
+         <certificates src="system" /> 
+         <certificates src="user" /> 
+      </trust-anchors> 
+   </base-config> 
+   <domain-config cleartextTrafficPermitted="true"> 
+      <domain includeSubdomains="false">localhost</domain> 
+      <domain includeSubdomains="false">10.0.2.2</domain> 
+   </domain-config> 
 </network-security-config>
