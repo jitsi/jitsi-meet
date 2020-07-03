@@ -107,15 +107,22 @@ class Filmstrip extends Component<Props, State> {
 
         this.state = {
             sortedParticipants: []
-        }
+        };
     }
 
     componentDidMount() {
+
+        setTimeout(() => {
+            this.setState({
+                sortedParticipants: this._getSortedParticipants()
+            });
+        }, 0);
+
         this.sortInterval = setInterval(() => {
             this.setState({
                 sortedParticipants: this._getSortedParticipants()
-            })
-        }, 5000)
+            });
+        }, 5000);
     }
 
     componentWillUnmount() {
@@ -218,6 +225,7 @@ class Filmstrip extends Component<Props, State> {
                 moderators.push(participant);
             } else {
                 let sortWeight = 0;
+
                 if (isVideoMuted || connectionStatus === INACTIVE) {
                     sortWeight = 1;
                 }
@@ -232,10 +240,9 @@ class Filmstrip extends Component<Props, State> {
             }
         }
 
-        sortedParticipants = _.sortBy(sortedParticipants, "sortWeight");
+        sortedParticipants = _.sortBy(sortedParticipants, 'sortWeight');
 
-        return [...moderators, ...sortedParticipants]
-            .filter(Boolean);
+        return [ ...moderators, ...sortedParticipants ].filter(Boolean);
     }
 }
 
