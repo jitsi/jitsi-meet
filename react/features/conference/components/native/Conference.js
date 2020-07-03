@@ -24,6 +24,7 @@ import { AddPeopleDialog, CalleeInfoContainer } from '../../../invite';
 import { LargeVideo } from '../../../large-video';
 import { KnockingParticipantList } from '../../../lobby';
 import { BackButtonRegistry } from '../../../mobile/back-button';
+import { PostMeetingScreen } from '../../../post-meeting';
 import { Captions } from '../../../subtitles';
 import { isToolboxVisible, setToolboxVisible, Toolbox } from '../../../toolbox';
 import {
@@ -202,6 +203,7 @@ class Conference extends AbstractConference<Props, *> {
         return [
             <AddPeopleDialog key = 'addPeopleDialog' />,
             <Chat key = 'chat' />,
+            <PostMeetingScreen key = 'postMeetingScreen' />,
             <SharedDocument key = 'sharedDocument' />
         ];
     }

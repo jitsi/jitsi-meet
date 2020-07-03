@@ -889,5 +889,8 @@
         "passwordJoinButton": "Join",
         "reject": "Reject",
         "toggleLabel": "Enable lobby"
+    },
+    "postMeeting": {
+        "title": "Thank you!"
     }
 }

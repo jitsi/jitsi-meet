@@ -11,9 +11,10 @@ import {
     setConfig,
     storeConfig
 } from '../base/config';
-import { connect, disconnect, setLocationURL } from '../base/connection';
+import { connect, setLocationURL } from '../base/connection';
 import { loadConfig } from '../base/lib-jitsi-meet';
 import { MEDIA_TYPE } from '../base/media';
+import { setActiveModalId } from '../base/modal';
 import { toState } from '../base/redux';
 import { createDesiredLocalTracks, isLocalVideoTrackMuted, isLocalTrackMuted } from '../base/tracks';
 import {
@@ -25,6 +26,7 @@ import {
 } from '../base/util';
 import { clearNotifications, showNotification } from '../notifications';
 import { setFatalError } from '../overlay';
+import { getClosePage } from '../post-meeting';
 
 import {
     getDefaultURL,
@@ -73,15 +75,12 @@ export function appNavigate(uri: ?string) {
         const { contextRoot, host, room } = location;
         const locationURL = new URL(location.toString());
 
-        // Disconnect from any current conference.
-        // FIXME: unify with web.
-        if (navigator.product === 'ReactNative') {
-            dispatch(disconnect());
-        }
-
         // There are notifications now that gets displayed after we technically left
         // the conference, but we're still on the conference screen.
         dispatch(clearNotifications());
+
+        // We want to close all modals.
+        dispatch(setActiveModalId());
 
         dispatch(configWillLoad(locationURL, room));
 
@@ -290,15 +289,7 @@ export function maybeRedirectToWelcomePage(options: Object = {}) {
             // to close page
             window.sessionStorage.setItem('guest', isGuest);
 
-            let path = 'close.html';
-
-            if (interfaceConfig.SHOW_PROMOTIONAL_CLOSE_PAGE) {
-                path = 'close3.html';
-            } else if (!options.feedbackSubmitted) {
-                path = 'close2.html';
-            }
-
-            dispatch(redirectToStaticPage(`static/${path}`));
+            dispatch(redirectToStaticPage(getClosePage(options)));
 
             return;
         }
