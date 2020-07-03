@@ -17,7 +17,12 @@ type Props = {
     /**
      * The milliseconds to be converted into a human-readable format.
      */
-    time: number
+    time: number,
+
+    /**
+     * Themplate name.
+     */
+    template?: string
 };
 
 /**
@@ -35,7 +40,7 @@ class TimeElapsed extends Component<Props> {
      * @returns {ReactElement}
      */
     render() {
-        const { time } = this.props;
+        const { time, template } = this.props;
         const hours = _getHoursCount(time);
         const minutes = _getMinutesCount(time);
         const seconds = _getSecondsCount(time);
@@ -66,9 +71,11 @@ class TimeElapsed extends Component<Props> {
 
         timeElapsed.push(secondsPassed);
 
+        const subjectTime = template === 'subject' && _getSubjectTime(seconds, minutes);
+
         return (
-            <div>
-                { timeElapsed }
+            <div className = 'time' >
+                { subjectTime || timeElapsed }
             </div>
         );
     }
@@ -128,4 +135,19 @@ function _getMinutesCount(milliseconds) {
  */
 function _getSecondsCount(milliseconds) {
     return Math.floor(milliseconds / 1000 % 60);
+}
+
+/**
+ * Get time for Subject.
+ *
+ * @param {number} seconds - The seconds from millisecond.
+ * @param {number} minutes - The minutes from millisecond..
+ * @private
+ * @returns {string}
+ */
+function _getSubjectTime(seconds, minutes) {
+    const newSec = seconds.toString().length === 1 ? `0${seconds}` : seconds;
+    const newMin = minutes.toString().length === 1 ? `0${minutes}` : minutes;
+
+    return `${newMin}:${newSec}`;
 }

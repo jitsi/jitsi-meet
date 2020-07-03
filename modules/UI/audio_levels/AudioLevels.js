@@ -1,5 +1,3 @@
-/* global interfaceConfig */
-
 import UIUtil from '../util/UIUtil';
 
 /**
@@ -63,7 +61,6 @@ const AudioLevels = {
         let level = parseFloat(audioLevel);
 
         level = isNaN(level) ? 0 : level;
-
         let shadowElement = element.getElementsByClassName('dynamic-shadow');
 
         if (shadowElement && shadowElement.length > 0) {
@@ -82,24 +79,35 @@ const AudioLevels = {
         // Internal circle audio level.
         const int = {
             level: level > 0.15 ? 20 : 0,
-            color: interfaceConfig.AUDIO_LEVEL_PRIMARY_COLOR
+            color: 'rgba(255,255,255, 0.02)'
+        };
+
+        // Middle circle audio level.
+        const mid = {
+            level: parseFloat(
+                ((int.level * scale * level) + int.level).toFixed(0)),
+            color: 'rgba(255,255,255, 0.04)'
         };
 
         // External circle audio level.
         const ext = {
             level: parseFloat(
-                ((int.level * scale * level) + int.level).toFixed(0)),
-            color: interfaceConfig.AUDIO_LEVEL_SECONDARY_COLOR
+                ((mid.level * scale * level) + mid.level).toFixed(0)),
+            color: 'rgba(255,255,255, 0.04)'
         };
 
         // Internal blur.
-        int.blur = int.level ? 2 : 0;
+        int.blur = 0;
+
+        // Middle blur.
+        mid.blur = mid.level ? 2 : 0;
 
         // External blur.
-        ext.blur = ext.level ? 6 : 0;
+        ext.blur = ext.level ? 5 : 0;
 
         return [
             `0 0 ${int.blur}px ${int.level}px ${int.color}`,
+            `0 0 ${mid.blur}px ${mid.level}px ${mid.color}`,
             `0 0 ${ext.blur}px ${ext.level}px ${ext.color}`
         ].join(', ');
     }

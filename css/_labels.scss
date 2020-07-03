@@ -6,41 +6,47 @@
     transition: right 0.5s;
     z-index: $zindex3;
 
+    @media (max-width: $desktopWidth) {
+        position: static;
+    }
+
     .circular-label {
         align-items: center;
-        color: white;
+        background: $toolBarDesktopBackground;
+        color: $subjectTextColor;
         display: flex;
         font-weight: bold;
         justify-content: center;
         margin-left: 8px;
         opacity: 0.8;
-    }
 
-    .circular-label {
-        background: #B8C7E0;
-    }
+        @media (max-width: $desktopWidth) {
+            position: absolute;
+            z-index: $zindex10;
+            top: 16px;
+            left: 24px;
+            opacity: 1;
+        }
 
-    .circular-label.e2ee {
-        align-items: center;
-        background: #76CF9C;
-        display: flex;
-        justify-content: center;
-    }
+        &.e2ee {
+            align-items: center;
+            background: #76CF9C;
+            display: flex;
+            justify-content: center;
+        }
 
-    .circular-label.file {
-        background: #FF5630;
-    }
+        &.file,
+        &.local-rec {
+            background: #FF5630;
+        }
 
-    .circular-label.local-rec {
-        background: #FF5630;
-    }
+        &.stream {
+            background: #0065FF;
+        }
 
-    .circular-label.stream {
-        background: #0065FF;
-    }
-
-    .circular-label.insecure {
-        background: $defaultWarningColor;
+        &.insecure {
+            background: $defaultWarningColor;
+        }
     }
 
     .recording-label.center-message {

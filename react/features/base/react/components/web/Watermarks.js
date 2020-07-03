@@ -95,7 +95,7 @@ class Watermarks extends Component<Props, State> {
             showBrandWatermark = interfaceConfig.SHOW_BRAND_WATERMARK;
             showJitsiWatermark = interfaceConfig.SHOW_JITSI_WATERMARK;
             showJitsiWatermarkForGuests
-                = interfaceConfig.SHOW_WATERMARK_FOR_GUESTS;
+                    = interfaceConfig.SHOW_WATERMARK_FOR_GUESTS;
         }
 
         this.state = {
@@ -175,8 +175,8 @@ class Watermarks extends Component<Props, State> {
         let reactElement = null;
 
         if (this.state.showJitsiWatermark
-                || (this.props._isGuest
-                    && this.state.showJitsiWatermarkForGuests)) {
+            || (this.props._isGuest
+                && this.state.showJitsiWatermarkForGuests)) {
             reactElement = <div className = 'watermark leftwatermark' />;
 
             const { jitsiWatermarkLink } = this.state;

@@ -167,30 +167,32 @@ export default class MeetingsList extends Component<Props> {
                 className = { rootClassName }
                 key = { index }
                 onClick = { onPress }>
-                <Container className = 'left-column'>
-                    <Text className = 'date'>
-                        { _toDateString(date) }
-                    </Text>
-                    <Text>
-                        { _toTimeString(time) }
-                    </Text>
-                </Container>
                 <Container className = 'right-column'>
                     <Text className = 'title'>
                         { title }
                     </Text>
-                    {
-                        hideURL || !url ? null : (
+                    <div className = 'bottom-column'>
+                        <div className = 'left-column-bottom'>
+                            <Text className = 'date'>
+                                { _toDateString(date) }
+                            </Text>
                             <Text>
-                                { url }
-                            </Text>)
-                    }
-                    {
-                        typeof duration === 'number' ? (
-                            <Text>
-                                { getLocalizedDurationFormatter(duration) }
-                            </Text>) : null
-                    }
+                                { _toTimeString(time) }
+                            </Text>
+                        </div>
+                        {
+                            hideURL || !url ? null : (
+                                <Text>
+                                    { url }
+                                </Text>)
+                        }
+                        {
+                            typeof duration === 'number' ? (
+                                <Text>
+                                    { getLocalizedDurationFormatter(duration) }
+                                </Text>) : null
+                        }
+                    </div>
                 </Container>
                 <Container className = 'actions'>
                     { elementAfter || null }

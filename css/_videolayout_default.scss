@@ -211,6 +211,7 @@
 #largeVideoContainer {
     height: 100%;
     width: 100%;
+    background: #2A2B35 !important;
 }
 
 #largeVideoWrapper {
@@ -479,6 +480,10 @@
     pointer-events: none;
 }
 
+#mixedstream {
+    display:none !important;
+}
+
 #dominantSpeaker {
     visibility: hidden;
     width: 300px;
@@ -487,33 +492,39 @@
     position: relative;
     top: 50%;
     transform: translateY(-50%);
-}
 
-#mixedstream {
-    display:none !important;
-}
+    #dominantSpeakerAvatarContainer {
+        width: 200px;
+        height: 200px;
+        top: 50px;
+        margin: auto;
+        position: relative;
+        overflow: hidden;
+        visibility: inherit;
+    }
 
-#dominantSpeakerAvatarContainer,
-.dynamic-shadow {
-    width: 200px;
-    height: 200px;
-}
+    .dynamic-shadow {
+        width: 200px;
+        height: 200px;
+        border-radius: 50%;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        margin: -100px 0 0 -100px;
+        transition: box-shadow 0.3s ease;
+    }
 
-#dominantSpeakerAvatarContainer {
-    top: 50px;
-    margin: auto;
-    position: relative;
-    overflow: hidden;
-    visibility: inherit;
-}
+    @media (max-width: $desktopWidth) {
+        #dominantSpeakerAvatarContainer,
+        .dynamic-shadow {
+            width: 140px;
+            height: 140px;
+        }
 
-.dynamic-shadow {
-    border-radius: 50%;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    margin: -100px 0 0 -100px;
-    transition: box-shadow 0.3s ease;
+        .dynamic-shadow {
+            left: 60%;
+        }
+    }
 }
 
 .avatar-container {
@@ -525,13 +536,22 @@
     width: auto;
     overflow: hidden;
 
+    @media (max-width: $desktopWidth) {
+        width: 30px !important;
+    }
+
     .userAvatar {
-        height: 100%;
+        height: 100% !important;
         object-fit: cover;
-        width: 100%;
+        width: 100% !important;
         top: 0px;
         left: 0px;
         position: absolute;
+
+        @media (max-width: $desktopWidth) {
+            height: 30px !important;
+            width: 30px !important;
+        }
     }
 }
 

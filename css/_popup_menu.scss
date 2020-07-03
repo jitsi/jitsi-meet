@@ -67,15 +67,15 @@
                 width: 100%;
 
                 &::-webkit-slider-runnable-track {
-                    background-color: $popupSliderColor;
+                    background-color: $popupMenuSliderBackground;
                 }
 
                 &::-moz-range-track {
-                    background-color: $popupSliderColor;
+                    background-color: $popupMenuSliderBackground;
                 }
 
                 &::-ms-fill-lower {
-                    background-color: $popupSliderColor;
+                    background-color: $popupMenuSliderBackground;
                 }
             }
         }

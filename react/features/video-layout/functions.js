@@ -50,7 +50,7 @@ export function getTileViewGridDimensions(state: Object, maxColumns: number = ge
 
     // This is needed to calculate the size of large videos, therefore, numberOfParticipants
     // should be only the number of people who are streaming
-    const streamingParticipantsSelector = 'span.videocontainer:not(.without-camera)';
+    const streamingParticipantsSelector = 'span.videocontainer';
     const numberOfParticipants = document.querySelectorAll(streamingParticipantsSelector).length || 1;
 
     const columnsToMaintainASquare = Math.ceil(Math.sqrt(numberOfParticipants));
