@@ -1,15 +1,15 @@
 // @flow
 
-import throttle from 'lodash/throttle';
-import type { Dispatch } from 'redux';
+import throttle from "lodash/throttle";
+import type { Dispatch } from "redux";
 
 import {
     CLEAR_NOTIFICATIONS,
     HIDE_NOTIFICATION,
     SET_NOTIFICATIONS_ENABLED,
-    SHOW_NOTIFICATION
-} from './actionTypes';
-import { NOTIFICATION_TIMEOUT, NOTIFICATION_TYPE } from './constants';
+    SHOW_NOTIFICATION,
+} from "./actionTypes";
+import { NOTIFICATION_TIMEOUT, NOTIFICATION_TYPE } from "./constants";
 
 /**
  * Clears (removes) all the notifications.
@@ -20,7 +20,7 @@ import { NOTIFICATION_TIMEOUT, NOTIFICATION_TYPE } from './constants';
  */
 export function clearNotifications() {
     return {
-        type: CLEAR_NOTIFICATIONS
+        type: CLEAR_NOTIFICATIONS,
     };
 }
 
@@ -37,7 +37,7 @@ export function clearNotifications() {
 export function hideNotification(uid: number) {
     return {
         type: HIDE_NOTIFICATION,
-        uid
+        uid,
     };
 }
 
@@ -53,7 +53,7 @@ export function hideNotification(uid: number) {
 export function setNotificationsEnabled(enabled: boolean) {
     return {
         type: SET_NOTIFICATIONS_ENABLED,
-        enabled
+        enabled,
     };
 }
 
@@ -66,7 +66,7 @@ export function setNotificationsEnabled(enabled: boolean) {
 export function showErrorNotification(props: Object) {
     return showNotification({
         ...props,
-        appearance: NOTIFICATION_TYPE.ERROR
+        appearance: NOTIFICATION_TYPE.ERROR,
     });
 }
 
@@ -85,10 +85,10 @@ export function showErrorNotification(props: Object) {
  */
 export function showNotification(props: Object = {}, timeout: ?number) {
     return {
-        type: SHOW_NOTIFICATION,
+        type: "",
         props,
         timeout,
-        uid: window.Date.now()
+        uid: window.Date.now(),
     };
 }
 
@@ -101,7 +101,7 @@ export function showNotification(props: Object = {}, timeout: ?number) {
 export function showWarningNotification(props: Object) {
     return showNotification({
         ...props,
-        appearance: NOTIFICATION_TYPE.WARNING
+        appearance: NOTIFICATION_TYPE.WARNING,
     });
 }
 
@@ -122,44 +122,46 @@ let joinedParticipantsNames = [];
  * @private
  * @type {Function}
  */
-const _throttledNotifyParticipantConnected = throttle((dispatch: Dispatch<any>) => {
-    const joinedParticipantsCount = joinedParticipantsNames.length;
+const _throttledNotifyParticipantConnected = throttle(
+    (dispatch: Dispatch<any>) => {
+        const joinedParticipantsCount = joinedParticipantsNames.length;
 
-    let notificationProps;
+        let notificationProps;
 
-    if (joinedParticipantsCount >= 3) {
-        notificationProps = {
-            titleArguments: {
-                name: joinedParticipantsNames[0],
-                count: joinedParticipantsCount - 1
-            },
-            titleKey: 'notify.connectedThreePlusMembers'
-        };
-    } else if (joinedParticipantsCount === 2) {
-        notificationProps = {
-            titleArguments: {
-                first: joinedParticipantsNames[0],
-                second: joinedParticipantsNames[1]
-            },
-            titleKey: 'notify.connectedTwoMembers'
-        };
-    } else if (joinedParticipantsCount) {
-        notificationProps = {
-            titleArguments: {
-                name: joinedParticipantsNames[0]
-            },
-            titleKey: 'notify.connectedOneMember'
-        };
-    }
+        if (joinedParticipantsCount >= 3) {
+            notificationProps = {
+                titleArguments: {
+                    name: joinedParticipantsNames[0],
+                    count: joinedParticipantsCount - 1,
+                },
+                titleKey: "notify.connectedThreePlusMembers",
+            };
+        } else if (joinedParticipantsCount === 2) {
+            notificationProps = {
+                titleArguments: {
+                    first: joinedParticipantsNames[0],
+                    second: joinedParticipantsNames[1],
+                },
+                titleKey: "notify.connectedTwoMembers",
+            };
+        } else if (joinedParticipantsCount) {
+            notificationProps = {
+                titleArguments: {
+                    name: joinedParticipantsNames[0],
+                },
+                titleKey: "notify.connectedOneMember",
+            };
+        }
 
-    if (notificationProps) {
-        dispatch(
-            showNotification(notificationProps, NOTIFICATION_TIMEOUT));
-    }
+        if (notificationProps) {
+            dispatch(showNotification(notificationProps, NOTIFICATION_TIMEOUT));
+        }
 
-    joinedParticipantsNames = [];
-
-}, 500, { leading: false });
+        joinedParticipantsNames = [];
+    },
+    500,
+    { leading: false }
+);
 
 /**
  * Queues the display of a notification of a participant having connected to
@@ -172,5 +174,6 @@ const _throttledNotifyParticipantConnected = throttle((dispatch: Dispatch<any>) 
 export function showParticipantJoinedNotification(displayName: string) {
     joinedParticipantsNames.push(displayName);
 
-    return (dispatch: Dispatch<any>) => _throttledNotifyParticipantConnected(dispatch);
+    return (dispatch: Dispatch<any>) =>
+        _throttledNotifyParticipantConnected(dispatch);
 }
