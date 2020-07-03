@@ -51,6 +51,7 @@ function Preview(props: Props) {
             <Avatar
                 className = 'preview-avatar'
                 displayName = { name }
+                participantId = 'local'
                 size = { 200 } />
         </div>
     );
