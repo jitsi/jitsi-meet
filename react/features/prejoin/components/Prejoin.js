@@ -228,6 +228,7 @@ class Prejoin extends Component<Props, State> {
         return (
             <PreMeetingScreen
                 footer = { this._renderFooter() }
+                name = { name }
                 title = { t('prejoin.joinMeeting') }
                 videoMuted = { !showCameraPreview }
                 videoTrack = { videoTrack }>

@@ -20,6 +20,11 @@ type Props = {
     footer?: React$Node,
 
     /**
+     * The name of the participant.
+     */
+    name?: string,
+
+    /**
      * Title of the screen.
      */
     title: string,
@@ -46,13 +51,14 @@ export default class PreMeetingScreen extends PureComponent<Props> {
      * @inheritdoc
      */
     render() {
-        const { title, videoMuted, videoTrack } = this.props;
+        const { name, title, videoMuted, videoTrack } = this.props;
 
         return (
             <div
                 className = 'premeeting-screen'
                 id = 'lobby-screen'>
                 <Preview
+                    name = { name }
                     videoMuted = { videoMuted }
                     videoTrack = { videoTrack } />
                 <div className = 'content'>
