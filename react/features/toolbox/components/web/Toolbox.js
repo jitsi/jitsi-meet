@@ -1203,10 +1203,9 @@ class Toolbox extends Component<Props, State> {
         if (this._shouldShowButton('invite')) {
             buttonsRight.push('invite');
         }
-        if (this._shouldShowButton('security') || this._shouldShowButton('info')) {
+        if (_isModerator && (this._shouldShowButton('security') || this._shouldShowButton('info'))) {
             buttonsRight.push('security');
         }
-
         if (this._shouldShowButton('tileview')) {
             buttonsRight.push('tileview');
         }
