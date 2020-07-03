@@ -355,14 +355,16 @@ class Conference extends AbstractConference<Props, *> {
                     { this._renderNotificationsContainer() }
                 </SafeAreaView>
 
-                <SafeAreaView style = { styles.participantsCountSafeView }>
-                    <View style = { styles.participantsCount }>
-                        <Text style = { styles.participantsCountText }>{this.props.count}</Text>
-                        <Icon
-                            src = { IconUserGroups }
-                            style = { styles.participantsCountIcon } />
-                    </View>
-                </SafeAreaView>
+                {
+                    _toolboxVisible && <SafeAreaView style = { styles.participantsCountSafeView }>
+                        <View style = { styles.participantsCount }>
+                            <Text style = { styles.participantsCountText }>{this.props.count}</Text>
+                            <Icon
+                                src = { IconUserGroups }
+                                style = { styles.participantsCountIcon } />
+                        </View>
+                    </SafeAreaView>
+                }
 
                 <TestConnectionInfo />
 
