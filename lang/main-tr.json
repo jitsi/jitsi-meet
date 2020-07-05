@@ -71,9 +71,8 @@
         },
 	"privateNotice": "{{recipient}} için özel mesaj",
         "title": "Sohbet",
-        "you": "sen",
-        
-        
+        "you": "sen"
+
     },
     "connectingOverlay": {
         "joiningRoom": "Toplantıya bağlanılıyor..."
