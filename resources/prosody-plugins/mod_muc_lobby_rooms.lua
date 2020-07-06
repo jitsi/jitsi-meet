@@ -221,7 +221,7 @@ function process_lobby_muc_loaded(lobby_muc, host_module)
         local actor, occupant, room, x = event.actor, event.occupant, event.room, event.x;
         if check_status(x, '307') then
             -- we need to notify in the main room
-            notify_lobby_access(room.main_room, actor, occupant.jid, false);
+            notify_lobby_access(room.main_room, actor, occupant.nick, false);
         end
     end);
 end
@@ -346,7 +346,12 @@ process_host_module(main_muc_component_config, function(host_module, host)
         local from = stanza:get_child('x', 'http://jabber.org/protocol/muc#user')
             :get_child('invite').attr.from;
 
-        notify_lobby_access(room, from, invitee, true);
+        if room._data.lobbyroom then
+            local occupant = room._data.lobbyroom:get_occupant_by_real_jid(invitee);
+            if occupant then
+                notify_lobby_access(room, from, occupant.nick, true);
+            end
+        end
     end);
 end);
 
