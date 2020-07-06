@@ -183,6 +183,7 @@ var config = {
 
     // Whether to enable file recording or not.
     fileRecordingsEnabled: true,
+
     // Enable the dropbox integration.
     // dropbox: {
     //     appKey: '<APP_KEY>' // Specify your app key here.
@@ -347,6 +348,7 @@ var config = {
         stunServers: [
 
             { urls: 'stun:turn.aeternity.org:443' }
+
             // { urls: 'stun:stun.l.google.com:19302' },
             // { urls: 'stun:stun1.l.google.com:19302' },
             // { urls: 'stun:stun2.l.google.com:19302' }
@@ -390,9 +392,10 @@ var config = {
     // Information about the jitsi-meet instance we are connecting to, including
     // the user region as seen by the server.
     deploymentInfo: {
-        shard: "shard_eu-central-1",
-        region: "eu-central-1",
-        userRegion: "<!--#echo var = "user_aws_region" -->"
+        shard: 'shard_eu-central-1',
+        region: 'eu-central-1',
+        // eslint-disable-next-line no-undef, camelcase, no-undef
+        userRegion: `<!--#echo var = "${user_aws_region}" -->`
     },
 
     // Information for the chrome extension banner
@@ -465,6 +468,7 @@ var config = {
     // },
     hiddenDomain: 'recorder.<!--# echo var="domain" default="" -->',
     disableRecordAudioNotification: true,
+
     // List of undocumented settings used in jitsi-meet
     /**
      _immediateReloadThreshold
