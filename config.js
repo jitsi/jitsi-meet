@@ -394,8 +394,7 @@ var config = {
     deploymentInfo: {
         shard: 'shard_eu-central-1',
         region: 'eu-central-1',
-        // eslint-disable-next-line no-undef, camelcase, no-undef
-        userRegion: `<!--#echo var = "${user_aws_region}" -->`
+        userRegion: '<!--#echo var = "user_aws_region" -->'
     },
 
     // Information for the chrome extension banner
