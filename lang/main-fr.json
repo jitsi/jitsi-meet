@@ -147,6 +147,7 @@
         "accessibilityLabel": {
             "liveStreaming": "Diffusion en direct"
         },
+        "add": "Ajouter",
         "allow": "Autoriser",
         "alreadySharedVideoMsg": "Un autre participant est en train de partager sa vidéo. Cette conférence ne permet de partager qu'une seule vidéo à la fois.",
         "alreadySharedVideoTitle": "Une seule vidéo partagée est autorisée à la fois",
