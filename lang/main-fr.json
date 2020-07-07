@@ -785,6 +785,7 @@
         "header": "Centre d'aide"
     },
     "lobby": {
+        "knockingParticipantList" : "Liste des participants en attente",
         "allow": "Autoriser",
         "backToKnockModeButton": "Aucun mot de passe, demander à rejoindre plutôt",
         "dialogTitle": "Mode lobby",
@@ -793,7 +794,7 @@
         "emailField": "Saisissez votre adresse email",
         "enableDialogPasswordField": "Définir le mot de passe (optionel)",
         "enableDialogSubmit": "Activer",
-        "enableDialogText": "Le mode lobby vous permet de protéger votre réunion en n'autorisant les personnes à entrer qu'après l'approbation formelle d'un modérateur.",
+        "enableDialogText": "Le mode lobby vous permet de protéger votre réunion en autorisant les personnes à entrer qu'après l'approbation formelle d'un modérateur.",
         "enterPasswordButton": "Saisissez un mot de passe de réunion",
         "enterPasswordTitle": "Saisissez le mot de passe pour rejoindre la réunion",
         "invalidPassword": "Mot de passe invalide",
@@ -810,5 +811,11 @@
         "passwordJoinButton": "Rejoindre",
         "reject": "Refuser",
         "toggleLabel": "Activer le lobby"
+    },
+    "security": {
+        "about": "Vous pouvez ajouter un mot de passe à votre réunion. Les participants devront fournir le mot de passe avant qu'ils soient autorisés à rejoindre la réunion.",
+        "aboutReadOnly": "Les modérateurs peuvent ajouter un mot de passe à la réunion. Les participants devront fournir le mot de passe avant qu'ils soient autorisés à rejoindre la réunion.",
+        "insecureRoomNameWarning": "Le nom de la salle est peu sûr. Des participants non désirés peuvent rejoindre votre réunion. Pensez à sécuriser votre réunion en cliquant sur le bouton de sécurité.",
+        "securityOptions": "Options de sécurité"
     }
 }
