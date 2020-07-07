@@ -460,7 +460,10 @@ function _sendTones({ getState }, next, action) {
  */
 function _setReceiverVideoConstraint(conference, preferred, max) {
     if (conference) {
-        conference.setReceiverVideoConstraint(Math.min(preferred, max));
+        const value = Math.min(preferred, max);
+
+        conference.setReceiverVideoConstraint(value);
+        logger.info(`setReceiverVideoConstraint: ${value}`);
     }
 }
 
