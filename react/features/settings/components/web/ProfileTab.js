@@ -173,24 +173,35 @@ class ProfileTab extends AbstractDialogTab<Props> {
 
         return (
             <div>
-                <div>
-                    <div className = 'mock-atlaskit-label'>
-                        { t('toolbar.authenticate') }
-                    </div>
+                <div className = 'settings-pane--auth'>
+                    <div className = 'settings-pane--auth_left'>
+                        <div className = 'mock-atlaskit-label'>
+                            { t('toolbar.authenticate') }
+                        </div>
 
-                    { authLogin
-                        && <div className = 'auth-name'>
-                            { t('settings.loggedIn', { name: authLogin }) }
-                        </div> }
+                        { authLogin
+                            && <div className = 'auth-name'>
+                                { t('settings.loggedIn', { name: authLogin }) }
+                            </div> }
+                        <Button
+                            appearance = 'primary'
+                            id = 'login_button'
+                            onClick = { this._onAuthToggle }
+                            type = 'button'>
+                            { authLogin ? t('toolbar.logout') : t('toolbar.login') }
+                        </Button>
+                    </div>
                     <Button
                         appearance = 'primary'
+                        className = 'settings-pane--auth_right'
                         id = 'login_button'
-                        onClick = { this._onAuthToggle }
                         type = 'button'>
-                        { authLogin ? t('toolbar.logout') : t('toolbar.login') }
+                        <WebLogin >
+                            Login with web wallet
+                        </WebLogin>
                     </Button>
                 </div>
-                <WebLogin />
+
             </div>
         );
     }

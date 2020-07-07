@@ -22,12 +22,12 @@ const signDeepLink = () => {
     window.location = forward;
 };
 
-const Button = () => (
+const Button = ({ children, ...rest }) => (
     <div
-        className = 'invite-more-button invite-more-deeplink'
+        { ...rest }
         onClick = { signDeepLink } >
         <div className = 'invite-more-button-text'>
-            Login with web wallet
+            { children }
         </div>
     </div>
 );
