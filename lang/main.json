@@ -864,6 +864,7 @@
         "header": "Help center"
     },
     "lobby": {
+        "knockingParticipantList" : "Knocking participant list",
         "allow": "Allow",
         "backToKnockModeButton": "No password, ask to join instead",
         "dialogTitle": "Lobby mode",
