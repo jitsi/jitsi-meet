@@ -13,6 +13,16 @@
 export const DOMINANT_SPEAKER_CHANGED = 'DOMINANT_SPEAKER_CHANGED';
 
 /**
+ * Create an action for granting moderator to a participant.
+ *
+ * {
+ *     type: GRANT_MODERATOR,
+ *     id: string
+ * }
+ */
+export const GRANT_MODERATOR = 'GRANT_MODERATOR';
+
+/**
  * Create an action for removing a participant from the conference.
  *
  * {

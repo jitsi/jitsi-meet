@@ -23,6 +23,7 @@ export { default as IconClosedCaption } from './closed_caption.svg';
 export { default as IconConnectionActive } from './gsm-bars.svg';
 export { default as IconConnectionInactive } from './ninja.svg';
 export { default as IconCopy } from './copy.svg';
+export { default as IconCrown } from './crown.svg';
 export { default as IconDeviceBluetooth } from './bluetooth.svg';
 export { default as IconDeviceEarpiece } from './phone-talk.svg';
 export { default as IconDeviceHeadphone } from './headset.svg';
