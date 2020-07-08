@@ -71,6 +71,11 @@ body.welcome-page {
             border-radius: $welcomePageEnterRoomBorderRadius;
             border: 2px solid $welcomeBorderColor;
 
+            @media (max-width: $desktopWidth) {
+                width: 100%;
+                border: none;
+            }
+
             .enter-room-input-container {
                 width: 100%;
                 padding: $welcomePageEnterRoomInputContainerPadding;
@@ -98,6 +103,12 @@ body.welcome-page {
                     display: inline-block;
                     width: 100%;
                     font-size: 14px;
+                    margin-top: 20px;
+
+                    &:focus {
+                        border-image: $welcomePageEnterRoomInputContainerBorderImageFocused;
+                        color: $unsupportedBrowserTitleColor;
+                    }
                 }
 
                 .insecure-room-name-warning {
@@ -123,6 +134,10 @@ body.welcome-page {
             width: 600px;
             display: $welcomePageTabContainerDisplay;
             flex-direction: column;
+
+            @media (max-width: $desktopWidth) {
+                width: 100%;
+            }
 
             .tab-content{
                 display: $welcomePageTabContentDisplay;
@@ -179,6 +194,7 @@ body.welcome-page {
         vertical-align: middle;
         line-height: $welcomePageButtonLineHeight;
         cursor: pointer;
+        margin-top: 30px;
 
         &:hover {
             background: #1969b0;

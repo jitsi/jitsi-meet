@@ -22,7 +22,7 @@
 
         @media (max-width: $desktopWidth) {
             position: absolute;
-            z-index: $zindex10;
+            z-index: $zindex10 !important;
             top: 16px;
             left: 24px;
             opacity: 1;
