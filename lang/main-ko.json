@@ -744,6 +744,7 @@
             "roomname": "방 이름 입력"
         },
         "account": "계정 설정",
+        "adminConsole": "관리자 콘솔",
         "appDescription": "전체 팀과 화상회의를 하십시오. 당신이 아는 모든 사람들을 초대해 보십시오. {{app}}은 보안이 철저한 암호화된 화상회의 솔루션으로 하루 종일, 매일 무료로 사용할 수 있습니다.",
         "audioVideoSwitch": {
             "audio": "음성",

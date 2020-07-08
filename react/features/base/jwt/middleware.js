@@ -223,7 +223,7 @@ function _undoOverwriteLocalParticipant(
  *     name: ?string
  * }}
  */
-function _user2participant({ avatar, avatarUrl, email, id, name }) {
+function _user2participant({ avatar, avatarUrl, email, id, name, username, isAdmin }) {
     const participant = {};
 
     if (typeof avatarUrl === 'string') {
@@ -239,6 +239,12 @@ function _user2participant({ avatar, avatarUrl, email, id, name }) {
     }
     if (typeof name === 'string') {
         participant.name = name.trim();
+    }
+    if (typeof isAdmin === 'boolean') {
+        participant.isAdmin = isAdmin;
+    }
+    if (typeof username === 'string') {
+        participant.username = username;
     }
 
     return Object.keys(participant).length ? participant : undefined;

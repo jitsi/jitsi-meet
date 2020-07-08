@@ -219,6 +219,15 @@ class WelcomePage extends AbstractWelcomePage {
         const buttons = [];
 
         if (_user) {
+            if (_user.isAdmin) {
+                buttons.push(
+                    <Button
+                        appearance = 'primary'
+                        href = { `${AUTH_PAGE_BASE}/admin` }>
+                        { t('welcomepage.adminConsole') }
+                    </Button>
+                );
+            }
             buttons.push(
                 <DropdownMenu
                     isLoading = { submitting }
