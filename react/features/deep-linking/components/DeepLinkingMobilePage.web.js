@@ -6,11 +6,13 @@ import { connect } from '../../base/redux';
 import { createDeepLinkingPageEvent, sendAnalytics } from '../../analytics';
 import { translate } from '../../base/i18n';
 import { Platform } from '../../base/react';
-import { DialInSummary } from '../../invite';
+
+// import { DialInSummary } from '../../invite';
 
 import { _TNS } from '../constants';
-import { generateDeepLinkingURL } from '../functions';
-import { renderPromotionalFooter } from '../renderPromotionalFooter';
+
+// import { generateDeepLinkingURL } from '../functions';
+// import { renderPromotionalFooter } from '../renderPromotionalFooter';
 
 declare var interfaceConfig: Object;
 
@@ -82,27 +84,29 @@ class DeepLinkingMobilePage extends Component<Props> {
      * @returns {ReactElement}
      */
     render() {
-        const { _downloadUrl, _room, t } = this.props;
+        // const { _downloadUrl, _room, t } = this.props;
+
+        const { t } = this.props;
         const { NATIVE_APP_NAME, SHOW_DEEP_LINKING_IMAGE } = interfaceConfig;
         const downloadButtonClassName
             = `${_SNS}__button ${_SNS}__button_primary`;
 
 
-        const onOpenLinkProperties = _downloadUrl
-            ? {
-                // When opening a link to the download page, we want to let the
-                // OS itself handle intercepting and opening the appropriate
-                // app store. This avoids potential issues with browsers, such
-                // as iOS Chrome, not opening the store properly.
-            }
-            : {
-                // When falling back to another URL (Firebase) let the page be
-                // opened in a new window. This helps prevent the user getting
-                // trapped in an app-open-cycle where going back to the mobile
-                // browser re-triggers the app-open behavior.
-                target: '_blank',
-                rel: 'noopener noreferrer'
-            };
+        // const onOpenLinkProperties = _downloadUrl
+        //     ? {
+        //         // When opening a link to the download page, we want to let the
+        //         // OS itself handle intercepting and opening the appropriate
+        //         // app store. This avoids potential issues with browsers, such
+        //         // as iOS Chrome, not opening the store properly.
+        //     }
+        //     : {
+        //         // When falling back to another URL (Firebase) let the page be
+        //         // opened in a new window. This helps prevent the user getting
+        //         // trapped in an app-open-cycle where going back to the mobile
+        //         // browser re-triggers the app-open behavior.
+        //         target: '_blank',
+        //         rel: 'noopener noreferrer'
+        //     };
 
         return (
             <div className = { _SNS }>
@@ -122,28 +126,44 @@ class DeepLinkingMobilePage extends Component<Props> {
                     <p className = { `${_SNS}__text` }>
                         { t(`${_TNS}.appNotInstalled`, { app: NATIVE_APP_NAME }) }
                     </p>
+                    {/* <a */}
+                    {/*    { ...onOpenLinkProperties }*/}
+                    {/*    href = { this._generateDownloadURL() }*/}
+                    {/*    onClick = { this._onDownloadApp }>*/}
+                    {/*    <button className = { downloadButtonClassName }>*/}
+                    {/*        { t(`${_TNS}.downloadApp`) }*/}
+                    {/*    </button>*/}
+                    {/* </a> */}
+
                     <a
-                        { ...onOpenLinkProperties }
-                        href = { this._generateDownloadURL() }
-                        onClick = { this._onDownloadApp }>
+                        href = 'https://apps.apple.com/us/app/fiesta-in-miami/id1482227800'>
                         <button className = { downloadButtonClassName }>
-                            { t(`${_TNS}.downloadApp`) }
+                            { t(`${_TNS}.downloadApp`) } - iOS
                         </button>
                     </a>
+
                     <a
+                        href = 'https://play.google.com/store/apps/details?id=app.fiesta'>
+                        <button className = { downloadButtonClassName }>
+                            { t(`${_TNS}.downloadApp`) } - Android
+                        </button>
+                    </a>
+
+                    {/* <a
                         { ...onOpenLinkProperties }
                         className = { `${_SNS}__href` }
                         href = { generateDeepLinkingURL() }
                         onClick = { this._onOpenApp }>
                         {/* <button className = { `${_SNS}__button` }> */}
-                        { t(`${_TNS}.openApp`) }
-                        {/* </button> */}
-                    </a>
-                    { renderPromotionalFooter() }
-                    <DialInSummary
+                    {/* t(`${_TNS}.openApp`) */}
+                    {/* </button> */}
+                    {/* </a> */}
+
+                    {/* renderPromotionalFooter() */}
+                    {/* <DialInSummary
                         className = 'deep-linking-dial-in'
                         clickableNumbers = { true }
-                        room = { _room } />
+                        room = { _room } /> */}
                 </div>
             </div>
         );
