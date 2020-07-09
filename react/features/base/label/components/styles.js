@@ -1,6 +1,6 @@
 // @flow
 
-import { BoxModel, ColorPalette, createStyleSheet } from '../../styles';
+import { BoxModel, ColorPalette } from '../../styles';
 
 /**
  * The default color of the {@code Label} and {@code ExpandedLabel}.
@@ -22,7 +22,7 @@ export const LABEL_SIZE = 36;
 /**
  * The styles of the native base/label feature.
  */
-export default createStyleSheet({
+export default {
 
     expandedLabelArrow: {
         backgroundColor: ColorPalette.blue,
@@ -64,12 +64,16 @@ export default createStyleSheet({
         width: LABEL_SIZE
     },
 
+    indicatorIcon: {
+        fontSize: 24
+    },
+
     indicatorText: {
         color: ColorPalette.white,
-        fontSize: 12
+        fontSize: 10
     },
 
     labelOff: {
         opacity: 0.3
     }
-});
+};

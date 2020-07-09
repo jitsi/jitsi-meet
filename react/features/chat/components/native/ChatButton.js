@@ -1,6 +1,8 @@
 // @flow
 
+import { CHAT_ENABLED, getFeatureFlag } from '../../../base/flags';
 import { IconChat, IconChatUnread } from '../../../base/icons';
+import { setActiveModalId } from '../../../base/modal';
 import { getLocalParticipant } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import {
@@ -8,8 +10,7 @@ import {
     type AbstractButtonProps
 } from '../../../base/toolbox';
 import { openDisplayNamePrompt } from '../../../display-name';
-
-import { toggleChat } from '../../actions';
+import { CHAT_VIEW_MODAL_ID } from '../../constants';
 import { getUnreadCount } from '../../functions';
 
 type Props = AbstractButtonProps & {
@@ -93,7 +94,7 @@ function _mapDispatchToProps(dispatch: Function) {
          * @returns {void}
          */
         _displayChat() {
-            dispatch(toggleChat());
+            dispatch(setActiveModalId(CHAT_VIEW_MODAL_ID));
         },
 
         /**
@@ -113,16 +114,18 @@ function _mapDispatchToProps(dispatch: Function) {
  * Maps part of the redux state to the component's props.
  *
  * @param {Object} state - The Redux state.
- * @returns {{
- *     _unreadMessageCount
- * }}
+ * @param {Object} ownProps - The properties explicitly passed to the component instance.
+ * @returns {Props}
  */
-function _mapStateToProps(state) {
+function _mapStateToProps(state, ownProps) {
     const localParticipant = getLocalParticipant(state);
+    const enabled = getFeatureFlag(state, CHAT_ENABLED, true);
+    const { visible = enabled } = ownProps;
 
     return {
         _showNamePrompt: !localParticipant.name,
-        _unreadMessageCount: getUnreadCount(state)
+        _unreadMessageCount: getUnreadCount(state),
+        visible
     };
 }
 

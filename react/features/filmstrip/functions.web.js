@@ -104,8 +104,10 @@ export function calculateThumbnailSizeForTileView({
     // Minimum space to keep between the sides of the tiles and the sides
     // of the window.
     const sideMargins = 30 * 2;
+
+    const verticalMargins = visibleRows * 10;
     const viewWidth = clientWidth - sideMargins;
-    const viewHeight = clientHeight - topBottomPadding;
+    const viewHeight = clientHeight - topBottomPadding - verticalMargins;
     const initialWidth = viewWidth / columns;
     const aspectRatioHeight = initialWidth / TILE_ASPECT_RATIO;
     const height = Math.floor(Math.min(aspectRatioHeight, viewHeight / visibleRows));

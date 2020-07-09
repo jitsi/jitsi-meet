@@ -46,6 +46,7 @@ local function check_for_max_occupants(event)
 		-- For each person in the room that's not on the whitelist, subtract one
 		-- from the count.
 		for _, occupant in room:each_occupant() do
+			user, domain, res = split_jid(occupant.bare_jid);
 			if not whitelist:contains(domain) and not whitelist:contains(user..'@'..domain) then
 				slots = slots - 1
 			end

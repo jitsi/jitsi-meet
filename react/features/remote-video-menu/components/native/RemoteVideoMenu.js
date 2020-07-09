@@ -10,7 +10,6 @@ import { getParticipantDisplayName } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import { StyleType } from '../../../base/styles';
 import { PrivateMessageButton } from '../../../chat';
-
 import { hideRemoteVideoMenu } from '../../actions';
 
 import KickButton from './KickButton';
@@ -39,6 +38,16 @@ type Props = {
      * The color-schemed stylesheet of the BottomSheet.
      */
     _bottomSheetStyles: StyleType,
+
+    /**
+     * Whether or not to display the kick button.
+     */
+    _disableKick: boolean,
+
+    /**
+     * Whether or not to display the remote mute buttons.
+     */
+    _disableRemoteMute: boolean,
 
     /**
      * True if the menu is currently open, false otherwise.
@@ -75,13 +84,26 @@ class RemoteVideoMenu extends Component<Props> {
      * @inheritdoc
      */
     render() {
-        const { participant } = this.props;
+        const { _disableKick, _disableRemoteMute, participant } = this.props;
         const buttonProps = {
             afterClick: this._onCancel,
             showLabel: true,
             participantID: participant.id,
             styles: this.props._bottomSheetStyles.buttons
         };
+
+        const buttons = [];
+
+        if (!_disableRemoteMute) {
+            buttons.push(<MuteButton { ...buttonProps } />);
+        }
+
+        if (!_disableKick) {
+            buttons.push(<KickButton { ...buttonProps } />);
+        }
+
+        buttons.push(<PinButton { ...buttonProps } />);
+        buttons.push(<PrivateMessageButton { ...buttonProps } />);
 
         return (
             <BottomSheet onCancel = { this._onCancel }>
@@ -93,10 +115,7 @@ class RemoteVideoMenu extends Component<Props> {
                         { this.props._participantDisplayName }
                     </Text>
                 </View>
-                <MuteButton { ...buttonProps } />
-                <KickButton { ...buttonProps } />
-                <PinButton { ...buttonProps } />
-                <PrivateMessageButton { ...buttonProps } />
+                { buttons }
             </BottomSheet>
         );
     }
@@ -130,13 +149,15 @@ class RemoteVideoMenu extends Component<Props> {
  */
 function _mapStateToProps(state, ownProps) {
     const { participant } = ownProps;
+    const { remoteVideoMenu = {}, disableRemoteMute } = state['features/base/config'];
+    const { disableKick } = remoteVideoMenu;
 
     return {
-        _bottomSheetStyles:
-            ColorSchemeRegistry.get(state, 'BottomSheet'),
+        _bottomSheetStyles: ColorSchemeRegistry.get(state, 'BottomSheet'),
+        _disableKick: Boolean(disableKick),
+        _disableRemoteMute: Boolean(disableRemoteMute),
         _isOpen: isDialogOpen(state, RemoteVideoMenu_),
-        _participantDisplayName: getParticipantDisplayName(
-            state, participant.id)
+        _participantDisplayName: getParticipantDisplayName(state, participant.id)
     };
 }
 

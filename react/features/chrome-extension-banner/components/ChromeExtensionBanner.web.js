@@ -1,19 +1,23 @@
 // @flow
+
+import { jitsiLocalStorage } from 'js-utils';
 import React, { PureComponent } from 'react';
-import { connect } from '../../base/redux';
-import { Icon, IconClose } from '../../base/icons';
-import { translate } from '../../base/i18n';
-import { getCurrentConference } from '../../base/conference/functions';
-import { browser } from '../../base/lib-jitsi-meet';
-import {
-    checkChromeExtensionsInstalled,
-    isMobileBrowser
-} from '../../base/environment/utils';
-import logger from '../logger';
+
 import {
     createChromeExtensionBannerEvent,
     sendAnalytics
 } from '../../analytics';
+import { getCurrentConference } from '../../base/conference/functions';
+import {
+    checkChromeExtensionsInstalled,
+    isMobileBrowser
+} from '../../base/environment/utils';
+import { translate } from '../../base/i18n';
+import { Icon, IconClose } from '../../base/icons';
+import { browser } from '../../base/lib-jitsi-meet';
+import { connect } from '../../base/redux';
+import logger from '../logger';
+
 
 declare var interfaceConfig: Object;
 
@@ -182,7 +186,7 @@ class ChromeExtensionBanner extends PureComponent<Props, State> {
             return true;
         }
 
-        const dontShowAgain = localStorage.getItem(DONT_SHOW_AGAIN_CHECKED) === 'true';
+        const dontShowAgain = jitsiLocalStorage.getItem(DONT_SHOW_AGAIN_CHECKED) === 'true';
 
         return !this.props.bannerCfg.url
             || dontShowAgain
@@ -212,7 +216,7 @@ class ChromeExtensionBanner extends PureComponent<Props, State> {
     render() {
         if (this._shouldNotRender()) {
             if (this.state.dontShowAgainChecked) {
-                localStorage.setItem(DONT_SHOW_AGAIN_CHECKED, 'true');
+                jitsiLocalStorage.setItem(DONT_SHOW_AGAIN_CHECKED, 'true');
             }
 
             return null;

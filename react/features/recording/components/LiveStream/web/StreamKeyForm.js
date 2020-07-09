@@ -4,10 +4,10 @@ import { FieldTextStateless } from '@atlaskit/field-text';
 import React from 'react';
 
 import { translate } from '../../../../base/i18n';
-
 import AbstractStreamKeyForm, {
     type Props
 } from '../AbstractStreamKeyForm';
+import { GOOGLE_PRIVACY_POLICY, YOUTUBE_TERMS_URL } from '../constants';
 
 /**
  * A React Component for entering a key for starting a YouTube live stream.
@@ -53,21 +53,37 @@ class StreamKeyForm extends AbstractStreamKeyForm<Props> {
                     type = 'text'
                     value = { this.props.value } />
                 <div className = 'form-footer'>
-                    {
-                        this.state.showValidationError
-                            ? <span className = 'warning-text'>
-                                { t('liveStreaming.invalidStreamKey') }
-                            </span>
+                    <div className = 'help-container'>
+                        {
+                            this.state.showValidationError
+                                ? <span className = 'warning-text'>
+                                    { t('liveStreaming.invalidStreamKey') }
+                                </span>
+                                : null
+                        }
+                        { this.helpURL
+                            ? <a
+                                className = 'helper-link'
+                                onClick = { this._onOpenHelp }>
+                                { t('liveStreaming.streamIdHelp') }
+                            </a>
                             : null
-                    }
-                    { this.helpURL
-                        ? <a
-                            className = 'helper-link'
-                            onClick = { this._onOpenHelp }>
-                            { t('liveStreaming.streamIdHelp') }
-                        </a>
-                        : null
-                    }
+                        }
+                    </div>
+                    <a
+                        className = 'helper-link'
+                        href = { YOUTUBE_TERMS_URL }
+                        rel = 'noopener noreferrer'
+                        target = '_blank'>
+                        { t('liveStreaming.youtubeTerms') }
+                    </a>
+                    <a
+                        className = 'helper-link'
+                        href = { GOOGLE_PRIVACY_POLICY }
+                        rel = 'noopener noreferrer'
+                        target = '_blank'>
+                        { t('liveStreaming.googlePrivacyPolicy') }
+                    </a>
                 </div>
             </div>
         );
@@ -85,7 +101,7 @@ class StreamKeyForm extends AbstractStreamKeyForm<Props> {
      * @returns {void}
      */
     _onOpenHelp() {
-        window.open(this.helpURL, 'noopener');
+        window.open(this.helpURL, '_blank', 'noopener');
     }
 }
 

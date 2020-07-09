@@ -1,6 +1,7 @@
 // @flow
 import type { Dispatch } from 'redux';
 
+import UIEvents from '../../../service/UI/UIEvents';
 import {
     AUDIO_MUTE,
     createRemoteMuteConfirmedEvent,
@@ -8,12 +9,11 @@ import {
     sendAnalytics
 } from '../analytics';
 import { hideDialog } from '../base/dialog';
+import { setAudioMuted } from '../base/media';
 import {
     getLocalParticipant,
     muteRemoteParticipant
 } from '../base/participants';
-import { setAudioMuted } from '../base/media';
-import UIEvents from '../../../service/UI/UIEvents';
 
 import { RemoteVideoMenu } from './components';
 

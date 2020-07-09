@@ -8,9 +8,7 @@ import { IconAddPeople } from '../../../../base/icons';
 import { connect } from '../../../../base/redux';
 import { AbstractButton } from '../../../../base/toolbox';
 import type { AbstractButtonProps } from '../../../../base/toolbox';
-
-import { setAddPeopleDialogVisible } from '../../../actions';
-import { isAddPeopleEnabled, isDialOutEnabled } from '../../../functions';
+import { doInvitePeople } from '../../../actions.native';
 
 type Props = AbstractButtonProps & {
 
@@ -36,28 +34,25 @@ class InviteButton extends AbstractButton<Props, *> {
      * @returns {void}
      */
     _handleClick() {
-        this.props.dispatch(setAddPeopleDialogVisible(true));
+        this.props.dispatch(doInvitePeople());
     }
 }
 
 /**
- * Maps (parts of) the redux state to {@link InviteButton}'s React {@code Component}
- * props.
+ * Maps part of the Redux state to the props of this component.
  *
- * @param {Object} state - The redux store/state.
- * @param {Object} ownProps - The properties explicitly passed to the component
- * instance.
- * @private
- * @returns {Object}
+ * @param {Object} state - The Redux state.
+ * @param {Props} ownProps - The own props of the component.
+ * @returns {Props}
  */
-function _mapStateToProps(state: Object, ownProps: Object) {
-    const addPeopleEnabled = getFeatureFlag(state, INVITE_ENABLED, true)
-        && (isAddPeopleEnabled(state) || isDialOutEnabled(state));
-    const { visible = Boolean(addPeopleEnabled) } = ownProps;
+function _mapStateToProps(state, ownProps: Props) {
+    const { disableInviteFunctions } = state['features/base/config'];
+    const flag = getFeatureFlag(state, INVITE_ENABLED, true);
 
     return {
-        visible
+        visible: flag && !disableInviteFunctions && ownProps.visible
     };
 }
+
 
 export default translate(connect(_mapStateToProps)(InviteButton));

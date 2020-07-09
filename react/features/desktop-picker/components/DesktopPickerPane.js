@@ -1,7 +1,11 @@
 /* @flow */
 
+import { Checkbox } from '@atlaskit/checkbox';
 import Spinner from '@atlaskit/spinner';
 import React, { Component } from 'react';
+
+import { translate } from '../../base/i18n';
+import { Platform } from '../../base/react';
 
 import DesktopSourcePreview from './DesktopSourcePreview';
 
@@ -21,6 +25,11 @@ type Props = {
     onDoubleClick: Function,
 
     /**
+     * The handler to be invoked if the users checks the audio screen sharing checkbox.
+     */
+    onShareAudioChecked: Function,
+
+    /**
      * The id of the DesktopCapturerSource that is currently selected.
      */
     selectedSourceId: string,
@@ -33,7 +42,12 @@ type Props = {
     /**
      * The source type of the DesktopCapturerSources to display.
      */
-    type: string
+    type: string,
+
+    /**
+     * Used to obtain translations.
+     */
+    t: Function
 };
 
 /**
@@ -42,6 +56,31 @@ type Props = {
  * @extends Component
  */
 class DesktopPickerPane extends Component<Props> {
+
+    /**
+     * Initializes a new DesktopPickerPane instance.
+     *
+     * @param {Object} props - The read-only properties with which the new
+     * instance is to be initialized.
+     */
+    constructor(props: Props) {
+        super(props);
+
+        this._onShareAudioCheck = this._onShareAudioCheck.bind(this);
+    }
+
+    _onShareAudioCheck: (Object) => void;
+
+    /**
+     * Function to be called when the Checkbox is used.
+     *
+     * @param {boolean} checked - Checkbox status (checked or not).
+     * @returns {void}
+     */
+    _onShareAudioCheck({ target: { checked } }) {
+        this.props.onShareAudioChecked(checked);
+    }
+
     /**
      * Implements React's {@link Component#render()}.
      *
@@ -54,7 +93,8 @@ class DesktopPickerPane extends Component<Props> {
             onDoubleClick,
             selectedSourceId,
             sources,
-            type
+            type,
+            t
         } = this.props;
 
         const classNames
@@ -77,12 +117,25 @@ class DesktopPickerPane extends Component<Props> {
                     </div>
                 );
 
+        let checkBox;
+
+        // Only display the share audio checkbox if we're on windows and on
+        // desktop sharing tab.
+        // App window and Mac OS screen sharing doesn't work with system audio.
+        if (type === 'screen' && Platform.OS === 'windows') {
+            checkBox = (<Checkbox
+                label = { t('dialog.screenSharingAudio') }
+                name = 'share-system-audio'
+                onChange = { this._onShareAudioCheck } />);
+        }
+
         return (
             <div className = { classNames }>
                 { previews }
+                { checkBox }
             </div>
         );
     }
 }
 
-export default DesktopPickerPane;
+export default translate(DesktopPickerPane);

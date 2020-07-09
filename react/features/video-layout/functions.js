@@ -1,7 +1,8 @@
 // @flow
 
-import { LAYOUTS } from './constants';
 import { getPinnedParticipant } from '../base/participants';
+
+import { LAYOUTS } from './constants';
 
 declare var interfaceConfig: Object;
 
@@ -31,7 +32,7 @@ export function getCurrentLayout(state: Object) {
 export function getMaxColumnCount() {
     const configuredMax = interfaceConfig.TILE_VIEW_MAX_COLUMNS || 5;
 
-    return Math.max(Math.min(configuredMax, 1), 5);
+    return Math.min(Math.max(configuredMax, 1), 5);
 }
 
 /**

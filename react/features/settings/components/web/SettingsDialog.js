@@ -11,13 +11,13 @@ import {
     getDeviceSelectionDialogProps,
     submitDeviceSelectionTab
 } from '../../../device-selection';
+import { submitMoreTab, submitProfileTab } from '../../actions';
+import { SETTINGS_TABS } from '../../constants';
+import { getMoreTabProps, getProfileTabProps } from '../../functions';
 
 import CalendarTab from './CalendarTab';
 import MoreTab from './MoreTab';
 import ProfileTab from './ProfileTab';
-import { getMoreTabProps, getProfileTabProps } from '../../functions';
-import { submitMoreTab, submitProfileTab } from '../../actions';
-import { SETTINGS_TABS } from '../../constants';
 
 declare var APP: Object;
 declare var interfaceConfig: Object;

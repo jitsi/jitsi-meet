@@ -2,6 +2,8 @@
 
 import pixelmatch from 'pixelmatch';
 
+import { getCurrentConference } from '../../base/conference';
+
 import {
     CLEAR_INTERVAL,
     INTERVAL_TIMEOUT,
@@ -9,8 +11,6 @@ import {
     POLL_INTERVAL,
     SET_INTERVAL
 } from './constants';
-
-import { getCurrentConference } from '../../base/conference';
 import { processScreenshot } from './processScreenshot';
 import { timerWorkerScript } from './worker';
 
@@ -46,7 +46,7 @@ export default class ScreenshotCaptureEffect {
         // Bind handlers such that they access the same instance.
         this._handleWorkerAction = this._handleWorkerAction.bind(this);
         this._initScreenshotCapture = this._initScreenshotCapture.bind(this);
-        this._streamWorker = new Worker(timerWorkerScript);
+        this._streamWorker = new Worker(timerWorkerScript, { name: 'Screenshot capture worker' });
         this._streamWorker.onmessage = this._handleWorkerAction;
     }
 

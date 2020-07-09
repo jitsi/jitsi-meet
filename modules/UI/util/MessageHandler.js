@@ -1,7 +1,7 @@
 /* global $, APP */
-const logger = require('jitsi-meet-logger').getLogger(__filename);
 
-import jitsiLocalStorage from '../../util/JitsiLocalStorage';
+import Logger from 'jitsi-meet-logger';
+import { jitsiLocalStorage } from 'js-utils';
 
 import {
     NOTIFICATION_TIMEOUT,
@@ -9,6 +9,8 @@ import {
     showNotification,
     showWarningNotification
 } from '../../../react/features/notifications';
+
+const logger = Logger.getLogger(__filename);
 
 /**
  * Flag for enabling/disabling popups.

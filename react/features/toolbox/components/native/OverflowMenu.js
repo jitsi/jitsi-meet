@@ -1,28 +1,30 @@
 // @flow
 
 import React, { PureComponent } from 'react';
-import { Platform } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 import Collapsible from 'react-native-collapsible';
 
 import { ColorSchemeRegistry } from '../../../base/color-scheme';
 import { BottomSheet, hideDialog, isDialogOpen } from '../../../base/dialog';
-import { CHAT_ENABLED, IOS_RECORDING_ENABLED, getFeatureFlag } from '../../../base/flags';
+import { IconDragHandle } from '../../../base/icons';
 import { connect } from '../../../base/redux';
 import { StyleType } from '../../../base/styles';
 import { SharedDocumentButton } from '../../../etherpad';
-import { InfoDialogButton, InviteButton } from '../../../invite';
+import { InviteButton } from '../../../invite';
+import { LobbyModeButton } from '../../../lobby/components/native';
 import { AudioRouteButton } from '../../../mobile/audio-mode';
 import { LiveStreamButton, RecordButton } from '../../../recording';
 import { RoomLockButton } from '../../../room-lock';
 import { ClosedCaptionButton } from '../../../subtitles';
 import { TileViewButton } from '../../../video-layout';
-
+import { VideoShareButton } from '../../../youtube-player';
 import HelpButton from '../HelpButton';
 
 import AudioOnlyButton from './AudioOnlyButton';
 import MoreOptionsButton from './MoreOptionsButton';
 import RaiseHandButton from './RaiseHandButton';
 import ToggleCameraButton from './ToggleCameraButton';
+import styles from './styles';
 
 /**
  * The type of the React {@code Component} props of {@link OverflowMenu}.
@@ -33,11 +35,6 @@ type Props = {
      * The color-schemed stylesheet of the dialog feature.
      */
     _bottomSheetStyles: StyleType,
-
-    /**
-     * Whether the chat feature has been enabled. The meeting info button will be displayed in its place when disabled.
-     */
-    _chatEnabled: boolean,
 
     /**
      * True if the overflow menu is currently visible, false otherwise.
@@ -99,6 +96,7 @@ class OverflowMenu extends PureComponent<Props, State> {
         this._onCancel = this._onCancel.bind(this);
         this._onSwipe = this._onSwipe.bind(this);
         this._onToggleMenu = this._onToggleMenu.bind(this);
+        this._renderMenuExpandToggle = this._renderMenuExpandToggle.bind(this);
     }
 
     /**
@@ -126,30 +124,48 @@ class OverflowMenu extends PureComponent<Props, State> {
         return (
             <BottomSheet
                 onCancel = { this._onCancel }
-                onSwipe = { this._onSwipe }>
+                onSwipe = { this._onSwipe }
+                renderHeader = { this._renderMenuExpandToggle }>
                 <AudioRouteButton { ...buttonProps } />
-                <ToggleCameraButton { ...buttonProps } />
+                <InviteButton { ...buttonProps } />
                 <AudioOnlyButton { ...buttonProps } />
+                <RaiseHandButton { ...buttonProps } />
+                <LobbyModeButton { ...buttonProps } />
                 <MoreOptionsButton { ...moreOptionsButtonProps } />
                 <Collapsible collapsed = { !showMore }>
+                    <ToggleCameraButton { ...buttonProps } />
+                    <TileViewButton { ...buttonProps } />
+                    <RecordButton { ...buttonProps } />
+                    <LiveStreamButton { ...buttonProps } />
+                    <VideoShareButton { ...buttonProps } />
                     <RoomLockButton { ...buttonProps } />
                     <ClosedCaptionButton { ...buttonProps } />
-                    {
-                        this.props._recordingEnabled
-                            && <RecordButton { ...buttonProps } />
-                    }
-                    <LiveStreamButton { ...buttonProps } />
-                    <TileViewButton { ...buttonProps } />
-                    <InviteButton { ...buttonProps } />
-                    {
-                        this.props._chatEnabled
-                            && <InfoDialogButton { ...buttonProps } />
-                    }
-                    <RaiseHandButton { ...buttonProps } />
                     <SharedDocumentButton { ...buttonProps } />
                     <HelpButton { ...buttonProps } />
                 </Collapsible>
             </BottomSheet>
+        );
+    }
+
+    _renderMenuExpandToggle: () => React$Element<any>;
+
+    /**
+     * Function to render the menu toggle in the bottom sheet header area.
+     *
+     * @returns {React$Element}
+     */
+    _renderMenuExpandToggle() {
+        return (
+            <View
+                style = { [
+                    this.props._bottomSheetStyles.sheet,
+                    styles.expandMenuContainer
+                ] }>
+                <TouchableOpacity onPress = { this._onToggleMenu }>
+                    { /* $FlowFixMeProps */ }
+                    <IconDragHandle style = { this.props._bottomSheetStyles.expandIcon } />
+                </TouchableOpacity>
+            </View>
         );
     }
 
@@ -223,9 +239,7 @@ class OverflowMenu extends PureComponent<Props, State> {
 function _mapStateToProps(state) {
     return {
         _bottomSheetStyles: ColorSchemeRegistry.get(state, 'BottomSheet'),
-        _chatEnabled: getFeatureFlag(state, CHAT_ENABLED, true),
-        _isOpen: isDialogOpen(state, OverflowMenu_),
-        _recordingEnabled: Platform.OS !== 'ios' || getFeatureFlag(state, IOS_RECORDING_ENABLED)
+        _isOpen: isDialogOpen(state, OverflowMenu_)
     };
 }
 

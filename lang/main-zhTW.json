@@ -2,13 +2,13 @@
     "addPeople": {
         "add": "邀請",
         "countryNotSupported": "此目標區域尚未支援。",
-        "countryReminder": "嘗試在美國以外地區通話？請確認開頭使用的國家代碼！",
+        "countryReminder": "嘗試撥打到美國以外的地區嗎？請確認在開頭加入國家代碼！",
         "disabled": "您不可以邀請人員。",
         "failedToAdd": "增加參與人失敗",
         "footerText": "對外播號已停用。",
         "loading": "尋找聯絡人及電話號碼",
         "loadingNumber": "驗證電話號碼",
-        "loadingPeople": "正在尋搜人員進行邀請",
+        "loadingPeople": "正在搜尋邀請的人員",
         "noResults": "沒有符合要求的搜尋結果",
         "noValidNumbers": "請輸入一組電話號碼",
         "searchNumbers": "新增電話號碼",
@@ -18,7 +18,7 @@
         "title": "邀請人員參加會議"
     },
     "audioDevices": {
-        "bluetooth": "藍芽",
+        "bluetooth": "藍牙",
         "headphones": "耳機",
         "phone": "電話",
         "speaker": "發言者",
@@ -37,20 +37,20 @@
         },
         "join": "參加",
         "joinTooltip": "參加會議",
-        "nextMeeting": "下次會議",
-        "noEvents": "沒有預定事件排入行程。",
+        "nextMeeting": "下一個會議",
+        "noEvents": "已經沒有排程的事件。",
         "ongoingMeeting": "正在進行的會議",
         "permissionButton": "開啟設定",
-        "permissionMessage": "行事曆允許權限是必須的，以查看您在應用程式中的會議。",
+        "permissionMessage": "必須先取得行事曆的存取權限才能查看您應用程式中的會議。",
         "refresh": "重新整理行事曆",
         "today": "今日"
     },
     "chat": {
         "error": "錯誤：您的訊息未被傳送。原因： {{error}}",
-        "fieldPlaceHolder": "",
+        "fieldPlaceHolder": "在此輸入您的訊息",
         "messagebox": "輸入訊息",
         "messageTo": "私人訊息傳送至 {{recipient}}",
-        "noMessagesMessage": "",
+        "noMessagesMessage": "此會議尚無訊息。在此開始對話交談！",
         "nickname": {
             "popover": "選擇名稱",
             "title": "輸入名稱來使用交談"
@@ -72,12 +72,16 @@
         "DISCONNECTED": "已經中斷連接",
         "DISCONNECTING": "中斷連接中",
         "ERROR": "錯誤",
-        "RECONNECTING": "網路發生問題。重新連線中........."
+        "RECONNECTING": "網路發生問題。重新連線中.........",
+        "GOT_SESSION_ID": "正在取得 session-id… 完成",
+        "GET_SESSION_ID_ERROR": "取得 session-id 時發生錯誤：{{code}}",
+        "FETCH_SESSION_ID": "正在取得 session-id…",
+        "LOW_BANDWIDTH": "已關閉 {{displayName}} 的影片以節省流量"
     },
     "connectionindicator": {
         "address": "位址：",
         "bandwidth": "估計頻寬：",
-        "bitrate": "比特率：",
+        "bitrate": "位元率：",
         "bridgeCount": "伺服器數量：",
         "connectedTo": "已連接至：",
         "framerate": "影格率：",
@@ -89,7 +93,7 @@
         "quality": {
             "good": "很好",
             "inactive": "未啟用",
-            "lost": "漏失",
+            "lost": "遺失",
             "nonoptimal": "不甚理想",
             "poor": "不好"
         },
@@ -97,7 +101,13 @@
         "remoteport": "遠端端口：",
         "resolution": "解析度：",
         "status": "連接：",
-        "transport": "傳輸："
+        "transport": "傳輸：",
+        "transport_plural": "傳輸：",
+        "remoteport_plural": "遠端連線埠：",
+        "remoteaddress_plural": "遠端位址：",
+        "localport_plural": "本機連線埠：",
+        "localaddress_plural": "本機位址：",
+        "e2e_rtt": "E2E RTT："
     },
     "dateUtils": {
         "earlier": "稍早",
@@ -106,21 +116,21 @@
     },
     "deepLinking": {
         "appNotInstalled": "在您的手機上需要 {{app}} 行動應用程式去加入這場會議。",
-        "description": "沒有發生作用嗎？我們嘗試發起您的會議於 {{app}} 桌面應用程式。請再試一次，或是在 {{app}} 網路應用程式發起會議。",
+        "description": "沒有發生作用嗎？我們嘗試在您的 {{app}} 桌面應用程式發起會議。請再試一次，或是在 {{app}} 網路應用程式發起會議。",
         "descriptionWithoutWeb": "毫無作用嗎？我們已試著將您的會議在桌機應用工具 {{app}} 中啟動。",
         "downloadApp": "下載應用 APP",
         "launchWebButton": "在網路上發起",
         "openApp": "繼續前往此應用程式",
-        "title": "發起您的會議於 {{app}}...",
+        "title": "正在 {{app}} 發起您的會議...",
         "tryAgainButton": "在桌面上再試一次"
     },
     "defaultLink": "例如 {{url}}",
     "defaultNickname": "例如 春嬌 志明",
     "deviceError": {
-        "cameraError": "無法取用您的攝影裝置",
-        "cameraPermission": "無法獲得攝影裝置取用權限",
-        "microphoneError": "無法取用您的麥克風",
-        "microphonePermission": "無法獲得麥克風取用權限"
+        "cameraError": "無法存取您的攝影裝置",
+        "cameraPermission": "無法獲得攝影裝置存取權限",
+        "microphoneError": "無法存取您的麥克風",
+        "microphonePermission": "無法獲得麥克風存取權限"
     },
     "deviceSelection": {
         "noPermission": "未取得權限",
@@ -139,14 +149,14 @@
         "Back": "返回",
         "cameraConstraintFailedError": "您的攝影裝置不符合要求。",
         "cameraNotFoundError": "未發現攝影裝置。",
-        "cameraNotSendingData": "我們無法取用您的攝影裝置。請檢查是否有其他程序正在使用這個設備，否則請從設置選單裡選擇其他設備或者重新裝載。",
-        "cameraNotSendingDataTitle": "無法取用攝影裝置",
+        "cameraNotSendingData": "我們無法存取您的攝影裝置。請檢查是否有其他應用程式正在使用這個裝置，否則請從裝置選單裡選擇其他設備或者重新裝載。",
+        "cameraNotSendingDataTitle": "無法存取攝影裝置",
         "cameraPermissionDeniedError": "您未取得權限使用攝影裝置。您仍可參加會議，但其他人無法看到。可以利用位址欄中的攝影裝置按鈕來修正。",
         "cameraUnknownError": "由於不明原因，無法使用攝影裝置。",
         "cameraUnsupportedResolutionError": "您的攝影裝置不支援所需的影像解析度。",
         "Cancel": "取消",
         "close": "關閉",
-        "conferenceDisconnectMsg": "請檢查一下網路連接。將在 {{seconds}} 秒後重新連接...",
+        "conferenceDisconnectMsg": "請檢查一下網路連線。將在 {{seconds}} 秒後重新連接...",
         "conferenceDisconnectTitle": "您已經被中斷連接。",
         "conferenceReloadMsg": "我們正試著修復狀況。重新連接於 {{seconds}} 秒內......",
         "conferenceReloadTitle": "很不幸，有點出錯了。",
@@ -199,19 +209,19 @@
         "muteParticipantButton": "靜音",
         "muteParticipantDialog": "確定要將這位參與者設為靜音？您無法為他們解除，但他們可以隨時自行解除靜音。",
         "muteParticipantTitle": "將這位參與者設為靜音？",
-        "Ok": "OK",
-        "passwordLabel": "$t(lockRoomPasswordUppercase)",
-        "passwordNotSupported": "設置會議密碼 $t(lockRoomPassword) 尚未支援 。",
-        "passwordNotSupportedTitle": "$t(lockRoomPasswordUppercase) 尚未支援",
-        "passwordRequired": "$t(lockRoomPasswordUppercase) 必須要有",
-        "popupError": "您的瀏覽器在此網站上阻擋彈出視窗。請在瀏覽器的安全設置中開啟並再試一次。",
+        "Ok": "確定",
+        "passwordLabel": "會議已被參與者鎖定。請輸入 $t(lockRoomPassword) 以加入。",
+        "passwordNotSupported": "尚未支援設定會議密碼 $t(lockRoomPassword)。",
+        "passwordNotSupportedTitle": "尚未支援 $t(lockRoomPasswordUppercase)",
+        "passwordRequired": "必須要有 $t(lockRoomPasswordUppercase)",
+        "popupError": "您的瀏覽器在此網站上阻擋彈出視窗。請在瀏覽器的安全設定中啟用並再試一次。",
         "popupErrorTitle": "彈出視窗遭到阻擋",
         "recording": "錄影中",
         "recordingDisabledForGuestTooltip": "訪客無法啟動錄影。",
         "recordingDisabledTooltip": "啟動錄影已停用。",
         "rejoinNow": "立即重新加入",
-        "remoteControlAllowedMessage": "{{user}} 接受您進行遠端控制的要求！",
-        "remoteControlDeniedMessage": "{{user}} 拒絕您進行遠端控制的要求！",
+        "remoteControlAllowedMessage": "{{user}} 接受您進行遠端控制的請求！",
+        "remoteControlDeniedMessage": "{{user}} 拒絕您進行遠端控制的請求！",
         "remoteControlErrorMessage": "在嘗試向 {{user}} 請求遠端控制權限時發生錯誤！",
         "remoteControlRequestMessage": "您要允許 {{user}} 遠端控制您的桌面嗎？",
         "remoteControlShareScreenWarning": "注意：如果按下 \"允許\" 您將會分享出自己的螢幕！",
@@ -226,7 +236,7 @@
         "retry": "重試",
         "screenSharingFailedToInstall": "喔哦！螢幕分享擴充程式安裝失敗。",
         "screenSharingFailedToInstallTitle": "螢幕分享擴充安裝失敗",
-        "screenSharingFirefoxPermissionDeniedError": "嘗試進行螢幕分享時遇到問題。請確認您有將權限允許。",
+        "screenSharingFirefoxPermissionDeniedError": "嘗試進行螢幕分享時遇到問題。請確認您有授予權限以分享。 ",
         "screenSharingFirefoxPermissionDeniedTitle": "喔哦！我們無法啟動螢幕分享！",
         "screenSharingPermissionDeniedError": "噢喔！您的影像分享擴充權限發生問題。請重新載入，再試一次。",
         "sendPrivateMessage": "您最近有收到私人訊息。您要進行私人回覆，或是要將自己的訊息發佈至群組？",
@@ -255,13 +265,20 @@
         "tokenAuthFailed": "抱歉，您未被允許加入此會議。",
         "tokenAuthFailedTitle": "認證失敗",
         "transcribing": "轉錄中",
-        "unlockRoom": "移除會議  $t(lockRoomPassword)",
+        "unlockRoom": "移除會議 $t(lockRoomPassword)",
         "userPassword": "用戶密碼",
         "WaitForHostMsg": "此會議 <b>{{room}}</b> 尚未啟動。如果您是會議主人，請進行認證；否者，請等待會議主人到達。",
-        "WaitForHostMsgWOk": "此會議 <b>{{room}}</b> 尚未啟動。如果您是會議主人，請按 OK 進行認證；否者，請等待會議主人到達。",
+        "WaitForHostMsgWOk": "此會議 <b>{{room}}</b> 尚未啟動。如果您是會議主人，請按 [確定] 進行認證；否者，請等待會議主人到達。",
         "WaitingForHost": "等侯主辦人 ...",
         "Yes": "是的",
-        "yourEntireScreen": "自己的全螢幕"
+        "yourEntireScreen": "自己的全螢幕",
+        "screenSharingAudio": "分享音訊",
+        "muteEveryoneStartMuted": "現在所有人皆已靜音",
+        "muteEveryoneSelf": "您自己",
+        "muteEveryoneTitle": "靜音所有人？",
+        "muteEveryoneDialog": "是否要靜音所有人？您將不能解除對方的靜音，但對方可以隨時解除自己的靜音狀態。",
+        "muteEveryoneElseTitle": "是否要讓除了 {{whom}} 以外的人靜音？",
+        "muteEveryoneElseDialog": "靜音後，你就不能再解除對方的靜音，但對方可以隨時解除自己的靜音狀態。"
     },
     "dialOut": {
         "statusMessage": "現在狀態為 {{status}}"
@@ -272,9 +289,9 @@
     "feedback": {
         "average": "普通中等",
         "bad": "很差",
-        "detailsLabel": "告訴我們關於本次會議使用上更多結果。",
+        "detailsLabel": "告訴我們關於本次會議使用上更多回饋。",
         "good": "很好",
-        "rateExperience": "請您評分本次會議的體驗效果",
+        "rateExperience": "對本次會議的體驗評分",
         "veryBad": "極差",
         "veryGood": "極好"
     },
@@ -293,8 +310,8 @@
         "country": "國家",
         "dialANumber": "要參加您的會議，撥打以下號碼其中之一，然後輸入 PIN 碼。",
         "dialInConferenceID": "PIN 號碼：",
-        "dialInNotSupported": "抱歉，目前不支援電話播入。",
-        "dialInNumber": "播入：",
+        "dialInNotSupported": "抱歉，目前不支援電話撥入。",
+        "dialInNumber": "撥入：",
         "dialInSummaryError": "目前解析撥入資訊錯誤。請稍後再試一次。",
         "dialInTollFree": "完全免費",
         "genericError": "糟糕！出錯了。",
@@ -302,17 +319,17 @@
         "invitePhone": "要用電話參加會議，請使用： {{number}},,{{conferenceID}}#\n",
         "invitePhoneAlternatives": "要找另一組撥入號碼？\n請見會議撥入號碼： {{url}}\n\n\n如果也要用室內電話撥打，不用連接語音進行加入： {{silentUrl}}",
         "inviteURLFirstPartGeneral": "您受邀參加會議。",
-        "inviteURLFirstPartPersonal": "{{name}}  正在邀請您加入會議。\n",
+        "inviteURLFirstPartPersonal": "{{name}} 正在邀請您加入會議。\n",
         "inviteURLSecondPart": "\n加入會議：\n{{url}}\n",
         "liveStreamURL": "直播串流：",
         "moreNumbers": "更多成員",
-        "noNumbers": "無播入號碼。",
+        "noNumbers": "無撥入號碼。",
         "noPassword": "無",
-        "noRoom": "沒有會議室是指定要播打進入。",
-        "numbers": "播入號碼",
+        "noRoom": "沒有會議室是指定要撥入。",
+        "numbers": "撥入號碼",
         "password": "$t(lockRoomPasswordUppercase):",
         "title": "分享",
-        "tooltip": "顯示此會議的連結及電話播入號碼",
+        "tooltip": "顯示此會議的連結及電話撥入號碼",
         "label": "會議資訊"
     },
     "inviteDialog": {
@@ -354,7 +371,7 @@
         "chooseCTA": "請選擇直播串流選項。您目前是以 {{email}} 身份登入。",
         "enterStreamKey": "在此輸入您的 YouTube 直播串流密鑰。",
         "error": "直播串流失敗。請重試。",
-        "errorAPI": "在取用您的 YouTube 直播串流時發生問題。請重新登入。",
+        "errorAPI": "在存取您的 YouTube 直播串流時發生問題。請重新登入。",
         "errorLiveStreamNotEnabled": "直播串流在 {{email}} 尚未啟用。請開啟直播串流或登入有啟用直播串流的帳戶。",
         "expandedOff": "直播串流已停止",
         "expandedOn": "會議串流目前送至 YouTube 。",
@@ -363,9 +380,9 @@
         "getStreamKeyManually": "我們無法解析任何直播串流，請從 YouTube 取得您的直播串流 Key 。",
         "invalidStreamKey": "直播串流 Key 可能不正確。",
         "off": "直播串流已經停止",
-        "offBy": "{{name}}  停止了直播串流",
+        "offBy": "{{name}} 停止了直播串流",
         "on": "直播串流中",
-        "onBy": "{{name}}  啟動了直播串流",
+        "onBy": "{{name}} 啟動了直播串流",
         "pending": "啟動直播串流...",
         "serviceName": "直播串流服務",
         "signedInAs": "您目前登入名稱為：",
@@ -374,7 +391,9 @@
         "signOut": "登出",
         "start": "啟動直播串流",
         "streamIdHelp": "這是什麼？",
-        "unavailableTitle": "直播串流無法使用"
+        "unavailableTitle": "直播串流無法使用",
+        "googlePrivacyPolicy": "Google 隱私權政策",
+        "youtubeTerms": "YouTube 服務條款"
     },
     "localRecording": {
         "clientState": {
@@ -400,7 +419,7 @@
         "no": "否",
         "participant": "參與者",
         "participantStats": "參與者狀態",
-        "sessionToken": "階段標記",
+        "sessionToken": "工作階段標記",
         "start": "啟動錄影",
         "stop": "停止錄影",
         "yes": "是的"
@@ -409,7 +428,7 @@
     "lockRoomPasswordUppercase": "密碼",
     "me": "我",
     "notify": {
-        "connectedOneMember": "{{name}}  加入了會議",
+        "connectedOneMember": "{{name}} 加入了會議",
         "connectedThreePlusMembers": "{{name}} 及 {{count}} 位人員加入了會議",
         "connectedTwoMembers": "{{first}} 及 {{second}} 加入了會議",
         "disconnected": "已經中斷連接",
@@ -432,7 +451,7 @@
         "somebody": "某人",
         "startSilentTitle": "您加入了會議而無聲音輸出！",
         "startSilentDescription": "重新加入會議以啟用語音",
-        "suboptimalBrowserWarning": "恐怕您本次會議體驗並不太好，我們會想辦法改進的。但在此之前，敬請使用 <a href='static/recommendedBrowsers.html' target='_blank'>完全支援的瀏覽器</a> 。",
+        "suboptimalBrowserWarning": "恐怕您本次會議體驗並不太好，我們會想辦法改進的。但在此之前，敬請使用 <a href='{{recommendedBrowserPageLink}}' target='_blank'>完全支援的瀏覽器</a> 。",
         "suboptimalExperienceTitle": "瀏覽器警告",
         "unmute": "取消靜音",
         "newDeviceCameraTitle": "偵測到新的攝影裝置",
@@ -451,7 +470,7 @@
         "disconnected": "已經中斷連接",
         "expired": "逾時未接",
         "ignored": "忽略不接",
-        "initializingCall": "播打電話...",
+        "initializingCall": "撥打電話...",
         "invited": "受邀請的",
         "rejected": "拒接",
         "ringing": "鈴鈴鈴..."
@@ -459,17 +478,17 @@
     "profile": {
         "setDisplayNameLabel": "設定您的顯示名稱",
         "setEmailInput": "輸入您的電子信箱",
-        "setEmailLabel": "設置您的大頭人像電子信箱",
+        "setEmailLabel": "設定您的大頭人像電子信箱",
         "title": "簡介"
     },
     "raisedHand": "請求發言",
     "recording": {
         "authDropboxText": "上傳至 Dropbox",
-        "availableSpace": "可用空間： {{spaceLeft}} MB (大約錄影時間 {{duration}} 分鐘)",
+        "availableSpace": "可用空間： {{spaceLeft}} MB (錄影時間大約 {{duration}} 分鐘)",
         "beta": "BETA",
         "busy": "我們正在釋放錄影資源。請過幾分鐘後再試。",
         "busyTitle": "全部錄影目前忙碌",
-        "error": "錄影失敗。請再次重試。",
+        "error": "錄影失敗。請重試。",
         "expandedOff": "錄影已經停止",
         "expandedOn": "此會議目前正在錄影。",
         "expandedPending": "錄影正在啟動...",
@@ -514,30 +533,32 @@
         "selectMic": "麥克風",
         "startAudioMuted": "全部人啟動時處於靜音",
         "startVideoMuted": "全部人啟動時處於隱藏",
-        "title": "設置"
+        "title": "設定",
+        "speakers": "揚聲器",
+        "microphones": "麥克風"
     },
     "settingsView": {
-        "advanced": "",
-        "alertOk": "OK",
+        "advanced": "進階",
+        "alertOk": "確定",
         "alertTitle": "警告",
         "alertURLText": "所輸入的伺服器 URL 是無效的",
         "buildInfoSection": "建立資訊",
         "conferenceSection": "會議",
-        "disableCallIntegration": "",
-        "disableP2P": "",
+        "disableCallIntegration": "停用原生電話整合",
+        "disableP2P": "停用端對端模式",
         "displayName": "顯示名稱",
         "email": "電子郵件",
-        "header": "設置",
+        "header": "設定",
         "profileSection": "簡介",
         "serverURL": "伺服器 URL",
-        "showAdvanced": "",
+        "showAdvanced": "顯示進階設定",
         "startWithAudioMuted": "啟動並靜音",
         "startWithVideoMuted": "啟動並關閉影像",
         "version": "版本"
     },
     "share": {
         "dialInfoText": "\n\n=====\n\n正要撥入您的會議電話？\n\n{{defaultDialInNumber}} 點按此連結來查看此會議的電話撥入號碼\n{{dialInfoPageUrl}}",
-        "mainText": "點按以下連結參加會議：{{roomUrl}}\n"
+        "mainText": "按一下下方連結加入會議：\n{{roomUrl}}"
     },
     "speaker": "發言者",
     "speakerStats": {
@@ -584,7 +605,7 @@
             "recording": "切換錄影",
             "remoteMute": "靜音參與者",
             "Settings": "切換設定",
-            "sharedvideo": "切換 Youtube 影片分享",
+            "sharedvideo": "切換 YouTube 影片分享",
             "shareRoom": "邀請某人",
             "shareYourScreen": "切換螢幕分享",
             "shortcuts": "切換快捷鍵",
@@ -593,7 +614,10 @@
             "tileView": "切換平鋪檢視",
             "toggleCamera": "切換攝影機",
             "videomute": "切換無影像",
-            "videoblur": "切換影像模糊"
+            "videoblur": "切換影像模糊",
+            "toggleFilmstrip": "切換幻燈片",
+            "muteEveryone": "靜音所有人",
+            "moreOptions": "顯示更多選項"
         },
         "addPeople": "新增人員到您的通話中",
         "audioOnlyOff": "停用低頻寬模式",
@@ -619,16 +643,16 @@
         "lowerYourHand": "放下舉手",
         "moreActions": "更多動作",
         "mute": "靜音 / 解除靜音",
-        "noAudioSignalTitle": "",
-        "noAudioSignalDesc": "",
-        "noAudioSignalDescSuggestion": "",
+        "noAudioSignalTitle": "您的麥克風沒有輸入訊號！",
+        "noAudioSignalDesc": "如果您沒有特別從系統設定或硬體靜音，請考慮更換裝置。",
+        "noAudioSignalDescSuggestion": "如果您沒有特別從系統設定或硬體靜音，請考慮切換至建議裝置。",
         "openChat": "開啟交談",
         "pip": "進入子母畫面模式",
         "privateMessage": "發送私人訊息",
         "profile": "編輯您的簡介",
         "raiseHand": "舉手/取消 請求發言",
         "raiseYourHand": "舉手發言",
-        "Settings": "設置",
+        "Settings": "設定",
         "sharedvideo": "分享 YouTube 影片",
         "shareRoom": "邀請某人",
         "shortcuts": "查看快捷鍵",
@@ -643,7 +667,13 @@
         "toggleCamera": "切換攝影機",
         "videomute": "啟動/停止 攝影裝置",
         "startvideoblur": "模糊我的背景畫面",
-        "stopvideoblur": "停用背景模糊畫面"
+        "stopvideoblur": "停用背景模糊畫面",
+        "noisyAudioInputDesc": "噪音聽起來是從麥克風傳來的，請考慮靜音或更換裝置。",
+        "noisyAudioInputTitle": "您的麥克風疑似有雜音！",
+        "noAudioSignalDialInLinkDesc": "撥入號碼",
+        "noAudioSignalDialInDesc": "您亦可使用下述方式撥入：",
+        "muteEveryone": "靜音所有人",
+        "moreOptions": "更多選項"
     },
     "transcribing": {
         "ccButtonTooltip": "啟動/停止 字幕",
@@ -658,16 +688,16 @@
         "tr": "TR 轉錄"
     },
     "userMedia": {
-        "androidGrantPermissions": "當瀏覽器要求權限允許時，請選擇 <b><i>允許</i></b>",
-        "chromeGrantPermissions": "當瀏覽器要求權限允許時，請選擇 <b><i>允許</i></b>",
-        "edgeGrantPermissions": "當瀏覽器要求權限允許時，請選擇 <b><i>是的</i></b>",
+        "androidGrantPermissions": "當瀏覽器要求權限時，請選擇 <b><i>允許</i></b>。",
+        "chromeGrantPermissions": "當瀏覽器要求權限時，請選擇 <b><i>允許</i></b>。",
+        "edgeGrantPermissions": "當瀏覽器要求權限時，請選擇 <b><i>是的</i></b>。",
         "electronGrantPermissions": "請允許權限使用您的攝影裝置和麥克風",
-        "firefoxGrantPermissions": "當瀏覽器要求權限允許時，請選擇<b><i>分享裝置</i></b> ",
-        "iexplorerGrantPermissions": "當瀏覽器要求權限允許時，請選擇 <b><i>OK</i></b>",
+        "firefoxGrantPermissions": "當瀏覽器請求權限時，請選擇<b><i>分享選取裝置</i></b>。",
+        "iexplorerGrantPermissions": "當瀏覽器要求權限時，請選擇 <b><i>確定</i></b>。",
         "nwjsGrantPermissions": "請允許權限使用您的攝影裝置和麥克風",
-        "operaGrantPermissions": "當瀏覽器要求權限允許時，請選擇 <b><i>允許</i></b>",
-        "react-nativeGrantPermissions": "當瀏覽器要求權限允許時，請選擇 <b><i>允許</i></b>",
-        "safariGrantPermissions": "當瀏覽器要求權限允許時，請選擇 <b><i>OK</i></b>"
+        "operaGrantPermissions": "當瀏覽器要求權限時，請選擇 <b><i>允許</i></b>。",
+        "react-nativeGrantPermissions": "當瀏覽器要求權限時，請選擇 <b><i>允許</i></b>。",
+        "safariGrantPermissions": "當瀏覽器要求權限時，請選擇 <b><i>確定</i></b>。"
     },
     "videoSIPGW": {
         "busy": "我們正在清理釋放資源。請過幾分鐘後再試。",
@@ -693,9 +723,6 @@
         "lowDefinition": "低解析度 LD",
         "onlyAudioAvailable": "僅有音訊可以使用",
         "onlyAudioSupported": "在此瀏覽器我們僅支援音訊功能。",
-        "p2pEnabled": "點對點功能已經啟用",
-        "p2pVideoQualityDescription": "在點對點模式下收到的影像品質只能在高檔及僅有語音間切換。其他的設定必須在點對點退出後才會生效。",
-        "recHighDefinitionOnly": "將會偏好使用高解析度 HD。",
         "sd": "SD",
         "sdTooltip": "觀看標準解析度影像 SD",
         "standardDefinition": "標準解析度 SD"
@@ -709,7 +736,8 @@
         "muted": "處於靜音",
         "remoteControl": "遠端控制",
         "show": "顯示在台上",
-        "videomute": "參與者已經停止攝影裝置"
+        "videomute": "參與者已經停止攝影裝置",
+        "domuteOthers": "靜音其他所有人"
     },
     "welcomepage": {
         "accessibilityLabel": {
@@ -728,7 +756,7 @@
         "roomNameAllowedChars": "會議的名稱不可包含這些字元: ?, &, :, ', \", %, #.",
         "go": "開始",
         "goSmall": "開始",
-        "join": "",
+        "join": "建立 / 加入",
         "info": "資訊",
         "privacy": "隱私",
         "recentList": "最近使用",
@@ -739,6 +767,19 @@
         "roomnameHint": "請輸入您想加入的會議室名稱或 URL 網址。您可以用個名稱來建立會議室，只要其他人輸入相同的名稱就能加入會議室喔。",
         "sendFeedback": "發送回報",
         "terms": "條款",
-        "title": "安全、全功能、完全免費的視訊會議"
+        "title": "安全、全功能、完全免費的視訊會議",
+        "getHelp": "取得協助"
+    },
+    "chromeExtensionBanner": {
+        "dontShowAgain": "不再顯示此訊息",
+        "buttonText": "安裝 Chrome 擴充套件",
+        "installExtensionText": "安裝適用於 Google 行事曆及 Office 365 整合的擴充套件"
+    },
+    "helpView": {
+        "header": "說明中心"
+    },
+    "lonelyMeetingExperience": {
+        "youAreAlone": "您是會議中的唯一一個人",
+        "button": "邀請其他人"
     }
 }

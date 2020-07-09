@@ -1,16 +1,17 @@
 // @flow
 
 import React, { PureComponent } from 'react';
-import { SafeAreaView, View } from 'react-native';
+import { View } from 'react-native';
 import { WebView } from 'react-native-webview';
 import type { Dispatch } from 'redux';
 
 import { ColorSchemeRegistry } from '../../../base/color-scheme';
 import { translate } from '../../../base/i18n';
-import { HeaderWithNavigation, LoadingIndicator, SlidingView } from '../../../base/react';
+import { JitsiModal } from '../../../base/modal';
+import { LoadingIndicator } from '../../../base/react';
 import { connect } from '../../../base/redux';
-
 import { toggleDocument } from '../../actions';
+import { SHARE_DOCUMENT_VIEW_ID } from '../../constants';
 import { getSharedDocumentUrl } from '../../functions';
 
 import styles, { INDICATOR_COLOR } from './styles';
@@ -69,40 +70,22 @@ class SharedDocument extends PureComponent<Props> {
      * @inheritdoc
      */
     render() {
-        const { _documentUrl, _isOpen } = this.props;
-        const webViewStyles = this._getWebViewStyles();
+        const { _documentUrl } = this.props;
 
         return (
-            <SlidingView
-                onHide = { this._onClose }
-                position = 'bottom'
-                show = { _isOpen } >
-                <View style = { styles.webViewWrapper }>
-                    <HeaderWithNavigation
-                        headerLabelKey = 'documentSharing.title'
-                        onPressBack = { this._onClose } />
-                    <SafeAreaView style = { webViewStyles }>
-                        <WebView
-                            onError = { this._onError }
-                            renderLoading = { this._renderLoading }
-                            source = {{ uri: _documentUrl }}
-                            startInLoadingState = { true } />
-                    </SafeAreaView>
-                </View>
-            </SlidingView>
+            <JitsiModal
+                headerProps = {{
+                    headerLabelKey: 'documentSharing.title'
+                }}
+                modalId = { SHARE_DOCUMENT_VIEW_ID }
+                style = { styles.webView }>
+                <WebView
+                    onError = { this._onError }
+                    renderLoading = { this._renderLoading }
+                    source = {{ uri: _documentUrl }}
+                    startInLoadingState = { true } />
+            </JitsiModal>
         );
-    }
-
-    /**
-     * Computes the styles required for the WebView component.
-     *
-     * @returns {Object}
-     */
-    _getWebViewStyles() {
-        return {
-            ...styles.webView,
-            backgroundColor: this.props._headerStyles.screenHeader.backgroundColor
-        };
     }
 
     _onClose: () => boolean

@@ -6,7 +6,6 @@ import _ from 'lodash';
 import React, { Component } from 'react';
 
 import { translate } from '../../../i18n/functions';
-
 import type { DialogProps } from '../../constants';
 
 /**
@@ -29,7 +28,15 @@ const OK_BUTTON_ID = 'modal-dialog-ok-button';
 type Props = {
     ...DialogProps,
 
-    i18n: Object,
+    /**
+     * Custom dialog header that replaces the standard heading.
+     */
+    customHeader?: React$Element<any> | Function,
+
+    /*
+     * True if listening for the Enter key should be disabled.
+     */
+    disableEnter: boolean,
 
     /**
      * Disables dismissing the dialog when the blanket is clicked. Enabled
@@ -42,6 +49,8 @@ type Props = {
      * clicking the blanket, will cancel.
      */
     hideCancelButton: boolean,
+
+    i18n: Object,
 
     /**
      * Whether the dialog is modal. This means clicking on the blanket will
@@ -106,6 +115,7 @@ class StatelessDialog extends Component<Props> {
      */
     render() {
         const {
+            customHeader,
             children,
             t /* The following fixes a flow error: */ = _.identity,
             titleString,
@@ -116,8 +126,11 @@ class StatelessDialog extends Component<Props> {
         return (
             <Modal
                 autoFocus = { true }
+                components = {{
+                    Header: customHeader
+                }}
                 footer = { this._renderFooter }
-                heading = { titleString || t(titleKey) }
+                heading = { customHeader ? undefined : titleString || t(titleKey) }
                 i18n = { this.props.i18n }
                 onClose = { this._onDialogDismissed }
                 onDialogDismissed = { this._onDialogDismissed }
@@ -305,7 +318,7 @@ class StatelessDialog extends Component<Props> {
             return;
         }
 
-        if (event.key === 'Enter') {
+        if (event.key === 'Enter' && !this.props.disableEnter) {
             event.preventDefault();
             event.stopPropagation();
 
