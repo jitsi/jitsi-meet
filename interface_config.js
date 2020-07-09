@@ -207,7 +207,7 @@ var interfaceConfig = {
     * If this is set to false, the banner will not be rendered at all. If set to true, the check for extension(s)
     * being already installed is done before rendering.
     */
-    SHOW_CHROME_EXTENSION_BANNER: false,
+    SHOW_CHROME_EXTENSION_BANNER: false
 
     /**
      * When enabled, the kick participant button will not be presented for users without a JWT
@@ -233,12 +233,12 @@ var interfaceConfig = {
     /**
      * Specify mobile app scheme for opening the app from the mobile browser.
      */
-    APP_SCHEME: 'org.postech.vmeeting',
+    // APP_SCHEME: 'org.jitsi.meet',
 
     /**
      * Specify the Android app package name.
      */
-    ANDROID_APP_PACKAGE: 'org.postech.vmeeting'
+    // ANDROID_APP_PACKAGE: 'org.jitsi.meet'
 
     /**
      * Override the behavior of some notifications to remain displayed until

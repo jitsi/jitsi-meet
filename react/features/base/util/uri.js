@@ -6,7 +6,7 @@ import { normalizeNFKC } from './strings';
  * The app linking scheme.
  * TODO: This should be read from the manifest files later.
  */
-export const APP_LINK_SCHEME = 'org.postech.vmeeting:';
+export const APP_LINK_SCHEME = 'org.jitsi.meet:';
 
 /**
  * A list of characters to be excluded/removed from the room component/segment

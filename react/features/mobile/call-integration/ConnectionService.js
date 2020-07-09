@@ -14,11 +14,11 @@ if (ConnectionService) {
         registerSubscriptions(context, delegate) {
             return [
                 ConnectionService.addListener(
-                    'org.postech.vmeeting:features/connection_service#disconnect',
+                    'org.jitsi.meet:features/connection_service#disconnect',
                     delegate._onPerformEndCallAction,
                     context),
                 ConnectionService.addListener(
-                    'org.postech.vmeeting:features/connection_service#abort',
+                    'org.jitsi.meet:features/connection_service#abort',
                     delegate._onPerformEndCallAction,
                     context)
             ];
