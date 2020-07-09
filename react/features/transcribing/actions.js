@@ -1,17 +1,18 @@
 // @flow
 
 import {
-    _POTENTIAL_TRANSCRIBER_JOINED,
-    _TRANSCRIBER_JOINED,
-    _TRANSCRIBER_LEFT,
-    SET_PENDING_TRANSCRIBING_NOTIFICATION_UID
-} from './actionTypes';
-import {
     NOTIFICATION_TIMEOUT,
     hideNotification,
     showErrorNotification,
     showNotification
 } from '../notifications';
+
+import {
+    _POTENTIAL_TRANSCRIBER_JOINED,
+    _TRANSCRIBER_JOINED,
+    _TRANSCRIBER_LEFT,
+    SET_PENDING_TRANSCRIBING_NOTIFICATION_UID
+} from './actionTypes';
 
 /**
  * Notify that the transcriber, with a unique ID, has joined.

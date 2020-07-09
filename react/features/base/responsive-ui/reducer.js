@@ -23,7 +23,6 @@ const DEFAULT_STATE = {
 ReducerRegistry.register('features/base/responsive-ui', (state = DEFAULT_STATE, action) => {
     switch (action.type) {
     case CLIENT_RESIZED: {
-
         return {
             ...state,
             clientWidth: action.clientWidth,

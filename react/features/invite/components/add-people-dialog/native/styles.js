@@ -1,6 +1,6 @@
 // @flow
 
-import { BoxModel, ColorPalette } from '../../../../base/styles';
+import { BoxModel } from '../../../../base/styles';
 
 export const AVATAR_SIZE = 40;
 export const DARK_GREY = 'rgb(28, 32, 37)';
@@ -19,8 +19,10 @@ export default {
         fontSize: 12
     },
 
-    avoidingView: {
-        flex: 1
+    bottomBar: {
+        alignItems: 'center',
+        flexDirection: 'row',
+        justifyContent: 'space-around'
     },
 
     clearButton: {
@@ -44,12 +46,11 @@ export default {
         width: 24
     },
 
-    dialogWrapper: {
-        alignItems: 'stretch',
-        backgroundColor: ColorPalette.white,
-        flex: 1,
-        flexDirection: 'column',
-        justifyContent: 'flex-start'
+    /**
+     * A special padding to avoid issues on some devices (such as Android devices with custom suggestions bar).
+     */
+    extraBarPadding: {
+        paddingBottom: 30
     },
 
     invitedList: {
@@ -122,6 +123,10 @@ export default {
         flexDirection: 'row',
         justifyContent: 'center',
         width: ICON_SIZE + 16
+    },
+
+    shareIcon: {
+        fontSize: 42
     },
 
     unselectIcon: {

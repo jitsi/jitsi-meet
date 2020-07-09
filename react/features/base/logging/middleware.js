@@ -9,13 +9,12 @@ import JitsiMeetJS, {
     JitsiConferenceEvents
 } from '../lib-jitsi-meet';
 import { MiddlewareRegistry } from '../redux';
-
 import { isTestModeEnabled } from '../testing';
 
-import { setLogCollector } from './actions';
-import { SET_LOGGING_CONFIG } from './actionTypes';
-import JitsiMeetLogStorage from './JitsiMeetLogStorage';
 import JitsiMeetInMemoryLogStorage from './JitsiMeetInMemoryLogStorage';
+import JitsiMeetLogStorage from './JitsiMeetLogStorage';
+import { SET_LOGGING_CONFIG } from './actionTypes';
+import { setLogCollector } from './actions';
 
 declare var APP: Object;
 

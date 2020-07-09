@@ -2,9 +2,10 @@
 
 import React, { Component } from 'react';
 
+import type { Item } from '../../Types';
+
 import Container from './Container';
 import Text from './Text';
-import type { Item } from '../../Types';
 
 /**
  * The type of the React {@code Component} props of

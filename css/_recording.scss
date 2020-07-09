@@ -71,6 +71,11 @@
         display: flex;
         margin-top: 5px;
         text-align: right;
+        flex-direction: column;
+
+        .help-container {
+            display: flex;
+        }
     }
 
     .live-stream-cta {

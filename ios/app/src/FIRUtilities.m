@@ -16,12 +16,7 @@
 
 #import "FIRUtilities.h"
 
-// Plist file name.
-NSString *const kGoogleServiceInfoFileName = @"GoogleService-Info";
-// Plist file type.
-NSString *const kGoogleServiceInfoFileType = @"plist";
-NSString *const kGoogleAppIDPlistKey = @"GOOGLE_APP_ID";
-
+@import JitsiMeet;
 
 @implementation FIRUtilities
 
@@ -30,35 +25,9 @@ NSString *const kGoogleAppIDPlistKey = @"GOOGLE_APP_ID";
   static dispatch_once_t onceToken;
   dispatch_once(&onceToken, ^{
     NSBundle *bundle = [NSBundle mainBundle];
-    containsRealServiceInfoPlist = [self containsRealServiceInfoPlistInBundle:bundle];
+    containsRealServiceInfoPlist = [InfoPlistUtil containsRealServiceInfoPlistInBundle:bundle];
   });
   return containsRealServiceInfoPlist;
-}
-
-+ (BOOL)containsRealServiceInfoPlistInBundle:(NSBundle *)bundle {
-  NSString *bundlePath = bundle.bundlePath;
-  if (!bundlePath.length) {
-    return NO;
-  }
-
-  NSString *plistFilePath = [bundle pathForResource:kGoogleServiceInfoFileName
-                                             ofType:kGoogleServiceInfoFileType];
-  if (!plistFilePath.length) {
-    return NO;
-  }
-
-  NSDictionary *plist = [NSDictionary dictionaryWithContentsOfFile:plistFilePath];
-  if (!plist) {
-    return NO;
-  }
-
-  // Perform a very naive validation by checking to see if the plist has the dummy google app id
-  NSString *googleAppID = plist[kGoogleAppIDPlistKey];
-  if (!googleAppID.length) {
-    return NO;
-  }
-
-  return YES;
 }
 
 + (NSURL *)extractURL: (FIRDynamicLink*)dynamicLink {

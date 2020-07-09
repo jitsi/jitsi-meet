@@ -22,5 +22,4 @@ class ClosedCaptionButton
     toggledLabel = 'toolbar.stopSubtitles';
 }
 
-export default translate(connect(_abstractMapStateToProps)(
-    ClosedCaptionButton));
+export default translate(connect(_abstractMapStateToProps)(ClosedCaptionButton));

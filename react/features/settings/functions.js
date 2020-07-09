@@ -1,11 +1,15 @@
 // @flow
-import { toState } from '../base/redux';
-import { parseStandardURIString } from '../base/util';
+
+import { SERVER_URL_CHANGE_ENABLED, getFeatureFlag } from '../base/flags';
 import { i18next, DEFAULT_LANGUAGE, LANGUAGES } from '../base/i18n';
+import { createLocalTrack } from '../base/lib-jitsi-meet/functions';
 import {
     getLocalParticipant,
     isLocalParticipantModerator
 } from '../base/participants';
+import { toState } from '../base/redux';
+import { parseStandardURIString } from '../base/util';
+import { isFollowMeActive } from '../follow-me';
 
 declare var interfaceConfig: Object;
 
@@ -19,6 +23,20 @@ declare var interfaceConfig: Object;
  */
 export function isSettingEnabled(settingName: string) {
     return interfaceConfig.SETTINGS_SECTIONS.includes(settingName);
+}
+
+/**
+ * Returns true if user is allowed to change Server URL.
+ *
+ * @param {(Function|Object)} stateful - The (whole) redux state, or redux's
+ * {@code getState} function to be used to retrieve the state.
+ * @returns {boolean} True to indicate that user can change Server URL, false otherwise.
+ */
+export function isServerURLChangeEnabled(stateful: Object | Function) {
+    const state = toState(stateful);
+    const flag = getFeatureFlag(state, SERVER_URL_CHANGE_ENABLED, true);
+
+    return flag;
 }
 
 /**
@@ -84,7 +102,7 @@ export function getMoreTabProps(stateful: Object | Function) {
         startAudioMutedPolicy,
         startVideoMutedPolicy
     } = state['features/base/conference'];
-    const followMeActive = Boolean(state['features/follow-me'].moderator);
+    const followMeActive = isFollowMeActive(state);
     const configuredTabs = interfaceConfig.SETTINGS_SECTIONS || [];
 
     // The settings sections to display.
@@ -129,4 +147,83 @@ export function getProfileTabProps(stateful: Object | Function) {
         displayName: localParticipant.name,
         email: localParticipant.email
     };
+}
+
+/**
+ * Returns a promise which resolves with a list of objects containing
+ * all the video jitsiTracks and appropriate errors for the given device ids.
+ *
+ * @param {string[]} ids - The list of the camera ids for wich to create tracks.
+ *
+ * @returns {Promise<Object[]>}
+ */
+export function createLocalVideoTracks(ids: string[]) {
+    return Promise.all(ids.map(deviceId => createLocalTrack('video', deviceId)
+                   .then(jitsiTrack => {
+                       return {
+                           jitsiTrack,
+                           deviceId
+                       };
+                   })
+                   .catch(() => {
+                       return {
+                           jitsiTrack: null,
+                           deviceId,
+                           error: 'deviceSelection.previewUnavailable'
+                       };
+                   })));
+}
+
+
+/**
+ * Returns a promise which resolves with a list of objects containing
+ * the audio track and the corresponding audio device information.
+ *
+ * @param {Object[]} devices - A list of microphone devices.
+ * @returns {Promise<{
+ *   deviceId: string,
+ *   hasError: boolean,
+ *   jitsiTrack: Object,
+ *   label: string
+ * }[]>}
+ */
+export function createLocalAudioTracks(devices: Object[]) {
+    return Promise.all(
+        devices.map(async ({ deviceId, label }) => {
+            let jitsiTrack = null;
+            let hasError = false;
+
+            try {
+                jitsiTrack = await createLocalTrack('audio', deviceId);
+            } catch (err) {
+                hasError = true;
+            }
+
+            return {
+                deviceId,
+                hasError,
+                jitsiTrack,
+                label
+            };
+        }));
+}
+
+/**
+ * Returns the visibility state of the audio settings.
+ *
+ * @param {Object} state - The state of the application.
+ * @returns {boolean}
+ */
+export function getAudioSettingsVisibility(state: Object) {
+    return state['features/settings'].audioSettingsVisible;
+}
+
+/**
+ * Returns the visibility state of the video settings.
+ *
+ * @param {Object} state - The state of the application.
+ * @returns {boolean}
+ */
+export function getVideoSettingsVisibility(state: Object) {
+    return state['features/settings'].videoSettingsVisible;
 }

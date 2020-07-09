@@ -1,5 +1,7 @@
 /* global APP, config, JitsiMeetJS, Promise */
 
+import Logger from 'jitsi-meet-logger';
+
 import { openConnection } from '../../../connection';
 import { setJWT } from '../../../react/features/base/jwt';
 import {
@@ -9,7 +11,7 @@ import UIUtil from '../util/UIUtil';
 
 import LoginDialog from './LoginDialog';
 
-const logger = require('jitsi-meet-logger').getLogger(__filename);
+const logger = Logger.getLogger(__filename);
 
 let externalAuthWindow;
 let authRequiredDialog;

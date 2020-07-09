@@ -43,7 +43,9 @@ const INITIAL_RN_STATE = {
     p2p: {
         disableH264: false,
         preferH264: true
-    }
+    },
+
+    remoteVideoMenu: {}
 };
 
 ReducerRegistry.register('features/base/config', (state = _getInitialState(), action) => {

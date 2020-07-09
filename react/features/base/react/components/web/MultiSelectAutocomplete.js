@@ -1,7 +1,7 @@
 // @flow
 
-import { MultiSelectStateless } from '@atlaskit/multi-select';
 import AKInlineDialog from '@atlaskit/inline-dialog';
+import { MultiSelectStateless } from '@atlaskit/multi-select';
 import _debounce from 'lodash/debounce';
 import React, { Component } from 'react';
 

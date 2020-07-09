@@ -115,8 +115,9 @@ form {
 .leftwatermark {
     left: 32px;
     top: 32px;
-    background-image: url($defaultWatermarkLink);
     background-position: center left;
+    background-repeat: no-repeat;
+    background-size: contain;
 }
 
 .rightwatermark {

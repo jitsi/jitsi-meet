@@ -14,6 +14,8 @@ echo "- Download certbot-auto from https://dl.eff.org to /usr/local/sbin"
 echo "- Install additional dependencies in order to request Let’s Encrypt certificate"
 echo "- If running with jetty serving web content, will stop Jitsi Videobridge"
 echo "- Configure and reload nginx or apache2, whichever is used"
+echo "- Configure the coturn server to use Let's Encrypt certificate and add required deploy hooks"
+echo "- Add command in weekly cron job to renew certificates regularly"
 echo ""
 echo "You need to agree to the ACME server's Subscriber Agreement (https://letsencrypt.org/documents/LE-SA-v1.1.1-August-1-2016.pdf) "
 echo "by providing an email address for important account notifications"
@@ -29,6 +31,9 @@ if [ ! -f certbot-auto ] ; then
 fi
 
 CRON_FILE="/etc/cron.weekly/letsencrypt-renew"
+if [ ! -d "/etc/cron.weekly" ] ; then
+    mkdir "/etc/cron.weekly"
+fi
 echo "#!/bin/bash" > $CRON_FILE
 echo "/usr/local/sbin/certbot-auto renew >> /var/log/le-renew.log" >> $CRON_FILE
 
@@ -37,10 +42,26 @@ CERT_CRT="/etc/letsencrypt/live/$DOMAIN/fullchain.pem"
 
 if [ -f /etc/nginx/sites-enabled/$DOMAIN.conf ] ; then
 
-    ./certbot-auto certonly --noninteractive \
-    --webroot --webroot-path /usr/share/jitsi-meet \
-    -d $DOMAIN \
-    --agree-tos --email $EMAIL
+    TURN_CONFIG="/etc/turnserver.conf"
+    TURN_HOOK=/etc/letsencrypt/renewal-hooks/deploy/0000-coturn-certbot-deploy.sh
+    if [ -f $TURN_CONFIG ] && grep -q "jitsi-meet coturn config" "$TURN_CONFIG" ; then
+        mkdir -p $(dirname $TURN_HOOK)
+
+        cp /usr/share/jitsi-meet-turnserver/coturn-certbot-deploy.sh $TURN_HOOK
+        chmod u+x $TURN_HOOK
+        sed -i "s/jitsi-meet.example.com/$DOMAIN/g" $TURN_HOOK
+
+        ./certbot-auto certonly --noninteractive \
+        --webroot --webroot-path /usr/share/jitsi-meet \
+        -d $DOMAIN \
+        --agree-tos --email $EMAIL \
+        --deploy-hook $TURN_HOOK
+    else
+        ./certbot-auto certonly --noninteractive \
+        --webroot --webroot-path /usr/share/jitsi-meet \
+        -d $DOMAIN \
+        --agree-tos --email $EMAIL
+    fi
 
     echo "Configuring nginx"
 
@@ -56,16 +77,6 @@ if [ -f /etc/nginx/sites-enabled/$DOMAIN.conf ] ; then
 
     echo "service nginx reload" >> $CRON_FILE
     service nginx reload
-
-    TURN_CONFIG="/etc/turnserver.conf"
-    if [ -f $TURN_CONFIG ] && grep -q "jitsi-meet coturn config" "$TURN_CONFIG" ; then
-        echo "Configuring turnserver"
-        sed -i "s/cert=\/etc\/jitsi\/meet\/.*crt/cert=$CERT_CRT_ESC/g" $TURN_CONFIG
-        sed -i "s/pkey=\/etc\/jitsi\/meet\/.*key/pkey=$CERT_KEY_ESC/g" $TURN_CONFIG
-
-        echo "service coturn restart" >> $CRON_FILE
-        service coturn restart
-    fi
 elif [ -f /etc/apache2/sites-enabled/$DOMAIN.conf ] ; then
 
     ./certbot-auto certonly --noninteractive \
@@ -87,27 +98,6 @@ elif [ -f /etc/apache2/sites-enabled/$DOMAIN.conf ] ; then
 
     echo "service apache2 reload" >> $CRON_FILE
     service apache2 reload
-else
-    service jitsi-videobridge stop
-
-    ./certbot-auto certonly --noninteractive \
-    --standalone \
-    -d $DOMAIN \
-    --agree-tos --email $EMAIL
-
-    echo "Configuring jetty"
-
-    CERT_P12="/etc/jitsi/videobridge/$DOMAIN.p12"
-    CERT_JKS="/etc/jitsi/videobridge/$DOMAIN.jks"
-    # create jks from  certs
-    openssl pkcs12 -export \
-        -in $CERT_CRT -inkey $CERT_KEY -passout pass:changeit > $CERT_P12
-    keytool -importkeystore -destkeystore $CERT_JKS \
-        -srckeystore $CERT_P12 -srcstoretype pkcs12 \
-        -noprompt -storepass changeit -srcstorepass changeit
-
-    service jitsi-videobridge start
-
 fi
 
 # the cron file that will renew certificates

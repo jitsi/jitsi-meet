@@ -258,6 +258,20 @@ export function createDeviceChangedEvent(mediaType, deviceType) {
 }
 
 /**
+ * Creates an event indicating that an action related to E2EE occurred.
+ *
+ * @param {string} action - The action which occurred.
+ * @returns {Object} The event in a format suitable for sending via
+ * sendAnalytics.
+ */
+export function createE2EEEvent(action) {
+    return {
+        action,
+        actionSubject: 'e2ee'
+    };
+}
+
+/**
  * Creates an event which specifies that the feedback dialog has been opened.
  *
  * @returns {Object} The event in a format suitable for sending via
@@ -671,21 +685,6 @@ export function createStartMutedConfigurationEvent(
             'audio_mute': audioMute,
             'video_mute': videoMute
         }
-    };
-}
-
-/**
- * Creates an event which indicates the delay for switching between simulcast
- * streams.
- *
- * @param {Object} attributes - Attributes to attach to the event.
- * @returns {Object} The event in a format suitable for sending via
- * sendAnalytics.
- */
-export function createStreamSwitchDelayEvent(attributes) {
-    return {
-        action: 'stream.switch.delay',
-        attributes
     };
 }
 

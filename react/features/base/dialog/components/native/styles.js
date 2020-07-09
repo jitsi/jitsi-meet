@@ -4,7 +4,6 @@ import { StyleSheet } from 'react-native';
 
 import { ColorSchemeRegistry, schemeColor } from '../../../color-scheme';
 import { BoxModel, ColorPalette } from '../../../styles';
-
 import { PREFERRED_DIALOG_SIZE } from '../../constants';
 
 const BORDER_RADIUS = 5;
@@ -170,6 +169,12 @@ ColorSchemeRegistry.register('BottomSheet', {
          * Additional style that is not directly used as a style object.
          */
         underlayColor: ColorPalette.overflowMenuItemUnderlay
+    },
+
+    expandIcon: {
+        color: schemeColor('icon'),
+        fontSize: 48,
+        opacity: 0.8
     },
 
     /**

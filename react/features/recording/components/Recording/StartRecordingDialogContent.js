@@ -22,7 +22,6 @@ import {
 import { connect } from '../../../base/redux';
 import { ColorPalette, StyleType } from '../../../base/styles';
 import { authorizeDropbox, updateDropboxToken } from '../../../dropbox';
-
 import { RECORDING_TYPES } from '../../constants';
 import { getRecordingDurationEstimation } from '../../functions';
 

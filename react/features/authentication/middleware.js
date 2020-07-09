@@ -2,7 +2,7 @@
 
 import type { Dispatch } from 'redux';
 
-import { appNavigate } from '../app';
+import { appNavigate } from '../app/actions';
 import {
     CONFERENCE_FAILED,
     CONFERENCE_JOINED,
@@ -17,16 +17,16 @@ import {
 import { MiddlewareRegistry } from '../base/redux';
 
 import {
+    CANCEL_LOGIN,
+    STOP_WAIT_FOR_OWNER,
+    WAIT_FOR_OWNER
+} from './actionTypes';
+import {
     _openLoginDialog,
     _openWaitForOwnerDialog,
     stopWaitForOwner,
     waitForOwner
 } from './actions';
-import {
-    CANCEL_LOGIN,
-    STOP_WAIT_FOR_OWNER,
-    WAIT_FOR_OWNER
-} from './actionTypes';
 import { LoginDialog, WaitForOwnerDialog } from './components';
 
 /**

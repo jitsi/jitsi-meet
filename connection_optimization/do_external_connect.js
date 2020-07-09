@@ -1,7 +1,7 @@
 /* global config, createConnectionExternally */
 
 import getRoomName from '../react/features/base/config/getRoomName';
-import parseURLParams from '../react/features/base/config/parseURLParams';
+import { parseURLParams } from '../react/features/base/util/parseURLParams';
 
 /**
  * Implements external connect using createConnectionExternally function defined

@@ -28,6 +28,11 @@ type Props = {
     label: string,
 
     /**
+     * One of 'row' (default) or 'column'.
+     */
+    layout: string,
+
+    /**
      * Invoked to obtain translated strings.
      */
     t: Function
@@ -60,7 +65,7 @@ class FormRow extends Component<Props> {
      * @returns {ReactElement}
      */
     render() {
-        const { t } = this.props;
+        const { layout, t } = this.props;
 
         // Some field types need additional props to look good and standardized
         // on a form.
@@ -76,7 +81,8 @@ class FormRow extends Component<Props> {
                     <Text
                         style = { [
                             styles.text,
-                            styles.fieldLabelText
+                            styles.fieldLabelText,
+                            layout === 'column' ? styles.fieldLabelTextColumn : undefined
                         ] } >
                         { t(this.props.label) }
                     </Text>
@@ -108,7 +114,10 @@ class FormRow extends Component<Props> {
             case 'TextInput':
                 return {
                     placeholderTextColor: PLACEHOLDER_COLOR,
-                    style: styles.textInputField,
+                    style: [
+                        styles.textInputField,
+                        this.props.layout === 'column' ? styles.textInputFieldColumn : undefined
+                    ],
                     underlineColorAndroid: ANDROID_UNDERLINE_COLOR
                 };
             }
@@ -126,12 +135,19 @@ class FormRow extends Component<Props> {
      * @returns {Array<Object>}
      */
     _getRowStyle() {
+        const { fieldSeparator, layout } = this.props;
         const rowStyle = [
             styles.fieldContainer
         ];
 
-        if (this.props.fieldSeparator) {
+        if (fieldSeparator) {
             rowStyle.push(styles.fieldSeparator);
+        }
+
+        if (layout === 'column') {
+            rowStyle.push(
+                styles.fieldContainerColumn
+            );
         }
 
         return rowStyle;
