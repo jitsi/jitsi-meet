@@ -30,11 +30,14 @@ MiddlewareRegistry.register(store => next => action => {
             // init, we need to add these proxies before it initializes, otherwise lib-jitsi-meet will use the
             // original non proxy versions of these functions.
             try {
+                // Default poll interval is 1000ms if not provided in the config.
+                const pollInterval = analytics.rtcstatsPollInterval || 1000;
+
                 // Initialize but don't connect to the rtcstats server wss, as it will start sending data for all
                 // media calls made even before the conference started.
                 RTCStats.init({
                     rtcstatsEndpoint: analytics.rtcstatsEndpoint,
-                    rtcstatsPollInterval: analytics.rtcstatsPollInterval
+                    rtcstatsPollInterval: pollInterval
                 });
             } catch (error) {
                 logger.error('Failed to initialize RTCStats: ', error);
