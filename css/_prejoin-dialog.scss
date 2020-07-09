@@ -96,6 +96,11 @@
             padding: 0 8px;
         }
     }
+
+    .prejoin-dialog-btn.primary,
+    .action-btn.prejoin-dialog-btn.text {
+        width: 310px;
+    }
 }
 
 .prejoin-dialog-callout {

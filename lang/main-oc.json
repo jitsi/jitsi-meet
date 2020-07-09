@@ -15,7 +15,22 @@
         "searchPeople": "Cercar de monde",
         "searchPeopleAndNumbers": "Cercar de monde o apondre lor numèros de telefòn",
         "telephone": "Telefòn : {{number}}",
-        "title": "Convidatz de monde a vòstra conferéncia"
+        "title": "Convidatz de monde a vòstra conferéncia",
+        "shareStream": "Partejar la ligam de la difusion en dirècte",
+        "copyStream": "Copiar lo ligam de la difusion en dirècte",
+        "yahooEmail": "Yahoo Email",
+        "outlookEmail": "Outlook Email",
+        "shareLink": "Partejar lo ligam de la conferéncia per convidar de monde",
+        "shareInvite": "Partejar invitacion conferéncia",
+        "linkCopied": "Ligam copiat al quichapapièrs",
+        "inviteMorePrompt": "Convidar mai de monde",
+        "inviteMoreMailSubject": "Rejónher la conferéncia {{appName}}",
+        "inviteMoreHeader": "Sètz l’unica persona de la conferéncia",
+        "googleEmail": "Google Email",
+        "defaultEmail": "Vòstre email per defaut",
+        "copyLink": "Copiar lo ligam de la conferéncia",
+        "copyInvite": "Copiar l’invitacion a la conferéncia",
+        "addContacts": "Convidatz vòstres contactes"
     },
     "audioDevices": {
         "bluetooth": "Bluetooth",
@@ -122,7 +137,10 @@
         "launchWebButton": "Lançar del navigador",
         "openApp": "Telecargar l’aplicacion",
         "title": "Aviada de vòstra conferéncia dins {{app}}…",
-        "tryAgainButton": "Tornar ensajar del burèu"
+        "tryAgainButton": "Tornar ensajar del burèu",
+        "joinInApp": "Rejónher la conferéncia en utilizant l’aplicacion",
+        "ifHaveApp": "S’avètz ja l’aplicacion :",
+        "ifDoNotHaveApp": "S’avètz pas encara l’aplicacion :"
     },
     "defaultLink": "ex. {{url}}",
     "defaultNickname": "ex. Joan Delpuèch",
@@ -238,7 +256,7 @@
         "screenSharingFailedToInstallTitle": "Fracàs de l'installacion de partatge d'ecran",
         "screenSharingFirefoxPermissionDeniedError": "Quicòm a fach mèuca quand èrem a ensajar de partejar vòstre ecran. Mercés de verificar qu’avètz donat l’autorizacion de lo partejar.",
         "screenSharingFirefoxPermissionDeniedTitle": "Ops ! Avèm pas pogut aviar lo partatge d’ecran.",
-        "screenSharingPermissionDeniedError": "Òups ! Quicòm s'es pas ben passat amb l'autorizacion de vòstra extension de partatge d'ecran. Mercés de recargar e tornar ensajar.",
+        "screenSharingPermissionDeniedError": "Òps ! Quicòm s'es pas ben passat amb l'autorizacion de vòstra autorizacion de partatge d'ecran. Mercés de recargar e tornar ensajar.",
         "sendPrivateMessage": "Avètz recentament recebut un messatge privat. Avètz ensajat d’i respondre en privat, o volètz enviar lo messatge al grop ?",
         "sendPrivateMessageCancel": "Enviar al grop",
         "sendPrivateMessageOk": "Enviar en privat",
@@ -257,7 +275,7 @@
         "stopLiveStreaming": "Arrestar lo dirècte",
         "stopRecording": "Arrestar l'enregistrament",
         "stopRecordingWarning": "Sètz segur que volètz arrestar l'enregistrament?",
-        "stopStreamingWarning": "Sètz segur que volètz arrestar lo dirècte?",
+        "stopStreamingWarning": "Volètz vertadièrament arrestar lo dirècte ?",
         "streamKey": "Clau del dirècte",
         "Submit": "Validar",
         "thankYou": "Mercé d'aver utilizat {{appName}} !",
@@ -273,14 +291,11 @@
         "Yes": "Òc",
         "yourEntireScreen": "Vòstre ecran complet",
         "screenSharingAudio": "Partejar l’àudio",
-        "muteEveryoneStartMuted": "",
-        "muteEveryoneSelf": "",
-        "muteEveryoneTitle": "",
-        "muteEveryoneDialog": "",
-        "muteEveryoneElseTitle": "Copar lo son a totes levat {{whom}} ?",
-        "muteEveryoneElseDialog": "",
-        "e2eeTitle": "Chiframent del cap a la fin",
-        "e2eeLabel": "Clau"
+        "muteEveryoneStartMuted": "D'ara enlà tot lo monde comença mut",
+        "muteEveryoneSelf": "vos",
+        "muteEveryoneTitle": "Rendre mut tot lo monde ?",
+        "muteEveryoneDialog": "Volètz vertadièrament copar lo son a tot lo monde ? Poiretz pas lo restablir, mas eles poiràn o far quora que vòlgan.",
+        "muteEveryoneElseTitle": "Copar lo son a totes levat {{whom}} ?"
     },
     "dialOut": {
         "statusMessage": "ara es {{status}}"
@@ -383,7 +398,7 @@
         "invalidStreamKey": "La clau de difusion en dirècte es benlèu pas corrècta.",
         "off": "La difusion en dirècte es estada arrestada",
         "offBy": "{{name}} a arrestat la difusion en dirècte",
-        "on": "La difusion en dirècte es estada arrestada",
+        "on": "Difusion en dirècte",
         "onBy": "{{name}} a començat la difusion en dirècte",
         "pending": "Començar lo dirècte…",
         "serviceName": "Servici de difusion en dirècte",
@@ -460,7 +475,9 @@
         "newDeviceAudioTitle": "Nòu periferic àudio detectat",
         "newDeviceAction": "Utilizar",
         "oldElectronClientDescription3": " ara !",
-        "oldElectronClientDescription2": "darrièra compilacion"
+        "oldElectronClientDescription2": "darrièra compilacion",
+        "oldElectronClientDescription1": "Sembla qu’utilizatz una version anciana del client Jitsi Meet qu’es conegut per conténer de problèmas de seguretat. Mercés de vos assegurar de metre a jorn ",
+        "OldElectronAPPTitle": "Problèma de seguretat !"
     },
     "passwordSetRemotely": "causit per qualqu'un mai",
     "passwordDigitsOnly": "Fins a {{number}} chifras",
@@ -559,7 +576,9 @@
         "startWithAudioMuted": "Començar sens son",
         "startWithVideoMuted": "Començar sens vièdo",
         "version": "Version",
-        "alertCancel": "Anullar"
+        "alertCancel": "Anullar",
+        "disableCrashReportingWarning": "Volètz vertadièrament desactivar lo rapòrt de plantatge ? Lo paramètre serà aplicat aprèp la reaviada de l’aplicacion.",
+        "disableCrashReporting": "Desactivar lo rapòrt de plantatge"
     },
     "share": {
         "dialInfoText": "\n\n=====\n\nVolètz sonar de vòstre telefòn estant ?\n\n{{defaultDialInNumber}}Clicatz lo ligam per veire los numèros de telefòn d’aquesta conferéncia\n{{dialInfoPageUrl}}",
@@ -620,9 +639,10 @@
             "toggleCamera": "Passar a la camèra",
             "videomute": "Silenciar la vidèo",
             "videoblur": "Enfoscar o non la vidèo",
-            "muteEveryone": "",
+            "muteEveryone": "Rendre mut tot lo monde",
             "moreOptions": "Mostrar mai d’opcions",
-            "e2ee": "Chiframent del cap a la fin"
+            "e2ee": "Chiframent del cap a la fin",
+            "security": "Opcions de seguretat"
         },
         "addPeople": "Ajustar de monde a vòstra sonada",
         "audioOnlyOff": "Desactivar lo mòde connexion febla",
@@ -674,12 +694,13 @@
         "startvideoblur": "Trebolar mon rèire-plan",
         "stopvideoblur": "Desactivar lo borrolatge del rèire-plan",
         "noisyAudioInputDesc": "",
-        "noisyAudioInputTitle": "",
+        "noisyAudioInputTitle": "Vòstre microfòn sembla brusent !",
         "noAudioSignalDialInLinkDesc": "",
         "noAudioSignalDialInDesc": "",
-        "muteEveryone": "",
+        "muteEveryone": "Rendre mut tot lo monde",
         "moreOptions": "Autras opcions",
-        "e2ee": "Chiframent del cap a la fin"
+        "e2ee": "Chiframent del cap a la fin",
+        "security": "Opcions de seguretat"
     },
     "transcribing": {
         "ccButtonTooltip": "Aviar / Arrestat los sostítols",
@@ -743,7 +764,7 @@
         "remoteControl": "Contraròtle alonhat",
         "show": "Mostrar davant",
         "videomute": "Lo participant a arrestat la camèra",
-        "domuteOthers": ""
+        "domuteOthers": "Rendre mut totes los autres"
     },
     "welcomepage": {
         "accessibilityLabel": {
@@ -780,8 +801,8 @@
         "header": "Centre d’ajuda"
     },
     "lonelyMeetingExperience": {
-        "youAreAlone": "",
-        "button": ""
+        "youAreAlone": "Sètz l’unica persona de la conferéncia",
+        "button": "Convidar d’autres"
     },
     "chromeExtensionBanner": {
         "dontShowAgain": "Me mostrar pas mai aquò",
@@ -798,6 +819,53 @@
         "callMe": "Sona-me",
         "audioTrackError": "Creacion impossibla de la pista àudio.",
         "audioOnlyError": "Error àudio :",
-        "audioAndVideoError": "Error àudio e vidèo :"
+        "audioAndVideoError": "Error àudio e vidèo :",
+        "dialing": "A sonar",
+        "viewAllNumbers": "veire totes los numèros",
+        "videoTrackError": "Creacion d’una pista àudio impossibla.",
+        "videoOnlyError": "Error vidèo :",
+        "screenSharingError": "Error de partatge d’ecran :",
+        "startWithPhone": "Començar amb l’àudio del telefòn",
+        "calling": "A sonar",
+        "lookGood": "Sembla que lo microfòn fonciona pas coma cal",
+        "linkCopied": "Ligam copiat al quichapapièrs",
+        "initiated": "Sonada aviada",
+        "joinWithoutAudio": "Rejónher sens àudio",
+        "joinMeeting": "Rejónher la conferéncia",
+        "joinAudioByPhone": "Rejónher amb l’àudio del telefòn"
+    },
+    "lobby": {
+        "reject": "Regetar",
+        "passwordJoinButton": "Rejónher",
+        "passwordField": "Picatz lo senhal de la conferéncia",
+        "nameField": "Escrivètz vòstre nom",
+        "knockTitle": "Qualqu’un vòl rejónher la conferéncia",
+        "knockButton": "Demandar a rejónher",
+        "joiningWithPasswordTitle": "A rejónher amb senhal...",
+        "joiningTitle": "Demanda a rejónher la conferéncia...",
+        "joinTitle": "Rejónher la conferéncia",
+        "joinRejectedMessage": "Un moderator a regetat vòstra demanda de participacion.",
+        "joinWithPasswordMessage": "Ensag de participacion amb senhal, volgatz esperar...",
+        "joiningMessage": "Dintraretz dins la conferéncia tre que qualqu’un aurà acceptat vòstra demanda",
+        "invalidPassword": "Senhal invalid",
+        "enterPasswordTitle": "Dintratz lo senhal per rejónher la conferéncia",
+        "enterPasswordButton": "Dintratz lo senhal de la conferéncia",
+        "enableDialogSubmit": "Activar",
+        "enableDialogPasswordField": "Definir un senhal (opcional)",
+        "emailField": "Picata vòstra adreça electronica",
+        "disableDialogSubmit": "Desactivar",
+        "backToKnockModeButton": "Cap de senhal, demandar a participar a la plaça",
+        "allow": "Autorizar"
+    },
+    "security": {
+        "securityOptions": "Opcions de seguretat",
+        "insecureRoomNameWarning": "Lo nom de la sala es pas segur. De monde indesirables poirián rejónher vòstra conferéncia.",
+        "aboutReadOnly": "Los participants que son moderators pòdon ajustar un $t(lockRoomPassword) a la conferéncia. Los participants deuràn fornir lo $t(lockRoomPassword) abans d’aver l’autorizacion de rejónher la conferéncia.",
+        "about": "Podètz ajustar un $t(lockRoomPassword) per rejónher una conferéncia. Los participants deuràn fornir lo $t(lockRoomPassword) abans d’obténer l’autorizacion de dintrar dins la conferéncia."
+    },
+    "e2ee": {
+        "labelToolTip": "La comunicacion àudio e vidèo d’aquesta sonada es chifrada del cap a la fin"
     }
 }
+
+

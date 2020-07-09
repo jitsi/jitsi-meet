@@ -43,7 +43,7 @@ function _updateLastN({ getState }) {
     const state = getState();
     const { conference } = state['features/base/conference'];
     const { enabled: audioOnly } = state['features/base/audio-only'];
-    const { appState } = state['features/background'];
+    const { appState } = state['features/background'] || {};
     const { enabled: filmStripEnabled } = state['features/filmstrip'];
     const config = state['features/base/config'];
 
@@ -56,7 +56,7 @@ function _updateLastN({ getState }) {
     const defaultLastN = typeof config.channelLastN === 'undefined' ? -1 : config.channelLastN;
     let lastN = defaultLastN;
 
-    if (appState !== 'active') {
+    if (typeof appState !== 'undefined' && appState !== 'active') {
         lastN = 0;
     } else if (audioOnly) {
         const { screenShares, tileViewEnabled } = state['features/video-layout'];

@@ -6,10 +6,11 @@ import React, { Component } from 'react';
 import { getRoomName } from '../../base/conference';
 import { translate } from '../../base/i18n';
 import { Icon, IconPhone, IconVolumeOff } from '../../base/icons';
+import { isVideoMutedByUser } from '../../base/media';
+import { ActionButton, InputField, PreMeetingScreen } from '../../base/premeeting';
 import { connect } from '../../base/redux';
 import { getDisplayName, updateSettings } from '../../base/settings';
-import { isGuest } from '../../invite';
-import { VideoSettingsButton, AudioSettingsButton } from '../../toolbox';
+import { getLocalJitsiVideoTrack } from '../../base/tracks';
 import {
     joinConference as joinConferenceAction,
     joinConferenceWithoutAudio as joinConferenceWithoutAudioAction,
@@ -17,18 +18,14 @@ import {
     setJoinByPhoneDialogVisiblity as setJoinByPhoneDialogVisiblityAction
 } from '../actions';
 import {
-    isJoinByPhoneButtonVisible,
     isDeviceStatusVisible,
+    isDisplayNameRequired,
+    isJoinByPhoneButtonVisible,
     isJoinByPhoneDialogVisible
 } from '../functions';
 
-import ActionButton from './buttons/ActionButton';
 import JoinByPhoneDialog from './dialogs/JoinByPhoneDialog';
-import CopyMeetingUrl from './preview/CopyMeetingUrl';
 import DeviceStatus from './preview/DeviceStatus';
-import ParticipantName from './preview/ParticipantName';
-import Preview from './preview/Preview';
-
 
 type Props = {
 
@@ -43,9 +40,9 @@ type Props = {
     hasJoinByPhoneButton: boolean,
 
     /**
-     * Flag signaling if a user is logged in or not.
+     * If join button is disabled or not.
      */
-    isAnonymousUser: boolean,
+    joinButtonDisabled: boolean,
 
     /**
      * Joins the current meeting.
@@ -83,6 +80,11 @@ type Props = {
     setJoinByPhoneDialogVisiblity: Function,
 
     /**
+     * Flag signaling the visibility of camera preview.
+     */
+    showCameraPreview: boolean,
+
+    /**
      * If 'JoinByPhoneDialog' is visible or not.
      */
     showDialog: boolean,
@@ -91,6 +93,11 @@ type Props = {
      * Used for translation.
      */
     t: Function,
+
+    /**
+     * The JitsiLocalTrack to display.
+     */
+    videoTrack: ?Object,
 };
 
 type State = {
@@ -211,34 +218,33 @@ class Prejoin extends Component<Props, State> {
      */
     render() {
         const {
-            deviceStatusVisible,
+            joinButtonDisabled,
             hasJoinByPhoneButton,
-            isAnonymousUser,
             joinConference,
             joinConferenceWithoutAudio,
             name,
+            showCameraPreview,
             showDialog,
-            t
+            t,
+            videoTrack
         } = this.props;
 
         const { _closeDialog, _onCheckboxChange, _onDropdownClose, _onOptionsClick, _setName, _showDialog } = this;
         const { showJoinByPhoneButtons } = this.state;
 
         return (
-            <div className = 'prejoin-full-page'>
-                <Preview name = { name } />
+            <PreMeetingScreen
+                footer = { this._renderFooter() }
+                name = { name }
+                title = { t('prejoin.joinMeeting') }
+                videoMuted = { !showCameraPreview }
+                videoTrack = { videoTrack }>
                 <div className = 'prejoin-input-area-container'>
                     <div className = 'prejoin-input-area'>
-                        <div className = 'prejoin-title'>
-                            {t('prejoin.joinMeeting')}
-                        </div>
-
-                        <CopyMeetingUrl />
-
-                        <ParticipantName
-                            isEditable = { isAnonymousUser }
-                            joinConference = { joinConference }
-                            setName = { _setName }
+                        <InputField
+                            onChange = { _setName }
+                            onSubmit = { joinConference }
+                            placeHolder = { t('dialog.enterDisplayName') }
                             value = { name } />
 
                         <div className = 'prejoin-preview-dropdown-container'>
@@ -266,7 +272,7 @@ class Prejoin extends Component<Props, State> {
                                 isOpen = { showJoinByPhoneButtons }
                                 onClose = { _onDropdownClose }>
                                 <ActionButton
-                                    disabled = { !name }
+                                    disabled = { joinButtonDisabled }
                                     hasOptions = { true }
                                     onClick = { joinConference }
                                     onOptionsClick = { _onOptionsClick }
@@ -274,11 +280,6 @@ class Prejoin extends Component<Props, State> {
                                     { t('prejoin.joinMeeting') }
                                 </ActionButton>
                             </InlineDialog>
-                        </div>
-
-                        <div className = 'prejoin-preview-btn-container'>
-                            <AudioSettingsButton visible = { true } />
-                            <VideoSettingsButton visible = { true } />
                         </div>
                     </div>
 
@@ -290,15 +291,22 @@ class Prejoin extends Component<Props, State> {
                         <span>{t('prejoin.doNotShow')}</span>
                     </div>
                 </div>
-
-                { deviceStatusVisible && <DeviceStatus /> }
                 { showDialog && (
                     <JoinByPhoneDialog
                         joinConferenceWithoutAudio = { joinConferenceWithoutAudio }
                         onClose = { _closeDialog } />
                 )}
-            </div>
+            </PreMeetingScreen>
         );
+    }
+
+    /**
+     * Renders the screen footer if any.
+     *
+     * @returns {React$Element}
+     */
+    _renderFooter() {
+        return this.props.deviceStatusVisible && <DeviceStatus />;
     }
 }
 
@@ -309,13 +317,18 @@ class Prejoin extends Component<Props, State> {
  * @returns {Object}
  */
 function mapStateToProps(state): Object {
+    const name = getDisplayName(state);
+    const joinButtonDisabled = isDisplayNameRequired(state) && !name;
+
     return {
-        isAnonymousUser: isGuest(state),
+        joinButtonDisabled,
+        name,
         deviceStatusVisible: isDeviceStatusVisible(state),
-        name: getDisplayName(state),
         roomName: getRoomName(state),
         showDialog: isJoinByPhoneDialogVisible(state),
-        hasJoinByPhoneButton: isJoinByPhoneButtonVisible(state)
+        hasJoinByPhoneButton: isJoinByPhoneButtonVisible(state),
+        showCameraPreview: !isVideoMutedByUser(state),
+        videoTrack: getLocalJitsiVideoTrack(state)
     };
 }
 

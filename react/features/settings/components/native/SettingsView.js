@@ -7,11 +7,11 @@ import { translate } from '../../../base/i18n';
 import { JitsiModal } from '../../../base/modal';
 import { connect } from '../../../base/redux';
 import { SETTINGS_VIEW_ID } from '../../constants';
-import { normalizeUserInputURL } from '../../functions';
+import { normalizeUserInputURL, isServerURLChangeEnabled } from '../../functions';
 import {
     AbstractSettingsView,
     _mapStateToProps as _abstractMapStateToProps,
-    type Props
+    type Props as AbstractProps
 } from '../AbstractSettingsView';
 
 import FormRow from './FormRow';
@@ -68,6 +68,20 @@ type State = {
      * State variable for the start with video muted switch.
      */
     startWithVideoMuted: boolean,
+}
+
+/**
+ * The type of the React {@code Component} props of
+ * {@link SettingsView}.
+ */
+type Props = AbstractProps & {
+
+    /**
+     * Flag indicating if URL can be changed by user.
+     *
+     * @protected
+     */
+    _serverURLChangeEnabled: boolean
 }
 
 /**
@@ -168,6 +182,7 @@ class SettingsView extends AbstractSettingsView<Props, State> {
                         <TextInput
                             autoCapitalize = 'none'
                             autoCorrect = { false }
+                            editable = { this.props._serverURLChangeEnabled }
                             onBlur = { this._onBlurServerURL }
                             onChangeText = { this._onChangeServerURL }
                             placeholder = { this.props._serverURL }
@@ -514,7 +529,8 @@ class SettingsView extends AbstractSettingsView<Props, State> {
  */
 function _mapStateToProps(state) {
     return {
-        ..._abstractMapStateToProps(state)
+        ..._abstractMapStateToProps(state),
+        _serverURLChangeEnabled: isServerURLChangeEnabled(state)
     };
 }
 

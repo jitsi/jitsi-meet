@@ -498,9 +498,6 @@ export class VideoContainer extends LargeContainer {
         });
 
         this._updateBackground();
-
-        // Reset the large video background depending on the stream.
-        this.setLargeVideoBackground(this.avatarDisplayed);
     }
 
     /**
@@ -533,14 +530,6 @@ export class VideoContainer extends LargeContainer {
      * @param {boolean} show
      */
     showAvatar(show) {
-        // TO FIX: Video background need to be black, so that we don't have a
-        // flickering effect when scrolling between videos and have the screen
-        // move to grey before going back to video. Avatars though can have the
-        // default background set.
-        // In order to fix this code we need to introduce video background or
-        // find a workaround for the video flickering.
-        this.setLargeVideoBackground(show);
-
         this.$avatar.css('visibility', show ? 'visible' : 'hidden');
         this.avatarDisplayed = show;
 
@@ -594,21 +583,6 @@ export class VideoContainer extends LargeContainer {
      */
     stayOnStage() {
         return false;
-    }
-
-    /**
-     * Sets the large video container background depending on the container
-     * type and the parameter indicating if an avatar is currently shown on
-     * large.
-     *
-     * @param {boolean} isAvatar - Indicates if the avatar is currently shown
-     * on the large video.
-     * @returns {void}
-     */
-    setLargeVideoBackground(isAvatar) {
-        $('#largeVideoContainer').css('background',
-            this.videoType === VIDEO_CONTAINER_TYPE && !isAvatar
-                ? '#000' : interfaceConfig.DEFAULT_BACKGROUND);
     }
 
     /**

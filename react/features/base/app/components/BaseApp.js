@@ -11,11 +11,11 @@ import Thunk from 'redux-thunk';
 import { i18next } from '../../i18n';
 import {
     MiddlewareRegistry,
+    PersistenceRegistry,
     ReducerRegistry,
     StateListenerRegistry
 } from '../../redux';
 import { SoundCollection } from '../../sounds';
-import { PersistenceRegistry } from '../../storage';
 import { appWillMount, appWillUnmount } from '../actions';
 import logger from '../logger';
 

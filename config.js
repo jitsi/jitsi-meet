@@ -44,6 +44,10 @@ var config = {
     //
 
     testing: {
+        // Disables the End to End Encryption feature. Useful for debugging
+        // issues related to insertable streams.
+        // disableE2EE: false,
+
         // P2P test mode disables automatic switching to P2P when there are 2
         // participants in the conference.
         p2pTestMode: false
@@ -154,22 +158,6 @@ var config = {
 
     // Desktop sharing
 
-    // The ID of the jidesha extension for Chrome.
-    desktopSharingChromeExtId: null,
-
-    // Whether desktop sharing should be disabled on Chrome.
-    // desktopSharingChromeDisabled: false,
-
-    // The media sources to use when using screen sharing with the Chrome
-    // extension.
-    desktopSharingChromeSources: [ 'screen', 'window', 'tab' ],
-
-    // Required version of Chrome extension
-    desktopSharingChromeMinExtVersion: '0.1',
-
-    // Whether desktop sharing should be disabled on Firefox.
-    // desktopSharingFirefoxDisabled: false,
-
     // Optional desktop sharing frame rate options. Default value: min:5, max:5.
     // desktopSharingFrameRate: {
     //     min: 5,
@@ -260,11 +248,14 @@ var config = {
     // is set in Jicofo and set to 2).
     // minParticipants: 2,
 
-    // Use XEP-0215 to fetch STUN and TURN servers.
+    // Use the TURN servers discovered via XEP-0215 for the jitsi-videobridge
+    // connection
     // useStunTurn: true,
 
-    // Enable IPv6 support.
-    // useIPv6: true,
+    // Use TURN/UDP servers for the jitsi-videobridge connection (by default
+    // we filter out TURN/UDP because it is usually not needed since the
+    // bridge itself is reachable via UDP)
+    // useTurnUdp: false
 
     // Enables / disables a data communication channel with the Videobridge.
     // Values can be 'datachannel', 'websocket', true (treat it as
@@ -275,9 +266,6 @@ var config = {
 
     // UI
     //
-
-    // Use display name as XMPP nickname.
-    // useNicks: false,
 
     // Require users to always specify a display name.
     // requireDisplayName: true,
@@ -319,7 +307,7 @@ var config = {
     // and microsoftApiApplicationClientID
     // enableCalendarIntegration: false,
 
-    // When 'true', it shows an intermediate page before joining, where the user can  configure its devices.
+    // When 'true', it shows an intermediate page before joining, where the user can configure their devices.
     // prejoinPageEnabled: false,
 
     // If etherpad integration is enabled, setting this to true will
@@ -328,6 +316,11 @@ var config = {
     // obscures the conference controls -- it's better to let users
     // choose to open the pad on their own in that case.
     // openSharedDocumentOnJoin: false,
+
+    // If true, shows the unsafe roon name warning label when a room name is
+    // deemed unsafe (due to the simplicity in the name) and a password is not
+    // set or the lobby is not enabled.
+    // enableInsecureRoomNameWarning: false,
 
     // Stats
     //
@@ -346,10 +339,10 @@ var config = {
     // callStatsID: '',
     // callStatsSecret: '',
 
-    // enables sending participants display name to callstats
+    // Enables sending participants' display names to callstats
     // enableDisplayNameInStats: false,
 
-    // enables sending participants email if available to callstats and other analytics
+    // Enables sending participants' emails (if available) to callstats and other analytics
     // enableEmailInStats: false,
 
     // Privacy
@@ -379,7 +372,7 @@ var config = {
         // The STUN servers that will be used in the peer to peer connections
         stunServers: [
 
-            // { urls: 'stun:jitsi-meet.example.com:4446' },
+            // { urls: 'stun:jitsi-meet.example.com:3478' },
             { urls: 'stun:meet-jit-si-turnrelay.jitsi.net:443' }
         ]
 
@@ -518,6 +511,28 @@ var config = {
 
     // If set to true all muting operations of remote participants will be disabled.
     // disableRemoteMute: true,
+
+    /**
+     External API url used to receive branding specific information.
+     If there is no url set or there are missing fields, the defaults are applied.
+     None of the fieds are mandatory and the response must have the shape:
+     {
+         // The hex value for the colour used as background
+         backgroundColor: '#fff',
+         // The url for the image used as background
+         backgroundImageUrl: 'https://example.com/background-img.png',
+         // The anchor url used when clicking the logo image
+         logoClickUrl: 'https://example-company.org',
+         // The url used for the image used as logo
+         logoImageUrl: 'https://example.com/logo-img.png'
+     }
+    */
+    // brandingDataUrl: '',
+
+    // The URL of the moderated rooms microservice, if available. If it
+    // is present, a link to the service will be rendered on the welcome page,
+    // otherwise the app doesn't render it.
+    // moderatedRoomServiceUrl: 'https://moderated.jitsi-meet.example.com',
 
     // List of undocumented settings used in jitsi-meet
     /**

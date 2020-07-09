@@ -208,6 +208,12 @@
                 padding: 8px 16px;
                 background: #0376DA;
             }
+
+            &.disabled {
+                & > a {
+                    pointer-events: none;
+                }
+            }
         }
 
         &.stream {

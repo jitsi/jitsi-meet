@@ -7,7 +7,7 @@ import {
     createCalendarSelectedEvent,
     sendAnalytics
 } from '../../analytics';
-import { appNavigate } from '../../app';
+import { appNavigate } from '../../app/actions';
 import { MeetingsList } from '../../base/react';
 import { connect } from '../../base/redux';
 

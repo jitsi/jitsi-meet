@@ -123,3 +123,32 @@ in the agreement, unfortunately, we cannot accept your contribution.
   respective variable, function, property is non-public i.e. private, protected,
   or internal. In contrast, the lack of an underscore at the beginning of a name
   signals public API.
+
+### Feature layout
+
+When adding a new feature, this would be the usual layout.
+
+```
+react/features/sample/
+├── actionTypes.js
+├── actions.js
+├── components
+│   ├── AnotherComponent.js
+│   ├── OneComponent.js
+│   └── index.js
+├── middleware.js
+└── reducer.js
+```
+
+The middleware must be imported in `react/features/app/` specifically
+in `middlewares.any`, `middlewares.native.js` or `middlewares.web.js` where appropriate.
+Likewise for the reducer.
+
+An `index.js` file must not be provided for exporting actions, action types and
+component. Features / files requiring those must import them explicitly.
+
+This has not always been the case and the entire codebase hasn't been migrated to
+this model but new features should follow this new layout.
+
+When working on an old feature, adding the necessary changes to migrate to the new
+model is encouraged.

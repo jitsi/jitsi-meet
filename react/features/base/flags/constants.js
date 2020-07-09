@@ -20,7 +20,7 @@ export const CALENDAR_ENABLED = 'calendar.enabled';
 export const CALL_INTEGRATION_ENABLED = 'call-integration.enabled';
 
 /**
- * Flag indicating if chat should be enabled.
+ * Flag indicating if close captions should be enabled.
  * Default: enabled (true).
  */
 export const CLOSE_CAPTIONS_ENABLED = 'close-captions.enabled';
@@ -80,6 +80,19 @@ export const RAISE_HAND_ENABLED = 'raise-hand.enabled';
  * Default: auto-detected.
  */
 export const RECORDING_ENABLED = 'recording.enabled';
+
+/**
+ * Flag indicating the local and (maximum) remote video resolution. Overrides
+ * the server configuration.
+ * Default: (unset).
+ */
+export const RESOLUTION = 'resolution';
+
+/**
+ * Flag indicating if server URL change is enabled.
+ * Default: enabled (true)
+ */
+export const SERVER_URL_CHANGE_ENABLED = 'server-url-change.enabled';
 
 /**
  * Flag indicating if tile view feature should be enabled.
