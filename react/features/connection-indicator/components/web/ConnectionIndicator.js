@@ -345,6 +345,7 @@ class ConnectionIndicator extends AbstractConnectionIndicator<Props, State> {
             packetLoss,
             region,
             resolution,
+            maxEnabledResolution,
             serverRegion,
             transport
         } = this.state.stats;
@@ -362,6 +363,7 @@ class ConnectionIndicator extends AbstractConnectionIndicator<Props, State> {
                 packetLoss = { packetLoss }
                 region = { region }
                 resolution = { resolution }
+                maxEnabledResolution = { maxEnabledResolution }
                 serverRegion = { serverRegion }
                 shouldShowMore = { this.state.showMoreStats }
                 transport = { transport } />

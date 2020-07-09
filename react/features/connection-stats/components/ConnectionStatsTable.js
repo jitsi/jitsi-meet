@@ -380,14 +380,18 @@ class ConnectionStatsTable extends Component<Props> {
      * @returns {ReactElement}
      */
     _renderResolution() {
-        const { resolution, t } = this.props;
-        const resolutionString = Object.keys(resolution || {})
+        const { resolution, maxEnabledResolution, t } = this.props;
+        let resolutionString = Object.keys(resolution || {})
             .map(ssrc => {
                 const { width, height } = resolution[ssrc];
 
                 return `${width}x${height}`;
             })
             .join(', ') || 'N/A';
+
+        if (maxEnabledResolution && maxEnabledResolution < 720) {
+            resolutionString += ' (' + maxEnabledResolution + 'p max enabled)';
+        }
 
         return (
             <tr>
