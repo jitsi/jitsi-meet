@@ -1,6 +1,6 @@
 // @flow
 
-import { jitsiLocalStorage } from 'js-utils';
+import { jitsiLocalStorage } from '@jitsi/js-utils';
 
 import { APP_WILL_MOUNT } from '../app';
 import { getFeatureFlag } from '../flags/functions';
