@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jitsi.meet;
+package org.postech.vmeeting;
 
 import android.content.Intent;
 import android.net.Uri;

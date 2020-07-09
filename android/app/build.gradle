@@ -20,7 +20,7 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
 
     defaultConfig {
-        applicationId 'org.jitsi.meet'
+        applicationId 'org.postech.vmeeting'
         versionCode vcode
         versionName project.appVersion
 
@@ -67,7 +67,7 @@ android {
         }
     }
 
-    compileOptions {
+   compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }

@@ -53,12 +53,12 @@
     "i18next-xhr-backend": "3.0.0",
     "jQuery-Impromptu": "github:trentrichardson/jQuery-Impromptu#v6.0.0",
     "jitsi-meet-logger": "github:jitsi/jitsi-meet-logger#5ec92357570dc8f0b7ffc1528820721c84c6af8b",
-    "jquery": "3.4.0",
+    "jquery": "^3.5.1",
     "jquery-contextmenu": "2.4.5",
     "jquery-i18next": "1.2.1",
     "js-md5": "0.6.1",
     "js-utils": "github:jitsi/js-utils#df68966e3c65b5c57fcd2670da1326a2c77518d1",
-    "jsrsasign": "8.0.12",
+    "jsrsasign": "^8.0.20",
     "jwt-decode": "2.2.0",
     "lib-jitsi-meet": "github:jitsi/lib-jitsi-meet#f97c37d0140a0f12644ae29f4dd93757b8b8610f",
     "libflacjs": "github:mmig/libflac.js#93d37e7f811f01cf7d8b6a603e38bd3c3810907d",
@@ -134,8 +134,8 @@
     "unorm": "1.6.0",
     "webpack": "4.27.1",
     "webpack-bundle-analyzer": "3.4.1",
-    "webpack-cli": "3.1.2",
-    "webpack-dev-server": "3.8.2"
+    "webpack-cli": "^3.3.12",
+    "webpack-dev-server": "^3.11.0"
   },
   "engines": {
     "node": ">=8.0.0",
