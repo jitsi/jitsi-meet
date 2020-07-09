@@ -66,8 +66,12 @@
             flex: 1 1 100%;
         }
 
+        &_left {
+            margin-right: 36px;
+        }
+
         &_right {
-            margin: 28px 22px 0 57px !important;
+            margin: 35px 19px 0 0 !important;
         }
     }
 }
