@@ -58,6 +58,12 @@ type Props = {
     isLocalVideo: boolean,
 
     /**
+     * The send-side max enabled resolution (aka the highest layer that is not
+     * suspended on the send-side).
+     */
+    maxEnabledResolution: number,
+
+    /**
      * Callback to invoke when the show additional stats link is clicked.
      */
     onShowMore: Function,
@@ -390,7 +396,7 @@ class ConnectionStatsTable extends Component<Props> {
             .join(', ') || 'N/A';
 
         if (maxEnabledResolution && maxEnabledResolution < 720) {
-            resolutionString += ' (' + maxEnabledResolution + 'p max enabled)';
+            resolutionString += ` (send max ${maxEnabledResolution}p)`;
         }
 
         return (

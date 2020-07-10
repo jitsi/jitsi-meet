@@ -342,10 +342,10 @@ class ConnectionIndicator extends AbstractConnectionIndicator<Props, State> {
             bridgeCount,
             e2eRtt,
             framerate,
+            maxEnabledResolution,
             packetLoss,
             region,
             resolution,
-            maxEnabledResolution,
             serverRegion,
             transport
         } = this.state.stats;
@@ -359,11 +359,11 @@ class ConnectionIndicator extends AbstractConnectionIndicator<Props, State> {
                 e2eRtt = { e2eRtt }
                 framerate = { framerate }
                 isLocalVideo = { this.props.isLocalVideo }
+                maxEnabledResolution = { maxEnabledResolution }
                 onShowMore = { this._onToggleShowMore }
                 packetLoss = { packetLoss }
                 region = { region }
                 resolution = { resolution }
-                maxEnabledResolution = { maxEnabledResolution }
                 serverRegion = { serverRegion }
                 shouldShowMore = { this.state.showMoreStats }
                 transport = { transport } />
