@@ -26,14 +26,20 @@ body.welcome-page {
         position: relative;
         text-align: center;
 
+        .wrapper {
+            width: 100%;
+            background-image: url($welcomePageTopBackground);
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: left 50% top 0%;
+        }
+
         .header-text {
             display: flex;
             flex-direction: column;
             padding: $watermarkHeight + $watermarkTop 50px 50px;
             max-width: 100%;
-            background-image: url($welcomePageTopBackground);
-            background-size: cover;
-            background-repeat: no-repeat;
+            align-items: center;
         }
 
         .header-text-title {
