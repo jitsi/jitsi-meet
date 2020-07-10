@@ -24,7 +24,7 @@ const minimize
     = process.argv.indexOf('-p') !== -1
     || process.argv.indexOf('--optimize-minimize') !== -1;
 
-const isDevelopment = process.env.NODE_ENV !== 'production' || process.argv.indexOf('-p') === -1;
+const isDevelopment = process.argv.indexOf('-p') === -1;
 
 /**
  * Build a Performance configuration object for the given size.
@@ -213,7 +213,7 @@ const config = {
                 chunkFilename: isDevelopment ? '[id].css' : '[id].[hash].css'
             }),
         new EnvironmentPlugin({
-            'process.env': JSON.stringify(process.env.NODE_ENV || dotenv)
+            'process.env': JSON.stringify(dotenv || process.env)
         })
     ].filter(Boolean),
     resolve: {
