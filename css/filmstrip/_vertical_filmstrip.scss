@@ -124,7 +124,8 @@
         flex-direction: column-reverse;
         height: auto;
         overflow-x: hidden;
-        overflow-y: scroll;
+        overflow-y: auto;
+        scrollbar-color: $filmstripScrollBarColor;
 
         @media (max-width: $desktopWidth) {
             margin-left: 9px;

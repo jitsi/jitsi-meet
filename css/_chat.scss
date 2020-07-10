@@ -36,6 +36,8 @@
     width: $sidebarWidth;
     word-wrap: break-word;
     background: $chatConversationBackground;
+    scrollbar-color: $chatScrollBarColor;
+    scrollbar-width: thin;
 
     a {
         display: block;
@@ -141,6 +143,11 @@
     height: 60px;
     align-items: center;
     color: $chatInputTextColor;
+
+    #usermsg {
+        scrollbar-color: $chatInputScrollBarColor;
+        scrollbar-width: thin;
+    }
 
     * {
         background-color: transparent;

@@ -58,10 +58,21 @@
             margin-top: 0;
         }
 
+        @media (max-width: $desktopWidth) {
+            border: 1px solid $welcomeBorderColor;
+
+            &:first-child {
+                border-top: 2px solid $welcomeBorderColor;
+            }
+
+            &:last-child {
+                border-bottom: none;
+            }
+        }
+
         .bottom-column {
             display: flex;
             justify-content: space-between;
-            padding-top: 10px;
 
             .date {
                 padding-bottom: 5px;
@@ -88,7 +99,6 @@
 
             .title {
                 font-size: 16px;
-                font-weight: bold;
                 padding-bottom: 5px;
                 color: #babac0;
             }

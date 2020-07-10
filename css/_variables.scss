@@ -8,6 +8,9 @@ $hangupColor: #2A2B35;
 $hangupFontSize: 2em;
 $popOverBackground: #12121B;
 $popupMenuSliderBackground: #67F7B8;
+$chatScrollBarColor: #06a5df black;
+$chatInputScrollBarColor: rgba(0,0,0,.5) #3A3A3A;
+$filmstripScrollBarColor: rgba(0,0,0,.5) transparent;
 
 /**
  * Size variables.
@@ -186,7 +189,7 @@ $unsupportedDesktopBrowserTextFontSize: 21px;
  * The size of the default watermark.
  */
 $watermarkWidth: 230px;
-$watermarkHeight: 100px;
+$watermarkHeight: 55px;
 $watermarkTop: 32px;
 
 /**
@@ -230,6 +233,7 @@ $welcomePageEnterRoomInputContainerPadding: 0 8px 5px 0px;
 $welcomePageEnterRoomInputContainerBorderWidth: 0px 0px 2px 0px;
 $welcomePageEnterRoomInputContainerBorderStyle: solid;
 $welcomePageEnterRoomInputContainerBorderImage: linear-gradient(to right, #dee1e6, #fff) 1;
+$welcomePageEnterRoomInputContainerBorderImageFocused: linear-gradient(to right, #2A9CFF, #2A9CFF) 1;
 
 $welcomePageEnterRoomTitleDisplay: inherit;
 
