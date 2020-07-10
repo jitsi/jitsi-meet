@@ -1,6 +1,7 @@
 // @flow
 
 import React from 'react';
+
 import { Icon, IconMeter } from '../../../../base/icons';
 
 type Props = {

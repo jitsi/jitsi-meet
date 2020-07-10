@@ -1,6 +1,58 @@
 // @flow
 
 /**
+ * A helper function that behaves similar to Object.assign, but only reassigns a
+ * property in target if it's defined in source.
+ *
+ * @param {Object} target - The target object to assign the values into.
+ * @param {Object} source - The source object.
+ * @returns {Object}
+ */
+export function assignIfDefined(target: Object, source: Object) {
+    const to = Object(target);
+
+    for (const nextKey in source) {
+        if (source.hasOwnProperty(nextKey)) {
+            const value = source[nextKey];
+
+            if (typeof value !== 'undefined') {
+                to[nextKey] = value;
+            }
+        }
+    }
+
+    return to;
+}
+
+/**
+ * Tries to copy a given text to the clipboard.
+ * Returns true if the action succeeds.
+ *
+ * @param {string} textToCopy - Text to be copied.
+ * @returns {boolean}
+ */
+export function copyText(textToCopy: string) {
+    const fakeTextArea = document.createElement('textarea');
+    let result;
+
+    // $FlowFixMe
+    document.body.appendChild(fakeTextArea);
+    fakeTextArea.value = textToCopy;
+    fakeTextArea.select();
+
+    try {
+        result = document.execCommand('copy');
+    } catch (err) {
+        result = false;
+    }
+
+    // $FlowFixMe
+    document.body.removeChild(fakeTextArea);
+
+    return result;
+}
+
+/**
  * Creates a deferred object.
  *
  * @returns {{promise, resolve, reject}}
@@ -70,30 +122,6 @@ export function getJitsiMeetGlobalNS() {
     }
 
     return window.JitsiMeetJS.app;
-}
-
-/**
- * A helper function that behaves similar to Object.assign, but only reassigns a
- * property in target if it's defined in source.
- *
- * @param {Object} target - The target object to assign the values into.
- * @param {Object} source - The source object.
- * @returns {Object}
- */
-export function assignIfDefined(target: Object, source: Object) {
-    const to = Object(target);
-
-    for (const nextKey in source) {
-        if (source.hasOwnProperty(nextKey)) {
-            const value = source[nextKey];
-
-            if (typeof value !== 'undefined') {
-                to[nextKey] = value;
-            }
-        }
-    }
-
-    return to;
 }
 
 /**

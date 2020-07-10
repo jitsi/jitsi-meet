@@ -1,16 +1,10 @@
 /* global APP, $, config, interfaceConfig */
 
-const logger = require('jitsi-meet-logger').getLogger(__filename);
 
 const UI = {};
 
-import messageHandler from './util/MessageHandler';
-import UIUtil from './util/UIUtil';
-import UIEvents from '../../service/UI/UIEvents';
-import EtherpadManager from './etherpad/Etherpad';
-import SharedVideoManager from './shared_video/SharedVideo';
-
-import VideoLayout from './videolayout/VideoLayout';
+import EventEmitter from 'events';
+import Logger from 'jitsi-meet-logger';
 
 import { getLocalParticipant } from '../../react/features/base/participants';
 import { toggleChat } from '../../react/features/chat';
@@ -22,8 +16,15 @@ import {
     setToolboxEnabled,
     showToolbox
 } from '../../react/features/toolbox';
+import UIEvents from '../../service/UI/UIEvents';
 
-const EventEmitter = require('events');
+import EtherpadManager from './etherpad/Etherpad';
+import SharedVideoManager from './shared_video/SharedVideo';
+import messageHandler from './util/MessageHandler';
+import UIUtil from './util/UIUtil';
+import VideoLayout from './videolayout/VideoLayout';
+
+const logger = Logger.getLogger(__filename);
 
 UI.messageHandler = messageHandler;
 
@@ -94,19 +95,6 @@ UI.notifyReservationError = function(code, msg) {
         },
         descriptionKey: 'dialog.reservationErrorMsg',
         titleKey: 'dialog.reservationError'
-    });
-};
-
-/**
- * Notify user that conference was destroyed.
- * @param reason {string} the reason text
- */
-UI.notifyConferenceDestroyed = function(reason) {
-    // FIXME: use Session Terminated from translation, but
-    // 'reason' text comes from XMPP packet and is not translated
-    messageHandler.showError({
-        description: reason,
-        titleKey: 'dialog.sessTerminated'
     });
 };
 
@@ -563,82 +551,6 @@ UI.getLargeVideoID = function() {
  */
 UI.getLargeVideo = function() {
     return VideoLayout.getLargeVideo();
-};
-
-/**
- * Shows "Please go to chrome webstore to install the desktop sharing extension"
- * 2 button dialog with buttons - cancel and go to web store.
- * @param url {string} the url of the extension.
- */
-UI.showExtensionExternalInstallationDialog = function(url) {
-    let openedWindow = null;
-
-    const submitFunction = function(e, v) {
-        if (v) {
-            e.preventDefault();
-            if (openedWindow === null || openedWindow.closed) {
-                openedWindow
-                    = window.open(
-                        url,
-                        'extension_store_window',
-                        'resizable,scrollbars=yes,status=1');
-            } else {
-                openedWindow.focus();
-            }
-        }
-    };
-
-    const closeFunction = function(e, v) {
-        if (openedWindow) {
-            // Ideally we would close the popup, but this does not seem to work
-            // on Chrome. Leaving it uncommented in case it could work
-            // in some version.
-            openedWindow.close();
-            openedWindow = null;
-        }
-        if (!v) {
-            eventEmitter.emit(UIEvents.EXTERNAL_INSTALLATION_CANCELED);
-        }
-    };
-
-    messageHandler.openTwoButtonDialog({
-        titleKey: 'dialog.externalInstallationTitle',
-        msgKey: 'dialog.externalInstallationMsg',
-        leftButtonKey: 'dialog.goToStore',
-        submitFunction,
-        loadedFunction: $.noop,
-        closeFunction
-    });
-};
-
-/**
- * Shows a dialog which asks user to install the extension. This one is
- * displayed after installation is triggered from the script, but fails because
- * it must be initiated by user gesture.
- * @param callback {function} function to be executed after user clicks
- * the install button - it should make another attempt to install the extension.
- */
-UI.showExtensionInlineInstallationDialog = function(callback) {
-    const submitFunction = function(e, v) {
-        if (v) {
-            callback();
-        }
-    };
-
-    const closeFunction = function(e, v) {
-        if (!v) {
-            eventEmitter.emit(UIEvents.EXTERNAL_INSTALLATION_CANCELED);
-        }
-    };
-
-    messageHandler.openTwoButtonDialog({
-        titleKey: 'dialog.externalInstallationTitle',
-        msgKey: 'dialog.inlineInstallationMsg',
-        leftButtonKey: 'dialog.inlineInstallExtension',
-        submitFunction,
-        loadedFunction: $.noop,
-        closeFunction
-    });
 };
 
 /**

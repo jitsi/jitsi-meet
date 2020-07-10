@@ -10,7 +10,6 @@ import { getParticipantDisplayName } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import { StyleType } from '../../../base/styles';
 import { PrivateMessageButton } from '../../../chat';
-
 import { hideRemoteVideoMenu } from '../../actions';
 
 import KickButton from './KickButton';

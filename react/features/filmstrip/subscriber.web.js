@@ -1,8 +1,8 @@
 // @flow
 
-import { StateListenerRegistry, equals } from '../base/redux';
 import Filmstrip from '../../../modules/UI/videolayout/Filmstrip';
 import VideoLayout from '../../../modules/UI/videolayout/VideoLayout';
+import { StateListenerRegistry, equals } from '../base/redux';
 import { getCurrentLayout, getTileViewGridDimensions, shouldDisplayTileView, LAYOUTS } from '../video-layout';
 
 import { setHorizontalViewDimensions, setTileViewDimensions } from './actions';

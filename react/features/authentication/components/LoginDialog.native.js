@@ -18,7 +18,6 @@ import {
 import { translate } from '../../base/i18n';
 import { JitsiConnectionErrors } from '../../base/lib-jitsi-meet';
 import type { StyleType } from '../../base/styles';
-
 import { authenticateAndUpgradeRole, cancelLogin } from '../actions';
 
 // Register styles.
@@ -172,6 +171,7 @@ class LoginDialog extends Component<Props, State> {
                         underlineColorAndroid = { FIELD_UNDERLINE }
                         value = { this.state.username } />
                     <TextInput
+                        autoCapitalize = { 'none' }
                         onChangeText = { this._onPasswordChange }
                         placeholder = { t('dialog.userPassword') }
                         placeholderTextColor = { PLACEHOLDER_COLOR }
@@ -264,7 +264,7 @@ class LoginDialog extends Component<Props, State> {
      */
     _onUsernameChange(text) {
         this.setState({
-            username: text
+            username: text.trim()
         });
     }
 

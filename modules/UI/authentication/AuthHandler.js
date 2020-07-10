@@ -1,5 +1,7 @@
 /* global APP, config, JitsiMeetJS, Promise, process */
 
+import Logger from 'jitsi-meet-logger';
+
 import { openConnection } from '../../../connection';
 import { setJWT } from '../../../react/features/base/jwt';
 import { toJid } from '../../../react/features/base/connection';
@@ -10,7 +12,7 @@ import { getCurrentUser } from '../../../react/features/base/auth/functions';
 
 import LoginDialog from './LoginDialog';
 
-const logger = require('jitsi-meet-logger').getLogger(__filename);
+const logger = Logger.getLogger(__filename);
 const AUTH_PAGE_BASE = process.env.REACT_APP_AUTH_PAGE_BASE;
 
 let externalAuthWindow;

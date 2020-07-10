@@ -8,7 +8,6 @@ import { IconBlurBackground } from '../../base/icons';
 import { connect } from '../../base/redux';
 import { AbstractButton, BetaTag } from '../../base/toolbox';
 import type { AbstractButtonProps } from '../../base/toolbox';
-
 import { toggleBlurEffect } from '../actions';
 
 /**

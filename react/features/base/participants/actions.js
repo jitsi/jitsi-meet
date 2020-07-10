@@ -1,5 +1,5 @@
-import { set } from '../redux';
 import { NOTIFICATION_TIMEOUT, showNotification } from '../../notifications';
+import { set } from '../redux';
 
 import {
     DOMINANT_SPEAKER_CHANGED,

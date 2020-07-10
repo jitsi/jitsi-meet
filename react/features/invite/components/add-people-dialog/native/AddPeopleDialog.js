@@ -31,9 +31,7 @@ import {
 } from '../../../../base/react';
 import { connect } from '../../../../base/redux';
 import { beginShareRoom } from '../../../../share-room';
-
 import { ADD_PEOPLE_DIALOG_VIEW_ID } from '../../../constants';
-
 import AbstractAddPeopleDialog, {
     type Props as AbstractProps,
     type State as AbstractState,

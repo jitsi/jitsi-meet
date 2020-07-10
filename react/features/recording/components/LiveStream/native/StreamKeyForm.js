@@ -7,7 +7,6 @@ import { _abstractMapStateToProps } from '../../../../base/dialog';
 import { translate } from '../../../../base/i18n';
 import { connect } from '../../../../base/redux';
 import { StyleType } from '../../../../base/styles';
-
 import AbstractStreamKeyForm, {
     type Props as AbstractProps
 } from '../AbstractStreamKeyForm';

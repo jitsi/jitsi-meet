@@ -1,9 +1,9 @@
 // @flow
 
-import { MiddlewareRegistry } from '../redux';
-
 import { CONFERENCE_WILL_JOIN } from '../conference';
 import { JitsiConferenceEvents } from '../lib-jitsi-meet';
+import { MiddlewareRegistry } from '../redux';
+
 import { setConnectionState } from './actions';
 import logger from './logger';
 

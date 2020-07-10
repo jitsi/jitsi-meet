@@ -8,10 +8,11 @@ import DropdownMenu, {
 } from '@atlaskit/dropdown-menu';
 import React from 'react';
 
-import { translate } from '../../base/i18n';
+import { isMobileBrowser } from '../../base/environment/utils';
+import { translate, translateToHTML } from '../../base/i18n';
+import { Icon, IconWarning } from '../../base/icons';
 import { Watermarks } from '../../base/react';
 import { connect } from '../../base/redux';
-import { isMobileBrowser } from '../../base/environment/utils';
 import { CalendarList } from '../../calendar-sync';
 import { RecentList } from '../../recent-list';
 import { SETTINGS_TABS } from '../../settings';
@@ -210,7 +211,7 @@ class WelcomePage extends AbstractWelcomePage {
      * @returns {ReactElement|null}
      */
     render() {
-        const { _user, t } = this.props;
+        const { _moderatedRoomServiceUrl, _user, t } = this.props;
         const { submitting } = this.state;
         const { APP_NAME } = interfaceConfig;
         const showAdditionalContent = this._shouldShowAdditionalContent();
@@ -316,6 +317,7 @@ class WelcomePage extends AbstractWelcomePage {
                                     title = { t('welcomepage.roomNameAllowedChars') }
                                     type = 'text'
                                     value = { this.state.room } />
+                                { this._renderInsecureRoomNameWarning() }
                             </form>
                         </div>
                         <div
@@ -329,6 +331,16 @@ class WelcomePage extends AbstractWelcomePage {
                             }
                         </div>
                     </div>
+                    { _moderatedRoomServiceUrl && (
+                        <div id = 'moderated-meetings'>
+                            <p>
+                                {
+                                    translateToHTML(
+                                        t, 'welcomepage.moderatedMessage', { url: _moderatedRoomServiceUrl })
+                                }
+                            </p>
+                        </div>
+                    ) }
                     { this._renderTabs() }
                 </div>
                 { showAdditionalContent
@@ -337,6 +349,22 @@ class WelcomePage extends AbstractWelcomePage {
                         ref = { this._setAdditionalContentRef } />
                     : null }
                 <NotificationsContainer />
+            </div>
+        );
+    }
+
+    /**
+     * Renders the insecure room name warning.
+     *
+     * @inheritdoc
+     */
+    _doRenderInsecureRoomNameWarning() {
+        return (
+            <div className = 'insecure-room-name-warning'>
+                <Icon src = { IconWarning } />
+                <span>
+                    { this.props.t('security.insecureRoomNameWarning') }
+                </span>
             </div>
         );
     }

@@ -2,14 +2,14 @@
 
 import Tabs from '@atlaskit/tabs';
 import React, { PureComponent } from 'react';
-import { connect } from '../../base/redux';
 import type { Dispatch } from 'redux';
 
 import { Dialog, hideDialog } from '../../base/dialog';
 import { translate } from '../../base/i18n';
+import { connect } from '../../base/redux';
+import { obtainDesktopSources } from '../functions';
 
 import DesktopPickerPane from './DesktopPickerPane';
-import { obtainDesktopSources } from '../functions';
 
 /**
  * The size of the requested thumbnails.

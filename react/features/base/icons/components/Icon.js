@@ -2,9 +2,8 @@
 
 import React from 'react';
 
-import { styleTypeToObject } from '../../styles';
-
 import { Container } from '../../react/base';
+import { styleTypeToObject } from '../../styles';
 
 type Props = {
 

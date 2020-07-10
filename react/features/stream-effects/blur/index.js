@@ -1,6 +1,7 @@
 // @flow
 
 import * as bodyPix from '@tensorflow-models/body-pix';
+
 import JitsiStreamBlurEffect from './JitsiStreamBlurEffect';
 
 /**

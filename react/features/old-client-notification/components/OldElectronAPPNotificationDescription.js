@@ -1,6 +1,7 @@
 // @flow
 
 import React, { Component } from 'react';
+
 import { translate } from '../../base/i18n';
 
 /**

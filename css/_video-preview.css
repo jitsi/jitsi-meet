@@ -1,7 +1,11 @@
 .video-preview {
     background: none;
     max-height: 290px;
-    overflow: auto;
+
+    &-container {
+        overflow: auto;
+        padding: 16px;
+    }
 
     &-entry {
         cursor: pointer;
@@ -61,6 +65,6 @@
     // Override @atlaskit/InlineDialog container which is made with styled components
     & > div > div:nth-child(2) > div > div {
         outline: none;
-        padding: 16px;
+        padding: 0;
     }
 }

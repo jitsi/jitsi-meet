@@ -25,15 +25,25 @@ function init_session(event)
 
 	if query ~= nil then
         local params = formdecode(query);
+
+        -- The following fields are filled in the session, by extracting them
+        -- from the query and no validation is beeing done.
+        -- After validating auth_token will be cleaned in case of error and few
+        -- other fields will be extracted from the token and set in the session
+
         session.auth_token = query and params.token or nil;
         -- previd is used together with https://modules.prosody.im/mod_smacks.html
         -- the param is used to find resumed session and re-use anonymous(random) user id
         -- (see get_username_from_token)
         session.previd = query and params.previd or nil;
 
-        -- The room name and optional prefix from the bosh query
-        session.jitsi_bosh_query_room = params.room;
-        session.jitsi_bosh_query_prefix = params.prefix or "";
+        -- The room name and optional prefix from the web query
+        session.jitsi_web_query_room = params.room;
+        session.jitsi_web_query_prefix = params.prefix or "";
+
+        -- Deprecated, you should use jitsi_web_query_room and jitsi_web_query_prefix
+        session.jitsi_bosh_query_room = session.jitsi_web_query_room;
+        session.jitsi_bosh_query_prefix = session.jitsi_web_query_prefix;
     end
 end
 
@@ -72,6 +82,7 @@ function provider.get_sasl_handler(session)
         if (res == false) then
             log("warn",
                 "Error verifying token err:%s, reason:%s", error, reason);
+            session.auth_token = nil;
             return res, error, reason;
         end
 

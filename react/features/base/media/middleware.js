@@ -8,7 +8,6 @@ import {
     sendAnalytics
 } from '../../analytics';
 import { APP_STATE_CHANGED } from '../../mobile/background';
-
 import { SET_AUDIO_ONLY, setAudioOnly } from '../audio-only';
 import { isRoomValid, SET_ROOM } from '../conference';
 import JitsiMeetJS from '../lib-jitsi-meet';

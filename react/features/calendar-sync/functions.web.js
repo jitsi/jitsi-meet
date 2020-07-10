@@ -1,12 +1,13 @@
 // @flow
 
+import { toState } from '../base/redux';
+
 import {
     clearCalendarIntegration,
     setCalendarError,
     setLoadingCalendarEvents
 } from './actions';
 export * from './functions.any';
-
 import {
     CALENDAR_TYPE,
     ERRORS,
@@ -14,11 +15,9 @@ import {
     FETCH_START_DAYS
 } from './constants';
 import { _updateCalendarEntries } from './functions';
+import logger from './logger';
 import { googleCalendarApi } from './web/googleCalendar';
 import { microsoftCalendarApi } from './web/microsoftCalendar';
-import { toState } from '../base/redux';
-
-import logger from './logger';
 
 /**
  * Determines whether the calendar feature is enabled by the web.
