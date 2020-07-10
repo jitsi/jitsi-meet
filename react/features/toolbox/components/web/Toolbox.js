@@ -146,6 +146,16 @@ type Props = {
     _isGuest: boolean,
 
     /**
+     * Whether or not meeting is streaming live.
+     */
+    _isLiveStreaming: boolean,
+
+    /**
+     * Whether or not meeting is recording.
+     */
+    _isRecording: boolean,
+
+    /**
      * The ID of the local participant.
      */
     _localParticipantID: String,
@@ -958,6 +968,8 @@ class Toolbox extends Component<Props, State> {
         const {
             _feedbackConfigured,
             _fullScreen,
+            _isLiveStreaming,
+            _isRecording,
             _screensharing,
             _sharingVideo,
             t
@@ -980,9 +992,11 @@ class Toolbox extends Component<Props, State> {
                     onClick = { this._onToolbarToggleFullScreen }
                     text = { _fullScreen ? t('toolbar.exitFullScreen') : t('toolbar.enterFullScreen') } />,
             <LiveStreamButton
+                disabled = { _isRecording }
                 key = 'livestreaming'
                 showLabel = { true } />,
             <RecordButton
+                disabled = { _isLiveStreaming }
                 key = 'record'
                 showLabel = { true } />,
             this._shouldShowButton('sharedvideo')
