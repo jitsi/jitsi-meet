@@ -992,13 +992,13 @@ class Toolbox extends Component<Props, State> {
                     onClick = { this._onToolbarToggleFullScreen }
                     text = { _fullScreen ? t('toolbar.exitFullScreen') : t('toolbar.enterFullScreen') } />,
             <LiveStreamButton
-                disabled = { _isRecording }
                 key = 'livestreaming'
-                showLabel = { true } />,
+                showLabel = { true }
+                visible = { !_isRecording } />,
             <RecordButton
-                disabled = { _isLiveStreaming }
                 key = 'record'
-                showLabel = { true } />,
+                showLabel = { true }
+                visible = { !_isLiveStreaming } />,
             this._shouldShowButton('sharedvideo')
                 && <OverflowMenuItem
                     accessibilityLabel = { t('toolbar.accessibilityLabel.sharedvideo') }
