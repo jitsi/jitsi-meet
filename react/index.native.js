@@ -12,8 +12,8 @@ import './features/base/lib-jitsi-meet/native/polyfills-bundler';
 
 import React, { PureComponent } from 'react';
 import { AppRegistry } from 'react-native';
+import AppContainer from './components/AppContainer/AppContainer';
 
-import { App } from './features/app';
 import { IncomingCallApp } from './features/mobile/incoming-call';
 
 // It's crucial that the native loggers are created ASAP, not to lose any data.
@@ -48,7 +48,7 @@ class Root extends PureComponent<Props> {
      */
     render() {
         return (
-            <App
+            <AppContainer
                 { ...this.props } />
         );
     }

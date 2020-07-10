@@ -4,4 +4,9 @@
         <!-- Customize your theme here. -->
         <item name="android:navigationBarColor">#1081B2</item>
     </style>
+    <!-- Splash theme. -->
+    <style name="SplashTheme" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:windowBackground">@drawable/splash_background</item>
+        <item name="android:statusBarColor">@color/blue</item>
+    </style>
 </resources>
