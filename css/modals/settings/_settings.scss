@@ -58,4 +58,20 @@
     .sign-out-cta {
         margin-bottom: 20px;
     }
+
+    &--auth {
+        display: flex;
+
+        &_left, &_right {
+            flex: 1 1 100%;
+        }
+
+        &_left {
+            margin-right: 36px;
+        }
+
+        &_right {
+            margin: 35px 19px 0 0 !important;
+        }
+    }
 }

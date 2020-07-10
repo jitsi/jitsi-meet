@@ -9,8 +9,6 @@ import { connect } from '../../../base/redux';
 import { beginAddPeople } from '../../../invite';
 import { isToolboxVisible } from '../../../toolbox';
 
-import WebLogin from './WebLoginButton';
-
 type Props = {
 
     /**
@@ -32,12 +30,7 @@ type Props = {
     /**
      * Invoked to obtain translated strings.
      */
-    t: Function,
-
-     /**
-     * Whether to show the deeplink button.
-     */
-    showDeeplink: boolean
+    t: Function
 }
 
 /**
@@ -51,8 +44,7 @@ function InviteMore({
     _tileViewEnabled,
     _visible,
     onClick,
-    t,
-    showDeeplink
+    t
 }: Props) {
     return (
         _visible
@@ -69,7 +61,6 @@ function InviteMore({
                             {t('addPeople.inviteMorePrompt')}
                         </div>
                     </div>
-                    { showDeeplink && <WebLogin /> }
                 </div>
             </div> : null
     );

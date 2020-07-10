@@ -13,6 +13,8 @@ import { AbstractDialogTab } from '../../../base/dialog';
 import type { Props as AbstractDialogTabProps } from '../../../base/dialog';
 import { translate } from '../../../base/i18n';
 
+import WebLogin from './WebLoginButton';
+
 declare var APP: Object;
 
 /**
@@ -171,20 +173,35 @@ class ProfileTab extends AbstractDialogTab<Props> {
 
         return (
             <div>
-                <div className = 'mock-atlaskit-label'>
-                    { t('toolbar.authenticate') }
+                <div className = 'settings-pane--auth'>
+                    <div className = 'settings-pane--auth_left'>
+                        <div className = 'mock-atlaskit-label'>
+                            { t('toolbar.authenticate') }
+                        </div>
+
+                        { authLogin
+                            && <div className = 'auth-name'>
+                                { t('settings.loggedIn', { name: authLogin }) }
+                            </div> }
+                        <Button
+                            appearance = 'primary'
+                            id = 'login_button'
+                            onClick = { this._onAuthToggle }
+                            type = 'button'>
+                            { authLogin ? t('toolbar.logout') : t('toolbar.login') }
+                        </Button>
+                    </div>
+                    <Button
+                        appearance = 'primary'
+                        className = 'settings-pane--auth_right'
+                        id = 'login_button'
+                        type = 'button'>
+                        <WebLogin >
+                            Login with web wallet
+                        </WebLogin>
+                    </Button>
                 </div>
-                { authLogin
-                    && <div className = 'auth-name'>
-                        { t('settings.loggedIn', { name: authLogin }) }
-                    </div> }
-                <Button
-                    appearance = 'primary'
-                    id = 'login_button'
-                    onClick = { this._onAuthToggle }
-                    type = 'button'>
-                    { authLogin ? t('toolbar.logout') : t('toolbar.login') }
-                </Button>
+
             </div>
         );
     }
