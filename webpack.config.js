@@ -2,12 +2,13 @@
 
 const CircularDependencyPlugin = require('circular-dependency-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const optionalRequire = require('optional-require')(require);
 const path = require('path');
 const process = require('process');
-const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const { EnvironmentPlugin } = require('webpack');
+const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 
-const dotenv = require('.env').config({ path: `${__dirname}/.env` });
+const dotenv = optionalRequire(`${__dirname}/.env`);
 
 /**
  * The URL of the Jitsi Meet deployment to be proxy to in the context of
