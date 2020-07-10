@@ -15,7 +15,7 @@ const dotenv = optionalRequire(`${__dirname}/.env.json`);
  * development with webpack-dev-server.
  */
 const devServerProxyTarget
-    = (dotenv && dotenv.json.WEBPACK_DEV_SERVER_PROXY_TARGET)
+    = (dotenv && dotenv.WEBPACK_DEV_SERVER_PROXY_TARGET)
         || process.env.WEBPACK_DEV_SERVER_PROXY_TARGET
         || 'https://alpha.jitsi.net';
 
@@ -215,7 +215,7 @@ const config = {
                 chunkFilename: isDevelopment ? '[id].css' : '[id].[hash].css'
             }),
         new EnvironmentPlugin({
-            'process.env': JSON.stringify((dotenv && dotenv.json) || process.env)
+            'process.env': JSON.stringify(dotenv || process.env)
         })
     ].filter(Boolean),
     resolve: {
