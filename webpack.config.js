@@ -8,14 +8,16 @@ const process = require('process');
 const { EnvironmentPlugin } = require('webpack');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 
-const dotenv = optionalRequire(`${__dirname}/.env`);
+const dotenv = optionalRequire(`${__dirname}/.env.json`);
 
 /**
  * The URL of the Jitsi Meet deployment to be proxy to in the context of
  * development with webpack-dev-server.
  */
 const devServerProxyTarget
-    = process.env.WEBPACK_DEV_SERVER_PROXY_TARGET || 'https://alpha.jitsi.net';
+    = (dotenv && dotenv.json.WEBPACK_DEV_SERVER_PROXY_TARGET)
+        || process.env.WEBPACK_DEV_SERVER_PROXY_TARGET
+        || 'https://alpha.jitsi.net';
 
 const analyzeBundle = process.argv.indexOf('--analyze-bundle') !== -1;
 const detectCircularDeps = process.argv.indexOf('--detect-circular-deps') !== -1;
@@ -213,7 +215,7 @@ const config = {
                 chunkFilename: isDevelopment ? '[id].css' : '[id].[hash].css'
             }),
         new EnvironmentPlugin({
-            'process.env': JSON.stringify(dotenv || process.env)
+            'process.env': JSON.stringify((dotenv && dotenv.json) || process.env)
         })
     ].filter(Boolean),
     resolve: {
