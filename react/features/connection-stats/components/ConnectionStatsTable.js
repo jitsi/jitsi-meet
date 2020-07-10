@@ -396,7 +396,8 @@ class ConnectionStatsTable extends Component<Props> {
             .join(', ') || 'N/A';
 
         if (maxEnabledResolution && maxEnabledResolution < 720) {
-            resolutionString += ` (send max ${maxEnabledResolution}p)`;
+            const maxEnabledResolutionTitle = t('connectionindicator.maxEnabledResolution');
+            resolutionString += ` (${maxEnabledResolutionTitle} ${maxEnabledResolution}p)`;
         }
 
         return (
