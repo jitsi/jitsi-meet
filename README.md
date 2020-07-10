@@ -6,7 +6,7 @@ We will do all our work in our fork of jitsi-meet.  The "intulse" branch is our 
 
 * [See this Stack Overflow article for instructions.](https://stackoverflow.com/questions/20984802/how-can-i-keep-my-fork-in-sync-without-adding-a-separate-remote/21131381#21131381)
 
-## Publish intulse/jitsi-meet to meet.intul.se
+## Publish intulse/jitsi-meet to meet.intulse.com
 
 These instructions are publically visible on Github, do not include any sensative information.
 
