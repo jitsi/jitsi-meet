@@ -2,16 +2,22 @@
 
 const CircularDependencyPlugin = require('circular-dependency-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const optionalRequire = require('optional-require')(require);
 const path = require('path');
 const process = require('process');
+const { EnvironmentPlugin } = require('webpack');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
+
+const dotenv = optionalRequire(`${__dirname}/.env.json`);
 
 /**
  * The URL of the Jitsi Meet deployment to be proxy to in the context of
  * development with webpack-dev-server.
  */
 const devServerProxyTarget
-    = process.env.WEBPACK_DEV_SERVER_PROXY_TARGET || 'https://alpha.jitsi.net';
+    = (dotenv && dotenv.WEBPACK_DEV_SERVER_PROXY_TARGET)
+        || process.env.WEBPACK_DEV_SERVER_PROXY_TARGET
+        || 'https://alpha.jitsi.net';
 
 const analyzeBundle = process.argv.indexOf('--analyze-bundle') !== -1;
 const detectCircularDeps = process.argv.indexOf('--detect-circular-deps') !== -1;
@@ -20,7 +26,7 @@ const minimize
     = process.argv.indexOf('-p') !== -1
     || process.argv.indexOf('--optimize-minimize') !== -1;
 
-const isDevelopment = process.env.NODE_ENV !== 'production' || process.argv.indexOf('-p') === -1;
+const isDevelopment = process.argv.indexOf('-p') === -1;
 
 /**
  * Build a Performance configuration object for the given size.
@@ -207,7 +213,10 @@ const config = {
             && new MiniCssExtractPlugin({
                 filename: isDevelopment ? '[name].css' : '[name].[hash].css',
                 chunkFilename: isDevelopment ? '[id].css' : '[id].[hash].css'
-            })
+            }),
+        new EnvironmentPlugin({
+            'process.env': JSON.stringify(dotenv || process.env)
+        })
     ].filter(Boolean),
     resolve: {
         alias: {
