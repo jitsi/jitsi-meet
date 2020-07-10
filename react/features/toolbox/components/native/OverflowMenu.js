@@ -13,7 +13,8 @@ import { StyleType } from '../../../base/styles';
 import { SharedDocumentButton } from '../../../etherpad';
 import { InviteButton } from '../../../invite';
 import { AudioRouteButton } from '../../../mobile/audio-mode';
-import { LiveStreamButton, RecordButton } from '../../../recording';
+import { LiveStreamButton, RecordButton, getActiveSession } from '../../../recording';
+import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
 import { RoomLockButton } from '../../../room-lock';
 import { ClosedCaptionButton } from '../../../subtitles';
 import { TileViewButton } from '../../../video-layout';
@@ -106,9 +107,8 @@ class OverflowMenu extends PureComponent<Props, State> {
      * @returns {ReactElement}
      */
     render() {
-        const { _bottomSheetStyles } = this.props;
+        const { _bottomSheetStyles, _isLiveStreaming, _isRecording } = this.props;
         const { showMore } = this.state;
-
         const buttonProps = {
             afterClick: this._onCancel,
             showLabel: true,
@@ -136,9 +136,13 @@ class OverflowMenu extends PureComponent<Props, State> {
                     <TileViewButton { ...buttonProps } />
                     {
                         this.props._recordingEnabled
-                            && <RecordButton { ...buttonProps } />
+                            && <RecordButton
+                                { ...buttonProps }
+                                visible = { !_isLiveStreaming } />
                     }
-                    <LiveStreamButton { ...buttonProps } />
+                    <LiveStreamButton
+                        { ...buttonProps }
+                        visible = { !_isRecording } />
                     <RoomLockButton { ...buttonProps } />
                     <ClosedCaptionButton { ...buttonProps } />
                     <SharedDocumentButton { ...buttonProps } />
@@ -241,7 +245,9 @@ function _mapStateToProps(state) {
     return {
         _bottomSheetStyles: ColorSchemeRegistry.get(state, 'BottomSheet'),
         _isOpen: isDialogOpen(state, OverflowMenu_),
-        _recordingEnabled: Platform.OS !== 'ios' || getFeatureFlag(state, IOS_RECORDING_ENABLED)
+        _recordingEnabled: Platform.OS !== 'ios' || getFeatureFlag(state, IOS_RECORDING_ENABLED),
+        _isRecording: Boolean(getActiveSession(state, JitsiRecordingConstants.mode.FILE)),
+        _isLiveStreaming: Boolean(getActiveSession(state, JitsiRecordingConstants.mode.STREAM))
     };
 }
 

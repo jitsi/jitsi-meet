@@ -49,8 +49,10 @@ import {
 } from '../../../local-recording';
 import {
     LiveStreamButton,
-    RecordButton
+    RecordButton,
+    getActiveSession
 } from '../../../recording';
+import { JitsiRecordingConstants } from '../../../base/lib-jitsi-meet';
 import {
     SETTINGS_TABS,
     SettingsButton,
@@ -1379,6 +1381,8 @@ function _mapStateToProps(state) {
         _hideInviteButton:
             iAmRecorder || (!addPeopleEnabled && !dialOutEnabled),
         _isGuest: state['features/base/jwt'].isGuest,
+        _isLiveStreaming: Boolean(getActiveSession(state, JitsiRecordingConstants.mode.STREAM)),
+        _isRecording: Boolean(getActiveSession(state, JitsiRecordingConstants.mode.FILE)),
         _fullScreen: fullScreen,
         _tileViewEnabled: state['features/video-layout'].tileViewEnabled,
         _localParticipantID: localParticipant.id,
