@@ -44,6 +44,11 @@ export type Props = {
     email: string,
 
     /**
+     * The connected web wallets name.
+     */
+    walletName: string,
+
+    /**
      * Invoked to obtain translated strings.
      */
     t: Function
@@ -168,6 +173,7 @@ class ProfileTab extends AbstractDialogTab<Props> {
     _renderAuth() {
         const {
             authLogin,
+            walletName,
             t
         } = this.props;
 
@@ -191,17 +197,27 @@ class ProfileTab extends AbstractDialogTab<Props> {
                             { authLogin ? t('toolbar.logout') : t('toolbar.login') }
                         </Button>
                     </div>
-                    <Button
-                        appearance = 'primary'
-                        className = 'settings-pane--auth_right'
-                        id = 'login_button'
-                        type = 'button'>
-                        <WebLogin >
-                            Login with web wallet
-                        </WebLogin>
-                    </Button>
+                    <div className = 'settings-pane--auth_right'>
+                        <div className = 'mock-atlaskit-label'>
+                            { t('toolbar.authenticate') }
+                        </div>
+                        { walletName
+                            && <div
+                                className = 'auth-name'
+                                title = { t('settings.connectedAs', { name: walletName }) }>
+                                { t('settings.connectedAs', { name: walletName }) }
+                            </div> }
+                        <Button
+                            appearance = 'primary'
+                            className = 'settings-pane--auth_right'
+                            id = 'web_wallets_button'
+                            type = 'button'>
+                            <WebLogin >
+                                Login with web wallet
+                            </WebLogin>
+                        </Button>
+                    </div>
                 </div>
-
             </div>
         );
     }
