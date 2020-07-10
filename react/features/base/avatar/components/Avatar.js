@@ -59,6 +59,11 @@ export type Props = {
     status?: ?string,
 
     /**
+     * TestId of the element, if any.
+     */
+    testId?: string,
+
+    /**
      * URL of the avatar, if any.
      */
     url: ?string,
@@ -122,6 +127,7 @@ class Avatar<P: Props> extends PureComponent<P, State> {
             id,
             size,
             status,
+            testId,
             url
         } = this.props;
         const { avatarFailed } = this.state;
@@ -134,6 +140,7 @@ class Avatar<P: Props> extends PureComponent<P, State> {
             onAvatarLoadError: undefined,
             size,
             status,
+            testId,
             url: undefined
         };
 

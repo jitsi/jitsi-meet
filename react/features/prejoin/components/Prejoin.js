@@ -313,6 +313,7 @@ class Prejoin extends Component<Props, State> {
                                         hasOptions = { true }
                                         onClick = { joinConference }
                                         onOptionsClick = { _onOptionsClick }
+                                        testId = 'prejoin.joinMeeting'
                                         type = 'primary'>
                                         { t('prejoin.joinMeeting') }
                                     </ActionButton>
