@@ -130,7 +130,7 @@ function update_presence_identity(
 
     stanza:tag("identity"):tag("user");
     for k, v in pairs(user) do
-        stanza:tag(k):text(v):up();
+      stanza:tag(k):text(tostring(v)):up();
     end
     stanza:up();
 
