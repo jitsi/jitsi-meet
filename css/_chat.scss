@@ -411,3 +411,11 @@
         color: white;
     }
 }
+
+
+@media (max-width: $sidebarWidth) {
+    #sideToolbarContainer,
+    #chatconversation {
+        width: 100%;
+    }
+}
