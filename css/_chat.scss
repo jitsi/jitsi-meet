@@ -15,6 +15,7 @@
     transition: left 0.5s;
     width: $sidebarWidth;
     z-index: $sideToolbarContainerZ;
+    background: $chatConversationBackground;
 
     /**
      * The sidebar (chat) is off-screen when hidden. Move it flush to the left
@@ -408,5 +409,13 @@
         display: inline-block;
         margin-top: 3px;
         color: white;
+    }
+}
+
+
+@media (max-width: $sidebarWidth) {
+    #sideToolbarContainer,
+    #chatconversation {
+        width: 100%;
     }
 }
