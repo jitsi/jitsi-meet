@@ -129,7 +129,7 @@ var interfaceConfig = {
      * If indicated some of the error dialogs may point to the support URL for
      * help.
      */
-    SUPPORT_URL: 'mailto://smartlearn-info@postech.ac.kr',
+    SUPPORT_URL: 'mailto://vmeeting-info@postech.ac.kr',
 
     /**
      * Whether the connection indicator icon should hide itself based on
