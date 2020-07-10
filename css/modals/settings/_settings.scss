@@ -8,6 +8,10 @@
 
     .auth-name {
         margin-bottom: 4px;
+        width: 90%;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
     .calendar-tab,
@@ -64,14 +68,15 @@
 
         &_left, &_right {
             flex: 1 1 100%;
-        }
-
-        &_left {
             margin-right: 36px;
         }
 
+
         &_right {
-            margin: 35px 19px 0 0 !important;
+            .invite-more-button-text {
+                margin-left: 0px;
+                font-size: 12px;
+            }
         }
     }
 }
