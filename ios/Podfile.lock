@@ -296,6 +296,7 @@ PODS:
   - react-native-netinfo (4.1.5):
     - React
   - react-native-webrtc (1.75.3):
+    - BlueSocket
     - React
   - react-native-webview (7.4.1):
     - React
@@ -577,7 +578,7 @@ SPEC CHECKSUMS:
   react-native-calendar-events: 2fe35a9294af05de0ed819d3a1b5dac048d2c010
   react-native-keep-awake: eba3137546b10003361b37c761f6c429b59814ae
   react-native-netinfo: 8d8db463bcc5db66a8ac5c48a7d86beb3b92f61a
-  react-native-webrtc: 86d841823e66d68cc1f86712db1c2956056bf0c2
+  react-native-webrtc: a98ce66125b037e2b7b507c63e414492f7a41566
   react-native-webview: 4dbc1d2a4a6b9c5e9e723c62651917aa2b5e579e
   React-RCTActionSheet: b72ddbfbe15b44ce691d128e4b582f4bb9abb540
   React-RCTAnimation: cfaefba5024499d336b76ab850e6bd33b232b5e3
@@ -597,6 +598,6 @@ SPEC CHECKSUMS:
   RNWatch: 09738b339eceb66e4d80a2371633ca5fb380fa42
   Yoga: 7b4209fda2441f99d54dd6cf4c82b094409bb68f
 
-PODFILE CHECKSUM: d89173f05e6ccb1c5b5eee7c1f8ab93ac38b5034
+PODFILE CHECKSUM: 29e3e720c139b3735bf0c8a111940403c70bbf2d
 
 COCOAPODS: 1.8.4

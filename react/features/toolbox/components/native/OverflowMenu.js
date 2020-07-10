@@ -29,6 +29,10 @@ import { jitsiLocalStorage } from 'js-utils';
 
 import { requireNativeComponent } from 'react-native';
 
+import * as RCTWebRTC from 'react-native-webrtc';
+import {NativeModules} from 'react-native';
+const {WebRTCModule} = NativeModules;
+
 const RecordNativeComponent = requireNativeComponent('RecordComponent');
 
 
@@ -98,7 +102,7 @@ class OverflowMenu extends PureComponent<Props, State> {
     constructor(props: Props) {
         super(props);
 
-     
+        this.clicked = false;
 
         // Bind event handlers so they are only bound once per instance.
         this._onCancel = this._onCancel.bind(this);
@@ -162,8 +166,21 @@ class OverflowMenu extends PureComponent<Props, State> {
                 {this._renderModeratorButtons(buttonProps)}          
                     <ToggleCameraButton { ...buttonProps } />
                     <TileViewButton { ...buttonProps } />
-                    <RecordNativeComponent onUpdate={event => console.log(event.nativeEvent.frameData.length)} style={{width: 50, height: 50}} ref={comp => {this.recordComponent = comp}} />
-                    {/* <RecordButton { ...buttonProps } /> */}
+                    <RecordNativeComponent 
+                        onUpdate={event => console.log(event.nativeEvent.frameData.length)} 
+                        style={{width: 50, height: 50}} 
+                        // onClick={() => {console.log(WebRTCModule.checkArgss("type"));}}
+                        ref={comp => {
+                            this.recordComponent = comp; 
+                            if (!this.clicked) {
+                                WebRTCModule.checkArgss("type");
+                                this.clicked = true;
+                            } else {
+                                console.log('already clicked');
+                            }
+                             
+                        }} 
+                    />
                     <LiveStreamButton { ...buttonProps } />
                     <RoomLockButton { ...buttonProps } />
                     <ClosedCaptionButton { ...buttonProps } />

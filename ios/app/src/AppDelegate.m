@@ -19,6 +19,7 @@
 #import "FIRUtilities.h"
 #import "Types.h"
 #import "ViewController.h"
+#import "Digitales_Klassenzimmer-Swift.h"
 
 @import Fabric;
 @import Firebase;

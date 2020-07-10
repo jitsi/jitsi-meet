@@ -25,6 +25,8 @@
 		FE0025652492A75F00766AE2 /* JitsiMeet.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0B26BE6D1EC5BC3C00EEFB41 /* JitsiMeet.framework */; };
 		FE0025662492A75F00766AE2 /* JitsiMeet.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 0B26BE6D1EC5BC3C00EEFB41 /* JitsiMeet.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		FE01086024A9A4B7006CA22B /* Queue.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE01085F24A9A4B7006CA22B /* Queue.swift */; };
+		FE1CD4FE24B592CB00B4EE33 /* SocketShim.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE1CD4FD24B592CB00B4EE33 /* SocketShim.swift */; };
+		FE1E60DE24B4DE49000F2550 /* WebRTCModuleBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = FE1E60DD24B4DE49000F2550 /* WebRTCModuleBridge.m */; };
 		FE3141162497DD7300589973 /* JitsiMeet.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0B26BE6D1EC5BC3C00EEFB41 /* JitsiMeet.framework */; };
 		FE3141172497DD7300589973 /* JitsiMeet.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 0B26BE6D1EC5BC3C00EEFB41 /* JitsiMeet.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		FE816EAC248A550A004D900E /* RecordComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE816EAB248A550A004D900E /* RecordComponent.swift */; };
@@ -156,6 +158,8 @@
 		E58801132278944E008B0561 /* JitsiMeetContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JitsiMeetContext.swift; sourceTree = "<group>"; };
 		E5C97B62227A1EB400199214 /* JitsiMeetCommands.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JitsiMeetCommands.swift; sourceTree = "<group>"; };
 		FE01085F24A9A4B7006CA22B /* Queue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Queue.swift; sourceTree = "<group>"; };
+		FE1CD4FD24B592CB00B4EE33 /* SocketShim.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocketShim.swift; sourceTree = "<group>"; };
+		FE1E60DD24B4DE49000F2550 /* WebRTCModuleBridge.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WebRTCModuleBridge.m; sourceTree = "<group>"; };
 		FE816EAA248A550A004D900E /* jitsi-meet-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "jitsi-meet-Bridging-Header.h"; sourceTree = "<group>"; };
 		FE816EAB248A550A004D900E /* RecordComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordComponent.swift; sourceTree = "<group>"; };
 		FE816EAD248A587E004D900E /* RecordComponent.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RecordComponent.m; sourceTree = "<group>"; };
@@ -269,6 +273,8 @@
 				FE816EAD248A587E004D900E /* RecordComponent.m */,
 				FE01085F24A9A4B7006CA22B /* Queue.swift */,
 				FED1D3F624AA64DA00FA358E /* CustomBroadcastPickerView.swift */,
+				FE1E60DD24B4DE49000F2550 /* WebRTCModuleBridge.m */,
+				FE1CD4FD24B592CB00B4EE33 /* SocketShim.swift */,
 			);
 			path = src;
 			sourceTree = "<group>";
@@ -678,9 +684,11 @@
 				FE816EAE248A587E004D900E /* RecordComponent.m in Sources */,
 				FED1D3F724AA64DA00FA358E /* CustomBroadcastPickerView.swift in Sources */,
 				FE01086024A9A4B7006CA22B /* Queue.swift in Sources */,
+				FE1CD4FE24B592CB00B4EE33 /* SocketShim.swift in Sources */,
 				0B412F1F1EDEE6E800B1A0A6 /* ViewController.m in Sources */,
 				13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */,
 				FE816EAC248A550A004D900E /* RecordComponent.swift in Sources */,
+				FE1E60DE24B4DE49000F2550 /* WebRTCModuleBridge.m in Sources */,
 				DE4C456121DE1E4E00EA0709 /* FIRUtilities.m in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
 			);
@@ -749,6 +757,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = YES;
+				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = 54B7FUCZ25;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -788,6 +797,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = 54B7FUCZ25;
 				ENABLE_BITCODE = YES;
 				FRAMEWORK_SEARCH_PATHS = (

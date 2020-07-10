@@ -43,6 +43,9 @@ struct QueueStack<T>: Queue {
   
   @discardableResult
   mutating func dequeue() -> T? {
+    if self.isEmpty {
+      return nil
+    }
     if dequeuStack.isEmpty {
       dequeuStack = enqueuStack.reversed()
       enqueuStack.removeAll()

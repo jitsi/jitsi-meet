@@ -17,7 +17,7 @@ target 'JitsiMeet' do
 
   # React Native and its dependencies
   #
-
+  pod 'BlueSocket'
   pod 'FBLazyVector', :path => '../node_modules/react-native/Libraries/FBLazyVector/'
   pod 'FBReactNativeSpec', :path => '../node_modules/react-native/Libraries/FBReactNativeSpec/'
   pod 'RCTRequired', :path => '../node_modules/react-native/Libraries/RCTRequired/'

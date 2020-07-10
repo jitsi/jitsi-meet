@@ -12,7 +12,7 @@
 
 @interface RCT_EXTERN_MODULE(RecordComponent, RCTViewManager)
 
-//RCT_EXTERN_METHOD(getFrame)
+RCT_EXTERN_METHOD(getFrame)
 
 RCT_EXPORT_VIEW_PROPERTY(onUpdate, RCTDirectEventBlock)
 
