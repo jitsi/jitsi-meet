@@ -68,6 +68,8 @@ class Notification extends AbstractNotification<Props> {
 
     _getDescription: () => Array<string>
 
+    _getDescriptionKey: () => string
+
     _onDismissed: () => void;
 
     /**
@@ -78,11 +80,12 @@ class Notification extends AbstractNotification<Props> {
      * @returns {ReactElement}
      */
     _renderDescription() {
+        const description = this._getDescription();
+
+        // the id is used for testing the UI
         return (
-            <div>
-                {
-                    this._getDescription()
-                }
+            <div id = { this._getDescriptionKey() || description || this.props.titleKey || this.props.title } >
+                { description }
             </div>
         );
     }
