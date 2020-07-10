@@ -5,6 +5,9 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const path = require('path');
 const process = require('process');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
+const { EnvironmentPlugin } = require('webpack');
+
+const dotenv = require('.env').config({ path: `${__dirname}/.env` });
 
 /**
  * The URL of the Jitsi Meet deployment to be proxy to in the context of
@@ -207,7 +210,10 @@ const config = {
             && new MiniCssExtractPlugin({
                 filename: isDevelopment ? '[name].css' : '[name].[hash].css',
                 chunkFilename: isDevelopment ? '[id].css' : '[id].[hash].css'
-            })
+            }),
+        new EnvironmentPlugin({
+            'process.env': JSON.stringify(process.env.NODE_ENV || dotenv)
+        })
     ].filter(Boolean),
     resolve: {
         alias: {
