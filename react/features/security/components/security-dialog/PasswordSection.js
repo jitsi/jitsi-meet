@@ -4,7 +4,7 @@
 import React, { useRef } from 'react';
 
 import { translate } from '../../../base/i18n';
-import { copyText } from '../../../invite';
+import { copyText } from '../../../base/util';
 
 import PasswordForm from './PasswordForm';
 
