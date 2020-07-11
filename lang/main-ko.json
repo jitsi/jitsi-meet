@@ -1,21 +1,36 @@
 {
     "addPeople": {
         "add": "초대",
+        "addContacts": "연락처 초대",
+        "copyInvite": "회의 초대장 복사",
+        "copyLink": "회의 링크 복사",
+        "copyStream": "라이브 스트리밍 링크 복사",
         "countryNotSupported": "아직 해당 지역을 지원하지 않습니다",
         "countryReminder": "미국 이외의 지역으로 전화하시겠습니까? 국가 번호로 시작해야합니다!",
+        "defaultEmail": "기본 이메일",
         "disabled": "사람들을 초대 할 수 없습니다",
         "failedToAdd": "참가자 추가 실패",
         "footerText": "전화 걸기가 비활성화되어 있습니다.",
+        "googleEmail": "Google 이메일",
+        "inviteMoreHeader": "회의에 혼자 있습니다",
+        "inviteMoreMailSubject": "{{appName}} 회의에 참여",
+        "inviteMorePrompt": "다른 사람 초대",
+        "linkCopied": "링크가 클립보드에 복사되었습니다",
         "loading": "사람 및 전화번호 검색",
         "loadingNumber": "전화번호 확인 중",
         "loadingPeople": "초대할 사람 찾기",
         "noResults": "일치하는 검색 결과 없음",
         "noValidNumbers": "전화 번호를 입력하십시오.",
+        "outlookEmail": "Outlook 이메일",
         "searchNumbers": "전화번호 추가",
         "searchPeople": "인명 검색",
         "searchPeopleAndNumbers": "인명 검색 또는 전화번호 추가",
+        "shareInvite": "회의 초대장 공유",
+        "shareLink": "다른 사람 초대를 위한 회의 링크 공유",
+        "shareStream": "실시간 스트리밍 링크 공유",
         "telephone": "전화: {{number}}",
-        "title": "이 회의에 사람들을 초대하십시오"
+        "title": "이 회의에 사람들을 초대하십시오",
+        "yahooEmail": "Yahoo 이메일"
     },
     "audioDevices": {
         "bluetooth": "블루투스",
@@ -526,16 +541,17 @@
     },
     "settings": {
         "calendar": {
-            "about": "",
+            "about": "{{appName}} 캘린더 통합은 향후 일정을 읽을 수 있도록 캘린더에 안전하게 액세스하는 데 사용됩니다.",
             "disconnect": "연결 끊김",
-            "microsoftSignIn": "",
-            "signedIn": "",
-            "title": ""
+            "microsoftSignIn": "Microsoft로 로그인",
+            "signedIn": "현재 {{email}}의 캘린더 이벤트에 액세스 중입니다. 캘린더 이벤트에 대한 액세스를 중지하려면 아래의 연결 끊기 단추를 클릭하십시오.",
+            "title": "캘린더"
         },
         "devices": "장치",
         "followMe": "모두 나와 같은 설정 상태로",
         "language": "언어",
-        "loggedIn": "",
+        "loggedIn": "{{name}}으로 로그인",
+        "microphones": "마이크",
         "moderator": "방장",
         "more": "기타",
         "name": "이름",
@@ -543,6 +559,7 @@
         "selectAudioOutput": "오디오 출력",
         "selectCamera": "카메라",
         "selectMic": "오디오",
+        "speakers": "스피커",
         "startAudioMuted": "모두가 음소거를 시작합니다",
         "startVideoMuted": "모두가 비디오 비활성화로 시작합니다",
         "title": "설정"
@@ -768,7 +785,7 @@
     },
     "lonelyMeetingExperience": {
         "button": "다른 사람 초대",
-        "youAreAlone": "회의에 혼자 있습니다."
+        "youAreAlone": "회의에 혼자 있습니다"
     },
     "helpView": {
         "header": "도움말 센터"
