@@ -1,5 +1,6 @@
 // @flow
-import { getGravatarURL } from 'js-utils/avatar';
+
+import { getGravatarURL } from '@jitsi/js-utils/avatar';
 
 import { JitsiParticipantConnectionStatus } from '../lib-jitsi-meet';
 import { MEDIA_TYPE, shouldRenderVideoTrack } from '../media';

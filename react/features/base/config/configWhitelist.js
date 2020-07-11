@@ -125,6 +125,7 @@ export default [
     'minParticipants',
     'nick',
     'openBridgeChannel',
+    'opusMaxAvgBitrate',
     'p2p',
     'pcStatsInterval',
     'preferH264',

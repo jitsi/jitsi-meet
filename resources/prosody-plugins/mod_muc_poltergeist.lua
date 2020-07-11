@@ -221,7 +221,9 @@ function handle_create_poltergeist (event)
        creator_user = session.jitsi_meet_context_user;
        creator_group = session.jitsi_meet_context_group;
     };
-
+    if avatar ~= nil then
+        context.user.avatar = avatar
+    end
     local resources = {};
     if conversation ~= nil then
         resources["conversation"] = conversation

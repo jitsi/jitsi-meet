@@ -1,6 +1,6 @@
 // @flow
 
-import { randomInt } from 'js-utils/random';
+import { randomInt } from '@jitsi/js-utils/random';
 import React, { Component } from 'react';
 import type { Dispatch } from 'redux';
 

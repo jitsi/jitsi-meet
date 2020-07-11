@@ -1,7 +1,7 @@
 // @flow
 
-import { jitsiLocalStorage } from "js-utils";
-import React, { PureComponent } from "react";
+import { jitsiLocalStorage } from '@jitsi/js-utils';
+import React, { PureComponent } from 'react';
 
 import {
     createChromeExtensionBannerEvent,

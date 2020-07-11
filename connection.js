@@ -1,7 +1,7 @@
 /* global APP, JitsiMeetJS, config */
 
+import { jitsiLocalStorage } from '@jitsi/js-utils';
 import Logger from 'jitsi-meet-logger';
-import { jitsiLocalStorage } from 'js-utils';
 
 import AuthHandler from './modules/UI/authentication/AuthHandler';
 import {
