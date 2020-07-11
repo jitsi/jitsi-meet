@@ -6,8 +6,8 @@ muc_mapper_domain_base = "jitmeet.example.com";
 turncredentials_secret = "__turnSecret__";
 
 turncredentials = {
-  { type = "stun", host = "jitmeet.example.com", port = "4446" },
-  { type = "turn", host = "jitmeet.example.com", port = "4446", transport = "udp" },
+  { type = "stun", host = "jitmeet.example.com", port = "3478" },
+  { type = "turn", host = "jitmeet.example.com", port = "3478", transport = "udp" },
   { type = "turns", host = "jitmeet.example.com", port = "443", transport = "tcp" }
 };
 

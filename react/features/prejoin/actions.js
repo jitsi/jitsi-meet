@@ -199,14 +199,13 @@ export function initPrejoin(tracks: Object[], errors: Object) {
 }
 
 /**
- * Joins the conference.
+ * Action used to start the conference.
  *
  * @returns {Function}
  */
 export function joinConference() {
-    return function(dispatch: Function) {
-        dispatch(setPrejoinPageVisibility(false));
-        dispatch(startConference());
+    return {
+        type: PREJOIN_START_CONFERENCE
     };
 }
 
@@ -416,16 +415,5 @@ export function setPrejoinPageVisibility(value: boolean) {
     return {
         type: SET_PREJOIN_PAGE_VISIBILITY,
         value
-    };
-}
-
-/**
- * Action used to mark the start of the conference.
- *
- * @returns {Object}
- */
-function startConference() {
-    return {
-        type: PREJOIN_START_CONFERENCE
     };
 }

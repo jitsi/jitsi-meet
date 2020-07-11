@@ -1,17 +1,21 @@
 /**
  * Shared style for full screen local track based dialogs/modals.
  */
-.premeeting-screen {
+ .premeeting-screen,
+  .preview-overlay {
+     position: absolute;
+     left: 0;
+     right: 0;
+     top: 0;
+     bottom: 0;
+  }
+
+ .premeeting-screen {
     align-items: stretch;
-    background: #1C2025;
-    bottom: 0;
+    background: radial-gradient(50% 50% at 50% 50%, #5D95C7 0%, #376288 100%), #FFFFFF;
     display: flex;
     flex-direction: column;
     font-size: 1.3em;
-    left: 0;
-    position: absolute;
-    right: 0;
-    top: 0;
     z-index: $toolbarZ + 1;
 
     .action-btn {
@@ -74,9 +78,13 @@
         }
     }
 
+    .preview-overlay {
+        background-image: linear-gradient(transparent, black);
+        z-index: $toolbarZ + 1;
+    }
+
     .content {
         align-items: center;
-        background-image: linear-gradient(transparent, black);
         display: flex;
         flex: 1;
         flex-direction: column;

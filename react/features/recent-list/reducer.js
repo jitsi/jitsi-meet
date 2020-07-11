@@ -1,6 +1,6 @@
 // @flow
 
-import { jitsiLocalStorage } from 'js-utils';
+import { jitsiLocalStorage } from '@jitsi/js-utils';
 
 import { APP_WILL_MOUNT } from '../base/app';
 import { getURLWithoutParamsNormalized } from '../base/connection';

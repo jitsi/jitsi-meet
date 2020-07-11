@@ -1,8 +1,9 @@
 // @flow
 
-import { jitsiLocalStorage } from 'js-utils';
+import { jitsiLocalStorage } from '@jitsi/js-utils';
 
 import { APP_WILL_MOUNT } from '../app';
+import { getFeatureFlag } from '../flags/functions';
 import { addKnownDomains } from '../known-domains';
 import { MiddlewareRegistry } from '../redux';
 import { parseURIString } from '../util';
@@ -105,6 +106,12 @@ function _setConfig({ dispatch, getState }, next, action) {
 
     if (typeof settings.disableP2P !== 'undefined') {
         config.p2p = { enabled: !settings.disableP2P };
+    }
+
+    const resolutionFlag = getFeatureFlag(state, 'resolution');
+
+    if (typeof resolutionFlag !== 'undefined') {
+        config.resolution = resolutionFlag;
     }
 
     dispatch({

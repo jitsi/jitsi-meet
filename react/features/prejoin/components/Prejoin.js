@@ -80,9 +80,19 @@ type Props = {
     setJoinByPhoneDialogVisiblity: Function,
 
     /**
+     * Indicates whether the avatar should be shown when video is off
+     */
+    showAvatar: boolean,
+
+    /**
      * Flag signaling the visibility of camera preview.
      */
     showCameraPreview: boolean,
+
+    /**
+     * Flag signaling the visibility of join label, input and buttons
+     */
+    showJoinActions: boolean,
 
     /**
      * If 'JoinByPhoneDialog' is visible or not.
@@ -112,6 +122,15 @@ type State = {
  * This component is displayed before joining a meeting.
  */
 class Prejoin extends Component<Props, State> {
+    /**
+     * Default values for {@code Prejoin} component's properties.
+     *
+     * @static
+     */
+    static defaultProps = {
+        showJoinActions: true
+    };
+
     /**
      * Initializes a new {@code Prejoin} instance.
      *
@@ -223,8 +242,10 @@ class Prejoin extends Component<Props, State> {
             joinConference,
             joinConferenceWithoutAudio,
             name,
+            showAvatar,
             showCameraPreview,
             showDialog,
+            showJoinActions,
             t,
             videoTrack
         } = this.props;
@@ -236,61 +257,65 @@ class Prejoin extends Component<Props, State> {
             <PreMeetingScreen
                 footer = { this._renderFooter() }
                 name = { name }
+                showAvatar = { showAvatar }
+                showConferenceInfo = { showJoinActions }
                 title = { t('prejoin.joinMeeting') }
                 videoMuted = { !showCameraPreview }
                 videoTrack = { videoTrack }>
-                <div className = 'prejoin-input-area-container'>
-                    <div className = 'prejoin-input-area'>
-                        <InputField
-                            onChange = { _setName }
-                            onSubmit = { joinConference }
-                            placeHolder = { t('dialog.enterDisplayName') }
-                            value = { name } />
+                {showJoinActions && (
+                    <div className = 'prejoin-input-area-container'>
+                        <div className = 'prejoin-input-area'>
+                            <InputField
+                                onChange = { _setName }
+                                onSubmit = { joinConference }
+                                placeHolder = { t('dialog.enterDisplayName') }
+                                value = { name } />
 
-                        <div className = 'prejoin-preview-dropdown-container'>
-                            <InlineDialog
-                                content = { <div className = 'prejoin-preview-dropdown-btns'>
-                                    <div
-                                        className = 'prejoin-preview-dropdown-btn'
-                                        onClick = { joinConferenceWithoutAudio }>
-                                        <Icon
-                                            className = 'prejoin-preview-dropdown-icon'
-                                            size = { 24 }
-                                            src = { IconVolumeOff } />
-                                        { t('prejoin.joinWithoutAudio') }
-                                    </div>
-                                    {hasJoinByPhoneButton && <div
-                                        className = 'prejoin-preview-dropdown-btn'
-                                        onClick = { _showDialog }>
-                                        <Icon
-                                            className = 'prejoin-preview-dropdown-icon'
-                                            size = { 24 }
-                                            src = { IconPhone } />
-                                        { t('prejoin.joinAudioByPhone') }
-                                    </div>}
-                                </div> }
-                                isOpen = { showJoinByPhoneButtons }
-                                onClose = { _onDropdownClose }>
-                                <ActionButton
-                                    disabled = { joinButtonDisabled }
-                                    hasOptions = { true }
-                                    onClick = { joinConference }
-                                    onOptionsClick = { _onOptionsClick }
-                                    type = 'primary'>
-                                    { t('prejoin.joinMeeting') }
-                                </ActionButton>
-                            </InlineDialog>
+                            <div className = 'prejoin-preview-dropdown-container'>
+                                <InlineDialog
+                                    content = { <div className = 'prejoin-preview-dropdown-btns'>
+                                        <div
+                                            className = 'prejoin-preview-dropdown-btn'
+                                            onClick = { joinConferenceWithoutAudio }>
+                                            <Icon
+                                                className = 'prejoin-preview-dropdown-icon'
+                                                size = { 24 }
+                                                src = { IconVolumeOff } />
+                                            { t('prejoin.joinWithoutAudio') }
+                                        </div>
+                                        {hasJoinByPhoneButton && <div
+                                            className = 'prejoin-preview-dropdown-btn'
+                                            onClick = { _showDialog }>
+                                            <Icon
+                                                className = 'prejoin-preview-dropdown-icon'
+                                                size = { 24 }
+                                                src = { IconPhone } />
+                                            { t('prejoin.joinAudioByPhone') }
+                                        </div>}
+                                    </div> }
+                                    isOpen = { showJoinByPhoneButtons }
+                                    onClose = { _onDropdownClose }>
+                                    <ActionButton
+                                        disabled = { joinButtonDisabled }
+                                        hasOptions = { true }
+                                        onClick = { joinConference }
+                                        onOptionsClick = { _onOptionsClick }
+                                        type = 'primary'>
+                                        { t('prejoin.joinMeeting') }
+                                    </ActionButton>
+                                </InlineDialog>
+                            </div>
+                        </div>
+
+                        <div className = 'prejoin-checkbox-container'>
+                            <input
+                                className = 'prejoin-checkbox'
+                                onChange = { _onCheckboxChange }
+                                type = 'checkbox' />
+                            <span>{t('prejoin.doNotShow')}</span>
                         </div>
                     </div>
-
-                    <div className = 'prejoin-checkbox-container'>
-                        <input
-                            className = 'prejoin-checkbox'
-                            onChange = { _onCheckboxChange }
-                            type = 'checkbox' />
-                        <span>{t('prejoin.doNotShow')}</span>
-                    </div>
-                </div>
+                )}
                 { showDialog && (
                     <JoinByPhoneDialog
                         joinConferenceWithoutAudio = { joinConferenceWithoutAudio }
