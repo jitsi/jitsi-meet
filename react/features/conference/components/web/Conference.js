@@ -202,7 +202,7 @@ class Conference extends AbstractConference<Props, *> {
 
                 <Notice />
                 <Subject />
-                <InviteMore />
+                {/* <InviteMore /> */}
                 <div id = 'videospace'>
                     <LargeVideo />
                     <KnockingParticipantList />
