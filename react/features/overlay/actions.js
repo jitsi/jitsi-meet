@@ -2,8 +2,8 @@
 
 import {
     MEDIA_PERMISSION_PROMPT_VISIBILITY_CHANGED,
-    SET_FATAL_ERROR
-} from './actionTypes';
+    SET_FATAL_ERROR,
+} from "./actionTypes";
 
 /**
  * Signals that the prompt for media permission is visible or not.
@@ -18,11 +18,14 @@ import {
  *     isVisible: {boolean}
  * }}
  */
-export function mediaPermissionPromptVisibilityChanged(isVisible: boolean, browser: string) {
+export function mediaPermissionPromptVisibilityChanged(
+    isVisible: boolean,
+    browser: string
+) {
     return {
-        type: MEDIA_PERMISSION_PROMPT_VISIBILITY_CHANGED,
+        type: "",
         browser,
-        isVisible
+        isVisible,
     };
 }
 
@@ -41,6 +44,6 @@ export function mediaPermissionPromptVisibilityChanged(isVisible: boolean, brows
 export function setFatalError(fatalError: Object) {
     return {
         type: SET_FATAL_ERROR,
-        fatalError
+        fatalError,
     };
 }
