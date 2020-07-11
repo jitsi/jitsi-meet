@@ -2,7 +2,7 @@
 
 import { CONFERENCE_FAILED, CONFERENCE_JOINED } from '../base/conference';
 import { JitsiConferenceErrors, JitsiConferenceEvents } from '../base/lib-jitsi-meet';
-import { getFirstLoadableAvatarUrl, getParticipantDisplayName } from '../base/participants';
+import { getFirstLoadableAvatarUrl } from '../base/participants';
 import { MiddlewareRegistry, StateListenerRegistry } from '../base/redux';
 import { NOTIFICATION_TYPE, showNotification } from '../notifications';
 import { isPrejoinPageEnabled } from '../prejoin/functions';
@@ -17,7 +17,6 @@ import {
     startKnocking,
     setPasswordJoinFailed
 } from './actions';
-import { getKnockingParticipantById } from './functions';
 
 MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
@@ -44,7 +43,7 @@ MiddlewareRegistry.register(store => next => action => {
  */
 StateListenerRegistry.register(
     state => state['features/base/conference'].conference,
-    (conference, { dispatch, getState }, previousConference) => {
+    (conference, { dispatch }, previousConference) => {
         if (conference && !previousConference) {
             conference.on(JitsiConferenceEvents.MEMBERS_ONLY_CHANGED, enabled => {
                 dispatch(setLobbyModeEnabled(enabled));
@@ -67,13 +66,6 @@ StateListenerRegistry.register(
             conference.on(JitsiConferenceEvents.LOBBY_USER_LEFT, id => {
                 dispatch(knockingParticipantLeft(id));
             });
-
-            conference.on(JitsiConferenceEvents.ENDPOINT_MESSAGE_RECEIVED, (origin, sender) =>
-                _maybeSendLobbyNotification(origin, sender, {
-                    dispatch,
-                    getState
-                })
-            );
         }
     });
 
@@ -158,44 +150,4 @@ function _findLoadableAvatarForKnockingParticipant({ dispatch, getState }, { id 
             }
         });
     }
-}
-
-/**
- * Check the endpoint message that arrived through the conference and
- * sends a lobby notification, if the message belongs to the feature.
- *
- * @param {Object} origin - The origin (initiator) of the message.
- * @param {Object} message - The actual message.
- * @param {Object} store - The Redux store.
- * @returns {void}
- */
-function _maybeSendLobbyNotification(origin, message, { dispatch, getState }) {
-    if (!origin?._id || message?.type !== 'lobby-notify') {
-        return;
-    }
-
-    const notificationProps: any = {
-        descriptionArguments: {
-            originParticipantName: getParticipantDisplayName(getState, origin._id)
-        },
-        titleKey: 'lobby.notificationTitle'
-    };
-
-    switch (message.event) {
-    case 'LOBBY-ENABLED':
-        notificationProps.descriptionKey = `lobby.notificationLobby${message.value ? 'En' : 'Dis'}abled`;
-        break;
-    case 'LOBBY-ACCESS-GRANTED':
-        notificationProps.descriptionKey = 'lobby.notificationLobbyAccessGranted';
-        notificationProps.descriptionArguments.targetParticipantName
-            = getKnockingParticipantById(getState, message.value)?.name;
-        break;
-    case 'LOBBY-ACCESS-DENIED':
-        notificationProps.descriptionKey = 'lobby.notificationLobbyAccessDenied';
-        notificationProps.descriptionArguments.targetParticipantName
-            = getKnockingParticipantById(getState, message.value)?.name;
-        break;
-    }
-
-    dispatch(showNotification(notificationProps, 5000));
 }

@@ -143,10 +143,6 @@ MiddlewareRegistry.register(store => next => action => {
         if (typeof APP !== 'undefined') {
             const result = next(action);
 
-            if (isPrejoinPageVisible(store.getState())) {
-                return result;
-            }
-
             const { jitsiTrack } = action.track;
             const muted = jitsiTrack.isMuted();
             const participantID = jitsiTrack.getParticipantId();

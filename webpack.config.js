@@ -55,7 +55,7 @@ const config = {
             // as well.
 
             exclude: [
-                new RegExp(`${__dirname}/node_modules/(?!@jitsi/js-utils)`)
+                new RegExp(`${__dirname}/node_modules/(?!js-utils)`)
             ],
             loader: 'babel-loader',
             options: {

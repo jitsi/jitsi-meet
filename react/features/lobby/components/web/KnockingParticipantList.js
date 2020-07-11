@@ -40,7 +40,7 @@ class KnockingParticipantList extends AbstractKnockingParticipantList<Props> {
                 className = { _toolboxVisible ? 'toolbox-visible' : '' }
                 id = 'knocking-participant-list'>
                 <span className = 'title'>
-                    { t('lobby.knockingParticipantList') }
+                    Knocking participant list
                 </span>
                 <ul>
                     { _participants.map(p => (

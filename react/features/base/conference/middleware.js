@@ -117,15 +117,14 @@ StateListenerRegistry.register(
             maxReceiverVideoQuality,
             preferredVideoQuality
         } = currentState;
-        const changedConference = conference !== previousState.conference;
         const changedPreferredVideoQuality
             = preferredVideoQuality !== previousState.preferredVideoQuality;
         const changedMaxVideoQuality = maxReceiverVideoQuality !== previousState.maxReceiverVideoQuality;
 
-        if (changedConference || changedPreferredVideoQuality || changedMaxVideoQuality) {
+        if (changedPreferredVideoQuality || changedMaxVideoQuality) {
             _setReceiverVideoConstraint(conference, preferredVideoQuality, maxReceiverVideoQuality);
         }
-        if (changedConference || changedPreferredVideoQuality) {
+        if (changedPreferredVideoQuality) {
             _setSenderVideoConstraint(conference, preferredVideoQuality);
         }
     });
@@ -461,10 +460,7 @@ function _sendTones({ getState }, next, action) {
  */
 function _setReceiverVideoConstraint(conference, preferred, max) {
     if (conference) {
-        const value = Math.min(preferred, max);
-
-        conference.setReceiverVideoConstraint(value);
-        logger.info(`setReceiverVideoConstraint: ${value}`);
+        conference.setReceiverVideoConstraint(Math.min(preferred, max));
     }
 }
 

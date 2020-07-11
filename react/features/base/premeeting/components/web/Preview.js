@@ -15,11 +15,6 @@ export type Props = {
     name: string,
 
     /**
-     * Indicates whether the avatar should be shown when video is off
-     */
-    showAvatar: boolean,
-
-    /**
      * Flag signaling the visibility of camera preview.
      */
     videoMuted: boolean,
@@ -37,7 +32,7 @@ export type Props = {
  * @returns {ReactElement}
  */
 function Preview(props: Props) {
-    const { name, showAvatar, videoMuted, videoTrack } = props;
+    const { name, videoMuted, videoTrack } = props;
 
     if (!videoMuted && videoTrack) {
         return (
@@ -49,26 +44,18 @@ function Preview(props: Props) {
         );
     }
 
-    if (showAvatar) {
-        return (
-            <div
-                className = 'no-video'
-                id = 'preview'>
-                <Avatar
-                    className = 'preview-avatar'
-                    displayName = { name }
-                    participantId = 'local'
-                    size = { 200 } />
-            </div>
-        );
-    }
-
-    return null;
+    return (
+        <div
+            className = 'no-video'
+            id = 'preview'>
+            <Avatar
+                className = 'preview-avatar'
+                displayName = { name }
+                participantId = 'local'
+                size = { 200 } />
+        </div>
+    );
 }
-
-Preview.defaultProps = {
-    showAvatar: true
-};
 
 /**
  * Maps part of the Redux state to the props of this component.

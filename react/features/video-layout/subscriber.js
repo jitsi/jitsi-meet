@@ -32,7 +32,8 @@ StateListenerRegistry.register(
         dispatch(selectParticipant());
 
         if (!displayTileView) {
-            dispatch(setMaxReceiverVideoQuality(VIDEO_QUALITY_LEVELS.HIGH));
+            dispatch(
+                setMaxReceiverVideoQuality(VIDEO_QUALITY_LEVELS.HIGH));
 
             if (_getAutoPinSetting()) {
                 _updateAutoPinnedParticipant(store);

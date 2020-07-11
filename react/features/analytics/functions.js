@@ -117,9 +117,7 @@ export function createHandlers({ getState }: { getState: Function }) {
             })
             .catch(e => {
                 analytics.dispose();
-                if (handlers.length !== 0) {
-                    logger.error(e);
-                }
+                logger.error(e);
 
                 return [];
             }));

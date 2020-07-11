@@ -864,7 +864,6 @@
         "header": "Help center"
     },
     "lobby": {
-        "knockingParticipantList" : "Knocking participant list",
         "allow": "Allow",
         "backToKnockModeButton": "No password, ask to join instead",
         "dialogTitle": "Lobby mode",
@@ -886,11 +885,6 @@
         "knockButton": "Ask to Join",
         "knockTitle": "Someone wants to join the meeting",
         "nameField": "Enter your name",
-        "notificationLobbyAccessDenied": "{{targetParticipantName}} has been rejected to join by {{originParticipantName}}",
-        "notificationLobbyAccessGranted": "{{targetParticipantName}} has been allowed to join by {{originParticipantName}}",
-        "notificationLobbyDisabled": "Lobby has been disabled by {{originParticipantName}}",
-        "notificationLobbyEnabled": "Lobby has been enabled by {{originParticipantName}}",
-        "notificationTitle": "Lobby",
         "passwordField": "Enter meeting password",
         "passwordJoinButton": "Join",
         "reject": "Reject",

@@ -41,7 +41,6 @@ import '../subtitles/middleware';
 import '../toolbox/middleware';
 import '../transcribing/middleware';
 import '../video-layout/middleware';
-import '../video-quality/middleware';
 import '../videosipgw/middleware';
 
 import './middleware';
