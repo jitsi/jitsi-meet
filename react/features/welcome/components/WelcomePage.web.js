@@ -23,7 +23,7 @@ import { AbstractWelcomePage, _mapStateToProps } from './AbstractWelcomePage';
 import Tabs from './Tabs';
 
 // import { setCurrentUser } from '../../base/auth';
-import jitsiLocalStorage from '../../../../modules/util/JitsiLocalStorage';
+import { jitsiLocalStorage } from '@jitsi/js-utils';
 import { setJWT } from '../../base/jwt';
 
 /**
