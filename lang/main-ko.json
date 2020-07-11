@@ -518,6 +518,12 @@
     "sectionList": {
         "pullToRefresh": "당겨서 새로고침"
     },
+    "security": {
+        "about": "회의에 $t(lockRoomPassword)를 추가합니다. 참가자가 회의에 참석하려면 $t(lockRoomPassword)를 입력해야 합니다.",
+        "aboutReadOnly": "방장은 회의에 $t(lockRoomPassword)를 추가할 수 있습니다. 참가자가 회의에 참석하려면 $t(lockRoomPassword)를 입력해야 합니다.",
+        "insecureRoomNameWarning": "회의실 이름은 안전하지 않습니다. 원하지 않는 참가자가 회의에 참여할 수 있습니다. 보안 버튼을 사용하여 회의 보안을 고려하십시오.",
+        "securityOptions": "보안 옵션"
+    },
     "settings": {
         "calendar": {
             "about": "",
@@ -759,5 +765,45 @@
         "sendFeedback": "",
         "terms": "이용약관",
         "title": ""
+    },
+    "lonelyMeetingExperience": {
+        "button": "다른 사람 초대",
+        "youAreAlone": "회의에 혼자 있습니다."
+    },
+    "helpView": {
+        "header": "도움말 센터"
+    },
+    "lobby": {
+        "knockingParticipantList" : "참가자 목록 요청",
+        "allow": "허용",
+        "backToKnockModeButton": "암호 없음, 대신 가입 요청",
+        "dialogTitle": "로비 모드",
+        "disableDialogContent": "현재 로비 모드가 활성화되어 있습니다. 이 기능은 원치 않는 참가자가 회의에 참여할 수 없도록합니다. 비활성화 하시겠습니까?",
+        "disableDialogSubmit": "비활성화",
+        "emailField": "이메일 주소를 입력하세요",
+        "enableDialogPasswordField": "암호 설정 (선택사항)",
+        "enableDialogSubmit": "활성화",
+        "enableDialogText": "로비 모드를 사용하면 방장이 공식적으로 승인 한 후에 만 ​​사람들이 입장 할 수 있도록하여 회의를 보호 할 수 있습니다.",
+        "enterPasswordButton": "회의 비밀번호 입력",
+        "enterPasswordTitle": "회의에 참여하려면 비밀번호를 입력하세요",
+        "invalidPassword": "잘못된 비밀번호",
+        "joiningMessage": "다른 사람이 귀하의 요청을 수락하자마자 회의에 참석합니다",
+        "joinWithPasswordMessage": "비밀번호로 가입을 시도하는 중입니다. 잠시만 기다려주세요...",
+        "joinRejectedMessage": "방장이 귀하의 가입 요청을 거부했습니다.",
+        "joinTitle": "미팅 참여",
+        "joiningTitle": "회의에 참석하려고 합니다...",
+        "joiningWithPasswordTitle": "비밀번호로 가입...",
+        "knockButton": "가입 요청",
+        "knockTitle": "누군가 회의에 참여하려고 합니다",
+        "nameField": "이름을 입력하세요",
+        "notificationLobbyAccessDenied": "{{targetParticipantName}}님이 {{originParticipantName}}님의 참여를 거부했습니다.",
+        "notificationLobbyAccessGranted": "{{targetParticipantName}}님이 {{originParticipantName}}님의 참여를 허용했습니다.",
+        "notificationLobbyDisabled": "{{originParticipantName}}님이 로비를 비활성화 했습니다",
+        "notificationLobbyEnabled": "{{originParticipantName}}님이 로비를 활성화 했습니다",
+        "notificationTitle": "로비",
+        "passwordField": "회의 비밀번호 입력",
+        "passwordJoinButton": "가입",
+        "reject": "거부",
+        "toggleLabel": "로비 활성화"
     }
 }
