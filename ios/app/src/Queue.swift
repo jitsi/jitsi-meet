@@ -30,6 +30,7 @@ struct QueueStack<T>: Queue {
   private var dequeuStack = [T]()
   
   var isEmpty: Bool {
+//    print("counts my lord \(dequeuStack.count) \(enqueuStack.count) \(dequeuStack.isEmpty && enqueuStack.isEmpty)");
     return dequeuStack.isEmpty && enqueuStack.isEmpty
   }
   
@@ -38,11 +39,14 @@ struct QueueStack<T>: Queue {
   }
   
   mutating func enqueue(_ element: T) {
+//    print("pushing .....")
     enqueuStack.append(element)
+//    print("counts my lord \(dequeuStack.count) \(enqueuStack.count)");
   }
   
   @discardableResult
   mutating func dequeue() -> T? {
+    
     if self.isEmpty {
       return nil
     }
@@ -50,6 +54,10 @@ struct QueueStack<T>: Queue {
       dequeuStack = enqueuStack.reversed()
       enqueuStack.removeAll()
     }
-    return dequeuStack.popLast()
+    let data = dequeuStack.popLast();
+    if (data != nil) {
+      print(data)
+    }
+    return data
   }
 }

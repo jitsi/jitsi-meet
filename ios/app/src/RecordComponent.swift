@@ -59,9 +59,9 @@ class RecordComponent: RCTViewManager {
                 break
               }
               var buffer = Data.init()
-              print("----------- trying to read screen capture data")
+//              print("----------- trying to read screen capture data")
               let firstContact = try connSock.read(into: &buffer)
-              print("----------- \(firstContact)")
+//              print("----------- \(firstContact)")
               let cim = CIImage.init(data: buffer)
               var pixelBuffer: CVPixelBuffer?
               // not using below as not req now

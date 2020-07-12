@@ -16,8 +16,9 @@ import WebRTC
   
   static var frameQueue: QueueStack<RTCVideoFrame> = QueueStack<RTCVideoFrame>()
   
-  @objc static func testFunc() -> RTCVideoFrame? {
-    return frameQueue.dequeue()
+  @objc static func getNextFrame() -> RTCVideoFrame? {
+    let videoFrame = frameQueue.dequeue();
+    return videoFrame
   }
   
   @objc static func isQueueEmpty() -> Bool {

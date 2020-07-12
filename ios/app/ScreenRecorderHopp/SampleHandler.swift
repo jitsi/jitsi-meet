@@ -76,7 +76,7 @@ class SampleHandler: RPBroadcastSampleHandler {
     override func processSampleBuffer(_ sampleBuffer: CMSampleBuffer, with sampleBufferType: RPSampleBufferType) {
         switch sampleBufferType {
         case RPSampleBufferType.video:
-          if Int.random(in: 1...5) != 3 {
+          if Int.random(in: 1...20) != 3 {
 //
             print("dropping frame")
             return

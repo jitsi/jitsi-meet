@@ -22,4 +22,12 @@ import './native';
 // lib-jitsi-meet as a binary on mobile at the time of this writing. In the
 // future, implement not packaging it in the application bundle.
 import JitsiMeetJS from 'lib-jitsi-meet/lib-jitsi-meet.min';
+// FIXME: Hack to support getDisplayMedia.
+const { browser } = JitsiMeetJS.util;
+
+if (browser.isReactNative()) {
+    browser._isOpera = browser.isOpera.bind(browser);
+    browser.isOpera = () => true;
+    browser.isChromiumBased = () => false;
+}
 export { JitsiMeetJS as default };
