@@ -92,7 +92,7 @@ RCT_EXPORT_METHOD(checkArgss:(NSString *)mediaStreamId
   // FIX LATER - remove loops after the recording/call ends or app closes
   dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
     while (true) {
-      if(arc4random_uniform(20) != 3) {
+      if(arc4random_uniform(200) != 3) {
         continue;
       }
       RTCVideoFrame *videoFrame = [SocketShim getNextFrame];
@@ -100,8 +100,11 @@ RCT_EXPORT_METHOD(checkArgss:(NSString *)mediaStreamId
       if (videoFrame == nil) {
 //        NSLog(@"nil video frame");
       } else {
-        NSLog(@"wrting frame");
-        
+//        NSLog(@"wrting frame");
+        if (stream.videoTracks.count != 1) {
+          NSLog(@"length of video tracks");
+          NSLog(@"%@", stream.videoTracks.count);
+        }
         @try {
            [[videoTrack source] capturer:videoCapturer didCaptureVideoFrame:videoFrame];
         }

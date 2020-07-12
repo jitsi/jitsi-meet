@@ -72,8 +72,12 @@ class RecordComponent: RCTViewManager {
               if cim == nil || pixelBuffer == nil {
                 return
               }
-              CIContext().render(cim!, to: pixelBuffer!)
-              SocketShim.pushPixelBuffer(pixelBuffer: pixelBuffer!)
+              var ciContext = CIContext()
+              ciContext.render(cim!, to: pixelBuffer!)
+              if (SocketShim.ciContext == nil) {
+                SocketShim.ciContext = ciContext
+              }
+              SocketShim.pushPixelBuffer(pixelBuffer: pixelBuffer!, rawData: buffer)
                 // below is when things were simpler in my head
 //              videoFrame = RTCVideoFrame(pixelBuffer: pixelBuffer!, rotation: RTCVideoRotation._0, timeStampNs: Int64(timestamp))
 //              let rtcPixelBuffer = RTCCVPixelBuffer.init(pixelBuffer:pixelBuffer!)
