@@ -5,7 +5,7 @@ import React from 'react';
 import { createDeepLinkUrl } from '../../../base/util/createDeepLinkUrl';
 
 /**
- * Create a link with createDeepLinkUrl (window.URL) method.
+ * Create a link with createDeepLinkUrl (extended window.URL) method.
  *
  * @returns {Object}
  */
@@ -22,7 +22,11 @@ const signDeepLink = () => {
     window.location = forward;
 };
 
-const Button = ({ children, ...rest }) => (
+type Props = {
+    children: React$Element<*> | string,
+};
+
+const Button = ({ children, ...rest }: Props) => (
     <div
         { ...rest }
         onClick = { signDeepLink } >
