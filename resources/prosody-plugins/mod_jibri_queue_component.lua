@@ -180,37 +180,42 @@ local function sendEvent(type,room_address,participant,edetails)
     }, cb);
 end
 
--- receives messages from client currently connected to the room
--- clients indicates their own dominant speaker events
-function on_message(event)
+-- receives iq from client currently connected to the room
+function on_iq(event)
     -- Check the type of the incoming stanza to avoid loops:
     if event.stanza.attr.type == "error" then
         return; -- We do not want to reply to these, so leave.
     end
+    if event.stanza.attr.to == module:get_host() then
+        if event.stanza.attr.type == "set" then
+            log("info", "Jibri Queue Messsage Event found: %s ",inspect(event.stanza));
 
-    local jibriQueue
-        = jibriQueue.stanza:get_child('jibriqueue', 'http://jitsi.org/jitmeet');
-    if jibriQueue then
-        local roomAddress = jibriQueue.attr.room;
-        local room = get_room_from_jid(room_jid_match_rewrite(roomAddress));
+            local jibriQueue
+                = event.stanza:get_child('jibriqueue', 'http://jitsi.org/protocol/jibri-queue');
+            if jibriQueue then
+                log("info", "Jibri Queue: %s ",inspect(jibriQueue));
+                local roomAddress = jibriQueue.attr.room;
+                local room = get_room_from_jid(room_jid_match_rewrite(roomAddress));
 
-        if not room then
-            log("warn", "No room found %s", roomAddress);
-            return false;
+                if not room then
+                    log("warn", "No room found %s", roomAddress);
+                    return false;
+                end
+
+                local from = event.stanza.attr.from;
+
+                local occupant = room:get_occupant_by_real_jid(from);
+                if not occupant then
+                    log("warn", "No occupant %s found for %s", from, roomAddress);
+                    return false;
+                end
+                -- now handle new jibri queue message
+                local edetails = {
+                    ["foo"] = "bar"
+                }
+                sendEvent('JoinQueue',room.jid,occupant.jid,edetails)
+            end
         end
-
-        local from = event.stanza.attr.from;
-
-        local occupant = room:get_occupant_by_real_jid(from);
-        if not occupant then
-            log("warn", "No occupant %s found for %s", from, roomAddress);
-            return false;
-        end
-        -- now handle new jibri queue message
-        local edetails = {
-            ["foo"] = "bar"
-        }
-        sendEvent('Message',roomAddress,from,edetails)
     end
     return true
 end
@@ -232,7 +237,7 @@ function occupant_joined(event)
     sendEvent('Join',room.jid,occupant.jid,edetails)
 end
 
-module:hook("message/host", on_message);
+module:hook("iq/host", on_iq);
 
 -- executed on every host added internally in prosody, including components
 function process_host(host)
