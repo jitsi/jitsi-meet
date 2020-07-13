@@ -150,7 +150,7 @@ var interfaceConfig = {
     REMOTE_THUMBNAIL_RATIO: 1, // 1:1
 
     SETTINGS_SECTIONS: [ 'devices', 'language', 'moderator', 'profile', 'calendar' ],
-    SHOW_BRAND_WATERMARK: true,
+    SHOW_BRAND_WATERMARK: false,
 
     /**
     * Decides whether the chrome extension banner should be rendered on the landing page and during the meeting.
@@ -161,9 +161,9 @@ var interfaceConfig = {
 
     SHOW_DEEP_LINKING_IMAGE: false,
     SHOW_JITSI_WATERMARK: false,
-    SHOW_POWERED_BY: true,
+    SHOW_POWERED_BY: false,
     SHOW_PROMOTIONAL_CLOSE_PAGE: false,
-    SHOW_WATERMARK_FOR_GUESTS: true, // if watermark is disabled by default, it can be shown only for guests
+    SHOW_WATERMARK_FOR_GUESTS: false, // if watermark is disabled by default, it can be shown only for guests
 
     /*
      * If indicated some of the error dialogs may point to the support URL for
@@ -187,7 +187,7 @@ var interfaceConfig = {
     TOOLBAR_BUTTONS: [
         'microphone', 'camera', 'closedcaptions', 'desktop', 'fullscreen',
         'fodeviceselection', 'hangup', 'profile', 'chat', /*'recording',
-        'livestreaming',*/ 'etherpad', 'sharedvideo', 'settings', 'raisehand',
+        'livestreaming',*/ 'etherpad', /*'sharedvideo',*/ 'settings', 'raisehand',
         'videoquality', 'filmstrip', 'invite', /*'feedback', 'stats',*/ 'shortcuts',
         'tileview', 'videobackgroundblur', /*'download',*/ 'help', 'mute-everyone', 'security'
     ],
