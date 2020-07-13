@@ -1,8 +1,13 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { View, Text } from "react-native";
-import Line from "../Line/Line";
+import { LIGHT_GRAY } from "../../consts/colors";
 
+const HorizontalLine = () => {
+  return (
+    <View style={{ height: 1, flex: 1, backgroundColor: LIGHT_GRAY }}></View>
+  );
+};
 const TextDivider = ({ style, text }) => {
   return (
     <View
@@ -13,7 +18,7 @@ const TextDivider = ({ style, text }) => {
         ...style,
       }}
     >
-      <Line />
+      <HorizontalLine />
       <Text
         style={{
           paddingHorizontal: 10,
@@ -23,7 +28,7 @@ const TextDivider = ({ style, text }) => {
       >
         {text}
       </Text>
-      <Line />
+      <HorizontalLine />
     </View>
   );
 };

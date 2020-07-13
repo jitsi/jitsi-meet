@@ -10,6 +10,7 @@ import InputLabel from "../../components/InputLabel/InputLabel";
 import { postech_logo } from "../../assets";
 import { screenState } from "../../modules/navigator";
 import { useSetRecoilState } from "recoil";
+import * as validators from "../../utils/validator";
 
 const STATUS_BAR_HEIGHT = 70; // TODO : add react-native-status-bar-height library
 // import {getStatusBarHeight} from 'react-native-status-bar-height';
@@ -22,15 +23,68 @@ const LoginScreen = () => {
   const [password, setPassword] = useState("");
   const [usernameValid, setUsernameValid] = useState(null);
   const [passwordValid, setPasswordValid] = useState(null);
+  const [usernameErrorMsg, setUsernameErrorMsg] = useState("");
+  const [passwordErrorMsg, setPasswordErrorMsg] = useState("");
 
   const onPressPostechLoginButton = () => {};
-  const onPressLoginSubmitButton = () => {};
-  const onChangeUsername = ({ nativeEvent: { text } }) => {
-    console.log(text);
-    setUsername(text);
+  const onPressLoginSubmitButton = () => {
+    //   api.login(form)
+    //   .then(resp => {
+    //     const token = resp.data;
+    //     window.localStorage.setItem(AUTH_JWT_TOKEN, token);
+    //     window.location.href = next || '/';
+    //   })
+    //   .catch(err => {
+    //     const reason = err.response.headers['www-authenticate'];
+    //     let description = err.message;
+    //     if (reason === 'user_not_found') {
+    //       description = t('error.usernameInvalid');
+    //     } else if (reason === 'password_not_match') {
+    //       description = t('error.passwordNotMatch');
+    //     }
+    //     notification.error({
+    //       message: t('login.loginFailed'),
+    //       description,
+    //     });
+    // });
   };
+
+  const checkVaildUsername = (value) => {
+    const error = validators.username(value);
+    if (error) {
+      setUsernameErrorMsg(error);
+      return false;
+    } else if (value === "") {
+      setUsernameErrorMsg("error.usernameRequired");
+      return false;
+    } else if (value && value.length < 5) {
+      setUsernameErrorMsg("error.usernameTooShort");
+      return false;
+    }
+    return true;
+  };
+
+  const onChangeUsername = ({ nativeEvent: { text } }) => {
+    setUsername(text);
+    const validity = checkVaildUsername(text);
+    setUsernameValid(validity);
+  };
+
+  const checkValidPassword = (value) => {
+    if (value.length >= 8) {
+      return true;
+    } else if (value === "") {
+      setPasswordErrorMsg("error.passwordRequired");
+      return false;
+    }
+    setPasswordErrorMsg("error.passwordTooShort");
+    return false;
+  };
+
   const onChangePassword = ({ nativeEvent: { text } }) => {
     setPassword(text);
+    const validity = checkValidPassword(text);
+    setPasswordValid(validity);
   };
 
   const onChangeRememberCheckBox = () => {
@@ -50,14 +104,27 @@ const LoginScreen = () => {
       />
       <View>
         <InputLabel name={"Username"} necessary={true} />
-        <Form type="username" value={username} onChnage={onChangeUsername} />
+        <Form
+          type="username"
+          value={username}
+          onChange={onChangeUsername}
+          valid={usernameValid}
+          errorMessage={usernameErrorMsg}
+        />
         <InputLabel name={"Password"} necessary={true} />
-        <Form type="password" value={password} onChange={onChangePassword} />
+        <Form
+          type="password"
+          value={password}
+          onChange={onChangePassword}
+          valid={passwordValid}
+          errorMessage={passwordErrorMsg}
+        />
         <View
           style={{
             flexDirection: "row",
             justifyContent: "space-between",
-            paddingVertical: 28,
+            paddingTop: 5,
+            paddingBottom: 28,
           }}
         >
           <View style={{ flexDirection: "row" }}>

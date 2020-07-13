@@ -7,6 +7,7 @@ const SubmitButton = ({ onPress, name, invalid }) => {
   return (
     <TouchableOpacity
       onPress={onPress}
+      disabled={invalid}
       style={{
         borderWidth: invalid ? 1 : 0,
         borderColor: LIGHT_GRAY,
