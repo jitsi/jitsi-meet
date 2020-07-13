@@ -27,8 +27,12 @@ function _mapStateToProps(state: Object, ownProps: Props) {
     const abstractProps = _abstractMapStateToProps(state, ownProps);
     let { visible } = ownProps;
 
+    if (!interfaceConfig.TOOLBAR_BUTTONS.includes('livestreaming')) {
+      visible = false;
+    }
+
     if (typeof visible === 'undefined') {
-        visible = interfaceConfig.TOOLBAR_BUTTONS.includes('livestreaming') && abstractProps.visible;
+        visible = abstractProps.visible;
     }
 
     return {

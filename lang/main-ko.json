@@ -12,7 +12,7 @@
         "failedToAdd": "참가자 추가 실패",
         "footerText": "전화 걸기가 비활성화되어 있습니다.",
         "googleEmail": "Google 이메일",
-        "inviteMoreHeader": "회의에 혼자 있습니다",
+        "inviteMoreHeader": "회의실에 혼자 있습니다",
         "inviteMoreMailSubject": "{{appName}} 회의에 참여",
         "inviteMorePrompt": "다른 사람 초대",
         "linkCopied": "링크가 클립보드에 복사되었습니다",
@@ -785,7 +785,7 @@
     },
     "lonelyMeetingExperience": {
         "button": "다른 사람 초대",
-        "youAreAlone": "회의에 혼자 있습니다"
+        "youAreAlone": "회의실에 혼자 있습니다"
     },
     "helpView": {
         "header": "도움말 센터"

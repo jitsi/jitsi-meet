@@ -27,8 +27,12 @@ export function _mapStateToProps(state: Object, ownProps: Props): Object {
     const abstractProps = _abstractMapStateToProps(state, ownProps);
     let { visible } = ownProps;
 
+    if (!interfaceConfig.TOOLBAR_BUTTONS.includes('recording')) {
+      visible = false;
+    }
+
     if (typeof visible === 'undefined') {
-        visible = interfaceConfig.TOOLBAR_BUTTONS.includes('recording') && abstractProps.visible;
+        visible = abstractProps.visible;
     }
 
     return {
