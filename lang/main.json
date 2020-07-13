@@ -110,6 +110,7 @@
         "localaddress_plural": "Local addresses:",
         "localport": "Local port:",
         "localport_plural": "Local ports:",
+        "maxEnabledResolution": "send max",
         "more": "Show more",
         "packetloss": "Packet loss:",
         "quality": {
