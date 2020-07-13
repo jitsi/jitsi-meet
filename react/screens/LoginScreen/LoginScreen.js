@@ -105,7 +105,6 @@ const LoginScreen = () => {
       <View>
         <InputLabel name={"Username"} necessary={true} />
         <Form
-          type="username"
           value={username}
           onChange={onChangeUsername}
           valid={usernameValid}

@@ -1,36 +1,55 @@
-import React from "react";
+import React, { useState } from "react";
 import PropTypes from "prop-types";
-import { View, TextInput, Text } from "react-native";
+import { View, TextInput, Text, Image, TouchableOpacity } from "react-native";
 import { INVALID_RED, LIGHT_GRAY, VALID_GREEN } from "../../consts/colors";
+import { eye_visible, eye_invisible } from "../../assets";
 
-const Form = ({ placeholder, valid, errorMessage, value, onChange }) => {
-  const ValidIcon = ({ valid }) => {
-    return (
-      <View
+const ValidIcon = ({ validity }) => {
+  return (
+    <View
+      style={{
+        height: 16,
+        width: 16,
+        borderRadius: 8,
+        alignSelf: "center",
+        marginLeft: 7,
+        backgroundColor: validity ? VALID_GREEN : INVALID_RED,
+      }}
+    >
+      <Text
         style={{
-          height: 16,
-          width: 16,
-          borderRadius: 8,
+          marginLeft: 1,
+          fontSize: 10,
           alignSelf: "center",
-          backgroundColor: valid ? VALID_GREEN : INVALID_RED,
+          textAlignVertical: "center",
+          lineHeight: 16,
+          color: "white",
+          fontWeight: "500",
         }}
       >
-        <Text
-          style={{
-            marginLeft: 1,
-            fontSize: 10,
-            alignSelf: "center",
-            textAlignVertical: "center",
-            lineHeight: 16,
-            color: "white",
-            fontWeight: "500",
-          }}
-        >
-          {valid ? "✓" : "✕"}
-        </Text>
-      </View>
-    );
+        {validity ? "✓" : "✕"}
+      </Text>
+    </View>
+  );
+};
+
+const VisibilityButton = ({ visiblity, onPress }) => {
+  return (
+    <TouchableOpacity onPress={onPress} style={{ justifyContent: "center" }}>
+      <Image
+        source={visiblity ? eye_visible : eye_invisible}
+        style={{ height: 16, width: 16 }}
+      />
+    </TouchableOpacity>
+  );
+};
+
+const Form = ({ placeholder, valid, errorMessage, value, onChange, type }) => {
+  const [passwordVisibility, setPasswordVisibility] = useState(true);
+  const onPressVisibilityButton = () => {
+    setPasswordVisibility(!passwordVisibility);
   };
+  console.log(valid);
 
   return (
     <>
@@ -41,13 +60,22 @@ const Form = ({ placeholder, valid, errorMessage, value, onChange }) => {
         }}
       >
         <TextInput
+          secureTextEntry={type === "password" ? passwordVisibility : false}
+          type={type === "password" ? "password" : "none"}
+          autoCapitalize={"none"}
           value={value}
           onChange={onChange}
           style={{ lineHeight: 20, flex: 1 }}
           placeholder={placeholder}
         />
+        {type === "password" ? (
+          <VisibilityButton
+            visiblity={passwordVisibility}
+            onPress={onPressVisibilityButton}
+          />
+        ) : null}
         {valid !== null && valid !== undefined ? (
-          <ValidIcon valid={valid} />
+          <ValidIcon validity={valid} />
         ) : null}
       </View>
       <Text
@@ -69,6 +97,7 @@ Form.propTypes = {
   onChange: PropTypes.func,
   valid: PropTypes.bool,
   errorMessage: PropTypes.string,
+  type: PropTypes.oneOf(["password", "email"]),
 };
 
 const styles = {
