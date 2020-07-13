@@ -679,6 +679,7 @@
             "moreOptions": "Show more options",
             "mute": "Toggle mute audio",
             "muteEveryone": "Mute everyone",
+            "kickEveryone": "Kick everyone",
             "pip": "Toggle Picture-in-Picture mode",
             "privateMessage": "Send private message",
             "profile": "Edit your profile",
