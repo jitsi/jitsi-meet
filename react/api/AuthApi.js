@@ -1,6 +1,7 @@
-import axios from 'axios';
+import axios from "axios";
+import { API_URL } from "../config";
 
-const apiRoot = process.env.REACT_APP_API_BASE;
+const apiRoot = API_URL;
 
 export function fetchCurrentUser() {
   return axios.get(`${apiRoot}/current-user`, { withCredentials: true });

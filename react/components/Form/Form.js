@@ -49,7 +49,6 @@ const Form = ({ placeholder, valid, errorMessage, value, onChange, type }) => {
   const onPressVisibilityButton = () => {
     setPasswordVisibility(!passwordVisibility);
   };
-  console.log(valid);
 
   return (
     <>

@@ -9,8 +9,11 @@ import SubmitButton from "../../components/SubmitButton/SubmitButton";
 import InputLabel from "../../components/InputLabel/InputLabel";
 import { postech_logo } from "../../assets";
 import { screenState } from "../../modules/navigator";
+import AsyncStorage from "@react-native-community/async-storage";
 import { useSetRecoilState } from "recoil";
 import * as validators from "../../utils/validator";
+import api from "../../api";
+import { JWT_TOKEN } from "../../config";
 
 const STATUS_BAR_HEIGHT = 70; // TODO : add react-native-status-bar-height library
 // import {getStatusBarHeight} from 'react-native-status-bar-height';
@@ -18,6 +21,10 @@ const STATUS_BAR_HEIGHT = 70; // TODO : add react-native-status-bar-height libra
 
 const LoginScreen = () => {
   const setScreen = useSetRecoilState(screenState);
+  const navigate = (to) => {
+    setScreen(to);
+  };
+
   const [remember, setRemember] = useState(true);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -28,25 +35,28 @@ const LoginScreen = () => {
 
   const onPressPostechLoginButton = () => {};
   const onPressLoginSubmitButton = () => {
-    //   api.login(form)
-    //   .then(resp => {
-    //     const token = resp.data;
-    //     window.localStorage.setItem(AUTH_JWT_TOKEN, token);
-    //     window.location.href = next || '/';
-    //   })
-    //   .catch(err => {
-    //     const reason = err.response.headers['www-authenticate'];
-    //     let description = err.message;
-    //     if (reason === 'user_not_found') {
-    //       description = t('error.usernameInvalid');
-    //     } else if (reason === 'password_not_match') {
-    //       description = t('error.passwordNotMatch');
-    //     }
-    //     notification.error({
-    //       message: t('login.loginFailed'),
-    //       description,
-    //     });
-    // });
+    const form = { username, password, remember };
+    api
+      .login(form)
+      .then(async (resp) => {
+        const token = resp.data;
+        await AsyncStorage.setItem(JWT_TOKEN, token);
+        navigate("Home");
+      })
+      .catch((err) => {
+        const reason = err.response.headers["www-authenticate"];
+        if (reason === "user_not_found") {
+          setUsernameValid(false);
+          setPasswordValid(true);
+          setUsernameErrorMsg("error.usernameInvalid");
+          setPasswordErrorMsg("");
+        } else if (reason === "password_not_match") {
+          setUsernameValid(true);
+          setPasswordValid(false);
+          setUsernameErrorMsg("");
+          setPasswordErrorMsg("error.passwordNotMatch");
+        }
+      });
   };
 
   const checkVaildUsername = (value) => {
@@ -89,10 +99,6 @@ const LoginScreen = () => {
 
   const onChangeRememberCheckBox = () => {
     setRemember(!remember);
-  };
-
-  const navigate = (to) => {
-    setScreen(to);
   };
 
   return (
