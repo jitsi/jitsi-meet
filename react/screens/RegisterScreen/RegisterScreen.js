@@ -6,12 +6,18 @@ import InputLabel from "../../components/InputLabel/InputLabel";
 import SubmitButton from "../../components/SubmitButton/SubmitButton";
 import { DARK_GRAY } from "../../consts/colors";
 import Form from "../../components/Form/Form";
-
+import { useSetRecoilState } from "recoil";
+import { screenState } from "../../modules/navigator";
 const STATUS_BAR_HEIGHT = 70; // TODO : add react-native-status-bar-height library
 // import {getStatusBarHeight} from 'react-native-status-bar-height';
 // const iosStatusBarHeight = getStatusBarHeight();
 
 const RegisterScreen = () => {
+  const setScreen = useSetRecoilState(screenState);
+  const navigate = (to) => {
+    setScreen(to);
+  };
+
   return (
     <View
       style={{
@@ -39,10 +45,11 @@ const RegisterScreen = () => {
       <Form />
       <SubmitButton name="Register" />
       <Text
+        onPress={() => navigate("Login")}
         style={{
           alignSelf: "center",
           paddingVertical: 20,
-          fontColor: DARK_GRAY,
+          color: DARK_GRAY,
         }}
       >
         Already Registered? - Login
