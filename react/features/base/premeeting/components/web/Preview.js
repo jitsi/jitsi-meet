@@ -54,11 +54,13 @@ function Preview(props: Props) {
             <div
                 className = 'no-video'
                 id = 'preview'>
-                <Avatar
-                    className = 'preview-avatar'
-                    displayName = { name }
-                    participantId = 'local'
-                    size = { 200 } />
+                <div className = 'preview-avatar-container'>
+                    <Avatar
+                        className = 'preview-avatar'
+                        displayName = { name }
+                        participantId = 'local'
+                        size = { 200 } />
+                </div>
             </div>
         );
     }
