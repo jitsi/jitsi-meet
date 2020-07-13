@@ -153,6 +153,20 @@ function filter_session(session)
     end
 end
 
+function attach_lobby_room(room)
+    local node = jid_split(room.jid);
+    local lobby_room_jid = node .. '@' .. lobby_muc_component_config;
+    if not lobby_muc_service.get_room_from_jid(lobby_room_jid) then
+        local new_room = lobby_muc_service.create_room(lobby_room_jid);
+        module:log("debug","Lobby room jid = %s created",lobby_room_jid);
+        new_room.main_room = room;
+        room._data.lobbyroom = new_room;
+        room:save(true);
+        return true
+    end
+    return false
+end
+
 -- process a host module directly if loaded or hooks to wait for its load
 function process_host_module(name, callback)
     local function process_host(host)
@@ -251,15 +265,14 @@ process_host_module(main_muc_component_config, function(host_module, host)
     -- hooks when lobby is enabled to create its room, only done here or by admin
     host_module:hook('muc-config-submitted', function(event)
         local actor, room = event.actor, event.room;
+        local actor_node = jid_split(actor);
+        if actor_node == 'focus' then
+            return;
+        end
         local members_only = event.fields['muc#roomconfig_membersonly'] and true or nil;
         if members_only then
-            local node = jid_split(room.jid);
-
-            local lobby_room_jid = node .. '@' .. lobby_muc_component_config;
-            if not lobby_muc_service.get_room_from_jid(lobby_room_jid) then
-                local new_room = lobby_muc_service.create_room(lobby_room_jid);
-                new_room.main_room = room;
-                room._data.lobbyroom = new_room;
+            local lobby_created = attach_lobby_room(room);
+            if lobby_created then
                 event.status_codes['104'] = true;
                 notify_lobby_enabled(room, actor, true);
             end
@@ -373,6 +386,14 @@ function update_session(event)
     end
 end
 
+function handle_create_lobby(event)
+    local room = event.room;
+    room:set_members_only(true);
+    module:log("info","Set room jid = %s as members only",room.jid);
+    attach_lobby_room(room)
+end
+
 module:hook_global('bosh-session', update_session);
 module:hook_global('websocket-session', update_session);
 module:hook_global('config-reloaded', load_config);
+module:hook_global('create-lobby-room', handle_create_lobby);
