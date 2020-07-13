@@ -20,7 +20,7 @@ export const CALENDAR_ENABLED = 'calendar.enabled';
 export const CALL_INTEGRATION_ENABLED = 'call-integration.enabled';
 
 /**
- * Flag indicating if chat should be enabled.
+ * Flag indicating if close captions should be enabled.
  * Default: enabled (true).
  */
 export const CLOSE_CAPTIONS_ENABLED = 'close-captions.enabled';

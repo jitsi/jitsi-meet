@@ -2,7 +2,7 @@
 
 import type { Dispatch } from 'redux';
 
-import { appNavigate } from '../app';
+import { appNavigate } from '../app/actions';
 import {
     CONFERENCE_FAILED,
     CONFERENCE_JOINED,

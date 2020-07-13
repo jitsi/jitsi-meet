@@ -1,11 +1,6 @@
 // @flow
 
 import { hasAvailableDevices } from '../base/devices';
-import {
-    isAudioDisabled,
-    isPrejoinPageVisible,
-    isPrejoinVideoDisabled
-} from '../prejoin';
 
 declare var interfaceConfig: Object;
 
@@ -60,12 +55,9 @@ export function isToolboxVisible(state: Object) {
  * @returns {boolean}
  */
 export function isAudioSettingsButtonDisabled(state: Object) {
-    const devicesMissing = !hasAvailableDevices(state, 'audioInput')
-          && !hasAvailableDevices(state, 'audioOutput');
-
-    return isPrejoinPageVisible(state)
-        ? devicesMissing || isAudioDisabled(state)
-        : devicesMissing;
+    return (!hasAvailableDevices(state, 'audioInput')
+          && !hasAvailableDevices(state, 'audioOutput'))
+          || state['features/base/config'].startSilent;
 }
 
 /**
@@ -75,9 +67,5 @@ export function isAudioSettingsButtonDisabled(state: Object) {
  * @returns {boolean}
  */
 export function isVideoSettingsButtonDisabled(state: Object) {
-    const devicesMissing = !hasAvailableDevices(state, 'videoInput');
-
-    return isPrejoinPageVisible(state)
-        ? devicesMissing || isPrejoinVideoDisabled(state)
-        : devicesMissing;
+    return !hasAvailableDevices(state, 'videoInput');
 }

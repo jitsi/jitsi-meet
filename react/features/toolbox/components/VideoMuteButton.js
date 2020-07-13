@@ -9,6 +9,7 @@ import {
     sendAnalytics
 } from '../../analytics';
 import { setAudioOnly } from '../../base/audio-only';
+import { hasAvailableDevices } from '../../base/devices';
 import { translate } from '../../base/i18n';
 import {
     VIDEO_MUTISM_AUTHORITY,
@@ -18,11 +19,6 @@ import { connect } from '../../base/redux';
 import { AbstractVideoMuteButton } from '../../base/toolbox';
 import type { AbstractButtonProps } from '../../base/toolbox';
 import { getLocalVideoType, isLocalVideoTrackMuted } from '../../base/tracks';
-import {
-    isPrejoinPageVisible,
-    isPrejoinVideoDisabled,
-    isPrejoinVideoMuted
-} from '../../prejoin/functions';
 
 declare var APP: Object;
 
@@ -191,19 +187,12 @@ class VideoMuteButton extends AbstractVideoMuteButton<Props, *> {
 function _mapStateToProps(state): Object {
     const { enabled: audioOnly } = state['features/base/audio-only'];
     const tracks = state['features/base/tracks'];
-    let _videoMuted = isLocalVideoTrackMuted(tracks);
-    let _videoDisabled = false;
-
-    if (isPrejoinPageVisible(state)) {
-        _videoMuted = isPrejoinVideoMuted(state);
-        _videoDisabled = isPrejoinVideoDisabled(state);
-    }
 
     return {
         _audioOnly: Boolean(audioOnly),
-        _videoDisabled,
+        _videoDisabled: !hasAvailableDevices(state, 'videoInput'),
         _videoMediaType: getLocalVideoType(tracks),
-        _videoMuted
+        _videoMuted: isLocalVideoTrackMuted(tracks)
     };
 }
 

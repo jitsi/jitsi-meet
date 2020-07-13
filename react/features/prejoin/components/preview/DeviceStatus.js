@@ -62,7 +62,9 @@ function DeviceStatus({ deviceStatusType, deviceStatusText, rawError, t }: Props
                 size = { 16 }
                 src = { src } />
             <span className = 'prejoin-preview-error-desc'>{t(deviceStatusText)}</span>
-            <span>{rawError}</span>
+            { rawError && <span>
+                { rawError }
+            </span> }
         </div>
     );
 }

@@ -82,7 +82,7 @@ deploy-local:
 
 .NOTPARALLEL:
 dev: deploy-init deploy-css deploy-rnnoise-binary deploy-lib-jitsi-meet deploy-libflac
-	$(WEBPACK_DEV_SERVER)
+	$(WEBPACK_DEV_SERVER) --detect-circular-deps
 
 source-package:
 	mkdir -p source_package/jitsi-meet/css && \

@@ -1,0 +1,35 @@
+#e2ee-section {
+    .title {
+        font-weight: 700;
+    }
+
+    .description {
+        font-size: .8em;
+        margin: 15px 0;
+    }
+
+    .key-field {
+        align-items: center;
+        display: flex;
+        flex-direction: row;
+
+        label {
+            font-weight: 700;
+        }
+
+        input {
+            background-color: inherit;
+            border: none;
+            color: inherit;
+            flex: 1;
+            padding: 0 5px;
+        }
+
+        a {
+            color: #6FB1EA;
+            cursor: pointer;
+            font-size: 14px;
+            text-decoration: none;
+        }
+    }
+}

@@ -31,7 +31,7 @@ type Props = AbstractButtonProps & {
 };
 
 /**
- * An implementation of a button to raise or lower hand.
+ * An implementation of a button to Mute Everyone
  */
 class MuteEveryoneElseButton extends AbstractButton<Props, *> {
     accessibilityLabel = 'toolbar.accessibilityLabel.muteEveryone';

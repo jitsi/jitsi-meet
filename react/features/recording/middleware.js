@@ -26,6 +26,7 @@ import {
     hidePendingRecordingNotification,
     showPendingRecordingNotification,
     showRecordingError,
+    showRecordingLimitNotification,
     showStartedRecordingNotification,
     showStoppedRecordingNotification,
     updateRecordingSessionData
@@ -43,6 +44,8 @@ import {
     RECORDING_OFF_SOUND_FILE,
     RECORDING_ON_SOUND_FILE
 } from './sounds';
+
+declare var interfaceConfig: Object;
 
 /**
  * StateListenerRegistry provides a reliable way to detect the leaving of a
@@ -131,7 +134,8 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
         const {
             iAmRecorder,
             iAmSipGateway,
-            disableRecordAudioNotification
+            disableRecordAudioNotification,
+            recordingLimit
         } = getState()['features/base/config'];
 
         if (iAmRecorder && !iAmSipGateway) {
@@ -151,9 +155,16 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
 
             if (updatedSessionData.status === ON
                 && (!oldSessionData || oldSessionData.status !== ON)) {
-                const initiatorName = initiator && getParticipantDisplayName(getState, initiator.getId());
+                if (initiator) {
+                    const initiatorName = initiator && getParticipantDisplayName(getState, initiator.getId());
 
-                initiatorName && dispatch(showStartedRecordingNotification(mode, initiatorName));
+                    initiatorName && dispatch(showStartedRecordingNotification(mode, initiatorName));
+                } else if (typeof recordingLimit === 'object') {
+                    // Show notification with additional information to the initiator.
+                    dispatch(showRecordingLimitNotification(mode));
+                }
+
+
                 sendAnalytics(createRecordingEvent('start', mode));
 
                 if (disableRecordAudioNotification) {

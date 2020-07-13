@@ -37,6 +37,8 @@ const commands = {
     sendEndpointTextMessage: 'send-endpoint-text-message',
     sendTones: 'send-tones',
     setVideoQuality: 'set-video-quality',
+    startRecording: 'start-recording',
+    stopRecording: 'stop-recording',
     subject: 'subject',
     submitFeedback: 'submit-feedback',
     toggleAudio: 'toggle-audio',

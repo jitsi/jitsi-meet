@@ -23,6 +23,8 @@ import { appendSuffix } from '../display-name';
 import { SUBMIT_FEEDBACK_ERROR, SUBMIT_FEEDBACK_SUCCESS } from '../feedback';
 import { SET_FILMSTRIP_VISIBLE } from '../filmstrip';
 
+import './subscriber';
+
 declare var APP: Object;
 declare var interfaceConfig: Object;
 

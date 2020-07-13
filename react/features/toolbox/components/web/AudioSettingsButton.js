@@ -117,7 +117,9 @@ class AudioSettingsButton extends Component<Props, State> {
      */
     render() {
         const { isDisabled, onAudioOptionsClick, visible } = this.props;
-        const settingsDisabled = !this.state.hasPermissions || isDisabled;
+        const settingsDisabled = !this.state.hasPermissions
+            || isDisabled
+            || !JitsiMeetJS.mediaDevices.isMultipleAudioInputSupported();
 
         return visible ? (
             <AudioSettingsPopup>

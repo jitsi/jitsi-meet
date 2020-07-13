@@ -5,14 +5,17 @@ import uuid from 'uuid';
 import { getRoomName } from '../base/conference';
 import { getDialOutStatusUrl, getDialOutUrl } from '../base/config/functions';
 import { createLocalTrack } from '../base/lib-jitsi-meet';
+import {
+    getLocalAudioTrack,
+    getLocalVideoTrack,
+    trackAdded,
+    replaceLocalTrack
+} from '../base/tracks';
 import { openURLInBrowser } from '../base/util';
 import { executeDialOutRequest, executeDialOutStatusRequest, getDialInfoPageURL } from '../invite/functions';
 import { showErrorNotification } from '../notifications';
 
 import {
-    ADD_PREJOIN_AUDIO_TRACK,
-    ADD_PREJOIN_CONTENT_SHARING_TRACK,
-    ADD_PREJOIN_VIDEO_TRACK,
     PREJOIN_START_CONFERENCE,
     SET_DEVICE_STATUS,
     SET_DIALOUT_COUNTRY,
@@ -20,19 +23,13 @@ import {
     SET_DIALOUT_STATUS,
     SET_SKIP_PREJOIN,
     SET_JOIN_BY_PHONE_DIALOG_VISIBLITY,
-    SET_PREJOIN_AUDIO_DISABLED,
-    SET_PREJOIN_AUDIO_MUTED,
     SET_PREJOIN_DEVICE_ERRORS,
-    SET_PREJOIN_PAGE_VISIBILITY,
-    SET_PREJOIN_VIDEO_DISABLED,
-    SET_PREJOIN_VIDEO_MUTED
+    SET_PREJOIN_PAGE_VISIBILITY
 } from './actionTypes';
 import {
     getFullDialOutNumber,
-    getAudioTrack,
     getDialOutConferenceUrl,
     getDialOutCountry,
-    getVideoTrack,
     isJoinByPhoneDialogVisible
 } from './functions';
 import logger from './logger';
@@ -59,45 +56,6 @@ const STATUS_REQ_FREQUENCY = 2000;
  * The maximum number of retries while polling for dial out status.
  */
 const STATUS_REQ_CAP = 45;
-
-/**
- * Action used to add an audio track to the store.
- *
- * @param {Object} value - The track to be added.
- * @returns {Object}
- */
-export function addPrejoinAudioTrack(value: Object) {
-    return {
-        type: ADD_PREJOIN_AUDIO_TRACK,
-        value
-    };
-}
-
-/**
- * Action used to add a video track to the store.
- *
- * @param {Object} value - The track to be added.
- * @returns {Object}
- */
-export function addPrejoinVideoTrack(value: Object) {
-    return {
-        type: ADD_PREJOIN_VIDEO_TRACK,
-        value
-    };
-}
-
-/**
- * Action used to add a content sharing track to the store.
- *
- * @param {Object} value - The track to be added.
- * @returns {Object}
- */
-export function addPrejoinContentSharingTrack(value: Object) {
-    return {
-        type: ADD_PREJOIN_CONTENT_SHARING_TRACK,
-        value
-    };
-}
 
 /**
  * Polls for status change after dial out.
@@ -232,27 +190,10 @@ export function dialOut(onSuccess: Function, onFail: Function) {
  */
 export function initPrejoin(tracks: Object[], errors: Object) {
     return async function(dispatch: Function) {
-        const audioTrack = tracks.find(t => t.isAudioTrack());
-        const videoTrack = tracks.find(t => t.isVideoTrack());
-
         dispatch(setPrejoinDeviceErrors(errors));
 
-        if (audioTrack) {
-            dispatch(addPrejoinAudioTrack(audioTrack));
-        } else {
-            dispatch(setAudioDisabled());
-        }
 
-        if (videoTrack) {
-            if (videoTrack.videoType === 'desktop') {
-                dispatch(addPrejoinContentSharingTrack(videoTrack));
-                dispatch(setPrejoinVideoDisabled(true));
-            } else {
-                dispatch(addPrejoinVideoTrack(videoTrack));
-            }
-        } else {
-            dispatch(setPrejoinVideoDisabled(true));
-        }
+        tracks.forEach(track => dispatch(trackAdded(track)));
     };
 }
 
@@ -275,12 +216,12 @@ export function joinConference() {
  */
 export function joinConferenceWithoutAudio() {
     return async function(dispatch: Function, getState: Function) {
-        const audioTrack = getAudioTrack(getState());
+        const tracks = getState()['features/base/tracks'];
+        const audioTrack = getLocalAudioTrack(tracks)?.jitsiTrack;
 
         if (audioTrack) {
-            await dispatch(replacePrejoinAudioTrack(null));
+            await dispatch(replaceLocalTrack(audioTrack, null));
         }
-        dispatch(setAudioDisabled());
         dispatch(joinConference());
     };
 }
@@ -302,51 +243,23 @@ export function openDialInPage() {
 }
 
 /**
- * Replaces the existing audio track with a new one.
- *
- * @param {Object} track - The new track.
- * @returns {Function}
- */
-export function replacePrejoinAudioTrack(track: Object) {
-    return async (dispatch: Function, getState: Function) => {
-        const oldTrack = getAudioTrack(getState());
-
-        oldTrack && await oldTrack.dispose();
-        dispatch(addPrejoinAudioTrack(track));
-    };
-}
-
-/**
  * Creates a new audio track based on a device id and replaces the current one.
  *
  * @param {string} deviceId - The deviceId of the microphone.
  * @returns {Function}
  */
 export function replaceAudioTrackById(deviceId: string) {
-    return async (dispatch: Function) => {
+    return async (dispatch: Function, getState: Function) => {
         try {
-            const track = await createLocalTrack('audio', deviceId);
+            const tracks = getState()['features/base/tracks'];
+            const newTrack = await createLocalTrack('audio', deviceId);
+            const oldTrack = getLocalAudioTrack(tracks)?.jitsiTrack;
 
-            dispatch(replacePrejoinAudioTrack(track));
+            dispatch(replaceLocalTrack(oldTrack, newTrack));
         } catch (err) {
             dispatch(setDeviceStatusWarning('prejoin.audioTrackError'));
             logger.log('Error replacing audio track', err);
         }
-    };
-}
-
-/**
- * Replaces the existing video track with a new one.
- *
- * @param {Object} track - The new track.
- * @returns {Function}
- */
-export function replacePrejoinVideoTrack(track: Object) {
-    return async (dispatch: Function, getState: Function) => {
-        const oldTrack = getVideoTrack(getState());
-
-        oldTrack && await oldTrack.dispose();
-        dispatch(addPrejoinVideoTrack(track));
     };
 }
 
@@ -357,67 +270,17 @@ export function replacePrejoinVideoTrack(track: Object) {
  * @returns {Function}
  */
 export function replaceVideoTrackById(deviceId: Object) {
-    return async (dispatch: Function) => {
+    return async (dispatch: Function, getState: Function) => {
         try {
-            const track = await createLocalTrack('video', deviceId);
+            const tracks = getState()['features/base/tracks'];
+            const newTrack = await createLocalTrack('video', deviceId);
+            const oldTrack = getLocalVideoTrack(tracks)?.jitsiTrack;
 
-            dispatch(replacePrejoinVideoTrack(track));
+            dispatch(replaceLocalTrack(oldTrack, newTrack));
         } catch (err) {
             dispatch(setDeviceStatusWarning('prejoin.videoTrackError'));
             logger.log('Error replacing video track', err);
         }
-    };
-}
-
-
-/**
- * Action used to mark audio muted.
- *
- * @param {boolean} value - True for muted.
- * @returns {Object}
- */
-export function setPrejoinAudioMuted(value: boolean) {
-    return {
-        type: SET_PREJOIN_AUDIO_MUTED,
-        value
-    };
-}
-
-/**
- * Action used to mark video disabled.
- *
- * @param {boolean} value - True for muted.
- * @returns {Object}
- */
-export function setPrejoinVideoDisabled(value: boolean) {
-    return {
-        type: SET_PREJOIN_VIDEO_DISABLED,
-        value
-    };
-}
-
-
-/**
- * Action used to mark video muted.
- *
- * @param {boolean} value - True for muted.
- * @returns {Object}
- */
-export function setPrejoinVideoMuted(value: boolean) {
-    return {
-        type: SET_PREJOIN_VIDEO_MUTED,
-        value
-    };
-}
-
-/**
- * Action used to mark audio as disabled.
- *
- * @returns {Object}
- */
-export function setAudioDisabled() {
-    return {
-        type: SET_PREJOIN_AUDIO_DISABLED
     };
 }
 

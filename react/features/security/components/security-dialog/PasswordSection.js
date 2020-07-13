@@ -169,19 +169,22 @@ function PasswordSection({
     }
 
     return (
-        <div className = 'security-dialog password'>
-            <div
-                className = 'info-dialog info-dialog-column info-dialog-password'
-                ref = { formRef }>
-                <PasswordForm
-                    editEnabled = { passwordEditEnabled }
-                    locked = { locked }
-                    onSubmit = { onPasswordSubmit }
-                    password = { password }
-                    passwordNumberOfDigits = { passwordNumberOfDigits } />
-            </div>
-            <div className = 'security-dialog password-actions'>
-                { renderPasswordActions() }
+        <div className = 'security-dialog password-section'>
+            { t('security.about') }
+            <div className = 'security-dialog password'>
+                <div
+                    className = 'info-dialog info-dialog-column info-dialog-password'
+                    ref = { formRef }>
+                    <PasswordForm
+                        editEnabled = { passwordEditEnabled }
+                        locked = { locked }
+                        onSubmit = { onPasswordSubmit }
+                        password = { password }
+                        passwordNumberOfDigits = { passwordNumberOfDigits } />
+                </div>
+                <div className = 'security-dialog password-actions'>
+                    { renderPasswordActions() }
+                </div>
             </div>
         </div>
     );

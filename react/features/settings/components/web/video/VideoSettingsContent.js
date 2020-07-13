@@ -167,6 +167,7 @@ class VideoSettingsContent extends Component<Props, State> {
                 <div className = 'video-preview-overlay' />
                 <Video
                     className = { videoClassName }
+                    playsinline = { true }
                     videoTrack = {{ jitsiTrack }} />
             </div>
         );

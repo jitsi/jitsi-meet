@@ -104,8 +104,6 @@ export function createLocalTracksF(options = {}, firePermissionPromptIsShownEven
                 {
                     cameraDeviceId,
                     constraints,
-                    desktopSharingExtensionExternalInstallation:
-                        options.desktopSharingExtensionExternalInstallation,
                     desktopSharingFrameRate,
                     desktopSharingSourceDevice:
                         options.desktopSharingSourceDevice,
@@ -198,6 +196,18 @@ export function getLocalVideoType(tracks) {
     const presenterTrack = getLocalTrack(tracks, MEDIA_TYPE.PRESENTER);
 
     return presenterTrack ? MEDIA_TYPE.PRESENTER : MEDIA_TYPE.VIDEO;
+}
+
+/**
+ * Returns the stored local video track.
+ *
+ * @param {Object} state - The redux state.
+ * @returns {Object}
+ */
+export function getLocalJitsiVideoTrack(state) {
+    const track = getLocalVideoTrack(state['features/base/tracks']);
+
+    return track?.jitsiTrack;
 }
 
 /**

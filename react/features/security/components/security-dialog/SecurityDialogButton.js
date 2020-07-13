@@ -2,7 +2,7 @@
 
 import { createToolbarEvent, sendAnalytics } from '../../../analytics';
 import { translate } from '../../../base/i18n';
-import { IconLockPassword, IconUnlockPassword } from '../../../base/icons';
+import { IconSecurityOff, IconSecurityOn } from '../../../base/icons';
 import { connect } from '../../../base/redux';
 import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox';
 import { openSecurityDialog } from '../../actions';
@@ -28,9 +28,9 @@ type Props = AbstractButtonProps & {
  */
 class SecurityDialogButton extends AbstractButton<Props, *> {
     accessibilityLabel = 'toolbar.accessibilityLabel.security';
-    icon = IconUnlockPassword;
+    icon = IconSecurityOff;
     label = 'toolbar.security';
-    toggledIcon = IconLockPassword;
+    toggledIcon = IconSecurityOn;
     tooltip = 'toolbar.security';
 
     /**
@@ -63,9 +63,10 @@ class SecurityDialogButton extends AbstractButton<Props, *> {
  */
 function mapStateToProps(state: Object) {
     const { locked } = state['features/base/conference'];
+    const { lobbyEnabled } = state['features/lobby'];
 
     return {
-        _locked: locked
+        _locked: locked || lobbyEnabled
     };
 }
 

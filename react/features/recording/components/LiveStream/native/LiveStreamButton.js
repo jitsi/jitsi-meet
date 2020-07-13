@@ -2,19 +2,8 @@
 
 import { LIVE_STREAMING_ENABLED, getFeatureFlag } from '../../../../base/flags';
 import { translate } from '../../../../base/i18n';
-import { IconLiveStreaming } from '../../../../base/icons';
 import { connect } from '../../../../base/redux';
-import AbstractLiveStreamButton, {
-    _mapStateToProps as _abstractMapStateToProps,
-    type Props
-} from '../AbstractLiveStreamButton';
-
-/**
- * An implementation of a button for starting and stopping live streaming.
- */
-class LiveStreamButton extends AbstractLiveStreamButton<Props> {
-    icon = IconLiveStreaming;
-}
+import AbstractLiveStreamButton, { _mapStateToProps as _abstractMapStateToProps } from '../AbstractLiveStreamButton';
 
 /**
  * Maps (parts of) the redux state to the associated props for this component.
@@ -35,4 +24,4 @@ export function mapStateToProps(state: Object, ownProps: Object) {
     };
 }
 
-export default translate(connect(mapStateToProps)(LiveStreamButton));
+export default translate(connect(mapStateToProps)(AbstractLiveStreamButton));

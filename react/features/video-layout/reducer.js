@@ -1,7 +1,6 @@
 // @flow
 
-import { ReducerRegistry } from '../base/redux';
-import { PersistenceRegistry } from '../base/storage';
+import { PersistenceRegistry, ReducerRegistry } from '../base/redux';
 
 import {
     SCREEN_SHARE_PARTICIPANTS_UPDATED,

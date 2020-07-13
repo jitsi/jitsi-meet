@@ -8,13 +8,15 @@ import {
     sendAnalytics
 } from '../../analytics';
 import { openDisplayNamePrompt } from '../../display-name';
-import { CONNECTION_ESTABLISHED, CONNECTION_FAILED } from '../connection';
+import { showErrorNotification } from '../../notifications';
+import { CONNECTION_ESTABLISHED, CONNECTION_FAILED, connectionDisconnected } from '../connection';
 import { JitsiConferenceErrors } from '../lib-jitsi-meet';
 import { MEDIA_TYPE } from '../media';
 import {
     getLocalParticipant,
     getParticipantById,
     getPinnedParticipant,
+    PARTICIPANT_ROLE,
     PARTICIPANT_UPDATED,
     PIN_PARTICIPANT
 } from '../participants';
@@ -140,13 +142,40 @@ StateListenerRegistry.register(
  * @private
  * @returns {Object} The value returned by {@code next(action)}.
  */
-function _conferenceFailed(store, next, action) {
+function _conferenceFailed({ dispatch, getState }, next, action) {
     const result = next(action);
-
     const { conference, error } = action;
 
-    if (error.name === JitsiConferenceErrors.OFFER_ANSWER_FAILED) {
+    // Handle specific failure reasons.
+    switch (error.name) {
+    case JitsiConferenceErrors.CONFERENCE_DESTROYED: {
+        const [ reason ] = error.params;
+
+        dispatch(showErrorNotification({
+            description: reason,
+            titleKey: 'dialog.sessTerminated'
+        }));
+
+        if (typeof APP !== 'undefined') {
+            APP.UI.hideStats();
+        }
+        break;
+    }
+    case JitsiConferenceErrors.CONNECTION_ERROR: {
+        const [ msg ] = error.params;
+
+        dispatch(connectionDisconnected(getState()['features/base/connection'].connection));
+        dispatch(showErrorNotification({
+            descriptionArguments: { msg },
+            descriptionKey: msg ? 'dialog.connectErrorWithMsg' : 'dialog.connectError',
+            titleKey: 'connection.CONNFAIL'
+        }));
+
+        break;
+    }
+    case JitsiConferenceErrors.OFFER_ANSWER_FAILED:
         sendAnalytics(createOfferAnswerFailedEvent());
+        break;
     }
 
     // FIXME: Workaround for the web version. Currently, the creation of the
@@ -574,13 +603,27 @@ function _trackAddedOrRemoved(store, next, action) {
  * @private
  * @returns {Object} The value returned by {@code next(action)}.
  */
-function _updateLocalParticipantInConference({ getState }, next, action) {
+function _updateLocalParticipantInConference({ dispatch, getState }, next, action) {
     const { conference } = getState()['features/base/conference'];
     const { participant } = action;
     const result = next(action);
 
-    if (conference && participant.local && 'name' in participant) {
-        conference.setDisplayName(participant.name);
+    const localParticipant = getLocalParticipant(getState);
+
+    if (conference && participant.id === localParticipant.id) {
+        if ('name' in participant) {
+            conference.setDisplayName(participant.name);
+        }
+
+        if ('role' in participant && participant.role === PARTICIPANT_ROLE.MODERATOR) {
+            const { pendingSubjectChange, subject } = getState()['features/base/conference'];
+
+            // When the local user role is updated to moderator and we have a pending subject change
+            // which was not reflected we need to set it (the first time we tried was before becoming moderator).
+            if (pendingSubjectChange !== subject) {
+                dispatch(setSubject(pendingSubjectChange));
+            }
+        }
     }
 
     return result;

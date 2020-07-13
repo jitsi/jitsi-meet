@@ -13,6 +13,8 @@ import {
 import { SET_HORIZONTAL_VIEW_DIMENSIONS, SET_TILE_VIEW_DIMENSIONS } from './actionTypes';
 import { setHorizontalViewDimensions, setTileViewDimensions } from './actions';
 
+import './subscriber.web';
+
 /**
  * The middleware of the feature Filmstrip.
  */
