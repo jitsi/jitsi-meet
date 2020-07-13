@@ -258,6 +258,11 @@
     font-size: 20pt;
     margin: auto;
     cursor: pointer;
+    > span {
+        > span {
+            margin: auto !important;
+        }
+    }
 }
 
 #smileys img {
