@@ -37,7 +37,7 @@ const VisibilityButton = ({ visiblity, onPress }) => {
   return (
     <TouchableOpacity onPress={onPress} style={{ justifyContent: "center" }}>
       <Image
-        source={visiblity ? eye_visible : eye_invisible}
+        source={visiblity ? eye_invisible : eye_visible}
         style={{ height: 16, width: 16 }}
       />
     </TouchableOpacity>
@@ -77,14 +77,7 @@ const Form = ({ placeholder, valid, errorMessage, value, onChange, type }) => {
           <ValidIcon validity={valid} />
         ) : null}
       </View>
-      <Text
-        style={{
-          color: INVALID_RED,
-          height: 20,
-          marginTop: 4,
-          marginBottom: 10,
-        }}
-      >
+      <Text style={{ ...styles.errorMessage }}>
         {valid ? "" : errorMessage}
       </Text>
     </>
@@ -106,6 +99,12 @@ const styles = {
     borderWidth: 0.5,
     flexDirection: "row",
     justifyContent: "space-between",
+  },
+  errorMessage: {
+    color: INVALID_RED,
+    height: 20,
+    marginTop: 4,
+    marginBottom: 10,
   },
 };
 

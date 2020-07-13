@@ -25,6 +25,7 @@ const LoginScreen = () => {
     setScreen(to);
   };
 
+  const [loading, setLoading] = useState(false);
   const [remember, setRemember] = useState(true);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -35,27 +36,26 @@ const LoginScreen = () => {
 
   const onPressPostechLoginButton = () => {};
   const onPressLoginSubmitButton = () => {
+    setLoading(true);
     const form = { username, password, remember };
     api
       .login(form)
       .then(async (resp) => {
         const token = resp.data;
         await AsyncStorage.setItem(JWT_TOKEN, token);
+        setLoading(false);
         navigate("Home");
       })
       .catch((err) => {
         const reason = err.response.headers["www-authenticate"];
         if (reason === "user_not_found") {
           setUsernameValid(false);
-          setPasswordValid(true);
           setUsernameErrorMsg("error.usernameInvalid");
-          setPasswordErrorMsg("");
         } else if (reason === "password_not_match") {
-          setUsernameValid(true);
           setPasswordValid(false);
-          setUsernameErrorMsg("");
           setPasswordErrorMsg("error.passwordNotMatch");
         }
+        setLoading(false);
       });
   };
 
@@ -74,12 +74,6 @@ const LoginScreen = () => {
     return true;
   };
 
-  const onChangeUsername = ({ nativeEvent: { text } }) => {
-    setUsername(text);
-    const validity = checkVaildUsername(text);
-    setUsernameValid(validity);
-  };
-
   const checkValidPassword = (value) => {
     if (value.length >= 8) {
       return true;
@@ -89,6 +83,12 @@ const LoginScreen = () => {
     }
     setPasswordErrorMsg("error.passwordTooShort");
     return false;
+  };
+
+  const onChangeUsername = ({ nativeEvent: { text } }) => {
+    setUsername(text);
+    const validity = checkVaildUsername(text);
+    setUsernameValid(validity);
   };
 
   const onChangePassword = ({ nativeEvent: { text } }) => {
@@ -145,6 +145,7 @@ const LoginScreen = () => {
           invalid={!(passwordValid && usernameValid)}
           name={"Login"}
           onPress={onPressLoginSubmitButton}
+          loading={loading}
         />
         <Text
           style={{
