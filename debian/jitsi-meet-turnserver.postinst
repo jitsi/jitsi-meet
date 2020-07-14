@@ -87,7 +87,7 @@ case "$1" in
         if [[ -f $TURN_CONFIG ]] ; then
             echo "------------------------------------------------"
             echo ""
-            echo "turnserver is already configured on this machine, skipping."
+            echo "turnserver is already configured on this machine."
             echo ""
             echo "------------------------------------------------"
 
