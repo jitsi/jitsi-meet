@@ -132,7 +132,7 @@
     width: 100%;
 
     &--no-video {
-        background: radial-gradient(50% 50% at 50% 50%, #5B6F80 0%, #365067 100%), #FFFFFF;
+        background: $hangupColor;
         text-align: center;
     }
 
