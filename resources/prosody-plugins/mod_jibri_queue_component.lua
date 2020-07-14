@@ -13,7 +13,8 @@ local parse = neturl.parseQuery;
 local get_room_from_jid = module:require "util".get_room_from_jid;
 local room_jid_match_rewrite = module:require "util".room_jid_match_rewrite;
 local is_healthcheck_room = module:require "util".is_healthcheck_room;
-
+local room_jid_split_subdomain = module:require "util".room_jid_split_subdomain;
+local internal_room_jid_match_rewrite = module:require "util".internal_room_jid_match_rewrite;
 local async_handler_wrapper = module:require "util".async_handler_wrapper;
 
 -- this basically strips the domain from the conference.domain address
@@ -158,14 +159,21 @@ local function cb(content_, code_, response_, request_)
     end
 end
 
-local function sendEvent(type,room_address,participant,edetails)
+local function sendEvent(type,room_address,participant)
     local event_ts = round(socket.gettime()*1000);
+    local node, host, resource, target_subdomain = room_jid_split_subdomain(room_address);
+    local room_param = '';
+    if target_subdomain then
+        room_param = target_subdomain..'/'..node;
+    else
+        room_param = node;
+    end
+
     local out_event = {
         ["conference"] = room_address,
-        ["event_type"] = "Event"..type,
+        ["room_param"] = room_param,
+        ["event_type"] = type,
         ["participant"] = participant,
-        ["event_details"] = edetails,
-        ["event_ts"] = event_ts
     }
     module:log("debug","Sending event %s",inspect(out_event));
 
@@ -191,14 +199,14 @@ function on_iq(event)
             log("info", "Jibri Queue Messsage Event found: %s ",inspect(event.stanza));
 
             local jibriQueue
-                = event.stanza:get_child('jibriqueue', 'http://jitsi.org/protocol/jibri-queue');
+                = event.stanza:get_child('jibri-queue', 'http://jitsi.org/protocol/jibri-queue');
             if jibriQueue then
-                log("info", "Jibri Queue: %s ",inspect(jibriQueue));
+                module:log("info", "Jibri Queue Join Request: %s ",inspect(jibriQueue));
                 local roomAddress = jibriQueue.attr.room;
                 local room = get_room_from_jid(room_jid_match_rewrite(roomAddress));
 
                 if not room then
-                    log("warn", "No room found %s", roomAddress);
+                    module:log("warn", "No room found %s", roomAddress);
                     return false;
                 end
 
@@ -206,35 +214,64 @@ function on_iq(event)
 
                 local occupant = room:get_occupant_by_real_jid(from);
                 if not occupant then
-                    log("warn", "No occupant %s found for %s", from, roomAddress);
+                    module:log("warn", "No occupant %s found for %s", from, roomAddress);
                     return false;
                 end
+
                 -- now handle new jibri queue message
-                local edetails = {
-                    ["foo"] = "bar"
-                }
-                sendEvent('JoinQueue',room.jid,occupant.jid,edetails)
+                room.jibriQueue[occupant.jid] = true;
+
+                module:log("Sending JoinQueue event for jid %s occupant %s",roomAddress,occupant.jid)
+                sendEvent('JoinQueue',roomAddress,occupant.jid)
+            else
+                module:log("Jibri Queue Stanza missing child %s",inspect(event.stanza))
             end
         end
     end
     return true
 end
 
-function occupant_joined(event)
+-- create recorder queue cache for the room
+function room_created(event)
     local room = event.room;
-    local occupant = event.occupant;
 
     if is_healthcheck_room(room.jid) then
         return;
     end
 
-    local participant_count = it.count(room:each_occupant());
+    room.jibriQueue = {};
+end
 
-    -- now handle new jibri queue message
-    local edetails = {
-        ["participant_count"] = participant_count
-    }
-    sendEvent('Join',room.jid,occupant.jid,edetails)
+-- Conference ended, clear all queue cache jids
+function room_destroyed(event)
+    local room = event.room;
+
+    if is_healthcheck_room(room.jid) then
+        return;
+    end
+    for jid, x in pairs(room.jibriQueue) do
+        if x then
+            sendEvent('LeaveQueue',internal_room_jid_match_rewrite(room.jid),jid);
+        end
+    end
+end
+
+-- Occupant left remove it from the queue if it joined the queue
+function occupant_leaving(event)
+    local room = event.room;
+
+    if is_healthcheck_room(room.jid) then
+        return;
+    end
+
+    local occupant = event.occupant;
+
+    -- check if user has cached queue request
+    if room.jibriQueue[occupant.jid] then
+        -- remove occupant from queue cache, signal backend
+        room.jibriQueue[occupant.jid] = nil;
+        sendEvent('LeaveQueue',internal_room_jid_match_rewrite(room.jid),occupant.jid);
+    end
 end
 
 module:hook("iq/host", on_iq);
@@ -245,10 +282,10 @@ function process_host(host)
         module:log("info","Hook to muc events on %s", host);
 
         local muc_module = module:context(host);
-        -- muc_module:hook("muc-room-created", room_created, -1);
-        muc_module:hook("muc-occupant-joined", occupant_joined, -1);
-        -- muc_module:hook("muc-occupant-pre-leave", occupant_leaving, -1);
-        -- muc_module:hook("muc-room-destroyed", room_destroyed, -1);
+        muc_module:hook("muc-room-created", room_created, -1);
+        -- muc_module:hook("muc-occupant-joined", occupant_joined, -1);
+        muc_module:hook("muc-occupant-pre-leave", occupant_leaving, -1);
+        muc_module:hook("muc-room-destroyed", room_destroyed, -1);
     end
 end
 
