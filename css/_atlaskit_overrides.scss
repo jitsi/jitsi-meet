@@ -72,7 +72,7 @@
 
 .itZGfB,
 .settings-pane .mock-atlaskit-label {
-    color: $modalLabelsColor
+    color: $modalLabelsColor;
 }
 
 /**
@@ -130,4 +130,47 @@
  */
 .prejoin-preview-dropdown-container .eYJELv {
     background: $participantNameColor !important;
+}
+
+/**
+ * Override alert styles on small resolutions
+ */
+.gpUwQx {
+    @media (max-width: 480px) {
+        width: 320px !important;
+        left: -80px !important;
+    }
+}
+
+/**
+ * Override audio and video preview styles on small resolutions
+ */
+.audio-preview .etGiXB > div {
+    @media (max-width: 540px) {
+        left: -65px !important;
+    }
+}
+
+.video-preview .etGiXB > div {
+    @media (max-width: 490px) {
+        left: 100px !important;
+    }
+}
+
+/**
+ * Override audio preview styles on prejoin page
+ */
+.prejoin-preview-btn-container .audio-preview .etGiXB > div {
+    @media (max-width: 560px) {
+        left: -110px !important;
+    }
+}
+
+/**
+ * Override settings styles on devices tab
+ */
+.YymJg {
+    @media (min-width: 481px) and (max-width: 550px) {
+        max-width: calc(100% - 50px) !important;
+    }
 }
