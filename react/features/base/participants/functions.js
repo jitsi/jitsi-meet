@@ -1,10 +1,10 @@
 // @flow
-import { getGravatarURL } from 'js-utils/avatar';
 
-import { toState } from '../redux';
+import { getGravatarURL } from '@jitsi/js-utils/avatar';
 
 import { JitsiParticipantConnectionStatus } from '../lib-jitsi-meet';
 import { MEDIA_TYPE, shouldRenderVideoTrack } from '../media';
+import { toState } from '../redux';
 import { getTrackByMediaTypeAndParticipant } from '../tracks';
 import { createDeferred } from '../util';
 
@@ -240,6 +240,23 @@ function _getAllParticipants(stateful) {
         Array.isArray(stateful)
             ? stateful
             : toState(stateful)['features/base/participants'] || []);
+}
+
+/**
+ * Returns the youtube fake participant.
+ * At the moment it is considered the youtube participant the only fake participant in the list.
+ *
+ * @param {(Function|Object|Participant[])} stateful - The redux state
+ * features/base/participants, the (whole) redux state, or redux's
+ * {@code getState} function to be used to retrieve the state
+ * features/base/participants.
+ * @private
+ * @returns {Participant}
+ */
+export function getYoutubeParticipant(stateful: Object | Function) {
+    const participants = _getAllParticipants(stateful);
+
+    return participants.filter(p => p.isFakeParticipant)[0];
 }
 
 /**

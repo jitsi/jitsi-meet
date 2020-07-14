@@ -1,8 +1,9 @@
-import { BoxModel, ColorPalette, fixAndroidViewClipping } from '../../../base/styles';
 import { ColorSchemeRegistry, schemeColor } from '../../../base/color-scheme';
+import { BoxModel, ColorPalette, fixAndroidViewClipping } from '../../../base/styles';
 import { FILMSTRIP_SIZE } from '../../../filmstrip';
 
 export const NAVBAR_GRADIENT_COLORS = [ '#000000FF', '#00000000' ];
+export const INSECURE_ROOM_NAME_LABEL_COLOR = ColorPalette.warning;
 
 // From brand guideline
 const BOTTOM_GRADIENT_HEIGHT = 290;
@@ -167,6 +168,10 @@ export default {
         // On iPhone X there is the notch. In the two cases BoxModel.margin is
         // not enough.
         top: BoxModel.margin * 3
+    },
+
+    insecureRoomNameLabel: {
+        backgroundColor: INSECURE_ROOM_NAME_LABEL_COLOR
     }
 };
 

@@ -4,8 +4,8 @@ import { Checkbox } from '@atlaskit/checkbox';
 import Spinner from '@atlaskit/spinner';
 import React, { Component } from 'react';
 
-import { Platform } from '../../base/react';
 import { translate } from '../../base/i18n';
+import { Platform } from '../../base/react';
 
 import DesktopSourcePreview from './DesktopSourcePreview';
 

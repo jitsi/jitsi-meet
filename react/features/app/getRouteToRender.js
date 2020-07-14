@@ -1,11 +1,11 @@
 // @flow
 
-import { generateRoomWithoutSeparator } from 'js-utils/random';
+import { generateRoomWithoutSeparator } from '@jitsi/js-utils/random';
 import type { Component } from 'react';
 
 import { isRoomValid } from '../base/conference';
-import { toState } from '../base/redux';
 import { isSupportedBrowser } from '../base/environment';
+import { toState } from '../base/redux';
 import { Conference } from '../conference';
 import { getDeepLinkingPage } from '../deep-linking';
 import { UnsupportedDesktopBrowser } from '../unsupported-browser';

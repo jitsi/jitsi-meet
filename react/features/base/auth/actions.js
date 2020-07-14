@@ -3,7 +3,7 @@
 
 // import logger from './logger';
 import { SET_CURRENT_USER } from './actionTypes';
-import jitsiLocalStorage from '../../../../modules/util/JitsiLocalStorage';
+import { jitsiLocalStorage } from '@jitsi/js-utils';
 import { setJWT } from '../jwt';
 
 // const AUTH_API_BASE = process.env.REACT_APP_AUTH_API_BASE;

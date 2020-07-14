@@ -66,6 +66,9 @@ platform :ios do
       beta_app_feedback_email: ENV["JITSI_REVIEW_EMAIL"],
       beta_app_review_info: {
         contact_email: ENV["JITSI_REVIEW_EMAIL"],
+        contact_first_name: ENV["JITSI_REVIEW_NAME"],
+        contact_last_name: ENV["JITSI_REVIEW_SURNAME"],
+        contact_phone: ENV["JITSI_REVIEW_PHONE"],
         demo_account_name: ENV["JITSI_DEMO_ACCOUNT"],
         demo_account_password: ENV["JITSI_DEMO_PASSWORD"],
       },

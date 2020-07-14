@@ -20,6 +20,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+
 import androidx.annotation.Nullable;
 import androidx.fragment.app.FragmentActivity;
 
@@ -66,6 +67,9 @@ public class JitsiMeetActivity extends FragmentActivity
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_jitsi_meet);
+
+        // Listen for conference events.
+        getJitsiView().setListener(this);
 
         if (!extraInitialize()) {
             initialize();
@@ -151,9 +155,6 @@ public class JitsiMeetActivity extends FragmentActivity
     }
 
     protected void initialize() {
-        // Listen for conference events.
-        getJitsiView().setListener(this);
-
         // Join the room specified by the URL the app was launched with.
         // Joining without the room option displays the welcome page.
         join(getConferenceOptions(getIntent()));
@@ -164,6 +165,8 @@ public class JitsiMeetActivity extends FragmentActivity
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
         JitsiMeetActivityDelegate.onActivityResult(this, requestCode, resultCode, data);
     }
 

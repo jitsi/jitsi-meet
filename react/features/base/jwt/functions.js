@@ -1,6 +1,6 @@
 /* @flow */
 
-import { parseURLParams } from '../config';
+import { parseURLParams } from '../util';
 
 /**
  * Retrieves the JSON Web Token (JWT), if any, defined by a specific

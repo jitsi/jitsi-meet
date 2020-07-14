@@ -1,11 +1,12 @@
 /* global $, APP, interfaceConfig */
 
 /* eslint-disable no-unused-vars */
+import { AtlasKitThemeProvider } from '@atlaskit/theme';
+import Logger from 'jitsi-meet-logger';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Provider } from 'react-redux';
 import { I18nextProvider } from 'react-i18next';
-import { AtlasKitThemeProvider } from '@atlaskit/theme';
+import { Provider } from 'react-redux';
 
 import { i18next } from '../../../react/features/base/i18n';
 import {
@@ -22,12 +23,11 @@ import {
 } from '../../../react/features/remote-video-menu';
 import { LAYOUTS, getCurrentLayout } from '../../../react/features/video-layout';
 /* eslint-enable no-unused-vars */
-
-const logger = require('jitsi-meet-logger').getLogger(__filename);
-
+import UIUtils from '../util/UIUtil';
 
 import SmallVideo from './SmallVideo';
-import UIUtils from '../util/UIUtil';
+
+const logger = Logger.getLogger(__filename);
 
 /**
  *
@@ -456,14 +456,16 @@ export default class RemoteVideo extends SmallVideo {
             return;
         }
 
-        streamElement.oncanplay = () => {
+        const listener = () => {
             this._canPlayEventReceived = true;
             this.VideoLayout.remoteVideoActive(streamElement, this.id);
-            streamElement.oncanplay = undefined;
+            streamElement.removeEventListener('canplay', listener);
 
             // Refresh to show the video
             this.updateView();
         };
+
+        streamElement.addEventListener('canplay', listener);
     }
 
     /**

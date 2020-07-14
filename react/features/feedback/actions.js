@@ -2,8 +2,8 @@
 
 import type { Dispatch } from 'redux';
 
-import { openDialog } from '../base/dialog';
 import { FEEDBACK_REQUEST_IN_PROGRESS } from '../../../modules/UI/UIErrors';
+import { openDialog } from '../base/dialog';
 
 import {
     CANCEL_FEEDBACK,

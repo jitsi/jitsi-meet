@@ -6,12 +6,12 @@ import Transition from 'react-transition-group/Transition';
 import { translate } from '../../../base/i18n';
 import { Icon, IconClose } from '../../../base/icons';
 import { connect } from '../../../base/redux';
-
 import AbstractChat, {
     _mapDispatchToProps,
     _mapStateToProps,
     type Props
 } from '../AbstractChat';
+
 import ChatInput from './ChatInput';
 import DisplayNameForm from './DisplayNameForm';
 import MessageContainer from './MessageContainer';

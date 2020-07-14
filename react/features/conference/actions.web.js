@@ -2,11 +2,11 @@
 
 import type { Dispatch } from 'redux';
 
+import { getParticipantDisplayName } from '../base/participants';
 import {
     NOTIFICATION_TYPE,
     showNotification
 } from '../notifications';
-import { getParticipantDisplayName } from '../base/participants';
 
 /**
  * Notify that we've been kicked out of the conference.

@@ -450,7 +450,7 @@
         "somebody": "Някой",
         "startSilentTitle": "Влязохте с опция да не чувате аудио!",
         "startSilentDescription": "Влезте повторно за да пуснете звука",
-        "suboptimalBrowserWarning": "Опасяваме се, че няма да можете да се насладите на срещата. Работим по въпроса, междувременно използвайте някой от <a href='static/recommendedBrowsers.html' target='_blank'>напълно поддържаните браузъри</a>.",
+        "suboptimalBrowserWarning": "Опасяваме се, че няма да можете да се насладите на срещата. Работим по въпроса, междувременно използвайте някой от <a href='{{recommendedBrowserPageLink}}' target='_blank'>напълно поддържаните браузъри</a>.",
         "suboptimalExperienceTitle": "Внимание",
         "unmute": "Пускане на микрофона",
         "newDeviceCameraTitle": "Засечена е нова камера",
@@ -477,7 +477,7 @@
     "profile": {
         "setDisplayNameLabel": "Задайте екранното си име",
         "setEmailInput": "Въведете е-поща",
-        "setEmailLabel": "Задайте е-пощата си в „gravatar“",
+        "setEmailLabel": "Задайте е-пощата си в „Gravatar“",
         "title": "Профил"
     },
     "raisedHand": "Иска думата",
@@ -722,9 +722,6 @@
         "lowDefinition": "Ниско качество",
         "onlyAudioAvailable": "Само аудио е налично",
         "onlyAudioSupported": "Този браузър поддържа само аудио.",
-        "p2pEnabled": "Вкл. директно свързване",
-        "p2pVideoQualityDescription": "В директна връзка, получаваното качество може да се сменя между високо и само аудио. Останалите настройки ще са достъпни когато връзката не е директна.",
-        "recHighDefinitionOnly": "Ще се предпочита високо качество.",
         "sd": "СК",
         "sdTooltip": "Гледате стандартно качество на видеото",
         "standardDefinition": "Стандартно качество"

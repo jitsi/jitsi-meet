@@ -61,10 +61,10 @@
         "AUTHENTICATING": "Վավերացում",
         "AUTHFAIL": "Վավերացումը չի ստացվել",
         "CONNECTED": "Միացված է",
-        "CONNECTING": "Միանում է...",
+        "CONNECTING": "Միանում է…",
         "CONNFAIL": "Միացումը չստացվեց",
         "DISCONNECTED": "Անջատված է",
-        "DISCONNECTING": "Անջատում...",
+        "DISCONNECTING": "Անջատում…",
         "ERROR": "Սխալ",
         "RECONNECTING": "Ցանցի խնդիր է տեղի ունեցել: Վերամիացում..."
     },
@@ -109,7 +109,6 @@
         "title": "",
         "tryAgainButton": ""
     },
-    "\u0005deepLinking": {},
     "defaultLink": "օրինակ՝ {{url}}",
     "deviceError": {
         "cameraError": "",
@@ -141,16 +140,16 @@
         "cameraUnsupportedResolutionError": "Ձեր տեսախցիկը չունի պահանջվող վիդեո-չափ",
         "Cancel": "Չեղարկել",
         "close": "",
-        "conferenceDisconnectMsg": "Ստուգեք ցանցային միացումը։ Վերամիացում՝  {{seconds}} վ...",
+        "conferenceDisconnectMsg": "Ստուգեք ցանցային միացումը։ Վերամիացում՝ {{seconds}} վ…",
         "conferenceDisconnectTitle": "Ձեր կապը անջատվել է",
-        "conferenceReloadMsg": "Փորձում ենք վերականգնել կապը։ Վերամիացում՝ {{seconds}} վ...",
+        "conferenceReloadMsg": "Փորձում ենք վերականգնել կապը։ Վերամիացում՝ {{seconds}} վ…",
         "conferenceReloadTitle": "Ցավոք, ինչ֊որ բան այն չէ",
         "confirm": "",
         "confirmNo": "",
         "confirmYes": "Այո",
         "connectError": "Օհո՜։ Ինչ֊որ բան այն չէ և մենք չկարողացանք միանալ կոնֆերանսին",
         "connectErrorWithMsg": "Օհո՜։ Ինչ֊որ բան այն չէ և մենք չկարողացանք միանալ կոնֆերանսին {{msg}}",
-        "connecting": "Միանում է...",
+        "connecting": "Միանում է…",
         "contactSupport": "Կապվեք սպասարկող թիմի հետ",
         "copy": "Պատճենել",
         "dismiss": "Հեռացնել",
@@ -250,12 +249,9 @@
         "userPassword": "օգտագործողի գաղտնաբառը",
         "WaitForHostMsg": "",
         "WaitForHostMsgWOk": "",
-        "WaitingForHost": "Սպասում է հյուրընկալողի ...",
+        "WaitingForHost": "Սպասում է հյուրընկալողի …",
         "Yes": "Այո",
         "yourEntireScreen": ""
-    },
-    "\u0005dialog": {
-        "accessibilityLabel": {}
     },
     "dialOut": {
         "statusMessage": ""
@@ -269,7 +265,6 @@
         "veryBad": "",
         "veryGood": ""
     },
-    "\u0005feedback": {},
     "incomingCall": {
         "answer": "",
         "audioCallTitle": "",
@@ -307,7 +302,6 @@
         "tooltip": "",
         "label": ""
     },
-    "\u0005info": {},
     "inviteDialog": {
         "alertText": "",
         "header": "Հրավիրել",
@@ -338,7 +332,6 @@
         "toggleShortcuts": "",
         "videoMute": "Անջատե/միացնել ձեր վիդեոն"
     },
-    "\u0005keyboardShortcuts": {},
     "liveStreaming": {
         "busy": "",
         "busyTitle": "",
@@ -367,7 +360,6 @@
         "streamIdHelp": "",
         "unavailableTitle": ""
     },
-    "\u0005liveStreaming": {},
     "localRecording": {
         "clientState": {
             "off": "",
@@ -397,7 +389,6 @@
         "stop": "Կանգնացնել ձայնագրումը",
         "yes": "Այո"
     },
-    "\u0005localRecording": {},
     "lockRoomPassword": "Գաղտնաբառ",
     "lockRoomPasswordUppercase": "Գաղտնաբառ",
     "me": "ես",
@@ -439,7 +430,7 @@
         "busy": "",
         "calling": "",
         "connected": "Միացված է",
-        "connecting": "Միանում է...",
+        "connecting": "Միանում է…",
         "connecting2": "Միանում է...",
         "disconnected": "Անջատված է",
         "expired": "",
@@ -449,11 +440,10 @@
         "rejected": "",
         "ringing": ""
     },
-    "\u0005presenceStatus": {},
     "profile": {
         "setDisplayNameLabel": "Նշանակել Ձեր երևացող անունը",
         "setEmailInput": "Մուտքագրեք էլ.հասցե",
-        "setEmailLabel": "Սահմանեք Ձեր gravatar էլ.փոստը",
+        "setEmailLabel": "Սահմանեք Ձեր Gravatar էլ.փոստը",
         "title": "Պրոֆայլ"
     },
     "recording": {
@@ -481,7 +471,6 @@
         "unavailable": "",
         "unavailableTitle": ""
     },
-    "\u0005recording": {},
     "sectionList": {
         "pullToRefresh": ""
     },
@@ -507,9 +496,6 @@
         "startAudioMuted": "Հանդիպման սկզբում բոլորի ձայնը անջատված է",
         "startVideoMuted": "Հանդիպման սկզբում բոլորի վիդեոն անջատված է",
         "title": "Կարգավորումներ"
-    },
-    "\u0005settings": {
-        "calendar": {}
     },
     "settingsView": {
         "alertOk": "",
@@ -539,7 +525,6 @@
         "speakerStats": "Հռետորի վիճակագրությունը",
         "speakerTime": ""
     },
-    "\u0005speakerStats": {},
     "startupoverlay": {
         "policyText": "",
         "title": "{{app}} ցանկանում է օգտագործել Ձեր խոսափողը և տեսախցիկը"
@@ -628,9 +613,6 @@
         "startvideoblur": "",
         "stopvideoblur": ""
     },
-    "\u0005toolbar": {
-        "accessibilityLabel": {}
-    },
     "transcribing": {
         "ccButtonTooltip": "",
         "error": "Ձայնագրությյունը չստացվեց: Փորձեք կրկին",
@@ -643,7 +625,6 @@
         "stop": "",
         "tr": ""
     },
-    "\u0005transcribing": {},
     "userMedia": {
         "androidGrantPermissions": "Ընտրեք <b><i>Allow</i></b>, երբ բրաուզերը թույլտվություն հարցնի",
         "chromeGrantPermissions": "Ընտրեք <b><i>Allow</i></b>, երբ բրաուզերը թույլտվություն հարցնի",
@@ -678,9 +659,6 @@
         "lowDefinition": "",
         "onlyAudioAvailable": "",
         "onlyAudioSupported": "",
-        "p2pEnabled": "",
-        "p2pVideoQualityDescription": "",
-        "recHighDefinitionOnly": "",
         "sd": "",
         "standardDefinition": ""
     },

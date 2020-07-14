@@ -3,7 +3,6 @@
 import React from 'react';
 
 import { Icon } from '../../../icons';
-
 import AbstractStatelessAvatar, { type Props as AbstractProps } from '../AbstractStatelessAvatar';
 
 type Props = AbstractProps & {

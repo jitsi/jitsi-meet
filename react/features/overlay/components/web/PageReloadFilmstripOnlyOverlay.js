@@ -4,7 +4,6 @@ import React from 'react';
 
 import { translate } from '../../../base/i18n';
 import { connect } from '../../../base/redux';
-
 import AbstractPageReloadOverlay, { type Props, abstractMapStateToProps }
     from '../AbstractPageReloadOverlay';
 

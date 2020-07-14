@@ -9,7 +9,7 @@ export * from './functions.any';
  * @returns {void}
  */
 export function getCurrentCameraDeviceId(state: Object) {
-    return state['features/base/settings'].cameraDeviceId;
+    return getDeviceIdByType(state, 'isVideoTrack');
 }
 
 /**
@@ -19,7 +19,7 @@ export function getCurrentCameraDeviceId(state: Object) {
  * @returns {void}
  */
 export function getCurrentMicDeviceId(state: Object) {
-    return state['features/base/settings'].micDeviceId;
+    return getDeviceIdByType(state, 'isAudioTrack');
 }
 
 /**
@@ -33,6 +33,33 @@ export function getCurrentOutputDeviceId(state: Object) {
 }
 
 /**
+ * Returns the deviceId for the corresponding local track type.
+ *
+ * @param {Object} state - The state of the application.
+ * @param {string} isType - Can be 'isVideoTrack' | 'isAudioTrack'.
+ * @returns {string}
+ */
+function getDeviceIdByType(state: Object, isType: string) {
+    const [ deviceId ] = state['features/base/tracks']
+          .map(t => t.jitsiTrack)
+          .filter(t => t && t.isLocal() && t[isType]())
+          .map(t => t.getDeviceId());
+
+    return deviceId || '';
+}
+
+/**
+ * Returns the saved display name.
+ *
+ * @param {Object} state - The state of the application.
+ * @returns {string}
+ */
+export function getDisplayName(state: Object): string {
+    return state['features/base/settings'].displayName || '';
+}
+
+
+/**
  * Handles changes to the `disableCallIntegration` setting.
  * Noop on web.
  *
@@ -40,4 +67,14 @@ export function getCurrentOutputDeviceId(state: Object) {
  * @returns {void}
  */
 export function handleCallIntegrationChange(disabled: boolean) { // eslint-disable-line no-unused-vars
+}
+
+/**
+ * Handles changes to the `disableCrashReporting` setting.
+ * Noop on web.
+ *
+ * @param {boolean} disabled - Whether crash reporting is disabled or not.
+ * @returns {void}
+ */
+export function handleCrashReportingChange(disabled: boolean) { // eslint-disable-line no-unused-vars
 }

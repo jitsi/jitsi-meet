@@ -4,7 +4,6 @@ import Tooltip from '@atlaskit/tooltip';
 import React from 'react';
 
 import { Icon } from '../../../base/icons';
-
 import AbstractToolbarButton from '../AbstractToolbarButton';
 import type { Props as AbstractToolbarButtonProps }
     from '../AbstractToolbarButton';

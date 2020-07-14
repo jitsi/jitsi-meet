@@ -1,5 +1,6 @@
 /* global $, config, interfaceConfig, APP */
 
+import Logger from 'jitsi-meet-logger';
 /* eslint-disable no-unused-vars */
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
@@ -11,11 +12,11 @@ import { updateSettings } from '../../../react/features/base/settings';
 import { getLocalVideoTrack } from '../../../react/features/base/tracks';
 import { shouldDisplayTileView } from '../../../react/features/video-layout';
 /* eslint-enable no-unused-vars */
-
-const logger = require('jitsi-meet-logger').getLogger(__filename);
-
 import UIEvents from '../../../service/UI/UIEvents';
+
 import SmallVideo from './SmallVideo';
+
+const logger = Logger.getLogger(__filename);
 
 /**
  *
@@ -275,9 +276,12 @@ export default class LocalVideo extends SmallVideo {
 
         // Ensure the video gets play() called on it. This may be necessary in the
         // case where the local video container was moved and re-attached, in which
-        // case video does not autoplay.
+        // case video does not autoplay. Also, set the playsinline attribute on the
+        // video element so that local video doesn't open in full screen by default
+        // in Safari browser on iOS.
         const video = this.container.querySelector('video');
 
+        video && video.setAttribute('playsinline', 'true');
         video && !config.testing?.noAutoPlayVideo && video.play();
     }
 }

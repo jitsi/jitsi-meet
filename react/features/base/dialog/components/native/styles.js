@@ -4,7 +4,6 @@ import { StyleSheet } from 'react-native';
 
 import { ColorSchemeRegistry, schemeColor } from '../../../color-scheme';
 import { BoxModel, ColorPalette } from '../../../styles';
-
 import { PREFERRED_DIALOG_SIZE } from '../../constants';
 
 const BORDER_RADIUS = 5;

@@ -3,15 +3,20 @@
 import React from 'react';
 
 import { connect } from '../../../redux';
-
 import AbstractDialog from '../AbstractDialog';
 import type { Props as AbstractDialogProps, State } from '../AbstractDialog';
+
 import StatelessDialog from './StatelessDialog';
 
 /**
  * The type of the React {@code Component} props of {@link Dialog}.
  */
 type Props = AbstractDialogProps & {
+
+    /**
+     * True if listening for the Enter key should be disabled.
+     */
+    disableEnter: boolean,
 
     /**
      * Whether the dialog is modal. This means clicking on the blanket will
