@@ -5,6 +5,7 @@ import {
     CONFERENCE_JOINED
 } from '../base/conference';
 import { LIB_WILL_INIT } from '../base/lib-jitsi-meet';
+import { getLocalParticipant } from '../base/participants';
 import { MiddlewareRegistry } from '../base/redux';
 
 import RTCStats from './RTCStats';
@@ -51,6 +52,8 @@ MiddlewareRegistry.register(store => next => action => {
             try {
                 RTCStats.connect();
 
+                const localParticipant = getLocalParticipant(state);
+
                 // The current implementation of rtcstats-server is configured to send data to amplitude, thus
                 // we add identity specific information so we can corelate on the amplitude side. If amplitude is
                 // not configured an empty object will be sent.
@@ -60,7 +63,8 @@ MiddlewareRegistry.register(store => next => action => {
                 // conference with a specific version.
                 RTCStats.sendIdentityData({
                     ...getAmplitudeIdentity(),
-                    ...config
+                    ...config,
+                    displayName: localParticipant?.name
                 });
             } catch (error) {
                 // If the connection failed do not impact jitsi-meet just silently fail.
