@@ -1,6 +1,13 @@
 import rtcstatsInit from 'rtcstats/rtcstats';
 import traceInit from 'rtcstats/trace-ws';
 
+import {
+    createRTCStatsTraceCloseEvent,
+    sendAnalytics
+} from '../analytics';
+
+import logger from './logger';
+
 /**
  * Filter out RTCPeerConnection that are created by callstats.io.
  *
@@ -35,8 +42,19 @@ class RTCStats {
      * @returns {void}
      */
     init(options) {
-        this.trace = traceInit(options.rtcstatsEndpoint);
-        rtcstatsInit(this.trace, options.rtcstatsPollInterval, [ '', 'webkit', 'moz' ], connectionFilter);
+        this.handleTraceWSClose = this.handleTraceWSClose.bind(this);
+        this.trace = traceInit(options.rtcstatsEndpoint, this.handleTraceWSClose);
+        rtcstatsInit(this.trace, options.rtcstatsPollInterval, [ '' ], connectionFilter);
+        this.initialized = true;
+    }
+
+    /**
+     * Check whether or not the RTCStats is initialized.
+     *
+     * @returns {boolean}
+     */
+    isInitialized() {
+        return this.initialized;
     }
 
     /**
@@ -72,6 +90,21 @@ class RTCStats {
      */
     close() {
         this.trace && this.trace.close();
+    }
+
+    /**
+     * The way rtcstats is currently designed the ws wouldn't normally be closed by the application logic but rather
+     * by the page being closed/reloaded. Using this assumption any onclose event is most likely something abnormal
+     * that happened on the ws. We then track this in order to determine how many rtcstats connection were closed
+     * prematurely.
+     *
+     * @param {Object} closeEvent - Event sent by ws onclose.
+     * @returns {void}
+     */
+    handleTraceWSClose(closeEvent) {
+        logger.info('RTCStats trace ws closed', closeEvent);
+
+        sendAnalytics(createRTCStatsTraceCloseEvent(closeEvent));
     }
 }
 

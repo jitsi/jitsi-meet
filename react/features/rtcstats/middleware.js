@@ -46,7 +46,7 @@ MiddlewareRegistry.register(store => next => action => {
         break;
     }
     case CONFERENCE_JOINED: {
-        if (analytics.rtcstatsEndpoint) {
+        if (analytics.rtcstatsEndpoint && RTCStats.isInitialized()) {
             // Once the conference started connect to the rtcstats server and send data.
             try {
                 RTCStats.connect();
@@ -54,6 +54,10 @@ MiddlewareRegistry.register(store => next => action => {
                 // The current implementation of rtcstats-server is configured to send data to amplitude, thus
                 // we add identity specific information so we can corelate on the amplitude side. If amplitude is
                 // not configured an empty object will be sent.
+                // The current configuration of the conference is also sent as metadata to rtcstats server.
+                // This is done in order to facilitate queries based on different conference configurations.
+                // e.g. Find all RTCPeerConnections that connect to a specific shard or were created in a
+                // conference with a specific version.
                 RTCStats.sendIdentityData({
                     ...getAmplitudeIdentity(),
                     ...config
