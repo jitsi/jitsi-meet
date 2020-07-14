@@ -18,13 +18,11 @@ const OS = Platform.OS;
 /**
  * Renders the app when the DOM tree has been loaded.
  */
-document.addEventListener('DOMContentLoaded', async () => {
+document.addEventListener('DOMContentLoaded', () => {
     const now = window.performance.now();
 
     APP.connectionTimes['document.ready'] = now;
     logger.log('(TIME) document ready:\t', now);
-
-    receiveIsBraveCheck(await isBrave());
 });
 
 // Workaround for the issue when returning to a page with the back button and
@@ -66,11 +64,13 @@ globalNS.entryPoints = {
     PREJOIN: PrejoinApp
 };
 
-globalNS.renderEntryPoint = ({
+globalNS.renderEntryPoint = async ({
     Component,
     props = {},
     elementId = 'react'
 }) => {
+    receiveIsBraveCheck(await isBrave());
+
     ReactDOM.render(
         <Component { ...props } />,
         document.getElementById(elementId)
