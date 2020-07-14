@@ -317,6 +317,11 @@
         "veryBad": "매우 나쁨",
         "veryGood": "매우 좋음"
     },
+    "footer": {
+        "copyright": "Copyright@2020 포항공과대학교. ALL RIGHTS RESERVED.",
+        "privacy": "개인정보처리방침",
+        "tos": "이용약관"
+    },
     "incomingCall": {
         "answer": "",
         "audioCallTitle": "",

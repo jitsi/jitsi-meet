@@ -349,6 +349,15 @@ class WelcomePage extends AbstractWelcomePage {
                         ref = { this._setAdditionalContentRef } />
                     : null }
                 <NotificationsContainer />
+                <div className = 'footer-container'>
+                    <div className = 'copyright'>
+                        {t('footer.copyright')}
+                    </div>
+                    <div className = 'nav'>
+                        <a href={`${AUTH_PAGE_BASE}/tos`}>{t('footer.tos')}</a>
+                        <a href={`${AUTH_PAGE_BASE}/privacy`}>{t('footer.privacy')}</a>
+                    </div>
+                </div>
             </div>
         );
     }

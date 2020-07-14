@@ -245,4 +245,30 @@ body.welcome-page {
         //     margin-right: 10px;
         // }
     }
+
+    .footer-container {
+        background-color: #343a40 !important;
+        padding: 24px 40px;
+        font-size: 16px;
+        z-index: 1;
+
+        .copyright {
+            margin-bottom: 4px;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 13px;
+        }
+
+        .nav {
+            display: block;
+
+            a {
+                margin-right: 16px;
+                color: white;
+
+                &:hover {
+                  text-decoration: none;
+                }
+            }
+        }
+    }
 }
