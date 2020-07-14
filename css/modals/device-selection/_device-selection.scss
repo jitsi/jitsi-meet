@@ -1,4 +1,11 @@
 .device-selection {
+
+    @media (max-width: 420px) {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
     .device-selectors {
         font-size: 14px;
 
@@ -58,6 +65,17 @@
 
         &.column-video {
             width: 50%;
+        }
+
+        @media (min-width: 320px) and (max-width: 420px) {
+            &.column-selectors {
+                margin: 15px 0 0 0;
+            }
+
+            &.column-video,
+            &.column-selectors {
+                width: 70%;
+            }
         }
     }
 
