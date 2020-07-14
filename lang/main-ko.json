@@ -132,8 +132,11 @@
     "deepLinking": {
         "appNotInstalled": "중계 서비스에 참여하려면 모바일 앱 설치가 필요합니다",
         "description": "{{app}} 데스크톱 앱에서 회의를 시작했습니다. {{app}} 웹 응용 프로그램에서 다시 시도하거나 실행하십시오.",
-        "descriptionWithoutWeb": "",
+        "descriptionWithoutWeb": "{{app}} 데스크톱 앱에서 회의를 시작하려고 했습니다.",
         "downloadApp": "앱 다운로드",
+        "ifDoNotHaveApp": "아직 앱이 없는 경우:",
+        "ifHaveApp": "이미 앱이 있다면:",
+        "joinInApp": "앱으로 이 회의에 참여",
         "launchWebButton": "웹에서 실행",
         "openApp": "방으로 이동하기",
         "title": "{{app}}에서 회의 시작…",
