@@ -159,20 +159,22 @@ public class MainActivity extends JitsiMeetActivity {
         Bundle restrictions = manager.getApplicationRestrictions();
         Collection<RestrictionEntry> entries = manager.getManifestRestrictions(
             getApplicationContext().getPackageName());
-        for (RestrictionEntry restrictionEntry : entries) {
-            String key = restrictionEntry.getKey();
-            if (RESTRICTION_SERVER_URL.equals(key)) {
-                // If restrictions are passed to the application.
-                if (restrictions != null &&
-                    restrictions.containsKey(RESTRICTION_SERVER_URL)) {
-                    defaultURL = restrictions.getString(RESTRICTION_SERVER_URL);
-                    configurationByRestrictions = true;
-                // Otherwise use default URL from app-restrictions.xml.
-                } else {
-                    defaultURL = restrictionEntry.getSelectedString();
-                    configurationByRestrictions = false;
-                }
-            }
+        if(entries != null) {
+          for (RestrictionEntry restrictionEntry : entries) {
+              String key = restrictionEntry.getKey();
+              if (RESTRICTION_SERVER_URL.equals(key)) {
+                  // If restrictions are passed to the application.
+                  if (restrictions != null &&
+                      restrictions.containsKey(RESTRICTION_SERVER_URL)) {
+                      defaultURL = restrictions.getString(RESTRICTION_SERVER_URL);
+                      configurationByRestrictions = true;
+                  // Otherwise use default URL from app-restrictions.xml.
+                  } else {
+                      defaultURL = restrictionEntry.getSelectedString();
+                      configurationByRestrictions = false;
+                  }
+              }
+          }
         }
     }
 
