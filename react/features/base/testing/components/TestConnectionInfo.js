@@ -9,6 +9,8 @@ import { isTestModeEnabled } from '../functions';
 
 import { TestHint } from './index';
 
+declare var APP: Object;
+
 /**
  * Defines the TestConnectionInfo's properties.
  */
@@ -29,6 +31,12 @@ type Props = {
      * once the conference is joined (the XMPP MUC room to be specific).
      */
     _conferenceJoinedState: string,
+
+    /**
+     * This will be a boolean converted to a string. The value will be 'true'
+     * if granting moderator functionality is available.
+     */
+    _grantModeratorAvailable: string,
 
     /**
      * The local participant's ID. Required to be able to observe the local RTP
@@ -185,6 +193,9 @@ class TestConnectionInfo extends Component<Props, State> {
                     id = 'org.jitsi.meet.conference.joinedState'
                     value = { this.props._conferenceJoinedState } />
                 <TestHint
+                    id = 'org.jitsi.meet.conference.grantModeratorAvailable'
+                    value = { this.props._grantModeratorAvailable } />
+                <TestHint
                     id = 'org.jitsi.meet.conference.localParticipantRole'
                     value = { this.props._localUserRole } />
                 <TestHint
@@ -204,6 +215,7 @@ class TestConnectionInfo extends Component<Props, State> {
  * @returns {{
  *     _conferenceConnectionState: string,
  *     _conferenceJoinedState: string,
+ *     _grantModeratorAvailable: string,
  *     _localUserId: string,
  *     _testMode: boolean
  * }}
@@ -216,6 +228,7 @@ function _mapStateToProps(state) {
     return {
         _conferenceConnectionState: state['features/testing'].connectionState,
         _conferenceJoinedState: conferenceJoined.toString(),
+        _grantModeratorAvailable: typeof APP.conference._room.grantOwner === 'function',
         _localUserId: localParticipant?.id,
         _localUserRole: localParticipant?.role,
         _testMode: isTestModeEnabled(state)
