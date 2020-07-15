@@ -113,6 +113,12 @@ export const TILE_VIEW_ENABLED = 'tile-view.enabled';
 export const TOOLBOX_ALWAYS_VISIBLE = 'toolbox.alwaysVisible';
 
 /**
+ * Flag indicating if the video share button should be enabled
+ * Default: enabled (true).
+ */
+export const VIDEO_SHARE_BUTTON_ENABLED = 'video-share.enabled';
+
+/**
  * Flag indicating if the welcome page should be enabled.
  * Default: disabled (false).
  */
