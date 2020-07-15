@@ -1,8 +1,13 @@
 import React from "react";
-import { App } from "../../features/app/components";
+import { RecoilRoot } from "recoil";
+import GeneralNavigator from "../../navigation/GeneralNavigator";
 
 const AppContainer = (props) => {
-    return <App {...props} />;
+  return (
+    <RecoilRoot>
+      <GeneralNavigator appProps={props} />
+    </RecoilRoot>
+  );
 };
 
 export default AppContainer;
