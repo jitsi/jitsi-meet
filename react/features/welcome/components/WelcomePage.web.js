@@ -202,7 +202,9 @@ class WelcomePage extends AbstractWelcomePage {
                             <div className = 'enter-room-title'>
                                 { t('welcomepage.enterRoomTitle') }
                             </div>
-                            <form onSubmit = { this._onFormSubmit }>
+                            <form
+                                autoComplete = 'off'
+                                onSubmit = { this._onFormSubmit }>
                                 <input
                                     autoFocus = { true }
                                     className = 'enter-room-input'
