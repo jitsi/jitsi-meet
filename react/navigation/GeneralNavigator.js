@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { screenState } from "../modules/navigator";
-import { App } from "../features/app";
+import { App } from "../features/app/components";
 import LoginScreen from "../screens/LoginScreen/LoginScreen";
 import RegisterScreen from "../screens/RegisterScreen/RegisterScreen";
 import { useRecoilValue } from "recoil";
