@@ -2,6 +2,7 @@
 
 import type { Store } from 'redux';
 
+import { equals } from './functions';
 import logger from './logger';
 
 /**
@@ -38,6 +39,18 @@ type Listener
 type Selector = (state: Object, prevSelection: any) => any;
 
 /**
+ * Options that can be passed to the register method.
+ */
+type RegistrationOptions = {
+
+    /**
+     * @property {boolean} [deepEquals=false] - whether or not a deep equals check should be performed on the selection
+     * returned by {@link Selector}.
+     */
+    deepEquals: ?boolean
+}
+
+/**
  * A type of a {@link Selector}-{@link Listener} association in which the
  * {@code Listener} listens to changes in the values derived from a redux
  * store/state by the {@code Selector}.
@@ -49,6 +62,11 @@ type SelectorListener = {
      * {@link selector}.
      */
     listener: Listener,
+
+    /**
+     * The {@link RegistrationOptions} passed during the registration to be applied on the listener.
+     */
+    options: ?RegistrationOptions,
 
     /**
      * The {@code Selector} which selects values whose changes are listened to
@@ -94,8 +112,10 @@ class StateListenerRegistry {
                     = selectorListener.selector(
                         store.getState(),
                         prevSelection);
+                const useDeepEquals = selectorListener?.options?.deepEquals;
 
-                if (prevSelection !== selection) {
+                if ((useDeepEquals && !equals(prevSelection, selection))
+                        || (!useDeepEquals && prevSelection !== selection)) {
                     prevSelections.set(selectorListener, selection);
                     selectorListener.listener(selection, store, prevSelection);
                 }
@@ -117,12 +137,14 @@ class StateListenerRegistry {
      * @param {Function} listener - The listener to register with this
      * {@code StateListenerRegistry} so that it gets invoked when the value
      * returned by the specified {@code selector} changes.
+     * @param {RegistrationOptions} [options] - Any options to be applied to the registration.
      * @returns {void}
      */
-    register(selector: Selector, listener: Listener) {
+    register(selector: Selector, listener: Listener, options: ?RegistrationOptions) {
         this._selectorListeners.add({
             listener,
-            selector
+            selector,
+            options
         });
     }
 
