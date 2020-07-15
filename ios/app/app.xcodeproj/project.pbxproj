@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0087C21FA5A978E98A12654C /* libPods-vmeeting.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E9D914D91D6C415C907F5030 /* libPods-vmeeting.a */; };
 		0B412F1F1EDEE6E800B1A0A6 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0B412F1E1EDEE6E800B1A0A6 /* ViewController.m */; };
 		0B412F211EDEE95300B1A0A6 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0B412F201EDEE95300B1A0A6 /* Main.storyboard */; };
 		0B5418471F7C5D8C00A2DD86 /* MeetingRowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B5418461F7C5D8C00A2DD86 /* MeetingRowController.swift */; };
@@ -27,7 +28,6 @@
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		4DB8302D24AB1C15003D3368 /* JitsiMeet.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4DB8302C24AB1C15003D3368 /* JitsiMeet.framework */; };
 		4DB8302E24AB1C15003D3368 /* JitsiMeet.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 4DB8302C24AB1C15003D3368 /* JitsiMeet.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		695AF3ED6F686F9C5EE40F9A /* libPods-jitsi-meet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 489E8EFE2C720D10F5961AEF /* libPods-jitsi-meet.a */; };
 		DE4C456121DE1E4E00EA0709 /* FIRUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = DE4C455F21DE1E4E00EA0709 /* FIRUtilities.m */; };
 		E588011722789D43008B0561 /* JitsiMeetContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = E58801132278944E008B0561 /* JitsiMeetContext.swift */; };
 		E5C97B63227A1EB400199214 /* JitsiMeetCommands.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5C97B62227A1EB400199214 /* JitsiMeetCommands.swift */; };
@@ -114,13 +114,15 @@
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		4670A512A688E2DC34528282 /* Pods-jitsi-meet.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-jitsi-meet.debug.xcconfig"; path = "../Pods/Target Support Files/Pods-jitsi-meet/Pods-jitsi-meet.debug.xcconfig"; sourceTree = "<group>"; };
-		489E8EFE2C720D10F5961AEF /* libPods-jitsi-meet.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-jitsi-meet.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		4DB8302C24AB1C15003D3368 /* JitsiMeet.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = JitsiMeet.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		6342EE7F981197A37212F6C7 /* Pods-vmeeting.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-vmeeting.debug.xcconfig"; path = "../Pods/Target Support Files/Pods-vmeeting/Pods-vmeeting.debug.xcconfig"; sourceTree = "<group>"; };
+		AF5DC70CC3D33F668BD7E37A /* Pods-vmeeting.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-vmeeting.release.xcconfig"; path = "../Pods/Target Support Files/Pods-vmeeting/Pods-vmeeting.release.xcconfig"; sourceTree = "<group>"; };
 		B3B083EB1D4955FF0069CEE7 /* app.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = app.entitlements; sourceTree = "<group>"; };
 		DE4C455F21DE1E4E00EA0709 /* FIRUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FIRUtilities.m; sourceTree = "<group>"; };
 		DE4C456021DE1E4E00EA0709 /* FIRUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FIRUtilities.h; sourceTree = "<group>"; };
 		E58801132278944E008B0561 /* JitsiMeetContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JitsiMeetContext.swift; sourceTree = "<group>"; };
 		E5C97B62227A1EB400199214 /* JitsiMeetCommands.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JitsiMeetCommands.swift; sourceTree = "<group>"; };
+		E9D914D91D6C415C907F5030 /* libPods-vmeeting.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-vmeeting.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -137,7 +139,7 @@
 			files = (
 				4DB8302D24AB1C15003D3368 /* JitsiMeet.framework in Frameworks */,
 				0BD6B4371EF82A6B00D1F4CD /* WebRTC.framework in Frameworks */,
-				695AF3ED6F686F9C5EE40F9A /* libPods-jitsi-meet.a in Frameworks */,
+				0087C21FA5A978E98A12654C /* libPods-vmeeting.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -156,7 +158,7 @@
 			children = (
 				4DB8302C24AB1C15003D3368 /* JitsiMeet.framework */,
 				0BD6B4361EF82A6B00D1F4CD /* WebRTC.framework */,
-				489E8EFE2C720D10F5961AEF /* libPods-jitsi-meet.a */,
+				E9D914D91D6C415C907F5030 /* libPods-vmeeting.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -213,6 +215,8 @@
 			children = (
 				4670A512A688E2DC34528282 /* Pods-jitsi-meet.debug.xcconfig */,
 				09AA3B93E4CC62D84B424690 /* Pods-jitsi-meet.release.xcconfig */,
+				6342EE7F981197A37212F6C7 /* Pods-vmeeting.debug.xcconfig */,
+				AF5DC70CC3D33F668BD7E37A /* Pods-vmeeting.release.xcconfig */,
 			);
 			name = Pods;
 			sourceTree = "<group>";
@@ -449,7 +453,7 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-jitsi-meet-checkManifestLockResult.txt",
+				"$(DERIVED_FILE_DIR)/Pods-vmeeting-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -727,7 +731,7 @@
 		};
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 4670A512A688E2DC34528282 /* Pods-jitsi-meet.debug.xcconfig */;
+			baseConfigurationReference = 6342EE7F981197A37212F6C7 /* Pods-vmeeting.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIconDebug;
@@ -763,7 +767,7 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 09AA3B93E4CC62D84B424690 /* Pods-jitsi-meet.release.xcconfig */;
+			baseConfigurationReference = AF5DC70CC3D33F668BD7E37A /* Pods-vmeeting.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIconRelease;
