@@ -3,10 +3,6 @@
 import debounce from 'lodash/debounce';
 
 import {
-    VIDEO_QUALITY_LEVELS,
-    setMaxReceiverVideoQuality
-} from '../base/conference';
-import {
     getPinnedParticipant,
     pinParticipant
 } from '../base/participants';
@@ -32,8 +28,6 @@ StateListenerRegistry.register(
         dispatch(selectParticipant());
 
         if (!displayTileView) {
-            dispatch(setMaxReceiverVideoQuality(VIDEO_QUALITY_LEVELS.HIGH));
-
             if (_getAutoPinSetting()) {
                 _updateAutoPinnedParticipant(store);
             }
