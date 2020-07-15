@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 
 import { translate } from '../../../../base/i18n';
 import { Icon, IconCheck, IconCopy } from '../../../../base/icons';
-import { copyText } from '../../../../base/util';
+import { copyText, getDecodedURI } from '../../../../base/util';
 
 
 type Props = {
@@ -82,7 +82,7 @@ function CopyMeetingLinkSection({ t, url }: Props) {
             );
         }
 
-        const displayUrl = decodeURI(url.replace(/^https?:\/\//i, ''));
+        const displayUrl = getDecodedURI(url);
 
         return (
             <>

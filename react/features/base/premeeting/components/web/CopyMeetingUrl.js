@@ -6,7 +6,7 @@ import { getCurrentConferenceUrl } from '../../../connection';
 import { translate } from '../../../i18n';
 import { Icon, IconCopy, IconCheck } from '../../../icons';
 import { connect } from '../../../redux';
-import { copyText } from '../../../util';
+import { copyText, getDecodedURI } from '../../../util';
 
 type Props = {
 
@@ -156,7 +156,7 @@ class CopyMeetingUrl extends Component<Props, State> {
                     className = { `url ${showLinkCopied ? 'done' : ''}` }
                     onClick = { _copyUrl } >
                     <div className = 'copy-meeting-text'>
-                        { !showCopyLink && !showLinkCopied && url }
+                        { !showCopyLink && !showLinkCopied && getDecodedURI(url) }
                         { showCopyLink && t('prejoin.copyAndShare') }
                         { showLinkCopied && t('prejoin.linkCopied') }
                     </div>
