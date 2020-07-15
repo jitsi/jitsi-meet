@@ -2,10 +2,11 @@
 
 import React, { Component } from 'react';
 
-import Container from './Container';
-import styles from './styles';
-import Text from './Text';
 import type { SetionListSection } from '../../Types';
+
+import Container from './Container';
+import Text from './Text';
+import styles from './styles';
 
 type Props = {
 

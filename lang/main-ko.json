@@ -1,21 +1,36 @@
 {
     "addPeople": {
         "add": "초대",
+        "addContacts": "연락처 초대",
+        "copyInvite": "회의 초대장 복사",
+        "copyLink": "회의 링크 복사",
+        "copyStream": "라이브 스트리밍 링크 복사",
         "countryNotSupported": "아직 해당 지역을 지원하지 않습니다",
         "countryReminder": "미국 이외의 지역으로 전화하시겠습니까? 국가 번호로 시작해야합니다!",
+        "defaultEmail": "기본 이메일",
         "disabled": "사람들을 초대 할 수 없습니다",
         "failedToAdd": "참가자 추가 실패",
         "footerText": "전화 걸기가 비활성화되어 있습니다.",
+        "googleEmail": "Google 이메일",
+        "inviteMoreHeader": "회의실에 혼자 있습니다",
+        "inviteMoreMailSubject": "{{appName}} 회의에 참여",
+        "inviteMorePrompt": "다른 사람 초대",
+        "linkCopied": "링크가 클립보드에 복사되었습니다",
         "loading": "사람 및 전화번호 검색",
         "loadingNumber": "전화번호 확인 중",
         "loadingPeople": "초대할 사람 찾기",
         "noResults": "일치하는 검색 결과 없음",
         "noValidNumbers": "전화 번호를 입력하십시오.",
+        "outlookEmail": "Outlook 이메일",
         "searchNumbers": "전화번호 추가",
         "searchPeople": "인명 검색",
         "searchPeopleAndNumbers": "인명 검색 또는 전화번호 추가",
+        "shareInvite": "회의 초대장 공유",
+        "shareLink": "다른 사람 초대를 위한 회의 링크 공유",
+        "shareStream": "실시간 스트리밍 링크 공유",
         "telephone": "전화: {{number}}",
-        "title": "이 회의에 사람들을 초대하십시오"
+        "title": "이 회의에 사람들을 초대하십시오",
+        "yahooEmail": "Yahoo 이메일"
     },
     "audioDevices": {
         "bluetooth": "블루투스",
@@ -117,11 +132,14 @@
     "deepLinking": {
         "appNotInstalled": "중계 서비스에 참여하려면 모바일 앱 설치가 필요합니다",
         "description": "{{app}} 데스크톱 앱에서 회의를 시작했습니다. {{app}} 웹 응용 프로그램에서 다시 시도하거나 실행하십시오.",
-        "descriptionWithoutWeb": "",
+        "descriptionWithoutWeb": "{{app}} 데스크톱 앱에서 회의를 시작하려고 했습니다.",
         "downloadApp": "앱 다운로드",
+        "ifDoNotHaveApp": "아직 앱이 없는 경우:",
+        "ifHaveApp": "이미 앱이 있다면:",
+        "joinInApp": "앱으로 이 회의에 참여",
         "launchWebButton": "웹에서 실행",
         "openApp": "방으로 이동하기",
-        "title": "{{app}}에서 회의 시작...",
+        "title": "{{app}}에서 회의 시작…",
         "tryAgainButton": "데스크톱에서 다시 시도하십시오"
     },
     "defaultLink": "e.g. {{url}}",
@@ -155,7 +173,7 @@
         "cameraUnsupportedResolutionError": "카메라가 필요한 비디오 해상도를 지원하지 않습니다",
         "Cancel": "취소",
         "close": "닫기",
-        "conferenceDisconnectMsg": "네트워크 연결을 확인하고 있습니다. {{seconds}} 초 내에 다시 연결중입니다...",
+        "conferenceDisconnectMsg": "네트워크 연결을 확인하고 있습니다. {{seconds}} 초 내에 다시 연결중입니다…",
         "conferenceDisconnectTitle": "연결이 끊어졌습니다.",
         "conferenceReloadMsg": "문제를 해결하려고 노력하고 있습니다. {{seconds}} 초 안에 다시 연결중입니다.",
         "conferenceReloadTitle": "불행하게도 문제가 발생했습니다",
@@ -290,9 +308,6 @@
         "Yes": "",
         "yourEntireScreen": "전체 화면"
     },
-    "\u0005dialog": {
-        "accessibilityLabel": {}
-    },
     "dialOut": {
         "statusMessage": "지금은 {{status}}입니다"
     },
@@ -304,6 +319,11 @@
         "rateExperience": "회의 경험 평가하기",
         "veryBad": "매우 나쁨",
         "veryGood": "매우 좋음"
+    },
+    "footer": {
+        "copyright": "Copyright@2020 포항공과대학교. ALL RIGHTS RESERVED.",
+        "privacy": "개인정보처리방침",
+        "tos": "이용약관"
     },
     "incomingCall": {
         "answer": "",
@@ -342,7 +362,6 @@
         "tooltip": "링크 공유 및 회의에 대한 정보",
         "label": ""
     },
-    "\u0005info": {},
     "inviteDialog": {
         "alertText": "",
         "header": "초대",
@@ -392,7 +411,7 @@
         "invalidStreamKey": "",
         "off": "실시간 스트리밍이 중지됨",
         "on": "실시간 스트리밍",
-        "pending": "실시간 스트리밍 시작...",
+        "pending": "실시간 스트리밍 시작…",
         "serviceName": "실시간 스트리밍 서비스",
         "signedInAs": "",
         "signIn": "Google로 로그인",
@@ -431,9 +450,8 @@
         "stop": "레코딩 종료",
         "yes": ""
     },
-    "\u0005localRecording": {},
-    "lockRoomPassword": "비밀번호",
-    "lockRoomPasswordUppercase": "비밀번호",
+    "lockRoomPassword": "패스워드",
+    "lockRoomPasswordUppercase": "패스워드",
     "me": "Me",
     "notify": {
         "connectedOneMember": "{{name}}님이 회의에 참석했습니다",
@@ -520,22 +538,28 @@
         "unavailable": "죄송합니다. {{serviceName}}은 현재 사용할 수 없습니다. 저희는 문제를 해결하기 위해 노력하고 있습니다. 나중에 다시 시도 해주십시오.",
         "unavailableTitle": "레코딩을 사용할 수 없습니다"
     },
-    "\u0005recording": {},
     "sectionList": {
         "pullToRefresh": "당겨서 새로고침"
     },
+    "security": {
+        "about": "회의에 $t(lockRoomPassword)를 추가합니다. 참가자가 회의에 참석하려면 $t(lockRoomPassword)를 입력해야 합니다.",
+        "aboutReadOnly": "방장은 회의에 $t(lockRoomPassword)를 추가할 수 있습니다. 참가자가 회의에 참석하려면 $t(lockRoomPassword)를 입력해야 합니다.",
+        "insecureRoomNameWarning": "회의실 이름은 안전하지 않습니다. 원하지 않는 참가자가 회의에 참여할 수 있습니다. 보안 버튼을 사용하여 회의 보안을 고려하십시오.",
+        "securityOptions": "보안 옵션"
+    },
     "settings": {
         "calendar": {
-            "about": "",
+            "about": "{{appName}} 캘린더 통합은 향후 일정을 읽을 수 있도록 캘린더에 안전하게 액세스하는 데 사용됩니다.",
             "disconnect": "연결 끊김",
-            "microsoftSignIn": "",
-            "signedIn": "",
-            "title": ""
+            "microsoftSignIn": "Microsoft로 로그인",
+            "signedIn": "현재 {{email}}의 캘린더 이벤트에 액세스 중입니다. 캘린더 이벤트에 대한 액세스를 중지하려면 아래의 연결 끊기 단추를 클릭하십시오.",
+            "title": "캘린더"
         },
         "devices": "장치",
         "followMe": "모두 나와 같은 설정 상태로",
         "language": "언어",
-        "loggedIn": "",
+        "loggedIn": "{{name}}으로 로그인",
+        "microphones": "마이크",
         "moderator": "방장",
         "more": "기타",
         "name": "이름",
@@ -543,12 +567,10 @@
         "selectAudioOutput": "오디오 출력",
         "selectCamera": "카메라",
         "selectMic": "오디오",
+        "speakers": "스피커",
         "startAudioMuted": "모두가 음소거를 시작합니다",
         "startVideoMuted": "모두가 비디오 비활성화로 시작합니다",
         "title": "설정"
-    },
-    "\u0005settings": {
-        "calendar": {}
     },
     "settingsView": {
         "alertOk": "확인",
@@ -674,7 +696,6 @@
         "startvideoblur": "배경 흐리게",
         "stopvideoblur": "배경 흐리게 취소"
     },
-    "\u0005toolbar": {},
     "transcribing": {
         "ccButtonTooltip": "",
         "error": "레코딩이 실패했습니다. 다시 시도하십시오.",
@@ -682,12 +703,11 @@
         "failedToStart": "",
         "labelToolTip": "",
         "off": "",
-        "pending": "참석할 멤버를 기다리는 중입니다...",
+        "pending": "참석할 멤버를 기다리는 중입니다…",
         "start": "",
         "stop": "",
         "tr": ""
     },
-    "\u0005transcribing": {},
     "userMedia": {
         "androidGrantPermissions": "브라우저에서 권한을 요청할 때 <b><i>허락</i></b>을 선택",
         "chromeGrantPermissions": "브라우저에서 권한을 요청할 때 <b><i>허락</i></b>을 선택",
@@ -722,9 +742,6 @@
         "lowDefinition": "저화질",
         "onlyAudioAvailable": "오디오만 사용할 수 있습니다",
         "onlyAudioSupported": "이 브라우저에서는 오디오만 지원합니다",
-        "p2pEnabled": "Peer to Peer 사용 가능",
-        "p2pVideoQualityDescription": "",
-        "recHighDefinitionOnly": "고화질을 선호합니다",
         "sd": "SD",
         "standardDefinition": "표준 해상도"
     },
@@ -773,5 +790,45 @@
         "sendFeedback": "",
         "terms": "이용약관",
         "title": ""
+    },
+    "lonelyMeetingExperience": {
+        "button": "다른 사람 초대",
+        "youAreAlone": "회의실에 혼자 있습니다"
+    },
+    "helpView": {
+        "header": "도움말 센터"
+    },
+    "lobby": {
+        "knockingParticipantList" : "참가자 목록 요청",
+        "allow": "허용",
+        "backToKnockModeButton": "암호 없음, 대신 가입 요청",
+        "dialogTitle": "로비 모드",
+        "disableDialogContent": "현재 로비 모드가 활성화되어 있습니다. 이 기능은 원치 않는 참가자가 회의에 참여할 수 없도록합니다. 비활성화 하시겠습니까?",
+        "disableDialogSubmit": "비활성화",
+        "emailField": "이메일 주소를 입력하세요",
+        "enableDialogPasswordField": "암호 설정 (선택사항)",
+        "enableDialogSubmit": "활성화",
+        "enableDialogText": "로비 모드를 사용하면 방장이 공식적으로 승인 한 후에 만 ​​사람들이 입장 할 수 있도록하여 회의를 보호 할 수 있습니다.",
+        "enterPasswordButton": "회의 비밀번호 입력",
+        "enterPasswordTitle": "회의에 참여하려면 비밀번호를 입력하세요",
+        "invalidPassword": "잘못된 비밀번호",
+        "joiningMessage": "다른 사람이 귀하의 요청을 수락하자마자 회의에 참석합니다",
+        "joinWithPasswordMessage": "비밀번호로 가입을 시도하는 중입니다. 잠시만 기다려주세요...",
+        "joinRejectedMessage": "방장이 귀하의 가입 요청을 거부했습니다.",
+        "joinTitle": "미팅 참여",
+        "joiningTitle": "회의에 참석하려고 합니다...",
+        "joiningWithPasswordTitle": "비밀번호로 가입...",
+        "knockButton": "가입 요청",
+        "knockTitle": "누군가 회의에 참여하려고 합니다",
+        "nameField": "이름을 입력하세요",
+        "notificationLobbyAccessDenied": "{{targetParticipantName}}님이 {{originParticipantName}}님의 참여를 거부했습니다.",
+        "notificationLobbyAccessGranted": "{{targetParticipantName}}님이 {{originParticipantName}}님의 참여를 허용했습니다.",
+        "notificationLobbyDisabled": "{{originParticipantName}}님이 로비를 비활성화 했습니다",
+        "notificationLobbyEnabled": "{{originParticipantName}}님이 로비를 활성화 했습니다",
+        "notificationTitle": "로비",
+        "passwordField": "회의 비밀번호 입력",
+        "passwordJoinButton": "가입",
+        "reject": "거부",
+        "toggleLabel": "로비 활성화"
     }
 }

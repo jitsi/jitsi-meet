@@ -6,7 +6,6 @@ import { Text, TouchableOpacity } from 'react-native';
 import { translate } from '../../../i18n';
 import { connect } from '../../../redux';
 import { StyleType } from '../../../styles';
-
 import { _abstractMapStateToProps } from '../../functions';
 
 import { type Props as BaseProps } from './BaseDialog';

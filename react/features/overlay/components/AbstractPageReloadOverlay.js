@@ -1,6 +1,6 @@
 // @flow
 
-import { randomInt } from 'js-utils/random';
+import { randomInt } from '@jitsi/js-utils/random';
 import React, { Component } from 'react';
 import type { Dispatch } from 'redux';
 
@@ -8,13 +8,13 @@ import {
     createPageReloadScheduledEvent,
     sendAnalytics
 } from '../../analytics';
-import { reloadNow } from '../../app';
+import { reloadNow } from '../../app/actions';
 import {
     isFatalJitsiConferenceError,
     isFatalJitsiConnectionError
 } from '../../base/lib-jitsi-meet';
-
 import logger from '../logger';
+
 import ReloadButton from './web/ReloadButton';
 
 declare var APP: Object;
@@ -286,6 +286,6 @@ export function abstractMapStateToProps(state: Object) {
         details: fatalError && fatalError.details,
         isNetworkFailure:
             fatalError === configError || fatalError === connectionError,
-        reason: fatalError && fatalError.message
+        reason: fatalError && (fatalError.message || fatalError.name)
     };
 }

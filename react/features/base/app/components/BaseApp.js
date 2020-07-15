@@ -1,5 +1,6 @@
 // @flow
 
+import { jitsiLocalStorage } from '@jitsi/js-utils';
 import _ from 'lodash';
 import React, { Component, Fragment } from 'react';
 import { I18nextProvider } from 'react-i18next';
@@ -10,12 +11,11 @@ import Thunk from 'redux-thunk';
 import { i18next } from '../../i18n';
 import {
     MiddlewareRegistry,
+    PersistenceRegistry,
     ReducerRegistry,
     StateListenerRegistry
 } from '../../redux';
 import { SoundCollection } from '../../sounds';
-import { PersistenceRegistry } from '../../storage';
-
 import { appWillMount, appWillUnmount } from '../actions';
 import logger from '../logger';
 
@@ -110,7 +110,7 @@ export default class BaseApp extends Component<*, State> {
      * @returns {Promise}
      */
     _initStorage(): Promise<*> {
-        const { _initializing } = window.localStorage;
+        const _initializing = jitsiLocalStorage.getItem('_initializing');
 
         return _initializing || Promise.resolve();
     }
@@ -122,14 +122,14 @@ export default class BaseApp extends Component<*, State> {
      * @returns {ReactElement}
      */
     render() {
-        const { route: { component }, store } = this.state;
+        const { route: { component, props }, store } = this.state;
 
         if (store) {
             return (
                 <I18nextProvider i18n = { i18next }>
                     <Provider store = { store }>
                         <Fragment>
-                            { this._createMainElement(component) }
+                            { this._createMainElement(component, props) }
                             <SoundCollection />
                             { this._createExtraElement() }
                             { this._renderDialogContainer() }

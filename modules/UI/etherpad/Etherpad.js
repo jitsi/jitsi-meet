@@ -2,10 +2,9 @@
 
 import { getSharedDocumentUrl, setDocumentEditingState } from '../../../react/features/etherpad';
 import { getToolboxHeight } from '../../../react/features/toolbox';
-
-import VideoLayout from '../videolayout/VideoLayout';
-import LargeContainer from '../videolayout/LargeContainer';
 import Filmstrip from '../videolayout/Filmstrip';
+import LargeContainer from '../videolayout/LargeContainer';
+import VideoLayout from '../videolayout/VideoLayout';
 
 /**
  *

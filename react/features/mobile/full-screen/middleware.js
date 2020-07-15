@@ -8,8 +8,8 @@ import { isAnyDialogOpen } from '../../base/dialog/functions';
 import { Platform } from '../../base/react';
 import { MiddlewareRegistry, StateListenerRegistry } from '../../base/redux';
 
-import { _setImmersiveListener as _setImmersiveListenerA } from './actions';
 import { _SET_IMMERSIVE_LISTENER } from './actionTypes';
+import { _setImmersiveListener as _setImmersiveListenerA } from './actions';
 
 /**
  * Middleware that captures conference actions and activates or deactivates the

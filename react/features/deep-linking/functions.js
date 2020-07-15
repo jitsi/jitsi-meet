@@ -1,8 +1,8 @@
 /* global interfaceConfig */
 
-import { URI_PROTOCOL_PATTERN } from '../base/util';
 import { isMobileBrowser } from '../base/environment/utils';
 import { Platform } from '../base/react';
+import { URI_PROTOCOL_PATTERN } from '../base/util';
 
 import {
     DeepLinkingDesktopPage,
@@ -23,7 +23,7 @@ export function generateDeepLinkingURL() {
     // appears to be a link with an app-specific scheme, not a Universal
     // Link.
 
-    const appScheme = interfaceConfig.APP_SCHEME || 'org.postech.vmeeting';
+    const appScheme = interfaceConfig.APP_SCHEME || 'org.jitsi.meet';
     const { href } = window.location;
     const regex = new RegExp(URI_PROTOCOL_PATTERN, 'gi');
 
@@ -32,7 +32,7 @@ export function generateDeepLinkingURL() {
     if (Platform.OS === 'android') {
         // https://meet.jit.si/foo -> meet.jit.si/foo
         const url = href.replace(regex, '').substr(2);
-        const pkg = interfaceConfig.ANDROID_APP_PACKAGE || 'org.postech.vmeeting';
+        const pkg = interfaceConfig.ANDROID_APP_PACKAGE || 'org.jitsi.meet';
 
         return `intent://${url}#Intent;scheme=${appScheme};package=${pkg};end`;
     }
@@ -50,9 +50,10 @@ export function generateDeepLinkingURL() {
  */
 export function getDeepLinkingPage(state) {
     const { room } = state['features/base/conference'];
+    const { launchInWeb } = state['features/deep-linking'];
 
     // Show only if we are about to join a conference.
-    if (!room || state['features/base/config'].disableDeepLinking) {
+    if (launchInWeb || !room || state['features/base/config'].disableDeepLinking) {
         return Promise.resolve();
     }
 
@@ -64,13 +65,6 @@ export function getDeepLinkingPage(state) {
         return Promise.resolve(
             typeof mobileAppPromo === 'undefined' || Boolean(mobileAppPromo)
                 ? DeepLinkingMobilePage : NoMobileApp);
-    }
-
-    // desktop
-    const { launchInWeb } = state['features/deep-linking'];
-
-    if (launchInWeb) {
-        return Promise.resolve();
     }
 
     return _openDesktopApp(state).then(

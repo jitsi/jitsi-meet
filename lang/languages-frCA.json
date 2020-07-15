@@ -6,11 +6,11 @@
     "cs": "Tchèque",
     "de": "Allemand",
     "el": "Grec",
-    "enGB": "Anglais (Royaume-Uni) ",
+    "enGB": "Anglais (Royaume-Uni)",
     "eo": "Espéranto",
     "es": "Espagnol",
     "esUS": "Espagnol (Amérique latine)",
-    "fi": "Finlandais",
+    "fi": "Finnois",
     "fr": "Français",
     "frCA": "Français (Canadien)",
     "hr": "Croate",
@@ -29,5 +29,7 @@
     "tr": "Turc",
     "vi": "Vietnamien",
     "zhCN": "Chinois (Chine)",
-    "zhTW": "Chinois (Taiwan)"
+    "zhTW": "Chinois (Taiwan)",
+    "et": "Estonien",
+    "da": "Danois"
 }

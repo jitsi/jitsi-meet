@@ -5,7 +5,6 @@ import React, { PureComponent } from 'react';
 import { IconShareDesktop } from '../../icons';
 import { getParticipantById } from '../../participants';
 import { connect } from '../../redux';
-
 import { getAvatarColor, getInitials } from '../functions';
 
 import { StatelessAvatar } from '.';

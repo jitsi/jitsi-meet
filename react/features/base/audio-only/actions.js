@@ -1,13 +1,13 @@
 // @flow
 
-import UIEvents from '../../../../service/UI/UIEvents';
+import type { Dispatch } from 'redux';
 
+import UIEvents from '../../../../service/UI/UIEvents';
 import { createAudioOnlyChangedEvent, sendAnalytics } from '../../analytics';
 
 import { SET_AUDIO_ONLY } from './actionTypes';
 import logger from './logger';
 
-import type { Dispatch } from 'redux';
 
 declare var APP: Object;
 

@@ -7,7 +7,6 @@ import { translate } from '../../base/i18n';
 import { IconShareDoc } from '../../base/icons';
 import { connect } from '../../base/redux';
 import { AbstractButton, type AbstractButtonProps } from '../../base/toolbox';
-
 import { toggleDocument } from '../actions';
 
 

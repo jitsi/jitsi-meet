@@ -1,10 +1,10 @@
-// XXX The function parseURLParams is exported by the feature base/config (as
+// XXX The function parseURLParams is exported by the feature base/util (as
 // defined in the terminology of react/). However, this file is (very likely)
 // bundled in external_api in addition to app.bundle and, consequently, it is
 // best to import as little as possible here (rather than the whole feature
-// base/config) in order to minimize the amount of source code bundled into
+// base/util) in order to minimize the amount of source code bundled into
 // multiple bundles.
-import parseURLParams from '../../react/features/base/config/parseURLParams';
+import { parseURLParams } from '../../react/features/base/util/parseURLParams';
 
 /**
  * JitsiMeetExternalAPI id - unique for a webpage.

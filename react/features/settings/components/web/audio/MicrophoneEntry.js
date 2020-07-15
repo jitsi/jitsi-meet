@@ -2,8 +2,9 @@
 
 import React, { Component } from 'react';
 
-import AudioSettingsEntry, { type Props as AudioSettingsEntryProps } from './AudioSettingsEntry';
 import JitsiMeetJS from '../../../../base/lib-jitsi-meet/_';
+
+import AudioSettingsEntry, { type Props as AudioSettingsEntryProps } from './AudioSettingsEntry';
 import Meter from './Meter';
 
 const JitsiTrackEvents = JitsiMeetJS.events.track;

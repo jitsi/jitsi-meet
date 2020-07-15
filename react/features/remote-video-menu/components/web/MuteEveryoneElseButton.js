@@ -7,11 +7,11 @@ import { openDialog } from '../../../base/dialog';
 import { translate } from '../../../base/i18n';
 import { IconMuteEveryoneElse } from '../../../base/icons';
 import { connect } from '../../../base/redux';
-
 import AbstractMuteButton, {
     _mapStateToProps,
     type Props
 } from '../AbstractMuteButton';
+
 import MuteEveryoneDialog from './MuteEveryoneDialog';
 import RemoteVideoMenuButton from './RemoteVideoMenuButton';
 

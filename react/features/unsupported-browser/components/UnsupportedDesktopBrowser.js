@@ -50,7 +50,7 @@ class UnsupportedDesktopBrowser extends Component<Props> {
                         className = { `${_SNS}__link` }
                         href = { CHROME } >Chrome</a>&nbsp;
                     {
-                        this._showFirefox() && <>and <a
+                        this._showFirefox() && <>or <a
                             className = { `${_SNS}__link` }
                             href = { FIREFOX }>Firefox</a></>
                     }

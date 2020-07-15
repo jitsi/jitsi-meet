@@ -8,6 +8,9 @@ import { translate } from '../../base/i18n';
 import AbstractGoogleSignInButton from './AbstractGoogleSignInButton';
 import styles from './styles';
 
+// eslint-disable-next-line
+const GOOGLE_BRAND_IMAGE = require('../../../../images/btn_google_signin_dark_normal.png');
+
 /**
  * The Google Brand image for Sign In.
  *
@@ -15,8 +18,6 @@ import styles from './styles';
  * well due to our CocoaPods build process (the lib is not intended to be used
  * this way), hence the custom button implementation.
  */
-const GOOGLE_BRAND_IMAGE
-    = require('../../../../images/btn_google_signin_dark_normal.png');
 
 /**
  * A React Component showing a button to sign in with Google.

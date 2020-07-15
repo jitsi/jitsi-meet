@@ -12,6 +12,7 @@ import { SET_LOG_COLLECTOR, SET_LOGGING_CONFIG } from './actionTypes';
  * }}
  */
 const DEFAULT_STATE = {
+    // eslint-disable-next-line
     config: require('../../../../logging_config.js'),
 
     /**

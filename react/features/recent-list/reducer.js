@@ -1,8 +1,10 @@
 // @flow
+
+import { jitsiLocalStorage } from '@jitsi/js-utils';
+
 import { APP_WILL_MOUNT } from '../base/app';
 import { getURLWithoutParamsNormalized } from '../base/connection';
-import { ReducerRegistry } from '../base/redux';
-import { PersistenceRegistry } from '../base/storage';
+import { PersistenceRegistry, ReducerRegistry } from '../base/redux';
 
 import {
     _STORE_CURRENT_CONFERENCE,
@@ -119,15 +121,16 @@ function _appWillMount(state) {
  * @returns {Array<Object>}
  */
 function _getLegacyRecentRoomList(): Array<Object> {
-    try {
-        const str = window.localStorage.getItem(LEGACY_STORAGE_KEY);
+    const str = jitsiLocalStorage.getItem(LEGACY_STORAGE_KEY);
 
-        if (str) {
+    if (str) {
+        try {
             return JSON.parse(str);
+        } catch (error) {
+            logger.warn('Failed to parse legacy recent-room list!');
         }
-    } catch (error) {
-        logger.warn('Failed to parse legacy recent-room list!');
     }
+
 
     return [];
 }

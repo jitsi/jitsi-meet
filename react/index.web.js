@@ -5,9 +5,11 @@ import ReactDOM from 'react-dom';
 
 import { getJitsiMeetTransport } from '../modules/transport';
 
-import { App } from './features/app';
+import { App } from './features/app/components';
 import { getLogger } from './features/base/logging/functions';
 import { Platform } from './features/base/react';
+import { getJitsiMeetGlobalNS } from './features/base/util';
+import PrejoinApp from './features/prejoin/components/PrejoinApp';
 
 const logger = getLogger('index.web');
 const OS = Platform.OS;
@@ -20,9 +22,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     APP.connectionTimes['document.ready'] = now;
     logger.log('(TIME) document ready:\t', now);
-
-    // Render the main/root Component.
-    ReactDOM.render(<App />, document.getElementById('react'));
 });
 
 // Workaround for the issue when returning to a page with the back button and
@@ -56,3 +55,21 @@ window.addEventListener('beforeunload', () => {
     APP.API.dispose();
     getJitsiMeetTransport().dispose();
 });
+
+const globalNS = getJitsiMeetGlobalNS();
+
+globalNS.entryPoints = {
+    APP: App,
+    PREJOIN: PrejoinApp
+};
+
+globalNS.renderEntryPoint = ({
+    Component,
+    props = {},
+    elementId = 'react'
+}) => {
+    ReactDOM.render(
+        <Component { ...props } />,
+        document.getElementById(elementId)
+    );
+};

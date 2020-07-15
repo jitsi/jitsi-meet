@@ -9,6 +9,8 @@ import { SET_DOCUMENT_EDITING_STATUS, toggleDocument } from '../etherpad';
 import { SET_TILE_VIEW } from './actionTypes';
 import { setTileView } from './actions';
 
+import './subscriber';
+
 /**
  * Middleware which intercepts actions and updates tile view related state.
  *

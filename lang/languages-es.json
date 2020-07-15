@@ -1,6 +1,6 @@
 {
     "en": "Inglés",
-    "af": "Africano",
+    "af": "Afrikáans",
     "bg": "Búlgaro",
     "ca": "Catalán",
     "cs": "Checo",
@@ -12,7 +12,7 @@
     "esUS": "Español (América Latina)",
     "fi": "Finlandés",
     "fr": "Francés",
-    "frCA": "Franco (Canadiense)",
+    "frCA": "Francés (Canadiense)",
     "he": "Hebreo",
     "hr": "Croata",
     "hu": "Húngaro",
@@ -30,5 +30,7 @@
     "tr": "Turco",
     "vi": "Vietnamita",
     "zhCN": "Chino (China)",
-    "zhTW": "Chino (Taiwan)"
+    "zhTW": "Chino (Taiwán)",
+    "et": "Estonio",
+    "da": "Danés"
 }

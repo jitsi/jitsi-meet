@@ -1,8 +1,5 @@
 apply plugin: 'com.android.application'
 
-boolean googleServicesEnabled \
-    = project.file('google-services.json').exists() && !rootProject.ext.libreBuild
-
 // Crashlytics integration is done as part of Firebase now, so it gets
 // automagically activated with google-services.json
 if (googleServicesEnabled) {
@@ -13,7 +10,7 @@ if (googleServicesEnabled) {
 // This lets us upload a new build at most every 10 seconds for the
 // next ~680 years.
 // https://stackoverflow.com/a/38643838
-def vcode = (int)(((new Date().getTime()/1000) - 1546297200) / 10)
+def vcode = (int) (((new Date().getTime() / 1000) - 1546297200) / 10)
 
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
@@ -143,8 +140,8 @@ gradle.projectsEvaluated {
         def targetName = variant.name.capitalize()
 
         def currentRunPackagerTask = tasks.create(
-                name: "run${targetName}ReactPackager",
-                type: Exec) {
+            name: "run${targetName}ReactPackager",
+            type: Exec) {
             group = "react"
             description = "Run the React packager."
 
@@ -175,5 +172,5 @@ gradle.projectsEvaluated {
 }
 
 if (googleServicesEnabled) {
-   apply plugin: 'com.google.gms.google-services'
+    apply plugin: 'com.google.gms.google-services'
 }

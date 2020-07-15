@@ -243,8 +243,10 @@ export function setAudioInputDeviceAndUpdateSettings(deviceId) {
  * @returns {Function}
  */
 export function setAudioOutputDevice(deviceId) {
-    return function(dispatch) {
-        return setAudioOutputDeviceId(deviceId, dispatch);
+    return function(dispatch, getState) {
+        const deviceLabel = getDeviceLabelById(getState(), deviceId, 'audioOutput');
+
+        return setAudioOutputDeviceId(deviceId, dispatch, true, deviceLabel);
     };
 }
 

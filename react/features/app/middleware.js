@@ -4,7 +4,6 @@ import {
     createConnectionEvent,
     sendAnalytics
 } from '../analytics';
-
 import { SET_ROOM } from '../base/conference';
 import {
     CONNECTION_ESTABLISHED,

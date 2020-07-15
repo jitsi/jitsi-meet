@@ -144,15 +144,17 @@ class AudioMuteButton extends AbstractAudioMuteButton<Props, *> {
  * @param {Object} state - The Redux state.
  * @private
  * @returns {{
- *     _audioMuted: boolean
+ *     _audioMuted: boolean,
+ *     _disabled: boolean
  * }}
  */
 function _mapStateToProps(state): Object {
-    const tracks = state['features/base/tracks'];
+    const _audioMuted = isLocalTrackMuted(state['features/base/tracks'], MEDIA_TYPE.AUDIO);
+    const _disabled = state['features/base/config'].startSilent;
 
     return {
-        _audioMuted: isLocalTrackMuted(tracks, MEDIA_TYPE.AUDIO),
-        _disabled: state['features/base/config'].startSilent
+        _audioMuted,
+        _disabled
     };
 }
 

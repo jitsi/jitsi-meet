@@ -4,25 +4,45 @@ about: Create a report to help us improve
 
 ---
 
-*This Issue tracker is only for reporting bugs and tracking code related issues.*
+<!--
 
-Before posting, please make sure you check community.jitsi.org to see if the same or similar bugs have already been discussed.
-General questions, installation help, and feature requests can also be posted to community.jitsi.org.
+This issue tracker is only for reporting bugs and tracking issues related to the source code.
 
-## Description
----
+Before posting, please make sure to check if the same or similar bugs have already been discussed: https://github.com/jitsi/jitsi-meet/issues
 
-## Current behavior
----
+General questions regarding usage, installation, etc. should be posted at https://community.jitsi.org. They will be closed if posted here.
 
-## Expected Behavior
----
+-->
 
-## Possible Solution
----
+### Description:
 
-## Steps to reproduce
----
+<!-- Please describe the bug clearly and concisely. -->
 
-# Environment details
----
+### Steps to reproduce:
+
+1. <!-- Open '...' -->
+2. <!-- Click on '...' -->
+3. <!-- and so on... -->
+
+### Expected behavior:
+
+<!-- Please describe what should happen. -->
+
+### Actual behavior:
+
+<!-- Please describe what actually happens. -->
+<!-- Please attach screenshot if possible. -->
+
+### Server information:
+
+- Jitsi Meet version:
+- Operating System:
+
+### Client information:
+
+- Browser / app version:
+- Operating System:
+
+### Additional information:
+
+<!-- Please provide additional information about the bug, if any. -->

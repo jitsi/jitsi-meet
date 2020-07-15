@@ -1,6 +1,7 @@
 /* @flow */
 
 import { ReducerRegistry } from '../base/redux';
+
 import {
     LOCAL_RECORDING_ENGAGED,
     LOCAL_RECORDING_STATS_UPDATE,
