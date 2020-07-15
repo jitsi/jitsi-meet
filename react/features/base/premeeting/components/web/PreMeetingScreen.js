@@ -40,6 +40,11 @@ type Props = {
     title: string,
 
     /**
+     * The 'Skip prejoin' button to be rendered (if any).
+     */
+     skipPrejoinButton?: React$Node,
+
+    /**
      * True if the preview overlay should be muted, false otherwise.
      */
     videoMuted?: boolean,
@@ -97,6 +102,7 @@ export default class PreMeetingScreen extends PureComponent<Props> {
                         <AudioSettingsButton visible = { true } />
                         <VideoSettingsButton visible = { true } />
                     </div>
+                    { this.props.skipPrejoinButton }
                     { this.props.footer }
                 </div>
             </div>
