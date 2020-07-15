@@ -216,3 +216,66 @@
         width: 100%;
     }
 }
+
+@mixin flex-centered() {
+    align-items: center;
+    display: flex;
+    justify-content: center;
+}
+
+@mixin icon-container($bg, $fill) {
+    .toggle-button-icon-container {
+        background: $bg;
+
+        svg {
+            fill: $fill
+        }
+    }
+}
+
+.toggle-button {
+    border-radius: 3px;
+    cursor: pointer;
+    color: #fff;
+    font-size: 13px;
+    height: 40px;
+    margin: 0 auto;
+    width: 320px;
+
+    @include flex-centered();
+
+    svg {
+        fill: transparent;
+    }
+
+    &:hover {
+        background: #1C2025;
+
+        @include icon-container(#A4B8D1, #1C2025);
+    }
+
+    &-container {
+        position: relative;
+
+        @include flex-centered();
+    }
+
+    &-icon-container {
+        border-radius: 50%;
+        left: -22px;
+        padding: 2px;
+        position: absolute;
+    }
+
+    &--toggled {
+        background: #75757A;
+
+        &:hover {
+            background: #75757A;
+
+            @include icon-container(#A4B8D1, #75757A);
+        }
+
+        @include icon-container(#A4B8D1, #75757A);
+    }
+}
