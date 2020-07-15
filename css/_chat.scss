@@ -295,7 +295,7 @@
     max-height: 0;
     overflow: hidden;
     position: absolute;
-    width: $sidebarWidth;
+    max-width: $sidebarWidth;
 
     /**
      * CSS transitions do not apply for auto dimensions. So to produce the css

@@ -50,7 +50,12 @@ type State = {
     /**
      * Whether or not the smiley selector is visible.
      */
-    showSmileysPanel: boolean
+    showSmileysPanel: boolean,
+
+    /**
+     * Window size
+     */
+    width: number
 };
 
 /**
@@ -63,7 +68,8 @@ class ChatInput extends Component<Props, State> {
 
     state = {
         message: '',
-        showSmileysPanel: false
+        showSmileysPanel: false,
+        width: 0
     };
 
     /**
@@ -105,8 +111,10 @@ class ChatInput extends Component<Props, State> {
      * @returns {ReactElement}
      */
     render() {
+        const { width } = this.state;
         const smileysPanelClassName = `${this.state.showSmileysPanel
             ? 'show-smileys' : 'hide-smileys'} smileys-panel`;
+        const smileysPanelWidth = { width: width - 1 };
 
         return (
             <div id = 'chat-input' >
@@ -118,7 +126,9 @@ class ChatInput extends Component<Props, State> {
                                 text = ':)' />
                         </div>
                     </div>
-                    <div className = { smileysPanelClassName }>
+                    <div
+                        className = { smileysPanelClassName }
+                        style = { smileysPanelWidth }>
                         <SmileysPanel
                             onSmileySelect = { this._onSmileySelect } />
                     </div>
@@ -214,7 +224,10 @@ class ChatInput extends Component<Props, State> {
      * @returns {void}
      */
     _onToggleSmileysPanel() {
-        this.setState({ showSmileysPanel: !this.state.showSmileysPanel });
+        this.setState({
+            showSmileysPanel: !this.state.showSmileysPanel,
+            width: window.innerWidth
+        });
 
         this._focus();
     }
