@@ -30,9 +30,11 @@
         width: 100%;
     }
 
-    .profile-edit-field,
-    .settings-sub-pane {
+    .profile-edit-field {
         flex: 1;
+    }
+    .settings-sub-pane {
+        flex-grow: 1;
     }
 
     .profile-edit-field {
