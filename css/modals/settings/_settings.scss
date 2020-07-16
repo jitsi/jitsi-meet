@@ -32,6 +32,10 @@
     .profile-edit {
         display: flex;
         width: 100%;
+
+        @media (max-width: $mobileWidth) {
+            flex-direction: column;
+        }
     }
 
     .profile-edit-field,

@@ -63,6 +63,14 @@
 }
 
 /**
+ * Override more actions pop-up
+ */
+.toolbox-button-wth-dialog .eYJELv {
+    background-color: $chatInputBackground !important;
+    border: 1px solid $borderColor !important;
+}
+
+/**
  * Override pop-ups text color
  */
 .oQiLZ,

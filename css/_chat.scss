@@ -145,6 +145,10 @@
     align-items: center;
     color: $chatInputTextColor;
 
+    ::-webkit-input-placeholder {
+        color: $chatPlaceholderColor;
+    }
+
     #usermsg {
         scrollbar-color: $chatInputScrollBarColor;
         scrollbar-width: thin;
@@ -161,6 +165,8 @@
 
 .usrmsg-form {
     flex: 1;
+    height: 60px;
+    margin-top: 15px;
 }
 
 #usermsg {
@@ -174,6 +180,7 @@
     resize: none;
     width: 100%;
     word-break: break-word;
+    max-height: 100%;
 }
 
 #usermsg:hover {
