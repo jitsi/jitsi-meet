@@ -33,6 +33,10 @@ export default {
         flex: 1
     }),
 
+    displayNameContainer: {
+        margin: 10
+    },
+
     gradient: {
         position: 'absolute',
         top: 0,

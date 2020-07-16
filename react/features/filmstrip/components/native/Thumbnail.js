@@ -157,7 +157,9 @@ function Thumbnail(props: Props) {
                 tintStyle = { _styles.activeThumbnailTint }
                 zOrder = { 1 } />
 
-            { renderDisplayName && <DisplayNameLabel participantId = { participantId } /> }
+            { renderDisplayName && <Container style = { styles.displayNameContainer }>
+                <DisplayNameLabel participantId = { participantId } />
+            </Container> }
 
             { renderModeratorIndicator
                 && <View style = { styles.moderatorIndicatorContainer }>
