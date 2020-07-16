@@ -67,44 +67,6 @@
             }
         }
 
-        &.copy-link {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 8px 8px 8px 16px;
-            margin-top: 8px;
-            width: calc(100% - 24px);
-            height: 24px;
-
-            background: #0376DA;
-            border-radius: 4px;
-            cursor: pointer;
-
-            &:hover {
-                background: #278ADF;
-                font-weight: 600;
-            }
-
-            &-text {
-                overflow: hidden;
-                text-overflow: ellipsis;
-                white-space: nowrap;
-                max-width: 292px;
-
-                &.selected {
-                    font-weight: 600;
-                }
-            }
-
-            &.clicked {
-                background: #31B76A;
-            }
-
-            & > div > svg > path {
-                fill: #fff;
-            }
-        }
-
         &.separator {
             margin: 24px 0 24px -20px;
             padding: 0 20px;
