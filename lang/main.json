@@ -501,6 +501,7 @@
         "audioAndVideoError": "Audio and video error:",
         "audioOnlyError": "Audio error:",
         "audioTrackError": "Could not create audio track.",
+        "calling": "Calling",
         "callMe": "Call me",
         "callMeAtNumber": "Call me at this number:",
         "configuringDevices": "Configuring devices...",
@@ -524,7 +525,8 @@
         "linkCopied": "Link copied to clipboard",
         "lookGood": "It sounds like your microphone is working properly",
         "or": "or",
-        "calling": "Calling",
+        "premeeting": "Pre meeting",
+        "showScreen": "Enable pre meeting screen",
         "startWithPhone": "Start with phone audio",
         "screenSharingError": "Screen sharing error:",
         "videoOnlyError": "Video error:",
@@ -869,7 +871,7 @@
         "header": "Help center"
     },
     "lobby": {
-        "knockingParticipantList" : "Knocking participant list",
+        "knockingParticipantList": "Knocking participant list",
         "allow": "Allow",
         "backToKnockModeButton": "No password, ask to join instead",
         "dialogTitle": "Lobby mode",
