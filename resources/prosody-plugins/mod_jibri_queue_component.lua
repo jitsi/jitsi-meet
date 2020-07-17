@@ -86,6 +86,9 @@ end
 
 log("info", "Starting jibri queue handling for %s", muc_component_host);
 
+local external_api_url = module:get_option_string("external_api_url",tostring(parentHostName));
+module:log("info", "External advertised API URL", external_api_url);
+
 -- Read ASAP key once on module startup
 local f = io.open(ASAPKeyPath, "r");
 if f then
@@ -174,6 +177,7 @@ local function sendEvent(type,room_address,participant)
         ["room_param"] = room_param,
         ["event_type"] = type,
         ["participant"] = participant,
+        ["external_api_url"] = external_api_url.."/jibriqueue/update",
     }
     module:log("debug","Sending event %s",inspect(out_event));
 
@@ -351,11 +355,25 @@ function handle_update_jibri_queue(event)
         return { status_code = 400; };
     end
 
+    local body = json.decode(event.request.body);
     local params = parse(event.request.url.query);
-    local user_jid = params["user"];
-    local roomAddress = params["room"];
 
-    if not verify_token(params["token"], roomAddress, {}) then
+    local token = params["token"];
+    if not token then
+        token = event.request.headers["authorization"];
+        local prefixStart, prefixEnd = token:find("Bearer ");
+        if prefixStart ~= 1 then
+            module:log("error", "Invalid authorization header format. The header must start with the string 'Bearer '");
+            return 403
+        end
+        token = token:sub(prefixEnd + 1);
+    end
+    
+    local user_jid = body["participant"];
+    local roomAddress = body["conference"];
+    local userJWT = body["token"];
+
+    if not verify_token(token, roomAddress, {}) then
         return { status_code = 403; };
     end
 
