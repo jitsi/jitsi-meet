@@ -107,6 +107,8 @@ class GreenScreenTab extends AbstractDialogTab<Props, State> {
         this._onGreenScreenChange = this._onGreenScreenChange.bind(this);
     }
 
+    _onGreenScreenChange: (Object) => void;
+
     /**
      * Handle when the user selects a new green screen image.
      *

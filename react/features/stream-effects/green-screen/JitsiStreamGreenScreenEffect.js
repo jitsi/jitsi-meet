@@ -1,6 +1,7 @@
 // @flow
 
 import * as bodyPix from '@tensorflow-models/body-pix';
+import type { Dispatch } from 'redux';
 
 /**
  * Represents a modified MediaStream that adds a green screen to video background.
@@ -16,6 +17,7 @@ export default class JitsiStreamGreenScreenEffect {
     _ctx: CanvasRenderingContext2D;
     _dispatch: Function;
     _fps: number;
+    _getState: Function;
     _inputVideoElement: HTMLVideoElement;
     _internalResolution: string;
     _matchChroma: Function;
@@ -24,7 +26,7 @@ export default class JitsiStreamGreenScreenEffect {
     _renderBP: Function;
     _renderChromaKey: Function;
     _renderMask: Function;
-    _requestAnimationFrame: number;
+    _requestAnimationFrame: number | typeof undefined;
     _requiresResize: Function;
     _resizeInProgress: boolean;
     _resizeMask: Function;
@@ -40,7 +42,7 @@ export default class JitsiStreamGreenScreenEffect {
      * @param {Function} getState - GetState function.
      * @param {Function} dispatch - Dispatch function.
      */
-    constructor(getState, dispatch) {
+    constructor(getState: Function, dispatch: Dispatch<any>) {
         this._getState = getState;
         this._dispatch = dispatch;
 
@@ -80,7 +82,12 @@ export default class JitsiStreamGreenScreenEffect {
             this._canvas = document.createElement('canvas');
             this._ctx = this._canvas.getContext('2d');
         } else {
-            const options = {
+            const options: {
+                architecture: string,
+                outputStride: number,
+                quantBytes: number,
+                multiplier?: number,
+            } = {
                 architecture: algorithmType === 'resNet' ? 'ResNet50' : 'MobileNetV1',
                 outputStride: outputStride || 16,
                 quantBytes: quantBytes || 2
@@ -271,6 +278,7 @@ export default class JitsiStreamGreenScreenEffect {
         resizeCanvas.width = this._inputVideoElement.width;
         resizeCanvas.height = this._inputVideoElement.height;
 
+        // $FlowFixMe
         const imgBitmap = await createImageBitmap(maskData);
 
         resizeCtx.drawImage(imgBitmap, 0, 0, resizeCanvas.width, resizeCanvas.height);

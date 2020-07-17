@@ -1,5 +1,7 @@
 // @flow
 
+import type { Dispatch } from 'redux';
+
 import JitsiStreamGreenScreenEffect from './JitsiStreamGreenScreenEffect';
 
 /**
@@ -10,7 +12,7 @@ import JitsiStreamGreenScreenEffect from './JitsiStreamGreenScreenEffect';
  * @param {Function} dispatch - Dispatch function.
  * @returns {Promise<JitsiStreamGreenScreenEffect>}
  */
-export async function createGreenScreenEffect(getState, dispatch) {
+export async function createGreenScreenEffect(getState: Function, dispatch: Dispatch<any>) {
     if (!MediaStreamTrack.prototype.getSettings && !MediaStreamTrack.prototype.getConstraints) {
         throw new Error('JitsiStreamGreenScreenEffect not supported!');
     }

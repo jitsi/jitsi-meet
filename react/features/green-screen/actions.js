@@ -60,10 +60,10 @@ export function toggleGreenScreenEffect(enabled: boolean) {
  *
  * @param {Object} imageData - Raw file input.
  * @returns {{
- *      type: GREEN_SCREEN_CHANGED,
+ *      type: GREEN_SCREEN_CHANGED
  * }}
  */
-export function greenScreenUpdated(imageData) {
+export function greenScreenUpdated(imageData: Object) {
     return {
         type: GREEN_SCREEN_CHANGED,
         data: imageData
@@ -76,10 +76,10 @@ export function greenScreenUpdated(imageData) {
  *
  * @param {Object} imageData - Processed file input.
  * @returns {{
- *      type: GREEN_SCREEN_MASK_UPDATED,
+ *      type: GREEN_SCREEN_MASK_UPDATED
  * }}
  */
-export function greenScreenMaskUpdated(imageData) {
+export function greenScreenMaskUpdated(imageData: Object) {
     return {
         type: GREEN_SCREEN_MASK_UPDATED,
         data: imageData

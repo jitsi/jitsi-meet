@@ -1,5 +1,7 @@
 // @flow
 
+import type { Dispatch } from 'redux';
+
 import { getJitsiMeetGlobalNS, loadScript } from '../base/util';
 
 /**
@@ -9,7 +11,7 @@ import { getJitsiMeetGlobalNS, loadScript } from '../base/util';
  * @param {Function} dispatch - Dispatch function.
  * @returns {Promise<JitsiStreamGreenScreenEffect>} - Resolves with the green screen effect instance.
  */
-export function getGreenScreenEffect(getState, dispatch) {
+export function getGreenScreenEffect(getState: Function, dispatch: Dispatch<any>) {
     const ns = getJitsiMeetGlobalNS();
 
     if (ns.effects && ns.effects.createGreenScreenEffect) {
