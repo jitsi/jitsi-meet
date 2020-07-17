@@ -104,7 +104,7 @@ var interfaceConfig = {
     /**
      * Hide the invite prompt in the header when alone in the meeting.
      */
-    HIDE_INVITE_MORE_HEADER: false,
+    HIDE_INVITE_MORE_HEADER: true,
 
     INITIAL_TOOLBAR_TIMEOUT: 20000,
     JITSI_WATERMARK_LINK: 'https://intulse.com',
@@ -188,8 +188,8 @@ var interfaceConfig = {
         'microphone', 'camera', 'closedcaptions', 'desktop', 'fullscreen',
         'fodeviceselection', 'hangup', 'profile', 'chat', /*'recording',
         'livestreaming',*/ 'etherpad', /*'sharedvideo',*/ 'settings', 'raisehand',
-        'videoquality', 'filmstrip', 'invite', /*'feedback', 'stats',*/ 'shortcuts',
-        'tileview', 'videobackgroundblur', /*'download',*/ 'help', 'mute-everyone', 'security'
+        'videoquality', 'filmstrip', /*'invite', 'feedback', 'stats',*/ 'shortcuts',
+        'tileview', 'videobackgroundblur', /*'download',*/ 'help', 'mute-everyone', /*'security'*/
     ],
 
     TOOLBAR_TIMEOUT: 4000,
