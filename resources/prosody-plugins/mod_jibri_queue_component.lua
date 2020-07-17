@@ -151,6 +151,12 @@ local function generateToken(audience)
     end
 end
 
+local function sendIq(participant,action,participant,time,position,token)
+    local outStanza = st.iq({type = 'set', to = participant}):tag("jibri-queue", 
+       { xmlns = 'http://jitsi.org/protocol/jibri-queue', requestId = requestId, action = action }):
+
+    module:send(outStanza);
+end
 
 local function cb(content_, code_, response_, request_)
     if code_ == 200 or code_ == 204 then
@@ -162,7 +168,7 @@ local function cb(content_, code_, response_, request_)
     end
 end
 
-local function sendEvent(type,room_address,participant)
+local function sendEvent(type,room_address,participant,requestId,replyIq,replyError)
     local event_ts = round(socket.gettime()*1000);
     local node, host, resource, target_subdomain = room_jid_split_subdomain(room_address);
     local room_param = '';
@@ -174,10 +180,11 @@ local function sendEvent(type,room_address,participant)
 
     local out_event = {
         ["conference"] = room_address,
-        ["room_param"] = room_param,
-        ["event_type"] = type,
+        ["roomParam"] = room_param,
+        ["eventType"] = type,
         ["participant"] = participant,
-        ["external_api_url"] = external_api_url.."/jibriqueue/update",
+        ["externalApiUrl"] = external_api_url.."/jibriqueue/update",
+        ["requestId"] = requestId,
     }
     module:log("debug","Sending event %s",inspect(out_event));
 
@@ -189,11 +196,24 @@ local function sendEvent(type,room_address,participant)
         headers = headers,
         method = "POST",
         body = json.encode(out_event)
-    }, cb);
+    }, function (content_, code_, response_, request_)
+        if code_ == 200 or code_ == 204 then
+            module:log("debug", "URL Callback: Code %s, Content %s, Request (host %s, path %s, body %s), Response: %s",
+                    code_, content_, request_.host, request_.path, inspect(request_.body), inspect(response_));
+            module:log("info", "sending reply IQ %s",inspect(replyIq));
+            module:send(replyIq);
+        else
+            module:log("warn", "URL Callback non successful: Code %s, Content %s, Request (%s), Response: %s",
+                    code_, content_, inspect(request_), inspect(response_));
+            module:log("warn", "sending reply error IQ %s",inspect(replyError));
+            module:send(replyError);
+        end
+    end);
 end
 
 -- receives iq from client currently connected to the room
 function on_iq(event)
+    local requestId;
     -- Check the type of the incoming stanza to avoid loops:
     if event.stanza.attr.type == "error" then
         return; -- We do not want to reply to these, so leave.
@@ -201,11 +221,15 @@ function on_iq(event)
     if event.stanza.attr.to == module:get_host() then
         if event.stanza.attr.type == "set" then
             log("info", "Jibri Queue Messsage Event found: %s ",inspect(event.stanza));
+            local reply = st.reply(event.stanza);
+            local replyError = st.error_reply(event.stanza,'cancel','internal-server-error',"Queue Server Error");
+            module:log("info","Reply stanza %s",inspect(reply));
 
             local jibriQueue
                 = event.stanza:get_child('jibri-queue', 'http://jitsi.org/protocol/jibri-queue');
             if jibriQueue then
-                module:log("info", "Jibri Queue Join Request: %s ",inspect(jibriQueue));
+                module:log("info", "Jibri Queue Request: %s ",inspect(jibriQueue));
+
                 local roomAddress = jibriQueue.attr.room;
                 local room = get_room_from_jid(room_jid_match_rewrite(roomAddress));
 
@@ -222,13 +246,29 @@ function on_iq(event)
                     return false;
                 end
 
-                -- now handle new jibri queue message
-                room.jibriQueue[occupant.jid] = true;
+                local action = jibriQueue.attr.action;
+                if action == 'join' then
+                    -- join action, so send event out
+                    requestId = uuid_gen();
 
-                module:log("Sending JoinQueue event for jid %s occupant %s",roomAddress,occupant.jid)
-                sendEvent('JoinQueue',roomAddress,occupant.jid)
+                    -- now handle new jibri queue message
+                    room.jibriQueue[occupant.jid] = requestId;
+                    reply:add_child(st.stanza("jibri-queue", { xmlns = 'http://jitsi.org/protocol/jibri-queue', requestId = requestId})):up()
+                    replyError:add_child(st.stanza("jibri-queue", { xmlns = 'http://jitsi.org/protocol/jibri-queue', requestId = requestId})):up()
+
+                    module:log("info","Sending JoinQueue event for jid %s occupant %s reply %s",roomAddress,occupant.jid,inspect(reply));
+                    sendEvent('JoinQueue',roomAddress,occupant.jid,requestId,reply,replyError);
+                end
+                if action == 'leave' then
+                    requestId = jibriQueue.attr.requestId;
+                    -- TODO: check that requestId is the same as cached value
+                    room.jibriQueue[occupant.jid] = nil;
+                    reply:add_child(st.stanza("jibri-queue", { xmlns = 'http://jitsi.org/protocol/jibri-queue', requestId = requestId})):up()
+                    replyError:add_child(st.stanza("jibri-queue", { xmlns = 'http://jitsi.org/protocol/jibri-queue', requestId = requestId})):up()
+                    sendEvent('LeaveQueue',roomAddress,occupant.jid,requestId,reply,replyError);
+                end
             else
-                module:log("Jibri Queue Stanza missing child %s",inspect(event.stanza))
+                module:log("warn","Jibri Queue Stanza missing child %s",inspect(event.stanza))
             end
         end
     end
@@ -255,7 +295,7 @@ function room_destroyed(event)
     end
     for jid, x in pairs(room.jibriQueue) do
         if x then
-            sendEvent('LeaveQueue',internal_room_jid_match_rewrite(room.jid),jid);
+            sendEvent('LeaveQueue',internal_room_jid_match_rewrite(room.jid),jid,x);
         end
     end
 end
@@ -269,12 +309,12 @@ function occupant_leaving(event)
     end
 
     local occupant = event.occupant;
-
+    local requestId = room.jibriQueue[occupant.jid];
     -- check if user has cached queue request
-    if room.jibriQueue[occupant.jid] then
+    if requestId then
         -- remove occupant from queue cache, signal backend
         room.jibriQueue[occupant.jid] = nil;
-        sendEvent('LeaveQueue',internal_room_jid_match_rewrite(room.jid),occupant.jid);
+        sendEvent('LeaveQueue',internal_room_jid_match_rewrite(room.jid),occupant.jid,requestId);
     end
 end
 
