@@ -177,10 +177,7 @@ const VideoLayout = {
             this.onAudioMute(id, stream.isMuted());
         } else {
             this.onVideoMute(id, stream.isMuted());
-
-            if (stream.videoType === 'desktop') {
-                remoteVideo.setScreenSharing(true);
-            }
+            remoteVideo.setScreenSharing(stream.videoType === 'desktop');
         }
     },
 
@@ -192,10 +189,7 @@ const VideoLayout = {
 
         if (remoteVideo) {
             remoteVideo.removeRemoteStreamElement(stream);
-
-            if (stream.videoType === 'desktop') {
-                remoteVideo.setScreenSharing(false);
-            }
+            remoteVideo.setScreenSharing(false);
         }
 
         this.updateMutedForNoTracks(id, stream.getType());
@@ -493,13 +487,14 @@ const VideoLayout = {
     },
 
     onVideoTypeChanged(id, newVideoType) {
-        if (VideoLayout.getRemoteVideoType(id) === newVideoType) {
+        const remoteVideo = remoteVideos[id];
+
+        if (!remoteVideo || remoteVideo.videoType === newVideoType) {
             return;
         }
 
         logger.info('Peer video type changed: ', id, newVideoType);
-
-        this._updateLargeVideoIfDisplayed(id, true);
+        remoteVideo.setScreenSharing(newVideoType === 'desktop');
     },
 
     /**
