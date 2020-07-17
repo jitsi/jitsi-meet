@@ -1,0 +1,41 @@
+// @flow
+
+/**
+ * The type of redux action dispatched which represents that the green screen
+ * is enabled.
+ *
+ * {
+ *      type: GREEN_SCREEN_ENABLED
+ * }
+ */
+export const GREEN_SCREEN_ENABLED = 'GREEN_SCREEN_ENABLED';
+
+/**
+ * The type of redux action dispatched which represents that the green screen
+ * is disabled.
+ *
+ * {
+ *      type: GREEN_SCREEN_DISABLED
+ * }
+ */
+export const GREEN_SCREEN_DISABLED = 'GREEN_SCREEN_DISABLED';
+
+export const GREEN_SCREEN_CHANGED = 'GREEN_SCREEN_CHANGED';
+
+export const GREEN_SCREEN_MASK_UPDATED = 'GREEN_SCREEN_MASK_UPDATED';
+
+export const GREEN_SCREEN_TYPE_UPDATED = 'GREEN_SCREEN_TYPE_UPDATED';
+
+export const GREEN_SCREEN_OUTPUT_STRIDE_UPDATED = 'GREEN_SCREEN_OUTPUT_STRIDE_UPDATED';
+
+export const GREEN_SCREEN_MULTIPLIER_UPDATED = 'GREEN_SCREEN_MULTIPLIER_UPDATED';
+
+export const GREEN_SCREEN_QUANT_BYTES_UPDATED = 'GREEN_SCREEN_QUANT_BYTES_UPDATED';
+
+export const GREEN_SCREEN_CHROMA_KEY_UPDATED = 'GREEN_SCREEN_CHROMA_KEY_UPDATED';
+
+export const GREEN_SCREEN_CHROMA_THRESHOLD_UPDATED = 'GREEN_SCREEN_CHROMA_THRESHOLD_UPDATED';
+
+export const GREEN_SCREEN_FPS_UPDATED = 'GREEN_SCREEN_FPS_UPDATED';
+
+export const GREEN_SCREEN_INTERNAL_RESOLUTION_UPDATED = 'GREEN_SCREEN_INTERNAL_RESOLUTION_UPDATED';

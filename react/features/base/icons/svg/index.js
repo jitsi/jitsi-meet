@@ -10,6 +10,7 @@ export { default as IconAudioOnly } from './visibility.svg';
 export { default as IconAudioOnlyOff } from './visibility-off.svg';
 export { default as IconAudioRoute } from './volume.svg';
 export { default as IconBlurBackground } from './blur-background.svg';
+export { default as IconGreenScreenBackground } from './green-screen-background.svg';
 export { default as IconCamera } from './camera.svg';
 export { default as IconCameraDisabled } from './camera-disabled.svg';
 export { default as IconCancelSelection } from './cancel.svg';

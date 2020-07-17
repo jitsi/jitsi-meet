@@ -1,6 +1,7 @@
 // @flow
 
 import { getBlurEffect } from '../../blur';
+import { getGreenScreenEffect } from '../../green-screen';
 import { createScreenshotCaptureEffect } from '../../stream-effects/screenshot-capture';
 
 import logger from './logger';
@@ -22,6 +23,16 @@ export default function loadEffects(store: Object): Promise<any> {
                 return Promise.resolve();
             })
         : Promise.resolve();
+
+    const greenScreenPromise = state['features/green-screen/settings'].enabled
+        ? getGreenScreenEffect(store.getState, store.dispatch)
+            .catch(error => {
+                logger.error('Failed to obtain the green screen effect instance with error: ', error);
+
+                return Promise.resolve();
+            })
+        : Promise.resolve();
+
     const screenshotCapturePromise = state['features/screenshot-capture']?.capturesEnabled
         ? createScreenshotCaptureEffect(state)
             .catch(error => {
@@ -31,5 +42,5 @@ export default function loadEffects(store: Object): Promise<any> {
             })
         : Promise.resolve();
 
-    return Promise.all([ blurPromise, screenshotCapturePromise ]);
+    return Promise.all([ blurPromise, greenScreenPromise, screenshotCapturePromise ]);
 }

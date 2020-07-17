@@ -615,7 +615,58 @@
         "speakers": "Speakers",
         "startAudioMuted": "Everyone starts muted",
         "startVideoMuted": "Everyone starts hidden",
-        "title": "Settings"
+        "title": "Settings",
+        "greenScreen": {
+            "title": "Green Screen",
+            "enabled": "Enabled",
+            "input": "Green Screen Image",
+            "selected": "Selected File",
+            "type": "Algorithm Type",
+            "typeRestart": "Changing the type requires you to turn off/on the effect.",
+            "types": {
+                "chroma": {
+                    "label": "Chroma Key (any tier computer)",
+                    "help": "Replace a given color in your video output with the select green screen image."
+                },
+                "mobileNet": {
+                    "label": "MobileNet (low - mid tier computer)",
+                    "help": "Automatically analyze and render your video output. This is recommended for low - mid range computers or mobile devices."
+                },
+                "resNet": {
+                    "label": "ResNet (mid - high tier computer)",
+                    "help": "Automatically analyze and render your video output. This is recommended for mid - high range computers with high bandwidth."
+                }
+            },
+            "settingsRestart": "Changing the following settings requires you to turn off/on the effect.",
+            "outputStride": {
+                "label": "Output Stride",
+                "help": "A larger value results in a smaller model and faster prediction time, but lower accuracy."
+            },
+            "multiplier": {
+                "label": "Multiplier",
+                "help": "A smaller value results in a smaller model and faster prediction time, but lower accuracy."
+            },
+            "quantBytes": {
+                "label": "Quantization",
+                "help": "A smaller value results in a smaller model and faster prediction time, but lower accuracy."
+            },
+            "chroma": {
+                "label": "Chroma Color Selector"
+            },
+            "threshold": {
+                "label": "Color Comparison Threshold",
+                "help": "A higher number results in a more lenient color comparison algorithm."
+            },
+            "fps": {
+                "label": "FPS",
+                "help": "A smaller value results in higher performance, but reduces how smooth the video stream appears."
+            },
+            "internalResolution": {
+                "label": "Internal Resolution",
+                "help": "A lower resolution results in higher performance, but reduces accuracy."
+            },
+            "fpsRestart": "Changing the FPS requires you to turn off/on the effect."
+        }
     },
     "settingsView": {
         "advanced": "Advanced",
@@ -704,7 +755,8 @@
             "toggleCamera": "Toggle camera",
             "toggleFilmstrip": "Toggle filmstrip",
             "videomute": "Toggle mute video",
-            "videoblur": "Toggle video blur"
+            "videoblur": "Toggle video blur",
+            "videogreenscreen": "Toggle video green screen"
         },
         "addPeople": "Add people to your call",
         "audioOnlyOff": "Disable low bandwidth mode",
@@ -764,7 +816,9 @@
         "toggleCamera": "Toggle camera",
         "videomute": "Start / Stop camera",
         "startvideoblur": "Blur my background",
-        "stopvideoblur": "Disable background blur"
+        "stopvideoblur": "Disable background blur",
+        "startvideogreenscreen": "Enable my green screen",
+        "stopvideogreenscreen": "Disable my green screen"
     },
     "transcribing": {
         "ccButtonTooltip": "Start / Stop subtitles",

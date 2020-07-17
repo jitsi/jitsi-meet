@@ -126,6 +126,19 @@ export function getMoreTabProps(stateful: Object | Function) {
 }
 
 /**
+ * Returns the current state green screen settings.
+ *
+ * @param {(Function|Object)} stateful - The (whole) redux state, or redux's
+ * {@code getState} function to be used to retrieve the state.
+ * @returns {Object} - Green screen settings.
+ */
+export function getGreenScreenTabProps(stateful: Object | Function) {
+    const state = toState(stateful);
+
+    return state['features/green-screen/settings'];
+}
+
+/**
  * Returns the properties for the "Profile" tab from settings dialog from Redux
  * state.
  *

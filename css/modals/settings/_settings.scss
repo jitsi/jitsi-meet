@@ -30,14 +30,16 @@
         width: 100%;
     }
 
-    .profile-edit-field {
+    .profile-edit-field,
+    .settings-sub-pane {
         flex: 1;
     }
     .settings-sub-pane {
         flex-grow: 1;
     }
 
-    .profile-edit-field {
+    .profile-edit-field,
+    .settings-column-margin-right {
         margin-right: 20px;
     }
 
@@ -59,5 +61,22 @@
 
     .sign-out-cta {
         margin-bottom: 20px;
+    }
+
+    .settings-green-screen-enabled {
+        margin-top: 20px;
+    }
+
+    .settings-green-screen-restart-message {
+        margin-top: 15px;
+    }
+
+    .settings-green-screen-chrome-picker-wrapper {
+        margin: auto;
+        width: 225px;
+    }
+
+    .settings-green-screen-image-preview {
+        max-width: 100%;
     }
 }

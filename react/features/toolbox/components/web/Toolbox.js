@@ -35,6 +35,7 @@ import { VideoBlurButton } from '../../../blur';
 import { CHAT_SIZE, ChatCounter, toggleChat } from '../../../chat';
 import { SharedDocumentButton } from '../../../etherpad';
 import { openFeedbackDialog } from '../../../feedback';
+import { VideoGreenScreenButton } from '../../../green-screen';
 import { beginAddPeople } from '../../../invite';
 import { openKeyboardShortcutsDialog } from '../../../keyboard-shortcuts';
 import {
@@ -1002,6 +1003,10 @@ class Toolbox extends Component<Props, State> {
                 key = 'videobackgroundblur'
                 showLabel = { true }
                 visible = { this._shouldShowButton('videobackgroundblur') && !_screensharing } />,
+            <VideoGreenScreenButton
+                key = 'videobackgroundgreenscreen'
+                showLabel = { true }
+                visible = { this._shouldShowButton('videobackgroundgreenscreen') && !_screensharing } />,
             <SettingsButton
                 key = 'settings'
                 showLabel = { true }

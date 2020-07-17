@@ -11,11 +11,12 @@ import {
     getDeviceSelectionDialogProps,
     submitDeviceSelectionTab
 } from '../../../device-selection';
-import { submitMoreTab, submitProfileTab } from '../../actions';
+import { submitMoreTab, submitProfileTab, submitGreenScreenTab } from '../../actions';
 import { SETTINGS_TABS } from '../../constants';
 import { getMoreTabProps, getProfileTabProps } from '../../functions';
 
 import CalendarTab from './CalendarTab';
+import GreenScreenTab from './GreenScreenTab';
 import MoreTab from './MoreTab';
 import ProfileTab from './ProfileTab';
 
@@ -183,6 +184,30 @@ function _mapStateToProps(state) {
             styles: 'settings-pane calendar-pane'
         });
     }
+
+    tabs.push({
+        name: SETTINGS_TABS.GREEN_SCREEN,
+        component: GreenScreenTab,
+        label: 'settings.greenScreen.title',
+        props: state['features/green-screen/settings'],
+        propsUpdateFunction: (tabState, newProps) => {
+            return {
+                ...newProps,
+                enabled: tabState.enabled,
+                image: tabState.image,
+                algorithmType: tabState.algorithmType,
+                outputStride: tabState.outputStride,
+                multiplier: tabState.multiplier,
+                quantBytes: tabState.quantBytes,
+                chromaKey: tabState.chromaKey,
+                chromaThreshold: tabState.chromaThreshold,
+                fps: tabState.fps,
+                internalResolution: tabState.internalResolution
+            };
+        },
+        styles: 'settings-pane green-screen-pane',
+        submit: submitGreenScreenTab
+    });
 
     if (showModeratorSettings || showLanguageSettings || showPrejoinSettings) {
         tabs.push({

@@ -115,6 +115,7 @@ import {
     maybeOpenFeedbackDialog,
     submitFeedback
 } from './react/features/feedback';
+import { greenScreenUpdated, toggleGreenScreenEffect } from './react/features/green-screen';
 import { showNotification } from './react/features/notifications';
 import { mediaPermissionPromptVisibilityChanged } from './react/features/overlay';
 import { suspendDetected } from './react/features/power-monitor';
@@ -3007,6 +3008,18 @@ export default {
         if (room) {
             APP.UI.changeDisplayName(id, formattedNickname);
         }
+    },
+
+    changeGreenScreen(image) {
+        APP.store.dispatch(greenScreenUpdated(image));
+
+        APP.store.dispatch(updateSettings({
+            image
+        }));
+    },
+
+    toggleGreenScreenEffect(value) {
+        APP.store.dispatch(toggleGreenScreenEffect(value));
     },
 
     /**

@@ -24,6 +24,7 @@ import '../base/testing/reducer';
 import '../base/tracks/reducer';
 import '../base/user-interaction/reducer';
 import '../blur/reducer';
+import '../green-screen/reducer';
 import '../calendar-sync/reducer';
 import '../chat/reducer';
 import '../deep-linking/reducer';

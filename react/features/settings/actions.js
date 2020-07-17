@@ -4,6 +4,16 @@ import { setFollowMe, setStartMutedPolicy } from '../base/conference';
 import { openDialog } from '../base/dialog';
 import { i18next } from '../base/i18n';
 import { updateSettings } from '../base/settings';
+import {
+    GREEN_SCREEN_CHROMA_KEY_UPDATED,
+    GREEN_SCREEN_CHROMA_THRESHOLD_UPDATED,
+    GREEN_SCREEN_FPS_UPDATED,
+    GREEN_SCREEN_INTERNAL_RESOLUTION_UPDATED,
+    GREEN_SCREEN_MULTIPLIER_UPDATED,
+    GREEN_SCREEN_OUTPUT_STRIDE_UPDATED,
+    GREEN_SCREEN_QUANT_BYTES_UPDATED,
+    GREEN_SCREEN_TYPE_UPDATED
+} from '../green-screen/actionTypes';
 import { setPrejoinPageVisibility } from '../prejoin';
 
 import {
@@ -11,7 +21,7 @@ import {
     SET_VIDEO_SETTINGS_VISIBILITY
 } from './actionTypes';
 import { SettingsDialog } from './components';
-import { getMoreTabProps, getProfileTabProps } from './functions';
+import { getMoreTabProps, getProfileTabProps, getGreenScreenTabProps } from './functions';
 
 declare var APP: Object;
 
@@ -87,6 +97,82 @@ export function submitMoreTab(newState: Object): Function {
 
         if (newState.currentLanguage !== currentState.currentLanguage) {
             i18next.changeLanguage(newState.currentLanguage);
+        }
+    };
+}
+
+/**
+ * Submits the settings from the "Green Screen" tab of the settings dialog.
+ *
+ * @param {Object} newState - The new settings.
+ * @returns {Function}
+ */
+export function submitGreenScreenTab(newState: Object): Function {
+    return (dispatch, getState) => {
+        const currentState = getGreenScreenTabProps(getState());
+
+        if (newState.enabled !== currentState.enabled) {
+            APP.conference.toggleGreenScreenEffect(newState.enabled);
+        }
+
+        if (newState.image !== currentState.image) {
+            APP.conference.changeGreenScreen(newState.image);
+        }
+
+        if (newState.algorithmType !== currentState.algorithmType) {
+            dispatch({
+                type: GREEN_SCREEN_TYPE_UPDATED,
+                algorithmType: newState.algorithmType
+            });
+        }
+
+        if (newState.outputStride !== currentState.outputStride) {
+            dispatch({
+                type: GREEN_SCREEN_OUTPUT_STRIDE_UPDATED,
+                outputStride: newState.outputStride
+            });
+        }
+
+        if (newState.multiplier !== currentState.multiplier) {
+            dispatch({
+                type: GREEN_SCREEN_MULTIPLIER_UPDATED,
+                multiplier: newState.multiplier
+            });
+        }
+
+        if (newState.quantBytes !== currentState.quantBytes) {
+            dispatch({
+                type: GREEN_SCREEN_QUANT_BYTES_UPDATED,
+                quantBytes: newState.quantBytes
+            });
+        }
+
+        if (newState.chromaKey !== currentState.chromaKey) {
+            dispatch({
+                type: GREEN_SCREEN_CHROMA_KEY_UPDATED,
+                chromaKey: newState.chromaKey
+            });
+        }
+
+        if (newState.chromaThreshold !== currentState.chromaThreshold) {
+            dispatch({
+                type: GREEN_SCREEN_CHROMA_THRESHOLD_UPDATED,
+                chromaThreshold: newState.chromaThreshold
+            });
+        }
+
+        if (newState.fps !== currentState.fps) {
+            dispatch({
+                type: GREEN_SCREEN_FPS_UPDATED,
+                fps: newState.fps
+            });
+        }
+
+        if (newState.internalResolution !== currentState.internalResolution) {
+            dispatch({
+                type: GREEN_SCREEN_INTERNAL_RESOLUTION_UPDATED,
+                internalResolution: newState.internalResolution
+            });
         }
     };
 }
