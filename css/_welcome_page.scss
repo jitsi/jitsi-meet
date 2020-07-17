@@ -40,6 +40,10 @@ body.welcome-page {
             padding: $watermarkHeight + $watermarkTop 50px 50px;
             max-width: 100%;
             align-items: center;
+
+            @media (max-width: $mobileWidth) {
+                padding: 40px 20px 20px;
+            }
         }
 
         .header-text-title {
@@ -213,6 +217,11 @@ body.welcome-page {
         top: 32px;
         right: 32px;
         z-index: $zindex2;
+
+        @media (max-width: $desktopWidth) {
+            top: 15px;
+            right: 15px;
+        }
 
         * {
             cursor: pointer;

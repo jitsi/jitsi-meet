@@ -526,6 +526,18 @@
             left: 60%;
         }
     }
+
+    @media (max-width: $mobileWidth) {
+        #dominantSpeakerAvatarContainer,
+        .dynamic-shadow {
+            width: 110px;
+            height: 110px;
+        }
+
+        .dynamic-shadow {
+            left: 65%;
+        }
+    }
 }
 
 .avatar-container {

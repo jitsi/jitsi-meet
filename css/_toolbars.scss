@@ -129,7 +129,7 @@
 
             .overflow-menu-item {
                 align-items: center;
-                color: $overflowMenuItemColor;
+                color: $feedbackInputBg;
                 cursor: pointer;
                 display: flex;
                 font-size: 14px;
@@ -160,7 +160,7 @@
             }
 
             .beta-tag {
-                background: $overflowMenuItemColor;
+                background: $feedbackInputBg;
                 border-radius: 2px;
                 color: $overflowMenuBG;
                 font-size: 11px;
@@ -188,7 +188,7 @@
                 }
 
                 svg {
-                    fill: #B8C7E0 !important;
+                    fill: #FFFFFF !important;
                 }
             }
 

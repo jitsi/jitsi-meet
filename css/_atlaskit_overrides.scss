@@ -63,6 +63,14 @@
 }
 
 /**
+ * Override more actions pop-up
+ */
+.toolbox-button-wth-dialog .eYJELv {
+    background-color: $chatInputBackground !important;
+    border: 1px solid $borderColor !important;
+}
+
+/**
  * Override pop-ups text color
  */
 .oQiLZ,
@@ -135,7 +143,8 @@
 /**
  * Override alert styles on small resolutions
  */
-.gpUwQx {
+.gpUwQx,
+.mIBKA {
     @media (max-width: 480px) {
         width: 320px !important;
         left: -80px !important;
