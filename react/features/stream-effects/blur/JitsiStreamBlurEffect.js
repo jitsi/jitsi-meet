@@ -115,10 +115,12 @@ export default class JitsiStreamBlurEffect {
         this._inputVideoElement.autoplay = true;
         this._inputVideoElement.srcObject = stream;
         this._inputVideoElement.onloadeddata = () => {
-            this._maskFrameTimerWorker.postMessage({
-                id: SET_INTERVAL,
-                timeMs: 1000 / parseInt(frameRate, 10)
-            });
+            if (this._maskFrameTimerWorker) {
+                this._maskFrameTimerWorker.postMessage({
+                    id: SET_INTERVAL,
+                    timeMs: 1000 / parseInt(frameRate, 10)
+                });
+            }
         };
 
         return this._outputCanvasElement.captureStream(parseInt(frameRate, 10));
@@ -130,12 +132,14 @@ export default class JitsiStreamBlurEffect {
      * @returns {void}
      */
     stopEffect() {
-        this._maskFrameTimerWorker.postMessage({
-            id: CLEAR_INTERVAL
-        });
+        if (this._maskFrameTimerWorker) {
+            this._maskFrameTimerWorker.postMessage({
+                id: CLEAR_INTERVAL
+            });
 
-        this._maskFrameTimerWorker.terminate();
+            this._maskFrameTimerWorker.terminate();
 
-        this._maskFrameTimerWorker = undefined;
+            this._maskFrameTimerWorker = undefined;
+        }
     }
 }
