@@ -373,6 +373,7 @@ export default class RemoteVideo extends SmallVideo {
 
         if (stream === this.videoStream) {
             this.videoStream = null;
+            this.videoType = undefined;
         }
 
         this.updateView();
@@ -481,7 +482,12 @@ export default class RemoteVideo extends SmallVideo {
 
         const isVideo = stream.isVideoTrack();
 
-        isVideo ? this.videoStream = stream : this.audioStream = stream;
+        if (isVideo) {
+            this.videoStream = stream;
+            this.videoType = stream.videoType;
+        } else {
+            this.audioStream = stream;
+        }
 
         if (!stream.getOriginalStream()) {
             logger.debug('Remote video stream has no original stream');

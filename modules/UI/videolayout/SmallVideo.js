@@ -88,6 +88,7 @@ export default class SmallVideo {
         this.audioStream = null;
         this.VideoLayout = VideoLayout;
         this.videoIsHovered = false;
+        this.videoType = undefined;
 
         /**
          * The current state of the user's bridge connection. The value should be
@@ -243,6 +244,7 @@ export default class SmallVideo {
      */
     setScreenSharing(isScreenSharing) {
         this.isScreenSharing = isScreenSharing;
+        this.updateView();
         this.updateStatusBar();
     }
 
@@ -463,8 +465,10 @@ export default class SmallVideo {
      * or <tt>DISPLAY_BLACKNESS_WITH_NAME</tt>.
      */
     selectDisplayMode(input) {
-        // Display name is always and only displayed when user is on the stage
-        if (input.isCurrentlyOnLargeVideo && !input.tileViewActive) {
+        if (!input.tileViewActive && input.isScreenSharing) {
+            return input.isHovered ? DISPLAY_AVATAR_WITH_NAME : DISPLAY_AVATAR;
+        } else if (input.isCurrentlyOnLargeVideo && !input.tileViewActive) {
+            // Display name is always and only displayed when user is on the stage
             return input.isVideoPlayable && !input.isAudioOnly ? DISPLAY_BLACKNESS_WITH_NAME : DISPLAY_AVATAR_WITH_NAME;
         } else if (input.isVideoPlayable && input.hasVideo && !input.isAudioOnly) {
             // check hovering and change state to video with name
@@ -493,6 +497,7 @@ export default class SmallVideo {
             canPlayEventReceived: this._canPlayEventReceived,
             videoStream: Boolean(this.videoStream),
             isVideoMuted: this.isVideoMuted,
+            isScreenSharing: this.isScreenSharing,
             videoStreamMuted: this.videoStream ? this.videoStream.isMuted() : 'no stream'
         };
     }
