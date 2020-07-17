@@ -8,6 +8,7 @@ import { getCurrentLayout, LAYOUTS } from '../../../video-layout';
 
 import AudioMutedIndicator from './AudioMutedIndicator';
 import ModeratorIndicator from './ModeratorIndicator';
+import ScreenShareIndicator from './ScreenShareIndicator';
 import VideoMutedIndicator from './VideoMutedIndicator';
 
 declare var interfaceConfig: Object;
@@ -31,6 +32,11 @@ type Props = {
      * Indicates if the audio muted indicator should be visible or not.
      */
     showAudioMutedIndicator: Boolean,
+
+    /**
+     * Indicates if the screen share indicator should be visible or not.
+     */
+    showScreenShareIndicator: Boolean,
 
     /**
      * Indicates if the video muted indicator should be visible or not.
@@ -60,6 +66,7 @@ class StatusIndicators extends Component<Props> {
             _currentLayout,
             _showModeratorIndicator,
             showAudioMutedIndicator,
+            showScreenShareIndicator,
             showVideoMutedIndicator
         } = this.props;
         let tooltipPosition;
@@ -78,6 +85,7 @@ class StatusIndicators extends Component<Props> {
         return (
             <div>
                 { showAudioMutedIndicator ? <AudioMutedIndicator tooltipPosition = { tooltipPosition } /> : null }
+                { showScreenShareIndicator ? <ScreenShareIndicator tooltipPosition = { tooltipPosition } /> : null }
                 { showVideoMutedIndicator ? <VideoMutedIndicator tooltipPosition = { tooltipPosition } /> : null }
                 { _showModeratorIndicator ? <ModeratorIndicator tooltipPosition = { tooltipPosition } /> : null }
             </div>

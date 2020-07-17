@@ -177,6 +177,10 @@ const VideoLayout = {
             this.onAudioMute(id, stream.isMuted());
         } else {
             this.onVideoMute(id, stream.isMuted());
+
+            if (stream.videoType === 'desktop') {
+                remoteVideo.setScreenSharing(true);
+            }
         }
     },
 
@@ -188,6 +192,10 @@ const VideoLayout = {
 
         if (remoteVideo) {
             remoteVideo.removeRemoteStreamElement(stream);
+
+            if (stream.videoType === 'desktop') {
+                remoteVideo.setScreenSharing(false);
+            }
         }
 
         this.updateMutedForNoTracks(id, stream.getType());
