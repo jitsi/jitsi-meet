@@ -39,7 +39,7 @@
     &__background {
         @include topLeft();
         background-color: black;
-        border-radius: $borderRadius;
+        //border-radius: $borderRadius;
         width: 100%;
         height: 100%;
     }

@@ -15,9 +15,11 @@
         box-sizing: border-box;
         display: flex;
         flex-direction: column;
-        height: calc(100vh - 200px);
+        //height: calc(100vh - 200px);
+        height: calc(100vh - 70px);
         width: 100vw;
-        margin: 100px 0px;
+        //margin: 100px 0px;
+        margin: 0 0 70px 0;
     }
 
     .filmstrip__videos .videocontainer {
@@ -86,7 +88,8 @@
             border: 0;
             box-sizing: border-box;
             display: block;
-            margin: 5px;
+            //margin: 5px;
+            border: 1px solid rgba(255,255,255,0.2);
         }
 
         video {
