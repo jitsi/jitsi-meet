@@ -21,7 +21,7 @@ cp -r "${SRC_DIR}/fonts/." "${DST_DIR}/fonts/"
 
 cp "${SRC_DIR}/head.html" "${DST_DIR}/head.html"
 
-3mkdir "${DST_DIR}/images/"
+#mkdir "${DST_DIR}/images/"
 cp -r "${SRC_DIR}/images/." "${DST_DIR}/images/"
 
 cp "${SRC_DIR}/index.html" "${DST_DIR}/index.html"
