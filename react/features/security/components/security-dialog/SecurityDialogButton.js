@@ -5,7 +5,7 @@ import { translate } from '../../../base/i18n';
 import { IconSecurityOff, IconSecurityOn } from '../../../base/icons';
 import { connect } from '../../../base/redux';
 import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox';
-import { openSecurityDialog } from '../../actions';
+import { toggleSecurityDialog } from '../../actions';
 
 
 type Props = AbstractButtonProps & {
@@ -77,7 +77,7 @@ function mapStateToProps(state: Object) {
  * @returns {Props}
  */
 const mapDispatchToProps = {
-    onClick: () => openSecurityDialog()
+    onClick: () => toggleSecurityDialog()
 };
 
 export default translate(connect(mapStateToProps, mapDispatchToProps)(SecurityDialogButton));
