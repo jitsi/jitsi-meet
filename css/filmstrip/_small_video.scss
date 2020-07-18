@@ -2,9 +2,10 @@
     display: inline-block;
     position: relative;
     background-size: contain;
-    border: $thumbnailVideoBorder solid transparent;
-    border-radius: $borderRadius;
-    margin: 0 $thumbnailVideoMargin;
+    border: 1px solid rgba(255,255,255,0.2);
+    //border: $thumbnailVideoBorder solid transparent;
+    //border-radius: $borderRadius;
+    //margin: 0 $thumbnailVideoMargin;
 
     &.videoContainerFocused, &:hover {
         cursor: hand;
@@ -28,7 +29,8 @@
      */
     &:hover:not(.videoContainerFocused):not(.active-speaker) {
         cursor: hand;
-        border: $thumbnailVideoBorder solid $videoThumbnailHovered;
+        border: 1px solid $videoThumbnailHovered;
+        //border: $thumbnailVideoBorder solid $videoThumbnailHovered;
         box-shadow: inset 0 0 3px $videoThumbnailHovered,
         0 0 3px $videoThumbnailHovered;
 

@@ -1,11 +1,12 @@
 .subject {
     top: -120px;
     transition: top .3s ease-in;
-    height: 95px;
+    //height: 95px;
     width: 100%;
     pointer-events: none;
     position: absolute;
-    padding: 25px 140px 0 140px;
+    //padding: 25px 140px 0 140px;
+    padding: 15px 0 0 0;
     text-align: center;
     font-size: 17px;
     color: #fff;
@@ -15,6 +16,10 @@
     box-sizing: border-box;
     white-space: nowrap;
     background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0));
+    
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
     &.visible {
         top: 0px;
