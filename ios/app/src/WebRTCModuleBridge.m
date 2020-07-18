@@ -85,12 +85,13 @@ RCT_EXPORT_METHOD(checkArgss:(NSString *)mediaStreamId
                   resolver:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject) {
   
+//  NSLog(@"Thread while writing - %@ %@", NSThread.mainThread, NSThread.currentThread);
 
   RTCVideoCapturer *videoCapturer = [[RTCVideoCapturer alloc] init];
   RTCMediaStream *stream = self.localStreams[mediaStreamId];
   RTCVideoTrack *videoTrack = stream.videoTracks[0];
   // FIX LATER - remove loops after the recording/call ends or app closes
-  dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+  dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
     while (true) {
       if(arc4random_uniform(200) != 3) {
         continue;
@@ -106,6 +107,7 @@ RCT_EXPORT_METHOD(checkArgss:(NSString *)mediaStreamId
           NSLog(@"%@", stream.videoTracks.count);
         }
         @try {
+//            NSLog(@"Thread while writing loop - %@ %@", NSThread.mainThread, NSThread.currentThread);
            [[videoTrack source] capturer:videoCapturer didCaptureVideoFrame:videoFrame];
         }
         @catch (NSException *exception) {
