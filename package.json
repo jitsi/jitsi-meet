@@ -82,7 +82,7 @@
     "react-native-svg-transformer": "0.13.0",
     "react-native-swipeout": "2.3.6",
     "react-native-watch-connectivity": "0.2.0",
-    "react-native-webrtc": "github:linuxpi/react-native-webrtc#582d8cbfab0b1d7b2580844e30ca5eca53585ef9",
+    "react-native-webrtc": "github:linuxpi/react-native-webrtc#ios-screen-recording",
     "react-native-webview": "7.4.1",
     "react-redux": "7.1.0",
     "react-textarea-autosize": "7.1.0",
