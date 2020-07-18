@@ -30,7 +30,10 @@ class RecordComponent: RCTViewManager {
                frame: CGRect(x: 0, y: 0, width: 50, height: 50))
       pickerView.preferredExtension = "de.hopp-foundation.screenshare.ScreenRecorderHopp"
       pickerView.translatesAutoresizingMaskIntoConstraints = false
-      
+//      RPBroadcastActivityViewController.load(withPreferredExtension: "") { (broadcastAVC, error) in
+//        broadcastAVC?.delegate = self
+        
+//      }
       // Update the color of the Button
       // to make it visible clearly on a white background
       if let button = pickerView.subviews.first as? UIButton {

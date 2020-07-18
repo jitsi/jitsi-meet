@@ -23,27 +23,28 @@ import CoreImage
   static var ciContext: CIContext?
   
   @objc static func getNextFrame() -> RTCVideoFrame? {
-    if Int.random(in: 1...3) != 1 && SocketShim.ciContext != nil {
-        var buffer = Data.init(base64Encoded: SocketShim.constantFrameData[Int.random(in: 0...1)])
-        let cim = CIImage.init(data: buffer!)
-        var pixelBuffer: CVPixelBuffer?
-        let status = CVPixelBufferCreate(nil, Int(886 / 2), Int(1920 / 2), kCVPixelFormatType_32BGRA, nil, &pixelBuffer)
-        // should do something with status to check if creation was successful
-        if cim != nil && pixelBuffer != nil {
-//            var context = CIContext()
-//            print(context)
-            SocketShim.ciContext!.render(cim!, to: pixelBuffer!)
-            var videoFrame:RTCVideoFrame?;
-            let timestamp = NSDate().timeIntervalSince1970 * 1000
-            let rtcPixelBuffer = RTCCVPixelBuffer.init(pixelBuffer:pixelBuffer!)
-            videoFrame = RTCVideoFrame(buffer: rtcPixelBuffer, rotation: RTCVideoRotation._0, timeStampNs: Int64(timestamp))
-            return videoFrame
-        }
-    }
+//    if Int.random(in: 1...3) != 1 && SocketShim.ciContext != nil {
+//        var buffer = Data.init(base64Encoded: SocketShim.constantFrameData[Int.random(in: 0...1)])
+//        let cim = CIImage.init(data: buffer!)
+//        var pixelBuffer: CVPixelBuffer?
+//        let status = CVPixelBufferCreate(nil, Int(886 / 2), Int(1920 / 2), kCVPixelFormatType_32BGRA, nil, &pixelBuffer)
+//        // should do something with status to check if creation was successful
+//        if cim != nil && pixelBuffer != nil {
+////            var context = CIContext()
+////            print(context)
+//            SocketShim.ciContext!.render(cim!, to: pixelBuffer!)
+//            var videoFrame:RTCVideoFrame?;
+//            let timestamp = NSDate().timeIntervalSince1970 * 1000000000
+//            let rtcPixelBuffer = RTCCVPixelBuffer.init(pixelBuffer:pixelBuffer!)
+//            videoFrame = RTCVideoFrame(buffer: rtcPixelBuffer, rotation: RTCVideoRotation._0, timeStampNs: Int64(timestamp))
+//            return videoFrame
+//        }
+//    }
 
 //    let videoFrame = frameQueue.dequeue();
 //    print("hash for the video frame \(videoFrame?.buffer.hash)")
 //    return videoFrame
+//      print("\(sampleFrame) getting frame")
       return sampleFrame
   }
   
@@ -53,7 +54,7 @@ import CoreImage
   
   @objc static func pushPixelBuffer(pixelBuffer: CVPixelBuffer, rawData: Data) {
     var videoFrame:RTCVideoFrame?;
-    let timestamp = NSDate().timeIntervalSince1970 * 1000
+    let timestamp = NSDate().timeIntervalSince1970 * 1000000000
 //    print("the data that we are pushing \(rawData.base64EncodedString())")
 //    videoFrame = RTCVideoFrame(pixelBuffer: pixelBuffer, rotation: RTCVideoRotation._0, timeStampNs: Int64(timestamp))
     let rtcPixelBuffer = RTCCVPixelBuffer.init(pixelBuffer:pixelBuffer)
@@ -62,6 +63,7 @@ import CoreImage
 //    localVideoSource.capturer(videoCapturer, didCapture: videoFrame!)
 //    pickerView.frameRecieved(buffer.base64EncodedString())
 //    self.frameQueue.enqueue(buffer.base64EncodedString())
+//      print(" pushing video frame - \(videoFrame)")
       sampleFrame = videoFrame
 //    return frameQueue.enqueue(videoFrame!)
   }

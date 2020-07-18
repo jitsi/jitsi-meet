@@ -4,6 +4,8 @@
 
 #import "WebRTCModule.h"
 
+#import "CustomRTCVideoCapturer.h"
+
 #import "Digitales_Klassenzimmer-Swift.h"
 
 @import WebRTC;
@@ -87,15 +89,17 @@ RCT_EXPORT_METHOD(checkArgss:(NSString *)mediaStreamId
   
 //  NSLog(@"Thread while writing - %@ %@", NSThread.mainThread, NSThread.currentThread);
 
-  RTCVideoCapturer *videoCapturer = [[RTCVideoCapturer alloc] init];
+//  RTCVideoCapturer *videoCapturer = [[RTCVideoCapturer alloc] init];
   RTCMediaStream *stream = self.localStreams[mediaStreamId];
   RTCVideoTrack *videoTrack = stream.videoTracks[0];
+  CustomRTCVideoCapturer *videoCapturer = [[CustomRTCVideoCapturer alloc] initWithDelegate:[videoTrack source]];
   // FIX LATER - remove loops after the recording/call ends or app closes
   dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
     while (true) {
-      if(arc4random_uniform(200) != 3) {
-        continue;
-      }
+//      if(arc4random_uniform(200) != 3) {
+//        continue;
+//      }
+      [NSThread sleepForTimeInterval:0.0300];
       RTCVideoFrame *videoFrame = [SocketShim getNextFrame];
 //      NSLog(videoFrame);
       if (videoFrame == nil) {
@@ -104,11 +108,12 @@ RCT_EXPORT_METHOD(checkArgss:(NSString *)mediaStreamId
 //        NSLog(@"wrting frame");
         if (stream.videoTracks.count != 1) {
           NSLog(@"length of video tracks");
-          NSLog(@"%@", stream.videoTracks.count);
+//          NSLog(@"%@", stream.videoTracks.count);
         }
         @try {
+          [videoCapturer didCaptureVideoFrame:videoFrame];
 //            NSLog(@"Thread while writing loop - %@ %@", NSThread.mainThread, NSThread.currentThread);
-           [[videoTrack source] capturer:videoCapturer didCaptureVideoFrame:videoFrame];
+//           [[videoTrack source] capturer:videoCapturer didCaptureVideoFrame:videoFrame];
         }
         @catch (NSException *exception) {
            NSLog(@"error while writing frame");
