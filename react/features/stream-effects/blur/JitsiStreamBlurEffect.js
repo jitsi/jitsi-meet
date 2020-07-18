@@ -115,7 +115,7 @@ export default class JitsiStreamBlurEffect {
         this._inputVideoElement.autoplay = true;
         this._inputVideoElement.srcObject = stream;
         this._inputVideoElement.onloadeddata = () => {
-            if (this._maskFrameTimerWorker) {
+            if (this._maskFrameTimerWorker !== undefined) {
                 this._maskFrameTimerWorker.postMessage({
                     id: SET_INTERVAL,
                     timeMs: 1000 / parseInt(frameRate, 10)
@@ -132,7 +132,7 @@ export default class JitsiStreamBlurEffect {
      * @returns {void}
      */
     stopEffect() {
-        if (this._maskFrameTimerWorker) {
+        if (this._maskFrameTimerWorker !== undefined) {
             this._maskFrameTimerWorker.postMessage({
                 id: CLEAR_INTERVAL
             });
