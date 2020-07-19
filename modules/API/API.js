@@ -21,6 +21,7 @@ import {
 import { isEnabled as isDropboxEnabled } from '../../react/features/dropbox';
 import { setE2EEKey } from '../../react/features/e2ee';
 import { invite } from '../../react/features/invite';
+import { toggleLobbyMode } from '../../react/features/lobby/actions.web';
 import { RECORDING_TYPES } from '../../react/features/recording/constants';
 import { getActiveSession } from '../../react/features/recording/functions';
 import { muteAllParticipants } from '../../react/features/remote-video-menu/actions';
@@ -89,10 +90,8 @@ function initCommands() {
 
             APP.store.dispatch(muteAllParticipants(localIds));
         },
-        'enable-lobby': () => {
-            const { conference } = APP.store.getState()['features/base/conference'];
-
-            conference.enableLobby();
+        'toggle-lobby': isLobbyEnabled => {
+            APP.store.dispatch(toggleLobbyMode(isLobbyEnabled));
         },
         'password': password => {
             const { conference, passwordRequired }
