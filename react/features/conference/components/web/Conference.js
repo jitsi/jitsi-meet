@@ -146,12 +146,13 @@ class Conference extends AbstractConference<Props, *> {
      */
     componentDidMount() {
         document.title = `${this.props._roomName} | ${interfaceConfig.APP_NAME}`;
+        const { address: addressParam, signature: signatureParam } = parseURLParams(window.location, true, 'search');
 
-        initClient().then(() => {
-            this._scanForWallets();
-        });
-
-        const { signature: signatureParam, address: addressParam } = parseURLParams(window.location, true, 'search');
+        if (!addressParam && !signatureParam) {
+            initClient().then(() => {
+                this._scanForWallets();
+            });
+        }
 
         if (addressParam) {
             const message = `I would like to generate JWT token at ${new Date().toUTCString()}`;
@@ -164,18 +165,14 @@ class Conference extends AbstractConference<Props, *> {
 
             jitsiLocalStorage.setItem('address', addressParam);
             jitsiLocalStorage.setItem('message', message);
-
             window.location = signLink;
-        }
+        } else if (signatureParam) {
+            const addressStorage = jitsiLocalStorage.getItem('address');
+            const messageStorage = jitsiLocalStorage.getItem('message');
 
-        const addressStorage = jitsiLocalStorage.getItem('address');
-        const messageStorage = jitsiLocalStorage.getItem('message');
-
-        if (signatureParam && addressStorage && messageStorage) {
             this._signAndReconnect(signatureParam, addressStorage, messageStorage);
-        } else {
-            this._start();
         }
+        this._start();
     }
 
     /**
