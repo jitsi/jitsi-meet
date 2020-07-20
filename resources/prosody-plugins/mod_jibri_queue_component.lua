@@ -151,10 +151,25 @@ local function generateToken(audience)
     end
 end
 
-local function sendIq(participant,action,participant,time,position,token)
-    local outStanza = st.iq({type = 'set', to = participant}):tag("jibri-queue", 
-       { xmlns = 'http://jitsi.org/protocol/jibri-queue', requestId = requestId, action = action }):
+local function sendIq(participant,action,requestId,time,position,token)
+    local iqId = uuid_gen();
+    local from = module:get_host();
+    module:log("info","Oubound iq id %s",iqId);
+    local outStanza = st.iq({type = 'set', from = from, to = participant, id = iqId}):tag("jibri-queue", 
+       { xmlns = 'http://jitsi.org/protocol/jibri-queue', requestId = requestId, action = action });
 
+    module:log("info","Oubound base stanza %s",inspect(outStanza));
+
+    if token then
+        outStanza:tag("token"):text(token):up()
+    end
+    if time then
+        outStanza:tag("time"):text(time):up()
+    end
+    if position then
+        outStanza:tag("position"):text(position):up()
+    end
+    module:log("info","Oubound stanza %s",inspect(outStanza));
     module:send(outStanza);
 end
 
@@ -391,27 +406,39 @@ end
 -- @param event the http event, holds the request query
 -- @return GET response, containing a json with response details
 function handle_update_jibri_queue(event)
-    if (not event.request.url.query) then
-        return { status_code = 400; };
-    end
+    module:log("info","Update Jibri Queue Event Received");
+    -- if (not event.request.url.query) then
+    --     return { status_code = 400; };
+    -- end
 
     local body = json.decode(event.request.body);
-    local params = parse(event.request.url.query);
+--    local params = parse(event.request.url.query);
 
-    local token = params["token"];
+    module:log("info","Update Jibri Event Body %s",inspect(body));
+
+--    local token = params["token"];
+    local token
     if not token then
         token = event.request.headers["authorization"];
-        local prefixStart, prefixEnd = token:find("Bearer ");
-        if prefixStart ~= 1 then
-            module:log("error", "Invalid authorization header format. The header must start with the string 'Bearer '");
-            return 403
+        if not token then
+            token = ''
+        else
+            local prefixStart, prefixEnd = token:find("Bearer ");
+            if prefixStart ~= 1 then
+                module:log("error", "Invalid authorization header format. The header must start with the string 'Bearer '");
+                return 403
+            end
+            token = token:sub(prefixEnd + 1);
         end
-        token = token:sub(prefixEnd + 1);
     end
     
     local user_jid = body["participant"];
     local roomAddress = body["conference"];
     local userJWT = body["token"];
+    local action = body["action"];
+    local time = body["time"];
+    local position = body["position"];
+    local requestId = body["requestId"];
 
     if not verify_token(token, roomAddress, {}) then
         return { status_code = 403; };
@@ -429,8 +456,25 @@ function handle_update_jibri_queue(event)
         return { status_code = 404; };
     end
 
-    -- TODO: actually implement udpate code here
+    if not room.jibriQueue[occupant.jid] then
+        log("warn", "No queue request found for occupant %s in conference %s",occupant.jid,room.jid)
+        return { status_code = 404; };
+    end
 
+    if not action then
+        if userJWT then
+            action = 'token';
+        else
+            action = 'info';
+        end
+    end
+
+    if not requestId then
+        requestId = room.jibriQueue[occupant.jid];
+    end
+
+    -- TODO: actually implement udpate code here
+    sendIq(occupant.jid,action,requestId,time,position,userJWT);
     return { status_code = 200; };
 end
 
@@ -439,6 +483,6 @@ module:provides("http", {
     default_path = "/";
     name = "jibriqueue";
     route = {
-        ["GET /jibriqueue/update"] = function (event) return async_handler_wrapper(event,handle_update_jibri_queue) end;
+        ["POST /jibriqueue/update"] = function (event) return async_handler_wrapper(event,handle_update_jibri_queue) end;
     };
 });
