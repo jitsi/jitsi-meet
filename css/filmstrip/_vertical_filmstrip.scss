@@ -39,10 +39,6 @@
     right: 0;
     z-index: $filmstripVideosZ;
 
-    @media (max-width: $desktopWidth) {
-        max-width: 133px !important;
-    }
-
     &.reduce-height {
         height: calc(100% - #{$newToolbarSizeWithPadding});
     }
@@ -57,10 +53,6 @@
         position:relative;
         right: 0;
         width: auto;
-
-        @media (max-width: $desktopWidth) {
-            margin: auto;
-        }
 
         &.hidden {
             bottom: auto;
@@ -97,12 +89,6 @@
             .videocontainer {
                 height: 0px;
                 width: 100%;
-
-                @media (max-width: $desktopWidth) {
-                    width: 100px;
-                    height: 66px;
-                    padding: 0 !important;
-                }
             }
         }
     }
@@ -127,10 +113,6 @@
         overflow-y: auto;
         scrollbar-color: $filmstripScrollBarColor;
 
-        @media (max-width: $desktopWidth) {
-            margin-left: 9px;
-        }
-
         #filmstripRemoteVideosContainer {
             @include minHWAutoFix();
             flex-direction: column-reverse;
@@ -140,13 +122,6 @@
             .videocontainer {
                 height: 0px;
                 width: 100%;
-
-                @media (max-width: $desktopWidth) {
-                    width: 100px;
-                    height: 66px;
-                    padding: 0 !important;
-                    margin-bottom: 10px;
-                }
             }
         }
     }
