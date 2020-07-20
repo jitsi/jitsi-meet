@@ -588,7 +588,7 @@ export default {
 
         // Hide the permissions prompt/overlay as soon as the tracks are
         // created. Don't wait for the connection to be made, since in some
-        // cases, when auth is rquired, for instance, that won't happen until
+        // cases, when auth is required, for instance, that won't happen until
         // the user inputs their credentials, but the dialog would be
         // overshadowed by the overlay.
         tryCreateLocalTracks.then(tracks => {
@@ -1395,9 +1395,9 @@ export default {
      * @private
      */
     _getWiFiStatsMethod() {
-        const gloabalNS = getJitsiMeetGlobalNS();
+        const globalNS = getJitsiMeetGlobalNS();
 
-        return gloabalNS.getWiFiStats ? gloabalNS.getWiFiStats() : Promise.resolve('{}');
+        return globalNS.getWiFiStats ? globalNS.getWiFiStats() : Promise.resolve('{}');
     },
 
     /**

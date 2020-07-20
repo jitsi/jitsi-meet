@@ -53,7 +53,7 @@ export const REMOTE_CONTROL_MESSAGE_NAME = 'remote-control';
  * The remote control event.
  * @typedef {object} RemoteControlEvent
  * @property {EVENTS | REQUESTS} type - the type of the message
- * @property {number} x - avaibale for type === mousemove only. The new x
+ * @property {number} x - available for type === mousemove only. The new x
  * coordinate of the mouse
  * @property {number} y - For mousemove type - the new y
  * coordinate of the mouse and for mousescroll - represents the vertical
