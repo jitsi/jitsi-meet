@@ -105,10 +105,6 @@ export function calculateThumbnailSizeForTileView({
     // of the window.
     const sideMargins = 30 * 2;
 
-    // Setting initial small (non-speaker/non-video-on) thumbnail width/height to default 0 values
-    let smallThumbnailWidth = 0;
-    let smallThumbnailHeight = 0;
-
     // The width of the chat overlay (for now constant 375px)
     const chatNode = document.getElementById('sideToolbarContainer');
     const chatWidth = chatNode && interfaceConfig.CHAT_ALWAYS_OPEN
@@ -120,19 +116,8 @@ export function calculateThumbnailSizeForTileView({
     const viewHeight = clientHeight - topBottomPadding - verticalMargins;
     const initialWidth = viewWidth / columns;
     const aspectRatioHeight = initialWidth / TILE_ASPECT_RATIO;
-    const smallThumbnail = document.getElementsByClassName('videocontainer without-camera')[0];
-
-    if (smallThumbnail) {
-        smallThumbnailWidth = smallThumbnail.clientWidth;
-        smallThumbnailHeight = smallThumbnail.clientHeight;
-    }
-
-    const height = smallThumbnailHeight > 0
-        ? smallThumbnailHeight
-        : Math.floor(Math.min(aspectRatioHeight, viewHeight / visibleRows));
-    const width = smallThumbnailWidth > 0
-        ? smallThumbnailWidth
-        : Math.floor(TILE_ASPECT_RATIO * height);
+    const height = Math.floor(Math.min(aspectRatioHeight, viewHeight / visibleRows));
+    const width = Math.floor(TILE_ASPECT_RATIO * height);
 
     return {
         height,
