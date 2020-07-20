@@ -167,6 +167,10 @@
     flex: 1;
     height: 60px;
     margin-top: 15px;
+
+    textarea {
+        height: 100% !important;
+    }
 }
 
 #usermsg {
