@@ -1,6 +1,6 @@
 // @flow
 
-import { API_ID } from '../../../modules/API';
+import { API_ID } from '../../../modules/API/constants';
 import {
     checkChromeExtensionsInstalled,
     isMobileBrowser
