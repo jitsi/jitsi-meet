@@ -4,7 +4,7 @@ import { setFollowMe, setStartMutedPolicy } from '../base/conference';
 import { openDialog } from '../base/dialog';
 import { i18next } from '../base/i18n';
 import { updateSettings } from '../base/settings';
-import { setPrejoinPageVisibility } from '../prejoin';
+import { setPrejoinPageVisibility } from '../prejoin/actions';
 
 import {
     SET_AUDIO_SETTINGS_VISIBILITY,
