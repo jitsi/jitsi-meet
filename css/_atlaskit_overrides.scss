@@ -169,7 +169,7 @@
 /**
  * Override tile view pop-ups styles
  */
-.tile-view {
+.tile-view #filmstripRemoteVideos {
     .etGiXB > div {
         @media (max-width: 650px) {
             transform: translate3d(50px, 280px, 0) !important;
