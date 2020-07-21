@@ -20,4 +20,6 @@
 
 @interface ViewController : UIViewController<JitsiMeetViewDelegate>
 
+- (void)terminate;
+
 @end

@@ -4,7 +4,6 @@ import Tooltip from '@atlaskit/tooltip';
 import React from 'react';
 
 import { Icon } from '../../../base/icons';
-
 import AbstractToolbarButton from '../AbstractToolbarButton';
 import type { Props as AbstractToolbarButtonProps }
     from '../AbstractToolbarButton';
@@ -42,6 +41,41 @@ class ToolbarButton extends AbstractToolbarButton<Props> {
     };
 
     /**
+     * Initializes a new {@code ToolbarButton} instance.
+     *
+     * @inheritdoc
+     */
+    constructor(props: Props) {
+        super(props);
+
+        this._onKeyDown = this._onKeyDown.bind(this);
+    }
+
+    _onKeyDown: (Object) => void;
+
+    /**
+     * Handles 'Enter' key on the button to trigger onClick for accessibility.
+     * We should be handling Space onKeyUp but it conflicts with PTT.
+     *
+     * @param {Object} event - The key event.
+     * @private
+     * @returns {void}
+     */
+    _onKeyDown(event) {
+        // If the event coming to the dialog has been subject to preventDefault
+        // we don't handle it here.
+        if (event.defaultPrevented) {
+            return;
+        }
+
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            event.stopPropagation();
+            this.props.onClick();
+        }
+    }
+
+    /**
      * Renders the button of this {@code ToolbarButton}.
      *
      * @param {Object} children - The children, if any, to be rendered inside
@@ -53,8 +87,12 @@ class ToolbarButton extends AbstractToolbarButton<Props> {
         return (
             <div
                 aria-label = { this.props.accessibilityLabel }
+                aria-pressed = { this.props.toggled }
                 className = 'toolbox-button'
-                onClick = { this.props.onClick }>
+                onClick = { this.props.onClick }
+                onKeyDown = { this._onKeyDown }
+                role = 'button'
+                tabIndex = { 0 }>
                 { this.props.tooltip
                     ? <Tooltip
                         content = { this.props.tooltip }

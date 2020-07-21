@@ -4,34 +4,32 @@ import _ from 'lodash';
 import React from 'react';
 
 import VideoLayout from '../../../../../modules/UI/videolayout/VideoLayout';
-
+import { getConferenceNameForTitle } from '../../../base/conference';
 import { connect, disconnect } from '../../../base/connection';
 import { translate } from '../../../base/i18n';
 import { connect as reactReduxConnect } from '../../../base/redux';
-import { getConferenceNameForTitle } from '../../../base/conference';
 import { Chat } from '../../../chat';
 import { Filmstrip } from '../../../filmstrip';
 import { CalleeInfoContainer } from '../../../invite';
 import { LargeVideo } from '../../../large-video';
-import { LAYOUTS, getCurrentLayout } from '../../../video-layout';
-
+import { KnockingParticipantList, LobbyScreen } from '../../../lobby';
+import { Prejoin, isPrejoinPageVisible } from '../../../prejoin';
 import {
     Toolbox,
     fullScreenChanged,
     setToolboxAlwaysVisible,
     showToolbox
 } from '../../../toolbox';
-
+import { LAYOUTS, getCurrentLayout } from '../../../video-layout';
 import { maybeShowSuboptimalExperienceNotification } from '../../functions';
-
-import Labels from './Labels';
-import { default as Notice } from './Notice';
-import { default as Subject } from './Subject';
 import {
     AbstractConference,
     abstractMapStateToProps
 } from '../AbstractConference';
 import type { AbstractProps } from '../AbstractConference';
+
+import Labels from './Labels';
+import { default as Notice } from './Notice';
 
 declare var APP: Object;
 declare var config: Object;
@@ -74,6 +72,11 @@ type Props = AbstractProps & {
     _iAmRecorder: boolean,
 
     /**
+     * Returns true if the 'lobby screen' is visible.
+     */
+    _isLobbyScreenVisible: boolean,
+
+    /**
      * The CSS class to apply to the root of {@link Conference} to modify the
      * application layout.
      */
@@ -83,6 +86,11 @@ type Props = AbstractProps & {
      * Name for this conference room.
      */
     _roomName: string,
+
+    /**
+     * If prejoin page is visible or not.
+     */
+    _showPrejoin: boolean,
 
     dispatch: Function,
     t: Function
@@ -172,37 +180,40 @@ class Conference extends AbstractConference<Props, *> {
      */
     render() {
         const {
-            VIDEO_QUALITY_LABEL_DISABLED,
-
             // XXX The character casing of the name filmStripOnly utilized by
             // interfaceConfig is obsolete but legacy support is required.
             filmStripOnly: filmstripOnly
         } = interfaceConfig;
-        const hideVideoQualityLabel
-            = filmstripOnly
-                || VIDEO_QUALITY_LABEL_DISABLED
-                || this.props._iAmRecorder;
+        const {
+            _iAmRecorder,
+            _isLobbyScreenVisible,
+            _layoutClassName,
+            _showPrejoin
+        } = this.props;
+        const hideLabels = filmstripOnly || _iAmRecorder;
 
         return (
             <div
-                className = { this.props._layoutClassName }
+                className = { _layoutClassName }
                 id = 'videoconference_page'
                 onMouseMove = { this._onShowToolbar }>
+
                 <Notice />
-                <Subject />
                 <div id = 'videospace'>
                     <LargeVideo />
-                    { hideVideoQualityLabel
-                        || <Labels /> }
+                    <KnockingParticipantList />
                     <Filmstrip filmstripOnly = { filmstripOnly } />
+                    { hideLabels || <Labels /> }
                 </div>
 
-                { filmstripOnly || <Toolbox /> }
+                { filmstripOnly || _showPrejoin || _isLobbyScreenVisible || <Toolbox /> }
                 { filmstripOnly || <Chat /> }
 
                 { this.renderNotificationsContainer() }
 
                 <CalleeInfoContainer />
+
+                { !filmstripOnly && _showPrejoin && <Prejoin />}
             </div>
         );
     }
@@ -267,8 +278,10 @@ function _mapStateToProps(state) {
     return {
         ...abstractMapStateToProps(state),
         _iAmRecorder: state['features/base/config'].iAmRecorder,
+        _isLobbyScreenVisible: state['features/base/dialog']?.component === LobbyScreen,
         _layoutClassName: LAYOUT_CLASSNAMES[getCurrentLayout(state)],
-        _roomName: getConferenceNameForTitle(state)
+        _roomName: getConferenceNameForTitle(state),
+        _showPrejoin: isPrejoinPageVisible(state)
     };
 }
 

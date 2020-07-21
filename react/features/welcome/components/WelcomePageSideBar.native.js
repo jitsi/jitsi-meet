@@ -17,8 +17,8 @@ import {
 import { connect } from '../../base/redux';
 import { HELP_VIEW_MODAL_ID } from '../../help';
 import { SETTINGS_VIEW_ID } from '../../settings';
-
 import { setSideBarVisible } from '../actions';
+
 import SideBarItem from './SideBarItem';
 import styles, { SIDEBAR_AVATAR_SIZE } from './styles';
 

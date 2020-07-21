@@ -102,4 +102,11 @@
 }
 #endif
 
+#pragma mark - Helpers
+
+- (void)terminate {
+    JitsiMeetView *view = (JitsiMeetView *) self.view;
+    [view leave];
+}
+
 @end

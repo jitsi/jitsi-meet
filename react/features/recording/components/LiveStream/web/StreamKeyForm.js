@@ -4,7 +4,6 @@ import { FieldTextStateless } from '@atlaskit/field-text';
 import React from 'react';
 
 import { translate } from '../../../../base/i18n';
-
 import AbstractStreamKeyForm, {
     type Props
 } from '../AbstractStreamKeyForm';

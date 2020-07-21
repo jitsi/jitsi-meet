@@ -2,11 +2,12 @@
 
 import { Alert } from 'react-native';
 
-import { openSettings } from './functions';
 
 import { isRoomValid } from '../../base/conference';
 import { MiddlewareRegistry } from '../../base/redux';
 import { TRACK_CREATE_ERROR } from '../../base/tracks';
+
+import { openSettings } from './functions';
 
 /**
  * Middleware that captures track permission errors and alerts the user so they

@@ -1,6 +1,6 @@
 // @flow
 
-import { jitsiLocalStorage } from 'js-utils';
+import { jitsiLocalStorage } from '@jitsi/js-utils';
 import React, { PureComponent } from 'react';
 
 import {
@@ -8,15 +8,14 @@ import {
     sendAnalytics
 } from '../../analytics';
 import { getCurrentConference } from '../../base/conference/functions';
-import { Icon, IconClose } from '../../base/icons';
-import { translate } from '../../base/i18n';
-import { browser } from '../../base/lib-jitsi-meet';
-import { connect } from '../../base/redux';
 import {
     checkChromeExtensionsInstalled,
     isMobileBrowser
 } from '../../base/environment/utils';
-
+import { translate } from '../../base/i18n';
+import { Icon, IconClose } from '../../base/icons';
+import { browser } from '../../base/lib-jitsi-meet';
+import { connect } from '../../base/redux';
 import logger from '../logger';
 
 

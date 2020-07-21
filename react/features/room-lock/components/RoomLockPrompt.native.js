@@ -5,7 +5,6 @@ import type { Dispatch } from 'redux';
 
 import { InputDialog } from '../../base/dialog';
 import { connect } from '../../base/redux';
-
 import { endRoomLockRequest } from '../actions';
 
 /**
@@ -78,7 +77,7 @@ class RoomLockPrompt extends Component<Props> {
 
         return (
             <InputDialog
-                contentKey = 'dialog.passwordLabel'
+                contentKey = 'security.about'
                 onCancel = { this._onCancel }
                 onSubmit = { this._onSubmit }
                 textInputProps = { textInputProps }
@@ -130,10 +129,7 @@ class RoomLockPrompt extends Component<Props> {
     _validateInput(value: string) {
 
         // we want only digits, but both number-pad and numeric add ',' and '.' as symbols
-        if (this.props.passwordNumberOfDigits
-            && value.length > 0
-            && !/^\d+$/.test(value)) {
-
+        if (this.props.passwordNumberOfDigits && value.length > 0 && !/^\d+$/.test(value)) {
             return false;
         }
 

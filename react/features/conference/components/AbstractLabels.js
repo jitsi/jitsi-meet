@@ -10,6 +10,8 @@ import { TranscribingLabel } from '../../transcribing';
 import { shouldDisplayTileView } from '../../video-layout';
 import { VideoQualityLabel } from '../../video-quality';
 
+import { InsecureRoomNameLabel } from '.';
+
 /**
  * The type of the React {@code Component} props of {@link AbstractLabels}.
  */
@@ -81,6 +83,18 @@ export default class AbstractLabels<P: Props, S> extends Component<P, S> {
     _renderTranscribingLabel() {
         return (
             <TranscribingLabel />
+        );
+    }
+
+    /**
+     * Renders the {@code InsecureRoomNameLabel}.
+     *
+     * @protected
+     * @returns {React$Element}
+     */
+    _renderInsecureRoomNameLabel() {
+        return (
+            <InsecureRoomNameLabel />
         );
     }
 

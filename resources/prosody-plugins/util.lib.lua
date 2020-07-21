@@ -175,9 +175,10 @@ end
 function starts_with(str, start)
     return str:sub(1, #start) == start
 end
+
 -- healthcheck rooms in jicofo starts with a string '__jicofo-health-check'
-function is_healthcheck_room(room)
-    if starts_with(room.jid, "__jicofo-health-check") then
+function is_healthcheck_room(room_jid)
+    if starts_with(room_jid, "__jicofo-health-check") then
         return true;
     end
 

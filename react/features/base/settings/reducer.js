@@ -1,13 +1,12 @@
 // @flow
 
-import { jitsiLocalStorage } from 'js-utils';
-import { randomHexString } from 'js-utils/random';
+import { jitsiLocalStorage } from '@jitsi/js-utils';
+import { randomHexString } from '@jitsi/js-utils/random';
 import _ from 'lodash';
 
-import { APP_WILL_MOUNT } from '../app';
+import { APP_WILL_MOUNT } from '../app/actionTypes';
 import { browser } from '../lib-jitsi-meet';
-import { ReducerRegistry } from '../redux';
-import { PersistenceRegistry } from '../storage';
+import { PersistenceRegistry, ReducerRegistry } from '../redux';
 import { assignIfDefined } from '../util';
 
 import { SETTINGS_UPDATED } from './actionTypes';
@@ -24,6 +23,7 @@ const DEFAULT_STATE = {
     avatarURL: undefined,
     cameraDeviceId: undefined,
     disableCallIntegration: undefined,
+    disableCrashReporting: undefined,
     disableP2P: undefined,
     displayName: undefined,
     email: undefined,
@@ -38,7 +38,8 @@ const DEFAULT_STATE = {
     userSelectedMicDeviceId: undefined,
     userSelectedAudioOutputDeviceLabel: undefined,
     userSelectedCameraDeviceLabel: undefined,
-    userSelectedMicDeviceLabel: undefined
+    userSelectedMicDeviceLabel: undefined,
+    userSelectedSkipPrejoin: undefined
 };
 
 const STORE_NAME = 'features/base/settings';

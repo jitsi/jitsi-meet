@@ -6,6 +6,7 @@ import {
     createToolbarEvent,
     sendAnalytics
 } from '../../analytics';
+import { TILE_VIEW_ENABLED, getFeatureFlag } from '../../base/flags';
 import { translate } from '../../base/i18n';
 import { IconTileView } from '../../base/icons';
 import { connect } from '../../base/redux';
@@ -13,7 +14,6 @@ import {
     AbstractButton,
     type AbstractButtonProps
 } from '../../base/toolbox';
-
 import { setTileView } from '../actions';
 import logger from '../logger';
 
@@ -83,13 +83,16 @@ class TileViewButton<P: Props> extends AbstractButton<P, *> {
  * {@code TileViewButton} component.
  *
  * @param {Object} state - The Redux state.
- * @returns {{
- *     _tileViewEnabled: boolean
- * }}
+ * @param {Object} ownProps - The properties explicitly passed to the component instance.
+ * @returns {Props}
  */
-function _mapStateToProps(state) {
+function _mapStateToProps(state, ownProps) {
+    const enabled = getFeatureFlag(state, TILE_VIEW_ENABLED, true);
+    const { visible = enabled } = ownProps;
+
     return {
-        _tileViewEnabled: state['features/video-layout'].tileViewEnabled
+        _tileViewEnabled: state['features/video-layout'].tileViewEnabled,
+        visible
     };
 }
 

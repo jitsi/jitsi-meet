@@ -451,7 +451,7 @@
         "somebody": "Alguém",
         "startSilentTitle": "Você entrou sem saída de áudio!",
         "startSilentDescription": "Volte à reunião para habilitar o áudio",
-        "suboptimalBrowserWarning": "Tememos que sua experiência de reunião não seja tão boa aqui. Estamos procurando maneiras de melhorar isso, mas até então, tente usar um dos <a href='static/recommendedBrowsers.html' target='_blank'>navegadores completamente suportados</a>.",
+        "suboptimalBrowserWarning": "Tememos que sua experiência de reunião não seja tão boa aqui. Estamos procurando maneiras de melhorar isso, mas até então, tente usar um dos <a href='{{recommendedBrowserPageLink}}' target='_blank'>navegadores completamente suportados</a>.",
         "suboptimalExperienceTitle": "Alerta do navegador",
         "unmute": "Ativar som",
         "newDeviceCameraTitle": "Nova câmera detectada",
@@ -723,9 +723,6 @@
         "lowDefinition": "Baixa definição (LD)",
         "onlyAudioAvailable": "Somente áudio disponível",
         "onlyAudioSupported": "Suportamos somente áudio neste navegador.",
-        "p2pEnabled": "Ponto-a-ponto habilitada",
-        "p2pVideoQualityDescription": "No modo ponto a ponto, a qualidade do vídeo recebido só pode ser alternada entre alta e apenas áudio. Outras configurações não serão respeitadas até que o ponto a ponto seja encerrado.",
-        "recHighDefinitionOnly": "Preferência para alta definição.",
         "sd": "SD",
         "sdTooltip": "Ver vídeo em definição padrão",
         "standardDefinition": "Definição padrão"
@@ -783,6 +780,33 @@
     "chromeExtensionBanner": {
         "dontShowAgain": "Não me mostre isso de novo",
         "buttonText": "Instalar extensão do Chrome",
-        "installExtensionText": "Instale a extensão par integração com Google Calendar e Office 365"
+        "installExtensionText": "Instale a extensão para integrar com Google Calendar e Office 365"
+    },
+    "lobby": {
+        "allow": "Permitir",
+        "backToKnockModeButton": "Sem senha, peça para se juntar",
+        "dialogTitle": "modo Lobby",
+        "disableDialogContent": "O modo Lobby está habilitado. Este recurso evita que particpantes não convidados juntem-se à sua conferência. Deseja desabilitar?",
+        "disableDialogSubmit": "Desabilitar",
+        "emailField": "Informe seu email",
+        "enableDialogPasswordField": "Definir senha (opcional)",
+        "enableDialogSubmit": "Habilitar",
+        "enableDialogText": "O modo Lobby protege a sua conferência, permitindo a entrada de participantes apenas após a aprovação formal do moderador.",
+        "enterPasswordButton": "Informe a senha da conferência",
+        "enterPasswordTitle": "Informe a senha para se juntar à conferência",
+        "invalidPassword": "Senha inválida",
+        "joiningMessage": "Você se juntará à conferência tão logo alguém aprove sua solicitação",
+        "joinWithPasswordMessage": "Tentando entrar com a senha, por favor aguarde...",
+        "joinRejectedMessage": "Sua solicitação de participação foi rejeitada pelo moderador.",
+        "joinTitle": "Junte-se à conferência",
+        "joiningTitle": "Pedindo para se juntar à conferência...",
+        "joiningWithPasswordTitle": "Participando com senha...",
+        "knockButton": "Peça para participar",
+        "knockTitle": "Alguém deseja participar da conferência",
+        "nameField": "Informe seu nome",
+        "passwordField": "Informe a senha da conferência",
+        "passwordJoinButton": "Solicitar",
+        "reject": "Rejeitar",
+        "toggleLabel": "Habilitar lobby"
     }
 }

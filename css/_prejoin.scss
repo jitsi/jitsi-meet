@@ -1,0 +1,193 @@
+.prejoin {
+
+    &-input-area {
+        margin: 0 auto;
+        text-align: center;
+        width: 320px;
+    }
+
+    &-title {
+        color: #fff;
+        font-size: 24px;
+        line-height: 32px;
+        margin-bottom: 16px;
+    }
+
+    &-text-btns {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    &-input-label {
+        color: #A4B8D1;
+        font-size: 13px;
+        line-height: 20px;
+        margin-top: 32px 0 8px 0;
+        text-align: center;
+        width: 100%;
+    }
+
+    &-checkbox {
+        border: 0;
+        height: 16px;
+        margin-right: 8px;
+        padding: 0;
+        width: 16px;
+    }
+
+    &-checkbox-container {
+        margin-bottom: 14px;
+        width: 100%;
+    }
+}
+
+@mixin name-placeholder {
+    color: #fff;
+    font-weight: 300;
+    opacity: 0.6;
+}
+
+.prejoin-preview {
+    height: 100%;
+    position: absolute;
+    width: 100%;
+
+    &--no-video {
+        background: radial-gradient(50% 50% at 50% 50%, #5B6F80 0%, #365067 100%), #FFFFFF;
+        text-align: center;
+    }
+
+    &-video {
+        height: 100%;
+        object-fit: cover;
+        position: absolute;
+        width: 100%;
+    }
+
+    &-name {
+        color: #fff;
+        font-size: 19px;
+        line-height: 28px;
+
+        &--editable {
+            background: none;
+            border: 0;
+            border-bottom: 1px solid #D1DBE8;
+            margin: 24px 0 16px 0;
+            outline: none;
+            text-align: center;
+            width: 100%;
+
+            &::-webkit-input-placeholder {
+                @include name-placeholder;
+            }
+            &::-moz-placeholder {
+                @include name-placeholder;
+            }
+            &:-ms-input-placeholder {
+                @include name-placeholder;
+            }
+        }
+
+        &--text {
+            margin: 16px 0;
+            outline: none;
+        }
+    }
+
+    &-avatar.avatar {
+        background: #A4B8D1;
+        margin: 200px auto 0 auto;
+    }
+
+    &-overlay {
+        height: 100%;
+        position: absolute;
+        width: 100%;
+        z-index: 1;
+        background: linear-gradient(0deg, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3));
+    }
+
+    &-bottom-overlay {
+        background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.9) 100%);
+        bottom: 0;
+        height: 50%;
+        position: absolute;
+        width: 100%;
+        z-index: 1;
+    }
+
+    &-status {
+        align-items: center;
+        align-self: stretch;
+        color: #fff;
+        display: flex;
+        font-size: 13px;
+        min-height: 24px;
+        justify-content: center;
+        text-align: center;
+        z-index: 1;
+
+        &--warning {
+            background: rgba(241, 173, 51, 0.7)
+        }
+        &--ok {
+            background: rgba(49, 183, 106, 0.7);
+        }
+    }
+
+    &-icon {
+        background-position: center;
+        background-repeat: no-repeat;
+        display: inline-block;
+        height: 16px;
+        margin-right: 8px;
+        width: 16px;
+    }
+
+    &-error-desc {
+        margin-right: 4px;
+    }
+
+    .settings-button-container {
+        width: 49px;
+        margin: 0 8px;
+    }
+
+    &-dropdown-btns {
+        width: 320px;
+        padding: 8px 0;
+    }
+
+    &-dropdown-btn {
+        align-items: center;
+        color: #1C2025;
+        cursor: pointer;
+        display: flex;
+        height: 40px;
+        font-size: 15px;
+        line-height: 24px;
+        padding: 0 16px;
+
+        &:hover {
+            background-color: #DAEBFA;
+        }
+    }
+
+    &-dropdown-icon {
+        display: inline-block;
+        margin-right: 16px;
+
+        & > svg {
+            fill:  #1C2025;
+        }
+    }
+
+    &-dropdown-container {
+        & > div > div:nth-child(2) > div > div {
+            background: #fff;
+            padding: 0;
+        }
+    }
+
+}

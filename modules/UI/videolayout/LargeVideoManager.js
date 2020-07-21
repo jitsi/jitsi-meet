@@ -1,5 +1,6 @@
 /* global $, APP */
 /* eslint-disable no-unused-vars */
+import Logger from 'jitsi-meet-logger';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { I18nextProvider } from 'react-i18next';
@@ -7,24 +8,24 @@ import { Provider } from 'react-redux';
 
 import { Avatar } from '../../../react/features/base/avatar';
 import { i18next } from '../../../react/features/base/i18n';
-import { PresenceLabel } from '../../../react/features/presence-status';
-/* eslint-enable no-unused-vars */
-
-const logger = require('jitsi-meet-logger').getLogger(__filename);
-
-import { VIDEO_TYPE } from '../../../react/features/base/media';
 import {
     JitsiParticipantConnectionStatus
 } from '../../../react/features/base/lib-jitsi-meet';
+import { VIDEO_TYPE } from '../../../react/features/base/media';
+import { CHAT_SIZE } from '../../../react/features/chat';
 import {
     updateKnownLargeVideoResolution
 } from '../../../react/features/large-video';
-import { createDeferred } from '../../util/helpers';
+import { PresenceLabel } from '../../../react/features/presence-status';
+/* eslint-enable no-unused-vars */
 import UIEvents from '../../../service/UI/UIEvents';
+import { createDeferred } from '../../util/helpers';
+import AudioLevels from '../audio_levels/AudioLevels';
 import UIUtil from '../util/UIUtil';
+
 import { VideoContainer, VIDEO_CONTAINER_TYPE } from './VideoContainer';
 
-import AudioLevels from '../audio_levels/AudioLevels';
+const logger = Logger.getLogger(__filename);
 
 const DESKTOP_CONTAINER_TYPE = 'desktop';
 
@@ -323,7 +324,18 @@ export default class LargeVideoManager {
      * Update container size.
      */
     updateContainerSize() {
-        this.width = UIUtil.getAvailableVideoWidth();
+        let widthToUse = UIUtil.getAvailableVideoWidth();
+        const { isOpen } = APP.store.getState()['features/chat'];
+
+        if (isOpen) {
+            /**
+             * If chat state is open, we re-compute the container width
+             * by subtracting the default width of the chat.
+             */
+            widthToUse -= CHAT_SIZE;
+        }
+
+        this.width = widthToUse;
         this.height = window.innerHeight;
     }
 

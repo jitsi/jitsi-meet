@@ -8,7 +8,6 @@ import { PagedList } from '../../base/react';
 import { connect } from '../../base/redux';
 import { CalendarList, isCalendarEnabled } from '../../calendar-sync';
 import { RecentList } from '../../recent-list';
-
 import { setWelcomePageListsDefaultPage } from '../actions';
 
 /**

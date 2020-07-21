@@ -32,9 +32,13 @@ const commands = {
     e2eeKey: 'e2ee-key',
     email: 'email',
     hangup: 'video-hangup',
+    muteEveryone: 'mute-everyone',
     password: 'password',
     sendEndpointTextMessage: 'send-endpoint-text-message',
     sendTones: 'send-tones',
+    setVideoQuality: 'set-video-quality',
+    startRecording: 'start-recording',
+    stopRecording: 'stop-recording',
     subject: 'subject',
     submitFeedback: 'submit-feedback',
     toggleAudio: 'toggle-audio',
@@ -67,6 +71,7 @@ const events = {
     'participant-joined': 'participantJoined',
     'participant-kicked-out': 'participantKickedOut',
     'participant-left': 'participantLeft',
+    'participant-role-changed': 'participantRoleChanged',
     'password-required': 'passwordRequired',
     'proxy-connection-event': 'proxyConnectionEvent',
     'video-ready-to-close': 'readyToClose',
@@ -752,6 +757,17 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
     isAudioMuted() {
         return this._transport.sendRequest({
             name: 'is-audio-muted'
+        });
+    }
+
+    /**
+     * Returns screen sharing status.
+     *
+     * @returns {Promise} - Resolves with screensharing status and rejects on failure.
+     */
+    isSharingScreen() {
+        return this._transport.sendRequest({
+            name: 'is-sharing-screen'
         });
     }
 

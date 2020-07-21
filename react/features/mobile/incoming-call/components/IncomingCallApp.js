@@ -1,8 +1,8 @@
 // @flow
 
 import { BaseApp } from '../../../base/app';
-
 import { incomingCallReceived } from '../actions';
+
 import IncomingCallPage from './IncomingCallPage';
 
 /**

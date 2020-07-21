@@ -1,10 +1,20 @@
 // @flow
 
+import { JitsiConferenceErrors } from '../base/lib-jitsi-meet';
 import { StateListenerRegistry } from '../base/redux';
 
 import { setFatalError } from './actions';
 
 declare var APP: Object;
+
+/**
+ * List of errors that are not fatal (or handled differently) so then the overlays won't kick in.
+ */
+const NON_OVERLAY_ERRORS = [
+    JitsiConferenceErrors.CONFERENCE_ACCESS_DENIED,
+    JitsiConferenceErrors.CONFERENCE_DESTROYED,
+    JitsiConferenceErrors.CONNECTION_ERROR
+];
 
 /**
  * State listener which emits the {@code fatalErrorOccurred} action which works
@@ -21,6 +31,7 @@ StateListenerRegistry.register(
     },
     /* listener */ (error, { dispatch }) => {
         error
+            && NON_OVERLAY_ERRORS.indexOf(error.name) === -1
             && typeof error.recoverable === 'undefined'
             && dispatch(setFatalError(error));
     }

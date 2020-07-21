@@ -10,7 +10,6 @@ import { translate } from '../../../base/i18n';
 import { JitsiModal } from '../../../base/modal';
 import { LoadingIndicator } from '../../../base/react';
 import { connect } from '../../../base/redux';
-
 import { toggleDocument } from '../../actions';
 import { SHARE_DOCUMENT_VIEW_ID } from '../../constants';
 import { getSharedDocumentUrl } from '../../functions';

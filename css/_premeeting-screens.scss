@@ -1,0 +1,281 @@
+/**
+ * Shared style for full screen local track based dialogs/modals.
+ */
+ .premeeting-screen,
+  .preview-overlay {
+     position: absolute;
+     left: 0;
+     right: 0;
+     top: 0;
+     bottom: 0;
+  }
+
+ .premeeting-screen {
+    align-items: stretch;
+    background: radial-gradient(50% 50% at 50% 50%, #5D95C7 0%, #376288 100%), #FFFFFF;
+    display: flex;
+    flex-direction: column;
+    font-size: 1.3em;
+    z-index: $toolbarZ + 1;
+
+    .action-btn {
+        border-radius: 3px;
+        color: #fff;
+        cursor: pointer;
+        display: inline-block;
+        font-size: 15px;
+        line-height: 24px;
+        margin-top: 16px;
+        padding: 7px 16px;
+        position: relative;
+        text-align: center;
+        width: 286px;
+
+        &.primary {
+            background: #0376DA;
+            border: 1px solid #0376DA;
+        }
+
+        &.secondary {
+            background: transparent;
+            border: 1px solid #5E6D7A;
+        }
+
+        &.text {
+            width: auto;
+            font-size: 13px;
+            margin: 0;
+            padding: 0;
+        }
+
+        &.disabled {
+            background: #5E6D7A;
+            border: 1px solid #5E6D7A;
+            color: #AFB6BC;
+            cursor: initial;
+
+            .icon {
+                & > svg {
+                    fill: #AFB6BC;
+                }
+            }
+
+            .options {
+                border-left: 1px solid #AFB6BC;
+            }
+        }
+
+        .options {
+            align-items: center;
+            border-left: 1px solid #fff;
+            display: flex;
+            height: 100%;
+            justify-content: center;
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: 40px;
+        }
+    }
+
+    .preview-overlay {
+        background-image: linear-gradient(transparent, black);
+        z-index: $toolbarZ + 1;
+    }
+
+    .content {
+        align-items: center;
+        display: flex;
+        flex: 1;
+        flex-direction: column;
+        justify-content: flex-end;
+        z-index: $toolbarZ + 2;
+
+        .title {
+            color: #fff;
+            font-size: 24px;
+            line-height: 32px;
+            margin-bottom: 16px;
+        }
+
+        .copy-meeting {
+            align-items: center;
+            cursor: pointer;
+            color: #fff;
+            display: flex;
+            flex-direction: row;
+            font-size: 15px;
+            font-weight: 300;
+            justify-content: center;
+            line-height: 24px;
+            margin-bottom: 16px;
+
+            .url {
+                display: flex;
+                padding: 8px 10px;
+
+                &:hover {
+                    background: #1C2025;
+                    border-radius: 4px;
+                }
+
+                &.done {
+                    background: #31B76A;
+                }
+
+                .jitsi-icon {
+                    margin-left: 10px;
+                }
+            }
+
+            .copy-meeting-text {
+                width: 266px;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            &:hover {
+                align-self: stretch;
+            }
+
+            textarea {
+                border-width: 0;
+                height: 0;
+                opacity: 0;
+                padding: 0;
+                width: 0;
+            }
+        }
+
+        input.field {
+            background-color: transparent;
+            border: 1px solid transparent;
+            color: white;
+            outline-width: 0;
+            padding: 8px 0;
+            text-align: center;
+            width: 100%;
+
+            &.focused {
+                border-bottom: 1px solid white;
+            }
+
+            &.error::placeholder {
+                color: $defaultWarningColor;
+            }
+        }
+    }
+
+    .media-btn-container {
+        display: flex;
+        justify-content: center;
+        margin: 32px 0;
+        width: 100%;
+
+        &> div {
+            margin: 0 12px;
+        }
+
+        .settings-button-small-icon {
+            right: -8px;
+
+            &--hovered {
+                right: -10px;
+            }
+        }
+    }
+}
+
+#preview {
+    height: 100%;
+    position: absolute;
+    width: 100%;
+
+    &.no-video {
+        background: radial-gradient(50% 50% at 50% 50%, #5B6F80 0%, #365067 100%), #FFFFFF;
+        text-align: center;
+    }
+
+    .preview-avatar-container {
+        width: 100%;
+        height: 80%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .avatar {
+        background: #A4B8D1;
+    }
+
+    video {
+        height: 100%;
+        object-fit: cover;
+        position: absolute;
+        width: 100%;
+    }
+}
+
+@mixin flex-centered() {
+    align-items: center;
+    display: flex;
+    justify-content: center;
+}
+
+@mixin icon-container($bg, $fill) {
+    .toggle-button-icon-container {
+        background: $bg;
+
+        svg {
+            fill: $fill
+        }
+    }
+}
+
+.toggle-button {
+    border-radius: 3px;
+    cursor: pointer;
+    color: #fff;
+    font-size: 13px;
+    height: 40px;
+    margin: 0 auto;
+    width: 320px;
+
+    @include flex-centered();
+
+    svg {
+        fill: transparent;
+    }
+
+    &:hover {
+        background: #1C2025;
+
+        @include icon-container(#A4B8D1, #1C2025);
+    }
+
+    &-container {
+        position: relative;
+
+        @include flex-centered();
+    }
+
+    &-icon-container {
+        border-radius: 50%;
+        left: -22px;
+        padding: 2px;
+        position: absolute;
+    }
+
+    &--toggled {
+        background: #75757A;
+
+        &:hover {
+            background: #75757A;
+
+            @include icon-container(#A4B8D1, #75757A);
+        }
+
+        @include icon-container(#A4B8D1, #75757A);
+    }
+}

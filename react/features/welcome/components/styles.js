@@ -108,15 +108,8 @@ export default {
      * Container for the hint box.
      */
     hintContainer: {
-        backgroundColor: ColorPalette.white,
-        borderColor: ColorPalette.white,
-        borderRadius: 4,
-        borderWidth: 1,
         flexDirection: 'column',
-        marginVertical: 5,
-        overflow: 'hidden',
-        paddingHorizontal: BoxModel.padding,
-        paddingVertical: 2 * BoxModel.padding
+        overflow: 'hidden'
     },
 
     /**
@@ -146,6 +139,16 @@ export default {
      */
     joinControls: {
         padding: BoxModel.padding
+    },
+
+    messageContainer: {
+        backgroundColor: ColorPalette.white,
+        borderColor: ColorPalette.white,
+        borderRadius: 4,
+        borderWidth: 1,
+        marginVertical: 5,
+        paddingHorizontal: BoxModel.padding,
+        paddingVertical: 2 * BoxModel.padding
     },
 
     /**
@@ -278,6 +281,23 @@ export default {
         fontSize: 25,
         marginBottom: 2 * BoxModel.margin,
         textAlign: 'center'
+    },
+
+    insecureRoomNameWarningContainer: {
+        alignItems: 'center',
+        flexDirection: 'row',
+        paddingHorizontal: 5
+    },
+
+    insecureRoomNameWarningIcon: {
+        color: ColorPalette.warning,
+        fontSize: 24,
+        marginRight: 10
+    },
+
+    insecureRoomNameWarningText: {
+        color: ColorPalette.warning,
+        flex: 1
     },
 
     /**

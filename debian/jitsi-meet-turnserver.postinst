@@ -49,7 +49,7 @@ case "$1" in
                 # nothing to do
                 echo "------------------------------------------------"
                 echo ""
-                echo "turnserver is listening on tcp 4445 as other nginx sites use port 443"
+                echo "turnserver is listening on tcp 5349 as other nginx sites use port 443"
                 echo ""
                 echo "------------------------------------------------"
                 NGINX_MULTIPLEXING="false"
@@ -87,9 +87,36 @@ case "$1" in
         if [[ -f $TURN_CONFIG ]] ; then
             echo "------------------------------------------------"
             echo ""
-            echo "turnserver is already configured on this machine, skipping."
+            echo "turnserver is already configured on this machine."
             echo ""
             echo "------------------------------------------------"
+
+            if grep -q "jitsi-meet coturn config" "$TURN_CONFIG" && ! grep -q "jitsi-meet coturn relay disable config" "$TURN_CONFIG" ; then
+                echo "Updating coturn config"
+                echo "# jitsi-meet coturn relay disable config. Do not modify this line
+no-multicast-peers
+no-cli
+no-loopback-peers
+no-tcp-relay
+denied-peer-ip=0.0.0.0-0.255.255.255
+denied-peer-ip=10.0.0.0-10.255.255.255
+denied-peer-ip=100.64.0.0-100.127.255.255
+denied-peer-ip=127.0.0.0-127.255.255.255
+denied-peer-ip=169.254.0.0-169.254.255.255
+denied-peer-ip=127.0.0.0-127.255.255.255
+denied-peer-ip=172.16.0.0-172.31.255.255
+denied-peer-ip=192.0.0.0-192.0.0.255
+denied-peer-ip=192.0.2.0-192.0.2.255
+denied-peer-ip=192.88.99.0-192.88.99.255
+denied-peer-ip=192.168.0.0-192.168.255.255
+denied-peer-ip=198.18.0.0-198.19.255.255
+denied-peer-ip=198.51.100.0-198.51.100.255
+denied-peer-ip=203.0.113.0-203.0.113.255
+denied-peer-ip=240.0.0.0-255.255.255.255" >> $TURN_CONFIG
+
+                invoke-rc.d coturn restart || true
+            fi
+
             db_stop
             exit 0
         fi
@@ -106,7 +133,7 @@ case "$1" in
         TURN_SECRET="$RET"
 
         # no turn config exists, lt's copy template and fill it in
-        PUBLIC_IP=$(dig +short myip.opendns.com @resolver1.opendns.com) || true
+        PUBLIC_IP=$(dig -4 +short myip.opendns.com a @resolver1.opendns.com) || true
         if [ -z "$PUBLIC_IP" ] ; then
             PUBLIC_IP="127.0.0.1"
             echo "------------------------------------------------"
@@ -152,7 +179,7 @@ case "$1" in
             PROSODY_HOST_CONFIG="/etc/prosody/conf.avail/$JVB_HOSTNAME.cfg.lua"
             if [ -f $PROSODY_HOST_CONFIG ] ; then
                 # If we are not multiplexing we need to change the port in prosody config
-                sed -i 's/"443"/"4445"/g' $PROSODY_HOST_CONFIG
+                sed -i 's/"443"/"5349"/g' $PROSODY_HOST_CONFIG
                 invoke-rc.d prosody restart || true
             fi
         fi

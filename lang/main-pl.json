@@ -639,7 +639,7 @@
         "raiseHand": "Podnieś / Opuść rękę",
         "raiseYourHand": "Podnieś rękę",
         "Settings": "Ustawienia",
-        "sharedvideo": "Udostępnij wideo w Youtube",
+        "sharedvideo": "Udostępnij wideo z Youtube",
         "shareRoom": "Zaproś kogoś",
         "shortcuts": "Wyświetl skróty",
         "speakerStats": "Statystyki mówców",
@@ -703,9 +703,6 @@
         "lowDefinition": "Niska rozdzielczość",
         "onlyAudioAvailable": "Dostępny jest tylko dźwięk",
         "onlyAudioSupported": "Obsługujemy tylko dźwięk w tej przeglądarce.",
-        "p2pEnabled": "Połączenie Peer to Peer włączone",
-        "p2pVideoQualityDescription": "",
-        "recHighDefinitionOnly": "Preferowana wysoka rozdzielczość.",
         "sd": "SD",
         "sdTooltip": "Podgląd obrazu w standardowej rozdzielczości",
         "standardDefinition": "Standardowa rozdzielczość"

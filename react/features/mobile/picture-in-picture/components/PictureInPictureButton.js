@@ -1,6 +1,6 @@
 // @flow
 
-import { Platform } from 'react-native';
+import { NativeModules, Platform } from 'react-native';
 
 import { PIP_ENABLED, getFeatureFlag } from '../../../base/flags';
 import { translate } from '../../../base/i18n';
@@ -8,7 +8,6 @@ import { IconMenuDown } from '../../../base/icons';
 import { connect } from '../../../base/redux';
 import { AbstractButton } from '../../../base/toolbox';
 import type { AbstractButtonProps } from '../../../base/toolbox';
-
 import { enterPictureInPicture } from '../actions';
 
 type Props = AbstractButtonProps & {
@@ -67,9 +66,8 @@ function _mapStateToProps(state): Object {
     const flag = Boolean(getFeatureFlag(state, PIP_ENABLED));
     let enabled = flag;
 
-    // Override flag for Android < 26, PiP was introduced in Oreo.
-    // https://developer.android.com/guide/topics/ui/picture-in-picture
-    if (Platform.OS === 'android' && Platform.Version < 26) {
+    // Override flag for Android, since it might be unsupported.
+    if (Platform.OS === 'android' && !NativeModules.PictureInPicture.SUPPORTED) {
         enabled = false;
     }
 

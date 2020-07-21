@@ -9,7 +9,7 @@ local is_healthcheck_room = module:require "util".is_healthcheck_room;
 module:hook("muc-room-created", function(event)
     local room = event.room;
 
-    if is_healthcheck_room(room) then
+    if is_healthcheck_room(room.jid) then
         return;
     end
 

@@ -1,20 +1,20 @@
 // @flow
 
-import { jitsiLocalStorage } from 'js-utils';
+import { jitsiLocalStorage } from '@jitsi/js-utils';
 import _ from 'lodash';
+
+import { parseURLParams } from '../util';
 
 import CONFIG_WHITELIST from './configWhitelist';
 import { _CONFIG_STORE_PREFIX } from './constants';
 import INTERFACE_CONFIG_WHITELIST from './interfaceConfigWhitelist';
-import parseURLParams from './parseURLParams';
 import logger from './logger';
 
-// XXX The functions getRoomName and parseURLParams are split out of
-// functions.js because they are bundled in both app.bundle and
+// XXX The function getRoomName is split out of
+// functions.js because it is bundled in both app.bundle and
 // do_external_connect, webpack 1 does not support tree shaking, and we don't
 // want all functions to be bundled in do_external_connect.
 export { default as getRoomName } from './getRoomName';
-export { parseURLParams };
 
 /**
  * Create a "fake" configuration object for the given base URL. This is used in case the config
