@@ -153,6 +153,7 @@ export default class JitsiStreamPresenterEffect {
         this._videoFrameTimerWorker.postMessage({
             id: CLEAR_INTERVAL
         });
+        this._videoFrameTimerWorker.terminate();
     }
 
 }
