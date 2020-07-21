@@ -1173,15 +1173,41 @@ class Toolbox extends Component<Props, State> {
         const buttonsLeft = [];
         const buttonsRight = [];
 
-        const maxNumberOfButtonsPerGroup = Math.floor(
-            (
-                this.state.windowWidth
-                    - 168 // the width of the central group by design
-                    - 48 // the minimum space between the button groups
-            )
-            / 56 // the width + padding of a button
-            / 2 // divide by the number of groups(left and right group)
-        );
+        let maxNumberOfButtonsPerGroup;
+        const smallThreshold = 700;
+        const verySmallThreshold = 500;
+
+        if (this.state.windowWidth > smallThreshold) {
+            maxNumberOfButtonsPerGroup = Math.floor(
+                (
+                    this.state.windowWidth
+                        - 168 // the width of the central group by design
+                        - 48 // the minimum space between the button groups
+                )
+                / 56 // the width + padding of a button
+                / 2 // divide by the number of groups(left and right group)
+            );
+        } else if (this.state.windowWidth > verySmallThreshold) {
+            maxNumberOfButtonsPerGroup = Math.floor(
+                (
+                    this.state.windowWidth
+                        - 168 // the width of the central group by design
+                        - 36 // the minimum space between the button groups
+                )
+                / 40 // the width + padding of a button
+                / 2 // divide by the number of groups(left and right group)
+            );
+        } else {
+            maxNumberOfButtonsPerGroup = Math.floor(
+                (
+                    this.state.windowWidth
+                        - 168 // the width of the central group by design
+                        - 26 // the minimum space between the button groups
+                )
+                / 28 // the width + padding of a button
+                / 2 // divide by the number of groups(left and right group)
+            );
+        }
 
         if (this._shouldShowButton('chat')) {
             buttonsLeft.push('chat');
@@ -1196,7 +1222,7 @@ class Toolbox extends Component<Props, State> {
         if (this._shouldShowButton('closedcaptions')) {
             buttonsLeft.push('closedcaptions');
         }
-        if (overflowHasItems) {
+        if (overflowHasItems && this.state.windowWidth >= verySmallThreshold) {
             buttonsRight.push('overflowmenu');
         }
         if (this._shouldShowButton('invite')) {
@@ -1219,13 +1245,13 @@ class Toolbox extends Component<Props, State> {
             movedButtons.push(...buttonsLeft.splice(
                 maxNumberOfButtonsPerGroup,
                 buttonsLeft.length - maxNumberOfButtonsPerGroup));
-            if (buttonsRight.indexOf('overflowmenu') === -1) {
+            if (buttonsRight.indexOf('overflowmenu') === -1 && this.state.windowWidth >= verySmallThreshold) {
                 buttonsRight.unshift('overflowmenu');
             }
         }
 
         if (buttonsRight.length > maxNumberOfButtonsPerGroup) {
-            if (buttonsRight.indexOf('overflowmenu') === -1) {
+            if (buttonsRight.indexOf('overflowmenu') === -1 && this.state.windowWidth >= verySmallThreshold) {
                 buttonsRight.unshift('overflowmenu');
             }
 
@@ -1296,7 +1322,7 @@ class Toolbox extends Component<Props, State> {
                             tooltip = { t('toolbar.invite') } /> }
                     { buttonsRight.indexOf('security') !== -1
                         && <SecurityDialogButton customClass = 'security-toolbar-button' /> }
-                    { buttonsRight.indexOf('overflowmenu') !== -1
+                    { buttonsRight.indexOf('overflowmenu') !== -1 && this.state.windowWidth >= verySmallThreshold
                         && <OverflowMenuButton
                             isOpen = { _overflowMenuVisible }
                             onVisibilityChange = { this._onSetOverflowVisible }>
