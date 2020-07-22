@@ -1,4 +1,4 @@
-@media (max-width: 700px) {
+@media only screen and (max-width: $smallScreen) {
     .watermark {
         width: 20%;
         height: 20%;
@@ -29,7 +29,7 @@
     }
 }
 
-@media (max-width: 500px) {
+@media only screen and (max-width: $verySmallScreen) {
     #videoResolutionLabel {
         display: none;
     }
