@@ -132,6 +132,7 @@ export default [
     'prejoinPageEnabled',
     'requireDisplayName',
     'remoteVideoMenu',
+    'roomPasswordNumberOfDigits',
     'resolution',
     'startAudioMuted',
     'startAudioOnly',
