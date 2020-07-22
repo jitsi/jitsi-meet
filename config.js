@@ -37,6 +37,8 @@ var config = {
     clientNode: 'http://jitsi.org/jitsimeet',
 
     // The real JID of focus participant - can be overridden here
+    // Do not change username - FIXME: Make focus username configurable
+    // https://github.com/jitsi/jitsi-meet/issues/7376
     // focusUserJid: 'focus@auth.jitsi-meet.example.com',
 
 
