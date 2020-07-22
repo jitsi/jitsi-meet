@@ -73,7 +73,7 @@ function _mapStateToProps(state: Object, ownProps: Props) {
     // participant and there is no video rendered for
     // them.
     const _render = Boolean(participantId)
-        && localParticipant.id !== participantId
+        && localParticipant?.id !== participantId
         && !shouldRenderParticipantVideo(state, participantId)
         && !isFakeParticipant;
 
