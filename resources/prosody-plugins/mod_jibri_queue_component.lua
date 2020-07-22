@@ -207,7 +207,11 @@ local function sendEvent(type,room_address,participant,requestId,replyIq,replyEr
     headers['Authorization'] = generateToken()
 
     module:log("debug","Sending headers %s",inspect(headers));
-    local request = http.request(queueServiceURL, {
+    local requestURL = queueServiceURL.."/job/recording"
+    if type=="LeaveQueue" then
+        requestURL = requestURL .."/cancel"
+    end
+    local request = http.request(requestURL, {
         headers = headers,
         method = "POST",
         body = json.encode(out_event)
