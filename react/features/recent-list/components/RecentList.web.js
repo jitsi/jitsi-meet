@@ -6,6 +6,7 @@ import type { Dispatch } from 'redux';
 import { translate } from '../../base/i18n';
 import { MeetingsList } from '../../base/react';
 import { connect } from '../../base/redux';
+import sendRoomNameSignal from '../../base/util/sendRoomNameSignal';
 import { isRecentListEnabled, toDisplayableList } from '../functions';
 
 import AbstractRecentList from './AbstractRecentList';
@@ -55,6 +56,19 @@ class RecentList extends AbstractRecentList<Props> {
         this._getRenderListEmptyComponent
             = this._getRenderListEmptyComponent.bind(this);
         this._onPress = this._onPress.bind(this);
+    }
+
+    /**
+     * Extends the method that used in the onPress callback of the items.
+     *
+     * @param {string} url - The URL of the item to navigate to.
+     * @param {string} room - The room name.
+     * @private
+     * @returns {Function}
+     */
+    _onPress(url, room) {
+        sendRoomNameSignal(room);
+        super._onPress(url);
     }
 
     /**

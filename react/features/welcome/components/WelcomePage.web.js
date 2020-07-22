@@ -1,6 +1,4 @@
 /* global interfaceConfig */
-// eslint-disable-next-line max-len
-import browserWindowMessageConnection from '@aeternity/aepp-sdk/es/utils/aepp-wallet-communication/connection/browser-window-message';
 import React from 'react';
 
 import { isMobileBrowser } from '../../base/environment/utils';
@@ -8,7 +6,7 @@ import { translate } from '../../base/i18n';
 import { Icon, IconWarning } from '../../base/icons';
 import { Watermarks } from '../../base/react';
 import { connect } from '../../base/redux';
-import isInIframe from '../../base/util/inIframe';
+import sendRoomNameSignal from '../../base/util/sendRoomNameSignal';
 import { CalendarList } from '../../calendar-sync';
 import { RecentList } from '../../recent-list';
 import { SettingsButton, SETTINGS_TABS } from '../../settings';
@@ -268,15 +266,7 @@ class WelcomePage extends AbstractWelcomePage {
         event.preventDefault();
 
         if (!this._roomInputRef || this._roomInputRef.reportValidity()) {
-            if (isInIframe()) {
-                const connection = await browserWindowMessageConnection();
-
-                const room = this.state.room || this.state.generatedRoomname;
-
-                connection.sendMessage({ room });
-
-                return;
-            }
+            sendRoomNameSignal(this.state.room || this.state.generatedRoomname);
             this._onJoin();
         }
     }
