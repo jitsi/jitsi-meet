@@ -1178,6 +1178,7 @@ class Toolbox extends Component<Props, State> {
 
         let minSpaceBetweenButtons = 48;
         let widthPlusPaddingOfButton = 56;
+
         if (this.state.windowWidth <= verySmallThreshold) {
             minSpaceBetweenButtons = 26;
             widthPlusPaddingOfButton = 28;
