@@ -12,6 +12,7 @@ import { MiddlewareRegistry, StateListenerRegistry } from '../base/redux';
 
 import { TOGGLE_SHARED_VIDEO, SET_SHARED_VIDEO_STATUS } from './actionTypes';
 import { setSharedVideoStatus, showEnterVideoLinkPrompt } from './actions';
+import { YOUTUBE_PARTICIPANT_NAME } from './constants';
 
 const SHARED_VIDEO = 'shared-video';
 
@@ -105,7 +106,7 @@ function handleSharingVideoStatus(store, videoId, { state, time, from }, confere
             id: videoId,
             isFakeParticipant: true,
             avatarURL: `https://img.youtube.com/vi/${videoId}/0.jpg`,
-            name: 'YouTube'
+            name: YOUTUBE_PARTICIPANT_NAME
         }));
 
         dispatch(pinParticipant(videoId));

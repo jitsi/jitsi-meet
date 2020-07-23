@@ -152,17 +152,14 @@ function _onFollowMeCommand(attributes = {}, id, store) {
         }
     }
 
-    const pinnedParticipant
-        = getPinnedParticipant(state, attributes.nextOnStage);
+    const pinnedParticipant = getPinnedParticipant(state);
     const idOfParticipantToPin = attributes.nextOnStage;
 
     if (typeof idOfParticipantToPin !== 'undefined'
-            && (!pinnedParticipant
-                || idOfParticipantToPin !== pinnedParticipant.id)
+            && (!pinnedParticipant || idOfParticipantToPin !== pinnedParticipant.id)
             && oldState.nextOnStage !== attributes.nextOnStage) {
         _pinVideoThumbnailById(store, idOfParticipantToPin);
-    } else if (typeof idOfParticipantToPin === 'undefined'
-            && pinnedParticipant) {
+    } else if (typeof idOfParticipantToPin === 'undefined' && pinnedParticipant) {
         store.dispatch(pinParticipant(null));
     }
 }

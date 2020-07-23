@@ -4,6 +4,7 @@ import { SET_FILMSTRIP_ENABLED } from '../../filmstrip/actionTypes';
 import { SELECT_LARGE_VIDEO_PARTICIPANT } from '../../large-video/actionTypes';
 import { APP_STATE_CHANGED } from '../../mobile/background/actionTypes';
 import { SCREEN_SHARE_PARTICIPANTS_UPDATED, SET_TILE_VIEW } from '../../video-layout/actionTypes';
+import { shouldDisplayTileView } from '../../video-layout/functions';
 import { SET_AUDIO_ONLY } from '../audio-only/actionTypes';
 import { CONFERENCE_JOINED } from '../conference/actionTypes';
 import { getParticipantById } from '../participants/functions';
@@ -59,7 +60,8 @@ function _updateLastN({ getState }) {
     if (typeof appState !== 'undefined' && appState !== 'active') {
         lastN = 0;
     } else if (audioOnly) {
-        const { screenShares, tileViewEnabled } = state['features/video-layout'];
+        const { screenShares } = state['features/video-layout'];
+        const tileViewEnabled = shouldDisplayTileView(state);
         const largeVideoParticipantId = state['features/large-video'].participantId;
         const largeVideoParticipant
             = largeVideoParticipantId ? getParticipantById(state, largeVideoParticipantId) : undefined;

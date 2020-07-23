@@ -17,6 +17,7 @@ import {
     getToolboxHeight,
     showToolbox
 } from '../../../react/features/toolbox';
+import { YOUTUBE_PARTICIPANT_NAME } from '../../../react/features/youtube-player';
 import UIEvents from '../../../service/UI/UIEvents';
 import UIUtil from '../util/UIUtil';
 import Filmstrip from '../videolayout/Filmstrip';
@@ -305,7 +306,7 @@ export default class SharedVideoManager {
                 conference: APP.conference._room,
                 id: self.url,
                 isFakeParticipant: true,
-                name: 'YouTube'
+                name: YOUTUBE_PARTICIPANT_NAME
             }));
 
             APP.store.dispatch(pinParticipant(self.url));
