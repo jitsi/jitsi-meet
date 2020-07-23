@@ -56,7 +56,7 @@ class Chat extends AbstractChat<Props> {
     _onClose: () => boolean
 
     /**
-     * Closes the window.
+     * Closes the modal.
      *
      * @returns {boolean}
      */
