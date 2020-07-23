@@ -562,7 +562,7 @@
         "limitNotificationDescriptionWeb": "Ze względu na duże zapotrzebowanie twoje nagrywanie będzie ograniczone do {{limit}} minut. Aby strumieniować bez ograniczeń wybróbuj <a href={{url}} rel='noopener noreferrer' target='_blank'>{{app}}</a>.",
         "limitNotificationDescriptionNative": "Ze względu na duże zapotrzebowanie twoje nagrywanie będzie ograniczone do {{limit}} minut. Aby strumieniować bez ograniczeń wybróbuj <3>{{app}}</3>.",
         "authDropboxText": "Prześlij na Dropbox",
-        "availableSpace": "Dostępna przestrzeń: {{spaceLeft}} MB (około {{duration}} minut nagrania)"",
+        "availableSpace": "Dostępna przestrzeń: {{spaceLeft}} MB (około {{duration}} minut nagrania)",
         "beta": "BETA",
         "busy": "Pracujemy nad uwolnieniem zasobów nagrywania. Proszę spróbować ponownie za kilka minut.",
         "busyTitle": "Wszystkie urządzenia nagrywania są obecnie zajete",
