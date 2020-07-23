@@ -21,7 +21,6 @@ import MessageRecipient from './MessageRecipient';
  * the mobile client.
  */
 class Chat extends AbstractChat<Props> {
-    
     /**
      * Instantiates a new instance.
      *
