@@ -1173,38 +1173,26 @@ class Toolbox extends Component<Props, State> {
         const buttonsLeft = [];
         const buttonsRight = [];
 
-        let maxNumberOfButtonsPerGroup;
         const smallThreshold = 700;
         const verySmallThreshold = 500;
 
-        if (this.state.windowWidth > smallThreshold) {
-            maxNumberOfButtonsPerGroup = Math.floor(
+        let minSpaceBetweenButtons = 48;
+        let widthPlusPaddingOfButton = 56;
+        if (this.state.windowWidth <= verySmallThreshold) {
+            minSpaceBetweenButtons = 26;
+            widthPlusPaddingOfButton = 28;
+        } else if (this.state.windowWidth <= smallThreshold) {
+            minSpaceBetweenButtons = 36;
+            widthPlusPaddingOfButton = 40;
+        }
+
+        const maxNumberOfButtonsPerGroup = Math.floor(
                 (
                     this.state.windowWidth
                         - 168 // the width of the central group by design
-                        - 48 // the minimum space between the button groups
+                        - minSpaceBetweenButtons // the minimum space between the button groups
                 )
-                / 56 // the width + padding of a button
-                / 2 // divide by the number of groups(left and right group)
-            );
-        } else if (this.state.windowWidth > verySmallThreshold) {
-            maxNumberOfButtonsPerGroup = Math.floor(
-                (
-                    this.state.windowWidth
-                        - 168 // the width of the central group by design
-                        - 36 // the minimum space between the button groups
-                )
-                / 40 // the width + padding of a button
-                / 2 // divide by the number of groups(left and right group)
-            );
-        } else {
-            maxNumberOfButtonsPerGroup = Math.floor(
-                (
-                    this.state.windowWidth
-                        - 168 // the width of the central group by design
-                        - 26 // the minimum space between the button groups
-                )
-                / 28 // the width + padding of a button
+                / widthPlusPaddingOfButton // the width + padding of a button
                 / 2 // divide by the number of groups(left and right group)
             );
         }
