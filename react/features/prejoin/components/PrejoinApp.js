@@ -21,6 +21,11 @@ type Props = {
      * Flag signaling the visibility of join label, input and buttons
      */
     showJoinActions: boolean,
+
+    /**
+     * Flag signaling the visibility of the skip prejoin toggle
+     */
+    showSkipPrejoin: boolean,
 };
 
 /**
@@ -42,13 +47,14 @@ export default class PrejoinApp extends BaseApp<Props> {
         this._init.then(async () => {
             const { store } = this.state;
             const { dispatch } = store;
-            const { showAvatar, showJoinActions } = this.props;
+            const { showAvatar, showJoinActions, showSkipPrejoin } = this.props;
 
             super._navigate({
                 component: Prejoin,
                 props: {
                     showAvatar,
-                    showJoinActions
+                    showJoinActions,
+                    showSkipPrejoin
                 }
             });
 
