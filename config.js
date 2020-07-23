@@ -116,7 +116,7 @@ var config = {
     // Sets the preferred target bitrate for the Opus audio codec by setting its
     // 'maxaveragebitrate' parameter. Currently not available in p2p mode.
     // Valid values are in the range 6000 to 510000
-    // opusMaxAvgBitrate: 20000,
+    // opusMaxAverageBitrate: 20000,
 
     // Video
 
