@@ -1187,15 +1187,14 @@ class Toolbox extends Component<Props, State> {
         }
 
         const maxNumberOfButtonsPerGroup = Math.floor(
-                (
-                    this.state.windowWidth
-                        - 168 // the width of the central group by design
-                        - minSpaceBetweenButtons // the minimum space between the button groups
-                )
-                / widthPlusPaddingOfButton // the width + padding of a button
-                / 2 // divide by the number of groups(left and right group)
-            );
-        }
+            (
+                this.state.windowWidth
+                    - 168 // the width of the central group by design
+                    - minSpaceBetweenButtons // the minimum space between the button groups
+            )
+            / widthPlusPaddingOfButton // the width + padding of a button
+            / 2 // divide by the number of groups(left and right group)
+        );
 
         if (this._shouldShowButton('chat')) {
             buttonsLeft.push('chat');
