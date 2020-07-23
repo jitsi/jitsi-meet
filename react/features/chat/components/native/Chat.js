@@ -22,7 +22,7 @@ import MessageRecipient from './MessageRecipient';
  */
 class Chat extends AbstractChat<Props> {
     /**
-     * Instantiates a new instance.
+     * Creates a new instance.
      *
      * @inheritdoc
      */
