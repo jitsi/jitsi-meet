@@ -9,7 +9,7 @@ var config = {
         domain: '<!--# echo var="domain" default="" -->',
 
         // When using authentication, domain for guest users.
-        anonymousdomain: 'guest.<!--# echo var="domain" default="" -->',
+        anonymousdomain: '<!--# echo var="guest_domain" default="" -->',
 
         // Domain for authenticated users. Defaults to <domain>.
         // authdomain: 'auth.test.league.aeternity.org',
