@@ -11,6 +11,7 @@ import {
     isButtonEnabled,
     isToolboxVisible
 } from '../../../toolbox';
+import { shouldDisplayTileView } from '../../../video-layout/functions';
 
 declare var interfaceConfig: Object;
 
@@ -83,7 +84,7 @@ function mapStateToProps(state) {
     const hide = interfaceConfig.HIDE_INVITE_MORE_HEADER;
 
     return {
-        _tileViewEnabled: state['features/video-layout'].tileViewEnabled,
+        _tileViewEnabled: shouldDisplayTileView(state),
         _visible: isToolboxVisible(state) && isButtonEnabled('invite') && isAlone && !hide
     };
 }
