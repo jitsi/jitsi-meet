@@ -146,7 +146,6 @@ function InviteByEmailSection({ inviteSubject, inviteText, t }: Props) {
                     {renderEmailIcons()}
                 </div>
             </div>
-            <div className = 'invite-more-dialog separator' />
         </>
     );
 }
