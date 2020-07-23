@@ -125,14 +125,15 @@ export default class MeetingsList extends Component<Props> {
      * Returns a function that is used in the onPress callback of the items.
      *
      * @param {string} url - The URL of the item to navigate to.
+     * @param {string} title - Room name.
      * @private
      * @returns {Function}
      */
-    _onPress(url) {
+    _onPress(url, title) {
         const { disabled, onPress } = this.props;
 
         if (!disabled && url && typeof onPress === 'function') {
-            return () => onPress(url);
+            return () => onPress(url, title);
         }
 
         return null;
@@ -157,7 +158,7 @@ export default class MeetingsList extends Component<Props> {
             url
         } = meeting;
         const { hideURL = false } = this.props;
-        const onPress = this._onPress(url);
+        const onPress = this._onPress(url, title);
         const rootClassName
             = `item ${
                 onPress ? 'with-click-handler' : 'without-click-handler'}`;
