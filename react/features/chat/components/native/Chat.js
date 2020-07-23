@@ -21,6 +21,18 @@ import MessageRecipient from './MessageRecipient';
  * the mobile client.
  */
 class Chat extends AbstractChat<Props> {
+    
+    /**
+     * Instantiates a new instance.
+     *
+     * @inheritdoc
+     */
+    constructor(props: Props) {
+        super(props);
+
+        this._onClose = this._onClose.bind(this);
+    }
+
     /**
      * Implements React's {@link Component#render()}.
      *
@@ -33,13 +45,26 @@ class Chat extends AbstractChat<Props> {
                     headerLabelKey: 'chat.title'
                 }}
                 modalId = { CHAT_VIEW_MODAL_ID }
-                onClose = { this.props._onToggleChat }>
+                onClose = { this._onClose }>
 
                 <MessageContainer messages = { this.props._messages } />
                 <MessageRecipient />
                 <ChatInputBar onSend = { this.props._onSendMessage } />
             </JitsiModal>
         );
+    }
+
+    _onClose: () => boolean
+
+    /**
+     * Closes the window.
+     *
+     * @returns {boolean}
+     */
+    _onClose() {
+        this.props._onToggleChat();
+
+        return true;
     }
 }
 
