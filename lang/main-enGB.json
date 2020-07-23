@@ -728,7 +728,7 @@
             "join": "Tap to join",
             "roomname": "Enter room name"
         },
-        "appDescription": "Go ahead, video chat with the whole team. In fact, invite everyone you know. {{app}} is a fully encrypted, 100% open source video conferencing solution that you can use all day, every day, for free — with no account needed.",
+        "appDescription": "Create your very own conference room and join your fellow Superheroes online! Form your own SuperheroLeague and launch missions together. Superhero Meet is free for all to use—no need to create an account. Just create a custom link below and you’re all set.",
         "audioVideoSwitch": {
             "audio": "Voice",
             "video": "Video"
