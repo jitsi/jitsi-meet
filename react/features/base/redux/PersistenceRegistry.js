@@ -1,7 +1,7 @@
 // @flow
 
+import { jitsiLocalStorage } from '@jitsi/js-utils';
 import md5 from 'js-md5';
-import { jitsiLocalStorage } from 'js-utils';
 
 import logger from './logger';
 

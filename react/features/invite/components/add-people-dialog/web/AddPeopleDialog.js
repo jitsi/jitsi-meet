@@ -36,9 +36,9 @@ type Props = {
     _dialIn: Object,
 
     /**
-     * Whether or not invite should be hidden.
+     * Whether or not invite contacts should be visible.
      */
-    _hideInviteContacts: boolean,
+    _inviteContactsVisible: boolean,
 
     /**
      * The current url of the conference to be copied onto the clipboard.
@@ -79,7 +79,7 @@ type Props = {
 function AddPeopleDialog({
     _conferenceName,
     _dialIn,
-    _hideInviteContacts,
+    _inviteContactsVisible,
     _inviteUrl,
     _liveStreamViewURL,
     _localParticipantName,
@@ -146,7 +146,7 @@ function AddPeopleDialog({
             titleKey = 'addPeople.inviteMorePrompt'
             width = { 'small' }>
             <div className = 'invite-more-dialog'>
-                { !_hideInviteContacts && <InviteContactsSection /> }
+                { _inviteContactsVisible && <InviteContactsSection /> }
                 <CopyMeetingLinkSection url = { _inviteUrl } />
                 <InviteByEmailSection
                     inviteSubject = { inviteSubject }
@@ -183,12 +183,12 @@ function mapStateToProps(state) {
     const { iAmRecorder } = state['features/base/config'];
     const addPeopleEnabled = isAddPeopleEnabled(state);
     const dialOutEnabled = isDialOutEnabled(state);
+    const hideInviteContacts = iAmRecorder || (!addPeopleEnabled && !dialOutEnabled);
 
     return {
         _conferenceName: getRoomName(state),
         _dialIn: state['features/invite'],
-        _hideInviteContacts:
-            iAmRecorder || (!addPeopleEnabled && !dialOutEnabled),
+        _inviteContactsVisible: interfaceConfig.ENABLE_DIAL_OUT && !hideInviteContacts,
         _inviteUrl: getInviteURL(state),
         _liveStreamViewURL:
             currentLiveStreamingSession

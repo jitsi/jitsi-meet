@@ -2,6 +2,7 @@
 
 import React, { Component } from 'react';
 
+import { isMobileBrowser } from '../../../base/environment/utils';
 import { IconArrowDown } from '../../../base/icons';
 import JitsiMeetJS from '../../../base/lib-jitsi-meet/_';
 import { connect } from '../../../base/redux';
@@ -37,6 +38,9 @@ type Props = {
 
     /**
      * Flag controlling the visibility of the button.
+     * VideoSettings popup is currently disabled on mobile browsers
+     * as mobile devices do not support capture of more than one
+     * camera at a time.
      */
     visible: boolean,
 };
@@ -144,7 +148,7 @@ class VideoSettingsButton extends Component<Props, State> {
                     <VideoMuteButton />
                 </ToolboxButtonWithIcon>
             </VideoSettingsPopup>
-        ) : null;
+        ) : <VideoMuteButton />;
     }
 }
 
@@ -158,7 +162,8 @@ function mapStateToProps(state) {
     return {
         hasVideoTrack: Boolean(getLocalJitsiVideoTrack(state)),
         isDisabled: isVideoSettingsButtonDisabled(state),
-        permissionPromptVisibility: getMediaPermissionPromptVisibility(state)
+        permissionPromptVisibility: getMediaPermissionPromptVisibility(state),
+        visible: !isMobileBrowser()
     };
 }
 

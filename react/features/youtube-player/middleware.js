@@ -28,6 +28,7 @@ MiddlewareRegistry.register(store => next => action => {
     const conference = getCurrentConference(state);
     const localParticipantId = getLocalParticipant(state)?.id;
     const { videoId, status, ownerId, time } = action;
+    const { ownerId: stateOwnerId, videoId: stateVideoId } = state['features/youtube-player'];
 
     switch (action.type) {
     case TOGGLE_SHARED_VIDEO:
@@ -37,8 +38,9 @@ MiddlewareRegistry.register(store => next => action => {
         dispatch(setSharedVideoStatus('', 'stop', 0, ''));
         break;
     case PARTICIPANT_LEFT:
-        if (action.participant.id === action.ownerId) {
+        if (action.participant.id === stateOwnerId) {
             dispatch(setSharedVideoStatus('', 'stop', 0, ''));
+            dispatch(participantLeft(stateVideoId, conference));
         }
         break;
     case SET_SHARED_VIDEO_STATUS:

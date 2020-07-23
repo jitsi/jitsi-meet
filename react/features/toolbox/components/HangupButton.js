@@ -9,7 +9,7 @@ import { translate } from '../../base/i18n';
 import { connect } from '../../base/redux';
 import { AbstractHangupButton } from '../../base/toolbox';
 import type { AbstractButtonProps } from '../../base/toolbox';
-import { jitsiLocalStorage } from 'js-utils';
+import { jitsiLocalStorage } from '@jitsi/js-utils';
 /**
  * The type of the React {@code Component} props of {@link HangupButton}.
  */

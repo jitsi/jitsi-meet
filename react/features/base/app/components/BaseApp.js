@@ -1,6 +1,6 @@
 // @flow
 
-import { jitsiLocalStorage } from 'js-utils';
+import { jitsiLocalStorage } from '@jitsi/js-utils';
 import _ from 'lodash';
 import React, { Component, Fragment } from 'react';
 import { I18nextProvider } from 'react-i18next';

@@ -18,8 +18,9 @@ import {
     setJoinByPhoneDialogVisiblity as setJoinByPhoneDialogVisiblityAction
 } from '../actions';
 import {
-    isJoinByPhoneButtonVisible,
     isDeviceStatusVisible,
+    isDisplayNameRequired,
+    isJoinByPhoneButtonVisible,
     isJoinByPhoneDialogVisible
 } from '../functions';
 
@@ -37,6 +38,11 @@ type Props = {
      * If join by phone button should be visible.
      */
     hasJoinByPhoneButton: boolean,
+
+    /**
+     * If join button is disabled or not.
+     */
+    joinButtonDisabled: boolean,
 
     /**
      * Joins the current meeting.
@@ -212,6 +218,7 @@ class Prejoin extends Component<Props, State> {
      */
     render() {
         const {
+            joinButtonDisabled,
             hasJoinByPhoneButton,
             joinConference,
             joinConferenceWithoutAudio,
@@ -228,6 +235,7 @@ class Prejoin extends Component<Props, State> {
         return (
             <PreMeetingScreen
                 footer = { this._renderFooter() }
+                name = { name }
                 title = { t('prejoin.joinMeeting') }
                 videoMuted = { !showCameraPreview }
                 videoTrack = { videoTrack }>
@@ -264,7 +272,7 @@ class Prejoin extends Component<Props, State> {
                                 isOpen = { showJoinByPhoneButtons }
                                 onClose = { _onDropdownClose }>
                                 <ActionButton
-                                    disabled = { !name }
+                                    disabled = { joinButtonDisabled }
                                     hasOptions = { true }
                                     onClick = { joinConference }
                                     onOptionsClick = { _onOptionsClick }
@@ -309,9 +317,13 @@ class Prejoin extends Component<Props, State> {
  * @returns {Object}
  */
 function mapStateToProps(state): Object {
+    const name = getDisplayName(state);
+    const joinButtonDisabled = isDisplayNameRequired(state) && !name;
+
     return {
+        joinButtonDisabled,
+        name,
         deviceStatusVisible: isDeviceStatusVisible(state),
-        name: getDisplayName(state),
         roomName: getRoomName(state),
         showDialog: isJoinByPhoneDialogVisible(state),
         hasJoinByPhoneButton: isJoinByPhoneButtonVisible(state),

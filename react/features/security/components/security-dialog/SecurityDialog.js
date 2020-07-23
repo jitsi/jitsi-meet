@@ -89,7 +89,6 @@ function SecurityDialog({
             width = { 'small' }>
             <div className = 'security-dialog'>
                 <LobbySection />
-                <div className = 'separator-line' />
                 <PasswordSection
                     canEditPassword = { _canEditPassword }
                     conference = { _conference }

@@ -8,6 +8,10 @@
             display: flex;
             flex-direction: column;
 
+            .description {
+                font-size: 13px;
+            }
+
             .password {
                 align-items: center;
                 display: flex;
@@ -21,16 +25,8 @@
                         font-size: 14px;
                         color: #6FB1EA;
                     }
-
-                    &>a+a {
-                        margin-left: 24px;
-                    }
                 }
             }
-        }
-
-        &> :first-child:not(:last-child) {
-            margin-right: 24px;
         }
 
         .separator-line {

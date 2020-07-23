@@ -4,7 +4,7 @@ import React from 'react';
 
 import { setColorScheme } from '../../base/color-scheme';
 import { DialogContainer } from '../../base/dialog';
-import { CALL_INTEGRATION_ENABLED, updateFlags } from '../../base/flags';
+import { CALL_INTEGRATION_ENABLED, SERVER_URL_CHANGE_ENABLED, updateFlags } from '../../base/flags';
 import { Platform } from '../../base/react';
 import { DimensionsDetector, clientResized } from '../../base/responsive-ui';
 import { updateSettings } from '../../base/settings';
@@ -85,6 +85,20 @@ export class App extends AbstractApp {
         this._init.then(() => {
             // We set these early enough so then we avoid any unnecessary re-renders.
             const { dispatch } = this.state.store;
+
+            // Check if serverURL is configured externally and not allowed to change.
+            const serverURLChangeEnabled = this.props.flags[SERVER_URL_CHANGE_ENABLED];
+
+            if (!serverURLChangeEnabled) {
+                // As serverURL is provided externally, so we push it to settings.
+                if (typeof this.props.url !== 'undefined') {
+                    const { serverURL } = this.props.url;
+
+                    if (typeof serverURL !== 'undefined') {
+                        dispatch(updateSettings({ serverURL }));
+                    }
+                }
+            }
 
             dispatch(setColorScheme(this.props.colorScheme));
             dispatch(updateFlags(this.props.flags));

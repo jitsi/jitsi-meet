@@ -159,9 +159,10 @@ end
 
 --- Verifies issuer part of token
 -- @param 'iss' claim from the token to verify
+-- @param 'acceptedIssuers' list of issuers to check
 -- @return nil and error string or true for accepted claim
-function Util:verify_issuer(issClaim)
-    for i, iss in ipairs(self.acceptedIssuers) do
+function Util:verify_issuer(issClaim, acceptedIssuers)
+    for i, iss in ipairs(acceptedIssuers) do
         if issClaim == iss then
             --claim matches an accepted issuer so return success
             return true;
@@ -192,8 +193,9 @@ end
 --- Verifies token
 -- @param token the token to verify
 -- @param secret the secret to use to verify token
+-- @param acceptedIssuers the list of accepted issuers to check
 -- @return nil and error or the extracted claims from the token
-function Util:verify_token(token, secret)
+function Util:verify_token(token, secret, acceptedIssuers)
     local claims, err = jwt.decode(token, secret, true);
     if claims == nil then
         return nil, err;
@@ -209,7 +211,7 @@ function Util:verify_token(token, secret)
         return nil, "'iss' claim is missing";
     end
     --check the issuer against the accepted list
-    local issCheck, issCheckErr = self:verify_issuer(issClaim);
+    local issCheck, issCheckErr = self:verify_issuer(issClaim, acceptedIssuers);
     if issCheck == nil then
         return nil, issCheckErr;
     end
@@ -241,8 +243,13 @@ end
 -- session.jitsi_meet_context_group - the group value from the token
 -- session.jitsi_meet_context_features - the features value from the token
 -- @param session the current session
+-- @param acceptedIssuers optional list of accepted issuers to check
 -- @return false and error
-function Util:process_and_verify_token(session)
+function Util:process_and_verify_token(session, acceptedIssuers)
+    if not acceptedIssuers then
+        acceptedIssuers = self.acceptedIssuers;
+    end
+
     if session.auth_token == nil then
         if self.allowEmptyToken then
             return true;
@@ -272,9 +279,9 @@ function Util:process_and_verify_token(session)
     -- now verify the whole token
     local claims, msg;
     if self.asapKeyServer then
-        claims, msg = self:verify_token(session.auth_token, pubKey);
+        claims, msg = self:verify_token(session.auth_token, pubKey, acceptedIssuers);
     else
-        claims, msg = self:verify_token(session.auth_token, self.appSecret);
+        claims, msg = self:verify_token(session.auth_token, self.appSecret, acceptedIssuers);
     end
     if claims ~= nil then
         -- Binds room name to the session which is later checked on MUC join

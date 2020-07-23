@@ -1,7 +1,7 @@
 // @flow
 
-import { jitsiLocalStorage } from 'js-utils';
-import { randomHexString } from 'js-utils/random';
+import { jitsiLocalStorage } from '@jitsi/js-utils';
+import { randomHexString } from '@jitsi/js-utils/random';
 import _ from 'lodash';
 
 import { APP_WILL_MOUNT } from '../app/actionTypes';

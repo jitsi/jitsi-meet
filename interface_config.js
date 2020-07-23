@@ -111,6 +111,8 @@ var interfaceConfig = {
     DISPLAY_WELCOME_PAGE_CONTENT: true,
     DISPLAY_WELCOME_PAGE_TOOLBAR_ADDITIONAL_CONTENT: false,
 
+    ENABLE_DIAL_OUT: true,
+
     ENABLE_FEEDBACK_ANIMATION: false, // Enables feedback star animation.
 
     FILM_STRIP_MAX_HEIGHT: 120,
@@ -135,7 +137,7 @@ var interfaceConfig = {
     LOCAL_THUMBNAIL_RATIO: 16 / 9, // 16:9
 
     /**
-     * Maximum coeficient of the ratio of the large video to the visible area
+     * Maximum coefficient of the ratio of the large video to the visible area
      * after the large video is scaled to fit the window.
      *
      * @type {number}
@@ -195,11 +197,15 @@ var interfaceConfig = {
     TOOLBAR_ALWAYS_VISIBLE: false,
 
     /**
-     * The name of the toolbar buttons to display in the toolbar. If present,
-     * the button will display. Exceptions are "livestreaming" and "recording"
-     * which also require being a moderator and some values in config.js to be
-     * enabled. Also, the "profile" button will not display for user's with a
-     * jwt.
+     * The name of the toolbar buttons to display in the toolbar, including the
+     * "More actions" menu. If present, the button will display. Exceptions are
+     * "livestreaming" and "recording" which also require being a moderator and
+     * some values in config.js to be enabled. Also, the "profile" button will
+     * not display for users with a JWT.
+     * Notes:
+     * - it's impossible to choose which buttons go in the "More actions" menu
+     * - it's impossible to control the placement of buttons
+     * - 'desktop' controls the "Share your screen" button
      */
     TOOLBAR_BUTTONS: [
         'microphone', 'camera', 'closedcaptions', 'desktop', 'fullscreen',

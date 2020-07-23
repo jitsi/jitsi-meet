@@ -28,7 +28,7 @@ import styles from './styles';
 import MuteEveryoneElseButton from './MuteEveryoneElseButton';
 import KickEveryoneElseButton from './KickEveryoneElseButton';
 
-import { jitsiLocalStorage } from 'js-utils';
+import { jitsiLocalStorage } from '@jitsi/js-utils';
 
 /**
  * The type of the React {@code Component} props of {@link OverflowMenu}.

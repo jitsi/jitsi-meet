@@ -1,6 +1,6 @@
 // @flow
 
-import { generateRoomWithoutSeparator } from 'js-utils/random';
+import { generateRoomWithoutSeparator } from '@jitsi/js-utils/random';
 import type { Dispatch } from 'redux';
 
 import { createCalendarConnectedEvent, sendAnalytics } from '../analytics';
