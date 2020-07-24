@@ -9,8 +9,8 @@ import {
 import { translate } from '../../base/i18n';
 import { MEDIA_TYPE } from '../../base/media';
 import { connect } from '../../base/redux';
-import { AbstractAudioMuteButton } from '../../base/toolbox';
-import type { AbstractButtonProps } from '../../base/toolbox';
+import { AbstractAudioMuteButton } from '../../base/toolbox/components';
+import type { AbstractButtonProps } from '../../base/toolbox/components';
 import { isLocalTrackMuted } from '../../base/tracks';
 import { muteLocal } from '../../remote-video-menu/actions';
 

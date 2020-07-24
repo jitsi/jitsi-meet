@@ -11,10 +11,7 @@ import { translate } from '../../base/i18n';
 import { IconTileView } from '../../base/icons';
 import { getParticipantCount } from '../../base/participants';
 import { connect } from '../../base/redux';
-import {
-    AbstractButton,
-    type AbstractButtonProps
-} from '../../base/toolbox';
+import { AbstractButton, type AbstractButtonProps } from '../../base/toolbox/components';
 import { setTileView } from '../actions';
 import { shouldDisplayTileView } from '../functions';
 import logger from '../logger';

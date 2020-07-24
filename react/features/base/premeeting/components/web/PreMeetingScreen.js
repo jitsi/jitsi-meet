@@ -2,7 +2,7 @@
 
 import React, { PureComponent } from 'react';
 
-import { AudioSettingsButton, VideoSettingsButton } from '../../../../toolbox';
+import { AudioSettingsButton, VideoSettingsButton } from '../../../../toolbox/components/web';
 
 import CopyMeetingUrl from './CopyMeetingUrl';
 import Preview from './Preview';
