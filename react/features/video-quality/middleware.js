@@ -81,7 +81,7 @@ StateListenerRegistry.register(
 
                 logger.info(`The nearest receiver video quality level for thumbnail height: ${thumbnailHeight}, `
                     + `is: ${newMaxRecvVideoQuality}, `
-                    + `override: ${overrideNearestHeight}, `
+                    + `override: ${String(overrideNearestHeight)}, `
                     + `max full res N: ${maxFullResolutionParticipants}`);
 
                 if (overrideNearestHeight) {
