@@ -278,6 +278,7 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
         this._transport = new Transport({
             backend: new PostMessageTransportBackend({
                 postisOptions: {
+                    allowedOrigin: new URL(this._url).origin,
                     scope: `jitsi_meet_external_api_${id}`,
                     window: this._frame.contentWindow
                 }
