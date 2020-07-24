@@ -33,6 +33,8 @@
     "@atlaskit/theme": "7.0.2",
     "@atlaskit/toggle": "5.0.14",
     "@atlaskit/tooltip": "12.1.13",
+    "@dicebear/avatars": "^4.2.5",
+    "@dicebear/avatars-avataaars-sprites": "^4.2.5",
     "@microsoft/microsoft-graph-client": "1.1.0",
     "@react-native-community/async-storage": "1.3.4",
     "@react-native-community/google-signin": "3.0.1",

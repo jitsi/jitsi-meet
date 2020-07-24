@@ -255,7 +255,7 @@ module.exports = [
         entry: {
             'alwaysontop': './react/features/always-on-top/index.js'
         },
-        performance: getPerformanceHints(400 * 1024)
+        performance: getPerformanceHints(1000 * 1024)
     }),
     Object.assign({}, config, {
         entry: {

@@ -134,7 +134,8 @@ class Avatar<P: Props> extends PureComponent<P, State> {
             onAvatarLoadError: undefined,
             size,
             status,
-            url: undefined
+            url: undefined,
+            fullName: _initialsBase
         };
 
         // _loadableAvatarUrl is validated that it can be loaded, but uri (if present) is not, so
