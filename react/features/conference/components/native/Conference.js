@@ -25,7 +25,9 @@ import { LargeVideo } from '../../../large-video';
 import { KnockingParticipantList } from '../../../lobby';
 import { BackButtonRegistry } from '../../../mobile/back-button';
 import { Captions } from '../../../subtitles';
-import { isToolboxVisible, setToolboxVisible, Toolbox } from '../../../toolbox';
+import { setToolboxVisible } from '../../../toolbox/actions';
+import { Toolbox } from '../../../toolbox/components/native';
+import { isToolboxVisible } from '../../../toolbox/functions';
 import {
     AbstractConference,
     abstractMapStateToProps

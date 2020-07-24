@@ -8,7 +8,7 @@ import { connect } from '../../../base/redux';
 import {
     AbstractButton,
     type AbstractButtonProps
-} from '../../../base/toolbox';
+} from '../../../base/toolbox/components';
 import { openDisplayNamePrompt } from '../../../display-name';
 import { CHAT_VIEW_MODAL_ID } from '../../constants';
 import { getUnreadCount } from '../../functions';

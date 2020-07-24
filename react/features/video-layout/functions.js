@@ -1,7 +1,7 @@
 // @flow
 
 import { getPinnedParticipant, getParticipantCount } from '../base/participants';
-import { isYoutubeVideoPlaying } from '../youtube-player';
+import { isYoutubeVideoPlaying } from '../youtube-player/functions';
 
 import { LAYOUTS } from './constants';
 

@@ -13,7 +13,7 @@ import { MiddlewareRegistry, StateListenerRegistry } from '../base/redux';
 import { SET_REDUCED_UI } from '../base/responsive-ui';
 import { FeedbackDialog } from '../feedback';
 import { setFilmstripEnabled } from '../filmstrip';
-import { setToolboxEnabled } from '../toolbox';
+import { setToolboxEnabled } from '../toolbox/actions';
 
 import { notifyKickedOut } from './actions';
 

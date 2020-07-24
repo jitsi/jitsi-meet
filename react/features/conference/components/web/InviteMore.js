@@ -7,10 +7,7 @@ import { Icon, IconInviteMore } from '../../../base/icons';
 import { getParticipantCount } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import { beginAddPeople } from '../../../invite';
-import {
-    isButtonEnabled,
-    isToolboxVisible
-} from '../../../toolbox';
+import { isButtonEnabled, isToolboxVisible } from '../../../toolbox/functions.web';
 import { shouldDisplayTileView } from '../../../video-layout/functions';
 
 declare var interfaceConfig: Object;

@@ -15,7 +15,7 @@ import {
     dockToolbox,
     setToolboxEnabled,
     showToolbox
-} from '../../react/features/toolbox';
+} from '../../react/features/toolbox/actions.web';
 import UIEvents from '../../service/UI/UIEvents';
 
 import EtherpadManager from './etherpad/Etherpad';

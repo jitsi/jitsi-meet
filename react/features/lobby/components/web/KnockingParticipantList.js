@@ -5,7 +5,7 @@ import React from 'react';
 import { Avatar } from '../../../base/avatar';
 import { translate } from '../../../base/i18n';
 import { connect } from '../../../base/redux';
-import { isToolboxVisible } from '../../../toolbox';
+import { isToolboxVisible } from '../../../toolbox/functions.web';
 import AbstractKnockingParticipantList, {
     mapStateToProps as abstractMapStateToProps,
     type Props as AbstractProps
