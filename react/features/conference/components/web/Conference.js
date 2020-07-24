@@ -146,7 +146,12 @@ class Conference extends AbstractConference<Props, *> {
      */
     componentDidMount() {
         document.title = `${this.props._roomName} | ${interfaceConfig.APP_NAME}`;
+        const { ENABLE_SUPERHERO } = interfaceConfig;
         const { address: addressParam, signature: signatureParam } = parseURLParams(window.location, true, 'search');
+
+        if (!ENABLE_SUPERHERO) {
+            return this._start();
+        }
 
         if (!addressParam && !signatureParam) {
             initClient().then(() => {

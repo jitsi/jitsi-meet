@@ -269,6 +269,9 @@ var interfaceConfig = {
      PHONE_NUMBER_REGEX
     */
 
+    // Enable superhero features
+    ENABLE_SUPERHERO: true,
+
     // Allow all above example options to include a trailing comma and
     // prevent fear when commenting out the last value.
     makeJsonParserHappy: 'even if last key had a trailing comma'

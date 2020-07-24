@@ -16,6 +16,7 @@ import { translate } from '../../../base/i18n';
 import WebLogin from './WebLoginButton';
 
 declare var APP: Object;
+declare var interfaceConfig: Object;
 
 /**
  * The type of the React {@code Component} props of {@link ProfileTab}.
@@ -177,6 +178,8 @@ class ProfileTab extends AbstractDialogTab<Props> {
             t
         } = this.props;
 
+        const { ENABLE_SUPERHERO } = interfaceConfig;
+
         return (
             <div>
                 <div className = 'settings-pane--auth'>
@@ -207,7 +210,7 @@ class ProfileTab extends AbstractDialogTab<Props> {
                                 title = { t('settings.connectedAs', { name: walletName }) }>
                                 { t('settings.connectedAs', { name: walletName }) }
                             </div> }
-                        <Button
+                        { ENABLE_SUPERHERO && <Button
                             appearance = 'primary'
                             className = 'settings-pane--auth_right'
                             id = 'web_wallets_button'
@@ -215,7 +218,7 @@ class ProfileTab extends AbstractDialogTab<Props> {
                             <WebLogin >
                                 Login with web wallet
                             </WebLogin>
-                        </Button>
+                        </Button>}
                     </div>
                 </div>
             </div>
