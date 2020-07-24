@@ -7,6 +7,7 @@ import {
     setMaxReceiverVideoQuality,
     setPreferredVideoQuality
 } from '../base/conference';
+import { getParticipantCount } from '../base/participants';
 import { MiddlewareRegistry, StateListenerRegistry } from '../base/redux';
 import { shouldDisplayTileView } from '../video-layout';
 
@@ -46,15 +47,24 @@ StateListenerRegistry.register(
         const { reducedUI } = state['features/base/responsive-ui'];
         const _shouldDisplayTileView = shouldDisplayTileView(state);
         const thumbnailSize = state['features/filmstrip']?.tileViewDimensions?.thumbnailSize;
+        const participantCount = getParticipantCount(state);
 
         return {
             displayTileView: _shouldDisplayTileView,
+            participantCount,
             reducedUI,
             thumbnailHeight: thumbnailSize?.height
         };
     },
-    /* listener */ ({ displayTileView, reducedUI, thumbnailHeight }, { dispatch, getState }) => {
-        const { maxReceiverVideoQuality } = getState()['features/base/conference'];
+    /* listener */ ({ displayTileView, participantCount, reducedUI, thumbnailHeight }, { dispatch, getState }) => {
+        const state = getState();
+        const { maxReceiverVideoQuality } = state['features/base/conference'];
+        let { maxFullResolutionParticipants } = state['features/base/config'];
+
+        if (typeof maxFullResolutionParticipants === 'undefined') {
+            maxFullResolutionParticipants = 4;
+        }
+
         let newMaxRecvVideoQuality = VIDEO_QUALITY_LEVELS.HIGH;
 
         if (reducedUI) {
@@ -64,6 +74,20 @@ StateListenerRegistry.register(
         }
 
         if (maxReceiverVideoQuality !== newMaxRecvVideoQuality) {
+            if (displayTileView && maxFullResolutionParticipants !== -1) {
+                const overrideNearestHeight
+                    = participantCount > maxFullResolutionParticipants
+                            && newMaxRecvVideoQuality > VIDEO_QUALITY_LEVELS.STANDARD;
+
+                logger.info(`The nearest receiver video quality level for thumbnail height: ${thumbnailHeight}, `
+                    + `is: ${newMaxRecvVideoQuality}, `
+                    + `override: ${overrideNearestHeight}, `
+                    + `max full res N: ${maxFullResolutionParticipants}`);
+
+                if (overrideNearestHeight) {
+                    newMaxRecvVideoQuality = VIDEO_QUALITY_LEVELS.STANDARD;
+                }
+            }
             dispatch(setMaxReceiverVideoQuality(newMaxRecvVideoQuality));
         }
     }, {
