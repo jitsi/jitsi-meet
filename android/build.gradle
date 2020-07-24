@@ -84,10 +84,10 @@ allprojects {
             def npmManifest = project.file('../package.json')
             def json = new JsonSlurper().parseText(npmManifest.text)
 
-            // Release every dependency the SDK has with a -jitsi-XXX qualified version. This allows
+            // Release every dependency the SDK has with a -vmeeting-XXX qualified version. This allows
             // us to pin the dependencies and make sure they are always updated, no matter what.
 
-            project.version = "${json.version}-jitsi-${versionQualifierNumber}"
+            project.version = "${json.version}-vmeeting-${versionQualifierNumber}"
 
             task androidSourcesJar(type: Jar) {
                 classifier = 'sources'

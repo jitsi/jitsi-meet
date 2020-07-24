@@ -3,10 +3,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="org.jitsi.meet.sdk.JitsiMeetActivity">
+    tools:context="org.vmeeting.meet.sdk.JitsiMeetActivity">
     <fragment
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:name="org.jitsi.meet.sdk.JitsiMeetFragment"
+        android:name="org.vmeeting.meet.sdk.JitsiMeetFragment"
         android:id="@+id/jitsiFragment"/>
 </FrameLayout>

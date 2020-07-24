@@ -189,8 +189,8 @@ android.libraryVariants.all { def variant ->
 publishing {
     publications {
         aarArchive(MavenPublication) {
-            groupId 'org.jitsi.react'
-            artifactId 'jitsi-meet-sdk'
+            groupId 'org.vmeeting.react'
+            artifactId 'vmeeting-meet-sdk'
             version System.env.OVERRIDE_SDK_VERSION ?: project.sdkVersion
 
             artifact("${project.buildDir}/outputs/aar/${project.name}-release.aar") {
@@ -198,7 +198,7 @@ publishing {
             }
             pom.withXml {
                 def pomXml = asNode()
-                pomXml.appendNode('name', 'jitsi-meet-sdk')
+                pomXml.appendNode('name', 'vmeeting-meet-sdk')
                 pomXml.appendNode('description', 'Jitsi Meet SDK for Android')
                 def dependencies = pomXml.appendNode('dependencies')
                 configurations.getByName('releaseCompileClasspath').getResolvedConfiguration().getFirstLevelModuleDependencies().each {
@@ -210,7 +210,7 @@ publishing {
                     def groupId = it.moduleGroup
                     def artifactId = it.moduleName
 
-                    if (artifactId.startsWith('react-native-') && groupId.equals('jitsi-meet')) {
+                    if (artifactId.startsWith('react-native-') && groupId.equals('vmeeting-meet')) {
                         groupId = rootProject.ext.moduleGroupId
                     }
 

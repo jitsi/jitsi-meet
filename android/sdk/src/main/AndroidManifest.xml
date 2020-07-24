@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="org.jitsi.meet.sdk">
+    package="org.vmeeting.meet.sdk">
     <!-- XXX ACCESS_NETWORK_STATE is required by WebRTC. -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.BLUETOOTH" />
@@ -29,7 +29,7 @@
         android:label="@string/app_name"
         android:supportsRtl="true">
         <activity
-            android:name=".JitsiMeetActivity"
+            android:name="org.vmeeting.meet.sdk.JitsiMeetActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize|smallestScreenSize"
             android:launchMode="singleTask"
             android:resizeableActivity="true"
@@ -39,14 +39,14 @@
         <activity android:name="com.facebook.react.devsupport.DevSettingsActivity" />
 
         <service
-            android:name=".ConnectionService"
+            android:name="org.vmeeting.meet.sdk.ConnectionService"
             android:permission="android.permission.BIND_TELECOM_CONNECTION_SERVICE">
             <intent-filter>
                 <action android:name="android.telecom.ConnectionService" />
             </intent-filter>
         </service>
 
-        <service android:name="org.jitsi.meet.sdk.JitsiMeetOngoingConferenceService" />
+        <service android:name="org.vmeeting.meet.sdk.JitsiMeetOngoingConferenceService" />
     </application>
 
 </manifest>

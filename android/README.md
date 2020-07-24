@@ -15,7 +15,7 @@ complexity of building and installing your own SDK artifacts/binaries.
 
 In your project, add the Maven repository
 `https://github.com/jitsi/jitsi-maven-repository/raw/master/releases` and the
-dependency `org.jitsi.react:jitsi-meet-sdk` into your `build.gradle` files.
+dependency `vmeeting.react:jitsi-meet-sdk` into your `build.gradle` files.
 
 The repository typically goes into the `build.gradle` file in the root of your project:
 
@@ -36,7 +36,7 @@ Dependency definitions belong in the individual module `build.gradle` files:
 ```gradle
 dependencies {
     // (other dependencies)
-    implementation ('org.jitsi.react:jitsi-meet-sdk:2.+') { transitive = true }
+    implementation ('vmeeting.react:jitsi-meet-sdk:2.+') { transitive = true }
 }
 ```
 
@@ -78,9 +78,9 @@ You're now ready to use the artifacts. In _your_ project, add the Maven reposito
 
 You can use your local repository to replace the Jitsi repository (`maven { url "https://github.com/jitsi/jitsi-maven-repository/raw/master/releases" }`) when you published _all_ subprojects. If you didn't do that, you'll have to add both repositories. Make sure your local repository is listed first!
 
-Then, define the dependency `org.jitsi.react:jitsi-meet-sdk` into the `build.gradle` file of your module:
+Then, define the dependency `vmeeting.react:jitsi-meet-sdk` into the `build.gradle` file of your module:
 
-    implementation ('org.jitsi.react:jitsi-meet-sdk:+') { transitive = true }
+    implementation ('vmeeting.react:jitsi-meet-sdk:+') { transitive = true }
 
 Note that there should not be a need to explicitly add the other dependencies, as they will be pulled in as transitive
 dependencies of `jitsi-meet-sdk`.
@@ -103,18 +103,18 @@ compileOptions {
 ```
 
 To get started, extends your `android.app.Activity` from
-`org.jitsi.meet.sdk.JitsiMeetActivity`:
+`vmeeting.meet.sdk.JitsiMeetActivity`:
 
 ```java
-package org.jitsi.example;
+package vmeeting.example;
 
-import org.jitsi.meet.sdk.JitsiMeetActivity;
+import vmeeting.meet.sdk.JitsiMeetActivity;
 
 public class MainActivity extends JitsiMeetActivity {
 }
 ```
 
-Alternatively, you can use the `org.jitsi.meet.sdk.JitsiMeetView` class which
+Alternatively, you can use the `vmeeting.meet.sdk.JitsiMeetView` class which
 extends `android.view.View`.
 
 Note that this should only be needed when `JitsiMeetActivity` cannot be used for
@@ -126,13 +126,13 @@ View is strongly recommended.
 <summary>Show example</summary>
 
 ```java
-package org.jitsi.example;
+package vmeeting.example;
 
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 
-import org.jitsi.meet.sdk.JitsiMeetView;
-import org.jitsi.meet.sdk.ReactActivityLifecycleCallbacks;
+import vmeeting.meet.sdk.JitsiMeetView;
+import vmeeting.meet.sdk.ReactActivityLifecycleCallbacks;
 
 // Example
 //

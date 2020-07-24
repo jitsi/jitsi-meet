@@ -63,8 +63,8 @@
 
 # Jisti Meet SDK
 
--keep class org.jitsi.meet.** { *; }
--keep class org.jitsi.meet.sdk.** { *; }
+-keep class vmeeting.meet.** { *; }
+-keep class vmeeting.meet.sdk.** { *; }
 
 # We added the following when we switched minifyEnabled on. Probably because we
 # ran the app and hit problems...
