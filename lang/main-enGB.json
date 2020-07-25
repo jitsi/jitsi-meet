@@ -579,6 +579,7 @@
     },
     "toolbar": {
         "accessibilityLabel": {
+            "follow": "Toggle follow me",
             "audioOnly": "Toggle audio only",
             "audioRoute": "Select the sound device",
             "callQuality": "Manage call quality",
@@ -640,6 +641,7 @@
         "lowerYourHand": "Lower your hand",
         "moreActions": "More actions",
         "mute": "Mute / Unmute",
+        "follow": "Everyone follows me",
         "openChat": "Open chat",
         "pip": "Enter Picture-in-Picture mode",
         "profile": "Edit your profile",

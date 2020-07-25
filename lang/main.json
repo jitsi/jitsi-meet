@@ -637,6 +637,7 @@
     },
     "toolbar": {
         "accessibilityLabel": {
+            "follow": "Toggle follow me",
             "audioOnly": "Toggle audio only",
             "audioRoute": "Select the sound device",
             "callQuality": "Manage video quality",
@@ -704,6 +705,7 @@
         "moreActions": "More actions",
         "moreOptions": "More options",
         "mute": "Mute / Unmute",
+        "follow": "Everyone follows me",
         "muteEveryone": "Mute everyone",
         "muteAll": "Mute all",
         "unMuteEveryone": "Unmute everyone",

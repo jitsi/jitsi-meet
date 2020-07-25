@@ -80,13 +80,14 @@ import HelpButton from '../HelpButton';
 import OverflowMenuButton from './OverflowMenuButton';
 import OverflowMenuProfileItem from './OverflowMenuProfileItem';
 import MuteEveryoneButton from './MuteEveryoneButton';
-import UnMuteEveryoneButton from "./UnMuteEveryoneButton";
+import UnMuteEveryoneButton from './UnMuteEveryoneButton';
 import ToolbarButton from './ToolbarButton';
 import VideoSettingsButton from './VideoSettingsButton';
+import FollowMeButton from '../FollowMeButton';
 import {
     ClosedCaptionButton
 } from '../../../subtitles';
-import LockUnMuteGuestsButton from "./LockUnMuteGuestsButton";
+import LockUnMuteGuestsButton from './LockUnMuteGuestsButton';
 
 /**
  * The type of the React {@code Component} props of {@link Toolbox}.
@@ -1279,6 +1280,7 @@ class Toolbox extends Component<Props, State> {
                     <HangupButton
                         visible = { this._shouldShowButton('hangup') } />
                     { this._renderVideoButton() }
+                    <FollowMeButton />
                 </div>
                 <div className = 'button-group-right'>
                     { buttonsRight.indexOf('localrecording') !== -1
