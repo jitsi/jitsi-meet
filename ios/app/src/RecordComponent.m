@@ -12,9 +12,12 @@
 
 @interface RCT_EXTERN_MODULE(RecordComponent, RCTViewManager)
 
-RCT_EXTERN_METHOD(getFrame)
+RCT_EXTERN_METHOD(destroy)
 
-RCT_EXPORT_VIEW_PROPERTY(onUpdate, RCTDirectEventBlock)
+// to tell RN that broadcast has stopeed
+RCT_EXPORT_VIEW_PROPERTY(onEnd, RCTDirectEventBlock)
 
+// to tell RN that broadcast will begin
+RCT_EXPORT_VIEW_PROPERTY(onStart, RCTDirectEventBlock)
 
 @end

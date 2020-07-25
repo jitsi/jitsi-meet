@@ -27,14 +27,7 @@ import MuteEveryoneElseButton from './MuteEveryoneElseButton';
 
 import { jitsiLocalStorage } from 'js-utils';
 
-import { requireNativeComponent } from 'react-native';
-import {getDisplayMedia} from 'react-native-webrtc';
-import { getLocalTrack, getLocalVideoTrack, createLocalTracksF, replaceLocalTrack } from '../../../base/tracks';
-import DesktopSharingButton from './DesktopSharingButton';
-import {NativeModules} from 'react-native';
-const {WebRTCModule} = NativeModules;
-
-const RecordNativeComponent = requireNativeComponent('RecordComponent');
+import IOSRecordButtonWrapper from './IOSRecordButtonWrapper';
 
 
 /**
@@ -167,38 +160,6 @@ class OverflowMenu extends PureComponent<Props, State> {
                 {this._renderModeratorButtons(buttonProps)}          
                     <ToggleCameraButton { ...buttonProps } />
                     <TileViewButton { ...buttonProps } />
-                    <RecordNativeComponent 
-                        onUpdate={event => console.log(event.nativeEvent.frameData.length)} 
-                        style={{width: 50, height: 50}} 
-                        // onClick={() => {console.log(WebRTCModule.checkArgss("type"));}}
-                        ref={comp => {
-                            this.recordComponent = comp; 
-                            // if (!this.clicked) {
-                            //     getDisplayMedia({"video": {}}).then((desktopStream) => {
-                            //         console.log("swtching to scren sharing")
-                            //         const tracks = __localVideo;
-                            //         // console.log(tracks);
-                            //         const localVideo = getLocalVideoTrack(tracks);
-                            //         // console.log(localVideo);
-                            //         console.log(desktopStream);
-                            //         const _initObj = {
-                            //             streamId: desktopStream.id,
-                            //             streamReactTag: desktopStream._reactTag,
-                            //             tracks: desktopStream._tracks
-                            //         }
-                            //         console.log(_initObj);
-                            //         let initStream = new MediaStream(_initObj)
-                            //         console.log(initStream);
-                            //         console.log(initStream.getTracks()[0]);
-                            //         dispatch(replaceLocalTrack(localVideo.jitsiTrack, initStream.getTracks()[0]));
-                            //     });
-                            //     this.clicked = true;
-                            // } else {
-                            //     console.log('already clicked');
-                            // }
-                             
-                        }} 
-                    />
                     <LiveStreamButton { ...buttonProps } />
                     <RoomLockButton { ...buttonProps } />
                     <ClosedCaptionButton { ...buttonProps } />
@@ -206,7 +167,7 @@ class OverflowMenu extends PureComponent<Props, State> {
                     <HelpButton { ...buttonProps } />
                     {
                         this.props._desktopSharingEnabled
-                            && <DesktopSharingButton  { ...buttonProps } />
+                            && <IOSRecordButtonWrapper />
                     }
                 </Collapsible>
             </BottomSheet>

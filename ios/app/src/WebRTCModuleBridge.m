@@ -66,20 +66,6 @@ RCT_EXPORT_METHOD(getDisplayMedia:(NSString *)mediaType
   } rejecter:^(NSString *code, NSString *message, NSError *error) {
     NSLog(@"check args errored");
   }];
-//    videoTrack.isEnabled = true;
-//    int count = 0;
-//    for (NSString *peerConnectionId in self.localStreams.allKeys) {
-//      count += 1;
-//      if(count != self.localStreams.allKeys.count){continue;}
-//          RTCMediaStream *stream = self.localStreams[peerConnectionId];
-//          for (RTCVideoTrack *oldVideoTrack in stream.videoTracks) {
-//              [stream removeVideoTrack:oldVideoTrack];
-//          }
-//          [stream addVideoTrack:videoTrack];
-//
-//      break;
-//        }
-  // -------------- an attempt at custom video track ends ----------------------------//
 }
 
 
@@ -89,61 +75,28 @@ RCT_EXPORT_METHOD(checkArgss:(NSString *)mediaStreamId
   
 //  NSLog(@"Thread while writing - %@ %@", NSThread.mainThread, NSThread.currentThread);
 
-//  RTCVideoCapturer *videoCapturer = [[RTCVideoCapturer alloc] init];
   RTCMediaStream *stream = self.localStreams[mediaStreamId];
   RTCVideoTrack *videoTrack = stream.videoTracks[0];
   CustomRTCVideoCapturer *videoCapturer = [[CustomRTCVideoCapturer alloc] initWithDelegate:[videoTrack source]];
   // FIX LATER - remove loops after the recording/call ends or app closes
   dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
     while (true) {
-//      if(arc4random_uniform(200) != 3) {
-//        continue;
-//      }
-      [NSThread sleepForTimeInterval:0.0300];
+      [NSThread sleepForTimeInterval:0.0600];
       RTCVideoFrame *videoFrame = [SocketShim getNextFrame];
-//      NSLog(videoFrame);
+
       if (videoFrame == nil) {
 //        NSLog(@"nil video frame");
       } else {
-//        NSLog(@"wrting frame");
         if (stream.videoTracks.count != 1) {
           NSLog(@"length of video tracks");
-//          NSLog(@"%@", stream.videoTracks.count);
         }
         @try {
           [videoCapturer didCaptureVideoFrame:videoFrame];
 //            NSLog(@"Thread while writing loop - %@ %@", NSThread.mainThread, NSThread.currentThread);
-//           [[videoTrack source] capturer:videoCapturer didCaptureVideoFrame:videoFrame];
         }
         @catch (NSException *exception) {
            NSLog(@"error while writing frame");
         }
-//        int count = 0;
-//        BOOL stop = false;
-//        NSLog(@"starting loop");
-//        for (NSString *steamId in self.localStreams.allKeys) {
-//            NSLog(@"peerConnectionId");
-//          if (stop == true) {
-//            NSLog(@"stopping loop");
-//            break;
-//          }
-//            RTCMediaStream *stream = self.localStreams[steamId];
-//            for (RTCVideoTrack *videoTrack in stream.videoTracks) {
-//              count += 1;
-//              // dont know which track to write to and can only write to one track
-//              // so writing randomly
-//              if (arc4random_uniform(5) == count) {
-//                NSLog(@"writing to track");
-//                [[videoTrack source] capturer:videoCapturer didCaptureVideoFrame:videoFrame];
-//                stop = true;
-//                break;
-//              } else {
-//                NSLog(@"skipping frame");
-//              }
-//
-//              NSLog(@"bansak boys");
-//            }
-//          }
       }
     }
   });

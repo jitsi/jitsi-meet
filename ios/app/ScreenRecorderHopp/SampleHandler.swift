@@ -76,8 +76,7 @@ class SampleHandler: RPBroadcastSampleHandler {
     override func processSampleBuffer(_ sampleBuffer: CMSampleBuffer, with sampleBufferType: RPSampleBufferType) {
         switch sampleBufferType {
         case RPSampleBufferType.video:
-          if Int.random(in: 1...20) != 3 {
-//
+          if Int.random(in: 1...5) != 3 {
             print("dropping frame")
             return
           }
@@ -92,7 +91,6 @@ class SampleHandler: RPBroadcastSampleHandler {
                     let cim = CIImage.init(cvPixelBuffer: imageBuffer!)
                     let ccim = cim.transformed(by: CGAffineTransform(scaleX: 0.5, y: 0.5))
                     let opts:[CIImageRepresentationOption:Float] = [kCGImageDestinationLossyCompressionQuality as CIImageRepresentationOption: 0.25]
-//                    ccim.pixelBuffer
                     let jpeg = CIContext.init(options: nil).jpegRepresentation(of: ccim, colorSpace: ccim.colorSpace!, options: opts)
                     let b64IamgeData = jpeg?.base64EncodedString()
                     let rawImageData = Data.init(base64Encoded: b64IamgeData!)

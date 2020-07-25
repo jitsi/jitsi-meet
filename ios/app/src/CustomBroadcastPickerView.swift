@@ -11,15 +11,8 @@ import ReplayKit
 
 
 @available(iOS 12.0, *)
+// not used now, remove at last
 class CustomBroadcastPickerView: RPSystemBroadcastPickerView {
-  @objc var onUpdate: RCTDirectEventBlock?
-  
-  @objc func frameRecieved(_ frameData: String) {
-    print("frameData.count \(frameData.count)")
-    if onUpdate != nil {
-      onUpdate!(["frameData": frameData])
-    } else {
-      print("on update was null")
-    }
-  }
+  @objc var onEnd: RCTDirectEventBlock?;
+  @objc var onStart: RCTDirectEventBlock?;
 }
