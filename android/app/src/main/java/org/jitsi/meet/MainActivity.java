@@ -30,6 +30,7 @@ import android.util.Log;
 import android.view.KeyEvent;
 import androidx.annotation.Nullable;
 
+import org.jitsi.meet.sdk.BuildConfig;
 import org.jitsi.meet.sdk.JitsiMeet;
 import org.jitsi.meet.sdk.JitsiMeetActivity;
 import org.jitsi.meet.sdk.JitsiMeetConferenceOptions;
@@ -81,7 +82,7 @@ public class MainActivity extends JitsiMeetActivity {
 
     @Override
     protected boolean extraInitialize() {
-        Log.d(this.getClass().getSimpleName(), "LIBRE_BUILD="+BuildConfig.LIBRE_BUILD);
+        Log.d(this.getClass().getSimpleName(), "LIBRE_BUILD="+ BuildConfig.LIBRE_BUILD);
 
         // Setup Crashlytics and Firebase Dynamic Links
         // Here we are using reflection since it may have been disabled at compile time.
