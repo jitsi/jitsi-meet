@@ -1,0 +1,22 @@
+.video-effect-filters-dialog {
+
+    .video-effect-filters-dialog-content {
+        display: flex;
+		flex-direction: column;
+        padding: 10px;
+        min-width: 250px;
+
+        .video-effect-filters-label {
+			vertical-align: middle;
+	    	margin-top: 6px;
+			margin-bottom: 6px;
+        }
+
+		.video-effect-filters-radio {
+			vertical-align: middle;
+			margin-right: 10px;
+		}
+       
+    }
+
+}

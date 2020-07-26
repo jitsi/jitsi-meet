@@ -37,6 +37,10 @@ import { isVpaasMeeting } from '../../../billing-counter/functions';
 import { VideoBlurButton } from '../../../blur';
 import { CHAT_SIZE, ChatCounter, toggleChat } from '../../../chat';
 import { EmbedMeetingDialog } from '../../../embed-meeting';
+import { 
+	VideEffectFiltersDialog, 
+	VideoEffectFiltersMenuButton
+} from '../../../video-effect-filters';
 import { SharedDocumentButton } from '../../../etherpad';
 import { openFeedbackDialog } from '../../../feedback';
 import { beginAddPeople } from '../../../invite';
@@ -428,7 +432,7 @@ class Toolbox extends Component<Props, State> {
     _doOpenVideoQuality() {
         this.props.dispatch(openDialog(VideoQualityDialog));
     }
-
+    
     /**
      * Dispatches an action to toggle the display of chat.
      *
@@ -1047,6 +1051,10 @@ class Toolbox extends Component<Props, State> {
                 key = 'videobackgroundblur'
                 showLabel = { true }
                 visible = { this._shouldShowButton('videobackgroundblur') && !_screensharing } />,
+			 <VideoEffectFiltersMenuButton
+                key = 'videoeffectfilters'
+                showLabel = { true }
+                visible = { this._shouldShowButton('videoeffectfilters') } />,
             <SettingsButton
                 key = 'settings'
                 showLabel = { true }

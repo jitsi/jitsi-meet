@@ -710,6 +710,7 @@
             "toggleFilmstrip": "Miniaturansichten ein-/ausschalten",
             "videomute": "„Video stummschalten“ ein-/ausschalten",
             "videoblur": "Video-Unschärfe ein-/ausschalten"
+            "videoEffectFilters": "Video-Effekt auswählen"
         },
         "addPeople": "Teilnehmer zur Konferenz hinzufügen",
         "audioOnlyOff": "Modus „Nur Audio“ deaktivieren",
@@ -768,6 +769,7 @@
         "talkWhileMutedPopup": "Versuchen Sie zu sprechen? Ihr Mikrofon ist stummgeschaltet.",
         "tileViewToggle": "Kachelansicht ein-/ausschalten",
         "toggleCamera": "Kamera wechseln",
+        "videoEffectFilters" : "Video-Effekt auswählen",
         "videomute": "Kamera starten / stoppen",
         "startvideoblur": "Hintergrundunschärfe aktivieren",
         "stopvideoblur": "Hintergrundunschärfe deaktivieren"
@@ -810,6 +812,7 @@
         "audioOnly": "AUD",
         "audioOnlyExpanded": "Sie befinden sich im Modus „Nur Audio“. Dieser Modus benötigt weniger Bandbreite, Sie sehen jedoch nicht die Videos der anderen.",
         "callQuality": "Videoqualität",
+        "effectFilter": "Video-Effekte auswählen",
         "hd": "HD",
         "hdTooltip": "Video wird in hoher Auflösung angezeigt",
         "highDefinition": "Hohe Auflösung",

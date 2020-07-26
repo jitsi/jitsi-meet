@@ -574,6 +574,17 @@ export function createVideoBlurEvent(action) {
 }
 
 /**
+ * Creates an event indicating that an action related to the video 
+ * effect filters occured (e.g. started or stopped an effect filter).
+ */
+ export function createVideoEffectFiltersEvent(action) {
+	return {
+		action,
+		actionSubject: 'video.effect-filters'
+	};
+}
+
+/**
  * Creates an event indicating that an action related to screen sharing
  * occurred (e.g. It was started or stopped).
  *

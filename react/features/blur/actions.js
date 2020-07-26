@@ -4,6 +4,7 @@ import { getLocalVideoTrack } from '../../features/base/tracks';
 
 import { BLUR_DISABLED, BLUR_ENABLED } from './actionTypes';
 import { getBlurEffect } from './functions';
+
 import logger from './logger';
 
 /**
