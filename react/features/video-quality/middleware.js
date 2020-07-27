@@ -71,23 +71,25 @@ StateListenerRegistry.register(
             newMaxRecvVideoQuality = VIDEO_QUALITY_LEVELS.LOW;
         } else if (displayTileView && !Number.isNaN(thumbnailHeight)) {
             newMaxRecvVideoQuality = getNearestReceiverVideoQualityLevel(thumbnailHeight);
-        }
 
-        if (maxReceiverVideoQuality !== newMaxRecvVideoQuality) {
-            if (displayTileView && maxFullResolutionParticipants !== -1) {
-                const overrideNearestHeight
+            // Override HD level calculated for the thumbnail height when # of participants threshold is exceeded
+            if (maxReceiverVideoQuality !== newMaxRecvVideoQuality && maxFullResolutionParticipants !== -1) {
+                const override
                     = participantCount > maxFullResolutionParticipants
-                            && newMaxRecvVideoQuality > VIDEO_QUALITY_LEVELS.STANDARD;
+                        && newMaxRecvVideoQuality > VIDEO_QUALITY_LEVELS.STANDARD;
 
                 logger.info(`The nearest receiver video quality level for thumbnail height: ${thumbnailHeight}, `
                     + `is: ${newMaxRecvVideoQuality}, `
-                    + `override: ${String(overrideNearestHeight)}, `
+                    + `override: ${String(override)}, `
                     + `max full res N: ${maxFullResolutionParticipants}`);
 
-                if (overrideNearestHeight) {
+                if (override) {
                     newMaxRecvVideoQuality = VIDEO_QUALITY_LEVELS.STANDARD;
                 }
             }
+        }
+
+        if (maxReceiverVideoQuality !== newMaxRecvVideoQuality) {
             dispatch(setMaxReceiverVideoQuality(newMaxRecvVideoQuality));
         }
     }, {
