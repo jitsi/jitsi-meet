@@ -4,6 +4,7 @@ import React from 'react';
 
 import { Dialog } from '../../../../base/dialog';
 import { translate } from '../../../../base/i18n';
+import { JitsiRecordingConstants } from '../../../../base/lib-jitsi-meet';
 import { connect } from '../../../../base/redux';
 import AbstractStopLiveStreamDialog, {
     _mapStateToProps
@@ -24,13 +25,17 @@ class StopLiveStreamDialog extends AbstractStopLiveStreamDialog {
      * @returns {ReactElement}
      */
     render() {
+        const { _session = {}, t } = this.props;
+
+        const isInQueue = _session.status === JitsiRecordingConstants.status.WAITING_IN_QUEUE;
+
         return (
             <Dialog
-                okKey = 'dialog.stopLiveStreaming'
+                okKey = { isInQueue ? 'dialog.leaveJibriQueue' : 'dialog.stopLiveStreaming' }
                 onSubmit = { this._onSubmit }
                 titleKey = 'dialog.liveStreaming'
                 width = 'small'>
-                { this.props.t('dialog.stopStreamingWarning') }
+                { t(isInQueue ? 'dialog.leaveJibriQueueWarning' : 'dialog.stopStreamingWarning') }
             </Dialog>
         );
     }

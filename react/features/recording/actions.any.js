@@ -1,8 +1,12 @@
 // @flow
 
+import React from 'react';
+
+import { openDialog } from '../base/dialog';
 import JitsiMeetJS, { JitsiRecordingConstants } from '../base/lib-jitsi-meet';
 import {
     NOTIFICATION_TIMEOUT,
+    NOTIFICATION_TYPE,
     hideNotification,
     showErrorNotification,
     showNotification
@@ -12,8 +16,10 @@ import {
     CLEAR_RECORDING_SESSIONS,
     RECORDING_SESSION_UPDATED,
     SET_PENDING_RECORDING_NOTIFICATION_UID,
-    SET_STREAM_KEY
+    SET_STREAM_KEY,
+    SET_WAITING_IN_RECORDING_NOTIFICATION_UID
 } from './actionTypes';
+import { QueueInfo, StopLiveStreamDialog, StopRecordingDialog } from './components';
 
 /**
  * Clears the data of every recording sessions.
@@ -46,6 +52,25 @@ export function hidePendingRecordingNotification(streamType: string) {
             dispatch(
                 _setPendingRecordingNotificationUid(
                     undefined, streamType));
+        }
+    };
+}
+
+/**
+ * Signals that the waiting in queue recording notification should be removed from the screen.
+ *
+ * @param {string} streamType - The type of the stream ({@code 'file'} or
+ * {@code 'stream'}).
+ * @returns {Function}
+ */
+export function hideWaitingInQueueRecordingNotification(streamType: string) {
+    return (dispatch: Function, getState: Function) => {
+        const { waitingInQueueNotificationUids } = getState()['features/recording'];
+        const waitingInQueueNotificationUid = waitingInQueueNotificationUids[streamType];
+
+        if (waitingInQueueNotificationUid) {
+            dispatch(hideNotification(waitingInQueueNotificationUid));
+            dispatch(_setWaitingInQueueRecordingNotificationUid(undefined, streamType));
         }
     };
 }
@@ -95,6 +120,22 @@ export function showPendingRecordingNotification(streamType: string) {
         dispatch(_setPendingRecordingNotificationUid(
             showNotificationAction.uid, streamType));
     };
+}
+
+/**
+ * Signals that the jibri queue has been left and notification should be shown on the
+ * screen.
+ *
+ * @param {string} streamType - The type of the stream ({@code file} or
+ * {@code stream}).
+ * @returns {showNotification}
+ */
+export function showQueueLeftRecordingNotification(streamType: string) {
+    const isLiveStreaming = streamType === JitsiMeetJS.constants.recording.mode.STREAM;
+
+    return showNotification({
+        titleKey: `jibriQueue.${isLiveStreaming ? 'livestreaming' : 'recording'}.left`
+    }, NOTIFICATION_TIMEOUT);
 }
 
 /**
@@ -175,6 +216,15 @@ export function updateRecordingSessionData(session: Object) {
         = status === JitsiRecordingConstants.status.ON
             ? Date.now() / 1000
             : undefined;
+    const queueID = session.getQueueID();
+    let queueEstimatedTimeOfStart, queuePosition;
+
+    if (status === JitsiRecordingConstants.status.WAITING_IN_QUEUE) {
+        const { position, estimatedTimeLeft } = session.getQueueMetrics();
+
+        queuePosition = position;
+        queueEstimatedTimeOfStart = (new Date()).getTime() + (estimatedTimeLeft * 1000);
+    }
 
     return {
         type: RECORDING_SESSION_UPDATED,
@@ -186,7 +236,10 @@ export function updateRecordingSessionData(session: Object) {
             mode: session.getMode(),
             status,
             terminator: session.getTerminator(),
-            timestamp
+            timestamp,
+            queueID,
+            queuePosition,
+            queueEstimatedTimeOfStart
         }
     };
 }
@@ -210,5 +263,59 @@ function _setPendingRecordingNotificationUid(uid: ?number, streamType: string) {
         type: SET_PENDING_RECORDING_NOTIFICATION_UID,
         streamType,
         uid
+    };
+}
+
+/**
+ * Sets UID of the the pending streaming notification to use it when hiding
+ * the notification is necessary, or unsets it when undefined (or no param) is
+ * passed.
+ *
+ * @param {?number} uid - The UID of the notification.
+ * @param {string} streamType - The type of the stream ({@code file} or {@code stream}).
+ * @returns {{
+ *     type: SET_PENDING_RECORDING_NOTIFICATION_UID,
+ *     streamType: string,
+ *     uid: number
+ * }}
+ */
+function _setWaitingInQueueRecordingNotificationUid(uid: ?number, streamType: string) {
+    return {
+        type: SET_WAITING_IN_RECORDING_NOTIFICATION_UID,
+        streamType,
+        uid
+    };
+}
+
+/**
+ * Signals that the recording queue notification should be shown on the screen.
+ *
+ * @param {string} streamType - The type of the stream ({@code file} or
+ * {@code stream}).
+ * @returns {Function}
+ */
+export function showWaitingInQueueRecordingNotification(streamType: string) {
+    return (dispatch: Function) => {
+        const isLiveStreaming = streamType === JitsiMeetJS.constants.recording.mode.STREAM;
+        const showNotificationAction = showNotification({
+            appearance: NOTIFICATION_TYPE.INFO,
+            customActionNameKey: 'jibriQueue.exit',
+            customActionHandler: () => {
+                if (isLiveStreaming) {
+                    dispatch(openDialog(StopLiveStreamDialog));
+                } else {
+                    dispatch(openDialog(StopRecordingDialog));
+                }
+
+                return false;
+            },
+            position: 'top',
+            titleKey: `jibriQueue.${isLiveStreaming ? 'livestreaming' : 'recording'}.title`,
+            description: <QueueInfo />
+        });
+
+        dispatch(showNotificationAction);
+        dispatch(_setWaitingInQueueRecordingNotificationUid(
+            showNotificationAction.uid, streamType));
     };
 }

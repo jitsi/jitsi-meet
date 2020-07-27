@@ -4,12 +4,14 @@ import {
     CLEAR_RECORDING_SESSIONS,
     RECORDING_SESSION_UPDATED,
     SET_PENDING_RECORDING_NOTIFICATION_UID,
-    SET_STREAM_KEY
+    SET_STREAM_KEY,
+    SET_WAITING_IN_RECORDING_NOTIFICATION_UID
 } from './actionTypes';
 
 const DEFAULT_STATE = {
     pendingNotificationUids: {},
-    sessionDatas: []
+    sessionDatas: [],
+    waitingInQueueNotificationUids: {}
 };
 
 /**
@@ -56,6 +58,20 @@ ReducerRegistry.register(STORE_NAME,
                 streamKey: action.streamKey
             };
 
+        case SET_WAITING_IN_RECORDING_NOTIFICATION_UID: {
+            const waitingInQueueNotificationUids = {
+                ...state.waitingInQueueNotificationUids
+            };
+
+            waitingInQueueNotificationUids[action.streamType] = action.uid;
+
+            return {
+                ...state,
+                waitingInQueueNotificationUids
+            };
+        }
+
+
         default:
             return state;
         }
@@ -71,12 +87,12 @@ ReducerRegistry.register(STORE_NAME,
  */
 function _updateSessionDatas(sessionDatas, newSessionData) {
     const hasExistingSessionData = sessionDatas.find(
-        sessionData => sessionData.id === newSessionData.id);
+        sessionData => sessionData.id === newSessionData.id || sessionData.queueID === newSessionData.queueID);
     let newSessionDatas;
 
     if (hasExistingSessionData) {
         newSessionDatas = sessionDatas.map(sessionData => {
-            if (sessionData.id === newSessionData.id) {
+            if (sessionData.id === newSessionData.id || sessionData.queueID === newSessionData.queueID) {
                 return {
                     ...newSessionData
                 };

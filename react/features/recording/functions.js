@@ -9,16 +9,17 @@ import { RECORDING_STATUS_PRIORITIES } from './constants';
  * passed in mode.
  *
  * @param {Object} state - The redux state to search in.
- * @param {string} mode - Find an active recording session of the given mode.
+ * @param {string|undefined} mode - Find an active recording session of the given mode.
  * @returns {Object|undefined}
  */
-export function getActiveSession(state: Object, mode: string) {
+export function getActiveSession(state: Object, mode: ?string) {
     const { sessionDatas } = state['features/recording'];
     const { status: statusConstants } = JitsiRecordingConstants;
 
-    return sessionDatas.find(sessionData => sessionData.mode === mode
+    return sessionDatas.find(sessionData => (typeof mode === 'undefined' || sessionData.mode === mode)
         && (sessionData.status === statusConstants.ON
-            || sessionData.status === statusConstants.PENDING));
+            || sessionData.status === statusConstants.PENDING
+            || sessionData.status === statusConstants.WAITING_IN_QUEUE));
 }
 
 /**
@@ -37,6 +38,8 @@ export function getRecordingDurationEstimation(size: ?number) {
  * Searches in the passed in redux state for a recording session that matches
  * the passed in recording session ID.
  *
+ * NOTE: The sessoins in WAITING_IN_QUEUE status don't have ID yet.
+ *
  * @param {Object} state - The redux state to search in.
  * @param {string} id - The ID of the recording session to find.
  * @returns {Object|undefined}
@@ -50,6 +53,8 @@ export function getSessionById(state: Object, id: string) {
  * Returns the recording session status that is to be shown in a label. E.g. If
  * there is a session with the status OFF and one with PENDING, then the PENDING
  * one will be shown, because that is likely more important for the user to see.
+ *
+ * NOTE: For all "queue" statuses the function returns undefined because we don't want to show label.
  *
  * @param {Object} state - The redux state to search in.
  * @param {string} mode - The recording mode to get status for.

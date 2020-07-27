@@ -115,3 +115,19 @@
         font-size: 12px;
     }
 }
+
+.jibri-queue-info {
+    display: flex;
+    flex-flow: column;
+
+    .footer {
+        background: #a4b8a4D1;
+        border-radius: 3px;
+        font-weight: bold;
+        color: #5e6d7a;
+        padding: 5px;
+        margin-right: 30px;
+        margin-top: 5px;
+    }
+
+}

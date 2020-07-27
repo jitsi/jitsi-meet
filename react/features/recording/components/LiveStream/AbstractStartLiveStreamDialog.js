@@ -217,6 +217,8 @@ export default class AbstractStartLiveStreamDialog<P: Props>
             broadcastId: selectedBroadcastID,
             mode: JitsiRecordingConstants.mode.STREAM,
             streamId: key
+        }).catch(() => {
+            // prevent unhandled promise rejection.
         });
 
         return true;

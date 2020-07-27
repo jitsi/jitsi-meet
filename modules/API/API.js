@@ -238,6 +238,7 @@ function initCommands() {
                 return;
             }
 
+            const jibriQueueJID = state['features/base/config'].jibriQueueJID;
             let recordingConfig;
 
             if (mode === JitsiRecordingConstants.mode.FILE) {
@@ -251,7 +252,8 @@ function initCommands() {
                                     'token': dropboxToken
                                 }
                             }
-                        })
+                        }),
+                        jibriQueueJID
                     };
                 } else {
                     recordingConfig = {
@@ -260,12 +262,14 @@ function initCommands() {
                             'file_recording_metadata': {
                                 'share': shouldShare
                             }
-                        })
+                        }),
+                        jibriQueueJID
                     };
                 }
             } else if (mode === JitsiRecordingConstants.mode.STREAM) {
                 recordingConfig = {
                     broadcastId: youtubeBroadcastID,
+                    jibriQueueJID,
                     mode: JitsiRecordingConstants.mode.STREAM,
                     streamId: youtubeStreamKey
                 };
@@ -275,7 +279,9 @@ function initCommands() {
                 return;
             }
 
-            conference.startRecording(recordingConfig);
+            conference.startRecording(recordingConfig).catch(() => {
+                // prevent unhandled promise rejection.
+            });
         },
 
         /**
@@ -302,8 +308,10 @@ function initCommands() {
 
             const activeSession = getActiveSession(state, mode);
 
-            if (activeSession && activeSession.id) {
-                conference.stopRecording(activeSession.id);
+            if (activeSession && (activeSession.id || activeSession.queueID)) {
+                conference.stopRecording(activeSession.id, activeSession.queueID).catch(() => {
+                    // prevent unhandled promise rejection.
+                });
             } else {
                 logger.error('No recording or streaming session found');
             }

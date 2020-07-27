@@ -1,0 +1,74 @@
+@include keyframes(exiting) {
+    from {
+        opacity: 1;
+        transform: translate(0, 0);
+    }
+    to {
+        opacity: 0;
+        transform: translate(-200px, 0);
+    }
+}
+
+.notificationsContainer {
+    display: flex;
+    position: absolute;
+    bottom: 0px;
+    flex-direction: column;
+    width: 400px;
+    left: 80px;
+
+    .topContainer {
+        padding-bottom: 16px;
+        // transition: height 0.4s ease-in-out;
+
+        .notification {
+            width: 400px;
+            z-index: 5;
+
+            &:nth-child(n+2) {
+                margin-top: 16px;
+            }
+
+            &.exiting {
+                animation-name: exiting;
+                animation-duration: 0.4s;
+            }
+        }
+    }
+
+    .bottomContainer {
+        margin-bottom: 64px;
+        position: relative;
+        height: 100%;
+
+        .notification {
+            width: 400px;
+            bottom: 0px;
+
+            &:nth-child(1) {
+                z-index: 5;
+            }
+
+            &:nth-child(n+2) {
+                transition: transform 0.4s ease-in-out;
+                z-index: 4;
+                position: absolute;
+                transform: translateY(100%) translateY(16px);
+            }
+
+
+            &:nth-child(n+4) {
+                display: none;
+            }
+
+            &.exiting {
+                animation-name: exiting;
+                animation-duration: 0.4s;
+            }
+
+            &.exiting+.notification {
+                transform: translateY(0);
+            }
+        }
+    }
+}

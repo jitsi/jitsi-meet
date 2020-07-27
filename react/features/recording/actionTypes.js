@@ -46,3 +46,17 @@ export const SET_PENDING_RECORDING_NOTIFICATION_UID
  * }
  */
 export const SET_STREAM_KEY = 'SET_STREAM_KEY';
+
+/**
+ * The type of Redux action which sets the waiting in queue recording notification UID to
+ * use it for when hiding the notification is necessary, or unsets it when
+ * undefined (or no param) is passed.
+ *
+ * {
+ *     type: SET_WAITING_IN_RECORDING_NOTIFICATION_UID,
+ *     streamType: string,
+ *     uid: ?number
+ * }
+ * @public
+ */
+export const SET_WAITING_IN_RECORDING_NOTIFICATION_UID = 'SET_WAITING_IN_RECORDING_NOTIFICATION_UID';

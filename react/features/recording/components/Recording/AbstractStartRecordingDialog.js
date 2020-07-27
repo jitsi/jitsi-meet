@@ -280,6 +280,8 @@ class AbstractStartRecordingDialog extends Component<Props, State> {
         _conference.startRecording({
             mode: JitsiRecordingConstants.mode.FILE,
             appData
+        }).catch(() => {
+            // prevent unhandled promise rejection.
         });
 
         if (_autoCaptionOnRecord) {

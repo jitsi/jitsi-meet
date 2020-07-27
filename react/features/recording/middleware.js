@@ -24,11 +24,14 @@ import { RECORDING_SESSION_UPDATED } from './actionTypes';
 import {
     clearRecordingSessions,
     hidePendingRecordingNotification,
+    hideWaitingInQueueRecordingNotification,
     showPendingRecordingNotification,
+    showQueueLeftRecordingNotification,
     showRecordingError,
     showRecordingLimitNotification,
     showStartedRecordingNotification,
     showStoppedRecordingNotification,
+    showWaitingInQueueRecordingNotification,
     updateRecordingSessionData
 } from './actions';
 import {
@@ -110,15 +113,16 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
         conference.on(
             JitsiConferenceEvents.RECORDER_STATE_CHANGED,
             recorderSession => {
-
                 if (recorderSession) {
-                    recorderSession.getID()
-                        && dispatch(
+                    if (recorderSession.getID() || recorderSession.getQueueID()) {
+                        dispatch(
                             updateRecordingSessionData(recorderSession));
+                    }
 
-                    recorderSession.getError()
-                        && _showRecordingErrorNotification(
+                    if (recorderSession.getError()) {
+                        _showRecordingErrorNotification(
                             recorderSession, dispatch);
+                    }
                 }
 
                 return;
@@ -142,75 +146,91 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
             break;
         }
 
-        const updatedSessionData
-            = getSessionById(getState(), action.sessionData.id);
-        const { initiator, mode, terminator } = updatedSessionData;
-        const { PENDING, OFF, ON } = JitsiRecordingConstants.status;
+        const updatedSessionData = getSessionById(getState(), action.sessionData.id);
+        const { initiator, mode, status: newStatus, terminator } = updatedSessionData;
+        const { PENDING, OFF, ON, WAITING_IN_QUEUE, QUEUE_LEFT } = JitsiRecordingConstants.status;
 
-        if (updatedSessionData.status === PENDING
-            && (!oldSessionData || oldSessionData.status !== PENDING)) {
-            dispatch(showPendingRecordingNotification(mode));
-        } else if (updatedSessionData.status !== PENDING) {
+        if (oldSessionData && oldSessionData.status === newStatus) {
+            return result;
+        }
+
+        if (newStatus !== WAITING_IN_QUEUE) {
+            dispatch(hideWaitingInQueueRecordingNotification(mode));
+        }
+
+        if (newStatus !== PENDING) {
             dispatch(hidePendingRecordingNotification(mode));
+        }
 
-            if (updatedSessionData.status === ON
-                && (!oldSessionData || oldSessionData.status !== ON)) {
-                if (initiator) {
-                    const initiatorName = initiator && getParticipantDisplayName(getState, initiator.getId());
+        switch (newStatus) {
+        case WAITING_IN_QUEUE:
+            dispatch(showWaitingInQueueRecordingNotification(mode));
+            break;
+        case QUEUE_LEFT:
+            dispatch(showQueueLeftRecordingNotification(mode));
+            break;
+        case PENDING:
+            dispatch(showPendingRecordingNotification(mode));
+            break;
+        case ON: {
+            if (initiator) {
+                const initiatorName = initiator && getParticipantDisplayName(getState, initiator.getId());
 
-                    initiatorName && dispatch(showStartedRecordingNotification(mode, initiatorName));
-                } else if (typeof recordingLimit === 'object') {
-                    // Show notification with additional information to the initiator.
-                    dispatch(showRecordingLimitNotification(mode));
-                }
-
-
-                sendAnalytics(createRecordingEvent('start', mode));
-
-                if (disableRecordAudioNotification) {
-                    break;
-                }
-
-                let soundID;
-
-                if (mode === JitsiRecordingConstants.mode.FILE) {
-                    soundID = RECORDING_ON_SOUND_ID;
-                } else if (mode === JitsiRecordingConstants.mode.STREAM) {
-                    soundID = LIVE_STREAMING_ON_SOUND_ID;
-                }
-
-                if (soundID) {
-                    dispatch(playSound(soundID));
-                }
-            } else if (updatedSessionData.status === OFF
-                && (!oldSessionData || oldSessionData.status !== OFF)) {
-                dispatch(showStoppedRecordingNotification(
-                    mode, terminator && getParticipantDisplayName(getState, terminator.getId())));
-                let duration = 0, soundOff, soundOn;
-
-                if (oldSessionData && oldSessionData.timestamp) {
-                    duration
-                        = (Date.now() / 1000) - oldSessionData.timestamp;
-                }
-                sendAnalytics(createRecordingEvent('stop', mode, duration));
-
-                if (disableRecordAudioNotification) {
-                    break;
-                }
-
-                if (mode === JitsiRecordingConstants.mode.FILE) {
-                    soundOff = RECORDING_OFF_SOUND_ID;
-                    soundOn = RECORDING_ON_SOUND_ID;
-                } else if (mode === JitsiRecordingConstants.mode.STREAM) {
-                    soundOff = LIVE_STREAMING_OFF_SOUND_ID;
-                    soundOn = LIVE_STREAMING_ON_SOUND_ID;
-                }
-
-                if (soundOff && soundOn) {
-                    dispatch(stopSound(soundOn));
-                    dispatch(playSound(soundOff));
-                }
+                initiatorName && dispatch(showStartedRecordingNotification(mode, initiatorName));
+            } else if (typeof recordingLimit === 'object') {
+                // Show notification with additional information to the initiator.
+                dispatch(showRecordingLimitNotification(mode));
             }
+
+
+            sendAnalytics(createRecordingEvent('start', mode));
+
+            if (disableRecordAudioNotification) {
+                return result;
+            }
+
+            let soundID;
+
+            if (mode === JitsiRecordingConstants.mode.FILE) {
+                soundID = RECORDING_ON_SOUND_ID;
+            } else if (mode === JitsiRecordingConstants.mode.STREAM) {
+                soundID = LIVE_STREAMING_ON_SOUND_ID;
+            }
+
+            if (soundID) {
+                dispatch(playSound(soundID));
+            }
+            break;
+        }
+        case OFF: {
+            dispatch(showStoppedRecordingNotification(
+                mode, terminator && getParticipantDisplayName(getState, terminator.getId())));
+            let duration = 0, soundOff, soundOn;
+
+            if (oldSessionData && oldSessionData.timestamp) {
+                duration
+                    = (Date.now() / 1000) - oldSessionData.timestamp;
+            }
+            sendAnalytics(createRecordingEvent('stop', mode, duration));
+
+            if (disableRecordAudioNotification) {
+                return result;
+            }
+
+            if (mode === JitsiRecordingConstants.mode.FILE) {
+                soundOff = RECORDING_OFF_SOUND_ID;
+                soundOn = RECORDING_ON_SOUND_ID;
+            } else if (mode === JitsiRecordingConstants.mode.STREAM) {
+                soundOff = LIVE_STREAMING_OFF_SOUND_ID;
+                soundOn = LIVE_STREAMING_ON_SOUND_ID;
+            }
+
+            if (soundOff && soundOn) {
+                dispatch(stopSound(soundOn));
+                dispatch(playSound(soundOff));
+            }
+            break;
+        }
         }
 
         break;

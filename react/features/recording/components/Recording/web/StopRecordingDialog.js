@@ -4,6 +4,7 @@ import React from 'react';
 
 import { Dialog } from '../../../../base/dialog';
 import { translate } from '../../../../base/i18n';
+import { JitsiRecordingConstants } from '../../../../base/lib-jitsi-meet';
 import { connect } from '../../../../base/redux';
 import AbstractStopRecordingDialog, {
     type Props,
@@ -24,15 +25,17 @@ class StopRecordingDialog extends AbstractStopRecordingDialog<Props> {
      * @returns {ReactElement}
      */
     render() {
-        const { t } = this.props;
+        const { _fileRecordingSession = {}, t } = this.props;
+
+        const isInQueue = _fileRecordingSession.status === JitsiRecordingConstants.status.WAITING_IN_QUEUE;
 
         return (
             <Dialog
-                okKey = 'dialog.confirm'
+                okKey = { isInQueue ? 'dialog.leaveJibriQueue' : 'dialog.confirm' }
                 onSubmit = { this._onSubmit }
                 titleKey = 'dialog.recording'
                 width = 'small'>
-                { t('dialog.stopRecordingWarning') }
+                { t(isInQueue ? 'dialog.leaveJibriQueueWarning' : 'dialog.stopRecordingWarning') }
             </Dialog>
         );
     }

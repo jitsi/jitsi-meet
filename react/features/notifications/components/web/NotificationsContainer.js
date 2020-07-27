@@ -1,7 +1,8 @@
 // @flow
 
-import { FlagGroup } from '@atlaskit/flag';
+import Portal from '@atlaskit/portal';
 import React from 'react';
+import { Transition, TransitionGroup } from 'react-transition-group';
 
 import { connect } from '../../../base/redux';
 import AbstractNotificationsContainer, {
@@ -27,6 +28,16 @@ type Props = AbstractProps & {
  * @extends {Component}
  */
 class NotificationsContainer extends AbstractNotificationsContainer<Props> {
+    /**
+     * Creates new NotificationContainer instance.
+     *
+     * @param {Props} props - The props of the react component.
+     */
+    constructor(props: Props) {
+        super(props);
+
+        this._renderNotification = this._renderNotification.bind(this);
+    }
 
     /**
      * Implements React's {@link Component#render()}.
@@ -40,39 +51,92 @@ class NotificationsContainer extends AbstractNotificationsContainer<Props> {
         }
 
         return (
-            <FlagGroup onDismissed = { this._onDismissed }>
-                { this._renderFlags() }
-            </FlagGroup>
+            <Portal zIndex = { 600 }>
+                <div className = 'notificationsContainer'>
+                    { this._renderTopNotificationsContainer() }
+                    { this._renderBottomNotificationsContainer() }
+                </div>
+            </Portal>
         );
     }
 
     _onDismissed: number => void;
 
     /**
-     * Renders notifications to display as ReactElements. An empty array will
-     * be returned if notifications are disabled.
+     * Renders the bottom notification container.
      *
      * @private
-     * @returns {ReactElement[]}
+     * @returns {ReactElement}
      */
-    _renderFlags() {
+    _renderBottomNotificationsContainer() {
         const { _notifications } = this.props;
 
-        return _notifications.map(notification => {
-            const { props, uid } = notification;
+        return (
+            <TransitionGroup className = 'bottomContainer'>
+                {
+                    _notifications.filter(n => n.props.position !== 'top').map((notification, index) => {
+                        const { props, uid } = notification;
 
-            // The id attribute is necessary as {@code FlagGroup} looks for
-            // either id or key to set a key on notifications, but accessing
-            // props.key will cause React to print an error.
-            return (
-                <Notification
-                    { ...props }
-                    id = { uid }
-                    key = { uid }
-                    uid = { uid } />
+                        return this._renderNotification({
+                            ...props,
+                            isDismissAllowed: index > 0 ? false : props.isDismissAllowed
+                        }, uid);
+                    })
+                }
+            </TransitionGroup>
+        );
+    }
 
-            );
-        });
+    _renderNotification: (string, number) => Function;
+
+    /**
+     * Renders a notification.
+     *
+     * @param {Object} props - The props for the Notification component.
+     * @param {string} uid - A unique ID for the notification.
+     * @returns {Function} - Returns a transition function for the Transition component.
+     */
+    _renderNotification(props, uid) {
+        return (
+            <Transition
+                key = { uid }
+                timeout = { 400 }>
+                {
+                    transitionState => (
+                        <div className = { `notification ${transitionState}` }>
+                            <Notification
+                                { ...props }
+                                id = { uid }
+                                key = { uid }
+                                onDismissed = { this._onDismissed }
+                                uid = { uid } />
+                        </div>
+                    )
+                }
+            </Transition>
+        );
+    }
+
+    /**
+     * Renders the top notifications container.
+     *
+     * @private
+     * @returns {ReactElement}
+     */
+    _renderTopNotificationsContainer() {
+        const { _notifications } = this.props;
+
+        return (
+            <TransitionGroup className = 'topContainer'>
+                {
+                    _notifications.filter(n => n.props.position === 'top').map(notification => {
+                        const { props, uid } = notification;
+
+                        return this._renderNotification(props, uid);
+                    })
+                }
+            </TransitionGroup>
+        );
     }
 }
 

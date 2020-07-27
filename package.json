@@ -31,6 +31,7 @@
     "@atlaskit/tabs": "8.0.11",
     "@atlaskit/theme": "7.0.2",
     "@atlaskit/toggle": "5.0.14",
+    "@atlaskit/portal": "4.0.0",
     "@atlaskit/tooltip": "12.1.13",
     "@jitsi/js-utils": "1.0.1",
     "@microsoft/microsoft-graph-client": "1.1.0",

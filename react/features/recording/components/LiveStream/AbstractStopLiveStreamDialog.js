@@ -65,7 +65,9 @@ export default class AbstractStopLiveStreamDialog extends Component<Props> {
         const { _session } = this.props;
 
         if (_session) {
-            this.props._conference.stopRecording(_session.id);
+            this.props._conference.stopRecording(_session.id, _session.queueID).catch(() => {
+                // prevent unhandled promise rejection.
+            });
         }
 
         return true;

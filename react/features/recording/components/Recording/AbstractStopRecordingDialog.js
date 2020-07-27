@@ -65,7 +65,9 @@ export default class AbstractStopRecordingDialog<P: Props>
         const { _fileRecordingSession } = this.props;
 
         if (_fileRecordingSession) {
-            this.props._conference.stopRecording(_fileRecordingSession.id);
+            this.props._conference.stopRecording(_fileRecordingSession.id, _fileRecordingSession.queueID).catch(() => {
+                // prevent unhandled promise rejection.
+            });
         }
 
         return true;

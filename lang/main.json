@@ -216,7 +216,9 @@
         "kickParticipantDialog": "Are you sure you want to kick this participant?",
         "kickParticipantTitle": "Kick this participant?",
         "kickTitle": "Ouch! {{participantDisplayName}} kicked you out of the meeting",
+        "leaveJibriQueue": "Exit queue",
         "liveStreaming": "Live Streaming",
+        "leaveJibriQueueWarning": "Are you sure you would like to exit the queue?",
         "liveStreamingDisabledBecauseOfActiveRecordingTooltip": "Not possible while recording is active",
         "liveStreamingDisabledForGuestTooltip": "Guests can't start live streaming.",
         "liveStreamingDisabledTooltip": "Start live stream disabled.",
@@ -908,5 +910,22 @@
         "passwordJoinButton": "Join",
         "reject": "Reject",
         "toggleLabel": "Enable lobby"
+    },
+    "jibriQueue": {
+        "recording": {
+            "title": "You have joined a recording queue!",
+            "time": "Estimated time for starting the recording: {{time}}",
+            "footer": "For unlimited recordings you should subscribe to 8x8 Meetings",
+            "left": "You have left the recording queue!"
+        },
+        "livestreaming": {
+            "title": "You have joined a live streaming queue!",
+            "time": "Estimated time for starting the live streaming: {{time}}",
+            "footer": "For unlimited live streaming you should subscribe to 8x8 Meetings",
+            "left": "You have left the live streaming queue!"
+        },
+        "position": "{{count}} more person is waiting in front of you.",
+        "position_plural": "{{count}} more people are waiting in front of you.",
+        "exit": "Exit queue"
     }
 }
