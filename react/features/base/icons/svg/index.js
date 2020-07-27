@@ -88,3 +88,5 @@ export { default as IconUserGroups } from './user-groups.svg';
 export { default as IconVolumeEmpty } from './volume-empty.svg';
 export { default as IconVolumeOff } from './volume-off.svg';
 export { default as IconWarning } from './warning.svg';
+export { default as IconFollowEnabled } from './follow-enabled.svg';
+export { default as IconFollowDisabled } from './follow-disabled.svg';
