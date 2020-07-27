@@ -88,14 +88,20 @@ class SampleHandler: RPBroadcastSampleHandler {
                 let imageBuffer = CMSampleBufferGetImageBuffer(sampleBuffer)
                 if imageBuffer != nil && self.connSocket != nil {
                     CVPixelBufferLockBaseAddress(imageBuffer!, CVPixelBufferLockFlags.readOnly)
+                    let width = CVPixelBufferGetWidth(imageBuffer!)
+                    let height = CVPixelBufferGetHeight(imageBuffer!)
                     let cim = CIImage.init(cvPixelBuffer: imageBuffer!)
                     let ccim = cim.transformed(by: CGAffineTransform(scaleX: 0.5, y: 0.5))
                     let opts:[CIImageRepresentationOption:Float] = [kCGImageDestinationLossyCompressionQuality as CIImageRepresentationOption: 0.25]
                     let jpeg = CIContext.init(options: nil).jpegRepresentation(of: ccim, colorSpace: ccim.colorSpace!, options: opts)
                     let b64IamgeData = jpeg?.base64EncodedString()
-                    let rawImageData = Data.init(base64Encoded: b64IamgeData!)
-                    print("size \(rawImageData?.count)")
-                  try self.connSocket.write(from: rawImageData!)
+                    var dataDict:[String: String] = ["height": String(height/2), "width": String(width/2), "b64": b64IamgeData!]
+                    if let jsonData = try? JSONEncoder().encode(dataDict) {
+                      try self.connSocket.write(from: jsonData)
+                    }
+//                  var rawImageData = Data("\(1920)_\(889)_\(b64IamgeData!)".utf8)
+//                    print("size \(rawImageData.count)")
+//                    try self.connSocket.write(from: rawImageData)
 //                  print(imageBuffer)
 //                      let currPixelBuffer = imageBuffer
 //                                      let nbytesPerRow = CGFloat(CVPixelBufferGetBytesPerRow(currPixelBuffer!))

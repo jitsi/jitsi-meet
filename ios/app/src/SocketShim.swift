@@ -81,14 +81,21 @@ import CoreImage
                 break
               }
             }
-            let cim = CIImage.init(data: buffer)
-            var pixelBuffer: CVPixelBuffer?
-            let status = CVPixelBufferCreate(nil, Int(886 / 2), Int(1920 / 2), kCVPixelFormatType_32BGRA, nil, &pixelBuffer)
-            if SocketShim.ciContext == nil || pixelBuffer == nil || cim == nil {
-              continue
+            if let jsonData = try? JSONDecoder().decode([String: String].self, from: buffer) {
+              let height = jsonData["height"]
+              let width = jsonData["width"]
+              let b64Buffer = jsonData["b64"]
+              let frameData = Data.init(base64Encoded: b64Buffer!)
+              let cim = CIImage.init(data: frameData!)
+              var pixelBuffer: CVPixelBuffer?
+              _ = CVPixelBufferCreate(nil, Int(width!)!, Int(height!)!, kCVPixelFormatType_32BGRA, nil, &pixelBuffer)
+              if SocketShim.ciContext == nil || pixelBuffer == nil || cim == nil {
+                continue
+              }
+              SocketShim.ciContext!.render(cim!, to: pixelBuffer!)
+              SocketShim.pushPixelBuffer(pixelBuffer: pixelBuffer!, rawData: buffer)
             }
-            SocketShim.ciContext!.render(cim!, to: pixelBuffer!)
-            SocketShim.pushPixelBuffer(pixelBuffer: pixelBuffer!, rawData: buffer)
+            
 //            print("[SocketShim] just pushed a frame, feeling pretty good")
           } catch {
             print("[SocketShim] some error has occurred \(error)")
