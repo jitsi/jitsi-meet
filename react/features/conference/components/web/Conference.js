@@ -316,12 +316,7 @@ class Conference extends AbstractConference<Props, *> {
 
         // if user will click the "reject" button the code will stops before that line
         this.props.dispatch(setJWT(token));
-        await APP.conference.leaveRoomAndDisconnect();
-        APP.UI.unbindEvents();
-        FULL_SCREEN_EVENTS.forEach(name =>
-            document.removeEventListener(name, this._onFullScreenChange));
         this.setState({ showDeeplink: false });
-        this._start();
     }
 
     /**
