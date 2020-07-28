@@ -147,6 +147,8 @@
         color: #fff;
         font-size: 19px;
         line-height: 28px;
+        overflow-x: hidden;
+        text-overflow: ellipsis;
 
         &--editable {
             background: none;
