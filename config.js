@@ -36,6 +36,8 @@ var config = {
     // The name of client node advertised in XEP-0115 'c' stanza
     clientNode: 'http://jitsi.org/jitsimeet',
 
+    prejoinPageEnabled: true,
+
     // The real JID of focus participant - can be overridden here
     // focusUserJid: 'focus@auth.league.superhero.com',
 
@@ -277,7 +279,7 @@ var config = {
     // If true all users without a token will be considered guests and all users
     // with token will be considered non-guests. Only guests will be allowed to
     // edit their profile.
-    enableUserRolesBasedOnToken: true,
+    enableUserRolesBasedOnToken: false,
 
     // Whether or not some features are checked based on token.
     enableFeaturesBasedOnToken: false,
