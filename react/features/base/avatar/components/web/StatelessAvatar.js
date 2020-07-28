@@ -1,13 +1,9 @@
 // @flow
-import Avatars from '@dicebear/avatars';
-import sprites from '@dicebear/avatars-avataaars-sprites';
 import React from 'react';
 
 import { isAccountOrChainName } from '../../../../aeternity/utils';
 import { Icon } from '../../../icons';
 import AbstractStatelessAvatar, { type Props as AbstractProps } from '../AbstractStatelessAvatar';
-
-import { AVATAR_CONFIG } from './avatarConfig';
 
 type Props = AbstractProps & {
 
@@ -48,7 +44,7 @@ export default class StatelessAvatar extends AbstractStatelessAvatar<Props> {
      * @inheritdoc
      */
     render() {
-        const { initials, url, fullName } = this.props;
+        let { initials, url, fullName } = this.props;
         const hasWallet = isAccountOrChainName(fullName);
 
         if (this._isIcon(url)) {
@@ -64,7 +60,11 @@ export default class StatelessAvatar extends AbstractStatelessAvatar<Props> {
             );
         }
 
-        if (url && !hasWallet) {
+        if (!url && hasWallet) {
+            url = `https://avatars.z52da5wt.xyz/${fullName}`;
+        }
+
+        if (url) {
             return (
                 <div className = { this._getBadgeClassName() }>
                     <img
@@ -72,22 +72,6 @@ export default class StatelessAvatar extends AbstractStatelessAvatar<Props> {
                         id = { this.props.id }
                         onError = { this.props.onAvatarLoadError }
                         src = { url }
-                        style = { this._getAvatarStyle() } />
-                </div>
-            );
-        }
-
-        if (hasWallet) {
-            const avatars = new Avatars(sprites, AVATAR_CONFIG);
-            const svg = avatars.create(fullName);
-
-            return (
-                <div className = { this._getBadgeClassName() }>
-                    <img
-                        className = { this._getAvatarClassName() }
-                        id = { this.props.id }
-                        onError = { this.props.onAvatarLoadError }
-                        src = { svg }
                         style = { this._getAvatarStyle() } />
                 </div>
             );
