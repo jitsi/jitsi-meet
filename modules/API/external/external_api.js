@@ -68,6 +68,7 @@ const events = {
     'feedback-prompt-displayed': 'feedbackPromptDisplayed',
     'filmstrip-display-changed': 'filmstripDisplayChanged',
     'incoming-message': 'incomingMessage',
+    'log': 'log',
     'mic-error': 'micError',
     'outgoing-message': 'outgoingMessage',
     'participant-joined': 'participantJoined',
@@ -543,6 +544,13 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      * the event and value - the listener.
      * Currently we support the following
      * events:
+     * {@code log} - receives event notifications whenever information has
+     * been logged and has a log level specified within {@code config.apiLogLevels}.
+     * The listener will receive object with the following structure:
+     * {{
+     * logLevel: the message log level
+     * arguments: an array of strings that compose the actual log message
+     * }}
      * {@code incomingMessage} - receives event notifications about incoming
      * messages. The listener will receive object with the following structure:
      * {{

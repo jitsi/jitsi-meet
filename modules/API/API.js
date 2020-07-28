@@ -697,6 +697,21 @@ class API {
     }
 
     /**
+     * Notify external application (if API is enabled) that the an error has been logged.
+     *
+     * @param {string} logLevel - The message log level.
+     * @param {Array} args - Array of strings composing the log message.
+     * @returns {void}
+     */
+    notifyLog(logLevel: string, args: Array<string>) {
+        this._sendEvent({
+            name: 'log',
+            logLevel,
+            args
+        });
+    }
+
+    /**
      * Notify external application (if API is enabled) that the conference has
      * been joined.
      *

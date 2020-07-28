@@ -510,6 +510,9 @@ var config = {
         // ],
     },
 
+    // Logs that should go be passed through the 'log' event if a handler is defined for it
+    // apiLogLevels: ['warn', 'log', 'error', 'info', 'debug'],
+
     // Information about the jitsi-meet instance we are connecting to, including
     // the user region as seen by the server.
     deploymentInfo: {
