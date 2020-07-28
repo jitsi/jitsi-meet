@@ -17,6 +17,7 @@ export default [
     'audioLevelsInterval',
     'autoRecord',
     'autoRecordToken',
+    'apiLogLevels',
     'avgRtpStatsN',
 
     /**
