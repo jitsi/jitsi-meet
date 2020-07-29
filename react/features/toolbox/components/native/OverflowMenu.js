@@ -30,6 +30,9 @@ import KickEveryoneElseButton from './KickEveryoneElseButton';
 
 import { jitsiLocalStorage } from '@jitsi/js-utils';
 
+import IOSRecordButtonWrapper from './IOSRecordButtonWrapper';
+
+
 /**
  * The type of the React {@code Component} props of {@link OverflowMenu}.
  */
@@ -96,7 +99,7 @@ class OverflowMenu extends PureComponent<Props, State> {
     constructor(props: Props) {
         super(props);
 
-     
+        this.clicked = false;
 
         // Bind event handlers so they are only bound once per instance.
         this._onCancel = this._onCancel.bind(this);
@@ -131,9 +134,9 @@ class OverflowMenu extends PureComponent<Props, State> {
      * @returns {ReactElement}
      */
     render() {
-        const { _bottomSheetStyles } = this.props;
+        const { _bottomSheetStyles, __localVideo } = this.props;
         const { showMore } = this.state;
-
+        let {dispatch} = this.props;
         const buttonProps = {
             afterClick: this._onCancel,
             showLabel: true,
@@ -161,13 +164,16 @@ class OverflowMenu extends PureComponent<Props, State> {
                 {this._renderModeratorButtons(buttonProps)}          
                     <ToggleCameraButton { ...buttonProps } />
                     <TileViewButton { ...buttonProps } />
-                    <RecordButton { ...buttonProps } />
                     <LiveStreamButton { ...buttonProps } />
                     <VideoShareButton { ...buttonProps } />
                     <RoomLockButton { ...buttonProps } />
                     <ClosedCaptionButton { ...buttonProps } />
                     <SharedDocumentButton { ...buttonProps } />
                     <HelpButton { ...buttonProps } />
+                    {
+                        this.props._desktopSharingEnabled
+                            && <IOSRecordButtonWrapper />
+                    }
                 </Collapsible>
             </BottomSheet>
         );
@@ -281,9 +287,19 @@ class OverflowMenu extends PureComponent<Props, State> {
  * @returns {Props}
  */
 function _mapStateToProps(state) {
+    let { desktopSharingEnabled } = state['features/base/conference'];
+    if (state['features/base/config'].enableFeaturesBasedOnToken) {
+        // we enable desktop sharing if any participant already have this
+        // feature enabled
+        desktopSharingEnabled = getParticipants(state)
+            .find(({ features = {} }) =>
+                String(features['screen-sharing']) === 'true') !== undefined;
+    }
     return {
+        __localVideo: state['features/base/tracks'],
         _bottomSheetStyles: ColorSchemeRegistry.get(state, 'BottomSheet'),
-        _isOpen: isDialogOpen(state, OverflowMenu_)
+        _isOpen: isDialogOpen(state, OverflowMenu_),
+        _desktopSharingEnabled: Boolean(desktopSharingEnabled)
     };
 }
 
