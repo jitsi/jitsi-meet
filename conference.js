@@ -121,7 +121,8 @@ import { suspendDetected } from './react/features/power-monitor';
 import {
     initPrejoin,
     isPrejoinPageEnabled,
-    isPrejoinPageVisible
+    isPrejoinPageVisible,
+    makePrecallTest
 } from './react/features/prejoin';
 import { createRnnoiseProcessorPromise } from './react/features/rnnoise';
 import { toggleScreenshotCaptureEffect } from './react/features/screenshot-capture';
@@ -760,6 +761,8 @@ export default {
 
         if (isPrejoinPageEnabled(APP.store.getState())) {
             _connectionPromise = connect(roomName);
+
+            APP.store.dispatch(makePrecallTest(this._getConferenceOptions()));
 
             const { tryCreateLocalTracks, errors } = this.createInitialLocalTracks(initialOptions);
             const tracks = await tryCreateLocalTracks;

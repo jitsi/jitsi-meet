@@ -510,6 +510,25 @@
         "callMeAtNumber": "Call me at this number:",
         "configuringDevices": "Configuring devices...",
         "connectedWithAudioQ": "You’re connected with audio?",
+        "connection": {
+           "good": "Your internet connection looks good!",
+           "nonOptimal": "Your internet connection is not optimal",
+           "poor": "You have a poor internet connection"
+        },
+        "connectionDetails": {
+          "audioClipping": "We expect your audio to be clipped.",
+          "audioHighQuality": "We expect your audio to have excellent quality.",
+          "audioLowNoVideo": "We expect your audio quality to be low and no video.",
+          "goodQuality": "Awesome! Your media quality is going to be great.",
+          "noMediaConnectivity": "We could not find a way to establish media connectivity for this test. This is typically caused by a firewall or NAT.",
+          "noVideo": "We expect that your video will be terrible.",
+          "undetectable": "If you still can not make calls in browser, we recommend that you make sure your speakers, microphone and camera are properly set up, that you have granted your browser rights to use your microphone and camera, and that your browser version is up-to-date. If you still have trouble calling, you should contact the web application developer.",
+          "veryPoorConnection": "We expect your call quality to be really terrible.",
+          "videoFreezing": "We expect your video to freeze, turn black, and be pixelated.",
+          "videoHighQuality": "We expect your video to have good quality.",
+          "videoLowQuality": "We expect your video to have low quality in terms of frame rate and resolution.",
+          "videoTearing": "We expect your video to be pixelated or have visual artefacts."
+        },
         "copyAndShare": "Copy & share meeting link",
         "dialInMeeting": "Dial into the meeting",
         "dialInPin": "Dial into the meeting and enter PIN code:",
