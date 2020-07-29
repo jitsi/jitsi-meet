@@ -4,6 +4,7 @@ import React, { PureComponent } from 'react';
 
 import { AudioSettingsButton, VideoSettingsButton } from '../../../../toolbox/components/web';
 
+import ConnectionStatus from './ConnectionStatus';
 import CopyMeetingUrl from './CopyMeetingUrl';
 import Preview from './Preview';
 
@@ -82,6 +83,7 @@ export default class PreMeetingScreen extends PureComponent<Props> {
             <div
                 className = 'premeeting-screen'
                 id = 'lobby-screen'>
+                <ConnectionStatus />
                 <Preview
                     name = { name }
                     showAvatar = { showAvatar }
