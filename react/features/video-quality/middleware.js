@@ -59,11 +59,7 @@ StateListenerRegistry.register(
     /* listener */ ({ displayTileView, participantCount, reducedUI, thumbnailHeight }, { dispatch, getState }) => {
         const state = getState();
         const { maxReceiverVideoQuality } = state['features/base/conference'];
-        let { maxFullResolutionParticipants } = state['features/base/config'];
-
-        if (typeof maxFullResolutionParticipants === 'undefined') {
-            maxFullResolutionParticipants = 4;
-        }
+        const { maxFullResolutionParticipants = 2 } = state['features/base/config'];
 
         let newMaxRecvVideoQuality = VIDEO_QUALITY_LEVELS.HIGH;
 
