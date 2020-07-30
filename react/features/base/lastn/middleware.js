@@ -59,6 +59,7 @@ function _updateLastN({ getState }) {
     const { appState } = state['features/background'] || {};
     const { enabled: filmStripEnabled } = state['features/filmstrip'];
     const config = state['features/base/config'];
+    const { lastNLimits } = state['features/base/lastn'];
     const participantCount = getParticipantCount(state);
 
     if (!conference) {
@@ -71,7 +72,7 @@ function _updateLastN({ getState }) {
     let lastN = defaultLastN;
 
     // Apply last N limit based on the # of participants
-    const limitedLastN = limitLastN(participantCount, config.lastNLimits);
+    const limitedLastN = limitLastN(participantCount, lastNLimits);
 
     if (limitedLastN !== undefined) {
         lastN = limitedLastN;

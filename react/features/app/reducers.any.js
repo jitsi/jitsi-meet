@@ -11,6 +11,7 @@ import '../base/dialog/reducer';
 import '../base/flags/reducer';
 import '../base/jwt/reducer';
 import '../base/known-domains/reducer';
+import '../base/lastn/reducer';
 import '../base/lib-jitsi-meet/reducer';
 import '../base/logging/reducer';
 import '../base/media/reducer';

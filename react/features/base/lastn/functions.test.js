@@ -1,12 +1,12 @@
-import { limitLastN } from './functions';
+import { limitLastN, validateLastNLimits } from './functions';
 
 describe('limitsLastN', () => {
     describe('when a correct limit mapping is given', () => {
-        const limits = {
-            5: -1,
-            10: 8,
-            20: 5
-        };
+        const limits = new Map();
+
+        limits.set(5, -1);
+        limits.set(10, 8);
+        limits.set(20, 5);
 
         it('returns undefined when less participants that the first limit', () => {
             expect(limitLastN(2, limits)).toBe(undefined);
@@ -26,9 +26,12 @@ describe('limitsLastN', () => {
             expect(limitLastN(100, limits)).toBe(5);
         });
     });
+});
+
+describe('validateLastNLimits', () => {
     describe('validates the input by returning undefined', () => {
         it('if lastNLimits param is not an Object', () => {
-            expect(limitLastN(1, 5)).toBe(undefined);
+            expect(validateLastNLimits(5)).toBe(undefined);
         });
         it('if any key is not a number', () => {
             const limits = {
@@ -37,8 +40,16 @@ describe('limitsLastN', () => {
                 20: 5
             };
 
-            expect(limitLastN(1, limits)).toBe(undefined);
-            expect(limitLastN(21, limits)).toBe(undefined);
+            expect(validateLastNLimits(limits)).toBe(undefined);
+        });
+        it('if any value is not a number', () => {
+            const limits = {
+                8: 'something',
+                5: -1,
+                20: 5
+            };
+
+            expect(validateLastNLimits(limits)).toBe(undefined);
         });
         it('if any value is null', () => {
             const limits = {
@@ -47,7 +58,7 @@ describe('limitsLastN', () => {
                 20: 5
             };
 
-            expect(limitLastN(21, limits)).toBe(undefined);
+            expect(validateLastNLimits(limits)).toBe(undefined);
         });
         it('if any value is undefined', () => {
             const limits = {
@@ -56,22 +67,34 @@ describe('limitsLastN', () => {
                 20: 5
             };
 
-            expect(limitLastN(21, limits)).toBe(undefined);
+            expect(validateLastNLimits(limits)).toBe(undefined);
         });
         it('if the map is empty', () => {
-            expect(limitLastN(10, {})).toBe(undefined);
+            expect(validateLastNLimits({})).toBe(undefined);
         });
     });
-    it('handles the case when keys are not ordered', () => {
-        const limits = {
-            10: 8,
-            5: -1,
-            20: 5
-        };
+    it('sorts by the keys', () => {
+        const mappingKeys = validateLastNLimits({
+            10: 5,
+            3: 3,
+            5: 4
+        }).keys();
 
-        expect(limitLastN(1, limits)).toBe(undefined);
-        expect(limitLastN(6, limits)).toBe(-1);
-        expect(limitLastN(11, limits)).toBe(8);
-        expect(limitLastN(21, limits)).toBe(5);
+        expect(mappingKeys.next().value).toBe(3);
+        expect(mappingKeys.next().value).toBe(5);
+        expect(mappingKeys.next().value).toBe(10);
+        expect(mappingKeys.next().done).toBe(true);
+    });
+    it('converts keys and values to numbers', () => {
+        const mapping = validateLastNLimits({
+            3: 3,
+            5: 4,
+            10: 5
+        });
+
+        for (const key of mapping.keys()) {
+            expect(typeof key).toBe('number');
+            expect(typeof mapping.get(key)).toBe('number');
+        }
     });
 });
