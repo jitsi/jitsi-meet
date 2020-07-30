@@ -55,4 +55,55 @@
  */
 - (void)enterPictureInPicture:(NSDictionary *)data;
 
+/**
+ * Called when someone else joins the conference
+ *
+ * The `data` dictionary contains:
+ *    `participant`: JSON containing data about the new participant
+ *            `id`: id of the new particpant
+ *            `name`: name of the new participant
+ *            `email`: email of the new participant (if any)
+ *            `role`: role (participant | moderator)
+ *            `avatarURL`: avatar URL, if any
+ *
+ *            NOTE: Except for `id`, not all fields are always available.
+ *            If e.g. no `email` was set, that field will not show up at all
+ *
+ *    `numParticipants`: number of participants in conference, including the
+ *                       new participant.
+ *                       NOTE: If you are just initiating the call, you may
+ *                       not have joined yourself, so this number is 1 in case
+ *                       you are still initiating the call - wait for
+ *                       `conferenceJoined` above...
+ */
+- (void)participantJoined:(NSDictionary *)data;
+
+/**
+ * Called when a participant leaves the conference
+ *
+ * The `data` dictionary contains:
+ *    `participant`: JSON containing data about the new participant
+ *            `id`: id of the new particpant
+ *            `name`: name of the new participant
+ *            `email`: email of the new participant (if any)
+ *            `role`: role (participant | moderator)
+ *            `avatarURL`: avatar URL, if any
+ *
+ *            NOTE: Except for `id`, not all fields are always available.
+ *            If e.g. no `email` was set, that field will not show up at all
+ *
+ *    `numParticipants`: number of participants in conference, after this
+ *                       participant left the meeting.
+ */
+- (void)participantLeft:(NSDictionary *)data;
+
+/**
+ * Called when a participant was kicked out of the conference.
+ *
+ * The `data` dictionary contains:
+ *    `id`: id of the participant who was kicked out
+ *    `numParticipants`: number of participants *after* the participant
+ *                       was kicked out.
+ */
+- (void)participantKicked:(NSDictionary *)data;
 @end
