@@ -8,6 +8,7 @@ import React from 'react';
 
 import VideoLayout from '../../../../../modules/UI/videolayout/VideoLayout';
 import { client, initClient } from '../../../../client';
+import { walletFound } from '../../../aeternity';
 import { getConferenceNameForTitle } from '../../../base/conference';
 import { connect, disconnect } from '../../../base/connection';
 import { translate } from '../../../base/i18n';
@@ -106,7 +107,7 @@ class Conference extends AbstractConference<Props, *> {
     _onFullScreenChange: Function;
     _onShowToolbar: Function;
     _originalOnShowToolbar: Function;
-    _signAndReconnect: Function;
+    _sign: Function;
     _scanForWallets: Function;
 
     /**
@@ -135,7 +136,7 @@ class Conference extends AbstractConference<Props, *> {
 
         // Bind event handler so it is only bound once for every instance.
         this._onFullScreenChange = this._onFullScreenChange.bind(this);
-        this._signAndReconnect = this._signAndReconnect.bind(this);
+        this._sign = this._sign.bind(this);
         this._scanForWallets = this._scanForWallets.bind(this);
     }
 
@@ -175,7 +176,7 @@ class Conference extends AbstractConference<Props, *> {
             const addressStorage = jitsiLocalStorage.getItem('address');
             const messageStorage = jitsiLocalStorage.getItem('message');
 
-            this._signAndReconnect(signatureParam, addressStorage, messageStorage);
+            this._sign(signatureParam, addressStorage, messageStorage);
         }
         this._start();
     }
@@ -281,7 +282,7 @@ class Conference extends AbstractConference<Props, *> {
                 detector.stopScan();
                 await client.connectToWallet(await newWallet.getConnection());
                 await client.subscribeAddress('subscribe', 'current');
-                this._signAndReconnect();
+                this._sign();
             }
         });
 
@@ -297,7 +298,7 @@ class Conference extends AbstractConference<Props, *> {
      * @returns {void}
      *
      */
-    async _signAndReconnect(signatureParam, addressParam, messageParam) {
+    async _sign(signatureParam, addressParam, messageParam) {
         const message = messageParam || `I would like to generate JWT token at ${new Date().toUTCString()}`;
         const signature = signatureParam || await client.signMessage(message);
         const address = addressParam || client.rpcClient.getCurrentAccount();
@@ -317,6 +318,7 @@ class Conference extends AbstractConference<Props, *> {
         // if user will click the "reject" button the code will stops before that line
         this.props.dispatch(setJWT(token));
         this.setState({ showDeeplink: false });
+        APP.store.dispatch(walletFound());
     }
 
     /**
