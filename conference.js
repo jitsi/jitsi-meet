@@ -27,6 +27,7 @@ import {
     AVATAR_ID_COMMAND,
     AVATAR_URL_COMMAND,
     EMAIL_COMMAND,
+    AK_ADDRESS_COMMAND,
     authStatusChanged,
     commonUserJoinedHandling,
     commonUserLeftHandling,
@@ -176,7 +177,8 @@ const commands = {
     CUSTOM_ROLE: 'custom-role',
     EMAIL: EMAIL_COMMAND,
     ETHERPAD: 'etherpad',
-    SHARED_VIDEO: 'shared-video'
+    SHARED_VIDEO: 'shared-video',
+    AK_ADDRESS: AK_ADDRESS_COMMAND
 };
 
 /**
@@ -2317,6 +2319,17 @@ export default {
                         conference: room,
                         id: from,
                         avatarID: data.value
+                    }));
+            });
+
+        room.addCommandListener(
+            this.commands.defaults.AK_ADDRESS,
+            (data, from) => {
+                APP.store.dispatch(
+                    participantUpdated({
+                        conference: room,
+                        id: from,
+                        akAddress: data.value
                     }));
             });
 

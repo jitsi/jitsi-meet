@@ -17,6 +17,7 @@ import {
     AVATAR_ID_COMMAND,
     AVATAR_URL_COMMAND,
     EMAIL_COMMAND,
+    AK_ADDRESS_COMMAND,
     JITSI_CONFERENCE_URL_KEY,
     VIDEO_QUALITY_LEVELS
 } from './constants';
@@ -353,7 +354,8 @@ export function sendLocalParticipant(
         avatarURL,
         email,
         features,
-        name
+        name,
+        akAddress
     } = getLocalParticipant(stateful);
 
     avatarID && conference.sendCommand(AVATAR_ID_COMMAND, {
@@ -364,6 +366,9 @@ export function sendLocalParticipant(
     });
     email && conference.sendCommand(EMAIL_COMMAND, {
         value: email
+    });
+    akAddress && conference.sendCommand(AK_ADDRESS_COMMAND, {
+        value: akAddress
     });
 
     if (features && features['screen-sharing'] === 'true') {
