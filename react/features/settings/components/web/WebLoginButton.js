@@ -9,7 +9,7 @@ import { createDeepLinkUrl } from '../../../base/util/createDeepLinkUrl';
  *
  * @returns {Object}
  */
-const signDeepLink = () => {
+export const signDeepLink = () => {
     const currentUrl = new URL(window.location);
 
     currentUrl.search = '';
@@ -30,7 +30,7 @@ const Button = ({ children, ...rest }: Props) => (
     <div
         { ...rest }
         onClick = { signDeepLink } >
-        <div className = 'invite-more-button-text'>
+        <div>
             { children }
         </div>
     </div>

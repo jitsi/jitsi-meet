@@ -11,6 +11,7 @@ import { getDisplayName, updateSettings } from '../../base/settings';
 import { getLocalParticipant } from '../../base/participants';
 import { isWalletNameSet } from '../../aeternity/utils';
 import { isGuest } from '../../invite';
+import { signDeepLink } from '../../settings/components/web/WebLoginButton';
 import { VideoSettingsButton, AudioSettingsButton } from '../../toolbox';
 import {
     joinConference as joinConferenceAction,
@@ -30,7 +31,6 @@ import CopyMeetingUrl from './preview/CopyMeetingUrl';
 import DeviceStatus from './preview/DeviceStatus';
 import ParticipantName from './preview/ParticipantName';
 import Preview from './preview/Preview';
-
 
 
 type Props = {
@@ -105,6 +105,11 @@ type Props = {
      * Used for translation.
      */
     t: Function,
+
+    /*
+    * if sdk found a wallet
+    */
+   showWebLoginButton: boolean,
 };
 
 type State = {
@@ -297,6 +302,12 @@ class Prejoin extends Component<Props, State> {
                                     type = 'primary'>
                                     { t('prejoin.joinMeeting') }
                                 </ActionButton>
+                                { this.props.showWebLoginButton && <ActionButton
+                                    disabled = { false }
+                                    onClick = { signDeepLink }
+                                    type = 'secondary'>
+                                    { 'Login with web wallet' }
+                                </ActionButton>}
                             </InlineDialog>
                         </div>
 
@@ -341,7 +352,8 @@ function mapStateToProps(state): Object {
         showDialog: isJoinByPhoneDialogVisible(state),
         hasJoinByPhoneButton: isJoinByPhoneButtonVisible(state),
         isWalletNameSet: isWalletNameSet(state),
-        localParticipant: getLocalParticipant(state)
+        localParticipant: getLocalParticipant(state),
+        showWebLoginButton: !state['features/aeternity'].hasWallet
     };
 }
 
