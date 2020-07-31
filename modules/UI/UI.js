@@ -6,6 +6,7 @@ const UI = {};
 import EventEmitter from 'events';
 import Logger from 'jitsi-meet-logger';
 
+import { isMobileBrowser } from '../../react/features/base/environment/utils';
 import { getLocalParticipant } from '../../react/features/base/participants';
 import { toggleChat } from '../../react/features/chat';
 import { setDocumentUrl } from '../../react/features/etherpad';
@@ -153,6 +154,12 @@ UI.start = function() {
     VideoLayout.resizeVideoArea();
 
     sharedVideoManager = new SharedVideoManager(eventEmitter);
+
+    if (isMobileBrowser()) {
+        $('body').addClass('mobile-browser');
+    } else {
+        $('body').addClass('desktop-browser');
+    }
 
     if (interfaceConfig.filmStripOnly) {
         $('body').addClass('filmstrip-only');
