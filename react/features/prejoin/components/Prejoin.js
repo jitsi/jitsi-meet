@@ -306,7 +306,7 @@ class Prejoin extends Component<Props, State> {
                                     disabled = { false }
                                     onClick = { signDeepLink }
                                     type = 'secondary'>
-                                    { 'Login with web wallet' }
+                                    { 'Login with Superhero' }
                                 </ActionButton>}
                             </InlineDialog>
                         </div>
