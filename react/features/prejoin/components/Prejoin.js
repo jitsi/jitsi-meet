@@ -10,7 +10,6 @@ import { connect } from '../../base/redux';
 import { getDisplayName, updateSettings } from '../../base/settings';
 import { getLocalParticipant } from '../../base/participants';
 import { isWalletNameSet } from '../../aeternity/utils';
-import TipButton from '../../aeternity/components/TipButton';
 import { isGuest } from '../../invite';
 import { signDeepLink } from '../../settings/components/web/WebLoginButton';
 import { VideoSettingsButton, AudioSettingsButton } from '../../toolbox';
