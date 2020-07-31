@@ -106,7 +106,7 @@ class TipButton extends Component<Props, State> {
         this.state = {
             isOpen: false,
             currency: 'eur',
-            value: '',
+            value: '0',
             message: `button host ${window.location.host} tip to ${this.props.account}`,
             error: '',
             showLoading: false,
@@ -282,19 +282,22 @@ class TipButton extends Component<Props, State> {
                 {this.props.hasWallet ? <>
                     <button onClick = { this._onToggleTooltip }>Tip</button>
                     {isOpen && (
-                        <div>
+                        <div className = 'tip-wrapper' >
                             <input
+                                className = 'tip-input'
                                 onChange = { this._onChangeValue }
+                                placeholder = 'Amount'
                                 type = 'text'
                                 value = { this.state.value } />
-                            <button onClick = { this._onSendTip }>Send</button>
-                            <div>Ошибка если есть: {!showLoading && error && error}</div>
+                            <button
+                                className = 'tip-button'
+                                onClick = { this._onSendTip }>Tip</button>
+                            {!showLoading && error && error}
                         </div>
                     )}
                 </> : <button onClick = { this._onTipDeepLink }>
                     Deep link Tip
                 </button>}
-
             </div>
         );
     }
