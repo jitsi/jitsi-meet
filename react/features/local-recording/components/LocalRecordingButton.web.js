@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 
 import { translate } from '../../base/i18n';
 import { IconRec } from '../../base/icons';
-import { ToolbarButton } from '../../toolbox';
+import { ToolbarButton } from '../../toolbox/components/web';
 
 /**
  * The type of the React {@code Component} state of

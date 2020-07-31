@@ -20,6 +20,7 @@ export { default as IconCheck } from './check.svg';
 export { default as IconClose } from './close.svg';
 export { default as IconCloseX } from './close-x.svg';
 export { default as IconClosedCaption } from './closed_caption.svg';
+export { default as IconCodeBlock } from './code-block.svg';
 export { default as IconConnectionActive } from './gsm-bars.svg';
 export { default as IconConnectionInactive } from './ninja.svg';
 export { default as IconCopy } from './copy.svg';

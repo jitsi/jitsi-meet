@@ -190,6 +190,7 @@
         "connectErrorWithMsg": "Oops! Something went wrong and we couldn't connect to the conference: {{msg}}",
         "connecting": "Connecting",
         "contactSupport": "Contact support",
+        "copied": "Copied",
         "copy": "Copy",
         "dismiss": "Dismiss",
         "displayNameRequired": "Hi! What’s your name?",
@@ -315,6 +316,9 @@
     },
     "e2ee": {
         "labelToolTip": "Audio and Video Communication on this call is end-to-end encrypted"
+    },
+    "embedMeeting": {
+        "title": "Embed this meeting"
     },
     "feedback": {
         "average": "Average",
@@ -670,6 +674,7 @@
             "chat": "Toggle chat window",
             "document": "Toggle shared document",
             "download": "Download our apps",
+            "embedMeeting": "Embed meeting",
             "e2ee": "End-to-End Encryption",
             "feedback": "Leave feedback",
             "fullScreen": "Toggle full screen",
@@ -718,6 +723,7 @@
         "documentOpen": "Open shared document",
         "download": "Download our apps",
         "e2ee": "End-to-End Encryption",
+        "embedMeeting": "Embed meeting",
         "enterFullScreen": "View full screen",
         "enterTileView": "Enter tile view",
         "exitFullScreen": "Exit full screen",

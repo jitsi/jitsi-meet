@@ -5,7 +5,7 @@ import React, { Component } from 'react';
 import { getConferenceName } from '../../../base/conference/functions';
 import { getParticipantCount } from '../../../base/participants/functions';
 import { connect } from '../../../base/redux';
-import { isToolboxVisible } from '../../../toolbox';
+import { isToolboxVisible } from '../../../toolbox/functions.web';
 import ConferenceTimer from '../ConferenceTimer';
 
 import ParticipantsCount from './ParticipantsCount';

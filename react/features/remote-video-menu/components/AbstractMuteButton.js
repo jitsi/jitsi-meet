@@ -7,10 +7,7 @@ import {
 import { openDialog } from '../../base/dialog';
 import { IconMicDisabled } from '../../base/icons';
 import { MEDIA_TYPE } from '../../base/media';
-import {
-    AbstractButton,
-    type AbstractButtonProps
-} from '../../base/toolbox';
+import { AbstractButton, type AbstractButtonProps } from '../../base/toolbox/components';
 import { isRemoteTrackMuted } from '../../base/tracks';
 
 import { MuteRemoteParticipantDialog } from '.';

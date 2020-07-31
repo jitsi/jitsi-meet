@@ -15,7 +15,7 @@ import {
     dockToolbox,
     setToolboxEnabled,
     showToolbox
-} from '../../react/features/toolbox';
+} from '../../react/features/toolbox/actions.web';
 import { isMobileBrowser } from '../../react/features/base/environment/utils';
 import UIEvents from '../../service/UI/UIEvents';
 

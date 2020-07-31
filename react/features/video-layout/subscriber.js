@@ -2,16 +2,12 @@
 
 import debounce from 'lodash/debounce';
 
-import {
-    getPinnedParticipant,
-    pinParticipant
-} from '../base/participants';
+import { pinParticipant, getPinnedParticipant } from '../base/participants';
 import { StateListenerRegistry, equals } from '../base/redux';
 import { isFollowMeActive } from '../follow-me';
 import { selectParticipant } from '../large-video';
 
 import { setParticipantsWithScreenShare } from './actions';
-import { shouldDisplayTileView } from './functions';
 
 declare var APP: Object;
 declare var interfaceConfig: Object;
@@ -21,17 +17,11 @@ declare var interfaceConfig: Object;
  * preferred layout state and dispatching additional actions.
  */
 StateListenerRegistry.register(
-    /* selector */ state => shouldDisplayTileView(state),
-    /* listener */ (displayTileView, store) => {
+    /* selector */ state => state['features/video-layout'].tileViewEnabled,
+    /* listener */ (tileViewEnabled, store) => {
         const { dispatch } = store;
 
         dispatch(selectParticipant());
-
-        if (!displayTileView) {
-            if (_getAutoPinSetting()) {
-                _updateAutoPinnedParticipant(store);
-            }
-        }
     }
 );
 
@@ -115,9 +105,11 @@ function _updateAutoPinnedParticipant({ dispatch, getState }) {
     const latestScreenshareParticipantId
         = screenShares[screenShares.length - 1];
 
+    const pinned = getPinnedParticipant(getState);
+
     if (latestScreenshareParticipantId) {
         dispatch(pinParticipant(latestScreenshareParticipantId));
-    } else if (getPinnedParticipant(state['features/base/participants'])) {
+    } else if (pinned) {
         dispatch(pinParticipant(null));
     }
 }

@@ -106,6 +106,11 @@ type Props = {
     showDialog: boolean,
 
     /**
+     * Flag signaling the visibility of the skip prejoin toggle
+     */
+    showSkipPrejoin: boolean,
+
+    /**
      * Used for translation.
      */
     t: Function,
@@ -134,7 +139,8 @@ class Prejoin extends Component<Props, State> {
      * @static
      */
     static defaultProps = {
-        showJoinActions: true
+        showJoinActions: true,
+        showSkipPrejoin: true
     };
 
     /**
@@ -307,6 +313,7 @@ class Prejoin extends Component<Props, State> {
                                         hasOptions = { true }
                                         onClick = { joinConference }
                                         onOptionsClick = { _onOptionsClick }
+                                        testId = 'prejoin.joinMeeting'
                                         type = 'primary'>
                                         { t('prejoin.joinMeeting') }
                                     </ActionButton>
@@ -339,7 +346,11 @@ class Prejoin extends Component<Props, State> {
      * @returns {React$Element}
      */
     _renderSkipPrejoinButton() {
-        const { buttonIsToggled, t } = this.props;
+        const { buttonIsToggled, t, showSkipPrejoin } = this.props;
+
+        if (!showSkipPrejoin) {
+            return null;
+        }
 
         return (
             <div className = 'prejoin-checkbox-container'>

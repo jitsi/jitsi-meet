@@ -12,6 +12,11 @@ type Props = {
     className?: string,
 
     /**
+     * TestId of the button. Can be used to locate element when testing UI.
+     */
+    testId?: string,
+
+    /**
      * Callback for the onChange event of the field.
      */
     onChange: Function,
@@ -105,6 +110,7 @@ export default class InputField extends PureComponent<Props, State> {
         return (
             <input
                 className = { `field ${this.state.focused ? 'focused' : ''} ${this.props.className || ''}` }
+                data-testid = { this.props.testId ? this.props.testId : undefined }
                 onBlur = { this._onBlur }
                 onChange = { this._onChange }
                 onFocus = { this._onFocus }

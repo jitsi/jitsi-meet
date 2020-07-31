@@ -1,6 +1,7 @@
 // @flow
 
 import { API_ID } from '../../../modules/API/constants';
+import { getName as getAppName } from '../app/functions';
 import {
     checkChromeExtensionsInstalled,
     isMobileBrowser
@@ -167,10 +168,13 @@ export function initAnalytics({ getState }: { getState: Function }, handlers: Ar
         permanentProperties.group = group;
     }
 
-    //  Report if user is using websocket
+    // Report the application name
+    permanentProperties.appName = getAppName();
+
+    // Report if user is using websocket
     permanentProperties.websocket = navigator.product !== 'ReactNative' && typeof config.websocket === 'string';
 
-    // permanentProperties is external api
+    // Report if user is using the external API
     permanentProperties.externalApi = typeof API_ID === 'number';
 
     // Report if we are loaded in iframe

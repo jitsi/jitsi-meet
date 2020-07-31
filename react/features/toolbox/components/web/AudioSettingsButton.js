@@ -6,7 +6,7 @@ import { isMobileBrowser } from '../../../base/environment/utils';
 import { IconArrowDown } from '../../../base/icons';
 import JitsiMeetJS from '../../../base/lib-jitsi-meet/_';
 import { connect } from '../../../base/redux';
-import { ToolboxButtonWithIcon } from '../../../base/toolbox';
+import { ToolboxButtonWithIcon } from '../../../base/toolbox/components';
 import { getMediaPermissionPromptVisibility } from '../../../overlay';
 import { AudioSettingsPopup, toggleAudioSettings } from '../../../settings';
 import { isAudioSettingsButtonDisabled } from '../../functions';

@@ -12,6 +12,7 @@ import { openDialog, toggleDialog } from '../../../base/dialog';
 import { translate } from '../../../base/i18n';
 import {
     IconChat,
+    IconCodeBlock,
     IconExitFullScreen,
     IconFeedback,
     IconFullScreen,
@@ -29,10 +30,11 @@ import {
     participantUpdated
 } from '../../../base/participants';
 import { connect, equals } from '../../../base/redux';
-import { OverflowMenuItem } from '../../../base/toolbox';
+import { OverflowMenuItem } from '../../../base/toolbox/components';
 import { getLocalVideoTrack, toggleScreensharing } from '../../../base/tracks';
 import { VideoBlurButton } from '../../../blur';
 import { CHAT_SIZE, ChatCounter, toggleChat } from '../../../chat';
+import { EmbedMeetingDialog } from '../../../embed-meeting';
 import { SharedDocumentButton } from '../../../etherpad';
 import { openFeedbackDialog } from '../../../feedback';
 import { beginAddPeople } from '../../../invite';
@@ -58,6 +60,7 @@ import {
 } from '../../../subtitles';
 import {
     TileViewButton,
+    shouldDisplayTileView,
     toggleTileView
 } from '../../../video-layout';
 import {
@@ -237,6 +240,7 @@ class Toolbox extends Component<Props, State> {
         this._onToolbarOpenInvite = this._onToolbarOpenInvite.bind(this);
         this._onToolbarOpenKeyboardShortcuts = this._onToolbarOpenKeyboardShortcuts.bind(this);
         this._onToolbarOpenSpeakerStats = this._onToolbarOpenSpeakerStats.bind(this);
+        this._onToolbarOpenEmbedMeeting = this._onToolbarOpenEmbedMeeting.bind(this);
         this._onToolbarOpenVideoQuality = this._onToolbarOpenVideoQuality.bind(this);
         this._onToolbarToggleChat = this._onToolbarToggleChat.bind(this);
         this._onToolbarToggleFullScreen = this._onToolbarToggleFullScreen.bind(this);
@@ -374,6 +378,16 @@ class Toolbox extends Component<Props, State> {
         const { _conference } = this.props;
 
         this.props.dispatch(openFeedbackDialog(_conference));
+    }
+
+    /**
+     * Callback invoked to display {@code FeedbackDialog}.
+     *
+     * @private
+     * @returns {void}
+     */
+    _doOpenEmbedMeeting() {
+        this.props.dispatch(openDialog(EmbedMeetingDialog));
     }
 
     /**
@@ -717,6 +731,21 @@ class Toolbox extends Component<Props, State> {
         this._doOpenKeyboardShorcuts();
     }
 
+    _onToolbarOpenEmbedMeeting: () => void;
+
+    /**
+     * Creates an analytics toolbar event and dispatches an action for opening
+     * the embed meeting modal.
+     *
+     * @private
+     * @returns {void}
+     */
+    _onToolbarOpenEmbedMeeting() {
+        sendAnalytics(createToolbarEvent('embed.meeting'));
+
+        this._doOpenEmbedMeeting();
+    }
+
     _onToolbarOpenSpeakerStats: () => void;
 
     /**
@@ -1017,6 +1046,13 @@ class Toolbox extends Component<Props, State> {
                     key = 'stats'
                     onClick = { this._onToolbarOpenSpeakerStats }
                     text = { t('toolbar.speakerStats') } />,
+            this._shouldShowButton('embedmeeting')
+                && <OverflowMenuItem
+                    accessibilityLabel = { t('toolbar.accessibilityLabel.embedMeeting') }
+                    icon = { IconCodeBlock }
+                    key = 'embed'
+                    onClick = { this._onToolbarOpenEmbedMeeting }
+                    text = { t('toolbar.embedMeeting') } />,
             this._shouldShowButton('feedback')
                 && _feedbackConfigured
                 && <OverflowMenuItem
@@ -1395,7 +1431,7 @@ function _mapStateToProps(state) {
         _feedbackConfigured: Boolean(callStatsID),
         _isGuest: state['features/base/jwt'].isGuest,
         _fullScreen: fullScreen,
-        _tileViewEnabled: state['features/video-layout'].tileViewEnabled,
+        _tileViewEnabled: shouldDisplayTileView(state),
         _localParticipantID: localParticipant.id,
         _localRecState: localRecordingStates,
         _locked: locked,
