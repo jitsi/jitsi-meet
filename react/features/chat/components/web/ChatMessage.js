@@ -3,7 +3,8 @@
 import React from 'react';
 import { toArray } from 'react-emoji-render';
 
-
+import { isAccountOrChainName } from '../../../aeternity';
+import TipButton from '../../../aeternity/components/TipButton';
 import { translate } from '../../../base/i18n';
 import { Linkify } from '../../../base/react';
 import { MESSAGE_TYPE_LOCAL } from '../../constants';
@@ -76,9 +77,12 @@ class ChatMessage extends AbstractChatMessage<Props> {
      * @returns {React$Element<*>}
      */
     _renderDisplayName() {
+        const hasWallet = isAccountOrChainName(this.props.message.displayName);
+
         return (
             <div className = 'display-name'>
-                { this.props.message.displayName }
+                <span className = 'chat-name'>{ this.props.message.displayName }</span>
+                {hasWallet && <TipButton hasWallet = { hasWallet } /> }
             </div>
         );
     }

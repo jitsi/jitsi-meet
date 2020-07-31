@@ -7,14 +7,12 @@ import React, { Component } from 'react';
 import TIPPING_INTERFACE from 'superhero-utls/src/contracts/TippingInterface.aes';
 
 // base/util/createDeepLinkUrl
-import { createDeepLinkUrl } from '../../base/util/createDeepLinkUrl';
 import { client } from '../../../client';
+import TipIcon from '../../base/icons/svg/tip.svg';
+import { createDeepLinkUrl } from '../../base/util/createDeepLinkUrl';
 import {
     isAccountOrChainName
 } from '../utils';
-
-import IconTip from './iconTip.svg';
-import IconTipActive from './iconTipActive.svg';
 
 type Props = {
 
@@ -23,10 +21,15 @@ type Props = {
      */
     account: string,
 
-    /*
-    * Whether sdk is connected to extension and client is inited
-    */
-   connectedToExtension: boolean
+    /**
+     * Whether sdk is connected to extension and client is inited
+     */
+   connectedToExtension: boolean,
+
+    /**
+     * Has wallet
+     */
+    hasWallet: boolean
 };
 
 type State = {
@@ -279,8 +282,10 @@ class TipButton extends Component<Props, State> {
 
         return (
             <div>
-                {this.props.hasWallet ? <>
-                    <button onClick = { this._onToggleTooltip }>Tip</button>
+                {!this.props.hasWallet ? <>
+                    <div className = 'tip-icon' >
+                        <TipIcon onClick = { this._onToggleTooltip } />
+                    </div>
                     {isOpen && (
                         <div className = 'tip-wrapper' >
                             <input
@@ -295,9 +300,9 @@ class TipButton extends Component<Props, State> {
                             {!showLoading && error && error}
                         </div>
                     )}
-                </> : <button onClick = { this._onTipDeepLink }>
-                    Deep link Tip
-                </button>}
+                </> : <div className = 'tip-icon' >
+                    <TipIcon onClick = { this._onTipDeepLink } />
+                </div>}
             </div>
         );
     }
