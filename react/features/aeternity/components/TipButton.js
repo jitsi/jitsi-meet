@@ -282,22 +282,24 @@ class TipButton extends Component<Props, State> {
 
         return (
             <div>
-                {!this.props.hasWallet ? <>
+                {this.props.hasWallet ? <>
                     <div className = 'tip-icon' >
                         <TipIcon onClick = { this._onToggleTooltip } />
                     </div>
                     {isOpen && (
-                        <div className = 'tip-wrapper' >
-                            <input
-                                className = 'tip-input'
-                                onChange = { this._onChangeValue }
-                                placeholder = 'Amount'
-                                type = 'text'
-                                value = { this.state.value } />
-                            <button
-                                className = 'tip-button'
-                                onClick = { this._onSendTip }>Tip</button>
-                            {!showLoading && error && error}
+                        <div className = 'tip-container' >
+                            {!showLoading && error && <div className = 'tip-error'> {error}. </div>}
+                            <div className = 'tip-wrapper'>
+                                <input
+                                    className = 'tip-input'
+                                    onChange = { this._onChangeValue }
+                                    placeholder = 'Amount'
+                                    type = 'text'
+                                    value = { this.state.value } />
+                                <button
+                                    className = 'tip-button'
+                                    onClick = { this._onSendTip }>Tip</button>
+                            </div>
                         </div>
                     )}
                 </> : <div className = 'tip-icon' >

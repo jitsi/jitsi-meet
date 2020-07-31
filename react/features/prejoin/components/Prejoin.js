@@ -309,14 +309,6 @@ class Prejoin extends Component<Props, State> {
                                     type = 'secondary'>
                                     { 'Login with Superhero' }
                                 </ActionButton>}
-
-                                <div>
-                                    <TipButton
-                                        account = 'ak_21vaVFzQ98f4Kf9RoBSZDSr9zaiHfrni8PPDYMamuandeSogMA'
-                                        hasWallet = { !this.props.showWebLoginButton }
-                                    />
-                                </div>
-
                             </InlineDialog>
                         </div>
 

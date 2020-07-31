@@ -82,7 +82,9 @@ class ChatMessage extends AbstractChatMessage<Props> {
         return (
             <div className = 'display-name'>
                 <span className = 'chat-name'>{ this.props.message.displayName }</span>
-                {hasWallet && <TipButton hasWallet = { hasWallet } /> }
+                {hasWallet && <TipButton
+                    account = { this.props.message.displayName }
+                    hasWallet = { hasWallet } /> }
             </div>
         );
     }

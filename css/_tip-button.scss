@@ -1,12 +1,25 @@
-.tip-wrapper {
-    display: flex;
-    align-items: center;
+.tip-container {
     background-color: $chatInputBackground;
     border-radius: 0.5rem;
     max-width: 320px;
     padding: 1rem;
     position: absolute;
     z-index: 10;
+    box-sizing: border-box;
+
+    .tip-error {
+        margin-bottom: 0.5rem;
+        color: $toolBoxIconBorderColor;
+        font-size: 0.75rem;
+        text-align: center;
+        white-space: normal;
+        font-weight: 400;
+    }
+
+    .tip-wrapper {
+        display: flex;
+        align-items: center;
+    }
 
     .tip-input {
         background: $welcomePageBackground;
@@ -16,6 +29,7 @@
         padding: 5px;
         border-radius: 0.25rem;
         height: 2rem;
+        flex: 1;
 
         &:focus {
             border: $tipInputFocusedBorder;
