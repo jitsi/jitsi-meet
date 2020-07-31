@@ -1,0 +1,57 @@
+.tip-popup {
+    background-color: #12121B;
+    border-radius: 0.5rem;
+    max-width: 320px;
+    padding: 1rem;
+
+    form {
+        display: flex;
+        align-items: center;
+
+        & > div {
+            display: flex;
+            align-items: center;
+            height: 2rem;
+            width: 205px;
+            border-radius: 0.25rem;
+            background: #21222C;
+
+            .tip-input {
+                background: #21222C;
+                border: none;
+                color: white;
+                font-size: 14px;
+                padding: 5px;
+
+                &::placeholder {
+                    color: #727278;
+                }
+            }
+
+            .tip-text {
+                padding: 0.375rem 0.75rem;
+
+                span:first-child {
+                    color: #2A9CFF;
+                }
+
+                span:last-child {
+                    color: #727278;
+                    margin-left: 0.1rem;
+                    font-size: 0.7rem;
+                }
+            }
+        }
+
+        .tip-button {
+            background: #2A9CFF;
+            height: 2.3rem;
+            min-width: 3.5rem;
+            border: none;
+            border-radius: 0.25rem;
+            font-size: 15px;
+            font-weight: bold;
+            margin-left: 0.5rem;
+        }
+    }
+}

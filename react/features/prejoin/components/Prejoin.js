@@ -10,6 +10,7 @@ import { connect } from '../../base/redux';
 import { getDisplayName, updateSettings } from '../../base/settings';
 import { getLocalParticipant } from '../../base/participants';
 import { isWalletNameSet } from '../../aeternity/utils';
+import TipButton from '../../aeternity/components/TipButton';
 import { isGuest } from '../../invite';
 import { signDeepLink } from '../../settings/components/web/WebLoginButton';
 import { VideoSettingsButton, AudioSettingsButton } from '../../toolbox';
@@ -308,6 +309,14 @@ class Prejoin extends Component<Props, State> {
                                     type = 'secondary'>
                                     { 'Login with Superhero' }
                                 </ActionButton>}
+
+                                <div>
+                                    <TipButton
+                                        account = 'ak_21vaVFzQ98f4Kf9RoBSZDSr9zaiHfrni8PPDYMamuandeSogMA'
+                                        hasWallet = { !this.props.showWebLoginButton }
+                                    />
+                                </div>
+
                             </InlineDialog>
                         </div>
 

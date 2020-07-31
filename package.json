@@ -95,7 +95,10 @@
     "uuid": "3.1.0",
     "windows-iana": "^3.1.0",
     "xmldom": "0.1.27",
-    "zxcvbn": "4.4.2"
+    "zxcvbn": "4.4.2",
+    "superhero-utls": "git+https://git@github.com/aeternity/superhero-ui.git#master",
+    "bignumber.js": "^9.0.0",
+    "raw-loader": "^4.0.1"
   },
   "devDependencies": {
     "@babel/core": "7.5.5",
