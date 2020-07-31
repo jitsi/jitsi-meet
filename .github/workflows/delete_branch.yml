@@ -15,7 +15,7 @@ jobs:
         env:
           BRANCH_REF: ${{ github.head_ref }}
         id: get_branch
-        run: echo "::set-output name=branch::${BRANCH_REF##*/}"
+        run: echo "::set-output name=branch::$(echo ${GITHUB_REF##*/}|tr '[:upper:]' '[:lower:]')"
       - name: Remove deployed branch and restart services
         uses: JimCronqvist/action-ssh@master
         with:

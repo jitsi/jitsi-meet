@@ -10,7 +10,7 @@ jobs:
       # strip 'refs/heads/' from GITHUB_REF and export as ${{ steps.get_branch.outputs.branch }}
       - name: Get branch name
         id: get_branch
-        run: echo "::set-output name=branch::${GITHUB_REF##*/}"
+        run: echo "::set-output name=branch::$(echo ${GITHUB_REF##*/}|tr '[:upper:]' '[:lower:]')"
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v1
         with:

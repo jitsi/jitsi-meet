@@ -12,7 +12,7 @@ jobs:
         env:
           BRANCH_REF: ${{ github.head_ref }}
         id: get_branch
-        run: echo "::set-output name=branch::${BRANCH_REF##*/}"
+        run: echo "::set-output name=branch::$(echo ${BRANCH_REF##*/}|tr '[:upper:]' '[:lower:]')"
       - name: Publish url in PR
         uses: unsplash/comment-on-pr@master
         env:
