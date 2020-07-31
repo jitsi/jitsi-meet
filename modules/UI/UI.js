@@ -6,6 +6,7 @@ const UI = {};
 import EventEmitter from 'events';
 import Logger from 'jitsi-meet-logger';
 
+import { isMobileBrowser } from '../../react/features/base/environment/utils';
 import { getLocalParticipant } from '../../react/features/base/participants';
 import { toggleChat } from '../../react/features/chat';
 import { setDocumentUrl } from '../../react/features/etherpad';
@@ -16,7 +17,6 @@ import {
     setToolboxEnabled,
     showToolbox
 } from '../../react/features/toolbox/actions.web';
-import { isMobileBrowser } from '../../react/features/base/environment/utils';
 import UIEvents from '../../service/UI/UIEvents';
 
 import EtherpadManager from './etherpad/Etherpad';
