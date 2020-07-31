@@ -16,6 +16,7 @@ import {
     setToolboxEnabled,
     showToolbox
 } from '../../react/features/toolbox';
+import { isMobileBrowser } from '../../react/features/base/environment/utils';
 import UIEvents from '../../service/UI/UIEvents';
 
 import EtherpadManager from './etherpad/Etherpad';
@@ -153,6 +154,12 @@ UI.start = function() {
     VideoLayout.resizeVideoArea();
 
     sharedVideoManager = new SharedVideoManager(eventEmitter);
+
+    if (isMobileBrowser()) {
+        $('body').addClass('mobile-browser');
+    } else {
+        $('body').addClass('desktop-browser');
+    }
 
     if (interfaceConfig.filmStripOnly) {
         $('body').addClass('filmstrip-only');

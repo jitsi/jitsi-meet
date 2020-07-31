@@ -33,8 +33,10 @@
     #videoResolutionLabel {
         display: none;
     }
-    .vertical-filmstrip .filmstrip {
-        display: none;
+    .desktop-browser {
+        .vertical-filmstrip .filmstrip {
+            display: none;
+        }
     }
     .new-toolbox {
         .toolbox-content {
