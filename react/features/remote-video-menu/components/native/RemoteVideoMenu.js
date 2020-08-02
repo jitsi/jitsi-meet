@@ -15,7 +15,10 @@ import { hideRemoteVideoMenu } from '../../actions';
 import KickButton from './KickButton';
 import MuteButton from './MuteButton';
 import PinButton from './PinButton';
+import TipButton from './TipButton';
 import styles from './styles';
+
+declare var interfaceConfig: Object;
 
 /**
  * Size of the rendered avatar in the menu.
@@ -84,7 +87,7 @@ class RemoteVideoMenu extends Component<Props> {
      * @inheritdoc
      */
     render() {
-        const { _disableKick, _disableRemoteMute, participant } = this.props;
+        const { _disableKick, _disableRemoteMute, participant, _enableTip } = this.props;
         const buttonProps = {
             afterClick: this._onCancel,
             showLabel: true,
@@ -103,6 +106,11 @@ class RemoteVideoMenu extends Component<Props> {
         }
 
         buttons.push(<PinButton { ...buttonProps } />);
+
+        if (_enableTip) {
+            buttonProps.push(<TipButton { ...buttonProps } />);
+        }
+
         buttons.push(<PrivateMessageButton { ...buttonProps } />);
 
         return (
@@ -157,7 +165,8 @@ function _mapStateToProps(state, ownProps) {
         _disableKick: Boolean(disableKick),
         _disableRemoteMute: Boolean(disableRemoteMute),
         _isOpen: isDialogOpen(state, RemoteVideoMenu_),
-        _participantDisplayName: getParticipantDisplayName(state, participant.id)
+        _participantDisplayName: getParticipantDisplayName(state, participant.id),
+        _enableTip: Boolean(interfaceConfig.ENABLE_SUPERHERO)
     };
 }
 
