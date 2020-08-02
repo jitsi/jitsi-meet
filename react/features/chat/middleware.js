@@ -212,6 +212,7 @@ function _handleReceivedMessage({ dispatch, getState }, { id, message, nick, pri
     // backfilled for a participant that has left the conference.
     const participant = getParticipantById(state, id) || {};
     const localParticipant = getLocalParticipant(getState);
+    const akAddress = participant.akAddress;
     const displayName = participant.name || nick || getParticipantDisplayName(state, id);
     const hasRead = participant.local || isChatOpen;
     const timestampToDate = timestamp
@@ -220,6 +221,7 @@ function _handleReceivedMessage({ dispatch, getState }, { id, message, nick, pri
 
     dispatch(addMessage({
         displayName,
+        akAddress,
         hasRead,
         id,
         messageType: participant.local ? MESSAGE_TYPE_LOCAL : MESSAGE_TYPE_REMOTE,

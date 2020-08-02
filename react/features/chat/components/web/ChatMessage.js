@@ -77,14 +77,15 @@ class ChatMessage extends AbstractChatMessage<Props> {
      * @returns {React$Element<*>}
      */
     _renderDisplayName() {
-        const hasWallet = isAccountOrChainName(this.props.message.displayName);
+        const senderHasSuperHeroAddress = Boolean(this.props.message.akAddress)
+           || isAccountOrChainName(this.props.message.displayName);
 
         return (
             <div className = 'display-name'>
                 <span className = 'chat-name'>{ this.props.message.displayName }</span>
-                {hasWallet && <TipButton
-                    account = { this.props.message.displayName }
-                    hasWallet = { hasWallet } /> }
+                { senderHasSuperHeroAddress && <TipButton
+                    account = { this.props.message.akAddress }
+                    hasWallet = { true } /> }
             </div>
         );
     }
