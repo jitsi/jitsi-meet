@@ -263,7 +263,7 @@
         "remoteControlShareScreenWarning": "「許可」を押すと画面を共有することに注意してください！",
         "remoteControlStopMessage": "リモートコントロールセッションが終了しました！",
         "remoteControlTitle": "リモートデスクトップコントロール",
-        "Remove": "除去",
+        "Remove": "削除",
         "removePassword": "$t(lockRoomPassword) を削除する",
         "removeSharedVideoMsg": "共有ビデオを削除してもよろしいですか？",
         "removeSharedVideoTitle": "共有ビデオを削除する",
