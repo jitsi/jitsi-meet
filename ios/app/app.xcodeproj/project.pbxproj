@@ -22,13 +22,9 @@
 		C9D335549B2E5405F5FDDFD5 /* libPods-ScreenRecorderHopp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D743D392A28815D357C72E08 /* libPods-ScreenRecorderHopp.a */; };
 		DE4C456121DE1E4E00EA0709 /* FIRUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = DE4C455F21DE1E4E00EA0709 /* FIRUtilities.m */; };
 		FC13295CB433662D15672279 /* libPods-ScreenRecorderHoppSetupUI.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6C7B4A2E99BD9C2F5FEDD410 /* libPods-ScreenRecorderHoppSetupUI.a */; };
-		FE0025652492A75F00766AE2 /* JitsiMeet.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0B26BE6D1EC5BC3C00EEFB41 /* JitsiMeet.framework */; };
-		FE0025662492A75F00766AE2 /* JitsiMeet.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 0B26BE6D1EC5BC3C00EEFB41 /* JitsiMeet.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		FE01086024A9A4B7006CA22B /* Queue.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE01085F24A9A4B7006CA22B /* Queue.swift */; };
 		FE1CD4FE24B592CB00B4EE33 /* SocketShim.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE1CD4FD24B592CB00B4EE33 /* SocketShim.swift */; };
 		FE1E60DE24B4DE49000F2550 /* WebRTCModuleBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = FE1E60DD24B4DE49000F2550 /* WebRTCModuleBridge.m */; };
-		FE3141162497DD7300589973 /* JitsiMeet.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0B26BE6D1EC5BC3C00EEFB41 /* JitsiMeet.framework */; };
-		FE3141172497DD7300589973 /* JitsiMeet.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 0B26BE6D1EC5BC3C00EEFB41 /* JitsiMeet.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		FE816EAC248A550A004D900E /* RecordComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE816EAB248A550A004D900E /* RecordComponent.swift */; };
 		FE816EAE248A587E004D900E /* RecordComponent.m in Sources */ = {isa = PBXBuildFile; fileRef = FE816EAD248A587E004D900E /* RecordComponent.m */; };
 		FE816EB5248A5AD0004D900E /* ReplayKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FE816EB4248A5AD0004D900E /* ReplayKit.framework */; };
@@ -80,28 +76,6 @@
 			files = (
 			);
 			name = "Embed Watch Content";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		FE0025672492A75F00766AE2 /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				FE0025662492A75F00766AE2 /* JitsiMeet.framework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		FE3141182497DD7300589973 /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				FE3141172497DD7300589973 /* JitsiMeet.framework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		FE816ED2248A5AD0004D900E /* Embed App Extensions */ = {
@@ -194,7 +168,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				FE816EB5248A5AD0004D900E /* ReplayKit.framework in Frameworks */,
-				FE0025652492A75F00766AE2 /* JitsiMeet.framework in Frameworks */,
 				C9D335549B2E5405F5FDDFD5 /* libPods-ScreenRecorderHopp.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -203,7 +176,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FE3141162497DD7300589973 /* JitsiMeet.framework in Frameworks */,
 				FE816EBF248A5AD0004D900E /* ReplayKit.framework in Frameworks */,
 				FE816EC1248A5AD0004D900E /* UIKit.framework in Frameworks */,
 				FC13295CB433662D15672279 /* libPods-ScreenRecorderHoppSetupUI.a in Frameworks */,
@@ -385,7 +357,6 @@
 				FE816EAF248A5AD0004D900E /* Sources */,
 				FE816EB0248A5AD0004D900E /* Frameworks */,
 				FE816EB1248A5AD0004D900E /* Resources */,
-				FE0025672492A75F00766AE2 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -404,7 +375,6 @@
 				FE816EBA248A5AD0004D900E /* Sources */,
 				FE816EBB248A5AD0004D900E /* Frameworks */,
 				FE816EBC248A5AD0004D900E /* Resources */,
-				FE3141182497DD7300589973 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -426,7 +396,7 @@
 				ORGANIZATIONNAME = Facebook;
 				TargetAttributes = {
 					13B07F861A680F5B00A75B9A = {
-						DevelopmentTeam = 54B7FUCZ25;
+						DevelopmentTeam = UARN79NLDY;
 						LastSwiftMigration = 1130;
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
@@ -440,12 +410,12 @@
 					};
 					FE816EB2248A5AD0004D900E = {
 						CreatedOnToolsVersion = 11.3;
-						DevelopmentTeam = 54B7FUCZ25;
+						DevelopmentTeam = UARN79NLDY;
 						ProvisioningStyle = Automatic;
 					};
 					FE816EBD248A5AD0004D900E = {
 						CreatedOnToolsVersion = 11.3;
-						DevelopmentTeam = 54B7FUCZ25;
+						DevelopmentTeam = UARN79NLDY;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -761,10 +731,10 @@
 				CODE_SIGN_ENTITLEMENTS = app.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 4;
+				CURRENT_PROJECT_VERSION = 2;
 				DEAD_CODE_STRIPPING = YES;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = 54B7FUCZ25;
+				DEVELOPMENT_TEAM = UARN79NLDY;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -777,13 +747,13 @@
 				INFOPLIST_FILE = src/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
-				MARKETING_VERSION = 1.0.9;
+				MARKETING_VERSION = 1.1.0;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "de.hopp-foundation.screenshare";
+				PRODUCT_BUNDLE_IDENTIFIER = "de.hopp-foundation.klassenzimmer";
 				PRODUCT_NAME = "Digitales Klassenzimmer";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "src/jitsi-meet-Bridging-Header.h";
@@ -802,9 +772,9 @@
 				CODE_SIGN_ENTITLEMENTS = app.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 4;
+				CURRENT_PROJECT_VERSION = 2;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = 54B7FUCZ25;
+				DEVELOPMENT_TEAM = UARN79NLDY;
 				ENABLE_BITCODE = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -817,13 +787,13 @@
 				INFOPLIST_FILE = src/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
-				MARKETING_VERSION = 1.0.9;
+				MARKETING_VERSION = 1.1.0;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "de.hopp-foundation.screenshare";
+				PRODUCT_BUNDLE_IDENTIFIER = "de.hopp-foundation.klassenzimmer";
 				PRODUCT_NAME = "Digitales Klassenzimmer";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "src/jitsi-meet-Bridging-Header.h";
@@ -958,7 +928,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = 54B7FUCZ25;
+				DEVELOPMENT_TEAM = UARN79NLDY;
 				ENABLE_BITCODE = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = ScreenRecorderHoppSetupUI/Info.plist;
@@ -966,7 +936,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "de.hopp-foundation.screenshare.ScreenRecorderHoppSetupUI";
+				PRODUCT_BUNDLE_IDENTIFIER = "de.hopp-foundation.klassenzimmer.ScreenRecorderHoppSetupUI";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
@@ -990,14 +960,14 @@
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = 54B7FUCZ25;
+				DEVELOPMENT_TEAM = UARN79NLDY;
 				ENABLE_BITCODE = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = ScreenRecorderHoppSetupUI/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.2;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "de.hopp-foundation.screenshare.ScreenRecorderHoppSetupUI";
+				PRODUCT_BUNDLE_IDENTIFIER = "de.hopp-foundation.klassenzimmer.ScreenRecorderHoppSetupUI";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
@@ -1019,16 +989,18 @@
 				CODE_SIGN_ENTITLEMENTS = ScreenRecorderHopp/ScreenRecorderHopp.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 2;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = 54B7FUCZ25;
+				DEVELOPMENT_TEAM = UARN79NLDY;
 				ENABLE_BITCODE = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = ScreenRecorderHopp/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.2;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				MARKETING_VERSION = 1.1.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "de.hopp-foundation.screenshare.ScreenRecorderHopp";
+				PRODUCT_BUNDLE_IDENTIFIER = "de.hopp-foundation.klassenzimmer.ScreenRecorderHopp";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
@@ -1052,15 +1024,17 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 2;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = 54B7FUCZ25;
+				DEVELOPMENT_TEAM = UARN79NLDY;
 				ENABLE_BITCODE = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = ScreenRecorderHopp/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.2;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				MARKETING_VERSION = 1.1.0;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "de.hopp-foundation.screenshare.ScreenRecorderHopp";
+				PRODUCT_BUNDLE_IDENTIFIER = "de.hopp-foundation.klassenzimmer.ScreenRecorderHopp";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";

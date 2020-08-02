@@ -38,11 +38,11 @@ class RecordComponent: RCTViewManager {
     if #available(iOS 12.0, *) {
       let pickerView = CustomBroadcastPickerView(
                frame: CGRect(x: 0, y: 0, width: 200, height: 52))
-      pickerView.preferredExtension = "de.hopp-foundation.screenshare.ScreenRecorderHopp"
+      pickerView.preferredExtension = "de.hopp-foundation.klassenzimmer.ScreenRecorderHopp"
       pickerView.showsMicrophoneButton = false
       pickerView.translatesAutoresizingMaskIntoConstraints = false
       if let button = pickerView.subviews.first as? UIButton {
-        button.setTitle("Start Sharing", for: .normal)
+        button.setTitle("Bildschirm teilen", for: .normal)
         button.setTitleColor(UIColor.black, for: .normal)
 //        button.imageView?.backgroundColor = UIColor.red
         button.addTarget(self, action: #selector(self.buttonClicked), for: .touchUpInside)

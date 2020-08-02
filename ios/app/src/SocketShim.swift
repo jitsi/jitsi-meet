@@ -48,7 +48,7 @@ import CoreImage
     queue.async { [inst] in // remove this loop when recording ends.
       do {
         let connSock = try Socket.create(family: Socket.ProtocolFamily.unix, proto: Socket.SocketProtocol.unix)
-        let socketFD = fileManager.containerURL(forSecurityApplicationGroupIdentifier: "group.org.reactjs.native.example.ScreenRecordingDemo")
+        let socketFD = fileManager.containerURL(forSecurityApplicationGroupIdentifier: "group.de.hopp-foundation.screenrecording")
         let filePath = socketFD?.absoluteURL.appendingPathComponent("socketFDNN", isDirectory: false)
         let sockSig = try Socket.Signature.init(socketType: Socket.SocketType.stream, proto: Socket.SocketProtocol.unix, path: filePath?.path ?? "")
         

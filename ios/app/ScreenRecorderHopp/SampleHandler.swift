@@ -25,7 +25,7 @@ class SampleHandler: RPBroadcastSampleHandler {
       let fileManager = FileManager.default
       do {
         serverSocket = try Socket.create(family: Socket.ProtocolFamily.unix, proto: Socket.SocketProtocol.unix)
-        let sharedContainer = fileManager.containerURL(forSecurityApplicationGroupIdentifier: "group.org.reactjs.native.example.ScreenRecordingDemo")
+        let sharedContainer = fileManager.containerURL(forSecurityApplicationGroupIdentifier: "group.de.hopp-foundation.screenrecording")
         print("started")
           do {
             print("listening start")
