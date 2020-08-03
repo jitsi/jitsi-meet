@@ -2,6 +2,7 @@
 
 import React, { Component } from 'react';
 
+import TipButton from '../../../aeternity/components/TipButton';
 import { getLocalParticipant, getParticipantById, PARTICIPANT_ROLE } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import { getCurrentLayout, LAYOUTS } from '../../../video-layout';
@@ -80,6 +81,9 @@ class StatusIndicators extends Component<Props> {
                 { showAudioMutedIndicator ? <AudioMutedIndicator tooltipPosition = { tooltipPosition } /> : null }
                 { showVideoMutedIndicator ? <VideoMutedIndicator tooltipPosition = { tooltipPosition } /> : null }
                 { _showModeratorIndicator ? <ModeratorIndicator tooltipPosition = { tooltipPosition } /> : null }
+                <div className = 'moderator-icon right'>
+                    <TipButton hasWallet={true} account= 'ak_e12ijriqwjr12123123rewrqfefqw' />
+                </div>
             </div>
         );
     }
