@@ -7,9 +7,18 @@ import { SCREEN_SHARE_PARTICIPANTS_UPDATED, SET_TILE_VIEW } from '../../video-la
 import { shouldDisplayTileView } from '../../video-layout/functions';
 import { SET_AUDIO_ONLY } from '../audio-only/actionTypes';
 import { CONFERENCE_JOINED } from '../conference/actionTypes';
-import { getParticipantById } from '../participants/functions';
+import {
+    PARTICIPANT_JOINED,
+    PARTICIPANT_KICKED,
+    PARTICIPANT_LEFT
+} from '../participants/actionTypes';
+import {
+    getParticipantById,
+    getParticipantCount
+} from '../participants/functions';
 import { MiddlewareRegistry } from '../redux';
 
+import { limitLastN } from './functions';
 import logger from './logger';
 
 declare var APP: Object;
@@ -21,6 +30,9 @@ MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
     case APP_STATE_CHANGED:
     case CONFERENCE_JOINED:
+    case PARTICIPANT_JOINED:
+    case PARTICIPANT_KICKED:
+    case PARTICIPANT_LEFT:
     case SCREEN_SHARE_PARTICIPANTS_UPDATED:
     case SELECT_LARGE_VIDEO_PARTICIPANT:
     case SET_AUDIO_ONLY:
@@ -47,6 +59,8 @@ function _updateLastN({ getState }) {
     const { appState } = state['features/background'] || {};
     const { enabled: filmStripEnabled } = state['features/filmstrip'];
     const config = state['features/base/config'];
+    const { lastNLimits } = state['features/base/lastn'];
+    const participantCount = getParticipantCount(state);
 
     if (!conference) {
         logger.debug('There is no active conference, not updating last N');
@@ -56,6 +70,13 @@ function _updateLastN({ getState }) {
 
     const defaultLastN = typeof config.channelLastN === 'undefined' ? -1 : config.channelLastN;
     let lastN = defaultLastN;
+
+    // Apply last N limit based on the # of participants
+    const limitedLastN = limitLastN(participantCount, lastNLimits);
+
+    if (limitedLastN !== undefined) {
+        lastN = limitedLastN;
+    }
 
     if (typeof appState !== 'undefined' && appState !== 'active') {
         lastN = 0;
