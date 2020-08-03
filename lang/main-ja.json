@@ -15,7 +15,7 @@
         "inviteMoreHeader": "今このミーティングの参加者はあなただけです",
         "inviteMoreMailSubject": " {{appName}} ミーティングに参加する",
         "inviteMorePrompt": "招待状を送る",
-        "linkCopied": "Link copied to clipboard",
+        "linkCopied": "リンクをクリップボードにコピーしました",
         "loading": "Searching for people and phone numbers",
         "loadingNumber": "電話番号を検証しています",
         "loadingPeople": "招待する人を検索する",
@@ -487,7 +487,7 @@
       "somebody": "誰か",
       "startSilentTitle": "音声出力なしで参加しました!",
       "startSilentDescription": "ミーティングに再度参加して音声を有効にする",
-      "suboptimalBrowserWarning": "We are afraid your meeting experience isn't going to be that great here. We are looking for ways to improve this, but until then please try using one of the <a href='{{recommendedBrowserPageLink}}' target='_blank'>fully supported browsers</a>.",
+      "suboptimalBrowserWarning": "あなたの会議はこれ以上に素晴らしいものになることはありません。わたしたちは日々改善する努力をしていますが、それまでは、推奨している<a href='{{recommendedBrowserPageLink}}' target='_blank'>フルサポートブラウザー</a>を活用してください。",
       "suboptimalExperienceTitle": "ブラウザ警告",
       "unmute": "ミュートをはずす",
       "newDeviceCameraTitle": "新しいカメラが検出されました",
@@ -594,7 +594,7 @@
         "about": "あなたはこのミーティングに $t(lockRoomPassword) を設定できます。$t(lockRoomPassword) を知っているひとだけ参加できます。",
         "aboutReadOnly": "モデレーター参加者はこのミーティングに $t(lockRoomPassword) を設定できます。参加者には事前に $t(lockRoomPassword) を知らせます。",
         "insecureRoomNameWarning": "このミーティングの名前は安全ではありません。勝手に参加されてしまう危険があります。セキュリティーオプションを検討してください。",
-        "securityOptions": "セキュリティーオプション"
+        "securityOptions": "セキュリティー"
     },
     "settings": {
         "calendar": {
@@ -737,7 +737,7 @@
         "login": "ログイン",
         "logout": "ログアウト",
         "lowerYourHand": "手を下ろす",
-        "moreActions": "その他のアクション",
+        "moreActions": "その他の機能",
         "moreOptions": "その他のオプション",
         "mute": "マイク ON/OFF",
         "muteEveryone": "全員をミュート",
@@ -879,7 +879,7 @@
     "lobby": {
         "knockingParticipantList" : "参加拒否リスト",
         "allow": "許可",
-        "backToKnockModeButton": "パスワード不要で参加",
+        "backToKnockModeButton": "パスワードなしで参加",
         "dialogTitle": "ロビーモード",
         "disableDialogContent": "ロビーモードが有効です。この機能は この機能により、呼ばれていない参加者が会議に参加できなくなります。無効にしますか？",
         "disableDialogSubmit": "不可",
