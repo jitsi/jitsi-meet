@@ -390,3 +390,21 @@ export function getDominantSpeaker(stateful: Object | Function): ?Object {
 
     return participants.find(({ dominantSpeaker }) => dominantSpeaker);
 }
+
+/**
+ * Returns participant by akAddress from Redux state.
+ *
+ * @param {(Function|Object|Participant[])} stateful - The redux state
+ * features/base/participants, the (whole) redux state, or redux's
+ * {@code getState} function to be used to retrieve the state
+ * features/base/participants.
+ * @param {string} akAddress - The akAddress of the participant to retrieve.
+ * @private
+ * @returns {(Participant|undefined)}
+ */
+export function getParticipantByAkAddress(
+        stateful: Object | Function, akAddress: string): ?Object {
+    const participants = _getAllParticipants(stateful);
+
+    return participants.find(p => p.akAddress === akAddress);
+}

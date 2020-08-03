@@ -1,6 +1,7 @@
 // @flow
 
 import React from 'react';
+import { connect } from '../../../base/redux';
 import { toArray } from 'react-emoji-render';
 
 import { isAccountOrChainName } from '../../../aeternity';
@@ -85,7 +86,7 @@ class ChatMessage extends AbstractChatMessage<Props> {
                 <span className = 'chat-name'>{ this.props.message.displayName }</span>
                 { senderHasSuperHeroAddress && <TipButton
                     account = { this.props.message.akAddress }
-                    hasWallet = { true } /> }
+                    hasWallet = { this.props.hasWallet } /> }
             </div>
         );
     }
@@ -117,4 +118,10 @@ class ChatMessage extends AbstractChatMessage<Props> {
     }
 }
 
-export default translate(ChatMessage);
+const mapStateToProps = state => {
+    return {
+        hasWallet: state['features/aeternity'].hasWallet
+    };
+};
+
+export default translate(connect(mapStateToProps)(ChatMessage));

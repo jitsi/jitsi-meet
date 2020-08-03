@@ -45,11 +45,8 @@ class TipButton extends AbstractTipButton {
      * @returns {ReactElement}
      */
     render() {
-        const { participantID, t, visible } = this.props;
+        const { participantID, t } = this.props;
 
-        if (!visible) {
-            return null;
-        }
         const displayName = getParticipantDisplayName(APP.store.getState(), participantID);
 
         if (!isAccountOrChainName(displayName)) {
@@ -81,7 +78,7 @@ class TipButton extends AbstractTipButton {
 function _mapStateToProps(state: Object) {
 
     return {
-        visible: interfaceConfig.ENABLE_SUPERHERO
+        hasWallet: state['features/aeternity'].hasWallet
     };
 }
 

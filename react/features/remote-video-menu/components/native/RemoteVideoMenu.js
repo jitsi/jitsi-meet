@@ -97,6 +97,10 @@ class RemoteVideoMenu extends Component<Props> {
 
         const buttons = [];
 
+        if (_enableTip) {
+            buttonProps.push(<TipButton { ...buttonProps } />);
+        }
+
         if (!_disableRemoteMute) {
             buttons.push(<MuteButton { ...buttonProps } />);
         }
@@ -106,10 +110,6 @@ class RemoteVideoMenu extends Component<Props> {
         }
 
         buttons.push(<PinButton { ...buttonProps } />);
-
-        if (_enableTip) {
-            buttonProps.push(<TipButton { ...buttonProps } />);
-        }
 
         buttons.push(<PrivateMessageButton { ...buttonProps } />);
 

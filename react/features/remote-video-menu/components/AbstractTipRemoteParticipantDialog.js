@@ -6,7 +6,7 @@ import {
     createRemoteVideoMenuButtonEvent,
     sendAnalytics
 } from '../../analytics';
-import { kickParticipant } from '../../base/participants';
+
 
 type Props = {
 
@@ -51,7 +51,7 @@ export default class AbstractTipRemoteParticipantDialog
      * @returns {boolean} - True (to note that the modal should be closed).
      */
     _onSubmit() {
-        const { dispatch, participantID } = this.props;
+        const { participantID } = this.props;
 
         sendAnalytics(createRemoteVideoMenuButtonEvent(
             'tip.button',
@@ -59,7 +59,7 @@ export default class AbstractTipRemoteParticipantDialog
                 'participant_id': participantID
             }));
 
-        // dispatch(kickParticipant(participantID));
+        this._onSendTip();
 
         return true;
     }
