@@ -179,6 +179,9 @@ const config = {
                     name: `fonts/${isDevelopment ? '[name].[ext]' : '[name].[hash:8].[ext]'}`
                 }
             } ]
+        }, {
+            test: /\.aes$/i,
+            use: 'raw-loader'
         } ]
     },
     node: {

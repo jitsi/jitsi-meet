@@ -258,6 +258,27 @@
         margin: 5px 10px;
         max-width: 100%;
         overflow: hidden;
+
+        .display-name {
+            display: flex;
+            justify-content: space-between;
+
+            .chat-name {
+                width: 65%;
+                overflow-x: hidden;
+                text-overflow: ellipsis;
+            }
+
+            .tip-icon {
+                width: 20px;
+                height: 20px;
+            }
+
+            .tip-container {
+                left: 20%;
+                top: 100%;
+            }
+        }
     }
 }
 

@@ -12,11 +12,10 @@ export const initClient = async () => {
         nodes: [ {
             name: 'mainnet',
             instance: await node({
-                url: NODE_URL,
-                internalUrl: COMPILER_URL
+                url: NODE_URL
             })
         } ],
-        COMPILER_URL
+        compilerUrl: COMPILER_URL
     });
 
     return;

@@ -23,6 +23,7 @@ ReducerRegistry.register('features/chat', (state = DEFAULT_STATE, action) => {
     case ADD_MESSAGE: {
         const newMessage = {
             displayName: action.displayName,
+            akAddress: action.akAddress,
             error: action.error,
             id: action.id,
             messageType: action.messageType,
