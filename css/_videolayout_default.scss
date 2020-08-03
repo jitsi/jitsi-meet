@@ -365,6 +365,17 @@
     }
 }
 
+.tip-block {
+    display: inline-block;
+    float: right;
+    margin: 0 5px;
+
+    .tip-icon  {
+        width: 20px;
+        height: 20px;
+    }
+}
+
 .raisehandindicator {
   background: $raiseHandBg;
 }

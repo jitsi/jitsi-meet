@@ -41,7 +41,17 @@ type Props = {
     /**
      * The ID of the participant for which the status bar is rendered.
      */
-    participantID: String
+    participantID: String,
+
+    /**
+     * Participant's akAddress
+     */
+    _akAddress: string,
+
+    /**
+     * Participant is local
+     */
+    _local: boolean
 };
 
 /**
@@ -60,6 +70,8 @@ class StatusIndicators extends Component<Props> {
         const {
             _currentLayout,
             _showModeratorIndicator,
+            _akAddress,
+            _local,
             showAudioMutedIndicator,
             showVideoMutedIndicator
         } = this.props;
@@ -81,9 +93,12 @@ class StatusIndicators extends Component<Props> {
                 { showAudioMutedIndicator ? <AudioMutedIndicator tooltipPosition = { tooltipPosition } /> : null }
                 { showVideoMutedIndicator ? <VideoMutedIndicator tooltipPosition = { tooltipPosition } /> : null }
                 { _showModeratorIndicator ? <ModeratorIndicator tooltipPosition = { tooltipPosition } /> : null }
-                <div className = 'moderator-icon right'>
-                    <TipButton hasWallet={true} account= 'ak_e12ijriqwjr12123123rewrqfefqw' />
-                </div>
+                {!_local && _akAddress
+                    && <div className = 'tip-block'>
+                        <TipButton
+                            account = { _akAddress }
+                            hasWallet = { true } />
+                    </div>}
             </div>
         );
     }
@@ -109,7 +124,9 @@ function _mapStateToProps(state, ownProps) {
     return {
         _currentLayout: getCurrentLayout(state),
         _showModeratorIndicator:
-            !interfaceConfig.DISABLE_FOCUS_INDICATOR && participant && participant.role === PARTICIPANT_ROLE.MODERATOR
+            !interfaceConfig.DISABLE_FOCUS_INDICATOR && participant && participant.role === PARTICIPANT_ROLE.MODERATOR,
+        _akAddress: participant.akAddress,
+        _local: participant.local
     };
 }
 
