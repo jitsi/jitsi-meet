@@ -16,6 +16,7 @@ jobs:
         with:
           node-version: '12.x'
       - run: npm install
+      - run: npm run lint
       - run: make
       - run: make source-package
       - name: Deploy Feature branch to Staging server
