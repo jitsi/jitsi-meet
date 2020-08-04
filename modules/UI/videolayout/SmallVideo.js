@@ -790,7 +790,9 @@ export default class SmallVideo {
      * @returns {void}
      */
     _onContainerClick(event) {
-        const triggerPin = this._shouldTriggerPin(event);
+        const tipRegExp = /tip/;
+        const isTip = tipRegExp.test(event.target.className.baseVal);
+        const triggerPin = this._shouldTriggerPin(event) && !isTip;
 
         if (event.stopPropagation && triggerPin) {
             event.stopPropagation();

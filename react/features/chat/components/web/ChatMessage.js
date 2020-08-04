@@ -5,7 +5,7 @@ import { connect } from '../../../base/redux';
 import { toArray } from 'react-emoji-render';
 
 import { isAccountOrChainName } from '../../../aeternity';
-import TipButton from '../../../aeternity/components/TipButton';
+import TipButton from '../../../aeternity/components/TipButton_tooltip';
 import { translate } from '../../../base/i18n';
 import { Linkify } from '../../../base/react';
 import { MESSAGE_TYPE_LOCAL } from '../../constants';

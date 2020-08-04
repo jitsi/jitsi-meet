@@ -23,7 +23,7 @@ type Props = {
 
 
     /**
-     * Has wallet
+     * Whether user has wallet
      */
     hasWallet: boolean
 };

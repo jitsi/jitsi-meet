@@ -60,3 +60,14 @@
         width: 100%;
     }
 }
+
+.tip-container {
+    &.tip-container__chat {
+        left: 20%;
+        top: 100%;
+    }
+    &.tip-container__aside {
+        top: -80px;
+        right: 0;
+    }
+}

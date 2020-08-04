@@ -4,6 +4,7 @@ import React, { Component } from 'react';
 
 import { getLocalParticipant, getParticipantById, PARTICIPANT_ROLE } from '../../../base/participants';
 import { connect } from '../../../base/redux';
+import TipButton from '../../../remote-video-menu/components/web/TipButton';
 import { getCurrentLayout, LAYOUTS } from '../../../video-layout';
 
 import AudioMutedIndicator from './AudioMutedIndicator';
@@ -40,7 +41,18 @@ type Props = {
     /**
      * The ID of the participant for which the status bar is rendered.
      */
-    participantID: String
+    participantID: String,
+
+
+    /**
+     * Participant's akAddress
+     */
+    _akAddress: string,
+
+    /**
+     * Participant is local
+     */
+    _local: boolean,
 };
 
 /**
@@ -60,7 +72,9 @@ class StatusIndicators extends Component<Props> {
             _currentLayout,
             _showModeratorIndicator,
             showAudioMutedIndicator,
-            showVideoMutedIndicator
+            showVideoMutedIndicator,
+            _akAddress,
+            _local
         } = this.props;
         let tooltipPosition;
 
@@ -80,6 +94,15 @@ class StatusIndicators extends Component<Props> {
                 { showAudioMutedIndicator ? <AudioMutedIndicator tooltipPosition = { tooltipPosition } /> : null }
                 { showVideoMutedIndicator ? <VideoMutedIndicator tooltipPosition = { tooltipPosition } /> : null }
                 { _showModeratorIndicator ? <ModeratorIndicator tooltipPosition = { tooltipPosition } /> : null }
+                { !_local && _akAddress
+                    && <div className = 'tip-block'>
+                        <TipButton
+                            account = { _akAddress }
+                            hasWallet = { this.props.hasWallet }
+                            theme = {{
+                                place: 'aside'
+                            }} />
+                    </div> }
             </div>
         );
     }
@@ -102,10 +125,19 @@ function _mapStateToProps(state, ownProps) {
     // Only the local participant won't have id for the time when the conference is not yet joined.
     const participant = participantID ? getParticipantById(state, participantID) : getLocalParticipant(state);
 
+    console.log({
+        _akAddress: participant.akAddress,
+        _local: participant.local
+    });
+
     return {
         _currentLayout: getCurrentLayout(state),
         _showModeratorIndicator:
-            !interfaceConfig.DISABLE_FOCUS_INDICATOR && participant && participant.role === PARTICIPANT_ROLE.MODERATOR
+            !interfaceConfig.DISABLE_FOCUS_INDICATOR && participant && participant.role === PARTICIPANT_ROLE.MODERATOR,
+        _akAddress: participant.akAddress,
+        _local: participant.local,
+        hasWallet: state['features/aeternity'].hasWallet
+
     };
 }
 
