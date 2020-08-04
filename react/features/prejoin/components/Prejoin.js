@@ -11,6 +11,7 @@ import { ActionButton, InputField, PreMeetingScreen, ToggleButton } from '../../
 import { connect } from '../../base/redux';
 import { getDisplayName, updateSettings } from '../../base/settings';
 import { getLocalJitsiVideoTrack } from '../../base/tracks';
+import { isButtonEnabled } from '../../toolbox/functions.web';
 import {
     joinConference as joinConferenceAction,
     joinConferenceWithoutAudio as joinConferenceWithoutAudioAction,
@@ -27,6 +28,8 @@ import {
 
 import JoinByPhoneDialog from './dialogs/JoinByPhoneDialog';
 import DeviceStatus from './preview/DeviceStatus';
+
+declare var interfaceConfig: Object;
 
 type Props = {
 
@@ -101,6 +104,11 @@ type Props = {
     showJoinActions: boolean,
 
     /**
+     * Flag signaling the visibility of the conference URL section.
+     */
+    showConferenceInfo: boolean,
+
+    /**
      * If 'JoinByPhoneDialog' is visible or not.
      */
     showDialog: boolean,
@@ -139,6 +147,7 @@ class Prejoin extends Component<Props, State> {
      * @static
      */
     static defaultProps = {
+        showConferenceInfo: true,
         showJoinActions: true,
         showSkipPrejoin: true
     };
@@ -257,6 +266,7 @@ class Prejoin extends Component<Props, State> {
             showAvatar,
             showCameraPreview,
             showDialog,
+            showConferenceInfo,
             showJoinActions,
             t,
             videoTrack
@@ -270,7 +280,7 @@ class Prejoin extends Component<Props, State> {
                 footer = { this._renderFooter() }
                 name = { name }
                 showAvatar = { showAvatar }
-                showConferenceInfo = { showJoinActions }
+                showConferenceInfo = { showConferenceInfo }
                 skipPrejoinButton = { this._renderSkipPrejoinButton() }
                 title = { t('prejoin.joinMeeting') }
                 videoMuted = { !showCameraPreview }
@@ -368,11 +378,22 @@ class Prejoin extends Component<Props, State> {
  * Maps (parts of) the redux state to the React {@code Component} props.
  *
  * @param {Object} state - The redux state.
+ * @param {Object} ownProps - The props passed to the component.
  * @returns {Object}
  */
-function mapStateToProps(state): Object {
+function mapStateToProps(state, ownProps): Object {
     const name = getDisplayName(state);
     const joinButtonDisabled = isDisplayNameRequired(state) && !name;
+    const { showJoinActions } = ownProps;
+    const isInviteButtonEnabled = isButtonEnabled('invite');
+
+    // Hide conference info when interfaceConfig is available and the invite button is disabled.
+    // In all other cases we want to preserve the behaviour and control the the conference info
+    // visibility trough showJoinActions.
+    const showConferenceInfo
+        = typeof isInviteButtonEnabled === 'undefined' || isInviteButtonEnabled === true
+            ? showJoinActions
+            : false;
 
     return {
         buttonIsToggled: isPrejoinSkipped(state),
@@ -383,6 +404,7 @@ function mapStateToProps(state): Object {
         showDialog: isJoinByPhoneDialogVisible(state),
         hasJoinByPhoneButton: isJoinByPhoneButtonVisible(state),
         showCameraPreview: !isVideoMutedByUser(state),
+        showConferenceInfo,
         videoTrack: getLocalJitsiVideoTrack(state)
     };
 }
