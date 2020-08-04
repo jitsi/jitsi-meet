@@ -40,6 +40,10 @@ export function validateLastNLimits(lastNLimits) {
  * of participants or {@code undefined} otherwise.
  */
 export function limitLastN(participantsCount, lastNLimits) {
+    if (!lastNLimits || !lastNLimits.keys) {
+        return undefined;
+    }
+
     let selectedLimit;
 
     for (const participantsN of lastNLimits.keys()) {

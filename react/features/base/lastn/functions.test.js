@@ -1,6 +1,9 @@
 import { limitLastN, validateLastNLimits } from './functions';
 
-describe('limitsLastN', () => {
+describe('limitLastN', () => {
+    it('handles undefined mapping', () => {
+        expect(limitLastN(0, undefined)).toBe(undefined);
+    });
     describe('when a correct limit mapping is given', () => {
         const limits = new Map();
 
