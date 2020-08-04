@@ -125,7 +125,9 @@ class TipButton extends Component<Props, State> {
     }
 
     static defaultProps = {
-        place: 'chat'
+        theme: {
+            place: 'chat'
+        }
     }
 
     /**
@@ -285,7 +287,7 @@ class TipButton extends Component<Props, State> {
         const { isOpen, error, showLoading } = this.state;
 
         return (
-            <div>
+            <div className = 'tip-component'>
                 {this.props.hasWallet ? <>
                     <div className = 'tip-icon' >
                         <TipIcon onClick = { this._onToggleTooltip } />
