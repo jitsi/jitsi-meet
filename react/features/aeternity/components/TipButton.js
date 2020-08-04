@@ -27,9 +27,9 @@ type Props = {
    connectedToExtension: boolean,
 
     /**
-     * Has wallet
+     * Whether user has wallet
      */
-    hasWallet: boolean
+    hasWallet: boolean,
 };
 
 type State = {
@@ -122,6 +122,10 @@ class TipButton extends Component<Props, State> {
         this._onSendTipComment = this._onSendTipComment.bind(this);
         this._onChangeValue = this._onChangeValue.bind(this);
         this._onTipDeepLink = this._onTipDeepLink.bind(this);
+    }
+
+    static defaultProps = {
+        place: 'chat'
     }
 
     /**
@@ -287,7 +291,7 @@ class TipButton extends Component<Props, State> {
                         <TipIcon onClick = { this._onToggleTooltip } />
                     </div>
                     {isOpen && (
-                        <div className = 'tip-container' >
+                        <div className = { `tip-container tip-container__${this.props.theme.place}` } >
                             {!showLoading && error && <div className = 'tip-error'> {error}. </div>}
                             <div className = 'tip-wrapper'>
                                 <input

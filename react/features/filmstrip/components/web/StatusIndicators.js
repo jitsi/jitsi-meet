@@ -97,7 +97,10 @@ class StatusIndicators extends Component<Props> {
                     && <div className = 'tip-block'>
                         <TipButton
                             account = { _akAddress }
-                            hasWallet = { true } />
+                            hasWallet = { this.props.hasWallet }
+                            theme = {{
+                                place: 'aside'
+                            }} />
                     </div>}
             </div>
         );
@@ -126,7 +129,8 @@ function _mapStateToProps(state, ownProps) {
         _showModeratorIndicator:
             !interfaceConfig.DISABLE_FOCUS_INDICATOR && participant && participant.role === PARTICIPANT_ROLE.MODERATOR,
         _akAddress: participant.akAddress,
-        _local: participant.local
+        _local: participant.local,
+        hasWallet: state['features/aeternity'].hasWallet
     };
 }
 

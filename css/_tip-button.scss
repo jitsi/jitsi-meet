@@ -61,7 +61,13 @@
     }
 }
 
-.videocontainer__toolbar .tip-container {
-    top: -80px;
-    left: -131px;
+.tip-container {
+    &.tip-container__chat {
+        top: -50px;
+        left: 100%;
+    }
+    &.tip-container__aside {
+        top: -80px;
+        left: -131px;
+    }
 }

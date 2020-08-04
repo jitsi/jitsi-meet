@@ -7,6 +7,7 @@ import { isAccountOrChainName } from '../../../aeternity';
 import TipButton from '../../../aeternity/components/TipButton';
 import { translate } from '../../../base/i18n';
 import { Linkify } from '../../../base/react';
+import { connect } from '../../../base/redux';
 import { MESSAGE_TYPE_LOCAL } from '../../constants';
 import AbstractChatMessage, {
     type Props
@@ -85,7 +86,11 @@ class ChatMessage extends AbstractChatMessage<Props> {
                 <span className = 'chat-name'>{ this.props.message.displayName }</span>
                 { senderHasSuperHeroAddress && <TipButton
                     account = { this.props.message.akAddress }
-                    hasWallet = { true } /> }
+                    hasWallet = { this.props.hasWallet }
+                    theme = {{
+                        place: 'chat'
+                    }} />
+                }
             </div>
         );
     }
@@ -117,4 +122,10 @@ class ChatMessage extends AbstractChatMessage<Props> {
     }
 }
 
-export default translate(ChatMessage);
+const mapStateToProps = state => {
+    return {
+        hasWallet: state['features/aeternity'].hasWallet
+    };
+};
+
+export default translate(connect(mapStateToProps)(ChatMessage));
