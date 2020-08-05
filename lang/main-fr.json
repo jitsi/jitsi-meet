@@ -697,6 +697,8 @@
         "hangup": "Quitter",
         "help": "Aide",
         "invite": "Inviter des participants",
+        "lobbyButtonDisable": "Désactiver le contrôle des participant·e·s",
+        "lobbyButtonEnable": "Activer le contrôle des participant·e·s",
         "login": "Connexion",
         "logout": "Déconnexion",
         "lowerYourHand": "Baisser la main",
