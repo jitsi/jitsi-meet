@@ -296,8 +296,6 @@
         "streamKey": "Live stream key",
         "Submit": "Submit",
         "thankYou": "Thank you for using {{appName}}!",
-        "tipParticipantButton": "Tip",
-        "tipParticipantTitle": "Tip this participant?",
         "token": "token",
         "tokenAuthFailed": "Sorry, you're not allowed to join this call.",
         "tokenAuthFailedTitle": "Authentication failed",
@@ -696,7 +694,6 @@
             "show": "Show on stage",
             "speakerStats": "Toggle speaker statistics",
             "tileView": "Toggle tile view",
-            "tip": "Tip Participant",
             "toggleCamera": "Toggle camera",
             "toggleFilmstrip": "Toggle filmstrip",
             "videomute": "Toggle mute video",
@@ -821,11 +818,10 @@
         "moderator": "Moderator",
         "mute": "Participant is muted",
         "muted": "Muted",
-        "pin": "Pin participant",
         "remoteControl": "Start / Stop remote control",
         "show": "Show on stage",
-        "tip": "Tip participant",
-        "videomute": "Participant has stopped the camera"
+        "videomute": "Participant has stopped the camera",
+        "pin": "Pin participant"
     },
     "welcomepage": {
         "accessibilityLabel": {

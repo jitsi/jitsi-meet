@@ -8,7 +8,6 @@ import { Popover } from '../../../base/popover';
 import { connect } from '../../../base/redux';
 
 import PinButton from './PinButton';
-import TipButton from './TipButton';
 
 import {
     MuteButton,
@@ -173,7 +172,6 @@ class RemoteVideoMenuTriggerButton extends Component<Props> {
             _disableKick,
             _disableRemoteMute,
             _isModerator,
-            _enableTip,
             initialVolumeValue,
             isAudioMuted,
             onRemoteControlToggle,
@@ -223,14 +221,6 @@ class RemoteVideoMenuTriggerButton extends Component<Props> {
             );
         }
 
-        if (_enableTip) {
-            buttons.push(
-                <TipButton
-                    key = 'tip'
-                    participantID = { participantID } />
-            );
-        }
-
         buttons.push(
             <PrivateMessageMenuButton
                 key = 'privateMessage'
@@ -276,8 +266,7 @@ function _mapStateToProps(state) {
     return {
         _isModerator: Boolean(participant?.role === PARTICIPANT_ROLE.MODERATOR),
         _disableKick: Boolean(disableKick),
-        _disableRemoteMute: Boolean(disableRemoteMute),
-        _enableTip: Boolean(interfaceConfig.ENABLE_SUPERHERO)
+        _disableRemoteMute: Boolean(disableRemoteMute)
     };
 }
 

@@ -2,6 +2,7 @@
 
 import React, { Component } from 'react';
 
+import TipButton from '../../../aeternity/components/TipButton';
 import { getLocalParticipant, getParticipantById, PARTICIPANT_ROLE } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import { getCurrentLayout, LAYOUTS } from '../../../video-layout';
@@ -40,7 +41,22 @@ type Props = {
     /**
      * The ID of the participant for which the status bar is rendered.
      */
-    participantID: String
+    participantID: String,
+
+    /**
+     * Participant's akAddress
+     */
+    _akAddress: string,
+
+    /**
+     * Participant is local
+     */
+    _local: boolean,
+
+    /**
+     * Whether user has wallet
+     */
+    hasWallet: boolean,
 };
 
 /**
@@ -59,6 +75,9 @@ class StatusIndicators extends Component<Props> {
         const {
             _currentLayout,
             _showModeratorIndicator,
+            _akAddress,
+            _local,
+            hasWallet,
             showAudioMutedIndicator,
             showVideoMutedIndicator
         } = this.props;
@@ -80,6 +99,14 @@ class StatusIndicators extends Component<Props> {
                 { showAudioMutedIndicator ? <AudioMutedIndicator tooltipPosition = { tooltipPosition } /> : null }
                 { showVideoMutedIndicator ? <VideoMutedIndicator tooltipPosition = { tooltipPosition } /> : null }
                 { _showModeratorIndicator ? <ModeratorIndicator tooltipPosition = { tooltipPosition } /> : null }
+                {!_local && _akAddress
+                    && <div className = 'tip-block'>
+                        <TipButton
+                            account = { _akAddress }
+                            hasWallet = { hasWallet }
+                            layout = { _currentLayout } />
+                    </div>
+                }
             </div>
         );
     }
@@ -105,7 +132,10 @@ function _mapStateToProps(state, ownProps) {
     return {
         _currentLayout: getCurrentLayout(state),
         _showModeratorIndicator:
-            !interfaceConfig.DISABLE_FOCUS_INDICATOR && participant && participant.role === PARTICIPANT_ROLE.MODERATOR
+            !interfaceConfig.DISABLE_FOCUS_INDICATOR && participant && participant.role === PARTICIPANT_ROLE.MODERATOR,
+        _akAddress: participant.akAddress,
+        _local: participant.local,
+        hasWallet: state['features/aeternity'].hasWallet
     };
 }
 

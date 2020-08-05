@@ -60,3 +60,47 @@
         width: 100%;
     }
 }
+
+.tip-container {
+    &.tip-container__chat {
+        left: 20%;
+        top: 100%;
+    }
+    &.tip-container__aside {
+        top: -80px;
+        right: 0;
+    }
+}
+
+.modal {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 9000;
+    opacity: 1;
+    margin: 0;
+    padding: 0;
+
+    .modal-dialog {
+        position: relative;
+        width: auto;
+        height: 100%;
+
+        .modal-content {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+
+            .modal-body {
+                position: relative;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 100%;
+            }
+        }
+    }
+}

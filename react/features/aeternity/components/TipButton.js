@@ -3,7 +3,6 @@
 
 import BigNumber from 'bignumber.js';
 import React, { Component } from 'react';
-
 import TIPPING_INTERFACE from 'superhero-utls/src/contracts/TippingInterface.aes';
 
 // base/util/createDeepLinkUrl
@@ -27,9 +26,14 @@ type Props = {
    connectedToExtension: boolean,
 
     /**
-     * Has wallet
+     * Whether user has wallet
      */
-    hasWallet: boolean
+    hasWallet: boolean,
+
+    /**
+     * Tile view or vertical filmstrip
+     */
+    layout: string,
 };
 
 type State = {
@@ -109,7 +113,7 @@ class TipButton extends Component<Props, State> {
         this.state = {
             isOpen: false,
             currency: 'eur',
-            value: '0',
+            value: '',
             message: `button host ${window.location.host} tip to ${this.props.account}`,
             error: '',
             showLoading: false,
@@ -122,6 +126,12 @@ class TipButton extends Component<Props, State> {
         this._onSendTipComment = this._onSendTipComment.bind(this);
         this._onChangeValue = this._onChangeValue.bind(this);
         this._onTipDeepLink = this._onTipDeepLink.bind(this);
+    }
+
+    static defaultProps = {
+        theme: {
+            place: 'chat'
+        }
     }
 
     /**
@@ -141,8 +151,11 @@ class TipButton extends Component<Props, State> {
      * @param {string} currency - New currency.
      * @returns {void}
      */
-    _onToggleTooltip() {
-        this.setState({ isOpen: !this.state.isOpen });
+    _onToggleTooltip(event) {
+        const tipRegExp = /tip/;
+        const isModal = tipRegExp.test(event.target.className);
+
+        isModal ? null : this.setState({ isOpen: !this.state.isOpen });
     }
 
     /**
@@ -152,7 +165,10 @@ class TipButton extends Component<Props, State> {
      * @returns {void}
      */
     _onChangeValue({ target: { value } }) {
-        this.setState({ value });
+        const validationRegExp = /^\d*\.?\d*/;
+        const result = value.match(validationRegExp);
+
+        result ? this.setState({ value: result[0] }) : null;
     }
 
     /**
@@ -234,6 +250,14 @@ class TipButton extends Component<Props, State> {
             return;
         }
 
+        const { value } = this.state;
+
+        if (value[value.length - 1] === '.') {
+            this.setState({ error: 'The last character shouldn\'t be \' . \'' });
+
+            return;
+        }
+
         const amount = aeternity.util.aeToAtoms(this.state.value);
         const url = `${URLS.SUPER}/user-profile/${this.props.account}`;
 
@@ -278,24 +302,65 @@ class TipButton extends Component<Props, State> {
      * @returns {ReactElement}
      */
     render() {
-        const { isOpen, error, showLoading } = this.state;
+        const { isOpen, error, showLoading, value } = this.state;
+        const { hasWallet, layout } = this.props;
+
+        if (layout) {
+            return (
+                <div className = 'tip-component'>
+                    {hasWallet ? <>
+                        <div className = 'tip-icon' >
+                            <TipIcon onClick = { this._onToggleTooltip } />
+                        </div>
+                        {isOpen && (
+                            <div className = 'modal'>
+                                <div className = 'modal-dialog'>
+                                    <div className = 'modal-content'>
+                                        <div
+                                            className = 'modal-body'
+                                            onClick = { this._onToggleTooltip }>
+                                            <div className = 'tip-container'>
+                                                {!showLoading && error && <div className = 'tip-error'> {error} </div>}
+                                                <div className = 'tip-wrapper'>
+                                                    <input
+                                                        className = 'tip-input'
+                                                        onChange = { this._onChangeValue }
+                                                        placeholder = 'Amount'
+                                                        type = 'text'
+                                                        value = { value } />
+                                                    <button
+                                                        className = 'tip-button'
+                                                        onClick = { this._onSendTip }>Tip</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+                    </> : <div className = 'tip-icon' >
+                        <TipIcon onClick = { this._onTipDeepLink } />
+                    </div>}
+                </div>
+            );
+        }
 
         return (
-            <div>
-                {this.props.hasWallet ? <>
+            <div className = 'tip-component'>
+                {hasWallet ? <>
                     <div className = 'tip-icon' >
                         <TipIcon onClick = { this._onToggleTooltip } />
                     </div>
                     {isOpen && (
-                        <div className = 'tip-container' >
-                            {!showLoading && error && <div className = 'tip-error'> {error}. </div>}
+                        <div className = { `tip-container tip-container__${this.props.theme.place}` } >
+                            {!showLoading && error && <div className = 'tip-error'> {error} </div>}
                             <div className = 'tip-wrapper'>
                                 <input
                                     className = 'tip-input'
                                     onChange = { this._onChangeValue }
                                     placeholder = 'Amount'
                                     type = 'text'
-                                    value = { this.state.value } />
+                                    value = { value } />
                                 <button
                                     className = 'tip-button'
                                     onClick = { this._onSendTip }>Tip</button>

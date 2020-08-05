@@ -75,6 +75,7 @@
             display: inline-block;
             float: left;
             pointer-events: all;
+            z-index: 10;
         }
     }
 
@@ -362,6 +363,18 @@
 
     .toolbar-icon {
         margin: 0;
+    }
+}
+
+.tip-block {
+    display: inline-block;
+    float: right;
+    margin: 0 5px;
+    position: relative;
+
+    .tip-icon  {
+        width: 20px;
+        height: 20px;
     }
 }
 
