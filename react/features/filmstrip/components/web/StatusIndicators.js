@@ -95,8 +95,6 @@ class StatusIndicators extends Component<Props> {
             tooltipPosition = 'top';
         }
 
-        const isVerticalFilmstrip = _currentLayout === 'vertical-filmstrip-view';
-
         return (
             <div>
                 { showAudioMutedIndicator ? <AudioMutedIndicator tooltipPosition = { tooltipPosition } /> : null }
@@ -104,13 +102,9 @@ class StatusIndicators extends Component<Props> {
                 { _showModeratorIndicator ? <ModeratorIndicator tooltipPosition = { tooltipPosition } /> : null }
                 {!_local && _akAddress
                     && <div className = 'tip-block'>
-                        {isVerticalFilmstrip
-                            ? <TipModal
-                                account = { _akAddress }
-                                hasWallet = { hasWallet } />
-                            : <TipButton
-                                account = { _akAddress }
-                                hasWallet = { hasWallet } />}
+                        <TipModal
+                            account = { _akAddress }
+                            hasWallet = { hasWallet } />
                     </div>
                 }
             </div>
