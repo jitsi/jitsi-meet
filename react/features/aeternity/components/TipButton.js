@@ -29,6 +29,11 @@ type Props = {
      * Whether user has wallet
      */
     hasWallet: boolean,
+
+    /**
+     * Tile view or vertical filmstrip
+     */
+    layout: string,
 };
 
 type State = {
@@ -146,8 +151,11 @@ class TipButton extends Component<Props, State> {
      * @param {string} currency - New currency.
      * @returns {void}
      */
-    _onToggleTooltip() {
-        this.setState({ isOpen: !this.state.isOpen });
+    _onToggleTooltip(event) {
+        const tipRegExp = /tip/;
+        const isModal = tipRegExp.test(event.target.className);
+
+        isModal ? null : this.setState({ isOpen: !this.state.isOpen });
     }
 
     /**
@@ -295,7 +303,47 @@ class TipButton extends Component<Props, State> {
      */
     render() {
         const { isOpen, error, showLoading, value } = this.state;
-        const { hasWallet } = this.props;
+        const { hasWallet, layout } = this.props;
+
+        if (layout) {
+            return (
+                <div className = 'tip-component'>
+                    {hasWallet ? <>
+                        <div className = 'tip-icon' >
+                            <TipIcon onClick = { this._onToggleTooltip } />
+                        </div>
+                        {isOpen && (
+                            <div className = 'modal'>
+                                <div className = 'modal-dialog'>
+                                    <div className = 'modal-content'>
+                                        <div
+                                            className = 'modal-body'
+                                            onClick = { this._onToggleTooltip }>
+                                            <div className = 'tip-container'>
+                                                {!showLoading && error && <div className = 'tip-error'> {error} </div>}
+                                                <div className = 'tip-wrapper'>
+                                                    <input
+                                                        className = 'tip-input'
+                                                        onChange = { this._onChangeValue }
+                                                        placeholder = 'Amount'
+                                                        type = 'text'
+                                                        value = { value } />
+                                                    <button
+                                                        className = 'tip-button'
+                                                        onClick = { this._onSendTip }>Tip</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+                    </> : <div className = 'tip-icon' >
+                        <TipIcon onClick = { this._onTipDeepLink } />
+                    </div>}
+                </div>
+            );
+        }
 
         return (
             <div className = 'tip-component'>

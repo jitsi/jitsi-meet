@@ -2,7 +2,7 @@
 
 import React, { Component } from 'react';
 
-import TipModal from '../../../aeternity/components/TipModal';
+import TipButton from '../../../aeternity/components/TipButton';
 import { getLocalParticipant, getParticipantById, PARTICIPANT_ROLE } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import { getCurrentLayout, LAYOUTS } from '../../../video-layout';
@@ -101,9 +101,10 @@ class StatusIndicators extends Component<Props> {
                 { _showModeratorIndicator ? <ModeratorIndicator tooltipPosition = { tooltipPosition } /> : null }
                 {!_local && _akAddress
                     && <div className = 'tip-block'>
-                        <TipModal
+                        <TipButton
                             account = { _akAddress }
-                            hasWallet = { hasWallet } />
+                            hasWallet = { hasWallet }
+                            layout = { _currentLayout } />
                     </div>
                 }
             </div>
