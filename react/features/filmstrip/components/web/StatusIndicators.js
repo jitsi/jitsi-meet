@@ -2,7 +2,6 @@
 
 import React, { Component } from 'react';
 
-import TipButton from '../../../aeternity/components/TipButton';
 import TipModal from '../../../aeternity/components/TipModal';
 import { getLocalParticipant, getParticipantById, PARTICIPANT_ROLE } from '../../../base/participants';
 import { connect } from '../../../base/redux';
