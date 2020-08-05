@@ -109,7 +109,7 @@ class TipModal extends Component<Props, State> {
         this.state = {
             isOpen: false,
             currency: 'eur',
-            value: '0',
+            value: '',
             message: `button host ${window.location.host} tip to ${this.props.account}`,
             error: '',
             showLoading: false,
@@ -161,7 +161,10 @@ class TipModal extends Component<Props, State> {
      * @returns {void}
      */
     _onChangeValue({ target: { value } }) {
-        this.setState({ value });
+        const validationRegExp = /^\d*\.?\d*/;
+        const result = value.match(validationRegExp);
+
+        result ? this.setState({ value: result[0] }) : null;
     }
 
     /**
@@ -243,6 +246,14 @@ class TipModal extends Component<Props, State> {
             return;
         }
 
+        const { value } = this.state;
+
+        if (value[value.length - 1] === '.') {
+            this.setState({ error: 'The last character shouldn\'t be \' . \'' });
+
+            return;
+        }
+
         const amount = aeternity.util.aeToAtoms(this.state.value);
         const url = `${URLS.SUPER}/user-profile/${this.props.account}`;
 
@@ -304,7 +315,7 @@ class TipModal extends Component<Props, State> {
                                         className = 'modal-body'
                                         onClick = { this._onToggleTooltip }>
                                         <div className = 'tip-container'>
-                                            {!showLoading && error && <div className = 'tip-error'> {error}. </div>}
+                                            {!showLoading && error && <div className = 'tip-error'> {error} </div>}
                                             <div className = 'tip-wrapper'>
                                                 <input
                                                     className = 'tip-input'
