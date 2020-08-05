@@ -13,6 +13,8 @@ import {
     isAccountOrChainName
 } from '../utils';
 
+declare var APP: Object;
+
 type Props = {
 
     /**
@@ -109,12 +111,13 @@ class TipButton extends Component<Props, State> {
      */
     constructor(props) {
         super(props);
+        const room = APP.conference.roomName;
 
         this.state = {
             isOpen: false,
             currency: 'eur',
             value: '',
-            message: `button host ${window.location.host} tip to ${this.props.account}`,
+            message: `Appreciation from conference : ${room} on ${window.location.host}.`,
             error: '',
             showLoading: false,
         };
