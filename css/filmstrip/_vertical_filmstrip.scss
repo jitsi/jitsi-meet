@@ -109,9 +109,8 @@
         flex: 1;
         flex-direction: column-reverse;
         height: auto;
-        overflow-x: visible;
-        // todo: revert scroll
-        // overflow-y: scroll;
+        overflow-x: hidden;
+        overflow-y: auto;
         scrollbar-color: $filmstripScrollBarColor;
 
         #filmstripRemoteVideosContainer {

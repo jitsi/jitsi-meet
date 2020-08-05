@@ -8,7 +8,6 @@ import { Popover } from '../../../base/popover';
 import { connect } from '../../../base/redux';
 
 import PinButton from './PinButton';
-import TipButton from './TipButton';
 
 import {
     MuteButton,
