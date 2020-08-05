@@ -3,6 +3,7 @@
 import React, { Component } from 'react';
 
 import TipButton from '../../../aeternity/components/TipButton';
+import TipModal from '../../../aeternity/components/TipModal';
 import { getLocalParticipant, getParticipantById, PARTICIPANT_ROLE } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import { getCurrentLayout, LAYOUTS } from '../../../video-layout';
@@ -51,7 +52,12 @@ type Props = {
     /**
      * Participant is local
      */
-    _local: boolean
+    _local: boolean,
+
+    /**
+     * Whether user has wallet
+     */
+    hasWallet: boolean,
 };
 
 /**
@@ -72,6 +78,7 @@ class StatusIndicators extends Component<Props> {
             _showModeratorIndicator,
             _akAddress,
             _local,
+            hasWallet,
             showAudioMutedIndicator,
             showVideoMutedIndicator
         } = this.props;
@@ -88,6 +95,8 @@ class StatusIndicators extends Component<Props> {
             tooltipPosition = 'top';
         }
 
+        const isVerticalFilmstrip = _currentLayout === 'vertical-filmstrip-view';
+
         return (
             <div>
                 { showAudioMutedIndicator ? <AudioMutedIndicator tooltipPosition = { tooltipPosition } /> : null }
@@ -95,13 +104,15 @@ class StatusIndicators extends Component<Props> {
                 { _showModeratorIndicator ? <ModeratorIndicator tooltipPosition = { tooltipPosition } /> : null }
                 {!_local && _akAddress
                     && <div className = 'tip-block'>
-                        <TipButton
-                            account = { _akAddress }
-                            hasWallet = { this.props.hasWallet }
-                            theme = {{
-                                place: 'aside'
-                            }} />
-                    </div>}
+                        {isVerticalFilmstrip
+                            ? <TipModal
+                                account = { _akAddress }
+                                hasWallet = { hasWallet } />
+                            : <TipButton
+                                account = { _akAddress }
+                                hasWallet = { hasWallet } />}
+                    </div>
+                }
             </div>
         );
     }

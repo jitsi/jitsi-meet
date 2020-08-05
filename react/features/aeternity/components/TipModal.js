@@ -23,7 +23,7 @@ type Props = {
     /**
      * Whether sdk is connected to extension and client is inited
      */
-   connectedToExtension: boolean,
+    connectedToExtension: boolean,
 
     /**
      * Whether user has wallet
@@ -68,6 +68,7 @@ const URLS = {
     SUPER: 'https://superhero.com',
     RAENDOM: 'https://raendom-backend.z52da5wt.xyz'
 };
+
 const CONTRACT_ADDRESS = 'ct_2AfnEfCSZCTEkxL5Yoi4Yfq6fF7YapHRaFKDJK3THMXMBspp5z';
 
 const aeternity = {
@@ -95,7 +96,7 @@ const aeternity = {
 /**
  * Aeternity tip button react version.
  */
-class TipButton extends Component<Props, State> {
+class TipModal extends Component<Props, State> {
     /**
      * Initializes a new TipButton instance.
      *
@@ -127,7 +128,7 @@ class TipButton extends Component<Props, State> {
         theme: {
             place: 'chat'
         }
-    }
+    };
 
     /**
      * WIP.
@@ -146,8 +147,11 @@ class TipButton extends Component<Props, State> {
      * @param {string} currency - New currency.
      * @returns {void}
      */
-    _onToggleTooltip() {
-        this.setState({ isOpen: !this.state.isOpen });
+    _onToggleTooltip(e) {
+        const modalRegExp = /tip/;
+        const isTipModal = modalRegExp.test(e.target.className);
+
+        isTipModal ? null : this.setState({ isOpen: !this.state.isOpen });
     }
 
     /**
@@ -293,18 +297,28 @@ class TipButton extends Component<Props, State> {
                         <TipIcon onClick = { this._onToggleTooltip } />
                     </div>
                     {isOpen && (
-                        <div className = { `tip-container tip-container__${this.props.theme.place}` } >
-                            {!showLoading && error && <div className = 'tip-error'> {error}. </div>}
-                            <div className = 'tip-wrapper'>
-                                <input
-                                    className = 'tip-input'
-                                    onChange = { this._onChangeValue }
-                                    placeholder = 'Amount'
-                                    type = 'text'
-                                    value = { value } />
-                                <button
-                                    className = 'tip-button'
-                                    onClick = { this._onSendTip }>Tip</button>
+                        <div className = 'modal'>
+                            <div className = 'modal-dialog'>
+                                <div className = 'modal-content'>
+                                    <div
+                                        className = 'modal-body'
+                                        onClick = { this._onToggleTooltip }>
+                                        <div className = 'tip-container'>
+                                            {!showLoading && error && <div className = 'tip-error'> {error}. </div>}
+                                            <div className = 'tip-wrapper'>
+                                                <input
+                                                    className = 'tip-input'
+                                                    onChange = { this._onChangeValue }
+                                                    placeholder = 'Amount'
+                                                    type = 'text'
+                                                    value = { value } />
+                                                <button
+                                                    className = 'tip-button'
+                                                    onClick = { this._onSendTip }>Tip</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     )}
@@ -316,4 +330,4 @@ class TipButton extends Component<Props, State> {
     }
 }
 
-export default TipButton;
+export default TipModal;
