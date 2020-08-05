@@ -122,6 +122,7 @@ export default [
     'ignoreStartMuted',
     'liveStreamingEnabled',
     'localRecording',
+    'maxFullResolutionParticipants',
     'minParticipants',
     'nick',
     'openBridgeChannel',
