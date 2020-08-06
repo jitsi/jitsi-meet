@@ -14,7 +14,27 @@ jobs:
       uses: fifsky/ssh-action@master
       with:
         command: |
-            cd ~/house.fiesta.app/web/trs-jitsi-meet
+            cd ${{ secrets.FIESTA_MAIN_PROJECT_LOCATION }}
+            envFile=".env"
+            set -a
+            source $envFile
+            cd web
+            echo "Getting latest custom jitsi-meet codebase"
+            if [ ! -d "trs-jitsi-meet" ]; then
+              mkdir trs-jitsi-meet
+            ficd trs-jitsi-meet
+            if [ ! -d .git ]; then
+              git add .
+              git commit -m "committing changes before switching branches"
+              git clone github-trs-jitsi-meet:TheRealStart/jitsi-meet.git .
+              git checkout "$CUSTOM_TRS_JITSI_MEET_BRANCH"
+            else
+              git fetch
+              git add .
+              git commit -m "committing changes before switching branches"
+              git checkout "$CUSTOM_TRS_JITSI_MEET_BRANCH"
+              git pull
+            fi
             sudo npm install -g npm@latest
             sudo npm cache clean -f
             sudo npm install -g n
