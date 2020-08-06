@@ -16,37 +16,42 @@ jobs:
         command: |
             cd ${{ secrets.FIESTA_MAIN_PROJECT_LOCATION }}
             envFile=".env"
-            set -a
-            source $envFile
-            cd web
-            echo "Getting latest custom jitsi-meet codebase"
-            if [ ! -d "trs-jitsi-meet" ]; then
-              mkdir trs-jitsi-meet
-            ficd trs-jitsi-meet
-            if [ ! -d .git ]; then
-              git add .
-              git commit -m "committing changes before switching branches"
-              git clone github-trs-jitsi-meet:TheRealStart/jitsi-meet.git .
-              git checkout "$CUSTOM_TRS_JITSI_MEET_BRANCH"
-            else
-              git fetch
-              git add .
-              git commit -m "committing changes before switching branches"
-              git checkout "$CUSTOM_TRS_JITSI_MEET_BRANCH"
-              git pull
+            if [ -f $envFile ]; then
+              set -a
+              source $envFile
+              cd web
+              echo "Getting latest custom jitsi-meet codebase"
+              if [ ! -d "trs-jitsi-meet" ]; then
+                mkdir trs-jitsi-meet
+              fi
+              cd trs-jitsi-meet
+              if [ ! -d .git ]; then
+                git add .
+                git commit -m "committing changes before switching branches"
+                git clone github-trs-jitsi-meet:TheRealStart/jitsi-meet.git .
+                git checkout "$CUSTOM_TRS_JITSI_MEET_BRANCH"
+              else
+                git fetch
+                git add .
+                git commit -m "committing changes before switching branches"
+                git checkout "$CUSTOM_TRS_JITSI_MEET_BRANCH"
+                git pull
+              fi
+              sudo npm install -g npm@latest
+              sudo npm cache clean -f
+              sudo npm install -g n
+              sudo n stable
+              sudo chown -R 1000:1000 "/home/ubuntu/.npm"
+              cd ~/house.fiesta.app/web/trs-jitsi-meet/
+              npm install
+              npm audit fix
+              make
+              make source-package
+              cd ..
+              tar xf trs-jitsi-meet/jitsi-meet.tar.bz2
+
+              
             fi
-            sudo npm install -g npm@latest
-            sudo npm cache clean -f
-            sudo npm install -g n
-            sudo n stable
-            sudo chown -R 1000:1000 "/home/ubuntu/.npm"
-            cd ~/house.fiesta.app/web/trs-jitsi-meet/
-            npm install
-            npm audit fix
-            make
-            make source-package
-            cd ..
-            tar xf trs-jitsi-meet/jitsi-meet.tar.bz2
         host: ${{ secrets.FIESTA_MEET_MAIN_SERVER }}
         user: ubuntu
         key: ${{ secrets.FIESTA_PRIVKEY }}
