@@ -232,6 +232,21 @@ var config = {
     //     90: 2
     // },
 
+    // Specify the settings for video quality optimizations on the client.
+    // videoQuality: {
+    //
+    //    // Provides a way to configure the maximum bitrates that will be enforced on the simulcast streams for
+    //    // video tracks. The keys in the object represent the type of the stream (LD, SD or HD) and the values
+    //    // are the max.bitrates to be set on that particular type of stream. The actual send may vary based on
+    //    // the available bandwidth calculated by the browser, but it will be capped by the values specified here.
+    //    // This is currently not implemented on app based clients on mobile.
+    //    maxBitratesVideo: {
+    //        low: 200000,
+    //        standard: 500000,
+    //        high: 1500000
+    //    }
+    // },
+
     // // Options for the recording limit notification.
     // recordingLimit: {
     //
