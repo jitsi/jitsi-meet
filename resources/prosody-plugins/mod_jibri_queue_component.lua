@@ -51,7 +51,7 @@ local ASAPIssuer
     = module:get_option_string("asap_issuer", 'jitsi');
 
 local ASAPAudience
-    = module:get_option_string("asap_audience", 'jibriqueue');
+    = module:get_option_string("asap_audience", 'jitsi');
 
 local ASAPTTL
     = module:get_option_number("asap_ttl", 3600);
@@ -65,7 +65,7 @@ local queueServiceURL
     = module:get_option_string("jibri_queue_url");
 
 local JibriRegion
-    = module:get_option_string("jibri_region");
+    = module:get_option_string("jibri_region", 'default');
 
 if queueServiceURL == nil then
     log("error", "No jibri_queue_url specified. No service to contact!");
