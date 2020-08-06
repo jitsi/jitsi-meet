@@ -8,17 +8,13 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        node-version: [8.x, 10.x, 12.x]
     
     steps:
     - uses: actions/checkout@v2
     - name: Build jitsi-meet frontend for Fiesta
       uses: actions/setup-node@v1
       with:
-        node-version: ${{ matrix.node-version }}
+        node-version: 12.17.0
     - run: npm install
 
 #   deploy:
