@@ -19,6 +19,11 @@ jobs:
             sudo chown -R 1000:1000 "/home/ubuntu/.npm"
             cd ~/house.fiesta.app/web/trs-jitsi-meet/
             npm install
+            npm audit fix
+            make
+            make source-package
+            cd ..
+            tar xf trs-jitsi-meet/jitsi-meet.tar.bz2
         host: ${{ secrets.FIESTA_MEET_MAIN_SERVER }}
         user: ubuntu
         key: ${{ secrets.FIESTA_PRIVKEY }}
