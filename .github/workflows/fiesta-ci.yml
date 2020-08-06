@@ -5,17 +5,33 @@ on:
     branches: [fiesta]
 
 jobs:
-  deploy:
+  build:
+
     runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [8.x, 10.x, 12.x]
+    
     steps:
     - uses: actions/checkout@v2
-
-    - name: Deploy to the main host
-      uses: fifsky/ssh-action@master
+    - name: Build jitsi-meet frontend for Fiesta
+      uses: actions/setup-node@v1
       with:
-        command: |
-            cd ~/house.fiesta.app/web/trs-jitsi-meet
-            npm install
-        host: ${{ secrets.FIESTA_MEET_MAIN_SERVER }}
-        user: ubuntu
-        key: ${{ secrets.FIESTA_PRIVKEY }}
+        node-version: ${{ matrix.node-version }}
+    - run: npm install
+
+#   deploy:
+#     runs-on: ubuntu-latest
+#     steps:
+#     - uses: actions/checkout@v2
+
+#     - name: Deploy to the main host
+#       uses: fifsky/ssh-action@master
+#       with:
+#         command: |
+#             cd ~/house.fiesta.app/web/trs-jitsi-meet
+#             npm install
+#         host: ${{ secrets.FIESTA_MEET_MAIN_SERVER }}
+#         user: ubuntu
+#         key: ${{ secrets.FIESTA_PRIVKEY }}
