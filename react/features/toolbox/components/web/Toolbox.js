@@ -26,7 +26,8 @@ import {
 import {
     getLocalParticipant,
     getParticipants,
-    participantUpdated
+    participantUpdated,
+    PARTICIPANT_ROLE
 } from '../../../base/participants';
 import { connect, equals } from '../../../base/redux';
 import { OverflowMenuItem } from '../../../base/toolbox';
@@ -1165,6 +1166,7 @@ class Toolbox extends Component<Props, State> {
      */
     _renderToolboxContent() {
         const {
+            _isModerator,
             _chatOpen,
             _hideInviteButton,
             _overflowMenuVisible,
@@ -1251,8 +1253,8 @@ class Toolbox extends Component<Props, State> {
         return (
             <div className = 'toolbox-content'>
                 <div className = 'button-group-left'>
+                    { _isModerator &&  <FollowMeButton />}
                     
-                    <FollowMeButton />
                     { buttonsLeft.indexOf('raisehand') !== -1
                         && <ToolbarButton
                             accessibilityLabel = { t('toolbar.accessibilityLabel.raiseHand') }
@@ -1353,6 +1355,7 @@ function _mapStateToProps(state) {
         overflowMenuVisible
     } = state['features/toolbox'];
     const localParticipant = getLocalParticipant(state);
+    const isModerator = localParticipant.role === PARTICIPANT_ROLE.MODERATOR
     const localRecordingStates = state['features/local-recording'];
     const localVideo = getLocalVideoTrack(state['features/base/tracks']);
     const addPeopleEnabled = isAddPeopleEnabled(state);
@@ -1402,7 +1405,8 @@ function _mapStateToProps(state) {
             || sharedVideoStatus === 'start'
             || sharedVideoStatus === 'pause',
         _visible: isToolboxVisible(state),
-        _visibleButtons: equals(visibleButtons, buttons) ? visibleButtons : buttons
+        _visibleButtons: equals(visibleButtons, buttons) ? visibleButtons : buttons,
+        _isModerator : isModerator
     };
 }
 
