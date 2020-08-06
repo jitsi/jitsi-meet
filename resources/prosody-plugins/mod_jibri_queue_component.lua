@@ -33,6 +33,13 @@ if parentCtx == nil then
 end
 local token_util = module:require "token/util".new(parentCtx);
 
+local ASAPKeyServer
+    = module:get_option_string("asap_key_server");
+
+if ASAPKeyServer then
+    module:log("info", "ASAP Public Key URL %s", ASAPKeyServer);
+    token_util:set_asap_key_server(ASAPKeyServer);
+end
 
 local ASAPKeyPath
     = module:get_option_string("asap_key_path", '/etc/prosody/certs/asap.key');
@@ -56,6 +63,9 @@ local ASAPKey;
 
 local queueServiceURL
     = module:get_option_string("jibri_queue_url");
+
+local JibriRegion
+    = module:get_option_string("jibri_region");
 
 if queueServiceURL == nil then
     log("error", "No jibri_queue_url specified. No service to contact!");
@@ -200,6 +210,7 @@ local function sendEvent(type,room_address,participant,requestId,replyIq,replyEr
         ["participant"] = participant,
         ["externalApiUrl"] = external_api_url.."/jibriqueue/update",
         ["requestId"] = requestId,
+        ["region"] = JibriRegion,
     }
     module:log("debug","Sending event %s",inspect(out_event));
 
