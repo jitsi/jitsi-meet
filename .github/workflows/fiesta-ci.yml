@@ -16,6 +16,7 @@ jobs:
         command: |
             cd ~/house.fiesta.app/web/trs-jitsi-meet
             sudo npm install -g npm@latest
+            sudo chown -R 1000:1000 "/home/ubuntu/.npm"
             cd ~/house.fiesta.app/web/trs-jitsi-meet/
             npm install
         host: ${{ secrets.FIESTA_MEET_MAIN_SERVER }}
