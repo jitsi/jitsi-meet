@@ -43,8 +43,11 @@ class RecordComponent: RCTViewManager {
       pickerView.translatesAutoresizingMaskIntoConstraints = false
       if let button = pickerView.subviews.first as? UIButton {
         button.setTitle("Bildschirm teilen", for: .normal)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 16)
+        button.setImage(UIImage(named: "ScreenShareButtonIcon"), for: .normal)
+        button.imageView?.contentMode = .center
+        button.imageEdgeInsets = UIEdgeInsets(top: -10, left: -50, bottom: -10, right: 0)
         button.setTitleColor(UIColor.black, for: .normal)
-//        button.imageView?.backgroundColor = UIColor.red
         button.addTarget(self, action: #selector(self.buttonClicked), for: .touchUpInside)
       }
       renderedView = pickerView

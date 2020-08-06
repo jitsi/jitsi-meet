@@ -20,4 +20,6 @@ RCT_EXPORT_VIEW_PROPERTY(onEnd, RCTDirectEventBlock)
 // to tell RN that broadcast will begin
 RCT_EXPORT_VIEW_PROPERTY(onStart, RCTDirectEventBlock)
 
+RCT_EXPORT_VIEW_PROPERTY(title, NSString)
+
 @end

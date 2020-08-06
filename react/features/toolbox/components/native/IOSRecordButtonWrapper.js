@@ -48,7 +48,7 @@ class IOSRecordButtonWrapper extends PureComponent<Props,*> {
             // send button label in props to maintain translated strings in react native
             onStart={() => {this.recordingStarted();}}
             onEnd={() => {this.recordingEnded();}}
-            style={{width: 200, height: 50}} 
+            style={{width: 200, height: 36}}
             ref={comp => { this.recordComponent = comp; }} 
         />
     }
