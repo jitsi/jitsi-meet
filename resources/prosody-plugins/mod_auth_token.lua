@@ -101,6 +101,11 @@ function provider.get_sasl_handler(session)
         else
             self.username = message;
         end
+        
+        local post_auth_result = prosody.events.fire_event("post-jitsi-authentication", session);
+        if post_auth_result ~= nil and (not post_auth_result) then 
+            return post_auth_result, "not-allowed", "post-jitsi-authentication validation failed";
+        end
 
         return res;
 	end

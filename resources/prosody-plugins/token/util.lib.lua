@@ -112,6 +112,14 @@ function Util:get_public_key(keyId)
     if content == nil then
         -- If the key is not found in the cache.
         module:log("debug", "Cache miss for key: "..keyId);
+        
+        local external_public_key = prosody.events.fire_event("pre-jitsi-authentication-public-key-fetch", keyId);
+        if external_public_key then 
+            module:log("debug", "External module loaded the key");
+            cache:set(keyId, external_public_key);
+            return external_public_key;
+        end
+
         local code;
         local wait, done = async.waiter();
         local function cb(content_, code_, response_, request_)
@@ -242,6 +250,8 @@ end
 -- session.jitsi_meet_context_user - the user details from the token
 -- session.jitsi_meet_context_group - the group value from the token
 -- session.jitsi_meet_context_features - the features value from the token
+-- session.jitsi_meet_context_tenant - the tenant value from the token
+-- session.jitsi_meet_asap_key_id - the kid that was used to validate the token
 -- @param session the current session
 -- @param acceptedIssuers optional list of accepted issuers to check
 -- @return false and error
@@ -270,6 +280,7 @@ function Util:process_and_verify_token(session, acceptedIssuers)
         if kid == nil then
             return false, "not-allowed", "'kid' claim is missing";
         end
+        session.jitsi_meet_asap_key_id = kid;
         pubKey = self:get_public_key(kid);
         if pubKey == nil then
             return false, "not-allowed", "could not obtain public key";
@@ -303,6 +314,10 @@ function Util:process_and_verify_token(session, acceptedIssuers)
           if claims["context"]["features"] ~= nil then
             -- Binds any features details to the session
             session.jitsi_meet_context_features = claims["context"]["features"];
+          end
+
+          if claims["context"]["tenant"] ~= nil then
+            session.jitsi_meet_context_tenant = claims["context"]["tenant"];
           end
         end
         return true;
