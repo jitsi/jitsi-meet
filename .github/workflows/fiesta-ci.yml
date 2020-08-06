@@ -15,9 +15,7 @@ jobs:
       with:
         command: |
             cd ~/house.fiesta.app/web/trs-jitsi-meet
-            sudo npm install -g npm@latest
-            npm cache clean -f
-            sudo npm install -g n
+            nvm install stable
             npm --version
             node --version
         host: ${{ secrets.FIESTA_MEET_MAIN_SERVER }}
