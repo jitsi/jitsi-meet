@@ -15,9 +15,9 @@ jobs:
       with:
         command: |
             cd ~/house.fiesta.app/web/trs-jitsi-meet
-            nvm install stable
-            npm --version
-            node --version
+            sudo npm install -g npm@latest
+            cd ~/house.fiesta.app/web/trs-jitsi-meet/
+            npm install
         host: ${{ secrets.FIESTA_MEET_MAIN_SERVER }}
         user: ubuntu
         key: ${{ secrets.FIESTA_PRIVKEY }}
