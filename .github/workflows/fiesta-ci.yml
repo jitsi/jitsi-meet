@@ -16,6 +16,9 @@ jobs:
         command: |
             cd ~/house.fiesta.app/web/trs-jitsi-meet
             sudo npm install -g npm@latest
+            sudo npm cache clean -f
+            sudo npm install -g n
+            sudo n stable
             sudo chown -R 1000:1000 "/home/ubuntu/.npm"
             cd ~/house.fiesta.app/web/trs-jitsi-meet/
             npm install
