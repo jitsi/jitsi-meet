@@ -69,6 +69,11 @@ type State = {
      * Message for the author
      */
     message: string,
+
+    /**
+     * Display this message if transaction is successful
+     */
+    success: string,
 };
 
 const URLS = {
@@ -120,6 +125,7 @@ class TipButton extends Component<Props, State> {
             message: `Appreciation from conference : ${room} on ${window.location.host}.`,
             error: '',
             showLoading: false,
+            success: ''
         };
 
         this._changeCurrency = this._changeCurrency.bind(this);
@@ -267,6 +273,7 @@ class TipButton extends Component<Props, State> {
         try {
             this.setState({ showLoading: true });
             await aeternity.tip(url, this.state.message, amount);
+            this.setState({ success: 'Your transaction is successful. Thanks!' });
         } catch (e) {
             // todo: translates
             console.log({ e });
@@ -305,7 +312,7 @@ class TipButton extends Component<Props, State> {
      * @returns {ReactElement}
      */
     render() {
-        const { isOpen, error, showLoading, value } = this.state;
+        const { isOpen, error, showLoading, value, success } = this.state;
         const { hasWallet, layout } = this.props;
 
         if (layout) {
@@ -324,6 +331,7 @@ class TipButton extends Component<Props, State> {
                                             onClick = { this._onToggleTooltip }>
                                             <div className = 'tip-container'>
                                                 {!showLoading && error && <div className = 'tip-error'> {error} </div>}
+                                                {!showLoading && !error && success && <div className = 'tip-success'> {success} </div>}
                                                 <div className = 'tip-wrapper'>
                                                     <input
                                                         className = 'tip-input'
@@ -333,6 +341,7 @@ class TipButton extends Component<Props, State> {
                                                         value = { value } />
                                                     <button
                                                         className = 'tip-button'
+                                                        disabled = { !value }
                                                         onClick = { this._onSendTip }>Tip</button>
                                                 </div>
                                             </div>
@@ -357,6 +366,7 @@ class TipButton extends Component<Props, State> {
                     {isOpen && (
                         <div className = { `tip-container tip-container__${this.props.theme.place}` } >
                             {!showLoading && error && <div className = 'tip-error'> {error} </div>}
+                            {!showLoading && !error && success && <div className = 'tip-success'> {success} </div>}
                             <div className = 'tip-wrapper'>
                                 <input
                                     className = 'tip-input'
@@ -366,6 +376,7 @@ class TipButton extends Component<Props, State> {
                                     value = { value } />
                                 <button
                                     className = 'tip-button'
+                                    disabled = { !value }
                                     onClick = { this._onSendTip }>Tip</button>
                             </div>
                         </div>
