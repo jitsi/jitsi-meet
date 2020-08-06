@@ -7,13 +7,21 @@
     z-index: 10;
     box-sizing: border-box;
 
-    .tip-error {
+    .tip-error,
+    .tip-success {
         margin-bottom: 0.5rem;
-        color: $toolBoxIconBorderColor;
         font-size: 0.75rem;
         text-align: center;
         white-space: normal;
         font-weight: 400;
+    }
+
+    .tip-error {
+        color: $toolBoxIconBorderColor;
+    }
+
+    .tip-success {
+        color: $popupMenuSliderBackground;
     }
 
     .tip-wrapper {
@@ -49,6 +57,12 @@
         font-size: 15px;
         font-weight: bold;
         margin-left: 0.5rem;
+        outline: none;
+
+        &:disabled {
+            opacity: 0.4;
+            cursor: auto;
+        }
     }
 }
 
