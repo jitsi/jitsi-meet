@@ -341,7 +341,7 @@ class TipButton extends Component<Props, State> {
                                                         value = { value } />
                                                     <button
                                                         className = 'tip-button'
-                                                        disabled = { !value }
+                                                        disabled = { !value || showLoading}
                                                         onClick = { this._onSendTip }>Tip</button>
                                                 </div>
                                             </div>
@@ -376,7 +376,7 @@ class TipButton extends Component<Props, State> {
                                     value = { value } />
                                 <button
                                     className = 'tip-button'
-                                    disabled = { !value }
+                                    disabled = { !value || showLoading }
                                     onClick = { this._onSendTip }>Tip</button>
                             </div>
                         </div>
