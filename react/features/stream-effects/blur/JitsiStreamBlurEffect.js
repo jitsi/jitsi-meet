@@ -1,4 +1,6 @@
 // @flow
+
+import * as bodyPix from '@tensorflow-models/body-pix';
 import * as StackBlur from 'stackblur-canvas';
 
 
@@ -17,8 +19,8 @@ const segmentationProperties = {
  * video stream.
  */
 export default class JitsiStreamBlurEffect {
-    bpModel; // bodyPix.BodyPix
-    stream; // MediaStream
+    bpModel: bodyPix.BodyPix;
+    stream: MediaStream;
 
     tmpVideo = document.createElement('video');
 
@@ -34,19 +36,21 @@ export default class JitsiStreamBlurEffect {
     // worker: Worker;
     shouldContinue = true;
 
-    imageData = null; //  ImageData | null
-    blur = false; // boolean
-    outStream = null; // MediaStream | null
+    imageData: ImageData | null = null;
+    blur: boolean = false;
+    outStream: MediaStream | null = null;
 
+    videoRenderCanvasCtx: CanvasRenderingContext2D;
+    bodyPixCtx: CanvasRenderingContext2D;
 
     /**
      * Represents a modified video MediaStream track.
      *
      * @class
-     * @param {BodyPix} bpModel - BodyPix model.
+     * @param {bodyPix.BodyPix} bpModel - BodyPix model.
 
      */
-    constructor(bpModel) {
+    constructor(bpModel: bodyPix.BodyPix) {
         this.videoRenderCanvasCtx = this.videoRenderCanvas.getContext('2d');
         this.bodyPixCtx = this.bodyPixCanvas.getContext('2d');
         this.bpModel = bpModel;
@@ -60,7 +64,7 @@ export default class JitsiStreamBlurEffect {
      * @param {HTMLImageElement | undefined} image - Used for virtual background/background replacement.
      * @returns {MediaStream} - The stream with the applied effect.
      */
-    startEffect(stream, blur = true, image) {
+    startEffect(stream: MediaStream, blur: boolean = true, image?: HTMLImageElement) {
         this.stream = stream;
 
         this.blur = blur;
@@ -126,7 +130,7 @@ export default class JitsiStreamBlurEffect {
      * @param {bodyPix.SemanticPersonSegmentation | null} segmentation - Segmentation data.
      * @returns {void}
      */
-    processSegmentation(segmentation) {
+    processSegmentation(segmentation: bodyPix.SemanticPersonSegmentation | null) {
         const ctx = this.finalCanvas.getContext('2d');
         const liveData = this.videoRenderCanvasCtx.getImageData(
             0,
@@ -184,7 +188,7 @@ export default class JitsiStreamBlurEffect {
      * @param {HTMLImageElement | undefined} image - Used for virtual background/background replacement.
      * @returns {void}
      */
-    setNewSettings(blur, image) {
+    setNewSettings(blur: boolean, image?: HTMLImageElement) {
         if (blur && image) {
             throw new Error('I can\'t blur and replace image...well I can...but that would be stupid.');
         }
@@ -202,7 +206,7 @@ export default class JitsiStreamBlurEffect {
      * @param {HTMLImageElement} img - Image to generate ImageData for.
      * @returns {void}
      */
-    generateImageData(img) {
+    generateImageData(img: HTMLImageElement) {
         /**
          * https://stackoverflow.com/a/21961894/7886229
          * By Ken Fyrstenberg Nilsen
