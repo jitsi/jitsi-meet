@@ -260,22 +260,8 @@ class TipButton extends Component<Props, State> {
      * @returns {void}
      */
     async _onSendTip() {
-        const { account } = this.props;
-
-        if (!account) {
-            return;
-        }
-
-        const { value } = this.state;
-
-        if (value[value.length - 1] === '.') {
-            this.setState({ error: 'The last character shouldn\'t be \' . \'' });
-
-            return;
-        }
-
         const amount = aeternity.util.aeToAtoms(this.state.value);
-        const url = `${URLS.SUPER}/user-profile/${account}`;
+        const url = `${URLS.SUPER}/user-profile/${this.props.account}`;
 
         try {
             this.setState({ showLoading: true });
