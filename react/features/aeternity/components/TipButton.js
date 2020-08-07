@@ -174,10 +174,10 @@ class TipButton extends Component<Props, State> {
      * @returns {void}
      */
     _onChangeValue({ target: { value } }) {
-        const validationRegExp = /^\d*\.?\d*/;
+        const validationRegExp = /\d+\.?\d*/;
         const result = value.match(validationRegExp);
 
-        result ? this.setState({ value: result[0] }) : null;
+        result ? this.setState({ value: result[0] }) : this.setState({ value: '' });
     }
 
     /**
@@ -259,14 +259,6 @@ class TipButton extends Component<Props, State> {
             return;
         }
 
-        const { value } = this.state;
-
-        if (value[value.length - 1] === '.') {
-            this.setState({ error: 'The last character shouldn\'t be \' . \'' });
-
-            return;
-        }
-
         const amount = aeternity.util.aeToAtoms(this.state.value);
         const url = `${URLS.SUPER}/user-profile/${this.props.account}`;
 
@@ -314,6 +306,7 @@ class TipButton extends Component<Props, State> {
     render() {
         const { isOpen, error, showLoading, value, success } = this.state;
         const { hasWallet, layout } = this.props;
+        const isLastCharDot = value[value.length - 1] === '.';
 
         if (layout) {
             return (
@@ -341,7 +334,7 @@ class TipButton extends Component<Props, State> {
                                                         value = { value } />
                                                     <button
                                                         className = 'tip-button'
-                                                        disabled = { !value || showLoading}
+                                                        disabled = { !value || showLoading || isLastCharDot }
                                                         onClick = { this._onSendTip }>Tip</button>
                                                 </div>
                                             </div>
@@ -376,7 +369,7 @@ class TipButton extends Component<Props, State> {
                                     value = { value } />
                                 <button
                                     className = 'tip-button'
-                                    disabled = { !value || showLoading }
+                                    disabled = { !value || showLoading || isLastCharDot }
                                     onClick = { this._onSendTip }>Tip</button>
                             </div>
                         </div>
