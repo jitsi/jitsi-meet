@@ -380,7 +380,7 @@ module:log("info", "Loading jibri_queue_component");
 -- @param group name of the group (optional)
 -- @param session the session to use for storing token specific fields
 -- @return true if values are ok or false otherwise
-function verify_token(token, room_name, session)
+function verify_token(token, room_jid, session)
     if disableTokenVerification then
         return true;
     end
@@ -395,22 +395,15 @@ function verify_token(token, room_name, session)
     end
 
     session.auth_token = token;
-    local verified, reason = token_util:process_and_verify_token(session);
+    local verified, reason, message = token_util:process_and_verify_token(session);
     if not verified then
-        log("warn", "not a valid token %s", tostring(reason));
+        log("warn", "not a valid token %s: %s", tostring(reason), tostring(message));
         return false;
     end
 
-    local room_address = jid.join(room_name, module:get_host());
-    -- if there is a group we are in multidomain mode and that group is not
-    -- our parent host
-    if group and group ~= "" and group ~= parentHostName then
-        room_address = "["..group.."]"..room_address;
-    end
-
-    if not token_util:verify_room(session, room_address) then
-        log("warn", "Token %s not allowed to join: %s",
-            tostring(token), tostring(room_address));
+    if not token_util:verify_room(session, room_jid) then
+        log("warn", "Token %s not allowed to access: %s",
+            tostring(token), tostring(room_jid));
         return false;
     end
 
@@ -455,11 +448,13 @@ function handle_update_jibri_queue(event)
     local position = body["position"];
     local requestId = body["requestId"];
 
-    if not verify_token(token, roomAddress, {}) then
+    local room_jid = room_jid_match_rewrite(roomAddress);
+
+    if not verify_token(token, room_jid, {}) then
         return { status_code = 403; };
     end
 
-    local room = get_room_from_jid(room_jid_match_rewrite(roomAddress));
+    local room = get_room_from_jid(room_jid);
     if (not room) then
         log("error", "no room found %s", roomAddress);
         return { status_code = 404; };
