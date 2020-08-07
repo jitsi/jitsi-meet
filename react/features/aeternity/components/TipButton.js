@@ -176,6 +176,11 @@ class TipButton extends Component<Props, State> {
     _onChangeValue({ target: { value } }) {
         const validationRegExp = /\d+\.?\d*/;
         const result = value.match(validationRegExp);
+        const { value } = this.state;
+
+        if (value === 0 || value < 0) {
+            return;
+        }
 
         result ? this.setState({ value: result[0] }) : this.setState({ value: '' });
     }
@@ -255,12 +260,22 @@ class TipButton extends Component<Props, State> {
      * @returns {void}
      */
     async _onSendTip() {
-        if (!this.props.account) {
+        const { account } = this.props;
+
+        if (!account) {
+            return;
+        }
+
+        const { value } = this.state;
+
+        if (value[value.length - 1] === '.') {
+            this.setState({ error: 'The last character shouldn\'t be \' . \'' });
+
             return;
         }
 
         const amount = aeternity.util.aeToAtoms(this.state.value);
-        const url = `${URLS.SUPER}/user-profile/${this.props.account}`;
+        const url = `${URLS.SUPER}/user-profile/${account}`;
 
         try {
             this.setState({ showLoading: true });
@@ -336,9 +351,10 @@ class TipButton extends Component<Props, State> {
                                                 <div className = 'tip-wrapper'>
                                                     <input
                                                         className = 'tip-input'
+                                                        min = '0.01'
                                                         onChange = { this._onChangeValue }
                                                         placeholder = 'Amount'
-                                                        type = 'text'
+                                                        type = 'number'
                                                         value = { value } />
                                                     <button
                                                         className = 'tip-button'
@@ -379,9 +395,10 @@ class TipButton extends Component<Props, State> {
                             <div className = 'tip-wrapper'>
                                 <input
                                     className = 'tip-input'
+                                    min = '0.01'
                                     onChange = { this._onChangeValue }
                                     placeholder = 'Amount'
-                                    type = 'text'
+                                    type = 'number'
                                     value = { value } />
                                 <button
                                     className = 'tip-button'
