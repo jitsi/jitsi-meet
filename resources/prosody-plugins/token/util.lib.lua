@@ -19,7 +19,6 @@ local http_headers = {
 
 -- TODO: Figure out a less arbitrary default cache size.
 local cacheSize = module:get_option_number("jwt_pubkey_cache_size", 128);
-local cache = require"util.cache".new(cacheSize);
 
 local Util = {}
 Util.__index = Util
@@ -37,6 +36,8 @@ function Util.new(module)
     self.appSecret = module:get_option_string("app_secret");
     self.asapKeyServer = module:get_option_string("asap_key_server");
     self.allowEmptyToken = module:get_option_boolean("allow_empty_token");
+
+    self.cache = require"util.cache".new(cacheSize);
 
     --[[
         Multidomain can be supported in some deployments. In these deployments
@@ -108,7 +109,7 @@ end
 -- @param keyId the key ID to request
 -- @return the public key (the content of requested resource) or nil
 function Util:get_public_key(keyId)
-    local content = cache:get(keyId);
+    local content = self.cache:get(keyId);
     if content == nil then
         -- If the key is not found in the cache.
         module:log("debug", "Cache miss for key: "..keyId);
@@ -117,7 +118,10 @@ function Util:get_public_key(keyId)
         local function cb(content_, code_, response_, request_)
             content, code = content_, code_;
             if code == 200 or code == 204 then
-                cache:set(keyId, content);
+                self.cache:set(keyId, content);
+            else
+                module:log("warn", "Error on public key request: Code %s, Content %s",
+                code_, content_);
             end
             done();
         end
@@ -138,7 +142,10 @@ function Util:get_public_key(keyId)
             -- TODO: This check is racey. Not likely to be a problem, but we should
             --       still stick a mutex on content / code at some point.
             if code == nil then
-                http.destroy_request(request);
+                -- no longer present in prosody 0.11, so check before calling
+                if http.destroy_request ~= nil then
+                    http.destroy_request(request);
+                end
                 done();
             end
         end
