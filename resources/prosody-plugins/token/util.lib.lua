@@ -142,7 +142,7 @@ function Util:get_public_key(keyId)
             -- TODO: This check is racey. Not likely to be a problem, but we should
             --       still stick a mutex on content / code at some point.
             if code == nil then
-                -- no longer present in prosody 0.11, so cehck before calling
+                -- no longer present in prosody 0.11, so check before calling
                 if http.destroy_request ~= nil then
                     http.destroy_request(request);
                 end
