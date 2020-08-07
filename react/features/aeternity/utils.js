@@ -27,3 +27,16 @@ export function isWalletNameSet(state) {
 
     return false;
 }
+
+/**
+ * Returns true if site is embeded in an iframe.
+ *
+ * @returns {boolean}
+ */
+export function isInIframe() {
+    try {
+        return window.self !== window.top;
+    } catch (e) {
+        return true;
+    }
+}
