@@ -1,3 +1,5 @@
+// @flow
+
 import { findIndex } from 'lodash';
 
 import { CONNECTION_TYPE } from './constants';
@@ -7,6 +9,75 @@ const LOSS_VIDEO_THRESHOLDS = [ 0.33, 0.1, 0.05 ];
 
 const THROUGHPUT_AUDIO_THRESHOLDS = [ 8, 20 ];
 const THROUGHPUT_VIDEO_THRESHOLDS = [ 60, 750 ];
+
+/**
+ * The avatar size to container size ration.
+ */
+const ratio = 1 / 3;
+
+/**
+ * The max avatar size.
+ */
+const maxSize = 190;
+
+/**
+ * The window limit hight over which the avatar should have the default dimension.
+ */
+const upperHeightLimit = 760;
+
+/**
+ * The window limit hight under which the avatar should not be resized anymore.
+ */
+const lowerHeightLimit = 460;
+
+/**
+ * The default top margin of the avatar.
+ */
+const defaultMarginTop = '10%';
+
+/**
+ * The top margin of the avatar when its dimension is small.
+ */
+const smallMarginTop = '5%';
+
+/**
+ * Calculates avatar dimensions based on window height and position.
+ *
+ * @param {number} height - The window height.
+ * @returns {{
+ *   marginTop: string,
+ *   size: number
+ * }}
+ */
+export function calculateAvatarDimensions(height: number) {
+    if (height > upperHeightLimit) {
+        return {
+            size: maxSize,
+            marginTop: defaultMarginTop
+        };
+    }
+
+    if (height > lowerHeightLimit) {
+        const diff = height - lowerHeightLimit;
+        const percent = diff * ratio;
+        const size = Math.floor(maxSize * percent / 100);
+        let marginTop = defaultMarginTop;
+
+        if (height < 600) {
+            marginTop = smallMarginTop;
+        }
+
+        return {
+            size,
+            marginTop
+        };
+    }
+
+    return {
+        size: 0,
+        marginTop: '0'
+    };
+}
 
 /**
  * Returns the level based on a list of thresholds.
@@ -121,7 +192,7 @@ function _getConnectionDataFromTestResults({ fractionalLoss: l, throughput: t })
  *   connectionDetails: string[]
  * }}
  */
-export function getConnectionData(state) {
+export function getConnectionData(state: Object) {
     const { precallTestResults } = state['features/prejoin'];
 
     if (precallTestResults) {

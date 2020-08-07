@@ -2,10 +2,11 @@
 
 import React from 'react';
 
-import { Avatar } from '../../../avatar';
 import { Video } from '../../../media';
 import { connect } from '../../../redux';
 import { getLocalVideoTrack } from '../../../tracks';
+
+import PreviewAvatar from './Avatar';
 
 export type Props = {
 
@@ -54,13 +55,7 @@ function Preview(props: Props) {
             <div
                 className = 'no-video'
                 id = 'preview'>
-                <div className = 'preview-avatar-container'>
-                    <Avatar
-                        className = 'preview-avatar'
-                        displayName = { name }
-                        participantId = 'local'
-                        size = { 200 } />
-                </div>
+                <PreviewAvatar name = { name } />
             </div>
         );
     }
