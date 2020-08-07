@@ -250,7 +250,7 @@ class Conference extends AbstractConference<Props, *> {
                     <Filmstrip filmstripOnly = { filmstripOnly } />
                 </div>
 
-                { (filmstripOnly || _showPrejoin) && !_iAmRecorder && <Toolbox /> }
+                { !_iAmRecorder && (filmstripOnly || _showPrejoin || <Toolbox />) }
                 { filmstripOnly || <Chat /> }
 
                 { this.renderNotificationsContainer() }
