@@ -162,6 +162,7 @@ export default class JitsiStreamBlurEffect {
             }
             if (this.imageData) {
                 const dataL = liveData.data;
+                const imageData = this.imageData;
 
                 for (let x = 0; x < this.finalCanvas.width; x++) {
                     for (let y = 0; y < this.finalCanvas.height; y++) {
@@ -170,9 +171,9 @@ export default class JitsiStreamBlurEffect {
                         // eslint-disable-next-line max-depth
                         if (segmentation.data[n] === 0) {
                             dataL[n * 4] = this.imageData.data[n * 4];
-                            dataL[(n * 4) + 1] = this.imageData.data[(n * 4) + 1];
-                            dataL[(n * 4) + 2] = this.imageData.data[(n * 4) + 2];
-                            dataL[(n * 4) + 3] = this.imageData.data[(n * 4) + 3];
+                            dataL[(n * 4) + 1] = imageData.data[(n * 4) + 1];
+                            dataL[(n * 4) + 2] = imageData.data[(n * 4) + 2];
+                            dataL[(n * 4) + 3] = imageData.data[(n * 4) + 3];
                         }
                     }
                 }
