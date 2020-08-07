@@ -325,6 +325,14 @@ class TipButton extends Component<Props, State> {
                                             <div className = 'tip-container'>
                                                 {!showLoading && error && <div className = 'tip-error'> {error} </div>}
                                                 {!showLoading && !error && success && <div className = 'tip-success'> {success} </div>}
+                                                {showLoading && <div className = 'tip-loader'>
+                                                    <div className = 'lds-ellipsis'>
+                                                        <div />
+                                                        <div />
+                                                        <div />
+                                                        <div />
+                                                    </div>
+                                                </div>}
                                                 <div className = 'tip-wrapper'>
                                                     <input
                                                         className = 'tip-input'
@@ -360,6 +368,14 @@ class TipButton extends Component<Props, State> {
                         <div className = { `tip-container tip-container__${this.props.theme.place}` } >
                             {!showLoading && error && <div className = 'tip-error'> {error} </div>}
                             {!showLoading && !error && success && <div className = 'tip-success'> {success} </div>}
+                            {showLoading && <div className = 'tip-loader'>
+                                <div className = 'lds-ellipsis'>
+                                    <div />
+                                    <div />
+                                    <div />
+                                    <div />
+                                </div>
+                            </div>}
                             <div className = 'tip-wrapper'>
                                 <input
                                     className = 'tip-input'
