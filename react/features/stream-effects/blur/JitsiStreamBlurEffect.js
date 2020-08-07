@@ -6,7 +6,7 @@ import * as StackBlur from 'stackblur-canvas';
 
 const segmentationProperties = {
     flipHorizontal: false,
-    internalResolution: "medium",
+    internalResolution: 'medium',
     segmentationThreshold: 0.7,
     scoreThreshold: 0.2,
     maxDetections: 1
@@ -22,15 +22,15 @@ export default class JitsiStreamBlurEffect {
     bpModel; // bodyPix.BodyPix
     stream; // MediaStream
 
-    tmpVideo = document.createElement("video");
+    tmpVideo = document.createElement('video');
 
-    videoRenderCanvas = document.createElement("canvas");
+    videoRenderCanvas = document.createElement('canvas');
     videoRenderCanvasCtx = this.videoRenderCanvas.getContext('2d');
 
-    bodyPixCanvas = document.createElement("canvas");
+    bodyPixCanvas = document.createElement('canvas');
     bodyPixCtx = this.bodyPixCanvas.getContext('2d');
 
-    finalCanvas = document.createElement("canvas");
+    finalCanvas = document.createElement('canvas');
 
     previousSegmentationComplete = true;
     lastSegmentation = null; // bodyPix.SemanticPersonSegmentation | null
@@ -47,7 +47,7 @@ export default class JitsiStreamBlurEffect {
      * Represents a modified video MediaStream track.
      *
      * @class
-     * @param {bodyPix.BodyPix} bpModel - BodyPix model.
+     * @param {BodyPix} bpModel - BodyPix model.
 
      */
     constructor(bpModel) {
@@ -58,8 +58,8 @@ export default class JitsiStreamBlurEffect {
      * Starts loop to capture video frame and render the segmentation mask.
      *
      * @param {MediaStream} stream - Stream to be used for processing.
-     * @param {boolean} blur
-     * @param {HTMLImageElement | undefined} image
+     * @param {boolean} blur - Do you want to blur?
+     * @param {HTMLImageElement | undefined} image - Used for virtual background/background replacement
      * @returns {MediaStream} - The stream with the applied effect.
      */
     startEffect(stream, blur = true, image) {
@@ -165,7 +165,7 @@ export default class JitsiStreamBlurEffect {
      */
     setNewSettings(blur, image){
         if (blur && image) {
-            throw "I can't blur and replace image...well I can...but that would be stupid."
+            throw 'I can\'t blur and replace image...well I can...but that would be stupid.'
         }
         this.blur = blur;
         if(image){
