@@ -14,10 +14,17 @@ import CoreMedia
 import CoreImage
 
 
+enum BroadcastError: Error {
+    case callEnded(message: String)
+
+    var localizedDescription: String { return "The call has ended!" }
+}
+
 class SampleHandler: RPBroadcastSampleHandler {
   
   var serverSocket: Socket!
   var connSocket: Socket!
+  var errorCount = 0
   
     override func broadcastStarted(withSetupInfo setupInfo: [String : NSObject]?) {
         // User has requested to start the broadcast. Setup info from the UI extension can be supplied but optional.
@@ -99,6 +106,7 @@ class SampleHandler: RPBroadcastSampleHandler {
                     if let jsonData = try? JSONEncoder().encode(dataDict) {
                       try self.connSocket.write(from: jsonData)
                     }
+
 //                  var rawImageData = Data("\(1920)_\(889)_\(b64IamgeData!)".utf8)
 //                    print("size \(rawImageData.count)")
 //                    try self.connSocket.write(from: rawImageData)
@@ -118,6 +126,11 @@ class SampleHandler: RPBroadcastSampleHandler {
                 }
               } catch {
                 print("error while writing in process buffer \(error)")
+                if (self.errorCount > 5) {
+                  print("stopping broadcast")
+                  self.finishBroadcastWithError(BroadcastError.callEnded(message: "There has been an error"))
+                }
+                self.errorCount = self.errorCount + 1
               }
             }
             break

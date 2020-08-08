@@ -9,3 +9,4 @@
 #import <react-native-webrtc/WebRTCModule.h>
 
 //#import "WebRTCModuleBridge.m"
+#import "ScreenShareController.h"

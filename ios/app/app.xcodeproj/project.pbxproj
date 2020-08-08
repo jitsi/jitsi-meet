@@ -34,6 +34,7 @@
 		FE816EC4248A5AD0004D900E /* BroadcastSetupViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE816EC3248A5AD0004D900E /* BroadcastSetupViewController.swift */; };
 		FE816EC8248A5AD0004D900E /* ScreenRecorderHoppSetupUI.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = FE816EBE248A5AD0004D900E /* ScreenRecorderHoppSetupUI.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		FE816ECB248A5AD0004D900E /* ScreenRecorderHopp.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = FE816EB3248A5AD0004D900E /* ScreenRecorderHopp.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		FEC6995024DEBDBF00BAC275 /* ScreenShareController.m in Sources */ = {isa = PBXBuildFile; fileRef = FEC6994F24DEBDBF00BAC275 /* ScreenShareController.m */; };
 		FED1D3F724AA64DA00FA358E /* CustomBroadcastPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FED1D3F624AA64DA00FA358E /* CustomBroadcastPickerView.swift */; };
 		FEF1E8C824C354CC00AA2AEF /* CustomRTCVideoCapturer.m in Sources */ = {isa = PBXBuildFile; fileRef = FEF1E8C724C354CC00AA2AEF /* CustomRTCVideoCapturer.m */; };
 /* End PBXBuildFile section */
@@ -147,6 +148,8 @@
 		FE816EC3248A5AD0004D900E /* BroadcastSetupViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BroadcastSetupViewController.swift; sourceTree = "<group>"; };
 		FE816EC5248A5AD0004D900E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		FE97C44F249BA3D700D34880 /* ScreenRecorderHopp.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ScreenRecorderHopp.entitlements; sourceTree = "<group>"; };
+		FEC6994E24DEBB3600BAC275 /* ScreenShareController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ScreenShareController.h; sourceTree = "<group>"; };
+		FEC6994F24DEBDBF00BAC275 /* ScreenShareController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ScreenShareController.m; sourceTree = "<group>"; };
 		FED1D3F624AA64DA00FA358E /* CustomBroadcastPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomBroadcastPickerView.swift; sourceTree = "<group>"; };
 		FEF1E8C624C353B200AA2AEF /* CustomRTCVideoCapturer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CustomRTCVideoCapturer.h; sourceTree = "<group>"; };
 		FEF1E8C724C354CC00AA2AEF /* CustomRTCVideoCapturer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CustomRTCVideoCapturer.m; sourceTree = "<group>"; };
@@ -252,6 +255,8 @@
 				FE1CD4FD24B592CB00B4EE33 /* SocketShim.swift */,
 				FEF1E8C624C353B200AA2AEF /* CustomRTCVideoCapturer.h */,
 				FEF1E8C724C354CC00AA2AEF /* CustomRTCVideoCapturer.m */,
+				FEC6994E24DEBB3600BAC275 /* ScreenShareController.h */,
+				FEC6994F24DEBDBF00BAC275 /* ScreenShareController.m */,
 			);
 			path = src;
 			sourceTree = "<group>";
@@ -665,6 +670,7 @@
 				13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */,
 				FE816EAC248A550A004D900E /* RecordComponent.swift in Sources */,
 				FE1E60DE24B4DE49000F2550 /* WebRTCModuleBridge.m in Sources */,
+				FEC6995024DEBDBF00BAC275 /* ScreenShareController.m in Sources */,
 				DE4C456121DE1E4E00EA0709 /* FIRUtilities.m in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
 			);
