@@ -14,12 +14,6 @@ import CoreMedia
 import CoreImage
 
 
-enum BroadcastError: Error {
-    case callEnded(message: String)
-
-    var localizedDescription: String { return "The call has ended!" }
-}
-
 class SampleHandler: RPBroadcastSampleHandler {
   
   var serverSocket: Socket!
@@ -128,7 +122,8 @@ class SampleHandler: RPBroadcastSampleHandler {
                 print("error while writing in process buffer \(error)")
                 if (self.errorCount > 5) {
                   print("stopping broadcast")
-                  self.finishBroadcastWithError(BroadcastError.callEnded(message: "There has been an error"))
+                  let errorMsg = [NSLocalizedFailureReasonErrorKey: "Der Anruf ist beendet!"]
+                  self.finishBroadcastWithError(NSError(domain: "ScreenRec", code: -1, userInfo: errorMsg))
                 }
                 self.errorCount = self.errorCount + 1
               }

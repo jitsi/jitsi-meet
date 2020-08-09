@@ -13,7 +13,6 @@ const subscription = screenShareControllerEmitter.addListener(
   (reminder) => {
       console.log(`successfully sent event from native to react native globally ${reminder.name}`);
       if (reminder.name == 'recStarted') {
-          console.log(Object.keys(global.window))
         global.window.storeDispatch({ type: 'START_SCREEN_SHARING' });
       } else if (reminder.name == 'recStopped') {
         global.window.storeDispatch({ type: 'END_SCREEN_SHARING' });
