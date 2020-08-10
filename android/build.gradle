@@ -144,7 +144,7 @@ allprojects {
 ext {
     buildToolsVersion = "29.0.3"
     compileSdkVersion = 29
-    minSdkVersion    = 21
+    minSdkVersion    = 23
     targetSdkVersion = 29
     supportLibVersion = "28.0.0"
 
