@@ -1,15 +1,15 @@
 {
     "addPeople": {
-        "add": "",
-        "countryNotSupported": "",
-        "countryReminder": "",
-        "disabled": "",
-        "failedToAdd": "",
-        "footerText": "",
+        "add": "اضافه کردن",
+        "countryNotSupported": "متاسفانه در حال حاضر کشور مورد نظر شما را پشتیبانی نمی کنیم.",
+        "countryReminder": "از خارج از ایران تماس می گیرید؟ لطفا مطمئن شوید که پیش شماره صحیح را وارد کرده باشید.",
+        "disabled": "شما نمی توانید شرکت کننده جدیدی را اضافه کنید.",
+        "failedToAdd": "شرکت کننده مورد نظر اضافه نشد.",
+        "footerText": "در حال حاضر ارتباط با خطوط تلفن امکان پذیر نمی‌باشد.",
         "loading": "",
         "loadingNumber": "اعتبار سنجی شماره تلفن",
         "loadingPeople": "جستجوی افراد برای دعوت",
-        "noResults": "",
+        "noResults": "هیچ نتیجه مرتبطی پیدا نشد",
         "noValidNumbers": "لطفاً یک شماره تلفن وارد کنید",
         "searchNumbers": "اضافه کردن شماره تلفن ها",
         "searchPeople": "جستجوی افراد",
@@ -28,7 +28,7 @@
         "audioOnly": "پهنای باند پایین"
     },
     "calendarSync": {
-        "addMeetingURL": "افزودن پیوند جلسه",
+        "addMeetingURL": "افزودن لینک جلسه",
         "confirmAddLink": "",
         "error": {
             "appConfiguration": "",
@@ -115,18 +115,18 @@
         "tryAgainButton": ""
     },
     "defaultLink": "مثال__{{url}}",
-    "defaultNickname": "برای مثال مجید مجیدی",
+    "defaultNickname": "برای مثال نوید بهرنگی,
     "deviceError": {
-        "cameraError": "",
-        "cameraPermission": "",
-        "microphoneError": "",
-        "microphonePermission": ""
+        "cameraError": "دسترسی به دوربین شما انجام نشد",
+        "cameraPermission": "در دریافت اجازه دوربین خطایی رخ داده است",
+        "microphoneError": "دسترسی به میکروفون شما انجام نشد",
+        "microphonePermission": "در دریافت اجازه میکروفون خطایی رخ داده است"
     },
     "deviceSelection": {
-        "noPermission": "",
-        "previewUnavailable": "",
-        "selectADevice": "",
-        "testAudio": ""
+        "noPermission": "اجازه داده نمی شود",
+        "previewUnavailable": "پیش نمایش در دسترس نیست",
+        "selectADevice": "یک دستگاه را انتخاب کنید",
+        "testAudio": "یک صدای آزمایشی پخش کنید"
     },
     "dialog": {
         "accessibilityLabel": {
