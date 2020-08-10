@@ -7,6 +7,7 @@ import TIPPING_INTERFACE from 'superhero-utls/src/contracts/TippingInterface.aes
 
 // base/util/createDeepLinkUrl
 import { client } from '../../../client';
+import { translate } from '../../base/i18n';
 import TipIcon from '../../base/icons/svg/tip.svg';
 import { createDeepLinkUrl } from '../../base/util/createDeepLinkUrl';
 import {
@@ -36,6 +37,11 @@ type Props = {
      * Tile view or vertical filmstrip
      */
     layout: string,
+
+    /**
+     * Used for translation
+     */
+    t: Function
 };
 
 type State = {
@@ -230,9 +236,10 @@ class TipButton extends Component<Props, State> {
         signCb,
         parentId = ''
     }) {
-        // todo: move to onChange
+        const { t } = this.props;
+
         if (!isAccountOrChainName(author)) {
-            this.setState({ error: 'value is not account or chain name' });
+            this.setState({ error: t('tipping.error.invalidAccount') });
 
             return;
         }
@@ -265,17 +272,18 @@ class TipButton extends Component<Props, State> {
      * @returns {void}
      */
     async _onSendTip() {
+        const { t } = this.props;
         const amount = aeternity.util.aeToAtoms(this.state.value);
         const url = `${URLS.SUPER}/user-profile/${this.props.account}`;
 
         try {
             this.setState({ showLoading: true });
             await aeternity.tip(url, this.state.message, amount);
-            this.setState({ success: 'Your transaction is successful. Thanks!' });
+            this.setState({ success: t('tipping.success') });
         } catch (e) {
             // todo: translates
             console.log({ e });
-            this.setState({ error: 'An error occurred while sending the tip. Please try again later' });
+            this.setState({ error: t('tipping.error.tippingFailed') });
         } finally {
             this.setState({ showLoading: false });
         }
@@ -404,4 +412,4 @@ class TipButton extends Component<Props, State> {
     }
 }
 
-export default TipButton;
+export default translate(TipButton);

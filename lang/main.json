@@ -860,5 +860,13 @@
     },
     "helpView": {
         "header": "Help center"
+    },
+    "tipping": {
+        "success": "Your transaction is successful. Thanks!",
+        "error": {
+            "invalidAccount": "value is not account or chain name",
+            "invalidLastChar": "The last character shouldn't be a '.'",
+            "tippingFailed": "An error occurred while sending the tip. Please try again later."
+        }
     }
 }
