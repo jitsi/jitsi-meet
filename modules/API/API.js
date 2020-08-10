@@ -284,7 +284,7 @@ function initCommands() {
          * @param {string} mode - `file` or `stream`.
          * @returns {void}
          */
-        'stop-recording': mode => {
+        'stop-recording': ({ mode }) => {
             const state = APP.store.getState();
             const conference = getCurrentConference(state);
 
