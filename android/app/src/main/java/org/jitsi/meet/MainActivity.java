@@ -23,7 +23,6 @@ import android.content.IntentFilter;
 import android.content.RestrictionEntry;
 import android.content.RestrictionsManager;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
@@ -96,7 +95,7 @@ public class MainActivity extends JitsiMeetActivity {
         // In Debug builds React needs permission to write over other apps in
         // order to display the warning and error overlays.
         if (BuildConfig.DEBUG) {
-            if (canRequestOverlayPermission() && !Settings.canDrawOverlays(this)) {
+            if (!Settings.canDrawOverlays(this)) {
                 Intent intent
                     = new Intent(
                     Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
@@ -186,8 +185,7 @@ public class MainActivity extends JitsiMeetActivity {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == OVERLAY_PERMISSION_REQUEST_CODE
-                && canRequestOverlayPermission()) {
+        if (requestCode == OVERLAY_PERMISSION_REQUEST_CODE) {
             if (Settings.canDrawOverlays(this)) {
                 initialize();
                 return;
@@ -231,11 +229,5 @@ public class MainActivity extends JitsiMeetActivity {
         } catch (MalformedURLException e) {
             return null;
         }
-    }
-
-    private boolean canRequestOverlayPermission() {
-        return
-            Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
-                && getApplicationInfo().targetSdkVersion >= Build.VERSION_CODES.M;
     }
 }
