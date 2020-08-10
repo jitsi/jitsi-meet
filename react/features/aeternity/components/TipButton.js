@@ -174,14 +174,20 @@ class TipButton extends Component<Props, State> {
      * @returns {void}
      */
     _onChangeValue({ target: { value } }) {
-        const validationRegExp = /\d+\.?\d*/;
+        const validationRegExp = /^\d+\.?\d*$/;
         const result = value.match(validationRegExp);
 
-        if (this.state.value === 0 || this.state.value < 0) {
+        if (result && result[0].endsWith('.')) {
+            this.setState({ value: result[0] });
+
+            return;
+        } else if (!value) {
+            this.setState({ value: '' });
+
             return;
         }
 
-        result ? this.setState({ value: result[0] }) : this.setState({ value: '' });
+        result ? this.setState({ value: Number(result[0]) }) : this.setState({ value: this.state.value });
     }
 
     /**
@@ -305,8 +311,8 @@ class TipButton extends Component<Props, State> {
      */
     render() {
         const { isOpen, error, showLoading, value, success } = this.state;
-        const { hasWallet, layout } = this.props;
-        const isLastCharDot = value[value.length - 1] === '.';
+        const { hasWallet, layout, theme: { place } } = this.props;
+        const isNotValidValue = String(value).endsWith('.');
 
         if (layout) {
             return (
@@ -336,14 +342,13 @@ class TipButton extends Component<Props, State> {
                                                 <div className = 'tip-wrapper'>
                                                     <input
                                                         className = 'tip-input'
-                                                        min = '0.01'
                                                         onChange = { this._onChangeValue }
                                                         placeholder = 'Amount'
-                                                        type = 'number'
+                                                        type = 'text'
                                                         value = { value } />
                                                     <button
                                                         className = 'tip-button'
-                                                        disabled = { !value || showLoading || isLastCharDot }
+                                                        disabled = { !value || showLoading || isNotValidValue }
                                                         onClick = { this._onSendTip }>Tip</button>
                                                 </div>
                                             </div>
@@ -366,7 +371,7 @@ class TipButton extends Component<Props, State> {
                         <TipIcon onClick = { this._onToggleTooltip } />
                     </div>
                     {isOpen && (
-                        <div className = { `tip-container tip-container__${this.props.theme.place}` } >
+                        <div className = { `tip-container tip-container__${place}` } >
                             {!showLoading && error && <div className = 'tip-error'> {error} </div>}
                             {!showLoading && !error && success && <div className = 'tip-success'> {success} </div>}
                             {showLoading && <div className = 'tip-loader'>
@@ -380,14 +385,13 @@ class TipButton extends Component<Props, State> {
                             <div className = 'tip-wrapper'>
                                 <input
                                     className = 'tip-input'
-                                    min = '0.01'
                                     onChange = { this._onChangeValue }
                                     placeholder = 'Amount'
-                                    type = 'number'
+                                    type = 'text'
                                     value = { value } />
                                 <button
                                     className = 'tip-button'
-                                    disabled = { !value || showLoading || isLastCharDot }
+                                    disabled = { !value || showLoading || isNotValidValue }
                                     onClick = { this._onSendTip }>Tip</button>
                             </div>
                         </div>
