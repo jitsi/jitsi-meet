@@ -177,6 +177,10 @@ class TipButton extends Component<Props, State> {
         const validationRegExp = /\d+\.?\d*/;
         const result = value.match(validationRegExp);
 
+        if (this.state.value === 0 || this.state.value < 0) {
+            return;
+        }
+
         result ? this.setState({ value: result[0] }) : this.setState({ value: '' });
     }
 
@@ -255,10 +259,6 @@ class TipButton extends Component<Props, State> {
      * @returns {void}
      */
     async _onSendTip() {
-        if (!this.props.account) {
-            return;
-        }
-
         const amount = aeternity.util.aeToAtoms(this.state.value);
         const url = `${URLS.SUPER}/user-profile/${this.props.account}`;
 
@@ -336,9 +336,10 @@ class TipButton extends Component<Props, State> {
                                                 <div className = 'tip-wrapper'>
                                                     <input
                                                         className = 'tip-input'
+                                                        min = '0.01'
                                                         onChange = { this._onChangeValue }
                                                         placeholder = 'Amount'
-                                                        type = 'text'
+                                                        type = 'number'
                                                         value = { value } />
                                                     <button
                                                         className = 'tip-button'
@@ -379,9 +380,10 @@ class TipButton extends Component<Props, State> {
                             <div className = 'tip-wrapper'>
                                 <input
                                     className = 'tip-input'
+                                    min = '0.01'
                                     onChange = { this._onChangeValue }
                                     placeholder = 'Amount'
-                                    type = 'text'
+                                    type = 'number'
                                     value = { value } />
                                 <button
                                     className = 'tip-button'
