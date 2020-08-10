@@ -16,11 +16,10 @@ if nc -w 5 -z localhost ${RCT_METRO_PORT} ; then
     exit 2
   fi
 else
-    CMD="${THIS_DIR}/../../node_modules/react-native/scripts/launchPackager.command"
+    CMD="$THIS_DIR/run-packager-helper.command"
     if [[ `uname` == "Darwin"  ]]; then
         open -g "${CMD}" || echo "Can't start packager automatically"
     else
         xdg-open "${CMD}" || echo "Can't start packager automatically"
     fi
 fi
-
