@@ -186,10 +186,10 @@ local function sendIq(participant,action,requestId,time,position,token)
         outStanza:tag("token"):text(token):up()
     end
     if time then
-        outStanza:tag("time"):text(time):up()
+        outStanza:tag("time"):text(tostring(time)):up()
     end
     if position then
-        outStanza:tag("position"):text(position):up()
+        outStanza:tag("position"):text(tostring(position)):up()
     end
     module:log("info","Oubound stanza %s",inspect(outStanza));
     module:send(outStanza);
