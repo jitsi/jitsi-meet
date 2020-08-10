@@ -12,6 +12,7 @@ import {
     MuteButton,
     MuteEveryoneElseButton,
     KickButton,
+    KickEveryoneElseButton,
     PrivateMessageMenuButton,
     RemoteControlButton,
     RemoteVideoMenu,

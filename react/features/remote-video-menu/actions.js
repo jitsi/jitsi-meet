@@ -81,37 +81,39 @@ export function muteAllParticipants(exclude: Array<string>) {
         /* eslint-enable no-confusing-arrow */
     };
 }
+
 /**
-* kicks the remote participant with the given ID.
+* Kicks the remote participant with the given ID.
 *
 * @param {string} participantId - ID of the participant to kick.
 * @returns {Function}
 */
 export function kickRemote(participantId: string) {
-return (dispatch: Dispatch<any>) => {
-    sendAnalytics(createRemoteMuteConfirmedEvent(participantId));
-    dispatch(kickParticipant(participantId));
-};
+    return (dispatch: Dispatch<any>) => {
+        sendAnalytics(createRemoteMuteConfirmedEvent(participantId));
+        dispatch(kickParticipant(participantId));
+    };
 }
+
 /**
-* kicks all participants.
+* Kicks all participants.
 *
 * @param {Array<string>} exclude - Array of participant IDs to not mute.
 * @returns {Function}
 */
 export function kickAllParticipants(exclude: Array<string>) {
-return (dispatch: Dispatch<any>, getState: Function) => {
-    const state = getState();
-    const localId = getLocalParticipant(state).id;
-    const participantIds = state['features/base/participants']
-        .map(p => p.id);
+    return (dispatch: Dispatch<any>, getState: Function) => {
+        const state = getState();
+        const localId = getLocalParticipant(state).id;
+        const participantIds = state['features/base/participants']
+            .map(p => p.id);
 
-    /* eslint-disable no-confusing-arrow */
-    participantIds
-        .filter(id => !exclude.includes(id))
-        .map(id => id === localId ? kickParticipant(true) : kickParticipant(id))
+        /* eslint-disable no-confusing-arrow */
+        participantIds
+            .filter(id => !exclude.includes(id))
+            .map(id => id === localId ? kickParticipant(true) : kickParticipant(id))
 
-        .map(dispatch);
-    /* eslint-enable no-confusing-arrow */
-};
+            .map(dispatch);
+        /* eslint-enable no-confusing-arrow */
+    };
 }

@@ -79,8 +79,8 @@ import HangupButton from '../HangupButton';
 import HelpButton from '../HelpButton';
 
 import AudioSettingsButton from './AudioSettingsButton';
-import MuteEveryoneButton from './MuteEveryoneButton';
 import KickEveryoneButton from './KickEveryoneButton';
+import MuteEveryoneButton from './MuteEveryoneButton';
 import OverflowMenuButton from './OverflowMenuButton';
 import OverflowMenuProfileItem from './OverflowMenuProfileItem';
 import ToolbarButton from './ToolbarButton';
