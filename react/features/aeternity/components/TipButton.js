@@ -175,10 +175,10 @@ class TipButton extends Component<Props, State> {
      */
     _onChangeValue({ target: { value } }) {
         const validationRegExp = /^\d+\.?\d*$/;
-        const result = value.match(validationRegExp);
+        const [ result ] = value?.match(validationRegExp) ?? [];
 
-        if (result && result[0].endsWith('.')) {
-            this.setState({ value: result[0] });
+        if (result && result.endsWith('.')) {
+            this.setState({ value: result });
 
             return;
         } else if (!value) {
@@ -187,7 +187,7 @@ class TipButton extends Component<Props, State> {
             return;
         }
 
-        result ? this.setState({ value: Number(result[0]) }) : this.setState({ value: this.state.value });
+        result ? this.setState({ value: Number(result) }) : this.setState({ value: this.state.value });
     }
 
     /**
