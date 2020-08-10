@@ -51,7 +51,19 @@ local ASAPIssuer
     = module:get_option_string("asap_issuer", 'jitsi');
 
 local ASAPAudience
-    = module:get_option_string("asap_audience", 'jitsi');
+    = module:get_option_string("asap_audience", 'jibri-queue');
+
+local ASAPAcceptedIssuers
+    = module:get_option_array('asap_accepted_issuers',{'jibri-queue'});
+
+module:log("info", "ASAP Accepted Issuers %s", ASAPAcceptedIssuers);
+token_util:set_asap_accepted_issuers(ASAPAcceptedIssuers);
+
+local ASAPAcceptedAudiences
+    = module:get_option_array('asap_accepted_audiences',{'*'});
+
+    module:log("info", "ASAP Accepted Audiences %s", ASAPAcceptedAudiences);
+    token_util:set_asap_accepted_audiences(ASAPAcceptedAudiences);
 
 local ASAPTTL
     = module:get_option_number("asap_ttl", 3600);

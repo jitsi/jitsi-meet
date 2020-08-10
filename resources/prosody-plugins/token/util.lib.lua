@@ -101,7 +101,15 @@ function Util.new(module)
 end
 
 function Util:set_asap_key_server(asapKeyServer)
-    self.asapKeyServer = asapKeyServer
+    self.asapKeyServer = asapKeyServer;
+end
+
+function Util:set_asap_accepted_issuers(acceptedIssuers)
+    self.acceptedIssuers = acceptedIssuers;
+end
+
+function Util:set_asap_accepted_audiences(acceptedAudiences)
+    self.acceptedAudiences = acceptedAudiences;
 end
 
 --- Returns the public key by keyID
