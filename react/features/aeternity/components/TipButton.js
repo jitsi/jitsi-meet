@@ -181,7 +181,7 @@ class TipButton extends Component<Props, State> {
      */
     _onChangeValue({ target: { value } }) {
         const validationRegExp = /^\d+\.?\d*$/;
-        const [ result ] = value?.match(validationRegExp) ?? [];
+        const [ result ] = value.match(validationRegExp) ?? [];
 
         if (result && result.endsWith('.')) {
             this.setState({ value: result });
