@@ -74,17 +74,27 @@ function provider.delete_user(username)
 	return nil;
 end
 
+local function validate_result(session, res, error, reason)
+    if res == false then
+        log("warn",
+            "Error verifying token err:%s, reason:%s", error, reason);
+        session.auth_token = nil;
+        return res, error, reason;
+    end
+end
+
 function provider.get_sasl_handler(session)
 
 	local function get_username_from_token(self, message)
-        local res, error, reason = token_util:process_and_verify_token(session);
 
-        if (res == false) then
-            log("warn",
-                "Error verifying token err:%s, reason:%s", error, reason);
-            session.auth_token = nil;
-            return res, error, reason;
+        -- retrieve custom public key from server and save it on the session
+        local event_result = prosody.events.fire_event("pre-jitsi-authentication-fetch-key", session);
+        if event_result ~= nil then
+            validate_result(session,event_result.res, event_result.error, event_result.reason)
         end
+
+        local res, error, reason = token_util:process_and_verify_token(session);
+        validate_result(session, res, error, reason);
 
         local customUsername
             = prosody.events.fire_event("pre-jitsi-authentication", session);
@@ -100,6 +110,11 @@ function provider.get_sasl_handler(session)
         	end
         else
             self.username = message;
+        end
+
+        local event_result = prosody.events.fire_event("post-jitsi-authentication", session);
+        if event_result ~= nil then
+            validate_result(session,event_result.res, event_result.error, event_result.reason)
         end
 
         return res;
