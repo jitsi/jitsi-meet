@@ -151,8 +151,8 @@ var interfaceConfig = {
      *
      * @type {boolean}
      */
-    RECENT_LIST_ENABLED: true,
     RECENT_LIST_DEPTH: 3,
+    RECENT_LIST_ENABLED: true,
     REMOTE_THUMBNAIL_RATIO: 1, // 1:1
 
     SETTINGS_SECTIONS: [ 'devices', 'language', 'moderator', 'profile', 'calendar' ],
