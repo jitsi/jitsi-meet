@@ -5,7 +5,6 @@ import BigNumber from 'bignumber.js';
 import React, { Component } from 'react';
 import TIPPING_INTERFACE from 'superhero-utls/src/contracts/TippingInterface.aes';
 
-// base/util/createDeepLinkUrl
 import { client } from '../../../client';
 import { translate } from '../../base/i18n';
 import TipIcon from '../../base/icons/svg/tip.svg';
@@ -147,6 +146,17 @@ class TipButton extends Component<Props, State> {
         theme: {
             place: 'chat'
         }
+    };
+
+    /**
+     * Implements {@code Component#componentDidUpdate}.
+     *
+     * @inheritdoc
+     */
+    componentDidUpdate() {
+        this.state.isOpen && !this.props.layout
+            ? document.addEventListener('click', this._onToggleTooltip)
+            : document.removeEventListener('click', this._onToggleTooltip);
     }
 
     /**
@@ -163,14 +173,18 @@ class TipButton extends Component<Props, State> {
     /**
      * Toggle tooltip.
      *
-     * @param {string} currency - New currency.
+     * @param {Object} event - Event object.
      * @returns {void}
      */
     _onToggleTooltip(event) {
         const tipRegExp = /tip/;
-        const isModal = tipRegExp.test(event.target.className);
+        const isTip = tipRegExp.test(event.target.className);
 
-        isModal ? null : this.setState({ isOpen: !this.state.isOpen });
+        if (isTip) {
+            return;
+        }
+
+        this.setState({ isOpen: !this.state.isOpen });
     }
 
     /**
@@ -183,7 +197,7 @@ class TipButton extends Component<Props, State> {
         const validationRegExp = /^\d+\.?\d*$/;
         const [ result ] = value.match(validationRegExp) ?? [];
 
-        if (result && result.endsWith('.')) {
+        if (result?.endsWith('.')) {
             this.setState({ value: result });
 
             return;
