@@ -48,6 +48,11 @@ type Props = {
     _welcomePageIsVisible: boolean,
 
     /**
+     * The default value for the Jitsi logo URL.
+     */
+    defaultJitsiLogoURL: ?string,
+
+    /**
      * Invoked to obtain translated strings.
      */
     t: Function
@@ -218,13 +223,14 @@ class Watermarks extends Component<Props, State> {
         let reactElement = null;
         const {
             _customLogoUrl,
-            _customLogoLink
+            _customLogoLink,
+            defaultJitsiLogoURL
         } = this.props;
 
         if (this._canDisplayJitsiWatermark()) {
             const link = _customLogoLink || this.state.jitsiWatermarkLink;
             const style = {
-                backgroundImage: `url(${_customLogoUrl || interfaceConfig.DEFAULT_LOGO_URL})`,
+                backgroundImage: `url(${_customLogoUrl || defaultJitsiLogoURL || interfaceConfig.DEFAULT_LOGO_URL})`,
                 maxWidth: 140,
                 maxHeight: 70
             };
