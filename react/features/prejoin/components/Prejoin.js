@@ -3,13 +3,13 @@
 import InlineDialog from '@atlaskit/inline-dialog';
 import React, { Component } from 'react';
 
+import { isWalletNameSet } from '../../aeternity/utils';
 import { getRoomName } from '../../base/conference';
 import { translate } from '../../base/i18n';
 import { Icon, IconPhone, IconVolumeOff } from '../../base/icons';
+import { getLocalParticipant } from '../../base/participants';
 import { connect } from '../../base/redux';
 import { getDisplayName, updateSettings } from '../../base/settings';
-import { getLocalParticipant } from '../../base/participants';
-import { isWalletNameSet } from '../../aeternity/utils';
 import { isGuest } from '../../invite';
 import { signDeepLink } from '../../settings/components/web/WebLoginButton';
 import { VideoSettingsButton, AudioSettingsButton } from '../../toolbox';
@@ -238,6 +238,7 @@ class Prejoin extends Component<Props, State> {
             name,
             showDialog,
             isWalletNameSet,
+            showWebLoginButton,
             localParticipant,
             t
         } = this.props;
@@ -246,7 +247,6 @@ class Prejoin extends Component<Props, State> {
 
         if (isWalletNameSet) {
             displayName = localParticipant.name;
-            isParticipantEditable = false;
         }
         isParticipantEditable = isParticipantEditable && isAnonymousUser;
 
@@ -302,7 +302,7 @@ class Prejoin extends Component<Props, State> {
                                     type = 'primary'>
                                     { t('prejoin.joinMeeting') }
                                 </ActionButton>
-                                { this.props.showWebLoginButton && <ActionButton
+                                { showWebLoginButton && <ActionButton
                                     disabled = { false }
                                     onClick = { signDeepLink }
                                     type = 'secondary'>
