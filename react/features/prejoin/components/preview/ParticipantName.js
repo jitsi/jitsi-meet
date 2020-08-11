@@ -50,6 +50,18 @@ class ParticipantName extends Component<Props> {
 
         this._onKeyDown = this._onKeyDown.bind(this);
         this._onNameChange = this._onNameChange.bind(this);
+        this._onClearInput = this._onClearInput.bind(this);
+    }
+
+    _onClearInput: () => void;
+
+    /**
+     * Clear input's value
+     *
+     * @returns {void}
+     */
+    _onClearInput() {
+        this.props.setName('');
     }
 
     _onKeyDown: () => void;
@@ -85,17 +97,23 @@ class ParticipantName extends Component<Props> {
      */
     render() {
         const { value, isEditable, t } = this.props;
-        const { _onKeyDown, _onNameChange } = this;
+        const { _onKeyDown, _onNameChange, _onClearInput } = this;
 
         return isEditable ? (
-            <input
-                autoFocus = { true }
-                className = 'prejoin-preview-name prejoin-preview-name--editable'
-                onChange = { _onNameChange }
-                onKeyDown = { _onKeyDown }
-                placeholder = { t('dialog.enterDisplayName') }
-                value = { value } />
-        )
+            <div className = 'prejoin-preview-wrapper'>
+                <input
+                    autoFocus = { true }
+                    className = 'prejoin-preview-name prejoin-preview-name--editable'
+                    onChange = { _onNameChange }
+                    onKeyDown = { _onKeyDown }
+                    placeholder = { t('dialog.enterDisplayName') }
+                    value = { value } />
+                <button
+                    className = 'prejoin-preview-clear'
+                    onClick = { _onClearInput }>
+                    x
+                </button>
+            </div>)
             : <div
                 className = 'prejoin-preview-name prejoin-preview-name--text'
                 onKeyDown = { _onKeyDown }

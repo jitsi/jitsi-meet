@@ -144,6 +144,18 @@
         width: 100%;
     }
 
+    &-clear {
+        background: #0376DA;
+        border: 1px solid #0376DA;
+        outline: none;
+    }
+
+    &-wrapper {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+    }
+
     &-name {
         color: #fff;
         font-size: 19px;
@@ -158,7 +170,7 @@
             margin: 24px 0 16px 0;
             outline: none;
             text-align: center;
-            width: 100%;
+            width: 90%;
 
             &::-webkit-input-placeholder {
                 @include name-placeholder;
