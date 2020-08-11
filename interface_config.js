@@ -137,10 +137,6 @@ var interfaceConfig = {
 
     NATIVE_APP_NAME: 'Jitsi Meet',
 
-    RECENT_LIST_ENABLED: true,
-    RECENT_LIST_DEPTH: 3,
-
-
     // Names of browsers which should show a warning stating the current browser
     // has a suboptimal experience. Browsers which are not listed as optimal or
     // unsupported are considered suboptimal. Valid values are:
@@ -156,6 +152,7 @@ var interfaceConfig = {
      * @type {boolean}
      */
     RECENT_LIST_ENABLED: true,
+    RECENT_LIST_DEPTH: 3,
     REMOTE_THUMBNAIL_RATIO: 1, // 1:1
 
     SETTINGS_SECTIONS: [ 'devices', 'language', 'moderator', 'profile', 'calendar' ],
