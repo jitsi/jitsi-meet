@@ -1,7 +1,7 @@
 /* global APP, JitsiMeetJS, config */
 
+import { jitsiLocalStorage } from '@jitsi/js-utils';
 import Logger from 'jitsi-meet-logger';
-import { jitsiLocalStorage } from 'js-utils';
 
 import AuthHandler from './modules/UI/authentication/AuthHandler';
 import {
@@ -13,6 +13,7 @@ import {
     JitsiConnectionErrors,
     JitsiConnectionEvents
 } from './react/features/base/lib-jitsi-meet';
+import { setPrejoinDisplayNameRequired } from './react/features/prejoin/actions';
 
 const logger = Logger.getLogger(__filename);
 
@@ -113,6 +114,10 @@ function connect(id, password, roomName) {
         connection.addEventListener(
             JitsiConnectionEvents.CONNECTION_FAILED,
             connectionFailedHandler);
+        connection.addEventListener(
+            JitsiConnectionEvents.DISPLAY_NAME_REQUIRED,
+            displayNameRequiredHandler
+        );
 
         /* eslint-disable max-params */
         /**
@@ -164,6 +169,14 @@ function connect(id, password, roomName) {
             unsubscribe();
             logger.error('CONNECTION FAILED:', err);
             reject(err);
+        }
+
+        /**
+         * Marks the display name for the prejoin screen as required.
+         * This can happen if a user tries to join a room with lobby enabled.
+         */
+        function displayNameRequiredHandler() {
+            APP.store.dispatch(setPrejoinDisplayNameRequired());
         }
 
         checkForAttachParametersAndConnect(id, password, connection);

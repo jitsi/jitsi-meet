@@ -59,18 +59,19 @@ class LobbySection extends PureComponent<Props, State> {
     }
 
     /**
-     * Implements {@code PureComponent#componentDidUpdate}.
+     * Implements React's {@link Component#getDerivedStateFromProps()}.
      *
      * @inheritdoc
      */
-    componentDidUpdate(prevProps, prevState) {
-        if (this.props._lobbyEnabled !== prevProps._lobbyEnabled
-                && this.state.lobbyEnabled !== prevState.lobbyEnabled) {
-            // eslint-disable-next-line react/no-did-update-set-state
-            this.setState({
-                lobbyEnabled: this.props._lobbyEnabled
-            });
+    static getDerivedStateFromProps(props: Props, state: Object) {
+        if (props._lobbyEnabled !== state.lobbyEnabled) {
+
+            return {
+                lobbyEnabled: props._lobbyEnabled
+            };
         }
+
+        return null;
     }
 
     /**
@@ -86,17 +87,22 @@ class LobbySection extends PureComponent<Props, State> {
         }
 
         return (
-            <div id = 'lobby-section'>
-                { t('lobby.enableDialogText') }
-                <div className = 'control-row'>
-                    <label>
-                        { t('lobby.toggleLabel') }
-                    </label>
-                    <Switch
-                        onValueChange = { this._onToggleLobby }
-                        value = { this.state.lobbyEnabled } />
+            <>
+                <div id = 'lobby-section'>
+                    <p className = 'description'>
+                        { t('lobby.enableDialogText') }
+                    </p>
+                    <div className = 'control-row'>
+                        <label>
+                            { t('lobby.toggleLabel') }
+                        </label>
+                        <Switch
+                            onValueChange = { this._onToggleLobby }
+                            value = { this.state.lobbyEnabled } />
+                    </div>
                 </div>
-            </div>
+                <div className = 'separator-line' />
+            </>
         );
     }
 

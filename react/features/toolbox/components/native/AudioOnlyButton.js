@@ -4,8 +4,7 @@ import { toggleAudioOnly } from '../../../base/audio-only';
 import { translate } from '../../../base/i18n';
 import { IconAudioOnly, IconAudioOnlyOff } from '../../../base/icons';
 import { connect } from '../../../base/redux';
-import { AbstractButton } from '../../../base/toolbox';
-import type { AbstractButtonProps } from '../../../base/toolbox';
+import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
 
 /**
  * The type of the React {@code Component} props of {@link AudioOnlyButton}.

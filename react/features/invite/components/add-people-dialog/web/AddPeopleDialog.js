@@ -10,6 +10,7 @@ import { translate } from '../../../../base/i18n';
 import { JitsiRecordingConstants } from '../../../../base/lib-jitsi-meet';
 import { getLocalParticipant } from '../../../../base/participants';
 import { connect } from '../../../../base/redux';
+import EmbedMeetingTrigger from '../../../../embed-meeting/components/EmbedMeetingTrigger';
 import { getActiveSession } from '../../../../recording';
 import { updateDialInNumbers } from '../../../actions';
 import { _getDefaultPhoneNumber, getInviteText, isAddPeopleEnabled, isDialOutEnabled } from '../../../functions';
@@ -36,9 +37,9 @@ type Props = {
     _dialIn: Object,
 
     /**
-     * Whether or not invite should be hidden.
+     * Whether or not invite contacts should be visible.
      */
-    _hideInviteContacts: boolean,
+    _inviteContactsVisible: boolean,
 
     /**
      * The current url of the conference to be copied onto the clipboard.
@@ -79,7 +80,7 @@ type Props = {
 function AddPeopleDialog({
     _conferenceName,
     _dialIn,
-    _hideInviteContacts,
+    _inviteContactsVisible,
     _inviteUrl,
     _liveStreamViewURL,
     _localParticipantName,
@@ -146,11 +147,13 @@ function AddPeopleDialog({
             titleKey = 'addPeople.inviteMorePrompt'
             width = { 'small' }>
             <div className = 'invite-more-dialog'>
-                { !_hideInviteContacts && <InviteContactsSection /> }
+                { _inviteContactsVisible && <InviteContactsSection /> }
                 <CopyMeetingLinkSection url = { _inviteUrl } />
                 <InviteByEmailSection
                     inviteSubject = { inviteSubject }
                     inviteText = { invite } />
+                <EmbedMeetingTrigger />
+                <div className = 'invite-more-dialog separator' />
                 {
                     _liveStreamViewURL
                         && <LiveStreamSection liveStreamViewURL = { _liveStreamViewURL } />
@@ -183,12 +186,12 @@ function mapStateToProps(state) {
     const { iAmRecorder } = state['features/base/config'];
     const addPeopleEnabled = isAddPeopleEnabled(state);
     const dialOutEnabled = isDialOutEnabled(state);
+    const hideInviteContacts = iAmRecorder || (!addPeopleEnabled && !dialOutEnabled);
 
     return {
         _conferenceName: getRoomName(state),
         _dialIn: state['features/invite'],
-        _hideInviteContacts:
-            iAmRecorder || (!addPeopleEnabled && !dialOutEnabled),
+        _inviteContactsVisible: interfaceConfig.ENABLE_DIAL_OUT && !hideInviteContacts,
         _inviteUrl: getInviteURL(state),
         _liveStreamViewURL:
             currentLiveStreamingSession

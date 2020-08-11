@@ -1,6 +1,6 @@
 // @flow
 
-import { generateRoomWithoutSeparator } from 'js-utils/random';
+import { generateRoomWithoutSeparator } from '@jitsi/js-utils/random';
 import { Component } from 'react';
 import type { Dispatch } from 'redux';
 
@@ -24,6 +24,11 @@ type Props = {
      * Whether the insecure room name functionality is enabled or not.
      */
     _enableInsecureRoomNameWarning: boolean,
+
+    /**
+     * URL for the moderated rooms microservice, if available.
+     */
+    _moderatedRoomServiceUrl: ?string,
 
     /**
      * Whether the recent list is enabled
@@ -269,16 +274,13 @@ export class AbstractWelcomePage extends Component<Props, *> {
  *
  * @param {Object} state - The redux state.
  * @protected
- * @returns {{
- *     _calendarEnabled: boolean,
- *     _room: string,
- *     _settings: Object
- * }}
+ * @returns {Props}
  */
 export function _mapStateToProps(state: Object) {
     return {
         _calendarEnabled: isCalendarEnabled(state),
         _enableInsecureRoomNameWarning: state['features/base/config'].enableInsecureRoomNameWarning || false,
+        _moderatedRoomServiceUrl: state['features/base/config'].moderatedRoomServiceUrl,
         _recentListEnabled: isRecentListEnabled(),
         _room: state['features/base/conference'].room,
         _settings: state['features/base/settings']

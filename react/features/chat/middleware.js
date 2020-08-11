@@ -18,7 +18,8 @@ import {
 } from '../base/participants';
 import { MiddlewareRegistry, StateListenerRegistry } from '../base/redux';
 import { playSound, registerSound, unregisterSound } from '../base/sounds';
-import { isButtonEnabled, showToolbox } from '../toolbox';
+import { showToolbox } from '../toolbox/actions';
+import { isButtonEnabled } from '../toolbox/functions';
 
 import { SEND_MESSAGE, SET_PRIVATE_MESSAGE_RECIPIENT } from './actionTypes';
 import { addMessage, clearMessages, toggleChat } from './actions';

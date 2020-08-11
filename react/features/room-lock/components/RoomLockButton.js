@@ -5,8 +5,7 @@ import { translate } from '../../base/i18n';
 import { IconRoomLock, IconRoomUnlock } from '../../base/icons';
 import { isLocalParticipantModerator } from '../../base/participants';
 import { connect } from '../../base/redux';
-import { AbstractButton } from '../../base/toolbox';
-import type { AbstractButtonProps } from '../../base/toolbox';
+import { AbstractButton, type AbstractButtonProps } from '../../base/toolbox/components';
 import { beginRoomLockRequest, unlockRoom } from '../actions';
 
 type Props = AbstractButtonProps & {

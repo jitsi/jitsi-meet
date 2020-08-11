@@ -293,7 +293,7 @@ PODS:
     - React
   - react-native-netinfo (4.1.5):
     - React
-  - react-native-webrtc (1.75.3):
+  - react-native-webrtc (1.84.0):
     - React
   - react-native-webview (7.4.1):
     - React
@@ -569,7 +569,7 @@ SPEC CHECKSUMS:
   react-native-calendar-events: 1442fad71a00388f933cfa25512588fec300fcf8
   react-native-keep-awake: eba3137546b10003361b37c761f6c429b59814ae
   react-native-netinfo: 8d8db463bcc5db66a8ac5c48a7d86beb3b92f61a
-  react-native-webrtc: 86d841823e66d68cc1f86712db1c2956056bf0c2
+  react-native-webrtc: 9268ae9a2bc9730796b0968d012327e92c392adf
   react-native-webview: 4dbc1d2a4a6b9c5e9e723c62651917aa2b5e579e
   React-RCTActionSheet: b72ddbfbe15b44ce691d128e4b582f4bb9abb540
   React-RCTAnimation: cfaefba5024499d336b76ab850e6bd33b232b5e3

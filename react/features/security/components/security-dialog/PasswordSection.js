@@ -4,7 +4,7 @@
 import React, { useRef } from 'react';
 
 import { translate } from '../../../base/i18n';
-import { copyText } from '../../../invite';
+import { copyText } from '../../../base/util';
 
 import PasswordForm from './PasswordForm';
 
@@ -170,7 +170,9 @@ function PasswordSection({
 
     return (
         <div className = 'security-dialog password-section'>
-            { t('security.about') }
+            <p className = 'description'>
+                { t(canEditPassword ? 'security.about' : 'security.aboutReadOnly') }
+            </p>
             <div className = 'security-dialog password'>
                 <div
                     className = 'info-dialog info-dialog-column info-dialog-password'

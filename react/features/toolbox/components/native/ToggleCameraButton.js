@@ -4,8 +4,7 @@ import { translate } from '../../../base/i18n';
 import { IconSwitchCamera } from '../../../base/icons';
 import { MEDIA_TYPE, toggleCameraFacingMode } from '../../../base/media';
 import { connect } from '../../../base/redux';
-import { AbstractButton } from '../../../base/toolbox';
-import type { AbstractButtonProps } from '../../../base/toolbox';
+import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
 import { isLocalTrackMuted } from '../../../base/tracks';
 
 /**

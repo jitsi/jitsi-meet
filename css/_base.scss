@@ -33,6 +33,26 @@ body {
     }
 }
 
+/**
+ * AtlasKit sets a default margin on the rendered modals, so
+ * when the shift-right class is set when the chat opens, we
+ * pad the modal container in order for the modals to be centered
+ * while also taking the chat size into consideration.
+*/
+@media (min-width: 480px + $sidebarWidth) {
+    .shift-right [class^="Modal__FillScreen"] {
+        padding-left: $sidebarWidth;
+    }
+}
+
+/**
+ * Similarly, we offset the notifications when the chat is open by
+ * padding the container.
+*/
+.shift-right [class^="styledFlagGroup-"] {
+    padding-left: $sidebarWidth;
+}
+
 .jitsi-icon svg {
     fill: white;
 }

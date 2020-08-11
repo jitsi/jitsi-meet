@@ -6,6 +6,7 @@ const UI = {};
 import EventEmitter from 'events';
 import Logger from 'jitsi-meet-logger';
 
+import { isMobileBrowser } from '../../react/features/base/environment/utils';
 import { getLocalParticipant } from '../../react/features/base/participants';
 import { toggleChat } from '../../react/features/chat';
 import { setDocumentUrl } from '../../react/features/etherpad';
@@ -15,7 +16,7 @@ import {
     dockToolbox,
     setToolboxEnabled,
     showToolbox
-} from '../../react/features/toolbox';
+} from '../../react/features/toolbox/actions.web';
 import UIEvents from '../../service/UI/UIEvents';
 
 import EtherpadManager from './etherpad/Etherpad';
@@ -153,6 +154,12 @@ UI.start = function() {
     VideoLayout.resizeVideoArea();
 
     sharedVideoManager = new SharedVideoManager(eventEmitter);
+
+    if (isMobileBrowser()) {
+        $('body').addClass('mobile-browser');
+    } else {
+        $('body').addClass('desktop-browser');
+    }
 
     if (interfaceConfig.filmStripOnly) {
         $('body').addClass('filmstrip-only');
@@ -551,82 +558,6 @@ UI.getLargeVideoID = function() {
  */
 UI.getLargeVideo = function() {
     return VideoLayout.getLargeVideo();
-};
-
-/**
- * Shows "Please go to chrome webstore to install the desktop sharing extension"
- * 2 button dialog with buttons - cancel and go to web store.
- * @param url {string} the url of the extension.
- */
-UI.showExtensionExternalInstallationDialog = function(url) {
-    let openedWindow = null;
-
-    const submitFunction = function(e, v) {
-        if (v) {
-            e.preventDefault();
-            if (openedWindow === null || openedWindow.closed) {
-                openedWindow
-                    = window.open(
-                        url,
-                        'extension_store_window',
-                        'resizable,scrollbars=yes,status=1');
-            } else {
-                openedWindow.focus();
-            }
-        }
-    };
-
-    const closeFunction = function(e, v) {
-        if (openedWindow) {
-            // Ideally we would close the popup, but this does not seem to work
-            // on Chrome. Leaving it uncommented in case it could work
-            // in some version.
-            openedWindow.close();
-            openedWindow = null;
-        }
-        if (!v) {
-            eventEmitter.emit(UIEvents.EXTERNAL_INSTALLATION_CANCELED);
-        }
-    };
-
-    messageHandler.openTwoButtonDialog({
-        titleKey: 'dialog.externalInstallationTitle',
-        msgKey: 'dialog.externalInstallationMsg',
-        leftButtonKey: 'dialog.goToStore',
-        submitFunction,
-        loadedFunction: $.noop,
-        closeFunction
-    });
-};
-
-/**
- * Shows a dialog which asks user to install the extension. This one is
- * displayed after installation is triggered from the script, but fails because
- * it must be initiated by user gesture.
- * @param callback {function} function to be executed after user clicks
- * the install button - it should make another attempt to install the extension.
- */
-UI.showExtensionInlineInstallationDialog = function(callback) {
-    const submitFunction = function(e, v) {
-        if (v) {
-            callback();
-        }
-    };
-
-    const closeFunction = function(e, v) {
-        if (!v) {
-            eventEmitter.emit(UIEvents.EXTERNAL_INSTALLATION_CANCELED);
-        }
-    };
-
-    messageHandler.openTwoButtonDialog({
-        titleKey: 'dialog.externalInstallationTitle',
-        msgKey: 'dialog.inlineInstallationMsg',
-        leftButtonKey: 'dialog.inlineInstallExtension',
-        submitFunction,
-        loadedFunction: $.noop,
-        closeFunction
-    });
 };
 
 /**

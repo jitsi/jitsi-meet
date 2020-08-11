@@ -9,6 +9,7 @@ import { inviteVideoRooms } from '../videosipgw';
 import {
     ADD_PENDING_INVITE_REQUEST,
     BEGIN_ADD_PEOPLE,
+    HIDE_ADD_PEOPLE_DIALOG,
     REMOVE_PENDING_INVITE_REQUESTS,
     SET_CALLEE_INFO_VISIBLE,
     UPDATE_DIAL_IN_NUMBERS_FAILED,
@@ -33,6 +34,20 @@ import logger from './logger';
 export function beginAddPeople() {
     return {
         type: BEGIN_ADD_PEOPLE
+    };
+}
+
+/**
+ * Creates a (redux) action to signal that the {@code AddPeopleDialog}
+ * should close.
+ *
+ * @returns {{
+ *     type: HIDE_ADD_PEOPLE_DIALOG
+ * }}
+ */
+export function hideAddPeopleDialog() {
+    return {
+        type: HIDE_ADD_PEOPLE_DIALOG
     };
 }
 

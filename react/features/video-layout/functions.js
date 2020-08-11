@@ -1,6 +1,7 @@
 // @flow
 
-import { getPinnedParticipant } from '../base/participants';
+import { getPinnedParticipant, getParticipantCount } from '../base/participants';
+import { isYoutubeVideoPlaying } from '../youtube-player/functions';
 
 import { LAYOUTS } from './constants';
 
@@ -72,17 +73,44 @@ export function getTileViewGridDimensions(state: Object, maxColumns: number = ge
  * @returns {boolean} True if tile view should be displayed.
  */
 export function shouldDisplayTileView(state: Object = {}) {
-    return Boolean(
-        state['features/video-layout']
-            && state['features/video-layout'].tileViewEnabled
-            && (!state['features/etherpad']
-                || !state['features/etherpad'].editing)
+    const participantCount = getParticipantCount(state);
 
-            // Truthy check is needed for interfaceConfig to prevent errors on
-            // mobile which does not have interfaceConfig. On web, tile view
-            // should never be enabled for filmstrip only mode.
-            && (typeof interfaceConfig === 'undefined'
-                || !interfaceConfig.filmStripOnly)
-            && !getPinnedParticipant(state)
+    // In case of a lonely meeting, we don't allow tile view.
+    // But it's a special case too, as we don't even render the button,
+    // see TileViewButton component.
+    if (participantCount < 2) {
+        return false;
+    }
+
+    const { tileViewEnabled } = state['features/video-layout'];
+
+    if (tileViewEnabled !== undefined) {
+        // If the user explicitly requested a view mode, we
+        // do that.
+        return tileViewEnabled;
+    }
+
+    // None tile view mode is easier to calculate (no need for many negations), so we do
+    // that and negate it only once.
+    const shouldDisplayNormalMode = Boolean(
+
+        // Reasons for normal mode:
+
+        // Editing etherpad
+        state['features/etherpad']?.editing
+
+        // We're in filmstrip-only mode
+        || (typeof interfaceConfig === 'object' && interfaceConfig?.filmStripOnly)
+
+        // We pinned a participant
+        || getPinnedParticipant(state)
+
+        // It's a 1-on-1 meeting
+        || participantCount < 3
+
+        // There is a shared YouTube video in the meeting
+        || isYoutubeVideoPlaying(state)
     );
+
+    return !shouldDisplayNormalMode;
 }

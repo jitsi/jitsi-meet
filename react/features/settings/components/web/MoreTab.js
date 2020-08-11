@@ -49,6 +49,16 @@ export type Props = {
     showModeratorSettings: boolean,
 
     /**
+     * Whether or not to display the prejoin settings section.
+     */
+    showPrejoinSettings: boolean,
+
+    /**
+     * Whether or not to show prejoin screen.
+     */
+    showPrejoinPage: boolean,
+
+    /**
      * Whether or not the user has selected the Start Audio Muted feature to be
      * enabled.
      */
@@ -108,8 +118,12 @@ class MoreTab extends AbstractDialogTab<Props, State> {
      * @returns {ReactElement}
      */
     render() {
-        const { showModeratorSettings, showLanguageSettings } = this.props;
+        const { showModeratorSettings, showLanguageSettings, showPrejoinSettings } = this.props;
         const content = [];
+
+        if (showPrejoinSettings) {
+            content.push(this._renderPrejoinScreenSettings());
+        }
 
         if (showModeratorSettings) {
             content.push(this._renderModeratorSettings());
@@ -235,6 +249,35 @@ class MoreTab extends AbstractDialogTab<Props, State> {
                     onChange = {
                         ({ target: { checked } }) =>
                             super._onChange({ followMeEnabled: checked })
+                    } />
+            </div>
+        );
+    }
+
+    /**
+     * Returns the React Element for modifying prejoin screen settings.
+     *
+     * @private
+     * @returns {ReactElement}
+     */
+    _renderPrejoinScreenSettings() {
+        const { t, showPrejoinPage } = this.props;
+
+        return (
+            <div
+                className = 'settings-sub-pane'
+                key = 'prejoin-screen'>
+                <div className = 'mock-atlaskit-label'>
+                    { t('prejoin.premeeting') }
+                </div>
+                <Checkbox
+                    isChecked = { showPrejoinPage }
+                    label = { t('prejoin.showScreen') }
+                    name = 'show-prejoin-page'
+                    // eslint-disable-next-line react/jsx-no-bind
+                    onChange = {
+                        ({ target: { checked } }) =>
+                            super._onChange({ showPrejoinPage: checked })
                     } />
             </div>
         );

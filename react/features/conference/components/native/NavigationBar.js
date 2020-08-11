@@ -5,15 +5,20 @@ import { SafeAreaView, Text, View } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 
 import { getConferenceName } from '../../../base/conference';
-import { getFeatureFlag, MEETING_NAME_ENABLED } from '../../../base/flags';
+import { getFeatureFlag, CONFERENCE_TIMER_ENABLED, MEETING_NAME_ENABLED } from '../../../base/flags';
 import { connect } from '../../../base/redux';
 import { PictureInPictureButton } from '../../../mobile/picture-in-picture';
-import { isToolboxVisible } from '../../../toolbox';
+import { isToolboxVisible } from '../../../toolbox/functions.native';
 import ConferenceTimer from '../ConferenceTimer';
 
 import styles, { NAVBAR_GRADIENT_COLORS } from './styles';
 
 type Props = {
+
+    /**
+     * Whether displaying the current conference timer is enabled or not.
+     */
+    _conferenceTimerEnabled: boolean,
 
     /**
      * Name of the meeting we're currently in.
@@ -73,7 +78,9 @@ class NavigationBar extends Component<Props> {
                             { this.props._meetingName }
                         </Text>
                     }
-                    <ConferenceTimer />
+                    {
+                        this.props._conferenceTimerEnabled && <ConferenceTimer />
+                    }
                 </View>
             </View>
         ];
@@ -89,6 +96,7 @@ class NavigationBar extends Component<Props> {
  */
 function _mapStateToProps(state) {
     return {
+        _conferenceTimerEnabled: getFeatureFlag(state, CONFERENCE_TIMER_ENABLED, true),
         _meetingName: getConferenceName(state),
         _meetingNameEnabled: getFeatureFlag(state, MEETING_NAME_ENABLED, true),
         _visible: isToolboxVisible(state)

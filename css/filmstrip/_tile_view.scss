@@ -46,7 +46,16 @@
         position: fixed;
         top: 0;
         width: 100%;
-        z-index: $filmstripVideosZ
+        z-index: $filmstripVideosZ;
+
+        &.shift-right {
+            margin-left: $sidebarWidth;
+            width: calc(100% - #{$sidebarWidth});
+
+            #filmstripRemoteVideos {
+                width: calc(100vw - #{$sidebarWidth});
+            }
+        }
     }
 
     /**

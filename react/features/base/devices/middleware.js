@@ -15,14 +15,19 @@ import {
     NOTIFY_CAMERA_ERROR,
     NOTIFY_MIC_ERROR,
     SET_AUDIO_INPUT_DEVICE,
-    SET_VIDEO_INPUT_DEVICE
+    SET_VIDEO_INPUT_DEVICE,
+    UPDATE_DEVICE_LIST
 } from './actionTypes';
 import {
     removePendingDeviceRequests,
     setAudioInputDevice,
     setVideoInputDevice
 } from './actions';
-import { formatDeviceLabel, setAudioOutputDeviceId } from './functions';
+import {
+    formatDeviceLabel,
+    groupDevicesByKind,
+    setAudioOutputDeviceId
+} from './functions';
 import logger from './logger';
 
 const JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP = {
@@ -40,6 +45,24 @@ const JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP = {
         [JitsiTrackErrors.UNSUPPORTED_RESOLUTION]: 'dialog.cameraUnsupportedResolutionError'
     }
 };
+
+/**
+ * Logs the current device list.
+ *
+ * @param {Object} deviceList - Whatever is returned by {@link groupDevicesByKind}.
+ * @returns {string}
+ */
+function logDeviceList(deviceList) {
+    const devicesToStr = list => list.map(device => `\t\t${device.label}[${device.deviceId}]`).join('\n');
+    const audioInputs = devicesToStr(deviceList.audioInput);
+    const audioOutputs = devicesToStr(deviceList.audioOutput);
+    const videoInputs = devicesToStr(deviceList.videoInput);
+
+    logger.debug('Device list updated:\n'
+        + `audioInput:\n${audioInputs}\n`
+        + `audioOutput:\n${audioOutputs}\n`
+        + `videoInput:\n${videoInputs}`);
+}
 
 /**
  * Implements the middleware of the feature base/devices.
@@ -122,6 +145,9 @@ MiddlewareRegistry.register(store => next => action => {
         } else {
             APP.UI.emitEvent(UIEvents.VIDEO_DEVICE_CHANGED, action.deviceId);
         }
+        break;
+    case UPDATE_DEVICE_LIST:
+        logDeviceList(groupDevicesByKind(action.devices));
         break;
     case CHECK_AND_NOTIFY_FOR_NEW_DEVICE:
         _checkAndNotifyForNewDevice(store, action.newDevices, action.oldDevices);

@@ -34,6 +34,10 @@
     display: flex;
     flex-direction: column;
 
+    .description {
+        font-size: 13px;
+    }
+
     .control-row {
         display: flex;
         flex-direction: row;
