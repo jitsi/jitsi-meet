@@ -302,7 +302,7 @@ class Prejoin extends Component<Props, State> {
                                     type = 'primary'>
                                     { t('prejoin.joinMeeting') }
                                 </ActionButton>
-                                { showWebLoginButton && <ActionButton
+                                { (showWebLoginButton || !isWalletNameSet) && <ActionButton
                                     disabled = { false }
                                     onClick = { signDeepLink }
                                     type = 'secondary'>
