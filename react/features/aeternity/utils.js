@@ -13,12 +13,12 @@ export function isAccountOrChainName(str) {
 }
 
 /**
- * Returns true if user is connected to web wallet.
+ * Returns true if local participant name is an aeternity address.
  *
  * @param {Object} state - The state of the app.
  * @returns {boolean}
  */
-export function isWalletNameSet(state) {
+export function localParticipantHasAeternityName(state) {
     const localParticipant = getLocalParticipant(state);
 
     if (localParticipant && localParticipant.name) {
@@ -39,4 +39,14 @@ export function isInIframe() {
     } catch (e) {
         return true;
     }
+}
+
+/**
+ * Returns true if user is connected to web wallet.
+ *
+ * @param {Object} state - The state of the app.
+ * @returns {boolean}
+ */
+export function isWalletJWTSet(state) {
+    return state['features/base/jwt'].jwt;
 }

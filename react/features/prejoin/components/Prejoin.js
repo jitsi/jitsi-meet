@@ -3,7 +3,7 @@
 import InlineDialog from '@atlaskit/inline-dialog';
 import React, { Component } from 'react';
 
-import { isWalletNameSet } from '../../aeternity/utils';
+import { isWalletJWTSet } from '../../aeternity/utils';
 import { getRoomName } from '../../base/conference';
 import { translate } from '../../base/i18n';
 import { Icon, IconPhone, IconVolumeOff } from '../../base/icons';
@@ -91,10 +91,10 @@ type Props = {
     showDialog: boolean,
 
     /**
-     * if webwallet address is set
+     * if webwallet JWT was done
      */
 
-    isWalletNameSet: boolean,
+    walletSynced: boolean,
 
     /**
      * local participant
@@ -237,7 +237,7 @@ class Prejoin extends Component<Props, State> {
             joinConferenceWithoutAudio,
             name,
             showDialog,
-            isWalletNameSet,
+            walletSynced,
             showWebLoginButton,
             localParticipant,
             t
@@ -245,8 +245,9 @@ class Prejoin extends Component<Props, State> {
         let isParticipantEditable = true;
         let displayName = name;
 
-        if (isWalletNameSet) {
+        if (walletSynced) {
             displayName = localParticipant.name;
+            isParticipantEditable = false;
         }
         isParticipantEditable = isParticipantEditable && isAnonymousUser;
 
@@ -302,7 +303,7 @@ class Prejoin extends Component<Props, State> {
                                     type = 'primary'>
                                     { t('prejoin.joinMeeting') }
                                 </ActionButton>
-                                { (showWebLoginButton || !isWalletNameSet) && <ActionButton
+                                { (showWebLoginButton || !walletSynced) && <ActionButton
                                     disabled = { false }
                                     onClick = { signDeepLink }
                                     type = 'secondary'>
@@ -351,7 +352,7 @@ function mapStateToProps(state): Object {
         roomName: getRoomName(state),
         showDialog: isJoinByPhoneDialogVisible(state),
         hasJoinByPhoneButton: isJoinByPhoneButtonVisible(state),
-        isWalletNameSet: isWalletNameSet(state),
+        walletSynced: isWalletJWTSet(state),
         localParticipant: getLocalParticipant(state),
         showWebLoginButton: !state['features/aeternity'].hasWallet
     };
