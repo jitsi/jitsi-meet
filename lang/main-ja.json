@@ -295,7 +295,7 @@
         "stopStreamingWarning": "ライブ配信を停止してもよろしいですか？",
         "streamKey": "ストリームキー",
         "Submit": "投稿",
-        "thankYou": "{{appName}} を使用していただきありがとうございます！",
+        "thankYou": "{{appName}} のご利用ありがとうございました！",
         "token": "トークン",
         "tokenAuthFailed": "申し訳ありませんが、この通話に参加することはできません。",
         "tokenAuthFailedTitle": "認証に失敗しました",
@@ -594,7 +594,7 @@
         "about": "あなたはこのミーティングに $t(lockRoomPassword) を設定できます。$t(lockRoomPassword) を知っているひとだけ参加できます。",
         "aboutReadOnly": "モデレーター参加者はこのミーティングに $t(lockRoomPassword) を設定できます。参加者には事前に $t(lockRoomPassword) を知らせます。",
         "insecureRoomNameWarning": "このミーティングの名前は安全ではありません。勝手に参加されてしまう危険があります。セキュリティーオプションを検討してください。",
-        "securityOptions": "セキュリティー"
+        "securityOptions": "セキュリティーオプション"
     },
     "settings": {
         "calendar": {
@@ -697,7 +697,7 @@
             "raiseHand": "手を挙げる・下げる",
             "recording": "レコーディングに切り替える",
             "remoteMute": "参加者を退出させる",
-            "security": "セキュリティーオプション",
+            "security": "セキュリティー",
             "Settings": "設定に切り替える",
             "sharedvideo": "YouTubeビデオ共有に切り替える",
             "shareRoom": "誰かを招待する",
@@ -754,7 +754,7 @@
         "profile": "プロファイル編集",
         "raiseHand": "挙手",
         "raiseYourHand": "手を挙げる",
-        "security": "セキュリティーオプション",
+        "security": "セキュリティー",
         "Settings": "設定",
         "sharedvideo": "YouTube動画を共有",
         "shareRoom": "招待する",
