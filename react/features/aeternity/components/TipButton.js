@@ -142,19 +142,13 @@ class TipButton extends Component<Props, State> {
         this._onTipDeepLink = this._onTipDeepLink.bind(this);
     }
 
-    static defaultProps = {
-        theme: {
-            place: 'chat'
-        }
-    };
-
     /**
      * Implements {@code Component#componentDidUpdate}.
      *
      * @inheritdoc
      */
     componentDidUpdate() {
-        this.state.isOpen && !this.props.layout
+        this.state.isOpen
             ? document.addEventListener('click', this._onToggleTooltip)
             : document.removeEventListener('click', this._onToggleTooltip);
     }
@@ -333,58 +327,8 @@ class TipButton extends Component<Props, State> {
      */
     render() {
         const { isOpen, error, showLoading, value, success } = this.state;
-        const { hasWallet, layout, theme: { place } } = this.props;
+        const { hasWallet, layout } = this.props;
         const isNotValidValue = String(value).endsWith('.');
-
-        if (layout) {
-            return (
-                <div className = 'tip-component'>
-                    {hasWallet ? <>
-                        <div className = 'tip-icon' >
-                            <TipIcon onClick = { this._onToggleTooltip } />
-                        </div>
-                        {isOpen && (
-                            <div className = 'modal'>
-                                <div className = 'modal-dialog'>
-                                    <div className = 'modal-content'>
-                                        <div
-                                            className = 'modal-body'
-                                            onClick = { this._onToggleTooltip }>
-                                            <div className = 'tip-container'>
-                                                {!showLoading && error && <div className = 'tip-error'> {error} </div>}
-                                                {!showLoading && !error && success && <div className = 'tip-success'> {success} </div>}
-                                                {showLoading && <div className = 'tip-loader'>
-                                                    <div className = 'lds-ellipsis'>
-                                                        <div />
-                                                        <div />
-                                                        <div />
-                                                        <div />
-                                                    </div>
-                                                </div>}
-                                                <div className = 'tip-wrapper'>
-                                                    <input
-                                                        className = 'tip-input'
-                                                        onChange = { this._onChangeValue }
-                                                        placeholder = 'Amount'
-                                                        type = 'text'
-                                                        value = { value } />
-                                                    <button
-                                                        className = 'tip-button'
-                                                        disabled = { !value || showLoading || isNotValidValue }
-                                                        onClick = { this._onSendTip }>Tip</button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        )}
-                    </> : <div className = 'tip-icon' >
-                        <TipIcon onClick = { this._onTipDeepLink } />
-                    </div>}
-                </div>
-            );
-        }
 
         return (
             <div className = 'tip-component'>
@@ -393,7 +337,7 @@ class TipButton extends Component<Props, State> {
                         <TipIcon onClick = { this._onToggleTooltip } />
                     </div>
                     {isOpen && (
-                        <div className = { `tip-container tip-container__${place}` } >
+                        <div className = { `tip-container tip-container__${layout}` } >
                             {!showLoading && error && <div className = 'tip-error'> {error} </div>}
                             {!showLoading && !error && success && <div className = 'tip-success'> {success} </div>}
                             {showLoading && <div className = 'tip-loader'>

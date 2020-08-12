@@ -78,19 +78,18 @@ class ChatMessage extends AbstractChatMessage<Props> {
      * @returns {React$Element<*>}
      */
     _renderDisplayName() {
-        const senderHasSuperHeroAddress = Boolean(this.props.message.akAddress)
-           || isAccountOrChainName(this.props.message.displayName);
-        const localParticipantHasSuperHeroWallet = Boolean(this.props.hasWallet);
+        const { hasWallet, message: { akAddress, displayName } } = this.props;
+        const senderHasSuperHeroAddress = Boolean(akAddress)
+           || isAccountOrChainName(displayName);
+        const localParticipantHasSuperHeroWallet = Boolean(hasWallet);
 
         return (
             <div className = 'display-name'>
-                <span className = 'chat-name'>{ this.props.message.displayName }</span>
+                <span className = 'chat-name'>{ displayName }</span>
                 { senderHasSuperHeroAddress && <TipButton
-                    account = { this.props.message.akAddress }
+                    account = { akAddress }
                     hasWallet = { localParticipantHasSuperHeroWallet }
-                    theme = {{
-                        place: 'chat'
-                    }} />
+                    layout = 'chat' />
                 }
             </div>
         );
