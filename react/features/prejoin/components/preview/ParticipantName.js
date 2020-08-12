@@ -100,11 +100,14 @@ class ParticipantName extends Component<Props> {
         const { _onKeyDown, _onNameChange, _onClearInput } = this;
         const trimmedValue = value ? value.trim() : '';
 
+        const className = trimmedValue ? '' : 'full-width';
+        const allClasses = `prejoin-preview-name prejoin-preview-name--editable ${className}`;
+
         return isEditable ? (
             <div className = 'prejoin-preview-wrapper'>
                 <input
                     autoFocus = { true }
-                    className = 'prejoin-preview-name prejoin-preview-name--editable'
+                    className = { allClasses }
                     onChange = { _onNameChange }
                     onKeyDown = { _onKeyDown }
                     placeholder = { t('dialog.enterDisplayName') }
