@@ -504,6 +504,7 @@
     "poweredby": "powered by",
     "prejoin": {
         "audioAndVideoError": "Audio and video error:",
+        "audioDeviceProblem": "There is a problem with your audio device",
         "audioOnlyError": "Audio error:",
         "audioTrackError": "Could not create audio track.",
         "calling": "Calling",
