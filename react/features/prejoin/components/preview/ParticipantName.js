@@ -98,6 +98,7 @@ class ParticipantName extends Component<Props> {
     render() {
         const { value, isEditable, t } = this.props;
         const { _onKeyDown, _onNameChange, _onClearInput } = this;
+        const trimmedValue = value ? value.trim() : '';
 
         return isEditable ? (
             <div className = 'prejoin-preview-wrapper'>
@@ -108,11 +109,11 @@ class ParticipantName extends Component<Props> {
                     onKeyDown = { _onKeyDown }
                     placeholder = { t('dialog.enterDisplayName') }
                     value = { value } />
-                <button
+                { trimmedValue && <button
                     className = 'prejoin-preview-clear'
                     onClick = { _onClearInput }>
                     x
-                </button>
+                </button> }
             </div>)
             : <div
                 className = 'prejoin-preview-name prejoin-preview-name--text'
