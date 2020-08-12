@@ -2,6 +2,7 @@
 
 import React, { PureComponent } from 'react';
 
+import { isWalletJWTSet } from '../../../aeternity';
 import { IconShareDesktop } from '../../icons';
 import { getParticipantById } from '../../participants';
 import { connect } from '../../redux';
@@ -122,7 +123,8 @@ class Avatar<P: Props> extends PureComponent<P, State> {
             id,
             size,
             status,
-            url
+            url,
+            walletSynced
         } = this.props;
         const { avatarFailed } = this.state;
 
@@ -135,7 +137,8 @@ class Avatar<P: Props> extends PureComponent<P, State> {
             size,
             status,
             url: undefined,
-            fullName: _initialsBase
+            fullName: _initialsBase,
+            walletSynced
         };
 
         // _loadableAvatarUrl is validated that it can be loaded, but uri (if present) is not, so
@@ -197,7 +200,8 @@ export function _mapStateToProps(state: Object, ownProps: Props) {
     return {
         _initialsBase,
         _loadableAvatarUrl,
-        colorBase: !colorBase && _participant ? _participant.id : colorBase
+        colorBase: !colorBase && _participant ? _participant.id : colorBase,
+        walletSynced: isWalletJWTSet(state)
     };
 }
 
