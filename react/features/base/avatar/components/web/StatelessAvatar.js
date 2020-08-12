@@ -1,7 +1,6 @@
 // @flow
 import React from 'react';
 
-import { isAccountOrChainName } from '../../../../aeternity/utils';
 import { Icon } from '../../../icons';
 import AbstractStatelessAvatar, { type Props as AbstractProps } from '../AbstractStatelessAvatar';
 
@@ -30,7 +29,12 @@ type Props = AbstractProps & {
     /**
      * User's Full name
      */
-    fullName?: string
+    fullName?: string,
+
+    /**
+     * Participant has wallet
+     */
+    walletSynced?: string
 };
 
 /**
@@ -46,7 +50,6 @@ export default class StatelessAvatar extends AbstractStatelessAvatar<Props> {
     render() {
         const { initials, walletSynced, fullName } = this.props;
         let { url } = this.props;
-        const hasWallet = isAccountOrChainName(fullName);
 
         if (this._isIcon(url)) {
             return (
@@ -61,7 +64,7 @@ export default class StatelessAvatar extends AbstractStatelessAvatar<Props> {
             );
         }
 
-        if (!url && hasWallet && walletSynced) {
+        if (!url && walletSynced) {
             url = `https://avatars.z52da5wt.xyz/${fullName}`;
         }
 
