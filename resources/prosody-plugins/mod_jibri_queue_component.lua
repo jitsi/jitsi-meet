@@ -62,8 +62,11 @@ token_util:set_asap_accepted_issuers(ASAPAcceptedIssuers);
 local ASAPAcceptedAudiences
     = module:get_option_array('asap_accepted_audiences',{'*'});
 
-    module:log("info", "ASAP Accepted Audiences %s", ASAPAcceptedAudiences);
-    token_util:set_asap_accepted_audiences(ASAPAcceptedAudiences);
+module:log("info", "ASAP Accepted Audiences %s", ASAPAcceptedAudiences);
+token_util:set_asap_accepted_audiences(ASAPAcceptedAudiences);
+
+-- do not require room to be set on tokens for jibri queue
+token_util:set_asap_require_room_claim(false);
 
 local ASAPTTL
     = module:get_option_number("asap_ttl", 3600);
@@ -410,14 +413,15 @@ function verify_token(token, room_jid, session)
     local verified, reason, message = token_util:process_and_verify_token(session);
     if not verified then
         log("warn", "not a valid token %s: %s", tostring(reason), tostring(message));
+        log("debug", "invalid token %s", token);
         return false;
     end
 
-    if not token_util:verify_room(session, room_jid) then
-        log("warn", "Token %s not allowed to access: %s",
-            tostring(token), tostring(room_jid));
-        return false;
-    end
+    -- if not token_util:verify_room(session, room_jid) then
+    --     log("warn", "Token %s not allowed to access: %s",
+    --         tostring(token), tostring(room_jid));
+    --     return false;
+    -- end
 
     return true;
 end

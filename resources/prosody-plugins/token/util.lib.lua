@@ -92,6 +92,8 @@ function Util.new(module)
     --array of accepted audiences: by default only includes our appId
     self.acceptedAudiences = module:get_option_array('asap_accepted_audiences',{'*'})
 
+    self.requireRoomClaim = module:get_option_boolean('asap_require_room_claim', true);
+
     if self.asapKeyServer and not have_async then
         module:log("error", "requires a version of Prosody with util.async");
         return nil;
@@ -110,6 +112,10 @@ end
 
 function Util:set_asap_accepted_audiences(acceptedAudiences)
     self.acceptedAudiences = acceptedAudiences;
+end
+
+function Util:set_asap_require_room_claim(checkRoom)
+    self.requireRoomClaim = checkRoom;
 end
 
 --- Returns the public key by keyID
@@ -222,9 +228,11 @@ function Util:verify_token(token, secret)
         return nil, issCheckErr;
     end
 
-    local roomClaim = claims["room"];
-    if roomClaim == nil then
-        return nil, "'room' claim is missing";
+    if self.requireRoomClaim then
+        local roomClaim = claims["room"];
+        if roomClaim == nil then
+            return nil, "'room' claim is missing";
+        end
     end
 
     local audClaim = claims["aud"];
