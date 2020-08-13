@@ -2,7 +2,6 @@
 
 import React, { PureComponent } from 'react';
 
-import { isWalletJWTSet } from '../../../aeternity';
 import { IconShareDesktop } from '../../icons';
 import { getParticipantById } from '../../participants';
 import { connect } from '../../redux';
@@ -68,11 +67,6 @@ export type Props = {
      * Is user has akAddress.
      */
     akAddress: ?string,
-
-    /**
-     * Participant has wallet.
-     */
-    walletSynced: ?string
 }
 
 type State = {
@@ -134,7 +128,6 @@ class Avatar<P: Props> extends PureComponent<P, State> {
             size,
             status,
             url,
-            walletSynced,
             akAddress
         } = this.props;
         const { avatarFailed } = this.state;
@@ -149,7 +142,6 @@ class Avatar<P: Props> extends PureComponent<P, State> {
             status,
             url: undefined,
             fullName: _initialsBase,
-            walletSynced,
             akAddress
         };
 
@@ -214,8 +206,7 @@ export function _mapStateToProps(state: Object, ownProps: Props) {
         _initialsBase,
         _loadableAvatarUrl,
         akAddress,
-        colorBase: !colorBase && _participant ? _participant.id : colorBase,
-        walletSynced: isWalletJWTSet(state)
+        colorBase: !colorBase && _participant ? _participant.id : colorBase
     };
 }
 
