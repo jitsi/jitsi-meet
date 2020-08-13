@@ -32,9 +32,9 @@ type Props = AbstractProps & {
     fullName?: string,
 
     /**
-     * Participant has wallet
+     * Is user has akAddress.
      */
-    walletSynced?: string
+    akAddress: ?string,
 };
 
 /**
@@ -48,7 +48,7 @@ export default class StatelessAvatar extends AbstractStatelessAvatar<Props> {
      * @inheritdoc
      */
     render() {
-        const { initials, walletSynced, fullName } = this.props;
+        const { initials, fullName, akAddress } = this.props;
         let { url } = this.props;
 
         if (this._isIcon(url)) {
@@ -64,7 +64,7 @@ export default class StatelessAvatar extends AbstractStatelessAvatar<Props> {
             );
         }
 
-        if (!url && walletSynced) {
+        if (!url && akAddress) {
             url = `https://avatars.z52da5wt.xyz/${fullName}`;
         }
 

@@ -23,6 +23,11 @@ export type Props = {
      * The JitsiLocalTrack to display.
      */
     videoTrack: ?Object,
+
+    /**
+     * Participant id.
+     */
+    participantId: string
 };
 
 /**
@@ -35,7 +40,8 @@ function Preview(props: Props) {
     const {
         name,
         showCameraPreview,
-        videoTrack
+        videoTrack,
+        participantId
     } = props;
 
     if (showCameraPreview && videoTrack) {
@@ -55,6 +61,7 @@ function Preview(props: Props) {
             <Avatar
                 className = 'prejoin-preview-avatar'
                 displayName = { name }
+                participantId = { participantId }
                 size = { 200 } />
         </div>
     );
@@ -69,7 +76,8 @@ function Preview(props: Props) {
 function mapStateToProps(state) {
     return {
         videoTrack: getActiveVideoTrack(state),
-        showCameraPreview: !isPrejoinVideoMuted(state)
+        showCameraPreview: !isPrejoinVideoMuted(state),
+        participantId: state['features/large-video'].participantId
     };
 }
 
