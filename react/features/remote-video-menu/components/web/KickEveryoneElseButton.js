@@ -8,7 +8,6 @@ import { translate } from '../../../base/i18n';
 import { IconKickEveryoneElse } from '../../../base/icons';
 import { connect } from '../../../base/redux';
 import AbstractKickButton, {
-    _mapStateToProps,
     type Props
 } from '../AbstractKickButton';
 
@@ -68,4 +67,4 @@ class KickEveryoneElseButton extends AbstractKickButton {
     }
 }
 
-export default translate(connect(_mapStateToProps)(KickEveryoneElseButton));
+export default translate(connect(_ => _)(KickEveryoneElseButton));
