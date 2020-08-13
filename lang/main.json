@@ -520,6 +520,7 @@
         "errorDialOutDisconnected": "Could not dial out. Disconnected",
         "errorDialOutFailed": "Could not dial out. Call failed",
         "errorDialOutStatus": "Error getting dial out status",
+        "errorMissingName": "Please enter your name to join the meeting",
         "errorStatusCode": "Error dialing out, status code: {{status}}",
         "errorValidation": "Number validation failed",
         "iWantToDialIn": "I want to dial in",
