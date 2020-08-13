@@ -37,7 +37,7 @@ local ASAPKeyServer
     = module:get_option_string("asap_key_server");
 
 if ASAPKeyServer then
-    module:log("info", "ASAP Public Key URL %s", ASAPKeyServer);
+    module:log("debug", "ASAP Public Key URL %s", ASAPKeyServer);
     token_util:set_asap_key_server(ASAPKeyServer);
 end
 
@@ -56,13 +56,13 @@ local ASAPAudience
 local ASAPAcceptedIssuers
     = module:get_option_array('asap_accepted_issuers',{'jibri-queue'});
 
-module:log("info", "ASAP Accepted Issuers %s", ASAPAcceptedIssuers);
+module:log("debug", "ASAP Accepted Issuers %s", ASAPAcceptedIssuers);
 token_util:set_asap_accepted_issuers(ASAPAcceptedIssuers);
 
 local ASAPAcceptedAudiences
     = module:get_option_array('asap_accepted_audiences',{'*'});
 
-module:log("info", "ASAP Accepted Audiences %s", ASAPAcceptedAudiences);
+module:log("debug", "ASAP Accepted Audiences %s", ASAPAcceptedAudiences);
 token_util:set_asap_accepted_audiences(ASAPAcceptedAudiences);
 
 -- do not require room to be set on tokens for jibri queue
@@ -112,7 +112,7 @@ end
 log("info", "Starting jibri queue handling for %s", muc_component_host);
 
 local external_api_url = module:get_option_string("external_api_url",tostring(parentHostName));
-module:log("info", "External advertised API URL", external_api_url);
+module:log("debug", "External advertised API URL", external_api_url);
 
 -- Read ASAP key once on module startup
 local f = io.open(ASAPKeyPath, "r");
@@ -179,11 +179,11 @@ end
 local function sendIq(participant,action,requestId,time,position,token)
     local iqId = uuid_gen();
     local from = module:get_host();
-    module:log("info","Oubound iq id %s",iqId);
+--    module:log("info","Oubound iq id %s",iqId);
     local outStanza = st.iq({type = 'set', from = from, to = participant, id = iqId}):tag("jibri-queue", 
        { xmlns = 'http://jitsi.org/protocol/jibri-queue', requestId = requestId, action = action });
 
-    module:log("info","Oubound base stanza %s",inspect(outStanza));
+--    module:log("info","Oubound base stanza %s",inspect(outStanza));
 
     if token then
         outStanza:tag("token"):text(token):up()
@@ -194,7 +194,7 @@ local function sendIq(participant,action,requestId,time,position,token)
     if position then
         outStanza:tag("position"):text(tostring(position)):up()
     end
-    module:log("info","Oubound stanza %s",inspect(outStanza));
+ --    module:log("debug","Oubound stanza %s",inspect(outStanza));
     module:send(outStanza);
 end
 
@@ -245,13 +245,17 @@ local function sendEvent(type,room_address,participant,requestId,replyIq,replyEr
         if code_ == 200 or code_ == 204 then
             module:log("debug", "URL Callback: Code %s, Content %s, Request (host %s, path %s, body %s), Response: %s",
                     code_, content_, request_.host, request_.path, inspect(request_.body), inspect(response_));
-            module:log("info", "sending reply IQ %s",inspect(replyIq));
-            module:send(replyIq);
+            if (replyIq) then
+                module:log("debug", "sending reply IQ %s",inspect(replyIq));
+                module:send(replyIq);
+            end
         else
             module:log("warn", "URL Callback non successful: Code %s, Content %s, Request (%s), Response: %s",
                     code_, content_, inspect(request_), inspect(response_));
-            module:log("warn", "sending reply error IQ %s",inspect(replyError));
-            module:send(replyError);
+            if (replyError) then
+                module:log("warn", "sending reply error IQ %s",inspect(replyError));
+                module:send(replyError);
+            end
         end
     end);
 end
@@ -265,15 +269,13 @@ function on_iq(event)
     end
     if event.stanza.attr.to == module:get_host() then
         if event.stanza.attr.type == "set" then
-            log("info", "Jibri Queue Messsage Event found: %s ",inspect(event.stanza));
             local reply = st.reply(event.stanza);
             local replyError = st.error_reply(event.stanza,'cancel','internal-server-error',"Queue Server Error");
-            module:log("info","Reply stanza %s",inspect(reply));
 
             local jibriQueue
                 = event.stanza:get_child('jibri-queue', 'http://jitsi.org/protocol/jibri-queue');
             if jibriQueue then
-                module:log("info", "Jibri Queue Request: %s ",inspect(jibriQueue));
+                module:log("debug", "Received Jibri Queue Request: %s ",inspect(jibriQueue));
 
                 local roomAddress = jibriQueue.attr.room;
                 local room = get_room_from_jid(room_jid_match_rewrite(roomAddress));
@@ -295,21 +297,26 @@ function on_iq(event)
                 if action == 'join' then
                     -- join action, so send event out
                     requestId = uuid_gen();
+                    module:log("debug","Received join queue request for jid %s occupant %s requestId %s",roomAddress,occupant.jid,requestId);
 
                     -- now handle new jibri queue message
                     room.jibriQueue[occupant.jid] = requestId;
                     reply:add_child(st.stanza("jibri-queue", { xmlns = 'http://jitsi.org/protocol/jibri-queue', requestId = requestId})):up()
                     replyError:add_child(st.stanza("jibri-queue", { xmlns = 'http://jitsi.org/protocol/jibri-queue', requestId = requestId})):up()
 
-                    module:log("info","Sending JoinQueue event for jid %s occupant %s reply %s",roomAddress,occupant.jid,inspect(reply));
+                    module:log("debug","Sending JoinQueue event for jid %s occupant %s reply %s",roomAddress,occupant.jid,inspect(reply));
                     sendEvent('JoinQueue',roomAddress,occupant.jid,requestId,reply,replyError);
                 end
                 if action == 'leave' then
                     requestId = jibriQueue.attr.requestId;
+                    module:log("debug","Received leave queue request for jid %s occupant %s requestId %s",roomAddress,occupant.jid,requestId);
+
                     -- TODO: check that requestId is the same as cached value
                     room.jibriQueue[occupant.jid] = nil;
                     reply:add_child(st.stanza("jibri-queue", { xmlns = 'http://jitsi.org/protocol/jibri-queue', requestId = requestId})):up()
                     replyError:add_child(st.stanza("jibri-queue", { xmlns = 'http://jitsi.org/protocol/jibri-queue', requestId = requestId})):up()
+
+                    module:log("debug","Sending LeaveQueue event for jid %s occupant %s reply %s",roomAddress,occupant.jid,inspect(reply));
                     sendEvent('LeaveQueue',roomAddress,occupant.jid,requestId,reply,replyError);
                 end
             else
@@ -368,7 +375,7 @@ module:hook("iq/host", on_iq);
 -- executed on every host added internally in prosody, including components
 function process_host(host)
     if host == muc_component_host then -- the conference muc component
-        module:log("info","Hook to muc events on %s", host);
+        module:log("debug","Hook to muc events on %s", host);
 
         local muc_module = module:context(host);
         muc_module:hook("muc-room-created", room_created, -1);
@@ -379,7 +386,7 @@ function process_host(host)
 end
 
 if prosody.hosts[muc_component_host] == nil then
-    module:log("info","No muc component found, will listen for it: %s", muc_component_host)
+    module:log("debug","No muc component found, will listen for it: %s", muc_component_host)
 
     -- when a host or component is added
     prosody.events.add_handler("host-activated", process_host);
@@ -430,7 +437,6 @@ end
 -- @param event the http event, holds the request query
 -- @return GET response, containing a json with response details
 function handle_update_jibri_queue(event)
-    module:log("info","Update Jibri Queue Event Received");
     -- if (not event.request.url.query) then
     --     return { status_code = 400; };
     -- end
@@ -438,7 +444,7 @@ function handle_update_jibri_queue(event)
     local body = json.decode(event.request.body);
 --    local params = parse(event.request.url.query);
 
-    module:log("info","Update Jibri Event Body %s",inspect(body));
+    module:log("debug","Update Jibri Queue Event Received: %s",inspect(body));
 
 --    local token = params["token"];
     local token
@@ -449,7 +455,7 @@ function handle_update_jibri_queue(event)
         else
             local prefixStart, prefixEnd = token:find("Bearer ");
             if prefixStart ~= 1 then
-                module:log("error", "Invalid authorization header format. The header must start with the string 'Bearer '");
+                module:log("error", "REST event: Invalid authorization header format. The header must start with the string 'Bearer '");
                 return 403
             end
             token = token:sub(prefixEnd + 1);
@@ -467,23 +473,24 @@ function handle_update_jibri_queue(event)
     local room_jid = room_jid_match_rewrite(roomAddress);
 
     if not verify_token(token, room_jid, {}) then
+        log("error", "REST event: Invalid token for room %s to route action %s for requestId %s", roomAddress, action, requestId);
         return { status_code = 403; };
     end
 
     local room = get_room_from_jid(room_jid);
     if (not room) then
-        log("error", "no room found %s", roomAddress);
+        log("error", "REST event: no room found %s to route action %s for requestId %s", roomAddress, action, requestId);
         return { status_code = 404; };
     end
 
     local occupant = room:get_occupant_by_real_jid(user_jid);
     if not occupant then
-        log("warn", "No occupant %s found for %s", user_jid, roomAddress);
+        log("warn", "REST event: No occupant %s found for %s to route action %s for requestId %s", user_jid, roomAddress, action, requestId);
         return { status_code = 404; };
     end
 
     if not room.jibriQueue[occupant.jid] then
-        log("warn", "No queue request found for occupant %s in conference %s",occupant.jid,room.jid)
+        log("warn", "REST event: No queue request found for occupant %s in conference %s to route action %s for requestId %s",occupant.jid,room.jid, action, requestId)
         return { status_code = 404; };
     end
 
@@ -499,7 +506,7 @@ function handle_update_jibri_queue(event)
         requestId = room.jibriQueue[occupant.jid];
     end
 
-    -- TODO: actually implement udpate code here
+    log("debug", "REST event: Sending update for occupant %s in conference %s to route action %s for requestId %s",occupant.jid,room.jid, action, requestId)
     sendIq(occupant.jid,action,requestId,time,position,userJWT);
     return { status_code = 200; };
 end
