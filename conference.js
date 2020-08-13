@@ -759,7 +759,13 @@ export default {
         }
 
         if (isPrejoinPageEnabled(APP.store.getState())) {
-            _connectionPromise = connect(roomName);
+            _connectionPromise = connect(roomName).then(c => {
+                // we want to initialize it early, in case of errors to be able
+                // to gather logs
+                APP.connection = c;
+
+                return c;
+            });
 
             const { tryCreateLocalTracks, errors } = this.createInitialLocalTracks(initialOptions);
             const tracks = await tryCreateLocalTracks;
@@ -1206,10 +1212,6 @@ export default {
 
     // end used by torture
 
-    getLogs() {
-        return room.getLogs();
-    },
-
     /**
      * Download logs, a function that can be called from console while
      * debugging.
@@ -1218,7 +1220,7 @@ export default {
     saveLogs(filename = 'meetlog.json') {
         // this can be called from console and will not have reference to this
         // that's why we reference the global var
-        const logs = APP.conference.getLogs();
+        const logs = APP.connection.getLogs();
         const data = encodeURIComponent(JSON.stringify(logs, null, '  '));
 
         const elem = document.createElement('a');
