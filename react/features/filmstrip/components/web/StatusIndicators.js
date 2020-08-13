@@ -133,8 +133,8 @@ function _mapStateToProps(state, ownProps) {
         _currentLayout: getCurrentLayout(state),
         _showModeratorIndicator:
             !interfaceConfig.DISABLE_FOCUS_INDICATOR && participant && participant.role === PARTICIPANT_ROLE.MODERATOR,
-        _akAddress: participant.akAddress,
-        _local: participant.local,
+        _akAddress: participant?.akAddress,
+        _local: participant?.local,
         hasWallet: state['features/aeternity'].hasWallet
     };
 }

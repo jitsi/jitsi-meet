@@ -3,7 +3,6 @@
 import React from 'react';
 import { toArray } from 'react-emoji-render';
 
-import { isAccountOrChainName } from '../../../aeternity';
 import TipButton from '../../../aeternity/components/TipButton';
 import { translate } from '../../../base/i18n';
 import { Linkify } from '../../../base/react';
@@ -79,8 +78,7 @@ class ChatMessage extends AbstractChatMessage<Props> {
      */
     _renderDisplayName() {
         const { hasWallet, message: { akAddress, displayName } } = this.props;
-        const senderHasSuperHeroAddress = Boolean(akAddress)
-           || isAccountOrChainName(displayName);
+        const senderHasSuperHeroAddress = Boolean(akAddress);
         const localParticipantHasSuperHeroWallet = Boolean(hasWallet);
 
         return (
