@@ -63,6 +63,16 @@ export type Props = {
      * URL of the avatar, if any.
      */
     url: ?string,
+
+    /**
+     * Is user has akAddress.
+     */
+    akAddress: ?string,
+
+    /**
+     * Participant has wallet.
+     */
+    walletSynced: ?string
 }
 
 type State = {
@@ -124,7 +134,8 @@ class Avatar<P: Props> extends PureComponent<P, State> {
             size,
             status,
             url,
-            walletSynced
+            walletSynced,
+            akAddress
         } = this.props;
         const { avatarFailed } = this.state;
 
@@ -138,7 +149,8 @@ class Avatar<P: Props> extends PureComponent<P, State> {
             status,
             url: undefined,
             fullName: _initialsBase,
-            walletSynced
+            walletSynced,
+            akAddress
         };
 
         // _loadableAvatarUrl is validated that it can be loaded, but uri (if present) is not, so
@@ -190,6 +202,7 @@ export function _mapStateToProps(state: Object, ownProps: Props) {
     const _participant: ?Object = participantId && getParticipantById(state, participantId);
     const _initialsBase = _participant?.name ?? displayName;
     const screenShares = state['features/video-layout'].screenShares || [];
+    const akAddress = _participant?.akAddress;
 
     let _loadableAvatarUrl = _participant?.loadableAvatarUrl;
 
@@ -200,6 +213,7 @@ export function _mapStateToProps(state: Object, ownProps: Props) {
     return {
         _initialsBase,
         _loadableAvatarUrl,
+        akAddress,
         colorBase: !colorBase && _participant ? _participant.id : colorBase,
         walletSynced: isWalletJWTSet(state)
     };
