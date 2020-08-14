@@ -33,63 +33,127 @@ if parentCtx == nil then
 end
 local token_util = module:require "token/util".new(parentCtx);
 
-local ASAPKeyServer
-    = module:get_option_string("asap_key_server");
+local ASAPKeyServer;
+local ASAPKeyPath;
+local ASAPKeyId;
+local ASAPIssuer;
+local ASAPAudience;
+local ASAPAcceptedIssuers;
+local ASAPAcceptedAudiences;
+local ASAPTTL;
+local ASAPTTL_THRESHOLD;
+local ASAPKey;
+local JibriRegion;
+local disableTokenVerification;
+local muc_component_host;
+local external_api_url;
+local jwtKeyCacheSize;
+local jwtKeyCache;
 
-if ASAPKeyServer then
-    module:log("debug", "ASAP Public Key URL %s", ASAPKeyServer);
-    token_util:set_asap_key_server(ASAPKeyServer);
+local function load_config()
+    ASAPKeyServer = module:get_option_string("asap_key_server");
+
+    if ASAPKeyServer then
+        module:log("debug", "ASAP Public Key URL %s", ASAPKeyServer);
+        token_util:set_asap_key_server(ASAPKeyServer);
+    end
+
+    ASAPKeyPath
+        = module:get_option_string("asap_key_path", '/etc/prosody/certs/asap.key');
+
+    ASAPKeyId
+        = module:get_option_string("asap_key_id", 'jitsi');        
+
+    ASAPIssuer
+        = module:get_option_string("asap_issuer", 'jitsi');
+
+    ASAPAudience
+        = module:get_option_string("asap_audience", 'jibri-queue');
+
+    ASAPAcceptedIssuers
+        = module:get_option_array('asap_accepted_issuers',{'jibri-queue'});
+    module:log("debug", "ASAP Accepted Issuers %s", ASAPAcceptedIssuers);
+    token_util:set_asap_accepted_issuers(ASAPAcceptedIssuers);
+
+    ASAPAcceptedAudiences 
+        = module:get_option_array('asap_accepted_audiences',{'*'});
+    module:log("debug", "ASAP Accepted Audiences %s", ASAPAcceptedAudiences);
+    token_util:set_asap_accepted_audiences(ASAPAcceptedAudiences);
+
+    -- do not require room to be set on tokens for jibri queue
+    token_util:set_asap_require_room_claim(false);
+
+    ASAPTTL
+        = module:get_option_number("asap_ttl", 3600);
+ 
+    ASAPTTL_THRESHOLD
+        = module:get_option_number("asap_ttl_threshold", 600);
+
+    queueServiceURL
+        = module:get_option_string("jibri_queue_url");
+
+    JibriRegion
+        = module:get_option_string("jibri_region", 'default');
+
+    -- option to enable/disable token verifications
+    disableTokenVerification
+        = module:get_option_boolean("disable_jibri_queue_token_verification", false);
+
+    muc_component_host 
+        = module:get_option_string("muc_component");
+
+    external_api_url = module:get_option_string("external_api_url",tostring(parentHostName));
+    module:log("debug", "External advertised API URL", external_api_url);
+
+
+    -- TODO: Figure out a less arbitrary default cache size.
+    jwtKeyCacheSize 
+        = module:get_option_number("jwt_pubkey_cache_size", 128);
+    jwtKeyCache = require"util.cache".new(jwtKeyCacheSize);
+
+    if queueServiceURL == nil then
+        log("error", "No jibri_queue_url specified. No service to contact!");
+        return;
+    end
+
+    if muc_component_host == nil then
+        log("error", "No muc_component specified. No muc to operate on for jibri queue!");
+        return;
+    end
+
+    -- Read ASAP key once on module startup
+    local f = io.open(ASAPKeyPath, "r");
+    if f then
+        ASAPKey = f:read("*all");
+        f:close();
+        if not ASAPKey then
+            module:log("warn", "No ASAP Key read from %s, disabling jibri queue component plugin", ASAPKeyPath);
+            return
+        end
+    else
+        module:log("warn", "Error reading ASAP Key %s, disabling jibri queue component plugin", ASAPKeyPath);
+        return
+    end
+
+    return true;
 end
 
-local ASAPKeyPath
-    = module:get_option_string("asap_key_path", '/etc/prosody/certs/asap.key');
+local function reload_config()
+    module:log("info", "Reloading configuration for jibri queue component");
+    local config_success = load_config();
 
-local ASAPKeyId
-    = module:get_option_string("asap_key_id", 'jitsi');
+    if not config_success then
+        log("error", "Unsuccessful reconfiguration, jibri queue component may misbehave");
+    end
+end
 
-local ASAPIssuer
-    = module:get_option_string("asap_issuer", 'jitsi');
+local config_success = load_config();
 
-local ASAPAudience
-    = module:get_option_string("asap_audience", 'jibri-queue');
-
-local ASAPAcceptedIssuers
-    = module:get_option_array('asap_accepted_issuers',{'jibri-queue'});
-
-module:log("debug", "ASAP Accepted Issuers %s", ASAPAcceptedIssuers);
-token_util:set_asap_accepted_issuers(ASAPAcceptedIssuers);
-
-local ASAPAcceptedAudiences
-    = module:get_option_array('asap_accepted_audiences',{'*'});
-
-module:log("debug", "ASAP Accepted Audiences %s", ASAPAcceptedAudiences);
-token_util:set_asap_accepted_audiences(ASAPAcceptedAudiences);
-
--- do not require room to be set on tokens for jibri queue
-token_util:set_asap_require_room_claim(false);
-
-local ASAPTTL
-    = module:get_option_number("asap_ttl", 3600);
-
-local ASAPTTL_THRESHOLD
-    = module:get_option_number("asap_ttl_threshold", 600);
-
-local ASAPKey;
-
-local queueServiceURL
-    = module:get_option_string("jibri_queue_url");
-
-local JibriRegion
-    = module:get_option_string("jibri_region", 'default');
-
-if queueServiceURL == nil then
-    log("error", "No jibri_queue_url specified. No service to contact!");
+if not config_success then
+    log("error", "Unsuccessful configuration step, jibri queue component disabled")
     return;
 end
 
--- option to enable/disable token verifications
-local disableTokenVerification
-    = module:get_option_boolean("disable_jibri_queue_token_verification", false);
 
 local http_headers = {
     ["User-Agent"] = "Prosody ("..prosody.version.."; "..prosody.platform..")",
@@ -103,34 +167,8 @@ if not have_async then
     return;
 end
 
-local muc_component_host = module:get_option_string("muc_component");
-if muc_component_host == nil then
-    log("error", "No muc_component specified. No muc to operate on for jibri queue!");
-    return;
-end
 
 log("info", "Starting jibri queue handling for %s", muc_component_host);
-
-local external_api_url = module:get_option_string("external_api_url",tostring(parentHostName));
-module:log("debug", "External advertised API URL", external_api_url);
-
--- Read ASAP key once on module startup
-local f = io.open(ASAPKeyPath, "r");
-if f then
-    ASAPKey = f:read("*all");
-    f:close();
-    if not ASAPKey then
-        module:log("warn", "No ASAP Key read, disabling muc_events plugin");
-        return
-    end
-else
-    module:log("warn", "Error reading ASAP Key, disabling muc_events plugin");
-    return
-end
-
--- TODO: Figure out a less arbitrary default cache size.
-local jwtKeyCacheSize = module:get_option_number("jwt_pubkey_cache_size", 128);
-local jwtKeyCache = require"util.cache".new(jwtKeyCacheSize);
 
 local function round(num, numDecimalPlaces)
     local mult = 10^(numDecimalPlaces or 0)
@@ -179,11 +217,8 @@ end
 local function sendIq(participant,action,requestId,time,position,token)
     local iqId = uuid_gen();
     local from = module:get_host();
---    module:log("info","Oubound iq id %s",iqId);
     local outStanza = st.iq({type = 'set', from = from, to = participant, id = iqId}):tag("jibri-queue", 
        { xmlns = 'http://jitsi.org/protocol/jibri-queue', requestId = requestId, action = action });
-
---    module:log("info","Oubound base stanza %s",inspect(outStanza));
 
     if token then
         outStanza:tag("token"):text(token):up()
@@ -194,7 +229,7 @@ local function sendIq(participant,action,requestId,time,position,token)
     if position then
         outStanza:tag("position"):text(tostring(position)):up()
     end
- --    module:log("debug","Oubound stanza %s",inspect(outStanza));
+
     module:send(outStanza);
 end
 
@@ -260,6 +295,14 @@ local function sendEvent(type,room_address,participant,requestId,replyIq,replyEr
     end);
 end
 
+function clearRoomQueueByOccupant(room, occupant)
+    room.jibriQueue[occupant.jid] = nil;
+end
+
+function addRoomQueueByOccupant(room, occupant, requestId)
+    room.jibriQueue[occupant.jid] = requestId;
+end
+
 -- receives iq from client currently connected to the room
 function on_iq(event)
     local requestId;
@@ -300,7 +343,7 @@ function on_iq(event)
                     module:log("debug","Received join queue request for jid %s occupant %s requestId %s",roomAddress,occupant.jid,requestId);
 
                     -- now handle new jibri queue message
-                    room.jibriQueue[occupant.jid] = requestId;
+                    addRoomQueueByOccupant(room, occupant, requestId);
                     reply:add_child(st.stanza("jibri-queue", { xmlns = 'http://jitsi.org/protocol/jibri-queue', requestId = requestId})):up()
                     replyError:add_child(st.stanza("jibri-queue", { xmlns = 'http://jitsi.org/protocol/jibri-queue', requestId = requestId})):up()
 
@@ -312,7 +355,7 @@ function on_iq(event)
                     module:log("debug","Received leave queue request for jid %s occupant %s requestId %s",roomAddress,occupant.jid,requestId);
 
                     -- TODO: check that requestId is the same as cached value
-                    room.jibriQueue[occupant.jid] = nil;
+                    clearRoomQueueByOccupant(room, occupant);
                     reply:add_child(st.stanza("jibri-queue", { xmlns = 'http://jitsi.org/protocol/jibri-queue', requestId = requestId})):up()
                     replyError:add_child(st.stanza("jibri-queue", { xmlns = 'http://jitsi.org/protocol/jibri-queue', requestId = requestId})):up()
 
@@ -424,12 +467,6 @@ function verify_token(token, room_jid, session)
         return false;
     end
 
-    -- if not token_util:verify_room(session, room_jid) then
-    --     log("warn", "Token %s not allowed to access: %s",
-    --         tostring(token), tostring(room_jid));
-    --     return false;
-    -- end
-
     return true;
 end
 
@@ -437,31 +474,22 @@ end
 -- @param event the http event, holds the request query
 -- @return GET response, containing a json with response details
 function handle_update_jibri_queue(event)
-    -- if (not event.request.url.query) then
-    --     return { status_code = 400; };
-    -- end
-
     local body = json.decode(event.request.body);
---    local params = parse(event.request.url.query);
 
     module:log("debug","Update Jibri Queue Event Received: %s",inspect(body));
 
---    local token = params["token"];
-    local token
+    local token = event.request.headers["authorization"];
     if not token then
-        token = event.request.headers["authorization"];
-        if not token then
-            token = ''
-        else
-            local prefixStart, prefixEnd = token:find("Bearer ");
-            if prefixStart ~= 1 then
-                module:log("error", "REST event: Invalid authorization header format. The header must start with the string 'Bearer '");
-                return 403
-            end
-            token = token:sub(prefixEnd + 1);
+        token = ''
+    else
+        local prefixStart, prefixEnd = token:find("Bearer ");
+        if prefixStart ~= 1 then
+            module:log("error", "REST event: Invalid authorization header format. The header must start with the string 'Bearer '");
+            return 403
         end
+        token = token:sub(prefixEnd + 1);
     end
-    
+
     local user_jid = body["participant"];
     local roomAddress = body["conference"];
     local userJWT = body["token"];
@@ -469,6 +497,14 @@ function handle_update_jibri_queue(event)
     local time = body["time"];
     local position = body["position"];
     local requestId = body["requestId"];
+
+    if not action then
+        if userJWT then
+            action = 'token';
+        else
+            action = 'info';
+        end
+    end
 
     local room_jid = room_jid_match_rewrite(roomAddress);
 
@@ -494,19 +530,16 @@ function handle_update_jibri_queue(event)
         return { status_code = 404; };
     end
 
-    if not action then
-        if userJWT then
-            action = 'token';
-        else
-            action = 'info';
-        end
-    end
-
     if not requestId then
         requestId = room.jibriQueue[occupant.jid];
     end
 
-    log("debug", "REST event: Sending update for occupant %s in conference %s to route action %s for requestId %s",occupant.jid,room.jid, action, requestId)
+    if action == 'token' and userJWT then
+        log("debug", "REST event: Token received for occupant %s in conference %s requestId %s, clearing room queue");
+        clearRoomQueueByOccupant(room, occupant);
+    end
+
+    log("debug", "REST event: Sending update for occupant %s in conference %s to route action %s for requestId %s",occupant.jid,room.jid, action, requestId);
     sendIq(occupant.jid,action,requestId,time,position,userJWT);
     return { status_code = 200; };
 end
@@ -519,3 +552,5 @@ module:provides("http", {
         ["POST /jibriqueue/update"] = function (event) return async_handler_wrapper(event,handle_update_jibri_queue) end;
     };
 });
+
+module:hook_global('config-reloaded', reload_config);
