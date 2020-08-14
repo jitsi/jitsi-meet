@@ -2,31 +2,29 @@
 // eslint-disable-next-line max-len
 import browserWindowMessageConnection from '@aeternity/aepp-sdk/es/utils/aepp-wallet-communication/connection/browser-window-message';
 import Detector from '@aeternity/aepp-sdk/es/utils/aepp-wallet-communication/wallet-detector';
-import { jitsiLocalStorage } from 'js-utils';
+import { jitsiLocalStorage } from '@jitsi/js-utils';
 import _ from 'lodash';
 import React from 'react';
 
 import VideoLayout from '../../../../../modules/UI/videolayout/VideoLayout';
+import { InviteMore, Subject } from '.';
 import { client, initClient } from '../../../../client';
 import { walletFound } from '../../../aeternity';
+import { setJWT } from '../../../base/jwt/actions';
+import { createDeepLinkUrl } from '../../../base/util/createDeepLinkUrl';
+import { parseURLParams } from '../../../base/util/parseURLParams';
 import { getConferenceNameForTitle } from '../../../base/conference';
 import { connect, disconnect } from '../../../base/connection';
 import { translate } from '../../../base/i18n';
-import { setJWT } from '../../../base/jwt/actions';
 import { connect as reactReduxConnect } from '../../../base/redux';
-import { createDeepLinkUrl } from '../../../base/util/createDeepLinkUrl';
-import { parseURLParams } from '../../../base/util/parseURLParams';
 import { Chat } from '../../../chat';
 import { Filmstrip } from '../../../filmstrip';
 import { CalleeInfoContainer } from '../../../invite';
 import { LargeVideo } from '../../../large-video';
+import { KnockingParticipantList, LobbyScreen } from '../../../lobby';
 import { Prejoin, isPrejoinPageVisible } from '../../../prejoin';
-import {
-    Toolbox,
-    fullScreenChanged,
-    setToolboxAlwaysVisible,
-    showToolbox
-} from '../../../toolbox';
+import { fullScreenChanged, setToolboxAlwaysVisible, showToolbox } from '../../../toolbox/actions.web';
+import { Toolbox } from '../../../toolbox/components/web';
 import { LAYOUTS, getCurrentLayout } from '../../../video-layout';
 import { maybeShowSuboptimalExperienceNotification } from '../../functions';
 import {
@@ -35,10 +33,8 @@ import {
 } from '../AbstractConference';
 import type { AbstractProps } from '../AbstractConference';
 
-import InviteMore from './InviteMore';
 import Labels from './Labels';
 import { default as Notice } from './Notice';
-import { default as Subject } from './Subject';
 
 declare var APP: Object;
 declare var config: Object;
@@ -79,6 +75,11 @@ type Props = AbstractProps & {
      * Whether the local participant is recording the conference.
      */
     _iAmRecorder: boolean,
+
+    /**
+     * Returns true if the 'lobby screen' is visible.
+     */
+    _isLobbyScreenVisible: boolean,
 
     /**
      * The CSS class to apply to the root of {@link Conference} to modify the
@@ -229,6 +230,7 @@ class Conference extends AbstractConference<Props, *> {
         } = interfaceConfig;
         const {
             _iAmRecorder,
+            _isLobbyScreenVisible,
             _layoutClassName,
             _showPrejoin
         } = this.props;
@@ -245,19 +247,19 @@ class Conference extends AbstractConference<Props, *> {
                 <InviteMore showDeeplink = { this.state.showDeeplink } />
                 <div id = 'videospace'>
                     <LargeVideo />
-                    { hideLabels
-                        || <Labels /> }
+                    <KnockingParticipantList />
                     <Filmstrip filmstripOnly = { filmstripOnly } />
+                    { hideLabels || <Labels /> }
                 </div>
 
-                { !_iAmRecorder && (filmstripOnly || _showPrejoin || <Toolbox />) }
+                { !_iAmRecorder && (filmstripOnly || _showPrejoin || _isLobbyScreenVisible || <Toolbox />) }
                 { filmstripOnly || <Chat /> }
 
                 { this.renderNotificationsContainer() }
 
-                { !filmstripOnly && _showPrejoin && <Prejoin />}
-
                 <CalleeInfoContainer />
+
+                { !filmstripOnly && _showPrejoin && <Prejoin />}
             </div>
         );
     }
@@ -381,6 +383,7 @@ function _mapStateToProps(state) {
     return {
         ...abstractMapStateToProps(state),
         _iAmRecorder: state['features/base/config'].iAmRecorder,
+        _isLobbyScreenVisible: state['features/base/dialog']?.component === LobbyScreen,
         _layoutClassName: LAYOUT_CLASSNAMES[getCurrentLayout(state)],
         _roomName: getConferenceNameForTitle(state),
         _showPrejoin: isPrejoinPageVisible(state)

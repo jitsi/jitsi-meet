@@ -5,7 +5,7 @@ import React from 'react';
 import { translate } from '../../../base/i18n';
 import { IconPin } from '../../../base/icons/svg';
 import { connect } from '../../../base/redux';
-import { type AbstractButtonProps } from '../../../base/toolbox';
+import { type AbstractButtonProps } from '../../../base/toolbox/components';
 import AbstractPinButton from '../AbstractPinButton';
 
 import RemoteVideoMenuButton from './RemoteVideoMenuButton';

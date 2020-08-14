@@ -10,6 +10,7 @@ import { connect } from '../../../base/redux';
 import PinButton from './PinButton';
 
 import {
+    GrantModeratorButton,
     MuteButton,
     MuteEveryoneElseButton,
     KickButton,
@@ -196,6 +197,12 @@ class RemoteVideoMenuTriggerButton extends Component<Props> {
                         participantID = { participantID } />
                 );
             }
+
+            buttons.push(
+                <GrantModeratorButton
+                    key = 'grant-moderator'
+                    participantID = { participantID } />
+            );
 
             if (!_disableKick) {
                 buttons.push(

@@ -222,10 +222,8 @@ class AudioModeModule extends ReactContextBaseJavaModule {
 
         if (useConnectionService()) {
             audioDeviceHandler = new AudioDeviceHandlerConnectionService(audioManager);
-        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            audioDeviceHandler = new AudioDeviceHandlerGeneric(audioManager);
         } else {
-            audioDeviceHandler = new AudioDeviceHandlerLegacy(audioManager);
+            audioDeviceHandler = new AudioDeviceHandlerGeneric(audioManager);
         }
 
         audioDeviceHandler.start(this);
@@ -425,15 +423,6 @@ class AudioModeModule extends ReactContextBaseJavaModule {
         if (mode != -1) {
             updateAudioRoute(mode);
         }
-    }
-
-    /**
-     * Needed on the legacy handler...
-     *
-     * @return Context for the application.
-     */
-    Context getContext() {
-        return getReactApplicationContext();
     }
 
     /**

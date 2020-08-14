@@ -6,8 +6,7 @@ import { getFeatureFlag, INVITE_ENABLED } from '../../../../base/flags';
 import { translate } from '../../../../base/i18n';
 import { IconAddPeople } from '../../../../base/icons';
 import { connect } from '../../../../base/redux';
-import { AbstractButton } from '../../../../base/toolbox';
-import type { AbstractButtonProps } from '../../../../base/toolbox';
+import { AbstractButton, type AbstractButtonProps } from '../../../../base/toolbox/components';
 import { doInvitePeople } from '../../../actions.native';
 
 type Props = AbstractButtonProps & {

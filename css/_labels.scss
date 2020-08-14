@@ -4,7 +4,7 @@
     top: 30px;
     right: 30px;
     transition: right 0.5s;
-    z-index: $zindex3;
+    z-index: $filmstripVideosZ + 1;
 
     @media (max-width: $desktopWidth) {
         position: static;
@@ -27,26 +27,30 @@
             left: 24px;
             opacity: 1;
         }
+    }
 
-        &.e2ee {
-            align-items: center;
-            background: #76CF9C;
-            display: flex;
-            justify-content: center;
-        }
+    .circular-label.e2ee {
+        align-items: center;
+        background: #76CF9C;
+        display: flex;
+        justify-content: center;
+    }
 
-        &.file,
-        &.local-rec {
-            background: #FF5630;
-        }
+    .circular-label.local-rec,
+    .circular-label.file {
+        background: #FF5630;
+    }
 
-        &.stream {
-            background: #0065FF;
-        }
+    .circular-label.local-rec {
+        background: #FF5630;
+    }
 
-        &.insecure {
-            background: $defaultWarningColor;
-        }
+    .circular-label.stream {
+        background: #0065FF;
+    }
+
+    .circular-label.insecure {
+        background: $defaultWarningColor;
     }
 
     .recording-label.center-message {

@@ -1,4 +1,5 @@
 // @flow
+
 import React from 'react';
 
 import { isAccountOrChainName } from '../../../../aeternity/utils';
@@ -6,6 +7,10 @@ import { Icon } from '../../../icons';
 import AbstractStatelessAvatar, { type Props as AbstractProps } from '../AbstractStatelessAvatar';
 
 type Props = AbstractProps & {
+    /**
+     * User's Full name
+     */
+    fullName?: string,
 
     /**
      * External class name passed through props.
@@ -28,9 +33,9 @@ type Props = AbstractProps & {
     status?: ?string,
 
     /**
-     * User's Full name
+     * TestId of the element, if any.
      */
-    fullName?: string
+    testId?: string
 };
 
 /**
@@ -51,6 +56,7 @@ export default class StatelessAvatar extends AbstractStatelessAvatar<Props> {
             return (
                 <div
                     className = { `${this._getAvatarClassName()} ${this._getBadgeClassName()}` }
+                    data-testid = { this.props.testId }
                     id = { this.props.id }
                     style = { this._getAvatarStyle(this.props.color) }>
                     <Icon
@@ -69,6 +75,7 @@ export default class StatelessAvatar extends AbstractStatelessAvatar<Props> {
                 <div className = { this._getBadgeClassName() }>
                     <img
                         className = { this._getAvatarClassName() }
+                        data-testid = { this.props.testId }
                         id = { this.props.id }
                         onError = { this.props.onAvatarLoadError }
                         src = { url }
@@ -81,6 +88,7 @@ export default class StatelessAvatar extends AbstractStatelessAvatar<Props> {
             return (
                 <div
                     className = { `${this._getAvatarClassName()} ${this._getBadgeClassName()}` }
+                    data-testid = { this.props.testId }
                     id = { this.props.id }
                     style = { this._getAvatarStyle(this.props.color) }>
                     <svg
@@ -107,6 +115,7 @@ export default class StatelessAvatar extends AbstractStatelessAvatar<Props> {
             <div className = { this._getBadgeClassName() }>
                 <img
                     className = { this._getAvatarClassName('defaultAvatar') }
+                    data-testid = { this.props.testId }
                     id = { this.props.id }
                     src = { this.props.defaultAvatar || 'images/avatar.png' }
                     style = { this._getAvatarStyle() } />

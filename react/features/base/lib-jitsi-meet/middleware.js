@@ -2,6 +2,7 @@
 
 import { SET_CONFIG } from '../config';
 import { setLoggingConfig } from '../logging';
+import { SET_NETWORK_INFO } from '../net-info';
 import { PARTICIPANT_LEFT } from '../participants';
 import { MiddlewareRegistry } from '../redux';
 
@@ -29,6 +30,12 @@ MiddlewareRegistry.register(store => next => action => {
         if (typeof APP !== 'undefined') {
             _setErrorHandlers();
         }
+        break;
+
+    case SET_NETWORK_INFO:
+        JitsiMeetJS.setNetworkInfo({
+            isOnline: action.isOnline
+        });
         break;
 
     case PARTICIPANT_LEFT:

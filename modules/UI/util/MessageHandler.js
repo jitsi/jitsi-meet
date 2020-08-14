@@ -1,7 +1,7 @@
 /* global $, APP */
 
+import { jitsiLocalStorage } from '@jitsi/js-utils';
 import Logger from 'jitsi-meet-logger';
-import { jitsiLocalStorage } from 'js-utils';
 
 import {
     NOTIFICATION_TIMEOUT,
@@ -460,15 +460,18 @@ const messageHandler = {
             messageArguments,
             enabledNotifications,
             timeout = NOTIFICATION_TIMEOUT) {
-        if (enabledNotifications) {
-            APP.store.dispatch(showNotification({
-                descriptionArguments: messageArguments,
-                descriptionKey: messageKey,
-                titleKey: displayNameKey,
-                title: displayName
-            },
-                timeout));
+
+        if (!enabledNotifications) {
+            return;
         }
+
+        APP.store.dispatch(showNotification({
+            descriptionArguments: messageArguments,
+            descriptionKey: messageKey,
+            titleKey: displayNameKey,
+            title: displayName
+        },
+        timeout));
     },
 
     /**

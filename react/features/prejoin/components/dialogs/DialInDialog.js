@@ -4,9 +4,9 @@ import React from 'react';
 
 import { translate } from '../../../base/i18n';
 import { Icon, IconArrowLeft } from '../../../base/icons';
+import { ActionButton } from '../../../base/premeeting';
 import { getCountryCodeFromPhone } from '../../utils';
 import Label from '../Label';
-import ActionButton from '../buttons/ActionButton';
 
 type Props = {
 

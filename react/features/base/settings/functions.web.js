@@ -9,7 +9,7 @@ export * from './functions.any';
  * @returns {void}
  */
 export function getCurrentCameraDeviceId(state: Object) {
-    return state['features/base/settings'].cameraDeviceId;
+    return getDeviceIdByType(state, 'isVideoTrack');
 }
 
 /**
@@ -19,7 +19,7 @@ export function getCurrentCameraDeviceId(state: Object) {
  * @returns {void}
  */
 export function getCurrentMicDeviceId(state: Object) {
-    return state['features/base/settings'].micDeviceId;
+    return getDeviceIdByType(state, 'isAudioTrack');
 }
 
 /**
@@ -30,6 +30,22 @@ export function getCurrentMicDeviceId(state: Object) {
  */
 export function getCurrentOutputDeviceId(state: Object) {
     return state['features/base/settings'].audioOutputDeviceId;
+}
+
+/**
+ * Returns the deviceId for the corresponding local track type.
+ *
+ * @param {Object} state - The state of the application.
+ * @param {string} isType - Can be 'isVideoTrack' | 'isAudioTrack'.
+ * @returns {string}
+ */
+function getDeviceIdByType(state: Object, isType: string) {
+    const [ deviceId ] = state['features/base/tracks']
+          .map(t => t.jitsiTrack)
+          .filter(t => t && t.isLocal() && t[isType]())
+          .map(t => t.getDeviceId());
+
+    return deviceId || '';
 }
 
 /**

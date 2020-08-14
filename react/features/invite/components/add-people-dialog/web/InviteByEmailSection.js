@@ -13,9 +13,7 @@ import {
     IconOutlook,
     IconYahoo
 } from '../../../../base/icons';
-import { openURLInBrowser } from '../../../../base/util';
-
-import { copyText } from './utils';
+import { copyText, openURLInBrowser } from '../../../../base/util';
 
 type Props = {
 
@@ -148,7 +146,6 @@ function InviteByEmailSection({ inviteSubject, inviteText, t }: Props) {
                     {renderEmailIcons()}
                 </div>
             </div>
-            <div className = 'invite-more-dialog separator' />
         </>
     );
 }

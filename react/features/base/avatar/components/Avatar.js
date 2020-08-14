@@ -59,6 +59,11 @@ export type Props = {
     status?: ?string,
 
     /**
+     * TestId of the element, if any.
+     */
+    testId?: string,
+
+    /**
      * URL of the avatar, if any.
      */
     url: ?string,
@@ -122,11 +127,13 @@ class Avatar<P: Props> extends PureComponent<P, State> {
             id,
             size,
             status,
+            testId,
             url
         } = this.props;
         const { avatarFailed } = this.state;
 
         const avatarProps = {
+            fullName: _initialsBase,
             className,
             color: undefined,
             id,
@@ -134,8 +141,8 @@ class Avatar<P: Props> extends PureComponent<P, State> {
             onAvatarLoadError: undefined,
             size,
             status,
-            url: undefined,
-            fullName: _initialsBase
+            testId,
+            url: undefined
         };
 
         // _loadableAvatarUrl is validated that it can be loaded, but uri (if present) is not, so

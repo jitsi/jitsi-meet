@@ -25,6 +25,34 @@ export function assignIfDefined(target: Object, source: Object) {
 }
 
 /**
+ * Tries to copy a given text to the clipboard.
+ * Returns true if the action succeeds.
+ *
+ * @param {string} textToCopy - Text to be copied.
+ * @returns {boolean}
+ */
+export function copyText(textToCopy: string) {
+    const fakeTextArea = document.createElement('textarea');
+    let result;
+
+    // $FlowFixMe
+    document.body.appendChild(fakeTextArea);
+    fakeTextArea.value = textToCopy;
+    fakeTextArea.select();
+
+    try {
+        result = document.execCommand('copy');
+    } catch (err) {
+        result = false;
+    }
+
+    // $FlowFixMe
+    document.body.removeChild(fakeTextArea);
+
+    return result;
+}
+
+/**
  * Creates a deferred object.
  *
  * @returns {{promise, resolve, reject}}

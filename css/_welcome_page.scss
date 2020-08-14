@@ -21,7 +21,7 @@ body.welcome-page {
         align-items: center;
         display: flex;
         flex-direction: column;
-        min-height: fit-content;
+        min-height: $welcomePageHeaderMinHeight;
         overflow: hidden;
         position: relative;
         text-align: center;
@@ -35,10 +35,13 @@ body.welcome-page {
         }
 
         .header-text {
-            display: flex;
+            box-sizing: border-box;
+            display: $welcomePageHeaderTextDisplay;
             flex-direction: column;
             padding: $watermarkHeight + $watermarkTop 50px 50px;
             max-width: 100%;
+            margin: auto;
+            width: $welcomePageHeaderTextWidth;
             align-items: center;
 
             @media (max-width: $mobileWidth) {
@@ -71,7 +74,7 @@ body.welcome-page {
         }
 
         #enter_room {
-            display: flex;
+            display: $welcomePageEnterRoomDisplay;
             align-items: center;
             max-width: calc(100% - 40px);
             width: $welcomePageEnterRoomWidth;
@@ -128,12 +131,32 @@ body.welcome-page {
                     flex-direction: row;
                     margin-top: 5px;
 
-                    svg {
-                        fill: $defaultWarningColor
+                    .jitsi-icon {
+                        margin-right: 15px;
+
+                        svg {
+                            fill: $defaultWarningColor
+                        }
                     }
                 }
             }
 
+        }
+
+        #moderated-meetings {
+            max-width: calc(100% - 40px);
+            padding: 16px 0 39px 0;
+            width: $welcomePageEnterRoomWidth;
+
+            p {
+                color: $welcomePageDescriptionColor;
+                text-align: left;
+
+                a {
+                    color: inherit;
+                    font-weight: 600;
+                }
+            }
         }
 
         .tab-container {
@@ -233,5 +256,10 @@ body.welcome-page {
         position: absolute;
         width: 100%;
         height: 100%;
+
+        .watermark.leftwatermark {
+            width: $welcomePageWatermarkWidth;
+            height: $welcomePageWatermarkHeight;
+        }
     }
 }

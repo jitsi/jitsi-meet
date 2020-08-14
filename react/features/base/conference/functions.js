@@ -14,6 +14,7 @@ import { toState } from '../redux';
 import { safeDecodeURIComponent } from '../util';
 
 import {
+    AK_ADDRESS_COMMAND,
     AVATAR_ID_COMMAND,
     AVATAR_URL_COMMAND,
     EMAIL_COMMAND,
@@ -204,7 +205,7 @@ export function getConferenceTimestamp(stateful: Function | Object): number {
  * @returns {JitsiConference|undefined}
  */
 export function getCurrentConference(stateful: Function | Object) {
-    const { conference, joining, leaving, passwordRequired }
+    const { conference, joining, leaving, membersOnly, passwordRequired }
         = toState(stateful)['features/base/conference'];
 
     // There is a precendence
@@ -212,7 +213,7 @@ export function getCurrentConference(stateful: Function | Object) {
         return conference === leaving ? undefined : conference;
     }
 
-    return joining || passwordRequired;
+    return joining || passwordRequired || membersOnly;
 }
 
 /**
@@ -350,6 +351,7 @@ export function sendLocalParticipant(
             setDisplayName: Function,
             setLocalParticipantProperty: Function }) {
     const {
+        akAddress,
         avatarID,
         avatarURL,
         email,

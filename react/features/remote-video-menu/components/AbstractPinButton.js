@@ -2,8 +2,7 @@
 
 import { IconPin } from '../../base/icons';
 import { pinParticipant } from '../../base/participants';
-import { AbstractButton } from '../../base/toolbox';
-import type { AbstractButtonProps } from '../../base/toolbox';
+import { AbstractButton, type AbstractButtonProps } from '../../base/toolbox/components';
 
 export type Props = AbstractButtonProps & {
 

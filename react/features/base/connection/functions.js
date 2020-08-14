@@ -40,10 +40,10 @@ export function getCurrentConferenceUrl(stateful: Function | Object) {
  * @returns {string}
  */
 export function getInviteURL(stateOrGetState: Function | Object): string {
-
     if (isInIframe()) {
         return document.referrer;
     }
+
     const state = toState(stateOrGetState);
     let locationURL
         = state instanceof URL

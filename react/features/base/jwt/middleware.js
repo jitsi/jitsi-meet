@@ -15,6 +15,7 @@ import { MiddlewareRegistry } from '../redux';
 import { SET_JWT } from './actionTypes';
 import { setJWT } from './actions';
 import { parseJWTFromURLParams } from './functions';
+import logger from './logger';
 
 declare var APP: Object;
 
@@ -138,7 +139,13 @@ function _setJWT(store, next, action) {
 
             action.isGuest = !enableUserRolesBasedOnToken;
 
-            const jwtPayload = jwtDecode(jwt);
+            let jwtPayload;
+
+            try {
+                jwtPayload = jwtDecode(jwt);
+            } catch (e) {
+                logger.error(e);
+            }
 
             if (jwtPayload) {
                 const { context, iss } = jwtPayload;
@@ -146,7 +153,7 @@ function _setJWT(store, next, action) {
                 action.jwt = jwt;
                 action.issuer = iss;
                 if (context) {
-                    const user = _user2participant(context.user);
+                    const user = _user2participant(context.user || {});
 
                     action.callee = context.callee;
                     action.group = context.group;

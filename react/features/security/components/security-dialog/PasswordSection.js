@@ -4,7 +4,7 @@
 import React, { useRef } from 'react';
 
 import { translate } from '../../../base/i18n';
-import { copyText } from '../../../invite';
+import { copyText } from '../../../base/util';
 
 import PasswordForm from './PasswordForm';
 
@@ -169,19 +169,24 @@ function PasswordSection({
     }
 
     return (
-        <div className = 'security-dialog password'>
-            <div
-                className = 'info-dialog info-dialog-column info-dialog-password'
-                ref = { formRef }>
-                <PasswordForm
-                    editEnabled = { passwordEditEnabled }
-                    locked = { locked }
-                    onSubmit = { onPasswordSubmit }
-                    password = { password }
-                    passwordNumberOfDigits = { passwordNumberOfDigits } />
-            </div>
-            <div className = 'security-dialog password-actions'>
-                { renderPasswordActions() }
+        <div className = 'security-dialog password-section'>
+            <p className = 'description'>
+                { t(canEditPassword ? 'security.about' : 'security.aboutReadOnly') }
+            </p>
+            <div className = 'security-dialog password'>
+                <div
+                    className = 'info-dialog info-dialog-column info-dialog-password'
+                    ref = { formRef }>
+                    <PasswordForm
+                        editEnabled = { passwordEditEnabled }
+                        locked = { locked }
+                        onSubmit = { onPasswordSubmit }
+                        password = { password }
+                        passwordNumberOfDigits = { passwordNumberOfDigits } />
+                </div>
+                <div className = 'security-dialog password-actions'>
+                    { renderPasswordActions() }
+                </div>
             </div>
         </div>
     );

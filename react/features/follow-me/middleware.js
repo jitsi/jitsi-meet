@@ -1,6 +1,6 @@
 // @flow
 
-import { CONFERENCE_WILL_JOIN } from '../base/conference';
+import { CONFERENCE_WILL_JOIN } from '../base/conference/actionTypes';
 import {
     getParticipantById,
     getPinnedParticipant,
@@ -18,6 +18,8 @@ import {
 import { FOLLOW_ME_COMMAND } from './constants';
 import { isFollowMeActive } from './functions';
 import logger from './logger';
+
+import './subscriber';
 
 declare var APP: Object;
 
@@ -150,17 +152,14 @@ function _onFollowMeCommand(attributes = {}, id, store) {
         }
     }
 
-    const pinnedParticipant
-        = getPinnedParticipant(state, attributes.nextOnStage);
+    const pinnedParticipant = getPinnedParticipant(state);
     const idOfParticipantToPin = attributes.nextOnStage;
 
     if (typeof idOfParticipantToPin !== 'undefined'
-            && (!pinnedParticipant
-                || idOfParticipantToPin !== pinnedParticipant.id)
+            && (!pinnedParticipant || idOfParticipantToPin !== pinnedParticipant.id)
             && oldState.nextOnStage !== attributes.nextOnStage) {
         _pinVideoThumbnailById(store, idOfParticipantToPin);
-    } else if (typeof idOfParticipantToPin === 'undefined'
-            && pinnedParticipant) {
+    } else if (typeof idOfParticipantToPin === 'undefined' && pinnedParticipant) {
         store.dispatch(pinParticipant(null));
     }
 }
