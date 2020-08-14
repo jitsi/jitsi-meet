@@ -29,8 +29,7 @@ import {
     LAYOUTS,
     getCurrentLayout,
     setTileView,
-    shouldDisplayTileView,
-    getTileViewGridDimensions
+    shouldDisplayTileView
 } from '../../../react/features/video-layout';
 /* eslint-enable no-unused-vars */
 
