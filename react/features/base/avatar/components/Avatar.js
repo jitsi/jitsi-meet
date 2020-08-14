@@ -125,6 +125,7 @@ class Avatar<P: Props> extends PureComponent<P, State> {
     render() {
         const {
             testId,
+            akAddress,
             _initialsBase,
             _loadableAvatarUrl,
             className,
