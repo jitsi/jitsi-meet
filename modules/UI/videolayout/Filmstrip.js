@@ -1,6 +1,9 @@
 /* global $, APP, interfaceConfig */
 
-import { getVerticalFilmstripVisibleAreaWidth, isFilmstripVisible } from '../../../react/features/filmstrip';
+import {
+    getVerticalFilmstripVisibleAreaWidth,
+    isFilmstripVisible
+} from '../../../react/features/filmstrip';
 
 const Filmstrip = {
     /**
@@ -39,30 +42,63 @@ const Filmstrip = {
         const thumbs = this._getThumbs(!forceUpdate);
         const avatarSize = height / 2;
 
-        if (thumbs.localThumb) {
-            thumbs.localThumb.css({
-                'padding-top': '',
-                height: `${height}px`,
-                'min-height': `${height}px`,
-                'min-width': `${width}px`,
-                width: `${width}px`
-            });
-        }
-
-        if (thumbs.remoteThumbs) {
-            thumbs.remoteThumbs.css({
-                'padding-top': '',
-                height: `${height}px`,
-                'min-height': `${height}px`,
-                'min-width': `${width}px`,
-                width: `${width}px`
-            });
-        }
+        const bigVideoCSS = {
+            'padding-top': '',
+            height: `${height}px`,
+            'min-height': `${height}px`,
+            'min-width': `${width}px`,
+            width: `${width}px`
+        };
 
         $('.avatar-container').css({
             height: `${avatarSize}px`,
             width: `${avatarSize}px`
         });
+
+        let thumbEls = [ ...thumbs.remoteThumbs ];
+
+        // localThumb is underfined when iAmRecorder is enabled
+        if (thumbs.localThumb) {
+            thumbEls = thumbEls.concat([ ...thumbs.localThumb ]);
+        }
+
+        thumbEls.forEach(videoThumb => {
+            const $thumb = $(videoThumb);
+
+            // Smaller video
+            if ($thumb.hasClass('with-camera') || $thumb.hasClass('without-camera')) {
+                $thumb.css(bigVideoCSS);
+
+                return;
+            }
+
+            const ratio = width / height;
+
+            // Everything is relative to vw ; width is 20%
+            const smallVideoWidthPercent = 20;
+            const smallVideoHeight = smallVideoWidthPercent / ratio;
+            const smallVideoAvatar = smallVideoHeight / 2;
+
+            $thumb.css({
+                'padding-top': '',
+                height: `${smallVideoHeight}vw`,
+                'min-height': `${smallVideoHeight}vw`,
+                'min-width': `${smallVideoWidthPercent}vw`,
+                width: `${smallVideoWidthPercent}vw`
+            });
+            $thumb.find('.avatar-container')
+                .css({
+                    height: `${smallVideoAvatar}vw`,
+                    width: `${smallVideoAvatar}vw`
+                });
+        });
+
+        // If i am the only participant
+        // Make my thumbnail a large videо
+        // localThumb is underfined when iAmRecorder is enabled
+        if (thumbs.remoteThumbs.length === 0 && thumbs.localThumb) {
+            thumbs.localThumb.css(bigVideoCSS);
+        }
     },
 
     /**

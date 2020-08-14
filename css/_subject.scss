@@ -1,11 +1,14 @@
 .subject {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     top: -120px;
     transition: top .3s ease-in;
-    height: 95px;
+    height: 100px;
     width: 100%;
     pointer-events: none;
     position: absolute;
-    padding: 25px 140px 0 140px;
+    padding: 25px 99px 0 99px;
     text-align: center;
     font-size: 17px;
     color: #fff;
@@ -14,7 +17,7 @@
     text-overflow: ellipsis;
     box-sizing: border-box;
     white-space: nowrap;
-    background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0));
+    background-image: linear-gradient(to bottom, rgba(74, 75, 86, 0.5), rgba(0, 0, 0, 0));
 
     &.visible {
         top: 0px;
@@ -27,6 +30,17 @@
     &-conference-timer {
         display: block;
         font-size: 15px;
-        opacity: 0.6;
+        margin-left: 10px;
+    }
+
+    .wrapper {
+        display: flex;
+        align-items: center;
+        margin-top: 15px;
+
+        .time {
+            font-size: 15px;
+            margin-left: 15px;
+        }
     }
 }

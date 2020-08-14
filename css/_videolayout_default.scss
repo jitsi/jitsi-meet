@@ -12,6 +12,7 @@
     left: 0px;
     right: 0px;
     overflow: hidden;
+    background: $hangupColor;
 }
 
 #largeVideoBackgroundContainer,
@@ -74,6 +75,7 @@
             display: inline-block;
             float: left;
             pointer-events: all;
+            z-index: 10;
         }
     }
 
@@ -218,6 +220,7 @@
 #largeVideoContainer {
     height: 100%;
     width: 100%;
+    background: #2A2B35 !important;
 }
 
 #largeVideoWrapper {
@@ -370,6 +373,18 @@
     }
 }
 
+.tip-block {
+    display: inline-block;
+    float: right;
+    margin: 0 5px;
+    position: relative;
+
+    .tip-icon  {
+        width: 20px;
+        height: 20px;
+    }
+}
+
 .raisehandindicator {
   background: $raiseHandBg;
 }
@@ -486,6 +501,10 @@
     pointer-events: none;
 }
 
+#mixedstream {
+    display:none !important;
+}
+
 #dominantSpeaker {
     visibility: hidden;
     width: 300px;
@@ -494,33 +513,51 @@
     position: relative;
     top: 50%;
     transform: translateY(-50%);
-}
 
-#mixedstream {
-    display:none !important;
-}
+    #dominantSpeakerAvatarContainer {
+        width: 200px;
+        height: 200px;
+        top: 50px;
+        margin: auto;
+        position: relative;
+        overflow: hidden;
+        visibility: inherit;
+    }
 
-#dominantSpeakerAvatarContainer,
-.dynamic-shadow {
-    width: 200px;
-    height: 200px;
-}
+    .dynamic-shadow {
+        width: 200px;
+        height: 200px;
+        border-radius: 50%;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        margin: -100px 0 0 -100px;
+        transition: box-shadow 0.3s ease;
+    }
 
-#dominantSpeakerAvatarContainer {
-    top: 50px;
-    margin: auto;
-    position: relative;
-    overflow: hidden;
-    visibility: inherit;
-}
+    @media (max-width: $desktopWidth) {
+        #dominantSpeakerAvatarContainer,
+        .dynamic-shadow {
+            width: 140px;
+            height: 140px;
+        }
 
-.dynamic-shadow {
-    border-radius: 50%;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    margin: -100px 0 0 -100px;
-    transition: box-shadow 0.3s ease;
+        .dynamic-shadow {
+            left: 60%;
+        }
+    }
+
+    @media (max-width: $mobileWidth) {
+        #dominantSpeakerAvatarContainer,
+        .dynamic-shadow {
+            width: 110px;
+            height: 110px;
+        }
+
+        .dynamic-shadow {
+            left: 65%;
+        }
+    }
 }
 
 .avatar-container {
@@ -533,9 +570,9 @@
     overflow: hidden;
 
     .userAvatar {
-        height: 100%;
+        height: 100% !important;
         object-fit: cover;
-        width: 100%;
+        width: 100% !important;
         top: 0px;
         left: 0px;
         position: absolute;

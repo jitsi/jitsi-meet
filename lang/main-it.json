@@ -571,7 +571,8 @@
             "tileView": "Vedi tutti i partecipanti insieme, o uno solo",
             "toggleCamera": "Cambia videocamera",
             "videomute": "Attiva/disattiva videocamera",
-            "videoblur": "Attiva/disattiva offuscamento video"
+            "videoblur": "Attiva/disattiva offuscamento video",
+            "pin": ""
         },
         "addPeople": "Aggiungi persone alla chiamata",
         "audioOnlyOff": "Anche video",
@@ -676,7 +677,8 @@
         "muted": "Audio disattivato",
         "remoteControl": "Controllo remoto",
         "show": "",
-        "videomute": "Silenzia il video"
+        "videomute": "Silenzia il video",
+        "pin": ""
     },
     "welcomepage": {
         "accessibilityLabel": {

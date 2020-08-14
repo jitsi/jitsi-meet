@@ -13,6 +13,66 @@
         margin-bottom: 16px;
     }
 
+    &-btn {
+        border-radius: 3px;
+        color: #fff;
+        cursor: pointer;
+        display: inline-block;
+        font-size: 15px;
+        line-height: 24px;
+        padding: 7px 16px;
+        position: relative;
+        text-align: center;
+        width: 286px;
+
+        &--primary {
+            background: #0376DA;
+            border: 1px solid #0376DA;
+        }
+
+        &--secondary {
+            background: #2A3A4B;
+            border: 1px solid #5E6D7A;
+            margin-top: 5px;
+        }
+
+        &--text {
+            width: auto;
+            font-size: 13px;
+            margin: 0;
+            padding: 0;
+        }
+
+        &--disabled {
+            background: #5E6D7A;
+            border: 1px solid #5E6D7A;
+            color: #AFB6BC;
+            cursor: initial;
+
+            .prejoin-btn-icon {
+                & > svg {
+                    fill: #AFB6BC;
+                }
+            }
+
+            .prejoin-btn-options {
+                border-left: 1px solid #AFB6BC;
+            }
+        }
+    }
+
+    &-btn-options {
+        align-items: center;
+        border-left: 1px solid #fff;
+        display: flex;
+        height: 100%;
+        justify-content: center;
+        position: absolute;
+        right: 0;
+        top: 0;
+        width: 40px;
+    }
+
     &-text-btns {
         display: flex;
         justify-content: space-between;
@@ -53,7 +113,7 @@
     width: 100%;
 
     &--no-video {
-        background: radial-gradient(50% 50% at 50% 50%, #5B6F80 0%, #365067 100%), #FFFFFF;
+        background: $hangupColor;
         text-align: center;
     }
 
@@ -64,10 +124,24 @@
         width: 100%;
     }
 
+    &-clear {
+        background: #0376DA;
+        border: 1px solid #0376DA;
+        outline: none;
+    }
+
+    &-wrapper {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+    }
+
     &-name {
         color: #fff;
         font-size: 19px;
         line-height: 28px;
+        overflow-x: hidden;
+        text-overflow: ellipsis;
 
         &--editable {
             background: none;
@@ -76,7 +150,7 @@
             margin: 24px 0 16px 0;
             outline: none;
             text-align: center;
-            width: 100%;
+            width: 90%;
 
             &::-webkit-input-placeholder {
                 @include name-placeholder;

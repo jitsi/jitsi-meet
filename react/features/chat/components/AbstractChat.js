@@ -6,6 +6,8 @@ import type { Dispatch } from 'redux';
 import { getLocalParticipant } from '../../base/participants';
 import { sendMessage, toggleChat } from '../actions';
 
+declare var interfaceConfig: Object;
+
 /**
  * The type of the React {@code Component} props of {@code AbstractChat}.
  */
@@ -105,8 +107,9 @@ export function _mapStateToProps(state: Object) {
     const { isOpen, messages } = state['features/chat'];
     const _localParticipant = getLocalParticipant(state);
 
+
     return {
-        _isOpen: isOpen,
+        _isOpen: interfaceConfig.CHAT_ALWAYS_OPEN || isOpen,
         _messages: messages,
         _showNamePrompt: !_localParticipant.name
     };

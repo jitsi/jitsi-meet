@@ -194,6 +194,19 @@ class Filmstrip extends Component <Props> {
             }
 
             filmstripRemoteVideosContainerStyle.width = _filmstripWidth;
+
+            // The width of the chat overlay (for now constant 375px)
+            // On the initial mount it may be null
+            if (interfaceConfig.TILE_VIEW_ALWAYS_OPEN) {
+                const chatNode = document.getElementById('sideToolbarContainer');
+                const chatWidth = chatNode
+                    ? chatNode.getBoundingClientRect().width
+                    : 0;
+
+                filmstripRemoteVideosContainerStyle.position = 'relative';
+                filmstripRemoteVideosContainerStyle.left = chatWidth / 2;
+            }
+
             break;
         }
         }
@@ -209,6 +222,8 @@ class Filmstrip extends Component <Props> {
         if (!this.props._hideToolbar) {
             toolbar = this.props._filmstripOnly ? <Toolbar /> : this._renderToggleButton();
         }
+
+        filmstripStyle.background = this.props._visible ? 'rgba(33,34,44, 0.66)' : 'none';
 
         return (
             <div
@@ -240,6 +255,8 @@ class Filmstrip extends Component <Props> {
                             onMouseOver = { this._onMouseOver }
                             style = { filmstripRemoteVideosContainerStyle }>
                             <div id = 'localVideoTileViewContainer' />
+                            {/* Empty line between smaller and bigger videos */}
+                            <div id = 'videosDelimiter' />
                         </div>
                     </div>
                 </div>

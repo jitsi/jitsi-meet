@@ -1,6 +1,5 @@
 // @flow
 
-import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../base/app';
 import {
     CONFERENCE_JOINED
 } from '../base/conference';
@@ -9,26 +8,11 @@ import {
     getParticipantPresenceStatus,
     getParticipants,
     PARTICIPANT_JOINED,
-    PARTICIPANT_JOINED_SOUND_ID,
     PARTICIPANT_LEFT,
     PARTICIPANT_UPDATED,
     pinParticipant
 } from '../base/participants';
 import { MiddlewareRegistry } from '../base/redux';
-import {
-    playSound,
-    registerSound,
-    stopSound,
-    unregisterSound
-} from '../base/sounds';
-import {
-    CALLING,
-    CONNECTED_USER,
-    EXPIRED,
-    INVITED,
-    REJECTED,
-    RINGING
-} from '../presence-status';
 
 import {
     SET_CALLEE_INFO_VISIBLE,
@@ -39,29 +23,9 @@ import {
     removePendingInviteRequests,
     setCalleeInfoVisible
 } from './actions';
-import {
-    OUTGOING_CALL_EXPIRED_SOUND_ID,
-    OUTGOING_CALL_REJECTED_SOUND_ID,
-    OUTGOING_CALL_RINGING_SOUND_ID,
-    OUTGOING_CALL_START_SOUND_ID
-} from './constants';
 import logger from './logger';
-import { sounds } from './sounds';
 
 declare var interfaceConfig: Object;
-
-/**
- * Maps the presence status with the ID of the sound that will be played when
- * the status is received.
- */
-const statusToRingtone = {
-    [CALLING]: OUTGOING_CALL_START_SOUND_ID,
-    [CONNECTED_USER]: PARTICIPANT_JOINED_SOUND_ID,
-    [EXPIRED]: OUTGOING_CALL_EXPIRED_SOUND_ID,
-    [INVITED]: OUTGOING_CALL_START_SOUND_ID,
-    [REJECTED]: OUTGOING_CALL_REJECTED_SOUND_ID,
-    [RINGING]: OUTGOING_CALL_RINGING_SOUND_ID
-};
 
 /**
  * The middleware of the feature invite common to mobile/react-native and
@@ -93,18 +57,6 @@ MiddlewareRegistry.register(store => next => action => {
     const result = next(action);
 
     switch (action.type) {
-    case APP_WILL_MOUNT:
-        for (const [ soundId, sound ] of sounds.entries()) {
-            dispatch(registerSound(soundId, sound.file, sound.options));
-        }
-        break;
-
-    case APP_WILL_UNMOUNT:
-        for (const soundId of sounds.keys()) {
-            dispatch(unregisterSound(soundId));
-        }
-        break;
-
     case CONFERENCE_JOINED:
         _onConferenceJoined(store);
         break;
@@ -119,26 +71,6 @@ MiddlewareRegistry.register(store => next => action => {
 
         if (oldParticipantPresence === newParticipantPresence) {
             break;
-        }
-
-        const oldSoundId
-            = oldParticipantPresence
-                && statusToRingtone[oldParticipantPresence];
-        const newSoundId
-            = newParticipantPresence
-                && statusToRingtone[newParticipantPresence];
-
-
-        if (oldSoundId === newSoundId) {
-            break;
-        }
-
-        if (oldSoundId) {
-            dispatch(stopSound(oldSoundId));
-        }
-
-        if (newSoundId) {
-            dispatch(playSound(newSoundId));
         }
 
         break;

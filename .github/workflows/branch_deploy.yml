@@ -1,0 +1,41 @@
+name: Deploy feature branch
+
+on: [push]
+
+jobs:
+  run-ci:
+    name: Build Frontend
+    runs-on: ubuntu-latest
+    steps:
+      # strip 'refs/heads/' from GITHUB_REF and export as ${{ steps.get_branch.outputs.branch }}
+      - name: Get branch name
+        id: get_branch
+        run: echo "::set-output name=branch::$(echo ${GITHUB_REF##*/}|tr '[:upper:]' '[:lower:]')"
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: '12.x'
+      - run: npm install
+      - run: make
+      - run: make source-package
+      - name: Deploy Feature branch to Staging server
+        uses: Pendect/action-rsyncer@v1.1.0
+        env:
+          DEPLOY_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+        with:
+          src: 'source_package/jitsi-meet/'
+          dest: ${{ secrets.TEST_DEPLOY_HOST }}:${{ secrets.TEST_BRANCHES_DEST }}/${{ steps.get_branch.outputs.branch }}
+      - name: Deploy Prosody scripts to Staging server
+        uses: Pendect/action-rsyncer@v1.1.0
+        env:
+          DEPLOY_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+        with:
+          src: 'resources/prosody-plugins/'
+          dest: ${{ secrets.TEST_DEPLOY_HOST }}:${{ secrets.TEST_BRANCHES_PROSODY_DEST }}/${{ steps.get_branch.outputs.branch }}
+      - name: Enable branch as subdomain and restart services
+        uses: JimCronqvist/action-ssh@master
+        with:
+          hosts: ${{ secrets.TEST_DEPLOY_HOST }}
+          privateKey: ${{ secrets.DEPLOY_SSH_KEY }}
+          command: |
+            sudo systemctl restart nginx prosody jicofo jitsi-videobridge2

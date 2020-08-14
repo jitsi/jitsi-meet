@@ -8,6 +8,10 @@
 
     .auth-name {
         margin-bottom: 4px;
+        width: 90%;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
     .calendar-tab,
@@ -28,6 +32,10 @@
     .profile-edit {
         display: flex;
         width: 100%;
+
+        @media (max-width: $mobileWidth) {
+            flex-direction: column;
+        }
     }
 
     .profile-edit-field {
@@ -59,5 +67,22 @@
 
     .sign-out-cta {
         margin-bottom: 20px;
+    }
+
+    &--auth {
+        display: flex;
+
+        &_left, &_right {
+            flex: 1 1 100%;
+            margin-right: 36px;
+        }
+
+
+        &_right {
+            .invite-more-button-text {
+                margin-left: 0px;
+                font-size: 12px;
+            }
+        }
     }
 }

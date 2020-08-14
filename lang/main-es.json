@@ -18,7 +18,7 @@
         "linkCopied": "Link copiado al portapapeles",
         "loading": "Buscando por contacto y número telefónico",
         "loadingNumber": "Validando el número telefónico",
-        "loadingPeople": "Buscando contactos a invitar",        
+        "loadingPeople": "Buscando contactos a invitar",
         "noResults": "No se encontraron coincidencias",
         "noValidNumbers": "Por favor ingrese un número de teléfono",
         "outlookEmail": "Correo de Outlook",
@@ -690,7 +690,8 @@
             "toggleCamera": "Alternar cámara",
             "toggleFilmstrip": "Alternar mosaicos",
             "videomute": "Alternar silencio de video",
-            "videoblur": "Alternar desenfoque de video"
+            "videoblur": "Alternar desenfoque de video",
+            "pin": ""
         },
         "addPeople": "Agregar personas a su llamada",
         "audioOnlyOff": "Deshabilitar el modo de ancho de banda bajo",
@@ -812,7 +813,8 @@
         "muted": "Silenciado",
         "remoteControl": "Control remoto",
         "show": "Mostrar en escena",
-        "videomute": "El participante ha detenido la cámara."
+        "videomute": "El participante ha detenido la cámara.",
+        "pin": ""
     },
     "welcomepage": {
         "accessibilityLabel": {

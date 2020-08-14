@@ -43,32 +43,50 @@
     }
 
     .item {
-        background: rgba(255,255,255,0.50);
+        background: #21222c;
         box-sizing: border-box;
-        display: inline-flex;
-        margin-top: 5px;
+        border: 2px solid $welcomeBorderColor;
+        margin-top: 0;
         min-height: 92px;
-        width: 100%;
         word-break: break-word;
         display: flex;
         flex-direction: row;
         text-align: left;
 
         &:first-child {
-            margin-top: 0px;
+            margin-top: 0;
         }
 
-        .left-column {
+        @media (max-width: $desktopWidth) {
+            border: 1px solid $welcomeBorderColor;
+
+            &:first-child {
+                border-top: 2px solid $welcomeBorderColor;
+            }
+
+            &:last-child {
+                border-bottom: none;
+            }
+        }
+
+        .bottom-column {
             display: flex;
-            flex-direction: column;
-            width: 140px;
-            flex-grow: 0;
-            padding-left: 30px;
-            padding-top: 25px;
+            justify-content: space-between;
 
             .date {
-                font-weight: bold;
                 padding-bottom: 5px;
+                color: #727278;
+                font-size: 15px;
+                line-height: 1.6;
+                text-align: center;
+                padding-right: 20px;
+            }
+
+            span {
+                color: #727278 !important;
+                font-size: 15px;
+                line-height: 1.6;
+                text-align: center;
             }
         }
 
@@ -76,13 +94,16 @@
             display: flex;
             flex-direction: column;
             flex-grow: 1;
-            padding-left: 30px;
-            padding-top: 25px;
+            padding: 20px;
 
             .title {
                 font-size: 16px;
-                font-weight: bold;
                 padding-bottom: 5px;
+                color: #babac0;
+            }
+
+            span {
+                color: #babac0;
             }
         }
 
@@ -99,13 +120,13 @@
         }
 
         &.with-click-handler:hover {
-            background-color: #75A7E7;
+            background-color: #1a1a22;
         }
 
         .add-button {
             width: 30px;
             height: 30px;
-            padding: 0px;
+            padding: 0;
         }
 
         i {

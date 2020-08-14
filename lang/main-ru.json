@@ -720,6 +720,7 @@
     "toolbar": {
         "Settings": "Настройки",
         "accessibilityLabel": {
+            "pin": "",
             "Settings": "Вкл/Выкл меню настроек",
             "audioOnly": "Вкл/Выкл только звук",
             "audioRoute": "Выбрать аудиоустройство",
@@ -886,7 +887,8 @@
         "muted": "Звук выключен",
         "remoteControl": "Начать / Остановить дистанционный контроль",
         "show": "Показать крупным планом",
-        "videomute": "Участник отключил камеру"
+        "videomute": "Участник отключил камеру",
+        "pin": ""
     },
     "welcomepage": {
         "accessibilityLabel": {

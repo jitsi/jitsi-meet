@@ -7,6 +7,7 @@ import { translate, translateToHTML } from '../../base/i18n';
 import { Icon, IconWarning } from '../../base/icons';
 import { Watermarks } from '../../base/react';
 import { connect } from '../../base/redux';
+import sendRoomNameSignal from '../../base/util/sendRoomNameSignal';
 import { CalendarList } from '../../calendar-sync';
 import { RecentList } from '../../recent-list';
 import { SettingsButton, SETTINGS_TABS } from '../../settings';
@@ -173,32 +174,36 @@ class WelcomePage extends AbstractWelcomePage {
                     <Watermarks defaultJitsiLogoURL = { DEFAULT_WELCOME_PAGE_LOGO_URL } />
                 </div>
                 <div className = 'header'>
-                    <div className = 'welcome-page-settings'>
-                        <SettingsButton
-                            defaultTab = { SETTINGS_TABS.CALENDAR } />
-                        { showAdditionalToolbarContent
-                            ? <div
-                                className = 'settings-toolbar-content'
-                                ref = { this._setAdditionalToolbarContentRef } />
-                            : null
-                        }
-                    </div>
-                    <div className = 'header-image' />
-                    <div className = 'header-text'>
-                        <h1 className = 'header-text-title'>
-                            { t('welcomepage.title') }
-                        </h1>
-                        <p className = 'header-text-description'>
-                            { t('welcomepage.appDescription',
-                                { app: APP_NAME }) }
-                        </p>
+                    <div className = 'wrapper'>
+                        <div className = 'welcome-page-settings'>
+                            <SettingsButton
+                                defaultTab = { SETTINGS_TABS.CALENDAR } />
+                            { showAdditionalToolbarContent
+                                ? <div
+                                    className = 'settings-toolbar-content'
+                                    ref = { this._setAdditionalToolbarContentRef } />
+                                : null
+                            }
+                        </div>
+                        <div className = 'header-image' />
+                        <div className = 'header-text'>
+                            <h1 className = 'header-text-title'>
+                                { t('welcomepage.title') }
+                            </h1>
+                            <p className = 'header-text-description'>
+                                { t('welcomepage.appDescription',
+                                    { app: APP_NAME }) }
+                            </p>
+                        </div>
                     </div>
                     <div id = 'enter_room'>
                         <div className = 'enter-room-input-container'>
                             <div className = 'enter-room-title'>
                                 { t('welcomepage.enterRoomTitle') }
                             </div>
-                            <form onSubmit = { this._onFormSubmit }>
+                            <form
+                                autoComplete = 'off'
+                                onSubmit = { this._onFormSubmit }>
                                 <input
                                     autoFocus = { true }
                                     className = 'enter-room-input'
@@ -268,10 +273,11 @@ class WelcomePage extends AbstractWelcomePage {
      * @private
      * @returns {void}
      */
-    _onFormSubmit(event) {
+    async _onFormSubmit(event) {
         event.preventDefault();
 
         if (!this._roomInputRef || this._roomInputRef.reportValidity()) {
+            sendRoomNameSignal(this.state.room || this.state.generatedRoomname);
             this._onJoin();
         }
     }

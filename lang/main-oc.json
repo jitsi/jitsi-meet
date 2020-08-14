@@ -642,7 +642,8 @@
             "muteEveryone": "Rendre mut tot lo monde",
             "moreOptions": "Mostrar mai d’opcions",
             "e2ee": "Chiframent del cap a la fin",
-            "security": "Opcions de seguretat"
+            "security": "Opcions de seguretat",
+            "pin": ""
         },
         "addPeople": "Ajustar de monde a vòstra sonada",
         "audioOnlyOff": "Desactivar lo mòde connexion febla",
@@ -764,7 +765,8 @@
         "remoteControl": "Contraròtle alonhat",
         "show": "Mostrar davant",
         "videomute": "Lo participant a arrestat la camèra",
-        "domuteOthers": "Rendre mut totes los autres"
+        "domuteOthers": "Rendre mut totes los autres",
+        "pin": ""
     },
     "welcomepage": {
         "accessibilityLabel": {

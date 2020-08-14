@@ -55,12 +55,14 @@ function InviteMore({
                 <div className = 'invite-more-header'>
                     {t('addPeople.inviteMoreHeader')}
                 </div>
-                <div
-                    className = 'invite-more-button'
-                    onClick = { onClick }>
-                    <Icon src = { IconInviteMore } />
-                    <div className = 'invite-more-button-text'>
-                        {t('addPeople.inviteMorePrompt')}
+                <div className = 'header-buttons-container'>
+                    <div
+                        className = 'invite-more-button'
+                        onClick = { onClick }>
+                        <Icon src = { IconInviteMore } />
+                        <div className = 'invite-more-button-text'>
+                            {t('addPeople.inviteMorePrompt')}
+                        </div>
                     </div>
                 </div>
             </div> : null

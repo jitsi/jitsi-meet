@@ -6,18 +6,27 @@
     transition: right 0.5s;
     z-index: $filmstripVideosZ + 1;
 
+    @media (max-width: $desktopWidth) {
+        position: static;
+    }
+
     .circular-label {
         align-items: center;
-        color: white;
+        background: $toolBarDesktopBackground;
+        color: $subjectTextColor;
         display: flex;
         font-weight: bold;
         justify-content: center;
         margin-left: 8px;
         opacity: 0.8;
-    }
 
-    .circular-label {
-        background: #B8C7E0;
+        @media (max-width: $desktopWidth) {
+            position: absolute;
+            z-index: $zindex10 !important;
+            top: 16px;
+            left: 24px;
+            opacity: 1;
+        }
     }
 
     .circular-label.e2ee {
@@ -27,6 +36,7 @@
         justify-content: center;
     }
 
+    .circular-label.local-rec,
     .circular-label.file {
         background: #FF5630;
     }

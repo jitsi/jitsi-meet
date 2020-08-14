@@ -99,14 +99,20 @@ export function calculateThumbnailSizeForTileView({
 }: Object) {
     // The distance from the top and bottom of the screen, as set by CSS, to
     // avoid overlapping UI elements.
-    const topBottomPadding = 200;
+    const topBottomPadding = 400;
 
     // Minimum space to keep between the sides of the tiles and the sides
     // of the window.
     const sideMargins = 30 * 2;
 
+    // The width of the chat overlay (for now constant 375px)
+    const chatNode = document.getElementById('sideToolbarContainer');
+    const chatWidth = chatNode && interfaceConfig.CHAT_ALWAYS_OPEN
+        ? chatNode.getBoundingClientRect().width
+        : 0;
+
     const verticalMargins = visibleRows * 10;
-    const viewWidth = clientWidth - sideMargins;
+    const viewWidth = clientWidth - sideMargins - chatWidth;
     const viewHeight = clientHeight - topBottomPadding - verticalMargins;
     const initialWidth = viewWidth / columns;
     const aspectRatioHeight = initialWidth / TILE_ASPECT_RATIO;

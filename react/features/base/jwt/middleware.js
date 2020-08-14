@@ -8,6 +8,8 @@ import {
     getLocalParticipant,
     participantUpdated
 } from '../participants';
+// eslint-disable-next-line import/order
+import { AK_ADDRESS_COMMAND } from '../conference';
 import { MiddlewareRegistry } from '../redux';
 
 import { SET_JWT } from './actionTypes';
@@ -43,7 +45,7 @@ MiddlewareRegistry.register(store => next => action => {
 });
 
 /**
- * Overwrites the properties {@code avatarURL}, {@code email}, and {@code name}
+ * Overwrites the properties {@code avatarURL}, {@code email},{@code name} and {@code akAddress}
  * of the local participant stored in the redux state base/participants.
  *
  * @param {Store} store - The redux store.
@@ -55,10 +57,10 @@ MiddlewareRegistry.register(store => next => action => {
  */
 function _overwriteLocalParticipant(
         { dispatch, getState },
-        { avatarURL, email, name, features }) {
+        { avatarURL, email, name, features, akAddress }) {
     let localParticipant;
 
-    if ((avatarURL || email || name)
+    if ((avatarURL || email || name || akAddress)
             && (localParticipant = getLocalParticipant(getState))) {
         const newProperties: Object = {
             id: localParticipant.id,
@@ -76,6 +78,9 @@ function _overwriteLocalParticipant(
         }
         if (features) {
             newProperties.features = features;
+        }
+        if (akAddress) {
+            newProperties.akAddress = akAddress;
         }
         dispatch(participantUpdated(newProperties));
     }
@@ -159,6 +164,17 @@ function _setJWT(store, next, action) {
                     user && _overwriteLocalParticipant(
                         store, { ...user,
                             features: context.features });
+                    const { akAddress = '' } = user;
+                    const { conference } = APP;
+
+
+                    // incase participant joined before jwt token is gotten
+                    // eslint-disable-next-line max-depth
+                    if (akAddress && conference && conference.isJoined()) {
+                        conference.commands.sendCommand(AK_ADDRESS_COMMAND, {
+                            value: akAddress
+                        });
+                    }
                 }
             }
         } else if (typeof APP === 'undefined') {
@@ -191,10 +207,10 @@ function _setJWT(store, next, action) {
  */
 function _undoOverwriteLocalParticipant(
         { dispatch, getState },
-        { avatarURL, name, email }) {
+        { avatarURL, name, email, akAddress }) {
     let localParticipant;
 
-    if ((avatarURL || name || email)
+    if ((avatarURL || name || email || akAddress)
             && (localParticipant = getLocalParticipant(getState))) {
         const newProperties: Object = {
             id: localParticipant.id,
@@ -209,6 +225,9 @@ function _undoOverwriteLocalParticipant(
         }
         if (name === localParticipant.name) {
             newProperties.name = undefined;
+        }
+        if (akAddress === localParticipant.akAddress) {
+            newProperties.akAddress = undefined;
         }
         newProperties.features = undefined;
 
@@ -226,10 +245,11 @@ function _undoOverwriteLocalParticipant(
  *     avatarURL: ?string,
  *     email: ?string,
  *     id: ?string,
- *     name: ?string
+ *     name: ?string,
+ *     akAddress: ?string
  * }}
  */
-function _user2participant({ avatar, avatarUrl, email, id, name }) {
+function _user2participant({ avatar, avatarUrl, email, id, name, address }) {
     const participant = {};
 
     if (typeof avatarUrl === 'string') {
@@ -245,6 +265,9 @@ function _user2participant({ avatar, avatarUrl, email, id, name }) {
     }
     if (typeof name === 'string') {
         participant.name = name.trim();
+    }
+    if (typeof address === 'string') {
+        participant.akAddress = address.trim();
     }
 
     return Object.keys(participant).length ? participant : undefined;

@@ -43,6 +43,11 @@ type Props = {
 type State = {
 
     /**
+     * Window size
+     */
+    width: number,
+
+    /**
      * User provided nickname when the input text is provided in the view.
      */
     message: string,
@@ -62,6 +67,7 @@ class ChatInput extends Component<Props, State> {
     _textArea: ?HTMLTextAreaElement;
 
     state = {
+        width: 0,
         message: '',
         showSmileysPanel: false
     };
@@ -105,8 +111,10 @@ class ChatInput extends Component<Props, State> {
      * @returns {ReactElement}
      */
     render() {
+        const { width } = this.state;
         const smileysPanelClassName = `${this.state.showSmileysPanel
             ? 'show-smileys' : 'hide-smileys'} smileys-panel`;
+        const smileysPanelWidth = { width: width - 1 };
 
         return (
             <div id = 'chat-input' >
@@ -118,7 +126,9 @@ class ChatInput extends Component<Props, State> {
                                 text = ':)' />
                         </div>
                     </div>
-                    <div className = { smileysPanelClassName }>
+                    <div
+                        className = { smileysPanelClassName }
+                        style = { smileysPanelWidth }>
                         <SmileysPanel
                             onSmileySelect = { this._onSmileySelect } />
                     </div>
@@ -214,7 +224,10 @@ class ChatInput extends Component<Props, State> {
      * @returns {void}
      */
     _onToggleSmileysPanel() {
-        this.setState({ showSmileysPanel: !this.state.showSmileysPanel });
+        this.setState({
+            showSmileysPanel: !this.state.showSmileysPanel,
+            width: window.innerWidth
+        });
 
         this._focus();
     }

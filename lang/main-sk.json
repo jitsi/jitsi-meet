@@ -616,7 +616,8 @@
             "tileView": "Prepnúť dlaždicové zobrazenie",
             "toggleCamera": "Zmeniť kameru",
             "videomute": "„Video odpojiť“ zapnúť/vypnúť",
-            "videoblur": "Rozmazanie pozadia zapnúť/vypnúť"
+            "videoblur": "Rozmazanie pozadia zapnúť/vypnúť",
+            "pin": ""
         },
         "addPeople": "Pridať účastníka do konferencie",
         "audioOnlyOff": "Mód „Iba zvuk“ deaktivovať",
@@ -735,7 +736,8 @@
         "muted": "Vypnutý mikrofón",
         "remoteControl": "Vzdialené ovládanie",
         "show": "Ukázať v popredí",
-        "videomute": "Účastník vypol kameru"
+        "videomute": "Účastník vypol kameru",
+        "pin": ""
     },
     "welcomepage": {
         "accessibilityLabel": {

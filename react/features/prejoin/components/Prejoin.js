@@ -3,15 +3,20 @@
 import InlineDialog from '@atlaskit/inline-dialog';
 import React, { Component } from 'react';
 
+import { isWalletNameSet } from '../../aeternity/utils';
 import { getRoomName } from '../../base/conference';
 import { translate } from '../../base/i18n';
 import { Icon, IconPhone, IconVolumeOff } from '../../base/icons';
 import { isVideoMutedByUser } from '../../base/media';
 import { ActionButton, InputField, PreMeetingScreen, ToggleButton } from '../../base/premeeting';
+import { getLocalParticipant } from '../../base/participants';
 import { connect } from '../../base/redux';
 import { getDisplayName, updateSettings } from '../../base/settings';
 import { getLocalJitsiVideoTrack } from '../../base/tracks';
 import { isButtonEnabled } from '../../toolbox/functions.web';
+import { signDeepLink } from '../../settings/components/web/WebLoginButton';
+import { isGuest } from '../../invite';
+
 import {
     joinConference as joinConferenceAction,
     joinConferenceWithoutAudio as joinConferenceWithoutAudioAction,
@@ -32,6 +37,26 @@ import DeviceStatus from './preview/DeviceStatus';
 declare var interfaceConfig: Object;
 
 type Props = {
+    /**
+     * if webwallet address is set
+     */
+
+    isWalletNameSet: boolean,
+
+    /**
+     * local participant
+     */
+    localParticipant: Object,
+
+    /*
+    * if sdk found a wallet
+    */
+    showWebLoginButton: boolean,
+
+    /**
+     * Flag signaling if a user is logged in or not.
+     */
+    isAnonymousUser: boolean,
 
     /**
      * Flag signaling if the 'skip prejoin' button is toggled or not.
@@ -149,7 +174,7 @@ class Prejoin extends Component<Props, State> {
     static defaultProps = {
         showConferenceInfo: true,
         showJoinActions: true,
-        showSkipPrejoin: true
+        showSkipPrejoin: false
     };
 
     /**
@@ -258,6 +283,10 @@ class Prejoin extends Component<Props, State> {
      */
     render() {
         const {
+            isWalletNameSet,
+            showWebLoginButton,
+            localParticipant,
+            isAnonymousUser,
             joinButtonDisabled,
             hasJoinByPhoneButton,
             joinConference,
@@ -271,6 +300,13 @@ class Prejoin extends Component<Props, State> {
             t,
             videoTrack
         } = this.props;
+        let isParticipantEditable = true;
+        let displayName = name;
+
+        if (isWalletNameSet) {
+            displayName = localParticipant.name;
+        }
+        isParticipantEditable = isParticipantEditable && isAnonymousUser;
 
         const { _closeDialog, _onDropdownClose, _onOptionsClick, _setName, _showDialog } = this;
         const { showJoinByPhoneButtons } = this.state;
@@ -278,7 +314,7 @@ class Prejoin extends Component<Props, State> {
         return (
             <PreMeetingScreen
                 footer = { this._renderFooter() }
-                name = { name }
+                name = { displayName }
                 showAvatar = { showAvatar }
                 showConferenceInfo = { showConferenceInfo }
                 skipPrejoinButton = { this._renderSkipPrejoinButton() }
@@ -289,10 +325,11 @@ class Prejoin extends Component<Props, State> {
                     <div className = 'prejoin-input-area-container'>
                         <div className = 'prejoin-input-area'>
                             <InputField
+                                disabled = { isParticipantEditable }
                                 onChange = { _setName }
                                 onSubmit = { joinConference }
                                 placeHolder = { t('dialog.enterDisplayName') }
-                                value = { name } />
+                                value = { displayName } />
 
                             <div className = 'prejoin-preview-dropdown-container'>
                                 <InlineDialog
@@ -319,7 +356,7 @@ class Prejoin extends Component<Props, State> {
                                     isOpen = { showJoinByPhoneButtons }
                                     onClose = { _onDropdownClose }>
                                     <ActionButton
-                                        disabled = { joinButtonDisabled }
+                                        disabled = { joinButtonDisabled || !displayName }
                                         hasOptions = { true }
                                         onClick = { joinConference }
                                         onOptionsClick = { _onOptionsClick }
@@ -327,6 +364,12 @@ class Prejoin extends Component<Props, State> {
                                         type = 'primary'>
                                         { t('prejoin.joinMeeting') }
                                     </ActionButton>
+                                    { (showWebLoginButton || !isWalletNameSet) && <ActionButton
+                                      disabled = { false }
+                                      onClick = { signDeepLink }
+                                      type = 'secondary'>
+                                        { 'Login with Superhero' }
+                                    </ActionButton>}
                                 </InlineDialog>
                             </div>
                         </div>
@@ -396,6 +439,10 @@ function mapStateToProps(state, ownProps): Object {
             : false;
 
     return {
+        isAnonymousUser: isGuest(state),
+        isWalletNameSet: isWalletNameSet(state),
+        localParticipant: getLocalParticipant(state),
+        showWebLoginButton: !state['features/aeternity'].hasWallet,
         buttonIsToggled: isPrejoinSkipped(state),
         joinButtonDisabled,
         name,

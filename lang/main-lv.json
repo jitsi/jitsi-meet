@@ -611,7 +611,8 @@
             "toggleCamera": "Kamera (iesl./izsl.)",
             "toggleFilmstrip": "Pārslēgt filmstrip-u",
             "videomute": "Video (iesl./izsl.)",
-            "videoblur": "Fona izpludināšana - bokeh (iesl./izsl.)"
+            "videoblur": "Fona izpludināšana - bokeh (iesl./izsl.)",
+            "pin": ""
         },
         "addPeople": "Pievienot cilvēkus savai sesijai/zvanam",
         "audioOnlyOff": "Atspējot kanāla/trafika taupības režīmu",
@@ -728,7 +729,8 @@
         "muted": "Noklusināts (bez skaņas)",
         "remoteControl": "Ieslēgt/izslēgt tālvadību",
         "show": "Parādīt tuvplānu",
-        "videomute": "Dalībnieks atslēdzis kameru"
+        "videomute": "Dalībnieks atslēdzis kameru",
+        "pin": ""
     },
     "welcomepage": {
         "accessibilityLabel": {

@@ -397,3 +397,18 @@ async function _getFirstLoadableAvatarUrl(participant) {
 
     return undefined;
 }
+
+/**
+ * Returns dominantSpeaker.
+ *
+ * @param {(Function|Object)} stateful - The redux state
+ * features/base/participants, the (whole) redux state, or redux's
+ * {@code getState} function to be used to retrieve the state
+ * features/base/participants.
+ * @returns {?Object}
+ */
+export function getDominantSpeaker(stateful: Object | Function): ?Object {
+    const participants = _getAllParticipants(stateful);
+
+    return participants.find(({ dominantSpeaker }) => dominantSpeaker);
+}

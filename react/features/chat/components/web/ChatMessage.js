@@ -3,9 +3,11 @@
 import React from 'react';
 import { toArray } from 'react-emoji-render';
 
-
+import { isAccountOrChainName } from '../../../aeternity';
+import TipButton from '../../../aeternity/components/TipButton';
 import { translate } from '../../../base/i18n';
 import { Linkify } from '../../../base/react';
+import { connect } from '../../../base/redux';
 import { MESSAGE_TYPE_LOCAL } from '../../constants';
 import AbstractChatMessage, {
     type Props
@@ -76,9 +78,20 @@ class ChatMessage extends AbstractChatMessage<Props> {
      * @returns {React$Element<*>}
      */
     _renderDisplayName() {
+        const senderHasSuperHeroAddress = Boolean(this.props.message.akAddress)
+           || isAccountOrChainName(this.props.message.displayName);
+        const localParticipantHasSuperHeroWallet = Boolean(this.props.hasWallet);
+
         return (
             <div className = 'display-name'>
-                { this.props.message.displayName }
+                <span className = 'chat-name'>{ this.props.message.displayName }</span>
+                { senderHasSuperHeroAddress && <TipButton
+                    account = { this.props.message.akAddress }
+                    hasWallet = { localParticipantHasSuperHeroWallet }
+                    theme = {{
+                        place: 'chat'
+                    }} />
+                }
             </div>
         );
     }
@@ -110,4 +123,10 @@ class ChatMessage extends AbstractChatMessage<Props> {
     }
 }
 
-export default translate(ChatMessage);
+const mapStateToProps = state => {
+    return {
+        hasWallet: state['features/aeternity'].hasWallet
+    };
+};
+
+export default translate(connect(mapStateToProps)(ChatMessage));

@@ -615,7 +615,8 @@
             "tileView": "Paneelvaade",
             "toggleCamera": "Kasuta kaamerat",
             "videomute": "Video väljalülitamine",
-            "videoblur": "Video hägustamine"
+            "videoblur": "Video hägustamine",
+            "pin": ""
         },
         "addPeople": "Lisa kõnesse inimesi",
         "audioOnlyOff": "Lülita “ainult heli” valik välja",
@@ -735,7 +736,8 @@
         "muted": "Mikrofon välja lülitatud",
         "remoteControl": "Kaugjuhtimine",
         "show": "Näita laval",
-        "videomute": "Kasutaja on kaamera peatanud"
+        "videomute": "Kasutaja on kaamera peatanud",
+        "pin": ""
     },
     "welcomepage": {
         "accessibilityLabel": {

@@ -1,11 +1,9 @@
 /* @flow */
 
-
 import {
     createRecordingEvent,
     sendAnalytics
 } from '../analytics';
-import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../base/app';
 import { CONFERENCE_WILL_JOIN, getCurrentConference } from '../base/conference';
 import JitsiMeetJS, {
     JitsiConferenceEvents,
@@ -13,12 +11,6 @@ import JitsiMeetJS, {
 } from '../base/lib-jitsi-meet';
 import { getParticipantDisplayName } from '../base/participants';
 import { MiddlewareRegistry, StateListenerRegistry } from '../base/redux';
-import {
-    playSound,
-    registerSound,
-    stopSound,
-    unregisterSound
-} from '../base/sounds';
 
 import { RECORDING_SESSION_UPDATED } from './actionTypes';
 import {
@@ -31,19 +23,7 @@ import {
     showStoppedRecordingNotification,
     updateRecordingSessionData
 } from './actions';
-import {
-    LIVE_STREAMING_OFF_SOUND_ID,
-    LIVE_STREAMING_ON_SOUND_ID,
-    RECORDING_OFF_SOUND_ID,
-    RECORDING_ON_SOUND_ID
-} from './constants';
 import { getSessionById } from './functions';
-import {
-    LIVE_STREAMING_OFF_SOUND_FILE,
-    LIVE_STREAMING_ON_SOUND_FILE,
-    RECORDING_OFF_SOUND_FILE,
-    RECORDING_ON_SOUND_FILE
-} from './sounds';
 
 declare var interfaceConfig: Object;
 
@@ -77,33 +57,6 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
     const result = next(action);
 
     switch (action.type) {
-    case APP_WILL_MOUNT:
-        dispatch(registerSound(
-            LIVE_STREAMING_OFF_SOUND_ID,
-            LIVE_STREAMING_OFF_SOUND_FILE));
-
-        dispatch(registerSound(
-            LIVE_STREAMING_ON_SOUND_ID,
-            LIVE_STREAMING_ON_SOUND_FILE));
-
-        dispatch(registerSound(
-            RECORDING_OFF_SOUND_ID,
-            RECORDING_OFF_SOUND_FILE));
-
-        dispatch(registerSound(
-            RECORDING_ON_SOUND_ID,
-            RECORDING_ON_SOUND_FILE));
-
-        break;
-
-    case APP_WILL_UNMOUNT:
-        dispatch(unregisterSound(LIVE_STREAMING_OFF_SOUND_ID));
-        dispatch(unregisterSound(LIVE_STREAMING_ON_SOUND_ID));
-        dispatch(unregisterSound(RECORDING_OFF_SOUND_ID));
-        dispatch(unregisterSound(RECORDING_ON_SOUND_ID));
-
-        break;
-
     case CONFERENCE_WILL_JOIN: {
         const { conference } = action;
 
@@ -171,22 +124,11 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
                     break;
                 }
 
-                let soundID;
-
-                if (mode === JitsiRecordingConstants.mode.FILE) {
-                    soundID = RECORDING_ON_SOUND_ID;
-                } else if (mode === JitsiRecordingConstants.mode.STREAM) {
-                    soundID = LIVE_STREAMING_ON_SOUND_ID;
-                }
-
-                if (soundID) {
-                    dispatch(playSound(soundID));
-                }
             } else if (updatedSessionData.status === OFF
                 && (!oldSessionData || oldSessionData.status !== OFF)) {
                 dispatch(showStoppedRecordingNotification(
                     mode, terminator && getParticipantDisplayName(getState, terminator.getId())));
-                let duration = 0, soundOff, soundOn;
+                let duration = 0;
 
                 if (oldSessionData && oldSessionData.timestamp) {
                     duration
@@ -196,19 +138,6 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
 
                 if (disableRecordAudioNotification) {
                     break;
-                }
-
-                if (mode === JitsiRecordingConstants.mode.FILE) {
-                    soundOff = RECORDING_OFF_SOUND_ID;
-                    soundOn = RECORDING_ON_SOUND_ID;
-                } else if (mode === JitsiRecordingConstants.mode.STREAM) {
-                    soundOff = LIVE_STREAMING_OFF_SOUND_ID;
-                    soundOn = LIVE_STREAMING_ON_SOUND_ID;
-                }
-
-                if (soundOff && soundOn) {
-                    dispatch(stopSound(soundOn));
-                    dispatch(playSound(soundOff));
                 }
             }
         }

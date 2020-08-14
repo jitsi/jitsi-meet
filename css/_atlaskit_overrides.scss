@@ -48,3 +48,155 @@
 .toolbox-button-wth-dialog .eYJELv {
     max-height: initial;
 }
+
+/**
+ * Override @atlaskit/modal-dialog and @atlaskit/button styling for pop-ups
+ */
+
+/**
+ * Override pop-ups background color
+ */
+.eoRGoR,
+.kuyJLl,
+.eYJELv {
+    background-color: $toolBarDesktopBackground !important;
+}
+
+/**
+ * Override more actions pop-up
+ */
+.toolbox-button-wth-dialog .eYJELv {
+    background-color: $chatInputBackground !important;
+    border: 1px solid $borderColor !important;
+}
+
+/**
+ * Override pop-ups text color
+ */
+.oQiLZ,
+.eoRGoR {
+    color: $participantNameColor !important;
+}
+
+.itZGfB,
+.settings-pane .mock-atlaskit-label {
+    color: $modalLabelsColor;
+}
+
+/**
+ * Override pop-ups inputs background color
+ */
+.jsYMHu {
+    background-color: $chatInputBackground !important;
+}
+
+/**
+ * Override pop-ups inputs border color
+ */
+.dvocAg,
+.jsYMHu {
+    border-color: $modalInputsBorderColor;
+}
+
+/**
+ * Override cancel and ok buttons styles
+ */
+.ldkQnA {
+    .gUwyVH {
+        background: $hangupColor !important;
+    }
+
+    .iuZaWk {
+        background: $modalInputsBorderColor;
+    }
+
+    .iuZaWk,
+    .gUwyVH {
+        color: $participantNameColor !important;
+    }
+}
+
+/**
+ * Override alert styles
+ */
+.giDcAS {
+    color: $participantNameColor;
+
+    button {
+        color: $subjectTextColor;
+    }
+
+    .fjkYSH {
+        span {
+            color: $participantNameColor;
+        }
+    }
+}
+
+/**
+ * Override prejoin page dropdown
+ */
+.prejoin-preview-dropdown-container .eYJELv {
+    background: $participantNameColor !important;
+}
+
+/**
+ * Override alert styles on small resolutions
+ */
+.gpUwQx,
+.mIBKA {
+    @media (max-width: 480px) {
+        width: 320px !important;
+        left: -80px !important;
+    }
+}
+
+/**
+ * Override audio and video preview styles on small resolutions
+ */
+.audio-preview .etGiXB > div {
+    @media (max-width: 540px) {
+        left: -65px !important;
+    }
+}
+
+.video-preview .etGiXB > div {
+    @media (max-width: 490px) {
+        left: 100px !important;
+    }
+}
+
+/**
+ * Override tile view pop-ups styles
+ */
+.tile-view #filmstripRemoteVideos {
+    .etGiXB > div {
+        @media (max-width: 650px) {
+            transform: translate3d(50px, 280px, 0) !important;
+        }
+    }
+
+    .show-connection-indicator .etGiXB > div {
+        @media (max-width: 600px) {
+            transform: translate3d(50%, 300px, 0) !important;
+        }
+    }
+}
+
+/**
+ * Override audio preview styles on prejoin page
+ */
+.prejoin-preview-btn-container .audio-preview .etGiXB > div {
+    @media (max-width: 560px) {
+        left: -110px !important;
+    }
+}
+
+/**
+ * Override settings styles on devices tab
+ */
+.YymJg {
+    @media (min-width: 481px) and (max-width: 550px) {
+        max-width: calc(100% - 50px) !important;
+    }
+}

@@ -4,8 +4,16 @@
  * Style variables
  */
 $baseFontFamily: -apple-system, BlinkMacSystemFont, 'open_sanslight', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-$hangupColor: #bf2117;
+$hangupColor: #2A2B35;
 $hangupFontSize: 2em;
+$popOverBackground: #12121B;
+$popupMenuSliderBackground: #67F7B8;
+$chatScrollBarColor: #06a5df black;
+$chatInputScrollBarColor: rgba(0,0,0,.5) #3A3A3A;
+$filmstripScrollBarColor: rgba(0,0,0,.5) transparent;
+$preJoinButtonToggled: rgba(42, 156, 255, .5);
+$preJoinButtonToggledBorder: 2px solid rgba(42, 156, 255, 0);
+$tipInputFocusedBorder: 0.05rem solid #007BFF;
 
 /**
  * Size variables.
@@ -19,7 +27,8 @@ $thumbnailVideoMargin: 2px;
 $thumbnailsBorder: 2px;
 $thumbnailVideoBorder: 2px;
 $filmstripToggleButtonWidth: 17px;
-
+$desktopWidth: 620px;
+$mobileWidth: 450px;
 
 /**
  * Color variables.
@@ -33,6 +42,14 @@ $presence-available: rgb(110, 176, 5);
 $presence-away: rgb(250, 201, 20);
 $presence-busy: rgb(233, 0, 27);
 $presence-idle: rgb(172, 172, 172);
+
+/**
+ * Subject
+ */
+$participantsCountColor: #fff;
+$participantsCountBackground: #21222C;
+$subjectTextColor: #727278;
+
 
 /**
  * Toolbar
@@ -51,12 +68,17 @@ $overflowMenuBG: initial;
 $overflowMenuItemHoverBG: #313D52;
 $overflowMenuItemHoverColor: #B8C7E0;
 $overflowMenuItemColor: #B8C7E0;
+$toolBarDesktopBackground: #21222C;
+$toolBoxIconBorderColor: #BABAC0;
+$toolBoxIconsToggled: #67F7B8;
+$toolBoxIconToggled: #2A2B35;
+$cellPhoneColor: #FF4952;
 
 /**
  * Video layout
  */
-$videoThumbnailHovered: rgba(22, 94, 204, .4);
-$videoThumbnailSelected: #165ECC;
+$videoThumbnailHovered: rgba(103, 247, 184, .4);
+$videoThumbnailSelected: #67F7B8;
 $participantNameColor: #fff;
 $thumbnailPictogramColor: #fff;
 $dominantSpeakerBg: #165ecc;
@@ -85,6 +107,8 @@ $modalButtonFontSize: 14px;
 $modalMockAKInputBackground: #fafbfc;
 $modalMockAKInputBorder: 1px solid #f4f5f7;
 $modalTextColor: #333;
+$modalLabelsColor: #BABAC0 !important;
+$modalInputsBorderColor: #2a9cff !important;
 
 /**
  * Chat
@@ -96,11 +120,21 @@ $chatLocalMessageBackgroundColor: rgb(4, 98, 178);
 $chatPrivateMessageBackgroundColor: rgb(153, 69, 77);
 $chatRemoteMessageBackgroundColor:  rgb(86, 101, 114);
 $sidebarWidth: 375px;
+$sidebarDesktopWidth: 370px;
+$chatInputBackground: #12121B;
+$chatInputTextColor: #727278;
+$smileysAreaBorderColor: #292A34;
+$chatConversationBackground: rgba(33, 34, 44, 0.95);
+$displayNameColor: #2A9CFF;
+$borderColor: #707070;
+$chatPlaceholderColor: #727278;
 
  /**
  * Misc.
  */
 $borderRadius: 4px;
+$defaultWatermarkLink: '../images/superhero.com_league_slogan.svg';
+$welcomePageTopBackground: '../images/home-background.png';
 $popoverMenuPadding: 13px;
 $happySoftwareBackground: transparent;
 $desktopAppDragBarHeight: 25px;
@@ -161,8 +195,9 @@ $unsupportedDesktopBrowserTextFontSize: 21px;
 /**
  * The size of the default watermark.
  */
-$watermarkWidth: 186px;
-$watermarkHeight: 74px;
+$watermarkWidth: 230px;
+$watermarkHeight: 55px;
+$watermarkTop: 32px;
 
 $welcomePageWatermarkWidth: 186px;
 $welcomePageWatermarkHeight: 74px;
@@ -170,10 +205,11 @@ $welcomePageWatermarkHeight: 74px;
 /**
  * Welcome page variables.
  */
-$welcomePageDescriptionColor: #fff;
+$welcomePageDescriptionColor: #babac0;
 $welcomePageFontFamily: inherit;
-$welcomePageBackground: linear-gradient(-90deg, #1251AE 0%, #0074FF 50%, #1251AE 100%);
-$welcomePageTitleColor: #fff;
+$welcomePageBackground: #21222c;
+$welcomePageTitleColor: #2a9cff;
+$welcomeBorderColor: #1c1c24;
 
 $welcomePageHeaderBackground: none;
 $welcomePageHeaderBackgroundSmall: none;
@@ -189,20 +225,21 @@ $welcomePageHeaderTextDisplay: flex;
 $welcomePageHeaderTextWidth: 650px;
 
 $welcomePageHeaderTextTitleMarginBottom: 16px;
-$welcomePageHeaderTextTitleFontSize: 2.5rem;
+$welcomePageHeaderTextTitleFontFamily: Roboto, sans-serif;
+$welcomePageHeaderTextTitleFontSize: 30px;
 $welcomePageHeaderTextTitleFontWeight: 500;
-$welcomePageHeaderTextTitleLineHeight: 1.18;
+$welcomePageHeaderTextTitleLineHeight: 1.2;
 $welcomePageHeaderTextTitleOpacity: 1;
 
 $welcomePageHeaderTextDescriptionDisplay: inherit;
-$welcomePageHeaderTextDescriptionFontSize: 1rem;
-$welcomePageHeaderTextDescriptionFontWeight: 400;
-$welcomePageHeaderTextDescriptionLineHeight: 24px;
+$welcomePageHeaderTextDescriptionFontSize: 17px;
+$welcomePageHeaderTextDescriptionFontWeight: 500;
+$welcomePageHeaderTextDescriptionLineHeight: 1.47;
 $welcomePageHeaderTextDescriptionMarginBottom: 20px;
 $welcomePageHeaderTextDescriptionAlignSelf: inherit;
 
 $welcomePageEnterRoomDisplay: flex;
-$welcomePageEnterRoomWidth: 680px;
+$welcomePageEnterRoomWidth: 536px;
 $welcomePageEnterRoomPadding: 25px 30px;
 $welcomePageEnterRoomBorderRadius: 0px;
 
@@ -210,6 +247,7 @@ $welcomePageEnterRoomInputContainerPadding: 0 8px 5px 0px;
 $welcomePageEnterRoomInputContainerBorderWidth: 0px 0px 2px 0px;
 $welcomePageEnterRoomInputContainerBorderStyle: solid;
 $welcomePageEnterRoomInputContainerBorderImage: linear-gradient(to right, #dee1e6, #fff) 1;
+$welcomePageEnterRoomInputContainerBorderImageFocused: linear-gradient(to right, #2A9CFF, #2A9CFF) 1;
 
 $welcomePageEnterRoomTitleDisplay: inherit;
 

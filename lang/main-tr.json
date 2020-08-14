@@ -690,7 +690,8 @@
             "tileView": "Döşeme görünümünü aç/kapat",
             "toggleCamera": "Kamerayı aç/kapat",
             "videomute": "Sessiz videoyu aç/kapat",
-            "videoblur": ""
+            "videoblur": "",
+            "pin": ""
         },
         "addPeople": "Aramanıza kişi ekleyin",
         "audioOnlyOff": "Yalnızca ses modunu devre dışı bırak",
@@ -803,6 +804,7 @@
         "standardDefinition": "Standart çözünürlük"
     },
     "videothumbnail": {
+        "pin": "",
         "domute": "Sustur",
         "domuteOthers": "Diğer herkesi sustur",
         "flip": "Döndür",
@@ -844,7 +846,7 @@
         "sendFeedback": "Geri bildirim gönder",
         "terms": "Kurallar",
         "title": "Güvenli, tüm özelliklere erişimli ve tamamen ücretsiz görüntülü arama"
-       
+
     },
 
     "lonelyMeetingExperience": {

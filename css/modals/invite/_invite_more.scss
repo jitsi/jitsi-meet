@@ -11,6 +11,11 @@
         &.elevated {
             z-index: $filmstripVideosZ + 1;
         }
+
+        .header-buttons-container {
+            display: flex;
+            justify-content: center;
+        }
     }
 
     &-header {
@@ -21,7 +26,7 @@
 
     &-button {
         display: flex;
-        margin: auto;
+        margin: 0 10px;
         padding: 8px 16px;
         width: fit-content;
         width: -moz-fit-content;
@@ -112,11 +117,11 @@
                     border-radius: 4px;
                     cursor: pointer;
                 }
-    
+
                 &:hover > div:hover {
                     background-color: rgba(255, 255, 255, 0.2);
                 }
-    
+
                 & > :not(:last-child) {
                     margin-right: 16px;
                 }

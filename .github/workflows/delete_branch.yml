@@ -1,0 +1,27 @@
+name: Cleanup feature branch
+
+on:
+  pull_request:
+    types: [close]
+
+jobs:
+  run-ci:
+    name: Perform cleanup
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.merged && (github.head_ref != 'refs/heads/master' || github.head_ref != 'refs/heads/develop')
+    steps:
+      # strip 'refs/heads/' from GITHUB_REF and export as ${{ steps.get_branch.outputs.branch }}
+      - name: Get branch name
+        env:
+          BRANCH_REF: ${{ github.head_ref }}
+        id: get_branch
+        run: echo "::set-output name=branch::$(echo ${GITHUB_REF##*/}|tr '[:upper:]' '[:lower:]')"
+      - name: Remove deployed branch and restart services
+        uses: JimCronqvist/action-ssh@master
+        with:
+          hosts: ${{ secrets.TEST_DEPLOY_HOST }}
+          privateKey: ${{ secrets.DEPLOY_SSH_KEY }}
+          command: |
+            rm -rf ${{ secrets.TEST_BRANCHES_PROSODY_DEST }}/${{ steps.get_branch.outputs.branch }}
+            rm -rf ${{ secrets.TEST_BRANCHES_DEST }}/${{ steps.get_branch.outputs.branch }}
+            sudo systemctl restart nginx prosody jicofo jitsi-videobridge2

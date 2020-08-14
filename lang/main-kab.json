@@ -578,7 +578,8 @@
             "videomute": "",
             "videoblur": "",
             "privateMessage": "Azen izen uslig",
-            "help": "Tallelt"
+            "help": "Tallelt",
+            "pin": ""
         },
         "addPeople": "Rnu-d imdanen ɣer tiɣri-inek",
         "audioOnlyOff": "",
@@ -685,7 +686,8 @@
         "muted": "Tettwasgugem",
         "remoteControl": "Asenqed agemmaḍ",
         "show": "",
-        "videomute": ""
+        "videomute": "",
+        "pin": ""
     },
     "welcomepage": {
         "accessibilityLabel": {

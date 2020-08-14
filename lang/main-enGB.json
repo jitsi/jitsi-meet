@@ -615,7 +615,8 @@
             "muteEveryone": "Mute everyone",
             "moreOptions": "Show more options",
             "help": "Help",
-            "download": "Download our apps"
+            "download": "Download our apps",
+            "pin": ""
         },
         "addPeople": "Add people to your call",
         "audioOnlyOff": "Disable audio only mode",
@@ -719,14 +720,15 @@
         "muted": "Muted",
         "remoteControl": "Remote control",
         "show": "",
-        "videomute": "Member has stopped the camera"
+        "videomute": "Member has stopped the camera",
+        "pin": "Pin participant"
     },
     "welcomepage": {
         "accessibilityLabel": {
             "join": "Tap to join",
             "roomname": "Enter room name"
         },
-        "appDescription": "Go ahead, video chat with the whole team. In fact, invite everyone you know. {{app}} is a fully encrypted, 100% open source video conferencing solution that you can use all day, every day, for free — with no account needed.",
+        "appDescription": "Create your very own conference room and join your fellow Superheroes online! Form your own SuperheroLeague and launch missions together. Superhero Meet is free for all to use—no need to create an account. Just create a custom link below and you’re all set.",
         "audioVideoSwitch": {
             "audio": "Voice",
             "video": "Video"
@@ -747,7 +749,7 @@
         "roomnameHint": "Enter the name or URL of the room you want to join. You may make a name up, just let the people you are meeting know it so that they enter the same name.",
         "sendFeedback": "Send feedback",
         "terms": "Terms",
-        "title": "Secure, fully featured, and completely free video conferencing"
+        "title": "Social good is even better when done together"
     },
     "documentSharing": {
         "title": ""

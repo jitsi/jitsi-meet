@@ -2,6 +2,7 @@
 
 import React, { Component } from 'react';
 
+import TipButton from '../../../aeternity/components/TipButton';
 import { getLocalParticipant, getParticipantById, PARTICIPANT_ROLE } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import { getCurrentLayout, LAYOUTS } from '../../../video-layout';
@@ -16,6 +17,21 @@ declare var interfaceConfig: Object;
  * The type of the React {@code Component} props of {@link StatusIndicators}.
  */
 type Props = {
+
+    /**
+     * Participant's akAddress
+     */
+    _akAddress: string,
+
+    /**
+     * Participant is local
+     */
+    _local: boolean,
+
+    /**
+     * Whether user has wallet
+     */
+    hasWallet: boolean,
 
     /**
      * The current layout of the filmstrip.
@@ -57,6 +73,9 @@ class StatusIndicators extends Component<Props> {
      */
     render() {
         const {
+            _akAddress,
+            _local,
+            hasWallet,
             _currentLayout,
             _showModeratorIndicator,
             showAudioMutedIndicator,
@@ -80,6 +99,14 @@ class StatusIndicators extends Component<Props> {
                 { showAudioMutedIndicator ? <AudioMutedIndicator tooltipPosition = { tooltipPosition } /> : null }
                 { showVideoMutedIndicator ? <VideoMutedIndicator tooltipPosition = { tooltipPosition } /> : null }
                 { _showModeratorIndicator ? <ModeratorIndicator tooltipPosition = { tooltipPosition } /> : null }
+                {!_local && _akAddress
+                    && <div className = 'tip-block'>
+                        <TipButton
+                            account = { _akAddress }
+                            hasWallet = { hasWallet }
+                            layout = { _currentLayout } />
+                    </div>
+                }
             </div>
         );
     }
@@ -103,6 +130,9 @@ function _mapStateToProps(state, ownProps) {
     const participant = participantID ? getParticipantById(state, participantID) : getLocalParticipant(state);
 
     return {
+        _akAddress: participant.akAddress,
+        _local: participant.local,
+        hasWallet: state['features/aeternity'].hasWallet,
         _currentLayout: getCurrentLayout(state),
         _showModeratorIndicator:
             !interfaceConfig.DISABLE_FOCUS_INDICATOR && participant && participant.role === PARTICIPANT_ROLE.MODERATOR

@@ -621,7 +621,8 @@
             "toggleCamera": "Víxla myndavél",
             "toggleFilmstrip": "Víxla filmubút af/á",
             "videomute": "Víxla hljóði myndmerkis af/á",
-            "videoblur": "Víxla móðun myndmerkis af/á"
+            "videoblur": "Víxla móðun myndmerkis af/á",
+            "pin": ""
         },
         "addPeople": "Bæta fólki við símtalið þitt",
         "audioOnlyOff": "Gera ham fyrir litla bandbreidd óvirkan",
@@ -741,7 +742,8 @@
         "muted": "Þaggað",
         "remoteControl": "Ræsa / Stöðva fjarstýringu",
         "show": "Birta í glugga",
-        "videomute": "Þátttakandi hefur stöðvað myndavél"
+        "videomute": "Þátttakandi hefur stöðvað myndavél",
+        "pin": ""
     },
     "welcomepage": {
         "accessibilityLabel": {

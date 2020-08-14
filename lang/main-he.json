@@ -625,7 +625,8 @@
             "toggleCamera": "שנה מצלמה",
 			"toggleFilmstrip": "שנה את הסרט",
             "videomute": "שנה השתקת וידאו",
-            "videoblur": "שנה טשטוש וידאו"
+            "videoblur": "שנה טשטוש וידאו",
+            "pin": ""
         },
         "addPeople": "הוסף אנשים לשיחה שלך",
         "audioOnlyOff": "כבה מצב שמע בלבד",
@@ -745,7 +746,8 @@
         "muted": "מושתק",
         "remoteControl": "שליטה מרחוק",
         "show": "",
-        "videomute": "החבר עצר את המצלמה"
+        "videomute": "החבר עצר את המצלמה",
+        "pin": ""
     },
     "welcomepage": {
         "accessibilityLabel": {

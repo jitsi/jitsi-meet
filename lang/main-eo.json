@@ -633,7 +633,8 @@
             "toggleCamera": "Baskuligi kameraon",
             "toggleFilmstrip": "Baskuligi filmbendon",
             "videomute": "Silentigi/malsilentigi videon",
-            "videoblur": "Baskuligi malnetigon de video"
+            "videoblur": "Baskuligi malnetigon de video",
+            "pin": ""
         },
         "addPeople": "Aldoni homojn al via voko",
         "audioOnlyOff": "Malŝalti malalt-trafikan reĝimon",
@@ -757,7 +758,8 @@
         "muted": "Silentigita",
         "remoteControl": "Komenci/Fini deforan regadon",
         "show": "Montri sur scenejo",
-        "videomute": "La partoprenanto malŝaltis la kameraon"
+        "videomute": "La partoprenanto malŝaltis la kameraon",
+        "pin": ""
     },
     "welcomepage": {
         "accessibilityLabel": {

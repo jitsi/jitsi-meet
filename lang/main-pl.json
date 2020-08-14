@@ -7,7 +7,7 @@
         "copyStream": "Kopiuj link transmisji na żywo",
         "countryNotSupported": "Nie obsługujemy jeszcze tej lokalizacji.",
         "countryReminder": "Dzwonisz spoza USA? Upewnij się, że zaczynasz od kodu kraju!",
-        "defaultEmail": "Domyślna poczta",        
+        "defaultEmail": "Domyślna poczta",
         "disabled": "Nie możesz zapraszać ludzi.",
         "failedToAdd": "Błąd dodawania uczestników",
         "footerText": "Wybieranie numeru jest wyłączone.",
@@ -709,7 +709,8 @@
             "toggleCamera": "Przełączanie kamery",
             "toggleFilmstrip": "Przełącz filmstrip",
             "videomute": "Przełączanie wyciszonego filmu wideo",
-            "videoblur": "Przełącz rozmazanie obrazu"
+            "videoblur": "Przełącz rozmazanie obrazu",
+            "pin": ""
         },
         "addPeople": "Dodaj ludzi do swojej rozmowy",
         "audioOnlyOff": "Wyłącz tryb słabego łącza",
@@ -825,6 +826,7 @@
         "standardDefinition": "Standardowa rozdzielczość"
     },
     "videothumbnail": {
+        "pin": "",
         "domute": "Wyciszenie",
         "domuteOthers": "Wycisz pozostałych",
         "flip": "Odwrócenie",

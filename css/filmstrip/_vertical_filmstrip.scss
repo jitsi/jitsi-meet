@@ -68,6 +68,7 @@
             padding-left: 0;
             transition: right 2s;
             width: 100%;
+            padding-bottom: 10px
         }
     }
 
@@ -88,9 +89,8 @@
             .videocontainer {
                 height: 0px;
                 width: 100%;
-    }
+            }
         }
-
     }
 
     /**
@@ -110,7 +110,8 @@
         flex-direction: column-reverse;
         height: auto;
         overflow-x: hidden;
-        overflow-y: scroll;
+        overflow-y: auto;
+        scrollbar-color: $filmstripScrollBarColor;
 
         #filmstripRemoteVideosContainer {
             @include minHWAutoFix();

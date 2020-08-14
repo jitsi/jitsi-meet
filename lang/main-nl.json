@@ -699,7 +699,8 @@
             "toggleCamera": "Camera in- of uitschakelen",
             "toggleFilmstrip": "Filmstrip in- of uitschakelen",
             "videomute": "Video dempen in- of uitschakelen",
-            "videoblur": "Video vervagen in- of uitschakelen"
+            "videoblur": "Video vervagen in- of uitschakelen",
+            "pin": "",
         },
         "addPeople": "Personen aan uw gesprek toevoegen",
         "audioOnlyOff": "Lage bandbreedte-modus uitschakelen",
@@ -823,7 +824,8 @@
         "muted": "Gedempt",
         "remoteControl": "Extern beheer starten / stoppen",
         "show": "Op podium weergeven",
-        "videomute": "Deelnemer heeft de camera gestopt"
+        "videomute": "Deelnemer heeft de camera gestopt",
+        "pin": ""
     },
     "welcomepage": {
         "accessibilityLabel": {

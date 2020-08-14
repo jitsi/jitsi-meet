@@ -1,22 +1,32 @@
 /* global __dirname */
 
 const CircularDependencyPlugin = require('circular-dependency-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const optionalRequire = require('optional-require')(require);
+const path = require('path');
 const process = require('process');
+const { EnvironmentPlugin } = require('webpack');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
+
+const dotenv = optionalRequire(`${__dirname}/.env.json`);
 
 /**
  * The URL of the Jitsi Meet deployment to be proxy to in the context of
  * development with webpack-dev-server.
  */
 const devServerProxyTarget
-    = process.env.WEBPACK_DEV_SERVER_PROXY_TARGET || 'https://alpha.jitsi.net';
+    = (dotenv && dotenv.WEBPACK_DEV_SERVER_PROXY_TARGET)
+        || process.env.WEBPACK_DEV_SERVER_PROXY_TARGET
+        || 'https://alpha.jitsi.net';
 
 const analyzeBundle = process.argv.indexOf('--analyze-bundle') !== -1;
 const detectCircularDeps = process.argv.indexOf('--detect-circular-deps') !== -1;
 
 const minimize
     = process.argv.indexOf('-p') !== -1
-        || process.argv.indexOf('--optimize-minimize') !== -1;
+    || process.argv.indexOf('--optimize-minimize') !== -1;
+
+const isDevelopment = process.argv.indexOf('-p') === -1;
 
 /**
  * Build a Performance configuration object for the given size.
@@ -104,12 +114,29 @@ const config = {
             loader: 'expose-loader?$!expose-loader?jQuery',
             test: /\/node_modules\/jquery\/.*\.js$/
         }, {
-            // Allow CSS to be imported into JavaScript.
-
-            test: /\.css$/,
+            test: /\.scss$/,
             use: [
-                'style-loader',
-                'css-loader'
+                {
+                    loader: isDevelopment ? 'style-loader' : MiniCssExtractPlugin.loader
+                },
+                {
+                    loader: 'css-loader?url=false',
+                    options: {
+                        // sourceMap: isDevelopment,
+                        modules: true
+                    }
+                }, {
+                    loader: 'resolve-url-loader',
+                    options: {
+                        sourceMap: isDevelopment,
+                        keepQuery: true
+                    }
+                }, {
+                    loader: 'sass-loader?url=false',
+                    options: {
+                        sourceMap: isDevelopment
+                    }
+                }
             ]
         }, {
             test: /\/node_modules\/@atlaskit\/modal-dialog\/.*\.js$/,
@@ -134,6 +161,27 @@ const config = {
                     expandProps: 'start'
                 }
             } ]
+        }, {
+            test: /\.(jpg|png)$/,
+            use: [ {
+                loader: 'url-loader',
+                options: {
+                    limit: 11000,
+                    name: `images/${isDevelopment ? '[name].[ext]' : '[name].[hash:8].[ext]'}`
+                }
+            } ]
+        }, {
+            test: /\.(ttf|eot|woff|woff2)$/,
+            use: [ {
+                loader: 'url-loader',
+                options: {
+                    limit: 50000,
+                    name: `fonts/${isDevelopment ? '[name].[ext]' : '[name].[hash:8].[ext]'}`
+                }
+            } ]
+        }, {
+            test: /\.aes$/i,
+            use: 'raw-loader'
         } ]
     },
     node: {
@@ -163,11 +211,21 @@ const config = {
                 allowAsyncCycles: false,
                 exclude: /node_modules/,
                 failOnError: false
-            })
+            }),
+        MiniCssExtractPlugin
+            && new MiniCssExtractPlugin({
+                filename: isDevelopment ? '[name].css' : '[name].[hash].css',
+                chunkFilename: isDevelopment ? '[id].css' : '[id].[hash].css'
+            }),
+        new EnvironmentPlugin({
+            'process.env': JSON.stringify(dotenv || process.env)
+        })
     ].filter(Boolean),
     resolve: {
         alias: {
-            jquery: `jquery/dist/jquery${minimize ? '.min' : ''}.js`
+            jquery: `jquery/dist/jquery${minimize ? '.min' : ''}.js`,
+            '!images': path.join(__dirname, 'images'),
+            '!fonts': path.join(__dirname, 'fonts')
         },
         aliasFields: [
             'browser'
@@ -177,7 +235,8 @@ const config = {
 
             // Webpack defaults:
             '.js',
-            '.json'
+            '.json',
+            '.scss'
         ]
     }
 };
@@ -187,7 +246,7 @@ module.exports = [
         entry: {
             'app.bundle': './app.js'
         },
-        performance: getPerformanceHints(4 * 1024 * 1024)
+        performance: getPerformanceHints(10 * 1024 * 1024)
     }),
     Object.assign({}, config, {
         entry: {
@@ -199,7 +258,7 @@ module.exports = [
         entry: {
             'alwaysontop': './react/features/always-on-top/index.js'
         },
-        performance: getPerformanceHints(400 * 1024)
+        performance: getPerformanceHints(4500 * 1024)
     }),
     Object.assign({}, config, {
         entry: {
@@ -280,6 +339,7 @@ module.exports = [
  * @returns {string|undefined} If the request is to be served by the proxy
  * target, undefined; otherwise, the path to the local file to be served.
  */
+// eslint-disable-next-line no-shadow,require-jsdoc
 function devServerProxyBypass({ path }) {
     if (path.startsWith('/css/') || path.startsWith('/doc/')
             || path.startsWith('/fonts/')
@@ -297,24 +357,24 @@ function devServerProxyBypass({ path }) {
     /* eslint-disable array-callback-return, indent */
 
     if ((Array.isArray(configs) ? configs : Array(configs)).some(c => {
-            if (path.startsWith(c.output.publicPath)) {
-                    if (!minimize) {
-                        // Since webpack-dev-server is serving non-minimized
-                        // artifacts, serve them even if the minimized ones are
-                        // requested.
-                        return Object.keys(c.entry).some(e => {
-                            const name = `${e}.min.js`;
+        if (path.startsWith(c.output.publicPath)) {
+            if (!minimize) {
+                // Since webpack-dev-server is serving non-minimized
+                // artifacts, serve them even if the minimized ones are
+                // requested.
+                return Object.keys(c.entry).some(e => {
+                    const name = `${e}.min.js`;
 
-                            if (path.indexOf(name) !== -1) {
-                                // eslint-disable-next-line no-param-reassign
-                                path = path.replace(name, `${e}.js`);
+                    if (path.indexOf(name) !== -1) {
+                        // eslint-disable-next-line no-param-reassign
+                        path = path.replace(name, `${e}.js`);
 
-                                return true;
-                            }
-                        });
+                        return true;
                     }
-                }
-            })) {
+                });
+            }
+        }
+    })) {
         return path;
     }
 

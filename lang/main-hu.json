@@ -617,7 +617,8 @@
             "videoblur": "Videoelmosás átváltása",
             "toggleFilmstrip": "Filmszalag átváltása",
             "muteEveryone": "Mindenki elnémítása",
-            "moreOptions": "További beállítások megjelenítése"
+            "moreOptions": "További beállítások megjelenítése",
+            "pin": ""
         },
         "addPeople": "Személy hozzáadása a híváshoz",
         "audioOnlyOff": "Alacsony sávszélességű mód letiltása",
@@ -737,7 +738,8 @@
         "remoteControl": "Távoli vezérlés",
         "show": "Megjelenítés a színpadon",
         "videomute": "A résztvevő leállította a kameráját",
-        "domuteOthers": "Mindenki más elnémítása"
+        "domuteOthers": "Mindenki más elnémítása",
+        "pin": ""
     },
     "welcomepage": {
         "accessibilityLabel": {

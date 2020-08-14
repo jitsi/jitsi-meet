@@ -2,7 +2,6 @@
 
 import UIEvents from '../../../../service/UI/UIEvents';
 import { NOTIFICATION_TIMEOUT, showNotification } from '../../notifications';
-import { CALLING, INVITED } from '../../presence-status';
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../app';
 import {
     CONFERENCE_WILL_JOIN,
@@ -11,7 +10,6 @@ import {
 } from '../conference';
 import { JitsiConferenceEvents } from '../lib-jitsi-meet';
 import { MiddlewareRegistry, StateListenerRegistry } from '../redux';
-import { playSound, registerSound, unregisterSound } from '../sounds';
 
 import {
     DOMINANT_SPEAKER_CHANGED,
@@ -32,18 +30,14 @@ import {
     setLoadableAvatarUrl
 } from './actions';
 import {
-    LOCAL_PARTICIPANT_DEFAULT_ID,
-    PARTICIPANT_JOINED_SOUND_ID,
-    PARTICIPANT_LEFT_SOUND_ID
+    LOCAL_PARTICIPANT_DEFAULT_ID
 } from './constants';
 import {
     getFirstLoadableAvatarUrl,
     getLocalParticipant,
     getParticipantById,
-    getParticipantCount,
     getParticipantDisplayName
 } from './functions';
-import { PARTICIPANT_JOINED_FILE, PARTICIPANT_LEFT_FILE } from './sounds';
 
 declare var APP: Object;
 
@@ -57,13 +51,9 @@ declare var APP: Object;
 MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
     case APP_WILL_MOUNT:
-        _registerSounds(store);
-
         return _localParticipantJoined(store, next, action);
 
     case APP_WILL_UNMOUNT:
-        _unregisterSounds(store);
-
         return _localParticipantLeft(store, next, action);
 
     case CONFERENCE_WILL_JOIN:
@@ -123,13 +113,10 @@ MiddlewareRegistry.register(store => next => action => {
     }
 
     case PARTICIPANT_JOINED: {
-        _maybePlaySounds(store, action);
-
         return _participantJoinedOrUpdated(store, next, action);
     }
 
     case PARTICIPANT_LEFT:
-        _maybePlaySounds(store, action);
         break;
 
     case PARTICIPANT_UPDATED:
@@ -312,39 +299,6 @@ function _localParticipantLeft({ dispatch }, next, action) {
 }
 
 /**
- * Plays sounds when participants join/leave conference.
- *
- * @param {Store} store - The redux store.
- * @param {Action} action - The redux action. Should be either
- * {@link PARTICIPANT_JOINED} or {@link PARTICIPANT_LEFT}.
- * @private
- * @returns {void}
- */
-function _maybePlaySounds({ getState, dispatch }, action) {
-    const state = getState();
-    const { startAudioMuted } = state['features/base/config'];
-
-    // We're not playing sounds for local participant
-    // nor when the user is joining past the "startAudioMuted" limit.
-    // The intention there was to not play user joined notification in big
-    // conferences where 100th person is joining.
-    if (!action.participant.local
-            && (!startAudioMuted
-                || getParticipantCount(state) < startAudioMuted)) {
-        if (action.type === PARTICIPANT_JOINED) {
-            const { presence } = action.participant;
-
-            // The sounds for the poltergeist are handled by features/invite.
-            if (presence !== INVITED && presence !== CALLING) {
-                dispatch(playSound(PARTICIPANT_JOINED_SOUND_ID));
-            }
-        } else if (action.type === PARTICIPANT_LEFT) {
-            dispatch(playSound(PARTICIPANT_LEFT_SOUND_ID));
-        }
-    }
-}
-
-/**
  * Notifies the feature base/participants that the action
  * {@code PARTICIPANT_JOINED} or {@code PARTICIPANT_UPDATED} is being dispatched
  * within a specific redux store.
@@ -438,29 +392,4 @@ function _raiseHandUpdated({ dispatch, getState }, conference, participantId, ne
             titleKey: 'notify.raisedHand'
         }, NOTIFICATION_TIMEOUT));
     }
-}
-
-/**
- * Registers sounds related with the participants feature.
- *
- * @param {Store} store - The redux store.
- * @private
- * @returns {void}
- */
-function _registerSounds({ dispatch }) {
-    dispatch(
-        registerSound(PARTICIPANT_JOINED_SOUND_ID, PARTICIPANT_JOINED_FILE));
-    dispatch(registerSound(PARTICIPANT_LEFT_SOUND_ID, PARTICIPANT_LEFT_FILE));
-}
-
-/**
- * Unregisters sounds related with the participants feature.
- *
- * @param {Store} store - The redux store.
- * @private
- * @returns {void}
- */
-function _unregisterSounds({ dispatch }) {
-    dispatch(unregisterSound(PARTICIPANT_JOINED_SOUND_ID));
-    dispatch(unregisterSound(PARTICIPANT_LEFT_SOUND_ID));
 }

@@ -35,6 +35,7 @@
          */
         height: 100% !important;
         width: 100%;
+        background: $hangupColor;
     }
 
     .filmstrip {
@@ -74,6 +75,7 @@
          */
         overflow-x: hidden;
         overflow-y: auto;
+        scrollbar-color: $filmstripScrollBarColor;
     }
 
     /**
@@ -100,6 +102,11 @@
 
         video {
             object-fit: contain;
+        }
+
+        #videosDelimiter {
+            order: 10;
+            width: 100%;
         }
     }
 

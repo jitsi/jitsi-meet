@@ -598,7 +598,8 @@
             "tileView": "画面模式",
             "toggleCamera": "切换相机",
             "videomute": "静音 / 取消静音",
-            "videoblur": ""
+            "videoblur": "",
+            "pin": ""
         },
         "addPeople": "添加成员到您的通话中",
         "audioOnlyOff": "",
@@ -713,7 +714,8 @@
         "muted": "已静音",
         "remoteControl": "",
         "show": "",
-        "videomute": ""
+        "videomute": "",
+        "pin": ""
     },
     "welcomepage": {
         "accessibilityLabel": {

@@ -21,9 +21,11 @@ import { DisplayName } from '../../../react/features/display-name';
 import {
     DominantSpeakerIndicator,
     RaisedHandIndicator,
+    setTileViewDimensions,
     StatusIndicators
 } from '../../../react/features/filmstrip';
 import {
+    getTileViewGridDimensions,
     LAYOUTS,
     getCurrentLayout,
     setTileView,
@@ -534,8 +536,44 @@ export default class SmallVideo {
         }
 
         if (this.displayMode !== oldDisplayMode) {
+            this.reArrangeVideos();
             logger.debug(`Displaying ${displayModeString} for ${this.id}, data: [${JSON.stringify(displayModeInput)}]`);
         }
+    }
+
+    /**
+     * Change the order of the element, based on displayMode
+     * If is sharing screen/streaming order should be < 10
+     * Else order > 10
+     * Also adds special className 'without-camera' to apply
+     * different styles (smaller width and height)
+     */
+    reArrangeVideos() {
+        if (this.displayMode === DISPLAY_VIDEO || this.displayMode === DISPLAY_VIDEO_WITH_NAME) {
+            if (this.isLocal) {
+                $(this.container.parentNode).toggleClass('without-camera', false);
+                $(this.container.parentNode).toggleClass('with-camera', true);
+            }
+            this.$container.toggleClass('without-camera', false);
+            this.$container.toggleClass('with-camera', true);
+        }
+        if (this.displayMode === DISPLAY_AVATAR_WITH_NAME || this.displayMode === DISPLAY_AVATAR) {
+            if (this.isLocal) {
+                $(this.container.parentNode).toggleClass('with-camera', false);
+                $(this.container.parentNode).toggleClass('without-camera', true);
+            }
+            this.$container.toggleClass('with-camera', false);
+            this.$container.toggleClass('without-camera', true);
+        }
+
+        // Force recalculation of the grid and rerender of thumbnails
+        const gridDimensions = getTileViewGridDimensions(APP.store.getState());
+        const { clientHeight, clientWidth } = APP.store.getState()['features/base/responsive-ui'];
+
+        APP.store.dispatch(setTileViewDimensions(gridDimensions, {
+            clientHeight,
+            clientWidth
+        }));
     }
 
     /**
@@ -752,7 +790,11 @@ export default class SmallVideo {
      * @returns {void}
      */
     _onContainerClick(event) {
-        const triggerPin = this._shouldTriggerPin(event);
+        const tipRegExp = /tip/;
+        const modalRegExp = /modal/;
+        const isTip = tipRegExp.test(event.target.className.baseVal || event.target.className);
+        const isModal = modalRegExp.test(event.target.className);
+        const triggerPin = this._shouldTriggerPin(event) && !isTip && !isModal;
 
         if (event.stopPropagation && triggerPin) {
             event.stopPropagation();

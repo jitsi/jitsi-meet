@@ -617,7 +617,8 @@
             "videoblur": "Alternar desfoque de vídeo",
             "toggleFilmstrip": "Alterar tira de filme",
             "muteEveryone": "Silenciar todos",
-            "moreOptions": "Mostrar mais opções"
+            "moreOptions": "Mostrar mais opções",
+            "pin": ""
         },
         "addPeople": "Adicionar pessoas à sua chamada",
         "audioOnlyOff": "Desabilitar modo de largura de banda baixa",
@@ -737,7 +738,8 @@
         "remoteControl": "Controle remoto",
         "show": "Mostrar no palco",
         "videomute": "O participante parou a câmera",
-        "domuteOthers": "Silenciar todos os demais"
+        "domuteOthers": "Silenciar todos os demais",
+        "pin": ""
     },
     "welcomepage": {
         "accessibilityLabel": {

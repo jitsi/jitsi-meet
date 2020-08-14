@@ -13,7 +13,10 @@ import { AbstractDialogTab } from '../../../base/dialog';
 import type { Props as AbstractDialogTabProps } from '../../../base/dialog';
 import { translate } from '../../../base/i18n';
 
+import WebLogin from './WebLoginButton';
+
 declare var APP: Object;
+declare var interfaceConfig: Object;
 
 /**
  * The type of the React {@code Component} props of {@link ProfileTab}.
@@ -40,6 +43,11 @@ export type Props = {
      * The email to display for the local participant.
      */
     email: string,
+
+    /**
+     * The connected web wallets name.
+     */
+    walletName: string,
 
     /**
      * Invoked to obtain translated strings.
@@ -166,25 +174,53 @@ class ProfileTab extends AbstractDialogTab<Props> {
     _renderAuth() {
         const {
             authLogin,
+            walletName,
             t
         } = this.props;
 
+        const { ENABLE_SUPERHERO } = interfaceConfig;
+
         return (
             <div>
-                <div className = 'mock-atlaskit-label'>
-                    { t('toolbar.authenticate') }
+                <div className = 'settings-pane--auth'>
+                    <div className = 'settings-pane--auth_left'>
+                        <div className = 'mock-atlaskit-label'>
+                            { t('toolbar.authenticate') }
+                        </div>
+
+                        { authLogin
+                            && <div className = 'auth-name'>
+                                { t('settings.loggedIn', { name: authLogin }) }
+                            </div> }
+                        <Button
+                            appearance = 'primary'
+                            id = 'login_button'
+                            onClick = { this._onAuthToggle }
+                            type = 'button'>
+                            { authLogin ? t('toolbar.logout') : t('toolbar.login') }
+                        </Button>
+                    </div>
+                    <div className = 'settings-pane--auth_right'>
+                        <div className = 'mock-atlaskit-label'>
+                            { t('toolbar.authenticate') }
+                        </div>
+                        { walletName
+                            && <div
+                                className = 'auth-name'
+                                title = { t('settings.connectedAs', { name: walletName }) }>
+                                { t('settings.connectedAs', { name: walletName }) }
+                            </div> }
+                        { ENABLE_SUPERHERO && <Button
+                            appearance = 'primary'
+                            className = 'settings-pane--auth_right'
+                            id = 'web_wallets_button'
+                            type = 'button'>
+                            <WebLogin >
+                                Login with web wallet
+                            </WebLogin>
+                        </Button>}
+                    </div>
                 </div>
-                { authLogin
-                    && <div className = 'auth-name'>
-                        { t('settings.loggedIn', { name: authLogin }) }
-                    </div> }
-                <Button
-                    appearance = 'primary'
-                    id = 'login_button'
-                    onClick = { this._onAuthToggle }
-                    type = 'button'>
-                    { authLogin ? t('toolbar.logout') : t('toolbar.login') }
-                </Button>
             </div>
         );
     }

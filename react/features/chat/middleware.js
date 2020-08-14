@@ -1,6 +1,5 @@
 // @flow
 
-import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../base/app';
 import {
     CONFERENCE_JOINED,
     getCurrentConference
@@ -26,12 +25,10 @@ import { addMessage, clearMessages, toggleChat } from './actions';
 import { ChatPrivacyDialog } from './components';
 import {
     CHAT_VIEW_MODAL_ID,
-    INCOMING_MSG_SOUND_ID,
     MESSAGE_TYPE_ERROR,
     MESSAGE_TYPE_LOCAL,
     MESSAGE_TYPE_REMOTE
 } from './constants';
-import { INCOMING_MSG_SOUND_FILE } from './sounds';
 
 declare var APP: Object;
 declare var interfaceConfig : Object;
@@ -54,15 +51,6 @@ MiddlewareRegistry.register(store => next => action => {
     const { dispatch } = store;
 
     switch (action.type) {
-    case APP_WILL_MOUNT:
-        dispatch(
-                registerSound(INCOMING_MSG_SOUND_ID, INCOMING_MSG_SOUND_FILE));
-        break;
-
-    case APP_WILL_UNMOUNT:
-        dispatch(unregisterSound(INCOMING_MSG_SOUND_ID));
-        break;
-
     case CONFERENCE_JOINED:
         _addChatMsgListener(action.conference, store);
         break;
@@ -222,14 +210,11 @@ function _handleReceivedMessage({ dispatch, getState }, { id, message, nick, pri
     const state = getState();
     const { isOpen: isChatOpen } = state['features/chat'];
 
-    if (!isChatOpen) {
-        dispatch(playSound(INCOMING_MSG_SOUND_ID));
-    }
-
     // Provide a default for for the case when a message is being
     // backfilled for a participant that has left the conference.
     const participant = getParticipantById(state, id) || {};
     const localParticipant = getLocalParticipant(getState);
+    const akAddress = participant.akAddress;
     const displayName = participant.name || nick || getParticipantDisplayName(state, id);
     const hasRead = participant.local || isChatOpen;
     const timestampToDate = timestamp
@@ -238,6 +223,7 @@ function _handleReceivedMessage({ dispatch, getState }, { id, message, nick, pri
 
     dispatch(addMessage({
         displayName,
+        akAddress,
         hasRead,
         id,
         messageType: participant.local ? MESSAGE_TYPE_LOCAL : MESSAGE_TYPE_REMOTE,

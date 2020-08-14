@@ -5,6 +5,16 @@
     font-weight: 100;
     object-fit: cover;
 
+    @media (max-width: $desktopWidth) {
+        height: 140px !important;
+        width: 140px !important;
+    }
+
+    @media (max-width: $mobileWidth) {
+        width: 110px !important;
+        height: 110px !important;
+    }
+
     &.avatar-small {
         height: 28px !important;
         width: 28px !important;

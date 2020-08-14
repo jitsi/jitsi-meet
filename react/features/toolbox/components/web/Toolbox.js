@@ -26,6 +26,7 @@ import {
     IconShareVideo
 } from '../../../base/icons';
 import {
+    isLocalParticipantModerator,
     getLocalParticipant,
     getParticipants,
     participantUpdated
@@ -89,6 +90,11 @@ import VideoSettingsButton from './VideoSettingsButton';
  * The type of the React {@code Component} props of {@link Toolbox}.
  */
 type Props = {
+
+    /**
+     * Flag showing whether local participant is moderator.
+     */
+    _isModerator: boolean,
 
     /**
      * Whether or not the chat feature is currently displayed.
@@ -484,7 +490,7 @@ class Toolbox extends Component<Props, State> {
      * @returns {void}
      */
     _doToggleScreenshare() {
-        if (this.props._desktopSharingEnabled) {
+        if (this.props._desktopSharingEnabled && this.props._isModerator) {
             this.props.dispatch(toggleScreensharing());
         }
     }
@@ -988,6 +994,7 @@ class Toolbox extends Component<Props, State> {
      */
     _renderOverflowMenuContent() {
         const {
+            _isModerator,
             _feedbackConfigured,
             _fullScreen,
             _screensharing,
@@ -1011,13 +1018,13 @@ class Toolbox extends Component<Props, State> {
                     key = 'fullscreen'
                     onClick = { this._onToolbarToggleFullScreen }
                     text = { _fullScreen ? t('toolbar.exitFullScreen') : t('toolbar.enterFullScreen') } />,
-            <LiveStreamButton
+            _isModerator && <LiveStreamButton
                 key = 'livestreaming'
                 showLabel = { true } />,
             <RecordButton
                 key = 'record'
                 showLabel = { true } />,
-            this._shouldShowButton('sharedvideo')
+            _isModerator && this._shouldShowButton('sharedvideo')
                 && <OverflowMenuItem
                     accessibilityLabel = { t('toolbar.accessibilityLabel.sharedvideo') }
                     icon = { IconShareVideo }
@@ -1199,6 +1206,7 @@ class Toolbox extends Component<Props, State> {
      */
     _renderToolboxContent() {
         const {
+            _isModerator,
             _chatOpen,
             _overflowMenuVisible,
             _raisedHand,
@@ -1239,7 +1247,7 @@ class Toolbox extends Component<Props, State> {
         if (this._shouldShowButton('chat')) {
             buttonsLeft.push('chat');
         }
-        if (this._shouldShowButton('desktop')
+        if (_isModerator && this._shouldShowButton('desktop')
                 && this._isDesktopSharingButtonVisible()) {
             buttonsLeft.push('desktop');
         }
@@ -1255,10 +1263,10 @@ class Toolbox extends Component<Props, State> {
         if (this._shouldShowButton('invite')) {
             buttonsRight.push('invite');
         }
-        if (this._shouldShowButton('security') || this._shouldShowButton('info')) {
+        if (_isModerator
+                && (this._shouldShowButton('security') || this._shouldShowButton('info'))) {
             buttonsRight.push('security');
         }
-
         if (this._shouldShowButton('tileview')) {
             buttonsRight.push('tileview');
         }
@@ -1426,6 +1434,7 @@ function _mapStateToProps(state) {
     const buttons = new Set(interfaceConfig.TOOLBAR_BUTTONS);
 
     return {
+        _isModerator: isLocalParticipantModerator(state),
         _chatOpen: state['features/chat'].isOpen,
         _conference: conference,
         _desktopSharingEnabled: desktopSharingEnabled,

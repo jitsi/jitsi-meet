@@ -27,6 +27,7 @@ import {
     AVATAR_ID_COMMAND,
     AVATAR_URL_COMMAND,
     EMAIL_COMMAND,
+    AK_ADDRESS_COMMAND,
     authStatusChanged,
     commonUserJoinedHandling,
     commonUserLeftHandling,
@@ -172,6 +173,7 @@ window.JitsiMeetScreenObtainer = {
  * Known custom conference commands.
  */
 const commands = {
+    AK_ADDRESS: AK_ADDRESS_COMMAND,
     AVATAR_ID: AVATAR_ID_COMMAND,
     AVATAR_URL: AVATAR_URL_COMMAND,
     CUSTOM_ROLE: 'custom-role',
@@ -2231,6 +2233,17 @@ export default {
                         conference: room,
                         id: from,
                         avatarID: data.value
+                    }));
+            });
+
+        room.addCommandListener(
+            this.commands.defaults.AK_ADDRESS,
+            (data, from) => {
+                APP.store.dispatch(
+                    participantUpdated({
+                        conference: room,
+                        id: from,
+                        akAddress: data.value
                     }));
             });
 

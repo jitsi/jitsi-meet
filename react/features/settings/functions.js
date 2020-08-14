@@ -136,6 +136,7 @@ export function getMoreTabProps(stateful: Object | Function) {
  */
 export function getProfileTabProps(stateful: Object | Function) {
     const state = toState(stateful);
+    const { user: { name: walletName = '' } = {} } = state['features/base/jwt'];
     const {
         authEnabled,
         authLogin,
@@ -144,6 +145,7 @@ export function getProfileTabProps(stateful: Object | Function) {
     const localParticipant = getLocalParticipant(state);
 
     return {
+        walletName,
         authEnabled: Boolean(conference && authEnabled),
         authLogin,
         displayName: localParticipant.name,

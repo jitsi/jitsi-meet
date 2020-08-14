@@ -660,7 +660,8 @@
             "toggleCamera": "Txandakatu kamera",
             "toggleFilmstrip": "Txandakatu film-zerrenda",
             "videomute": "Txandakatu mutututako bideoa",
-            "videoblur": "Txandakatu bideoaren lausotzea"
+            "videoblur": "Txandakatu bideoaren lausotzea",
+            "pin": ""
         },
         "addPeople": "Gehitu jendea zure deira",
         "audioOnlyOff": "Gaitu audioa soilik modua",
@@ -781,7 +782,8 @@
         "muted": "Mutututa",
         "remoteControl": "Hasi / Gelditu urruneko kontrola",
         "show": "Erakutsi",
-        "videomute": "Parte-hartzaileak kamera geldiarazi du."
+        "videomute": "Parte-hartzaileak kamera geldiarazi du.",
+        "pin": ""
     },
     "welcomepage": {
         "accessibilityLabel": {

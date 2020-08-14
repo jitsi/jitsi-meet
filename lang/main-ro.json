@@ -579,6 +579,7 @@
     },
     "toolbar": {
         "accessibilityLabel": {
+            "pin": "",
             "audioOnly": "Comutați doar audio",
             "audioRoute": "Selectați dispozitivul pentru sunet",
             "callQuality": "Gestionați calitatea apelului",
@@ -719,7 +720,8 @@
         "muted": "Microfon dezactivat",
         "remoteControl": "Control la distanță",
         "show": "",
-        "videomute": "Un membru a oprit camera"
+        "videomute": "Un membru a oprit camera",
+        "pin": ""
     },
     "welcomepage": {
         "accessibilityLabel": {

@@ -598,7 +598,8 @@
             "tileView": "Alternar visualização em blocos",
             "toggleCamera": "Alternar câmera",
             "videomute": "Alternar mudo do vídeo",
-            "videoblur": "Alternar desfoque de vídeo"
+            "videoblur": "Alternar desfoque de vídeo",
+            "pin": ""
         },
         "addPeople": "Adicionar pessoas à sua chamada",
         "audioOnlyOff": "Desabilitar modo de largura de banda baixa",
@@ -711,7 +712,8 @@
         "muted": "Mudo",
         "remoteControl": "Controle remoto",
         "show": "Mostrar no palco",
-        "videomute": "O participante parou a câmera"
+        "videomute": "O participante parou a câmera",
+        "pin": ""
     },
     "welcomepage": {
         "accessibilityLabel": {

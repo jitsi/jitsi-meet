@@ -2,7 +2,6 @@
 
 import React from 'react';
 
-import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../base/app';
 import { CONFERENCE_JOINED } from '../base/conference';
 import {
     formatDeviceLabel,
@@ -11,28 +10,16 @@ import {
 import JitsiMeetJS, { JitsiConferenceEvents } from '../base/lib-jitsi-meet';
 import { MiddlewareRegistry } from '../base/redux';
 import { updateSettings } from '../base/settings';
-import { playSound, registerSound, unregisterSound } from '../base/sounds';
 import { hideNotification, showNotification } from '../notifications';
 
 import { setNoAudioSignalNotificationUid } from './actions';
 import DialInLink from './components/DialInLink';
-import { NO_AUDIO_SIGNAL_SOUND_ID } from './constants';
-import { NO_AUDIO_SIGNAL_SOUND_FILE } from './sounds';
 
 MiddlewareRegistry.register(store => next => async action => {
     const result = next(action);
-    const { dispatch } = store;
 
-    switch (action.type) {
-    case APP_WILL_MOUNT:
-        dispatch(registerSound(NO_AUDIO_SIGNAL_SOUND_ID, NO_AUDIO_SIGNAL_SOUND_FILE));
-        break;
-    case APP_WILL_UNMOUNT:
-        dispatch(unregisterSound(NO_AUDIO_SIGNAL_SOUND_ID));
-        break;
-    case CONFERENCE_JOINED:
+    if (action.type === CONFERENCE_JOINED) {
         _handleNoAudioSignalNotification(store, action);
-        break;
     }
 
     return result;
@@ -117,8 +104,6 @@ async function _handleNoAudioSignalNotification({ dispatch, getState }, action) 
         });
 
         dispatch(notification);
-
-        dispatch(playSound(NO_AUDIO_SIGNAL_SOUND_ID));
 
         // Store the current notification uid so we can check for this state and hide it in case
         // a new track was added, thus changing the context of the notification

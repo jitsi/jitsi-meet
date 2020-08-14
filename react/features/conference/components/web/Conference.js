@@ -1,9 +1,18 @@
 // @flow
-
+// eslint-disable-next-line max-len
+import browserWindowMessageConnection from '@aeternity/aepp-sdk/es/utils/aepp-wallet-communication/connection/browser-window-message';
+import Detector from '@aeternity/aepp-sdk/es/utils/aepp-wallet-communication/wallet-detector';
+import { jitsiLocalStorage } from '@jitsi/js-utils';
 import _ from 'lodash';
 import React from 'react';
 
 import VideoLayout from '../../../../../modules/UI/videolayout/VideoLayout';
+import { InviteMore, Subject } from '.';
+import { client, initClient } from '../../../../client';
+import { walletFound } from '../../../aeternity';
+import { setJWT } from '../../../base/jwt/actions';
+import { createDeepLinkUrl } from '../../../base/util/createDeepLinkUrl';
+import { parseURLParams } from '../../../base/util/parseURLParams';
 import { getConferenceNameForTitle } from '../../../base/conference';
 import { connect, disconnect } from '../../../base/connection';
 import { translate } from '../../../base/i18n';
@@ -99,6 +108,8 @@ class Conference extends AbstractConference<Props, *> {
     _onFullScreenChange: Function;
     _onShowToolbar: Function;
     _originalOnShowToolbar: Function;
+    _sign: Function;
+    _scanForWallets: Function;
 
     /**
      * Initializes a new Conference instance.
@@ -108,6 +119,10 @@ class Conference extends AbstractConference<Props, *> {
      */
     constructor(props) {
         super(props);
+
+        this.state = {
+            showDeeplink: true
+        };
 
         // Throttle and bind this component's mousemove handler to prevent it
         // from firing too often.
@@ -122,6 +137,8 @@ class Conference extends AbstractConference<Props, *> {
 
         // Bind event handler so it is only bound once for every instance.
         this._onFullScreenChange = this._onFullScreenChange.bind(this);
+        this._sign = this._sign.bind(this);
+        this._scanForWallets = this._scanForWallets.bind(this);
     }
 
     /**
@@ -131,6 +148,37 @@ class Conference extends AbstractConference<Props, *> {
      */
     componentDidMount() {
         document.title = `${this.props._roomName} | ${interfaceConfig.APP_NAME}`;
+        const { ENABLE_SUPERHERO } = interfaceConfig;
+        const { address: addressParam, signature: signatureParam } = parseURLParams(window.location, true, 'search');
+
+        if (!ENABLE_SUPERHERO) {
+            return this._start();
+        }
+
+        if (!addressParam && !signatureParam) {
+            initClient().then(() => {
+                this._scanForWallets();
+            });
+        }
+
+        if (addressParam) {
+            const message = `I would like to generate JWT token at ${new Date().toUTCString()}`;
+            const currentUrl = window.location.href.split('?')[0];
+            const signLink = createDeepLinkUrl({
+                type: 'sign-message',
+                message,
+                'x-success': `${currentUrl}?result=success&signature={signature}`
+            });
+
+            jitsiLocalStorage.setItem('address', addressParam);
+            jitsiLocalStorage.setItem('message', message);
+            window.location = signLink;
+        } else if (signatureParam) {
+            const addressStorage = jitsiLocalStorage.getItem('address');
+            const messageStorage = jitsiLocalStorage.getItem('message');
+
+            this._sign(signatureParam, addressStorage, messageStorage);
+        }
         this._start();
     }
 
@@ -195,6 +243,8 @@ class Conference extends AbstractConference<Props, *> {
                 onMouseMove = { this._onShowToolbar }>
 
                 <Notice />
+                <Subject />
+                <InviteMore showDeeplink = { this.state.showDeeplink } />
                 <div id = 'videospace'>
                     <LargeVideo />
                     <KnockingParticipantList />
@@ -202,7 +252,7 @@ class Conference extends AbstractConference<Props, *> {
                     { hideLabels || <Labels /> }
                 </div>
 
-                { filmstripOnly || _showPrejoin || _isLobbyScreenVisible || <Toolbox /> }
+                { !_iAmRecorder && (filmstripOnly || _showPrejoin || _isLobbyScreenVisible || <Toolbox />) }
                 { filmstripOnly || <Chat /> }
 
                 { this.renderNotificationsContainer() }
@@ -212,6 +262,65 @@ class Conference extends AbstractConference<Props, *> {
                 { !filmstripOnly && _showPrejoin && <Prejoin />}
             </div>
         );
+    }
+
+    /**
+     * Start to search the wallet with sdk.
+     *
+     * @private
+     * @returns {void}
+     *
+     */
+    async _scanForWallets() {
+        const connection = await browserWindowMessageConnection({
+            connectionInfo: { id: 'spy' }
+        });
+
+        // eslint-disable-next-line new-cap
+        const detector = await Detector({ connection });
+
+        detector.scan(async ({ newWallet }) => {
+            if (newWallet) {
+                detector.stopScan();
+                await client.connectToWallet(await newWallet.getConnection());
+                await client.subscribeAddress('subscribe', 'current');
+                this._sign();
+            }
+        });
+
+    }
+
+    /**
+     * Start to search the wallet with sdk.
+     *
+     * @param {string} signatureParam - Signature from the query string.
+     * @param {string} addressParam - Address from the query string.
+     * @param {string} messageParam - Message from the query string.
+     * @private
+     * @returns {void}
+     *
+     */
+    async _sign(signatureParam, addressParam, messageParam) {
+        const message = messageParam || `I would like to generate JWT token at ${new Date().toUTCString()}`;
+        const signature = signatureParam || await client.signMessage(message);
+        const address = addressParam || client.rpcClient.getCurrentAccount();
+
+        const token = await (await fetch('https://jwt.z52da5wt.xyz/claim', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                address,
+                message,
+                signature
+            })
+        })).text();
+
+        // if user will click the "reject" button the code will stops before that line
+        this.props.dispatch(setJWT(token));
+        this.setState({ showDeeplink: false });
+        APP.store.dispatch(walletFound());
     }
 
     /**

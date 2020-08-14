@@ -99,17 +99,20 @@ class PasswordForm extends Component<Props, State> {
      */
     render() {
         const { t } = this.props;
+        const passwordField = this._renderPasswordField();
 
         return (
-            <div className = 'info-password'>
-                <span className = 'info-label'>
-                    { t('info.password') }
-                </span>
-                <span className = 'spacer'>&nbsp;</span>
-                <span className = 'info-password-field info-value'>
-                    { this._renderPasswordField() }
-                </span>
-            </div>
+            passwordField && passwordField.props.children !== 'None' && (
+                <div className = 'info-password'>
+                    <span className = 'info-label'>
+                        { t('info.password') }
+                    </span>
+                    <span className = 'spacer'>&nbsp;</span>
+                    <span className = 'info-password-field info-value'>
+                        { passwordField }
+                    </span>
+                </div>
+            )
         );
     }
 

@@ -1,0 +1,33 @@
+name: Deploy to Production
+
+on:
+  release:
+    # Only use the types keyword to narrow down the activity types that will trigger your workflow.
+    types: [published]
+
+jobs:
+  run-ci:
+    name: Build Frontend
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-node@v1
+      with:
+        node-version: '12.x'
+    - run: npm install
+    - run: make
+    - run: make source-package
+    - name: Deploy to Production server
+      uses: Pendect/action-rsyncer@v1.1.0
+      env:
+        DEPLOY_KEY: ${{ secrets.PRODUCTION_SSH_KEY }}
+      with:
+        src: 'source_package/jitsi-meet/'
+        dest: ${{ secrets.PRODUCTION_DEST }}
+    - name: Deploy Lua scripts to Production server
+      uses: Pendect/action-rsyncer@v1.1.0
+      env:
+          DEPLOY_KEY: ${{ secrets.PRODUCTION_SSH_KEY }}
+      with:
+          src: 'resources/prosody-plugins/'
+          dest: ${{ secrets.PRODUCTION_PROSODY_PLUGIN_DEST }}

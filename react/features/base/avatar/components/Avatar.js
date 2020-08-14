@@ -133,6 +133,7 @@ class Avatar<P: Props> extends PureComponent<P, State> {
         const { avatarFailed } = this.state;
 
         const avatarProps = {
+            fullName: _initialsBase,
             className,
             color: undefined,
             id,

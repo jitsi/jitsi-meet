@@ -709,7 +709,8 @@
             "toggleCamera": "Kamera wechseln",
             "toggleFilmstrip": "Miniaturansichten ein-/ausschalten",
             "videomute": "„Video stummschalten“ ein-/ausschalten",
-            "videoblur": "Video-Unschärfe ein-/ausschalten"
+            "videoblur": "Video-Unschärfe ein-/ausschalten",
+            "pin": ""
         },
         "addPeople": "Teilnehmer zur Konferenz hinzufügen",
         "audioOnlyOff": "Modus „Nur Audio“ deaktivieren",
@@ -835,7 +836,8 @@
         "muted": "Stummgeschaltet",
         "remoteControl": "Fernsteuerung",
         "show": "Im Vordergrund anzeigen",
-        "videomute": "Teilnehmer hat die Kamera angehalten"
+        "videomute": "Teilnehmer hat die Kamera angehalten",
+        "pin": ""
     },
     "welcomepage": {
         "accessibilityLabel": {

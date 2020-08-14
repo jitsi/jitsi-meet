@@ -6,6 +6,7 @@ all.css
 *css.map
 .remote-sync.json
 .sync-config.cson
+source_package/
 
 # CocoaPods
 Pods/
@@ -84,3 +85,5 @@ android/app/google-services.json
 ios/app/dropbox.key
 ios/app/GoogleService-Info.plist
 
+# Because we have two domains with different includes
+.env.json

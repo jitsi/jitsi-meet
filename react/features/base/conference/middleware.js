@@ -220,7 +220,7 @@ function _conferenceJoined({ dispatch, getState }, next, action) {
     const result = next(action);
     const { conference } = action;
     const { pendingSubjectChange } = getState()['features/base/conference'];
-    const { requireDisplayName } = getState()['features/base/config'];
+    const { requireDisplayName, iAmRecorder } = getState()['features/base/config'];
 
     pendingSubjectChange && dispatch(setSubject(pendingSubjectChange));
 
@@ -235,6 +235,7 @@ function _conferenceJoined({ dispatch, getState }, next, action) {
     window.addEventListener('beforeunload', beforeUnloadHandler);
 
     if (requireDisplayName
+        && !iAmRecorder
         && !getLocalParticipant(getState)?.name
         && !conference.isHidden()) {
         dispatch(openDisplayNamePrompt(undefined));

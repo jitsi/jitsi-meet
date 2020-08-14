@@ -2,9 +2,9 @@
 /* eslint sort-keys: ["error", "asc", {"caseSensitive": false}] */
 
 var interfaceConfig = {
-    APP_NAME: 'Jitsi Meet',
-    AUDIO_LEVEL_PRIMARY_COLOR: 'rgba(255,255,255,0.4)',
-    AUDIO_LEVEL_SECONDARY_COLOR: 'rgba(255,255,255,0.2)',
+    APP_NAME: 'Superhero League',
+    AUDIO_LEVEL_PRIMARY_COLOR: 'rgba(255,255,255,0.2)',
+    AUDIO_LEVEL_SECONDARY_COLOR: 'rgba(255,255,255,0.4)',
 
     /**
      * A UX mode where the last screen share participant is automatically
@@ -15,7 +15,7 @@ var interfaceConfig = {
      * Note: this mode is experimental and subject to breakage.
      */
     AUTO_PIN_LATEST_SCREEN_SHARE: 'remote-only',
-    BRAND_WATERMARK_LINK: '',
+    BRAND_WATERMARK_LINK: 'https://league.superhero.com',
 
     CLOSE_PAGE_GUEST_HINT: false, // A html text to be shown to guests on the close page, false disables it
     /**
@@ -47,7 +47,7 @@ var interfaceConfig = {
     DEFAULT_BACKGROUND: '#474747',
     DEFAULT_LOCAL_DISPLAY_NAME: 'me',
     DEFAULT_LOGO_URL: 'images/watermark.png',
-    DEFAULT_REMOTE_DISPLAY_NAME: 'Fellow Jitster',
+    DEFAULT_REMOTE_DISPLAY_NAME: 'Fellow Superhero',
     DEFAULT_WELCOME_PAGE_LOGO_URL: 'images/watermark.png',
 
     DISABLE_DOMINANT_SPEAKER_INDICATOR: false,
@@ -57,12 +57,12 @@ var interfaceConfig = {
     /**
      * If true, notifications regarding joining/leaving are no longer displayed.
      */
-    DISABLE_JOIN_LEAVE_NOTIFICATIONS: false,
+    DISABLE_JOIN_LEAVE_NOTIFICATIONS: true,
 
     /**
      * If true, presence status: busy, calling, connected etc. is not displayed.
      */
-    DISABLE_PRESENCE_STATUS: false,
+    DISABLE_PRESENCE_STATUS: true,
 
     /**
      * Whether the ringing sound in the call/ring overlay is disabled. If
@@ -70,7 +70,7 @@ var interfaceConfig = {
      *
      * @type {boolean}
      */
-    DISABLE_RINGING: false,
+    DISABLE_RINGING: true,
 
     /**
      * Whether the speech to text transcription subtitles panel is disabled.
@@ -78,7 +78,7 @@ var interfaceConfig = {
      *
      * @type {boolean}
      */
-    DISABLE_TRANSCRIPTION_SUBTITLES: false,
+    DISABLE_TRANSCRIPTION_SUBTITLES: true,
 
     /**
      * Whether or not the blurred video background for large video should be
@@ -113,7 +113,7 @@ var interfaceConfig = {
     HIDE_INVITE_MORE_HEADER: false,
 
     INITIAL_TOOLBAR_TIMEOUT: 20000,
-    JITSI_WATERMARK_LINK: 'https://jitsi.org',
+    JITSI_WATERMARK_LINK: 'https://league.superhero.com',
 
     LANG_DETECTION: true, // Allow i18n to detect the system language
     LIVE_STREAMING_HELP_LINK: 'https://jitsi.org/live', // Documentation reference for the live streaming feature.
@@ -134,7 +134,7 @@ var interfaceConfig = {
      *
      * @type {boolean}
      */
-    MOBILE_APP_PROMO: true,
+    MOBILE_APP_PROMO: false,
 
     NATIVE_APP_NAME: 'Jitsi Meet',
 
@@ -177,7 +177,7 @@ var interfaceConfig = {
      */
     SUPPORT_URL: 'https://community.jitsi.org/',
 
-    TOOLBAR_ALWAYS_VISIBLE: false,
+    TOOLBAR_ALWAYS_VISIBLE: true,
 
     /**
      * The name of the toolbar buttons to display in the toolbar, including the
@@ -191,7 +191,7 @@ var interfaceConfig = {
      * - 'desktop' controls the "Share your screen" button
      */
     TOOLBAR_BUTTONS: [
-        'microphone', 'camera', 'closedcaptions', 'desktop', 'embedmeeting', 'fullscreen',
+        'microphone', 'camera', 'closedcaptions', 'desktop', 'fullscreen',
         'fodeviceselection', 'hangup', 'profile', 'chat', 'recording',
         'livestreaming', 'etherpad', 'sharedvideo', 'settings', 'raisehand',
         'videoquality', 'filmstrip', 'invite', 'feedback', 'stats', 'shortcuts',
@@ -226,13 +226,13 @@ var interfaceConfig = {
     /**
      * When enabled, the kick participant button will not be presented for users without a JWT
      */
-    // HIDE_KICK_BUTTON_FOR_GUESTS: false,
+    HIDE_KICK_BUTTON_FOR_GUESTS: false,
 
     /**
      * How many columns the tile view can expand to. The respected range is
      * between 1 and 5.
      */
-    // TILE_VIEW_MAX_COLUMNS: 5,
+    TILE_VIEW_MAX_COLUMNS: 3,
 
     /**
      * Specify custom URL for downloading android mobile app.
@@ -272,11 +272,18 @@ var interfaceConfig = {
      */
     // ENFORCE_NOTIFICATION_AUTO_DISMISS_TIMEOUT: 15000,
 
+    // Aeternity custom settings
+    CHAT_ALWAYS_OPEN: false,
+    TILE_VIEW_ALWAYS_OPEN: false,
+
     // List of undocumented settings
     /**
      INDICATOR_FONT_SIZES
      PHONE_NUMBER_REGEX
     */
+
+    // Enable superhero features
+    ENABLE_SUPERHERO: true,
 
     // Allow all above example options to include a trailing comma and
     // prevent fear when commenting out the last value.

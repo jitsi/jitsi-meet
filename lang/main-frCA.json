@@ -598,7 +598,8 @@
             "tileView": "Basculement de l'affichage mosaïque",
             "toggleCamera": "Basculement de la caméra",
             "videomute": "Basculement de la sourdine vidéo",
-            "videoblur": "Alterner le brouillage vidéo"
+            "videoblur": "Alterner le brouillage vidéo",
+            "pin": ""
         },
         "addPeople": "Ajouter des personnes à votre appel",
         "audioOnlyOff": "Désactiver le mode bande passante faible",
@@ -711,7 +712,8 @@
         "muted": "Discrétion",
         "remoteControl": "Contrôle à distance",
         "show": "Afficher en premier plan",
-        "videomute": "Le membre a arrêté la caméra"
+        "videomute": "Le membre a arrêté la caméra",
+        "pin": ""
     },
     "welcomepage": {
         "accessibilityLabel": {

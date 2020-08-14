@@ -8,26 +8,17 @@
             display: flex;
             background-color: #fff;
             border-radius: 50%;
-            border: 1px solid #d1dbe8;
+            border: 2px solid $toolBoxIconBorderColor;
             justify-content: center;
             width: 38px;
             height: 38px;
 
-            &:hover {
-                background-color: #daebfa;
-                border: 1px solid #daebfa;
-            }
-
             &.toggled {
-                background: #2a3a4b;
-                border: 1px solid #5e6d7a;
+                background: $preJoinButtonToggled;
+                border: $preJoinButtonToggledBorder;
 
                 svg {
                     fill: #fff;
-                }
-
-                &:hover {
-                    background-color: #5e6d7a;
                 }
             }
 
@@ -42,7 +33,7 @@
             }
 
             svg {
-                fill: #5e6d7a;
+                fill: $participantsCountBackground;
             }
         }
     }

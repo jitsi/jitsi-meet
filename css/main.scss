@@ -19,7 +19,6 @@
 /* Animations END */
 
 /* Flags BEGIN */
-$flagsImagePath: "../images/";
 @import "../node_modules/bc-css-flags/dist/css/bc-css-flags.scss";
 /* Flags END */
 
@@ -102,5 +101,6 @@ $flagsImagePath: "../images/";
 @import 'premeeting-screens';
 @import 'e2ee';
 @import 'responsive';
+@import 'tip-button';
 
 /* Modules END */

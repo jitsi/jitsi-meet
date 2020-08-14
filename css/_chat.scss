@@ -1,5 +1,4 @@
 #sideToolbarContainer {
-    background-color: $newToolbarBackgroundColor;
     box-sizing: border-box;
     color: #FFF;
     display: flex;
@@ -11,6 +10,7 @@
     top: 0;
     width: $sidebarWidth;
     z-index: $sideToolbarContainerZ;
+    background: $chatConversationBackground;
 
     /**
      * The sidebar (chat) is off-screen when hidden. Move it flush to the left
@@ -31,6 +31,9 @@
     text-align: left;
     width: $sidebarWidth;
     word-wrap: break-word;
+    background: $chatConversationBackground;
+    scrollbar-color: $chatScrollBarColor;
+    scrollbar-width: thin;
 
     a {
         display: block;
@@ -98,8 +101,8 @@
 }
 
 .chat-header {
-    background-color: $chatHeaderBackgroundColor;
-    height: 70px;
+    background-color: $chatInputBackground;
+    height: 40px;
     position: relative;
     width: 100%;
     z-index: 1;
@@ -114,10 +117,14 @@
         height: 40px;
         justify-content: center;
         line-height: 15px;
-        padding: 4px;
+        top: 0px;
         position: absolute;
         right: 5px;
         width: 40px;
+
+        svg {
+            fill: $chatInputTextColor;
+        }
 
         &:hover {
             color: rgba(255, 255, 255, 0.8);
@@ -126,9 +133,21 @@
 }
 
 #chat-input {
-    border-top: 1px solid $chatInputSeparatorColor;
+    background: $chatInputBackground;
     display: flex;
     padding: 5px 10px;
+    height: 60px;
+    align-items: center;
+    color: $chatInputTextColor;
+
+    ::-webkit-input-placeholder {
+        color: $chatPlaceholderColor;
+    }
+
+    #usermsg {
+        scrollbar-color: $chatInputScrollBarColor;
+        scrollbar-width: thin;
+    }
 
     * {
         background-color: transparent;
@@ -141,6 +160,12 @@
 
 .usrmsg-form {
     flex: 1;
+    height: 60px;
+    margin-top: 15px;
+
+    textarea {
+        height: 100% !important;
+    }
 }
 
 #usermsg {
@@ -154,6 +179,7 @@
     resize: none;
     width: 100%;
     word-break: break-word;
+    max-height: 100%;
 }
 
 #usermsg:hover {
@@ -183,11 +209,11 @@
         white-space: nowrap;
         text-overflow: ellipsis;
         overflow: hidden;
+        color: $displayNameColor;
     }
 }
 
 .chatmessage {
-    background-color: $chatRemoteMessageBackgroundColor;
     border-radius: 0px 6px 6px 6px;
     box-sizing: border-box;
     color: white;
@@ -227,6 +253,22 @@
         margin: 5px 10px;
         max-width: 100%;
         overflow: hidden;
+
+        .display-name {
+            display: flex;
+            justify-content: space-between;
+
+            .chat-name {
+                width: 65%;
+                overflow-x: hidden;
+                text-overflow: ellipsis;
+            }
+
+            .tip-icon {
+                width: 20px;
+                height: 20px;
+            }
+        }
     }
 }
 
@@ -238,6 +280,11 @@
     font-size: 20pt;
     margin: auto;
     cursor: pointer;
+    > span {
+        > span {
+            margin: auto !important;
+        }
+    }
 }
 
 #smileys img {
@@ -250,6 +297,11 @@
     max-height: 150px;
     min-height: 35px;
     overflow: hidden;
+    border: 2px solid $smileysAreaBorderColor;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    align-items: center;
 }
 
 .smiley-input {
@@ -265,7 +317,7 @@
     max-height: 0;
     overflow: hidden;
     position: absolute;
-    width: $sidebarWidth;
+    max-width: $sidebarWidth;
 
     /**
      * CSS transitions do not apply for auto dimensions. So to produce the css
@@ -311,15 +363,21 @@
     display: flex;
     flex-direction: column;
 
+    &.remote{
+        .replywrapper {
+            border-radius: 0 10% 10% 10%;
+        }
+    }
+
     &.local {
         align-items: flex-end;
 
         .chatmessage {
-            background-color: $chatLocalMessageBackgroundColor;
             border-radius: 6px 0px 6px 6px;
 
-            &.privatemessage {
-                background-color: $chatPrivateMessageBackgroundColor;
+            .replywrapper {
+                border: 1px dashed $borderColor;
+                border-radius: 10% 0 10% 10%;
             }
         }
 
@@ -329,6 +387,7 @@
 
         .timestamp {
             text-align: right;
+            color: $chatInputTextColor;
         }
     }
 
@@ -345,12 +404,17 @@
     }
 
     .chatmessage-wrapper {
-        max-width: 100%;
+        max-width: 50%;
+
+        .timestamp {
+            color: $chatInputTextColor;
+        }
 
         .replywrapper {
             display: flex;
             flex-direction: row;
             align-items: center;
+            background: $chatInputBackground;
 
             .messageactions {
                 align-self: stretch;
@@ -368,14 +432,17 @@
     }
 
     .chatmessage {
-        background-color: $chatRemoteMessageBackgroundColor;
         border-radius: 0px 6px 6px 6px;
         display: inline-block;
         margin-top: 3px;
         color: white;
+    }
+}
 
-        &.privatemessage {
-            background-color: $chatPrivateMessageBackgroundColor;
-        }
+
+@media (max-width: $sidebarWidth) {
+    #sideToolbarContainer,
+    #chatconversation {
+        width: 100%;
     }
 }

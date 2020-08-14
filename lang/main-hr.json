@@ -577,7 +577,8 @@
             "tileView": "Prikaz pločica",
             "toggleCamera": "Uključi / isključi kameru",
             "videomute": "Nijemi videozapis",
-            "videoblur": ""
+            "videoblur": "",
+            "pin": ""
         },
         "addPeople": "Dodaj osobe u poziv",
         "audioOnlyOff": "Isključi način samo zvuk",
@@ -681,7 +682,8 @@
         "muted": "Utišaj",
         "remoteControl": "",
         "show": "",
-        "videomute": ""
+        "videomute": "",
+        "pin": ""
     },
     "welcomepage": {
         "accessibilityLabel": {

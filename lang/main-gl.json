@@ -603,7 +603,8 @@
             "tileView": "Trocar a vista en mosaico",
             "toggleCamera": "Trocar a cámara",
             "videomute": "Trocar o activador de vídeo",
-            "videoblur": "Trocar o difuminador de vídeo"
+            "videoblur": "Trocar o difuminador de vídeo",
+            "pin": "",
         },
         "addPeople": "Engadir xente á súa chamada",
         "audioOnlyOff": "Desactivar o modo de largo de banda reducido",
@@ -718,7 +719,8 @@
         "muted": "Silenciado",
         "remoteControl": "",
         "show": "Amosar en primeiro plano",
-        "videomute": "O participante parou a cámara"
+        "videomute": "O participante parou a cámara",
+        "pin": ""
     },
     "welcomepage": {
         "accessibilityLabel": {

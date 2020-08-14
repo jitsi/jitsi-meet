@@ -4,7 +4,7 @@ body.welcome-page {
 }
 
 .welcome {
-    background-image: $welcomePageBackground;
+    background: $welcomePageBackground;
     display: flex;
     flex-direction: column;
     font-family: $welcomePageFontFamily;
@@ -26,33 +26,51 @@ body.welcome-page {
         position: relative;
         text-align: center;
 
+        .wrapper {
+            width: 100%;
+            background-image: url($welcomePageTopBackground);
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: left 50% top 0%;
+        }
+
         .header-text {
+            box-sizing: border-box;
             display: $welcomePageHeaderTextDisplay;
             flex-direction: column;
-            margin-top: $watermarkHeight + $welcomePageHeaderTextMarginTop;
-            margin-bottom: $welcomePageHeaderTextMarginBottom;
-            max-width: calc(100% - 40px);
+            padding: $watermarkHeight + $watermarkTop 50px 50px;
+            max-width: 100%;
+            margin: auto;
             width: $welcomePageHeaderTextWidth;
-            z-index: $zindex2;
+            align-items: center;
+
+            @media (max-width: $mobileWidth) {
+                padding: 40px 20px 20px;
+            }
         }
 
         .header-text-title {
             color: $welcomePageTitleColor;
+            font-family: $welcomePageHeaderTextTitleFontFamily;
             font-size: $welcomePageHeaderTextTitleFontSize;
             font-weight: $welcomePageHeaderTextTitleFontWeight;
             line-height: $welcomePageHeaderTextTitleLineHeight;
             margin-bottom: $welcomePageHeaderTextTitleMarginBottom;
             opacity: $welcomePageHeaderTextTitleOpacity;
+            letter-spacing: normal;
+            text-align: center;
         }
 
         .header-text-description {
             display: $welcomePageHeaderTextDescriptionDisplay;
             color: $welcomePageDescriptionColor;
+            font-family: $welcomePageHeaderTextTitleFontFamily;
             font-size: $welcomePageHeaderTextDescriptionFontSize;
             font-weight: $welcomePageHeaderTextDescriptionFontWeight;
             line-height: $welcomePageHeaderTextDescriptionLineHeight;
             margin-bottom: $welcomePageHeaderTextDescriptionMarginBottom;
             align-self: $welcomePageHeaderTextDescriptionAlignSelf;
+            text-align: center;
         }
 
         #enter_room {
@@ -61,9 +79,15 @@ body.welcome-page {
             max-width: calc(100% - 40px);
             width: $welcomePageEnterRoomWidth;
             z-index: $zindex2;
-            background-color: #fff;
+            background-color: $welcomePageBackground;
             padding: $welcomePageEnterRoomPadding;
             border-radius: $welcomePageEnterRoomBorderRadius;
+            border: 2px solid $welcomeBorderColor;
+
+            @media (max-width: $desktopWidth) {
+                width: 100%;
+                border: none;
+            }
 
             .enter-room-input-container {
                 width: 100%;
@@ -77,15 +101,27 @@ body.welcome-page {
                     font-size: 18px;
                     font-weight: bold;
                     padding-bottom: 5px;
+                    font-family: Roboto, sans-serif;
+                    line-height: 1.33;
+                    text-align: left;
+                    color: $welcomePageTitleColor;
                 }
 
                 .enter-room-input {
                     border-width: $welcomePageEnterRoomInputContainerBorderWidth;
                     border-style: $welcomePageEnterRoomInputContainerBorderStyle;
                     border-image: $welcomePageEnterRoomInputContainerBorderImage;
+                    background: transparent;
+                    color: #babac0;
                     display: inline-block;
                     width: 100%;
                     font-size: 14px;
+                    margin-top: 20px;
+
+                    &:focus {
+                        border-image: $welcomePageEnterRoomInputContainerBorderImageFocused;
+                        color: $unsupportedBrowserTitleColor;
+                    }
                 }
 
                 .insecure-room-name-warning {
@@ -102,10 +138,6 @@ body.welcome-page {
                             fill: $defaultWarningColor
                         }
                     }
-                }
-
-                ::placeholder {
-                    color: #253858;
                 }
             }
 
@@ -132,14 +164,17 @@ body.welcome-page {
             position: relative;
             text-align: left;
             min-height: 354px;
-            width: 710px;
-            background: #75A7E7;
+            width: 600px;
             display: $welcomePageTabContainerDisplay;
             flex-direction: column;
 
+            @media (max-width: $desktopWidth) {
+                width: 100%;
+            }
+
             .tab-content{
                 display: $welcomePageTabContentDisplay;
-                margin: 5px 0px;
+                margin: 0;
                 overflow: hidden;
                 flex-grow: 1;
                 position: relative;
@@ -185,13 +220,18 @@ body.welcome-page {
         height: $welcomePageButtonHeight;
         font-size: $welcomePageButtonFontSize;
         font-weight: $welcomePageButtonFontWeight;
-        background: #0074E0;
+        background: #2a9cff;
         border-radius: $welcomePageButtonBorderRadius;
         color: #FFFFFF;
         text-align: center;
         vertical-align: middle;
         line-height: $welcomePageButtonLineHeight;
         cursor: pointer;
+        margin-top: 30px;
+
+        &:hover {
+            background: #1969b0;
+        }
     }
 
     .welcome-page-settings {
@@ -200,6 +240,11 @@ body.welcome-page {
         top: 32px;
         right: 32px;
         z-index: $zindex2;
+
+        @media (max-width: $desktopWidth) {
+            top: 15px;
+            right: 15px;
+        }
 
         * {
             cursor: pointer;

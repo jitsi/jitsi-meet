@@ -125,14 +125,15 @@ export default class MeetingsList extends Component<Props> {
      * Returns a function that is used in the onPress callback of the items.
      *
      * @param {string} url - The URL of the item to navigate to.
+     * @param {string} title - Room name.
      * @private
      * @returns {Function}
      */
-    _onPress(url) {
+    _onPress(url, title) {
         const { disabled, onPress } = this.props;
 
         if (!disabled && url && typeof onPress === 'function') {
-            return () => onPress(url);
+            return () => onPress(url, title);
         }
 
         return null;
@@ -157,7 +158,7 @@ export default class MeetingsList extends Component<Props> {
             url
         } = meeting;
         const { hideURL = false } = this.props;
-        const onPress = this._onPress(url);
+        const onPress = this._onPress(url, title);
         const rootClassName
             = `item ${
                 onPress ? 'with-click-handler' : 'without-click-handler'}`;
@@ -167,30 +168,32 @@ export default class MeetingsList extends Component<Props> {
                 className = { rootClassName }
                 key = { index }
                 onClick = { onPress }>
-                <Container className = 'left-column'>
-                    <Text className = 'date'>
-                        { _toDateString(date) }
-                    </Text>
-                    <Text>
-                        { _toTimeString(time) }
-                    </Text>
-                </Container>
                 <Container className = 'right-column'>
                     <Text className = 'title'>
                         { title }
                     </Text>
-                    {
-                        hideURL || !url ? null : (
+                    <div className = 'bottom-column'>
+                        <div className = 'left-column-bottom'>
+                            <Text className = 'date'>
+                                { _toDateString(date) }
+                            </Text>
                             <Text>
-                                { url }
-                            </Text>)
-                    }
-                    {
-                        typeof duration === 'number' ? (
-                            <Text>
-                                { getLocalizedDurationFormatter(duration) }
-                            </Text>) : null
-                    }
+                                { _toTimeString(time) }
+                            </Text>
+                        </div>
+                        {
+                            hideURL || !url ? null : (
+                                <Text>
+                                    { url }
+                                </Text>)
+                        }
+                        {
+                            typeof duration === 'number' ? (
+                                <Text>
+                                    { getLocalizedDurationFormatter(duration) }
+                                </Text>) : null
+                        }
+                    </div>
                 </Container>
                 <Container className = 'actions'>
                     { elementAfter || null }

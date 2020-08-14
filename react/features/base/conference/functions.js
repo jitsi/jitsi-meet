@@ -14,6 +14,7 @@ import { toState } from '../redux';
 import { safeDecodeURIComponent } from '../util';
 
 import {
+    AK_ADDRESS_COMMAND,
     AVATAR_ID_COMMAND,
     AVATAR_URL_COMMAND,
     EMAIL_COMMAND,
@@ -349,6 +350,7 @@ export function sendLocalParticipant(
             setDisplayName: Function,
             setLocalParticipantProperty: Function }) {
     const {
+        akAddress,
         avatarID,
         avatarURL,
         email,
@@ -364,6 +366,9 @@ export function sendLocalParticipant(
     });
     email && conference.sendCommand(EMAIL_COMMAND, {
         value: email
+    });
+    akAddress && conference.sendCommand(AK_ADDRESS_COMMAND, {
+        value: akAddress
     });
 
     if (features && features['screen-sharing'] === 'true') {
