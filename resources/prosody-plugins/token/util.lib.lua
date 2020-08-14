@@ -119,6 +119,10 @@ function Util:set_asap_require_room_claim(checkRoom)
     self.requireRoomClaim = checkRoom;
 end
 
+function Util:clear_asap_cache()
+    self.cache = require"util.cache".new(cacheSize);
+end
+
 --- Returns the public key by keyID
 -- @param keyId the key ID to request
 -- @return the public key (the content of requested resource) or nil
@@ -130,6 +134,9 @@ function Util:get_public_key(keyId)
         local code;
         local timeout_occurred;
         local wait, done = async.waiter();
+
+        local keyurl = path.join(self.asapKeyServer, hex.to(sha256(keyId))..'.pem');
+
         local function cb(content_, code_, response_, request_)
             if timeout_occurred == nil then
                 content, code = content_, code_;
@@ -144,6 +151,7 @@ function Util:get_public_key(keyId)
                 module:log("warn", "public key reply delivered after timeout from: %s",keyurl);
             end
         end
+
         -- TODO: Is the done() call racey? Can we cancel this if the request
         --       succeedes?
         local function cancel()
@@ -159,7 +167,6 @@ function Util:get_public_key(keyId)
             end
         end
 
-        local keyurl = path.join(self.asapKeyServer, hex.to(sha256(keyId))..'.pem');
         module:log("debug", "Fetching public key from: "..keyurl);
 
         -- We hash the key ID to work around some legacy behavior and make
