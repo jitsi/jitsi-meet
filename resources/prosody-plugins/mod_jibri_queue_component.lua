@@ -142,6 +142,9 @@ local function reload_config()
     module:log("info", "Reloading configuration for jibri queue component");
     local config_success = load_config();
 
+    -- clear ASAP public key cache on config reload
+    token_util:clear_asap_cache();
+
     if not config_success then
         log("error", "Unsuccessful reconfiguration, jibri queue component may misbehave");
     end
@@ -485,7 +488,7 @@ function handle_update_jibri_queue(event)
         local prefixStart, prefixEnd = token:find("Bearer ");
         if prefixStart ~= 1 then
             module:log("error", "REST event: Invalid authorization header format. The header must start with the string 'Bearer '");
-            return 403
+            return { status_code = 403; };
         end
         token = token:sub(prefixEnd + 1);
     end
