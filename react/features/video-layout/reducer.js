@@ -1,6 +1,6 @@
 // @flow
 
-import { PersistenceRegistry, ReducerRegistry } from '../base/redux';
+import { ReducerRegistry } from '../base/redux';
 
 import {
     SCREEN_SHARE_PARTICIPANTS_UPDATED,
@@ -14,17 +14,16 @@ const DEFAULT_STATE = {
      * The indicator which determines whether the video layout should display
      * video thumbnails in a tiled layout.
      *
+     * Note: undefined means that the user hasn't requested anything in particular yet, so
+     * we use our auto switching rules.
+     *
      * @public
      * @type {boolean}
      */
-    tileViewEnabled: false
+    tileViewEnabled: undefined
 };
 
 const STORE_NAME = 'features/video-layout';
-
-PersistenceRegistry.register(STORE_NAME, {
-    tileViewEnabled: true
-});
 
 ReducerRegistry.register(STORE_NAME, (state = DEFAULT_STATE, action) => {
     switch (action.type) {

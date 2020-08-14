@@ -269,7 +269,7 @@
         "userPassword": "senha do usuário",
         "WaitForHostMsg": "A conferência <b>{{room}}</b> ainda não começou. Se você é o anfitrião, faça a autenticação. Do contrário, aguarde a chegada do anfitrião.",
         "WaitForHostMsgWOk": "A conferência <b>{{room}}</b> ainda não começou. Se você é o anfitrião, pressione Ok para autenticar. Do contrário, aguarde a chegada do anfitrião.",
-        "WaitingForHost": "Esperando o hospedeiro...",
+        "WaitingForHost": "Esperando o anfitrião...",
         "Yes": "Sim",
         "yourEntireScreen": "Toda sua tela",
         "screenSharingAudio": "Compartilhar áudio",

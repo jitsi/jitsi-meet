@@ -21,6 +21,7 @@ import {
     SET_DIALOUT_COUNTRY,
     SET_DIALOUT_NUMBER,
     SET_DIALOUT_STATUS,
+    SET_PREJOIN_DISPLAY_NAME_REQUIRED,
     SET_SKIP_PREJOIN,
     SET_JOIN_BY_PHONE_DIALOG_VISIBLITY,
     SET_PREJOIN_DEVICE_ERRORS,
@@ -198,14 +199,13 @@ export function initPrejoin(tracks: Object[], errors: Object) {
 }
 
 /**
- * Joins the conference.
+ * Action used to start the conference.
  *
  * @returns {Function}
  */
 export function joinConference() {
-    return function(dispatch: Function) {
-        dispatch(setPrejoinPageVisibility(false));
-        dispatch(startConference());
+    return {
+        type: PREJOIN_START_CONFERENCE
     };
 }
 
@@ -343,6 +343,17 @@ export function setDialOutCountry(value: Object) {
 }
 
 /**
+ * Action used to set the stance of the display name.
+ *
+ * @returns {Object}
+ */
+export function setPrejoinDisplayNameRequired() {
+    return {
+        type: SET_PREJOIN_DISPLAY_NAME_REQUIRED
+    };
+}
+
+/**
  * Action used to set the dial out number.
  *
  * @param {string} value - The dial out number.
@@ -404,16 +415,5 @@ export function setPrejoinPageVisibility(value: boolean) {
     return {
         type: SET_PREJOIN_PAGE_VISIBILITY,
         value
-    };
-}
-
-/**
- * Action used to mark the start of the conference.
- *
- * @returns {Object}
- */
-function startConference() {
-    return {
-        type: PREJOIN_START_CONFERENCE
     };
 }

@@ -4,6 +4,7 @@ import React, { Component } from 'react';
 
 import { Watermarks } from '../../base/react';
 import { connect } from '../../base/redux';
+import { InviteMore, Subject } from '../../conference';
 import { fetchCustomBrandingData } from '../../dynamic-branding';
 import { Captions } from '../../subtitles/';
 
@@ -25,6 +26,11 @@ type Props = {
      * Fetches the branding data.
      */
     _fetchCustomBrandingData: Function,
+
+    /**
+     * Prop that indicates whether the chat is open.
+     */
+    _isChatOpen: boolean,
 
     /**
      * Used to determine the value of the autoplay attribute of the underlying
@@ -57,12 +63,15 @@ class LargeVideo extends Component<Props> {
      */
     render() {
         const style = this._getCustomSyles();
+        const className = `videocontainer${this.props._isChatOpen ? ' shift-right' : ''}`;
 
         return (
             <div
-                className = 'videocontainer'
+                className = { className }
                 id = 'largeVideoContainer'
                 style = { style }>
+                <Subject />
+                <InviteMore />
                 <div id = 'sharedVideo'>
                     <div id = 'sharedVideoIFrame' />
                 </div>
@@ -133,10 +142,12 @@ class LargeVideo extends Component<Props> {
 function _mapStateToProps(state) {
     const testingConfig = state['features/base/config'].testing;
     const { backgroundColor, backgroundImageUrl } = state['features/dynamic-branding'];
+    const { isOpen: isChatOpen } = state['features/chat'];
 
     return {
         _customBackgroundColor: backgroundColor,
         _customBackgroundImageUrl: backgroundImageUrl,
+        _isChatOpen: isChatOpen,
         _noAutoPlayVideo: testingConfig?.noAutoPlayVideo
     };
 }

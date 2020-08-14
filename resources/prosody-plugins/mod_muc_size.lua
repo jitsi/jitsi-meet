@@ -137,7 +137,7 @@ function handle_get_room (event)
     local room_address
         = jid.join(room_name, muc_domain_prefix.."."..domain_name);
 
-    if subdomain ~= "" then
+    if subdomain and subdomain ~= "" then
         room_address = "["..subdomain.."]"..room_address;
     end
 

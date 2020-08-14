@@ -31,6 +31,7 @@ const commands = {
     displayName: 'display-name',
     e2eeKey: 'e2ee-key',
     email: 'email',
+    toggleLobby: 'toggle-lobby',
     hangup: 'video-hangup',
     muteEveryone: 'mute-everyone',
     password: 'password',
@@ -277,6 +278,7 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
         this._transport = new Transport({
             backend: new PostMessageTransportBackend({
                 postisOptions: {
+                    allowedOrigin: new URL(this._url).origin,
                     scope: `jitsi_meet_external_api_${id}`,
                     window: this._frame.contentWindow
                 }

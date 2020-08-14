@@ -284,11 +284,12 @@ export function maybeRedirectToWelcomePage(options: Object = {}) {
 
         // if close page is enabled redirect to it, without further action
         if (enableClosePage) {
-            const { isGuest } = getState()['features/base/jwt'];
+            const { isGuest, jwt } = getState()['features/base/jwt'];
 
-            // save whether current user is guest or not, before navigating
-            // to close page
+            // save whether current user is guest or not, and pass auth token,
+            // before navigating to close page
             window.sessionStorage.setItem('guest', isGuest);
+            window.sessionStorage.setItem('jwt', jwt);
 
             let path = 'close.html';
 

@@ -1,5 +1,6 @@
 // @flow
-import { getGravatarURL } from 'js-utils/avatar';
+
+import { getGravatarURL } from '@jitsi/js-utils/avatar';
 
 import { JitsiParticipantConnectionStatus } from '../lib-jitsi-meet';
 import { MEDIA_TYPE, shouldRenderVideoTrack } from '../media';
@@ -259,6 +260,16 @@ export function getYoutubeParticipant(stateful: Object | Function) {
 }
 
 /**
+ * Returns true if the participant is a moderator.
+ *
+ * @param {string} participant - Participant object.
+ * @returns {boolean}
+ */
+export function isParticipantModerator(participant: Object) {
+    return participant?.role === PARTICIPANT_ROLE.MODERATOR;
+}
+
+/**
  * Returns true if all of the meeting participants are moderators.
  *
  * @param {Object|Function} stateful -Object or function that can be resolved
@@ -268,13 +279,7 @@ export function getYoutubeParticipant(stateful: Object | Function) {
 export function isEveryoneModerator(stateful: Object | Function) {
     const participants = _getAllParticipants(stateful);
 
-    for (const participant of participants) {
-        if (participant.role !== PARTICIPANT_ROLE.MODERATOR) {
-            return false;
-        }
-    }
-
-    return true;
+    return participants.every(isParticipantModerator);
 }
 
 /**

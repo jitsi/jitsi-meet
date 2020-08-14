@@ -72,7 +72,7 @@ class DeepLinkingDesktopPage<P : Props> extends Component<P> {
      */
     render() {
         const { t } = this.props;
-        const { NATIVE_APP_NAME, SHOW_DEEP_LINKING_IMAGE } = interfaceConfig;
+        const { HIDE_DEEP_LINKING_LOGO, NATIVE_APP_NAME, SHOW_DEEP_LINKING_IMAGE } = interfaceConfig;
         const rightColumnStyle
             = SHOW_DEEP_LINKING_IMAGE ? null : { width: '100%' };
 
@@ -82,9 +82,13 @@ class DeepLinkingDesktopPage<P : Props> extends Component<P> {
             <AtlasKitThemeProvider mode = 'light'>
                 <div className = 'deep-linking-desktop'>
                     <div className = 'header'>
-                        <img
-                            className = 'logo'
-                            src = 'images/logo-deep-linking.png' />
+                        {
+                            HIDE_DEEP_LINKING_LOGO
+                                ? null
+                                : <img
+                                    className = 'logo'
+                                    src = 'images/logo-deep-linking.png' />
+                        }
                     </div>
                     <div className = 'content'>
                         {

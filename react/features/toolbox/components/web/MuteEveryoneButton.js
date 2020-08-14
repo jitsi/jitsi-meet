@@ -6,7 +6,7 @@ import { translate } from '../../../base/i18n';
 import { IconMuteEveryone } from '../../../base/icons';
 import { getLocalParticipant, PARTICIPANT_ROLE } from '../../../base/participants';
 import { connect } from '../../../base/redux';
-import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox';
+import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
 import { MuteEveryoneDialog } from '../../../remote-video-menu';
 
 type Props = AbstractButtonProps & {

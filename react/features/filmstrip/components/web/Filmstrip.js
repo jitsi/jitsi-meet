@@ -12,7 +12,7 @@ import {
 import { translate } from '../../../base/i18n';
 import { Icon, IconMenuDown, IconMenuUp } from '../../../base/icons';
 import { connect } from '../../../base/redux';
-import { dockToolbox } from '../../../toolbox';
+import { dockToolbox } from '../../../toolbox/actions.web';
 import { getCurrentLayout, LAYOUTS } from '../../../video-layout';
 import { setFilmstripHovered, setFilmstripVisible } from '../../actions';
 import { shouldRemoteVideosBeVisible } from '../../functions';
@@ -371,12 +371,14 @@ function _mapStateToProps(state) {
     const reduceHeight
         = !isFilmstripOnly && state['features/toolbox'].visible && interfaceConfig.TOOLBAR_BUTTONS.length;
     const remoteVideosVisible = shouldRemoteVideosBeVisible(state);
-    const className = `${remoteVideosVisible ? '' : 'hide-videos'} ${reduceHeight ? 'reduce-height' : ''}`.trim();
+    const { isOpen: shiftRight } = state['features/chat'];
+    const className = `${remoteVideosVisible ? '' : 'hide-videos'} ${
+        reduceHeight ? 'reduce-height' : ''
+    } ${shiftRight ? 'shift-right' : ''}`.trim();
     const videosClassName = `filmstrip__videos${
         isFilmstripOnly ? ' filmstrip__videos-filmstripOnly' : ''}${
         visible ? '' : ' hidden'}`;
     const { gridDimensions = {}, filmstripWidth } = state['features/filmstrip'].tileViewDimensions;
-
 
     return {
         _className: className,

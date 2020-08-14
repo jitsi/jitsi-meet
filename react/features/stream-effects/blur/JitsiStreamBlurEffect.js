@@ -43,9 +43,6 @@ export default class JitsiStreamBlurEffect {
         this._outputCanvasElement = document.createElement('canvas');
         this._outputCanvasElement.getContext('2d');
         this._inputVideoElement = document.createElement('video');
-
-        this._maskFrameTimerWorker = new Worker(timerWorkerScript, { name: 'Blur effect worker' });
-        this._maskFrameTimerWorker.onmessage = this._onMaskFrameTimer;
     }
 
     /**
@@ -104,6 +101,9 @@ export default class JitsiStreamBlurEffect {
      * @returns {MediaStream} - The stream with the applied effect.
      */
     startEffect(stream: MediaStream) {
+        this._maskFrameTimerWorker = new Worker(timerWorkerScript, { name: 'Blur effect worker' });
+        this._maskFrameTimerWorker.onmessage = this._onMaskFrameTimer;
+
         const firstVideoTrack = stream.getVideoTracks()[0];
         const { height, frameRate, width }
             = firstVideoTrack.getSettings ? firstVideoTrack.getSettings() : firstVideoTrack.getConstraints();
@@ -133,5 +133,7 @@ export default class JitsiStreamBlurEffect {
         this._maskFrameTimerWorker.postMessage({
             id: CLEAR_INTERVAL
         });
+
+        this._maskFrameTimerWorker.terminate();
     }
 }

@@ -35,6 +35,11 @@ type Props = {
     bridgeCount: number,
 
     /**
+     * Audio/video codecs in use for the connection.
+     */
+    codec: Object,
+
+    /**
      * A message describing the connection quality.
      */
     connectionSummary: string,
@@ -56,6 +61,12 @@ type Props = {
      * Whether or not the statistics are for local video.
      */
     isLocalVideo: boolean,
+
+    /**
+     * The send-side max enabled resolution (aka the highest layer that is not
+     * suspended on the send-side).
+     */
+    maxEnabledResolution: number,
 
     /**
      * Callback to invoke when the show additional stats link is clicked.
@@ -212,6 +223,45 @@ class ConnectionStatsTable extends Component<Props> {
             </tr>
         );
     }
+
+    /**
+     * Creates a a table row as a ReactElement for displaying codec, if present.
+     * This will typically be something like "Codecs (A/V): opus, vp8".
+     *
+     * @private
+     * @returns {ReactElement}
+     */
+    _renderCodecs() {
+        const { codec, t } = this.props;
+
+        if (!codec) {
+            return;
+        }
+
+        let codecString;
+
+        // Only report one codec, in case there are multiple for a user.
+        Object.keys(codec || {})
+            .forEach(ssrc => {
+                const { audio, video } = codec[ssrc];
+
+                codecString = `${audio}, ${video}`;
+            });
+
+        if (!codecString) {
+            codecString = 'N/A';
+        }
+
+        return (
+            <tr>
+                <td>
+                    <span>{ t('connectionindicator.codecs') }</span>
+                </td>
+                <td>{ codecString }</td>
+            </tr>
+        );
+    }
+
 
     /**
      * Creates a table row as a ReactElement for displaying a summary message
@@ -380,14 +430,20 @@ class ConnectionStatsTable extends Component<Props> {
      * @returns {ReactElement}
      */
     _renderResolution() {
-        const { resolution, t } = this.props;
-        const resolutionString = Object.keys(resolution || {})
+        const { resolution, maxEnabledResolution, t } = this.props;
+        let resolutionString = Object.keys(resolution || {})
             .map(ssrc => {
                 const { width, height } = resolution[ssrc];
 
                 return `${width}x${height}`;
             })
             .join(', ') || 'N/A';
+
+        if (maxEnabledResolution && maxEnabledResolution < 720) {
+            const maxEnabledResolutionTitle = t('connectionindicator.maxEnabledResolution');
+
+            resolutionString += ` (${maxEnabledResolutionTitle} ${maxEnabledResolution}p)`;
+        }
 
         return (
             <tr>
@@ -440,6 +496,7 @@ class ConnectionStatsTable extends Component<Props> {
                     { isRemoteVideo ? this._renderRegion() : null }
                     { this._renderResolution() }
                     { this._renderFrameRate() }
+                    { this._renderCodecs() }
                     { isRemoteVideo ? null : this._renderBridgeCount() }
                 </tbody>
             </table>

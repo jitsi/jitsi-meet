@@ -1,7 +1,7 @@
 /* global $, APP */
 
+import { jitsiLocalStorage } from '@jitsi/js-utils';
 import Logger from 'jitsi-meet-logger';
-import { jitsiLocalStorage } from 'js-utils';
 
 import {
     NOTIFICATION_TIMEOUT,

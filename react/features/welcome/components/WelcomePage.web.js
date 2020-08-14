@@ -3,7 +3,7 @@
 import React from 'react';
 
 import { isMobileBrowser } from '../../base/environment/utils';
-import { translate } from '../../base/i18n';
+import { translate, translateToHTML } from '../../base/i18n';
 import { Icon, IconWarning } from '../../base/icons';
 import { Watermarks } from '../../base/react';
 import { connect } from '../../base/redux';
@@ -158,8 +158,8 @@ class WelcomePage extends AbstractWelcomePage {
      * @returns {ReactElement|null}
      */
     render() {
-        const { t } = this.props;
-        const { APP_NAME } = interfaceConfig;
+        const { _moderatedRoomServiceUrl, t } = this.props;
+        const { APP_NAME, DEFAULT_WELCOME_PAGE_LOGO_URL } = interfaceConfig;
         const showAdditionalContent = this._shouldShowAdditionalContent();
         const showAdditionalToolbarContent = this._shouldShowAdditionalToolbarContent();
         const showResponsiveText = this._shouldShowResponsiveText();
@@ -170,7 +170,7 @@ class WelcomePage extends AbstractWelcomePage {
                     ? 'with-content' : 'without-content'}` }
                 id = 'welcome_page'>
                 <div className = 'welcome-watermark'>
-                    <Watermarks />
+                    <Watermarks defaultJitsiLogoURL = { DEFAULT_WELCOME_PAGE_LOGO_URL } />
                 </div>
                 <div className = 'header'>
                     <div className = 'welcome-page-settings'>
@@ -224,6 +224,16 @@ class WelcomePage extends AbstractWelcomePage {
                             }
                         </div>
                     </div>
+                    { _moderatedRoomServiceUrl && (
+                        <div id = 'moderated-meetings'>
+                            <p>
+                                {
+                                    translateToHTML(
+                                        t, 'welcomepage.moderatedMessage', { url: _moderatedRoomServiceUrl })
+                                }
+                            </p>
+                        </div>
+                    ) }
                     { this._renderTabs() }
                 </div>
                 { showAdditionalContent
