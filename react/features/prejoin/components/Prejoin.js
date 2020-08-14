@@ -3,7 +3,7 @@
 import InlineDialog from '@atlaskit/inline-dialog';
 import React, { Component } from 'react';
 
-import { isWalletNameSet } from '../../aeternity/utils';
+import { isWalletJWTSet } from '../../aeternity/utils';
 import { getRoomName } from '../../base/conference';
 import { translate } from '../../base/i18n';
 import { Icon, IconPhone, IconVolumeOff } from '../../base/icons';
@@ -37,11 +37,11 @@ import DeviceStatus from './preview/DeviceStatus';
 declare var interfaceConfig: Object;
 
 type Props = {
-    /**
-     * if webwallet address is set
-     */
 
-    isWalletNameSet: boolean,
+    /**
+     * if webwallet JWT was done
+     */
+    walletSynced: boolean,
 
     /**
      * local participant
@@ -62,6 +62,11 @@ type Props = {
      * Flag signaling if the 'skip prejoin' button is toggled or not.
      */
     buttonIsToggled: boolean,
+
+    /**
+     * Flag signaling the visibility of the skip prejoin toggle
+     */
+    showSkipPrejoin: boolean,
 
     /**
      * Flag signaling if the device status is visible or not.
@@ -139,9 +144,9 @@ type Props = {
     showDialog: boolean,
 
     /**
-     * Flag signaling the visibility of the skip prejoin toggle
-     */
-    showSkipPrejoin: boolean,
+     * local participant
+    */
+    localParticipant: Object,
 
     /**
      * Used for translation.
@@ -283,7 +288,7 @@ class Prejoin extends Component<Props, State> {
      */
     render() {
         const {
-            isWalletNameSet,
+            walletSynced,
             showWebLoginButton,
             localParticipant,
             isAnonymousUser,
@@ -303,8 +308,9 @@ class Prejoin extends Component<Props, State> {
         let isParticipantEditable = true;
         let displayName = name;
 
-        if (isWalletNameSet) {
+        if (walletSynced) {
             displayName = localParticipant.name;
+            isParticipantEditable = false;
         }
         isParticipantEditable = isParticipantEditable && isAnonymousUser;
 
@@ -364,7 +370,7 @@ class Prejoin extends Component<Props, State> {
                                         type = 'primary'>
                                         { t('prejoin.joinMeeting') }
                                     </ActionButton>
-                                    { (showWebLoginButton || !isWalletNameSet) && <ActionButton
+                                    { (showWebLoginButton || !walletSynced) && <ActionButton
                                       disabled = { false }
                                       onClick = { signDeepLink }
                                       type = 'secondary'>
@@ -440,7 +446,7 @@ function mapStateToProps(state, ownProps): Object {
 
     return {
         isAnonymousUser: isGuest(state),
-        isWalletNameSet: isWalletNameSet(state),
+        walletSynced: isWalletJWTSet(state),
         localParticipant: getLocalParticipant(state),
         showWebLoginButton: !state['features/aeternity'].hasWallet,
         buttonIsToggled: isPrejoinSkipped(state),

@@ -130,8 +130,8 @@ function _mapStateToProps(state, ownProps) {
     const participant = participantID ? getParticipantById(state, participantID) : getLocalParticipant(state);
 
     return {
-        _akAddress: participant.akAddress,
-        _local: participant.local,
+        _akAddress: participant?.akAddress,
+        _local: participant?.local,
         hasWallet: state['features/aeternity'].hasWallet,
         _currentLayout: getCurrentLayout(state),
         _showModeratorIndicator:

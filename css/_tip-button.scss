@@ -3,7 +3,7 @@
     border-radius: 0.5rem;
     max-width: 320px;
     padding: 1rem;
-    position: absolute;
+    position: fixed;
     z-index: 10;
     box-sizing: border-box;
 
@@ -77,47 +77,24 @@
     }
 }
 
-.tip-container {
-    &.tip-container__chat {
-        left: 20%;
-        top: 100%;
-    }
-    &.tip-container__aside {
-        top: -80px;
-        right: 0;
+#filmstripRemoteVideosContainer span:first-child {
+    .tip-container__vertical-filmstrip-view {
+        bottom: 15%;
     }
 }
 
-.modal {
-    position: fixed;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    z-index: 9000;
-    opacity: 1;
-    margin: 0;
-    padding: 0;
+.tip-container {
+    &.tip-container__chat,
+    &.tip-container__tile-view {
+        left: 20%;
+    }
 
-    .modal-dialog {
-        position: relative;
-        width: auto;
-        height: 100%;
+    &.tip-container__tile-view {
+        bottom: 10%;
+    }
 
-        .modal-content {
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-
-            .modal-body {
-                position: relative;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                height: 100%;
-            }
-        }
+    &.tip-container__vertical-filmstrip-view {
+        right: 10%;
     }
 }
 

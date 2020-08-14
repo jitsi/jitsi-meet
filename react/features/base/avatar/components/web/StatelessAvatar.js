@@ -2,15 +2,20 @@
 
 import React from 'react';
 
-import { isAccountOrChainName } from '../../../../aeternity/utils';
 import { Icon } from '../../../icons';
 import AbstractStatelessAvatar, { type Props as AbstractProps } from '../AbstractStatelessAvatar';
 
 type Props = AbstractProps & {
+
     /**
      * User's Full name
      */
     fullName?: string,
+
+    /**
+     * Is user has akAddress.
+     */
+    akAddress: ?string,
 
     /**
      * External class name passed through props.
@@ -49,8 +54,8 @@ export default class StatelessAvatar extends AbstractStatelessAvatar<Props> {
      * @inheritdoc
      */
     render() {
-        let { initials, url, fullName } = this.props;
-        const hasWallet = isAccountOrChainName(fullName);
+        const { initials, fullName, akAddress } = this.props;
+        let { url } = this.props;
 
         if (this._isIcon(url)) {
             return (
@@ -66,7 +71,7 @@ export default class StatelessAvatar extends AbstractStatelessAvatar<Props> {
             );
         }
 
-        if (!url && hasWallet) {
+        if (!url && akAddress) {
             url = `https://avatars.z52da5wt.xyz/${fullName}`;
         }
 

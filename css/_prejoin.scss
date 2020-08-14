@@ -151,6 +151,10 @@
             outline: none;
             text-align: center;
             width: 90%;
+            
+            &.full-width {
+                width: 100%;
+            }
 
             &::-webkit-input-placeholder {
                 @include name-placeholder;
