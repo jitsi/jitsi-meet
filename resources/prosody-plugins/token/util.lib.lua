@@ -127,14 +127,34 @@ function Util:get_public_key(keyId)
         -- If the key is not found in the cache.
         module:log("debug", "Cache miss for key: "..keyId);
         local code;
+        local timeout_occurred;
         local wait, done = async.waiter();
         local function cb(content_, code_, response_, request_)
-            content, code = content_, code_;
-            if code == 200 or code == 204 then
-                cache:set(keyId, content);
+            if timeout_occurred == nil then
+                content, code = content_, code_;
+                if code == 200 or code == 204 then
+                    cache:set(keyId, content);
+                end
+                done();
+            else
+                module:log("warn", "public key reply delivered after timeout from: %s",keyurl);
             end
-            done();
         end
+        -- TODO: Is the done() call racey? Can we cancel this if the request
+        --       succeedes?
+        local function cancel()
+            -- TODO: This check is racey. Not likely to be a problem, but we should
+            --       still stick a mutex on content / code at some point.
+            if code == nil then
+                timeout_occurred = true;
+                module:log("warn", "Timeout %s seconds fetching public key from: %s",http_timeout,keyurl);
+                if http.destroy_request then
+                    http.destroy_request(request);
+                end
+                done();
+            end
+        end
+
         local keyurl = path.join(self.asapKeyServer, hex.to(sha256(keyId))..'.pem');
         module:log("debug", "Fetching public key from: "..keyurl);
 
@@ -146,19 +166,6 @@ function Util:get_public_key(keyId)
             method = "GET"
         }, cb);
 
-        -- TODO: Is the done() call racey? Can we cancel this if the request
-        --       succeedes?
-        local function cancel()
-            -- TODO: This check is racey. Not likely to be a problem, but we should
-            --       still stick a mutex on content / code at some point.
-            if code == nil then
-                module:log("warn", "Timeout %s seconds fetching public key from: %s",http_timeout,keyurl);
-                if http.destroy_request then
-                    http.destroy_request(request);
-                end
-                done();
-            end
-        end
         timer.add_task(http_timeout, cancel);
         wait();
 
