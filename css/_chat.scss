@@ -3,7 +3,7 @@
     color: #FFF;
     display: flex;
     flex-direction: column;
-    height: 100%;
+    height: calc(100% - #{$newToolbarSizeWithPadding});
     left: -$sidebarWidth;
     overflow: hidden;
     position: absolute;

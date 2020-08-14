@@ -243,7 +243,6 @@ class Conference extends AbstractConference<Props, *> {
                 onMouseMove = { this._onShowToolbar }>
 
                 <Notice />
-                <Subject />
                 <InviteMore showDeeplink = { this.state.showDeeplink } />
                 <div id = 'videospace'>
                     <LargeVideo />
