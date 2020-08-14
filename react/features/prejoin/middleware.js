@@ -1,5 +1,6 @@
 // @flow
 
+import { updateConfig } from '../base/config';
 import { SET_AUDIO_MUTED, SET_VIDEO_MUTED } from '../base/media';
 import { MiddlewareRegistry } from '../base/redux';
 import { updateSettings } from '../base/settings';
@@ -24,6 +25,9 @@ MiddlewareRegistry.register(store => next => async action => {
         const state = getState();
         const { userSelectedSkipPrejoin } = state['features/prejoin'];
         const localVideoTrack = getLocalVideoTrack(state['features/base/tracks']);
+        const { options } = action;
+
+        options && store.dispatch(updateConfig(options));
 
         userSelectedSkipPrejoin && dispatch(updateSettings({
             userSelectedSkipPrejoin

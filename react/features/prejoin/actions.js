@@ -201,11 +201,13 @@ export function initPrejoin(tracks: Object[], errors: Object) {
 /**
  * Action used to start the conference.
  *
+ * @param {Object} options - The config options that override the default ones (if any).
  * @returns {Function}
  */
-export function joinConference() {
+export function joinConference(options?: Object) {
     return {
-        type: PREJOIN_START_CONFERENCE
+        type: PREJOIN_START_CONFERENCE,
+        options
     };
 }
 
@@ -222,7 +224,10 @@ export function joinConferenceWithoutAudio() {
         if (audioTrack) {
             await dispatch(replaceLocalTrack(audioTrack, null));
         }
-        dispatch(joinConference());
+
+        dispatch(joinConference({
+            startSilent: true
+        }));
     };
 }
 
