@@ -132,7 +132,7 @@ function filter_stanza(stanza)
 
             -- check is an owner, only owners can receive the presence
             local room = main_muc_service.get_room_from_jid(jid_bare(node .. '@' .. main_muc_component_config));
-            if room.get_affiliation(room, stanza.attr.to) == 'owner' then
+            if not room or room.get_affiliation(room, stanza.attr.to) == 'owner' then
                 return stanza;
             end
 
@@ -159,6 +159,11 @@ function attach_lobby_room(room)
     local lobby_room_jid = node .. '@' .. lobby_muc_component_config;
     if not lobby_muc_service.get_room_from_jid(lobby_room_jid) then
         local new_room = lobby_muc_service.create_room(lobby_room_jid);
+        -- set persistent the lobby room to avoid it to be destroyed
+        -- there are cases like when selecting new moderator after the current one leaves
+        -- which can leave the room with no occupants and it will be destroyed and we want to
+        -- avoid lobby destroy while it is enabled
+        new_room:set_persistent(true);
         module:log("debug","Lobby room jid = %s created",lobby_room_jid);
         new_room.main_room = room;
         room._data.lobbyroom = new_room;
@@ -166,6 +171,18 @@ function attach_lobby_room(room)
         return true
     end
     return false
+end
+
+-- destroys lobby room for the supplied main room
+function destroy_lobby_room(room, newjid, message)
+    if not message then
+        message = 'Lobby room closed.';
+    end
+    if room and room._data.lobbyroom then
+        room._data.lobbyroom:set_persistent(false);
+        room._data.lobbyroom:destroy(newjid, message);
+        room._data.lobbyroom = nil;
+    end
 end
 
 -- process a host module directly if loaded or hooks to wait for its load
@@ -280,16 +297,14 @@ process_host_module(main_muc_component_config, function(host_module, host)
                 notify_lobby_enabled(room, actor, true);
             end
         elseif room._data.lobbyroom then
-            room._data.lobbyroom:destroy(room.jid, 'Lobby room closed.');
-            room._data.lobbyroom = nil;
+            destroy_lobby_room(room, room.jid);
             notify_lobby_enabled(room, actor, false);
         end
     end);
     host_module:hook('muc-room-destroyed',function(event)
         local room = event.room;
         if room._data.lobbyroom then
-            room._data.lobbyroom:destroy(nil, 'Lobby room closed.');
-            room._data.lobbyroom = nil;
+            destroy_lobby_room(room, nil);
         end
     end);
     host_module:hook('muc-disco#info', function (event)
@@ -399,7 +414,12 @@ function handle_create_lobby(event)
     attach_lobby_room(room)
 end
 
+function handle_destroy_lobby(event)
+    destroy_lobby_room(event.room, event.newjid, event.message);
+end
+
 module:hook_global('bosh-session', update_session);
 module:hook_global('websocket-session', update_session);
 module:hook_global('config-reloaded', load_config);
 module:hook_global('create-lobby-room', handle_create_lobby);
+module:hook_global('destroy-lobby-room', handle_destroy_lobby);
