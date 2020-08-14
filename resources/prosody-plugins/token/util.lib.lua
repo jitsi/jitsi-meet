@@ -152,7 +152,10 @@ function Util:get_public_key(keyId)
             -- TODO: This check is racey. Not likely to be a problem, but we should
             --       still stick a mutex on content / code at some point.
             if code == nil then
-                http.destroy_request(request);
+                module:log("warn", "Timeout %s seconds fetching public key from: %s",http_timeout,keyurl);
+                if http.destroy_request then
+                    http.destroy_request(request);
+                end
                 done();
             end
         end
@@ -175,6 +178,7 @@ end
 -- @param 'iss' claim from the token to verify
 -- @return nil and error string or true for accepted claim
 function Util:verify_issuer(issClaim)
+    module:log("debug","verify_issuer claim: %s against accepted: %s",issClaim, self.acceptedIssuers);
     for i, iss in ipairs(self.acceptedIssuers) do
         if issClaim == iss then
             --claim matches an accepted issuer so return success
@@ -189,6 +193,7 @@ end
 -- @param 'aud' claim from the token to verify
 -- @return nil and error string or true for accepted claim
 function Util:verify_audience(audClaim)
+    module:log("debug","verify_audience claim: %s against accepted: %s",audClaim, self.acceptedAudiences);
     for i, aud in ipairs(self.acceptedAudiences) do
         if aud == '*' then
             --* indicates to accept any audience in the claims so return success
