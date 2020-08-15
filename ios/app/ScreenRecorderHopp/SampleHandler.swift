@@ -78,12 +78,12 @@ class SampleHandler: RPBroadcastSampleHandler {
   override func processSampleBuffer(_ sampleBuffer: CMSampleBuffer, with sampleBufferType: RPSampleBufferType) {
     switch sampleBufferType {
     case RPSampleBufferType.video:
-      if dropCounter < 5 {
-        dropCounter+=1;
+      if dropCount < 5 {
+        dropCount+=1;
         return
       }
       
-      dropCounter = 0;
+      dropCount = 0;
       
       print("processing video frame")
       // Handle video sample buffer
@@ -95,12 +95,24 @@ class SampleHandler: RPBroadcastSampleHandler {
             CVPixelBufferLockBaseAddress(imageBuffer!, CVPixelBufferLockFlags.readOnly)
             let width = CVPixelBufferGetWidth(imageBuffer!)
             let height = CVPixelBufferGetHeight(imageBuffer!)
-            let cim = CIImage.init(cvPixelBuffer: imageBuffer!)
-            let ccim = cim.transformed(by: CGAffineTransform(scaleX: 0.5, y: 0.5))
-            let opts:[CIImageRepresentationOption:Float] = [kCGImageDestinationLossyCompressionQuality as CIImageRepresentationOption: 0.25]
-            let jpeg = CIContext.init(options: nil).jpegRepresentation(of: ccim, colorSpace: ccim.colorSpace!, options: opts)
+            if let orientationAttachment = CMGetAttachment(sampleBuffer, key: RPVideoSampleOrientationKey as CFString, attachmentModeOut: nil) as? NSNumber {
+              let orientation = CGImagePropertyOrientation(rawValue: orientationAttachment.uint32Value)
+              let cim = CIImage.init(cvPixelBuffer: imageBuffer!)
+              let ccim = cim.transformed(by: CGAffineTransform(scaleX: 0.5, y: 0.5))
+              let opts:[CIImageRepresentationOption:Float] = [kCGImageDestinationLossyCompressionQuality as CIImageRepresentationOption: 0.25]
+              let jpeg = CIContext.init(options: nil).jpegRepresentation(of: ccim, colorSpace: ccim.colorSpace!, options: opts)
+              var byteArray: [UInt8] = [UInt8](jpeg!)
+              print(byteArray.count)
+              byteArray.append(orientationAttachment.uint8Value)
+              print(byteArray.count)
+              byteArray = byteArray + withUnsafeBytes(of: (height / 2).bigEndian, Array.init)
+              print(byteArray.count)
+              byteArray = byteArray + withUnsafeBytes(of: (width / 2).bigEndian, Array.init)
+              print(byteArray.count)
+              let data = Data(bytes: byteArray, count: byteArray.count)
+              try self.connSocket.write(from: data)
+            }
             
-            try self.connSocket.write(from: jpeg!)
             
             //                  var rawImageData = Data("\(1920)_\(889)_\(b64IamgeData!)".utf8)
             //                    print("size \(rawImageData.count)")

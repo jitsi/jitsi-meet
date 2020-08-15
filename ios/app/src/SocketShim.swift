@@ -96,6 +96,7 @@ import CoreImage
                 print("[SocketShim] exiting receiving frames")
                 continue
               }
+              continue
             }
             if SocketShim._closeSocket {
               SocketShim._closeSocket = false
@@ -109,19 +110,21 @@ import CoreImage
               continue
             }
             
-            let cim = CIImage.init(data: buffer)
+            let rawBytes = [UInt8](buffer)
+            let width : Int = Int(bigEndian: Data(bytes: rawBytes[firstContact - 8...firstContact - 1]).withUnsafeBytes {$0.pointee})
+            var height : Int = Int(bigEndian: Data(bytes: rawBytes[firstContact - 16...firstContact - 9]).withUnsafeBytes {$0.pointee})
+            var rotation = rawBytes[firstContact - 17]
+            let bufferBytes = rawBytes[0...firstContact - 18]
+            let bufferData = Data(bufferBytes)
+            let cim = CIImage.init(data: bufferData)
             if cim != nil {
-              let uim = UIImage.init(ciImage: cim!)
-              let height = uim.size.height * uim.scale;
-              let width = uim.size.width * uim.scale;
-              
               var pixelBuffer: CVPixelBuffer?
-              _ = CVPixelBufferCreate(nil, Int(width!)!, Int(height!)!, kCVPixelFormatType_32BGRA, nil, &pixelBuffer)
+              _ = CVPixelBufferCreate(nil, Int(width), Int(height), kCVPixelFormatType_32BGRA, nil, &pixelBuffer)
               if SocketShim.ciContext == nil || pixelBuffer == nil || cim == nil {
                 continue
               }
               SocketShim.ciContext!.render(cim!, to: pixelBuffer!)
-              SocketShim.pushPixelBuffer(pixelBuffer: pixelBuffer!, rawData: buffer)
+              SocketShim.pushPixelBuffer(pixelBuffer: pixelBuffer!, rotation:rotation)
             }
             
           } catch {
@@ -147,12 +150,25 @@ import CoreImage
     return frameQueue.isEmpty;
   }
   
-  @objc static func pushPixelBuffer(pixelBuffer: CVPixelBuffer, rawData: Data) {
+  @objc static func pushPixelBuffer(pixelBuffer: CVPixelBuffer, rotation: UInt8) {
     var videoFrame:RTCVideoFrame?;
     let timestamp = NSDate().timeIntervalSince1970 * 1000000000 // Need timestamp in nano secs - Ns
     let rtcPixelBuffer = RTCCVPixelBuffer.init(pixelBuffer:pixelBuffer)
     
-    videoFrame = RTCVideoFrame(buffer: rtcPixelBuffer, rotation: RTCVideoRotation._0, timeStampNs: Int64(timestamp))
+    var rotationDegree:RTCVideoRotation;
+
+    switch rotation{
+      case 3:
+          rotationDegree = RTCVideoRotation._180
+      case 8:
+          rotationDegree = RTCVideoRotation._90
+      case 6:
+        rotationDegree = RTCVideoRotation._270
+      default:
+          rotationDegree = RTCVideoRotation._0
+    }
+    print(rotationDegree)
+    videoFrame = RTCVideoFrame(buffer: rtcPixelBuffer, rotation: rotationDegree, timeStampNs: Int64(timestamp))
     //    self.frameQueue.enqueue(buffer.base64EncodedString())
     //      print(" pushing video frame - \(videoFrame)")
     sampleFrame = videoFrame
