@@ -17,6 +17,7 @@
 package org.jitsi.meet.sdk;
 
 import android.content.Context;
+import android.media.AudioManager;
 import android.os.Build;
 
 import com.facebook.react.bridge.Arguments;
@@ -85,6 +86,12 @@ class AudioModeModule extends ReactContextBaseJavaModule {
         return supportsConnectionService && useConnectionService_;
     }
 
+    /**
+     * {@link AudioManager} instance used to interact with the Android audio
+     * subsystem.
+     */
+    private AudioManager audioManager;
+
     private AudioDeviceHandlerInterface audioDeviceHandler;
 
     /**
@@ -136,6 +143,8 @@ class AudioModeModule extends ReactContextBaseJavaModule {
      */
     public AudioModeModule(ReactApplicationContext reactContext) {
         super(reactContext);
+
+        audioManager = (AudioManager)reactContext.getSystemService(Context.AUDIO_SERVICE);
     }
 
     /**
@@ -198,7 +207,12 @@ class AudioModeModule extends ReactContextBaseJavaModule {
      */
     @Override
     public void initialize() {
-        setAudioDeviceHandler();
+        runInAudioThread(new Runnable() {
+            @Override
+            public void run() {
+                setAudioDeviceHandler();
+            }
+        });
     }
 
     private void setAudioDeviceHandler() {
@@ -207,14 +221,14 @@ class AudioModeModule extends ReactContextBaseJavaModule {
         }
 
         if (useConnectionService()) {
-            audioDeviceHandler = new AudioDeviceHandlerConnectionService();
+            audioDeviceHandler = new AudioDeviceHandlerConnectionService(audioManager);
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            audioDeviceHandler = new AudioDeviceHandlerGeneric();
+            audioDeviceHandler = new AudioDeviceHandlerGeneric(audioManager);
         } else {
-            audioDeviceHandler = new AudioDeviceHandlerLegacy();
+            audioDeviceHandler = new AudioDeviceHandlerLegacy(audioManager);
         }
 
-        audioDeviceHandler.start(getReactApplicationContext(), this);
+        audioDeviceHandler.start(this);
     }
 
     /**
@@ -292,9 +306,14 @@ class AudioModeModule extends ReactContextBaseJavaModule {
      * @param use Boolean indicator of where it should be used or not.
      */
     @ReactMethod
-    public void setUseConnectionService(boolean use) {
-        useConnectionService_ = use;
-        setAudioDeviceHandler();
+    public void setUseConnectionService(final boolean use) {
+        runInAudioThread(new Runnable() {
+            @Override
+            public void run() {
+                useConnectionService_ = use;
+                setAudioDeviceHandler();
+            }
+        });
     }
 
     /**
@@ -409,15 +428,23 @@ class AudioModeModule extends ReactContextBaseJavaModule {
     }
 
     /**
+     * Needed on the legacy handler...
+     *
+     * @return Context for the application.
+     */
+    Context getContext() {
+        return getReactApplicationContext();
+    }
+
+    /**
      * Interface for the modules implementing the actual audio device management.
      */
     interface AudioDeviceHandlerInterface {
         /**
          * Start detecting audio device changes.
-         * @param context Android {@link Context} where detection should take place.
          * @param audioModeModule Reference to the main {@link AudioModeModule}.
          */
-        void start(Context context, AudioModeModule audioModeModule);
+        void start(AudioModeModule audioModeModule);
 
         /**
          * Stop audio device detection.

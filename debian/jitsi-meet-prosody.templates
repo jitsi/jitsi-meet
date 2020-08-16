@@ -28,3 +28,8 @@ Template: jicofo/jicofosecret
 Type: password
 _Description: Jicofo Component secret:
  The secret used to connect to xmpp server as component
+
+Template: jitsi-meet-prosody/turn-secret
+Type: string
+_Description: The turn server secret
+ The secret used to connect to turnserver server.

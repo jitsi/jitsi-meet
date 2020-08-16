@@ -6,11 +6,10 @@ import type { Dispatch } from 'redux';
 
 import { createToolbarEvent, sendAnalytics } from '../../analytics';
 import { setAudioOnly } from '../../base/audio-only';
-import { VIDEO_QUALITY_LEVELS, setPreferredReceiverVideoQuality } from '../../base/conference';
+import { VIDEO_QUALITY_LEVELS, setPreferredVideoQuality } from '../../base/conference';
 import { translate } from '../../base/i18n';
 import JitsiMeetJS from '../../base/lib-jitsi-meet';
 import { connect } from '../../base/redux';
-
 import logger from '../logger';
 
 const {
@@ -51,10 +50,10 @@ type Props = {
     _p2p: Boolean,
 
     /**
-     * The currently configured maximum quality resolution to be received
-     * from remote participants.
+     * The currently configured maximum quality resolution to be sent and
+     * received from the remote participants.
      */
-    _receiverVideoQuality: Number,
+    _sendrecvVideoQuality: Number,
 
     /**
      * Whether or not displaying video is supported in the current
@@ -139,7 +138,7 @@ class VideoQualitySlider extends Component<Props> {
      * @returns {ReactElement}
      */
     render() {
-        const { _audioOnly, _p2p, _videoSupported, t } = this.props;
+        const { _videoSupported, t } = this.props;
         const activeSliderOption = this._mapCurrentQualityToSliderValue();
 
         let classNames = 'video-quality-dialog';
@@ -148,8 +147,6 @@ class VideoQualitySlider extends Component<Props> {
         if (!_videoSupported) {
             classNames += ' video-not-supported';
             warning = this._renderAudioOnlyLockedMessage();
-        } else if (_p2p && !_audioOnly) {
-            warning = this._renderP2PMessage();
         }
 
         return (
@@ -201,24 +198,6 @@ class VideoQualitySlider extends Component<Props> {
             <InlineMessage
                 title = { t('videoStatus.onlyAudioAvailable') }>
                 { t('videoStatus.onlyAudioSupported') }
-            </InlineMessage>
-        );
-    }
-
-    /**
-     * Creates React Elements for notifying that peer to peer is enabled.
-     *
-     * @private
-     * @returns {ReactElement}
-     */
-    _renderP2PMessage() {
-        const { t } = this.props;
-
-        return (
-            <InlineMessage
-                secondaryText = { t('videoStatus.recHighDefinitionOnly') }
-                title = { t('videoStatus.p2pEnabled') }>
-                { t('videoStatus.p2pVideoQualityDescription') }
             </InlineMessage>
         );
     }
@@ -326,7 +305,7 @@ class VideoQualitySlider extends Component<Props> {
      * @returns {void}
      */
     _mapCurrentQualityToSliderValue() {
-        const { _audioOnly, _receiverVideoQuality } = this.props;
+        const { _audioOnly, _sendrecvVideoQuality } = this.props;
         const { _sliderOptions } = this;
 
         if (_audioOnly) {
@@ -337,7 +316,7 @@ class VideoQualitySlider extends Component<Props> {
         }
 
         const matchingOption = _sliderOptions.find(
-            ({ videoQuality }) => videoQuality === _receiverVideoQuality);
+            ({ videoQuality }) => videoQuality === _sendrecvVideoQuality);
 
         return _sliderOptions.indexOf(matchingOption);
     }
@@ -352,7 +331,7 @@ class VideoQualitySlider extends Component<Props> {
      * @returns {void}
      */
     _onSliderChange(event) {
-        const { _audioOnly, _receiverVideoQuality } = this.props;
+        const { _audioOnly, _sendrecvVideoQuality } = this.props;
         const {
             audioOnly,
             onSelect,
@@ -362,7 +341,7 @@ class VideoQualitySlider extends Component<Props> {
         // Take no action if the newly chosen option does not change audio only
         // or video quality state.
         if ((_audioOnly && audioOnly)
-            || (!_audioOnly && videoQuality === _receiverVideoQuality)) {
+            || (!_audioOnly && videoQuality === _sendrecvVideoQuality)) {
             return;
         }
 
@@ -379,7 +358,7 @@ class VideoQualitySlider extends Component<Props> {
      * @returns {void}
      */
     _setPreferredVideoQuality(qualityLevel) {
-        this.props.dispatch(setPreferredReceiverVideoQuality(qualityLevel));
+        this.props.dispatch(setPreferredVideoQuality(qualityLevel));
 
         if (this.props._audioOnly) {
             this.props.dispatch(setAudioOnly(false));
@@ -396,17 +375,17 @@ class VideoQualitySlider extends Component<Props> {
  * @returns {{
  *     _audioOnly: boolean,
  *     _p2p: boolean,
- *     _receiverVideoQuality: boolean
+ *     _sendrecvVideoQuality: number
  * }}
  */
 function _mapStateToProps(state) {
     const { enabled: audioOnly } = state['features/base/audio-only'];
-    const { p2p, preferredReceiverVideoQuality } = state['features/base/conference'];
+    const { p2p, preferredVideoQuality } = state['features/base/conference'];
 
     return {
         _audioOnly: audioOnly,
         _p2p: p2p,
-        _receiverVideoQuality: preferredReceiverVideoQuality,
+        _sendrecvVideoQuality: preferredVideoQuality,
         _videoSupported: JitsiMeetJS.mediaDevices.supportsVideo()
     };
 }

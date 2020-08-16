@@ -1,0 +1,3 @@
+doc/debian/jitsi-meet-turn/turnserver.conf          /usr/share/jitsi-meet-turnserver/
+doc/debian/jitsi-meet/jitsi-meet.conf               /usr/share/jitsi-meet-turnserver/
+doc/debian/jitsi-meet-turn/coturn-certbot-deploy.sh /usr/share/jitsi-meet-turnserver/

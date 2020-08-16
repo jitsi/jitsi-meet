@@ -53,6 +53,16 @@ export const CONFERENCE_LEFT = 'CONFERENCE_LEFT';
 export const CONFERENCE_SUBJECT_CHANGED = 'CONFERENCE_SUBJECT_CHANGED';
 
 /**
+* The type of (redux) action, which indicates conference UTC timestamp changes.
+*
+* {
+*      type: CONFERENCE_TIMESTAMP_CHANGED
+*      timestamp: number
+* }
+*/
+export const CONFERENCE_TIMESTAMP_CHANGED = 'CONFERENCE_TIMESTAMP_CHANGED';
+
+/**
  * The type of (redux) action which signals that a specific conference will be
  * joined.
  *
@@ -202,15 +212,14 @@ export const SET_PENDING_SUBJECT_CHANGE = 'SET_PENDING_SUBJECT_CHANGE';
 
 /**
  * The type of (redux) action which sets the preferred maximum video height that
- * should be received from remote participants.
+ * should be sent to and received from remote participants.
  *
  * {
- *     type: SET_PREFERRED_RECEIVER_VIDEO_QUALITY,
- *     preferredReceiverVideoQuality: number
+ *     type: SET_PREFERRED_VIDEO_QUALITY,
+ *     preferredVideoQuality: number
  * }
  */
-export const SET_PREFERRED_RECEIVER_VIDEO_QUALITY
-    = 'SET_PREFERRED_RECEIVER_VIDEO_QUALITY';
+export const SET_PREFERRED_VIDEO_QUALITY = 'SET_PREFERRED_VIDEO_QUALITY';
 
 /**
  * The type of (redux) action which sets the name of the room of the

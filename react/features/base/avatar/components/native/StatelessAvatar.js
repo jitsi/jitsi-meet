@@ -5,20 +5,24 @@ import { Image, Text, View } from 'react-native';
 
 import { Icon } from '../../../icons';
 import { type StyleType } from '../../../styles';
-
 import AbstractStatelessAvatar, { type Props as AbstractProps } from '../AbstractStatelessAvatar';
 
 import styles from './styles';
 
+const DEFAULT_AVATAR = require('../../../../../../images/avatar.png');
+
 type Props = AbstractProps & {
+
+    /**
+     * One of the expected status strings (e.g. 'available') to render a badge on the avatar, if necessary.
+     */
+    status?: ?string,
 
     /**
      * External style passed to the componant.
      */
     style?: StyleType
 };
-
-const DEFAULT_AVATAR = require('../../../../../../images/avatar.png');
 
 /**
  * Implements a stateless avatar component that renders an avatar purely from what gets passed through
@@ -46,17 +50,39 @@ export default class StatelessAvatar extends AbstractStatelessAvatar<Props> {
         }
 
         return (
-            <View
-                style = { [
-                    styles.avatarContainer(size),
-                    style
-                ] }>
-                { avatar }
+            <View>
+                <View
+                    style = { [
+                        styles.avatarContainer(size),
+                        style
+                    ] }>
+                    { avatar }
+                </View>
+                { this._renderAvatarStatus() }
             </View>
         );
     }
 
     _isIcon: (?string | ?Object) => boolean
+
+    /**
+     * Renders a badge representing the avatar status.
+     *
+     * @returns {React$Elementaa}
+     */
+    _renderAvatarStatus() {
+        const { size, status } = this.props;
+
+        if (!status) {
+            return null;
+        }
+
+        return (
+            <View style = { styles.badgeContainer }>
+                <View style = { styles.badge(size, status) } />
+            </View>
+        );
+    }
 
     /**
      * Renders the default avatar.

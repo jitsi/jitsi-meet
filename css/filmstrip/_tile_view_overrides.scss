@@ -22,7 +22,6 @@
         display: none;
     }
 
-    #localConnectionMessage,
     #remoteConnectionMessage,
     .watermark {
         z-index: $filmstripVideosZ + 1;
@@ -40,9 +39,6 @@
     #remoteConnectionMessage,
     #remotePresenceMessage {
         display: none !important;
-    }
-    #largeVideoContainer {
-        background-color: $defaultBackground !important;
     }
 
     /**

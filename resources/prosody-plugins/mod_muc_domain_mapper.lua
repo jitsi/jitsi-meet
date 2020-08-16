@@ -1,8 +1,6 @@
 -- Maps MUC JIDs like room1@muc.foo.example.com to JIDs like [foo]room1@muc.example.com
 -- Must be loaded on the client host in Prosody
 
-module:set_global();
-
 -- It is recommended to set muc_mapper_domain_base to the main domain being served (example.com)
 
 local jid = require "util.jid";
@@ -13,7 +11,7 @@ local muc_domain_prefix = module:get_option_string("muc_mapper_domain_prefix", "
 
 local muc_domain_base = module:get_option_string("muc_mapper_domain_base");
 if not muc_domain_base then
-    module:log("warn", "No 'muc_domain_base' option set, disabling muc_mapper plugin inactive");
+    module:log("warn", "No 'muc_mapper_domain_base' option set, disabling muc_mapper plugin inactive");
     return
 end
 
@@ -116,14 +114,14 @@ end
 function module.load()
     if module.reloading then
         module:log("debug", "Reloading MUC mapper!");
-    else        
+    else
         module:log("debug", "First load of MUC mapper!");
     end
     filters.add_filter_hook(filter_session);
 end
 
 function module.unload()
-    filters.remove_filter_hook(filter_session); 
+    filters.remove_filter_hook(filter_session);
 end
 
 
@@ -150,10 +148,14 @@ local function hook_all_stanzas(handler, host_module, event_prefix)
     end
 end
 
-
-function module.add_host(host_module)
-    module:log("info",
-               "Loading mod_muc_domain_mapper for host %s!", host_module.host);
+function add_host(host)
+    module:log("info", "Loading mod_muc_domain_mapper for host %s!", host);
+    local host_module = module:context(host);
     hook_all_stanzas(incoming_stanza_rewriter, host_module);
     hook_all_stanzas(outgoing_stanza_rewriter, host_module, "pre-");
+end
+
+prosody.events.add_handler("host-activated", add_host);
+for host in pairs(prosody.hosts) do
+    add_host(host);
 end

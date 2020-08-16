@@ -17,7 +17,7 @@ export type AbstractCaptionsProps = {
      * Mapped by id just to have the keys for convenience during the rendering
      * process.
      */
-    _transcripts: Map<string, string>
+    _transcripts: ?Map<string, string>
 };
 
 /**
@@ -36,7 +36,7 @@ export class AbstractCaptions<P: AbstractCaptionsProps>
     render() {
         const { _requestingSubtitles, _transcripts } = this.props;
 
-        if (!_requestingSubtitles || !_transcripts.size) {
+        if (!_requestingSubtitles || !_transcripts || !_transcripts.size) {
             return null;
         }
 
@@ -120,9 +120,12 @@ function _constructTranscripts(state: Object): Map<string, string> {
  */
 export function _abstractMapStateToProps(state: Object) {
     const { _requestingSubtitles } = state['features/subtitles'];
+    const transcripts = _constructTranscripts(state);
 
     return {
         _requestingSubtitles,
-        _transcripts: _constructTranscripts(state)
+
+        // avoid rerenders by setting to props new empty Map instances.
+        _transcripts: transcripts.size === 0 ? undefined : transcripts
     };
 }

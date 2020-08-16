@@ -44,9 +44,6 @@ export default class JitsiStreamPresenterEffect {
         this._canvas = document.createElement('canvas');
         this._ctx = this._canvas.getContext('2d');
 
-        if (document.body !== null) {
-            document.body.appendChild(this._canvas);
-        }
         this._desktopElement = document.createElement('video');
         this._videoElement = document.createElement('video');
         videoDiv.appendChild(this._videoElement);
@@ -67,7 +64,7 @@ export default class JitsiStreamPresenterEffect {
 
         // Bind event handler so it is only bound once for every instance.
         this._onVideoFrameTimer = this._onVideoFrameTimer.bind(this);
-        this._videoFrameTimerWorker = new Worker(timerWorkerScript);
+        this._videoFrameTimerWorker = new Worker(timerWorkerScript, { name: 'Presenter effect worker' });
         this._videoFrameTimerWorker.onmessage = this._onVideoFrameTimer;
     }
 

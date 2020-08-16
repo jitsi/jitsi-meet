@@ -6,11 +6,11 @@ import type { Dispatch } from 'redux';
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../../base/app';
 import { MiddlewareRegistry } from '../../base/redux';
 
+import { _SET_APP_STATE_LISTENER } from './actionTypes';
 import {
     _setAppStateListener as _setAppStateListenerA,
     appStateChanged
 } from './actions';
-import { _SET_APP_STATE_LISTENER } from './actionTypes';
 
 /**
  * Middleware that captures App lifetime actions and subscribes to application

@@ -1,1 +1,11 @@
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24" height="24" viewBox="0 0 24 24"><defs><path id="a" d="M0 0h24v24H0V0z"/></defs><clipPath id="b"><use xlink:href="#a" overflow="visible"/></clipPath><path clip-path="url(#b)" d="M20 9H4v2h16V9zM4 15h16v-2H4v2z"/></svg>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   width="24"
+   height="24"
+   viewBox="0 0 24 24">
+   <path
+     d="m 5.6875,10.59375 h 12.625 c 0.779062,0 1.40625,0.627187 1.40625,1.40625 0,0.779062 -0.627188,1.40625 -1.40625,1.40625 H 5.6875 c -0.7790625,0 -1.40625,-0.627188 -1.40625,-1.40625 0,-0.779063 0.6271875,-1.40625 1.40625,-1.40625 z"
+     id="rect3711" />
+</svg>

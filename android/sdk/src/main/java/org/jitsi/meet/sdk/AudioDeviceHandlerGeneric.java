@@ -117,7 +117,8 @@ class AudioDeviceHandlerGeneric implements
             }
         };
 
-    public AudioDeviceHandlerGeneric() {
+    public AudioDeviceHandlerGeneric(AudioManager audioManager) {
+        this.audioManager = audioManager;
     }
 
     /**
@@ -178,11 +179,10 @@ class AudioDeviceHandlerGeneric implements
     }
 
     @Override
-    public void start(Context context, AudioModeModule audioModeModule) {
+    public void start(AudioModeModule audioModeModule) {
         JitsiMeetLogger.i("Using " + TAG + " as the audio device handler");
 
         module = audioModeModule;
-        audioManager = (AudioManager)context.getSystemService(Context.AUDIO_SERVICE);
 
         // Setup runtime device change detection.
         audioManager.registerAudioDeviceCallback(audioDeviceCallback, null);

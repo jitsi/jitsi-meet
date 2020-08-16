@@ -1,4 +1,13 @@
 /**
+ * The type of (redux) action which indicates that the client window has been resized.
+ *
+ * {
+ *     type: CLIENT_RESIZED
+ * }
+ */
+export const CLIENT_RESIZED = 'CLIENT_RESIZED';
+
+/**
  * The type of (redux) action which sets the aspect ratio of the app's user
  * interface.
  *

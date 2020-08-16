@@ -4,11 +4,12 @@ import { Immersive } from 'react-native-immersive';
 
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../../base/app';
 import { getCurrentConference } from '../../base/conference';
+import { isAnyDialogOpen } from '../../base/dialog/functions';
 import { Platform } from '../../base/react';
 import { MiddlewareRegistry, StateListenerRegistry } from '../../base/redux';
 
-import { _setImmersiveListener as _setImmersiveListenerA } from './actions';
 import { _SET_IMMERSIVE_LISTENER } from './actionTypes';
+import { _setImmersiveListener as _setImmersiveListenerA } from './actions';
 
 /**
  * Middleware that captures conference actions and activates or deactivates the
@@ -48,8 +49,9 @@ StateListenerRegistry.register(
     /* selector */ state => {
         const { enabled: audioOnly } = state['features/base/audio-only'];
         const conference = getCurrentConference(state);
+        const dialogOpen = isAnyDialogOpen(state);
 
-        return conference ? !audioOnly : false;
+        return conference ? !audioOnly && !dialogOpen : false;
     },
     /* listener */ fullScreen => _setFullScreen(fullScreen)
 );
@@ -70,7 +72,8 @@ function _onImmersiveChange({ getState }) {
     if (appState === 'active') {
         const { enabled: audioOnly } = state['features/base/audio-only'];
         const conference = getCurrentConference(state);
-        const fullScreen = conference ? !audioOnly : false;
+        const dialogOpen = isAnyDialogOpen(state);
+        const fullScreen = conference ? !audioOnly && !dialogOpen : false;
 
         _setFullScreen(fullScreen);
     }

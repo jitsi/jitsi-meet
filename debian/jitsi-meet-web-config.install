@@ -1,0 +1,3 @@
+doc/debian/jitsi-meet/jitsi-meet.example        /usr/share/jitsi-meet-web-config/
+doc/debian/jitsi-meet/jitsi-meet.example-apache /usr/share/jitsi-meet-web-config/
+config.js                                       /usr/share/jitsi-meet-web-config/

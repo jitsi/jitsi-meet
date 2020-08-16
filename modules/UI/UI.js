@@ -1,30 +1,30 @@
 /* global APP, $, config, interfaceConfig */
 
-const logger = require('jitsi-meet-logger').getLogger(__filename);
 
 const UI = {};
 
-import messageHandler from './util/MessageHandler';
-import UIUtil from './util/UIUtil';
-import UIEvents from '../../service/UI/UIEvents';
-import EtherpadManager from './etherpad/Etherpad';
-import SharedVideoManager from './shared_video/SharedVideo';
-
-import VideoLayout from './videolayout/VideoLayout';
-import Filmstrip from './videolayout/Filmstrip';
+import EventEmitter from 'events';
+import Logger from 'jitsi-meet-logger';
 
 import { getLocalParticipant } from '../../react/features/base/participants';
 import { toggleChat } from '../../react/features/chat';
 import { setDocumentUrl } from '../../react/features/etherpad';
 import { setFilmstripVisible } from '../../react/features/filmstrip';
-import { setNotificationsEnabled } from '../../react/features/notifications';
+import { joinLeaveNotificationsDisabled, setNotificationsEnabled } from '../../react/features/notifications';
 import {
     dockToolbox,
     setToolboxEnabled,
     showToolbox
 } from '../../react/features/toolbox';
+import UIEvents from '../../service/UI/UIEvents';
 
-const EventEmitter = require('events');
+import EtherpadManager from './etherpad/Etherpad';
+import SharedVideoManager from './shared_video/SharedVideo';
+import messageHandler from './util/MessageHandler';
+import UIUtil from './util/UIUtil';
+import VideoLayout from './videolayout/VideoLayout';
+
+const logger = Logger.getLogger(__filename);
 
 UI.messageHandler = messageHandler;
 
@@ -99,19 +99,6 @@ UI.notifyReservationError = function(code, msg) {
 };
 
 /**
- * Notify user that conference was destroyed.
- * @param reason {string} the reason text
- */
-UI.notifyConferenceDestroyed = function(reason) {
-    // FIXME: use Session Terminated from translation, but
-    // 'reason' text comes from XMPP packet and is not translated
-    messageHandler.showError({
-        description: reason,
-        titleKey: 'dialog.sessTerminated'
-    });
-};
-
-/**
  * Change nickname for the user.
  * @param {string} id user id
  * @param {string} displayName new nickname
@@ -126,10 +113,6 @@ UI.changeDisplayName = function(id, displayName) {
 UI.initConference = function() {
     const { getState } = APP.store;
     const { id, name } = getLocalParticipant(getState);
-
-    // Update default button states before showing the toolbar
-    // if local role changes buttons state will be again updated.
-    UI.updateLocalRole(APP.conference.isModerator);
 
     UI.showToolbar();
 
@@ -158,8 +141,6 @@ UI.start = function() {
     // Set the defaults for prompt dialogs.
     $.prompt.setDefaults({ persistent: false });
 
-    Filmstrip.init(eventEmitter);
-
     VideoLayout.init(eventEmitter);
     if (!interfaceConfig.filmStripOnly) {
         VideoLayout.initLargeVideo();
@@ -169,7 +150,7 @@ UI.start = function() {
     // resizeVideoArea) because the animation is not visible anyway. Plus with
     // the current dom layout, the quality label is part of the video layout and
     // will be seen animating in.
-    VideoLayout.resizeVideoArea(true, false);
+    VideoLayout.resizeVideoArea();
 
     sharedVideoManager = new SharedVideoManager(eventEmitter);
 
@@ -180,10 +161,10 @@ UI.start = function() {
         // in case of iAmSipGateway keep local video visible
         if (!config.iAmSipGateway) {
             VideoLayout.setLocalVideoVisible(false);
+            APP.store.dispatch(setNotificationsEnabled(false));
         }
 
         APP.store.dispatch(setToolboxEnabled(false));
-        APP.store.dispatch(setNotificationsEnabled(false));
         UI.messageHandler.enablePopups(false);
     }
 };
@@ -202,7 +183,7 @@ UI.bindEvents = () => {
      *
      */
     function onResize() {
-        VideoLayout.resizeVideoArea();
+        VideoLayout.onResize();
     }
 
     // Resize and reposition videos in full screen mode.
@@ -283,44 +264,6 @@ UI.onPeerVideoTypeChanged
     = (id, newVideoType) => VideoLayout.onVideoTypeChanged(id, newVideoType);
 
 /**
- * Update local user role and show notification if user is moderator.
- * @param {boolean} isModerator if local user is moderator or not
- */
-UI.updateLocalRole = isModerator => {
-    VideoLayout.showModeratorIndicator();
-
-    if (isModerator && !interfaceConfig.DISABLE_FOCUS_INDICATOR) {
-        messageHandler.participantNotification(
-            null, 'notify.me', 'connected', 'notify.moderator');
-    }
-};
-
-/**
- * Check the role for the user and reflect it in the UI, moderator ui indication
- * and notifies user who is the moderator
- * @param user to check for moderator
- */
-UI.updateUserRole = user => {
-    VideoLayout.showModeratorIndicator();
-
-    // We don't need to show moderator notifications when the focus (moderator)
-    // indicator is disabled.
-    if (!user.isModerator() || interfaceConfig.DISABLE_FOCUS_INDICATOR) {
-        return;
-    }
-
-    const displayName = user.getDisplayName();
-
-    messageHandler.participantNotification(
-        displayName,
-        'notify.somebody',
-        'connected',
-        'notify.grantedTo',
-        { to: displayName
-            ? UIUtil.escapeHtml(displayName) : '$t(notify.somebody)' });
-};
-
-/**
  * Updates the user status.
  *
  * @param {JitsiParticipant} user - The user which status we need to update.
@@ -330,7 +273,9 @@ UI.updateUserStatus = (user, status) => {
     const reduxState = APP.store.getState() || {};
     const { calleeInfoVisible } = reduxState['features/invite'] || {};
 
-    if (!status || calleeInfoVisible) {
+    // We hide status updates when join/leave notifications are disabled,
+    // as jigasi is the component with statuses and they are seen as join/leave notifications.
+    if (!status || calleeInfoVisible || joinLeaveNotificationsDisabled()) {
         return;
     }
 
@@ -354,12 +299,6 @@ UI.toggleFilmstrip = function() {
 };
 
 /**
- * Checks if the filmstrip is currently visible or not.
- * @returns {true} if the filmstrip is currently visible, and false otherwise.
- */
-UI.isFilmstripVisible = () => Filmstrip.isFilmstripVisible();
-
-/**
  * Toggles the visibility of the chat panel.
  */
 UI.toggleChat = () => APP.store.dispatch(toggleChat());
@@ -369,15 +308,6 @@ UI.toggleChat = () => APP.store.dispatch(toggleChat());
  */
 UI.inputDisplayNameHandler = function(newDisplayName) {
     eventEmitter.emit(UIEvents.NICKNAME_CHANGED, newDisplayName);
-};
-
-/**
- * Return the type of the remote video.
- * @param jid the jid for the remote video
- * @returns the video type video or screen.
- */
-UI.getRemoteVideoType = function(jid) {
-    return VideoLayout.getRemoteVideoType(jid);
 };
 
 // FIXME check if someone user this
@@ -621,86 +551,6 @@ UI.getLargeVideoID = function() {
  */
 UI.getLargeVideo = function() {
     return VideoLayout.getLargeVideo();
-};
-
-/**
- * Shows "Please go to chrome webstore to install the desktop sharing extension"
- * 2 button dialog with buttons - cancel and go to web store.
- * @param url {string} the url of the extension.
- */
-UI.showExtensionExternalInstallationDialog = function(url) {
-    let openedWindow = null;
-
-    const submitFunction = function(e, v) {
-        if (v) {
-            e.preventDefault();
-            if (openedWindow === null || openedWindow.closed) {
-                openedWindow
-                    = window.open(
-                        url,
-                        'extension_store_window',
-                        'resizable,scrollbars=yes,status=1');
-            } else {
-                openedWindow.focus();
-            }
-        }
-    };
-
-    const closeFunction = function(e, v) {
-        if (openedWindow) {
-            // Ideally we would close the popup, but this does not seem to work
-            // on Chrome. Leaving it uncommented in case it could work
-            // in some version.
-            openedWindow.close();
-            openedWindow = null;
-        }
-        if (!v) {
-            eventEmitter.emit(UIEvents.EXTERNAL_INSTALLATION_CANCELED);
-        }
-    };
-
-    messageHandler.openTwoButtonDialog({
-        titleKey: 'dialog.externalInstallationTitle',
-        msgKey: 'dialog.externalInstallationMsg',
-        leftButtonKey: 'dialog.goToStore',
-        submitFunction,
-        loadedFunction: $.noop,
-        closeFunction
-    });
-};
-
-/**
- * Shows a dialog which asks user to install the extension. This one is
- * displayed after installation is triggered from the script, but fails because
- * it must be initiated by user gesture.
- * @param callback {function} function to be executed after user clicks
- * the install button - it should make another attempt to install the extension.
- */
-UI.showExtensionInlineInstallationDialog = function(callback) {
-    const submitFunction = function(e, v) {
-        if (v) {
-            callback();
-        }
-    };
-
-    const closeFunction = function(e, v) {
-        if (!v) {
-            eventEmitter.emit(UIEvents.EXTERNAL_INSTALLATION_CANCELED);
-        }
-    };
-
-    messageHandler.openTwoButtonDialog({
-        titleKey: 'dialog.externalInstallationTitle',
-        msgKey: 'dialog.inlineInstallationMsg',
-        leftButtonKey: 'dialog.inlineInstallExtension',
-        submitFunction,
-        loadedFunction: $.noop,
-        closeFunction
-    });
-};
-
-UI.updateDevicesAvailability = function(id, devices) {
-    VideoLayout.setDeviceAvailabilityIcons(id, devices);
 };
 
 /**

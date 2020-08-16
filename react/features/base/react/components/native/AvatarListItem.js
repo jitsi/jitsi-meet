@@ -5,7 +5,6 @@ import { Text } from 'react-native';
 
 import { Avatar } from '../../../avatar';
 import { StyleType } from '../../../styles';
-
 import { type Item } from '../../Types';
 
 import Container from './Container';
@@ -22,6 +21,11 @@ type Props = {
      * Preferred size of the avatar.
      */
     avatarSize?: number,
+
+    /**
+     * One of the expected status strings (e.g. 'available') to render a badge on the avatar, if necessary.
+     */
+    avatarStatus?: ?string,
 
     /**
      * External style to be applied to the avatar (icon).
@@ -83,6 +87,7 @@ export default class AvatarListItem extends Component<Props> {
         const {
             avatarOnly,
             avatarSize = AVATAR_SIZE,
+            avatarStatus,
             avatarStyle
         } = this.props;
         const { avatar, colorBase, lines, title } = this.props.item;
@@ -96,6 +101,7 @@ export default class AvatarListItem extends Component<Props> {
                     colorBase = { colorBase }
                     displayName = { title }
                     size = { avatarSize }
+                    status = { avatarStatus }
                     style = { avatarStyle }
                     url = { avatar } />
                 { avatarOnly || <Container style = { styles.listItemDetails }>

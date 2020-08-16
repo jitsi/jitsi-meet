@@ -4,16 +4,15 @@ import {
     ACTION_SHORTCUT_TRIGGERED,
     AUDIO_MUTE,
     createShortcutEvent,
-    createToolbarEvent,
     sendAnalytics
 } from '../../analytics';
 import { translate } from '../../base/i18n';
-import { MEDIA_TYPE, setAudioMuted } from '../../base/media';
+import { MEDIA_TYPE } from '../../base/media';
 import { connect } from '../../base/redux';
 import { AbstractAudioMuteButton } from '../../base/toolbox';
 import type { AbstractButtonProps } from '../../base/toolbox';
 import { isLocalTrackMuted } from '../../base/tracks';
-import UIEvents from '../../../../service/UI/UIEvents';
+import { muteLocal } from '../../remote-video-menu/actions';
 
 declare var APP: Object;
 
@@ -125,13 +124,7 @@ class AudioMuteButton extends AbstractAudioMuteButton<Props, *> {
      * @returns {void}
      */
     _setAudioMuted(audioMuted: boolean) {
-        sendAnalytics(createToolbarEvent(AUDIO_MUTE, { enable: audioMuted }));
-        this.props.dispatch(setAudioMuted(audioMuted, /* ensureTrack */ true));
-
-        // FIXME: The old conference logic as well as the shared video feature
-        // still rely on this event being emitted.
-        typeof APP === 'undefined'
-            || APP.UI.emitEvent(UIEvents.AUDIO_MUTED, audioMuted, true);
+        this.props.dispatch(muteLocal(audioMuted));
     }
 
     /**
@@ -151,15 +144,17 @@ class AudioMuteButton extends AbstractAudioMuteButton<Props, *> {
  * @param {Object} state - The Redux state.
  * @private
  * @returns {{
- *     _audioMuted: boolean
+ *     _audioMuted: boolean,
+ *     _disabled: boolean
  * }}
  */
 function _mapStateToProps(state): Object {
-    const tracks = state['features/base/tracks'];
+    const _audioMuted = isLocalTrackMuted(state['features/base/tracks'], MEDIA_TYPE.AUDIO);
+    const _disabled = state['features/base/config'].startSilent;
 
     return {
-        _audioMuted: isLocalTrackMuted(tracks, MEDIA_TYPE.AUDIO),
-        _disabled: state['features/base/config'].startSilent
+        _audioMuted,
+        _disabled
     };
 }
 

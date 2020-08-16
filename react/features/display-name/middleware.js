@@ -3,6 +3,7 @@
 import { hideDialog, isDialogOpen } from '../base/dialog';
 import { MiddlewareRegistry } from '../base/redux';
 import { SETTINGS_UPDATED } from '../base/settings';
+
 import { DisplayNamePrompt } from './components';
 
 /**

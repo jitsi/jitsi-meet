@@ -29,16 +29,22 @@ export function getCalendarEntries(
 /**
  * Loads Google API.
  *
- * @param {string} clientId - The client ID to be used with the API library.
  * @returns {Function}
  */
-export function loadGoogleAPI(clientId: string) {
+export function loadGoogleAPI() {
     return (dispatch: Dispatch<any>, getState: Function) =>
         googleApi.get()
         .then(() => {
+            const {
+                liveStreamingEnabled,
+                enableCalendarIntegration,
+                googleApiApplicationClientID
+            } = getState()['features/base/config'];
+
             if (getState()['features/google-api'].googleAPIState
                     === GOOGLE_API_STATES.NEEDS_LOADING) {
-                return googleApi.initializeClient(clientId);
+                return googleApi.initializeClient(
+                    googleApiApplicationClientID, liveStreamingEnabled, enableCalendarIntegration);
             }
 
             return Promise.resolve();

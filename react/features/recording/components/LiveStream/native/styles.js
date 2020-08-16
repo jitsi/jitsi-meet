@@ -145,6 +145,13 @@ export default createStyleSheet({
         flexDirection: 'column'
     },
 
+    /**
+     * Terms and Conditions texts.
+     */
+    tcText: {
+        textAlign: 'right'
+    },
+
     text: {
         fontSize: 14,
         textAlign: 'left'

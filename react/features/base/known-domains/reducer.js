@@ -1,8 +1,7 @@
 // @flow
 
-import { APP_WILL_MOUNT } from '../app';
-import { ReducerRegistry } from '../redux';
-import { PersistenceRegistry } from '../storage';
+import { APP_WILL_MOUNT } from '../app/actionTypes';
+import { PersistenceRegistry, ReducerRegistry } from '../redux';
 
 import { ADD_KNOWN_DOMAINS } from './actionTypes';
 

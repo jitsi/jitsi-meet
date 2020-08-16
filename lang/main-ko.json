@@ -106,7 +106,7 @@
         "downloadApp": "앱 다운로드",
         "launchWebButton": "웹에서 실행",
         "openApp": "방으로 이동하기",
-        "title": "{{app}}에서 회의 시작...",
+        "title": "{{app}}에서 회의 시작…",
         "tryAgainButton": "데스크톱에서 다시 시도하십시오"
     },
     "defaultLink": "e.g. {{url}}",
@@ -140,7 +140,7 @@
         "cameraUnsupportedResolutionError": "카메라가 필요한 비디오 해상도를 지원하지 않습니다",
         "Cancel": "취소",
         "close": "닫기",
-        "conferenceDisconnectMsg": "네트워크 연결을 확인하고 있습니다. {{seconds}} 초 내에 다시 연결중입니다...",
+        "conferenceDisconnectMsg": "네트워크 연결을 확인하고 있습니다. {{seconds}} 초 내에 다시 연결중입니다…",
         "conferenceDisconnectTitle": "연결이 끊어졌습니다.",
         "conferenceReloadMsg": "문제를 해결하려고 노력하고 있습니다. {{seconds}} 초 안에 다시 연결중입니다.",
         "conferenceReloadTitle": "불행하게도 문제가 발생했습니다",
@@ -249,12 +249,9 @@
         "userPassword": "사용자 비밀번호",
         "WaitForHostMsg": "",
         "WaitForHostMsgWOk": "",
-        "WaitingForHost": "호스트를 기다리는 중입니다...",
+        "WaitingForHost": "호스트를 기다리는 중입니다…",
         "Yes": "",
         "yourEntireScreen": "전체 화면"
-    },
-    "\u0005dialog": {
-        "accessibilityLabel": {}
     },
     "dialOut": {
         "statusMessage": "지금은 {{status}}입니다"
@@ -305,7 +302,6 @@
         "tooltip": "링크 공유 및 회의에 대한 정보",
         "label": ""
     },
-    "\u0005info": {},
     "inviteDialog": {
         "alertText": "",
         "header": "초대",
@@ -354,7 +350,7 @@
         "invalidStreamKey": "",
         "off": "실시간 스트리밍이 중지됨",
         "on": "실시간 스트리밍",
-        "pending": "실시간 스트리밍 시작...",
+        "pending": "실시간 스트리밍 시작…",
         "serviceName": "실시간 스트리밍 서비스",
         "signedInAs": "",
         "signIn": "Google로 로그인",
@@ -393,7 +389,6 @@
         "stop": "레코딩 종료",
         "yes": ""
     },
-    "\u0005localRecording": {},
     "lockRoomPassword": "패스워드",
     "lockRoomPasswordUppercase": "패스워드",
     "me": "Me",
@@ -421,7 +416,7 @@
         "somebody": "누군가",
         "startSilentTitle": "",
         "startSilentDescription": "",
-        "suboptimalExperienceDescription": "{{appName}}에 대한 귀하의 경험이 없으시다면 <a href='static/recommendedBrowsers.html' target='_blank'>완벽하게 지원되는 브라우저</a> 중 하나를 사용해보십시오.",
+        "suboptimalExperienceDescription": "{{appName}}에 대한 귀하의 경험이 없으시다면 <a href='{{recommendedBrowserPageLink}}' target='_blank'>완벽하게 지원되는 브라우저</a> 중 하나를 사용해보십시오.",
         "suboptimalExperienceTitle": "브라우저 경고",
         "unmute": "",
         "newDeviceCameraTitle": "",
@@ -467,7 +462,7 @@
         "loggedIn": "",
         "off": "레코딩이 중지됨",
         "on": "레코딩",
-        "pending": "참석할 멤버를 기다리는 중입니다...",
+        "pending": "참석할 멤버를 기다리는 중입니다…",
         "rec": "REC",
         "serviceDescription": "",
         "serviceName": "레코딩 서비스",
@@ -476,7 +471,6 @@
         "unavailable": "죄송합니다. {{serviceName}}은 현재 사용할 수 없습니다. 저희는 문제를 해결하기 위해 노력하고 있습니다. 나중에 다시 시도 해주십시오.",
         "unavailableTitle": "레코딩을 사용할 수 없습니다"
     },
-    "\u0005recording": {},
     "sectionList": {
         "pullToRefresh": "당겨서 새로고침"
     },
@@ -502,9 +496,6 @@
         "startAudioMuted": "모두가 음소거를 시작합니다",
         "startVideoMuted": "모두가 비디오 비활성화로 시작합니다",
         "title": "세티"
-    },
-    "\u0005settings": {
-        "calendar": {}
     },
     "settingsView": {
         "alertOk": "확인",
@@ -622,7 +613,6 @@
         "startvideoblur": "",
         "stopvideoblur": ""
     },
-    "\u0005toolbar": {},
     "transcribing": {
         "ccButtonTooltip": "",
         "error": "레코딩이 실패했습니다. 다시 시도하십시오.",
@@ -630,12 +620,11 @@
         "failedToStart": "",
         "labelToolTip": "",
         "off": "",
-        "pending": "참석할 멤버를 기다리는 중입니다...",
+        "pending": "참석할 멤버를 기다리는 중입니다…",
         "start": "",
         "stop": "",
         "tr": ""
     },
-    "\u0005transcribing": {},
     "userMedia": {
         "androidGrantPermissions": "브라우저에서 권한을 요청할 때 <b><i>허락</i></b>을 선택",
         "chromeGrantPermissions": "브라우저에서 권한을 요청할 때 <b><i>허락</i></b>을 선택",
@@ -670,9 +659,6 @@
         "lowDefinition": "저화질",
         "onlyAudioAvailable": "오디오만 사용할 수 있습니다",
         "onlyAudioSupported": "이 브라우저에서는 오디오만 지원합니다",
-        "p2pEnabled": "Peer to Peer 사용 가능",
-        "p2pVideoQualityDescription": "",
-        "recHighDefinitionOnly": "고화질을 선호합니다",
         "sd": "SD",
         "standardDefinition": "표준 해상도"
     },

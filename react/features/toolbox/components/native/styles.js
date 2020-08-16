@@ -57,6 +57,13 @@ const styles = {
 
     expandMenuContainer: {
         alignItems: 'center',
+        borderTopLeftRadius: 16,
+        borderTopRightRadius: 16,
+        flexDirection: 'column'
+    },
+
+    sheetGestureRecognizer: {
+        alignItems: 'stretch',
         flexDirection: 'column'
     },
 

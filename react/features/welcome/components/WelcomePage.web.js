@@ -2,8 +2,10 @@
 
 import React from 'react';
 
-import { translate } from '../../base/i18n';
-import { Platform, Watermarks } from '../../base/react';
+import { isMobileBrowser } from '../../base/environment/utils';
+import { translate, translateToHTML } from '../../base/i18n';
+import { Icon, IconWarning } from '../../base/icons';
+import { Watermarks } from '../../base/react';
 import { connect } from '../../base/redux';
 import { CalendarList } from '../../calendar-sync';
 import { RecentList } from '../../recent-list';
@@ -156,7 +158,7 @@ class WelcomePage extends AbstractWelcomePage {
      * @returns {ReactElement|null}
      */
     render() {
-        const { t } = this.props;
+        const { _moderatedRoomServiceUrl, t } = this.props;
         const { APP_NAME } = interfaceConfig;
         const showAdditionalContent = this._shouldShowAdditionalContent();
         const showAdditionalToolbarContent = this._shouldShowAdditionalToolbarContent();
@@ -208,6 +210,7 @@ class WelcomePage extends AbstractWelcomePage {
                                     title = { t('welcomepage.roomNameAllowedChars') }
                                     type = 'text'
                                     value = { this.state.room } />
+                                { this._renderInsecureRoomNameWarning() }
                             </form>
                         </div>
                         <div
@@ -221,6 +224,16 @@ class WelcomePage extends AbstractWelcomePage {
                             }
                         </div>
                     </div>
+                    { _moderatedRoomServiceUrl && (
+                        <div id = 'moderated-meetings'>
+                            <p>
+                                {
+                                    translateToHTML(
+                                        t, 'welcomepage.moderatedMessage', { url: _moderatedRoomServiceUrl })
+                                }
+                            </p>
+                        </div>
+                    ) }
                     { this._renderTabs() }
                 </div>
                 { showAdditionalContent
@@ -228,6 +241,22 @@ class WelcomePage extends AbstractWelcomePage {
                         className = 'welcome-page-content'
                         ref = { this._setAdditionalContentRef } />
                     : null }
+            </div>
+        );
+    }
+
+    /**
+     * Renders the insecure room name warning.
+     *
+     * @inheritdoc
+     */
+    _doRenderInsecureRoomNameWarning() {
+        return (
+            <div className = 'insecure-room-name-warning'>
+                <Icon src = { IconWarning } />
+                <span>
+                    { this.props.t('security.insecureRoomNameWarning') }
+                </span>
             </div>
         );
     }
@@ -280,14 +309,11 @@ class WelcomePage extends AbstractWelcomePage {
      * @returns {ReactElement|null}
      */
     _renderTabs() {
-        const isMobileBrowser
-            = Platform.OS === 'android' || Platform.OS === 'ios';
-
-        if (isMobileBrowser) {
+        if (isMobileBrowser()) {
             return null;
         }
 
-        const { _calendarEnabled, t } = this.props;
+        const { _calendarEnabled, _recentListEnabled, t } = this.props;
 
         const tabs = [];
 
@@ -298,10 +324,16 @@ class WelcomePage extends AbstractWelcomePage {
             });
         }
 
-        tabs.push({
-            label: t('welcomepage.recentList'),
-            content: <RecentList />
-        });
+        if (_recentListEnabled) {
+            tabs.push({
+                label: t('welcomepage.recentList'),
+                content: <RecentList />
+            });
+        }
+
+        if (tabs.length === 0) {
+            return null;
+        }
 
         return (
             <Tabs

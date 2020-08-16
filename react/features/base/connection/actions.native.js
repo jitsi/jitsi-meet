@@ -3,11 +3,8 @@
 import _ from 'lodash';
 import type { Dispatch } from 'redux';
 
-import {
-    conferenceLeft,
-    conferenceWillLeave,
-    getCurrentConference
-} from '../conference';
+import { conferenceLeft, conferenceWillLeave } from '../conference/actions';
+import { getCurrentConference } from '../conference/functions';
 import JitsiMeetJS, { JitsiConnectionEvents } from '../lib-jitsi-meet';
 import {
     getBackendSafeRoomName,
@@ -104,7 +101,7 @@ export function connect(id: ?string, password: ?string) {
             JitsiConnectionEvents.CONNECTION_FAILED,
             _onConnectionFailed);
 
-        return connection.connect({
+        connection.connect({
             id,
             password
         });
@@ -113,13 +110,12 @@ export function connect(id: ?string, password: ?string) {
          * Dispatches {@code CONNECTION_DISCONNECTED} action when connection is
          * disconnected.
          *
-         * @param {string} message - Disconnect reason.
          * @private
          * @returns {void}
          */
-        function _onConnectionDisconnected(message: string) {
+        function _onConnectionDisconnected() {
             unsubscribe();
-            dispatch(_connectionDisconnected(connection, message));
+            dispatch(connectionDisconnected(connection));
         }
 
         /**
@@ -187,19 +183,16 @@ export function connect(id: ?string, password: ?string) {
  *
  * @param {JitsiConnection} connection - The {@code JitsiConnection} which
  * disconnected.
- * @param {string} message - Error message.
  * @private
  * @returns {{
  *     type: CONNECTION_DISCONNECTED,
- *     connection: JitsiConnection,
- *     message: string
+ *     connection: JitsiConnection
  * }}
  */
-function _connectionDisconnected(connection: Object, message: string) {
+export function connectionDisconnected(connection: Object) {
     return {
         type: CONNECTION_DISCONNECTED,
-        connection,
-        message
+        connection
     };
 }
 
@@ -299,12 +292,12 @@ function _constructOptions(state) {
             // Handle relative URLs, which won't work on mobile.
             const {
                 protocol,
-                hostname,
+                host,
                 contextRoot
             } = parseURIString(locationURL.href);
 
             // eslint-disable-next-line max-len
-            bosh = `${protocol}//${hostname}${contextRoot || '/'}${bosh.substr(1)}`;
+            bosh = `${protocol}//${host}${contextRoot || '/'}${bosh.substr(1)}`;
         }
 
         // Append room to the URL's search.
@@ -312,7 +305,8 @@ function _constructOptions(state) {
 
         room && (bosh += `?room=${getBackendSafeRoomName(room)}`);
 
-        options.bosh = bosh;
+        // FIXME Remove deprecated 'bosh' option assignment at some point.
+        options.serviceUrl = options.bosh = bosh;
     }
 
     return options;

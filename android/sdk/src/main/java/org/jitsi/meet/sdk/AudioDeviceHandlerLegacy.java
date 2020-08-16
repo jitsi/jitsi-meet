@@ -59,7 +59,8 @@ class AudioDeviceHandlerLegacy implements
      */
     private BluetoothHeadsetMonitor bluetoothHeadsetMonitor;
 
-    public AudioDeviceHandlerLegacy() {
+    public AudioDeviceHandlerLegacy(AudioManager audioManager) {
+        this.audioManager = audioManager;
     }
 
     /**
@@ -155,11 +156,11 @@ class AudioDeviceHandlerLegacy implements
     }
 
     @Override
-    public void start(Context context, AudioModeModule audioModeModule) {
+    public void start(AudioModeModule audioModeModule) {
         JitsiMeetLogger.i("Using " + TAG + " as the audio device handler");
 
         module = audioModeModule;
-        audioManager = (AudioManager)context.getSystemService(Context.AUDIO_SERVICE);
+        Context context = module.getContext();
 
         // Setup runtime device change detection.
         //

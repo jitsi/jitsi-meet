@@ -43,7 +43,8 @@ case "$1" in
         fi
 
         JVB_SERVE="false"
-        db_get jitsi-meet/jvb-serve
+        # this detect only old installations
+        db_get jitsi-meet/jvb-serve || true
         if [ -n "$RET" ] && [ "$RET" = "true" ] ; then
             JVB_SERVE="true"
         fi
@@ -52,9 +53,12 @@ case "$1" in
         db_set jitsi-meet/jvb-hostname $JVB_HOSTNAME
 
         NGINX_INSTALL_CHECK="$(dpkg-query -f '${Status}' -W 'nginx' 2>/dev/null | awk '{print $3}' || true)"
+        NGINX_FULL_INSTALL_CHECK="$(dpkg-query -f '${Status}' -W 'nginx-full' 2>/dev/null | awk '{print $3}' || true)"
         NGINX_EXTRAS_INSTALL_CHECK="$(dpkg-query -f '${Status}' -W 'nginx-extras' 2>/dev/null | awk '{print $3}' || true)"
         if [ "$NGINX_INSTALL_CHECK" = "installed" ] \
            || [ "$NGINX_INSTALL_CHECK" = "unpacked" ] \
+           || [ "$NGINX_FULL_INSTALL_CHECK" = "installed" ] \
+           || [ "$NGINX_FULL_INSTALL_CHECK" = "unpacked" ] \
            || [ "$NGINX_EXTRAS_INSTALL_CHECK" = "installed" ] \
            || [ "$NGINX_EXTRAS_INSTALL_CHECK" = "unpacked" ] ; then
             FORCE_NGINX="true"
@@ -64,12 +68,11 @@ case "$1" in
             FORCE_APACHE="true"
         fi
 
+        UPLOADED_CERT_CHOICE="I want to use my own certificate"
         # if first time config ask for certs, or if we are reconfiguring
         if [ -z "$JVB_HOSTNAME_OLD" ] || [ "$RECONFIGURING" = "true" ] ; then
-            # SSL for nginx
             db_get jitsi-meet/cert-choice
             CERT_CHOICE="$RET"
-            UPLOADED_CERT_CHOICE="I want to use my own certificate"
 
             if [ "$CERT_CHOICE" = "$UPLOADED_CERT_CHOICE" ] ; then
                 db_set jitsi-meet/cert-path-key "/etc/ssl/$JVB_HOSTNAME.key"
@@ -88,87 +91,74 @@ case "$1" in
                 CERT_CRT="/etc/jitsi/meet/$JVB_HOSTNAME.crt"
                 HOST="$( (hostname -s; echo localhost) | head -n 1)"
                 DOMAIN="$( (hostname -d; echo localdomain) | head -n 1)"
-                openssl req -new -newkey rsa:4096 -days 365 -nodes -x509 -subj \
+                openssl req -new -newkey rsa:4096 -days 3650 -nodes -x509 -subj \
                     "/O=$DOMAIN/OU=$HOST/CN=$JVB_HOSTNAME/emailAddress=webmaster@$HOST.$DOMAIN" \
                     -keyout $CERT_KEY \
-                    -out $CERT_CRT
+                    -out $CERT_CRT \
+                    -reqexts SAN \
+                    -extensions SAN \
+                    -config <(cat /etc/ssl/openssl.cnf \
+                        <(printf "[SAN]\nsubjectAltName=DNS:localhost,DNS:$JVB_HOSTNAME"))
             fi
         fi
 
         # jitsi meet
         JITSI_MEET_CONFIG="/etc/jitsi/meet/$JVB_HOSTNAME-config.js"
         if [ ! -f $JITSI_MEET_CONFIG ] ; then
-            cp /usr/share/doc/jitsi-meet-web-config/config.js $JITSI_MEET_CONFIG
+            cp /usr/share/jitsi-meet-web-config/config.js $JITSI_MEET_CONFIG
+            # replaces needed config for multidomain as it works only with nginx
+            if [[ "$FORCE_NGINX" = "true" ]] ; then
+                sed -i "s/conference.jitsi-meet.example.com/conference.<\!--# echo var=\"subdomain\" default=\"\" -->jitsi-meet.example.com/g" $JITSI_MEET_CONFIG
+            fi
             sed -i "s/jitsi-meet.example.com/$JVB_HOSTNAME/g" $JITSI_MEET_CONFIG
         fi
 
-        # this is new install let's configure jvb to serve meet
-        # no-nginx, no-apache installed on machine, this is new install or reconfiguring old one which have jvb_serve set
-        if [[ -z "$FORCE_NGINX" && -z "$FORCE_APACHE" && ( -z "$JVB_HOSTNAME_OLD" || ( "$JVB_SERVE" = "true" && "$RECONFIGURING" = "true" )) ]] ; then
-
-            JVB_ETC_CONFIG="/etc/jitsi/videobridge/config"
+        # getting rid of jetty serving web
+        if [[ "$JVB_SERVE" = "true" ]] ; then
             JVB_CONFIG="/etc/jitsi/videobridge/sip-communicator.properties"
 
-            # this is a reconfigure, lets just delete old links
-            if [ "$RECONFIGURING" = "true" ] ; then
-                rm -f $JVB_CONFIG
-            fi
-
             # we will write to the file if missing create it
-            if [ ! -f $JVB_CONFIG ] ; then
-                touch $JVB_CONFIG
-            fi
+            if [ -f $JVB_CONFIG ] ; then
+                echo ""
+                echo "------------------------------------------------"
+                echo ""
+                echo "You are using jetty to serve jitsi-meet, we are now upgrading you to use nginx!"
+                echo ""
+                echo "If you are using Let’s Encrypt certificates please re-run the script."
+                echo ""
+                echo "------------------------------------------------"
+                echo ""
 
-            # configure jvb
-            echo "AUTHBIND=yes" >> $JVB_ETC_CONFIG
-            sed -i "s/JVB_OPTS=.*/JVB_OPTS=--apis=rest,xmpp/g" $JVB_ETC_CONFIG
+                sed -i "s/org.jitsi.videobridge.rest.jetty/#org.jitsi.videobridge.rest.jetty/g" $JVB_CONFIG
+                sed -i "s/org.jitsi.videobridge.TCP_HARVESTER_PORT/#org.jitsi.videobridge.TCP_HARVESTER_PORT/g" $JVB_CONFIG
 
-            echo "org.jitsi.videobridge.rest.jetty.host=::" >> $JVB_CONFIG
-            echo "org.jitsi.videobridge.rest.jetty.port=443" >> $JVB_CONFIG
-            echo "org.jitsi.videobridge.rest.jetty.ProxyServlet.hostHeader=$JVB_HOSTNAME" >> $JVB_CONFIG
-            echo "org.jitsi.videobridge.rest.jetty.ProxyServlet.pathSpec=/http-bind" >> $JVB_CONFIG
-            echo "org.jitsi.videobridge.rest.jetty.ProxyServlet.proxyTo=http://localhost:5280/http-bind" >> $JVB_CONFIG
-            echo "org.jitsi.videobridge.rest.jetty.ResourceHandler.resourceBase=/usr/share/jitsi-meet" >> $JVB_CONFIG
-            echo "org.jitsi.videobridge.rest.jetty.ResourceHandler.alias./config.js=/etc/jitsi/meet/$JVB_HOSTNAME-config.js" >> $JVB_CONFIG
-            echo "org.jitsi.videobridge.rest.jetty.ResourceHandler.alias./interface_config.js=/usr/share/jitsi-meet/interface_config.js" >> $JVB_CONFIG
-            echo "org.jitsi.videobridge.rest.jetty.ResourceHandler.alias./logging_config.js=/usr/share/jitsi-meet/logging_config.js" >> $JVB_CONFIG
-            echo "org.jitsi.videobridge.rest.jetty.ResourceHandler.alias./external_api.js=/usr/share/jitsi-meet/libs/external_api.min.js" >> $JVB_CONFIG
-            echo "org.jitsi.videobridge.rest.jetty.RewriteHandler.regex=^/([a-zA-Z0-9]+)$" >> $JVB_CONFIG
-            echo "org.jitsi.videobridge.rest.jetty.RewriteHandler.replacement=/" >> $JVB_CONFIG
-            echo "org.jitsi.videobridge.rest.jetty.SSIResourceHandler.paths=/" >> $JVB_CONFIG
-            echo "org.jitsi.videobridge.rest.jetty.tls.port=443" >> $JVB_CONFIG
-            echo "org.jitsi.videobridge.TCP_HARVESTER_PORT=443" >> $JVB_CONFIG
-            echo "org.jitsi.videobridge.rest.jetty.sslContextFactory.keyStorePath=/etc/jitsi/videobridge/$JVB_HOSTNAME.jks" >> $JVB_CONFIG
-            echo "org.jitsi.videobridge.rest.jetty.sslContextFactory.keyStorePassword=changeit" >> $JVB_CONFIG
-
-            # configure authbind to allow jvb to bind to privileged ports
-            OWNER=$(stat -c '%U' /usr/share/jitsi-videobridge)
-            GROUP=$(stat -c '%G' /usr/share/jitsi-videobridge)
-            JVB_UID="`id -u $OWNER`"
-            if [ ! -f "/etc/authbind/byport/443" ] ; then
-                if [ ! -d "/etc/authbind/byport" ] ; then
-                        mkdir -p /etc/authbind/byport
-                        chmod 755 /etc/authbind
-                        chmod 755 /etc/authbind/byport
+                if [ -d /run/systemd/system ]; then
+                    systemctl restart jitsi-videobridge2.service >/dev/null || true
                 fi
-                touch /etc/authbind/byport/443
-                chown $OWNER /etc/authbind/byport/443
-                chmod 755 /etc/authbind/byport/443
+
+                # Removing this value will force nginx or apache to be locally configured
+                JVB_HOSTNAME_OLD=""
+
+                db_get jitsi-meet/cert-choice
+                CERT_CHOICE="$RET"
+                # Fix certs on upgrade from jetty
+                if [ "$CERT_CHOICE" = "$UPLOADED_CERT_CHOICE" ] ; then
+                    db_get jitsi-meet/cert-path-key
+                    CERT_KEY="$RET"
+                    db_get jitsi-meet/cert-path-crt
+                    CERT_CRT="$RET"
+                else
+                    # create self-signed certs
+                    CERT_KEY="/etc/jitsi/meet/$JVB_HOSTNAME.key"
+                    CERT_CRT="/etc/jitsi/meet/$JVB_HOSTNAME.crt"
+                fi
             fi
 
-            CERT_P12="/etc/jitsi/videobridge/$JVB_HOSTNAME.p12"
-            CERT_JKS="/etc/jitsi/videobridge/$JVB_HOSTNAME.jks"
-            # create jks from  certs
-            openssl pkcs12 -export \
-                -in $CERT_CRT -inkey $CERT_KEY -passout pass:changeit > $CERT_P12
-            keytool -importkeystore -destkeystore $CERT_JKS \
-                -srckeystore $CERT_P12 -srcstoretype pkcs12 \
-                -noprompt -storepass changeit -srcstorepass changeit
+            db_set jitsi-meet/jvb-serve "false"
+        fi
 
-            db_set jitsi-meet/jvb-serve "true"
+        if [[ "$FORCE_NGINX" = "true" && ( -z "$JVB_HOSTNAME_OLD" || "$RECONFIGURING" = "true" ) ]] ; then
 
-            invoke-rc.d jitsi-videobridge restart
-        elif [[ "$FORCE_NGINX" = "true" && ( -z "$JVB_HOSTNAME_OLD" || "$RECONFIGURING" = "true" ) ]] ; then
             # this is a reconfigure, lets just delete old links
             if [ "$RECONFIGURING" = "true" ] ; then
                 rm -f /etc/nginx/sites-enabled/$JVB_HOSTNAME_OLD.conf
@@ -177,7 +167,7 @@ case "$1" in
 
             # nginx conf
             if [ ! -f /etc/nginx/sites-available/$JVB_HOSTNAME.conf ] ; then
-                cp /usr/share/doc/jitsi-meet-web-config/jitsi-meet.example /etc/nginx/sites-available/$JVB_HOSTNAME.conf
+                cp /usr/share/jitsi-meet-web-config/jitsi-meet.example /etc/nginx/sites-available/$JVB_HOSTNAME.conf
                 if [ ! -f /etc/nginx/sites-enabled/$JVB_HOSTNAME.conf ] ; then
                     ln -s /etc/nginx/sites-available/$JVB_HOSTNAME.conf /etc/nginx/sites-enabled/$JVB_HOSTNAME.conf
                 fi
@@ -196,8 +186,9 @@ case "$1" in
                     /etc/nginx/sites-available/$JVB_HOSTNAME.conf
             fi
 
-            invoke-rc.d nginx reload
+            invoke-rc.d nginx reload || true
         elif [[ "$FORCE_APACHE" = "true" && ( -z "$JVB_HOSTNAME_OLD" || "$RECONFIGURING" = "true" ) ]] ; then
+
             # this is a reconfigure, lets just delete old links
             if [ "$RECONFIGURING" = "true" ] ; then
                 a2dissite $JVB_HOSTNAME_OLD.conf
@@ -208,7 +199,7 @@ case "$1" in
             if [ ! -f /etc/apache2/sites-available/$JVB_HOSTNAME.conf ] ; then
                 # when creating new config, make sure all needed modules are enabled
                 a2enmod rewrite ssl headers proxy_http include
-                cp /usr/share/doc/jitsi-meet-web-config/jitsi-meet.example-apache /etc/apache2/sites-available/$JVB_HOSTNAME.conf
+                cp /usr/share/jitsi-meet-web-config/jitsi-meet.example-apache /etc/apache2/sites-available/$JVB_HOSTNAME.conf
                 a2ensite $JVB_HOSTNAME.conf
                 sed -i "s/jitsi-meet.example.com/$JVB_HOSTNAME/g" /etc/apache2/sites-available/$JVB_HOSTNAME.conf
             fi
@@ -225,7 +216,7 @@ case "$1" in
                     /etc/apache2/sites-available/$JVB_HOSTNAME.conf
             fi
 
-            invoke-rc.d apache2 reload
+            invoke-rc.d apache2 reload || true
         fi
 
         echo "----------------"

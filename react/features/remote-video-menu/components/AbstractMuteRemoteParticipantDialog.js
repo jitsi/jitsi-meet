@@ -2,17 +2,13 @@
 
 import { Component } from 'react';
 
-import {
-    createRemoteMuteConfirmedEvent,
-    sendAnalytics
-} from '../../analytics';
-import { muteRemoteParticipant } from '../../base/participants';
+import { muteRemote } from '../actions';
 
 /**
  * The type of the React {@code Component} props of
  * {@link AbstractMuteRemoteParticipantDialog}.
  */
-type Props = {
+export type Props = {
 
     /**
      * The Redux dispatch function.
@@ -35,15 +31,15 @@ type Props = {
  *
  * @extends Component
  */
-export default class AbstractMuteRemoteParticipantDialog
-    extends Component<Props> {
+export default class AbstractMuteRemoteParticipantDialog<P:Props = Props>
+    extends Component<P> {
     /**
      * Initializes a new {@code AbstractMuteRemoteParticipantDialog} instance.
      *
      * @param {Object} props - The read-only properties with which the new
      * instance is to be initialized.
      */
-    constructor(props: Props) {
+    constructor(props: P) {
         super(props);
 
         // Bind event handlers so they are only bound once per instance.
@@ -61,9 +57,7 @@ export default class AbstractMuteRemoteParticipantDialog
     _onSubmit() {
         const { dispatch, participantID } = this.props;
 
-        sendAnalytics(createRemoteMuteConfirmedEvent(participantID));
-
-        dispatch(muteRemoteParticipant(participantID));
+        dispatch(muteRemote(participantID));
 
         return true;
     }

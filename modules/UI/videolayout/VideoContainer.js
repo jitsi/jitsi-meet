@@ -8,34 +8,16 @@ import { browser } from '../../../react/features/base/lib-jitsi-meet';
 import { ORIENTATION, LargeVideoBackground } from '../../../react/features/large-video';
 import { LAYOUTS, getCurrentLayout } from '../../../react/features/video-layout';
 /* eslint-enable no-unused-vars */
+import UIEvents from '../../../service/UI/UIEvents';
+import UIUtil from '../util/UIUtil';
 
 import Filmstrip from './Filmstrip';
 import LargeContainer from './LargeContainer';
-import UIEvents from '../../../service/UI/UIEvents';
-import UIUtil from '../util/UIUtil';
 
 // FIXME should be 'video'
 export const VIDEO_CONTAINER_TYPE = 'camera';
 
 const FADE_DURATION_MS = 300;
-
-/**
- * The CSS class used to add a filter effect on the large video when there is
- * a problem with local video.
- *
- * @private
- * @type {string}
- */
-const LOCAL_PROBLEM_FILTER_CLASS = 'videoProblemFilter';
-
-/**
- * The CSS class used to add a filter effect on the large video when there is
- * a problem with remote video.
- *
- * @private
- * @type {string}
- */
-const REMOTE_PROBLEM_FILTER_CLASS = 'remoteVideoProblemFilter';
 
 /**
  * Returns an array of the video dimensions, so that it keeps it's aspect
@@ -64,7 +46,7 @@ function computeDesktopVideoSize( // eslint-disable-line max-params
 
     if (interfaceConfig.VERTICAL_FILMSTRIP) {
         // eslint-disable-next-line no-param-reassign
-        videoSpaceWidth -= Filmstrip.getFilmstripWidth();
+        videoSpaceWidth -= Filmstrip.getVerticalFilmstripWidth();
     } else {
         // eslint-disable-next-line no-param-reassign
         videoSpaceHeight -= Filmstrip.getFilmstripHeight();
@@ -224,6 +206,8 @@ export class VideoContainer extends LargeContainer {
          */
         this._hideBackground = true;
 
+        this._isHidden = false;
+
         /**
          * Flag indicates whether or not the avatar is currently displayed.
          * @type {boolean}
@@ -290,18 +274,6 @@ export class VideoContainer extends LargeContainer {
     }
 
     /**
-     * Enables a filter on the video which indicates that there are some
-     * problems with the local media connection.
-     *
-     * @param {boolean} enable <tt>true</tt> if the filter is to be enabled or
-     * <tt>false</tt> otherwise.
-     */
-    enableLocalConnectionProblemFilter(enable) {
-        this.$video.toggleClass(LOCAL_PROBLEM_FILTER_CLASS, enable);
-        this._updateBackground();
-    }
-
-    /**
      * Obtains media stream ID of the underlying {@link JitsiTrack}.
      * @return {string|null}
      */
@@ -362,7 +334,7 @@ export class VideoContainer extends LargeContainer {
         /* eslint-enable max-params */
         if (this.stream && this.isScreenSharing()) {
             if (interfaceConfig.VERTICAL_FILMSTRIP) {
-                containerWidthToUse -= Filmstrip.getFilmstripWidth();
+                containerWidthToUse -= Filmstrip.getVerticalFilmstripWidth();
             }
 
             return getCameraVideoPosition(width,
@@ -526,9 +498,6 @@ export class VideoContainer extends LargeContainer {
         });
 
         this._updateBackground();
-
-        // Reset the large video background depending on the stream.
-        this.setLargeVideoBackground(this.avatarDisplayed);
     }
 
     /**
@@ -561,34 +530,12 @@ export class VideoContainer extends LargeContainer {
      * @param {boolean} show
      */
     showAvatar(show) {
-        // TO FIX: Video background need to be black, so that we don't have a
-        // flickering effect when scrolling between videos and have the screen
-        // move to grey before going back to video. Avatars though can have the
-        // default background set.
-        // In order to fix this code we need to introduce video background or
-        // find a workaround for the video flickering.
-        this.setLargeVideoBackground(show);
-
         this.$avatar.css('visibility', show ? 'visible' : 'hidden');
         this.avatarDisplayed = show;
 
         this.emitter.emit(UIEvents.LARGE_VIDEO_AVATAR_VISIBLE, show);
         APP.API.notifyLargeVideoVisibilityChanged(show);
     }
-
-    /**
-     * Indicates that the remote user who is currently displayed by this video
-     * container is having connectivity issues.
-     *
-     * @param {boolean} show <tt>true</tt> to show or <tt>false</tt> to hide
-     * the indication.
-     */
-    showRemoteConnectionProblemIndicator(show) {
-        this.$video.toggleClass(REMOTE_PROBLEM_FILTER_CLASS, show);
-        this.$avatar.toggleClass(REMOTE_PROBLEM_FILTER_CLASS, show);
-        this._updateBackground();
-    }
-
 
     /**
      * We are doing fadeOut/fadeIn animations on parent div which wraps
@@ -605,6 +552,8 @@ export class VideoContainer extends LargeContainer {
                 FADE_DURATION_MS,
                 1,
                 () => {
+                    this._isHidden = false;
+                    this._updateBackground();
                     resolve();
                 }
             );
@@ -622,6 +571,8 @@ export class VideoContainer extends LargeContainer {
         return new Promise(resolve => {
             this.$wrapperParent.fadeTo(FADE_DURATION_MS, 0, () => {
                 this.$wrapperParent.css('visibility', 'hidden');
+                this._isHidden = true;
+                this._updateBackground();
                 resolve();
             });
         });
@@ -632,21 +583,6 @@ export class VideoContainer extends LargeContainer {
      */
     stayOnStage() {
         return false;
-    }
-
-    /**
-     * Sets the large video container background depending on the container
-     * type and the parameter indicating if an avatar is currently shown on
-     * large.
-     *
-     * @param {boolean} isAvatar - Indicates if the avatar is currently shown
-     * on the large video.
-     * @returns {void}
-     */
-    setLargeVideoBackground(isAvatar) {
-        $('#largeVideoContainer').css('background',
-            this.videoType === VIDEO_CONTAINER_TYPE && !isAvatar
-                ? '#000' : interfaceConfig.DEFAULT_BACKGROUND);
     }
 
     /**
@@ -673,23 +609,19 @@ export class VideoContainer extends LargeContainer {
         // explicitly disabled.
         if (interfaceConfig.DISABLE_VIDEO_BACKGROUND
                 || browser.isFirefox()
-                || browser.isSafariWithWebrtc()) {
+                || browser.isSafari()) {
             return;
         }
 
         ReactDOM.render(
             <LargeVideoBackground
-                hidden = { this._hideBackground }
+                hidden = { this._hideBackground || this._isHidden }
                 mirror = {
                     this.stream
                     && this.stream.isLocal()
                     && this.localFlipX
                 }
                 orientationFit = { this._backgroundOrientation }
-                showLocalProblemFilter
-                    = { this.$video.hasClass(LOCAL_PROBLEM_FILTER_CLASS) }
-                showRemoteProblemFilter
-                    = { this.$video.hasClass(REMOTE_PROBLEM_FILTER_CLASS) }
                 videoElement = { this.$video && this.$video[0] }
                 videoTrack = { this.stream } />,
             document.getElementById('largeVideoBackgroundContainer')

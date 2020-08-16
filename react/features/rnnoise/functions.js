@@ -25,20 +25,3 @@ export function createRnnoiseProcessorPromise() {
         throw new Error('Rnnoise module binding createRnnoiseProcessor not found!');
     });
 }
-
-/**
- * Get the accepted sample length for the rnnoise library. We might want to expose it with flow libdefs.
- *
- * @returns {number}
- */
-export function getSampleLength() {
-    const ns = getJitsiMeetGlobalNS();
-
-    const rnnoiseSample = ns?.effects?.rnnoise?.RNNOISE_SAMPLE_LENGTH;
-
-    if (!rnnoiseSample) {
-        throw new Error('Please call createRnnoiseProcessorPromise first or wait for promise to resolve!');
-    }
-
-    return rnnoiseSample;
-}

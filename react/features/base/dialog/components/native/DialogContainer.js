@@ -1,5 +1,4 @@
 import { connect } from '../../../redux';
-
 import AbstractDialogContainer, {
     abstractMapStateToProps
 } from '../AbstractDialogContainer';

@@ -18,7 +18,7 @@ export default class AbstractHandler {
         this._blackListedEvents = [
             ...(options.blackListedEvents || []), // eslint-disable-line no-extra-parens
             'e2e_rtt', 'rtp.stats', 'rtt.by.region', 'available.device', 'stream.switch.delay', 'ice.state.changed',
-            'ice.duration'
+            'ice.duration', 'peer.conn.status.duration'
         ];
     }
 

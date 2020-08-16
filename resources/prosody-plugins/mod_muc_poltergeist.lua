@@ -4,7 +4,14 @@ local jid = require "util.jid";
 local neturl = require "net.url";
 local parse = neturl.parseQuery;
 local poltergeist = module:require "poltergeist";
-local wrap_async_run = module:require "util".wrap_async_run;
+
+local have_async = pcall(require, "util.async");
+if not have_async then
+    module:log("error", "requires a version of Prosody with util.async");
+    return;
+end
+
+local async_handler_wrapper = module:require "util".async_handler_wrapper;
 
 -- Options
 local poltergeist_component
@@ -99,8 +106,8 @@ prosody.events.add_handler("pre-jitsi-authentication", function(session)
 
     if (session.jitsi_meet_context_user) then
         local room = get_room(
-            session.jitsi_bosh_query_room,
-            session.jitsi_bosh_query_prefix);
+            session.jitsi_web_query_room,
+            session.jitsi_web_query_prefix);
 
         if (not room) then
             return nil;
@@ -168,7 +175,7 @@ module:hook(
 -- @return GET response, containing a json with response details
 function handle_create_poltergeist (event)
     if (not event.request.url.query) then
-        return 400;
+        return { status_code = 400; };
     end
 
     local params = parse(event.request.url.query);
@@ -182,7 +189,7 @@ function handle_create_poltergeist (event)
     local session = {};
 
     if not verify_token(params["token"], room_name, group, session) then
-        return 403;
+        return { status_code = 403; };
     end
 
     -- If the provided room conference doesn't exist then we
@@ -190,7 +197,7 @@ function handle_create_poltergeist (event)
     local room = get_room(room_name, group);
     if (not room) then
         log("error", "no room found %s", room_name);
-        return 404;
+        return { status_code = 404; };
     end
 
     -- If the poltergiest is already in the conference then it will
@@ -203,7 +210,7 @@ function handle_create_poltergeist (event)
             username,
             room_name
         );
-        return 202;
+        return { status_code = 202; };
     end
 
     local context = {
@@ -214,14 +221,16 @@ function handle_create_poltergeist (event)
        creator_user = session.jitsi_meet_context_user;
        creator_group = session.jitsi_meet_context_group;
     };
-
+    if avatar ~= nil then
+        context.user.avatar = avatar
+    end
     local resources = {};
     if conversation ~= nil then
         resources["conversation"] = conversation
     end
 
     poltergeist.add_to_muc(room, user_id, name, avatar, context, status, resources)
-    return 200;
+    return { status_code = 200; };
 end
 
 --- Handles request for updating poltergeists status
@@ -229,7 +238,7 @@ end
 -- @return GET response, containing a json with response details
 function handle_update_poltergeist (event)
     if (not event.request.url.query) then
-        return 400;
+        return { status_code = 400; };
     end
 
     local params = parse(event.request.url.query);
@@ -245,18 +254,18 @@ function handle_update_poltergeist (event)
     end
 
     if not verify_token(params["token"], room_name, group, {}) then
-        return 403;
+        return { status_code = 403; };
     end
 
     local room = get_room(room_name, group);
     if (not room) then
         log("error", "no room found %s", room_name);
-        return 404;
+        return { status_code = 404; };
     end
 
     local username = poltergeist.get_username(room, user_id);
     if (not username) then
-        return 404;
+        return { status_code = 404; };
     end
 
     local call_details = {
@@ -266,11 +275,11 @@ function handle_update_poltergeist (event)
 
     local nick = poltergeist.create_nick(username);
     if (not poltergeist.occupies(room, nick)) then
-       return 404;
+       return { status_code = 404; };
     end
 
     poltergeist.update(room, nick, status, call_details);
-    return 200;
+    return { status_code = 200; };
 end
 
 --- Handles remove poltergeists
@@ -278,7 +287,7 @@ end
 -- @return GET response, containing a json with response details
 function handle_remove_poltergeist (event)
     if (not event.request.url.query) then
-        return 400;
+        return { status_code = 400; };
     end
 
     local params = parse(event.request.url.query);
@@ -287,27 +296,27 @@ function handle_remove_poltergeist (event)
     local group = params["group"];
 
     if not verify_token(params["token"], room_name, group, {}) then
-        return 403;
+        return { status_code = 403; };
     end
 
     local room = get_room(room_name, group);
     if (not room) then
         log("error", "no room found %s", room_name);
-        return 404;
+        return { status_code = 404; };
     end
 
     local username = poltergeist.get_username(room, user_id);
     if (not username) then
-        return 404;
+        return { status_code = 404; };
     end
 
     local nick = poltergeist.create_nick(username);
     if (not poltergeist.occupies(room, nick)) then
-       return 404;
+       return { status_code = 404; };
     end
 
     poltergeist.remove(room, nick, false);
-    return 200;
+    return { status_code = 200; };
 end
 
 log("info", "Loading poltergeist service");
@@ -316,8 +325,8 @@ module:provides("http", {
     default_path = "/";
     name = "poltergeist";
     route = {
-        ["GET /poltergeist/create"] = function (event) return wrap_async_run(event,handle_create_poltergeist) end;
-        ["GET /poltergeist/update"] = function (event) return wrap_async_run(event,handle_update_poltergeist) end;
-        ["GET /poltergeist/remove"] = function (event) return wrap_async_run(event,handle_remove_poltergeist) end;
+        ["GET /poltergeist/create"] = function (event) return async_handler_wrapper(event,handle_create_poltergeist) end;
+        ["GET /poltergeist/update"] = function (event) return async_handler_wrapper(event,handle_update_poltergeist) end;
+        ["GET /poltergeist/remove"] = function (event) return async_handler_wrapper(event,handle_remove_poltergeist) end;
     };
 });

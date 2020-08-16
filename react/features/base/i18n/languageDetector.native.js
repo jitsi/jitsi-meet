@@ -2,6 +2,10 @@
 
 import { NativeModules } from 'react-native';
 
+import LANGUAGES_RESOURCES from '../../../../lang/languages.json';
+
+const LANGUAGES = Object.keys(LANGUAGES_RESOURCES);
+
 /**
  * The singleton language detector for React Native which uses the system-wide
  * locale.
@@ -16,8 +20,14 @@ export default {
 
     detect() {
         const { LocaleDetector } = NativeModules;
+        const [ lang, region ] = LocaleDetector.locale.replace(/_/, '-').split('-');
+        const locale = `${lang}${region}`;
 
-        return LocaleDetector.locale.replace(/_/, '-');
+        if (LANGUAGES.includes(locale)) {
+            return locale;
+        }
+
+        return lang;
     },
 
     init: Function.prototype,

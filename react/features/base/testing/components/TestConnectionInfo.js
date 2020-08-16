@@ -2,14 +2,12 @@
 
 import React, { Component, Fragment } from 'react';
 
+import { statsEmitter } from '../../../connection-indicator';
 import { getLocalParticipant } from '../../participants';
 import { connect } from '../../redux';
-
-// FIXME this imports feature to 'base'
-import { statsEmitter } from '../../../connection-indicator';
+import { isTestModeEnabled } from '../functions';
 
 import { TestHint } from './index';
-import { isTestModeEnabled } from '../functions';
 
 /**
  * Defines the TestConnectionInfo's properties.
@@ -37,6 +35,11 @@ type Props = {
      * stats.
      */
     _localUserId: string,
+
+    /**
+     * The local participant's role.
+     */
+    _localUserRole: string,
 
     /**
      * Indicates whether or not the test mode is currently on. Otherwise the
@@ -182,6 +185,9 @@ class TestConnectionInfo extends Component<Props, State> {
                     id = 'org.jitsi.meet.conference.joinedState'
                     value = { this.props._conferenceJoinedState } />
                 <TestHint
+                    id = 'org.jitsi.meet.conference.localParticipantRole'
+                    value = { this.props._localUserRole } />
+                <TestHint
                     id = 'org.jitsi.meet.stats.rtp'
                     value = { JSON.stringify(this.state.stats) } />
             </Fragment>
@@ -210,7 +216,8 @@ function _mapStateToProps(state) {
     return {
         _conferenceConnectionState: state['features/testing'].connectionState,
         _conferenceJoinedState: conferenceJoined.toString(),
-        _localUserId: localParticipant && localParticipant.id,
+        _localUserId: localParticipant?.id,
+        _localUserRole: localParticipant?.role,
         _testMode: isTestModeEnabled(state)
     };
 }

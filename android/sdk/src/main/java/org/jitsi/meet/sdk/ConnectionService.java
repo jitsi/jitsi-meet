@@ -123,14 +123,17 @@ public class ConnectionService extends android.telecom.ConnectionService {
      * {@link android.telecom.Connection#STATE_ACTIVE}.
      *
      * @param callUUID the call UUID which identifies the connection.
+     * @return Whether the connection was set as active or not.
      */
-    static void setConnectionActive(String callUUID) {
+    static boolean setConnectionActive(String callUUID) {
         ConnectionImpl connection = connections.get(callUUID);
 
         if (connection != null) {
             connection.setActive();
+            return true;
         } else {
-            JitsiMeetLogger.e("%s setConnectionActive - no connection for UUID: %s", TAG, callUUID);
+            JitsiMeetLogger.w("%s setConnectionActive - no connection for UUID: %s", TAG, callUUID);
+            return false;
         }
     }
 

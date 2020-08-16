@@ -1,0 +1,101 @@
+--- mod_websocket.lua
++++ mod_websocket.lua
+@@ -163,34 +163,34 @@ function handle_request(event)
+ 		return 403;
+ 	end
+ 
+-	local function websocket_close(code, message)
++	local function websocket_close(conn, code, message)
+ 		conn:write(build_close(code, message));
+ 		conn:close();
+ 	end
+ 
+ 	local dataBuffer;
+-	local function handle_frame(frame)
++	local function handle_frame(conn, frame)
+ 		local opcode = frame.opcode;
+ 		local length = frame.length;
+ 		module:log("debug", "Websocket received frame: opcode=%0x, %i bytes", frame.opcode, #frame.data);
+ 
+ 		-- Error cases
+ 		if frame.RSV1 or frame.RSV2 or frame.RSV3 then -- Reserved bits non zero
+-			websocket_close(1002, "Reserved bits not zero");
++			websocket_close(conn, 1002, "Reserved bits not zero");
+ 			return false;
+ 		end
+ 
+ 		if opcode == 0x8 then -- close frame
+ 			if length == 1 then
+-				websocket_close(1002, "Close frame with payload, but too short for status code");
++				websocket_close(conn, 1002, "Close frame with payload, but too short for status code");
+ 				return false;
+ 			elseif length >= 2 then
+ 				local status_code = parse_close(frame.data)
+ 				if status_code < 1000 then
+-					websocket_close(1002, "Closed with invalid status code");
++					websocket_close(conn, 1002, "Closed with invalid status code");
+ 					return false;
+ 				elseif ((status_code > 1003 and status_code < 1007) or status_code > 1011) and status_code < 3000 then
+-					websocket_close(1002, "Closed with reserved status code");
++					websocket_close(conn, 1002, "Closed with reserved status code");
+ 					return false;
+ 				end
+ 			end
+@@ -198,28 +198,28 @@ function handle_request(event)
+ 
+ 		if opcode >= 0x8 then
+ 			if length > 125 then -- Control frame with too much payload
+-				websocket_close(1002, "Payload too large");
++				websocket_close(conn, 1002, "Payload too large");
+ 				return false;
+ 			end
+ 
+ 			if not frame.FIN then -- Fragmented control frame
+-				websocket_close(1002, "Fragmented control frame");
++				websocket_close(conn, 1002, "Fragmented control frame");
+ 				return false;
+ 			end
+ 		end
+ 
+ 		if (opcode > 0x2 and opcode < 0x8) or (opcode > 0xA) then
+-			websocket_close(1002, "Reserved opcode");
++			websocket_close(conn, 1002, "Reserved opcode");
+ 			return false;
+ 		end
+ 
+ 		if opcode == 0x0 and not dataBuffer then
+-			websocket_close(1002, "Unexpected continuation frame");
++			websocket_close(conn, 1002, "Unexpected continuation frame");
+ 			return false;
+ 		end
+ 
+ 		if (opcode == 0x1 or opcode == 0x2) and dataBuffer then
+-			websocket_close(1002, "Continuation frame expected");
++			websocket_close(conn, 1002, "Continuation frame expected");
+ 			return false;
+ 		end
+ 
+@@ -229,11 +229,11 @@ function handle_request(event)
+ 		elseif opcode == 0x1 then -- Text frame
+ 			dataBuffer = {frame.data};
+ 		elseif opcode == 0x2 then -- Binary frame
+-			websocket_close(1003, "Only text frames are supported");
++			websocket_close(conn, 1003, "Only text frames are supported");
+ 			return;
+ 		elseif opcode == 0x8 then -- Close request
+-			websocket_close(1000, "Goodbye");
+-			return;
++			websocket_close(conn, 1000, "Goodbye");
++			return "";
+ 		elseif opcode == 0x9 then -- Ping frame
+ 			frame.opcode = 0xA;
+ 			conn:write(build_frame(frame));
+@@ -276,7 +276,7 @@ function handle_request(event)
+ 
+ 		while frame do
+ 			frameBuffer = frameBuffer:sub(length + 1);
+-			local result = handle_frame(frame);
++			local result = handle_frame(session.conn, frame);
+ 			if not result then return; end
+ 			cache[#cache+1] = filter_open_close(result);
+ 			frame, length = parse_frame(frameBuffer);

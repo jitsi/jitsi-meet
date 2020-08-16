@@ -1,50 +1,41 @@
-import { BoxModel, ColorPalette, createStyleSheet } from '../../base/styles';
-
-/**
- * The style common to {@code LoginDialog} and {@code WaitForOwnerDialog}.
- */
-const dialog = {
-    marginBottom: BoxModel.margin,
-    marginTop: BoxModel.margin
-};
-
-/**
- * The style common to {@code Text} rendered by {@code LoginDialog} and
- * {@code WaitForOwnerDialog}.
- */
-const text = {
-    color: ColorPalette.white
-};
+import { ColorSchemeRegistry, schemeColor } from '../../base/color-scheme';
+import { BoxModel } from '../../base/styles';
 
 /**
  * The styles of the authentication feature.
  */
-export default createStyleSheet({
+ColorSchemeRegistry.register('LoginDialog', {
 
     /**
      * The style of {@code Text} rendered by the {@code Dialog}s of the
      * feature authentication.
      */
     dialogText: {
-        ...text,
         margin: BoxModel.margin,
         marginTop: BoxModel.margin * 2
+    },
+
+    /**
+     * The style used when an error message is rendered.
+     */
+    errorMessage: {
+        color: schemeColor('errorText')
     },
 
     /**
      * The style of {@code LoginDialog}.
      */
     loginDialog: {
-        ...dialog,
         flex: 0,
-        flexDirection: 'column'
+        flexDirection: 'column',
+        marginBottom: BoxModel.margin,
+        marginTop: BoxModel.margin
     },
 
     /**
-     * The style of {@code WaitForOwnerDialog}.
+     * The style used then a progress message is rendered.
      */
-    waitForOwnerDialog: {
-        ...dialog,
-        ...text
+    progressMessage: {
+        color: schemeColor('text')
     }
 });

@@ -1,7 +1,7 @@
 // @flow
 
-import { StateListenerRegistry } from '../base/redux';
 import VideoLayout from '../../../modules/UI/videolayout/VideoLayout';
+import { StateListenerRegistry } from '../base/redux';
 
 /**
  * Updates the on stage participant video.

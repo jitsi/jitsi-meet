@@ -1,9 +1,9 @@
 // @flow
 
+import COUNTRIES_RESOURCES from 'i18n-iso-countries/langs/en.json';
 import i18next from 'i18next';
 import I18nextXHRBackend from 'i18next-xhr-backend';
 
-import COUNTRIES_RESOURCES from 'i18n-iso-countries/langs/en.json';
 import LANGUAGES_RESOURCES from '../../../../lang/languages.json';
 import MAIN_RESOURCES from '../../../../lang/main.json';
 

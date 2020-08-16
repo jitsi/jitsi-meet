@@ -1,6 +1,5 @@
 local jid = require "util.jid";
-local runner, waiter = require "util.async".runner, require "util.async".waiter;
-
+local have_async, async = pcall(require, "util.async");
 local muc_domain_prefix
     = module:get_option_string("muc_mapper_domain_prefix", "conference");
 
@@ -60,29 +59,14 @@ function get_room_from_jid(room_jid)
     end
 end
 
-
-function wrap_async_run(event,handler)
-    -- Grab a local response so that we can send the http response when
-    -- the handler is done.
-    local response = event.response;
-    local async_func = runner(function (event)
-        local result = handler(event);
-        -- if it is a number, it is a status code, else it is the body
-        -- result we will return
-        if (tonumber(result) ~= nil) then
-            response.status_code = result;
-        else
-            response.body = result;
-        end;
-        -- Send the response to the waiting http client.
-        response:send();
-    end)
-    async_func:run(event)
-    -- return true to keep the client http connection open.
-    return true;
-end
-
 function async_handler_wrapper(event, handler)
+    if not have_async then
+        module:log("error", "requires a version of Prosody with util.async");
+        return nil;
+    end
+
+    local runner = async.runner;
+
     -- Grab a local response so that we can send the http response when
     -- the handler is done.
     local response = event.response;
@@ -188,10 +172,23 @@ function is_feature_allowed(session, feature)
     end
 end
 
+function starts_with(str, start)
+    return str:sub(1, #start) == start
+end
+
+-- healthcheck rooms in jicofo starts with a string '__jicofo-health-check'
+function is_healthcheck_room(room_jid)
+    if starts_with(room_jid, "__jicofo-health-check") then
+        return true;
+    end
+
+    return false;
+end
+
 return {
     is_feature_allowed = is_feature_allowed;
+    is_healthcheck_room = is_healthcheck_room;
     get_room_from_jid = get_room_from_jid;
-    wrap_async_run = wrap_async_run;
     async_handler_wrapper = async_handler_wrapper;
     room_jid_match_rewrite = room_jid_match_rewrite;
     update_presence_identity = update_presence_identity;

@@ -61,11 +61,17 @@ const googleApi = {
      * making Google API requests.
      *
      * @param {string} clientId - The client ID to be used with the API library.
+     * @param {boolean} enableYoutube - Whether youtube scope is enabled.
+     * @param {boolean} enableCalendar - Whether calendar scope is enabled.
      * @returns {Promise}
      */
-    initializeClient(clientId) {
+    initializeClient(clientId, enableYoutube, enableCalendar) {
         return this.get()
             .then(api => new Promise((resolve, reject) => {
+                const scope
+                    = `${enableYoutube ? GOOGLE_SCOPE_YOUTUBE : ''} ${enableCalendar ? GOOGLE_SCOPE_CALENDAR : ''}`
+                        .trim();
+
                 // setTimeout is used as a workaround for api.client.init not
                 // resolving consistently when the Google API Client Library is
                 // loaded asynchronously. See:
@@ -74,10 +80,7 @@ const googleApi = {
                     api.client.init({
                         clientId,
                         discoveryDocs: DISCOVERY_DOCS,
-                        scope: [
-                            GOOGLE_SCOPE_CALENDAR,
-                            GOOGLE_SCOPE_YOUTUBE
-                        ].join(' ')
+                        scope
                     })
                     .then(resolve)
                     .catch(reject);

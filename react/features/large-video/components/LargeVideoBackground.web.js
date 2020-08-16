@@ -2,6 +2,9 @@
 
 import React, { Component } from 'react';
 
+import { connect } from '../../base/redux';
+import { shouldDisplayTileView } from '../../video-layout';
+
 /**
  * Constants to describe the dimensions of the video. Landscape videos
  * are wider than they are taller and portrait videos are taller than they
@@ -20,6 +23,14 @@ export const ORIENTATION = {
  * {@link LargeVideoBackgroundCanvas}.
  */
 type Props = {
+
+   /**
+     * Whether or not the layout should change to support tile view mode.
+     *
+     * @protected
+     * @type {boolean}
+     */
+    _shouldDisplayTileView: boolean,
 
     /**
      * Additional CSS class names to add to the root of the component.
@@ -42,18 +53,6 @@ type Props = {
      * (landscape) or full height (portrait).
      */
     orientationFit: string,
-
-    /**
-     * Whether or not to display a filter on the video to visually indicate a
-     * problem with the video being displayed.
-     */
-    showLocalProblemFilter: boolean,
-
-    /**
-     * Whether or not to display a filter on the video to visually indicate a
-     * problem with the video being displayed.
-     */
-    showRemoteProblemFilter: boolean,
 
     /**
      * The video stream to display.
@@ -95,7 +94,9 @@ export class LargeVideoBackground extends Component<Props> {
      * @returns {void}
      */
     componentDidMount() {
-        if (this.props.videoElement && !this.props.hidden) {
+        const { _shouldDisplayTileView, hidden, videoElement } = this.props;
+
+        if (videoElement && !hidden && !_shouldDisplayTileView) {
             this._updateCanvas();
             this._setUpdateCanvasInterval();
         }
@@ -107,15 +108,18 @@ export class LargeVideoBackground extends Component<Props> {
      * @inheritdoc
      */
     componentDidUpdate(prevProps: Props) {
-        if (prevProps.hidden && !this.props.hidden) {
-            this._clearCanvas();
-            this._setUpdateCanvasInterval();
-        }
+        const wasCanvasUpdating = !prevProps.hidden && !prevProps._shouldDisplayTileView && prevProps.videoElement;
+        const shouldCanvasUpdating
+            = !this.props.hidden && !this.props._shouldDisplayTileView && this.props.videoElement;
 
-        if ((!prevProps.hidden && this.props.hidden)
-            || !this.props.videoElement) {
-            this._clearCanvas();
-            this._clearUpdateCanvasInterval();
+        if (wasCanvasUpdating !== shouldCanvasUpdating) {
+            if (shouldCanvasUpdating) {
+                this._clearCanvas();
+                this._setUpdateCanvasInterval();
+            } else {
+                this._clearCanvas();
+                this._clearUpdateCanvasInterval();
+            }
         }
     }
 
@@ -137,14 +141,9 @@ export class LargeVideoBackground extends Component<Props> {
     render() {
         const {
             hidden,
-            mirror,
-            showLocalProblemFilter,
-            showRemoteProblemFilter
+            mirror
         } = this.props;
-        const classNames = `large-video-background ${mirror ? 'flip-x' : ''} ${
-            hidden ? 'invisible' : ''} ${
-            showLocalProblemFilter ? 'videoProblemFilter' : ''} ${
-            showRemoteProblemFilter ? 'remoteVideoProblemFilter' : ''}`;
+        const classNames = `large-video-background ${mirror ? 'flip-x' : ''} ${hidden ? 'invisible' : ''}`;
 
         return (
             <div className = { classNames }>
@@ -212,6 +211,19 @@ export class LargeVideoBackground extends Component<Props> {
      * @returns {void}
      */
     _updateCanvas() {
+        // On Electron 7 there is a memory leak if we try to draw into a hidden canvas that is part of the DOM tree.
+        // See: https://github.com/electron/electron/issues/22417
+        // Trying to detect all the cases when the page will be hidden because of something not in our control
+        // (for example when the page is loaded in an iframe which is hidden due to the host page styles) to solve
+        // the memory leak. Currently we are not handling the use case when the page is hidden with visibility:hidden
+        // because we don't have a good way to do it.
+        // All other cases when the canvas is not visible are handled trough the component props
+        // (hidden, _shouldDisplayTileView).
+        if (!this._canvasEl || this._canvasEl.offsetParent === null
+                || window.innerHeight === 0 || window.innerWidth === 0) {
+            return;
+        }
+
         const { videoElement } = this.props;
         const { videoWidth, videoHeight } = videoElement;
         const {
@@ -233,3 +245,22 @@ export class LargeVideoBackground extends Component<Props> {
         }
     }
 }
+
+/**
+ * Maps (parts of) the Redux state to the associated LargeVideoBackground props.
+ *
+ * @param {Object} state - The Redux state.
+ * @private
+ * @returns {{
+ *     _shouldDisplayTileView: boolean
+ * }}
+ */
+function _mapStateToProps(state) {
+    return {
+        _shouldDisplayTileView: shouldDisplayTileView(state)
+    };
+}
+
+
+export default connect(_mapStateToProps)(LargeVideoBackground);
+

@@ -185,6 +185,23 @@ export function createRecentClickedEvent(eventName, attributes = {}) {
 }
 
 /**
+ * Creates an event which indicate an action occured in the chrome extension banner.
+ *
+ * @param {boolean} installPressed - Whether the user pressed install or `x` - cancel.
+ * @param {Object} attributes - Attributes to attach to the event.
+ * @returns {Object} The event in a format suitable for sending via
+ * sendAnalytics.
+ */
+export function createChromeExtensionBannerEvent(installPressed, attributes = {}) {
+    return {
+        action: installPressed ? 'install' : 'cancel',
+        attributes,
+        source: 'chrome.extension.banner',
+        type: TYPE_UI
+    };
+}
+
+/**
  * Creates an event which indicates that the recent list container is shown and
  * selected.
  *
@@ -237,6 +254,20 @@ export function createDeviceChangedEvent(mediaType, deviceType) {
             'device_type': deviceType,
             'media_type': mediaType
         }
+    };
+}
+
+/**
+ * Creates an event indicating that an action related to E2EE occurred.
+ *
+ * @param {string} action - The action which occurred.
+ * @returns {Object} The event in a format suitable for sending via
+ * sendAnalytics.
+ */
+export function createE2EEEvent(action) {
+    return {
+        action,
+        actionSubject: 'e2ee'
     };
 }
 
@@ -508,6 +539,26 @@ export function createRemoteVideoMenuButtonEvent(buttonName, attributes) {
 }
 
 /**
+ * The rtcstats websocket onclose event. We send this to amplitude in order
+ * to detect trace ws prematurely closing.
+ *
+ * @param {Object} closeEvent - The event with which the websocket closed.
+ * @returns {Object} The event in a format suitable for sending via
+ * sendAnalytics.
+ */
+export function createRTCStatsTraceCloseEvent(closeEvent) {
+    const event = {
+        action: 'trace.onclose',
+        source: 'rtcstats'
+    };
+
+    event.code = closeEvent.code;
+    event.reason = closeEvent.reason;
+
+    return event;
+}
+
+/**
  * Creates an event indicating that an action related to video blur
  * occurred (e.g. It was started or stopped).
  *
@@ -658,21 +709,6 @@ export function createStartMutedConfigurationEvent(
 }
 
 /**
- * Creates an event which indicates the delay for switching between simulcast
- * streams.
- *
- * @param {Object} attributes - Attributes to attach to the event.
- * @returns {Object} The event in a format suitable for sending via
- * sendAnalytics.
- */
-export function createStreamSwitchDelayEvent(attributes) {
-    return {
-        action: 'stream.switch.delay',
-        attributes
-    };
-}
-
-/**
  * Automatically changing the mute state of a media track in order to match
  * the current stored state in redux.
  *
@@ -688,21 +724,6 @@ export function createSyncTrackStateEvent(mediaType, muted) {
         attributes: {
             'media_type': mediaType,
             muted
-        }
-    };
-}
-
-/**
- * Creates an event that indicates the thumbnail offset parent is null.
- *
- * @param {string} id - The id of the user related to the thumbnail.
- * @returns {Object} The event in a format suitable for sending via sendAnalytics.
- */
-export function createThumbnailOffsetParentIsNullEvent(id) {
-    return {
-        action: 'OffsetParentIsNull',
-        attributes: {
-            id
         }
     };
 }

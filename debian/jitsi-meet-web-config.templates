@@ -26,12 +26,6 @@ Type: string
 _Description: The hostname of the current installation:
  The value for the hostname that is set in Jitsi Videobridge installation.
 
-Template: jitsi-meet/jvb-serve
-Type: boolean
-Default: false
-_Description: for internal use
- for internal use.
-
 Template: jitsi-videobridge/jvb-hostname
 Type: string
 _Description: Hostname:

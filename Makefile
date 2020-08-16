@@ -21,6 +21,7 @@ compile:
 clean:
 	rm -fr $(BUILD_DIR)
 
+.NOTPARALLEL:
 deploy: deploy-init deploy-appbundle deploy-rnnoise-binary deploy-lib-jitsi-meet deploy-libflac deploy-css deploy-local
 
 deploy-init:
@@ -73,18 +74,19 @@ deploy-rnnoise-binary:
 
 deploy-css:
 	$(NODE_SASS) $(STYLES_MAIN) $(STYLES_BUNDLE) && \
-	$(CLEANCSS) $(STYLES_BUNDLE) > $(STYLES_DESTINATION) ; \
+	$(CLEANCSS) --skip-rebase $(STYLES_BUNDLE) > $(STYLES_DESTINATION) ; \
 	rm $(STYLES_BUNDLE)
 
 deploy-local:
 	([ ! -x deploy-local.sh ] || ./deploy-local.sh)
 
+.NOTPARALLEL:
 dev: deploy-init deploy-css deploy-rnnoise-binary deploy-lib-jitsi-meet deploy-libflac
-	$(WEBPACK_DEV_SERVER)
+	$(WEBPACK_DEV_SERVER) --detect-circular-deps
 
 source-package:
 	mkdir -p source_package/jitsi-meet/css && \
-	cp -r *.js *.html connection_optimization favicon.ico fonts images libs static sounds LICENSE lang source_package/jitsi-meet && \
+	cp -r *.js *.html resources/*.txt connection_optimization favicon.ico fonts images libs static sounds LICENSE lang source_package/jitsi-meet && \
 	cp css/all.css source_package/jitsi-meet/css && \
 	(cd source_package ; tar cjf ../jitsi-meet.tar.bz2 jitsi-meet) && \
 	rm -rf source_package

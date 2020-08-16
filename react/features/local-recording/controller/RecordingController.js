@@ -1,7 +1,6 @@
 /* @flow */
 
 import { i18next } from '../../base/i18n';
-
 import logger from '../logger';
 import {
     FlacAdapter,

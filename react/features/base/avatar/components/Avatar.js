@@ -5,7 +5,6 @@ import React, { PureComponent } from 'react';
 import { IconShareDesktop } from '../../icons';
 import { getParticipantById } from '../../participants';
 import { connect } from '../../redux';
-
 import { getAvatarColor, getInitials } from '../functions';
 
 import { StatelessAvatar } from '.';
@@ -53,6 +52,11 @@ export type Props = {
      * The size of the avatar.
      */
     size: number,
+
+    /**
+     * One of the expected status strings (e.g. 'available') to render a badge on the avatar, if necessary.
+     */
+    status?: ?string,
 
     /**
      * URL of the avatar, if any.
@@ -117,6 +121,7 @@ class Avatar<P: Props> extends PureComponent<P, State> {
             colorBase,
             id,
             size,
+            status,
             url
         } = this.props;
         const { avatarFailed } = this.state;
@@ -128,6 +133,7 @@ class Avatar<P: Props> extends PureComponent<P, State> {
             initials: undefined,
             onAvatarLoadError: undefined,
             size,
+            status,
             url: undefined
         };
 

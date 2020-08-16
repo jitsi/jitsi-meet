@@ -1,5 +1,5 @@
 import AbstractHandler from './AbstractHandler';
-import { amplitude } from './amplitude';
+import { amplitude, fixDeviceID } from './amplitude';
 
 /**
  * Analytics handler for Amplitude.
@@ -28,6 +28,7 @@ export default class AmplitudeHandler extends AbstractHandler {
         };
 
         amplitude.getInstance(this._amplitudeOptions).init(amplitudeAPPKey, undefined, { includeReferrer: true });
+        fixDeviceID(amplitude.getInstance(this._amplitudeOptions));
 
         if (user) {
             amplitude.getInstance(this._amplitudeOptions).setUserId(user);
@@ -63,5 +64,18 @@ export default class AmplitudeHandler extends AbstractHandler {
         amplitude.getInstance(this._amplitudeOptions).logEvent(
             this._extractName(event),
             event);
+    }
+
+    /**
+     * Return amplitude identity information.
+     *
+     * @returns {Object}
+     */
+    getIdentityProps() {
+        return {
+            sessionId: amplitude.getInstance(this._amplitudeOptions).getSessionId(),
+            deviceId: amplitude.getInstance(this._amplitudeOptions).options.deviceId,
+            userId: amplitude.getInstance(this._amplitudeOptions).options.userId
+        };
     }
 }

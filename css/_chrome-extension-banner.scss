@@ -1,0 +1,93 @@
+.chrome-extension-banner {
+  position: fixed;
+  width: 406px;
+  height: $chromeExtensionBannerHeight;
+  background: #FFF;
+  box-shadow: 0px 2px 48px rgba(0, 0, 0, 0.25);
+  border-radius: 4px;
+  z-index: 1000;
+  float: right;
+  display: flex;
+  flex-direction: column;
+  padding: 20px 20px;
+  top: $chromeExtensionBannerTop;
+  right: $chromeExtensionBannerRight;
+    &__pos_in_meeting {
+      top: $chromeExtensionBannerTopInMeeting;
+      right: $chromeExtensionBannerRightInMeeeting;
+    }
+
+    &__container {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+
+    &__button-container {
+      display: flex;
+    }
+
+    &__checkbox-container {
+        display: $chromeExtensionBannerDontShowAgainDisplay;
+        margin-left: 45px;
+        margin-top: 16px;
+    }
+
+    &__checkbox-label {
+        font-size: 14px;
+        line-height: 18px;
+        display: flex;
+        align-items: center;
+        letter-spacing: -0.006em;
+        color: #1C2025;
+    }
+
+    &__icon-container {
+      display: flex;
+      background: url('../images/chromeLogo.svg');
+      background-repeat: no-repeat;
+      width: 27px;
+      height: 27px;
+    }
+
+    &__text-container {
+      font-size: 14px;
+      line-height: 18px;
+      display: flex;
+      align-items: center;
+      letter-spacing: -0.006em;
+      color: #151531;
+      width: 329px;
+    }
+
+    &__close-container {
+      display: flex;
+      width: 12px;
+      height: 12px;
+    }
+
+    &__gray-close-icon {
+      fill: #5E6D7A;
+      width: 12px;
+      height: 12px;
+      cursor: pointer;
+    }
+
+    &__button-open-url {
+      background: #0A57EB;
+      border-radius: 24px;
+      margin-left: 45px;
+      width: 236px;
+      height: 40px;
+      cursor: pointer;
+    }
+
+    &__button-text {
+      font-weight: 600;
+      font-size: 14px;
+      line-height: 40px;
+      text-align: center;
+      letter-spacing: -0.006em;
+      color: #FFFFFF;
+    }
+}

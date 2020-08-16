@@ -1,7 +1,7 @@
 /* global config, createConnectionExternally */
 
 import getRoomName from '../react/features/base/config/getRoomName';
-import parseURLParams from '../react/features/base/config/parseURLParams';
+import { parseURLParams } from '../react/features/base/util/parseURLParams';
 
 /**
  * Implements external connect using createConnectionExternally function defined
@@ -17,10 +17,11 @@ import parseURLParams from '../react/features/base/config/parseURLParams';
 
 if (typeof createConnectionExternally === 'function') {
     // URL params have higher priority than config params.
+    // Do not use external connect if websocket is enabled.
     let url
         = parseURLParams(window.location, true, 'hash')[
                 'config.externalConnectUrl']
-            || config.externalConnectUrl;
+            || config.websocket ? undefined : config.externalConnectUrl;
     const isRecorder
         = parseURLParams(window.location, true, 'hash')['config.iAmRecorder'];
 

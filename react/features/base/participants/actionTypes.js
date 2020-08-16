@@ -13,6 +13,16 @@
 export const DOMINANT_SPEAKER_CHANGED = 'DOMINANT_SPEAKER_CHANGED';
 
 /**
+ * Create an action for granting moderator to a participant.
+ *
+ * {
+ *     type: GRANT_MODERATOR,
+ *     id: string
+ * }
+ */
+export const GRANT_MODERATOR = 'GRANT_MODERATOR';
+
+/**
  * Create an action for removing a participant from the conference.
  *
  * {
@@ -56,6 +66,19 @@ export const PARTICIPANT_DISPLAY_NAME_CHANGED
  * }
  */
 export const PARTICIPANT_ID_CHANGED = 'PARTICIPANT_ID_CHANGED';
+
+/**
+ * Action to signal that participant role has changed. e.
+ *
+ * {
+ *     type: PARTICIPANT_ROLE_CHANGED,
+ *     participant: {
+ *         id: string
+ *     }
+ *     role: string
+ * }
+ */
+export const PARTICIPANT_ROLE_CHANGED = 'PARTICIPANT_ROLE_CHANGED';
 
 /**
  * Action to signal that a participant has joined.

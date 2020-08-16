@@ -37,6 +37,11 @@ body {
     fill: white;
 }
 
+.jitsi-icon.gray svg {
+    fill: #5E6D7A;
+    cursor: pointer;
+}
+
 /**
  * AtlasKitThemeProvider sets a background color on an app-wrapping div, thereby
  * preventing transparency in filmstrip-only mode. The selector chosen to
@@ -110,8 +115,9 @@ form {
 .leftwatermark {
     left: 32px;
     top: 32px;
-    background-image: url($defaultWatermarkLink);
     background-position: center left;
+    background-repeat: no-repeat;
+    background-size: contain;
 }
 
 .rightwatermark {
@@ -161,6 +167,7 @@ form {
 ::-webkit-scrollbar {
     background: transparent;
     width: 7px;
+    height: $scrollHeight;
 }
 
 ::-webkit-scrollbar-button {

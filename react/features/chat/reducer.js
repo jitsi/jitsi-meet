@@ -1,5 +1,6 @@
 // @flow
 
+import { SET_ACTIVE_MODAL_ID } from '../base/modal';
 import { ReducerRegistry } from '../base/redux';
 
 import {
@@ -8,6 +9,7 @@ import {
     SET_PRIVATE_MESSAGE_RECIPIENT,
     TOGGLE_CHAT
 } from './actionTypes';
+import { CHAT_VIEW_MODAL_ID } from './constants';
 
 const DEFAULT_STATE = {
     isOpen: false,
@@ -56,6 +58,12 @@ ReducerRegistry.register('features/chat', (state = DEFAULT_STATE, action) => {
             messages: []
         };
 
+    case SET_ACTIVE_MODAL_ID:
+        if (action.activeModalId === CHAT_VIEW_MODAL_ID) {
+            return updateChatState(state);
+        }
+
+        break;
     case SET_PRIVATE_MESSAGE_RECIPIENT:
         return {
             ...state,
@@ -64,14 +72,24 @@ ReducerRegistry.register('features/chat', (state = DEFAULT_STATE, action) => {
         };
 
     case TOGGLE_CHAT:
-        return {
-            ...state,
-            isOpen: !state.isOpen,
-            lastReadMessage: state.messages[
-                navigator.product === 'ReactNative' ? 0 : state.messages.length - 1],
-            privateMessageRecipient: state.isOpen ? undefined : state.privateMessageRecipient
-        };
+        return updateChatState(state);
     }
 
     return state;
 });
+
+/**
+ * Updates the chat status on opening the chat view.
+ *
+ * @param {Object} state - The Redux state of the feature.
+ * @returns {Object}
+ */
+function updateChatState(state) {
+    return {
+        ...state,
+        isOpen: !state.isOpen,
+        lastReadMessage: state.messages[
+            navigator.product === 'ReactNative' ? 0 : state.messages.length - 1],
+        privateMessageRecipient: state.isOpen ? undefined : state.privateMessageRecipient
+    };
+}

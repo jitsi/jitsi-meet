@@ -1,5 +1,6 @@
 /* global $, APP */
 /* eslint-disable no-unused-vars */
+import Logger from 'jitsi-meet-logger';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { I18nextProvider } from 'react-i18next';
@@ -7,24 +8,23 @@ import { Provider } from 'react-redux';
 
 import { Avatar } from '../../../react/features/base/avatar';
 import { i18next } from '../../../react/features/base/i18n';
-import { PresenceLabel } from '../../../react/features/presence-status';
-/* eslint-enable no-unused-vars */
-
-const logger = require('jitsi-meet-logger').getLogger(__filename);
-
-import { VIDEO_TYPE } from '../../../react/features/base/media';
 import {
     JitsiParticipantConnectionStatus
 } from '../../../react/features/base/lib-jitsi-meet';
+import { VIDEO_TYPE } from '../../../react/features/base/media';
 import {
     updateKnownLargeVideoResolution
 } from '../../../react/features/large-video';
-import { createDeferred } from '../../util/helpers';
+import { PresenceLabel } from '../../../react/features/presence-status';
+/* eslint-enable no-unused-vars */
 import UIEvents from '../../../service/UI/UIEvents';
+import { createDeferred } from '../../util/helpers';
+import AudioLevels from '../audio_levels/AudioLevels';
 import UIUtil from '../util/UIUtil';
+
 import { VideoContainer, VIDEO_CONTAINER_TYPE } from './VideoContainer';
 
-import AudioLevels from '../audio_levels/AudioLevels';
+const logger = Logger.getLogger(__filename);
 
 const DESKTOP_CONTAINER_TYPE = 'desktop';
 
@@ -141,26 +141,6 @@ export default class LargeVideoManager {
     }
 
     /**
-     * Called when the media connection has been interrupted.
-     */
-    onVideoInterrupted() {
-        this.enableLocalConnectionProblemFilter(true);
-        this._setLocalConnectionMessage('connection.RECONNECTING');
-
-        // Show the message only if the video is currently being displayed
-        this.showLocalConnectionMessage(
-            LargeVideoManager.isVideoContainer(this.state));
-    }
-
-    /**
-     * Called when the media connection has been restored.
-     */
-    onVideoRestored() {
-        this.enableLocalConnectionProblemFilter(false);
-        this.showLocalConnectionMessage(false);
-    }
-
-    /**
      *
      */
     get id() {
@@ -204,7 +184,7 @@ export default class LargeVideoManager {
 
             this.newStreamData = null;
 
-            logger.info('hover in %s', id);
+            logger.info(`hover in ${id}`);
             this.state = videoType;
             // eslint-disable-next-line no-shadow
             const container = this.getCurrentContainer();
@@ -257,29 +237,15 @@ export default class LargeVideoManager {
                 this.updateLargeVideoAudioLevel(0);
             }
 
-            const isConnectionInterrupted
-                = APP.conference.getParticipantConnectionStatus(id)
-                    === JitsiParticipantConnectionStatus.INTERRUPTED;
-            let messageKey = null;
+            const messageKey
+                = connectionStatus === JitsiParticipantConnectionStatus.INACTIVE ? 'connection.LOW_BANDWIDTH' : null;
 
-            if (isConnectionInterrupted) {
-                messageKey = 'connection.USER_CONNECTION_INTERRUPTED';
-            } else if (connectionStatus
-                    === JitsiParticipantConnectionStatus.INACTIVE) {
-                messageKey = 'connection.LOW_BANDWIDTH';
-            }
-
-            // Make sure no notification about remote failure is shown as
-            // its UI conflicts with the one for local connection interrupted.
-            // For the purposes of UI indicators, audio only is considered as
-            // an "active" connection.
-            const overrideAndHide
-                = APP.conference.isAudioOnly()
-                    || APP.conference.isConnectionInterrupted();
+            // Do not show connection status message in the audio only mode,
+            // because it's based on the video playback status.
+            const overrideAndHide = APP.conference.isAudioOnly();
 
             this.updateParticipantConnStatusIndication(
                     id,
-                    !overrideAndHide && isConnectionInterrupted,
                     !overrideAndHide && messageKey);
 
             // Change the participant id the presence label is listening to.
@@ -305,20 +271,12 @@ export default class LargeVideoManager {
      * shown on the large video area.
      *
      * @param {string} id the id of remote participant(MUC nickname)
-     * @param {boolean} showProblemsIndication
      * @param {string|null} messageKey the i18n key of the message which will be
      * displayed on the large video or <tt>null</tt> to hide it.
      *
      * @private
      */
-    updateParticipantConnStatusIndication(
-            id,
-            showProblemsIndication,
-            messageKey) {
-        // Apply grey filter on the large video
-        this.videoContainer.showRemoteConnectionProblemIndicator(
-            showProblemsIndication);
-
+    updateParticipantConnStatusIndication(id, messageKey) {
         if (messageKey) {
             // Get user's display name
             const displayName
@@ -388,16 +346,6 @@ export default class LargeVideoManager {
         // resize all containers
         Object.keys(this.containers)
             .forEach(type => this.resizeContainer(type, animate));
-    }
-
-    /**
-     * Enables/disables the filter indicating a video problem to the user caused
-     * by the problems with local media connection.
-     *
-     * @param enable <tt>true</tt> to enable, <tt>false</tt> to disable
-     */
-    enableLocalConnectionProblemFilter(enable) {
-        this.videoContainer.enableLocalConnectionProblemFilter(enable);
     }
 
     /**
@@ -479,29 +427,6 @@ export default class LargeVideoManager {
     }
 
     /**
-     * Shows/hides the message indicating problems with local media connection.
-     * @param {boolean|null} show(optional) tells whether the message is to be
-     * displayed or not. If missing the condition will be based on the value
-     * obtained from {@link APP.conference.isConnectionInterrupted}.
-     */
-    showLocalConnectionMessage(show) {
-        if (typeof show !== 'boolean') {
-            // eslint-disable-next-line no-param-reassign
-            show = APP.conference.isConnectionInterrupted();
-        }
-
-        const id = 'localConnectionMessage';
-
-        UIUtil.setVisible(id, show);
-
-        if (show) {
-            // Avatar message conflicts with 'videoConnectionMessage',
-            // so it must be hidden
-            this.showRemoteConnectionMessage(false);
-        }
-    }
-
-    /**
      * Shows hides the "avatar" message which is to be displayed either in
      * the middle of the screen or below the avatar image.
      *
@@ -525,10 +450,6 @@ export default class LargeVideoManager {
 
         if (show) {
             $('#remoteConnectionMessage').css({ display: 'block' });
-
-            // 'videoConnectionMessage' message conflicts with 'avatarMessage',
-            // so it must be hidden
-            this.showLocalConnectionMessage(false);
         } else {
             $('#remoteConnectionMessage').hide();
         }
@@ -552,21 +473,6 @@ export default class LargeVideoManager {
             APP.translation.translateElement(
                 $('#remoteConnectionMessage'), msgOptions);
         }
-    }
-
-    /**
-     * Updated the text which is to be shown on the top of large video, when
-     * local media connection is interrupted.
-     *
-     * @param {string} msgKey the translation key which will be used to get
-     * the message text to be displayed on the large video.
-     *
-     * @private
-     */
-    _setLocalConnectionMessage(msgKey) {
-        $('#localConnectionMessage')
-            .attr('data-i18n', msgKey);
-        APP.translation.translateElement($('#localConnectionMessage'));
     }
 
     /**
@@ -649,7 +555,6 @@ export default class LargeVideoManager {
 
         if (LargeVideoManager.isVideoContainer(this.state)) {
             this.showWatermark(false);
-            this.showLocalConnectionMessage(false);
             this.showRemoteConnectionMessage(false);
         }
         oldContainer.hide();
@@ -669,7 +574,6 @@ export default class LargeVideoManager {
                 // at the same time, but the latter is of higher priority and it
                 // will hide the avatar one if will be displayed.
                 this.showRemoteConnectionMessage(/* fetch the current state */);
-                this.showLocalConnectionMessage(/* fetch the current state */);
             }
         });
     }

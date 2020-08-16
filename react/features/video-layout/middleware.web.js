@@ -1,7 +1,6 @@
 // @flow
 
 import VideoLayout from '../../../modules/UI/videolayout/VideoLayout.js';
-
 import { CONFERENCE_JOINED, CONFERENCE_WILL_LEAVE } from '../base/conference';
 import {
     DOMINANT_SPEAKER_CHANGED,
@@ -74,7 +73,7 @@ MiddlewareRegistry.register(store => next => action => {
         break;
 
     case SET_FILMSTRIP_VISIBLE:
-        VideoLayout.resizeVideoArea(true, false);
+        VideoLayout.resizeVideoArea();
         break;
 
     case TRACK_ADDED:

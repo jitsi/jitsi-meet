@@ -1,7 +1,9 @@
 // @flow
 
+import { MEDIA_TYPE, VIDEO_TYPE } from '../base/media';
 import { getLocalParticipant } from '../base/participants';
 import { StateListenerRegistry } from '../base/redux';
+import { getTrackByMediaTypeAndParticipant } from '../base/tracks';
 import { appendSuffix } from '../display-name';
 import { shouldDisplayTileView } from '../video-layout';
 
@@ -37,3 +39,18 @@ StateListenerRegistry.register(
             });
         }
     });
+
+/**
+ * Updates the on stage participant value.
+ */
+StateListenerRegistry.register(
+    /* selector */ state => state['features/large-video'].participantId,
+    /* listener */ (participantId, store) => {
+        const videoTrack = getTrackByMediaTypeAndParticipant(
+            store.getState()['features/base/tracks'], MEDIA_TYPE.VIDEO, participantId);
+
+        if (videoTrack && videoTrack.videoType === VIDEO_TYPE.CAMERA) {
+            APP.API.notifyOnStageParticipantChanged(participantId);
+        }
+    }
+);

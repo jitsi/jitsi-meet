@@ -1,27 +1,27 @@
 // @flow
 
 import React, { PureComponent } from 'react';
-import { Platform, TouchableOpacity } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 import Collapsible from 'react-native-collapsible';
-import GestureRecognizer, { swipeDirections } from 'react-native-swipe-gestures';
 
 import { ColorSchemeRegistry } from '../../../base/color-scheme';
 import { BottomSheet, hideDialog, isDialogOpen } from '../../../base/dialog';
 import { IconDragHandle } from '../../../base/icons';
-import { CHAT_ENABLED, IOS_RECORDING_ENABLED, getFeatureFlag } from '../../../base/flags';
 import { connect } from '../../../base/redux';
 import { StyleType } from '../../../base/styles';
 import { SharedDocumentButton } from '../../../etherpad';
-import { InfoDialogButton, InviteButton } from '../../../invite';
+import { InviteButton } from '../../../invite';
+import { LobbyModeButton } from '../../../lobby/components/native';
 import { AudioRouteButton } from '../../../mobile/audio-mode';
 import { LiveStreamButton, RecordButton } from '../../../recording';
 import { RoomLockButton } from '../../../room-lock';
 import { ClosedCaptionButton } from '../../../subtitles';
 import { TileViewButton } from '../../../video-layout';
-
+import { VideoShareButton } from '../../../youtube-player';
 import HelpButton from '../HelpButton';
 
 import AudioOnlyButton from './AudioOnlyButton';
+import MoreOptionsButton from './MoreOptionsButton';
 import RaiseHandButton from './RaiseHandButton';
 import ToggleCameraButton from './ToggleCameraButton';
 import styles from './styles';
@@ -35,11 +35,6 @@ type Props = {
      * The color-schemed stylesheet of the dialog feature.
      */
     _bottomSheetStyles: StyleType,
-
-    /**
-     * Whether the chat feature has been enabled. The meeting info button will be displayed in its place when disabled.
-     */
-    _chatEnabled: boolean,
 
     /**
      * True if the overflow menu is currently visible, false otherwise.
@@ -58,6 +53,11 @@ type Props = {
 };
 
 type State = {
+
+    /**
+     * True if the bottom scheet is scrolled to the top.
+     */
+    scrolledToTop: boolean,
 
     /**
      * True if the 'more' button set needas to be rendered.
@@ -88,6 +88,7 @@ class OverflowMenu extends PureComponent<Props, State> {
         super(props);
 
         this.state = {
+            scrolledToTop: true,
             showMore: false
         };
 
@@ -114,28 +115,31 @@ class OverflowMenu extends PureComponent<Props, State> {
             styles: _bottomSheetStyles.buttons
         };
 
+        const moreOptionsButtonProps = {
+            ...buttonProps,
+            afterClick: this._onToggleMenu,
+            visible: !showMore
+        };
+
         return (
             <BottomSheet
                 onCancel = { this._onCancel }
+                onSwipe = { this._onSwipe }
                 renderHeader = { this._renderMenuExpandToggle }>
                 <AudioRouteButton { ...buttonProps } />
-                <ToggleCameraButton { ...buttonProps } />
+                <InviteButton { ...buttonProps } />
                 <AudioOnlyButton { ...buttonProps } />
+                <RaiseHandButton { ...buttonProps } />
+                <LobbyModeButton { ...buttonProps } />
+                <MoreOptionsButton { ...moreOptionsButtonProps } />
                 <Collapsible collapsed = { !showMore }>
+                    <ToggleCameraButton { ...buttonProps } />
+                    <TileViewButton { ...buttonProps } />
+                    <RecordButton { ...buttonProps } />
+                    <LiveStreamButton { ...buttonProps } />
+                    <VideoShareButton { ...buttonProps } />
                     <RoomLockButton { ...buttonProps } />
                     <ClosedCaptionButton { ...buttonProps } />
-                    {
-                        this.props._recordingEnabled
-                            && <RecordButton { ...buttonProps } />
-                    }
-                    <LiveStreamButton { ...buttonProps } />
-                    <TileViewButton { ...buttonProps } />
-                    <InviteButton { ...buttonProps } />
-                    {
-                        this.props._chatEnabled
-                            && <InfoDialogButton { ...buttonProps } />
-                    }
-                    <RaiseHandButton { ...buttonProps } />
                     <SharedDocumentButton { ...buttonProps } />
                     <HelpButton { ...buttonProps } />
                 </Collapsible>
@@ -152,12 +156,7 @@ class OverflowMenu extends PureComponent<Props, State> {
      */
     _renderMenuExpandToggle() {
         return (
-            <GestureRecognizer
-                config = {{
-                    velocityThreshold: 0.1,
-                    directionalOffsetThreshold: 30
-                }}
-                onSwipe = { this._onSwipe }
+            <View
                 style = { [
                     this.props._bottomSheetStyles.sheet,
                     styles.expandMenuContainer
@@ -166,7 +165,7 @@ class OverflowMenu extends PureComponent<Props, State> {
                     { /* $FlowFixMeProps */ }
                     <IconDragHandle style = { this.props._bottomSheetStyles.expandIcon } />
                 </TouchableOpacity>
-            </GestureRecognizer>
+            </View>
         );
     }
 
@@ -188,34 +187,31 @@ class OverflowMenu extends PureComponent<Props, State> {
         return false;
     }
 
-    _onSwipe: (string) => void;
+    _onSwipe: string => void;
 
     /**
-     * Callback to be invoked when a swipe gesture is detected on the menu.
+     * Callback to be invoked when swipe gesture is detected on the menu. Returns true
+     * if the swipe gesture is handled by the menu, false otherwise.
      *
-     * @param {string} gestureName - The name of the swipe gesture.
-     * @returns {void}
+     * @param {string} direction - Direction of 'up' or 'down'.
+     * @returns {boolean}
      */
-    _onSwipe(gestureName) {
+    _onSwipe(direction) {
         const { showMore } = this.state;
 
-        switch (gestureName) {
-        case swipeDirections.SWIPE_UP:
+        switch (direction) {
+        case 'up':
             !showMore && this.setState({
                 showMore: true
             });
-            break;
-        case swipeDirections.SWIPE_DOWN:
-            if (showMore) {
-                // If the menu is expanded, we collapse it.
-                this.setState({
-                    showMore: false
-                });
-            } else {
-                // If the menu is not expanded, we close the menu
-                this._onCancel();
-            }
-            break;
+
+            return !showMore;
+        case 'down':
+            showMore && this.setState({
+                showMore: false
+            });
+
+            return showMore;
         }
     }
 
@@ -242,11 +238,8 @@ class OverflowMenu extends PureComponent<Props, State> {
  */
 function _mapStateToProps(state) {
     return {
-        _bottomSheetStyles:
-            ColorSchemeRegistry.get(state, 'BottomSheet'),
-        _chatEnabled: getFeatureFlag(state, CHAT_ENABLED, true),
-        _isOpen: isDialogOpen(state, OverflowMenu_),
-        _recordingEnabled: Platform.OS !== 'ios' || getFeatureFlag(state, IOS_RECORDING_ENABLED)
+        _bottomSheetStyles: ColorSchemeRegistry.get(state, 'BottomSheet'),
+        _isOpen: isDialogOpen(state, OverflowMenu_)
     };
 }
 
