@@ -19,6 +19,21 @@ declare var interfaceConfig: Object;
 type Props = {
 
     /**
+     * Participant's akAddress
+     */
+    _akAddress: string,
+
+    /**
+     * Participant is local
+     */
+    _local: boolean,
+
+    /**
+     * Whether user has wallet
+     */
+    hasWallet: boolean,
+
+    /**
      * The current layout of the filmstrip.
      */
     _currentLayout: string,
@@ -41,22 +56,7 @@ type Props = {
     /**
      * The ID of the participant for which the status bar is rendered.
      */
-    participantID: String,
-
-    /**
-     * Participant's akAddress
-     */
-    _akAddress: string,
-
-    /**
-     * Participant is local
-     */
-    _local: boolean,
-
-    /**
-     * Whether user has wallet
-     */
-    hasWallet: boolean,
+    participantID: String
 };
 
 /**
@@ -73,11 +73,11 @@ class StatusIndicators extends Component<Props> {
      */
     render() {
         const {
-            _currentLayout,
-            _showModeratorIndicator,
             _akAddress,
             _local,
             hasWallet,
+            _currentLayout,
+            _showModeratorIndicator,
             showAudioMutedIndicator,
             showVideoMutedIndicator
         } = this.props;
@@ -130,12 +130,12 @@ function _mapStateToProps(state, ownProps) {
     const participant = participantID ? getParticipantById(state, participantID) : getLocalParticipant(state);
 
     return {
-        _currentLayout: getCurrentLayout(state),
-        _showModeratorIndicator:
-            !interfaceConfig.DISABLE_FOCUS_INDICATOR && participant && participant.role === PARTICIPANT_ROLE.MODERATOR,
         _akAddress: participant?.akAddress,
         _local: participant?.local,
-        hasWallet: state['features/aeternity'].hasWallet
+        hasWallet: state['features/aeternity'].hasWallet,
+        _currentLayout: getCurrentLayout(state),
+        _showModeratorIndicator:
+            !interfaceConfig.DISABLE_FOCUS_INDICATOR && participant && participant.role === PARTICIPANT_ROLE.MODERATOR
     };
 }
 

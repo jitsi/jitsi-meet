@@ -11,10 +11,7 @@ import {
     getLocalParticipant,
     isLocalParticipantModerator
 } from '../../../base/participants';
-import {
-    AbstractButton,
-    type AbstractButtonProps
-} from '../../../base/toolbox';
+import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
 import { getActiveSession } from '../../functions';
 
 import { StartRecordingDialog, StopRecordingDialog } from './_';

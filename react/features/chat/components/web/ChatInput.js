@@ -43,6 +43,11 @@ type Props = {
 type State = {
 
     /**
+     * Window size
+     */
+    width: number,
+
+    /**
      * User provided nickname when the input text is provided in the view.
      */
     message: string,
@@ -67,6 +72,7 @@ class ChatInput extends Component<Props, State> {
     _textArea: ?HTMLTextAreaElement;
 
     state = {
+        width: 0,
         message: '',
         showSmileysPanel: false,
         width: 0

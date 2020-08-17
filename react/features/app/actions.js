@@ -23,7 +23,7 @@ import {
     parseURIString,
     toURLString
 } from '../base/util';
-import { showNotification } from '../notifications';
+import { clearNotifications, showNotification } from '../notifications';
 import { setFatalError } from '../overlay';
 
 import {
@@ -78,6 +78,10 @@ export function appNavigate(uri: ?string) {
         if (navigator.product === 'ReactNative') {
             dispatch(disconnect());
         }
+
+        // There are notifications now that gets displayed after we technically left
+        // the conference, but we're still on the conference screen.
+        dispatch(clearNotifications());
 
         dispatch(configWillLoad(locationURL, room));
 
@@ -280,11 +284,12 @@ export function maybeRedirectToWelcomePage(options: Object = {}) {
 
         // if close page is enabled redirect to it, without further action
         if (enableClosePage) {
-            const { isGuest } = getState()['features/base/jwt'];
+            const { isGuest, jwt } = getState()['features/base/jwt'];
 
-            // save whether current user is guest or not, before navigating
-            // to close page
+            // save whether current user is guest or not, and pass auth token,
+            // before navigating to close page
             window.sessionStorage.setItem('guest', isGuest);
+            window.sessionStorage.setItem('jwt', jwt);
 
             let path = 'close.html';
 

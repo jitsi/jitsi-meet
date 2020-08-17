@@ -4,9 +4,9 @@ import React, { Component } from 'react';
 
 import TimeElapsed from '../../../../features/speaker-stats/components/TimeElapsed';
 import { getConferenceName } from '../../../base/conference/functions';
-import { getParticipantCount, getDominantSpeaker } from '../../../base/participants';
+import { getParticipantCount, getDominantSpeaker } from '../../../base/participants/functions';
 import { connect } from '../../../base/redux';
-import { isToolboxVisible } from '../../../toolbox';
+import { isToolboxVisible } from '../../../toolbox/functions.web';
 
 import ParticipantsCount from './ParticipantsCount';
 
@@ -14,6 +14,16 @@ import ParticipantsCount from './ParticipantsCount';
  * The type of the React {@code Component} props of {@link Subject}.
  */
 type Props = {
+
+    /**
+     * The JitsiConference from which stats will be pulled.
+     */
+    conference: Object,
+
+    /**
+     * Dominant speaker id
+     */
+    _id: string,
 
     /**
      * Whether then participant count should be shown or not.
@@ -29,17 +39,7 @@ type Props = {
     /**
      * Indicates whether the component should be visible or not.
      */
-    _visible: boolean,
-
-    /**
-     * The JitsiConference from which stats will be pulled.
-     */
-    conference: Object,
-
-    /**
-     * Dominant speaker id
-     */
-    _id: string
+    _visible: boolean
 };
 
 /**

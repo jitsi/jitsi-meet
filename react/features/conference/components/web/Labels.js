@@ -41,8 +41,7 @@ class Labels extends AbstractLabels<Props, State> {
      */
     static getDerivedStateFromProps(props: Props, prevState: State) {
         return {
-            filmstripBecomingVisible: !prevState.filmstripBecomingVisible
-                && props._filmstripVisible
+            filmstripBecomingVisible: !prevState.filmstripBecomingVisible && props._filmstripVisible
         };
     }
 

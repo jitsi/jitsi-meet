@@ -19,7 +19,6 @@ local http_headers = {
 
 -- TODO: Figure out a less arbitrary default cache size.
 local cacheSize = module:get_option_number("jwt_pubkey_cache_size", 128);
-local cache = require"util.cache".new(cacheSize);
 
 local Util = {}
 Util.__index = Util
@@ -37,6 +36,8 @@ function Util.new(module)
     self.appSecret = module:get_option_string("app_secret");
     self.asapKeyServer = module:get_option_string("asap_key_server");
     self.allowEmptyToken = module:get_option_boolean("allow_empty_token");
+
+    self.cache = require"util.cache".new(cacheSize);
 
     --[[
         Multidomain can be supported in some deployments. In these deployments
@@ -108,7 +109,7 @@ end
 -- @param keyId the key ID to request
 -- @return the public key (the content of requested resource) or nil
 function Util:get_public_key(keyId)
-    local content = cache:get(keyId);
+    local content = self.cache:get(keyId);
     if content == nil then
         -- If the key is not found in the cache.
         module:log("debug", "Cache miss for key: "..keyId);
@@ -117,7 +118,10 @@ function Util:get_public_key(keyId)
         local function cb(content_, code_, response_, request_)
             content, code = content_, code_;
             if code == 200 or code == 204 then
-                cache:set(keyId, content);
+                self.cache:set(keyId, content);
+            else
+                module:log("warn", "Error on public key request: Code %s, Content %s",
+                code_, content_);
             end
             done();
         end
@@ -138,7 +142,10 @@ function Util:get_public_key(keyId)
             -- TODO: This check is racey. Not likely to be a problem, but we should
             --       still stick a mutex on content / code at some point.
             if code == nil then
-                http.destroy_request(request);
+                -- no longer present in prosody 0.11, so check before calling
+                if http.destroy_request ~= nil then
+                    http.destroy_request(request);
+                end
                 done();
             end
         end
@@ -159,9 +166,10 @@ end
 
 --- Verifies issuer part of token
 -- @param 'iss' claim from the token to verify
+-- @param 'acceptedIssuers' list of issuers to check
 -- @return nil and error string or true for accepted claim
-function Util:verify_issuer(issClaim)
-    for i, iss in ipairs(self.acceptedIssuers) do
+function Util:verify_issuer(issClaim, acceptedIssuers)
+    for i, iss in ipairs(acceptedIssuers) do
         if issClaim == iss then
             --claim matches an accepted issuer so return success
             return true;
@@ -192,8 +200,9 @@ end
 --- Verifies token
 -- @param token the token to verify
 -- @param secret the secret to use to verify token
+-- @param acceptedIssuers the list of accepted issuers to check
 -- @return nil and error or the extracted claims from the token
-function Util:verify_token(token, secret)
+function Util:verify_token(token, secret, acceptedIssuers)
     local claims, err = jwt.decode(token, secret, true);
     if claims == nil then
         return nil, err;
@@ -209,7 +218,7 @@ function Util:verify_token(token, secret)
         return nil, "'iss' claim is missing";
     end
     --check the issuer against the accepted list
-    local issCheck, issCheckErr = self:verify_issuer(issClaim);
+    local issCheck, issCheckErr = self:verify_issuer(issClaim, acceptedIssuers);
     if issCheck == nil then
         return nil, issCheckErr;
     end
@@ -241,8 +250,13 @@ end
 -- session.jitsi_meet_context_group - the group value from the token
 -- session.jitsi_meet_context_features - the features value from the token
 -- @param session the current session
+-- @param acceptedIssuers optional list of accepted issuers to check
 -- @return false and error
-function Util:process_and_verify_token(session)
+function Util:process_and_verify_token(session, acceptedIssuers)
+    if not acceptedIssuers then
+        acceptedIssuers = self.acceptedIssuers;
+    end
+
     if session.auth_token == nil then
         if self.allowEmptyToken then
             return true;
@@ -272,9 +286,9 @@ function Util:process_and_verify_token(session)
     -- now verify the whole token
     local claims, msg;
     if self.asapKeyServer then
-        claims, msg = self:verify_token(session.auth_token, pubKey);
+        claims, msg = self:verify_token(session.auth_token, pubKey, acceptedIssuers);
     else
-        claims, msg = self:verify_token(session.auth_token, self.appSecret);
+        claims, msg = self:verify_token(session.auth_token, self.appSecret, acceptedIssuers);
     end
     if claims ~= nil then
         -- Binds room name to the session which is later checked on MUC join

@@ -7,6 +7,8 @@ import { Dialog } from '../../../base/dialog';
 import { translate } from '../../../base/i18n';
 import { isLocalParticipantModerator } from '../../../base/participants';
 import { connect } from '../../../base/redux';
+import { E2EESection } from '../../../e2ee/components';
+import { LobbySection } from '../../../lobby';
 
 import Header from './Header';
 import PasswordSection from './PasswordSection';
@@ -41,6 +43,11 @@ type Props = {
     _passwordNumberOfDigits: ?number,
 
     /**
+     * Indicates whether e2ee will be displayed or not.
+     */
+    _showE2ee: boolean,
+
+    /**
      * Action that sets the conference password.
      */
     setPassword: Function,
@@ -62,8 +69,8 @@ function SecurityDialog({
     _locked,
     _password,
     _passwordNumberOfDigits,
-    setPassword,
-    t
+    _showE2ee,
+    setPassword
 }: Props) {
     const [ passwordEditEnabled, setPasswordEditEnabled ] = useState(false);
 
@@ -81,8 +88,7 @@ function SecurityDialog({
             titleKey = 'security.securityOptions'
             width = { 'small' }>
             <div className = 'security-dialog'>
-                { t('security.about') }
-                <div className = 'invite-more-dialog separator' />
+                <LobbySection />
                 <PasswordSection
                     canEditPassword = { _canEditPassword }
                     conference = { _conference }
@@ -92,6 +98,13 @@ function SecurityDialog({
                     passwordNumberOfDigits = { _passwordNumberOfDigits }
                     setPassword = { setPassword }
                     setPasswordEditEnabled = { setPasswordEditEnabled } />
+                {
+                    _showE2ee ? <>
+                        <div className = 'separator-line' />
+                        <E2EESection />
+                    </> : null
+                }
+
             </div>
         </Dialog>
     );
@@ -108,16 +121,23 @@ function SecurityDialog({
 function mapStateToProps(state) {
     const {
         conference,
+        e2eeSupported,
         locked,
         password
     } = state['features/base/conference'];
+    const {
+        lockRoomGuestEnabled,
+        roomPasswordNumberOfDigits
+    } = state['features/base/config'];
 
     return {
-        _canEditPassword: isLocalParticipantModerator(state, state['features/base/config'].lockRoomGuestEnabled),
+        _canEditPassword: isLocalParticipantModerator(state, lockRoomGuestEnabled),
         _conference: conference,
         _dialIn: state['features/invite'],
         _locked: locked,
-        _password: password
+        _password: password,
+        _passwordNumberOfDigits: roomPasswordNumberOfDigits,
+        _showE2ee: Boolean(e2eeSupported)
     };
 }
 

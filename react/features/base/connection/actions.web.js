@@ -9,6 +9,7 @@ import { configureInitialDevices } from '../devices';
 import { getBackendSafeRoomName } from '../util';
 
 export {
+    connectionDisconnected,
     connectionEstablished,
     connectionFailed,
     setLocationURL

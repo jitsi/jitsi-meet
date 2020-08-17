@@ -1,6 +1,6 @@
 // @flow
 
-import { jitsiLocalStorage } from 'js-utils';
+import { jitsiLocalStorage } from '@jitsi/js-utils';
 import type { Dispatch } from 'redux';
 
 import { addKnownDomains } from '../known-domains';

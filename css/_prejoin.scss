@@ -1,18 +1,4 @@
 .prejoin {
-    &-full-page {
-        background: #1C2025;
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        z-index: $toolbarZ + 1;
-    }
-
-    &-input-area-container {
-        position: absolute;
-        bottom: 48px;
-        width: 100%;
-        z-index: 2;
-    }
 
     &-input-area {
         margin: 0 auto;
@@ -110,13 +96,7 @@
     }
 
     &-checkbox-container {
-        align-items: center;
-        color: #fff;
-        display: none;
-        font-size: 13px;
-        justify-content: center;
-        line-height: 20px;
-        margin-top: 16px;
+        margin-bottom: 14px;
         width: 100%;
     }
 }
@@ -198,25 +178,6 @@
         margin: 200px auto 0 auto;
     }
 
-    &-btn-container {
-        display: flex;
-        justify-content: center;
-        margin-top: 32px;
-        width: 100%;
-
-        &> div {
-            margin: 0 12px;
-        }
-
-        .settings-button-small-icon {
-            right: -8px;
-
-            &--hovered {
-                right: -10px;
-            }
-        }
-    }
-
     &-overlay {
         height: 100%;
         position: absolute;
@@ -236,22 +197,20 @@
 
     &-status {
         align-items: center;
-        bottom: 0;
+        align-self: stretch;
         color: #fff;
         display: flex;
         font-size: 13px;
         min-height: 24px;
         justify-content: center;
-        position: absolute;
         text-align: center;
-        width: 100%;
         z-index: 1;
 
         &--warning {
-            background: rgba(241, 173, 51, 0.5)
+            background: rgba(241, 173, 51, 0.7)
         }
         &--ok {
-            background: rgba(49, 183, 106, 0.5);
+            background: rgba(49, 183, 106, 0.7);
         }
     }
 
@@ -309,64 +268,4 @@
         }
     }
 
-}
-
-.prejoin-copy {
-    &-meeting {
-        cursor: pointer;
-        color: #fff;
-        font-size: 15px;
-        font-weight: 300;
-        line-height: 24px;
-        position: relative;
-    }
-
-    &-url {
-        max-width: 278px;
-        padding: 8px 10px;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-
-    &-badge {
-        border-radius: 4px;
-        height: 100%;
-        line-height: 38px;
-        position: absolute;
-        padding-left: 10px;
-        text-align: left;
-        top: 0;
-        width: 100%;
-
-        &--hover {
-            background: #1C2025;
-        }
-
-        &--done {
-            background: #31B76A;
-        }
-    }
-
-    &-icon {
-        position: absolute;
-        right: 8px;
-        top: 8px;
-
-       &--white {
-           &> svg > path {
-               fill: #fff
-           }
-       }
-
-       &--light {
-           &> svg > path {
-               fill: #D1DBE8;
-           }
-       }
-    }
-
-    &-textarea {
-        position: absolute;
-        left: -9999px;
-    }
 }

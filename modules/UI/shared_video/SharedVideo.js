@@ -12,11 +12,9 @@ import {
     participantLeft,
     pinParticipant
 } from '../../../react/features/base/participants';
-import {
-    dockToolbox,
-    getToolboxHeight,
-    showToolbox
-} from '../../../react/features/toolbox';
+import { dockToolbox, showToolbox } from '../../../react/features/toolbox/actions.web';
+import { getToolboxHeight } from '../../../react/features/toolbox/functions.web';
+import { YOUTUBE_PARTICIPANT_NAME } from '../../../react/features/youtube-player/constants';
 import UIEvents from '../../../service/UI/UIEvents';
 import UIUtil from '../util/UIUtil';
 import Filmstrip from '../videolayout/Filmstrip';
@@ -31,7 +29,7 @@ export const SHARED_VIDEO_CONTAINER_TYPE = 'sharedvideo';
  * Example shared video link.
  * @type {string}
  */
-const defaultSharedVideoLink = 'https://www.youtube.com/watch?v=xNXN7CZk8X0';
+const defaultSharedVideoLink = 'https://youtu.be/TB7LlM4erx8';
 const updateInterval = 5000; // milliseconds
 
 /**
@@ -305,7 +303,7 @@ export default class SharedVideoManager {
                 conference: APP.conference._room,
                 id: self.url,
                 isFakeParticipant: true,
-                name: 'YouTube'
+                name: YOUTUBE_PARTICIPANT_NAME
             }));
 
             APP.store.dispatch(pinParticipant(self.url));

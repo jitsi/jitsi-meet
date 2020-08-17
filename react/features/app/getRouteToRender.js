@@ -1,6 +1,6 @@
 // @flow
 
-import { generateRoomWithoutSeparator } from 'js-utils/random';
+import { generateRoomWithoutSeparator } from '@jitsi/js-utils/random';
 import type { Component } from 'react';
 
 import { isRoomValid } from '../base/conference';

@@ -9,8 +9,7 @@ import RnnoiseProcessor from './RnnoiseProcessor';
 export { RNNOISE_SAMPLE_LENGTH } from './RnnoiseProcessor';
 export type { RnnoiseProcessor };
 
-let rnnoiseWasmInterface;
-let initializePromise;
+let rnnoiseModule;
 
 /**
  * Creates a new instance of RnnoiseProcessor.
@@ -18,20 +17,9 @@ let initializePromise;
  * @returns {Promise<RnnoiseProcessor>}
  */
 export function createRnnoiseProcessor() {
-    if (!initializePromise) {
-        initializePromise = new Promise((resolve, reject) => {
-            rnnoiseWasmInterface = rnnoiseWasmInit({
-                onRuntimeInitialized() {
-                    resolve();
-                },
-                onAbort(reason) {
-                    reject(reason);
-                }
-            });
-        });
+    if (!rnnoiseModule) {
+        rnnoiseModule = rnnoiseWasmInit();
     }
 
-    return initializePromise.then(
-        () => new RnnoiseProcessor(rnnoiseWasmInterface)
-    );
+    return rnnoiseModule.then(mod => new RnnoiseProcessor(mod));
 }

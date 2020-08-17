@@ -65,7 +65,7 @@ const config = {
             // as well.
 
             exclude: [
-                new RegExp(`${__dirname}/node_modules/(?!js-utils)`)
+                new RegExp(`${__dirname}/node_modules/(?!@jitsi/js-utils)`)
             ],
             loader: 'babel-loader',
             options: {
@@ -309,12 +309,6 @@ module.exports = [
         entry: {
             'rnnoise-processor': './react/features/stream-effects/rnnoise/index.js'
         },
-        node: {
-            // Emscripten generated glue code "rnnoise.js" expects node fs module,
-            // we need to specify this parameter so webpack knows how to properly
-            // interpret it when encountered.
-            fs: 'empty'
-        },
         output: Object.assign({}, config.output, {
             library: [ 'JitsiMeetJS', 'app', 'effects', 'rnnoise' ],
             libraryTarget: 'window',
@@ -348,12 +342,12 @@ module.exports = [
 // eslint-disable-next-line no-shadow,require-jsdoc
 function devServerProxyBypass({ path }) {
     if (path.startsWith('/css/') || path.startsWith('/doc/')
-        || path.startsWith('/fonts/')
-        || path.startsWith('/images/')
-        || path.startsWith('/lang/')
-        || path.startsWith('/sounds/')
-        || path.startsWith('/static/')
-        || path.endsWith('.wasm')) {
+            || path.startsWith('/fonts/')
+            || path.startsWith('/images/')
+            || path.startsWith('/lang/')
+            || path.startsWith('/sounds/')
+            || path.startsWith('/static/')
+            || path.endsWith('.wasm')) {
 
         return path;
     }

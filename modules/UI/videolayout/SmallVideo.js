@@ -25,11 +25,11 @@ import {
     StatusIndicators
 } from '../../../react/features/filmstrip';
 import {
+    getTileViewGridDimensions,
     LAYOUTS,
     getCurrentLayout,
     setTileView,
-    shouldDisplayTileView,
-    getTileViewGridDimensions
+    shouldDisplayTileView
 } from '../../../react/features/video-layout';
 /* eslint-enable no-unused-vars */
 
@@ -453,7 +453,7 @@ export default class SmallVideo {
      */
     selectDisplayMode(input) {
         // Display name is always and only displayed when user is on the stage
-        if (input.isCurrentlyOnLargeVideo && !input.tileViewEnabled) {
+        if (input.isCurrentlyOnLargeVideo && !input.tileViewActive) {
             return input.isVideoPlayable && !input.isAudioOnly ? DISPLAY_BLACKNESS_WITH_NAME : DISPLAY_AVATAR_WITH_NAME;
         } else if (input.isVideoPlayable && input.hasVideo && !input.isAudioOnly) {
             // check hovering and change state to video with name
@@ -474,7 +474,7 @@ export default class SmallVideo {
             isCurrentlyOnLargeVideo: this.isCurrentlyOnLargeVideo(),
             isHovered: this._isHovered(),
             isAudioOnly: APP.conference.isAudioOnly(),
-            tileViewEnabled: shouldDisplayTileView(APP.store.getState()),
+            tileViewActive: shouldDisplayTileView(APP.store.getState()),
             isVideoPlayable: this.isVideoPlayable(),
             hasVideo: Boolean(this.selectVideoElement().length),
             connectionStatus: APP.conference.getParticipantConnectionStatus(this.id),

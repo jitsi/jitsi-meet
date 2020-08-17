@@ -1,6 +1,6 @@
 // @flow
 
-import { randomInt } from 'js-utils/random';
+import { randomInt } from '@jitsi/js-utils/random';
 import React, { Component } from 'react';
 import type { Dispatch } from 'redux';
 
@@ -8,7 +8,7 @@ import {
     createPageReloadScheduledEvent,
     sendAnalytics
 } from '../../analytics';
-import { reloadNow } from '../../app';
+import { reloadNow } from '../../app/actions';
 import {
     isFatalJitsiConferenceError,
     isFatalJitsiConnectionError
