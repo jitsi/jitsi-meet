@@ -3,9 +3,10 @@
 import { openDialog } from '../../base/dialog';
 import { IconCrown } from '../../base/icons';
 import {
+    getLocalParticipant,
     getParticipantById,
-    isLocalParticipantModerator,
-    isParticipantModerator
+    isParticipantModerator,
+    PARTICIPANT_ROLE
 } from '../../base/participants';
 import { AbstractButton } from '../../base/toolbox';
 import type { AbstractButtonProps } from '../../base/toolbox';
@@ -64,7 +65,11 @@ export default class AbstractGrantModeratorButton extends AbstractButton<Props, 
 export function _mapStateToProps(state: Object, ownProps: Props) {
     const { participantID } = ownProps;
 
+    const localParticipant = getLocalParticipant(state);
+    const targetParticipant = getParticipantById(state, participantID);
+
     return {
-        visible: isLocalParticipantModerator(state) && !isParticipantModerator(getParticipantById(state, participantID))
+        visible: Boolean(localParticipant?.role === PARTICIPANT_ROLE.MODERATOR)
+          && !isParticipantModerator(targetParticipant)
     };
 }

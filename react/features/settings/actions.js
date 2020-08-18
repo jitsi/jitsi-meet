@@ -14,7 +14,7 @@ import {
     GREEN_SCREEN_QUANT_BYTES_UPDATED,
     GREEN_SCREEN_TYPE_UPDATED
 } from '../green-screen/actionTypes';
-import { setPrejoinPageVisibility } from '../prejoin';
+import { setPrejoinPageVisibility } from '../prejoin/actions';
 
 import {
     SET_AUDIO_SETTINGS_VISIBILITY,
