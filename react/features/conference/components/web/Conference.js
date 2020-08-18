@@ -278,10 +278,11 @@ class Conference extends AbstractConference<Props, *> {
         // eslint-disable-next-line new-cap
         const detector = await Detector({ connection });
 
-        detector.scan(async ({ newWallet }) => {
-            if (newWallet) {
+        detector.scan(async ({ wallets, newWallet }) => {
+            const _newWallet = newWallet || Object.values(wallets)[0];
+            if (_newWallet) {
                 detector.stopScan();
-                await client.connectToWallet(await newWallet.getConnection());
+                await client.connectToWallet(await _newWallet.getConnection());
                 await client.subscribeAddress('subscribe', 'current');
                 this._sign();
             }

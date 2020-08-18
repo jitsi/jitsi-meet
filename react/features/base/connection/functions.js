@@ -41,7 +41,8 @@ export function getCurrentConferenceUrl(stateful: Function | Object) {
  */
 export function getInviteURL(stateOrGetState: Function | Object): string {
     if (isInIframe()) {
-        return document.referrer;
+        // TODO: fix error URI is undefined
+        return 'http://localhost:8081/meet/asdasdasd';//document.referrer;
     }
 
     const state = toState(stateOrGetState);

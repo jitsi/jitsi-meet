@@ -10,7 +10,7 @@ export const initClient = async () => {
     client = await rpcAepp({
         name: 'Superhero-league',
         nodes: [ {
-            name: 'mainnet',
+            name: 'ae_mainnet',
             instance: await node({
                 url: NODE_URL
             })
