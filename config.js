@@ -459,6 +459,12 @@ var config = {
         // amplitudeAPPKey: '<APP_KEY>'
 
         // Configuration for the rtcstats server:
++       // By enabling rtcstats server every time a conference is joined the rtcstats
+        // module connects to the provided rtcstatsEndpoint and sends statistics regarding
+        // PeerConnection states along with getStats metrics polled at the specified
+        // interval.
+        // rtcstatsEnabled: true,
+
         // In order to enable rtcstats one needs to provide a endpoint url.
         // rtcstatsEndpoint: wss://rtcstats-server-pilot.jitsi.net/,
 
