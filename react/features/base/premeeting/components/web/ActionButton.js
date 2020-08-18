@@ -70,6 +70,7 @@ function ActionButton({
             {children}
             {hasOptions && <div
                 className = 'options'
+                data-testid = 'prejoin.joinOptions'
                 onClick = { disabled ? undefined : onOptionsClick }>
                 <Icon
                     className = 'icon'
