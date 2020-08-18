@@ -264,6 +264,11 @@ function _conferenceWillJoin({ dispatch, getState }, next, action) {
     const handle = callHandle || url.toString();
     const hasVideo = !isVideoMutedByAudioOnly(state);
 
+    // On iOS, if we already have a callUUID set, dont start a new call
+    if (conference.callUUID && Platform.OS === 'ios') {
+        return result;
+    }
+
     // When assigning the call UUID, do so in upper case, since iOS will return
     // it upper cased.
     conference.callUUID = (callUUID || uuid.v4()).toUpperCase();
