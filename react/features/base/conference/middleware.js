@@ -624,7 +624,7 @@ function _updateLocalParticipantInConference({ dispatch, getState }, next, actio
 
             // When the local user role is updated to moderator and we have a pending subject change
             // which was not reflected we need to set it (the first time we tried was before becoming moderator).
-            if (pendingSubjectChange !== subject) {
+            if (typeof pendingSubjectChange !== 'undefined' && pendingSubjectChange !== subject) {
                 dispatch(setSubject(pendingSubjectChange));
             }
         }
