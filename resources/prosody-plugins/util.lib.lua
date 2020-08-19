@@ -225,17 +225,22 @@ end
 -- the external call failed after the last retry
 function http_get_with_retry(url, retry)
     local content, code;
+    local timeout_occurred;
     local wait, done = async.waiter();
     local function cb(content_, code_, response_, request_)
-        code = code_;
-        if code == 200 or code == 204 then
-            module:log("debug", "External call was successful, content %s", content_);
-            content = content_
+        if timeout_occurred == nil then
+            code = code_;
+            if code == 200 or code == 204 then
+                module:log("debug", "External call was successful, content %s", content_);
+                content = content_
+            else
+                module:log("warn", "Error on public key request: Code %s, Content %s",
+                    code_, content_);
+            end
+            done();
         else
-            module:log("warn", "Error on public key request: Code %s, Content %s",
-                code_, content_);
+            module:log("warn", "External call reply delivered after timeout from: %s", url);
         end
-        done();
     end
 
     local function call_http()
@@ -251,6 +256,8 @@ function http_get_with_retry(url, retry)
         -- TODO: This check is racey. Not likely to be a problem, but we should
         --       still stick a mutex on content / code at some point.
         if code == nil then
+            timeout_occurred = true;
+            module:log("warn", "Timeout %s seconds making the external call to: %s", http_timeout, url);
             -- no longer present in prosody 0.11, so check before calling
             if http.destroy_request ~= nil then
                 http.destroy_request(request);
@@ -272,10 +279,7 @@ function http_get_with_retry(url, retry)
     timer.add_task(http_timeout, cancel);
     wait();
 
-    if code == 200 or code == 204 then
-        return content;
-    end
-    return nil;
+    return content;
 end
 
 return {
