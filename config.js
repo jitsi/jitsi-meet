@@ -244,6 +244,21 @@ var config = {
     //        low: 200000,
     //        standard: 500000,
     //        high: 1500000
+    //    },
+    //
+    //    // The options can be used to override default thresholds of video thumbnail heights corresponding to
+    //    // the video quality levels used in the application. At the time of this writing the allowed levels are:
+    //    //     'low' - for the low quality level (180p at the time of this writing)
+    //    //     'standard' - for the medium quality level (360p)
+    //    //     'high' - for the high quality level (720p)
+    //    // The keys should be positive numbers which represent the minimal thumbnail height for the quality level.
+    //    //
+    //    // With the default config value below the application will use 'low' quality until the thumbnails are
+    //    // at least 360 pixels tall. If the thumbnail height reaches 720 pixels then the application will switch to
+    //    // the high quality.
+    //    minHeightForQualityLvl: {
+    //        360: 'standard,
+    //        720: 'high'
     //    }
     // },
 
