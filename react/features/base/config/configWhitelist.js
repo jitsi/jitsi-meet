@@ -69,6 +69,7 @@ export default [
 
     'channelLastN',
     'constraints',
+    'brandingRoomAlias',
     'debug',
     'debugAudioLevels',
     'defaultLanguage',

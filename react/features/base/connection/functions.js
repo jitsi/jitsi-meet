@@ -54,7 +54,17 @@ export function getInviteURL(stateOrGetState: Function | Object): string {
         throw new Error('Can not get invite URL - the app is not ready');
     }
 
-    return getURLWithoutParams(locationURL).href;
+    const { inviteDomain } = state['features/dynamic-branding'];
+    const urlWithoutParams = getURLWithoutParams(locationURL);
+
+    if (inviteDomain) {
+        const meetingId
+            = state['features/base/config'].brandingRoomAlias || urlWithoutParams.pathname;
+
+        return `${inviteDomain}/${meetingId}`;
+    }
+
+    return urlWithoutParams.href;
 }
 
 /**

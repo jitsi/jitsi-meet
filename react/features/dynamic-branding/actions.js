@@ -53,7 +53,6 @@ function setDynamicBrandingData(value) {
     };
 }
 
-
 /**
  * Action used to signal the branding elements are ready to be displayed.
  *
