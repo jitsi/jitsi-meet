@@ -44,11 +44,11 @@ import CoreImage
       print("[SocketShim] already broadcasting. exiting")
       return
     }
-
+    
     SocketShim.isWaitingForConnection = true
     var emptyFrameCount = 0;
     var waitingForConnectionCount = 0;
-
+    
     queue.async { [inst] in // remove this loop when recording ends.
       do {
         var sockSig: Socket.Signature? = nil;
@@ -64,16 +64,16 @@ import CoreImage
               sockSig = try Socket.Signature.init(socketType: Socket.SocketType.stream, proto: Socket.SocketProtocol.unix, path: filePath?.path ?? "")!
             }
             if !SocketShim.connSocket!.isConnected {
-//              if (waitingForConnectionCount > 5) {
-//                SocketShim.isWaitingForConnection = false
-//                print("[SocketShim] user did not start recording after opening the picker view")
-//                break
-//              }
+              //              if (waitingForConnectionCount > 5) {
+              //                SocketShim.isWaitingForConnection = false
+              //                print("[SocketShim] user did not start recording after opening the picker view")
+              //                break
+              //              }
               print("[SocketShim] trying to connect to server")
               sleep(3)
               waitingForConnectionCount = waitingForConnectionCount + 1
               try SocketShim.connSocket!.connect(using: sockSig!)
-//              inst.recStarted()
+              //              inst.recStarted()
               ScreenShareController.getSingleton()?.recStarted();
               print("[SocketShim] track switch started")
               continue
@@ -81,7 +81,7 @@ import CoreImage
             SocketShim.isWaitingForConnection = false
             SocketShim.isBroadcasting = true
             var buffer = Data.init()
-
+            
             let firstContact = try SocketShim.connSocket!.read(into: &buffer)
             if firstContact == 0 {
               print("[SocketShim] empty data received from socket or need to shut the socket close")
@@ -96,6 +96,7 @@ import CoreImage
                 print("[SocketShim] exiting receiving frames")
                 continue
               }
+              continue
             }
             if SocketShim._closeSocket {
               SocketShim._closeSocket = false
@@ -108,23 +109,24 @@ import CoreImage
               print("[SocketShim] exiting receiving frames")
               continue
             }
-            if let jsonData = try? JSONDecoder().decode([String: String].self, from: buffer) {
-              let height = jsonData["height"]
-              let width = jsonData["width"]
-              let b64Buffer = jsonData["b64"]
-              let frameData = Data.init(base64Encoded: b64Buffer!)
-              if frameData == nil {
-                continue
-              }
-              let cim = CIImage.init(data: frameData!)
+            
+            let rawBytes = [UInt8](buffer)
+            let width : Int = Int(bigEndian: Data(bytes: rawBytes[firstContact - 8...firstContact - 1]).withUnsafeBytes {$0.pointee})
+            var height : Int = Int(bigEndian: Data(bytes: rawBytes[firstContact - 16...firstContact - 9]).withUnsafeBytes {$0.pointee})
+            var rotation = rawBytes[firstContact - 17]
+            let bufferBytes = rawBytes[0...firstContact - 18]
+            let bufferData = Data(bufferBytes)
+            let cim = CIImage.init(data: bufferData)
+            if cim != nil {
               var pixelBuffer: CVPixelBuffer?
-              _ = CVPixelBufferCreate(nil, Int(width!)!, Int(height!)!, kCVPixelFormatType_32BGRA, nil, &pixelBuffer)
+              _ = CVPixelBufferCreate(nil, Int(width), Int(height), kCVPixelFormatType_32BGRA, nil, &pixelBuffer)
               if SocketShim.ciContext == nil || pixelBuffer == nil || cim == nil {
                 continue
               }
               SocketShim.ciContext!.render(cim!, to: pixelBuffer!)
-              SocketShim.pushPixelBuffer(pixelBuffer: pixelBuffer!, rawData: buffer)
+              SocketShim.pushPixelBuffer(pixelBuffer: pixelBuffer!, rotation:rotation)
             }
+            
           } catch {
             print("[SocketShim] some error has occurred \(error)")
           }
@@ -141,22 +143,34 @@ import CoreImage
   }
   
   @objc static func getNextFrame() -> RTCVideoFrame? {
-      return sampleFrame
+    return sampleFrame
   }
   
   @objc static func isQueueEmpty() -> Bool {
     return frameQueue.isEmpty;
   }
   
-  @objc static func pushPixelBuffer(pixelBuffer: CVPixelBuffer, rawData: Data) {
+  @objc static func pushPixelBuffer(pixelBuffer: CVPixelBuffer, rotation: UInt8) {
     var videoFrame:RTCVideoFrame?;
     let timestamp = NSDate().timeIntervalSince1970 * 1000000000 // Need timestamp in nano secs - Ns
     let rtcPixelBuffer = RTCCVPixelBuffer.init(pixelBuffer:pixelBuffer)
     
-    videoFrame = RTCVideoFrame(buffer: rtcPixelBuffer, rotation: RTCVideoRotation._0, timeStampNs: Int64(timestamp))
-//    self.frameQueue.enqueue(buffer.base64EncodedString())
-//      print(" pushing video frame - \(videoFrame)")
-      sampleFrame = videoFrame
-//    return frameQueue.enqueue(videoFrame!)
+    var rotationDegree:RTCVideoRotation;
+
+    switch rotation{
+      case 3:
+          rotationDegree = RTCVideoRotation._180
+      case 8:
+          rotationDegree = RTCVideoRotation._90
+      case 6:
+        rotationDegree = RTCVideoRotation._270
+      default:
+          rotationDegree = RTCVideoRotation._0
+    }
+    videoFrame = RTCVideoFrame(buffer: rtcPixelBuffer, rotation: rotationDegree, timeStampNs: Int64(timestamp))
+    //    self.frameQueue.enqueue(buffer.base64EncodedString())
+    //      print(" pushing video frame - \(videoFrame)")
+    sampleFrame = videoFrame
+    //    return frameQueue.enqueue(videoFrame!)
   }
 }

@@ -81,7 +81,7 @@ RCT_EXPORT_METHOD(checkArgss:(NSString *)mediaStreamId
   // FIX LATER - remove loops after the recording/call ends or app closes
   dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
     while (true) {
-      [NSThread sleepForTimeInterval:0.0600];
+      [NSThread sleepForTimeInterval:0.20];
       RTCVideoFrame *videoFrame = [SocketShim getNextFrame];
 
       if (videoFrame == nil) {
