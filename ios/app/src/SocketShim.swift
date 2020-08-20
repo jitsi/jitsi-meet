@@ -167,7 +167,6 @@ import CoreImage
       default:
           rotationDegree = RTCVideoRotation._0
     }
-    print(rotationDegree)
     videoFrame = RTCVideoFrame(buffer: rtcPixelBuffer, rotation: rotationDegree, timeStampNs: Int64(timestamp))
     //    self.frameQueue.enqueue(buffer.base64EncodedString())
     //      print(" pushing video frame - \(videoFrame)")

@@ -99,7 +99,7 @@ class SampleHandler: RPBroadcastSampleHandler {
               let orientation = CGImagePropertyOrientation(rawValue: orientationAttachment.uint32Value)
               let cim = CIImage.init(cvPixelBuffer: imageBuffer!)
               let ccim = cim.transformed(by: CGAffineTransform(scaleX: 0.5, y: 0.5))
-              let opts:[CIImageRepresentationOption:Float] = [kCGImageDestinationLossyCompressionQuality as CIImageRepresentationOption: 0.25]
+              let opts:[CIImageRepresentationOption:Float] = [kCGImageDestinationLossyCompressionQuality as CIImageRepresentationOption: 0.4]
               let jpeg = CIContext.init(options: nil).jpegRepresentation(of: ccim, colorSpace: ccim.colorSpace!, options: opts)
               var byteArray: [UInt8] = [UInt8](jpeg!)
               print(byteArray.count)
