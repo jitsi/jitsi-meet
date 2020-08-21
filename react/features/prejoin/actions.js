@@ -34,7 +34,8 @@ import {
     getFullDialOutNumber,
     getDialOutConferenceUrl,
     getDialOutCountry,
-    isJoinByPhoneDialogVisible
+    isJoinByPhoneDialogVisible,
+    isPrejoinPageVisible
 } from './functions';
 import logger from './logger';
 
@@ -60,6 +61,11 @@ const STATUS_REQ_FREQUENCY = 2000;
  * The maximum number of retries while polling for dial out status.
  */
 const STATUS_REQ_CAP = 45;
+
+/**
+ * The maximum number of precall tests.
+ */
+const PRECALL_CAP = 10;
 
 /**
  * Polls for status change after dial out.
@@ -235,18 +241,46 @@ export function joinConferenceWithoutAudio() {
 }
 
 /**
- * Initializes the 'precallTest' and executes one test, storing the results.
+ * Executes a precall test and stores the data.
+ * Dispatches the execution of another test afterwards.
+ * It stops when the prejoin page is no longer visible or when PRECALL_CAP was reached.
+ *
+ * @param {number} count - The number of precall test executed so far.
+ * @returns {Function}
+ */
+function executePrecallTest(count) {
+    return async function(dispatch: Function, getState: Function) {
+        if (!isPrejoinPageVisible(getState()) || count >= PRECALL_CAP) {
+            return;
+        }
+
+        try {
+            const results = await JitsiMeetJS.precallTest.execute();
+
+            dispatch(setPrecallTestResults(results));
+        } catch (err) {
+            logger.error('Could not receive precall test results', err);
+        } finally {
+            dispatch(executePrecallTest(count + 1));
+        }
+    };
+}
+
+/**
+ * Initializes the 'precallTest' and executes one test.
  *
  * @param {Object} conferenceOptions - The conference options.
  * @returns {Function}
  */
 export function makePrecallTest(conferenceOptions: Object) {
     return async function(dispatch: Function) {
-        await JitsiMeetJS.precallTest.init(conferenceOptions);
+        try {
+            await JitsiMeetJS.precallTest.init(conferenceOptions);
 
-        const results = await JitsiMeetJS.precallTest.execute();
-
-        dispatch(setPrecallTestResults(results));
+            dispatch(executePrecallTest(0));
+        } catch (err) {
+            logger.error('Could not init precall test', err);
+        }
     };
 }
 
