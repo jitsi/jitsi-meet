@@ -142,10 +142,10 @@ allprojects {
 }
 
 ext {
-    buildToolsVersion = "28.0.3"
-    compileSdkVersion = 28
-    minSdkVersion    = 21
-    targetSdkVersion = 28
+    buildToolsVersion = "29.0.3"
+    compileSdkVersion = 29
+    minSdkVersion    = 23
+    targetSdkVersion = 29
     supportLibVersion = "28.0.0"
 
     // The Maven artifact groupdId of the third-party react-native modules which

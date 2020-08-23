@@ -21,18 +21,18 @@ body.welcome-page {
         align-items: center;
         display: flex;
         flex-direction: column;
-        min-height: fit-content;
+        min-height: $welcomePageHeaderMinHeight;
         overflow: hidden;
         position: relative;
         text-align: center;
 
         .header-text {
-            display: flex;
+            display: $welcomePageHeaderTextDisplay;
             flex-direction: column;
             margin-top: $watermarkHeight + $welcomePageHeaderTextMarginTop;
             margin-bottom: $welcomePageHeaderTextMarginBottom;
             max-width: calc(100% - 40px);
-            width: 650px;
+            width: $welcomePageHeaderTextWidth;
             z-index: $zindex2;
         }
 
@@ -56,7 +56,7 @@ body.welcome-page {
         }
 
         #enter_room {
-            display: flex;
+            display: $welcomePageEnterRoomDisplay;
             align-items: center;
             max-width: calc(100% - 40px);
             width: $welcomePageEnterRoomWidth;
@@ -211,5 +211,10 @@ body.welcome-page {
         position: absolute;
         width: 100%;
         height: 100%;
+
+        .watermark.leftwatermark {
+            width: $welcomePageWatermarkWidth;
+            height: $welcomePageWatermarkHeight;
+        }
     }
 }

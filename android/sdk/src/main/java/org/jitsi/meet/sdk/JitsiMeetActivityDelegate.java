@@ -1,6 +1,5 @@
 /*
- * Copyright @ 2019-present 8x8, Inc.
- * Copyright @ 2018 Atlassian Pty Ltd
+ * Copyright @ 2018-present 8x8, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,10 +16,8 @@
 
 package org.jitsi.meet.sdk;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Intent;
-import android.os.Build;
 
 import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.bridge.Callback;
@@ -178,7 +175,6 @@ public class JitsiMeetActivityDelegate {
         };
     }
 
-    @TargetApi(Build.VERSION_CODES.M)
     public static void requestPermissions(Activity activity, String[] permissions, int requestCode, PermissionListener listener) {
         permissionListener = listener;
         activity.requestPermissions(permissions, requestCode);

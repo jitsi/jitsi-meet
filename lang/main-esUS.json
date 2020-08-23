@@ -578,7 +578,7 @@
     },
     "security": {
         "about": "Usted puede agregar una contraseña a la reunión. Los participantes necesitaran la contraseña para unirse a la reunión.",
-        "insecureRoomNameWarning": "El nombre de la sala es inseguro. Participantes no desseados pueden llegar a unirse a la reunión.",
+        "insecureRoomNameWarning": "El nombre de la sala es inseguro. Participantes no deseados pueden llegar a unirse a la reunión.",
         "securityOptions": "Opciones de seguridad"
     },
     "settings": {

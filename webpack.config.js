@@ -225,6 +225,12 @@ module.exports = [
         },
         performance: getPerformanceHints(5 * 1024)
     }),
+    Object.assign({}, config, {
+        entry: {
+            'close3': './static/close3.js'
+        },
+        performance: getPerformanceHints(128 * 1024)
+    }),
 
     // Because both video-blur-effect and rnnoise-processor modules are loaded
     // in a lazy manner using the loadScript function with a hard coded name,

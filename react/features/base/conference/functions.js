@@ -17,8 +17,7 @@ import {
     AVATAR_ID_COMMAND,
     AVATAR_URL_COMMAND,
     EMAIL_COMMAND,
-    JITSI_CONFERENCE_URL_KEY,
-    VIDEO_QUALITY_LEVELS
+    JITSI_CONFERENCE_URL_KEY
 } from './constants';
 import logger from './logger';
 
@@ -212,38 +211,6 @@ export function getCurrentConference(stateful: Function | Object) {
     }
 
     return joining || passwordRequired || membersOnly;
-}
-
-/**
- * Finds the nearest match for the passed in {@link availableHeight} to am
- * enumerated value in {@code VIDEO_QUALITY_LEVELS}.
- *
- * @param {number} availableHeight - The height to which a matching video
- * quality level should be found.
- * @returns {number} The closest matching value from
- * {@code VIDEO_QUALITY_LEVELS}.
- */
-export function getNearestReceiverVideoQualityLevel(availableHeight: number) {
-    const qualityLevels = [
-        VIDEO_QUALITY_LEVELS.HIGH,
-        VIDEO_QUALITY_LEVELS.STANDARD,
-        VIDEO_QUALITY_LEVELS.LOW
-    ];
-
-    let selectedLevel = qualityLevels[0];
-
-    for (let i = 1; i < qualityLevels.length; i++) {
-        const previousValue = qualityLevels[i - 1];
-        const currentValue = qualityLevels[i];
-        const diffWithCurrent = Math.abs(availableHeight - currentValue);
-        const diffWithPrevious = Math.abs(availableHeight - previousValue);
-
-        if (diffWithCurrent < diffWithPrevious) {
-            selectedLevel = currentValue;
-        }
-    }
-
-    return selectedLevel;
 }
 
 /**
