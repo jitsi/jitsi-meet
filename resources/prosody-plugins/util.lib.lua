@@ -1,5 +1,13 @@
 local jid = require "util.jid";
+local timer = require "util.timer";
+local http = require "net.http";
+
+local http_timeout = 30;
 local have_async, async = pcall(require, "util.async");
+local http_headers = {
+    ["User-Agent"] = "Prosody ("..prosody.version.."; "..prosody.platform..")"
+};
+
 local muc_domain_prefix
     = module:get_option_string("muc_mapper_domain_prefix", "conference");
 
@@ -208,6 +216,72 @@ function is_healthcheck_room(room_jid)
     return false;
 end
 
+-- Utility function to make an http get request and
+-- retry @param retry number of times
+-- @param url endpoint to be called
+-- @param retry nr of retries, if retry is
+-- nil there will be no retries
+-- @returns result of the http call or nil if
+-- the external call failed after the last retry
+function http_get_with_retry(url, retry)
+    local content, code;
+    local timeout_occurred;
+    local wait, done = async.waiter();
+    local function cb(content_, code_, response_, request_)
+        if timeout_occurred == nil then
+            code = code_;
+            if code == 200 or code == 204 then
+                module:log("debug", "External call was successful, content %s", content_);
+                content = content_
+            else
+                module:log("warn", "Error on public key request: Code %s, Content %s",
+                    code_, content_);
+            end
+            done();
+        else
+            module:log("warn", "External call reply delivered after timeout from: %s", url);
+        end
+    end
+
+    local function call_http()
+        return http.request(url, {
+            headers = http_headers or {},
+            method = "GET"
+        }, cb);
+    end
+
+    local request = call_http();
+
+    local function cancel()
+        -- TODO: This check is racey. Not likely to be a problem, but we should
+        --       still stick a mutex on content / code at some point.
+        if code == nil then
+            timeout_occurred = true;
+            module:log("warn", "Timeout %s seconds making the external call to: %s", http_timeout, url);
+            -- no longer present in prosody 0.11, so check before calling
+            if http.destroy_request ~= nil then
+                http.destroy_request(request);
+            end
+            if retry == nil then
+                module:log("debug", "External call failed and retry policy is not set");
+                done();
+            elseif retry ~= nil and retry < 1 then
+                module:log("debug", "External call failed after retry")
+                done();
+            else
+                module:log("debug", "External call failed, retry nr %s", retry)
+                retry = retry - 1;
+                request = call_http()
+                return http_timeout;
+            end
+        end
+    end
+    timer.add_task(http_timeout, cancel);
+    wait();
+
+    return content;
+end
+
 return {
     is_feature_allowed = is_feature_allowed;
     is_healthcheck_room = is_healthcheck_room;
@@ -217,4 +291,5 @@ return {
     room_jid_split_subdomain = room_jid_split_subdomain;
     internal_room_jid_match_rewrite = internal_room_jid_match_rewrite;
     update_presence_identity = update_presence_identity;
+    http_get_with_retry = http_get_with_retry;
 };
