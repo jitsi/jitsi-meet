@@ -275,10 +275,11 @@ function _constructOptions(state) {
     // redux store.
     const options = _.cloneDeep(state['features/base/config']);
 
-    // Normalize the BOSH URL.
     let { bosh } = options;
+    const { websocket } = options;
 
-    if (bosh) {
+    // Normalize the BOSH URL.
+    if (bosh && !websocket) {
         const { locationURL } = state['features/base/connection'];
 
         if (bosh.startsWith('//')) {
@@ -295,14 +296,22 @@ function _constructOptions(state) {
             // eslint-disable-next-line max-len
             bosh = `${protocol}//${host}${contextRoot || '/'}${bosh.substr(1)}`;
         }
+    }
 
-        // Append room to the URL's search.
-        const { room } = state['features/base/conference'];
+    // WebSocket is preferred over BOSH.
+    const serviceUrl = websocket || bosh;
 
-        room && (bosh += `?room=${getBackendSafeRoomName(room)}`);
+    // Append room to the URL's search.
+    const { room } = state['features/base/conference'];
 
-        // FIXME Remove deprecated 'bosh' option assignment at some point.
-        options.serviceUrl = options.bosh = bosh;
+    if (serviceUrl && room) {
+        const roomName = getBackendSafeRoomName(room);
+
+        options.serviceUrl = `${serviceUrl}?room=${roomName}`;
+
+        if (options.websocketKeepAliveUrl) {
+            options.websocketKeepAliveUrl += `?room=${roomName}`;
+        }
     }
 
     return options;
