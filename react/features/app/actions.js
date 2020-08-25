@@ -24,6 +24,7 @@ import {
     parseURIString,
     toURLString
 } from '../base/util';
+import { isVpaasMeeting } from '../billing-counter/functions';
 import { clearNotifications, showNotification } from '../notifications';
 import { setFatalError } from '../overlay';
 
@@ -291,7 +292,12 @@ export function maybeRedirectToWelcomePage(options: Object = {}) {
 
         // if close page is enabled redirect to it, without further action
         if (enableClosePage) {
+            if (isVpaasMeeting(getState())) {
+                redirectToStaticPage('/');
+            }
+
             const { isGuest, jwt } = getState()['features/base/jwt'];
+
             let hashParam;
 
             // save whether current user is guest or not, and pass auth token,
