@@ -18,6 +18,7 @@ import '../base/sounds/middleware';
 import '../base/testing/middleware';
 import '../base/tracks/middleware';
 import '../base/user-interaction/middleware';
+import '../billing-counter/middleware';
 import '../calendar-sync/middleware';
 import '../chat/middleware';
 import '../conference/middleware';
