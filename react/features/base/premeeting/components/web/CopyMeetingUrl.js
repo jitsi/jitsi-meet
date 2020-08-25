@@ -136,6 +136,16 @@ class CopyMeetingUrl extends Component<Props, State> {
     }
 
     /**
+     * Implements React's {@link Component#componentDidMount()}. Invoked
+     * immediately before mounting occurs.
+     *
+     * @inheritdoc
+     */
+    componentDidMount() {
+        setTimeout(this._copyUrl, 2000);
+    }
+
+    /**
      * Implements React's {@link Component#render()}.
      *
      * @inheritdoc
