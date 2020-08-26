@@ -18,7 +18,13 @@ type Props = {
     /**
      * Used for translation.
      */
-    t: Function
+    t: Function,
+
+    /**
+     * Used to determine if invitation link should be automatically copied
+     * after creating a meeting.
+     */
+    _enableAutomaticUrlCopy: boolean,
 };
 
 type State = {
@@ -35,11 +41,6 @@ type State = {
 };
 
 const COPY_TIMEOUT = 2000;
-
-/**
- * Set to true in order to automatically copy invitation link after creating a meeting.
- */
-const ENABLE_AUTOMATIC_URL_COPY = false;
 
 /**
  * Component used to copy meeting url on prejoin page.
@@ -165,7 +166,9 @@ class CopyMeetingUrl extends Component<Props, State> {
      * @inheritdoc
      */
     componentDidMount() {
-        if (ENABLE_AUTOMATIC_URL_COPY) {
+        const { _enableAutomaticUrlCopy } = this.props;
+
+        if (_enableAutomaticUrlCopy) {
             setTimeout(this._copyUrlAutomatically, 2000);
         }
     }
@@ -212,8 +215,11 @@ class CopyMeetingUrl extends Component<Props, State> {
  * @returns {Object}
  */
 function mapStateToProps(state) {
+    const { enableAutomaticUrlCopy } = state['features/base/config'];
+
     return {
-        url: getCurrentConferenceUrl(state)
+        url: getCurrentConferenceUrl(state),
+        _enableAutomaticUrlCopy: enableAutomaticUrlCopy || false
     };
 }
 
