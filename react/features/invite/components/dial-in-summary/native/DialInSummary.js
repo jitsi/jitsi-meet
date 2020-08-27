@@ -7,14 +7,10 @@ import { type Dispatch } from 'redux';
 
 import { openDialog } from '../../../../base/dialog';
 import { translate } from '../../../../base/i18n';
-import {
-    HeaderWithNavigation,
-    LoadingIndicator,
-    SlidingView
-} from '../../../../base/react';
+import { JitsiModal, setActiveModalId } from '../../../../base/modal';
+import { LoadingIndicator } from '../../../../base/react';
 import { connect } from '../../../../base/redux';
-
-import { hideDialInSummary } from '../../../actions';
+import { DIAL_IN_SUMMARY_VIEW_ID } from '../../../constants';
 import { getDialInfoPageURLForURIString } from '../../../functions';
 
 import DialInSummaryErrorDialog from './DialInSummaryErrorDialog';
@@ -43,7 +39,6 @@ class DialInSummary extends Component<Props> {
     constructor(props: Props) {
         super(props);
 
-        this._onCloseView = this._onCloseView.bind(this);
         this._onError = this._onError.bind(this);
         this._onNavigate = this._onNavigate.bind(this);
         this._renderLoading = this._renderLoading.bind(this);
@@ -58,41 +53,21 @@ class DialInSummary extends Component<Props> {
         const { _summaryUrl } = this.props;
 
         return (
-            <SlidingView
-                onHide = { this._onCloseView }
-                position = 'bottom'
-                show = { Boolean(_summaryUrl) } >
-                <View style = { styles.webViewWrapper }>
-                    <HeaderWithNavigation
-                        headerLabelKey = 'info.label'
-                        onPressBack = { this._onCloseView } />
-                    <WebView
-                        onError = { this._onError }
-                        onShouldStartLoadWithRequest = { this._onNavigate }
-                        renderLoading = { this._renderLoading }
-                        source = {{ uri: getDialInfoPageURLForURIString(_summaryUrl) }}
-                        startInLoadingState = { true }
-                        style = { styles.webView } />
-                </View>
-            </SlidingView>
+            <JitsiModal
+                headerProps = {{
+                    headerLabelKey: 'info.label'
+                }}
+                modalId = { DIAL_IN_SUMMARY_VIEW_ID }
+                style = { styles.backDrop } >
+                <WebView
+                    onError = { this._onError }
+                    onShouldStartLoadWithRequest = { this._onNavigate }
+                    renderLoading = { this._renderLoading }
+                    source = {{ uri: getDialInfoPageURLForURIString(_summaryUrl) }}
+                    startInLoadingState = { true }
+                    style = { styles.webView } />
+            </JitsiModal>
         );
-    }
-
-    _onCloseView: () => boolean;
-
-    /**
-     * Closes the view.
-     *
-     * @returns {boolean}
-     */
-    _onCloseView() {
-        if (this.props._summaryUrl) {
-            this.props.dispatch(hideDialInSummary());
-
-            return true;
-        }
-
-        return false;
     }
 
     _onError: () => void;
@@ -103,7 +78,7 @@ class DialInSummary extends Component<Props> {
      * @returns {void}
      */
     _onError() {
-        this.props.dispatch(hideDialInSummary());
+        this.props.dispatch(setActiveModalId());
         this.props.dispatch(openDialog(DialInSummaryErrorDialog));
     }
 
@@ -122,7 +97,8 @@ class DialInSummary extends Component<Props> {
 
         if (url.startsWith('tel:')) {
             Linking.openURL(url);
-            this.props.dispatch(hideDialInSummary());
+
+            this.props.dispatch(setActiveModalId());
         }
 
         return url === getDialInfoPageURLForURIString(this.props._summaryUrl);
@@ -156,7 +132,7 @@ class DialInSummary extends Component<Props> {
  */
 function _mapStateToProps(state) {
     return {
-        _summaryUrl: state['features/invite'].summaryUrl
+        _summaryUrl: (state['features/base/modal'].modalProps || {}).summaryUrl
     };
 }
 

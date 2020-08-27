@@ -5,11 +5,10 @@ import React from 'react';
 import { Dialog } from '../../../base/dialog';
 import { translate } from '../../../base/i18n';
 import { connect } from '../../../base/redux';
-
+import { muteAllParticipants } from '../../actions';
 import AbstractMuteRemoteParticipantDialog, {
     type Props as AbstractProps
 } from '../AbstractMuteRemoteParticipantDialog';
-import { muteAllParticipants } from '../../actions';
 
 declare var APP: Object;
 

@@ -23,12 +23,6 @@ export default {
         width: 32
     },
 
-    chatContainer: {
-        alignItems: 'stretch',
-        flex: 1,
-        flexDirection: 'column'
-    },
-
     chatLink: {
         color: ColorPalette.blue
     },

@@ -1,6 +1,7 @@
 // @flow
 
 import React, { Component } from 'react';
+
 import ChatMessage from './ChatMessage';
 
 type Props = {

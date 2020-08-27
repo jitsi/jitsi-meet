@@ -1,7 +1,6 @@
 // @flow
 
 import VideoLayout from '../../../modules/UI/videolayout/VideoLayout.js';
-
 import { CONFERENCE_JOINED, CONFERENCE_WILL_LEAVE } from '../base/conference';
 import {
     DOMINANT_SPEAKER_CHANGED,
@@ -70,7 +69,7 @@ MiddlewareRegistry.register(store => next => action => {
         break;
 
     case PIN_PARTICIPANT:
-        VideoLayout.onPinChange(action.participant.id);
+        VideoLayout.onPinChange(action.participant?.id);
         break;
 
     case SET_FILMSTRIP_VISIBLE:

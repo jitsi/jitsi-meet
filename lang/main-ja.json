@@ -5,7 +5,7 @@
         "countryReminder": "米国外にコールしますか？ 国コードで始まることを確認してください！",
         "disabled": "人を招待することはできません。",
         "failedToAdd": "",
-        "footerText": "ダイヤルアウトが無効しています。",
+        "footerText": "ダイヤルアウトが無効です。",
         "loading": "人と電話番号を検索する",
         "loadingNumber": "電話番号を検証しています",
         "loadingPeople": "招待する人を検索する",
@@ -17,14 +17,12 @@
         "telephone": "電話： {{number}}",
         "title": "この会議に人を招待する"
     },
-    "\u0005addPeople": {},
     "audioDevices": {
         "bluetooth": "Bluetooth",
         "headphones": "ヘッドフォン",
         "phone": "電話",
         "speaker": "スピーカー"
     },
-    "\u0005audioDevices": {},
     "audioOnly": {
         "audioOnly": "オーディオのみ"
     },
@@ -33,7 +31,7 @@
         "confirmAddLink": "このイベントにビデオ会議リンクを張り付けますか。",
         "error": {
             "appConfiguration": "カレンダー機能が正しく設定されていない",
-            "generic": "エラーが発生した。カレンダー機能設定を確認してください、もしくはカレンダーを更新してください",
+            "generic": "エラーが発生しました。カレンダー機能設定を確認してください、もしくはカレンダーを更新してください",
             "notSignedIn": "認証中エラーが発生しました。カレンダーの設定を確認し、ログインし直してください。"
         },
         "join": "参加",
@@ -46,7 +44,6 @@
         "refresh": "カレンダーを更新する",
         "today": "今日"
     },
-    "\u0005calendarSync": {},
     "chat": {
         "error": "エラー: \"{{originalText}}\" がまだ送信されていません. エラー： {{error}}",
         "messagebox": "メッセージを書いてください",
@@ -73,7 +70,7 @@
     },
     "connectionindicator": {
         "address": "アドレス：",
-        "bandwidth": "推定バンドワイズ",
+        "bandwidth": "推定帯域幅",
         "bitrate": "ビットレート:",
         "bridgeCount": "サーバー数：",
         "connectedTo": "接続先：",
@@ -86,7 +83,7 @@
         "quality": {
             "good": "良い",
             "inactive": "休止中",
-            "lost": "接続切れた",
+            "lost": "接続ロスト",
             "nonoptimal": "最適ではない",
             "poor": "悪い"
         },
@@ -107,9 +104,11 @@
         "description": "何も起こりませんでしたか？ {{app}} デスクトップアプリで会議を開始しようとしました。 再度試してみるか、{{app}} Webアプリで起動してください。",
         "descriptionWithoutWeb": "",
         "downloadApp": "アプリをダウンロードする",
+        "ifDoNotHaveApp": "まだアプリを持っていない場合は、",
+        "ifHaveApp": "すでにアプリを持っている場合は、",
+        "joinInApp": "アプリで会議に参加する",
         "launchWebButton": "Webで起動する",
-        "openApp": "アプリで続く",
-        "title": "{{app}} で会議を開始する...",
+        "title": "{{app}} で会議を開始する…",
         "tryAgainButton": "デスクトップでもう一度お試しください"
     },
     "defaultLink": "例： {{url}}",
@@ -139,19 +138,19 @@
         "cameraNotSendingData": "あなたのカメラにアクセスすることができません。 他のアプリケーションがこのデバイスを使用しているかどうかを確認し、設定メニューから別のデバイスを選択するか、アプリケーションをリロードしてみてください。",
         "cameraNotSendingDataTitle": "カメラにアクセスできません",
         "cameraPermissionDeniedError": "あなたはカメラを使用する許可を与えていません。 あなたはまだ会議に参加することができますが、他の参加者はあなたを見ることはできません。 この問題を解決するには、アドレスバーのカメラボタンを使用します。",
-        "cameraUnknownError": "不明な理由でカメラを使用することはできません。",
+        "cameraUnknownError": "不明な理由でカメラが使用できません。",
         "cameraUnsupportedResolutionError": "お使いのカメラは、必要なビデオ解像度をサポートしていません。",
         "Cancel": "キャンセル",
         "close": "閉じる",
-        "conferenceDisconnectMsg": "ネットワーク接続を確認することができます。 {{seconds}} 秒で再接続します...",
+        "conferenceDisconnectMsg": "ネットワーク接続を確認することができます。 {{seconds}} 秒で再接続します…",
         "conferenceDisconnectTitle": "あなたは切断されました。",
-        "conferenceReloadMsg": "私たちはこれを解決しようとしています。 {{seconds}} 秒で再接続します...",
-        "conferenceReloadTitle": "残念ながら、何かが間違っていました。",
+        "conferenceReloadMsg": "私たちはこれを解決しようとしています。 {{seconds}} 秒で再接続します…",
+        "conferenceReloadTitle": "残念ながら、何か問題が発生しています。",
         "confirm": "確認",
         "confirmNo": "いいえ",
         "confirmYes": "はい",
-        "connectError": "Oops! 何かがうまくいかず、会議に接続できませんでした。",
-        "connectErrorWithMsg": "Oops! 何か問題が発生し、会議に接続できませんでした： {{msg}}",
+        "connectError": "おおっと! 何かがうまくいかず、会議に接続できませんでした。",
+        "connectErrorWithMsg": "おおっと! 何か問題が発生し、会議に接続できませんでした： {{msg}}",
         "connecting": "接続中",
         "contactSupport": "サポート問い合わせ先",
         "copy": "コピー",
@@ -194,7 +193,7 @@
         "micUnknownError": "不明な理由でマイクを使用することはできません。",
         "muteParticipantBody": "あなたはそのミュートを解除することはできませんが、彼らはいつでも自分自身のミュートを解除することができます。",
         "muteParticipantButton": "ミュート",
-        "muteParticipantDialog": "この参加者をミュートしますか。あなたが取り戻せませんが、本人が自分でいつでも解除でいます。",
+        "muteParticipantDialog": "この参加者をミュートしますか。あなた解除できませんが、本人が自分でいつでも解除できます。",
         "muteParticipantTitle": "",
         "Ok": "Ok",
         "passwordLabel": "",
@@ -252,12 +251,9 @@
         "userPassword": "ユーザーのパスワード",
         "WaitForHostMsg": "",
         "WaitForHostMsgWOk": "",
-        "WaitingForHost": "ホストを待っています...",
+        "WaitingForHost": "ホストを待っています…",
         "Yes": "はい",
         "yourEntireScreen": "あなたの画面全体"
-    },
-    "\u0005dialog": {
-        "accessibilityLabel": {}
     },
     "dialOut": {
         "statusMessage": "は現在 {{status}} です"
@@ -294,9 +290,9 @@
         "inviteLiveStream": "この会議のライブストリームを表示するには、このリンクをクリックしてください：{{url}}",
         "invitePhone": "",
         "invitePhoneAlternatives": "",
-        "inviteURLFirstPartGeneral": "",
-        "inviteURLFirstPartPersonal": "",
-        "inviteURLSecondPart": "",
+        "inviteURLFirstPartGeneral": "あなたはミーティングに招待されました。",
+        "inviteURLFirstPartPersonal": "{{name}} があなたをミーティングに招待しました。\n",
+        "inviteURLSecondPart": "\nミーティングにご参加ください:\n{{url}}\n",
         "liveStreamURL": "ライブストリーム：",
         "moreNumbers": "その他の番号",
         "noNumbers": "ダイヤルイン番号はありません。",
@@ -308,7 +304,6 @@
         "tooltip": "この会議のリンクとダイヤルイン情報を共有する",
         "label": "ミーティング情報"
     },
-    "\u0005info": {},
     "inviteDialog": {
         "alertText": "",
         "header": "招待",
@@ -330,7 +325,7 @@
         "keyboardShortcuts": "キーボードショートカット",
         "localRecording": "ローカル録画コントロールの表示／非表示",
         "mute": "マイクの消音 ( ミュート )",
-        "pushToTalk": "話すために押す",
+        "pushToTalk": "プッシュ・トゥ・トーク",
         "raiseHand": "手を上げる/下げる",
         "showSpeakerStats": "演説者のデータを表示",
         "toggleChat": "チャットを表示/非表示",
@@ -339,7 +334,6 @@
         "toggleShortcuts": "キーボード ショートカットを表示",
         "videoMute": "カメラを有効/無効"
     },
-    "\u0005keyboardShortcuts": {},
     "liveStreaming": {
         "busy": "私たちはストリーミングリソースを解放するために取り組んでいます。 数分後にもう一度お試しください。",
         "busyTitle": "すべてのストリーマーは現在ビジー状態です",
@@ -358,7 +352,7 @@
         "invalidStreamKey": "ライブストリーミングキーが間に合いました。",
         "off": "ライブストリーミングが停止しました",
         "on": "ライブストリーミング",
-        "pending": "ライブストリームを開始しています...",
+        "pending": "ライブストリームを開始しています…",
         "serviceName": "ライブストリーミングサービス",
         "signedInAs": "",
         "signIn": "Googleでログイン",
@@ -368,7 +362,6 @@
         "streamIdHelp": "これは何ですか？",
         "unavailableTitle": "ライブストリーミングは利用できません"
     },
-    "\u0005liveStreaming": {},
     "localRecording": {
         "clientState": {
             "off": "オフ",
@@ -398,7 +391,6 @@
         "stop": "録画を停止する",
         "yes": "はい"
     },
-    "\u0005localRecording": {},
     "lockRoomPassword": "パスワード",
     "lockRoomPasswordUppercase": "パスワード",
     "me": "私",
@@ -450,7 +442,6 @@
         "rejected": "",
         "ringing": "着信している・・"
     },
-    "\u0005presenceStatus": {},
     "profile": {
         "setDisplayNameLabel": "表示名を設定してください",
         "setEmailInput": "メールアドレスを入力してください",
@@ -482,7 +473,6 @@
         "unavailable": "Oops! {{serviceName}} は現在使用できません。 私たちはこの問題の解決に取り組んでいます。 後でもう一度お試しください。",
         "unavailableTitle": "録画できません"
     },
-    "\u0005recording": {},
     "sectionList": {
         "pullToRefresh": "プルしてリフレッシュする"
     },
@@ -509,9 +499,6 @@
         "startVideoMuted": "全員非表示にする",
         "title": "設定"
     },
-    "\u0005settings": {
-        "calendar": {}
-    },
     "settingsView": {
         "alertOk": "OK",
         "alertTitle": "Warning",
@@ -533,19 +520,17 @@
     },
     "speaker": "スピーカー",
     "speakerStats": {
-        "hours": "{{count}} 秒",
-        "minutes": "{{count}} 秒",
+        "hours": "{{count}} 時間",
+        "minutes": "{{count}} 分",
         "name": "名前",
         "seconds": "{{count}} 秒",
         "speakerStats": "話者の統計",
         "speakerTime": "話す時間"
     },
-    "\u0005speakerStats": {},
     "startupoverlay": {
         "policyText": " ",
         "title": "{{app}} を使用するには、マイクとカメラが必要です。"
     },
-    "\u0005startupoverlay": {},
     "suspendedoverlay": {
         "rejoinKeyTitle": "再参加",
         "text": "再接続するには、<i>再参加</i> ボタンを押してください。",
@@ -575,13 +560,13 @@
             "recording": "レコーディングに切り替える",
             "remoteMute": "参加者を追い出す",
             "Settings": "設定に切り替える",
-            "sharedvideo": "Youtubeビデオ共有に切り替える",
+            "sharedvideo": "YouTubeビデオ共有に切り替える",
             "shareRoom": "誰かを招待する",
             "shareYourScreen": "画面共有に切り替える",
             "shortcuts": "ショートカットに切り替える",
             "show": "",
             "speakerStats": "スピーカー統計に切り替える",
-            "tileView": "",
+            "tileView": "タイルビュー",
             "toggleCamera": "カメラを切り替える",
             "videomute": "ミュートビデオに切り替える",
             "videoblur": ""
@@ -597,9 +582,9 @@
         "documentClose": "共有ドキュメントを閉じる",
         "documentOpen": "共有ドキュメントを開く",
         "enterFullScreen": "フルスクリーン表示",
-        "enterTileView": "タイトルビューを開始",
+        "enterTileView": "タイルビューを開始",
         "exitFullScreen": "フルスクリーンを終了",
-        "exitTileView": "タイトルビューを終了",
+        "exitTileView": "タイルビューを終了",
         "feedback": "フィードバックを残す",
         "hangup": "退出",
         "invite": "メンバーを招待する",
@@ -624,14 +609,11 @@
         "stopSubtitles": "字幕停止",
         "stopSharedVideo": "YouTube動画を停止する",
         "talkWhileMutedPopup": "話そうとしていますか？ あなたはミュートされています。",
-        "tileViewToggle": "",
+        "tileViewToggle": "タイルビューを切り替え",
         "toggleCamera": "カメラを切り替える",
         "videomute": "カメラの開始 / 停止",
         "startvideoblur": "",
         "stopvideoblur": ""
-    },
-    "\u0005toolbar": {
-        "accessibilityLabel": {}
     },
     "transcribing": {
         "ccButtonTooltip": "字幕を表示・非表示する",
@@ -645,7 +627,6 @@
         "stop": "字幕を非表示する",
         "tr": "TR"
     },
-    "\u0005transcribing": {},
     "userMedia": {
         "androidGrantPermissions": "ブラウザーのポップアップで<b><i>許可する</i></b>を選択してください",
         "chromeGrantPermissions": "ブラウザーのポップアップで<b><i>許可する</i></b>を選択してください",
@@ -664,7 +645,7 @@
         "errorAlreadyInvited": "{{displayName}}さんがすでに招待されました",
         "errorInvite": "会議がまだ設定されていません。もう一度お試しください。",
         "errorInviteFailed": "問題を解決しています。しばらくしたらまたお試しください。",
-        "errorInviteFailedTitle": " {{displayName}}さんが招待できません。",
+        "errorInviteFailedTitle": "{{displayName}}さんが招待できません。",
         "errorInviteTitle": "招集エラー",
         "pending": "{{displayName}} が招待されました"
     },
@@ -680,9 +661,6 @@
         "lowDefinition": "低画質",
         "onlyAudioAvailable": "音声のみ利用可能",
         "onlyAudioSupported": "このブラウザでは音声のみをサポートしています。",
-        "p2pEnabled": "ピア・ツー・ピアモード有効している",
-        "p2pVideoQualityDescription": "",
-        "recHighDefinitionOnly": "",
         "sd": "SD",
         "standardDefinition": "標準画質"
     },
@@ -724,6 +702,5 @@
         "sendFeedback": "フィードバックを送信",
         "terms": "利用規約",
         "title": "安全で、機能豊富で、完全に無料のビデオ会議"
-    },
-    "\u0005welcomepage": {}
+    }
 }

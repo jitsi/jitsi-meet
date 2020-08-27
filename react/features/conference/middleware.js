@@ -1,21 +1,21 @@
 // @flow
-import { notifyKickedOut } from './actions';
-import { appNavigate } from '../app';
+import { appNavigate } from '../app/actions';
 import {
     CONFERENCE_JOINED,
     KICKED_OUT,
-    VIDEO_QUALITY_LEVELS,
     conferenceLeft,
-    getCurrentConference,
-    setPreferredReceiverVideoQuality
+    getCurrentConference
 } from '../base/conference';
 import { hideDialog, isDialogOpen } from '../base/dialog';
+import { setActiveModalId } from '../base/modal';
 import { pinParticipant } from '../base/participants';
-import { SET_REDUCED_UI } from '../base/responsive-ui';
 import { MiddlewareRegistry, StateListenerRegistry } from '../base/redux';
+import { SET_REDUCED_UI } from '../base/responsive-ui';
 import { FeedbackDialog } from '../feedback';
 import { setFilmstripEnabled } from '../filmstrip';
-import { setToolboxEnabled } from '../toolbox';
+import { setToolboxEnabled } from '../toolbox/actions';
+
+import { notifyKickedOut } from './actions';
 
 MiddlewareRegistry.register(store => next => action => {
     const result = next(action);
@@ -29,12 +29,6 @@ MiddlewareRegistry.register(store => next => action => {
 
         dispatch(setToolboxEnabled(!reducedUI));
         dispatch(setFilmstripEnabled(!reducedUI));
-
-        dispatch(
-            setPreferredReceiverVideoQuality(
-                reducedUI
-                    ? VIDEO_QUALITY_LEVELS.LOW
-                    : VIDEO_QUALITY_LEVELS.HIGH));
 
         break;
     }
@@ -64,7 +58,7 @@ MiddlewareRegistry.register(store => next => action => {
 StateListenerRegistry.register(
     state => getCurrentConference(state),
     (conference, { dispatch, getState }, prevConference) => {
-        const { authRequired, passwordRequired }
+        const { authRequired, membersOnly, passwordRequired }
             = getState()['features/base/conference'];
 
         if (conference !== prevConference) {
@@ -78,11 +72,15 @@ StateListenerRegistry.register(
             // and explicitly check.
             if (typeof authRequired === 'undefined'
                     && typeof passwordRequired === 'undefined'
+                    && typeof membersOnly === 'undefined'
                     && !isDialogOpen(getState(), FeedbackDialog)) {
                 // Conference changed, left or failed... and there is no
                 // pending authentication, nor feedback request, so close any
                 // dialog we might have open.
                 dispatch(hideDialog());
             }
+
+            // We want to close all modals.
+            dispatch(setActiveModalId());
         }
     });

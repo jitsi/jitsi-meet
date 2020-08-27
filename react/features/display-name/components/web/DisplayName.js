@@ -1,7 +1,6 @@
 /* @flow */
 
 import React, { Component } from 'react';
-import { connect } from '../../../base/redux';
 import type { Dispatch } from 'redux';
 
 import { translate } from '../../../base/i18n';
@@ -9,8 +8,8 @@ import {
     getParticipantDisplayName,
     getParticipantById
 } from '../../../base/participants';
+import { connect } from '../../../base/redux';
 import { updateSettings } from '../../../base/settings';
-
 import { appendSuffix } from '../../functions';
 
 /**

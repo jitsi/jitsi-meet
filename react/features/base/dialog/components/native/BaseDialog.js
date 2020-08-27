@@ -2,6 +2,7 @@
 
 import React from 'react';
 import {
+    KeyboardAvoidingView,
     Text,
     TouchableOpacity,
     TouchableWithoutFeedback,
@@ -10,11 +11,11 @@ import {
 
 import { Icon, IconClose } from '../../../icons';
 import { StyleType } from '../../../styles';
-
 import AbstractDialog, {
     type Props as AbstractProps,
     type State
 } from '../AbstractDialog';
+
 import { brandedDialog as styles } from './styles';
 
 export type Props = AbstractProps & {
@@ -53,16 +54,16 @@ class BaseDialog<P: Props, S: State> extends AbstractDialog<P, S> {
 
         return (
             <TouchableWithoutFeedback>
-                <View
+                <KeyboardAvoidingView
+                    behavior = 'height'
                     style = { [
-                        styles.overlay,
-                        style
+                        styles.overlay
                     ] }>
                     <View
                         pointerEvents = 'box-none'
                         style = { [
                             _dialogStyles.dialog,
-                            this.props.style
+                            style
                         ] }>
                         <TouchableOpacity
                             onPress = { this._onCancel }
@@ -73,7 +74,7 @@ class BaseDialog<P: Props, S: State> extends AbstractDialog<P, S> {
                         </TouchableOpacity>
                         { this._renderContent() }
                     </View>
-                </View>
+                </KeyboardAvoidingView>
             </TouchableWithoutFeedback>
         );
     }

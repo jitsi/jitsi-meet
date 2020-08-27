@@ -27,12 +27,15 @@ const UIUtil = {
      */
     prependChild(container, newChild) {
         const firstChild = container.childNodes[0];
+        let result;
 
         if (firstChild) {
-            container.insertBefore(newChild, firstChild);
+            result = container.insertBefore(newChild, firstChild);
         } else {
-            container.appendChild(newChild);
+            result = container.appendChild(newChild);
         }
+
+        return result;
     },
 
     /**

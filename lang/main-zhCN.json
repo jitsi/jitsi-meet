@@ -1,21 +1,21 @@
 {
     "addPeople": {
-        "add": "邀请",
-        "countryNotSupported": "目的国家暂时未被支持。",
+        "add": "添加",
+        "countryNotSupported": "当前国家暂时未被支持。",
         "countryReminder": "尝试在美国之外通话？请检查国家代码！",
-        "disabled": "您不能邀请成员",
-        "failedToAdd": "添加参与者失败",
-        "footerText": "禁止拨号。",
-        "loading": "查找联系人或者电话号码",
-        "loadingNumber": "验证电话号码",
-        "loadingPeople": "正在搜索需要邀请的成员",
-        "noResults": "没有符合要求的搜索结果",
-        "noValidNumbers": "请输入一个电话号码",
-        "searchNumbers": "添加电话成员",
+        "disabled": "关闭",
+        "failedToAdd": "添加失败",
+        "footerText": "底部文本",
+        "loading": "正在加载",
+        "loadingNumber": "正在加载号码",
+        "loadingPeople": "正在加载会议人员",
+        "noResults": "没有找到查询结果",
+        "noValidNumbers": "无效号码",
+        "searchNumbers": "查询号码",
         "searchPeople": "查找人员",
         "searchPeopleAndNumbers": "搜索成员或添加其电话号码",
         "telephone": "电话号码： {{number}}",
-        "title": "邀请成员与会"
+        "title": "会议标题"
     },
     "audioDevices": {
         "bluetooth": "蓝牙",
@@ -25,13 +25,13 @@
         "none": "没有可用的音频设备"
     },
     "audioOnly": {
-        "audioOnly": "低带宽"
+        "audioOnly": "仅语音支持"
     },
     "calendarSync": {
         "addMeetingURL": "添加会议链接",
         "confirmAddLink": "是否在此事件中添加Jitsi链接",
         "error": {
-            "appConfiguration": "日历集成配置不正确。",
+            "appConfiguration": "配置错误",
             "generic": "发生错误。请检查日历设置或尝试刷新日历。",
             "notSignedIn": "查看日历事件验证出错。请检查日历设置，然后再次尝试登录。"
         },
@@ -56,7 +56,7 @@
             "title": "输入一个昵称用于聊天"
         },
         "privateNotice": "与 {{recipient}} 的私人聊天",
-        "title": "聊天",
+        "title": "话题",
         "you": "您"
     },
     "chromeExtensionBanner": {
@@ -65,13 +65,13 @@
         "dontShowAgain": ""
     },
     "connectingOverlay": {
-        "joiningRoom": "会议连接中..."
+        "joiningRoom": "会议连接中…"
     },
     "connection": {
         "ATTACHED": "已接入",
         "AUTHENTICATING": "认证中",
         "AUTHFAIL": "认证失败",
-        "CONNECTED": "连接中...",
+        "CONNECTED": "连接中…",
         "CONNECTING": "连接中",
         "CONNFAIL": "连接失败",
         "DISCONNECTED": "已断开连接",
@@ -116,7 +116,7 @@
         "downloadApp": "下载应用",
         "launchWebButton": "在网页中启动",
         "openApp": "继续",
-        "title": "在 {{app}}中登录会议...",
+        "title": "在 {{app}}中登录会议…",
         "tryAgainButton": "请尝试重启桌面版应用程序"
     },
     "defaultLink": "例如 {{url}}",
@@ -284,7 +284,7 @@
         "veryGood": "非常好"
     },
     "incomingCall": {
-        "answer": "回复",
+        "answer": "应答",
         "audioCallTitle": "来电",
         "decline": "解除,离开",
         "productLabel": "来自Jitsi Meet",
@@ -292,14 +292,14 @@
     },
     "info": {
         "accessibilityLabel": "显示信息",
-        "addPassword": "",
-        "cancelPassword": "",
-        "conferenceURL": "链接：",
+        "addPassword": "添加密码",
+        "cancelPassword": "取消密码",
+        "conferenceURL": "会议链接：",
         "country": "国家",
         "dialANumber": "若要加入会议，请拨打其中一个号码，然后输入pin码。",
         "dialInConferenceID": "PIN:",
         "dialInNotSupported": "抱歉，不支持电话呼入。",
-        "dialInNumber": "播入：",
+        "dialInNumber": "拨入：",
         "dialInSummaryError": "获取拨入信息时出错。请稍后再试。",
         "dialInTollFree": "免费电话",
         "genericError": "糟糕！出错了。",
@@ -315,7 +315,7 @@
         "noPassword": "未发现设备",
         "noRoom": "没有指定要呼入的房间。",
         "numbers": "呼入号码",
-        "password": "",
+        "password": "密码",
         "title": "分享",
         "tooltip": "共享此会议的链接和拨入信息",
         "label": "会议信息"
@@ -377,7 +377,7 @@
         "signIn": "使用谷歌登录",
         "signInCTA": "输入 YouTube 串流密钥或者登录 YouTube 帐号。",
         "signOut": "登出",
-        "start": "开始直播",
+        "start": "开始",
         "streamIdHelp": "这是什么？",
         "unavailableTitle": "流媒体直播不可用"
     },
@@ -416,10 +416,10 @@
     "notify": {
         "connectedOneMember": "{{name}} 加入会议",
         "connectedThreePlusMembers": "{{name}} 和其他 {{count}} 人加入会议",
-        "connectedTwoMembers": "{{first}} 和  {{second}} 加入会议",
+        "connectedTwoMembers": "{{first}} 和 {{second}} 加入会议",
         "disconnected": "已断开连接",
         "focus": "会议聚焦",
-        "focusFail": "{{component}} 不可用 -  在{{ms}}秒后重试",
+        "focusFail": "{{component}} 不可用 - 在{{ms}}秒后重试",
         "grantedTo": "主持权限已授予{{to}}！",
         "invitedOneMember": "{{name}} 已被邀请",
         "invitedThreePlusMembers": "",
@@ -449,17 +449,17 @@
     "poweredby": "技术支持",
     "presenceStatus": {
         "busy": "忙碌",
-        "calling": "通话中...",
-        "connected": "连接中...",
-        "connecting": "连接中...",
+        "calling": "通话中…",
+        "connected": "连接中…",
+        "connecting": "连接中…",
         "connecting2": "连接中...",
         "disconnected": "已断开连接",
         "expired": "已过期",
         "ignored": "已忽略",
-        "initializingCall": "初始化呼叫...",
+        "initializingCall": "初始化呼叫…",
         "invited": "邀请",
         "rejected": "拒绝",
-        "ringing": "响铃..."
+        "ringing": "响铃…"
     },
     "profile": {
         "setDisplayNameLabel": "设定您的显示名称",
@@ -477,7 +477,7 @@
         "error": "录制失败。请重新尝试。",
         "expandedOff": "录制已停止",
         "expandedOn": "此会议正在被录制。",
-        "expandedPending": "录制正在启动...",
+        "expandedPending": "录制正在启动…",
         "failedToStart": "录制启动失败",
         "fileSharingdescription": "跟与会者分享录制",
         "live": "直播",
@@ -486,7 +486,7 @@
         "offBy": "",
         "on": "录制中",
         "onBy": "",
-        "pending": "正在准备录制会议....",
+        "pending": "正在准备录制会议…",
         "rec": "REC录制",
         "serviceDescription": "录制服务将保存您的录制",
         "serviceName": "录制服务",
@@ -504,10 +504,10 @@
             "disconnect": "断开连接",
             "microsoftSignIn": "Microsoft帐号登录",
             "signedIn": "目前通过{{email}}获取日历事件。点击下方断开连接按钮停止访问。",
-            "title": "日历"
+            "title": "题目"
         },
         "devices": "设备",
-        "followMe": "所有人跟随我",
+        "followMe": "分机随行",
         "language": "语言",
         "loggedIn": "以{{name}} 登录",
         "moderator": "管理员",
@@ -519,10 +519,10 @@
         "selectMic": "麦克风",
         "startAudioMuted": "所有人开始时静音",
         "startVideoMuted": "所有人开始时隐藏视频画面",
-        "title": "设置"
+        "title": "抬头"
     },
     "settingsView": {
-        "advanced": "",
+        "advanced": "高级",
         "alertOk": "确认",
         "alertTitle": "警告",
         "alertURLText": "服务器 URL 无效",
@@ -535,13 +535,13 @@
         "header": "设置",
         "profileSection": "简介",
         "serverURL": "服务器 URL",
-        "showAdvanced": "",
+        "showAdvanced": "显示高级设置",
         "startWithAudioMuted": "启动并关闭音频",
         "startWithVideoMuted": "启动并关闭视频",
         "version": "版本"
     },
     "share": {
-        "dialInfoText": "",
+        "dialInfoText": "拨号文本",
         "mainText": "点击以下链接加入会议：{{roomUrl}}\n"
     },
     "speaker": "发言人",
@@ -589,7 +589,7 @@
             "recording": "开启 / 停止 视频录制",
             "remoteMute": "静音与会者",
             "Settings": "显示 / 隐藏 设置",
-            "sharedvideo": "开启 / 关闭 Youtube 影片分享",
+            "sharedvideo": "开启 / 关闭 YouTube 影片分享",
             "shareRoom": "邀请他人",
             "shareYourScreen": "开启 / 关闭 屏幕分享",
             "shortcuts": "切换快捷方式",
@@ -659,7 +659,7 @@
         "failedToStart": "开启转录失败",
         "labelToolTip": "会议正在转录",
         "off": "停止转录",
-        "pending": "正在准备转录会议...",
+        "pending": "正在准备转录会议…",
         "start": "开启显示字幕",
         "stop": "停止显示字幕",
         "tr": "TR"
@@ -687,9 +687,9 @@
         "pending": "{{displayName}} 已被邀请"
     },
     "videoStatus": {
-        "audioOnly": "AUD声音",
+        "audioOnly": "仅语音支持",
         "audioOnlyExpanded": "",
-        "callQuality": "",
+        "callQuality": "呼叫质量",
         "hd": "高清",
         "hdTooltip": "观看高清视频",
         "highDefinition": "高清",
@@ -700,9 +700,6 @@
         "lowDefinition": "低清",
         "onlyAudioAvailable": "只能使用音频",
         "onlyAudioSupported": "我们只支持此浏览器的音频功能。",
-        "p2pEnabled": "点对点已启用",
-        "p2pVideoQualityDescription": "",
-        "recHighDefinitionOnly": "将会首选高清模式。",
         "sd": "标清",
         "sdTooltip": "观看标清视频",
         "standardDefinition": "标清"

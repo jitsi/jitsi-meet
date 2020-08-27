@@ -8,16 +8,9 @@ import {
 } from 'react-native';
 import type { Dispatch } from 'redux';
 
-import {
-    getNearestReceiverVideoQualityLevel,
-    setMaxReceiverVideoQuality
-} from '../../../base/conference';
 import { connect } from '../../../base/redux';
-import {
-    DimensionsDetector,
-    isNarrowAspectRatio,
-    makeAspectRatioAware
-} from '../../../base/responsive-ui';
+import { ASPECT_RATIO_NARROW } from '../../../base/responsive-ui/constants';
+import { setTileViewDimensions } from '../../actions.native';
 
 import Thumbnail from './Thumbnail';
 import styles from './styles';
@@ -28,9 +21,24 @@ import styles from './styles';
 type Props = {
 
     /**
+     * Application's aspect ratio.
+     */
+    _aspectRatio: Symbol,
+
+    /**
+     * Application's viewport height.
+     */
+    _height: number,
+
+    /**
      * The participants in the conference.
      */
     _participants: Array<Object>,
+
+    /**
+     * Application's viewport height.
+     */
+    _width: number,
 
     /**
      * Invoked to update the receiver video quality.
@@ -41,22 +49,6 @@ type Props = {
      * Callback to invoke when tile view is tapped.
      */
     onClick: Function
-};
-
-/**
- * The type of the React {@link Component} state of {@link TileView}.
- */
-type State = {
-
-    /**
-     * The available width for {@link TileView} to occupy.
-     */
-    height: number,
-
-    /**
-     * The available height for {@link TileView} to occupy.
-     */
-    width: number
 };
 
 /**
@@ -82,25 +74,7 @@ const TILE_ASPECT_RATIO = 1;
  *
  * @extends Component
  */
-class TileView extends Component<Props, State> {
-    state = {
-        height: 0,
-        width: 0
-    };
-
-    /**
-     * Initializes a new {@code TileView} instance.
-     *
-     * @param {Object} props - The read-only properties with which the new
-     * instance is to be initialized.
-     */
-    constructor(props: Props) {
-        super(props);
-
-        // Bind event handler so it is only bound once per instance.
-        this._onDimensionsChanged = this._onDimensionsChanged.bind(this);
-    }
-
+class TileView extends Component<Props> {
     /**
      * Implements React's {@link Component#componentDidMount}.
      *
@@ -126,32 +100,27 @@ class TileView extends Component<Props, State> {
      * @returns {ReactElement}
      */
     render() {
-        const { onClick } = this.props;
-        const { height, width } = this.state;
-        const rowElements = this._groupIntoRows(
-            this._renderThumbnails(), this._getColumnCount());
+        const { _height, _width, onClick } = this.props;
+        const rowElements = this._groupIntoRows(this._renderThumbnails(), this._getColumnCount());
 
         return (
-            <DimensionsDetector
-                onDimensionsChanged = { this._onDimensionsChanged }>
-                <ScrollView
-                    style = {{
-                        ...styles.tileView,
-                        height,
-                        width
-                    }}>
-                    <TouchableWithoutFeedback onPress = { onClick }>
-                        <View
-                            style = {{
-                                ...styles.tileViewRows,
-                                minHeight: height,
-                                minWidth: width
-                            }}>
-                            { rowElements }
-                        </View>
-                    </TouchableWithoutFeedback>
-                </ScrollView>
-            </DimensionsDetector>
+            <ScrollView
+                style = {{
+                    ...styles.tileView,
+                    height: _height,
+                    width: _width
+                }}>
+                <TouchableWithoutFeedback onPress = { onClick }>
+                    <View
+                        style = {{
+                            ...styles.tileViewRows,
+                            minHeight: _height,
+                            minWidth: _width
+                        }}>
+                        { rowElements }
+                    </View>
+                </TouchableWithoutFeedback>
+            </ScrollView>
         );
     }
 
@@ -167,7 +136,7 @@ class TileView extends Component<Props, State> {
         // For narrow view, tiles should stack on top of each other for a lonely
         // call and a 1:1 call. Otherwise tiles should be grouped into rows of
         // two.
-        if (isNarrowAspectRatio(this)) {
+        if (this.props._aspectRatio === ASPECT_RATIO_NARROW) {
             return participantCount >= 3 ? 2 : 1;
         }
 
@@ -209,19 +178,17 @@ class TileView extends Component<Props, State> {
      * @returns {Object}
      */
     _getTileDimensions() {
-        const { _participants } = this.props;
-        const { height, width } = this.state;
+        const { _height, _participants, _width } = this.props;
         const columns = this._getColumnCount();
         const participantCount = _participants.length;
-        const heightToUse = height - (MARGIN * 2);
-        const widthToUse = width - (MARGIN * 2);
+        const heightToUse = _height - (MARGIN * 2);
+        const widthToUse = _width - (MARGIN * 2);
         let tileWidth;
 
         // If there is going to be at least two rows, ensure that at least two
         // rows display fully on screen.
         if (participantCount / columns > 1) {
-            tileWidth
-                = Math.min(widthToUse / columns, heightToUse / 2);
+            tileWidth = Math.min(widthToUse / columns, heightToUse / 2);
         } else {
             tileWidth = Math.min(widthToUse / columns, heightToUse);
         }
@@ -247,8 +214,7 @@ class TileView extends Component<Props, State> {
 
         for (let i = 0; i < thumbnails.length; i++) {
             if (i % rowLength === 0) {
-                const thumbnailsInRow
-                    = thumbnails.slice(i, i + rowLength);
+                const thumbnailsInRow = thumbnails.slice(i, i + rowLength);
 
                 rowElements.push(
                     <View
@@ -261,23 +227,6 @@ class TileView extends Component<Props, State> {
         }
 
         return rowElements;
-    }
-
-    _onDimensionsChanged: (width: number, height: number) => void;
-
-    /**
-     * Updates the known available state for {@link TileView} to occupy.
-     *
-     * @param {number} width - The component's current width.
-     * @param {number} height - The component's current height.
-     * @private
-     * @returns {void}
-     */
-    _onDimensionsChanged(width: number, height: number) {
-        this.setState({
-            height,
-            width
-        });
     }
 
     /**
@@ -314,10 +263,14 @@ class TileView extends Component<Props, State> {
      * @returns {void}
      */
     _updateReceiverQuality() {
-        const { height } = this._getTileDimensions();
-        const qualityLevel = getNearestReceiverVideoQualityLevel(height);
+        const { height, width } = this._getTileDimensions();
 
-        this.props.dispatch(setMaxReceiverVideoQuality(qualityLevel));
+        this.props.dispatch(setTileViewDimensions({
+            thumbnailSize: {
+                height,
+                width
+            }
+        }));
     }
 }
 
@@ -326,14 +279,17 @@ class TileView extends Component<Props, State> {
  *
  * @param {Object} state - The redux state.
  * @private
- * @returns {{
- *     _participants: Participant[]
- * }}
+ * @returns {Props}
  */
 function _mapStateToProps(state) {
+    const responsiveUi = state['features/base/responsive-ui'];
+
     return {
-        _participants: state['features/base/participants']
+        _aspectRatio: responsiveUi.aspectRatio,
+        _height: responsiveUi.clientHeight,
+        _participants: state['features/base/participants'],
+        _width: responsiveUi.clientWidth
     };
 }
 
-export default connect(_mapStateToProps)(makeAspectRatioAware(TileView));
+export default connect(_mapStateToProps)(TileView);

@@ -1,12 +1,18 @@
 // @flow
 
-import { parseURLParams } from '../config';
 import JitsiMeetJS from '../lib-jitsi-meet';
 import { updateSettings } from '../settings';
+import { parseURLParams } from '../util';
 
 import logger from './logger';
 
 declare var APP: Object;
+
+const webrtcKindToJitsiKindTranslator = {
+    audioinput: 'audioInput',
+    audiooutput: 'audioOutput',
+    videoinput: 'videoInput'
+};
 
 /**
  * Detects the use case when the labels are not available if the A/V permissions
@@ -42,6 +48,29 @@ export function getAudioOutputDeviceId() {
 }
 
 /**
+ * Finds the real device id of the default device of the given type.
+ *
+ * @param {Object} state - The redux state.
+ * @param {*} kind - The type of the device. One of "audioInput",
+ * "audioOutput", and "videoInput". Also supported is all lowercase versions
+ * of the preceding types.
+ * @returns {string|undefined}
+ */
+export function getDefaultDeviceId(state: Object, kind: string) {
+    const kindToSearch = webrtcKindToJitsiKindTranslator[kind] || kind;
+    const defaultDevice = (state['features/base/devices'].availableDevices[kindToSearch] || [])
+        .find(d => d.deviceId === 'default');
+
+    // Find the device with a matching group id.
+    const matchingDevice = (state['features/base/devices'].availableDevices[kindToSearch] || [])
+        .find(d => d.deviceId !== 'default' && d.groupId === defaultDevice.groupId);
+
+    if (matchingDevice) {
+        return matchingDevice.deviceId;
+    }
+}
+
+/**
  * Finds a device with a label that matches the passed label and returns its id.
  *
  * @param {Object} state - The redux state.
@@ -52,12 +81,6 @@ export function getAudioOutputDeviceId() {
  * @returns {string|undefined}
  */
 export function getDeviceIdByLabel(state: Object, label: string, kind: string) {
-    const webrtcKindToJitsiKindTranslator = {
-        audioinput: 'audioInput',
-        audiooutput: 'audioOutput',
-        videoinput: 'videoInput'
-    };
-
     const kindToSearch = webrtcKindToJitsiKindTranslator[kind] || kind;
 
     const device
@@ -80,12 +103,6 @@ export function getDeviceIdByLabel(state: Object, label: string, kind: string) {
  * @returns {string|undefined}
  */
 export function getDeviceLabelById(state: Object, id: string, kind: string) {
-    const webrtcKindToJitsiKindTranslator = {
-        audioinput: 'audioInput',
-        audiooutput: 'audioOutput',
-        videoinput: 'videoInput'
-    };
-
     const kindToSearch = webrtcKindToJitsiKindTranslator[kind] || kind;
 
     const device
@@ -172,6 +189,64 @@ export function formatDeviceLabel(label: string) {
     }
 
     return formattedLabel;
+}
+
+/**
+ * Returns a list of objects containing all the microphone device ids and labels.
+ *
+ * @param {Object} state - The state of the application.
+ * @returns {Object[]}
+ */
+export function getAudioInputDeviceData(state: Object) {
+    return state['features/base/devices'].availableDevices.audioInput.map(
+        ({ deviceId, label }) => {
+            return {
+                deviceId,
+                label
+            };
+        });
+}
+
+/**
+ * Returns a list of objectes containing all the output device ids and labels.
+ *
+ * @param {Object} state - The state of the application.
+ * @returns {Object[]}
+ */
+export function getAudioOutputDeviceData(state: Object) {
+    return state['features/base/devices'].availableDevices.audioOutput.map(
+        ({ deviceId, label }) => {
+            return {
+                deviceId,
+                label
+            };
+        });
+}
+
+/**
+ * Returns a list of all the camera device ids.
+ *
+ * @param {Object} state - The state of the application.
+ * @returns {string[]}
+ */
+export function getVideoDeviceIds(state: Object) {
+    return state['features/base/devices'].availableDevices.videoInput.map(({ deviceId }) => deviceId);
+}
+
+/**
+ * Returns true if there are devices of a specific type or on native platform.
+ *
+ * @param {Object} state - The state of the application.
+ * @param {string} type - The type of device: VideoOutput | audioOutput | audioInput.
+ *
+ * @returns {boolean}
+ */
+export function hasAvailableDevices(state: Object, type: string) {
+    if (state['features/base/devices'] === undefined) {
+        return true;
+    }
+
+    return state['features/base/devices'].availableDevices[type].length > 0;
 }
 
 /**

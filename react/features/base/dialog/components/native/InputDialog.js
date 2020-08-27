@@ -6,9 +6,7 @@ import { View, Text, TextInput, TouchableOpacity } from 'react-native';
 import { translate } from '../../../i18n';
 import { connect } from '../../../redux';
 import { StyleType } from '../../../styles';
-
 import { _abstractMapStateToProps } from '../../functions';
-
 import { type State as AbstractState } from '../AbstractDialog';
 
 import BaseDialog, { type Props as BaseProps } from './BaseDialog';

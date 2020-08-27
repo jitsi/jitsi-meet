@@ -17,8 +17,7 @@ import {
     AVATAR_ID_COMMAND,
     AVATAR_URL_COMMAND,
     EMAIL_COMMAND,
-    JITSI_CONFERENCE_URL_KEY,
-    VIDEO_QUALITY_LEVELS
+    JITSI_CONFERENCE_URL_KEY
 } from './constants';
 import logger from './logger';
 
@@ -164,7 +163,18 @@ export function getConferenceName(stateful: Function | Object): string {
         || subject
         || callDisplayName
         || (callee && callee.name)
-        || _.startCase(safeDecodeURIComponent(room));
+        || safeStartCase(safeDecodeURIComponent(room));
+}
+
+/**
+ * Returns the name of the conference formated for the title.
+ *
+ * @param {Function | Object} stateful - Reference that can be resolved to Redux state with the {@code toState}
+ * function.
+ * @returns {string} - The name of the conference formated for the title.
+ */
+export function getConferenceNameForTitle(stateful: Function | Object) {
+    return safeStartCase(safeDecodeURIComponent(toState(stateful)['features/base/conference'].room));
 }
 
 /**
@@ -192,7 +202,7 @@ export function getConferenceTimestamp(stateful: Function | Object): number {
  * @returns {JitsiConference|undefined}
  */
 export function getCurrentConference(stateful: Function | Object) {
-    const { conference, joining, leaving, passwordRequired }
+    const { conference, joining, leaving, membersOnly, passwordRequired }
         = toState(stateful)['features/base/conference'];
 
     // There is a precendence
@@ -200,39 +210,17 @@ export function getCurrentConference(stateful: Function | Object) {
         return conference === leaving ? undefined : conference;
     }
 
-    return joining || passwordRequired;
+    return joining || passwordRequired || membersOnly;
 }
 
 /**
- * Finds the nearest match for the passed in {@link availableHeight} to am
- * enumerated value in {@code VIDEO_QUALITY_LEVELS}.
+ * Returns the stored room name.
  *
- * @param {number} availableHeight - The height to which a matching video
- * quality level should be found.
- * @returns {number} The closest matching value from
- * {@code VIDEO_QUALITY_LEVELS}.
+ * @param {Object} state - The current state of the app.
+ * @returns {string}
  */
-export function getNearestReceiverVideoQualityLevel(availableHeight: number) {
-    const qualityLevels = [
-        VIDEO_QUALITY_LEVELS.HIGH,
-        VIDEO_QUALITY_LEVELS.STANDARD,
-        VIDEO_QUALITY_LEVELS.LOW
-    ];
-
-    let selectedLevel = qualityLevels[0];
-
-    for (let i = 1; i < qualityLevels.length; i++) {
-        const previousValue = qualityLevels[i - 1];
-        const currentValue = qualityLevels[i];
-        const diffWithCurrent = Math.abs(availableHeight - currentValue);
-        const diffWithPrevious = Math.abs(availableHeight - previousValue);
-
-        if (diffWithCurrent < diffWithPrevious) {
-            selectedLevel = currentValue;
-        }
-    }
-
-    return selectedLevel;
+export function getRoomName(state: Object): string {
+    return state['features/base/conference'].room;
 }
 
 /**
@@ -350,4 +338,20 @@ export function sendLocalParticipant(
     }
 
     conference.setDisplayName(name);
+}
+
+/**
+ * A safe implementation of lodash#startCase that doesn't deburr the string.
+ *
+ * NOTE: According to lodash roadmap, lodash v5 will have this function.
+ *
+ * Code based on https://github.com/lodash/lodash/blob/master/startCase.js.
+ *
+ * @param {string} s - The string to do start case on.
+ * @returns {string}
+ */
+function safeStartCase(s = '') {
+    return _.words(`${s}`.replace(/['\u2019]/g, '')).reduce(
+        (result, word, index) => result + (index ? ' ' : '') + _.upperFirst(word)
+        , '');
 }

@@ -6,7 +6,7 @@ import { translate } from '../../../base/i18n';
 import { IconMuteEveryone } from '../../../base/icons';
 import { getLocalParticipant, PARTICIPANT_ROLE } from '../../../base/participants';
 import { connect } from '../../../base/redux';
-import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox';
+import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
 import { MuteEveryoneDialog } from '../../../remote-video-menu';
 
 type Props = AbstractButtonProps & {
@@ -64,11 +64,12 @@ function _mapStateToProps(state: Object, ownProps: Props) {
     const localParticipant = getLocalParticipant(state);
     const isModerator = localParticipant.role === PARTICIPANT_ROLE.MODERATOR;
     const { visible } = ownProps;
+    const { disableRemoteMute } = state['features/base/config'];
 
     return {
         isModerator,
         localParticipantId: localParticipant.id,
-        visible: visible && isModerator
+        visible: visible && isModerator && !disableRemoteMute
     };
 }
 

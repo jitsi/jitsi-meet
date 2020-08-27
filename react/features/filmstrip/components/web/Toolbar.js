@@ -8,7 +8,7 @@ import {
     AudioMuteButton,
     HangupButton,
     VideoMuteButton
-} from '../../../toolbox';
+} from '../../../toolbox/components';
 
 declare var interfaceConfig: Object;
 

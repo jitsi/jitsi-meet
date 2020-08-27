@@ -1,12 +1,11 @@
 // @flow
 
+import { MEETING_PASSWORD_ENABLED, getFeatureFlag } from '../../base/flags';
 import { translate } from '../../base/i18n';
 import { IconRoomLock, IconRoomUnlock } from '../../base/icons';
 import { isLocalParticipantModerator } from '../../base/participants';
 import { connect } from '../../base/redux';
-import { AbstractButton } from '../../base/toolbox';
-import type { AbstractButtonProps } from '../../base/toolbox';
-
+import { AbstractButton, type AbstractButtonProps } from '../../base/toolbox/components';
 import { beginRoomLockRequest, unlockRoom } from '../actions';
 
 type Props = AbstractButtonProps & {
@@ -83,19 +82,19 @@ class RoomLockButton extends AbstractButton<Props, *> {
  * {@code RoomLockButton} component.
  *
  * @param {Object} state - The Redux state.
+ * @param {Object} ownProps - The properties explicitly passed to the component instance.
  * @private
- * @returns {{
- *     _localParticipantModerator: boolean,
- *     _locked: boolean
- * }}
+ * @returns {Props}
  */
-function _mapStateToProps(state): Object {
+function _mapStateToProps(state, ownProps): Object {
     const { conference, locked } = state['features/base/conference'];
+    const enabled = getFeatureFlag(state, MEETING_PASSWORD_ENABLED, true);
+    const { visible = enabled } = ownProps;
 
     return {
-        _localParticipantModerator:
-            Boolean(conference && isLocalParticipantModerator(state)),
-        _locked: Boolean(conference && locked)
+        _localParticipantModerator: Boolean(conference && isLocalParticipantModerator(state)),
+        _locked: Boolean(conference && locked),
+        visible
     };
 }
 

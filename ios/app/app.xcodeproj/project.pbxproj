@@ -291,9 +291,9 @@
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				0B26BE701EC5BC3C00EEFB41 /* Embed Frameworks */,
 				B35383AD1DDA0083008F406A /* Adjust embedded framework architectures */,
+				DE3A859324C701EA009B7D76 /* Copy WebRTC dSYM */,
 				0BB7DA181EC9E695007AAE98 /* Adjust ATS */,
 				DEF4813D224925A2002AD03A /* Copy Google Plist file */,
-				DEC2069321CBBD6900072F03 /* Setup Fabric */,
 				DE11877A21EE09640078D059 /* Setup Google reverse URL handler */,
 				DE4F6D6E22005C0400DE699E /* Setup Dropbox */,
 				0BEA5C491F7B8F73000D0AB4 /* Embed Watch Content */,
@@ -474,6 +474,24 @@
 			shellPath = /bin/sh;
 			shellScript = "INFO_PLIST=\"$BUILT_PRODUCTS_DIR/$INFOPLIST_PATH\"\nGOOGLE_PLIST=\"$PROJECT_DIR/GoogleService-Info.plist\"\n\nif [[ -f $GOOGLE_PLIST ]]; then\n    REVERSED_CLIENT_ID=$(/usr/libexec/PlistBuddy -c \"Print :REVERSED_CLIENT_ID:\" $GOOGLE_PLIST)\n    /usr/libexec/PlistBuddy -c \"Set :CFBundleURLTypes:1:CFBundleURLSchemes:0 $REVERSED_CLIENT_ID\" $INFO_PLIST\nfi\n";
 		};
+		DE3A859324C701EA009B7D76 /* Copy WebRTC dSYM */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Copy WebRTC dSYM";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -x\n\nif [[ \"${CONFIGURATION}\" != \"Debug\" ]]; then\n    cp -r ../../node_modules/react-native-webrtc/ios/WebRTC.dSYM ${DWARF_DSYM_FOLDER_PATH}/\nfi\n";
+		};
 		DE4F6D6E22005C0400DE699E /* Setup Dropbox */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -491,24 +509,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "INFO_PLIST=\"$BUILT_PRODUCTS_DIR/$INFOPLIST_PATH\"\nDROPBOX_KEY_FILE=\"$PROJECT_DIR/dropbox.key\"\n\nif [[ -f $DROPBOX_KEY_FILE ]]; then\n    /usr/libexec/PlistBuddy -c \"Delete :LSApplicationQueriesSchemes\" $INFO_PLIST\n    /usr/libexec/PlistBuddy -c \"Add :LSApplicationQueriesSchemes array\" $INFO_PLIST\n    /usr/libexec/PlistBuddy -c \"Add :LSApplicationQueriesSchemes:0 string 'dbapi-2'\" $INFO_PLIST\n    /usr/libexec/PlistBuddy -c \"Add :LSApplicationQueriesSchemes:1 string 'dbapi-8-emm'\" $INFO_PLIST\n\n    DROPBOX_KEY=$(head -n 1 $DROPBOX_KEY_FILE)\n    /usr/libexec/PlistBuddy -c \"Add :CFBundleURLTypes:2:CFBundleURLName string dropbox\" $INFO_PLIST\n    /usr/libexec/PlistBuddy -c \"Add :CFBundleURLTypes:2:CFBundleURLSchemes array\" $INFO_PLIST\n    /usr/libexec/PlistBuddy -c \"Add :CFBundleURLTypes:2:CFBundleURLSchemes:0 string $DROPBOX_KEY\" $INFO_PLIST\nfi\n";
-		};
-		DEC2069321CBBD6900072F03 /* Setup Fabric */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "Setup Fabric";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "${PODS_ROOT}/Fabric/run\n";
 		};
 		DEF4813D224925A2002AD03A /* Copy Google Plist file */ = {
 			isa = PBXShellScriptBuildPhase;

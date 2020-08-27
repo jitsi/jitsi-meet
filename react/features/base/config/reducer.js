@@ -4,7 +4,7 @@ import _ from 'lodash';
 
 import { equals, ReducerRegistry, set } from '../redux';
 
-import { _UPDATE_CONFIG, CONFIG_WILL_LOAD, LOAD_CONFIG_ERROR, SET_CONFIG } from './actionTypes';
+import { UPDATE_CONFIG, CONFIG_WILL_LOAD, LOAD_CONFIG_ERROR, SET_CONFIG } from './actionTypes';
 import { _cleanupConfig } from './functions';
 
 /**
@@ -43,12 +43,14 @@ const INITIAL_RN_STATE = {
     p2p: {
         disableH264: false,
         preferH264: true
-    }
+    },
+
+    remoteVideoMenu: {}
 };
 
 ReducerRegistry.register('features/base/config', (state = _getInitialState(), action) => {
     switch (action.type) {
-    case _UPDATE_CONFIG:
+    case UPDATE_CONFIG:
         return _updateConfig(state, action);
 
     case CONFIG_WILL_LOAD:

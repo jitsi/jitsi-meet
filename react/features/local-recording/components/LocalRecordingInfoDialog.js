@@ -11,7 +11,6 @@ import {
     getLocalParticipant
 } from '../../base/participants';
 import { connect } from '../../base/redux';
-
 import { statsUpdate } from '../actions';
 import { recordingController } from '../controller';
 

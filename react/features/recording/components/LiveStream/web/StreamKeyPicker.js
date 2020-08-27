@@ -8,7 +8,6 @@ import {
 import React, { PureComponent } from 'react';
 
 import { translate } from '../../../../base/i18n';
-
 import { YOUTUBE_LIVE_DASHBOARD_URL } from '../constants';
 
 /**

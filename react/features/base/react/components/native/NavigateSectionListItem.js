@@ -4,7 +4,6 @@ import React, { Component } from 'react';
 import Swipeout from 'react-native-swipeout';
 
 import { ColorPalette } from '../../../styles';
-
 import type { Item } from '../../Types';
 
 import AvatarListItem from './AvatarListItem';

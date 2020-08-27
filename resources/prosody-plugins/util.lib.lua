@@ -1,5 +1,13 @@
 local jid = require "util.jid";
+local timer = require "util.timer";
+local http = require "net.http";
+
+local http_timeout = 30;
 local have_async, async = pcall(require, "util.async");
+local http_headers = {
+    ["User-Agent"] = "Prosody ("..prosody.version.."; "..prosody.platform..")"
+};
+
 local muc_domain_prefix
     = module:get_option_string("muc_mapper_domain_prefix", "conference");
 
@@ -18,14 +26,20 @@ local escaped_muc_domain_prefix = muc_domain_prefix:gsub("%p", "%%%1");
 local target_subdomain_pattern
     = "^"..escaped_muc_domain_prefix..".([^%.]+)%."..escaped_muc_domain_base;
 
+-- Utility function to split room JID to include room name and subdomain
+local function room_jid_split_subdomain(room_jid)
+    local node, host, resource = jid.split(room_jid);
+    local target_subdomain = host and host:match(target_subdomain_pattern);
+    return node, host, resource, target_subdomain
+end
+
 --- Utility function to check and convert a room JID from
 -- virtual room1@muc.foo.example.com to real [foo]room1@muc.example.com
 -- @param room_jid the room jid to match and rewrite if needed
 -- @return returns room jid [foo]room1@muc.example.com when it has subdomain
 -- otherwise room1@muc.example.com(the room_jid value untouched)
 local function room_jid_match_rewrite(room_jid)
-    local node, host, resource = jid.split(room_jid);
-    local target_subdomain = host and host:match(target_subdomain_pattern);
+    local node, host, resource, target_subdomain = room_jid_split_subdomain(room_jid);
     if not target_subdomain then
         module:log("debug", "No need to rewrite out 'to' %s", room_jid);
         return room_jid;
@@ -38,6 +52,23 @@ local function room_jid_match_rewrite(room_jid)
     return room_jid
 end
 
+local function internal_room_jid_match_rewrite(room_jid)
+    local node, host, resource = jid.split(room_jid);
+    if host ~= muc_domain or not node then
+        module:log("debug", "No need to rewrite %s (not from the MUC host)", room_jid);
+        return room_jid;
+    end
+    local target_subdomain, target_node = node:match("^%[([^%]]+)%](.+)$");
+    if not (target_node and target_subdomain) then
+        module:log("debug", "Not rewriting... unexpected node format: %s", node);
+        return room_jid;
+    end
+    -- Ok, rewrite room_jid address to pretty format
+    local new_node, new_host, new_resource = target_node, muc_domain_prefix..".".. target_subdomain.."."..muc_domain_base, resource;
+    room_jid = jid.join(new_node, new_host, new_resource);
+    module:log("debug", "Rewrote to %s", room_jid);
+    return room_jid
+end
 
 --- Finds and returns room by its jid
 -- @param room_jid the room jid to search in the muc component
@@ -66,7 +97,7 @@ function async_handler_wrapper(event, handler)
     end
 
     local runner = async.runner;
-    
+
     -- Grab a local response so that we can send the http response when
     -- the handler is done.
     local response = event.response;
@@ -172,10 +203,93 @@ function is_feature_allowed(session, feature)
     end
 end
 
+function starts_with(str, start)
+    return str:sub(1, #start) == start
+end
+
+-- healthcheck rooms in jicofo starts with a string '__jicofo-health-check'
+function is_healthcheck_room(room_jid)
+    if starts_with(room_jid, "__jicofo-health-check") then
+        return true;
+    end
+
+    return false;
+end
+
+-- Utility function to make an http get request and
+-- retry @param retry number of times
+-- @param url endpoint to be called
+-- @param retry nr of retries, if retry is
+-- nil there will be no retries
+-- @returns result of the http call or nil if
+-- the external call failed after the last retry
+function http_get_with_retry(url, retry)
+    local content, code;
+    local timeout_occurred;
+    local wait, done = async.waiter();
+    local function cb(content_, code_, response_, request_)
+        if timeout_occurred == nil then
+            code = code_;
+            if code == 200 or code == 204 then
+                module:log("debug", "External call was successful, content %s", content_);
+                content = content_
+            else
+                module:log("warn", "Error on public key request: Code %s, Content %s",
+                    code_, content_);
+            end
+            done();
+        else
+            module:log("warn", "External call reply delivered after timeout from: %s", url);
+        end
+    end
+
+    local function call_http()
+        return http.request(url, {
+            headers = http_headers or {},
+            method = "GET"
+        }, cb);
+    end
+
+    local request = call_http();
+
+    local function cancel()
+        -- TODO: This check is racey. Not likely to be a problem, but we should
+        --       still stick a mutex on content / code at some point.
+        if code == nil then
+            timeout_occurred = true;
+            module:log("warn", "Timeout %s seconds making the external call to: %s", http_timeout, url);
+            -- no longer present in prosody 0.11, so check before calling
+            if http.destroy_request ~= nil then
+                http.destroy_request(request);
+            end
+            if retry == nil then
+                module:log("debug", "External call failed and retry policy is not set");
+                done();
+            elseif retry ~= nil and retry < 1 then
+                module:log("debug", "External call failed after retry")
+                done();
+            else
+                module:log("debug", "External call failed, retry nr %s", retry)
+                retry = retry - 1;
+                request = call_http()
+                return http_timeout;
+            end
+        end
+    end
+    timer.add_task(http_timeout, cancel);
+    wait();
+
+    return content;
+end
+
 return {
     is_feature_allowed = is_feature_allowed;
+    is_healthcheck_room = is_healthcheck_room;
     get_room_from_jid = get_room_from_jid;
     async_handler_wrapper = async_handler_wrapper;
     room_jid_match_rewrite = room_jid_match_rewrite;
+    room_jid_split_subdomain = room_jid_split_subdomain;
+    internal_room_jid_match_rewrite = internal_room_jid_match_rewrite;
     update_presence_identity = update_presence_identity;
+    http_get_with_retry = http_get_with_retry;
 };

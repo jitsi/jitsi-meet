@@ -1,17 +1,19 @@
 /* global APP, $, interfaceConfig */
 
-import { toggleDialog } from '../../react/features/base/dialog';
+import Logger from 'jitsi-meet-logger';
+
 import {
     ACTION_SHORTCUT_PRESSED as PRESSED,
     ACTION_SHORTCUT_RELEASED as RELEASED,
     createShortcutEvent,
     sendAnalytics
 } from '../../react/features/analytics';
+import { toggleDialog } from '../../react/features/base/dialog';
 import { KeyboardShortcutsDialog }
     from '../../react/features/keyboard-shortcuts';
 import { SpeakerStats } from '../../react/features/speaker-stats';
 
-const logger = require('jitsi-meet-logger').getLogger(__filename);
+const logger = Logger.getLogger(__filename);
 
 /**
  * Map of shortcuts. When a shortcut is registered it enters the mapping.

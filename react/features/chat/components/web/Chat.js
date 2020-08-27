@@ -1,17 +1,16 @@
 // @flow
 
 import React from 'react';
-import Transition from 'react-transition-group/Transition';
 
 import { translate } from '../../../base/i18n';
 import { Icon, IconClose } from '../../../base/icons';
 import { connect } from '../../../base/redux';
-
 import AbstractChat, {
     _mapDispatchToProps,
     _mapStateToProps,
     type Props
 } from '../AbstractChat';
+
 import ChatInput from './ChatInput';
 import DisplayNameForm from './DisplayNameForm';
 import MessageContainer from './MessageContainer';
@@ -84,11 +83,9 @@ class Chat extends AbstractChat<Props> {
      */
     render() {
         return (
-            <Transition
-                in = { this.props._isOpen }
-                timeout = { 500 }>
-                { this._renderPanelContent }
-            </Transition>
+            <>
+                { this._renderPanelContent() }
+            </>
         );
     }
 
@@ -145,30 +142,25 @@ class Chat extends AbstractChat<Props> {
         );
     }
 
-    _renderPanelContent: (string) => React$Node | null;
+    _renderPanelContent: () => React$Node | null;
 
     /**
-     * Renders the contents of the chat panel, depending on the current
-     * animation state provided by {@code Transition}.
+     * Renders the contents of the chat panel.
      *
-     * @param {string} state - The current display transition state of the
-     * {@code Chat} component, as provided by {@code Transition}.
      * @private
      * @returns {ReactElement | null}
      */
-    _renderPanelContent(state) {
-        this._isExited = state === 'exited';
-
+    _renderPanelContent() {
         const { _isOpen, _showNamePrompt } = this.props;
-        const ComponentToRender = !_isOpen && state === 'exited'
-            ? null
-            : (
+        const ComponentToRender = _isOpen
+            ? (
                 <>
                     { this._renderChatHeader() }
                     { _showNamePrompt
                         ? <DisplayNameForm /> : this._renderChat() }
                 </>
-            );
+            )
+            : null;
         let className = '';
 
         if (_isOpen) {

@@ -2,8 +2,8 @@
 
 import { MiddlewareRegistry } from '../redux';
 
-import { SET_COLOR_SCHEME } from './actionTypes';
 import ColorSchemeRegistry from './ColorSchemeRegistry';
+import { SET_COLOR_SCHEME } from './actionTypes';
 
 /**
  * The middleware of the feature {@code base/color-scheme}.

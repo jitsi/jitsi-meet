@@ -2,7 +2,6 @@
 
 import { ColorSchemeRegistry, schemeColor } from '../../../base/color-scheme';
 import { ColorPalette } from '../../../base/styles';
-
 import { FILMSTRIP_SIZE } from '../../constants';
 
 /**
@@ -14,6 +13,17 @@ export const AVATAR_SIZE = 50;
  * The styles of the feature filmstrip.
  */
 export default {
+
+    /**
+     * The display name container.
+     */
+    displayNameContainer: {
+        alignSelf: 'center',
+        bottom: 0,
+        flex: 1,
+        margin: 4,
+        position: 'absolute'
+    },
 
     /**
      * The style of the narrow {@link Filmstrip} version which displays

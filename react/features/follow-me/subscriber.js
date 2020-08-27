@@ -1,11 +1,12 @@
 // @flow
 
-import { StateListenerRegistry } from '../base/redux';
 import { getCurrentConference } from '../base/conference';
 import {
     getPinnedParticipant,
     isLocalParticipantModerator
 } from '../base/participants';
+import { StateListenerRegistry } from '../base/redux';
+import { shouldDisplayTileView } from '../video-layout/functions';
 
 import { FOLLOW_ME_COMMAND } from './constants';
 
@@ -72,7 +73,7 @@ function _getFollowMeState(state) {
         filmstripVisible: state['features/filmstrip'].visible,
         nextOnStage: pinnedParticipant && pinnedParticipant.id,
         sharedDocumentVisible: state['features/etherpad'].editing,
-        tileViewEnabled: state['features/video-layout'].tileViewEnabled
+        tileViewEnabled: shouldDisplayTileView(state)
     };
 }
 

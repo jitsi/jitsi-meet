@@ -1,5 +1,6 @@
 // @flow
 
+import UIEvents from '../../../service/UI/UIEvents';
 import {
     CONFERENCE_FAILED,
     CONFERENCE_JOINED,
@@ -13,7 +14,6 @@ import {
     NOTIFICATION_TIMEOUT,
     showNotification
 } from '../notifications';
-import UIEvents from '../../../service/UI/UIEvents';
 
 import { _openPasswordRequiredPrompt } from './actions';
 import { PasswordRequiredPrompt, RoomLockPrompt } from './components';

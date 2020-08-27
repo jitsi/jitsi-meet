@@ -1,6 +1,7 @@
 // @flow
 
 import * as bodyPix from '@tensorflow-models/body-pix';
+
 import {
     CLEAR_INTERVAL,
     INTERVAL_TIMEOUT,
@@ -42,9 +43,6 @@ export default class JitsiStreamBlurEffect {
         this._outputCanvasElement = document.createElement('canvas');
         this._outputCanvasElement.getContext('2d');
         this._inputVideoElement = document.createElement('video');
-
-        this._maskFrameTimerWorker = new Worker(timerWorkerScript);
-        this._maskFrameTimerWorker.onmessage = this._onMaskFrameTimer;
     }
 
     /**
@@ -71,7 +69,7 @@ export default class JitsiStreamBlurEffect {
     async _renderMask() {
         this._maskInProgress = true;
         this._segmentationData = await this._bpModel.segmentPerson(this._inputVideoElement, {
-            internalResolution: 'low', // resized to 0.25 times of the original resolution before inference
+            internalResolution: 'medium', // resized to 0.5 times of the original resolution before inference
             maxDetections: 1, // max. number of person poses to detect per image
             segmentationThreshold: 0.7 // represents probability that a pixel belongs to a person
         });
@@ -80,7 +78,7 @@ export default class JitsiStreamBlurEffect {
             this._outputCanvasElement,
             this._inputVideoElement,
             this._segmentationData,
-            15, // Constant for background blur, integer values between 0-20
+            12, // Constant for background blur, integer values between 0-20
             7 // Constant for edge blur, integer values between 0-20
         );
     }
@@ -103,6 +101,9 @@ export default class JitsiStreamBlurEffect {
      * @returns {MediaStream} - The stream with the applied effect.
      */
     startEffect(stream: MediaStream) {
+        this._maskFrameTimerWorker = new Worker(timerWorkerScript, { name: 'Blur effect worker' });
+        this._maskFrameTimerWorker.onmessage = this._onMaskFrameTimer;
+
         const firstVideoTrack = stream.getVideoTracks()[0];
         const { height, frameRate, width }
             = firstVideoTrack.getSettings ? firstVideoTrack.getSettings() : firstVideoTrack.getConstraints();
@@ -132,5 +133,7 @@ export default class JitsiStreamBlurEffect {
         this._maskFrameTimerWorker.postMessage({
             id: CLEAR_INTERVAL
         });
+
+        this._maskFrameTimerWorker.terminate();
     }
 }

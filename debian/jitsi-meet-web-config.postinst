@@ -68,12 +68,11 @@ case "$1" in
             FORCE_APACHE="true"
         fi
 
+        UPLOADED_CERT_CHOICE="I want to use my own certificate"
         # if first time config ask for certs, or if we are reconfiguring
         if [ -z "$JVB_HOSTNAME_OLD" ] || [ "$RECONFIGURING" = "true" ] ; then
-            # SSL for nginx
             db_get jitsi-meet/cert-choice
             CERT_CHOICE="$RET"
-            UPLOADED_CERT_CHOICE="I want to use my own certificate"
 
             if [ "$CERT_CHOICE" = "$UPLOADED_CERT_CHOICE" ] ; then
                 db_set jitsi-meet/cert-path-key "/etc/ssl/$JVB_HOSTNAME.key"
@@ -92,10 +91,14 @@ case "$1" in
                 CERT_CRT="/etc/jitsi/meet/$JVB_HOSTNAME.crt"
                 HOST="$( (hostname -s; echo localhost) | head -n 1)"
                 DOMAIN="$( (hostname -d; echo localdomain) | head -n 1)"
-                openssl req -new -newkey rsa:4096 -days 365 -nodes -x509 -subj \
+                openssl req -new -newkey rsa:4096 -days 3650 -nodes -x509 -subj \
                     "/O=$DOMAIN/OU=$HOST/CN=$JVB_HOSTNAME/emailAddress=webmaster@$HOST.$DOMAIN" \
                     -keyout $CERT_KEY \
-                    -out $CERT_CRT
+                    -out $CERT_CRT \
+                    -reqexts SAN \
+                    -extensions SAN \
+                    -config <(cat /etc/ssl/openssl.cnf \
+                        <(printf "[SAN]\nsubjectAltName=DNS:localhost,DNS:$JVB_HOSTNAME"))
             fi
         fi
 
@@ -104,24 +107,57 @@ case "$1" in
         if [ ! -f $JITSI_MEET_CONFIG ] ; then
             cp /usr/share/jitsi-meet-web-config/config.js $JITSI_MEET_CONFIG
             # replaces needed config for multidomain as it works only with nginx
-            sed -i "s/conference.jitsi-meet.example.com/conference.<\!--# echo var=\"subdomain\" default=\"\" -->jitsi-meet.example.com/g" $JITSI_MEET_CONFIG
+            if [[ "$FORCE_NGINX" = "true" ]] ; then
+                sed -i "s/conference.jitsi-meet.example.com/conference.<\!--# echo var=\"subdomain\" default=\"\" -->jitsi-meet.example.com/g" $JITSI_MEET_CONFIG
+            fi
             sed -i "s/jitsi-meet.example.com/$JVB_HOSTNAME/g" $JITSI_MEET_CONFIG
         fi
 
-        # this is new install let's configure jvb to serve meet
-        # no-nginx, no-apache installed on machine, this is new install or reconfiguring old one which have jvb_serve set
+        # getting rid of jetty serving web
         if [[ "$JVB_SERVE" = "true" ]] ; then
-            echo ""
-            echo "------------------------------------------------"
-            echo "You are using jetty to serve jitsi-meet, it is recommended to uninstall(purge) and use default installation that comes with nginx!"
-            echo ""
-            echo "When using the following command, any custom config will be LOST, please backup /etc/jitsi !!!"
-            echo ""
-            echo "You can purge your installation using the following command:"
-            echo "apt-get purge jitsi-meet jitsi-meet-web-config jitsi-meet-prosody jitsi-meet-web jicofo jitsi-videobridge"
-            echo "------------------------------------------------"
-            echo ""
-        elif [[ "$FORCE_NGINX" = "true" && ( -z "$JVB_HOSTNAME_OLD" || "$RECONFIGURING" = "true" ) ]] ; then
+            JVB_CONFIG="/etc/jitsi/videobridge/sip-communicator.properties"
+
+            # we will write to the file if missing create it
+            if [ -f $JVB_CONFIG ] ; then
+                echo ""
+                echo "------------------------------------------------"
+                echo ""
+                echo "You are using jetty to serve jitsi-meet, we are now upgrading you to use nginx!"
+                echo ""
+                echo "If you are using Let’s Encrypt certificates please re-run the script."
+                echo ""
+                echo "------------------------------------------------"
+                echo ""
+
+                sed -i "s/org.jitsi.videobridge.rest.jetty/#org.jitsi.videobridge.rest.jetty/g" $JVB_CONFIG
+                sed -i "s/org.jitsi.videobridge.TCP_HARVESTER_PORT/#org.jitsi.videobridge.TCP_HARVESTER_PORT/g" $JVB_CONFIG
+
+                if [ -d /run/systemd/system ]; then
+                    systemctl restart jitsi-videobridge2.service >/dev/null || true
+                fi
+
+                # Removing this value will force nginx or apache to be locally configured
+                JVB_HOSTNAME_OLD=""
+
+                db_get jitsi-meet/cert-choice
+                CERT_CHOICE="$RET"
+                # Fix certs on upgrade from jetty
+                if [ "$CERT_CHOICE" = "$UPLOADED_CERT_CHOICE" ] ; then
+                    db_get jitsi-meet/cert-path-key
+                    CERT_KEY="$RET"
+                    db_get jitsi-meet/cert-path-crt
+                    CERT_CRT="$RET"
+                else
+                    # create self-signed certs
+                    CERT_KEY="/etc/jitsi/meet/$JVB_HOSTNAME.key"
+                    CERT_CRT="/etc/jitsi/meet/$JVB_HOSTNAME.crt"
+                fi
+            fi
+
+            db_set jitsi-meet/jvb-serve "false"
+        fi
+
+        if [[ "$FORCE_NGINX" = "true" && ( -z "$JVB_HOSTNAME_OLD" || "$RECONFIGURING" = "true" ) ]] ; then
 
             # this is a reconfigure, lets just delete old links
             if [ "$RECONFIGURING" = "true" ] ; then

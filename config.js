@@ -37,6 +37,8 @@ var config = {
     clientNode: 'http://jitsi.org/jitsimeet',
 
     // The real JID of focus participant - can be overridden here
+    // Do not change username - FIXME: Make focus username configurable
+    // https://github.com/jitsi/jitsi-meet/issues/7376
     // focusUserJid: 'focus@auth.jitsi-meet.example.com',
 
 
@@ -44,8 +46,9 @@ var config = {
     //
 
     testing: {
-        // Enables experimental simulcast support on Firefox.
-        enableFirefoxSimulcast: false,
+        // Disables the End to End Encryption feature. Useful for debugging
+        // issues related to insertable streams.
+        // disableE2EE: false,
 
         // P2P test mode disables automatic switching to P2P when there are 2
         // participants in the conference.
@@ -57,6 +60,13 @@ var config = {
         // Disables the auto-play behavior of *all* newly created video element.
         // This is useful when the client runs on a host with limited resources.
         // noAutoPlayVideo: false
+
+        // Enable / disable 500 Kbps bitrate cap on desktop tracks. When enabled,
+        // simulcast is turned off for the desktop share. If presenter is turned
+        // on while screensharing is in progress, the max bitrate is automatically
+        // adjusted to 2.5 Mbps. This takes a value between 0 and 1 which determines
+        // the probability for this to be enabled.
+        // capScreenshareBitrate: 1 // 0 to disable
     },
 
     // Disables ICE/UDP by filtering out local and remote UDP candidates in
@@ -103,19 +113,27 @@ var config = {
     // participants and to enable it back a reload is needed.
     // startSilent: false
 
+    // Sets the preferred target bitrate for the Opus audio codec by setting its
+    // 'maxaveragebitrate' parameter. Currently not available in p2p mode.
+    // Valid values are in the range 6000 to 510000
+    // opusMaxAverageBitrate: 20000,
+
     // Video
 
     // Sets the preferred resolution (height) for local video. Defaults to 720.
     // resolution: 720,
 
+    // How many participants while in the tile view mode, before the receiving video quality is reduced from HD to SD.
+    // Use -1 to disable.
+    // maxFullResolutionParticipants: 2
+
     // w3c spec-compliant video constraints to use for video capture. Currently
     // used by browsers that return true from lib-jitsi-meet's
-    // util#browser#usesNewGumFlow. The constraints are independency from
-    // this config's resolution value. Defaults to requesting an ideal aspect
-    // ratio of 16:9 with an ideal resolution of 720.
+    // util#browser#usesNewGumFlow. The constraints are independent from
+    // this config's resolution value. Defaults to requesting an ideal
+    // resolution of 720p.
     // constraints: {
     //     video: {
-    //         aspectRatio: 16 / 9,
     //         height: {
     //             ideal: 720,
     //             max: 720,
@@ -143,6 +161,7 @@ var config = {
     // Note that it's not recommended to do this because simulcast is not
     // supported when  using H.264. For 1-to-1 calls this setting is enabled by
     // default and can be toggled in the p2p section.
+    // This option has been deprecated, use preferredCodec under videoQuality section instead.
     // preferH264: true,
 
     // If set to true, disable H.264 video codec by stripping it out of the
@@ -150,22 +169,6 @@ var config = {
     // disableH264: false,
 
     // Desktop sharing
-
-    // The ID of the jidesha extension for Chrome.
-    desktopSharingChromeExtId: null,
-
-    // Whether desktop sharing should be disabled on Chrome.
-    // desktopSharingChromeDisabled: false,
-
-    // The media sources to use when using screen sharing with the Chrome
-    // extension.
-    desktopSharingChromeSources: [ 'screen', 'window', 'tab' ],
-
-    // Required version of Chrome extension
-    desktopSharingChromeMinExtVersion: '0.1',
-
-    // Whether desktop sharing should be disabled on Firefox.
-    // desktopSharingFirefoxDisabled: false,
 
     // Optional desktop sharing frame rate options. Default value: min:5, max:5.
     // desktopSharingFrameRate: {
@@ -214,6 +217,79 @@ var config = {
     // Default value for the channel "last N" attribute. -1 for unlimited.
     channelLastN: -1,
 
+    // Provides a way to use different "last N" values based on the number of participants in the conference.
+    // The keys in an Object represent number of participants and the values are "last N" to be used when number of
+    // participants gets to or above the number.
+    //
+    // For the given example mapping, "last N" will be set to 20 as long as there are at least 5, but less than
+    // 29 participants in the call and it will be lowered to 15 when the 30th participant joins. The 'channelLastN'
+    // will be used as default until the first threshold is reached.
+    //
+    // lastNLimits: {
+    //     5: 20,
+    //     30: 15,
+    //     50: 10,
+    //     70: 5,
+    //     90: 2
+    // },
+
+    // Specify the settings for video quality optimizations on the client.
+    // videoQuality: {
+    //    // Provides a way to prevent a video codec from being negotiated on the JVB connection. The codec specified
+    //    // here will be removed from the list of codecs present in the SDP answer generated by the client. If the
+    //    // same codec is specified for both the disabled and preferred option, the disable settings will prevail.
+    //    // Note that 'VP8' cannot be disabled since it's a mandatory codec, the setting will be ignored in this case.
+    //    disabledCodec: 'H264',
+    //
+    //    // Provides a way to set a preferred video codec for the JVB connection. If 'H264' is specified here,
+    //    // simulcast will be automatically disabled since JVB doesn't support H264 simulcast yet. This will only
+    //    // rearrange the the preference order of the codecs in the SDP answer generated by the browser only if the
+    //    // preferred codec specified here is present. Please ensure that the JVB offers the specified codec for this
+    //    // to take effect.
+    //    preferredCodec: 'VP8',
+    //
+    //    // Provides a way to configure the maximum bitrates that will be enforced on the simulcast streams for
+    //    // video tracks. The keys in the object represent the type of the stream (LD, SD or HD) and the values
+    //    // are the max.bitrates to be set on that particular type of stream. The actual send may vary based on
+    //    // the available bandwidth calculated by the browser, but it will be capped by the values specified here.
+    //    // This is currently not implemented on app based clients on mobile.
+    //    maxBitratesVideo: {
+    //        low: 200000,
+    //        standard: 500000,
+    //        high: 1500000
+    //    },
+    //
+    //    // The options can be used to override default thresholds of video thumbnail heights corresponding to
+    //    // the video quality levels used in the application. At the time of this writing the allowed levels are:
+    //    //     'low' - for the low quality level (180p at the time of this writing)
+    //    //     'standard' - for the medium quality level (360p)
+    //    //     'high' - for the high quality level (720p)
+    //    // The keys should be positive numbers which represent the minimal thumbnail height for the quality level.
+    //    //
+    //    // With the default config value below the application will use 'low' quality until the thumbnails are
+    //    // at least 360 pixels tall. If the thumbnail height reaches 720 pixels then the application will switch to
+    //    // the high quality.
+    //    minHeightForQualityLvl: {
+    //        360: 'standard,
+    //        720: 'high'
+    //    }
+    // },
+
+    // // Options for the recording limit notification.
+    // recordingLimit: {
+    //
+    //    // The recording limit in minutes. Note: This number appears in the notification text
+    //    // but doesn't enforce the actual recording time limit. This should be configured in
+    //    // jibri!
+    //    limit: 60,
+    //
+    //    // The name of the app with unlimited recordings.
+    //    appName: 'Unlimited recordings APP',
+    //
+    //    // The URL of the app with unlimited recordings.
+    //    appURL: 'https://unlimited.recordings.app.com/'
+    // },
+
     // Disables or enables RTX (RFC 4588) (defaults to false).
     // disableRtx: false,
 
@@ -230,15 +306,26 @@ var config = {
     // disabled, then bandwidth estimations are disabled.
     // enableRemb: false,
 
+    // Enables ICE restart logic in LJM and displays the page reload overlay on
+    // ICE failure. Current disabled by default because it's causing issues with
+    // signaling when Octo is enabled. Also when we do an "ICE restart"(which is
+    // not a real ICE restart), the client maintains the TCC sequence number
+    // counter, but the bridge resets it. The bridge sends media packets with
+    // TCC sequence numbers starting from 0.
+    // enableIceRestart: false,
+
     // Defines the minimum number of participants to start a call (the default
     // is set in Jicofo and set to 2).
     // minParticipants: 2,
 
-    // Use XEP-0215 to fetch STUN and TURN servers.
+    // Use the TURN servers discovered via XEP-0215 for the jitsi-videobridge
+    // connection
     // useStunTurn: true,
 
-    // Enable IPv6 support.
-    // useIPv6: true,
+    // Use TURN/UDP servers for the jitsi-videobridge connection (by default
+    // we filter out TURN/UDP because it is usually not needed since the
+    // bridge itself is reachable via UDP)
+    // useTurnUdp: false
 
     // Enables / disables a data communication channel with the Videobridge.
     // Values can be 'datachannel', 'websocket', true (treat it as
@@ -249,9 +336,6 @@ var config = {
 
     // UI
     //
-
-    // Use display name as XMPP nickname.
-    // useNicks: false,
 
     // Require users to always specify a display name.
     // requireDisplayName: true,
@@ -293,6 +377,14 @@ var config = {
     // and microsoftApiApplicationClientID
     // enableCalendarIntegration: false,
 
+    // When 'true', it shows an intermediate page before joining, where the user can configure their devices.
+    // prejoinPageEnabled: false,
+
+    // If true, shows the unsafe room name warning label when a room name is
+    // deemed unsafe (due to the simplicity in the name) and a password is not
+    // set or the lobby is not enabled.
+    // enableInsecureRoomNameWarning: false,
+
     // Stats
     //
 
@@ -310,11 +402,11 @@ var config = {
     // callStatsID: '',
     // callStatsSecret: '',
 
-    // enables sending participants display name to callstats
-    // enableDisplayNameInStats: false
+    // Enables sending participants' display names to callstats
+    // enableDisplayNameInStats: false,
 
-    // enables sending participants email if available to callstats and other analytics
-    // enableEmailInStats: false
+    // Enables sending participants' emails (if available) to callstats and other analytics
+    // enableEmailInStats: false,
 
     // Privacy
     //
@@ -343,11 +435,9 @@ var config = {
         // The STUN servers that will be used in the peer to peer connections
         stunServers: [
 
-            // { urls: 'stun:jitsi-meet.example.com:443' },
-            { urls: 'stun:stun.l.google.com:19302' },
-            { urls: 'stun:stun1.l.google.com:19302' },
-            { urls: 'stun:stun2.l.google.com:19302' }
-        ],
+            // { urls: 'stun:jitsi-meet.example.com:3478' },
+            { urls: 'stun:meet-jit-si-turnrelay.jitsi.net:443' }
+        ]
 
         // Sets the ICE transport policy for the p2p connection. At the time
         // of this writing the list of possible values are 'all' and 'relay',
@@ -358,12 +448,19 @@ var config = {
         // iceTransportPolicy: 'all',
 
         // If set to true, it will prefer to use H.264 for P2P calls (if H.264
-        // is supported).
-        preferH264: true
+        // is supported). This setting is deprecated, use preferredCodec instead.
+        // preferH264: true
+
+        // Provides a way to set the video codec preference on the p2p connection. Acceptable
+        // codec values are 'VP8', 'VP9' and 'H264'.
+        // preferredCodec: 'H264',
 
         // If set to true, disable H.264 video codec by stripping it out of the
-        // SDP.
+        // SDP. This setting is deprecated, use disabledCodec instead.
         // disableH264: false,
+
+        // Provides a way to prevent a video codec from being negotiated on the p2p connection.
+        // disabledCodec: '',
 
         // How long we're going to wait, before going back to P2P after the 3rd
         // participant has left the conference (to filter out page reload).
@@ -374,8 +471,27 @@ var config = {
         // The Google Analytics Tracking ID:
         // googleAnalyticsTrackingId: 'your-tracking-id-UA-123456-1'
 
+        // Matomo configuration:
+        // matomoEndpoint: 'https://your-matomo-endpoint/',
+        // matomoSiteID: '42',
+
         // The Amplitude APP Key:
         // amplitudeAPPKey: '<APP_KEY>'
+
+        // Configuration for the rtcstats server:
+        // By enabling rtcstats server every time a conference is joined the rtcstats
+        // module connects to the provided rtcstatsEndpoint and sends statistics regarding
+        // PeerConnection states along with getStats metrics polled at the specified
+        // interval.
+        // rtcstatsEnabled: true,
+
+        // In order to enable rtcstats one needs to provide a endpoint url.
+        // rtcstatsEndpoint: wss://rtcstats-server-pilot.jitsi.net/,
+
+        // The interval at which rtcstats will poll getStats, defaults to 1000ms.
+        // If the value is set to 0 getStats won't be polled and the rtcstats client
+        // will only send data related to RTCPeerConnection events.
+        // rtcstatsPolIInterval: 1000
 
         // Array of script URLs to load as lib-jitsi-meet "analytics handlers".
         // scriptURLs: [
@@ -390,7 +506,10 @@ var config = {
         // shard: "shard1",
         // region: "europe",
         // userRegion: "asia"
-    }
+    },
+
+    // Decides whether the start/stop recording audio notifications should play on record.
+    // disableRecordAudioNotification: false,
 
     // Information for the chrome extension banner
     // chromeExtensionBanner: {
@@ -404,7 +523,7 @@ var config = {
     //             path: 'jitsi-logo-48x48.png'
     //         }
     //     ]
-    // }
+    // },
 
     // Local Recording
     //
@@ -422,7 +541,7 @@ var config = {
     //     format: 'flac'
     //
 
-    // }
+    // },
 
     // Options related to end-to-end (participant to participant) ping.
     // e2eping: {
@@ -434,22 +553,30 @@ var config = {
     //   // with the measured RTT will be sent. Defaults to 60000, set
     //   // to <= 0 to disable.
     //   analyticsInterval: 60000,
-    //   }
+    //   },
 
     // If set, will attempt to use the provided video input device label when
     // triggering a screenshare, instead of proceeding through the normal flow
     // for obtaining a desktop stream.
     // NOTE: This option is experimental and is currently intended for internal
     // use only.
-    // _desktopSharingSourceDevice: 'sample-id-or-label'
+    // _desktopSharingSourceDevice: 'sample-id-or-label',
 
     // If true, any checks to handoff to another application will be prevented
     // and instead the app will continue to display in the current browser.
-    // disableDeepLinking: false
+    // disableDeepLinking: false,
 
     // A property to disable the right click context menu for localVideo
     // the menu has option to flip the locally seen video for local presentations
-    // disableLocalVideoFlip: false
+    // disableLocalVideoFlip: false,
+
+    // Mainly privacy related settings
+
+    // Disables all invite functions from the app (share, invite, dial out...etc)
+    // disableInviteFunctions: true,
+
+    // Disables storing the room name to the recents list
+    // doNotStoreRoom: true,
 
     // Deployment specific URLs.
     // deploymentUrls: {
@@ -459,7 +586,38 @@ var config = {
     //    // If specified a 'Download our apps' button will be displayed in the overflow menu with a link
     //    // to the specified URL for an app download page.
     //    downloadAppsUrl: 'https://docs.example.com/our-apps.html'
-    // }
+    // },
+
+    // Options related to the remote participant menu.
+    // remoteVideoMenu: {
+    //     // If set to true the 'Kick out' button will be disabled.
+    //     disableKick: true
+    // },
+
+    // If set to true all muting operations of remote participants will be disabled.
+    // disableRemoteMute: true,
+
+    /**
+     External API url used to receive branding specific information.
+     If there is no url set or there are missing fields, the defaults are applied.
+     None of the fields are mandatory and the response must have the shape:
+     {
+         // The hex value for the colour used as background
+         backgroundColor: '#fff',
+         // The url for the image used as background
+         backgroundImageUrl: 'https://example.com/background-img.png',
+         // The anchor url used when clicking the logo image
+         logoClickUrl: 'https://example-company.org',
+         // The url used for the image used as logo
+         logoImageUrl: 'https://example.com/logo-img.png'
+     }
+    */
+    // brandingDataUrl: '',
+
+    // The URL of the moderated rooms microservice, if available. If it
+    // is present, a link to the service will be rendered on the welcome page,
+    // otherwise the app doesn't render it.
+    // moderatedRoomServiceUrl: 'https://moderated.jitsi-meet.example.com',
 
     // List of undocumented settings used in jitsi-meet
     /**
@@ -488,6 +646,13 @@ var config = {
      tokenAuthUrl
      */
 
+    /**
+     * This property can be used to alter the generated meeting invite links (in combination with a branding domain
+     * which is retrieved internally by jitsi meet) (e.g. https://meet.jit.si/someMeeting
+     * can become https://brandedDomain/roomAlias)
+     */
+    // brandingRoomAlias: null,
+
     // List of undocumented settings used in lib-jitsi-meet
     /**
      _peerConnStatusOutOfLastNTimeout
@@ -511,6 +676,12 @@ var config = {
      startBitrate
      */
 
+
+    // Allow all above example options to include a trailing comma and
+    // prevent fear when commenting out the last value.
+    makeJsonParserHappy: 'even if last key had a trailing comma'
+
+    // no configuration value should follow this line.
 };
 
 /* eslint-enable no-unused-vars, no-var */
