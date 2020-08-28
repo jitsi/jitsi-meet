@@ -40,18 +40,20 @@ function computeDesktopVideoSize( // eslint-disable-line max-params
         return [ 0, 0 ];
     }
 
-    const aspectRatio = videoWidth / videoHeight;
+    const aspectRatio = videoHeight/videoWidth; //interchanging width and height due to rotation
     let availableWidth = Math.max(videoWidth, videoSpaceWidth);
     let availableHeight = Math.max(videoHeight, videoSpaceHeight);
 
-    if (interfaceConfig.VERTICAL_FILMSTRIP) {
-        // eslint-disable-next-line no-param-reassign
-        videoSpaceWidth -= Filmstrip.getVerticalFilmstripWidth();
-    } else {
-        // eslint-disable-next-line no-param-reassign
-        videoSpaceHeight -= Filmstrip.getFilmstripHeight();
-    }
+    console.log("doing something somthing her.......47",videoSpaceWidth,videoSpaceHeight);
 
+    // if (interfaceConfig.VERTICAL_FILMSTRIP) {
+    //     // eslint-disable-next-line no-param-reassign
+    //     videoSpaceWidth -= Filmstrip.getVerticalFilmstripWidth();
+    // } else {
+    //     // eslint-disable-next-line no-param-reassign
+    //     videoSpaceHeight -= Filmstrip.getFilmstripHeight();
+    // }
+    
     if (availableWidth / aspectRatio >= videoSpaceHeight) {
         availableHeight = videoSpaceHeight;
         availableWidth = availableHeight * aspectRatio;
@@ -61,8 +63,8 @@ function computeDesktopVideoSize( // eslint-disable-line max-params
         availableWidth = videoSpaceWidth;
         availableHeight = availableWidth / aspectRatio;
     }
-
-    return [ availableWidth, availableHeight ];
+    console.log("did something somthing her.......47",availableWidth, availableHeight);
+    return [availableHeight,availableWidth ];//interchanging width and height due to rotation
 }
 
 
@@ -89,6 +91,9 @@ function computeCameraVideoSize( // eslint-disable-line max-params
     }
 
     const aspectRatio = videoWidth / videoHeight;
+    console.log("doing something somthing here.......94",videoWidth,videoHeight,videoSpaceWidth,videoSpaceHeight,videoLayoutFit);
+    //this is where magic happens
+    //work on this - divyansh
 
     switch (videoLayoutFit) {
     case 'height':
@@ -110,19 +115,40 @@ function computeCameraVideoSize( // eslint-disable-line max-params
             videoSpaceWidth,
             videoSpaceHeight,
             videoSpaceRatio < aspectRatio ? 'height' : 'width');
-        const maxWidth = videoSpaceWidth * maxZoomCoefficient;
-        const maxHeight = videoSpaceHeight * maxZoomCoefficient;
+            // const maxWidth = videoSpaceWidth * maxZoomCoefficient;
+            // const maxHeight = videoSpaceHeight * maxZoomCoefficient;
+            //confgure the logic further when using share screen option
+        const maxWidth = videoSpaceWidth * 1;
+        const maxHeight = videoSpaceHeight * 1;
+                  
 
-        if (width > maxWidth) {
-            width = maxWidth;
+        console.log("............................lololo......","videoWidth->",
+                    videoWidth,"  videoHeight-->",videoHeight,"  videoSpaceWidth-->",videoSpaceWidth,"  videoSpaceHeight-->",videoSpaceHeight);
+            //rotated, hence interchanging maxHeight and maxWidth in the below logic
+        if(videoSpaceHeight>videoSpaceWidth){
+            console.log("vertical screen detected - > VideoContainer.js 129");
+            if (width > maxHeight) {
+            width = maxHeight;
             height = width / aspectRatio;
-        } else if (height > maxHeight) {
-            height = maxHeight;
+        } else if (height > maxWidth) {
+            height = maxWidth;
             width = height * aspectRatio;
         }
-
-        return [ width, height ];
+        console.log("computeCameraVideoSize.........output","height-->",width," width-->", height);
+        return [ width, height ];       
+    }else{
+        console.log("...................horizontal Screen Dtected");
+        if (height > maxHeight) {
+            height = maxHeight;
+            width = height * aspectRatio;
+        } else if (width > maxWidth) {
+            width = maxWidth;
+            height = width / aspectRatio;
+        }
+        console.log("computeCameraVideoSize.........output","height-->",height," width-->", width);
+        return [ width ,height];                     
     }
+}
     default:
         return [ videoWidth, videoHeight ];
     }
@@ -310,7 +336,11 @@ export class VideoContainer extends LargeContainer {
                 containerWidth,
                 containerHeight);
         }
-
+        console.log("_getVideoSize..............",computeCameraVideoSize(width,
+            height,
+            containerWidth,
+            containerHeight,
+            interfaceConfig.VIDEO_LAYOUT_FIT));
         return computeCameraVideoSize(width,
             height,
             containerWidth,
@@ -330,12 +360,12 @@ export class VideoContainer extends LargeContainer {
      */
     getVideoPosition(width, height, containerWidth, containerHeight) {
         let containerWidthToUse = containerWidth;
-
+        console.log("getVideoPosition.............");
         /* eslint-enable max-params */
         if (this.stream && this.isScreenSharing()) {
-            if (interfaceConfig.VERTICAL_FILMSTRIP) {
-                containerWidthToUse -= Filmstrip.getVerticalFilmstripWidth();
-            }
+            // if (interfaceConfig.VERTICAL_FILMSTRIP) {
+            //     containerWidthToUse -= Filmstrip.getVerticalFilmstripWidth();
+            // }
 
             return getCameraVideoPosition(width,
                 height,
@@ -422,6 +452,7 @@ export class VideoContainer extends LargeContainer {
         }
 
         this._updateBackground();
+        console.log("something something..........................................");
 
         const { horizontalIndent, verticalIndent }
             = this.getVideoPosition(width, height, containerWidth, containerHeight);

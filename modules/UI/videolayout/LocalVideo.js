@@ -121,10 +121,11 @@ export default class LocalVideo extends SmallVideo {
 
         // eslint-disable-next-line eqeqeq
         const isVideo = stream.videoType != 'desktop';
+        console.log("...........almost ther..............",isVideo);
         const settings = APP.store.getState()['features/base/settings'];
 
         this._enableDisableContextMenu(isVideo);
-        this.setFlipX(isVideo ? settings.localFlipX : false);
+        this.setFlipX(isVideo ? settings.localFlipX : false); //divyansh - false
 
         const endedHandler = () => {
             const localVideoContainer
@@ -182,6 +183,7 @@ export default class LocalVideo extends SmallVideo {
      * @param val {boolean} true for flipped otherwise false;
      */
     setFlipX(val) {
+        console.log("............................................yaha to hoja");
         this.emitter.emit(UIEvents.LOCAL_FLIPX_CHANGED, val);
         if (!this.localVideoId) {
             return;
@@ -205,6 +207,7 @@ export default class LocalVideo extends SmallVideo {
                     name: 'Flip',
                     callback: () => {
                         const { store } = APP;
+                        console.log(".................ye pehle hua......");
                         const val = !store.getState()['features/base/settings']
                         .localFlipX;
 

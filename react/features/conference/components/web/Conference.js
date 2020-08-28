@@ -187,6 +187,10 @@ class Conference extends AbstractConference<Props, *> {
             _showPrejoin
         } = this.props;
         const hideLabels = filmstripOnly || _iAmRecorder;
+        console.log("asfasfasfasfasfasfasfasfasfafasfasfasfafasfasfasfasfas",_layoutClassName);
+        const rot = {
+            transform: `rotate(270deg)`
+          };
 
         return (
             <div
@@ -196,7 +200,9 @@ class Conference extends AbstractConference<Props, *> {
 
                 <Notice />
                 <div id = 'videospace'>
+                    <div id='experiment123456789' >
                     <LargeVideo />
+                    </div>
                     <KnockingParticipantList />
                     <Filmstrip filmstripOnly = { filmstripOnly } />
                     { hideLabels || <Labels /> }

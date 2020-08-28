@@ -1728,6 +1728,7 @@ export default {
      * {@link JitsiStreamPresenterEffect} if it succeeds.
      */
     async _createPresenterStreamEffect(height = null, cameraDeviceId = null) {
+        console.log("fuckmylife...............");
         if (!this.localPresenterVideo) {
             try {
                 this.localPresenterVideo = await createLocalPresenterTrack({ cameraDeviceId }, height);
@@ -1775,7 +1776,7 @@ export default {
             const { width } = this.localVideo.track.getSettings();
             let desktopResizeConstraints = {};
             let resizeDesktopStream = false;
-            const DESKTOP_STREAM_CAP = 720;
+            const DESKTOP_STREAM_CAP = 1080; //720 - divyansh
 
             // Determine the constraints if the desktop track needs to be resized.
             // Resizing is needed when the resolution cannot be determined or when
@@ -1798,8 +1799,8 @@ export default {
             } else {
                 resizeDesktopStream = true;
                 desktopResizeConstraints = {
-                    width: 1280,
-                    height: 720
+                    width: 1280, //1280 - divyansh
+                    height: 720 //720 - divyansh
                 };
             }
             if (resizeDesktopStream) {
@@ -2300,6 +2301,7 @@ export default {
                         .then(effect => this.localVideo.setEffect(effect))
                         .then(() => {
                             this.setVideoMuteStatus(false);
+                            console.log("Where to put flipx................2303");
                             logger.log('switched local video device');
                             this._updateVideoDeviceId();
                         })
@@ -2317,6 +2319,7 @@ export default {
                     // FIXME JitsiLocalTrack.dispose is async and should be waited for
                     this.localPresenterVideo && this.localPresenterVideo.dispose();
                     this.localPresenterVideo = null;
+                    console.log("Where to put flipx................2321");
                     this._createPresenterStreamEffect(height, cameraDeviceId);
 
                 // if there is only video, switch to the new camera stream.

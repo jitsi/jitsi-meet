@@ -6,6 +6,7 @@ import {
     SET_INTERVAL,
     timerWorkerScript
 } from './TimeWorker';
+import { relativeTimeThreshold } from 'moment';
 
 /**
  * Represents a modified MediaStream that adds video as pip on a desktop stream.
@@ -14,7 +15,11 @@ import {
  */
 export default class JitsiStreamPresenterEffect {
     _canvas: HTMLCanvasElement;
+    _canvas1: HTMLCanvasElement;
+    _canvas2: HTMLCanvasElement;
     _ctx: CanvasRenderingContext2D;
+    _ctx1: CanvasRenderingContext2D;
+    _ctx2: CanvasRenderingContext2D;
     _desktopElement: HTMLVideoElement;
     _desktopStream: MediaStream;
     _frameRate: number;
@@ -40,9 +45,13 @@ export default class JitsiStreamPresenterEffect {
         const videoDiv = document.createElement('div');
         const firstVideoTrack = videoStream.getVideoTracks()[0];
         const { height, width, frameRate } = firstVideoTrack.getSettings() ?? firstVideoTrack.getConstraints();
-
+        console.log(".................here............",height, width, frameRate);
         this._canvas = document.createElement('canvas');
         this._ctx = this._canvas.getContext('2d');
+        this._canvas1 = document.createElement('canvas');
+        this._ctx1 = this._canvas1.getContext('2d');
+        this._canvas2 = document.createElement('canvas');
+        this._ctx2 = this._canvas2.getContext('2d');
 
         this._desktopElement = document.createElement('video');
         this._videoElement = document.createElement('video');
@@ -60,10 +69,12 @@ export default class JitsiStreamPresenterEffect {
         this._videoElement.srcObject = videoStream;
 
         // set the style attribute of the div to make it invisible
-        videoDiv.style.display = 'none';
+        //videoDiv.style.display = 'none';
 
         // Bind event handler so it is only bound once for every instance.
         this._onVideoFrameTimer = this._onVideoFrameTimer.bind(this);
+
+        
     }
 
     /**
@@ -79,6 +90,8 @@ export default class JitsiStreamPresenterEffect {
         }
     }
 
+    
+
     /**
      * Loop function to render the video frame input and draw presenter effect.
      *
@@ -90,11 +103,67 @@ export default class JitsiStreamPresenterEffect {
         const [ track ] = this._desktopStream.getVideoTracks();
         const { height, width } = track.getSettings() ?? track.getConstraints();
 
+        /*
+
         this._canvas.width = parseInt(width, 10);
         this._canvas.height = parseInt(height, 10);
+
+        */
+        this._canvas.width = parseInt(this._desktopElement.width, 10);
+        this._canvas.height = parseInt(this._desktopElement.height, 10);
+
+        this._canvas1.width = parseInt(this._desktopElement.width, 10);
+        this._canvas1.height = parseInt(this._desktopElement.height, 10);
+        this._canvas2.width = parseInt(width, 10);
+        this._canvas2.height = parseInt(height, 10);
+        //console.log(height, width);
+        this._ctx2.translate(this._canvas2.width, 0);
+        this._ctx2.scale(-1, 1);
+        this._ctx1.rotate(Math.PI/2);
+        this._ctx1.translate(0,-this._canvas.width);
+
+        // this._ctx2.rotate(Math.PI);
+        // this._ctx2.translate(-this._canvas2.width,-this._canvas2.height);
+        
+
+        //Following two lines should be used to adjust individual sizes of the two components
+        this._ctx1.drawImage(this._desktopElement, 0, 0, this._canvas.height, (this._canvas.height*9/16)); //(width,height) due to rotation
+        
+        this._ctx2.drawImage(this._videoElement, 0, 0, this._videoElement.width, this._videoElement.height);
+        
+        this._ctx.drawImage(this._canvas2, 0, 0, this._canvas.width, this._canvas.height);
+        this._ctx.drawImage(this._canvas1, 0, 0, this._canvas1.width, this._canvas1.height);
+        
+        this._ctx.drawImage(this._canvas2, 0, 0, this._canvas.width, this._canvas.height);
+        this._ctx.drawImage(this._canvas1, 0, 0, this._canvas.width, (this._canvas.height));
+
+        /*
+
+        this._ctx1.rotate(-Math.PI/2);
+        this._ctx1.translate(-this._canvas.height,0);
+        //following code works when you flip the screen in LocalVideo.js line 127
+        this._ctx1.drawImage(this._desktopElement, 0, 0, this._canvas.height, (this._canvas.height*9/16)); //(width,height) due to rotation
+        
+        this._ctx2.drawImage(this._videoElement, 0, 0, this._videoElement.width, this._videoElement.height);
+        
+        this._ctx.drawImage(this._canvas2, 0, 0, this._canvas.width, this._canvas.height);
+        this._ctx.drawImage(this._canvas1, 0, 0, this._canvas1.width, this._canvas1.height);
+        
+        this._ctx.drawImage(this._canvas2, 0, 0, this._canvas.width, this._canvas.height);
+        this._ctx.drawImage(this._canvas1, 0, 0, this._canvas.width, (this._canvas.height));
+
+
+
+
+
+
+
+        //original
         this._ctx.drawImage(this._desktopElement, 0, 0, this._canvas.width, this._canvas.height);
         this._ctx.drawImage(this._videoElement, this._canvas.width - this._videoElement.width, this._canvas.height
             - this._videoElement.height, this._videoElement.width, this._videoElement.height);
+        */
+
 
         // draw a border around the video element.
         this._ctx.beginPath();

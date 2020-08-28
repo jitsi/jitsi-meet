@@ -38,6 +38,7 @@ let localFlipX = null;
  * @param {Object} val
  */
 function onLocalFlipXChanged(val) {
+    console.log("....................onLocalFlipXChanged");
     localFlipX = val;
     if (largeVideo) {
         largeVideo.onLocalFlipXChange(val);
@@ -85,6 +86,7 @@ const VideoLayout = {
      * @returns {void}
      */
     registerListeners() {
+        console.log("before or after onlocalflipxchanged");
         eventEmitter.addListener(UIEvents.LOCAL_FLIPX_CHANGED,
             onLocalFlipXChanged);
     },
@@ -713,7 +715,9 @@ const VideoLayout = {
      * @returns {JQuerySelector} the wrapper jquery selector for the largeVideo
      */
     getLargeVideoWrapper() {
+        console.log("getLargeVideoWrapper........................");
         return this.getCurrentlyOnLargeContainer().$wrapper;
+        
     },
 
     /**
