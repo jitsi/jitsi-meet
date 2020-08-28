@@ -706,5 +706,9 @@
         "sendFeedback": "フィードバックを送信",
         "terms": "利用規約",
         "title": "安全で、機能豊富で、完全に無料のビデオ会議"
+    },
+    "lonelyMeetingExperience": {
+        "button": "招待する",
+        "youAreAlone": "このミーティングにはあなたしかいません"
     }
 }
