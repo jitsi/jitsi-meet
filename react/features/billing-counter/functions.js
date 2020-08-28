@@ -54,7 +54,7 @@ export async function sendCountRequest({ baseUrl, billingId, jwt, tenant }: {
 }) {
     const fullUrl = `${baseUrl}/${encodeURIComponent(tenant)}/${billingId}`;
     const headers = {
-        'Authorization': `Bearer: ${jwt}`
+        'Authorization': `Bearer ${jwt}`
     };
 
     try {
