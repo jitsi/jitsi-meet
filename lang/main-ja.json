@@ -710,5 +710,8 @@
     "lonelyMeetingExperience": {
         "button": "招待する",
         "youAreAlone": "このミーティングにはあなたしかいません"
+    },
+    "helpView": {
+        "header": "ヘルプセンター"
     }
 }
