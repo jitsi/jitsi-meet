@@ -6,4 +6,4 @@ export const BILLING_ID = 'billingId';
 /**
  * The prefix for the vpaas tenant.
  */
-export const VPAAS_TENANT_PREFIX = 'vpass-magic-cookie-';
+export const VPAAS_TENANT_PREFIX = 'vpaas-magic-cookie';
