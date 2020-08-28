@@ -51,6 +51,8 @@ deploy-appbundle:
 		$(BUILD_DIR)/video-blur-effect.min.map \
 		$(BUILD_DIR)/rnnoise-processor.min.js \
 		$(BUILD_DIR)/rnnoise-processor.min.map \
+		$(BUILD_DIR)/close3.min.js \
+		$(BUILD_DIR)/close3.min.map \
 		$(DEPLOY_DIR)
 
 deploy-lib-jitsi-meet:
