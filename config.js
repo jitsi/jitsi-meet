@@ -385,6 +385,10 @@ var config = {
     // set or the lobby is not enabled.
     // enableInsecureRoomNameWarning: false,
 
+    // Whether to automatically copy invitation URL after creating a room.
+    // Document should be focused for this option to work
+    // enableAutomaticUrlCopy: false,
+
     // Stats
     //
 

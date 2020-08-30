@@ -107,6 +107,7 @@ export default [
     'enableNoAudioDetection',
     'enableNoisyMicDetection',
     'enableTcc',
+    'enableAutomaticUrlCopy',
     'etherpad_base',
     'failICE',
     'feedbackPercentage',
