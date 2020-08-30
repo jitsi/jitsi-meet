@@ -713,5 +713,38 @@
     },
     "helpView": {
         "header": "ヘルプセンター"
+    },
+    "lobby": {
+        "knockingParticipantList": "参加待ちリスト",
+        "allow": "許可",
+        "backToKnockModeButton": "パスワードを入力せず、参加を許可するように依頼する",
+        "dialogTitle": "ロビーモード",
+        "disableDialogContent": "ロビーモードが有効になっています。この機能により、望まない人があなたのミーティングに参加することを防ぎます。本当にこの機能を無効にしますか?",
+        "disableDialogSubmit": "無効にする",
+        "emailField": "メールアドレスを入力してください",
+        "enableDialogPasswordField": "パスワードを設定してください(オプション)",
+        "enableDialogSubmit": "設定",
+        "enableDialogText": "ロビーモードを有効にすると、来訪者はモデレーターが許可した場合にのみミーティングに参加できるようになり、あなたのミーティングを保護することができます。",
+        "enterPasswordButton": "ミーティングパスワードを入力",
+        "enterPasswordTitle": "パスワードを入力してミーティングに参加",
+        "invalidPassword": "パスワードが違います",
+        "joiningMessage": "誰かがあなたのリクエストを受け入れるとすぐにミーティングに参加できます",
+        "joinWithPasswordMessage": "パスワードを使って参加しています。しばらくお待ちください…",
+        "joinRejectedMessage": "あなたの参加リクエストはモデレーターによって拒否されました。",
+        "joinTitle": "ミーティングに参加",
+        "joiningTitle": "ミーティングへの参加を許可するように依頼しています…",
+        "joiningWithPasswordTitle": "パスワードを使って参加しています…",
+        "knockButton": "ミーティングへの参加を許可するように依頼",
+        "knockTitle": "ミーティングに参加したい人がいます",
+        "nameField": "あなたの名前を入力",
+        "notificationLobbyAccessDenied": "{{targetParticipantName}} は、 {{originParticipantName}} によって参加を拒否されました",
+        "notificationLobbyAccessGranted": "{{targetParticipantName}} は、 {{originParticipantName}} によって参加を許可されました",
+        "notificationLobbyDisabled": "ロビーモードは、 {{originParticipantName}} によって無効にされました",
+        "notificationLobbyEnabled": "ロビーモードは、 {{originParticipantName}} によって有効にされました",
+        "notificationTitle": "ロビー",
+        "passwordField": "ミーティングパスワードを入力",
+        "passwordJoinButton": "参加",
+        "reject": "拒否",
+        "toggleLabel": "ロビーモードを有効にする"
     }
 }
