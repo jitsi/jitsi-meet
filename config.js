@@ -118,6 +118,9 @@ var config = {
     // Valid values are in the range 6000 to 510000
     // opusMaxAverageBitrate: 20000,
 
+    // Enables redundancy for Opus
+    // enableOpusRed: false
+
     // Video
 
     // Sets the preferred resolution (height) for local video. Defaults to 720.

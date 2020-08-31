@@ -101,6 +101,7 @@ export default [
     'enableInsecureRoomNameWarning',
     'enableLayerSuspension',
     'enableLipSync',
+    'enableOpusRed',
     'enableRemb',
     'enableScreenshotCapture',
     'enableTalkWhileMuted',
