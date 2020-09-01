@@ -51,18 +51,13 @@ export function setMaxReceiverVideoQuality(maxReceiverVideoQuality: number) {
  * @returns {void}
  */
 export function setVideoQuality(frameHeight: number) {
-    return (dispatch: Dispatch<any>, getState: Function) => {
-        const { conference, maxReceiverVideoQuality } = getState()['features/base/conference'];
-
+    return (dispatch: Dispatch<any>) => {
         if (frameHeight < VIDEO_QUALITY_LEVELS.LOW) {
             logger.error(`Invalid frame height for video quality - ${frameHeight}`);
 
             return;
         }
-        conference.setReceiverVideoConstraint(Math.min(frameHeight, maxReceiverVideoQuality));
-        conference.setSenderVideoConstraint(Math.min(frameHeight, VIDEO_QUALITY_LEVELS.HIGH))
-            .catch(err => {
-                logger.error(`Set video quality command failed - ${err}`);
-            });
+
+        dispatch(setPreferredVideoQuality(Math.min(frameHeight, VIDEO_QUALITY_LEVELS.HIGH)));
     };
 }
