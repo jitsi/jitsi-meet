@@ -12,6 +12,7 @@ import {
 } from '../../base/icons';
 import { connect } from '../../base/redux';
 import { VIDEO_QUALITY_LEVELS } from '../constants';
+import { findNearestQualityLevel } from '../functions';
 
 /**
  * A map of of selectable receive resolutions to corresponding icons.
@@ -69,9 +70,10 @@ class OverflowMenuVideoQualityItem extends Component<Props> {
      */
     render() {
         const { _audioOnly, _videoQuality } = this.props;
-        const icon = _audioOnly || !_videoQuality
+        const videoQualityLevel = findNearestQualityLevel(_videoQuality);
+        const icon = _audioOnly || !videoQualityLevel
             ? IconVideoQualityAudioOnly
-            : VIDEO_QUALITY_TO_ICON[_videoQuality];
+            : VIDEO_QUALITY_TO_ICON[videoQualityLevel];
 
         return (
             <li

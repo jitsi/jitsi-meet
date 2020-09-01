@@ -316,10 +316,13 @@ class VideoQualitySlider extends Component<Props> {
             return _sliderOptions.indexOf(audioOnlyOption);
         }
 
-        const matchingOption = _sliderOptions.find(
-            ({ videoQuality }) => videoQuality === _sendrecvVideoQuality);
+        for (let i = 0; i < _sliderOptions.length; i++) {
+            if (_sliderOptions[i].videoQuality >= _sendrecvVideoQuality) {
+                return i;
+            }
+        }
 
-        return _sliderOptions.indexOf(matchingOption);
+        return -1;
     }
 
     _onSliderChange: () => void;
