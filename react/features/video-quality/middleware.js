@@ -4,6 +4,7 @@ import {
     CONFERENCE_JOINED,
     DATA_CHANNEL_OPENED
 } from '../base/conference';
+import { SET_CONFIG } from '../base/config';
 import { getParticipantCount } from '../base/participants';
 import { MiddlewareRegistry, StateListenerRegistry } from '../base/redux';
 import { shouldDisplayTileView } from '../video-layout';
@@ -37,6 +38,18 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
                 logger.info(`Configured preferred receiver video frame height to: ${resolution}`);
             }
         }
+        break;
+    }
+    case SET_CONFIG: {
+        const state = getState();
+        const { videoQuality = {} } = state['features/base/config'];
+
+        if (videoQuality.persist) {
+            dispatch(
+                setPreferredVideoQuality(
+                    state['features/video-quality-persistent-storage'].persistedPrefferedVideoQuality));
+        }
+
         break;
     }
     }
