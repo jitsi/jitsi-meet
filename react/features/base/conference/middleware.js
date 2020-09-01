@@ -20,7 +20,7 @@ import {
     PARTICIPANT_UPDATED,
     PIN_PARTICIPANT
 } from '../participants';
-import { MiddlewareRegistry, StateListenerRegistry } from '../redux';
+import { MiddlewareRegistry } from '../redux';
 import { TRACK_ADDED, TRACK_REMOVED } from '../tracks';
 
 import {
@@ -28,7 +28,6 @@ import {
     CONFERENCE_JOINED,
     CONFERENCE_SUBJECT_CHANGED,
     CONFERENCE_WILL_LEAVE,
-    DATA_CHANNEL_OPENED,
     SEND_TONES,
     SET_PENDING_SUBJECT_CHANGE,
     SET_ROOM
@@ -81,9 +80,6 @@ MiddlewareRegistry.register(store => next => action => {
         _conferenceWillLeave();
         break;
 
-    case DATA_CHANNEL_OPENED:
-        return _syncReceiveVideoQuality(store, next, action);
-
     case PARTICIPANT_UPDATED:
         return _updateLocalParticipantInConference(store, next, action);
 
@@ -104,31 +100,6 @@ MiddlewareRegistry.register(store => next => action => {
     return next(action);
 });
 
-/**
- * Registers a change handler for state['features/base/conference'] to update
- * the preferred video quality levels based on user preferred and internal
- * settings.
- */
-StateListenerRegistry.register(
-    /* selector */ state => state['features/base/conference'],
-    /* listener */ (currentState, store, previousState = {}) => {
-        const {
-            conference,
-            maxReceiverVideoQuality,
-            preferredVideoQuality
-        } = currentState;
-        const changedConference = conference !== previousState.conference;
-        const changedPreferredVideoQuality
-            = preferredVideoQuality !== previousState.preferredVideoQuality;
-        const changedMaxVideoQuality = maxReceiverVideoQuality !== previousState.maxReceiverVideoQuality;
-
-        if (changedConference || changedPreferredVideoQuality || changedMaxVideoQuality) {
-            _setReceiverVideoConstraint(conference, preferredVideoQuality, maxReceiverVideoQuality);
-        }
-        if (changedConference || changedPreferredVideoQuality) {
-            _setSenderVideoConstraint(conference, preferredVideoQuality);
-        }
-    });
 
 /**
  * Makes sure to leave a failed conference in order to release any allocated
@@ -449,44 +420,6 @@ function _sendTones({ getState }, next, action) {
 }
 
 /**
- * Helper function for updating the preferred receiver video constraint, based
- * on the user preference and the internal maximum.
- *
- * @param {JitsiConference} conference - The JitsiConference instance for the
- * current call.
- * @param {number} preferred - The user preferred max frame height.
- * @param {number} max - The maximum frame height the application should
- * receive.
- * @returns {void}
- */
-function _setReceiverVideoConstraint(conference, preferred, max) {
-    if (conference) {
-        const value = Math.min(preferred, max);
-
-        conference.setReceiverVideoConstraint(value);
-        logger.info(`setReceiverVideoConstraint: ${value}`);
-    }
-}
-
-/**
- * Helper function for updating the preferred sender video constraint, based
- * on the user preference.
- *
- * @param {JitsiConference} conference - The JitsiConference instance for the
- * current call.
- * @param {number} preferred - The user preferred max frame height.
- * @returns {void}
- */
-function _setSenderVideoConstraint(conference, preferred) {
-    if (conference) {
-        conference.setSenderVideoConstraint(preferred)
-            .catch(err => {
-                logger.error(`Changing sender resolution to ${preferred} failed - ${err} `);
-            });
-    }
-}
-
-/**
  * Notifies the feature base/conference that the action
  * {@code SET_ROOM} is being dispatched within a specific
  *  redux store.
@@ -537,33 +470,6 @@ function _syncConferenceLocalTracksWithState({ getState }, action) {
     }
 
     return promise || Promise.resolve();
-}
-
-/**
- * Sets the maximum receive video quality.
- *
- * @param {Store} store - The redux store in which the specified {@code action}
- * is being dispatched.
- * @param {Dispatch} next - The redux {@code dispatch} function to dispatch the
- * specified {@code action} to the specified {@code store}.
- * @param {Action} action - The redux action {@code DATA_CHANNEL_STATUS_CHANGED}
- * which is being dispatched in the specified {@code store}.
- * @private
- * @returns {Object} The value returned by {@code next(action)}.
- */
-function _syncReceiveVideoQuality({ getState }, next, action) {
-    const {
-        conference,
-        maxReceiverVideoQuality,
-        preferredVideoQuality
-    } = getState()['features/base/conference'];
-
-    _setReceiverVideoConstraint(
-        conference,
-        preferredVideoQuality,
-        maxReceiverVideoQuality);
-
-    return next(action);
 }
 
 /**

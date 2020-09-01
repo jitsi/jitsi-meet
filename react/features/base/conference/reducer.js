@@ -18,15 +18,12 @@ import {
     P2P_STATUS_CHANGED,
     SET_DESKTOP_SHARING_ENABLED,
     SET_FOLLOW_ME,
-    SET_MAX_RECEIVER_VIDEO_QUALITY,
     SET_PASSWORD,
     SET_PENDING_SUBJECT_CHANGE,
-    SET_PREFERRED_VIDEO_QUALITY,
     SET_ROOM,
     SET_SIP_GATEWAY_ENABLED,
     SET_START_MUTED_POLICY
 } from './actionTypes';
-import { VIDEO_QUALITY_LEVELS } from './constants';
 import { isRoomValid } from './functions';
 
 const DEFAULT_STATE = {
@@ -35,11 +32,9 @@ const DEFAULT_STATE = {
     joining: undefined,
     leaving: undefined,
     locked: undefined,
-    maxReceiverVideoQuality: VIDEO_QUALITY_LEVELS.HIGH,
     membersOnly: undefined,
     password: undefined,
-    passwordRequired: undefined,
-    preferredVideoQuality: VIDEO_QUALITY_LEVELS.HIGH
+    passwordRequired: undefined
 };
 
 /**
@@ -90,23 +85,11 @@ ReducerRegistry.register(
         case SET_LOCATION_URL:
             return set(state, 'room', undefined);
 
-        case SET_MAX_RECEIVER_VIDEO_QUALITY:
-            return set(
-                state,
-                'maxReceiverVideoQuality',
-                action.maxReceiverVideoQuality);
-
         case SET_PASSWORD:
             return _setPassword(state, action);
 
         case SET_PENDING_SUBJECT_CHANGE:
             return set(state, 'pendingSubjectChange', action.subject);
-
-        case SET_PREFERRED_VIDEO_QUALITY:
-            return set(
-                state,
-                'preferredVideoQuality',
-                action.preferredVideoQuality);
 
         case SET_ROOM:
             return _setRoom(state, action);
