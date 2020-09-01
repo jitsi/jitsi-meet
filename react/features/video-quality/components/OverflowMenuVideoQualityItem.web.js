@@ -2,7 +2,6 @@
 
 import React, { Component } from 'react';
 
-import { VIDEO_QUALITY_LEVELS } from '../../base/conference/constants';
 import { translate } from '../../base/i18n';
 import {
     Icon,
@@ -12,6 +11,7 @@ import {
     IconVideoQualitySD
 } from '../../base/icons';
 import { connect } from '../../base/redux';
+import { VIDEO_QUALITY_LEVELS } from '../constants';
 
 /**
  * A map of of selectable receive resolutions to corresponding icons.
@@ -104,7 +104,7 @@ class OverflowMenuVideoQualityItem extends Component<Props> {
 function _mapStateToProps(state) {
     return {
         _audioOnly: state['features/base/audio-only'].enabled,
-        _videoQuality: state['features/base/conference'].preferredVideoQuality
+        _videoQuality: state['features/video-quality'].preferredVideoQuality
     };
 }
 

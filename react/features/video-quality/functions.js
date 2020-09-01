@@ -1,8 +1,6 @@
 // @flow
 
-import { VIDEO_QUALITY_LEVELS } from '../base/conference';
-
-import { CFG_LVL_TO_APP_QUALITY_LVL } from './constants';
+import { CFG_LVL_TO_APP_QUALITY_LVL, VIDEO_QUALITY_LEVELS } from './constants';
 
 
 /**

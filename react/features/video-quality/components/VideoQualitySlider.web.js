@@ -6,10 +6,11 @@ import type { Dispatch } from 'redux';
 
 import { createToolbarEvent, sendAnalytics } from '../../analytics';
 import { setAudioOnly } from '../../base/audio-only';
-import { VIDEO_QUALITY_LEVELS, setPreferredVideoQuality } from '../../base/conference';
 import { translate } from '../../base/i18n';
 import JitsiMeetJS from '../../base/lib-jitsi-meet';
 import { connect } from '../../base/redux';
+import { setPreferredVideoQuality } from '../actions';
+import { VIDEO_QUALITY_LEVELS } from '../constants';
 import logger from '../logger';
 
 const {
@@ -380,7 +381,8 @@ class VideoQualitySlider extends Component<Props> {
  */
 function _mapStateToProps(state) {
     const { enabled: audioOnly } = state['features/base/audio-only'];
-    const { p2p, preferredVideoQuality } = state['features/base/conference'];
+    const { p2p } = state['features/base/conference'];
+    const { preferredVideoQuality } = state['features/video-quality'];
 
     return {
         _audioOnly: audioOnly,
