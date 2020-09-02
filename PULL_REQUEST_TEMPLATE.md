@@ -69,6 +69,7 @@ Resource: [Code Review Checklist](https://www.notion.so/janeapp/Code-Review-chec
 
 ### Jane Desktop
 > - Should these changes be tested in Jane Desktop? If the PR touches any of the [areas outlined here](https://www.notion.so/janeapp/Jane-Desktop-a10c9c06b180487982a3ef67d6163db9#9ea43281537e458089a87229e7281612), the answer is probably yes. If yes, indicate which areas.
+> - How to test [video-chat inside Jane Desktop locally is outlined here](https://github.com/janeapp/jane_electron/blob/master/README.md#testing-video-chat)
 
 ### Other Considerations
 > - Will this affect other parts of the app or views?
