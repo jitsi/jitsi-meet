@@ -8,8 +8,6 @@ import { Switch } from '../../../base/react';
 import { connect } from '../../../base/redux';
 import { toggleLobbyMode } from '../../actions';
 
-declare var interfaceConfig: Object;
-
 type Props = {
 
     /**
@@ -84,7 +82,7 @@ class LobbySection extends PureComponent<Props, State> {
     render() {
         const { _visible, t } = this.props;
 
-        if (!_visible || interfaceConfig.HIDE_LOBBY_BUTTON) {
+        if (!_visible) {
             return null;
         }
 
@@ -134,10 +132,12 @@ class LobbySection extends PureComponent<Props, State> {
  */
 function mapStateToProps(state: Object): $Shape<Props> {
     const { conference } = state['features/base/conference'];
+    const { hideLobbyButton } = state['features/base/config'];
 
     return {
         _lobbyEnabled: state['features/lobby'].lobbyEnabled,
         _visible: conference && conference.isLobbySupported() && isLocalParticipantModerator(state)
+            && !hideLobbyButton
     };
 }
 
