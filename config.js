@@ -324,6 +324,9 @@ var config = {
     // UI
     //
 
+    // Hides lobby button
+    // hideLobbyButton: false,
+
     // Require users to always specify a display name.
     // requireDisplayName: true,
 

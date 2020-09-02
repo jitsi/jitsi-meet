@@ -66,11 +66,12 @@ class LobbyModeButton extends AbstractButton<Props, any> {
 export function _mapStateToProps(state: Object): $Shape<Props> {
     const conference = getCurrentConference(state);
     const { lobbyEnabled } = state['features/lobby'];
+    const { hideLobbyButton } = state['features/base/config'];
     const lobbySupported = conference && conference.isLobbySupported();
 
     return {
         lobbyEnabled,
-        visible: lobbySupported && isLocalParticipantModerator(state)
+        visible: lobbySupported && isLocalParticipantModerator(state) && !hideLobbyButton
     };
 }
 
