@@ -8,6 +8,8 @@ import { Switch } from '../../../base/react';
 import { connect } from '../../../base/redux';
 import { toggleLobbyMode } from '../../actions';
 
+declare var interfaceConfig: Object;
+
 type Props = {
 
     /**
@@ -82,7 +84,7 @@ class LobbySection extends PureComponent<Props, State> {
     render() {
         const { _visible, t } = this.props;
 
-        if (!_visible) {
+        if (!_visible || interfaceConfig.HIDE_LOBBY_BUTTON) {
             return null;
         }
 

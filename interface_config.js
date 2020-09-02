@@ -112,6 +112,11 @@ var interfaceConfig = {
      */
     HIDE_INVITE_MORE_HEADER: false,
 
+    /**
+     * Hides the lobby button.
+     */
+    // HIDE_LOBBY_BUTTON: false,
+
     INITIAL_TOOLBAR_TIMEOUT: 20000,
     JITSI_WATERMARK_LINK: 'https://jitsi.org',
 
