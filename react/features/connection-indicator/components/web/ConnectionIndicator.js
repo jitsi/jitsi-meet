@@ -259,8 +259,6 @@ class ConnectionIndicator extends AbstractConnectionIndicator<Props, State> {
             ? 'show-connection-indicator' : 'hide-connection-indicator';
     }
 
-    _onToggleShowMore: () => void;
-
     /**
      * Callback to invoke when the show more link in the popover content is
      * clicked. Sets the state which will determine if the popover should show
