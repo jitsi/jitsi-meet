@@ -6,10 +6,9 @@
 > - Most importantly: explain the "WHY". Do your best to give the reviewer some context about this change.
 
 ## Description
-- [Jira Ticket](https://janeapp.atlassian.net/browse/...)
-- [Notion Issue](https://www.notion.so/janeapp/...)
-
 > Provide a summary of the problem being solved, the work done, and what was added/removed/changed
+
+- [Jira Ticket](https://janeapp.atlassian.net/browse/...)
 
 ### Risk / General PR Class
 - [ ] 🔴 = High Risk
@@ -23,10 +22,7 @@
 🏇 = Performance improvement
 👁 = UX / UI improvement
 🏗 = Refactor
-💾 = Database Migrations
-🔎 = SQL Views
 🌦 = Env Changes
-💎 = Ruby Gem Changes
 ☕️ = JS Dependency Changes
 ⚛️ = Jane Desktop Changes
 💻 = Browser Refresh Required (Unobtrusive, Immediate, or Forced)
@@ -37,14 +33,11 @@
 ### Dependencies / ENV / Migrations / Client Reset
 > Describe any migrations, dependencies or ENV variables that are required for this change. Add notes regarding the release such as rake tasks, libraries, or the need for a client reset. Notify the team, if they have to update their environment.
 
-### Tally Token
-> If you are updating the tally token version, make note of it here. The release of a new tally token version should be split up across two PRs. The first PR should add the new template but keep the current version the same. The second PR can increment the current version after the first PR has been released.
-
 ### Release Risk Assessment
 > Describe what areas of Jane are touched by the change in this PR, and what it would look like if something were to go wrong, and how much damage could be done. Keep your neighborhood deployer in mind when filling in this section, it will help identify errant PRs more quickly during deploy.
 
 ### Demo Notes
-> If you have instructions on how to demo or a video add it here
+> If you have instructions on how to demo, or a video/gif, add it here
 
 ## Code Review
 Resource: [Dev Team Notion Page](https://www.notion.so/janeapp/Dev-Team-f06c6eb2ccca4066bc63fc1ac1bd2549)
