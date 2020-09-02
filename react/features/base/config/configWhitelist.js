@@ -116,6 +116,7 @@ export default [
     'gatherStats',
     'googleApiApplicationClientID',
     'hiddenDomain',
+    'hideLobbyButton',
     'hosts',
     'iAmRecorder',
     'iAmSipGateway',
