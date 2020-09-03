@@ -1,5 +1,6 @@
 // @flow
 
+import * as MediaType from 'lib-jitsi-meet/service/RTC/MediaType';
 import React from 'react';
 
 import { translate } from '../../../base/i18n';
@@ -14,6 +15,7 @@ import AbstractConnectionIndicator, {
 } from '../AbstractConnectionIndicator';
 
 declare var interfaceConfig: Object;
+declare var APP: Object;
 
 /**
  * An array of display configurations for the connection indicator and its bars.
@@ -132,6 +134,7 @@ class ConnectionIndicator extends AbstractConnectionIndicator<Props, State> {
 
         // Bind event handlers so they are only bound once for every instance.
         this._onToggleShowMore = this._onToggleShowMore.bind(this);
+        this._onSaveLogs = this._onSaveLogs.bind(this);
     }
 
     /**
@@ -271,6 +274,16 @@ class ConnectionIndicator extends AbstractConnectionIndicator<Props, State> {
     }
 
     /**
+     * Callback to invoke when the user clicks on the save logs link in the
+     * popover content.
+     *
+     * @returns {void}
+     */
+    _onSaveLogs() {
+        APP.conference.saveLogs();
+    }
+
+    /**
      * Creates a ReactElement for displaying an icon that represents the current
      * connection quality.
      *
@@ -349,8 +362,26 @@ class ConnectionIndicator extends AbstractConnectionIndicator<Props, State> {
             transport
         } = this.state.stats;
 
+        const participant = APP.conference.getParticipantById(this.props.participantId);
+
+        let firstAudioSsrc = 'N/A', firstVideoSsrc = 'N/A';
+
+        if (participant) {
+            const firstAudioTrack = participant.getTracksByMediaType(MediaType.VIDEO).shift();
+
+            if (firstAudioTrack) {
+                firstAudioSsrc = APP.conference.getSsrcByTrack(firstAudioTrack);
+            }
+            const firstVideoTrack = participant.getTracksByMediaType(MediaType.AUDIO).shift();
+
+            if (firstVideoTrack) {
+                firstVideoSsrc = APP.conference.getSsrcByTrack(firstVideoTrack);
+            }
+        }
+
         return (
             <ConnectionStatsTable
+                audioSsrc = { firstAudioSsrc }
                 bandwidth = { bandwidth }
                 bitrate = { bitrate }
                 bridgeCount = { bridgeCount }
@@ -360,13 +391,16 @@ class ConnectionIndicator extends AbstractConnectionIndicator<Props, State> {
                 framerate = { framerate }
                 isLocalVideo = { this.props.isLocalVideo }
                 maxEnabledResolution = { maxEnabledResolution }
+                onSaveLogs = { this._onSaveLogs }
                 onShowMore = { this._onToggleShowMore }
                 packetLoss = { packetLoss }
+                participantId = { this.props.participantId }
                 region = { region }
                 resolution = { resolution }
                 serverRegion = { serverRegion }
                 shouldShowMore = { this.state.showMoreStats }
-                transport = { transport } />
+                transport = { transport }
+                videoSsrc = { firstVideoSsrc } />
         );
     }
 }

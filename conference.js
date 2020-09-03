@@ -1138,6 +1138,17 @@ export default {
     },
 
     /**
+     * Finds the SSRC of a given JitsiTrack.
+     *
+     * @param {JitsiTrack} track.
+     *
+     * @returns {Number|null} the SSRC of the specified track.
+     */
+    getSsrcByTrack(track) {
+        return room ? room.getSsrcByTrack(track) : null;
+    },
+
+    /**
      * Get participant connection status for the participant.
      *
      * @param {string} id participant's identifier(MUC nickname)

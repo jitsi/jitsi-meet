@@ -99,6 +99,7 @@
     },
     "connectionindicator": {
         "address": "Address:",
+        "audio_ssrc": "Audio SSRC:",
         "bandwidth": "Estimated bandwidth:",
         "bitrate": "Bitrate:",
         "bridgeCount": "Server count: ",
@@ -126,9 +127,12 @@
         "remoteport": "Remote port:",
         "remoteport_plural": "Remote ports:",
         "resolution": "Resolution:",
+        "savelogs": "Save logs",
+        "participant_id": "Participant id:",
         "status": "Connection:",
         "transport": "Transport:",
-        "transport_plural": "Transports:"
+        "transport_plural": "Transports:",
+        "video_ssrc": "Video SSRC:"
     },
     "dateUtils": {
         "earlier": "Earlier",
