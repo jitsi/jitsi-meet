@@ -525,6 +525,19 @@ class API {
     }
 
     /**
+     * Notify external application that the video quality setting has changed.
+     *
+     * @param {number} videoQuality - The video quality. The number represents the maximum height of the video streams.
+     * @returns {void}
+     */
+    notifyVideoQualityChanged(videoQuality: number) {
+        this._sendEvent({
+            name: 'video-quality-changed',
+            videoQuality
+        });
+    }
+
+    /**
      * Notify external application (if API is enabled) that message was
      * received.
      *
