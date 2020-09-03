@@ -58,6 +58,7 @@ case "$1" in
                 sed -i "s/ --app_id=\"example_app_id\"/ app_id=\"$APP_ID\"/g" $PROSODY_HOST_CONFIG
                 sed -i "s/ --app_secret=\"example_app_secret\"/ app_secret=\"$APP_SECRET\"/g" $PROSODY_HOST_CONFIG
                 sed -i 's/ --modules_enabled = { "token_verification" }/ modules_enabled = { "token_verification" }/g' $PROSODY_HOST_CONFIG
+                sed -i '/^\s*--\s*"token_verification"/ s/--\s*//' $PROSODY_HOST_CONFIG
 
                 # Install luajwt
                 if ! luarocks install luajwtjitsi; then
