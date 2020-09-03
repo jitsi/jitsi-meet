@@ -152,6 +152,7 @@ export default [
     'testing',
     'useStunTurn',
     'useTurnUdp',
+    'videoQuality.persist',
     'webrtcIceTcpDisable',
     'webrtcIceUdpDisable'
 ].concat(extraConfigWhitelist);

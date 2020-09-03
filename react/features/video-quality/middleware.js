@@ -15,6 +15,8 @@ import { getReceiverVideoQualityLevel } from './functions';
 import logger from './logger';
 import { getMinHeightForQualityLvlMap } from './selector';
 
+declare var APP: Object;
+
 /**
  * Implements the middleware of the feature video-quality.
  *
@@ -212,5 +214,9 @@ StateListenerRegistry.register(
         }
         if (changedConference || changedPreferredVideoQuality) {
             _setSenderVideoConstraint(conference, preferredVideoQuality);
+        }
+
+        if (typeof APP !== 'undefined' && changedPreferredVideoQuality) {
+            APP.API.notifyVideoQualityChanged(preferredVideoQuality);
         }
     });
