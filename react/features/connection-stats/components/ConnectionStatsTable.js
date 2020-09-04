@@ -158,11 +158,7 @@ class ConnectionStatsTable extends Component<Props> {
         return (
             <div className = 'connection-info'>
                 { this._renderStatistics() }
-                { this._renderAudioSsrc() }
-                { this._renderVideoSsrc() }
-                { this._renderParticipantId() }
-                { this._renderSaveLogsLink() }
-                { isLocalVideo ? this._renderShowMoreLink() : null }
+                { isLocalVideo ? this._renderLocalActions() : null }
                 { isLocalVideo && this.props.shouldShowMore
                     ? this._renderAdditionalStats() : null }
             </div>
@@ -263,7 +259,7 @@ class ConnectionStatsTable extends Component<Props> {
                 <td>
                     <span>{ t('connectionindicator.audio_ssrc') }</span>
                 </td>
-                <td>{ audioSsrc }</td>
+                <td>{ audioSsrc || 'N/A' }</td>
             </tr>
         );
     }
@@ -283,7 +279,7 @@ class ConnectionStatsTable extends Component<Props> {
                 <td>
                     <span>{ t('connectionindicator.video_ssrc') }</span>
                 </td>
-                <td>{ videoSsrc }</td>
+                <td>{ videoSsrc || 'N/A' }</td>
             </tr>
         );
     }
@@ -304,7 +300,7 @@ class ConnectionStatsTable extends Component<Props> {
                 <td>
                     <span>{ t('connectionindicator.participant_id') }</span>
                 </td>
-                <td>{ participantId }</td>
+                <td>{ participantId || 'N/A' }</td>
             </tr>
         );
     }
@@ -541,40 +537,29 @@ class ConnectionStatsTable extends Component<Props> {
     }
 
     /**
-     * Creates a ReactElement for display a link to download the debug logs.
+     * Creates a div as a ReactElement that contains actions that are shown
+     * only on the local connection.
      *
-     * @private
      * @returns {ReactElement}
-     */
-    _renderSaveLogsLink() {
-        return (
-            <a
-                className = 'savelogs link'
-                onClick = { this.props.onSaveLogs } >
-                { this.props.t('connectionindicator.savelogs') }
-            </a>
-        );
-    }
-
-    /**
-     * Creates a ReactElement for display a link to toggle showing additional
-     * statistics.
-     *
      * @private
-     * @returns {ReactElement}
      */
-    _renderShowMoreLink() {
-        const translationKey
-            = this.props.shouldShowMore
-                ? 'connectionindicator.less'
-                : 'connectionindicator.more';
+    _renderLocalActions() {
+        const translationKey = this.props.shouldShowMore ? 'connectionindicator.less' : 'connectionindicator.more';
 
         return (
-            <a
-                className = 'showmore link'
-                onClick = { this.props.onShowMore } >
-                { this.props.t(translationKey) }
-            </a>
+            <div className = 'local-connection-actions'>
+                <a
+                    className = 'savelogs link'
+                    onClick = { this.props.onSaveLogs } >
+                    { this.props.t('connectionindicator.savelogs') }
+                </a>
+                <span> | </span>
+                <a
+                    className = 'showmore link'
+                    onClick = { this.props.onShowMore } >
+                    { this.props.t(translationKey) }
+                </a>
+            </div>
         );
     }
 
@@ -599,6 +584,9 @@ class ConnectionStatsTable extends Component<Props> {
                     { this._renderFrameRate() }
                     { this._renderCodecs() }
                     { isRemoteVideo ? null : this._renderBridgeCount() }
+                    { this._renderAudioSsrc() }
+                    { this._renderVideoSsrc() }
+                    { this._renderParticipantId() }
                 </tbody>
             </table>
         );

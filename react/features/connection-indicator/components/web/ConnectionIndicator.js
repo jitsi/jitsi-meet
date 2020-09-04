@@ -14,6 +14,10 @@ import AbstractConnectionIndicator, {
     type State as AbstractState
 } from '../AbstractConnectionIndicator';
 
+import {
+    getTrackByMediaTypeAndParticipant
+} from '../../../base/tracks';
+
 declare var interfaceConfig: Object;
 declare var APP: Object;
 
@@ -362,22 +366,17 @@ class ConnectionIndicator extends AbstractConnectionIndicator<Props, State> {
             transport
         } = this.state.stats;
 
-        const participant = APP.conference.getParticipantById(this.props.participantId);
+        const firstVideoTrack = getTrackByMediaTypeAndParticipant(
+            APP.store.getState()['features/base/tracks'], MediaType.VIDEO, this.props.participantId);
 
-        let firstAudioSsrc = 'N/A', firstVideoSsrc = 'N/A';
+        const firstVideoSsrc = firstVideoTrack
+            ? APP.conference.getSsrcByTrack(firstVideoTrack.jitsiTrack) : undefined;
 
-        if (participant) {
-            const firstAudioTrack = participant.getTracksByMediaType(MediaType.VIDEO).shift();
+        const firstAudioTrack = getTrackByMediaTypeAndParticipant(
+            APP.store.getState()['features/base/tracks'], MediaType.AUDIO, this.props.participantId);
 
-            if (firstAudioTrack) {
-                firstAudioSsrc = APP.conference.getSsrcByTrack(firstAudioTrack);
-            }
-            const firstVideoTrack = participant.getTracksByMediaType(MediaType.AUDIO).shift();
-
-            if (firstVideoTrack) {
-                firstVideoSsrc = APP.conference.getSsrcByTrack(firstVideoTrack);
-            }
-        }
+        const firstAudioSsrc = firstAudioTrack
+            ? APP.conference.getSsrcByTrack(firstAudioTrack.jitsiTrack) : undefined;
 
         return (
             <ConnectionStatsTable
