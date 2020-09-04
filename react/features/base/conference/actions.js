@@ -436,7 +436,7 @@ export function conferenceWillLeave(conference: Object) {
 
 
 // eslint-disable-next-line require-jsdoc,no-unused-vars,no-empty-function
-function sendBeaconRn(url, data) {
+export function sendBeaconRn(url, data) {
     return fetch(url, {
         method: 'POST',
         headers: {

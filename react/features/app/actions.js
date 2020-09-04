@@ -1,8 +1,8 @@
 // @flow
 
 import type { Dispatch } from 'redux';
-
 import { setRoom } from '../base/conference';
+import { enablePreJoinPage, isPrejoinPageEnabled } from '../prejoin';
 import {
     configWillLoad,
     createFakeConfig,
@@ -131,7 +131,11 @@ export function appNavigate(uri: ?string) {
         // FIXME: unify with web, currently the connection and track creation happens in conference.js.
         if (room && navigator.product === 'ReactNative') {
             dispatch(createDesiredLocalTracks());
-            dispatch(connect());
+            if (isPrejoinPageEnabled(getState())) {
+                dispatch(enablePreJoinPage(true));
+            } else {
+                dispatch(connect());
+            }
         }
     };
 }
