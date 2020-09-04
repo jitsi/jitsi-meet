@@ -27,6 +27,7 @@ import {
 import { isVpaasMeeting } from '../billing-counter/functions';
 import { clearNotifications, showNotification } from '../notifications';
 import { setFatalError } from '../overlay';
+import { enablePreJoinPage, isPrejoinPageEnabled } from '../prejoin';
 
 import {
     getDefaultURL,
@@ -140,7 +141,11 @@ export function appNavigate(uri: ?string) {
         // FIXME: unify with web, currently the connection and track creation happens in conference.js.
         if (room && navigator.product === 'ReactNative') {
             dispatch(createDesiredLocalTracks());
-            dispatch(connect());
+            if (isPrejoinPageEnabled(getState())) {
+                dispatch(enablePreJoinPage(true));
+            } else {
+                dispatch(connect());
+            }
         }
     };
 }

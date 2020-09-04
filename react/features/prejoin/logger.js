@@ -1,5 +1,5 @@
 // @flow
 
-import { getLogger } from '../base/logging/functions';
+import { getLogger } from '../../../../janecode/video-chat-web/react/features/base/logging/functions';
 
 export default getLogger('features/prejoin');

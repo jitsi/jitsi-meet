@@ -1,13 +1,16 @@
 // @flow
 
 import React, { PureComponent } from 'react';
-import { View } from 'react-native';
+import { View, Button } from 'react-native';
 
 import { ColorSchemeRegistry } from '../../../base/color-scheme';
+import { connect as startConference } from '../../../base/connection';
 import { Container } from '../../../base/react';
 import { connect } from '../../../base/redux';
 import { StyleType } from '../../../base/styles';
 import { ChatButton } from '../../../chat';
+import { enablePreJoinPage } from '../../../prejoin';
+import Prejoin from '../../../prejoin/components/Prejoin.native';
 import { isToolboxVisible } from '../../functions';
 import AudioMuteButton from '../AudioMuteButton';
 import HangupButton from '../HangupButton';
@@ -15,6 +18,7 @@ import VideoMuteButton from '../VideoMuteButton';
 
 import OverflowMenuButton from './OverflowMenuButton';
 import styles from './styles';
+
 
 /**
  * The type of {@link Toolbox}'s React {@code Component} props.
@@ -96,7 +100,7 @@ class Toolbox extends PureComponent<Props> {
      * @returns {React$Node}
      */
     _renderToolbar() {
-        const { _styles } = this.props;
+        const { _chatEnabled, _styles, _enablePreJoinPage, _startConference } = this.props;
         const { buttonStyles, buttonStylesBorderless, hangupButtonStyles, toggledButtonStyles } = _styles;
 
         return (
@@ -104,20 +108,41 @@ class Toolbox extends PureComponent<Props> {
                 accessibilityRole = 'toolbar'
                 pointerEvents = 'box-none'
                 style = { styles.toolbar }>
-                <ChatButton
-                    styles = { buttonStylesBorderless }
-                    toggledStyles = { this._getChatButtonToggledStyle(toggledButtonStyles) } />
+                {
+                    _chatEnabled && !_enablePreJoinPage
+                        && <ChatButton
+                            styles = { buttonStylesBorderless }
+                            toggledStyles = {
+                                this._getChatButtonToggledStyle(toggledButtonStyles)
+                            } />
+                }
+                {
+                    !_chatEnabled
+                        && <InfoDialogButton
+                            styles = { buttonStyles }
+                            toggledStyles = { toggledButtonStyles } />
+                }
                 <AudioMuteButton
                     styles = { buttonStyles }
                     toggledStyles = { toggledButtonStyles } />
-                <HangupButton
-                    styles = { hangupButtonStyles } />
+                {
+                    !_enablePreJoinPage && <HangupButton
+                        styles = { hangupButtonStyles } />
+                }
+                {
+                    <Button
+                        title = { 'hello' }
+                        onPress = { () => {
+                            _startConference();
+                        } } />
+                }
+                <Prejoin />
                 <VideoMuteButton
                     styles = { buttonStyles }
                     toggledStyles = { toggledButtonStyles } />
-                <OverflowMenuButton
+                {!_enablePreJoinPage && <OverflowMenuButton
                     styles = { buttonStylesBorderless }
-                    toggledStyles = { toggledButtonStyles } />
+                    toggledStyles = { toggledButtonStyles } />}
             </View>
         );
     }
@@ -133,10 +158,23 @@ class Toolbox extends PureComponent<Props> {
  * @returns {Props}
  */
 function _mapStateToProps(state: Object): Object {
+    const { enablePreJoinPage } = state['features/prejoin'];
+
     return {
         _styles: ColorSchemeRegistry.get(state, 'Toolbox'),
-        _visible: isToolboxVisible(state)
+        _visible: isToolboxVisible(state),
+        _enablePreJoinPage: enablePreJoinPage
     };
 }
 
-export default connect(_mapStateToProps)(Toolbox);
+function _mapDispatchToProps(dispatch: Function): $Shape<Props> {
+    return {
+        _startConference: () => {
+            dispatch(startConference());
+            dispatch(enablePreJoinPage(false));
+        }
+    };
+}
+
+
+export default connect(_mapStateToProps, _mapDispatchToProps)(Toolbox);
