@@ -199,13 +199,13 @@ class WelcomePage extends AbstractWelcomePage {
                             </div>
                             <form onSubmit = { this._onFormSubmit }>
                                 <input
+                                    accessibilityLabel = " { t('welcomepage.roomLabel') }"
                                     autoFocus = { true }
                                     className = 'enter-room-input'
                                     id = 'enter_room_field'
                                     onChange = { this._onRoomChange }
                                     pattern = { ROOM_NAME_VALIDATE_PATTERN_STR }
                                     placeholder = { this.state.roomPlaceholder }
-                                    accessibilityLabel = " { t('welcomepage.roomLabel') }"
                                     ref = { this._setRoomInputRef }
                                     title = { t('welcomepage.roomNameAllowedChars') }
                                     type = 'text'
