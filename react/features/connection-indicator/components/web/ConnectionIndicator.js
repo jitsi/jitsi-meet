@@ -7,16 +7,13 @@ import { translate } from '../../../base/i18n';
 import { Icon, IconConnectionActive, IconConnectionInactive } from '../../../base/icons';
 import { JitsiParticipantConnectionStatus } from '../../../base/lib-jitsi-meet';
 import { Popover } from '../../../base/popover';
+import { getTrackByMediaTypeAndParticipant } from '../../../base/tracks';
 import { ConnectionStatsTable } from '../../../connection-stats';
 import AbstractConnectionIndicator, {
     INDICATOR_DISPLAY_THRESHOLD,
     type Props as AbstractProps,
     type State as AbstractState
 } from '../AbstractConnectionIndicator';
-
-import {
-    getTrackByMediaTypeAndParticipant
-} from '../../../base/tracks';
 
 declare var interfaceConfig: Object;
 declare var APP: Object;

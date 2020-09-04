@@ -292,7 +292,6 @@ class ConnectionStatsTable extends Component<Props> {
     }
 
     /**
-     *
      * Creates a table row as a ReactElement for displaying the endpoint id.
      * This will typically be something like "Endpoint id: e18fbg".
      *
