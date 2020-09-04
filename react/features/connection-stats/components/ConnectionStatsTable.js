@@ -158,9 +158,11 @@ class ConnectionStatsTable extends Component<Props> {
         return (
             <div className = 'connection-info'>
                 { this._renderStatistics() }
-                { isLocalVideo ? this._renderLocalActions() : null }
-                { isLocalVideo && this.props.shouldShowMore
-                    ? this._renderAdditionalStats() : null }
+                <div className = 'connection-actions'>
+                    { isLocalVideo ? this._renderSaveLogs() : null}
+                    { this._renderShowMoreLink() }
+                </div>
+                { this.props.shouldShowMore ? this._renderAdditionalStats() : null }
             </div>
         );
     }
@@ -173,12 +175,17 @@ class ConnectionStatsTable extends Component<Props> {
      * @returns {ReactElement}
      */
     _renderAdditionalStats() {
+        const { isLocalVideo } = this.props;
+
         return (
             <table className = 'connection-info__container'>
                 <tbody>
-                    { this._renderBandwidth() }
-                    { this._renderTransport() }
-                    { this._renderRegion() }
+                    { isLocalVideo ? this._renderBandwidth() : null }
+                    { isLocalVideo ? this._renderTransport() : null }
+                    { isLocalVideo ? this._renderRegion() : null }
+                    { this._renderAudioSsrc() }
+                    { this._renderVideoSsrc() }
+                    { this._renderParticipantId() }
                 </tbody>
             </table>
         );
@@ -537,29 +544,44 @@ class ConnectionStatsTable extends Component<Props> {
     }
 
     /**
-     * Creates a div as a ReactElement that contains actions that are shown
-     * only on the local connection.
+     * Creates a ReactElement for display a link to save the logs.
      *
-     * @returns {ReactElement}
      * @private
+     * @returns {ReactElement}
      */
-    _renderLocalActions() {
-        const translationKey = this.props.shouldShowMore ? 'connectionindicator.less' : 'connectionindicator.more';
-
+    _renderSaveLogs() {
         return (
-            <div className = 'local-connection-actions'>
+            <span>
                 <a
                     className = 'savelogs link'
                     onClick = { this.props.onSaveLogs } >
                     { this.props.t('connectionindicator.savelogs') }
                 </a>
                 <span> | </span>
-                <a
-                    className = 'showmore link'
-                    onClick = { this.props.onShowMore } >
-                    { this.props.t(translationKey) }
-                </a>
-            </div>
+            </span>
+        );
+    }
+
+
+    /**
+     * Creates a ReactElement for display a link to toggle showing additional
+     * statistics.
+     *
+     * @private
+     * @returns {ReactElement}
+     */
+    _renderShowMoreLink() {
+        const translationKey
+            = this.props.shouldShowMore
+                ? 'connectionindicator.less'
+                : 'connectionindicator.more';
+
+        return (
+            <a
+                className = 'showmore link'
+                onClick = { this.props.onShowMore } >
+                { this.props.t(translationKey) }
+            </a>
         );
     }
 
@@ -584,9 +606,6 @@ class ConnectionStatsTable extends Component<Props> {
                     { this._renderFrameRate() }
                     { this._renderCodecs() }
                     { isRemoteVideo ? null : this._renderBridgeCount() }
-                    { this._renderAudioSsrc() }
-                    { this._renderVideoSsrc() }
-                    { this._renderParticipantId() }
                 </tbody>
             </table>
         );
