@@ -25,7 +25,7 @@ clean:
 deploy: deploy-init deploy-appbundle deploy-rnnoise-binary deploy-lib-jitsi-meet deploy-libflac deploy-css deploy-local
 
 deploy-init:
-	rm -fr $(DEPLOY_DIR)
+	sudo rm -fr $(DEPLOY_DIR)
 	mkdir -p $(DEPLOY_DIR)
 
 deploy-appbundle:
