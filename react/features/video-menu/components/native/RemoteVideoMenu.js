@@ -54,6 +54,11 @@ type Props = {
     _disableRemoteMute: boolean,
 
     /**
+     * Whether or not to display the grant moderator button.
+     */
+    _disableGrantModerator: Boolean,
+
+    /**
      * True if the menu is currently open, false otherwise.
      */
     _isOpen: boolean,
@@ -89,13 +94,30 @@ class RemoteVideoMenu extends PureComponent<Props> {
      * @inheritdoc
      */
     render() {
-        const { _disableKick, _disableRemoteMute, participant } = this.props;
+        const { _disableKick, _disableRemoteMute, _disableGrantModerator, participant } = this.props;
         const buttonProps = {
             afterClick: this._onCancel,
             showLabel: true,
             participantID: participant.id,
             styles: this.props._bottomSheetStyles.buttons
         };
+
+        const buttons = [];
+
+        if (!_disableRemoteMute) {
+            buttons.push(<MuteButton { ...buttonProps } />);
+        }
+
+        if (!_disableGrantModerator) {
+            buttons.push(<GrantModeratorButton { ...buttonProps } />);
+        }
+
+        if (!_disableKick) {
+            buttons.push(<KickButton { ...buttonProps } />);
+        }
+
+        buttons.push(<PinButton { ...buttonProps } />);
+        buttons.push(<PrivateMessageButton { ...buttonProps } />);
 
         return (
             <BottomSheet
