@@ -85,6 +85,15 @@ export default {
         width: 80
     },
 
+    moreInfoButton:{
+        width:20,
+        height:20,
+        borderColor: '#424242',
+        borderRadius: 4,
+        borderStyle: 'solid',
+        borderWidth: 1
+    },
+
     /**
      * The thumbnails indicator container.
      */

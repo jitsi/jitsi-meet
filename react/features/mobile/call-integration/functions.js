@@ -16,6 +16,6 @@ export function isCallIntegrationEnabled(stateful: Function | Object) {
     const flag = getFeatureFlag(state, CALL_INTEGRATION_ENABLED);
 
     // The feature flag has precedence.
-    // return flag ?? !disableCallIntegration;
-    return false;
+    return flag ?? !disableCallIntegration;
+    // return true;
 }
