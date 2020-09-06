@@ -80,6 +80,10 @@ platform :ios do
       uses_non_exempt_encryption: false
     )
 
+    # Upload dSYMs to Crashlytics
+    download_dsyms
+    upload_symbols_to_crashlytics
+
     # Cleanup
     clean_build_artifacts
     reset_git_repo(skip_clean: true)

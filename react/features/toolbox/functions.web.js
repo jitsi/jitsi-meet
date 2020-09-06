@@ -1,6 +1,7 @@
 // @flow
 
 import { hasAvailableDevices } from '../base/devices';
+import { isMobileBrowser } from '../base/environment/utils';
 
 declare var interfaceConfig: Object;
 
@@ -43,8 +44,10 @@ export function isToolboxVisible(state: Object) {
         visible
     } = state['features/toolbox'];
     const { audioSettingsVisible, videoSettingsVisible } = state['features/settings'];
+    const { isOpen } = state['features/chat'];
+    const isMobileChatOpen = isMobileBrowser() && isOpen;
 
-    return Boolean(!iAmSipGateway && (timeoutID || visible || alwaysVisible
+    return Boolean(!isMobileChatOpen && !iAmSipGateway && (timeoutID || visible || alwaysVisible
                                       || audioSettingsVisible || videoSettingsVisible));
 }
 

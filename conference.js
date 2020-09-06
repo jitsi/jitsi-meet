@@ -411,6 +411,10 @@ function disconnect() {
         return Promise.resolve();
     };
 
+    if (!connection) {
+        return onDisconnected();
+    }
+
     return connection.disconnect().then(onDisconnected, onDisconnected);
 }
 
@@ -1584,10 +1588,6 @@ export default {
         if (didHaveVideo) {
             promise = promise.then(() => createLocalTracksF({ devices: [ 'video' ] }))
                 .then(([ stream ]) => this.useVideoStream(stream))
-                .then(() => {
-                    sendAnalytics(createScreenSharingEvent('stopped'));
-                    logger.log('Screen sharing stopped.');
-                })
                 .catch(error => {
                     logger.error('failed to switch back to local video', error);
 
@@ -1604,6 +1604,8 @@ export default {
         return promise.then(
             () => {
                 this.videoSwitchInProgress = false;
+                sendAnalytics(createScreenSharingEvent('stopped'));
+                logger.info('Screen sharing stopped.');
             },
             error => {
                 this.videoSwitchInProgress = false;

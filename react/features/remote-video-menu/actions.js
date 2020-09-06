@@ -82,24 +82,25 @@ export function muteAllParticipants(exclude: Array<string>) {
     };
 }
 
-    /**
- * kicks the remote participant with the given ID.
- *
- * @param {string} participantId - ID of the participant to kick.
- * @returns {Function}
- */
+/**
+* Kicks the remote participant with the given ID.
+*
+* @param {string} participantId - ID of the participant to kick.
+* @returns {Function}
+*/
 export function kickRemote(participantId: string) {
     return (dispatch: Dispatch<any>) => {
         sendAnalytics(createRemoteMuteConfirmedEvent(participantId));
         dispatch(kickParticipant(participantId));
     };
 }
+
 /**
- * kicks all participants.
- *
- * @param {Array<string>} exclude - Array of participant IDs to not mute.
- * @returns {Function}
- */
+* Kicks all participants.
+*
+* @param {Array<string>} exclude - Array of participant IDs to not mute.
+* @returns {Function}
+*/
 export function kickAllParticipants(exclude: Array<string>) {
     return (dispatch: Dispatch<any>, getState: Function) => {
         const state = getState();
@@ -111,7 +112,7 @@ export function kickAllParticipants(exclude: Array<string>) {
         participantIds
             .filter(id => !exclude.includes(id))
             .map(id => id === localId ? kickParticipant(true) : kickParticipant(id))
-        
+
             .map(dispatch);
         /* eslint-enable no-confusing-arrow */
     };

@@ -8,7 +8,7 @@ import {
 } from '../../analytics';
 import { kickParticipant } from '../../base/participants';
 
-type Props = {
+export type Props = {
 
     /**
      * The Redux dispatch function.
@@ -29,14 +29,14 @@ type Props = {
 /**
  * Abstract dialog to confirm a remote participant kick action.
  */
-export default class AbstractKickRemoteParticipantDialog
-    extends Component<Props> {
+export default class AbstractKickRemoteParticipantDialog<P:Props = Props>
+    extends Component<P> {
     /**
      * Initializes a new {@code AbstractKickRemoteParticipantDialog} instance.
      *
      * @inheritdoc
      */
-    constructor(props: Props) {
+    constructor(props: P) {
         super(props);
 
         this._onSubmit = this._onSubmit.bind(this);

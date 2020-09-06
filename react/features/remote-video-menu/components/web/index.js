@@ -1,5 +1,9 @@
 // @flow
 
+export { default as GrantModeratorButton } from './GrantModeratorButton';
+export {
+    default as GrantModeratorDialog
+} from './GrantModeratorDialog';
 export { default as KickButton } from './KickButton';
 export {
     default as KickRemoteParticipantDialog
@@ -7,6 +11,9 @@ export {
 export { default as MuteButton } from './MuteButton';
 export { default as MuteEveryoneElseButton } from './MuteEveryoneElseButton';
 export { default as MuteEveryoneDialog } from './MuteEveryoneDialog';
+export { default as KickEveryoneElseButton } from './KickEveryoneElseButton';
+export { default as KickEveryoneDialog } from './KickEveryoneDialog';
+
 export {
     default as MuteRemoteParticipantDialog
 } from './MuteRemoteParticipantDialog';

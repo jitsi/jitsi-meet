@@ -5,6 +5,7 @@ import {
     DOMINANT_SPEAKER_CHANGED,
     HIDDEN_PARTICIPANT_JOINED,
     HIDDEN_PARTICIPANT_LEFT,
+    GRANT_MODERATOR,
     KICK_PARTICIPANT,
     MUTE_REMOTE_PARTICIPANT,
     PARTICIPANT_ID_CHANGED,
@@ -44,6 +45,22 @@ export function dominantSpeakerChanged(id, conference) {
             conference,
             id
         }
+    };
+}
+
+/**
+ * Create an action for granting moderator to a participant.
+ *
+ * @param {string} id - Participant's ID.
+ * @returns {{
+ *     type: GRANT_MODERATOR,
+ *     id: string
+ * }}
+ */
+export function grantModerator(id) {
+    return {
+        type: GRANT_MODERATOR,
+        id
     };
 }
 

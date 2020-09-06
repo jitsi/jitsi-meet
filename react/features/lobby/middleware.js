@@ -17,7 +17,6 @@ import {
     startKnocking,
     setPasswordJoinFailed
 } from './actions';
-import { getKnockingParticipantById } from './functions';
 
 MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
@@ -176,7 +175,8 @@ function _maybeSendLobbyNotification(origin, message, { dispatch, getState }) {
 
     const notificationProps: any = {
         descriptionArguments: {
-            originParticipantName: getParticipantDisplayName(getState, origin._id)
+            originParticipantName: getParticipantDisplayName(getState, origin._id),
+            targetParticipantName: message.name
         },
         titleKey: 'lobby.notificationTitle'
     };
@@ -187,13 +187,9 @@ function _maybeSendLobbyNotification(origin, message, { dispatch, getState }) {
         break;
     case 'LOBBY-ACCESS-GRANTED':
         notificationProps.descriptionKey = 'lobby.notificationLobbyAccessGranted';
-        notificationProps.descriptionArguments.targetParticipantName
-            = getKnockingParticipantById(getState, message.value)?.name;
         break;
     case 'LOBBY-ACCESS-DENIED':
         notificationProps.descriptionKey = 'lobby.notificationLobbyAccessDenied';
-        notificationProps.descriptionArguments.targetParticipantName
-            = getKnockingParticipantById(getState, message.value)?.name;
         break;
     }
 

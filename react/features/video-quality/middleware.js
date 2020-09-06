@@ -1,8 +1,14 @@
 // @flow
 
-import { CONFERENCE_JOINED } from '../base/conference/actionTypes';
-import { setPreferredVideoQuality } from '../base/conference/actions';
-import { MiddlewareRegistry } from '../base/redux';
+import {
+    CONFERENCE_JOINED,
+    VIDEO_QUALITY_LEVELS,
+    getNearestReceiverVideoQualityLevel,
+    setMaxReceiverVideoQuality,
+    setPreferredVideoQuality
+} from '../base/conference';
+import { MiddlewareRegistry, StateListenerRegistry } from '../base/redux';
+import { shouldDisplayTileView } from '../video-layout';
 
 import logger from './logger';
 
@@ -31,3 +37,35 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
 
     return result;
 });
+
+/**
+ * Implements a state listener in order to calculate max receiver video quality.
+ */
+StateListenerRegistry.register(
+    /* selector */ state => {
+        const { reducedUI } = state['features/base/responsive-ui'];
+        const _shouldDisplayTileView = shouldDisplayTileView(state);
+        const thumbnailSize = state['features/filmstrip']?.tileViewDimensions?.thumbnailSize;
+
+        return {
+            displayTileView: _shouldDisplayTileView,
+            reducedUI,
+            thumbnailHeight: thumbnailSize?.height
+        };
+    },
+    /* listener */ ({ displayTileView, reducedUI, thumbnailHeight }, { dispatch, getState }) => {
+        const { maxReceiverVideoQuality } = getState()['features/base/conference'];
+        let newMaxRecvVideoQuality = VIDEO_QUALITY_LEVELS.HIGH;
+
+        if (reducedUI) {
+            newMaxRecvVideoQuality = VIDEO_QUALITY_LEVELS.LOW;
+        } else if (displayTileView && !Number.isNaN(thumbnailHeight)) {
+            newMaxRecvVideoQuality = getNearestReceiverVideoQualityLevel(thumbnailHeight);
+        }
+
+        if (maxReceiverVideoQuality !== newMaxRecvVideoQuality) {
+            dispatch(setMaxReceiverVideoQuality(newMaxRecvVideoQuality));
+        }
+    }, {
+        deepEquals: true
+    });

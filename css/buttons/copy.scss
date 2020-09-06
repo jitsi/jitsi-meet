@@ -1,0 +1,38 @@
+.copy-button {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 8px 8px 16px;
+    margin-top: 8px;
+    width: calc(100% - 24px);
+    height: 24px;
+
+    background: #0376DA;
+    border-radius: 4px;
+    cursor: pointer;
+
+    &:hover {
+        background: #278ADF;
+        font-weight: 600;
+    }
+
+    &-content {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        max-width: 292px;
+        margin-right: 16px;
+
+        &.selected {
+            font-weight: 600;
+        }
+    }
+
+    &.clicked {
+        background: #31B76A;
+    }
+
+    & > div > svg > path {
+        fill: #fff;
+    }
+}

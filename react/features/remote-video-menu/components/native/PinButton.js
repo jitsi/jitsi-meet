@@ -4,7 +4,8 @@ import { translate } from '../../../base/i18n';
 import { IconPin } from '../../../base/icons';
 import { pinParticipant } from '../../../base/participants';
 import { connect } from '../../../base/redux';
-import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox';
+import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
+import { shouldDisplayTileView } from '../../../video-layout/functions';
 
 export type Props = AbstractButtonProps & {
 
@@ -59,7 +60,7 @@ class PinButton extends AbstractButton<Props, *> {
  */
 function _mapStateToProps(state) {
     return {
-        visible: state['features/video-layout'].tileViewEnabled
+        visible: shouldDisplayTileView(state)
     };
 }
 

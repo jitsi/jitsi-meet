@@ -69,7 +69,7 @@ MiddlewareRegistry.register(store => next => action => {
         break;
 
     case PIN_PARTICIPANT:
-        VideoLayout.onPinChange(action.participant.id);
+        VideoLayout.onPinChange(action.participant?.id);
         break;
 
     case SET_FILMSTRIP_VISIBLE:
