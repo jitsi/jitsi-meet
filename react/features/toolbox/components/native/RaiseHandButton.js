@@ -7,14 +7,17 @@ import {
     sendAnalytics
 } from '../../../analytics';
 import { RAISE_HAND_ENABLED, getFeatureFlag } from '../../../base/flags';
-import { translate } from '../../../base/i18n';
+import { i18next, translate } from '../../../base/i18n';
 import { IconRaisedHand } from '../../../base/icons';
 import {
     getLocalParticipant,
-    participantUpdated
+    participantUpdated,
+    getParticipantDisplayName,
 } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
+import { sendMessage } from '../../../chat';
+
 
 /**
  * The type of the React {@code Component} props of {@link RaiseHandButton}.
@@ -89,6 +92,9 @@ class RaiseHandButton extends AbstractButton<Props, *> {
             local: true,
             raisedHand: enable
         }));
+        if (enable) {
+            this.props.dispatch(sendMessage(i18next.t('raisedHandMessage', {'name': this.props.participantDisplayName})));
+        }
     }
 }
 
@@ -108,7 +114,8 @@ function _mapStateToProps(state, ownProps): Object {
     return {
         _localParticipant,
         _raisedHand: _localParticipant.raisedHand,
-        visible
+        visible,
+        participantDisplayName: getParticipantDisplayName(state, _localParticipant.id)
     };
 }
 
