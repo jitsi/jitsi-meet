@@ -91,6 +91,7 @@ export { default as IconShareVideo } from './shared-video.svg';
 export { default as IconSwitchCamera } from './switch-camera.svg';
 export { default as IconTileView } from './tiles-many.svg';
 export { default as IconToggleRecording } from './camera-take-picture.svg';
+export { default as IconTrash } from './trash.svg';
 export { default as IconVideoQualityAudioOnly } from './AUD.svg';
 export { default as IconVideoQualityHD } from './HD.svg';
 export { default as IconVideoQualityLD } from './LD.svg';
