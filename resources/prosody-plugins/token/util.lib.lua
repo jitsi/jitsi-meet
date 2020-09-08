@@ -332,14 +332,39 @@ function Util:verify_room(session, room_address)
     end
 
     local auth_room = session.jitsi_meet_room;
+    local auth_group = session.jitsi_meet_context_group;
+    if auth_group == nil then
+        auth_group = '*'
+    end
+
     if not self.enableDomainVerification then
         -- if auth_room is missing, this means user is anonymous (no token for
         -- its domain) we let it through, jicofo is verifying creation domain
-        if auth_room and room ~= string.lower(auth_room) and auth_room ~= '*' then
-            return false;
+        if auth_room == nil then
+            return true;
+        -- no check for room and group, verify
+        elseif auth_room == '*' and auth_group == '*' then
+            return true;
+        -- no check for room, verify if group is matching
+        elseif auth_room == '*' then
+            return nil ~= room:match(
+                              "^%["..
+	                      string.lower(auth_group):gsub('([%%*.-])','%%%1')
+                              .."%].*$");
+        -- no check for group, verify if room is matching
+        elseif auth_group == '*' then
+            return
+                room == string.lower(auth_room) or 
+                nil ~= room:match(
+                           "^%[.*%]?"..
+                           string.lower(auth_room):gsub('([%%*.-])','%%%1')
+                           .."$");
+        -- verify if group and room are matching
+        else
+            return room == "["..string.lower(auth_group).."]"..string.lower(auth_room);
         end
 
-        return true;
+        return false;
     end
 
     local room_address_to_verify = jid.bare(room_address);
