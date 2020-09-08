@@ -366,7 +366,7 @@
         "password": "$t(lockRoomPasswordUppercase):",
         "title": "Share",
         "tooltip": "Share link and dial-in info for this meeting",
-        "label": "Meeting info"
+        "label": "Dial-in info"
     },
     "inviteDialog": {
         "alertText": "Failed to invite some participants.",
@@ -876,12 +876,12 @@
         "getHelp": "Get help",
         "go": "GO",
         "goSmall": "GO",
-        "info": "Info",
+        "info": "Dial-in info",
         "join": "CREATE / JOIN",
         "moderatedMessage": "Or <a href=\"{{url}}\" rel=\"noopener noreferrer\" target=\"_blank\">book a meeting URL</a> in advance where you are the only moderator.",
         "privacy": "Privacy",
         "recentList": "Recent",
-        "recentListDelete": "Delete",
+        "recentListDelete": "Delete entry",
         "recentListEmpty": "Your recent list is currently empty. Chat with your team and you will find all your recent meetings here.",
         "reducedUIText": "Welcome to {{app}}!",
         "roomNameAllowedChars": "Meeting name should not contain any of these characters: ?, &, :, ', \", %, #.",
