@@ -462,7 +462,13 @@ export default {
      * FIXME tracks from redux store should be the single source of truth
      * @type {JitsiLocalTrack|null}
      */
-    localAudio: null,
+    get localAudio() {
+        if (isPrejoinPageVisible(APP.store.getState())) {
+            return null;
+        }
+
+        return getLocalJitsiAudioTrack(APP.store.getState());
+    },
 
     /**
      * The local presenter video track (if any).
@@ -476,7 +482,14 @@ export default {
      * more refactoring is required around screen sharing ('localVideo' usages).
      * @type {JitsiLocalTrack|null}
      */
-    localVideo: null,
+    get localVideo() {
+        if (isPrejoinPageVisible(APP.store.getState())) {
+            return null;
+        }
+
+        return getLocalJitsiVideoTrack(APP.store.getState());
+    },
+
 
     /**
      * Returns an object containing a promise which resolves with the created tracks &
@@ -1434,7 +1447,6 @@ export default {
                 APP.store.dispatch(
                 replaceLocalTrack(this.localVideo, newTrack, room))
                     .then(() => {
-                        this.localVideo = newTrack;
                         this._setSharingScreen(newTrack);
                         if (newTrack) {
                             APP.UI.addLocalVideoStream(newTrack);
@@ -1500,7 +1512,6 @@ export default {
                 APP.store.dispatch(
                 replaceLocalTrack(this.localAudio, newTrack, room))
                     .then(() => {
-                        this.localAudio = newTrack;
                         this.setAudioMuteStatus(this.isLocalAudioMuted());
                     })
                     .then(resolve)
@@ -2507,9 +2518,6 @@ export default {
                 JitsiMediaDevicesEvents.DEVICE_LIST_CHANGED,
                 this.deviceChangeListener);
         }
-
-        this.localVideo = null;
-        this.localAudio = null;
     },
 
     /**
@@ -2825,8 +2833,6 @@ export default {
 
         APP.store.dispatch(destroyLocalTracks());
         this._localTracksInitialized = false;
-        this.localVideo = null;
-        this.localAudio = null;
 
         // Remove unnecessary event listeners from firing callbacks.
         if (this.deviceChangeListener) {

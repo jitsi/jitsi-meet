@@ -268,16 +268,21 @@ export function toggleScreensharing() {
  */
 export function replaceLocalTrack(oldTrack, newTrack, conference) {
     return async (dispatch, getState) => {
+        // we need to prevent disposing the old track if they're the same, while also allowing
+        // the new track to be updated by the conference.setupNewTrack flow in case it'a track
+        // initialized on the prejoin flow
+        const trackToReplace = oldTrack === newTrack ? null : oldTrack;
+
         conference
 
             // eslint-disable-next-line no-param-reassign
             || (conference = getState()['features/base/conference'].conference);
 
         if (conference) {
-            await conference.replaceTrack(oldTrack, newTrack);
+            await conference.replaceTrack(trackToReplace, newTrack);
         }
 
-        return dispatch(replaceStoredTracks(oldTrack, newTrack));
+        return dispatch(replaceStoredTracks(trackToReplace, newTrack));
     };
 }
 
