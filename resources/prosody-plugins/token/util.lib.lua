@@ -348,15 +348,14 @@ function Util:verify_room(session, room_address)
         -- no check for room, verify if group is matching
         elseif auth_room == '*' then
             return nil ~= room:match(
-                              "^%["..
-	                      string.lower(auth_group):gsub('([%%*.-])','%%%1')
-                              .."%].*$");
+                           "^%["..
+                           string.lower(auth_group):gsub('([%%*.-])','%%%1')
+                           .."%].*$");
         -- no check for group, verify if room is matching
         elseif auth_group == '*' then
-            return
-                room == string.lower(auth_room) or 
-                nil ~= room:match(
-                           "^%[.*%]?"..
+            return room == string.lower(auth_room) or 
+                   nil ~= room:match(
+                           "^%[.*%]"..
                            string.lower(auth_room):gsub('([%%*.-])','%%%1')
                            .."$");
         -- verify if group and room are matching
