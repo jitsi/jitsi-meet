@@ -264,7 +264,7 @@ function _conferenceWillJoin({ dispatch, getState }, next, action) {
     const handle = callHandle || url.toString();
     const hasVideo = !isVideoMutedByAudioOnly(state);
 
-    // If we already have a callUUID set, dont start a new call
+    // If we already have a callUUID set, don't start a new call.
     if (conference.callUUID) {
         return result;
     }
