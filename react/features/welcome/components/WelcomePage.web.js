@@ -170,7 +170,7 @@ class WelcomePage extends AbstractWelcomePage {
                     ? 'with-content' : 'without-content'}` }
                 id = 'welcome_page'>
                 <div className = 'welcome-watermark'>
-                    <Watermarks isWelcomePage = { true } />
+                    <Watermarks stopAnimation/>
                 </div>
                 <div className = 'header'>
                     <div className = 'welcome-page-settings'>

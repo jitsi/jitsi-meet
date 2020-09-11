@@ -29,7 +29,7 @@ type Props = {
      */
     _isGuest: boolean,
     conferenceHasStarted: boolean,
-    isWelcomePage: boolean,
+    stopAnimation: boolean,
 
     /**
      * Invoked to obtain translated strings.
@@ -139,14 +139,13 @@ class Watermarks extends Component<Props, State> {
      * @returns {ReactElement|null}
      */
     _renderWatermark() {
-        const { conferenceHasStarted, isWelcomePage } = this.props;
-
+        const { conferenceHasStarted, stopAnimation } = this.props;
 
         return (<div className = 'watermark '>
             <div
-                className = { `leftwatermark ${conferenceHasStarted || isWelcomePage ? '' : 'animate-flicker'}` } />
+                className = { `leftwatermark ${conferenceHasStarted || stopAnimation ? '' : 'animate-flicker'}` } />
             {
-                !isWelcomePage && <WaitingMessage />
+                !stopAnimation && <WaitingMessage />
             }
         </div>);
     }
