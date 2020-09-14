@@ -949,6 +949,18 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
     }
 
     /**
+     * Displays the given participant on the large video. If no participant id is specified,
+     * dominant and pinned speakers will be taken into consideration while selecting the
+     * the large video participant.
+     *
+     * @param {string} participantId - Jid of the participant to be displayed on the large video.
+     * @returns {void}
+     */
+    setLargeVideoParticipant(participantId) {
+        this.executeCommand('setLargeVideoParticipant', participantId);
+    }
+
+    /**
      * Sets the video input device to the one with the label or id that is
      * passed.
      *
