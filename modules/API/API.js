@@ -22,6 +22,7 @@ import { isEnabled as isDropboxEnabled } from '../../react/features/dropbox';
 import { toggleE2EE } from '../../react/features/e2ee/actions';
 import { invite } from '../../react/features/invite';
 import { toggleLobbyMode } from '../../react/features/lobby/actions.web';
+import { kickParticipant } from '../../react/features/base/participants';
 import { RECORDING_TYPES } from '../../react/features/recording/constants';
 import { getActiveSession } from '../../react/features/recording/functions';
 import { muteAllParticipants } from '../../react/features/remote-video-menu/actions';
@@ -79,6 +80,9 @@ function initCommands() {
         'display-name': displayName => {
             sendAnalytics(createApiEvent('display.name.changed'));
             APP.conference.changeLocalDisplayName(displayName);
+        },
+        'kick-participant': participantId => {
+            APP.store.dispatch(kickParticipant(participantId));
         },
         'mute-everyone': () => {
             sendAnalytics(createApiEvent('muted-everyone'));

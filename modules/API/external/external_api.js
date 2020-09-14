@@ -31,8 +31,8 @@ const commands = {
     displayName: 'display-name',
     e2eeKey: 'e2ee-key',
     email: 'email',
-    toggleLobby: 'toggle-lobby',
     hangup: 'video-hangup',
+    kickParticipant: 'kick-participant',
     muteEveryone: 'mute-everyone',
     password: 'password',
     sendEndpointTextMessage: 'send-endpoint-text-message',
@@ -45,6 +45,7 @@ const commands = {
     toggleAudio: 'toggle-audio',
     toggleChat: 'toggle-chat',
     toggleFilmStrip: 'toggle-film-strip',
+    toggleLobby: 'toggle-lobby',
     toggleShareScreen: 'toggle-share-screen',
     toggleTileView: 'toggle-tile-view',
     toggleVideo: 'toggle-video'
