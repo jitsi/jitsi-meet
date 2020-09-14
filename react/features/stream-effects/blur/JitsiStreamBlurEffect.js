@@ -92,6 +92,8 @@ export default class JitsiStreamBlurEffect {
 
         // Workaround for FF issue https://bugzilla.mozilla.org/show_bug.cgi?id=1388974
         this.finalCanvas.getContext('2d');
+
+        return this.getStream();
     }
 
 
@@ -103,6 +105,18 @@ export default class JitsiStreamBlurEffect {
     stopEffect() {
         this.shouldContinue = false;
     }
+
+    /**
+     * Checks if the local track supports this effect.
+     *
+     * @param {JitsiLocalTrack} jitsiLocalTrack - Track to apply effect.
+     * @returns {boolean} - Returns true if this effect can run on the specified track
+     * false otherwise.
+     */
+    isEnabled(jitsiLocalTrack: Object) {
+        return jitsiLocalTrack.isVideoTrack() && jitsiLocalTrack.videoType === 'camera';
+    }
+
 
     /**
      * Render next frame.
