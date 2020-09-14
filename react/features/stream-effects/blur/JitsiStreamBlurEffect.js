@@ -36,7 +36,6 @@ export default class JitsiStreamBlurEffect {
     // worker: Worker;
     shouldContinue = true;
 
-    imageData: ImageData | null = null;
     blur: boolean = false;
     outStream: MediaStream | null = null;
 
@@ -61,16 +60,15 @@ export default class JitsiStreamBlurEffect {
      *
      * @param {MediaStream} stream - Stream to be used for processing.
      * @param {boolean} blur - Do you want to blur?
-     * @param {HTMLImageElement | undefined} image - Used for virtual background/background replacement.
      * @returns {MediaStream} - The stream with the applied effect.
      */
-    startEffect(stream: MediaStream, blur: boolean = true, image?: HTMLImageElement) {
+    startEffect(stream: MediaStream, blur: boolean = true) {
         this.stream = stream;
 
         this.blur = blur;
 
         this.tmpVideo.addEventListener('loadedmetadata', () => {
-            this.setNewSettings(blur, image);
+            this.setNewSettings(blur);
             this.finalCanvas.width = this.tmpVideo.videoWidth;
             this.finalCanvas.height = this.tmpVideo.videoHeight;
             this.videoRenderCanvas.width = this.tmpVideo.videoWidth;
@@ -154,41 +152,21 @@ export default class JitsiStreamBlurEffect {
         );
 
         if (segmentation) {
-            if (this.blur) {
-                const blurData = new ImageData(liveData.data.slice(), liveData.width, liveData.height);
+            const blurData = new ImageData(liveData.data.slice(), liveData.width, liveData.height);
 
-                StackBlur.imageDataRGB(blurData, 0, 0, liveData.width, liveData.height, 12);
-                const dataL = liveData.data;
+            StackBlur.imageDataRGB(blurData, 0, 0, liveData.width, liveData.height, 12);
+            const dataL = liveData.data;
 
-                for (let x = 0; x < this.finalCanvas.width; x++) {
-                    for (let y = 0; y < this.finalCanvas.height; y++) {
-                        const n = (y * this.finalCanvas.width) + x;
+            for (let x = 0; x < this.finalCanvas.width; x++) {
+                for (let y = 0; y < this.finalCanvas.height; y++) {
+                    const n = (y * this.finalCanvas.width) + x;
 
-                        // eslint-disable-next-line max-depth
-                        if (segmentation.data[n] === 0) {
-                            dataL[n * 4] = blurData.data[n * 4];
-                            dataL[(n * 4) + 1] = blurData.data[(n * 4) + 1];
-                            dataL[(n * 4) + 2] = blurData.data[(n * 4) + 2];
-                            dataL[(n * 4) + 3] = blurData.data[(n * 4) + 3];
-                        }
-                    }
-                }
-            }
-            if (this.imageData) {
-                const dataL = liveData.data;
-                const imageData = this.imageData;
-
-                for (let x = 0; x < this.finalCanvas.width; x++) {
-                    for (let y = 0; y < this.finalCanvas.height; y++) {
-                        const n = (y * this.finalCanvas.width) + x;
-
-                        // eslint-disable-next-line max-depth
-                        if (segmentation.data[n] === 0) {
-                            dataL[n * 4] = this.imageData.data[n * 4];
-                            dataL[(n * 4) + 1] = imageData.data[(n * 4) + 1];
-                            dataL[(n * 4) + 2] = imageData.data[(n * 4) + 2];
-                            dataL[(n * 4) + 3] = imageData.data[(n * 4) + 3];
-                        }
+                    // eslint-disable-next-line max-depth
+                    if (segmentation.data[n] === 0) {
+                        dataL[n * 4] = blurData.data[n * 4];
+                        dataL[(n * 4) + 1] = blurData.data[(n * 4) + 1];
+                        dataL[(n * 4) + 2] = blurData.data[(n * 4) + 2];
+                        dataL[(n * 4) + 3] = blurData.data[(n * 4) + 3];
                     }
                 }
             }
@@ -200,91 +178,10 @@ export default class JitsiStreamBlurEffect {
      * Adjust settings to existing BlurEffect.
      *
      * @param {boolean} blur - Do you want to blur?
-     * @param {HTMLImageElement | undefined} image - Used for virtual background/background replacement.
      * @returns {void}
      */
-    setNewSettings(blur: boolean, image?: HTMLImageElement) {
-        if (blur && image) {
-            throw new Error('I can\'t blur and replace image...well I can...but that would be stupid.');
-        }
+    setNewSettings(blur: boolean) {
         this.blur = blur;
-        if (image) {
-            this.generateImageData(image);
-        } else {
-            this.imageData = null;
-        }
-    }
-
-    /**
-     * Generates an ImageData for a given HTMLImageElement.
-     *
-     * @param {HTMLImageElement} img - Image to generate ImageData for.
-     * @returns {void}
-     */
-    generateImageData(img: HTMLImageElement) {
-        /**
-         * https://stackoverflow.com/a/21961894/7886229
-         * By Ken Fyrstenberg Nilsen
-         *
-         * drawImageProp(context, image [, x, y, width, height [,offsetX, offsetY]])
-         *
-         * If image and context are only arguments rectangle will equal canvas
-         */
-        const canvas = document.createElement('canvas');
-
-        canvas.height = this.tmpVideo.videoHeight;
-        canvas.width = this.tmpVideo.videoWidth;
-        const ctx = canvas.getContext('2d');
-        const x = 0;
-        const y = 0;
-        const w = ctx.canvas.width;
-        const h = ctx.canvas.height;
-
-        const offsetX = 0.5;
-        const offsetY = 0.5;
-
-        const iw = img.width;
-        const ih = img.height;
-        const r = Math.min(w / iw, h / ih);
-        let nw = iw * r; // new prop. width
-        let nh = ih * r; // new prop. height
-        let ar = 1, ch, cw, cx, cy;
-
-        // decide which gap to fill
-        if (nw < w) {
-            ar = w / nw;
-        }
-        if (Math.abs(ar - 1) < 1e-14 && nh < h) {
-            ar = h / nh;
-        } // updated
-        nw *= ar;
-        nh *= ar;
-
-        // calc source rectangle
-        cw = iw / (nw / w);
-        ch = ih / (nh / h);
-
-        cx = (iw - cw) * offsetX;
-        cy = (ih - ch) * offsetY;
-
-        // make sure source rectangle is valid
-        if (cx < 0) {
-            cx = 0;
-        }
-        if (cy < 0) {
-            cy = 0;
-        }
-        if (cw > iw) {
-            cw = iw;
-        }
-        if (ch > ih) {
-            ch = ih;
-        }
-
-        // fill image in dest. rectangle
-        ctx.drawImage(img, cx, cy, cw, ch, x, y, w, h);
-
-        this.imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
     }
 
     /**
