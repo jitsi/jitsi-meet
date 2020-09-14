@@ -37,6 +37,7 @@ const commands = {
     password: 'password',
     sendEndpointTextMessage: 'send-endpoint-text-message',
     sendTones: 'send-tones',
+    setLargeVideoParticipant: 'set-large-video-participant',
     setVideoQuality: 'set-video-quality',
     startRecording: 'start-recording',
     stopRecording: 'stop-recording',

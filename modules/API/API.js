@@ -21,6 +21,7 @@ import {
 import { isEnabled as isDropboxEnabled } from '../../react/features/dropbox';
 import { toggleE2EE } from '../../react/features/e2ee/actions';
 import { invite } from '../../react/features/invite';
+import { selectParticipantInLargeVideo } from '../../react/features/large-video/actions';
 import { toggleLobbyMode } from '../../react/features/lobby/actions.web';
 import { RECORDING_TYPES } from '../../react/features/recording/constants';
 import { getActiveSession } from '../../react/features/recording/functions';
@@ -122,6 +123,11 @@ function initCommands() {
             const { duration, tones, pause } = options;
 
             APP.store.dispatch(sendTones(tones, duration, pause));
+        },
+        'set-large-video-participant': participantId => {
+            logger.debug('Set large video participant command received');
+            sendAnalytics(createApiEvent('largevideo.participant.changed'));
+            APP.store.dispatch(selectParticipantInLargeVideo(participantId));
         },
         'subject': subject => {
             sendAnalytics(createApiEvent('subject.changed'));
@@ -710,8 +716,7 @@ class API {
     }
 
     /**
-     * Notify external application (if API is enabled) that user changed their
-     * nickname.
+     * Notify external application (if API is enabled) that local user has left the conference.
      *
      * @param {string} roomName - User id.
      * @returns {void}
