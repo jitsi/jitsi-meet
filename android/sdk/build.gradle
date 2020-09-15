@@ -44,9 +44,9 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    implementation 'androidx.appcompat:appcompat:1.1.0'
-    implementation 'androidx.fragment:fragment:1.2.0'
+    implementation 'androidx.appcompat:appcompat:1.2.0'
+    implementation 'androidx.fragment:fragment:1.2.5'
+    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
 
     //noinspection GradleDynamicVersion
     api 'com.facebook.react:react-native:+'
