@@ -7,9 +7,9 @@ import { getRoomName } from '../../base/conference';
 import { translate } from '../../base/i18n';
 import { Icon, IconPhone, IconVolumeOff } from '../../base/icons';
 import { isVideoMutedByUser } from '../../base/media';
-import { ActionButton, InputField, PreMeetingScreen, ToggleButton } from '../../base/premeeting';
+import { ActionButton, PreMeetingScreen, ToggleButton } from '../../base/premeeting';
 import { connect } from '../../base/redux';
-import { getDisplayName, updateSettings } from '../../base/settings';
+import { getDisplayName } from '../../base/settings';
 import { getLocalJitsiVideoTrack } from '../../base/tracks';
 import { isButtonEnabled } from '../../toolbox/functions.web';
 import {
@@ -26,8 +26,10 @@ import {
     isPrejoinSkipped
 } from '../functions';
 
+import Name from './Name';
 import JoinByPhoneDialog from './dialogs/JoinByPhoneDialog';
 import DeviceStatus from './preview/DeviceStatus';
+
 
 declare var interfaceConfig: Object;
 
@@ -62,11 +64,6 @@ type Props = {
      * The name of the user that is about to join.
      */
     name: string,
-
-    /**
-     * Updates settings.
-     */
-    updateSettings: Function,
 
     /**
      * The name of the meeting that is about to be joined.
@@ -176,7 +173,6 @@ class Prejoin extends Component<Props, State> {
         this._onToggleButtonClick = this._onToggleButtonClick.bind(this);
         this._onDropdownClose = this._onDropdownClose.bind(this);
         this._onOptionsClick = this._onOptionsClick.bind(this);
-        this._setName = this._setName.bind(this);
     }
     _onJoinButtonClick: () => void;
 
@@ -240,19 +236,6 @@ class Prejoin extends Component<Props, State> {
         });
     }
 
-    _setName: () => void;
-
-    /**
-     * Sets the guest participant name.
-     *
-     * @param {string} displayName - Participant name.
-     * @returns {void}
-     */
-    _setName(displayName) {
-        this.props.updateSettings({
-            displayName
-        });
-    }
 
     _closeDialog: () => void;
 
@@ -298,7 +281,7 @@ class Prejoin extends Component<Props, State> {
             videoTrack
         } = this.props;
 
-        const { _closeDialog, _onDropdownClose, _onJoinButtonClick, _onOptionsClick, _setName, _showDialog } = this;
+        const { _closeDialog, _onDropdownClose, _onJoinButtonClick, _onOptionsClick, _showDialog } = this;
         const { showJoinByPhoneButtons, showError } = this.state;
 
         return (
@@ -314,13 +297,9 @@ class Prejoin extends Component<Props, State> {
                 {showJoinActions && (
                     <div className = 'prejoin-input-area-container'>
                         <div className = 'prejoin-input-area'>
-                            <InputField
-                                autoFocus = { true }
-                                onChange = { _setName }
-                                onSubmit = { joinConference }
-                                placeHolder = { t('dialog.enterDisplayName') }
+                            <Name
+                                joinConference = { joinConference }
                                 value = { name } />
-
                             {showError && <div
                                 className = 'prejoin-error'
                                 data-testid = 'prejoin.errorMessage'>{t('prejoin.errorMissingName')}</div>}
@@ -445,8 +424,7 @@ const mapDispatchToProps = {
     joinConferenceWithoutAudio: joinConferenceWithoutAudioAction,
     joinConference: joinConferenceAction,
     setJoinByPhoneDialogVisiblity: setJoinByPhoneDialogVisiblityAction,
-    setSkipPrejoin: setSkipPrejoinAction,
-    updateSettings
+    setSkipPrejoin: setSkipPrejoinAction
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(translate(Prejoin));
