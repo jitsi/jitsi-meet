@@ -163,6 +163,7 @@ export default class JitsiStreamBlurEffect {
         this._maskFrameTimerWorker.postMessage({
             id: CLEAR_INTERVAL
         });
+
         this._maskFrameTimerWorker.terminate();
     }
 }
