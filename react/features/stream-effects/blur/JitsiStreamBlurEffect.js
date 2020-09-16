@@ -3,9 +3,9 @@
 import * as StackBlur from 'stackblur-canvas';
 
 import {
-    CLEAR_INTERVAL,
-    INTERVAL_TIMEOUT,
-    SET_INTERVAL,
+    CLEAR_TIMEOUT,
+    TIMEOUT_TICK,
+    SET_TIMEOUT,
     timerWorkerScript
 } from './TimerWorker';
 
@@ -58,7 +58,7 @@ export default class JitsiStreamBlurEffect {
      * @returns {void}
      */
     async _onMaskFrameTimer(response: Object) {
-        if (response.data.id === INTERVAL_TIMEOUT) {
+        if (response.data.id === TIMEOUT_TICK) {
             await this._renderMask();
         }
     }
@@ -83,7 +83,11 @@ export default class JitsiStreamBlurEffect {
                 this._maskInProgress = false;
             });
         }
-        const currentFrame = this._inputVideoCanvasElement.getContext('2d').getImageData(
+        const inputCanvasCtx = this._inputVideoCanvasElement.getContext('2d');
+
+        inputCanvasCtx.drawImage(this._inputVideoElement, 0, 0);
+
+        const currentFrame = inputCanvasCtx.getImageData(
             0,
             0,
             this._inputVideoCanvasElement.width,
@@ -109,6 +113,10 @@ export default class JitsiStreamBlurEffect {
             }
         }
         this._outputCanvasElement.getContext('2d').putImageData(currentFrame, 0, 0);
+        this._maskFrameTimerWorker.postMessage({
+            id: SET_TIMEOUT,
+            timeMs: 1000 / 30
+        });
     }
 
     /**
@@ -146,8 +154,8 @@ export default class JitsiStreamBlurEffect {
         this._inputVideoElement.srcObject = stream;
         this._inputVideoElement.onloadeddata = () => {
             this._maskFrameTimerWorker.postMessage({
-                id: SET_INTERVAL,
-                timeMs: 1000 / parseInt(frameRate, 10)
+                id: SET_TIMEOUT,
+                timeMs: 1000 / 30
             });
         };
 
@@ -161,7 +169,7 @@ export default class JitsiStreamBlurEffect {
      */
     stopEffect() {
         this._maskFrameTimerWorker.postMessage({
-            id: CLEAR_INTERVAL
+            id: CLEAR_TIMEOUT
         });
 
         this._maskFrameTimerWorker.terminate();
