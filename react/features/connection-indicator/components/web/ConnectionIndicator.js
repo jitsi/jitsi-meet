@@ -1,14 +1,17 @@
 // @flow
 
-import * as MediaType from 'lib-jitsi-meet/service/RTC/MediaType';
 import React from 'react';
+import { Dispatch } from 'redux';
 
 import { translate } from '../../../base/i18n';
 import { Icon, IconConnectionActive, IconConnectionInactive } from '../../../base/icons';
 import { JitsiParticipantConnectionStatus } from '../../../base/lib-jitsi-meet';
+import { MEDIA_TYPE } from '../../../base/media';
 import { Popover } from '../../../base/popover';
+import { connect } from '../../../base/redux';
 import { getTrackByMediaTypeAndParticipant } from '../../../base/tracks';
 import { ConnectionStatsTable } from '../../../connection-stats';
+import { saveLogs } from '../../actions';
 import AbstractConnectionIndicator, {
     INDICATOR_DISPLAY_THRESHOLD,
     type Props as AbstractProps,
@@ -16,7 +19,6 @@ import AbstractConnectionIndicator, {
 } from '../AbstractConnectionIndicator';
 
 declare var interfaceConfig: Object;
-declare var APP: Object;
 
 /**
  * An array of display configurations for the connection indicator and its bars.
@@ -70,6 +72,11 @@ type Props = AbstractProps & {
      * enumerated values in the library.
      */
     connectionStatus: string,
+
+    /**
+     * The Redux dispatch function.
+     */
+    dispatch: Dispatch<any>,
 
     /**
      * Whether or not clicking the indicator should display a popover for more
@@ -135,7 +142,6 @@ class ConnectionIndicator extends AbstractConnectionIndicator<Props, State> {
 
         // Bind event handlers so they are only bound once for every instance.
         this._onToggleShowMore = this._onToggleShowMore.bind(this);
-        this._onSaveLogs = this._onSaveLogs.bind(this);
     }
 
     /**
@@ -276,18 +282,6 @@ class ConnectionIndicator extends AbstractConnectionIndicator<Props, State> {
         this.setState({ showMoreStats: !this.state.showMoreStats });
     }
 
-    _onSaveLogs: () => void;
-
-    /**
-     * Callback to invoke when the user clicks on the save logs link in the
-     * popover content.
-     *
-     * @returns {void}
-     */
-    _onSaveLogs() {
-        APP.conference.saveLogs();
-    }
-
     /**
      * Creates a ReactElement for displaying an icon that represents the current
      * connection quality.
@@ -367,21 +361,9 @@ class ConnectionIndicator extends AbstractConnectionIndicator<Props, State> {
             transport
         } = this.state.stats;
 
-        const firstVideoTrack = getTrackByMediaTypeAndParticipant(
-            APP.store.getState()['features/base/tracks'], MediaType.VIDEO, this.props.participantId);
-
-        const firstVideoSsrc = firstVideoTrack
-            ? APP.conference.getSsrcByTrack(firstVideoTrack.jitsiTrack) : undefined;
-
-        const firstAudioTrack = getTrackByMediaTypeAndParticipant(
-            APP.store.getState()['features/base/tracks'], MediaType.AUDIO, this.props.participantId);
-
-        const firstAudioSsrc = firstAudioTrack
-            ? APP.conference.getSsrcByTrack(firstAudioTrack.jitsiTrack) : undefined;
-
         return (
             <ConnectionStatsTable
-                audioSsrc = { firstAudioSsrc }
+                audioSsrc = { this.props.participantAudioSsrc }
                 bandwidth = { bandwidth }
                 bitrate = { bitrate }
                 bridgeCount = { bridgeCount }
@@ -391,7 +373,7 @@ class ConnectionIndicator extends AbstractConnectionIndicator<Props, State> {
                 framerate = { framerate }
                 isLocalVideo = { this.props.isLocalVideo }
                 maxEnabledResolution = { maxEnabledResolution }
-                onSaveLogs = { this._onSaveLogs }
+                onSaveLogs = { this.props._onSaveLogs }
                 onShowMore = { this._onToggleShowMore }
                 packetLoss = { packetLoss }
                 participantId = { this.props.participantId }
@@ -400,9 +382,54 @@ class ConnectionIndicator extends AbstractConnectionIndicator<Props, State> {
                 serverRegion = { serverRegion }
                 shouldShowMore = { this.state.showMoreStats }
                 transport = { transport }
-                videoSsrc = { firstVideoSsrc } />
+                videoSsrc = { this.props.participantVideoSsrc } />
         );
     }
 }
 
-export default translate(ConnectionIndicator);
+
+/**
+ * Maps redux actions to the props of the component.
+ *
+ * @param {Function} dispatch - The redux action {@code dispatch} function.
+ * @returns {{
+ *     _onSaveLogs: Function,
+ * }}
+ * @private
+ */
+export function _mapDispatchToProps(dispatch: Dispatch<any>) {
+    return {
+        /**
+         * Saves the conference logs.
+         *
+         * @returns {Function}
+         */
+        _onSaveLogs() {
+            dispatch(saveLogs());
+        }
+    };
+}
+
+
+/**
+ * Maps part of the Redux state to the props of this component.
+ *
+ * @param {Object} state - The Redux state.
+ * @param {Props} ownProps - The own props of the component.
+ * @returns {Props}
+ */
+export function _mapStateToProps(state: Object, ownProps: Props) {
+
+    const firstVideoTrack = getTrackByMediaTypeAndParticipant(
+        state['features/base/tracks'], MEDIA_TYPE.VIDEO, ownProps.participantId);
+    const firstAudioTrack = getTrackByMediaTypeAndParticipant(
+        state['features/base/tracks'], MEDIA_TYPE.AUDIO, ownProps.participantId);
+
+    return {
+        participantAudioSsrc: firstAudioTrack
+            ? state['features/base/conference'].conference.getSsrcByTrack(firstAudioTrack.jitsiTrack) : undefined,
+        participantVideoSsrc: firstVideoTrack
+            ? state['features/base/conference'].conference.getSsrcByTrack(firstVideoTrack.jitsiTrack) : undefined
+    };
+}
+export default translate(connect(_mapStateToProps, _mapDispatchToProps)(ConnectionIndicator));
