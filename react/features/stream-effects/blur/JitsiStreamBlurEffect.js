@@ -73,7 +73,7 @@ export default class JitsiStreamBlurEffect {
         if (!this._maskInProgress) {
             this._maskInProgress = true;
             this._bpModel.segmentPerson(this._inputVideoElement, {
-                internalResolution: 'medium', // resized to 0.5 times of the original resolution before inference
+                internalResolution: 'low', // resized to 0.5 times of the original resolution before inference
                 maxDetections: 1, // max. number of person poses to detect per image
                 segmentationThreshold: 0.7, // represents probability that a pixel belongs to a person
                 flipHorizontal: false,
