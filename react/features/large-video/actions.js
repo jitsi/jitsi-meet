@@ -2,6 +2,7 @@
 
 import type { Dispatch } from 'redux';
 
+import VideoLayout from '../../../modules/UI/videolayout/VideoLayout';
 import {
     createSelectParticipantFailedEvent,
     sendAnalytics
@@ -18,6 +19,27 @@ import {
 } from './actionTypes';
 
 declare var APP: Object;
+
+/**
+ * Resizes the large video container based on the dimensions provided.
+ *
+ * @param {number} width - Width that needs to be applied on the large video container.
+ * @param {number} height - Height that needs to be applied on the large video container.
+ * @returns {void}
+ */
+export function resizeLargeVideo(width: number, height: number) {
+    return (dispatch: Dispatch<any>, getState: Function) => {
+        const state = getState();
+        const largeVideo = state['features/large-video'];
+
+        if (largeVideo) {
+            const largeVideoContainer = VideoLayout.getLargeVideo();
+
+            largeVideoContainer.updateContainerSize(width, height);
+            largeVideoContainer.resize();
+        }
+    };
+}
 
 /**
  * Signals conference to select a participant.
