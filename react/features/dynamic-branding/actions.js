@@ -4,7 +4,11 @@ import { getLogger } from 'jitsi-meet-logger';
 
 import { doGetJSON } from '../base/util';
 
-import { SET_DYNAMIC_BRANDING_DATA, SET_DYNAMIC_BRANDING_READY } from './actionTypes';
+import {
+    SET_DYNAMIC_BRANDING_DATA,
+    SET_DYNAMIC_BRANDING_FAILED,
+    SET_DYNAMIC_BRANDING_READY
+} from './actionTypes';
 import { extractFqnFromPath } from './functions';
 
 const logger = getLogger(__filename);
@@ -32,6 +36,8 @@ export function fetchCustomBrandingData() {
                     return dispatch(setDynamicBrandingData(res));
                 } catch (err) {
                     logger.error('Error fetching branding data', err);
+
+                    return dispatch(setDynamicBrandingFailed());
                 }
             }
 
@@ -61,5 +67,16 @@ function setDynamicBrandingData(value) {
 function setDynamicBrandingReady() {
     return {
         type: SET_DYNAMIC_BRANDING_READY
+    };
+}
+
+/**
+ * Action used to signal the branding request failed.
+ *
+ * @returns {Object}
+ */
+function setDynamicBrandingFailed() {
+    return {
+        type: SET_DYNAMIC_BRANDING_FAILED
     };
 }
