@@ -1,17 +1,13 @@
 // @flow
 
-import * as bodyPix from '@tensorflow-models/body-pix';
 import * as StackBlur from 'stackblur-canvas';
 
-
-const segmentationProperties = {
-    flipHorizontal: false,
-    internalResolution: 'medium',
-    segmentationThreshold: 0.7,
-    scoreThreshold: 0.2,
-    maxDetections: 1
-};
-
+import {
+    CLEAR_INTERVAL,
+    INTERVAL_TIMEOUT,
+    SET_INTERVAL,
+    timerWorkerScript
+} from './TimerWorker';
 
 /**
  * Represents a modified MediaStream that adds blur to video background.
@@ -19,89 +15,100 @@ const segmentationProperties = {
  * video stream.
  */
 export default class JitsiStreamBlurEffect {
-    bpModel: bodyPix.BodyPix;
-    stream: MediaStream;
-
-    tmpVideo = document.createElement('video');
-
-    videoRenderCanvas = document.createElement('canvas');
-
-    bodyPixCanvas = document.createElement('canvas');
-
-    finalCanvas = document.createElement('canvas');
-
-    previousSegmentationComplete = true;
-    lastSegmentation = null; // bodyPix.SemanticPersonSegmentation | null
-
-    // worker: Worker;
-    shouldContinue = true;
-
-    blur: boolean = false;
-    outStream: MediaStream | null = null;
-
-    videoRenderCanvasCtx: CanvasRenderingContext2D;
-    bodyPixCtx: CanvasRenderingContext2D;
+    _bpModel: Object;
+    _inputVideoElement: HTMLVideoElement;
+    _inputVideoCanvasElement: HTMLCanvasElement;
+    _onMaskFrameTimer: Function;
+    _maskFrameTimerWorker: Worker;
+    _maskInProgress: boolean;
+    _outputCanvasElement: HTMLCanvasElement;
+    _renderMask: Function;
+    _segmentationData: Object;
+    isEnabled: Function;
+    startEffect: Function;
+    stopEffect: Function;
 
     /**
      * Represents a modified video MediaStream track.
      *
      * @class
-     * @param {bodyPix.BodyPix} bpModel - BodyPix model.
-
+     * @param {BodyPix} bpModel - BodyPix model.
      */
-    constructor(bpModel: bodyPix.BodyPix) {
-        this.videoRenderCanvasCtx = this.videoRenderCanvas.getContext('2d');
-        this.bodyPixCtx = this.bodyPixCanvas.getContext('2d');
-        this.bpModel = bpModel;
-    }
+    constructor(bpModel: Object) {
+        this._bpModel = bpModel;
 
-    /**
-     * Starts loop to capture video frame and render the segmentation mask.
-     *
-     * @param {MediaStream} stream - Stream to be used for processing.
-     * @param {boolean} blur - Do you want to blur?
-     * @returns {MediaStream} - The stream with the applied effect.
-     */
-    startEffect(stream: MediaStream, blur: boolean = true) {
-        this.stream = stream;
-
-        this.blur = blur;
-
-        this.tmpVideo.addEventListener('loadedmetadata', () => {
-            this.setNewSettings(blur);
-            this.finalCanvas.width = this.tmpVideo.videoWidth;
-            this.finalCanvas.height = this.tmpVideo.videoHeight;
-            this.videoRenderCanvas.width = this.tmpVideo.videoWidth;
-            this.videoRenderCanvas.height = this.tmpVideo.videoHeight;
-            this.bodyPixCanvas.width = this.tmpVideo.videoWidth;
-            this.bodyPixCanvas.height = this.tmpVideo.videoHeight;
-
-            const finalCanvasCtx = this.finalCanvas.getContext('2d');
-
-            finalCanvasCtx.drawImage(this.tmpVideo, 0, 0);
-        });
-
-        this.tmpVideo.addEventListener('loadeddata', () => {
-            this.tmpVideo.play();
-            this.tick();
-        });
-
-        this.tmpVideo.srcObject = stream;
+        // Bind event handler so it is only bound once for every instance.
+        this._onMaskFrameTimer = this._onMaskFrameTimer.bind(this);
 
         // Workaround for FF issue https://bugzilla.mozilla.org/show_bug.cgi?id=1388974
-        this.finalCanvas.getContext('2d');
+        this._outputCanvasElement = document.createElement('canvas');
+        this._outputCanvasElement.getContext('2d');
+        this._inputVideoElement = document.createElement('video');
+        this._inputVideoCanvasElement = document.createElement('canvas');
 
-        return this.getStream();
+        this._maskFrameTimerWorker = new Worker(timerWorkerScript, { name: 'Blur effect worker' });
+        this._maskFrameTimerWorker.onmessage = this._onMaskFrameTimer;
     }
 
-
     /**
-     * Stops the capture and render loop.
+     * EventHandler onmessage for the maskFrameTimerWorker WebWorker.
      *
+     * @private
+     * @param {EventHandler} response - The onmessage EventHandler parameter.
      * @returns {void}
      */
-    stopEffect() {
-        this.shouldContinue = false;
+    async _onMaskFrameTimer(response: Object) {
+        if (response.data.id === INTERVAL_TIMEOUT) {
+            await this._renderMask();
+        }
+    }
+
+    /**
+     * Loop function to render the background mask.
+     *
+     * @private
+     * @returns {void}
+     */
+    async _renderMask() {
+        if (!this._maskInProgress) {
+            this._maskInProgress = true;
+            this._bpModel.segmentPerson(this._inputVideoElement, {
+                internalResolution: 'medium', // resized to 0.5 times of the original resolution before inference
+                maxDetections: 1, // max. number of person poses to detect per image
+                segmentationThreshold: 0.7, // represents probability that a pixel belongs to a person
+                flipHorizontal: false,
+                scoreThreshold: 0.2
+            }).then(data => {
+                this._segmentationData = data;
+                this._maskInProgress = false;
+            });
+        }
+        const currentFrame = this._inputVideoCanvasElement.getContext('2d').getImageData(
+            0,
+            0,
+            this._inputVideoCanvasElement.width,
+            this._inputVideoCanvasElement.height
+        );
+
+        if (this._segmentationData) {
+            const blurData = new ImageData(currentFrame.data.slice(), currentFrame.width, currentFrame.height);
+
+            StackBlur.imageDataRGB(blurData, 0, 0, currentFrame.width, currentFrame.height, 12);
+
+            for (let x = 0; x < this._outputCanvasElement.width; x++) {
+                for (let y = 0; y < this._outputCanvasElement.height; y++) {
+                    const n = (y * this._outputCanvasElement.width) + x;
+
+                    if (this._segmentationData.data[n] === 0) {
+                        currentFrame.data[n * 4] = blurData.data[n * 4];
+                        currentFrame.data[(n * 4) + 1] = blurData.data[(n * 4) + 1];
+                        currentFrame.data[(n * 4) + 2] = blurData.data[(n * 4) + 2];
+                        currentFrame.data[(n * 4) + 3] = blurData.data[(n * 4) + 3];
+                    }
+                }
+            }
+        }
+        this._outputCanvasElement.getContext('2d').putImageData(currentFrame, 0, 0);
     }
 
     /**
@@ -115,85 +122,43 @@ export default class JitsiStreamBlurEffect {
         return jitsiLocalTrack.isVideoTrack() && jitsiLocalTrack.videoType === 'camera';
     }
 
-
     /**
-     * Render next frame.
+     * Starts loop to capture video frame and render the segmentation mask.
      *
-     * @returns {void}
+     * @param {MediaStream} stream - Stream to be used for processing.
+     * @returns {MediaStream} - The stream with the applied effect.
      */
-    tick() {
-        this.videoRenderCanvasCtx.drawImage(this.tmpVideo, 0, 0);
-        if (this.previousSegmentationComplete) {
-            this.previousSegmentationComplete = false;
-            this.bpModel.segmentPerson(this.videoRenderCanvas, segmentationProperties).then(segmentation => {
-                this.lastSegmentation = segmentation;
-                this.previousSegmentationComplete = true;
+    startEffect(stream: MediaStream) {
+        const firstVideoTrack = stream.getVideoTracks()[0];
+        const { height, frameRate, width }
+            = firstVideoTrack.getSettings ? firstVideoTrack.getSettings() : firstVideoTrack.getConstraints();
+
+        this._outputCanvasElement.width = parseInt(width, 10);
+        this._outputCanvasElement.height = parseInt(height, 10);
+        this._inputVideoCanvasElement.width = parseInt(width, 10);
+        this._inputVideoCanvasElement.height = parseInt(height, 10);
+        this._inputVideoElement.width = parseInt(width, 10);
+        this._inputVideoElement.height = parseInt(height, 10);
+        this._inputVideoElement.autoplay = true;
+        this._inputVideoElement.srcObject = stream;
+        this._inputVideoElement.onloadeddata = () => {
+            this._maskFrameTimerWorker.postMessage({
+                id: SET_INTERVAL,
+                timeMs: 1000 / parseInt(frameRate, 10)
             });
-        }
-        this.processSegmentation(this.lastSegmentation);
-        if (this.shouldContinue) {
-            setTimeout(this.tick.bind(this), 1000 / 60);
-        }
+        };
+
+        return this._outputCanvasElement.captureStream(parseInt(frameRate, 10));
     }
 
     /**
-     * Processes next frame.
+     * Stops the capture and render loop.
      *
-     * @param {bodyPix.SemanticPersonSegmentation | null} segmentation - Segmentation data.
      * @returns {void}
      */
-    processSegmentation(segmentation: bodyPix.SemanticPersonSegmentation | null) {
-        const ctx = this.finalCanvas.getContext('2d');
-        const liveData = this.videoRenderCanvasCtx.getImageData(
-            0,
-            0,
-            this.videoRenderCanvas.width,
-            this.videoRenderCanvas.height
-        );
-
-        if (segmentation) {
-            const blurData = new ImageData(liveData.data.slice(), liveData.width, liveData.height);
-
-            StackBlur.imageDataRGB(blurData, 0, 0, liveData.width, liveData.height, 12);
-            const dataL = liveData.data;
-
-            for (let x = 0; x < this.finalCanvas.width; x++) {
-                for (let y = 0; y < this.finalCanvas.height; y++) {
-                    const n = (y * this.finalCanvas.width) + x;
-
-                    // eslint-disable-next-line max-depth
-                    if (segmentation.data[n] === 0) {
-                        dataL[n * 4] = blurData.data[n * 4];
-                        dataL[(n * 4) + 1] = blurData.data[(n * 4) + 1];
-                        dataL[(n * 4) + 2] = blurData.data[(n * 4) + 2];
-                        dataL[(n * 4) + 3] = blurData.data[(n * 4) + 3];
-                    }
-                }
-            }
-        }
-        ctx.putImageData(liveData, 0, 0);
-    }
-
-    /**
-     * Adjust settings to existing BlurEffect.
-     *
-     * @param {boolean} blur - Do you want to blur?
-     * @returns {void}
-     */
-    setNewSettings(blur: boolean) {
-        this.blur = blur;
-    }
-
-    /**
-     * Get the stream.
-     *
-     * @returns {MediaStream}
-     */
-    getStream() {
-        if (!this.outStream) {
-            this.outStream = this.finalCanvas.captureStream();
-        }
-
-        return this.outStream;
+    stopEffect() {
+        this._maskFrameTimerWorker.postMessage({
+            id: CLEAR_INTERVAL
+        });
     }
 }
