@@ -2,7 +2,7 @@
 
 import uuid from 'uuid';
 
-import { SET_BILLING_ID } from './actionTypes';
+import { SET_BILLING_ID, SET_ENDPOINT_COUNTED } from './actionTypes';
 import { extractVpaasTenantFromPath, getBillingId, sendCountRequest } from './functions';
 
 /**
@@ -33,6 +33,7 @@ export function countEndpoint() {
                 jwt,
                 tenant
             });
+            dispatch(setEndpointCounted());
         }
     };
 }
@@ -47,5 +48,16 @@ function setBillingId(value) {
     return {
         type: SET_BILLING_ID,
         value
+    };
+}
+
+/**
+ * Action used to mark the endpoint as counted.
+ *
+ * @returns {Object}
+ */
+function setEndpointCounted() {
+    return {
+        type: SET_ENDPOINT_COUNTED
     };
 }
