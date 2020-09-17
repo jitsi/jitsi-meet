@@ -1,7 +1,7 @@
 // @flow
 
 import React from 'react';
-import { Dispatch } from 'redux';
+import type { Dispatch } from 'redux';
 
 import { translate } from '../../../base/i18n';
 import { Icon, IconConnectionActive, IconConnectionInactive } from '../../../base/icons';
@@ -68,6 +68,11 @@ type Props = AbstractProps & {
     alwaysVisible: boolean,
 
     /**
+     * The audio SSRC of this client.
+     */
+    audioSsrc: number,
+
+    /**
      * The current condition of the user's connection, matching one of the
      * enumerated values in the library.
      */
@@ -103,7 +108,17 @@ type Props = AbstractProps & {
     /**
      * Invoked to obtain translated strings.
      */
-    t: Function
+    t: Function,
+
+    /**
+     * The video SSRC of this client.
+     */
+    videoSsrc: number,
+
+    /**
+     * Invoked to save the conference logs.
+     */
+    _onSaveLogs: Function
 };
 
 /**
@@ -363,7 +378,7 @@ class ConnectionIndicator extends AbstractConnectionIndicator<Props, State> {
 
         return (
             <ConnectionStatsTable
-                audioSsrc = { this.props.participantAudioSsrc }
+                audioSsrc = { this.props.audioSsrc }
                 bandwidth = { bandwidth }
                 bitrate = { bitrate }
                 bridgeCount = { bridgeCount }
@@ -382,7 +397,7 @@ class ConnectionIndicator extends AbstractConnectionIndicator<Props, State> {
                 serverRegion = { serverRegion }
                 shouldShowMore = { this.state.showMoreStats }
                 transport = { transport }
-                videoSsrc = { this.props.participantVideoSsrc } />
+                videoSsrc = { this.props.videoSsrc } />
         );
     }
 }
@@ -426,9 +441,9 @@ export function _mapStateToProps(state: Object, ownProps: Props) {
         state['features/base/tracks'], MEDIA_TYPE.AUDIO, ownProps.participantId);
 
     return {
-        participantAudioSsrc: firstAudioTrack
+        audioSsrc: firstAudioTrack
             ? state['features/base/conference'].conference.getSsrcByTrack(firstAudioTrack.jitsiTrack) : undefined,
-        participantVideoSsrc: firstVideoTrack
+        videoSsrc: firstVideoTrack
             ? state['features/base/conference'].conference.getSsrcByTrack(firstVideoTrack.jitsiTrack) : undefined
     };
 }
