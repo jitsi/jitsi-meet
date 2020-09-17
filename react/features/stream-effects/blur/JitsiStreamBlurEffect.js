@@ -45,9 +45,6 @@ export default class JitsiStreamBlurEffect {
         this._outputCanvasElement.getContext('2d');
         this._inputVideoElement = document.createElement('video');
         this._inputVideoCanvasElement = document.createElement('canvas');
-
-        this._maskFrameTimerWorker = new Worker(timerWorkerScript, { name: 'Blur effect worker' });
-        this._maskFrameTimerWorker.onmessage = this._onMaskFrameTimer;
     }
 
     /**
