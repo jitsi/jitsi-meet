@@ -1,4 +1,4 @@
-import { CONFERENCE_JOINED } from '../base/conference/actionTypes';
+import { PARTICIPANT_JOINED } from '../base/participants/actionTypes';
 import { MiddlewareRegistry } from '../base/redux';
 
 import { SET_BILLING_ID } from './actionTypes';
@@ -11,6 +11,7 @@ import { setBillingId } from './functions';
  * @param {Store} store - The redux store.
  * @returns {Function}
  */
+
 MiddlewareRegistry.register(store => next => async action => {
     switch (action.type) {
     case SET_BILLING_ID: {
@@ -19,12 +20,16 @@ MiddlewareRegistry.register(store => next => async action => {
         break;
     }
 
-    case CONFERENCE_JOINED: {
-        store.dispatch(countEndpoint());
+    case PARTICIPANT_JOINED: {
+        const shouldCount = !store.getState()['features/billing-counter'].endpointCounted
+              && !action.participant.local;
+
+        if (shouldCount) {
+            store.dispatch(countEndpoint());
+        }
 
         break;
     }
-
     }
 
     return next(action);
