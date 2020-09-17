@@ -4,8 +4,8 @@ import { getCurrentConference } from '../base/conference';
 import { getLocalParticipant, participantUpdated } from '../base/participants';
 import { MiddlewareRegistry, StateListenerRegistry } from '../base/redux';
 
-import { SET_E2EE_KEY } from './actionTypes';
-import { setE2EEKey } from './actions';
+import { TOGGLE_E2EE } from './actionTypes';
+import { toggleE2EE } from './actions';
 import logger from './logger';
 
 /**
@@ -16,18 +16,18 @@ import logger from './logger';
  */
 MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
     switch (action.type) {
-    case SET_E2EE_KEY: {
+    case TOGGLE_E2EE: {
         const conference = getCurrentConference(getState);
 
         if (conference) {
-            logger.debug(`New E2EE key: ${action.key}`);
-            conference.setE2EEKey(action.key);
+            logger.debug(`E2EE will be ${action.enabled ? 'enabled' : 'disabled'}`);
+            conference.toggleE2EE(action.enabled);
 
             // Broadccast that we enabled / disabled E2EE.
             const participant = getLocalParticipant(getState);
 
             dispatch(participantUpdated({
-                e2eeEnabled: Boolean(action.key),
+                e2eeEnabled: action.enabled,
                 id: participant.id,
                 local: true
             }));
@@ -48,6 +48,6 @@ StateListenerRegistry.register(
     state => getCurrentConference(state),
     (conference, { dispatch }, previousConference) => {
         if (previousConference) {
-            dispatch(setE2EEKey(undefined));
+            dispatch(toggleE2EE(false));
         }
     });

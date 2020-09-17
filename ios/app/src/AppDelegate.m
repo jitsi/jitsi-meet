@@ -20,8 +20,6 @@
 #import "Types.h"
 #import "ViewController.h"
 
-@import Crashlytics;
-@import Fabric;
 @import Firebase;
 @import JitsiMeet;
 
@@ -48,10 +46,11 @@
     }];
 
     // Initialize Crashlytics and Firebase if a valid GoogleService-Info.plist file was provided.
-    if ([FIRUtilities appContainsRealServiceInfoPlist] && ![jitsiMeet isCrashReportingDisabled]) {
-        NSLog(@"Enabling Crashlytics and Firebase");
+  if ([FIRUtilities appContainsRealServiceInfoPlist]) {
+        NSLog(@"Enabling Firebase");
         [FIRApp configure];
-        [Fabric with:@[[Crashlytics class]]];
+        // Crashlytics defaults to disabled wirth the FirebaseCrashlyticsCollectionEnabled Info.plist key.
+        [[FIRCrashlytics crashlytics] setCrashlyticsCollectionEnabled:![jitsiMeet isCrashReportingDisabled]];
     }
 
     [jitsiMeet application:application didFinishLaunchingWithOptions:launchOptions];

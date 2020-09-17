@@ -1,9 +1,27 @@
 // @flow
 
-import { VIDEO_QUALITY_LEVELS } from '../base/conference';
+import { CFG_LVL_TO_APP_QUALITY_LVL, VIDEO_QUALITY_LEVELS } from './constants';
 
-import { CFG_LVL_TO_APP_QUALITY_LVL } from './constants';
+const { LOW, STANDARD, HIGH } = VIDEO_QUALITY_LEVELS;
+const videoQualityLevels = [ LOW, STANDARD, HIGH ];
 
+/**
+ * Finds the nearest video quality level to the passed video quality.
+ *
+ * @param {number} videoQuality - The video quality.
+ * @returns {number|undefined} - The found quality level.
+ */
+export function findNearestQualityLevel(videoQuality: number) {
+    for (let i = 0; i < videoQualityLevels.length; i++) {
+        const level = videoQualityLevels[i];
+
+        if (level >= videoQuality) {
+            return level;
+        }
+    }
+
+    return undefined;
+}
 
 /**
  * Selects {@code VIDEO_QUALITY_LEVELS} for the given {@link availableHeight} and threshold to quality mapping.

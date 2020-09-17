@@ -1,16 +1,16 @@
 // @flow
 
-import { SET_E2EE_KEY } from './actionTypes';
+import { TOGGLE_E2EE } from './actionTypes';
 
 /**
- * Dispatches an action to set the E2EE key.
+ * Dispatches an action to enable / disable E2EE.
  *
- * @param {string|undefined} key - The new key to be used for E2EE.
+ * @param {boolean} enabled - Whether E2EE is to be enabled or not.
  * @returns {Object}
  */
-export function setE2EEKey(key: ?string) {
+export function toggleE2EE(enabled: boolean) {
     return {
-        type: SET_E2EE_KEY,
-        key
+        type: TOGGLE_E2EE,
+        enabled
     };
 }

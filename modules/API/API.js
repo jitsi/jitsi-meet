@@ -19,8 +19,9 @@ import {
     processExternalDeviceRequest
 } from '../../react/features/device-selection/functions';
 import { isEnabled as isDropboxEnabled } from '../../react/features/dropbox';
-import { setE2EEKey } from '../../react/features/e2ee';
+import { toggleE2EE } from '../../react/features/e2ee/actions';
 import { invite } from '../../react/features/invite';
+import { selectParticipantInLargeVideo } from '../../react/features/large-video/actions';
 import { toggleLobbyMode } from '../../react/features/lobby/actions.web';
 import { RECORDING_TYPES } from '../../react/features/recording/constants';
 import { getActiveSession } from '../../react/features/recording/functions';
@@ -123,6 +124,11 @@ function initCommands() {
 
             APP.store.dispatch(sendTones(tones, duration, pause));
         },
+        'set-large-video-participant': participantId => {
+            logger.debug('Set large video participant command received');
+            sendAnalytics(createApiEvent('largevideo.participant.set'));
+            APP.store.dispatch(selectParticipantInLargeVideo(participantId));
+        },
         'subject': subject => {
             sendAnalytics(createApiEvent('subject.changed'));
             APP.store.dispatch(setSubject(subject));
@@ -191,9 +197,9 @@ function initCommands() {
                 logger.error('Failed sending endpoint text message', err);
             }
         },
-        'e2ee-key': key => {
-            logger.debug('Set E2EE key command received');
-            APP.store.dispatch(setE2EEKey(key));
+        'toggle-e2ee': enabled => {
+            logger.debug('Toggle E2EE key command received');
+            APP.store.dispatch(toggleE2EE(enabled));
         },
         'set-video-quality': frameHeight => {
             logger.debug('Set video quality command received');
@@ -525,6 +531,19 @@ class API {
     }
 
     /**
+     * Notify external application that the video quality setting has changed.
+     *
+     * @param {number} videoQuality - The video quality. The number represents the maximum height of the video streams.
+     * @returns {void}
+     */
+    notifyVideoQualityChanged(videoQuality: number) {
+        this._sendEvent({
+            name: 'video-quality-changed',
+            videoQuality
+        });
+    }
+
+    /**
      * Notify external application (if API is enabled) that message was
      * received.
      *
@@ -678,6 +697,21 @@ class API {
     }
 
     /**
+     * Notify external application (if API is enabled) that the an error has been logged.
+     *
+     * @param {string} logLevel - The message log level.
+     * @param {Array} args - Array of strings composing the log message.
+     * @returns {void}
+     */
+    notifyLog(logLevel: string, args: Array<string>) {
+        this._sendEvent({
+            name: 'log',
+            logLevel,
+            args
+        });
+    }
+
+    /**
      * Notify external application (if API is enabled) that the conference has
      * been joined.
      *
@@ -697,8 +731,7 @@ class API {
     }
 
     /**
-     * Notify external application (if API is enabled) that user changed their
-     * nickname.
+     * Notify external application (if API is enabled) that local user has left the conference.
      *
      * @param {string} roomName - User id.
      * @returns {void}

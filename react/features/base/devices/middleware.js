@@ -5,7 +5,6 @@ import { processExternalDeviceRequest } from '../../device-selection';
 import { showNotification, showWarningNotification } from '../../notifications';
 import { replaceAudioTrackById, replaceVideoTrackById, setDeviceStatusWarning } from '../../prejoin/actions';
 import { isPrejoinPageVisible } from '../../prejoin/functions';
-import { CONFERENCE_JOINED } from '../conference';
 import { JitsiTrackErrors } from '../lib-jitsi-meet';
 import { MiddlewareRegistry } from '../redux';
 import { updateSettings } from '../settings';
@@ -24,6 +23,7 @@ import {
     setVideoInputDevice
 } from './actions';
 import {
+    areDeviceLabelsInitialized,
     formatDeviceLabel,
     groupDevicesByKind,
     setAudioOutputDeviceId
@@ -73,8 +73,6 @@ function logDeviceList(deviceList) {
 // eslint-disable-next-line no-unused-vars
 MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
-    case CONFERENCE_JOINED:
-        return _conferenceJoined(store, next, action);
     case NOTIFY_CAMERA_ERROR: {
         if (typeof APP !== 'object' || !action.error) {
             break;
@@ -148,6 +146,9 @@ MiddlewareRegistry.register(store => next => action => {
         break;
     case UPDATE_DEVICE_LIST:
         logDeviceList(groupDevicesByKind(action.devices));
+        if (areDeviceLabelsInitialized(store.getState())) {
+            return _processPendingRequests(store, next, action);
+        }
         break;
     case CHECK_AND_NOTIFY_FOR_NEW_DEVICE:
         _checkAndNotifyForNewDevice(store, action.newDevices, action.oldDevices);
@@ -170,10 +171,14 @@ MiddlewareRegistry.register(store => next => action => {
  * @private
  * @returns {Object} The value returned by {@code next(action)}.
  */
-function _conferenceJoined({ dispatch, getState }, next, action) {
+function _processPendingRequests({ dispatch, getState }, next, action) {
     const result = next(action);
     const state = getState();
     const { pendingRequests } = state['features/base/devices'];
+
+    if (!pendingRequests || pendingRequests.length === 0) {
+        return result;
+    }
 
     pendingRequests.forEach(request => {
         processExternalDeviceRequest(

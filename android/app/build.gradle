@@ -3,7 +3,7 @@ apply plugin: 'com.android.application'
 // Crashlytics integration is done as part of Firebase now, so it gets
 // automagically activated with google-services.json
 if (googleServicesEnabled) {
-    apply plugin: 'io.fabric'
+    apply plugin: 'com.google.firebase.crashlytics'
 }
 
 // Use the number of seconds/10 since Jan 1 2019 as the versionCode.
@@ -70,14 +70,9 @@ android {
     }
 }
 
-repositories {
-    maven { url 'https://maven.fabric.io/public' }
-}
-
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    implementation 'androidx.appcompat:appcompat:1.1.0'
+    implementation 'androidx.appcompat:appcompat:1.2.0'
 
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.0-beta-5'
 
@@ -87,9 +82,8 @@ dependencies {
         // Firebase
         //  - Crashlytics
         //  - Dynamic Links
-        implementation 'com.google.firebase:firebase-core:16.0.6'
-        implementation 'com.crashlytics.sdk.android:crashlytics:2.9.8'
-        implementation 'com.google.firebase:firebase-dynamic-links:16.1.5'
+        implementation 'com.google.firebase:firebase-crashlytics:17.2.1'
+        implementation 'com.google.firebase:firebase-dynamic-links:19.1.0'
     }
 
     implementation project(':sdk')
