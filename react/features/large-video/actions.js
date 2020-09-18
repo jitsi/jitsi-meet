@@ -27,42 +27,49 @@ declare var APP: Object;
 * @returns {Function}
 */
 export function captureLargeVideoScreenshot() {
-   return (dispatch: Dispatch<any>, getState: Function): Promise<Object> => {
-       const state = getState();
-       const largeVideo = state['features/large-video'];
+    return (dispatch: Dispatch<any>, getState: Function): Promise<Object> => {
+        const state = getState();
+        const largeVideo = state['features/large-video'];
 
-       if (!largeVideo) {
-           return Promise.resolve();
-       }
-       const tracks = state['features/base/tracks'];
-       const { jitsiTrack } = getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.VIDEO, largeVideo.participantId);
-       const videoStream = jitsiTrack.getOriginalStream();
+        if (!largeVideo) {
+            return Promise.resolve();
+        }
+        const tracks = state['features/base/tracks'];
+        const { jitsiTrack } = getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.VIDEO, largeVideo.participantId);
+        const videoStream = jitsiTrack.getOriginalStream();
 
-       // create a HTML canvas and draw video from the track on to the canvas.
-       const [ track ] = videoStream.getVideoTracks();
-       const { height, width } = track.getSettings() ?? track.getConstraints();
-       const canvas = document.createElement('canvas');
-       const ctx = canvas.getContext('2d');
-       const element = document.createElement('video');
+        // Create a HTML canvas and draw video from the track on to the canvas.
+        const [ track ] = videoStream.getVideoTracks();
+        const { height, width } = track.getSettings() ?? track.getConstraints();
+        const canvasElement = document.createElement('canvas');
+        const ctx = canvasElement.getContext('2d');
+        const videoElement = document.createElement('video');
 
-       element.height = parseInt(height, 10);
-       element.width = parseInt(width, 10);
-       element.autoplay = true;
-       element.srcObject = videoStream;
-       canvas.height = parseInt(height, 10);
-       canvas.width = parseInt(width, 10);
+        videoElement.height = parseInt(height, 10);
+        videoElement.width = parseInt(width, 10);
+        videoElement.autoplay = true;
+        videoElement.srcObject = videoStream;
+        canvasElement.height = parseInt(height, 10);
+        canvasElement.width = parseInt(width, 10);
 
-       // wait for the video to load before drawing on to the canvas.
-       const promise = new Promise(resolve => {
-           element.onloadeddata = () => resolve();
-       });
+        // Wait for the video to load before drawing on to the canvas.
+        const promise = new Promise(resolve => {
+            videoElement.onloadeddata = () => resolve();
+        });
 
-       return promise.then(() => {
-           ctx.drawImage(element, 0, 0, element.width, element.height);
+        return promise.then(() => {
+            ctx.drawImage(videoElement, 0, 0, videoElement.width, videoElement.height);
+            const dataURL = canvasElement.toDataURL('image/png', 1.0);
 
-           return Promise.resolve(canvas.toDataURL('image/jpeg', 1.0));
-       });
-   }
+            // Cleanup.
+            ctx.clearRect(0, 0, videoElement.width, videoElement.height);
+            videoElement.srcObject = null;
+            canvasElement.remove();
+            videoElement.remove();
+
+            return Promise.resolve(dataURL);
+        });
+    };
 }
 
 /**
@@ -70,7 +77,7 @@ export function captureLargeVideoScreenshot() {
  *
  * @param {number} width - Width that needs to be applied on the large video container.
  * @param {number} height - Height that needs to be applied on the large video container.
- * @returns {void}
+ * @returns {Function}
  */
 export function resizeLargeVideo(width: number, height: number) {
     return (dispatch: Dispatch<any>, getState: Function) => {

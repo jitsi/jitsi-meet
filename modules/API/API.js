@@ -21,7 +21,7 @@ import {
 import { isEnabled as isDropboxEnabled } from '../../react/features/dropbox';
 import { toggleE2EE } from '../../react/features/e2ee/actions';
 import { invite } from '../../react/features/invite';
-import { 
+import {
     captureLargeVideoScreenshot,
     resizeLargeVideo,
     selectParticipantInLargeVideo
