@@ -1,5 +1,7 @@
 // @flow
 
+import { downloadJSON } from '../../../modules/util/helpers';
+import getRoomName from '../base/config/getRoomName';
 import { MiddlewareRegistry } from '../base/redux';
 
 import { CONNECTION_INDICATOR_SAVE_LOGS } from './actionTypes';
@@ -18,18 +20,9 @@ MiddlewareRegistry.register(store => next => action => {
         // this can be called from console and will not have reference to this
         // that's why we reference the global var
         const logs = store.getState()['features/base/connection'].connection.getLogs();
-        const data = encodeURIComponent(JSON.stringify(logs, null, '  '));
+        const roomName = getRoomName() || '';
 
-        const elem = document.createElement('a');
-
-        elem.download = 'meet.json';
-        elem.href = `data:application/json;charset=utf-8,\n${data}`;
-        elem.dataset.downloadurl = [ 'text/json', elem.download, elem.href ].join(':');
-        elem.dispatchEvent(new MouseEvent('click', {
-            view: window,
-            bubbles: true,
-            cancelable: false
-        }));
+        downloadJSON(logs, `meetlog-${roomName}.json`);
     }
     }
 

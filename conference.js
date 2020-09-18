@@ -10,7 +10,7 @@ import AuthHandler from './modules/UI/authentication/AuthHandler';
 import UIUtil from './modules/UI/util/UIUtil';
 import mediaDeviceHelper from './modules/devices/mediaDeviceHelper';
 import Recorder from './modules/recorder/Recorder';
-import { createTaskQueue } from './modules/util/helpers';
+import { createTaskQueue, downloadJSON } from './modules/util/helpers';
 import {
     createDeviceChangedEvent,
     createStartSilentEvent,
@@ -1221,19 +1221,8 @@ export default {
         // this can be called from console and will not have reference to this
         // that's why we reference the global var
         const logs = APP.connection.getLogs();
-        const data = encodeURIComponent(JSON.stringify(logs, null, '  '));
 
-        const elem = document.createElement('a');
-
-        elem.download = filename;
-        elem.href = `data:application/json;charset=utf-8,\n${data}`;
-        elem.dataset.downloadurl
-            = [ 'text/json', elem.download, elem.href ].join(':');
-        elem.dispatchEvent(new MouseEvent('click', {
-            view: window,
-            bubbles: true,
-            cancelable: false
-        }));
+        downloadJSON(logs, filename);
     },
 
     /**
