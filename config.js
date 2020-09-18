@@ -632,8 +632,6 @@ var config = {
     // List of undocumented settings used in jitsi-meet
     /**
      _immediateReloadThreshold
-     autoRecord
-     autoRecordToken
      debug
      debugAudioLevels
      deploymentInfo
