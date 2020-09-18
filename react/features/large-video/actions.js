@@ -10,6 +10,7 @@ import {
 import { _handleParticipantError } from '../base/conference';
 import { MEDIA_TYPE } from '../base/media';
 import { getParticipants } from '../base/participants';
+import { getTrackByMediaTypeAndParticipant } from '../base/tracks';
 import { reportError } from '../base/util';
 import { shouldDisplayTileView } from '../video-layout';
 
@@ -19,6 +20,50 @@ import {
 } from './actionTypes';
 
 declare var APP: Object;
+
+/**
+* Captures a screenshot of the video displayed on the large video.
+*
+* @returns {Function}
+*/
+export function captureLargeVideoScreenshot() {
+   return (dispatch: Dispatch<any>, getState: Function): Promise<Object> => {
+       const state = getState();
+       const largeVideo = state['features/large-video'];
+
+       if (!largeVideo) {
+           return Promise.resolve();
+       }
+       const tracks = state['features/base/tracks'];
+       const { jitsiTrack } = getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.VIDEO, largeVideo.participantId);
+       const videoStream = jitsiTrack.getOriginalStream();
+
+       // create a HTML canvas and draw video from the track on to the canvas.
+       const [ track ] = videoStream.getVideoTracks();
+       const { height, width } = track.getSettings() ?? track.getConstraints();
+       const canvas = document.createElement('canvas');
+       const ctx = canvas.getContext('2d');
+       const element = document.createElement('video');
+
+       element.height = parseInt(height, 10);
+       element.width = parseInt(width, 10);
+       element.autoplay = true;
+       element.srcObject = videoStream;
+       canvas.height = parseInt(height, 10);
+       canvas.width = parseInt(width, 10);
+
+       // wait for the video to load before drawing on to the canvas.
+       const promise = new Promise(resolve => {
+           element.onloadeddata = () => resolve();
+       });
+
+       return promise.then(() => {
+           ctx.drawImage(element, 0, 0, element.width, element.height);
+
+           return Promise.resolve(canvas.toDataURL('image/jpeg', 1.0));
+       });
+   }
+}
 
 /**
  * Resizes the large video container based on the dimensions provided.
@@ -72,7 +117,7 @@ export function selectParticipant() {
 
 /**
  * Action to select the participant to be displayed in LargeVideo based on the
- * participant id provided. If a partcipant id is not provided, the LargeVideo
+ * participant id provided. If a participant id is not provided, the LargeVideo
  * participant will be selected based on a variety of factors: If there is a
  * dominant or pinned speaker, or if there are remote tracks, etc.
  *
