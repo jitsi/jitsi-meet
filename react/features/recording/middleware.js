@@ -45,6 +45,7 @@ import {
     RECORDING_ON_SOUND_FILE
 } from './sounds';
 
+declare var APP: Object;
 declare var interfaceConfig: Object;
 
 /**
@@ -182,6 +183,8 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
                 if (soundID) {
                     dispatch(playSound(soundID));
                 }
+
+                APP.API.notifyRecordingStatusChanged(true, mode);
             } else if (updatedSessionData.status === OFF
                 && (!oldSessionData || oldSessionData.status !== OFF)) {
                 dispatch(showStoppedRecordingNotification(
@@ -210,6 +213,8 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
                     dispatch(stopSound(soundOn));
                     dispatch(playSound(soundOff));
                 }
+
+                APP.API.notifyRecordingStatusChanged(false, mode);
             }
         }
 
