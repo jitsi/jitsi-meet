@@ -489,7 +489,7 @@ const VideoLayout = {
     onVideoTypeChanged(id, newVideoType) {
         const remoteVideo = remoteVideos[id];
 
-        if (!remoteVideo || remoteVideo.videoType === newVideoType) {
+        if (!remoteVideo) {
             return;
         }
 
