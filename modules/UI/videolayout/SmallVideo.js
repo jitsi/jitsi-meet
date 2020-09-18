@@ -243,6 +243,10 @@ export default class SmallVideo {
      * or hidden
      */
     setScreenSharing(isScreenSharing) {
+        if (isScreenSharing === this.isScreenSharing) {
+            return;
+        }
+
         this.isScreenSharing = isScreenSharing;
         this.updateView();
         this.updateStatusBar();
