@@ -14,9 +14,6 @@ var config = {
         // Domain for authenticated users. Defaults to <domain>.
         // authdomain: 'jitsi-meet.example.com',
 
-        // Jirecon recording component domain.
-        // jirecon: 'jirecon.jitsi-meet.example.com',
-
         // Call control component (Jigasi).
         // call_control: 'callcontrol.jitsi-meet.example.com',
 
