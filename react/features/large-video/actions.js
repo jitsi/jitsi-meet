@@ -49,8 +49,8 @@ export function captureLargeVideoScreenshot() {
         videoElement.width = parseInt(width, 10);
         videoElement.autoplay = true;
         videoElement.srcObject = videoStream;
-        canvasElement.height = parseInt(height, 10);
-        canvasElement.width = parseInt(width, 10);
+        canvasElement.height = videoElement.height;
+        canvasElement.width = videoElement.width;
 
         // Wait for the video to load before drawing on to the canvas.
         const promise = new Promise(resolve => {
