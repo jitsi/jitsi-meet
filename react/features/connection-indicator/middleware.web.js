@@ -14,7 +14,6 @@ import { CONNECTION_INDICATOR_SAVE_LOGS } from './actionTypes';
  */
 // eslint-disable-next-line no-unused-vars
 MiddlewareRegistry.register(store => next => action => {
-    // FIXME duplicate code with conference.saveLogs()
     switch (action.type) {
     case CONNECTION_INDICATOR_SAVE_LOGS: {
         // this can be called from console and will not have reference to this
