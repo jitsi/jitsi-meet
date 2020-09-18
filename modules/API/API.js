@@ -21,7 +21,11 @@ import {
 import { isEnabled as isDropboxEnabled } from '../../react/features/dropbox';
 import { toggleE2EE } from '../../react/features/e2ee/actions';
 import { invite } from '../../react/features/invite';
-import { resizeLargeVideo, selectParticipantInLargeVideo } from '../../react/features/large-video/actions';
+import {
+    captureLargeVideoScreenshot,
+    resizeLargeVideo,
+    selectParticipantInLargeVideo
+} from '../../react/features/large-video/actions';
 import { toggleLobbyMode } from '../../react/features/lobby/actions.web';
 import { RECORDING_TYPES } from '../../react/features/recording/constants';
 import { getActiveSession } from '../../react/features/recording/functions';
@@ -339,6 +343,21 @@ function initCommands() {
         const { name } = request;
 
         switch (name) {
+        case 'capture-largevideo-screenshot' :
+            APP.store.dispatch(captureLargeVideoScreenshot())
+                .then(dataURL => {
+                    let error;
+
+                    if (!dataURL) {
+                        error = new Error('No large video found!');
+                    }
+
+                    callback({
+                        error,
+                        dataURL
+                    });
+                });
+            break;
         case 'invite': {
             const { invitees } = request;
 

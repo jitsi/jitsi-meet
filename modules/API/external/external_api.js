@@ -637,6 +637,18 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
     }
 
     /**
+     * Captures the screenshot of the large video.
+     *
+     * @returns {dataURL} - Base64 encoded image data of the screenshot if large
+     * video is detected, an error otherwise.
+     */
+    captureLargeVideoScreenshot() {
+        return this._transport.sendRequest({
+            name: 'capture-largevideo-screenshot'
+        });
+    }
+
+    /**
      * Removes the listeners and removes the Jitsi Meet frame.
      *
      * @returns {void}
