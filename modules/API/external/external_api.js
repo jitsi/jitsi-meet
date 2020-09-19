@@ -35,7 +35,6 @@ const commands = {
     hangup: 'video-hangup',
     muteEveryone: 'mute-everyone',
     password: 'password',
-    resizeLargeVideo: 'resize-large-video',
     sendEndpointTextMessage: 'send-endpoint-text-message',
     sendTones: 'send-tones',
     setLargeVideoParticipant: 'set-large-video-participant',
@@ -438,12 +437,10 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
         const parsedWidth = parseSizeParam(width);
 
         if (parsedHeight !== undefined) {
-            this._height = height;
             this._frame.style.height = parsedHeight;
         }
 
         if (parsedWidth !== undefined) {
-            this._width = width;
             this._frame.style.width = parsedWidth;
         }
     }
@@ -931,19 +928,6 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      */
     removeEventListeners(eventList) {
         eventList.forEach(event => this.removeEventListener(event));
-    }
-
-    /**
-     * Resizes the large video container as per the dimensions provided.
-     *
-     * @param {number} width - Width that needs to be applied on the large video container.
-     * @param {number} height - Height that needs to be applied on the large video container.
-     * @returns {void}
-     */
-    resizeLargeVideo(width, height) {
-        if (width <= this._width && height <= this._height) {
-            this.executeCommand('resizeLargeVideo', width, height);
-        }
     }
 
     /**

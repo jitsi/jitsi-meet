@@ -6,6 +6,13 @@
 const UIUtil = {
 
     /**
+     * Returns the available video width.
+     */
+    getAvailableVideoWidth() {
+        return window.innerWidth;
+    },
+
+    /**
      * Escapes the given text.
      */
     escapeHtml(unsafeText) {

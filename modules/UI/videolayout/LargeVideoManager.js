@@ -21,6 +21,7 @@ import { PresenceLabel } from '../../../react/features/presence-status';
 import UIEvents from '../../../service/UI/UIEvents';
 import { createDeferred } from '../../util/helpers';
 import AudioLevels from '../audio_levels/AudioLevels';
+import UIUtil from '../util/UIUtil';
 
 import { VideoContainer, VIDEO_CONTAINER_TYPE } from './VideoContainer';
 
@@ -322,25 +323,20 @@ export default class LargeVideoManager {
     /**
      * Update container size.
      */
-    updateContainerSize(width, height) {
-        let widthToUse = width ?? (this.width > 0 ? this.width : window.innerWidth);
+    updateContainerSize() {
+        let widthToUse = UIUtil.getAvailableVideoWidth();
         const { isOpen } = APP.store.getState()['features/chat'];
 
-        /**
-         * If chat state is open, we re-compute the container width by subtracting the default width of
-         * the chat. We re-compute the width again after the chat window is closed. This is needed when
-         * custom styling is configured on the large video container through the iFrame API.
-         */
         if (isOpen) {
+            /**
+             * If chat state is open, we re-compute the container width
+             * by subtracting the default width of the chat.
+             */
             widthToUse -= CHAT_SIZE;
-            this.resizedForChat = true;
-        } else if (this.resizedForChat) {
-            this.resizedForChat = false;
-            widthToUse += CHAT_SIZE;
         }
 
         this.width = widthToUse;
-        this.height = height ?? (this.height > 0 ? this.height : window.innerHeight);
+        this.height = window.innerHeight;
     }
 
     /**
