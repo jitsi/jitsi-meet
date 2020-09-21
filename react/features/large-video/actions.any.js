@@ -18,8 +18,6 @@ import {
     UPDATE_KNOWN_LARGE_VIDEO_RESOLUTION
 } from './actionTypes';
 
-declare var APP: Object;
-
 /**
 * Captures a screenshot of the video displayed on the large video.
 *

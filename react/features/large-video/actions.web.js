@@ -4,8 +4,6 @@ import type { Dispatch } from 'redux';
 
 import VideoLayout from '../../../modules/UI/videolayout/VideoLayout';
 
-declare var APP: Object;
-
 export * from './actions.any';
 
 /**
