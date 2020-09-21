@@ -53,12 +53,16 @@ type Props = AbstractButtonProps & {
     dispatch: Function
 }
 
+type State = {
+    videoControlOverride: Boolean
+}
+
 /**
  * Component that renders a toolbar button for toggling video mute.
  *
  * @extends AbstractVideoMuteButton
  */
-class VideoMuteButton extends AbstractVideoMuteButton<Props, *> {
+class VideoMuteButton extends AbstractVideoMuteButton<Props, State> {
     accessibilityLabel = 'toolbar.accessibilityLabel.videomute';
     label = 'toolbar.videomute';
     tooltip = 'toolbar.videomute';
@@ -74,6 +78,10 @@ class VideoMuteButton extends AbstractVideoMuteButton<Props, *> {
 
         // Bind event handlers so they are only bound once per instance.
         this._onKeyboardShortcut = this._onKeyboardShortcut.bind(this);
+
+        this.state = {
+            videoControlOverride: false
+        }
     }
 
     /**
@@ -140,8 +148,43 @@ class VideoMuteButton extends AbstractVideoMuteButton<Props, *> {
                 ACTION_SHORTCUT_TRIGGERED,
                 { enable: !this._isVideoMuted() }));
 
+        this._handleClick();
+    }
+
+    _handleClick() {
+        if (this.props._screensharingTrack != null) {
+            // mark video mutation overriden by local user during screensharing
+            this.state.videoControlOverride = true
+        }
         super._handleClick();
     }
+
+    /**
+     * Controls video mutation during screensharing to save bandwidth.
+     *
+     * @inheritdoc
+     * @returns {void}
+     */
+    componentDidUpdate(prevProps: *, prevState: State) {
+        if (this.props._screensharingTrack != null 
+            && !this.state.videoControlOverride) {
+            console.log('mute video because screensharing started');
+            const mediaType = this.props._videoMediaType;
+
+            this.props.dispatch(
+                setVideoMuted(
+                    true,
+                    mediaType,
+                    VIDEO_MUTISM_AUTHORITY.USER,
+                    /* ensureTrack */ true));
+        }
+
+        if (this.props._screensharingTrack == null && prevProps._screensharingTrack != null) {
+            console.log('reset video override');
+            this.state.videoControlOverride = false;
+        }
+    }
+
 
     /**
      * Changes the muted state.
@@ -192,6 +235,7 @@ function _mapStateToProps(state): Object {
         _audioOnly: Boolean(audioOnly),
         _videoDisabled: !hasAvailableDevices(state, 'videoInput'),
         _videoMediaType: getLocalVideoType(tracks),
+        _screensharingTrack: tracks.filter(track => track.videoType === 'desktop' && !track.local)[0],
         _videoMuted: isLocalVideoTrackMuted(tracks)
     };
 }
