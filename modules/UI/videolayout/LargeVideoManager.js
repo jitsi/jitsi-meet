@@ -15,7 +15,7 @@ import { VIDEO_TYPE } from '../../../react/features/base/media';
 import { CHAT_SIZE } from '../../../react/features/chat';
 import {
     updateKnownLargeVideoResolution
-} from '../../../react/features/large-video';
+} from '../../../react/features/large-video/actions';
 import { PresenceLabel } from '../../../react/features/presence-status';
 /* eslint-enable no-unused-vars */
 import UIEvents from '../../../service/UI/UIEvents';

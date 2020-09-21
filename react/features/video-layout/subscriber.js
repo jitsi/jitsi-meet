@@ -5,7 +5,7 @@ import debounce from 'lodash/debounce';
 import { pinParticipant, getPinnedParticipant } from '../base/participants';
 import { StateListenerRegistry, equals } from '../base/redux';
 import { isFollowMeActive } from '../follow-me';
-import { selectParticipant } from '../large-video';
+import { selectParticipant } from '../large-video/actions';
 
 import { setParticipantsWithScreenShare } from './actions';
 
