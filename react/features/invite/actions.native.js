@@ -6,8 +6,8 @@ import { getFeatureFlag, ADD_PEOPLE_ENABLED } from '../base/flags';
 import { setActiveModalId } from '../base/modal';
 import { beginShareRoom } from '../share-room';
 
-import { isAddPeopleEnabled, isDialOutEnabled } from './functions';
 import { ADD_PEOPLE_DIALOG_VIEW_ID } from './constants';
+import { isAddPeopleEnabled, isDialOutEnabled } from './functions';
 
 export * from './actions.any';
 

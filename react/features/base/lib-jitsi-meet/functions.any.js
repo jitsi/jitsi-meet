@@ -1,6 +1,7 @@
 // @flow
 
 import { toState } from '../redux';
+
 import JitsiMeetJS from './_';
 
 const JitsiConferenceErrors = JitsiMeetJS.errors.conference;
@@ -64,6 +65,7 @@ export function isFatalJitsiConferenceError(error: Object | string) {
     return (
         error === JitsiConferenceErrors.FOCUS_DISCONNECTED
             || error === JitsiConferenceErrors.FOCUS_LEFT
+            || error === JitsiConferenceErrors.ICE_FAILED
             || error === JitsiConferenceErrors.OFFER_ANSWER_FAILED
             || error === JitsiConferenceErrors.VIDEOBRIDGE_NOT_AVAILABLE);
 }

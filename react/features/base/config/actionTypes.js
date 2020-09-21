@@ -43,8 +43,8 @@ export const SET_CONFIG = 'SET_CONFIG';
  * and the passed object.
  *
  * {
- *     type: _UPDATE_CONFIG,
+ *     type: UPDATE_CONFIG,
  *     config: Object
  * }
  */
-export const _UPDATE_CONFIG = '_UPDATE_CONFIG';
+export const UPDATE_CONFIG = 'UPDATE_CONFIG';

@@ -2,6 +2,8 @@
 
 import pixelmatch from 'pixelmatch';
 
+import { getCurrentConference } from '../../base/conference';
+
 import {
     CLEAR_INTERVAL,
     INTERVAL_TIMEOUT,
@@ -9,8 +11,6 @@ import {
     POLL_INTERVAL,
     SET_INTERVAL
 } from './constants';
-
-import { getCurrentConference } from '../../base/conference';
 import { processScreenshot } from './processScreenshot';
 import { timerWorkerScript } from './worker';
 

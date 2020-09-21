@@ -10,9 +10,9 @@ import { getParticipantDisplayName } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import { StyleType } from '../../../base/styles';
 import { PrivateMessageButton } from '../../../chat';
-
 import { hideRemoteVideoMenu } from '../../actions';
 
+import GrantModeratorButton from './GrantModeratorButton';
 import KickButton from './KickButton';
 import MuteButton from './MuteButton';
 import PinButton from './PinButton';
@@ -98,6 +98,8 @@ class RemoteVideoMenu extends Component<Props> {
         if (!_disableRemoteMute) {
             buttons.push(<MuteButton { ...buttonProps } />);
         }
+
+        buttons.push(<GrantModeratorButton { ...buttonProps } />);
 
         if (!_disableKick) {
             buttons.push(<KickButton { ...buttonProps } />);

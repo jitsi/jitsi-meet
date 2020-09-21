@@ -1,10 +1,8 @@
 // @flow
 
 import UIEvents from '../../../../service/UI/UIEvents';
-
 import { NOTIFICATION_TIMEOUT, showNotification } from '../../notifications';
 import { CALLING, INVITED } from '../../presence-status';
-
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../app';
 import {
     CONFERENCE_WILL_JOIN,
@@ -16,15 +14,8 @@ import { MiddlewareRegistry, StateListenerRegistry } from '../redux';
 import { playSound, registerSound, unregisterSound } from '../sounds';
 
 import {
-    localParticipantIdChanged,
-    localParticipantJoined,
-    localParticipantLeft,
-    participantLeft,
-    participantUpdated,
-    setLoadableAvatarUrl
-} from './actions';
-import {
     DOMINANT_SPEAKER_CHANGED,
+    GRANT_MODERATOR,
     KICK_PARTICIPANT,
     MUTE_REMOTE_PARTICIPANT,
     PARTICIPANT_DISPLAY_NAME_CHANGED,
@@ -32,6 +23,14 @@ import {
     PARTICIPANT_LEFT,
     PARTICIPANT_UPDATED
 } from './actionTypes';
+import {
+    localParticipantIdChanged,
+    localParticipantJoined,
+    localParticipantLeft,
+    participantLeft,
+    participantUpdated,
+    setLoadableAvatarUrl
+} from './actions';
 import {
     LOCAL_PARTICIPANT_DEFAULT_ID,
     PARTICIPANT_JOINED_SOUND_ID,
@@ -85,6 +84,13 @@ MiddlewareRegistry.register(store => next => action => {
                 raisedHand: false
             }));
 
+        break;
+    }
+
+    case GRANT_MODERATOR: {
+        const { conference } = store.getState()['features/base/conference'];
+
+        conference.grantOwner(action.id);
         break;
     }
 
@@ -231,7 +237,7 @@ StateListenerRegistry.register(
 
                 });
         } else {
-            const localParticipantId = getLocalParticipant(store.getState).getId();
+            const localParticipantId = getLocalParticipant(store.getState).id;
 
             // We left the conference, the local participant must be updated.
             _e2eeUpdated(store, conference, localParticipantId, false);

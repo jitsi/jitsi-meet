@@ -101,7 +101,6 @@ $sidebarWidth: 375px;
  * Misc.
  */
 $borderRadius: 4px;
-$defaultWatermarkLink: '../images/watermark.png';
 $popoverMenuPadding: 13px;
 $happySoftwareBackground: transparent;
 $desktopAppDragBarHeight: 25px;
@@ -165,6 +164,9 @@ $unsupportedDesktopBrowserTextFontSize: 21px;
 $watermarkWidth: 186px;
 $watermarkHeight: 74px;
 
+$welcomePageWatermarkWidth: 186px;
+$welcomePageWatermarkHeight: 74px;
+
 /**
  * Welcome page variables.
  */
@@ -179,9 +181,12 @@ $welcomePageHeaderBackgroundPosition: none;
 $welcomePageHeaderBackgroundRepeat: none;
 $welcomePageHeaderBackgroundSize: none;
 $welcomePageHeaderPaddingBottom: 0px;
+$welcomePageHeaderMinHeight: fit-content;
 
 $welcomePageHeaderTextMarginTop: 35px;
 $welcomePageHeaderTextMarginBottom: 35px;
+$welcomePageHeaderTextDisplay: flex;
+$welcomePageHeaderTextWidth: 650px;
 
 $welcomePageHeaderTextTitleMarginBottom: 16px;
 $welcomePageHeaderTextTitleFontSize: 2.5rem;
@@ -196,6 +201,7 @@ $welcomePageHeaderTextDescriptionLineHeight: 24px;
 $welcomePageHeaderTextDescriptionMarginBottom: 20px;
 $welcomePageHeaderTextDescriptionAlignSelf: inherit;
 
+$welcomePageEnterRoomDisplay: flex;
 $welcomePageEnterRoomWidth: 680px;
 $welcomePageEnterRoomPadding: 25px 30px;
 $welcomePageEnterRoomBorderRadius: 0px;
@@ -271,3 +277,8 @@ $chromeExtensionBannerRight: 16px;
 $chromeExtensionBannerTopInMeeting: 10px;
 $chromeExtensionBannerRightInMeeeting: 10px;
 
+/**
+* media type thresholds
+*/
+$smallScreen: 700px;
+$verySmallScreen: 500px;

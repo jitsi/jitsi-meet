@@ -11,14 +11,15 @@
 
   ServerName jitsi-meet.example.com
 
-  SSLProtocol TLSv1 TLSv1.1 TLSv1.2
+  # enable HTTP/2, if available
+  Protocols h2 http/1.1
+
   SSLEngine on
   SSLProxyEngine on
   SSLCertificateFile /etc/jitsi/meet/jitsi-meet.example.com.crt
   SSLCertificateKeyFile /etc/jitsi/meet/jitsi-meet.example.com.key
-  SSLCipherSuite "EECDH+ECDSA+AESGCM:EECDH+aRSA+AESGCM:EECDH+ECDSA+SHA256:EECDH+aRSA+SHA256:EECDH+ECDSA+SHA384:EECDH+ECDSA+SHA256:EECDH+aRSA+SHA384:EDH+aRSA+AESGCM:EDH+aRSA+SHA256:EDH+aRSA:EECDH:!aNULL:!eNULL:!MEDIUM:!LOW:!3DES:!MD5:!EXP:!PSK:!SRP:!DSS:!RC4:!SEED"
-  SSLHonorCipherOrder on
-  Header set Strict-Transport-Security "max-age=31536000"
+
+  Header always set Strict-Transport-Security "max-age=63072000"
 
   DocumentRoot "/usr/share/jitsi-meet"
   <Directory "/usr/share/jitsi-meet">
@@ -48,3 +49,9 @@
   RewriteEngine on
   RewriteRule ^/([a-zA-Z0-9]+)$ /index.html
 </VirtualHost>
+
+# Mozilla Guideline v5.4, Apache 2.4.41, OpenSSL 1.1.1d, intermediate configuration, no OCSP
+SSLProtocol             all -SSLv3 -TLSv1 -TLSv1.1
+SSLCipherSuite          ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384
+SSLHonorCipherOrder     off
+SSLSessionTickets       off

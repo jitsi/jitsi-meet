@@ -5,10 +5,11 @@ import { Image, Text, View } from 'react-native';
 
 import { Icon } from '../../../icons';
 import { type StyleType } from '../../../styles';
-
 import AbstractStatelessAvatar, { type Props as AbstractProps } from '../AbstractStatelessAvatar';
 
 import styles from './styles';
+
+const DEFAULT_AVATAR = require('../../../../../../images/avatar.png');
 
 type Props = AbstractProps & {
 
@@ -22,8 +23,6 @@ type Props = AbstractProps & {
      */
     style?: StyleType
 };
-
-const DEFAULT_AVATAR = require('../../../../../../images/avatar.png');
 
 /**
  * Implements a stateless avatar component that renders an avatar purely from what gets passed through

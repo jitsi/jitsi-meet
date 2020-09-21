@@ -6,11 +6,11 @@ import type { Dispatch } from 'redux';
 
 import { createToolbarEvent, sendAnalytics } from '../../analytics';
 import { setAudioOnly } from '../../base/audio-only';
-import { VIDEO_QUALITY_LEVELS, setPreferredVideoQuality } from '../../base/conference';
 import { translate } from '../../base/i18n';
 import JitsiMeetJS from '../../base/lib-jitsi-meet';
 import { connect } from '../../base/redux';
-
+import { setPreferredVideoQuality } from '../actions';
+import { VIDEO_QUALITY_LEVELS } from '../constants';
 import logger from '../logger';
 
 const {
@@ -139,7 +139,7 @@ class VideoQualitySlider extends Component<Props> {
      * @returns {ReactElement}
      */
     render() {
-        const { _audioOnly, _p2p, _videoSupported, t } = this.props;
+        const { _videoSupported, t } = this.props;
         const activeSliderOption = this._mapCurrentQualityToSliderValue();
 
         let classNames = 'video-quality-dialog';
@@ -148,8 +148,6 @@ class VideoQualitySlider extends Component<Props> {
         if (!_videoSupported) {
             classNames += ' video-not-supported';
             warning = this._renderAudioOnlyLockedMessage();
-        } else if (_p2p && !_audioOnly) {
-            warning = this._renderP2PMessage();
         }
 
         return (
@@ -201,24 +199,6 @@ class VideoQualitySlider extends Component<Props> {
             <InlineMessage
                 title = { t('videoStatus.onlyAudioAvailable') }>
                 { t('videoStatus.onlyAudioSupported') }
-            </InlineMessage>
-        );
-    }
-
-    /**
-     * Creates React Elements for notifying that peer to peer is enabled.
-     *
-     * @private
-     * @returns {ReactElement}
-     */
-    _renderP2PMessage() {
-        const { t } = this.props;
-
-        return (
-            <InlineMessage
-                secondaryText = { t('videoStatus.recHighDefinitionOnly') }
-                title = { t('videoStatus.p2pEnabled') }>
-                { t('videoStatus.p2pVideoQualityDescription') }
             </InlineMessage>
         );
     }
@@ -336,10 +316,13 @@ class VideoQualitySlider extends Component<Props> {
             return _sliderOptions.indexOf(audioOnlyOption);
         }
 
-        const matchingOption = _sliderOptions.find(
-            ({ videoQuality }) => videoQuality === _sendrecvVideoQuality);
+        for (let i = 0; i < _sliderOptions.length; i++) {
+            if (_sliderOptions[i].videoQuality >= _sendrecvVideoQuality) {
+                return i;
+            }
+        }
 
-        return _sliderOptions.indexOf(matchingOption);
+        return -1;
     }
 
     _onSliderChange: () => void;
@@ -401,7 +384,8 @@ class VideoQualitySlider extends Component<Props> {
  */
 function _mapStateToProps(state) {
     const { enabled: audioOnly } = state['features/base/audio-only'];
-    const { p2p, preferredVideoQuality } = state['features/base/conference'];
+    const { p2p } = state['features/base/conference'];
+    const { preferredVideoQuality } = state['features/video-quality'];
 
     return {
         _audioOnly: audioOnly,

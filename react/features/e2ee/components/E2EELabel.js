@@ -4,7 +4,7 @@ import Tooltip from '@atlaskit/tooltip';
 import React, { Component } from 'react';
 
 import { translate } from '../../base/i18n';
-import { Icon, IconE2EE } from '../../base/icons';
+import { IconE2EE } from '../../base/icons';
 import { CircularLabel } from '../../base/label';
 import { connect } from '../../base/redux';
 
@@ -29,16 +29,13 @@ class E2EELabel extends Component<Props> {
             return null;
         }
 
-        // eslint-disable-next-line react/jsx-max-props-per-line
-        const icon = <Icon size = { 22 } src = { IconE2EE } />;
-
         return (
             <Tooltip
                 content = { this.props.t('e2ee.labelToolTip') }
                 position = { 'left' }>
                 <CircularLabel
                     className = 'e2ee'
-                    label = { icon } />
+                    icon = { IconE2EE } />
             </Tooltip>
         );
     }

@@ -1,6 +1,7 @@
 // @flow
-import { CONFIG_WHITELIST, parseURLParams } from '../config';
+import { CONFIG_WHITELIST } from '../config';
 import { toState } from '../redux';
+import { parseURLParams } from '../util';
 
 import { DEFAULT_SERVER_URL } from './constants';
 

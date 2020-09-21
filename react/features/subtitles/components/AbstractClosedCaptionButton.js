@@ -1,8 +1,8 @@
 // @flow
 
 import { createToolbarEvent, sendAnalytics } from '../../analytics';
-import { AbstractButton, type AbstractButtonProps } from '../../base/toolbox';
-
+import { isLocalParticipantModerator } from '../../base/participants';
+import { AbstractButton, type AbstractButtonProps } from '../../base/toolbox/components';
 import { toggleRequestingSubtitles } from '../actions';
 
 export type AbstractProps = AbstractButtonProps & {
@@ -85,7 +85,7 @@ export class AbstractClosedCaptionButton
 export function _abstractMapStateToProps(state: Object, ownProps: Object) {
     const { _requestingSubtitles } = state['features/subtitles'];
     const { transcribingEnabled } = state['features/base/config'];
-    const { visible = Boolean(transcribingEnabled) } = ownProps;
+    const { visible = Boolean(transcribingEnabled && isLocalParticipantModerator(state)) } = ownProps;
 
     return {
         _requestingSubtitles,

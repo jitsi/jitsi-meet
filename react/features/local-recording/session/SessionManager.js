@@ -1,6 +1,6 @@
 /* @flow */
 
-import jitsiLocalStorage from '../../../../modules/util/JitsiLocalStorage';
+import { jitsiLocalStorage } from '@jitsi/js-utils';
 
 import logger from '../logger';
 

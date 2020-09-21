@@ -1,17 +1,18 @@
 // @flow
 
-import { getNearestReceiverVideoQualityLevel, setMaxReceiverVideoQuality } from '../base/conference';
+import Filmstrip from '../../../modules/UI/videolayout/Filmstrip';
 import { MiddlewareRegistry } from '../base/redux';
 import { CLIENT_RESIZED } from '../base/responsive-ui';
-import Filmstrip from '../../../modules/UI/videolayout/Filmstrip';
 import {
     getCurrentLayout,
     LAYOUTS,
     shouldDisplayTileView
 } from '../video-layout';
 
-import { setHorizontalViewDimensions, setTileViewDimensions } from './actions';
 import { SET_HORIZONTAL_VIEW_DIMENSIONS, SET_TILE_VIEW_DIMENSIONS } from './actionTypes';
+import { setHorizontalViewDimensions, setTileViewDimensions } from './actions.web';
+
+import './subscriber.web';
 
 /**
  * The middleware of the feature Filmstrip.
@@ -28,11 +29,18 @@ MiddlewareRegistry.register(store => next => action => {
         case LAYOUTS.TILE_VIEW: {
             const { gridDimensions } = state['features/filmstrip'].tileViewDimensions;
             const { clientHeight, clientWidth } = state['features/base/responsive-ui'];
+            const { isOpen } = state['features/chat'];
 
-            store.dispatch(setTileViewDimensions(gridDimensions, {
-                clientHeight,
-                clientWidth
-            }));
+            store.dispatch(
+                setTileViewDimensions(
+                    gridDimensions,
+                    {
+                        clientHeight,
+                        clientWidth
+                    },
+                    isOpen
+                )
+            );
             break;
         }
         case LAYOUTS.HORIZONTAL_FILMSTRIP_VIEW:
@@ -46,9 +54,6 @@ MiddlewareRegistry.register(store => next => action => {
 
         if (shouldDisplayTileView(state)) {
             const { width, height } = state['features/filmstrip'].tileViewDimensions.thumbnailSize;
-            const qualityLevel = getNearestReceiverVideoQualityLevel(height);
-
-            store.dispatch(setMaxReceiverVideoQuality(qualityLevel));
 
             // Once the thumbnails are reactified this should be moved there too.
             Filmstrip.resizeThumbnailsForTileView(width, height, true);

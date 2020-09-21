@@ -1,0 +1,70 @@
+@media only screen and (max-width: $smallScreen) {
+    .watermark {
+        width: 20%;
+        height: 20%;
+    }
+
+    .new-toolbox {
+        .toolbox-content {
+            .button-group-center, .button-group-left, .button-group-right {
+                .toolbox-button {
+                    .toolbox-icon {
+                        width: 28px;
+                        height: 28px;
+                        svg {
+                            width: 18px;
+                            height: 18px;
+                        }
+                    }
+
+                    &:nth-child(2) {
+                        .toolbox-icon {
+                            width: 30px;
+                            height: 30px;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@media only screen and (max-width: $verySmallScreen) {
+    #videoResolutionLabel {
+        display: none;
+    }
+    .desktop-browser {
+        .vertical-filmstrip .filmstrip {
+            display: none;
+        }
+    }
+    .new-toolbox {
+        .toolbox-content {
+            .button-group-center, .button-group-left, .button-group-right {
+                .settings-button-small-icon {
+                    display: none;
+                }
+                .toolbox-button {
+                    .toolbox-icon {
+                        width: 18px;
+                        height: 18px;
+                        svg {
+                            width: 12px;
+                            height: 12px;
+                        }
+                    }
+
+                    &:nth-child(2) {
+                        .toolbox-icon {
+                            width: 20px;
+                            height: 20px;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    .chrome-extension-banner {
+        display: none;
+    }
+}

@@ -2,8 +2,8 @@
 
 // We need to reference these files directly to avoid loading things that are not available
 // in this environment (e.g. JitsiMeetJS or interfaceConfig)
-import AbstractVideoMuteButton from '../base/toolbox/components/AbstractVideoMuteButton';
 import type { Props } from '../base/toolbox/components/AbstractButton';
+import AbstractVideoMuteButton from '../base/toolbox/components/AbstractVideoMuteButton';
 
 const { api } = window.alwaysOnTop;
 

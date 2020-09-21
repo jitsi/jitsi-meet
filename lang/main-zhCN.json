@@ -700,9 +700,6 @@
         "lowDefinition": "低清",
         "onlyAudioAvailable": "只能使用音频",
         "onlyAudioSupported": "我们只支持此浏览器的音频功能。",
-        "p2pEnabled": "点对点已启用",
-        "p2pVideoQualityDescription": "",
-        "recHighDefinitionOnly": "将会首选高清模式。",
         "sd": "标清",
         "sdTooltip": "观看标清视频",
         "standardDefinition": "标清"

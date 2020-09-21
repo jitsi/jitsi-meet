@@ -21,18 +21,18 @@ body.welcome-page {
         align-items: center;
         display: flex;
         flex-direction: column;
-        min-height: fit-content;
+        min-height: $welcomePageHeaderMinHeight;
         overflow: hidden;
         position: relative;
         text-align: center;
 
         .header-text {
-            display: flex;
+            display: $welcomePageHeaderTextDisplay;
             flex-direction: column;
             margin-top: $watermarkHeight + $welcomePageHeaderTextMarginTop;
             margin-bottom: $welcomePageHeaderTextMarginBottom;
             max-width: calc(100% - 40px);
-            width: 650px;
+            width: $welcomePageHeaderTextWidth;
             z-index: $zindex2;
         }
 
@@ -56,7 +56,7 @@ body.welcome-page {
         }
 
         #enter_room {
-            display: flex;
+            display: $welcomePageEnterRoomDisplay;
             align-items: center;
             max-width: calc(100% - 40px);
             width: $welcomePageEnterRoomWidth;
@@ -71,9 +71,6 @@ body.welcome-page {
                 text-align: left;
                 color: #253858;
                 height: fit-content;
-                border-width: $welcomePageEnterRoomInputContainerBorderWidth;
-                border-style: $welcomePageEnterRoomInputContainerBorderStyle;
-                border-image: $welcomePageEnterRoomInputContainerBorderImage;
 
                 .enter-room-title {
                     display: $welcomePageEnterRoomTitleDisplay;
@@ -83,10 +80,28 @@ body.welcome-page {
                 }
 
                 .enter-room-input {
-                    border: none;
+                    border-width: $welcomePageEnterRoomInputContainerBorderWidth;
+                    border-style: $welcomePageEnterRoomInputContainerBorderStyle;
+                    border-image: $welcomePageEnterRoomInputContainerBorderImage;
                     display: inline-block;
                     width: 100%;
                     font-size: 14px;
+                }
+
+                .insecure-room-name-warning {
+                    align-items: center;
+                    color: $defaultWarningColor;
+                    display: flex;
+                    flex-direction: row;
+                    margin-top: 5px;
+
+                    .jitsi-icon {
+                        margin-right: 15px;
+
+                        svg {
+                            fill: $defaultWarningColor
+                        }
+                    }
                 }
 
                 ::placeholder {
@@ -94,6 +109,22 @@ body.welcome-page {
                 }
             }
 
+        }
+
+        #moderated-meetings {
+            max-width: calc(100% - 40px);
+            padding: 16px 0 39px 0;
+            width: $welcomePageEnterRoomWidth;
+
+            p {
+                color: $welcomePageDescriptionColor;
+                text-align: left;
+
+                a {
+                    color: inherit;
+                    font-weight: 600;
+                }
+            }
         }
 
         .tab-container {
@@ -180,5 +211,10 @@ body.welcome-page {
         position: absolute;
         width: 100%;
         height: 100%;
+
+        .watermark.leftwatermark {
+            width: $welcomePageWatermarkWidth;
+            height: $welcomePageWatermarkHeight;
+        }
     }
 }

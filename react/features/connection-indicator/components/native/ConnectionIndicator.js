@@ -5,7 +5,6 @@ import React from 'react';
 import { IconSignalLevel0, IconSignalLevel1, IconSignalLevel2 } from '../../../base/icons';
 import { BaseIndicator } from '../../../base/react';
 import { connect } from '../../../base/redux';
-
 import AbstractConnectionIndicator, {
     type Props,
     type State

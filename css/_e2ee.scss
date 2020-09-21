@@ -1,0 +1,26 @@
+#e2ee-section {
+    display: flex;
+    flex-direction: column;
+
+    .description {
+        font-size: 13px;
+        margin: 15px 0;
+
+        .read-more {
+            cursor: pointer;
+            opacity: .7;
+        }
+    }
+
+    .control-row {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        margin-top: 15px;
+
+        label {
+            font-size: 14px;
+            font-weight: bold;
+        }
+    }
+}

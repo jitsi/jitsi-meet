@@ -7,7 +7,6 @@ export default {
         alignSelf: 'center',
         backgroundColor: 'rgba(28, 32, 37, 0.6)',
         borderRadius: 4,
-        margin: 16,
         paddingHorizontal: 16,
         paddingVertical: 4
     },

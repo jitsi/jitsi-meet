@@ -6,14 +6,12 @@ import { Alert, NativeModules, ScrollView, Switch, Text, TextInput } from 'react
 import { translate } from '../../../base/i18n';
 import { JitsiModal } from '../../../base/modal';
 import { connect } from '../../../base/redux';
-
 import { SETTINGS_VIEW_ID } from '../../constants';
-import { normalizeUserInputURL } from '../../functions';
-
+import { normalizeUserInputURL, isServerURLChangeEnabled } from '../../functions';
 import {
     AbstractSettingsView,
     _mapStateToProps as _abstractMapStateToProps,
-    type Props
+    type Props as AbstractProps
 } from '../AbstractSettingsView';
 
 import FormRow from './FormRow';
@@ -35,6 +33,11 @@ type State = {
      * State variable for the disable p2p switch.
      */
     disableP2P: boolean,
+
+    /**
+     * State variable for the disable crash reporting switch.
+     */
+    disableCrashReporting: boolean,
 
     /**
      * State variable for the display name field.
@@ -68,6 +71,20 @@ type State = {
 }
 
 /**
+ * The type of the React {@code Component} props of
+ * {@link SettingsView}.
+ */
+type Props = AbstractProps & {
+
+    /**
+     * Flag indicating if URL can be changed by user.
+     *
+     * @protected
+     */
+    _serverURLChangeEnabled: boolean
+}
+
+/**
  * The native container rendering the app settings page.
  *
  * @extends AbstractSettingsView
@@ -84,6 +101,7 @@ class SettingsView extends AbstractSettingsView<Props, State> {
         super(props);
         const {
             disableCallIntegration,
+            disableCrashReporting,
             disableP2P,
             displayName,
             email,
@@ -94,6 +112,7 @@ class SettingsView extends AbstractSettingsView<Props, State> {
 
         this.state = {
             disableCallIntegration,
+            disableCrashReporting,
             disableP2P,
             displayName,
             email,
@@ -107,6 +126,7 @@ class SettingsView extends AbstractSettingsView<Props, State> {
         this._onBlurServerURL = this._onBlurServerURL.bind(this);
         this._onClose = this._onClose.bind(this);
         this._onDisableCallIntegration = this._onDisableCallIntegration.bind(this);
+        this._onDisableCrashReporting = this._onDisableCrashReporting.bind(this);
         this._onDisableP2P = this._onDisableP2P.bind(this);
         this._onShowAdvanced = this._onShowAdvanced.bind(this);
         this._setURLFieldReference = this._setURLFieldReference.bind(this);
@@ -140,6 +160,7 @@ class SettingsView extends AbstractSettingsView<Props, State> {
                             autoCorrect = { false }
                             onChangeText = { this._onChangeDisplayName }
                             placeholder = 'John Doe'
+                            textContentType = { 'name' } // iOS only
                             value = { displayName } />
                     </FormRow>
                     <FormRow
@@ -151,6 +172,7 @@ class SettingsView extends AbstractSettingsView<Props, State> {
                             keyboardType = { 'email-address' }
                             onChangeText = { this._onChangeEmail }
                             placeholder = 'email@example.com'
+                            textContentType = { 'emailAddress' } // iOS only
                             value = { email } />
                     </FormRow>
                     <FormSectionHeader
@@ -162,9 +184,12 @@ class SettingsView extends AbstractSettingsView<Props, State> {
                         <TextInput
                             autoCapitalize = 'none'
                             autoCorrect = { false }
+                            editable = { this.props._serverURLChangeEnabled }
+                            keyboardType = { 'url' }
                             onBlur = { this._onBlurServerURL }
                             onChangeText = { this._onChangeServerURL }
                             placeholder = { this.props._serverURL }
+                            textContentType = { 'URL' } // iOS only
                             value = { serverURL } />
                     </FormRow>
                     <FormRow
@@ -184,12 +209,12 @@ class SettingsView extends AbstractSettingsView<Props, State> {
                     <FormRow
                         label = 'settingsView.version'>
                         <Text>
-                            { `${AppInfo.version} build ${AppInfo.buildNumber}` }
+                            {`${AppInfo.version} build ${AppInfo.buildNumber}`}
                         </Text>
                     </FormRow>
                     <FormSectionHeader
                         label = 'settingsView.advanced' />
-                    { this._renderAdvancedSettings() }
+                    {this._renderAdvancedSettings()}
                 </ScrollView>
             </JitsiModal>
         );
@@ -285,6 +310,24 @@ class SettingsView extends AbstractSettingsView<Props, State> {
         });
     }
 
+    _onDisableCrashReporting: (boolean) => void;
+
+    /**
+     * Handles the disable crash reporting change event.
+     *
+     * @param {boolean} disableCrashReporting - The new value
+     * option.
+     * @private
+     * @returns {void}
+     */
+    _onDisableCrashReporting(disableCrashReporting) {
+        if (disableCrashReporting) {
+            this._showCrashReportingDisableAlert();
+        } else {
+            this._disableCrashReporting(disableCrashReporting);
+        }
+    }
+
     _onClose: () => void;
 
     /**
@@ -367,7 +410,7 @@ class SettingsView extends AbstractSettingsView<Props, State> {
      * @returns {React$Element}
      */
     _renderAdvancedSettings() {
-        const { disableCallIntegration, disableP2P, showAdvanced } = this.state;
+        const { disableCallIntegration, disableP2P, disableCrashReporting, showAdvanced } = this.state;
 
         if (!showAdvanced) {
             return (
@@ -397,6 +440,15 @@ class SettingsView extends AbstractSettingsView<Props, State> {
                         onValueChange = { this._onDisableP2P }
                         value = { disableP2P } />
                 </FormRow>
+                {AppInfo.GOOGLE_SERVICES_ENABLED && (
+                    <FormRow
+                        fieldSeparator = { true }
+                        label = 'settingsView.disableCrashReporting'>
+                        <Switch
+                            onValueChange = { this._onDisableCrashReporting }
+                            value = { disableCrashReporting } />
+                    </FormRow>
+                )}
             </>
         );
     }
@@ -436,7 +488,41 @@ class SettingsView extends AbstractSettingsView<Props, State> {
         );
     }
 
+    /**
+     * Shows an alert warning the user about disabling crash reporting.
+     *
+     * @returns {void}
+     */
+    _showCrashReportingDisableAlert() {
+        const { t } = this.props;
+
+        Alert.alert(
+            t('settingsView.alertTitle'),
+            t('settingsView.disableCrashReportingWarning'),
+            [
+                {
+                    onPress: () => this._disableCrashReporting(true),
+                    text: t('settingsView.alertOk')
+                },
+                {
+                    text: t('settingsView.alertCancel')
+                }
+            ]
+        );
+    }
+
     _updateSettings: (Object) => void;
+
+    /**
+     * Updates the settings and sets state for disableCrashReporting.
+     *
+     * @param {boolean} disableCrashReporting - Whether crash reporting is disabled or not.
+     * @returns {void}
+     */
+    _disableCrashReporting(disableCrashReporting) {
+        this._updateSettings({ disableCrashReporting });
+        this.setState({ disableCrashReporting });
+    }
 }
 
 /**
@@ -447,7 +533,8 @@ class SettingsView extends AbstractSettingsView<Props, State> {
  */
 function _mapStateToProps(state) {
     return {
-        ..._abstractMapStateToProps(state)
+        ..._abstractMapStateToProps(state),
+        _serverURLChangeEnabled: isServerURLChangeEnabled(state)
     };
 }
 

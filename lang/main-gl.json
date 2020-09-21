@@ -442,7 +442,7 @@
         "somebody": "Alguén",
         "startSilentTitle": "Vostede uniuse sen saída de son!",
         "startSilentDescription": "Volva a unirse para activar o son",
-        "suboptimalBrowserWarning": "Lamentamos que a súa experiencia non estea a ser boa. Procuramos maneiras de mellorala mais, ata entón, probe utilizar un dos <a href='static/recommendedBrowsers.html' target='_blank'>navegadores totalmente compatíbeis</a>.",
+        "suboptimalBrowserWarning": "Lamentamos que a súa experiencia non estea a ser boa. Procuramos maneiras de mellorala mais, ata entón, probe utilizar un dos <a href='{{recommendedBrowserPageLink}}' target='_blank'>navegadores totalmente compatíbeis</a>.",
         "suboptimalExperienceTitle": "Aviso verbo do navegador",
         "unmute": "Activar o son",
         "newDeviceCameraTitle": "Detectada unha nova cámara",
@@ -705,9 +705,6 @@
         "lowDefinition": "Baixa definición",
         "onlyAudioAvailable": "Soamente está dispoñíbel o son",
         "onlyAudioSupported": "Soamente está dispoñíbel o son neste navegador.",
-        "p2pEnabled": "Activado entre pares",
-        "p2pVideoQualityDescription": "No modo entre pares, a calidade de recepción de vídeo soamente pode escollerse entre alta ou soamente con son. Calquera outra configuración non se admitirá ata que se saia do modo entre pares. ",
-        "recHighDefinitionOnly": "Preferir alta definición.",
         "sd": "MD",
         "sdTooltip": "Ver un vídeo en definición estándar",
         "standardDefinition": "Definición estándar"

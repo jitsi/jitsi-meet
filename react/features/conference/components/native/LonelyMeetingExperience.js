@@ -6,13 +6,13 @@ import { Text, TouchableOpacity, View } from 'react-native';
 import { ColorSchemeRegistry } from '../../../base/color-scheme';
 import { getFeatureFlag, INVITE_ENABLED } from '../../../base/flags';
 import { translate } from '../../../base/i18n';
+import { Icon, IconAddPeople } from '../../../base/icons';
+import { getParticipantCount } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import { StyleType } from '../../../base/styles';
-import { getParticipantCount } from '../../../base/participants';
 import { doInvitePeople } from '../../../invite/actions.native';
 
 import styles from './styles';
-import { Icon, IconAddPeople } from '../../../base/icons';
 
 /**
  * Props type of the component.
@@ -126,11 +126,12 @@ class LonelyMeetingExperience extends PureComponent<Props> {
  */
 function _mapStateToProps(state): $Shape<Props> {
     const { disableInviteFunctions } = state['features/base/config'];
+    const { conference } = state['features/base/conference'];
     const flag = getFeatureFlag(state, INVITE_ENABLED, true);
 
     return {
         _isInviteFunctionsDiabled: !flag || disableInviteFunctions,
-        _isLonelyMeeting: getParticipantCount(state) === 1,
+        _isLonelyMeeting: conference && getParticipantCount(state) === 1,
         _styles: ColorSchemeRegistry.get(state, 'Conference')
     };
 }

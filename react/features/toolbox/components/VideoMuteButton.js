@@ -1,5 +1,6 @@
 // @flow
 
+import UIEvents from '../../../../service/UI/UIEvents';
 import {
     ACTION_SHORTCUT_TRIGGERED,
     VIDEO_MUTE,
@@ -8,16 +9,16 @@ import {
     sendAnalytics
 } from '../../analytics';
 import { setAudioOnly } from '../../base/audio-only';
+import { hasAvailableDevices } from '../../base/devices';
 import { translate } from '../../base/i18n';
 import {
     VIDEO_MUTISM_AUTHORITY,
     setVideoMuted
 } from '../../base/media';
 import { connect } from '../../base/redux';
-import { AbstractVideoMuteButton } from '../../base/toolbox';
-import type { AbstractButtonProps } from '../../base/toolbox';
+import { AbstractVideoMuteButton } from '../../base/toolbox/components';
+import type { AbstractButtonProps } from '../../base/toolbox/components';
 import { getLocalVideoType, isLocalVideoTrackMuted } from '../../base/tracks';
-import UIEvents from '../../../../service/UI/UIEvents';
 
 declare var APP: Object;
 
@@ -40,6 +41,11 @@ type Props = AbstractButtonProps & {
      * Whether video is currently muted or not.
      */
     _videoMuted: boolean,
+
+    /**
+     * Whether video button is disabled or not.
+     */
+    _videoDisabled: boolean,
 
     /**
      * The redux {@code dispatch} function.
@@ -94,6 +100,17 @@ class VideoMuteButton extends AbstractVideoMuteButton<Props, *> {
     componentWillUnmount() {
         typeof APP === 'undefined'
             || APP.keyboardshortcut.unregisterShortcut('V');
+    }
+
+    /**
+     * Indicates if video is currently disabled or not.
+     *
+     * @override
+     * @protected
+     * @returns {boolean}
+     */
+    _isDisabled() {
+        return this.props._videoDisabled;
     }
 
     /**
@@ -173,6 +190,7 @@ function _mapStateToProps(state): Object {
 
     return {
         _audioOnly: Boolean(audioOnly),
+        _videoDisabled: !hasAvailableDevices(state, 'videoInput'),
         _videoMediaType: getLocalVideoType(tracks),
         _videoMuted: isLocalVideoTrackMuted(tracks)
     };

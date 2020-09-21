@@ -1,5 +1,6 @@
 /* global APP, $, interfaceConfig  */
-const logger = require('jitsi-meet-logger').getLogger(__filename);
+
+import Logger from 'jitsi-meet-logger';
 
 import { MEDIA_TYPE, VIDEO_TYPE } from '../../../react/features/base/media';
 import {
@@ -9,16 +10,16 @@ import {
     pinParticipant
 } from '../../../react/features/base/participants';
 import { getTrackByMediaTypeAndParticipant } from '../../../react/features/base/tracks';
+import UIEvents from '../../../service/UI/UIEvents';
 import { SHARED_VIDEO_CONTAINER_TYPE } from '../shared_video/SharedVideo';
 import SharedVideoThumb from '../shared_video/SharedVideoThumb';
 
-import UIEvents from '../../../service/UI/UIEvents';
-
-import RemoteVideo from './RemoteVideo';
 import LargeVideoManager from './LargeVideoManager';
+import LocalVideo from './LocalVideo';
+import RemoteVideo from './RemoteVideo';
 import { VIDEO_CONTAINER_TYPE } from './VideoContainer';
 
-import LocalVideo from './LocalVideo';
+const logger = Logger.getLogger(__filename);
 
 const remoteVideos = {};
 let localVideoThumbnail = null;
@@ -176,6 +177,7 @@ const VideoLayout = {
             this.onAudioMute(id, stream.isMuted());
         } else {
             this.onVideoMute(id, stream.isMuted());
+            remoteVideo.setScreenSharing(stream.videoType === 'desktop');
         }
     },
 
@@ -187,6 +189,7 @@ const VideoLayout = {
 
         if (remoteVideo) {
             remoteVideo.removeRemoteStreamElement(stream);
+            remoteVideo.setScreenSharing(false);
         }
 
         this.updateMutedForNoTracks(id, stream.getType());
@@ -484,13 +487,14 @@ const VideoLayout = {
     },
 
     onVideoTypeChanged(id, newVideoType) {
-        if (VideoLayout.getRemoteVideoType(id) === newVideoType) {
+        const remoteVideo = remoteVideos[id];
+
+        if (!remoteVideo) {
             return;
         }
 
         logger.info('Peer video type changed: ', id, newVideoType);
-
-        this._updateLargeVideoIfDisplayed(id, true);
+        remoteVideo.setScreenSharing(newVideoType === 'desktop');
     },
 
     /**

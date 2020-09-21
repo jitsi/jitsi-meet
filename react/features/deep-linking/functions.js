@@ -1,8 +1,9 @@
 /* global interfaceConfig */
 
-import { URI_PROTOCOL_PATTERN } from '../base/util';
 import { isMobileBrowser } from '../base/environment/utils';
 import { Platform } from '../base/react';
+import { URI_PROTOCOL_PATTERN } from '../base/util';
+import { isVpaasMeeting } from '../billing-counter/functions';
 
 import {
     DeepLinkingDesktopPage,
@@ -50,9 +51,10 @@ export function generateDeepLinkingURL() {
  */
 export function getDeepLinkingPage(state) {
     const { room } = state['features/base/conference'];
+    const { launchInWeb } = state['features/deep-linking'];
 
     // Show only if we are about to join a conference.
-    if (!room || state['features/base/config'].disableDeepLinking) {
+    if (launchInWeb || !room || state['features/base/config'].disableDeepLinking || isVpaasMeeting(state)) {
         return Promise.resolve();
     }
 
@@ -64,13 +66,6 @@ export function getDeepLinkingPage(state) {
         return Promise.resolve(
             typeof mobileAppPromo === 'undefined' || Boolean(mobileAppPromo)
                 ? DeepLinkingMobilePage : NoMobileApp);
-    }
-
-    // desktop
-    const { launchInWeb } = state['features/deep-linking'];
-
-    if (launchInWeb) {
-        return Promise.resolve();
     }
 
     return _openDesktopApp(state).then(

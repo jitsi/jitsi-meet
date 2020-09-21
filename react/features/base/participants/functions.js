@@ -1,10 +1,10 @@
 // @flow
-import { getGravatarURL } from 'js-utils/avatar';
 
-import { toState } from '../redux';
+import { getGravatarURL } from '@jitsi/js-utils/avatar';
 
 import { JitsiParticipantConnectionStatus } from '../lib-jitsi-meet';
 import { MEDIA_TYPE, shouldRenderVideoTrack } from '../media';
+import { toState } from '../redux';
 import { getTrackByMediaTypeAndParticipant } from '../tracks';
 import { createDeferred } from '../util';
 
@@ -243,6 +243,33 @@ function _getAllParticipants(stateful) {
 }
 
 /**
+ * Returns the youtube fake participant.
+ * At the moment it is considered the youtube participant the only fake participant in the list.
+ *
+ * @param {(Function|Object|Participant[])} stateful - The redux state
+ * features/base/participants, the (whole) redux state, or redux's
+ * {@code getState} function to be used to retrieve the state
+ * features/base/participants.
+ * @private
+ * @returns {Participant}
+ */
+export function getYoutubeParticipant(stateful: Object | Function) {
+    const participants = _getAllParticipants(stateful);
+
+    return participants.filter(p => p.isFakeParticipant)[0];
+}
+
+/**
+ * Returns true if the participant is a moderator.
+ *
+ * @param {string} participant - Participant object.
+ * @returns {boolean}
+ */
+export function isParticipantModerator(participant: Object) {
+    return participant?.role === PARTICIPANT_ROLE.MODERATOR;
+}
+
+/**
  * Returns true if all of the meeting participants are moderators.
  *
  * @param {Object|Function} stateful -Object or function that can be resolved
@@ -252,13 +279,7 @@ function _getAllParticipants(stateful) {
 export function isEveryoneModerator(stateful: Object | Function) {
     const participants = _getAllParticipants(stateful);
 
-    for (const participant of participants) {
-        if (participant.role !== PARTICIPANT_ROLE.MODERATOR) {
-            return false;
-        }
-    }
-
-    return true;
+    return participants.every(isParticipantModerator);
 }
 
 /**

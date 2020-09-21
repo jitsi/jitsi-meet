@@ -181,6 +181,13 @@
         visibility: hidden;
         z-index: $zindex2;
     }
+
+    &.shift-right {
+        &#largeVideoContainer {
+            margin-left: $sidebarWidth;
+            width: calc(100% - #{$sidebarWidth});
+        }
+    }
 }
 
 #localVideoWrapper {

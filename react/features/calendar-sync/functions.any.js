@@ -2,8 +2,9 @@
 
 import md5 from 'js-md5';
 
-import { setCalendarEvents } from './actions';
 import { APP_LINK_SCHEME, parseURIString } from '../base/util';
+
+import { setCalendarEvents } from './actions';
 import { MAX_LIST_LENGTH } from './constants';
 
 const ALLDAY_EVENT_LENGTH = 23 * 60 * 60 * 1000;

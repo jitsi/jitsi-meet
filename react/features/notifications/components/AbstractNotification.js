@@ -56,6 +56,11 @@ export type Props = {
     isDismissAllowed: boolean,
 
     /**
+     * Maximum lines of the description.
+     */
+    maxLines: ?number,
+
+    /**
      * Callback invoked when the user clicks to dismiss the notification.
      */
     onDismissed: Function,
@@ -141,6 +146,18 @@ export default class AbstractNotification<P: Props> extends Component<P> {
         description && descriptionArray.push(description);
 
         return descriptionArray;
+    }
+
+    _getDescriptionKey: () => string
+
+    /**
+     * Returns the description key that was used if any.
+     *
+     * @protected
+     * @returns {string}
+     */
+    _getDescriptionKey() {
+        return this.props.descriptionKey;
     }
 
     _onDismissed: () => void;

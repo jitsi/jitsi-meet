@@ -3,8 +3,9 @@ CLEANCSS = ./node_modules/.bin/cleancss
 DEPLOY_DIR = libs
 LIBJITSIMEET_DIR = node_modules/lib-jitsi-meet/
 LIBFLAC_DIR = node_modules/libflacjs/dist/min/
+OLM_DIR = node_modules/olm
 RNNOISE_WASM_DIR = node_modules/rnnoise-wasm/dist/
-NODE_SASS = ./node_modules/.bin/node-sass
+NODE_SASS = ./node_modules/.bin/sass
 NPM = npm
 OUTPUT_DIR = .
 STYLES_BUNDLE = css/all.bundle.css
@@ -21,7 +22,8 @@ compile:
 clean:
 	rm -fr $(BUILD_DIR)
 
-deploy: deploy-init deploy-appbundle deploy-rnnoise-binary deploy-lib-jitsi-meet deploy-libflac deploy-css deploy-local
+.NOTPARALLEL:
+deploy: deploy-init deploy-appbundle deploy-rnnoise-binary deploy-lib-jitsi-meet deploy-libflac deploy-olm deploy-css deploy-local
 
 deploy-init:
 	rm -fr $(DEPLOY_DIR)
@@ -50,12 +52,15 @@ deploy-appbundle:
 		$(BUILD_DIR)/video-blur-effect.min.map \
 		$(BUILD_DIR)/rnnoise-processor.min.js \
 		$(BUILD_DIR)/rnnoise-processor.min.map \
+		$(BUILD_DIR)/close3.min.js \
+		$(BUILD_DIR)/close3.min.map \
 		$(DEPLOY_DIR)
 
 deploy-lib-jitsi-meet:
 	cp \
 		$(LIBJITSIMEET_DIR)/lib-jitsi-meet.min.js \
 		$(LIBJITSIMEET_DIR)/lib-jitsi-meet.min.map \
+		$(LIBJITSIMEET_DIR)/lib-jitsi-meet.e2ee-worker.js \
 		$(LIBJITSIMEET_DIR)/connection_optimization/external_connect.js \
 		$(LIBJITSIMEET_DIR)/modules/browser/capabilities.json \
 		$(DEPLOY_DIR)
@@ -66,6 +71,11 @@ deploy-libflac:
 		$(LIBFLAC_DIR)/libflac4-1.3.2.min.js.mem \
 		$(DEPLOY_DIR)
 
+deploy-olm:
+	cp \
+		$(OLM_DIR)/olm.wasm \
+		$(DEPLOY_DIR)
+
 deploy-rnnoise-binary:
 	cp \
 		$(RNNOISE_WASM_DIR)/rnnoise.wasm \
@@ -73,14 +83,15 @@ deploy-rnnoise-binary:
 
 deploy-css:
 	$(NODE_SASS) $(STYLES_MAIN) $(STYLES_BUNDLE) && \
-	$(CLEANCSS) $(STYLES_BUNDLE) > $(STYLES_DESTINATION) ; \
+	$(CLEANCSS) --skip-rebase $(STYLES_BUNDLE) > $(STYLES_DESTINATION) ; \
 	rm $(STYLES_BUNDLE)
 
 deploy-local:
 	([ ! -x deploy-local.sh ] || ./deploy-local.sh)
 
-dev: deploy-init deploy-css deploy-rnnoise-binary deploy-lib-jitsi-meet deploy-libflac
-	$(WEBPACK_DEV_SERVER)
+.NOTPARALLEL:
+dev: deploy-init deploy-css deploy-rnnoise-binary deploy-lib-jitsi-meet deploy-libflac deploy-olm
+	$(WEBPACK_DEV_SERVER) --detect-circular-deps
 
 source-package:
 	mkdir -p source_package/jitsi-meet/css && \

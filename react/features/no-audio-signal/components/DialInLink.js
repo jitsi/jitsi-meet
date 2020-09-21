@@ -2,8 +2,8 @@
 
 import React, { Component } from 'react';
 
-import { connect } from '../../base/redux';
 import { translate } from '../../base/i18n';
+import { connect } from '../../base/redux';
 import { getDialInfoPageURL, shouldDisplayDialIn } from '../../invite';
 
 /**

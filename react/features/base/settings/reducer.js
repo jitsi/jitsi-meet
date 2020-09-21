@@ -1,12 +1,12 @@
 // @flow
 
-import { randomHexString } from 'js-utils/random';
+import { jitsiLocalStorage } from '@jitsi/js-utils';
+import { randomHexString } from '@jitsi/js-utils/random';
 import _ from 'lodash';
 
-import { APP_WILL_MOUNT } from '../app';
+import { APP_WILL_MOUNT } from '../app/actionTypes';
 import { browser } from '../lib-jitsi-meet';
-import { ReducerRegistry } from '../redux';
-import { PersistenceRegistry } from '../storage';
+import { PersistenceRegistry, ReducerRegistry } from '../redux';
 import { assignIfDefined } from '../util';
 
 import { SETTINGS_UPDATED } from './actionTypes';
@@ -23,6 +23,7 @@ const DEFAULT_STATE = {
     avatarURL: undefined,
     cameraDeviceId: undefined,
     disableCallIntegration: undefined,
+    disableCrashReporting: undefined,
     disableP2P: undefined,
     displayName: undefined,
     email: undefined,
@@ -37,7 +38,8 @@ const DEFAULT_STATE = {
     userSelectedMicDeviceId: undefined,
     userSelectedAudioOutputDeviceLabel: undefined,
     userSelectedCameraDeviceLabel: undefined,
-    userSelectedMicDeviceLabel: undefined
+    userSelectedMicDeviceLabel: undefined,
+    userSelectedSkipPrejoin: undefined
 };
 
 const STORE_NAME = 'features/base/settings';
@@ -86,8 +88,7 @@ ReducerRegistry.register(STORE_NAME, (state = DEFAULT_STATE, action) => {
  * @returns {Object}
  */
 function _getLegacyProfile() {
-    let persistedProfile
-        = window.localStorage.getItem('features/base/profile');
+    let persistedProfile = jitsiLocalStorage.getItem('features/base/profile');
 
     if (persistedProfile) {
         try {
@@ -123,9 +124,9 @@ function _initSettings(featureState) {
     // FIXME: jibri uses old settings.js local storage values to set its display
     // name and email. Provide another way for jibri to set these values, update
     // jibri, and remove the old settings.js values.
-    const savedDisplayName = window.localStorage.getItem('displayname');
-    const savedEmail = window.localStorage.getItem('email');
-    let avatarID = _.escape(window.localStorage.getItem('avatarId'));
+    const savedDisplayName = jitsiLocalStorage.getItem('displayname');
+    const savedEmail = jitsiLocalStorage.getItem('email');
+    let avatarID = _.escape(jitsiLocalStorage.getItem('avatarId'));
 
     // The helper _.escape will convert null to an empty strings. The empty
     // string will be saved in settings. On app re-load, because an empty string
@@ -149,16 +150,13 @@ function _initSettings(featureState) {
 
     if (!browser.isReactNative()) {
         // Browser only
-        const localFlipX
-            = JSON.parse(window.localStorage.getItem('localFlipX') || 'true');
-        const cameraDeviceId
-            = window.localStorage.getItem('cameraDeviceId') || '';
-        const micDeviceId = window.localStorage.getItem('micDeviceId') || '';
+        const localFlipX = JSON.parse(jitsiLocalStorage.getItem('localFlipX') || 'true');
+        const cameraDeviceId = jitsiLocalStorage.getItem('cameraDeviceId') || '';
+        const micDeviceId = jitsiLocalStorage.getItem('micDeviceId') || '';
 
         // Currently audio output device change is supported only in Chrome and
         // default output always has 'default' device ID
-        const audioOutputDeviceId
-            = window.localStorage.getItem('audioOutputDeviceId') || 'default';
+        const audioOutputDeviceId = jitsiLocalStorage.getItem('audioOutputDeviceId') || 'default';
 
         settings = assignIfDefined({
             audioOutputDeviceId,
