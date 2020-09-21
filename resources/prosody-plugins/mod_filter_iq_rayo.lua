@@ -11,7 +11,8 @@ if token_util == nil then
     return;
 end
 
--- configuration to limit number of outgoing calls
+-- The maximum number of simultaneous calls,
+-- and also the maximum number of new calls per minute that a session is allowed to create.
 local limit_outgoing_calls;
 local function load_config()
     limit_outgoing_calls = module:get_option_number("max_number_outgoing_calls", -1);
