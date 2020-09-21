@@ -11,7 +11,11 @@ if token_util == nil then
 end
 
 -- configuration to limit number of outgoing calls
-local LIMIT_OUTGOING_CALLS = module:get_option_number("max_number_outgoing_calls", -1);
+local limit_outgoing_calls;
+local function load_config()
+    limit_outgoing_calls = module:get_option_number("max_number_outgoing_calls", -1);
+end
+load_config();
 
 -- Header names to use to push extra data extracted from token, if any
 local OUT_INITIATOR_USER_ATTR_NAME = "X-outbound-call-initiator-user";
@@ -53,10 +57,10 @@ module:hook("pre-iq/full", function(event)
             end
 
             -- now lets check any limits if configured
-            if LIMIT_OUTGOING_CALLS > 0
+            if limit_outgoing_calls > 0
                 and get_concurrent_outgoing_count(
                         session.jitsi_meet_context_user["id"],
-                        session.jitsi_meet_context_group) >= LIMIT_OUTGOING_CALLS
+                        session.jitsi_meet_context_group) >= limit_outgoing_calls
             then
                 module:log("warn",
                     "Filtering stanza dial, stanza:%s, outgoing calls limit reached", tostring(stanza));
@@ -163,3 +167,4 @@ function get_concurrent_outgoing_count(context_user, context_group)
     return count;
 end
 
+module:hook_global('config-reloaded', load_config);
