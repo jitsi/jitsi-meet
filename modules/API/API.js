@@ -15,6 +15,7 @@ import {
 } from '../../react/features/base/conference';
 import { parseJWTFromURLParams } from '../../react/features/base/jwt';
 import { JitsiRecordingConstants } from '../../react/features/base/lib-jitsi-meet';
+import { pinParticipant } from '../../react/features/base/participants';
 import {
     processExternalDeviceRequest
 } from '../../react/features/device-selection/functions';
@@ -119,6 +120,11 @@ function initCommands() {
                     password
                 ));
             }
+        },
+        'pin-participant': id => {
+            logger.debug('Pin participant command received');
+            sendAnalytics(createApiEvent('participant.pinned'));
+            APP.store.dispatch(pinParticipant(id));
         },
         'proxy-connection-event': event => {
             APP.conference.onProxyConnectionEvent(event);

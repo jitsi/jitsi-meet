@@ -35,6 +35,7 @@ const commands = {
     hangup: 'video-hangup',
     muteEveryone: 'mute-everyone',
     password: 'password',
+    pinParticipant: 'pin-participant',
     resizeLargeVideo: 'resize-large-video',
     sendEndpointTextMessage: 'send-endpoint-text-message',
     sendTones: 'send-tones',
@@ -917,6 +918,17 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
         return this._transport.sendRequest({
             name: 'is-video-muted'
         });
+    }
+
+    /**
+     * Pins a participant's video on to the stage view.
+     *
+     * @param {string} participantId - Participant id (JID) of the participant
+     * that needs to be pinned on the stage view.
+     * @returns {void}
+     */
+    pinParticipant(participantId) {
+        this.executeCommand('pinParticipant', participantId);
     }
 
     /**
