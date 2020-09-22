@@ -10,7 +10,7 @@ import AuthHandler from './modules/UI/authentication/AuthHandler';
 import UIUtil from './modules/UI/util/UIUtil';
 import mediaDeviceHelper from './modules/devices/mediaDeviceHelper';
 import Recorder from './modules/recorder/Recorder';
-import { createTaskQueue, downloadJSON } from './modules/util/helpers';
+import { createTaskQueue } from './modules/util/helpers';
 import {
     createDeviceChangedEvent,
     createStartSilentEvent,
@@ -108,6 +108,7 @@ import {
     getBackendSafePath,
     getJitsiMeetGlobalNS
 } from './react/features/base/util';
+import { downloadJSON } from './react/features/base/util/downloadJSON';
 import { showDesktopPicker } from './react/features/desktop-picker';
 import { appendSuffix } from './react/features/display-name';
 import {
