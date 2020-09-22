@@ -142,7 +142,8 @@ const config = {
         // value that is a mock (/index.js).
         __filename: true,
 
-        // Provide an empty 'fs' module.
+        // Provide some empty Node modules (required by olm).
+        crypto: 'empty',
         fs: 'empty'
     },
     optimization: {
@@ -190,7 +191,7 @@ module.exports = [
         entry: {
             'app.bundle': './app.js'
         },
-        performance: getPerformanceHints(4.5 * 1024 * 1024)
+        performance: getPerformanceHints(4 * 1024 * 1024)
     }),
     Object.assign({}, config, {
         entry: {
