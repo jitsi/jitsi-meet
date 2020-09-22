@@ -331,7 +331,7 @@ export default class LargeVideoManager {
          * the chat. We re-compute the width again after the chat window is closed. This is needed when
          * custom styling is configured on the large video container through the iFrame API.
          */
-        if (isOpen) {
+        if (isOpen && !this.resizedForChat) {
             widthToUse -= CHAT_SIZE;
             this.resizedForChat = true;
         } else if (this.resizedForChat) {
