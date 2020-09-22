@@ -639,8 +639,8 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
     /**
      * Captures the screenshot of the large video.
      *
-     * @returns {dataURL} - Base64 encoded image data of the screenshot if large
-     * video is detected, an error otherwise.
+     * @returns {Promise<string>} - Resolves with a base64 encoded image data of the screenshot
+     * if large video is detected, an error otherwise.
      */
     captureLargeVideoScreenshot() {
         return this._transport.sendRequest({
