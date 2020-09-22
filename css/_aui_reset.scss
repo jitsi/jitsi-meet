@@ -76,6 +76,29 @@ body {
 [lang|=en] {
   font-family: Arial, sans-serif;
 }
+[lang|=fa] {
+  font-family: Samim;
+}
+@font-face {
+    font-family: Samim;
+    font-style: normal;
+    font-weight: bold;
+    src: url('../fonts/Samim-Bold-FD.eot');
+    src: url('../fonts/Samim-Bold-FD.eot?#iefix') format('embedded-opentype'),  /* IE6-8 */
+    url('../fonts/Samim-Bold-FD.woff2') format('woff2'),  /* FF39+,Chrome36+, Opera24+*/
+    url('../fonts/Samim-Bold-FD.woff') format('woff'),  /* FF3.6+, IE9, Chrome6+, Saf5.1+*/
+    url('../fonts/Samim-Bold-FD.ttf') format('truetype');
+}
+@font-face {
+    font-family: Samim;
+    font-style: normal;
+    font-weight: normal;
+    src: url('../fonts/Samim-FD.eot');
+    src: url('../fonts/Samim-FD.eot?#iefix') format('embedded-opentype'),  /* IE6-8 */
+    url('../fonts/Samim-FD.woff2') format('woff2'),  /* FF39+,Chrome36+, Opera24+*/
+    url('../fonts/Samim-FD.woff') format('woff'),  /* FF3.6+, IE9, Chrome6+, Saf5.1+*/
+    url('../fonts/Samim-FD.ttf') format('truetype');
+}
 [lang|=ja] {
   font-family: "Hiragino Kaku Gothic Pro", "ヒラギノ角ゴ Pro W3", "メイリオ", Meiryo, "ＭＳ Ｐゴシック", Verdana, Arial, sans-serif;
 }
