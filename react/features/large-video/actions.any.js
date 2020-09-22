@@ -9,7 +9,6 @@ import {
 import { _handleParticipantError } from '../base/conference';
 import { MEDIA_TYPE } from '../base/media';
 import { getParticipants } from '../base/participants';
-import { getTrackByMediaTypeAndParticipant } from '../base/tracks';
 import { reportError } from '../base/util';
 import { shouldDisplayTileView } from '../video-layout';
 
@@ -17,57 +16,6 @@ import {
     SELECT_LARGE_VIDEO_PARTICIPANT,
     UPDATE_KNOWN_LARGE_VIDEO_RESOLUTION
 } from './actionTypes';
-
-/**
-* Captures a screenshot of the video displayed on the large video.
-*
-* @returns {Function}
-*/
-export function captureLargeVideoScreenshot() {
-    return (dispatch: Dispatch<any>, getState: Function): Promise<Object> => {
-        const state = getState();
-        const largeVideo = state['features/large-video'];
-
-        if (!largeVideo) {
-            return Promise.resolve();
-        }
-        const tracks = state['features/base/tracks'];
-        const { jitsiTrack } = getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.VIDEO, largeVideo.participantId);
-        const videoStream = jitsiTrack.getOriginalStream();
-
-        // Create a HTML canvas and draw video from the track on to the canvas.
-        const [ track ] = videoStream.getVideoTracks();
-        const { height, width } = track.getSettings() ?? track.getConstraints();
-        const canvasElement = document.createElement('canvas');
-        const ctx = canvasElement.getContext('2d');
-        const videoElement = document.createElement('video');
-
-        videoElement.height = parseInt(height, 10);
-        videoElement.width = parseInt(width, 10);
-        videoElement.autoplay = true;
-        videoElement.srcObject = videoStream;
-        canvasElement.height = videoElement.height;
-        canvasElement.width = videoElement.width;
-
-        // Wait for the video to load before drawing on to the canvas.
-        const promise = new Promise(resolve => {
-            videoElement.onloadeddata = () => resolve();
-        });
-
-        return promise.then(() => {
-            ctx.drawImage(videoElement, 0, 0, videoElement.width, videoElement.height);
-            const dataURL = canvasElement.toDataURL('image/png', 1.0);
-
-            // Cleanup.
-            ctx.clearRect(0, 0, videoElement.width, videoElement.height);
-            videoElement.srcObject = null;
-            canvasElement.remove();
-            videoElement.remove();
-
-            return Promise.resolve(dataURL);
-        });
-    };
-}
 
 /**
  * Signals conference to select a participant.
