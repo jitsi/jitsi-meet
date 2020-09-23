@@ -67,7 +67,30 @@ export default class LargeVideoManager {
         // use the same video container to handle desktop tracks
         this.addContainer(DESKTOP_CONTAINER_TYPE, this.videoContainer);
 
+        /**
+         * The preferred width passed as an argument to {@link updateContainerSize}.
+         *
+         * @type {number|undefined}
+         */
+        this.preferredWidth = undefined;
+
+        /**
+         * The preferred height passed as an argument to {@link updateContainerSize}.
+         *
+         * @type {number|undefined}
+         */
+        this.preferredHeight = undefined;
+
+        /**
+         * The calculated width that will be used for the large video.
+         * @type {number}
+         */
         this.width = 0;
+
+        /**
+         * The calculated height that will be used for the large video.
+         * @type {number}
+         */
         this.height = 0;
 
         /**
@@ -323,7 +346,14 @@ export default class LargeVideoManager {
      * Update container size.
      */
     updateContainerSize(width, height) {
-        let widthToUse = width ?? (this.width > 0 ? this.width : window.innerWidth);
+        if (typeof width === 'number') {
+            this.preferredWidth = width;
+        }
+        if (typeof height === 'number') {
+            this.preferredHeight = height;
+        }
+
+        let widthToUse = this.preferredWidth || window.innerWidth;
         const { isOpen } = APP.store.getState()['features/chat'];
 
         /**
@@ -340,7 +370,7 @@ export default class LargeVideoManager {
         }
 
         this.width = widthToUse;
-        this.height = height ?? (this.height > 0 ? this.height : window.innerHeight);
+        this.height = this.preferredHeight || window.innerHeight;
     }
 
     /**
