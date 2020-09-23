@@ -10,6 +10,7 @@ import { translate } from '../../../../base/i18n';
 import { JitsiRecordingConstants } from '../../../../base/lib-jitsi-meet';
 import { getLocalParticipant } from '../../../../base/participants';
 import { connect } from '../../../../base/redux';
+import { isVpaasMeeting } from '../../../../billing-counter/functions';
 import EmbedMeetingTrigger from '../../../../embed-meeting/components/EmbedMeetingTrigger';
 import { getActiveSession } from '../../../../recording';
 import { updateDialInNumbers } from '../../../actions';
@@ -35,6 +36,11 @@ type Props = {
      * The object representing the dialIn feature.
      */
     _dialIn: Object,
+
+    /**
+     * Whether or not embed meeting should be visible.
+     */
+    _embedMeetingVisible: boolean,
 
     /**
      * Whether or not invite contacts should be visible.
@@ -80,6 +86,7 @@ type Props = {
 function AddPeopleDialog({
     _conferenceName,
     _dialIn,
+    _embedMeetingVisible,
     _inviteContactsVisible,
     _inviteUrl,
     _liveStreamViewURL,
@@ -152,7 +159,7 @@ function AddPeopleDialog({
                 <InviteByEmailSection
                     inviteSubject = { inviteSubject }
                     inviteText = { invite } />
-                <EmbedMeetingTrigger />
+                { _embedMeetingVisible && <EmbedMeetingTrigger /> }
                 <div className = 'invite-more-dialog separator' />
                 {
                     _liveStreamViewURL
@@ -191,6 +198,7 @@ function mapStateToProps(state) {
     return {
         _conferenceName: getRoomName(state),
         _dialIn: state['features/invite'],
+        _embedMeetingVisible: !isVpaasMeeting(state),
         _inviteContactsVisible: interfaceConfig.ENABLE_DIAL_OUT && !hideInviteContacts,
         _inviteUrl: getInviteURL(state),
         _liveStreamViewURL:
