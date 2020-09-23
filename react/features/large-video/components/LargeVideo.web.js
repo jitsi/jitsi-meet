@@ -63,7 +63,9 @@ class LargeVideo extends Component<Props> {
      */
     render() {
         const style = this._getCustomSyles();
-        const className = `videocontainer${this.props._isChatOpen ? ' shift-right' : ''}`;
+        const className = `videocontainer${this.props._isChatOpen
+            ? interfaceConfig.CHAT_ON_THE_LEFT ? ' shift-right'
+                : ' shift-up' : ''}`;
 
         return (
             <div

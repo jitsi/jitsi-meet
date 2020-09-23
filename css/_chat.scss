@@ -4,12 +4,8 @@
     color: #FFF;
     display: flex;
     flex-direction: column;
-    height: 100%;
-    left: -$sidebarWidth;
     overflow: hidden;
     position: absolute;
-    top: 0;
-    width: $sidebarWidth;
     z-index: $sideToolbarContainerZ;
 
     /**
@@ -19,8 +15,28 @@
     &.slideInExt {
         left: 0;
     }
+
+    * {
+        -webkit-user-select: text;
+        user-select: text;
+    }
+
+    .display-name {
+        font-size: 13px;
+        font-weight: bold;
+        margin-bottom: 5px;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+    }
 }
 
+.chatconversation-vertical {
+    width: $sidebarWidth;
+}
+.chatconversation-horizontal {
+    width: 100%;
+}
 #chatconversation {
     box-sizing: border-box;
     flex: 1;
@@ -29,7 +45,7 @@
     overflow: auto;
     padding: 16px;
     text-align: left;
-    width: $sidebarWidth;
+    width: 100%;
     word-wrap: break-word;
 
     a {
@@ -171,19 +187,17 @@
 }
 
 .sideToolbarContainer {
-    * {
-        -webkit-user-select: text;
-        user-select: text;
-    }
+    height: 100%;
+    left: -$sidebarWidth;
+    top: 0;
+    width: $sidebarWidth;
+}
 
-    .display-name {
-        font-size: 13px;
-        font-weight: bold;
-        margin-bottom: 5px;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-        overflow: hidden;
-    }
+.bottomToolbarContainer {
+    height: $bottomBarHeight;
+    left: 0;
+    bottom: 0;
+    width: 100%;
 }
 
 .chatmessage {

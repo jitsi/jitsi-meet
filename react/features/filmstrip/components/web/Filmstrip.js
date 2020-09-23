@@ -371,10 +371,10 @@ function _mapStateToProps(state) {
     const reduceHeight
         = !isFilmstripOnly && state['features/toolbox'].visible && interfaceConfig.TOOLBAR_BUTTONS.length;
     const remoteVideosVisible = shouldRemoteVideosBeVisible(state);
-    const { isOpen: shiftRight } = state['features/chat'];
+    const { isOpen: shift } = state['features/chat'];
     const className = `${remoteVideosVisible ? '' : 'hide-videos'} ${
-        reduceHeight ? 'reduce-height' : ''
-    } ${shiftRight ? 'shift-right' : ''}`.trim();
+        reduceHeight && interfaceConfig.CHAT_ON_THE_LEFT ? 'reduce-height' : ''
+    } ${shift ? interfaceConfig.CHAT_ON_THE_LEFT ? 'shift-right' : 'shift-up' : ''}`.trim();
     const videosClassName = `filmstrip__videos${
         isFilmstripOnly ? ' filmstrip__videos-filmstripOnly' : ''}${
         visible ? '' : ' hidden'}`;

@@ -1,3 +1,4 @@
+/* global interfaceConfig */
 // @flow
 
 import React from 'react';
@@ -151,7 +152,12 @@ class Chat extends AbstractChat<Props> {
      * @returns {ReactElement | null}
      */
     _renderPanelContent() {
-        const { _isOpen, _showNamePrompt } = this.props;
+        let _isOpen = this.props._isOpen;
+        const _showNamePrompt = this.props._showNamePrompt;
+
+        if (interfaceConfig.CHAT_STARTS_OPEN) {
+            _isOpen = true;
+        }
         const ComponentToRender = _isOpen
             ? (
                 <>
@@ -161,17 +167,24 @@ class Chat extends AbstractChat<Props> {
                 </>
             )
             : null;
+
         let className = '';
 
-        if (_isOpen) {
-            className = 'slideInExt';
-        } else if (this._isExited) {
-            className = 'invisible';
+        if (interfaceConfig.CHAT_ON_THE_LEFT) {
+            className = 'sideToolbarContainer';
+        } else {
+            className = 'bottomToolbarContainer';
         }
+        if (_isOpen) {
+            className += ' slideInExt';
+        } else if (this._isExited) {
+            className += ' invisible';
+        }
+
 
         return (
             <div
-                className = { `sideToolbarContainer ${className}` }
+                className = { className }
                 id = 'sideToolbarContainer'>
                 { ComponentToRender }
             </div>

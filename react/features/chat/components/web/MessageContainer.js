@@ -1,3 +1,4 @@
+/* global interfaceConfig */
 // @flow
 
 import React from 'react';
@@ -70,6 +71,9 @@ export default class MessageContainer extends AbstractMessageContainer<Props> {
 
         return (
             <div
+                className = { interfaceConfig.CHAT_ON_THE_LEFT
+                    ? 'chatconversation-vertical'
+                    : 'chatconversation-horizontal' }
                 id = 'chatconversation'
                 onScroll = { this._onChatScroll }
                 ref = { this._messageListRef }>
