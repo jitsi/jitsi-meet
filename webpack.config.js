@@ -8,9 +8,8 @@ const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
  * The URL of the Jitsi Meet deployment to be proxy to in the context of
  * development with webpack-dev-server.
  */
-const devServerProxyTarget = 'https://cwm-temp-test.diverse.org.ru';
-
-// = process.env.WEBPACK_DEV_SERVER_PROXY_TARGET || 'https://alpha.jitsi.net';
+const devServerProxyTarget
+    = process.env.WEBPACK_DEV_SERVER_PROXY_TARGET || 'https://alpha.jitsi.net';
 
 const analyzeBundle = process.argv.indexOf('--analyze-bundle') !== -1;
 const detectCircularDeps = process.argv.indexOf('--detect-circular-deps') !== -1;
@@ -43,12 +42,10 @@ const config = {
                 secure: false,
                 target: devServerProxyTarget,
                 headers: {
-                    // 'Host': new URL(devServerProxyTarget).host,
-                    'Connection': 'keep-alive'
+                    'Host': new URL(devServerProxyTarget).host
                 }
             }
-        },
-        stats: 'verbose'
+        }
     },
     devtool: 'source-map',
     mode: minimize ? 'production' : 'development',
@@ -282,13 +279,6 @@ module.exports = [
         }),
         performance: getPerformanceHints(30 * 1024)
     })
-
-    // Object.assign({}, config, {
-    //     entry: {
-    //         'interface_config': './interface_config.js'
-    //     },
-    //     performance: getPerformanceHints(5 * 1024)
-    // })
 ];
 
 /**
@@ -301,7 +291,6 @@ module.exports = [
  * target, undefined; otherwise, the path to the local file to be served.
  */
 function devServerProxyBypass({ path }) {
-    console.log(path);
     if (path.startsWith('/css/') || path.startsWith('/doc/')
             || path.startsWith('/fonts/')
             || path.startsWith('/images/')
@@ -312,10 +301,6 @@ function devServerProxyBypass({ path }) {
 
         return path;
     }
-
-    // if (path.endsWith('interface_config.js')) {
-    //     return '/Users/vladislav.ertel/Work/jitsi-meet/interface_config.js';
-    // }
 
     const configs = module.exports;
 

@@ -1,4 +1,4 @@
-/* global $, APP */
+/* global $, APP, interfaceConfig */
 /* eslint-disable no-unused-vars */
 import Logger from 'jitsi-meet-logger';
 import React from 'react';
@@ -12,7 +12,10 @@ import {
     JitsiParticipantConnectionStatus
 } from '../../../react/features/base/lib-jitsi-meet';
 import { VIDEO_TYPE } from '../../../react/features/base/media';
-import { CHAT_SIZE } from '../../../react/features/chat';
+import {
+    CHAT_SIZE_HEIGHT,
+    CHAT_SIZE_WIDTH
+} from '../../../react/features/chat';
 import {
     updateKnownLargeVideoResolution
 } from '../../../react/features/large-video/actions';
@@ -354,6 +357,8 @@ export default class LargeVideoManager {
         }
 
         let widthToUse = this.preferredWidth || window.innerWidth;
+        let heightToUse = this.preferredHeight || window.innerHeight;
+
         const { isOpen } = APP.store.getState()['features/chat'];
 
         /**
@@ -361,16 +366,27 @@ export default class LargeVideoManager {
          * the chat. We re-compute the width again after the chat window is closed. This is needed when
          * custom styling is configured on the large video container through the iFrame API.
          */
-        if (isOpen && !this.resizedForChat) {
-            widthToUse -= CHAT_SIZE;
-            this.resizedForChat = true;
-        } else if (this.resizedForChat) {
-            this.resizedForChat = false;
-            widthToUse += CHAT_SIZE;
+        if (interfaceConfig.CHAT_ON_THE_LEFT) {
+            if (isOpen && !this.resizedForChat) {
+                widthToUse -= CHAT_SIZE_WIDTH;
+                this.resizedForChat = true;
+            } else if (!isOpen && this.resizedForChat) {
+                this.resizedForChat = false;
+                widthToUse += CHAT_SIZE_WIDTH;
+            }
+        } else {
+            // eslint-disable-next-line no-lonely-if
+            if (isOpen && !this.resizedForChat) {
+                heightToUse -= CHAT_SIZE_HEIGHT;
+                this.resizedForChat = true;
+            } else if (!isOpen && this.resizedForChat) {
+                this.resizedForChat = false;
+                heightToUse += CHAT_SIZE_HEIGHT;
+            }
         }
 
         this.width = widthToUse;
-        this.height = this.preferredHeight || window.innerHeight;
+        this.height = heightToUse;
     }
 
     /**

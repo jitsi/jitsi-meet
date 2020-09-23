@@ -17,7 +17,7 @@ WEBPACK_DEV_SERVER = ./node_modules/.bin/webpack-dev-server
 all: compile deploy clean
 
 compile:
-	$(WEBPACK) -p --verbose
+	$(WEBPACK) -p
 
 clean:
 	rm -fr $(BUILD_DIR)
@@ -91,7 +91,7 @@ deploy-local:
 
 .NOTPARALLEL:
 dev: deploy-init deploy-css deploy-rnnoise-binary deploy-lib-jitsi-meet deploy-libflac deploy-olm
-	$(WEBPACK_DEV_SERVER)
+	$(WEBPACK_DEV_SERVER) --detect-circular-deps
 
 source-package:
 	mkdir -p source_package/jitsi-meet/css && \

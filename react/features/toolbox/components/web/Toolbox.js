@@ -34,7 +34,7 @@ import { connect, equals } from '../../../base/redux';
 import { OverflowMenuItem } from '../../../base/toolbox/components';
 import { getLocalVideoTrack, toggleScreensharing } from '../../../base/tracks';
 import { VideoBlurButton } from '../../../blur';
-import { CHAT_SIZE, ChatCounter, toggleChat } from '../../../chat';
+import { CHAT_SIZE_WIDTH, ChatCounter, toggleChat } from '../../../chat';
 import { EmbedMeetingDialog } from '../../../embed-meeting';
 import { SharedDocumentButton } from '../../../etherpad';
 import { openFeedbackDialog } from '../../../feedback';
@@ -559,7 +559,7 @@ class Toolbox extends Component<Props, State> {
 
         // Take chat size into account when resizing toolbox.
         if (this.props._chatOpen) {
-            widthToUse -= CHAT_SIZE;
+            widthToUse -= CHAT_SIZE_WIDTH;
         }
 
         if (this.state.windowWidth !== widthToUse) {

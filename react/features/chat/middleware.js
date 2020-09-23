@@ -122,7 +122,7 @@ StateListenerRegistry.register(
         if (conference !== previousConference) {
             // conference changed, left or failed...
 
-            if (getState()['features/chat'].isOpen) {
+            if (getState()['features/chat'].isOpen && !interfaceConfig.CHAT_STARTS_OPEN) {
                 // Closes the chat if it's left open.
                 dispatch(toggleChat());
             }

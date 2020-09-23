@@ -1,4 +1,3 @@
-/* global interfaceConfig */
 // @flow
 
 import React from 'react';
@@ -8,6 +7,8 @@ import AbstractMessageContainer, { type Props }
     from '../AbstractMessageContainer';
 
 import ChatMessageGroup from './ChatMessageGroup';
+
+declare var interfaceConfig: Object;
 
 /**
  * Displays all received chat messages, grouped by sender.

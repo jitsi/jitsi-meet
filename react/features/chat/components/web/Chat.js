@@ -1,4 +1,3 @@
-/* global interfaceConfig */
 // @flow
 
 import React from 'react';
@@ -16,6 +15,8 @@ import ChatInput from './ChatInput';
 import DisplayNameForm from './DisplayNameForm';
 import MessageContainer from './MessageContainer';
 import MessageRecipient from './MessageRecipient';
+
+declare var interfaceConfig: Object;
 
 /**
  * React Component for holding the chat feature in a side panel that slides in
@@ -43,7 +44,6 @@ class Chat extends AbstractChat<Props> {
      */
     constructor(props: Props) {
         super(props);
-
         this._isExited = true;
         this._messageContainerRef = React.createRef();
 
@@ -152,12 +152,9 @@ class Chat extends AbstractChat<Props> {
      * @returns {ReactElement | null}
      */
     _renderPanelContent() {
-        let _isOpen = this.props._isOpen;
+        const _isOpen = this.props._isOpen;
         const _showNamePrompt = this.props._showNamePrompt;
 
-        if (interfaceConfig.CHAT_STARTS_OPEN) {
-            _isOpen = true;
-        }
         const ComponentToRender = _isOpen
             ? (
                 <>
