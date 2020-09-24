@@ -113,19 +113,9 @@ denied-peer-ip=240.0.0.0-255.255.255.255" >> $TURN_CONFIG
         TURN_SECRET="$RET"
 
         # no turn config exists, lt's copy template and fill it in
-        PUBLIC_IP=$(dig -4 +short myip.opendns.com a @resolver1.opendns.com) || true
-        if [ -z "$PUBLIC_IP" ] ; then
-            PUBLIC_IP="127.0.0.1"
-            echo "------------------------------------------------"
-            echo "Warning! Could not resolve your external ip address! Error:^"
-            echo "Your turn server will not work till you edit your $TURN_CONFIG config file."
-            echo "You need to set your external ip address in external-ip and restart coturn service."
-            echo "------------------------------------------------"
-        fi
         cp /usr/share/jitsi-meet-turnserver/turnserver.conf $TURN_CONFIG
         sed -i "s/jitsi-meet.example.com/$JVB_HOSTNAME/g" $TURN_CONFIG
         sed -i "s/__turnSecret__/$TURN_SECRET/g" $TURN_CONFIG
-        sed -i "s/__external_ip_address__/$PUBLIC_IP/g" $TURN_CONFIG
 
         # SSL for nginx
         db_get jitsi-meet/cert-choice
