@@ -25,9 +25,9 @@ import {
     toURLString
 } from '../base/util';
 import { isVpaasMeeting } from '../billing-counter/functions';
+import { enablePreJoinPage, isPrejoinPageEnabled } from '../jane-waiting-area-native';
 import { clearNotifications, showNotification } from '../notifications';
 import { setFatalError } from '../overlay';
-import { enablePreJoinPage, isPrejoinPageEnabled } from '../prejoin';
 
 import {
     getDefaultURL,

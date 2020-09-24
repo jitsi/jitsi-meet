@@ -3,6 +3,7 @@
  */
 const BLACK = '#111111';
 
+const JANE_DARK_COLOR = '#009097';
 /**
  * The application's color palette.
  */
@@ -31,6 +32,9 @@ export const ColorPalette = {
     warning: 'rgb(215, 121, 118)',
     white: '#FFFFFF',
 
+    manatee: '#8E8E9D',
+    santasGray: '#A3A2B1',
+    manateeLight: '#9998A7',
     /**
      * These are colors from the atlaskit to be used on mobile, when needed.
      *
@@ -45,5 +49,10 @@ export const ColorPalette = {
     /** Jane */
     jane: '#00c1ca',
     janeDarkGrey: '#333333',
-    janeLight: '#DAF6F7'
+    janeLight: '#DAF6F7',
+
+    /** action button */
+    btnBorder: '#DDDDDD',
+    btnTextDefault: '#333333',
+    janeDarkColor: JANE_DARK_COLOR
 };

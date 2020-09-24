@@ -8,7 +8,10 @@ import {
 } from 'react-native';
 import type { Dispatch } from 'redux';
 
+import WaitingMessage
+    from '../../../base/react/components/native/WaitingMessage';
 import { connect } from '../../../base/redux';
+import { DimensionsDetector } from '../../../base/responsive-ui';
 import { ASPECT_RATIO_NARROW } from '../../../base/responsive-ui/constants';
 import { setTileViewDimensions } from '../../actions.native';
 
@@ -104,23 +107,27 @@ class TileView extends Component<Props> {
         const rowElements = this._groupIntoRows(this._renderThumbnails(), this._getColumnCount());
 
         return (
-            <ScrollView
-                style = {{
-                    ...styles.tileView,
-                    height: _height,
-                    width: _width
-                }}>
-                <TouchableWithoutFeedback onPress = { onClick }>
-                    <View
-                        style = {{
-                            ...styles.tileViewRows,
-                            minHeight: _height,
-                            minWidth: _width
-                        }}>
-                        { rowElements }
-                    </View>
-                </TouchableWithoutFeedback>
-            </ScrollView>
+            <DimensionsDetector
+                onDimensionsChanged = { this._onDimensionsChanged }>
+                <WaitingMessage />
+                <ScrollView
+                    style = {{
+                        ...styles.tileView,
+                        height: _height,
+                        width: _width
+                    }}>
+                    <TouchableWithoutFeedback onPress = { onClick }>
+                        <View
+                            style = {{
+                                ...styles.tileViewRows,
+                                minHeight: _height,
+                                minWidth: _width
+                            }}>
+                            { rowElements }
+                        </View>
+                    </TouchableWithoutFeedback>
+                </ScrollView>
+            </DimensionsDetector>
         );
     }
 

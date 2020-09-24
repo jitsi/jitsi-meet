@@ -11,7 +11,7 @@ const DEFAULT_STATE = {
 };
 
 ReducerRegistry.register(
-    'features/prejoin', (state = DEFAULT_STATE, action) => {
+    'features/jane-waiting-area-native', (state = DEFAULT_STATE, action) => {
         switch (action.type) {
         case ENABLE_PREJOIN_PAGE:
             return {

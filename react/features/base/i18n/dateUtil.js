@@ -100,3 +100,8 @@ function _getSupportedLocale() {
 
     return supportedLocale || 'en';
 }
+
+export function jsCoreDateCreator(dateString: string) {
+    return moment(dateString, 'YYYY-MM-DD HH:mm')
+        .format('YYYY-MM-DD HH:mm');
+}
