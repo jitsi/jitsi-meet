@@ -144,7 +144,7 @@ android.libraryVariants.all { def variant ->
     mergeResourcesTask.dependsOn(currentBundleTask)
 
     mergeAssetsTask.doLast {
-        def assetsDir = mergeAssetsTask.outputDir
+        def assetsDir = mergeAssetsTask.outputDir.get()
 
         // Bundle sounds
         //
@@ -178,7 +178,7 @@ android.libraryVariants.all { def variant ->
         if (currentBundleTask.enabled) {
             copy {
                 from(resourcesDir)
-                into(mergeResourcesTask.outputDir)
+                into(mergeResourcesTask.outputDir.get())
             }
         }
     }
