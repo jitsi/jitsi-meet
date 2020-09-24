@@ -9,10 +9,34 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.3.2'
+        classpath 'com.android.tools.build:gradle:4.0.1'
         classpath 'com.google.gms:google-services:4.3.3'
         classpath 'com.google.firebase:firebase-crashlytics-gradle:2.3.0'
     }
+}
+
+ext {
+    buildToolsVersion = "29.0.3"
+    compileSdkVersion = 29
+    minSdkVersion    = 23
+    targetSdkVersion = 29
+    supportLibVersion = "28.0.0"
+
+    // The Maven artifact groupdId of the third-party react-native modules which
+    // Jitsi Meet SDK for Android depends on and which are not available in
+    // third-party Maven repositories so we have to deploy to a Maven repository
+    // of ours.
+    moduleGroupId = 'com.facebook.react'
+
+    // Maven repo where artifacts will be published
+    mavenRepo = System.env.MVN_REPO ?: ""
+    mavenUser = System.env.MVN_USER ?: ""
+    mavenPassword = System.env.MVN_PASSWORD ?: ""
+
+    // Libre build
+    libreBuild = (System.env.LIBRE_BUILD ?: "false").toBoolean()
+
+    googleServicesEnabled = project.file('app/google-services.json').exists() && !libreBuild
 }
 
 allprojects {
@@ -135,30 +159,6 @@ allprojects {
             }
         }
     }
-}
-
-ext {
-    buildToolsVersion = "29.0.3"
-    compileSdkVersion = 29
-    minSdkVersion    = 23
-    targetSdkVersion = 29
-    supportLibVersion = "28.0.0"
-
-    // The Maven artifact groupdId of the third-party react-native modules which
-    // Jitsi Meet SDK for Android depends on and which are not available in
-    // third-party Maven repositories so we have to deploy to a Maven repository
-    // of ours.
-    moduleGroupId = 'com.facebook.react'
-
-    // Maven repo where artifacts will be published
-    mavenRepo = System.env.MVN_REPO ?: ""
-    mavenUser = System.env.MVN_USER ?: ""
-    mavenPassword = System.env.MVN_PASSWORD ?: ""
-
-    // Libre build
-    libreBuild = (System.env.LIBRE_BUILD ?: "false").toBoolean()
-
-    googleServicesEnabled = project.file('app/google-services.json').exists() && !libreBuild
 }
 
 // Force the version of the Android build tools we have chosen on all
