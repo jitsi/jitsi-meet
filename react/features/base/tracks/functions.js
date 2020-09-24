@@ -179,6 +179,29 @@ export function getLocalTracks(tracks, includePending = false) {
 }
 
 /**
+ * Returns an array containing the remote tracks with or without a (valid)
+ * {@code JitsiTrack}.
+ *
+ * @param {Track[]} tracks - An array containing all remote tracks.
+ * @param {boolean} [includePending] - Indicates whether a remote track is to be
+ * returned if it is still pending. A remote track is pending if
+ * {@code getUserMedia} is still executing to create it and, consequently, its
+ * {@code jitsiTrack} property is {@code undefined}. By default a pending remote
+ * track is not returned.
+ * @returns {Track[]}
+ */
+export function getRemoteTracks(tracks, includePending = false) {
+    // XXX A remote track is considered ready only once it has its `jitsiTrack`
+    // property set by the `TRACK_ADDED` action. Until then there is a stub
+    // added just before the `getUserMedia` call with a cancellable
+    // `gumInProgress` property which then can be used to destroy the track that
+    // has not yet been added to the redux store. Once GUM is cancelled, it will
+    // never make it to the store nor there will be any
+    // `TRACK_ADDED`/`TRACK_REMOVED` actions dispatched for it.
+    return tracks.filter(t => !t.local && (t.jitsiTrack || includePending));
+}
+
+/**
  * Returns local video track.
  *
  * @param {Track[]} tracks - List of all tracks.

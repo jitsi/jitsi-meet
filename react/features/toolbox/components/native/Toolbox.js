@@ -7,7 +7,6 @@ import { ColorSchemeRegistry } from '../../../base/color-scheme';
 import { CHAT_ENABLED, getFeatureFlag } from '../../../base/flags';
 import { Container } from '../../../base/react';
 import { connect } from '../../../base/redux';
-import { connect as startConference } from '../../../base/connection';
 import { StyleType } from '../../../base/styles';
 import { ChatButton } from '../../../chat';
 import { InfoDialogButton } from '../../../invite';
@@ -16,11 +15,9 @@ import { isToolboxVisible } from '../../functions';
 
 import AudioMuteButton from '../AudioMuteButton';
 import HangupButton from '../HangupButton';
-import Prejoin from '../../../prejoin/components/Prejoin.native';
 import OverflowMenuButton from './OverflowMenuButton';
 import styles from './styles';
 import VideoMuteButton from '../VideoMuteButton';
-import { enablePreJoinPage } from '../../../prejoin';
 
 /**
  * The type of {@link Toolbox}'s React {@code Component} props.
@@ -135,12 +132,6 @@ class Toolbox extends PureComponent<Props> {
                     !_enablePreJoinPage && <HangupButton
                         styles = { hangupButtonStyles } />
                 }
-                {
-                    <Button title={"hello"} onPress={()=>{
-                        _startConference()
-                    }}/>
-                }
-                <Prejoin/>
                 <VideoMuteButton
                     styles = { buttonStyles }
                     toggledStyles = { toggledButtonStyles } />
@@ -166,7 +157,7 @@ class Toolbox extends PureComponent<Props> {
  * }}
  */
 function _mapStateToProps(state: Object): Object {
-    const { enablePreJoinPage } = state['features/prejoin'];
+    const { enablePreJoinPage } = state['features/jane-waiting-area-native'];
     return {
         _chatEnabled: getFeatureFlag(state, CHAT_ENABLED, true),
         _styles: ColorSchemeRegistry.get(state, 'Toolbox'),
@@ -175,14 +166,4 @@ function _mapStateToProps(state: Object): Object {
     };
 }
 
-function _mapDispatchToProps(dispatch: Function): $Shape<Props> {
-    return {
-        _startConference: () => {
-            dispatch(startConference());
-            dispatch(enablePreJoinPage(false));
-        }
-    };
-}
-
-
-export default connect(_mapStateToProps, _mapDispatchToProps)(Toolbox);
+export default connect(_mapStateToProps)(Toolbox);

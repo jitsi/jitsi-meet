@@ -203,6 +203,43 @@ const SECTION_LIST_STYLES = {
     }
 };
 
+const WATING_MESSAGE_STYLES = {
+    waitingMessageContainer: {
+        position: 'absolute',
+        top: 80,
+        width: '100%',
+        flexDirection: 'row',
+        backgroundColor: 'transparent'
+    },
+
+    waitingMessageImage: {
+        marginRight: 5,
+    },
+
+    waitingMessageHeader: {
+        fontSize: 15,
+        marginTop: 5,
+        color: ColorPalette.janeDarkColor,
+        textAlign: 'left',
+        backgroundColor: 'transparent'
+    },
+
+    waitingMessageText: {
+        marginTop: 5,
+        fontSize: 12,
+        color: ColorPalette.janeDarkColor,
+        textAlign: 'left',
+        backgroundColor: 'transparent'
+    },
+
+    watermark: {
+        width: 60,
+        height: 50,
+        marginLeft: 16,
+        marginRight: 8
+    }
+};
+
 export const TINTED_VIEW_DEFAULT = {
     backgroundColor: ColorPalette.appBackground,
     opacity: 0.8
@@ -214,5 +251,6 @@ export const TINTED_VIEW_DEFAULT = {
  */
 export default {
     ...PAGED_LIST_STYLES,
-    ...SECTION_LIST_STYLES
+    ...SECTION_LIST_STYLES,
+    ...WATING_MESSAGE_STYLES
 };

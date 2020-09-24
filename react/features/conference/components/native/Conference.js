@@ -28,6 +28,7 @@ import { BackButtonRegistry } from '../../../mobile/back-button';
 import { AddPeopleDialog, CalleeInfoContainer } from '../../../invite';
 import { Captions } from '../../../subtitles';
 import { isToolboxVisible, setToolboxVisible, Toolbox } from '../../../toolbox';
+import Prejoin from '../../../jane-waiting-area-native/components/Prejoin.native';
 
 import {
     AbstractConference,
@@ -109,7 +110,8 @@ type Props = AbstractProps & {
     /**
      * The redux {@code dispatch} function.
      */
-    dispatch: Function
+    dispatch: Function,
+    enablePreJoinPage: boolean
 };
 
 /**
@@ -252,7 +254,8 @@ class Conference extends AbstractConference<Props, *> {
             _largeVideoParticipantId,
             _reducedUI,
             _shouldDisplayTileView,
-            _toolboxVisible
+            _toolboxVisible,
+            _enablePreJoinPage
         } = this.props;
         const showGradient = _toolboxVisible;
         const applyGradientStretching = _filmstripVisible && isNarrowAspectRatio(this) && !_shouldDisplayTileView;
@@ -315,8 +318,9 @@ class Conference extends AbstractConference<Props, *> {
 
                     <Captions onPress = { this._onClick } />
 
-                    { _shouldDisplayTileView || <DisplayNameLabel participantId = { _largeVideoParticipantId } /> }
-
+                    {_shouldDisplayTileView || <DisplayNameLabel
+                        participantId={_largeVideoParticipantId}/>}
+                    {_enablePreJoinPage && <Prejoin/>}
                     {/*
                       * The Toolbox is in a stacking layer below the Filmstrip.
                       */}
@@ -341,7 +345,7 @@ class Conference extends AbstractConference<Props, *> {
                     { this._renderNotificationsContainer() }
                 </SafeAreaView>
 
-                <TestConnectionInfo />
+                {/*<TestConnectionInfo />*/}
 
                 { this._renderConferenceNotification() }
             </>
@@ -431,6 +435,9 @@ function _mapStateToProps(state) {
         joining,
         leaving
     } = state['features/base/conference'];
+    const {
+        enablePreJoinPage
+    } = state['features/jane-waiting-area-native'];
     const { reducedUI } = state['features/base/responsive-ui'];
 
     // XXX There is a window of time between the successful establishment of the
@@ -500,7 +507,8 @@ function _mapStateToProps(state) {
          * @private
          * @type {boolean}
          */
-        _toolboxVisible: isToolboxVisible(state)
+        _toolboxVisible: isToolboxVisible(state),
+        _enablePreJoinPage: enablePreJoinPage
     };
 }
 

@@ -2,7 +2,7 @@
 
 import type { Dispatch } from 'redux';
 import { setRoom } from '../base/conference';
-import { enablePreJoinPage, isPrejoinPageEnabled } from '../prejoin';
+import { enablePreJoinPage, isPrejoinPageEnabled } from '../jane-waiting-area-native';
 import {
     configWillLoad,
     createFakeConfig,

@@ -21,6 +21,8 @@ import {
 
 import Thumbnail from './Thumbnail';
 import styles from './styles';
+import WaitingMessage
+    from '../../../base/react/components/native/WaitingMessage';
 
 /**
  * The type of the React {@link Component} props of {@link TileView}.
@@ -134,6 +136,7 @@ class TileView extends Component<Props, State> {
         return (
             <DimensionsDetector
                 onDimensionsChanged = { this._onDimensionsChanged }>
+                <WaitingMessage/>
                 <ScrollView
                     style = {{
                         ...styles.tileView,

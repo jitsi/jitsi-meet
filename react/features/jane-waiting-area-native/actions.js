@@ -3,7 +3,7 @@ import {
     INIT_WEB_SOCKET,
     DISCONNECT_WEB_SOCKET
 } from './actionTypes';
-import { Sockets } from '../../../service/Websocket/socket';
+// import { Sockets } from '../../../service/Websocket/socket';
 
 export function enablePreJoinPage(enablePreJoinPage: ?boolean) {
     return {
@@ -14,23 +14,23 @@ export function enablePreJoinPage(enablePreJoinPage: ?boolean) {
 
 export function initWebSocket(socketJwtPayload, socket_host, ws_token, onMessageUpdateListener) {
     let socket;
-    if (socketJwtPayload) {
-        socket = new Sockets({
-            socket_host: socket_host,
-            ws_token: ws_token
-        });
-        socket.onMessageUpdateListener = onMessageUpdateListener;
-    }
-    return {
-        type: INIT_WEB_SOCKET,
-        socket
-    };
+    // if (socketJwtPayload) {
+    //     socket = new Sockets({
+    //         socket_host: socket_host,
+    //         ws_token: ws_token
+    //     });
+    //     socket.onMessageUpdateListener = onMessageUpdateListener;
+    // }
+    // return {
+    //     type: INIT_WEB_SOCKET,
+    //     socket
+    // };
 }
 
 export function disconnectSocket() {
     return (dispatch: Function, getState: Function) => {
         const state = getState();
-        state['features/prejoin'].socket.disconnect();
+        state['features/jane-waiting-area-native'].socket.disconnect();
         dispatch({
             type: DISCONNECT_WEB_SOCKET
         });
