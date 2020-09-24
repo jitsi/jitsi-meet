@@ -235,7 +235,7 @@ function _inIframe() {
 }
 
 /**
- * Tries to load the scripts for the analytics handlers and creates them.
+ * Tries to load the scripts for the external analytics handlers and creates them.
  *
  * @param {Array} scriptURLs - The array of script urls to load.
  * @param {Object} handlerConstructorOptions - The default options to pass when creating handlers.
@@ -286,7 +286,7 @@ function _loadHandlers(scriptURLs = [], handlerConstructorOptions) {
                 logger.warn(`Error creating analytics handler: ${error}`);
             }
         }
-        logger.debug(`Loaded ${handlers.length} analytics handlers`);
+        logger.debug(`Loaded ${handlers.length} external analytics handlers`);
 
         return handlers;
     });
