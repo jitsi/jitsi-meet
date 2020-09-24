@@ -294,6 +294,8 @@ export function maybeRedirectToWelcomePage(options: Object = {}) {
         if (enableClosePage) {
             if (isVpaasMeeting(getState())) {
                 redirectToStaticPage('/');
+
+                return;
             }
 
             const { isGuest, jwt } = getState()['features/base/jwt'];
