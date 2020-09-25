@@ -337,6 +337,7 @@ var config = {
     // 'datachannel'), undefined (treat it as 'datachannel') and false (don't
     // open any channel).
     // openBridgeChannel: true,
+    openBridgeChannel: 'websocket',
 
 
     // UI

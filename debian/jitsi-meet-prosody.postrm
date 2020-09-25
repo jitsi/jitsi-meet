@@ -45,8 +45,12 @@ case "$1" in
             rm -rf /var/lib/prosody/$JICOFO_AUTH_DOMAIN.*
             rm -rf /var/lib/prosody/$JVB_HOSTNAME.*
 
-            # clean created users
-            rm -rf /var/lib/prosody/`echo $JICOFO_AUTH_DOMAIN | sed -e "s/\./%2e/g"`
+            # clean created users, replace '.' with '%2e', replace '-' with '%2d'
+            rm -rf /var/lib/prosody/`echo $JICOFO_AUTH_DOMAIN | sed -e "s/\./%2e/g"| sed -e "s/-/%2d/g"`
+
+            # clean the prosody cert from the trust store
+            rm -rf /usr/local/share/ca-certificates/$JICOFO_AUTH_DOMAIN.*
+            update-ca-certificates -f
         fi
 
         # Clear the debconf variable

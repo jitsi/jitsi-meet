@@ -8,7 +8,7 @@ turncredentials_secret = "__turnSecret__";
 turncredentials = {
   { type = "stun", host = "jitmeet.example.com", port = "3478" },
   { type = "turn", host = "jitmeet.example.com", port = "3478", transport = "udp" },
-  { type = "turns", host = "jitmeet.example.com", port = "443", transport = "tcp" }
+  { type = "turns", host = "jitmeet.example.com", port = "5349", transport = "tcp" }
 };
 
 cross_domain_bosh = false;
