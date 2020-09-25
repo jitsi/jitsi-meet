@@ -1027,6 +1027,19 @@ class API {
     }
 
     /**
+     * Notify external application (if API is enabled) that the localStorage has changed.
+     *
+     * @param {string} localStorageContent - The new localStorageContent.
+     * @returns {void}
+     */
+    notifyLocalStorageChanged(localStorageContent: string) {
+        this._sendEvent({
+            name: 'local-storage-changed',
+            localStorageContent
+        });
+    }
+
+    /**
      * Disposes the allocated resources.
      *
      * @returns {void}
