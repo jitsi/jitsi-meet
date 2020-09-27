@@ -73,6 +73,14 @@ var interfaceConfig = {
     DISABLE_RINGING: false,
 
     /**
+     * When true, subject text (conference name, room name) at the top of conference
+     * window will not show. If {@code undefined}, defaults to {@code false}.
+     *
+     * @type {boolean}
+     */
+    DISABLE_SUBJECT_TEXT: false,
+
+    /**
      * Whether the speech to text transcription subtitles panel is disabled.
      * If {@code undefined}, defaults to {@code false}.
      *

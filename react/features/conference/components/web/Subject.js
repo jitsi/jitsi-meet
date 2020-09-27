@@ -10,6 +10,8 @@ import ConferenceTimer from '../ConferenceTimer';
 
 import ParticipantsCount from './ParticipantsCount';
 
+declare var interfaceConfig: Object;
+
 /**
  * The type of the React {@code Component} props of {@link Subject}.
  */
@@ -74,7 +76,9 @@ function _mapStateToProps(state) {
 
     return {
         _showParticipantCount: participantCount > 2,
-        _subject: getConferenceName(state),
+        _subject: interfaceConfig.DISABLE_SUBJECT_TEXT
+            ? ''
+            : getConferenceName(state),
         _visible: isToolboxVisible(state) && participantCount > 1
     };
 }
