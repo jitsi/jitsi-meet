@@ -3,7 +3,6 @@
     &-input-area {
         margin: 0 auto;
         text-align: center;
-        width: 320px;
     }
 
     &-title {
@@ -42,9 +41,11 @@
 
     &-error {
         color: white;
-        background-color: rgba(229, 75, 75, 0.5);
+        background-color: rgba(225, 45, 45, 0.6);
+        border-radius: 3px;
         width: 100%;
-        padding: 3px;
+        padding: 2px;
+        box-sizing: border-box;
         margin-top: 4px;
         font-size: 13px;
         text-align: center;
@@ -58,75 +59,6 @@
 }
 
 .prejoin-preview {
-    height: 100%;
-    position: absolute;
-    width: 100%;
-
-    &--no-video {
-        background: radial-gradient(50% 50% at 50% 50%, #5B6F80 0%, #365067 100%), #FFFFFF;
-        text-align: center;
-    }
-
-    &-video {
-        height: 100%;
-        object-fit: cover;
-        position: absolute;
-        width: 100%;
-    }
-
-    &-name {
-        color: #fff;
-        font-size: 19px;
-        line-height: 28px;
-
-        &--editable {
-            background: none;
-            border: 0;
-            border-bottom: 1px solid #D1DBE8;
-            margin: 24px 0 16px 0;
-            outline: none;
-            text-align: center;
-            width: 100%;
-
-            &::-webkit-input-placeholder {
-                @include name-placeholder;
-            }
-            &::-moz-placeholder {
-                @include name-placeholder;
-            }
-            &:-ms-input-placeholder {
-                @include name-placeholder;
-            }
-        }
-
-        &--text {
-            margin: 16px 0;
-            outline: none;
-        }
-    }
-
-    &-avatar.avatar {
-        background: #A4B8D1;
-        margin: 200px auto 0 auto;
-    }
-
-    &-overlay {
-        height: 100%;
-        position: absolute;
-        width: 100%;
-        z-index: 1;
-        background: linear-gradient(0deg, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3));
-    }
-
-    &-bottom-overlay {
-        background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.9) 100%);
-        bottom: 0;
-        height: 50%;
-        position: absolute;
-        width: 100%;
-        z-index: 1;
-    }
-
     &-status {
         align-items: center;
         align-self: stretch;
