@@ -7,7 +7,7 @@ import 'jQuery-Impromptu';
 import 'olm';
 
 // We need to setup the jitsi-local-storage as early as possible so that we can start using it.
-// NOTE: If jitsi-local-storage is used before the initial setup is performed this will brake the use case when we use
+// NOTE: If jitsi-local-storage is used before the initial setup is performed this will break the use case when we use
 // the  local storage from the parent page when the localStorage is disabled. Also the setup is relying that
 // window.location is not changed and still has all URL parameters.
 import './react/features/base/jitsi-local-storage/setup';
