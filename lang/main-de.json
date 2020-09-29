@@ -234,7 +234,7 @@
         "micPermissionDeniedError": "Die Berechtigung zur Verwendung des Mikrofons wurde nicht erteilt. Sie können trotzdem an der Konferenz teilnehmen, aber die anderen Teilnehmer können Sie nicht hören. Verwenden Sie die Kamera-Schaltfläche in der Adressleiste, um die Berechtigungen zu erteilen.",
         "micUnknownError": "Das Mikrofon kann aus einem unbekannten Grund nicht verwendet werden.",
         "muteEveryoneElseDialog": "Einmal stummgeschaltet, können Sie deren Stummschaltung nicht mehr beenden, aber sie können ihre Stummschaltung jederzeit selbst beenden.",
-        "muteEveryoneElseTitle": "Alle außer {{whom}} stummschaten?",
+        "muteEveryoneElseTitle": "Alle außer {{whom}} stummschalten?",
         "muteEveryoneDialog": "Wollen Sie wirklich alle stummschalten? Sie können deren Stummschaltung nicht mehr beenden, aber sie können ihre Stummschaltung jederzeit selbst beenden.",
         "muteEveryoneTitle": "Alle stummschalten?",
         "muteEveryoneSelf": "sich selbst",
