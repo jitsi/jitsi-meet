@@ -3,6 +3,7 @@
 import React, { PureComponent } from 'react';
 
 import { AudioSettingsButton, VideoSettingsButton } from '../../../../toolbox/components/web';
+import { Avatar } from '../../../avatar';
 
 import ConnectionStatus from './ConnectionStatus';
 import CopyMeetingUrl from './CopyMeetingUrl';
@@ -85,12 +86,18 @@ export default class PreMeetingScreen extends PureComponent<Props> {
                 id = 'lobby-screen'>
                 <ConnectionStatus />
                 <Preview
-                    name = { name }
-                    showAvatar = { showAvatar }
                     videoMuted = { videoMuted }
                     videoTrack = { videoTrack } />
                 {!videoMuted && <div className = 'preview-overlay' />}
                 <div className = 'content'>
+                    {showAvatar && videoMuted && (
+                        <Avatar
+                            className = 'premeeting-screen-avatar'
+                            displayName = { name }
+                            dynamicColor = { false }
+                            participantId = 'local'
+                            size = { 80 } />
+                    )}
                     {showConferenceInfo && (
                         <>
                             <div className = 'title'>

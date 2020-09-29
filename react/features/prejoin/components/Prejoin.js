@@ -5,7 +5,7 @@ import React, { Component } from 'react';
 
 import { getRoomName } from '../../base/conference';
 import { translate } from '../../base/i18n';
-import { Icon, IconPhone, IconVolumeOff } from '../../base/icons';
+import { Icon, IconArrowDown, IconArrowUp, IconPhone, IconVolumeOff } from '../../base/icons';
 import { isVideoMutedByUser } from '../../base/media';
 import { ActionButton, InputField, PreMeetingScreen, ToggleButton } from '../../base/premeeting';
 import { connect } from '../../base/redux';
@@ -316,6 +316,8 @@ class Prejoin extends Component<Props, State> {
                         <div className = 'prejoin-input-area'>
                             <InputField
                                 autoFocus = { true }
+                                className = { showError ? 'error' : '' }
+                                hasError = { showError }
                                 onChange = { _setName }
                                 onSubmit = { joinConference }
                                 placeHolder = { t('dialog.enterDisplayName') }
@@ -352,6 +354,7 @@ class Prejoin extends Component<Props, State> {
                                     isOpen = { showJoinByPhoneButtons }
                                     onClose = { _onDropdownClose }>
                                     <ActionButton
+                                        OptionsIcon = { showJoinByPhoneButtons ? IconArrowUp : IconArrowDown }
                                         hasOptions = { true }
                                         onClick = { _onJoinButtonClick }
                                         onOptionsClick = { _onOptionsClick }
