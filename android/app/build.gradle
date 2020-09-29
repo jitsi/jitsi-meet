@@ -82,6 +82,7 @@ dependencies {
         // Firebase
         //  - Crashlytics
         //  - Dynamic Links
+        implementation 'com.google.firebase:firebase-analytics:17.5.0'
         implementation 'com.google.firebase:firebase-crashlytics:17.2.1'
         implementation 'com.google.firebase:firebase-dynamic-links:19.1.0'
     }

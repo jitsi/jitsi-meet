@@ -5,8 +5,9 @@ require_relative '../node_modules/@react-native-community/cli-platform-ios/nativ
 target 'jitsi-meet' do
   project 'app/app.xcodeproj'
 
-  pod 'Firebase/Crashlytics', '~> 6.24.0'
-  pod 'Firebase/DynamicLinks', '~> 6.24.0'
+  pod 'Firebase/Analytics', '~> 6.33.0'
+  pod 'Firebase/Crashlytics', '~> 6.33.0'
+  pod 'Firebase/DynamicLinks', '~> 6.33.0'
 end
 
 target 'JitsiMeet' do
