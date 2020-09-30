@@ -27,19 +27,8 @@ MiddlewareRegistry.register(store => next => action => {
 
         switch (layout) {
         case LAYOUTS.TILE_VIEW: {
-            const { gridDimensions } = state['features/filmstrip'].tileViewDimensions;
-            const { clientHeight, clientWidth } = state['features/base/responsive-ui'];
-            const { isOpen } = state['features/chat'];
-
             store.dispatch(
-                setTileViewDimensions(
-                    gridDimensions,
-                    {
-                        clientHeight,
-                        clientWidth
-                    },
-                    isOpen
-                )
+                setTileViewDimensions(state)
             );
             break;
         }
