@@ -16,6 +16,7 @@ For other systems, or if you wish to install all components manually, see the [d
 
 Installation with Docker is also available. Please see the [instruction](https://jitsi.github.io/handbook/docs/devops-guide/devops-guide-docker).
 
+For Apache session names special characters have to be specially enabled.
 ## Download
 
 | Latest stable release | [![release](https://img.shields.io/badge/release-latest-green.svg)](https://github.com/jitsi/jitsi-meet/releases/latest) |
