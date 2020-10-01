@@ -16,6 +16,10 @@ android {
     compileSdkVersion rootProject.ext.compileSdkVersion
     buildToolsVersion rootProject.ext.buildToolsVersion
 
+    packagingOptions {
+        exclude 'lib/*/libhermes*.so'
+    }
+
     defaultConfig {
         applicationId 'org.jitsi.meet'
         versionCode vcode
