@@ -19,7 +19,9 @@ export default function TestButton({ onClick }: Props) {
     return (
         <div
             className = 'audio-preview-test-button'
-            onClick = { onClick }>
+            onClick = { onClick }
+            role = 'button'
+            tabIndex = { 0 }>
             Test
         </div>
     );

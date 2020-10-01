@@ -115,6 +115,8 @@ class ChatInput extends Component<Props, State> {
                         <div id = 'smileys'>
                             <Emoji
                                 onClick = { this._onToggleSmileysPanel }
+                                role = 'button'
+                                tabIndex = { 0 }
                                 text = ':)' />
                         </div>
                     </div>

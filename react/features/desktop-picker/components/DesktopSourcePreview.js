@@ -71,7 +71,9 @@ class DesktopSourcePreview extends Component<Props> {
             <div
                 className = { displayClasses }
                 onClick = { this._onClick }
-                onDoubleClick = { this._onDoubleClick }>
+                onDoubleClick = { this._onDoubleClick }
+                role = 'button'
+                tabIndex = { 0 }>
                 <div className = 'desktop-source-preview-image-container'>
                     <img
                         className = 'desktop-source-preview-thumbnail'

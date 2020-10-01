@@ -72,7 +72,9 @@ class ParticipantsCount extends PureComponent<Props> {
         return (
             <div
                 className = 'participants-count'
-                onClick = { this._onClick }>
+                onClick = { this._onClick }
+                role = 'button'
+                tabIndex = { 0 }>
                 <span className = 'participants-count-number'>
                     {this.props.count}
                 </span>

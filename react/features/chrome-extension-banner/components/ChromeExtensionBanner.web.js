@@ -244,7 +244,9 @@ class ChromeExtensionBanner extends PureComponent<Props, State> {
                     </div>
                     <div
                         className = 'chrome-extension-banner__close-container'
-                        onClick = { this._onClosePressed }>
+                        onClick = { this._onClosePressed }
+                        role = 'button'
+                        tabIndex = { 0 }>
                         <Icon
                             className = 'gray'
                             size = { 12 }
@@ -255,7 +257,9 @@ class ChromeExtensionBanner extends PureComponent<Props, State> {
                     className = 'chrome-extension-banner__button-container'>
                     <div
                         className = 'chrome-extension-banner__button-open-url'
-                        onClick = { this._onInstallExtensionClick }>
+                        onClick = { this._onInstallExtensionClick }
+                        role = 'button'
+                        tabIndex = { 0 }>
                         <div
                             className = 'chrome-extension-banner__button-text'>
                             { t('chromeExtensionBanner.buttonText') }

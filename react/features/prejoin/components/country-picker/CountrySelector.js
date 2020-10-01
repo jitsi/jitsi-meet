@@ -26,7 +26,9 @@ function CountrySelector({ country: { code, dialCode }, onClick }: Props) {
     return (
         <div
             className = 'cpick-selector'
-            onClick = { onClick }>
+            onClick = { onClick }
+            role = 'button'
+            tabIndex = { 0 }>
             <div className = { `prejoin-dialog-flag iti-flag ${code}` } />
             <span>{`+${dialCode}`}</span>
             <Icon

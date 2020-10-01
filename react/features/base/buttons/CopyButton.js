@@ -112,7 +112,9 @@ function CopyButton({ className, displayedText, textToCopy, textOnHover, textOnC
             className = { `${className} copy-button${isClicked ? ' clicked' : ''}` }
             onClick = { onClick }
             onMouseOut = { onHoverOut }
-            onMouseOver = { onHoverIn }>
+            onMouseOver = { onHoverIn }
+            role = 'button'
+            tabIndex = { 0 }>
             { renderContent() }
         </div>
     );

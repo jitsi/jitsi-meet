@@ -36,7 +36,10 @@ class MessageRecipient extends AbstractMessageRecipient<Props> {
                         recipient: _privateMessageRecipient
                     }) }
                 </span>
-                <div onClick = { this.props._onRemovePrivateMessageRecipient }>
+                <div
+                    onClick = { this.props._onRemovePrivateMessageRecipient }
+                    role = 'button'
+                    tabIndex = { 0 }>
                     <Icon
                         src = { IconCancelSelection } />
                 </div>

@@ -69,7 +69,9 @@ export default class Tab extends Component<Props> {
             <div
                 className = { className }
                 key = { index }
-                onClick = { this._onSelect }>
+                onClick = { this._onSelect }
+                role = 'button'
+                tabIndex = { 0 }>
                 { label }
             </div>);
     }

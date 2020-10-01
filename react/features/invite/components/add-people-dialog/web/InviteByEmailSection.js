@@ -113,7 +113,9 @@ function InviteByEmailSection({ inviteSubject, inviteText, t }: Props) {
                             key = { idx }
                             position = 'top'>
                             <div
-                                onClick = { _onSelectProvider(url) }>
+                                onClick = { _onSelectProvider(url) }
+                                role = 'button'
+                                tabIndex = { 0 }>
                                 <Icon src = { icon } />
                             </div>
                         </Tooltip>
@@ -129,7 +131,9 @@ function InviteByEmailSection({ inviteSubject, inviteText, t }: Props) {
             <div>
                 <div
                     className = { `invite-more-dialog email-container${isActive ? ' active' : ''}` }
-                    onClick = { _onToggleActiveState }>
+                    onClick = { _onToggleActiveState }
+                    role = 'button'
+                    tabIndex = { 0 }>
                     <span>{t('addPeople.shareInvite')}</span>
                     <Icon src = { IconArrowDownSmall } />
                 </div>
@@ -139,7 +143,9 @@ function InviteByEmailSection({ inviteSubject, inviteText, t }: Props) {
                         position = 'top'>
                         <div
                             className = 'copy-invite-icon'
-                            onClick = { _onCopyText }>
+                            onClick = { _onCopyText }
+                            role = 'button'
+                            tabIndex = { 0 }>
                             <Icon src = { IconCopy } />
                         </div>
                     </Tooltip>

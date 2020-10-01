@@ -65,7 +65,9 @@ export default class NavigateSectionListItem<P: Props>
         return (
             <Container
                 className = { rootClassName }
-                onClick = { onPress }>
+                onClick = { onPress }
+                role = 'button'
+                tabIndex = { 0 }>
                 <Container className = 'navigate-section-list-tile-info'>
                     <Text
                         className = 'navigate-section-tile-title'>

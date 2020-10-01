@@ -95,7 +95,9 @@ export default class AvatarListItem extends Component<Props> {
         return (
             <Container
                 onClick = { this.props.onPress }
+                role = 'button'
                 style = { styles.listItem }
+                tabIndex = { 0 }
                 underlayColor = { UNDERLAY_COLOR }>
                 <Avatar
                     colorBase = { colorBase }

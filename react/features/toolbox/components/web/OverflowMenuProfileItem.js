@@ -79,7 +79,9 @@ class OverflowMenuProfileItem extends Component<Props> {
             <li
                 aria-label = { t('toolbar.accessibilityLabel.profile') }
                 className = { classNames }
-                onClick = { this._onClick }>
+                onClick = { this._onClick }
+                role = 'button'
+                tabIndex = { 0 }>
                 <span className = 'overflow-menu-item-icon'>
                     <Avatar
                         participantId = { _localParticipant.id }

@@ -39,7 +39,9 @@ function EmbedMeetingTrigger({ t, openEmbedDialog }: Props) {
     return (
         <div
             className = 'embed-meeting-trigger'
-            onClick = { onClick }>
+            onClick = { onClick }
+            role = 'button'
+            tabIndex = { 0 }>
             {t('embedMeeting.title')}
         </div>
     );

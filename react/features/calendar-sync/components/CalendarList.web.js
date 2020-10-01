@@ -124,14 +124,18 @@ class CalendarList extends AbstractPage<Props> {
                     { showSettingsButton
                         && <div
                             className = 'button'
-                            onClick = { this._onOpenSettings }>
+                            onClick = { this._onOpenSettings }
+                            role = 'button'
+                            tabIndex = { 0 }>
                             { t('calendarSync.permissionButton') }
                         </div>
                     }
                     { showRefreshButton
                         && <div
                             className = 'button'
-                            onClick = { this._onRefreshEvents }>
+                            onClick = { this._onRefreshEvents }
+                            role = 'button'
+                            tabIndex = { 0 }>
                             { t('calendarSync.refresh') }
                         </div>
                     }
@@ -167,7 +171,9 @@ class CalendarList extends AbstractPage<Props> {
                     </p>
                     <div
                         className = 'button'
-                        onClick = { this._onRefreshEvents }>
+                        onClick = { this._onRefreshEvents }
+                        role = 'button'
+                        tabIndex = { 0 }>
                         { t('calendarSync.refresh') }
                     </div>
                 </div>
@@ -193,7 +199,9 @@ class CalendarList extends AbstractPage<Props> {
                 </p>
                 <div
                     className = 'button'
-                    onClick = { this._onOpenSettings }>
+                    onClick = { this._onOpenSettings }
+                    role = 'button'
+                    tabIndex = { 0 }>
                     { t('welcomepage.connectCalendarButton') }
                 </div>
             </div>

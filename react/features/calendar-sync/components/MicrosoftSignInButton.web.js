@@ -31,7 +31,9 @@ export default class MicrosoftSignInButton extends Component<Props> {
         return (
             <div
                 className = 'microsoft-sign-in'
-                onClick = { this.props.onClick }>
+                onClick = { this.props.onClick }
+                role = 'button'
+                tabIndex = { 0 }>
                 <img
                     className = 'microsoft-logo'
                     src = 'images/microsoftLogo.svg' />

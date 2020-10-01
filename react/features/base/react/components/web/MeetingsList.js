@@ -166,7 +166,9 @@ export default class MeetingsList extends Component<Props> {
             <Container
                 className = { rootClassName }
                 key = { index }
-                onClick = { onPress }>
+                onClick = { onPress }
+                role = 'button'
+                tabIndex = { 0 }>
                 <Container className = 'left-column'>
                     <Text className = 'date'>
                         { _toDateString(date) }

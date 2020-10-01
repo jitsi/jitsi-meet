@@ -213,10 +213,12 @@ class ParticipantView extends Component<Props> {
         return (
             <Container
                 onClick = { renderVideo || renderYoutubeLargeVideo ? undefined : onPress }
+                role = 'button'
                 style = {{
                     ...styles.participantView,
                     ...this.props.style
                 }}
+                tabIndex = { 0 }
                 touchFeedback = { false }>
 
                 <TestHint

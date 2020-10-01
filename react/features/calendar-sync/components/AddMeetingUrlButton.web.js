@@ -67,7 +67,9 @@ class AddMeetingUrlButton extends Component<Props> {
             <Tooltip content = { this.props.t('calendarSync.addMeetingURL') }>
                 <div
                     className = 'button add-button'
-                    onClick = { this._onClick }>
+                    onClick = { this._onClick }
+                    role = 'button'
+                    tabIndex = { 0 }>
                     <Icon src = { IconAdd } />
                 </div>
             </Tooltip>
