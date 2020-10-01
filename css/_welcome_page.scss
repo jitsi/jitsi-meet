@@ -186,7 +186,9 @@ body.welcome-page {
         font-size: $welcomePageButtonFontSize;
         font-weight: $welcomePageButtonFontWeight;
         background: #0074E0;
+        border: none;
         border-radius: $welcomePageButtonBorderRadius;
+        box-shadow: none;
         color: #FFFFFF;
         text-align: center;
         vertical-align: middle;
