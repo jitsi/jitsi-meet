@@ -38,7 +38,9 @@ function Label({ children, className, number, onClick }: Props) {
     return (
         <div
             className = { containerClass }
-            onClick = { onClick }>
+            onClick = { onClick }
+            role = 'button'
+            tabIndex = { 0 }>
             {number && <div className = 'prejoin-dialog-label-num'>{number}</div>}
             <span>{children}</span>
         </div>

@@ -135,7 +135,9 @@ class Chat extends AbstractChat<Props> {
             <div className = 'chat-header'>
                 <div
                     className = 'chat-close'
-                    onClick = { this.props._onToggleChat }>
+                    onClick = { this.props._onToggleChat }
+                    role = 'button'
+                    tabIndex = { 0 }>
                     <Icon src = { IconClose } />
                 </div>
             </div>

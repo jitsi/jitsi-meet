@@ -141,12 +141,14 @@ function Thumbnail(props: Props) {
         <Container
             onClick = { _onClick }
             onLongPress = { participant.local ? undefined : _onShowRemoteVideoMenu }
+            role = 'button'
             style = { [
                 styles.thumbnail,
                 participant.pinned && !tileView
                     ? _styles.thumbnailPinned : null,
                 props.styleOverrides || null
             ] }
+            tabIndex = { 0 }
             touchFeedback = { false }>
 
             <ParticipantView

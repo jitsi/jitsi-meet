@@ -101,7 +101,9 @@ export default class NavigateSectionListItem extends Component<Props> {
         return (
             <Container
                 onClick = { secondaryAction }
-                style = { styles.secondaryActionContainer }>
+                role = 'button'
+                style = { styles.secondaryActionContainer }
+                tabIndex = { 0 }>
                 <Text style = { styles.secondaryActionLabel }>+</Text>
             </Container>
         );

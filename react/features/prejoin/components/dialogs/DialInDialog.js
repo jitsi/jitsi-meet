@@ -91,7 +91,9 @@ function DialinDialog(props: Props) {
             <div>
                 <span
                     className = 'prejoin-dialog-dialin-link'
-                    onClick = { onSmallTextClick }>
+                    onClick = { onSmallTextClick }
+                    role = 'button'
+                    tabIndex = { 0 }>
                     {t('prejoin.viewAllNumbers')}
                 </span>
             </div>

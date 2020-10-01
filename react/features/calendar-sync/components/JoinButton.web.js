@@ -59,7 +59,9 @@ class JoinButton extends Component<Props> {
                 content = { t('calendarSync.joinTooltip') }>
                 <div
                     className = 'button join-button'
-                    onClick = { this._onClick }>
+                    onClick = { this._onClick }
+                    role = 'button'
+                    tabIndex = { 0 }>
                     { t('calendarSync.join') }
                 </div>
             </Tooltip>

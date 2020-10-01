@@ -44,7 +44,9 @@ class CountryRow extends PureComponent<Props> {
         return (
             <div
                 className = 'cpick-dropdown-entry'
-                onClick = { this._onClick }>
+                onClick = { this._onClick }
+                role = 'button'
+                tabIndex = { 0 }>
                 <div className = { `prejoin-dialog-flag iti-flag ${code}` } />
                 <div className = 'cpick-dropdown-entry-text'>
                     {`${name} (+${dialCode})`}

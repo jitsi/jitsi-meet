@@ -172,7 +172,9 @@ class DisplayName extends Component<Props, State> {
             <span
                 className = 'displayname'
                 id = { elementID }
-                onClick = { this._onStartEditing }>
+                onClick = { this._onStartEditing }
+                role = 'button'
+                tabIndex = { 0 }>
                 { appendSuffix(_nameToDisplay, displayNameSuffix) }
             </span>
         );

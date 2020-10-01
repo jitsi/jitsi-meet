@@ -35,7 +35,9 @@ function ToggleButton({ children, isToggled, onClick }: Props) {
     return (
         <div
             className = { className }
-            onClick = { onClick }>
+            onClick = { onClick }
+            role = 'button'
+            tabIndex = { 0 }>
             <div className = 'toggle-button-container'>
                 <div className = 'toggle-button-icon-container'>
                     <Icon

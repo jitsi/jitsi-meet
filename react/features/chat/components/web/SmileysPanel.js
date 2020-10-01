@@ -41,6 +41,8 @@ class SmileysPanel extends PureComponent<Props> {
                     <Emoji
                         onClick = { onSelectFunction }
                         onlyEmojiClassName = 'smiley'
+                        role = 'button'
+                        tabIndex = { 0 }
                         text = { smileys[smileyKey] } />
                 </div>
             );
