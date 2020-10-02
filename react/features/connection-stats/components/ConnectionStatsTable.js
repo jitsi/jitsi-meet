@@ -11,6 +11,11 @@ import { translate } from '../../base/i18n';
 type Props = {
 
     /**
+     * The audio SSRC of this client.
+     */
+    audioSsrc: number,
+
+    /**
      * Statistics related to bandwidth.
      * {{
      *     download: Number,
@@ -50,6 +55,11 @@ type Props = {
     e2eRtt: number,
 
     /**
+     * The endpoint id of this client.
+     */
+    participantId: string,
+
+    /**
      * Statistics related to frame rates for each ssrc.
      * {{
      *     [ ssrc ]: Number
@@ -67,6 +77,11 @@ type Props = {
      * suspended on the send-side).
      */
     maxEnabledResolution: number,
+
+    /**
+     * Callback to invoke when the user clicks on the download logs link.
+     */
+    onSaveLogs: Function,
 
     /**
      * Callback to invoke when the show additional stats link is clicked.
@@ -115,6 +130,11 @@ type Props = {
     t: Function,
 
     /**
+     * The video SSRC of this client.
+     */
+    videoSsrc: number,
+
+    /**
      * Statistics related to transports.
      */
     transport: Array<Object>
@@ -138,9 +158,11 @@ class ConnectionStatsTable extends Component<Props> {
         return (
             <div className = 'connection-info'>
                 { this._renderStatistics() }
-                { isLocalVideo ? this._renderShowMoreLink() : null }
-                { isLocalVideo && this.props.shouldShowMore
-                    ? this._renderAdditionalStats() : null }
+                <div className = 'connection-actions'>
+                    { isLocalVideo ? this._renderSaveLogs() : null}
+                    { this._renderShowMoreLink() }
+                </div>
+                { this.props.shouldShowMore ? this._renderAdditionalStats() : null }
             </div>
         );
     }
@@ -153,12 +175,17 @@ class ConnectionStatsTable extends Component<Props> {
      * @returns {ReactElement}
      */
     _renderAdditionalStats() {
+        const { isLocalVideo } = this.props;
+
         return (
             <table className = 'connection-info__container'>
                 <tbody>
-                    { this._renderBandwidth() }
-                    { this._renderTransport() }
-                    { this._renderRegion() }
+                    { isLocalVideo ? this._renderBandwidth() : null }
+                    { isLocalVideo ? this._renderTransport() : null }
+                    { isLocalVideo ? this._renderRegion() : null }
+                    { this._renderAudioSsrc() }
+                    { this._renderVideoSsrc() }
+                    { this._renderParticipantId() }
                 </tbody>
             </table>
         );
@@ -220,6 +247,66 @@ class ConnectionStatsTable extends Component<Props> {
                     </span>
                     { upload ? `${upload} Kbps` : 'N/A' }
                 </td>
+            </tr>
+        );
+    }
+
+    /**
+     * Creates a table row as a ReactElement for displaying the audio ssrc.
+     * This will typically be something like "Audio SSRC: 12345".
+     *
+     * @returns {JSX.Element}
+     * @private
+     */
+    _renderAudioSsrc() {
+        const { audioSsrc, t } = this.props;
+
+        return (
+            <tr>
+                <td>
+                    <span>{ t('connectionindicator.audio_ssrc') }</span>
+                </td>
+                <td>{ audioSsrc || 'N/A' }</td>
+            </tr>
+        );
+    }
+
+    /**
+     * Creates a table row as a ReactElement for displaying the video ssrc.
+     * This will typically be something like "Video SSRC: 12345".
+     *
+     * @returns {JSX.Element}
+     * @private
+     */
+    _renderVideoSsrc() {
+        const { videoSsrc, t } = this.props;
+
+        return (
+            <tr>
+                <td>
+                    <span>{ t('connectionindicator.video_ssrc') }</span>
+                </td>
+                <td>{ videoSsrc || 'N/A' }</td>
+            </tr>
+        );
+    }
+
+    /**
+     * Creates a table row as a ReactElement for displaying the endpoint id.
+     * This will typically be something like "Endpoint id: 1e8fbg".
+     *
+     * @returns {JSX.Element}
+     * @private
+     */
+    _renderParticipantId() {
+        const { participantId, t } = this.props;
+
+        return (
+            <tr>
+                <td>
+                    <span>{ t('connectionindicator.participant_id') }</span>
+                </td>
+                <td>{ participantId || 'N/A' }</td>
             </tr>
         );
     }
@@ -454,6 +541,26 @@ class ConnectionStatsTable extends Component<Props> {
             </tr>
         );
     }
+
+    /**
+     * Creates a ReactElement for display a link to save the logs.
+     *
+     * @private
+     * @returns {ReactElement}
+     */
+    _renderSaveLogs() {
+        return (
+            <span>
+                <a
+                    className = 'savelogs link'
+                    onClick = { this.props.onSaveLogs } >
+                    { this.props.t('connectionindicator.savelogs') }
+                </a>
+                <span> | </span>
+            </span>
+        );
+    }
+
 
     /**
      * Creates a ReactElement for display a link to toggle showing additional

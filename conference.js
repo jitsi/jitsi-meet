@@ -108,6 +108,7 @@ import {
     getBackendSafePath,
     getJitsiMeetGlobalNS
 } from './react/features/base/util';
+import { downloadJSON } from './react/features/base/util/downloadJSON';
 import { showDesktopPicker } from './react/features/desktop-picker';
 import { appendSuffix } from './react/features/display-name';
 import {
@@ -1221,19 +1222,8 @@ export default {
         // this can be called from console and will not have reference to this
         // that's why we reference the global var
         const logs = APP.connection.getLogs();
-        const data = encodeURIComponent(JSON.stringify(logs, null, '  '));
 
-        const elem = document.createElement('a');
-
-        elem.download = filename;
-        elem.href = `data:application/json;charset=utf-8,\n${data}`;
-        elem.dataset.downloadurl
-            = [ 'text/json', elem.download, elem.href ].join(':');
-        elem.dispatchEvent(new MouseEvent('click', {
-            view: window,
-            bubbles: true,
-            cancelable: false
-        }));
+        downloadJSON(logs, filename);
     },
 
     /**
