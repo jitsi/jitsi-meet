@@ -261,12 +261,12 @@ function _untoggleScreenSharing({ dispatch, getState }) {
     const tracks = getState()['features/base/tracks'];
     const localVideo = getLocalVideoTrack(tracks);
     let promise;
-    if (didHaveVideo) {
+    if (false){ // (didHaveVideo) { We will always leave the video off  for now, becuase we had some cases in which the video turned on, even though it was off before
         promise = createLocalTrackF({ dispatch, getState }, tracks, 'video')
             .then(stream => useVideoStream(dispatch, localVideo, stream)
-                .then(() => stream))
+                .then(() => stream)) 
                     .then(localVideo => {
-            if (wasVideoMuted) {
+            if (true) { //wasVideoMuted
                 localVideo.mute();
             }
         }).catch(error => {

@@ -562,7 +562,7 @@
         "title": "Profil"
     },
     "raisedHand": "Ich möchte sprechen",
-    "raisedHandMessage": "{{name}} hat sich gemeldet!‘",
+    "raisedHandMessage": "{{name}} meldet sich!‘",
     "recording": {
         "limitNotificationDescriptionWeb": "Wegen hoher Nachfrage ist Ihre Aufnahme auf {{limit}} min. begrenzt. Für unlimitierte Aufnahmen nutzen Sie bitte <a href={{url}} rel='noopener noreferrer' target='_blank'>{{app}}</a>.",
         "limitNotificationDescriptionNative": "Wegen hoher Nachfrage ist Ihre Aufnahme auf {{limit}} min begrenzt. Für unlimitierte Aufnahmen nutzen Sie bitte <3>{{app}}</3>.",

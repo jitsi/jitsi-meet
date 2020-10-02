@@ -27,6 +27,7 @@ import ToggleCameraButton from './ToggleCameraButton';
 import styles from './styles';
 import MuteEveryoneElseButton from './MuteEveryoneElseButton';
 import KickEveryoneElseButton from './KickEveryoneElseButton';
+import ScreenshareButton from './ScreenshareButton';
 
 import { jitsiLocalStorage } from '@jitsi/js-utils';
 
@@ -109,7 +110,7 @@ class OverflowMenu extends PureComponent<Props, State> {
         this._renderModeratorButtons = this._renderModeratorButtons.bind(this)
 
         var sessionId = jitsiLocalStorage.getItem('sessionId');
-        console.log(jitsiLocalStorage.getItem('sessionId'))
+
         if(sessionId){
             this.state = {
                 scrolledToTop: true,
@@ -122,6 +123,7 @@ class OverflowMenu extends PureComponent<Props, State> {
                 scrolledToTop: true,
                 showMore: false,
                 isModerator:false
+
 
             };
          }
@@ -141,7 +143,9 @@ class OverflowMenu extends PureComponent<Props, State> {
             afterClick: this._onCancel,
             showLabel: true,
             styles: _bottomSheetStyles.buttons
+            
         };
+        var showScreenshare = jitsiLocalStorage.getItem('showScreenshare');
 
         const moreOptionsButtonProps = {
             ...buttonProps,
@@ -161,7 +165,7 @@ class OverflowMenu extends PureComponent<Props, State> {
                 <LobbyModeButton { ...buttonProps } />
                 <MoreOptionsButton { ...moreOptionsButtonProps } />
                 <Collapsible collapsed = { !showMore }>
-                {this._renderModeratorButtons(buttonProps)}          
+                    {this._renderModeratorButtons(buttonProps)}          
                     <ToggleCameraButton { ...buttonProps } />
                     <TileViewButton { ...buttonProps } />
                     <LiveStreamButton { ...buttonProps } />
@@ -170,10 +174,15 @@ class OverflowMenu extends PureComponent<Props, State> {
                     <ClosedCaptionButton { ...buttonProps } />
                     <SharedDocumentButton { ...buttonProps } />
                     <HelpButton { ...buttonProps } />
-                    {
+                     <Collapsible collapsed = { !showScreenshare }>
+                        <ScreenshareButton {...buttonProps} />
+                     </Collapsible>
+                    <Collapsible collapsed = { showScreenshare }>
+                        {
                         this.props._desktopSharingEnabled
                             && <IOSRecordButtonWrapper />
-                    }
+                        }
+                    </Collapsible>
                 </Collapsible>
             </BottomSheet>
         );
