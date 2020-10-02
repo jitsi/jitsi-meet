@@ -1,16 +1,13 @@
 // @flow
 
 import React, { PureComponent } from 'react';
-import { View, Button } from 'react-native';
+import { View } from 'react-native';
 
 import { ColorSchemeRegistry } from '../../../base/color-scheme';
-import { connect as startConference } from '../../../base/connection';
 import { Container } from '../../../base/react';
 import { connect } from '../../../base/redux';
 import { StyleType } from '../../../base/styles';
 import { ChatButton } from '../../../chat';
-import { enablePreJoinPage } from '../../../prejoin';
-import Prejoin from '../../../prejoin/components/Prejoin.native';
 import { isToolboxVisible } from '../../functions';
 import AudioMuteButton from '../AudioMuteButton';
 import HangupButton from '../HangupButton';
@@ -99,7 +96,7 @@ class Toolbox extends PureComponent<Props> {
      * @returns {React$Node}
      */
     _renderToolbar() {
-        const { _chatEnabled, _styles, _enablePreJoinPage, _startConference } = this.props;
+        const { _chatEnabled, _styles, _enableJaneWaitingAreaPage } = this.props;
         const { buttonStyles, buttonStylesBorderless, hangupButtonStyles, toggledButtonStyles } = _styles;
 
         return (
@@ -108,7 +105,7 @@ class Toolbox extends PureComponent<Props> {
                 pointerEvents = 'box-none'
                 style = { styles.toolbar }>
                 {
-                    _chatEnabled && !_enablePreJoinPage
+                    _chatEnabled && !_enableJaneWaitingAreaPage
                         && <ChatButton
                             styles = { buttonStylesBorderless }
                             toggledStyles = {
@@ -125,13 +122,13 @@ class Toolbox extends PureComponent<Props> {
                     styles = { buttonStyles }
                     toggledStyles = { toggledButtonStyles } />
                 {
-                    !_enablePreJoinPage && <HangupButton
+                    !_enableJaneWaitingAreaPage && <HangupButton
                         styles = { hangupButtonStyles } />
                 }
                 <VideoMuteButton
                     styles = { buttonStyles }
                     toggledStyles = { toggledButtonStyles } />
-                {!_enablePreJoinPage && <OverflowMenuButton
+                {!_enableJaneWaitingAreaPage && <OverflowMenuButton
                     styles = { buttonStylesBorderless }
                     toggledStyles = { toggledButtonStyles } />}
             </View>
@@ -149,12 +146,12 @@ class Toolbox extends PureComponent<Props> {
  * @returns {Props}
  */
 function _mapStateToProps(state: Object): Object {
-    const { enablePreJoinPage } = state['features/jane-waiting-area-native'];
+    const { enableJaneWaitingAreaPage } = state['features/jane-waiting-area-native'];
 
     return {
         _styles: ColorSchemeRegistry.get(state, 'Toolbox'),
         _visible: isToolboxVisible(state),
-        _enablePreJoinPage: enablePreJoinPage
+        _enableJaneWaitingAreaPage: enableJaneWaitingAreaPage
     };
 }
 

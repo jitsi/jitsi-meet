@@ -9,13 +9,12 @@ type Props = {
     titleStyle: Object
 };
 
-export const ActionButton: Props = ({ onPress, title, containerStyle = {}, titleStyle = {} }) => {
-    return <TouchableOpacity onPress={onPress}
-                             style={[ styles.actionButtonContainer, containerStyle ]}>
-        <Text style={[ styles.actionBtnTitle, titleStyle ]}>
-            {
-                title
-            }
-        </Text>
-    </TouchableOpacity>;
-};
+export const ActionButton: Props = ({ onPress, title, containerStyle = {}, titleStyle = {} }) => (<TouchableOpacity
+    onPress = { onPress }
+    style = { [ styles.actionButtonContainer, containerStyle ] }>
+    <Text style = { [ styles.actionBtnTitle, titleStyle ] }>
+        {
+            title
+        }
+    </Text>
+</TouchableOpacity>);

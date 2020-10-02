@@ -3,20 +3,20 @@ import { BoxModel } from '../../base/styles';
 import { JaneWeb, ColorPalette } from '../../base/styles';
 
 export default {
-    prejoinContainer: {
+    janeWaitingAreaContainer: {
         width: '100%',
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
         marginBottom: 30
     },
-    preJoinDialogBoxWrapper: {
+    janeWaitingAreaDialogBoxWrapper: {
         width: '80%',
         backgroundColor: 'white',
         borderRadius: 5,
         flexDirection: 'column'
     },
-    preJoinDialogBoxInnerWrapper: {
+    janeWaitingAreaDialogBoxInnerWrapper: {
         flexDirection: 'row',
         paddingTop: 20,
         paddingBottom: 15
@@ -33,8 +33,7 @@ export default {
     },
     messageWrapper: {
         width: '75%',
-        alignItems: 'flex-start'
-        ,
+        alignItems: 'flex-start',
         paddingRight: 15
     },
     infoDetailContainer: {
