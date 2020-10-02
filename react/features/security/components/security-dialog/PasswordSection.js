@@ -5,6 +5,7 @@ import React, { useRef } from 'react';
 
 import { translate } from '../../../base/i18n';
 import { copyText } from '../../../base/util';
+import { LOCKED_REMOTELY } from '../../../room-lock';
 
 import PasswordForm from './PasswordForm';
 
@@ -158,6 +159,14 @@ function PasswordSection({
                         className = 'copy-password'
                         onClick = { onPasswordCopy }>{ t('dialog.copy') }</a>
                 </>
+            );
+        }
+
+        if (locked === LOCKED_REMOTELY) {
+            return (
+                    <a
+                        className = 'remove-password'
+                        onClick = { onPasswordRemove }>{ t('dialog.Remove') }</a>
             );
         }
 
