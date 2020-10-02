@@ -164,9 +164,9 @@ function PasswordSection({
 
         if (locked === LOCKED_REMOTELY) {
             return (
-                    <a
-                        className = 'remove-password'
-                        onClick = { onPasswordRemove }>{ t('dialog.Remove') }</a>
+                <a
+                    className = 'remove-password'
+                    onClick = { onPasswordRemove }>{ t('dialog.Remove') }</a>
             );
         }
 
