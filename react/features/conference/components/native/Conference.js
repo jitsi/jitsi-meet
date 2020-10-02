@@ -28,7 +28,7 @@ import { BackButtonRegistry } from '../../../mobile/back-button';
 import { AddPeopleDialog, CalleeInfoContainer } from '../../../invite';
 import { Captions } from '../../../subtitles';
 import { isToolboxVisible, setToolboxVisible, Toolbox } from '../../../toolbox';
-import Prejoin from '../../../jane-waiting-area-native/components/Prejoin.native';
+import JaneWaitingArea from '../../../jane-waiting-area-native/components/JaneWaitingArea.native';
 
 import {
     AbstractConference,
@@ -111,7 +111,7 @@ type Props = AbstractProps & {
      * The redux {@code dispatch} function.
      */
     dispatch: Function,
-    enablePreJoinPage: boolean
+    enableJaneWaitingAreaPage: boolean
 };
 
 /**
@@ -255,7 +255,7 @@ class Conference extends AbstractConference<Props, *> {
             _reducedUI,
             _shouldDisplayTileView,
             _toolboxVisible,
-            _enablePreJoinPage
+            _enableJaneWaitingAreaPage
         } = this.props;
         const showGradient = _toolboxVisible;
         const applyGradientStretching = _filmstripVisible && isNarrowAspectRatio(this) && !_shouldDisplayTileView;
@@ -320,7 +320,7 @@ class Conference extends AbstractConference<Props, *> {
 
                     {_shouldDisplayTileView || <DisplayNameLabel
                         participantId={_largeVideoParticipantId}/>}
-                    {_enablePreJoinPage && <Prejoin/>}
+                    {_enableJaneWaitingAreaPage && <JaneWaitingArea/>}
                     {/*
                       * The Toolbox is in a stacking layer below the Filmstrip.
                       */}
@@ -436,7 +436,7 @@ function _mapStateToProps(state) {
         leaving
     } = state['features/base/conference'];
     const {
-        enablePreJoinPage
+        enableJaneWaitingAreaPage
     } = state['features/jane-waiting-area-native'];
     const { reducedUI } = state['features/base/responsive-ui'];
 
@@ -508,7 +508,7 @@ function _mapStateToProps(state) {
          * @type {boolean}
          */
         _toolboxVisible: isToolboxVisible(state),
-        _enablePreJoinPage: enablePreJoinPage
+        _enableJaneWaitingAreaPage: enableJaneWaitingAreaPage
     };
 }
 

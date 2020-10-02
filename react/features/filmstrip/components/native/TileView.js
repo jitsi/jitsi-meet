@@ -136,7 +136,7 @@ class TileView extends Component<Props, State> {
         return (
             <DimensionsDetector
                 onDimensionsChanged = { this._onDimensionsChanged }>
-                <WaitingMessage/>
+                <WaitingMessage />
                 <ScrollView
                     style = {{
                         ...styles.tileView,

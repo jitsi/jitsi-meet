@@ -104,7 +104,7 @@ class Toolbox extends PureComponent<Props> {
      * @returns {React$Node}
      */
     _renderToolbar() {
-        const { _chatEnabled, _styles, _enablePreJoinPage, _startConference } = this.props;
+        const { _chatEnabled, _styles, _enableJaneWaitingAreaPage, _startConference } = this.props;
         const { buttonStyles, buttonStylesBorderless, hangupButtonStyles, toggledButtonStyles } = _styles;
 
         return (
@@ -112,7 +112,7 @@ class Toolbox extends PureComponent<Props> {
                 pointerEvents = 'box-none'
                 style = { styles.toolbar }>
                 {
-                    _chatEnabled && !_enablePreJoinPage
+                    _chatEnabled && !_enableJaneWaitingAreaPage
                         && <ChatButton
                             styles = { buttonStylesBorderless }
                             toggledStyles = {
@@ -129,13 +129,13 @@ class Toolbox extends PureComponent<Props> {
                     styles = { buttonStyles }
                     toggledStyles = { toggledButtonStyles } />
                 {
-                    !_enablePreJoinPage && <HangupButton
+                    !_enableJaneWaitingAreaPage && <HangupButton
                         styles = { hangupButtonStyles } />
                 }
                 <VideoMuteButton
                     styles = { buttonStyles }
                     toggledStyles = { toggledButtonStyles } />
-                {!_enablePreJoinPage && <OverflowMenuButton
+                {!_enableJaneWaitingAreaPage && <OverflowMenuButton
                     styles={buttonStylesBorderless}
                     toggledStyles={toggledButtonStyles}/>}
             </View>
@@ -157,12 +157,12 @@ class Toolbox extends PureComponent<Props> {
  * }}
  */
 function _mapStateToProps(state: Object): Object {
-    const { enablePreJoinPage } = state['features/jane-waiting-area-native'];
+    const { enableJaneWaitingAreaPage } = state['features/jane-waiting-area-native'];
     return {
         _chatEnabled: getFeatureFlag(state, CHAT_ENABLED, true),
         _styles: ColorSchemeRegistry.get(state, 'Toolbox'),
         _visible: isToolboxVisible(state),
-        _enablePreJoinPage: enablePreJoinPage
+        _enableJaneWaitingAreaPage: enableJaneWaitingAreaPage
     };
 }
 

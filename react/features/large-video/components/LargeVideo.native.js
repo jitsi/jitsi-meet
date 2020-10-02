@@ -8,7 +8,7 @@ import { connect } from '../../base/redux';
 import { DimensionsDetector } from '../../base/responsive-ui';
 import { StyleType } from '../../base/styles';
 
-import WaitingMessage from '../../base/react/components/native/WaitingMessage.js'
+import WaitingMessage from '../../base/react/components/native/WaitingMessage.js';
 import { AVATAR_SIZE } from './styles';
 import jwtDecode from 'jwt-decode';
 
@@ -148,8 +148,9 @@ class LargeVideo extends Component<Props, State> {
                     useConnectivityInfoLabel = { useConnectivityInfoLabel }
                     zOrder = { 0 }
                     zoomEnabled = { true } />
-                <WaitingMessage stopAnimation={stopAnimation}
-                                waitingMessageFromProps={waitingMessage}/>
+                <WaitingMessage
+                    stopAnimation = { stopAnimation }
+                    waitingMessageFromProps = { waitingMessage } />
             </DimensionsDetector>
         );
     }
@@ -174,7 +175,7 @@ function _mapStateToProps(state) {
     return {
         _participantId: state['features/large-video'].participantId,
         _styles: ColorSchemeRegistry.get(state, 'LargeVideo'),
-        _participantType: participantType,
+        _participantType: participantType
     };
 }
 

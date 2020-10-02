@@ -1,11 +1,11 @@
 // @flow
 
-import  {MiddlewareRegistry}  from '../base/redux';
+import { MiddlewareRegistry } from '../base/redux';
 
 declare var APP: Object;
 
 /**
- * The redux middleware for {@link PrejoinPage}.
+ * The redux middleware for {@link JaneWaitingAreaPage}.
  *
  * @param {Store} store - The redux store.
  * @returns {Function}

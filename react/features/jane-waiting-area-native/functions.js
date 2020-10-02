@@ -2,20 +2,21 @@
 
 import jwtDecode from 'jwt-decode';
 import { sendBeaconRn } from '../base/conference';
+import { RemoteParticipantStatus } from './RemoteParticipantStatus';
 
-export function isPrejoinPageEnabled(state: Object): boolean {
+export function isJaneWaitingAreaPageEnabled(state: Object): boolean {
     const { jwt } = state['features/base/jwt'];
     const jwtPayload = jwt && jwtDecode(jwt) || null;
-    const shouldEnablePreJoinPage = jwtPayload && jwtPayload.context && jwtPayload.context.ws_host && jwtPayload.context.ws_token;
+    const shouldEnableJaneWaitingAreaPage = jwtPayload && jwtPayload.context && jwtPayload.context.ws_host && jwtPayload.context.ws_token;
 
-    return state['features/base/config'].prejoinPageEnabled || shouldEnablePreJoinPage;
+    return state['features/base/config'].janeWaitingAreaPageEnabled || shouldEnableJaneWaitingAreaPage;
 }
 
-export function isPrejoinPageVisible(state: Object): boolean {
-    return isPrejoinPageEnabled(state) && state['features/jane-waiting-area-native']?.showPrejoin;
+export function isJaneWaitingAreaPageVisible(state: Object): boolean {
+    return isJaneWaitingAreaPageEnabled(state) && state['features/jane-waiting-area-native']?.showJaneWaitingArea;
 }
 
-export async function getParticipantsStatus(jwt, jwtPayload) {
+export async function getAllParticipantsStatus(jwt, jwtPayload) {
     const url = new URL(jwtPayload.context.check_participants_status_url);
 
     const params = { jwt };
@@ -26,12 +27,18 @@ export async function getParticipantsStatus(jwt, jwtPayload) {
         .then(res => res.participants_status);
 }
 
-export async function checkOtherParticipantsReadyStatus(jwt, jwtPayload, participantType) {
-    const otherParticipantsStatus = await getParticipantsStatus(jwt, jwtPayload);
-    const otherParticipantType = participantType === 'StaffMember' ? 'Patient' : 'StaffMember';
-    return otherParticipantsStatus && otherParticipantsStatus.find((v) => {
-        return v.participant_type === otherParticipantType;
+export async function getRemoteParticipantsReadyStatus(jwt, jwtPayload, participantType) {
+    const allParticipantsStatus = await getAllParticipantsStatus(jwt, jwtPayload);
+    const remoteParticipantType = participantType === 'StaffMember' ? 'Patient' : 'StaffMember';
+    const remoteParticipantStatus = [];
+
+    allParticipantsStatus && allParticipantsStatus.forEach(v => {
+        if (v.participant_type === remoteParticipantType) {
+            remoteParticipantStatus.push(new RemoteParticipantStatus(v));
+        }
     });
+
+    return remoteParticipantStatus;
 }
 
 export function updateParticipantReadyStatus(jwt, jwtPayload, participantType, participant, status) {
@@ -46,7 +53,8 @@ export function updateParticipantReadyStatus(jwt, jwtPayload, participantType, p
             participant_name: participant.name,
             room_name: jwtPayload.room
         };
-        const data = new Blob([JSON.stringify(obj, null, 2)], { type: 'text/plain; charset=UTF-8' });
+        const data = new Blob([ JSON.stringify(obj, null, 2) ], { type: 'text/plain; charset=UTF-8' });
+
         sendBeaconRn(updateParticipantStatusUrl, data);
     }
 }

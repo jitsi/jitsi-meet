@@ -37,11 +37,11 @@ export type Props = {
 const iconMap = {
     warning: {
         src: IconExclamation,
-        className: 'prejoin-preview-status--warning'
+        className: 'jane-waiting-area-preview-status--warning'
     },
     ok: {
         src: IconCheck,
-        className: 'prejoin-preview-status--ok'
+        className: 'jane-waiting-area-preview-status--ok'
     }
 };
 
@@ -54,7 +54,7 @@ const iconMap = {
 function DeviceStatus({ deviceStatusType, deviceStatusText, rawError, t }: Props) {
     const { src, className } = iconMap[deviceStatusType];
 
-    return null
+    return null;
 }
 
 /**
