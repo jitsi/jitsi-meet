@@ -4,6 +4,7 @@ import { CONFERENCE_FAILED, CONFERENCE_JOINED } from '../base/conference';
 import { JitsiConferenceErrors, JitsiConferenceEvents } from '../base/lib-jitsi-meet';
 import { getFirstLoadableAvatarUrl, getParticipantDisplayName } from '../base/participants';
 import { MiddlewareRegistry, StateListenerRegistry } from '../base/redux';
+import { isTestModeEnabled } from '../base/testing';
 import { NOTIFICATION_TYPE, showNotification } from '../notifications';
 import { isPrejoinPageEnabled } from '../prejoin/functions';
 
@@ -193,5 +194,5 @@ function _maybeSendLobbyNotification(origin, message, { dispatch, getState }) {
         break;
     }
 
-    dispatch(showNotification(notificationProps, 5000));
+    dispatch(showNotification(notificationProps, isTestModeEnabled(getState()) ? undefined : 5000));
 }

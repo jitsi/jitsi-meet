@@ -20,7 +20,10 @@ import translation from './modules/translation/translation';
 
 // Initialize Olm as early as possible.
 if (window.Olm) {
-    window.Olm.init();
+    window.Olm.init().catch(e => {
+        console.error('Failed to initialize Olm, E2EE will be disabled', e);
+        delete window.Olm;
+    });
 }
 
 window.APP = {
