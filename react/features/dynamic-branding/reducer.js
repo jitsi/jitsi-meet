@@ -14,6 +14,7 @@ const DEFAULT_STATE = {
     backgroundColor: '',
     backgroundImageUrl: '',
     customizationReady: false,
+    inviteDomain: '',
     logoClickUrl: '',
     logoImageUrl: ''
 };
@@ -24,11 +25,12 @@ const DEFAULT_STATE = {
 ReducerRegistry.register(STORE_NAME, (state = DEFAULT_STATE, action) => {
     switch (action.type) {
     case SET_DYNAMIC_BRANDING_DATA: {
-        const { backgroundColor, backgroundImageUrl, logoClickUrl, logoImageUrl } = action.value;
+        const { backgroundColor, backgroundImageUrl, inviteDomain, logoClickUrl, logoImageUrl } = action.value;
 
         return {
             backgroundColor,
             backgroundImageUrl,
+            inviteDomain,
             logoClickUrl,
             logoImageUrl,
             customizationReady: true

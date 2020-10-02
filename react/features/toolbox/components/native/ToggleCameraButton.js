@@ -5,7 +5,7 @@ import { IconSwitchCamera } from '../../../base/icons';
 import { MEDIA_TYPE, toggleCameraFacingMode } from '../../../base/media';
 import { connect } from '../../../base/redux';
 import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
-import { isLocalTrackMuted } from '../../../base/tracks';
+import { isLocalTrackMuted, getLocalVideoTrack } from '../../../base/tracks';
 
 /**
  * The type of the React {@code Component} props of {@link ToggleCameraButton}.

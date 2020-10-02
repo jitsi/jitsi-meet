@@ -18,14 +18,20 @@ local escaped_muc_domain_prefix = muc_domain_prefix:gsub("%p", "%%%1");
 local target_subdomain_pattern
     = "^"..escaped_muc_domain_prefix..".([^%.]+)%."..escaped_muc_domain_base;
 
+-- Utility function to split room JID to include room name and subdomain
+local function room_jid_split_subdomain(room_jid)
+    local node, host, resource = jid.split(room_jid);
+    local target_subdomain = host and host:match(target_subdomain_pattern);
+    return node, host, resource, target_subdomain
+end
+
 --- Utility function to check and convert a room JID from
 -- virtual room1@muc.foo.example.com to real [foo]room1@muc.example.com
 -- @param room_jid the room jid to match and rewrite if needed
 -- @return returns room jid [foo]room1@muc.example.com when it has subdomain
 -- otherwise room1@muc.example.com(the room_jid value untouched)
 local function room_jid_match_rewrite(room_jid)
-    local node, host, resource = jid.split(room_jid);
-    local target_subdomain = host and host:match(target_subdomain_pattern);
+    local node, host, resource, target_subdomain = room_jid_split_subdomain(room_jid);
     if not target_subdomain then
         module:log("debug", "No need to rewrite out 'to' %s", room_jid);
         return room_jid;
@@ -38,6 +44,23 @@ local function room_jid_match_rewrite(room_jid)
     return room_jid
 end
 
+local function internal_room_jid_match_rewrite(room_jid)
+    local node, host, resource = jid.split(room_jid);
+    if host ~= muc_domain or not node then
+        module:log("debug", "No need to rewrite %s (not from the MUC host)", room_jid);
+        return room_jid;
+    end
+    local target_subdomain, target_node = node:match("^%[([^%]]+)%](.+)$");
+    if not (target_node and target_subdomain) then
+        module:log("debug", "Not rewriting... unexpected node format: %s", node);
+        return room_jid;
+    end
+    -- Ok, rewrite room_jid address to pretty format
+    local new_node, new_host, new_resource = target_node, muc_domain_prefix..".".. target_subdomain.."."..muc_domain_base, resource;
+    room_jid = jid.join(new_node, new_host, new_resource);
+    module:log("debug", "Rewrote to %s", room_jid);
+    return room_jid
+end
 
 --- Finds and returns room by its jid
 -- @param room_jid the room jid to search in the muc component
@@ -191,5 +214,7 @@ return {
     get_room_from_jid = get_room_from_jid;
     async_handler_wrapper = async_handler_wrapper;
     room_jid_match_rewrite = room_jid_match_rewrite;
+    room_jid_split_subdomain = room_jid_split_subdomain;
+    internal_room_jid_match_rewrite = internal_room_jid_match_rewrite;
     update_presence_identity = update_presence_identity;
 };

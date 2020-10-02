@@ -25,7 +25,7 @@ MiddlewareRegistry.register(store => next => action => {
 
     switch (action.type) {
     case LIB_WILL_INIT: {
-        if (analytics.rtcstatsEndpoint) {
+        if (analytics.rtcstatsEnabled) {
             // RTCStats "proxies" WebRTC functions such as GUM and RTCPeerConnection by rewriting the global
             // window functions. Because lib-jitsi-meet uses references to those functions that are taken on
             // init, we need to add these proxies before it initializes, otherwise lib-jitsi-meet will use the
@@ -47,7 +47,7 @@ MiddlewareRegistry.register(store => next => action => {
         break;
     }
     case CONFERENCE_JOINED: {
-        if (analytics.rtcstatsEndpoint && RTCStats.isInitialized()) {
+        if (analytics.rtcstatsEnabled && RTCStats.isInitialized()) {
             // Once the conference started connect to the rtcstats server and send data.
             try {
                 RTCStats.connect();

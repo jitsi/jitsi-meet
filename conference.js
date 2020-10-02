@@ -121,7 +121,8 @@ import { suspendDetected } from './react/features/power-monitor';
 import {
     initPrejoin,
     isPrejoinPageEnabled,
-    isPrejoinPageVisible
+    isPrejoinPageVisible,
+    makePrecallTest
 } from './react/features/prejoin';
 import { createRnnoiseProcessorPromise } from './react/features/rnnoise';
 import { toggleScreenshotCaptureEffect } from './react/features/screenshot-capture';
@@ -759,7 +760,15 @@ export default {
         }
 
         if (isPrejoinPageEnabled(APP.store.getState())) {
-            _connectionPromise = connect(roomName);
+            _connectionPromise = connect(roomName).then(c => {
+                // we want to initialize it early, in case of errors to be able
+                // to gather logs
+                APP.connection = c;
+
+                return c;
+            });
+
+            APP.store.dispatch(makePrecallTest(this._getConferenceOptions()));
 
             const { tryCreateLocalTracks, errors } = this.createInitialLocalTracks(initialOptions);
             const tracks = await tryCreateLocalTracks;
@@ -1206,10 +1215,6 @@ export default {
 
     // end used by torture
 
-    getLogs() {
-        return room.getLogs();
-    },
-
     /**
      * Download logs, a function that can be called from console while
      * debugging.
@@ -1218,7 +1223,7 @@ export default {
     saveLogs(filename = 'meetlog.json') {
         // this can be called from console and will not have reference to this
         // that's why we reference the global var
-        const logs = APP.conference.getLogs();
+        const logs = APP.connection.getLogs();
         const data = encodeURIComponent(JSON.stringify(logs, null, '  '));
 
         const elem = document.createElement('a');
@@ -2856,7 +2861,14 @@ export default {
             this._room = undefined;
             room = undefined;
 
-            APP.API.notifyReadyToClose();
+            /**
+             * Don't call {@code notifyReadyToClose} if the promotional page flag is set
+             * and let the page take care of sending the message, since there will be
+             * a redirect to the page regardlessly.
+             */
+            if (!interfaceConfig.SHOW_PROMOTIONAL_CLOSE_PAGE) {
+                APP.API.notifyReadyToClose();
+            }
             APP.store.dispatch(maybeRedirectToWelcomePage(values[0]));
         });
     },

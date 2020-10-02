@@ -534,7 +534,7 @@
         "selectCamera": "Kamera",
         "selectMic": "Mikrofon",
         "startAudioMuted": "Při připojení všem zlumit zvuk",
-        "startVideoMuted": "Všechny připojovat jako skrýté",
+        "startVideoMuted": "Všechny připojovat jako skryté",
         "title": "Nastavení",
         "speakers": "Reproduktory",
         "microphones": "Mikrofony"
@@ -567,7 +567,7 @@
         "name": "Řečník",
         "seconds": "",
         "speakerStats": "Statistika řečníků",
-        "speakerTime": "Mluvil již"
+        "speakerTime": "Mluvil(a) již"
     },
     "startupoverlay": {
         "policyText": " ",
@@ -638,7 +638,7 @@
         "openChat": "",
         "pip": "",
         "profile": "Upravit váš profil",
-        "raiseHand": "Příhlásit / Odhlásit se o slovo",
+        "raiseHand": "Přihlásit / Odhlásit se o slovo",
         "raiseYourHand": "",
         "Settings": "Nastavení",
         "sharedvideo": "Sdílet obraz YouTube videa",

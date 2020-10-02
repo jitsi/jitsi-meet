@@ -9,8 +9,8 @@ import {
     participantUpdated
 } from '../../../base/participants';
 import { connect } from '../../../base/redux';
-import { AbstractButton } from '../../../base/toolbox';
-import type { AbstractButtonProps } from '../../../base/toolbox';
+import { AbstractButton } from '../../../base/toolbox/components';
+import type { AbstractButtonProps } from '../../../base/toolbox/components';
 import KickEveryoneElsePrompt from './KickEveryoneElsePrompt';
 import { openDialog } from '../../../base/dialog';
 /**
