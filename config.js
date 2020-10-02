@@ -323,10 +323,6 @@ var config = {
     // is set in Jicofo and set to 2).
     // minParticipants: 2,
 
-    // Use the TURN servers discovered via XEP-0215 for the jitsi-videobridge
-    // connection
-    // useStunTurn: true,
-
     // Use TURN/UDP servers for the jitsi-videobridge connection (by default
     // we filter out TURN/UDP because it is usually not needed since the
     // bridge itself is reachable via UDP)
@@ -441,9 +437,6 @@ var config = {
         // 3rd participant joins the conference will be moved back to the JVB
         // connection.
         enabled: true,
-
-        // Use XEP-0215 to fetch STUN and TURN servers.
-        // useStunTurn: true,
 
         // The STUN servers that will be used in the peer to peer connections
         stunServers: [

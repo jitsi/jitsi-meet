@@ -150,11 +150,6 @@ denied-peer-ip=240.0.0.0-255.255.255.255" >> $TURN_CONFIG
             echo "------------------------------------------------"
         fi
 
-        # Enable turn server in config.js
-        if [ -f $JITSI_MEET_CONFIG ] ; then
-            sed -i "s/\/\/ useStunTurn: true/useStunTurn: true/g" $JITSI_MEET_CONFIG
-        fi
-
         # and we're done with debconf
         db_stop
     ;;
