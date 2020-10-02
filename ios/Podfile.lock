@@ -291,6 +291,8 @@ PODS:
     - React
   - react-native-netinfo (4.1.5):
     - React
+  - react-native-splash-screen (3.2.0):
+    - React
   - react-native-webrtc (1.84.0):
     - React
   - react-native-webview (10.9.0):
@@ -395,6 +397,7 @@ DEPENDENCIES:
   - react-native-calendar-events (from `../node_modules/react-native-calendar-events`)
   - react-native-keep-awake (from `../node_modules/react-native-keep-awake`)
   - "react-native-netinfo (from `../node_modules/@react-native-community/netinfo`)"
+  - react-native-splash-screen (from `../node_modules/react-native-splash-screen`)
   - react-native-webrtc (from `../node_modules/react-native-webrtc`)
   - react-native-webview (from `../node_modules/react-native-webview`)
   - React-RCTActionSheet (from `../node_modules/react-native/Libraries/ActionSheetIOS`)
@@ -477,6 +480,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-keep-awake"
   react-native-netinfo:
     :path: "../node_modules/@react-native-community/netinfo"
+  react-native-splash-screen:
+    :path: "../node_modules/react-native-splash-screen"
   react-native-webrtc:
     :path: "../node_modules/react-native-webrtc"
   react-native-webview:
@@ -556,6 +561,7 @@ SPEC CHECKSUMS:
   react-native-calendar-events: 1442fad71a00388f933cfa25512588fec300fcf8
   react-native-keep-awake: eba3137546b10003361b37c761f6c429b59814ae
   react-native-netinfo: 8d8db463bcc5db66a8ac5c48a7d86beb3b92f61a
+  react-native-splash-screen: 200d11d188e2e78cea3ad319964f6142b6384865
   react-native-webrtc: 9268ae9a2bc9730796b0968d012327e92c392adf
   react-native-webview: 6ee7868ca8eba635dbf7963986d1ab7959da0391
   React-RCTActionSheet: bcbc311dc3b47bc8efb2737ff0940239a45789a9
@@ -576,6 +582,6 @@ SPEC CHECKSUMS:
   RNWatch: a5320c959c75e72845c07985f3e935e58998f1d3
   Yoga: 96b469c5e81ff51b917b92e8c3390642d4ded30c
 
-PODFILE CHECKSUM: 224e84629bf45ae487c4ebc66faf33ec8304fb67
+PODFILE CHECKSUM: f2400f8e5a52c4d91697cbacba6956569efc5ab8
 
 COCOAPODS: 1.9.3
