@@ -80,4 +80,4 @@ function _mapStateToProps(state, ownProps): Object {
     };
 }
 
-export default translate(connect(_mapStateToProps)(KickEveryoneElseButton));
+export default translate(connect(_mapStateToProps)(ScreenshareButton));
