@@ -40,6 +40,11 @@ function on_message(event)
             log("warn", "No room found %s", roomAddress);
             return false;
         end
+ 
+        if not room.speakerStats then
+            log("warn", "No speakerStats found for %s", roomAddress);
+            return false;
+        end
 
         local roomSpeakerStats = room.speakerStats;
         local from = event.stanza.attr.from;
@@ -185,6 +190,10 @@ function occupant_leaving(event)
     local room = event.room;
 
     if is_healthcheck_room(room.jid) then
+        return;
+    end
+ 
+    if not room.speakerStats then
         return;
     end
 
