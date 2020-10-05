@@ -435,16 +435,20 @@ export function _mapDispatchToProps(dispatch: Dispatch<any>) {
  */
 export function _mapStateToProps(state: Object, ownProps: Props) {
 
-    const firstVideoTrack = getTrackByMediaTypeAndParticipant(
-        state['features/base/tracks'], MEDIA_TYPE.VIDEO, ownProps.participantId);
-    const firstAudioTrack = getTrackByMediaTypeAndParticipant(
-        state['features/base/tracks'], MEDIA_TYPE.AUDIO, ownProps.participantId);
+    const conference = state['features/base/conference'].conference;
 
-    return {
-        audioSsrc: firstAudioTrack
-            ? state['features/base/conference'].conference.getSsrcByTrack(firstAudioTrack.jitsiTrack) : undefined,
-        videoSsrc: firstVideoTrack
-            ? state['features/base/conference'].conference.getSsrcByTrack(firstVideoTrack.jitsiTrack) : undefined
-    };
+    if (conference) {
+        const firstVideoTrack = getTrackByMediaTypeAndParticipant(
+            state['features/base/tracks'], MEDIA_TYPE.VIDEO, ownProps.participantId);
+        const firstAudioTrack = getTrackByMediaTypeAndParticipant(
+            state['features/base/tracks'], MEDIA_TYPE.AUDIO, ownProps.participantId);
+
+        return {
+            audioSsrc: firstAudioTrack ? conference.getSsrcByTrack(firstAudioTrack.jitsiTrack) : undefined,
+            videoSsrc: firstVideoTrack ? conference.getSsrcByTrack(firstVideoTrack.jitsiTrack) : undefined
+        };
+    }
+
+    return {};
 }
 export default translate(connect(_mapStateToProps, _mapDispatchToProps)(ConnectionIndicator));
