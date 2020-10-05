@@ -34,6 +34,14 @@ body {
 }
 
 /**
+ * This will hide the focus indicator if an element receives focus via the mouse,
+ * but it will still show up on keyboard focus, thus preserving accessibility.
+ */
+.js-focus-visible :focus:not(.focus-visible) {
+  outline: none;
+}
+
+/**
  * AtlasKit sets a default margin on the rendered modals, so
  * when the shift-right class is set when the chat opens, we
  * pad the modal container in order for the modals to be centered
