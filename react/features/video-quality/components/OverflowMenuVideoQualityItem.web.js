@@ -21,6 +21,7 @@ import { findNearestQualityLevel } from '../functions';
  * @type {Object}
  */
 const VIDEO_QUALITY_TO_ICON = {
+    [VIDEO_QUALITY_LEVELS.ULTRA]: IconVideoQualityHD,
     [VIDEO_QUALITY_LEVELS.HIGH]: IconVideoQualityHD,
     [VIDEO_QUALITY_LEVELS.STANDARD]: IconVideoQualitySD,
     [VIDEO_QUALITY_LEVELS.LOW]: IconVideoQualityLD
