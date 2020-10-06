@@ -14,6 +14,7 @@ import { VIDEO_QUALITY_LEVELS } from '../constants';
 import logger from '../logger';
 
 const {
+    ULTRA,
     HIGH,
     STANDARD,
     LOW
@@ -97,6 +98,7 @@ class VideoQualitySlider extends Component<Props> {
         this._enableLowDefinition = this._enableLowDefinition.bind(this);
         this._enableStandardDefinition
             = this._enableStandardDefinition.bind(this);
+        this._enableUltraHighDefinition = this._enableUltraHighDefinition.bind(this);
         this._onSliderChange = this._onSliderChange.bind(this);
 
         /**
@@ -125,9 +127,9 @@ class VideoQualitySlider extends Component<Props> {
                 videoQuality: STANDARD
             },
             {
-                onSelect: this._enableHighDefinition,
+                onSelect: this._enableUltraHighDefinition,
                 textKey: 'videoStatus.highDefinition',
-                videoQuality: HIGH
+                videoQuality: ULTRA
             }
         ];
     }
@@ -296,6 +298,21 @@ class VideoQualitySlider extends Component<Props> {
         sendAnalytics(createEvent('standard'));
         logger.log('Video quality: standard enabled');
         this._setPreferredVideoQuality(STANDARD);
+    }
+
+    _enableUltraHighDefinition: () => void;
+
+    /**
+     * Dispatches an action to receive ultra HD quality video from remote
+     * participants.
+     *
+     * @private
+     * @returns {void}
+     */
+    _enableUltraHighDefinition() {
+        sendAnalytics(createEvent('ultra high'));
+        logger.log('Video quality: ultra high enabled');
+        this._setPreferredVideoQuality(ULTRA);
     }
 
     /**
