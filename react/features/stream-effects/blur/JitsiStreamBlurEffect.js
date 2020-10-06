@@ -54,9 +54,9 @@ export default class JitsiStreamBlurEffect {
      * @param {EventHandler} response - The onmessage EventHandler parameter.
      * @returns {void}
      */
-    async _onMaskFrameTimer(response: Object) {
+    _onMaskFrameTimer(response: Object) {
         if (response.data.id === TIMEOUT_TICK) {
-            await this._renderMask();
+            this._renderMask();
         }
     }
 
