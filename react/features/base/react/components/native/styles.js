@@ -1,6 +1,6 @@
 // @flow
 
-import { BoxModel, ColorPalette } from '../../../styles';
+import { BoxModel, ColorPalette, JaneWeb } from '../../../styles';
 
 const OVERLAY_FONT_COLOR = 'rgba(255, 255, 255, 0.6)';
 const SECONDARY_ACTION_BUTTON_SIZE = 30;
@@ -205,31 +205,30 @@ const SECTION_LIST_STYLES = {
 
 const WATING_MESSAGE_STYLES = {
     waitingMessageContainer: {
-        position: 'absolute',
-        top: 80,
-        width: '100%',
+        marginTop: 40,
         flexDirection: 'row',
-        backgroundColor: 'transparent'
     },
 
     waitingMessageImage: {
         marginRight: 5,
+        marginTop: 5,
     },
 
     waitingMessageHeader: {
         fontSize: 15,
         marginTop: 5,
-        color: ColorPalette.janeDarkColor,
+        color: ColorPalette.white,
         textAlign: 'left',
-        backgroundColor: 'transparent'
+        ...JaneWeb.regularFont,
     },
 
     waitingMessageText: {
         marginTop: 5,
         fontSize: 12,
-        color: ColorPalette.janeDarkColor,
+        color: ColorPalette.white,
         textAlign: 'left',
-        backgroundColor: 'transparent'
+        paddingRight:100,
+        ...JaneWeb.regularFont
     },
 
     watermark: {
