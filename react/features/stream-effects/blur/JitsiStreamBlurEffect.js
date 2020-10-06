@@ -66,7 +66,7 @@ export default class JitsiStreamBlurEffect {
      * @private
      * @returns {void}
      */
-    async _renderMask() {
+    _renderMask() {
         if (!this._maskInProgress) {
             this._maskInProgress = true;
             this._bpModel.segmentPerson(this._inputVideoElement, {
