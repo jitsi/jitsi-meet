@@ -100,9 +100,9 @@ class WaitingMessage extends Component<Props, State> {
     }
 
     render() {
-        const { conferenceHasStarted } = this.props;
+        const { conferenceHasStarted, appstate } = this.props;
 
-        if (conferenceHasStarted) {
+        if (conferenceHasStarted || appstate !== "active") {
             return null;
         }
 
@@ -115,20 +115,33 @@ class WaitingMessage extends Component<Props, State> {
         );
     }
 
+    _IsTestMode() {
+        const { jwt } = this.props;
+        const jwtPayload = jwt && jwtDecode(jwt) || null;
+        const participantId = jwtPayload && jwtPayload.context && jwtPayload.context.user && jwtPayload.context.user.participant_id;
+        const videoChatSessionId = jwtPayload && jwtPayload.context && jwtPayload.context.video_chat_session_id;
+        const participantEmail = jwtPayload && jwtPayload.context && jwtPayload.context.user && jwtPayload.context.user.email;
+
+        return jwtPayload && participantId === 0 && videoChatSessionId === 0 && participantEmail === 'test@test.com';
+    }
+
     getWaitingMessage() {
         const { waitingMessageFromProps } = this.props;
         const { beforeAppointmentStart, appointmentStartAt } = this.state;
-        let header, text;
-        header = <Text
+
+        let header = <Text
             style={styles.waitingMessageHeader}>{waitingMessageFromProps ? waitingMessageFromProps.header
             : 'Waiting for the other participant to join...'}</Text>;
-        text = <Text style={styles.waitingMessageText}>{
+
+        let text = <Text style={styles.waitingMessageText}>{
             waitingMessageFromProps ? waitingMessageFromProps.text :
                 'Sit back, relax and take a moment for yourself.'
         }</Text>;
+
         if (beforeAppointmentStart && appointmentStartAt && !waitingMessageFromProps) {
             const time = moment(appointmentStartAt, 'YYYY-MM-DD HH:mm')
                 .format('YYYY-MM-DD HH:mm');
+
             header = (
                 <Text style={styles.waitingMessageHeader}>Your appointment will
                     begin
@@ -136,7 +149,18 @@ class WaitingMessage extends Component<Props, State> {
                         .format('hh:mm A')}</Text>);
         }
 
-        return <View style={{ backgroundColor: 'transparent' }}>
+        if (this._IsTestMode()) {
+            header =
+                <Text style={styles.waitingMessageHeader}>Testing your audio and
+                    video...</Text>;
+
+            text = <Text style={styles.waitingMessageText}>
+                This is just a test area. Begin your online appointment from
+                your Upcoming Appointments page.
+            </Text>;
+        }
+
+        return <View style={{ backgroundColor: 'transparent'}}>
             {
                 header
             }
@@ -147,26 +171,14 @@ class WaitingMessage extends Component<Props, State> {
     }
 
     _renderWaitingMessage() {
-        const { stopAnimation} = this.props;
-        const { beforeAppointmentStart, appointmentStartAt } = this.state;
+        const { stopAnimation } = this.props;
         const animate = stopAnimation ? null : this.animatedValue.interpolate({
             inputRange: [ 0, .5, 1 ],
             outputRange: [ .1, 1, .1 ]
         });
 
-        let header = <Text style={styles.waitingMessageHeader}>Waiting for the
-            other participant to join...</Text>;
         const image = <Image style={styles.watermark}
                              source={watermarkImg}/>;
-        if (beforeAppointmentStart && appointmentStartAt) {
-            const time = moment(appointmentStartAt, 'YYYY-MM-DD HH:mm')
-                .format('YYYY-MM-DD HH:mm');
-            header = (
-                <Text style={styles.waitingMessageHeader}>Your appointment will
-                    begin
-                    at {getLocalizedDateFormatter(time)
-                        .format('hh:mm A')}</Text>);
-        }
 
         return (<View style={[ styles.waitingMessageContainer ]}>
             <Animated.View className='waitingMessage'
@@ -188,9 +200,11 @@ function _mapStateToProps(state) {
     const { jwt } = state['features/base/jwt'];
     const participantCount = getParticipantCount(state);
     const remoteTracks = getRemoteTracks(state['features/base/tracks']);
+    const appstate = state['features/background'];
 
     return {
         jwt,
+        appstate: appstate && appstate.appState,
         conferenceHasStarted: participantCount > 1 && remoteTracks.length > 0
     };
 }

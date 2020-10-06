@@ -1,5 +1,6 @@
 // @flow
 
+import jwtDecode from 'jwt-decode';
 import React from 'react';
 import { Clipboard, NativeModules, SafeAreaView, StatusBar } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
@@ -9,6 +10,7 @@ import { PIP_ENABLED, getFeatureFlag } from '../../../base/flags';
 import { Container, LoadingIndicator, TintedView } from '../../../base/react';
 import { connect } from '../../../base/redux';
 import { ASPECT_RATIO_NARROW } from '../../../base/responsive-ui/constants';
+import { TestConnectionInfo } from '../../../base/testing';
 import { ConferenceNotification, isCalendarEnabled } from '../../../calendar-sync';
 import { Chat } from '../../../chat';
 import { DisplayNameLabel } from '../../../display-name';
@@ -20,6 +22,7 @@ import {
     TileView
 } from '../../../filmstrip';
 import { AddPeopleDialog, CalleeInfoContainer } from '../../../invite';
+import { updateParticipantReadyStatus } from '../../../jane-waiting-area-native';
 import JaneWaitingArea from '../../../jane-waiting-area-native/components/JaneWaitingArea.native';
 import { LargeVideo } from '../../../large-video';
 import { KnockingParticipantList } from '../../../lobby';
@@ -38,10 +41,7 @@ import Labels from './Labels';
 import NavigationBar from './NavigationBar';
 import styles, { NAVBAR_GRADIENT_COLORS } from './styles';
 
-// import { TestConnectionInfo } from '../../../base/testing';
 // import LonelyMeetingExperience from './LonelyMeetingExperience';
-
-
 /**
  * The type of the React {@code Component} props of {@link Conference}.
  */
@@ -138,9 +138,28 @@ class Conference extends AbstractConference<Props, *> {
      * @returns {void}
      */
     componentWillUnmount() {
+
         // Tear handling any hardware button presses for back navigation down.
         BackButtonRegistry.removeListener(this._onHardwareBackPress);
+
     }
+
+    /**
+     * Implements {@link Component#componentDidUpdate()}. Invoked immediately
+     * after this component is updated check app background state and update
+     * the participant's ready status if app state is 'inactive' or 'background'.
+     *
+     * @inheritdoc
+     * @returns {void}
+     */
+    componentDidUpdate(prevProps) {
+        const { _participantType, _jwt, _jwtPayload, _participant } = this.props;
+
+        if (prevProps._appstate !== this.props._appstate && prevProps._appstate.appState === 'active') {
+            updateParticipantReadyStatus(_jwt, _jwtPayload, _participantType, _participant, 'left');
+        }
+    }
+
 
     /**
      * Clear the video chat universal link copied from Jane here to
@@ -345,8 +364,7 @@ class Conference extends AbstractConference<Props, *> {
                     <KnockingParticipantList />
                 </SafeAreaView>
 
-                {/* <TestConnectionInfo />*/}
-
+                <TestConnectionInfo />
                 { this._renderConferenceNotification() }
 
                 { this._renderConferenceModals() }
@@ -456,6 +474,11 @@ function _mapStateToProps(state) {
     //   are leaving one.
     const connecting_
         = connecting || (connection && (!membersOnly && (joining || (!conference && !leaving))));
+    const { jwt } = state['features/base/jwt'];
+    const jwtPayload = jwt && jwtDecode(jwt) || null;
+    const participant = jwtPayload && jwtPayload.context && jwtPayload.context.user || null;
+    const participantType = participant && participant.participant_type || null;
+    const appstate = state['features/background'];
 
     return {
         ...abstractMapStateToProps(state),
@@ -474,7 +497,12 @@ function _mapStateToProps(state) {
          * @type {boolean}
          */
         _toolboxVisible: isToolboxVisible(state),
-        _enableJaneWaitingAreaPage: enableJaneWaitingAreaPage
+        _enableJaneWaitingAreaPage: enableJaneWaitingAreaPage,
+        _jwt: jwt,
+        _jwtPayload: jwtPayload,
+        _participantType: participantType,
+        _participant: participantType,
+        _appstate: appstate
     };
 }
 

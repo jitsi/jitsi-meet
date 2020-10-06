@@ -42,18 +42,18 @@ export default {
     title: {
         fontSize: 14,
         color: ColorPalette.santasGray,
-        ...JaneWeb.semiBold
+        ...JaneWeb.semiBoldFont
     },
     titleMsg: {
         fontSize: 12,
         marginTop: 20,
         color: ColorPalette.manateeLight,
-        ...JaneWeb.regular
+        ...JaneWeb.regularFont
     },
     msgText: {
         fontSize: 12,
         color: ColorPalette.manatee,
-        ...JaneWeb.bold
+        ...JaneWeb.boldFont
     },
     actionButtonContainer: {
         width: 150,
@@ -68,7 +68,7 @@ export default {
     actionBtnTitle: {
         color: ColorPalette.btnTextDefault,
         fontSize: 14,
-        ...JaneWeb.regular
+        ...JaneWeb.regularFont
     },
     actionButtonWrapper: {
         width: '100%',
