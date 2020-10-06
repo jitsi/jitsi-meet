@@ -6,6 +6,7 @@ import { Text, View } from 'react-native';
 import { Avatar } from '../../../base/avatar';
 import { ColorSchemeRegistry } from '../../../base/color-scheme';
 import { BottomSheet, isDialogOpen } from '../../../base/dialog';
+import { KICK_OUT_ENABLED, getFeatureFlag } from '../../../base/flags';
 import { getParticipantDisplayName } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import { StyleType } from '../../../base/styles';
@@ -151,9 +152,12 @@ class RemoteVideoMenu extends Component<Props> {
  * @returns {Props}
  */
 function _mapStateToProps(state, ownProps) {
+    const kickOutEnabled = getFeatureFlag(state, KICK_OUT_ENABLED, true);
     const { participant } = ownProps;
     const { remoteVideoMenu = {}, disableRemoteMute } = state['features/base/config'];
-    const { disableKick } = remoteVideoMenu;
+    let { disableKick } = remoteVideoMenu;
+
+    disableKick = disableKick || !kickOutEnabled;
 
     return {
         _bottomSheetStyles: ColorSchemeRegistry.get(state, 'BottomSheet'),
