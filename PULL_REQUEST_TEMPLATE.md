@@ -16,19 +16,15 @@
 🏇 = Performance improvement
 👁 = UX / UI improvement
 🏗 = Refactor
-💾 = Database Migrations
-🔎 = SQL Views
 🌦 = Env Changes
-💎 = Ruby Gem Changes
 ☕️ = JS Dependency Changes
 ⚛️ = Jane Desktop Changes
-💻 = Browser Refresh Required (Unobtrusive, Immediate, or Forced)
 
 ### Release Note
 > Describe here a CS friendly version of what this fixes/adds. If the change is behind a feature flag, please include that in your description. If this is a hidden change CS doesn't need to really know about then just say so.
 
-### Dependencies / ENV / Migrations / Client Reset
-> Describe any migrations, dependencies or ENV variables that are required for this change. Add notes regarding the release such as rake tasks, libraries, or the need for a client reset. Notify the team, if they have to update their environment.
+### Dependencies / ENV
+> Describe any dependencies or ENV variables that are required for this change. Notify the team, if they have to update their environment.
 
 ### Risk Scorecard
 > 1. As the author you should check the boxes that correspond with your PR and then use the following guide to set your risk label:
@@ -40,15 +36,11 @@
 >
 > NOTE: if you aren't changing any production files, please use the zero risk label
 
-- [ ] migrations or view changes<sup>1</sup>
-- [ ] browser refresh required
-- [ ] cannot be rolled back (tally tokens, view or migration changes, API changes)
-- [ ] could create bad data
 - [ ] requires env configuration to be added in production
-- [ ] gemfile or js package changes<sup>1</sup>
+- [ ] js package changes<sup>1</sup>
 - [ ] more than 200 LOC changed in production files<sup>1</sup>
 - [ ] includes a user-facing workflow change to an existing production feature (user muscle memory or pattern recognition will be affected)
-- [ ] could prevent access to Jane (eg. cors, middleware, changes to auth system)
+- [ ] could prevent access to Jane Video (eg. cors, middleware, changes to auth system)
 - [ ] affects a widely used component or piece of code
 - [ ] I have a doubt - I want the RMT to review this. If possible, please elaborate your concerns in the risk assessment section.
 
@@ -68,7 +60,7 @@ Resource: [Code Review Checklist](https://www.notion.so/janeapp/Code-Review-chec
 
 #### Design
 - [ ] I added instructions for how to test, in the QA section below
-- [ ] I added tests for changes, or determined that none were required
+- [ ] I added specs for changes, or determined that none were required
 - [ ] I demoed this to the appropriate person
 - [ ] I considered both mobile & desktop views, or that wasn't relevant
 
@@ -77,8 +69,6 @@ Resource: [Code Review Checklist](https://www.notion.so/janeapp/Code-Review-chec
 - [ ] I wrote readable code, or added comments if it was complex
 - [ ] I performed a self-review of my own code
 - [ ] I rebased my branch on the latest `master`
-- [ ] I confirmed that all CircleCI tests are passing
-- [ ] I didn't add new npm packages, or else I made damn sure the `yarn.lock` changes are safe for existing production packages
 
 ## QA and Smoke Testing
 ### Steps to Reproduce
