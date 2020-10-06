@@ -2,27 +2,24 @@
 > Please make your PR readme as readable as possible. Only keep parts of this template that are filled out and meaningful to the reviewer.
 >
 > - Remove any quoted parts of the template below `>`. (These are just instructions for you to follow)
-> - Remove any sections that are irrelevant.
+> - Leave all headings, but clear content and mark as `N/A` if irrelevant.
 > - Most importantly: explain the "WHY". Do your best to give the reviewer some context about this change.
 
 ## Description
-> Provide a summary of the problem being solved, the work done, and what was added/removed/changed
-
 - [Jira Ticket](https://janeapp.atlassian.net/browse/...)
 
-### Risk / General PR Class
-- [ ] 🔴 = High Risk
-- [ ] 🔶 = Medium Risk
-- [ ] 💚 = Low Risk
-- [ ] 💜 = Almost Zero Risk
-- [ ] 0️⃣ = Zero Risk
+> Provide a summary of the problem being solved, the work done, and what was added/removed/changed
 
+### General PR Class
 🐛 = Bug Fix (Fixes an Issue)
 🌟 = New Feature (Adds Functionality)
 🏇 = Performance improvement
 👁 = UX / UI improvement
 🏗 = Refactor
+💾 = Database Migrations
+🔎 = SQL Views
 🌦 = Env Changes
+💎 = Ruby Gem Changes
 ☕️ = JS Dependency Changes
 ⚛️ = Jane Desktop Changes
 💻 = Browser Refresh Required (Unobtrusive, Immediate, or Forced)
@@ -33,11 +30,35 @@
 ### Dependencies / ENV / Migrations / Client Reset
 > Describe any migrations, dependencies or ENV variables that are required for this change. Add notes regarding the release such as rake tasks, libraries, or the need for a client reset. Notify the team, if they have to update their environment.
 
+### Risk Scorecard
+> 1. As the author you should check the boxes that correspond with your PR and then use the following guide to set your risk label:
+> * 0 checkboxes => low risk
+> * 1-3 checkboxes => medium risk
+> * 4+ checkboxes => high risk
+> 2. Unless exempt, checked risk factors should be explained comprehensively in the Release Risk Assessment section below
+> 3. Medium or higher risk PRs should get more than one code-review approval
+>
+> NOTE: if you aren't changing any production files, please use the zero risk label
+
+- [ ] migrations or view changes<sup>1</sup>
+- [ ] browser refresh required
+- [ ] cannot be rolled back (tally tokens, view or migration changes, API changes)
+- [ ] could create bad data
+- [ ] requires env configuration to be added in production
+- [ ] gemfile or js package changes<sup>1</sup>
+- [ ] more than 200 LOC changed in production files<sup>1</sup>
+- [ ] includes a user-facing workflow change to an existing production feature (user muscle memory or pattern recognition will be affected)
+- [ ] could prevent access to Jane (eg. cors, middleware, changes to auth system)
+- [ ] affects a widely used component or piece of code
+- [ ] I have a doubt - I want the RMT to review this. If possible, please elaborate your concerns in the risk assessment section.
+
+<sup>1</sup> No need to explain these risk factors below
+
 ### Release Risk Assessment
 > Describe what areas of Jane are touched by the change in this PR, and what it would look like if something were to go wrong, and how much damage could be done. Keep your neighborhood deployer in mind when filling in this section, it will help identify errant PRs more quickly during deploy.
 
 ### Demo Notes
-> If you have instructions on how to demo, or a video/gif, add it here
+> If you have instructions on how to demo or a video add it here
 
 ## Code Review
 Resource: [Dev Team Notion Page](https://www.notion.so/janeapp/Dev-Team-f06c6eb2ccca4066bc63fc1ac1bd2549)
