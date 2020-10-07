@@ -9,7 +9,7 @@ pushd ${THIS_DIR}/..
 
 npm install github:jitsi/lib-jitsi-meet#${LATEST_LJM_COMMIT}
 git add package.json package-lock.json
-git commit -m "deps: lib-jitsi-meet@latest"
+git commit -m "chore(deps) lib-jitsi-meet@latest"
 
 popd
 
