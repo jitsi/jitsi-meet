@@ -94,12 +94,12 @@ $chatHeaderBackgroundColor: rgba(42, 58, 75, 0.9);
 $chatInputSeparatorColor: #A4B8D1;
 $chatLocalMessageBackgroundColor: rgb(4, 98, 178);
 $chatPrivateMessageBackgroundColor: rgb(153, 69, 77);
-$chatRemoteMessageBackgroundColor:  rgb(86, 101, 114);
+$chatRemoteMessageBackgroundColor: rgb(86, 101, 114);
 $sidebarWidth: 375px;
 
- /**
- * Misc.
- */
+/**
+* Misc.
+*/
 $borderRadius: 4px;
 $defaultWatermarkLink: '../images/watermark.png';
 $popoverMenuPadding: 13px;
@@ -163,7 +163,7 @@ $unsupportedDesktopBrowserTextFontSize: 21px;
  * The size of the default watermark.
  */
 $watermarkWidth: 186px;
-$watermarkHeight: 74px;
+$watermarkHeight: 65px;
 
 /**
  * Welcome page variables.
@@ -271,4 +271,16 @@ $chromeExtensionBannerTop: 80px;
 $chromeExtensionBannerRight: 16px;
 $chromeExtensionBannerTopInMeeting: 10px;
 $chromeExtensionBannerRightInMeeeting: 10px;
+
+/**
+* Jane waiting area.
+*/
+$waitingAreaPageBackground: #1C2025;
+$waitingAreaInfoBoxBackground: #FFFFFF;
+$waitingAreaInfoBoxBorder: #CCCCCCC;
+$waitingAreaInfoLabelColor: #5cb85c;
+$waitingAreaInfoTitleColor: #A3A2B1;
+$waitingAreaInfoMsgColor: #9998A7;
+$waitingAreaInfoDetailColor: #8E8E9D;
+$waitingAreaJaneColor: #00c1ca;
 
