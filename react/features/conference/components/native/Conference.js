@@ -34,6 +34,7 @@ import type { AbstractProps } from '../AbstractConference';
 
 import Labels from './Labels';
 import LonelyMeetingExperience from './LonelyMeetingExperience';
+import ConferenceSessionTimer from '../ConferenceSessionTimer';
 import NavigationBar from './NavigationBar';
 import styles, { NAVBAR_GRADIENT_COLORS } from './styles';
 
@@ -325,6 +326,7 @@ class Conference extends AbstractConference<Props, *> {
                 </SafeAreaView>
 
                 <TestConnectionInfo />
+                <ConferenceSessionTimer />
 
                 { this._renderConferenceNotification() }
 
