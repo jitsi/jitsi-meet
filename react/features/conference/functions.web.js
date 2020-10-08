@@ -4,12 +4,10 @@ import { translateToHTML } from '../base/i18n';
 import { getLocalParticipant } from '../base/participants';
 import { toState } from '../base/redux';
 import { getBackendSafePath, getJitsiMeetGlobalNS } from '../base/util';
-import {
-    areThereNotifications,
-    showWarningNotification
-} from '../notifications';
-import { getOverlayToRender } from '../overlay';
+import { showWarningNotification } from '../notifications';
 import { createRnnoiseProcessorPromise } from '../rnnoise';
+
+export * from './functions.any';
 
 /**
  * Returns the result of getWiFiStats from the global NS or does nothing
@@ -50,23 +48,6 @@ export function maybeShowSuboptimalExperienceNotification(dispatch, t) {
             )
         );
     }
-}
-
-/**
- * Tells whether or not the notifications should be displayed within
- * the conference feature based on the current Redux state.
- *
- * @param {Object|Function} stateful - The redux store state.
- * @returns {boolean}
- */
-export function shouldDisplayNotifications(stateful) {
-    const state = toState(stateful);
-    const isAnyOverlayVisible = Boolean(getOverlayToRender(state));
-    const { calleeInfoVisible } = state['features/invite'];
-
-    return areThereNotifications(state)
-            && !isAnyOverlayVisible
-            && !calleeInfoVisible;
 }
 
 /**
