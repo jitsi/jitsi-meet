@@ -3,7 +3,7 @@
 import React, { Component } from 'react';
 
 import { connect } from '../../base/redux';
-import { jitsiLocalStorage } from '@jitsi/js-utils';
+import { markClearSessionId } from '../../base/conference/actions';
 
 /**
  * The type of the React {@code Component} props of {@link ConferenceSessionTimer}.
@@ -88,7 +88,7 @@ class ConferenceSessionTimer extends Component<Props, State> {
         this._timeout = setTimeout(() => {
             // remove session id after 1 hr
             console.log("removing session id");
-            jitsiLocalStorage.removeItem('sessionId'); // we want to force teachers to re enter the password
+            this.props.dispatch(markClearSessionId())
         }, 3600000);
     }
 

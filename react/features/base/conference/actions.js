@@ -51,7 +51,10 @@ import {
     SET_PREFERRED_VIDEO_QUALITY,
     SET_ROOM,
     SET_PENDING_SUBJECT_CHANGE,
-    SET_START_MUTED_POLICY
+    SET_START_MUTED_POLICY,
+    CLEAR_SESSION_ID,
+    MARK_CLEAR_SESSION_ID,
+    UNMARK_CLEAR_SESSION_ID
 } from './actionTypes';
 import {
     AVATAR_ID_COMMAND,
@@ -776,4 +779,40 @@ export function setSubject(subject: string) {
             });
         }
     };
+}
+
+
+/**
+ * Clears the sessionId from jitsilocalStorage
+ *
+ * @returns {{
+    *     type: CLEAR_SESSION_ID
+    * }}
+    */
+export function clearSessionId() {
+    return {type: CLEAR_SESSION_ID};
+}
+
+
+/**
+ * Sets the state to clear session id on hangup
+ *
+ * @returns {{
+    *     type: MARK_CLEAR_SESSION_ID
+    * }}
+    */
+export function markClearSessionId() {
+    return {type: MARK_CLEAR_SESSION_ID};
+}
+
+
+/**
+ * Unsets the sessionId from jitsilocalStorage
+ *
+ * @returns {{
+    *     type: UNMARK_CLEAR_SESSION_ID
+    * }}
+    */
+export function unmarkClearSessionId() {
+    return {type: UNMARK_CLEAR_SESSION_ID};
 }

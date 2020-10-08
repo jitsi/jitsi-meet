@@ -10,6 +10,9 @@ import { connect } from '../../base/redux';
 import { AbstractHangupButton } from '../../base/toolbox';
 import type { AbstractButtonProps } from '../../base/toolbox';
 import { ScreenShareController } from './native/IOSRecordButton';
+import { jitsiLocalStorage } from '@jitsi/js-utils';
+import {clearSessionId, unmarkClearSessionId} from '../../base/conference';
+
 /**
  * The type of the React {@code Component} props of {@link HangupButton}.
  */
@@ -46,6 +49,11 @@ class HangupButton extends AbstractHangupButton<Props, *> {
             this.props.dispatch({type: 'END_SCREEN_SHARING'});
             ScreenShareController.stopRecording();
             sendAnalytics(createToolbarEvent('hangup'));
+            console.log(`cleear session id ${jitsiLocalStorage.getItem('clearSessionId')}`);
+            if (jitsiLocalStorage.getItem('clearSessionId') === 'true') {
+                this.props.dispatch(clearSessionId());
+                this.props.dispatch(unmarkClearSessionId());
+            }
             // FIXME: these should be unified.
             if (navigator.product === 'ReactNative') {
                 this.props.dispatch(appNavigate(undefined));
