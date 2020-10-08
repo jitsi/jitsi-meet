@@ -666,7 +666,7 @@ function _updateLocalParticipantInConference({ dispatch, getState }, next, actio
  * @private
  * @returns {Object} The value returned by {@code next(action)}.
  */
-function toggleClearSessionId({ getState }, next, action, toggle = true) {
+function toggleClearSessionId({}, next, action, toggle = true) {
     jitsiLocalStorage.setItem('clearSessionId', toggle);
     return next(action)
 }

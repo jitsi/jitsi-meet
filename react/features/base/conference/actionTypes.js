@@ -269,7 +269,6 @@ export const CLEAR_SESSION_ID = "CLEAR_SESSION_ID";
 
 /**
  * The type of (redux) action, which sets persistent state that clears session id on hangup
- * if call length greater than 1 hour.
  *
  * {
  *     type: MARK_CLEAR_SESSION_ID
@@ -280,7 +279,6 @@ export const MARK_CLEAR_SESSION_ID = "MARK_CLEAR_SESSION_ID";
 
 /**
  * The type of (redux) action, which unsets persistent state that clears session id on hangup
- * if call length greater than 1 hour.
  *
  * {
  *     type: UNMARK_CLEAR_SESSION_ID

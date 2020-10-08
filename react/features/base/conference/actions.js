@@ -807,7 +807,7 @@ export function markClearSessionId() {
 
 
 /**
- * Unsets the sessionId from jitsilocalStorage
+ * Unsets the state to clear session id on hangup
  *
  * @returns {{
     *     type: UNMARK_CLEAR_SESSION_ID
