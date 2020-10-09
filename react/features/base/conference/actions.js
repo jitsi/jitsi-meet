@@ -52,7 +52,6 @@ import {
     SET_START_MUTED_POLICY
 } from './actionTypes';
 import {
-    AVATAR_ID_COMMAND,
     AVATAR_URL_COMMAND,
     EMAIL_COMMAND,
     JITSI_CONFERENCE_URL_KEY
@@ -198,13 +197,6 @@ function _addConferenceListeners(conference, dispatch) {
             botType
         })));
 
-    conference.addCommandListener(
-        AVATAR_ID_COMMAND,
-        (data, id) => dispatch(participantUpdated({
-            conference,
-            id,
-            avatarID: data.value
-        })));
     conference.addCommandListener(
         AVATAR_URL_COMMAND,
         (data, id) => dispatch(participantUpdated({

@@ -181,7 +181,6 @@ function _participant(state: Object = {}, action) {
  */
 function _participantJoined({ participant }) {
     const {
-        avatarID,
         avatarURL,
         botType,
         connectionStatus,
@@ -211,7 +210,6 @@ function _participantJoined({ participant }) {
     }
 
     return {
-        avatarID,
         avatarURL,
         botType,
         conference,
