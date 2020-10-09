@@ -52,7 +52,7 @@ function onLocalFlipXChanged(val) {
  */
 function getAllThumbnails() {
     return [
-        localVideoThumbnail,
+        ...localVideoThumbnail ? [ localVideoThumbnail ] : [],
         ...Object.values(remoteVideos)
     ];
 }
