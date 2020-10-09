@@ -19,6 +19,50 @@
     url('../fonts/ProximaNova-Light-webfont.svg#ProximaNovaLtLight') format('svg');
 }
 
+@font-face {
+    font-family: 'ProximaNovaLtBold';
+    font-weight: normal;
+    font-style: normal;
+    src: url('../fonts/ProximaNova-Bold-webfont.eot');
+    src: url('../fonts/ProximaNova-Bold-webfont.eot?#iefix') format('embedded-opentype'),
+    url('../fonts/ProximaNova-Bold-webfont.woff') format('woff'),
+    url('../fonts/ProximaNova-Bold-webfont.ttf') format('truetype'),
+    url('../fonts/ProximaNova-Bold-webfont.svg#ProximaNovaLtLight') format('svg');
+}
+
+@font-face {
+    font-family: 'ProximaNovaLtReg';
+    font-weight: normal;
+    font-style: normal;
+    src: url('../fonts/ProximaNova-Reg-webfont.eot');
+    src: url('../fonts/ProximaNova-Reg-webfont.eot?#iefix') format('embedded-opentype'),
+    url('../fonts/ProximaNova-Reg-webfont.woff') format('woff'),
+    url('../fonts/ProximaNova-Reg-webfont.ttf') format('truetype'),
+    url('../fonts/ProximaNova-Reg-webfont.svg#ProximaNovaLtLight') format('svg');
+}
+
+@font-face {
+    font-family: 'ProximaNovaLtSbold';
+    font-weight: normal;
+    font-style: normal;
+    src: url('../fonts/ProximaNova-Sbold-webfont.eot');
+    src: url('../fonts/ProximaNova-Sbold-webfont.eot?#iefix') format('embedded-opentype'),
+    url('../fonts/ProximaNova-Sbold-webfont.woff') format('woff'),
+    url('../fonts/ProximaNova-Sbold-webfont.ttf') format('truetype'),
+    url('../fonts/ProximaNova-Sbold-webfont.svg#ProximaNovaLtLight') format('svg');
+}
+
+@font-face {
+    font-family: 'ProximaNovaLtThin';
+    font-weight: normal;
+    font-style: normal;
+    src: url('../fonts/ProximaNova-Thin-webfont.eot');
+    src: url('../fonts/ProximaNova-Thin-webfont.eot?#iefix') format('embedded-opentype'),
+    url('../fonts/ProximaNova-Thin-webfont.woff') format('woff'),
+    url('../fonts/ProximaNova-Thin-webfont.ttf') format('truetype'),
+    url('../fonts/ProximaNova-Thin-webfont.svg#ProximaNovaLtLight') format('svg');
+}
+
 @keyframes fadeIn {
     from {
         opacity: 0;
