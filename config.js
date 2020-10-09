@@ -79,6 +79,9 @@ var config = {
     // signalling.
     // webrtcIceTcpDisable: false,
 
+    // Disables opus forward error correction by removing it from the remote
+    // SDP in signalling.
+    // webrtcOpusFecRemove: false,
 
     // Media
     //

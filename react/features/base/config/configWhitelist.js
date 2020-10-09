@@ -152,5 +152,6 @@ export default [
     'useTurnUdp',
     'videoQuality.persist',
     'webrtcIceTcpDisable',
-    'webrtcIceUdpDisable'
+    'webrtcIceUdpDisable',
+    'webrtcOpusFecRemove'
 ].concat(extraConfigWhitelist);
