@@ -283,7 +283,6 @@ function _localParticipantJoined({ getState, dispatch }, next, action) {
     const settings = getState()['features/base/settings'];
 
     dispatch(localParticipantJoined({
-        avatarID: settings.avatarID,
         avatarURL: settings.avatarURL,
         email: settings.email,
         name: settings.displayName
