@@ -85,3 +85,6 @@ ios/app/dropbox.key
 ios/app/GoogleService-Info.plist
 
 .vscode
+
+# Isomorphic environment variables
+.env.json
