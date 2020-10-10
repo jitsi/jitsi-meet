@@ -49,7 +49,6 @@ class HangupButton extends AbstractHangupButton<Props, *> {
             this.props.dispatch({type: 'END_SCREEN_SHARING'});
             ScreenShareController.stopRecording();
             sendAnalytics(createToolbarEvent('hangup'));
-            console.log(`cleear session id ${jitsiLocalStorage.getItem('clearSessionId')}`);
             if (jitsiLocalStorage.getItem('clearSessionId') === 'true') {
                 this.props.dispatch(clearSessionId());
                 this.props.dispatch(unmarkClearSessionId());
