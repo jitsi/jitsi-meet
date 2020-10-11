@@ -36,10 +36,10 @@ import type { AbstractProps } from '../AbstractConference';
 
 import Labels from './Labels';
 import LonelyMeetingExperience from './LonelyMeetingExperience';
-import ConferenceSessionTimer from '../ConferenceSessionTimer';
 import NavigationBar from './NavigationBar';
 import styles, { NAVBAR_GRADIENT_COLORS } from './styles';
 
+import { jitsiLocalStorage } from '@jitsi/js-utils';
 
 /**
  * The type of the React {@code Component} props of {@link Conference}.
@@ -123,6 +123,15 @@ class Conference extends AbstractConference<Props, *> {
      * @returns {void}
      */
     componentDidMount() {
+        const timestamp = jitsiLocalStorage.getItem('sessionIdTimestamp');
+        if (timestamp !== null || timestamp !== undefined) {
+            const nowTimeStamp = new Date().getTime();
+            if ((nowTimeStamp - timestamp) / 1000 >= 3600) {
+                console.log('removing session id')
+                jitsiLocalStorage.removeItem('sessionId');
+                jitsiLocalStorage.removeItem('sessionIdTimestamp')
+            }
+        }
         BackButtonRegistry.addListener(this._onHardwareBackPress);
     }
 
@@ -330,7 +339,6 @@ class Conference extends AbstractConference<Props, *> {
                 </SafeAreaView>
 
                 <TestConnectionInfo />
-                <ConferenceSessionTimer />
 
                 { this._renderConferenceNotification() }
 
@@ -438,7 +446,6 @@ function _mapStateToProps(state) {
     //   are leaving one.
     const connecting_
         = connecting || (connection && (!membersOnly && (joining || (!conference && !leaving))));
-
     return {
         ...abstractMapStateToProps(state),
         _aspectRatio: aspectRatio,

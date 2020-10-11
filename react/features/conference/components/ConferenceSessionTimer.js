@@ -89,7 +89,7 @@ class ConferenceSessionTimer extends Component<Props, State> {
             // remove session id after 1 hr
             console.log("removing session id");
             this.props.dispatch(markClearSessionId())
-        }, 3600000);
+        }, 10000);
     }
 
     /**
