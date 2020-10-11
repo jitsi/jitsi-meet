@@ -52,10 +52,10 @@ class KickEveryoneElsePrompt extends Component<Props> {
 
         return (
             <ConfirmDialog
-                contentKey = 'toolbar.accessibilityLabel.kickEveryone'
-                onCancel = { this._onCancel }
-                onSubmit = { this._onSubmit }
-                />
+                contentKey='dialog.kickEveryoneDialog'
+                onCancel={this._onCancel}
+                onSubmit={this._onSubmit}
+            />
         );
     }
 
@@ -87,11 +87,11 @@ class KickEveryoneElsePrompt extends Component<Props> {
      * after setting the password is resolved.
      */
     _onSubmit() {
-       this.props.dispatch(kickAllParticipants(exclude));
-       this.props.dispatch(hideDialog(KickEveryoneElsePrompt))
+        this.props.dispatch(kickAllParticipants(exclude));
+        this.props.dispatch(hideDialog(KickEveryoneElsePrompt))
 
 
-        return true; 
+        return true;
     }
 
 }

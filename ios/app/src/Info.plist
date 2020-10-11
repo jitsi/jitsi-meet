@@ -53,13 +53,13 @@
 		</dict>
 	</dict>
 	<key>NSCalendarsUsageDescription</key>
-	<string>See your scheduled meetings in the app.</string>
+	<string>Wenn Meetings in deinen Kalender eingetragen werden sollen</string>
 	<key>NSCameraUsageDescription</key>
-	<string>Participate in meetings with video.</string>
+	<string>Nehme mit Video an Meetings teil</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string></string>
 	<key>NSMicrophoneUsageDescription</key>
-	<string>Participate in meetings with voice.</string>
+	<string>Nehme mit Ton an Meetings teil.</string>
 	<key>NSUserActivityTypes</key>
 	<array>
 		<string>de.hopp-foundation.jitsi.ios.conference</string>

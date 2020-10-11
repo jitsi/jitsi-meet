@@ -52,10 +52,10 @@ class ScreenshareWarningPrompt extends Component<Props> {
 
         return (
             <ConfirmDialog
-                contentKey = 'toolbar.accessibilityLabel.kickEveryone'
-                onCancel = { this._onCancel }
-                onSubmit = { this._onSubmit }
-                />
+                contentKey='dialog.screenShareWarning'
+                onCancel={this._onCancel}
+                onSubmit={this._onSubmit}
+            />
         );
     }
 
@@ -86,11 +86,11 @@ class ScreenshareWarningPrompt extends Component<Props> {
      * after setting the password is resolved.
      */
     _onSubmit() {
-       jitsiLocalStorage.setItem('showScreenshare',true)
-       this.props.dispatch(hideDialog(ScreenshareWarningPrompt))
+        jitsiLocalStorage.setItem('showScreenshare', true)
+        this.props.dispatch(hideDialog(ScreenshareWarningPrompt))
 
 
-        return true; 
+        return true;
     }
 
 }
