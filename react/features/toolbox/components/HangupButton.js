@@ -12,6 +12,9 @@ import type { AbstractButtonProps } from '../../base/toolbox/components';
 import { ScreenShareController } from './native/IOSRecordButton';
 import { jitsiLocalStorage } from '@jitsi/js-utils';
 import {clearSessionId, unmarkClearSessionId} from '../../base/conference';
+import { Platform } from 'react-native';
+
+
 /**
  * The type of the React {@code Component} props of {@link HangupButton}.
  */
@@ -45,8 +48,10 @@ class HangupButton extends AbstractHangupButton<Props, *> {
         super(props);
 
         this._hangup = _.once(() => {
-            this.props.dispatch({ type: 'END_SCREEN_SHARING' });
-            ScreenShareController.stopRecording();
+            if (Platform.OS == 'ios') {
+                this.props.dispatch({ type: 'END_SCREEN_SHARING' });
+                ScreenShareController.stopRecording();
+            }
             sendAnalytics(createToolbarEvent('hangup'));
             if (jitsiLocalStorage.getItem('clearSessionId') === 'true') {
                 this.props.dispatch(clearSessionId());
