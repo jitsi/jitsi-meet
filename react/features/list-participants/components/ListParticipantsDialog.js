@@ -24,7 +24,7 @@ type Props = {
 };
 
 /**
- * Allow users to embed a jitsi meeting in an iframe.
+ * Allow users to list participants of a jitsi meeting
  *
  * @returns {React$Element<any>}
  */

@@ -28,7 +28,7 @@ type Props = {
  */
 function ListParticipantsTrigger({ t, openListDialog }: Props) {
     /**
-     * Handles opeming the embed dialog.
+     * Handles opeming the List dialog.
      *
      * @returns {void}
      */
@@ -45,6 +45,6 @@ function ListParticipantsTrigger({ t, openListDialog }: Props) {
     );
 }
 
-const mapDispatchToProps = { openEmbedDialog: openDialog };
+const mapDispatchToProps = { openListDialog: openDialog };
 
 export default translate(connect(null, mapDispatchToProps)(ListParticipantsTrigger));
