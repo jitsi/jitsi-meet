@@ -28,11 +28,9 @@ import styles from './styles';
 import MuteEveryoneElseButton from './MuteEveryoneElseButton';
 import KickEveryoneElseButton from './KickEveryoneElseButton';
 import ScreenshareButton from './ScreenshareButton';
-
 import { jitsiLocalStorage } from '@jitsi/js-utils';
-
 import IOSRecordButtonWrapper from './IOSRecordButtonWrapper';
-
+import { Platform } from 'react-native';
 
 /**
  * The type of the React {@code Component} props of {@link OverflowMenu}.
@@ -145,7 +143,7 @@ class OverflowMenu extends PureComponent<Props, State> {
             styles: _bottomSheetStyles.buttons
             
         };
-        var showScreenshare = jitsiLocalStorage.getItem('showScreenshare');
+        var showScreenshare = jitsiLocalStorage.getItem('showScreenshare') && Platform.OS == 'ios';
 
         const moreOptionsButtonProps = {
             ...buttonProps,
@@ -304,11 +302,12 @@ function _mapStateToProps(state) {
             .find(({ features = {} }) =>
                 String(features['screen-sharing']) === 'true') !== undefined;
     }
+    console.log(Platform.OS)
     return {
         __localVideo: state['features/base/tracks'],
         _bottomSheetStyles: ColorSchemeRegistry.get(state, 'BottomSheet'),
         _isOpen: isDialogOpen(state, OverflowMenu_),
-        _desktopSharingEnabled: Boolean(desktopSharingEnabled)
+        _desktopSharingEnabled: Boolean(desktopSharingEnabled) && Platform.OS == 'ios'
     };
 }
 
