@@ -179,7 +179,6 @@ function Thumbnail(props: Props) {
                     <View>
                  <MoreOptionsIndicator/>
 
-                <RaisedHandIndicator participantId = { participant.id } />
                 { renderDominantSpeakerIndicator && <DominantSpeakerIndicator /> }
                 </View>
 
@@ -192,6 +191,8 @@ function Thumbnail(props: Props) {
                     styles.thumbnailTopIndicatorContainer,
                     styles.thumbnailTopRightIndicatorContainer
                 ] }>
+                <RaisedHandIndicator participantId = { participant.id } />
+
                 <ConnectionIndicator participantId = { participant.id } />
             </View> }
 
