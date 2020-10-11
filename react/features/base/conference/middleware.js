@@ -31,7 +31,10 @@ import {
     DATA_CHANNEL_OPENED,
     SEND_TONES,
     SET_PENDING_SUBJECT_CHANGE,
-    SET_ROOM
+    SET_ROOM,
+    CLEAR_SESSION_ID,
+    MARK_CLEAR_SESSION_ID,
+    UNMARK_CLEAR_SESSION_ID
 } from './actionTypes';
 import {
     conferenceFailed,
@@ -45,7 +48,10 @@ import {
     forEachConference,
     getCurrentConference
 } from './functions';
+
+import { jitsiLocalStorage } from '@jitsi/js-utils';
 import logger from './logger';
+
 
 declare var APP: Object;
 
@@ -99,6 +105,20 @@ MiddlewareRegistry.register(store => next => action => {
     case TRACK_ADDED:
     case TRACK_REMOVED:
         return _trackAddedOrRemoved(store, next, action);
+
+    case CLEAR_SESSION_ID:
+        console.log('clearing');
+        jitsiLocalStorage.removeItem("sessionId");
+        return {}
+    
+    case MARK_CLEAR_SESSION_ID:
+        console.log('marking clear session');
+        return toggleClearSessionId(store, next, action);
+
+    case UNMARK_CLEAR_SESSION_ID:
+        console.log('unmarking clear session');
+        return toggleClearSessionId(store, next, action, false);
+    
     }
 
     return next(action);
@@ -631,4 +651,22 @@ function _updateLocalParticipantInConference({ dispatch, getState }, next, actio
     }
 
     return result;
+}
+
+/**
+ * Updates the persistent state which control clearing of session id
+ *
+ * @param {Store} store - The redux store in which the specified {@code action}
+ * is being dispatched.
+ * @param {Dispatch} next - The redux {@code dispatch} function to dispatch the
+ * specified {@code action} to the specified {@code store}.
+ * @param {Action} action - The redux action which is being dispatched in the
+ * specified {@code store}.
+ * @param {Boolean} toggle - The toggle to control the state
+ * @private
+ * @returns {Object} The value returned by {@code next(action)}.
+ */
+function toggleClearSessionId({}, next, action, toggle = true) {
+    jitsiLocalStorage.setItem('clearSessionId', toggle);
+    return next(action)
 }
