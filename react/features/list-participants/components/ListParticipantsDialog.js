@@ -6,10 +6,7 @@ import { connect } from 'react-redux';
 import CopyButton from '../../base/buttons/CopyButton';
 import { Dialog } from '../../base/dialog';
 import { translate } from '../../base/i18n';
-
-
 import { getParticipants } from '../../base/participants';
-
 
 import Header from './Header';
 
@@ -38,36 +35,19 @@ function ListParticipants({ t, paticipantsList }: Props) {
      * @returns {string} The list of participants.
      */
 
-
-	/*
-	
     const getList = () => {
-       let list = "";
-       for(const [ key, val ] of Object.entries(paticipantsList)){
-	    try{
-    	        list += (key + 1) + " : " + val.name + "\n";
-    	    }catch(err){
-    	        list += (key + 1) + " : " + "No Name Specified" + "\n";
-    	    }
-       }
-       return list;
-    };
-	
-	*/
+        let list = '';
 
+        for (const [ key, val ] of Object.entries(paticipantsList)) {
 
+            if (val && val.name) {
+                list = list.concat(`${(key + 1)} : ${String(val.name)} '\n'`);
+            } else {
+                list = list.concat(`${(key + 1)} : No Name Specified '\n'`);
+            }
+        }
 
-
-    const getList = () => {
-       let list = "";
-       paticipantsList.map((obj, index)=>{
-            if(obj && obj.name){
-    	        list += (index + 1) + " : " + obj.name + "\n";
-    	    }else{
-    	        list += (index + 1) + " : " + "No Name Specified" + "\n";
-    	    }
-       })
-       return list;
+        return list;
     };
 
     return (
@@ -76,6 +56,7 @@ function ListParticipants({ t, paticipantsList }: Props) {
             hideCancelButton = { true }
             submitDisabled = { true }
             width = 'small'>
+
             <div className = 'list-participants-dialog'>
                 <textarea
                     className = 'list-participants-code'

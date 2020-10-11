@@ -38,11 +38,11 @@ import { isVpaasMeeting } from '../../../billing-counter/functions';
 import { VideoBlurButton } from '../../../blur';
 import { CHAT_SIZE, ChatCounter, toggleChat } from '../../../chat';
 import { EmbedMeetingDialog } from '../../../embed-meeting';
-import { ListParticipantsDialog } from '../../../list-participants';
 import { SharedDocumentButton } from '../../../etherpad';
 import { openFeedbackDialog } from '../../../feedback';
 import { beginAddPeople } from '../../../invite';
 import { openKeyboardShortcutsDialog } from '../../../keyboard-shortcuts';
+import { ListParticipantsDialog } from '../../../list-participants';
 import {
     LocalRecordingButton,
     LocalRecordingInfoDialog
@@ -767,6 +767,7 @@ class Toolbox extends Component<Props, State> {
     }
 
     _onToolbarOpenListParticipants: () => void;
+
     /**
      * Creates an analytics toolbar event and dispatches an action for opening
      * the List Participants modal.
