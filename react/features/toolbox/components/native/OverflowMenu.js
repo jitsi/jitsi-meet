@@ -143,7 +143,7 @@ class OverflowMenu extends PureComponent<Props, State> {
             styles: _bottomSheetStyles.buttons
             
         };
-        var showScreenshare = jitsiLocalStorage.getItem('showScreenshare') && Platform.OS == 'ios';
+        var showScreenshare = jitsiLocalStorage.getItem('showScreenshare');
 
         const moreOptionsButtonProps = {
             ...buttonProps,
@@ -172,7 +172,7 @@ class OverflowMenu extends PureComponent<Props, State> {
                     <ClosedCaptionButton { ...buttonProps } />
                     <SharedDocumentButton { ...buttonProps } />
                     <HelpButton { ...buttonProps } />
-                     <Collapsible collapsed = { showScreenshare }>
+                    {Platform.OS == 'ios' ? <><Collapsible collapsed = { showScreenshare }>
                         <ScreenshareButton {...buttonProps} />
                      </Collapsible>
                     <Collapsible collapsed = { !showScreenshare }>
@@ -180,7 +180,7 @@ class OverflowMenu extends PureComponent<Props, State> {
                         this.props._desktopSharingEnabled
                             && <IOSRecordButtonWrapper />
                         }
-                    </Collapsible>
+                    </Collapsible></> : null}
                 </Collapsible>
             </BottomSheet>
         );
@@ -307,7 +307,7 @@ function _mapStateToProps(state) {
         __localVideo: state['features/base/tracks'],
         _bottomSheetStyles: ColorSchemeRegistry.get(state, 'BottomSheet'),
         _isOpen: isDialogOpen(state, OverflowMenu_),
-        _desktopSharingEnabled: Boolean(desktopSharingEnabled) && Platform.OS == 'ios'
+        _desktopSharingEnabled: Boolean(desktopSharingEnabled)
     };
 }
 
