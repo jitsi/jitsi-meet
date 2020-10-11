@@ -38,26 +38,6 @@ function ListParticipants({ t, paticipantsList }: Props) {
      * @returns {string} The list of participants.
      */
 
-
-	/*
-	
-    const getList = () => {
-       let list = "";
-       for(const [ key, val ] of Object.entries(paticipantsList)){
-	    try{
-    	        list += (key + 1) + " : " + val.name + "\n";
-    	    }catch(err){
-    	        list += (key + 1) + " : " + "No Name Specified" + "\n";
-    	    }
-       }
-       return list;
-    };
-	
-	*/
-
-
-
-
     const getList = () => {
        let list = "";
        paticipantsList.map((obj, index)=>{
