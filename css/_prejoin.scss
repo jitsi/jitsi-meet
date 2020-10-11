@@ -39,6 +39,16 @@
         margin-bottom: 14px;
         width: 100%;
     }
+
+    &-error {
+        color: white;
+        background-color: rgba(229, 75, 75, 0.5);
+        width: 100%;
+        padding: 3px;
+        margin-top: 4px;
+        font-size: 13px;
+        text-align: center;
+    }
 }
 
 @mixin name-placeholder {

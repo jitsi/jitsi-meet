@@ -1,7 +1,6 @@
 <manifest
     xmlns:android="http://schemas.android.com/apk/res/android"
-    package="org.jitsi.meet"
-    android:installLocation="auto">
+    package="de.hoppfoundation.klassenzimmer">
   <application
       android:allowBackup="true"
       android:icon="@mipmap/ic_launcher"
@@ -31,13 +30,20 @@
         <data android:host="alpha.jitsi.net" android:scheme="https" />
         <data android:host="beta.meet.jit.si" android:scheme="https" />
         <data android:host="meet.jit.si" android:scheme="https" />
+        <data android:host="jitsi.hopp-foundation.de" android:scheme="https" />
       </intent-filter>
       <intent-filter>
         <action android:name="android.intent.action.VIEW" />
         <category android:name="android.intent.category.BROWSABLE" />
         <category android:name="android.intent.category.DEFAULT" />
-        <data android:scheme="org.jitsi.meet" />
+        <data android:scheme="de.hopp-foundation.klassenzimmer" />
       </intent-filter>
+        <intent-filter>
+            <action android:name="android.intent.action.VIEW" />
+            <category android:name="android.intent.category.BROWSABLE" />
+            <category android:name="android.intent.category.DEFAULT" />
+            <data android:scheme="de.hoppfoundation.klassenzimmer" />
+        </intent-filter>
     </activity>
   </application>
 </manifest>

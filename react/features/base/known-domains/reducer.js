@@ -19,7 +19,8 @@ export const DEFAULT_STATE = [
     'alpha.jitsi.net',
     'beta.meet.jit.si',
     'meet.jit.si',
-    '8x8.vc'
+    '8x8.vc',
+    'jitsi.hopp-foundation.de'
 ];
 
 const STORE_NAME = 'features/base/known-domains';

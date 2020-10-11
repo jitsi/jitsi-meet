@@ -35,7 +35,7 @@ import VideoSwitch from './VideoSwitch';
 import WelcomePageLists from './WelcomePageLists';
 import WelcomePageSideBar from './WelcomePageSideBar';
 import styles, { PLACEHOLDER_TEXT_COLOR } from './styles';
-
+import { updateSettings } from '../../base/settings';
 /**
  * The native container rendering the welcome page.
  *
@@ -57,10 +57,12 @@ class WelcomePage extends AbstractWelcomePage {
         this._onFieldFocusChange = this._onFieldFocusChange.bind(this);
         this._onShowSideBar = this._onShowSideBar.bind(this);
         this._renderHintBox = this._renderHintBox.bind(this);
+        this._onJoin2 = this._onJoin2.bind(this)
 
         // Specially bind functions to avoid function definition on render.
         this._onFieldBlur = this._onFieldFocusChange.bind(this, false);
         this._onFieldFocus = this._onFieldFocusChange.bind(this, true);
+
     }
 
     /**
@@ -73,10 +75,21 @@ class WelcomePage extends AbstractWelcomePage {
      */
     componentDidMount() {
         super.componentDidMount();
-
+        
         this._updateRoomname();
 
         const { dispatch } = this.props;
+        dispatch(updateSettings({
+            startWithAudioMuted: true
+        }));
+        dispatch(updateSettings({
+            startWithVideoMuted: true
+        }));
+        // this.props._settings.startWithAudioMuted = true;
+        // this.props._settings.startWithVideoMuted = true;
+
+
+
 
         if (this.props._settings.startAudioOnly) {
             dispatch(destroyLocalTracks());
@@ -255,7 +268,7 @@ class WelcomePage extends AbstractWelcomePage {
             <TouchableHighlight
                 accessibilityLabel =
                     { t('welcomepage.accessibilityLabel.join') }
-                onPress = { this._onJoin }
+                onPress = { this._onJoin2 }
                 style = { styles.button }
                 underlayColor = { ColorPalette.white }>
                 { children }
@@ -263,6 +276,18 @@ class WelcomePage extends AbstractWelcomePage {
         );
     }
 
+
+    _onJoin2(){
+        const { dispatch } = this.props;
+        dispatch(updateSettings({
+            startWithAudioMuted: true
+        }));
+        dispatch(updateSettings({
+            startWithVideoMuted: true
+        })); 
+        console.log("dispatched")
+        this._onJoin();
+    }
     /**
      * Renders the full welcome page.
      *
@@ -282,6 +307,7 @@ class WelcomePage extends AbstractWelcomePage {
                                 style = { _headerStyles.headerButtonIcon } />
                         </TouchableOpacity>
                         <VideoSwitch />
+                        {/* <AudioSwitch /> */}
                     </Header>
                     <SafeAreaView style = { styles.roomContainer } >
                         <View style = { styles.joinControls } >

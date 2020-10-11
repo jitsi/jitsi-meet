@@ -10,7 +10,7 @@ declare var __DEV__;
 /**
  * The name of the {@code localStorage} store where the app persists its values.
  */
-const PERSISTED_STATE_NAME = 'jitsi-state';
+const PERSISTED_STATE_NAME = 'klassenzimmer-state';
 
 /**
  * Mixed type of the element (subtree) config. If it's a {@code boolean} (and is

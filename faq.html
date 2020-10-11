@@ -1,0 +1,178 @@
+
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Digitales Klassenzimmer FAQ</title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400&display=swap" rel="stylesheet">
+    <style type="text/css">
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+        }
+
+        #page {
+            align-items: stretch;
+        }
+
+        a {
+            border: 1px solid rgb(0, 0, 0, .2);
+            border-radius: 6px;
+            color: rgb(80, 80, 80);
+            display: block;
+            margin: 5px;
+            padding: 10px;
+            text-align: center;
+            text-decoration: none !important;
+        }
+
+        div, article, h1, h2 {
+            display: flex;
+            flex-direction: column;
+        }
+
+        h1 {
+            background-color: rgb(242, 245, 247);
+            font-size: 1em;
+        }
+
+        h1,
+        h2 {
+            align-items: center;
+            color: #425d8b;
+            flex-direction: row;
+            justify-content: space-between;
+            margin: 0;
+            padding: 15px 10px;
+        }
+
+        h2 {
+            border-bottom: 1px solid rgb(230, 230, 230);
+            font-size: 1em;
+        }
+
+        article p {
+            color: rgb(80, 80, 80);
+            margin: 0;
+            height: 0;
+            overflow: hidden;
+        }
+
+        article p[data-expanded] {
+            height: unset;
+            padding: 5px 15px;
+        }
+    </style>
+    <script type="text/javascript">
+        function initArticles() {
+            const articles = document.querySelectorAll(`article`);
+            articles.forEach(article => {
+                article.querySelector('h2').onclick = () => {
+                    article.querySelector('p').toggleAttribute('data-expanded');
+                };
+            });
+        }
+    </script>
+</head>
+
+<body onload="initArticles()">
+    <div id="page">
+        <h1>
+            Häufig Gestellte Fragen:
+        </h1>
+        <article>
+            <h2>
+               Wie funktioniert Jitsi?
+            </h2>
+            <p>
+                Sobald Sie die Anwendung installiert, und alle Zugriffsberechtigungen erteilt haben, 
+                können Sie einfach einen Raumnamen in das Raum Feld eingeben. Schon haben Sie Ihre erste Konferenz erstellt. Dann können sie das Menü öffnen, 
+                indem Sie die Drei Punkte unten anklicken. Dort können Sie über "Person einladen" die Meeting Details mit anderen teilen. 
+                Ansonsten können die anderen Teilnehmer den gleichen Namen bei sich in der App eingeben.
+            </p>
+        </article>
+        <article>
+            <h2>
+            Ich möchte an der Klasse/am Meeting XY teilnehmen
+            </h2>
+            <p>
+                Kontaktieren Sie den Organisator der Konferenz um den Namen des Raums zu erhalten.
+            </p>
+        </article>
+        <article>
+            <h2>
+                Ich kann meine Kamera oder Mikrofon nicht aktivieren.
+            </h2>
+            <p>
+                Es klingt wie einem Berechtigungsproblem auf dem Gerät. Können Sie bitte noch einmal überprüfen, ob Sie der App alle Berechtigungen gegeben haben, die sie benötigt? Am einfachsten ist es, in die Geräteeinstellungen des Telefon zu gehen. Suchen Sie dort die Anwendung Digitales Klassenzimmer, und schalten 
+                Sie alle Berechtigungen ein. 
+                Auf Android müssen Sie möglicherweise auch in das Menü "Apps und Benachrichtigungen" nach dem Öffnen von Einstellungen.
+            </p>
+        </article>
+        <article>
+            <h2>
+Wie lade ich andere in mein Meeting ein?
+            </h2>
+            <p>
+                Sobald Sie im Meeting sind, können sie das 3-Punkte-Menü unten auswählen und dort "Person einladen" auswählen, und die Meeting Details mit anderen zu teilen.
+            </p>
+        </article>
+        <article>
+            <h2>
+                Wie nutze ich das Digitale Klassenzimmer auf Windows/Mac?
+            </h2>
+            <p>
+                Jitsi ist hauptsächlich eine Web basierte App. Also können Sie auf jedem Betriebssystem auf <a href="https://jitsi.hopp-foundation.de">https://jitsi.hopp-foundation.de</a> gehen 
+                und Konferenzen beitreten. Benutzen Sie hierfür am besten den Google Chrome Browser. Unsere Desktop Applikationen folgen.
+            </p>
+        </article>
+        <article>
+            <h2>
+Was ist das Passwort?
+            </h2>
+            <p>Falls Sie beim Beitreten einer Konferenz nach einem Passwort gefragt werden sollten Sie andere Teilnehmer der Konferenz fragen,
+                 da diese wohlmöglich die Konferenz mit einem Passwort geschützt haben. Ansonsten kontaktieren Sie uns bei Fragen auf jitsi@hopp-foundation.de
+
+            </p>
+        </article>
+        <article>
+            <h2>
+Wie lösche ich einen Raum?            </h2>
+            <p>
+                Sie müssen die Räume nicht löschen. Jitsi Räume werden gelöscht, sobald jeder sie verlassen hat. Falls sie den Raum aus ihrem Verlauf löschen wollen, 
+                können Sie einfach auf dem Namen nach links wischen und die App bietet Ihnen die Möglichkeit den Eintrag zu löschen
+            </p>
+        </article>
+        
+        <article>
+            <h2>
+Jemand, den ich nicht kenne ist meinem Meeting beigetreten.
+            </h2>
+            <p>
+            Nächstes mal können Sie versuchen, den Raum mit einem einfachen Passwort zu schützen. Dieses können Sie mit anderen in der Konferenz teilen, damit diese im
+            Fall einer Verbindungsunterbrechung wieder beitreten können. Außerdem können so nur Leute beitreten, die das Passwort kennen.
+
+            </p>
+        </article>
+        <article>
+            <h2>
+Ich kann dem Meeting nicht beitreten / es bricht unerwartet ab            </h2>
+            <p>
+            Unser Server kann unter großer Last Probleme verursachen. Wir schlagen vor, es später nochmal zu probieren, und bei bleibenden Problemen melden Sie 
+            sich bitte per email an <a href="mailto:jitsi@hopp-foundation.de">jitsi@hopp-foundation.de</a>
+            </p>
+        </article>
+        <article>
+            <h2>
+            Ich habe sonstige Probleme mit der App.
+             </h2>
+            <p>
+                Bei Problemen erreichen Sie uns auf: <a href="mailto:jitsi@hopp-foundation.de">jitsi@hopp-foundation.de</a>
+            </p>
+        </article>
+    </div>
+</body>
+
+</html>

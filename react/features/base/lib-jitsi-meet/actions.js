@@ -48,6 +48,10 @@ export function initLib() {
 
         dispatch({ type: LIB_WILL_INIT });
 
+        // FIXME: android getDisplayMedia uses isOpera:false, isChromiumBased:false, desktopSharingChromeExtId: undefined with lib-jitsi-meet
+        if (navigator.product === 'ReactNative') {
+            config.desktopSharingChromeExtId = undefined;
+        }
         try {
             JitsiMeetJS.init({
                 enableAnalyticsLogging: isAnalyticsEnabled(getState),

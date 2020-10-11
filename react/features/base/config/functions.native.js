@@ -1,6 +1,5 @@
 // @flow
 
-import { NativeModules } from 'react-native';
 
 export * from './functions.any';
 
@@ -12,10 +11,8 @@ export * from './functions.any';
  */
 export function _cleanupConfig(config: Object) {
     config.analytics.scriptURLs = [];
-    if (NativeModules.AppInfo.LIBRE_BUILD) {
-        delete config.analytics.amplitudeAPPKey;
-        delete config.analytics.googleAnalyticsTrackingId;
-        delete config.callStatsID;
-        delete config.callStatsSecret;
-    }
+    delete config.analytics.amplitudeAPPKey; // always disable analytics
+    delete config.analytics.googleAnalyticsTrackingId;
+    delete config.callStatsID;
+    delete config.callStatsSecret;
 }

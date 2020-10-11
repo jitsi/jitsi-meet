@@ -32,7 +32,7 @@ const AVATAR_CHECKER_FUNCTIONS = [
         return participant && participant.avatarURL ? participant.avatarURL : null;
     },
     participant => {
-        return participant && participant.email ? getGravatarURL(participant.email) : null;
+        return participant && participant.email ? null : null;
     }
 ];
 /* eslint-enable arrow-body-style */

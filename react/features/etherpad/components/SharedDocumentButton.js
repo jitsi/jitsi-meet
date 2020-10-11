@@ -30,7 +30,7 @@ class SharedDocumentButton extends AbstractButton<Props, *> {
     accessibilityLabel = 'toolbar.accessibilityLabel.document';
     icon = IconShareDoc;
     label = 'toolbar.documentOpen';
-    toggledLabel = 'toolbar.documentClose';
+    toggledLabel = 'toolbar.documentOpen'; //TODO: refactor and remove the toggle option on mobile 
 
     /**
      * Handles clicking / pressing the button, and opens / closes the appropriate dialog.

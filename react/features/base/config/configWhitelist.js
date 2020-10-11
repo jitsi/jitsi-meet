@@ -69,6 +69,7 @@ export default [
 
     'channelLastN',
     'constraints',
+    'brandingRoomAlias',
     'debug',
     'debugAudioLevels',
     'defaultLanguage',
@@ -122,6 +123,7 @@ export default [
     'ignoreStartMuted',
     'liveStreamingEnabled',
     'localRecording',
+    'maxFullResolutionParticipants',
     'minParticipants',
     'nick',
     'openBridgeChannel',

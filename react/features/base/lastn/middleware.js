@@ -79,7 +79,8 @@ function _updateLastN({ getState }) {
     }
 
     if (typeof appState !== 'undefined' && appState !== 'active') {
-        lastN = 0;
+       lastN = 0;
+        lastN = localVideo && localVideo.videoType === 'desktop' ? 1 : 0;
     } else if (audioOnly) {
         const { screenShares } = state['features/video-layout'];
         const tileViewEnabled = shouldDisplayTileView(state);

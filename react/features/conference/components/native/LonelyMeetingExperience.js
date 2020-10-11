@@ -128,7 +128,6 @@ function _mapStateToProps(state): $Shape<Props> {
     const { disableInviteFunctions } = state['features/base/config'];
     const { conference } = state['features/base/conference'];
     const flag = getFeatureFlag(state, INVITE_ENABLED, true);
-
     return {
         _isInviteFunctionsDiabled: !flag || disableInviteFunctions,
         _isLonelyMeeting: conference && getParticipantCount(state) === 1,

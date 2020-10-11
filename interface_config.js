@@ -15,7 +15,30 @@ var interfaceConfig = {
      * Note: this mode is experimental and subject to breakage.
      */
     AUTO_PIN_LATEST_SCREEN_SHARE: 'remote-only',
+    DISABLE_VIDEO_BACKGROUND: false,
+
+    INITIAL_TOOLBAR_TIMEOUT: 20000,
+    TOOLBAR_TIMEOUT: 4000,
+    TOOLBAR_ALWAYS_VISIBLE: false,
+    DEFAULT_REMOTE_DISPLAY_NAME: 'Schüler*in',
+    DEFAULT_LOCAL_DISPLAY_NAME: 'Ich',
+    SHOW_JITSI_WATERMARK: true,
+    JITSI_WATERMARK_LINK: 'https://hopp-foundation.de',
+
+    // if watermark is disabled by default, it can be shown only for guests
+    SHOW_WATERMARK_FOR_GUESTS: true,
+    SHOW_BRAND_WATERMARK: false,
     BRAND_WATERMARK_LINK: '',
+    SHOW_POWERED_BY: false,
+    SHOW_DEEP_LINKING_IMAGE: false,
+    GENERATE_ROOMNAMES_ON_WELCOME_PAGE: true,
+    DISPLAY_WELCOME_PAGE_CONTENT: true,
+    DISPLAY_WELCOME_PAGE_TOOLBAR_ADDITIONAL_CONTENT: false,
+    APP_NAME: 'Digitales Klassenzimmer',
+    NATIVE_APP_NAME: 'Digitales Klassenzimmer',
+    PROVIDER_NAME: 'Hopp Foundation',
+    LANG_DETECTION: true, // Allow i18n to detect the system language
+    INVITATION_POWERED_BY: true,
 
     CLOSE_PAGE_GUEST_HINT: false, // A html text to be shown to guests on the close page, false disables it
     /**
@@ -48,6 +71,7 @@ var interfaceConfig = {
     DEFAULT_LOCAL_DISPLAY_NAME: 'me',
     DEFAULT_LOGO_URL: 'images/watermark.png',
     DEFAULT_REMOTE_DISPLAY_NAME: 'Fellow Jitster',
+    DEFAULT_WELCOME_PAGE_LOGO_URL: 'images/watermark.png',
 
     DISABLE_DOMINANT_SPEAKER_INDICATOR: false,
 
@@ -100,6 +124,11 @@ var interfaceConfig = {
     filmStripOnly: false,
 
     GENERATE_ROOMNAMES_ON_WELCOME_PAGE: true,
+
+    /**
+     * Hide the logo on the deep linking pages.
+     */
+    HIDE_DEEP_LINKING_LOGO: false,
 
     /**
      * Hide the invite prompt in the header when alone in the meeting.
@@ -253,12 +282,12 @@ var interfaceConfig = {
     /**
      * Specify mobile app scheme for opening the app from the mobile browser.
      */
-    // APP_SCHEME: 'org.jitsi.meet',
+    APP_SCHEME: 'de.hopp-foundation.klassenzimmer',
 
     /**
      * Specify the Android app package name.
      */
-    // ANDROID_APP_PACKAGE: 'org.jitsi.meet',
+    ANDROID_APP_PACKAGE: 'de.hopp-foundation.klassenzimmer'
 
     /**
      * Override the behavior of some notifications to remain displayed until

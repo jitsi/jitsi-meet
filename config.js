@@ -6,7 +6,7 @@ var config = {
 
     hosts: {
         // XMPP domain.
-        domain: 'jitsi-meet.example.com',
+        domain: 'jitsi.hopp-foundation.de',
 
         // When using authentication, domain for guest users.
         // anonymousdomain: 'guest.example.com',
@@ -24,7 +24,7 @@ var config = {
         // focus: 'focus.jitsi-meet.example.com',
 
         // XMPP MUC domain. FIXME: use XEP-0030 to discover it.
-        muc: 'conference.jitsi-meet.example.com'
+        muc: 'jitsi.hopp-foundation.de'
     },
 
     // BOSH URL. FIXME: use XEP-0156 to discover it.
@@ -122,6 +122,10 @@ var config = {
 
     // Sets the preferred resolution (height) for local video. Defaults to 720.
     // resolution: 720,
+
+    // How many participants while in the tile view mode, before the receiving video quality is reduced from HD to SD.
+    // Use -1 to disable.
+    // maxFullResolutionParticipants: 2
 
     // w3c spec-compliant video constraints to use for video capture. Currently
     // used by browsers that return true from lib-jitsi-meet's
@@ -228,6 +232,36 @@ var config = {
     //     90: 2
     // },
 
+    // Specify the settings for video quality optimizations on the client.
+    // videoQuality: {
+    //
+    //    // Provides a way to configure the maximum bitrates that will be enforced on the simulcast streams for
+    //    // video tracks. The keys in the object represent the type of the stream (LD, SD or HD) and the values
+    //    // are the max.bitrates to be set on that particular type of stream. The actual send may vary based on
+    //    // the available bandwidth calculated by the browser, but it will be capped by the values specified here.
+    //    // This is currently not implemented on app based clients on mobile.
+    //    maxBitratesVideo: {
+    //        low: 200000,
+    //        standard: 500000,
+    //        high: 1500000
+    //    },
+    //
+    //    // The options can be used to override default thresholds of video thumbnail heights corresponding to
+    //    // the video quality levels used in the application. At the time of this writing the allowed levels are:
+    //    //     'low' - for the low quality level (180p at the time of this writing)
+    //    //     'standard' - for the medium quality level (360p)
+    //    //     'high' - for the high quality level (720p)
+    //    // The keys should be positive numbers which represent the minimal thumbnail height for the quality level.
+    //    //
+    //    // With the default config value below the application will use 'low' quality until the thumbnails are
+    //    // at least 360 pixels tall. If the thumbnail height reaches 720 pixels then the application will switch to
+    //    // the high quality.
+    //    minHeightForQualityLvl: {
+    //        360: 'standard,
+    //        720: 'high'
+    //    }
+    // },
+
     // // Options for the recording limit notification.
     // recordingLimit: {
     //
@@ -299,7 +333,7 @@ var config = {
 
     // Enabling the close page will ignore the welcome page redirection when
     // a call is hangup.
-    // enableClosePage: false,
+    enableClosePage: true,
 
     // Disable hiding of remote thumbnails when in a 1-on-1 conference call.
     // disable1On1Mode: false,
@@ -367,7 +401,7 @@ var config = {
     // If third party requests are disabled, no other server will be contacted.
     // This means avatars will be locally generated and callstats integration
     // will not function.
-    // disableThirdPartyRequests: false,
+    disableThirdPartyRequests: true,
 
 
     // Peer-To-Peer mode: used (if enabled) when there are just 2 participants.
@@ -425,6 +459,12 @@ var config = {
         // amplitudeAPPKey: '<APP_KEY>'
 
         // Configuration for the rtcstats server:
+        // By enabling rtcstats server every time a conference is joined the rtcstats
+        // module connects to the provided rtcstatsEndpoint and sends statistics regarding
+        // PeerConnection states along with getStats metrics polled at the specified
+        // interval.
+        // rtcstatsEnabled: true,
+
         // In order to enable rtcstats one needs to provide a endpoint url.
         // rtcstatsEndpoint: wss://rtcstats-server-pilot.jitsi.net/,
 
@@ -585,6 +625,13 @@ var config = {
      requireDisplayName
      tokenAuthUrl
      */
+
+    /**
+     * This property can be used to alter the generated meeting invite links (in combination with a branding domain
+     * which is retrieved internally by jitsi meet) (e.g. https://meet.jit.si/someMeeting
+     * can become https://brandedDomain/roomAlias)
+     */
+    // brandingRoomAlias: null,
 
     // List of undocumented settings used in lib-jitsi-meet
     /**

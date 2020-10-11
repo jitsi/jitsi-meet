@@ -30,6 +30,7 @@ import '../chat/reducer';
 import '../deep-linking/reducer';
 import '../device-selection/reducer';
 import '../dropbox/reducer';
+import '../dynamic-branding/reducer';
 import '../etherpad/reducer';
 import '../filmstrip/reducer';
 import '../follow-me/reducer';

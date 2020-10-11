@@ -14,7 +14,7 @@ import {
     Container,
     Text
 } from '../../base/react';
-
+import { updateSettings } from '../../base/settings';
 import styles from './styles';
 
 /**
@@ -98,7 +98,12 @@ export default class AbstractRecentList<P: Props> extends AbstractPage<P> {
         const { dispatch } = this.props;
 
         sendAnalytics(createRecentClickedEvent('recent.meeting.tile'));
-
+        dispatch(updateSettings({
+            startWithAudioMuted: true
+        }));
+        dispatch(updateSettings({
+            startWithVideoMuted: true
+        })); 
         dispatch(appNavigate(url));
     }
 }

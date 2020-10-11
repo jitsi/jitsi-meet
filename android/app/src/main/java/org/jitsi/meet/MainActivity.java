@@ -23,13 +23,13 @@ import android.content.IntentFilter;
 import android.content.RestrictionEntry;
 import android.content.RestrictionsManager;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.KeyEvent;
 import androidx.annotation.Nullable;
 
+import org.jitsi.meet.sdk.BuildConfig;
 import org.jitsi.meet.sdk.JitsiMeet;
 import org.jitsi.meet.sdk.JitsiMeetActivity;
 import org.jitsi.meet.sdk.JitsiMeetConferenceOptions;
@@ -81,7 +81,7 @@ public class MainActivity extends JitsiMeetActivity {
 
     @Override
     protected boolean extraInitialize() {
-        Log.d(this.getClass().getSimpleName(), "LIBRE_BUILD="+BuildConfig.LIBRE_BUILD);
+        Log.d(this.getClass().getSimpleName(), "LIBRE_BUILD="+ BuildConfig.LIBRE_BUILD);
 
         // Setup Crashlytics and Firebase Dynamic Links
         // Here we are using reflection since it may have been disabled at compile time.
@@ -96,7 +96,7 @@ public class MainActivity extends JitsiMeetActivity {
         // In Debug builds React needs permission to write over other apps in
         // order to display the warning and error overlays.
         if (BuildConfig.DEBUG) {
-            if (canRequestOverlayPermission() && !Settings.canDrawOverlays(this)) {
+            if (!Settings.canDrawOverlays(this)) {
                 Intent intent
                     = new Intent(
                     Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
@@ -186,8 +186,7 @@ public class MainActivity extends JitsiMeetActivity {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == OVERLAY_PERMISSION_REQUEST_CODE
-                && canRequestOverlayPermission()) {
+        if (requestCode == OVERLAY_PERMISSION_REQUEST_CODE) {
             if (Settings.canDrawOverlays(this)) {
                 initialize();
                 return;
@@ -210,6 +209,18 @@ public class MainActivity extends JitsiMeetActivity {
         return super.onKeyUp(keyCode, event);
     }
 
+    @Override
+    public void onPictureInPictureModeChanged(boolean isInPictureInPictureMode) {
+        super.onPictureInPictureModeChanged(isInPictureInPictureMode);
+
+        Log.d(TAG, "Is in picture-in-picture mode: " + isInPictureInPictureMode);
+
+        if (!isInPictureInPictureMode) {
+            this.startActivity(new Intent(this, getClass())
+                .addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT));
+        }
+    }
+
     // Helper methods
     //
 
@@ -219,11 +230,5 @@ public class MainActivity extends JitsiMeetActivity {
         } catch (MalformedURLException e) {
             return null;
         }
-    }
-
-    private boolean canRequestOverlayPermission() {
-        return
-            Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
-                && getApplicationInfo().targetSdkVersion >= Build.VERSION_CODES.M;
     }
 }

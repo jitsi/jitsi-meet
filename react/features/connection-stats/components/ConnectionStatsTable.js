@@ -35,6 +35,11 @@ type Props = {
     bridgeCount: number,
 
     /**
+     * Audio/video codecs in use for the connection.
+     */
+    codec: Object,
+
+    /**
      * A message describing the connection quality.
      */
     connectionSummary: string,
@@ -218,6 +223,45 @@ class ConnectionStatsTable extends Component<Props> {
             </tr>
         );
     }
+
+    /**
+     * Creates a a table row as a ReactElement for displaying codec, if present.
+     * This will typically be something like "Codecs (A/V): opus, vp8".
+     *
+     * @private
+     * @returns {ReactElement}
+     */
+    _renderCodecs() {
+        const { codec, t } = this.props;
+
+        if (!codec) {
+            return;
+        }
+
+        let codecString;
+
+        // Only report one codec, in case there are multiple for a user.
+        Object.keys(codec || {})
+            .forEach(ssrc => {
+                const { audio, video } = codec[ssrc];
+
+                codecString = `${audio}, ${video}`;
+            });
+
+        if (!codecString) {
+            codecString = 'N/A';
+        }
+
+        return (
+            <tr>
+                <td>
+                    <span>{ t('connectionindicator.codecs') }</span>
+                </td>
+                <td>{ codecString }</td>
+            </tr>
+        );
+    }
+
 
     /**
      * Creates a table row as a ReactElement for displaying a summary message
@@ -452,6 +496,7 @@ class ConnectionStatsTable extends Component<Props> {
                     { isRemoteVideo ? this._renderRegion() : null }
                     { this._renderResolution() }
                     { this._renderFrameRate() }
+                    { this._renderCodecs() }
                     { isRemoteVideo ? null : this._renderBridgeCount() }
                 </tbody>
             </table>

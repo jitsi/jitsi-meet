@@ -5,7 +5,7 @@ import { IconSwitchCamera } from '../../../base/icons';
 import { MEDIA_TYPE, toggleCameraFacingMode } from '../../../base/media';
 import { connect } from '../../../base/redux';
 import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
-import { isLocalTrackMuted } from '../../../base/tracks';
+import { isLocalTrackMuted, getLocalVideoTrack } from '../../../base/tracks';
 
 /**
  * The type of the React {@code Component} props of {@link ToggleCameraButton}.
@@ -73,10 +73,17 @@ class ToggleCameraButton extends AbstractButton<Props, *> {
 function _mapStateToProps(state): Object {
     const { enabled: audioOnly } = state['features/base/audio-only'];
     const tracks = state['features/base/tracks'];
+    const videoMuted = Boolean(isLocalTrackMuted(tracks, MEDIA_TYPE.VIDEO));
+    const localVideo = getLocalVideoTrack(tracks);
 
+    let visible = !videoMuted;
+    if (localVideo && localVideo.videoType === 'desktop') {
+        visible = false;
+    }
     return {
         _audioOnly: Boolean(audioOnly),
-        _videoMuted: isLocalTrackMuted(tracks, MEDIA_TYPE.VIDEO)
+        _videoMuted: videoMuted,
+        visible
     };
 }
 

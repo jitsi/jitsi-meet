@@ -19,6 +19,7 @@ import { translate } from '../../base/i18n';
 import { JitsiConnectionErrors } from '../../base/lib-jitsi-meet';
 import type { StyleType } from '../../base/styles';
 import { authenticateAndUpgradeRole, cancelLogin } from '../actions';
+import { jitsiLocalStorage } from '@jitsi/js-utils';
 
 // Register styles.
 import './styles';
@@ -305,6 +306,8 @@ class LoginDialog extends Component<Props, State> {
      * @returns {void}
      */
     _onLogin() {
+        const currTimestamp = (new Date()).getTime();
+        jitsiLocalStorage.setItem('sessionIdTimestamp', currTimestamp)
         const { _conference: conference, dispatch } = this.props;
         const { password, username } = this.state;
         const jid = toJid(username, this.props._configHosts);

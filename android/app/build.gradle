@@ -1,10 +1,7 @@
 apply plugin: 'com.android.application'
 
-// Crashlytics integration is done as part of Firebase now, so it gets
 // automagically activated with google-services.json
-if (googleServicesEnabled) {
-    apply plugin: 'io.fabric'
-}
+
 
 // Use the number of seconds/10 since Jan 1 2019 as the versionCode.
 // This lets us upload a new build at most every 10 seconds for the
@@ -17,7 +14,7 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
 
     defaultConfig {
-        applicationId 'org.jitsi.meet'
+        applicationId 'de.hoppfoundation.klassenzimmer'
         versionCode vcode
         versionName project.appVersion
 
@@ -27,6 +24,7 @@ android {
         ndk {
             abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64'
         }
+        signingConfig signingConfigs.debug
     }
 
     signingConfigs {
@@ -40,16 +38,16 @@ android {
 
     buildTypes {
         debug {
-            buildConfigField "boolean", "GOOGLE_SERVICES_ENABLED", "${googleServicesEnabled}"
-            buildConfigField "boolean", "LIBRE_BUILD", "${rootProject.ext.libreBuild}"
+            buildConfigField "boolean", "GOOGLE_SERVICES_ENABLED", "false"
+            buildConfigField "boolean", "LIBRE_BUILD", "true"
         }
         release {
             // Uncomment the following line for singing a test release build.
             //signingConfig signingConfigs.debug
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules-release.pro'
-            buildConfigField "boolean", "GOOGLE_SERVICES_ENABLED", "${googleServicesEnabled}"
-            buildConfigField "boolean", "LIBRE_BUILD", "${rootProject.ext.libreBuild}"
+            buildConfigField "boolean", "GOOGLE_SERVICES_ENABLED", "false"
+            buildConfigField "boolean", "LIBRE_BUILD", "true"
         }
     }
 
@@ -81,16 +79,7 @@ dependencies {
 
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.0-beta-5'
 
-    if (!rootProject.ext.libreBuild) {
-        implementation 'com.google.android.gms:play-services-auth:16.0.1'
 
-        // Firebase
-        //  - Crashlytics
-        //  - Dynamic Links
-        implementation 'com.google.firebase:firebase-core:16.0.6'
-        implementation 'com.crashlytics.sdk.android:crashlytics:2.9.8'
-        implementation 'com.google.firebase:firebase-dynamic-links:16.1.5'
-    }
 
     implementation project(':sdk')
 }
@@ -171,6 +160,4 @@ gradle.projectsEvaluated {
 
 }
 
-if (googleServicesEnabled) {
-    apply plugin: 'com.google.gms.google-services'
-}
+

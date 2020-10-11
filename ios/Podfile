@@ -4,7 +4,8 @@ require_relative '../node_modules/@react-native-community/cli-platform-ios/nativ
 
 target 'jitsi-meet' do
   project 'app/app.xcodeproj'
-
+  
+  pod 'BlueSocket'
   pod 'Crashlytics', '~> 3.14.0'
   pod 'Fabric', '~> 1.10.2'
   pod 'Firebase/Core', '~> 6.16.0'
@@ -16,7 +17,7 @@ target 'JitsiMeet' do
 
   # React Native and its dependencies
   #
-
+  pod 'BlueSocket'
   pod 'FBLazyVector', :path => '../node_modules/react-native/Libraries/FBLazyVector/'
   pod 'FBReactNativeSpec', :path => '../node_modules/react-native/Libraries/FBReactNativeSpec/'
   pod 'RCTRequired', :path => '../node_modules/react-native/Libraries/RCTRequired/'
@@ -78,10 +79,29 @@ target 'JitsiMeet' do
   use_native_modules!
 end
 
+
+target 'ScreenRecorderHopp' do
+  project 'app/app.xcodeproj'
+  
+  pod 'BlueSocket'
+  pod 'JitsiMeetSDK'
+end
+
+target 'ScreenRecorderHoppSetupUI' do
+  project 'app/app.xcodeproj'
+
+  pod 'JitsiMeetSDK'
+end
+
+
 post_install do |installer|
   installer.pods_project.targets.each do |target|
     target.build_configurations.each do |config|
-      config.build_settings['ENABLE_BITCODE'] = 'YES'
+      if target.name == 'ScreenRecorderHopp' or target.name == 'ScreenRecorderHoppSetupUI'
+        config.build_settings['ENABLE_BITCODE'] = 'NO'
+      else
+        config.build_settings['ENABLE_BITCODE'] = 'YES'
+      end
       config.build_settings['SUPPORTS_MACCATALYST'] = 'NO'
       config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '11.0'
     end

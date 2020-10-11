@@ -433,6 +433,10 @@ export function participantMutedUs(participant) {
  */
 export function participantKicked(kicker, kicked) {
     return (dispatch, getState) => {
+        // HOTFIX, DO NOT LAND ON MASTER. This has been properly fixed in LJM.
+        if (typeof kicker === 'undefined') {
+            return;
+        }
 
         dispatch({
             type: PARTICIPANT_KICKED,

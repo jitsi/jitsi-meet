@@ -254,3 +254,34 @@ export const SET_SIP_GATEWAY_ENABLED = 'SET_SIP_GATEWAY_ENABLED';
  * }
  */
 export const SET_START_MUTED_POLICY = 'SET_START_MUTED_POLICY';
+
+
+/**
+ * The type of (redux) action, which clears session id
+ *
+ *
+ * {
+ *     type: CLEAR_SESSION_ID
+ * }
+ */
+export const CLEAR_SESSION_ID = "CLEAR_SESSION_ID";
+
+
+/**
+ * The type of (redux) action, which sets persistent state that clears session id on hangup
+ *
+ * {
+ *     type: MARK_CLEAR_SESSION_ID
+ * }
+ */
+export const MARK_CLEAR_SESSION_ID = "MARK_CLEAR_SESSION_ID";
+
+
+/**
+ * The type of (redux) action, which unsets persistent state that clears session id on hangup
+ *
+ * {
+ *     type: UNMARK_CLEAR_SESSION_ID
+ * }
+ */
+export const UNMARK_CLEAR_SESSION_ID = "UNMARK_CLEAR_SESSION_ID";
