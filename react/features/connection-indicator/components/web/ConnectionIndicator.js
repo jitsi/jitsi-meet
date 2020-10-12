@@ -1,12 +1,17 @@
 // @flow
 
 import React from 'react';
+import type { Dispatch } from 'redux';
 
 import { translate } from '../../../base/i18n';
 import { Icon, IconConnectionActive, IconConnectionInactive } from '../../../base/icons';
 import { JitsiParticipantConnectionStatus } from '../../../base/lib-jitsi-meet';
+import { MEDIA_TYPE } from '../../../base/media';
 import { Popover } from '../../../base/popover';
+import { connect } from '../../../base/redux';
+import { getTrackByMediaTypeAndParticipant } from '../../../base/tracks';
 import { ConnectionStatsTable } from '../../../connection-stats';
+import { saveLogs } from '../../actions';
 import AbstractConnectionIndicator, {
     INDICATOR_DISPLAY_THRESHOLD,
     type Props as AbstractProps,
@@ -63,10 +68,20 @@ type Props = AbstractProps & {
     alwaysVisible: boolean,
 
     /**
+     * The audio SSRC of this client.
+     */
+    audioSsrc: number,
+
+    /**
      * The current condition of the user's connection, matching one of the
      * enumerated values in the library.
      */
     connectionStatus: string,
+
+    /**
+     * The Redux dispatch function.
+     */
+    dispatch: Dispatch<any>,
 
     /**
      * Whether or not clicking the indicator should display a popover for more
@@ -93,7 +108,17 @@ type Props = AbstractProps & {
     /**
      * Invoked to obtain translated strings.
      */
-    t: Function
+    t: Function,
+
+    /**
+     * The video SSRC of this client.
+     */
+    videoSsrc: number,
+
+    /**
+     * Invoked to save the conference logs.
+     */
+    _onSaveLogs: Function
 };
 
 /**
@@ -340,6 +365,7 @@ class ConnectionIndicator extends AbstractConnectionIndicator<Props, State> {
             bandwidth,
             bitrate,
             bridgeCount,
+            codec,
             e2eRtt,
             framerate,
             maxEnabledResolution,
@@ -352,23 +378,77 @@ class ConnectionIndicator extends AbstractConnectionIndicator<Props, State> {
 
         return (
             <ConnectionStatsTable
+                audioSsrc = { this.props.audioSsrc }
                 bandwidth = { bandwidth }
                 bitrate = { bitrate }
                 bridgeCount = { bridgeCount }
+                codec = { codec }
                 connectionSummary = { this._getConnectionStatusTip() }
                 e2eRtt = { e2eRtt }
                 framerate = { framerate }
                 isLocalVideo = { this.props.isLocalVideo }
                 maxEnabledResolution = { maxEnabledResolution }
+                onSaveLogs = { this.props._onSaveLogs }
                 onShowMore = { this._onToggleShowMore }
                 packetLoss = { packetLoss }
+                participantId = { this.props.participantId }
                 region = { region }
                 resolution = { resolution }
                 serverRegion = { serverRegion }
                 shouldShowMore = { this.state.showMoreStats }
-                transport = { transport } />
+                transport = { transport }
+                videoSsrc = { this.props.videoSsrc } />
         );
     }
 }
 
-export default translate(ConnectionIndicator);
+
+/**
+ * Maps redux actions to the props of the component.
+ *
+ * @param {Function} dispatch - The redux action {@code dispatch} function.
+ * @returns {{
+ *     _onSaveLogs: Function,
+ * }}
+ * @private
+ */
+export function _mapDispatchToProps(dispatch: Dispatch<any>) {
+    return {
+        /**
+         * Saves the conference logs.
+         *
+         * @returns {Function}
+         */
+        _onSaveLogs() {
+            dispatch(saveLogs());
+        }
+    };
+}
+
+
+/**
+ * Maps part of the Redux state to the props of this component.
+ *
+ * @param {Object} state - The Redux state.
+ * @param {Props} ownProps - The own props of the component.
+ * @returns {Props}
+ */
+export function _mapStateToProps(state: Object, ownProps: Props) {
+
+    const conference = state['features/base/conference'].conference;
+
+    if (conference) {
+        const firstVideoTrack = getTrackByMediaTypeAndParticipant(
+            state['features/base/tracks'], MEDIA_TYPE.VIDEO, ownProps.participantId);
+        const firstAudioTrack = getTrackByMediaTypeAndParticipant(
+            state['features/base/tracks'], MEDIA_TYPE.AUDIO, ownProps.participantId);
+
+        return {
+            audioSsrc: firstAudioTrack ? conference.getSsrcByTrack(firstAudioTrack.jitsiTrack) : undefined,
+            videoSsrc: firstVideoTrack ? conference.getSsrcByTrack(firstVideoTrack.jitsiTrack) : undefined
+        };
+    }
+
+    return {};
+}
+export default translate(connect(_mapStateToProps, _mapDispatchToProps)(ConnectionIndicator));

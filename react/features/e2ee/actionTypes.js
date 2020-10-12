@@ -1,8 +1,8 @@
 /**
- * The type of the action which signals the E2EE key has changed.
+ * The type of the action which signals that E2EE needs to be enabled / disabled.
  *
  * {
- *     type: SET_E2EE_KEY
+ *     type: TOGGLE_E2EE
  * }
  */
-export const SET_E2EE_KEY = 'SET_E2EE_KEY';
+export const TOGGLE_E2EE = 'TOGGLE_E2EE';

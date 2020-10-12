@@ -45,8 +45,10 @@ server {
     error_page 404 /static/404.html;
 
     gzip on;
-    gzip_types text/plain text/css application/javascript application/json;
+    gzip_types text/plain text/css application/javascript application/json image/x-icon application/octet-stream application/wasm;
     gzip_vary on;
+    gzip_proxied no-cache no-store private expired auth;
+    gzip_min_length 512;
 
     location = /config.js {
         alias /etc/jitsi/meet/jitsi-meet.example.com-config.js;
@@ -61,6 +63,11 @@ server {
     {
         add_header 'Access-Control-Allow-Origin' '*';
         alias /usr/share/jitsi-meet/$1/$2;
+
+        # cache all versioned files
+        if ($arg_v) {
+          expires 1y;
+        }
     }
 
     # BOSH
@@ -78,6 +85,15 @@ server {
         proxy_set_header Connection "upgrade";
         proxy_set_header Host $http_host;
         tcp_nodelay on;
+    }
+
+    # colibri (JVB) websockets for jvb1
+    location ~ ^/colibri-ws/default-id/(.*) {
+       proxy_pass http://127.0.0.1:9090/colibri-ws/default-id/$1$is_args$args;
+       proxy_http_version 1.1;
+       proxy_set_header Upgrade $http_upgrade;
+       proxy_set_header Connection "upgrade";
+       tcp_nodelay on;
     }
 
     location ~ ^/([^/?&:'"]+)$ {

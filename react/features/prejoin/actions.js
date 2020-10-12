@@ -1,5 +1,7 @@
 // @flow
 
+declare var JitsiMeetJS: Object;
+
 import uuid from 'uuid';
 
 import { getRoomName } from '../base/conference';
@@ -24,6 +26,7 @@ import {
     SET_PREJOIN_DISPLAY_NAME_REQUIRED,
     SET_SKIP_PREJOIN,
     SET_JOIN_BY_PHONE_DIALOG_VISIBLITY,
+    SET_PRECALL_TEST_RESULTS,
     SET_PREJOIN_DEVICE_ERRORS,
     SET_PREJOIN_PAGE_VISIBILITY
 } from './actionTypes';
@@ -201,11 +204,13 @@ export function initPrejoin(tracks: Object[], errors: Object) {
 /**
  * Action used to start the conference.
  *
+ * @param {Object} options - The config options that override the default ones (if any).
  * @returns {Function}
  */
-export function joinConference() {
+export function joinConference(options?: Object) {
     return {
-        type: PREJOIN_START_CONFERENCE
+        type: PREJOIN_START_CONFERENCE,
+        options
     };
 }
 
@@ -222,7 +227,26 @@ export function joinConferenceWithoutAudio() {
         if (audioTrack) {
             await dispatch(replaceLocalTrack(audioTrack, null));
         }
-        dispatch(joinConference());
+
+        dispatch(joinConference({
+            startSilent: true
+        }));
+    };
+}
+
+/**
+ * Initializes the 'precallTest' and executes one test, storing the results.
+ *
+ * @param {Object} conferenceOptions - The conference options.
+ * @returns {Function}
+ */
+export function makePrecallTest(conferenceOptions: Object) {
+    return async function(dispatch: Function) {
+        await JitsiMeetJS.precallTest.init(conferenceOptions);
+
+        const results = await JitsiMeetJS.precallTest.execute();
+
+        dispatch(setPrecallTestResults(results));
     };
 }
 
@@ -388,6 +412,19 @@ export function setSkipPrejoin(value: boolean) {
 export function setJoinByPhoneDialogVisiblity(value: boolean) {
     return {
         type: SET_JOIN_BY_PHONE_DIALOG_VISIBLITY,
+        value
+    };
+}
+
+/**
+ * Action used to set data from precall test.
+ *
+ * @param {Object} value - The precall test results.
+ * @returns {Object}
+ */
+export function setPrecallTestResults(value: Object) {
+    return {
+        type: SET_PRECALL_TEST_RESULTS,
         value
     };
 }

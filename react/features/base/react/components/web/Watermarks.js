@@ -2,8 +2,10 @@
 
 import React, { Component } from 'react';
 
+import { isVpaasMeeting } from '../../../../billing-counter/functions';
 import { translate } from '../../../i18n';
 import { connect } from '../../../redux';
+
 
 declare var interfaceConfig: Object;
 
@@ -22,30 +24,24 @@ const _RIGHT_WATERMARK_STYLE = {
 type Props = {
 
     /**
-     * The user selected url used to navigate to on logo click.
+     * The link used to navigate to on logo click.
      */
-    _customLogoLink: string,
+    _logoLink: string,
 
     /**
-     * The url of the user selected logo.
+     * The url for the logo.
      */
-    _customLogoUrl: string,
+    _logoUrl: string,
 
     /**
-     * Whether or not the current user is logged in through a JWT.
+     * If the Jitsi watermark should be displayed or not.
      */
-    _isGuest: boolean,
+    _showJitsiWatermark: boolean,
 
     /**
-     * Flag used to signal that the logo can be displayed.
-     * It becomes true after the user customization options are fetched.
+     * The default value for the Jitsi logo URL.
      */
-    _readyToDisplayJitsiWatermark: boolean,
-
-    /**
-     * Returns true if welcome page is visible at the moment.
-     */
-    _welcomePageIsVisible: boolean,
+    defaultJitsiLogoURL: ?string,
 
     /**
      * Invoked to obtain translated strings.
@@ -64,25 +60,9 @@ type State = {
     brandWatermarkLink: string,
 
     /**
-     * The url to open when clicking the Jitsi watermark.
-     */
-    jitsiWatermarkLink: string,
-
-    /**
      * Whether or not the brand watermark should be displayed.
      */
     showBrandWatermark: boolean,
-
-    /**
-     * Whether or not the Jitsi watermark should be displayed.
-     */
-    showJitsiWatermark: boolean,
-
-    /**
-     * Whether or not the Jitsi watermark should be displayed for users not
-     * logged in through a JWT.
-     */
-    showJitsiWatermarkForGuests: boolean,
 
     /**
      * Whether or not the show the "powered by Jitsi.org" link.
@@ -105,29 +85,17 @@ class Watermarks extends Component<Props, State> {
         super(props);
 
         let showBrandWatermark;
-        let showJitsiWatermark;
-        let showJitsiWatermarkForGuests;
 
         if (interfaceConfig.filmStripOnly) {
             showBrandWatermark = false;
-            showJitsiWatermark = false;
-            showJitsiWatermarkForGuests = false;
         } else {
             showBrandWatermark = interfaceConfig.SHOW_BRAND_WATERMARK;
-            showJitsiWatermark = interfaceConfig.SHOW_JITSI_WATERMARK;
-            showJitsiWatermarkForGuests
-                = interfaceConfig.SHOW_WATERMARK_FOR_GUESTS;
         }
 
         this.state = {
             brandWatermarkLink:
                 showBrandWatermark ? interfaceConfig.BRAND_WATERMARK_LINK : '',
-            jitsiWatermarkLink:
-                showJitsiWatermark || showJitsiWatermarkForGuests
-                    ? interfaceConfig.JITSI_WATERMARK_LINK : '',
             showBrandWatermark,
-            showJitsiWatermark,
-            showJitsiWatermarkForGuests,
             showPoweredBy: interfaceConfig.SHOW_POWERED_BY
         };
     }
@@ -152,28 +120,6 @@ class Watermarks extends Component<Props, State> {
                 }
             </div>
         );
-    }
-
-    /**
-     * Returns true if the watermark is ready to be displayed.
-     *
-     * @private
-     * @returns {boolean}
-     */
-    _canDisplayJitsiWatermark() {
-        const {
-            showJitsiWatermark,
-            showJitsiWatermarkForGuests
-        } = this.state;
-        const {
-            _isGuest,
-            _readyToDisplayJitsiWatermark,
-            _welcomePageIsVisible
-        } = this.props;
-
-        return (_readyToDisplayJitsiWatermark
-            && (showJitsiWatermark || (_isGuest && showJitsiWatermarkForGuests)))
-            || _welcomePageIsVisible;
     }
 
     /**
@@ -215,16 +161,16 @@ class Watermarks extends Component<Props, State> {
      * @returns {ReactElement|null}
      */
     _renderJitsiWatermark() {
-        let reactElement = null;
         const {
-            _customLogoUrl,
-            _customLogoLink
+            _logoLink,
+            _logoUrl,
+            _showJitsiWatermark
         } = this.props;
+        let reactElement = null;
 
-        if (this._canDisplayJitsiWatermark()) {
-            const link = _customLogoLink || this.state.jitsiWatermarkLink;
+        if (_showJitsiWatermark) {
             const style = {
-                backgroundImage: `url(${_customLogoUrl || interfaceConfig.DEFAULT_LOGO_URL})`,
+                backgroundImage: `url(${_logoUrl})`,
                 maxWidth: 140,
                 maxHeight: 70
             };
@@ -233,10 +179,10 @@ class Watermarks extends Component<Props, State> {
                 className = 'watermark leftwatermark'
                 style = { style } />);
 
-            if (link) {
+            if (_logoLink) {
                 reactElement = (
                     <a
-                        href = { link }
+                        href = { _logoLink }
                         target = '_new'>
                         { reactElement }
                     </a>
@@ -275,26 +221,52 @@ class Watermarks extends Component<Props, State> {
  * Maps parts of Redux store to component prop types.
  *
  * @param {Object} state - Snapshot of Redux store.
+ * @param {Object} ownProps - Component's own props.
  * @returns {Props}
  */
-function _mapStateToProps(state) {
+function _mapStateToProps(state, ownProps) {
     const { isGuest } = state['features/base/jwt'];
-    const { customizationReady, logoClickUrl, logoImageUrl } = state['features/dynamic-branding'];
-    const { room } = state['features/base/conference'];
+    const {
+        customizationReady,
+        customizationFailed,
+        defaultBranding,
+        useDynamicBrandingData,
+        logoClickUrl,
+        logoImageUrl
+    } = state['features/dynamic-branding'];
+    const isValidRoom = state['features/base/conference'].room;
+    const {
+        DEFAULT_LOGO_URL,
+        JITSI_WATERMARK_LINK,
+        SHOW_JITSI_WATERMARK,
+        SHOW_JITSI_WATERMARK_FOR_GUESTS,
+        filmStripOnly
+    } = interfaceConfig;
+    let _showJitsiWatermark = (!filmStripOnly
+          && (customizationReady && !customizationFailed)
+          && (SHOW_JITSI_WATERMARK || (isGuest && SHOW_JITSI_WATERMARK_FOR_GUESTS)))
+    || !isValidRoom;
+    let _logoUrl = logoImageUrl;
+    let _logoLink = logoClickUrl;
+
+    if (useDynamicBrandingData) {
+        if (isVpaasMeeting(state)) {
+            // don't show logo if request fails or no logo set for vpaas meetings
+            _showJitsiWatermark = !customizationFailed && Boolean(logoImageUrl);
+        } else if (defaultBranding) {
+            _logoUrl = DEFAULT_LOGO_URL;
+            _logoLink = JITSI_WATERMARK_LINK;
+        }
+    } else {
+        // When there is no custom branding data use defaults
+        _logoUrl = ownProps.defaultJitsiLogoURL || DEFAULT_LOGO_URL;
+        _logoLink = JITSI_WATERMARK_LINK;
+    }
 
     return {
-        /**
-         * The indicator which determines whether the local participant is a
-         * guest in the conference.
-         *
-         * @private
-         * @type {boolean}
-         */
-        _customLogoLink: logoClickUrl,
-        _customLogoUrl: logoImageUrl,
-        _isGuest: isGuest,
-        _readyToDisplayJitsiWatermark: customizationReady,
-        _welcomePageIsVisible: !room
+        _logoLink,
+        _logoUrl,
+        _showJitsiWatermark
     };
 }
 

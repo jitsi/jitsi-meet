@@ -1,11 +1,11 @@
 // @flow
 
-import * as bodyPix from '@tensorflow-models/body-pix';
+import * as StackBlur from 'stackblur-canvas';
 
 import {
-    CLEAR_INTERVAL,
-    INTERVAL_TIMEOUT,
-    SET_INTERVAL,
+    CLEAR_TIMEOUT,
+    TIMEOUT_TICK,
+    SET_TIMEOUT,
     timerWorkerScript
 } from './TimerWorker';
 
@@ -17,6 +17,7 @@ import {
 export default class JitsiStreamBlurEffect {
     _bpModel: Object;
     _inputVideoElement: HTMLVideoElement;
+    _inputVideoCanvasElement: HTMLCanvasElement;
     _onMaskFrameTimer: Function;
     _maskFrameTimerWorker: Worker;
     _maskInProgress: boolean;
@@ -43,6 +44,7 @@ export default class JitsiStreamBlurEffect {
         this._outputCanvasElement = document.createElement('canvas');
         this._outputCanvasElement.getContext('2d');
         this._inputVideoElement = document.createElement('video');
+        this._inputVideoCanvasElement = document.createElement('canvas');
     }
 
     /**
@@ -53,10 +55,8 @@ export default class JitsiStreamBlurEffect {
      * @returns {void}
      */
     async _onMaskFrameTimer(response: Object) {
-        if (response.data.id === INTERVAL_TIMEOUT) {
-            if (!this._maskInProgress) {
-                await this._renderMask();
-            }
+        if (response.data.id === TIMEOUT_TICK) {
+            await this._renderMask();
         }
     }
 
@@ -67,20 +67,53 @@ export default class JitsiStreamBlurEffect {
      * @returns {void}
      */
     async _renderMask() {
-        this._maskInProgress = true;
-        this._segmentationData = await this._bpModel.segmentPerson(this._inputVideoElement, {
-            internalResolution: 'medium', // resized to 0.5 times of the original resolution before inference
-            maxDetections: 1, // max. number of person poses to detect per image
-            segmentationThreshold: 0.7 // represents probability that a pixel belongs to a person
-        });
-        this._maskInProgress = false;
-        bodyPix.drawBokehEffect(
-            this._outputCanvasElement,
-            this._inputVideoElement,
-            this._segmentationData,
-            12, // Constant for background blur, integer values between 0-20
-            7 // Constant for edge blur, integer values between 0-20
+        if (!this._maskInProgress) {
+            this._maskInProgress = true;
+            this._bpModel.segmentPerson(this._inputVideoElement, {
+                internalResolution: 'low', // resized to 0.5 times of the original resolution before inference
+                maxDetections: 1, // max. number of person poses to detect per image
+                segmentationThreshold: 0.7, // represents probability that a pixel belongs to a person
+                flipHorizontal: false,
+                scoreThreshold: 0.2
+            }).then(data => {
+                this._segmentationData = data;
+                this._maskInProgress = false;
+            });
+        }
+        const inputCanvasCtx = this._inputVideoCanvasElement.getContext('2d');
+
+        inputCanvasCtx.drawImage(this._inputVideoElement, 0, 0);
+
+        const currentFrame = inputCanvasCtx.getImageData(
+            0,
+            0,
+            this._inputVideoCanvasElement.width,
+            this._inputVideoCanvasElement.height
         );
+
+        if (this._segmentationData) {
+            const blurData = new ImageData(currentFrame.data.slice(), currentFrame.width, currentFrame.height);
+
+            StackBlur.imageDataRGB(blurData, 0, 0, currentFrame.width, currentFrame.height, 12);
+
+            for (let x = 0; x < this._outputCanvasElement.width; x++) {
+                for (let y = 0; y < this._outputCanvasElement.height; y++) {
+                    const n = (y * this._outputCanvasElement.width) + x;
+
+                    if (this._segmentationData.data[n] === 0) {
+                        currentFrame.data[n * 4] = blurData.data[n * 4];
+                        currentFrame.data[(n * 4) + 1] = blurData.data[(n * 4) + 1];
+                        currentFrame.data[(n * 4) + 2] = blurData.data[(n * 4) + 2];
+                        currentFrame.data[(n * 4) + 3] = blurData.data[(n * 4) + 3];
+                    }
+                }
+            }
+        }
+        this._outputCanvasElement.getContext('2d').putImageData(currentFrame, 0, 0);
+        this._maskFrameTimerWorker.postMessage({
+            id: SET_TIMEOUT,
+            timeMs: 1000 / 30
+        });
     }
 
     /**
@@ -110,14 +143,16 @@ export default class JitsiStreamBlurEffect {
 
         this._outputCanvasElement.width = parseInt(width, 10);
         this._outputCanvasElement.height = parseInt(height, 10);
+        this._inputVideoCanvasElement.width = parseInt(width, 10);
+        this._inputVideoCanvasElement.height = parseInt(height, 10);
         this._inputVideoElement.width = parseInt(width, 10);
         this._inputVideoElement.height = parseInt(height, 10);
         this._inputVideoElement.autoplay = true;
         this._inputVideoElement.srcObject = stream;
         this._inputVideoElement.onloadeddata = () => {
             this._maskFrameTimerWorker.postMessage({
-                id: SET_INTERVAL,
-                timeMs: 1000 / parseInt(frameRate, 10)
+                id: SET_TIMEOUT,
+                timeMs: 1000 / 30
             });
         };
 
@@ -131,7 +166,7 @@ export default class JitsiStreamBlurEffect {
      */
     stopEffect() {
         this._maskFrameTimerWorker.postMessage({
-            id: CLEAR_INTERVAL
+            id: CLEAR_TIMEOUT
         });
 
         this._maskFrameTimerWorker.terminate();

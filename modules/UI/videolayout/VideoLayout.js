@@ -52,7 +52,7 @@ function onLocalFlipXChanged(val) {
  */
 function getAllThumbnails() {
     return [
-        localVideoThumbnail,
+        ...localVideoThumbnail ? [ localVideoThumbnail ] : [],
         ...Object.values(remoteVideos)
     ];
 }
@@ -177,6 +177,7 @@ const VideoLayout = {
             this.onAudioMute(id, stream.isMuted());
         } else {
             this.onVideoMute(id, stream.isMuted());
+            remoteVideo.setScreenSharing(stream.videoType === 'desktop');
         }
     },
 
@@ -188,6 +189,7 @@ const VideoLayout = {
 
         if (remoteVideo) {
             remoteVideo.removeRemoteStreamElement(stream);
+            remoteVideo.setScreenSharing(false);
         }
 
         this.updateMutedForNoTracks(id, stream.getType());
@@ -485,13 +487,14 @@ const VideoLayout = {
     },
 
     onVideoTypeChanged(id, newVideoType) {
-        if (VideoLayout.getRemoteVideoType(id) === newVideoType) {
+        const remoteVideo = remoteVideos[id];
+
+        if (!remoteVideo) {
             return;
         }
 
         logger.info('Peer video type changed: ', id, newVideoType);
-
-        this._updateLargeVideoIfDisplayed(id, true);
+        remoteVideo.setScreenSharing(newVideoType === 'desktop');
     },
 
     /**

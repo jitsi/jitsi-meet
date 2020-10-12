@@ -6,6 +6,7 @@ import {
     SET_DIALOUT_NUMBER,
     SET_DIALOUT_STATUS,
     SET_JOIN_BY_PHONE_DIALOG_VISIBLITY,
+    SET_PRECALL_TEST_RESULTS,
     SET_PREJOIN_DEVICE_ERRORS,
     SET_PREJOIN_DISPLAY_NAME_REQUIRED,
     SET_PREJOIN_PAGE_VISIBILITY,
@@ -45,6 +46,12 @@ ReducerRegistry.register(
             };
         }
 
+        case SET_PRECALL_TEST_RESULTS:
+            return {
+                ...state,
+                precallTestResults: action.value
+            };
+
         case SET_PREJOIN_PAGE_VISIBILITY:
             return {
                 ...state,
@@ -61,10 +68,12 @@ ReducerRegistry.register(
         }
 
         case SET_DEVICE_STATUS: {
+            const { deviceStatusType, deviceStatusText } = action.value;
+
             return {
                 ...state,
-                deviceStatusText: action.text,
-                deviceStatusType: action.type
+                deviceStatusText,
+                deviceStatusType
             };
         }
 

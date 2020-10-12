@@ -20,7 +20,6 @@ import android.app.Activity;
 
 import androidx.annotation.Nullable;
 
-import com.facebook.hermes.reactexecutor.HermesExecutorFactory;
 import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.bridge.NativeModule;
@@ -28,6 +27,7 @@ import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.common.LifecycleState;
 import com.facebook.react.devsupport.DevInternalSettings;
+import com.facebook.react.jscexecutor.JSCExecutorFactory;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 import com.facebook.react.uimanager.ViewManager;
 import com.facebook.soloader.SoLoader;
@@ -35,6 +35,7 @@ import com.facebook.soloader.SoLoader;
 import com.oney.WebRTCModule.RTCVideoViewManager;
 import com.oney.WebRTCModule.WebRTCModule;
 
+import org.jitsi.meet.sdk.log.JitsiMeetLogger;
 import org.webrtc.SoftwareVideoDecoderFactory;
 import org.webrtc.SoftwareVideoEncoderFactory;
 import org.webrtc.audio.AudioDeviceModule;
@@ -216,8 +217,9 @@ class ReactInstanceManagerHolder {
             // Ignore any error, the module is not compiled when LIBRE_BUILD is enabled.
         }
 
-        // Use the Hermes JavaScript engine.
-        HermesExecutorFactory jsFactory = new HermesExecutorFactory();
+        // Keep on using JSC, the jury is out on Hermes.
+        JSCExecutorFactory jsFactory
+            = new JSCExecutorFactory("", "");
 
         reactInstanceManager
             = ReactInstanceManager.builder()

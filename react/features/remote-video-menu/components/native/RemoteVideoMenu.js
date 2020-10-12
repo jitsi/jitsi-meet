@@ -1,11 +1,12 @@
 // @flow
 
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import { Text, View } from 'react-native';
 
 import { Avatar } from '../../../base/avatar';
 import { ColorSchemeRegistry } from '../../../base/color-scheme';
 import { BottomSheet, isDialogOpen } from '../../../base/dialog';
+import { KICK_OUT_ENABLED, getFeatureFlag } from '../../../base/flags';
 import { getParticipantDisplayName } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import { StyleType } from '../../../base/styles';
@@ -67,7 +68,7 @@ let RemoteVideoMenu_;
 /**
  * Class to implement a popup menu that opens upon long pressing a thumbnail.
  */
-class RemoteVideoMenu extends Component<Props> {
+class RemoteVideoMenu extends PureComponent<Props> {
     /**
      * Constructor of the component.
      *
@@ -77,6 +78,7 @@ class RemoteVideoMenu extends Component<Props> {
         super(props);
 
         this._onCancel = this._onCancel.bind(this);
+        this._renderMenuHeader = this._renderMenuHeader.bind(this);
     }
 
     /**
@@ -93,32 +95,15 @@ class RemoteVideoMenu extends Component<Props> {
             styles: this.props._bottomSheetStyles.buttons
         };
 
-        const buttons = [];
-
-        if (!_disableRemoteMute) {
-            buttons.push(<MuteButton { ...buttonProps } />);
-        }
-
-        buttons.push(<GrantModeratorButton { ...buttonProps } />);
-
-        if (!_disableKick) {
-            buttons.push(<KickButton { ...buttonProps } />);
-        }
-
-        buttons.push(<PinButton { ...buttonProps } />);
-        buttons.push(<PrivateMessageButton { ...buttonProps } />);
-
         return (
-            <BottomSheet onCancel = { this._onCancel }>
-                <View style = { styles.participantNameContainer }>
-                    <Avatar
-                        participantId = { participant.id }
-                        size = { AVATAR_SIZE } />
-                    <Text style = { styles.participantNameLabel }>
-                        { this.props._participantDisplayName }
-                    </Text>
-                </View>
-                { buttons }
+            <BottomSheet
+                onCancel = { this._onCancel }
+                renderHeader = { this._renderMenuHeader }>
+                { !_disableRemoteMute && <MuteButton { ...buttonProps } /> }
+                { !_disableKick && <KickButton { ...buttonProps } /> }
+                <GrantModeratorButton { ...buttonProps } />
+                <PinButton { ...buttonProps } />
+                <PrivateMessageButton { ...buttonProps } />
             </BottomSheet>
         );
     }
@@ -140,6 +125,31 @@ class RemoteVideoMenu extends Component<Props> {
 
         return false;
     }
+
+    _renderMenuHeader: () => React$Element<any>;
+
+    /**
+     * Function to render the menu's header.
+     *
+     * @returns {React$Element}
+     */
+    _renderMenuHeader() {
+        const { _bottomSheetStyles, participant } = this.props;
+
+        return (
+            <View
+                style = { [
+                    _bottomSheetStyles.sheet,
+                    styles.participantNameContainer ] }>
+                <Avatar
+                    participantId = { participant.id }
+                    size = { AVATAR_SIZE } />
+                <Text style = { styles.participantNameLabel }>
+                    { this.props._participantDisplayName }
+                </Text>
+            </View>
+        );
+    }
 }
 
 /**
@@ -151,9 +161,12 @@ class RemoteVideoMenu extends Component<Props> {
  * @returns {Props}
  */
 function _mapStateToProps(state, ownProps) {
+    const kickOutEnabled = getFeatureFlag(state, KICK_OUT_ENABLED, true);
     const { participant } = ownProps;
     const { remoteVideoMenu = {}, disableRemoteMute } = state['features/base/config'];
-    const { disableKick } = remoteVideoMenu;
+    let { disableKick } = remoteVideoMenu;
+
+    disableKick = disableKick || !kickOutEnabled;
 
     return {
         _bottomSheetStyles: ColorSchemeRegistry.get(state, 'BottomSheet'),

@@ -1,7 +1,6 @@
 #e2ee-section {
-    .title {
-        font-weight: 700;
-    }
+    display: flex;
+    flex-direction: column;
 
     .description {
         font-size: 13px;
@@ -13,29 +12,15 @@
         }
     }
 
-    .key-field {
-        align-items: center;
+    .control-row {
         display: flex;
         flex-direction: row;
+        justify-content: space-between;
+        margin-top: 15px;
 
         label {
             font-size: 14px;
-            font-weight: 700;
-        }
-
-        input {
-            background-color: inherit;
-            border: none;
-            color: inherit;
-            flex: 1;
-            padding: 0 5px;
-        }
-
-        a {
-            color: #6FB1EA;
-            cursor: pointer;
-            font-size: 14px;
-            text-decoration: none;
+            font-weight: bold;
         }
     }
 }

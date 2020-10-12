@@ -9,6 +9,7 @@ import {
     sendAnalytics
 } from '../../../analytics';
 import { openDialog, toggleDialog } from '../../../base/dialog';
+import { isMobileBrowser } from '../../../base/environment/utils';
 import { translate } from '../../../base/i18n';
 import {
     IconChat,
@@ -32,6 +33,7 @@ import {
 import { connect, equals } from '../../../base/redux';
 import { OverflowMenuItem } from '../../../base/toolbox/components';
 import { getLocalVideoTrack, toggleScreensharing } from '../../../base/tracks';
+import { isVpaasMeeting } from '../../../billing-counter/functions';
 import { VideoBlurButton } from '../../../blur';
 import { CHAT_SIZE, ChatCounter, toggleChat } from '../../../chat';
 import { EmbedMeetingDialog } from '../../../embed-meeting';
@@ -134,6 +136,11 @@ type Props = {
      * Whether or not the current user is logged in through a JWT.
      */
     _isGuest: boolean,
+
+    /**
+     * Whether or not the current meeting belongs to a JaaS user.
+     */
+    _isVpaasMeeting: boolean,
 
     /**
      * The ID of the local participant.
@@ -975,6 +982,15 @@ class Toolbox extends Component<Props, State> {
      *
      * @returns {boolean}
      */
+    _isEmbedMeetingVisible() {
+        return !this.props._isVpaasMeeting && this._shouldShowButton('embedmeeting');
+    }
+
+    /**
+     * Returns true if the profile button is visible and false otherwise.
+     *
+     * @returns {boolean}
+     */
     _isProfileVisible() {
         return this.props._isGuest && this._shouldShowButton('profile');
     }
@@ -1046,7 +1062,7 @@ class Toolbox extends Component<Props, State> {
                     key = 'stats'
                     onClick = { this._onToolbarOpenSpeakerStats }
                     text = { t('toolbar.speakerStats') } />,
-            this._shouldShowButton('embedmeeting')
+            this._isEmbedMeetingVisible()
                 && <OverflowMenuItem
                     accessibilityLabel = { t('toolbar.accessibilityLabel.embedMeeting') }
                     icon = { IconCodeBlock }
@@ -1209,15 +1225,31 @@ class Toolbox extends Component<Props, State> {
         const buttonsLeft = [];
         const buttonsRight = [];
 
+        const smallThreshold = 700;
+        const verySmallThreshold = 500;
+
+        let minSpaceBetweenButtons = 48;
+        let widthPlusPaddingOfButton = 56;
+
+        if (this.state.windowWidth <= verySmallThreshold) {
+            minSpaceBetweenButtons = 26;
+            widthPlusPaddingOfButton = 28;
+        } else if (this.state.windowWidth <= smallThreshold) {
+            minSpaceBetweenButtons = 36;
+            widthPlusPaddingOfButton = 40;
+        }
+
         const maxNumberOfButtonsPerGroup = Math.floor(
             (
                 this.state.windowWidth
                     - 168 // the width of the central group by design
-                    - 48 // the minimum space between the button groups
+                    - minSpaceBetweenButtons // the minimum space between the button groups
             )
-            / 56 // the width + padding of a button
+            / widthPlusPaddingOfButton // the width + padding of a button
             / 2 // divide by the number of groups(left and right group)
         );
+
+        const showOverflowMenu = this.state.windowWidth >= verySmallThreshold || isMobileBrowser();
 
         if (this._shouldShowButton('chat')) {
             buttonsLeft.push('chat');
@@ -1232,7 +1264,7 @@ class Toolbox extends Component<Props, State> {
         if (this._shouldShowButton('closedcaptions')) {
             buttonsLeft.push('closedcaptions');
         }
-        if (overflowHasItems) {
+        if (overflowHasItems && showOverflowMenu) {
             buttonsRight.push('overflowmenu');
         }
         if (this._shouldShowButton('invite')) {
@@ -1255,13 +1287,13 @@ class Toolbox extends Component<Props, State> {
             movedButtons.push(...buttonsLeft.splice(
                 maxNumberOfButtonsPerGroup,
                 buttonsLeft.length - maxNumberOfButtonsPerGroup));
-            if (buttonsRight.indexOf('overflowmenu') === -1) {
+            if (buttonsRight.indexOf('overflowmenu') === -1 && showOverflowMenu) {
                 buttonsRight.unshift('overflowmenu');
             }
         }
 
         if (buttonsRight.length > maxNumberOfButtonsPerGroup) {
-            if (buttonsRight.indexOf('overflowmenu') === -1) {
+            if (buttonsRight.indexOf('overflowmenu') === -1 && showOverflowMenu) {
                 buttonsRight.unshift('overflowmenu');
             }
 
@@ -1416,6 +1448,7 @@ function _mapStateToProps(state) {
         _dialog: Boolean(state['features/base/dialog'].component),
         _feedbackConfigured: Boolean(callStatsID),
         _isGuest: state['features/base/jwt'].isGuest,
+        _isVpaasMeeting: isVpaasMeeting(state),
         _fullScreen: fullScreen,
         _tileViewEnabled: shouldDisplayTileView(state),
         _localParticipantID: localParticipant.id,
