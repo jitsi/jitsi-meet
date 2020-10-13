@@ -1,0 +1,31 @@
+{
+  "packageId": "org.jitsi.meet",
+  "host": "meet.jit.si",
+  "name": "Jitsi Meet",
+  "launcherName": "Jitsi Meet",
+  "display": "standalone",
+  "themeColor": "#2A3A4B",
+  "navigationColor": "#000000",
+  "navigationColorDark": "#000000",
+  "navigationDividerColor": "#000000",
+  "navigationDividerColorDark": "#000000",
+  "backgroundColor": "#2A3A4B",
+  "enableNotifications": false,
+  "startUrl": "/",
+  "iconUrl": "https://alpha.jitsi.net/static/pwa/icons/icon512.png",
+  "splashScreenFadeOutDuration": 300,
+  "signingKey": {
+    "path": "./android/app/debug.keystore",
+    "alias": "android"
+  },
+  "appVersionName": "1",
+  "appVersionCode": 1,
+  "shortcuts": [],
+  "generatorApp": "bubblewrap-cli",
+  "webManifestUrl": "https://alpha.jitsi.net/static/pwa/manifest.json",
+  "fallbackType": "customtabs",
+  "features": {},
+  "enableSiteSettingsShortcut": true,
+  "isChromeOSOnly": false,
+  "appVersion": "1"
+}
