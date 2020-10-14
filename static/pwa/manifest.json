@@ -22,9 +22,9 @@
     }
   ],
   "start_url": "/",
-  "background_color": "#2a3a4b",
+  "background_color": "#17A0DB",
   "display": "standalone",
   "scope": "/",
-  "theme_color": "#2a3a4b"
+  "theme_color": "#17A0DB"
  }
  
