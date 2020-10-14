@@ -53,6 +53,9 @@
         [[FIRCrashlytics crashlytics] setCrashlyticsCollectionEnabled:![jitsiMeet isCrashReportingDisabled]];
     }
 
+    ViewController *rootController = (ViewController *)self.window.rootViewController;
+    [jitsiMeet showSplashScreen:rootController.view];
+  
     [jitsiMeet application:application didFinishLaunchingWithOptions:launchOptions];
 
     return YES;
