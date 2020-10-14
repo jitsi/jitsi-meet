@@ -70,7 +70,7 @@
     "react-emoji-render": "1.2.4",
     "react-i18next": "10.11.4",
     "react-linkify": "1.0.0-alpha",
-    "react-native": "github:jitsi/react-native#efd2aff5661d75a230e36406b698cfe0ee545be2",
+    "react-native": "github:jitsi/react-native#891986ec5ecaef65d1c8a7fe472f86cf84fe7551",
     "react-native-background-timer": "2.4.0",
     "react-native-calendar-events": "github:jitsi/react-native-calendar-events#df48ecdc4e1e90c5352f803ddbab1fa7269b74a7",
     "react-native-callstats": "3.61.0",
