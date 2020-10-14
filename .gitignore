@@ -85,3 +85,9 @@ ios/app/dropbox.key
 ios/app/GoogleService-Info.plist
 
 .vscode
+
+# TWA
+twa/*.apk
+twa/*.aab
+twa/assetlinks.json
+
