@@ -25,6 +25,8 @@
     
 
     
+    <uses-feature android:name="org.chromium.arc" android:required="true" />
+    
 
     <application
         android:name="Application"

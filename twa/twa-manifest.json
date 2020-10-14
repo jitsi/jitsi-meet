@@ -18,8 +18,8 @@
     "path": "./jitsi-upload.keystore",
     "alias": "upload"
   },
-  "appVersionName": "1",
-  "appVersionCode": 1,
+  "appVersionName": "20.5.0",
+  "appVersionCode": 3,
   "shortcuts": [],
   "generatorApp": "bubblewrap-cli",
   "webManifestUrl": "https://meet.jit.si/static/pwa/manifest.json",
@@ -27,5 +27,5 @@
   "features": {},
   "enableSiteSettingsShortcut": true,
   "isChromeOSOnly": true,
-  "appVersion": "1"
+  "appVersion": "20.5.0"
 }
