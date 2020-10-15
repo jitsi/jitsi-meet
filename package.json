@@ -61,7 +61,7 @@
     "lodash": "4.17.19",
     "moment": "2.19.4",
     "moment-duration-format": "2.2.2",
-    "olm": "https://packages.matrix.org/npm/olm/olm-3.1.4.tgz",
+    "olm": "https://packages.matrix.org/npm/olm/olm-3.2.1.tgz",
     "pixelmatch": "5.1.0",
     "punycode": "2.1.1",
     "react": "16.9",
