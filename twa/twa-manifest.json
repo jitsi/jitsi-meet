@@ -1,0 +1,31 @@
+{
+  "packageId": "org.jitsi.meet",
+  "host": "meet.jit.si",
+  "name": "Jitsi Meet",
+  "launcherName": "Jitsi Meet",
+  "display": "standalone",
+  "themeColor": "#17A0DB",
+  "navigationColor": "#000000",
+  "navigationColorDark": "#000000",
+  "navigationDividerColor": "#000000",
+  "navigationDividerColorDark": "#000000",
+  "backgroundColor": "#17A0DB",
+  "enableNotifications": false,
+  "startUrl": "/",
+  "iconUrl": "https://meet.jit.si/static/pwa/icons/icon512.png",
+  "splashScreenFadeOutDuration": 300,
+  "signingKey": {
+    "path": "./jitsi-upload.keystore",
+    "alias": "upload"
+  },
+  "appVersionName": "20.5.0",
+  "appVersionCode": 3,
+  "shortcuts": [],
+  "generatorApp": "bubblewrap-cli",
+  "webManifestUrl": "https://meet.jit.si/static/pwa/manifest.json",
+  "fallbackType": "customtabs",
+  "features": {},
+  "enableSiteSettingsShortcut": true,
+  "isChromeOSOnly": true,
+  "appVersion": "20.5.0"
+}

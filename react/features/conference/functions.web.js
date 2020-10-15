@@ -77,9 +77,12 @@ export function getConferenceOptions(stateful) {
         options.statisticsId = email;
     }
 
+    if (locationURL) {
+        options.confID = `${locationURL.host}${getBackendSafePath(locationURL.pathname)}`;
+    }
+
     options.applicationName = getName();
     options.getWiFiStatsMethod = getWiFiStatsMethod;
-    options.confID = `${locationURL.host}${getBackendSafePath(locationURL.pathname)}`;
     options.createVADProcessor = createRnnoiseProcessorPromise;
 
     // Disable CallStats, if requessted.

@@ -8,6 +8,8 @@
 
     <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
     <link rel="stylesheet" href="css/all.css">
+    <link rel="manifest" href="static/pwa/manifest.json">
+
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             if (!JitsiMeetJS.app) {
@@ -158,6 +160,7 @@
     <script><!--#include virtual="/logging_config.js" --></script>
     <script src="libs/lib-jitsi-meet.min.js?v=139"></script>
     <script src="libs/app.bundle.min.js?v=139"></script>
+    <script src="static/pwa/registrator.js" async></script>
     <!--#include virtual="title.html" -->
     <!--#include virtual="plugin.head.html" -->
     <!--#include virtual="static/welcomePageAdditionalContent.html" -->
