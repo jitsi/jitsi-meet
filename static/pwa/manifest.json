@@ -19,6 +19,12 @@
       "src": "icons/icon512.png",
       "type": "image/png",
       "sizes": "512x512"
+    },
+    {
+      "src": "icons/iconMask.png",
+      "sizes": "196x196",
+      "type": "image/png",
+      "purpose": "any maskable"
     }
   ],
   "start_url": "/",
