@@ -145,6 +145,7 @@ export default class JitsiStreamPresenterEffect {
 
         // Put emphasis on the text details for the presenter's stream
         // See https://www.w3.org/TR/mst-content-hint/
+        // $FlowExpectedError
         capturedStream.getVideoTracks()[0].contentHint = 'text';
 
         return capturedStream;
