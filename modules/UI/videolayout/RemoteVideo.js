@@ -86,7 +86,6 @@ export default class RemoteVideo extends SmallVideo {
         this.bindHoverHandler();
         this.flipX = false;
         this.isLocal = false;
-        this.popupMenuIsHovered = false;
         this._isRemoteControlSessionActive = false;
 
         /**
@@ -135,17 +134,6 @@ export default class RemoteVideo extends SmallVideo {
         this.addPresenceLabel();
 
         return this.container;
-    }
-
-    /**
-     * Checks whether current video is considered hovered. Currently it is hovered
-     * if the mouse is over the video, or if the connection indicator or the popup
-     * menu is shown(hovered).
-     * @private
-     * NOTE: extends SmallVideo's method
-     */
-    _isHovered() {
-        return super._isHovered() || this.popupMenuIsHovered;
     }
 
     /**
