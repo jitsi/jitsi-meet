@@ -101,15 +101,6 @@ export default class SmallVideo {
         this._connectionStatus = null;
 
         /**
-         * Whether or not the ConnectionIndicator's popover is hovered. Modifies
-         * how the video overlays display based on hover state.
-         *
-         * @private
-         * @type {boolean}
-         */
-        this._popoverIsHovered = false;
-
-        /**
          * Whether or not the connection indicator should be displayed.
          *
          * @private
@@ -134,7 +125,6 @@ export default class SmallVideo {
         this._showRaisedHand = false;
 
         // Bind event handlers so they are only bound once for every instance.
-        this._onPopoverHover = this._onPopoverHover.bind(this);
         this.updateView = this.updateView.bind(this);
 
         this._onContainerClick = this._onContainerClick.bind(this);
@@ -513,7 +503,7 @@ export default class SmallVideo {
      * @private
      */
     _isHovered() {
-        return this.videoIsHovered || this._popoverIsHovered;
+        return this.videoIsHovered;
     }
 
     /**
@@ -834,19 +824,6 @@ export default class SmallVideo {
         if (indicatorToolbar) {
             ReactDOM.unmountComponentAtNode(indicatorToolbar);
         }
-    }
-
-    /**
-     * Updates the current state of the connection indicator popover being hovered.
-     * If hovered, display the small video as if it is hovered.
-     *
-     * @param {boolean} popoverIsHovered - Whether or not the mouse cursor is
-     * currently over the connection indicator popover.
-     * @returns {void}
-     */
-    _onPopoverHover(popoverIsHovered) {
-        this._popoverIsHovered = popoverIsHovered;
-        this.updateView();
     }
 
     /**
