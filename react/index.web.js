@@ -6,11 +6,9 @@ import ReactDOM from 'react-dom';
 import { getJitsiMeetTransport } from '../modules/transport';
 
 import { App } from './features/app/components';
-import { browser } from './features/base/lib-jitsi-meet';
 import { getLogger } from './features/base/logging/functions';
 import { Platform } from './features/base/react';
 import { getJitsiMeetGlobalNS } from './features/base/util';
-import { loadScript } from './features/base/util/loadScript';
 import PrejoinApp from './features/prejoin/components/PrejoinApp';
 
 const logger = getLogger('index.web');
@@ -24,12 +22,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     APP.connectionTimes['document.ready'] = now;
     logger.log('(TIME) document ready:\t', now);
-
-    if (!browser.isElectron()) {
-        const base = window.location.origin;
-
-        loadScript(`${base}/static/pwa/registrator.js`);
-    }
 });
 
 // Workaround for the issue when returning to a page with the back button and
