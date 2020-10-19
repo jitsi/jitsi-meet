@@ -27,7 +27,7 @@ import { getLocalTracks, trackAdded, trackRemoved } from '../tracks';
 import {
     getBackendSafePath,
     getBackendSafeRoomName,
-    getJitsiMeetGlobalNS
+    getJitsiMeetGlobalNS, sendBeaconToJaneRN
 } from '../util';
 
 import {
@@ -417,7 +417,7 @@ export function conferenceWillLeave(conference: Object) {
             if (url && surveyUrl) {
 
                 Linking.openURL(surveyUrl).then(() => {
-                    sendBeaconRn(url, data).then(r => {
+                    sendBeaconToJaneRN(url, data).then(r => {
                         console.log(r, 'response');
                     })
                      .catch(e => {
@@ -432,18 +432,6 @@ export function conferenceWillLeave(conference: Object) {
             conference
         });
     };
-}
-
-
-// eslint-disable-next-line require-jsdoc,no-unused-vars,no-empty-function
-export function sendBeaconRn(url, data) {
-    return fetch(url, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'text/plain; charset=UTF-8'
-        },
-        body: data
-    });
 }
 
 /**

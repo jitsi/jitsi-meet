@@ -4,7 +4,9 @@ import React, { Component } from 'react';
 import { Image, Text, View } from 'react-native';
 import { connect } from '../../base/redux';
 import {
-    getRemoteParticipantsReadyStatus,
+    checkLocalParticipantCanJoin,
+    checkRoomStatus,
+    getLocalParticipantFromJwt, getLocalParticipantType,
     updateParticipantReadyStatus
 } from '../functions';
 import jwtDecode from 'jwt-decode';
@@ -84,10 +86,13 @@ class DialogBox extends Component<Props, State> {
     }
 
     async _polling() {
-        const { jwt, jwtPayload, participantType, updateRemoteParticipantsStatus } = this.props;
-        const remoteParticipantsStatus = await getRemoteParticipantsReadyStatus(jwt, jwtPayload, participantType);
+        const { jwt, participantType } = this.props;
+        const response = await checkRoomStatus(jwt);
+        const localParticipantCanJoin = response && await checkLocalParticipantCanJoin(response.participant_statuses, participantType);
 
-        updateRemoteParticipantsStatus(remoteParticipantsStatus);
+        this.setState({
+            localParticipantCanJoin
+        });
     }
 
     _pollForReadyStatus() {
@@ -96,10 +101,10 @@ class DialogBox extends Component<Props, State> {
 
     _joinConference() {
         const {
-            startConference, participantType, enableJaneWaitingAreaPage, jwt, jwtPayload, participant
+            startConference, participantType, enableJaneWaitingAreaPage, jwt, participant
         } = this.props;
 
-        updateParticipantReadyStatus(jwt, jwtPayload, participantType, participant, 'joined');
+        updateParticipantReadyStatus(jwt, participantType, participant, 'joined');
         enableJaneWaitingAreaPage(false);
         startConference();
     }
@@ -128,14 +133,14 @@ class DialogBox extends Component<Props, State> {
 
         if (participantType === 'StaffMember') {
             if (!localParticipantCanJoin) {
-                header = 'Waiting for the client...';
+                header = 'Waiting for your client...';
             } else {
-                header = 'The patient is ready to begin your session';
+                header = 'Your patient is ready to begin the session.';
             }
         } else if (!localParticipantCanJoin) {
-            header = 'The pratitioner will let you into the session when they are ready...';
+            header = 'Your practitioner will let you into the session when ready...';
         } else {
-            header = 'The pratitioner is ready to begin your session';
+            header = 'Your practitioner is ready to begin the session.';
         }
 
         return <Text style = { styles.title }>{header}</Text>;
@@ -217,19 +222,20 @@ class DialogBox extends Component<Props, State> {
 
     onMessageUpdate(event) {
         const webViewEvent = this.parseJsonMessage(event.nativeEvent.data);
-
+        const remoteParticipantsStatuses = webViewEvent && webViewEvent.remoteParticipantsStatuses || null
+        const socketRemoteParticipantsEvent = webViewEvent && webViewEvent.socketRemoteParticipantsEvent || null
         console.log(webViewEvent, 'incoming web view event');
-        if (webViewEvent && webViewEvent.socketRemoteParticipantsEvent) {
-            const localParticipantCanJoin = webViewEvent.socketRemoteParticipantsEvent.info
-                && webViewEvent.socketRemoteParticipantsEvent.info.status !== 'left';
 
+        if (socketRemoteParticipantsEvent) {
+            const localParticipantCanJoin = socketRemoteParticipantsEvent.info
+                && socketRemoteParticipantsEvent.info.status !== 'left';
             this.setState({
                 localParticipantCanJoin
             });
         }
-        if (webViewEvent && webViewEvent.remoteParticipantsStatus) {
-            const localParticipantCanJoin = webViewEvent.remoteParticipantsStatus.some(v => v.info && v.info.status !== 'left');
 
+        if (remoteParticipantsStatuses) {
+            const localParticipantCanJoin = remoteParticipantsStatuses.some(v => v.info && v.info.status !== 'left');
             this.setState({
                 localParticipantCanJoin
             });
@@ -312,8 +318,8 @@ class DialogBox extends Component<Props, State> {
 function mapStateToProps(state): Object {
     const { jwt } = state['features/base/jwt'];
     const jwtPayload = jwt && jwtDecode(jwt) || null;
-    const participant = jwtPayload && jwtPayload.context && jwtPayload.context.user || null;
-    const participantType = participant && participant.participant_type || null;
+    const participant = getLocalParticipantFromJwt(state)
+    const participantType = getLocalParticipantType(state)
     const { locationURL } = state['features/base/connection'];
 
     return {

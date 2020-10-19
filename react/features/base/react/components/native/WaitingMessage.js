@@ -10,6 +10,7 @@ import { getRemoteTracks } from '../../../tracks';
 import jwtDecode from 'jwt-decode';
 import View from 'react-native-webrtc/RTCView';
 import moment from 'moment';
+import { isJaneTestMode } from '../../../conference';
 
 const watermarkImg = require('../../../../../../images/watermark.png');
 
@@ -115,18 +116,8 @@ class WaitingMessage extends Component<Props, State> {
         );
     }
 
-    _IsTestMode() {
-        const { jwt } = this.props;
-        const jwtPayload = jwt && jwtDecode(jwt) || null;
-        const participantId = jwtPayload && jwtPayload.context && jwtPayload.context.user && jwtPayload.context.user.participant_id;
-        const videoChatSessionId = jwtPayload && jwtPayload.context && jwtPayload.context.video_chat_session_id;
-        const participantEmail = jwtPayload && jwtPayload.context && jwtPayload.context.user && jwtPayload.context.user.email;
-
-        return jwtPayload && participantId === 0 && videoChatSessionId === 0 && participantEmail === 'test@test.com';
-    }
-
     getWaitingMessage() {
-        const { waitingMessageFromProps } = this.props;
+        const { waitingMessageFromProps, isJaneTestMode } = this.props;
         const { beforeAppointmentStart, appointmentStartAt } = this.state;
 
         let header = <Text
@@ -149,7 +140,7 @@ class WaitingMessage extends Component<Props, State> {
                         .format('hh:mm A')}</Text>);
         }
 
-        if (this._IsTestMode()) {
+        if (isJaneTestMode) {
             header =
                 <Text style={styles.waitingMessageHeader}>Testing your audio and
                     video...</Text>;
@@ -205,7 +196,8 @@ function _mapStateToProps(state) {
     return {
         jwt,
         appstate: appstate && appstate.appState,
-        conferenceHasStarted: participantCount > 1 && remoteTracks.length > 0
+        conferenceHasStarted: participantCount > 1 && remoteTracks.length > 0,
+        isJaneTestMode: isJaneTestMode(state)
     };
 }
 

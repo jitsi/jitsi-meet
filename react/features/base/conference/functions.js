@@ -1,5 +1,6 @@
 // @flow
 
+import jwtDecode from 'jwt-decode';
 import _ from 'lodash';
 
 import { JitsiTrackErrors } from '../lib-jitsi-meet';
@@ -354,4 +355,17 @@ function safeStartCase(s = '') {
     return _.words(`${s}`.replace(/['\u2019]/g, '')).reduce(
         (result, word, index) => result + (index ? ' ' : '') + _.upperFirst(word)
         , '');
+}
+
+// eslint-disable-next-line require-jsdoc
+export function isJaneTestMode(state) {
+    const { jwt } = state['features/base/jwt'];
+    const jwtPayload = jwt && jwtDecode(jwt) || null;
+    const context = jwtPayload && jwtPayload.context || null;
+    const user = context && context.user || null;
+    const participantId = user && user.participant_id;
+    const videoChatSessionId = context && context.video_chat_session_id;
+    const participantEmail = user && user.email;
+
+    return participantId === 0 && videoChatSessionId === 0 && participantEmail === 'test@test.com';
 }

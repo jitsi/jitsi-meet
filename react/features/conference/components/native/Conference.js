@@ -1,6 +1,5 @@
 // @flow
 
-import jwtDecode from 'jwt-decode';
 import React from 'react';
 import { Clipboard, NativeModules, SafeAreaView, StatusBar } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
@@ -22,7 +21,11 @@ import {
     TileView
 } from '../../../filmstrip';
 import { AddPeopleDialog, CalleeInfoContainer } from '../../../invite';
-import { updateParticipantReadyStatus } from '../../../jane-waiting-area-native';
+import {
+    updateParticipantReadyStatus,
+    getLocalParticipantFromJwt,
+    getLocalParticipantType
+} from '../../../jane-waiting-area-native';
 import JaneWaitingArea from '../../../jane-waiting-area-native/components/JaneWaitingArea.native';
 import { LargeVideo } from '../../../large-video';
 import { KnockingParticipantList } from '../../../lobby';
@@ -41,7 +44,9 @@ import Labels from './Labels';
 import NavigationBar from './NavigationBar';
 import styles, { NAVBAR_GRADIENT_COLORS } from './styles';
 
+
 // import LonelyMeetingExperience from './LonelyMeetingExperience';
+
 /**
  * The type of the React {@code Component} props of {@link Conference}.
  */
@@ -153,13 +158,12 @@ class Conference extends AbstractConference<Props, *> {
      * @returns {void}
      */
     componentDidUpdate(prevProps) {
-        const { _participantType, _jwt, _jwtPayload, _participant } = this.props;
+        const { _participantType, _jwt, _participant } = this.props;
 
         if (prevProps._appstate !== this.props._appstate && prevProps._appstate.appState === 'active') {
-            updateParticipantReadyStatus(_jwt, _jwtPayload, _participantType, _participant, 'left');
+            updateParticipantReadyStatus(_jwt, _participantType, _participant, 'left');
         }
     }
-
 
     /**
      * Clear the video chat universal link copied from Jane here to
@@ -475,9 +479,6 @@ function _mapStateToProps(state) {
     const connecting_
         = connecting || (connection && (!membersOnly && (joining || (!conference && !leaving))));
     const { jwt } = state['features/base/jwt'];
-    const jwtPayload = jwt && jwtDecode(jwt) || null;
-    const participant = jwtPayload && jwtPayload.context && jwtPayload.context.user || null;
-    const participantType = participant && participant.participant_type || null;
     const appstate = state['features/background'];
 
     return {
@@ -499,9 +500,8 @@ function _mapStateToProps(state) {
         _toolboxVisible: isToolboxVisible(state),
         _enableJaneWaitingAreaPage: enableJaneWaitingAreaPage,
         _jwt: jwt,
-        _jwtPayload: jwtPayload,
-        _participantType: participantType,
-        _participant: participantType,
+        _participantType: getLocalParticipantType(state),
+        _participant: getLocalParticipantFromJwt(state),
         _appstate: appstate
     };
 }
