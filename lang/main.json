@@ -878,6 +878,8 @@
         "goSmall": "GO",
         "info": "Dial-in info",
         "join": "CREATE / JOIN",
+        "jitsiMeet": "Jitsi Meet",
+        "jitsiOnMobile": "Jitsi on mobile – download our apps and start a meeting from anywhere",
         "moderatedMessage": "Or <a href=\"{{url}}\" rel=\"noopener noreferrer\" target=\"_blank\">book a meeting URL</a> in advance where you are the only moderator.",
         "privacy": "Privacy",
         "recentList": "Recent",
@@ -888,6 +890,8 @@
         "roomname": "Enter room name",
         "roomnameHint": "Enter the name or URL of the room you want to join. You may make a name up, just let the people you are meeting know it so that they enter the same name.",
         "sendFeedback": "Send feedback",
+        "secureMeetings": "Secure and high quality meetings",
+        "startMeeting": "Start meeting",
         "terms": "Terms",
         "title": "Secure, fully featured, and completely free video conferencing"
     },
