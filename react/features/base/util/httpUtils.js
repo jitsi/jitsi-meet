@@ -42,3 +42,21 @@ export function doGetJSON(url, retry) {
 
     return fetchPromise;
 }
+
+
+// send beacon to jane
+export function sendBeaconToJaneRN(url, data, errorMsg = null) {
+    return fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'text/plain; charset=UTF-8'
+        },
+        body: data
+    })
+        .then(res => {
+            if (!res.ok) {
+                const errorMsg = errorMsg ? errorMsg : res.statusText;
+                throw Error(errorMsg);
+            }
+        });
+}

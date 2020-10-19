@@ -21,6 +21,7 @@ import {
     VIDEO_QUALITY_LEVELS
 } from './constants';
 import logger from './logger';
+import jwtDecode from 'jwt-decode';
 
 /**
  * Attach a set of local tracks to a conference.
@@ -350,4 +351,16 @@ export function sendLocalParticipant(
     }
 
     conference.setDisplayName(name);
+}
+
+export function isJaneTestMode(state) {
+    const { jwt } = state['features/base/jwt'];
+    const jwtPayload = jwt && jwtDecode(jwt) || null;
+    const context = jwtPayload && jwtPayload.context || null;
+    const user = context && context.user || null;
+    const participantId = user && user.participant_id;
+    const videoChatSessionId = context && context.video_chat_session_id;
+    const participantEmail = user && user.email;
+
+    return participantId === 0 && videoChatSessionId === 0 && participantEmail === 'test@test.com';
 }

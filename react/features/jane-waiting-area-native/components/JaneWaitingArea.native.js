@@ -16,8 +16,8 @@ class JaneWaitingAreaNative extends Component<Props, State> {
     }
 
     render() {
-        return (this.props.appstate.appState === 'active'
-            && <DialogBox />) || null;
+        return (this.props.appstate && this.props.appstate.appState === 'active'
+            && <DialogBox/>) || null;
     }
 }
 
