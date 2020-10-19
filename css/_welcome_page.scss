@@ -4,7 +4,8 @@ body.welcome-page {
 }
 
 .welcome {
-    background-image: $welcomePageBackground;
+    background-image: $welcomePageBackground;    
+    background-size: $welcomePageBackgroundSize;
     display: flex;
     flex-direction: column;
     font-family: $welcomePageFontFamily;
@@ -12,6 +13,13 @@ body.welcome-page {
     min-height: 100vh;
     position: relative;
 
+    .leftwatermark {
+        background-image: url('../images/watermark-dark.png');
+    }
+
+    .jitsi-icon svg{
+        fill: #474747;
+    }
     .header {
         background-image: $welcomePageHeaderBackground;
         background-position: $welcomePageHeaderBackgroundPosition;
@@ -41,7 +49,7 @@ body.welcome-page {
             font-size: $welcomePageHeaderTextTitleFontSize;
             font-weight: $welcomePageHeaderTextTitleFontWeight;
             line-height: $welcomePageHeaderTextTitleLineHeight;
-            margin-bottom: $welcomePageHeaderTextTitleMarginBottom;
+            margin: $welcomePageHeaderTextTitleMarginBottom;
             opacity: $welcomePageHeaderTextTitleOpacity;
         }
 
@@ -51,7 +59,7 @@ body.welcome-page {
             font-size: $welcomePageHeaderTextDescriptionFontSize;
             font-weight: $welcomePageHeaderTextDescriptionFontWeight;
             line-height: $welcomePageHeaderTextDescriptionLineHeight;
-            margin-bottom: $welcomePageHeaderTextDescriptionMarginBottom;
+            margin: $welcomePageHeaderTextDescriptionMargin;
             align-self: $welcomePageHeaderTextDescriptionAlignSelf;
         }
 
@@ -71,6 +79,9 @@ body.welcome-page {
                 text-align: left;
                 color: #253858;
                 height: fit-content;
+                border-width: $welcomePageEnterRoomInputContainerBorderWidth;
+                border-style: $welcomePageEnterRoomInputContainerBorderStyle;
+                border-image: $welcomePageEnterRoomInputContainerBorderImage;
 
                 .enter-room-title {
                     display: $welcomePageEnterRoomTitleDisplay;
@@ -185,7 +196,7 @@ body.welcome-page {
         height: $welcomePageButtonHeight;
         font-size: $welcomePageButtonFontSize;
         font-weight: $welcomePageButtonFontWeight;
-        background: #0074E0;
+        background: #25a59a;
         border-radius: $welcomePageButtonBorderRadius;
         color: #FFFFFF;
         text-align: center;

@@ -842,7 +842,7 @@
             "join": "Zum Teilnehmen tippen",
             "roomname": "Konferenzname eingeben"
         },
-        "appDescription": "Auf geht's! Starten Sie eine Videokonferenz mit ihrem Team oder besser noch: Laden Sie alle ein, die Sie kennen. {{app}} ist eine vollständig verschlüsselte und 100 % quelloffene Videokonferenzlösung, die Sie immer und überall kostenlos verwenden können – ohne Registrierung.",
+        "appDescription": "Mobile Dolmetscher - Immer Schnell Überall",
         "audioVideoSwitch": {
             "audio": "Audio",
             "video": "Video"
@@ -867,7 +867,7 @@
         "roomnameHint": "Name oder URL der Konferenz, der Sie beitreten möchten. Sie können einen Namen erfinden, er muss nur den anderen Teilnehmern übermittelt werden, damit diese der gleichen Konferenz beitreten.",
         "sendFeedback": "Feedback senden",
         "terms": "AGB",
-        "title": "Sichere, voll funktionale und komplett kostenlose Videokonferenzen"
+        "title": "Dolmetscher per HD Videokonferenz"
     },
     "lonelyMeetingExperience": {
         "button": "Andere einladen",

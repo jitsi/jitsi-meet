@@ -6,7 +6,7 @@ var config = {
 
     hosts: {
         // XMPP domain.
-        domain: 'jitsi-meet.example.com',
+        domain: "meet.dolspot.de",
 
         // When using authentication, domain for guest users.
         // anonymousdomain: 'guest.example.com',
@@ -21,23 +21,23 @@ var config = {
         // focus: 'focus.jitsi-meet.example.com',
 
         // XMPP MUC domain. FIXME: use XEP-0030 to discover it.
-        muc: 'conference.jitsi-meet.example.com'
+        muc:
+            'conference.<!--# echo var="subdomain" default="" -->meet.dolspot.de',
     },
 
     // BOSH URL. FIXME: use XEP-0156 to discover it.
-    bosh: '//jitsi-meet.example.com/http-bind',
+    bosh: "//meet.dolspot.de/http-bind",
 
     // Websocket URL
     // websocket: 'wss://jitsi-meet.example.com/xmpp-websocket',
 
     // The name of client node advertised in XEP-0115 'c' stanza
-    clientNode: 'http://jitsi.org/jitsimeet',
+    clientNode: "http://jitsi.org/jitsimeet",
 
     // The real JID of focus participant - can be overridden here
     // Do not change username - FIXME: Make focus username configurable
     // https://github.com/jitsi/jitsi-meet/issues/7376
     // focusUserJid: 'focus@auth.jitsi-meet.example.com',
-
 
     // Testing / experimental features.
     //
@@ -49,7 +49,7 @@ var config = {
 
         // P2P test mode disables automatic switching to P2P when there are 2
         // participants in the conference.
-        p2pTestMode: false
+        p2pTestMode: false,
 
         // Enables the test specific features consumed by jitsi-meet-torture
         // testMode: false
@@ -78,7 +78,6 @@ var config = {
     // Disables ICE/TCP by filtering out local and remote TCP candidates in
     // signalling.
     // webrtcIceTcpDisable: false,
-
 
     // Media
     //
@@ -333,8 +332,7 @@ var config = {
     // 'datachannel'), undefined (treat it as 'datachannel') and false (don't
     // open any channel).
     // openBridgeChannel: true,
-    openBridgeChannel: 'websocket',
-
+    openBridgeChannel: "websocket",
 
     // UI
     //
@@ -343,7 +341,7 @@ var config = {
     // hideLobbyButton: false,
 
     // Require users to always specify a display name.
-    // requireDisplayName: true,
+    requireDisplayName: true,
 
     // Whether to use a welcome page or not. In case it's false a random room
     // will be joined when no room is specified.
@@ -425,7 +423,6 @@ var config = {
     // will not function.
     // disableThirdPartyRequests: false,
 
-
     // Peer-To-Peer mode: used (if enabled) when there are just 2 participants.
     //
 
@@ -440,10 +437,9 @@ var config = {
 
         // The STUN servers that will be used in the peer to peer connections
         stunServers: [
-
             // { urls: 'stun:jitsi-meet.example.com:3478' },
-            { urls: 'stun:meet-jit-si-turnrelay.jitsi.net:443' }
-        ]
+            { urls: "stun:meet-jit-si-turnrelay.jitsi.net:443" },
+        ],
 
         // Sets the ICE transport policy for the p2p connection. At the time
         // of this writing the list of possible values are 'all' and 'relay',
@@ -459,7 +455,7 @@ var config = {
 
         // Provides a way to set the video codec preference on the p2p connection. Acceptable
         // codec values are 'VP8', 'VP9' and 'H264'.
-        // preferredCodec: 'H264',
+        preferredCodec: "VP9",
 
         // If set to true, disable H.264 video codec by stripping it out of the
         // SDP. This setting is deprecated, use disabledCodec instead.
@@ -476,29 +472,23 @@ var config = {
     analytics: {
         // The Google Analytics Tracking ID:
         // googleAnalyticsTrackingId: 'your-tracking-id-UA-123456-1'
-
         // Matomo configuration:
         // matomoEndpoint: 'https://your-matomo-endpoint/',
         // matomoSiteID: '42',
-
         // The Amplitude APP Key:
         // amplitudeAPPKey: '<APP_KEY>'
-
         // Configuration for the rtcstats server:
         // By enabling rtcstats server every time a conference is joined the rtcstats
         // module connects to the provided rtcstatsEndpoint and sends statistics regarding
         // PeerConnection states along with getStats metrics polled at the specified
         // interval.
         // rtcstatsEnabled: true,
-
         // In order to enable rtcstats one needs to provide a endpoint url.
         // rtcstatsEndpoint: wss://rtcstats-server-pilot.jitsi.net/,
-
         // The interval at which rtcstats will poll getStats, defaults to 1000ms.
         // If the value is set to 0 getStats won't be polled and the rtcstats client
         // will only send data related to RTCPeerConnection events.
         // rtcstatsPolIInterval: 1000
-
         // Array of script URLs to load as lib-jitsi-meet "analytics handlers".
         // scriptURLs: [
         //      "libs/analytics-ga.min.js", // google-analytics
@@ -683,10 +673,9 @@ var config = {
      startBitrate
      */
 
-
     // Allow all above example options to include a trailing comma and
     // prevent fear when commenting out the last value.
-    makeJsonParserHappy: 'even if last key had a trailing comma'
+    makeJsonParserHappy: "even if last key had a trailing comma",
 
     // no configuration value should follow this line.
 };

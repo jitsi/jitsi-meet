@@ -101,6 +101,7 @@ $sidebarWidth: 375px;
  * Misc.
  */
 $borderRadius: 4px;
+$defaultWatermarkLink: '../images/watermark.png';
 $popoverMenuPadding: 13px;
 $happySoftwareBackground: transparent;
 $desktopAppDragBarHeight: 25px;
@@ -170,10 +171,11 @@ $welcomePageWatermarkHeight: 74px;
 /**
  * Welcome page variables.
  */
-$welcomePageDescriptionColor: #fff;
+$welcomePageDescriptionColor: #333;
 $welcomePageFontFamily: inherit;
-$welcomePageBackground: linear-gradient(-90deg, #1251AE 0%, #0074FF 50%, #1251AE 100%);
-$welcomePageTitleColor: #fff;
+$welcomePageBackground: url('../images/landing_background.jpg');
+$welcomePageBackgroundSize: cover;
+$welcomePageTitleColor: #333;
 
 $welcomePageHeaderBackground: none;
 $welcomePageHeaderBackgroundSmall: none;
@@ -189,7 +191,7 @@ $welcomePageHeaderTextDisplay: flex;
 $welcomePageHeaderTextWidth: 650px;
 
 $welcomePageHeaderTextTitleMarginBottom: 16px;
-$welcomePageHeaderTextTitleFontSize: 2.5rem;
+$welcomePageHeaderTextTitleFontSize: 2rem;
 $welcomePageHeaderTextTitleFontWeight: 500;
 $welcomePageHeaderTextTitleLineHeight: 1.18;
 $welcomePageHeaderTextTitleOpacity: 1;
@@ -198,7 +200,7 @@ $welcomePageHeaderTextDescriptionDisplay: inherit;
 $welcomePageHeaderTextDescriptionFontSize: 1rem;
 $welcomePageHeaderTextDescriptionFontWeight: 400;
 $welcomePageHeaderTextDescriptionLineHeight: 24px;
-$welcomePageHeaderTextDescriptionMarginBottom: 20px;
+$welcomePageHeaderTextDescriptionMargin: auto auto 20px auto;
 $welcomePageHeaderTextDescriptionAlignSelf: inherit;
 
 $welcomePageEnterRoomDisplay: flex;
@@ -213,7 +215,7 @@ $welcomePageEnterRoomInputContainerBorderImage: linear-gradient(to right, #dee1e
 
 $welcomePageEnterRoomTitleDisplay: inherit;
 
-$welcomePageTabContainerDisplay: flex;
+$welcomePageTabContainerDisplay: none;
 $welcomePageTabContentDisplay: inherit;
 $welcomePageTabButtonsDisplay: flex;
 $welcomePageTabDisplay: block;
@@ -223,7 +225,7 @@ $welcomePageButtonMinWidth: inherit;
 $welcomePageButtonFontSize: 14px;
 $welcomePageButtonHeight: 35px;
 $welcomePageButtonFontWeight: inherit;
-$welcomePageButtonBorderRadius: 4px;
+$welcomePageButtonBorderRadius: 1.3px;
 $welcomePageButtonLineHeight: 35px;
 
 /**

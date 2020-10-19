@@ -726,7 +726,7 @@
             "join": "Tap to join",
             "roomname": "Enter room name"
         },
-        "appDescription": "Go ahead, video chat with the whole team. In fact, invite everyone you know. {{app}} is a fully encrypted, 100% open source video conferencing solution that you can use all day, every day, for free — with no account needed.",
+        "appDescription": "Mobile Interpreter - Always Fast Everywhere",
         "audioVideoSwitch": {
             "audio": "Voice",
             "video": "Video"
@@ -747,7 +747,7 @@
         "roomnameHint": "Enter the name or URL of the room you want to join. You may make a name up, just let the people you are meeting know it so that they enter the same name.",
         "sendFeedback": "Send feedback",
         "terms": "Terms",
-        "title": "Secure, fully featured, and completely free video conferencing"
+        "title": "Interpreter by HD Videoconference"
     },
     "documentSharing": {
         "title": ""
