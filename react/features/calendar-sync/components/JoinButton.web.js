@@ -4,6 +4,7 @@ import Tooltip from '@atlaskit/tooltip';
 import React, { Component } from 'react';
 
 import { translate } from '../../base/i18n';
+import { Icon, IconAdd } from '../../base/icons';
 
 /**
  * The type of the React {@code Component} props of {@link JoinButton}.
@@ -60,7 +61,9 @@ class JoinButton extends Component<Props> {
                 <div
                     className = 'button join-button'
                     onClick = { this._onClick }>
-                    { t('calendarSync.join') }
+                    <Icon
+                        size = '14'
+                        src = { IconAdd } />
                 </div>
             </Tooltip>
         );
