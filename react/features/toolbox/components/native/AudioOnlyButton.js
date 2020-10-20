@@ -1,7 +1,7 @@
 // @flow
 
-import { AUDIO_ONLY_BUTTON_ENABLED, getFeatureFlag } from '../../../base/flags';
 import { toggleAudioOnly } from '../../../base/audio-only';
+import { AUDIO_ONLY_BUTTON_ENABLED, getFeatureFlag } from '../../../base/flags';
 import { translate } from '../../../base/i18n';
 import { IconAudioOnly, IconAudioOnlyOff } from '../../../base/icons';
 import { connect } from '../../../base/redux';
