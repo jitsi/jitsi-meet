@@ -1048,6 +1048,39 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
     }
 
     /**
+     * Starts a file recording or streaming session depending on the passed on params.
+     * For RTMP streams, `rtmpStreamKey` must be passed on. `rtmpBroadcastID` is optional.
+     * For youtube streams, `youtubeStreamKey` must be passed on. `youtubeBroadcastID` is optional.
+     * For dropbox recording, recording `mode` should be `file` and a dropbox oauth2 token must be provided.
+     * For file recording, recording `mode` should be `file` and optionally `shouldShare` could be passed on.
+     * No other params should be passed.
+     *
+     * @param {Object} options - An object with config options to pass along.
+     * @param { string } options.mode - Recording mode, either `file` or `stream`.
+     * @param { string } options.dropboxToken - Dropbox oauth2 token.
+     * @param { boolean } options.shouldShare - Whether the recording should be shared with the participants or not.
+     * Only applies to certain jitsi meet deploys.
+     * @param { string } options.rtmpStreamKey - The RTMP stream key.
+     * @param { string } options.rtmpBroadcastID - The RTMP broacast ID.
+     * @param { string } options.youtubeStreamKey - The youtube stream key.
+     * @param { string } options.youtubeBroadcastID - The youtube broacast ID.
+     * @returns {void}
+     */
+    startRecording(options) {
+        this.executeCommand('startRecording', options);
+    }
+
+    /**
+     * Stops a recording or streaming session that is in progress.
+     *
+     * @param {string} mode - `file` or `stream`.
+     * @returns {void}
+     */
+    stopRecording(mode) {
+        this.executeCommand('startRecording', mode);
+    }
+
+    /**
      * Returns the configuration for electron for the windows that are open
      * from Jitsi Meet.
      *
