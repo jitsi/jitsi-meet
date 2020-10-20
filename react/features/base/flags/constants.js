@@ -125,6 +125,12 @@ export const TOOLBOX_ALWAYS_VISIBLE = 'toolbox.alwaysVisible';
 export const VIDEO_SHARE_BUTTON_ENABLED = 'video-share.enabled';
 
 /**
+ * Flag indicating that the Audio only button in the overflow menu is enabled.
+ * Default: enabled (true).
+ */
+export const AUDIO_ONLY_BUTTON_ENABLED = 'audio-only.enabled';
+
+/**
  * Flag indicating if the welcome page should be enabled.
  * Default: disabled (false).
  */
