@@ -223,7 +223,8 @@ function initCommands() {
         },
 
         /**
-         * Starts a file recording or streaming depending on the passed on params.
+         * Starts a file recording or streaming session depending on the passed on params.
+         * For RTMP streams, `rtmpStreamKey` must be passed on. `rtmpBroadcastID` is optional.
          * For youtube streams, `youtubeStreamKey` must be passed on. `youtubeBroadcastID` is optional.
          * For dropbox recording, recording `mode` should be `file` and a dropbox oauth2 token must be provided.
          * For file recording, recording `mode` should be `file` and optionally `shouldShare` could be passed on.
@@ -231,13 +232,23 @@ function initCommands() {
          *
          * @param { string } arg.mode - Recording mode, either `file` or `stream`.
          * @param { string } arg.dropboxToken - Dropbox oauth2 token.
+         * @param { string } arg.rtmpStreamKey - The RTMP stream key.
+         * @param { string } arg.rtmpBroadcastID - The RTMP braodcast ID.
          * @param { boolean } arg.shouldShare - Whether the recording should be shared with the participants or not.
          * Only applies to certain jitsi meet deploys.
          * @param { string } arg.youtubeStreamKey - The youtube stream key.
          * @param { string } arg.youtubeBroadcastID - The youtube broacast ID.
          * @returns {void}
          */
-        'start-recording': ({ mode, dropboxToken, shouldShare, youtubeStreamKey, youtubeBroadcastID }) => {
+        'start-recording': ({
+            mode,
+            dropboxToken,
+            shouldShare,
+            rtmpStreamKey,
+            rtmpBroadcastID,
+            youtubeStreamKey,
+            youtubeBroadcastID
+        }) => {
             const state = APP.store.getState();
             const conference = getCurrentConference(state);
 
@@ -253,8 +264,8 @@ function initCommands() {
                 return;
             }
 
-            if (mode === JitsiRecordingConstants.mode.STREAM && !youtubeStreamKey) {
-                logger.error('Failed starting recording: missing youtube stream key');
+            if (mode === JitsiRecordingConstants.mode.STREAM && !(youtubeStreamKey || rtmpStreamKey)) {
+                logger.error('Failed starting recording: missing youtube or RTMP stream key');
 
                 return;
             }
@@ -286,9 +297,9 @@ function initCommands() {
                 }
             } else if (mode === JitsiRecordingConstants.mode.STREAM) {
                 recordingConfig = {
-                    broadcastId: youtubeBroadcastID,
+                    broadcastId: youtubeBroadcastID || rtmpBroadcastID,
                     mode: JitsiRecordingConstants.mode.STREAM,
-                    streamId: youtubeStreamKey
+                    streamId: youtubeStreamKey || rtmpStreamKey
                 };
             } else {
                 logger.error('Invalid recording mode provided');
