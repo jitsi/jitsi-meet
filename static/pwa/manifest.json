@@ -22,9 +22,9 @@
     },
     {
       "src": "icons/iconMask.png",
-      "sizes": "196x196",
+      "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "maskable"
     }
   ],
   "start_url": "/",
