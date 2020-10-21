@@ -17,6 +17,12 @@ var interfaceConfig = {
     AUTO_PIN_LATEST_SCREEN_SHARE: 'remote-only',
     BRAND_WATERMARK_LINK: '',
 
+    /**
+     * Whether the chat component will be opened by default or not.
+     * @type {boolean}
+     */
+    CHAT_STARTS_OPEN: false,
+
     CLOSE_PAGE_GUEST_HINT: false, // A html text to be shown to guests on the close page, false disables it
     /**
      * Whether the connection indicator icon should hide itself based on
