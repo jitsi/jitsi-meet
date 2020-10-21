@@ -21,6 +21,7 @@ import {
     MEDIA_TYPE,
     VIDEO_MUTISM_AUTHORITY
 } from './constants';
+import { getStartWithAudioMuted, getStartWithVideoMuted } from './functions';
 import logger from './logger';
 import {
     _AUDIO_INITIAL_MEDIA_STATE,
@@ -133,37 +134,8 @@ function _setRoom({ dispatch, getState }, next, action) {
     const state = getState();
     const { room } = action;
     const roomIsValid = isRoomValid(room);
-
-    // XXX The configurations/preferences/settings startWithAudioMuted,
-    // startWithVideoMuted, and startAudioOnly were introduced for
-    // conferences/meetings. So it makes sense for these to not be considered
-    // outside of conferences/meetings (e.g. WelcomePage). Later on, though, we
-    // introduced a "Video <-> Voice" toggle on the WelcomePage which utilizes
-    // startAudioOnly outside of conferences/meetings so that particular
-    // configuration/preference/setting employs slightly exclusive logic.
-    const mutedSources = {
-        // We have startWithAudioMuted and startWithVideoMuted here:
-        config: true,
-        settings: true,
-
-        // XXX We've already overwritten base/config with urlParams. However,
-        // settings are more important than the server-side config.
-        // Consequently, we need to read from urlParams anyway:
-        urlParams: true,
-
-        // We don't have startWithAudioMuted and startWithVideoMuted here:
-        jwt: false
-    };
-    const audioMuted
-        = roomIsValid
-            ? Boolean(
-                getPropertyValue(state, 'startWithAudioMuted', mutedSources))
-            : _AUDIO_INITIAL_MEDIA_STATE.muted;
-    const videoMuted
-        = roomIsValid
-            ? Boolean(
-                getPropertyValue(state, 'startWithVideoMuted', mutedSources))
-            : _VIDEO_INITIAL_MEDIA_STATE.muted;
+    const audioMuted = roomIsValid ? getStartWithAudioMuted(state) : _AUDIO_INITIAL_MEDIA_STATE.muted;
+    const videoMuted = roomIsValid ? getStartWithVideoMuted(state) : _VIDEO_INITIAL_MEDIA_STATE.muted;
 
     sendAnalytics(
         createStartMutedConfigurationEvent('local', audioMuted, videoMuted));
