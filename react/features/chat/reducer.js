@@ -1,11 +1,12 @@
 // @flow
 
+import UIUtil from '../../../modules/UI/util/UIUtil';
 import { SET_ACTIVE_MODAL_ID } from '../base/modal';
 import { ReducerRegistry } from '../base/redux';
 
 import {
     ADD_MESSAGE,
-    CLEAR_MESSAGES,
+    CLEAR_MESSAGES, SET_CHAT_POSITION,
     SET_PRIVATE_MESSAGE_RECIPIENT,
     TOGGLE_CHAT
 } from './actionTypes';
@@ -13,6 +14,7 @@ import { CHAT_VIEW_MODAL_ID } from './constants';
 
 const DEFAULT_STATE = {
     isOpen: false,
+    onTheLeft: UIUtil.shouldUseChatOnTheLeftSide(),
     lastReadMessage: undefined,
     messages: [],
     privateMessageRecipient: undefined
@@ -73,6 +75,12 @@ ReducerRegistry.register('features/chat', (state = DEFAULT_STATE, action) => {
 
     case TOGGLE_CHAT:
         return updateChatState(state);
+
+    case SET_CHAT_POSITION:
+        return {
+            ...state,
+            onTheLeft: action.onTheLeft
+        };
     }
 
     return state;

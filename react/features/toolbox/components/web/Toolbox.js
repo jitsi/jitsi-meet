@@ -35,7 +35,7 @@ import { OverflowMenuItem } from '../../../base/toolbox/components';
 import { getLocalVideoTrack, toggleScreensharing } from '../../../base/tracks';
 import { isVpaasMeeting } from '../../../billing-counter/functions';
 import { VideoBlurButton } from '../../../blur';
-import { CHAT_SIZE, ChatCounter, toggleChat } from '../../../chat';
+import { CHAT_SIZE_WIDTH, ChatCounter, toggleChat } from '../../../chat';
 import { EmbedMeetingDialog } from '../../../embed-meeting';
 import { SharedDocumentButton } from '../../../etherpad';
 import { openFeedbackDialog } from '../../../feedback';
@@ -95,6 +95,11 @@ type Props = {
      * Whether or not the chat feature is currently displayed.
      */
     _chatOpen: boolean,
+
+    /**
+     * Whether or not the chat feature is currently displayed.
+     */
+    _chatOnTheLeft: boolean,
 
     /**
      * The {@code JitsiConference} for the current conference.
@@ -361,7 +366,9 @@ class Toolbox extends Component<Props, State> {
     render() {
         const { _chatOpen, _visible, _visibleButtons } = this.props;
         const rootClassNames = `new-toolbox ${_visible ? 'visible' : ''} ${
-            _visibleButtons.size ? '' : 'no-buttons'} ${_chatOpen ? 'shift-right' : ''}`;
+            _visibleButtons.size ? '' : 'no-buttons'} ${_chatOpen
+            ? this.props._chatOnTheLeft ? 'shift-right'
+                : 'shift-up' : ''}`;
 
         return (
             <div
@@ -562,8 +569,8 @@ class Toolbox extends Component<Props, State> {
         let widthToUse = window.innerWidth;
 
         // Take chat size into account when resizing toolbox.
-        if (this.props._chatOpen) {
-            widthToUse -= CHAT_SIZE;
+        if (this.props._chatOpen && this.props._chatOnTheLeft) {
+            widthToUse -= CHAT_SIZE_WIDTH;
         }
 
         if (this.state.windowWidth !== widthToUse) {
@@ -1442,6 +1449,7 @@ function _mapStateToProps(state) {
 
     return {
         _chatOpen: state['features/chat'].isOpen,
+        _chatOnTheLeft: state['features/chat'].onTheLeft,
         _conference: conference,
         _desktopSharingEnabled: desktopSharingEnabled,
         _desktopSharingDisabledTooltipKey: desktopSharingDisabledTooltipKey,

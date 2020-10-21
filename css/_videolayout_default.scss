@@ -188,6 +188,13 @@
             width: calc(100% - #{$sidebarWidth});
         }
     }
+
+    &.shift-up {
+        &#largeVideoContainer {
+            margin-bottom: $bottomBarHeight;
+            height: calc(100% - #{$bottomBarHeight});
+        }
+    }
 }
 
 #localVideoWrapper {

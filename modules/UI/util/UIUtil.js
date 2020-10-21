@@ -1,5 +1,7 @@
 /* global $ */
 
+import { CHAT_SIZE_HEIGHT } from '../../../react/features/chat';
+
 /**
  * Created by hristo on 12/22/14.
  */
@@ -65,6 +67,14 @@ const UIUtil = {
      */
     isVisible(el) {
         return el.offsetParent !== null;
+    },
+
+    shouldUseChatOnTheLeftSide() {
+        if (window.innerWidth > window.innerHeight) {
+            return true;
+        }
+
+        return window.innerHeight <= CHAT_SIZE_HEIGHT * 1.6; // magic number
     }
 };
 

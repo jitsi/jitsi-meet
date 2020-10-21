@@ -1,6 +1,6 @@
 // @flow
 
-import { CHAT_SIZE } from '../chat/constants';
+import { CHAT_SIZE_WIDTH } from '../chat/constants';
 
 import { SET_HORIZONTAL_VIEW_DIMENSIONS, SET_TILE_VIEW_DIMENSIONS } from './actionTypes';
 import { calculateThumbnailSizeForHorizontalView, calculateThumbnailSizeForTileView } from './functions';
@@ -27,7 +27,7 @@ export function setTileViewDimensions(dimensions: Object, windowSize: Object, is
     let widthToUse = clientWidth;
 
     if (isChatOpen) {
-        widthToUse -= CHAT_SIZE;
+        widthToUse -= CHAT_SIZE_WIDTH;
     }
 
     const thumbnailSize = calculateThumbnailSizeForTileView({

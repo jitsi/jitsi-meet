@@ -56,6 +56,15 @@
                 width: calc(100vw - #{$sidebarWidth});
             }
         }
+
+        &.shift-up {
+            margin-bottom: $bottomBarHeight;
+            height: calc(100% - #{$bottomBarHeight});
+
+            #filmstripRemoteVideos {
+                height: calc(100vw - #{$bottomBarHeight});
+            }
+        }
     }
 
     /**

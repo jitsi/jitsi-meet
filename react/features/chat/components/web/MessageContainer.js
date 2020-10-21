@@ -2,6 +2,7 @@
 
 import React from 'react';
 
+import UIUtil from '../../../../../modules/UI/util/UIUtil';
 import { MESSAGE_TYPE_REMOTE } from '../../constants';
 import AbstractMessageContainer, { type Props }
     from '../AbstractMessageContainer';
@@ -70,6 +71,9 @@ export default class MessageContainer extends AbstractMessageContainer<Props> {
 
         return (
             <div
+                className = { UIUtil.shouldUseChatOnTheLeftSide()
+                    ? 'chatconversation-vertical'
+                    : 'chatconversation-horizontal' }
                 id = 'chatconversation'
                 onScroll = { this._onChatScroll }
                 ref = { this._messageListRef }>

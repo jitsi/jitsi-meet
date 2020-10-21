@@ -2,6 +2,7 @@
 
 import React from 'react';
 
+import UIUtil from '../../../../../modules/UI/util/UIUtil';
 import { translate } from '../../../base/i18n';
 import { Icon, IconClose } from '../../../base/icons';
 import { connect } from '../../../base/redux';
@@ -42,7 +43,6 @@ class Chat extends AbstractChat<Props> {
      */
     constructor(props: Props) {
         super(props);
-
         this._isExited = true;
         this._messageContainerRef = React.createRef();
 
@@ -51,6 +51,7 @@ class Chat extends AbstractChat<Props> {
 
         // Bind event handlers so they are only bound once for every instance.
         this._onChatInputResize = this._onChatInputResize.bind(this);
+        this._onResize = this._onResize.bind(this);
     }
 
     /**
@@ -60,6 +61,7 @@ class Chat extends AbstractChat<Props> {
      */
     componentDidMount() {
         this._scrollMessageContainerToBottom(true);
+        window.addEventListener('resize', this._onResize);
     }
 
     /**
@@ -73,6 +75,16 @@ class Chat extends AbstractChat<Props> {
         } else if (this.props._isOpen && !prevProps._isOpen) {
             this._scrollMessageContainerToBottom(false);
         }
+    }
+
+    /**
+     * Implements {@code Component#componentWillUnmount}.
+     *
+     * @inheritdoc
+     * @returns {void}
+     */
+    componentWillUnmount() {
+        window.removeEventListener('resize', this._onResize);
     }
 
     /**
@@ -100,6 +112,22 @@ class Chat extends AbstractChat<Props> {
      */
     _onChatInputResize() {
         this._messageContainerRef.current.maybeUpdateBottomScroll();
+    }
+
+    _onResize: () => void;
+
+    /**
+     * A window resize handler used to calculate the position of chat
+     *
+     * @private
+     * @returns {void}
+     */
+    _onResize() {
+        if (this.props._isOpen) {
+            const onTheLeft = UIUtil.shouldUseChatOnTheLeftSide();
+
+            this.props._setChatPosition(onTheLeft);
+        }
     }
 
     /**
@@ -151,7 +179,9 @@ class Chat extends AbstractChat<Props> {
      * @returns {ReactElement | null}
      */
     _renderPanelContent() {
-        const { _isOpen, _showNamePrompt } = this.props;
+        const _isOpen = this.props._isOpen;
+        const _showNamePrompt = this.props._showNamePrompt;
+
         const ComponentToRender = _isOpen
             ? (
                 <>
@@ -161,17 +191,24 @@ class Chat extends AbstractChat<Props> {
                 </>
             )
             : null;
+
         let className = '';
 
-        if (_isOpen) {
-            className = 'slideInExt';
-        } else if (this._isExited) {
-            className = 'invisible';
+        if (this.props._onTheLeft) {
+            className = 'sideToolbarContainer';
+        } else {
+            className = 'bottomToolbarContainer';
         }
+        if (_isOpen) {
+            className += ' slideInExt';
+        } else if (this._isExited) {
+            className += ' invisible';
+        }
+
 
         return (
             <div
-                className = { `sideToolbarContainer ${className}` }
+                className = { className }
                 id = 'sideToolbarContainer'>
                 { ComponentToRender }
             </div>

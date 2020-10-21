@@ -2,7 +2,7 @@
 
 import VideoLayout from '../../../modules/UI/videolayout/VideoLayout';
 
-import { TOGGLE_CHAT } from './actionTypes';
+import { TOGGLE_CHAT, SET_CHAT_POSITION } from './actionTypes';
 
 export * from './actions.any';
 
@@ -18,3 +18,20 @@ export function toggleChat() {
         VideoLayout.onResize();
     };
 }
+
+/**
+ * Sets
+ *
+ * @param {boolean} onTheLeft - controls whether
+ * chat will be rendered on the left or at the bottom
+ * @returns {Function}
+ */
+export function setChatPosition(onTheLeft: boolean) {
+    return function(dispatch: (Object) => Object) {
+        dispatch({
+            type: SET_CHAT_POSITION,
+            onTheLeft
+        });
+    };
+}
+

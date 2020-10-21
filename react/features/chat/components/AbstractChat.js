@@ -4,7 +4,7 @@ import { Component } from 'react';
 import type { Dispatch } from 'redux';
 
 import { getLocalParticipant } from '../../base/participants';
-import { sendMessage, toggleChat } from '../actions';
+import { sendMessage, toggleChat, setChatPosition } from '../actions';
 
 /**
  * The type of the React {@code Component} props of {@code AbstractChat}.
@@ -15,6 +15,12 @@ export type Props = {
      * True if the chat window should be rendered.
      */
     _isOpen: boolean,
+
+    /**
+     * True if the chat window should be rendered on the left,
+     * on the bottom otherwise
+     */
+    _onTheLeft: boolean,
 
     /**
      * All the chat messages in the conference.
@@ -85,6 +91,9 @@ export function _mapDispatchToProps(dispatch: Dispatch<any>) {
          */
         _onSendMessage(text: string) {
             dispatch(sendMessage(text));
+        },
+        _setChatPosition(onTheLeft: boolean) {
+            dispatch(setChatPosition(onTheLeft));
         }
     };
 }
@@ -102,11 +111,12 @@ export function _mapDispatchToProps(dispatch: Dispatch<any>) {
  * }}
  */
 export function _mapStateToProps(state: Object) {
-    const { isOpen, messages } = state['features/chat'];
+    const { isOpen, onTheLeft, messages } = state['features/chat'];
     const _localParticipant = getLocalParticipant(state);
 
     return {
         _isOpen: isOpen,
+        _onTheLeft: onTheLeft,
         _messages: messages,
         _showNamePrompt: !_localParticipant.name
     };

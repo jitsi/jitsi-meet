@@ -97,13 +97,15 @@ StateListenerRegistry.register(
     /* selector */ state => state['features/chat'].isOpen,
     /* listener */ (isChatOpen, store) => {
         const state = store.getState();
+        const shiftClass = state['features/chat'].onTheLeft
+            ? 'shift-right' : 'shift-up';
 
         if (isChatOpen) {
             // $FlowFixMe
-            document.body.classList.add('shift-right');
+            document.body.classList.add(shiftClass);
         } else {
             // $FlowFixMe
-            document.body.classList.remove('shift-right');
+            document.body.classList.remove(shiftClass);
         }
 
         if (shouldDisplayTileView(state)) {

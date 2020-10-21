@@ -91,3 +91,4 @@ twa/*.apk
 twa/*.aab
 twa/assetlinks.json
 
+/node_modules2/

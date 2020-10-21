@@ -51,6 +51,9 @@ body {
     .shift-right [class^="Modal__FillScreen"] {
         padding-left: $sidebarWidth;
     }
+    .shift-up [class^="Modal__FillScreen"] {
+        padding-bottom: $bottomBarHeight;
+    }
 }
 
 /**
@@ -60,7 +63,9 @@ body {
 .shift-right [class^="styledFlagGroup-"] {
     padding-left: $sidebarWidth;
 }
-
+.shift-up [class^="styledFlagGroup-"] {
+    padding-bottom: $bottomBarHeight;
+}
 .jitsi-icon svg {
     fill: white;
 }

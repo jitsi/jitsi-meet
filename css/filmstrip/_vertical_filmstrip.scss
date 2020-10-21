@@ -41,7 +41,16 @@
 
     &.reduce-height {
         height: calc(100% - #{$newToolbarSizeWithPadding});
+
+        &.shift-up {
+            height: calc(100% - #{$bottomBarHeight} - #{$newToolbarSizeWithPadding});
+        }
     }
+
+    &.shift-up {
+        height: calc(100% - #{$bottomBarHeight});
+    }
+
 
     /**
      * Hide videos by making them slight to the right.

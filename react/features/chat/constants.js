@@ -5,7 +5,8 @@ export const CHAT_VIEW_MODAL_ID = 'chatView';
 /**
  * The size of the chat.
  */
-export const CHAT_SIZE = 375;
+export const CHAT_SIZE_WIDTH = 375;
+export const CHAT_SIZE_HEIGHT = 500;
 
 /**
  * The audio ID of the audio element for which the {@link playAudio} action is
