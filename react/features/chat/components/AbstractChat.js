@@ -40,6 +40,11 @@ export type Props = {
     _onToggleChat: Function,
 
     /**
+     * Function to set new chat position.
+     */
+    _setChatPosition: Function,
+
+    /**
      * Whether or not to block chat access with a nickname input form.
      */
     _showNamePrompt: boolean,
