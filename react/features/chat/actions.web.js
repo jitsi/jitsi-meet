@@ -20,7 +20,7 @@ export function toggleChat() {
 }
 
 /**
- * Sets
+ * Sets new chat position.
  *
  * @param {boolean} onTheLeft - controls whether
  * chat will be rendered on the left or at the bottom
