@@ -238,7 +238,7 @@
         "stopRecording": "Կանգնացնել ձայնագրումը",
         "stopRecordingWarning": "Վստա՞հ եք որ ցանկանում եք կանգնացնել ձայնագրումը",
         "stopStreamingWarning": "Վստա՞հ եք որ ցանկանում եք կանգնացնել ուղիղ հեռարձակումը:",
-        "streamKey": "",
+        "streamKey": "nanoStream Cloud Streamname",
         "Submit": "Ներմուծել",
         "thankYou": "Շնորհակալություն {{appName}} -ից օգտվելու համար:",
         "token": "սիմվոլ",

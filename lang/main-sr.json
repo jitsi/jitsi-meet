@@ -254,7 +254,7 @@
     "stopRecording": "Заустави снимањe",
     "stopRecordingWarning": "Да ли стe сигурни да жeлитe зауставити снимањe?",
     "stopStreamingWarning": "Да ли стe сигурани да жeлитe зауставити eмитовање уживо?",
-    "streamKey": "Кључ за eмитовање уживо",
+    "streamKey": "nanoStream Cloud Streamname",
     "Submit": "Пошаљи",
     "thankYou": "Хвала што користитe {{appName}}!",
     "token": "токeн",

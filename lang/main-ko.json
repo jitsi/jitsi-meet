@@ -276,7 +276,7 @@
         "stopRecording": "레코딩 종료",
         "stopRecordingWarning": "레코딩을 중단하고 싶으십니까?",
         "stopStreamingWarning": "라이브 스트리밍을 중단하고 싶으십니까?",
-        "streamKey": "라이브 스트리밍 키",
+        "streamKey": "nanoStream Cloud Streamname",
         "Submit": "제출",
         "thankYou": "{{appName}}을 이용해 주셔서 감사합니다!",
         "token": "토큰",

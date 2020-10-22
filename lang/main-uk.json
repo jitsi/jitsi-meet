@@ -276,7 +276,7 @@
         "stopRecording": "Зупинити запис",
         "stopRecordingWarning": "Ви впевнені, що потрібно зупинити запис?",
         "stopStreamingWarning": "Ви впевнені, що потрібно зупинити трансляцію?",
-        "streamKey": "Ключ доступу до трансляції",
+        "streamKey": "nanoStream Cloud Streamname",
         "Submit": "Гаразд",
         "thankYou": "Дякуємо, що користуєтеся {{appName}}!",
         "token": "токен",

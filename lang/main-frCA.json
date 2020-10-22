@@ -253,7 +253,7 @@
         "stopRecording": "Arrêter l'enregistrement",
         "stopRecordingWarning": "Êtes-vous certain de vouloir arrêter l'enregistrement?",
         "stopStreamingWarning": "Êtes-vous certain de vouloir arrêter la diffusion en direct?",
-        "streamKey": "Clé de diffusion en direct",
+        "streamKey": "nanoStream Cloud Streamname",
         "Submit": "Envoyer",
         "thankYou": "Merci d'utiliser {{appName}}!",
         "token": "jeton",

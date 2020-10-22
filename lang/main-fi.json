@@ -243,7 +243,7 @@
         "stopRecording": "Lopeta nauhoitus",
         "stopRecordingWarning": "Haluatko varmasti lopettaa nauhoituksen?",
         "stopStreamingWarning": "Haluatko varmasti lopettaa suoratoiston?",
-        "streamKey": "Suoratoistokoodi",
+        "streamKey": "nanoStream Cloud Streamname",
         "Submit": "Lähetä",
         "thankYou": "Kiitos sovelluksen {{appName}} käytöstä!",
         "token": "koodi",

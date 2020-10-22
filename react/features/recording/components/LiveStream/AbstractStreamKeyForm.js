@@ -11,7 +11,7 @@ declare var interfaceConfig: Object;
  *
  * FIXME: This is in props now to prepare for the Redux-based interfaceConfig
  */
-const LIVE_STREAMING_HELP_LINK = 'https://jitsi.org/live';
+const LIVE_STREAMING_HELP_LINK = 'https://www.nanocosmos.de/support';
 
 /**
  * The props of the component.

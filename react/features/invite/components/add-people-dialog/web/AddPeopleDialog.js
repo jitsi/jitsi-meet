@@ -154,25 +154,25 @@ function AddPeopleDialog({
             titleKey = 'addPeople.inviteMorePrompt'
             width = { 'small' }>
             <div className = 'invite-more-dialog'>
-                { _inviteContactsVisible && <InviteContactsSection /> }
+                {/* { _inviteContactsVisible && <InviteContactsSection /> } */}
                 <CopyMeetingLinkSection url = { _inviteUrl } />
                 <InviteByEmailSection
                     inviteSubject = { inviteSubject }
                     inviteText = { invite } />
-                { _embedMeetingVisible && <EmbedMeetingTrigger /> }
+                {/* { _embedMeetingVisible && <EmbedMeetingTrigger /> } */}
                 <div className = 'invite-more-dialog separator' />
                 {
                     _liveStreamViewURL
                         && <LiveStreamSection liveStreamViewURL = { _liveStreamViewURL } />
                 }
-                {
+                {/* {
                     _dialIn.numbers
                         && <DialInSection
                             conferenceName = { _conferenceName }
                             dialIn = { _dialIn }
                             locationUrl = { _locationUrl }
                             phoneNumber = { phoneNumber } />
-                }
+                } */}
             </div>
         </Dialog>
     );

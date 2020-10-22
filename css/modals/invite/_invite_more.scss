@@ -26,14 +26,14 @@
         width: fit-content;
         width: -moz-fit-content;
         height: 24px;
-        background: #0376DA;
+        background: #ed7d0e;
         border-radius: 3px;
         font-size: 14px;
         line-height: 24px;
         cursor: pointer;
 
         &:hover {
-            background: #278ADF;
+            background: #ed7d0e50;
         }
 
         &-text {
@@ -59,7 +59,7 @@
 
             & > div > svg {
                 cursor: pointer;
-                fill: #A4B8D1;
+                fill: #cecece;
             }
         }
 
@@ -164,7 +164,7 @@
 
             &-add {
                 padding: 8px 16px;
-                background: #0376DA;
+                background: #ed7d0e;
             }
 
             &.disabled {

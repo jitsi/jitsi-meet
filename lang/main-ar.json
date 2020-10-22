@@ -264,7 +264,7 @@
         "stopRecording": "أوقف التسجيل",
         "stopRecordingWarning": "هل أنت متأكد من أنك ترغب في توقيف التسجيل؟",
         "stopStreamingWarning": "هل أنت متأكد من أنك ترغب في توقيف البث المباشر؟",
-        "streamKey": "",
+        "streamKey": "nanoStream Cloud Stream name",
         "Submit": "",
         "thankYou": "شكرًا لك على استخدام {{appName}}!",
         "token": "الرمز المميز",

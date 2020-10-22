@@ -129,9 +129,9 @@ class MoreTab extends AbstractDialogTab<Props, State> {
             content.push(this._renderModeratorSettings());
         }
 
-        if (showLanguageSettings) {
-            content.push(this._renderLangaugeSelect());
-        }
+        // if (showLanguageSettings) {
+        //     content.push(this._renderLangaugeSelect());
+        // }
 
         return <div className = 'more-tab'>{ content }</div>;
     }

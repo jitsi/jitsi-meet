@@ -2,7 +2,7 @@
 
 import { ColorPalette } from '../../../base/styles';
 
-const SECONDARY_COLOR = '#B8C7E0';
+const SECONDARY_COLOR = '#ed7d0e';
 
 export default {
     button: {

@@ -290,7 +290,7 @@
         "stopRecording": "Arrêter l'enregistrement",
         "stopRecordingWarning": "Désirez-vous vraiment arrêter l'enregistrement ?",
         "stopStreamingWarning": "Désirez-vous vraiment arrêter le direct ?",
-        "streamKey": "Clé Live stream",
+        "streamKey": "nanoStream Cloud Streamname",
         "Submit": "Soumettre",
         "thankYou": "Merci d'avoir utilisé {{appName}} !",
         "token": "jeton",

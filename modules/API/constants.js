@@ -7,7 +7,7 @@
 import { parseURLParams } from '../../react/features/base/util/parseURLParams';
 
 /**
- * JitsiMeetExternalAPI id - unique for a webpage.
+ * NanoStreamMeetcastering id - unique for a webpage.
  */
 export const API_ID = parseURLParams(window.location).jitsi_meet_external_api_id;
 

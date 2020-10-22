@@ -254,7 +254,7 @@
         "stopRecording": "Avsluta inspelningen",
         "stopRecordingWarning": "Vill du avsluta den pågående inspelningen?",
         "stopStreamingWarning": "Vill du avsluta den pågående strömningen?",
-        "streamKey": "Nyckel för liveström",
+        "streamKey": "nanoStream Cloud Streamname",
         "Submit": "Skicka",
         "thankYou": "Tack för att du använder {{appName}}!",
         "token": "token",

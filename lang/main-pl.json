@@ -293,7 +293,7 @@
         "stopRecording": "Zatrzymaj nagrywanie",
         "stopRecordingWarning": "Naprawdę chcesz zatrzymać nagrywanie?",
         "stopStreamingWarning": "Czy jesteś pewny, że chcesz zatrzymać tę transmisję na żywo?",
-        "streamKey": "Klucz transmisji na żywo",
+        "streamKey": "nanoStream Cloud Streamname",
         "Submit": "Wyślij",
         "thankYou": "Dziękujemy Ci za używanie {{appName}}!",
         "token": "token",

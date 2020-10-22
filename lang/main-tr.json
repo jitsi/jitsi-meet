@@ -280,7 +280,7 @@
         "stopRecording": "Kaydı durdur",
         "stopRecordingWarning": "Kaydı durdurmak istediğinizden emin misiniz?",
         "stopStreamingWarning": "Canlı akışı durdurmak istediğinizden emin misiniz?",
-        "streamKey": "Canlı akış anahtarı",
+        "streamKey": "nanoStream Cloud Streamname",
         "Submit": "Gönder",
         "thankYou": "{{appName}} kullandığınız için teşekkürler!",
         "token": "token",

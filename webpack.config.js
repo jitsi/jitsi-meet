@@ -275,7 +275,7 @@ module.exports = [
             'external_api': './modules/API/external/index.js'
         },
         output: Object.assign({}, config.output, {
-            library: 'JitsiMeetExternalAPI',
+            library: 'NanoStreamMeetcaster',
             libraryTarget: 'umd'
         }),
         performance: getPerformanceHints(35 * 1024)

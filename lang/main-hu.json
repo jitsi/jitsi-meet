@@ -258,7 +258,7 @@
         "stopRecording": "Felvétel leállítása",
         "stopRecordingWarning": "Valóban leállítható a felvétel?",
         "stopStreamingWarning": "Valóban leállítható az élő közvetítés?",
-        "streamKey": "Élő közvetítés kulcsa",
+        "streamKey": "nanoStream Cloud Streamname",
         "Submit": "Elküldés",
         "thankYou": "Köszönjük a {{appName}} használatát!",
         "token": "jelsor",

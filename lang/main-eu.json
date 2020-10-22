@@ -270,7 +270,7 @@
         "stopRecording": "Gelditu grabatzea",
         "stopRecordingWarning": "Ziur grabatzeari utzi nahi diozula?",
         "stopStreamingWarning": "Ziur zuzeneko erreprodukzioa gelditu nahi duzula?",
-        "streamKey": "Zuzeneko erreprodukzioaren giltza",
+        "streamKey": "nanoStream Cloud Streamname",
         "Submit": "Bidali",
         "thankYou": "Eskerrik asko {{appName}} erabiltzeagatik!",
         "token": "token",

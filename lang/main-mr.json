@@ -271,7 +271,7 @@
         "stopRecording": "रेकॉर्डिंग थांबवा",
         "stopRecordingWarning": "आपली खात्री आहे की आपण रेकॉर्डिंग थांबवू इच्छिता?",
         "stopStreamingWarning": "आपणास खात्री आहे की आपण थेट प्रवाह थांबवू इच्छिता?",
-        "streamKey": "थेट प्रवाह की",
+        "streamKey": "nanoStream Cloud Streamname",
         "Submit": "प्रस्तुत करणे",
         "thankYou": "वापरल्याबद्दल धन्यवाद {{appName}}!",
         "token": "टोकन",

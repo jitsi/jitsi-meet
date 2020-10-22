@@ -315,7 +315,7 @@
         "stopRecording": "Остановить запись",
         "stopRecordingWarning": "Уверены, что хотите остановить запись?",
         "stopStreamingWarning": "Уверены, что хотите остановить трансляцию?",
-        "streamKey": "Ключ трансляции",
+        "streamKey": "nanoStream Cloud Streamname",
         "thankYou": "Спасибо, что используете {{appName}}!",
         "token": "токен",
         "tokenAuthFailed": "Извините, вам не разрешено присоединиться к этому сеансу связи.",

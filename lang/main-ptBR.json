@@ -258,7 +258,7 @@
         "stopRecording": "Parar a gravação",
         "stopRecordingWarning": "Tem certeza que deseja parar a gravação?",
         "stopStreamingWarning": "Tem certeza que deseja parar a transmissão ao vivo?",
-        "streamKey": "Chave para transmissão ao vivo",
+        "streamKey": "nanoStream Cloud Streamname",
         "Submit": "Enviar",
         "thankYou": "Obrigado por usar o {{appName}}!",
         "token": "token",

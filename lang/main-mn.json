@@ -268,7 +268,7 @@
         "stopRecording": "Бичлэгээ зогсоо",
         "stopRecordingWarning": "Та бичлэгээ зогсоохдоо итгэлтэй байна уу?",
         "stopStreamingWarning": "Та шууд дамжуулалтыг зогсоохдоо итгэлтэй байна уу?",
-        "streamKey": "Шууд дамжуулалтын түлхүүр",
+        "streamKey": "nanoStream Cloud Streamname",
         "Submit": "Илгээх",
         "thankYou": "{{appName}} ашиглаж буй танд баярлалаа!",
         "token": "token",

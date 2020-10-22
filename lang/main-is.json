@@ -269,7 +269,7 @@
         "stopRecording": "Stöðva upptöku",
         "stopRecordingWarning": "Ertu viss um að þú viljir stöðva þessa upptöku?",
         "stopStreamingWarning": "Ertu viss um að þú viljir stöðva þetta beina streymi?",
-        "streamKey": "Lykill fyrir beint streymi",
+        "streamKey": "nanoStream Cloud Streamname",
         "Submit": "Senda inn",
         "thankYou": "Takk fyrir að nota {{appName}}!",
         "token": "teikn",

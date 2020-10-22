@@ -292,7 +292,7 @@
         "stopRecording": "Zastaviť záznam",
         "stopRecordingWarning": "Chcete zastaviť záznam?",
         "stopStreamingWarning": "Chcete zastaviť priamy prenos?",
-        "streamKey": "Kľúč živého vysielania",
+        "streamKey": "nanoStream Cloud Streamname",
         "Submit": "OK",
         "thankYou": "Ďakujeme za používanie {{appName}}!",
         "token": "token",

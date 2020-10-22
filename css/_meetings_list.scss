@@ -1,6 +1,6 @@
 .meetings-list {
     font-size: 14px;
-    color: #253858;
+    color: #fff;
     line-height: 20px;
     text-align: left;
     text-overflow: ellipsis;
@@ -26,7 +26,7 @@
     }
 
     .button {
-        background: #0074E0;
+        background: #ed7d0e;
         border-radius: 4px;
         color: #FFFFFF;
         display: flex;
@@ -99,7 +99,7 @@
         }
 
         &.with-click-handler:hover {
-            background-color: #75A7E7;
+            background-color: #ed7d0e50;
         }
 
         .add-button {

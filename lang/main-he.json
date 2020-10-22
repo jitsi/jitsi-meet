@@ -269,7 +269,7 @@
         "stopRecording": "הפסק הקלטה",
         "stopRecordingWarning": "האם אתה בטוח שברצונך להפסיק את ההקלטה?",
         "stopStreamingWarning": "האם אתה בטוח שברצונך להפסיק את השידור החי?",
-        "streamKey": "מפתח שידור חי",
+        "streamKey": "nanoStream Cloud Streamname",
         "Submit": "שלח",
         "thankYou": "תודה שהשתמשת ב{{appName}}!",
         "token": "אסימון",

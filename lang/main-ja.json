@@ -240,7 +240,7 @@
         "stopRecording": "録画を停止する",
         "stopRecordingWarning": "録画を停止してもよろしいですか？",
         "stopStreamingWarning": "ライブストリーミングを停止してもよろしいですか？",
-        "streamKey": "ライブストリームキー",
+        "streamKey": "nanoStream Cloud Streamname",
         "Submit": "投稿",
         "thankYou": "{{appName}} を使用していただきありがとうございます！",
         "token": "トークン",

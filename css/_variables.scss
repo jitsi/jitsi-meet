@@ -49,21 +49,21 @@ $newToolbarSizeWithPadding: calc(#{$newToolbarSize} + 24px);
 $toolbarTitleFontSize: 19px;
 $overflowMenuBG: initial;
 $overflowMenuItemHoverBG: #313D52;
-$overflowMenuItemHoverColor: #B8C7E0;
+$overflowMenuItemHoverColor: #ed7d0e;
 $overflowMenuItemColor: #B8C7E0;
 
 /**
  * Video layout
  */
-$videoThumbnailHovered: rgba(22, 94, 204, .4);
-$videoThumbnailSelected: #165ECC;
+$videoThumbnailHovered: #8b4805;
+$videoThumbnailSelected: #fd9934;
 $participantNameColor: #fff;
 $thumbnailPictogramColor: #fff;
-$dominantSpeakerBg: #165ecc;
+$dominantSpeakerBg: #ed7d0e;
 $raiseHandBg: #D6D61E;
-$audioLevelBg: #44A5FF;
-$connectionIndicatorBg: #165ecc;
-$audioLevelShadow: rgba(9, 36, 77, 0.9);
+$audioLevelBg: #ed7d0e;
+$connectionIndicatorBg: #a05b17;
+$audioLevelShadow: #914e0b;
 $videoStateIndicatorColor: $defaultColor;
 $videoStateIndicatorBackground: $toolbarBackground;
 $videoStateIndicatorSize: 40px;
@@ -142,8 +142,8 @@ $defaultDarkFontColor: #000;
 //inputs
 $inputControlEmColor: #f29424;
 //buttons
-$linkFontColor: #489afe;
-$linkHoverFontColor: #287ade;
+$linkFontColor: #ed7d0e;
+$linkHoverFontColor: #ed7d0e50;
 $formPadding: 16px;
 
 /**
@@ -172,7 +172,7 @@ $welcomePageWatermarkHeight: 74px;
  */
 $welcomePageDescriptionColor: #fff;
 $welcomePageFontFamily: inherit;
-$welcomePageBackground: linear-gradient(-90deg, #1251AE 0%, #0074FF 50%, #1251AE 100%);
+$welcomePageBackground: linear-gradient(-15deg, #ffffff 0, #ed7d0b 50%, #ed7d0e 100%);
 $welcomePageTitleColor: #fff;
 
 $welcomePageHeaderBackground: none;

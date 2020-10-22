@@ -253,7 +253,7 @@
         "stopRecording": "停止录制",
         "stopRecordingWarning": "确定要停止录制吗",
         "stopStreamingWarning": "确定要停止流媒体直播吗？",
-        "streamKey": "流媒体直播密钥",
+        "streamKey": "nanoStream Cloud Streamname",
         "Submit": "提交",
         "thankYou": "感谢使用{{appName}}！",
         "token": "标识",

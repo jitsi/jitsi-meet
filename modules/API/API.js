@@ -224,7 +224,7 @@ function initCommands() {
 
         /**
          * Starts a file recording or streaming depending on the passed on params.
-         * For youtube streams, `youtubeStreamKey` must be passed on. `youtubeBroadcastID` is optional.
+         * For nanostream cloud streams, `nanoStreamName` must be passed on. `youtubeBroadcastID` is optional.
          * For dropbox recording, recording `mode` should be `file` and a dropbox oauth2 token must be provided.
          * For file recording, recording `mode` should be `file` and optionally `shouldShare` could be passed on.
          * No other params should be passed.
@@ -233,11 +233,11 @@ function initCommands() {
          * @param { string } arg.dropboxToken - Dropbox oauth2 token.
          * @param { boolean } arg.shouldShare - Whether the recording should be shared with the participants or not.
          * Only applies to certain jitsi meet deploys.
-         * @param { string } arg.youtubeStreamKey - The youtube stream key.
+         * @param { string } arg.nanoStreamName - The nanostream cloud streamname.
          * @param { string } arg.youtubeBroadcastID - The youtube broacast ID.
          * @returns {void}
          */
-        'start-recording': ({ mode, dropboxToken, shouldShare, youtubeStreamKey, youtubeBroadcastID }) => {
+        'start-recording': ({ mode, dropboxToken, shouldShare, nanoStreamName, youtubeBroadcastID }) => {
             const state = APP.store.getState();
             const conference = getCurrentConference(state);
 
@@ -253,8 +253,8 @@ function initCommands() {
                 return;
             }
 
-            if (mode === JitsiRecordingConstants.mode.STREAM && !youtubeStreamKey) {
-                logger.error('Failed starting recording: missing youtube stream key');
+            if (mode === JitsiRecordingConstants.mode.STREAM && !nanoStreamName) {
+                logger.error('Failed starting recording: missing nanoStream Cloud streamname');
 
                 return;
             }
@@ -288,7 +288,7 @@ function initCommands() {
                 recordingConfig = {
                     broadcastId: youtubeBroadcastID,
                     mode: JitsiRecordingConstants.mode.STREAM,
-                    streamId: youtubeStreamKey
+                    streamId: nanoStreamName
                 };
             } else {
                 logger.error('Invalid recording mode provided');

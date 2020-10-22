@@ -102,7 +102,7 @@ let id = 0;
 /**
  * Adds given number to the numberOfParticipants property of given APIInstance.
  *
- * @param {JitsiMeetExternalAPI} APIInstance - The instance of the API.
+ * @param {NanoStreamMeetcastering} APIInstance - The instance of the API.
  * @param {int} number - The number of participants to be added to
  * numberOfParticipants property (this parameter can be negative number if the
  * numberOfParticipants should be decreased).
@@ -219,7 +219,7 @@ function parseSizeParam(value) {
 /**
  * The IFrame API interface class.
  */
-export default class JitsiMeetExternalAPI extends EventEmitter {
+export default class NanoStreamMeetcastering extends EventEmitter {
     /**
      * Constructs new API instance. Creates iframe and loads Jitsi Meet in it.
      *
@@ -455,7 +455,7 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
     }
 
     /**
-     * Setups listeners that are used internally for JitsiMeetExternalAPI.
+     * Setups listeners that are used internally for NanoStreamMeetcastering.
      *
      * @returns {void}
      *

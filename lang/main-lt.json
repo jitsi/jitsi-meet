@@ -268,7 +268,7 @@
         "stopRecording": "Stabdyti įrašymą",
         "stopRecordingWarning": "Ar jūs esate įsitikinę, kad norite sustabdyti įrašymą?",
         "stopStreamingWarning": "Ar esate įsitikinę, kad norite sustabdyti tiesioginę transliaciją?",
-        "streamKey": "Tiesioginės transliacijos kodas",
+        "streamKey": "nanoStream Cloud Streamname",
         "Submit": "Pateikti",
         "thankYou": "Ačiū, kad naudojate {{appName}}!",
         "token": "ženklas",

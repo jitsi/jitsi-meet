@@ -256,7 +256,7 @@
         "stopRecording": "Încheiere înregistrare",
         "stopRecordingWarning": "Sunteți sigur că vreți să încheiați înregistrarea?",
         "stopStreamingWarning": "Sunteți sigur că vreți să încheiați transmiterea live?",
-        "streamKey": "Cheie transmitere live",
+        "streamKey": "nanoStream Cloud Streamname",
         "Submit": "Trimiteți",
         "thankYou": "Vă mulțumim că utilizați {{appName}}!",
         "token": "token",

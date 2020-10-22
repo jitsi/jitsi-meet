@@ -43,8 +43,8 @@
         width: 286px;
 
         &.primary {
-            background: #0376DA;
-            border: 1px solid #0376DA;
+            background: #ed7d0e;
+            border: 1px solid #ed7d0e;
         }
 
         &.secondary {
@@ -84,7 +84,7 @@
             width: 36px;
 
             &:hover {
-                background-color: #0262B6;
+                background-color: #ed7d0e;
             }
 
             svg {
@@ -182,7 +182,7 @@
             }
 
             &.focused {
-                box-shadow: 0px 0px 4px 3px #0376DA;
+                box-shadow: 0px 0px 4px 3px #ed7d0e;
             }
         }
     }
@@ -213,12 +213,12 @@
     width: 100%;
 
     &.no-video {
-        background: radial-gradient(50% 50% at 50% 50%, #5B6F80 0%, #365067 100%), #FFFFFF;
+        background: radial-gradient(50% 50% at 50% 50%, #ff9d3c 0%, #a55505 100%), #FFFFFF;
         text-align: center;
     }
 
     .avatar {
-        background: #A4B8D1;
+        background: #fadcbe;
         margin: 0 auto;
     }
 

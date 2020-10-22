@@ -280,7 +280,7 @@
         "stopRecording": "Zaustavi snemanje",
         "stopRecordingWarning": "Ste prepričani, da želite zaustaviti snemanje?",
         "stopStreamingWarning": "Ste prepričani, da želite zaustaviti prenos v živo?",
-        "streamKey": "Žeton za prenos v živo",
+        "streamKey": "nanoStream Cloud Streamname",
         "thankYou": "Hvala, ker uporabljate {{appName}}!",
         "token": "žeton",
         "tokenAuthFailed": "Oprostite, temu srečanju se ne morete pridružiti.",

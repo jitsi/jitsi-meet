@@ -1,8 +1,8 @@
 import { ColorPalette, createStyleSheet } from '../../../base/styles';
 
-export const AVATAR_BORDER_GRADIENT = [ '#4C9AFF', '#0052CC' ];
+export const AVATAR_BORDER_GRADIENT = [ '#ed7d0e', '#0052CC' ];
 
-export const BACKGROUND_OVERLAY_GRADIENT = [ '#0052CC', '#4C9AFF' ];
+export const BACKGROUND_OVERLAY_GRADIENT = [ '#0052CC', '#ed7d0e' ];
 
 const BUTTON_SIZE = 56;
 

@@ -263,7 +263,7 @@
         "stopRecording": "Beigt ierakstu",
         "stopRecordingWarning": "Tiešām vēlaties beigt ierakstu?",
         "stopStreamingWarning": "Tiešām vēlaties beigt tiešraidi?",
-        "streamKey": "Tiešraides atslēga",
+        "streamKey": "nanoStream Cloud Streamname",
         "Submit": "ОК",
         "thankYou": "Super, ka izmantojat {{appName}}!",
         "token": "tokens/marķieris",

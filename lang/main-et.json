@@ -268,7 +268,7 @@
         "stopRecording": "Lõpeta salvestamine",
         "stopRecordingWarning": "Oled kindel, et soovid salvestamist lõpetada?",
         "stopStreamingWarning": "Oled kindel, et soovid otseülekannet lõpetada?",
-        "streamKey": "Otseülekande võti",
+        "streamKey": "nanoStream Cloud Streamname",
         "Submit": "Esita",
         "thankYou": "Aitäh, et kasutasid rakendust {{appName}}!",
         "token": "token",

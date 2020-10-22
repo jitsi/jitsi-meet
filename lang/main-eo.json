@@ -273,7 +273,7 @@
         "stopRecording": "Fini registradon",
         "stopRecordingWarning": "Ĉu vi certe volas fini la registradon?",
         "stopStreamingWarning": "Ĉu vi certe volas fini la tujan elsendfluon?",
-        "streamKey": "Ŝlosilo de tuja elsendfluo",
+        "streamKey": "nanoStream Cloud Streamname",
         "Submit": "Sendi",
         "thankYou": "Dankon ke vi uzas {{appName}}!",
         "token": "ĵetono",

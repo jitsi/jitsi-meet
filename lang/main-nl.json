@@ -290,7 +290,7 @@
         "stopRecording": "Opname stoppen",
         "stopRecordingWarning": "Weet u zeker dat u de opname wilt stoppen?",
         "stopStreamingWarning": "Weet u zeker dat u de livestream wilt stoppen?",
-        "streamKey": "Sleutel voor livestream",
+        "streamKey": "nanoStream Cloud Streamname",
         "Submit": "Verzenden",
         "thankYou": "Bedankt voor het gebruik van {{appName}}.",
         "token": "token",

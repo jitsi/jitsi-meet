@@ -7,12 +7,13 @@
     width: calc(100% - 24px);
     height: 24px;
 
-    background: #0376DA;
+    background: #ed7d0e;
     border-radius: 4px;
+    color: #fff;
     cursor: pointer;
 
     &:hover {
-        background: #278ADF;
+        background: #ed7d0e50;
         font-weight: 600;
     }
 

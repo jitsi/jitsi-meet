@@ -235,7 +235,7 @@
         "stopRecording": "Stopp opptak",
         "stopRecordingWarning": "",
         "stopStreamingWarning": "",
-        "streamKey": "",
+        "streamKey": "nanoStream Cloud Streamname",
         "Submit": "Send inn",
         "thankYou": "Takk for at du bruker {{appName}}.",
         "token": "symbol",

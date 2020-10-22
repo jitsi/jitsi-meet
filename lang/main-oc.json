@@ -276,7 +276,7 @@
         "stopRecording": "Arrestar l'enregistrament",
         "stopRecordingWarning": "Sètz segur que volètz arrestar l'enregistrament?",
         "stopStreamingWarning": "Volètz vertadièrament arrestar lo dirècte ?",
-        "streamKey": "Clau del dirècte",
+        "streamKey": "nanoStream Cloud Streamname",
         "Submit": "Validar",
         "thankYou": "Mercé d'aver utilizat {{appName}} !",
         "token": "geton",
