@@ -123,7 +123,10 @@ public class JitsiMeetActivity extends FragmentActivity
     }
 
     public void leave() {
-        getJitsiView().leave();
+        JitsiMeetView myView = getJitsiView();
+        if(myView != null) {
+            myView.leave();
+        }
     }
 
     private @Nullable JitsiMeetConferenceOptions getConferenceOptions(Intent intent) {
