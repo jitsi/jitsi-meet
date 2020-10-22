@@ -107,7 +107,7 @@ public class JitsiMeetActivity extends FragmentActivity
     protected JitsiMeetView getJitsiView() {
         JitsiMeetFragment fragment
             = (JitsiMeetFragment) getSupportFragmentManager().findFragmentById(R.id.jitsiFragment);
-        return fragment.getJitsiView();
+        return fragment == null ? null : fragment.getJitsiView();
     }
 
     public void join(@Nullable String url) {
