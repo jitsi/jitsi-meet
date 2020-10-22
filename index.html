@@ -9,8 +9,13 @@
 
     <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
     <link rel="stylesheet" href="css/all.css">
-    <link rel="manifest" href="static/pwa/manifest.json">
+    <link rel="manifest" id="manifest-placeholder">
+
     <script>
+        // Dynamically generate the manifest location URL. It must be served from the document origin, and we may have
+        // the base pointing to the CDN. This way we can generate a full URL which will bypass the base.
+        document.querySelector('#manifest-placeholder').setAttribute('href', window.location.origin + '/manifest.json');
+
         document.addEventListener('DOMContentLoaded', () => {
             if (!JitsiMeetJS.app) {
                 return;
