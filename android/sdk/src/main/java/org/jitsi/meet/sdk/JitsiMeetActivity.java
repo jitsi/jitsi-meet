@@ -124,7 +124,7 @@ public class JitsiMeetActivity extends FragmentActivity
 
     public void leave() {
         JitsiMeetView myView = getJitsiView();
-        if(myView != null) {
+        if (myView != null) {
             myView.leave();
         }
     }
