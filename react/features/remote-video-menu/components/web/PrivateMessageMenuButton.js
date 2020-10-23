@@ -9,8 +9,7 @@ import { connect } from '../../../base/redux';
 import {
     _mapDispatchToProps,
     _mapStateToProps as _abstractMapStateToProps,
-    type Props as AbstractProps
-} from '../../../chat/components/PrivateMessageButton';
+    type Props as AbstractProps } from '../../../chat/components/PrivateMessageButton';
 import { isButtonEnabled } from '../../../toolbox/functions.web';
 
 import RemoteVideoMenuButton from './RemoteVideoMenuButton';
@@ -20,6 +19,11 @@ declare var interfaceConfig: Object;
 type Props = AbstractProps & {
 
     /**
+     * True if the private send message button is disabled, hence the button is not enable.
+     */
+    _disabled: boolean,
+
+     /**
      * True if the private chat functionality is disabled, hence the button is not visible.
      */
     _hidden: boolean
@@ -50,7 +54,7 @@ class PrivateMessageMenuButton extends Component<Props> {
      * @returns {ReactElement}
      */
     render() {
-        const { participantID, t, _hidden, _disabled } = this.props;
+        const { participantID, t, _disabled, _hidden } = this.props;
 
         if (_hidden) {
             return null;
