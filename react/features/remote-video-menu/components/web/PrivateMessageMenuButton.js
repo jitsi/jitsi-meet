@@ -56,10 +56,6 @@ class PrivateMessageMenuButton extends Component<Props> {
     render() {
         const { participantID, t, _disabled, _hidden } = this.props;
 
-        if (_disabled) {
-            return null;
-        }
-
         if (_hidden) {
             return null;
         }
@@ -67,7 +63,7 @@ class PrivateMessageMenuButton extends Component<Props> {
         return (
             <RemoteVideoMenuButton
                 buttonText = { t('toolbar.privateMessage') }
-                displayClass = { 'disabled' && String(_disabled) }
+                displayClass = { _disabled ? 'disabled' : '' }
                 icon = { IconMessage }
                 id = { `privmsglink_${participantID}` }
                 onClick = { this._onClick } />
