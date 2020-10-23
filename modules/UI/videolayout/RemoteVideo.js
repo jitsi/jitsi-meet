@@ -12,10 +12,13 @@ import { i18next } from '../../../react/features/base/i18n';
 import {
     JitsiParticipantConnectionStatus
 } from '../../../react/features/base/lib-jitsi-meet';
+import { MEDIA_TYPE } from '../../../react/features/base/media';
 import {
+    getParticipantById,
     getPinnedParticipant,
     pinParticipant
 } from '../../../react/features/base/participants';
+import { isRemoteTrackMuted } from '../../../react/features/base/tracks';
 import { PresenceLabel } from '../../../react/features/presence-status';
 import {
     REMOTE_CONTROL_MENU_STATES,
@@ -310,11 +313,10 @@ export default class RemoteVideo extends SmallVideo {
     }
 
     /**
-     * @inheritDoc
-     * @override
+     * Video muted status changed handler.
      */
-    setVideoMutedView(isMuted) {
-        super.setVideoMutedView(isMuted);
+    onVideoMute() {
+        super.updateView();
 
         // Update 'mutedWhileDisconnected' flag
         this._figureOutMutedWhileDisconnected();
@@ -328,10 +330,12 @@ export default class RemoteVideo extends SmallVideo {
      */
     _figureOutMutedWhileDisconnected() {
         const isActive = this.isConnectionActive();
+        const isVideoMuted
+            = isRemoteTrackMuted(APP.store.getState()['features/base/tracks'], MEDIA_TYPE.VIDEO, this.id);
 
-        if (!isActive && this.isVideoMuted) {
+        if (!isActive && isVideoMuted) {
             this.mutedWhileDisconnected = true;
-        } else if (isActive && !this.isVideoMuted) {
+        } else if (isActive && !isVideoMuted) {
             this.mutedWhileDisconnected = false;
         }
     }

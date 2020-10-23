@@ -63,6 +63,7 @@ export default class LocalVideo extends SmallVideo {
 
         this.addAudioLevelIndicator();
         this.updateIndicators();
+        this.updateStatusBar();
 
         this.container.onclick = this._onContainerClick;
     }

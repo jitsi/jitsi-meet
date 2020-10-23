@@ -11,11 +11,15 @@ import { Provider } from 'react-redux';
 import { AudioLevelIndicator } from '../../../react/features/audio-level-indicator';
 import { Avatar as AvatarDisplay } from '../../../react/features/base/avatar';
 import { i18next } from '../../../react/features/base/i18n';
+import { MEDIA_TYPE } from '../../../react/features/base/media';
 import {
+    getLocalParticipant,
+    getParticipantById,
     getParticipantCount,
     getPinnedParticipant,
     pinParticipant
 } from '../../../react/features/base/participants';
+import { isLocalTrackMuted, isRemoteTrackMuted } from '../../../react/features/base/tracks';
 import { ConnectionIndicator } from '../../../react/features/connection-indicator';
 import { DisplayName } from '../../../react/features/display-name';
 import {
@@ -82,7 +86,6 @@ export default class SmallVideo {
      */
     constructor(VideoLayout) {
         this.isAudioMuted = false;
-        this.isVideoMuted = false;
         this.isScreenSharing = false;
         this.videoStream = null;
         this.audioStream = null;
@@ -243,19 +246,6 @@ export default class SmallVideo {
     }
 
     /**
-     * Shows video muted indicator over small videos and disables/enables avatar
-     * if video muted.
-     *
-     * @param {boolean} isMuted indicates if we should set the view to muted view
-     * or not
-     */
-    setVideoMutedView(isMuted) {
-        this.isVideoMuted = isMuted;
-        this.updateView();
-        this.updateStatusBar();
-    }
-
-    /**
      * Create or updates the ReactElement for displaying status indicators about
      * audio mute, video mute, and moderator status.
      *
@@ -274,7 +264,6 @@ export default class SmallVideo {
                     <StatusIndicators
                         showAudioMutedIndicator = { this.isAudioMuted }
                         showScreenShareIndicator = { this.isScreenSharing }
-                        showVideoMutedIndicator = { this.isVideoMuted }
                         participantID = { this.id } />
                 </I18nextProvider>
             </Provider>,
@@ -449,7 +438,18 @@ export default class SmallVideo {
      * or <tt>false</tt> otherwise.
      */
     isVideoPlayable() {
-        return this.videoStream && !this.isVideoMuted && !APP.conference.isAudioOnly();
+        const state = APP.store.getState();
+        const tracks = state['features/base/tracks'];
+        const participant = this.id ? getParticipantById(state, this.id) : getLocalParticipant(state);
+        let isVideoMuted = true;
+
+        if (participant?.local) {
+            isVideoMuted = isLocalTrackMuted(tracks, MEDIA_TYPE.VIDEO);
+        } else if (!participant?.isFakeParticipant) { // remote participants excluding shared video
+            isVideoMuted = isRemoteTrackMuted(tracks, MEDIA_TYPE.VIDEO, this.id);
+        }
+
+        return this.videoStream && !isVideoMuted && !APP.conference.isAudioOnly();
     }
 
     /**
@@ -490,7 +490,6 @@ export default class SmallVideo {
             mutedWhileDisconnected: this.mutedWhileDisconnected,
             canPlayEventReceived: this._canPlayEventReceived,
             videoStream: Boolean(this.videoStream),
-            isVideoMuted: this.isVideoMuted,
             isScreenSharing: this.isScreenSharing,
             videoStreamMuted: this.videoStream ? this.videoStream.isMuted() : 'no stream'
         };

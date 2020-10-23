@@ -3039,7 +3039,7 @@ export default {
      * @param {boolean} muted - New muted status.
      */
     setVideoMuteStatus(muted) {
-        APP.UI.setVideoMuted(this.getMyUserId(), muted);
+        APP.UI.setVideoMuted(this.getMyUserId());
         APP.API.notifyVideoMutedStatusChanged(muted);
     },
 
