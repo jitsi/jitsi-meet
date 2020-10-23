@@ -6,12 +6,13 @@ import { translate } from '../../../base/i18n';
 import { IconMessage } from '../../../base/icons';
 import { connect } from '../../../base/redux';
 import {
+    getLocalParticipant, getParticipants } from '../../../base/participants';
+import {
     _mapDispatchToProps,
     _mapStateToProps as _abstractMapStateToProps,
     type Props as AbstractProps
 } from '../../../chat/components/PrivateMessageButton';
 import { isButtonEnabled } from '../../../toolbox/functions.web';
-import { getLocalParticipant, getParticipants } from '../../../base/participants';
 
 import RemoteVideoMenuButton from './RemoteVideoMenuButton';
 
@@ -86,9 +87,8 @@ class PrivateMessageMenuButton extends Component<Props> {
  * @param {Object} state - The Redux state.
  * @param {Props} ownProps - The own props of the component.
  * @returns {Props}
- */
+*/
 function _mapStateToProps(state: Object, ownProps: Props): $Shape<Props> {
-    const localParticipant = getLocalParticipant(state);
     const { enableFeaturesBasedOnToken } = state['features/base/config'];
 
     let privateMessageDisabled;
