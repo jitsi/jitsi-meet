@@ -11,6 +11,7 @@ import {
     type Props as AbstractProps
 } from '../../../chat/components/PrivateMessageButton';
 import { isButtonEnabled } from '../../../toolbox/functions.web';
+import { getLocalParticipant, getParticipants } from '../../../base/participants';
 
 import RemoteVideoMenuButton from './RemoteVideoMenuButton';
 
@@ -49,7 +50,7 @@ class PrivateMessageMenuButton extends Component<Props> {
      * @returns {ReactElement}
      */
     render() {
-        const { participantID, t, _hidden } = this.props;
+        const { participantID, t, _hidden, _disabled } = this.props;
 
         if (_hidden) {
             return null;
@@ -58,6 +59,7 @@ class PrivateMessageMenuButton extends Component<Props> {
         return (
             <RemoteVideoMenuButton
                 buttonText = { t('toolbar.privateMessage') }
+                displayClass = { _disabled && 'disabled' }
                 icon = { IconMessage }
                 id = { `privmsglink_${participantID}` }
                 onClick = { this._onClick } />
@@ -86,8 +88,22 @@ class PrivateMessageMenuButton extends Component<Props> {
  * @returns {Props}
  */
 function _mapStateToProps(state: Object, ownProps: Props): $Shape<Props> {
+    const localParticipant = getLocalParticipant(state);
+    const { enableFeaturesBasedOnToken } = state['features/base/config'];
+
+    let privateMessageDisabled;
+
+    if (enableFeaturesBasedOnToken) {
+        // we enable private message if any participant already have this
+        // feature enabled
+        privateMessageDisabled = getParticipants(state)
+            .find(({ features = {} }) =>
+                String(features['private-message']) === 'false') !== undefined;
+    }
+
     return {
         ..._abstractMapStateToProps(state, ownProps),
+        _disabled: privateMessageDisabled,
         _hidden: typeof interfaceConfig !== 'undefined'
             && (interfaceConfig.DISABLE_PRIVATE_MESSAGES || !isButtonEnabled('chat'))
     };
