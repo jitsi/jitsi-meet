@@ -4,7 +4,6 @@ import { SET_FILMSTRIP_ENABLED } from '../../filmstrip/actionTypes';
 import { SELECT_LARGE_VIDEO_PARTICIPANT } from '../../large-video/actionTypes';
 import { APP_STATE_CHANGED } from '../../mobile/background/actionTypes';
 import { SCREEN_SHARE_PARTICIPANTS_UPDATED, SET_TILE_VIEW } from '../../video-layout/actionTypes';
-import { shouldDisplayTileView } from '../../video-layout/functions';
 import { SET_AUDIO_ONLY } from '../audio-only/actionTypes';
 import { CONFERENCE_JOINED } from '../conference/actionTypes';
 import {
@@ -81,12 +80,14 @@ function _updateLastN({ getState }) {
     if (typeof appState !== 'undefined' && appState !== 'active') {
         lastN = 0;
     } else if (audioOnly) {
-        const { screenShares } = state['features/video-layout'];
-        const tileViewEnabled = shouldDisplayTileView(state);
+        const { screenShares, tileViewEnabled } = state['features/video-layout'];
         const largeVideoParticipantId = state['features/large-video'].participantId;
         const largeVideoParticipant
             = largeVideoParticipantId ? getParticipantById(state, largeVideoParticipantId) : undefined;
 
+        // Use tileViewEnabled state from redux here instead of determining if client should be in tile
+        // view since we make an exception only for screenshare when in audio-only mode. If the user unpins
+        // the screenshare, lastN will be set to 0 here. It will be set to 1 if screenshare has been auto pinned.
         if (!tileViewEnabled && largeVideoParticipant && !largeVideoParticipant.local) {
             lastN = (screenShares || []).includes(largeVideoParticipantId) ? 1 : 0;
         } else {
