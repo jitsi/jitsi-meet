@@ -54,7 +54,11 @@ class PrivateMessageMenuButton extends Component<Props> {
      * @returns {ReactElement}
      */
     render() {
-        const { participantID, t, _disabled, _hidden } = this.props;
+        const { _disabled, _hidden, participantID, t } = this.props;
+
+        if (_disabled) {
+            return null;
+        }
 
         if (_hidden) {
             return null;
@@ -63,7 +67,7 @@ class PrivateMessageMenuButton extends Component<Props> {
         return (
             <RemoteVideoMenuButton
                 buttonText = { t('toolbar.privateMessage') }
-                displayClass = { _disabled && 'disabled' }
+                displayClass = {  'disabled' && _disabled }
                 icon = { IconMessage }
                 id = { `privmsglink_${participantID}` }
                 onClick = { this._onClick } />
