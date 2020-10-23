@@ -4,9 +4,8 @@ import React, { Component } from 'react';
 
 import { translate } from '../../../base/i18n';
 import { IconMessage } from '../../../base/icons';
+import { getParticipants } from '../../../base/participants';
 import { connect } from '../../../base/redux';
-import {
-    getLocalParticipant, getParticipants } from '../../../base/participants';
 import {
     _mapDispatchToProps,
     _mapStateToProps as _abstractMapStateToProps,
