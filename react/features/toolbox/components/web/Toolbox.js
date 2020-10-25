@@ -1029,6 +1029,13 @@ class Toolbox extends Component<Props, State> {
             <LiveStreamButton
                 key = 'livestreaming'
                 showLabel = { true } />,
+            this._shouldShowButton('recording')
+                && <OverflowMenuItem
+                accessibilityLabel = { t('toolbar.accessibilityLabel.localRecording') }
+                icon = { IconRec }
+                key = 'localrecording'
+                onClick = { this._onToolbarOpenLocalRecordingInfoDialog }
+                text = { t('localRecording.dialogTitle') } />,
             <RecordButton
                 key = 'record'
                 showLabel = { true } />,
