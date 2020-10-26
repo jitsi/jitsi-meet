@@ -1,80 +1,201 @@
-# Jitsi Meet - Secure, Simple and Scalable Video Conferences
+# nanoStream Meetcaster
+
+
+
+The nanoStream Meetcaster allows users to connect online with people in virtual rooms and hold face-to-face meetings. It is possible to stream the conference around the world in 1 second by passing a nanoStream Cloud ingest URL + streamname. 
+
+
+## Jitsi Meet - Secure, Simple and Scalable Video Conferences
 
 Jitsi Meet is an open-source (Apache) WebRTC JavaScript application that uses [Jitsi Videobridge](https://jitsi.org/videobridge) to provide high quality, [secure](https://jitsi.org/security) and scalable video conferences. Jitsi Meet in action can be seen at [here at the session #482 of the VoIP Users Conference](http://youtu.be/7vFUVClsNh0).
 
-The Jitsi Meet client runs in your browser, without installing anything else on your computer. You can try it out at https://meet.jit.si.
-
 Jitsi Meet allows very efficient collaboration. Users can stream their desktop or only some windows. It also supports shared document editing with Etherpad.
 
-## Installation
 
-On the client side, no installation is necessary. You just point your browser to the URL of your deployment. This section is about installing a Jitsi Meet suite on your server and hosting your own conferencing service.
+## Usecase
 
-Installing Jitsi Meet is a simple experience. For Debian-based system, following the [quick install](https://jitsi.github.io/handbook/docs/devops-guide/devops-guide-quickstart) document, which uses the package system. You can also see a demonstration of the process in [this tutorial video](https://jitsi.org/tutorial).
 
-For other systems, or if you wish to install all components manually, see the [detailed manual installation instructions](https://jitsi.github.io/handbook/docs/devops-guide/devops-guide-manual).
 
-Installation with Docker is also available. Please see the [instruction](https://jitsi.github.io/handbook/docs/devops-guide/devops-guide-docker).
+1. All participants are on the same level
+2. One participant on focus
+   1. All other participants hidden
+   2. All other participants as small tiles
 
-## Download
 
-| Latest stable release | [![release](https://img.shields.io/badge/release-latest-green.svg)](https://github.com/jitsi/jitsi-meet/releases/latest) |
-|---|---|
 
-You can download Debian/Ubuntu binaries:
-* [stable](https://download.jitsi.org/stable/) ([instructions](https://jitsi.org/downloads/ubuntu-debian-installations-instructions/))
-* [testing](https://download.jitsi.org/testing/) ([instructions](https://jitsi.org/downloads/ubuntu-debian-installations-instructions-for-testing/))
-* [nightly](https://download.jitsi.org/unstable/) ([instructions](https://jitsi.org/downloads/ubuntu-debian-installations-instructions-nightly/))
+[TOC]
 
-You can download source archives (produced by ```make source-package```):
-* [source builds](https://download.jitsi.org/jitsi-meet/src/)
+## Gettings Started
 
-### Mobile apps
+You can find the project [here](https://github.com/nanocosmos-private/jitsi-meet/tree/develop).
 
-* [Android](https://play.google.com/store/apps/details?id=org.jitsi.meet)
 
-[<img src="resources/img/google-play-badge.png" height="50">](https://play.google.com/store/apps/details?id=org.jitsi.meet)
 
-* [Android (F-Droid)](https://f-droid.org/en/packages/org.jitsi.meet/)
+### Web Frontend
 
-[<img src="resources/img/f-droid-badge.png" height="50">](https://f-droid.org/en/packages/org.jitsi.meet/)
+The Web Frontend can be used to start the Meetcaster directly from the browser. 
 
-* [iOS](https://itunes.apple.com/us/app/jitsi-meet/id1165103905)
+*The Makefile defines a few more options of how this project can be compiled and linked.*
 
-[<img src="resources/img/appstore-badge.png" height="50">](https://itunes.apple.com/us/app/jitsi-meet/id1165103905)
 
-You can also sign up for our open beta testing here:
 
-* [Android](https://play.google.com/apps/testing/org.jitsi.meet)
-* [iOS](https://testflight.apple.com/join/isy6ja7S)
+#### Installation
 
-## Release notes
+1. `npm install` - Installs the dependencies.
 
-Release notes for Jitsi Meet are maintained on [this repository](https://github.com/jitsi/jitsi-meet-release-notes).
+2. `make dev` - Runs the app in development mode. (open `http://localhost:8080/` to view it in the browser)
 
-## Development
 
-For web development see [here](https://jitsi.github.io/handbook/docs/dev-guide/dev-guide-web), and for mobile see [here](https://jitsi.github.io/handbook/docs/dev-guide/dev-guide-mobile).
 
-## Contributing
+#### Build
 
-If you are looking to contribute to Jitsi Meet, first of all, thank you! Please
-see our [guidelines for contributing](CONTRIBUTING.md).
+1. `make source-package` - Builds the app for production.
 
-## Embedding in external applications
+2. `jitsi-meet.tar.bz2` (ZIP file) - The source package for production (unpack file and copy to server  `scp * -r root@conference.nanocosmos.de:/usr/share/jitsi-meet`)
+3. `systemctl restart jicofo.service jitsi-videobridge2.service prosody.service` - Restarts and refreshs the server side including the new source package.
 
-Jitsi Meet provides a very flexible way of embedding in external applications by using the [Jitsi Meet API](doc/api.md).
 
-## Security
 
-The security section here was starting to feel a bit too succinct for the complexity of the topic, so we created a post that covers the topic much more broadly here: https://jitsi.org/security
+##### Update [interface_config.js](https://github.com/jitsi/jitsi-meet/blob/master/interface_config.js)
 
-The section on end-to-end encryption in that document is likely going to be one of the key points of interest: https://jitsi.org/security/#e2ee
+Gets updated when following the 3 steps above.
 
-## Security issues
 
-For information on reporting security vulnerabilities in Jitsi Meet, see [SECURITY.md](./SECURITY.md).
 
-## Acknowledgements
+##### Update [config.js](https://github.com/jitsi/jitsi-meet/blob/master/config.js)
 
-Jitsi Meet started out as a sample conferencing application using Jitsi Videobridge. It was originally developed by ESTOS' developer Philipp Hancke who then contributed it to the community where development continues with joint forces!
+Needs to be updated manually inside the directory `jitsi-meet-web-config` (copy to server: `scp config.js root@conference.nanocosmos.de:/usr/share/jitsi-meet-web-config`). Then do step 3 (s. above).
+
+
+
+#### Usage
+
+On the client side, no installation is necessary, just a JWT token.
+
+To customize data from the global setted [interface_config.js](https://github.com/jitsi/jitsi-meet/blob/master/interface_config.js) and [config.js](https://github.com/jitsi/jitsi-meet/blob/master/config.js) you can add params to the URL.
+
+Example: `[BASE_URL]/[ROOM_NAME]#config.startWithAudioMuted=true`
+
+
+
+### External API
+
+The External API can be used to embed the nanoStream Meetcaster.
+
+*The Makefile defines a few more options of how this project can be compiled and linked.*
+
+
+
+#### Build
+
+1. `make clean` - Cleans the `build` folder
+2. `make compile` - Creates a new `build` folder (Watch out: The server where jets is placed resolves every path as a room )
+
+
+
+#### Usage
+
+Read [here](https://jitsi.github.io/handbook/docs/dev-guide/dev-guide-iframe) about the IFrame API and have a look [here](#External-API) before using it, if some of these changes affect your planned usage.
+
+
+
+**Minimal code snippet**
+
+```html
+<script src='https://www-dev1.nanocosmos.de/amatic/api/external_api.min.js'></script>
+<div id="nanoStream-meet"></div>
+<script>
+    const domain = 'conference.nanocosmos.de';
+    const streamname='[BINTU-STREAMNAME]'
+    const parentNode = document.querySelector('#nanoStream-meet');
+    const options = {
+        roomName: streamname,
+        jwt: "[TOKEN]",
+        width: 700,
+        height: 700,
+        parentNode: parentNode,
+    };
+    const api = new NanoStreamMeetcaster(domain, options);
+</script>
+```
+
+
+
+
+
+## Changes and Customizations
+
+Until now changes have only been made by commenting things out or renaming every occurence of it.
+
+
+
+### External API
+
+Please do not forget to take care you rename **every occurence**, if you plan to.
+
+
+
+- Object `JitsiMeetExternalAPI` was renamed to`NanoStream Meetcaster` 
+  - Occurences:
+    - `webpack.config.js`
+    - `doc/examples/api.html`
+    - `modules/API/constants.js`
+    - `modules/API/external/external_api.js`
+    - `modules/API/external/index.js`
+
+
+
+
+- Function `startRecording ` (Starts a file recording or streaming session depending on the passed on params)  
+  - Occurrence: `modules/API/API.js`
+  - `youtubeStreamKey` was renamed to `nanoStreamName`
+
+
+
+### Lanuguage
+
+The default language is english (find the file here: `lang/main-enGB.json`). It can be setted up inside the `config.js` and could be changed manually by users inside the [Settings](#Settings). 
+
+
+
+### UI
+
+
+
+#### Invite People
+
+Can be found here: `react/features/invite/`
+
+
+
+- Add People Dialog (find here: `react/features/invite/components/add-people-dialog/web/AddPeopleDialog.js`)
+  - Hidden:
+    - "Dial in"
+
+
+
+#### More Actions Menu
+
+Can be found here: `react/features/toolbox/`
+
+
+
+- Toolbox (find here: `react/features/toolbox/components/web/Toolbox.js`)
+  - Hidden:
+    - "VideoBlurButton"
+    - "OverflowMenuItem (Feedback)"
+    - "OverflowMenuItem (Embed meeting)"
+    - "OverflowMenuItem (Shortcuts)"
+    - "OverflowMenuItem (Share YouTube Video)"
+
+
+
+#### Settings
+
+Can be found here: ` react/features/settings`
+
+
+
+- More Tab (find here: `react/features/settings/components/web/MoreTab.js`)
+  - Hidden: 
+    - "Choose Language"
