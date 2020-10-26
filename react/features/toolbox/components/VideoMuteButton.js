@@ -18,7 +18,7 @@ import {
 import { connect } from '../../base/redux';
 import { AbstractVideoMuteButton } from '../../base/toolbox/components';
 import type { AbstractButtonProps } from '../../base/toolbox/components';
-import { getLocalVideoType, isLocalVideoTrackMuted } from '../../base/tracks';
+import { getLocalVideoType, isLocalCameraTrackMuted } from '../../base/tracks';
 
 declare var APP: Object;
 
@@ -192,7 +192,7 @@ function _mapStateToProps(state): Object {
         _audioOnly: Boolean(audioOnly),
         _videoDisabled: !hasAvailableDevices(state, 'videoInput'),
         _videoMediaType: getLocalVideoType(tracks),
-        _videoMuted: isLocalVideoTrackMuted(tracks)
+        _videoMuted: isLocalCameraTrackMuted(tracks)
     };
 }
 

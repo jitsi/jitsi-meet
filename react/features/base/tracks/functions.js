@@ -346,12 +346,12 @@ export function getTracksByMediaType(tracks, mediaType) {
 }
 
 /**
- * Checks if the local video track in the given set of tracks is muted.
+ * Checks if the local video camera track in the given set of tracks is muted.
  *
  * @param {Track[]} tracks - List of all tracks.
  * @returns {Track[]}
  */
-export function isLocalVideoTrackMuted(tracks) {
+export function isLocalCameraTrackMuted(tracks) {
     const presenterTrack = getLocalTrack(tracks, MEDIA_TYPE.PRESENTER);
     const videoTrack = getLocalTrack(tracks, MEDIA_TYPE.VIDEO);
 
