@@ -53,7 +53,9 @@ import {
     setAudioOutputDeviceId,
     updateDeviceList
 } from './react/features/base/devices';
+import { isMobileBrowser } from './react/features/base/environment/utils';
 import {
+    browser,
     isFatalJitsiConnectionError,
     JitsiConferenceErrors,
     JitsiConferenceEvents,
@@ -503,9 +505,9 @@ export default {
 
         JitsiMeetJS.mediaDevices.addEventListener(
             JitsiMediaDevicesEvents.PERMISSION_PROMPT_IS_SHOWN,
-            browser =>
+            theBrowser =>
                 APP.store.dispatch(
-                    mediaPermissionPromptVisibilityChanged(true, browser))
+                    mediaPermissionPromptVisibilityChanged(true, theBrowser))
         );
 
         let tryCreateLocalTracks;
@@ -2429,6 +2431,15 @@ export default {
             = APP.store.getState()['features/base/settings'].displayName;
 
         APP.UI.changeDisplayName('localVideoContainer', displayName);
+
+        // Send environment related specifics.
+        sendAnalytics({
+            action: 'app.environment',
+            attributes: {
+                'isMobileBrowser': isMobileBrowser(),
+                'isPWA': browser.isTwa()
+            }
+        });
     },
 
     /**
