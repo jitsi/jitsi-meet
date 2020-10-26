@@ -5,7 +5,7 @@ import React, { Component } from 'react';
 import { MEDIA_TYPE } from '../../../base/media';
 import { getLocalParticipant, getParticipantById, PARTICIPANT_ROLE } from '../../../base/participants';
 import { connect } from '../../../base/redux';
-import { isLocalTrackMuted, isRemoteTrackMuted } from '../../../base/tracks';
+import { getTrackByMediaTypeAndParticipant, isLocalTrackMuted, isRemoteTrackMuted } from '../../../base/tracks';
 import { getCurrentLayout, LAYOUTS } from '../../../video-layout';
 
 import AudioMutedIndicator from './AudioMutedIndicator';
@@ -36,14 +36,14 @@ type Props = {
     _showModeratorIndicator: Boolean,
 
     /**
+     * Indicates if the screen share indicator should be visible or not.
+     */
+    _showScreenShareIndicator: Boolean,
+
+    /**
      * Indicates if the video muted indicator should be visible or not.
      */
     _showVideoMutedIndicator: Boolean,
-
-    /**
-     * Indicates if the screen share indicator should be visible or not.
-     */
-    showScreenShareIndicator: Boolean,
 
     /**
      * The ID of the participant for which the status bar is rendered.
@@ -68,7 +68,7 @@ class StatusIndicators extends Component<Props> {
             _currentLayout,
             _showAudioMutedIndicator,
             _showModeratorIndicator,
-            showScreenShareIndicator,
+            _showScreenShareIndicator,
             _showVideoMutedIndicator
         } = this.props;
         let tooltipPosition;
@@ -87,7 +87,7 @@ class StatusIndicators extends Component<Props> {
         return (
             <div>
                 { _showAudioMutedIndicator ? <AudioMutedIndicator tooltipPosition = { tooltipPosition } /> : null }
-                { showScreenShareIndicator ? <ScreenShareIndicator tooltipPosition = { tooltipPosition } /> : null }
+                { _showScreenShareIndicator ? <ScreenShareIndicator tooltipPosition = { tooltipPosition } /> : null }
                 { _showVideoMutedIndicator ? <VideoMutedIndicator tooltipPosition = { tooltipPosition } /> : null }
                 { _showModeratorIndicator ? <ModeratorIndicator tooltipPosition = { tooltipPosition } /> : null }
             </div>
@@ -116,11 +116,15 @@ function _mapStateToProps(state, ownProps) {
     const tracks = state['features/base/tracks'];
     let isVideoMuted = true;
     let isAudioMuted = true;
+    let isScreenSharing = false;
 
     if (participant?.local) {
         isVideoMuted = isLocalTrackMuted(tracks, MEDIA_TYPE.VIDEO);
         isAudioMuted = isLocalTrackMuted(tracks, MEDIA_TYPE.AUDIO);
     } else if (!participant?.isFakeParticipant) { // remote participants excluding shared video
+        const track = getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.VIDEO, participantID);
+
+        isScreenSharing = typeof track !== 'undefined' && track.videoType === 'desktop';
         isVideoMuted = isRemoteTrackMuted(tracks, MEDIA_TYPE.VIDEO, participantID);
         isAudioMuted = isRemoteTrackMuted(tracks, MEDIA_TYPE.AUDIO, participantID);
     }
@@ -130,6 +134,7 @@ function _mapStateToProps(state, ownProps) {
         _showAudioMutedIndicator: isAudioMuted,
         _showModeratorIndicator:
             !interfaceConfig.DISABLE_FOCUS_INDICATOR && participant && participant.role === PARTICIPANT_ROLE.MODERATOR,
+        _showScreenShareIndicator: isScreenSharing,
         _showVideoMutedIndicator: isVideoMuted
     };
 }

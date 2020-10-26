@@ -19,7 +19,11 @@ import {
     getPinnedParticipant,
     pinParticipant
 } from '../../../react/features/base/participants';
-import { isLocalTrackMuted, isRemoteTrackMuted } from '../../../react/features/base/tracks';
+import {
+    getTrackByMediaTypeAndParticipant,
+    isLocalTrackMuted,
+    isRemoteTrackMuted
+} from '../../../react/features/base/tracks';
 import { ConnectionIndicator } from '../../../react/features/connection-indicator';
 import { DisplayName } from '../../../react/features/display-name';
 import {
@@ -85,7 +89,6 @@ export default class SmallVideo {
      * Constructor.
      */
     constructor(VideoLayout) {
-        this.isScreenSharing = false;
         this.videoStream = null;
         this.audioStream = null;
         this.VideoLayout = VideoLayout;
@@ -218,22 +221,6 @@ export default class SmallVideo {
     }
 
     /**
-     * Shows / hides the screen-share indicator over small videos.
-     *
-     * @param {boolean} isScreenSharing indicates if the screen-share element should be shown
-     * or hidden
-     */
-    setScreenSharing(isScreenSharing) {
-        if (isScreenSharing === this.isScreenSharing) {
-            return;
-        }
-
-        this.isScreenSharing = isScreenSharing;
-        this.updateView();
-        this.updateStatusBar();
-    }
-
-    /**
      * Create or updates the ReactElement for displaying status indicators about
      * audio mute, video mute, and moderator status.
      *
@@ -250,7 +237,6 @@ export default class SmallVideo {
             <Provider store = { APP.store }>
                 <I18nextProvider i18n = { i18next }>
                     <StatusIndicators
-                        showScreenShareIndicator = { this.isScreenSharing }
                         participantID = { this.id } />
                 </I18nextProvider>
             </Provider>,
@@ -466,18 +452,29 @@ export default class SmallVideo {
      * @returns {Object}
      */
     computeDisplayModeInput() {
+        let isScreenSharing = false;
+        const state = APP.store.getState();
+        const participant = getParticipantById(state, this.id);
+
+        if (typeof participant !== 'undefined' && !participant.isFakeParticipant && !participant.local) {
+            const tracks = state['features/base/tracks'];
+            const track = getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.VIDEO, this.id);
+
+            isScreenSharing = typeof track !== 'undefined' && track.videoType === 'desktop';
+        }
+
         return {
             isCurrentlyOnLargeVideo: this.isCurrentlyOnLargeVideo(),
             isHovered: this._isHovered(),
             isAudioOnly: APP.conference.isAudioOnly(),
-            tileViewActive: shouldDisplayTileView(APP.store.getState()),
+            tileViewActive: shouldDisplayTileView(state),
             isVideoPlayable: this.isVideoPlayable(),
             hasVideo: Boolean(this.selectVideoElement().length),
             connectionStatus: APP.conference.getParticipantConnectionStatus(this.id),
             mutedWhileDisconnected: this.mutedWhileDisconnected,
             canPlayEventReceived: this._canPlayEventReceived,
             videoStream: Boolean(this.videoStream),
-            isScreenSharing: this.isScreenSharing,
+            isScreenSharing,
             videoStreamMuted: this.videoStream ? this.videoStream.isMuted() : 'no stream'
         };
     }
