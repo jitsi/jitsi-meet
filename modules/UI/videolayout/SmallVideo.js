@@ -85,7 +85,6 @@ export default class SmallVideo {
      * Constructor.
      */
     constructor(VideoLayout) {
-        this.isAudioMuted = false;
         this.isScreenSharing = false;
         this.videoStream = null;
         this.audioStream = null;
@@ -219,17 +218,6 @@ export default class SmallVideo {
     }
 
     /**
-     * Shows / hides the audio muted indicator over small videos.
-     *
-     * @param {boolean} isMuted indicates if the muted element should be shown
-     * or hidden
-     */
-    showAudioIndicator(isMuted) {
-        this.isAudioMuted = isMuted;
-        this.updateStatusBar();
-    }
-
-    /**
      * Shows / hides the screen-share indicator over small videos.
      *
      * @param {boolean} isScreenSharing indicates if the screen-share element should be shown
@@ -262,7 +250,6 @@ export default class SmallVideo {
             <Provider store = { APP.store }>
                 <I18nextProvider i18n = { i18next }>
                     <StatusIndicators
-                        showAudioMutedIndicator = { this.isAudioMuted }
                         showScreenShareIndicator = { this.isScreenSharing }
                         participantID = { this.id } />
                 </I18nextProvider>

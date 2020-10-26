@@ -3,9 +3,11 @@
 import React, { Component } from 'react';
 
 import { Icon, IconMenuThumb } from '../../../base/icons';
+import { MEDIA_TYPE } from '../../../base/media';
 import { getLocalParticipant, PARTICIPANT_ROLE } from '../../../base/participants';
 import { Popover } from '../../../base/popover';
 import { connect } from '../../../base/redux';
+import { isRemoteTrackMuted } from '../../../base/tracks';
 
 import {
     GrantModeratorButton,
@@ -38,6 +40,11 @@ type Props = {
     _disableRemoteMute: Boolean,
 
     /**
+     * Whether or not the participant is currently muted.
+     */
+    _isAudioMuted: boolean,
+
+    /**
      * Whether or not the participant is a conference moderator.
      */
     _isModerator: boolean,
@@ -47,11 +54,6 @@ type Props = {
      * audio element.
      */
     initialVolumeValue: number,
-
-    /**
-     * Whether or not the participant is currently muted.
-     */
-    isAudioMuted: boolean,
 
     /**
      * Callback to invoke when the popover has been displayed.
@@ -170,9 +172,9 @@ class RemoteVideoMenuTriggerButton extends Component<Props> {
         const {
             _disableKick,
             _disableRemoteMute,
+            _isAudioMuted,
             _isModerator,
             initialVolumeValue,
-            isAudioMuted,
             onRemoteControlToggle,
             onVolumeChange,
             remoteControlState,
@@ -185,7 +187,7 @@ class RemoteVideoMenuTriggerButton extends Component<Props> {
             if (!_disableRemoteMute) {
                 buttons.push(
                     <MuteButton
-                        isAudioMuted = { isAudioMuted }
+                        isAudioMuted = { _isAudioMuted }
                         key = 'mute'
                         participantID = { participantID } />
                 );
@@ -258,13 +260,16 @@ class RemoteVideoMenuTriggerButton extends Component<Props> {
  *     _isModerator: boolean
  * }}
  */
-function _mapStateToProps(state) {
-    const participant = getLocalParticipant(state);
+function _mapStateToProps(state, ownProps) {
+    const { participantID } = ownProps;
+    const tracks = state['features/base/tracks'];
+    const localParticipant = getLocalParticipant(state);
     const { remoteVideoMenu = {}, disableRemoteMute } = state['features/base/config'];
     const { disableKick } = remoteVideoMenu;
 
     return {
-        _isModerator: Boolean(participant?.role === PARTICIPANT_ROLE.MODERATOR),
+        _isAudioMuted: isRemoteTrackMuted(tracks, MEDIA_TYPE.AUDIO, participantID) || false,
+        _isModerator: Boolean(localParticipant?.role === PARTICIPANT_ROLE.MODERATOR),
         _disableKick: Boolean(disableKick),
         _disableRemoteMute: Boolean(disableRemoteMute)
     };

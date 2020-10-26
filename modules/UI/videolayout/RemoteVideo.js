@@ -198,7 +198,6 @@ export default class RemoteVideo extends SmallVideo {
                     <AtlasKitThemeProvider mode = 'dark'>
                         <RemoteVideoMenuTriggerButton
                             initialVolumeValue = { initialVolumeValue }
-                            isAudioMuted = { this.isAudioMuted }
                             menuPosition = { remoteMenuPosition }
                             onMenuDisplay
                                 = {this._onRemoteVideoMenuDisplay.bind(this)}
@@ -302,13 +301,8 @@ export default class RemoteVideo extends SmallVideo {
 
     /**
      * Updates the remote video menu.
-     *
-     * @param isMuted the new muted state to update to
      */
-    updateRemoteVideoMenu(isMuted) {
-        if (typeof isMuted !== 'undefined') {
-            this.isAudioMuted = isMuted;
-        }
+    updateRemoteVideoMenu() {
         this._generatePopupContent();
     }
 

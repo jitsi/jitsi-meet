@@ -26,6 +26,11 @@ type Props = {
     _currentLayout: string,
 
     /**
+     * Indicates if the audio muted indicator should be visible or not.
+     */
+    _showAudioMutedIndicator: Boolean,
+
+    /**
      * Indicates if the moderator indicator should be visible or not.
      */
     _showModeratorIndicator: Boolean,
@@ -34,11 +39,6 @@ type Props = {
      * Indicates if the video muted indicator should be visible or not.
      */
     _showVideoMutedIndicator: Boolean,
-
-    /**
-     * Indicates if the audio muted indicator should be visible or not.
-     */
-    showAudioMutedIndicator: Boolean,
 
     /**
      * Indicates if the screen share indicator should be visible or not.
@@ -66,8 +66,8 @@ class StatusIndicators extends Component<Props> {
     render() {
         const {
             _currentLayout,
+            _showAudioMutedIndicator,
             _showModeratorIndicator,
-            showAudioMutedIndicator,
             showScreenShareIndicator,
             _showVideoMutedIndicator
         } = this.props;
@@ -86,7 +86,7 @@ class StatusIndicators extends Component<Props> {
 
         return (
             <div>
-                { showAudioMutedIndicator ? <AudioMutedIndicator tooltipPosition = { tooltipPosition } /> : null }
+                { _showAudioMutedIndicator ? <AudioMutedIndicator tooltipPosition = { tooltipPosition } /> : null }
                 { showScreenShareIndicator ? <ScreenShareIndicator tooltipPosition = { tooltipPosition } /> : null }
                 { _showVideoMutedIndicator ? <VideoMutedIndicator tooltipPosition = { tooltipPosition } /> : null }
                 { _showModeratorIndicator ? <ModeratorIndicator tooltipPosition = { tooltipPosition } /> : null }
@@ -115,15 +115,19 @@ function _mapStateToProps(state, ownProps) {
 
     const tracks = state['features/base/tracks'];
     let isVideoMuted = true;
+    let isAudioMuted = true;
 
     if (participant?.local) {
         isVideoMuted = isLocalTrackMuted(tracks, MEDIA_TYPE.VIDEO);
+        isAudioMuted = isLocalTrackMuted(tracks, MEDIA_TYPE.AUDIO);
     } else if (!participant?.isFakeParticipant) { // remote participants excluding shared video
         isVideoMuted = isRemoteTrackMuted(tracks, MEDIA_TYPE.VIDEO, participantID);
+        isAudioMuted = isRemoteTrackMuted(tracks, MEDIA_TYPE.AUDIO, participantID);
     }
 
     return {
         _currentLayout: getCurrentLayout(state),
+        _showAudioMutedIndicator: isAudioMuted,
         _showModeratorIndicator:
             !interfaceConfig.DISABLE_FOCUS_INDICATOR && participant && participant.role === PARTICIPANT_ROLE.MODERATOR,
         _showVideoMutedIndicator: isVideoMuted
