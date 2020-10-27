@@ -124,7 +124,7 @@ function _mapStateToProps(state, ownProps) {
     } else if (!participant?.isFakeParticipant) { // remote participants excluding shared video
         const track = getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.VIDEO, participantID);
 
-        isScreenSharing = typeof track !== 'undefined' && track.videoType === 'desktop';
+        isScreenSharing = track?.videoType === 'desktop';
         isVideoMuted = isRemoteTrackMuted(tracks, MEDIA_TYPE.VIDEO, participantID);
         isAudioMuted = isRemoteTrackMuted(tracks, MEDIA_TYPE.AUDIO, participantID);
     }
