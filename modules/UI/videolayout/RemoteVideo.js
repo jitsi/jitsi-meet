@@ -323,9 +323,11 @@ export default class RemoteVideo extends SmallVideo {
      * @private
      */
     _figureOutMutedWhileDisconnected() {
-        const isActive = this.isConnectionActive();
-        const isVideoMuted
-            = isRemoteTrackMuted(APP.store.getState()['features/base/tracks'], MEDIA_TYPE.VIDEO, this.id);
+        const state = APP.store.getState();
+        const participant = getParticipantById(state, this.id);
+        const connectionState = participant?.connectionStatus;
+        const isActive = connectionState === JitsiParticipantConnectionStatus.ACTIVE;
+        const isVideoMuted = isRemoteTrackMuted(state['features/base/tracks'], MEDIA_TYPE.VIDEO, this.id);
 
         if (!isActive && isVideoMuted) {
             this.mutedWhileDisconnected = true;
@@ -365,17 +367,6 @@ export default class RemoteVideo extends SmallVideo {
     }
 
     /**
-     * Checks whether the remote user associated with this <tt>RemoteVideo</tt>
-     * has connectivity issues.
-     *
-     * @return {boolean} <tt>true</tt> if the user's connection is fine or
-     * <tt>false</tt> otherwise.
-     */
-    isConnectionActive() {
-        return this.user.getConnectionStatus() === JitsiParticipantConnectionStatus.ACTIVE;
-    }
-
-    /**
      * The remote video is considered "playable" once the can play event has been received. It will be allowed to
      * display video also in {@link JitsiParticipantConnectionStatus.INTERRUPTED} if the video has received the canplay
      * event and was not muted while not in ACTIVE state. This basically means that there is stalled video image cached
@@ -386,7 +377,8 @@ export default class RemoteVideo extends SmallVideo {
      * @override
      */
     isVideoPlayable() {
-        const connectionState = APP.conference.getParticipantConnectionStatus(this.id);
+        const participant = getParticipantById(APP.store.getState(), this.id);
+        const connectionState = participant?.connectionStatus;
 
         return super.isVideoPlayable()
             && this._canPlayEventReceived
@@ -399,25 +391,8 @@ export default class RemoteVideo extends SmallVideo {
      */
     updateView() {
         this.$container.toggleClass('audio-only', APP.conference.isAudioOnly());
-        this.updateConnectionStatusIndicator();
-
-        // This must be called after 'updateConnectionStatusIndicator' because it
-        // affects the display mode by modifying 'mutedWhileDisconnected' flag
-        super.updateView();
-    }
-
-    /**
-     * Updates the UI to reflect user's connectivity status.
-     */
-    updateConnectionStatusIndicator() {
-        const connectionStatus = this.user.getConnectionStatus();
-
-        logger.debug(`${this.id} thumbnail connection status: ${connectionStatus}`);
-
-        // FIXME rename 'mutedWhileDisconnected' to 'mutedWhileNotRendering'
-        // Update 'mutedWhileDisconnected' flag
         this._figureOutMutedWhileDisconnected();
-        this.updateConnectionStatus(connectionStatus);
+        super.updateView();
     }
 
     /**

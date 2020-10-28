@@ -96,16 +96,6 @@ export default class SmallVideo {
         this.videoType = undefined;
 
         /**
-         * The current state of the user's bridge connection. The value should be
-         * a string as enumerated in the library's participantConnectionStatus
-         * constants.
-         *
-         * @private
-         * @type {string|null}
-         */
-        this._connectionStatus = null;
-
-        /**
          * Whether or not the connection indicator should be displayed.
          *
          * @private
@@ -207,16 +197,6 @@ export default class SmallVideo {
     */
     removeConnectionIndicator() {
         this._showConnectionIndicator = false;
-        this.updateIndicators();
-    }
-
-    /**
-     * Updates the connectionStatus stat which displays in the ConnectionIndicator.
-
-    * @returns {void}
-    */
-    updateConnectionStatus(connectionStatus) {
-        this._connectionStatus = connectionStatus;
         this.updateIndicators();
     }
 
@@ -453,6 +433,7 @@ export default class SmallVideo {
      */
     computeDisplayModeInput() {
         let isScreenSharing = false;
+        let connectionStatus;
         const state = APP.store.getState();
         const participant = getParticipantById(state, this.id);
 
@@ -461,6 +442,7 @@ export default class SmallVideo {
             const track = getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.VIDEO, this.id);
 
             isScreenSharing = typeof track !== 'undefined' && track.videoType === 'desktop';
+            connectionStatus = participant.connectionStatus;
         }
 
         return {
@@ -470,7 +452,7 @@ export default class SmallVideo {
             tileViewActive: shouldDisplayTileView(state),
             isVideoPlayable: this.isVideoPlayable(),
             hasVideo: Boolean(this.selectVideoElement().length),
-            connectionStatus: APP.conference.getParticipantConnectionStatus(this.id),
+            connectionStatus,
             mutedWhileDisconnected: this.mutedWhileDisconnected,
             canPlayEventReceived: this._canPlayEventReceived,
             videoStream: Boolean(this.videoStream),
@@ -714,7 +696,6 @@ export default class SmallVideo {
                             { this._showConnectionIndicator
                                 ? <ConnectionIndicator
                                     alwaysVisible = { showConnectionIndicator }
-                                    connectionStatus = { this._connectionStatus }
                                     iconSize = { iconSize }
                                     isLocalVideo = { this.isLocal }
                                     enableStatsDisplay = { !interfaceConfig.filmStripOnly }

@@ -1135,20 +1135,6 @@ export default {
     },
 
     /**
-     * Get participant connection status for the participant.
-     *
-     * @param {string} id participant's identifier(MUC nickname)
-     *
-     * @returns {ParticipantConnectionStatus|null} the status of the participant
-     * or null if no such participant is found or participant is the local user.
-     */
-    getParticipantConnectionStatus(id) {
-        const participant = this.getParticipantById(id);
-
-        return participant ? participant.getConnectionStatus() : null;
-    },
-
-    /**
      * Gets the display name foe the <tt>JitsiParticipant</tt> identified by
      * the given <tt>id</tt>.
      *

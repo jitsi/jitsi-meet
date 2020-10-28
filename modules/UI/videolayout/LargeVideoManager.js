@@ -12,6 +12,7 @@ import {
     JitsiParticipantConnectionStatus
 } from '../../../react/features/base/lib-jitsi-meet';
 import { VIDEO_TYPE } from '../../../react/features/base/media';
+import { getParticipantById } from '../../../react/features/base/participants';
 import { CHAT_SIZE } from '../../../react/features/chat';
 import {
     updateKnownLargeVideoResolution
@@ -224,9 +225,8 @@ export default class LargeVideoManager {
             const wasUsersImageCached
                 = !isUserSwitch && container.wasVideoRendered;
             const isVideoMuted = !stream || stream.isMuted();
-
-            const connectionStatus
-                = APP.conference.getParticipantConnectionStatus(id);
+            const participant = getParticipantById(APP.store.getState(), id);
+            const connectionStatus = participant?.connectionStatus;
             const isVideoRenderable
                 = !isVideoMuted
                     && (APP.conference.isLocalId(id)
@@ -479,8 +479,8 @@ export default class LargeVideoManager {
      */
     showRemoteConnectionMessage(show) {
         if (typeof show !== 'boolean') {
-            const connStatus
-                = APP.conference.getParticipantConnectionStatus(this.id);
+            const participant = getParticipantById(APP.store.getState(), this.id);
+            const connStatus = participant?.connectionStatus;
 
             // eslint-disable-next-line no-param-reassign
             show = !APP.conference.isLocalId(this.id)
