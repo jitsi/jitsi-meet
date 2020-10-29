@@ -216,9 +216,10 @@ class CopyMeetingUrl extends Component<Props, State> {
  */
 function mapStateToProps(state) {
     const { enableAutomaticUrlCopy } = state['features/base/config'];
+    const { customizationReady } = state['features/dynamic-branding'];
 
     return {
-        url: getCurrentConferenceUrl(state),
+        url: customizationReady ? getCurrentConferenceUrl(state) : '',
         _enableAutomaticUrlCopy: enableAutomaticUrlCopy || false
     };
 }
