@@ -25,7 +25,7 @@ interfaceConfig.LANG_DETECTION && order.push(customNavigatorDetector.name);
 
 // Default use configured language
 order.push(configLanguageDetector.name);
-
+ 
 /**
  * The singleton language detector for Web.
  */

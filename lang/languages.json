@@ -1,4 +1,5 @@
 {
+ 
     "en": "English",
     "af": "Afrikaans",
     "ar": "Arabic",
@@ -14,6 +15,7 @@
     "esUS": "Spanish (Latin America)",
     "et": "Estonian",
     "eu": "Basque",
+    "fa":"Farsi",
     "fi": "Finnish",
     "fr": "French",
     "frCA": "French (Canadian)",

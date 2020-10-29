@@ -301,7 +301,7 @@ export const countries = [
         dialCode: '62',
         code: 'id' },
     {
-        name: 'Iran, Islamic Republic of Persian Gulf',
+        name: 'Iran',
         dialCode: '98',
         code: 'ir'
     },

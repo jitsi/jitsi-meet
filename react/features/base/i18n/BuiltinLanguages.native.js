@@ -18,6 +18,7 @@ const _LANGUAGES = {
         languages: require('../../../../lang/languages-ar'),
         main: require('../../../../lang/main-ar')
     },
+  
 
     // Bulgarian
     'bg': {
@@ -67,6 +68,10 @@ const _LANGUAGES = {
         main: require('../../../../lang/main-et')
     },
 
+  'fa': {
+    languages: require('../../../../lang/languages-fa'),
+    main: require('../../../../lang/main-fa')
+},
     // Finnish
     'fi': {
         languages: require('../../../../lang/languages-fi'),
