@@ -773,6 +773,22 @@ export function createTrackMutedEvent(mediaType, reason, muted = true) {
 }
 
 /**
+ * Creates an event for joining a vpaas conference.
+ *
+ * @param {string} tenant - The conference tenant.
+ * @returns {Object} The event in a format suitable for sending via
+ * sendAnalytics.
+ */
+export function createVpaasConferenceJoinedEvent(tenant) {
+    return {
+        action: 'vpaas.conference.joined',
+        attributes: {
+            tenant
+        }
+    };
+}
+
+/**
  * Creates an event for an action on the welcome page.
  *
  * @param {string} action - The action that the event represents.
