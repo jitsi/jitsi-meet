@@ -576,6 +576,22 @@
         "setEmailLabel": "Set your gravatar email",
         "title": "Profile"
     },
+    "janeWaitingArea": {
+        "audioAndVideoError": "Audio and video error:",
+        "audioOnlyError": "Audio error:",
+        "audioTrackError": "Could not create audio track.",
+        "configuringDevices": "Configuring devices...",
+        "begin": "Begin",
+        "lookGood": "It sounds like your microphone is working properly",
+        "videoOnlyError": "Video error:",
+        "videoTrackError": "Could not create video track.",
+        "whenYouAreReady": "When you are ready to begin, click on the button below to admit your client into the video session.",
+        "practitionerIsReady": "Your practitioner is ready to begin the session.",
+        "waitClient": "Waiting for your client...",
+        "patientIsReady": "Your patient is ready to begin the session.",
+        "waitPractitioner": "Your practitioner will let you into the session when ready...",
+        "testYourDevice": "Please keep your app or browser window open to stay on the call. You may test your audio and video while you wait."
+    },
     "raisedHand": "Would like to speak",
     "recording": {
         "limitNotificationDescriptionWeb": "Due to high demand your recording will be limited to {{limit}} min. For unlimited recordings try <a href={{url}} rel='noopener noreferrer' target='_blank'>{{app}}</a>.",

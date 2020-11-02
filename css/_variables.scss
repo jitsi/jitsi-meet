@@ -33,6 +33,7 @@ $presence-available: rgb(110, 176, 5);
 $presence-away: rgb(250, 201, 20);
 $presence-busy: rgb(233, 0, 27);
 $presence-idle: rgb(172, 172, 172);
+$janeBlue: #00c1ca;
 
 /**
  * Toolbar
@@ -284,3 +285,13 @@ $chromeExtensionBannerRightInMeeeting: 10px;
 */
 $smallScreen: 700px;
 $verySmallScreen: 500px;
+/**
+* Jane waiting area.
+*/
+$waitingAreaPageBackground: #1C2025;
+$waitingAreaInfoBoxBackground: #FFFFFF;
+$waitingAreaInfoBoxBorder: #cccccc;
+$waitingAreaInfoLabelColor: #5cb85c;
+$waitingAreaInfoTitleColor: #A3A2B1;
+$waitingAreaInfoMsgColor: #9998A7;
+$waitingAreaInfoDetailColor: #8E8E9D;
