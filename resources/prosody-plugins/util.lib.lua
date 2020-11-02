@@ -46,7 +46,7 @@ end
 local function room_jid_match_rewrite(room_jid, stanza)
     local node, _, resource, target_subdomain = room_jid_split_subdomain(room_jid);
     if not target_subdomain then
-        module:log("debug", "No need to rewrite out 'to' %s", room_jid);
+        -- module:log("debug", "No need to rewrite out 'to' %s", room_jid);
         return room_jid;
     end
     -- Ok, rewrite room_jid  address to new format
@@ -54,7 +54,7 @@ local function room_jid_match_rewrite(room_jid, stanza)
     if node then
         new_node, new_host, new_resource = "["..target_subdomain.."]"..node, muc_domain, resource;
     else
-        module:log("debug", "No room name provided so rewriting only host 'to' %s", room_jid);
+        -- module:log("debug", "No room name provided so rewriting only host 'to' %s", room_jid);
         new_host, new_resource = muc_domain, resource;
 
         if (stanza and stanza.attr and stanza.attr.id) then
@@ -62,7 +62,7 @@ local function room_jid_match_rewrite(room_jid, stanza)
         end
     end
     room_jid = jid.join(new_node, new_host, new_resource);
-    module:log("debug", "Rewrote to %s", room_jid);
+    -- module:log("debug", "Rewrote to %s", room_jid);
     return room_jid
 end
 
@@ -70,7 +70,7 @@ end
 local function internal_room_jid_match_rewrite(room_jid, stanza)
     local node, host, resource = jid.split(room_jid);
     if host ~= muc_domain or not node then
-        module:log("debug", "No need to rewrite %s (not from the MUC host)", room_jid);
+        -- module:log("debug", "No need to rewrite %s (not from the MUC host)", room_jid);
 
         if (stanza and stanza.attr and stanza.attr.id and roomless_iqs[stanza.attr.id]) then
             local result = roomless_iqs[stanza.attr.id];
@@ -82,13 +82,13 @@ local function internal_room_jid_match_rewrite(room_jid, stanza)
     end
     local target_subdomain, target_node = node:match("^%[([^%]]+)%](.+)$");
     if not (target_node and target_subdomain) then
-        module:log("debug", "Not rewriting... unexpected node format: %s", node);
+        -- module:log("debug", "Not rewriting... unexpected node format: %s", node);
         return room_jid;
     end
     -- Ok, rewrite room_jid address to pretty format
     local new_node, new_host, new_resource = target_node, muc_domain_prefix..".".. target_subdomain.."."..muc_domain_base, resource;
     room_jid = jid.join(new_node, new_host, new_resource);
-    module:log("debug", "Rewrote to %s", room_jid);
+    -- module:log("debug", "Rewrote to %s", room_jid);
     return room_jid
 end
 

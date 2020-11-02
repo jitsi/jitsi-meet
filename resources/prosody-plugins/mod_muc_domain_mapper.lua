@@ -20,11 +20,11 @@ local internal_room_jid_match_rewrite = util.internal_room_jid_match_rewrite;
 -- We must filter stanzas in order to hook in to all incoming and outgoing messaging which skips the stanza routers
 function filter_stanza(stanza)
     if stanza.name == "message" or stanza.name == "iq" or stanza.name == "presence" then
-        module:log("debug", "Filtering stanza type %s  to %s from %s",stanza.name,stanza.attr.to,stanza.attr.from);
+        -- module:log("debug", "Filtering stanza type %s  to %s from %s",stanza.name,stanza.attr.to,stanza.attr.from);
         if stanza.name == "iq" then
             local conf = stanza:get_child('conference')
             if conf then
-                module:log("debug", "Filtering stanza conference %s to %s from %s",conf.attr.room,stanza.attr.to,stanza.attr.from);
+                -- module:log("debug", "Filtering stanza conference %s to %s from %s",conf.attr.room,stanza.attr.to,stanza.attr.from);
                 conf.attr.room = room_jid_match_rewrite(conf.attr.room, stanza)
             end
         end
@@ -40,7 +40,6 @@ end
 
 function filter_session(session)
     module:log("warn", "Session filters applied");
---    filters.add_filter(session, "stanzas/in", filter_stanza_in);
     filters.add_filter(session, "stanzas/out", filter_stanza);
 end
 
