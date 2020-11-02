@@ -26,6 +26,9 @@ local escaped_muc_domain_prefix = muc_domain_prefix:gsub("%p", "%%%1");
 local target_subdomain_pattern
     = "^"..escaped_muc_domain_prefix..".([^%.]+)%."..escaped_muc_domain_base;
 
+-- table to store all incoming iqs without roomname in it, like discoinfo to the muc compoent
+local roomless_iqs = {};
+
 -- Utility function to split room JID to include room name and subdomain
 -- (e.g. from room1@conference.foo.example.com/res returns (room1, example.com, res, foo))
 local function room_jid_split_subdomain(room_jid)
@@ -37,26 +40,44 @@ end
 --- Utility function to check and convert a room JID from
 --- virtual room1@conference.foo.example.com to real [foo]room1@conference.example.com
 -- @param room_jid the room jid to match and rewrite if needed
+-- @param stanza the stanza
 -- @return returns room jid [foo]room1@conference.example.com when it has subdomain
 -- otherwise room1@conference.example.com(the room_jid value untouched)
-local function room_jid_match_rewrite(room_jid)
-    local node, host, resource, target_subdomain = room_jid_split_subdomain(room_jid);
+local function room_jid_match_rewrite(room_jid, stanza)
+    local node, _, resource, target_subdomain = room_jid_split_subdomain(room_jid);
     if not target_subdomain then
         module:log("debug", "No need to rewrite out 'to' %s", room_jid);
         return room_jid;
     end
     -- Ok, rewrite room_jid  address to new format
-    local new_node, new_host, new_resource
-        = "["..target_subdomain.."]"..node, muc_domain, resource;
+    local new_node, new_host, new_resource;
+    if node then
+        new_node, new_host, new_resource = "["..target_subdomain.."]"..node, muc_domain, resource;
+    else
+        module:log("debug", "No room name provided so rewriting only host 'to' %s", room_jid);
+        new_host, new_resource = muc_domain, resource;
+
+        if (stanza and stanza.attr and stanza.attr.id) then
+            roomless_iqs[stanza.attr.id] = stanza.attr.to;
+        end
+    end
     room_jid = jid.join(new_node, new_host, new_resource);
     module:log("debug", "Rewrote to %s", room_jid);
     return room_jid
 end
 
-local function internal_room_jid_match_rewrite(room_jid)
+-- Utility function to check and convert a room JID from real [foo]room1@muc.example.com to virtual room1@muc.foo.example.com
+local function internal_room_jid_match_rewrite(room_jid, stanza)
     local node, host, resource = jid.split(room_jid);
     if host ~= muc_domain or not node then
         module:log("debug", "No need to rewrite %s (not from the MUC host)", room_jid);
+
+        if (stanza and stanza.attr and stanza.attr.id and roomless_iqs[stanza.attr.id]) then
+            local result = roomless_iqs[stanza.attr.id];
+            roomless_iqs[stanza.attr.id] = nil;
+            return result;
+        end
+
         return room_jid;
     end
     local target_subdomain, target_node = node:match("^%[([^%]]+)%](.+)$");
