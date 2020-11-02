@@ -24,6 +24,16 @@ import {
     reloadWithStoredParams
 } from './react/features/app/actions';
 import {
+    initJaneWaitingArea,
+    isJaneWaitingAreaPageEnabled,
+    isJaneWaitingAreaPageVisible,
+    replaceJaneWaitingAreaAudioTrack,
+    replaceJaneWaitingAreaVideoTrack
+} from './react/features/jane-waiting-area';
+
+import EventEmitter from 'events';
+
+import {
     AVATAR_ID_COMMAND,
     AVATAR_URL_COMMAND,
     EMAIL_COMMAND,
@@ -143,6 +153,7 @@ const eventEmitter = new EventEmitter();
 
 let room;
 let connection;
+let _connectionPromise;
 
 /**
  * The promise is used when the prejoin screen is shown.
@@ -770,16 +781,8 @@ export default {
             logger.warn('initial device list initialization failed', error);
         }
 
-        if (isPrejoinPageEnabled(APP.store.getState())) {
-            _connectionPromise = connect(roomName).then(c => {
-                // we want to initialize it early, in case of errors to be able
-                // to gather logs
-                APP.connection = c;
-
-                return c;
-            });
-
-            APP.store.dispatch(makePrecallTest(this._getConferenceOptions()));
+        if (isJaneWaitingAreaPageEnabled(APP.store.getState())) {
+            _connectionPromise = connect(roomName);
 
             const { tryCreateLocalTracks, errors } = this.createInitialLocalTracks(initialOptions);
             const tracks = await tryCreateLocalTracks;
@@ -789,7 +792,7 @@ export default {
             // they may remain as empty strings.
             this._initDeviceList(true);
 
-            return APP.store.dispatch(initPrejoin(tracks, errors));
+            return APP.store.dispatch(initJaneWaitingArea(tracks, errors));
         }
 
         const [ tracks, con ] = await this.createInitialLocalTracksAndConnect(
@@ -801,12 +804,13 @@ export default {
     },
 
     /**
-     * Joins conference after the tracks have been configured in the prejoin screen.
+     * Joins conference after the tracks have been configured in the JaneWaitingArea screen.
      *
      * @param {Object[]} tracks - An array with the configured tracks
      * @returns {Promise}
      */
-    async prejoinStart(tracks) {
+
+    async janeWaitingAreaStart(tracks) {
         const con = await _connectionPromise;
 
         return this.startConference(con, tracks);
@@ -1409,12 +1413,8 @@ export default {
             _replaceLocalVideoTrackQueue.enqueue(onFinish => {
                 const state = APP.store.getState();
 
-                // When the prejoin page is displayed localVideo is not set
-                // so just replace the video track from the store with the new one.
-                if (isPrejoinPageVisible(state)) {
-                    const oldTrack = getLocalJitsiVideoTrack(state);
-
-                    return APP.store.dispatch(replaceLocalTrack(oldTrack, newTrack))
+                if (isJaneWaitingAreaPageVisible(state)) {
+                    return APP.store.dispatch(replaceJaneWaitingAreaVideoTrack(newTrack))
                         .then(resolve)
                         .catch(reject)
                         .then(onFinish);
@@ -1475,12 +1475,8 @@ export default {
             _replaceLocalAudioTrackQueue.enqueue(onFinish => {
                 const state = APP.store.getState();
 
-                // When the prejoin page is displayed localAudio is not set
-                // so just replace the audio track from the store with the new one.
-                if (isPrejoinPageVisible(state)) {
-                    const oldTrack = getLocalJitsiAudioTrack(state);
-
-                    return APP.store.dispatch(replaceLocalTrack(oldTrack, newTrack))
+                if (isJaneWaitingAreaPageVisible(state)) {
+                    return APP.store.dispatch(replaceJaneWaitingAreaAudioTrack(newTrack))
                         .then(resolve)
                         .catch(reject)
                         .then(onFinish);

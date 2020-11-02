@@ -11,6 +11,8 @@ import {
     DeepLinkingMobilePage,
     NoMobileApp
 } from './components';
+import { isRNSocketWebView } from '../jane-waiting-area/functions';
+import SocketConnection from '../jane-waiting-area/components/SocketConnection.web';
 import { _openDesktopApp } from './openDesktopApp';
 
 /**
@@ -63,6 +65,11 @@ export function getDeepLinkingPage(state) {
     const OS = Platform.OS;
     const isIpad = navigator.maxTouchPoints > 0 && OS === 'macos';
     const isUsingMobileBrowser = OS === 'ios' || isIpad || false;
+    const { locationURL } = state['features/base/connection'];
+
+    if (isRNSocketWebView(locationURL)) {
+        return Promise.resolve(SocketConnection);
+    }
 
     if (isUsingMobileBrowser) { // mobile
         const mobileAppPromo
