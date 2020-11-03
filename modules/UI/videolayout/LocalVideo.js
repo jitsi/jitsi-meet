@@ -60,7 +60,7 @@ export default class LocalVideo extends SmallVideo {
         // 'local' if no id has been assigned yet.
         this.initializeAvatar();
 
-        this.addAudioLevelIndicator();
+        // this.addAudioLevelIndicator();
         this.updateIndicators();
 
         this.container.onclick = this._onContainerClick;
