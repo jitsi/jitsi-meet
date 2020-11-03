@@ -41,8 +41,7 @@ import {
     lockStateChanged,
     onStartMutedPolicyChanged,
     p2pStatusChanged,
-    sendLocalParticipant,
-    setDesktopSharingEnabled
+    sendLocalParticipant
 } from './react/features/base/conference';
 import {
     checkAndNotifyForNewDevice,
@@ -441,17 +440,8 @@ export default {
      * the tracks won't exist).
      */
     _localTracksInitialized: false,
-    isSharingScreen: false,
 
-    /**
-     * Indicates if the desktop sharing functionality has been enabled.
-     * It takes into consideration the status returned by
-     * {@link JitsiMeetJS.isDesktopSharingEnabled()}. The latter can be false
-     * either if the desktop sharing is not supported by the current browser
-     * or if it was disabled through lib-jitsi-meet specific options (check
-     * config.js for listed options).
-     */
-    isDesktopSharingEnabled: false,
+    isSharingScreen: false,
 
     /**
      * The local audio track (if any).
@@ -678,14 +668,6 @@ export default {
         this._localTracksInitialized = true;
         con.addEventListener(JitsiConnectionEvents.CONNECTION_FAILED, _connectionFailedHandler);
         APP.connection = connection = con;
-
-        // Desktop sharing related stuff:
-        this.isDesktopSharingEnabled
-            = JitsiMeetJS.isDesktopSharingEnabled();
-        eventEmitter.emit(JitsiMeetConferenceEvents.DESKTOP_SHARING_ENABLED_CHANGED, this.isDesktopSharingEnabled);
-
-        APP.store.dispatch(
-            setDesktopSharingEnabled(this.isDesktopSharingEnabled));
 
         this._createRoom(tracks);
         APP.remoteControl.init();
@@ -1532,9 +1514,8 @@ export default {
         if (this.videoSwitchInProgress) {
             return Promise.reject('Switch in progress.');
         }
-        if (!this.isDesktopSharingEnabled) {
-            return Promise.reject(
-                'Cannot toggle screen sharing: not supported.');
+        if (!JitsiMeetJS.isDesktopSharingEnabled()) {
+            return Promise.reject('Cannot toggle screen sharing: not supported.');
         }
 
         if (this.isAudioOnly()) {

@@ -43,7 +43,6 @@ import {
     LOCK_STATE_CHANGED,
     P2P_STATUS_CHANGED,
     SEND_TONES,
-    SET_DESKTOP_SHARING_ENABLED,
     SET_FOLLOW_ME,
     SET_PASSWORD,
     SET_PASSWORD_FAILED,
@@ -570,22 +569,6 @@ export function sendTones(tones: string, duration: number, pause: number) {
         tones,
         duration,
         pause
-    };
-}
-
-/**
- * Sets the flag for indicating if desktop sharing is enabled.
- *
- * @param {boolean} desktopSharingEnabled - True if desktop sharing is enabled.
- * @returns {{
- *     type: SET_DESKTOP_SHARING_ENABLED,
- *     desktopSharingEnabled: boolean
- * }}
- */
-export function setDesktopSharingEnabled(desktopSharingEnabled: boolean) {
-    return {
-        type: SET_DESKTOP_SHARING_ENABLED,
-        desktopSharingEnabled
     };
 }
 
