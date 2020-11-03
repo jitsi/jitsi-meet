@@ -129,7 +129,7 @@ export default class RemoteVideo extends SmallVideo {
         this.initBrowserSpecificProperties();
         this.updateRemoteVideoMenu();
         this.updateStatusBar();
-        this.addAudioLevelIndicator();
+        // this.addAudioLevelIndicator();
         this.addPresenceLabel();
 
         return this.container;
