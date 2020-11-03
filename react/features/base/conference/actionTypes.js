@@ -141,18 +141,6 @@ export const P2P_STATUS_CHANGED = 'P2P_STATUS_CHANGED';
 export const SEND_TONES = 'SEND_TONES';
 
 /**
- * The type of (redux) action which sets the desktop sharing enabled flag for
- * the current conference.
- *
- * {
- *     type: SET_DESKTOP_SHARING_ENABLED,
- *     desktopSharingEnabled: boolean
- * }
- */
-export const SET_DESKTOP_SHARING_ENABLED
-    = 'SET_DESKTOP_SHARING_ENABLED';
-
-/**
  * The type of (redux) action which updates the current known status of the
  * Follow Me feature.
  *
