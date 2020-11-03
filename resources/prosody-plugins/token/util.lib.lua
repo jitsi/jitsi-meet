@@ -142,40 +142,44 @@ function Util:get_public_key(keyId)
 end
 
 --- Verifies issuer part of token
--- @param 'iss' claim from the token to verify
+-- @param 'issClaim' claim from the token to verify
 -- @param 'acceptedIssuers' list of issuers to check
 -- @return nil and error string or true for accepted claim
 function Util:verify_issuer(issClaim, acceptedIssuers)
     if not acceptedIssuers then
         acceptedIssuers = self.acceptedIssuers
     end
-    module:log("debug","verify_issuer claim: %s against accepted: %s",issClaim, acceptedIssuers);
+    module:log("debug", "verify_issuer claim: %s against accepted: %s", issClaim, acceptedIssuers);
     for i, iss in ipairs(acceptedIssuers) do
+        if iss == '*' then
+            -- "*" indicates to accept any issuer in the claims so return success
+            return true;
+        end
         if issClaim == iss then
-            --claim matches an accepted issuer so return success
+            -- claim matches an accepted issuer so return success
             return true;
         end
     end
-    --if issClaim not found in acceptedIssuers, fail claim
+    -- if issClaim not found in acceptedIssuers, fail claim
     return nil, "Invalid issuer ('iss' claim)";
 end
 
 --- Verifies audience part of token
--- @param 'aud' claim from the token to verify
+-- @param 'audClaim' claim from the token to verify
 -- @return nil and error string or true for accepted claim
 function Util:verify_audience(audClaim)
-    module:log("debug","verify_audience claim: %s against accepted: %s",audClaim, self.acceptedAudiences);
+    module:log("debug", "verify_audience claim: %s against accepted: %s", audClaim, self.acceptedAudiences);
     for i, aud in ipairs(self.acceptedAudiences) do
         if aud == '*' then
-            --* indicates to accept any audience in the claims so return success
+            -- "*" indicates to accept any audience in the claims so return success
             return true;
         end
         if audClaim == aud then
-            --claim matches an accepted audience so return success
+            -- claim matches an accepted audience so return success
             return true;
         end
     end
-    --if issClaim not found in acceptedIssuers, fail claim
+    -- if audClaim not found in acceptedAudiences, fail claim
     return nil, "Invalid audience ('aud' claim)";
 end
 
