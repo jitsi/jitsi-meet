@@ -14,6 +14,7 @@ var interfaceConfig = {
      * Note: this mode is experimental and subject to breakage.
      */
     AUTO_PIN_LATEST_SCREEN_SHARE: 'remote-only',
+    DISABLE_VIDEO_BACKGROUND: true,
 
     DEFAULT_REMOTE_DISPLAY_NAME: 'Jane VideoChat Participant',
     DEFAULT_LOCAL_DISPLAY_NAME: 'Me',
