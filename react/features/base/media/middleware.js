@@ -13,7 +13,7 @@ import { isRoomValid, SET_ROOM } from '../conference';
 import JitsiMeetJS from '../lib-jitsi-meet';
 import { MiddlewareRegistry } from '../redux';
 import { getPropertyValue } from '../settings';
-import { setTrackMuted, TRACK_ADDED } from '../tracks';
+import { isLocalVideoTrackDesktop, setTrackMuted, TRACK_ADDED } from '../tracks';
 
 import { setAudioMuted, setCameraFacingMode, setVideoMuted } from './actions';
 import {
@@ -73,13 +73,15 @@ MiddlewareRegistry.register(store => next => action => {
  * @private
  * @returns {Object} The value returned by {@code next(action)}.
  */
-function _appStateChanged({ dispatch }, next, action) {
-    const { appState } = action;
-    const mute = appState !== 'active'; // Note that 'background' and 'inactive' are treated equal.
+function _appStateChanged({ dispatch, getState }, next, action) {
+    if (navigator.product === 'ReactNative') {
+        const { appState } = action;
+        const mute = appState !== 'active' && !isLocalVideoTrackDesktop(getState());
 
-    sendAnalytics(createTrackMutedEvent('video', 'background mode', mute));
+        sendAnalytics(createTrackMutedEvent('video', 'background mode', mute));
 
-    dispatch(setVideoMuted(mute, MEDIA_TYPE.VIDEO, VIDEO_MUTISM_AUTHORITY.BACKGROUND));
+        dispatch(setVideoMuted(mute, MEDIA_TYPE.VIDEO, VIDEO_MUTISM_AUTHORITY.BACKGROUND));
+    }
 
     return next(action);
 }
