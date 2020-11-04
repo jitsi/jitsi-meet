@@ -23,6 +23,7 @@ import HelpButton from '../HelpButton';
 import AudioOnlyButton from './AudioOnlyButton';
 import MoreOptionsButton from './MoreOptionsButton';
 import RaiseHandButton from './RaiseHandButton';
+import ScreenSharingButton from './ScreenSharingButton.js';
 import ToggleCameraButton from './ToggleCameraButton';
 import styles from './styles';
 
@@ -131,6 +132,7 @@ class OverflowMenu extends PureComponent<Props, State> {
                 <AudioOnlyButton { ...buttonProps } />
                 <RaiseHandButton { ...buttonProps } />
                 <LobbyModeButton { ...buttonProps } />
+                <ScreenSharingButton { ...buttonProps } />
                 <MoreOptionsButton { ...moreOptionsButtonProps } />
                 <Collapsible collapsed = { !showMore }>
                     <ToggleCameraButton { ...buttonProps } />

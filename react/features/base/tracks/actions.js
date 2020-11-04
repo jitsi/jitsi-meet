@@ -9,7 +9,8 @@ import {
     MEDIA_TYPE,
     setAudioMuted,
     setVideoMuted,
-    VIDEO_MUTISM_AUTHORITY
+    VIDEO_MUTISM_AUTHORITY,
+    VIDEO_TYPE
 } from '../media';
 import { getLocalParticipant } from '../participants';
 
@@ -24,7 +25,13 @@ import {
     TRACK_UPDATED,
     TRACK_WILL_CREATE
 } from './actionTypes';
-import { createLocalTracksF, getLocalTrack, getLocalTracks, getTrackByJitsiTrack } from './functions';
+import {
+    createLocalTracksF,
+    getLocalTrack,
+    getLocalTracks,
+    getLocalVideoTrack,
+    getTrackByJitsiTrack
+} from './functions';
 import logger from './logger';
 
 /**
@@ -39,6 +46,8 @@ import logger from './logger';
 export function createDesiredLocalTracks(...desiredTypes) {
     return (dispatch, getState) => {
         const state = getState();
+
+        dispatch(destroyLocalDesktopTrackIfExists());
 
         if (desiredTypes.length === 0) {
             const { audio, video } = state['features/base/media'];
@@ -660,6 +669,22 @@ function _trackCreateCanceled(mediaType) {
     return {
         type: TRACK_CREATE_CANCELED,
         trackType: mediaType
+    };
+}
+
+/**
+ * If thee local track if of type Desktop, it calls _disposeAndRemoveTracks) on it.
+ *
+ * @returns {Function}
+ */
+export function destroyLocalDesktopTrackIfExists() {
+    return (dispatch, getState) => {
+        const videoTrack = getLocalVideoTrack(getState()['features/base/tracks']);
+        const isDesktopTrack = videoTrack && videoTrack.videoType === VIDEO_TYPE.DESKTOP;
+
+        if (isDesktopTrack) {
+            dispatch(_disposeAndRemoveTracks([ videoTrack.jitsiTrack ]));
+        }
     };
 }
 
