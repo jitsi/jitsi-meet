@@ -308,10 +308,7 @@ export function isLocalParticipantModerator(stateful: Object | Function) {
         return false;
     }
 
-    return (
-        localParticipant.role === PARTICIPANT_ROLE.MODERATOR
-        && (!state['features/base/config'].enableUserRolesBasedOnToken
-            || !state['features/base/jwt'].isGuest));
+    return localParticipant.role === PARTICIPANT_ROLE.MODERATOR;
 }
 
 /**
