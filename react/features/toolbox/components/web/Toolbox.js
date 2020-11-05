@@ -1426,15 +1426,7 @@ function _mapStateToProps(state) {
         desktopSharingEnabled = getParticipants(state)
             .find(({ features = {} }) =>
                 String(features['screen-sharing']) === 'true') !== undefined;
-
-        // we want to show button and tooltip
-        if (state['features/base/jwt'].isGuest) {
-            desktopSharingDisabledTooltipKey
-                = 'dialog.shareYourScreenDisabledForGuest';
-        } else {
-            desktopSharingDisabledTooltipKey
-                = 'dialog.shareYourScreenDisabled';
-        }
+        desktopSharingDisabledTooltipKey = 'dialog.shareYourScreenDisabled';
     }
 
     // NB: We compute the buttons again here because if URL parameters were used to
