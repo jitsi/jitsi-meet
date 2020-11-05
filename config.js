@@ -359,6 +359,9 @@ var config = {
     // Default language for the user interface.
     // defaultLanguage: 'en',
 
+    // Disables profile and the edit of all fields from the profile settings (display name and email)
+    // disableProfile: false,
+
     // If true all users without a token will be considered guests and all users
     // with token will be considered non-guests. Only guests will be allowed to
     // edit their profile.
