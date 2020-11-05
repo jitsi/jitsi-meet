@@ -9,7 +9,9 @@ local jid = require "util.jid";
 local json_safe = require "cjson.safe";
 local path = require "util.paths";
 local sha256 = require "util.hashes".sha256;
-local http_get_with_retry = module:require "util".http_get_with_retry;
+local main_util = module:require "util";
+local http_get_with_retry = main_util.http_get_with_retry;
+local extract_subdomain = main_util.extract_subdomain;
 
 local nr_retries = 3;
 
@@ -350,7 +352,7 @@ function Util:verify_room(session, room_address)
     local room_node = jid.node(room_address);
     -- parses bare room address, for multidomain expected format is:
     -- [subdomain]roomName@conference.domain
-    local target_subdomain, target_room = room_node:match("^%[([^%]]+)%](.+)$");
+    local target_subdomain, target_room = extract_subdomain(room_node);
 
     -- if we have '*' as room name in token, this means all rooms are allowed
     -- so we will use the actual name of the room when constructing strings

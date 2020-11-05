@@ -1,5 +1,6 @@
 local ext_events = module:require "ext_events"
 local jid = require "util.jid"
+local extract_subdomain = module:require "util".extract_subdomain;
 
 -- Options and configuration
 local poltergeist_component = module:get_option_string(
@@ -33,7 +34,7 @@ local function url_from_room_jid(room_jid)
     local node, _, _ = jid.split(room_jid)
     if not node then return nil end
 
-    local target_subdomain, target_node = node:match("^%[([^%]]+)%](.+)$")
+    local target_subdomain, target_node = extract_subdomain(node);
 
     if not(target_node or target_subdomain) then
         return "https://"..muc_domain_base.."/"..node
