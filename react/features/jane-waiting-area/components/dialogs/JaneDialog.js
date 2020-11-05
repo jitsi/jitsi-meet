@@ -29,6 +29,45 @@ type Props = {
     remoteParticipantsStatuses: string
 };
 
+type DialogTitleProps = {
+    t: Function,
+    participantType: string,
+    localParticipantCanJoin: boolean
+}
+
+function DialogTitle(props: DialogTitleProps) {
+    let header;
+
+    if (props.participantType === 'StaffMember') {
+        if (props.localParticipantCanJoin) {
+            header = props.t('janeWaitingArea.patientIsReady');
+        } else {
+            header = props.t('janeWaitingArea.waitClient');
+        }
+    } else if (props.localParticipantCanJoin) {
+        header = props.t('janeWaitingArea.practitionerIsReady');
+    } else {
+        header = props.t('janeWaitingArea.waitPractitioner');
+    }
+
+    return <div className='jane-waiting-area-info-title'>{header}</div>;
+}
+
+function DialogTitleMsg(props: DialogTitleProps) {
+    let title;
+
+    if (props.localParticipantCanJoin) {
+        title = '';
+        if (props.participantType === 'StaffMember') {
+            title = props.t('janeWaitingArea.whenYouAreReady');
+        }
+    } else {
+        title = props.t('janeWaitingArea.testYourDevice');
+    }
+
+    return <div className='jane-waiting-area-info-title-msg'>{title}</div>;
+}
+
 class JaneDialog extends Component<Props> {
 
     _joinConference: Function;
@@ -43,41 +82,6 @@ class JaneDialog extends Component<Props> {
 
         updateParticipantReadyStatus(jwt, participantType, participant, 'joined');
         joinConference();
-    }
-
-    _getDialogTitleMsg(localParticipantCanJoin) {
-        const { participantType, t } = this.props;
-        let title;
-
-        if (localParticipantCanJoin) {
-            title = '';
-            if (participantType === 'StaffMember') {
-                title = t('janeWaitingArea.whenYouAreReady');
-            }
-        } else {
-            title = t('janeWaitingArea.testYourDevice');
-        }
-
-        return <div className='jane-waiting-area-info-title-msg'>{title}</div>;
-    }
-
-    _getDialogTitle(localParticipantCanJoin) {
-        const { participantType, t } = this.props;
-        let header;
-
-        if (participantType === 'StaffMember') {
-            if (localParticipantCanJoin) {
-                header = t('janeWaitingArea.patientIsReady');
-            } else {
-                header = t('janeWaitingArea.waitClient');
-            }
-        } else if (localParticipantCanJoin) {
-            header = t('janeWaitingArea.practitionerIsReady');
-        } else {
-            header = t('janeWaitingArea.waitPractitioner');
-        }
-
-        return <div className='jane-waiting-area-info-title'>{header}</div>;
     }
 
     _getStartDate() {
@@ -139,7 +143,8 @@ class JaneDialog extends Component<Props> {
         const {
             participantType,
             jwtPayload,
-            remoteParticipantsStatuses
+            remoteParticipantsStatuses,
+            t
         } = this.props;
         const localParticipantCanJoin = checkLocalParticipantCanJoin(remoteParticipantsStatuses);
         const { _joinConference } = this;
@@ -155,12 +160,12 @@ class JaneDialog extends Component<Props> {
                                 is waiting</p>}
                         </div>
                         <div className='jane-waiting-area-info-text-wrapper'>
-                            {
-                                this._getDialogTitle(localParticipantCanJoin)
-                            }
-                            {
-                                this._getDialogTitleMsg(localParticipantCanJoin)
-                            }
+                            <DialogTitle participantType={participantType}
+                                         t={t}
+                                         localParticipantCanJoin={localParticipantCanJoin}/>
+                            <DialogTitleMsg participantType={participantType}
+                                            t={t}
+                                            localParticipantCanJoin={localParticipantCanJoin}/>
                             <div className='jane-waiting-area-info-detail'>
                                 <p>
                                     {
