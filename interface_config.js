@@ -240,11 +240,6 @@ var interfaceConfig = {
     VIDEO_QUALITY_LABEL_DISABLED: false,
 
     /**
-     * When enabled, the kick participant button will not be presented for users without a JWT
-     */
-    // HIDE_KICK_BUTTON_FOR_GUESTS: false,
-
-    /**
      * How many columns the tile view can expand to. The respected range is
      * between 1 and 5.
      */
