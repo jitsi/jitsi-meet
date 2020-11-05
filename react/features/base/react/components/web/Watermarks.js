@@ -225,7 +225,6 @@ class Watermarks extends Component<Props, State> {
  * @returns {Props}
  */
 function _mapStateToProps(state, ownProps) {
-    const { isGuest } = state['features/base/jwt'];
     const {
         customizationReady,
         customizationFailed,
@@ -239,12 +238,11 @@ function _mapStateToProps(state, ownProps) {
         DEFAULT_LOGO_URL,
         JITSI_WATERMARK_LINK,
         SHOW_JITSI_WATERMARK,
-        SHOW_JITSI_WATERMARK_FOR_GUESTS,
         filmStripOnly
     } = interfaceConfig;
     let _showJitsiWatermark = (!filmStripOnly
           && (customizationReady && !customizationFailed)
-          && (SHOW_JITSI_WATERMARK || (isGuest && SHOW_JITSI_WATERMARK_FOR_GUESTS)))
+          && SHOW_JITSI_WATERMARK)
     || !isValidRoom;
     let _logoUrl = logoImageUrl;
     let _logoLink = logoClickUrl;
