@@ -129,14 +129,14 @@ type Props = {
     _fullScreen: boolean,
 
     /**
+     * Whether or not the profile is disabled.
+     */
+    _isProfileDisabled: boolean,
+
+    /**
      * Whether or not the tile view is enabled.
      */
     _tileViewEnabled: boolean,
-
-    /**
-     * Whether or not the current user is logged in through a JWT.
-     */
-    _isGuest: boolean,
 
     /**
      * Whether or not the current meeting belongs to a JaaS user.
@@ -993,7 +993,7 @@ class Toolbox extends Component<Props, State> {
      * @returns {boolean}
      */
     _isProfileVisible() {
-        return this.props._isGuest && this._shouldShowButton('profile');
+        return !this.props._isProfileDisabled && this._shouldShowButton('profile');
     }
 
     /**
@@ -1448,7 +1448,7 @@ function _mapStateToProps(state) {
         _desktopSharingDisabledTooltipKey: desktopSharingDisabledTooltipKey,
         _dialog: Boolean(state['features/base/dialog'].component),
         _feedbackConfigured: Boolean(callStatsID),
-        _isGuest: state['features/base/jwt'].isGuest,
+        _isProfileDisabled: Boolean(state['features/base/config'].disableProfile),
         _isVpaasMeeting: isVpaasMeeting(state),
         _fullScreen: fullScreen,
         _tileViewEnabled: shouldDisplayTileView(state),
