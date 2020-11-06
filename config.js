@@ -275,9 +275,13 @@ var config = {
     //    // at least 360 pixels tall. If the thumbnail height reaches 720 pixels then the application will switch to
     //    // the high quality.
     //    minHeightForQualityLvl: {
-    //        360: 'standard,
+    //        360: 'standard',
     //        720: 'high'
-    //    }
+    //    },
+    //
+    //    // Provides a way to resize the desktop track to 720p (if it is greater than 720p) before creating a canvas
+    //    // for the presenter mode (camera picture-in-picture mode with screenshare).
+    //    resizeDesktopForPresenter: false
     // },
 
     // // Options for the recording limit notification.
