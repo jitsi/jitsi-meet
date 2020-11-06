@@ -53,6 +53,7 @@ import {
     updateDeviceList
 } from './react/features/base/devices';
 import {
+    browser,
     isFatalJitsiConnectionError,
     JitsiConferenceErrors,
     JitsiConferenceEvents,
@@ -493,9 +494,9 @@ export default {
 
         JitsiMeetJS.mediaDevices.addEventListener(
             JitsiMediaDevicesEvents.PERMISSION_PROMPT_IS_SHOWN,
-            browser =>
+            browserName =>
                 APP.store.dispatch(
-                    mediaPermissionPromptVisibilityChanged(true, browser))
+                    mediaPermissionPromptVisibilityChanged(true, browserName))
         );
 
         let tryCreateLocalTracks;
@@ -1605,8 +1606,10 @@ export default {
      */
     async _createPresenterStreamEffect(height = null, cameraDeviceId = null) {
         if (!this.localPresenterVideo) {
+            const camera = cameraDeviceId ?? getUserSelectedCameraDeviceId(APP.store.getState());
+
             try {
-                this.localPresenterVideo = await createLocalPresenterTrack({ cameraDeviceId }, height);
+                this.localPresenterVideo = await createLocalPresenterTrack({ cameraDeviceId: camera }, height);
             } catch (err) {
                 logger.error('Failed to create a camera track for presenter', err);
 
@@ -1647,37 +1650,39 @@ export default {
 
         // Create a new presenter track and apply the presenter effect.
         if (!this.localPresenterVideo && !mute) {
-            let { aspectRatio, height } = this.localVideo.track.getSettings();
-            const { width } = this.localVideo.track.getSettings();
+            const { height, width } = this.localVideo.track.getSettings() ?? this.localVideo.track.getConstraints();
             let desktopResizeConstraints = {};
             let resizeDesktopStream = false;
             const DESKTOP_STREAM_CAP = 720;
 
-            // Determine the constraints if the desktop track needs to be resized.
-            // Resizing is needed when the resolution cannot be determined or when
-            // the window is bigger than 720p.
-            if (height && width) {
-                aspectRatio = aspectRatio ?? (width / height).toPrecision(4);
-                const advancedConstraints = [ { aspectRatio } ];
-                const isPortrait = height >= width;
+            // Resizing the desktop track for presenter is causing blurriness of the desktop share.
+            // Disable this behavior for now until it is fixed in Chrome. The stream needs to be resized
+            // Firefox always.
+            if ((config.videoQuality && config.videoQuality.resizeDesktopForPresenter) || browser.isFirefox()) {
+                // Resizing is needed when the window is bigger than 720p.
+                if (height && width) {
+                    const advancedConstraints = [ { aspectRatio: (width / height).toPrecision(4) } ];
+                    const isPortrait = height >= width;
 
-                // Determine which dimension needs resizing and resize only that side
-                // keeping the aspect ratio same as before.
-                if (isPortrait && width > DESKTOP_STREAM_CAP) {
+                    // Determine which dimension needs resizing and resize only that side
+                    // keeping the aspect ratio same as before.
+                    if (isPortrait && width > DESKTOP_STREAM_CAP) {
+                        resizeDesktopStream = true;
+                        advancedConstraints.push({ width: DESKTOP_STREAM_CAP });
+                    } else if (!isPortrait && height > DESKTOP_STREAM_CAP) {
+                        resizeDesktopStream = true;
+                        advancedConstraints.push({ height: DESKTOP_STREAM_CAP });
+                    }
+                    desktopResizeConstraints.advanced = advancedConstraints;
+                } else {
                     resizeDesktopStream = true;
-                    advancedConstraints.push({ width: DESKTOP_STREAM_CAP });
-                } else if (!isPortrait && height > DESKTOP_STREAM_CAP) {
-                    resizeDesktopStream = true;
-                    advancedConstraints.push({ height: DESKTOP_STREAM_CAP });
+                    desktopResizeConstraints = {
+                        width: 1280,
+                        height: 720
+                    };
                 }
-                desktopResizeConstraints.advanced = advancedConstraints;
-            } else {
-                resizeDesktopStream = true;
-                desktopResizeConstraints = {
-                    width: 1280,
-                    height: 720
-                };
             }
+
             if (resizeDesktopStream) {
                 try {
                     await this.localVideo.track.applyConstraints(desktopResizeConstraints);
@@ -1686,14 +1691,15 @@ export default {
 
                     return;
                 }
-                height = this.localVideo.track.getSettings().height ?? DESKTOP_STREAM_CAP;
             }
+            const trackHeight = resizeDesktopStream
+                ? this.localVideo.track.getSettings().height ?? DESKTOP_STREAM_CAP
+                : height;
             const defaultCamera = getUserSelectedCameraDeviceId(APP.store.getState());
             let effect;
 
             try {
-                effect = await this._createPresenterStreamEffect(height,
-                    defaultCamera);
+                effect = await this._createPresenterStreamEffect(trackHeight, defaultCamera);
             } catch (err) {
                 logger.error('Failed to unmute Presenter Video');
                 maybeShowErrorDialog(err);
