@@ -183,6 +183,7 @@ function update_presence_identity(
 
     stanza:tag("identity"):tag("user");
     for k, v in pairs(user) do
+        v = tostring(v)
         stanza:tag(k):text(v):up();
     end
     stanza:up();
