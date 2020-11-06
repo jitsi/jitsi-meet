@@ -837,8 +837,6 @@
         "ld": "LD",
         "ldTooltip": "Viewing low definition video",
         "lowDefinition": "Low definition",
-        "onlyAudioAvailable": "Only audio is available",
-        "onlyAudioSupported": "We only support audio in this browser.",
         "sd": "SD",
         "sdTooltip": "Viewing standard definition video",
         "standardDefinition": "Standard definition"
