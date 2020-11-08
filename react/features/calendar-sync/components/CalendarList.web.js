@@ -187,7 +187,7 @@ class CalendarList extends AbstractPage<Props> {
         return (
             <div className = 'meetings-list-empty'>
                 <div className = 'meetings-list-empty-image'>
-                    <img src = '/images/calendar.svg' />
+                    <img src = './images/calendar.svg' />
                 </div>
                 <div className = 'description'>
                     { t('welcomepage.connectCalendarText', {
