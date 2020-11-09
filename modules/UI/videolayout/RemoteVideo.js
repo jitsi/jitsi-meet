@@ -1,4 +1,4 @@
-/* global $, APP, interfaceConfig */
+/* global $, APP, config */
 
 /* eslint-disable no-unused-vars */
 import { AtlasKitThemeProvider } from '@atlaskit/theme';
@@ -15,6 +15,7 @@ import {
 import { getParticipantById } from '../../../react/features/base/participants';
 import { isTestModeEnabled } from '../../../react/features/base/testing';
 import { updateLastTrackVideoMediaEvent } from '../../../react/features/base/tracks';
+import { Thumbnail, isVideoPlayable } from '../../../react/features/filmstrip';
 import { PresenceLabel } from '../../../react/features/presence-status';
 import { stopController, requestRemoteControl } from '../../../react/features/remote-control';
 import { RemoteVideoMenuTriggerButton } from '../../../react/features/remote-video-menu';
@@ -44,16 +45,6 @@ function createContainer(spanId) {
     container.id = spanId;
     container.className = 'videocontainer';
 
-    container.innerHTML = `
-        <div class = 'videocontainer__background'></div>
-        <div class = 'videocontainer__toptoolbar'></div>
-        <div class = 'videocontainer__toolbar'></div>
-        <div class = 'videocontainer__hoverOverlay'></div>
-        <div class = 'displayNameContainer'></div>
-        <div class = 'avatar-container'></div>
-        <div class ='presence-label-container'></div>
-        <span class = 'remotevideomenu'></span>`;
-
     const remoteVideosContainer
         = document.getElementById('filmstripRemoteVideosContainer');
     const localVideoContainer
@@ -72,21 +63,16 @@ export default class RemoteVideo extends SmallVideo {
      * Creates new instance of the <tt>RemoteVideo</tt>.
      * @param user {JitsiParticipant} the user for whom remote video instance will
      * be created.
-     * @param {VideoLayout} VideoLayout the video layout instance.
      * @constructor
      */
-    constructor(user, VideoLayout) {
-        super(VideoLayout);
+    constructor(user) {
+        super();
 
         this.user = user;
         this.id = user.getId();
         this.videoSpanId = `participant_${this.id}`;
 
-        this._audioStreamElement = null;
-        this.statsPopoverLocation = interfaceConfig.VERTICAL_FILMSTRIP ? 'left bottom' : 'top center';
         this.addRemoteVideoContainer();
-        this.updateIndicators();
-        this.updateDisplayName();
         this.bindHoverHandler();
         this.flipX = false;
         this.isLocal = false;
@@ -100,11 +86,6 @@ export default class RemoteVideo extends SmallVideo {
          */
         this._canPlayEventReceived = false;
 
-        // Bind event handlers so they are only bound once for every instance.
-        // TODO The event handlers should be turned into actions so changes can be
-        // handled through reducers and middleware.
-        this._setAudioVolume = this._setAudioVolume.bind(this);
-
         this.container.onclick = this._onContainerClick;
     }
 
@@ -114,76 +95,23 @@ export default class RemoteVideo extends SmallVideo {
     addRemoteVideoContainer() {
         this.container = createContainer(this.videoSpanId);
         this.$container = $(this.container);
-        this.initializeAvatar();
+        this.renderThumbnail();
         this._setThumbnailSize();
         this.initBrowserSpecificProperties();
-        this.updateRemoteVideoMenu();
-        this.updateStatusBar();
-        this.addAudioLevelIndicator();
-        this.addPresenceLabel();
 
         return this.container;
     }
 
     /**
-     * Generates the popup menu content.
-     *
-     * @returns {Element|*} the constructed element, containing popup menu items
-     * @private
+     * Renders the thumbnail.
      */
-    _generatePopupContent() {
-        const remoteVideoMenuContainer
-            = this.container.querySelector('.remotevideomenu');
-
-        if (!remoteVideoMenuContainer) {
-            return;
-        }
-
-        const initialVolumeValue = this._audioStreamElement && this._audioStreamElement.volume;
-
-        // hide volume when in silent mode
-        const onVolumeChange
-            = APP.store.getState()['features/base/config'].startSilent ? undefined : this._setAudioVolume;
-
+    renderThumbnail(isHovered = false) {
         ReactDOM.render(
             <Provider store = { APP.store }>
                 <I18nextProvider i18n = { i18next }>
-                    <AtlasKitThemeProvider mode = 'dark'>
-                        <RemoteVideoMenuTriggerButton
-                            initialVolumeValue = { initialVolumeValue }
-                            onMenuDisplay
-                                = {this._onRemoteVideoMenuDisplay.bind(this)}
-                            onVolumeChange = { onVolumeChange }
-                            participantID = { this.id } />
-                    </AtlasKitThemeProvider>
+                    <Thumbnail participantID = { this.id } isHovered = { isHovered } />
                 </I18nextProvider>
-            </Provider>,
-            remoteVideoMenuContainer);
-    }
-
-    /**
-     *
-     */
-    _onRemoteVideoMenuDisplay() {
-        this.updateRemoteVideoMenu();
-    }
-
-    /**
-     * Change the remote participant's volume level.
-     *
-     * @param {int} newVal - The value to set the slider to.
-     */
-    _setAudioVolume(newVal) {
-        if (this._audioStreamElement) {
-            this._audioStreamElement.volume = newVal;
-        }
-    }
-
-    /**
-     * Updates the remote video menu.
-     */
-    updateRemoteVideoMenu() {
-        this._generatePopupContent();
+            </Provider>, this.container);
     }
 
     /**
@@ -199,7 +127,7 @@ export default class RemoteVideo extends SmallVideo {
         }
 
         const isVideo = stream.isVideoTrack();
-        const elementID = SmallVideo.getStreamElementID(stream);
+        const elementID = `remoteVideo_${stream.getId()}`;
         const select = $(`#${elementID}`);
 
         select.remove();
@@ -207,11 +135,7 @@ export default class RemoteVideo extends SmallVideo {
             this._canPlayEventReceived = false;
         }
 
-        logger.info(`${isVideo ? 'Video' : 'Audio'} removed ${this.id}`, select);
-
-        if (stream === this.videoStream) {
-            this.videoStream = null;
-        }
+        logger.info(`Video removed ${this.id}`, select);
 
         this.updateView();
     }
@@ -223,14 +147,7 @@ export default class RemoteVideo extends SmallVideo {
      * @override
      */
     isVideoPlayable() {
-        const participant = getParticipantById(APP.store.getState(), this.id);
-        const { connectionStatus } = participant || {};
-
-        return (
-            super.isVideoPlayable()
-                && this._canPlayEventReceived
-                && connectionStatus === JitsiParticipantConnectionStatus.ACTIVE
-        );
+        return isVideoPlayable(APP.store.getState(), this.id) && this._canPlayEventReceived;
     }
 
     /**
@@ -245,9 +162,8 @@ export default class RemoteVideo extends SmallVideo {
      * Removes RemoteVideo from the page.
      */
     remove() {
+        ReactDOM.unmountComponentAtNode(this.container);
         super.remove();
-        this.removePresenceLabel();
-        this.removeRemoteVideoMenu();
     }
 
     /**
@@ -295,19 +211,16 @@ export default class RemoteVideo extends SmallVideo {
 
         const isVideo = stream.isVideoTrack();
 
-        if (isVideo) {
-            this.videoStream = stream;
-        } else {
-            this.audioStream = stream;
-        }
-
         if (!stream.getOriginalStream()) {
             logger.debug('Remote video stream has no original stream');
 
             return;
         }
 
-        let streamElement = SmallVideo.createStreamElement(stream);
+        let streamElement = document.createElement('video');
+
+        streamElement.autoplay = !config.testing?.noAutoPlayVideo;
+        streamElement.id = `remoteVideo_${stream.getId()}`;
 
         // Put new stream element always in front
         streamElement = UIUtils.prependChild(this.container, streamElement);
@@ -315,88 +228,13 @@ export default class RemoteVideo extends SmallVideo {
         this.waitForPlayback(streamElement, stream);
         stream.attach(streamElement);
 
-        if (!isVideo) {
-            this._audioStreamElement = streamElement;
-
-            // If the remote video menu was created before the audio stream was
-            // attached we need to update the menu in order to show the volume
-            // slider.
-            this.updateRemoteVideoMenu();
-        } else if (isTestModeEnabled(APP.store.getState())) {
+        if (isVideo && isTestModeEnabled(APP.store.getState())) {
 
             const cb = name => APP.store.dispatch(updateLastTrackVideoMediaEvent(stream, name));
 
             containerEvents.forEach(event => {
                 streamElement.addEventListener(event, cb.bind(this, event));
             });
-        }
-    }
-
-    /**
-     * Triggers re-rendering of the display name using current instance state.
-     *
-     * @returns {void}
-     */
-    updateDisplayName() {
-        if (!this.container) {
-            logger.warn(`Unable to set displayName - ${this.videoSpanId} does not exist`);
-
-            return;
-        }
-
-        this._renderDisplayName({
-            elementID: `${this.videoSpanId}_name`,
-            participantID: this.id
-        });
-    }
-
-    /**
-     * Removes remote video menu element from video element identified by
-     * given <tt>videoElementId</tt>.
-     *
-     * @param videoElementId the id of local or remote video element.
-     */
-    removeRemoteVideoMenu() {
-        const menuSpan = this.$container.find('.remotevideomenu');
-
-        if (menuSpan.length) {
-            ReactDOM.unmountComponentAtNode(menuSpan.get(0));
-            menuSpan.remove();
-        }
-    }
-
-    /**
-     * Mounts the {@code PresenceLabel} for displaying the participant's current
-     * presence status.
-     *
-     * @return {void}
-     */
-    addPresenceLabel() {
-        const presenceLabelContainer = this.container.querySelector('.presence-label-container');
-
-        if (presenceLabelContainer) {
-            ReactDOM.render(
-                <Provider store = { APP.store }>
-                    <I18nextProvider i18n = { i18next }>
-                        <PresenceLabel
-                            participantID = { this.id }
-                            className = 'presence-label' />
-                    </I18nextProvider>
-                </Provider>,
-                presenceLabelContainer);
-        }
-    }
-
-    /**
-     * Unmounts the {@code PresenceLabel} component.
-     *
-     * @return {void}
-     */
-    removePresenceLabel() {
-        const presenceLabelContainer = this.container.querySelector('.presence-label-container');
-
-        if (presenceLabelContainer) {
-            ReactDOM.unmountComponentAtNode(presenceLabelContainer);
         }
     }
 }
