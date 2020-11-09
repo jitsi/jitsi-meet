@@ -91,7 +91,6 @@ export default [
     'disableSimulcast',
     'disableSuspendVideo',
     'disableThirdPartyRequests',
-    'displayJids',
     'doNotStoreRoom',
     'e2eping',
     'enableDisplayNameInStats',

@@ -116,12 +116,6 @@ const VideoLayout = {
      * @param lvl the new audio level to update to
      */
     setAudioLevel(id, lvl) {
-        const smallVideo = this.getSmallVideo(id);
-
-        if (smallVideo) {
-            smallVideo.updateAudioLevelIndicator(lvl);
-        }
-
         if (largeVideo && id === largeVideo.id) {
             largeVideo.updateLargeVideoAudioLevel(lvl);
         }
@@ -135,19 +129,6 @@ const VideoLayout = {
         localVideoThumbnail.changeVideo(stream);
 
         this._updateLargeVideoIfDisplayed(localId);
-    },
-
-    /**
-     * Get's the localID of the conference and set it to the local video
-     * (small one). This needs to be called as early as possible, when muc is
-     * actually joined. Otherwise events can come with information like email
-     * and setting them assume the id is already set.
-     */
-    mucJoined() {
-        // FIXME: replace this call with a generic update call once SmallVideo
-        // only contains a ReactElement. Then remove this call once the
-        // Filmstrip is fully in React.
-        localVideoThumbnail.updateIndicators();
     },
 
     /**
@@ -346,22 +327,6 @@ const VideoLayout = {
     },
 
     /**
-     * Display name changed.
-     */
-    onDisplayNameChanged(id) {
-        if (id === 'localVideoContainer'
-            || APP.conference.isLocalId(id)) {
-            localVideoThumbnail.updateDisplayName();
-        } else {
-            const remoteVideo = remoteVideos[id];
-
-            if (remoteVideo) {
-                remoteVideo.updateDisplayName();
-            }
-        }
-    },
-
-    /**
      * On dominant speaker changed event.
      *
      * @param {string} id - The participant ID of the new dominant speaker.
@@ -427,20 +392,6 @@ const VideoLayout = {
         }
     },
 
-    /**
-     * Hides all the indicators
-     */
-    hideStats() {
-        for (const video in remoteVideos) { // eslint-disable-line guard-for-in
-            const remoteVideo = remoteVideos[video];
-
-            if (remoteVideo) {
-                remoteVideo.removeConnectionIndicator();
-            }
-        }
-        localVideoThumbnail.removeConnectionIndicator();
-    },
-
     removeParticipantContainer(id) {
         // Unlock large video
         if (this.getPinnedId() === id) {
@@ -491,15 +442,6 @@ const VideoLayout = {
     },
 
     changeUserAvatar(id, avatarUrl) {
-        const smallVideo = VideoLayout.getSmallVideo(id);
-
-        if (smallVideo) {
-            smallVideo.initializeAvatar();
-        } else {
-            logger.warn(
-                `Missed avatar update - no small video yet for ${id}`
-            );
-        }
         if (this.isCurrentlyOnLarge(id)) {
             largeVideo.updateAvatar(avatarUrl);
         }
