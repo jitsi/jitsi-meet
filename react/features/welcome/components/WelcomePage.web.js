@@ -200,10 +200,10 @@ class WelcomePage extends AbstractWelcomePage {
                     <div className = 'header-image' />
                     <div className = 'header-container'>
                         <h1 className = 'header-text-title'>
-                            { t('welcomepage.jitsiMeet') }
+                            { t('welcomepage.headerTitle') }
                         </h1>
                         <span className = 'header-text-subtitle'>
-                            { t('welcomepage.secureMeetings')}
+                            { t('welcomepage.headerSubtitle')}
                         </span>
                         <div id = 'enter_room'>
                             <div className = 'enter-room-input-container'>
