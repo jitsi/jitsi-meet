@@ -211,10 +211,10 @@
         "incorrectPassword": "Benutzername oder Passwort ungültig",
         "internalError": "Oh! Es hat etwas nicht funktioniert. Der folgende Fehler ist aufgetreten: {{error}}",
         "internalErrorTitle": "Interner Fehler",
-        "kickEveryoneElseDialog": "Alle Rauswerfen?",
+        "kickEveryoneElseDialog": "Sitzung für jeden beenden?",
         "kickEveryoneElseTitle": "Alle außer {{whom}} rauswerfen?",
         "kickEveryoneDialog": "Möchten Sie die Sitzung für alle beenden?",
-        "kickEveryoneTitle": "Alle rauswerfen?",
+        "kickEveryoneTitle": "Sitzung für jeden beenden?",
         "kickMessage": "Sie können sich für mehr Details an {{participantDisplayName}} wenden.",
         "kickParticipantButton": "Entfernen",
         "kickParticipantDialog": "Wollen Sie diesen Teilnehmer wirklich entfernen?",
@@ -310,6 +310,7 @@
         "WaitForHostMsg": "Die Konferenz <b>{{room}}</b> wurde noch nicht gestartet. Wenn Sie der Organisator sind, authentifizieren Sie sich. Warten Sie andernfalls, bis der Organisator erscheint.",
         "WaitForHostMsgWOk": "Die Konferenz <b>{{room}}</b> wurde noch nicht gestartet. Wenn Sie der Organisator sind, drücken Sie zum Authentifizieren auf OK. Warten Sie andernfalls, bis der Organisator erscheint.",
         "WaitingForHost": "Warten auf den Organisator …",
+        "whiteboardDialog": "Bei Nutzung des Whiteboards mit unterschiedlichen Endgerätetypen (Handy, Laptop etc.) kann es zu Abweichungen in der Darstellung kommen. Wir empfehlen daher, diese Funktion nur zu nutzen, wenn nur gleiche Gerätetypen (bspw. nur Laptop) im Einsatz sind.",
         "Yes": "Ja",
         "yourEntireScreen": "Ganzer Bildschirm"
     },
@@ -563,7 +564,7 @@
         "title": "Profil"
     },
     "raisedHand": "Ich möchte sprechen",
-    "raisedHandMessage": "{{name}} meldet sich!‘",
+    "raisedHandMessage": "{{name}} meldet sich!",
     "recording": {
         "limitNotificationDescriptionWeb": "Wegen hoher Nachfrage ist Ihre Aufnahme auf {{limit}} min. begrenzt. Für unlimitierte Aufnahmen nutzen Sie bitte <a href={{url}} rel='noopener noreferrer' target='_blank'>{{app}}</a>.",
         "limitNotificationDescriptionNative": "Wegen hoher Nachfrage ist Ihre Aufnahme auf {{limit}} min begrenzt. Für unlimitierte Aufnahmen nutzen Sie bitte <3>{{app}}</3>.",
@@ -597,7 +598,7 @@
         "pullToRefresh": "Ziehen, um zu aktualisieren"
     },
     "security": {
-        "about": "Sie können Ihre Konferenz mit einem Passwort sichern. Teilnehmer müssen dieses eingeben, bevor sie an der Sitzung teilnehmen dürfen.",
+        "about": "Sie können ein Passwort zu Ihrer Sitzung hinzufügen. Dies ist sinnvoll, wenn Sie die Lobby aktiv haben (s. oben). Ansonsten besteht die Gefahr, sich selbst aus dem Meeting auszusperren. Die Teilnehmer müssen dieses ebenfalls eingeben, bevor sie an der Sitzung teilnehmen dürfen.",
         "aboutReadOnly": "Moderatoren können die Konferenz mit einem Passwort sichern. Teilnehmer müssen dieses eingeben, bevor sie an der Sitzung teilnehmen dürfen.",
         "insecureRoomNameWarning": "Der Raumname ist unsicher. Unerwünschte Teilnehmer könnten Ihrer Konferenz beitreten",
         "securityOptions": "Sicherheitsoptionen"
@@ -689,7 +690,7 @@
             "help": "Hilfe",
             "invite": "Teilnehmer einladen",
             "kick": "Teilnehmer entfernen",
-            "kickEveryone": "Alle rauswerfen",
+            "kickEveryone": "Sitzung für jeden beenden",
             "lobbyButton": "Lobbymodus ein-/ausschalten",
             "localRecording": "Lokale Aufzeichnungssteuerelemente ein-/ausschalten",
             "lockRoom": "Konferenzpasswort ein-/auschalten",
@@ -719,8 +720,8 @@
             "videoblur": "Video-Unschärfe ein-/ausschalten"
         },
         "addPeople": "Teilnehmer zur Konferenz hinzufügen",
-        "audioOnlyOff": "Modus „Nur Audio“ deaktivieren",
-        "audioOnlyOn": "Modus „Nur Audio“ aktivieren",
+        "audioOnlyOff": "Nicht Nur Audio und geteilten Bildschirm anzeigen",
+        "audioOnlyOn": "Nur Audio und geteilten Bildschirm anzeigen",
         "audioRoute": "Audiogerät auswählen",
         "authenticate": "Anmelden",
         "callQuality": "Qualitätseinstellungen",
@@ -739,7 +740,7 @@
         "hangup": "Verlassen",
         "help": "Hilfe",
         "invite": "Teilnehmer einladen",
-        "kickEveryone": "Alle rauswerfen",
+        "kickEveryone": "Sitzung für jeden beenden",
         "lobbyButtonDisable": "Lobbymodus deaktivieren",
         "lobbyButtonEnable": "Lobbymodus aktivieren",
         "login": "Anmelden",
@@ -816,7 +817,9 @@
     },
     "videoStatus": {
         "audioOnly": "AUD",
-        "audioOnlyExpanded": "Sie befinden sich im Modus „Nur Audio“. Dieser Modus benötigt weniger Bandbreite, Sie sehen jedoch nicht die Videos der anderen.",
+        "audioOnlyExpanded": "Mit Aktivierung dieser Funktion werden alle Kameraübertragungen zu Ihnen und von Ihnen unterbunden. Sie hören nur noch mit. Sie sehen jedoch geteilte Bildschirme bzw. das geteilte Dokument. Diese Funktion sollte bei geringer Bandbreite aktiviert werden.",
+        "audioOnlyExpandedOff": "Mit Deaktivierung dieser Funktion werden alle Kameraübertragungen zu Ihnen und von Ihnen unterbunden. Sie hören nur noch mit. Sie sehen jedoch geteilte Bildschirme bzw. das geteilte Dokument. Diese Funktion sollte bei geringer Bandbreite aktiviert werden.",
+
         "callQuality": "Videoqualität",
         "hd": "HD",
         "hdTooltip": "Video wird in hoher Auflösung angezeigt",
@@ -889,12 +892,12 @@
         "allow": "Annehmen",
         "backToKnockModeButton": "Kein Passwort, stattdessen Beitritt anfragen",
         "dialogTitle": "Lobbymodus",
-        "disableDialogContent": "Lobbymodus derzeit deaktiviert. Diese Funktion stellt sicher, dass unerwünschte Personen Ihrer Konferenz nicht beitreten können. Funktion aktivieren?",
+        "disableDialogContent": "Der Lobbymodus derzeit aktiviert. Diese Funktion stellt sicher, dass unerwünschte Personen Ihrer Konferenz nicht beitreten können. Wollen Sie die Funktion deaktivieren?",
         "disableDialogSubmit": "Deaktivieren",
         "emailField": "E-Mail-Adresse eingeben",
         "enableDialogPasswordField": "Passwort setzen (optional)",
         "enableDialogSubmit": "Aktivieren",
-        "enableDialogText": "Mit dem Lobbymodus schützen Sie Ihre Konferenz, da nur von einem Moderator angenommene Teilnehmer beitreten können.",
+        "enableDialogText": "Mit dem Lobbymodus schützen Sie Ihre Konferenz, da nur von einem Moderator angenommene Teilnehmer beitreten können. Stellen Sie bitte sicher, dass ein weiterer Moderator in der Konferenz ist oder Sie zusätzlich ein Passwort gesetzt haben. Anonsten ist das erneute beitreten nach einem Verbindungsabbruch nicht möglich.",
         "enterPasswordButton": "Konferenzpasswort eingeben",
         "enterPasswordTitle": "Passwort zum Beitreten benutzen",
         "invalidPassword": "Ungültiges Passwort",

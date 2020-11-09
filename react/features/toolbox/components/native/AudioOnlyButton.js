@@ -5,7 +5,9 @@ import { translate } from '../../../base/i18n';
 import { IconAudioOnly, IconAudioOnlyOff } from '../../../base/icons';
 import { connect } from '../../../base/redux';
 import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
-
+import AudioOnlyWarningPrompt from './AudioOnlyWarningPrompt';
+import { openDialog } from '../../../base/dialog';
+/**
 /**
  * The type of the React {@code Component} props of {@link AudioOnlyButton}.
  */
@@ -40,7 +42,8 @@ class AudioOnlyButton extends AbstractButton<Props, *> {
      * @returns {void}
      */
     _handleClick() {
-        this.props.dispatch(toggleAudioOnly());
+        this.props.dispatch(openDialog(AudioOnlyWarningPrompt));
+        // this.props.dispatch(toggleAudioOnly());
     }
 
     /**

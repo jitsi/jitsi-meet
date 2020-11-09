@@ -312,6 +312,7 @@
         "WaitForHostMsg": "The conference <b>{{room}}</b> has not yet started. If you are the host then please authenticate. Otherwise, please wait for the host to arrive.",
         "WaitForHostMsgWOk": "The conference <b>{{room}}</b> has not yet started. If you are the host then please press Ok to authenticate. Otherwise, please wait for the host to arrive.",
         "WaitingForHost": "Waiting for the host ...",
+        "whiteboardDialog": "Bei Nutzung des Whiteboards mit unterschiedlichen Endgerätetypen (Handy, Laptop etc.) kann es zu Abweichungen in der Darstellung kommen. Wir empfehlen daher, diese Funktion nur zu nutzen, wenn nur gleiche Gerätetypen (bspw. nur Laptop) im Einsatz sind.",
         "Yes": "Yes",
         "yourEntireScreen": "Your entire screen"
     },
