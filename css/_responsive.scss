@@ -31,6 +31,8 @@
 
 @media only screen and (max-width: $verySmallScreen) {
   .welcome {
+      display: block;
+
       #enter_room {
         position: relative;
         height: 42px;
@@ -46,8 +48,7 @@
       }
 
       .header {
-          background: #06345E;
-          background-image: linear-gradient(180deg, rgba(8, 110, 202, 0.8) 0%, rgba(8, 110, 202, 0) 100%);
+          background-color: #002637;
 
           #enter_room {
               .enter-room-input-container {
@@ -88,6 +89,10 @@
       }
       .welcome-badge {
           margin-right: 16px;
+      }
+
+      .welcome-footer {
+          display: none;
       }
   }
 
