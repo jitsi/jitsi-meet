@@ -35,6 +35,7 @@ const commands = {
     toggleLobby: 'toggle-lobby',
     hangup: 'video-hangup',
     muteEveryone: 'mute-everyone',
+    muteParticipantAudio: 'mute-participant-audio',
     password: 'password',
     pinParticipant: 'pin-participant',
     resizeLargeVideo: 'resize-large-video',

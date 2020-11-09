@@ -14,7 +14,7 @@ import {
 } from '../../react/features/base/conference';
 import { parseJWTFromURLParams } from '../../react/features/base/jwt';
 import JitsiMeetJS, { JitsiRecordingConstants } from '../../react/features/base/lib-jitsi-meet';
-import { pinParticipant } from '../../react/features/base/participants';
+import { getLocalParticipant, pinParticipant } from '../../react/features/base/participants';
 import {
     processExternalDeviceRequest
 } from '../../react/features/device-selection/functions';
@@ -29,7 +29,7 @@ import {
 import { toggleLobbyMode } from '../../react/features/lobby/actions.web';
 import { RECORDING_TYPES } from '../../react/features/recording/constants';
 import { getActiveSession } from '../../react/features/recording/functions';
-import { muteAllParticipants } from '../../react/features/remote-video-menu/actions';
+import { muteAllParticipants, muteLocal, muteRemote } from '../../react/features/remote-video-menu/actions';
 import { toggleTileView } from '../../react/features/video-layout';
 import { setVideoQuality } from '../../react/features/video-quality';
 import { getJitsiMeetTransport } from '../transport';
@@ -86,6 +86,17 @@ function initCommands() {
                 .map(participant => participant.id);
 
             APP.store.dispatch(muteAllParticipants(localIds));
+        },
+        'mute-participant-audio': participantId => {
+            sendAnalytics(createApiEvent('muted-participant-audio'));
+            const state = APP.store.getState();
+            const localId = getLocalParticipant(state).id;
+
+            if (participantId === localId) {
+                muteLocal(true);
+            } else {
+                muteRemote(participantId);
+            }
         },
         'toggle-lobby': isLobbyEnabled => {
             APP.store.dispatch(toggleLobbyMode(isLobbyEnabled));
