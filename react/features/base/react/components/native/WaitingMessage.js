@@ -1,7 +1,14 @@
 // @flow
 /* eslint-disable */
 import React, { Component } from 'react/index';
-import { Animated, Easing, Text, SafeAreaView, Image } from 'react-native';
+import {
+    Animated,
+    Easing,
+    Text,
+    Image,
+    TouchableOpacity,
+    Dimensions
+} from 'react-native';
 import styles from './styles';
 import { getLocalizedDateFormatter, translate } from '../../../i18n';
 import { connect } from '../../../redux';
@@ -11,6 +18,7 @@ import jwtDecode from 'jwt-decode';
 import View from 'react-native-webrtc/RTCView';
 import moment from 'moment';
 import { isJaneTestMode } from '../../../conference';
+import { Icon, IconClose } from '../../../../base/icons';
 
 const watermarkImg = require('../../../../../../images/watermark.png');
 
@@ -18,8 +26,8 @@ type Props = {
     _isGuest: boolean,
     jwt: Object,
     conferenceHasStarted: boolean,
-    stopAnimation: boolean,
-    waitingMessageFromProps: string
+    hideWaitingMessage: boolean,
+    waitingMessageFromProps: string,
 };
 
 type State = {
@@ -37,9 +45,18 @@ class WaitingMessage extends Component<Props, State> {
         this.state = {
             beforeAppointmentStart: false,
             appointmentStartAt: '',
-            fadeAnim: new Animated.Value(0)
+            fadeAnim: new Animated.Value(0),
+            hideWaitingMessage: props.hideWaitingMessage
         };
         this.animatedValue = new Animated.Value(0);
+    }
+
+    componentDidUpdate(props) {
+        if (props.hideWaitingMessage !== this.props.hideWaitingMessage) {
+            this.setState({
+                hideWaitingMessage: props.hideWaitingMessage
+            });
+        }
     }
 
     componentDidMount() {
@@ -100,20 +117,14 @@ class WaitingMessage extends Component<Props, State> {
         }
     }
 
-    render() {
-        const { conferenceHasStarted, appstate } = this.props;
+    _getWindowHeight() {
+        return Dimensions.get('window').height;
+    }
 
-        if (conferenceHasStarted || appstate !== "active") {
-            return null;
-        }
-
-        return (
-            <SafeAreaView>
-                {
-                    this._renderWaitingMessage()
-                }
-            </SafeAreaView>
-        );
+    _close() {
+        this.setState({
+            hideWaitingMessage: true
+        });
     }
 
     getWaitingMessage() {
@@ -151,7 +162,7 @@ class WaitingMessage extends Component<Props, State> {
             </Text>;
         }
 
-        return <View style={{ backgroundColor: 'transparent'}}>
+        return <View style={{ backgroundColor: 'transparent' }}>
             {
                 header
             }
@@ -161,17 +172,35 @@ class WaitingMessage extends Component<Props, State> {
         </View>;
     }
 
+    renderCloseBtn() {
+        return <TouchableOpacity style={styles.waitingMessageCloseBtn}
+                                 onPress={this._close.bind(this)}>
+            <Icon
+                src={IconClose}
+                size={22}
+            />
+        </TouchableOpacity>;
+    }
+
     _renderWaitingMessage() {
-        const { stopAnimation } = this.props;
-        const animate = stopAnimation ? null : this.animatedValue.interpolate({
+        const { hideWaitingMessage } = this.state;
+        const animate = hideWaitingMessage ? null : this.animatedValue.interpolate({
             inputRange: [ 0, .5, 1 ],
             outputRange: [ .1, 1, .1 ]
         });
 
         const image = <Image style={styles.watermark}
                              source={watermarkImg}/>;
+        const backgroundColor = hideWaitingMessage ? 'transparent' : 'rgba(255,255,255,.3)';
+        const iphoneHasNotch = Platform.OS === 'ios' && this._getWindowHeight() > 811;
 
-        return (<View style={[ styles.waitingMessageContainer ]}>
+        return (<TouchableOpacity
+            style={{
+                ...styles.waitingMessageContainer,
+                backgroundColor,
+                paddingTop: iphoneHasNotch ? 60 : 40
+            }}
+            activeOpacity={1}>
             <Animated.View className='waitingMessage'
                            style={[ styles.waitingMessageImage, {
                                opacity: animate
@@ -181,9 +210,24 @@ class WaitingMessage extends Component<Props, State> {
                 }
             </Animated.View>
             {
-                this.getWaitingMessage()
+                !hideWaitingMessage && this.getWaitingMessage()
             }
-        </View>);
+            {
+                !hideWaitingMessage && this.renderCloseBtn()
+            }
+        </TouchableOpacity>);
+    }
+
+    render() {
+        const { conferenceHasStarted, appstate } = this.props;
+
+        if (conferenceHasStarted || appstate !== 'active') {
+            return null;
+        }
+
+        return (
+            this._renderWaitingMessage()
+        );
     }
 }
 
