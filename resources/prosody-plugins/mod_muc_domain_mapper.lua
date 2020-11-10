@@ -39,7 +39,7 @@ function filter_stanza(stanza)
 end
 
 function filter_session(session)
-    module:log("warn", "Session filters applied");
+    -- module:log("warn", "Session filters applied");
     filters.add_filter(session, "stanzas/out", filter_stanza);
 end
 
