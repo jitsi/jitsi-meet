@@ -134,7 +134,6 @@ class OverflowMenu extends PureComponent<Props, State> {
                 <RaiseHandButton { ...buttonProps } />
                 <LobbyModeButton { ...buttonProps } />
                 <ScreenSharingButton { ...buttonProps } />
-                <MuteEveryoneButton { ...buttonProps } />
                 <MoreOptionsButton { ...moreOptionsButtonProps } />
                 <Collapsible collapsed = { !showMore }>
                     <ToggleCameraButton { ...buttonProps } />
@@ -145,6 +144,7 @@ class OverflowMenu extends PureComponent<Props, State> {
                     <RoomLockButton { ...buttonProps } />
                     <ClosedCaptionButton { ...buttonProps } />
                     <SharedDocumentButton { ...buttonProps } />
+                    <MuteEveryoneButton { ...buttonProps } />
                     <HelpButton { ...buttonProps } />
                 </Collapsible>
             </BottomSheet>
