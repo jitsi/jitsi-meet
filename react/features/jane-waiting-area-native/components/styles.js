@@ -83,5 +83,11 @@ export default {
     },
     joinButtonText: {
         color: ColorPalette.white
+    },
+    disabledButtonContainer: {
+        backgroundColor: ColorPalette.disabledBtnBackground
+    },
+    disabledButtonText: {
+        color: ColorPalette.manatee
     }
 };

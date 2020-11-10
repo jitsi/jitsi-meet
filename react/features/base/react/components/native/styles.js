@@ -205,13 +205,13 @@ const SECTION_LIST_STYLES = {
 
 const WATING_MESSAGE_STYLES = {
     waitingMessageContainer: {
-        marginTop: 40,
-        flexDirection: 'row',
+        paddingBottom: 20,
+        paddingRight: 15,
+        flexDirection: 'row'
     },
 
     waitingMessageImage: {
-        marginRight: 5,
-        marginTop: 5,
+        marginRight: 5
     },
 
     waitingMessageHeader: {
@@ -219,7 +219,7 @@ const WATING_MESSAGE_STYLES = {
         marginTop: 5,
         color: ColorPalette.white,
         textAlign: 'left',
-        ...JaneWeb.regularFont,
+        ...JaneWeb.boldFont
     },
 
     waitingMessageText: {
@@ -227,8 +227,14 @@ const WATING_MESSAGE_STYLES = {
         fontSize: 12,
         color: ColorPalette.white,
         textAlign: 'left',
-        paddingRight:100,
-        ...JaneWeb.regularFont
+        paddingRight: 100,
+        ...JaneWeb.boldFont
+    },
+
+    waitingMessageCloseBtn: {
+        position: 'absolute',
+        right: 10,
+        bottom: 50
     },
 
     watermark: {
