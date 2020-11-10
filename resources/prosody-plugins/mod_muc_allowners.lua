@@ -24,7 +24,7 @@ end
 --      -> true, room_name, subdomain
 --      -> true, room_name, nil (if no subdomain is used for the room)
 local function is_moderated(room_jid)
-    if #moderated_subdomains == 0 and #moderated_rooms == 0 then
+    if moderated_subdomains:empty() and moderated_rooms:empty() then
         return false;
     end
 
