@@ -1,4 +1,4 @@
-/* global APP, $, config, interfaceConfig */
+/* global APP, $, config */
 
 
 const UI = {};
@@ -143,9 +143,7 @@ UI.start = function() {
     $.prompt.setDefaults({ persistent: false });
 
     VideoLayout.init(eventEmitter);
-    if (!interfaceConfig.filmStripOnly) {
-        VideoLayout.initLargeVideo();
-    }
+    VideoLayout.initLargeVideo();
 
     // Do not animate the video area on UI start (second argument passed into
     // resizeVideoArea) because the animation is not visible anyway. Plus with
@@ -161,10 +159,7 @@ UI.start = function() {
         $('body').addClass('desktop-browser');
     }
 
-    if (interfaceConfig.filmStripOnly) {
-        $('body').addClass('filmstrip-only');
-        APP.store.dispatch(setNotificationsEnabled(false));
-    } else if (config.iAmRecorder) {
+    if (config.iAmRecorder) {
         // in case of iAmSipGateway keep local video visible
         if (!config.iAmSipGateway) {
             VideoLayout.setLocalVideoVisible(false);

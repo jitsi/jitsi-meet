@@ -699,7 +699,7 @@ export default class SmallVideo {
                                     alwaysVisible = { showConnectionIndicator }
                                     iconSize = { iconSize }
                                     isLocalVideo = { this.isLocal }
-                                    enableStatsDisplay = { !interfaceConfig.filmStripOnly }
+                                    enableStatsDisplay = { true }
                                     participantId = { this.id }
                                     statsPopoverPosition = { statsPopoverPosition } />
                                 : null }

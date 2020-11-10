@@ -28,9 +28,6 @@ body {
     overflow: hidden;
     color: $defaultColor;
     background: $defaultBackground;
-    &.filmstrip-only {
-        background: transparent;
-    }
 }
 
 /**
@@ -68,16 +65,6 @@ body {
 .jitsi-icon.gray svg {
     fill: #5E6D7A;
     cursor: pointer;
-}
-
-/**
- * AtlasKitThemeProvider sets a background color on an app-wrapping div, thereby
- * preventing transparency in filmstrip-only mode. The selector chosen to
- * override this behavior is specific to where the AtlasKitThemeProvider might
- * be placed within the app hierarchy.
- */
-.filmstrip-only #react > .ckAJgx {
-    background: transparent;
 }
 
 p {

@@ -97,11 +97,6 @@ var interfaceConfig = {
 
     FILM_STRIP_MAX_HEIGHT: 120,
 
-    /**
-     * Whether to only show the filmstrip (and hide the toolbar).
-     */
-    filmStripOnly: false,
-
     GENERATE_ROOMNAMES_ON_WELCOME_PAGE: true,
 
     /**
