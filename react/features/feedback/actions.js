@@ -56,7 +56,7 @@ export function maybeOpenFeedbackDialog(conference: Object) {
         const state = getState();
         const { feedbackPercentage = 100 } = state['features/base/config'];
 
-        if (interfaceConfig.filmStripOnly || config.iAmRecorder) {
+        if (config.iAmRecorder) {
             // Intentionally fall through the if chain to prevent further action
             // from being taken with regards to showing feedback.
         } else if (state['features/base/dialog'].component === FeedbackDialog) {

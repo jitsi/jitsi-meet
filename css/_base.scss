@@ -28,9 +28,6 @@ body {
     overflow: hidden;
     color: $defaultColor;
     background: $defaultBackground;
-    &.filmstrip-only {
-        background: transparent;
-    }
 }
 
 /**
@@ -76,7 +73,7 @@ body {
  * override this behavior is specific to where the AtlasKitThemeProvider might
  * be placed within the app hierarchy.
  */
-.filmstrip-only #react > .ckAJgx {
+#react > .ckAJgx {
     background: transparent;
 }
 

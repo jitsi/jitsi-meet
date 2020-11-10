@@ -203,14 +203,12 @@ const KeyboardShortcut = {
         });
         this._addShortcutToHelp('SPACE', 'keyboardShortcuts.pushToTalk');
 
-        if (!interfaceConfig.filmStripOnly) {
-            this.registerShortcut('T', null, () => {
-                sendAnalytics(createShortcutEvent('speaker.stats'));
-                APP.store.dispatch(toggleDialog(SpeakerStats, {
-                    conference: APP.conference
-                }));
-            }, 'keyboardShortcuts.showSpeakerStats');
-        }
+        this.registerShortcut('T', null, () => {
+            sendAnalytics(createShortcutEvent('speaker.stats'));
+            APP.store.dispatch(toggleDialog(SpeakerStats, {
+                conference: APP.conference
+            }));
+        }, 'keyboardShortcuts.showSpeakerStats');
 
         /**
          * FIXME: Currently focus keys are directly implemented below in

@@ -17,8 +17,6 @@ import { getCurrentLayout, LAYOUTS } from '../../../video-layout';
 import { setFilmstripHovered, setFilmstripVisible } from '../../actions';
 import { shouldRemoteVideosBeVisible } from '../../functions';
 
-import Toolbar from './Toolbar';
-
 declare var APP: Object;
 declare var interfaceConfig: Object;
 
@@ -41,11 +39,6 @@ type Props = {
      * The number of columns in tile view.
      */
     _columns: number,
-
-    /**
-     * Whether the UI/UX is filmstrip-only.
-     */
-    _filmstripOnly: boolean,
 
     /**
      * The width of the filmstrip.
@@ -142,14 +135,12 @@ class Filmstrip extends Component <Props> {
      * @inheritdoc
      */
     componentDidMount() {
-        if (!this.props._filmstripOnly) {
-            APP.keyboardshortcut.registerShortcut(
-                'F',
-                'filmstripPopover',
-                this._onShortcutToggleFilmstrip,
-                'keyboardShortcuts.toggleFilmstrip'
-            );
-        }
+        APP.keyboardshortcut.registerShortcut(
+            'F',
+            'filmstripPopover',
+            this._onShortcutToggleFilmstrip,
+            'keyboardShortcuts.toggleFilmstrip'
+        );
     }
 
     /**
@@ -207,7 +198,7 @@ class Filmstrip extends Component <Props> {
         let toolbar = null;
 
         if (!this.props._hideToolbar) {
-            toolbar = this.props._filmstripOnly ? <Toolbar /> : this._renderToggleButton();
+            toolbar = this._renderToggleButton();
         }
 
         return (
@@ -367,24 +358,20 @@ class Filmstrip extends Component <Props> {
 function _mapStateToProps(state) {
     const { iAmSipGateway } = state['features/base/config'];
     const { hovered, visible } = state['features/filmstrip'];
-    const isFilmstripOnly = Boolean(interfaceConfig.filmStripOnly);
     const reduceHeight
-        = !isFilmstripOnly && state['features/toolbox'].visible && interfaceConfig.TOOLBAR_BUTTONS.length;
+        = state['features/toolbox'].visible && interfaceConfig.TOOLBAR_BUTTONS.length;
     const remoteVideosVisible = shouldRemoteVideosBeVisible(state);
     const { isOpen: shiftRight } = state['features/chat'];
     const className = `${remoteVideosVisible ? '' : 'hide-videos'} ${
         reduceHeight ? 'reduce-height' : ''
     } ${shiftRight ? 'shift-right' : ''}`.trim();
-    const videosClassName = `filmstrip__videos${
-        isFilmstripOnly ? ' filmstrip__videos-filmstripOnly' : ''}${
-        visible ? '' : ' hidden'}`;
+    const videosClassName = `filmstrip__videos${visible ? '' : ' hidden'}`;
     const { gridDimensions = {}, filmstripWidth } = state['features/filmstrip'].tileViewDimensions;
 
     return {
         _className: className,
         _columns: gridDimensions.columns,
         _currentLayout: getCurrentLayout(state),
-        _filmstripOnly: isFilmstripOnly,
         _filmstripWidth: filmstripWidth,
         _hideScrollbar: Boolean(iAmSipGateway),
         _hideToolbar: Boolean(iAmSipGateway),

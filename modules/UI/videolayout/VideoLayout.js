@@ -264,10 +264,6 @@ const VideoLayout = {
      * @returns {void}
      */
     onPinChange(pinnedParticipantID) {
-        if (interfaceConfig.filmStripOnly) {
-            return;
-        }
-
         getAllThumbnails().forEach(thumbnail =>
             thumbnail.focus(pinnedParticipantID === thumbnail.getId()));
     },
