@@ -1,4 +1,4 @@
-/* global APP, $, config, interfaceConfig */
+/* global APP, $, config */
 
 
 const UI = {};

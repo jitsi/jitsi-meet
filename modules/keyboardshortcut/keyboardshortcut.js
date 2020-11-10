@@ -1,4 +1,4 @@
-/* global APP, $, interfaceConfig */
+/* global APP, $ */
 
 import Logger from 'jitsi-meet-logger';
 

@@ -5,11 +5,8 @@ import { translate } from '../../../base/i18n';
 import { IconSettings } from '../../../base/icons';
 import { connect } from '../../../base/redux';
 import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
-import { openDeviceSelectionPopup } from '../../../device-selection';
 import { openSettingsDialog } from '../../actions';
 import { SETTINGS_TABS } from '../../constants';
-
-declare var interfaceConfig: Object;
 
 /**
  * The type of the React {@code Component} props of {@link SettingsButton}.
