@@ -78,17 +78,17 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'androidx.appcompat:appcompat:1.2.0'
 
-    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.2'
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.5'
 
     if (!rootProject.ext.libreBuild) {
-        implementation 'com.google.android.gms:play-services-auth:16.0.1'
+        implementation 'com.google.android.gms:play-services-auth:19.0.0'
 
         // Firebase
         //  - Crashlytics
         //  - Dynamic Links
-        implementation 'com.google.firebase:firebase-analytics:17.5.0'
-        implementation 'com.google.firebase:firebase-crashlytics:17.2.1'
-        implementation 'com.google.firebase:firebase-dynamic-links:19.1.0'
+        implementation 'com.google.firebase:firebase-analytics:18.0.0'
+        implementation 'com.google.firebase:firebase-crashlytics:17.2.2'
+        implementation 'com.google.firebase:firebase-dynamic-links:19.1.1'
     }
 
     implementation project(':sdk')
