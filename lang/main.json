@@ -678,6 +678,7 @@
     },
     "startupoverlay": {
         "policyText": " ",
+        "genericTitle": "The meeting needs to use your microphone and camera.",
         "title": "{{app}} needs to use your microphone and camera."
     },
     "suspendedoverlay": {
