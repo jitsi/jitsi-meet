@@ -239,7 +239,7 @@ end
 function extract_subdomain(room_node)
     -- optimization, skip matching if there is no subdomain, no [subdomain] part in the beginning of the node
     if not starts_with(room_node, '[') then
-        return room_node;
+        return nil,room_node;
     end
 
     return room_node:match("^%[([^%]]+)%](.+)$");
