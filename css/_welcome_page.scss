@@ -224,6 +224,7 @@ body.welcome-page {
     &.without-content {
         .welcome-card {
             min-width: 500px;
+            max-width: 580px;
         }
     }
 
