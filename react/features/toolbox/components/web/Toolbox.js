@@ -9,6 +9,7 @@ import {
     sendAnalytics
 } from '../../../analytics';
 import { openDialog, toggleDialog } from '../../../base/dialog';
+import { isMobileBrowser } from '../../../base/environment/utils';
 import { translate } from '../../../base/i18n';
 import {
     IconChat,
@@ -1231,10 +1232,10 @@ class Toolbox extends Component<Props, State> {
         let minSpaceBetweenButtons = 48;
         let widthPlusPaddingOfButton = 56;
 
-        if (this.state.windowWidth <= verySmallThreshold) {
+        if (this.state.windowWidth <= verySmallThreshold && !isMobileBrowser()) {
             minSpaceBetweenButtons = 26;
             widthPlusPaddingOfButton = 28;
-        } else if (this.state.windowWidth <= smallThreshold) {
+        } else if (this.state.windowWidth <= smallThreshold && !isMobileBrowser()) {
             minSpaceBetweenButtons = 36;
             widthPlusPaddingOfButton = 40;
         }
