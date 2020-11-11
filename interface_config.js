@@ -2,7 +2,7 @@
 /* eslint sort-keys: ["error", "asc", {"caseSensitive": false}] */
 
 var interfaceConfig = {
-    APP_NAME: 'nanocosmos Conference',
+    APP_NAME: 'nanocosmos Meetcaster',
     AUDIO_LEVEL_PRIMARY_COLOR: 'rgba(237, 125, 14)',
     AUDIO_LEVEL_SECONDARY_COLOR: 'rgba(255,255,255,0.2)',
 
@@ -15,7 +15,7 @@ var interfaceConfig = {
      * Note: this mode is experimental and subject to breakage.
      */
     AUTO_PIN_LATEST_SCREEN_SHARE: 'remote-only',
-    BRAND_WATERMARK_LINK: '',
+    BRAND_WATERMARK_LINK: 'https://via.placeholder.com/150',
 
     CLOSE_PAGE_GUEST_HINT: false, // A html text to be shown to guests on the close page, false disables it
     /**
@@ -136,7 +136,7 @@ var interfaceConfig = {
      */
     MOBILE_APP_PROMO: true,
 
-    NATIVE_APP_NAME: 'nanocosmos Conference',
+    NATIVE_APP_NAME: 'nanocosmos Meetcaster',
 
     // Names of browsers which should show a warning stating the current browser
     // has a suboptimal experience. Browsers which are not listed as optimal or
@@ -145,7 +145,7 @@ var interfaceConfig = {
     OPTIMAL_BROWSERS: ['chrome', 'chromium', 'firefox', 'nwjs', 'electron', 'safari'],
 
     POLICY_LOGO: null,
-    PROVIDER_NAME: 'nanoStream Conference',
+    PROVIDER_NAME: 'nanoStream Meetcaster',
 
     /**
      * If true, will display recent list
@@ -169,7 +169,7 @@ var interfaceConfig = {
     SHOW_JITSI_WATERMARK: false,
     SHOW_POWERED_BY: false,
     SHOW_PROMOTIONAL_CLOSE_PAGE: false,
-    SHOW_WATERMARK_FOR_GUESTS: true, // if watermark is disabled by default, it can be shown only for guests
+    SHOW_WATERMARK_FOR_GUESTS: false, // if watermark is disabled by default, it can be shown only for guests
 
     /*
      * If indicated some of the error dialogs may point to the support URL for

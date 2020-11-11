@@ -38,27 +38,38 @@ class StreamKeyForm extends AbstractStreamKeyForm<Props> {
     render() {
         const { t, value } = this.props;
 
+        // https://stackoverflow.com/questions/38552003/how-to-decode-jwt-token-in-javascript-without-using-a-library
+        function parseJwt(token) {
+            var base64Url = token.split('.')[1];
+            var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+            var jsonPayload = decodeURIComponent(atob(base64).split('').map(function (c) {
+                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+            }).join(''));
+
+            return JSON.parse(jsonPayload);
+        }
+
         return (
-            <div className = 'stream-key-form'>
+            <div className='stream-key-form'>
                 <FieldTextStateless
-                    autoFocus = { true }
-                    compact = { true }
-                    isSpellCheckEnabled = { false }
-                    label = { t('dialog.streamKey') }
-                    name = 'streamId'
-                    okDisabled = { !value }
-                    onChange = { this._onInputChange }
-                    placeholder = { t('liveStreaming.enterStreamKey') }
-                    shouldFitContainer = { true }
-                    type = 'text'
-                    value = { this.props.value } />
-                <div className = 'form-footer'>
+                    autoFocus={true}
+                    compact={true}
+                    isSpellCheckEnabled={false}
+                    label={t('dialog.streamKey')}
+                    name='streamId'
+                    okDisabled={!value}
+                    onChange={this._onInputChange}
+                    placeholder={t('liveStreaming.enterStreamKey')}
+                    shouldFitContainer={true}
+                    type='text'
+                    value={this.props.value} />
+                <div className='form-footer'>
                     <a
-                        className = 'helper-link'
-                        href = { YOUTUBE_TERMS_URL }
-                        rel = 'noopener noreferrer'
-                        target = '_blank'>
-                        { t('liveStreaming.youtubeTerms') }
+                        className='helper-link'
+                        href={YOUTUBE_TERMS_URL}
+                        rel='noopener noreferrer'
+                        target='_blank'>
+                        {t('liveStreaming.youtubeTerms')}
                     </a>
                 </div>
             </div>

@@ -628,7 +628,7 @@
             "title": "Calendar"
         },
         "devices": "Devices",
-        "followMe": "Everyone follows me",
+        "followMe": "Presenter Mode",
         "language": "Language",
         "loggedIn": "Logged in as {{name}}",
         "microphones": "Microphones",

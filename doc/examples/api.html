@@ -1,26 +1,30 @@
 <script src='../../build/external_api.min.js'></script>
 <div id="nanoStream-meet"></div>
 <script>
-    const domain = 'localhost:8080';
-    const streamname = 'yPleE-PkQ4V'
+    const domain = 'conference.nanocosmos.de';
+    const streamname = 'test'
     const parentNode = document.querySelector('#nanoStream-meet');
     const options = {
         roomName: streamname,
+        jwt: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJzZWN1cmUtY29uZmVyZW5jZSIsImlzcyI6Im5hbm9jb3Ntb3MiLCJzdWIiOiJjb25mZXJlbmNlLm5hbm9jb3Ntb3MiLCJyb29tIjoidGVzdCIsImNvbnRleHQiOnsidXNlciI6eyJuYW1lIjoiYW5uYSJ9fX0.mf2iPSBFYa-NZBdr6prN-KuKmwNfQx7VrUE3YZ4hP34",
         width: 700,
         height: 700,
         parentNode: parentNode,
         configOverwrite: {
-            subject: "This is a nanoStream custom subject",
-            startWithAudioMuted: true
+            // subject: "This is a nanoStream custom subject",
+            // startWithAudioMuted: true
+            SHOW_DEEP_LINKING_IMAGE: false,
+            SHOW_JITSI_WATERMARK: false,
+            SHOW_POWERED_BY: false,
+            SHOW_PROMOTIONAL_CLOSE_PAGE: false,
+            SHOW_WATERMARK_FOR_GUESTS: false,
         },
         interfaceConfigOverwrite: {
-            DEFAULT_REMOTE_DISPLAY_NAME: 'nanoStream User',
-            SHOW_JITSI_WATERMARK: false,
-            SHOW_WATERMARK_FOR_GUESTS: false
+            // DEFAULT_REMOTE_DISPLAY_NAME: 'nanoStream User',
+            // SHOW_JITSI_WATERMARK: false,
+            // SHOW_WATERMARK_FOR_GUESTS: false
         }
     };
-    const meeting = new NanoStreamMeetcastering(domain, options);
+    const meeting = new NanoStreamMeetcaster(domain, options);
 
-    meeting.executeCommand('startRecording', { nanoStreamName: streamname, });
-    meeting.executeCommand('toggleTileView');
 </script>
