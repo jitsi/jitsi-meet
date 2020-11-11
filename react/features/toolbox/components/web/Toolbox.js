@@ -1221,7 +1221,7 @@ class Toolbox extends Component<Props, State> {
             t
         } = this.props;
         const overflowMenuContent = this._renderOverflowMenuContent();
-        const overflowHasItems = Boolean(overflowMenuContent.filter(child => child).length);
+        const overflowHasItems = Boolean(overflowMenuContent.length);
         const toolbarAccLabel = 'toolbar.accessibilityLabel.moreActionsMenu';
         const buttonsLeft = [];
         const buttonsRight = [];
@@ -1232,10 +1232,10 @@ class Toolbox extends Component<Props, State> {
         let minSpaceBetweenButtons = 48;
         let widthPlusPaddingOfButton = 56;
 
-        if (this.state.windowWidth <= verySmallThreshold) {
+        if (this.state.windowWidth <= verySmallThreshold && !isMobileBrowser()) {
             minSpaceBetweenButtons = 26;
             widthPlusPaddingOfButton = 28;
-        } else if (this.state.windowWidth <= smallThreshold) {
+        } else if (this.state.windowWidth <= smallThreshold && !isMobileBrowser()) {
             minSpaceBetweenButtons = 36;
             widthPlusPaddingOfButton = 40;
         }
@@ -1250,8 +1250,6 @@ class Toolbox extends Component<Props, State> {
             / 2 // divide by the number of groups(left and right group)
         );
 
-        const showOverflowMenu = this.state.windowWidth >= verySmallThreshold || isMobileBrowser();
-
         if (this._shouldShowButton('chat')) {
             buttonsLeft.push('chat');
         }
@@ -1265,7 +1263,7 @@ class Toolbox extends Component<Props, State> {
         if (this._shouldShowButton('closedcaptions')) {
             buttonsLeft.push('closedcaptions');
         }
-        if (overflowHasItems && showOverflowMenu) {
+        if (overflowHasItems) {
             buttonsRight.push('overflowmenu');
         }
         if (this._shouldShowButton('invite')) {
@@ -1288,13 +1286,13 @@ class Toolbox extends Component<Props, State> {
             movedButtons.push(...buttonsLeft.splice(
                 maxNumberOfButtonsPerGroup,
                 buttonsLeft.length - maxNumberOfButtonsPerGroup));
-            if (buttonsRight.indexOf('overflowmenu') === -1 && showOverflowMenu) {
+            if (buttonsRight.indexOf('overflowmenu') === -1) {
                 buttonsRight.unshift('overflowmenu');
             }
         }
 
         if (buttonsRight.length > maxNumberOfButtonsPerGroup) {
-            if (buttonsRight.indexOf('overflowmenu') === -1 && showOverflowMenu) {
+            if (buttonsRight.indexOf('overflowmenu') === -1) {
                 buttonsRight.unshift('overflowmenu');
             }
 
