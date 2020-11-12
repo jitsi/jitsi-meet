@@ -18,6 +18,7 @@ import {
 import {
     joinConference as joinConferenceAction
 } from '../../actions';
+import JaneHangupButton from '../../../toolbox/components/JaneHangupButton';
 
 type Props = {
     joinConference: Function,
@@ -204,8 +205,9 @@ class JaneDialog extends Component<Props> {
                     }
                 </div>
                 <div className='jane-waiting-area-preview-btn-container'>
-                    <AudioSettingsButton visible={true}/>
-                    <VideoSettingsButton visible={true}/>
+                    <AudioSettingsButton visible/>
+                    <JaneHangupButton visible/>
+                    <VideoSettingsButton visible/>
                 </div>
             </div>
         );
