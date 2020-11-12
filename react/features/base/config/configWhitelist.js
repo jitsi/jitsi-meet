@@ -128,7 +128,6 @@ export default [
     'localRecording',
     'maxFullResolutionParticipants',
     'minParticipants',
-    'nick',
     'openBridgeChannel',
     'opusMaxAverageBitrate',
     'p2p',
