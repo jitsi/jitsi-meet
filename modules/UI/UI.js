@@ -343,11 +343,6 @@ UI.showLoginPopup = function(callback) {
     });
 };
 
-UI.askForNickname = function() {
-    // eslint-disable-next-line no-alert
-    return window.prompt('Your nickname (optional)');
-};
-
 /**
  * Sets muted audio state for participant
  */
