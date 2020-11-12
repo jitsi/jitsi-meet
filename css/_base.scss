@@ -187,12 +187,33 @@ form {
 }
 
 .watermark {
-    position: relative;
-    top: 32px;
-    left: 32px;
+    position: absolute;
+    top: 0;
+    left: 0;
     min-width: 120px;
-    height: 74px;
+    padding-left: 20px;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    width: 100%;
     z-index: 2;
+
+    &-with-background{
+        background-color: rgba(0, 0, 0, 0.2);
+    }
+
+    .close {
+        position: absolute;
+        top: 20px;
+        right: 40px;
+        cursor: pointer;
+
+        svg:focus,
+        svg:hover,
+        svg:active {
+            fill: #cccccc
+        }
+    }
+
 }
 
 .leftwatermark {
@@ -210,10 +231,10 @@ form {
     padding-left: 120px;
     padding-top: 5px;
     text-align: left;
-    color: $defaultDarkColor !important;
+    color: $defaultColor !important;
 
     p {
-        font-family: "ProximaNovaLtLight";
+        font-family: "ProximaNovaLtSbold";
 
         &:first-child {
             font-size: 24px;
@@ -227,6 +248,7 @@ form {
     @media all and (max-width: 800px) {
         padding-left: 0;
         padding-top: 85px;
+        padding-right: 50px;
         p {
             &:first-child {
                 font-size: 16px;

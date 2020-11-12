@@ -43,6 +43,13 @@
         height: calc(100% - #{$newToolbarSizeWithPadding});
     }
 
+    &.has-margin-top {
+        margin-top: 100px;
+        @media all and (max-width: 800px) {
+            margin-top: 155px;
+        }
+    }
+
     /**
      * Hide videos by making them slight to the right.
      */
