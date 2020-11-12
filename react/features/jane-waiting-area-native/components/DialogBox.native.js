@@ -1,30 +1,36 @@
 // @flow
 
 import React, { Component } from 'react';
-import { Image, Text, View } from 'react-native';
+import { Image, Linking, Text, View } from 'react-native';
 import { connect } from '../../base/redux';
 import {
     checkLocalParticipantCanJoin,
-    checkRoomStatus,
     getLocalParticipantFromJwt, getLocalParticipantType,
     updateParticipantReadyStatus
 } from '../functions';
 import jwtDecode from 'jwt-decode';
 import moment from 'moment';
-import { enableJaneWaitingAreaPage } from '../actions';
+import {
+    enableJaneWaitingAreaPage,
+    setJaneWaitingAreaAuthState,
+    updateRemoteParticipantsStatuses
+} from '../actions';
 import { getLocalizedDateFormatter, jsCoreDateCreator } from '../../base/i18n';
 import { connect as startConference } from '../../base/connection';
 import styles from './styles';
 import { ActionButton } from './ActionButton.native';
 import { WebView } from 'react-native-webview';
 
+type DialogTitleProps = {
+    t: Function,
+    participantType: string,
+    localParticipantCanJoin: boolean,
+    authState: string
+}
+
 type Props = {
     joinConference: Function,
 };
-
-type State = {
-    localParticipantCanJoin: boolean,
-}
 
 const getWebViewUrl = locationURL => {
     let uri = locationURL.href;
@@ -62,88 +68,22 @@ class DialogBox extends Component<Props, State> {
 
     constructor(props) {
         super(props);
-        this.state = {
-            localParticipantCanJoin: false,
-            webViewError: false
-        };
         this._joinConference = this._joinConference.bind(this);
-        this._close = this._close.bind(this);
-        this.pollingInterval = null;
-    }
-
-    componentDidUpdate(prevProps, prevState) {
-        if (this.state.webViewError && (prevState.webViewError !== this.state.webViewError)) {
-            this._pollForReadyStatus();
-        }
-    }
-
-    componentWillUnmount() {
-        this.pollingInterval && clearInterval(this.pollingInterval);
+        this._return = this._return.bind(this);
     }
 
     _setWebViewError(error) {
-        this.setState({ webViewError: error });
-    }
+        const { startConference } = this.props;
 
-    async _polling() {
-        const { jwt, participantType } = this.props;
-        const response = await checkRoomStatus(jwt);
-        const localParticipantCanJoin = response && await checkLocalParticipantCanJoin(response.participant_statuses, participantType);
-
-        this.setState({
-            localParticipantCanJoin
-        });
-    }
-
-    _pollForReadyStatus() {
-        this.pollingInterval = setInterval(this._polling.bind(this), 10000);
-    }
-
-    _joinConference() {
-        const {
-            startConference, participantType, enableJaneWaitingAreaPage, jwt, participant
-        } = this.props;
-
-        updateParticipantReadyStatus(jwt, participantType, participant, 'joined');
-        enableJaneWaitingAreaPage(false);
         startConference();
     }
 
-    _getDialogTitleMsg() {
-        const { participantType } = this.props;
-        const { localParticipantCanJoin } = this.state;
-        let title;
+    _joinConference() {
+        const { startConference, enableJaneWaitingAreaPage, jwt } = this.props;
 
-        if (!localParticipantCanJoin) {
-            title = 'Test your audio and video while you wait.';
-        } else if (participantType === 'StaffMember') {
-            title = 'When you are ready to begin, click on button below to admit your client into the video session.';
-        } else {
-            title = '';
-        }
-
-        return (<Text
-            style = { styles.titleMsg }>{title}</Text>);
-    }
-
-    _getDialogTitle() {
-        const { participantType } = this.props;
-        const { localParticipantCanJoin } = this.state;
-        let header;
-
-        if (participantType === 'StaffMember') {
-            if (!localParticipantCanJoin) {
-                header = 'Waiting for your client...';
-            } else {
-                header = 'Your patient is ready to begin the session.';
-            }
-        } else if (!localParticipantCanJoin) {
-            header = 'Your practitioner will let you into the session when ready...';
-        } else {
-            header = 'Your practitioner is ready to begin the session.';
-        }
-
-        return <Text style = { styles.title }>{header}</Text>;
+        updateParticipantReadyStatus(jwt, 'joined');
+        enableJaneWaitingAreaPage(false);
+        startConference();
     }
 
     _getStartDate() {
@@ -204,12 +144,15 @@ class DialogBox extends Component<Props, State> {
     _getBtnText() {
         const { participantType } = this.props;
 
-
         return participantType === 'StaffMember' ? 'Admit Client' : 'Begin';
     }
 
-    _close() {
+    _return() {
+        const { jwtPayload, jwt } = this.props;
+        const leaveWaitingAreaUrl = jwtPayload && jwtPayload.context && jwtPayload.context.leave_waiting_area_url || '';
 
+        updateParticipantReadyStatus(jwt, 'left');
+        Linking.openURL(leaveWaitingAreaUrl);
     }
 
     parseJsonMessage(string) {
@@ -221,24 +164,21 @@ class DialogBox extends Component<Props, State> {
     }
 
     onMessageUpdate(event) {
+        const {  updateRemoteParticipantsStatuses, setJaneWaitingAreaAuthState } = this.props;
         const webViewEvent = this.parseJsonMessage(event.nativeEvent.data);
-        const remoteParticipantsStatuses = webViewEvent && webViewEvent.remoteParticipantsStatuses || null
-        const socketRemoteParticipantsEvent = webViewEvent && webViewEvent.socketRemoteParticipantsEvent || null
+        const remoteParticipantsStatuses = webViewEvent && webViewEvent.remoteParticipantsStatuses || null;
         console.log(webViewEvent, 'incoming web view event');
 
-        if (socketRemoteParticipantsEvent) {
-            const localParticipantCanJoin = socketRemoteParticipantsEvent.info
-                && socketRemoteParticipantsEvent.info.status !== 'left';
-            this.setState({
-                localParticipantCanJoin
-            });
+        if (remoteParticipantsStatuses) {
+            updateRemoteParticipantsStatuses(remoteParticipantsStatuses);
         }
 
-        if (remoteParticipantsStatuses) {
-            const localParticipantCanJoin = remoteParticipantsStatuses.some(v => v.info && v.info.status !== 'left');
-            this.setState({
-                localParticipantCanJoin
-            });
+        if (webViewEvent && webViewEvent.error) {
+            if (webViewEvent.error.error === 'Signature has expired') {
+                setJaneWaitingAreaAuthState ('failed');
+            } else {
+                this._joinConference ();
+            }
         }
     }
 
@@ -246,9 +186,11 @@ class DialogBox extends Component<Props, State> {
         const {
             participantType,
             jwtPayload,
-            locationURL
+            locationURL,
+            remoteParticipantsStatuses,
+            authState
         } = this.props;
-        const { localParticipantCanJoin } = this.state;
+        const localParticipantCanJoin = checkLocalParticipantCanJoin(remoteParticipantsStatuses, participantType);
 
         return (<View style = { styles.janeWaitingAreaContainer }>
             <View style = { styles.janeWaitingAreaDialogBoxWrapper }>
@@ -260,10 +202,16 @@ class DialogBox extends Component<Props, State> {
                     </View>
                     <View style = { styles.messageWrapper }>
                         {
-                            this._getDialogTitle()
+                            <DialogTitle
+                                participantType = { participantType }
+                                authState = { authState }
+                                localParticipantCanJoin = { localParticipantCanJoin } />
                         }
                         {
-                            this._getDialogTitleMsg()
+                            <DialogTitleMsg
+                                participantType = { participantType }
+                                authState = { authState }
+                                localParticipantCanJoin = { localParticipantCanJoin } />
                         }
                         <View style = { styles.infoDetailContainer }>
                             <Text style = { [ styles.msgText, styles.boldText ] }>
@@ -290,21 +238,20 @@ class DialogBox extends Component<Props, State> {
                     </View>
                 </View>
                 <View style = { styles.actionButtonWrapper }>
-                    {localParticipantCanJoin
+                    { authState !== 'failed'
                     && <ActionButton
+                        disabled={ !localParticipantCanJoin }
                         title = { this._getBtnText() }
                         containerStyle = { styles.joinButtonContainer }
                         titleStyle = { styles.joinButtonText }
-                        onPress = { this._joinConference } />}
+                        onPress = { this._joinConference } /> }
                     {
-                        !localParticipantCanJoin && participantType === 'StaffMember'
+                        authState === 'failed'
                         && <ActionButton
-                            title = 'Close'
-                            onPress = { this._close } />
+                            title = { participantType === 'StaffMember' ? 'Return to my Schedule' : 'Return to my account' }
+                            onPress = { this._return } />
                     }
-
                 </View>
-
             </View>
             <SocketWebView
                 locationURL = { locationURL }
@@ -318,22 +265,65 @@ class DialogBox extends Component<Props, State> {
 function mapStateToProps(state): Object {
     const { jwt } = state['features/base/jwt'];
     const jwtPayload = jwt && jwtDecode(jwt) || null;
-    const participant = getLocalParticipantFromJwt(state)
-    const participantType = getLocalParticipantType(state)
+    const participant = getLocalParticipantFromJwt(state);
+    const participantType = getLocalParticipantType(state);
     const { locationURL } = state['features/base/connection'];
+    const { remoteParticipantsStatuses, authState } = state['features/jane-waiting-area-native'];
 
     return {
         jwt,
         jwtPayload,
         participantType,
         participant,
-        locationURL
+        locationURL,
+        remoteParticipantsStatuses,
+        authState
     };
 }
 
 const mapDispatchToProps = {
     startConference,
-    enableJaneWaitingAreaPage
+    enableJaneWaitingAreaPage,
+    updateRemoteParticipantsStatuses,
+    setJaneWaitingAreaAuthState
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(DialogBox);
+
+
+const DialogTitle = (props: DialogTitleProps) => {
+    const { participantType, authState, localParticipantCanJoin } = props;
+    const tokenExpiredHeader = 'Your appointment booking has expired';
+    let header;
+
+    if (participantType === 'StaffMember') {
+        if (!localParticipantCanJoin) {
+            header = 'Waiting for your client...';
+        } else {
+            header = 'Your patient is ready to begin the session.';
+        }
+    } else if (!localParticipantCanJoin) {
+        header = 'Your practitioner will let you into the session when ready...';
+    } else {
+        header = 'Your practitioner is ready to begin the session.';
+    }
+
+    return (<Text
+        style = { styles.title }>{ authState === 'failed' ? tokenExpiredHeader : header }</Text>);
+};
+
+const DialogTitleMsg = (props: DialogTitleProps) => {
+    const { participantType, authState, localParticipantCanJoin } = props;
+    let title;
+
+    if (!localParticipantCanJoin) {
+        title = 'Test your audio and video while you wait.';
+    } else if (participantType === 'StaffMember') {
+        title = 'When you are ready to begin, click on button below to admit your client into the video session.';
+    } else {
+        title = '';
+    }
+
+    return (<Text
+        style = { styles.titleMsg }>{ authState === 'failed' ? '' : title }</Text>);
+};

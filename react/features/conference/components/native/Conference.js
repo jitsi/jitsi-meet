@@ -41,8 +41,7 @@ import styles, { NAVBAR_GRADIENT_COLORS } from './styles';
 import type { AbstractProps } from '../AbstractConference';
 import {
     getLocalParticipantFromJwt,
-    getLocalParticipantType,
-    updateParticipantReadyStatus
+    getLocalParticipantType
 } from '../../../jane-waiting-area-native';
 
 /**
@@ -163,21 +162,6 @@ class Conference extends AbstractConference<Props, *> {
         // Tear handling any hardware button presses for back navigation down.
         BackButtonRegistry.removeListener(this._onHardwareBackPress);
 
-    }
-
-    /**
-     * Implements {@link Component#componentDidUpdate()}. Invoked immediately
-     * after this component is updated check app background state and update
-     * the participant's ready status if app state is 'inactive' or 'background'
-     *
-     * @inheritdoc
-     * @returns {void}
-     */
-    componentDidUpdate(prevProps) {
-        const { _participantType, _jwt, _participant } = this.props;
-        if (prevProps._appstate !== this.props._appstate && prevProps._appstate.appState === 'active') {
-            updateParticipantReadyStatus(_jwt, _participantType, _participant, 'left');
-        }
     }
 
     /**
@@ -341,8 +325,8 @@ class Conference extends AbstractConference<Props, *> {
                     <Captions onPress = { this._onClick } />
 
                     {_shouldDisplayTileView || <DisplayNameLabel
-                        participantId={_largeVideoParticipantId}/>}
-                    {_enableJaneWaitingAreaPage && <JaneWaitingArea/>}
+                        participantId = { _largeVideoParticipantId } />}
+                    {_enableJaneWaitingAreaPage && <JaneWaitingArea />}
                     {/*
                       * The Toolbox is in a stacking layer below the Filmstrip.
                       */}
@@ -473,7 +457,6 @@ function _mapStateToProps(state) {
     const connecting_
         = connecting || (connection && (joining || (!conference && !leaving)));
     const { jwt } = state['features/base/jwt'];
-    const appstate = state['features/background'];
 
     return {
         ...abstractMapStateToProps(state),
@@ -534,8 +517,7 @@ function _mapStateToProps(state) {
         _enableJaneWaitingAreaPage: enableJaneWaitingAreaPage,
         _jwt: jwt,
         _participantType: getLocalParticipantType(state),
-        _participant: getLocalParticipantFromJwt(state),
-        _appstate: appstate
+        _participant: getLocalParticipantFromJwt(state)
     };
 }
 

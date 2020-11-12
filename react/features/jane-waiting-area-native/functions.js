@@ -1,8 +1,7 @@
 // @flow
 
 import jwtDecode from 'jwt-decode';
-import { RemoteParticipantStatus } from './RemoteParticipantStatus';
-import { doGetJSON, sendBeaconToJaneRN } from '../base/util';
+import { doGetJSON } from '../base/util';
 
 export function isJaneWaitingAreaPageEnabled(state: Object): boolean {
     const { jwt } = state['features/base/jwt'];
@@ -16,47 +15,27 @@ export function isJaneWaitingAreaPageVisible(state: Object): boolean {
     return isJaneWaitingAreaPageEnabled(state) && state['features/jane-waiting-area-native']?.showJaneWaitingArea;
 }
 
-export async function checkRoomStatus(jwt) {
-    try {
-        const jwtPayload = jwt && jwtDecode(jwt) || null;
-        const roomStatusUrl = jwtPayload && jwtPayload.context && jwtPayload.context.room_status_url || '';
-        const url = new URL(roomStatusUrl);
-        const params = { jwt };
-        url.search = new URLSearchParams(params).toString();
-
-        return doGetJSON(url, true);
-    } catch (e) {
-        console.error(e);
-    }
-}
-
-export async function getRemoteParticipantsReadyStatus(participantsStatus, participantType) {
-    const remoteParticipantType = participantType === 'StaffMember' ? 'Patient' : 'StaffMember';
-    let remoteParticipantStatus = [];
-    participantsStatus && participantsStatus.forEach((v) => {
-        if (v.participant_type === remoteParticipantType) {
-            remoteParticipantStatus.push(new RemoteParticipantStatus(v));
-        }
-    });
-    return remoteParticipantStatus;
-}
-
-export function updateParticipantReadyStatus(jwt, participantType, participant, status) {
+export function updateParticipantReadyStatus(jwt: string, status: string): Promise {
     try {
         const jwtPayload = jwt && jwtDecode(jwt) || null;
         const updateParticipantStatusUrl = jwtPayload && jwtPayload.context && jwtPayload.context.update_participant_status_url || '';
         const info = { status };
-        const obj = {
-            jwt,
-            info,
-            participant_type: participantType === 'StaffMember' ? 'staff_member' : 'patient',
-            participant_id: participant.participant_id,
-            participant_name: participant.name,
-            room_name: jwtPayload.room
-        };
-        const data = new Blob([ JSON.stringify(obj, null, 2) ], { type: 'text/plain; charset=UTF-8' });
-        const errorMsg = 'Can Not Update Current Participant\'s Status.';
-        sendBeaconToJaneRN(updateParticipantStatusUrl, data, errorMsg);
+
+        return fetch(updateParticipantStatusUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                'jwt': jwt,
+                'info': info
+            })
+        })
+            .then(res => {
+                if (!res.ok) {
+                    throw Error('Can Not Update Current Participant\'s Status.');
+                }
+            });
     } catch (e) {
         console.error(e);
     }
@@ -75,8 +54,13 @@ export function getLocalParticipantType(state) {
     return participant && participant.participant_type || null;
 }
 
-export function checkLocalParticipantCanJoin(participant_statuses, participantType) {
-    const remoteParticipantsStatus = participant_statuses && getRemoteParticipantsReadyStatus(participant_statuses, participantType);
+export function checkLocalParticipantCanJoin(remoteParticipantsStatuses, participantType) {
+    return remoteParticipantsStatuses && remoteParticipantsStatuses.length > 0 && remoteParticipantsStatuses.some(v => {
+        if (participantType === 'StaffMember') {
+            return v.info && (v.info.status === 'joined' || v.info.status === 'waiting');
+        }
 
-    return remoteParticipantsStatus && remoteParticipantsStatus.info && remoteParticipantsStatus.info.status !== 'left' || false;
+        return v.info && v.info.status === 'joined';
+
+    }) || false;
 }
