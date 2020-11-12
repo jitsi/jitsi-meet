@@ -1,6 +1,8 @@
 /* eslint-disable */
 import jwtDecode from 'jwt-decode';
 import { doGetJSON } from '../base/util';
+import { UPDATE_REMOTE_PARTICIPANT_STATUSES } from './actionTypes';
+import { updateRemoteParticipantsStatuses } from './actions';
 
 function applyMuteOptionsToTrack(track, shouldMute) {
     if (track.isMuted() === shouldMute) {
@@ -166,9 +168,8 @@ export function checkLocalParticipantCanJoin(remoteParticipantsStatuses: Array, 
     return remoteParticipantsStatuses && remoteParticipantsStatuses.length > 0 && remoteParticipantsStatuses.some(v => {
         if (participantType === 'StaffMember') {
             return v.info && (v.info.status === 'joined' || v.info.status === 'waiting');
-        } else {
-            return v.info && v.info.status === 'joined';
         }
+        return v.info && v.info.status === 'joined';
     }) || false;
 }
 
@@ -185,3 +186,43 @@ export function getLocalParticipantType(state: Object): string {
     return participant && participant.participant_type;
 }
 
+export function detectLegacyMobileApp(remoteParticipantsStatuses) {
+    const now = Math.floor(Date.now() / 1000);
+    const participantType = getLocalParticipantType(APP.store.getState());
+    let fetchRoomStatusAgain = false;
+    remoteParticipantsStatuses.forEach(status => {
+        if (status.info.status === 'begin') {
+            if (now - status.updated_at > 4) {
+                if (participantType === 'StaffMember') {
+                    status.info.status = 'waiting';
+                } else {
+                    status.info.status = 'joined';
+                }
+            } else {
+                fetchRoomStatusAgain = true;
+            }
+        }
+    });
+
+    if (fetchRoomStatusAgain) {
+        const { jwt } = APP.store.getState()['features/base/jwt'];
+        setTimeout(async () => {
+            try {
+                const response = await checkRoomStatus(jwt);
+                const remoteParticipantsStatuses = getRemoteParticipantsStatues(response.participant_statuses, participantType);
+                APP.store.dispatch(updateRemoteParticipantsStatuses(remoteParticipantsStatuses));
+            } catch (e) {
+                console.error(e);
+            }
+        }, 5000);
+    } else {
+        APP.store.dispatch({
+            type: UPDATE_REMOTE_PARTICIPANT_STATUSES,
+            value: remoteParticipantsStatuses
+        });
+    }
+}
+
+export function hasRemoteParticipantInBeginStatus(remoteParticipantsStatuses) {
+    return remoteParticipantsStatuses.some(v => v.info && v.info.status === 'begin');
+}

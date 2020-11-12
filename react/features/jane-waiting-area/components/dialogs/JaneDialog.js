@@ -161,6 +161,7 @@ class JaneDialog extends Component<Props> {
         const { jwtPayload } = this.props;
         const { leave_waiting_area_url } = jwtPayload && jwtPayload.context;
         openURLInBrowser(leave_waiting_area_url);
+        updateParticipantReadyStatus('left');
     }
 
     render() {

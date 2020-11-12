@@ -20,8 +20,9 @@ import { createLocalTrack } from '../base/lib-jitsi-meet';
 import logger from './logger';
 
 import {
+    detectLegacyMobileApp,
     getAudioTrack,
-    getVideoTrack
+    getVideoTrack, hasRemoteParticipantInBeginStatus
 } from './functions';
 
 export function addJaneWaitingAreaAudioTrack(value: Object) {
@@ -195,10 +196,16 @@ export function connectJaneSocketServer() {
     };
 }
 
-export function updateRemoteParticipantsStatuses(value) {
-    return {
-        type: UPDATE_REMOTE_PARTICIPANT_STATUSES,
-        value
+export function updateRemoteParticipantsStatuses(remoteParticipantsStatuses) {
+    return (dispatch: Function) => {
+        if (hasRemoteParticipantInBeginStatus(remoteParticipantsStatuses)) {
+            detectLegacyMobileApp(remoteParticipantsStatuses);
+        } else {
+            dispatch({
+                type: UPDATE_REMOTE_PARTICIPANT_STATUSES,
+                value: remoteParticipantsStatuses
+            });
+        }
     };
 }
 
@@ -219,6 +226,7 @@ export function updateRemoteParticipantsStatusesFromSocket(value) {
             remoteParticipantsStatuses.forEach(v => {
                 if (v.participant_id === value.participant_id) {
                     v.info = value.info;
+                    v.updated_at = value.updated_at;
                 }
             });
         } else {
