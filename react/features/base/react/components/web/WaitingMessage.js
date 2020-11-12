@@ -2,17 +2,27 @@
 /* eslint-disable */
 import React, { Component } from 'react';
 
+import type { Dispatch } from 'redux';
 import { getLocalizedDateFormatter, translate } from '../../../i18n';
 import { connect } from '../../../redux';
 import { getParticipantCount } from '../../../participants';
 import { getRemoteTracks } from '../../../tracks';
 import jwtDecode from 'jwt-decode';
+import {
+    IconClose
+} from '../../../../base/icons';
+import { Icon } from '../../../icons/components';
+import { isJaneTestMode } from '../../../conference';
+import { setWaitingMessageVisibility } from '../../../../jane-waiting-area/actions';
 
 type Props = {
     _isGuest: boolean,
     jwt: Object,
     conferenceHasStarted: boolean,
-    isWelcomePage: boolean
+    waitingMessageHeader: string,
+    onClose: Function,
+    isJaneTestMode: boolean,
+    hideWaitingMessage: Function,
 };
 
 type State = {
@@ -79,6 +89,10 @@ class WaitingMessage extends Component<Props, State> {
         }
     }
 
+    _hideWaitingMessage() {
+        this.props.hideWaitingMessage();
+    }
+
     render() {
         const { conferenceHasStarted } = this.props;
 
@@ -91,25 +105,45 @@ class WaitingMessage extends Component<Props, State> {
                 {
                     this._renderWaitingMessage()
                 }
+                <div className='close'>
+                    <Icon src={IconClose}
+                          onClick={this._hideWaitingMessage.bind(this)}/>
+                </div>
             </div>
         );
     }
 
     _renderWaitingMessage() {
         const { beforeAppointmentStart, appointmentStartAt } = this.state;
+        const { waitingMessageHeader, isJaneTestMode } = this.props;
 
         let header = <p>Waiting for the other participant to join...</p>;
+        let text = <p>Sit back, relax and take a moment for yourself.</p>;
 
         if (beforeAppointmentStart && appointmentStartAt) {
             header = (<p>Your appointment will begin
                 at {getLocalizedDateFormatter(appointmentStartAt).format('hh:mm A')}</p>);
         }
 
-        return (<div className = 'waitingMessage'>
+        if (waitingMessageHeader) {
+            header = <p>{waitingMessageHeader}</p>;
+        }
+
+        if (isJaneTestMode) {
+            header = <p>Testing your audio and video...</p>;
+            text = <p>
+                This is just a test area. Begin your online appointment from
+                your Upcoming Appointments page.
+            </p>;
+        }
+
+        return (<div className='waitingMessage'>
             {
                 header
             }
-            <p>Sit back, relax and take a moment for yourself.</p>
+            {
+                text
+            }
         </div>);
     }
 }
@@ -119,11 +153,19 @@ function _mapStateToProps(state) {
     const participantCount = getParticipantCount(state);
     const remoteTracks = getRemoteTracks(state['features/base/tracks']);
 
-
     return {
         jwt,
-        conferenceHasStarted: participantCount > 1 && remoteTracks.length > 0
+        conferenceHasStarted: participantCount > 1 && remoteTracks.length > 0,
+        isJaneTestMode: isJaneTestMode(state)
     };
 }
 
-export default connect(_mapStateToProps)(translate(WaitingMessage));
+function _mapDispatchToProps(dispatch: Dispatch<any>) {
+    return {
+        hideWaitingMessage() {
+            dispatch(setWaitingMessageVisibility(false));
+        }
+    };
+}
+
+export default connect(_mapStateToProps, _mapDispatchToProps)(translate(WaitingMessage));

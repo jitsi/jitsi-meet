@@ -26,7 +26,8 @@ export type Props = {
     /**
      * Whether the video quality label should be displayed.
      */
-    _showVideoQualityLabel: boolean
+    _showVideoQualityLabel: boolean,
+    _showWaitingMessage: boolean
 };
 
 /**
@@ -123,8 +124,11 @@ export default class AbstractLabels<P: Props, S> extends Component<P, S> {
  * }}
  */
 export function _abstractMapStateToProps(state: Object) {
+    const { showWaitingMessage } = state['features/jane-waiting-area'];
+
     return {
         _filmstripVisible: isFilmstripVisible(state),
-        _showVideoQualityLabel: !shouldDisplayTileView(state)
+        _showVideoQualityLabel: !shouldDisplayTileView(state),
+        _showWaitingMessage: showWaitingMessage
     };
 }

@@ -39,15 +39,15 @@ class JaneWaitingArea extends Component<Props> {
             deviceStatusVisible,
             remoteParticipantsStatuses
         } = this.props;
-        const localParticipantCanJoin = checkLocalParticipantCanJoin(remoteParticipantsStatuses);
-        const hideWaitingMessage = participantType === 'StaffMember'
-            || localParticipantCanJoin;
-        const waitingMessageHeader = (localParticipantCanJoin || participantType === 'StaffMember') ? '' : 'Waiting for the practitioner...';
+        const localParticipantCanJoin = checkLocalParticipantCanJoin(remoteParticipantsStatuses, participantType);
+        const hasWaitingMessage = participantType === 'Patient'
+            && !localParticipantCanJoin;
+        const waitingMessageHeader = hasWaitingMessage && 'Waiting for the practitioner...' || '';
 
         return (
             <div className='jane-waiting-area-full-page'>
                 <Watermarks
-                    hideWaitingMessage={hideWaitingMessage}
+                    hasWaitingMessage={hasWaitingMessage}
                     waitingMessageHeader={waitingMessageHeader}/>
                 <Preview name={name}/>
                 <JaneDialog/>

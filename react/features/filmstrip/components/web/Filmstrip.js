@@ -1,5 +1,6 @@
 /* @flow */
 
+/* eslint-disable */
 import _ from 'lodash';
 import React, { Component } from 'react';
 import type { Dispatch } from 'redux';
@@ -370,11 +371,12 @@ function _mapStateToProps(state) {
     const isFilmstripOnly = Boolean(interfaceConfig.filmStripOnly);
     const reduceHeight
         = !isFilmstripOnly && state['features/toolbox'].visible && interfaceConfig.TOOLBAR_BUTTONS.length;
+    const { showWaitingMessage } = state['features/jane-waiting-area'];
     const remoteVideosVisible = shouldRemoteVideosBeVisible(state);
     const { isOpen: shiftRight } = state['features/chat'];
     const className = `${remoteVideosVisible ? '' : 'hide-videos'} ${
         reduceHeight ? 'reduce-height' : ''
-    } ${shiftRight ? 'shift-right' : ''}`.trim();
+    } ${shiftRight ? 'shift-right' : ''} ${showWaitingMessage ? 'has-margin-top' : ''}`.trim();
     const videosClassName = `filmstrip__videos${
         isFilmstripOnly ? ' filmstrip__videos-filmstripOnly' : ''}${
         visible ? '' : ' hidden'}`;

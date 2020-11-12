@@ -7,6 +7,7 @@ import { connect } from '../../base/redux';
 import { Subject } from '../../conference';
 import { fetchCustomBrandingData } from '../../dynamic-branding';
 import { Captions } from '../../subtitles/';
+import { isJaneWaitingAreaPageVisible } from '../../jane-waiting-area';
 
 declare var interfaceConfig: Object;
 
@@ -36,7 +37,8 @@ type Props = {
      * Used to determine the value of the autoplay attribute of the underlying
      * video element.
      */
-    _noAutoPlayVideo: boolean
+    _noAutoPlayVideo: boolean,
+    _showJaneWaitingArea: boolean
 }
 
 /**
@@ -64,6 +66,7 @@ class LargeVideo extends Component<Props> {
     render() {
         const style = this._getCustomSyles();
         const className = `videocontainer${this.props._isChatOpen ? ' shift-right' : ''}`;
+        const { _showJaneWaitingArea } = this.props;
 
         return (
             <div
@@ -76,7 +79,7 @@ class LargeVideo extends Component<Props> {
                 </div>
                 <div id = 'etherpad' />
 
-                <Watermarks />
+                {!_showJaneWaitingArea && <Watermarks />}
 
                 <div id = 'dominantSpeaker'>
                     <div className = 'dynamic-shadow' />
@@ -147,7 +150,8 @@ function _mapStateToProps(state) {
         _customBackgroundColor: backgroundColor,
         _customBackgroundImageUrl: backgroundImageUrl,
         _isChatOpen: isChatOpen,
-        _noAutoPlayVideo: testingConfig?.noAutoPlayVideo
+        _noAutoPlayVideo: testingConfig?.noAutoPlayVideo,
+        _showJaneWaitingArea: isJaneWaitingAreaPageVisible(state)
     };
 }
 
