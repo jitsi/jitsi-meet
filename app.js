@@ -1,7 +1,5 @@
 /* application specific logic */
 
-import bugsnag from '@bugsnag/js';
-window.bugsnagClient = bugsnag('a0c8e2c65bed338af650acd9c2192855');
 import 'jquery';
 import 'jquery-contextmenu';
 import 'jQuery-Impromptu';
@@ -14,11 +12,14 @@ import UI from './modules/UI/UI';
 import keyboardshortcut from './modules/keyboardshortcut/keyboardshortcut';
 import remoteControl from './modules/remotecontrol/RemoteControl';
 import translation from './modules/translation/translation';
+import { getBugsnagClient } from './bugsnag';
 
 // Initialize Olm as early as possible.
 if (window.Olm) {
     window.Olm.init();
 }
+
+window.bugsnag = getBugsnagClient();
 
 window.APP = {
     API,
