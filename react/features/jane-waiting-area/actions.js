@@ -11,7 +11,10 @@ import {
     SET_JANE_WAITING_AREA_PAGE_VISIBILITY,
     SET_JANE_WAITING_AREA_VIDEO_DISABLED,
     SET_JANE_WAITING_AREA_VIDEO_MUTED,
-    CONNECT_JANE_SOCKET_SERVER, UPDATE_REMOTE_PARTICIPANT_STATUSES
+    SET_WAITING_MESSAGE_VISIBILITY,
+    CONNECT_JANE_SOCKET_SERVER,
+    UPDATE_REMOTE_PARTICIPANT_STATUSES,
+    SET_JANE_WAITING_AREA_AUTH_STATE
 } from './actionTypes';
 import { createLocalTrack } from '../base/lib-jitsi-meet';
 import logger from './logger';
@@ -199,6 +202,15 @@ export function updateRemoteParticipantsStatuses(value) {
     };
 }
 
+export function setWaitingMessageVisibility(showWaitingMessage) {
+    return (dispatch: Function) => {
+        dispatch({
+            type: SET_WAITING_MESSAGE_VISIBILITY,
+            showWaitingMessage
+        });
+    };
+}
+
 export function updateRemoteParticipantsStatusesFromSocket(value) {
     return (dispatch: Function, getState: Function) => {
         const { remoteParticipantsStatuses } = getState()['features/jane-waiting-area'];
@@ -213,5 +225,12 @@ export function updateRemoteParticipantsStatusesFromSocket(value) {
             remoteParticipantsStatuses.push(value);
         }
         dispatch(updateRemoteParticipantsStatuses(remoteParticipantsStatuses));
+    };
+}
+
+export function setJaneWaitingAreaAuthState(value: string) {
+    return {
+        type: SET_JANE_WAITING_AREA_AUTH_STATE,
+        value
     };
 }

@@ -11,7 +11,9 @@ import {
     SET_JANE_WAITING_AREA_PAGE_VISIBILITY,
     SET_JANE_WAITING_AREA_VIDEO_DISABLED,
     SET_JANE_WAITING_AREA_VIDEO_MUTED,
-    UPDATE_REMOTE_PARTICIPANT_STATUSES
+    UPDATE_REMOTE_PARTICIPANT_STATUSES,
+    SET_WAITING_MESSAGE_VISIBILITY,
+    SET_JANE_WAITING_AREA_AUTH_STATE
 } from './actionTypes';
 
 const DEFAULT_STATE = {
@@ -28,7 +30,9 @@ const DEFAULT_STATE = {
     videoTrack: null,
     videoDisabled: false,
     videoMuted: false,
-    remoteParticipantsStatuses: []
+    remoteParticipantsStatuses: [],
+    showWaitingMessage: false,
+    authState: ''
 };
 
 /**
@@ -111,6 +115,20 @@ ReducerRegistry.register(
             return {
                 ...state,
                 remoteParticipantsStatuses: action.value
+            };
+        }
+
+        case SET_WAITING_MESSAGE_VISIBILITY: {
+            return {
+                ...state,
+                showWaitingMessage: action.showWaitingMessage
+            };
+        }
+
+        case SET_JANE_WAITING_AREA_AUTH_STATE: {
+            return {
+                ...state,
+                authState: action.value
             };
         }
 

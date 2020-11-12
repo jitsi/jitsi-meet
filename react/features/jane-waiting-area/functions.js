@@ -107,8 +107,9 @@ export function isJaneWaitingAreaPageVisible(state: Object): boolean {
     return isJaneWaitingAreaPageEnabled(state) && state['features/jane-waiting-area']?.showJaneWaitingArea;
 }
 
-export async function checkRoomStatus(jwt: string): Object {
+export async function checkRoomStatus(): Object {
     try {
+        const { jwt } = APP.store.getState()['features/base/jwt'];
         const jwtPayload = jwt && jwtDecode(jwt) || null;
         const roomStatusUrl = jwtPayload && jwtPayload.context && jwtPayload.context.room_status_url || '';
         const url = new URL(roomStatusUrl);
@@ -117,11 +118,11 @@ export async function checkRoomStatus(jwt: string): Object {
 
         return doGetJSON(url, true);
     } catch (e) {
-        console.error(e);
+        throw Error(e);
     }
 }
 
-export function getRemoteParticipantsReadyStatus(participantStatuses: Array, participantType: string): Array {
+export function getRemoteParticipantsStatues(participantStatuses: Array, participantType: string): Array {
     const remoteParticipantType = participantType === 'StaffMember' ? 'Patient' : 'StaffMember';
     let remoteParticipantStatuses = [];
     participantStatuses && participantStatuses.forEach((v) => {
@@ -132,26 +133,21 @@ export function getRemoteParticipantsReadyStatus(participantStatuses: Array, par
     return remoteParticipantStatuses;
 }
 
-export function updateParticipantReadyStatus(jwt: string, participantType: string, participant: Object, status: string): Promise {
+export function updateParticipantReadyStatus(status: string): Promise {
     try {
+        const { jwt } = APP.store.getState()['features/base/jwt'];
         const jwtPayload = jwt && jwtDecode(jwt) || null;
         const updateParticipantStatusUrl = jwtPayload && jwtPayload.context && jwtPayload.context.update_participant_status_url || '';
         const info = { status };
-        const obj = {
-            jwt,
-            info,
-            participant_type: participantType === 'StaffMember' ? 'staff_member' : 'patient',
-            participant_id: participant.participant_id,
-            participant_name: participant.name,
-            room_name: jwtPayload.room
-        };
-        const data = new Blob([JSON.stringify(obj, null, 2)], { type: 'text/plain; charset=UTF-8' });
         return fetch(updateParticipantStatusUrl, {
             method: 'POST',
             headers: {
-                'Content-Type': 'text/plain; charset=UTF-8'
+                'Content-Type': 'application/json'
             },
-            body: data
+            body: JSON.stringify({
+                'jwt': jwt,
+                'info': info
+            })
         }).then(res => {
             if (!res.ok) {
                 throw Error('Can Not Update Current Participant\'s Status.');
@@ -166,9 +162,13 @@ export function isRNSocketWebView(locationURL: string): boolean {
     return String(locationURL && locationURL.href || '').includes('RNsocket=true');
 }
 
-export function checkLocalParticipantCanJoin(remoteParticipantsStatuses: Array): boolean {
+export function checkLocalParticipantCanJoin(remoteParticipantsStatuses: Array, participantType: string): boolean {
     return remoteParticipantsStatuses && remoteParticipantsStatuses.length > 0 && remoteParticipantsStatuses.some(v => {
-        return v.info && v.info.status !== 'left';
+        if (participantType === 'StaffMember') {
+            return v.info && (v.info.status === 'joined' || v.info.status === 'waiting');
+        } else {
+            return v.info && v.info.status === 'joined';
+        }
     }) || false;
 }
 
