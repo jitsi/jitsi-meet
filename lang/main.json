@@ -590,7 +590,8 @@
         "waitClient": "Waiting for your client...",
         "patientIsReady": "Your patient is ready to begin the session.",
         "waitPractitioner": "Your practitioner will let you into the session when ready...",
-        "testYourDevice": "Please keep your app or browser window open to stay on the call. You may test your audio and video while you wait."
+        "testYourDevice": "Please keep your app or browser window open to stay on the call. You may test your audio and video while you wait.",
+        "authenticationExpired": "Your appointment booking has expired"
     },
     "raisedHand": "Would like to speak",
     "recording": {

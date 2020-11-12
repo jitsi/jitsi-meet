@@ -6,9 +6,8 @@ export class Socket {
     constructor(options) {
         this.unauthorized_count = 0;
         this.options = options || {};
-        this.socket_host = options.socket_host || '';
+        this.socket_host = this.options.socket_host || '';
         this.ws_token = this.options.ws_token || '';
-        this.jwt = options.jwt || '';
         this.totalRetries = 0;
         this.socketio = io(this.socket_host, {
             transports: ['websocket'],
@@ -26,7 +25,7 @@ export class Socket {
     auth_and_connect() {
         console.info('reauthorizing websocket');
         this.reauthorizing = true;
-        checkRoomStatus(this.jwt).then(r => (r) => {
+        checkRoomStatus().then(r => (r) => {
             if (r.socket_token && r.socket_token.length > 0) {
                 this.ws_token = r.socket_token;
                 console.log('fresh websocket jwt fetched');
@@ -34,8 +33,8 @@ export class Socket {
             this.reauthorizing = false;
             this.connect();
         }).catch(error => {
-            window.APP.notifyTokenAuthFailed();
-            throw Error(error);
+            this.connectionStatusListener({ error });
+            console.error(error);
         });
     }
 
@@ -69,8 +68,8 @@ export class Socket {
             if (this.totalRetries === 5) {
                 this.socket.disconnect();
                 this.socket.destroy();
-                window.APP.UI.notifyInternalError('Unable to connect Socket.IO');
-                throw Error('Unable to connect Socket.IO');
+                connectionStatusListener({ error: 'Unable to connect Socket.IO' });
+                console.error('Unable to connect Socket.IO');
             }
             this.totalRetries++;
             this.socket.io.opts.query.token = this.ws_token;
@@ -83,7 +82,7 @@ export class Socket {
                     console.info(
                         'websocket unauthorized. fetching fresh jwt and trying 1 more time'
                     );
-                    connectionStatusListener('websocket unauthorized. fetching fresh jwt and trying 1 more time');
+                    connectionStatusListener({ error: reason });
                     this.unauthorized_count++;
                     this.socket.disconnect();
                     this.socket.destroy();
@@ -94,11 +93,12 @@ export class Socket {
                     );
                     this.unauthorized_count = 0;
                     this.socket.disconnect();
-                    throw Error('Unable to connect Socket.IO', reason);
-                    connectionStatusListener('Unable to connect Socket.IO');
+                    connectionStatusListener({ error: reason });
+                    console.error('Unable to connect Socket.IO', reason);
                 }
             } else {
-                throw Error('Unable to connect Socket.IO', reason);
+                connectionStatusListener({ error: reason });
+                console.error('Unable to connect Socket.IO', reason);
             }
         });
 

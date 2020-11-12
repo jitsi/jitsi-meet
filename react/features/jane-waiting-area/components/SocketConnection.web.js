@@ -5,10 +5,11 @@ import { Component } from 'react';
 import { connect } from '../../base/redux';
 import {
     checkRoomStatus, getLocalParticipantFromJwt, getLocalParticipantType,
-    getRemoteParticipantsReadyStatus, isRNSocketWebView,
+    getRemoteParticipantsStatues, isRNSocketWebView,
     updateParticipantReadyStatus
 } from '../functions';
 import {
+    setJaneWaitingAreaAuthState as setJaneWaitingAreaAuthStateAction,
     updateRemoteParticipantsStatuses as updateRemoteParticipantsStatusesAction,
     updateRemoteParticipantsStatusesFromSocket as updateRemoteParticipantsStatusesFromSocketAction
 } from '../actions';
@@ -22,7 +23,6 @@ import { joinConference as joinConferenceAction } from '../actions';
 
 type Props = {
     t: Function,
-    jwt: string,
     jwtPayload: Object,
     participantType: string,
     participant: Object,
@@ -30,7 +30,8 @@ type Props = {
     updateRemoteParticipantsStatusesFromSocket: Function,
     updateRemoteParticipantsStatuses: Function,
     playSound: Function,
-    joinConference: Function
+    joinConference: Function,
+    setJaneWaitingAreaAuthState: Function
 };
 
 class SocketConnection extends Component<Props> {
@@ -39,21 +40,19 @@ class SocketConnection extends Component<Props> {
 
     constructor(props) {
         super(props);
-        this.socket = {};
+        this.socket = null;
     }
 
     componentDidMount() {
-        const { jwt, participant, participantType, isRNWebViewPage } = this.props;
+        const { isRNWebViewPage } = this.props;
 
-        if (participantType === 'Patient') {
-            updateParticipantReadyStatus(jwt, participantType, participant, 'waiting');
-        }
+        updateParticipantReadyStatus('waiting');
 
         if (isRNWebViewPage) {
             window.ReactNativeWebView.postMessage(JSON.stringify({ message: 'webview page is ready' }));
         } else {
             window.onunload = window.onbeforeunload = function () {
-                updateParticipantReadyStatus(jwt, participantType, participant, 'left');
+                updateParticipantReadyStatus('left');
             };
         }
         this._connectSocket();
@@ -75,7 +74,7 @@ class SocketConnection extends Component<Props> {
         }
     }
 
-    _onMessageReceived(event) {
+    _onMessageReceivedListener(event) {
         const { participantType, isRNWebViewPage, updateRemoteParticipantsStatusesFromSocket } = this.props;
 
         if (event.info && event.info.status && event.participant_type && (event.participant_type !== participantType)) {
@@ -90,21 +89,22 @@ class SocketConnection extends Component<Props> {
     }
 
     _connectionStatusListener(status) {
-        const { isRNWebViewPage } = this.props;
+        const { isRNWebViewPage, joinConference } = this.props;
 
         if (isRNWebViewPage) {
             window.ReactNativeWebView.postMessage(JSON.stringify({ message: status }));
-        } else {
-            console.log(status);
+        }
+        if (status && status.error) {
+            joinConference();
         }
     }
 
-    async _connectSocket() {
-        const { jwt, participantType, isRNWebViewPage, updateRemoteParticipantsStatuses, joinConference } = this.props;
 
+    async _connectSocket() {
+        const { participantType, isRNWebViewPage, updateRemoteParticipantsStatuses, joinConference, setJaneWaitingAreaAuthState } = this.props;
         try {
-            const response = await checkRoomStatus(jwt);
-            const remoteParticipantsStatuses = getRemoteParticipantsReadyStatus(response.participant_statuses, participantType);
+            const response = await checkRoomStatus();
+            const remoteParticipantsStatuses = getRemoteParticipantsStatues(response.participant_statuses, participantType);
 
             if (isRNWebViewPage) {
                 window.ReactNativeWebView.postMessage(JSON.stringify({ message: { remoteParticipantsStatuses } }));
@@ -116,16 +116,17 @@ class SocketConnection extends Component<Props> {
                 socket_host: response.socket_host,
                 ws_token: response.socket_token
             });
-            this.socket.onMessageReceivedListener = this._onMessageReceived.bind(this);
+            this.socket.onMessageReceivedListener = this._onMessageReceivedListener.bind(this);
             this.socket.connectionStatusListener = this._connectionStatusListener.bind(this);
             this.socket.connect();
         } catch (error) {
             if (isRNWebViewPage) {
-                window.ReactNativeWebView.postMessage(JSON.stringify({ message: { ...error } }));
+                window.ReactNativeWebView.postMessage(JSON.stringify({ message: { error } }));
+            } else if (error && error.error === 'Signature has expired') {
+                setJaneWaitingAreaAuthState('failed');
+            } else {
+                joinConference();
             }
-            window.APP.UI.notifyInternalError(error);
-            joinConference();
-            console.error(error);
         }
     }
 
@@ -143,7 +144,6 @@ function mapStateToProps(state): Object {
     const isRNWebViewPage = isRNSocketWebView(locationURL);
 
     return {
-        jwt,
         jwtPayload,
         participantType,
         participant,
@@ -164,6 +164,9 @@ function mapDispatchToProps(dispatch) {
         },
         joinConference() {
             dispatch(joinConferenceAction());
+        },
+        setJaneWaitingAreaAuthState(state) {
+            dispatch(setJaneWaitingAreaAuthStateAction(state));
         }
     };
 }
