@@ -1,13 +1,17 @@
 // @flow
 
+import jwtDecode from 'jwt-decode';
+import { Linking } from 'react-native';
 import type { Dispatch } from 'redux';
 
-import jwtDecode from 'jwt-decode';
 import {
     createStartMutedConfigurationEvent,
     sendAnalytics
 } from '../../analytics';
 import { getName } from '../../app/functions';
+import {
+    updateParticipantReadyStatus
+} from '../../jane-waiting-area-native';
 import { endpointMessageReceived } from '../../subtitles';
 import { JITSI_CONNECTION_CONFERENCE_KEY } from '../connection';
 import { JitsiConferenceEvents } from '../lib-jitsi-meet';
@@ -66,7 +70,6 @@ import {
     sendLocalParticipant
 } from './functions';
 import logger from './logger';
-import { Linking } from 'react-native';
 
 declare var APP: Object;
 
@@ -416,6 +419,7 @@ export function conferenceWillLeave(conference: Object) {
             // eslint-disable-next-line no-mixed-operators
             if (url && surveyUrl) {
 
+                updateParticipantReadyStatus(jwt, 'left');
                 Linking.openURL(surveyUrl).then(() => {
                     sendBeaconToJaneRN(url, data).then(r => {
                         console.log(r, 'response');
