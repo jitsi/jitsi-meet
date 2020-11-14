@@ -60,14 +60,6 @@ UI.isFullScreen = function() {
 };
 
 /**
- * Returns true if the etherpad window is currently visible.
- * @returns {Boolean} - true if the etherpad window is currently visible.
- */
-UI.isEtherpadVisible = function() {
-    return Boolean(etherpadManager && etherpadManager.isVisible());
-};
-
-/**
  * Returns true if there is a shared video which is being shown (?).
  * @returns {boolean} - true if there is a shared video which is being shown.
  */
@@ -306,45 +298,6 @@ UI.toggleFilmstrip = function() {
 UI.toggleChat = () => APP.store.dispatch(toggleChat());
 
 /**
- * Handle new user display name.
- */
-UI.inputDisplayNameHandler = function(newDisplayName) {
-    eventEmitter.emit(UIEvents.NICKNAME_CHANGED, newDisplayName);
-};
-
-// FIXME check if someone user this
-UI.showLoginPopup = function(callback) {
-    logger.log('password is required');
-
-    const message
-        = `<input name="username" type="text"
-                placeholder="user@domain.net"
-                data-i18n="[placeholder]dialog.user"
-                class="input-control" autofocus>
-         <input name="password" type="password"
-                data-i18n="[placeholder]dialog.userPassword"
-                class="input-control"
-                placeholder="user password">`
-
-    ;
-
-    // eslint-disable-next-line max-params
-    const submitFunction = (e, v, m, f) => {
-        if (v && f.username && f.password) {
-            callback(f.username, f.password);
-        }
-    };
-
-    messageHandler.openTwoButtonDialog({
-        titleKey: 'dialog.passwordRequired',
-        msgString: message,
-        leftButtonKey: 'dialog.Ok',
-        submitFunction,
-        focus: ':input:first'
-    });
-};
-
-/**
  * Sets muted audio state for participant
  */
 UI.setAudioMuted = function(id) {
@@ -500,14 +453,6 @@ UI.notifyTokenAuthFailed = function() {
     });
 };
 
-UI.notifyInternalError = function(error) {
-    messageHandler.showError({
-        descriptionArguments: { error },
-        descriptionKey: 'dialog.internalError',
-        titleKey: 'dialog.internalErrorTitle'
-    });
-};
-
 UI.notifyFocusDisconnected = function(focus, retrySec) {
     messageHandler.participantNotification(
         null, 'notify.focus',
@@ -515,16 +460,6 @@ UI.notifyFocusDisconnected = function(focus, retrySec) {
         { component: focus,
             ms: retrySec }
     );
-};
-
-/**
- * Notifies interested listeners that the raise hand property has changed.
- *
- * @param {boolean} isRaisedHand indicates the current state of the
- * "raised hand"
- */
-UI.onLocalRaiseHandChanged = function(isRaisedHand) {
-    eventEmitter.emit(UIEvents.LOCAL_RAISE_HAND_CHANGED, isRaisedHand);
 };
 
 /**
@@ -584,38 +519,6 @@ UI.onSharedVideoStop = function(id, attributes) {
     if (sharedVideoManager) {
         sharedVideoManager.onSharedVideoStop(id, attributes);
     }
-};
-
-/**
- * Handles user's features changes.
- */
-UI.onUserFeaturesChanged = user => VideoLayout.onUserFeaturesChanged(user);
-
-/**
- * Returns the number of known remote videos.
- *
- * @returns {number} The number of remote videos.
- */
-UI.getRemoteVideosCount = () => VideoLayout.getRemoteVideosCount();
-
-/**
- * Sets the remote control active status for a remote participant.
- *
- * @param {string} participantID - The id of the remote participant.
- * @param {boolean} isActive - The new remote control active status.
- * @returns {void}
- */
-UI.setRemoteControlActiveStatus = function(participantID, isActive) {
-    VideoLayout.setRemoteControlActiveStatus(participantID, isActive);
-};
-
-/**
- * Sets the remote control active status for the local participant.
- *
- * @returns {void}
- */
-UI.setLocalRemoteControlActiveChanged = function() {
-    VideoLayout.setLocalRemoteControlActiveChanged();
 };
 
 // TODO: Export every function separately. For now there is no point of doing

@@ -293,7 +293,6 @@ const VideoLayout = {
         const jitsiParticipant = APP.conference.getParticipantById(id);
         const remoteVideo = new RemoteVideo(jitsiParticipant, VideoLayout);
 
-        this._setRemoteControlProperties(jitsiParticipant, remoteVideo);
         this.addRemoteVideoContainer(id, remoteVideo);
 
         this.updateMutedForNoTracks(id, 'audio');
@@ -646,33 +645,6 @@ const VideoLayout = {
     },
 
     /**
-     * Handles user's features changes.
-     */
-    onUserFeaturesChanged(user) {
-        const video = this.getSmallVideo(user.getId());
-
-        if (!video) {
-            return;
-        }
-        this._setRemoteControlProperties(user, video);
-    },
-
-    /**
-     * Sets the remote control properties (checks whether remote control
-     * is supported and executes remoteVideo.setRemoteControlSupport).
-     * @param {JitsiParticipant} user the user that will be checked for remote
-     * control support.
-     * @param {RemoteVideo} remoteVideo the remoteVideo on which the properties
-     * will be set.
-     */
-    _setRemoteControlProperties(user, remoteVideo) {
-        APP.remoteControl.checkUserRemoteControlSupport(user)
-            .then(result => remoteVideo.setRemoteControlSupport(result))
-            .catch(error =>
-                logger.warn(`could not get remote control properties for: ${user.getJid()}`, error));
-    },
-
-    /**
      * Returns the wrapper jquery selector for the largeVideo
      * @returns {JQuerySelector} the wrapper jquery selector for the largeVideo
      */
@@ -687,28 +659,6 @@ const VideoLayout = {
      */
     getRemoteVideosCount() {
         return Object.keys(remoteVideos).length;
-    },
-
-    /**
-     * Sets the remote control active status for a remote participant.
-     *
-     * @param {string} participantID - The id of the remote participant.
-     * @param {boolean} isActive - The new remote control active status.
-     * @returns {void}
-     */
-    setRemoteControlActiveStatus(participantID, isActive) {
-        remoteVideos[participantID].setRemoteControlActiveStatus(isActive);
-    },
-
-    /**
-     * Sets the remote control active status for the local participant.
-     *
-     * @returns {void}
-     */
-    setLocalRemoteControlActiveChanged() {
-        Object.values(remoteVideos).forEach(
-            remoteVideo => remoteVideo.updateRemoteVideoMenu()
-        );
     },
 
     /**

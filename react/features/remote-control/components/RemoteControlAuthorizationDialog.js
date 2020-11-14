@@ -6,6 +6,8 @@ import { Dialog, hideDialog } from '../../base/dialog';
 import { translate } from '../../base/i18n';
 import { getParticipantById } from '../../base/participants';
 import { connect } from '../../base/redux';
+import { getLocalVideoTrack } from '../../base/tracks';
+import { grant, deny } from '../actions';
 
 declare var APP: Object;
 
@@ -20,6 +22,9 @@ type Props = {
      * remote desktop control session.
      */
     _displayName: string,
+
+    _isScreenSharing: boolean,
+    _sourceType: string,
 
     /**
      * Used to show/hide the dialog on cancel.
@@ -87,10 +92,9 @@ class RemoteControlAuthorizationDialog extends Component<Props> {
      * @returns {ReactElement}
      */
     _getAdditionalMessage() {
-        // FIXME: Once we have this information in redux we should
-        // start getting it from there.
-        if (APP.conference.isSharingScreen
-                && APP.conference.getDesktopSharingSourceType() === 'screen') {
+        const { _isScreenSharing, _sourceType } = this.props;
+
+        if (_isScreenSharing && _sourceType === 'screen') {
             return null;
         }
 
@@ -112,8 +116,9 @@ class RemoteControlAuthorizationDialog extends Component<Props> {
      * @returns {boolean} Returns true to close the dialog.
      */
     _onCancel() {
-        // FIXME: This should be action one day.
-        APP.remoteControl.receiver.deny(this.props.participantId);
+        const { dispatch, participantId } = this.props;
+
+        dispatch(deny(participantId));
 
         return true;
     }
@@ -131,10 +136,10 @@ class RemoteControlAuthorizationDialog extends Component<Props> {
      * picker window, the action will be ignored).
      */
     _onSubmit() {
-        this.props.dispatch(hideDialog());
+        const { dispatch, participantId } = this.props;
 
-        // FIXME: This should be action one day.
-        APP.remoteControl.receiver.grant(this.props.participantId);
+        dispatch(hideDialog());
+        dispatch(grant(participantId));
 
         return false;
     }
@@ -149,15 +154,24 @@ class RemoteControlAuthorizationDialog extends Component<Props> {
  * (instance of) RemoteControlAuthorizationDialog.
  * @private
  * @returns {{
- *     _displayName: string
+ *     _displayName: string,
+ *     _isScreenSharing: boolean,
+ *     _sourceId: string,
+ *     _sourceType: string
  * }}
  */
 function _mapStateToProps(state, ownProps) {
     const { _displayName, participantId } = ownProps;
     const participant = getParticipantById(state, participantId);
+    const tracks = state['features/base/tracks'];
+    const track = getLocalVideoTrack(tracks);
+    const _isScreenSharing = track?.videoType === 'desktop';
+    const { sourceType } = track?.jitsiTrack || {};
 
     return {
-        _displayName: participant ? participant.name : _displayName
+        _displayName: participant ? participant.name : _displayName,
+        _isScreenSharing,
+        _sourceType: sourceType
     };
 }
 
