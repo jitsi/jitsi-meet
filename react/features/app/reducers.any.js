@@ -43,6 +43,7 @@ import '../notifications/reducer';
 import '../overlay/reducer';
 import '../recent-list/reducer';
 import '../recording/reducer';
+import '../remote-control/reducer';
 import '../settings/reducer';
 import '../subtitles/reducer';
 import '../toolbox/reducer';

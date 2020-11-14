@@ -237,6 +237,13 @@ StateListenerRegistry.register(
                         _raiseHandUpdated(store, conference, participant.getId(), newValue);
                         break;
                     }
+                    case 'remoteControlSessionStatus':
+                        store.dispatch(participantUpdated({
+                            conference,
+                            id: participant.getId(),
+                            remoteControlSessionStatus: newValue
+                        }));
+                        break;
                     default:
 
                         // Ignore for now.

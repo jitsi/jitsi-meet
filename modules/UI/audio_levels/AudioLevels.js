@@ -7,48 +7,6 @@ import UIUtil from '../util/UIUtil';
  */
 const AudioLevels = {
     /**
-     * Fills the dot(s) with the specified "index", with as much opacity as
-     * indicated by "opacity".
-     *
-     * @param {string} elementID the parent audio indicator span element
-     * @param {number} index the index of the dots to fill, where 0 indicates
-     * the middle dot and the following increments point toward the
-     * corresponding pair of dots.
-     * @param {number} opacity the opacity to set for the specified dot.
-     */
-    _setDotLevel(elementID, index, opacity) {
-        let audioSpan
-            = document.getElementById(elementID)
-                .getElementsByClassName('audioindicator');
-
-        // Make sure the audio span is still around.
-        if (audioSpan && audioSpan.length > 0) {
-            audioSpan = audioSpan[0];
-        } else {
-            return;
-        }
-
-        const audioTopDots
-            = audioSpan.getElementsByClassName('audiodot-top');
-        const audioDotMiddle
-            = audioSpan.getElementsByClassName('audiodot-middle');
-        const audioBottomDots
-            = audioSpan.getElementsByClassName('audiodot-bottom');
-
-        // First take care of the middle dot case.
-        if (index === 0) {
-            audioDotMiddle[0].style.opacity = opacity;
-
-            return;
-        }
-
-        // Index > 0 : we are setting non-middle dots.
-        index--;// eslint-disable-line no-param-reassign
-        audioBottomDots[index].style.opacity = opacity;
-        audioTopDots[this.sideDotsCount - index - 1].style.opacity = opacity;
-    },
-
-    /**
      * Updates the audio level of the large video.
      *
      * @param audioLevel the new audio level to set.

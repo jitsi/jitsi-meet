@@ -12,19 +12,10 @@ import { i18next } from '../../../react/features/base/i18n';
 import {
     JitsiParticipantConnectionStatus
 } from '../../../react/features/base/lib-jitsi-meet';
-import { MEDIA_TYPE } from '../../../react/features/base/media';
-import {
-    getParticipantById,
-    getPinnedParticipant,
-    pinParticipant
-} from '../../../react/features/base/participants';
-import { isRemoteTrackMuted } from '../../../react/features/base/tracks';
+import { getParticipantById } from '../../../react/features/base/participants';
 import { PresenceLabel } from '../../../react/features/presence-status';
-import {
-    REMOTE_CONTROL_MENU_STATES,
-    RemoteVideoMenuTriggerButton
-} from '../../../react/features/remote-video-menu';
-import { LAYOUTS, getCurrentLayout } from '../../../react/features/video-layout';
+import { stopController, requestRemoteControl } from '../../../react/features/remote-control';
+import { RemoteVideoMenuTriggerButton } from '../../../react/features/remote-video-menu';
 /* eslint-enable no-unused-vars */
 import UIUtils from '../util/UIUtil';
 
@@ -81,7 +72,6 @@ export default class RemoteVideo extends SmallVideo {
         this.videoSpanId = `participant_${this.id}`;
 
         this._audioStreamElement = null;
-        this._supportsRemoteControl = false;
         this.statsPopoverLocation = interfaceConfig.VERTICAL_FILMSTRIP ? 'left bottom' : 'top center';
         this.addRemoteVideoContainer();
         this.updateIndicators();
@@ -89,7 +79,6 @@ export default class RemoteVideo extends SmallVideo {
         this.bindHoverHandler();
         this.flipX = false;
         this.isLocal = false;
-        this._isRemoteControlSessionActive = false;
 
         /**
          * The flag is set to <tt>true</tt> after the 'canplay' event has been
@@ -103,10 +92,7 @@ export default class RemoteVideo extends SmallVideo {
         // Bind event handlers so they are only bound once for every instance.
         // TODO The event handlers should be turned into actions so changes can be
         // handled through reducers and middleware.
-        this._requestRemoteControlPermissions
-            = this._requestRemoteControlPermissions.bind(this);
         this._setAudioVolume = this._setAudioVolume.bind(this);
-        this._stopRemoteControl = this._stopRemoteControl.bind(this);
 
         this.container.onclick = this._onContainerClick;
     }
@@ -142,40 +128,11 @@ export default class RemoteVideo extends SmallVideo {
             return;
         }
 
-        const { controller } = APP.remoteControl;
-        let remoteControlState = null;
-        let onRemoteControlToggle;
-
-        if (this._supportsRemoteControl
-            && ((!APP.remoteControl.active && !this._isRemoteControlSessionActive)
-                || APP.remoteControl.controller.activeParticipant === this.id)) {
-            if (controller.getRequestedParticipant() === this.id) {
-                remoteControlState = REMOTE_CONTROL_MENU_STATES.REQUESTING;
-            } else if (controller.isStarted()) {
-                onRemoteControlToggle = this._stopRemoteControl;
-                remoteControlState = REMOTE_CONTROL_MENU_STATES.STARTED;
-            } else {
-                onRemoteControlToggle = this._requestRemoteControlPermissions;
-                remoteControlState = REMOTE_CONTROL_MENU_STATES.NOT_STARTED;
-            }
-        }
-
         const initialVolumeValue = this._audioStreamElement && this._audioStreamElement.volume;
 
         // hide volume when in silent mode
         const onVolumeChange
             = APP.store.getState()['features/base/config'].startSilent ? undefined : this._setAudioVolume;
-        const participantID = this.id;
-        const currentLayout = getCurrentLayout(APP.store.getState());
-        let remoteMenuPosition;
-
-        if (currentLayout === LAYOUTS.TILE_VIEW) {
-            remoteMenuPosition = 'left top';
-        } else if (currentLayout === LAYOUTS.VERTICAL_FILMSTRIP_VIEW) {
-            remoteMenuPosition = 'left bottom';
-        } else {
-            remoteMenuPosition = 'top center';
-        }
 
         ReactDOM.render(
             <Provider store = { APP.store }>
@@ -183,13 +140,10 @@ export default class RemoteVideo extends SmallVideo {
                     <AtlasKitThemeProvider mode = 'dark'>
                         <RemoteVideoMenuTriggerButton
                             initialVolumeValue = { initialVolumeValue }
-                            menuPosition = { remoteMenuPosition }
                             onMenuDisplay
                                 = {this._onRemoteVideoMenuDisplay.bind(this)}
-                            onRemoteControlToggle = { onRemoteControlToggle }
                             onVolumeChange = { onVolumeChange }
-                            participantID = { participantID }
-                            remoteControlState = { remoteControlState } />
+                            participantID = { this.id } />
                     </AtlasKitThemeProvider>
                 </I18nextProvider>
             </Provider>,
@@ -200,76 +154,6 @@ export default class RemoteVideo extends SmallVideo {
      *
      */
     _onRemoteVideoMenuDisplay() {
-        this.updateRemoteVideoMenu();
-    }
-
-    /**
-     * Sets the remote control active status for the remote video.
-     *
-     * @param {boolean} isActive - The new remote control active status.
-     * @returns {void}
-     */
-    setRemoteControlActiveStatus(isActive) {
-        this._isRemoteControlSessionActive = isActive;
-        this.updateRemoteVideoMenu();
-    }
-
-    /**
-     * Sets the remote control supported value and initializes or updates the menu
-     * depending on the remote control is supported or not.
-     * @param {boolean} isSupported
-     */
-    setRemoteControlSupport(isSupported = false) {
-        if (this._supportsRemoteControl === isSupported) {
-            return;
-        }
-        this._supportsRemoteControl = isSupported;
-        this.updateRemoteVideoMenu();
-    }
-
-    /**
-     * Requests permissions for remote control session.
-     */
-    _requestRemoteControlPermissions() {
-        APP.remoteControl.controller.requestPermissions(this.id, this.VideoLayout.getLargeVideoWrapper())
-            .then(result => {
-                if (result === null) {
-                    return;
-                }
-                this.updateRemoteVideoMenu();
-                APP.UI.messageHandler.notify(
-                    'dialog.remoteControlTitle',
-                    result === false ? 'dialog.remoteControlDeniedMessage' : 'dialog.remoteControlAllowedMessage',
-                    { user: this.user.getDisplayName() || interfaceConfig.DEFAULT_REMOTE_DISPLAY_NAME }
-                );
-                if (result === true) {
-                    // the remote control permissions has been granted
-                    // pin the controlled participant
-                    const pinnedParticipant = getPinnedParticipant(APP.store.getState()) || {};
-                    const pinnedId = pinnedParticipant.id;
-
-                    if (pinnedId !== this.id) {
-                        APP.store.dispatch(pinParticipant(this.id));
-                    }
-                }
-            }, error => {
-                logger.error(error);
-                this.updateRemoteVideoMenu();
-                APP.UI.messageHandler.notify(
-                    'dialog.remoteControlTitle',
-                    'dialog.remoteControlErrorMessage',
-                    { user: this.user.getDisplayName() || interfaceConfig.DEFAULT_REMOTE_DISPLAY_NAME }
-                );
-            });
-        this.updateRemoteVideoMenu();
-    }
-
-    /**
-     * Stops remote control session.
-     */
-    _stopRemoteControl() {
-        // send message about stopping
-        APP.remoteControl.controller.stop();
         this.updateRemoteVideoMenu();
     }
 
