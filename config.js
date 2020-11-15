@@ -393,6 +393,9 @@ var config = {
     // Document should be focused for this option to work
     // enableAutomaticUrlCopy: false,
 
+    // Base URL for a Gravatar-compatible service. Defaults to libravatar.
+    // gravatarBaseURL: 'https://seccdn.libravatar.org/avatar/';
+
     // Stats
     //
 
