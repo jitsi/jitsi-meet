@@ -416,8 +416,8 @@ var config = {
     // Enables sending participants' emails (if available) to callstats and other analytics
     // enableEmailInStats: false,
 
-    // Controls the percentage of automatic feedbacks shown to participants when callstats is enabled
-    // default value is 100%, it can be set to 0 - no automatic feedback will be requested
+    // Controls the percentage of automatic feedback shown to participants when callstats is enabled.
+    // The default value is 100%. If set to 0, no automatic feedback will be requested
     // feedbackPercentage: 100,
 
     // Privacy
