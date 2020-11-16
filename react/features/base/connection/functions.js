@@ -59,7 +59,7 @@ export function getInviteURL(stateOrGetState: Function | Object): string {
 
     if (inviteDomain) {
         const meetingId
-            = state['features/base/config'].brandingRoomAlias || urlWithoutParams.pathname.replace('/', '');
+            = state['features/base/config'].brandingRoomAlias || urlWithoutParams.pathname.replace(/\//, '');
 
         return `${inviteDomain}/${meetingId}`;
     }
