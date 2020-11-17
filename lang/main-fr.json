@@ -629,7 +629,7 @@
         "aboutReadOnly": "Les modérateurs peuvent ajouter un mot de passe à la réunion. Les participants devront fournir le mot de passe avant qu'ils soient autorisés à rejoindre la réunion.",
         "insecureRoomNameWarning": "Le nom de la salle est peu sûr. Des participants non désirés peuvent rejoindre votre réunion. Pensez à sécuriser votre réunion en cliquant sur le bouton de sécurité.",
         "securityOptions": "Options de sécurité"
-    }
+    },
     "settings": {
         "calendar": {
             "about": "L'intégration de {{appName}} avec votre calendrier permet d'accéder de manière sécurisée aux événement à venir.",
