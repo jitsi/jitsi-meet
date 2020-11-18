@@ -1,7 +1,5 @@
 /* application specific logic */
 
-import bugsnag from '@bugsnag/js';
-window.bugsnagClient = bugsnag('a0c8e2c65bed338af650acd9c2192855');
 import 'jquery';
 import 'jquery-contextmenu';
 import 'jQuery-Impromptu';
@@ -12,6 +10,9 @@ import keyboardshortcut from './modules/keyboardshortcut/keyboardshortcut';
 import remoteControl from './modules/remotecontrol/RemoteControl';
 import translation from './modules/translation/translation';
 import UI from './modules/UI/UI';
+import { getBugsnagClient } from './bugsnag';
+
+window.bugsnag = getBugsnagClient();
 
 window.APP = {
     API,
