@@ -43,20 +43,20 @@
         "audioOnly": "Nízká přenosová rychlost"
     },
     "calendarSync": {
-        "addMeetingURL": "Přidejte odkaz na schůzku",
+        "addMeetingURL": "Přidejte odkaz na setkání",
         "confirmAddLink": "Chcete k této události přidat odkaz Jitsi?",
         "error": {
-            "appConfiguration": "Integrace kalendáře není správně nakonfigurována.",
-            "generic": "Došlo k chybě. Zkontrolujte nastavení kalendáře nebo zkuste aktualizovat kalendář.",
-            "notSignedIn": "Při ověřování k zobrazení kalendářových událostí došlo k chybě. Zkontrolujte prosím nastavení kalendáře a zkuste se znovu přihlásit."
+            "appConfiguration": "Integrace kalendáře není správně nastavena.",
+            "generic": "Došlo k chybě. Zkontrolujte nastavení kalendáře nebo zkuste obnovit kalendář.",
+            "notSignedIn": "Při přihlašování do kalendářových událostí došlo k chybě. Zkontrolujte prosím nastavení kalendáře a zkuste se znovu přihlásit."
         },
         "join": "Připojit se",
-        "joinTooltip": "Připojit se k videohovoru",
-        "nextMeeting": "další videohovor",
+        "joinTooltip": "Připojit se k setkání",
+        "nextMeeting": "další setkání",
         "noEvents": "Nejsou naplánovány žádné události.",
-        "ongoingMeeting": "současný videohovor",
+        "ongoingMeeting": "současné setkání",
         "permissionButton": "Otevřít nastavení",
-        "permissionMessage": "K zobrazení videohovorů v aplikaci je potřeba oprávnění Kalendář.",
+        "permissionMessage": "K zobrazení setkání v aplikaci je potřeba oprávnění Kalendář.",
         "refresh": "Obnovit kalendář",
         "today": "Dnes"
     },
