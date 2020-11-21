@@ -61,18 +61,18 @@
         "today": "Dnes"
     },
     "chat": {
-        "error": "Chyba: vaše zpráva nebyla odeslána. Důvod: {{error}}",
+        "error": "Chyba: vaše zpráva se neodeslala. Důvod: {{error}}",
+        "fieldPlaceHolder": "Sem napište zprávu",
         "messagebox": "Napište zprávu",
+        "messageTo": "Soukromá zpráva pro {{recipient}}",
+        "noMessagesMessage": "V setkání zatím nejsou žádné zprávy. Tady můžete začít konverzaci!",
         "nickname": {
             "popover": "Zvolte si přezdívku",
-            "title": "K zahájení chatu vložte přezdívku"
+            "title": "Vložte přezdívku, abyste mohl/a používat zprávy"
         },
-        "title": "Chat",
-        "fieldPlaceHolder": "Zde napište svou zprávu",
-        "messageTo": "Soukromá zpráva pro {{recipient}}",
-        "you": "vy",
         "privateNotice": "Soukromá zpráva pro {{recipient}}",
-        "noMessagesMessage": "V tomto videohovoru ještě nejsou žádné zprávy. Začněte konverzaci!"
+        "title": "Zprávy",
+        "you": "vy",
     },
     "connectingOverlay": {
         "joiningRoom": "Probíhá připojování k videohovoru..."
