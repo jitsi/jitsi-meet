@@ -74,6 +74,11 @@
         "title": "Zprávy",
         "you": "vy",
     },
+    "chromeExtensionBanner": {
+        "installExtensionText": "Nainstalujte si rozšíření pro integraci s Kalendářem Google a Office 365",
+        "buttonText": "Nainstalovat rozšíření do Chrome",
+        "dontShowAgain": "Už mi toto neukazovat"
+    },
     "connectingOverlay": {
         "joiningRoom": "Probíhá připojování k videohovoru..."
     },
