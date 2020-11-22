@@ -156,16 +156,20 @@
         "yesterday": "Včera"
     },
     "deepLinking": {
-        "appNotInstalled": "Pro připojení k tomuto videohovoru potřebujete mít na svém telefonu aplikaci {{app}}.",
-        "description": "Nic se nestalo? Zkusili jsme spustit videohovor v desktopové aplikaci {{app}}. Zkuste to znovu nebo spusťte webovou aplikaci {{app}}.",
-        "descriptionWithoutWeb": "Nic se nestalo? Zkusili jsme spustit videohovor v desktopové aplikaci {{app}}.",
-        "downloadApp": "Stažení aplikace",
+        "appNotInstalled": "Abyste se mohl/a připojit k setkání, potřebujete mít na telefonu aplikaci {{app}}.",
+        "description": "Nic se nestalo? Zkusili jsme spustit setkání v desktopové aplikaci {{app}}. Zkuste to znovu nebo spusťte webovou aplikaci {{app}}.",
+        "descriptionWithoutWeb": "Nic se nestalo? Zkusili jsme spustit setkání v desktopové aplikaci {{app}}.",
+        "downloadApp": "Stáhněte si aplikaci",
+        "ifDoNotHaveApp": "Pokud ještě aplikaci nemáte:",
+        "ifHaveApp": "Pokud už aplikaci máte:",
+        "joinInApp": "Připojte se k setkání pomocí aplikace",
         "launchWebButton": "Spustit na webu",
         "openApp": "Pokračovat do aplikace",
-        "title": "Spustit videohovor v {{app}}...",
+        "title": "Setkání se spouští v {{app}}…",
         "tryAgainButton": "Zkusit znovu na desktopu"
     },
     "defaultLink": "např. {{url}}",
+    "defaultNickname": "např. Jana Růžová",
     "deviceError": {
         "cameraError": "Chyba při přístupu ke kameře",
         "cameraPermission": "Aplikace nemá oprávnění přistupovat ke kameře",
