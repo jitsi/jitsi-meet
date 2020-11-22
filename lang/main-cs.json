@@ -27,7 +27,7 @@
         "searchPeopleAndNumbers": "Hledat lidi nebo přidat jejich telefonní čísla",
         "shareInvite": "Sdílet pozvánku na setkání",
         "shareLink": "Pozvěte ostatní tak, že jim pošlete odkaz na setkání",
-        "shareStream": "Share the live streaming link",
+        "shareStream": "Sdílet odkaz na živý přenos",
         "telephone": "Telefonní číslo: {{number}}",
         "title": "Pozvěte lidi na toto setkání",
         "yahooEmail": "E-mail Yahoo"
@@ -77,7 +77,7 @@
     "chromeExtensionBanner": {
         "buttonText": "Nainstalovat rozšíření Chrome",
         "dontShowAgain": "Toto už znovu neukazovat",
-        "installExtensionText": "Nainstalovat rozšíření pro integraci Google Calendar a Office 365"
+        "installExtensionText": "Nainstalovat rozšíření pro integraci Kalendáře Google a Office 365"
     },
     "connectingOverlay": {
         "joiningRoom": "Připojujete se k setkání…"
@@ -170,7 +170,7 @@
         "tryAgainButton": "Zkusit znovu na desktopu"
     },
     "defaultLink": "např. {{url}}",
-    "defaultNickname": "Franta Uživatel",
+    "defaultNickname": "např. Jana Růžová",
     "deviceError": {
         "cameraError": "Chyba při přístupu ke kameře",
         "cameraPermission": "Aplikace nemá oprávnění přistupovat ke kameře",
@@ -194,8 +194,8 @@
         "Remove": "Odstranit",
         "Share": "Sdílet",
         "Submit": "Potvrdit",
-        "WaitForHostMsg": "Konference <b>{{room}}</b> ještě nezačala. Pokud jste hostitel, přihlašte se. Jinak prosím počkejte, až hostitel dorazí.",
-        "WaitForHostMsgWOk": "Konference <b>{{room}}</b> ještě nezačala. Pokud jste hostitel, prosím přihlašte se kliknutím na OK. Jinak prosím počkejte, až hostitel dorazí.",
+        "WaitForHostMsg": "Konference <b>{{room}}</b> ještě nezačala. Pokud jste hostitel, přihlaste se. Jinak prosím počkejte, až hostitel dorazí.",
+        "WaitForHostMsgWOk": "Konference <b>{{room}}</b> ještě nezačala. Pokud jste hostitel, prosím přihlaste se kliknutím na OK. Jinak prosím počkejte, až hostitel dorazí.",
         "WaitingForHost": "Čeká se na hostitele…",
         "Yes": "Ano",
         "accessibilityLabel": {
@@ -253,7 +253,7 @@
         "liveStreamingDisabledForGuestTooltip": "Hosté nemohou spustit živý přenos.",
         "liveStreamingDisabledTooltip": "Spouštění živého přenosu zakázáno.",
         "lockMessage": "Konferenci se nepodařilo uzamknout.",
-        "lockRoom": "Nastavit $t(lockRoomPasswordLowercase) setkání",
+        "lockRoom": "Nastavit $t(lockRoomPassword) setkání",
         "lockTitle": "Zamknutí selhalo",
         "logoutQuestion": "Jste si jistí, že se chcete odhlásit a ukončit konferenci?",
         "logoutTitle": "Odhlásit",
@@ -278,7 +278,7 @@
         "passwordLabel": "Některý z účastníků toto setkání uzamkl. Pro připojení prosím zadejte $t(lockRoomPassword).",
         "passwordNotSupported": "Setkání nepodporuje nastavit $t(lockRoomPassword).",
         "passwordNotSupportedTitle": "$t(lockRoomPasswordUppercase) není podporováno",
-        "passwordRequired": "Požadováno $t(lockRoomPasswordLowercase)",
+        "passwordRequired": "Požadováno $t(lockRoomPassword)",
         "popupError": "Váš prohlížeč blokuje vyskakovací okna. V nastavení zabezpečení prosím povolte vyskakování oken a zkuste to znovu.",
         "popupErrorTitle": "Vyskakovací okno je zablokované",
         "readMore": "více",
@@ -314,7 +314,7 @@
         "shareYourScreen": "Sdílet obrazovku",
         "shareYourScreenDisabled": "Sdílení obrazovky vypnuto.",
         "shareYourScreenDisabledForGuest": "Hosté nemohou sdílet obrazovku.",
-        "startLiveStreaming": "Spustit živý stream",
+        "startLiveStreaming": "Spustit živý přenos",
         "startRecording": "Spustit záznam",
         "startRemoteControlErrorMessage": "",
         "stopLiveStreaming": "Zastavit živý přenos",
@@ -327,7 +327,7 @@
         "tokenAuthFailed": "Bohužel nemáte povoleno se k tomuto volání připojit.",
         "tokenAuthFailedTitle": "Ověření selhalo",
         "transcribing": "",
-        "unlockRoom": "Odstranit videohovor $t(lockRoomPassword)",
+        "unlockRoom": "Odstranit $t(lockRoomPassword) setkání",
         "userPassword": "uživatelské heslo",
         "yourEntireScreen": "Celá vaše obrazovka"
     },
@@ -414,7 +414,7 @@
         "raiseHand": "Přihlásit nebo odhlásit se o slovo",
         "showSpeakerStats": "Zobrazení statistiky řečníka",
         "toggleChat": "Otevřít nebo zavřít chat",
-        "toggleFilmstrip": "Zobrazit / Skrýt videonáhledy účastníků",
+        "toggleFilmstrip": "Zobrazit / Skrýt video náhledy účastníků",
         "toggleScreensharing": "Přepnutí mezi kamerou a sdílením obrazovky",
         "toggleShortcuts": "Zobrazení / Skrytí klávesových zkratek",
         "videoMute": "Spuštění / Vypnutí vaší kamery",
@@ -458,7 +458,7 @@
         "allow": "Povolit",
         "backToKnockModeButton": "Žádné heslo, místo toho požádat o přijetí",
         "dialogTitle": "Mód předsálí",
-        "disableDialogContent": "Právě je povolen mód předsálí. Zajišťuje, aby do setkání nemohli vstoupit nechtění účastníci. Chcete jej vypnout?",
+        "disableDialogContent": "Je zapnutý mód předsálí. Zajišťuje, aby do setkání nemohli vstoupit nežádoucí účastníci. Chcete jej vypnout?",
         "disableDialogSubmit": "Vypnout",
         "emailField": "Zadejte svoje e-mailovou adresu",
         "enableDialogPasswordField": "Nastavte heslo (volitelně)",
@@ -518,7 +518,6 @@
     },
     "lockRoomPassword": "heslo",
     "lockRoomPasswordUppercase": "Heslo",
-    "lockRoomPasswordLowercase": "heslo",
     "lonelyMeetingExperience": {
         "button": "Pozvat další",
         "youAreAlone": "Jste v tomto setkání jediný/á"
@@ -546,11 +545,11 @@
         "newDeviceAction": "Použít",
         "newDeviceAudioTitle": "Detekováno nové zvukové zařízení",
         "newDeviceCameraTitle": "Detekována nová kamera",
-        "oldElectronClientDescription1": "Zdá se, že používáte zastaralnou verzi klienta Jitsi Meet, který má známé bezpečnostní zranitelnosti. Aktualizujte prosím na ",
+        "oldElectronClientDescription1": "Zdá se, že používáte zastaralou verzi klienta Jitsi Meet, který má známé bezpečnostní zranitelnosti. Aktualizujte prosím na ",
         "oldElectronClientDescription2": "nejnovější sestavení",
         "oldElectronClientDescription3": " ihned!",
-        "passwordRemovedRemotely": "Jiný účastník odebral $t(lockRoomPasswordLowercase)",
-        "passwordSetRemotely": "Jiný účastník nastavil $t(lockRoomPasswordLowercase)",
+        "passwordRemovedRemotely": "Jiný účastník odebral $t(lockRoomPassword)",
+        "passwordSetRemotely": "Jiný účastník nastavil $t(lockRoomPassword)",
         "raisedHand": "{{name}} by chtěl/a mluvit",
         "somebody": "Někdo",
         "startSilentDescription": "Připojte se znovu, aby se zvuk zapnul",
@@ -601,7 +600,7 @@
         "errorDialOutDisconnected": "Nepovedlo se vytočit. Odpojeno",
         "errorDialOutFailed": "Nepovedlo se vytočit. Hovor selhal",
         "errorDialOutStatus": "Nepovedlo se zjistit stav vytáčení",
-        "errorMissingName": "Před vstpem do setkání prosím zadejte své jméno",
+        "errorMissingName": "Před vstupem do setkání prosím zadejte své jméno",
         "errorStatusCode": "Vytáčení selhalo, chybový kód: {{status}}",
         "errorValidation": "Selhalo ověření čísla",
         "iWantToDialIn": "Chci se připojit po telefonu",
@@ -700,7 +699,7 @@
         "selectCamera": "Kamera",
         "selectMic": "Mikrofon",
         "speakers": "Reproduktory",
-        "startAudioMuted": "Při připojení všem zlumit zvuk",
+        "startAudioMuted": "Při připojení všem ztlumit zvuk",
         "startVideoMuted": "Všechny připojovat jako skryté",
         "title": "Nastavení"
     },
@@ -791,7 +790,7 @@
             "speakerStats": "Statistika řečníků",
             "tileView": "Přepnout dlaždicové zobrazení",
             "toggleCamera": "Přepnout kameru",
-            "toggleFilmstrip": "Přepnout filmový pruh",
+            "toggleFilmstrip": "Přepnout video náhledy",
             "videoblur": "Přepnout rozmazání videa",
             "videomute": "Přepnout ztišení videa"
         },
@@ -900,7 +899,7 @@
         "labelTooltipAudioOnly": "Zapnut režim slabého připojení",
         "ld": "LD",
         "ldTooltip": "Sledujete obraz v nízké kvalitě",
-        "lowDefinition": "Nizká kvalita",
+        "lowDefinition": "Nízká kvalita",
         "onlyAudioAvailable": "Je k dispozici jen zvuk",
         "onlyAudioSupported": "V tomto prohlížeči podporujeme jen zvuk.",
         "sd": "SD",
