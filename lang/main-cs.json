@@ -100,10 +100,13 @@
     },
     "connectionindicator": {
         "address": "Adresa:",
-        "bandwidth": "Odhadovaná šířka pásma:",
+        "audio_ssrc": "SSRC audia:",
+        "bandwidth": "Odhad šířky pásma:",
         "bitrate": "Přenosová rychlost:",
         "bridgeCount": "Počet serverů: ",
+        "codecs": "Kodeky (A/V): ",
         "connectedTo": "Připojeno k:",
+        "e2e_rtt": "E2E RTT:",
         "framerate": "Rychlost snímkování:",
         "less": "Zobrazit méně",
         "localaddress_0": "Místní adresa:",
@@ -122,8 +125,8 @@
             "good": "Dobré",
             "inactive": "Neaktivní",
             "lost": "Ztraceno",
-            "nonoptimal": "Není optimální",
-            "poor": "Slabý"
+            "nonoptimal": "Neoptimální",
+            "poor": "Slabé"
         },
         "remoteaddress_0": "Vzdálená adresa:",
         "remoteaddress_1": "Vzdálené adresy:",
@@ -136,6 +139,8 @@
         "remoteport_plural_2": "Vzdálené porty:",
         "remoteport_plural_5": "Vzdálených portů:",
         "resolution": "Rozlišení:",
+        "savelogs": "Uložit záznam",
+        "participant_id": "Účastníkovo ID:",
         "status": "Připojení:",
         "transport_0": "Přenos:",
         "transport_1": "Přenosy:",
@@ -143,7 +148,7 @@
         "transport_plural_2": "Přenosy:",
         "transport_plural_5": "Přenosů:",
         "turn": "(otočit)",
-        "e2e_rtt": "E2E RTT:"
+        "video_ssrc": "SSRC videa:"
     },
     "dateUtils": {
         "earlier": "Dříve",
