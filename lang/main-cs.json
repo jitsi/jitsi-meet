@@ -72,7 +72,7 @@
         },
         "privateNotice": "Soukromá zpráva pro {{recipient}}",
         "title": "Zprávy",
-        "you": "vy",
+        "you": "vy"
     },
     "chromeExtensionBanner": {
         "installExtensionText": "Nainstalujte si rozšíření pro integraci s Kalendářem Google a Office 365",
