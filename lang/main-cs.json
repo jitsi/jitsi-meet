@@ -179,13 +179,14 @@
     "deviceSelection": {
         "noPermission": "Oprávnění není uděleno",
         "previewUnavailable": "Náhled není dostupný",
-        "selectADevice": "Zvolte zvukové zařízení",
+        "selectADevice": "Zvolte zařízení",
         "testAudio": "Vyzkoušet zvuk"
     },
     "dialog": {
         "accessibilityLabel": {
-            "liveStreaming": "Živý stream"
+            "liveStreaming": "Živý přenos"
         },
+        "add": "Přidat",
         "allow": "Povolit",
         "alreadySharedVideoMsg": "Video už sdílí jiný účastník. Tato konference umožňuje sdílet jen jedno video současně.",
         "alreadySharedVideoTitle": "Je povoleno jen jedno sdílené video",
@@ -198,11 +199,11 @@
         "cameraPermissionDeniedError": "Neudělili jste oprávnění k použití kamery. Můžete se sice připojit ke konferenci, ale ostatní vás neuvidí. Opravíte to stiskem tlačítka kamery v adresním řádku.",
         "cameraUnknownError": "Z neznámého důvodu nelze používat kameru.",
         "cameraUnsupportedResolutionError": "Vaše kamera nepodporuje požadované rozlišení obrazu.",
-        "Cancel": "Storno",
+        "Cancel": "Zrušit",
         "close": "Zavřít",
-        "conferenceDisconnectMsg": "Možná byste měli zkontrolovat připojení k síti. Znovu se připojíte za {{seconds}} s...",
-        "conferenceDisconnectTitle": "Byl jste odhlášen.",
-        "conferenceReloadMsg": "Pokoušíme se to opravit. Znovu se připojíte za {{seconds}} s...",
+        "conferenceDisconnectMsg": "Možná byste měli zkontrolovat připojení k síti. Znovu se připojíte za {{seconds}} s…",
+        "conferenceDisconnectTitle": "Byl/a jste odhlášen/a.",
+        "conferenceReloadMsg": "Pokoušíme se to opravit. Znovu se připojíte za {{seconds}} s…",
         "conferenceReloadTitle": "Bohužel, něco se pokazilo.",
         "confirm": "Potvrdit",
         "confirmNo": "Ne",
@@ -211,10 +212,14 @@
         "connectErrorWithMsg": "Jejda! Něco se pokazilo a do konference se nepodařilo připojit: {{msg}}",
         "connecting": "Připojení",
         "contactSupport": "Kontaktovat podporu",
+        "copied": "Zkopírováno",
         "copy": "Kopírovat",
-        "dismiss": "OK",
+        "dismiss": "Skrýt",
         "displayNameRequired": "Ahoj! Jak se jmenuješ?",
         "done": "Hotovo",
+        "e2eeDescription": "Šifrování end-to-end Je zatím EXPERIMENTÁLNÍ. Berte prosím v úvahu, že když zapnete šifrování end-to-end, vypnou se serverové služby jako: nahrávání, živý přenos a připojení po telefonu. Také mějte na paměti, že setkání bude fungovat jen lidem, kteří se připojí z prohlížečů s podporou vložitelných proudů.",
+        "e2eeLabel": "Povolit šifrování end-to-end",
+        "e2eeWarning": "VAROVÁNÍ: Zdá se, že některým účastníkům setkání chybí podpora pro šifrování end-to-end. Pokud jej povolíte, nebudou vás vidět ani slyšet.",
         "enterDisplayName": "Vložte prosím své jméno",
         "error": "Chyba",
         "externalInstallationMsg": "Je potřeba nainstalovat rozšíření pro sdílení plochy.",
