@@ -672,7 +672,7 @@
         "unavailableTitle": "Nahrávání nedostupné"
     },
     "sectionList": {
-        "pullToRefresh": ""
+        "pullToRefresh": "Zatáhnutím obnovíte"
     },
     "security": {
         "about": "Můžete pro setkání nastavit $t(lockRoomPassword). Účastníci budou muset $t(lockRoomPassword) zadat, než se budou moct do setkání připojit.",
@@ -682,16 +682,16 @@
     },
     "settings": {
         "calendar": {
-            "about": "",
-            "disconnect": "odpojeno",
+            "about": "Integrace kalendáře {{appName}} slouží k bezpečnému přístupu k vašemu kalendáři, takže dovede zjistit nadcházející události.",
+            "disconnect": "Odpojit",
             "microsoftSignIn": "Přihlásit se účtem Microsoft",
-            "signedIn": "",
+            "signedIn": "Právě se přistupuje ke kalendářním událostem pro {{email}}. Abyste zastavili přístup k událostem, klikněte na tlačítko Odpojit",
             "title": "Kalendář"
         },
         "devices": "Zařízení",
         "followMe": "Všichni sledují mě",
         "language": "Jazyk",
-        "loggedIn": "Přihlášen jako {{name}}",
+        "loggedIn": "Přihlášen/a jako {{name}}",
         "microphones": "Mikrofony",
         "moderator": "Moderátor",
         "more": "Více",
@@ -707,42 +707,48 @@
     },
     "settingsView": {
         "advanced": "Pokročilé",
+        "alertCancel": "Zrušit",
         "alertOk": "OK",
         "alertTitle": "Varování",
-        "alertURLText": "",
-        "buildInfoSection": "",
-        "conferenceSection": "",
+        "alertURLText": "Adresa URL k serveru je neplatná",
+        "buildInfoSection": "Informace o sestavení",
+        "conferenceSection": "Konference",
+        "disableCallIntegration": "Vypnout integraci nativních hovorů",
+        "disableCrashReporting": "Vypnout hlášení o pádu",
+        "disableCrashReportingWarning": "Určitě chcete vypnout hlášení o pádu? Nastavení se uplatní, až restartujete aplikaci.",
+        "disableP2P": "Vypnout mód Peer-To-Peer",
         "displayName": "Zobrazované jméno",
         "email": "E-mail",
         "header": "Nastavení",
         "profileSection": "Profil",
         "serverURL": "URL serveru",
         "showAdvanced": "Zobrazit pokročilá nastavení",
-        "startWithAudioMuted": "",
-        "startWithVideoMuted": "",
-        "version": ""
+        "startWithAudioMuted": "Začít se ztišeným zvukem",
+        "startWithVideoMuted": "Začít s vypnutým videem",
+        "version": "Verze"
     },
     "share": {
-        "dialInfoText": "",
-        "mainText": ""
+        "dialInfoText": "\n\n=====\n\nChcete se připojit jen vytočením po telefonu?\n\n{{defaultDialInNumber}}Klikněte na tento odkaz pro telefonní čísla k tomuto setkání\n{{dialInfoPageUrl}}",
+        "mainText": "Pro vstup do setkání klikněte na tento odkaz:\n{{roomUrl}}"
     },
     "speaker": "Řečník",
     "speakerStats": {
-        "hours": "",
-        "minutes": "",
-        "name": "Řečník",
-        "seconds": "",
+        "hours": "{{count}} h",
+        "minutes": "{{count}} min",
+        "name": "Jméno",
+        "seconds": "{{count}} s",
         "speakerStats": "Statistika řečníků",
-        "speakerTime": "Mluvil(a) již"
+        "speakerTime": "Mluvil/a již"
     },
     "startupoverlay": {
+        "genericTitle": "Setkání vyžaduje přístup k vašemu mikrofonu a kameře.",
         "policyText": " ",
-        "title": "{{app}} vyžaduje použití mikrofonu a kamery."
+        "title": "{{app}} potřebuje používat mikrofon a kameru."
     },
     "suspendedoverlay": {
         "rejoinKeyTitle": "Znovu připojit",
         "text": "Zmáčknutím tlačítka <i>Znovu připojit</i> se vrátíte do konference.",
-        "title": "Váš videohovor byl přerušen kvůli přechodu počítače do režimu spánku."
+        "title": "Váš videohovor se přerušil, protože počítač přešel do režimu spánku."
     },
     "toolbar": {
         "Settings": "Nastavení",
