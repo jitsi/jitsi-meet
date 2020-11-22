@@ -35,9 +35,9 @@
     "audioDevices": {
         "bluetooth": "Bluetooth",
         "headphones": "Sluchátka",
+        "none": "Nejsou k dispozici žádná zvuková zařízení",
         "phone": "Telefon",
-        "speaker": "Reproduktor",
-        "none": "Nejsou k dispozici žádná zvuková zařízení"
+        "speaker": "Reproduktor"
     },
     "audioOnly": {
         "audioOnly": "Nízká přenosová rychlost"
@@ -63,21 +63,21 @@
     "chat": {
         "error": "Chyba: vaše zpráva se neodeslala. Důvod: {{error}}",
         "fieldPlaceHolder": "Sem napište zprávu",
-        "messagebox": "Napište zprávu",
         "messageTo": "Soukromá zpráva pro {{recipient}}",
-        "noMessagesMessage": "V setkání zatím nejsou žádné zprávy. Tady můžete začít konverzaci!",
+        "messagebox": "Napište zprávu",
         "nickname": {
             "popover": "Zvolte si přezdívku",
             "title": "Vložte přezdívku, abyste mohl/a používat zprávy"
         },
+        "noMessagesMessage": "V setkání zatím nejsou žádné zprávy. Tady můžete začít konverzaci!",
         "privateNotice": "Soukromá zpráva pro {{recipient}}",
         "title": "Zprávy",
         "you": "vy"
     },
     "chromeExtensionBanner": {
-        "installExtensionText": "Nainstalujte si rozšíření pro integraci s Kalendářem Google a Office 365",
-        "buttonText": "Nainstalovat rozšíření do Chrome",
-        "dontShowAgain": "Už mi toto neukazovat"
+        "buttonText": "Nainstalovat rozšíření Chrome",
+        "dontShowAgain": "Toto už znovu neukazovat",
+        "installExtensionText": "Nainstalovat rozšíření pro integraci Google Calendar a Office 365"
     },
     "connectingOverlay": {
         "joiningRoom": "Připojujete se k setkání…"
@@ -92,11 +92,11 @@
         "DISCONNECTED": "Odpojeno",
         "DISCONNECTING": "Odpojování",
         "ERROR": "Chyba",
-        "RECONNECTING": "Nové připojování",
         "FETCH_SESSION_ID": "Získává se session-id…",
         "GET_SESSION_ID_ERROR": "Chyba při získávání session-id: {{code}}",
         "GOT_SESSION_ID": "Získává se session-id… Hotovo",
-        "LOW_BANDWIDTH": "Video pro {{displayName}} se vypnulo, aby se ušetřila přenosová rychlost"
+        "LOW_BANDWIDTH": "Video pro {{displayName}} se vypnulo, aby se ušetřila přenosová rychlost",
+        "RECONNECTING": "Nové připojování"
     },
     "connectionindicator": {
         "address": "Adresa:",
@@ -121,6 +121,7 @@
         "localport_plural_5": "Místních portů:",
         "more": "Zobrazit více",
         "packetloss": "Ztracené pakety:",
+        "participant_id": "Účastníkovo ID:",
         "quality": {
             "good": "Dobré",
             "inactive": "Neaktivní",
@@ -140,7 +141,6 @@
         "remoteport_plural_5": "Vzdálených portů:",
         "resolution": "Rozlišení:",
         "savelogs": "Uložit záznam",
-        "participant_id": "Účastníkovo ID:",
         "status": "Připojení:",
         "transport_0": "Přenos:",
         "transport_1": "Přenosy:",
@@ -169,7 +169,7 @@
         "tryAgainButton": "Zkusit znovu na desktopu"
     },
     "defaultLink": "např. {{url}}",
-    "defaultNickname": "např. Jana Růžová",
+    "defaultNickname": "Franta Uživatel",
     "deviceError": {
         "cameraError": "Chyba při přístupu ke kameře",
         "cameraPermission": "Aplikace nemá oprávnění přistupovat ke kameře",
@@ -182,7 +182,21 @@
         "selectADevice": "Zvolte zařízení",
         "testAudio": "Vyzkoušet zvuk"
     },
+    "dialOut": {
+        "statusMessage": "je nyní {{status}}"
+    },
     "dialog": {
+        "Back": "Zpět",
+        "Cancel": "Zrušit",
+        "IamHost": "Jsem hostitel",
+        "Ok": "OK",
+        "Remove": "Odstranit",
+        "Share": "Sdílet",
+        "Submit": "Potvrdit",
+        "WaitForHostMsg": "",
+        "WaitForHostMsgWOk": "",
+        "WaitingForHost": "",
+        "Yes": "Ano",
         "accessibilityLabel": {
             "liveStreaming": "Živý přenos"
         },
@@ -191,7 +205,6 @@
         "alreadySharedVideoMsg": "Video už sdílí jiný účastník. Tato konference umožňuje sdílet jen jedno video současně.",
         "alreadySharedVideoTitle": "Je povoleno jen jedno sdílené video",
         "applicationWindow": "Okno aplikace",
-        "Back": "Zpět",
         "cameraConstraintFailedError": "Vaše kamera nesplňuje některé požadované parametry.",
         "cameraNotFoundError": "Kamera nebyla nalezena.",
         "cameraNotSendingData": "Nelze přistupovat ke kameře. Zkontrolujte prosím, zda ji už nepoužívá jiná aplikace, vyberte jiné zařízení v nabídce nastavení nebo zkuste aplikaci znovu načíst.",
@@ -199,7 +212,6 @@
         "cameraPermissionDeniedError": "Neudělili jste oprávnění k použití kamery. Můžete se sice připojit ke konferenci, ale ostatní vás neuvidí. Opravíte to stiskem tlačítka kamery v adresním řádku.",
         "cameraUnknownError": "Z neznámého důvodu nelze používat kameru.",
         "cameraUnsupportedResolutionError": "Vaše kamera nepodporuje požadované rozlišení obrazu.",
-        "Cancel": "Zrušit",
         "close": "Zavřít",
         "conferenceDisconnectMsg": "Možná byste měli zkontrolovat připojení k síti. Znovu se připojíte za {{seconds}} s…",
         "conferenceDisconnectTitle": "Byl/a jste odhlášen/a.",
@@ -225,11 +237,10 @@
         "gracefulShutdown": "Naše služba je nyní mimo provoz kvůli údržbě. Zkuste to prosím znovu později.",
         "grantModeratorDialog": "Určitě chcete tohoto účastníka učinit moderátorem?",
         "grantModeratorTitle": "Pověřit moderátora",
-        "IamHost": "Jsem hostitel",
-        "incorrectRoomLockPassword": "Chybné heslo",
         "incorrectPassword": "Uživatelské jméno nebo heslo není správně",
-        "inlineInstallationMsg": "Je potřeba nainstalovat rozšíření pro sdílení plochy.",
+        "incorrectRoomLockPassword": "Chybné heslo",
         "inlineInstallExtension": "Nainstalovat",
+        "inlineInstallationMsg": "Je potřeba nainstalovat rozšíření pro sdílení plochy.",
         "internalError": "Jejda! Něco se pokazilo. Objevila se následující chyba: {{error}}",
         "internalErrorTitle": "Vnitřní chyba",
         "kickMessage": "Pro více informací můžete kontaktovat {{participantDisplayName}}.",
@@ -253,17 +264,16 @@
         "micNotSendingDataTitle": "Váš mikrofon je vypnutý v nastavení systému",
         "micPermissionDeniedError": "Neudělili jste oprávnění pro použití mikrofonu. Můžete se sice připojit ke konferenci, ale ostatní vás neuslyší. Opravíte to stiskem tlačítka kamery v adresním řádku.",
         "micUnknownError": "Z neznámého důvodu nelze použít mikrofon.",
-        "muteEveryoneElseDialog": "Po ztišení jim nebudete moct zvuk znovu zapnout, ale oni sami si můžou zvuk zapnout kdykoliv.",
-        "muteEveryoneElseTitle": "Ztišit všechny kromě {{whom}}?",
         "muteEveryoneDialog": "Určitě chcete všechny ztišit? Po ztišení jim nebudete moct zvuk znovu zapnout, ale oni sami si můžou zvuk zapnout kdykoliv.",
-        "muteEveryoneTitle": "Ztišit všechny?",
+        "muteEveryoneElseDialog": "Po ztišení jim nebudete moct zvuk znovu zapnout, ale oni sami si můžou zvuk zapnout kdykoliv.",
+        "muteEveryoneElseTitle": "Umlčet všechny kromě {{whom}}?",
         "muteEveryoneSelf": "sebe",
-        "muteEveryoneStartMuted": "Odteď budou všichni po připojení ztišení",
+        "muteEveryoneStartMuted": "Nyní jsou všichni umlčeni",
+        "muteEveryoneTitle": "Umlčet všechny?",
         "muteParticipantBody": "Po ztišení jim nebudete moct zvuk znovu zapnout, ale oni sami si můžou zvuk zapnout kdykoliv.",
         "muteParticipantButton": "Ztišit",
         "muteParticipantDialog": "Určitě chcete tohoto účastníka ztišit? Po ztišení jim nebudete moct zvuk znovu zapnout, ale oni sami si můžou zvuk zapnout kdykoliv.",
         "muteParticipantTitle": "Ztišit tohoto účastníka?",
-        "Ok": "OK",
         "passwordLabel": "Některý z účastníků toto setkání uzamkl. Pro připojení prosím zadejte $t(lockRoomPassword).",
         "passwordNotSupported": "Setkání nepodporuje nastavit $t(lockRoomPassword).",
         "passwordNotSupportedTitle": "$t(lockRoomPasswordUppercase) není podporováno",
@@ -282,21 +292,24 @@
         "remoteControlShareScreenWarning": "Nezapomeňte, že stiskem \"Povolit\" budete sdílet svou obrazovku!",
         "remoteControlStopMessage": "Relace dálkového ovládání skončila!",
         "remoteControlTitle": "Dálkové ovládání počítače",
-        "Remove": "Odstranit",
         "removePassword": "Odstranit $t(lockRoomPassword)",
         "removeSharedVideoMsg": "Opravdu chcete odstranit sdílené video?",
         "removeSharedVideoTitle": "Odstranit sdílené video",
         "reservationError": "Systémová chyba rezervace",
         "reservationErrorMsg": "Chyba: {{code}}, zpráva: {{msg}}",
         "retry": "Opakovat",
+        "screenSharingAudio": "Sdílet zvuk",
         "screenSharingFailedToInstall": "Doplněk pro sdílení obrazovky se nepodařilo nainstalovat.",
         "screenSharingFailedToInstallTitle": "Doplněk pro sdílení obrazovky se nepodařilo nainstalovat",
         "screenSharingFirefoxPermissionDeniedError": "",
         "screenSharingFirefoxPermissionDeniedTitle": "",
         "screenSharingPermissionDeniedError": "",
+        "sendPrivateMessage": "Nedávno vám přišla soukromá zpráva. Chcete na ni odpovědět soukromě, nebo chcete poslat zprávu do skupiny?",
+        "sendPrivateMessageCancel": "Poslat do skupiny",
+        "sendPrivateMessageOk": "Poslat soukromě",
+        "sendPrivateMessageTitle": "Poslat soukromě?",
         "serviceUnavailable": "Služba není dostupná",
         "sessTerminated": "Volání ukončeno",
-        "Share": "Sdílet",
         "shareVideoLinkError": "Zadejte prosím správný odkaz videa na YouTube.",
         "shareVideoTitle": "Sdílet obraz",
         "shareYourScreen": "Sdílet obrazovku",
@@ -310,7 +323,6 @@
         "stopRecordingWarning": "",
         "stopStreamingWarning": "",
         "streamKey": "",
-        "Submit": "Potvrdit",
         "thankYou": "Děkujeme, že používáte {{appName}}!",
         "token": "token",
         "tokenAuthFailed": "Bohužel nemáte povoleno se k tomuto volání připojit.",
@@ -318,22 +330,10 @@
         "transcribing": "",
         "unlockRoom": "Odstranit videohovor $t(lockRoomPassword)",
         "userPassword": "uživatelské heslo",
-        "WaitForHostMsg": "",
-        "WaitForHostMsgWOk": "",
-        "WaitingForHost": "",
-        "Yes": "Ano",
-        "yourEntireScreen": "Celá vaše obrazovka",
-        "sendPrivateMessageTitle": "Poslat soukromě?",
-        "sendPrivateMessageOk": "Poslat soukromě",
-        "sendPrivateMessageCancel": "Poslat do skupiny",
-        "sendPrivateMessage": "Nedávno vám přišla soukromá zpráva. Chcete na ni odpovědět soukromě, nebo chcete poslat zprávu do skupiny?",
-        "screenSharingAudio": "Sdílet zvuk",
-        "muteEveryoneStartMuted": "Nyní jsou všichni umlčeni",
-        "muteEveryoneTitle": "Umlčet všechny?",
-        "muteEveryoneElseTitle": "Umlčet všechny kromě {{whom}}?"
+        "yourEntireScreen": "Celá vaše obrazovka"
     },
-    "dialOut": {
-        "statusMessage": "je nyní {{status}}"
+    "documentSharing": {
+        "title": "Sdílený dokument"
     },
     "feedback": {
         "average": "Průměrná",
@@ -343,6 +343,9 @@
         "rateExperience": "Ohodnoťte svoji zkušenost s videohovorem",
         "veryBad": "Velmi špatná",
         "veryGood": "Velmi dobrá"
+    },
+    "helpView": {
+        "header": "Centrum pomoci"
     },
     "incomingCall": {
         "answer": "Odpovědět",
@@ -370,6 +373,7 @@
         "inviteURLFirstPartGeneral": "Připojte se k meetingu.",
         "inviteURLFirstPartPersonal": "",
         "inviteURLSecondPart": "",
+        "label": "Informace o meetingu",
         "liveStreamURL": "Živé vysílání:",
         "moreNumbers": "Více čísel",
         "noNumbers": "Žádná čísla pro připojení po telefonu.",
@@ -378,8 +382,13 @@
         "numbers": "Čísla pro připojení telefonicky",
         "password": "$t(lockRoomPasswordUppercase):",
         "title": "Sdílet",
-        "tooltip": "Sdílet odkaz k tomuto meetingu",
-        "label": "Informace o meetingu"
+        "tooltip": "Sdílet odkaz k tomuto meetingu"
+    },
+    "inlineDialogFailure": {
+        "msg": "",
+        "retry": "Zkusit znovu",
+        "support": "Podpora",
+        "supportMsg": ""
     },
     "inviteDialog": {
         "alertText": "Pozvání některých účastníků selhalo.",
@@ -388,12 +397,6 @@
         "searchPeopleOnlyPlaceholder": "Hledat účastníky",
         "searchPlaceholder": "Účastník nebo telefonní číslo",
         "send": "Odeslat"
-    },
-    "inlineDialogFailure": {
-        "msg": "",
-        "retry": "Zkusit znovu",
-        "support": "Podpora",
-        "supportMsg": ""
     },
     "keyboardShortcuts": {
         "focusLocal": "Vybrat váš obraz",
@@ -432,10 +435,10 @@
         "on": "",
         "pending": "",
         "serviceName": "",
-        "signedInAs": "Nyní jste přihlášen(a) jako:",
         "signIn": "Přihlásit se účtem Google",
         "signInCTA": "Přihlaste se nebo vložte svůj klíč ze služby YouTube.",
         "signOut": "Odhlásit se",
+        "signedInAs": "Nyní jste přihlášen(a) jako:",
         "start": "",
         "streamIdHelp": "Co je tohle?",
         "unavailableTitle": ""
@@ -471,6 +474,10 @@
     },
     "lockRoomPassword": "heslo",
     "lockRoomPasswordUppercase": "Heslo",
+    "lonelyMeetingExperience": {
+        "button": "Pozvat další",
+        "youAreAlone": "Jste jediný/á v tomto videohovoru"
+    },
     "me": "já",
     "notify": {
         "connectedOneMember": "{{name}} se připojil",
@@ -487,24 +494,24 @@
         "me": "Já",
         "moderator": "Moderátorská práva udělena!",
         "muted": "Konverzaci jste zahájili se ztlumeným zvukem.",
-        "mutedTitle": "Máte ztlumený zvuk!",
-        "mutedRemotelyTitle": "",
         "mutedRemotelyDescription": "",
+        "mutedRemotelyTitle": "",
+        "mutedTitle": "Máte ztlumený zvuk!",
+        "newDeviceAction": "Použít",
+        "newDeviceAudioTitle": "Detekováno nové zvukové zařízení",
+        "newDeviceCameraTitle": "Detekována nová kamera",
         "passwordRemovedRemotely": "",
         "passwordSetRemotely": "",
         "raisedHand": "",
         "somebody": "Někdo",
-        "startSilentTitle": "",
         "startSilentDescription": "",
+        "startSilentTitle": "",
         "suboptimalExperienceDescription": "Zatraceně… všimli jsme si, že vaše zkušenost s {{appName}} není úplně skvělá. Hledáme cesty, jak bychom to mohli zlepšit. Než se tak stane, vyzkoušejte některý z <a href='{{recommendedBrowserPageLink}}' target='_blank'>plně podporovaných prohlížečů</a>.",
         "suboptimalExperienceTitle": "Varování prohlížeče",
-        "unmute": "",
-        "newDeviceCameraTitle": "Detekována nová kamera",
-        "newDeviceAudioTitle": "Detekováno nové zvukové zařízení",
-        "newDeviceAction": "Použít"
+        "unmute": ""
     },
-    "passwordSetRemotely": "nastaveno jiným účastníkem",
     "passwordDigitsOnly": "Až {{number}} číslic",
+    "passwordSetRemotely": "nastaveno jiným účastníkem",
     "poweredby": "Poháněno",
     "presenceStatus": {
         "busy": "Obsazeno",
@@ -526,6 +533,7 @@
         "setEmailLabel": "Nastavte si e-mail vašeho Gravataru",
         "title": "Profil"
     },
+    "raisedHand": "Chtěl(a) bych mluvit",
     "recording": {
         "authDropboxText": "Nahrát na Dropbox",
         "availableSpace": "Dostupný prostor: {{spaceLeft}} MB (přibližně {{duration}} minut záznamu)",
@@ -566,6 +574,7 @@
         "followMe": "Všichni sledují mě",
         "language": "Jazyk",
         "loggedIn": "Přihlášen jako {{name}}",
+        "microphones": "Mikrofony",
         "moderator": "Moderátor",
         "more": "Více",
         "name": "Jméno",
@@ -573,13 +582,13 @@
         "selectAudioOutput": "Zvukový výstup",
         "selectCamera": "Kamera",
         "selectMic": "Mikrofon",
+        "speakers": "Reproduktory",
         "startAudioMuted": "Při připojení všem zlumit zvuk",
         "startVideoMuted": "Všechny připojovat jako skryté",
-        "title": "Nastavení",
-        "speakers": "Reproduktory",
-        "microphones": "Mikrofony"
+        "title": "Nastavení"
     },
     "settingsView": {
+        "advanced": "Pokročilé",
         "alertOk": "OK",
         "alertTitle": "Varování",
         "alertURLText": "",
@@ -590,11 +599,10 @@
         "header": "Nastavení",
         "profileSection": "Profil",
         "serverURL": "URL serveru",
+        "showAdvanced": "Zobrazit pokročilá nastavení",
         "startWithAudioMuted": "",
         "startWithVideoMuted": "",
-        "version": "",
-        "showAdvanced": "Zobrazit pokročilá nastavení",
-        "advanced": "Pokročilé"
+        "version": ""
     },
     "share": {
         "dialInfoText": "",
@@ -619,7 +627,9 @@
         "title": "Váš videohovor byl přerušen kvůli přechodu počítače do režimu spánku."
     },
     "toolbar": {
+        "Settings": "Nastavení",
         "accessibilityLabel": {
+            "Settings": "",
             "audioOnly": "",
             "audioRoute": "",
             "callQuality": "",
@@ -641,17 +651,16 @@
             "raiseHand": "",
             "recording": "",
             "remoteMute": "",
-            "Settings": "",
-            "sharedvideo": "",
             "shareRoom": "",
             "shareYourScreen": "Sdílet obrazovku",
+            "sharedvideo": "",
             "shortcuts": "Zobrazit zkratky",
             "show": "",
             "speakerStats": "Statistika řečníků",
             "tileView": "Přepnout režim zobrazení",
             "toggleCamera": "",
-            "videomute": "",
-            "videoblur": ""
+            "videoblur": "",
+            "videomute": ""
         },
         "addPeople": "Přidat účastníky vašeho hovoru",
         "audioOnlyOff": "",
@@ -680,22 +689,21 @@
         "profile": "Upravit váš profil",
         "raiseHand": "Přihlásit / Odhlásit se o slovo",
         "raiseYourHand": "",
-        "Settings": "Nastavení",
-        "sharedvideo": "Sdílet obraz YouTube videa",
         "shareRoom": "",
+        "sharedvideo": "Sdílet obraz YouTube videa",
         "shortcuts": "Klávesové zkratky",
         "speakerStats": "Statistiky řečníků",
         "startScreenSharing": "",
         "startSubtitles": "",
+        "startvideoblur": "Rozmazat pozadí",
         "stopScreenSharing": "",
-        "stopSubtitles": "",
         "stopSharedVideo": "",
+        "stopSubtitles": "",
+        "stopvideoblur": "Zrušit rozmazání",
         "talkWhileMutedPopup": "Snažíte se mluvit? Máte ztlumené audio.",
         "tileViewToggle": "Přepnout režim zobrazení",
         "toggleCamera": "",
-        "videomute": "Zapnutí / Vypnutí kamery",
-        "startvideoblur": "Rozmazat pozadí",
-        "stopvideoblur": "Zrušit rozmazání"
+        "videomute": "Zapnutí / Vypnutí kamery"
     },
     "transcribing": {
         "ccButtonTooltip": "",
@@ -751,6 +759,7 @@
     },
     "videothumbnail": {
         "domute": "Umlčet",
+        "domuteOthers": "Umlčet všechny ostatní",
         "flip": "Převrátit",
         "kick": "Vyhodit",
         "moderator": "Moderátor",
@@ -758,8 +767,7 @@
         "muted": "Ztlumený zvuk",
         "remoteControl": "Vzdálené ovládání",
         "show": "",
-        "videomute": "Účastník si vypnul kameru",
-        "domuteOthers": "Umlčet všechny ostatní"
+        "videomute": "Účastník si vypnul kameru"
     },
     "welcomepage": {
         "accessibilityLabel": {
@@ -775,38 +783,21 @@
         "connectCalendarButton": "Připojit váš kalendář",
         "connectCalendarText": "Připojte si kalendář a uvidíte všechny videohovory v {{app}}. Můžete si také přidat videohovory {{provider}} do kalendáře a spouštět je jedním klikem.",
         "enterRoomTitle": "Začít nový videohovor",
+        "getHelp": "Získat pomoc",
         "go": "ZAČÍT",
-        "join": "PŘIPOJIT",
+        "goSmall": "ZAČÍT",
         "info": "Informace",
+        "join": "PŘIPOJIT",
         "privacy": "Soukromí",
         "recentList": "Nedávné",
         "recentListDelete": "Smazat",
         "recentListEmpty": "Váš seznam nedávných hovorů je prázdný. Spojte se s kolegy z Vašeho týmu, poté zde naleznete seznam nedávných hovorů.",
         "reducedUIText": "Vítejte v {{app}}!",
+        "roomNameAllowedChars": "Název videohovoru nesmí obsahovat žádný z těchto znaků: ?, &, :, ', \", %, #.",
         "roomname": "Zadejte jméno místnosti",
         "roomnameHint": "Zadejte název nebo URL odkaz místnosti ke které se chcete připojit. Pokud jste místnost vytvořili, ujistěte se, že ostatní účastníci schůzky zadají stejné jméno jako vy.",
         "sendFeedback": "Poslat zpětnou vazbu",
         "terms": "Podmínky používání",
-        "title": "Bezpečná, plnohodnotná a zdarma dostupná videokonference",
-        "roomNameAllowedChars": "Název videohovoru nesmí obsahovat žádný z těchto znaků: ?, &, :, ', \", %, #.",
-        "getHelp": "Získat pomoc",
-        "goSmall": "ZAČÍT"
-    },
-    "lonelyMeetingExperience": {
-        "youAreAlone": "Jste jediný/á v tomto videohovoru",
-        "button": "Pozvat další"
-    },
-    "helpView": {
-        "header": "Centrum pomoci"
-    },
-    "chromeExtensionBanner": {
-        "dontShowAgain": "Toto už znovu neukazovat",
-        "buttonText": "Nainstalovat rozšíření Chrome",
-        "installExtensionText": "Nainstalovat rozšíření pro integraci Google Calendar a Office 365"
-    },
-    "defaultNickname": "Franta Uživatel",
-    "raisedHand": "Chtěl(a) bych mluvit",
-    "documentSharing": {
-        "title": "Sdílený dokument"
+        "title": "Bezpečná, plnohodnotná a zdarma dostupná videokonference"
     }
 }
