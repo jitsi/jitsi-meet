@@ -80,7 +80,7 @@
         "dontShowAgain": "Už mi toto neukazovat"
     },
     "connectingOverlay": {
-        "joiningRoom": "Probíhá připojování k videohovoru..."
+        "joiningRoom": "Připojujete se k setkání…"
     },
     "connection": {
         "ATTACHED": "Přiložený",
@@ -92,11 +92,11 @@
         "DISCONNECTED": "Odpojeno",
         "DISCONNECTING": "Odpojování",
         "ERROR": "Chyba",
-        "RECONNECTING": "",
-        "LOW_BANDWIDTH": "Video pro {{displayName}} bylo vypnuto pro snížení přenosové rychlosti",
-        "GOT_SESSION_ID": "Získávání session-id... Hotovo",
+        "RECONNECTING": "Nové připojování",
+        "FETCH_SESSION_ID": "Získává se session-id…",
         "GET_SESSION_ID_ERROR": "Chyba při získávání session-id: {{code}}",
-        "FETCH_SESSION_ID": "Získává se session-id..."
+        "GOT_SESSION_ID": "Získává se session-id… Hotovo",
+        "LOW_BANDWIDTH": "Video pro {{displayName}} se vypnulo, aby se ušetřila přenosová rychlost"
     },
     "connectionindicator": {
         "address": "Adresa:",
