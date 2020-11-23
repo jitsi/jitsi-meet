@@ -100,9 +100,8 @@ function _toTimeString(times, fmt) {
  *
  * @extends Component
  */
-//export default class MeetingsList extends Component<Props> {
 class MeetingsList extends Component<Props> {
-		/**
+    /**
      * Constructor of the MeetingsList component.
      *
      * @inheritdoc
@@ -203,6 +202,7 @@ class MeetingsList extends Component<Props> {
         const rootClassName
             = `item ${
                 onPress ? 'with-click-handler' : 'without-click-handler'}`;
+
         return (
             <Container
                 className = { rootClassName }
@@ -210,10 +210,20 @@ class MeetingsList extends Component<Props> {
                 onClick = { onPress }>
                 <Container className = 'left-column'>
                     <Text className = 'title'>
-                        { _toDateString(date, (t('meetingsList.dateFormat') === 'meetingsList.dateFormat' ? null : t('meetingsList.dateFormat'))) }
+                        {
+                          _toDateString(
+                            date,
+                            t('meetingsList.dateFormat') === 'meetingsList.dateFormat' ? null : t('meetingsList.dateFormat')
+                          )
+                        }
                     </Text>
                     <Text className = 'subtitle'>
-                        { _toTimeString(time, (t('meetingsList.timeFormat') === 'meetingsList.timeFormat' ? null : t('meetingsList.timeFormat'))) }
+                        {
+                          _toTimeString(
+                            time,
+                            t('meetingsList.timeFormat') === 'meetingsList.timeFormat' ? null : t('meetingsList.timeFormat')
+                          )
+                        }
                     </Text>
                 </Container>
                 <Container className = 'right-column'>
