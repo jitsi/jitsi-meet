@@ -54,7 +54,7 @@ type Props = {
  * Generates a date string for a given date.
  *
  * @param {Object} date - The date.
- * @param {string} fmt - Custom date format
+ * @param {string} fmt - Custom date format.
  * @private
  * @returns {string}
  */
@@ -73,7 +73,7 @@ function _toDateString(date, fmt) {
  * Generates a time (interval) string for a given times.
  *
  * @param {Array<Date>} times - Array of times.
- * @param {string} fmt - Custom time format
+ * @param {string} fmt - Custom time format.
  * @private
  * @returns {string}
  */
@@ -211,18 +211,20 @@ class MeetingsList extends Component<Props> {
                 <Container className = 'left-column'>
                     <Text className = 'title'>
                         {
-                          _toDateString(
-                            date,
-                            t('meetingsList.dateFormat') === 'meetingsList.dateFormat' ? null : t('meetingsList.dateFormat')
-                          )
+                            _toDateString(
+                                date,
+                                t('meetingsList.dateFormat') === 'meetingsList.dateFormat' ?
+                                    null : t('meetingsList.dateFormat')
+                            )
                         }
                     </Text>
                     <Text className = 'subtitle'>
                         {
-                          _toTimeString(
-                            time,
-                            t('meetingsList.timeFormat') === 'meetingsList.timeFormat' ? null : t('meetingsList.timeFormat')
-                          )
+                            _toTimeString(
+                                time,
+                                t('meetingsList.timeFormat') === 'meetingsList.timeFormat' ?
+                                    null : t('meetingsList.timeFormat')
+                            )
                         }
                     </Text>
                 </Container>
