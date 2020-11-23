@@ -1,6 +1,7 @@
 // @flow
 
 import Platform from '../react/Platform';
+import { Dimensions } from 'react-native';
 
 /**
  * Returns whether or not the current environment is a mobile device.
@@ -35,4 +36,8 @@ export function checkChromeExtensionsInstalled(config: Object = {}) {
     return Promise.all(
         (config.chromeExtensionsInfo || []).map(info => extensionInstalledFunction(info))
     );
+}
+
+export function iphoneHasNotch () {
+    return Platform.OS === 'ios' && Dimensions.get('window').height > 811 && !Platform.isPad || false;
 }

@@ -7,7 +7,6 @@ import {
     Text,
     Image,
     TouchableOpacity,
-    Dimensions
 } from 'react-native';
 import styles from './styles';
 import { getLocalizedDateFormatter, translate } from '../../../i18n';
@@ -19,6 +18,7 @@ import View from 'react-native-webrtc/RTCView';
 import moment from 'moment';
 import { isJaneTestMode } from '../../../conference';
 import { Icon, IconClose } from '../../../../base/icons';
+import { iphoneHasNotch } from '../../../environment/utils';
 
 const watermarkImg = require('../../../../../../images/watermark.png');
 
@@ -49,14 +49,6 @@ class WaitingMessage extends Component<Props, State> {
             hideWaitingMessage: props.hideWaitingMessage
         };
         this.animatedValue = new Animated.Value(0);
-    }
-
-    componentDidUpdate(props) {
-        if (props.hideWaitingMessage !== this.props.hideWaitingMessage) {
-            this.setState({
-                hideWaitingMessage: props.hideWaitingMessage
-            });
-        }
     }
 
     componentDidMount() {
@@ -115,10 +107,6 @@ class WaitingMessage extends Component<Props, State> {
         if (this._interval) {
             clearInterval(this._interval);
         }
-    }
-
-    _getWindowHeight() {
-        return Dimensions.get('window').height;
     }
 
     _close() {
@@ -192,13 +180,12 @@ class WaitingMessage extends Component<Props, State> {
         const image = <Image style={styles.watermark}
                              source={watermarkImg}/>;
         const backgroundColor = hideWaitingMessage ? 'transparent' : 'rgba(255,255,255,.3)';
-        const iphoneHasNotch = Platform.OS === 'ios' && this._getWindowHeight() > 811;
 
         return (<TouchableOpacity
             style={{
                 ...styles.waitingMessageContainer,
                 backgroundColor,
-                paddingTop: iphoneHasNotch ? 60 : 40
+                paddingTop: iphoneHasNotch() ? 60 : 40
             }}
             activeOpacity={1}>
             <Animated.View className='waitingMessage'
