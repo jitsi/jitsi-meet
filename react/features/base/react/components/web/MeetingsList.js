@@ -4,7 +4,8 @@ import React, { Component } from 'react';
 
 import {
     getLocalizedDateFormatter,
-    getLocalizedDurationFormatter
+    getLocalizedDurationFormatter,
+    translate
 } from '../../../i18n';
 import { Icon, IconTrash } from '../../../icons';
 
@@ -39,6 +40,11 @@ type Props = {
     meetings: Array<Object>,
 
     /**
+     * Invoked to obtain translated strings.
+     */
+    t: Function,
+
+    /**
      * Handler for deleting an item.
      */
     onItemDelete?: Function
@@ -48,11 +54,15 @@ type Props = {
  * Generates a date string for a given date.
  *
  * @param {Object} date - The date.
+ * @param {string} fmt - Formatting string.
  * @private
  * @returns {string}
  */
-function _toDateString(date) {
-    return getLocalizedDateFormatter(date).format('MMM Do, YYYY');
+function _toDateString(date, fmt) {
+    if (fmt == undefined || fmt == null || fmt.length == 0) {
+        fmt = 'MMM Do, YYYY';
+    }
+    return getLocalizedDateFormatter(date).format(fmt);
 }
 
 
@@ -60,14 +70,18 @@ function _toDateString(date) {
  * Generates a time (interval) string for a given times.
  *
  * @param {Array<Date>} times - Array of times.
+ * @param {string} fmt - Formatting string.
  * @private
  * @returns {string}
  */
-function _toTimeString(times) {
+function _toTimeString(times, fmt) {
+    if (fmt == undefined || fmt == null || fmt.length == 0) {
+        fmt = 'LT';
+    }
     if (times && times.length > 0) {
         return (
             times
-                .map(time => getLocalizedDateFormatter(time).format('LT'))
+                .map(time => getLocalizedDateFormatter(time).format(fmt))
                 .join(' - '));
     }
 
@@ -80,8 +94,9 @@ function _toTimeString(times) {
  *
  * @extends Component
  */
-export default class MeetingsList extends Component<Props> {
-    /**
+//export default class MeetingsList extends Component<Props> {
+class MeetingsList extends Component<Props> {
+		/**
      * Constructor of the MeetingsList component.
      *
      * @inheritdoc
@@ -176,12 +191,12 @@ export default class MeetingsList extends Component<Props> {
             title,
             url
         } = meeting;
-        const { hideURL = false, onItemDelete } = this.props;
+		const { hideURL = false, onItemDelete } = this.props;
+		const { t } = this.props;
         const onPress = this._onPress(url);
         const rootClassName
             = `item ${
                 onPress ? 'with-click-handler' : 'without-click-handler'}`;
-
         return (
             <Container
                 className = { rootClassName }
@@ -189,10 +204,10 @@ export default class MeetingsList extends Component<Props> {
                 onClick = { onPress }>
                 <Container className = 'left-column'>
                     <Text className = 'title'>
-                        { _toDateString(date) }
+                        { _toDateString(date, t('meetingsList.dateFormat')) }
                     </Text>
                     <Text className = 'subtitle'>
-                        { _toTimeString(time) }
+                        { _toTimeString(time, t('meetingsList.timeFormat')) }
                     </Text>
                 </Container>
                 <Container className = 'right-column'>
@@ -224,3 +239,5 @@ export default class MeetingsList extends Component<Props> {
         );
     }
 }
+
+export default translate(MeetingsList);
