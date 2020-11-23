@@ -54,15 +54,18 @@ type Props = {
  * Generates a date string for a given date.
  *
  * @param {Object} date - The date.
- * @param {string} fmt - Formatting string.
+ * @param {string} fmt - Custom date format
  * @private
  * @returns {string}
  */
 function _toDateString(date, fmt) {
-    if (fmt == undefined || fmt == null || fmt.length == 0) {
-        fmt = 'MMM Do, YYYY';
+    let newFormat = fmt;
+
+    if (newFormat === undefined || newFormat === null || newFormat.length === 0) {
+        newFormat = 'MMM Do, YYYY';
     }
-    return getLocalizedDateFormatter(date).format(fmt);
+
+    return getLocalizedDateFormatter(date).format(newFormat);
 }
 
 
@@ -70,18 +73,21 @@ function _toDateString(date, fmt) {
  * Generates a time (interval) string for a given times.
  *
  * @param {Array<Date>} times - Array of times.
- * @param {string} fmt - Formatting string.
+ * @param {string} fmt - Custom time format
  * @private
  * @returns {string}
  */
 function _toTimeString(times, fmt) {
-    if (fmt == undefined || fmt == null || fmt.length == 0) {
-        fmt = 'LT';
+    let newFormat = fmt;
+
+    if (fmt === undefined || fmt === null || fmt.length === 0) {
+        newFormat = 'LT';
     }
+
     if (times && times.length > 0) {
         return (
             times
-                .map(time => getLocalizedDateFormatter(time).format(fmt))
+                .map(time => getLocalizedDateFormatter(time).format(newFormat))
                 .join(' - '));
     }
 
@@ -191,8 +197,8 @@ class MeetingsList extends Component<Props> {
             title,
             url
         } = meeting;
-		const { hideURL = false, onItemDelete } = this.props;
-		const { t } = this.props;
+        const { hideURL = false, onItemDelete } = this.props;
+        const { t } = this.props;
         const onPress = this._onPress(url);
         const rootClassName
             = `item ${
@@ -204,10 +210,10 @@ class MeetingsList extends Component<Props> {
                 onClick = { onPress }>
                 <Container className = 'left-column'>
                     <Text className = 'title'>
-                        { _toDateString(date, t('meetingsList.dateFormat')) }
+                        { _toDateString(date, (t('meetingsList.dateFormat') === 'meetingsList.dateFormat' ? null : t('meetingsList.dateFormat'))) }
                     </Text>
                     <Text className = 'subtitle'>
-                        { _toTimeString(time, t('meetingsList.timeFormat')) }
+                        { _toTimeString(time, (t('meetingsList.timeFormat') === 'meetingsList.timeFormat' ? null : t('meetingsList.timeFormat'))) }
                     </Text>
                 </Container>
                 <Container className = 'right-column'>
