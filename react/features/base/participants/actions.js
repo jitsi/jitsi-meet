@@ -218,14 +218,14 @@ export function muteRemoteParticipant(id) {
  */
 export function participantConnectionStatusChanged(id, connectionStatus) {
     return (dispatch, getState) => {
-        return {
+        dispatch({
             type: PARTICIPANT_UPDATED,
             participant: {
                 connectionStatus,
                 id,
                 mutedWhileDisconnected: figureOutMutedWhileDisconnectedStatus(getState(), id, connectionStatus)
             }
-        };
+        });
     };
 }
 
