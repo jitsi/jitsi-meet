@@ -42,18 +42,18 @@
 
     [view join:[[JitsiMeet sharedInstance] getInitialConferenceOptions]];
 // Uncomment to test Crashlytics:
-  //    UIButton* button = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-  //    button.frame = CGRectMake(20, 50, 100, 30);
-  //    [button setTitle:@"Crash" forState:UIControlStateNormal];
-  //    [button addTarget:self action:@selector(crashButtonTapped:)
-  //        forControlEvents:UIControlEventTouchUpInside];
-  //    [self.view addSubview:button];
+//      UIButton* button = [UIButton buttonWithType:UIButtonTypeRoundedRect];
+//      button.frame = CGRectMake(20, 50, 100, 30);
+//      [button setTitle:@"Crash" forState:UIControlStateNormal];
+//      [button addTarget:self action:@selector(crashButtonTapped:)
+//          forControlEvents:UIControlEventTouchUpInside];
+//      [self.view addSubview:button];
 }
 
 // Uncomment to test Crashlytics:
-  //- (IBAction)crashButtonTapped:(id)sender {
-  //    [[Crashlytics sharedInstance] crash];
-  //}
+//  - (IBAction)crashButtonTapped:(id)sender {
+//    @[][1];
+//  }
 
 // JitsiMeetViewDelegate
 
