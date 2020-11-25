@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="org.jitsi.meet.sdk">
     <!-- XXX ACCESS_NETWORK_STATE is required by WebRTC. -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -34,7 +35,7 @@
             android:launchMode="singleTask"
             android:resizeableActivity="true"
             android:supportsPictureInPicture="true"
-            android:windowSoftInputMode="adjustResize"></activity>
+            android:windowSoftInputMode="adjustResize"/>
         <activity android:name="com.facebook.react.devsupport.DevSettingsActivity" />
 
         <service
@@ -48,6 +49,13 @@
         <service
             android:name="org.jitsi.meet.sdk.JitsiMeetOngoingConferenceService"
             android:foregroundServiceType="mediaProjection" />
+
+        <provider
+            android:name="com.reactnativecommunity.webview.RNCWebViewFileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:enabled="false"
+            tools:replace="android:authorities">
+        </provider>
     </application>
 
 </manifest>
