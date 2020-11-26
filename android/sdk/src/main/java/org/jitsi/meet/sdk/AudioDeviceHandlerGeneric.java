@@ -63,7 +63,7 @@ class AudioDeviceHandlerGeneric implements
     private AudioManager audioManager;
 
     /**
-     * {@link Runnable} for running audio device detection the main thread.
+     * {@link Runnable} for running audio device detection in the audio thread.
      * This is only used on Android >= M.
      */
     private final Runnable onAudioDeviceChangeRunner = new Runnable() {
@@ -145,7 +145,7 @@ class AudioDeviceHandlerGeneric implements
                         // Some other application potentially stole our audio focus
                         // temporarily. Restore our mode.
                         if (audioFocusLost) {
-                            module.updateAudioRoute();
+                            module.resetAudioRoute();
                         }
                         audioFocusLost = false;
                         break;
