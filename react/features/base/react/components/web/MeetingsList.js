@@ -4,7 +4,8 @@ import React, { Component } from 'react';
 
 import {
     getLocalizedDateFormatter,
-    getLocalizedDurationFormatter
+    getLocalizedDurationFormatter,
+    translate
 } from '../../../i18n';
 import { Icon, IconTrash } from '../../../icons';
 
@@ -41,18 +42,30 @@ type Props = {
     /**
      * Handler for deleting an item.
      */
-    onItemDelete?: Function
+    onItemDelete?: Function,
+
+    /**
+     * Invoked to obtain translated strings.
+     */
+    t: Function
 };
 
 /**
  * Generates a date string for a given date.
  *
  * @param {Object} date - The date.
+ * @param {string} dateFormat - Custom date format.
  * @private
  * @returns {string}
  */
-function _toDateString(date) {
-    return getLocalizedDateFormatter(date).format('MMM Do, YYYY');
+function _toDateString(date, dateFormat) {
+    let newDateFormat = dateFormat;
+
+    if (dateFormat === undefined || dateFormat === null || dateFormat.length === 0) {
+        newDateFormat = 'MMM Do, YYYY';
+    }
+
+    return getLocalizedDateFormatter(date).format(newDateFormat);
 }
 
 
@@ -60,14 +73,21 @@ function _toDateString(date) {
  * Generates a time (interval) string for a given times.
  *
  * @param {Array<Date>} times - Array of times.
+ * @param {string} timeFormat - Custom time format.
  * @private
  * @returns {string}
  */
-function _toTimeString(times) {
+function _toTimeString(times, timeFormat) {
+    let newTimeFormat = timeFormat;
+
+    if (timeFormat === undefined || timeFormat === null || timeFormat.length === 0) {
+        newTimeFormat = 'LT';
+    }
+
     if (times && times.length > 0) {
         return (
             times
-                .map(time => getLocalizedDateFormatter(time).format('LT'))
+                .map(time => getLocalizedDateFormatter(time).format(newTimeFormat))
                 .join(' - '));
     }
 
@@ -80,7 +100,7 @@ function _toTimeString(times) {
  *
  * @extends Component
  */
-export default class MeetingsList extends Component<Props> {
+export class MeetingsList extends Component<Props> {
     /**
      * Constructor of the MeetingsList component.
      *
@@ -176,7 +196,7 @@ export default class MeetingsList extends Component<Props> {
             title,
             url
         } = meeting;
-        const { hideURL = false, onItemDelete } = this.props;
+        const { hideURL = false, onItemDelete, t } = this.props;
         const onPress = this._onPress(url);
         const rootClassName
             = `item ${
@@ -189,10 +209,22 @@ export default class MeetingsList extends Component<Props> {
                 onClick = { onPress }>
                 <Container className = 'left-column'>
                     <Text className = 'title'>
-                        { _toDateString(date) }
+                        {
+                            _toDateString(
+                                date,
+                                t('meetingsList.dateFormat') === 'meetingsList.dateFormat'
+                                    ? null : t('meetingsList.dateFormat')
+                            )
+                        }
                     </Text>
                     <Text className = 'subtitle'>
-                        { _toTimeString(time) }
+                        {
+                            _toTimeString(
+                                time,
+                                t('meetingsList.timeFormat') === 'meetingsList.timeFormat'
+                                    ? null : t('meetingsList.timeFormat')
+                            )
+                        }
                     </Text>
                 </Container>
                 <Container className = 'right-column'>
@@ -224,3 +256,5 @@ export default class MeetingsList extends Component<Props> {
         );
     }
 }
+
+export default translate(MeetingsList);
