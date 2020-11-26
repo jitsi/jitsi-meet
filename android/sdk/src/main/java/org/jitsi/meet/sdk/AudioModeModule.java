@@ -16,6 +16,7 @@
 
 package org.jitsi.meet.sdk;
 
+import android.app.Activity;
 import android.content.Context;
 import android.media.AudioManager;
 import android.os.Build;
@@ -274,6 +275,15 @@ class AudioModeModule extends ReactContextBaseJavaModule {
         if (mode != DEFAULT && mode != AUDIO_CALL && mode != VIDEO_CALL) {
             promise.reject("setMode", "Invalid audio mode " + mode);
             return;
+        }
+
+        Activity currentActivity = getCurrentActivity();
+        if (currentActivity != null) {
+            if (mode == DEFAULT) {
+                currentActivity.setVolumeControlStream(AudioManager.USE_DEFAULT_STREAM_TYPE);
+            } else {
+                currentActivity.setVolumeControlStream(AudioManager.STREAM_VOICE_CALL);
+            }
         }
 
         runInAudioThread(new Runnable() {
