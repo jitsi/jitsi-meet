@@ -9,10 +9,11 @@ import { Popover } from '../../../base/popover';
 import { connect } from '../../../base/redux';
 import { isRemoteTrackMuted } from '../../../base/tracks';
 
+import MuteEveryoneElseButton from './MuteEveryoneElseButton';
+
 import {
     GrantModeratorButton,
     MuteButton,
-    MuteEveryoneElseButton,
     KickButton,
     PrivateMessageMenuButton,
     RemoteControlButton,

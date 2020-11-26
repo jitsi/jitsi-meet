@@ -1,4 +1,4 @@
-/* global APP, $, interfaceConfig  */
+/* global APP, $  */
 
 import Logger from 'jitsi-meet-logger';
 
@@ -264,10 +264,6 @@ const VideoLayout = {
      * @returns {void}
      */
     onPinChange(pinnedParticipantID) {
-        if (interfaceConfig.filmStripOnly) {
-            return;
-        }
-
         getAllThumbnails().forEach(thumbnail =>
             thumbnail.focus(pinnedParticipantID === thumbnail.getId()));
     },
@@ -337,7 +333,7 @@ const VideoLayout = {
             const remoteVideo = remoteVideos[id];
 
             if (remoteVideo) {
-                remoteVideo.onVideoMute();
+                remoteVideo.updateView();
             }
         }
 
@@ -391,12 +387,6 @@ const VideoLayout = {
         const remoteVideo = remoteVideos[id];
 
         if (remoteVideo) {
-            // Updating only connection status indicator is not enough, because
-            // when we the connection is restored while the avatar was displayed
-            // (due to 'muted while disconnected' condition) we may want to show
-            // the video stream again and in order to do that the display mode
-            // must be updated.
-            // remoteVideo.updateConnectionStatusIndicator(isActive);
             remoteVideo.updateView();
         }
     },

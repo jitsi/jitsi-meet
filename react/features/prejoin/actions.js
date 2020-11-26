@@ -18,6 +18,7 @@ import { executeDialOutRequest, executeDialOutStatusRequest, getDialInfoPageURL 
 import { showErrorNotification } from '../notifications';
 
 import {
+    PREJOIN_INITIALIZED,
     PREJOIN_START_CONFERENCE,
     SET_DEVICE_STATUS,
     SET_DIALOUT_COUNTRY,
@@ -195,7 +196,7 @@ export function dialOut(onSuccess: Function, onFail: Function) {
 export function initPrejoin(tracks: Object[], errors: Object) {
     return async function(dispatch: Function) {
         dispatch(setPrejoinDeviceErrors(errors));
-
+        dispatch(prejoinInitialized());
 
         tracks.forEach(track => dispatch(trackAdded(track)));
     };
@@ -266,6 +267,17 @@ export function openDialInPage() {
         const dialInPage = getDialInfoPageURL(roomName, locationURL);
 
         openURLInBrowser(dialInPage, true);
+    };
+}
+
+/**
+ * Action used to signal that the prejoin page has been initialized.
+ *
+ * @returns {Object}
+ */
+function prejoinInitialized() {
+    return {
+        type: PREJOIN_INITIALIZED
     };
 }
 

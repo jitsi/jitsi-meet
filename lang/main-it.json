@@ -21,7 +21,8 @@
         "bluetooth": "Bluetooth",
         "headphones": "Cuffie",
         "phone": "Telefono",
-        "speaker": "Vivavoce"
+        "speaker": "Vivavoce",
+        "none": ""
     },
     "audioOnly": {
         "audioOnly": "Solo audio"
@@ -51,7 +52,12 @@
             "popover": "Scegli un nickname",
             "title": "Inserire un nickname per utilizzare la chat"
         },
-        "title": "Chat"
+        "title": "Chat",
+        "you": "",
+        "privateNotice": "",
+        "noMessagesMessage": "",
+        "messageTo": "",
+        "fieldPlaceHolder": ""
     },
     "connectingOverlay": {
         "joiningRoom": "Collegamento al tuo meeting in corso…"
@@ -66,7 +72,11 @@
         "DISCONNECTED": "Disconnesso",
         "DISCONNECTING": "Disconnessione in corso",
         "ERROR": "Errore",
-        "RECONNECTING": "Si è verificato un problema di rete. Riconnessione..."
+        "RECONNECTING": "Si è verificato un problema di rete. Riconnessione...",
+        "LOW_BANDWIDTH": "",
+        "GOT_SESSION_ID": "",
+        "GET_SESSION_ID_ERROR": "",
+        "FETCH_SESSION_ID": ""
     },
     "connectionindicator": {
         "address": "Indirizzo:",
@@ -96,7 +106,9 @@
         "resolution": "Risoluzione:",
         "status": "Connessione:",
         "transport": "Trasporto:",
-        "turn": "(ruota)"
+        "transport_plural": "Trasporti:",
+        "turn": "(ruota)",
+        "e2e_rtt": ""
     },
     "dateUtils": {
         "earlier": "Prima",
@@ -108,8 +120,10 @@
         "description": "Non è successo nulla? Abbiamo provato ad avviare la tua videoconferenza sull'app desktop di {{app}}. Prova di nuovo o avviala nell'app web di {{app}}.",
         "descriptionWithoutWeb": "",
         "downloadApp": "Scarica l'app",
+        "ifDoNotHaveApp": "Se non hai ancora l'app:",
+        "ifHaveApp": "Se hai già l'app:",
+        "joinInApp": "Entra in riunione usando l'app",
         "launchWebButton": "Avvia sul web",
-        "openApp": "Prosegui verso l'app",
         "title": "Sto avviando la tua videoconferenza su {{app}}…",
         "tryAgainButton": "Prova di nuovo sul desktop"
     },
@@ -177,7 +191,7 @@
         "kickParticipantDialog": "Sei sicuro di voler espellere questo partecipante?",
         "kickParticipantTitle": "Espellere questi partecipante?",
         "kickTitle": "Espulso dal meeting",
-        "liveStreaming": "Live Streaming",
+        "liveStreaming": "Diretta",
         "liveStreamingDisabledForGuestTooltip": "Gli ospiti non possono avviare una diretta.",
         "liveStreamingDisabledTooltip": "Trasmissioni in diretta disabilitate.",
         "lockMessage": "Impossibile bloccare la conferenza.",
@@ -241,7 +255,7 @@
         "stopLiveStreaming": "Ferma la diretta",
         "stopRecording": "Ferma registrazione",
         "stopRecordingWarning": "Sei sicuro di voler interrompere la registrazione?",
-        "stopStreamingWarning": "Sei sicuro di voler interrompere il live streaming?",
+        "stopStreamingWarning": "Sei sicuro di voler interrompere la diretta?",
         "streamKey": "Chiave per trasmissione in diretta",
         "Submit": "Invia",
         "thankYou": "Grazie per aver usato {{appName}}!",
@@ -255,7 +269,18 @@
         "WaitForHostMsgWOk": "La conferenza <b>{{room}}</b> non è ancora cominciata. Se sei l'organizzatore, allora premi OK per autenticarti. Altrimenti, aspetta l'arrivo dell'organizzatore.",
         "WaitingForHost": "In attesa dell'organizzatore ...",
         "Yes": "Sì",
-        "yourEntireScreen": "Schermo intero"
+        "yourEntireScreen": "Schermo intero",
+        "sendPrivateMessageTitle": "",
+        "sendPrivateMessageOk": "",
+        "sendPrivateMessageCancel": "",
+        "sendPrivateMessage": "",
+        "screenSharingAudio": "",
+        "muteEveryoneStartMuted": "",
+        "muteEveryoneSelf": "",
+        "muteEveryoneTitle": "",
+        "muteEveryoneDialog": "",
+        "muteEveryoneElseTitle": "",
+        "muteEveryoneElseDialog": ""
     },
     "dialOut": {
         "statusMessage": "è ora {{status}}"
@@ -334,27 +359,28 @@
         "toggleFilmstrip": "Mostra o nascondi anteprime video",
         "toggleScreensharing": "Cambia modalità tra videocamera e condivisione schermo",
         "toggleShortcuts": "Mostra o nascondi le scorciatoie",
-        "videoMute": "Accendo o spegni la videocamera"
+        "videoMute": "Accendo o spegni la videocamera",
+        "videoQuality": ""
     },
     "liveStreaming": {
-        "busy": "Stiamo cercando di liberare risorse per lo streaming. Riprova tra qualche minuto.",
+        "busy": "Stiamo cercando di liberare risorse per la diretta. Riprova tra qualche minuto.",
         "busyTitle": "Tutti gli streamer sono impegnati al momento",
         "changeSignIn": "Cambia account",
         "choose": "Scegli una trasmissione in diretta",
         "chooseCTA": "Scegli un'opzione di trasmissione. Attualmente sei loggato come {{email}}.",
         "enterStreamKey": "Inserisci qui la tua chiave YouTube per le trasmissioni in diretta.",
-        "error": "Live streaming fallito. Prova di nuovo.",
+        "error": "Diretta fallita. Prova di nuovo.",
         "errorAPI": "Si è verificato un errore durante l'accesso ai tuoi broadcast YouTube. Prova a effettuare nuovamente il login.",
         "errorLiveStreamNotEnabled": "La diretta non è attivata su {{email}}. Per favore abilita la diretta o effettua l'accesso con un account abilitato alle dirette.",
-        "expandedOff": "La diretta &egrave; stata interrotta",
-        "expandedOn": "La conferenza &egrave; attualmente in diretta su YouTube.",
-        "expandedPending": "La diretta &egrave; in fase di avvio...",
+        "expandedOff": "La diretta è stata interrotta",
+        "expandedOn": "La conferenza è attualmente in diretta su YouTube.",
+        "expandedPending": "La diretta è in fase di avvio...",
         "failedToStart": "Avvio trasmissione in diretta fallito",
         "getStreamKeyManually": "Non siamo stati in grado di trovare nessuna trasmissione dal vivo. Prova ad ottenere una chiave stream da Youtube",
         "invalidStreamKey": "La chiave stream potrebbe non essere corretta.",
         "off": "La diretta si è interrotta",
         "on": "Trasmissione in diretta",
-        "pending": "Avvio live stream...",
+        "pending": "Avvio diretta...",
         "serviceName": "Servizio live streaming",
         "signedInAs": "Sei attualmente collegato come:",
         "signIn": "Registrati con Google",
@@ -362,7 +388,11 @@
         "signOut": "Esci",
         "start": "Inizia una diretta",
         "streamIdHelp": "Cos'è questo?",
-        "unavailableTitle": "Live streaming non disponibile"
+        "unavailableTitle": "La diretta non è disponibile",
+        "onBy": "",
+        "offBy": "",
+        "googlePrivacyPolicy": "Google Privacy Policy",
+        "youtubeTerms": "YouTube terms of services"
     },
     "localRecording": {
         "clientState": {
@@ -380,8 +410,8 @@
         "me": "io",
         "messages": {
             "engaged": "Registrazione locale avviata.",
-            "finished": "La registrazione della sessione {{token}} &egrave; terminata. Invia il file della registrazione al moderatore.",
-            "finishedModerator": "La registrazione della sessione {{token}} &egrave; terminata. Il file della traccia local &egrave; stato salvato. Richiedere ai partecipanti di inviare le loro registrazioni.",
+            "finished": "La registrazione della sessione {{token}} è terminata. Invia il file della registrazione al moderatore.",
+            "finishedModerator": "La registrazione della sessione {{token}} è terminata. Il file della traccia local è stato salvato. Richiedere ai partecipanti di inviare le loro registrazioni.",
             "notModerator": "Non sei un moderatore. Non puoi avviare o interrompere la registrazione"
         },
         "moderator": "Moderatore",
@@ -425,7 +455,8 @@
         "unmute": "",
         "newDeviceCameraTitle": "Trovata nuova videocamera",
         "newDeviceAudioTitle": "Trovata nuova origine audio",
-        "newDeviceAction": "Usala"
+        "newDeviceAction": "Usala",
+        "suboptimalBrowserWarning": "Ci spiace che la tua videoconferenza non sarà ottimale, qui. Stiamo cercando modi per migliorare, ma fino ad allora per favore prova ad usare <a href='{{recommendedBrowserPageLink}}' target='_blank'>browser supportati completamente/a>."
     },
     "passwordSetRemotely": "definita da altro utente",
     "passwordDigitsOnly": "Fino a {{number}} cifre",
@@ -473,7 +504,9 @@
         "signIn": "Entra",
         "signOut": "Esci",
         "unavailable": "Ops! Il {{serviceName}} non è al momento disponibile. Stiamo lavorando per risolvere il problema. Riprova più tardi.",
-        "unavailableTitle": "Registrazione non disponibile"
+        "unavailableTitle": "Registrazione non disponibile",
+        "onBy": "{{name}} registrazione iniziata",
+        "offBy": "{{name}} registrazione fermata"
     },
     "sectionList": {
         "pullToRefresh": "Trascina per aggiornare"
@@ -499,7 +532,9 @@
         "selectMic": "Microfono",
         "startAudioMuted": "Tutti cominciano con il microfono disattivato",
         "startVideoMuted": "Tutti cominciano con il video disattivato",
-        "title": "Impostazioni"
+        "title": "Impostazioni",
+        "speakers": "Altoparlanti",
+        "microphones": "Microfoni"
     },
     "settingsView": {
         "alertOk": "OK",
@@ -514,7 +549,11 @@
         "serverURL": "URL del server",
         "startWithAudioMuted": "Inizia con l'audio disattivato",
         "startWithVideoMuted": "Avvia con il video disattivato",
-        "version": "Versione"
+        "version": "Versione",
+        "showAdvanced": "Mostra impostazioni avanzate",
+        "disableP2P": "Disabilita modalità uno-a-uno",
+        "disableCallIntegration": "Disabilita integrazione nativa delle chiamate",
+        "advanced": "Avanzate"
     },
     "share": {
         "dialInfoText": "\n\n=====\n\nVuoi solo ascoltare la conferenza da un telefono?\n\n{{defaultDialInNumber}}Clicca questo link per vedere i numeri telefonici di questo meeting\n{{dialInfoPageUrl}}",
@@ -571,7 +610,12 @@
             "tileView": "Vedi tutti i partecipanti insieme, o uno solo",
             "toggleCamera": "Cambia videocamera",
             "videomute": "Attiva/disattiva videocamera",
-            "videoblur": "Attiva/disattiva offuscamento video"
+            "videoblur": "Attiva/disattiva offuscamento video",
+            "privateMessage": "Invia messaggio privato",
+            "muteEveryone": "Zittisci tutti",
+            "moreOptions": "Mostra più opzioni",
+            "help": "Aiuto",
+            "download": "Scarica altre app"
         },
         "addPeople": "Aggiungi persone alla chiamata",
         "audioOnlyOff": "Anche video",
@@ -594,7 +638,6 @@
         "logout": "Logout",
         "lowerYourHand": "Abbassa la mano",
         "moreActions": "Più azioni",
-        "moreOptions": "Più opzioni",
         "mute": "Microfono Attiva / Disattiva",
         "openChat": "Apri una chat",
         "pip": "Abilita visualizzazione immagine nell’immagine",
@@ -698,7 +741,7 @@
         "privacy": "Privacy",
         "recentList": "Recente",
         "recentListDelete": "Cancella",
-        "recentListEmpty": "La tua lista &egrave; vuota. Chatta con qualcuno del tuo team e lo vedrai apparire nella lista di meeting recenti.",
+        "recentListEmpty": "La tua lista è vuota. Chatta con qualcuno del tuo team e lo vedrai apparire nella lista di meeting recenti.",
         "reducedUIText": "",
         "roomname": "Inserisci Nome Stanza",
         "roomnameHint": "Inserisci il nome o l'URL della stanza alla quale vuoi accedere. Puoi anche inventarti un nome, assicurati solo che le persone che vuoi contattare lo sappiano, così che possano inserire lo stesso nome.",
@@ -706,8 +749,18 @@
         "terms": "Termini di utilizzo",
         "title": "Il sistema di conferenza sicuro, funzionale e completamente gratuito."
     },
+    "documentSharing": {
+        "title": ""
+    },
+    "defaultNickname": "",
+    "chromeExtensionBanner": {
+        "dontShowAgain": "",
+        "buttonText": "",
+        "installExtensionText": ""
+    },
+    "raisedHand": "Vorrebbe parlare",
     "lonelyMeetingExperience": {
-        "button": "Invita gli altri",
+        "button": "Invita altri",
         "youAreAlone": "Sei l'unico in riunione"
     }
 }

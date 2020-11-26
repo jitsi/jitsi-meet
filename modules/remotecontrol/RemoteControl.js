@@ -3,6 +3,7 @@
 import EventEmitter from 'events';
 import { getLogger } from 'jitsi-meet-logger';
 
+import JitsiMeetJS from '../../react/features/base/lib-jitsi-meet';
 import { DISCO_REMOTE_CONTROL_FEATURE }
     from '../../service/remotecontrol/Constants';
 import * as RemoteControlEvents
@@ -68,9 +69,7 @@ class RemoteControl extends EventEmitter {
      * @returns {void}
      */
     init() {
-        if (config.disableRemoteControl
-                || this._initialized
-                || !APP.conference.isDesktopSharingEnabled) {
+        if (config.disableRemoteControl || this._initialized || !JitsiMeetJS.isDesktopSharingEnabled()) {
             return;
         }
         logger.log('Initializing remote control.');

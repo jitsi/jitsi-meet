@@ -10,10 +10,9 @@ import {
 import { APP_STATE_CHANGED } from '../../mobile/background';
 import { SET_AUDIO_ONLY, setAudioOnly } from '../audio-only';
 import { isRoomValid, SET_ROOM } from '../conference';
-import JitsiMeetJS from '../lib-jitsi-meet';
 import { MiddlewareRegistry } from '../redux';
 import { getPropertyValue } from '../settings';
-import { setTrackMuted, TRACK_ADDED } from '../tracks';
+import { isLocalVideoTrackDesktop, setTrackMuted, TRACK_ADDED } from '../tracks';
 
 import { setAudioMuted, setCameraFacingMode, setVideoMuted } from './actions';
 import {
@@ -73,13 +72,15 @@ MiddlewareRegistry.register(store => next => action => {
  * @private
  * @returns {Object} The value returned by {@code next(action)}.
  */
-function _appStateChanged({ dispatch }, next, action) {
-    const { appState } = action;
-    const mute = appState !== 'active'; // Note that 'background' and 'inactive' are treated equal.
+function _appStateChanged({ dispatch, getState }, next, action) {
+    if (navigator.product === 'ReactNative') {
+        const { appState } = action;
+        const mute = appState !== 'active' && !isLocalVideoTrackDesktop(getState());
 
-    sendAnalytics(createTrackMutedEvent('video', 'background mode', mute));
+        sendAnalytics(createTrackMutedEvent('video', 'background mode', mute));
 
-    dispatch(setVideoMuted(mute, MEDIA_TYPE.VIDEO, VIDEO_MUTISM_AUTHORITY.BACKGROUND));
+        dispatch(setVideoMuted(mute, MEDIA_TYPE.VIDEO, VIDEO_MUTISM_AUTHORITY.BACKGROUND));
+    }
 
     return next(action);
 }
@@ -160,41 +161,33 @@ function _setRoom({ dispatch, getState }, next, action) {
     // XXX After the introduction of the "Video <-> Voice" toggle on the
     // WelcomePage, startAudioOnly is utilized even outside of
     // conferences/meetings.
-    let audioOnly;
+    const audioOnly
+        = Boolean(
+            getPropertyValue(
+                state,
+                'startAudioOnly',
+                /* sources */ {
+                    // FIXME Practically, base/config is (really) correct
+                    // only if roomIsValid. At the time of this writing,
+                    // base/config is overwritten by URL params which leaves
+                    // base/config incorrect on the WelcomePage after
+                    // leaving a conference which explicitly overwrites
+                    // base/config with URL params.
+                    config: roomIsValid,
 
-    if (JitsiMeetJS.mediaDevices.supportsVideo()) {
-        audioOnly
-            = Boolean(
-                getPropertyValue(
-                    state,
-                    'startAudioOnly',
-                    /* sources */ {
-                        // FIXME Practically, base/config is (really) correct
-                        // only if roomIsValid. At the time of this writing,
-                        // base/config is overwritten by URL params which leaves
-                        // base/config incorrect on the WelcomePage after
-                        // leaving a conference which explicitly overwrites
-                        // base/config with URL params.
-                        config: roomIsValid,
+                    // XXX We've already overwritten base/config with
+                    // urlParams if roomIsValid. However, settings are more
+                    // important than the server-side config. Consequently,
+                    // we need to read from urlParams anyway. We also
+                    // probably want to read from urlParams when
+                    // !roomIsValid.
+                    urlParams: true,
 
-                        // XXX We've already overwritten base/config with
-                        // urlParams if roomIsValid. However, settings are more
-                        // important than the server-side config. Consequently,
-                        // we need to read from urlParams anyway. We also
-                        // probably want to read from urlParams when
-                        // !roomIsValid.
-                        urlParams: true,
-
-                        // The following don't have complications around whether
-                        // they are defined or not:
-                        jwt: false,
-                        settings: true
-                    }));
-    } else {
-        // Default to audio-only if the (execution) environment does not
-        // support (sending and/or receiving) video.
-        audioOnly = true;
-    }
+                    // The following don't have complications around whether
+                    // they are defined or not:
+                    jwt: false,
+                    settings: true
+                }));
 
     sendAnalytics(createStartAudioOnlyEvent(audioOnly));
     logger.log(`Start audio only set to ${audioOnly.toString()}`);

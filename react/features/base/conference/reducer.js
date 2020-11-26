@@ -16,7 +16,6 @@ import {
     CONFERENCE_WILL_LEAVE,
     LOCK_STATE_CHANGED,
     P2P_STATUS_CHANGED,
-    SET_DESKTOP_SHARING_ENABLED,
     SET_FOLLOW_ME,
     SET_PASSWORD,
     SET_PENDING_SUBJECT_CHANGE,
@@ -75,9 +74,6 @@ ReducerRegistry.register(
 
         case P2P_STATUS_CHANGED:
             return _p2pStatusChanged(state, action);
-
-        case SET_DESKTOP_SHARING_ENABLED:
-            return _setDesktopSharingEnabled(state, action);
 
         case SET_FOLLOW_ME:
             return set(state, 'followMeEnabled', action.enabled);
@@ -341,21 +337,6 @@ function _lockStateChanged(state, { conference, locked }) {
  */
 function _p2pStatusChanged(state, action) {
     return set(state, 'p2p', action.p2p);
-}
-
-/**
- * Reduces a specific Redux action SET_DESKTOP_SHARING_ENABLED of the feature
- * base/conference.
- *
- * @param {Object} state - The Redux state of the feature base/conference.
- * @param {Action} action - The Redux action SET_DESKTOP_SHARING_ENABLED to
- * reduce.
- * @private
- * @returns {Object} The new state of the feature base/conference after the
- * reduction of the specified action.
- */
-function _setDesktopSharingEnabled(state, action) {
-    return set(state, 'desktopSharingEnabled', action.desktopSharingEnabled);
 }
 
 /**

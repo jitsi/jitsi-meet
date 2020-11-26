@@ -43,6 +43,7 @@ class PictureInPictureModule extends ReactContextBaseJavaModule {
     private static final String TAG = NAME;
 
     private static boolean isSupported;
+    private boolean isDisabled;
 
     public PictureInPictureModule(ReactApplicationContext reactContext) {
         super(reactContext);
@@ -83,6 +84,10 @@ class PictureInPictureModule extends ReactContextBaseJavaModule {
      */
     @TargetApi(Build.VERSION_CODES.O)
     public void enterPictureInPicture() {
+        if (isDisabled) {
+            return;
+        }
+
         if (!isSupported) {
             throw new IllegalStateException("Picture-in-Picture not supported");
         }
@@ -124,6 +129,11 @@ class PictureInPictureModule extends ReactContextBaseJavaModule {
         } catch (RuntimeException re) {
             promise.reject(re);
         }
+    }
+
+    @ReactMethod
+    public void setPictureInPictureDisabled(Boolean disabled) {
+        this.isDisabled = disabled;
     }
 
     public boolean isPictureInPictureSupported() {

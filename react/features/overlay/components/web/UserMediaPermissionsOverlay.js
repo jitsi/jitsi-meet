@@ -32,8 +32,7 @@ class UserMediaPermissionsOverlay extends AbstractUserMediaPermissionsOverlay {
                     <span className = 'inlay__icon icon-camera' />
                     <h3 className = 'inlay__title'>
                         {
-                            t('startupoverlay.title',
-                                { app: interfaceConfig.APP_NAME })
+                            t('startupoverlay.genericTitle')
                         }
                     </h3>
                     <span className = 'inlay__text'>

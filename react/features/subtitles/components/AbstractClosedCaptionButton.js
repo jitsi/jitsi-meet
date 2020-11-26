@@ -85,7 +85,12 @@ export class AbstractClosedCaptionButton
 export function _abstractMapStateToProps(state: Object, ownProps: Object) {
     const { _requestingSubtitles } = state['features/subtitles'];
     const { transcribingEnabled } = state['features/base/config'];
-    const { visible = Boolean(transcribingEnabled && isLocalParticipantModerator(state)) } = ownProps;
+    const { isTranscribing } = state['features/transcribing'];
+
+    // if the participant is moderator, it can enable transcriptions and if
+    // transcriptions are already started for the meeting, guests can just show them
+    const { visible = Boolean(transcribingEnabled
+        && (isLocalParticipantModerator(state) || isTranscribing)) } = ownProps;
 
     return {
         _requestingSubtitles,

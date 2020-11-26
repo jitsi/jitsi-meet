@@ -104,7 +104,7 @@ class PasswordRequiredPrompt extends Component<Props, State> {
                     name = 'lockKey'
                     onChange = { this._onPasswordChanged }
                     shouldFitContainer = { true }
-                    type = 'text'
+                    type = 'password'
                     value = { this.state.password } />
             </div>
         );

@@ -93,8 +93,7 @@ end
 -- saves start time if it is new dominat speaker
 -- or calculates and accumulates time of speaking
 function SpeakerStats:setDominantSpeaker(isNowDominantSpeaker)
-    log("debug",
-        "set isDominant %s for %s", tostring(isNowDominantSpeaker), self.nick);
+    -- log("debug", "set isDominant %s for %s", tostring(isNowDominantSpeaker), self.nick);
 
     if not self:isDominantSpeaker() and isNowDominantSpeaker then
         self._dominantSpeakerStart = socket.gettime()*1000;
