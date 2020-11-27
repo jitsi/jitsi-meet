@@ -51,6 +51,8 @@ if lobby_muc_component_config == nil then
     return ;
 end
 
+local initialized_hosts = module:shared("/*/muc_lobby_rooms/initialized_hosts");
+
 local whitelist;
 local check_display_name_required;
 local function load_config()
@@ -207,7 +209,7 @@ function process_host_module(name, callback)
 end
 
 -- operates on already loaded lobby muc module
-function process_lobby_muc_loaded(lobby_muc, host_module)
+function process_lobby_muc_loaded(lobby_muc, host_module, host)
     module:log('debug', 'Lobby muc loaded');
     lobby_muc_service = lobby_muc;
 
@@ -217,6 +219,13 @@ function process_lobby_muc_loaded(lobby_muc, host_module)
     -- Advertise lobbyrooms support on main domain so client can pick up the address and use it
     module:add_identity('component', LOBBY_IDENTITY_TYPE, lobby_muc_component_config);
 
+    if not initialized_hosts[host] then
+        initialized_hosts[host] = true;
+        process_lobby_muc_loaded_global(lobby_muc, host_module)
+    end
+end
+
+function process_lobby_muc_loaded_global(lobby_muc, host_module)
     -- Tag the disco#info response with a feature that display name is required
     -- when the conference name from the web request has a lobby enabled.
     host_module:hook('host-disco-info-node', function (event)
@@ -270,12 +279,12 @@ process_host_module(lobby_muc_component_config, function(host_module, host)
 
     local muc_module = prosody.hosts[host].modules.muc;
     if muc_module then
-        process_lobby_muc_loaded(muc_module, host_module);
+        process_lobby_muc_loaded(muc_module, host_module, host);
     else
         module:log('debug', 'Will wait for muc to be available');
         prosody.hosts[host].events.add_handler('module-loaded', function(event)
             if (event.module == 'muc') then
-                process_lobby_muc_loaded(prosody.hosts[host].modules.muc, host_module);
+                process_lobby_muc_loaded(prosody.hosts[host].modules.muc, host_module, host);
             end
         end);
     end
@@ -285,6 +294,13 @@ end);
 process_host_module(main_muc_component_config, function(host_module, host)
     main_muc_service = prosody.hosts[host].modules.muc;
 
+    if not initialized_hosts[host] then
+        initialized_hosts[host] = true;
+        process_main_muc_loaded_global(host_module, host);
+    end
+end);
+
+function process_main_muc_loaded_global(host_module, host)
     -- hooks when lobby is enabled to create its room, only done here or by admin
     host_module:hook('muc-config-submitted', function(event)
         local actor, room = event.actor, event.room;
@@ -393,7 +409,7 @@ process_host_module(main_muc_component_config, function(host_module, host)
             end
         end
     end);
-end);
+end
 
 -- Extract 'room' param from URL when session is created
 function update_session(event)
