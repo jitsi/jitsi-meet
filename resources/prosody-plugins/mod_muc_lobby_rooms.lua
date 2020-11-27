@@ -272,34 +272,6 @@ function process_lobby_muc_loaded_global(lobby_muc, host_module)
     end);
 end
 
--- process or waits to process the lobby muc component
-process_host_module(lobby_muc_component_config, function(host_module, host)
-    -- lobby muc component created
-    module:log('info', 'Lobby component loaded %s', host);
-
-    local muc_module = prosody.hosts[host].modules.muc;
-    if muc_module then
-        process_lobby_muc_loaded(muc_module, host_module, host);
-    else
-        module:log('debug', 'Will wait for muc to be available');
-        prosody.hosts[host].events.add_handler('module-loaded', function(event)
-            if (event.module == 'muc') then
-                process_lobby_muc_loaded(prosody.hosts[host].modules.muc, host_module, host);
-            end
-        end);
-    end
-end);
-
--- process or waits to process the main muc component
-process_host_module(main_muc_component_config, function(host_module, host)
-    main_muc_service = prosody.hosts[host].modules.muc;
-
-    if not initialized_hosts[host] then
-        initialized_hosts[host] = true;
-        process_main_muc_loaded_global(host_module, host);
-    end
-end);
-
 function process_main_muc_loaded_global(host_module, host)
     -- hooks when lobby is enabled to create its room, only done here or by admin
     host_module:hook('muc-config-submitted', function(event)
@@ -410,6 +382,34 @@ function process_main_muc_loaded_global(host_module, host)
         end
     end);
 end
+
+-- process or waits to process the lobby muc component
+process_host_module(lobby_muc_component_config, function(host_module, host)
+    -- lobby muc component created
+    module:log('info', 'Lobby component loaded %s', host);
+
+    local muc_module = prosody.hosts[host].modules.muc;
+    if muc_module then
+        process_lobby_muc_loaded(muc_module, host_module, host);
+    else
+        module:log('debug', 'Will wait for muc to be available');
+        prosody.hosts[host].events.add_handler('module-loaded', function(event)
+            if (event.module == 'muc') then
+                process_lobby_muc_loaded(prosody.hosts[host].modules.muc, host_module, host);
+            end
+        end);
+    end
+end);
+
+-- process or waits to process the main muc component
+process_host_module(main_muc_component_config, function(host_module, host)
+    main_muc_service = prosody.hosts[host].modules.muc;
+
+    if not initialized_hosts[host] then
+        initialized_hosts[host] = true;
+        process_main_muc_loaded_global(host_module, host);
+    end
+end);
 
 -- Extract 'room' param from URL when session is created
 function update_session(event)
