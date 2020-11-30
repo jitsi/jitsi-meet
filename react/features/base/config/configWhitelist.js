@@ -90,7 +90,6 @@ export default [
     'disableRemoteMute',
     'disableRtx',
     'disableSimulcast',
-    'disableSuspendVideo',
     'disableThirdPartyRequests',
     'displayJids',
     'doNotStoreRoom',
