@@ -221,16 +221,24 @@ const VideoLayout = {
      * @returns {String} the video type video or screen.
      */
     getRemoteVideoType(id) {
-        const state = APP.store.getState();
-        const participant = getParticipantById(state, id);
+        const participant = getParticipantById(APP.store.getState(), id);
 
         if (participant?.isFakeParticipant) {
             return SHARED_VIDEO_CONTAINER_TYPE;
         }
 
-        const videoTrack = getTrackByMediaTypeAndParticipant(state['features/base/tracks'], MEDIA_TYPE.VIDEO, id);
+        return this.getRemoteVideo(id)?.videoType;
+    },
 
-        return videoTrack?.videoType;
+    /**
+     * Return the remote video.
+     * @param id the id for the remote video
+     * @returns {(Track|undefined)} the video track.
+     */
+    getRemoteVideo(id) {
+        const state = APP.store.getState();
+
+        return getTrackByMediaTypeAndParticipant(state['features/base/tracks'], MEDIA_TYPE.VIDEO, id);
     },
 
     isPinned(id) {

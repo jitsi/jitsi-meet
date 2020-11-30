@@ -608,6 +608,15 @@ UI.getRemoteVideosCount = () => VideoLayout.getRemoteVideosCount();
 UI.getRemoteVideoType = participantID => VideoLayout.getRemoteVideoType(participantID);
 
 /**
+ * Returns whether the video of the remote participant's video is playing.
+ * This is needed for the torture clients to determine the state of the video of the remote participant.
+ *
+ * @param {string} participantID - The id of the remote participant.
+ * @returns {boolean} Whether video is received and played.
+ */
+UI.isRemoteVideoPlaying = participantID => VideoLayout.getRemoteVideo(participantID)?.jitsiTrack?.isPlaying();
+
+/**
  * Sets the remote control active status for a remote participant.
  *
  * @param {string} participantID - The id of the remote participant.
