@@ -127,7 +127,6 @@ export default [
     'liveStreamingEnabled',
     'localRecording',
     'maxFullResolutionParticipants',
-    'minParticipants',
     'openBridgeChannel',
     'opusMaxAverageBitrate',
     'p2p',

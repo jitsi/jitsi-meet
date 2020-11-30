@@ -328,10 +328,6 @@ var config = {
     // TCC sequence numbers starting from 0.
     // enableIceRestart: false,
 
-    // Defines the minimum number of participants to start a call (the default
-    // is set in Jicofo and set to 2).
-    // minParticipants: 2,
-
     // Use TURN/UDP servers for the jitsi-videobridge connection (by default
     // we filter out TURN/UDP because it is usually not needed since the
     // bridge itself is reachable via UDP)
