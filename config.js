@@ -609,6 +609,9 @@ var config = {
     // If set to true all muting operations of remote participants will be disabled.
     // disableRemoteMute: true,
 
+    // Enables support for lip-sync for this client (if the browser supports it).
+    //enableLipSync: false
+
     /**
      External API url used to receive branding specific information.
      If there is no url set or there are missing fields, the defaults are applied.
@@ -677,7 +680,6 @@ var config = {
      disableAP
      disableHPF
      disableNS
-     enableLipSync
      enableTalkWhileMuted
      forceJVB121Ratio
      hiddenDomain
