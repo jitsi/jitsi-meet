@@ -138,7 +138,6 @@ export default [
     'resolution',
     'startAudioMuted',
     'startAudioOnly',
-    'startBitrate',
     'startScreenSharing',
     'startSilent',
     'startVideoMuted',
