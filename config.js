@@ -610,7 +610,7 @@ var config = {
     // disableRemoteMute: true,
 
     // Enables support for lip-sync for this client (if the browser supports it).
-    //enableLipSync: false
+    // enableLipSync: false
 
     /**
      External API url used to receive branding specific information.
