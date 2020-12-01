@@ -310,7 +310,7 @@ var config = {
     // Disables or enables TCC support in this client (default: enabled).
     // enableTcc: true,
 
-    // Disables or enables REMB support in this client (default: enabled). 
+    // Disables or enables REMB support in this client (default: enabled).
     // enableRemb: true,
 
     // Enables ICE restart logic in LJM and displays the page reload overlay on
