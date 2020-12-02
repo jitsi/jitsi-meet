@@ -598,25 +598,6 @@ UI.onUserFeaturesChanged = user => VideoLayout.onUserFeaturesChanged(user);
 UI.getRemoteVideosCount = () => VideoLayout.getRemoteVideosCount();
 
 /**
- * Returns the video type of the remote participant's video.
- * This is needed for the torture clients to determine the video type of the
- * remote participants.
- *
- * @param {string} participantID - The id of the remote participant.
- * @returns {string} The video type "camera" or "desktop".
- */
-UI.getRemoteVideoType = participantID => VideoLayout.getRemoteVideoType(participantID);
-
-/**
- * Returns whether the video of the remote participant's video is playing.
- * This is needed for the torture clients to determine the state of the video of the remote participant.
- *
- * @param {string} participantID - The id of the remote participant.
- * @returns {boolean} Whether video is received and played.
- */
-UI.isRemoteVideoPlaying = participantID => VideoLayout.getRemoteVideo(participantID)?.jitsiTrack?.isPlaying();
-
-/**
  * Sets the remote control active status for a remote participant.
  *
  * @param {string} participantID - The id of the remote participant.
