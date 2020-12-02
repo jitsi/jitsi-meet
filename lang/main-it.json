@@ -230,7 +230,7 @@
         "maxUsersLimitReachedTitle": "Raggiunto limite partecipanti",
         "micConstraintFailedError": "Il tuo microfono non soddisfa alcuni dei requisiti richiesti.",
         "micNotFoundError": "Microfono non trovato.",
-        "micNotSendingData": "Non riusciamo a ricevere suoni dal microfono scelto. Prova a selezionare nelle impostazioni un microfono diverso, o a riavvare l'applicazione.",
+        "micNotSendingData": "Non riusciamo a ricevere suoni dal microfono scelto. Prova a selezionare nelle impostazioni un microfono diverso, o a riavviare l'applicazione.",
         "micNotSendingDataTitle": "Impossibile accedere al microfono",
         "micPermissionDeniedError": "Non hai concesso il permesso di usare il microfono. Puoi comunque partecipare alla conferenza ma gli altri non potranno sentirti. Usa il bottone a forma di telecamera nella barra degli indirizzi per cambiare impostazioni.",
         "micUnknownError": "Impossibile usare il microfono per un motivo sconosciuto.",
@@ -343,7 +343,7 @@
         "country": "Paese",
         "dialANumber": "Per collegarti telefonicamente al meeting, chiama uno di questi numeri e metti il pin.",
         "dialInConferenceID": "PIN:",
-        "dialInNotSupported": "Spiacenti, la partecipazionne solo telefonica non è supportata attualmente",
+        "dialInNotSupported": "Spiacenti, la partecipazione solo telefonica non è supportata attualmente",
         "dialInNumber": "Componi:",
         "dialInSummaryError": "Errore nella ricerca dei numeri telefonici. Riprova più tardi.",
         "dialInTollFree": "Numero verde",
@@ -684,7 +684,7 @@
     "suspendedoverlay": {
         "rejoinKeyTitle": "Ricollegati",
         "text": "Premi il  pulsante <i>Ricollegati</i> per ricollegarti.",
-        "title": "La video chiamata si è interrotta perchè il computer è stato sospeso."
+        "title": "La video chiamata si è interrotta perché il computer è stato sospeso."
     },
     "toolbar": {
         "accessibilityLabel": {
@@ -828,7 +828,7 @@
     },
     "videoStatus": {
         "audioOnly": "AUD",
-        "audioOnlyExpanded": "Hai attivato la modalità solo audio. Questa modalità permette di rispamiare banda, ma non vedrai gli altri partecipanti.",
+        "audioOnlyExpanded": "Hai attivato la modalità solo audio. Questa modalità permette di risparmiare banda, ma non vedrai gli altri partecipanti.",
         "callQuality": "Qualità video",
         "hd": "HD",
         "hdTooltip": "Stai vedendo in alta definizione",
