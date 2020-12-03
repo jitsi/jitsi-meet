@@ -1,6 +1,6 @@
 /* @flow */
 
-const { userAgent } = navigator;
+const { userAgent, maxTouchPoints, platform } = navigator;
 let OS;
 
 if (userAgent.match(/Android/i)) {
