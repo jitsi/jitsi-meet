@@ -9,7 +9,9 @@ local jid = require "util.jid";
 local json_safe = require "cjson.safe";
 local path = require "util.paths";
 local sha256 = require "util.hashes".sha256;
-local http_get_with_retry = module:require "util".http_get_with_retry;
+local main_util = module:require "util";
+local http_get_with_retry = main_util.http_get_with_retry;
+local extract_subdomain = main_util.extract_subdomain;
 
 local nr_retries = 3;
 
@@ -142,40 +144,44 @@ function Util:get_public_key(keyId)
 end
 
 --- Verifies issuer part of token
--- @param 'iss' claim from the token to verify
+-- @param 'issClaim' claim from the token to verify
 -- @param 'acceptedIssuers' list of issuers to check
 -- @return nil and error string or true for accepted claim
 function Util:verify_issuer(issClaim, acceptedIssuers)
     if not acceptedIssuers then
         acceptedIssuers = self.acceptedIssuers
     end
-    module:log("debug","verify_issuer claim: %s against accepted: %s",issClaim, acceptedIssuers);
+    module:log("debug", "verify_issuer claim: %s against accepted: %s", issClaim, acceptedIssuers);
     for i, iss in ipairs(acceptedIssuers) do
+        if iss == '*' then
+            -- "*" indicates to accept any issuer in the claims so return success
+            return true;
+        end
         if issClaim == iss then
-            --claim matches an accepted issuer so return success
+            -- claim matches an accepted issuer so return success
             return true;
         end
     end
-    --if issClaim not found in acceptedIssuers, fail claim
+    -- if issClaim not found in acceptedIssuers, fail claim
     return nil, "Invalid issuer ('iss' claim)";
 end
 
 --- Verifies audience part of token
--- @param 'aud' claim from the token to verify
+-- @param 'audClaim' claim from the token to verify
 -- @return nil and error string or true for accepted claim
 function Util:verify_audience(audClaim)
-    module:log("debug","verify_audience claim: %s against accepted: %s",audClaim, self.acceptedAudiences);
+    module:log("debug", "verify_audience claim: %s against accepted: %s", audClaim, self.acceptedAudiences);
     for i, aud in ipairs(self.acceptedAudiences) do
         if aud == '*' then
-            --* indicates to accept any audience in the claims so return success
+            -- "*" indicates to accept any audience in the claims so return success
             return true;
         end
         if audClaim == aud then
-            --claim matches an accepted audience so return success
+            -- claim matches an accepted audience so return success
             return true;
         end
     end
-    --if issClaim not found in acceptedIssuers, fail claim
+    -- if audClaim not found in acceptedAudiences, fail claim
     return nil, "Invalid audience ('aud' claim)";
 end
 
@@ -346,7 +352,7 @@ function Util:verify_room(session, room_address)
     local room_node = jid.node(room_address);
     -- parses bare room address, for multidomain expected format is:
     -- [subdomain]roomName@conference.domain
-    local target_subdomain, target_room = room_node:match("^%[([^%]]+)%](.+)$");
+    local target_subdomain, target_room = extract_subdomain(room_node);
 
     -- if we have '*' as room name in token, this means all rooms are allowed
     -- so we will use the actual name of the room when constructing strings

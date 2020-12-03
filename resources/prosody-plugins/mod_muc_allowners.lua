@@ -1,6 +1,8 @@
 local jid = require "util.jid";
 local um_is_admin = require "core.usermanager".is_admin;
-local is_healthcheck_room = module:require "util".is_healthcheck_room;
+local util = module:require "util";
+local is_healthcheck_room = util.is_healthcheck_room;
+local extract_subdomain = util.extract_subdomain;
 
 local moderated_subdomains;
 local moderated_rooms;
@@ -22,11 +24,14 @@ end
 --      -> true, room_name, subdomain
 --      -> true, room_name, nil (if no subdomain is used for the room)
 local function is_moderated(room_jid)
+    if moderated_subdomains:empty() and moderated_rooms:empty() then
+        return false;
+    end
+
     local room_node = jid.node(room_jid);
     -- parses bare room address, for multidomain expected format is:
     -- [subdomain]roomName@conference.domain
-    local target_subdomain, target_room_name = room_node:match("^%[([^%]]+)%](.+)$");
-
+    local target_subdomain, target_room_name = extract_subdomain(room_node);
     if target_subdomain then
         if moderated_subdomains:contains(target_subdomain) then
             return true, target_room_name, target_subdomain;

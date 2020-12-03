@@ -17,20 +17,30 @@ export function captureLargeVideoScreenshot() {
     return (dispatch: Dispatch<any>, getState: Function): Promise<string> => {
         const state = getState();
         const largeVideo = state['features/large-video'];
+        const promise = Promise.resolve();
 
         if (!largeVideo) {
-            return Promise.resolve();
+            return promise;
         }
         const tracks = state['features/base/tracks'];
-        const { jitsiTrack } = getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.VIDEO, largeVideo.participantId);
-        const videoStream = jitsiTrack.getOriginalStream();
+        const participantTrack = getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.VIDEO, largeVideo.participantId);
+
+        // Participants that join the call video muted do not have a jitsiTrack attached.
+        if (!(participantTrack && participantTrack.jitsiTrack)) {
+            return promise;
+        }
+        const videoStream = participantTrack.jitsiTrack.getOriginalStream();
+
+        if (!videoStream) {
+            return promise;
+        }
 
         // Get the video element for the large video, cast HTMLElement to HTMLVideoElement to make flow happy.
         /* eslint-disable-next-line no-extra-parens*/
         const videoElement = ((document.getElementById('largeVideo'): any): HTMLVideoElement);
 
         if (!videoElement) {
-            return Promise.resolve();
+            return promise;
         }
 
         // Create a HTML canvas and draw video on to the canvas.

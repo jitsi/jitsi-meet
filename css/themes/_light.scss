@@ -41,7 +41,6 @@ $overlayButtonBg: #ed7d0e70;
 * Color variables
 **/
 $defaultBackground: #ed7d0e;
-$filmstripOnlyOverlayBg: #000;
 $reloadProgressBarBg: #ed7d0e;
 
 /**
@@ -59,10 +58,6 @@ $dialogErrorText: #bb4325;
 **/
 $inlayColorBg: lighten($defaultBackground, 20%);
 $inlayBorderColor: lighten($baseLight, 10%);
-$inlayIconBg: #000;
-$inlayIconColor: #fff;
-$inlayFilmstripOnlyColor: #474747;
-$inlayFilmstripOnlyBg: #fff;
 
 // Main controls
 $placeHolderColor: #a7a7a7;

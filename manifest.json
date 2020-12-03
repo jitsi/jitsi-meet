@@ -11,17 +11,17 @@
   "name": "Jitsi Meet",
   "icons": [
     {
-      "src": "icons/icon192.png",
+      "src": "static/pwa/icons/icon192.png",
       "type": "image/png",
       "sizes": "192x192"
     },
     {
-      "src": "icons/icon512.png",
+      "src": "static/pwa/icons/icon512.png",
       "type": "image/png",
       "sizes": "512x512"
     },
     {
-      "src": "icons/iconMask.png",
+      "src": "static/pwa/icons/iconMask.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"

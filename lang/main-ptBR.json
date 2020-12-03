@@ -512,6 +512,12 @@
     "sectionList": {
         "pullToRefresh": "Puxe para atualizar"
     },
+    "security": {
+        "about": "Voce pode adicionar uma $t(lockRoomPassword) em sua reunião. Participantes irão precisar informar a $t(lockRoomPassword) antes de se juntarem na reunião.",
+        "aboutReadOnly": "Moderadores podem adicionar uma $t(lockRoomPassword) na reunião. Participantes irão precisar informar a $t(lockRoomPassword) antes de se juntarem na reunião",
+        "insecureRoomNameWarning": "Essa sala não está protegida. Participantes indesejados poderão entrar na sua reunião. Considere configurar a segurança da sua reunião utilizando o botão de segurança.",
+        "securityOptions": "Opções de segurança"
+    },
     "settings": {
         "calendar": {
             "about": "A integração do calendário {{appName}} é usada para acessar com segurança o seu calendário para que ele possa ler os próximos eventos.",

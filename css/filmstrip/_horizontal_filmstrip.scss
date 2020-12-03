@@ -67,20 +67,6 @@
         }
     }
 
-    /**
-     * Style the filmstrip videos in filmstrip-only mode.
-     */
-    &__videos-filmstripOnly {
-        margin-top: auto;
-        margin-bottom: auto;
-
-        .filmstrip__videos {
-            &#filmstripLocalVideo {
-                bottom: 0px;
-            }
-        }
-    }
-
     .remote-videos-container {
         transition: opacity 1s;
     }

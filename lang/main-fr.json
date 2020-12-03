@@ -730,7 +730,7 @@
         "stopScreenSharing": "Arrêter le partage d'écran",
         "stopSubtitles": "Désactiver les sous-titres",
         "stopSharedVideo": "Arrêter la vidéo YouTube",
-        "talkWhileMutedPopup": "Vous voulez parler ? Vôtre micro est coupé.",
+        "talkWhileMutedPopup": "Vous voulez parler ? Votre micro est coupé.",
         "tileViewToggle": "Activer/désactiver la vue mosaïque",
         "toggleCamera": "Changer de caméra",
         "videomute": "Démarrer / Arrêter la caméra",
@@ -769,7 +769,7 @@
         "errorAlreadyInvited": "{{displayName}} est déjà invité(e)",
         "errorInvite": "La conférence n'est pas encore établie. Veuillez réessayer plus tard.",
         "errorInviteFailed": "Nous tentons de résoudre le problème. Veuillez réessayer plus tard.",
-        "errorInviteFailedTitle": "l'invitation de {{displayName}} a échoué",
+        "errorInviteFailedTitle": "L'invitation de {{displayName}} a échoué",
         "errorInviteTitle": "Erreur lors de l'invitation",
         "pending": "{{displayName}} a été invité(e)"
     },
@@ -809,7 +809,7 @@
             "join": "Touchez pour rejoindre",
             "roomname": "Saisissez un nom de salle"
         },
-        "appDescription": "Foncez tchater en vidéo avec toute le monde. En fait, vous pouvez inviter tout ceux que vous connaissez. {{app}} est une solution de visioconférence entièrement chiffrée et 100% libre que vous pouvez utiliser en permanence, chaque jours, et sans aucun compte requis.",
+        "appDescription": "Foncez tchater en vidéo avec toute le monde. En fait, vous pouvez inviter tout ceux que vous connaissez. {{app}} est une solution de visioconférence entièrement chiffrée et 100% libre que vous pouvez utiliser en permanence, chaque jour, et sans aucun compte requis.",
         "audioVideoSwitch": {
             "audio": "Voix",
             "video": "Vidéo"
@@ -847,10 +847,10 @@
         "allow": "Autoriser",
         "backToKnockModeButton": "Aucun mot de passe, demander à rejoindre plutôt",
         "dialogTitle": "Mode lobby",
-        "disableDialogContent": "Le mode lobby est actuellement activé. Cette fonctionnalité garantit que les participants indésirables ne peuvent pas rejoindre votre réunion. Souhaitez-vous la désactiver?",
+        "disableDialogContent": "Le mode lobby est actuellement activé. Cette fonctionnalité garantit que les participants indésirables ne peuvent pas rejoindre votre réunion. Souhaitez-vous la désactiver ?",
         "disableDialogSubmit": "Désactiver",
         "emailField": "Saisissez votre adresse email",
-        "enableDialogPasswordField": "Définir le mot de passe (optionel)",
+        "enableDialogPasswordField": "Définir le mot de passe (optionnel)",
         "enableDialogSubmit": "Activer",
         "enableDialogText": "Le mode lobby vous permet de protéger votre réunion en autorisant les personnes à entrer qu'après l'approbation formelle d'un modérateur.",
         "enterPasswordButton": "Saisissez un mot de passe de réunion",

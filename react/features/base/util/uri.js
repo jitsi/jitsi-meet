@@ -514,7 +514,7 @@ export function urlObjectToString(o: Object): ?string {
     // pathname
 
     // Web's ExternalAPI roomName
-    const room = o.roomName || o.room;
+    const room = _fixRoom(o.roomName || o.room);
 
     if (room
             && (url.pathname.endsWith('/')
