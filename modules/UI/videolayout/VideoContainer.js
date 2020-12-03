@@ -272,13 +272,9 @@ export class VideoContainer extends LargeContainer {
 
         if (isTestModeEnabled(APP.store.getState())) {
             const cb = name => APP.store.dispatch(updateLastLargeVideoMediaEvent(name));
-            const containerHandlers = {};
 
             containerEvents.forEach(event => {
-                containerHandlers[event] = cb.bind(this, event);
-            });
-            containerEvents.forEach(event => {
-                this.$video[0].addEventListener(event, containerHandlers[event]);
+                this.$video[0].addEventListener(event, cb.bind(this, event));
             });
         }
     }

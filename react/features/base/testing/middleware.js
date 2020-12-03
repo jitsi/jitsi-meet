@@ -18,19 +18,20 @@ import logger from './logger';
  * @private
  */
 MiddlewareRegistry.register(store => next => action => {
-    let result;
-
     switch (action.type) {
     case CONFERENCE_WILL_JOIN:
         _bindConferenceConnectionListener(action.conference, store);
         break;
-    case SET_CONFIG:
-        result = next(action);
+    case SET_CONFIG: {
+        const result = next(action);
+
         _bindTortureHelpers(store);
-        break;
+
+        return result;
+    }
     }
 
-    return result || next(action);
+    return next(action);
 });
 
 /**

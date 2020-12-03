@@ -21,7 +21,7 @@ export function isTestModeEnabled(state: Object): boolean {
  * Returns the video type of the remote participant's video.
  *
  * @param {Store} store - The redux store.
- * @param {string} id - the participant ID for the remote video.
+ * @param {string} id - The participant ID for the remote video.
  * @returns {MEDIA_TYPE}
  */
 export function getRemoteVideoType({ getState }: Object, id: String): boolean {
