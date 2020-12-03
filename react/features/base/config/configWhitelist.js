@@ -116,6 +116,7 @@ export default [
     'forceJVB121Ratio',
     'gatherStats',
     'googleApiApplicationClientID',
+    'hideConferenceTimer',
     'hiddenDomain',
     'hideLobbyButton',
     'hosts',
