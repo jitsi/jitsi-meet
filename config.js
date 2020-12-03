@@ -330,14 +330,6 @@ var config = {
     // bridge itself is reachable via UDP)
     // useTurnUdp: false
 
-    // Enables / disables a data communication channel with the Videobridge.
-    // Values can be 'datachannel', 'websocket', true (treat it as
-    // 'datachannel'), undefined (treat it as 'datachannel') and false (don't
-    // open any channel).
-    // openBridgeChannel: true,
-    openBridgeChannel: 'websocket',
-
-
     // UI
     //
 
