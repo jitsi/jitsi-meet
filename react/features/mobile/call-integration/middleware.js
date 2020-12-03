@@ -189,7 +189,7 @@ function _conferenceJoined({ getState }, next, action) {
             .then(() => {
                 // iOS 13 doesn't like the mute state to be false before the call is started
                 // so we update it here in case the user selected startWithAudioMuted.
-                if (Platform.OS === 'ios') {
+                if (Platform.OS === 'ios' || Platform.OS === 'ipados') {
                     _updateCallIntegrationMuted(action.conference, getState());
                 }
             })
