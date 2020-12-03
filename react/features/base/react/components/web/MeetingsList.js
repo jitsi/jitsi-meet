@@ -6,6 +6,7 @@ import {
     getLocalizedDateFormatter,
     getLocalizedDurationFormatter
 } from '../../../i18n';
+import { Icon, IconTrash } from '../../../icons';
 
 import Container from './Container';
 import Text from './Text';
@@ -38,9 +39,9 @@ type Props = {
     meetings: Array<Object>,
 
     /**
-     * Defines what happens when  an item in the section list is clicked
+     * Handler for deleting an item.
      */
-    onItemClick: Function
+    onItemDelete?: Function
 };
 
 /**
@@ -138,6 +139,25 @@ export default class MeetingsList extends Component<Props> {
         return null;
     }
 
+    _onDelete: Object => Function;
+
+    /**
+     * Returns a function that is used on the onDelete callback.
+     *
+     * @param {Object} item - The item to be deleted.
+     * @private
+     * @returns {Function}
+     */
+    _onDelete(item) {
+        const { onItemDelete } = this.props;
+
+        return evt => {
+            evt.stopPropagation();
+
+            onItemDelete && onItemDelete(item);
+        };
+    }
+
     _renderItem: (Object, number) => React$Node;
 
     /**
@@ -156,7 +176,7 @@ export default class MeetingsList extends Component<Props> {
             title,
             url
         } = meeting;
-        const { hideURL = false } = this.props;
+        const { hideURL = false, onItemDelete } = this.props;
         const onPress = this._onPress(url);
         const rootClassName
             = `item ${
@@ -168,10 +188,10 @@ export default class MeetingsList extends Component<Props> {
                 key = { index }
                 onClick = { onPress }>
                 <Container className = 'left-column'>
-                    <Text className = 'date'>
+                    <Text className = 'title'>
                         { _toDateString(date) }
                     </Text>
-                    <Text>
+                    <Text className = 'subtitle'>
                         { _toTimeString(time) }
                     </Text>
                 </Container>
@@ -187,13 +207,18 @@ export default class MeetingsList extends Component<Props> {
                     }
                     {
                         typeof duration === 'number' ? (
-                            <Text>
+                            <Text className = 'subtitle'>
                                 { getLocalizedDurationFormatter(duration) }
                             </Text>) : null
                     }
                 </Container>
                 <Container className = 'actions'>
                     { elementAfter || null }
+
+                    { onItemDelete && <Icon
+                        className = 'delete-meeting'
+                        onClick = { this._onDelete(meeting) }
+                        src = { IconTrash } />}
                 </Container>
             </Container>
         );

@@ -14,9 +14,6 @@ var config = {
         // Domain for authenticated users. Defaults to <domain>.
         // authdomain: 'jitsi-meet.example.com',
 
-        // Call control component (Jigasi).
-        // call_control: 'callcontrol.jitsi-meet.example.com',
-
         // Focus component domain. Defaults to focus.<domain>.
         // focus: 'focus.jitsi-meet.example.com',
 
@@ -93,6 +90,11 @@ var config = {
     // will notify the user if the current selected microphone has no audio
     // input and will suggest another valid device if one is present.
     enableNoAudioDetection: true,
+
+    // Enabling this will show a "Save Logs" link in the GSM popover that can be
+    // used to collect debug information (XMPP IQs, SDP offer/answer cycles)
+    // about the call.
+    // enableSaveLogs: false,
 
     // Enabling this will run the lib-jitsi-meet noise detection module which will
     // notify the user if there is noise, other than voice, coming from the current
@@ -275,9 +277,13 @@ var config = {
     //    // at least 360 pixels tall. If the thumbnail height reaches 720 pixels then the application will switch to
     //    // the high quality.
     //    minHeightForQualityLvl: {
-    //        360: 'standard,
+    //        360: 'standard',
     //        720: 'high'
-    //    }
+    //    },
+    //
+    //    // Provides a way to resize the desktop track to 720p (if it is greater than 720p) before creating a canvas
+    //    // for the presenter mode (camera picture-in-picture mode with screenshare).
+    //    resizeDesktopForPresenter: false
     // },
 
     // // Options for the recording limit notification.
@@ -319,10 +325,6 @@ var config = {
     // TCC sequence numbers starting from 0.
     // enableIceRestart: false,
 
-    // Defines the minimum number of participants to start a call (the default
-    // is set in Jicofo and set to 2).
-    // minParticipants: 2,
-
     // Use TURN/UDP servers for the jitsi-videobridge connection (by default
     // we filter out TURN/UDP because it is usually not needed since the
     // bridge itself is reachable via UDP)
@@ -359,16 +361,11 @@ var config = {
     // Default language for the user interface.
     // defaultLanguage: 'en',
 
-    // If true all users without a token will be considered guests and all users
-    // with token will be considered non-guests. Only guests will be allowed to
-    // edit their profile.
-    enableUserRolesBasedOnToken: false,
+    // Disables profile and the edit of all fields from the profile settings (display name and email)
+    // disableProfile: false,
 
     // Whether or not some features are checked based on token.
     // enableFeaturesBasedOnToken: false,
-
-    // Enable lock room for all moderators, even when userRolesBasedOnToken is enabled and participants are guests.
-    // lockRoomGuestEnabled: false,
 
     // When enabled the password used for locking a room is restricted to up to the number of digits specified
     // roomPasswordNumberOfDigits: 10,
@@ -393,6 +390,9 @@ var config = {
     // Whether to automatically copy invitation URL after creating a room.
     // Document should be focused for this option to work
     // enableAutomaticUrlCopy: false,
+
+    // Base URL for a Gravatar-compatible service. Defaults to libravatar.
+    // gravatarBaseURL: 'https://seccdn.libravatar.org/avatar/';
 
     // Stats
     //
@@ -679,8 +679,6 @@ var config = {
      forceJVB121Ratio
      hiddenDomain
      ignoreStartMuted
-     nick
-     startBitrate
      */
 
 

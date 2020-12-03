@@ -16,6 +16,7 @@ import { hideRemoteVideoMenu } from '../../actions';
 import GrantModeratorButton from './GrantModeratorButton';
 import KickButton from './KickButton';
 import MuteButton from './MuteButton';
+import MuteEveryoneElseButton from './MuteEveryoneElseButton';
 import PinButton from './PinButton';
 import styles from './styles';
 
@@ -104,6 +105,7 @@ class RemoteVideoMenu extends PureComponent<Props> {
                 <GrantModeratorButton { ...buttonProps } />
                 <PinButton { ...buttonProps } />
                 <PrivateMessageButton { ...buttonProps } />
+                <MuteEveryoneElseButton { ...buttonProps } />
             </BottomSheet>
         );
     }

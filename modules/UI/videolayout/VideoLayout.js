@@ -1,4 +1,4 @@
-/* global APP, $, interfaceConfig  */
+/* global APP, $  */
 
 import Logger from 'jitsi-meet-logger';
 
@@ -173,11 +173,9 @@ const VideoLayout = {
         remoteVideo.addRemoteStreamElement(stream);
 
         // Make sure track's muted state is reflected
-        if (stream.getType() === 'audio') {
-            this.onAudioMute(id, stream.isMuted());
-        } else {
-            this.onVideoMute(id, stream.isMuted());
-            remoteVideo.setScreenSharing(stream.videoType === 'desktop');
+        if (stream.getType() !== 'audio') {
+            this.onVideoMute(id);
+            remoteVideo.updateView();
         }
     },
 
@@ -189,7 +187,7 @@ const VideoLayout = {
 
         if (remoteVideo) {
             remoteVideo.removeRemoteStreamElement(stream);
-            remoteVideo.setScreenSharing(false);
+            remoteVideo.updateView();
         }
 
         this.updateMutedForNoTracks(id, stream.getType());
@@ -210,7 +208,7 @@ const VideoLayout = {
             if (mediaType === 'audio') {
                 APP.UI.setAudioMuted(participantId, true);
             } else if (mediaType === 'video') {
-                APP.UI.setVideoMuted(participantId, true);
+                APP.UI.setVideoMuted(participantId);
             } else {
                 logger.error(`Unsupported media type: ${mediaType}`);
             }
@@ -266,10 +264,6 @@ const VideoLayout = {
      * @returns {void}
      */
     onPinChange(pinnedParticipantID) {
-        if (interfaceConfig.filmStripOnly) {
-            return;
-        }
-
         getAllThumbnails().forEach(thumbnail =>
             thumbnail.focus(pinnedParticipantID === thumbnail.getId()));
     },
@@ -330,34 +324,16 @@ const VideoLayout = {
     },
 
     /**
-     * On audio muted event.
-     */
-    onAudioMute(id, isMuted) {
-        if (APP.conference.isLocalId(id)) {
-            localVideoThumbnail.showAudioIndicator(isMuted);
-        } else {
-            const remoteVideo = remoteVideos[id];
-
-            if (!remoteVideo) {
-                return;
-            }
-
-            remoteVideo.showAudioIndicator(isMuted);
-            remoteVideo.updateRemoteVideoMenu();
-        }
-    },
-
-    /**
      * On video muted event.
      */
-    onVideoMute(id, value) {
+    onVideoMute(id) {
         if (APP.conference.isLocalId(id)) {
-            localVideoThumbnail && localVideoThumbnail.setVideoMutedView(value);
+            localVideoThumbnail && localVideoThumbnail.updateView();
         } else {
             const remoteVideo = remoteVideos[id];
 
             if (remoteVideo) {
-                remoteVideo.setVideoMutedView(value);
+                remoteVideo.updateView();
             }
         }
 
@@ -411,12 +387,6 @@ const VideoLayout = {
         const remoteVideo = remoteVideos[id];
 
         if (remoteVideo) {
-            // Updating only connection status indicator is not enough, because
-            // when we the connection is restored while the avatar was displayed
-            // (due to 'muted while disconnected' condition) we may want to show
-            // the video stream again and in order to do that the display mode
-            // must be updated.
-            // remoteVideo.updateConnectionStatusIndicator(isActive);
             remoteVideo.updateView();
         }
     },
@@ -494,7 +464,7 @@ const VideoLayout = {
         }
 
         logger.info('Peer video type changed: ', id, newVideoType);
-        remoteVideo.setScreenSharing(newVideoType === 'desktop');
+        remoteVideo.updateView();
     },
 
     /**

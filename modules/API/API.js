@@ -2,7 +2,6 @@
 
 import Logger from 'jitsi-meet-logger';
 
-import * as JitsiMeetConferenceEvents from '../../ConferenceEvents';
 import {
     createApiEvent,
     sendAnalytics
@@ -14,7 +13,7 @@ import {
     setSubject
 } from '../../react/features/base/conference';
 import { parseJWTFromURLParams } from '../../react/features/base/jwt';
-import { JitsiRecordingConstants } from '../../react/features/base/lib-jitsi-meet';
+import JitsiMeetJS, { JitsiRecordingConstants } from '../../react/features/base/lib-jitsi-meet';
 import { pinParticipant } from '../../react/features/base/participants';
 import {
     processExternalDeviceRequest
@@ -45,14 +44,6 @@ declare var APP: Object;
  * List of the available commands.
  */
 let commands = {};
-
-/**
- * The state of screen sharing(started/stopped) before the screen sharing is
- * enabled and initialized.
- * NOTE: This flag help us to cache the state and use it if toggle-share-screen
- * was received before the initialization.
- */
-let initialScreenSharingState = false;
 
 /**
  * The transport instance used for communication with external apps.
@@ -223,7 +214,8 @@ function initCommands() {
         },
 
         /**
-         * Starts a file recording or streaming depending on the passed on params.
+         * Starts a file recording or streaming session depending on the passed on params.
+         * For RTMP streams, `rtmpStreamKey` must be passed on. `rtmpBroadcastID` is optional.
          * For youtube streams, `youtubeStreamKey` must be passed on. `youtubeBroadcastID` is optional.
          * For dropbox recording, recording `mode` should be `file` and a dropbox oauth2 token must be provided.
          * For file recording, recording `mode` should be `file` and optionally `shouldShare` could be passed on.
@@ -231,13 +223,23 @@ function initCommands() {
          *
          * @param { string } arg.mode - Recording mode, either `file` or `stream`.
          * @param { string } arg.dropboxToken - Dropbox oauth2 token.
+         * @param { string } arg.rtmpStreamKey - The RTMP stream key.
+         * @param { string } arg.rtmpBroadcastID - The RTMP braodcast ID.
          * @param { boolean } arg.shouldShare - Whether the recording should be shared with the participants or not.
          * Only applies to certain jitsi meet deploys.
          * @param { string } arg.youtubeStreamKey - The youtube stream key.
          * @param { string } arg.youtubeBroadcastID - The youtube broacast ID.
          * @returns {void}
          */
-        'start-recording': ({ mode, dropboxToken, shouldShare, youtubeStreamKey, youtubeBroadcastID }) => {
+        'start-recording': ({
+            mode,
+            dropboxToken,
+            shouldShare,
+            rtmpStreamKey,
+            rtmpBroadcastID,
+            youtubeStreamKey,
+            youtubeBroadcastID
+        }) => {
             const state = APP.store.getState();
             const conference = getCurrentConference(state);
 
@@ -253,8 +255,8 @@ function initCommands() {
                 return;
             }
 
-            if (mode === JitsiRecordingConstants.mode.STREAM && !youtubeStreamKey) {
-                logger.error('Failed starting recording: missing youtube stream key');
+            if (mode === JitsiRecordingConstants.mode.STREAM && !(youtubeStreamKey || rtmpStreamKey)) {
+                logger.error('Failed starting recording: missing youtube or RTMP stream key');
 
                 return;
             }
@@ -286,9 +288,9 @@ function initCommands() {
                 }
             } else if (mode === JitsiRecordingConstants.mode.STREAM) {
                 recordingConfig = {
-                    broadcastId: youtubeBroadcastID,
+                    broadcastId: youtubeBroadcastID || rtmpBroadcastID,
                     mode: JitsiRecordingConstants.mode.STREAM,
-                    streamId: youtubeStreamKey
+                    streamId: youtubeStreamKey || rtmpStreamKey
                 };
             } else {
                 logger.error('Invalid recording mode provided');
@@ -420,19 +422,6 @@ function initCommands() {
 }
 
 /**
- * Listens for desktop/screen sharing enabled events and toggles the screen
- * sharing if needed.
- *
- * @param {boolean} enabled - Current screen sharing enabled status.
- * @returns {void}
- */
-function onDesktopSharingEnabledChanged(enabled = false) {
-    if (enabled && initialScreenSharingState) {
-        toggleScreenSharing();
-    }
-}
-
-/**
  * Check whether the API should be enabled or not.
  *
  * @returns {boolean}
@@ -459,12 +448,10 @@ function shouldBeEnabled() {
  * @returns {void}
  */
 function toggleScreenSharing(enable) {
-    if (APP.conference.isDesktopSharingEnabled) {
-
-        // eslint-disable-next-line no-empty-function
-        APP.conference.toggleScreenSharing(enable).catch(() => {});
-    } else {
-        initialScreenSharingState = !initialScreenSharingState;
+    if (JitsiMeetJS.isDesktopSharingEnabled()) {
+        APP.conference.toggleScreenSharing(enable).catch(() => {
+            logger.warn('Failed to toggle screen-sharing');
+        });
     }
 }
 
@@ -496,10 +483,6 @@ class API {
          * @type {boolean}
          */
         this._enabled = true;
-
-        APP.conference.addListener(
-            JitsiMeetConferenceEvents.DESKTOP_SHARING_ENABLED_CHANGED,
-            onDesktopSharingEnabledChanged);
 
         initCommands();
     }
@@ -1047,9 +1030,6 @@ class API {
     dispose() {
         if (this._enabled) {
             this._enabled = false;
-            APP.conference.removeListener(
-                JitsiMeetConferenceEvents.DESKTOP_SHARING_ENABLED_CHANGED,
-                onDesktopSharingEnabledChanged);
         }
     }
 }

@@ -56,9 +56,6 @@ export function shouldRemoteVideosBeVisible(state: Object) {
                     || ((pinnedParticipant = getPinnedParticipant(state))
                         && pinnedParticipant.local)))
 
-            || (typeof interfaceConfig === 'object'
-                && interfaceConfig.filmStripOnly)
-
             || state['features/base/config'].disable1On1Mode);
 }
 

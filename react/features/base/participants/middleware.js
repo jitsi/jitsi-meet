@@ -12,6 +12,7 @@ import {
 import { JitsiConferenceEvents } from '../lib-jitsi-meet';
 import { MiddlewareRegistry, StateListenerRegistry } from '../redux';
 import { playSound, registerSound, unregisterSound } from '../sounds';
+import { getTrackByJitsiTrack, TRACK_ADDED, TRACK_REMOVED, TRACK_UPDATED } from '../tracks';
 
 import {
     DOMINANT_SPEAKER_CHANGED,
@@ -41,7 +42,8 @@ import {
     getLocalParticipant,
     getParticipantById,
     getParticipantCount,
-    getParticipantDisplayName
+    getParticipantDisplayName,
+    figureOutMutedWhileDisconnectedStatus
 } from './functions';
 import { PARTICIPANT_JOINED_FILE, PARTICIPANT_LEFT_FILE } from './sounds';
 
@@ -134,6 +136,11 @@ MiddlewareRegistry.register(store => next => action => {
 
     case PARTICIPANT_UPDATED:
         return _participantJoinedOrUpdated(store, next, action);
+
+    case TRACK_ADDED:
+    case TRACK_REMOVED:
+    case TRACK_UPDATED:
+        return _trackChanged(store, next, action);
     }
 
     return next(action);
@@ -358,7 +365,8 @@ function _maybePlaySounds({ getState, dispatch }, action) {
  * @private
  * @returns {Object} The value returned by {@code next(action)}.
  */
-function _participantJoinedOrUpdated({ dispatch, getState }, next, action) {
+function _participantJoinedOrUpdated(store, next, action) {
+    const { dispatch, getState } = store;
     const { participant: { avatarURL, e2eeEnabled, email, id, local, name, raisedHand } } = action;
 
     // Send an external update of the local participant's raised hand state
@@ -394,7 +402,7 @@ function _participantJoinedOrUpdated({ dispatch, getState }, next, action) {
         const participantId = !id && local ? getLocalParticipant(getState()).id : id;
         const updatedParticipant = getParticipantById(getState(), participantId);
 
-        getFirstLoadableAvatarUrl(updatedParticipant)
+        getFirstLoadableAvatarUrl(updatedParticipant, store)
             .then(url => {
                 dispatch(setLoadableAvatarUrl(participantId, url));
             });
@@ -450,6 +458,55 @@ function _registerSounds({ dispatch }) {
     dispatch(
         registerSound(PARTICIPANT_JOINED_SOUND_ID, PARTICIPANT_JOINED_FILE));
     dispatch(registerSound(PARTICIPANT_LEFT_SOUND_ID, PARTICIPANT_LEFT_FILE));
+}
+
+/**
+ * Notifies the feature base/participants that the action there has been a change in the tracks of the participants.
+ *
+ * @param {Store} store - The redux store in which the specified {@code action} is being dispatched.
+ * @param {Dispatch} next - The redux {@code dispatch} function to dispatch the specified {@code action} in the
+ * specified {@code store}.
+ * @param {Action} action - The redux action {@code PARTICIPANT_JOINED} or {@code PARTICIPANT_UPDATED} which is being
+ * dispatched in the specified {@code store}.
+ * @private
+ * @returns {Object} The value returned by {@code next(action)}.
+ */
+function _trackChanged({ dispatch, getState }, next, action) {
+    const { jitsiTrack } = action.track;
+    let track;
+
+    if (action.type === TRACK_REMOVED) {
+        track = getTrackByJitsiTrack(getState()['features/base/tracks'], jitsiTrack);
+    }
+
+    const result = next(action);
+
+    if (action.type !== TRACK_REMOVED) {
+        track = getTrackByJitsiTrack(getState()['features/base/tracks'], jitsiTrack);
+    }
+
+    if (typeof track === 'undefined' || track.local) {
+        return result;
+    }
+
+    const { participantId } = track;
+    const state = getState();
+    const participant = getParticipantById(state, participantId);
+
+    if (!participant) {
+        return result;
+    }
+
+    const mutedWhileDisconnected = figureOutMutedWhileDisconnectedStatus(state, participantId);
+
+    if (participant.mutedWhileDisconnected !== mutedWhileDisconnected) {
+        dispatch(participantUpdated({
+            id: participantId,
+            mutedWhileDisconnected
+        }));
+    }
+
+    return result;
 }
 
 /**
