@@ -616,6 +616,12 @@ var config = {
     // otherwise the app doesn't render it.
     // moderatedRoomServiceUrl: 'https://moderated.jitsi-meet.example.com',
 
+    // Hides the conference timer.
+    // hideConferenceTimer: true,
+
+    // Sets the conference subject
+    // subject: 'Conference Subject',
+
     // List of undocumented settings used in jitsi-meet
     /**
      _immediateReloadThreshold
