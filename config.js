@@ -122,7 +122,7 @@ var config = {
     // Valid values are in the range 6000 to 510000
     // opusMaxAverageBitrate: 20000,
 
-    // Enables redundancy for Opus
+    // Enables support for opus-red (redundancy for Opus).
     // enableOpusRed: false
 
     // Video
@@ -304,18 +304,11 @@ var config = {
     // Disables or enables RTX (RFC 4588) (defaults to false).
     // disableRtx: false,
 
-    // Disables or enables TCC (the default is in Jicofo and set to true)
-    // (draft-holmer-rmcat-transport-wide-cc-extensions-01). This setting
-    // affects congestion control, it practically enables send-side bandwidth
-    // estimations.
+    // Disables or enables TCC support in this client (default: enabled).
     // enableTcc: true,
 
-    // Disables or enables REMB (the default is in Jicofo and set to false)
-    // (draft-alvestrand-rmcat-remb-03). This setting affects congestion
-    // control, it practically enables recv-side bandwidth estimations. When
-    // both TCC and REMB are enabled, TCC takes precedence. When both are
-    // disabled, then bandwidth estimations are disabled.
-    // enableRemb: false,
+    // Disables or enables REMB support in this client (default: enabled).
+    // enableRemb: true,
 
     // Enables ICE restart logic in LJM and displays the page reload overlay on
     // ICE failure. Current disabled by default because it's causing issues with
