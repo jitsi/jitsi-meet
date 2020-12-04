@@ -672,6 +672,7 @@ var config = {
      forceJVB121Ratio
      hiddenDomain
      ignoreStartMuted
+     startBitrate
      */
 
 
