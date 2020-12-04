@@ -12,13 +12,13 @@ import { i18next } from '../../../react/features/base/i18n';
 import {
     JitsiParticipantConnectionStatus
 } from '../../../react/features/base/lib-jitsi-meet';
-import { MEDIA_TYPE } from '../../../react/features/base/media';
 import {
     getParticipantById,
     getPinnedParticipant,
     pinParticipant
 } from '../../../react/features/base/participants';
-import { isRemoteTrackMuted } from '../../../react/features/base/tracks';
+import { isTestModeEnabled } from '../../../react/features/base/testing';
+import { updateLastTrackVideoMediaEvent } from '../../../react/features/base/tracks';
 import { PresenceLabel } from '../../../react/features/presence-status';
 import {
     REMOTE_CONTROL_MENU_STATES,
@@ -31,6 +31,15 @@ import UIUtils from '../util/UIUtil';
 import SmallVideo from './SmallVideo';
 
 const logger = Logger.getLogger(__filename);
+
+/**
+ * List of container events that we are going to process, will be added as listener to the
+ * container for every event in the list. The latest event will be stored in redux.
+ */
+const containerEvents = [
+    'abort', 'canplay', 'canplaythrough', 'emptied', 'ended', 'error', 'loadeddata', 'loadedmetadata', 'loadstart',
+    'pause', 'play', 'playing', 'ratechange', 'stalled', 'suspend', 'waiting'
+];
 
 /**
  *
@@ -425,6 +434,13 @@ export default class RemoteVideo extends SmallVideo {
             // attached we need to update the menu in order to show the volume
             // slider.
             this.updateRemoteVideoMenu();
+        } else if (isTestModeEnabled(APP.store.getState())) {
+
+            const cb = name => APP.store.dispatch(updateLastTrackVideoMediaEvent(stream, name));
+
+            containerEvents.forEach(event => {
+                streamElement.addEventListener(event, cb.bind(this, event));
+            });
         }
     }
 

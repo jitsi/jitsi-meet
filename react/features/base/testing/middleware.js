@@ -7,7 +7,12 @@ import { MiddlewareRegistry } from '../redux';
 import { getJitsiMeetGlobalNS } from '../util';
 
 import { setConnectionState } from './actions';
-import { getRemoteVideoType, isLargeVideoReceived, isTestModeEnabled } from './functions';
+import {
+    getRemoteVideoType,
+    isLargeVideoReceived,
+    isRemoteVideoReceived,
+    isTestModeEnabled
+} from './functions';
 import logger from './logger';
 
 /**
@@ -80,7 +85,8 @@ function _bindTortureHelpers(store) {
     // All torture helper methods go in here
     getJitsiMeetGlobalNS().testing = {
         getRemoteVideoType: getRemoteVideoType.bind(null, store),
-        isLargeVideoReceived: isLargeVideoReceived.bind(null, store)
+        isLargeVideoReceived: isLargeVideoReceived.bind(null, store),
+        isRemoteVideoReceived: isRemoteVideoReceived.bind(null, store)
     };
 }
 

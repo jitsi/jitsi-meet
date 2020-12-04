@@ -42,3 +42,17 @@ export function isLargeVideoReceived({ getState }: Object): boolean {
 
     return !videoTrack.muted && (lastMediaEvent === 'playing' || lastMediaEvent === 'canplaythrough');
 }
+
+/**
+ * Returns whether the last media event received for a remote video indicates that the video is playing, if not muted.
+ *
+ * @param {Store} store - The redux store.
+ * @param {string} id - The participant ID for the remote video.
+ * @returns {boolean}
+ */
+export function isRemoteVideoReceived({ getState }: Object, id: String): boolean {
+    const videoTrack = getTrackByMediaTypeAndParticipant(getState()['features/base/tracks'], MEDIA_TYPE.VIDEO, id);
+    const lastMediaEvent = videoTrack.lastMediaEvent;
+
+    return !videoTrack.muted && (lastMediaEvent === 'playing' || lastMediaEvent === 'canplaythrough');
+}
