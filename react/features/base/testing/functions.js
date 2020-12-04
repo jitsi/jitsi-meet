@@ -40,7 +40,7 @@ export function isLargeVideoReceived({ getState }: Object): boolean {
         getState()['features/base/tracks'], MEDIA_TYPE.VIDEO, largeVideoParticipantId);
     const lastMediaEvent = getState()['features/large-video'].lastMediaEvent;
 
-    return !videoTrack.muted && (lastMediaEvent === 'playing' || lastMediaEvent === 'canplaythrough');
+    return videoTrack && !videoTrack.muted && (lastMediaEvent === 'playing' || lastMediaEvent === 'canplaythrough');
 }
 
 /**
