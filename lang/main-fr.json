@@ -27,6 +27,7 @@
         "searchPeopleAndNumbers": "Rechercher des personnes ou ajouter leurs numéros de téléphone",
         "shareInvite": "Partager l'invitation à la réunion",
         "shareLink": "Partager le lien de la réunion pour inviter d'autres personnes",
+        "shareQrCode": "Générer un QR Code pour partager la réunion",
         "shareStream": "Partager le lien de diffusion en direct",
         "telephone": "Téléphone : {{number}}",
         "title": "Inviter une personne à cette réunion",

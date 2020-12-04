@@ -90,6 +90,49 @@
             }
         }
 
+        &.qr-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 8px 8px 16px;
+            margin-top: 24px;
+            width: calc(100% - 26px);
+            height: 22px;
+
+            background: #2A3A4B;
+            border: 1px solid #5E6D7A;
+            border-radius: 3px;
+            cursor: pointer;
+
+            &.active {
+                border-radius: 3px 3px 0 0;
+            }
+        }
+
+        &.qr-code-container {
+            display: none;
+
+            &.active {
+                display: flex;
+                width: calc(100% - 26px);
+                padding: 8px 8px 8px 16px;
+
+                background: #2A3A4B;
+                border: 1px solid #5E6D7A;
+                border-top: none;
+                border-radius: 0 0 3px 3px;
+
+                & canvas {
+                    margin-left: auto;
+                    margin-right: auto;
+
+                    &:hover {
+                        cursor: pointer;
+                    }
+                }
+            }
+        }
+
         &.icon-container {
             display: none;
 

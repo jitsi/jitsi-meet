@@ -22,6 +22,7 @@ import Header from './Header';
 import InviteByEmailSection from './InviteByEmailSection';
 import InviteContactsSection from './InviteContactsSection';
 import LiveStreamSection from './LiveStreamSection';
+import QrCodeSection from './QrCodeSection';
 
 declare var interfaceConfig: Object;
 
@@ -156,6 +157,7 @@ function AddPeopleDialog({
             <div className = 'invite-more-dialog'>
                 { _inviteContactsVisible && <InviteContactsSection /> }
                 <CopyMeetingLinkSection url = { _inviteUrl } />
+                <QrCodeSection url={_inviteUrl} />
                 <InviteByEmailSection
                     inviteSubject = { inviteSubject }
                     inviteText = { invite } />

@@ -27,6 +27,7 @@
         "searchPeopleAndNumbers": "Search for people or add their phone numbers",
         "shareInvite": "Share meeting invitation",
         "shareLink": "Share the meeting link to invite others",
+        "shareQrCode": "Generate a Qr Code to share the meeting",
         "shareStream": "Share the live streaming link",
         "telephone": "Telephone: {{number}}",
         "title": "Invite people to this meeting",
