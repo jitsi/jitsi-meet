@@ -1,7 +1,7 @@
 // @flow
 
-import React, { useState } from 'react';
 import QRCode from 'qrcode.react';
+import React, { useState } from 'react';
 
 import { translate } from '../../../../base/i18n';
 import {
@@ -30,7 +30,7 @@ type Props = {
  * @returns {React$Element<any>}
  */
 function QrCodeSection({ t, url }: Props) {
-    const [isActive, setIsActive] = useState(false);
+    const [ isActive, setIsActive ] = useState(false);
 
     /**
      * Toggles the email invite drawer.
@@ -54,17 +54,17 @@ function QrCodeSection({ t, url }: Props) {
         <>
             <div>
                 <div
-                    className={`invite-more-dialog qr-container${isActive ? ' active' : ''}`}
-                    onClick={_onToggleActiveState}>
+                    className = { `invite-more-dialog qr-container${isActive ? ' active' : ''}` }
+                    onClick = { _onToggleActiveState }>
                     <span>{t('addPeople.shareQrCode')}</span>
-                    <Icon src={IconArrowDownSmall} />
+                    <Icon src = { IconArrowDownSmall } />
                 </div>
-                <div className={`invite-more-dialog qr-code-container${isActive ? ' active' : ''}`}>
+                <div className = { `invite-more-dialog qr-code-container${isActive ? ' active' : ''}` }>
                     <QRCode
-                        includeMargin={false}
-                        value={url}
-                        size={200}
-                        onClick={_onCopyText} />
+                        includeMargin = { false }
+                        onClick = { _onCopyText }
+                        size = { 200 }
+                        value = { url } />
                 </div>
             </div>
         </>

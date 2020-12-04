@@ -157,7 +157,7 @@ function AddPeopleDialog({
             <div className = 'invite-more-dialog'>
                 { _inviteContactsVisible && <InviteContactsSection /> }
                 <CopyMeetingLinkSection url = { _inviteUrl } />
-                <QrCodeSection url={_inviteUrl} />
+                <QrCodeSection url = { _inviteUrl } />
                 <InviteByEmailSection
                     inviteSubject = { inviteSubject }
                     inviteText = { invite } />
