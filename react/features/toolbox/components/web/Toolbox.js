@@ -1362,13 +1362,13 @@ class Toolbox extends Component<Props, State> {
                     }
                     { buttonsRight.indexOf('tileview') !== -1
                         && <TileViewButton /> }
-                    { buttonsRight.indexOf('invite') !== -1
-                        && <ToolbarButton
-                            accessibilityLabel =
-                                { t('toolbar.accessibilityLabel.invite') }
-                            icon = { IconInviteMore }
-                            onClick = { this._onToolbarOpenInvite }
-                            tooltip = { t('toolbar.invite') } /> }
+                    {/*{ buttonsRight.indexOf('invite') !== -1*/}
+                    {/*    && <ToolbarButton*/}
+                    {/*        accessibilityLabel =*/}
+                    {/*            { t('toolbar.accessibilityLabel.invite') }*/}
+                    {/*        icon = { IconInviteMore }*/}
+                    {/*        onClick = { this._onToolbarOpenInvite }*/}
+                    {/*        tooltip = { t('toolbar.invite') } /> }*/}
                     {/*{ buttonsRight.indexOf('security') !== -1*/}
                     {/*    && <SecurityDialogButton customClass = 'security-toolbar-button' /> }*/}
                     {/* {*/}
