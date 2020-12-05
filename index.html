@@ -30,7 +30,7 @@
 
             if (shouldRegisterWorker) {
                 navigator.serviceWorker
-                    .register(window.location.origin + '/pwa-worker.js')
+                    .register(window.location.origin + '/static/pwa-worker.js')
                     .then(reg => {
                         console.log('Service worker registered.', reg);
                     })
