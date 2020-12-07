@@ -1,6 +1,6 @@
 // @flow
-
 import { jitsiLocalStorage } from '@jitsi/js-utils';
+import uuid from 'uuid';
 
 import { BILLING_ID, VPAAS_TENANT_PREFIX } from './constants';
 import logger from './logger';
@@ -37,13 +37,32 @@ export function isVpaasMeeting(state: Object) {
 }
 
 /**
+ * Compose the url used for sending billing counter requests.
+ *
+ * @param {string} baseUrl - The base url for the request.
+ * @param {string} tenant - The client tenant.
+ * @param {string} billingId - The unique id of the client.
+ * @returns {string}
+ */
+const composeUrl = (baseUrl, tenant, billingId) => {
+    const url = `${baseUrl}/${encodeURIComponent(tenant)}`;
+
+    if (billingId) {
+        return `${url}/${billingId}`;
+    }
+
+    return url;
+};
+
+
+/**
  * Sends a billing counter request.
  *
  * @param {Object} reqData - The request info.
  * @param {string} reqData.baseUrl - The base url for the request.
  * @param {string} billingId - The unique id of the client.
  * @param {string} jwt - The JWT token.
- * @param {string} tenat - The client tenant.
+ * @param {string} tenant - The client tenant.
  * @returns {void}
  */
 export async function sendCountRequest({ baseUrl, billingId, jwt, tenant }: {
@@ -52,13 +71,12 @@ export async function sendCountRequest({ baseUrl, billingId, jwt, tenant }: {
     jwt: string,
     tenant: string
 }) {
-    const fullUrl = `${baseUrl}/${encodeURIComponent(tenant)}/${billingId}`;
     const headers = {
         'Authorization': `Bearer ${jwt}`
     };
 
     try {
-        const res = await fetch(fullUrl, {
+        const res = await fetch(composeUrl(baseUrl, tenant, billingId), {
             method: 'GET',
             headers
         });
@@ -72,20 +90,24 @@ export async function sendCountRequest({ baseUrl, billingId, jwt, tenant }: {
 }
 
 /**
- * Returns the stored billing id.
+ * Returns the stored billing id if available. Generates a new otherwise.
  *
  * @returns {string}
  */
 export function getBillingId() {
-    return jitsiLocalStorage.getItem(BILLING_ID);
-}
+    let billingId;
 
-/**
- * Stores the billing id.
- *
- * @param {string} value - The id to be stored.
- * @returns {void}
- */
-export function setBillingId(value: string) {
-    jitsiLocalStorage.setItem(BILLING_ID, value);
+    try {
+        billingId = jitsiLocalStorage.getItem(BILLING_ID);
+
+        if (!billingId) {
+            billingId = uuid.v4();
+            jitsiLocalStorage.setItem(BILLING_ID, billingId);
+        }
+    } catch (err) {
+        billingId = '';
+        logger.error('Could not read from local storage', err);
+    }
+
+    return billingId;
 }
