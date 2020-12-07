@@ -69,6 +69,11 @@ type Props = {
     _locationUrl: Object,
 
     /**
+     * Whether or not QRCode should be visible.
+     */
+    _qrCodeVisible: boolean,
+
+    /**
      * Invoked to obtain translated strings.
      */
     t: Function,
@@ -93,6 +98,7 @@ function AddPeopleDialog({
     _liveStreamViewURL,
     _localParticipantName,
     _locationUrl,
+    _qrCodeVisible,
     t,
     updateNumbers }: Props) {
     const [ phoneNumber, setPhoneNumber ] = useState(undefined);
@@ -157,7 +163,7 @@ function AddPeopleDialog({
             <div className = 'invite-more-dialog'>
                 { _inviteContactsVisible && <InviteContactsSection /> }
                 <CopyMeetingLinkSection url = { _inviteUrl } />
-                <QrCodeSection url = { _inviteUrl } />
+                { _qrCodeVisible && <QrCodeSection url = { _inviteUrl } /> }
                 <InviteByEmailSection
                     inviteSubject = { inviteSubject }
                     inviteText = { invite } />
@@ -196,6 +202,7 @@ function mapStateToProps(state) {
     const addPeopleEnabled = isAddPeopleEnabled(state);
     const dialOutEnabled = isDialOutEnabled(state);
     const hideInviteContacts = iAmRecorder || (!addPeopleEnabled && !dialOutEnabled);
+    const hideQrCode = interfaceConfig.HIDE_INVITE_QRCODE || false;
 
     return {
         _conferenceName: getRoomName(state),
@@ -207,7 +214,8 @@ function mapStateToProps(state) {
             currentLiveStreamingSession
                 && currentLiveStreamingSession.liveStreamViewURL,
         _localParticipantName: localParticipant?.name,
-        _locationUrl: state['features/base/connection'].locationURL
+        _locationUrl: state['features/base/connection'].locationURL,
+        _qrCodeVisible: !hideQrCode
     };
 }
 
