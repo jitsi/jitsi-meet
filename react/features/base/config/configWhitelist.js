@@ -114,6 +114,7 @@ export default [
     'fileRecordingsEnabled',
     'firefox_fake_device',
     'forceJVB121Ratio',
+    'forceTurnRelay',
     'gatherStats',
     'googleApiApplicationClientID',
     'hideConferenceTimer',

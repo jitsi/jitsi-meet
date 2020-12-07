@@ -670,6 +670,7 @@ var config = {
      disableNS
      enableTalkWhileMuted
      forceJVB121Ratio
+     forceTurnRelay
      hiddenDomain
      ignoreStartMuted
      */
