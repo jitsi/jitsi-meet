@@ -3,13 +3,20 @@
 import { Component } from 'react';
 import type { Dispatch } from 'redux';
 
+import { isMobileBrowser } from '../../base/environment/utils';
 import { getLocalParticipant } from '../../base/participants';
 import { sendMessage, toggleChat } from '../actions';
+import { DESKTOP_SMALL_WIDTH_THRESHOLD, MOBILE_SMALL_WIDTH_THRESHOLD } from '../constants';
 
 /**
  * The type of the React {@code Component} props of {@code AbstractChat}.
  */
 export type Props = {
+
+    /**
+     * Whether the chat is opened in a modal or not (computed based on window width).
+     */
+    _isModal: boolean,
 
     /**
      * True if the chat window should be rendered.
@@ -106,6 +113,9 @@ export function _mapStateToProps(state: Object) {
     const _localParticipant = getLocalParticipant(state);
 
     return {
+        _isModal: isMobileBrowser()
+            ? window.innerWidth <= MOBILE_SMALL_WIDTH_THRESHOLD
+            : window.innerWidth <= DESKTOP_SMALL_WIDTH_THRESHOLD,
         _isOpen: isOpen,
         _messages: messages,
         _showNamePrompt: !_localParticipant.name
