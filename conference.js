@@ -596,6 +596,42 @@ export default {
     },
 
     /**
+     * Displays error notifications according to the state carried by {@code errors} object returned
+     * by {@link createInitialLocalTracks}.
+     * @param {Object} errors - the errors (if any) returned by {@link createInitialLocalTracks}.
+     *
+     * @returns {void}
+     * @private
+     */
+    _displayErrorsForCreateInitialLocalTracks(errors) {
+        const {
+            audioAndVideoError,
+            audioOnlyError,
+            screenSharingError,
+            videoOnlyError
+        } = errors;
+
+        // FIXME If there will be microphone error it will cover any screensharing dialog, but it's still better than in
+        // the reverse order where the screensharing dialog will sometimes be closing the microphone alert
+        // ($.prompt.close(); is called). Need to figure out dialogs chaining to fix that.
+        if (screenSharingError) {
+            this._handleScreenSharingError(screenSharingError);
+        }
+        if (audioAndVideoError || audioOnlyError) {
+            if (audioOnlyError || videoOnlyError) {
+                // If both requests for 'audio' + 'video' and 'audio' only failed, we assume that there are some
+                // problems with user's microphone and show corresponding dialog.
+                APP.store.dispatch(notifyMicError(audioOnlyError));
+                APP.store.dispatch(notifyCameraError(videoOnlyError));
+            } else {
+                // If request for 'audio' + 'video' failed, but request for 'audio' only was OK, we assume that we had
+                // problems with camera and show corresponding dialog.
+                APP.store.dispatch(notifyCameraError(audioAndVideoError));
+            }
+        }
+    },
+
+    /**
      * Creates local media tracks and connects to a room. Will show error
      * dialogs in case accessing the local microphone and/or camera failed. Will
      * show guidance overlay for users on how to give access to camera and/or
@@ -615,38 +651,11 @@ export default {
      */
     createInitialLocalTracksAndConnect(roomName, options = {}) {
         const { tryCreateLocalTracks, errors } = this.createInitialLocalTracks(options);
-        const {
-            audioAndVideoError,
-            audioOnlyError,
-            screenSharingError,
-            videoOnlyError
-        } = errors;
 
         return Promise.all([ tryCreateLocalTracks, connect(roomName) ])
             .then(([ tracks, con ]) => {
-                // FIXME If there will be microphone error it will cover any
-                // screensharing dialog, but it's still better than in
-                // the reverse order where the screensharing dialog will
-                // sometimes be closing the microphone alert ($.prompt.close();
-                // is called). Need to figure out dialogs chaining to fix that.
-                if (screenSharingError) {
-                    this._handleScreenSharingError(screenSharingError);
-                }
-                if (audioAndVideoError || audioOnlyError) {
-                    if (audioOnlyError || videoOnlyError) {
-                        // If both requests for 'audio' + 'video' and 'audio'
-                        // only failed, we assume that there are some problems
-                        // with user's microphone and show corresponding dialog.
-                        APP.store.dispatch(notifyMicError(audioOnlyError));
-                        APP.store.dispatch(notifyCameraError(videoOnlyError));
-                    } else {
-                        // If request for 'audio' + 'video' failed, but request
-                        // for 'audio' only was OK, we assume that we had
-                        // problems with camera and show corresponding dialog.
-                        APP.store.dispatch(
-                            notifyCameraError(audioAndVideoError));
-                    }
-                }
+
+                this._displayErrorsForCreateInitialLocalTracks(errors);
 
                 return [ tracks, con ];
             });
@@ -755,7 +764,15 @@ export default {
             // they may remain as empty strings.
             this._initDeviceList(true);
 
-            return APP.store.dispatch(initPrejoin(tracks, errors));
+            if (isPrejoinPageVisible(APP.store.getState())) {
+                return APP.store.dispatch(initPrejoin(tracks, errors));
+            }
+
+            logger.debug('Prejoin screen no longer displayed at the time when tracks were created');
+
+            this._displayErrorsForCreateInitialLocalTracks(errors);
+
+            return this._setLocalAudioVideoStreams(tracks);
         }
 
         const [ tracks, con ] = await this.createInitialLocalTracksAndConnect(
