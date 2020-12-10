@@ -301,6 +301,7 @@
         "tokenAuthFailedTitle": "Uwierzytelnianie nie powiodło się",
         "transcribing": "Transkrypcja",
         "unlockRoom": "Usuń spotkanie $t(lockRoomPassword)",
+        "user": "",
         "userPassword": "hasło użytkownika",
         "WaitForHostMsg": "Spotkanie <b>{{room}}</b> jeszcze się nie rozpoczęło. Jeśli jesteś gospodarzem, prosimy o uwierzytelnienie. Jeśli nie, prosimy czekać na przybycie gospodarza.",
         "WaitForHostMsgWOk": "Spotkanie <b>{{room}}</b> jeszcze się nie rozoczęło. Jeśli jesteś jej gospodarzem, wybierz Ok, aby się uwierzytelnić. Jeśli nie, prosimy czekać na przybycie gospodarza.",

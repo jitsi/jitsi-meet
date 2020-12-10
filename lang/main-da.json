@@ -277,6 +277,7 @@
         "tokenAuthFailedTitle": "Log ind fejlede",
         "transcribing": "Transcribering",
         "unlockRoom": "Fjern møde adgangskode",
+        "user": "",
         "userPassword": "bruger adgangskode",
         "WaitForHostMsg": "Mødet <b>{{room}}</b> er ikke startet endnu. Hvis du er hosten log venligst ind, ellers vent på at hosten kommer.",
         "WaitForHostMsgWOk": "Mødet <b>{{room}}</b> er ikke startet endnu. Hvis du er hosten tryk venligst på OK for at logge ind, ellers vent på at hosten kommer.",

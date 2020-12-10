@@ -276,6 +276,7 @@
         "tokenAuthFailedTitle": "L'autenticació ha fallat",
         "transcribing": "Transcripció",
         "unlockRoom": "Suprimeix la $t(lockRoomPassword) de la reunió",
+        "user": "",
         "userPassword": "contrasenya d'usuari",
         "WaitForHostMsg": "La conferència <b>{{room}}</b> encara no ha començat. Si en sou l'amfitrió autentiqueu-vos. Altrament, espereu que arribi l'amfitrió.",
         "WaitForHostMsgWOk": "La conferència <b>{{room}}</b> encara no ha començat. Si sou l'amfitrió aleshores pitgeu «D'acord» per a autenticar-vos. Altrament, espereu que arribi l'amfitrió.",

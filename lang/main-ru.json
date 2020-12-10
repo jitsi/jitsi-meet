@@ -325,6 +325,7 @@
         "tokenAuthFailedTitle": "Ошибка аутентификации",
         "transcribing": "Расшифровка",
         "unlockRoom": "Убрать $t(lockRoomPassword)",
+        "user": "",
         "userPassword": "пароль пользователя",
         "yourEntireScreen": "Весь экран"
     },

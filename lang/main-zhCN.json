@@ -261,6 +261,7 @@
         "tokenAuthFailedTitle": "认证失败",
         "transcribing": "转录中",
         "unlockRoom": "",
+        "user": "",
         "userPassword": "用户密码",
         "WaitForHostMsg": "会议<b>{{room}}</b>尚未开始。如果您是主持人，请进行身份验证。否则，请等待主持人的到来。",
         "WaitForHostMsgWOk": "会议<b>{{room}}</b>尚未开始。如果您是主持人，请进行身份验证。否则，请等待主持人的到来。",

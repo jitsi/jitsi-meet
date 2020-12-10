@@ -266,6 +266,7 @@
         "tokenAuthFailedTitle": "認證失敗",
         "transcribing": "轉錄中",
         "unlockRoom": "移除會議 $t(lockRoomPassword)",
+        "user": "",
         "userPassword": "用戶密碼",
         "WaitForHostMsg": "此會議 <b>{{room}}</b> 尚未啟動。如果您是會議主人，請進行認證；否者，請等待會議主人到達。",
         "WaitForHostMsgWOk": "此會議 <b>{{room}}</b> 尚未啟動。如果您是會議主人，請按 [確定] 進行認證；否者，請等待會議主人到達。",

@@ -251,6 +251,7 @@
         "tokenAuthFailedTitle": "Todennus epäonnistui",
         "transcribing": "Puhtaaksikirjoitus",
         "unlockRoom": "",
+        "user": "",
         "userPassword": "käyttäjän salasana",
         "WaitForHostMsg": "Kokous <b>{{room}}</b> ei ole vielä alkanut. Jos olet vetäjä, todenna henkilöllisyytesi. Muussa tapauksessa odota vetäjän saapumista.",
         "WaitForHostMsgWOk": "Kokous <b>{{room}}</b> ei ole vielä alkanut. Jos olet vetäjä, todenna henkilöllisyytesi OK-painikkeella. Muussa tapauksessa odota vetäjän saapumista.",

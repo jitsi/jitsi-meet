@@ -300,6 +300,7 @@
         "tokenAuthFailedTitle": "認証に失敗しました",
         "transcribing": "文字起こし",
         "unlockRoom": "ミーティング $t(lockRoomPassword) を削除",
+        "user": "",
         "userPassword": "ユーザーのパスワード",
         "WaitForHostMsg": "ミーティング <b>{{room}}</b> はまだ開始されていません。あなたがホストの場合は、認証を行ってください。それ以外の場合は、ホストの到着をお待ちください。",
         "WaitForHostMsgWOk": "ミーティング <b>{{room}}</b> はまだ開始されていません。あなたがホストの場合は、OKを押して認証を行ってください。それ以外の場合は、ホストの到着をお待ちください。",

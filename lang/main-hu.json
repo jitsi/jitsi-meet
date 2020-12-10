@@ -266,6 +266,7 @@
         "tokenAuthFailedTitle": "Hitelesítés meghiúsult",
         "transcribing": "Átirat készítése",
         "unlockRoom": "Értekezlet $t(lockRoomPassword) eltávolítása",
+        "user": "",
         "userPassword": "felhasználói jelszó",
         "WaitForHostMsg": "A <b>{{room}}</b> konferencia még nem kezdődött meg. Ha Ön a házigazda, akkor hitelesítse magát. Ellenkező esetben, kérjük várjon a házigazda érkezésére.",
         "WaitForHostMsgWOk": "A <b>{{room}}</b> konferencia még nem kezdődött meg. Ha Ön a házigazda, kérjük az „OK” gombra kattintva hitelesítse magát. Ellenkező esetben, kérjük várjon a házigazda érkezésére.",

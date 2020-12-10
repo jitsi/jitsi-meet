@@ -251,6 +251,7 @@
         "tokenAuthFailedTitle": "Xác thực thất bại",
         "transcribing": "Đang phiên âm",
         "unlockRoom": "",
+        "user": "",
         "userPassword": "mật khẩu người dùng",
         "WaitForHostMsg": "Cuộc họp <b>{{room}}</b> chưa được khởi tạo. Nếu bạn là chủ nghị vui lòng xác thực. Nếu không, vui lòng đợi chủ nghị.",
         "WaitForHostMsgWOk": "Cuộc họp <b>{{room}}</b> chưa được khởi tạo. Nếu bạn là chủ nghị vui lòng nhấn OK để xác thực. Nếu không, vui lòng đợi chủ nghị.",

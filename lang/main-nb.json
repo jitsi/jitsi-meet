@@ -243,6 +243,7 @@
         "tokenAuthFailedTitle": "",
         "transcribing": "",
         "unlockRoom": "",
+        "user": "",
         "userPassword": "brukerpassord",
         "WaitForHostMsg": "",
         "WaitForHostMsgWOk": "",

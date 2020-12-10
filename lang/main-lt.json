@@ -276,6 +276,7 @@
         "tokenAuthFailedTitle": "Autentifikavimas neįvyko",
         "transcribing": "Perrašymas",
         "unlockRoom": "Pašalinti susitikimą $t(lockRoomPassword)",
+        "user": "",
         "userPassword": "naudotojo slaptažodis",
         "WaitForHostMsg": "Konferencija <b>{{room}}</b> dar neprasidėjo. Jei jūs organizatorius, prašome tai patvirtinti. Jei ne, prašome palaukti organizatoriaus.",
         "WaitForHostMsgWOk": "Konferencija <b>{{room}}</b> dar neprasidėjo. Jei jūs organizatorius, prašome tai patvirtinti. Jei ne, prašome palaukti organizatoriaus.",

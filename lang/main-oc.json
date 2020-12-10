@@ -290,6 +290,7 @@
         "tokenAuthFailedTitle": "Fracàs de l'autentificacion",
         "transcribing": "Transcripcion",
         "unlockRoom": "Suprimir lo $t(lockRoomPassword) de la conferéncia",
+        "user": "utilizaire",
         "userPassword": "senhal utilizaire",
         "WaitForHostMsg": "La conferéncia <b>{{room}}</b> a pas encara començat. Se sètz l’òst volgatz ben vos identificar. Autrament esperatz qu’arribe l’òste.",
         "WaitForHostMsgWOk": "La conferéncia <b>{{room}}</b> a pas encara començat. Se sètz l’òst volgatz ben clicar Ok per vos identificar. Autrament esperatz qu’arribe l’òste.",

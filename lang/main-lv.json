@@ -271,6 +271,7 @@
         "tokenAuthFailedTitle": "Autentifikācijas kļūme",
         "transcribing": "Notiek transkripcija/pārrakstīšana",
         "unlockRoom": "Noņemt $t(lockRoomPassword)",
+        "user": "",
         "userPassword": "lietotāja parole",
         "WaitForHostMsg": "Sapulce <b>{{room}}</b> vēl nav sākusies. Ja esat sapulces rīkotājs, lūdzu autorizējaties. Ja nē, sagaidiet rīkotāju.",
         "WaitForHostMsgWOk": "Sapulce <b>{{room}}</b> vēl nav sākusies. Ja esat sapulces rīkotājs, lūdzu nospiediet |Ok|, lai autentificētos. Ja nē, sagaidiet rīkotāju.",

@@ -256,6 +256,7 @@
         "tokenAuthFailedTitle": "Autentikacija nije uspjela",
         "transcribing": "",
         "unlockRoom": "",
+        "user": "",
         "userPassword": "korisnička lozinka",
         "WaitForHostMsg": "",
         "WaitForHostMsgWOk": "",

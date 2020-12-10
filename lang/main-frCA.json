@@ -261,6 +261,7 @@
         "tokenAuthFailedTitle": "Échec de l'authentification",
         "transcribing": "Transcription en cours",
         "unlockRoom": "Supprimer le mot de passe de la réunion",
+        "user": "utilisateur",
         "userPassword": "mot de passe d'utilisateur",
         "WaitForHostMsg": "La conférence <b>{{room}}</b> n'a pas encore démarré. Si vous êtes l'hôte, veuillez vous authentifier. Sinon, veuillez attendre que l'hôte arrive.",
         "WaitForHostMsgWOk": "La conférence <b>{{room}}</b> n'a pas encore démarré. Si vous êtes l'hôte, veuillez appuyer sur OK pour vous authentifier. Sinon, veuillez attendre que l'hôte arrive.",

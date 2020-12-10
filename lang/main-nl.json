@@ -298,6 +298,7 @@
         "tokenAuthFailedTitle": "Authenticering mislukt",
         "transcribing": "Transcriberen",
         "unlockRoom": "$t(lockRoomPasswordUppercase) voor vergadering verwijderen",
+        "user": "",
         "userPassword": "gebruikerswachtwoord",
         "WaitForHostMsg": "De vergadering <b>{{room}}</b> is nog niet gestart. Authenticeer uzelf als u de host bent. Anders wacht u tot de host aanwezig is.",
         "WaitForHostMsgWOk": "De vergadering <b>{{room}}</b> is nog niet gestart. Als u de host bent, drukt u op 'OK' om uzelf te authenticeren. Anders wacht u tot de host aanwezig is.",

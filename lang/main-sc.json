@@ -276,6 +276,7 @@
         "tokenAuthFailedTitle": "Faddina in s'autenticatzione",
         "transcribing": "Trascritzione",
         "unlockRoom": "Boga riunione $t(lockRoomPassword)",
+        "user": "",
         "userPassword": "crae de utente",
         "WaitForHostMsg": "Sa cunferèntzia <b>{{room}}</b> no est cumintzada. Si ses mere de custa cunferèntzia, autèntica·ti. Si nono, iseta chi arribet.",
         "WaitForHostMsgWOk": "Sa cunferèntzia <b>{{room}}</b> no est cumintzada. Si ses mere, incarca AB pro ti autenticare. Si nono, iseta chi arribet.",

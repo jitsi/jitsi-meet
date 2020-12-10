@@ -319,6 +319,7 @@ UI.showLoginPopup = function(callback) {
     const message
         = `<input name="username" type="text"
                 placeholder="user@domain.net"
+                data-i18n="[placeholder]dialog.user"
                 class="input-control" autofocus>
          <input name="password" type="password"
                 data-i18n="[placeholder]dialog.userPassword"
