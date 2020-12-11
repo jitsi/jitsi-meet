@@ -9,9 +9,10 @@ import {
     SET_DYNAMIC_BRANDING_FAILED,
     SET_DYNAMIC_BRANDING_READY
 } from './actionTypes';
-import { extractFqnFromPath } from './functions';
+import { getDynamicBrandingUrl } from './functions';
 
 const logger = getLogger(__filename);
+
 
 /**
  * Fetches custom branding data.
@@ -23,15 +24,14 @@ const logger = getLogger(__filename);
 export function fetchCustomBrandingData() {
     return async function(dispatch: Function, getState: Function) {
         const state = getState();
-        const baseUrl = state['features/base/config'].brandingDataUrl;
         const { customizationReady } = state['features/dynamic-branding'];
 
         if (!customizationReady) {
-            const fqn = extractFqnFromPath(state['features/base/connection'].locationURL.pathname);
+            const url = getDynamicBrandingUrl(state);
 
-            if (baseUrl && fqn) {
+            if (url) {
                 try {
-                    const res = await doGetJSON(`${baseUrl}?conferenceFqn=${encodeURIComponent(fqn)}`);
+                    const res = await doGetJSON(url);
 
                     return dispatch(setDynamicBrandingData(res));
                 } catch (err) {
