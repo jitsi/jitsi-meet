@@ -284,7 +284,6 @@
         "tokenAuthFailedTitle": "인증 실패",
         "transcribing": "",
         "unlockRoom": "회의 비밀번호 제거",
-        "user": "",
         "userPassword": "사용자 비밀번호",
         "WaitForHostMsg": "<b>{{room}}</b> 회의가 시작되지 않았습니다. 호스트 인 경우 인증하십시오. 그렇지 않으면 호스트가 도착할 때까지 기다리십시오.",
         "WaitForHostMsgWOk": "<b>{{room}}</b> 회의가 아직 시작되지 않았습니다. 호스트 인 경우 확인을 눌러 인증하십시오. 그렇지 않으면 호스트가 도착할 때까지 기다리십시오.",

@@ -298,7 +298,6 @@
         "tokenAuthFailedTitle": "Error de autenticación",
         "transcribing": "Transcribiendo",
         "unlockRoom": "Quitar la $t(lockRoomPassword) de reunión",
-        "user": "usuario",
         "userPassword": "contraseña del usuario",
         "WaitForHostMsg": "La conferencia <b>{{room}}</b> aún no ha comenzado. Si eres el anfitrión, inicia sesión. De lo contrario, espera a que llegue el anfitrión.",
         "WaitForHostMsgWOk": "La conferencia <b>{{room}}</b> aún no ha comenzado. Si eres el anfitrión, presiona Aceptar para autenticar. De lo contrario, espera a que llegue el anfitrión.",

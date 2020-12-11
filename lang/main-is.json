@@ -277,7 +277,6 @@
         "tokenAuthFailedTitle": "Auðkenning mistókst",
         "transcribing": "Umrita (transcribing)",
         "unlockRoom": "Fjarlægja $t(lockRoomPassword) fundar",
-        "user": "",
         "userPassword": "lykilorð notandans",
         "WaitForHostMsg": "Fjarfundurinn <b>{{room}}</b> er ekki byrjaður. Ef þú ert gestgjafinn skaltu auðkenna þig. Annars ættiðu að bíða eftir að gestgjafinn skrái sig inn.",
         "WaitForHostMsgWOk": "Fjarfundurinn <b>{{room}}</b> er ekki byrjaður. Ef þú ert gestgjafinn skaltu ýta á 'Í lagi' til að auðkenna þig. Annars ættiðu að bíða eftir að gestgjafinn skrái sig inn.",

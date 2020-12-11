@@ -298,7 +298,6 @@
         "tokenAuthFailedTitle": "Échec de l'authentification",
         "transcribing": "Transcription",
         "unlockRoom": "Supprimer le $t(lockRoomPassword) de la réunion",
-        "user": "utilisateur",
         "userPassword": "mot de passe utilisateur",
         "WaitForHostMsg": "La conférence <b>{{room}}</b> n'a pas encore commencé. Si vous en êtes l'hôte, veuillez vous authentifier. Sinon, veuillez attendre son arrivée.",
         "WaitForHostMsgWOk": "La conférence <b>{{room}}</b> n'a pas encore commencé. Si vous en êtes l'hôte, veuillez appuyer sur Ok pour vous authentifier. Sinon, veuillez attendre son arrivée.",

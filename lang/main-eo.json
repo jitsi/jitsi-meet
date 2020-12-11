@@ -281,7 +281,6 @@
         "tokenAuthFailedTitle": "Aŭtentigo malsukcesis",
         "transcribing": "transskribado",
         "unlockRoom": "Forigi la $t(lockRoomPassword)n de la ĉambro",
-        "user": "",
         "userPassword": "uzantopasvorto",
         "WaitForHostMsg": "La kunveno <b>{{room}}</b> ankoraŭ ne komencis. Se vi estas la gastiganto, bonvolu aŭtentiĝi. Alikaze atendu, ĝis la gastiganto venos.",
         "WaitForHostMsgWOk": "La kunveno <b>{{room}}</b> ankoraŭ ne komencis. Se vi estas la gastiganto, bonvolu puŝi “Bone” por aŭtentiĝi. Alikaze atendu, ĝis la gastiganto venos.",

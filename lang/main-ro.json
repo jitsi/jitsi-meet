@@ -264,7 +264,6 @@
         "tokenAuthFailedTitle": "Autentificare eșuată",
         "transcribing": "Copiere",
         "unlockRoom": "Eliminați parola pentru apel video",
-        "user": "utilizator",
         "userPassword": "Parolă utilizator",
         "WaitForHostMsg": "Conferința {{room}} nu a început. Daca sunteți moderatorul conferinței, vă rugăm să vă autentificați. Dacă nu, așteptați ca moderatorul să înceapă conferința.",
         "WaitForHostMsgWOk": "Conferința {{room}} nu a început. Daca sunteți moderatorul, apăsați butonul OK pentru autentificare. Dacă nu, așteptați ca moderatorul să înceapă conferința.",

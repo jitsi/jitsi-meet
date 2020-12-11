@@ -262,7 +262,6 @@
         "tokenAuthFailedTitle": "Autentisering misslyckades",
         "transcribing": "Transkriberar",
         "unlockRoom": "Ta bort möte $t(lockRoomPassword)",
-        "user": "",
         "userPassword": "användarlösenord",
         "WaitForHostMsg": "Konferensen <b>{{room}}</b> har inte börjat än. Autentisera konferensen om du är värd. Vänta annars på att värden startar konferensen.",
         "WaitForHostMsgWOk": "Konferensen <b>{{room}}</b> har inte börjat än. Om du är värd, autentisera konferensen genom att trycka på Ok. Vänta annars på att värden startar konferensen.",

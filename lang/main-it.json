@@ -300,7 +300,6 @@
         "tokenAuthFailedTitle": "Autenticazione fallita",
         "transcribing": "Trascrizione",
         "unlockRoom": "Togli la password al meeting",
-        "user": "utente",
         "userPassword": "password utente",
         "WaitForHostMsg": "La conferenza <b>{{room}}</b> non è ancora cominciata. Se sei l'organizzatore, per favore autenticati. Altrimenti, aspetta l'arrivo dell'organizzatore.",
         "WaitForHostMsgWOk": "La conferenza <b>{{room}}</b> non è ancora cominciata. Se sei l'organizzatore, allora premi OK per autenticarti. Altrimenti, aspetta l'arrivo dell'organizzatore.",

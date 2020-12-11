@@ -277,7 +277,6 @@
         "tokenAuthFailedTitle": "Ověření selhalo",
         "transcribing": "",
         "unlockRoom": "Odstranit videohovor $t(lockRoomPassword)",
-        "user": "",
         "userPassword": "uživatelské heslo",
         "WaitForHostMsg": "",
         "WaitForHostMsgWOk": "",

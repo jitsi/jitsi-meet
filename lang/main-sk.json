@@ -300,7 +300,6 @@
         "tokenAuthFailedTitle": "Overenie zlyhalo",
         "transcribing": "",
         "unlockRoom": "Odstrániť $t(lockRoomPassword)",
-        "user": "",
         "userPassword": "heslo",
         "WaitForHostMsg": "Konferencia <b>{{room}}</b> sa ešte nezačala. Autorizujte sa prosím ak ste hostiteľ. V opačnom prípade čakajte na hostiteľa.",
         "WaitForHostMsgWOk": "Konferencia <b>{{room}}</b> sa ešte nezačala. Ak ste hostiteľ autorizujte sa stlačením Ok. V opačnom prípade čakajte na hostiteľa.",

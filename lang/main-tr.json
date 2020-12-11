@@ -288,7 +288,6 @@
         "tokenAuthFailedTitle": "Kimlik doğrulama başarısız",
         "transcribing": "Deşifre ediliyor",
         "unlockRoom": "Toplantı parolasını kaldır",
-        "user": "",
         "userPassword": "Kullancı parolası",
         "WaitForHostMsg": "<b>{{room}}</b> toplantısı henüz başlamadı. Toplantı sahibi sizseniz, lütfen kimlik doğrulaması yapın. Değilseniz lütfen toplantı sahibinin gelmesini bekleyin.",
         "WaitForHostMsgWOk": "<b>{{room}}</b> toplantısı henüz başlamadı. Toplantı sahibi sizseniz, kimlik doğrulaması için Tamam butonuna basın. Değilseniz lütfen toplantı sahibinin gelmesini bekleyin.",
