@@ -616,7 +616,7 @@ var config = {
          logoImageUrl: 'https://example.com/logo-img.png'
      }
     */
-    // brandingDataUrl: '',
+    // dynamicBrandingUrl: '',
 
     // The URL of the moderated rooms microservice, if available. If it
     // is present, a link to the service will be rendered on the welcome page,
