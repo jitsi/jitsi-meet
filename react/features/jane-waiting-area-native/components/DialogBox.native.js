@@ -40,7 +40,7 @@ const getWebViewUrl = locationURL => {
     return uri;
 };
 
-const SocketWebView = ({ locationURL, onMessageUpdate, setWebViewError }) => {
+const SocketWebView = ({ locationURL, onMessageUpdate, onError }) => {
     const injectedJavascript = `(function() {
           window.postMessage = function(data) {
             window.ReactNativeWebView.postMessage(data);
@@ -54,8 +54,7 @@ const SocketWebView = ({ locationURL, onMessageUpdate, setWebViewError }) => {
         }}>
         <WebView
             onError = { e => {
-                console.log(e, 'webview error');
-                setWebViewError(true);
+                onError(e);
             } }
             injectedJavaScript = { injectedJavascript }
             onMessage = { onMessageUpdate }
@@ -72,10 +71,9 @@ class DialogBox extends Component<Props, State> {
         this._return = this._return.bind(this);
     }
 
-    _setWebViewError(error) {
-        const { startConference } = this.props;
-
-        startConference();
+    _webviewOnError(error) {
+        console.log(error, 'webview error');
+        this._joinConference();
     }
 
     _joinConference() {
@@ -255,7 +253,7 @@ class DialogBox extends Component<Props, State> {
             </View>
             <SocketWebView
                 locationURL = { locationURL }
-                setWebViewError = { this._setWebViewError.bind(this) }
+                onError = { this._webviewOnError.bind(this) }
                 onMessageUpdate = { this.onMessageUpdate.bind(this) } />
         </View>);
 

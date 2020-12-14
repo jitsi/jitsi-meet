@@ -69,8 +69,10 @@ class HangupButton extends AbstractHangupButton<Props, *> {
 }
 
 function mapStateToProps (state): Object {
+    const { jwt } = state['features/base/jwt'];
+
     return {
-        jwt: state['features/base/jwt']
+        jwt
     };
 }
 
