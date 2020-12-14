@@ -331,23 +331,20 @@ export default class RemoteVideo extends SmallVideo {
     }
 
     /**
-     * The remote video is considered "playable" once the can play event has been received. It will be allowed to
-     * display video also in {@link JitsiParticipantConnectionStatus.INTERRUPTED} if the video has received the canplay
-     * event and was not muted while not in ACTIVE state. This basically means that there is stalled video image cached
-     * that could be displayed. It's used to show "grey video image" in user's thumbnail when there are connectivity
-     * issues.
+     * The remote video is considered "playable" once the can play event has been received.
      *
      * @inheritdoc
      * @override
      */
     isVideoPlayable() {
         const participant = getParticipantById(APP.store.getState(), this.id);
-        const { connectionStatus, mutedWhileDisconnected } = participant || {};
+        const { connectionStatus } = participant || {};
 
-        return super.isVideoPlayable()
-            && this._canPlayEventReceived
-            && (connectionStatus === JitsiParticipantConnectionStatus.ACTIVE
-                || (connectionStatus === JitsiParticipantConnectionStatus.INTERRUPTED && !mutedWhileDisconnected));
+        return (
+            super.isVideoPlayable()
+                && this._canPlayEventReceived
+                && connectionStatus === JitsiParticipantConnectionStatus.ACTIVE
+        );
     }
 
     /**
@@ -373,6 +370,8 @@ export default class RemoteVideo extends SmallVideo {
      * @param {*} stream
      */
     waitForPlayback(streamElement, stream) {
+        $(streamElement).hide();
+
         const webRtcStream = stream.getOriginalStream();
         const isVideo = stream.isVideoTrack();
 
@@ -382,7 +381,12 @@ export default class RemoteVideo extends SmallVideo {
 
         const listener = () => {
             this._canPlayEventReceived = true;
-            this.VideoLayout.remoteVideoActive(streamElement, this.id);
+
+            logger.info(`${this.id} video is now active`, streamElement);
+            if (streamElement) {
+                $(streamElement).show();
+            }
+
             streamElement.removeEventListener('canplay', listener);
 
             // Refresh to show the video
@@ -421,8 +425,6 @@ export default class RemoteVideo extends SmallVideo {
 
         // Put new stream element always in front
         streamElement = UIUtils.prependChild(this.container, streamElement);
-
-        $(streamElement).hide();
 
         this.waitForPlayback(streamElement, stream);
         stream.attach(streamElement);
