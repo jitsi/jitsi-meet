@@ -221,7 +221,6 @@ function _participantJoined({ participant }) {
         isJigasi,
         loadableAvatarUrl,
         local: local || false,
-        mutedWhileDisconnected: local ? undefined : false,
         name,
         pinned: pinned || false,
         presence,

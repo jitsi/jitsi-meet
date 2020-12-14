@@ -6,7 +6,7 @@ import type { Store } from 'redux';
 import { JitsiParticipantConnectionStatus } from '../lib-jitsi-meet';
 import { MEDIA_TYPE, shouldRenderVideoTrack } from '../media';
 import { toState } from '../redux';
-import { getTrackByMediaTypeAndParticipant, isRemoteTrackMuted } from '../tracks';
+import { getTrackByMediaTypeAndParticipant } from '../tracks';
 import { createDeferred } from '../util';
 
 import {
@@ -368,45 +368,6 @@ export function shouldRenderParticipantVideo(stateful: Object | Function, id: st
 
     return participantIsInLargeVideoWithScreen;
 }
-
-/**
- * Figures out the value of mutedWhileDisconnected status by taking into
- * account remote participant's network connectivity and video muted status.
- * The flag is set to <tt>true</tt> if remote participant's video gets muted
- * during his media connection disruption. This is to prevent black video
- * being render on the thumbnail, because even though once the video has
- * been played the image usually remains on the video element it seems that
- * after longer period of the video element being hidden this image can be
- * lost.
- *
- * @param {Object|Function} stateful - Object or function that can be resolved
- * to the Redux state.
- * @param {string} participantID - The ID of the participant.
- * @param {string} [connectionStatus] - A connection status to be used.
- * @returns {boolean} - The mutedWhileDisconnected value.
- */
-export function figureOutMutedWhileDisconnectedStatus(
-        stateful: Function | Object, participantID: string, connectionStatus: ?string) {
-    const state = toState(stateful);
-    const participant = getParticipantById(state, participantID);
-
-    if (!participant || participant.local) {
-        return undefined;
-    }
-
-    const isActive = (connectionStatus || participant.connectionStatus) === JitsiParticipantConnectionStatus.ACTIVE;
-    const isVideoMuted = isRemoteTrackMuted(state['features/base/tracks'], MEDIA_TYPE.VIDEO, participantID);
-    let mutedWhileDisconnected = participant.mutedWhileDisconnected || false;
-
-    if (!isActive && isVideoMuted) {
-        mutedWhileDisconnected = true;
-    } else if (isActive && !isVideoMuted) {
-        mutedWhileDisconnected = false;
-    }
-
-    return mutedWhileDisconnected;
-}
-
 
 /**
  * Resolves the first loadable avatar URL for a participant.

@@ -233,14 +233,6 @@ export class VideoContainer extends LargeContainer {
 
         this.$remotePresenceMessage = $('#remotePresenceMessage');
 
-        /**
-         * Indicates whether or not the video stream attached to the video
-         * element has started(which means that there is any image rendered
-         * even if the video is stalled).
-         * @type {boolean}
-         */
-        this.wasVideoRendered = false;
-
         this.$wrapper = $('#largeVideoWrapper');
 
         /**
@@ -249,17 +241,12 @@ export class VideoContainer extends LargeContainer {
          * video anyway.
          */
         this.$wrapperParent = this.$wrapper.parent();
-
         this.avatarHeight = $('#dominantSpeakerAvatarContainer').height();
-
-        const onPlayingCallback = function(event) {
+        this.$video[0].onplaying = function(event) {
             if (typeof resizeContainer === 'function') {
                 resizeContainer(event);
             }
-            this.wasVideoRendered = true;
-        }.bind(this);
-
-        this.$video[0].onplaying = onPlayingCallback;
+        };
 
         /**
          * A Set of functions to invoke when the video element resizes.
@@ -490,10 +477,6 @@ export class VideoContainer extends LargeContainer {
 
             return;
         }
-
-        // The stream has changed, so the image will be lost on detach
-        this.wasVideoRendered = false;
-
 
         // detach old stream
         if (this.stream) {
