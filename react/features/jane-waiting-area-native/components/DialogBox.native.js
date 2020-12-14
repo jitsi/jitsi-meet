@@ -1,25 +1,29 @@
 // @flow
 
-import React, { Component } from 'react';
-import { Image, Linking, Text, View } from 'react-native';
-import { connect } from '../../base/redux';
-import {
-    checkLocalParticipantCanJoin,
-    getLocalParticipantFromJwt, getLocalParticipantType,
-    updateParticipantReadyStatus
-} from '../functions';
 import jwtDecode from 'jwt-decode';
 import moment from 'moment';
+import React, { Component } from 'react';
+import { Image, Linking, Text, View } from 'react-native';
+import { WebView } from 'react-native-webview';
+
+import { connect as startConference } from '../../base/connection';
+import { getLocalizedDateFormatter, jsCoreDateCreator } from '../../base/i18n';
+import { connect } from '../../base/redux';
 import {
     enableJaneWaitingAreaPage,
     setJaneWaitingAreaAuthState,
     updateRemoteParticipantsStatuses
 } from '../actions';
-import { getLocalizedDateFormatter, jsCoreDateCreator } from '../../base/i18n';
-import { connect as startConference } from '../../base/connection';
-import styles from './styles';
+import {
+    checkLocalParticipantCanJoin,
+    getLocalParticipantFromJwt, getLocalParticipantType,
+    updateParticipantReadyStatus
+} from '../functions';
+
+
 import { ActionButton } from './ActionButton.native';
-import { WebView } from 'react-native-webview';
+import styles from './styles';
+
 
 type DialogTitleProps = {
     t: Function,
@@ -40,7 +44,7 @@ const getWebViewUrl = locationURL => {
     return uri;
 };
 
-const SocketWebView = ({ locationURL, onMessageUpdate, setWebViewError }) => {
+const SocketWebView = ({ locationURL, onMessageUpdate, onError }) => {
     const injectedJavascript = `(function() {
           window.postMessage = function(data) {
             window.ReactNativeWebView.postMessage(data);
@@ -53,9 +57,9 @@ const SocketWebView = ({ locationURL, onMessageUpdate, setWebViewError }) => {
             width: 0
         }}>
         <WebView
+            {/* eslint-disable-next-line react/jsx-no-bind */}
             onError = { e => {
-                console.log(e, 'webview error');
-                setWebViewError(true);
+                onError(e);
             } }
             injectedJavaScript = { injectedJavascript }
             onMessage = { onMessageUpdate }
@@ -72,10 +76,9 @@ class DialogBox extends Component<Props, State> {
         this._return = this._return.bind(this);
     }
 
-    _setWebViewError(error) {
-        const { startConference } = this.props;
-
-        startConference();
+    _webviewOnError(error) {
+        console.log(error, 'webview error');
+        this._joinConference();
     }
 
     _joinConference() {
@@ -164,9 +167,10 @@ class DialogBox extends Component<Props, State> {
     }
 
     onMessageUpdate(event) {
-        const {  updateRemoteParticipantsStatuses, setJaneWaitingAreaAuthState } = this.props;
+        const { updateRemoteParticipantsStatuses, setJaneWaitingAreaAuthState } = this.props;
         const webViewEvent = this.parseJsonMessage(event.nativeEvent.data);
         const remoteParticipantsStatuses = webViewEvent && webViewEvent.remoteParticipantsStatuses || null;
+
         console.log(webViewEvent, 'incoming web view event');
 
         if (remoteParticipantsStatuses) {
@@ -175,9 +179,9 @@ class DialogBox extends Component<Props, State> {
 
         if (webViewEvent && webViewEvent.error) {
             if (webViewEvent.error.error === 'Signature has expired') {
-                setJaneWaitingAreaAuthState ('failed');
+                setJaneWaitingAreaAuthState('failed');
             } else {
-                this._joinConference ();
+                this._joinConference();
             }
         }
     }
@@ -240,7 +244,7 @@ class DialogBox extends Component<Props, State> {
                 <View style = { styles.actionButtonWrapper }>
                     { authState !== 'failed'
                     && <ActionButton
-                        disabled={ !localParticipantCanJoin }
+                        disabled = { !localParticipantCanJoin }
                         title = { this._getBtnText() }
                         containerStyle = { styles.joinButtonContainer }
                         titleStyle = { styles.joinButtonText }
@@ -255,7 +259,7 @@ class DialogBox extends Component<Props, State> {
             </View>
             <SocketWebView
                 locationURL = { locationURL }
-                setWebViewError = { this._setWebViewError.bind(this) }
+                onError = { this._webviewOnError.bind(this) }
                 onMessageUpdate = { this.onMessageUpdate.bind(this) } />
         </View>);
 
