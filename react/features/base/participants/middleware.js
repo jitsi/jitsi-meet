@@ -71,16 +71,24 @@ MiddlewareRegistry.register(store => next => action => {
         break;
 
     case DOMINANT_SPEAKER_CHANGED: {
-        // Ensure the raised hand state is cleared for the dominant speaker.
+        // Ensure the raised hand state is cleared for the dominant speaker
+        // and only if it was set when this is the local participant
 
         const { conference, id } = action.participant;
         const participant = getLocalParticipant(store.getState());
+        const isLocal = participant && participant.id === id;
+
+        if (isLocal && participant.raisedHand === undefined) {
+            // if local was undefined, let's leave it like that
+            // avoids sending unnecessary presence updates
+            break;
+        }
 
         participant
             && store.dispatch(participantUpdated({
                 conference,
                 id,
-                local: participant.id === id,
+                local: isLocal,
                 raisedHand: false
             }));
 
@@ -369,10 +377,10 @@ function _participantJoinedOrUpdated(store, next, action) {
         if (local) {
             const { conference } = getState()['features/base/conference'];
 
-            conference
-                && conference.setLocalParticipantProperty(
-                    'raisedHand',
-                    raisedHand);
+            // Send raisedHand signalling only if there is a change
+            if (conference && raisedHand !== getLocalParticipant(getState()).raisedHand) {
+                conference.setLocalParticipantProperty('raisedHand', raisedHand);
+            }
         }
     }
 
