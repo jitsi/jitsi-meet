@@ -150,14 +150,15 @@ class WaitingMessage extends Component<Props, State> {
             </Text>;
         }
 
-        return <View style={{ backgroundColor: 'transparent' }}>
+        return <TouchableOpacity style={{ backgroundColor: 'transparent' }}
+                                 activeOpacity={1}>
             {
                 header
             }
             {
                 text
             }
-        </View>;
+        </TouchableOpacity>;
     }
 
     renderCloseBtn() {
