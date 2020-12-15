@@ -295,8 +295,8 @@ PODS:
     - React
   - react-native-webrtc (1.87.1):
     - React-Core
-  - react-native-webview (10.9.0):
-    - React
+  - react-native-webview (11.0.2):
+    - React-Core
   - React-RCTActionSheet (0.61.5-jitsi.2):
     - React-Core/RCTActionSheetHeaders (= 0.61.5-jitsi.2)
   - React-RCTAnimation (0.61.5-jitsi.2):
@@ -563,7 +563,7 @@ SPEC CHECKSUMS:
   react-native-netinfo: 8d8db463bcc5db66a8ac5c48a7d86beb3b92f61a
   react-native-splash-screen: 200d11d188e2e78cea3ad319964f6142b6384865
   react-native-webrtc: 40eca4cac200fda34fb843da07e3402211bbbd10
-  react-native-webview: 6ee7868ca8eba635dbf7963986d1ab7959da0391
+  react-native-webview: b2542d6fd424bcc3e3b2ec5f854f0abb4ec86c87
   React-RCTActionSheet: bcbc311dc3b47bc8efb2737ff0940239a45789a9
   React-RCTAnimation: 65f61080ce632f6dea23d52e354ffac9948396c6
   React-RCTBlob: 70d88f7b68b5c44953cdb286ac2e36a7a509a97e
