@@ -918,13 +918,13 @@
         "knockingParticipantList": "Liste des participants en attente",
         "allow": "Autoriser",
         "backToKnockModeButton": "Aucun mot de passe, demander à rejoindre plutôt",
-        "dialogTitle": "Mode lobby",
-        "disableDialogContent": "Le mode lobby est actuellement activé. Cette fonctionnalité garantit que les participants indésirables ne peuvent pas rejoindre votre réunion. Souhaitez-vous la désactiver ?",
+        "dialogTitle": "Mode salle d'attente",
+        "disableDialogContent": "Le mode salle d'attente est actuellement activé. Cette fonctionnalité garantit que les participants indésirables ne peuvent pas rejoindre votre réunion. Souhaitez-vous la désactiver ?",
         "disableDialogSubmit": "Désactiver",
         "emailField": "Saisissez votre adresse email",
         "enableDialogPasswordField": "Définir le mot de passe (optionnel)",
         "enableDialogSubmit": "Activer",
-        "enableDialogText": "Le mode lobby vous permet de protéger votre réunion en autorisant les personnes à entrer qu'après l'approbation formelle d'un modérateur.",
+        "enableDialogText": "Le mode salle d'attente vous permet de protéger votre réunion en autorisant les personnes à entrer qu'après l'approbation formelle d'un modérateur.",
         "enterPasswordButton": "Saisissez un mot de passe de réunion",
         "enterPasswordTitle": "Saisissez le mot de passe pour rejoindre la réunion",
         "invalidPassword": "Mot de passe invalide",
@@ -945,6 +945,6 @@
         "passwordField": "Saisissez le mot de passe de la réunion",
         "passwordJoinButton": "Rejoindre",
         "reject": "Refuser",
-        "toggleLabel": "Activer le lobby"
+        "toggleLabel": "Activer la salle d'attente"
     }
 }
