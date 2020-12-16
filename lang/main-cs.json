@@ -700,7 +700,7 @@
         "selectMic": "Mikrofon",
         "speakers": "Reproduktory",
         "startAudioMuted": "Při připojení všem ztlumit zvuk",
-        "startVideoMuted": "Všechny připojovat jako skryté",
+        "startVideoMuted": "Při připojení všem vypnout kameru",
         "title": "Nastavení"
     },
     "settingsView": {
