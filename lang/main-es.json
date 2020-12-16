@@ -18,7 +18,7 @@
         "linkCopied": "Link copiado al portapapeles",
         "loading": "Buscando por contacto y número telefónico",
         "loadingNumber": "Validando el número telefónico",
-        "loadingPeople": "Buscando contactos a invitar",        
+        "loadingPeople": "Buscando contactos a invitar",
         "noResults": "No se encontraron coincidencias",
         "noValidNumbers": "Por favor ingrese un número de teléfono",
         "outlookEmail": "Correo de Outlook",
@@ -100,9 +100,11 @@
     },
     "connectionindicator": {
         "address": "Dirección:",
+        "audio_ssrc": "Audio SSRC:",
         "bandwidth": "Ancho de banda estimado:",
         "bitrate": "Tasa de transferencia:",
         "bridgeCount": "Contador del servidor: ",
+        "codecs": "Codecs (A/V):",
         "connectedTo": "Conectado a:",
         "e2e_rtt": "E2E RTT:",
         "framerate": "Fotogramas por segundo:",
@@ -111,8 +113,10 @@
         "localaddress_plural": "Direcciones locales:",
         "localport": "Puerto local:",
         "localport_plural": "Puertos locales:",
+        "maxEnabledResolution": "enviar max",
         "more": "Mostrar más",
         "packetloss": "Pérdida de paquetes:",
+        "participant_id": "ID participante:",
         "quality": {
             "good": "Buena",
             "inactive": "Inactivo",
@@ -124,10 +128,12 @@
         "remoteaddress_plural": "Direcciones remotas:",
         "remoteport": "Puerto remoto:",
         "remoteport_plural": "Puertos remotos:",
+        "savelogs": "Guardar logs",
         "resolution": "Resolución:",
         "status": "Calidad:",
         "transport": "Transporte:",
-        "transport_plural": "Transportes:"
+        "transport_plural": "Transportes:",
+        "video_ssrc": "Video SSRC:"
     },
     "dateUtils": {
         "earlier": "Anterior",
@@ -165,6 +171,7 @@
         "accessibilityLabel": {
             "liveStreaming": "Transmisión en vivo"
         },
+        "add": "Agregar",
         "allow": "Permitir",
         "alreadySharedVideoMsg": "Otro participante ya está compartiendo un vídeo. Esta conferencia sólo permite compartir un vídeo a la vez.",
         "alreadySharedVideoTitle": "Solo se permite un vídeo compartido a la vez",
@@ -189,11 +196,13 @@
         "connectError": "¡Oops! Algo salió mal y no fue posible conectarnos a la conferencia.",
         "connectErrorWithMsg": "¡Oops! Algo salió mal y no fue posible conectarnos a la conferencia: {{msg}}",
         "connecting": "Conectando",
+        "copied": "Copiado",
         "contactSupport": "Contacta al soporte técnico",
         "copy": "Copiar",
         "dismiss": "Descartar",
         "displayNameRequired": "¡Hola! ¿Cuál es tu nombre?",
         "done": "Listo",
+        "e2eeLabel": "Habilitar cifrado Extremo-a-Extremo",
         "e2eeDescription": "El cifrado de extremo a extremo es actualmente EXPERIMENTAL. Tenga en cuenta que activarlo puede deshabilitar servicios como: grabación, transmisión en vivo y participación telefónica. Además, esta reunión solo funcionará con personas que se unan con un navegador.",
         "e2eeWarning": "ADVERTENCIA: No todos los participantes de esta reunión soportan el cifrado de extremo a extremo. Si usted habilita esta opción, ellos no podrán verlo ni oírlo.",
         "enterDisplayName": "Por favor ingresa tu nombre aquí",
@@ -202,6 +211,8 @@
         "externalInstallationTitle": "Extensión requerida",
         "goToStore": "Ir a la tienda web",
         "gracefulShutdown": "Nuestro servicio se encuentra en mantenimiento. Por favor, intente más tarde.",
+        "grantModeratorDialog": "¿Estas seguro de que quieres convertir a este participante en moderator?",
+        "grantModeratorTitle": "Convertir en moderador",
         "IamHost": "Soy el anfitrión",
         "incorrectRoomLockPassword": "Contraseña incorrecta",
         "incorrectPassword": "Nombre de usuario o contraseña incorrecta",
@@ -214,6 +225,7 @@
         "kickParticipantDialog": "¿Seguro que quiere expulsar a este participante?",
         "kickParticipantTitle": "¿Expulsar a este participante?",
         "kickTitle": "¡Ay! {{participantDisplayName}} te expulsó de la reunión",
+        "liveStreamingDisabledBecauseOfActiveRecordingTooltip": "No es posible mientras la grabación este activa",
         "liveStreaming": "Transmisión en vivo",
         "liveStreamingDisabledForGuestTooltip": "Los invitados no pueden iniciar la transmisión en vivo.",
         "liveStreamingDisabledTooltip": "Las trasmisiones están deshabilitadas.",
@@ -247,7 +259,9 @@
         "passwordRequired": "$t(lockRoomPasswordUppercase) necesario",
         "popupError": "Su navegador está bloqueando las ventanas emergentes de este sitio. Habilite las ventanas emergentes en la configuración de seguridad de su navegador y vuelva a intentarlo.",
         "popupErrorTitle": "Ventana emergente bloqueada",
+        "readMore": "mas",
         "recording": "Grabando",
+        "recordingDisabledBecauseOfActiveLiveStreamingTooltip": "No es posible mientras la transmisión en vivo este activa",
         "recordingDisabledForGuestTooltip": "Los invitados no pueden iniciar grabaciones.",
         "recordingDisabledTooltip": "Inicio de grabación desactivado.",
         "rejoinNow": "Reunirse ahora",
@@ -266,6 +280,8 @@
         "reservationErrorMsg": "Código de error: {{code}}, mensaje: {{msg}}",
         "retry": "Reintentar",
         "screenSharingAudio": "Compartir audio",
+        "screenSharingFailed": "¡Oops! ¡Algo salio mal, no se pudo iniciar la compartición de su pantalla!",
+        "screenSharingFailedTitle": "¡Fallo al compartir su pantalla!",
         "screenSharingFailedToInstall": "¡Uy! La extensión de uso compartido de pantalla no se pudo instalar.",
         "screenSharingFailedToInstallTitle": "La extensión de uso compartido de pantalla no se pudo instalar",
         "screenSharingFirefoxPermissionDeniedError": "Algo salió mal al compartir pantalla. Asegúrate de habernos dado permiso para hacerlo.",
@@ -316,6 +332,9 @@
     },
     "embedMeeting": {
         "title": "Insertar reunión en sitio web"
+    },
+    "embedMeeting": {
+        "title": "Insertar esta reunión"
     },
     "feedback": {
         "average": "Promedio",
@@ -406,6 +425,9 @@
         "errorLiveStreamNotEnabled": "La transmisión en vivo no está activada en {{email}}. Por favor, activa la transmisión en vivo o inicia sesión en una cuenta con la transmisión en vivo activada.",
         "expandedOff": "La transmisión en vivo se ha detenido",
         "expandedOn": "La reunión se está transmitiendo a YouTube.",
+        "googlePrivacyPolicy": "Política de Privacidad de Google",
+        "limitNotificationDescriptionWeb": "Debido a la alta demanda su transmisión estará limitada a {{limit}} minutos. Puede obtener transmisiones ilimitadas en <a href={{url}} rel='noopener noreferrer' target='_blank'>{{app}}</a>.",
+        "limitNotificationDescriptionNative": "Su transmisión estará limitada a {{limit}} minutos. Puede obtener transmisiones ilimitadas en {{app}}.",
         "expandedPending": "La transmisión en vivo se está iniciando…",
         "failedToStart": "La transmisión en vivo no se pudo iniciar",
         "getStreamKeyManually": "No pudimos encontrar tu clave de transmisión. Por favor, obtenla de la página de YouTube y pégala.",
@@ -422,7 +444,8 @@
         "signOut": "Cerrar sesión",
         "start": "Iniciar una transmisión en vivo",
         "streamIdHelp": "¿Qué es esto?",
-        "unavailableTitle": "Transmisión en vivo no disponible"
+        "unavailableTitle": "Transmisión en vivo no disponible",
+        "youtubeTerms": "Términos de servicios de YouTube"
     },
     "localRecording": {
         "clientState": {
@@ -495,6 +518,29 @@
     "passwordDigitsOnly": "Hasta {{number]] cifras",
     "poweredby": "con tecnología de",
     "prejoin": {
+        "audioDeviceProblem": "Hay un problema con su dispositivo de audio",
+        "connection": {
+            "good": "¡Su conexión a internet es buena!",
+            "nonOptimal": "Su conexión a internet no es óptima",
+            "poor": "Tiene una conexión a internet pobre"
+        },
+        "connectionDetails": {
+            "audioClipping": "Prevemos que su audio tendrá recortes.",
+            "audioHighQuality": "Prevemos que su audio tendrá excelente calidad.",
+            "audioLowNoVideo": "Prevemos que la calidad de su audio será baja y sin video.",
+            "goodQuality": "¡Genial! La calidad de sus medios será excelente.",
+            "noMediaConnectivity": "No pudimos encontrar una forma de establecer la conectividad de medios para esta prueba. Esto suele ser causado por un firewall o NAT.",
+            "noVideo": "Prevemos que su video será terrible.",
+            "undetectable": "Si aún no puede realizar llamadas en el navegador, le recomendamos que se asegure de que los altavoces, el micrófono y la cámara estén configurados correctamente, que haya concedido los derechos de su navegador para usar el micrófono y la cámara, y que la versión de su navegador esté actualizada. Si aún tiene problemas para llamar, debería comunicarse con el desarrollador de la aplicación web.",
+            "veryPoorConnection": "Prevemos que la calidad de su llamada será realmente terrible.",
+            "videoFreezing": "Prevemos que su video se congelará, se volverá negro y se pixelará.",
+            "videoHighQuality": "Prevemos que su video tendrá buena calidad.",
+            "videoLowQuality": "Prevemos que su video tendrá baja calidad en términos de velocidad de fotogramas y resolución.",
+            "videoTearing": "Prevemos que su video se pixelará o tendrá artefactos visuales."
+        },
+        "errorMissingName": "Ingrese su nombre para unirse a la reunión",
+        "premeeting": "Pre-reunión",
+        "showScreen": "Habilitar pantalla pre-reunión",
         "audioAndVideoError": "Error en audio y vídeo:",
         "audioOnlyError": "Error en audio:",
         "audioTrackError": "No se pudo crear la pista de audio.",
@@ -561,6 +607,8 @@
         "expandedPending": "La grabación se está iniciando…",
         "failedToStart": "No se pudo iniciar la grabación",
         "fileSharingdescription": "Compartir la grabación con los participantes de la reunión",
+        "limitNotificationDescriptionWeb": "Debido a la alta demanda su grabación estará limitada a {{limit}} minutos. Puede obtener grabaciones ilimitadas en <a href={{url}} rel='noopener noreferrer' target='_blank'>{{app}}</a>.",
+        "limitNotificationDescriptionNative": "Su grabación estará limitada a {{limit}} minutos. Puede obtener grabaciones ilimitadas en <3>{{app}}</3>.",
         "live": "EN VIVO",
         "loggedIn": "Sesión iniciada como {{userName}}",
         "off": "Grabación detenida",
@@ -580,6 +628,7 @@
         "pullToRefresh": "Mueve el dedo para abajo para actualizar."
     },
     "security": {
+        "aboutReadOnly": "Los participantes moderadores pueden agregar una $t(lockRoomPassword) a la reunión. Los participantes deberán proporcionar la $t(lockRoomPassword) antes de que se les permita unirse a la reunión.",
         "about": "Puedes agregar una contraseña a la reunión. Los participantes necesitarán la contraseña para unirse a la reunión.",
         "insecureRoomNameWarning": "El nombre de la sala es inseguro. Participantes no deseados pueden llegar a unirse a la reunión.",
         "securityOptions": "Opciones de seguridad"
@@ -607,6 +656,7 @@
         "speakers": "Altavoces",
         "startAudioMuted": "Todos inician silenciados",
         "startVideoMuted": "Todos inician con cámara desactivada",
+        "speakers": "Parlantes",
         "title": "Ajustes"
     },
     "settingsView": {
@@ -661,6 +711,8 @@
             "cc": "Alternar subtítulos",
             "chat": "Alternar ventana de chat",
             "document": "Alternar documento compartido",
+            "embedMeeting": "Insertar reunión",
+            "grantModerator": "Convertir en moderador",
             "download": "Descargar nuestras aplicaciones",
             "e2ee": "Cifrado de extremo a extremo",
             "feedback": "Dejar comentarios",
@@ -671,6 +723,7 @@
             "lobbyButtonDisable": "Desactivar sala de espera",
             "lobbyButtonEnable": "Activar sala de espera",
             "kick": "Expulsar participante",
+            "lobbyButton": "Activar / desactivar el modo lobby",
             "localRecording": "Alternar controles de grabación local",
             "lockRoom": "Alternar contraseña de la reunión",
             "moreActions": "Alternar más acciones",
@@ -709,6 +762,7 @@
         "documentClose": "Cerrar documento compartido",
         "documentOpen": "Abrir documento compartido",
         "download": "Descarga nuestras aplicaciones",
+        "embedMeeting": "Insertar reunión",
         "e2ee": "Cifrado de extremo a extremo",
         "enterFullScreen": "Pantalla completa",
         "enterTileView": "Ver en cuadrícula",
@@ -718,6 +772,8 @@
         "hangup": "Colgar",
         "help": "Ayuda",
         "invite": "Invitar personas",
+        "lobbyButtonDisable": "Desactivar el modo lobby",
+        "lobbyButtonEnable": "Activar el modo lobby",
         "login": "Inicio de sesión",
         "logout": "Cerrar sesión",
         "lowerYourHand": "Bajar la mano",
@@ -812,6 +868,7 @@
         "domute": "Silenciar",
         "domuteOthers": "Silenciar a todos",
         "flip": "Voltear",
+        "grantModerator": "Convertir en moderador",
         "kick": "Expulsar",
         "moderator": "Moderador",
         "mute": "Se silenció el participante",
@@ -840,6 +897,7 @@
         "goSmall": "IR",
         "join": "CREAR / UNIRSE",
         "info": "Información",
+        "moderatedMessage": "O <a href=\"{{url}}\" rel=\"noopener noreferrer\" target=\"_blank\">reserve con antelación una URL de reunión</a> en la que usted sea el único moderador.",
         "privacy": "Privacidad",
         "recentList": "Reciente",
         "recentListDelete": "Eliminar",
