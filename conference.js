@@ -3,7 +3,6 @@
 import EventEmitter from 'events';
 import Logger from 'jitsi-meet-logger';
 
-import * as JitsiMeetConferenceEvents from './ConferenceEvents';
 import { openConnection } from './connection';
 import { ENDPOINT_TEXT_MESSAGE_NAME } from './modules/API/constants';
 import AuthHandler from './modules/UI/authentication/AuthHandler';
@@ -41,8 +40,7 @@ import {
     lockStateChanged,
     onStartMutedPolicyChanged,
     p2pStatusChanged,
-    sendLocalParticipant,
-    setDesktopSharingEnabled
+    sendLocalParticipant
 } from './react/features/base/conference';
 import {
     checkAndNotifyForNewDevice,
@@ -54,6 +52,7 @@ import {
     updateDeviceList
 } from './react/features/base/devices';
 import {
+    browser,
     isFatalJitsiConnectionError,
     JitsiConferenceErrors,
     JitsiConferenceEvents,
@@ -86,7 +85,8 @@ import {
     participantMutedUs,
     participantPresenceChanged,
     participantRoleChanged,
-    participantUpdated
+    participantUpdated,
+    updateRemoteParticipantFeatures
 } from './react/features/base/participants';
 import {
     getUserSelectedCameraDeviceId,
@@ -122,14 +122,13 @@ import {
     isPrejoinPageVisible,
     makePrecallTest
 } from './react/features/prejoin';
+import { disableReceiver, stopReceiver } from './react/features/remote-control';
 import { toggleScreenshotCaptureEffect } from './react/features/screenshot-capture';
 import { setSharedVideoStatus } from './react/features/shared-video';
 import { AudioMixerEffect } from './react/features/stream-effects/audio-mixer/AudioMixerEffect';
 import { createPresenterEffect } from './react/features/stream-effects/presenter';
 import { endpointMessageReceived } from './react/features/subtitles';
 import UIEvents from './service/UI/UIEvents';
-import * as RemoteControlEvents
-    from './service/remotecontrol/RemoteControlEvents';
 
 const logger = Logger.getLogger(__filename);
 
@@ -441,17 +440,8 @@ export default {
      * the tracks won't exist).
      */
     _localTracksInitialized: false,
-    isSharingScreen: false,
 
-    /**
-     * Indicates if the desktop sharing functionality has been enabled.
-     * It takes into consideration the status returned by
-     * {@link JitsiMeetJS.isDesktopSharingEnabled()}. The latter can be false
-     * either if the desktop sharing is not supported by the current browser
-     * or if it was disabled through lib-jitsi-meet specific options (check
-     * config.js for listed options).
-     */
-    isDesktopSharingEnabled: false,
+    isSharingScreen: false,
 
     /**
      * The local audio track (if any).
@@ -503,9 +493,9 @@ export default {
 
         JitsiMeetJS.mediaDevices.addEventListener(
             JitsiMediaDevicesEvents.PERMISSION_PROMPT_IS_SHOWN,
-            browser =>
+            browserName =>
                 APP.store.dispatch(
-                    mediaPermissionPromptVisibilityChanged(true, browser))
+                    mediaPermissionPromptVisibilityChanged(true, browserName))
         );
 
         let tryCreateLocalTracks;
@@ -605,6 +595,42 @@ export default {
     },
 
     /**
+     * Displays error notifications according to the state carried by {@code errors} object returned
+     * by {@link createInitialLocalTracks}.
+     * @param {Object} errors - the errors (if any) returned by {@link createInitialLocalTracks}.
+     *
+     * @returns {void}
+     * @private
+     */
+    _displayErrorsForCreateInitialLocalTracks(errors) {
+        const {
+            audioAndVideoError,
+            audioOnlyError,
+            screenSharingError,
+            videoOnlyError
+        } = errors;
+
+        // FIXME If there will be microphone error it will cover any screensharing dialog, but it's still better than in
+        // the reverse order where the screensharing dialog will sometimes be closing the microphone alert
+        // ($.prompt.close(); is called). Need to figure out dialogs chaining to fix that.
+        if (screenSharingError) {
+            this._handleScreenSharingError(screenSharingError);
+        }
+        if (audioAndVideoError || audioOnlyError) {
+            if (audioOnlyError || videoOnlyError) {
+                // If both requests for 'audio' + 'video' and 'audio' only failed, we assume that there are some
+                // problems with user's microphone and show corresponding dialog.
+                APP.store.dispatch(notifyMicError(audioOnlyError));
+                APP.store.dispatch(notifyCameraError(videoOnlyError));
+            } else {
+                // If request for 'audio' + 'video' failed, but request for 'audio' only was OK, we assume that we had
+                // problems with camera and show corresponding dialog.
+                APP.store.dispatch(notifyCameraError(audioAndVideoError));
+            }
+        }
+    },
+
+    /**
      * Creates local media tracks and connects to a room. Will show error
      * dialogs in case accessing the local microphone and/or camera failed. Will
      * show guidance overlay for users on how to give access to camera and/or
@@ -624,38 +650,11 @@ export default {
      */
     createInitialLocalTracksAndConnect(roomName, options = {}) {
         const { tryCreateLocalTracks, errors } = this.createInitialLocalTracks(options);
-        const {
-            audioAndVideoError,
-            audioOnlyError,
-            screenSharingError,
-            videoOnlyError
-        } = errors;
 
         return Promise.all([ tryCreateLocalTracks, connect(roomName) ])
             .then(([ tracks, con ]) => {
-                // FIXME If there will be microphone error it will cover any
-                // screensharing dialog, but it's still better than in
-                // the reverse order where the screensharing dialog will
-                // sometimes be closing the microphone alert ($.prompt.close();
-                // is called). Need to figure out dialogs chaining to fix that.
-                if (screenSharingError) {
-                    this._handleScreenSharingError(screenSharingError);
-                }
-                if (audioAndVideoError || audioOnlyError) {
-                    if (audioOnlyError || videoOnlyError) {
-                        // If both requests for 'audio' + 'video' and 'audio'
-                        // only failed, we assume that there are some problems
-                        // with user's microphone and show corresponding dialog.
-                        APP.store.dispatch(notifyMicError(audioOnlyError));
-                        APP.store.dispatch(notifyCameraError(videoOnlyError));
-                    } else {
-                        // If request for 'audio' + 'video' failed, but request
-                        // for 'audio' only was OK, we assume that we had
-                        // problems with camera and show corresponding dialog.
-                        APP.store.dispatch(
-                            notifyCameraError(audioAndVideoError));
-                    }
-                }
+
+                this._displayErrorsForCreateInitialLocalTracks(errors);
 
                 return [ tracks, con ];
             });
@@ -679,16 +678,7 @@ export default {
         con.addEventListener(JitsiConnectionEvents.CONNECTION_FAILED, _connectionFailedHandler);
         APP.connection = connection = con;
 
-        // Desktop sharing related stuff:
-        this.isDesktopSharingEnabled
-            = JitsiMeetJS.isDesktopSharingEnabled();
-        eventEmitter.emit(JitsiMeetConferenceEvents.DESKTOP_SHARING_ENABLED_CHANGED, this.isDesktopSharingEnabled);
-
-        APP.store.dispatch(
-            setDesktopSharingEnabled(this.isDesktopSharingEnabled));
-
         this._createRoom(tracks);
-        APP.remoteControl.init();
 
         // if user didn't give access to mic or camera or doesn't have
         // them at all, we mark corresponding toolbar buttons as muted,
@@ -772,7 +762,15 @@ export default {
             // they may remain as empty strings.
             this._initDeviceList(true);
 
-            return APP.store.dispatch(initPrejoin(tracks, errors));
+            if (isPrejoinPageVisible(APP.store.getState())) {
+                return APP.store.dispatch(initPrejoin(tracks, errors));
+            }
+
+            logger.debug('Prejoin screen no longer displayed at the time when tracks were created');
+
+            this._displayErrorsForCreateInitialLocalTracks(errors);
+
+            return this._setLocalAudioVideoStreams(tracks);
         }
 
         const [ tracks, con ] = await this.createInitialLocalTracksAndConnect(
@@ -1445,11 +1443,8 @@ export default {
     async _turnScreenSharingOff(didHaveVideo) {
         this._untoggleScreenSharing = null;
         this.videoSwitchInProgress = true;
-        const { receiver } = APP.remoteControl;
 
-        if (receiver) {
-            receiver.stop();
-        }
+        APP.store.dispatch(stopReceiver());
 
         this._stopProxyConnection();
         if (config.enableScreenshotCapture) {
@@ -1532,9 +1527,8 @@ export default {
         if (this.videoSwitchInProgress) {
             return Promise.reject('Switch in progress.');
         }
-        if (!this.isDesktopSharingEnabled) {
-            return Promise.reject(
-                'Cannot toggle screen sharing: not supported.');
+        if (!JitsiMeetJS.isDesktopSharingEnabled()) {
+            return Promise.reject('Cannot toggle screen sharing: not supported.');
         }
 
         if (this.isAudioOnly()) {
@@ -1624,8 +1618,10 @@ export default {
      */
     async _createPresenterStreamEffect(height = null, cameraDeviceId = null) {
         if (!this.localPresenterVideo) {
+            const camera = cameraDeviceId ?? getUserSelectedCameraDeviceId(APP.store.getState());
+
             try {
-                this.localPresenterVideo = await createLocalPresenterTrack({ cameraDeviceId }, height);
+                this.localPresenterVideo = await createLocalPresenterTrack({ cameraDeviceId: camera }, height);
             } catch (err) {
                 logger.error('Failed to create a camera track for presenter', err);
 
@@ -1666,38 +1662,38 @@ export default {
 
         // Create a new presenter track and apply the presenter effect.
         if (!this.localPresenterVideo && !mute) {
-            let { aspectRatio, height } = this.localVideo.track.getSettings();
-            const { width } = this.localVideo.track.getSettings();
-            let desktopResizeConstraints = {};
-            let resizeDesktopStream = false;
+            const { height, width } = this.localVideo.track.getSettings() ?? this.localVideo.track.getConstraints();
+            const isPortrait = height >= width;
             const DESKTOP_STREAM_CAP = 720;
 
-            // Determine the constraints if the desktop track needs to be resized.
-            // Resizing is needed when the resolution cannot be determined or when
-            // the window is bigger than 720p.
-            if (height && width) {
-                aspectRatio = aspectRatio ?? (width / height).toPrecision(4);
-                const advancedConstraints = [ { aspectRatio } ];
-                const isPortrait = height >= width;
+            // Config.js setting for resizing high resolution desktop tracks to 720p when presenter is turned on.
+            const resizeEnabled = config.videoQuality && config.videoQuality.resizeDesktopForPresenter;
+            const highResolutionTrack
+                = (isPortrait && width > DESKTOP_STREAM_CAP) || (!isPortrait && height > DESKTOP_STREAM_CAP);
 
-                // Determine which dimension needs resizing and resize only that side
-                // keeping the aspect ratio same as before.
-                if (isPortrait && width > DESKTOP_STREAM_CAP) {
-                    resizeDesktopStream = true;
-                    advancedConstraints.push({ width: DESKTOP_STREAM_CAP });
-                } else if (!isPortrait && height > DESKTOP_STREAM_CAP) {
-                    resizeDesktopStream = true;
-                    advancedConstraints.push({ height: DESKTOP_STREAM_CAP });
-                }
-                desktopResizeConstraints.advanced = advancedConstraints;
-            } else {
-                resizeDesktopStream = true;
-                desktopResizeConstraints = {
-                    width: 1280,
-                    height: 720
-                };
-            }
+            // Resizing the desktop track for presenter is causing blurriness of the desktop share on chrome.
+            // Disable resizing by default, enable it only when config.js setting is enabled.
+            // Firefox doesn't return width and height for desktop tracks. Therefore, track needs to be resized
+            // for creating the canvas for presenter.
+            const resizeDesktopStream = browser.isFirefox() || (highResolutionTrack && resizeEnabled);
+
             if (resizeDesktopStream) {
+                let desktopResizeConstraints = {};
+
+                if (height && width) {
+                    const advancedConstraints = [ { aspectRatio: (width / height).toPrecision(4) } ];
+                    const constraint = isPortrait ? { width: DESKTOP_STREAM_CAP } : { height: DESKTOP_STREAM_CAP };
+
+                    advancedConstraints.push(constraint);
+                    desktopResizeConstraints.advanced = advancedConstraints;
+                } else {
+                    desktopResizeConstraints = {
+                        width: 1280,
+                        height: 720
+                    };
+                }
+
+                // Apply the contraints on the desktop track.
                 try {
                     await this.localVideo.track.applyConstraints(desktopResizeConstraints);
                 } catch (err) {
@@ -1705,20 +1701,22 @@ export default {
 
                     return;
                 }
-                height = this.localVideo.track.getSettings().height ?? DESKTOP_STREAM_CAP;
             }
-            const defaultCamera = getUserSelectedCameraDeviceId(APP.store.getState());
+            const trackHeight = resizeDesktopStream
+                ? this.localVideo.track.getSettings().height ?? DESKTOP_STREAM_CAP
+                : height;
             let effect;
 
             try {
-                effect = await this._createPresenterStreamEffect(height,
-                    defaultCamera);
+                effect = await this._createPresenterStreamEffect(trackHeight);
             } catch (err) {
-                logger.error('Failed to unmute Presenter Video');
+                logger.error('Failed to unmute Presenter Video', err);
                 maybeShowErrorDialog(err);
 
                 return;
             }
+
+            // Replace the desktop track on the peerconnection.
             try {
                 await this.localVideo.setEffect(effect);
                 APP.store.dispatch(setVideoMuted(mute, MEDIA_TYPE.PRESENTER));
@@ -1869,8 +1867,9 @@ export default {
             (authEnabled, authLogin) =>
                 APP.store.dispatch(authStatusChanged(authEnabled, authLogin)));
 
-        room.on(JitsiConferenceEvents.PARTCIPANT_FEATURES_CHANGED,
-            user => APP.UI.onUserFeaturesChanged(user));
+        room.on(JitsiConferenceEvents.PARTCIPANT_FEATURES_CHANGED, user => {
+            APP.store.dispatch(updateRemoteParticipantFeatures(user));
+        });
         room.on(JitsiConferenceEvents.USER_JOINED, (id, user) => {
             // The logic shared between RN and web.
             commonUserJoinedHandling(APP.store, room, user);
@@ -1879,6 +1878,7 @@ export default {
                 return;
             }
 
+            APP.store.dispatch(updateRemoteParticipantFeatures(user));
             logger.log(`USER ${id} connnected:`, user);
             APP.UI.addUser(user);
         });
@@ -2048,30 +2048,6 @@ export default {
         room.on(
             JitsiConferenceEvents.LOCK_STATE_CHANGED,
             (...args) => APP.store.dispatch(lockStateChanged(room, ...args)));
-
-        APP.remoteControl.on(RemoteControlEvents.ACTIVE_CHANGED, isActive => {
-            room.setLocalParticipantProperty(
-                'remoteControlSessionStatus',
-                isActive
-            );
-            APP.UI.setLocalRemoteControlActiveChanged();
-        });
-
-        /* eslint-disable max-params */
-        room.on(
-            JitsiConferenceEvents.PARTICIPANT_PROPERTY_CHANGED,
-            (participant, name, oldValue, newValue) => {
-                switch (name) {
-                case 'remoteControlSessionStatus':
-                    APP.UI.setRemoteControlActiveStatus(
-                        participant.getId(),
-                        newValue);
-                    break;
-                default:
-
-                // ignore
-                }
-            });
 
         room.on(JitsiConferenceEvents.KICKED, participant => {
             APP.UI.hideStats();
@@ -2418,25 +2394,6 @@ export default {
     },
 
     /**
-    * Adds any room listener.
-    * @param {string} eventName one of the JitsiConferenceEvents
-    * @param {Function} listener the function to be called when the event
-    * occurs
-    */
-    addConferenceListener(eventName, listener) {
-        room.on(eventName, listener);
-    },
-
-    /**
-    * Removes any room listener.
-    * @param {string} eventName one of the JitsiConferenceEvents
-    * @param {Function} listener the listener to be removed.
-    */
-    removeConferenceListener(eventName, listener) {
-        room.off(eventName, listener);
-    },
-
-    /**
      * Updates the list of current devices.
      * @param {boolean} setDeviceListChangeHandler - Whether to add the deviceList change handlers.
      * @private
@@ -2718,7 +2675,7 @@ export default {
      * requested
      */
     hangup(requestFeedback = false) {
-        eventEmitter.emit(JitsiMeetConferenceEvents.BEFORE_HANGUP);
+        APP.store.dispatch(disableReceiver());
 
         this._stopProxyConnection();
 
@@ -2735,7 +2692,6 @@ export default {
         }
 
         APP.UI.removeAllListeners();
-        APP.remoteControl.removeAllListeners();
 
         let requestFeedbackPromise;
 
@@ -2916,29 +2872,6 @@ export default {
         if (room) {
             APP.UI.changeDisplayName(id, formattedNickname);
         }
-    },
-
-    /**
-     * Returns the desktop sharing source id or undefined if the desktop sharing
-     * is not active at the moment.
-     *
-     * @returns {string|undefined} - The source id. If the track is not desktop
-     * track or the source id is not available, undefined will be returned.
-     */
-    getDesktopSharingSourceId() {
-        return this.localVideo.sourceId;
-    },
-
-    /**
-     * Returns the desktop sharing source type or undefined if the desktop
-     * sharing is not active at the moment.
-     *
-     * @returns {'screen'|'window'|undefined} - The source type. If the track is
-     * not desktop track or the source type is not available, undefined will be
-     * returned.
-     */
-    getDesktopSharingSourceType() {
-        return this.localVideo.sourceType;
     },
 
     /**

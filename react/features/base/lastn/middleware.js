@@ -16,6 +16,7 @@ import {
     getParticipantCount
 } from '../participants/functions';
 import { MiddlewareRegistry } from '../redux';
+import { isLocalVideoTrackDesktop } from '../tracks/functions';
 
 import { limitLastN } from './functions';
 import logger from './logger';
@@ -67,18 +68,17 @@ function _updateLastN({ getState }) {
         return;
     }
 
-    const defaultLastN = typeof config.channelLastN === 'undefined' ? -1 : config.channelLastN;
-    let lastN = defaultLastN;
+    let lastN = typeof config.channelLastN === 'undefined' ? -1 : config.channelLastN;
 
-    // Apply last N limit based on the # of participants
+    // Apply last N limit based on the # of participants and channelLastN settings.
     const limitedLastN = limitLastN(participantCount, lastNLimits);
 
     if (limitedLastN !== undefined) {
-        lastN = limitedLastN;
+        lastN = lastN === -1 ? limitedLastN : Math.min(limitedLastN, lastN);
     }
 
     if (typeof appState !== 'undefined' && appState !== 'active') {
-        lastN = 0;
+        lastN = isLocalVideoTrackDesktop(state) ? 1 : 0;
     } else if (audioOnly) {
         const { screenShares, tileViewEnabled } = state['features/video-layout'];
         const largeVideoParticipantId = state['features/large-video'].participantId;

@@ -453,7 +453,6 @@ export default class SmallVideo {
             isVideoPlayable: this.isVideoPlayable(),
             hasVideo: Boolean(this.selectVideoElement().length),
             connectionStatus,
-            mutedWhileDisconnected: this.mutedWhileDisconnected,
             canPlayEventReceived: this._canPlayEventReceived,
             videoStream: Boolean(this.videoStream),
             isScreenSharing,
@@ -698,7 +697,7 @@ export default class SmallVideo {
                                     alwaysVisible = { showConnectionIndicator }
                                     iconSize = { iconSize }
                                     isLocalVideo = { this.isLocal }
-                                    enableStatsDisplay = { !interfaceConfig.filmStripOnly }
+                                    enableStatsDisplay = { true }
                                     participantId = { this.id }
                                     statsPopoverPosition = { statsPopoverPosition } />
                                 : null }

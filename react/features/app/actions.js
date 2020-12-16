@@ -298,13 +298,13 @@ export function maybeRedirectToWelcomePage(options: Object = {}) {
                 return;
             }
 
-            const { isGuest, jwt } = getState()['features/base/jwt'];
+            const { jwt } = getState()['features/base/jwt'];
 
             let hashParam;
 
             // save whether current user is guest or not, and pass auth token,
             // before navigating to close page
-            window.sessionStorage.setItem('guest', isGuest);
+            window.sessionStorage.setItem('guest', !jwt);
             window.sessionStorage.setItem('jwt', jwt);
 
             let path = 'close.html';

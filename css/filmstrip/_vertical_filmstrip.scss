@@ -146,26 +146,6 @@
 }
 
 /**
- * Override other styles to support vertical filmstrip mode.
- */
-.filmstrip-only .vertical-filmstrip {
-    .filmstrip {
-        flex-direction: row-reverse;
-    }
-    .filmstrip__videos-filmstripOnly {
-        margin-top: auto;
-        margin-bottom: auto;
-        height: 100%;
-    }
-
-    .filmstrip__videos {
-        &#filmstripLocalVideo {
-            bottom: 0px;
-        }
-    }
-}
-
-/**
  * Workarounds for Edge and Firefox not handling scrolling properly with
  * flex-direction: column-reverse. The remove videos in filmstrip should
  * start scrolling from the bottom of the filmstrip, but in those browsers the

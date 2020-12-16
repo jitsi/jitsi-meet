@@ -161,70 +161,46 @@ $unsupportedDesktopBrowserTextFontSize: 21px;
 /**
  * The size of the default watermark.
  */
-$watermarkWidth: 186px;
-$watermarkHeight: 74px;
+$watermarkWidth: 71px;
+$watermarkHeight: 32px;
 
-$welcomePageWatermarkWidth: 186px;
-$welcomePageWatermarkHeight: 74px;
+$welcomePageWatermarkWidth: 71px;
+$welcomePageWatermarkHeight: 32px;
 
 /**
  * Welcome page variables.
  */
 $welcomePageDescriptionColor: #fff;
 $welcomePageFontFamily: inherit;
-$welcomePageBackground: linear-gradient(-90deg, #1251AE 0%, #0074FF 50%, #1251AE 100%);
+$welcomePageBackground: none;
 $welcomePageTitleColor: #fff;
 
-$welcomePageHeaderBackground: none;
-$welcomePageHeaderBackgroundSmall: none;
-$welcomePageHeaderBackgroundPosition: none;
+$welcomePageHeaderBackground: linear-gradient(0deg, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)), url('../images/welcome-background.png');
+$welcomePageHeaderBackgroundPosition: center;
 $welcomePageHeaderBackgroundRepeat: none;
-$welcomePageHeaderBackgroundSize: none;
+$welcomePageHeaderBackgroundSize: cover;
 $welcomePageHeaderPaddingBottom: 0px;
-$welcomePageHeaderMinHeight: fit-content;
+$welcomePageHeaderTitleMaxWidth: initial;
+$welcomePageHeaderTextAlign: center;
 
-$welcomePageHeaderTextMarginTop: 35px;
-$welcomePageHeaderTextMarginBottom: 35px;
-$welcomePageHeaderTextDisplay: flex;
-$welcomePageHeaderTextWidth: 650px;
+$welcomePageHeaderContainerDisplay: flex;
+$welcomePageHeaderContainerMargin: 104px 32px 0 32px;
 
-$welcomePageHeaderTextTitleMarginBottom: 16px;
-$welcomePageHeaderTextTitleFontSize: 2.5rem;
-$welcomePageHeaderTextTitleFontWeight: 500;
-$welcomePageHeaderTextTitleLineHeight: 1.18;
+$welcomePageHeaderTextTitleMarginBottom: 0;
+$welcomePageHeaderTextTitleFontSize: 42px;
+$welcomePageHeaderTextTitleFontWeight: normal;
+$welcomePageHeaderTextTitleLineHeight: 50px;
 $welcomePageHeaderTextTitleOpacity: 1;
 
-$welcomePageHeaderTextDescriptionDisplay: inherit;
-$welcomePageHeaderTextDescriptionFontSize: 1rem;
-$welcomePageHeaderTextDescriptionFontWeight: 400;
-$welcomePageHeaderTextDescriptionLineHeight: 24px;
-$welcomePageHeaderTextDescriptionMarginBottom: 20px;
-$welcomePageHeaderTextDescriptionAlignSelf: inherit;
-
 $welcomePageEnterRoomDisplay: flex;
-$welcomePageEnterRoomWidth: 680px;
-$welcomePageEnterRoomPadding: 25px 30px;
-$welcomePageEnterRoomBorderRadius: 0px;
-
-$welcomePageEnterRoomInputContainerPadding: 0 8px 5px 0px;
-$welcomePageEnterRoomInputContainerBorderWidth: 0px 0px 2px 0px;
-$welcomePageEnterRoomInputContainerBorderStyle: solid;
-$welcomePageEnterRoomInputContainerBorderImage: linear-gradient(to right, #dee1e6, #fff) 1;
-
-$welcomePageEnterRoomTitleDisplay: inherit;
+$welcomePageEnterRoomWidth: calc(100% - 32px);
+$welcomePageEnterRoomPadding: 4px;
+$welcomePageEnterRoomMargin: 0 auto;
 
 $welcomePageTabContainerDisplay: flex;
 $welcomePageTabContentDisplay: inherit;
 $welcomePageTabButtonsDisplay: flex;
 $welcomePageTabDisplay: block;
-
-$welcomePageButtonWidth: 51px;
-$welcomePageButtonMinWidth: inherit;
-$welcomePageButtonFontSize: 14px;
-$welcomePageButtonHeight: 35px;
-$welcomePageButtonFontWeight: inherit;
-$welcomePageButtonBorderRadius: 4px;
-$welcomePageButtonLineHeight: 35px;
 
 /**
  * Deep-linking page variables.

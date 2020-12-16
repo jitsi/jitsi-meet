@@ -218,21 +218,11 @@ export default class LargeVideoManager {
             // change the avatar url on large
             this.updateAvatar();
 
-            // If the user's connection is disrupted then the avatar will be
-            // displayed in case we have no video image cached. That is if
-            // there was a user switch (image is lost on stream detach) or if
-            // the video was not rendered, before the connection has failed.
-            const wasUsersImageCached
-                = !isUserSwitch && container.wasVideoRendered;
             const isVideoMuted = !stream || stream.isMuted();
             const participant = getParticipantById(APP.store.getState(), id);
             const connectionStatus = participant?.connectionStatus;
-            const isVideoRenderable
-                = !isVideoMuted
-                    && (APP.conference.isLocalId(id)
-                        || connectionStatus
-                                === JitsiParticipantConnectionStatus.ACTIVE
-                        || wasUsersImageCached);
+            const isVideoRenderable = !isVideoMuted
+                && (APP.conference.isLocalId(id) || connectionStatus === JitsiParticipantConnectionStatus.ACTIVE);
 
             const showAvatar
                 = isVideoContainer

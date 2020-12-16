@@ -1,7 +1,5 @@
 /* @flow */
 
-import jwtDecode from 'jwt-decode';
-
 import { parseURLParams } from '../util';
 
 /**
@@ -24,7 +22,7 @@ export function parseJWTFromURLParams(url: URL = window.location) {
  * @returns {string}
  */
 export function getJwtName(state: Object) {
-    const jwtData = jwtDecode(state['features/base/jwt'].jwt);
+    const { user } = state['features/base/jwt'];
 
-    return jwtData?.context?.user?.name || '';
+    return user?.name || '';
 }
