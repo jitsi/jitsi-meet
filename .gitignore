@@ -69,6 +69,7 @@ buck-out/
 *.framework
 android/app/debug
 android/app/release
+ios/sdk/out
 
 # precommit-hook
 .jshintignore

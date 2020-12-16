@@ -227,7 +227,7 @@ end
 -- everything.
 function is_feature_allowed(session, feature)
     if (session.jitsi_meet_context_features == nil
-        or session.jitsi_meet_context_features[feature] == "true") then
+        or session.jitsi_meet_context_features[feature] == "true" or session.jitsi_meet_context_features[feature] == true) then
         return true;
     else
         return false;

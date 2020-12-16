@@ -433,7 +433,7 @@ export default class SmallVideo {
      */
     computeDisplayModeInput() {
         let isScreenSharing = false;
-        let connectionStatus, mutedWhileDisconnected;
+        let connectionStatus;
         const state = APP.store.getState();
         const participant = getParticipantById(state, this.id);
 
@@ -443,7 +443,6 @@ export default class SmallVideo {
 
             isScreenSharing = typeof track !== 'undefined' && track.videoType === 'desktop';
             connectionStatus = participant.connectionStatus;
-            mutedWhileDisconnected = participant.mutedWhileDisconnected;
         }
 
         return {
@@ -454,7 +453,6 @@ export default class SmallVideo {
             isVideoPlayable: this.isVideoPlayable(),
             hasVideo: Boolean(this.selectVideoElement().length),
             connectionStatus,
-            mutedWhileDisconnected,
             canPlayEventReceived: this._canPlayEventReceived,
             videoStream: Boolean(this.videoStream),
             isScreenSharing,

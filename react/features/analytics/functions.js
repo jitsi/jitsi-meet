@@ -11,7 +11,7 @@ import JitsiMeetJS, {
     browser,
     isAnalyticsEnabled
 } from '../base/lib-jitsi-meet';
-import { getJitsiMeetGlobalNS, loadScript } from '../base/util';
+import { getJitsiMeetGlobalNS, loadScript, parseURIString } from '../base/util';
 
 import { AmplitudeHandler, MatomoHandler } from './handlers';
 import logger from './logger';
@@ -166,6 +166,8 @@ export function initAnalytics({ getState }: { getState: Function }, handlers: Ar
     } = config;
     const { group, server } = state['features/base/jwt'];
     const roomName = state['features/base/conference'].room;
+    const { locationURL = {} } = state['features/base/connection'];
+    const { tenant } = parseURIString(locationURL.href) || {};
     const permanentProperties = {};
 
     if (server) {
@@ -186,6 +188,9 @@ export function initAnalytics({ getState }: { getState: Function }, handlers: Ar
 
     // Report if we are loaded in iframe
     permanentProperties.inIframe = _inIframe();
+
+    // Report the tenant from the URL.
+    permanentProperties.tenant = tenant || '/';
 
     // Optionally, include local deployment information based on the
     // contents of window.config.deploymentInfo.

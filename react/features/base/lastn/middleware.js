@@ -68,14 +68,13 @@ function _updateLastN({ getState }) {
         return;
     }
 
-    const defaultLastN = typeof config.channelLastN === 'undefined' ? -1 : config.channelLastN;
-    let lastN = defaultLastN;
+    let lastN = typeof config.channelLastN === 'undefined' ? -1 : config.channelLastN;
 
-    // Apply last N limit based on the # of participants
+    // Apply last N limit based on the # of participants and channelLastN settings.
     const limitedLastN = limitLastN(participantCount, lastNLimits);
 
     if (limitedLastN !== undefined) {
-        lastN = limitedLastN;
+        lastN = lastN === -1 ? limitedLastN : Math.min(limitedLastN, lastN);
     }
 
     if (typeof appState !== 'undefined' && appState !== 'active') {

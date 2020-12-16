@@ -20,7 +20,6 @@ import {
     SET_PASSWORD,
     SET_PENDING_SUBJECT_CHANGE,
     SET_ROOM,
-    SET_SIP_GATEWAY_ENABLED,
     SET_START_MUTED_POLICY
 } from './actionTypes';
 import { isRoomValid } from './functions';
@@ -89,9 +88,6 @@ ReducerRegistry.register(
 
         case SET_ROOM:
             return _setRoom(state, action);
-
-        case SET_SIP_GATEWAY_ENABLED:
-            return _setSIPGatewayEnabled(state, action);
 
         case SET_START_MUTED_POLICY:
             return {
@@ -416,16 +412,3 @@ function _setRoom(state, action) {
     });
 }
 
-/**
- * Reduces a specific Redux action SET_SIP_GATEWAY_ENABLED of the feature
- * base/conference.
- *
- * @param {Object} state - The Redux state of the feature base/conference.
- * @param {Action} action - The Redux action SET_SIP_GATEWAY_ENABLED to reduce.
- * @private
- * @returns {Object} The new state of the feature base/conference after the
- * reduction of the specified action.
- */
-function _setSIPGatewayEnabled(state, action) {
-    return set(state, 'isSIPGatewayEnabled', action.isSIPGatewayEnabled);
-}

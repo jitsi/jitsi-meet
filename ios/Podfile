@@ -1,6 +1,7 @@
 platform :ios, '11.0'
 workspace 'jitsi-meet'
 require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
+install! 'cocoapods', :deterministic_uuids => false
 
 target 'jitsi-meet' do
   project 'app/app.xcodeproj'
