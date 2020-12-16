@@ -25,10 +25,6 @@ export * from './actions.native';
  */
 export function dockToolbox(dock: boolean): Function {
     return (dispatch: Dispatch<any>, getState: Function) => {
-        if (interfaceConfig.filmStripOnly) {
-            return;
-        }
-
         const { timeoutMS, visible } = getState()['features/toolbox'];
 
         if (dock) {

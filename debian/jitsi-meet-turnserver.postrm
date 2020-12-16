@@ -24,7 +24,6 @@ set -e
 
 case "$1" in
     remove)
-        rm -rf /etc/nginx/modules-enabled/60-jitsi-meet.conf
         if [ -x "/etc/init.d/nginx" ]; then
             invoke-rc.d nginx reload || true
         fi
@@ -33,7 +32,6 @@ case "$1" in
         fi
     ;;
     purge)
-        rm -rf /etc/nginx/modules-enabled/60-jitsi-meet.conf
         rm -rf /etc/turnserver.conf
         if [ -x "/etc/init.d/nginx" ]; then
             invoke-rc.d nginx reload || true

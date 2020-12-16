@@ -15,10 +15,16 @@ export function preloadImage(src: string | Object): Promise<string> {
     }
 
     return new Promise((resolve, reject) => {
-        const image = document.createElement('img');
-
-        image.onload = () => resolve(src);
-        image.onerror = reject;
-        image.src = src;
+        fetch(src, { referrer: '' })
+            .then(response => {
+                if (response.ok) {
+                    resolve(src);
+                } else {
+                    reject();
+                }
+            })
+            .catch(e => {
+                reject(e);
+            });
     });
 }

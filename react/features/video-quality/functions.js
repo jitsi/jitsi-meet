@@ -2,8 +2,8 @@
 
 import { CFG_LVL_TO_APP_QUALITY_LVL, VIDEO_QUALITY_LEVELS } from './constants';
 
-const { LOW, STANDARD, HIGH } = VIDEO_QUALITY_LEVELS;
-const videoQualityLevels = [ LOW, STANDARD, HIGH ];
+const { LOW, STANDARD, HIGH, ULTRA } = VIDEO_QUALITY_LEVELS;
+const videoQualityLevels = [ LOW, STANDARD, HIGH, ULTRA ];
 
 /**
  * Finds the nearest video quality level to the passed video quality.

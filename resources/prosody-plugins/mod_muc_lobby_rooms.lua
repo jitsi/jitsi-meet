@@ -166,7 +166,7 @@ function attach_lobby_room(room)
         new_room:set_persistent(true);
         module:log("debug","Lobby room jid = %s created",lobby_room_jid);
         new_room.main_room = room;
-        room._data.lobbyroom = new_room;
+        room._data.lobbyroom = new_room.jid;
         room:save(true);
         return true
     end
@@ -178,9 +178,12 @@ function destroy_lobby_room(room, newjid, message)
     if not message then
         message = 'Lobby room closed.';
     end
-    if room and room._data.lobbyroom then
-        room._data.lobbyroom:set_persistent(false);
-        room._data.lobbyroom:destroy(newjid, message);
+    if lobby_muc_service and room and room._data.lobbyroom then
+        local lobby_room_obj = lobby_muc_service.get_room_from_jid(room._data.lobbyroom);
+        if lobby_room_obj then
+            lobby_room_obj:set_persistent(false);
+            lobby_room_obj:destroy(newjid, message);
+        end
         room._data.lobbyroom = nil;
     end
 end
@@ -315,7 +318,7 @@ process_host_module(main_muc_component_config, function(host_module, host)
                 label = 'Lobby room jid';
                 value = '';
             });
-            event.formdata['muc#roominfo_lobbyroom'] = room._data.lobbyroom.jid;
+            event.formdata['muc#roominfo_lobbyroom'] = room._data.lobbyroom;
         end
     end);
 
@@ -364,7 +367,7 @@ process_host_module(main_muc_component_config, function(host_module, host)
             local reply = st.error_reply(stanza, 'auth', 'registration-required'):up();
             reply.tags[1].attr.code = '407';
             reply:tag('x', {xmlns = MUC_NS}):up();
-            reply:tag('lobbyroom'):text(room._data.lobbyroom.jid);
+            reply:tag('lobbyroom'):text(room._data.lobbyroom);
             event.origin.send(reply:tag('x', {xmlns = MUC_NS}));
             return true;
         end
@@ -377,13 +380,16 @@ process_host_module(main_muc_component_config, function(host_module, host)
         local from = stanza:get_child('x', 'http://jabber.org/protocol/muc#user')
             :get_child('invite').attr.from;
 
-        if room._data.lobbyroom then
-            local occupant = room._data.lobbyroom:get_occupant_by_real_jid(invitee);
-            if occupant then
-                local display_name = occupant:get_presence():get_child_text(
-                    'nick', 'http://jabber.org/protocol/nick');
+        if lobby_muc_service and room._data.lobbyroom then
+            local lobby_room_obj = lobby_muc_service.get_room_from_jid(room._data.lobbyroom);
+            if lobby_room_obj then
+                local occupant = lobby_room_obj:get_occupant_by_real_jid(invitee);
+                if occupant then
+                    local display_name = occupant:get_presence():get_child_text(
+                            'nick', 'http://jabber.org/protocol/nick');
 
-                notify_lobby_access(room, from, occupant.nick, display_name, true);
+                    notify_lobby_access(room, from, occupant.nick, display_name, true);
+                end
             end
         end
     end);

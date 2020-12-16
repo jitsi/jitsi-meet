@@ -4,16 +4,14 @@ import React from 'react';
 import type { Dispatch } from 'redux';
 
 import { getDefaultURL } from '../../app/functions';
+import { openDialog } from '../../base/dialog/actions';
 import { translate } from '../../base/i18n';
-import { setActiveModalId } from '../../base/modal';
 import { NavigateSectionList, type Section } from '../../base/react';
 import { connect } from '../../base/redux';
-import { ColorPalette } from '../../base/styles';
-import { DIAL_IN_SUMMARY_VIEW_ID } from '../../invite/constants';
-import { deleteRecentListEntry } from '../actions';
 import { isRecentListEnabled, toDisplayableList } from '../functions';
 
 import AbstractRecentList from './AbstractRecentList';
+import RecentListItemMenu from './RecentListItemMenu.native';
 
 /**
  * The type of the React {@code Component} props of {@link RecentList}
@@ -62,8 +60,8 @@ class RecentList extends AbstractRecentList<Props> {
     constructor(props: Props) {
         super(props);
 
-        this._onDelete = this._onDelete.bind(this);
-        this._onShowDialInInfo = this._onShowDialInInfo.bind(this);
+        // Bind event handlers so they are only bound once per instance.
+        this._onLongPress = this._onLongPress.bind(this);
     }
 
     /**
@@ -82,50 +80,29 @@ class RecentList extends AbstractRecentList<Props> {
             _recentList
         } = this.props;
         const recentList = toDisplayableList(_recentList, t, _defaultServerURL);
-        const slideActions = [ {
-            backgroundColor: ColorPalette.blue,
-            onPress: this._onShowDialInInfo,
-            text: t('welcomepage.info')
-        }, {
-            backgroundColor: 'red',
-            onPress: this._onDelete,
-            text: t('welcomepage.recentListDelete')
-        } ];
 
         return (
             <NavigateSectionList
                 disabled = { disabled }
+                onLongPress = { this._onLongPress }
                 onPress = { this._onPress }
                 renderListEmptyComponent
                     = { this._getRenderListEmptyComponent() }
-                sections = { recentList }
-                slideActions = { slideActions } />
+                sections = { recentList } />
         );
     }
 
-    _onDelete: Object => void
+    _onLongPress: (Object) => void;
 
     /**
-     * Callback for the delete action of the list.
+     * Handles the list's navigate action.
      *
-     * @param {Object} itemId - The ID of the entry thats deletion is
-     * requested.
+     * @private
+     * @param {Object} item - The item which was long pressed.
      * @returns {void}
      */
-    _onDelete(itemId) {
-        this.props.dispatch(deleteRecentListEntry(itemId));
-    }
-
-    _onShowDialInInfo: Object => void
-
-    /**
-     * Callback for the dial-in info action of the list.
-     *
-     * @param {Object} itemId - The ID of the entry for which we'd like to show the dial in numbers.
-     * @returns {void}
-     */
-    _onShowDialInInfo(itemId) {
-        this.props.dispatch(setActiveModalId(DIAL_IN_SUMMARY_VIEW_ID, { summaryUrl: itemId.url }));
+    _onLongPress(item) {
+        this.props.dispatch(openDialog(RecentListItemMenu, { item }));
     }
 }
 
@@ -133,10 +110,7 @@ class RecentList extends AbstractRecentList<Props> {
  * Maps redux state to component props.
  *
  * @param {Object} state - The redux state.
- * @returns {{
- *     _defaultServerURL: string,
- *     _recentList: Array
- * }}
+ * @returns {Props}
  */
 export function _mapStateToProps(state: Object) {
     return {

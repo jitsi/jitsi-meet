@@ -1,5 +1,3 @@
-import groovy.json.JsonSlurper
-
 apply plugin: 'com.android.library'
 apply plugin: 'maven-publish'
 
@@ -35,10 +33,6 @@ android {
             }
         }
     }
-
-    packagingOptions {
-        pickFirst '**/libc++_shared.so'
-    }
 }
 
 dependencies {
@@ -50,11 +44,8 @@ dependencies {
 
     //noinspection GradleDynamicVersion
     api 'com.facebook.react:react-native:+'
-
-    // Hermes JS engine
-    def hermesPath = "../../node_modules/hermes-engine/android/"
-    debugImplementation files(hermesPath + "hermes-debug.aar")
-    releaseImplementation files(hermesPath + "hermes-release.aar")
+    //noinspection GradleDynamicVersion
+    implementation 'org.webkit:android-jsc:+'
 
     implementation 'com.dropbox.core:dropbox-core-sdk:3.0.8'
     implementation 'com.jakewharton.timber:timber:4.7.1'
@@ -80,6 +71,7 @@ dependencies {
     implementation project(':react-native-svg')
     implementation project(':react-native-webrtc')
     implementation project(':react-native-webview')
+    implementation project(':react-native-splash-screen')
 
     testImplementation 'junit:junit:4.12'
 }
@@ -153,7 +145,7 @@ android.libraryVariants.all { def variant ->
     mergeResourcesTask.dependsOn(currentBundleTask)
 
     mergeAssetsTask.doLast {
-        def assetsDir = mergeAssetsTask.outputDir
+        def assetsDir = mergeAssetsTask.outputDir.get()
 
         // Bundle sounds
         //
@@ -187,7 +179,7 @@ android.libraryVariants.all { def variant ->
         if (currentBundleTask.enabled) {
             copy {
                 from(resourcesDir)
-                into(mergeResourcesTask.outputDir)
+                into(mergeResourcesTask.outputDir.get())
             }
         }
     }
@@ -227,14 +219,6 @@ publishing {
                     dependency.appendNode('artifactId', artifactId)
                     dependency.appendNode('version', it.moduleVersion)
                 }
-
-                // Add Hermes dependency.
-                def hermesPkg = new File("$rootDir/../node_modules/hermes-engine/package.json")
-                def hermesVersion = new JsonSlurper().parseText(hermesPkg.text).version
-                def hermesDependency = dependencies.appendNode('dependency')
-                hermesDependency.appendNode('groupId', "com.facebook")
-                hermesDependency.appendNode('artifactId', "hermes")
-                hermesDependency.appendNode('version', hermesVersion)
             }
         }
 

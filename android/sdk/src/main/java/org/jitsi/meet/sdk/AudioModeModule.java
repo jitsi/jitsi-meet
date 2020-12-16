@@ -16,6 +16,7 @@
 
 package org.jitsi.meet.sdk;
 
+import android.app.Activity;
 import android.content.Context;
 import android.media.AudioManager;
 import android.os.Build;
@@ -256,7 +257,7 @@ class AudioModeModule extends ReactContextBaseJavaModule {
                 if (mode != -1) {
                     JitsiMeetLogger.i(TAG + " User selected device set to: " + device);
                     userSelectedDevice = device;
-                    updateAudioRoute(mode);
+                    updateAudioRoute(mode, false);
                 }
             }
         });
@@ -276,13 +277,22 @@ class AudioModeModule extends ReactContextBaseJavaModule {
             return;
         }
 
+        Activity currentActivity = getCurrentActivity();
+        if (currentActivity != null) {
+            if (mode == DEFAULT) {
+                currentActivity.setVolumeControlStream(AudioManager.USE_DEFAULT_STREAM_TYPE);
+            } else {
+                currentActivity.setVolumeControlStream(AudioManager.STREAM_VOICE_CALL);
+            }
+        }
+
         runInAudioThread(new Runnable() {
             @Override
             public void run() {
                 boolean success;
 
                 try {
-                    success = updateAudioRoute(mode);
+                    success = updateAudioRoute(mode, false);
                 } catch (Throwable e) {
                     success = false;
                     JitsiMeetLogger.e(e, TAG + " Failed to update audio route for mode: " + mode);
@@ -321,7 +331,7 @@ class AudioModeModule extends ReactContextBaseJavaModule {
      * @return {@code true} if the audio route was updated successfully;
      * {@code false}, otherwise.
      */
-    private boolean updateAudioRoute(int mode) {
+    private boolean updateAudioRoute(int mode, boolean force) {
         JitsiMeetLogger.i(TAG + " Update audio route for mode: " + mode);
 
         if (!audioDeviceHandler.setMode(mode)) {
@@ -356,7 +366,7 @@ class AudioModeModule extends ReactContextBaseJavaModule {
 
         // If the previously selected device and the current default one
         // match, do nothing.
-        if (selectedDevice != null && selectedDevice.equals(audioDevice)) {
+        if (!force && selectedDevice != null && selectedDevice.equals(audioDevice)) {
             return true;
         }
 
@@ -421,7 +431,16 @@ class AudioModeModule extends ReactContextBaseJavaModule {
      */
     void updateAudioRoute() {
         if (mode != -1) {
-            updateAudioRoute(mode);
+            updateAudioRoute(mode, false);
+        }
+    }
+
+    /**
+     * Re-sets the current audio route. Needed when focus is lost and regained.
+     */
+    void resetAudioRoute() {
+        if (mode != -1) {
+            updateAudioRoute(mode, true);
         }
     }
 

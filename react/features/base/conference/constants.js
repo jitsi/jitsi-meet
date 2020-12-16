@@ -1,11 +1,4 @@
 /**
- * The command type for updating a participant's avatar ID.
- *
- * @type {string}
- */
-export const AVATAR_ID_COMMAND = 'avatar-id';
-
-/**
  * The command type for updating a participant's avatar URL.
  *
  * @type {string}

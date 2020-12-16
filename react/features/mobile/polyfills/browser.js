@@ -1,7 +1,7 @@
 import { Platform } from 'react-native';
 import BackgroundTimer from 'react-native-background-timer';
 
-import '@webcomponents/url'; // Polyfill for URL constructor
+import 'react-native-url-polyfill/auto'; // Complete URL polyfill.
 
 import Storage from './Storage';
 

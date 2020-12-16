@@ -1,10 +1,18 @@
 // @flow
 
 import { CONFERENCE_WILL_JOIN } from '../conference';
+import { SET_CONFIG } from '../config';
 import { JitsiConferenceEvents } from '../lib-jitsi-meet';
 import { MiddlewareRegistry } from '../redux';
+import { getJitsiMeetGlobalNS } from '../util';
 
 import { setConnectionState } from './actions';
+import {
+    getRemoteVideoType,
+    isLargeVideoReceived,
+    isRemoteVideoReceived,
+    isTestModeEnabled
+} from './functions';
 import logger from './logger';
 
 /**
@@ -19,6 +27,13 @@ MiddlewareRegistry.register(store => next => action => {
     case CONFERENCE_WILL_JOIN:
         _bindConferenceConnectionListener(action.conference, store);
         break;
+    case SET_CONFIG: {
+        const result = next(action);
+
+        _bindTortureHelpers(store);
+
+        return result;
+    }
     }
 
     return next(action);
@@ -50,6 +65,29 @@ function _bindConferenceConnectionListener(conference, { dispatch }) {
         JitsiConferenceEvents.CONNECTION_INTERRUPTED,
         _onConnectionEvent.bind(
             null, JitsiConferenceEvents.CONNECTION_INTERRUPTED, dispatch));
+}
+
+/**
+ * Binds all the helper functions needed by torture.
+ *
+ * @param {Store} store - The redux store.
+ * @private
+ * @returns {void}
+ */
+function _bindTortureHelpers(store) {
+    const { getState } = store;
+
+    // We bind helpers only if testing mode is enabled
+    if (!isTestModeEnabled(getState())) {
+        return;
+    }
+
+    // All torture helper methods go in here
+    getJitsiMeetGlobalNS().testing = {
+        getRemoteVideoType: getRemoteVideoType.bind(null, store),
+        isLargeVideoReceived: isLargeVideoReceived.bind(null, store),
+        isRemoteVideoReceived: isRemoteVideoReceived.bind(null, store)
+    };
 }
 
 /**

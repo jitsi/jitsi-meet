@@ -1,6 +1,7 @@
 // @flow
 
 import React from 'react';
+import SplashScreen from 'react-native-splash-screen';
 
 import { setColorScheme } from '../../base/color-scheme';
 import { DialogContainer } from '../../base/dialog';
@@ -83,6 +84,8 @@ export class App extends AbstractApp {
      */
     componentDidMount() {
         super.componentDidMount();
+
+        SplashScreen.hide();
 
         this._init.then(() => {
             const { dispatch, getState } = this.state.store;

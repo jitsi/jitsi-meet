@@ -36,26 +36,6 @@ case "$1" in
         NGINX_CONFIG="/etc/nginx/sites-available/$JVB_HOSTNAME.conf"
         JITSI_MEET_CONFIG="/etc/jitsi/meet/$JVB_HOSTNAME-config.js"
 
-        NGINX_SITES_ENABLED="/etc/nginx/sites-enabled/"
-        NGINX_CONFIG_ENABLED="${NGINX_SITES_ENABLED}${JVB_HOSTNAME}.conf"
-        NGINX_MULTIPLEXING="true"
-        for site in ${NGINX_SITES_ENABLED}*; do
-            # if it is not a file continue
-            [ -f "${site}" ] || continue
-            # if it is our config skip
-            [ "${site}" != "${NGINX_CONFIG_ENABLED}" ] || continue
-            # check whether other enabled hosts has listen 443
-            if cat ${site} | grep -v "^[[:space:]]*#" | grep listen | grep -q "^.*[[:space:]:]443[;[:space:]].*" ; then
-                # nothing to do
-                echo "------------------------------------------------"
-                echo ""
-                echo "turnserver is listening on tcp 5349 as other nginx sites use port 443"
-                echo ""
-                echo "------------------------------------------------"
-                NGINX_MULTIPLEXING="false"
-            fi
-        done
-
         # if there was a turn config backup it so we can configure
         # we cannot recognize at the moment is this a user config or default config when installing coturn
         if [[ -f $TURN_CONFIG ]] && ! grep -q "jitsi-meet coturn config" "$TURN_CONFIG" ; then
@@ -133,19 +113,9 @@ denied-peer-ip=240.0.0.0-255.255.255.255" >> $TURN_CONFIG
         TURN_SECRET="$RET"
 
         # no turn config exists, lt's copy template and fill it in
-        PUBLIC_IP=$(dig -4 +short myip.opendns.com a @resolver1.opendns.com) || true
-        if [ -z "$PUBLIC_IP" ] ; then
-            PUBLIC_IP="127.0.0.1"
-            echo "------------------------------------------------"
-            echo "Warning! Could not resolve your external ip address! Error:^"
-            echo "Your turn server will not work till you edit your $TURN_CONFIG config file."
-            echo "You need to set your external ip address in external-ip and restart coturn service."
-            echo "------------------------------------------------"
-        fi
         cp /usr/share/jitsi-meet-turnserver/turnserver.conf $TURN_CONFIG
         sed -i "s/jitsi-meet.example.com/$JVB_HOSTNAME/g" $TURN_CONFIG
         sed -i "s/__turnSecret__/$TURN_SECRET/g" $TURN_CONFIG
-        sed -i "s/__external_ip_address__/$PUBLIC_IP/g" $TURN_CONFIG
 
         # SSL for nginx
         db_get jitsi-meet/cert-choice
@@ -170,23 +140,14 @@ denied-peer-ip=240.0.0.0-255.255.255.255" >> $TURN_CONFIG
         invoke-rc.d coturn restart || true
 
         NGINX_STREAM_CONFIG="/etc/nginx/modules-enabled/60-jitsi-meet.conf"
-        if [ $NGINX_MULTIPLEXING = "true" ] && [ ! -f $NGINX_STREAM_CONFIG ] && [ -f $NGINX_CONFIG ] ; then
-            ln -s /usr/share/jitsi-meet-turnserver/jitsi-meet.conf $NGINX_STREAM_CONFIG
-            sed -i "s/listen 443 ssl/listen 4444 ssl http2/g" $NGINX_CONFIG
-            sed -i "s/listen \[\:\:\]\:443 ssl/listen \[\:\:\]\:4444 ssl http2/g" $NGINX_CONFIG
-            invoke-rc.d nginx reload || true
-        else
-            PROSODY_HOST_CONFIG="/etc/prosody/conf.avail/$JVB_HOSTNAME.cfg.lua"
-            if [ -f $PROSODY_HOST_CONFIG ] ; then
-                # If we are not multiplexing we need to change the port in prosody config
-                sed -i 's/"443"/"5349"/g' $PROSODY_HOST_CONFIG
-                invoke-rc.d prosody restart || true
-            fi
-        fi
-
-        # Enable turn server in config.js
-        if [ -f $JITSI_MEET_CONFIG ] ; then
-            sed -i "s/\/\/ useStunTurn: true/useStunTurn: true/g" $JITSI_MEET_CONFIG
+        if [ -f $NGINX_STREAM_CONFIG ] ; then
+            echo "------------------------------------------------"
+            echo ""
+            echo "You have multiplexing enabled, it is recommended to disable it and migrate to using websockets for the bridge channel."
+            echo "The support for sctp data channels is deprecated and will be dropped at some point."
+            echo "How to do it at: https://jitsi.org/multiplexing-to-bridge-ws-howto"
+            echo ""
+            echo "------------------------------------------------"
         fi
 
         # and we're done with debconf

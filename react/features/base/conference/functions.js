@@ -14,7 +14,6 @@ import { toState } from '../redux';
 import { safeDecodeURIComponent } from '../util';
 
 import {
-    AVATAR_ID_COMMAND,
     AVATAR_URL_COMMAND,
     EMAIL_COMMAND,
     JITSI_CONFERENCE_URL_KEY
@@ -74,6 +73,7 @@ export function commonUserJoinedHandling(
     } else {
         dispatch(participantJoined({
             botType: user.getBotType(),
+            connectionStatus: user.getConnectionStatus(),
             conference,
             id,
             name: displayName,
@@ -316,16 +316,12 @@ export function sendLocalParticipant(
             setDisplayName: Function,
             setLocalParticipantProperty: Function }) {
     const {
-        avatarID,
         avatarURL,
         email,
         features,
         name
     } = getLocalParticipant(stateful);
 
-    avatarID && conference.sendCommand(AVATAR_ID_COMMAND, {
-        value: avatarID
-    });
     avatarURL && conference.sendCommand(AVATAR_URL_COMMAND, {
         value: avatarURL
     });

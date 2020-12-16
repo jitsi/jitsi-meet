@@ -67,4 +67,6 @@
 
 - (BOOL)isCrashReportingDisabled;
 
+- (void)showSplashScreen:(UIView * _Nonnull) rootView;
+
 @end

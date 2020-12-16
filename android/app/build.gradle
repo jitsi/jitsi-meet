@@ -16,6 +16,10 @@ android {
     compileSdkVersion rootProject.ext.compileSdkVersion
     buildToolsVersion rootProject.ext.buildToolsVersion
 
+    packagingOptions {
+        exclude 'lib/*/libhermes*.so'
+    }
+
     defaultConfig {
         applicationId 'org.jitsi.meet'
         versionCode vcode
@@ -74,7 +78,7 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'androidx.appcompat:appcompat:1.2.0'
 
-    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.0-beta-5'
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.2'
 
     if (!rootProject.ext.libreBuild) {
         implementation 'com.google.android.gms:play-services-auth:16.0.1'
@@ -82,6 +86,7 @@ dependencies {
         // Firebase
         //  - Crashlytics
         //  - Dynamic Links
+        implementation 'com.google.firebase:firebase-analytics:17.5.0'
         implementation 'com.google.firebase:firebase-crashlytics:17.2.1'
         implementation 'com.google.firebase:firebase-dynamic-links:19.1.0'
     }
