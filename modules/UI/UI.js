@@ -221,6 +221,10 @@ UI.initEtherpad = name => {
     const url = new URL(name, config.etherpad_base);
 
     APP.store.dispatch(setDocumentUrl(url.toString()));
+
+    if (config.openSharedDocumentOnJoin) {
+        etherpadManager.toggleEtherpad();
+    }
 };
 
 /**
