@@ -104,3 +104,14 @@ export const TRACK_UPDATED = 'TRACK_UPDATED';
  * }
  */
 export const TRACK_WILL_CREATE = 'TRACK_WILL_CREATE';
+
+/**
+ * Action to update the redux store with the current media event name of the video track.
+ *
+ * @returns {{
+ *     type: TRACK_UPDATE_LAST_VIDEO_MEDIA_EVENT,
+ *     track: Track,
+ *     name: string
+ * }}
+ */
+export const TRACK_UPDATE_LAST_VIDEO_MEDIA_EVENT = 'TRACK_UPDATE_LAST_VIDEO_MEDIA_EVENT';

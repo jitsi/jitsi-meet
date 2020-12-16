@@ -5,7 +5,6 @@
  *     type: SETTINGS_UPDATED,
  *     settings: {
  *         audioOutputDeviceId: string,
- *         avatarID: string,
  *         avatarURL: string,
  *         cameraDeviceId: string,
  *         displayName: string,

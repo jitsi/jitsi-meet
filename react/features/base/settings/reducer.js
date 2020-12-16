@@ -1,7 +1,6 @@
 // @flow
 
 import { jitsiLocalStorage } from '@jitsi/js-utils';
-import { randomHexString } from '@jitsi/js-utils/random';
 import _ from 'lodash';
 
 import { APP_WILL_MOUNT } from '../app/actionTypes';
@@ -19,7 +18,6 @@ import logger from './logger';
  */
 const DEFAULT_STATE = {
     audioOutputDeviceId: undefined,
-    avatarID: undefined,
     avatarURL: undefined,
     cameraDeviceId: undefined,
     disableCallIntegration: undefined,
@@ -126,24 +124,16 @@ function _initSettings(featureState) {
     // jibri, and remove the old settings.js values.
     const savedDisplayName = jitsiLocalStorage.getItem('displayname');
     const savedEmail = jitsiLocalStorage.getItem('email');
-    let avatarID = _.escape(jitsiLocalStorage.getItem('avatarId'));
 
     // The helper _.escape will convert null to an empty strings. The empty
     // string will be saved in settings. On app re-load, because an empty string
     // is a defined value, it will override any value found in local storage.
     // The workaround is sidestepping _.escape when the value is not set in
     // local storage.
-    const displayName
-        = savedDisplayName === null ? undefined : _.escape(savedDisplayName);
+    const displayName = savedDisplayName === null ? undefined : _.escape(savedDisplayName);
     const email = savedEmail === null ? undefined : _.escape(savedEmail);
 
-    if (!avatarID) {
-        // if there is no avatar id, we generate a unique one and use it forever
-        avatarID = randomHexString(32);
-    }
-
     settings = assignIfDefined({
-        avatarID,
         displayName,
         email
     }, settings);

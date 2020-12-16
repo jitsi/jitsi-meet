@@ -4,7 +4,6 @@ import { SET_FILMSTRIP_ENABLED } from '../../filmstrip/actionTypes';
 import { SELECT_LARGE_VIDEO_PARTICIPANT } from '../../large-video/actionTypes';
 import { APP_STATE_CHANGED } from '../../mobile/background/actionTypes';
 import { SCREEN_SHARE_PARTICIPANTS_UPDATED, SET_TILE_VIEW } from '../../video-layout/actionTypes';
-import { shouldDisplayTileView } from '../../video-layout/functions';
 import { SET_AUDIO_ONLY } from '../audio-only/actionTypes';
 import { CONFERENCE_JOINED } from '../conference/actionTypes';
 import {
@@ -17,6 +16,7 @@ import {
     getParticipantCount
 } from '../participants/functions';
 import { MiddlewareRegistry } from '../redux';
+import { isLocalVideoTrackDesktop } from '../tracks/functions';
 
 import { limitLastN } from './functions';
 import logger from './logger';
@@ -68,25 +68,26 @@ function _updateLastN({ getState }) {
         return;
     }
 
-    const defaultLastN = typeof config.channelLastN === 'undefined' ? -1 : config.channelLastN;
-    let lastN = defaultLastN;
+    let lastN = typeof config.channelLastN === 'undefined' ? -1 : config.channelLastN;
 
-    // Apply last N limit based on the # of participants
+    // Apply last N limit based on the # of participants and channelLastN settings.
     const limitedLastN = limitLastN(participantCount, lastNLimits);
 
     if (limitedLastN !== undefined) {
-        lastN = limitedLastN;
+        lastN = lastN === -1 ? limitedLastN : Math.min(limitedLastN, lastN);
     }
 
     if (typeof appState !== 'undefined' && appState !== 'active') {
-        lastN = 0;
+        lastN = isLocalVideoTrackDesktop(state) ? 1 : 0;
     } else if (audioOnly) {
-        const { screenShares } = state['features/video-layout'];
-        const tileViewEnabled = shouldDisplayTileView(state);
+        const { screenShares, tileViewEnabled } = state['features/video-layout'];
         const largeVideoParticipantId = state['features/large-video'].participantId;
         const largeVideoParticipant
             = largeVideoParticipantId ? getParticipantById(state, largeVideoParticipantId) : undefined;
 
+        // Use tileViewEnabled state from redux here instead of determining if client should be in tile
+        // view since we make an exception only for screenshare when in audio-only mode. If the user unpins
+        // the screenshare, lastN will be set to 0 here. It will be set to 1 if screenshare has been auto pinned.
         if (!tileViewEnabled && largeVideoParticipant && !largeVideoParticipant.local) {
             lastN = (screenShares || []).includes(largeVideoParticipantId) ? 1 : 0;
         } else {

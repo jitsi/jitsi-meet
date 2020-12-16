@@ -11,11 +11,19 @@ import { Provider } from 'react-redux';
 import { AudioLevelIndicator } from '../../../react/features/audio-level-indicator';
 import { Avatar as AvatarDisplay } from '../../../react/features/base/avatar';
 import { i18next } from '../../../react/features/base/i18n';
+import { MEDIA_TYPE } from '../../../react/features/base/media';
 import {
+    getLocalParticipant,
+    getParticipantById,
     getParticipantCount,
     getPinnedParticipant,
     pinParticipant
 } from '../../../react/features/base/participants';
+import {
+    getTrackByMediaTypeAndParticipant,
+    isLocalTrackMuted,
+    isRemoteTrackMuted
+} from '../../../react/features/base/tracks';
 import { ConnectionIndicator } from '../../../react/features/connection-indicator';
 import { DisplayName } from '../../../react/features/display-name';
 import {
@@ -81,33 +89,11 @@ export default class SmallVideo {
      * Constructor.
      */
     constructor(VideoLayout) {
-        this.isAudioMuted = false;
-        this.isVideoMuted = false;
-        this.isScreenSharing = false;
         this.videoStream = null;
         this.audioStream = null;
         this.VideoLayout = VideoLayout;
         this.videoIsHovered = false;
         this.videoType = undefined;
-
-        /**
-         * The current state of the user's bridge connection. The value should be
-         * a string as enumerated in the library's participantConnectionStatus
-         * constants.
-         *
-         * @private
-         * @type {string|null}
-         */
-        this._connectionStatus = null;
-
-        /**
-         * Whether or not the ConnectionIndicator's popover is hovered. Modifies
-         * how the video overlays display based on hover state.
-         *
-         * @private
-         * @type {boolean}
-         */
-        this._popoverIsHovered = false;
 
         /**
          * Whether or not the connection indicator should be displayed.
@@ -134,7 +120,6 @@ export default class SmallVideo {
         this._showRaisedHand = false;
 
         // Bind event handlers so they are only bound once for every instance.
-        this._onPopoverHover = this._onPopoverHover.bind(this);
         this.updateView = this.updateView.bind(this);
 
         this._onContainerClick = this._onContainerClick.bind(this);
@@ -216,56 +201,6 @@ export default class SmallVideo {
     }
 
     /**
-     * Updates the connectionStatus stat which displays in the ConnectionIndicator.
-
-    * @returns {void}
-    */
-    updateConnectionStatus(connectionStatus) {
-        this._connectionStatus = connectionStatus;
-        this.updateIndicators();
-    }
-
-    /**
-     * Shows / hides the audio muted indicator over small videos.
-     *
-     * @param {boolean} isMuted indicates if the muted element should be shown
-     * or hidden
-     */
-    showAudioIndicator(isMuted) {
-        this.isAudioMuted = isMuted;
-        this.updateStatusBar();
-    }
-
-    /**
-     * Shows / hides the screen-share indicator over small videos.
-     *
-     * @param {boolean} isScreenSharing indicates if the screen-share element should be shown
-     * or hidden
-     */
-    setScreenSharing(isScreenSharing) {
-        if (isScreenSharing === this.isScreenSharing) {
-            return;
-        }
-
-        this.isScreenSharing = isScreenSharing;
-        this.updateView();
-        this.updateStatusBar();
-    }
-
-    /**
-     * Shows video muted indicator over small videos and disables/enables avatar
-     * if video muted.
-     *
-     * @param {boolean} isMuted indicates if we should set the view to muted view
-     * or not
-     */
-    setVideoMutedView(isMuted) {
-        this.isVideoMuted = isMuted;
-        this.updateView();
-        this.updateStatusBar();
-    }
-
-    /**
      * Create or updates the ReactElement for displaying status indicators about
      * audio mute, video mute, and moderator status.
      *
@@ -282,9 +217,6 @@ export default class SmallVideo {
             <Provider store = { APP.store }>
                 <I18nextProvider i18n = { i18next }>
                     <StatusIndicators
-                        showAudioMutedIndicator = { this.isAudioMuted }
-                        showScreenShareIndicator = { this.isScreenSharing }
-                        showVideoMutedIndicator = { this.isVideoMuted }
                         participantID = { this.id } />
                 </I18nextProvider>
             </Provider>,
@@ -459,7 +391,18 @@ export default class SmallVideo {
      * or <tt>false</tt> otherwise.
      */
     isVideoPlayable() {
-        return this.videoStream && !this.isVideoMuted && !APP.conference.isAudioOnly();
+        const state = APP.store.getState();
+        const tracks = state['features/base/tracks'];
+        const participant = this.id ? getParticipantById(state, this.id) : getLocalParticipant(state);
+        let isVideoMuted = true;
+
+        if (participant?.local) {
+            isVideoMuted = isLocalTrackMuted(tracks, MEDIA_TYPE.VIDEO);
+        } else if (!participant?.isFakeParticipant) { // remote participants excluding shared video
+            isVideoMuted = isRemoteTrackMuted(tracks, MEDIA_TYPE.VIDEO, this.id);
+        }
+
+        return this.videoStream && !isVideoMuted && !APP.conference.isAudioOnly();
     }
 
     /**
@@ -489,19 +432,30 @@ export default class SmallVideo {
      * @returns {Object}
      */
     computeDisplayModeInput() {
+        let isScreenSharing = false;
+        let connectionStatus;
+        const state = APP.store.getState();
+        const participant = getParticipantById(state, this.id);
+
+        if (typeof participant !== 'undefined' && !participant.isFakeParticipant && !participant.local) {
+            const tracks = state['features/base/tracks'];
+            const track = getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.VIDEO, this.id);
+
+            isScreenSharing = typeof track !== 'undefined' && track.videoType === 'desktop';
+            connectionStatus = participant.connectionStatus;
+        }
+
         return {
             isCurrentlyOnLargeVideo: this.isCurrentlyOnLargeVideo(),
             isHovered: this._isHovered(),
             isAudioOnly: APP.conference.isAudioOnly(),
-            tileViewActive: shouldDisplayTileView(APP.store.getState()),
+            tileViewActive: shouldDisplayTileView(state),
             isVideoPlayable: this.isVideoPlayable(),
             hasVideo: Boolean(this.selectVideoElement().length),
-            connectionStatus: APP.conference.getParticipantConnectionStatus(this.id),
-            mutedWhileDisconnected: this.mutedWhileDisconnected,
+            connectionStatus,
             canPlayEventReceived: this._canPlayEventReceived,
             videoStream: Boolean(this.videoStream),
-            isVideoMuted: this.isVideoMuted,
-            isScreenSharing: this.isScreenSharing,
+            isScreenSharing,
             videoStreamMuted: this.videoStream ? this.videoStream.isMuted() : 'no stream'
         };
     }
@@ -513,7 +467,7 @@ export default class SmallVideo {
      * @private
      */
     _isHovered() {
-        return this.videoIsHovered || this._popoverIsHovered;
+        return this.videoIsHovered;
     }
 
     /**
@@ -741,10 +695,9 @@ export default class SmallVideo {
                             { this._showConnectionIndicator
                                 ? <ConnectionIndicator
                                     alwaysVisible = { showConnectionIndicator }
-                                    connectionStatus = { this._connectionStatus }
                                     iconSize = { iconSize }
                                     isLocalVideo = { this.isLocal }
-                                    enableStatsDisplay = { !interfaceConfig.filmStripOnly }
+                                    enableStatsDisplay = { true }
                                     participantId = { this.id }
                                     statsPopoverPosition = { statsPopoverPosition } />
                                 : null }
@@ -834,19 +787,6 @@ export default class SmallVideo {
         if (indicatorToolbar) {
             ReactDOM.unmountComponentAtNode(indicatorToolbar);
         }
-    }
-
-    /**
-     * Updates the current state of the connection indicator popover being hovered.
-     * If hovered, display the small video as if it is hovered.
-     *
-     * @param {boolean} popoverIsHovered - Whether or not the mouse cursor is
-     * currently over the connection indicator popover.
-     * @returns {void}
-     */
-    _onPopoverHover(popoverIsHovered) {
-        this._popoverIsHovered = popoverIsHovered;
-        this.updateView();
     }
 
     /**

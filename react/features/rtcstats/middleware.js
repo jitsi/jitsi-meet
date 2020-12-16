@@ -9,6 +9,7 @@ import { getLocalParticipant } from '../base/participants';
 import { MiddlewareRegistry } from '../base/redux';
 
 import RTCStats from './RTCStats';
+import { isRtcstatsEnabled } from './functions';
 import logger from './logger';
 
 /**
@@ -25,7 +26,7 @@ MiddlewareRegistry.register(store => next => action => {
 
     switch (action.type) {
     case LIB_WILL_INIT: {
-        if (analytics.rtcstatsEnabled) {
+        if (isRtcstatsEnabled(state)) {
             // RTCStats "proxies" WebRTC functions such as GUM and RTCPeerConnection by rewriting the global
             // window functions. Because lib-jitsi-meet uses references to those functions that are taken on
             // init, we need to add these proxies before it initializes, otherwise lib-jitsi-meet will use the
@@ -47,7 +48,7 @@ MiddlewareRegistry.register(store => next => action => {
         break;
     }
     case CONFERENCE_JOINED: {
-        if (analytics.rtcstatsEnabled && RTCStats.isInitialized()) {
+        if (isRtcstatsEnabled(state) && RTCStats.isInitialized()) {
             // Once the conference started connect to the rtcstats server and send data.
             try {
                 RTCStats.connect();

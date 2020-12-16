@@ -12,22 +12,27 @@ import { i18next } from '../../../react/features/base/i18n';
 import {
     JitsiParticipantConnectionStatus
 } from '../../../react/features/base/lib-jitsi-meet';
-import {
-    getPinnedParticipant,
-    pinParticipant
-} from '../../../react/features/base/participants';
+import { getParticipantById } from '../../../react/features/base/participants';
+import { isTestModeEnabled } from '../../../react/features/base/testing';
+import { updateLastTrackVideoMediaEvent } from '../../../react/features/base/tracks';
 import { PresenceLabel } from '../../../react/features/presence-status';
-import {
-    REMOTE_CONTROL_MENU_STATES,
-    RemoteVideoMenuTriggerButton
-} from '../../../react/features/remote-video-menu';
-import { LAYOUTS, getCurrentLayout } from '../../../react/features/video-layout';
+import { stopController, requestRemoteControl } from '../../../react/features/remote-control';
+import { RemoteVideoMenuTriggerButton } from '../../../react/features/remote-video-menu';
 /* eslint-enable no-unused-vars */
 import UIUtils from '../util/UIUtil';
 
 import SmallVideo from './SmallVideo';
 
 const logger = Logger.getLogger(__filename);
+
+/**
+ * List of container events that we are going to process, will be added as listener to the
+ * container for every event in the list. The latest event will be stored in redux.
+ */
+const containerEvents = [
+    'abort', 'canplay', 'canplaythrough', 'emptied', 'ended', 'error', 'loadeddata', 'loadedmetadata', 'loadstart',
+    'pause', 'play', 'playing', 'ratechange', 'stalled', 'suspend', 'waiting'
+];
 
 /**
  *
@@ -78,7 +83,6 @@ export default class RemoteVideo extends SmallVideo {
         this.videoSpanId = `participant_${this.id}`;
 
         this._audioStreamElement = null;
-        this._supportsRemoteControl = false;
         this.statsPopoverLocation = interfaceConfig.VERTICAL_FILMSTRIP ? 'left bottom' : 'top center';
         this.addRemoteVideoContainer();
         this.updateIndicators();
@@ -86,8 +90,6 @@ export default class RemoteVideo extends SmallVideo {
         this.bindHoverHandler();
         this.flipX = false;
         this.isLocal = false;
-        this.popupMenuIsHovered = false;
-        this._isRemoteControlSessionActive = false;
 
         /**
          * The flag is set to <tt>true</tt> after the 'canplay' event has been
@@ -98,24 +100,10 @@ export default class RemoteVideo extends SmallVideo {
          */
         this._canPlayEventReceived = false;
 
-        /**
-         * The flag is set to <tt>true</tt> if remote participant's video gets muted
-         * during his media connection disruption. This is to prevent black video
-         * being render on the thumbnail, because even though once the video has
-         * been played the image usually remains on the video element it seems that
-         * after longer period of the video element being hidden this image can be
-         * lost.
-         * @type {boolean}
-         */
-        this.mutedWhileDisconnected = false;
-
         // Bind event handlers so they are only bound once for every instance.
         // TODO The event handlers should be turned into actions so changes can be
         // handled through reducers and middleware.
-        this._requestRemoteControlPermissions
-            = this._requestRemoteControlPermissions.bind(this);
         this._setAudioVolume = this._setAudioVolume.bind(this);
-        this._stopRemoteControl = this._stopRemoteControl.bind(this);
 
         this.container.onclick = this._onContainerClick;
     }
@@ -138,27 +126,12 @@ export default class RemoteVideo extends SmallVideo {
     }
 
     /**
-     * Checks whether current video is considered hovered. Currently it is hovered
-     * if the mouse is over the video, or if the connection indicator or the popup
-     * menu is shown(hovered).
-     * @private
-     * NOTE: extends SmallVideo's method
-     */
-    _isHovered() {
-        return super._isHovered() || this.popupMenuIsHovered;
-    }
-
-    /**
      * Generates the popup menu content.
      *
      * @returns {Element|*} the constructed element, containing popup menu items
      * @private
      */
     _generatePopupContent() {
-        if (interfaceConfig.filmStripOnly) {
-            return;
-        }
-
         const remoteVideoMenuContainer
             = this.container.querySelector('.remotevideomenu');
 
@@ -166,40 +139,11 @@ export default class RemoteVideo extends SmallVideo {
             return;
         }
 
-        const { controller } = APP.remoteControl;
-        let remoteControlState = null;
-        let onRemoteControlToggle;
-
-        if (this._supportsRemoteControl
-            && ((!APP.remoteControl.active && !this._isRemoteControlSessionActive)
-                || APP.remoteControl.controller.activeParticipant === this.id)) {
-            if (controller.getRequestedParticipant() === this.id) {
-                remoteControlState = REMOTE_CONTROL_MENU_STATES.REQUESTING;
-            } else if (controller.isStarted()) {
-                onRemoteControlToggle = this._stopRemoteControl;
-                remoteControlState = REMOTE_CONTROL_MENU_STATES.STARTED;
-            } else {
-                onRemoteControlToggle = this._requestRemoteControlPermissions;
-                remoteControlState = REMOTE_CONTROL_MENU_STATES.NOT_STARTED;
-            }
-        }
-
         const initialVolumeValue = this._audioStreamElement && this._audioStreamElement.volume;
 
         // hide volume when in silent mode
         const onVolumeChange
             = APP.store.getState()['features/base/config'].startSilent ? undefined : this._setAudioVolume;
-        const participantID = this.id;
-        const currentLayout = getCurrentLayout(APP.store.getState());
-        let remoteMenuPosition;
-
-        if (currentLayout === LAYOUTS.TILE_VIEW) {
-            remoteMenuPosition = 'left top';
-        } else if (currentLayout === LAYOUTS.VERTICAL_FILMSTRIP_VIEW) {
-            remoteMenuPosition = 'left bottom';
-        } else {
-            remoteMenuPosition = 'top center';
-        }
 
         ReactDOM.render(
             <Provider store = { APP.store }>
@@ -207,14 +151,10 @@ export default class RemoteVideo extends SmallVideo {
                     <AtlasKitThemeProvider mode = 'dark'>
                         <RemoteVideoMenuTriggerButton
                             initialVolumeValue = { initialVolumeValue }
-                            isAudioMuted = { this.isAudioMuted }
-                            menuPosition = { remoteMenuPosition }
                             onMenuDisplay
                                 = {this._onRemoteVideoMenuDisplay.bind(this)}
-                            onRemoteControlToggle = { onRemoteControlToggle }
                             onVolumeChange = { onVolumeChange }
-                            participantID = { participantID }
-                            remoteControlState = { remoteControlState } />
+                            participantID = { this.id } />
                     </AtlasKitThemeProvider>
                 </I18nextProvider>
             </Provider>,
@@ -225,76 +165,6 @@ export default class RemoteVideo extends SmallVideo {
      *
      */
     _onRemoteVideoMenuDisplay() {
-        this.updateRemoteVideoMenu();
-    }
-
-    /**
-     * Sets the remote control active status for the remote video.
-     *
-     * @param {boolean} isActive - The new remote control active status.
-     * @returns {void}
-     */
-    setRemoteControlActiveStatus(isActive) {
-        this._isRemoteControlSessionActive = isActive;
-        this.updateRemoteVideoMenu();
-    }
-
-    /**
-     * Sets the remote control supported value and initializes or updates the menu
-     * depending on the remote control is supported or not.
-     * @param {boolean} isSupported
-     */
-    setRemoteControlSupport(isSupported = false) {
-        if (this._supportsRemoteControl === isSupported) {
-            return;
-        }
-        this._supportsRemoteControl = isSupported;
-        this.updateRemoteVideoMenu();
-    }
-
-    /**
-     * Requests permissions for remote control session.
-     */
-    _requestRemoteControlPermissions() {
-        APP.remoteControl.controller.requestPermissions(this.id, this.VideoLayout.getLargeVideoWrapper())
-            .then(result => {
-                if (result === null) {
-                    return;
-                }
-                this.updateRemoteVideoMenu();
-                APP.UI.messageHandler.notify(
-                    'dialog.remoteControlTitle',
-                    result === false ? 'dialog.remoteControlDeniedMessage' : 'dialog.remoteControlAllowedMessage',
-                    { user: this.user.getDisplayName() || interfaceConfig.DEFAULT_REMOTE_DISPLAY_NAME }
-                );
-                if (result === true) {
-                    // the remote control permissions has been granted
-                    // pin the controlled participant
-                    const pinnedParticipant = getPinnedParticipant(APP.store.getState()) || {};
-                    const pinnedId = pinnedParticipant.id;
-
-                    if (pinnedId !== this.id) {
-                        APP.store.dispatch(pinParticipant(this.id));
-                    }
-                }
-            }, error => {
-                logger.error(error);
-                this.updateRemoteVideoMenu();
-                APP.UI.messageHandler.notify(
-                    'dialog.remoteControlTitle',
-                    'dialog.remoteControlErrorMessage',
-                    { user: this.user.getDisplayName() || interfaceConfig.DEFAULT_REMOTE_DISPLAY_NAME }
-                );
-            });
-        this.updateRemoteVideoMenu();
-    }
-
-    /**
-     * Stops remote control session.
-     */
-    _stopRemoteControl() {
-        // send message about stopping
-        APP.remoteControl.controller.stop();
         this.updateRemoteVideoMenu();
     }
 
@@ -311,41 +181,9 @@ export default class RemoteVideo extends SmallVideo {
 
     /**
      * Updates the remote video menu.
-     *
-     * @param isMuted the new muted state to update to
      */
-    updateRemoteVideoMenu(isMuted) {
-        if (typeof isMuted !== 'undefined') {
-            this.isAudioMuted = isMuted;
-        }
+    updateRemoteVideoMenu() {
         this._generatePopupContent();
-    }
-
-    /**
-     * @inheritDoc
-     * @override
-     */
-    setVideoMutedView(isMuted) {
-        super.setVideoMutedView(isMuted);
-
-        // Update 'mutedWhileDisconnected' flag
-        this._figureOutMutedWhileDisconnected();
-    }
-
-    /**
-     * Figures out the value of {@link #mutedWhileDisconnected} flag by taking into
-     * account remote participant's network connectivity and video muted status.
-     *
-     * @private
-     */
-    _figureOutMutedWhileDisconnected() {
-        const isActive = this.isConnectionActive();
-
-        if (!isActive && this.isVideoMuted) {
-            this.mutedWhileDisconnected = true;
-        } else if (isActive && !this.isVideoMuted) {
-            this.mutedWhileDisconnected = false;
-        }
     }
 
     /**
@@ -379,33 +217,20 @@ export default class RemoteVideo extends SmallVideo {
     }
 
     /**
-     * Checks whether the remote user associated with this <tt>RemoteVideo</tt>
-     * has connectivity issues.
-     *
-     * @return {boolean} <tt>true</tt> if the user's connection is fine or
-     * <tt>false</tt> otherwise.
-     */
-    isConnectionActive() {
-        return this.user.getConnectionStatus() === JitsiParticipantConnectionStatus.ACTIVE;
-    }
-
-    /**
-     * The remote video is considered "playable" once the can play event has been received. It will be allowed to
-     * display video also in {@link JitsiParticipantConnectionStatus.INTERRUPTED} if the video has received the canplay
-     * event and was not muted while not in ACTIVE state. This basically means that there is stalled video image cached
-     * that could be displayed. It's used to show "grey video image" in user's thumbnail when there are connectivity
-     * issues.
+     * The remote video is considered "playable" once the can play event has been received.
      *
      * @inheritdoc
      * @override
      */
     isVideoPlayable() {
-        const connectionState = APP.conference.getParticipantConnectionStatus(this.id);
+        const participant = getParticipantById(APP.store.getState(), this.id);
+        const { connectionStatus } = participant || {};
 
-        return super.isVideoPlayable()
-            && this._canPlayEventReceived
-            && (connectionState === JitsiParticipantConnectionStatus.ACTIVE
-                || (connectionState === JitsiParticipantConnectionStatus.INTERRUPTED && !this.mutedWhileDisconnected));
+        return (
+            super.isVideoPlayable()
+                && this._canPlayEventReceived
+                && connectionStatus === JitsiParticipantConnectionStatus.ACTIVE
+        );
     }
 
     /**
@@ -413,25 +238,7 @@ export default class RemoteVideo extends SmallVideo {
      */
     updateView() {
         this.$container.toggleClass('audio-only', APP.conference.isAudioOnly());
-        this.updateConnectionStatusIndicator();
-
-        // This must be called after 'updateConnectionStatusIndicator' because it
-        // affects the display mode by modifying 'mutedWhileDisconnected' flag
         super.updateView();
-    }
-
-    /**
-     * Updates the UI to reflect user's connectivity status.
-     */
-    updateConnectionStatusIndicator() {
-        const connectionStatus = this.user.getConnectionStatus();
-
-        logger.debug(`${this.id} thumbnail connection status: ${connectionStatus}`);
-
-        // FIXME rename 'mutedWhileDisconnected' to 'mutedWhileNotRendering'
-        // Update 'mutedWhileDisconnected' flag
-        this._figureOutMutedWhileDisconnected();
-        this.updateConnectionStatus(connectionStatus);
     }
 
     /**
@@ -449,6 +256,8 @@ export default class RemoteVideo extends SmallVideo {
      * @param {*} stream
      */
     waitForPlayback(streamElement, stream) {
+        $(streamElement).hide();
+
         const webRtcStream = stream.getOriginalStream();
         const isVideo = stream.isVideoTrack();
 
@@ -458,7 +267,12 @@ export default class RemoteVideo extends SmallVideo {
 
         const listener = () => {
             this._canPlayEventReceived = true;
-            this.VideoLayout.remoteVideoActive(streamElement, this.id);
+
+            logger.info(`${this.id} video is now active`, streamElement);
+            if (streamElement) {
+                $(streamElement).show();
+            }
+
             streamElement.removeEventListener('canplay', listener);
 
             // Refresh to show the video
@@ -498,8 +312,6 @@ export default class RemoteVideo extends SmallVideo {
         // Put new stream element always in front
         streamElement = UIUtils.prependChild(this.container, streamElement);
 
-        $(streamElement).hide();
-
         this.waitForPlayback(streamElement, stream);
         stream.attach(streamElement);
 
@@ -510,6 +322,13 @@ export default class RemoteVideo extends SmallVideo {
             // attached we need to update the menu in order to show the volume
             // slider.
             this.updateRemoteVideoMenu();
+        } else if (isTestModeEnabled(APP.store.getState())) {
+
+            const cb = name => APP.store.dispatch(updateLastTrackVideoMediaEvent(stream, name));
+
+            containerEvents.forEach(event => {
+                streamElement.addEventListener(event, cb.bind(this, event));
+            });
         }
     }
 

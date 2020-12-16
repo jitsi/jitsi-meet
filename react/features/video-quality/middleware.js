@@ -45,11 +45,10 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
     case SET_CONFIG: {
         const state = getState();
         const { videoQuality = {} } = state['features/base/config'];
+        const { persistedPrefferedVideoQuality } = state['features/video-quality-persistent-storage'];
 
-        if (videoQuality.persist) {
-            dispatch(
-                setPreferredVideoQuality(
-                    state['features/video-quality-persistent-storage'].persistedPrefferedVideoQuality));
+        if (videoQuality.persist && typeof persistedPrefferedVideoQuality !== 'undefined') {
+            dispatch(setPreferredVideoQuality(persistedPrefferedVideoQuality));
         }
 
         break;
@@ -81,7 +80,7 @@ StateListenerRegistry.register(
         const { maxReceiverVideoQuality } = state['features/video-quality'];
         const { maxFullResolutionParticipants = 2 } = state['features/base/config'];
 
-        let newMaxRecvVideoQuality = VIDEO_QUALITY_LEVELS.HIGH;
+        let newMaxRecvVideoQuality = VIDEO_QUALITY_LEVELS.ULTRA;
 
         if (reducedUI) {
             newMaxRecvVideoQuality = VIDEO_QUALITY_LEVELS.LOW;

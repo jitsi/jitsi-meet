@@ -19,6 +19,7 @@ import { connect } from '../../base/redux';
 import { ColorPalette } from '../../base/styles';
 import {
     createDesiredLocalTracks,
+    destroyLocalDesktopTrackIfExists,
     destroyLocalTracks
 } from '../../base/tracks';
 import { HelpView } from '../../help';
@@ -81,6 +82,8 @@ class WelcomePage extends AbstractWelcomePage {
         if (this.props._settings.startAudioOnly) {
             dispatch(destroyLocalTracks());
         } else {
+            dispatch(destroyLocalDesktopTrackIfExists());
+
             // Make sure we don't request the permission for the camera from
             // the start. We will, however, create a video track iff the user
             // already granted the permission.

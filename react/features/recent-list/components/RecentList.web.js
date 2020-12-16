@@ -6,6 +6,7 @@ import type { Dispatch } from 'redux';
 import { translate } from '../../base/i18n';
 import { MeetingsList } from '../../base/react';
 import { connect } from '../../base/redux';
+import { deleteRecentListEntry } from '../actions';
 import { isRecentListEnabled, toDisplayableList } from '../functions';
 
 import AbstractRecentList from './AbstractRecentList';
@@ -55,6 +56,19 @@ class RecentList extends AbstractRecentList<Props> {
         this._getRenderListEmptyComponent
             = this._getRenderListEmptyComponent.bind(this);
         this._onPress = this._onPress.bind(this);
+        this._onItemDelete = this._onItemDelete.bind(this);
+    }
+
+    _onItemDelete: Object => void;
+
+    /**
+     * Deletes a recent entry.
+     *
+     * @param {Object} entry - The entry to be deleted.
+     * @inheritdoc
+     */
+    _onItemDelete(entry) {
+        this.props.dispatch(deleteRecentListEntry(entry));
     }
 
     /**
@@ -78,6 +92,7 @@ class RecentList extends AbstractRecentList<Props> {
                 hideURL = { true }
                 listEmptyComponent = { this._getRenderListEmptyComponent() }
                 meetings = { recentList }
+                onItemDelete = { this._onItemDelete }
                 onPress = { this._onPress } />
         );
     }

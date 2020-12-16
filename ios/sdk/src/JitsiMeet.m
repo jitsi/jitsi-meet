@@ -22,6 +22,7 @@
 #import "JitsiMeetView+Private.h"
 #import "RCTBridgeWrapper.h"
 #import "ReactUtils.h"
+#import "RNSplashScreen.h"
 
 #import <RNGoogleSignin/RNGoogleSignin.h>
 #import <WebRTC/RTCLogging.h>
@@ -181,6 +182,10 @@
     }
 
     return nil;
+}
+
+- (void)showSplashScreen:(UIView*)rootView {
+    [RNSplashScreen showSplash:@"LaunchScreen" inRootView:rootView];
 }
 
 #pragma mark - Property getter / setters

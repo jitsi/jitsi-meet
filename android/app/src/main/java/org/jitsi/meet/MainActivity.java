@@ -27,6 +27,7 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.KeyEvent;
+
 import androidx.annotation.Nullable;
 
 import org.jitsi.meet.sdk.JitsiMeet;
@@ -77,6 +78,12 @@ public class MainActivity extends JitsiMeetActivity {
 
     // JitsiMeetActivity overrides
     //
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        JitsiMeet.showSplashScreen(this);
+        super.onCreate(savedInstanceState);
+    }
 
     @Override
     protected boolean extraInitialize() {

@@ -12,10 +12,11 @@ import {
     JitsiParticipantConnectionStatus
 } from '../../../react/features/base/lib-jitsi-meet';
 import { VIDEO_TYPE } from '../../../react/features/base/media';
+import { getParticipantById } from '../../../react/features/base/participants';
 import { CHAT_SIZE } from '../../../react/features/chat';
 import {
     updateKnownLargeVideoResolution
-} from '../../../react/features/large-video';
+} from '../../../react/features/large-video/actions';
 import { PresenceLabel } from '../../../react/features/presence-status';
 /* eslint-enable no-unused-vars */
 import UIEvents from '../../../service/UI/UIEvents';
@@ -67,7 +68,30 @@ export default class LargeVideoManager {
         // use the same video container to handle desktop tracks
         this.addContainer(DESKTOP_CONTAINER_TYPE, this.videoContainer);
 
+        /**
+         * The preferred width passed as an argument to {@link updateContainerSize}.
+         *
+         * @type {number|undefined}
+         */
+        this.preferredWidth = undefined;
+
+        /**
+         * The preferred height passed as an argument to {@link updateContainerSize}.
+         *
+         * @type {number|undefined}
+         */
+        this.preferredHeight = undefined;
+
+        /**
+         * The calculated width that will be used for the large video.
+         * @type {number}
+         */
         this.width = 0;
+
+        /**
+         * The calculated height that will be used for the large video.
+         * @type {number}
+         */
         this.height = 0;
 
         /**
@@ -194,22 +218,11 @@ export default class LargeVideoManager {
             // change the avatar url on large
             this.updateAvatar();
 
-            // If the user's connection is disrupted then the avatar will be
-            // displayed in case we have no video image cached. That is if
-            // there was a user switch (image is lost on stream detach) or if
-            // the video was not rendered, before the connection has failed.
-            const wasUsersImageCached
-                = !isUserSwitch && container.wasVideoRendered;
             const isVideoMuted = !stream || stream.isMuted();
-
-            const connectionStatus
-                = APP.conference.getParticipantConnectionStatus(id);
-            const isVideoRenderable
-                = !isVideoMuted
-                    && (APP.conference.isLocalId(id)
-                        || connectionStatus
-                                === JitsiParticipantConnectionStatus.ACTIVE
-                        || wasUsersImageCached);
+            const participant = getParticipantById(APP.store.getState(), id);
+            const connectionStatus = participant?.connectionStatus;
+            const isVideoRenderable = !isVideoMuted
+                && (APP.conference.isLocalId(id) || connectionStatus === JitsiParticipantConnectionStatus.ACTIVE);
 
             const showAvatar
                 = isVideoContainer
@@ -323,24 +336,26 @@ export default class LargeVideoManager {
      * Update container size.
      */
     updateContainerSize(width, height) {
-        let widthToUse = width ?? (this.width > 0 ? this.width : window.innerWidth);
+        if (typeof width === 'number') {
+            this.preferredWidth = width;
+        }
+        if (typeof height === 'number') {
+            this.preferredHeight = height;
+        }
+
+        let widthToUse = this.preferredWidth || window.innerWidth;
         const { isOpen } = APP.store.getState()['features/chat'];
 
-        /**
-         * If chat state is open, we re-compute the container width by subtracting the default width of
-         * the chat. We re-compute the width again after the chat window is closed. This is needed when
-         * custom styling is configured on the large video container through the iFrame API.
-         */
         if (isOpen) {
+            /**
+             * If chat state is open, we re-compute the container width
+             * by subtracting the default width of the chat.
+             */
             widthToUse -= CHAT_SIZE;
-            this.resizedForChat = true;
-        } else if (this.resizedForChat) {
-            this.resizedForChat = false;
-            widthToUse += CHAT_SIZE;
         }
 
         this.width = widthToUse;
-        this.height = height ?? (this.height > 0 ? this.height : window.innerHeight);
+        this.height = this.preferredHeight || window.innerHeight;
     }
 
     /**
@@ -454,8 +469,8 @@ export default class LargeVideoManager {
      */
     showRemoteConnectionMessage(show) {
         if (typeof show !== 'boolean') {
-            const connStatus
-                = APP.conference.getParticipantConnectionStatus(this.id);
+            const participant = getParticipantById(APP.store.getState(), this.id);
+            const connStatus = participant?.connectionStatus;
 
             // eslint-disable-next-line no-param-reassign
             show = !APP.conference.isLocalId(this.id)
