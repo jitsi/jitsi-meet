@@ -2,6 +2,17 @@
 
 set -e -u
 
+if [[ ! -z $(git status -s) ]]; then
+    echo "Git tree is not clean, aborting!"
+    exit 1
+fi
+
+#BRANCH=$(git rev-parse --abbrev-ref HEAD)
+#if [[ "$BRANCH" != "master" ]]; then
+#  echo "Not on master, aborting!";
+#  exit 1;
+#fi
+
 THIS_DIR=$(cd -P "$(dirname "$(readlink "${BASH_SOURCE[0]}" || echo "${BASH_SOURCE[0]}")")" && pwd)
 PID=$$
 LJM_TMP="${TMPDIR:-/tmp}/ljm-${PID}"
@@ -26,11 +37,14 @@ fi
 GH_LINK="https://github.com/jitsi/lib-jitsi-meet/compare/${CURRENT_LJM_COMMIT}...${LATEST_LJM_COMMIT}"
 
 pushd ${THIS_DIR}/..
+EPOCH=$(date +%s)
+NEW_BRANCH="update-ljm-${EPOCH}"
+git checkout -b ${NEW_BRANCH}
 npm install github:jitsi/lib-jitsi-meet#${LATEST_LJM_COMMIT}
 git add package.json package-lock.json
 git commit -m "chore(deps) lib-jitsi-meet@latest" -m "${LJM_COMMITS}" -m "${GH_LINK}"
+git push origin ${NEW_BRANCH}
+gh pr create --repo jitsi/jitsi-meet --fill
 popd
 
 rm -rf ${LJM_TMP}
-
-echo "Done! Now push your branch to GH and open a PR!"
