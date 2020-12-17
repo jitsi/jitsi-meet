@@ -3,7 +3,7 @@
    LastUpgradeVersion = "1020"
    version = "1.3">
    <BuildAction
-      parallelizeBuildables = "NO"
+      parallelizeBuildables = "YES"
       buildImplicitDependencies = "YES">
       <BuildActionEntries>
          <BuildActionEntry
@@ -15,23 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "0BD906E41EC0C00300C8C18E"
-               BuildableName = "JitsiMeet.framework"
-               BlueprintName = "JitsiMeet"
-               ReferencedContainer = "container:../sdk/sdk.xcodeproj">
-            </BuildableReference>
-         </BuildActionEntry>
-         <BuildActionEntry
-            buildForTesting = "YES"
-            buildForRunning = "YES"
-            buildForProfiling = "YES"
-            buildForArchiving = "YES"
-            buildForAnalyzing = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-               BuildableName = "jitsi-meet.app"
-               BlueprintName = "jitsi-meet"
-               ReferencedContainer = "container:app.xcodeproj">
+               BuildableName = "JitsiMeetSDK.framework"
+               BlueprintName = "JitsiMeetSDK"
+               ReferencedContainer = "container:sdk.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -41,15 +27,6 @@
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       shouldUseLaunchSchemeArgsEnv = "YES">
-      <MacroExpansion>
-         <BuildableReference
-            BuildableIdentifier = "primary"
-            BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "jitsi-meet.app"
-            BlueprintName = "jitsi-meet"
-            ReferencedContainer = "container:app.xcodeproj">
-         </BuildableReference>
-      </MacroExpansion>
       <Testables>
       </Testables>
    </TestAction>
@@ -63,16 +40,15 @@
       debugDocumentVersioning = "YES"
       debugServiceExtension = "internal"
       allowLocationSimulation = "YES">
-      <BuildableProductRunnable
-         runnableDebuggingMode = "0">
+      <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "jitsi-meet.app"
-            BlueprintName = "jitsi-meet"
-            ReferencedContainer = "container:app.xcodeproj">
+            BlueprintIdentifier = "0BD906E41EC0C00300C8C18E"
+            BuildableName = "JitsiMeetSDK.framework"
+            BlueprintName = "JitsiMeetSDK"
+            ReferencedContainer = "container:sdk.xcodeproj">
          </BuildableReference>
-      </BuildableProductRunnable>
+      </MacroExpansion>
    </LaunchAction>
    <ProfileAction
       buildConfiguration = "Release"
@@ -80,16 +56,15 @@
       savedToolIdentifier = ""
       useCustomWorkingDirectory = "NO"
       debugDocumentVersioning = "YES">
-      <BuildableProductRunnable
-         runnableDebuggingMode = "0">
+      <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "jitsi-meet.app"
-            BlueprintName = "jitsi-meet"
-            ReferencedContainer = "container:app.xcodeproj">
+            BlueprintIdentifier = "0BD906E41EC0C00300C8C18E"
+            BuildableName = "JitsiMeetSDK.framework"
+            BlueprintName = "JitsiMeetSDK"
+            ReferencedContainer = "container:sdk.xcodeproj">
          </BuildableReference>
-      </BuildableProductRunnable>
+      </MacroExpansion>
    </ProfileAction>
    <AnalyzeAction
       buildConfiguration = "Debug">

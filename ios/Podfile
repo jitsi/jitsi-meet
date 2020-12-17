@@ -3,7 +3,7 @@ workspace 'jitsi-meet'
 require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
 install! 'cocoapods', :deterministic_uuids => false
 
-target 'jitsi-meet' do
+target 'JitsiMeet' do
   project 'app/app.xcodeproj'
 
   pod 'Firebase/Analytics', '~> 6.33.0'
@@ -11,7 +11,7 @@ target 'jitsi-meet' do
   pod 'Firebase/DynamicLinks', '~> 6.33.0'
 end
 
-target 'JitsiMeet' do
+target 'JitsiMeetSDK' do
   project 'sdk/sdk.xcodeproj'
 
   # React Native and its dependencies

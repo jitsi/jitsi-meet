@@ -24,9 +24,9 @@
 		0BCA49601EC4B6C600B793EE /* POSIX.m in Sources */ = {isa = PBXBuildFile; fileRef = 0BCA495D1EC4B6C600B793EE /* POSIX.m */; };
 		0BCA49611EC4B6C600B793EE /* Proximity.m in Sources */ = {isa = PBXBuildFile; fileRef = 0BCA495E1EC4B6C600B793EE /* Proximity.m */; };
 		0BD906EA1EC0C00300C8C18E /* JitsiMeet.h in Headers */ = {isa = PBXBuildFile; fileRef = 0BD906E81EC0C00300C8C18E /* JitsiMeet.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		0F65EECE1D95DA94561BB47E /* libPods-JitsiMeet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 03F2ADC957FF109849B7FCA1 /* libPods-JitsiMeet.a */; };
 		6C31EDC820C06D490089C899 /* recordingOn.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 6C31EDC720C06D490089C899 /* recordingOn.mp3 */; };
 		6C31EDCA20C06D530089C899 /* recordingOff.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 6C31EDC920C06D530089C899 /* recordingOff.mp3 */; };
+		6F08DF7D4458EE3CF3F36F6D /* libPods-JitsiMeetSDK.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E4376CA6886DE68FD7A4294B /* libPods-JitsiMeetSDK.a */; };
 		75635B0A20751D6D00F29C9F /* joined.wav in Resources */ = {isa = PBXBuildFile; fileRef = 75635B0820751D6D00F29C9F /* joined.wav */; };
 		75635B0B20751D6D00F29C9F /* left.wav in Resources */ = {isa = PBXBuildFile; fileRef = 75635B0920751D6D00F29C9F /* left.wav */; };
 		87FE6F3321E52437004A5DC7 /* incomingMessage.wav in Resources */ = {isa = PBXBuildFile; fileRef = 87FE6F3221E52437004A5DC7 /* incomingMessage.wav */; };
@@ -54,6 +54,7 @@
 		DE81A2D92316AC7600AE1940 /* LogBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = DE81A2D72316AC7600AE1940 /* LogBridge.m */; };
 		DE81A2DE2317ED5400AE1940 /* JitsiMeetBaseLogHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = DE81A2DC2317ED5400AE1940 /* JitsiMeetBaseLogHandler.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DE81A2DF2317ED5400AE1940 /* JitsiMeetBaseLogHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = DE81A2DD2317ED5400AE1940 /* JitsiMeetBaseLogHandler.m */; };
+		DEA9F284258A5D9900D4CD74 /* JitsiMeetSDK.h in Headers */ = {isa = PBXBuildFile; fileRef = DEA9F283258A5D9900D4CD74 /* JitsiMeetSDK.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DEAD3226220C497000E93636 /* JitsiMeetConferenceOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = DEAD3224220C497000E93636 /* JitsiMeetConferenceOptions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DEAD3227220C497000E93636 /* JitsiMeetConferenceOptions.m in Sources */ = {isa = PBXBuildFile; fileRef = DEAD3225220C497000E93636 /* JitsiMeetConferenceOptions.m */; };
 		DEAFA779229EAD520033A7FA /* RNRootView.m in Sources */ = {isa = PBXBuildFile; fileRef = DEAFA778229EAD520033A7FA /* RNRootView.m */; };
@@ -63,7 +64,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		03F2ADC957FF109849B7FCA1 /* libPods-JitsiMeet.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-JitsiMeet.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		09A78016288AF50ACD28A10D /* Pods-JitsiMeetSDK.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JitsiMeetSDK.debug.xcconfig"; path = "../Pods/Target Support Files/Pods-JitsiMeetSDK/Pods-JitsiMeetSDK.debug.xcconfig"; sourceTree = "<group>"; };
 		0B412F161EDEC65D00B1A0A6 /* JitsiMeetView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JitsiMeetView.h; sourceTree = "<group>"; };
 		0B412F171EDEC65D00B1A0A6 /* JitsiMeetView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JitsiMeetView.m; sourceTree = "<group>"; };
 		0B412F1B1EDEC80100B1A0A6 /* JitsiMeetViewDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JitsiMeetViewDelegate.h; sourceTree = "<group>"; };
@@ -81,7 +82,7 @@
 		0BCA495C1EC4B6C600B793EE /* AudioMode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AudioMode.m; sourceTree = "<group>"; };
 		0BCA495D1EC4B6C600B793EE /* POSIX.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = POSIX.m; sourceTree = "<group>"; };
 		0BCA495E1EC4B6C600B793EE /* Proximity.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Proximity.m; sourceTree = "<group>"; };
-		0BD906E51EC0C00300C8C18E /* JitsiMeet.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = JitsiMeet.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		0BD906E51EC0C00300C8C18E /* JitsiMeetSDK.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = JitsiMeetSDK.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		0BD906E81EC0C00300C8C18E /* JitsiMeet.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JitsiMeet.h; sourceTree = "<group>"; };
 		0BD906E91EC0C00300C8C18E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6C31EDC720C06D490089C899 /* recordingOn.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = recordingOn.mp3; path = ../../sounds/recordingOn.mp3; sourceTree = "<group>"; };
@@ -89,6 +90,7 @@
 		75635B0820751D6D00F29C9F /* joined.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; name = joined.wav; path = ../../sounds/joined.wav; sourceTree = "<group>"; };
 		75635B0920751D6D00F29C9F /* left.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; name = left.wav; path = ../../sounds/left.wav; sourceTree = "<group>"; };
 		87FE6F3221E52437004A5DC7 /* incomingMessage.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; name = incomingMessage.wav; path = ../../sounds/incomingMessage.wav; sourceTree = "<group>"; };
+		891FE43DAD30BC8976683100 /* Pods-JitsiMeetSDK.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JitsiMeetSDK.release.xcconfig"; path = "../Pods/Target Support Files/Pods-JitsiMeetSDK/Pods-JitsiMeetSDK.release.xcconfig"; sourceTree = "<group>"; };
 		98E09B5C73D9036B4ED252FC /* Pods-JitsiMeet.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JitsiMeet.debug.xcconfig"; path = "../Pods/Target Support Files/Pods-JitsiMeet/Pods-JitsiMeet.debug.xcconfig"; sourceTree = "<group>"; };
 		9C77CA3CC919B081F1A52982 /* Pods-JitsiMeet.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JitsiMeet.release.xcconfig"; path = "../Pods/Target Support Files/Pods-JitsiMeet/Pods-JitsiMeet.release.xcconfig"; sourceTree = "<group>"; };
 		A4414ADF20B37F1A003546E6 /* rejected.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; name = rejected.wav; path = ../../sounds/rejected.wav; sourceTree = "<group>"; };
@@ -118,6 +120,7 @@
 		DE81A2D72316AC7600AE1940 /* LogBridge.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LogBridge.m; sourceTree = "<group>"; };
 		DE81A2DC2317ED5400AE1940 /* JitsiMeetBaseLogHandler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JitsiMeetBaseLogHandler.h; sourceTree = "<group>"; };
 		DE81A2DD2317ED5400AE1940 /* JitsiMeetBaseLogHandler.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JitsiMeetBaseLogHandler.m; sourceTree = "<group>"; };
+		DEA9F283258A5D9900D4CD74 /* JitsiMeetSDK.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JitsiMeetSDK.h; sourceTree = "<group>"; };
 		DEAD3224220C497000E93636 /* JitsiMeetConferenceOptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JitsiMeetConferenceOptions.h; sourceTree = "<group>"; };
 		DEAD3225220C497000E93636 /* JitsiMeetConferenceOptions.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JitsiMeetConferenceOptions.m; sourceTree = "<group>"; };
 		DEAD3228220C734300E93636 /* JitsiMeetConferenceOptions+Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "JitsiMeetConferenceOptions+Private.h"; sourceTree = "<group>"; };
@@ -128,6 +131,7 @@
 		DEFE535521FB2E8300011A3A /* ReactUtils.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ReactUtils.m; sourceTree = "<group>"; };
 		DEFE535721FB2E9E00011A3A /* ReactUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ReactUtils.h; sourceTree = "<group>"; };
 		DEFE535821FB311F00011A3A /* JitsiMeet+Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "JitsiMeet+Private.h"; sourceTree = "<group>"; };
+		E4376CA6886DE68FD7A4294B /* libPods-JitsiMeetSDK.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-JitsiMeetSDK.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -137,7 +141,7 @@
 			files = (
 				0BB9AD791F5EC6D7001C08DB /* Intents.framework in Frameworks */,
 				0BB9AD771F5EC6CE001C08DB /* CallKit.framework in Frameworks */,
-				0F65EECE1D95DA94561BB47E /* libPods-JitsiMeet.a in Frameworks */,
+				6F08DF7D4458EE3CF3F36F6D /* libPods-JitsiMeetSDK.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -178,7 +182,7 @@
 		0BD906E61EC0C00300C8C18E /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				0BD906E51EC0C00300C8C18E /* JitsiMeet.framework */,
+				0BD906E51EC0C00300C8C18E /* JitsiMeetSDK.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -196,6 +200,7 @@
 				DE438CD82350934700DD541D /* JavaScriptSandbox.m */,
 				0BD906E81EC0C00300C8C18E /* JitsiMeet.h */,
 				DEFE535821FB311F00011A3A /* JitsiMeet+Private.h */,
+				DEA9F283258A5D9900D4CD74 /* JitsiMeetSDK.h */,
 				DEFE535321FB1BF800011A3A /* JitsiMeet.m */,
 				DEAD3224220C497000E93636 /* JitsiMeetConferenceOptions.h */,
 				DEAD3228220C734300E93636 /* JitsiMeetConferenceOptions+Private.h */,
@@ -236,7 +241,7 @@
 				0BB9AD761F5EC6CE001C08DB /* CallKit.framework */,
 				0B93EF7A1EC608550030D24D /* CoreText.framework */,
 				0BB9AD781F5EC6D7001C08DB /* Intents.framework */,
-				03F2ADC957FF109849B7FCA1 /* libPods-JitsiMeet.a */,
+				E4376CA6886DE68FD7A4294B /* libPods-JitsiMeetSDK.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -264,6 +269,8 @@
 			children = (
 				98E09B5C73D9036B4ED252FC /* Pods-JitsiMeet.debug.xcconfig */,
 				9C77CA3CC919B081F1A52982 /* Pods-JitsiMeet.release.xcconfig */,
+				09A78016288AF50ACD28A10D /* Pods-JitsiMeetSDK.debug.xcconfig */,
+				891FE43DAD30BC8976683100 /* Pods-JitsiMeetSDK.release.xcconfig */,
 			);
 			name = Pods;
 			sourceTree = "<group>";
@@ -299,6 +306,7 @@
 				0B412F181EDEC65D00B1A0A6 /* JitsiMeetView.h in Headers */,
 				0B93EF7E1EC9DDCD0030D24D /* RCTBridgeWrapper.h in Headers */,
 				DE81A2DE2317ED5400AE1940 /* JitsiMeetBaseLogHandler.h in Headers */,
+				DEA9F284258A5D9900D4CD74 /* JitsiMeetSDK.h in Headers */,
 				DE65AACC2318028300290BEC /* JitsiMeetBaseLogHandler+Private.h in Headers */,
 				0B412F221EDEF6EA00B1A0A6 /* JitsiMeetViewDelegate.h in Headers */,
 				0BD906EA1EC0C00300C8C18E /* JitsiMeet.h in Headers */,
@@ -312,9 +320,9 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		0BD906E41EC0C00300C8C18E /* JitsiMeet */ = {
+		0BD906E41EC0C00300C8C18E /* JitsiMeetSDK */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 0BD906ED1EC0C00300C8C18E /* Build configuration list for PBXNativeTarget "JitsiMeet" */;
+			buildConfigurationList = 0BD906ED1EC0C00300C8C18E /* Build configuration list for PBXNativeTarget "JitsiMeetSDK" */;
 			buildPhases = (
 				26796D8589142D80C8AFDA51 /* [CP] Check Pods Manifest.lock */,
 				0BD906E01EC0C00300C8C18E /* Sources */,
@@ -328,9 +336,9 @@
 			);
 			dependencies = (
 			);
-			name = JitsiMeet;
+			name = JitsiMeetSDK;
 			productName = "Jitsi Meet SDK";
-			productReference = 0BD906E51EC0C00300C8C18E /* JitsiMeet.framework */;
+			productReference = 0BD906E51EC0C00300C8C18E /* JitsiMeetSDK.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 /* End PBXNativeTarget section */
@@ -362,7 +370,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				0BD906E41EC0C00300C8C18E /* JitsiMeet */,
+				0BD906E41EC0C00300C8C18E /* JitsiMeetSDK */,
 			);
 		};
 /* End PBXProject section */
@@ -416,7 +424,7 @@
 			);
 			name = "[CP] Check Pods Manifest.lock";
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-JitsiMeet-checkManifestLockResult.txt",
+				"$(DERIVED_FILE_DIR)/Pods-JitsiMeetSDK-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -429,7 +437,7 @@
 			files = (
 			);
 			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-JitsiMeet/Pods-JitsiMeet-resources.sh",
+				"${PODS_ROOT}/Target Support Files/Pods-JitsiMeetSDK/Pods-JitsiMeetSDK-resources.sh",
 				"${PODS_ROOT}/Amplitude-iOS/Amplitude/api.amplitude.com.der",
 				"${PODS_ROOT}/Amplitude-iOS/Amplitude/ComodoCaLimitedRsaCertificationAuthority.der",
 				"${PODS_ROOT}/Amplitude-iOS/Amplitude/ComodoRsaCA.der",
@@ -446,7 +454,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-JitsiMeet/Pods-JitsiMeet-resources.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-JitsiMeetSDK/Pods-JitsiMeetSDK-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -609,7 +617,7 @@
 		};
 		0BD906EE1EC0C00300C8C18E /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 98E09B5C73D9036B4ED252FC /* Pods-JitsiMeet.debug.xcconfig */;
+			baseConfigurationReference = 09A78016288AF50ACD28A10D /* Pods-JitsiMeetSDK.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
 				CLANG_ENABLE_MODULES = YES;
@@ -636,7 +644,7 @@
 		};
 		0BD906EF1EC0C00300C8C18E /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 9C77CA3CC919B081F1A52982 /* Pods-JitsiMeet.release.xcconfig */;
+			baseConfigurationReference = 891FE43DAD30BC8976683100 /* Pods-JitsiMeetSDK.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
 				CLANG_ENABLE_MODULES = YES;
@@ -672,7 +680,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		0BD906ED1EC0C00300C8C18E /* Build configuration list for PBXNativeTarget "JitsiMeet" */ = {
+		0BD906ED1EC0C00300C8C18E /* Build configuration list for PBXNativeTarget "JitsiMeetSDK" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				0BD906EE1EC0C00300C8C18E /* Debug */,
