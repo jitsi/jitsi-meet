@@ -1,5 +1,5 @@
 /*
- * Copyright @ 2017-present Atlassian Pty Ltd
+ * Copyright @ 2020-present 8x8, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-@import UIKit;
-@import JitsiMeetSDK;
-
-@interface ViewController : UIViewController<JitsiMeetViewDelegate>
-
-- (void)terminate;
-
-@end
+#import <JitsiMeetSDK/JitsiMeet.h>
+#import <JitsiMeetSDK/JitsiMeetView.h>
+#import <JitsiMeetSDK/JitsiMeetViewDelegate.h>
+#import <JitsiMeetSDK/JitsiMeetConferenceOptions.h>
+#import <JitsiMeetSDK/JitsiMeetLogger.h>
+#import <JitsiMeetSDK/JitsiMeetBaseLogHandler.h>
+#import <JitsiMeetSDK/InfoPlistUtil.h>
