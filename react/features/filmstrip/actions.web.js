@@ -6,9 +6,9 @@ import { SET_HORIZONTAL_VIEW_DIMENSIONS, SET_TILE_VIEW_DIMENSIONS } from './acti
 import { calculateThumbnailSizeForHorizontalView, calculateThumbnailSizeForTileView } from './functions';
 
 /**
- * The size of the side margins for each tile as set in CSS.
+ * The size of the side margins for the entire tile view area.
  */
-const TILE_VIEW_SIDE_MARGINS = 10 * 2;
+const TILE_VIEW_SIDE_MARGINS = 20;
 
 /**
  * Sets the dimensions of the tile view grid.
@@ -24,19 +24,13 @@ const TILE_VIEW_SIDE_MARGINS = 10 * 2;
  *     dimensions: Object
  * }}
  */
-export function setTileViewDimensions(
-        dimensions: Object, windowSize: Object, isChatOpen: boolean, isToolboxVisible: boolean) {
+export function setTileViewDimensions(dimensions: Object, windowSize: Object, isChatOpen: boolean) {
     const { clientWidth, clientHeight } = windowSize;
-    let heightToUse = clientHeight;
+    const heightToUse = clientHeight;
     let widthToUse = clientWidth;
 
     if (isChatOpen) {
         widthToUse -= CHAT_SIZE;
-    }
-
-    if (isToolboxVisible) {
-        // The distance from the top and bottom of the screen, to avoid overlapping UI elements.
-        heightToUse -= 150;
     }
 
     const thumbnailSize = calculateThumbnailSizeForTileView({
