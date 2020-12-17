@@ -864,7 +864,7 @@
             "join": "Zum Teilnehmen tippen",
             "roomname": "Konferenzname eingeben"
         },
-        "appDescription": "Auf geht's! Starten Sie eine Videokonferenz mit ihrem Team oder besser noch: Laden Sie alle ein, die Sie kennen. {{app}} ist eine vollständig verschlüsselte und 100 % quelloffene Videokonferenzlösung, die Sie immer und überall kostenlos verwenden können – ohne Registrierung.",
+        "appDescription": "Auf geht's! Starten Sie eine Videokonferenz mit Ihrem Team oder besser noch: Laden Sie alle ein, die Sie kennen. {{app}} ist eine vollständig verschlüsselte und 100 % quelloffene Videokonferenzlösung, die Sie immer und überall kostenlos verwenden können – ohne Registrierung.",
         "audioVideoSwitch": {
             "audio": "Audio",
             "video": "Video"
