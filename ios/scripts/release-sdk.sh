@@ -27,10 +27,10 @@ pushd ${PROJECT_REPO}
 rm -rf ios/sdk/out
 xcodebuild clean \
     -workspace ios/jitsi-meet.xcworkspace \
-    -scheme JitsiMeet
+    -scheme JitsiMeetSDK
 xcodebuild archive \
     -workspace ios/jitsi-meet.xcworkspace \
-    -scheme JitsiMeet  \
+    -scheme JitsiMeetSDK  \
     -configuration Release \
     -sdk iphonesimulator \
     -destination='generic/platform=iOS Simulator' \
@@ -41,7 +41,7 @@ xcodebuild archive \
     BUILD_LIBRARY_FOR_DISTRIBUTION=YES
 xcodebuild archive \
     -workspace ios/jitsi-meet.xcworkspace \
-    -scheme JitsiMeet  \
+    -scheme JitsiMeetSDK  \
     -configuration Release \
     -sdk iphoneos \
     -destination='generic/platform=iOS' \
@@ -51,9 +51,9 @@ xcodebuild archive \
     SKIP_INSTALL=NO \
     BUILD_LIBRARY_FOR_DISTRIBUTION=YES
 xcodebuild -create-xcframework \
-    -framework ios/sdk/out/ios-device.xcarchive/Products/Library/Frameworks/JitsiMeet.framework \
-    -framework ios/sdk/out/ios-simulator.xcarchive/Products/Library/Frameworks/JitsiMeet.framework \
-    -output ios/sdk/out/JitsiMeet.xcframework
+    -framework ios/sdk/out/ios-device.xcarchive/Products/Library/Frameworks/JitsiMeetSDK.framework \
+    -framework ios/sdk/out/ios-simulator.xcarchive/Products/Library/Frameworks/JitsiMeetSDK.framework \
+    -output ios/sdk/out/JitsiMeetSDK.xcframework
 if [[ $DO_GIT_TAG == 1 ]]; then
     git tag ios-sdk-${SDK_VERSION}
 fi
@@ -62,7 +62,7 @@ popd
 pushd ${RELEASE_REPO}
 
 # Put the new files in the repo
-cp -a ${PROJECT_REPO}/ios/sdk/out/JitsiMeet.xcframework Frameworks/
+cp -a ${PROJECT_REPO}/ios/sdk/out/JitsiMeetSDK.xcframework Frameworks/
 cp -a ${PROJECT_REPO}/node_modules/react-native-webrtc/apple/WebRTC.xcframework Frameworks/
 
 # Add all files to git

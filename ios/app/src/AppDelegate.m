@@ -21,7 +21,7 @@
 #import "ViewController.h"
 
 @import Firebase;
-@import JitsiMeet;
+@import JitsiMeetSDK;
 
 @implementation AppDelegate
 
