@@ -371,7 +371,8 @@
         "toggleFilmstrip": "동영상 표시 또는 숨기기",
         "toggleScreensharing": "카메라와 화면 공유간에 전환",
         "toggleShortcuts": "도움말 메뉴 표시 또는 숨기기",
-        "videoMute": "카메라 시작 또는 중지"
+        "videoMute": "카메라 시작 또는 중지",
+        "videoQuality": "비디오 품질"
     },
     "liveStreaming": {
         "busy": "스트리밍 자원을 확보하기 위해 노력하고 있습니다. 몇 분 후에 다시 시도하십시오.",
