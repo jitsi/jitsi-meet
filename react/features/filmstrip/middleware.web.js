@@ -30,7 +30,6 @@ MiddlewareRegistry.register(store => next => action => {
             const { gridDimensions } = state['features/filmstrip'].tileViewDimensions;
             const { clientHeight, clientWidth } = state['features/base/responsive-ui'];
             const { isOpen } = state['features/chat'];
-            const { visible } = state['features/toolbox'];
 
             store.dispatch(
                 setTileViewDimensions(
@@ -39,8 +38,7 @@ MiddlewareRegistry.register(store => next => action => {
                         clientHeight,
                         clientWidth
                     },
-                    isOpen,
-                    visible
+                    isOpen
                 )
             );
             break;
