@@ -8,6 +8,7 @@ import ReactDOM from 'react-dom';
 import { I18nextProvider } from 'react-i18next';
 import { Provider } from 'react-redux';
 
+import { createScreenSharingIssueEvent, sendAnalytics } from '../../../react/features/analytics';
 import { AudioLevelIndicator } from '../../../react/features/audio-level-indicator';
 import { Avatar as AvatarDisplay } from '../../../react/features/base/avatar';
 import { i18next } from '../../../react/features/base/i18n';
@@ -511,6 +512,18 @@ export default class SmallVideo {
 
         if (this.displayMode !== oldDisplayMode) {
             logger.debug(`Displaying ${displayModeString} for ${this.id}, data: [${JSON.stringify(displayModeInput)}]`);
+        }
+
+        if (this.displayMode !== DISPLAY_VIDEO
+            && this.displayMode !== DISPLAY_VIDEO_WITH_NAME
+            && displayModeInput.tileViewActive
+            && displayModeInput.isScreenSharing
+            && !displayModeInput.isAudioOnly) {
+            // send the event
+            sendAnalytics(createScreenSharingIssueEvent({
+                source: 'thumbnail',
+                ...displayModeInput
+            }));
         }
     }
 

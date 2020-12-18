@@ -589,6 +589,19 @@ export function createScreenSharingEvent(action) {
 }
 
 /**
+ * Creates an event which indicates the screen sharing video is not displayed when it needs to be displayed.
+ *
+ * @param {Object} attributes - Additional information that describes the issue.
+ * @returns {Object} The event in a format suitable for sending via sendAnalytics.
+ */
+export function createScreenSharingIssueEvent(attributes) {
+    return {
+        action: 'screen.sharing.issue',
+        attributes
+    };
+}
+
+/**
  * The local participant failed to send a "selected endpoint" message to the
  * bridge.
  *
