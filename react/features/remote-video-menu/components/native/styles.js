@@ -40,7 +40,13 @@ export default createStyleSheet({
     },
 
     statsInfoCell: {
+        alignItems: 'center',
         flexDirection: 'row',
+        height: 30,
         justifyContent: 'flex-start'
+    },
+
+    statsWrapper: {
+        marginVertical: 10
     }
 });

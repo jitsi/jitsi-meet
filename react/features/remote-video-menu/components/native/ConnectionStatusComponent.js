@@ -122,71 +122,73 @@ class ConnectionStatusComponent extends Component<Props, State> {
             <BottomSheet
                 onCancel = { this._onCancel }
                 renderHeader = { this._renderMenuHeader }>
-                <View style = { styles.statsInfoCell }>
-                    <Text style = { styles.statsTitleText }>
-                        { `${t('connectionindicator.status')} ` }
-                    </Text>
-                    <Text style = { styles.statsInfoText }>
-                        { this.state.connectionString }
-                    </Text>
-                </View>
-                <View style = { styles.statsInfoCell }>
-                    <Text style = { styles.statsTitleText }>
-                        { `${t('connectionindicator.bitrate')}` }
-                    </Text>
-                    <BaseIndicator
-                        icon = { IconArrowDownLarge }
-                        iconStyle = {{
-                            color: ColorPalette.darkGrey
-                        }} />
-                    <Text style = { styles.statsInfoText }>
-                        { this.state.downloadString }
-                    </Text>
-                    <BaseIndicator
-                        icon = { IconArrowUpLarge }
-                        iconStyle = {{
-                            color: ColorPalette.darkGrey
-                        }} />
-                    <Text style = { styles.statsInfoText }>
-                        { `${this.state.uploadString} Kbps` }
-                    </Text>
-                </View>
-                <View style = { styles.statsInfoCell }>
-                    <Text style = { styles.statsTitleText }>
-                        { `${t('connectionindicator.packetloss')}` }
-                    </Text>
-                    <BaseIndicator
-                        icon = { IconArrowDownLarge }
-                        iconStyle = {{
-                            color: ColorPalette.darkGrey
-                        }} />
-                    <Text style = { styles.statsInfoText }>
-                        { this.state.packetLostDownloadString }
-                    </Text>
-                    <BaseIndicator
-                        icon = { IconArrowUpLarge }
-                        iconStyle = {{
-                            color: ColorPalette.darkGrey
-                        }} />
-                    <Text style = { styles.statsInfoText }>
-                        { this.state.packetLostUploadString }
-                    </Text>
-                </View>
-                <View style = { styles.statsInfoCell }>
-                    <Text style = { styles.statsTitleText }>
-                        { `${t('connectionindicator.resolution')} ` }
-                    </Text>
-                    <Text style = { styles.statsInfoText }>
-                        { this.state.resolutionString }
-                    </Text>
-                </View>
-                <View style = { styles.statsInfoCell }>
-                    <Text style = { styles.statsTitleText }>
-                        { `${t('connectionindicator.codecs')}` }
-                    </Text>
-                    <Text style = { styles.statsInfoText }>
-                        { this.state.codecString }
-                    </Text>
+                <View style = { styles.statsWrapper }>
+                    <View style = { styles.statsInfoCell }>
+                        <Text style = { styles.statsTitleText }>
+                            { `${t('connectionindicator.status')} ` }
+                        </Text>
+                        <Text style = { styles.statsInfoText }>
+                            { this.state.connectionString }
+                        </Text>
+                    </View>
+                    <View style = { styles.statsInfoCell }>
+                        <Text style = { styles.statsTitleText }>
+                            { `${t('connectionindicator.bitrate')}` }
+                        </Text>
+                        <BaseIndicator
+                            icon = { IconArrowDownLarge }
+                            iconStyle = {{
+                                color: ColorPalette.darkGrey
+                            }} />
+                        <Text style = { styles.statsInfoText }>
+                            { this.state.downloadString }
+                        </Text>
+                        <BaseIndicator
+                            icon = { IconArrowUpLarge }
+                            iconStyle = {{
+                                color: ColorPalette.darkGrey
+                            }} />
+                        <Text style = { styles.statsInfoText }>
+                            { `${this.state.uploadString} Kbps` }
+                        </Text>
+                    </View>
+                    <View style = { styles.statsInfoCell }>
+                        <Text style = { styles.statsTitleText }>
+                            { `${t('connectionindicator.packetloss')}` }
+                        </Text>
+                        <BaseIndicator
+                            icon = { IconArrowDownLarge }
+                            iconStyle = {{
+                                color: ColorPalette.darkGrey
+                            }} />
+                        <Text style = { styles.statsInfoText }>
+                            { this.state.packetLostDownloadString }
+                        </Text>
+                        <BaseIndicator
+                            icon = { IconArrowUpLarge }
+                            iconStyle = {{
+                                color: ColorPalette.darkGrey
+                            }} />
+                        <Text style = { styles.statsInfoText }>
+                            { this.state.packetLostUploadString }
+                        </Text>
+                    </View>
+                    <View style = { styles.statsInfoCell }>
+                        <Text style = { styles.statsTitleText }>
+                            { `${t('connectionindicator.resolution')} ` }
+                        </Text>
+                        <Text style = { styles.statsInfoText }>
+                            { this.state.resolutionString }
+                        </Text>
+                    </View>
+                    <View style = { styles.statsInfoCell }>
+                        <Text style = { styles.statsTitleText }>
+                            { `${t('connectionindicator.codecs')}` }
+                        </Text>
+                        <Text style = { styles.statsInfoText }>
+                            { this.state.codecString }
+                        </Text>
+                    </View>
                 </View>
             </BottomSheet>
         );
