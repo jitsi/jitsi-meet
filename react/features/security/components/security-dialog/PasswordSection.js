@@ -106,7 +106,11 @@ function PasswordSection({
      */
     function onPasswordSave() {
         if (formRef.current) {
-            formRef.current.querySelector('form').requestSubmit();
+            const { value } = formRef.current.querySelector('form > input');
+
+            if (value) {
+                onPasswordSubmit(value);
+            }
         }
     }
 
