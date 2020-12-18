@@ -6,7 +6,6 @@ import { Text, View } from 'react-native';
 import { Avatar } from '../../../base/avatar';
 import { ColorSchemeRegistry } from '../../../base/color-scheme';
 import { BottomSheet, isDialogOpen, hideDialog } from '../../../base/dialog';
-import { KICK_OUT_ENABLED, getFeatureFlag } from '../../../base/flags';
 import { translate } from '../../../base/i18n';
 import { IconArrowDownLarge, IconArrowUpLarge } from '../../../base/icons';
 import { getParticipantDisplayName } from '../../../base/participants';
@@ -61,23 +60,27 @@ export type Props = {
     t: Function
 }
 
+/**
+ * The type of the React {@code Component} state of {@link ConnectionStatusComponent}.
+ */
+type State = {
+    resolutionString: string,
+    downloadString: string,
+    uploadString: string,
+    packetLostDownloadString: string,
+    packetLostUploadString: string,
+    serverRegionString: string,
+    codecString: string,
+    connectionString: string
+};
+
 // eslint-disable-next-line prefer-const
 let ConnectionStatusComponent_;
 
 /**
  * Class to implement a popup menu that show the connection statistics.
  */
-class ConnectionStatusComponent extends Component<Props, *> {
-
-    _resolutionString: string = 'N/A';
-    _downloadString: string = 'N/A';
-    _uploadString: string = 'N/A';
-    _uploadString: string = 'N/A';
-    _packetLostDownloadString: string = 'N/A';
-    _packetLostUploadString: string = 'N/A';
-    _serverRegionString: string = 'N/A';
-    _codecString: string = 'N/A';
-    _connectionString: string = 'N/A';
+class ConnectionStatusComponent extends Component<Props, State> {
 
     /**
      * Constructor of the component.
@@ -93,6 +96,17 @@ class ConnectionStatusComponent extends Component<Props, *> {
         this._onStatsUpdated = this._onStatsUpdated.bind(this);
         this._onCancel = this._onCancel.bind(this);
         this._renderMenuHeader = this._renderMenuHeader.bind(this);
+
+        this.state = {
+            resolutionString: 'N/A',
+            downloadString: 'N/A',
+            uploadString: 'N/A',
+            packetLostDownloadString: 'N/A',
+            packetLostUploadString: 'N/A',
+            serverRegionString: 'N/A',
+            codecString: 'N/A',
+            connectionString: 'N/A'
+        };
     }
 
     /**
@@ -110,10 +124,10 @@ class ConnectionStatusComponent extends Component<Props, *> {
                 renderHeader = { this._renderMenuHeader }>
                 <View style = { styles.statsInfoCell }>
                     <Text style = { styles.statsTitleText }>
-                        { `${t('connectionindicator.resolution')} ` }
+                        { `${t('connectionindicator.status')} ` }
                     </Text>
                     <Text style = { styles.statsInfoText }>
-                        { this._resolutionString }
+                        { this.state.connectionString }
                     </Text>
                 </View>
                 <View style = { styles.statsInfoCell }>
@@ -126,7 +140,7 @@ class ConnectionStatusComponent extends Component<Props, *> {
                             color: ColorPalette.darkGrey
                         }} />
                     <Text style = { styles.statsInfoText }>
-                        { this._downloadString }
+                        { this.state.downloadString }
                     </Text>
                     <BaseIndicator
                         icon = { IconArrowUpLarge }
@@ -134,7 +148,7 @@ class ConnectionStatusComponent extends Component<Props, *> {
                             color: ColorPalette.darkGrey
                         }} />
                     <Text style = { styles.statsInfoText }>
-                        { `${this._uploadString} Kbps` }
+                        { `${this.state.uploadString} Kbps` }
                     </Text>
                 </View>
                 <View style = { styles.statsInfoCell }>
@@ -147,7 +161,7 @@ class ConnectionStatusComponent extends Component<Props, *> {
                             color: ColorPalette.darkGrey
                         }} />
                     <Text style = { styles.statsInfoText }>
-                        { this._packetLostDownloadString }
+                        { this.state.packetLostDownloadString }
                     </Text>
                     <BaseIndicator
                         icon = { IconArrowUpLarge }
@@ -155,15 +169,15 @@ class ConnectionStatusComponent extends Component<Props, *> {
                             color: ColorPalette.darkGrey
                         }} />
                     <Text style = { styles.statsInfoText }>
-                        { this._packetLostUploadString }
+                        { this.state.packetLostUploadString }
                     </Text>
                 </View>
                 <View style = { styles.statsInfoCell }>
                     <Text style = { styles.statsTitleText }>
-                        { `${t('connectionindicator.connectedTo')}` }
+                        { `${t('connectionindicator.resolution')} ` }
                     </Text>
                     <Text style = { styles.statsInfoText }>
-                        { this._serverRegionString }
+                        { this.state.resolutionString }
                     </Text>
                 </View>
                 <View style = { styles.statsInfoCell }>
@@ -171,15 +185,7 @@ class ConnectionStatusComponent extends Component<Props, *> {
                         { `${t('connectionindicator.codecs')}` }
                     </Text>
                     <Text style = { styles.statsInfoText }>
-                        { this._codecString }
-                    </Text>
-                </View>
-                <View style = { styles.statsInfoCell }>
-                    <Text style = { styles.statsTitleText }>
-                        { `${t('connectionindicator.status')} ` }
-                    </Text>
-                    <Text style = { styles.statsInfoText }>
-                        { this._connectionString }
+                        { this.state.codecString }
                     </Text>
                 </View>
             </BottomSheet>
@@ -224,24 +230,35 @@ class ConnectionStatusComponent extends Component<Props, *> {
      * @returns {void}
      */
     _onStatsUpdated(stats = {}) {
-        this._extractStats(stats);
-        this.setState({ state: this.state });
+        const newState = this._buildState(stats);
+
+        this.setState(newState);
     }
 
     /**
-     * Extracts statistics.
+     * Extracts statistics and builds the state object.
      *
      * @param {Object} stats - Connection stats from the library.
      * @private
-     * @returns {void}
+     * @returns {State}
      */
-    _extractStats(stats) {
-        this._extractResolutionString(stats);
-        this._extractBitrate(stats);
-        this._extractPacketLost(stats);
-        this._extractServer(stats);
-        this._extractCodecs(stats);
-        this._extractConnection(stats);
+    _buildState(stats) {
+        const { download: downloadBitrate, upload: uploadBitrate } = this._extractBitrate(stats) ?? {};
+
+        const { download: downloadPacketLost, upload: uploadPacketLost } = this._extractPacketLost(stats) ?? {};
+
+        return {
+            resolutionString: this._extractResolutionString(stats) ?? this.state.resolutionString,
+            downloadString: downloadBitrate ?? this.state.downloadString,
+            uploadString: uploadBitrate ?? this.state.uploadString,
+            packetLostDownloadString: downloadPacketLost === undefined
+                ? this.state.packetLostDownloadString : `${downloadPacketLost}%`,
+            packetLostUploadString: uploadPacketLost === undefined
+                ? this.state.packetLostUploadString : `${uploadPacketLost}%`,
+            serverRegionString: this._extractServer(stats) ?? this.state.serverRegionString,
+            codecString: this._extractCodecs(stats) ?? this.state.codecString,
+            connectionString: this._extractConnection(stats) ?? this.state.connectionString
+        };
     }
 
     /**
@@ -249,7 +266,7 @@ class ConnectionStatusComponent extends Component<Props, *> {
      *
      * @param {Object} stats - Connection stats from the library.
      * @private
-     * @returns {void}
+     * @returns {string}
      */
     _extractResolutionString(stats) {
         const { framerate, resolution } = stats;
@@ -266,9 +283,7 @@ class ConnectionStatusComponent extends Component<Props, *> {
             .map(ssrc => framerate[ssrc])
             .join(', ') || null;
 
-        if (resolutionString && frameRateString) {
-            this._resolutionString = `${resolutionString}/${frameRateString}fps`;
-        }
+        return resolutionString && frameRateString ? `${resolutionString}@${frameRateString}fps` : undefined;
     }
 
     /**
@@ -276,19 +291,10 @@ class ConnectionStatusComponent extends Component<Props, *> {
      *
      * @param {Object} stats - Connection stats from the library.
      * @private
-     * @returns {void}
+     * @returns {{ download, upload }}
      */
     _extractBitrate(stats) {
-        const { bitrate } = stats;
-        const { download, upload } = bitrate || { };
-
-        if (download) {
-            this._downloadString = download;
-        }
-
-        if (upload) {
-            this._uploadString = upload;
-        }
+        return stats.bitrate;
     }
 
     /**
@@ -296,19 +302,10 @@ class ConnectionStatusComponent extends Component<Props, *> {
      *
      * @param {Object} stats - Connection stats from the library.
      * @private
-     * @returns {void}
+     * @returns {{ download, upload }}
      */
     _extractPacketLost(stats) {
-        const { packetLoss } = stats;
-        const { download, upload } = packetLoss || { };
-
-        if (download !== undefined) {
-            this._packetLostDownloadString = `${download}%`;
-        }
-
-        if (upload !== undefined) {
-            this._packetLostUploadString = `${upload}%`;
-        }
+        return stats.packetLoss;
     }
 
     /**
@@ -316,14 +313,10 @@ class ConnectionStatusComponent extends Component<Props, *> {
      *
      * @param {Object} stats - Connection stats from the library.
      * @private
-     * @returns {void}
+     * @returns {string}
      */
     _extractServer(stats) {
-        const { serverRegion } = stats;
-
-        if (serverRegion) {
-            this._serverRegionString = serverRegion;
-        }
+        return stats.serverRegion;
     }
 
     /**
@@ -331,18 +324,22 @@ class ConnectionStatusComponent extends Component<Props, *> {
      *
      * @param {Object} stats - Connection stats from the library.
      * @private
-     * @returns {void}
+     * @returns {string}
      */
     _extractCodecs(stats) {
         const { codec } = stats;
+
+        let codecString;
 
         // Only report one codec, in case there are multiple for a user.
         Object.keys(codec || {})
             .forEach(ssrc => {
                 const { audio, video } = codec[ssrc];
 
-                this._codecString = `${audio}, ${video}`;
+                codecString = `${audio}, ${video}`;
             });
+
+        return codecString;
     }
 
     /**
@@ -350,7 +347,7 @@ class ConnectionStatusComponent extends Component<Props, *> {
      *
      * @param {Object} stats - Connection stats from the library.
      * @private
-     * @returns {void}
+     * @returns {string}
      */
     _extractConnection(stats) {
         const { connectionQuality } = stats;
@@ -358,7 +355,7 @@ class ConnectionStatusComponent extends Component<Props, *> {
         if (connectionQuality) {
             const signalLevel = Math.floor(connectionQuality / 33.4);
 
-            this._connectionString = CONNECTION_QUALITY[signalLevel];
+            return CONNECTION_QUALITY[signalLevel];
         }
     }
 
@@ -418,17 +415,10 @@ class ConnectionStatusComponent extends Component<Props, *> {
  * @returns {Props}
  */
 function _mapStateToProps(state, ownProps) {
-    const kickOutEnabled = getFeatureFlag(state, KICK_OUT_ENABLED, true);
     const { participantID } = ownProps;
-    const { remoteVideoMenu = {}, disableRemoteMute } = state['features/base/config'];
-    let { disableKick } = remoteVideoMenu;
-
-    disableKick = disableKick || !kickOutEnabled;
 
     return {
         _bottomSheetStyles: ColorSchemeRegistry.get(state, 'BottomSheet'),
-        _disableKick: Boolean(disableKick),
-        _disableRemoteMute: Boolean(disableRemoteMute),
         _isOpen: isDialogOpen(state, ConnectionStatusComponent_),
         _participantDisplayName: getParticipantDisplayName(state, participantID)
     };

@@ -32,7 +32,6 @@ import ScreenShareIndicator from './ScreenShareIndicator';
 import VideoMutedIndicator from './VideoMutedIndicator';
 import styles, { AVATAR_SIZE } from './styles';
 
-
 /**
  * Thumbnail component's property types.
  */
