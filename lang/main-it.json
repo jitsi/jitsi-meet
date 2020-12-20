@@ -214,7 +214,7 @@
         "internalError": "Ops! Qualcosa è andato storto. Questo è l'errore: {{error}}",
         "internalErrorTitle": "Errore interno",
         "kickMessage": "Puoi contattare {{participantDisplayName}} per maggiori dettagli.",
-        "kickParticipantButton": "Escludi,
+        "kickParticipantButton": "Escludi",
         "kickParticipantDialog": "Sei sicuro di voler escludere questo partecipante?",
         "kickParticipantTitle": "Escludi questo partecipante?",
         "kickTitle": "Escluso dalla conferenza",
