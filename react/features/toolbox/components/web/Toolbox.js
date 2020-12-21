@@ -470,7 +470,7 @@ class Toolbox extends Component<Props, State> {
      */
     _doToggleRaiseHand() {
         const { _localParticipantID, _raisedHand } = this.props;
-        let newRaisedStatus = !_raisedHand;
+        const newRaisedStatus = !_raisedHand;
 
         this.props.dispatch(participantUpdated({
             // XXX Only the local participant is allowed to update without
@@ -484,7 +484,7 @@ class Toolbox extends Component<Props, State> {
             raisedHand: newRaisedStatus
         }));
 
-        APP.API.notifyRaiseHandUpdated(_localParticipantID,newRaisedStatus);
+        APP.API.notifyRaiseHandUpdated(_localParticipantID, newRaisedStatus);
     }
 
     /**
