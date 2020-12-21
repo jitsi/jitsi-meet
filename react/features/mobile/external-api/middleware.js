@@ -22,6 +22,8 @@ import { MiddlewareRegistry } from '../../base/redux';
 import { ENTER_PICTURE_IN_PICTURE } from '../picture-in-picture';
 
 import { sendEvent } from './functions';
+import { SET_AUDIO_MUTED, setAudioMuted } from '../../base/media';
+import { NativeEventEmitter, NativeModules } from 'react-native';
 
 /**
  * Event which will be emitted on the native side to indicate the conference
@@ -63,6 +65,8 @@ MiddlewareRegistry.register(store => next => action => {
     }
 
     case CONFERENCE_JOINED:
+        _registerForSetAudioMuted(store.dispatch);
+        break;
     case CONFERENCE_LEFT:
     case CONFERENCE_WILL_JOIN:
         _sendConferenceEvent(store, action);
@@ -114,10 +118,27 @@ MiddlewareRegistry.register(store => next => action => {
     case SET_ROOM:
         _maybeTriggerEarlyConferenceWillJoin(store, action);
         break;
+
+    case SET_AUDIO_MUTED:
+        console.log('SET_AUDIO_MUTED', action.muted);
+        sendEvent(
+            store,
+            SET_AUDIO_MUTED,
+            /* data */ {
+                muted: action.muted
+            });
+        break;
     }
 
     return result;
 });
+
+function _registerForSetAudioMuted(dispatch) {
+    const eventEmitter = new NativeEventEmitter(NativeModules.ExternalAPI);
+    eventEmitter.addListener('org.jitsi.meet.SET_AUDIO_MUTED', ({muted}) => {
+        dispatch(setAudioMuted(muted));
+    });
+}
 
 /**
  * Returns a {@code String} representation of a specific error {@code Object}.

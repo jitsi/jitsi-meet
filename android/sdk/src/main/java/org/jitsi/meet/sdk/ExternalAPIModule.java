@@ -35,6 +35,8 @@ class ExternalAPIModule
 
     private static final String TAG = NAME;
 
+    private final BroadcastService broadcastService;
+
     /**
      * Initializes a new module instance. There shall be a single instance of
      * this module throughout the lifetime of the app.
@@ -44,6 +46,8 @@ class ExternalAPIModule
      */
     public ExternalAPIModule(ReactApplicationContext reactContext) {
         super(reactContext);
+
+        broadcastService = new BroadcastService(reactContext);
     }
 
     /**
@@ -79,6 +83,7 @@ class ExternalAPIModule
             JitsiMeetLogger.d(TAG + " Sending event: " + name + " with data: " + data);
             try {
                 view.onExternalAPIEvent(name, data);
+                broadcastService.sendBroadcast(name, data);
             } catch(Exception e) {
                 JitsiMeetLogger.e(e, TAG + " onExternalAPIEvent: error sending event");
             }

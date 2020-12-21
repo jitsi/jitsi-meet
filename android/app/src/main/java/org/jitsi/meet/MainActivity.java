@@ -34,6 +34,7 @@ import org.jitsi.meet.sdk.JitsiMeet;
 import org.jitsi.meet.sdk.JitsiMeetActivity;
 import org.jitsi.meet.sdk.JitsiMeetConferenceOptions;
 
+import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -183,8 +184,8 @@ public class MainActivity extends JitsiMeetActivity {
     }
 
     @Override
-    public void onConferenceTerminated(Map<String, Object> data) {
-        Log.d(TAG, "Conference terminated: " + data);
+    protected void onConferenceTerminated(Serializable extraData) {
+        Log.d(TAG, "Conference terminated: " + extraData);
     }
 
     // Activity lifecycle method overrides
