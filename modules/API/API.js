@@ -1023,6 +1023,22 @@ class API {
     }
 
     /**
+     * Notify external application (if API is enabled) that user updated their hand raised
+     *
+     * @param {string} id - User id.
+     * @param {boolean} handRaised - whether user has raised hand
+     * @returns {void}
+     */
+    notifyRaiseHandUpdated(
+        id: string,
+        handRaised ) {
+        this._sendEvent({
+            name: 'raise-hand-updated',
+            handraised: handRaised,
+            id
+        });
+    }
+    /**
      * Disposes the allocated resources.
      *
      * @returns {void}
