@@ -54,7 +54,7 @@ platform :ios do
 
     # Actually build the app
     build_app(
-        scheme: "jitsi-meet",
+        scheme: "JitsiMeet",
         include_bitcode: true,
         include_symbols: true,
         export_xcargs: "-allowProvisioningUpdates"
