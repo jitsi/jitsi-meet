@@ -844,6 +844,7 @@
         "standardDefinition": "Standard definition"
     },
     "videothumbnail": {
+        "connectionInfo": "Connection Info",
         "domute": "Mute",
         "domuteOthers": "Mute everyone else",
         "flip": "Flip",
