@@ -903,7 +903,7 @@
         "allow": "Annehmen",
         "backToKnockModeButton": "Kein Passwort, stattdessen Beitritt anfragen",
         "dialogTitle": "Lobbymodus",
-        "disableDialogContent": "Lobbymodus derzeit deaktiviert. Diese Funktion stellt sicher, dass unerwünschte Personen Ihrer Konferenz nicht beitreten können. Funktion aktivieren?",
+        "disableDialogContent": "Lobbymodus derzeit aktiviert. Diese Funktion stellt sicher, dass unerwünschte Personen Ihrer Konferenz nicht beitreten können. Funktion deaktivieren?",
         "disableDialogSubmit": "Deaktivieren",
         "emailField": "E-Mail-Adresse eingeben",
         "enableDialogPasswordField": "Passwort setzen (optional)",
