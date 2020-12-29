@@ -16,7 +16,7 @@ import { connect, disconnect, setLocationURL } from '../base/connection';
 import { loadConfig } from '../base/lib-jitsi-meet';
 import { MEDIA_TYPE } from '../base/media';
 import { toState } from '../base/redux';
-import { createDesiredLocalTracks, isLocalVideoTrackMuted, isLocalTrackMuted } from '../base/tracks';
+import { createDesiredLocalTracks, isLocalCameraTrackMuted, isLocalTrackMuted } from '../base/tracks';
 import {
     addHashParamsToURL,
     getBackendSafeRoomName,
@@ -232,7 +232,7 @@ export function reloadNow() {
 function addTrackStateToURL(url, stateful) {
     const state = toState(stateful);
     const tracks = state['features/base/tracks'];
-    const isVideoMuted = isLocalVideoTrackMuted(tracks);
+    const isVideoMuted = isLocalCameraTrackMuted(tracks);
     const isAudioMuted = isLocalTrackMuted(tracks, MEDIA_TYPE.AUDIO);
 
     return addHashParamsToURL(new URL(url), { // use new URL object in order to not pollute the passed parameter.
@@ -298,13 +298,13 @@ export function maybeRedirectToWelcomePage(options: Object = {}) {
                 return;
             }
 
-            const { isGuest, jwt } = getState()['features/base/jwt'];
+            const { jwt } = getState()['features/base/jwt'];
 
             let hashParam;
 
             // save whether current user is guest or not, and pass auth token,
             // before navigating to close page
-            window.sessionStorage.setItem('guest', isGuest);
+            window.sessionStorage.setItem('guest', !jwt);
             window.sessionStorage.setItem('jwt', jwt);
 
             let path = 'close.html';

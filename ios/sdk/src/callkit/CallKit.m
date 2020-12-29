@@ -28,9 +28,9 @@
 #import <React/RCTUtils.h>
 #import <WebRTC/WebRTC.h>
 
-#import <JitsiMeet/JitsiMeet-Swift.h>
+#import <JitsiMeetSDK/JitsiMeetSDK-Swift.h>
 
-#import "LogUtils.h"
+#import "../LogUtils.h"
 
 
 // The events emitted/supported by RNCallKit:

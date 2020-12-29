@@ -153,13 +153,7 @@ export function _mapStateToProps(state: Object, ownProps: Props): Object {
             if (!visible && !_disabled) {
                 _disabled = true;
                 visible = true;
-
-                // button and tooltip
-                if (state['features/base/jwt'].isGuest) {
-                    _tooltip = 'dialog.recordingDisabledForGuestTooltip';
-                } else {
-                    _tooltip = 'dialog.recordingDisabledTooltip';
-                }
+                _tooltip = 'dialog.recordingDisabledTooltip';
             }
         }
     }

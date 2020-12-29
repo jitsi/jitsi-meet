@@ -91,14 +91,6 @@ class ReactInstanceManagerHolder {
 
         nativeModules.add(new WebRTCModule(reactContext, options));
 
-        try {
-            Class<?> amplitudeModuleClass = Class.forName("org.jitsi.meet.sdk.AmplitudeModule");
-            Constructor constructor = amplitudeModuleClass.getConstructor(ReactApplicationContext.class);
-            nativeModules.add((NativeModule)constructor.newInstance(reactContext));
-        } catch (Exception e) {
-            // Ignore any error, the module is not compiled when LIBRE_BUILD is enabled.
-        }
-
         return nativeModules;
     }
 
@@ -192,6 +184,7 @@ class ReactInstanceManagerHolder {
                 new com.facebook.react.shell.MainReactPackage(),
                 new com.horcrux.svg.SvgPackage(),
                 new com.kevinresol.react_native_default_preference.RNDefaultPreferencePackage(),
+                new com.learnium.RNDeviceInfo.RNDeviceInfo(),
                 new com.ocetnik.timer.BackgroundTimerPackage(),
                 new com.reactnativecommunity.asyncstorage.AsyncStoragePackage(),
                 new com.reactnativecommunity.netinfo.NetInfoPackage(),

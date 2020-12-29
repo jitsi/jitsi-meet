@@ -220,7 +220,6 @@
         "kickTitle": "Ouch! {{participantDisplayName}} kicked you out of the meeting",
         "liveStreaming": "Live Streaming",
         "liveStreamingDisabledBecauseOfActiveRecordingTooltip": "Not possible while recording is active",
-        "liveStreamingDisabledForGuestTooltip": "Guests can't start live streaming.",
         "liveStreamingDisabledTooltip": "Start live stream disabled.",
         "lockMessage": "Failed to lock the conference.",
         "lockRoom": "Add meeting $t(lockRoomPasswordUppercase)",
@@ -255,7 +254,6 @@
         "readMore": "more",
         "recording": "Recording",
         "recordingDisabledBecauseOfActiveLiveStreamingTooltip": "Not possible while a live stream is active",
-        "recordingDisabledForGuestTooltip": "Guests can't start recordings.",
         "recordingDisabledTooltip": "Start recording disabled.",
         "rejoinNow": "Rejoin now",
         "remoteControlAllowedMessage": "{{user}} accepted your remote control request!",
@@ -287,7 +285,6 @@
         "shareVideoTitle": "Share a video",
         "shareYourScreen": "Share your screen",
         "shareYourScreenDisabled": "Screen sharing disabled.",
-        "shareYourScreenDisabledForGuest": "Guests can't screen share.",
         "startLiveStreaming": "Start live stream",
         "startRecording": "Start recording",
         "startRemoteControlErrorMessage": "An error occurred while trying to start the remote control session!",
@@ -303,6 +300,7 @@
         "tokenAuthFailedTitle": "Authentication failed",
         "transcribing": "Transcribing",
         "unlockRoom": "Remove meeting $t(lockRoomPassword)",
+        "user": "user",
         "userPassword": "user password",
         "WaitForHostMsg": "The conference <b>{{room}}</b> has not yet started. If you are the host then please authenticate. Otherwise, please wait for the host to arrive.",
         "WaitForHostMsgWOk": "The conference <b>{{room}}</b> has not yet started. If you are the host then please press Ok to authenticate. Otherwise, please wait for the host to arrive.",
@@ -396,8 +394,7 @@
         "toggleFilmstrip": "Show or hide video thumbnails",
         "toggleScreensharing": "Switch between camera and screen sharing",
         "toggleShortcuts": "Show or hide keyboard shortcuts",
-        "videoMute": "Start or stop your camera",
-        "videoQuality": "Manage call quality"
+        "videoMute": "Start or stop your camera"
     },
     "liveStreaming": {
         "limitNotificationDescriptionWeb": "Due to high demand your streaming will be limited to {{limit}} min. For unlimited streaming try <a href={{url}} rel='noopener noreferrer' target='_blank'>{{app}}</a>.",
@@ -604,6 +601,7 @@
         "pending": "Preparing to record the meeting...",
         "rec": "REC",
         "serviceDescription": "Your recording will be saved by the recording service",
+        "serviceDescriptionCloud": "Cloud recording",
         "serviceName": "Recording service",
         "signIn": "Sign in",
         "signOut": "Sign out",
@@ -681,6 +679,7 @@
     },
     "startupoverlay": {
         "policyText": " ",
+        "genericTitle": "The meeting needs to use your microphone and camera.",
         "title": "{{app}} needs to use your microphone and camera."
     },
     "suspendedoverlay": {
@@ -840,13 +839,12 @@
         "ld": "LD",
         "ldTooltip": "Viewing low definition video",
         "lowDefinition": "Low definition",
-        "onlyAudioAvailable": "Only audio is available",
-        "onlyAudioSupported": "We only support audio in this browser.",
         "sd": "SD",
         "sdTooltip": "Viewing standard definition video",
         "standardDefinition": "Standard definition"
     },
     "videothumbnail": {
+        "connectionInfo": "Connection Info",
         "domute": "Mute",
         "domuteOthers": "Mute everyone else",
         "flip": "Flip",
@@ -876,8 +874,11 @@
         "getHelp": "Get help",
         "go": "GO",
         "goSmall": "GO",
+        "headerTitle": "Jitsi Meet",
+        "headerSubtitle": "Secure and high quality meetings",
         "info": "Dial-in info",
         "join": "CREATE / JOIN",
+        "jitsiOnMobile": "Jitsi on mobile – download our apps and start a meeting from anywhere",
         "moderatedMessage": "Or <a href=\"{{url}}\" rel=\"noopener noreferrer\" target=\"_blank\">book a meeting URL</a> in advance where you are the only moderator.",
         "privacy": "Privacy",
         "recentList": "Recent",
@@ -888,6 +889,7 @@
         "roomname": "Enter room name",
         "roomnameHint": "Enter the name or URL of the room you want to join. You may make a name up, just let the people you are meeting know it so that they enter the same name.",
         "sendFeedback": "Send feedback",
+        "startMeeting": "Start meeting",
         "terms": "Terms",
         "title": "Secure, fully featured, and completely free video conferencing"
     },

@@ -16,12 +16,10 @@ import {
     CONFERENCE_WILL_LEAVE,
     LOCK_STATE_CHANGED,
     P2P_STATUS_CHANGED,
-    SET_DESKTOP_SHARING_ENABLED,
     SET_FOLLOW_ME,
     SET_PASSWORD,
     SET_PENDING_SUBJECT_CHANGE,
     SET_ROOM,
-    SET_SIP_GATEWAY_ENABLED,
     SET_START_MUTED_POLICY
 } from './actionTypes';
 import { isRoomValid } from './functions';
@@ -76,9 +74,6 @@ ReducerRegistry.register(
         case P2P_STATUS_CHANGED:
             return _p2pStatusChanged(state, action);
 
-        case SET_DESKTOP_SHARING_ENABLED:
-            return _setDesktopSharingEnabled(state, action);
-
         case SET_FOLLOW_ME:
             return set(state, 'followMeEnabled', action.enabled);
 
@@ -93,9 +88,6 @@ ReducerRegistry.register(
 
         case SET_ROOM:
             return _setRoom(state, action);
-
-        case SET_SIP_GATEWAY_ENABLED:
-            return _setSIPGatewayEnabled(state, action);
 
         case SET_START_MUTED_POLICY:
             return {
@@ -344,21 +336,6 @@ function _p2pStatusChanged(state, action) {
 }
 
 /**
- * Reduces a specific Redux action SET_DESKTOP_SHARING_ENABLED of the feature
- * base/conference.
- *
- * @param {Object} state - The Redux state of the feature base/conference.
- * @param {Action} action - The Redux action SET_DESKTOP_SHARING_ENABLED to
- * reduce.
- * @private
- * @returns {Object} The new state of the feature base/conference after the
- * reduction of the specified action.
- */
-function _setDesktopSharingEnabled(state, action) {
-    return set(state, 'desktopSharingEnabled', action.desktopSharingEnabled);
-}
-
-/**
  * Reduces a specific Redux action SET_PASSWORD of the feature base/conference.
  *
  * @param {Object} state - The Redux state of the feature base/conference.
@@ -435,16 +412,3 @@ function _setRoom(state, action) {
     });
 }
 
-/**
- * Reduces a specific Redux action SET_SIP_GATEWAY_ENABLED of the feature
- * base/conference.
- *
- * @param {Object} state - The Redux state of the feature base/conference.
- * @param {Action} action - The Redux action SET_SIP_GATEWAY_ENABLED to reduce.
- * @private
- * @returns {Object} The new state of the feature base/conference after the
- * reduction of the specified action.
- */
-function _setSIPGatewayEnabled(state, action) {
-    return set(state, 'isSIPGatewayEnabled', action.isSIPGatewayEnabled);
-}

@@ -18,10 +18,11 @@ StateListenerRegistry.register(
         if (shouldDisplayTileView(state)) {
             const gridDimensions = getTileViewGridDimensions(state);
             const oldGridDimensions = state['features/filmstrip'].tileViewDimensions.gridDimensions;
-            const { clientHeight, clientWidth } = state['features/base/responsive-ui'];
-            const { isOpen } = state['features/chat'];
 
             if (!equals(gridDimensions, oldGridDimensions)) {
+                const { clientHeight, clientWidth } = state['features/base/responsive-ui'];
+                const { isOpen } = state['features/chat'];
+
                 store.dispatch(
                     setTileViewDimensions(
                         gridDimensions,

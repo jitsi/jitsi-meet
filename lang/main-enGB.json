@@ -83,6 +83,7 @@
         "bandwidth": "Estimated bandwidth:",
         "bitrate": "Bitrate:",
         "bridgeCount": "Server count: ",
+        "codecs": "Codecs (A/V): ",
         "connectedTo": "Connected to:",
         "framerate": "Frame rate:",
         "less": "Show less",
