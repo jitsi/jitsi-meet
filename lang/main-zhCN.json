@@ -298,7 +298,7 @@
         "tokenAuthFailed": "对不起，您未被允许参加此会议。",
         "tokenAuthFailedTitle": "认证失败",
         "transcribing": "转录中",
-        "unlockRoom": "",
+        "unlockRoom": "移除会议 $t(lockRoomPassword)",
         "userPassword": "用户密码",
         "WaitForHostMsg": "会议<b>{{room}}</b>尚未开始。如果您是主持人，请进行身份验证。否则，请等待主持人的到来。",
         "WaitForHostMsgWOk": "会议<b>{{room}}</b>尚未开始。如果您是主持人，请进行身份验证。否则，请等待主持人的到来。",
