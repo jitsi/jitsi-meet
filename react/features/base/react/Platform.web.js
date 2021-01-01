@@ -5,10 +5,8 @@ let OS;
 
 if (userAgent.match(/Android/i)) {
     OS = 'android';
-} else if (userAgent.match(/iP(ad|hone|od)/i)) {
+} else if (userAgent.match(/iP(ad|hone|od)/i) || (maxTouchPoints && maxTouchPoints > 2 && /MacIntel/.test(platform))) {
     OS = 'ios';
-} else if (maxTouchPoints && maxTouchPoints > 2 && /MacIntel/.test(platform)) {
-    OS = 'ipados';
 } else if (userAgent.match(/Mac(intosh| OS X)/i)) {
     OS = 'macos';
 } else if (userAgent.match(/Windows/i)) {

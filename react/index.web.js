@@ -27,7 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
 // Workaround for the issue when returning to a page with the back button and
 // the page is loaded from the 'back-forward' cache on iOS which causes nothing
 // to be rendered.
-if (OS === 'ios' || OS === 'ipados') {
+if (OS === 'ios') {
     window.addEventListener('pageshow', event => {
         // Detect pages loaded from the 'back-forward' cache
         // (https://webkit.org/blog/516/webkit-page-cache-ii-the-unload-event/)
