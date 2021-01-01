@@ -30,6 +30,7 @@ case "$1" in
             db_set jitsi-videobridge/jvb-hostname "localhost"
             db_input critical jitsi-videobridge/jvb-hostname || true
             db_go
+            db_get jitsi-videobridge/jvb-hostname
         fi
         JVB_HOSTNAME="$RET"
 
