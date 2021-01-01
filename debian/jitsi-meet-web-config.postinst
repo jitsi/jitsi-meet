@@ -75,15 +75,21 @@ case "$1" in
             CERT_CHOICE="$RET"
 
             if [ "$CERT_CHOICE" = "$UPLOADED_CERT_CHOICE" ] ; then
-                db_set jitsi-meet/cert-path-key "/etc/ssl/$JVB_HOSTNAME.key"
-                db_input critical jitsi-meet/cert-path-key || true
-                db_go
                 db_get jitsi-meet/cert-path-key
+                if [ -z "$RET" ] ; then
+                    db_set jitsi-meet/cert-path-key "/etc/ssl/$JVB_HOSTNAME.key"
+                    db_input critical jitsi-meet/cert-path-key || true
+                    db_go
+                    db_get jitsi-meet/cert-path-key
+                fi
                 CERT_KEY="$RET"
-                db_set jitsi-meet/cert-path-crt "/etc/ssl/$JVB_HOSTNAME.crt"
-                db_input critical jitsi-meet/cert-path-crt || true
-                db_go
                 db_get jitsi-meet/cert-path-crt
+                if [ -z "$RET" ] ; then
+                    db_set jitsi-meet/cert-path-crt "/etc/ssl/$JVB_HOSTNAME.crt"
+                    db_input critical jitsi-meet/cert-path-crt || true
+                    db_go
+                    db_get jitsi-meet/cert-path-crt
+                fi
                 CERT_CRT="$RET"
             else
                 # create self-signed certs
