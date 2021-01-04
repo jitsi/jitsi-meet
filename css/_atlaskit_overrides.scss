@@ -48,3 +48,19 @@
 .toolbox-button-wth-dialog .eYJELv {
     max-height: initial;
 }
+
+/**
+ * Override @atlaskit/InlineDialog styling for the overflowmenu so it displays
+ * a scrollable list of elements at small screen widths.
+ */
+.sc-eNQAEJ {
+    overflow-y: auto;
+}
+
+/**
+ * Keep overflow menu within screen vertical bounds and make it scrollable.
+ */
+.toolbox-button-wth-dialog .sc-ckVGcZ.fdAqDG > :first-child {
+    max-height: calc(100vh - #{$newToolbarSizeWithPadding} - 16px);
+    overflow-y: auto;
+}
