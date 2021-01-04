@@ -3,9 +3,11 @@
 import Filmstrip from '../../../modules/UI/videolayout/Filmstrip';
 import VideoLayout from '../../../modules/UI/videolayout/VideoLayout';
 import { StateListenerRegistry, equals } from '../base/redux';
+import { setOverflowDrawer } from '../toolbox/actions.web';
 import { getCurrentLayout, getTileViewGridDimensions, shouldDisplayTileView, LAYOUTS } from '../video-layout';
 
 import { setHorizontalViewDimensions, setTileViewDimensions } from './actions.web';
+import { DISPLAY_DRAWER_THRESHOLD } from './constants';
 
 /**
  * Listens for changes in the number of participants to calculate the dimensions of the tile view grid and the tiles.
@@ -122,4 +124,13 @@ StateListenerRegistry.register(
                 )
             );
         }
+    });
+
+/**
+ * Listens for changes in the client width to determine whether the overflow menu(s) should be displayed as drawers.
+ */
+StateListenerRegistry.register(
+    /* selector */ state => state['features/base/responsive-ui'].clientWidth < DISPLAY_DRAWER_THRESHOLD,
+    /* listener */ (widthBelowThreshold, store) => {
+        store.dispatch(setOverflowDrawer(widthBelowThreshold));
     });

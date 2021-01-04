@@ -50,6 +50,12 @@
     }
 }
 
+.dial-in-number {
+    display: flex;
+    justify-content: space-between;
+    padding-right: 8px;
+}
+
 .dial-in-numbers-list {
     margin-top: 20px;
     font-size: 12px;
