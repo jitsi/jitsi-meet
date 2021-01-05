@@ -206,51 +206,53 @@ StateListenerRegistry.register(
     state => state['features/base/conference'].conference,
     (conference, store) => {
         if (conference) {
+            const propertyHandlers = {
+                'e2eeEnabled': (participant, value) => _e2eeUpdated(store, conference, participant.getId(), value),
+                'features_e2ee': (participant, value) =>
+                    store.dispatch(participantUpdated({
+                        conference,
+                        id: participant.getId(),
+                        e2eeSupported: value
+                    })),
+                'features_jigasi': (participant, value) =>
+                    store.dispatch(participantUpdated({
+                        conference,
+                        id: participant.getId(),
+                        isJigasi: value
+                    })),
+                'features_screen-sharing': (participant, value) => // eslint-disable-line no-unused-vars
+                    store.dispatch(participantUpdated({
+                        conference,
+                        id: participant.getId(),
+                        features: { 'screen-sharing': true }
+                    })),
+                'raisedHand': (participant, value) => _raiseHandUpdated(store, conference, participant.getId(), value),
+                'remoteControlSessionStatus': (participant, value) =>
+                    store.dispatch(participantUpdated({
+                        conference,
+                        id: participant.getId(),
+                        remoteControlSessionStatus: value
+                    }))
+            };
+
+            // update properties for the participants that are already in the conference
+            conference.getParticipants().forEach(participant => {
+                Object.keys(propertyHandlers).forEach(propertyName => {
+                    const value = participant.getProperty(propertyName);
+
+                    if (value !== undefined) {
+                        propertyHandlers[propertyName](participant, value);
+                    }
+                });
+            });
+
             // We joined a conference
             conference.on(
                 JitsiConferenceEvents.PARTICIPANT_PROPERTY_CHANGED,
                 (participant, propertyName, oldValue, newValue) => {
-                    switch (propertyName) {
-                    case 'e2eeEnabled':
-                        _e2eeUpdated(store, conference, participant.getId(), newValue);
-                        break;
-                    case 'features_e2ee':
-                        store.dispatch(participantUpdated({
-                            conference,
-                            id: participant.getId(),
-                            e2eeSupported: newValue
-                        }));
-                        break;
-                    case 'features_jigasi':
-                        store.dispatch(participantUpdated({
-                            conference,
-                            id: participant.getId(),
-                            isJigasi: newValue
-                        }));
-                        break;
-                    case 'features_screen-sharing':
-                        store.dispatch(participantUpdated({
-                            conference,
-                            id: participant.getId(),
-                            features: { 'screen-sharing': true }
-                        }));
-                        break;
-                    case 'raisedHand': {
-                        _raiseHandUpdated(store, conference, participant.getId(), newValue);
-                        break;
+                    if (propertyHandlers.hasOwnProperty(propertyName)) {
+                        propertyHandlers[propertyName](participant, newValue);
                     }
-                    case 'remoteControlSessionStatus':
-                        store.dispatch(participantUpdated({
-                            conference,
-                            id: participant.getId(),
-                            remoteControlSessionStatus: newValue
-                        }));
-                        break;
-                    default:
-
-                        // Ignore for now.
-                    }
-
                 });
         } else {
             const localParticipantId = getLocalParticipant(store.getState).id;
