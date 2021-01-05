@@ -16,7 +16,6 @@ import {
 } from './constants';
 import { preloadImage } from './preloadImage';
 
-declare var config: Object;
 declare var interfaceConfig: Object;
 
 /**
@@ -299,7 +298,7 @@ export function isEveryoneModerator(stateful: Object | Function) {
  * @returns {boolean}
  */
 export function isIconUrl(icon: ?string | ?Object) {
-    return Boolean(icon) && typeof icon === 'object';
+    return Boolean(icon) && (typeof icon === 'object' || typeof icon === 'function');
 }
 
 /**
