@@ -142,6 +142,21 @@ case "$1" in
             echo -e "    admins = { \"$JICOFO_AUTH_USER@auth.$JVB_HOSTNAME\", \"jvb@auth.$JVB_HOSTNAME\" }" >> $PROSODY_HOST_CONFIG
         fi
 
+        # Convert the old focus component config to the new one.
+        # Old:
+        # Component "focus.jitmeet.example.com"
+        #     component_secret = "focusSecret"
+        # New:
+        # Component "focus.jitmeet.example.com" "client_proxy"
+        #    target_address = "focus@auth.jitmeet.example.com"
+        if grep -q "Component \"focus.$JVB_HOSTNAME\"" $PROSODY_HOST_CONFIG && ! grep "Component \"focus.$JVB_HOSTNAME\" \"client_proxy\"" $PROSODY_HOST_CONFIG ;then
+            sed -i -e "s/Component \"focus.$JVB_HOSTNAME\"/Component \"focus.$JVB_HOSTNAME\" \"client_proxy\"\n    target_address = \"$JICOFO_AUTH_USER@auth.$JVB_HOSTNAME\"/" $PROSODY_HOST_CONFIG
+            PROSODY_CONFIG_PRESENT="false"
+        fi
+
+        # Make sure the focus@auth user's roster includes the proxy component (this is idempotent)
+        prosodyctl mod_roster_command subscribe focus.$JVB_HOSTNAME $JICOFO_AUTH_USER@auth.$JVB_HOSTNAME
+
         if [ ! -f /var/lib/prosody/$JVB_HOSTNAME.crt ]; then
             # prosodyctl takes care for the permissions
             # echo for using all default values

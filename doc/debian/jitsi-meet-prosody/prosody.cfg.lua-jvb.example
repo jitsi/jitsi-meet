@@ -77,8 +77,9 @@ Component "internal.auth.jitmeet.example.com" "muc"
 VirtualHost "auth.jitmeet.example.com"
     authentication = "internal_plain"
 
-Component "focus.jitmeet.example.com"
-    component_secret = "focusSecret"
+-- Proxy to jicofo's user JID, so that it doesn't have to register as a component.
+Component "focus.jitmeet.example.com" "client_proxy"
+    target_address = "focusUser@auth.jitmeet.example.com"
 
 Component "speakerstats.jitmeet.example.com" "speakerstats_component"
     muc_component = "conference.jitmeet.example.com"
