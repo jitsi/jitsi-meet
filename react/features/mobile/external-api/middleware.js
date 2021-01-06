@@ -2,7 +2,6 @@
 
 import {
     CONFERENCE_FAILED,
-    CONFERENCE_JOINED,
     CONFERENCE_LEFT,
     CONFERENCE_WILL_JOIN,
     JITSI_CONFERENCE_URL_KEY,
@@ -22,8 +21,11 @@ import { MiddlewareRegistry } from '../../base/redux';
 import { ENTER_PICTURE_IN_PICTURE } from '../picture-in-picture';
 
 import { sendEvent } from './functions';
+import { appNavigate } from '../../app/actions';
+import { APP_WILL_MOUNT } from '../../base/app';
 import { SET_AUDIO_MUTED, setAudioMuted } from '../../base/media';
 import { NativeEventEmitter, NativeModules } from 'react-native';
+
 
 /**
  * Event which will be emitted on the native side to indicate the conference
@@ -43,6 +45,9 @@ MiddlewareRegistry.register(store => next => action => {
     const { type } = action;
 
     switch (type) {
+    case APP_WILL_MOUNT:
+        _registerForNativeFromNative(store.dispatch);
+        break;
     case CONFERENCE_FAILED: {
         const { error, ...data } = action;
 
@@ -64,9 +69,6 @@ MiddlewareRegistry.register(store => next => action => {
         break;
     }
 
-    case CONFERENCE_JOINED:
-        _registerForSetAudioMuted(store.dispatch);
-        break;
     case CONFERENCE_LEFT:
     case CONFERENCE_WILL_JOIN:
         _sendConferenceEvent(store, action);
@@ -132,6 +134,18 @@ MiddlewareRegistry.register(store => next => action => {
 
     return result;
 });
+
+function _registerForNativeFromNative(dispatch) {
+    _registerForHangUp(dispatch);
+    _registerForSetAudioMuted(dispatch);
+}
+
+function _registerForHangUp(dispatch) {
+    const eventEmitter = new NativeEventEmitter(NativeModules.ExternalAPI);
+    eventEmitter.addListener('org.jitsi.meet.HANG_UP', () => {
+        dispatch(appNavigate(undefined));
+    });
+}
 
 function _registerForSetAudioMuted(dispatch) {
     const eventEmitter = new NativeEventEmitter(NativeModules.ExternalAPI);

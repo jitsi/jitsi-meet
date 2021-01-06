@@ -209,7 +209,7 @@ public class JitsiMeetActivity extends FragmentActivity
 
     @Override
     public void onBackPressed() {
-        Intent intent = BroadcastIntentHelper.constructSetAudioMutedIntent();
+        Intent intent = BroadcastIntentHelper.constructHangUpIntent();
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 
