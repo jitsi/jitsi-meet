@@ -345,9 +345,8 @@ class Thumbnail extends Component<Props, State> {
         return (
             <div>
                 <AtlasKitThemeProvider mode = 'dark'>
-                    { _connectionIndicatorDisabled
-                        ? null
-                        : <ConnectionIndicator
+                    { !_connectionIndicatorDisabled
+                        && <ConnectionIndicator
                             alwaysVisible = { showConnectionIndicator }
                             enableStatsDisplay = { true }
                             iconSize = { iconSize }
@@ -360,10 +359,10 @@ class Thumbnail extends Component<Props, State> {
                         participantId = { id }
                         tooltipPosition = { tooltipPosition } />
                     { showDominantSpeaker && _participantCount > 2
-                        ? <DominantSpeakerIndicator
+                        && <DominantSpeakerIndicator
                             iconSize = { iconSize }
                             tooltipPosition = { tooltipPosition } />
-                        : null }
+                    }
                 </AtlasKitThemeProvider>
             </div>);
     }
@@ -452,7 +451,7 @@ class Thumbnail extends Component<Props, State> {
 
         // hide volume when in silent mode
         const onVolumeChange = _startSilent ? undefined : this._onVolumeChange;
-        const { jitsiTrack } = _audioTrack ?? {};
+        const jitsiTrack = _audioTrack?.jitsiTrack;
         const audioTrackId = jitsiTrack && jitsiTrack.getId();
 
         return (
@@ -461,7 +460,7 @@ class Thumbnail extends Component<Props, State> {
                     _audioTrack
                         ? <AudioTrack
                             audioTrack = { _audioTrack }
-                            id = { `remoteAudio_${audioTrackId}` }
+                            id = { `remoteAudio_${audioTrackId || ''}` }
                             muted = { _startSilent }
                             onAudioElementReferenceChanged = { this._onAudioElementReferenceChanged }
                             volume = { this.state.volume } />
@@ -542,7 +541,7 @@ class Thumbnail extends Component<Props, State> {
             return null;
         }
 
-        const { isFakeParticipant, local = false } = _participant;
+        const { isFakeParticipant, local } = _participant;
 
         if (local) {
             return this._renderLocalParticipant();
