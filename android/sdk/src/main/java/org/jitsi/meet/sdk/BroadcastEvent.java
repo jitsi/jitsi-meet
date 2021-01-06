@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import com.facebook.react.bridge.ReadableMap;
-import com.facebook.react.bridge.ReadableMapKeySetIterator;
 
 import org.jitsi.meet.sdk.log.JitsiMeetLogger;
 
@@ -15,11 +14,11 @@ public class BroadcastEvent {
     private static final String TAG = BroadcastEvent.class.getSimpleName();
 
     private final Type type;
-    private final HashMap<String, String> data;
+    private final HashMap<String, Object> data;
 
     public BroadcastEvent(String name, ReadableMap data) {
         this.type = Type.buildTypeFromName(name);
-        this.data = buildDataFromReadableMap(data);
+        this.data = data.toHashMap();
     }
 
     public BroadcastEvent(Intent intent) {
@@ -31,7 +30,7 @@ public class BroadcastEvent {
         return this.type;
     }
 
-    public HashMap<String, String> getData() {
+    public HashMap<String, Object> getData() {
         return this.data;
     }
 
@@ -47,8 +46,8 @@ public class BroadcastEvent {
         return null;
     }
 
-    private static HashMap<String, String> buildDataFromBundle(Bundle bundle) {
-        HashMap<String, String> map = new HashMap<>();
+    private static HashMap<String, Object> buildDataFromBundle(Bundle bundle) {
+        HashMap<String, Object> map = new HashMap<>();
 
         if (bundle != null) {
             for (String key : bundle.keySet()) {
@@ -65,20 +64,6 @@ public class BroadcastEvent {
         }
 
         return map;
-    }
-
-
-    private static HashMap<String, String> buildDataFromReadableMap(ReadableMap readableMap) {
-        HashMap<String, String> hashMap = new HashMap<>();
-
-        for (ReadableMapKeySetIterator i = readableMap.keySetIterator();
-             i.hasNextKey(); ) {
-            String key = i.nextKey();
-
-            hashMap.put(key, readableMap.getString(key));
-        }
-
-        return hashMap;
     }
 
     public enum Type {

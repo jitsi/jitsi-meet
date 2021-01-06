@@ -13,7 +13,7 @@ public class BroadcastAction {
     private static final String TAG = BroadcastAction.class.getSimpleName();
 
     private final Type type;
-    private final HashMap<String, String> data;
+    private final HashMap<String, Object> data;
 
     public BroadcastAction(Intent intent) {
         this.type = Type.buildTypeFromAction(intent.getAction());
@@ -24,7 +24,7 @@ public class BroadcastAction {
         return this.type;
     }
 
-    public HashMap<String, String> getData() {
+    public HashMap<String, Object> getData() {
         return this.data;
     }
 
@@ -32,26 +32,22 @@ public class BroadcastAction {
         WritableNativeMap nativeMap = new WritableNativeMap();
 
         for (String key : this.data.keySet()) {
-            nativeMap.putString(key, this.data.get(key));
+            try {
+                nativeMap.putString(key, this.data.get(key).toString());
+            } catch (Exception e) {
+                JitsiMeetLogger.i(TAG + " invalid extra data in event", e);
+            }
         }
 
         return nativeMap;
     }
 
-    private static HashMap<String, String> buildDataFromBundle(Bundle bundle) {
-        HashMap<String, String> map = new HashMap<>();
+    private static HashMap<String, Object> buildDataFromBundle(Bundle bundle) {
+        HashMap<String, Object> map = new HashMap<>();
 
         if (bundle != null) {
             for (String key : bundle.keySet()) {
-                try {
-                    String value = bundle.get(key).toString();
-
-                    if (value != null) {
-                        map.put(key, value);
-                    }
-                } catch (Exception e) {
-                    JitsiMeetLogger.i(TAG + " invalid extra data", e);
-                }
+                map.put(key, bundle.get(key));
             }
         }
 
