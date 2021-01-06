@@ -5,42 +5,30 @@ import android.os.Bundle;
 
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.ReadableMapKeySetIterator;
-import com.facebook.react.bridge.WritableNativeMap;
 
 import org.jitsi.meet.sdk.log.JitsiMeetLogger;
 
 import java.util.HashMap;
 
-public class BroadcastMessage {
+public class BroadcastEvent {
 
-    private static final String TAG = BroadcastMessage.class.getSimpleName();
+    private static final String TAG = BroadcastEvent.class.getSimpleName();
 
     private final Type type;
     private final HashMap<String, String> data;
-    private final int emitterId;
 
-    public BroadcastMessage(String name, ReadableMap data, int emitterId) {
+    public BroadcastEvent(String name, ReadableMap data) {
         this.type = Type.buildTypeFromName(name);
         this.data = buildDataFromReadableMap(data);
-        this.emitterId = emitterId;
     }
 
-    public BroadcastMessage(Intent intent) {
+    public BroadcastEvent(Intent intent) {
         this.type = Type.buildTypeFromAction(intent.getAction());
         this.data = buildDataFromBundle(intent.getExtras());
-        this.emitterId = 0;
     }
 
     public Type getType() {
         return this.type;
-    }
-
-    public String getAction() {
-        return this.type.action;
-    }
-
-    public int getEmitterId() {
-        return this.emitterId;
     }
 
     public HashMap<String, String> getData() {
@@ -51,23 +39,12 @@ public class BroadcastMessage {
         if (type != null && type.action != null) {
             Intent intent = new Intent(type.action);
 
-
             intent.putExtra(Type.extraData, data);
 
             return intent;
         }
 
         return null;
-    }
-
-    public WritableNativeMap getDataAsWritableNativeMap() {
-        WritableNativeMap nativeMap = new WritableNativeMap();
-
-        for (String key : this.data.keySet()) {
-            nativeMap.putString(key, this.data.get(key));
-        }
-
-        return nativeMap;
     }
 
     private static HashMap<String, String> buildDataFromBundle(Bundle bundle) {
@@ -90,6 +67,7 @@ public class BroadcastMessage {
         return map;
     }
 
+
     private static HashMap<String, String> buildDataFromReadableMap(ReadableMap readableMap) {
         HashMap<String, String> hashMap = new HashMap<>();
 
@@ -107,9 +85,7 @@ public class BroadcastMessage {
         CONFERENCE_JOINED("org.jitsi.meet.CONFERENCE_JOINED"),
         CONFERENCE_TERMINATED("org.jitsi.meet.CONFERENCE_TERMINATED"),
         CONFERENCE_WILL_JOIN("org.jitsi.meet.CONFERENCE_WILL_JOIN"),
-        SEND_MESSAGE("org.jitsi.meet.SEND_MESSAGE"),
-        AUDIO_MUTED_CHANGED("org.jitsi.meet.AUDIO_MUTED_CHANGED"),
-        SET_AUDIO_MUTED("org.jitsi.meet.SET_AUDIO_MUTED");
+        AUDIO_MUTED_CHANGED("org.jitsi.meet.AUDIO_MUTED_CHANGED");
 
         public static final String extraData = "extraData";
 
@@ -128,6 +104,15 @@ public class BroadcastMessage {
             return action;
         }
 
+        public static Type buildTypeFromAction(String action) {
+            for (Type type : Type.values()) {
+                if (type.action.equalsIgnoreCase(action)) {
+                    return type;
+                }
+            }
+            return null;
+        }
+
         public static Type buildTypeFromName(String name) {
             switch (name) {
                 case CONFERENCE_WILL_JOIN_NAME:
@@ -140,15 +125,6 @@ public class BroadcastMessage {
                     return AUDIO_MUTED_CHANGED;
             }
 
-            return null;
-        }
-
-        public static Type buildTypeFromAction(String action) {
-            for (Type type : Type.values()) {
-                if (type.action.equalsIgnoreCase(action)) {
-                    return type;
-                }
-            }
             return null;
         }
     }

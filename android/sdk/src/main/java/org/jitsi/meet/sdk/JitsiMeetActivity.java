@@ -209,8 +209,7 @@ public class JitsiMeetActivity extends FragmentActivity
 
     @Override
     public void onBackPressed() {
-        Intent intent = new Intent(BroadcastMessage.Type.SET_AUDIO_MUTED.getAction());
-        intent.putExtra("muted", true);
+        Intent intent = BroadcastIntentHelper.constructSetAudioMutedIntent();
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 
@@ -230,10 +229,6 @@ public class JitsiMeetActivity extends FragmentActivity
 
     @Override
     protected void onUserLeaveHint() {
-        getJitsiView().enterPictureInPicture();
-        Intent intent = new Intent(BroadcastMessage.Type.SET_AUDIO_MUTED.getAction());
-        intent.putExtra("muted", true);
-        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 
     // JitsiMeetActivityInterface
@@ -251,26 +246,26 @@ public class JitsiMeetActivity extends FragmentActivity
 
     private void registerForBroadcastMessages() {
         IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(BroadcastMessage.Type.CONFERENCE_JOINED.getAction());
-        intentFilter.addAction(BroadcastMessage.Type.CONFERENCE_WILL_JOIN.getAction());
-        intentFilter.addAction(BroadcastMessage.Type.CONFERENCE_TERMINATED.getAction());
+        intentFilter.addAction(BroadcastEvent.Type.CONFERENCE_JOINED.getAction());
+        intentFilter.addAction(BroadcastEvent.Type.CONFERENCE_WILL_JOIN.getAction());
+        intentFilter.addAction(BroadcastEvent.Type.CONFERENCE_TERMINATED.getAction());
 
         LocalBroadcastManager.getInstance(this).registerReceiver(broadcastReceiver, intentFilter);
     }
 
     private void onBroadcastReceived(Intent intent) {
         if (intent != null) {
-            BroadcastMessage message = new BroadcastMessage(intent);
+            BroadcastEvent event = new BroadcastEvent(intent);
 
-            switch (message.getType()) {
+            switch (event.getType()) {
                 case CONFERENCE_JOINED:
-                    onConferenceJoined(message.getData());
+                    onConferenceJoined(event.getData());
                     break;
                 case CONFERENCE_WILL_JOIN:
-                    onConferenceWillJoin(message.getData());
+                    onConferenceWillJoin(event.getData());
                     break;
                 case CONFERENCE_TERMINATED:
-                    onConferenceTerminated(message.getData());
+                    onConferenceTerminated(event.getData());
                     break;
             }
         }
