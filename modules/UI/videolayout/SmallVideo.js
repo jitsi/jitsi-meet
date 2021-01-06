@@ -244,7 +244,7 @@ export default class SmallVideo {
             = isLocal ? getLocalVideoTrack(tracks) : getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.VIDEO, id);
 
         if (typeof participant !== 'undefined' && !participant.isFakeParticipant && !participant.local) {
-            isScreenSharing = typeof track !== 'undefined' && videoTrack?.videoType === 'desktop';
+            isScreenSharing = videoTrack?.videoType === 'desktop';
             connectionStatus = participant.connectionStatus;
         }
 
