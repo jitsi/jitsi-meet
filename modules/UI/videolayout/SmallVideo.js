@@ -30,9 +30,9 @@ import { ConnectionIndicator } from '../../../react/features/connection-indicato
 import { DisplayName } from '../../../react/features/display-name';
 import {
     DominantSpeakerIndicator,
-    isVideoPlayable,
     RaisedHandIndicator,
-    StatusIndicators
+    StatusIndicators,
+    isVideoPlayable
 } from '../../../react/features/filmstrip';
 import {
     LAYOUTS,
