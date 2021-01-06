@@ -86,7 +86,6 @@ export function isVideoPlayable(stateful: Object | Function, id: String) {
     const state = toState(stateful);
     const tracks = state['features/base/tracks'];
     const participant = id ? getParticipantById(state, id) : getLocalParticipant(state);
-    let isVideoMuted = true;
     const isLocal = participant?.local ?? true;
     const { connectionStatus } = participant || {};
     const videoTrack
@@ -94,11 +93,13 @@ export function isVideoPlayable(stateful: Object | Function, id: String) {
     const isAudioOnly = Boolean(state['features/base/audio-only'].enabled);
     let isPlayable = false;
 
-    if (participant?.local) {
-        isVideoMuted = isLocalTrackMuted(tracks, MEDIA_TYPE.VIDEO);
+    if (isLocal) {
+        const isVideoMuted = isLocalTrackMuted(tracks, MEDIA_TYPE.VIDEO);
+
         isPlayable = Boolean(videoTrack) && !isVideoMuted && !isAudioOnly;
     } else if (!participant?.isFakeParticipant) { // remote participants excluding shared video
-        isVideoMuted = isRemoteTrackMuted(tracks, MEDIA_TYPE.VIDEO, id);
+        const isVideoMuted = isRemoteTrackMuted(tracks, MEDIA_TYPE.VIDEO, id);
+
         isPlayable = Boolean(videoTrack) && !isVideoMuted && !isAudioOnly
             && connectionStatus === JitsiParticipantConnectionStatus.ACTIVE;
     }
