@@ -437,7 +437,9 @@ function _raiseHandUpdated({ dispatch, getState }, conference, participantId, ne
         raisedHand
     }));
 
-    APP.API.notifyRaiseHandUpdated(participantId, raisedHand);
+    if (typeof APP !== 'undefined') {
+        APP.API.notifyRaiseHandUpdated(participantId, raisedHand);
+    }
 
     if (raisedHand) {
         dispatch(showNotification({
