@@ -72,7 +72,7 @@ public class BroadcastAction {
             return action;
         }
 
-        public static Type buildTypeFromAction(String action) {
+        private static Type buildTypeFromAction(String action) {
             for (Type type : Type.values()) {
                 if (type.action.equalsIgnoreCase(action)) {
                     return type;

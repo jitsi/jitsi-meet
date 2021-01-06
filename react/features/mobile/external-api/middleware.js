@@ -24,6 +24,7 @@ import { sendEvent } from './functions';
 import { appNavigate } from '../../app/actions';
 import { APP_WILL_MOUNT } from '../../base/app';
 import { SET_AUDIO_MUTED, setAudioMuted } from '../../base/media';
+import { PARTICIPANT_JOINED, PARTICIPANT_LEFT } from '../../base/participants';
 import { NativeEventEmitter, NativeModules } from 'react-native';
 
 
@@ -117,15 +118,25 @@ MiddlewareRegistry.register(store => next => action => {
         break;
     }
 
+    case PARTICIPANT_JOINED: 
+    case PARTICIPANT_LEFT: {
+        sendEvent(
+            store,
+            action.type,
+            /* data */ {
+                participantId: action.participant.id
+            });
+        break;
+    }
+
     case SET_ROOM:
         _maybeTriggerEarlyConferenceWillJoin(store, action);
         break;
 
     case SET_AUDIO_MUTED:
-        console.log('SET_AUDIO_MUTED', action.muted);
         sendEvent(
             store,
-            SET_AUDIO_MUTED,
+            "AUDIO_MUTED_CHANGED",
             /* data */ {
                 muted: action.muted
             });
