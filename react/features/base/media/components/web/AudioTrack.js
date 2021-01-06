@@ -135,7 +135,7 @@ export default class AudioTrack extends Component<Props> {
             const currentVolume = this._ref.volume;
             const nextVolume = nextProps.volume;
 
-            if (typeof nextVolume === 'number' && currentVolume !== nextVolume) {
+            if (typeof nextVolume === 'number' && !isNaN(nextVolume) && currentVolume !== nextVolume) {
                 this._ref.volume = nextVolume;
             }
 
