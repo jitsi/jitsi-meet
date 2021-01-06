@@ -123,8 +123,8 @@ export default class AudioTrack extends Component<Props> {
      * from React.
      */
     shouldComponentUpdate(nextProps: Props) {
-        const currentJitsiTrack = this.props.audioTrack && this.props.audioTrack.jitsiTrack;
-        const nextJitsiTrack = nextProps.audioTrack && nextProps.audioTrack.jitsiTrack;
+        const currentJitsiTrack = this.props.audioTrack?.jitsiTrack;
+        const nextJitsiTrack = nextProps.audioTrack?.jitsiTrack;
 
         if (currentJitsiTrack !== nextJitsiTrack) {
             this._detachTrack(this.props.audioTrack);
