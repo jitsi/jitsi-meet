@@ -2,7 +2,7 @@
 
 import VideoLayout from '../../../modules/UI/videolayout/VideoLayout.js';
 import { CONFERENCE_WILL_LEAVE } from '../base/conference';
-import { MEDIA_TYPE } from '../base/media/index.js';
+import { MEDIA_TYPE } from '../base/media';
 import {
     DOMINANT_SPEAKER_CHANGED,
     PARTICIPANT_JOINED,

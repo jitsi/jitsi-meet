@@ -7,7 +7,7 @@ import { I18nextProvider } from 'react-i18next';
 import { Provider } from 'react-redux';
 
 import { i18next } from '../../../react/features/base/i18n';
-import Thumbnail from '../../../react/features/filmstrip/components/web/Thumbnail';
+import { Thumbnail } from '../../../react/features/filmstrip';
 import SmallVideo from '../videolayout/SmallVideo';
 /* eslint-enable no-unused-vars */
 
