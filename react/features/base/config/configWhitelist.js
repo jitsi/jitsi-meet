@@ -117,6 +117,8 @@ export default [
     'forceTurnRelay',
     'gatherStats',
     'googleApiApplicationClientID',
+    'hideConferenceSubject',
+    'hideParticipantsStats',
     'hideConferenceTimer',
     'hiddenDomain',
     'hideLobbyButton',
