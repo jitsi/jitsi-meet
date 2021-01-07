@@ -715,6 +715,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 609CB2080B75F75A89923F3D /* Pods-JitsiMeet.debug.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIconDebug;
 				CODE_SIGN_ENTITLEMENTS = app.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
@@ -744,6 +745,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = FC040BBED70876444D89E91C /* Pods-JitsiMeet.release.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIconRelease;
 				CODE_SIGN_ENTITLEMENTS = app.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
