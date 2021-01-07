@@ -91,6 +91,7 @@ export default [
     'disableRtx',
     'disableSimulcast',
     'disableThirdPartyRequests',
+    'disableTileView',
     'displayJids',
     'doNotStoreRoom',
     'e2eping',
