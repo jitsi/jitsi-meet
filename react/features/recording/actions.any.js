@@ -147,11 +147,11 @@ export function showStartedRecordingNotification(streamType: string, participant
         = streamType === JitsiMeetJS.constants.recording.mode.STREAM;
     const descriptionArguments = { name: participantName };
     const dialogProps = isLiveStreaming ? {
-        descriptionKey: 'liveStreaming.onBy',
+        descriptionKey: participantName ? 'liveStreaming.onBy' : 'liveStreaming.on',
         descriptionArguments,
         titleKey: 'dialog.liveStreaming'
     } : {
-        descriptionKey: 'recording.onBy',
+        descriptionKey: participantName ? 'recording.onBy' : 'recording.on',
         descriptionArguments,
         titleKey: 'dialog.recording'
     };
