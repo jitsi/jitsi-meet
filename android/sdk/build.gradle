@@ -47,7 +47,14 @@ dependencies {
     implementation 'com.jakewharton.timber:timber:4.7.1'
     implementation 'com.squareup.duktape:duktape-android:1.3.0'
 
-    if (!rootProject.ext.libreBuild) {
+    if (rootProject.ext.libreBuild) {
+        implementation(project(':react-native-device-info')) {
+            exclude group: 'com.google.firebase'
+            exclude group: 'com.google.android.gms'
+            exclude group: 'com.android.installreferrer'
+        }
+    } else {
+        implementation project(':react-native-device-info')
         implementation(project(":react-native-google-signin")) {
             exclude group: 'com.google.android.gms'
             exclude group: 'androidx'
@@ -59,7 +66,6 @@ dependencies {
     implementation project(':react-native-calendar-events')
     implementation project(':react-native-community_netinfo')
     implementation project(':react-native-default-preference')
-    implementation project(':react-native-device-info')
     implementation project(':react-native-immersive')
     implementation project(':react-native-keep-awake')
     implementation project(':react-native-linear-gradient')
