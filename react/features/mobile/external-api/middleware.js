@@ -1,5 +1,9 @@
 // @flow
 
+import { NativeEventEmitter, NativeModules } from 'react-native';
+
+import { appNavigate } from '../../app/actions';
+import { APP_WILL_MOUNT } from '../../base/app';
 import {
     CONFERENCE_FAILED,
     CONFERENCE_JOINED,
@@ -18,16 +22,12 @@ import {
     JITSI_CONNECTION_URL_KEY,
     getURLWithoutParams
 } from '../../base/connection';
+import { SET_AUDIO_MUTED, setAudioMuted } from '../../base/media';
+import { PARTICIPANT_JOINED, PARTICIPANT_LEFT } from '../../base/participants';
 import { MiddlewareRegistry } from '../../base/redux';
 import { ENTER_PICTURE_IN_PICTURE } from '../picture-in-picture';
 
 import { sendEvent } from './functions';
-import { appNavigate } from '../../app/actions';
-import { APP_WILL_MOUNT } from '../../base/app';
-import { SET_AUDIO_MUTED, setAudioMuted } from '../../base/media';
-import { PARTICIPANT_JOINED, PARTICIPANT_LEFT } from '../../base/participants';
-import { NativeEventEmitter, NativeModules } from 'react-native';
-
 
 /**
  * Event which will be emitted on the native side to indicate the conference
@@ -120,7 +120,7 @@ MiddlewareRegistry.register(store => next => action => {
         break;
     }
 
-    case PARTICIPANT_JOINED: 
+    case PARTICIPANT_JOINED:
     case PARTICIPANT_LEFT: {
         sendEvent(
             store,
@@ -138,7 +138,7 @@ MiddlewareRegistry.register(store => next => action => {
     case SET_AUDIO_MUTED:
         sendEvent(
             store,
-            "AUDIO_MUTED_CHANGED",
+            'AUDIO_MUTED_CHANGED',
             /* data */ {
                 muted: action.muted
             });
@@ -148,21 +148,44 @@ MiddlewareRegistry.register(store => next => action => {
     return result;
 });
 
+/**
+ * Registers for events sent from the native side via NativeEventEmitter.
+ *
+ * @param {Dispatch} dispatch - The Redux dispatch function.
+ * @private
+ * @returns {void}
+ */
 function _registerForNativeFromNative(dispatch) {
     _registerForHangUp(dispatch);
     _registerForSetAudioMuted(dispatch);
 }
 
+/**
+ * Registers for HANG_UP event.
+ *
+ * @param {Dispatch} dispatch - The Redux dispatch function.
+ * @private
+ * @returns {void}
+ */
 function _registerForHangUp(dispatch) {
     const eventEmitter = new NativeEventEmitter(NativeModules.ExternalAPI);
+
     eventEmitter.addListener('org.jitsi.meet.HANG_UP', () => {
         dispatch(appNavigate(undefined));
     });
 }
 
+/**
+ * Registers for HANG_UP event.
+ *
+ * @param {Dispatch} dispatch - The Redux dispatch function.
+ * @private
+ * @returns {void}
+ */
 function _registerForSetAudioMuted(dispatch) {
     const eventEmitter = new NativeEventEmitter(NativeModules.ExternalAPI);
-    eventEmitter.addListener('org.jitsi.meet.SET_AUDIO_MUTED', ({muted}) => {
+
+    eventEmitter.addListener('org.jitsi.meet.SET_AUDIO_MUTED', ({ muted }) => {
         dispatch(setAudioMuted(muted));
     });
 }

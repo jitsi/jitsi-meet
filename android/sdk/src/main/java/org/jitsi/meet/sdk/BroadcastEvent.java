@@ -37,7 +37,6 @@ public class BroadcastEvent {
     public Intent buildIntent() {
         if (type != null && type.action != null) {
             Intent intent = new Intent(type.action);
-
             intent.putExtra(Type.extraData, data);
 
             return intent;
