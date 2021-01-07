@@ -14,7 +14,7 @@ import {
     getTrackByMediaTypeAndParticipant,
     isLocalTrackMuted,
     isRemoteTrackMuted
-} from '../base/tracks';
+} from '../base/tracks/functions';
 
 import { TILE_ASPECT_RATIO } from './constants';
 
