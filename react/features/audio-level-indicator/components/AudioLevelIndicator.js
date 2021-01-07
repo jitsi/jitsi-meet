@@ -39,8 +39,11 @@ class AudioLevelIndicator extends Component<Props> {
      * @returns {ReactElement}
      */
     render() {
+        const { audioLevel: passedAudioLevel } = this.props;
+
         // First make sure we are sensitive enough.
-        const audioLevel = Math.min(this.props.audioLevel * 1.2, 1);
+        const audioLevel = typeof passedAudioLevel === 'number' && !isNaN(passedAudioLevel)
+            ? Math.min(passedAudioLevel * 1.2, 1) : 0;
 
         // Let's now stretch the audio level over the number of dots we have.
         const stretchedAudioLevel = AUDIO_LEVEL_DOTS * audioLevel;
