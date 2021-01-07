@@ -401,7 +401,7 @@ class Thumbnail extends Component<Props, State> {
             _videoTrack
         } = this.props;
         const { id } = _participant || {};
-        const { audioLevel = 0 } = this.state;
+        const { audioLevel } = this.state;
 
 
         return (
@@ -447,7 +447,7 @@ class Thumbnail extends Component<Props, State> {
             _startSilent
         } = this.props;
         const { id } = _participant;
-        const { audioLevel = 0, volume = 1 } = this.state;
+        const { audioLevel, volume } = this.state;
 
         // hide volume when in silent mode
         const onVolumeChange = _startSilent ? undefined : this._onVolumeChange;

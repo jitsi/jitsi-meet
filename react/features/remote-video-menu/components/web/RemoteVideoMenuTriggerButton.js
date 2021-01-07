@@ -75,7 +75,7 @@ type Props = {
      * A value between 0 and 1 indicating the volume of the participant's
      * audio element.
      */
-    initialVolumeValue: number,
+    initialVolumeValue: ?number,
 
     /**
      * Callback to invoke when changing the level of the participant's
@@ -210,7 +210,7 @@ class RemoteVideoMenuTriggerButton extends Component<Props> {
                 participantID = { participantID } />
         );
 
-        if (onVolumeChange) {
+        if (onVolumeChange && initialVolumeValue && !isNaN(initialVolumeValue)) {
             buttons.push(
                 <VolumeSlider
                     initialValue = { initialVolumeValue }
