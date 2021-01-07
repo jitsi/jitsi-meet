@@ -162,7 +162,7 @@ class Thumbnail extends Component<Props, State> {
 
         this._updateAudioLevel = this._updateAudioLevel.bind(this);
         this._onVolumeChange = this._onVolumeChange.bind(this);
-        this._onAudioElementReferenceChanged = this._onAudioElementReferenceChanged.bind(this);
+        this._onInitialVolumeSet = this._onInitialVolumeSet.bind(this);
     }
 
     /**
@@ -308,11 +308,11 @@ class Thumbnail extends Component<Props, State> {
     }
 
     /**
-     * Renders the top toolbar of the thumbnail.
+     * Renders the top indicators of the thumbnail.
      *
      * @returns {Component}
      */
-    _renderTopToolbar() {
+    _renderTopIndicators() {
         const {
             _connectionIndicatorAutoHideEnabled,
             _connectionIndicatorDisabled,
@@ -416,7 +416,7 @@ class Thumbnail extends Component<Props, State> {
                     <StatusIndicators participantID = { id } />
                 </div>
                 <div className = 'videocontainer__toptoolbar'>
-                    { this._renderTopToolbar() }
+                    { this._renderTopIndicators() }
                 </div>
                 <div className = 'videocontainer__hoverOverlay' />
                 <div className = 'displayNameContainer'>
@@ -462,14 +462,14 @@ class Thumbnail extends Component<Props, State> {
                             audioTrack = { _audioTrack }
                             id = { `remoteAudio_${audioTrackId || ''}` }
                             muted = { _startSilent }
-                            onAudioElementReferenceChanged = { this._onAudioElementReferenceChanged }
+                            onInitialVolumeSet = { this._onInitialVolumeSet }
                             volume = { this.state.volume } />
                         : null
 
                 }
                 <div className = 'videocontainer__background' />
                 <div className = 'videocontainer__toptoolbar'>
-                    { this._renderTopToolbar() }
+                    { this._renderTopIndicators() }
                 </div>
                 <div className = 'videocontainer__toolbar'>
                     <StatusIndicators participantID = { id } />
@@ -501,15 +501,15 @@ class Thumbnail extends Component<Props, State> {
         );
     }
 
-    _onAudioElementReferenceChanged: Object => void;
+    _onInitialVolumeSet: Object => void;
 
     /**
-     * Handles audio element references changes by receiving some properties from the audio element.
+     * A handler for the initial volume value of the audio element.
      *
-     * @param {Obejct} audioElementProps - Properties of the audio element.
+     * @param {number} volume - Properties of the audio element.
      * @returns {void}
      */
-    _onAudioElementReferenceChanged({ volume }) {
+    _onInitialVolumeSet(volume) {
         if (this.state.volume !== volume) {
             this.setState({ volume });
         }

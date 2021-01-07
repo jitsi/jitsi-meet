@@ -35,9 +35,10 @@ type Props = {
     volume: ?number,
 
     /**
-     * A function that will be executed when the reference to the underlying audio element changes.
+     * A function that will be executed when the reference to the underlying audio element changes in order to report
+     * the initial volume value.
      */
-    onAudioElementReferenceChanged: Function
+    onInitialVolumeSet: Function
 };
 
 /**
@@ -207,10 +208,10 @@ export default class AudioTrack extends Component<Props> {
      */
     _setRef(audioElement: ?HTMLAudioElement) {
         this._ref = audioElement;
-        const { onAudioElementReferenceChanged } = this.props;
+        const { onInitialVolumeSet } = this.props;
 
-        if (this._ref && onAudioElementReferenceChanged) {
-            onAudioElementReferenceChanged({ volume: this._ref.volume });
+        if (this._ref && onInitialVolumeSet) {
+            onInitialVolumeSet(this._ref.volume);
         }
     }
 }
