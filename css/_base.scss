@@ -128,8 +128,10 @@ form {
 }
 
 .leftwatermark {
-    left: 32px;
-    top: 32px;
+    // left: 32px;
+    // top: 32px;
+    left: 5px;
+    top: 5px;
     background-position: center left;
     background-repeat: no-repeat;
     background-size: contain;
@@ -205,8 +207,10 @@ form {
 .desktop-browser {
     @media only screen and (max-width: $smallScreen) {
         .watermark {
-            width: 20%;
-            height: 20%;
+            // width: 20%;
+            // height: 20%;
+            width: 10%;
+            height: 10%;
         }
 
         .new-toolbox {

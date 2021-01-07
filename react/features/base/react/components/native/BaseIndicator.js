@@ -7,7 +7,6 @@ import { Icon } from '../../../icons';
 import { type StyleType } from '../../../styles';
 
 import styles from './indicatorstyles';
-import { BASE_INDICATOR } from './styles';
 
 type Props = {
 
@@ -41,9 +40,7 @@ export default class BaseIndicator extends Component<Props> {
         const { highlight, icon, iconStyle } = this.props;
 
         return (
-            <View
-                style = { [ BASE_INDICATOR,
-                    highlight ? styles.highlightedIndicator : null ] }>
+            <View style = { highlight ? styles.highlightedIndicator : null }>
                 <Icon
                     src = { icon }
                     style = { [

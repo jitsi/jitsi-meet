@@ -15,8 +15,9 @@
         box-sizing: border-box;
         display: flex;
         flex-direction: column;
-        height: 100vh;
+        // height: calc(100vh - 200px);
         width: 100vw;
+        margin: 30px 0px;
     }
 
     .filmstrip__videos .videocontainer {
@@ -94,7 +95,7 @@
             border: 0;
             box-sizing: border-box;
             display: block;
-            margin: 2px;
+            margin: 5px;
         }
 
         video {
@@ -108,5 +109,15 @@
 
     .has-overflow .videocontainer {
         align-self: baseline;
+    }
+
+    /**
+     * Firefox flex acts a little differently. To make sure the bottom row of
+     * thumbnails is not overlapped by the horizontal toolbar, margin is added
+     * to the local thumbnail to keep it from the bottom of the screen. It is
+     * assumed the local thumbnail will always be on the bottom row.
+     */
+    .has-overflow #localVideoContainer {
+        margin-bottom: 100px !important;
     }
 }

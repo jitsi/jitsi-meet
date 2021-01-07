@@ -95,16 +95,9 @@ if [ -f /etc/nginx/sites-enabled/$DOMAIN.conf ] ; then
     CERT_CRT_ESC=$(echo $CERT_CRT_ESC | sed 's/\//\\\//g')
     sed -i "s/ssl_certificate\ \/etc\/jitsi\/meet\/.*crt/ssl_certificate\ $CERT_CRT_ESC/g" \
         $CONF_FILE
-    
-    if type service >/dev/null 2>&1
-    then 
-        service nginx reload
-        echo "service nginx reload" >> $CRON_FILE
-    else 
-        systemctl reload nginx.service 
-        echo "systemctl reload nginx.service" >> $CRON_FILE
-    fi
-    
+
+    echo "service nginx reload" >> $CRON_FILE
+    service nginx reload
 elif [ -f /etc/apache2/sites-enabled/$DOMAIN.conf ] ; then
 
     /usr/bin/certbot certonly --noninteractive \
@@ -123,15 +116,9 @@ elif [ -f /etc/apache2/sites-enabled/$DOMAIN.conf ] ; then
     CERT_CRT_ESC=$(echo $CERT_CRT_ESC | sed 's/\//\\\//g')
     sed -i "s/SSLCertificateFile\ \/etc\/jitsi\/meet\/.*crt/SSLCertificateFile\ $CERT_CRT_ESC/g" \
         $CONF_FILE
-    
-    if type service >/dev/null 2>&1
-    then 
-        service apache2 reload
-        echo "service apache2 reload" >> $CRON_FILE
-    else 
-        systemctl reload apache2.service 
-        echo "systemctl reload apache2.service" >> $CRON_FILE
-    fi
+
+    echo "service apache2 reload" >> $CRON_FILE
+    service apache2 reload
 fi
 
 # the cron file that will renew certificates

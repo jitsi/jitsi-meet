@@ -363,7 +363,7 @@ class Toolbox extends Component<Props, State> {
         const { _chatOpen, _visible, _visibleButtons } = this.props;
         const rootClassNames = `new-toolbox ${_visible ? 'visible' : ''} ${
             _visibleButtons.size ? '' : 'no-buttons'} ${_chatOpen ? 'shift-right' : ''}`;
-
+        // display toolbar background from here TODO
         return (
             <div
                 className = { rootClassNames }
@@ -470,7 +470,6 @@ class Toolbox extends Component<Props, State> {
      */
     _doToggleRaiseHand() {
         const { _localParticipantID, _raisedHand } = this.props;
-        const newRaisedStatus = !_raisedHand;
 
         this.props.dispatch(participantUpdated({
             // XXX Only the local participant is allowed to update without
@@ -481,10 +480,8 @@ class Toolbox extends Component<Props, State> {
 
             id: _localParticipantID,
             local: true,
-            raisedHand: newRaisedStatus
+            raisedHand: !_raisedHand
         }));
-
-        APP.API.notifyRaiseHandUpdated(_localParticipantID, newRaisedStatus);
     }
 
     /**

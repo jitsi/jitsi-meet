@@ -267,12 +267,6 @@ export function setAudioOutputDeviceId(
 
     logger.debug(`setAudioOutputDevice: ${String(newLabel)}[${newId}]`);
 
-    if (!JitsiMeetJS.mediaDevices.isDeviceChangeAvailable('output')) {
-        logger.warn('Adjusting audio output is not supported');
-
-        return Promise.resolve();
-    }
-
     return JitsiMeetJS.mediaDevices.setAudioOutputDevice(newId)
         .then(() => {
             const newSettings = {

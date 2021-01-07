@@ -4,12 +4,8 @@
 local log = module._log;
 local host = module.host;
 local st = require "util.stanza";
-local um_is_admin = require "core.usermanager".is_admin;
+local is_admin = require "core.usermanager".is_admin;
 
-
-local function is_admin(jid)
-    return um_is_admin(jid, host);
-end
 
 local parentHostName = string.gmatch(tostring(host), "%w+.(%w.+)")();
 if parentHostName == nil then

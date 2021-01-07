@@ -22,6 +22,7 @@ StateListenerRegistry.register(
             if (!equals(gridDimensions, oldGridDimensions)) {
                 const { clientHeight, clientWidth } = state['features/base/responsive-ui'];
                 const { isOpen } = state['features/chat'];
+                const { visible } = state['features/toolbox'];
 
                 store.dispatch(
                     setTileViewDimensions(
@@ -30,7 +31,8 @@ StateListenerRegistry.register(
                             clientHeight,
                             clientWidth
                         },
-                        isOpen
+                        isOpen,
+                        visible
                     )
                 );
             }
@@ -49,6 +51,7 @@ StateListenerRegistry.register(
         case LAYOUTS.TILE_VIEW: {
             const { clientHeight, clientWidth } = state['features/base/responsive-ui'];
             const { isOpen } = state['features/chat'];
+            const { visible } = state['features/toolbox'];
 
             store.dispatch(
                 setTileViewDimensions(
@@ -57,7 +60,8 @@ StateListenerRegistry.register(
                         clientHeight,
                         clientWidth
                     },
-                    isOpen
+                    isOpen,
+                    visible
                 )
             );
             break;
@@ -110,6 +114,7 @@ StateListenerRegistry.register(
         if (shouldDisplayTileView(state)) {
             const gridDimensions = getTileViewGridDimensions(state);
             const { clientHeight, clientWidth } = state['features/base/responsive-ui'];
+            const { visible } = state['features/toolbox'];
 
             store.dispatch(
                 setTileViewDimensions(
@@ -118,7 +123,35 @@ StateListenerRegistry.register(
                         clientHeight,
                         clientWidth
                     },
-                    isChatOpen
+                    isChatOpen,
+                    visible
+                )
+            );
+        }
+    });
+
+/**
+ * Listens for changes in the chat state to calculate the dimensions of the tile view grid and the tiles.
+ */
+StateListenerRegistry.register(
+    /* selector */ state => state['features/toolbox'].visible,
+    /* listener */ (visible, store) => {
+        const state = store.getState();
+
+        if (shouldDisplayTileView(state)) {
+            const gridDimensions = getTileViewGridDimensions(state);
+            const { clientHeight, clientWidth } = state['features/base/responsive-ui'];
+            const { isOpen } = state['features/chat'];
+
+            store.dispatch(
+                setTileViewDimensions(
+                    gridDimensions,
+                    {
+                        clientHeight,
+                        clientWidth
+                    },
+                    isOpen,
+                    visible
                 )
             );
         }

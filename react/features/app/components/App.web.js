@@ -12,6 +12,8 @@ import { AbstractApp } from './AbstractApp';
 import '../middlewares';
 import '../reducers';
 
+declare var interfaceConfig: Object;
+
 /**
  * Root app {@code Component} on Web/React.
  *

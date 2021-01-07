@@ -21,7 +21,6 @@ import { getTrackByMediaTypeAndParticipant } from '../../../base/tracks';
 import { ConnectionIndicator } from '../../../connection-indicator';
 import { DisplayNameLabel } from '../../../display-name';
 import { RemoteVideoMenu } from '../../../remote-video-menu';
-import ConnectionStatusComponent from '../../../remote-video-menu/components/native/ConnectionStatusComponent';
 import { toggleToolboxVisible } from '../../../toolbox/actions.native';
 
 import AudioMutedIndicator from './AudioMutedIndicator';
@@ -55,7 +54,7 @@ type Props = {
     /**
      * Handles long press on the thumbnail.
      */
-    _onThumbnailLongPress: ?Function,
+    _onShowRemoteVideoMenu: ?Function,
 
     /**
      * Whether to show the dominant speaker indicator or not.
@@ -121,7 +120,7 @@ function Thumbnail(props: Props) {
         _audioMuted: audioMuted,
         _largeVideo: largeVideo,
         _onClick,
-        _onThumbnailLongPress,
+        _onShowRemoteVideoMenu,
         _renderDominantSpeakerIndicator: renderDominantSpeakerIndicator,
         _renderModeratorIndicator: renderModeratorIndicator,
         _styles,
@@ -141,7 +140,7 @@ function Thumbnail(props: Props) {
     return (
         <Container
             onClick = { _onClick }
-            onLongPress = { _onThumbnailLongPress }
+            onLongPress = { participant.local ? undefined : _onShowRemoteVideoMenu }
             style = { [
                 styles.thumbnail,
                 participant.pinned && !tileView
@@ -231,18 +230,12 @@ function _mapDispatchToProps(dispatch: Function, ownProps): Object {
          *
          * @returns {void}
          */
-        _onThumbnailLongPress() {
+        _onShowRemoteVideoMenu() {
             const { participant } = ownProps;
 
-            if (participant.local) {
-                dispatch(openDialog(ConnectionStatusComponent, {
-                    participantID: participant.id
-                }));
-            } else {
-                dispatch(openDialog(RemoteVideoMenu, {
-                    participant
-                }));
-            }
+            dispatch(openDialog(RemoteVideoMenu, {
+                participant
+            }));
         }
     };
 }
