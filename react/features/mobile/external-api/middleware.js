@@ -186,7 +186,7 @@ function _registerForSetAudioMuted(dispatch) {
     const eventEmitter = new NativeEventEmitter(NativeModules.ExternalAPI);
 
     eventEmitter.addListener('org.jitsi.meet.SET_AUDIO_MUTED', ({ muted }) => {
-        dispatch(setAudioMuted(muted));
+        muted && dispatch(setAudioMuted(muted));
     });
 }
 
