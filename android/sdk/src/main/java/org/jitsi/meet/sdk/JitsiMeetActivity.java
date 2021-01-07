@@ -209,8 +209,7 @@ public class JitsiMeetActivity extends FragmentActivity
 
     @Override
     public void onBackPressed() {
-        Intent intent = BroadcastIntentHelper.constructHangUpIntent();
-        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+        JitsiMeetActivityDelegate.onBackPressed();
     }
 
     @Override
@@ -229,6 +228,11 @@ public class JitsiMeetActivity extends FragmentActivity
 
     @Override
     protected void onUserLeaveHint() {
+        JitsiMeetView view = getJitsiView();
+
+        if (view != null) {
+            view.enterPictureInPicture();
+        }
     }
 
     // JitsiMeetActivityInterface

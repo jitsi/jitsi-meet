@@ -23,6 +23,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
+
 import androidx.core.app.NotificationCompat;
 
 import org.jitsi.meet.sdk.log.JitsiMeetLogger;
@@ -56,7 +57,7 @@ class OngoingNotification {
         }
 
         NotificationManager notificationManager
-            = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
+            = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
         NotificationChannel channel
             = notificationManager.getNotificationChannel(CHANNEL_ID);
@@ -83,12 +84,7 @@ class OngoingNotification {
         Intent notificationIntent = new Intent(context, context.getClass());
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, notificationIntent, 0);
 
-        NotificationCompat.Builder builder;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            builder = new NotificationCompat.Builder(context, CHANNEL_ID);
-        } else {
-            builder = new NotificationCompat.Builder(context);
-        }
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID);
 
         builder
             .setCategory(NotificationCompat.CATEGORY_CALL)
@@ -103,8 +99,6 @@ class OngoingNotification {
             .setOnlyAlertOnce(true)
             .setSmallIcon(context.getResources().getIdentifier("ic_notification", "drawable", context.getPackageName()));
 
-        // Add a "hang-up" action only if we are using ConnectionService.
-        if (AudioModeModule.useConnectionService()) {
             Intent hangupIntent = new Intent(context, JitsiMeetOngoingConferenceService.class);
             hangupIntent.setAction(JitsiMeetOngoingConferenceService.Actions.HANGUP);
             PendingIntent hangupPendingIntent
@@ -112,7 +106,6 @@ class OngoingNotification {
             NotificationCompat.Action hangupAction = new NotificationCompat.Action(0, "Hang up", hangupPendingIntent);
 
             builder.addAction(hangupAction);
-        }
 
         return builder.build();
     }

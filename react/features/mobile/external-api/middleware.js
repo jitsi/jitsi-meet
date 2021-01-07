@@ -2,6 +2,7 @@
 
 import {
     CONFERENCE_FAILED,
+    CONFERENCE_JOINED,
     CONFERENCE_LEFT,
     CONFERENCE_WILL_JOIN,
     JITSI_CONFERENCE_URL_KEY,
@@ -70,6 +71,7 @@ MiddlewareRegistry.register(store => next => action => {
         break;
     }
 
+    case CONFERENCE_JOINED:
     case CONFERENCE_LEFT:
     case CONFERENCE_WILL_JOIN:
         _sendConferenceEvent(store, action);

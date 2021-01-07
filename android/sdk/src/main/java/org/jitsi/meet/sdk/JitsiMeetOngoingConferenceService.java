@@ -24,6 +24,8 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.IBinder;
 
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+
 import org.jitsi.meet.sdk.log.JitsiMeetLogger;
 
 
@@ -31,11 +33,11 @@ import org.jitsi.meet.sdk.log.JitsiMeetLogger;
  * This class implements an Android {@link Service}, a foreground one specifically, and it's
  * responsible for presenting an ongoing notification when a conference is in progress.
  * The service will help keep the app running while in the background.
- *
+ * <p>
  * See: https://developer.android.com/guide/components/services
  */
 public class JitsiMeetOngoingConferenceService extends Service
-        implements OngoingConferenceTracker.OngoingConferenceListener {
+    implements OngoingConferenceTracker.OngoingConferenceListener {
     private static final String TAG = JitsiMeetOngoingConferenceService.class.getSimpleName();
 
     static final class Actions {
@@ -98,10 +100,10 @@ public class JitsiMeetOngoingConferenceService extends Service
             }
         } else if (Actions.HANGUP.equals(action)) {
             JitsiMeetLogger.i(TAG + " Hangup requested");
-            // Abort all ongoing calls
-            if (AudioModeModule.useConnectionService()) {
-                ConnectionService.abortConnections();
-            }
+
+            Intent broadcastIntent = BroadcastIntentHelper.constructHangUpIntent();
+            LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(broadcastIntent);
+
             stopSelf();
         } else {
             JitsiMeetLogger.w(TAG + " Unknown action received: " + action);
