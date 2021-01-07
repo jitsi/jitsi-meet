@@ -21,6 +21,11 @@ type Props = {
     _showParticipantCount: boolean,
 
     /**
+     * Whether the conference subject should be shown or not.
+     */
+    _showSubject: boolean,
+
+    /**
      * The subject or the of the conference.
      * Falls back to conference name.
      */
@@ -46,11 +51,11 @@ class Subject extends Component<Props> {
      * @returns {ReactElement}
      */
     render() {
-        const { _showParticipantCount, _subject, _visible } = this.props;
+        const { _hideConferenceTimer, _showParticipantCount, _showSubject, _subject, _visible } = this.props;
 
         return (
             <div className = { `subject ${_visible ? 'visible' : ''}` }>
-                <span className = 'subject-text'>{ _subject }</span>
+                { _showSubject && <span className = 'subject-text'>{ _subject }</span>}
                 { _showParticipantCount && <ParticipantsCount /> }
                 <ConferenceTimer />
             </div>
@@ -65,15 +70,21 @@ class Subject extends Component<Props> {
  * @param {Object} state - The Redux state.
  * @private
  * @returns {{
+ *     _hideConferenceTimer: boolean,
+ *     _showParticipantCount: boolean,
+ *     _showSubject: boolean,
  *     _subject: string,
  *     _visible: boolean
  * }}
  */
 function _mapStateToProps(state) {
     const participantCount = getParticipantCount(state);
+    const { hideConferenceTimer, hideConferenceSubject, hideParticipantsStats } = state['features/base/config'];
 
     return {
-        _showParticipantCount: participantCount > 2,
+        _hideConferenceTimer: Boolean(hideConferenceTimer),
+        _showParticipantCount: participantCount > 2 && !hideParticipantsStats,
+        _showSubject: !hideConferenceSubject,
         _subject: getConferenceName(state),
         _visible: isToolboxVisible(state) && participantCount > 1
     };

@@ -628,9 +628,6 @@ var config = {
     // otherwise the app doesn't render it.
     // moderatedRoomServiceUrl: 'https://moderated.jitsi-meet.example.com',
 
-    // If true, tile view will not be enabled automatically when the participants count threshold is reached.
-    // disableTileView: true,
-
     // Hides the conference subject
     // hideConferenceSubject: true
 
