@@ -112,7 +112,7 @@ static void initializeViewsMap() {
 }
 
 - (void)leave {
-    [ExternalAPI.instance sendSetAudioMuted:NO];
+    [self setProps:@{}];
 }
 
 - (void)hangUp {
