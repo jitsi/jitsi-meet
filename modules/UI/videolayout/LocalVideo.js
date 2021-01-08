@@ -77,7 +77,10 @@ export default class LocalVideo extends SmallVideo {
         containerSpan.classList.add('videocontainer');
         containerSpan.id = this.videoSpanId;
 
-        containerSpan.innerHTML = `
+        if(interfaceConfig.DEFAULT_BACKGROUND == "transparent"){
+            $("body").attr('style', 'background: transparent !important');
+            $("#react").children("div").first().attr('style', 'background: transparent !important');
+            containerSpan.innerHTML = `
             <div class = 'videocontainer__background'></div>
             <span id = 'localVideoWrapper'></span>
             <div class = 'videocontainer__toolbar'></div>
@@ -85,6 +88,20 @@ export default class LocalVideo extends SmallVideo {
             <div class = 'videocontainer__hoverOverlay'></div>
             <div class = 'displayNameContainer'></div>
             <div class = 'avatar-container'></div>`;
+
+            // containerSpan.style.display = "none";
+
+        }else{
+            containerSpan.innerHTML = `
+            <div class = 'videocontainer__background'></div>
+            <span id = 'localVideoWrapper'></span>
+            <div class = 'videocontainer__toolbar'></div>
+            <div class = 'videocontainer__toptoolbar'></div>
+            <div class = 'videocontainer__hoverOverlay'></div>
+            <div class = 'displayNameContainer'></div>
+            <div class = 'avatar-container'></div>`;
+
+        }
 
         return containerSpan;
     }

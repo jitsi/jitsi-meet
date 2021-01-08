@@ -46,9 +46,9 @@ var interfaceConfig = {
 
     DEFAULT_BACKGROUND: 'transparent',
     DEFAULT_LOCAL_DISPLAY_NAME: 'me',
-    DEFAULT_LOGO_URL: 'images/platoo.png',
+    DEFAULT_LOGO_URL: 'images/watermark.svg',
     DEFAULT_REMOTE_DISPLAY_NAME: 'Fellow Platooer',
-    DEFAULT_WELCOME_PAGE_LOGO_URL: 'images/platoo.png',
+    DEFAULT_WELCOME_PAGE_LOGO_URL: 'images/watermark.svg',
 
     DISABLE_DOMINANT_SPEAKER_INDICATOR: false,
 
@@ -131,7 +131,7 @@ var interfaceConfig = {
      *
      * @type {boolean}
      */
-    MOBILE_APP_PROMO: false,
+    MOBILE_APP_PROMO: true,
 
     /**
      * Specify custom URL for downloading android mobile app.
@@ -178,7 +178,7 @@ var interfaceConfig = {
     SHOW_CHROME_EXTENSION_BANNER: false,
 
     SHOW_DEEP_LINKING_IMAGE: false,
-    SHOW_JITSI_WATERMARK: false,
+    SHOW_JITSI_WATERMARK: true,
     SHOW_POWERED_BY: false,
     SHOW_PROMOTIONAL_CLOSE_PAGE: false,
 

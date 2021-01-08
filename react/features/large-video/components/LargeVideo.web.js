@@ -64,20 +64,25 @@ class LargeVideo extends Component<Props> {
     render() {
         const style = this._getCustomSyles();
         const className = `videocontainer${this.props._isChatOpen ? ' shift-right' : ''}`;
-
+        let is_transparent = false
+        if(interfaceConfig.DEFAULT_BACKGROUND == "transparent"){
+            is_transparent = true
+        }
+        // is_transparent = false
         return (
             <div
                 className = { className }
                 id = 'largeVideoContainer'
                 style = { style }>
-                <Subject />
-                <InviteMore />
-                <div id = 'sharedVideo'>
+                { is_transparent ? null : <Subject /> }
+                { is_transparent ? null : <InviteMore /> }
+                { is_transparent ? null : <div id = 'sharedVideo'>
                     <div id = 'sharedVideoIFrame' />
-                </div>
-                <div id = 'etherpad' />
-
-                <Watermarks />
+                </div> }
+                
+                { is_transparent ? null : <div id = 'etherpad' /> }
+                { is_transparent ? null : <Watermarks /> }
+                
 
                 <div id = 'dominantSpeaker'>
                     <div className = 'dynamic-shadow' />
@@ -126,6 +131,10 @@ class LargeVideo extends Component<Props> {
             styles.backgroundImage = `url(${_customBackgroundImageUrl})`;
             styles.backgroundSize = 'cover';
         }
+        if (interfaceConfig.DEFAULT_BACKGROUND == "transparent"){
+            styles.backgroundColor = 'transparent !important';
+        }
+
 
         return styles;
     }

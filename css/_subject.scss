@@ -1,13 +1,13 @@
 .subject {
     top: -120px;
     transition: top .3s ease-in;
-    height: 95px;
+    // height: 20px;
     width: 100%;
     pointer-events: none;
     position: absolute;
-    padding: 25px 140px 0 140px;
+    // padding: 25px 140px 0 140px;
     text-align: center;
-    font-size: 17px;
+    font-size: 12px;
     color: #fff;
     z-index: $zindex10;
     overflow: hidden;
@@ -15,6 +15,8 @@
     box-sizing: border-box;
     white-space: nowrap;
     background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0));
+    padding-left: 7%;
+    padding-top: 5px;
 
     &.visible {
         top: 0px;
@@ -26,7 +28,10 @@
 
     &-conference-timer {
         display: block;
-        font-size: 15px;
+        font-size: 12px;
         opacity: 0.6;
+        float: right;
+        padding-right: 10px;
+        padding-top: 5px;
     }
 }
