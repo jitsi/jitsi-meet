@@ -194,7 +194,7 @@ class Watermarks extends Component<Props, State> {
      * @returns {ReactElement|null}
      */
     _renderPoweredBy() {
-        if (this.state.showPoweredBy) {
+        if (this.state.showPoweredBy && false) {
             const { t } = this.props;
 
             return (

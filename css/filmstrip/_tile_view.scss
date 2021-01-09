@@ -15,7 +15,7 @@
         box-sizing: border-box;
         display: flex;
         flex-direction: column;
-        // height: calc(100vh - 200px);
+        height: 100vh; // height: calc(100vh - 200px);
         width: 100vw;
         margin: 30px 0px;
     }
@@ -95,7 +95,7 @@
             border: 0;
             box-sizing: border-box;
             display: block;
-            margin: 5px;
+            margin: 2px;
         }
 
         video {

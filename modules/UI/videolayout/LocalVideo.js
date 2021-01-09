@@ -77,6 +77,7 @@ export default class LocalVideo extends SmallVideo {
         containerSpan.classList.add('videocontainer');
         containerSpan.id = this.videoSpanId;
 
+        console.log("interfaceConfig.DEFAULT_BACKGROUND", interfaceConfig.DEFAULT_BACKGROUND)
         if(interfaceConfig.DEFAULT_BACKGROUND == "transparent"){
             $("body").attr('style', 'background: transparent !important');
             $("#react").children("div").first().attr('style', 'background: transparent !important');

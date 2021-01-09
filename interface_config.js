@@ -44,7 +44,7 @@ var interfaceConfig = {
      */
     CONNECTION_INDICATOR_DISABLED: false,
 
-    DEFAULT_BACKGROUND: 'transparent',
+    DEFAULT_BACKGROUND: '#474747',
     DEFAULT_LOCAL_DISPLAY_NAME: 'me',
     DEFAULT_LOGO_URL: 'images/platoo.png',
     DEFAULT_REMOTE_DISPLAY_NAME: 'Fellow Platooer',

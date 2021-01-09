@@ -65,6 +65,7 @@ class LargeVideo extends Component<Props> {
         const style = this._getCustomSyles();
         const className = `videocontainer${this.props._isChatOpen ? ' shift-right' : ''}`;
         let is_transparent = false
+        console.log("interfaceConfig.DEFAULT_BACKGROUND", interfaceConfig.DEFAULT_BACKGROUND)
         if(interfaceConfig.DEFAULT_BACKGROUND == "transparent"){
             is_transparent = true
         }
@@ -81,7 +82,7 @@ class LargeVideo extends Component<Props> {
                 </div> }
                 
                 { is_transparent ? null : <div id = 'etherpad' /> }
-                { is_transparent ? null : <Watermarks /> }
+                {/* { is_transparent ? null : <Watermarks /> } */}
                 
 
                 <div id = 'dominantSpeaker'>
