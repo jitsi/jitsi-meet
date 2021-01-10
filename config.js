@@ -83,7 +83,7 @@ var config = {
     // Audio
 
     // Disable measuring of audio levels.
-    // disableAudioLevels: false,
+    disableAudioLevels: true,
     // audioLevelsInterval: 200,
 
     // Enabling this will run the lib-jitsi-meet no audio detection module which
