@@ -112,6 +112,13 @@
         overflow-x: hidden;
         overflow-y: scroll;
 
+        // This fixes scrolling and white scrollbar issues on firefox #8586
+        @-moz-document url-prefix() {
+            scrollbar-color: rgba(0,0,0,.3) transparent;
+            flex-direction: column;
+        }
+        
+
         #filmstripRemoteVideosContainer {
             @include minHWAutoFix();
             flex-direction: column-reverse;
