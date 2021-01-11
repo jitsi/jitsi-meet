@@ -99,13 +99,13 @@ class OngoingNotification {
             .setOnlyAlertOnce(true)
             .setSmallIcon(context.getResources().getIdentifier("ic_notification", "drawable", context.getPackageName()));
 
-            Intent hangupIntent = new Intent(context, JitsiMeetOngoingConferenceService.class);
-            hangupIntent.setAction(JitsiMeetOngoingConferenceService.Actions.HANGUP);
-            PendingIntent hangupPendingIntent
-                = PendingIntent.getService(context, 0, hangupIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-            NotificationCompat.Action hangupAction = new NotificationCompat.Action(0, "Hang up", hangupPendingIntent);
+        Intent hangupIntent = new Intent(context, JitsiMeetOngoingConferenceService.class);
+        hangupIntent.setAction(JitsiMeetOngoingConferenceService.Actions.HANGUP);
+        PendingIntent hangupPendingIntent
+            = PendingIntent.getService(context, 0, hangupIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        NotificationCompat.Action hangupAction = new NotificationCompat.Action(0, "Hang up", hangupPendingIntent);
 
-            builder.addAction(hangupAction);
+        builder.addAction(hangupAction);
 
         return builder.build();
     }

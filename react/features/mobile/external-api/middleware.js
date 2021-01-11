@@ -3,7 +3,7 @@
 import { NativeEventEmitter, NativeModules } from 'react-native';
 
 import { appNavigate } from '../../app/actions';
-import { APP_WILL_MOUNT } from '../../base/app';
+import { APP_WILL_MOUNT } from '../../base/app/actionTypes';
 import {
     CONFERENCE_FAILED,
     CONFERENCE_JOINED,
@@ -22,7 +22,8 @@ import {
     JITSI_CONNECTION_URL_KEY,
     getURLWithoutParams
 } from '../../base/connection';
-import { SET_AUDIO_MUTED, setAudioMuted } from '../../base/media';
+import { setAudioMuted } from '../../base/media/actions';
+import { SET_AUDIO_MUTED } from '../../base/media/actionTypes';
 import { PARTICIPANT_JOINED, PARTICIPANT_LEFT } from '../../base/participants';
 import { MiddlewareRegistry } from '../../base/redux';
 import { ENTER_PICTURE_IN_PICTURE } from '../picture-in-picture';
@@ -35,6 +36,8 @@ import { sendEvent } from './functions';
  */
 const CONFERENCE_TERMINATED = 'CONFERENCE_TERMINATED';
 
+const { ExternalAPI } = NativeModules;
+const eventEmitter = new NativeEventEmitter(ExternalAPI);
 /**
  * Middleware that captures Redux actions and uses the ExternalAPI module to
  * turn them into native events so the application knows about them.
@@ -156,34 +159,9 @@ MiddlewareRegistry.register(store => next => action => {
  * @returns {void}
  */
 function _registerForNativeFromNative(dispatch) {
-    _registerForHangUp(dispatch);
-    _registerForSetAudioMuted(dispatch);
-}
-
-/**
- * Registers for HANG_UP event.
- *
- * @param {Dispatch} dispatch - The Redux dispatch function.
- * @private
- * @returns {void}
- */
-function _registerForHangUp(dispatch) {
-    const eventEmitter = new NativeEventEmitter(NativeModules.ExternalAPI);
-
     eventEmitter.addListener('org.jitsi.meet.HANG_UP', () => {
         dispatch(appNavigate(undefined));
     });
-}
-
-/**
- * Registers for HANG_UP event.
- *
- * @param {Dispatch} dispatch - The Redux dispatch function.
- * @private
- * @returns {void}
- */
-function _registerForSetAudioMuted(dispatch) {
-    const eventEmitter = new NativeEventEmitter(NativeModules.ExternalAPI);
 
     eventEmitter.addListener('org.jitsi.meet.SET_AUDIO_MUTED', ({ muted }) => {
         muted && dispatch(setAudioMuted(muted));

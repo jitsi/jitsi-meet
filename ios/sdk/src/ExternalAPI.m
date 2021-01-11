@@ -14,40 +14,16 @@
  * limitations under the License.
  */
 
-#import <React/RCTBridgeModule.h>
-#import <React/RCTEventEmitter.h>
-
+#import "ExternalAPI.h"
 #import "JitsiMeetView+Private.h"
 
 // Events
 static NSString * const hangUpEvent = @"org.jitsi.meet.HANG_UP";
 static NSString * const setAudioMutedEvent = @"org.jitsi.meet.SET_AUDIO_MUTED";
 
-
-@interface ExternalAPI : RCTEventEmitter<RCTBridgeModule>
-@property (class, nonatomic, assign) ExternalAPI *instance;
-@end
-
-static ExternalAPI * _instance;
-
 @implementation ExternalAPI
 
 RCT_EXPORT_MODULE();
-
-- (instancetype)init {
-    self = [super init];
-    _instance = self;
-    
-    return self;
-}
-
-+ (ExternalAPI*)instance {
-    return _instance;
-}
-
-+ (void)setInstance:(ExternalAPI*)newValue {
-    _instance = newValue;
-}
 
 /**
  * Make sure all methods in this module are invoked on the main/UI thread.

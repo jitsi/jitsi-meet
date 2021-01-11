@@ -33,9 +33,10 @@ public class BroadcastAction {
 
         for (String key : this.data.keySet()) {
             try {
+                // TODO add support for different types of objects
                 nativeMap.putString(key, this.data.get(key).toString());
             } catch (Exception e) {
-                JitsiMeetLogger.i(TAG + " invalid extra data in event", e);
+                JitsiMeetLogger.w(TAG + " invalid extra data in event", e);
             }
         }
 

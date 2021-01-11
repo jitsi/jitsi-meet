@@ -31,7 +31,7 @@ import com.facebook.react.modules.core.PermissionListener;
 
 import org.jitsi.meet.sdk.log.JitsiMeetLogger;
 
-import java.io.Serializable;
+import java.util.HashMap;
 
 /**
  * A base activity for SDK users to embed. It uses {@link JitsiMeetFragment} to do the heavy
@@ -182,19 +182,35 @@ public class JitsiMeetActivity extends FragmentActivity
         join(getConferenceOptions(getIntent()));
     }
 
-    protected void onConferenceJoined(Serializable extraData) {
+    protected void onConferenceJoined(HashMap<String, Object> extraData) {
         JitsiMeetLogger.i("Conference joined: " + extraData);
         // Launch the service for the ongoing notification.
         JitsiMeetOngoingConferenceService.launch(this);
     }
 
-    protected void onConferenceTerminated(Serializable extraData) {
+    protected void onConferenceTerminated(HashMap<String, Object> extraData) {
         JitsiMeetLogger.i("Conference terminated: " + extraData);
         finish();
     }
 
-    protected void onConferenceWillJoin(Serializable extraData) {
+    protected void onConferenceWillJoin(HashMap<String, Object> extraData) {
         JitsiMeetLogger.i("Conference will join: " + extraData);
+    }
+
+    protected void onParticipantJoined(HashMap<String, Object> extraData) {
+        try {
+            JitsiMeetLogger.i("Participant joined: ", extraData.get("participantId"));
+        } catch (Exception e) {
+            JitsiMeetLogger.w("Invalid participant joined extraData", e);
+        }
+    }
+
+    protected void onParticipantLeft(HashMap<String, Object> extraData) {
+        try {
+            JitsiMeetLogger.i("Participant left: ", extraData.get("participantId"));
+        } catch (Exception e) {
+            JitsiMeetLogger.w("Invalid participant left extraData", e);
+        }
     }
 
     // Activity lifecycle methods
@@ -253,6 +269,8 @@ public class JitsiMeetActivity extends FragmentActivity
         intentFilter.addAction(BroadcastEvent.Type.CONFERENCE_JOINED.getAction());
         intentFilter.addAction(BroadcastEvent.Type.CONFERENCE_WILL_JOIN.getAction());
         intentFilter.addAction(BroadcastEvent.Type.CONFERENCE_TERMINATED.getAction());
+        intentFilter.addAction(BroadcastEvent.Type.PARTICIPANT_JOINED.getAction());
+        intentFilter.addAction(BroadcastEvent.Type.PARTICIPANT_LEFT.getAction());
 
         LocalBroadcastManager.getInstance(this).registerReceiver(broadcastReceiver, intentFilter);
     }
@@ -270,6 +288,12 @@ public class JitsiMeetActivity extends FragmentActivity
                     break;
                 case CONFERENCE_TERMINATED:
                     onConferenceTerminated(event.getData());
+                    break;
+                case PARTICIPANT_JOINED:
+                    onParticipantJoined(event.getData());
+                    break;
+                case PARTICIPANT_LEFT:
+                    onParticipantLeft(event.getData());
                     break;
             }
         }

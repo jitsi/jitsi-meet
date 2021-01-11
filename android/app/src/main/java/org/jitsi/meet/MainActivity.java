@@ -34,12 +34,11 @@ import org.jitsi.meet.sdk.JitsiMeet;
 import org.jitsi.meet.sdk.JitsiMeetActivity;
 import org.jitsi.meet.sdk.JitsiMeetConferenceOptions;
 
-import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collection;
-import java.util.Map;
+import java.util.HashMap;
 
 /**
  * The one and only Activity that the Jitsi Meet app needs. The
@@ -184,7 +183,8 @@ public class MainActivity extends JitsiMeetActivity {
     }
 
     @Override
-    protected void onConferenceTerminated(Serializable extraData) {
+    protected void onConferenceTerminated(HashMap<String, Object> extraData) {
+        super.onConferenceTerminated(extraData);
         Log.d(TAG, "Conference terminated: " + extraData);
     }
 

@@ -46,23 +46,15 @@ public class BroadcastEvent {
     }
 
     private static HashMap<String, Object> buildDataFromBundle(Bundle bundle) {
-        HashMap<String, Object> map = new HashMap<>();
-
         if (bundle != null) {
-            for (String key : bundle.keySet()) {
-                try {
-                    String value = bundle.get(key).toString();
-
-                    if (value != null) {
-                        map.put(key, value);
-                    }
-                } catch (Exception e) {
-                    JitsiMeetLogger.i(TAG + " invalid extra data", e);
-                }
+            try {
+                return (HashMap<String, Object>) bundle.get(Type.extraData);
+            } catch (Exception e) {
+                JitsiMeetLogger.w(TAG + " invalid extra data", e);
             }
         }
 
-        return map;
+        return null;
     }
 
     public enum Type {
@@ -73,7 +65,7 @@ public class BroadcastEvent {
         PARTICIPANT_JOINED("org.jitsi.meet.PARTICIPANT_JOINED"),
         PARTICIPANT_LEFT("org.jitsi.meet.PARTICIPANT_LEFT");
 
-        public static final String extraData = "extraData";
+        private static final String extraData = "extraData";
 
         private static final String CONFERENCE_WILL_JOIN_NAME = "CONFERENCE_WILL_JOIN";
         private static final String CONFERENCE_JOINED_NAME = "CONFERENCE_JOINED";

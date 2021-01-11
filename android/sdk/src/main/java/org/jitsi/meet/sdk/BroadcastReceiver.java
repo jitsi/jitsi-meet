@@ -6,8 +6,6 @@ import android.content.IntentFilter;
 
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
-import org.jitsi.meet.sdk.log.JitsiMeetLogger;
-
 public class BroadcastReceiver extends android.content.BroadcastReceiver {
 
     private static final String TAG = BroadcastReceiver.class.getSimpleName();
@@ -25,13 +23,8 @@ public class BroadcastReceiver extends android.content.BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         BroadcastAction action = new BroadcastAction(intent);
-
         String actionName = action.getType().getAction();
 
-        if (actionName != null) {
-            ReactInstanceManagerHolder.emitEvent(actionName, action.getDataAsWritableNativeMap());
-        } else {
-            JitsiMeetLogger.i(TAG + " invalid broadcast action");
-        }
+        ReactInstanceManagerHolder.emitEvent(actionName, action.getDataAsWritableNativeMap());
     }
 }

@@ -17,7 +17,7 @@
 
 #include <mach/mach_time.h>
 
-#import "ExternalAPI.m"
+#import "ExternalAPI.h"
 #import "JitsiMeet+Private.h"
 #import "JitsiMeetConferenceOptions+Private.h"
 #import "JitsiMeetView+Private.h"
@@ -116,11 +116,13 @@ static void initializeViewsMap() {
 }
 
 - (void)hangUp {
-    [ExternalAPI.instance sendHangUp];
+    RCTBridge *bridge = [[JitsiMeet sharedInstance] getReactBridge];
+    [[bridge moduleForClass:ExternalAPI.class] sendHangUp];
 }
 
-- (void)setAudioMuted:(BOOL)muted{
-    [ExternalAPI.instance sendSetAudioMuted:muted];
+- (void)setAudioMuted:(BOOL)muted {
+   // RCTBridge *bridge = [[JitsiMeet sharedInstance] getReactBridge];
+   // [[bridge moduleForName:@"ExternalAPI"] sendHangUp];
 }
 
 #pragma mark Private methods

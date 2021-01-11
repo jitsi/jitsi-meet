@@ -37,4 +37,8 @@
  */
 - (void)leave;
 
+- (void)hangUp;
+
+- (void)setAudioMuted:(BOOL)muted;
+
 @end

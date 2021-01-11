@@ -33,7 +33,7 @@ import org.jitsi.meet.sdk.log.JitsiMeetLogger;
  * This class implements an Android {@link Service}, a foreground one specifically, and it's
  * responsible for presenting an ongoing notification when a conference is in progress.
  * The service will help keep the app running while in the background.
- * <p>
+ *
  * See: https://developer.android.com/guide/components/services
  */
 public class JitsiMeetOngoingConferenceService extends Service
@@ -101,7 +101,7 @@ public class JitsiMeetOngoingConferenceService extends Service
         } else if (Actions.HANGUP.equals(action)) {
             JitsiMeetLogger.i(TAG + " Hangup requested");
 
-            Intent broadcastIntent = BroadcastIntentHelper.constructHangUpIntent();
+            Intent broadcastIntent = BroadcastIntentHelper.buildHangUpIntent();
             LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(broadcastIntent);
 
             stopSelf();
