@@ -24,6 +24,9 @@ import com.facebook.react.module.annotations.ReactModule;
 
 import org.jitsi.meet.sdk.log.JitsiMeetLogger;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Module implementing an API for sending events from JavaScript to native code.
  */
@@ -63,6 +66,22 @@ class ExternalAPIModule
     }
 
     /**
+     * Gets a mapping with the constants this module is exporting.
+     *
+     * @return a {@link Map} mapping the constants to be exported with their
+     * values.
+     */
+    @Override
+    public Map<String, Object> getConstants() {
+        Map<String, Object> constants = new HashMap<>();
+
+        constants.put("SET_AUDIO_MUTED", BroadcastAction.Type.SET_AUDIO_MUTED.getAction());
+        constants.put("HANG_UP", BroadcastAction.Type.HANG_UP.getAction());
+
+        return constants;
+    }
+
+    /**
      * Dispatches an event that occurred on the JavaScript side of the SDK to
      * the specified {@link BaseReactView}'s listener.
      *
@@ -86,7 +105,7 @@ class ExternalAPIModule
             try {
                 view.onExternalAPIEvent(name, data);
                 broadcastEmitter.sendBroadcast(name, data);
-            } catch(Exception e) {
+            } catch (Exception e) {
                 JitsiMeetLogger.e(e, TAG + " onExternalAPIEvent: error sending event");
             }
         }

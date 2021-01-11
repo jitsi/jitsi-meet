@@ -25,6 +25,13 @@ static NSString * const setAudioMutedEvent = @"org.jitsi.meet.SET_AUDIO_MUTED";
 
 RCT_EXPORT_MODULE();
 
+- (NSDictionary *)constantsToExport {
+    return @{
+        @"HANG_UP": hangUpEvent,
+        @"SET_AUDIO_MUTED" : setAudioMutedEvent
+    };
+};
+
 /**
  * Make sure all methods in this module are invoked on the main/UI thread.
  */

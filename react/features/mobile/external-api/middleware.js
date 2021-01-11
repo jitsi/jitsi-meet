@@ -22,8 +22,8 @@ import {
     JITSI_CONNECTION_URL_KEY,
     getURLWithoutParams
 } from '../../base/connection';
-import { setAudioMuted } from '../../base/media/actions';
 import { SET_AUDIO_MUTED } from '../../base/media/actionTypes';
+import { setAudioMuted } from '../../base/media/actions';
 import { PARTICIPANT_JOINED, PARTICIPANT_LEFT } from '../../base/participants';
 import { MiddlewareRegistry } from '../../base/redux';
 import { ENTER_PICTURE_IN_PICTURE } from '../picture-in-picture';
@@ -38,6 +38,7 @@ const CONFERENCE_TERMINATED = 'CONFERENCE_TERMINATED';
 
 const { ExternalAPI } = NativeModules;
 const eventEmitter = new NativeEventEmitter(ExternalAPI);
+
 /**
  * Middleware that captures Redux actions and uses the ExternalAPI module to
  * turn them into native events so the application knows about them.
@@ -159,11 +160,11 @@ MiddlewareRegistry.register(store => next => action => {
  * @returns {void}
  */
 function _registerForNativeFromNative(dispatch) {
-    eventEmitter.addListener('org.jitsi.meet.HANG_UP', () => {
+    eventEmitter.addListener(ExternalAPI.HANG_UP, () => {
         dispatch(appNavigate(undefined));
     });
 
-    eventEmitter.addListener('org.jitsi.meet.SET_AUDIO_MUTED', ({ muted }) => {
+    eventEmitter.addListener(ExternalAPI.SET_AUDIO_MUTED, ({ muted }) => {
         muted && dispatch(setAudioMuted(muted));
     });
 }
