@@ -14,7 +14,8 @@ import {
 } from '../../react/features/base/conference';
 import { parseJWTFromURLParams } from '../../react/features/base/jwt';
 import JitsiMeetJS, { JitsiRecordingConstants } from '../../react/features/base/lib-jitsi-meet';
-import { pinParticipant } from '../../react/features/base/participants';
+import { pinParticipant, getParticipantById } from '../../react/features/base/participants';
+import { setPrivateMessageRecipient } from '../../react/features/chat/actions';
 import {
     processExternalDeviceRequest
 } from '../../react/features/device-selection/functions';
@@ -330,6 +331,24 @@ function initCommands() {
             } else {
                 logger.error('No recording or streaming session found');
             }
+        },
+        'initiate-private-chat': participantId => {
+            const state = APP.store.getState();
+            const participant = getParticipantById(state, participantId);
+
+            if (participant) {
+                const { isOpen: isChatOpen } = state['features/chat'];
+
+                if (!isChatOpen) {
+                    APP.UI.toggleChat();
+                }
+                APP.store.dispatch(setPrivateMessageRecipient(participant));
+            } else {
+                logger.error('No participant found for the given participantId');
+            }
+        },
+        'cancel-private-chat': () => {
+            APP.store.dispatch(setPrivateMessageRecipient());
         }
     };
     transport.on('event', ({ data, name }) => {
