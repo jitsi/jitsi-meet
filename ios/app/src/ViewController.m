@@ -21,7 +21,7 @@
 @import MobileCoreServices;
 @import Intents;  // Needed for NSUserActivity suggestedInvocationPhrase
 
-@import JitsiMeet;
+@import JitsiMeetSDK;
 
 #import "Types.h"
 #import "ViewController.h"

@@ -116,7 +116,10 @@ var config = {
     // Sets the preferred target bitrate for the Opus audio codec by setting its
     // 'maxaveragebitrate' parameter. Currently not available in p2p mode.
     // Valid values are in the range 6000 to 510000
-    // opusMaxAvgBitrate: 20000,
+    // opusMaxAverageBitrate: 20000,
+
+    // Enables support for opus-red (redundancy for Opus).
+    // enableOpusRed: false
 
     // Video
 
@@ -294,18 +297,11 @@ var config = {
     // Disables or enables RTX (RFC 4588) (defaults to false).
     // disableRtx: false,
 
-    // Disables or enables TCC (the default is in Jicofo and set to true)
-    // (draft-holmer-rmcat-transport-wide-cc-extensions-01). This setting
-    // affects congestion control, it practically enables send-side bandwidth
-    // estimations.
+    // Disables or enables TCC support in this client (default: enabled).
     // enableTcc: true,
 
-    // Disables or enables REMB (the default is in Jicofo and set to false)
-    // (draft-alvestrand-rmcat-remb-03). This setting affects congestion
-    // control, it practically enables recv-side bandwidth estimations. When
-    // both TCC and REMB are enabled, TCC takes precedence. When both are
-    // disabled, then bandwidth estimations are disabled.
-    // enableRemb: false,
+    // Disables or enables REMB support in this client (default: enabled).
+    // enableRemb: true,
 
     // Enables ICE restart logic in LJM and displays the page reload overlay on
     // ICE failure. Current disabled by default because it's causing issues with
@@ -325,7 +321,6 @@ var config = {
     // 'datachannel'), undefined (treat it as 'datachannel') and false (don't
     // open any channel).
     // openBridgeChannel: true,
-
 
     // UI
     //
@@ -367,6 +362,13 @@ var config = {
 
     // When 'true', it shows an intermediate page before joining, where the user can configure their devices.
     // prejoinPageEnabled: false,
+
+    // If etherpad integration is enabled, setting this to true will
+    // automatically open the etherpad when a participant joins.  This
+    // does not affect the mobile app since opening an etherpad
+    // obscures the conference controls -- it's better to let users
+    // choose to open the pad on their own in that case.
+    // openSharedDocumentOnJoin: false,
 
     // If true, shows the unsafe room name warning label when a room name is
     // deemed unsafe (due to the simplicity in the name) and a password is not
@@ -579,6 +581,9 @@ var config = {
     // If set to true all muting operations of remote participants will be disabled.
     // disableRemoteMute: true,
 
+    // Enables support for lip-sync for this client (if the browser supports it).
+    // enableLipSync: false
+
     /**
      External API url used to receive branding specific information.
      If there is no url set or there are missing fields, the defaults are applied.
@@ -594,12 +599,27 @@ var config = {
          logoImageUrl: 'https://example.com/logo-img.png'
      }
     */
-    // brandingDataUrl: '',
+    // dynamicBrandingUrl: '',
 
     // The URL of the moderated rooms microservice, if available. If it
     // is present, a link to the service will be rendered on the welcome page,
     // otherwise the app doesn't render it.
     // moderatedRoomServiceUrl: 'https://moderated.jibri.nanocosmos.de',
+
+    // If true, tile view will not be enabled automatically when the participants count threshold is reached.
+    // disableTileView: true,
+
+    // Hides the conference subject
+    // hideConferenceSubject: true
+
+    // Hides the conference timer.
+    // hideConferenceTimer: true,
+
+    // Hides the participants stats
+    // hideParticipantsStats: true
+
+    // Sets the conference subject
+    // subject: 'Conference Subject',
 
     // List of undocumented settings used in jitsi-meet
     /**
@@ -642,9 +662,9 @@ var config = {
      disableAP
      disableHPF
      disableNS
-     enableLipSync
      enableTalkWhileMuted
      forceJVB121Ratio
+     forceTurnRelay
      hiddenDomain
      ignoreStartMuted
      */

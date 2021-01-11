@@ -314,7 +314,8 @@
         "e2eeDescription": "Lo chiframent del cap a la fin es actualament EXPERIMENTALA. Mercés de gardar a l'esperit qu'activar lo chiframent del cap a la fin desactivarà en efièch los servicis costat servidor coma : l'enregistrament, la difusion en dirècte e las participacions telefonicas. Remembratz tanben que la conferéncia foncionarà pas que per lo monde que participan amb un navigador compatible amb los fluxes inseribles.",
         "screenSharingFailed": "Ops ! Quicòm a trucat, avèm pas pogut començar lo partiment d'ecran!",
         "e2eeWarning": "AVERTIMENT : pas totes los participants d'aquesta conferéncia semblan poder suportar lo chiframent del cap a la fin. Se l'activatz poiràn pas vos veire nimai vos entendre.",
-        "muteEveryoneElseDialog": "Un còp mut, poiretz pas mai lo tornar la paraula, mas la se pòdon tornar quora vòlgan."
+        "muteEveryoneElseDialog": "Un còp mut, poiretz pas mai lo tornar la paraula, mas la se pòdon tornar quora vòlgan.",
+        "user": "utilizaire"
     },
     "dialOut": {
         "statusMessage": "ara es {{status}}"
@@ -549,7 +550,8 @@
         "signIn": "Connexion",
         "signOut": "Se desconnectar",
         "unavailable": "Ops ! Lo {{serviceName}} es pas disponible pel moment. Sèm a reglar aqueste problèma. Mercés de tornar ensajar mai tard.",
-        "unavailableTitle": "Enregistrament indisponible"
+        "unavailableTitle": "Enregistrament indisponible",
+        "serviceDescriptionCloud": "Enregistrament distant"
     },
     "sectionList": {
         "pullToRefresh": "Tirar per actualizar"
@@ -616,7 +618,8 @@
     },
     "startupoverlay": {
         "policyText": " ",
-        "title": "{{app}} a besonh d'utilizar vòstre microfòn e camèra."
+        "title": "{{app}} a besonh d'utilizar vòstre microfòn e camèra.",
+        "genericTitle": "Aquesta reünion requerís l'utilizacion del microfòn e de la camèra."
     },
     "suspendedoverlay": {
         "rejoinKeyTitle": "Tornar participar",
@@ -666,7 +669,8 @@
             "security": "Opcions de seguretat",
             "embedMeeting": "Conferéncia integrada",
             "grantModerator": "Passar moderator",
-            "lobbyButton": "Activar/Desactivar mòde sala d'espèra"
+            "lobbyButton": "Activar/Desactivar mòde sala d'espèra",
+            "toggleFilmstrip": "Bascular mòde benda film"
         },
         "addPeople": "Ajustar de monde a vòstra sonada",
         "audioOnlyOff": "Desactivar lo mòde connexion febla",
@@ -791,7 +795,9 @@
         "remoteControl": "Contraròtle alonhat",
         "show": "Mostrar davant",
         "videomute": "Lo participant a arrestat la camèra",
-        "domuteOthers": "Rendre mut totes los autres"
+        "domuteOthers": "Rendre mut totes los autres",
+        "connectionInfo": "Info connexion",
+        "grantModerator": "Nomenar moderator"
     },
     "welcomepage": {
         "accessibilityLabel": {
@@ -827,7 +833,8 @@
         "jitsiOnMobile": "Jitsi sus mobil –telecargatz nòstra aplicacion e començatz de conferéncias de pertot",
         "moderatedMessage": "O <a href=\"{{url}}\" rel=\"noopener noreferrer\" target=\"_blank\">reservatz una URL de conferéncia</a> a l'avança ont sètz l'unic moderator.",
         "jitsiMeet": "Jitsi Meet",
-        "secureMeetings": "Conferéncias seguras e de nauta qualitat"
+        "secureMeetings": "Conferéncias seguras e de nauta qualitat",
+        "headerTitle": "Jitsi Meet"
     },
     "helpView": {
         "header": "Centre d’ajuda"
@@ -884,7 +891,14 @@
             "videoFreezing": "Nos esperam a veire vòstra vidèo se gelar, venir negra e se pixelizar."
         },
         "premeeting": "Preconferéncia",
-        "errorMissingName": "Mercés de picar vòstre nom per rejónher la conferéncia"
+        "errorMissingName": "Mercés de picar vòstre nom per rejónher la conferéncia",
+        "errorDialOutDisconnected": "Impossible de sonar aqueste numèro. Desconnectat",
+        "errorDialOutStatus": "Error en recuperant l’estat de la sonada sortissenta",
+        "errorDialOut": "Impossible de sonar aqueste numèro",
+        "errorDialOutFailed": "Impossible de sonar aqueste numèro. La sonada a fracassat",
+        "dialInMeeting": "Participatz a la reünion",
+        "dialInPin": "Participar a la reünion e picar lo còdi PIN :",
+        "iWantToDialIn": "Vòli me connectar"
     },
     "lobby": {
         "reject": "Regetar",

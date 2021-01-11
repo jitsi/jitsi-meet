@@ -25,5 +25,28 @@ export default createStyleSheet({
         fontSize: MD_FONT_SIZE,
         marginLeft: MD_ITEM_MARGIN_PADDING,
         opacity: 0.90
+    },
+
+    statsTitleText: {
+        fontSize: 16,
+        fontWeight: 'bold',
+        marginRight: 3
+    },
+
+    statsInfoText: {
+        fontSize: 16,
+        marginRight: 2,
+        marginLeft: 2
+    },
+
+    statsInfoCell: {
+        alignItems: 'center',
+        flexDirection: 'row',
+        height: 30,
+        justifyContent: 'flex-start'
+    },
+
+    statsWrapper: {
+        marginVertical: 10
     }
 });

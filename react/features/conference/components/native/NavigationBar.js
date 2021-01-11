@@ -95,10 +95,14 @@ class NavigationBar extends Component<Props> {
  * @returns {Props}
  */
 function _mapStateToProps(state) {
+    const { hideConferenceTimer, hideConferenceSubject } = state['features/base/config'];
+
     return {
-        _conferenceTimerEnabled: getFeatureFlag(state, CONFERENCE_TIMER_ENABLED, true),
+        _conferenceTimerEnabled:
+            getFeatureFlag(state, CONFERENCE_TIMER_ENABLED, true) && !hideConferenceTimer,
         _meetingName: getConferenceName(state),
-        _meetingNameEnabled: getFeatureFlag(state, MEETING_NAME_ENABLED, true),
+        _meetingNameEnabled:
+            getFeatureFlag(state, MEETING_NAME_ENABLED, true) && !hideConferenceSubject,
         _visible: isToolboxVisible(state)
     };
 }

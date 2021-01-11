@@ -275,7 +275,7 @@ class Toolbox extends Component<Props, State> {
             this._shouldShowButton('videoquality') && {
                 character: 'A',
                 exec: this._onShortcutToggleVideoQuality,
-                helpDescription: 'keyboardShortcuts.videoQuality'
+                helpDescription: 'toolbar.callQuality'
             },
             this._shouldShowButton('chat') && {
                 character: 'C',
@@ -469,6 +469,7 @@ class Toolbox extends Component<Props, State> {
      */
     _doToggleRaiseHand() {
         const { _localParticipantID, _raisedHand } = this.props;
+        const newRaisedStatus = !_raisedHand;
 
         this.props.dispatch(participantUpdated({
             // XXX Only the local participant is allowed to update without
@@ -479,8 +480,10 @@ class Toolbox extends Component<Props, State> {
 
             id: _localParticipantID,
             local: true,
-            raisedHand: !_raisedHand
+            raisedHand: newRaisedStatus
         }));
+
+        APP.API.notifyRaiseHandUpdated(_localParticipantID, newRaisedStatus);
     }
 
     /**

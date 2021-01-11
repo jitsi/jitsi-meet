@@ -8,6 +8,7 @@ import {
     TRACK_CREATE_ERROR,
     TRACK_NO_DATA_FROM_SOURCE,
     TRACK_REMOVED,
+    TRACK_UPDATE_LAST_VIDEO_MEDIA_EVENT,
     TRACK_UPDATED,
     TRACK_WILL_CREATE
 } from './actionTypes';
@@ -40,6 +41,7 @@ import {
  * @param {Track|undefined} state - Track to be modified.
  * @param {Object} action - Action object.
  * @param {string} action.type - Type of action.
+ * @param {string} action.name - Name of last media event.
  * @param {string} action.newValue - New participant ID value (in this
  * particular case).
  * @param {string} action.oldValue - Old participant ID value (in this
@@ -77,6 +79,20 @@ function track(state, action) {
         }
         break;
     }
+    case TRACK_UPDATE_LAST_VIDEO_MEDIA_EVENT: {
+        const t = action.track;
+
+        if (state.jitsiTrack === t) {
+            if (state.lastMediaEvent !== action.name) {
+
+                return {
+                    ...state,
+                    lastMediaEvent: action.name
+                };
+            }
+        }
+        break;
+    }
     case TRACK_NO_DATA_FROM_SOURCE: {
         const t = action.track;
 
@@ -104,6 +120,7 @@ ReducerRegistry.register('features/base/tracks', (state = [], action) => {
     switch (action.type) {
     case PARTICIPANT_ID_CHANGED:
     case TRACK_NO_DATA_FROM_SOURCE:
+    case TRACK_UPDATE_LAST_VIDEO_MEDIA_EVENT:
     case TRACK_UPDATED:
         return state.map(t => track(t, action));
 

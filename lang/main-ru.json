@@ -824,7 +824,7 @@
         "stopvideoblur": "Отключить размытие фона",
         "talkWhileMutedPopup": "Пытаетесь говорить? У вас отключен звук.",
         "tileViewToggle": "Вкл/выкл плитку",
-        "toggleCamera": "Вкл/выкл камеру",
+        "toggleCamera": "Переключить камеру",
         "videomute": "Камера"
     },
     "transcribing": {

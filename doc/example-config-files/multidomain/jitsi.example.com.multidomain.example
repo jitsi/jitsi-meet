@@ -10,7 +10,6 @@ server {
     index index.html;
     set $prefix "";
 
-
     # BOSH
     location /http-bind {
         proxy_pass      http://localhost:5280/http-bind;
@@ -44,13 +43,13 @@ server {
 
     location ~ ^/([^/?&:'"]+)/config.js$
     {
-       set $subdomain "$1.";
-       set $subdir "$1/";
+        set $subdomain "$1.";
+        set $subdir "$1/";
 
-       alias /etc/jitsi/meet/{{jitsi_meet_domain_name}}-config.js;
+        alias /etc/jitsi/meet/{{jitsi_meet_domain_name}}-config.js;
     }
 
-    #Anything that didn't match above, and isn't a real file, assume it's a room name and redirect to /
+    # Anything that didn't match above, and isn't a real file, assume it's a room name and redirect to /
     location ~ ^/([^/?&:'"]+)/(.*)$ {
         set $subdomain "$1.";
         set $subdir "$1/";

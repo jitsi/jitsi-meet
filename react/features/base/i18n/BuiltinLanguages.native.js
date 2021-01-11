@@ -67,6 +67,12 @@ const _LANGUAGES = {
         main: require('../../../../lang/main-et')
     },
 
+    // Persian
+    'fa': {
+        languages: require('../../../../lang/languages-fa'),
+        main: require('../../../../lang/main-fa')
+    },
+
     // Finnish
     'fi': {
         languages: require('../../../../lang/languages-fi'),
