@@ -28,11 +28,13 @@ const ALWAYS_ON_TOP_FILENAMES = [
  */
 const commands = {
     avatarUrl: 'avatar-url',
+    cancelPrivateChat: 'cancel-private-chat',
     displayName: 'display-name',
     e2eeKey: 'e2ee-key',
     email: 'email',
     toggleLobby: 'toggle-lobby',
     hangup: 'video-hangup',
+    intiatePrivateChat: 'initiate-private-chat',
     muteEveryone: 'mute-everyone',
     password: 'password',
     pinParticipant: 'pin-participant',
