@@ -472,8 +472,8 @@ export default {
      */
     createInitialLocalTracks(options = {}) {
         const errors = {};
-        const initialDevices = [ 'audio' ];
-        const requestedAudio = true;
+        const initialDevices = config.disableInitialGUM ? [] : [ 'audio' ];
+        const requestedAudio = !config.disableInitialGUM;
         let requestedVideo = false;
 
         // Always get a handle on the audio input device so that we have statistics even if the user joins the
@@ -484,19 +484,22 @@ export default {
             this.muteAudio(true, true);
         }
 
-        if (!options.startWithVideoMuted
+        if (!config.disableInitialGUM
+                && !options.startWithVideoMuted
                 && !options.startAudioOnly
                 && !options.startScreenSharing) {
             initialDevices.push('video');
             requestedVideo = true;
         }
 
-        JitsiMeetJS.mediaDevices.addEventListener(
-            JitsiMediaDevicesEvents.PERMISSION_PROMPT_IS_SHOWN,
-            browserName =>
-                APP.store.dispatch(
-                    mediaPermissionPromptVisibilityChanged(true, browserName))
-        );
+        if (!config.disableInitialGUM) {
+            JitsiMeetJS.mediaDevices.addEventListener(
+                JitsiMediaDevicesEvents.PERMISSION_PROMPT_IS_SHOWN,
+                browserName =>
+                    APP.store.dispatch(
+                        mediaPermissionPromptVisibilityChanged(true, browserName))
+            );
+        }
 
         let tryCreateLocalTracks;
 
