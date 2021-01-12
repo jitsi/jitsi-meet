@@ -37,7 +37,14 @@ public class BroadcastEvent {
     public Intent buildIntent() {
         if (type != null && type.action != null) {
             Intent intent = new Intent(type.action);
-            intent.putExtra(Type.extraData, data);
+
+            for (String key : this.data.keySet()) {
+                try {
+                    intent.putExtra(key, this.data.get(key).toString());
+                } catch (Exception e) {
+                    JitsiMeetLogger.w(TAG + " invalid extra data in event", e);
+                }
+            }
 
             return intent;
         }
@@ -48,7 +55,11 @@ public class BroadcastEvent {
     private static HashMap<String, Object> buildDataFromBundle(Bundle bundle) {
         if (bundle != null) {
             try {
-                return (HashMap<String, Object>) bundle.get(Type.extraData);
+                HashMap<String, Object> map = new HashMap<>();
+
+                for (String key : bundle.keySet()) {
+                    map.put(key, bundle.get(key));
+                }
             } catch (Exception e) {
                 JitsiMeetLogger.w(TAG + " invalid extra data", e);
             }
@@ -64,8 +75,6 @@ public class BroadcastEvent {
         AUDIO_MUTED_CHANGED("org.jitsi.meet.AUDIO_MUTED_CHANGED"),
         PARTICIPANT_JOINED("org.jitsi.meet.PARTICIPANT_JOINED"),
         PARTICIPANT_LEFT("org.jitsi.meet.PARTICIPANT_LEFT");
-
-        private static final String extraData = "extraData";
 
         private static final String CONFERENCE_WILL_JOIN_NAME = "CONFERENCE_WILL_JOIN";
         private static final String CONFERENCE_JOINED_NAME = "CONFERENCE_JOINED";

@@ -5,7 +5,7 @@ import android.content.Intent;
 public class BroadcastIntentHelper {
     public static Intent buildSetAudioMutedIntent(boolean muted) {
         Intent intent = new Intent(BroadcastAction.Type.SET_AUDIO_MUTED.getAction());
-        intent.putExtra("muted", muted);
+        intent.putExtra(BroadcastExtraConstants.MUTED, muted);
         return intent;
     }
 
