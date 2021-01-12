@@ -126,7 +126,6 @@ local function async_http_request(url, options, callback, timeout_callback)
     local timed_out = false;
 
     local function cb_(response_body, response_code)
-        -- TODO: add mutex. small chance of a race condition here if request complete exactly same time as timeout.
         if not timed_out then  -- request completed before timeout
             completed = true;
             if callback then
@@ -446,10 +445,6 @@ end
 local reservations = {}
 
 local function get_or_create_reservations(room_jid, creator_jid)
-    -- TODO: add mutex. small chance of a race condition here two events for same room happen at same time.
-    -- If this happens, two events might end up creating RoomReservation objects but only one is
-    -- retained in reservations table. API calls will be triggered by both, and this may
-    -- or may not work depending on how the endpoint handles duplicate calls with different mail_owner.
     if reservations[room_jid] == nil then
         module:log("debug", "Creating new reservation data for %s", room_jid);
         reservations[room_jid] = newRoomReservation(room_jid, creator_jid);
