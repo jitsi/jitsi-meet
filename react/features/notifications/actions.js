@@ -76,19 +76,23 @@ export function showErrorNotification(props: Object) {
  * @param {Object} props - The props needed to show the notification component.
  * @param {number} timeout - How long the notification should display before
  * automatically being hidden.
- * @returns {{
- *     type: SHOW_NOTIFICATION,
- *     props: Object,
- *     timeout: number,
- *     uid: number
- * }}
+ * @returns {Function}
  */
 export function showNotification(props: Object = {}, timeout: ?number) {
-    return {
-        type: SHOW_NOTIFICATION,
-        props,
-        timeout,
-        uid: window.Date.now()
+    return function(dispatch: Function, getState: Function) {
+        const { notifications } = getState()['features/base/config'];
+        const shouldDisplay = !notifications
+            || notifications.includes(props.descriptionKey)
+            || notifications.includes(props.titleKey);
+
+        if (shouldDisplay) {
+            return dispatch({
+                type: SHOW_NOTIFICATION,
+                props,
+                timeout,
+                uid: window.Date.now()
+            });
+        }
     };
 }
 

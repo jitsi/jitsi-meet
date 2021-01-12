@@ -69,17 +69,16 @@ export function potentialTranscriberJoined(participantId: string) {
  * @returns {Function}
  */
 export function showPendingTranscribingNotification() {
-    return (dispatch: Function) => {
-        const showNotificationAction = showNotification({
+    return async (dispatch: Function) => {
+        const notification = await dispatch(showNotification({
             descriptionKey: 'transcribing.pending',
             isDismissAllowed: false,
             titleKey: 'dialog.transcribing'
-        });
+        }));
 
-        dispatch(showNotificationAction);
-
-        dispatch(setPendingTranscribingNotificationUid(
-            showNotificationAction.uid));
+        if (notification) {
+            dispatch(setPendingTranscribingNotificationUid(notification.uid));
+        }
     };
 }
 
