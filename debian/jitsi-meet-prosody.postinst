@@ -150,7 +150,7 @@ case "$1" in
         # Component "focus.jitmeet.example.com" "client_proxy"
         #    target_address = "focus@auth.jitmeet.example.com"
         if grep -q "Component \"focus.$JVB_HOSTNAME\"" $PROSODY_HOST_CONFIG && ! grep "Component \"focus.$JVB_HOSTNAME\" \"client_proxy\"" $PROSODY_HOST_CONFIG ;then
-            sed -i -e "s/Component \"focus.$JVB_HOSTNAME\"/Component \"focus.$JVB_HOSTNAME\" \"client_proxy\"\n    target_address = \"$JICOFO_AUTH_USER@auth.$JVB_HOSTNAME\"/" $PROSODY_HOST_CONFIG
+            sed -i "s/Component \"focus.$JVB_HOSTNAME\"/Component \"focus.$JVB_HOSTNAME\" \"client_proxy\"\n    target_address = \"$JICOFO_AUTH_USER@auth.$JVB_HOSTNAME\"/g" $PROSODY_HOST_CONFIG
             PROSODY_CONFIG_PRESENT="false"
         fi
 
