@@ -16,15 +16,6 @@
 --  response is sent back to the origin if reservation is denied. Events are routed as usual
 --  if the room already exists.
 --
---  TODO:
---  =====
---   * We do not yet handle retries if API call fails. If there is a temporary glitch in
---     connectivity, room creation will fail and users will have to wait up to 90 secs to
---     retry since reservation failures are cached. Ideally want to retry if no status
---     code, or if status code matches a list provided by config (with some sensible defaults).
---   * When room exceeds reservation duration, we kick everyone out and destroy the room;
---     but we do not yet show a sensible message to user so all they see is everyone
---     dropping off the meeting :(
 --
 --  Installation:
 --  =============
@@ -36,6 +27,11 @@
 --      * set "reservations_api_timeout" to change API call timeouts (defaults to 20 seconds)
 --      * set "reservations_api_headers" to specify custom HTTP headers included in
 --        all API calls e.g. to provide auth tokens.
+--      * set "reservations_api_retry_count" to the number of times API call failures are retried (defaults to 3)
+--      * set "reservations_api_retry_delay" seconds to wait between retries (defaults to 3s)
+--      * set "reservations_api_should_retry_for_code" to a function that takes an HTTP response code and
+--        returns true if API call should be retried. By default, retries are done for 5XX
+--        responses. Timeouts are never retried, and HTTP call failures are always retried.
 --
 --  Example config:
 --
@@ -46,9 +42,17 @@
 --            "reservations";
 --        }
 --        reservations_api_prefix = "http://reservation.example.com"
+--
+--        --- The following are all optional
 --        reservations_api_headers = {
 --            ["Authorization"] = "Bearer TOKEN-237958623045";
 --        }
+--        reservations_api_timeout = 10  -- timeout if API does not respond within 10s
+--        reservations_api_retry_count = 5  -- retry up to 5 times
+--        reservations_api_retry_delay = 1  -- wait 1s between retries
+--        reservations_api_should_retry_for_code = function (code)
+--            return code >= 500 or code == 408
+--        end
 --
 
 
@@ -65,6 +69,16 @@ local is_healthcheck_room = module:require "util".is_healthcheck_room;
 local api_prefix = module:get_option("reservations_api_prefix");
 local api_headers = module:get_option("reservations_api_headers");
 local api_timeout = module:get_option("reservations_api_timeout", 20);
+local api_retry_count = tonumber(module:get_option("reservations_api_retry_count", 3));
+local api_retry_delay = tonumber(module:get_option("reservations_api_retry_delay", 3));
+
+
+-- Option for user to control HTTP response codes that will result in a retry.
+-- Defaults to returning true on any 5XX code or 0
+local api_should_retry_for_code = module:get_option("reservations_api_should_retry_for_code", function (code)
+   return code >= 500;
+end)
+
 
 local muc_component_host = module:get_option_string("main_muc");
 
@@ -120,14 +134,24 @@ end
 -- @param options options table as expected by net.http where we provide optional headers, body or method.
 -- @param callback if provided, called with callback(response_body, response_code) when call complete.
 -- @param timeout_callback if provided, called without args when request times out.
-local function async_http_request(url, options, callback, timeout_callback)
+-- @param retries how many times to retry on failure; 0 means no retries.
+local function async_http_request(url, options, callback, timeout_callback, retries)
     -- TODO: auto retry if request failed or if response code matches certain values provided by config.
     local completed = false;
     local timed_out = false;
+    local retries = retries or api_retry_count;
 
     local function cb_(response_body, response_code)
         if not timed_out then  -- request completed before timeout
             completed = true;
+            if (response_code == 0 or api_should_retry_for_code(response_code)) and retries > 0 then
+                module:log("warn", "API Response code %d. Will retry after %ds", response_code, api_retry_delay);
+                timer.add_task(api_retry_delay, function()
+                    async_http_request(url, options, callback, timeout_callback, retries - 1)
+                end)
+                return;
+            end
+
             if callback then
                 callback(response_body, response_code)
             end
