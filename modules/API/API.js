@@ -432,6 +432,15 @@ function initCommands() {
         case 'is-sharing-screen':
             callback(Boolean(APP.conference.isSharingScreen));
             break;
+        case 'get-content-sharing-participants': {
+            const tracks = getState()['features/base/tracks'];
+            const sharingParticipantIds = tracks.filter(tr => tr.videoType === 'desktop').map(t => t.participantId);
+
+            callback({
+                sharingParticipantIds
+            });
+            break;
+        }
         default:
             return false;
         }
@@ -671,6 +680,19 @@ class API {
     notifyEndpointTextMessageReceived(data: Object) {
         this._sendEvent({
             name: 'endpoint-text-message-received',
+            data
+        });
+    }
+
+    /**
+     * Notify external application (if API is enabled) that the list of sharing participants changed.
+     *
+     * @param {Object} data - The event data.
+     * @returns {void}
+     */
+    notifySharingParticipantsChanged(data: Object) {
+        this._sendEvent({
+            name: 'content-sharing-participants-changed',
             data
         });
     }
