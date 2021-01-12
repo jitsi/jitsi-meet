@@ -1,3 +1,73 @@
+@mixin small-button-size() {
+    .new-toolbox {
+        .toolbox-content {
+            .button-group-center, .button-group-left, .button-group-right {
+                .toolbox-button {
+                    .toolbox-icon {
+                        width: 28px;
+                        height: 28px;
+                        svg {
+                            width: 18px;
+                            height: 18px;
+                        }
+                    }
+
+                    &:nth-child(2) {
+                        .toolbox-icon {
+                            width: 30px;
+                            height: 30px;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@mixin very-small-button-size() {
+    .new-toolbox {
+        .toolbox-content {
+            .button-group-center, .button-group-left, .button-group-right {
+                .settings-button-small-icon {
+                    display: none;
+                }
+                .toolbox-button {
+                    .toolbox-icon {
+                        width: 18px;
+                        height: 18px;
+                        svg {
+                            width: 12px;
+                            height: 12px;
+                        }
+                    }
+
+                    &:nth-child(2) {
+                        .toolbox-icon {
+                            width: 20px;
+                            height: 20px;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@mixin full-size-modal-positioner() {
+    height: 100%;
+    left: 0;
+    position: fixed;
+    top: 0;
+    max-width: 100%;
+    width: 100%;
+}
+
+@mixin full-size-modal-dialog() {
+    height: 100%;
+    max-height: 100%;
+    border-radius: 0;
+}
+
 @media only screen and (max-width: $verySmallScreen) {
     .welcome {
         display: block;
@@ -62,6 +132,68 @@
 
         .welcome-footer {
             display: none;
+        }
+    }
+}
+
+.desktop-browser {
+    @media only screen and (max-width: $smallScreen) {
+        @include small-button-size();
+    }
+
+    @media only screen and (max-width: $verySmallScreen) {
+        @include very-small-button-size();
+
+        #videoResolutionLabel {
+            display: none;
+        }
+        .vertical-filmstrip .filmstrip {
+            display: none;
+        }
+        .chrome-extension-banner {
+            display: none;
+        }
+    }
+
+    &.shift-right {
+        @media only screen and (max-width: $smallScreen + $sidebarWidth) {
+            @include small-button-size()
+        }
+
+        @media only screen and (max-width: $verySmallScreen + $sidebarWidth) {
+            @include very-small-button-size();
+
+            #videoResolutionLabel {
+                display: none;
+            }
+            .vertical-filmstrip .filmstrip {
+                display: none;
+            }
+            .chrome-extension-banner {
+                display: none;
+            }
+        }
+    }
+}
+
+@media (min-width: 480px) and (max-width: 580px) {
+    .shift-right [class^="Modal__PositionerAbsolute"] {
+        @include full-size-modal-positioner();
+    }
+
+    .shift-right [class^="Modal__Dialog-"] {
+        @include full-size-modal-dialog();
+    }
+}
+
+@media (min-width: 580px) and (max-width: 680px) {
+    .mobile-browser {
+        &.shift-right [class^="Modal__PositionerAbsolute"] {
+            @include full-size-modal-positioner();
+        }
+
+        &.shift-right [class^="Modal__Dialog-"] {
+            @include full-size-modal-dialog();
         }
     }
 }

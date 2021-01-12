@@ -379,3 +379,31 @@
         }
     }
 }
+
+.chat-dialog {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    margin-top: -5px; // Margin set by atlaskit.
+
+    &-header {
+        display: flex;
+        justify-content: space-between;
+        margin: 16px 16px 24px;
+        width: calc(100% - 32px);
+        box-sizing: border-box;
+        color: #fff;
+        font-weight: 600;
+        font-size: 24px;
+        line-height: 32px;
+
+        .jitsi-icon > svg {
+            cursor: pointer;
+            fill: #A4B8D1;
+        }
+    }
+
+    #chatconversation {
+        width: 100%;
+    }
+}

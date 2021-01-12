@@ -11,6 +11,7 @@ import AbstractChat, {
     type Props
 } from '../AbstractChat';
 
+import ChatDialog from './ChatDialog';
 import ChatInput from './ChatInput';
 import DisplayNameForm from './DisplayNameForm';
 import MessageContainer from './MessageContainer';
@@ -151,16 +152,25 @@ class Chat extends AbstractChat<Props> {
      * @returns {ReactElement | null}
      */
     _renderPanelContent() {
-        const { _isOpen, _showNamePrompt } = this.props;
-        const ComponentToRender = _isOpen
-            ? (
-                <>
-                    { this._renderChatHeader() }
-                    { _showNamePrompt
-                        ? <DisplayNameForm /> : this._renderChat() }
-                </>
-            )
-            : null;
+        const { _isModal, _isOpen, _showNamePrompt } = this.props;
+        let ComponentToRender = null;
+
+        if (_isOpen) {
+            if (_isModal) {
+                ComponentToRender = (
+                    <ChatDialog>
+                        { _showNamePrompt ? <DisplayNameForm /> : this._renderChat() }
+                    </ChatDialog>
+                );
+            } else {
+                ComponentToRender = (
+                    <>
+                        { this._renderChatHeader() }
+                        { _showNamePrompt ? <DisplayNameForm /> : this._renderChat() }
+                    </>
+                );
+            }
+        }
         let className = '';
 
         if (_isOpen) {
