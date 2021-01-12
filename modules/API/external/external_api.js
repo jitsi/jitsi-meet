@@ -62,6 +62,7 @@ const events = {
     'audio-availability-changed': 'audioAvailabilityChanged',
     'audio-mute-status-changed': 'audioMuteStatusChanged',
     'camera-error': 'cameraError',
+    'content-sharing-participants-changed': 'contentSharingParticipantsChanged',
     'device-list-changed': 'deviceListChanged',
     'display-name-change': 'displayNameChange',
     'email-change': 'emailChange',
@@ -721,6 +722,17 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      */
     getAvailableDevices() {
         return getAvailableDevices(this._transport);
+    }
+
+    /**
+     * Gets a list of the currently sharing participant id's.
+     *
+     * @returns {Promise} - Resolves with the list of participant id's currently sharing.
+     */
+    getContentSharingParticipants() {
+        return this._transport.sendRequest({
+            name: 'get-content-sharing-participants'
+        });
     }
 
     /**
