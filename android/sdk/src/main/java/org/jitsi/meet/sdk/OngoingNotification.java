@@ -30,7 +30,6 @@ import org.jitsi.meet.sdk.log.JitsiMeetLogger;
 
 import java.util.Random;
 
-
 /**
  * Helper class for creating the ongoing notification which is used with
  * {@link JitsiMeetOngoingConferenceService}. It allows the user to easily get back to the app
@@ -43,7 +42,6 @@ class OngoingNotification {
     private static final String CHANNEL_NAME = "Ongoing Conference Notifications";
 
     static final int NOTIFICATION_ID = new Random().nextInt(99999) + 10000;
-
 
     static void createOngoingConferenceNotificationChannel() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
@@ -74,7 +72,7 @@ class OngoingNotification {
         notificationManager.createNotificationChannel(channel);
     }
 
-    static Notification buildOngoingConferenceNotification() {
+    static Notification buildOngoingConferenceNotification(boolean isMuted) {
         Context context = ReactInstanceManagerHolder.getCurrentActivity();
         if (context == null) {
             JitsiMeetLogger.w(TAG + " Cannot create notification: no current context");
@@ -95,18 +93,27 @@ class OngoingNotification {
             .setOngoing(true)
             .setAutoCancel(false)
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-            .setUsesChronometer(true)
             .setOnlyAlertOnce(true)
             .setSmallIcon(context.getResources().getIdentifier("ic_notification", "drawable", context.getPackageName()));
 
-        Intent hangupIntent = new Intent(context, JitsiMeetOngoingConferenceService.class);
-        hangupIntent.setAction(JitsiMeetOngoingConferenceService.Actions.HANGUP);
-        PendingIntent hangupPendingIntent
-            = PendingIntent.getService(context, 0, hangupIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-        NotificationCompat.Action hangupAction = new NotificationCompat.Action(0, "Hang up", hangupPendingIntent);
+        NotificationCompat.Action hangupAction = createAction(context, JitsiMeetOngoingConferenceService.Action.HANGUP, "Hang up");
+
+        JitsiMeetOngoingConferenceService.Action toggleAudioAction = isMuted
+            ? JitsiMeetOngoingConferenceService.Action.UNMUTE : JitsiMeetOngoingConferenceService.Action.MUTE;
+        String toggleAudioTitle = isMuted ? "Unmute" : "Mute";
+        NotificationCompat.Action audioAction = createAction(context, toggleAudioAction, toggleAudioTitle);
 
         builder.addAction(hangupAction);
+        builder.addAction(audioAction);
 
         return builder.build();
+    }
+
+    private static NotificationCompat.Action createAction(Context context, JitsiMeetOngoingConferenceService.Action action, String title) {
+        Intent intent = new Intent(context, JitsiMeetOngoingConferenceService.class);
+        intent.setAction(action.getName());
+        PendingIntent pendingIntent
+            = PendingIntent.getService(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        return new NotificationCompat.Action(0, title, pendingIntent);
     }
 }
