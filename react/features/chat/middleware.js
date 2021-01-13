@@ -247,6 +247,7 @@ function _handleReceivedMessage({ dispatch, getState }, { id, message, privateMe
             body: message,
             id,
             nick: displayName,
+            privateMessage,
             ts: timestamp
         });
 
