@@ -4,6 +4,7 @@ import { i18next } from '../base/i18n';
 import { isLocalParticipantModerator } from '../base/participants';
 import { toState } from '../base/redux';
 import { doGetJSON, parseURIString } from '../base/util';
+import { isVpaasMeeting } from '../billing-counter/functions';
 
 import logger from './logger';
 
@@ -352,7 +353,7 @@ export function invitePeopleAndChatRooms( // eslint-disable-line max-params
 export function isAddPeopleEnabled(state: Object): boolean {
     const { peopleSearchUrl } = state['features/base/config'];
 
-    return state['features/base/jwt'].jwt && Boolean(peopleSearchUrl);
+    return state['features/base/jwt'].jwt && Boolean(peopleSearchUrl) && !isVpaasMeeting(state);
 }
 
 /**
