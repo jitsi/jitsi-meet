@@ -338,6 +338,8 @@ export function sendLocalParticipant(
 
 /**
  * A safe implementation of lodash#startCase that doesn't deburr the string.
+ * To avoid mixing up corporate names that include capital letters and numbers,
+ * names starting with a '_' are not beautified.
  *
  * NOTE: According to lodash roadmap, lodash v5 will have this function.
  *
@@ -347,7 +349,11 @@ export function sendLocalParticipant(
  * @returns {string}
  */
 function safeStartCase(s = '') {
-    return _.words(`${s}`.replace(/['\u2019]/g, '')).reduce(
-        (result, word, index) => result + (index ? ' ' : '') + _.upperFirst(word)
-        , '');
+    if (s.length > 0 && s[0] === '_'){
+        return s.slice(1);
+    } else {
+        return _.words(`${s}`.replace(/['\u2019]/g, '')).reduce(
+            (result, word, index) => result + (index ? ' ' : '') + _.upperFirst(word)
+            , '');
+    }
 }
