@@ -7,6 +7,10 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.facebook.react.bridge.ReadableMap;
 
+/**
+ * Class used to emit events through the LocalBroadcastManager, called when events
+ * from JS occurred. Takes an action name from JS, builds and broadcasts the {@link BroadcastEvent}
+ */
 public class BroadcastEmitter {
     private final LocalBroadcastManager localBroadcastManager;
 

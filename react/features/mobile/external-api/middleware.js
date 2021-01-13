@@ -23,9 +23,9 @@ import {
     getURLWithoutParams
 } from '../../base/connection';
 import { SET_AUDIO_MUTED } from '../../base/media/actionTypes';
-import { setAudioMuted } from '../../base/media/actions';
 import { PARTICIPANT_JOINED, PARTICIPANT_LEFT } from '../../base/participants';
 import { MiddlewareRegistry } from '../../base/redux';
+import { muteLocal } from '../../remote-video-menu/actions';
 import { ENTER_PICTURE_IN_PICTURE } from '../picture-in-picture';
 
 import { sendEvent } from './functions';
@@ -52,7 +52,7 @@ MiddlewareRegistry.register(store => next => action => {
 
     switch (type) {
     case APP_WILL_MOUNT:
-        _registerForNativeFromNative(store.dispatch);
+        _registerForNativeEvents(store.dispatch);
         break;
     case CONFERENCE_FAILED: {
         const { error, ...data } = action;
@@ -126,11 +126,16 @@ MiddlewareRegistry.register(store => next => action => {
 
     case PARTICIPANT_JOINED:
     case PARTICIPANT_LEFT: {
+        const { participant } = action;
+
         sendEvent(
             store,
             action.type,
             /* data */ {
-                participantId: action.participant.id
+                isLocal: participant.local,
+                email: participant.email,
+                name: participant.name,
+                participantId: participant.id
             });
         break;
     }
@@ -159,13 +164,13 @@ MiddlewareRegistry.register(store => next => action => {
  * @private
  * @returns {void}
  */
-function _registerForNativeFromNative(dispatch) {
+function _registerForNativeEvents(dispatch) {
     eventEmitter.addListener(ExternalAPI.HANG_UP, () => {
         dispatch(appNavigate(undefined));
     });
 
     eventEmitter.addListener(ExternalAPI.SET_AUDIO_MUTED, ({ muted }) => {
-        muted && dispatch(setAudioMuted(muted));
+        dispatch(muteLocal(muted === 'true'));
     });
 }
 

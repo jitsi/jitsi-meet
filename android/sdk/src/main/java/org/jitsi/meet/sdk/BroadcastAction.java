@@ -9,6 +9,9 @@ import org.jitsi.meet.sdk.log.JitsiMeetLogger;
 
 import java.util.HashMap;
 
+/**
+ * Wraps the name and extra data for events that were broadcasted locally.
+ */
 public class BroadcastAction {
     private static final String TAG = BroadcastAction.class.getSimpleName();
 

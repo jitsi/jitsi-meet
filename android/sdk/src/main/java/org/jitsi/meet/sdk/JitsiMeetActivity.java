@@ -199,7 +199,7 @@ public class JitsiMeetActivity extends FragmentActivity
 
     protected void onParticipantJoined(HashMap<String, Object> extraData) {
         try {
-            JitsiMeetLogger.i("Participant joined: ", extraData.get(BroadcastExtraConstants.PARTICIPANT_ID));
+            JitsiMeetLogger.i("Participant joined: ", extraData);
         } catch (Exception e) {
             JitsiMeetLogger.w("Invalid participant joined extraData", e);
         }
@@ -207,7 +207,7 @@ public class JitsiMeetActivity extends FragmentActivity
 
     protected void onParticipantLeft(HashMap<String, Object> extraData) {
         try {
-            JitsiMeetLogger.i("Participant left: ", extraData.get(BroadcastExtraConstants.PARTICIPANT_ID));
+            JitsiMeetLogger.i("Participant left: ", extraData);
         } catch (Exception e) {
             JitsiMeetLogger.w("Invalid participant left extraData", e);
         }

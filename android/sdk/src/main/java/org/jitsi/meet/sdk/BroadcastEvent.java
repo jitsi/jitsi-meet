@@ -9,6 +9,10 @@ import org.jitsi.meet.sdk.log.JitsiMeetLogger;
 
 import java.util.HashMap;
 
+/**
+ * Wraps the name and extra data for the events that occur on the JS side and are
+ * to be broadcasted.
+ */
 public class BroadcastEvent {
 
     private static final String TAG = BroadcastEvent.class.getSimpleName();
@@ -60,6 +64,8 @@ public class BroadcastEvent {
                 for (String key : bundle.keySet()) {
                     map.put(key, bundle.get(key));
                 }
+
+                return map;
             } catch (Exception e) {
                 JitsiMeetLogger.w(TAG + " invalid extra data", e);
             }

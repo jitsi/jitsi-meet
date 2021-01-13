@@ -121,8 +121,8 @@ static void initializeViewsMap() {
 }
 
 - (void)setAudioMuted:(BOOL)muted {
-   // RCTBridge *bridge = [[JitsiMeet sharedInstance] getReactBridge];
-   // [[bridge moduleForName:@"ExternalAPI"] sendHangUp];
+    RCTBridge *bridge = [[JitsiMeet sharedInstance] getReactBridge];
+    [[bridge moduleForClass:ExternalAPI.class] sendSetAudioMuted:muted];
 }
 
 #pragma mark Private methods

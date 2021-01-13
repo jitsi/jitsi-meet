@@ -166,7 +166,7 @@ public class JitsiMeetOngoingConferenceService extends Service
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            isAudioMuted = Boolean.parseBoolean(intent.getStringExtra(BroadcastExtraConstants.MUTED));
+            isAudioMuted = Boolean.parseBoolean(intent.getStringExtra("muted"));
             Notification notification = OngoingNotification.buildOngoingConferenceNotification(isAudioMuted);
             if (notification == null) {
                 stopSelf();
