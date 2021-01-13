@@ -335,7 +335,7 @@
         "answer": "Antworten",
         "audioCallTitle": "Eingehender Anruf",
         "decline": "OK",
-        "productLabel": "von Jitsi Meet",
+        "productLabel": "von {{app}}",
         "videoCallTitle": "Eingehender Videoanruf"
     },
     "info": {
@@ -496,7 +496,7 @@
         "newDeviceAudioTitle": "Neues Audiogerät erkannt",
         "newDeviceAction": "Verwenden",
         "OldElectronAPPTitle": "Sicherheitslücke!",
-        "oldElectronClientDescription1": "Sie scheinen eine alte Version des Jitsi-Meet-Clients zu nutzen. Diese hat bekannte Schwachstellen. Bitte aktualisieren Sie auf unsere ",
+        "oldElectronClientDescription1": "Sie scheinen eine alte Version des {{app}}-Clients zu nutzen. Diese hat bekannte Schwachstellen. Bitte aktualisieren Sie auf unsere ",
         "oldElectronClientDescription2": "aktuelle Version",
         "oldElectronClientDescription3": "!"
     },
@@ -604,6 +604,7 @@
         "pending": "Aufzeichnung des Meetings wird vorbereitet…",
         "rec": "AUFZ",
         "serviceDescription": "Ihre Aufzeichnung wird vom Aufzeichnungsdienst gespeichert",
+	"serviceDescriptionCloud": "Cloud-Aufzeichnung",
         "serviceName": "Aufnahmedienst",
         "signIn": "Anmelden",
         "signOut": "Abmelden",
@@ -681,6 +682,7 @@
     },
     "startupoverlay": {
         "policyText": " ",
+	"genericTitle": "Diese Konferenz muss Ihr Mikrofon und Ihre Kamera verwenden.",
         "title": "{{app}} benötigt Kamera und Mikrofon."
     },
     "suspendedoverlay": {
@@ -847,6 +849,7 @@
         "standardDefinition": "Standardauflösung"
     },
     "videothumbnail": {
+	"connectionInfo": "Verbindungsinformationen",
         "domute": "Stummschalten",
         "domuteOthers": "Alle anderen stummschalten",
         "flip": "Spiegeln",
@@ -876,8 +879,11 @@
         "getHelp": "Hilfe",
         "go": "Los",
         "goSmall": "Los",
+	"headerTitle": "{{app}}",
+	"headerSubtitle": "Sichere und qualitativ hochwertige Konferenzen",
         "info": "Einwahlinformationen",
         "join": "ERSTELLEN / BEITRETEN",
+	"jitsiOnMobile": "Jitsi auf dem Handy - laden Sie unsere Apps herunter und starten Sie ein Meeting von überall",
         "moderatedMessage": "Oder <a href=\"{{url}}\" rel=\"noopener noreferrer\" target=\"_blank\">reservieren Sie sich eine Konferenz-URL</a>, unter der Sie der einzige Moderator sind.",
         "privacy": "Datenschutz",
         "recentList": "Verlauf",
@@ -888,6 +894,7 @@
         "roomname": "Konferenzname eingeben",
         "roomnameHint": "Name oder URL der Konferenz, der Sie beitreten möchten. Sie können einen Namen erfinden, er muss nur den anderen Teilnehmern übermittelt werden, damit diese der gleichen Konferenz beitreten.",
         "sendFeedback": "Feedback senden",
+	"startMeeting": "Konferenz starten",
         "terms": "AGB",
         "title": "Sichere, voll funktionale und komplett kostenlose Videokonferenzen"
     },
