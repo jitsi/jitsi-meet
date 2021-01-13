@@ -22,7 +22,8 @@
         display: none;
     }
 
-    #remoteConnectionMessage {
+    #remoteConnectionMessage,
+    .watermark {
         z-index: $filmstripVideosZ + 1;
     }
 
