@@ -592,8 +592,8 @@ class API {
      * @returns {void}
      */
     notifyReceivedChatMessage(
-            { body, id, nick, ts }: {
-                body: *, id: string, nick: string, ts: *
+            { body, id, nick, privateMessage, ts }: {
+                body: *, id: string, nick: string, privateMessage: boolean, ts: *
             } = {}) {
         if (APP.conference.isLocalId(id)) {
             return;
@@ -604,6 +604,7 @@ class API {
             from: id,
             message: body,
             nick,
+            privateMessage,
             stamp: ts
         });
     }
