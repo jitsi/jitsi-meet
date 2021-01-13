@@ -336,6 +336,9 @@ var config = {
     // will be joined when no room is specified.
     enableWelcomePage: true,
 
+    // Disable app shortcuts that are registered upon joining a conference
+    // disableShortcuts: false,
+
     // Disable initial browser getUserMedia requests.
     // This is useful for scenarios where users might want to start a conference for screensharing only
     // disableInitialGUM: false,
