@@ -2,6 +2,7 @@
 /* eslint-disable */
 import { getGravatarURL } from '@jitsi/js-utils/avatar';
 
+import jwtDecode from 'jwt-decode';
 import { JitsiParticipantConnectionStatus } from '../lib-jitsi-meet';
 import { MEDIA_TYPE, shouldRenderVideoTrack } from '../media';
 import { toState } from '../redux';
@@ -364,6 +365,33 @@ export function shouldRenderParticipantVideo(stateful: Object | Function, id: st
         = participant.id === largeVideoParticipantId && screenShares.includes(participant.id);
 
     return participantIsInLargeVideoWithScreen;
+}
+
+/**
+ * Returns participant info from the jwt token
+ *
+ * @param {Object|Function} stateful - Object or function that can be resolved
+ * to the Redux state.
+ * @returns {string|null}
+ */
+export function getLocalParticipantFromJwt(state: Object | Function): Object {
+    const { jwt } = state['features/base/jwt'];
+    const jwtPayload = jwt && jwtDecode(jwt) || null;
+
+    return jwtPayload && jwtPayload.context && jwtPayload.context.user || null;
+}
+
+/**
+ * Returns participant type from the participant info
+ *
+ * @param {Object|Function} stateful - Object or function that can be resolved
+ * to the Redux state.
+ * @returns {string|null}
+ */
+export function getLocalParticipantType(state: Object | Function): string {
+    const participant = getLocalParticipantFromJwt(state);
+
+    return participant && participant.participant_type || null;
 }
 
 /**
