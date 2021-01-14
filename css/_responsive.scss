@@ -167,22 +167,22 @@
 }
 
 @media (min-width: 480px) and (max-width: 580px) {
-    .shift-right [class^="Modal__PositionerAbsolute"] {
+    .shift-right .focus-lock > div > div {
         @include full-size-modal-positioner();
     }
 
-    .shift-right [class^="Modal__Dialog-"] {
+    .shift-right .focus-lock [role="dialog"] {
         @include full-size-modal-dialog();
     }
 }
 
 @media (min-width: 580px) and (max-width: 680px) {
     .mobile-browser {
-        &.shift-right [class^="Modal__PositionerAbsolute"] {
+        &.shift-right .focus-lock > div > div {
             @include full-size-modal-positioner();
         }
 
-        &.shift-right [class^="Modal__Dialog-"] {
+        &.shift-right .focus-lock [role="dialog"] {
             @include full-size-modal-dialog();
         }
     }

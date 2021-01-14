@@ -330,15 +330,15 @@ class Thumbnail extends Component<Props, State> {
 
         switch (_currentLayout) {
         case LAYOUTS.TILE_VIEW:
-            statsPopoverPosition = 'right top';
+            statsPopoverPosition = 'right-start';
             tooltipPosition = 'right';
             break;
         case LAYOUTS.VERTICAL_FILMSTRIP_VIEW:
-            statsPopoverPosition = 'left top';
+            statsPopoverPosition = 'left-start';
             tooltipPosition = 'left';
             break;
         default:
-            statsPopoverPosition = 'top center';
+            statsPopoverPosition = 'auto';
             tooltipPosition = 'top';
         }
 

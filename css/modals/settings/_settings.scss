@@ -23,6 +23,10 @@
         padding: 20px 0px 4px 0px;
     }
 
+    input[type="checkbox"] + svg + span {
+        color: #9FB0CC;
+    }
+
     .calendar-tab,
     .more-tab,
     .profile-edit {

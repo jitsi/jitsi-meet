@@ -103,25 +103,19 @@
     position: relative;
     width: 100%;
     z-index: 1;
+    display: flex;
+    justify-content: space-between;
+    padding: 16px;
+    align-items: center;
+    box-sizing: border-box;
+    color: #fff;
+    font-weight: 600;
+    font-size: 24px;
+    line-height: 32px;
 
-    .chat-close {
-        align-items: center;
-        bottom: 8px;
-        color: white;
+    .jitsi-icon > svg {
         cursor: pointer;
-        display: flex;
-        font-size: 18px;
-        height: 40px;
-        justify-content: center;
-        line-height: 15px;
-        padding: 4px;
-        position: absolute;
-        right: 5px;
-        width: 40px;
-
-        &:hover {
-            color: rgba(255, 255, 255, 0.8);
-        }
+        fill: #A4B8D1;
     }
 }
 
@@ -183,6 +177,10 @@
         white-space: nowrap;
         text-overflow: ellipsis;
         overflow: hidden;
+    }
+
+    @media (max-width: 580px) {
+        display: none !important;
     }
 }
 

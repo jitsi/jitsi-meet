@@ -3,7 +3,6 @@
 import React from 'react';
 
 import { translate } from '../../../base/i18n';
-import { Icon, IconClose } from '../../../base/icons';
 import { connect } from '../../../base/redux';
 import AbstractChat, {
     _mapDispatchToProps,
@@ -12,6 +11,7 @@ import AbstractChat, {
 } from '../AbstractChat';
 
 import ChatDialog from './ChatDialog';
+import Header from './ChatDialogHeader';
 import ChatInput from './ChatInput';
 import DisplayNameForm from './DisplayNameForm';
 import MessageContainer from './MessageContainer';
@@ -133,13 +133,9 @@ class Chat extends AbstractChat<Props> {
      */
     _renderChatHeader() {
         return (
-            <div className = 'chat-header'>
-                <div
-                    className = 'chat-close'
-                    onClick = { this.props._onToggleChat }>
-                    <Icon src = { IconClose } />
-                </div>
-            </div>
+            <Header
+                className = 'chat-header'
+                onCancel = { this.props._onToggleChat } />
         );
     }
 

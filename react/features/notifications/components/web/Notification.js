@@ -44,8 +44,6 @@ class Notification extends AbstractNotification<Props> {
         const {
             appearance,
             hideErrorSupportLink,
-            isDismissAllowed,
-            onDismissed,
             t,
             title,
             titleArguments,
@@ -60,8 +58,6 @@ class Notification extends AbstractNotification<Props> {
                 description = { this._renderDescription() }
                 icon = { this._mapAppearanceToIcon() }
                 id = { uid }
-                isDismissAllowed = { isDismissAllowed }
-                onDismissed = { onDismissed }
                 testId = { titleKey }
                 title = { title || t(titleKey, titleArguments) } />
         );
