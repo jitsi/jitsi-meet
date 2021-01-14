@@ -20,5 +20,6 @@
 
 - (void)sendHangUp;
 - (void)sendSetAudioMuted: (BOOL)muted;
+- (void)sendMessage:(NSString*)to :(NSString*)message;
 
 @end

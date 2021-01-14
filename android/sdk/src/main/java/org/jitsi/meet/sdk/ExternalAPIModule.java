@@ -77,6 +77,7 @@ class ExternalAPIModule
 
         constants.put("SET_AUDIO_MUTED", BroadcastAction.Type.SET_AUDIO_MUTED.getAction());
         constants.put("HANG_UP", BroadcastAction.Type.HANG_UP.getAction());
+        constants.put("SEND_MESSAGE", BroadcastAction.Type.SEND_MESSAGE.getAction());
 
         return constants;
     }

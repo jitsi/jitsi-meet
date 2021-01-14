@@ -125,6 +125,11 @@ static void initializeViewsMap() {
     [[bridge moduleForClass:ExternalAPI.class] sendSetAudioMuted:muted];
 }
 
+- (void)sendMessage:(NSString*)to :(NSString*)message {
+    RCTBridge *bridge = [[JitsiMeet sharedInstance] getReactBridge];
+    [[bridge moduleForClass:ExternalAPI.class] sendMessage:to :message];
+}
+
 #pragma mark Private methods
 
 /**

@@ -41,4 +41,6 @@
 
 - (void)setAudioMuted:(BOOL)muted;
 
+- (void)sendMessage:(NSString*)to :(NSString*)message;
+
 @end

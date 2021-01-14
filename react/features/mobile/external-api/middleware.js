@@ -12,6 +12,7 @@ import {
     JITSI_CONFERENCE_URL_KEY,
     SET_ROOM,
     forEachConference,
+    getCurrentConference,
     isRoomValid
 } from '../../base/conference';
 import { LOAD_CONFIG_ERROR } from '../../base/config';
@@ -29,12 +30,21 @@ import { muteLocal } from '../../remote-video-menu/actions';
 import { ENTER_PICTURE_IN_PICTURE } from '../picture-in-picture';
 
 import { sendEvent } from './functions';
+import { JitsiConferenceEvents } from '../../base/lib-jitsi-meet';
+import logger from '../../analytics/logger';
+import { ENDPOINT_MESSAGE_NAME } from '../../../../modules/API/constants';
 
 /**
  * Event which will be emitted on the native side to indicate the conference
  * has ended either by user request or because an error was produced.
  */
 const CONFERENCE_TERMINATED = 'CONFERENCE_TERMINATED';
+
+/**
+ * Event which will be emitted on the native side to indicate a message was received
+ * through the channel.
+ */
+const MESSAGE_RECEIVED = 'MESSAGE_RECEIVED';
 
 const { ExternalAPI } = NativeModules;
 const eventEmitter = new NativeEventEmitter(ExternalAPI);
@@ -52,7 +62,7 @@ MiddlewareRegistry.register(store => next => action => {
 
     switch (type) {
     case APP_WILL_MOUNT:
-        _registerForNativeEvents(store.dispatch);
+        _registerForNativeEvents(store);
         break;
     case CONFERENCE_FAILED: {
         const { error, ...data } = action;
@@ -75,10 +85,14 @@ MiddlewareRegistry.register(store => next => action => {
         break;
     }
 
-    case CONFERENCE_JOINED:
     case CONFERENCE_LEFT:
     case CONFERENCE_WILL_JOIN:
         _sendConferenceEvent(store, action);
+        break;
+        
+    case CONFERENCE_JOINED:
+        _sendConferenceEvent(store, action);
+        _registerForCommands(store);
         break;
 
     case CONNECTION_DISCONNECTED: {
@@ -160,17 +174,59 @@ MiddlewareRegistry.register(store => next => action => {
 /**
  * Registers for events sent from the native side via NativeEventEmitter.
  *
- * @param {Dispatch} dispatch - The Redux dispatch function.
+ * @param {Store} store - The redux store.
  * @private
  * @returns {void}
  */
-function _registerForNativeEvents(dispatch) {
+function _registerForNativeEvents({ getState, dispatch }) {
     eventEmitter.addListener(ExternalAPI.HANG_UP, () => {
         dispatch(appNavigate(undefined));
     });
 
     eventEmitter.addListener(ExternalAPI.SET_AUDIO_MUTED, ({ muted }) => {
         dispatch(muteLocal(muted === 'true'));
+    });
+
+    eventEmitter.addListener(ExternalAPI.SEND_MESSAGE, ({ to, message}) => {
+        const conference = getCurrentConference(getState());
+        
+        try {
+            conference && conference.sendEndpointMessage( to, {
+                name: ENDPOINT_MESSAGE_NAME,
+                message
+            });
+        } catch (error) {
+            logger.warn('Cannot send endpointMessage', error);
+        }
+    });
+}
+
+/**
+ * Registers for commands sent on conference 
+ *
+ * @param {Store} store - The redux store.
+ * @private
+ * @returns {void}
+ */
+function _registerForCommands(store) {
+    const conference = getCurrentConference(store.getState());
+
+    conference && conference.on(
+        JitsiConferenceEvents.ENDPOINT_MESSAGE_RECEIVED,
+        (...args) => {
+            if (args && args.length >= 2) {
+                const [ sender, eventData ] = args;
+
+                if (eventData.name === ENDPOINT_MESSAGE_NAME) {
+                    sendEvent(
+                        store,
+                        MESSAGE_RECEIVED,
+                        /* data */ {
+                            message: eventData.message,
+                            senderId: sender._id
+                        });
+                }
+        }
     });
 }
 
