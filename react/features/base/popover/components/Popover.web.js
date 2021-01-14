@@ -28,7 +28,7 @@ const DIALOG_TO_PADDING_POSITION = {
  * @returns {string}
  */
 function _mapPositionToPaddingClass(position = 'left') {
-    return DIALOG_TO_PADDING_POSITION[position.split(' ')[0]];
+    return DIALOG_TO_PADDING_POSITION[position.split('-')[0]];
 }
 
 /**
@@ -212,7 +212,7 @@ class Popover extends Component<Props, State> {
                 <InlineDialog
                     content = { this._renderContent() }
                     isOpen = { this.state.showDialog }
-                    position = { position }>
+                    placement = { position }>
                     { children }
                 </InlineDialog>
             </div>

@@ -93,7 +93,7 @@ class OverflowMenuButton extends Component<Props> {
                             content = { children }
                             isOpen = { isOpen }
                             onClose = { this._onCloseDialog }
-                            position = { 'top right' }>
+                            placement = 'top-end'>
                             {this._renderToolbarButton()}
                         </InlineDialog>
                     )

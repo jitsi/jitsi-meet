@@ -182,10 +182,12 @@
         z-index: $zindex2;
     }
 
-    &.shift-right {
-        &#largeVideoContainer {
-            margin-left: $sidebarWidth;
-            width: calc(100% - #{$sidebarWidth});
+    @media (min-width: 581px) {
+        &.shift-right {
+            &#largeVideoContainer {
+                margin-left: $sidebarWidth;
+                width: calc(100% - #{$sidebarWidth});
+            }
         }
     }
 }

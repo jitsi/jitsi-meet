@@ -169,7 +169,11 @@ class MoreTab extends AbstractDialogTab<Props, State> {
 
                     // eslint-disable-next-line react/jsx-no-bind
                     onClick = {
-                        () => super._onChange({ currentLanguage: language }) }>
+                        e => {
+                            e.stopPropagation();
+                            super._onChange({ currentLanguage: language });
+                        }
+                    }>
                     { t(`languages:${language}`) }
                 </DropdownItem>));
 
@@ -180,22 +184,23 @@ class MoreTab extends AbstractDialogTab<Props, State> {
                 <div className = 'mock-atlaskit-label'>
                     { t('settings.language') }
                 </div>
-                <DropdownMenu
-                    isOpen = { this.state.isLanguageSelectOpen }
-                    onOpenChange = { this._onLanguageDropdownOpenChange }
-                    shouldFitContainer = { true }
-                    trigger = { currentLanguage
-                        ? t(`languages:${currentLanguage}`)
-                        : '' }
-                    triggerButtonProps = {{
-                        appearance: 'primary',
-                        shouldFitContainer: true
-                    }}
-                    triggerType = 'button'>
-                    <DropdownItemGroup>
-                        { languageItems }
-                    </DropdownItemGroup>
-                </DropdownMenu>
+                <div className = 'dropdown-menu'>
+                    <DropdownMenu
+                        isOpen = { this.state.isLanguageSelectOpen }
+                        onOpenChange = { this._onLanguageDropdownOpenChange }
+                        shouldFitContainer = { true }
+                        trigger = { currentLanguage
+                            ? t(`languages:${currentLanguage}`)
+                            : '' }
+                        triggerButtonProps = {{
+                            shouldFitContainer: true
+                        }}
+                        triggerType = 'button'>
+                        <DropdownItemGroup>
+                            { languageItems }
+                        </DropdownItemGroup>
+                    </DropdownMenu>
+                </div>
             </div>
         );
     }

@@ -15,6 +15,11 @@ type Props = {
     onCancel: Function,
 
     /**
+     * An optional class name.
+     */
+    className: string,
+
+    /**
      * Invoked to obtain translated strings.
      */
     t: Function
@@ -25,10 +30,10 @@ type Props = {
  *
  * @returns {React$Element<any>}
  */
-function Header({ onCancel, t }: Props) {
+function Header({ onCancel, className, t }: Props) {
     return (
         <div
-            className = 'chat-dialog-header'>
+            className = { className || 'chat-dialog-header' }>
             { t('chat.title') }
             <Icon
                 onClick = { onCancel }

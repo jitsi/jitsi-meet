@@ -2,34 +2,27 @@
  * Move the @atlaskit/flag container up a little bit so it does not cover the
  * toolbar with the first notification.
  */
-.jIMojv{
+.atlaskit-portal > #notifications-container {
     bottom: calc(#{$newToolbarSizeWithPadding}) !important;
-}
-
-/**
- * Disable the slide-in animation for @atlaskit/flag due to the animation
- * repeating for each queued flag once it becomes the top flag.
- */
- .mIBKA:first-child {
-    animation: cbfRuT 0s !important;
-    -webkit-animation: cbfRuT 0s !important;
 }
 
 .modal-dialog-form {
     /**
-     * Update the @atlaskit/dropdown-menu trigger wrapper to make sure it looks
-     * click-able.
-     */
-    .cjJUnw {
-        cursor: pointer;
-    }
-
-    /**
      * Override @atlaskit/dropdown-menu styling when in a modal because the
      * dropdown backgrounds clash with the modal backgrounds.
      */
-    .cksvax[data-role=droplistContent] {
-        border: 1px solid #455166;
+    .dropdown-menu div[style*="transform"] {
+        outline: 1px solid #455166;
+    }
+}
+
+/**
+ * Override @atlaskit/modal-dialog header styling
+ */
+.atlaskit-portal [role="dialog"] header {
+    .jitsi-icon svg {
+        fill: #B8C7E0;
+        cursor: pointer;
     }
 }
 
@@ -37,30 +30,15 @@
  * Override @atlaskit/theme styling for the top toolbar so it displays over
  * the video thumbnail while obscuring as little as possible.
  */
-.videocontainer .tOoji {
+.videocontainer__toptoolbar > div > div {
     background: none;
 }
 
-/**
- * Override @atlaskit/InlineDialog styling for the overflowmenu so it displays
- * with the correct height.
- */
-.toolbox-button-wth-dialog .eYJELv {
-    max-height: initial;
-}
-
-/**
- * Override @atlaskit/InlineDialog styling for the overflowmenu so it displays
- * a scrollable list of elements at small screen widths.
- */
-.sc-eNQAEJ {
-    overflow-y: auto;
-}
 
 /**
  * Keep overflow menu within screen vertical bounds and make it scrollable.
  */
-.toolbox-button-wth-dialog .sc-ckVGcZ.fdAqDG > :first-child {
-    max-height: calc(100vh - #{$newToolbarSizeWithPadding} - 16px);
+ .toolbox-button-wth-dialog > div:nth-child(2) {
+    max-height: calc(100vh - #{$newToolbarSizeWithPadding} - 46px);
     overflow-y: auto;
 }
