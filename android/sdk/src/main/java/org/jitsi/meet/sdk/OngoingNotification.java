@@ -24,6 +24,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 
+import androidx.annotation.StringRes;
 import androidx.core.app.NotificationCompat;
 
 import org.jitsi.meet.sdk.log.JitsiMeetLogger;
@@ -96,11 +97,11 @@ class OngoingNotification {
             .setOnlyAlertOnce(true)
             .setSmallIcon(context.getResources().getIdentifier("ic_notification", "drawable", context.getPackageName()));
 
-        NotificationCompat.Action hangupAction = createAction(context, JitsiMeetOngoingConferenceService.Action.HANGUP, "Hang up");
+        NotificationCompat.Action hangupAction = createAction(context, JitsiMeetOngoingConferenceService.Action.HANGUP, R.string.ongoing_notification_action_hang_up);
 
         JitsiMeetOngoingConferenceService.Action toggleAudioAction = isMuted
             ? JitsiMeetOngoingConferenceService.Action.UNMUTE : JitsiMeetOngoingConferenceService.Action.MUTE;
-        String toggleAudioTitle = isMuted ? "Unmute" : "Mute";
+        int toggleAudioTitle = isMuted ? R.string.ongoing_notification_action_unmute : R.string.ongoing_notification_action_mute;
         NotificationCompat.Action audioAction = createAction(context, toggleAudioAction, toggleAudioTitle);
 
         builder.addAction(hangupAction);
@@ -109,11 +110,12 @@ class OngoingNotification {
         return builder.build();
     }
 
-    private static NotificationCompat.Action createAction(Context context, JitsiMeetOngoingConferenceService.Action action, String title) {
+    private static NotificationCompat.Action createAction(Context context, JitsiMeetOngoingConferenceService.Action action, @StringRes int titleId) {
         Intent intent = new Intent(context, JitsiMeetOngoingConferenceService.class);
         intent.setAction(action.getName());
         PendingIntent pendingIntent
             = PendingIntent.getService(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        String title = context.getString(titleId);
         return new NotificationCompat.Action(0, title, pendingIntent);
     }
 }

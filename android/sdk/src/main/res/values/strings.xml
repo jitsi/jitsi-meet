@@ -3,4 +3,7 @@
     <string name="dropbox_app_key"></string>
     <string name="ongoing_notification_title">Ongoing meeting</string>
     <string name="ongoing_notification_text">You are currently in a meeting. Tap to return to it.</string>
+    <string name="ongoing_notification_action_hang_up">Hang up</string>
+    <string name="ongoing_notification_action_mute">Mute</string>
+    <string name="ongoing_notification_action_unmute">Unmute</string>
 </resources>
