@@ -352,6 +352,7 @@ function safeStartCase(s = '') {
     if (s.length > 0 && s[0] === '_') {
         return s.slice(1);
     }
+
     return _.words(`${s}`.replace(/['\u2019]/g, '')).reduce(
         (result, word, index) => result + (index ? ' ' : '') + _.upperFirst(word)
         , '');
