@@ -16,6 +16,11 @@ import ParticipantsCount from './ParticipantsCount';
 type Props = {
 
     /**
+     * Whether the conference timer should be shown or not.
+     */
+    _hideConferenceTimer: Boolean,
+
+    /**
      * Whether then participant count should be shown or not.
      */
     _showParticipantCount: boolean,
@@ -57,7 +62,7 @@ class Subject extends Component<Props> {
             <div className = { `subject ${_visible ? 'visible' : ''}` }>
                 { _showSubject && <span className = 'subject-text'>{ _subject }</span>}
                 { _showParticipantCount && <ParticipantsCount /> }
-                <ConferenceTimer />
+                { !_hideConferenceTimer && <ConferenceTimer /> }
             </div>
         );
     }
