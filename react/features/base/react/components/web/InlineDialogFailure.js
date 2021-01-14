@@ -1,6 +1,6 @@
 /* @flow */
 
-import Button from '@atlaskit/button';
+import Button from '@atlaskit/button/standard-button';
 import React, { Component } from 'react';
 
 import { translate } from '../../../i18n';
