@@ -120,9 +120,6 @@
 - (void)terminate {
     JitsiMeetView *view = (JitsiMeetView *) self.view;
     [view leave];
-
-- (void)messageReceived:(NSDictionary *)data {
-  NSLog(@"%@%@", @"Audio muted changed: ", data[@"muted"]);
 }
 
 @end
