@@ -14,10 +14,13 @@
     text-overflow: ellipsis;
     box-sizing: border-box;
     white-space: nowrap;
-    background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0));
 
     &.visible {
         top: 0px;
+    }
+
+    &.gradient {
+        background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0));
     }
 
     &-text {
