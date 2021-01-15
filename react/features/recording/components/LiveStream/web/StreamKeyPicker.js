@@ -114,7 +114,12 @@ class StreamKeyPicker extends PureComponent<Props, State> {
                     key = { broadcast.boundStreamID }
 
                     // eslint-disable-next-line react/jsx-no-bind
-                    onClick = { () => this._onSelect(broadcast.boundStreamID) }>
+                    onClick = {
+                        e => {
+                            e.stopPropagation();
+                            this._onSelect(broadcast.boundStreamID);
+                        }
+                    }>
                     { broadcast.title }
                 </DropdownItem>));
         const selected

@@ -169,7 +169,11 @@ class MoreTab extends AbstractDialogTab<Props, State> {
 
                     // eslint-disable-next-line react/jsx-no-bind
                     onClick = {
-                        () => super._onChange({ currentLanguage: language }) }>
+                        e => {
+                            e.stopPropagation();
+                            super._onChange({ currentLanguage: language });
+                        }
+                    }>
                     { t(`languages:${language}`) }
                 </DropdownItem>));
 
