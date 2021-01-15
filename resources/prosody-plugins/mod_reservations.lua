@@ -136,7 +136,6 @@ end
 -- @param timeout_callback if provided, called without args when request times out.
 -- @param retries how many times to retry on failure; 0 means no retries.
 local function async_http_request(url, options, callback, timeout_callback, retries)
-    -- TODO: auto retry if request failed or if response code matches certain values provided by config.
     local completed = false;
     local timed_out = false;
     local retries = retries or api_retry_count;
