@@ -32,6 +32,10 @@
 --      * set "reservations_api_should_retry_for_code" to a function that takes an HTTP response code and
 --        returns true if API call should be retried. By default, retries are done for 5XX
 --        responses. Timeouts are never retried, and HTTP call failures are always retried.
+--      * set "reservations_enable_multi_tenant" to true to enable multi-tenant support. To be consistent with
+--        muc_domain_mapper, enabling this feature will rewrite the room name field in API payload to include the tenant
+--        name if exists. E.g. "/TenantX/RoomName" --> "[tenantx]roomname".
+--
 --
 --  Example config:
 --
@@ -47,6 +51,7 @@
 --        reservations_api_headers = {
 --            ["Authorization"] = "Bearer TOKEN-237958623045";
 --        }
+--        reservations_enable_multi_tenant = true
 --        reservations_api_timeout = 10  -- timeout if API does not respond within 10s
 --        reservations_api_retry_count = 5  -- retry up to 5 times
 --        reservations_api_retry_delay = 1  -- wait 1s between retries
@@ -65,12 +70,15 @@ local datetime = require 'util.datetime';
 
 local get_room_from_jid = module:require "util".get_room_from_jid;
 local is_healthcheck_room = module:require "util".is_healthcheck_room;
+local room_jid_match_rewrite = module:require "util".room_jid_match_rewrite;
+local internal_room_jid_match_rewrite =  module:require "util".internal_room_jid_match_rewrite;
 
 local api_prefix = module:get_option("reservations_api_prefix");
 local api_headers = module:get_option("reservations_api_headers");
 local api_timeout = module:get_option("reservations_api_timeout", 20);
 local api_retry_count = tonumber(module:get_option("reservations_api_retry_count", 3));
 local api_retry_delay = tonumber(module:get_option("reservations_api_retry_delay", 3));
+local enable_multi_tenant = module:get_option("reservations_enable_multi_tenant", false);
 
 
 -- Option for user to control HTTP response codes that will result in a retry.
@@ -216,6 +224,17 @@ function newRoomReservation(room_jid, creator_jid)
     }, RoomReservation);
 end
 
+
+--- Extracts room name from room jid
+function RoomReservation:get_room_name()
+    local room_jid = self.room_jid
+    if enable_multi_tenant then
+        room_jid = room_jid_match_rewrite(room_jid);
+    end
+
+    return jid.node(room_jid):lower();
+end
+
 --- Checks if reservation data is expires and should be evicted from store
 function RoomReservation:is_expired()
     return self.meta.expires_at ~= nil and now() > self.meta.expires_at;
@@ -335,7 +354,7 @@ function RoomReservation:call_api_create_conference()
 
     local url = api_prefix..'/conference';
     local request_data = {
-        name = jid.node(self.room_jid);
+        name = self:get_room_name();
         start_time = to_java_date_string(self.meta.start_time);
         mail_owner = self.meta.mail_owner;
     }
@@ -365,7 +384,7 @@ function RoomReservation:parse_conference_response(response_body)
         return;
     end
 
-    if data.name == nil or data.name:lower() ~= jid.node(self.room_jid):lower() then
+    if data.name == nil or data.name:lower() ~= self:get_room_name(self.room_jid) then
         module:log("error", "Missing or mismathing room name - %s", data.name);
         return;
     end
@@ -542,12 +561,14 @@ local function room_destroyed(event)
     local room = event.room
 
     if not is_healthcheck_room(room.jid) then
-        res = reservations[room.jid]
-        reservations[room.jid] = nil
+        local room_jid = internal_room_jid_match_rewrite(room.jid);
+
+        res = reservations[room_jid]
+        reservations[room_jid] = nil
 
         -- reservation may not exist if room destroyed by expiry check (which drops reservation too)
         if res then
-            module:log("info", "Dropped reservation data for destroyed room %s", room.jid);
+            module:log("info", "Dropped reservation data for destroyed room %s", room_jid);
 
             local conflict_id = res.meta.conflict_id
             if conflict_id then
