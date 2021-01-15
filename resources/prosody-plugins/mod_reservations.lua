@@ -32,10 +32,6 @@
 --      * set "reservations_api_should_retry_for_code" to a function that takes an HTTP response code and
 --        returns true if API call should be retried. By default, retries are done for 5XX
 --        responses. Timeouts are never retried, and HTTP call failures are always retried.
---      * set "reservations_api_exclude_tenant_name" to true to exclude tenant name from the room name.
---        To be consistent with muc_domain_mapper, name field in API payload includes the tenant name if exists, so
---        "https://<domain>/TenantX/RoomName" --> "[tenantx]roomname". Use this config to disable this to retain
---        Jicofo behaviour and always send only room name.
 --
 --
 --  Example config:
@@ -52,7 +48,6 @@
 --        reservations_api_headers = {
 --            ["Authorization"] = "Bearer TOKEN-237958623045";
 --        }
---        reservations_api_exclude_tenant_name = true  -- retain Jicofo behavior where tenant name not included
 --        reservations_api_timeout = 10  -- timeout if API does not respond within 10s
 --        reservations_api_retry_count = 5  -- retry up to 5 times
 --        reservations_api_retry_delay = 1  -- wait 1s between retries
@@ -79,7 +74,6 @@ local api_headers = module:get_option("reservations_api_headers");
 local api_timeout = module:get_option("reservations_api_timeout", 20);
 local api_retry_count = tonumber(module:get_option("reservations_api_retry_count", 3));
 local api_retry_delay = tonumber(module:get_option("reservations_api_retry_delay", 3));
-local exclude_tenant_name = module:get_option("reservations_api_exclude_tenant_name", false);
 
 
 -- Option for user to control HTTP response codes that will result in a retry.
@@ -228,12 +222,7 @@ end
 
 --- Extracts room name from room jid
 function RoomReservation:get_room_name()
-    local room_jid = self.room_jid
-    if not exclude_tenant_name then
-        room_jid = room_jid_match_rewrite(room_jid);
-    end
-
-    return jid.node(room_jid):lower();
+    return jid.node(self.room_jid);
 end
 
 --- Checks if reservation data is expires and should be evicted from store
@@ -385,7 +374,7 @@ function RoomReservation:parse_conference_response(response_body)
         return;
     end
 
-    if data.name == nil or data.name:lower() ~= self:get_room_name(self.room_jid) then
+    if data.name == nil or data.name:lower() ~= self:get_room_name() then
         module:log("error", "Missing or mismathing room name - %s", data.name);
         return;
     end
@@ -543,7 +532,8 @@ module:hook("pre-iq/host", function(event)
         return; -- not Conference IQ. Ignore.
     end
 
-    local room_jid = conference.attr.room;
+    local room_jid = room_jid_match_rewrite(conference.attr.room);
+
     if get_room_from_jid(room_jid) ~= nil then
         module:log("debug", "Skip reservation check for existing room %s", room_jid);
         return;  -- room already exists. Continue with normal flow
@@ -562,14 +552,12 @@ local function room_destroyed(event)
     local room = event.room
 
     if not is_healthcheck_room(room.jid) then
-        local room_jid = internal_room_jid_match_rewrite(room.jid);
-
-        res = reservations[room_jid]
-        reservations[room_jid] = nil
+        res = reservations[room.jid]
+        reservations[room.jid] = nil
 
         -- reservation may not exist if room destroyed by expiry check (which drops reservation too)
         if res then
-            module:log("info", "Dropped reservation data for destroyed room %s", room_jid);
+            module:log("info", "Dropped reservation data for destroyed room %s", room.jid);
 
             local conflict_id = res.meta.conflict_id
             if conflict_id then
