@@ -1,6 +1,7 @@
 // @flow
 
 import { jitsiLocalStorage } from '@jitsi/js-utils';
+import uuid from 'uuid';
 
 import { BILLING_ID, VPAAS_TENANT_PREFIX } from './constants';
 import logger from './logger';
@@ -72,20 +73,18 @@ export async function sendCountRequest({ baseUrl, billingId, jwt, tenant }: {
 }
 
 /**
- * Returns the stored billing id.
+ * Returns the stored billing id (or generates a new one if none is present).
  *
  * @returns {string}
  */
 export function getBillingId() {
-    return jitsiLocalStorage.getItem(BILLING_ID);
-}
 
-/**
- * Stores the billing id.
- *
- * @param {string} value - The id to be stored.
- * @returns {void}
- */
-export function setBillingId(value: string) {
-    jitsiLocalStorage.setItem(BILLING_ID, value);
+    let billingId = jitsiLocalStorage.getItem(BILLING_ID);
+
+    if (!billingId) {
+        billingId = uuid.v4();
+        jitsiLocalStorage.setItem(BILLING_ID, billingId);
+    }
+
+    return billingId;
 }

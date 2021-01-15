@@ -32,7 +32,7 @@
     "@atlaskit/theme": "7.0.2",
     "@atlaskit/toggle": "5.0.14",
     "@atlaskit/tooltip": "12.1.13",
-    "@jitsi/js-utils": "1.0.3",
+    "@jitsi/js-utils": "1.0.5",
     "@microsoft/microsoft-graph-client": "1.1.0",
     "@react-native-async-storage/async-storage": "1.13.2",
     "@react-native-community/google-signin": "3.0.1",

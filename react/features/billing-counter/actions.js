@@ -1,13 +1,10 @@
 // @flow
 
-import uuid from 'uuid';
-
-import { SET_BILLING_ID, SET_ENDPOINT_COUNTED } from './actionTypes';
+import { SET_ENDPOINT_COUNTED } from './actionTypes';
 import { extractVpaasTenantFromPath, getBillingId, sendCountRequest } from './functions';
 
 /**
  * Sends a billing count request when needed.
- * If there is no billingId, it presists one first and sends the request after.
  *
  * @returns {Function}
  */
@@ -20,12 +17,7 @@ export function countEndpoint() {
         const shouldSendRequest = Boolean(baseUrl && jwt && tenant);
 
         if (shouldSendRequest) {
-            let billingId = getBillingId();
-
-            if (!billingId) {
-                billingId = uuid.v4();
-                dispatch(setBillingId(billingId));
-            }
+            const billingId = getBillingId();
 
             sendCountRequest({
                 baseUrl,
@@ -35,19 +27,6 @@ export function countEndpoint() {
             });
             dispatch(setEndpointCounted());
         }
-    };
-}
-
-/**
- * Action used to set the user billing id.
- *
- * @param {string} value - The uid.
- * @returns {Object}
- */
-function setBillingId(value) {
-    return {
-        type: SET_BILLING_ID,
-        value
     };
 }
 
