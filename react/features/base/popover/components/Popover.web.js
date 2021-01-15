@@ -212,7 +212,7 @@ class Popover extends Component<Props, State> {
                 <InlineDialog
                     content = { this._renderContent() }
                     isOpen = { this.state.showDialog }
-                    position = { position }>
+                    placement = { position }>
                     { children }
                 </InlineDialog>
             </div>
