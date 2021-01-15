@@ -2,13 +2,13 @@
  * Move the @atlaskit/flag container up a little bit so it does not cover the
  * toolbar with the first notification.
  */
-.jIMojv{
+.atlaskit-portal > [class$="-FlagGroup"] {
     bottom: calc(#{$newToolbarSizeWithPadding}) !important;
 }
 
 /**
  * Disable the slide-in animation for @atlaskit/flag due to the animation
- * repeating for each queued flag once it becomes the top flag.
+ * repeating for each queued flag once it becomes the top flag. (Obsolete? class .mIBKA does not exist)
  */
  .mIBKA:first-child {
     animation: cbfRuT 0s !important;
@@ -58,7 +58,7 @@
 }
 
 /**
- * Keep overflow menu within screen vertical bounds and make it scrollable.
+ * Keep overflow menu within screen vertical bounds and make it scrollable. (Obsolete? class .sc-ckVGcZ.fdAqDG does not exist)
  */
 .toolbox-button-wth-dialog .sc-ckVGcZ.fdAqDG > :first-child {
     max-height: calc(100vh - #{$newToolbarSizeWithPadding} - 16px);
