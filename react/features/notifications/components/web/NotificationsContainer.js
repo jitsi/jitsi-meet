@@ -67,9 +67,9 @@ class NotificationsContainer extends AbstractNotificationsContainer<Props> {
             return (
                 <Notification
                     { ...props }
-                    onDismissed = { this._onDismissed }
                     id = { uid }
                     key = { uid }
+                    onDismissed = { this._onDismissed }
                     uid = { uid } />
 
             );

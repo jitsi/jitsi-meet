@@ -4,7 +4,6 @@ import DropdownMenu, {
     DropdownItem,
     DropdownItemGroup
 } from '@atlaskit/dropdown-menu';
-import ChevronDownIcon from '@atlaskit/icon/glyph/chevron-down';
 import React, { Component } from 'react';
 
 import { translate } from '../../base/i18n/functions';
@@ -196,7 +195,7 @@ class DeviceSelector extends Component<Props> {
     /**
      * Invokes the passed in callback to notify of selection changes.
      *
-     * @param {Object} selection - Event from choosing a AKDropdownMenu option.
+     * @param {Object} newDeviceId - Selected device id from DropdownMenu option.
      * @private
      * @returns {void}
      */
