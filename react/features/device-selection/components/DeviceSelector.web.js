@@ -121,6 +121,8 @@ class DeviceSelector extends Component<Props> {
         );
     }
 
+    _createDropdownItem: (Object) => void;
+
     /**
      * Creates an object in the format expected by AKDropdownMenu for an option.
      *
