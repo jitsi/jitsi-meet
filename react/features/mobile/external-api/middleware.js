@@ -2,6 +2,8 @@
 
 import { NativeEventEmitter, NativeModules } from 'react-native';
 
+import { ENDPOINT_MESSAGE_NAME } from '../../../../modules/API/constants';
+import logger from '../../analytics/logger';
 import { appNavigate } from '../../app/actions';
 import { APP_WILL_MOUNT } from '../../base/app/actionTypes';
 import {
@@ -23,6 +25,7 @@ import {
     JITSI_CONNECTION_URL_KEY,
     getURLWithoutParams
 } from '../../base/connection';
+import { JitsiConferenceEvents } from '../../base/lib-jitsi-meet';
 import { SET_AUDIO_MUTED } from '../../base/media/actionTypes';
 import { PARTICIPANT_JOINED, PARTICIPANT_LEFT } from '../../base/participants';
 import { MiddlewareRegistry } from '../../base/redux';
@@ -30,9 +33,6 @@ import { muteLocal } from '../../remote-video-menu/actions';
 import { ENTER_PICTURE_IN_PICTURE } from '../picture-in-picture';
 
 import { sendEvent } from './functions';
-import { JitsiConferenceEvents } from '../../base/lib-jitsi-meet';
-import logger from '../../analytics/logger';
-import { ENDPOINT_MESSAGE_NAME } from '../../../../modules/API/constants';
 
 /**
  * Event which will be emitted on the native side to indicate the conference
@@ -89,7 +89,7 @@ MiddlewareRegistry.register(store => next => action => {
     case CONFERENCE_WILL_JOIN:
         _sendConferenceEvent(store, action);
         break;
-        
+
     case CONFERENCE_JOINED:
         _sendConferenceEvent(store, action);
         _registerForCommands(store);
@@ -187,11 +187,11 @@ function _registerForNativeEvents({ getState, dispatch }) {
         dispatch(muteLocal(muted === 'true'));
     });
 
-    eventEmitter.addListener(ExternalAPI.SEND_MESSAGE, ({ to, message}) => {
+    eventEmitter.addListener(ExternalAPI.SEND_MESSAGE, ({ to, message }) => {
         const conference = getCurrentConference(getState());
-        
+
         try {
-            conference && conference.sendEndpointMessage( to, {
+            conference && conference.sendEndpointMessage(to, {
                 name: ENDPOINT_MESSAGE_NAME,
                 message
             });
@@ -202,7 +202,7 @@ function _registerForNativeEvents({ getState, dispatch }) {
 }
 
 /**
- * Registers for commands sent on conference 
+ * Registers for commands sent on conference data channel.
  *
  * @param {Store} store - The redux store.
  * @private
@@ -226,8 +226,8 @@ function _registerForCommands(store) {
                             senderId: sender._id
                         });
                 }
-        }
-    });
+            }
+        });
 }
 
 /**

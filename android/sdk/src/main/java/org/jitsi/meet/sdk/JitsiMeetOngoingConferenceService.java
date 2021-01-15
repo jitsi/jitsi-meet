@@ -114,7 +114,7 @@ public class JitsiMeetOngoingConferenceService extends Service
             case HANGUP:
                 JitsiMeetLogger.i(TAG + " Hangup requested");
 
-                Intent hangupBroadcastIntent = BroadcastIntentHelper.buildSendMessageIntent("", "mesaj");
+                Intent hangupBroadcastIntent = BroadcastIntentHelper.buildHangUpIntent();
                 LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(hangupBroadcastIntent);
 
                 stopSelf();
