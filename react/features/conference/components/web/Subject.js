@@ -57,9 +57,14 @@ class Subject extends Component<Props> {
      */
     render() {
         const { _hideConferenceTimer, _showParticipantCount, _showSubject, _subject, _visible } = this.props;
+        let className = `subject ${_visible ? 'visible' : ''}`;
+
+        if (!_hideConferenceTimer || _showParticipantCount || _showSubject) {
+            className += ' gradient';
+        }
 
         return (
-            <div className = { `subject ${_visible ? 'visible' : ''}` }>
+            <div className = { className }>
                 { _showSubject && <span className = 'subject-text'>{ _subject }</span>}
                 { _showParticipantCount && <ParticipantsCount /> }
                 { !_hideConferenceTimer && <ConferenceTimer /> }
