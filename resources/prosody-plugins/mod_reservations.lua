@@ -32,9 +32,10 @@
 --      * set "reservations_api_should_retry_for_code" to a function that takes an HTTP response code and
 --        returns true if API call should be retried. By default, retries are done for 5XX
 --        responses. Timeouts are never retried, and HTTP call failures are always retried.
---      * set "reservations_enable_multi_tenant" to true to enable multi-tenant support. To be consistent with
---        muc_domain_mapper, enabling this feature will rewrite the room name field in API payload to include the tenant
---        name if exists. E.g. "/TenantX/RoomName" --> "[tenantx]roomname".
+--      * set "reservations_api_exclude_tenant_name" to true to exclude tenant name from the room name.
+--        To be consistent with muc_domain_mapper, name field in API payload includes the tenant name if exists, so
+--        "https://<domain>/TenantX/RoomName" --> "[tenantx]roomname". Use this config to disable this to retain
+--        Jicofo behaviour and always send only room name.
 --
 --
 --  Example config:
@@ -51,7 +52,7 @@
 --        reservations_api_headers = {
 --            ["Authorization"] = "Bearer TOKEN-237958623045";
 --        }
---        reservations_enable_multi_tenant = true
+--        reservations_api_exclude_tenant_name = true  -- retain Jicofo behavior where tenant name not included
 --        reservations_api_timeout = 10  -- timeout if API does not respond within 10s
 --        reservations_api_retry_count = 5  -- retry up to 5 times
 --        reservations_api_retry_delay = 1  -- wait 1s between retries
@@ -78,7 +79,7 @@ local api_headers = module:get_option("reservations_api_headers");
 local api_timeout = module:get_option("reservations_api_timeout", 20);
 local api_retry_count = tonumber(module:get_option("reservations_api_retry_count", 3));
 local api_retry_delay = tonumber(module:get_option("reservations_api_retry_delay", 3));
-local enable_multi_tenant = module:get_option("reservations_enable_multi_tenant", false);
+local exclude_tenant_name = module:get_option("reservations_api_exclude_tenant_name", false);
 
 
 -- Option for user to control HTTP response codes that will result in a retry.
@@ -228,7 +229,7 @@ end
 --- Extracts room name from room jid
 function RoomReservation:get_room_name()
     local room_jid = self.room_jid
-    if enable_multi_tenant then
+    if not exclude_tenant_name then
         room_jid = room_jid_match_rewrite(room_jid);
     end
 
