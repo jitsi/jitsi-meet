@@ -40,7 +40,8 @@ class NotificationsContainer extends AbstractNotificationsContainer<Props> {
         }
 
         return (
-            <FlagGroup onDismissed = { this._onDismissed }>
+            <FlagGroup
+                onDismissed = { this._onDismissed }>
                 { this._renderFlags() }
             </FlagGroup>
         );
@@ -67,6 +68,7 @@ class NotificationsContainer extends AbstractNotificationsContainer<Props> {
             return (
                 <Notification
                     { ...props }
+                    onDismissed = { this._onDismissed }
                     id = { uid }
                     key = { uid }
                     uid = { uid } />
