@@ -57,7 +57,6 @@
 	
 	<key>NSCameraUsageDescription</key>
 	<string>Nehme mit Video an Meetings teil</string>
-	<string></string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Nehme mit Ton an Meetings teil.</string>
 	<key>NSLocalNetworkUsageDescription</key>
