@@ -54,8 +54,8 @@
 	</dict>
 	<key>NSCalendarsUsageDescription</key>
 	<string>Wenn Meetings in deinen Kalender eingetragen werden sollen</string>
+	
 	<key>NSCameraUsageDescription</key>
-	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Nehme mit Video an Meetings teil</string>
 	<string></string>
 	<key>NSMicrophoneUsageDescription</key>
