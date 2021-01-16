@@ -7,5 +7,5 @@
  * @returns {Map<number,number>}
  */
 export function getMinHeightForQualityLvlMap(state: Object): Map<number, number> {
-    return state['features/base/videoquality'].minHeightForQualityLvl;
+    return state['features/video-quality'].minHeightForQualityLvl;
 }

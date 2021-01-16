@@ -1,7 +1,7 @@
 import { Platform } from 'react-native';
 import BackgroundTimer from 'react-native-background-timer';
 
-import '@webcomponents/url'; // Polyfill for URL constructor
+import 'react-native-url-polyfill/auto'; // Complete URL polyfill.
 
 import Storage from './Storage';
 
@@ -415,10 +415,12 @@ function _visitNode(node, callback) {
     // Required by:
     // - lib-jitsi-meet
     // - Strophe
-    global.clearTimeout = BackgroundTimer.clearTimeout.bind(BackgroundTimer);
-    global.clearInterval = BackgroundTimer.clearInterval.bind(BackgroundTimer);
-    global.setInterval = BackgroundTimer.setInterval.bind(BackgroundTimer);
-    global.setTimeout = (fn, ms = 0) => BackgroundTimer.setTimeout(fn, ms);
+    if (Platform.OS === 'android') {
+        global.clearTimeout = BackgroundTimer.clearTimeout.bind(BackgroundTimer);
+        global.clearInterval = BackgroundTimer.clearInterval.bind(BackgroundTimer);
+        global.setInterval = BackgroundTimer.setInterval.bind(BackgroundTimer);
+        global.setTimeout = (fn, ms = 0) => BackgroundTimer.setTimeout(fn, ms);
+    }
 
     // localStorage
     if (typeof global.localStorage === 'undefined') {

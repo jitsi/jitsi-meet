@@ -18,6 +18,7 @@ import { executeDialOutRequest, executeDialOutStatusRequest, getDialInfoPageURL 
 import { showErrorNotification } from '../notifications';
 
 import {
+    PREJOIN_INITIALIZED,
     PREJOIN_START_CONFERENCE,
     SET_DEVICE_STATUS,
     SET_DIALOUT_COUNTRY,
@@ -195,7 +196,7 @@ export function dialOut(onSuccess: Function, onFail: Function) {
 export function initPrejoin(tracks: Object[], errors: Object) {
     return async function(dispatch: Function) {
         dispatch(setPrejoinDeviceErrors(errors));
-
+        dispatch(prejoinInitialized());
 
         tracks.forEach(track => dispatch(trackAdded(track)));
     };
@@ -242,11 +243,14 @@ export function joinConferenceWithoutAudio() {
  */
 export function makePrecallTest(conferenceOptions: Object) {
     return async function(dispatch: Function) {
-        await JitsiMeetJS.precallTest.init(conferenceOptions);
+        try {
+            await JitsiMeetJS.precallTest.init(conferenceOptions);
+            const results = await JitsiMeetJS.precallTest.execute();
 
-        const results = await JitsiMeetJS.precallTest.execute();
-
-        dispatch(setPrecallTestResults(results));
+            dispatch(setPrecallTestResults(results));
+        } catch (error) {
+            logger.debug('Failed to execute pre call test - ', error);
+        }
     };
 }
 
@@ -263,6 +267,17 @@ export function openDialInPage() {
         const dialInPage = getDialInfoPageURL(roomName, locationURL);
 
         openURLInBrowser(dialInPage, true);
+    };
+}
+
+/**
+ * Action used to signal that the prejoin page has been initialized.
+ *
+ * @returns {Object}
+ */
+function prejoinInitialized() {
+    return {
+        type: PREJOIN_INITIALIZED
     };
 }
 

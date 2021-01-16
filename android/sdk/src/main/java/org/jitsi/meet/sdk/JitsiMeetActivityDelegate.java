@@ -24,6 +24,8 @@ import com.facebook.react.bridge.Callback;
 import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.modules.core.PermissionListener;
 
+import org.jitsi.meet.sdk.log.JitsiMeetLogger;
+
 /**
  * Helper class to encapsulate the work which needs to be done on
  * {@link Activity} lifecycle methods in order for the React side to be aware of
@@ -177,6 +179,16 @@ public class JitsiMeetActivityDelegate {
 
     public static void requestPermissions(Activity activity, String[] permissions, int requestCode, PermissionListener listener) {
         permissionListener = listener;
-        activity.requestPermissions(permissions, requestCode);
+
+        // The RN Permissions module calls this in a non-UI thread. What we observe is a crash in ViewGroup.dispatchCancelPendingInputEvents,
+        // which is called on the calling (ie, non-UI) thread. This doesn't look very safe, so try to avoid a crash by pretending the permission
+        // was denied.
+
+        try {
+            activity.requestPermissions(permissions, requestCode);
+        } catch (Exception e) {
+            JitsiMeetLogger.e(e, "Error requesting permissions");
+            onRequestPermissionsResult(requestCode, permissions, new int[0]);
+        }
     }
 }

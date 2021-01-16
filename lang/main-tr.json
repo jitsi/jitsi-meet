@@ -579,7 +579,7 @@
     },
 
     "security": {
-        "about": "Toplantınıza bir şifre ekleyebilirsiniz. Katılımcıların toplantıya katılmasına izin verilmeden önce şifreyi girmeleri gerekecektir.",
+        "about": "Toplantınıza bir parola ekleyebilirsiniz. Katılımcıların toplantıya katılmasına izin verilmeden önce parolayı girmeleri gerekecektir.",
         "insecureRoomNameWarning": "Toplantı odası güvenli değil. Konferansınıza istenmeyen katılımcılar katılabilir.",
         "securityOptions": "Güvenlik Seçenekleri"
     },
@@ -819,7 +819,7 @@
             "join": "Katılmak için dokunun",
             "roomname": "Oda adı girin"
         },
-        "appDescription": "Durma ve tüm ekiple görüntülü sohbet et. Hatta tanıdığın herkesi davet et. {{app}} tüm gün, her gün ücretsiz olarak kullanabileceğiniz, hesap gerektirmeden kullanbilieceğiniz tamamen şifrelenmiş, % 100 özgür bir video konferans çözümüdür.",
+        "appDescription": "Durma ve tüm ekiple görüntülü sohbet et. Hatta tanıdığın herkesi davet et. {{app}} tüm gün, her gün ücretsiz olarak ve hesap gerektirmeden kullanabileceğiniz tamamen şifrelenmiş, % 100 özgür bir video konferans çözümüdür.",
         "audioVideoSwitch": {
             "audio": "Ses",
             "video": "Görüntü"
@@ -865,27 +865,27 @@
 
     "lobby": {
         "allow": "İzin ver",
-        "backToKnockModeButton": "Şifre yok, bunun yerine katılmayı isteyin",
+        "backToKnockModeButton": "Parola yok, bunun yerine katılmayı isteyin",
         "dialogTitle": "Lobi modu",
         "disableDialogContent": "Lobi modu şu anda etkin. Bu özellik, istenmeyen katılımcıların toplantınıza katılamamasını sağlar. Devre dışı bırakmak istiyor musunuz?",
         "disableDialogSubmit": "Devre Dışı",
         "emailField": "E-posta adresinizi giriniz",
-        "enableDialogPasswordField": "Şifre belirleyin (isteğe bağlı)",
+        "enableDialogPasswordField": "Parola belirleyin (isteğe bağlı)",
         "enableDialogSubmit": "Etkin",
         "enableDialogText": "Lobi modu, toplantınızı yalnızca kişilerin bir moderatör tarafından resmi olarak onaylandıktan sonra girmelerine izin vererek korumanıza izin verir.",
-        "enterPasswordButton": "Toplantı şifresini girin",
-        "enterPasswordTitle": "Toplantıya katılmak için şifre girin",
-        "invalidPassword": "Geçersiz şifre",
+        "enterPasswordButton": "Toplantı parolasını girin",
+        "enterPasswordTitle": "Toplantıya katılmak için parola girin",
+        "invalidPassword": "Geçersiz parola",
         "joiningMessage": "Birisi isteğinizi kabul eder etmez toplantıya katılacaksınız",
-        "joinWithPasswordMessage": "Şifre ile katılmaya çalışıyorsunuz lütfen bekleyin...",
+        "joinWithPasswordMessage": "Parola ile katılmaya çalışıyorsunuz lütfen bekleyin...",
         "joinRejectedMessage": "Katılma isteğiniz bir moderatör tarafından reddedildi.",
         "joinTitle": "Toplantıya katıl",
         "joiningTitle": "Toplantıya katılma isteniyor...",
-        "joiningWithPasswordTitle": "Şifre ile katılıyor...",
+        "joiningWithPasswordTitle": "Parola ile katılıyor...",
         "knockButton": "Katılmak için sor",
         "knockTitle": "Birisi toplantıya katılmak istiyor",
         "nameField": "Adınızı giriniz",
-        "passwordField": "Toplantı şifresini giriniz",
+        "passwordField": "Toplantı parolasını giriniz",
         "passwordJoinButton": "Katıl",
         "reject": "Reddet",
         "toggleLabel": "Lobiyi etkinleştir"

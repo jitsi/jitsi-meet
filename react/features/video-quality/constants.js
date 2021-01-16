@@ -1,4 +1,15 @@
-import { VIDEO_QUALITY_LEVELS } from '../base/conference';
+/**
+ * The supported remote video resolutions. The values are currently based on
+ * available simulcast layers.
+ *
+ * @type {object}
+ */
+export const VIDEO_QUALITY_LEVELS = {
+    ULTRA: 2160,
+    HIGH: 720,
+    STANDARD: 360,
+    LOW: 180
+};
 
 /**
  * Maps quality level names used in the config.videoQuality.minHeightForQualityLvl to the quality level constants used

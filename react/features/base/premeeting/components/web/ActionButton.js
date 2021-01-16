@@ -27,6 +27,11 @@ type Props = {
     hasOptions?: boolean,
 
     /**
+     * Icon to display in the options section.
+     */
+    OptionsIcon?: React$Node,
+
+    /**
      * TestId of the button. Can be used to locate element when testing UI.
      */
     testId?: string,
@@ -57,6 +62,7 @@ function ActionButton({
     className = '',
     disabled,
     hasOptions,
+    OptionsIcon = IconArrowDown,
     testId,
     type = 'primary',
     onClick,
@@ -75,7 +81,7 @@ function ActionButton({
                 <Icon
                     className = 'icon'
                     size = { 14 }
-                    src = { IconArrowDown } />
+                    src = { OptionsIcon } />
             </div>
             }
         </div>

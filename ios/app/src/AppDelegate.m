@@ -23,8 +23,8 @@
 
 @import Fabric;
 @import Firebase;
-@import JitsiMeet;
 @import ReplayKit;
+@import JitsiMeetSDK;
 
 @implementation AppDelegate
 
@@ -48,6 +48,8 @@
 #endif
     }];
     [jitsiMeet application:application didFinishLaunchingWithOptions:launchOptions];
+    ViewController *rootController = (ViewController *)self.window.rootViewController;
+    [jitsiMeet showSplashScreen:rootController.view];
 
     return YES;
 }

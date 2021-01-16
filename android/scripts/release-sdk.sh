@@ -10,7 +10,7 @@ MVN_HTTP=0
 DEFAULT_SDK_VERSION=$(grep sdkVersion ${THIS_DIR}/../gradle.properties | cut -d"=" -f2)
 SDK_VERSION=${OVERRIDE_SDK_VERSION:-${DEFAULT_SDK_VERSION}}
 RN_VERSION=$(jq -r '.version' ${THIS_DIR}/../../node_modules/react-native/package.json)
-HERMES_VERSION=$(jq -r '.dependencies."hermes-engine"' ${THIS_DIR}/../../node_modules/react-native/package.json | cut -c 2-)
+JSC_VERSION="r"$(jq -r '.dependencies."jsc-android"' ${THIS_DIR}/../../node_modules/react-native/package.json | cut -d . -f 1 | cut -c 2-)
 DO_GIT_TAG=${GIT_TAG:-0}
 
 if [[ $THE_MVN_REPO == http* ]]; then
@@ -38,19 +38,17 @@ if [[ $MVN_HTTP == 1 ]]; then
         -DgeneratePom=false \
         -DpomFile=react-native-${RN_VERSION}.pom || true
     popd
-    # Push Hermes
-    echo "Pushing Hermes ${HERMES_VERSION} to the Maven repo"
-    pushd ${THIS_DIR}/../../node_modules/hermes-engine/android/
+    # Push JSC
+    echo "Pushing JSC ${JSC_VERSION} to the Maven repo"
+    pushd ${THIS_DIR}/../../node_modules/jsc-android/dist/org/webkit/android-jsc/${JSC_VERSION}
     mvn \
         deploy:deploy-file \
         -Durl=${MVN_REPO} \
         -DrepositoryId=${MVN_REPO_ID} \
-        -Dfile=hermes-release.aar \
+        -Dfile=android-jsc-${JSC_VERSION}.aar \
         -Dpackaging=aar \
-        -DgroupId=com.facebook \
-        -DartifactId=hermes \
-        -Dversion=${HERMES_VERSION} \
-        -DgeneratePom=true || true
+        -DgeneratePom=false \
+        -DpomFile=android-jsc-${JSC_VERSION}.pom || true
     popd
 else
     # Push React Native, if necessary
@@ -67,19 +65,17 @@ else
         popd
     fi
 
-    # Push Hermes, if necessary
-    if [[ ! -d ${MVN_REPO}/com/facebook/hermes/${HERMES_VERSION} ]]; then
-        echo "Pushing Hermes ${HERMES_VERSION} to the Maven repo"
-        pushd ${THIS_DIR}/../../node_modules/hermes-engine/android/
+    # Push JSC, if necessary
+    if [[ ! -d ${MVN_REPO}/org/webkit/android-jsc/${JSC_VERSION} ]]; then
+        echo "Pushing JSC ${JSC_VERSION} to the Maven repo"
+        pushd ${THIS_DIR}/../../node_modules/jsc-android/dist/org/webkit/android-jsc/${JSC_VERSION}
         mvn \
             deploy:deploy-file \
             -Durl=${MVN_REPO} \
-            -Dfile=hermes-release.aar \
+            -Dfile=android-jsc-${JSC_VERSION}.aar \
             -Dpackaging=aar \
-            -DgroupId=com.facebook \
-            -DartifactId=hermes \
-            -Dversion=${HERMES_VERSION} \
-            -DgeneratePom=true
+            -DgeneratePom=false \
+            -DpomFile=android-jsc-${JSC_VERSION}.pom
         popd
     fi
 
@@ -93,7 +89,9 @@ fi
 # Now build and publish the Jitsi Meet SDK and its dependencies
 echo "Building and publishing the Jitsi Meet SDK"
 pushd ${THIS_DIR}/../
-./gradlew clean assembleRelease publish
+./gradlew clean 
+./gradlew assembleRelease 
+./gradlew publish
 popd
 
 if [[ $DO_GIT_TAG == 1 ]]; then

@@ -212,7 +212,7 @@
         "kickParticipantButton": "Verwijderen",
         "kickParticipantDialog": "Weet u zeker dat u deze deelnemer wilt verwijderen?",
         "kickParticipantTitle": "Deze deelnemer verwijderen?",
-        "kickTitle": "Oei! {{ParticipantDisplayName}} heeft u uit de vergadering verwijderd",
+        "kickTitle": "Oei! {{participantDisplayName}} heeft u uit de vergadering verwijderd",
         "liveStreaming": "Livestreamen",
         "liveStreamingDisabledBecauseOfActiveRecordingTooltip": "Niet mogelijk tijdens opnemen",
         "liveStreamingDisabledForGuestTooltip": "Gasten kunnen geen livestream starten.",

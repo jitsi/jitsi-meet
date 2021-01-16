@@ -1,3 +1,4 @@
+local new_throttle = require "util.throttle".create;
 local st = require "util.stanza";
 
 local token_util = module:require "token/util".new(module);
@@ -10,12 +11,19 @@ if token_util == nil then
     return;
 end
 
--- configuration to limit number of outgoing calls
-local LIMIT_OUTGOING_CALLS = module:get_option_number("max_number_outgoing_calls", -1);
+-- The maximum number of simultaneous calls,
+-- and also the maximum number of new calls per minute that a session is allowed to create.
+local limit_outgoing_calls;
+local function load_config()
+    limit_outgoing_calls = module:get_option_number("max_number_outgoing_calls", -1);
+end
+load_config();
 
 -- Header names to use to push extra data extracted from token, if any
 local OUT_INITIATOR_USER_ATTR_NAME = "X-outbound-call-initiator-user";
 local OUT_INITIATOR_GROUP_ATTR_NAME = "X-outbound-call-initiator-group";
+local OUTGOING_CALLS_THROTTLE_INTERVAL = 60; -- if max_number_outgoing_calls is enabled it will be
+                                             -- the max number of outgoing calls a user can try for a minute
 
 -- filters rayo iq in case of requested from not jwt authenticated sessions
 -- or if the session has features in user context and it doesn't mention
@@ -53,15 +61,21 @@ module:hook("pre-iq/full", function(event)
             end
 
             -- now lets check any limits if configured
-            if LIMIT_OUTGOING_CALLS > 0
-                and get_concurrent_outgoing_count(
-                        session.jitsi_meet_context_user["id"],
-                        session.jitsi_meet_context_group) >= LIMIT_OUTGOING_CALLS
-            then
-                module:log("warn",
-                    "Filtering stanza dial, stanza:%s, outgoing calls limit reached", tostring(stanza));
-                session.send(st.error_reply(stanza, "cancel", "resource-constraint"));
-                return true;
+            if limit_outgoing_calls > 0 then
+                if not session.dial_out_throttle then
+                    module:log("debug", "Enabling dial-out throttle session=%s.", session);
+                    session.dial_out_throttle = new_throttle(limit_outgoing_calls, OUTGOING_CALLS_THROTTLE_INTERVAL);
+                end
+
+                if not session.dial_out_throttle:poll(1) -- we first check the throttle so we can mark one incoming dial for the balance
+                    or get_concurrent_outgoing_count(session.jitsi_meet_context_user["id"], session.jitsi_meet_context_group)
+                            >= limit_outgoing_calls
+                then
+                    module:log("warn",
+                        "Filtering stanza dial, stanza:%s, outgoing calls limit reached", tostring(stanza));
+                    session.send(st.error_reply(stanza, "cancel", "resource-constraint"));
+                    return true;
+                end
             end
 
             -- now lets insert token information if any
@@ -163,3 +177,4 @@ function get_concurrent_outgoing_count(context_user, context_group)
     return count;
 end
 
+module:hook_global('config-reloaded', load_config);
