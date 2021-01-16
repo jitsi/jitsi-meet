@@ -7,7 +7,7 @@ import { JitsiModal } from '../../base/modal';
 import { connect } from '../../base/redux';
 import { HELP_VIEW_MODAL_ID } from '../constants';
 
-const DEFAULT_HELP_CENTRE_URL = 'https://web-cdn.jitsi.net/faq/meet-faq.html';
+const DEFAULT_HELP_CENTRE_URL = 'https://www.hopp-foundation.de/schule/unterstuetzung/videokonferenztool-jitsi/';
 
 type Props = {
 
