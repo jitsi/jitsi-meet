@@ -13,6 +13,7 @@ import { translate } from '../../../base/i18n';
 import { Icon, IconMenuDown, IconMenuUp } from '../../../base/icons';
 import { connect } from '../../../base/redux';
 import { dockToolbox } from '../../../toolbox/actions.web';
+import { isButtonEnabled } from '../../../toolbox/functions.web';
 import { getCurrentLayout, LAYOUTS } from '../../../video-layout';
 import { setFilmstripHovered, setFilmstripVisible } from '../../actions';
 import { shouldRemoteVideosBeVisible } from '../../functions';
@@ -197,7 +198,7 @@ class Filmstrip extends Component <Props> {
 
         let toolbar = null;
 
-        if (!this.props._hideToolbar) {
+        if (!this.props._hideToolbar && isButtonEnabled('filmstrip')) {
             toolbar = this._renderToggleButton();
         }
 

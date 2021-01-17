@@ -99,8 +99,21 @@
 #if 0
 - (void)enterPictureInPicture:(NSDictionary *)data {
     [self _onJitsiMeetViewDelegateEvent:@"ENTER_PICTURE_IN_PICTURE" withData:data];
+
 }
 #endif
+
+- (void)participantJoined:(NSDictionary *)data {
+  NSLog(@"%@%@", @"Participant joined: ", data[@"participantId"]);
+}
+
+- (void)participantLeft:(NSDictionary *)data {
+  NSLog(@"%@%@", @"Participant left: ", data[@"participantId"]);
+}
+
+- (void)audioMutedChanged:(NSDictionary *)data {
+  NSLog(@"%@%@", @"Audio muted changed: ", data[@"muted"]);
+}
 
 #pragma mark - Helpers
 

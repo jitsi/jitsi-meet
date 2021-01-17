@@ -40,20 +40,20 @@ MiddlewareRegistry.register(store => next => action => {
                 }
             });
         conference.on(
-            JitsiConferenceEvents.TALK_WHILE_MUTED, () => {
-                const notification = showNotification({
+            JitsiConferenceEvents.TALK_WHILE_MUTED, async () => {
+                const notification = await dispatch(showNotification({
                     titleKey: 'toolbar.talkWhileMutedPopup',
                     customActionNameKey: 'notify.unmute',
                     customActionHandler: () => dispatch(setAudioMuted(false))
-                });
-
-                dispatch(notification);
+                }));
 
                 dispatch(playSound(TALK_WHILE_MUTED_SOUND_ID));
 
-                // we store the last start muted notification id that we showed,
-                // so we can hide it when unmuted mic is detected
-                dispatch(setCurrentNotificationUid(notification.uid));
+                if (notification) {
+                    // we store the last start muted notification id that we showed,
+                    // so we can hide it when unmuted mic is detected
+                    dispatch(setCurrentNotificationUid(notification.uid));
+                }
             });
         break;
     }

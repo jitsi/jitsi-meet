@@ -61,6 +61,11 @@ type Props = {
     _menuPosition: string,
 
     /**
+     * Whether to display the Popover as a drawer.
+     */
+    _overflowDrawer: boolean,
+
+    /**
      * The current state of the participant's remote control session.
      */
     _remoteControlState: number,
@@ -75,12 +80,7 @@ type Props = {
      * A value between 0 and 1 indicating the volume of the participant's
      * audio element.
      */
-    initialVolumeValue: number,
-
-    /**
-     * Callback to invoke when the popover has been displayed.
-     */
-    onMenuDisplay: Function,
+    initialVolumeValue: ?number,
 
     /**
      * Callback to invoke when changing the level of the participant's
@@ -112,19 +112,6 @@ class RemoteVideoMenuTriggerButton extends Component<Props> {
     _rootElement = null;
 
     /**
-     * Initializes a new {#@code RemoteVideoMenuTriggerButton} instance.
-     *
-     * @param {Object} props - The read-only properties with which the new
-     * instance is to be initialized.
-     */
-    constructor(props: Object) {
-        super(props);
-
-        // Bind event handler so it is only bound once for every instance.
-        this._onShowRemoteMenu = this._onShowRemoteMenu.bind(this);
-    }
-
-    /**
      * Implements React's {@link Component#render()}.
      *
      * @inheritdoc
@@ -140,7 +127,7 @@ class RemoteVideoMenuTriggerButton extends Component<Props> {
         return (
             <Popover
                 content = { content }
-                onPopoverOpen = { this._onShowRemoteMenu }
+                overflowDrawer = { this.props._overflowDrawer }
                 position = { this.props._menuPosition }>
                 <span
                     className = 'popover-trigger remote-video-menu-trigger'>
@@ -151,18 +138,6 @@ class RemoteVideoMenuTriggerButton extends Component<Props> {
                 </span>
             </Popover>
         );
-    }
-
-    _onShowRemoteMenu: () => void;
-
-    /**
-     * Opens the {@code RemoteVideoMenu}.
-     *
-     * @private
-     * @returns {void}
-     */
-    _onShowRemoteMenu() {
-        this.props.onMenuDisplay();
     }
 
     /**
@@ -241,7 +216,7 @@ class RemoteVideoMenuTriggerButton extends Component<Props> {
                 participantID = { participantID } />
         );
 
-        if (onVolumeChange) {
+        if (onVolumeChange && initialVolumeValue && !isNaN(initialVolumeValue)) {
             buttons.push(
                 <VolumeSlider
                     initialValue = { initialVolumeValue }
@@ -268,14 +243,7 @@ class RemoteVideoMenuTriggerButton extends Component<Props> {
  * @param {Object} state - The Redux state.
  * @param {Object} ownProps - The own props of the component.
  * @private
- * @returns {{
- *     _isAudioMuted: boolean,
- *     _isModerator: boolean,
- *     _disableKick: boolean,
- *     _disableRemoteMute: boolean,
- *     _menuPosition: string,
- *     _remoteControlState: number
- * }}
+ * @returns {Props}
  */
 function _mapStateToProps(state, ownProps) {
     const { participantID } = ownProps;
@@ -290,6 +258,7 @@ function _mapStateToProps(state, ownProps) {
     const { active, controller } = state['features/remote-control'];
     const { requestedParticipant, controlled } = controller;
     const activeParticipant = requestedParticipant || controlled;
+    const { overflowDrawer } = state['features/toolbox'];
 
     if (_supportsRemoteControl
             && ((!active && !_isRemoteControlSessionActive) || activeParticipant === participantID)) {
@@ -322,7 +291,8 @@ function _mapStateToProps(state, ownProps) {
         _disableKick: Boolean(disableKick),
         _disableRemoteMute: Boolean(disableRemoteMute),
         _remoteControlState,
-        _menuPosition
+        _menuPosition,
+        _overflowDrawer: overflowDrawer
     };
 }
 

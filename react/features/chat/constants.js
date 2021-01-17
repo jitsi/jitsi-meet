@@ -29,3 +29,7 @@ export const MESSAGE_TYPE_LOCAL = 'local';
  * The {@code messageType} of remote messages.
  */
 export const MESSAGE_TYPE_REMOTE = 'remote';
+
+export const DESKTOP_SMALL_WIDTH_THRESHOLD = 580;
+
+export const MOBILE_SMALL_WIDTH_THRESHOLD = 680;

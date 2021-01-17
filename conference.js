@@ -472,8 +472,8 @@ export default {
      */
     createInitialLocalTracks(options = {}) {
         const errors = {};
-        const initialDevices = [ 'audio' ];
-        const requestedAudio = true;
+        const initialDevices = config.disableInitialGUM ? [] : [ 'audio' ];
+        const requestedAudio = !config.disableInitialGUM;
         let requestedVideo = false;
 
         // Always get a handle on the audio input device so that we have statistics even if the user joins the
@@ -484,19 +484,22 @@ export default {
             this.muteAudio(true, true);
         }
 
-        if (!options.startWithVideoMuted
+        if (!config.disableInitialGUM
+                && !options.startWithVideoMuted
                 && !options.startAudioOnly
                 && !options.startScreenSharing) {
             initialDevices.push('video');
             requestedVideo = true;
         }
 
-        JitsiMeetJS.mediaDevices.addEventListener(
-            JitsiMediaDevicesEvents.PERMISSION_PROMPT_IS_SHOWN,
-            browserName =>
-                APP.store.dispatch(
-                    mediaPermissionPromptVisibilityChanged(true, browserName))
-        );
+        if (!config.disableInitialGUM) {
+            JitsiMeetJS.mediaDevices.addEventListener(
+                JitsiMediaDevicesEvents.PERMISSION_PROMPT_IS_SHOWN,
+                browserName =>
+                    APP.store.dispatch(
+                        mediaPermissionPromptVisibilityChanged(true, browserName))
+            );
+        }
 
         let tryCreateLocalTracks;
 
@@ -2011,7 +2014,6 @@ export default {
                             formattedDisplayName
                                 || interfaceConfig.DEFAULT_REMOTE_DISPLAY_NAME)
                 });
-                APP.UI.changeDisplayName(id, formattedDisplayName);
             }
         );
         room.on(
@@ -2050,10 +2052,7 @@ export default {
             (...args) => APP.store.dispatch(lockStateChanged(room, ...args)));
 
         room.on(JitsiConferenceEvents.KICKED, participant => {
-            APP.UI.hideStats();
             APP.store.dispatch(kickedOut(room, participant));
-
-            // FIXME close
         });
 
         room.on(JitsiConferenceEvents.PARTICIPANT_KICKED, (kicker, kicked) => {
@@ -2383,14 +2382,11 @@ export default {
     _onConferenceJoined() {
         APP.UI.initConference();
 
-        APP.keyboardshortcut.init();
+        if (!config.disableShortcuts) {
+            APP.keyboardshortcut.init();
+        }
 
         APP.store.dispatch(conferenceJoined(room));
-
-        const displayName
-            = APP.store.getState()['features/base/settings'].displayName;
-
-        APP.UI.changeDisplayName('localVideoContainer', displayName);
     },
 
     /**
@@ -2868,10 +2864,6 @@ export default {
         APP.store.dispatch(updateSettings({
             displayName: formattedNickname
         }));
-
-        if (room) {
-            APP.UI.changeDisplayName(id, formattedNickname);
-        }
     },
 
     /**

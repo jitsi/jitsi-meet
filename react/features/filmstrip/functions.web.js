@@ -1,10 +1,20 @@
 // @flow
 
+import { JitsiParticipantConnectionStatus } from '../base/lib-jitsi-meet';
+import { MEDIA_TYPE } from '../base/media';
 import {
+    getLocalParticipant,
+    getParticipantById,
     getParticipantCountWithFake,
     getPinnedParticipant
 } from '../base/participants';
 import { toState } from '../base/redux';
+import {
+    getLocalVideoTrack,
+    getTrackByMediaTypeAndParticipant,
+    isLocalTrackMuted,
+    isRemoteTrackMuted
+} from '../base/tracks/functions';
 
 import { TILE_ASPECT_RATIO } from './constants';
 
@@ -61,6 +71,40 @@ export function shouldRemoteVideosBeVisible(state: Object) {
                         && pinnedParticipant.local)))
 
             || state['features/base/config'].disable1On1Mode);
+}
+
+/**
+ * Checks whether there is a playable video stream available for the user associated with the passed ID.
+ *
+ * @param {Object | Function} stateful - The Object or Function that can be
+ * resolved to a Redux state object with the toState function.
+ * @param {string} id - The id of the participant.
+ * @returns {boolean} <tt>true</tt> if there is a playable video stream available
+ * or <tt>false</tt> otherwise.
+ */
+export function isVideoPlayable(stateful: Object | Function, id: String) {
+    const state = toState(stateful);
+    const tracks = state['features/base/tracks'];
+    const participant = id ? getParticipantById(state, id) : getLocalParticipant(state);
+    const isLocal = participant?.local ?? true;
+    const { connectionStatus } = participant || {};
+    const videoTrack
+        = isLocal ? getLocalVideoTrack(tracks) : getTrackByMediaTypeAndParticipant(tracks, MEDIA_TYPE.VIDEO, id);
+    const isAudioOnly = Boolean(state['features/base/audio-only'].enabled);
+    let isPlayable = false;
+
+    if (isLocal) {
+        const isVideoMuted = isLocalTrackMuted(tracks, MEDIA_TYPE.VIDEO);
+
+        isPlayable = Boolean(videoTrack) && !isVideoMuted && !isAudioOnly;
+    } else if (!participant?.isFakeParticipant) { // remote participants excluding shared video
+        const isVideoMuted = isRemoteTrackMuted(tracks, MEDIA_TYPE.VIDEO, id);
+
+        isPlayable = Boolean(videoTrack) && !isVideoMuted && !isAudioOnly
+            && connectionStatus === JitsiParticipantConnectionStatus.ACTIVE;
+    }
+
+    return isPlayable;
 }
 
 /**

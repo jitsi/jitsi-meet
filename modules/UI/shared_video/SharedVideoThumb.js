@@ -1,10 +1,15 @@
-/* global $ */
+/* global $, APP */
 
-import Logger from 'jitsi-meet-logger';
+/* eslint-disable no-unused-vars */
+import React, { Component } from 'react';
+import ReactDOM from 'react-dom';
+import { I18nextProvider } from 'react-i18next';
+import { Provider } from 'react-redux';
 
+import { i18next } from '../../../react/features/base/i18n';
+import { Thumbnail } from '../../../react/features/filmstrip';
 import SmallVideo from '../videolayout/SmallVideo';
-
-const logger = Logger.getLogger(__filename);
+/* eslint-enable no-unused-vars */
 
 /**
  *
@@ -13,27 +18,20 @@ export default class SharedVideoThumb extends SmallVideo {
     /**
      *
      * @param {*} participant
-     * @param {*} videoType
-     * @param {*} VideoLayout
      */
-    constructor(participant, videoType, VideoLayout) {
-        super(VideoLayout);
+    constructor(participant) {
+        super();
         this.id = participant.id;
         this.isLocal = false;
         this.url = participant.id;
         this.videoSpanId = 'sharedVideoContainer';
         this.container = this.createContainer(this.videoSpanId);
         this.$container = $(this.container);
+        this.renderThumbnail();
         this._setThumbnailSize();
         this.bindHoverHandler();
-        this.updateDisplayName();
         this.container.onclick = this._onContainerClick;
     }
-
-    /**
-     *
-     */
-    initializeAvatar() {} // eslint-disable-line no-empty-function
 
     /**
      *
@@ -44,18 +42,6 @@ export default class SharedVideoThumb extends SmallVideo {
 
         container.id = spanId;
         container.className = 'videocontainer';
-
-        // add the avatar
-        const avatar = document.createElement('img');
-
-        avatar.className = 'sharedVideoAvatar';
-        avatar.src = `https://img.youtube.com/vi/${this.url}/0.jpg`;
-        container.appendChild(avatar);
-
-        const displayNameContainer = document.createElement('div');
-
-        displayNameContainer.className = 'displayNameContainer';
-        container.appendChild(displayNameContainer);
 
         const remoteVideosContainer
             = document.getElementById('filmstripRemoteVideosContainer');
@@ -68,21 +54,14 @@ export default class SharedVideoThumb extends SmallVideo {
     }
 
     /**
-     * Triggers re-rendering of the display name using current instance state.
-     *
-     * @returns {void}
+     * Renders the thumbnail.
      */
-    updateDisplayName() {
-        if (!this.container) {
-            logger.warn(`Unable to set displayName - ${this.videoSpanId
-            } does not exist`);
-
-            return;
-        }
-
-        this._renderDisplayName({
-            elementID: `${this.videoSpanId}_name`,
-            participantID: this.id
-        });
+    renderThumbnail(isHovered = false) {
+        ReactDOM.render(
+            <Provider store = { APP.store }>
+                <I18nextProvider i18n = { i18next }>
+                    <Thumbnail participantID = { this.id } isHovered = { isHovered } />
+                </I18nextProvider>
+            </Provider>, this.container);
     }
 }

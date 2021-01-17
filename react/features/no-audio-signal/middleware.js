@@ -108,20 +108,20 @@ async function _handleNoAudioSignalNotification({ dispatch, getState }, action) 
             };
         }
 
-        const notification = showNotification({
+        const notification = await dispatch(showNotification({
             titleKey: 'toolbar.noAudioSignalTitle',
             description: <DialInLink />,
             descriptionKey,
             customActionNameKey,
             customActionHandler
-        });
-
-        dispatch(notification);
+        }));
 
         dispatch(playSound(NO_AUDIO_SIGNAL_SOUND_ID));
 
-        // Store the current notification uid so we can check for this state and hide it in case
-        // a new track was added, thus changing the context of the notification
-        dispatch(setNoAudioSignalNotificationUid(notification.uid));
+        if (notification) {
+            // Store the current notification uid so we can check for this state and hide it in case
+            // a new track was added, thus changing the context of the notification
+            dispatch(setNoAudioSignalNotificationUid(notification.uid));
+        }
     });
 }

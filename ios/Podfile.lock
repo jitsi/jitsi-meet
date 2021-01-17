@@ -292,7 +292,7 @@ PODS:
     - React
   - react-native-splash-screen (3.2.0):
     - React
-  - react-native-webrtc (1.87.2):
+  - react-native-webrtc (1.87.3):
     - React-Core
   - react-native-webview (11.0.2):
     - React-Core
@@ -354,7 +354,7 @@ PODS:
     - React
   - RNDefaultPreference (1.4.2):
     - React
-  - RNDeviceInfo (7.3.1):
+  - RNDeviceInfo (8.0.0):
     - React-Core
   - RNGoogleSignin (3.0.1):
     - GoogleSignIn (~> 5.0.0)
@@ -364,7 +364,7 @@ PODS:
     - RNSound/Core (= 0.11.0)
   - RNSound/Core (0.11.0):
     - React
-  - RNSVG (10.1.0):
+  - RNSVG (12.1.0):
     - React
   - RNWatch (0.4.3):
     - React
@@ -563,7 +563,7 @@ SPEC CHECKSUMS:
   react-native-keep-awake: eba3137546b10003361b37c761f6c429b59814ae
   react-native-netinfo: 8d8db463bcc5db66a8ac5c48a7d86beb3b92f61a
   react-native-splash-screen: 200d11d188e2e78cea3ad319964f6142b6384865
-  react-native-webrtc: e6fca8432542dd1c77afa6c59629f0176ed78ee6
+  react-native-webrtc: dc1208bdca2c4d091f7b57859e69332bff6f1986
   react-native-webview: b2542d6fd424bcc3e3b2ec5f854f0abb4ec86c87
   React-RCTActionSheet: bcbc311dc3b47bc8efb2737ff0940239a45789a9
   React-RCTAnimation: 65f61080ce632f6dea23d52e354ffac9948396c6
@@ -577,10 +577,10 @@ SPEC CHECKSUMS:
   ReactCommon: 18014e1d98dbeb9141e935cfe35fc93bd511ffb6
   RNCAsyncStorage: bc2f81cc1df90c267ce9ed30bb2dbc93b945a8ee
   RNDefaultPreference: 56a405ce61033ac77b95004dccd7ac54c2eb50d1
-  RNDeviceInfo: 57bb2806fb7bd982a1434e9f0b4e6a6ab1f6702e
+  RNDeviceInfo: 72ded653ce636b3f03571e90bed99309a714944e
   RNGoogleSignin: 39336070b35fc4cea6a98cf111e00480317be0ae
   RNSound: c980916b596cc15c8dcd2f6ecd3b13c4881dbe20
-  RNSVG: 069864be08c9fe065a2cf7e63656a34c78653c99
+  RNSVG: ce9d996113475209013317e48b05c21ee988d42e
   RNWatch: a5320c959c75e72845c07985f3e935e58998f1d3
   Yoga: 96b469c5e81ff51b917b92e8c3390642d4ded30c
 
