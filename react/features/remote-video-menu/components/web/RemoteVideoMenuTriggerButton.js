@@ -61,6 +61,11 @@ type Props = {
     _menuPosition: string,
 
     /**
+     * Whether to display the Popover as a drawer.
+     */
+    _overflowDrawer: boolean,
+
+    /**
      * The current state of the participant's remote control session.
      */
     _remoteControlState: number,
@@ -122,6 +127,7 @@ class RemoteVideoMenuTriggerButton extends Component<Props> {
         return (
             <Popover
                 content = { content }
+                overflowDrawer = { this.props._overflowDrawer }
                 position = { this.props._menuPosition }>
                 <span
                     className = 'popover-trigger remote-video-menu-trigger'>
@@ -237,14 +243,7 @@ class RemoteVideoMenuTriggerButton extends Component<Props> {
  * @param {Object} state - The Redux state.
  * @param {Object} ownProps - The own props of the component.
  * @private
- * @returns {{
- *     _isAudioMuted: boolean,
- *     _isModerator: boolean,
- *     _disableKick: boolean,
- *     _disableRemoteMute: boolean,
- *     _menuPosition: string,
- *     _remoteControlState: number
- * }}
+ * @returns {Props}
  */
 function _mapStateToProps(state, ownProps) {
     const { participantID } = ownProps;
@@ -259,6 +258,7 @@ function _mapStateToProps(state, ownProps) {
     const { active, controller } = state['features/remote-control'];
     const { requestedParticipant, controlled } = controller;
     const activeParticipant = requestedParticipant || controlled;
+    const { overflowDrawer } = state['features/toolbox'];
 
     if (_supportsRemoteControl
             && ((!active && !_isRemoteControlSessionActive) || activeParticipant === participantID)) {
@@ -291,7 +291,8 @@ function _mapStateToProps(state, ownProps) {
         _disableKick: Boolean(disableKick),
         _disableRemoteMute: Boolean(disableRemoteMute),
         _remoteControlState,
-        _menuPosition
+        _menuPosition,
+        _overflowDrawer: overflowDrawer
     };
 }
 

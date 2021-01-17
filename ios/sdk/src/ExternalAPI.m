@@ -1,5 +1,5 @@
 /*
- * Copyright @ 2017-present Atlassian Pty Ltd
+ * Copyright @ 2017-present 8x8, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,22 +14,37 @@
  * limitations under the License.
  */
 
-#import <React/RCTBridgeModule.h>
-
+#import "ExternalAPI.h"
 #import "JitsiMeetView+Private.h"
 
-@interface ExternalAPI : NSObject<RCTBridgeModule>
-@end
+// Events
+static NSString * const hangUpEvent = @"org.jitsi.meet.HANG_UP";
+static NSString * const setAudioMutedEvent = @"org.jitsi.meet.SET_AUDIO_MUTED";
 
 @implementation ExternalAPI
 
 RCT_EXPORT_MODULE();
+
+- (NSDictionary *)constantsToExport {
+    return @{
+        @"HANG_UP": hangUpEvent,
+        @"SET_AUDIO_MUTED" : setAudioMutedEvent
+    };
+};
 
 /**
  * Make sure all methods in this module are invoked on the main/UI thread.
  */
 - (dispatch_queue_t)methodQueue {
     return dispatch_get_main_queue();
+}
+
++ (BOOL)requiresMainQueueSetup {
+    return NO;
+}
+
+- (NSArray<NSString *> *)supportedEvents {
+    return @[ hangUpEvent, setAudioMutedEvent ];
 }
 
 /**
@@ -85,6 +100,16 @@ RCT_EXPORT_METHOD(sendEvent:(NSString *)name
    [methodName appendString:@":"];
 
    return methodName;
+}
+
+- (void)sendHangUp {
+    [self sendEventWithName:hangUpEvent body:nil];
+}
+
+- (void)sendSetAudioMuted: (BOOL)muted {
+    NSDictionary *data = @{ @"muted": [NSNumber numberWithBool:muted]};
+
+    [self sendEventWithName:setAudioMutedEvent body:data];
 }
 
 @end

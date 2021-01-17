@@ -1,5 +1,5 @@
 /*
- * Copyright @ 2017-present Atlassian Pty Ltd
+ * Copyright @ 2017-present 8x8, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -55,4 +55,24 @@
  */
 - (void)enterPictureInPicture:(NSDictionary *)data;
 
+/**
+ * Called when a participant has joined the conference.
+ *
+ * The `data` dictionary contains a `participantId` key with the id of the participant that has joined.
+ */
+- (void)participantJoined:(NSDictionary *)data;
+
+/**
+ * Called when a participant has left the conference.
+ *
+ * The `data` dictionary contains a `participantId` key with the id of the participant that has left.
+ */
+- (void)participantLeft:(NSDictionary *)data;
+
+/**
+ * Called when audioMuted state changed.
+ *
+ * The `data` dictionary contains a `muted` key with state of the audioMuted for the localParticipant.
+ */
+- (void)audioMutedChanged:(NSDictionary *)data;
 @end
