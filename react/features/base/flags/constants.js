@@ -57,6 +57,12 @@ export const CHAT_ENABLED = 'chat.enabled';
 export const FILMSTRIP_ENABLED = 'filmstrip.enabled';
 
 /**
+ * Flag indicating if the Help button should be enabled.
+ * Default: enabled (true).
+ */
+export const HELP_BUTTON_ENABLED = 'help.enabled';
+
+/**
  * Flag indicating if invite functionality should be enabled.
  * Default: enabled (true).
  */
