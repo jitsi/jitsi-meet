@@ -21,7 +21,6 @@
 #import "ViewController.h"
 #import "Digitales_Klassenzimmer-Swift.h"
 
-@import Fabric;
 @import Firebase;
 @import ReplayKit;
 @import JitsiMeetSDK;

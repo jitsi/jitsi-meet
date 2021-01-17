@@ -26,6 +26,10 @@ import {
     _AUDIO_INITIAL_MEDIA_STATE,
     _VIDEO_INITIAL_MEDIA_STATE
 } from './reducer';
+import {
+    getLocalVideoTrack,
+} from '../tracks';
+
 
 /**
  * Implements the entry point of the middleware of the feature base/media.
@@ -73,18 +77,21 @@ MiddlewareRegistry.register(store => next => action => {
  * @returns {Object} The value returned by {@code next(action)}.
  */
 function _appStateChanged({ dispatch, getState }, next, action) {
-    const localVideo = getLocalVideoTrack(getState()['features/base/tracks']);
-    if (localVideo && localVideo.videoType === 'desktop') {
-        return next(action);
-    }
+    // const localVideo = getLocalVideoTrack(getState()['features/base/tracks']);
+    // if (localVideo && localVideo.videoType === 'desktop') {
+    //     return next(action);
+    // }
+    console.log('appstatechanged')
     if (navigator.product === 'ReactNative') {
         const { appState } = action;
         const mute = appState !== 'active' && !isLocalVideoTrackDesktop(getState());
 
         sendAnalytics(createTrackMutedEvent('video', 'background mode', mute));
+        console.log("in the if condition")
 
         dispatch(setVideoMuted(mute, MEDIA_TYPE.VIDEO, VIDEO_MUTISM_AUTHORITY.BACKGROUND));
     }
+    console.log("next(action)")
 
     return next(action);
 }
