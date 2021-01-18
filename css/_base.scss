@@ -51,16 +51,6 @@ body {
     }
 }
 
-/**
- * Similarly, we offset the notifications when the chat is open by
- * padding the container.
-*/
-@media (min-width: 581px) {
-    .shift-right [class^="styledFlagGroup-"] {
-        padding-left: $sidebarWidth;
-    }
-}
-
 .jitsi-icon svg {
     fill: white;
 }

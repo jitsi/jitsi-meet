@@ -142,7 +142,7 @@ class DeviceSelector extends Component<Props> {
                         this._onSelect(device.deviceId);
                     }
                 }>
-                { device.label }
+                { device.label || device.deviceId }
             </DropdownItem>
         );
     }
@@ -165,7 +165,7 @@ class DeviceSelector extends Component<Props> {
      */
     _createDropdown(options) {
         const triggerText
-            = (options.defaultSelected && options.defaultSelected.label)
+            = (options.defaultSelected && (options.defaultSelected.label || options.defaultSelected.deviceId))
                 || options.placeholder;
         const trigger = this._createDropdownTrigger(triggerText);
 
@@ -178,17 +178,19 @@ class DeviceSelector extends Component<Props> {
         }
 
         return (
-            <DropdownMenu
-                shouldFitContainer = { true }
-                trigger = { triggerText }
-                triggerButtonProps = {{
-                    shouldFitContainer: true
-                }}
-                triggerType = 'button'>
-                <DropdownItemGroup>
-                    { options.items }
-                </DropdownItemGroup>
-            </DropdownMenu>
+            <div className = 'dropdown-menu'>
+                <DropdownMenu
+                    shouldFitContainer = { true }
+                    trigger = { triggerText }
+                    triggerButtonProps = {{
+                        shouldFitContainer: true
+                    }}
+                    triggerType = 'button'>
+                    <DropdownItemGroup>
+                        { options.items }
+                    </DropdownItemGroup>
+                </DropdownMenu>
+            </div>
         );
     }
 

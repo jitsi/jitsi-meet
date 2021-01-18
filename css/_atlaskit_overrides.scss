@@ -2,7 +2,7 @@
  * Move the @atlaskit/flag container up a little bit so it does not cover the
  * toolbar with the first notification.
  */
-.atlaskit-portal > [class$="-FlagGroup"] {
+.atlaskit-portal > #notifications-container {
     bottom: calc(#{$newToolbarSizeWithPadding}) !important;
 }
 
@@ -11,8 +11,8 @@
      * Override @atlaskit/dropdown-menu styling when in a modal because the
      * dropdown backgrounds clash with the modal backgrounds.
      */
-    [class^="Droplist-"] [class^="styledContentContainer-"] > div {
-        border: 1px solid #455166;
+    .dropdown-menu div[style*="transform"] {
+        outline: 1px solid #455166;
     }
 }
 
@@ -22,4 +22,13 @@
  */
 .videocontainer__toptoolbar > div > div {
     background: none;
+}
+
+
+/**
+ * Keep overflow menu within screen vertical bounds and make it scrollable.
+ */
+ .toolbox-button-wth-dialog > div:nth-child(2) {
+    max-height: calc(100vh - #{$newToolbarSizeWithPadding} - 46px);
+    overflow-y: auto;
 }

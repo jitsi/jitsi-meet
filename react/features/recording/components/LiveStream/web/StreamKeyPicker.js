@@ -129,7 +129,7 @@ class StreamKeyPicker extends PureComponent<Props, State> {
             = (selected && selected.title) || t('liveStreaming.choose');
 
         return (
-            <div className = 'broadcast-dropdown'>
+            <div className = 'broadcast-dropdown dropdown-menu'>
                 <DropdownMenuStateless
                     isOpen = { this.state.isDropdownOpen }
                     onItemActivated = { this._onSelect }

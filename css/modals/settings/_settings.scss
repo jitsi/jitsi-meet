@@ -23,7 +23,7 @@
         padding: 20px 0px 4px 0px;
     }
 
-    label[class$="-Label"] > [class$="-LabelText"] {
+    input[type="checkbox"] + svg + span {
         color: #9FB0CC;
     }
 
