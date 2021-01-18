@@ -77,10 +77,10 @@
 - (void)audioMutedChanged:(NSDictionary *)data;
 
 /**
- * Called when a message is received.
+ * Called when an endpoint message is received.
  *
  * The `data` dictionary contains a `senderId` key with the participantId of the sender and a 'message' key with the content.
  */
-- (void)messageReceived:(NSDictionary *)data;
+- (void)endpointMessageReceived:(NSDictionary *)data;
 
 @end

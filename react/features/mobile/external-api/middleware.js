@@ -44,7 +44,7 @@ const CONFERENCE_TERMINATED = 'CONFERENCE_TERMINATED';
  * Event which will be emitted on the native side to indicate a message was received
  * through the channel.
  */
-const MESSAGE_RECEIVED = 'MESSAGE_RECEIVED';
+const ENDPOINT_MESSAGE_RECEIVED = 'ENDPOINT_MESSAGE_RECEIVED';
 
 const { ExternalAPI } = NativeModules;
 const eventEmitter = new NativeEventEmitter(ExternalAPI);
@@ -92,7 +92,7 @@ MiddlewareRegistry.register(store => next => action => {
 
     case CONFERENCE_JOINED:
         _sendConferenceEvent(store, action);
-        _registerForCommands(store);
+        _registerForEndpointMessages(store);
         break;
 
     case CONNECTION_DISCONNECTED: {
@@ -187,7 +187,7 @@ function _registerForNativeEvents({ getState, dispatch }) {
         dispatch(muteLocal(muted === 'true'));
     });
 
-    eventEmitter.addListener(ExternalAPI.SEND_MESSAGE, ({ to, message }) => {
+    eventEmitter.addListener(ExternalAPI.SEND_ENDPOINT_MESSAGE, ({ to, message }) => {
         const conference = getCurrentConference(getState());
 
         try {
@@ -202,13 +202,13 @@ function _registerForNativeEvents({ getState, dispatch }) {
 }
 
 /**
- * Registers for commands sent on conference data channel.
+ * Registers for endpoint messages sent on conference data channel.
  *
  * @param {Store} store - The redux store.
  * @private
  * @returns {void}
  */
-function _registerForCommands(store) {
+function _registerForEndpointMessages(store) {
     const conference = getCurrentConference(store.getState());
 
     conference && conference.on(
@@ -220,7 +220,7 @@ function _registerForCommands(store) {
                 if (eventData.name === ENDPOINT_MESSAGE_NAME) {
                     sendEvent(
                         store,
-                        MESSAGE_RECEIVED,
+                        ENDPOINT_MESSAGE_RECEIVED,
                         /* data */ {
                             message: eventData.message,
                             senderId: sender._id
