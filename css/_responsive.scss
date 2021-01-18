@@ -143,16 +143,6 @@
 
     @media only screen and (max-width: $verySmallScreen) {
         @include very-small-button-size();
-
-        #videoResolutionLabel {
-            display: none;
-        }
-        .vertical-filmstrip .filmstrip {
-            display: none;
-        }
-        .chrome-extension-banner {
-            display: none;
-        }
     }
 
     &.shift-right {
