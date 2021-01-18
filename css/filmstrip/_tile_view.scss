@@ -100,6 +100,15 @@
         video {
             object-fit: contain;
         }
+
+        /**
+         * Max-width corresponding to the ASPECT_RATIO_BREAKPOINT from features/filmstrip/constants.
+         */
+        @media only screen and (max-width: 500px) {
+            video {
+                object-fit: cover;
+            }
+        }
     }
 
     .has-overflow#filmstripRemoteVideosContainer {

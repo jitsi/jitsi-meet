@@ -16,7 +16,7 @@ import {
     isRemoteTrackMuted
 } from '../base/tracks/functions';
 
-import { TILE_ASPECT_RATIO } from './constants';
+import { ASPECT_RATIO_BREAKPOINT, SQUARE_TILE_ASPECT_RATIO, TILE_ASPECT_RATIO } from './constants';
 
 declare var interfaceConfig: Object;
 
@@ -142,12 +142,13 @@ export function calculateThumbnailSizeForTileView({
     clientWidth,
     clientHeight
 }: Object) {
+    const aspectRatio = clientWidth < ASPECT_RATIO_BREAKPOINT ? SQUARE_TILE_ASPECT_RATIO : TILE_ASPECT_RATIO;
     const viewWidth = clientWidth - TILE_VIEW_SIDE_MARGINS;
     const viewHeight = clientHeight - TILE_VIEW_SIDE_MARGINS;
     const initialWidth = viewWidth / columns;
-    const aspectRatioHeight = initialWidth / TILE_ASPECT_RATIO;
+    const aspectRatioHeight = initialWidth / aspectRatio;
     const height = Math.floor(Math.min(aspectRatioHeight, viewHeight / visibleRows));
-    const width = Math.floor(TILE_ASPECT_RATIO * height);
+    const width = Math.floor(aspectRatio * height);
 
     return {
         height,
