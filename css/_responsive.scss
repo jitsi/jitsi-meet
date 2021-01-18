@@ -181,7 +181,7 @@
         @include full-size-modal-positioner();
     }
 
-    .shift-right [role="dialog"] {
+    .shift-right .focus-lock [role="dialog"] {
         @include full-size-modal-dialog();
     }
 }
@@ -192,7 +192,7 @@
             @include full-size-modal-positioner();
         }
 
-        &.shift-right [role="dialog"] {
+        &.shift-right .focus-lock [role="dialog"] {
             @include full-size-modal-dialog();
         }
     }
