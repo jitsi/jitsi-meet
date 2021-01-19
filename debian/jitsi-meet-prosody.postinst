@@ -161,6 +161,9 @@ case "$1" in
             PROSODY_CONFIG_PRESENT="false"
         fi
 
+        # Make sure the client-proxy is set correctly.
+        hocon -f /etc/jitsi/jicofo/jicofo.conf set xmpp.client.client-proxy "focus.$JVB_HOSTNAME"
+
         # Make sure the focus@auth user's roster includes the proxy component (this is idempotent)
         prosodyctl mod_roster_command subscribe focus.$JVB_HOSTNAME $JICOFO_AUTH_USER@auth.$JVB_HOSTNAME
 
