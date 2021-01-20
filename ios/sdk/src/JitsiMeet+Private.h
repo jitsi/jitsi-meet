@@ -22,5 +22,6 @@
 
 - (NSDictionary *)getDefaultProps;
 - (RCTBridge *)getReactBridge;
+- (ExternalAPI *)getExternalAPI;
 
 @end

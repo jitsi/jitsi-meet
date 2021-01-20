@@ -20,7 +20,7 @@
 // Events
 static NSString * const hangUpAction = @"org.jitsi.meet.HANG_UP";
 static NSString * const setAudioMutedAction = @"org.jitsi.meet.SET_AUDIO_MUTED";
-static NSString * const sendEndpointMessageAction = @"org.jitsi.meet.SEND_ENDPOINT_MESSAGE";
+static NSString * const sendEndpointTextMessageAction = @"org.jitsi.meet.SEND_ENDPOINT_TEXT_MESSAGE";
 
 @implementation ExternalAPI
 
@@ -30,7 +30,7 @@ RCT_EXPORT_MODULE();
     return @{
         @"HANG_UP": hangUpAction,
         @"SET_AUDIO_MUTED" : setAudioMutedAction,
-        @"SEND_ENDPOINT_MESSAGE": sendEndpointMessageAction
+        @"SEND_ENDPOINT_TEXT_MESSAGE": sendEndpointTextMessageAction
     };
 };
 
@@ -46,7 +46,7 @@ RCT_EXPORT_MODULE();
 }
 
 - (NSArray<NSString *> *)supportedEvents {
-    return @[ hangUpAction, setAudioMutedAction, sendEndpointMessageAction ];
+    return @[ hangUpAction, setAudioMutedAction, sendEndpointTextMessageAction ];
 }
 
 /**
@@ -114,13 +114,13 @@ RCT_EXPORT_METHOD(sendEvent:(NSString *)name
     [self sendEventWithName:setAudioMutedAction body:data];
 }
 
-- (void)sendEndpointMessage:(NSString*)to :(NSString*)message {
+- (void)sendEndpointTextMessage:(NSString*)to :(NSString*)message {
     NSDictionary *data = @{
         @"to": to,
         @"message": message
     };
     
-    [self sendEventWithName:sendEndpointMessageAction body:data];
+    [self sendEventWithName:sendEndpointTextMessageAction body:data];
 }
 
 @end

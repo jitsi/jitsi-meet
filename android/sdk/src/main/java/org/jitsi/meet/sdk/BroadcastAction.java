@@ -61,7 +61,7 @@ public class BroadcastAction {
     enum Type {
         SET_AUDIO_MUTED("org.jitsi.meet.SET_AUDIO_MUTED"),
         HANG_UP("org.jitsi.meet.HANG_UP"),
-        SEND_ENDPOINT_MESSAGE("org.jitsi.meet.SEND_ENDPOINT_MESSAGE");
+        SEND_ENDPOINT_TEXT_MESSAGE("org.jitsi.meet.SEND_ENDPOINT_TEXT_MESSAGE");
 
         private final String action;
 

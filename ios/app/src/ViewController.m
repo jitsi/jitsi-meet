@@ -115,8 +115,8 @@
   NSLog(@"%@%@", @"Audio muted changed: ", data[@"muted"]);
 }
 
-- (void)endpointMessageReceived:(NSDictionary *)data; {
-  NSLog(@"%@%@", @"Endpoint message received: ", data);
+- (void)endpointTextMessageReceived:(NSDictionary *)data; {
+  NSLog(@"%@%@", @"Endpoint text message received: ", data);
 }
 
 #pragma mark - Helpers

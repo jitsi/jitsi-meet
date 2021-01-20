@@ -2,7 +2,7 @@
 
 import { NativeEventEmitter, NativeModules } from 'react-native';
 
-import { ENDPOINT_MESSAGE_NAME } from '../../../../modules/API/constants';
+import { ENDPOINT_TEXT_MESSAGE_NAME } from '../../../../modules/API/constants';
 import logger from '../../analytics/logger';
 import { appNavigate } from '../../app/actions';
 import { APP_WILL_MOUNT } from '../../base/app/actionTypes';
@@ -44,7 +44,7 @@ const CONFERENCE_TERMINATED = 'CONFERENCE_TERMINATED';
  * Event which will be emitted on the native side to indicate a message was received
  * through the channel.
  */
-const ENDPOINT_MESSAGE_RECEIVED = 'ENDPOINT_MESSAGE_RECEIVED';
+const ENDPOINT_TEXT_MESSAGE_RECEIVED = 'ENDPOINT_TEXT_MESSAGE_RECEIVED';
 
 const { ExternalAPI } = NativeModules;
 const eventEmitter = new NativeEventEmitter(ExternalAPI);
@@ -92,7 +92,7 @@ MiddlewareRegistry.register(store => next => action => {
 
     case CONFERENCE_JOINED:
         _sendConferenceEvent(store, action);
-        _registerForEndpointMessages(store);
+        _registerForEndpointTextMessages(store);
         break;
 
     case CONNECTION_DISCONNECTED: {
@@ -187,13 +187,13 @@ function _registerForNativeEvents({ getState, dispatch }) {
         dispatch(muteLocal(muted === 'true'));
     });
 
-    eventEmitter.addListener(ExternalAPI.SEND_ENDPOINT_MESSAGE, ({ to, message }) => {
+    eventEmitter.addListener(ExternalAPI.SEND_ENDPOINT_TEXT_MESSAGE, ({ to, message }) => {
         const conference = getCurrentConference(getState());
 
         try {
             conference && conference.sendEndpointMessage(to, {
-                name: ENDPOINT_MESSAGE_NAME,
-                message
+                name: ENDPOINT_TEXT_MESSAGE_NAME,
+                text: message
             });
         } catch (error) {
             logger.warn('Cannot send endpointMessage', error);
@@ -208,7 +208,7 @@ function _registerForNativeEvents({ getState, dispatch }) {
  * @private
  * @returns {void}
  */
-function _registerForEndpointMessages(store) {
+function _registerForEndpointTextMessages(store) {
     const conference = getCurrentConference(store.getState());
 
     conference && conference.on(
@@ -216,13 +216,13 @@ function _registerForEndpointMessages(store) {
         (...args) => {
             if (args && args.length >= 2) {
                 const [ sender, eventData ] = args;
-
-                if (eventData.name === ENDPOINT_MESSAGE_NAME) {
+                if (eventData.name === ENDPOINT_TEXT_MESSAGE_NAME) {
+                   
                     sendEvent(
                         store,
-                        ENDPOINT_MESSAGE_RECEIVED,
+                        ENDPOINT_TEXT_MESSAGE_RECEIVED,
                         /* data */ {
-                            message: eventData.message,
+                            message: eventData.text,
                             senderId: sender._id
                         });
                 }

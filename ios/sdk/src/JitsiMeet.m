@@ -17,6 +17,7 @@
 #import <Intents/Intents.h>
 
 #import "Dropbox.h"
+#import "ExternalAPI.h"
 #import "JitsiMeet+Private.h"
 #import "JitsiMeetConferenceOptions+Private.h"
 #import "JitsiMeetView+Private.h"
@@ -211,6 +212,10 @@
 
 - (RCTBridge *)getReactBridge {
     return _bridgeWrapper.bridge;
+}
+
+- (ExternalAPI *)getExternalAPI {
+    return [_bridgeWrapper.bridge moduleForClass:ExternalAPI.class];
 }
 
 @end
