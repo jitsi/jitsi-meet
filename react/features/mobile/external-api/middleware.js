@@ -216,8 +216,8 @@ function _registerForEndpointTextMessages(store) {
         (...args) => {
             if (args && args.length >= 2) {
                 const [ sender, eventData ] = args;
+
                 if (eventData.name === ENDPOINT_TEXT_MESSAGE_NAME) {
-                   
                     sendEvent(
                         store,
                         ENDPOINT_TEXT_MESSAGE_RECEIVED,
