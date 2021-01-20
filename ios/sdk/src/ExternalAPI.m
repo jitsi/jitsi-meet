@@ -18,8 +18,9 @@
 #import "JitsiMeetView+Private.h"
 
 // Events
-static NSString * const hangUpEvent = @"org.jitsi.meet.HANG_UP";
-static NSString * const setAudioMutedEvent = @"org.jitsi.meet.SET_AUDIO_MUTED";
+static NSString * const hangUpAction = @"org.jitsi.meet.HANG_UP";
+static NSString * const setAudioMutedAction = @"org.jitsi.meet.SET_AUDIO_MUTED";
+static NSString * const sendEndpointTextMessageAction = @"org.jitsi.meet.SEND_ENDPOINT_TEXT_MESSAGE";
 
 @implementation ExternalAPI
 
@@ -27,8 +28,9 @@ RCT_EXPORT_MODULE();
 
 - (NSDictionary *)constantsToExport {
     return @{
-        @"HANG_UP": hangUpEvent,
-        @"SET_AUDIO_MUTED" : setAudioMutedEvent
+        @"HANG_UP": hangUpAction,
+        @"SET_AUDIO_MUTED" : setAudioMutedAction,
+        @"SEND_ENDPOINT_TEXT_MESSAGE": sendEndpointTextMessageAction
     };
 };
 
@@ -44,7 +46,7 @@ RCT_EXPORT_MODULE();
 }
 
 - (NSArray<NSString *> *)supportedEvents {
-    return @[ hangUpEvent, setAudioMutedEvent ];
+    return @[ hangUpAction, setAudioMutedAction, sendEndpointTextMessageAction ];
 }
 
 /**
@@ -103,13 +105,22 @@ RCT_EXPORT_METHOD(sendEvent:(NSString *)name
 }
 
 - (void)sendHangUp {
-    [self sendEventWithName:hangUpEvent body:nil];
+    [self sendEventWithName:hangUpAction body:nil];
 }
 
-- (void)sendSetAudioMuted: (BOOL)muted {
+- (void)sendSetAudioMuted:(BOOL)muted {
     NSDictionary *data = @{ @"muted": [NSNumber numberWithBool:muted]};
 
-    [self sendEventWithName:setAudioMutedEvent body:data];
+    [self sendEventWithName:setAudioMutedAction body:data];
+}
+
+- (void)sendEndpointTextMessage:(NSString*)to :(NSString*)message {
+    NSDictionary *data = @{
+        @"to": to,
+        @"message": message
+    };
+    
+    [self sendEventWithName:sendEndpointTextMessageAction body:data];
 }
 
 @end

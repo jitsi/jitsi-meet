@@ -116,13 +116,18 @@ static void initializeViewsMap() {
 }
 
 - (void)hangUp {
-    RCTBridge *bridge = [[JitsiMeet sharedInstance] getReactBridge];
-    [[bridge moduleForClass:ExternalAPI.class] sendHangUp];
+    ExternalAPI *externalAPI = [[JitsiMeet sharedInstance] getExternalAPI];
+    [externalAPI sendHangUp];
 }
 
 - (void)setAudioMuted:(BOOL)muted {
-    RCTBridge *bridge = [[JitsiMeet sharedInstance] getReactBridge];
-    [[bridge moduleForClass:ExternalAPI.class] sendSetAudioMuted:muted];
+    ExternalAPI *externalAPI = [[JitsiMeet sharedInstance] getExternalAPI];
+    [externalAPI sendSetAudioMuted:muted];
+}
+
+- (void)sendEndpointTextMessage:(NSString*)to :(NSString*)message {
+    ExternalAPI *externalAPI = [[JitsiMeet sharedInstance] getExternalAPI];
+    [externalAPI sendEndpointTextMessage:to :message];
 }
 
 #pragma mark Private methods
