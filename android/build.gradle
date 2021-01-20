@@ -17,10 +17,10 @@ buildscript {
 }
 
 ext {
-    buildToolsVersion = "29.0.3"
-    compileSdkVersion = 29
+    buildToolsVersion = "30.0.3"
+    compileSdkVersion = 30
     minSdkVersion    = 23
-    targetSdkVersion = 29
+    targetSdkVersion = 30
     supportLibVersion = "28.0.0"
 
     // The Maven artifact groupdId of the third-party react-native modules which
