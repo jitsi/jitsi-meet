@@ -16,6 +16,7 @@
 
 #import <React/RCTBridge.h>
 
+#import "ExternalAPI.h"
 #import "JitsiMeet.h"
 
 @interface JitsiMeet ()

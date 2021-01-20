@@ -17,7 +17,6 @@
 #import <Intents/Intents.h>
 
 #import "Dropbox.h"
-#import "ExternalAPI.h"
 #import "JitsiMeet+Private.h"
 #import "JitsiMeetConferenceOptions+Private.h"
 #import "JitsiMeetView+Private.h"

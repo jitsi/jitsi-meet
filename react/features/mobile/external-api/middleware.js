@@ -3,7 +3,6 @@
 import { NativeEventEmitter, NativeModules } from 'react-native';
 
 import { ENDPOINT_TEXT_MESSAGE_NAME } from '../../../../modules/API/constants';
-import logger from '../../analytics/logger';
 import { appNavigate } from '../../app/actions';
 import { APP_WILL_MOUNT } from '../../base/app/actionTypes';
 import {
@@ -33,6 +32,7 @@ import { muteLocal } from '../../remote-video-menu/actions';
 import { ENTER_PICTURE_IN_PICTURE } from '../picture-in-picture';
 
 import { sendEvent } from './functions';
+import logger from './logger';
 
 /**
  * Event which will be emitted on the native side to indicate the conference
