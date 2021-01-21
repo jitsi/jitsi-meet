@@ -25,9 +25,10 @@ import {
     TRACK_CREATE_ERROR,
     TRACK_NO_DATA_FROM_SOURCE,
     TRACK_REMOVED,
+    TRACK_STOPPED,
     TRACK_UPDATED,
-    TRACK_WILL_CREATE,
-    TRACK_UPDATE_LAST_VIDEO_MEDIA_EVENT
+    TRACK_UPDATE_LAST_VIDEO_MEDIA_EVENT,
+    TRACK_WILL_CREATE
 } from './actionTypes';
 import {
     createLocalTracksF,
@@ -400,8 +401,15 @@ export function trackAdded(track) {
 
                     noDataFromSourceNotificationInfo = { timeout };
                 }
-
             }
+
+            track.on(JitsiTrackEvents.LOCAL_TRACK_STOPPED,
+                () => dispatch({
+                    type: TRACK_STOPPED,
+                    track: {
+                        jitsiTrack: track
+                    }
+                }));
         } else {
             participantId = track.getParticipantId();
             isReceivingData = true;

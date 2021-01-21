@@ -14,6 +14,7 @@ export { default as MuteRemoteParticipantDialog } from './MuteRemoteParticipantD
 export { default as MuteRemoteParticipantsVideoDialog } from './MuteRemoteParticipantsVideoDialog';
 export { default as PrivateMessageMenuButton } from './PrivateMessageMenuButton';
 export { REMOTE_CONTROL_MENU_STATES, default as RemoteControlButton } from './RemoteControlButton';
-export { default as RemoteVideoMenu } from './RemoteVideoMenu';
+export { default as VideoMenu } from './VideoMenu';
 export { default as RemoteVideoMenuTriggerButton } from './RemoteVideoMenuTriggerButton';
+export { default as LocalVideoMenuTriggerButton } from './LocalVideoMenuTriggerButton';
 export { default as VolumeSlider } from './VolumeSlider';

@@ -9,6 +9,7 @@ import {
     sendAnalytics
 } from '../../react/features/analytics';
 import { toggleDialog } from '../../react/features/base/dialog';
+import { clickOnVideo } from '../../react/features/filmstrip/actions';
 import { KeyboardShortcutsDialog }
     from '../../react/features/keyboard-shortcuts';
 import { SpeakerStats } from '../../react/features/speaker-stats';
@@ -54,7 +55,7 @@ const KeyboardShortcut = {
                 if (_shortcuts.has(key)) {
                     _shortcuts.get(key).function(e);
                 } else if (!isNaN(num) && num >= 0 && num <= 9) {
-                    APP.UI.clickOnVideo(num);
+                    APP.store.dispatch(clickOnVideo(num));
                 }
 
             }

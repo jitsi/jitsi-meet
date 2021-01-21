@@ -146,6 +146,18 @@ type Props = {
 };
 
 /**
+ * Click handler.
+ *
+ * @param {SyntheticEvent} event - The click event.
+ * @returns {void}
+ */
+function onClick(event) {
+    // If the event is propagated to the thumbnail container the participant will be pinned. That's why the propagation
+    // needs to be stopped.
+    event.stopPropagation();
+}
+
+/**
  * React {@code Component} for displaying connection statistics.
  *
  * @extends Component
@@ -161,7 +173,9 @@ class ConnectionStatsTable extends Component<Props> {
         const { isLocalVideo, enableSaveLogs } = this.props;
 
         return (
-            <div className = 'connection-info'>
+            <div
+                className = 'connection-info'
+                onClick = { onClick }>
                 { this._renderStatistics() }
                 <div className = 'connection-actions'>
                     { isLocalVideo && enableSaveLogs ? this._renderSaveLogs() : null}
