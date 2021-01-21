@@ -19,4 +19,8 @@ public class BroadcastIntentHelper {
         intent.putExtra("message", message);
         return intent;
     }
+
+    public static Intent buildToggleScreenShareIntent() {
+        return new Intent(BroadcastAction.Type.TOGGLE_SCREEN_SHARE.getAction());
+    }
 }

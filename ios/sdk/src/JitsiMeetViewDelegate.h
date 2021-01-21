@@ -83,4 +83,11 @@
  */
 - (void)endpointTextMessageReceived:(NSDictionary *)data;
 
+/**
+ * Called when a participant toggled shared screen.
+ *
+ * The `data` dictionary contains a `participantId` key with the id of the participant  and a 'sharing' key with boolean value.
+ */
+- (void)screenShareToggled:(NSDictionary *)data;
+
 @end

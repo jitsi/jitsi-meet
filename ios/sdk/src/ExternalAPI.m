@@ -21,6 +21,7 @@
 static NSString * const hangUpAction = @"org.jitsi.meet.HANG_UP";
 static NSString * const setAudioMutedAction = @"org.jitsi.meet.SET_AUDIO_MUTED";
 static NSString * const sendEndpointTextMessageAction = @"org.jitsi.meet.SEND_ENDPOINT_TEXT_MESSAGE";
+static NSString * const toggleScreenShareAction = @"org.jitsi.meet.TOGGLE_SCREEN_SHARE";
 
 @implementation ExternalAPI
 
@@ -30,7 +31,8 @@ RCT_EXPORT_MODULE();
     return @{
         @"HANG_UP": hangUpAction,
         @"SET_AUDIO_MUTED" : setAudioMutedAction,
-        @"SEND_ENDPOINT_TEXT_MESSAGE": sendEndpointTextMessageAction
+        @"SEND_ENDPOINT_TEXT_MESSAGE": sendEndpointTextMessageAction,
+        @"TOGGLE_SCREEN_SHARE": toggleScreenShareAction
     };
 };
 
@@ -46,7 +48,7 @@ RCT_EXPORT_MODULE();
 }
 
 - (NSArray<NSString *> *)supportedEvents {
-    return @[ hangUpAction, setAudioMutedAction, sendEndpointTextMessageAction ];
+    return @[ hangUpAction, setAudioMutedAction, sendEndpointTextMessageAction, toggleScreenShareAction ];
 }
 
 /**
@@ -121,6 +123,10 @@ RCT_EXPORT_METHOD(sendEvent:(NSString *)name
     };
     
     [self sendEventWithName:sendEndpointTextMessageAction body:data];
+}
+
+- (void)toggleScreenShare {
+    [self sendEventWithName:toggleScreenShareAction body:nil];
 }
 
 @end

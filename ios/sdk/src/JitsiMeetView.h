@@ -43,4 +43,6 @@
 
 - (void)sendEndpointTextMessage:(NSString*)to :(NSString*)message;
 
+- (void)toggleScreenShare;
+
 @end
