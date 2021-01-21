@@ -303,6 +303,7 @@
         "tokenAuthFailedTitle": "Authentifizierung fehlgeschlagen",
         "transcribing": "Wird transkribiert",
         "unlockRoom": "Konferenz$t(lockRoomPassword) entfernen",
+        "user": "Anmeldename",
         "userPassword": "Passwort",
         "WaitForHostMsg": "Die Konferenz <b>{{room}}</b> wurde noch nicht gestartet. Falls sie die Konferenz organisieren, authentifizieren Sie sich bitte. Warten Sie andernfalls, bis die Konferenz gestartet wird.",
         "WaitForHostMsgWOk": "Die Konferenz <b>{{room}}</b> wurde noch nicht gestartet. Falls sie die Konferenz organisieren, authentifizieren Sie sich bitte. Warten Sie andernfalls, bis die Konferenz gestartet wird.",
