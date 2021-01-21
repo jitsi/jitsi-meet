@@ -11,7 +11,7 @@ import { getParticipantDisplayName } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import { StyleType } from '../../../base/styles';
 import { PrivateMessageButton } from '../../../chat';
-import { hideRemoteVideoMenu } from '../../actions';
+import { hideRemoteVideoMenu } from '../../actions.native';
 
 import ConnectionStatusButton from './ConnectionStatusButton';
 import GrantModeratorButton from './GrantModeratorButton';

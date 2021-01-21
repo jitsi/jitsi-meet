@@ -31,8 +31,8 @@ import {
 import { toggleLobbyMode } from '../../react/features/lobby/actions.web';
 import { RECORDING_TYPES } from '../../react/features/recording/constants';
 import { getActiveSession } from '../../react/features/recording/functions';
-import { muteAllParticipants } from '../../react/features/remote-video-menu/actions';
 import { toggleTileView } from '../../react/features/video-layout';
+import { muteAllParticipants } from '../../react/features/video-menu/actions';
 import { setVideoQuality } from '../../react/features/video-quality';
 import { getJitsiMeetTransport } from '../transport';
 

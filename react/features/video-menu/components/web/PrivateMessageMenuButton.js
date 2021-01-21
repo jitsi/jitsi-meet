@@ -12,7 +12,7 @@ import {
 } from '../../../chat/components/PrivateMessageButton';
 import { isButtonEnabled } from '../../../toolbox/functions.web';
 
-import RemoteVideoMenuButton from './RemoteVideoMenuButton';
+import VideoMenuButton from './VideoMenuButton';
 
 declare var interfaceConfig: Object;
 
@@ -56,7 +56,7 @@ class PrivateMessageMenuButton extends Component<Props> {
         }
 
         return (
-            <RemoteVideoMenuButton
+            <VideoMenuButton
                 buttonText = { t('toolbar.privateMessage') }
                 icon = { IconMessage }
                 id = { `privmsglink_${participantID}` }

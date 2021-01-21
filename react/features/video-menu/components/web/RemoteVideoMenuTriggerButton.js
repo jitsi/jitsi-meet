@@ -20,7 +20,7 @@ import {
     KickButton,
     PrivateMessageMenuButton,
     RemoteControlButton,
-    RemoteVideoMenu,
+    VideoMenu,
     VolumeSlider
 } from './';
 
@@ -96,21 +96,11 @@ type Props = {
 
 /**
  * React {@code Component} for displaying an icon associated with opening the
- * the {@code RemoteVideoMenu}.
+ * the {@code VideoMenu}.
  *
  * @extends {Component}
  */
 class RemoteVideoMenuTriggerButton extends Component<Props> {
-    /**
-     * The internal reference to topmost DOM/HTML element backing the React
-     * {@code Component}. Accessed directly for associating an element as
-     * the trigger for a popover.
-     *
-     * @private
-     * @type {HTMLDivElement}
-     */
-    _rootElement = null;
-
     /**
      * Implements React's {@link Component#render()}.
      *
@@ -141,7 +131,7 @@ class RemoteVideoMenuTriggerButton extends Component<Props> {
     }
 
     /**
-     * Creates a new {@code RemoteVideoMenu} with buttons for interacting with
+     * Creates a new {@code VideoMenu} with buttons for interacting with
      * the remote participant.
      *
      * @private
@@ -227,9 +217,9 @@ class RemoteVideoMenuTriggerButton extends Component<Props> {
 
         if (buttons.length > 0) {
             return (
-                <RemoteVideoMenu id = { participantID }>
+                <VideoMenu id = { participantID }>
                     { buttons }
-                </RemoteVideoMenu>
+                </VideoMenu>
             );
         }
 

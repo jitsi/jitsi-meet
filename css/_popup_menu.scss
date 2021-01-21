@@ -110,6 +110,6 @@ ul.popupmenu {
     margin: -16px -24px;
 }
 
-span.remotevideomenu:hover ul.popupmenu, ul.popupmenu:hover {
+span.localvideomenu:hover ul.popupmenu, span.remotevideomenu:hover ul.popupmenu, ul.popupmenu:hover {
     display:block !important;
 }

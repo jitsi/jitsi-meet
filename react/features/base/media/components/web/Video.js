@@ -5,7 +5,7 @@ import React, { Component } from 'react';
 /**
  * The type of the React {@code Component} props of {@link Video}.
  */
-type Props = {
+type Props = {|
 
     /**
      * CSS classes to add to the video element.
@@ -38,8 +38,98 @@ type Props = {
      * Used to determine the value of the autoplay attribute of the underlying
      * video element.
      */
-    playsinline: boolean
-};
+    playsinline: boolean,
+
+    /**
+     * onAbort event handler.
+     */
+    onAbort?: ?Function,
+
+    /**
+     * onCanPlay event handler.
+     */
+    onCanPlay?: ?Function,
+
+    /**
+     * onCanPlayThrough event handler.
+     */
+    onCanPlayThrough?: ?Function,
+
+    /**
+     * onEmptied event handler.
+     */
+    onEmptied?: ?Function,
+
+    /**
+     * onEnded event handler.
+     */
+    onEnded?: ?Function,
+
+    /**
+     * onError event handler.
+     */
+    onError?: ?Function,
+
+    /**
+     * onLoadedData event handler.
+     */
+    onLoadedData?: ?Function,
+
+    /**
+     * onLoadedMetadata event handler.
+     */
+    onLoadedMetadata?: ?Function,
+
+    /**
+     * onLoadStart event handler.
+     */
+    onLoadStart?: ?Function,
+
+    /**
+     * onPause event handler.
+     */
+    onPause?: ?Function,
+
+    /**
+     * onPlay event handler.
+     */
+    onPlay?: ?Function,
+
+    /**
+     * onPlaying event handler.
+     */
+    onPlaying?: ?Function,
+
+    /**
+     * Not used on web.
+     */
+    onPress?: Function,
+
+    /**
+     * onRateChange event handler.
+     */
+    onRateChange?: ?Function,
+
+    /**
+     * onStalled event handler.
+     */
+    onStalled?: ?Function,
+
+    /**
+     * onSuspend event handler.
+     */
+    onSuspend?: ?Function,
+
+    /**
+     * onWaiting event handler.
+     */
+    onWaiting?: ?Function,
+
+    /**
+     * A styles that will be applied on the video element.
+     */
+    style?: Object
+|};
 
 /**
  * Component that renders a video element for a passed in video track.
@@ -139,6 +229,10 @@ class Video extends Component<Props> {
             this._attachTrack(nextProps.videoTrack);
         }
 
+        if (this.props.style !== nextProps.style || this.props.className !== nextProps.className) {
+            return true;
+        }
+
         return false;
     }
 
@@ -149,13 +243,28 @@ class Video extends Component<Props> {
      * @returns {ReactElement}
      */
     render() {
+        const {
+            autoPlay,
+            className,
+            id,
+            // eslint-disable-next-line no-unused-vars
+            onVideoPlaying,
+            // eslint-disable-next-line no-unused-vars
+            videoTrack,
+            playsinline,
+            style,
+            ...eventHandlers
+        } = this.props;
+
         return (
             <video
-                autoPlay = { this.props.autoPlay }
-                className = { this.props.className }
-                id = { this.props.id }
-                playsInline = { this.props.playsinline }
-                ref = { this._setVideoElement } />
+                autoPlay = { autoPlay }
+                className = { className }
+                id = { id }
+                playsInline = { playsinline }
+                ref = { this._setVideoElement }
+                style = { style }
+                { ...eventHandlers } />
         );
     }
 
