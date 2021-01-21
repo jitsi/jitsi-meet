@@ -12,4 +12,11 @@ public class BroadcastIntentHelper {
     public static Intent buildHangUpIntent() {
         return new Intent(BroadcastAction.Type.HANG_UP.getAction());
     }
+
+    public static Intent buildSendEndpointTextMessageIntent(String to, String message) {
+        Intent intent = new Intent(BroadcastAction.Type.SEND_ENDPOINT_TEXT_MESSAGE.getAction());
+        intent.putExtra("to", to);
+        intent.putExtra("message", message);
+        return intent;
+    }
 }

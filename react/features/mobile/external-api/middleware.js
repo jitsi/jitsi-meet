@@ -2,6 +2,7 @@
 
 import { NativeEventEmitter, NativeModules } from 'react-native';
 
+import { ENDPOINT_TEXT_MESSAGE_NAME } from '../../../../modules/API/constants';
 import { appNavigate } from '../../app/actions';
 import { APP_WILL_MOUNT } from '../../base/app/actionTypes';
 import {
@@ -12,6 +13,7 @@ import {
     JITSI_CONFERENCE_URL_KEY,
     SET_ROOM,
     forEachConference,
+    getCurrentConference,
     isRoomValid
 } from '../../base/conference';
 import { LOAD_CONFIG_ERROR } from '../../base/config';
@@ -22,6 +24,7 @@ import {
     JITSI_CONNECTION_URL_KEY,
     getURLWithoutParams
 } from '../../base/connection';
+import { JitsiConferenceEvents } from '../../base/lib-jitsi-meet';
 import { SET_AUDIO_MUTED } from '../../base/media/actionTypes';
 import { PARTICIPANT_JOINED, PARTICIPANT_LEFT } from '../../base/participants';
 import { MiddlewareRegistry } from '../../base/redux';
@@ -29,12 +32,19 @@ import { muteLocal } from '../../remote-video-menu/actions';
 import { ENTER_PICTURE_IN_PICTURE } from '../picture-in-picture';
 
 import { sendEvent } from './functions';
+import logger from './logger';
 
 /**
  * Event which will be emitted on the native side to indicate the conference
  * has ended either by user request or because an error was produced.
  */
 const CONFERENCE_TERMINATED = 'CONFERENCE_TERMINATED';
+
+/**
+ * Event which will be emitted on the native side to indicate a message was received
+ * through the channel.
+ */
+const ENDPOINT_TEXT_MESSAGE_RECEIVED = 'ENDPOINT_TEXT_MESSAGE_RECEIVED';
 
 const { ExternalAPI } = NativeModules;
 const eventEmitter = new NativeEventEmitter(ExternalAPI);
@@ -52,7 +62,7 @@ MiddlewareRegistry.register(store => next => action => {
 
     switch (type) {
     case APP_WILL_MOUNT:
-        _registerForNativeEvents(store.dispatch);
+        _registerForNativeEvents(store);
         break;
     case CONFERENCE_FAILED: {
         const { error, ...data } = action;
@@ -75,10 +85,14 @@ MiddlewareRegistry.register(store => next => action => {
         break;
     }
 
-    case CONFERENCE_JOINED:
     case CONFERENCE_LEFT:
     case CONFERENCE_WILL_JOIN:
         _sendConferenceEvent(store, action);
+        break;
+
+    case CONFERENCE_JOINED:
+        _sendConferenceEvent(store, action);
+        _registerForEndpointTextMessages(store);
         break;
 
     case CONNECTION_DISCONNECTED: {
@@ -160,11 +174,11 @@ MiddlewareRegistry.register(store => next => action => {
 /**
  * Registers for events sent from the native side via NativeEventEmitter.
  *
- * @param {Dispatch} dispatch - The Redux dispatch function.
+ * @param {Store} store - The redux store.
  * @private
  * @returns {void}
  */
-function _registerForNativeEvents(dispatch) {
+function _registerForNativeEvents({ getState, dispatch }) {
     eventEmitter.addListener(ExternalAPI.HANG_UP, () => {
         dispatch(appNavigate(undefined));
     });
@@ -172,6 +186,48 @@ function _registerForNativeEvents(dispatch) {
     eventEmitter.addListener(ExternalAPI.SET_AUDIO_MUTED, ({ muted }) => {
         dispatch(muteLocal(muted === 'true'));
     });
+
+    eventEmitter.addListener(ExternalAPI.SEND_ENDPOINT_TEXT_MESSAGE, ({ to, message }) => {
+        const conference = getCurrentConference(getState());
+
+        try {
+            conference && conference.sendEndpointMessage(to, {
+                name: ENDPOINT_TEXT_MESSAGE_NAME,
+                text: message
+            });
+        } catch (error) {
+            logger.warn('Cannot send endpointMessage', error);
+        }
+    });
+}
+
+/**
+ * Registers for endpoint messages sent on conference data channel.
+ *
+ * @param {Store} store - The redux store.
+ * @private
+ * @returns {void}
+ */
+function _registerForEndpointTextMessages(store) {
+    const conference = getCurrentConference(store.getState());
+
+    conference && conference.on(
+        JitsiConferenceEvents.ENDPOINT_MESSAGE_RECEIVED,
+        (...args) => {
+            if (args && args.length >= 2) {
+                const [ sender, eventData ] = args;
+
+                if (eventData.name === ENDPOINT_TEXT_MESSAGE_NAME) {
+                    sendEvent(
+                        store,
+                        ENDPOINT_TEXT_MESSAGE_RECEIVED,
+                        /* data */ {
+                            message: eventData.text,
+                            senderId: sender._id
+                        });
+                }
+            }
+        });
 }
 
 /**

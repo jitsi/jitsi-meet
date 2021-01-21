@@ -602,6 +602,7 @@
         "rec": "REC",
         "serviceDescription": "La tua registrazione verrà salvata dal servizio di registrazione che hai scelto",
         "serviceName": "Servizio di registrazione",
+        "serviceDescriptionCloud": "Registrazione in rete",
         "signIn": "Entra",
         "signOut": "Esci",
         "unavailable": "Ops! Il {{serviceName}} non è al momento disponibile. Stiamo lavorando per risolvere il problema. Riprova più tardi.",
@@ -628,6 +629,7 @@
         "followMe": "Tutti mi seguono",
         "language": "Lingua",
         "loggedIn": "Connesso come {{name}}",
+        "microphones": "Microfoni",
         "moderator": "Moderatore",
         "more": "Altro",
         "name": "Nome",
@@ -635,6 +637,7 @@
         "selectAudioOutput": "Uscita audio",
         "selectCamera": "Videocamera",
         "selectMic": "Microfono",
+        "speakers": "Altoparlanti",
         "startAudioMuted": "Tutti cominciano con il microfono disattivato",
         "startVideoMuted": "Tutti cominciano con il video disattivato",
         "title": "Impostazioni"
@@ -841,6 +844,7 @@
         "standardDefinition": "Definizione standard"
     },
     "videothumbnail": {
+        "connectionInfo": "Info connessione",
         "domute": "Disattiva audio",
         "domuteOthers": "Zittisci tutti gli altri",
         "flip": "Rifletti",

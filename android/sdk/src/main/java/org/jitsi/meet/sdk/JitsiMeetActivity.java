@@ -271,6 +271,7 @@ public class JitsiMeetActivity extends FragmentActivity
         intentFilter.addAction(BroadcastEvent.Type.CONFERENCE_TERMINATED.getAction());
         intentFilter.addAction(BroadcastEvent.Type.PARTICIPANT_JOINED.getAction());
         intentFilter.addAction(BroadcastEvent.Type.PARTICIPANT_LEFT.getAction());
+        intentFilter.addAction(BroadcastEvent.Type.ENDPOINT_TEXT_MESSAGE_RECEIVED.getAction());
 
         LocalBroadcastManager.getInstance(this).registerReceiver(broadcastReceiver, intentFilter);
     }

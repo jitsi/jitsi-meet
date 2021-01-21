@@ -75,4 +75,12 @@
  * The `data` dictionary contains a `muted` key with state of the audioMuted for the localParticipant.
  */
 - (void)audioMutedChanged:(NSDictionary *)data;
+
+/**
+ * Called when an endpoint text message is received.
+ *
+ * The `data` dictionary contains a `senderId` key with the participantId of the sender and a 'message' key with the content.
+ */
+- (void)endpointTextMessageReceived:(NSDictionary *)data;
+
 @end
