@@ -9,7 +9,6 @@ import { setAudioOnly } from '../../base/audio-only';
 import { translate } from '../../base/i18n';
 import JitsiMeetJS from '../../base/lib-jitsi-meet';
 import { connect } from '../../base/redux';
-import { isHdQualityEnabled } from '../../base/tracks';
 import { setPreferredVideoQuality } from '../actions';
 import { VIDEO_QUALITY_LEVELS } from '../constants';
 import logger from '../logger';
@@ -64,12 +63,6 @@ type Props = {
     _videoSupported: Boolean,
 
     /**
-     * Whether or not the clinic enabled the hd telehealth
-     * feature.
-     */
-    _isHdQualityEnabled: Boolean,
-
-    /**
      * Invoked to request toggling of audio only mode.
      */
     dispatch: Dispatch<any>,
@@ -115,7 +108,28 @@ class VideoQualitySlider extends Component<Props> {
          * @private
          * @type {Object[]}
          */
-        this._sliderOptions = this._getSliderOptions();
+        this._sliderOptions = [
+            {
+                audioOnly: true,
+                onSelect: this._enableAudioOnly,
+                textKey: 'audioOnly.audioOnly'
+            },
+            {
+                onSelect: this._enableLowDefinition,
+                textKey: 'videoStatus.lowDefinition',
+                videoQuality: LOW
+            },
+            {
+                onSelect: this._enableStandardDefinition,
+                textKey: 'videoStatus.standardDefinition',
+                videoQuality: STANDARD
+            },
+            {
+                onSelect: this._enableHighDefinition,
+                textKey: 'videoStatus.highDefinition',
+                videoQuality: HIGH
+            }
+        ];
     }
 
     /**
@@ -354,37 +368,6 @@ class VideoQualitySlider extends Component<Props> {
             this.props.dispatch(setAudioOnly(false));
         }
     }
-
-
-    // eslint-disable-next-line require-jsdoc
-    _getSliderOptions() {
-        const { _isHdQualityEnabled } = this.props;
-        const defaultSliderOptions = [
-            {
-                audioOnly: true,
-                onSelect: this._enableAudioOnly,
-                textKey: 'audioOnly.audioOnly'
-            },
-            {
-                onSelect: this._enableLowDefinition,
-                textKey: 'videoStatus.lowDefinition',
-                videoQuality: LOW
-            },
-            {
-                onSelect: this._enableStandardDefinition,
-                textKey: 'videoStatus.standardDefinition',
-                videoQuality: STANDARD
-            },
-            {
-                onSelect: this._enableHighDefinition,
-                textKey: 'videoStatus.highDefinition',
-                videoQuality: HIGH
-            }
-        ];
-
-        return _isHdQualityEnabled ? defaultSliderOptions
-            : defaultSliderOptions.filter(v => !v.videoQuality || v.videoQuality !== HIGH);
-    }
 }
 
 /**
@@ -396,8 +379,7 @@ class VideoQualitySlider extends Component<Props> {
  * @returns {{
  *     _audioOnly: boolean,
  *     _p2p: boolean,
- *     _sendrecvVideoQuality: number,
- *     _isHdQualityEnabled: boolean
+ *     _sendrecvVideoQuality: number
  * }}
  */
 function _mapStateToProps(state) {
@@ -409,8 +391,7 @@ function _mapStateToProps(state) {
         _audioOnly: audioOnly,
         _p2p: p2p,
         _sendrecvVideoQuality: preferredVideoQuality,
-        _videoSupported: JitsiMeetJS.mediaDevices.supportsVideo(),
-        _isHdQualityEnabled: isHdQualityEnabled(state)
+        _videoSupported: JitsiMeetJS.mediaDevices.supportsVideo()
     };
 }
 

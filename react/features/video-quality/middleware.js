@@ -14,7 +14,6 @@ import { VIDEO_QUALITY_LEVELS } from './constants';
 import { getReceiverVideoQualityLevel } from './functions';
 import logger from './logger';
 import { getMinHeightForQualityLvlMap } from './selector';
-import { isHdQualityEnabled } from '../base/tracks';
 
 declare var APP: Object;
 
@@ -46,11 +45,6 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
     case SET_CONFIG: {
         const state = getState();
         const { videoQuality = {} } = state['features/base/config'];
-        const hdQualityEnabled = isHdQualityEnabled(state);
-
-        if(!hdQualityEnabled){
-            dispatch(setPreferredVideoQuality(VIDEO_QUALITY_LEVELS.STANDARD));
-        }
 
         if (videoQuality.persist) {
             dispatch(
