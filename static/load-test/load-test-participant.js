@@ -14,10 +14,10 @@ const {
 
 const options = {
     hosts: {
-        domain: 'hristo-perf.jitsi.net',
-        muc: 'conference.hristo-perf.jitsi.net'
+        domain: 'jlennox-perf.jitsi.net',
+        muc: 'conference.jlennox-perf.jitsi.net'
     },
-    bosh: '//hristo-perf.jitsi.net/http-bind',
+    websocket: 'wss://jlennox-perf.jitsi.net/xmpp-websocket',
 
     // The name of client node advertised in XEP-0115 'c' stanza
     clientNode: 'http://jitsi.org/jitsimeet'
