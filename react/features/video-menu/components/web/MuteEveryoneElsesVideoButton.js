@@ -9,7 +9,7 @@ import AbstractMuteEveryoneElsesVideoButton, {
     type Props
 } from '../AbstractMuteEveryoneElsesVideoButton';
 
-import RemoteVideoMenuButton from './RemoteVideoMenuButton';
+import VideoMenuButton from './VideoMenuButton';
 
 /**
  * Implements a React {@link Component} which displays a button for audio muting
@@ -38,7 +38,7 @@ class MuteEveryoneElsesVideoButton extends AbstractMuteEveryoneElsesVideoButton 
         const { participantID, t } = this.props;
 
         return (
-            <RemoteVideoMenuButton
+            <VideoMenuButton
                 buttonText = { t('videothumbnail.domuteVideoOfOthers') }
                 displayClass = { 'mutelink' }
                 icon = { IconMuteVideoEveryoneElse }

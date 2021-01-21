@@ -400,7 +400,9 @@
     }
 }
 
+.local-video-menu-trigger,
 .remote-video-menu-trigger,
+.localvideomenu,
 .remotevideomenu
 {
     display: inline-block;
@@ -418,6 +420,7 @@
         cursor: hand;
     }
 }
+.local-video-menu-trigger,
 .remote-video-menu-trigger {
     margin-top: 7px;
 }

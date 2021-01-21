@@ -9,7 +9,7 @@ import {
 import { translate } from '../../../base/i18n';
 import { IconRemoteControlStart, IconRemoteControlStop } from '../../../base/icons';
 
-import RemoteVideoMenuButton from './RemoteVideoMenuButton';
+import VideoMenuButton from './VideoMenuButton';
 
 // TODO: Move these enums into the store after further reactification of the
 // non-react RemoteVideo component.
@@ -102,7 +102,7 @@ class RemoteControlButton extends Component<Props> {
         }
 
         return (
-            <RemoteVideoMenuButton
+            <VideoMenuButton
                 buttonText = { t('videothumbnail.remoteControl') }
                 displayClass = { className }
                 icon = { icon }

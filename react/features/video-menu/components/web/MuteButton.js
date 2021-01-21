@@ -3,26 +3,26 @@
 import React from 'react';
 
 import { translate } from '../../../base/i18n';
-import { IconCameraDisabled } from '../../../base/icons';
+import { IconMicDisabled } from '../../../base/icons';
 import { connect } from '../../../base/redux';
-import AbstractMuteVideoButton, {
+import AbstractMuteButton, {
     _mapStateToProps,
     type Props
-} from '../AbstractMuteVideoButton';
+} from '../AbstractMuteButton';
 
-import RemoteVideoMenuButton from './RemoteVideoMenuButton';
+import VideoMenuButton from './VideoMenuButton';
 
 /**
- * Implements a React {@link Component} which displays a button for disabling
- * the camera of a participant in the conference.
+ * Implements a React {@link Component} which displays a button for audio muting
+ * a participant in the conference.
  *
  * NOTE: At the time of writing this is a button that doesn't use the
  * {@code AbstractButton} base component, but is inherited from the same
- * super class ({@code AbstractMuteVideoButton} that extends {@code AbstractButton})
+ * super class ({@code AbstractMuteButton} that extends {@code AbstractButton})
  * for the sake of code sharing between web and mobile. Once web uses the
  * {@code AbstractButton} base component, this can be fully removed.
  */
-class MuteVideoButton extends AbstractMuteVideoButton {
+class MuteButton extends AbstractMuteButton {
     /**
      * Instantiates a new {@code Component}.
      *
@@ -41,20 +41,20 @@ class MuteVideoButton extends AbstractMuteVideoButton {
      * @returns {ReactElement}
      */
     render() {
-        const { _videoTrackMuted, participantID, t } = this.props;
-        const muteConfig = _videoTrackMuted ? {
-            translationKey: 'videothumbnail.videoMuted',
+        const { _audioTrackMuted, participantID, t } = this.props;
+        const muteConfig = _audioTrackMuted ? {
+            translationKey: 'videothumbnail.muted',
             muteClassName: 'mutelink disabled'
         } : {
-            translationKey: 'videothumbnail.domuteVideo',
+            translationKey: 'videothumbnail.domute',
             muteClassName: 'mutelink'
         };
 
         return (
-            <RemoteVideoMenuButton
+            <VideoMenuButton
                 buttonText = { t(muteConfig.translationKey) }
                 displayClass = { muteConfig.muteClassName }
-                icon = { IconCameraDisabled }
+                icon = { IconMicDisabled }
                 id = { `mutelink_${participantID}` }
                 // eslint-disable-next-line react/jsx-handler-names
                 onClick = { this._handleClick } />
@@ -64,4 +64,4 @@ class MuteVideoButton extends AbstractMuteVideoButton {
     _handleClick: () => void
 }
 
-export default translate(connect(_mapStateToProps)(MuteVideoButton));
+export default translate(connect(_mapStateToProps)(MuteButton));

@@ -1,7 +1,6 @@
 /* application specific logic */
 
 import 'jquery';
-import 'jquery-contextmenu';
 import 'jQuery-Impromptu';
 
 import 'olm';

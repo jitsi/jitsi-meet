@@ -49,11 +49,6 @@ export default {
     AUDIO_DEVICE_CHANGED: 'UI.audio_device_changed',
 
     /**
-     * Notifies that flipX property of the local video is changed.
-     */
-    LOCAL_FLIPX_CHANGED: 'UI.local_flipx_changed',
-
-    /**
      * Notifies that the side toolbar container has been toggled. The actual
      * event must contain the identifier of the container that has been toggled
      * and information about toggle on or off.
@@ -63,15 +58,5 @@ export default {
     /**
      * Notifies that the raise hand has been changed.
      */
-    LOCAL_RAISE_HAND_CHANGED: 'UI.local_raise_hand_changed',
-
-    /**
-     * Notifies that the avatar is displayed or not on the largeVideo.
-     */
-    LARGE_VIDEO_AVATAR_VISIBLE: 'UI.large_video_avatar_visible',
-
-    /**
-     * Notifies that the displayed particpant id on the largeVideo is changed.
-     */
-    LARGE_VIDEO_ID_CHANGED: 'UI.large_video_id_changed'
+    LOCAL_RAISE_HAND_CHANGED: 'UI.local_raise_hand_changed'
 };
