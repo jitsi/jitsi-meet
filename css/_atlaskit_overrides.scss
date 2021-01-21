@@ -17,6 +17,16 @@
 }
 
 /**
+ * Override @atlaskit/modal-dialog header styling
+ */
+.atlaskit-portal [role="dialog"] header {
+    .jitsi-icon svg {
+        fill: #B8C7E0;
+        cursor: pointer;
+    }
+}
+
+/**
  * Override @atlaskit/theme styling for the top toolbar so it displays over
  * the video thumbnail while obscuring as little as possible.
  */
