@@ -6,7 +6,7 @@ import { Icon } from '../../../base/icons';
 
 /**
  * The type of the React {@code Component} props of
- * {@link RemoteVideoMenuButton}.
+ * {@link VideoMenuButton}.
  */
 type Props = {
 
@@ -23,7 +23,7 @@ type Props = {
     /**
      * The icon that will display within the component.
      */
-    icon: Object,
+    icon?: Object,
 
     /**
      * The id attribute to be added to the component's DOM for retrieval when
@@ -38,11 +38,11 @@ type Props = {
 };
 
 /**
- * React {@code Component} for displaying an action in {@code RemoteVideoMenu}.
+ * React {@code Component} for displaying an action in {@code VideoMenuButton}.
  *
  * @extends {Component}
  */
-export default class RemoteVideoMenuButton extends Component<Props> {
+export default class VideoMenuButton extends Component<Props> {
     /**
      * Implements React's {@link Component#render()}.
      *
@@ -67,7 +67,7 @@ export default class RemoteVideoMenuButton extends Component<Props> {
                     id = { id }
                     onClick = { onClick }>
                     <span className = 'popupmenu__icon'>
-                        <Icon src = { icon } />
+                        { icon && <Icon src = { icon } /> }
                     </span>
                     <span className = 'popupmenu__text'>
                         { buttonText }

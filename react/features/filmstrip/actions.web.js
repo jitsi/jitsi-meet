@@ -1,5 +1,6 @@
 // @flow
 
+import { pinParticipant } from '../base/participants';
 import { CHAT_SIZE } from '../chat/constants';
 
 import { SET_HORIZONTAL_VIEW_DIMENSIONS, SET_TILE_VIEW_DIMENSIONS } from './actionTypes';
@@ -63,6 +64,22 @@ export function setHorizontalViewDimensions(clientHeight: number = 0) {
     return {
         type: SET_HORIZONTAL_VIEW_DIMENSIONS,
         dimensions: calculateThumbnailSizeForHorizontalView(clientHeight)
+    };
+}
+
+/**
+ * Emulates a click on the n-th video.
+ *
+ * @param {number} n - Number that identifies the video.
+ * @returns {Function}
+ */
+export function clickOnVideo(n: number) {
+    return (dispatch: Function, getState: Function) => {
+        const participants = getState()['features/base/participants'];
+        const nThParticipant = participants[n];
+        const { id, pinned } = nThParticipant;
+
+        dispatch(pinParticipant(pinned ? null : id));
     };
 }
 

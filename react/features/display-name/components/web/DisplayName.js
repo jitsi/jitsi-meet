@@ -216,14 +216,16 @@ class DisplayName extends Component<Props, State> {
      * initial value to the current display name.
      *
      * @private
+     * @param {SyntheticEvent} event - The click event that triggered display name editing.
      * @returns {void}
      */
-    _onStartEditing() {
+    _onStartEditing(event) {
         if (this.props.allowEditing) {
             this.setState({
                 isEditing: true,
                 editDisplayNameValue: this.props._configuredDisplayName
             });
+            event.stopPropagation();
         }
     }
 

@@ -11,7 +11,7 @@ import Video from './Video';
 /**
  * The type of the React {@code Component} props of {@link VideoTrack}.
  */
-type Props = AbstractVideoTrackProps & {
+type Props = AbstractVideoTrackProps & {|
 
     /**
      * CSS classes to add to the video element.
@@ -29,8 +29,93 @@ type Props = AbstractVideoTrackProps & {
      * Used to determine the value of the autoplay attribute of the underlying
      * video element.
      */
-    _noAutoPlayVideo: boolean
-};
+    _noAutoPlayVideo: boolean,
+
+    /**
+     * onAbort event handler.
+     */
+    onAbort?: ?Function,
+
+    /**
+     * onCanPlay event handler.
+     */
+    onCanPlay?: ?Function,
+
+    /**
+     * onCanPlayThrough event handler.
+     */
+    onCanPlayThrough?: ?Function,
+
+    /**
+     * onEmptied event handler.
+     */
+    onEmptied?: ?Function,
+
+    /**
+     * onEnded event handler.
+     */
+    onEnded?: ?Function,
+
+    /**
+     * onError event handler.
+     */
+    onError?: ?Function,
+
+    /**
+     * onLoadedData event handler.
+     */
+    onLoadedData?: ?Function,
+
+    /**
+     * onLoadedMetadata event handler.
+     */
+    onLoadedMetadata?: ?Function,
+
+    /**
+     * onLoadStart event handler.
+     */
+    onLoadStart?: ?Function,
+
+    /**
+     * onPause event handler.
+     */
+    onPause?: ?Function,
+
+    /**
+     * onPlay event handler.
+     */
+    onPlay?: ?Function,
+
+    /**
+     * onPlaying event handler.
+     */
+    onPlaying?: ?Function,
+
+    /**
+     * onRateChange event handler.
+     */
+    onRateChange?: ?Function,
+
+    /**
+     * onStalled event handler.
+     */
+    onStalled?: ?Function,
+
+    /**
+     * onSuspend event handler.
+     */
+    onSuspend?: ?Function,
+
+    /**
+     * onWaiting event handler.
+     */
+    onWaiting?: ?Function,
+
+    /**
+     * A styles that will be applied on the video element.
+     */
+    style: Object
+|};
 
 /**
  * Component that renders a video element for a passed in video track and
@@ -57,13 +142,27 @@ class VideoTrack extends AbstractVideoTrack<Props> {
      * @returns {ReactElement}
      */
     render() {
+        const {
+            _noAutoPlayVideo,
+            className,
+            // eslint-disable-next-line no-unused-vars
+            dispatch,
+            id,
+            videoTrack,
+            style,
+            ...eventHandlers
+        } = this.props;
+
         return (
+
             <Video
-                autoPlay = { !this.props._noAutoPlayVideo }
-                className = { this.props.className }
-                id = { this.props.id }
+                autoPlay = { !_noAutoPlayVideo }
+                className = { className }
+                id = { id }
                 onVideoPlaying = { this._onVideoPlaying }
-                videoTrack = { this.props.videoTrack } />
+                style = { style }
+                videoTrack = { videoTrack }
+                { ...eventHandlers } />
         );
     }
 

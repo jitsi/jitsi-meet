@@ -9,7 +9,6 @@ import { isTestModeEnabled } from '../../../react/features/base/testing';
 import { ORIENTATION, LargeVideoBackground, updateLastLargeVideoMediaEvent } from '../../../react/features/large-video';
 import { LAYOUTS, getCurrentLayout } from '../../../react/features/video-layout';
 /* eslint-enable no-unused-vars */
-import UIEvents from '../../../service/UI/UIEvents';
 import UIUtil from '../util/UIUtil';
 
 import Filmstrip from './Filmstrip';
@@ -187,16 +186,13 @@ export class VideoContainer extends LargeContainer {
      * Creates new VideoContainer instance.
      * @param resizeContainer {Function} function that takes care of the size
      * of the video container.
-     * @param emitter {EventEmitter} the event emitter that will be used by
-     * this instance.
      */
-    constructor(resizeContainer, emitter) {
+    constructor(resizeContainer) {
         super();
         this.stream = null;
         this.userId = null;
         this.videoType = null;
         this.localFlipX = true;
-        this.emitter = emitter;
         this.resizeContainer = resizeContainer;
 
         /**
@@ -534,7 +530,6 @@ export class VideoContainer extends LargeContainer {
         this.$avatar.css('visibility', show ? 'visible' : 'hidden');
         this.avatarDisplayed = show;
 
-        this.emitter.emit(UIEvents.LARGE_VIDEO_AVATAR_VISIBLE, show);
         APP.API.notifyLargeVideoVisibilityChanged(show);
     }
 

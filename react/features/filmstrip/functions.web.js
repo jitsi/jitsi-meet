@@ -15,8 +15,17 @@ import {
     isLocalTrackMuted,
     isRemoteTrackMuted
 } from '../base/tracks/functions';
+import { LAYOUTS } from '../video-layout';
 
-import { TILE_ASPECT_RATIO } from './constants';
+import type { Props, State } from './components/web/Thumbnail';
+import {
+    DISPLAY_AVATAR,
+    DISPLAY_AVATAR_WITH_NAME,
+    DISPLAY_BLACKNESS_WITH_NAME,
+    DISPLAY_VIDEO,
+    DISPLAY_VIDEO_WITH_NAME,
+    TILE_ASPECT_RATIO
+} from './constants';
 
 declare var interfaceConfig: Object;
 
@@ -170,4 +179,72 @@ export function getVerticalFilmstripVisibleAreaWidth() {
     const filmstripMaxWidth = (interfaceConfig.FILM_STRIP_MAX_HEIGHT || 120) + 18;
 
     return Math.min(filmstripMaxWidth, window.innerWidth);
+}
+
+/**
+ * Extracts information for props and state needed to compute the display mode.
+ *
+ * @param {Props} props - The component's props.
+ * @param {State} state - The component's state.
+ * @returns {Object}
+ */
+export function getDisplayModeInput(props: Props, state: State) {
+    const {
+        _currentLayout,
+        _isAudioOnly,
+        _isCurrentlyOnLargeVideo,
+        _isScreenSharing,
+        _isVideoPlayable,
+        _participant,
+        _videoTrack
+    } = props;
+    const tileViewActive = _currentLayout === LAYOUTS.TILE_VIEW;
+    const { canPlayEventReceived, isHovered } = state;
+
+    return {
+        isCurrentlyOnLargeVideo: _isCurrentlyOnLargeVideo,
+        isHovered,
+        isAudioOnly: _isAudioOnly,
+        tileViewActive,
+        isVideoPlayable: _isVideoPlayable,
+        connectionStatus: _participant?.connectionStatus,
+        canPlayEventReceived,
+        videoStream: Boolean(_videoTrack),
+        isRemoteParticipant: !_participant?.isFakeParticipant && !_participant?.local,
+        isScreenSharing: _isScreenSharing,
+        videoStreamMuted: _videoTrack ? _videoTrack.muted : 'no stream'
+    };
+}
+
+/**
+ * Computes information that determine the display mode.
+ *
+ * @param {Object} input - Obejct containing all necessary information for determining the display mode for
+ * the thumbnail.
+ * @returns {number} - One of <tt>DISPLAY_VIDEO</tt>, <tt>DISPLAY_AVATAR</tt> or <tt>DISPLAY_BLACKNESS_WITH_NAME</tt>.
+*/
+export function computeDisplayMode(input: Object) {
+    const {
+        isAudioOnly,
+        isCurrentlyOnLargeVideo,
+        isScreenSharing,
+        canPlayEventReceived,
+        isHovered,
+        isRemoteParticipant,
+        tileViewActive
+    } = input;
+    const adjustedIsVideoPlayable = input.isVideoPlayable && (!isRemoteParticipant || canPlayEventReceived);
+
+    if (!tileViewActive && isScreenSharing && isRemoteParticipant) {
+        return isHovered ? DISPLAY_AVATAR_WITH_NAME : DISPLAY_AVATAR;
+    } else if (isCurrentlyOnLargeVideo && !tileViewActive) {
+        // Display name is always and only displayed when user is on the stage
+        return adjustedIsVideoPlayable && !isAudioOnly ? DISPLAY_BLACKNESS_WITH_NAME : DISPLAY_AVATAR_WITH_NAME;
+    } else if (adjustedIsVideoPlayable && !isAudioOnly) {
+        // check hovering and change state to video with name
+        return isHovered ? DISPLAY_VIDEO_WITH_NAME : DISPLAY_VIDEO;
+    }
+
+    // check hovering and change state to avatar with name
+    return isHovered ? DISPLAY_AVATAR_WITH_NAME : DISPLAY_AVATAR;
 }

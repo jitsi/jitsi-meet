@@ -1,6 +1,7 @@
 // @flow
 import _ from 'lodash';
 
+import VideoLayout from '../../../../modules/UI/videolayout/VideoLayout';
 import { PREJOIN_INITIALIZED } from '../../prejoin/actionTypes';
 import { APP_WILL_MOUNT } from '../app';
 import { setAudioOnly } from '../audio-only';
@@ -13,6 +14,7 @@ import { parseURLParams } from '../util';
 import { SETTINGS_UPDATED } from './actionTypes';
 import { updateSettings } from './actions';
 import { handleCallIntegrationChange, handleCrashReportingChange } from './functions';
+
 
 /**
  * The middleware of the feature base/settings. Distributes changes to the state
@@ -36,6 +38,7 @@ MiddlewareRegistry.register(store => next => action => {
     case SETTINGS_UPDATED:
         _maybeHandleCallIntegrationChange(action);
         _maybeSetAudioOnly(store, action);
+        _maybeSetLocalFlipX(store, action);
         _updateLocalParticipant(store, action);
         _maybeCrashReportingChange(action);
         break;
@@ -118,6 +121,21 @@ function _maybeSetAudioOnly(
         { settings: { startAudioOnly } }) {
     if (typeof startAudioOnly === 'boolean') {
         dispatch(setAudioOnly(startAudioOnly, true));
+    }
+}
+
+/**
+ * Updates {@code localFlipX} flag if it's updated in the settings.
+ *
+ * @param {Store} store - The redux store.
+ * @param {Object} action - The redux action.
+ * @private
+ * @returns {void}
+ */
+function _maybeSetLocalFlipX(store, { settings: { localFlipX } }) {
+    if (typeof localFlipX === 'boolean') {
+        // TODO: This needs to be removed once the large video is Reactified.
+        VideoLayout.onLocalFlipXChanged();
     }
 }
 

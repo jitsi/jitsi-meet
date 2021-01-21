@@ -115,7 +115,6 @@ UI.start = function() {
     // Set the defaults for prompt dialogs.
     $.prompt.setDefaults({ persistent: false });
 
-    VideoLayout.init(eventEmitter);
     VideoLayout.initLargeVideo();
 
     // Do not animate the video area on UI start (second argument passed into
@@ -135,7 +134,6 @@ UI.start = function() {
     if (config.iAmRecorder) {
         // in case of iAmSipGateway keep local video visible
         if (!config.iAmSipGateway) {
-            VideoLayout.setLocalVideoVisible(false);
             APP.store.dispatch(setNotificationsEnabled(false));
         }
 
@@ -180,14 +178,6 @@ UI.unbindEvents = () => {
 };
 
 /**
- * Show local video stream on UI.
- * @param {JitsiTrack} track stream to show
- */
-UI.addLocalVideoStream = track => {
-    VideoLayout.changeLocalVideo(track);
-};
-
-/**
  * Setup and show Etherpad.
  * @param {string} name etherpad id
  */
@@ -226,14 +216,6 @@ UI.addUser = function(user) {
         UI.updateUserStatus(user, status);
     }
 };
-
-/**
- * Update videotype for specified user.
- * @param {string} id user id
- * @param {string} newVideoType new videotype
- */
-UI.onPeerVideoTypeChanged
-    = (id, newVideoType) => VideoLayout.onVideoTypeChanged(id, newVideoType);
 
 /**
  * Updates the user status.
@@ -289,19 +271,14 @@ UI.setAudioMuted = function(id) {
  * Sets muted video state for participant
  */
 UI.setVideoMuted = function(id) {
-    VideoLayout.onVideoMute(id);
+    VideoLayout._updateLargeVideoIfDisplayed(id, true);
+
     if (APP.conference.isLocalId(id)) {
         APP.conference.updateVideoIconEnabled();
     }
 };
 
-/**
- * Triggers an update of remote video and large video displays so they may pick
- * up any state changes that have occurred elsewhere.
- *
- * @returns {void}
- */
-UI.updateAllVideos = () => VideoLayout.updateAllVideos();
+UI.updateLargeVideo = (id, forceUpdate) => VideoLayout.updateLargeVideo(id, forceUpdate);
 
 /**
  * Adds a listener that would be notified on the given type of event.
@@ -339,8 +316,6 @@ UI.removeListener = function(type, listener) {
  * @param options the parameters for the event
  */
 UI.emitEvent = (type, ...options) => eventEmitter.emit(type, ...options);
-
-UI.clickOnVideo = videoNumber => VideoLayout.togglePin(videoNumber);
 
 // Used by torture.
 UI.showToolbar = timeout => APP.store.dispatch(showToolbox(timeout));

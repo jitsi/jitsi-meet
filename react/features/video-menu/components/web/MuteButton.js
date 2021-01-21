@@ -10,7 +10,7 @@ import AbstractMuteButton, {
     type Props
 } from '../AbstractMuteButton';
 
-import RemoteVideoMenuButton from './RemoteVideoMenuButton';
+import VideoMenuButton from './VideoMenuButton';
 
 /**
  * Implements a React {@link Component} which displays a button for audio muting
@@ -51,7 +51,7 @@ class MuteButton extends AbstractMuteButton {
         };
 
         return (
-            <RemoteVideoMenuButton
+            <VideoMenuButton
                 buttonText = { t(muteConfig.translationKey) }
                 displayClass = { muteConfig.muteClassName }
                 icon = { IconMicDisabled }

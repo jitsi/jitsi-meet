@@ -8,25 +8,14 @@ import {
     createToolbarEvent,
     sendAnalytics
 } from '../analytics';
-import { hideDialog } from '../base/dialog';
 import { setAudioMuted } from '../base/media';
 import {
     getLocalParticipant,
     muteRemoteParticipant
 } from '../base/participants';
 
-import { RemoteVideoMenu } from './components';
-
 declare var APP: Object;
 
-/**
- * Hides the remote video menu.
- *
- * @returns {Function}
- */
-export function hideRemoteVideoMenu() {
-    return hideDialog(RemoteVideoMenu);
-}
 
 /**
  * Mutes the local participant.
