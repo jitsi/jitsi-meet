@@ -145,8 +145,12 @@ class OverflowMenu extends PureComponent<Props, State> {
             styles: _bottomSheetStyles.buttons
             
         };
-        var showScreenshare = jitsiLocalStorage.getItem('showScreenshare');
-
+        var showScreenshare = jitsiLocalStorage.getItem('showScreenshare')=='true'; // I don't know why this is a string now 
+        console.log('showScreenshare')
+        
+        console.log(typeof(showScreenshare))
+        console.log(showScreenshare)
+        console.log(this.props)            
         const moreOptionsButtonProps = {
             ...buttonProps,
             afterClick: this._onToggleMenu,
@@ -181,8 +185,7 @@ class OverflowMenu extends PureComponent<Props, State> {
                      </Collapsible>
                     <Collapsible collapsed = { !showScreenshare }>
                         {
-                        this.props._desktopSharingEnabled
-                            && <IOSRecordButtonWrapper />
+                            <IOSRecordButtonWrapper />
                         }
                     </Collapsible></> : null}
                 </Collapsible>
@@ -199,7 +202,6 @@ class OverflowMenu extends PureComponent<Props, State> {
         if(isModerator){
             return(
                 <View>
-                <MuteEveryoneElseButton { ...buttonProps } />
                 <KickEveryoneElseButton { ...buttonProps } />
                 </View>
             );
@@ -307,6 +309,8 @@ function _mapStateToProps(state) {
             .find(({ features = {} }) =>
                 String(features['screen-sharing']) === 'true') !== undefined;
     }
+    console.log(state)
+    console.log('state')
     console.log(Platform.OS)
     return {
         __localVideo: state['features/base/tracks'],

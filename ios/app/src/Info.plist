@@ -32,9 +32,12 @@
 				<string>de.hopp-foundation.klassenzimmer</string>
 			</array>
 		</dict>
+		<dict/>
 	</array>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
+	<key>FirebaseCrashlyticsCollectionEnabled</key>
+	<string>false</string>
 	<key>FirebaseScreenReportingEnabled</key>
 	<false/>
 	<key>ITSAppUsesNonExemptEncryption</key>
@@ -54,13 +57,12 @@
 	</dict>
 	<key>NSCalendarsUsageDescription</key>
 	<string>Wenn Meetings in deinen Kalender eingetragen werden sollen</string>
-	
 	<key>NSCameraUsageDescription</key>
 	<string>Nehme mit Video an Meetings teil</string>
-	<key>NSMicrophoneUsageDescription</key>
-	<string>Nehme mit Ton an Meetings teil.</string>
 	<key>NSLocalNetworkUsageDescription</key>
 	<string>Local network is used for establishing Peer-to-Peer connections.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Nehme mit Ton an Meetings teil.</string>
 	<key>NSUserActivityTypes</key>
 	<array>
 		<string>de.hopp-foundation.jitsi.ios.conference</string>
@@ -90,7 +92,5 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
-	<key>FirebaseCrashlyticsCollectionEnabled</key>
-	<string>false</string>
 </dict>
 </plist>

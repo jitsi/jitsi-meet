@@ -172,7 +172,7 @@ function Thumbnail(props: Props) {
                 
             { !participant.isFakeParticipant && 
            <TouchableOpacity 
-           onPress={ participant.local ? undefined : _onShowRemoteVideoMenu}  
+           onPress={ participant.local ? undefined : _onThumbnailLongPress}  
      style = { [
                     styles.thumbnailTopIndicatorContainer,
                     styles.thumbnailTopLeftIndicatorContainer,
@@ -181,13 +181,20 @@ function Thumbnail(props: Props) {
                     <View>
                  <MoreOptionsIndicator/>
 
-                { renderDominantSpeakerIndicator && <DominantSpeakerIndicator /> }
                 </View>
-
 
             </TouchableOpacity>
 }
 
+            <View
+           style = { [
+            styles.thumbnailTopIndicatorContainer,
+            styles.thumbnailUnderTopLeftIndicatorContainer]}
+            >
+            
+
+                { renderDominantSpeakerIndicator && <DominantSpeakerIndicator /> }
+                </View>
             { !participant.isFakeParticipant && <View
                 style = { [
                     styles.thumbnailTopIndicatorContainer,

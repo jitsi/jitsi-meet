@@ -107,7 +107,7 @@ function _mapStateToProps(state, ownProps): Object {
     console.log(localParticipant)
     console.log('localParticipant')
     const isModerator = localParticipant.role === PARTICIPANT_ROLE.MODERATOR;
-    const MODERATOR_KEYS = state['features/base/config'].MODERATOR_KEYS
+    const MODERATOR_KEYS = state['features/base/config'].HOPP_MODERATOR_KEYS
 
     if (MODERATOR_KEYS){
         visible = visible&isModerator&MODERATOR_KEYS.includes('youtube')

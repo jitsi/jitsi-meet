@@ -78,8 +78,9 @@ function _updateLastN({ getState }) {
     }
 
     if (typeof appState !== 'undefined' && appState !== 'active') {
-       lastN = 0;
-        lastN = localVideo && localVideo.videoType === 'desktop' ? 1 : 0;
+        lastN = isLocalVideoTrackDesktop(state) ? 1 : 0;
+
+      //  lastN = localVideo && localVideo.videoType === 'desktop' ? 1 : 0;
     } else if (audioOnly) {
         const { screenShares, tileViewEnabled } = state['features/video-layout'];
         const largeVideoParticipantId = state['features/large-video'].participantId;

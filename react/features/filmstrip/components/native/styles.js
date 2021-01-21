@@ -101,8 +101,6 @@ export default {
         height:20,
         borderColor: '#424242',
         borderRadius: 4,
-        borderStyle: 'solid',
-        borderWidth: 1
     },
 
     /**
@@ -125,6 +123,10 @@ export default {
 
     thumbnailTopLeftIndicatorContainer: {
         left: 0
+    },
+    thumbnailUnderTopLeftIndicatorContainer: {
+        left: 0,
+        top:10
     },
 
     thumbnailTopRightIndicatorContainer: {

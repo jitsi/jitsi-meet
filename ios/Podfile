@@ -84,13 +84,11 @@ target 'ScreenRecorderHopp' do
   project 'app/app.xcodeproj'
   
   pod 'BlueSocket'
-#  pod 'JitsiMeetSDK'
 end
 
 target 'ScreenRecorderHoppSetupUI' do
   project 'app/app.xcodeproj'
 
-#  pod 'JitsiMeetSDK'
 end
 
 
