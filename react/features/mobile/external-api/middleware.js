@@ -1,5 +1,6 @@
 // @flow
 
+import debounce from 'lodash/debounce';
 import { NativeEventEmitter, NativeModules } from 'react-native';
 
 import { ENDPOINT_TEXT_MESSAGE_NAME } from '../../../../modules/API/constants';
@@ -27,10 +28,12 @@ import {
 import { JitsiConferenceEvents } from '../../base/lib-jitsi-meet';
 import { SET_AUDIO_MUTED } from '../../base/media/actionTypes';
 import { PARTICIPANT_JOINED, PARTICIPANT_LEFT } from '../../base/participants';
-import { MiddlewareRegistry } from '../../base/redux';
+import { MiddlewareRegistry, StateListenerRegistry } from '../../base/redux';
+import { toggleScreensharing } from '../../base/tracks';
 import { muteLocal } from '../../remote-video-menu/actions';
 import { ENTER_PICTURE_IN_PICTURE } from '../picture-in-picture';
 
+import { setParticipantsWithScreenShare } from './actions';
 import { sendEvent } from './functions';
 import logger from './logger';
 
@@ -45,6 +48,12 @@ const CONFERENCE_TERMINATED = 'CONFERENCE_TERMINATED';
  * through the channel.
  */
 const ENDPOINT_TEXT_MESSAGE_RECEIVED = 'ENDPOINT_TEXT_MESSAGE_RECEIVED';
+
+/**
+ * Event which will be emitted on the native side to indicate a participant togggles
+ * the screen share.
+ */
+const SCREEN_SHARE_TOGGLED = 'SCREEN_SHARE_TOGGLED';
 
 const { ExternalAPI } = NativeModules;
 const eventEmitter = new NativeEventEmitter(ExternalAPI);
@@ -172,6 +181,48 @@ MiddlewareRegistry.register(store => next => action => {
 });
 
 /**
+ * Listen for changes to the known media tracks and look
+ * for updates to screen shares for emitting native events.
+ * The listener is debounced to avoid state thrashing that might occur,
+ * especially when switching in or out of p2p.
+ */
+StateListenerRegistry.register(
+    /* selector */ state => state['features/base/tracks'],
+    /* listener */ debounce((tracks, store) => {
+        const oldScreenShares = store.getState()['features/mobile/external-api'].screenShares || [];
+        const newScreenShares = tracks
+            .filter(track => track.mediaType === 'video' && track.videoType === 'desktop')
+            .map(track => track.participantId);
+
+        oldScreenShares.forEach(participantId => {
+            if (!newScreenShares.includes(participantId)) {
+                sendEvent(
+                    store,
+                    SCREEN_SHARE_TOGGLED,
+                    /* data */ {
+                        participantId,
+                        sharing: false
+                    });
+            }
+        });
+
+        newScreenShares.forEach(participantId => {
+            if (!oldScreenShares.includes(participantId)) {
+                sendEvent(
+                    store,
+                    SCREEN_SHARE_TOGGLED,
+                    /* data */ {
+                        participantId,
+                        sharing: true
+                    });
+            }
+        });
+
+        store.dispatch(setParticipantsWithScreenShare(newScreenShares));
+
+    }, 100));
+
+/**
  * Registers for events sent from the native side via NativeEventEmitter.
  *
  * @param {Store} store - The redux store.
@@ -198,6 +249,10 @@ function _registerForNativeEvents({ getState, dispatch }) {
         } catch (error) {
             logger.warn('Cannot send endpointMessage', error);
         }
+    });
+
+    eventEmitter.addListener(ExternalAPI.TOGGLE_SCREEN_SHARE, () => {
+        dispatch(toggleScreensharing());
     });
 }
 

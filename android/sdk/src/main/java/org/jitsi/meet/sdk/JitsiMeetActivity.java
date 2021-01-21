@@ -266,12 +266,10 @@ public class JitsiMeetActivity extends FragmentActivity
 
     private void registerForBroadcastMessages() {
         IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(BroadcastEvent.Type.CONFERENCE_JOINED.getAction());
-        intentFilter.addAction(BroadcastEvent.Type.CONFERENCE_WILL_JOIN.getAction());
-        intentFilter.addAction(BroadcastEvent.Type.CONFERENCE_TERMINATED.getAction());
-        intentFilter.addAction(BroadcastEvent.Type.PARTICIPANT_JOINED.getAction());
-        intentFilter.addAction(BroadcastEvent.Type.PARTICIPANT_LEFT.getAction());
-        intentFilter.addAction(BroadcastEvent.Type.ENDPOINT_TEXT_MESSAGE_RECEIVED.getAction());
+
+        for (BroadcastEvent.Type type : BroadcastEvent.Type.values()) {
+            intentFilter.addAction(type.getAction());
+        }
 
         LocalBroadcastManager.getInstance(this).registerReceiver(broadcastReceiver, intentFilter);
     }

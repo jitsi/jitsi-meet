@@ -130,6 +130,11 @@ static void initializeViewsMap() {
     [externalAPI sendEndpointTextMessage:to :message];
 }
 
+- (void)toggleScreenShare {
+    ExternalAPI *externalAPI = [[JitsiMeet sharedInstance] getExternalAPI];
+    [externalAPI toggleScreenShare];
+}
+
 #pragma mark Private methods
 
 /**

@@ -21,5 +21,6 @@
 - (void)sendHangUp;
 - (void)sendSetAudioMuted: (BOOL)muted;
 - (void)sendEndpointTextMessage:(NSString*)to :(NSString*)message;
+- (void)toggleScreenShare;
 
 @end
