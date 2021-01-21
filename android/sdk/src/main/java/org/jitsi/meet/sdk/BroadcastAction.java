@@ -62,7 +62,8 @@ public class BroadcastAction {
         SET_AUDIO_MUTED("org.jitsi.meet.SET_AUDIO_MUTED"),
         HANG_UP("org.jitsi.meet.HANG_UP"),
         SEND_ENDPOINT_TEXT_MESSAGE("org.jitsi.meet.SEND_ENDPOINT_TEXT_MESSAGE"),
-        TOGGLE_SCREEN_SHARE("org.jitsi.meet.TOGGLE_SCREEN_SHARE");
+        TOGGLE_SCREEN_SHARE("org.jitsi.meet.TOGGLE_SCREEN_SHARE"),
+        RETRIEVE_PARTICIPANTS_INFO("org.jitsi.meet.RETRIEVE_PARTICIPANTS_INFO");
 
         private final String action;
 

@@ -135,6 +135,11 @@ static void initializeViewsMap() {
     [externalAPI toggleScreenShare];
 }
 
+- (void)retrieveParticipantsInfo:(void (^)(NSArray*))completionHandler {
+    ExternalAPI *externalAPI = [[JitsiMeet sharedInstance] getExternalAPI];
+    [externalAPI retrieveParticipantsInfo:completionHandler];
+}
+
 #pragma mark Private methods
 
 /**

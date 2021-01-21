@@ -18,9 +18,12 @@
 
 @interface ExternalAPI : RCTEventEmitter<RCTBridgeModule>
 
+@property (nonatomic, copy) void (^completionHandler)(NSArray* participantsInfo);
+
 - (void)sendHangUp;
 - (void)sendSetAudioMuted: (BOOL)muted;
 - (void)sendEndpointTextMessage:(NSString*)to :(NSString*)message;
 - (void)toggleScreenShare;
+- (void)retrieveParticipantsInfo:(void (^)(NSArray*))completion;
 
 @end

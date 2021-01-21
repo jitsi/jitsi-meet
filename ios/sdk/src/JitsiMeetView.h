@@ -45,4 +45,6 @@
 
 - (void)toggleScreenShare;
 
+- (void)retrieveParticipantsInfo:(void (^)(NSArray*))completionHandler;
+
 @end
