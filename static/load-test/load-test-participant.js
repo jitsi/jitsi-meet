@@ -12,30 +12,6 @@ const {
     remoteAudio = isHuman
 } = params;
 
-const options = {
-    hosts: {
-        domain: 'hristo-perf.jitsi.net',
-        muc: 'conference.hristo-perf.jitsi.net'
-    },
-    bosh: '//hristo-perf.jitsi.net/http-bind',
-
-    // The name of client node advertised in XEP-0115 'c' stanza
-    clientNode: 'http://jitsi.org/jitsimeet'
-};
-
-const confOptions = {
-    openBridgeChannel: 'websocket',
-    testing: {
-        testMode: true,
-        noAutoPlayVideo: true
-    },
-    disableNS: true,
-    disableAEC: true,
-    gatherStats: true,
-    callStatsID: false
-
-};
-
 let connection = null;
 
 let isJoined = false;
@@ -163,7 +139,7 @@ function onUserLeft(id) {
  * That function is called when connection is established successfully
  */
 function onConnectionSuccess() {
-    room = connection.initJitsiConference(roomName, confOptions);
+    room = connection.initJitsiConference(roomName, config);
     room.on(JitsiMeetJS.events.conference.TRACK_ADDED, onRemoteTrack);
     room.on(JitsiMeetJS.events.conference.CONFERENCE_JOINED, onConferenceJoined);
     room.on(JitsiMeetJS.events.conference.USER_JOINED, id => {
@@ -214,29 +190,9 @@ $(window).bind('unload', unload);
 
 JitsiMeetJS.setLogLevel(JitsiMeetJS.logLevels.ERROR);
 
-const initOptions = {
-    disableAudioLevels: true,
+JitsiMeetJS.init(config);
 
-    // The ID of the jidesha extension for Chrome.
-    desktopSharingChromeExtId: 'mbocklcggfhnbahlnepmldehdhpjfcjp',
-
-    // Whether desktop sharing should be disabled on Chrome.
-    desktopSharingChromeDisabled: true,
-
-    // The media sources to use when using screen sharing with the Chrome
-    // extension.
-    desktopSharingChromeSources: [ 'screen', 'window' ],
-
-    // Required version of Chrome extension
-    desktopSharingChromeMinExtVersion: '0.1',
-
-    // Whether desktop sharing should be disabled on Firefox.
-    desktopSharingFirefoxDisabled: true
-};
-
-JitsiMeetJS.init(initOptions);
-
-connection = new JitsiMeetJS.JitsiConnection(null, null, options);
+connection = new JitsiMeetJS.JitsiConnection(null, null, config);
 connection.addEventListener(JitsiMeetJS.events.connection.CONNECTION_ESTABLISHED, onConnectionSuccess);
 connection.addEventListener(JitsiMeetJS.events.connection.CONNECTION_FAILED, onConnectionFailed);
 connection.addEventListener(JitsiMeetJS.events.connection.CONNECTION_DISCONNECTED, disconnect);
