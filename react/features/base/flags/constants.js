@@ -38,6 +38,12 @@ export const CONFERENCE_TIMER_ENABLED = 'conference-timer.enabled';
 export const CHAT_ENABLED = 'chat.enabled';
 
 /**
+ * Flag indicating if the filmstrip should be enabled.
+ * Default: enabled (true).
+ */
+export const FILMSTRIP_ENABLED = 'filmstrip.enabled';
+
+/**
  * Flag indicating if invite functionality should be enabled.
  * Default: enabled (true).
  */
@@ -74,6 +80,13 @@ export const MEETING_NAME_ENABLED = 'meeting-name.enabled';
  * Default: enabled (true).
  */
 export const MEETING_PASSWORD_ENABLED = 'meeting-password.enabled';
+
+
+/**
+ * Flag indicating if the notifications should be enabled.
+ * Default: enabled (true).
+ */
+export const NOTIFICATIONS_ENABLED = 'notifications.enabled';
 
 /**
  * Flag indicating if Picture-in-Picture should be enabled.
@@ -117,6 +130,12 @@ export const TILE_VIEW_ENABLED = 'tile-view.enabled';
  * Default: disabled (false).
  */
 export const TOOLBOX_ALWAYS_VISIBLE = 'toolbox.alwaysVisible';
+
+/**
+ * Flag indicating if the toolbox should be enabled
+ * Default: enabled.
+ */
+export const TOOLBOX_ENABLED = 'toolbox.enabled';
 
 /**
  * Flag indicating if the video share button should be enabled
