@@ -5,17 +5,15 @@ local basexx = require "basexx";
 local have_async, async = pcall(require, "util.async");
 local hex = require "util.hex";
 local jwt = require "luajwtjitsi";
-local http = require "net.http";
 local jid = require "util.jid";
 local json_safe = require "cjson.safe";
 local path = require "util.paths";
 local sha256 = require "util.hashes".sha256;
-local timer = require "util.timer";
+local main_util = module:require "util";
+local http_get_with_retry = main_util.http_get_with_retry;
+local extract_subdomain = main_util.extract_subdomain;
 
-local http_timeout = 30;
-local http_headers = {
-    ["User-Agent"] = "Prosody ("..prosody.version.."; "..prosody.platform..")"
-};
+local nr_retries = 3;
 
 -- TODO: Figure out a less arbitrary default cache size.
 local cacheSize = module:get_option_number("jwt_pubkey_cache_size", 128);
@@ -131,102 +129,59 @@ function Util:get_public_key(keyId)
     if content == nil then
         -- If the key is not found in the cache.
         module:log("debug", "Cache miss for key: "..keyId);
-        local code;
-        local timeout_occurred;
-        local wait, done = async.waiter();
-
         local keyurl = path.join(self.asapKeyServer, hex.to(sha256(keyId))..'.pem');
-
-        local function cb(content_, code_, response_, request_)
-            if timeout_occurred == nil then
-                content, code = content_, code_;
-                if code == 200 or code == 204 then
-                    self.cache:set(keyId, content);
-                else
-                    module:log("warn", "Error on public key request: Code %s, Content %s",
-                    code_, content_);
-                end
-                done();
-            else
-                module:log("warn", "public key reply delivered after timeout from: %s",keyurl);
-            end
-        end
-
-        -- TODO: Is the done() call racey? Can we cancel this if the request
-        --       succeedes?
-        local function cancel()
-            -- TODO: This check is racey. Not likely to be a problem, but we should
-            --       still stick a mutex on content / code at some point.
-            if code == nil then
-                timeout_occurred = true;
-                module:log("warn", "Timeout %s seconds fetching public key from: %s",http_timeout,keyurl);
-                if http.destroy_request ~= nil then
-                    http.destroy_request(request);
-                end
-                done();
-            end
-        end
-
         module:log("debug", "Fetching public key from: "..keyurl);
-
-        -- We hash the key ID to work around some legacy behavior and make
-        -- deployment easier. It also helps prevent directory
-        -- traversal attacks (although path cleaning could have done this too).
-        local request = http.request(keyurl, {
-            headers = http_headers or {},
-            method = "GET"
-        }, cb);
-
-        timer.add_task(http_timeout, cancel);
-        wait();
-
-        if code == 200 or code == 204 then
-            return content;
+        content = http_get_with_retry(keyurl, nr_retries);
+        if content ~= nil then
+            self.cache:set(keyId, content);
         end
+        return content;
     else
         -- If the key is in the cache, use it.
         module:log("debug", "Cache hit for key: "..keyId);
         return content;
     end
-
-    return nil;
 end
 
 --- Verifies issuer part of token
--- @param 'iss' claim from the token to verify
+-- @param 'issClaim' claim from the token to verify
 -- @param 'acceptedIssuers' list of issuers to check
 -- @return nil and error string or true for accepted claim
 function Util:verify_issuer(issClaim, acceptedIssuers)
     if not acceptedIssuers then
         acceptedIssuers = self.acceptedIssuers
     end
-    module:log("debug","verify_issuer claim: %s against accepted: %s",issClaim, acceptedIssuers);
+    module:log("debug", "verify_issuer claim: %s against accepted: %s", issClaim, acceptedIssuers);
     for i, iss in ipairs(acceptedIssuers) do
+        if iss == '*' then
+            -- "*" indicates to accept any issuer in the claims so return success
+            return true;
+        end
         if issClaim == iss then
-            --claim matches an accepted issuer so return success
+            -- claim matches an accepted issuer so return success
             return true;
         end
     end
-    --if issClaim not found in acceptedIssuers, fail claim
+    -- if issClaim not found in acceptedIssuers, fail claim
     return nil, "Invalid issuer ('iss' claim)";
 end
 
 --- Verifies audience part of token
--- @param 'aud' claim from the token to verify
+-- @param 'audClaim' claim from the token to verify
 -- @return nil and error string or true for accepted claim
 function Util:verify_audience(audClaim)
-    module:log("debug","verify_audience claim: %s against accepted: %s",audClaim, self.acceptedAudiences);
+    module:log("debug", "verify_audience claim: %s against accepted: %s", audClaim, self.acceptedAudiences);
     for i, aud in ipairs(self.acceptedAudiences) do
         if aud == '*' then
-            --* indicates to accept any audience in the claims so return success
+            -- "*" indicates to accept any audience in the claims so return success
             return true;
         end
         if audClaim == aud then
-            --claim matches an accepted audience so return success
+            -- claim matches an accepted audience so return success
             return true;
         end
     end
-    --if issClaim not found in acceptedIssuers, fail claim
+    -- if audClaim not found in acceptedAudiences, fail claim
     return nil, "Invalid audience ('aud' claim)";
 end
 
@@ -301,7 +256,10 @@ function Util:process_and_verify_token(session, acceptedIssuers)
     end
 
     local pubKey;
-    if self.asapKeyServer and session.auth_token ~= nil then
+    if session.public_key then
+        module:log("debug","Public key was found on the session");
+        pubKey = session.public_key;
+    elseif self.asapKeyServer and session.auth_token ~= nil then
         local dotFirst = session.auth_token:find("%.");
         if not dotFirst then return nil, "Invalid token" end
         local header, err = json_safe.decode(basexx.from_url64(session.auth_token:sub(1,dotFirst-1)));
@@ -394,7 +352,7 @@ function Util:verify_room(session, room_address)
     local room_node = jid.node(room_address);
     -- parses bare room address, for multidomain expected format is:
     -- [subdomain]roomName@conference.domain
-    local target_subdomain, target_room = room_node:match("^%[([^%]]+)%](.+)$");
+    local target_subdomain, target_room = extract_subdomain(room_node);
 
     -- if we have '*' as room name in token, this means all rooms are allowed
     -- so we will use the actual name of the room when constructing strings

@@ -4,10 +4,15 @@ import { getLogger } from 'jitsi-meet-logger';
 
 import { doGetJSON } from '../base/util';
 
-import { SET_DYNAMIC_BRANDING_DATA, SET_DYNAMIC_BRANDING_READY } from './actionTypes';
-import { extractFqnFromPath } from './functions';
+import {
+    SET_DYNAMIC_BRANDING_DATA,
+    SET_DYNAMIC_BRANDING_FAILED,
+    SET_DYNAMIC_BRANDING_READY
+} from './actionTypes';
+import { getDynamicBrandingUrl } from './functions';
 
 const logger = getLogger(__filename);
+
 
 /**
  * Fetches custom branding data.
@@ -19,19 +24,20 @@ const logger = getLogger(__filename);
 export function fetchCustomBrandingData() {
     return async function(dispatch: Function, getState: Function) {
         const state = getState();
-        const baseUrl = state['features/base/config'].brandingDataUrl;
         const { customizationReady } = state['features/dynamic-branding'];
 
         if (!customizationReady) {
-            const fqn = extractFqnFromPath(state['features/base/connection'].locationURL.pathname);
+            const url = getDynamicBrandingUrl(state);
 
-            if (baseUrl && fqn) {
+            if (url) {
                 try {
-                    const res = await doGetJSON(`${baseUrl}?conferenceFqn=${encodeURIComponent(fqn)}`);
+                    const res = await doGetJSON(url);
 
                     return dispatch(setDynamicBrandingData(res));
                 } catch (err) {
                     logger.error('Error fetching branding data', err);
+
+                    return dispatch(setDynamicBrandingFailed());
                 }
             }
 
@@ -61,5 +67,16 @@ function setDynamicBrandingData(value) {
 function setDynamicBrandingReady() {
     return {
         type: SET_DYNAMIC_BRANDING_READY
+    };
+}
+
+/**
+ * Action used to signal the branding request failed.
+ *
+ * @returns {Object}
+ */
+function setDynamicBrandingFailed() {
+    return {
+        type: SET_DYNAMIC_BRANDING_FAILED
     };
 }

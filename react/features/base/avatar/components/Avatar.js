@@ -2,7 +2,6 @@
 
 import React, { PureComponent } from 'react';
 
-import { IconShareDesktop } from '../../icons';
 import { getParticipantById } from '../../participants';
 import { connect } from '../../redux';
 import { getAvatarColor, getInitials } from '../functions';
@@ -37,6 +36,11 @@ export type Props = {
      * an avatar for a non-participasnt entity (e.g. a recent list item).
      */
     displayName?: string,
+
+    /**
+     * Whether or not to update the background color of the avatar
+     */
+    dynamicColor?: Boolean,
 
     /**
      * ID of the element, if any.
@@ -79,6 +83,15 @@ export const DEFAULT_SIZE = 65;
  * Implements a class to render avatars in the app.
  */
 class Avatar<P: Props> extends PureComponent<P, State> {
+    /**
+     * Default values for {@code Avatar} component's properties.
+     *
+     * @static
+     */
+    static defaultProps = {
+        dynamicColor: true
+    };
+
     /**
      * Instantiates a new {@code Component}.
      *
@@ -124,6 +137,7 @@ class Avatar<P: Props> extends PureComponent<P, State> {
             _loadableAvatarUrl,
             className,
             colorBase,
+            dynamicColor,
             id,
             size,
             status,
@@ -157,7 +171,10 @@ class Avatar<P: Props> extends PureComponent<P, State> {
         const initials = getInitials(_initialsBase);
 
         if (initials) {
-            avatarProps.color = getAvatarColor(colorBase || _initialsBase);
+            if (dynamicColor) {
+                avatarProps.color = getAvatarColor(colorBase || _initialsBase);
+            }
+
             avatarProps.initials = initials;
         }
 
@@ -192,17 +209,10 @@ export function _mapStateToProps(state: Object, ownProps: Props) {
     const { colorBase, displayName, participantId } = ownProps;
     const _participant: ?Object = participantId && getParticipantById(state, participantId);
     const _initialsBase = _participant?.name ?? displayName;
-    const screenShares = state['features/video-layout'].screenShares || [];
-
-    let _loadableAvatarUrl = _participant?.loadableAvatarUrl;
-
-    if (participantId && screenShares.includes(participantId)) {
-        _loadableAvatarUrl = IconShareDesktop;
-    }
 
     return {
         _initialsBase,
-        _loadableAvatarUrl,
+        _loadableAvatarUrl: _participant?.loadableAvatarUrl,
         colorBase: !colorBase && _participant ? _participant.id : colorBase
     };
 }

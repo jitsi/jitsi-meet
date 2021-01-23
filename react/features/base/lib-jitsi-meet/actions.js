@@ -1,5 +1,6 @@
 /* @flow */
 
+import { jitsiLocalStorage } from '@jitsi/js-utils';
 import type { Dispatch } from 'redux';
 
 import { isOnline } from '../net-info/selectors';
@@ -55,7 +56,8 @@ export function initLib() {
         try {
             JitsiMeetJS.init({
                 enableAnalyticsLogging: isAnalyticsEnabled(getState),
-                ...config
+                ...config,
+                externalStorage: jitsiLocalStorage.isLocalStorageDisabled() ? jitsiLocalStorage : undefined
             });
             JitsiMeetJS.setNetworkInfo({
                 isOnline: isOnline(state)

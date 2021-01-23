@@ -11,6 +11,7 @@ import JitsiMeetJS, {
 import { MiddlewareRegistry } from '../redux';
 import { isTestModeEnabled } from '../testing';
 
+import buildExternalApiLogTransport from './ExternalApiLogTransport';
 import JitsiMeetInMemoryLogStorage from './JitsiMeetInMemoryLogStorage';
 import JitsiMeetLogStorage from './JitsiMeetLogStorage';
 import { SET_LOGGING_CONFIG } from './actionTypes';
@@ -140,6 +141,15 @@ function _initLogging({ dispatch, getState }, loggingConfig, isTestingEnabled) {
     if (!logCollector && !loggingConfig.disableLogCollector) {
         const _logCollector
             = new Logger.LogCollector(new JitsiMeetLogStorage(getState));
+
+        const { apiLogLevels } = getState()['features/base/config'];
+
+        if (apiLogLevels && Array.isArray(apiLogLevels) && typeof APP === 'object') {
+            const transport = buildExternalApiLogTransport(apiLogLevels);
+
+            Logger.addGlobalTransport(transport);
+            JitsiMeetJS.addGlobalLogTransport(transport);
+        }
 
         Logger.addGlobalTransport(_logCollector);
         JitsiMeetJS.addGlobalLogTransport(_logCollector);

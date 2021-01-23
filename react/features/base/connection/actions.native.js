@@ -122,12 +122,15 @@ export function connect(id: ?string, password: ?string) {
          * @returns {void}
          */
         function _onConnectionEstablished() {
+            console.log("on connetion est");
             connection.removeEventListener(
                 JitsiConnectionEvents.CONNECTION_ESTABLISHED,
                 _onConnectionEstablished);
             // Enable desktop sharing.
+            console.log("trying to catch it");
+            console.log(JitsiMeetJS.isDesktopSharingEnabled());
             const isDesktopSharingEnabled = JitsiMeetJS.isDesktopSharingEnabled();
-            dispatch(setDesktopSharingEnabled(isDesktopSharingEnabled));
+            // dispatch(setDesktopSharingEnabled(isDesktopSharingEnabled));
             dispatch(connectionEstablished(connection, Date.now()));
         }
 

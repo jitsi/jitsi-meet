@@ -96,7 +96,8 @@ class NavigationBar extends Component<Props> {
  */
 function _mapStateToProps(state) {
     return {
-        _conferenceTimerEnabled: getFeatureFlag(state, CONFERENCE_TIMER_ENABLED, true),
+        _conferenceTimerEnabled:
+            getFeatureFlag(state, CONFERENCE_TIMER_ENABLED, true) && !state['features/base/config'].hideConferenceTimer,
         _meetingName: getConferenceName(state),
         _meetingNameEnabled: getFeatureFlag(state, MEETING_NAME_ENABLED, true),
         _visible: isToolboxVisible(state)

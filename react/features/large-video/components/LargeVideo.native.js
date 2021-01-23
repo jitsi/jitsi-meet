@@ -3,9 +3,10 @@
 import React, { PureComponent } from 'react';
 
 import { ColorSchemeRegistry } from '../../base/color-scheme';
-import { ParticipantView } from '../../base/participants';
+import { ParticipantView, getParticipantById } from '../../base/participants';
 import { connect } from '../../base/redux';
 import { StyleType } from '../../base/styles';
+import { isLocalVideoTrackDesktop } from '../../base/tracks/functions';
 
 import { AVATAR_SIZE } from './styles';
 
@@ -13,6 +14,11 @@ import { AVATAR_SIZE } from './styles';
  * The type of the React {@link Component} props of {@link LargeVideo}.
  */
 type Props = {
+
+    /**
+     * Whether video should be disabled.
+     */
+    _disableVideo: boolean,
 
     /**
      * Application's viewport height.
@@ -112,6 +118,7 @@ class LargeVideo extends PureComponent<Props, State> {
             useConnectivityInfoLabel
         } = this.state;
         const {
+            _disableVideo,
             _participantId,
             _styles,
             onClick
@@ -120,6 +127,7 @@ class LargeVideo extends PureComponent<Props, State> {
         return (
             <ParticipantView
                 avatarSize = { avatarSize }
+                disableVideo = { _disableVideo }
                 onPress = { onClick }
                 participantId = { _participantId }
                 style = { _styles.largeVideo }
@@ -139,11 +147,19 @@ class LargeVideo extends PureComponent<Props, State> {
  * @returns {Props}
  */
 function _mapStateToProps(state) {
+    const { participantId } = state['features/large-video'];
+    const participant = getParticipantById(state, participantId);
     const { clientHeight: height, clientWidth: width } = state['features/base/responsive-ui'];
+    let disableVideo = false;
+
+    if (participant?.local) {
+        disableVideo = isLocalVideoTrackDesktop(state);
+    }
 
     return {
+        _disableVideo: disableVideo,
         _height: height,
-        _participantId: state['features/large-video'].participantId,
+        _participantId: participantId,
         _styles: ColorSchemeRegistry.get(state, 'LargeVideo'),
         _width: width
     };

@@ -32,9 +32,12 @@
 				<string>de.hopp-foundation.klassenzimmer</string>
 			</array>
 		</dict>
+		<dict/>
 	</array>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
+	<key>FirebaseCrashlyticsCollectionEnabled</key>
+	<string>false</string>
 	<key>FirebaseScreenReportingEnabled</key>
 	<false/>
 	<key>ITSAppUsesNonExemptEncryption</key>
@@ -56,8 +59,8 @@
 	<string>Wenn Meetings in deinen Kalender eingetragen werden sollen</string>
 	<key>NSCameraUsageDescription</key>
 	<string>Nehme mit Video an Meetings teil</string>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string></string>
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>Local network is used for establishing Peer-to-Peer connections.</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Nehme mit Ton an Meetings teil.</string>
 	<key>NSUserActivityTypes</key>
@@ -89,7 +92,5 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
-	<key>firebase_crashlytics_collection_enabled</key>
-	<string>false</string>
 </dict>
 </plist>

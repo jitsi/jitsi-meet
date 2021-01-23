@@ -13,6 +13,10 @@ android {
     compileSdkVersion rootProject.ext.compileSdkVersion
     buildToolsVersion rootProject.ext.buildToolsVersion
 
+    packagingOptions {
+        exclude 'lib/*/libhermes*.so'
+    }
+
     defaultConfig {
         applicationId 'de.hoppfoundation.klassenzimmer'
         versionCode vcode
@@ -68,16 +72,11 @@ android {
     }
 }
 
-repositories {
-    maven { url 'https://maven.fabric.io/public' }
-}
-
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    implementation 'androidx.appcompat:appcompat:1.1.0'
+    implementation 'androidx.appcompat:appcompat:1.2.0'
 
-    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.0-beta-5'
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.2'
 
 
 

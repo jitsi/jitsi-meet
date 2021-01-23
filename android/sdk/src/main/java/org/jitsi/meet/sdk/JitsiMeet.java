@@ -1,6 +1,5 @@
 /*
- * Copyright @ 2018-present 8x8, Inc.
- * Copyright @ 2017-2018 Atlassian Pty Ltd
+ * Copyright @ 2017-present 8x8, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +15,15 @@
  */
 package org.jitsi.meet.sdk;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import com.facebook.react.ReactInstanceManager;
+
+import org.devio.rn.splashscreen.SplashScreen;
+import org.jitsi.meet.sdk.log.JitsiMeetLogger;
 
 public class JitsiMeet {
 
@@ -80,5 +83,18 @@ public class JitsiMeet {
         SharedPreferences preferences = context.getSharedPreferences("jitsi-default-preferences", Context.MODE_PRIVATE);
         String value = preferences.getString("isCrashReportingDisabled", "");
         return Boolean.parseBoolean(value);
+    }
+
+    /**
+     * Helper method to show the SplashScreen.
+     *
+     * @param activity - The activity on which to show the SplashScreen {@link Activity}.
+     */
+    public static void showSplashScreen(Activity activity) {
+        try {
+            SplashScreen.show(activity);
+        } catch (Exception e) {
+            JitsiMeetLogger.e(e, "Failed to show splash screen");
+        }
     }
 }

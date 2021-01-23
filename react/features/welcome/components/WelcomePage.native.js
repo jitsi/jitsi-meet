@@ -19,9 +19,11 @@ import { connect } from '../../base/redux';
 import { ColorPalette } from '../../base/styles';
 import {
     createDesiredLocalTracks,
+    destroyLocalDesktopTrackIfExists,
     destroyLocalTracks
 } from '../../base/tracks';
 import { HelpView } from '../../help';
+import { ClosingView } from '../../closingpage/components';//TODO: why do we need ocmponents
 import { DialInSummary } from '../../invite';
 import { SettingsView } from '../../settings';
 import { setSideBarVisible } from '../actions';
@@ -94,6 +96,8 @@ class WelcomePage extends AbstractWelcomePage {
         if (this.props._settings.startAudioOnly) {
             dispatch(destroyLocalTracks());
         } else {
+            dispatch(destroyLocalDesktopTrackIfExists());
+
             // Make sure we don't request the permission for the camera from
             // the start. We will, however, create a video track iff the user
             // already granted the permission.
@@ -371,6 +375,7 @@ class WelcomePage extends AbstractWelcomePage {
     _renderWelcomePageModals() {
         return [
             <HelpView key = 'helpView' />,
+            <ClosingView key = 'closingView' />,
             <DialInSummary key = 'dialInSummary' />,
             <SettingsView key = 'settings' />
         ];

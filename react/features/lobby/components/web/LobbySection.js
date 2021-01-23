@@ -132,10 +132,12 @@ class LobbySection extends PureComponent<Props, State> {
  */
 function mapStateToProps(state: Object): $Shape<Props> {
     const { conference } = state['features/base/conference'];
+    const { hideLobbyButton } = state['features/base/config'];
 
     return {
         _lobbyEnabled: state['features/lobby'].lobbyEnabled,
         _visible: conference && conference.isLobbySupported() && isLocalParticipantModerator(state)
+            && !hideLobbyButton
     };
 }
 

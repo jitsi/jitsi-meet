@@ -21,12 +21,14 @@ import { getTrackByMediaTypeAndParticipant } from '../../../base/tracks';
 import { ConnectionIndicator } from '../../../connection-indicator';
 import { DisplayNameLabel } from '../../../display-name';
 import { RemoteVideoMenu } from '../../../remote-video-menu';
+import ConnectionStatusComponent from '../../../remote-video-menu/components/native/ConnectionStatusComponent';
 import { toggleToolboxVisible } from '../../../toolbox/actions.native';
 
 import AudioMutedIndicator from './AudioMutedIndicator';
 import DominantSpeakerIndicator from './DominantSpeakerIndicator';
 import ModeratorIndicator from './ModeratorIndicator';
 import RaisedHandIndicator from './RaisedHandIndicator';
+import ScreenShareIndicator from './ScreenShareIndicator';
 import VideoMutedIndicator from './VideoMutedIndicator';
 import styles, { AVATAR_SIZE } from './styles';
 import MoreOptionsIndicator from './MoreOptionsIndicator';
@@ -54,7 +56,7 @@ type Props = {
     /**
      * Handles long press on the thumbnail.
      */
-    _onShowRemoteVideoMenu: ?Function,
+    _onThumbnailLongPress: ?Function,
 
     /**
      * Whether to show the dominant speaker indicator or not.
@@ -120,7 +122,7 @@ function Thumbnail(props: Props) {
         _audioMuted: audioMuted,
         _largeVideo: largeVideo,
         _onClick,
-        _onShowRemoteVideoMenu,
+        _onThumbnailLongPress,
         _renderDominantSpeakerIndicator: renderDominantSpeakerIndicator,
         _renderModeratorIndicator: renderModeratorIndicator,
         _styles,
@@ -140,7 +142,7 @@ function Thumbnail(props: Props) {
     return (
         <Container
             onClick = { _onClick }
-            onLongPress = { participant.local ? undefined : _onShowRemoteVideoMenu }
+            onLongPress = { _onThumbnailLongPress }
             style = { [
                 styles.thumbnail,
                 participant.pinned && !tileView
@@ -170,7 +172,7 @@ function Thumbnail(props: Props) {
                 
             { !participant.isFakeParticipant && 
            <TouchableOpacity 
-           onPress={ participant.local ? undefined : _onShowRemoteVideoMenu}  
+           onPress={ participant.local ? undefined : _onThumbnailLongPress}  
      style = { [
                     styles.thumbnailTopIndicatorContainer,
                     styles.thumbnailTopLeftIndicatorContainer,
@@ -179,13 +181,20 @@ function Thumbnail(props: Props) {
                     <View>
                  <MoreOptionsIndicator/>
 
-                { renderDominantSpeakerIndicator && <DominantSpeakerIndicator /> }
                 </View>
-
 
             </TouchableOpacity>
 }
 
+            <View
+           style = { [
+            styles.thumbnailTopIndicatorContainer,
+            styles.thumbnailUnderTopLeftIndicatorContainer]}
+            >
+            
+
+                { renderDominantSpeakerIndicator && <DominantSpeakerIndicator /> }
+                </View>
             { !participant.isFakeParticipant && <View
                 style = { [
                     styles.thumbnailTopIndicatorContainer,
@@ -199,9 +208,10 @@ function Thumbnail(props: Props) {
             { !participant.isFakeParticipant && <Container style = { styles.thumbnailIndicatorContainer }>
                 { audioMuted
                     && <AudioMutedIndicator /> }
-
                 { videoMuted
                     && <VideoMutedIndicator /> }
+                { isScreenShare
+                    && <ScreenShareIndicator /> }
             </Container> }
 
         </Container>
@@ -241,12 +251,18 @@ function _mapDispatchToProps(dispatch: Function, ownProps): Object {
          *
          * @returns {void}
          */
-        _onShowRemoteVideoMenu() {
+        _onThumbnailLongPress() {
             const { participant } = ownProps;
 
-            dispatch(openDialog(RemoteVideoMenu, {
-                participant
-            }));
+            if (participant.local) {
+                dispatch(openDialog(ConnectionStatusComponent, {
+                    participantID: participant.id
+                }));
+            } else {
+                dispatch(openDialog(RemoteVideoMenu, {
+                    participant
+                }));
+            }
         }
     };
 }

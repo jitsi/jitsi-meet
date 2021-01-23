@@ -270,6 +270,11 @@ function _conferenceWillJoin({ dispatch, getState }, next, action) {
         return result;
     }
 
+    // If we already have a callUUID set, don't start a new call.
+    if (conference.callUUID) {
+        return result;
+    }
+
     // When assigning the call UUID, do so in upper case, since iOS will return
     // it upper cased.
     conference.callUUID = (callUUID || uuid.v4()).toUpperCase();

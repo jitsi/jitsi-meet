@@ -19,10 +19,12 @@ import { ClosedCaptionButton } from '../../../subtitles';
 import { TileViewButton } from '../../../video-layout';
 import { VideoShareButton } from '../../../youtube-player/components';
 import HelpButton from '../HelpButton';
+import MuteEveryoneButton from '../MuteEveryoneButton';
 
 import AudioOnlyButton from './AudioOnlyButton';
 import MoreOptionsButton from './MoreOptionsButton';
 import RaiseHandButton from './RaiseHandButton';
+import ScreenSharingButton from './ScreenSharingButton.js';
 import ToggleCameraButton from './ToggleCameraButton';
 import styles from './styles';
 import MuteEveryoneElseButton from './MuteEveryoneElseButton';
@@ -143,8 +145,12 @@ class OverflowMenu extends PureComponent<Props, State> {
             styles: _bottomSheetStyles.buttons
             
         };
-        var showScreenshare = jitsiLocalStorage.getItem('showScreenshare');
-
+        var showScreenshare = jitsiLocalStorage.getItem('showScreenshare')=='true'; // I don't know why this is a string now 
+        console.log('showScreenshare')
+        
+        console.log(typeof(showScreenshare))
+        console.log(showScreenshare)
+        console.log(this.props)            
         const moreOptionsButtonProps = {
             ...buttonProps,
             afterClick: this._onToggleMenu,
@@ -161,6 +167,7 @@ class OverflowMenu extends PureComponent<Props, State> {
                 <AudioOnlyButton { ...buttonProps } />
                 <RaiseHandButton { ...buttonProps } />
                 <LobbyModeButton { ...buttonProps } />
+                <ScreenSharingButton { ...buttonProps } />
                 <MoreOptionsButton { ...moreOptionsButtonProps } />
                 <Collapsible collapsed = { !showMore }>
                     {this._renderModeratorButtons(buttonProps)}          
@@ -171,14 +178,14 @@ class OverflowMenu extends PureComponent<Props, State> {
                     <RoomLockButton { ...buttonProps } />
                     <ClosedCaptionButton { ...buttonProps } />
                     <SharedDocumentButton { ...buttonProps } />
+                    <MuteEveryoneButton { ...buttonProps } />
                     <HelpButton { ...buttonProps } />
                     {Platform.OS == 'ios' ? <><Collapsible collapsed = { showScreenshare }>
                         <ScreenshareButton {...buttonProps} />
                      </Collapsible>
                     <Collapsible collapsed = { !showScreenshare }>
                         {
-                        this.props._desktopSharingEnabled
-                            && <IOSRecordButtonWrapper />
+                            <IOSRecordButtonWrapper />
                         }
                     </Collapsible></> : null}
                 </Collapsible>
@@ -195,7 +202,6 @@ class OverflowMenu extends PureComponent<Props, State> {
         if(isModerator){
             return(
                 <View>
-                <MuteEveryoneElseButton { ...buttonProps } />
                 <KickEveryoneElseButton { ...buttonProps } />
                 </View>
             );
@@ -218,8 +224,9 @@ class OverflowMenu extends PureComponent<Props, State> {
                     styles.expandMenuContainer
                 ] }>
                 <TouchableOpacity onPress = { this._onToggleMenu }>
-                    { /* $FlowFixMeProps */ }
-                    <IconDragHandle style = { this.props._bottomSheetStyles.expandIcon } />
+                    { /* $FlowFixMe */ }
+                    <IconDragHandle
+                        fill = { this.props._bottomSheetStyles.buttons.iconStyle.color } />
                 </TouchableOpacity>
             </View>
         );
@@ -302,6 +309,8 @@ function _mapStateToProps(state) {
             .find(({ features = {} }) =>
                 String(features['screen-sharing']) === 'true') !== undefined;
     }
+    console.log(state)
+    console.log('state')
     console.log(Platform.OS)
     return {
         __localVideo: state['features/base/tracks'],

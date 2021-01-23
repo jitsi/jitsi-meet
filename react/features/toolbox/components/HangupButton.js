@@ -13,6 +13,10 @@ const {ScreenShareController} =  require('./native/IOSRecordButton');
 import { jitsiLocalStorage } from '@jitsi/js-utils';
 import { Platform } from 'react-native';
 
+import { CLOSING_PAGE_MODAL_ID } from '../../closingpage/constants';
+import { setActiveModalId } from '../../base/modal';
+
+
 
 /**
  * The type of the React {@code Component} props of {@link HangupButton}.
@@ -71,7 +75,26 @@ class HangupButton extends AbstractHangupButton<Props, *> {
      */
     _doHangup() {
         this._hangup();
+
+        const protocol = this.props.locationURL.protocol
+        const host = this.props.locationURL.host
+        const serverURL = `${protocol}//${host}`
+        console.log(serverURL)
+        var shouldShowClosePage = JSON.parse(jitsiLocalStorage.getItem(['config.js/'+ serverURL+'/']))["enableClosePage"]
+        if(shouldShowClosePage){
+            this.props.dispatch(setActiveModalId(CLOSING_PAGE_MODAL_ID,serverURL));
+            
+        }
+
     }
 }
+function _mapStateToProps(state: Object): $Shape<Props> {
+    const { locationURL } = state['features/base/connection'];
 
-export default translate(connect()(HangupButton));
+    return {
+        locationURL
+    };
+}
+
+
+export default translate(connect(_mapStateToProps)(HangupButton));

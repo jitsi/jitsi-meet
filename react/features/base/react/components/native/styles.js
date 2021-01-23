@@ -208,6 +208,11 @@ export const TINTED_VIEW_DEFAULT = {
     opacity: 0.8
 };
 
+export const BASE_INDICATOR = {
+    alignItems: 'center',
+    justifyContent: 'center'
+};
+
 /**
  * The styles of the generic React {@code Component}s implemented by the feature
  * base/react.
