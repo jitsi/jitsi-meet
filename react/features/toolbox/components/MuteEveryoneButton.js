@@ -66,10 +66,12 @@ function _mapStateToProps(state: Object, ownProps: Props) {
     const { visible } = ownProps;
     const { disableRemoteMute } = state['features/base/config'];
 
+    var vis_calc = !(!visible && !disableRemoteMute && !isModerator)
+
     return {
         isModerator,
         localParticipantId: localParticipant.id,
-        visible: visible && isModerator && !disableRemoteMute
+        visible: vis_calc
     };
 }
 
