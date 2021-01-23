@@ -6,7 +6,8 @@ import { translate } from '../../../base/i18n';
 import { IconKick } from '../../../base/icons';
 import {
     getLocalParticipant,
-    participantUpdated
+    participantUpdated,
+    PARTICIPANT_ROLE
 } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import { AbstractButton } from '../../../base/toolbox/components';
@@ -14,7 +15,7 @@ import type { AbstractButtonProps } from '../../../base/toolbox/components';
 import ScreenshareWarningPrompt from './ScreenshareWarningPrompt';
 import { openDialog } from '../../../base/dialog';
 /**
- * The type of the React {@code Component} props of {@link KickEveryoneElseButton}.
+ * The type of the React {@code Component} props of {@link ScreenshareButton}.
  */
 type Props = AbstractButtonProps & {
 
@@ -31,7 +32,7 @@ type Props = AbstractButtonProps & {
 };
 
 /**
- * An implementation of a button to Kick Everyone
+ * An implementation of a button  to show screensharing
  */
 class ScreenshareButton extends AbstractButton<Props, *> {
     accessibilityLabel = 'toolbar.accessibilityLabel.shareYourScreen';
@@ -74,9 +75,16 @@ class ScreenshareButton extends AbstractButton<Props, *> {
  */
 function _mapStateToProps(state, ownProps): Object {
     const _localParticipant = getLocalParticipant(state);
+    const isModerator = _localParticipant.role === PARTICIPANT_ROLE.MODERATOR;
+    const MODERATOR_KEYS = state['features/base/config'].HOPP_MODERATOR_KEYS
+    var visible_generally = true
 
+    if (MODERATOR_KEYS){
+        visible_generally = visible_generally && isModerator && MODERATOR_KEYS.includes('screenshare')
+    }
     return {
-        _localParticipant
+        _localParticipant,
+        visible: visible_generally
     };
 }
 
