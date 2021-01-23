@@ -23,6 +23,7 @@ import {
     destroyLocalTracks
 } from '../../base/tracks';
 import { HelpView } from '../../help';
+import { ClosingView } from '../../closingpage/components';//TODO: why do we need ocmponents
 import { DialInSummary } from '../../invite';
 import { SettingsView } from '../../settings';
 import { setSideBarVisible } from '../actions';
@@ -374,6 +375,7 @@ class WelcomePage extends AbstractWelcomePage {
     _renderWelcomePageModals() {
         return [
             <HelpView key = 'helpView' />,
+            <ClosingView key = 'closingView' />,
             <DialInSummary key = 'dialInSummary' />,
             <SettingsView key = 'settings' />
         ];
