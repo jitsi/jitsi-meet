@@ -60,7 +60,7 @@
         "today": "Bugün"
     },
     "chat": {
-        "error": "Hata: mesajınız gönderilmedi. Gerekçe: {{error}}",
+        "error": "Hata: Mesajınız gönderilmedi. Neden: {{error}}",
         "fieldPlaceHolder": "Mesajınızı buraya yazın",
         "messagebox": "Bir mesaj yazın",
         "messageTo": "{{recipient}} adlı kişiye özel mesaj",
@@ -730,7 +730,7 @@
         "noisyAudioInputDesc": "Mikrofonunuz gürültü yapıyor gibi görünüyor, lütfen cihazı kapatmayı veya değiştirmeyi düşünün.",
         "openChat": "Mesajlaşmayı aç",
         "pip": "Resim içinde Resim moduna gir",
-        "privateMessage": "Özel mesajgönder",
+        "privateMessage": "Özel mesaj gönder",
         "profile": "Profilinizi düzenleyin",
         "raiseHand": "Elinizi kaldırın/indirin",
         "raiseYourHand": "Elinizi kaldırın",
@@ -806,7 +806,7 @@
         "domute": "Sustur",
         "domuteOthers": "Diğer herkesi sustur",
         "flip": "Döndür",
-        "kick": "Çıkarıldı",
+        "kick": "Çıkar",
         "moderator": "Yönetici",
         "mute": "Katılımcı sessiz",
         "muted": "Sessiz",
