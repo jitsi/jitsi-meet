@@ -68,6 +68,12 @@ case "$1" in
         if [ "$APACHE_INSTALL_CHECK" = "installed" ] || [ "$APACHE_INSTALL_CHECK" = "unpacked" ] ; then
             FORCE_APACHE="true"
         fi
+        # In case user enforces apache and if apache is available, unset nginx.
+        db_get jitsi-meet/enforce_apache
+        if [ -n "$RET" ] && [ "$RET" = "true" ] \
+            && [ "$FORCE_APACHE" = "true" ]; then
+            FORCE_NGINX="false"
+        fi
 
         UPLOADED_CERT_CHOICE="I want to use my own certificate"
         # if first time config ask for certs, or if we are reconfiguring
