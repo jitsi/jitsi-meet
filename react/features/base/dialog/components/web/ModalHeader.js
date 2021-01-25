@@ -17,23 +17,34 @@ const TitleIcon = ({ appearance }: { appearance?: 'danger' | 'warning' }) => {
         return null;
     }
 
-    const Icon = appearance === 'danger' ? ErrorIcon : WarningIcon;
+    const IconSymbol = appearance === 'danger' ? ErrorIcon : WarningIcon;
 
     return (
         <span css = { titleIconWrapperStyles(appearance) }>
-            <Icon label = { `${appearance} icon` } />
+            <IconSymbol label = { `${appearance} icon` } />
         </span>
     );
 };
+
+type Props = {
+    id: string,
+    appearance?: 'danger' | 'warning',
+    heading: string,
+    onClose: Function,
+    showKeyline: boolean,
+    isHeadingMultiline: boolean,
+    testId: string,
+    t: Function
+}
 
 /**
  * A default header for modal-dialog components
  *
  * @export
  * @class ModalHeader
- * @extends {React.Component<HeaderProps, {}>}
+ * @extends {React.Component<Props>}
  */
-export default class ModalHeader extends React.Component {
+export default class ModalHeader extends React.Component<Props> {
     static defaultProps = {
         isHeadingMultiline: true
     };
