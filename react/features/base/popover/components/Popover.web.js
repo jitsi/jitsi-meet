@@ -28,7 +28,7 @@ const DIALOG_TO_PADDING_POSITION = {
  * @returns {string}
  */
 function _mapPositionToPaddingClass(position = 'left') {
-    return DIALOG_TO_PADDING_POSITION[position.split(' ')[0]];
+    return DIALOG_TO_PADDING_POSITION[position.split('-')[0]];
 }
 
 /**
