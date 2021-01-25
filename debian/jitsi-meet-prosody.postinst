@@ -60,15 +60,6 @@ case "$1" in
             JICOFO_AUTH_PASSWORD="$RET"
         fi
 
-        db_get jicofo/jicofosecret
-        if [ -z "$RET" ] ; then
-            # if secret is missing generate it, and store it
-            JICOFO_SECRET=`generateRandomPassword`
-            db_set jicofo/jicofosecret "$JICOFO_SECRET"
-        else
-            JICOFO_SECRET="$RET"
-        fi
-
         JICOFO_AUTH_DOMAIN="auth.$JVB_HOSTNAME"
 
         # detect dpkg-reconfigure, just delete old links
@@ -107,7 +98,6 @@ case "$1" in
             mkdir -p /etc/prosody/conf.d/
             cp /usr/share/jitsi-meet-prosody/prosody.cfg.lua-jvb.example $PROSODY_HOST_CONFIG
             sed -i "s/jitmeet.example.com/$JVB_HOSTNAME/g" $PROSODY_HOST_CONFIG
-            sed -i "s/focusSecret/$JICOFO_SECRET/g" $PROSODY_HOST_CONFIG
             sed -i "s/focusUser/$JICOFO_AUTH_USER/g" $PROSODY_HOST_CONFIG
             sed -i "s/__turnSecret__/$TURN_SECRET/g" $PROSODY_HOST_CONFIG
             if [ ! -f /etc/prosody/conf.d/$JVB_HOSTNAME.cfg.lua ]; then

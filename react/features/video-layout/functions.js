@@ -1,5 +1,6 @@
 // @flow
 
+import { getFeatureFlag, TILE_VIEW_ENABLED } from '../base/flags';
 import { getPinnedParticipant, getParticipantCount } from '../base/participants';
 import { isYoutubeVideoPlaying } from '../youtube-player/functions';
 
@@ -82,9 +83,10 @@ export function shouldDisplayTileView(state: Object = {}) {
         return false;
     }
 
+    const tileViewEnabledFeatureFlag = getFeatureFlag(state, TILE_VIEW_ENABLED, true);
     const { disableTileView } = state['features/base/config'];
 
-    if (disableTileView) {
+    if (disableTileView || !tileViewEnabledFeatureFlag) {
         return false;
     }
 
