@@ -79,10 +79,10 @@ export function getStartWithAudioMuted(stateful: Object | Function) {
 }
 
 /**
- * Computes the startWithAudioMuted by retrieving its values from config, URL and settings.
+ * Computes the startWithVideoMuted by retrieving its values from config, URL and settings.
  *
  * @param {Object|Function} stateful - The redux state object or {@code getState} function.
- * @returns {boolean} - The computed startWithAudioMuted value that will be used.
+ * @returns {boolean} - The computed startWithVideoMuted value that will be used.
  */
 export function getStartWithVideoMuted(stateful: Object | Function) {
     return Boolean(getPropertyValue(stateful, 'startWithVideoMuted', START_WITH_AUDIO_VIDEO_MUTED_SOURCES));
