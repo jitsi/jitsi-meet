@@ -9,6 +9,7 @@ import {
 } from '../../analytics';
 import { openDisplayNamePrompt } from '../../display-name';
 import { showErrorNotification } from '../../notifications';
+import { setSkipPrejoinOnReload } from '../../prejoin';
 import { CONNECTION_ESTABLISHED, CONNECTION_FAILED, connectionDisconnected } from '../connection';
 import { JitsiConferenceErrors } from '../lib-jitsi-meet';
 import { MEDIA_TYPE } from '../media';
@@ -26,6 +27,7 @@ import { TRACK_ADDED, TRACK_REMOVED } from '../tracks';
 import {
     CONFERENCE_FAILED,
     CONFERENCE_JOINED,
+    CONFERENCE_RESTARTED,
     CONFERENCE_SUBJECT_CHANGED,
     CONFERENCE_WILL_LEAVE,
     SEND_TONES,
@@ -66,6 +68,9 @@ MiddlewareRegistry.register(store => next => action => {
 
     case CONFERENCE_JOINED:
         return _conferenceJoined(store, next, action);
+
+    case CONFERENCE_RESTARTED:
+        return _conferenceRestarted(store, next, action);
 
     case CONNECTION_ESTABLISHED:
         return _connectionEstablished(store, next, action);
@@ -209,6 +214,42 @@ function _conferenceJoined({ dispatch, getState }, next, action) {
     }
 
     return result;
+}
+
+/**
+ * Notifies the feature base/conference that the action {@code CONFERENCE_RESTARTED}
+ * is being dispatched within a specific redux store.
+ *
+ * @param {Store} store - The redux store in which the specified {@code action}
+ * is being dispatched.
+ * @param {Dispatch} next - The redux {@code dispatch} function to dispatch the
+ * specified {@code action} to the specified {@code store}.
+ * @param {Action} action - The redux action {@code CONFERENCE_RESTARTED}
+ * which is being dispatched in the specified {@code store}.
+ * @private
+ * @returns {Object} The value returned by {@code next(action)}.
+ */
+function _conferenceRestarted({ dispatch, getState }, next, action) {
+    const { enableForcedReload } = getState()['features/base/config'];
+
+    if (enableForcedReload) {
+        const reason = 'Client reload initiated because of a bridge failure';
+
+        dispatch(showErrorNotification({
+            description: reason,
+            titleKey: 'dialog.sessionRestarted'
+        }));
+
+        if (typeof APP !== 'undefined') {
+            dispatch(setSkipPrejoinOnReload(true));
+            if (typeof beforeUnloadHandler !== 'undefined') {
+                window.removeEventListener('beforeunload', beforeUnloadHandler);
+                beforeUnloadHandler = undefined;
+            }
+        }
+    }
+
+    return next(action);
 }
 
 /**

@@ -34,6 +34,7 @@ import {
     CONFERENCE_FAILED,
     CONFERENCE_JOINED,
     CONFERENCE_LEFT,
+    CONFERENCE_RESTARTED,
     CONFERENCE_SUBJECT_CHANGED,
     CONFERENCE_TIMESTAMP_CHANGED,
     CONFERENCE_UNIQUE_ID_SET,
@@ -296,6 +297,22 @@ export function conferenceLeft(conference: Object) {
     };
 }
 
+/*
+* Specifies that a specific conference has been restarted.
+*
+* @param {JitsiConference} conference - The JitsiConference instance which is being restarted.
+* @returns {{
+*      type: CONFERENCE_RESTARTED,
+*      conference: JitsiConference
+* }}
+*/
+export function conferenceRestarted(conference: Object) {
+   return {
+       type: CONFERENCE_RESTARTED,
+       conference
+   };
+}
+
 /**
  * Signals that the unique identifier for conference has been set.
  *
@@ -311,6 +328,7 @@ export function conferenceUniqueIdSet(conference: Object) {
         conference
     };
 }
+
 
 /**
  * Signals that the conference subject has been changed.

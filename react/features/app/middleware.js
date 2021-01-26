@@ -4,7 +4,7 @@ import {
     createConnectionEvent,
     sendAnalytics
 } from '../analytics';
-import { SET_ROOM } from '../base/conference';
+import { CONFERENCE_RESTARTED, SET_ROOM } from '../base/conference';
 import {
     CONNECTION_ESTABLISHED,
     CONNECTION_FAILED,
@@ -17,6 +17,8 @@ import { _getRouteToRender } from './getRouteToRender';
 
 MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
+    case CONFERENCE_RESTARTED:
+        return _conferenceRestarted(store, next, action);
     case CONNECTION_ESTABLISHED:
         return _connectionEstablished(store, next, action);
     case CONNECTION_FAILED:
@@ -28,6 +30,32 @@ MiddlewareRegistry.register(store => next => action => {
 
     return next(action);
 });
+
+/**
+ * Notifies the feature app that the action {@link CONFERENCE_RESTARTED} is
+ * being dispatched within a specific redux {@code store}.
+ *
+ * @param {Store} store - The redux store in which the specified {@code action}
+ * is being dispatched.
+ * @param {Dispatch} next - The redux {@code dispatch} function to dispatch the
+ * specified {@code action} to the specified {@code store}.
+ * @param {Action} action - The redux action {@code CONFERENCE_RESTARTED}
+ * which is being dispatched in the specified {@code store}.
+ * @private
+ * @returns {Object} The new state that is the result of the reduction of the
+ * specified {@code action}.
+ */
+function _conferenceRestarted({ dispatch, getState }, next, action) {
+    const { enableForcedReload } = getState()['features/base/config'];
+
+    if (enableForcedReload) {
+        dispatch(reloadNow());
+
+        return;
+    }
+
+    return next(action);
+}
 
 /**
  * Notifies the feature app that the action {@link CONNECTION_ESTABLISHED} is

@@ -42,6 +42,16 @@ export const CONFERENCE_JOINED = 'CONFERENCE_JOINED';
  */
 export const CONFERENCE_LEFT = 'CONFERENCE_LEFT';
 
+/*
+* The type of (redux) action which signals that a specific conference was restarted.
+*
+* {
+*     type: CONFERENCE_RESTARTED,
+*     conference: JitsiConference
+* }
+*/
+export const CONFERENCE_RESTARTED = 'CONFERENCE_RESTARTED';
+
 /**
  * The type of (redux) action which signals that an uuid for a conference has been set.
  *
@@ -51,6 +61,7 @@ export const CONFERENCE_LEFT = 'CONFERENCE_LEFT';
  * }
  */
 export const CONFERENCE_UNIQUE_ID_SET = 'CONFERENCE_UNIQUE_ID_SET';
+
 
 /**
  * The type of (redux) action, which indicates conference subject changes.

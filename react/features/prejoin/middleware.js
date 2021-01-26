@@ -1,5 +1,6 @@
 // @flow
 
+import { CONFERENCE_JOINED } from '../base/conference';
 import { updateConfig } from '../base/config';
 import { SET_AUDIO_MUTED, SET_VIDEO_MUTED } from '../base/media';
 import { MiddlewareRegistry } from '../base/redux';
@@ -15,7 +16,8 @@ import { PREJOIN_START_CONFERENCE } from './actionTypes';
 import {
     setDeviceStatusOk,
     setDeviceStatusWarning,
-    setPrejoinPageVisibility
+    setPrejoinPageVisibility,
+    setSkipPrejoinOnReload
 } from './actions';
 import { isPrejoinPageVisible } from './functions';
 
@@ -29,6 +31,15 @@ declare var APP: Object;
  */
 MiddlewareRegistry.register(store => next => async action => {
     switch (action.type) {
+    case CONFERENCE_JOINED: {
+        const { getState, dispatch } = store;
+        const { enableForcedReload } = getState()['features/base/config'];
+
+        dispatch(setPrejoinPageVisibility(false));
+        enableForcedReload && dispatch(setSkipPrejoinOnReload(false));
+        break;
+    }
+
     case PREJOIN_START_CONFERENCE: {
         const { getState, dispatch } = store;
         const state = getState();
