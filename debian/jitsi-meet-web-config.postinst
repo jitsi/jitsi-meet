@@ -45,8 +45,9 @@ case "$1" in
 
         JVB_SERVE="false"
         # this detect only old installations
+        RET=""
         db_get jitsi-meet/jvb-serve || true
-        if [ -n "$RET" ] && [ "$RET" = "true" ] ; then
+        if [ "$RET" = "true" ] ; then
             JVB_SERVE="true"
         fi
 
@@ -69,19 +70,21 @@ case "$1" in
             FORCE_APACHE="true"
         fi
         # In case user enforces apache and if apache is available, unset nginx.
+        RET=""
         db_get jitsi-meet/enforce_apache || RET="false"
-        if [ -n "$RET" ] && [ "$RET" = "true" ] \
-            && [ "$FORCE_APACHE" = "true" ]; then
+        if [ "$RET" = "true" ] && [ "$FORCE_APACHE" = "true" ]; then
             FORCE_NGINX="false"
         fi
 
         UPLOADED_CERT_CHOICE="I want to use my own certificate"
         # if first time config ask for certs, or if we are reconfiguring
         if [ -z "$JVB_HOSTNAME_OLD" ] || [ "$RECONFIGURING" = "true" ] ; then
+            RET=""
             db_get jitsi-meet/cert-choice
             CERT_CHOICE="$RET"
 
             if [ "$CERT_CHOICE" = "$UPLOADED_CERT_CHOICE" ] ; then
+                RET=""
                 db_get jitsi-meet/cert-path-key
                 if [ -z "$RET" ] ; then
                     db_set jitsi-meet/cert-path-key "/etc/ssl/$JVB_HOSTNAME.key"
@@ -90,6 +93,7 @@ case "$1" in
                     db_get jitsi-meet/cert-path-key
                 fi
                 CERT_KEY="$RET"
+                RET=""
                 db_get jitsi-meet/cert-path-crt
                 if [ -z "$RET" ] ; then
                     db_set jitsi-meet/cert-path-crt "/etc/ssl/$JVB_HOSTNAME.crt"
@@ -152,12 +156,15 @@ case "$1" in
                 # Removing this value will force nginx or apache to be locally configured
                 JVB_HOSTNAME_OLD=""
 
+                RET=""
                 db_get jitsi-meet/cert-choice
                 CERT_CHOICE="$RET"
                 # Fix certs on upgrade from jetty
                 if [ "$CERT_CHOICE" = "$UPLOADED_CERT_CHOICE" ] ; then
+                    RET=""
                     db_get jitsi-meet/cert-path-key
                     CERT_KEY="$RET"
+                    RET=""
                     db_get jitsi-meet/cert-path-crt
                     CERT_CRT="$RET"
                 else
