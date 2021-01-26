@@ -69,7 +69,7 @@ case "$1" in
             FORCE_APACHE="true"
         fi
         # In case user enforces apache and if apache is available, unset nginx.
-        db_get jitsi-meet/enforce_apache
+        db_get jitsi-meet/enforce_apache || RET="false"
         if [ -n "$RET" ] && [ "$RET" = "true" ] \
             && [ "$FORCE_APACHE" = "true" ]; then
             FORCE_NGINX="false"
