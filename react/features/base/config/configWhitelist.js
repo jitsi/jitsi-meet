@@ -89,6 +89,7 @@ export default [
     'disableProfile',
     'disableRemoteControl',
     'disableRemoteMute',
+    'disableResponsiveTiles',
     'disableRtx',
     'disableShortcuts',
     'disableSimulcast',
