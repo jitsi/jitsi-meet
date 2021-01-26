@@ -74,7 +74,7 @@ Component "internal.auth.jitmeet.example.com" "muc"
     muc_room_default_public_jids = true
 
 VirtualHost "auth.jitmeet.example.com"
-    authentication = "internal_plain"
+    authentication = "internal_hashed"
 
 -- Proxy to jicofo's user JID, so that it doesn't have to register as a component.
 Component "focus.jitmeet.example.com" "client_proxy"

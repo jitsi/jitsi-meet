@@ -139,7 +139,6 @@ pidfile = "/var/run/prosody/prosody.pid"
 -- server please see http://prosody.im/doc/modules/mod_auth_internal_hashed
 -- for information about using the hashed backend.
 
--- authentication = "internal_plain"
 authentication = "internal_hashed"
 
 -- Select the storage backend to use. By default Prosody uses flat files
@@ -187,7 +186,7 @@ VirtualHost "auth.jitsi.example.com"
         key = "/var/lib/prosody/auth.jitsi.example.com.key";
         certificate = "/var/lib/prosody/auth.jitsi.example.com.crt";
     }
-    authentication = "internal_plain"
+    authentication = "internal_hashed"
 
 ------ Components ------
 -- You can specify components to add hosts that provide special services,
