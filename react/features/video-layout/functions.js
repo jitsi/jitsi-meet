@@ -42,28 +42,32 @@ export function getCurrentLayout(state: Object) {
  */
 export function getMaxColumnCount(state: Object) {
     const configuredMax = interfaceConfig.TILE_VIEW_MAX_COLUMNS || DEFAULT_MAX_COLUMNS;
-    const { clientWidth } = state['features/base/responsive-ui'];
-    let availableWidth = clientWidth;
-    const participantCount = getParticipantCount(state);
-    const { isOpen } = state['features/chat'];
+    const { disableResponsiveTiles } = state['features/base/config'];
 
-    if (isOpen) {
-        availableWidth -= CHAT_SIZE;
-    }
+    if (!disableResponsiveTiles) {
+        const { clientWidth } = state['features/base/responsive-ui'];
+        let availableWidth = clientWidth;
+        const participantCount = getParticipantCount(state);
+        const { isOpen } = state['features/chat'];
 
-    // If there are just two participants in a conference, enforce single-column view for mobile size.
-    if (participantCount === 2 && availableWidth < ASPECT_RATIO_BREAKPOINT) {
-        return Math.min(1, Math.max(configuredMax, 1));
-    }
+        if (isOpen) {
+            availableWidth -= CHAT_SIZE;
+        }
 
-    // Enforce single column view at very small screen widths.
-    if (availableWidth < SINGLE_COLUMN_BREAKPOINT) {
-        return Math.min(1, Math.max(configuredMax, 1));
-    }
+        // If there are just two participants in a conference, enforce single-column view for mobile size.
+        if (participantCount === 2 && availableWidth < ASPECT_RATIO_BREAKPOINT) {
+            return Math.min(1, Math.max(configuredMax, 1));
+        }
 
-    // Enforce two column view below breakpoint.
-    if (availableWidth < TWO_COLUMN_BREAKPOINT) {
-        return Math.min(2, Math.max(configuredMax, 1));
+        // Enforce single column view at very small screen widths.
+        if (availableWidth < SINGLE_COLUMN_BREAKPOINT) {
+            return Math.min(1, Math.max(configuredMax, 1));
+        }
+
+        // Enforce two column view below breakpoint.
+        if (availableWidth < TWO_COLUMN_BREAKPOINT) {
+            return Math.min(2, Math.max(configuredMax, 1));
+        }
     }
 
     return Math.min(Math.max(configuredMax, 1), ABSOLUTE_MAX_COLUMNS);

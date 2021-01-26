@@ -140,9 +140,15 @@ export function calculateThumbnailSizeForTileView({
     columns,
     visibleRows,
     clientWidth,
-    clientHeight
+    clientHeight,
+    disableResponsiveTiles
 }: Object) {
-    const aspectRatio = clientWidth < ASPECT_RATIO_BREAKPOINT ? SQUARE_TILE_ASPECT_RATIO : TILE_ASPECT_RATIO;
+    let aspectRatio = TILE_ASPECT_RATIO;
+
+    if (!disableResponsiveTiles && clientWidth < ASPECT_RATIO_BREAKPOINT) {
+        aspectRatio = SQUARE_TILE_ASPECT_RATIO;
+    }
+
     const viewWidth = clientWidth - TILE_VIEW_SIDE_MARGINS;
     const viewHeight = clientHeight - TILE_VIEW_SIDE_MARGINS;
     const initialWidth = viewWidth / columns;
