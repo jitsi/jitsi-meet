@@ -1,5 +1,9 @@
 server_names_hash_bucket_size 64;
 
+types {
+# nginx's default mime.types doesn't include a mapping for wasm
+    application/wasm     wasm;
+}
 server {
     listen 80;
     listen [::]:80;
