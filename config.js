@@ -699,6 +699,8 @@ var config = {
      forceTurnRelay
      hiddenDomain
      ignoreStartMuted
+     websocketKeepAlive
+     websocketKeepAliveUrl
      */
 
     /**
