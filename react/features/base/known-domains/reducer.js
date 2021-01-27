@@ -19,6 +19,11 @@ export const DEFAULT_STATE = [
     'alpha.jitsi.net',
     'beta.meet.jit.si',
     'meet.jit.si',
+    'fairmeeting.net',
+    'jitsi.linux.it',
+    'meet.epicenter.works',
+    'meet.golem.de',
+    'calls.disroot.org',
     '8x8.vc'
 ];
 
