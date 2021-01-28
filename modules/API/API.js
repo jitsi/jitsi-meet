@@ -557,6 +557,21 @@ class API {
     }
 
     /**
+     * Notify external application (if API is enabled) that the chat state has been updated.
+     *
+     * @param {number} unreadCount - The unread messages counter.
+     * @param {boolean} isOpen - True if the chat panel is open.
+     * @returns {void}
+     */
+    notifyChatUpdated(unreadCount: number, isOpen: boolean) {
+        this._sendEvent({
+            name: 'chat-updated',
+            unreadCount,
+            isOpen
+        });
+    }
+
+    /**
      * Notify external application (if API is enabled) that message was sent.
      *
      * @param {string} message - Message body.
