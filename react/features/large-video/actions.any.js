@@ -61,11 +61,11 @@ export function selectParticipantInLargeVideo(participant: ?string) {
         const state = getState();
         const participantId = participant ?? _electParticipantInLargeVideo(state);
         const largeVideo = state['features/large-video'];
-        const screenShares = state['features/video-layout'].screenShares;
+        const remoteScreenShares = state['features/video-layout'].remoteScreenShares;
         let latestScreenshareParticipantId;
 
-        if (screenShares && screenShares.length) {
-            latestScreenshareParticipantId = screenShares[screenShares.length - 1];
+        if (remoteScreenShares && remoteScreenShares.length) {
+            latestScreenshareParticipantId = remoteScreenShares[remoteScreenShares.length - 1];
         }
 
         // When trying to auto pin screenshare, always select the endpoint even though it happens to be
