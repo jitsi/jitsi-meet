@@ -3,12 +3,12 @@
 import { ReducerRegistry } from '../base/redux';
 
 import {
-    SCREEN_SHARE_PARTICIPANTS_UPDATED,
+    SCREEN_SHARE_REMOTE_PARTICIPANTS_UPDATED,
     SET_TILE_VIEW
 } from './actionTypes';
 
 const DEFAULT_STATE = {
-    screenShares: [],
+    remoteScreenShares: [],
 
     /**
      * The indicator which determines whether the video layout should display
@@ -27,10 +27,10 @@ const STORE_NAME = 'features/video-layout';
 
 ReducerRegistry.register(STORE_NAME, (state = DEFAULT_STATE, action) => {
     switch (action.type) {
-    case SCREEN_SHARE_PARTICIPANTS_UPDATED: {
+    case SCREEN_SHARE_REMOTE_PARTICIPANTS_UPDATED: {
         return {
             ...state,
-            screenShares: action.participantIds
+            remoteScreenShares: action.participantIds
         };
     }
 
