@@ -64,6 +64,7 @@ const events = {
     'audio-availability-changed': 'audioAvailabilityChanged',
     'audio-mute-status-changed': 'audioMuteStatusChanged',
     'camera-error': 'cameraError',
+    'chat-updated': 'chatUpdated',
     'content-sharing-participants-changed': 'contentSharingParticipantsChanged',
     'device-list-changed': 'deviceListChanged',
     'display-name-change': 'displayNameChange',
@@ -571,6 +572,12 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      * {{
      * logLevel: the message log level
      * arguments: an array of strings that compose the actual log message
+     * }}
+     * {@code chatUpdated} - receives event notifications about chat state being
+     * updated. The listener will receive object with the following structure:
+     * {{
+     *  'unreadCount': unreadCounter, // the unread message(s) counter,
+     *  'isOpen': isOpen, // whether the chat panel is open or not
      * }}
      * {@code incomingMessage} - receives event notifications about incoming
      * messages. The listener will receive object with the following structure:
