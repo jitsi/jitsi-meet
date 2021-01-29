@@ -20,10 +20,25 @@
  * Override @atlaskit/modal-dialog header styling
  */
 .atlaskit-portal [role="dialog"] header {
-    .jitsi-icon svg {
-        fill: #B8C7E0;
+    .jitsi-icon {
         cursor: pointer;
     }
+
+    .jitsi-icon svg {
+        fill: #B8C7E0;
+    }
+}
+
+/**
+ * Make header close button more easily tappable on mobile.
+ */
+.mobile-browser .atlaskit-portal [role="dialog"] header .jitsi-icon {
+    display: grid;
+    place-items: center;
+    height: 48px;
+    width: 48px;
+    background: #2a3a4b;
+    border-radius: 3px;
 }
 
 /**

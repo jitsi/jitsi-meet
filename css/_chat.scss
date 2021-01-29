@@ -113,8 +113,11 @@
     font-size: 24px;
     line-height: 32px;
 
-    .jitsi-icon > svg {
+    .jitsi-icon {
         cursor: pointer;
+    }
+
+    .jitsi-icon > svg {
         fill: #A4B8D1;
     }
 }
@@ -387,6 +390,7 @@
     &-header {
         display: flex;
         justify-content: space-between;
+        align-items: center;
         margin: 16px 16px 24px;
         width: calc(100% - 32px);
         box-sizing: border-box;
@@ -395,8 +399,11 @@
         font-size: 24px;
         line-height: 32px;
 
-        .jitsi-icon > svg {
+        .jitsi-icon {
             cursor: pointer;
+        }
+
+        .jitsi-icon > svg {
             fill: #A4B8D1;
         }
     }
@@ -404,4 +411,16 @@
     #chatconversation {
         width: 100%;
     }
+}
+
+/**
+ * Make header close button more easily tappable on mobile.
+ */
+.mobile-browser .chat-dialog-header .jitsi-icon {
+    display: grid;
+    place-items: center;
+    height: 48px;
+    width: 48px;
+    background: #2a3a4b;
+    border-radius: 3px;
 }
