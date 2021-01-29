@@ -47,22 +47,6 @@
         font-size: 15px;
         line-height: 24px;
 
-        &.header {
-            display: flex;
-            justify-content: space-between;
-            margin: 16px 16px 24px;
-            width: calc(100% - 32px);
-            color: #fff;
-            font-weight: 600;
-            font-size: 24px;
-            line-height: 32px;
-
-            & > div > svg {
-                cursor: pointer;
-                fill: #A4B8D1;
-            }
-        }
-
         &.separator {
             margin: 24px 0 24px -20px;
             padding: 0 20px;
