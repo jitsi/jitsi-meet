@@ -15,7 +15,7 @@
         box-sizing: border-box;
         display: flex;
         flex-direction: column;
-        height: 100vh;
+        height: 100%;
         width: 100vw;
     }
 
@@ -88,6 +88,7 @@
         box-sizing: border-box;
         display: flex;
         flex-wrap: wrap;
+        flex-shrink: 0;
         margin-top: auto;
         margin-bottom: auto;
         justify-content: center;
