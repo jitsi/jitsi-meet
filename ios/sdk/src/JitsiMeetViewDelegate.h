@@ -91,7 +91,7 @@
 - (void)screenShareToggled:(NSDictionary *)data;
 
 /**
- * Called when the participantsInfo arrau is retrieved
+ * Called when the participantsInfo array is retrieved.
  *
  * The `data` dictionary contains a `participantsInfo` key with the array of participantInfo.
  */

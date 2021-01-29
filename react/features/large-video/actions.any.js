@@ -8,7 +8,7 @@ import {
 } from '../analytics';
 import { _handleParticipantError } from '../base/conference';
 import { MEDIA_TYPE } from '../base/media';
-import { getParticipants, getLocalParticipant } from '../base/participants';
+import { getParticipants } from '../base/participants';
 import { reportError } from '../base/util';
 import { shouldDisplayTileView } from '../video-layout';
 
