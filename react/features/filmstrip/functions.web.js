@@ -62,11 +62,9 @@ export function shouldRemoteVideosBeVisible(state: Object) {
         participantCount > 2
 
             // Always show the filmstrip when there is another participant to
-            // show and the filmstrip is hovered, or local video is pinned, or
-            // the toolbar is displayed.
+            // show and the  local video is pinned, or the toolbar is displayed.
             || (participantCount > 1
-                && (state['features/filmstrip'].hovered
-                    || state['features/toolbox'].visible
+                && (state['features/toolbox'].visible
                     || ((pinnedParticipant = getPinnedParticipant(state))
                         && pinnedParticipant.local)))
 
