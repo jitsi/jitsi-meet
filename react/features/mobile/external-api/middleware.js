@@ -264,7 +264,7 @@ function _registerForNativeEvents({ getState, dispatch }) {
 
     eventEmitter.addListener(ExternalAPI.RETRIEVE_PARTICIPANTS_INFO, () => {
         const store = getState();
-        
+
         const participantsInfo = getParticipants(store).map(participant => {
             return {
                 isLocal: participant.local,
