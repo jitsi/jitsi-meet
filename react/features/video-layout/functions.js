@@ -62,6 +62,12 @@ export function getTileViewGridDimensions(state: Object, maxColumns: number = ge
         visibleRows = 1
 
     }
+    if(interfaceConfig.DEFAULT_BACKGROUND == "transparent-vertical"){
+        rows = numberOfParticipants
+        columns = 1
+        visibleRows = numberOfParticipants
+
+    }
     
 
 
@@ -87,6 +93,9 @@ export function shouldDisplayTileView(state: Object = {}) {
     // But it's a special case too, as we don't even render the button,
     // see TileViewButton component.
     if(interfaceConfig.DEFAULT_BACKGROUND == "transparent"){
+        return true;
+    }
+    if(interfaceConfig.DEFAULT_BACKGROUND == "transparent-vertical"){
         return true;
     }
     if (participantCount < 2) {
