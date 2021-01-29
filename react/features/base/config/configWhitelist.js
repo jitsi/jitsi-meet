@@ -97,6 +97,7 @@ export default [
     'disableTileView',
     'displayJids',
     'doNotStoreRoom',
+    'dropbox',
     'e2eping',
     'enableDisplayNameInStats',
     'enableEmailInStats',
