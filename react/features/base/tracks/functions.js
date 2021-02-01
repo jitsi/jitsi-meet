@@ -1,4 +1,5 @@
 /* global APP */
+import jwtDecode from 'jwt-decode';
 
 import JitsiMeetJS, { JitsiTrackErrors, browser } from '../lib-jitsi-meet';
 import { MEDIA_TYPE, setAudioMuted } from '../media';
@@ -95,7 +96,9 @@ export function createLocalTracksF(options = {}, firePermissionPromptIsShownEven
     } = state['features/base/config'];
     let constraints = options.constraints ?? state['features/base/config'].constraints;
 
-    if (JitsiMeetJS.util.browser.isFirefox()) {
+    const hdQualityEnabled = isHdQualityEnabled(state);
+
+    if (JitsiMeetJS.util.browser.isFirefox() || hdQualityEnabled) {
         constraints = null;
     }
 
@@ -468,4 +471,22 @@ export function setTrackMuted(track, muted) {
             logger.error(`set track ${f} failed`, error);
         }
     });
+}
+
+/**
+ * Check if the clinic enabled the hd telehealth feature.
+ *
+ * @param {Object} state - The redux state.
+ * @returns {boolean}
+ */
+export function isHdQualityEnabled(state) {
+    const { jwt } = state['features/base/jwt'];
+
+    if (jwt) {
+        const jwtPayload = jwtDecode(jwt);
+
+        return (jwtPayload.context && jwtPayload.context.hd_enabled) ?? false;
+    }
+
+    return false;
 }
