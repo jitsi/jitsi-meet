@@ -2,15 +2,13 @@
 
 import { CHAT_ENABLED, getFeatureFlag } from '../../../base/flags';
 import { IconChat, IconChatUnread } from '../../../base/icons';
-import { setActiveModalId } from '../../../base/modal';
 import { getLocalParticipant } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import {
     AbstractButton,
     type AbstractButtonProps
 } from '../../../base/toolbox/components';
-import { openDisplayNamePrompt } from '../../../display-name';
-import { CHAT_VIEW_MODAL_ID } from '../../constants';
+import { openChat } from '../../actions.native';
 import { getUnreadCount } from '../../functions';
 
 type Props = AbstractButtonProps & {
@@ -36,7 +34,9 @@ type Props = AbstractButtonProps & {
     /**
      * The unread message count.
      */
-    _unreadMessageCount: number
+    _unreadMessageCount: number,
+
+    dispatch: Function
 };
 
 /**
@@ -55,13 +55,7 @@ class ChatButton extends AbstractButton<Props, *> {
      * @returns {void}
      */
     _handleClick() {
-        if (this.props._showNamePrompt) {
-            this.props._displayNameInputDialog(() => {
-                this.props._displayChat();
-            });
-        } else {
-            this.props._displayChat();
-        }
+        this.props.dispatch(openChat());
     }
 
     /**
@@ -73,41 +67,6 @@ class ChatButton extends AbstractButton<Props, *> {
     _isToggled() {
         return Boolean(this.props._unreadMessageCount);
     }
-}
-
-/**
- * Maps redux actions to the props of the component.
- *
- * @param {Function} dispatch - The redux action {@code dispatch} function.
- * @returns {{
- *     _displayChat,
- *     _displayNameInputDialog
- * }}
- * @private
- */
-function _mapDispatchToProps(dispatch: Function) {
-    return {
-        /**
-         * Launches native invite dialog.
-         *
-         * @private
-         * @returns {void}
-         */
-        _displayChat() {
-            dispatch(setActiveModalId(CHAT_VIEW_MODAL_ID));
-        },
-
-        /**
-         * Displays a display name prompt.
-         *
-         * @param {Function} onPostSubmit - The function to invoke after a
-         * succesfulsetting of the display name.
-         * @returns {void}
-         */
-        _displayNameInputDialog(onPostSubmit) {
-            dispatch(openDisplayNamePrompt(onPostSubmit));
-        }
-    };
 }
 
 /**
@@ -129,4 +88,4 @@ function _mapStateToProps(state, ownProps) {
     };
 }
 
-export default connect(_mapStateToProps, _mapDispatchToProps)(ChatButton);
+export default connect(_mapStateToProps)(ChatButton);

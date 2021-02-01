@@ -5,8 +5,8 @@ import React, { Component } from 'react';
 import { translate } from '../../../base/i18n';
 import { IconMessage } from '../../../base/icons';
 import { connect } from '../../../base/redux';
+import { openChat } from '../../../chat/';
 import {
-    _mapDispatchToProps,
     _mapStateToProps as _abstractMapStateToProps,
     type Props as AbstractProps
 } from '../../../chat/components/PrivateMessageButton';
@@ -72,9 +72,9 @@ class PrivateMessageMenuButton extends Component<Props> {
      * @returns {void}
      */
     _onClick() {
-        const { _participant, _setPrivateMessageRecipient } = this.props;
+        const { dispatch, _participant } = this.props;
 
-        _setPrivateMessageRecipient(_participant);
+        dispatch(openChat(_participant));
     }
 }
 
@@ -93,4 +93,4 @@ function _mapStateToProps(state: Object, ownProps: Props): $Shape<Props> {
     };
 }
 
-export default translate(connect(_mapStateToProps, _mapDispatchToProps)(PrivateMessageMenuButton));
+export default translate(connect(_mapStateToProps)(PrivateMessageMenuButton));

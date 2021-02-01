@@ -5,6 +5,7 @@ import React from 'react';
 import { translate } from '../../../base/i18n';
 import { JitsiModal } from '../../../base/modal';
 import { connect } from '../../../base/redux';
+import { closeChat } from '../../actions.any';
 import { CHAT_VIEW_MODAL_ID } from '../../constants';
 import AbstractChat, {
     _mapDispatchToProps,
@@ -61,7 +62,7 @@ class Chat extends AbstractChat<Props> {
      * @returns {boolean}
      */
     _onClose() {
-        this.props._onToggleChat();
+        this.props.dispatch(closeChat());
 
         return true;
     }

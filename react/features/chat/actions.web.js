@@ -2,19 +2,23 @@
 
 import VideoLayout from '../../../modules/UI/videolayout/VideoLayout';
 
-import { TOGGLE_CHAT } from './actionTypes';
+import { OPEN_CHAT } from './actionTypes';
 
 export * from './actions.any';
 
 /**
- * Toggles display of the chat side panel while also taking window
- * resize into account.
+ * Displays the chat panel.
  *
- * @returns {Function}
+ * @param {Object} participant - The recipient for the private chat.
+ * @returns {{
+ *     participant: Participant,
+ *     type: OPEN_CHAT
+ * }}
  */
-export function toggleChat() {
+export function openChat(participant: Object) {
     return function(dispatch: (Object) => Object) {
-        dispatch({ type: TOGGLE_CHAT });
+        dispatch({ participant,
+            type: OPEN_CHAT });
         VideoLayout.onResize();
     };
 }

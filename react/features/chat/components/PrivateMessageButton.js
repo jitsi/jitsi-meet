@@ -1,11 +1,11 @@
 // @flow
 
+import { openChat } from '../';
 import { translate } from '../../base/i18n';
 import { IconMessage, IconReply } from '../../base/icons';
 import { getParticipantById } from '../../base/participants';
 import { connect } from '../../base/redux';
 import { AbstractButton, type AbstractButtonProps } from '../../base/toolbox/components';
-import { setPrivateMessageRecipient } from '../actions';
 
 export type Props = AbstractButtonProps & {
 
@@ -32,7 +32,9 @@ export type Props = AbstractButtonProps & {
     /**
      * Function to dispatch the result of the participant selection to send a private message.
      */
-    _setPrivateMessageRecipient: Function
+    _setPrivateMessageRecipient: Function,
+
+    dispatch: Function
 };
 
 /**
@@ -51,9 +53,9 @@ class PrivateMessageButton extends AbstractButton<Props, any> {
      * @returns {void}
      */
     _handleClick() {
-        const { _participant, _setPrivateMessageRecipient } = this.props;
+        const { dispatch, _participant } = this.props;
 
-        _setPrivateMessageRecipient(_participant);
+        dispatch(openChat(_participant));
     }
 
     /**
@@ -70,20 +72,6 @@ class PrivateMessageButton extends AbstractButton<Props, any> {
 }
 
 /**
- * Maps part of the props of this component to Redux actions.
- *
- * @param {Function} dispatch - The Redux dispatch function.
- * @returns {Props}
- */
-export function _mapDispatchToProps(dispatch: Function): $Shape<Props> {
-    return {
-        _setPrivateMessageRecipient: participant => {
-            dispatch(setPrivateMessageRecipient(participant));
-        }
-    };
-}
-
-/**
  * Maps part of the Redux store to the props of this component.
  *
  * @param {Object} state - The Redux state.
@@ -96,4 +84,4 @@ export function _mapStateToProps(state: Object, ownProps: Props): $Shape<Props> 
     };
 }
 
-export default translate(connect(_mapStateToProps, _mapDispatchToProps)(PrivateMessageButton));
+export default translate(connect(_mapStateToProps)(PrivateMessageButton));
