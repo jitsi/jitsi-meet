@@ -52,7 +52,7 @@ export function isLargeVideoReceived({ getState }: Object): boolean {
  */
 export function isRemoteVideoReceived({ getState }: Object, id: String): boolean {
     const videoTrack = getTrackByMediaTypeAndParticipant(getState()['features/base/tracks'], MEDIA_TYPE.VIDEO, id);
-    const lastMediaEvent = videoTrack.lastMediaEvent;
+    const lastMediaEvent = videoTrack?.lastMediaEvent;
 
     return !videoTrack.muted && (lastMediaEvent === 'playing' || lastMediaEvent === 'canplaythrough');
 }
