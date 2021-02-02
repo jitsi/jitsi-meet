@@ -2,9 +2,8 @@
 
 import { PureComponent } from 'react';
 
-import { openChat } from '../';
 import { getParticipantById } from '../../base/participants';
-import { sendMessage } from '../actions';
+import { sendMessage, setPrivateMessageRecipient } from '../actions';
 
 type Props = {
 
@@ -98,7 +97,7 @@ export function _mapDispatchToProps(dispatch: Function): $Shape<Props> {
         },
 
         _onSetMessageRecipient: participant => {
-            dispatch(openChat(participant));
+            dispatch(setPrivateMessageRecipient(participant));
         }
     };
 }

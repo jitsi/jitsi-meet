@@ -92,7 +92,9 @@ export function _mapDispatchToProps(dispatch: Dispatch<any>) {
          */
         _onSendMessage(text: string) {
             dispatch(sendMessage(text));
-        }
+        },
+
+        dispatch
     };
 }
 

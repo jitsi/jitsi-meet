@@ -25,16 +25,14 @@ export type Props = AbstractButtonProps & {
     t: Function,
 
     /**
+     * The Redux dispatch function.
+     */
+    dispatch: Function,
+
+    /**
      * The participant object retreived from Redux.
      */
     _participant: Object,
-
-    /**
-     * Function to dispatch the result of the participant selection to send a private message.
-     */
-    _setPrivateMessageRecipient: Function,
-
-    dispatch: Function
 };
 
 /**

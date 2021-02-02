@@ -2,7 +2,6 @@
 
 import { CHAT_ENABLED, getFeatureFlag } from '../../../base/flags';
 import { IconChat, IconChatUnread } from '../../../base/icons';
-import { getLocalParticipant } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import {
     AbstractButton,
@@ -12,24 +11,6 @@ import { openChat } from '../../actions.native';
 import { getUnreadCount } from '../../functions';
 
 type Props = AbstractButtonProps & {
-
-    /**
-     * Function to display chat.
-     *
-     * @protected
-     */
-    _displayChat: Function,
-
-    /**
-     * Function to diaply the name prompt before displaying the chat
-     * window, if the user has no display name set.
-     */
-    _displayNameInputDialog: Function,
-
-    /**
-     * Whether or not to block chat access with a nickname input form.
-     */
-    _showNamePrompt: boolean,
 
     /**
      * The unread message count.
@@ -77,12 +58,10 @@ class ChatButton extends AbstractButton<Props, *> {
  * @returns {Props}
  */
 function _mapStateToProps(state, ownProps) {
-    const localParticipant = getLocalParticipant(state);
     const enabled = getFeatureFlag(state, CHAT_ENABLED, true);
     const { visible = enabled } = ownProps;
 
     return {
-        _showNamePrompt: !localParticipant.name,
         _unreadMessageCount: getUnreadCount(state),
         visible
     };
