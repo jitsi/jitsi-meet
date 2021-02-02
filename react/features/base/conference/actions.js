@@ -301,7 +301,7 @@ export function conferenceLeft(conference: Object) {
  *
  * @param {JitsiConference} conference - The JitsiConference instance, where the uuid has been set.
  * @returns {{
-    *   type: CONFERENCE_JOINED,
+    *   type: CONFERENCE_UNIQUE_ID_SET,
     *   conference: JitsiConference,
     * }}
     */
