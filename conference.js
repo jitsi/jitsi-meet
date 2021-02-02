@@ -33,6 +33,7 @@ import {
     conferenceLeft,
     conferenceSubjectChanged,
     conferenceTimestampChanged,
+    conferenceUniqueIdSet,
     conferenceWillJoin,
     conferenceWillLeave,
     dataChannelOpened,
@@ -1864,6 +1865,10 @@ export default {
                 APP.store.dispatch(conferenceTimestampChanged(0));
                 APP.store.dispatch(conferenceLeft(room, ...args));
             });
+
+        room.on(
+            JitsiConferenceEvents.CONFERENCE_UNIQUE_ID_SET,
+            (...args) => APP.store.dispatch(conferenceUniqueIdSet(room, ...args)));
 
         room.on(
             JitsiConferenceEvents.AUTH_STATUS_CHANGED,
