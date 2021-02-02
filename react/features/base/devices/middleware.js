@@ -5,7 +5,8 @@ import { processExternalDeviceRequest } from '../../device-selection';
 import { showNotification, showWarningNotification } from '../../notifications';
 import { replaceAudioTrackById, replaceVideoTrackById, setDeviceStatusWarning } from '../../prejoin/actions';
 import { isPrejoinPageVisible } from '../../prejoin/functions';
-import { JitsiTrackErrors } from '../lib-jitsi-meet';
+import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../app';
+import JitsiMeetJS, { JitsiMediaDevicesEvents, JitsiTrackErrors } from '../lib-jitsi-meet';
 import { MiddlewareRegistry } from '../redux';
 import { updateSettings } from '../settings';
 
@@ -18,6 +19,7 @@ import {
     UPDATE_DEVICE_LIST
 } from './actionTypes';
 import {
+    devicePermissionsChanged,
     removePendingDeviceRequests,
     setAudioInputDevice,
     setVideoInputDevice
@@ -35,16 +37,24 @@ const JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP = {
         [JitsiTrackErrors.CONSTRAINT_FAILED]: 'dialog.micConstraintFailedError',
         [JitsiTrackErrors.GENERAL]: 'dialog.micUnknownError',
         [JitsiTrackErrors.NOT_FOUND]: 'dialog.micNotFoundError',
-        [JitsiTrackErrors.PERMISSION_DENIED]: 'dialog.micPermissionDeniedError'
+        [JitsiTrackErrors.PERMISSION_DENIED]: 'dialog.micPermissionDeniedError',
+        [JitsiTrackErrors.TIMEOUT]: 'dialog.micTimeoutError'
     },
     camera: {
         [JitsiTrackErrors.CONSTRAINT_FAILED]: 'dialog.cameraConstraintFailedError',
         [JitsiTrackErrors.GENERAL]: 'dialog.cameraUnknownError',
         [JitsiTrackErrors.NOT_FOUND]: 'dialog.cameraNotFoundError',
         [JitsiTrackErrors.PERMISSION_DENIED]: 'dialog.cameraPermissionDeniedError',
-        [JitsiTrackErrors.UNSUPPORTED_RESOLUTION]: 'dialog.cameraUnsupportedResolutionError'
+        [JitsiTrackErrors.UNSUPPORTED_RESOLUTION]: 'dialog.cameraUnsupportedResolutionError',
+        [JitsiTrackErrors.TIMEOUT]: 'dialog.cameraTimeoutError'
     }
 };
+
+
+/**
+ * A listener for device permissions changed reported from lib-jitsi-meet.
+ */
+let permissionsListener;
 
 /**
  * Logs the current device list.
@@ -73,6 +83,36 @@ function logDeviceList(deviceList) {
 // eslint-disable-next-line no-unused-vars
 MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
+    case APP_WILL_MOUNT: {
+        const _permissionsListener = permissions => {
+            store.dispatch(devicePermissionsChanged(permissions));
+        };
+        const { mediaDevices } = JitsiMeetJS;
+
+        permissionsListener = _permissionsListener;
+        mediaDevices.addEventListener(JitsiMediaDevicesEvents.PERMISSIONS_CHANGED, permissionsListener);
+        Promise.all([
+            mediaDevices.isDevicePermissionGranted('audio'),
+            mediaDevices.isDevicePermissionGranted('video')
+        ])
+        .then(results => {
+            _permissionsListener({
+                audio: results[0],
+                video: results[1]
+            });
+        })
+        .catch(() => {
+            // Ignore errors.
+        });
+        break;
+    }
+    case APP_WILL_UNMOUNT:
+        if (typeof permissionsListener === 'function') {
+            JitsiMeetJS.mediaDevices.removeEventListener(
+                JitsiMediaDevicesEvents.PERMISSIONS_CHANGED, permissionsListener);
+            permissionsListener = undefined;
+        }
+        break;
     case NOTIFY_CAMERA_ERROR: {
         if (typeof APP !== 'object' || !action.error) {
             break;

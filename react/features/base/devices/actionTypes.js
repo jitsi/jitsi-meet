@@ -84,3 +84,13 @@ export const REMOVE_PENDING_DEVICE_REQUESTS = 'REMOVE_PENDING_DEVICE_REQUESTS';
  * }
  */
 export const CHECK_AND_NOTIFY_FOR_NEW_DEVICE = 'CHECK_AND_NOTIFY_FOR_NEW_DEVICE';
+
+/**
+ * The type of Redux action which signals that the device permissions have changed.
+ *
+ * {
+ *     type: CHECK_AND_NOTIFY_FOR_NEW_DEVICE
+ *     permissions: Object
+ * }
+ */
+export const DEVICE_PERMISSIONS_CHANGED = 'DEVICE_PERMISSIONS_CHANGED';

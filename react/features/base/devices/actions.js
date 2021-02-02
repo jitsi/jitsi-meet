@@ -7,6 +7,7 @@ import {
 import {
     ADD_PENDING_DEVICE_REQUEST,
     CHECK_AND_NOTIFY_FOR_NEW_DEVICE,
+    DEVICE_PERMISSIONS_CHANGED,
     NOTIFY_CAMERA_ERROR,
     NOTIFY_MIC_ERROR,
     REMOVE_PENDING_DEVICE_REQUESTS,
@@ -318,5 +319,21 @@ export function checkAndNotifyForNewDevice(newDevices, oldDevices) {
         type: CHECK_AND_NOTIFY_FOR_NEW_DEVICE,
         newDevices,
         oldDevices
+    };
+}
+
+/**
+ * Signals that the device permissions have changed.
+ *
+ * @param {Object} permissions - Object with the permissions.
+ * @returns {{
+ *      type: DEVICE_PERMISSIONS_CHANGED,
+ *      permissions: Object
+ * }}
+ */
+export function devicePermissionsChanged(permissions) {
+    return {
+        type: DEVICE_PERMISSIONS_CHANGED,
+        permissions
     };
 }

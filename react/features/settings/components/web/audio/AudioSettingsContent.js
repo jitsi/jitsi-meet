@@ -182,9 +182,7 @@ class AudioSettingsContent extends Component<Props, State> {
 
         this._disposeTracks(this.state.audioTracks);
 
-        const audioTracks = await createLocalAudioTracks(
-            this.props.microphoneDevices
-        );
+        const audioTracks = await createLocalAudioTracks(this.props.microphoneDevices, 5000);
 
         if (this._componentWasUnmounted) {
             this._disposeTracks(audioTracks);

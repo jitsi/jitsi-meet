@@ -504,6 +504,8 @@ export default {
 
         let tryCreateLocalTracks;
 
+        const timeout = browser.isElectron() ? 15000 : 60000;
+
         // FIXME is there any simpler way to rewrite this spaghetti below ?
         if (options.startScreenSharing) {
             tryCreateLocalTracks = this._createDesktopTrack()
@@ -512,7 +514,10 @@ export default {
                         return [ desktopStream ];
                     }
 
-                    return createLocalTracksF({ devices: [ 'audio' ] }, true)
+                    return createLocalTracksF({
+                        devices: [ 'audio' ],
+                        timeout
+                    }, true)
                         .then(([ audioStream ]) =>
                             [ desktopStream, audioStream ])
                         .catch(error => {
@@ -526,7 +531,10 @@ export default {
                     errors.screenSharingError = error;
 
                     return requestedAudio
-                        ? createLocalTracksF({ devices: [ 'audio' ] }, true)
+                        ? createLocalTracksF({
+                            devices: [ 'audio' ],
+                            timeout
+                        }, true)
                         : [];
                 })
                 .catch(error => {
@@ -538,15 +546,33 @@ export default {
             // Resolve with no tracks
             tryCreateLocalTracks = Promise.resolve([]);
         } else {
-            tryCreateLocalTracks = createLocalTracksF({ devices: initialDevices }, true)
+            tryCreateLocalTracks = createLocalTracksF({
+                devices: initialDevices,
+                timeout
+            }, true)
                 .catch(err => {
                     if (requestedAudio && requestedVideo) {
 
                         // Try audio only...
                         errors.audioAndVideoError = err;
 
+                        if (err.name === JitsiTrackErrors.TIMEOUT && !browser.isElectron()) {
+                            // In this case we expect that the permission prompt is still visible. There is no point of
+                            // executing GUM with different source. Also at the time of writting the following
+                            // inconsistency have been noticed in some browsers - if the permissions prompt is visible
+                            // and another GUM is executed the prompt does not change its content but if the user
+                            // clicks allow the user action isassociated with the latest GUM call.
+                            errors.audioOnlyError = err;
+                            errors.videoOnlyError = err;
+
+                            return [];
+                        }
+
                         return (
-                            createLocalTracksF({ devices: [ 'audio' ] }, true));
+                            createLocalTracksF({
+                                devices: [ 'audio' ],
+                                timeout
+                            }, true));
                     } else if (requestedAudio && !requestedVideo) {
                         errors.audioOnlyError = err;
 
@@ -567,7 +593,10 @@ export default {
 
                     // Try video only...
                     return requestedVideo
-                        ? createLocalTracksF({ devices: [ 'video' ] }, true)
+                        ? createLocalTracksF({
+                            devices: [ 'video' ],
+                            timeout
+                        }, true)
                         : [];
                 })
                 .catch(err => {
