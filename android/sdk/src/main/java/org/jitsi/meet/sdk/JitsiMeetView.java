@@ -197,6 +197,7 @@ public class JitsiMeetView extends BaseReactView<JitsiMeetViewListener>
      * by/associated with the specified {@code name}.
      */
     @Override
+    @Deprecated
     protected void onExternalAPIEvent(String name, ReadableMap data) {
         onExternalAPIEvent(LISTENER_METHODS, name, data);
     }

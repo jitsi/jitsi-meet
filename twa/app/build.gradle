@@ -46,20 +46,14 @@ def twaManifest = [
     enableSiteSettingsShortcut: 'true',
 ]
 
-// Use the number of seconds/10 since Jan 1 2019 as the versionCode.
-// This lets us upload a new build at most every 10 seconds for the
-// next ~680 years.
-// https://stackoverflow.com/a/38643838
-def vcode = (int) (((new Date().getTime() / 1000) - 1546297200) / 10)
-
 android {
     compileSdkVersion 29
     defaultConfig {
         applicationId "org.jitsi.meet"
         minSdkVersion 19
         targetSdkVersion 29
-        versionCode vcode
-        versionName "20.5.0"
+        versionCode 2000000000
+        versionName "1.0.0"
 
         // The name for the application
         resValue "string", "appName", twaManifest.name
@@ -71,12 +65,12 @@ android {
         def launchUrl = "https://" + twaManifest.hostName + twaManifest.launchUrl
         resValue "string", "launchUrl", launchUrl
 
-
+        
             // The URL the Web Manifest for the Progressive Web App that the TWA points to. This
             // is used by Chrome OS to open the Web version of the PWA instead of the TWA, as it
             // will probably give a better user experience for non-mobile devices.
-            resValue "string", "webManifestUrl", 'https://meet.jit.si/static/pwa/manifest.json'
-
+            resValue "string", "webManifestUrl", 'https://meet.jit.si/manifest.json'
+        
 
         // The hostname is used when building the intent-filter, so the TWA is able to
         // handle Intents to open https://svgomg.firebaseapp.com.
@@ -106,13 +100,13 @@ android {
         // compile. If not set, the navigation bar color defaults to #000000 - black.
         resValue "color", "navigationColorDark", twaManifest.navigationColorDark
 
-        // This attribute sets the navbar divider color for the TWA. It can be either
-        // set here or in `res/values/colors.xml`. Setting in both places is an error and the app
+        // This attribute sets the navbar divider color for the TWA. It can be either 
+        // set here or in `res/values/colors.xml`. Setting in both places is an error and the app 
         // will not compile. If not set, the divider color defaults to #00000000 - transparent.
         resValue "color", "navigationDividerColor", twaManifest.navigationDividerColor
 
-        // This attribute sets the dark navbar divider color for the TWA. It can be either
-        // set here or in `res/values/colors.xml`. Setting in both places is an error and the
+        // This attribute sets the dark navbar divider color for the TWA. It can be either 
+        // set here or in `res/values/colors.xml`. Setting in both places is an error and the 
         //app will not compile. If not set, the divider color defaults to #000000 - black.
         resValue "color", "navigationDividerColorDark", twaManifest.navigationDividerColorDark
 
@@ -192,11 +186,11 @@ task generateShorcutsFile {
 preBuild.dependsOn(generateShorcutsFile)
 
 repositories {
-
+    
 }
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-
-    implementation 'com.google.androidbrowserhelper:androidbrowserhelper:2.0.0'
+    
+    implementation 'com.google.androidbrowserhelper:androidbrowserhelper:2.0.0'    
 }

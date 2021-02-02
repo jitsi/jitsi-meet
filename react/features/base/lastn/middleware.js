@@ -3,7 +3,7 @@
 import { SET_FILMSTRIP_ENABLED } from '../../filmstrip/actionTypes';
 import { SELECT_LARGE_VIDEO_PARTICIPANT } from '../../large-video/actionTypes';
 import { APP_STATE_CHANGED } from '../../mobile/background/actionTypes';
-import { SCREEN_SHARE_PARTICIPANTS_UPDATED, SET_TILE_VIEW } from '../../video-layout/actionTypes';
+import { SCREEN_SHARE_REMOTE_PARTICIPANTS_UPDATED, SET_TILE_VIEW } from '../../video-layout/actionTypes';
 import { SET_AUDIO_ONLY } from '../audio-only/actionTypes';
 import { CONFERENCE_JOINED } from '../conference/actionTypes';
 import {
@@ -33,7 +33,7 @@ MiddlewareRegistry.register(store => next => action => {
     case PARTICIPANT_JOINED:
     case PARTICIPANT_KICKED:
     case PARTICIPANT_LEFT:
-    case SCREEN_SHARE_PARTICIPANTS_UPDATED:
+    case SCREEN_SHARE_REMOTE_PARTICIPANTS_UPDATED:
     case SELECT_LARGE_VIDEO_PARTICIPANT:
     case SET_AUDIO_ONLY:
     case SET_FILMSTRIP_ENABLED:
@@ -68,20 +68,19 @@ function _updateLastN({ getState }) {
         return;
     }
 
-    const defaultLastN = typeof config.channelLastN === 'undefined' ? -1 : config.channelLastN;
-    let lastN = defaultLastN;
+    let lastN = typeof config.channelLastN === 'undefined' ? -1 : config.channelLastN;
 
-    // Apply last N limit based on the # of participants
+    // Apply last N limit based on the # of participants and channelLastN settings.
     const limitedLastN = limitLastN(participantCount, lastNLimits);
 
     if (limitedLastN !== undefined) {
-        lastN = limitedLastN;
+        lastN = lastN === -1 ? limitedLastN : Math.min(limitedLastN, lastN);
     }
 
     if (typeof appState !== 'undefined' && appState !== 'active') {
         lastN = isLocalVideoTrackDesktop(state) ? 1 : 0;
     } else if (audioOnly) {
-        const { screenShares, tileViewEnabled } = state['features/video-layout'];
+        const { remoteScreenShares, tileViewEnabled } = state['features/video-layout'];
         const largeVideoParticipantId = state['features/large-video'].participantId;
         const largeVideoParticipant
             = largeVideoParticipantId ? getParticipantById(state, largeVideoParticipantId) : undefined;
@@ -90,7 +89,7 @@ function _updateLastN({ getState }) {
         // view since we make an exception only for screenshare when in audio-only mode. If the user unpins
         // the screenshare, lastN will be set to 0 here. It will be set to 1 if screenshare has been auto pinned.
         if (!tileViewEnabled && largeVideoParticipant && !largeVideoParticipant.local) {
-            lastN = (screenShares || []).includes(largeVideoParticipantId) ? 1 : 0;
+            lastN = (remoteScreenShares || []).includes(largeVideoParticipantId) ? 1 : 0;
         } else {
             lastN = 0;
         }

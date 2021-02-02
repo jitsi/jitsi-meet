@@ -12,7 +12,6 @@ import {
 import { JitsiConferenceEvents } from '../lib-jitsi-meet';
 import { MiddlewareRegistry, StateListenerRegistry } from '../redux';
 import { playSound, registerSound, unregisterSound } from '../sounds';
-import { getTrackByJitsiTrack, TRACK_ADDED, TRACK_REMOVED, TRACK_UPDATED } from '../tracks';
 
 import {
     DOMINANT_SPEAKER_CHANGED,
@@ -42,8 +41,7 @@ import {
     getLocalParticipant,
     getParticipantById,
     getParticipantCount,
-    getParticipantDisplayName,
-    figureOutMutedWhileDisconnectedStatus
+    getParticipantDisplayName
 } from './functions';
 import { PARTICIPANT_JOINED_FILE, PARTICIPANT_LEFT_FILE } from './sounds';
 
@@ -73,16 +71,24 @@ MiddlewareRegistry.register(store => next => action => {
         break;
 
     case DOMINANT_SPEAKER_CHANGED: {
-        // Ensure the raised hand state is cleared for the dominant speaker.
+        // Ensure the raised hand state is cleared for the dominant speaker
+        // and only if it was set when this is the local participant
 
         const { conference, id } = action.participant;
         const participant = getLocalParticipant(store.getState());
+        const isLocal = participant && participant.id === id;
+
+        if (isLocal && participant.raisedHand === undefined) {
+            // if local was undefined, let's leave it like that
+            // avoids sending unnecessary presence updates
+            break;
+        }
 
         participant
             && store.dispatch(participantUpdated({
                 conference,
                 id,
-                local: participant.id === id,
+                local: isLocal,
                 raisedHand: false
             }));
 
@@ -137,10 +143,6 @@ MiddlewareRegistry.register(store => next => action => {
     case PARTICIPANT_UPDATED:
         return _participantJoinedOrUpdated(store, next, action);
 
-    case TRACK_ADDED:
-    case TRACK_REMOVED:
-    case TRACK_UPDATED:
-        return _trackChanged(store, next, action);
     }
 
     return next(action);
@@ -204,44 +206,53 @@ StateListenerRegistry.register(
     state => state['features/base/conference'].conference,
     (conference, store) => {
         if (conference) {
+            const propertyHandlers = {
+                'e2eeEnabled': (participant, value) => _e2eeUpdated(store, conference, participant.getId(), value),
+                'features_e2ee': (participant, value) =>
+                    store.dispatch(participantUpdated({
+                        conference,
+                        id: participant.getId(),
+                        e2eeSupported: value
+                    })),
+                'features_jigasi': (participant, value) =>
+                    store.dispatch(participantUpdated({
+                        conference,
+                        id: participant.getId(),
+                        isJigasi: value
+                    })),
+                'features_screen-sharing': (participant, value) => // eslint-disable-line no-unused-vars
+                    store.dispatch(participantUpdated({
+                        conference,
+                        id: participant.getId(),
+                        features: { 'screen-sharing': true }
+                    })),
+                'raisedHand': (participant, value) => _raiseHandUpdated(store, conference, participant.getId(), value),
+                'remoteControlSessionStatus': (participant, value) =>
+                    store.dispatch(participantUpdated({
+                        conference,
+                        id: participant.getId(),
+                        remoteControlSessionStatus: value
+                    }))
+            };
+
+            // update properties for the participants that are already in the conference
+            conference.getParticipants().forEach(participant => {
+                Object.keys(propertyHandlers).forEach(propertyName => {
+                    const value = participant.getProperty(propertyName);
+
+                    if (value !== undefined) {
+                        propertyHandlers[propertyName](participant, value);
+                    }
+                });
+            });
+
             // We joined a conference
             conference.on(
                 JitsiConferenceEvents.PARTICIPANT_PROPERTY_CHANGED,
                 (participant, propertyName, oldValue, newValue) => {
-                    switch (propertyName) {
-                    case 'e2eeEnabled':
-                        _e2eeUpdated(store, conference, participant.getId(), newValue);
-                        break;
-                    case 'features_e2ee':
-                        store.dispatch(participantUpdated({
-                            conference,
-                            id: participant.getId(),
-                            e2eeSupported: newValue
-                        }));
-                        break;
-                    case 'features_jigasi':
-                        store.dispatch(participantUpdated({
-                            conference,
-                            id: participant.getId(),
-                            isJigasi: newValue
-                        }));
-                        break;
-                    case 'features_screen-sharing':
-                        store.dispatch(participantUpdated({
-                            conference,
-                            id: participant.getId(),
-                            features: { 'screen-sharing': true }
-                        }));
-                        break;
-                    case 'raisedHand': {
-                        _raiseHandUpdated(store, conference, participant.getId(), newValue);
-                        break;
+                    if (propertyHandlers.hasOwnProperty(propertyName)) {
+                        propertyHandlers[propertyName](participant, newValue);
                     }
-                    default:
-
-                        // Ignore for now.
-                    }
-
                 });
         } else {
             const localParticipantId = getLocalParticipant(store.getState).id;
@@ -375,10 +386,10 @@ function _participantJoinedOrUpdated(store, next, action) {
         if (local) {
             const { conference } = getState()['features/base/conference'];
 
-            conference
-                && conference.setLocalParticipantProperty(
-                    'raisedHand',
-                    raisedHand);
+            // Send raisedHand signalling only if there is a change
+            if (conference && raisedHand !== getLocalParticipant(getState()).raisedHand) {
+                conference.setLocalParticipantProperty('raisedHand', raisedHand);
+            }
         }
     }
 
@@ -437,6 +448,10 @@ function _raiseHandUpdated({ dispatch, getState }, conference, participantId, ne
         raisedHand
     }));
 
+    if (typeof APP !== 'undefined') {
+        APP.API.notifyRaiseHandUpdated(participantId, raisedHand);
+    }
+
     if (raisedHand) {
         dispatch(showNotification({
             titleArguments: {
@@ -458,55 +473,6 @@ function _registerSounds({ dispatch }) {
     dispatch(
         registerSound(PARTICIPANT_JOINED_SOUND_ID, PARTICIPANT_JOINED_FILE));
     dispatch(registerSound(PARTICIPANT_LEFT_SOUND_ID, PARTICIPANT_LEFT_FILE));
-}
-
-/**
- * Notifies the feature base/participants that the action there has been a change in the tracks of the participants.
- *
- * @param {Store} store - The redux store in which the specified {@code action} is being dispatched.
- * @param {Dispatch} next - The redux {@code dispatch} function to dispatch the specified {@code action} in the
- * specified {@code store}.
- * @param {Action} action - The redux action {@code PARTICIPANT_JOINED} or {@code PARTICIPANT_UPDATED} which is being
- * dispatched in the specified {@code store}.
- * @private
- * @returns {Object} The value returned by {@code next(action)}.
- */
-function _trackChanged({ dispatch, getState }, next, action) {
-    const { jitsiTrack } = action.track;
-    let track;
-
-    if (action.type === TRACK_REMOVED) {
-        track = getTrackByJitsiTrack(getState()['features/base/tracks'], jitsiTrack);
-    }
-
-    const result = next(action);
-
-    if (action.type !== TRACK_REMOVED) {
-        track = getTrackByJitsiTrack(getState()['features/base/tracks'], jitsiTrack);
-    }
-
-    if (typeof track === 'undefined' || track.local) {
-        return result;
-    }
-
-    const { participantId } = track;
-    const state = getState();
-    const participant = getParticipantById(state, participantId);
-
-    if (!participant) {
-        return result;
-    }
-
-    const mutedWhileDisconnected = figureOutMutedWhileDisconnectedStatus(state, participantId);
-
-    if (participant.mutedWhileDisconnected !== mutedWhileDisconnected) {
-        dispatch(participantUpdated({
-            id: participantId,
-            mutedWhileDisconnected
-        }));
-    }
-
-    return result;
 }
 
 /**

@@ -10,7 +10,6 @@ import { connect } from '../../../base/redux';
 import { E2EESection } from '../../../e2ee/components';
 import { LobbySection } from '../../../lobby';
 
-import Header from './Header';
 import PasswordSection from './PasswordSection';
 
 type Props = {
@@ -82,7 +81,6 @@ function SecurityDialog({
 
     return (
         <Dialog
-            customHeader = { Header }
             hideCancelButton = { true }
             submitDisabled = { true }
             titleKey = 'security.securityOptions'

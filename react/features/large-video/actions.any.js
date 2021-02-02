@@ -61,8 +61,20 @@ export function selectParticipantInLargeVideo(participant: ?string) {
         const state = getState();
         const participantId = participant ?? _electParticipantInLargeVideo(state);
         const largeVideo = state['features/large-video'];
+        const remoteScreenShares = state['features/video-layout'].remoteScreenShares;
+        let latestScreenshareParticipantId;
 
-        if (participantId !== largeVideo.participantId) {
+        if (remoteScreenShares && remoteScreenShares.length) {
+            latestScreenshareParticipantId = remoteScreenShares[remoteScreenShares.length - 1];
+        }
+
+        // When trying to auto pin screenshare, always select the endpoint even though it happens to be
+        // the large video participant in redux (for the reasons listed above in the large video selection
+        // logic above). The auto pin screenshare logic kicks in after the track is added
+        // (which updates the large video participant and selects all endpoints because of the auto tile
+        // view mode). If the screenshare endpoint is not among the forwarded endpoints from the bridge,
+        // it needs to be selected again at this point.
+        if (participantId !== largeVideo.participantId || participantId === latestScreenshareParticipantId) {
             dispatch({
                 type: SELECT_LARGE_VIDEO_PARTICIPANT,
                 participantId

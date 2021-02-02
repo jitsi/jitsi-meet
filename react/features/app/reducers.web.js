@@ -8,6 +8,7 @@ import '../no-audio-signal/reducer';
 import '../noise-detection/reducer';
 import '../power-monitor/reducer';
 import '../prejoin/reducer';
+import '../remote-control/reducer';
 import '../screenshot-capture/reducer';
 import '../shared-video/reducer';
 import '../talk-while-muted/reducer';

@@ -3,7 +3,6 @@
 import React from 'react';
 
 import { translate } from '../../../base/i18n';
-import { Icon, IconClose } from '../../../base/icons';
 import { connect } from '../../../base/redux';
 import AbstractChat, {
     _mapDispatchToProps,
@@ -11,6 +10,8 @@ import AbstractChat, {
     type Props
 } from '../AbstractChat';
 
+import ChatDialog from './ChatDialog';
+import Header from './ChatDialogHeader';
 import ChatInput from './ChatInput';
 import DisplayNameForm from './DisplayNameForm';
 import MessageContainer from './MessageContainer';
@@ -132,13 +133,9 @@ class Chat extends AbstractChat<Props> {
      */
     _renderChatHeader() {
         return (
-            <div className = 'chat-header'>
-                <div
-                    className = 'chat-close'
-                    onClick = { this.props._onToggleChat }>
-                    <Icon src = { IconClose } />
-                </div>
-            </div>
+            <Header
+                className = 'chat-header'
+                onCancel = { this.props._onToggleChat } />
         );
     }
 
@@ -151,16 +148,25 @@ class Chat extends AbstractChat<Props> {
      * @returns {ReactElement | null}
      */
     _renderPanelContent() {
-        const { _isOpen, _showNamePrompt } = this.props;
-        const ComponentToRender = _isOpen
-            ? (
-                <>
-                    { this._renderChatHeader() }
-                    { _showNamePrompt
-                        ? <DisplayNameForm /> : this._renderChat() }
-                </>
-            )
-            : null;
+        const { _isModal, _isOpen, _showNamePrompt } = this.props;
+        let ComponentToRender = null;
+
+        if (_isOpen) {
+            if (_isModal) {
+                ComponentToRender = (
+                    <ChatDialog>
+                        { _showNamePrompt ? <DisplayNameForm /> : this._renderChat() }
+                    </ChatDialog>
+                );
+            } else {
+                ComponentToRender = (
+                    <>
+                        { this._renderChatHeader() }
+                        { _showNamePrompt ? <DisplayNameForm /> : this._renderChat() }
+                    </>
+                );
+            }
+        }
         let className = '';
 
         if (_isOpen) {

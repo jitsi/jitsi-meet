@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import UIKit
+
 public typealias AnimationCompletion = (Bool) -> Void
 
 public protocol PiPViewCoordinatorDelegate: class {

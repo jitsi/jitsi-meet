@@ -17,6 +17,7 @@
 
 #include <mach/mach_time.h>
 
+#import "ExternalAPI.h"
 #import "JitsiMeet+Private.h"
 #import "JitsiMeetConferenceOptions+Private.h"
 #import "JitsiMeetView+Private.h"
@@ -49,7 +50,6 @@ static NSString *const PiPEnabledFeatureFlag = @"pip.enabled";
  * identifiers within the process).
  */
 static NSMapTable<NSString *, JitsiMeetView *> *views;
-
 /**
  * This gets called automagically when the program starts.
  */
@@ -113,6 +113,26 @@ static void initializeViewsMap() {
 
 - (void)leave {
     [self setProps:@{}];
+}
+
+- (void)hangUp {
+    ExternalAPI *externalAPI = [[JitsiMeet sharedInstance] getExternalAPI];
+    [externalAPI sendHangUp];
+}
+
+- (void)setAudioMuted:(BOOL)muted {
+    ExternalAPI *externalAPI = [[JitsiMeet sharedInstance] getExternalAPI];
+    [externalAPI sendSetAudioMuted:muted];
+}
+
+- (void)sendEndpointTextMessage:(NSString*)to :(NSString*)message {
+    ExternalAPI *externalAPI = [[JitsiMeet sharedInstance] getExternalAPI];
+    [externalAPI sendEndpointTextMessage:to :message];
+}
+
+- (void)toggleScreenShare {
+    ExternalAPI *externalAPI = [[JitsiMeet sharedInstance] getExternalAPI];
+    [externalAPI toggleScreenShare];
 }
 
 #pragma mark Private methods

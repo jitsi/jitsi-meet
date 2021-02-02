@@ -6,7 +6,10 @@ import React, { Component } from 'react';
 import { createToolbarEvent, sendAnalytics } from '../../../analytics';
 import { translate } from '../../../base/i18n';
 import { IconMenuThumb } from '../../../base/icons';
+import { connect } from '../../../base/redux';
 
+import Drawer from './Drawer';
+import DrawerPortal from './DrawerPortal';
 import ToolbarButton from './ToolbarButton';
 
 /**
@@ -28,6 +31,11 @@ type Props = {
      * Calback to change the visibility of the overflow menu.
      */
     onVisibilityChange: Function,
+
+    /**
+     * Whether to display the OverflowMenu as a drawer.
+     */
+    overflowDrawer: boolean,
 
     /**
      * Invoked to obtain translated strings.
@@ -63,24 +71,55 @@ class OverflowMenuButton extends Component<Props> {
      * @returns {ReactElement}
      */
     render() {
-        const { children, isOpen, t } = this.props;
+        const { children, isOpen, overflowDrawer } = this.props;
 
         return (
             <div className = 'toolbox-button-wth-dialog'>
-                <InlineDialog
-                    content = { children }
-                    isOpen = { isOpen }
-                    onClose = { this._onCloseDialog }
-                    position = { 'top right' }>
-                    <ToolbarButton
-                        accessibilityLabel =
-                            { t('toolbar.accessibilityLabel.moreActions') }
-                        icon = { IconMenuThumb }
-                        onClick = { this._onToggleDialogVisibility }
-                        toggled = { isOpen }
-                        tooltip = { t('toolbar.moreActions') } />
-                </InlineDialog>
+                {
+                    overflowDrawer ? (
+                        <>
+                            {this._renderToolbarButton()}
+                            <DrawerPortal>
+                                <Drawer
+                                    canExpand = { true }
+                                    isOpen = { isOpen }
+                                    onClose = { this._onCloseDialog }>
+                                    {children}
+                                </Drawer>
+                            </DrawerPortal>
+                        </>
+                    ) : (
+                        <InlineDialog
+                            content = { children }
+                            isOpen = { isOpen }
+                            onClose = { this._onCloseDialog }
+                            placement = 'top-end'>
+                            {this._renderToolbarButton()}
+                        </InlineDialog>
+                    )
+                }
             </div>
+        );
+    }
+
+    _renderToolbarButton: () => React$Node;
+
+    /**
+     * Renders the actual toolbar overflow menu button.
+     *
+     * @returns {ReactElement}
+     */
+    _renderToolbarButton() {
+        const { isOpen, t } = this.props;
+
+        return (
+            <ToolbarButton
+                accessibilityLabel =
+                    { t('toolbar.accessibilityLabel.moreActions') }
+                icon = { IconMenuThumb }
+                onClick = { this._onToggleDialogVisibility }
+                toggled = { isOpen }
+                tooltip = { t('toolbar.moreActions') } />
         );
     }
 
@@ -113,4 +152,19 @@ class OverflowMenuButton extends Component<Props> {
     }
 }
 
-export default translate(OverflowMenuButton);
+/**
+ * Maps (parts of) the Redux state to the associated props for the
+ * {@code OverflowMenuButton} component.
+ *
+ * @param {Object} state - The Redux state.
+ * @returns {Props}
+ */
+function mapStateToProps(state) {
+    const { overflowDrawer } = state['features/toolbox'];
+
+    return {
+        overflowDrawer
+    };
+}
+
+export default translate(connect(mapStateToProps)(OverflowMenuButton));

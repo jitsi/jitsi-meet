@@ -1,8 +1,9 @@
 platform :ios, '11.0'
 workspace 'jitsi-meet'
 require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
+install! 'cocoapods', :deterministic_uuids => false
 
-target 'jitsi-meet' do
+target 'JitsiMeet' do
   project 'app/app.xcodeproj'
 
   pod 'Firebase/Analytics', '~> 6.33.0'
@@ -10,7 +11,7 @@ target 'jitsi-meet' do
   pod 'Firebase/DynamicLinks', '~> 6.33.0'
 end
 
-target 'JitsiMeet' do
+target 'JitsiMeetSDK' do
   project 'sdk/sdk.xcodeproj'
 
   # React Native and its dependencies
@@ -57,21 +58,21 @@ target 'JitsiMeet' do
   pod 'react-native-calendar-events', :path => '../node_modules/react-native-calendar-events'
   pod 'react-native-keep-awake', :path => '../node_modules/react-native-keep-awake'
   pod 'react-native-netinfo', :path => '../node_modules/@react-native-community/netinfo'
+  pod 'react-native-splash-screen', :path => '../node_modules/react-native-splash-screen'
   pod 'react-native-webview', :path => '../node_modules/react-native-webview'
   pod 'react-native-webrtc', :path => '../node_modules/react-native-webrtc'
   pod 'BVLinearGradient', :path => '../node_modules/react-native-linear-gradient'
-  pod 'RNCAsyncStorage', :path => '../node_modules/@react-native-community/async-storage'
+  pod 'RNCAsyncStorage', :path => '../node_modules/@react-native-async-storage/async-storage'
+  pod 'RNDeviceInfo', :path => '../node_modules/react-native-device-info'
   pod 'RNGoogleSignin', :path => '../node_modules/@react-native-community/google-signin'
   pod 'RNSound', :path => '../node_modules/react-native-sound'
   pod 'RNSVG', :path => '../node_modules/react-native-svg'
   pod 'RNWatch', :path => '../node_modules/react-native-watch-connectivity'
   pod 'RNDefaultPreference', :path => '../node_modules/react-native-default-preference'
-  pod 'react-native-splash-screen', :path => '../node_modules/react-native-splash-screen'
 
   # Native pod dependencies
   #
 
-  pod 'Amplitude-iOS', '~> 4.0.4'
   pod 'CocoaLumberjack', '~>3.5.3'
   pod 'ObjectiveDropboxOfficial', '~> 3.9.4'
 

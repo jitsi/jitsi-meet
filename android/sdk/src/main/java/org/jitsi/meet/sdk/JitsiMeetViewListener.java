@@ -21,6 +21,7 @@ import java.util.Map;
 /**
  * Interface for listening to events coming from Jitsi Meet.
  */
+@Deprecated
 public interface JitsiMeetViewListener {
     /**
      * Called when a conference was joined.

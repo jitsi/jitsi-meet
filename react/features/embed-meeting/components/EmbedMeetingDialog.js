@@ -8,8 +8,6 @@ import { getInviteURL } from '../../base/connection';
 import { Dialog } from '../../base/dialog';
 import { translate } from '../../base/i18n';
 
-import Header from './Header';
-
 type Props = {
 
     /**
@@ -40,9 +38,9 @@ function EmbedMeeting({ t, url }: Props) {
 
     return (
         <Dialog
-            customHeader = { Header }
             hideCancelButton = { true }
             submitDisabled = { true }
+            titleKey = { 'embedMeeting.title' }
             width = 'small'>
             <div className = 'embed-meeting-dialog'>
                 <textarea

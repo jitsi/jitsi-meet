@@ -128,9 +128,6 @@ function _conferenceFailed({ dispatch, getState }, next, action) {
             titleKey: 'dialog.sessTerminated'
         }));
 
-        if (typeof APP !== 'undefined') {
-            APP.UI.hideStats();
-        }
         break;
     }
     case JitsiConferenceErrors.CONNECTION_ERROR: {

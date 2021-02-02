@@ -1,6 +1,7 @@
 // @flow
 
-import Button, { ButtonGroup } from '@atlaskit/button';
+import ButtonGroup from '@atlaskit/button/button-group';
+import Button from '@atlaskit/button/standard-button';
 import { AtlasKitThemeProvider } from '@atlaskit/theme';
 import React, { Component } from 'react';
 import type { Dispatch } from 'redux';

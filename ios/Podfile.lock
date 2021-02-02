@@ -1,5 +1,4 @@
 PODS:
-  - Amplitude-iOS (4.0.4)
   - AppAuth (1.2.0):
     - AppAuth/Core (= 1.2.0)
     - AppAuth/ExternalUserAgent (= 1.2.0)
@@ -293,10 +292,10 @@ PODS:
     - React
   - react-native-splash-screen (3.2.0):
     - React
-  - react-native-webrtc (1.84.1):
+  - react-native-webrtc (1.87.3):
     - React-Core
-  - react-native-webview (10.9.0):
-    - React
+  - react-native-webview (11.0.2):
+    - React-Core
   - React-RCTActionSheet (0.61.5-jitsi.2):
     - React-Core/RCTActionSheetHeaders (= 0.61.5-jitsi.2)
   - React-RCTAnimation (0.61.5-jitsi.2):
@@ -351,10 +350,12 @@ PODS:
     - React-jsi (= 0.61.5-jitsi.2)
     - ReactCommon/jscallinvoker (= 0.61.5-jitsi.2)
     - ReactCommon/turbomodule/core (= 0.61.5-jitsi.2)
-  - RNCAsyncStorage (1.3.4):
+  - RNCAsyncStorage (1.13.2):
     - React
   - RNDefaultPreference (1.4.2):
     - React
+  - RNDeviceInfo (8.0.0):
+    - React-Core
   - RNGoogleSignin (3.0.1):
     - GoogleSignIn (~> 5.0.0)
     - React
@@ -363,14 +364,13 @@ PODS:
     - RNSound/Core (= 0.11.0)
   - RNSound/Core (0.11.0):
     - React
-  - RNSVG (10.1.0):
+  - RNSVG (12.1.0):
     - React
   - RNWatch (0.4.3):
     - React
   - Yoga (1.14.0)
 
 DEPENDENCIES:
-  - Amplitude-iOS (~> 4.0.4)
   - BVLinearGradient (from `../node_modules/react-native-linear-gradient`)
   - CocoaLumberjack (~> 3.5.3)
   - DoubleConversion (from `../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec`)
@@ -410,8 +410,9 @@ DEPENDENCIES:
   - React-RCTText (from `../node_modules/react-native/Libraries/Text`)
   - React-RCTVibration (from `../node_modules/react-native/Libraries/Vibration`)
   - ReactCommon/turbomodule (from `../node_modules/react-native/ReactCommon`)
-  - "RNCAsyncStorage (from `../node_modules/@react-native-community/async-storage`)"
+  - "RNCAsyncStorage (from `../node_modules/@react-native-async-storage/async-storage`)"
   - RNDefaultPreference (from `../node_modules/react-native-default-preference`)
+  - RNDeviceInfo (from `../node_modules/react-native-device-info`)
   - "RNGoogleSignin (from `../node_modules/@react-native-community/google-signin`)"
   - RNSound (from `../node_modules/react-native-sound`)
   - RNSVG (from `../node_modules/react-native-svg`)
@@ -420,7 +421,6 @@ DEPENDENCIES:
 
 SPEC REPOS:
   trunk:
-    - Amplitude-iOS
     - AppAuth
     - boost-for-react-native
     - CocoaLumberjack
@@ -507,9 +507,11 @@ EXTERNAL SOURCES:
   ReactCommon:
     :path: "../node_modules/react-native/ReactCommon"
   RNCAsyncStorage:
-    :path: "../node_modules/@react-native-community/async-storage"
+    :path: "../node_modules/@react-native-async-storage/async-storage"
   RNDefaultPreference:
     :path: "../node_modules/react-native-default-preference"
+  RNDeviceInfo:
+    :path: "../node_modules/react-native-device-info"
   RNGoogleSignin:
     :path: "../node_modules/@react-native-community/google-signin"
   RNSound:
@@ -522,7 +524,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
 SPEC CHECKSUMS:
-  Amplitude-iOS: 2ad4d7270c99186236c1272a3a9425463b1ae1a7
   AppAuth: bce82c76043657c99d91e7882e8a9e1a93650cd4
   boost-for-react-native: 39c7adb57c4e60d6c5479dd8623128eb5b3f0f2c
   BVLinearGradient: e3aad03778a456d77928f594a649e96995f1c872
@@ -562,8 +563,8 @@ SPEC CHECKSUMS:
   react-native-keep-awake: eba3137546b10003361b37c761f6c429b59814ae
   react-native-netinfo: 8d8db463bcc5db66a8ac5c48a7d86beb3b92f61a
   react-native-splash-screen: 200d11d188e2e78cea3ad319964f6142b6384865
-  react-native-webrtc: edd689b0d5a462d7a6f6f52bca3f9414fc0ee11c
-  react-native-webview: 6ee7868ca8eba635dbf7963986d1ab7959da0391
+  react-native-webrtc: dc1208bdca2c4d091f7b57859e69332bff6f1986
+  react-native-webview: b2542d6fd424bcc3e3b2ec5f854f0abb4ec86c87
   React-RCTActionSheet: bcbc311dc3b47bc8efb2737ff0940239a45789a9
   React-RCTAnimation: 65f61080ce632f6dea23d52e354ffac9948396c6
   React-RCTBlob: 70d88f7b68b5c44953cdb286ac2e36a7a509a97e
@@ -574,14 +575,15 @@ SPEC CHECKSUMS:
   React-RCTText: 4f1b99f228278d2a5e9008eced8dc9c974c4a270
   React-RCTVibration: c1041024893fdfdb8371e7c720c437751b711676
   ReactCommon: 18014e1d98dbeb9141e935cfe35fc93bd511ffb6
-  RNCAsyncStorage: 8e31405a9f12fbf42c2bb330e4560bfd79c18323
+  RNCAsyncStorage: bc2f81cc1df90c267ce9ed30bb2dbc93b945a8ee
   RNDefaultPreference: 56a405ce61033ac77b95004dccd7ac54c2eb50d1
+  RNDeviceInfo: 72ded653ce636b3f03571e90bed99309a714944e
   RNGoogleSignin: 39336070b35fc4cea6a98cf111e00480317be0ae
   RNSound: c980916b596cc15c8dcd2f6ecd3b13c4881dbe20
-  RNSVG: 069864be08c9fe065a2cf7e63656a34c78653c99
+  RNSVG: ce9d996113475209013317e48b05c21ee988d42e
   RNWatch: a5320c959c75e72845c07985f3e935e58998f1d3
   Yoga: 96b469c5e81ff51b917b92e8c3390642d4ded30c
 
-PODFILE CHECKSUM: f2400f8e5a52c4d91697cbacba6956569efc5ab8
+PODFILE CHECKSUM: 5be5132e41831a98362eeed760558227a4df89ae
 
-COCOAPODS: 1.9.3
+COCOAPODS: 1.10.0

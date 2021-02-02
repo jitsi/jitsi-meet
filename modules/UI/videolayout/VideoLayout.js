@@ -1,4 +1,4 @@
-/* global APP, $  */
+/* global APP  */
 
 import Logger from 'jitsi-meet-logger';
 
@@ -72,7 +72,6 @@ const VideoLayout = {
         eventEmitter = emitter;
 
         localVideoThumbnail = new LocalVideo(
-            VideoLayout,
             emitter,
             this._updateLargeVideoIfDisplayed.bind(this));
 
@@ -116,12 +115,6 @@ const VideoLayout = {
      * @param lvl the new audio level to update to
      */
     setAudioLevel(id, lvl) {
-        const smallVideo = this.getSmallVideo(id);
-
-        if (smallVideo) {
-            smallVideo.updateAudioLevelIndicator(lvl);
-        }
-
         if (largeVideo && id === largeVideo.id) {
             largeVideo.updateLargeVideoAudioLevel(lvl);
         }
@@ -135,19 +128,6 @@ const VideoLayout = {
         localVideoThumbnail.changeVideo(stream);
 
         this._updateLargeVideoIfDisplayed(localId);
-    },
-
-    /**
-     * Get's the localID of the conference and set it to the local video
-     * (small one). This needs to be called as early as possible, when muc is
-     * actually joined. Otherwise events can come with information like email
-     * and setting them assume the id is already set.
-     */
-    mucJoined() {
-        // FIXME: replace this call with a generic update call once SmallVideo
-        // only contains a ReactElement. Then remove this call once the
-        // Filmstrip is fully in React.
-        localVideoThumbnail.updateIndicators();
     },
 
     /**
@@ -172,11 +152,8 @@ const VideoLayout = {
 
         remoteVideo.addRemoteStreamElement(stream);
 
-        // Make sure track's muted state is reflected
-        if (stream.getType() !== 'audio') {
-            this.onVideoMute(id);
-            remoteVideo.updateView();
-        }
+        this.onVideoMute(id);
+        remoteVideo.updateView();
     },
 
     onRemoteStreamRemoved(stream) {
@@ -184,13 +161,12 @@ const VideoLayout = {
         const remoteVideo = remoteVideos[id];
 
         // Remote stream may be removed after participant left the conference.
-
         if (remoteVideo) {
             remoteVideo.removeRemoteStreamElement(stream);
             remoteVideo.updateView();
         }
 
-        this.updateMutedForNoTracks(id, stream.getType());
+        this.updateVideoMutedForNoTracks(id);
     },
 
     /**
@@ -199,19 +175,12 @@ const VideoLayout = {
      *
      * If participant has no tracks will make the UI display muted status.
      * @param {string} participantId
-     * @param {string} mediaType 'audio' or 'video'
      */
-    updateMutedForNoTracks(participantId, mediaType) {
+    updateVideoMutedForNoTracks(participantId) {
         const participant = APP.conference.getParticipantById(participantId);
 
-        if (participant && !participant.getTracksByMediaType(mediaType).length) {
-            if (mediaType === 'audio') {
-                APP.UI.setAudioMuted(participantId, true);
-            } else if (mediaType === 'video') {
-                APP.UI.setVideoMuted(participantId);
-            } else {
-                logger.error(`Unsupported media type: ${mediaType}`);
-            }
+        if (participant && !participant.getTracksByMediaType('video').length) {
+            APP.UI.setVideoMuted(participantId);
         }
     },
 
@@ -279,10 +248,7 @@ const VideoLayout = {
         if (!participant || participant.local) {
             return;
         } else if (participant.isFakeParticipant) {
-            const sharedVideoThumb = new SharedVideoThumb(
-                participant,
-                SHARED_VIDEO_CONTAINER_TYPE,
-                VideoLayout);
+            const sharedVideoThumb = new SharedVideoThumb(participant);
 
             this.addRemoteVideoContainer(participant.id, sharedVideoThumb);
 
@@ -291,13 +257,10 @@ const VideoLayout = {
 
         const id = participant.id;
         const jitsiParticipant = APP.conference.getParticipantById(id);
-        const remoteVideo = new RemoteVideo(jitsiParticipant, VideoLayout);
+        const remoteVideo = new RemoteVideo(jitsiParticipant);
 
-        this._setRemoteControlProperties(jitsiParticipant, remoteVideo);
         this.addRemoteVideoContainer(id, remoteVideo);
-
-        this.updateMutedForNoTracks(id, 'audio');
-        this.updateMutedForNoTracks(id, 'video');
+        this.updateVideoMutedForNoTracks(id);
     },
 
     /**
@@ -312,15 +275,6 @@ const VideoLayout = {
 
         // Initialize the view
         remoteVideo.updateView();
-    },
-
-    // FIXME: what does this do???
-    remoteVideoActive(videoElement, resourceJid) {
-        logger.info(`${resourceJid} video is now active`, videoElement);
-        if (videoElement) {
-            $(videoElement).show();
-        }
-        this._updateLargeVideoIfDisplayed(resourceJid, true);
     },
 
     /**
@@ -339,22 +293,6 @@ const VideoLayout = {
 
         // large video will show avatar instead of muted stream
         this._updateLargeVideoIfDisplayed(id, true);
-    },
-
-    /**
-     * Display name changed.
-     */
-    onDisplayNameChanged(id) {
-        if (id === 'localVideoContainer'
-            || APP.conference.isLocalId(id)) {
-            localVideoThumbnail.updateDisplayName();
-        } else {
-            const remoteVideo = remoteVideos[id];
-
-            if (remoteVideo) {
-                remoteVideo.updateDisplayName();
-            }
-        }
     },
 
     /**
@@ -423,20 +361,6 @@ const VideoLayout = {
         }
     },
 
-    /**
-     * Hides all the indicators
-     */
-    hideStats() {
-        for (const video in remoteVideos) { // eslint-disable-line guard-for-in
-            const remoteVideo = remoteVideos[video];
-
-            if (remoteVideo) {
-                remoteVideo.removeConnectionIndicator();
-            }
-        }
-        localVideoThumbnail.removeConnectionIndicator();
-    },
-
     removeParticipantContainer(id) {
         // Unlock large video
         if (this.getPinnedId() === id) {
@@ -487,15 +411,6 @@ const VideoLayout = {
     },
 
     changeUserAvatar(id, avatarUrl) {
-        const smallVideo = VideoLayout.getSmallVideo(id);
-
-        if (smallVideo) {
-            smallVideo.initializeAvatar();
-        } else {
-            logger.warn(
-                `Missed avatar update - no small video yet for ${id}`
-            );
-        }
         if (this.isCurrentlyOnLarge(id)) {
             largeVideo.updateAvatar(avatarUrl);
         }
@@ -655,33 +570,6 @@ const VideoLayout = {
     },
 
     /**
-     * Handles user's features changes.
-     */
-    onUserFeaturesChanged(user) {
-        const video = this.getSmallVideo(user.getId());
-
-        if (!video) {
-            return;
-        }
-        this._setRemoteControlProperties(user, video);
-    },
-
-    /**
-     * Sets the remote control properties (checks whether remote control
-     * is supported and executes remoteVideo.setRemoteControlSupport).
-     * @param {JitsiParticipant} user the user that will be checked for remote
-     * control support.
-     * @param {RemoteVideo} remoteVideo the remoteVideo on which the properties
-     * will be set.
-     */
-    _setRemoteControlProperties(user, remoteVideo) {
-        APP.remoteControl.checkUserRemoteControlSupport(user)
-            .then(result => remoteVideo.setRemoteControlSupport(result))
-            .catch(error =>
-                logger.warn(`could not get remote control properties for: ${user.getJid()}`, error));
-    },
-
-    /**
      * Returns the wrapper jquery selector for the largeVideo
      * @returns {JQuerySelector} the wrapper jquery selector for the largeVideo
      */
@@ -696,28 +584,6 @@ const VideoLayout = {
      */
     getRemoteVideosCount() {
         return Object.keys(remoteVideos).length;
-    },
-
-    /**
-     * Sets the remote control active status for a remote participant.
-     *
-     * @param {string} participantID - The id of the remote participant.
-     * @param {boolean} isActive - The new remote control active status.
-     * @returns {void}
-     */
-    setRemoteControlActiveStatus(participantID, isActive) {
-        remoteVideos[participantID].setRemoteControlActiveStatus(isActive);
-    },
-
-    /**
-     * Sets the remote control active status for the local participant.
-     *
-     * @returns {void}
-     */
-    setLocalRemoteControlActiveChanged() {
-        Object.values(remoteVideos).forEach(
-            remoteVideo => remoteVideo.updateRemoteVideoMenu()
-        );
     },
 
     /**

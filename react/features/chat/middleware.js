@@ -19,9 +19,8 @@ import {
 import { MiddlewareRegistry, StateListenerRegistry } from '../base/redux';
 import { playSound, registerSound, unregisterSound } from '../base/sounds';
 import { showToolbox } from '../toolbox/actions';
-import { isButtonEnabled } from '../toolbox/functions';
 
-import { SEND_MESSAGE, SET_PRIVATE_MESSAGE_RECIPIENT } from './actionTypes';
+import { ADD_MESSAGE, TOGGLE_CHAT, SEND_MESSAGE, SET_PRIVATE_MESSAGE_RECIPIENT } from './actionTypes';
 import { addMessage, clearMessages, toggleChat } from './actions';
 import { ChatPrivacyDialog } from './components';
 import {
@@ -31,6 +30,7 @@ import {
     MESSAGE_TYPE_LOCAL,
     MESSAGE_TYPE_REMOTE
 } from './constants';
+import { getUnreadCount } from './functions';
 import { INCOMING_MSG_SOUND_FILE } from './sounds';
 
 declare var APP: Object;
@@ -51,9 +51,26 @@ const PRIVACY_NOTICE_TIMEOUT = 20 * 1000;
  * @returns {Function}
  */
 MiddlewareRegistry.register(store => next => action => {
-    const { dispatch } = store;
+    const { dispatch, getState } = store;
+    let isOpen, unreadCount;
 
     switch (action.type) {
+    case ADD_MESSAGE:
+        unreadCount = action.hasRead ? 0 : getUnreadCount(getState()) + 1;
+        isOpen = getState()['features/chat'].isOpen;
+
+        if (typeof APP !== 'undefined') {
+            APP.API.notifyChatUpdated(unreadCount, isOpen);
+        }
+        break;
+    case TOGGLE_CHAT:
+        unreadCount = 0;
+        isOpen = !getState()['features/chat'].isOpen;
+
+        if (typeof APP !== 'undefined') {
+            APP.API.notifyChatUpdated(unreadCount, isOpen);
+        }
+        break;
     case APP_WILL_MOUNT:
         dispatch(
                 registerSound(INCOMING_MSG_SOUND_ID, INCOMING_MSG_SOUND_FILE));
@@ -152,10 +169,9 @@ StateListenerRegistry.register(
  * @returns {void}
  */
 function _addChatMsgListener(conference, store) {
-    if ((typeof APP !== 'undefined' && !isButtonEnabled('chat'))
-        || store.getState()['features/base/config'].iAmRecorder) {
-        // We don't register anything on web if the chat button is not enabled in interfaceConfig
-        // or we are in iAmRecorder mode
+
+    if (store.getState()['features/base/config'].iAmRecorder) {
+        // We don't register anything on web if we are in iAmRecorder mode
         return;
     }
 
@@ -249,6 +265,7 @@ function _handleReceivedMessage({ dispatch, getState }, { id, message, privateMe
             body: message,
             id,
             nick: displayName,
+            privateMessage,
             ts: timestamp
         });
 

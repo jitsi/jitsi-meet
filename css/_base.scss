@@ -17,6 +17,7 @@ textarea {
 html {
     height: 100%;
     width: 100%;
+    overflow: hidden;
 }
 
 body {
@@ -44,18 +45,10 @@ body {
  * pad the modal container in order for the modals to be centered
  * while also taking the chat size into consideration.
 */
-@media (min-width: 480px + $sidebarWidth) {
-    .shift-right [class^="Modal__FillScreen"] {
+@media (min-width: 581px) {
+    .shift-right .atlaskit-portal > div:not(.Tooltip) {
         padding-left: $sidebarWidth;
     }
-}
-
-/**
- * Similarly, we offset the notifications when the chat is open by
- * padding the container.
-*/
-.shift-right [class^="styledFlagGroup-"] {
-    padding-left: $sidebarWidth;
 }
 
 .jitsi-icon svg {
@@ -200,75 +193,4 @@ form {
 ::-webkit-scrollbar-thumb {
     background: rgba(0, 0, 0, .5);
     border-radius: 4px;
-}
-
-.desktop-browser {
-    @media only screen and (max-width: $smallScreen) {
-        .watermark {
-            width: 20%;
-            height: 20%;
-        }
-
-        .new-toolbox {
-            .toolbox-content {
-                .button-group-center, .button-group-left, .button-group-right {
-                    .toolbox-button {
-                        .toolbox-icon {
-                            width: 28px;
-                            height: 28px;
-                            svg {
-                                width: 18px;
-                                height: 18px;
-                            }
-                        }
-
-                        &:nth-child(2) {
-                            .toolbox-icon {
-                                width: 30px;
-                                height: 30px;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    @media only screen and (max-width: $verySmallScreen) {
-        #videoResolutionLabel {
-            display: none;
-        }
-        .vertical-filmstrip .filmstrip {
-            display: none;
-        }
-        .new-toolbox {
-            .toolbox-content {
-                .button-group-center, .button-group-left, .button-group-right {
-                    .settings-button-small-icon {
-                        display: none;
-                    }
-                    .toolbox-button {
-                        .toolbox-icon {
-                            width: 18px;
-                            height: 18px;
-                            svg {
-                                width: 12px;
-                                height: 12px;
-                            }
-                        }
-
-                        &:nth-child(2) {
-                            .toolbox-icon {
-                                width: 20px;
-                                height: 20px;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        .chrome-extension-banner {
-            display: none;
-        }
-    }
 }

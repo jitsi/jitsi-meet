@@ -1,5 +1,5 @@
 /*
- * Copyright @ 2017-present Atlassian Pty Ltd
+ * Copyright @ 2017-present 8x8, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,22 +14,41 @@
  * limitations under the License.
  */
 
-#import <React/RCTBridgeModule.h>
-
+#import "ExternalAPI.h"
 #import "JitsiMeetView+Private.h"
 
-@interface ExternalAPI : NSObject<RCTBridgeModule>
-@end
+// Events
+static NSString * const hangUpAction = @"org.jitsi.meet.HANG_UP";
+static NSString * const setAudioMutedAction = @"org.jitsi.meet.SET_AUDIO_MUTED";
+static NSString * const sendEndpointTextMessageAction = @"org.jitsi.meet.SEND_ENDPOINT_TEXT_MESSAGE";
+static NSString * const toggleScreenShareAction = @"org.jitsi.meet.TOGGLE_SCREEN_SHARE";
 
 @implementation ExternalAPI
 
 RCT_EXPORT_MODULE();
+
+- (NSDictionary *)constantsToExport {
+    return @{
+        @"HANG_UP": hangUpAction,
+        @"SET_AUDIO_MUTED" : setAudioMutedAction,
+        @"SEND_ENDPOINT_TEXT_MESSAGE": sendEndpointTextMessageAction,
+        @"TOGGLE_SCREEN_SHARE": toggleScreenShareAction
+    };
+};
 
 /**
  * Make sure all methods in this module are invoked on the main/UI thread.
  */
 - (dispatch_queue_t)methodQueue {
     return dispatch_get_main_queue();
+}
+
++ (BOOL)requiresMainQueueSetup {
+    return NO;
+}
+
+- (NSArray<NSString *> *)supportedEvents {
+    return @[ hangUpAction, setAudioMutedAction, sendEndpointTextMessageAction, toggleScreenShareAction ];
 }
 
 /**
@@ -85,6 +104,29 @@ RCT_EXPORT_METHOD(sendEvent:(NSString *)name
    [methodName appendString:@":"];
 
    return methodName;
+}
+
+- (void)sendHangUp {
+    [self sendEventWithName:hangUpAction body:nil];
+}
+
+- (void)sendSetAudioMuted:(BOOL)muted {
+    NSDictionary *data = @{ @"muted": [NSNumber numberWithBool:muted]};
+
+    [self sendEventWithName:setAudioMutedAction body:data];
+}
+
+- (void)sendEndpointTextMessage:(NSString*)to :(NSString*)message {
+    NSDictionary *data = @{
+        @"to": to,
+        @"message": message
+    };
+    
+    [self sendEventWithName:sendEndpointTextMessageAction body:data];
+}
+
+- (void)toggleScreenShare {
+    [self sendEventWithName:toggleScreenShareAction body:nil];
 }
 
 @end

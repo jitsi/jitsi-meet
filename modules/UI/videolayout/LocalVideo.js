@@ -1,22 +1,22 @@
-/* global $, config, interfaceConfig, APP */
+/* global $, config, APP */
 
-import Logger from 'jitsi-meet-logger';
 /* eslint-disable no-unused-vars */
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
+import { I18nextProvider } from 'react-i18next';
 import { Provider } from 'react-redux';
 
+import { i18next } from '../../../react/features/base/i18n';
 import { JitsiTrackEvents } from '../../../react/features/base/lib-jitsi-meet';
 import { VideoTrack } from '../../../react/features/base/media';
 import { updateSettings } from '../../../react/features/base/settings';
 import { getLocalVideoTrack } from '../../../react/features/base/tracks';
+import Thumbnail from '../../../react/features/filmstrip/components/web/Thumbnail';
 import { shouldDisplayTileView } from '../../../react/features/video-layout';
 /* eslint-enable no-unused-vars */
 import UIEvents from '../../../service/UI/UIEvents';
 
 import SmallVideo from './SmallVideo';
-
-const logger = Logger.getLogger(__filename);
 
 /**
  *
@@ -24,12 +24,11 @@ const logger = Logger.getLogger(__filename);
 export default class LocalVideo extends SmallVideo {
     /**
      *
-     * @param {*} VideoLayout
      * @param {*} emitter
      * @param {*} streamEndedCallback
      */
-    constructor(VideoLayout, emitter, streamEndedCallback) {
-        super(VideoLayout);
+    constructor(emitter, streamEndedCallback) {
+        super();
         this.videoSpanId = 'localVideoContainer';
         this.streamEndedCallback = streamEndedCallback;
         this.container = this.createContainer();
@@ -37,6 +36,7 @@ export default class LocalVideo extends SmallVideo {
         this.isLocal = true;
         this._setThumbnailSize();
         this.updateDOMLocation();
+        this.renderThumbnail();
 
         this.localVideoId = null;
         this.bindHoverHandler();
@@ -44,7 +44,6 @@ export default class LocalVideo extends SmallVideo {
             this._buildContextMenu();
         }
         this.emitter = emitter;
-        this.statsPopoverLocation = interfaceConfig.VERTICAL_FILMSTRIP ? 'left top' : 'top center';
 
         Object.defineProperty(this, 'id', {
             get() {
@@ -52,18 +51,6 @@ export default class LocalVideo extends SmallVideo {
             }
         });
         this.initBrowserSpecificProperties();
-
-        // Set default display name.
-        this.updateDisplayName();
-
-        // Initialize the avatar display with an avatar url selected from the redux
-        // state. Redux stores the local user with a hardcoded participant id of
-        // 'local' if no id has been assigned yet.
-        this.initializeAvatar();
-
-        this.addAudioLevelIndicator();
-        this.updateIndicators();
-        this.updateStatusBar();
 
         this.container.onclick = this._onContainerClick;
     }
@@ -77,38 +64,19 @@ export default class LocalVideo extends SmallVideo {
         containerSpan.classList.add('videocontainer');
         containerSpan.id = this.videoSpanId;
 
-        containerSpan.innerHTML = `
-            <div class = 'videocontainer__background'></div>
-            <span id = 'localVideoWrapper'></span>
-            <div class = 'videocontainer__toolbar'></div>
-            <div class = 'videocontainer__toptoolbar'></div>
-            <div class = 'videocontainer__hoverOverlay'></div>
-            <div class = 'displayNameContainer'></div>
-            <div class = 'avatar-container'></div>`;
-
         return containerSpan;
     }
 
     /**
-     * Triggers re-rendering of the display name using current instance state.
-     *
-     * @returns {void}
+     * Renders the thumbnail.
      */
-    updateDisplayName() {
-        if (!this.container) {
-            logger.warn(
-                    `Unable to set displayName - ${this.videoSpanId
-                    } does not exist`);
-
-            return;
-        }
-
-        this._renderDisplayName({
-            allowEditing: !config.disableProfile,
-            displayNameSuffix: interfaceConfig.DEFAULT_LOCAL_DISPLAY_NAME,
-            elementID: 'localDisplayName',
-            participantID: this.id
-        });
+    renderThumbnail(isHovered = false) {
+        ReactDOM.render(
+            <Provider store = { APP.store }>
+                <I18nextProvider i18n = { i18next }>
+                    <Thumbnail participantID = { this.id } isHovered = { isHovered } />
+                </I18nextProvider>
+            </Provider>, this.container);
     }
 
     /**
@@ -116,9 +84,7 @@ export default class LocalVideo extends SmallVideo {
      * @param {*} stream
      */
     changeVideo(stream) {
-        this.videoStream = stream;
         this.localVideoId = `localVideo_${stream.getId()}`;
-        this._updateVideoElement();
 
         // eslint-disable-next-line eqeqeq
         const isVideo = stream.videoType != 'desktop';
@@ -128,17 +94,6 @@ export default class LocalVideo extends SmallVideo {
         this.setFlipX(isVideo ? settings.localFlipX : false);
 
         const endedHandler = () => {
-            const localVideoContainer
-                = document.getElementById('localVideoWrapper');
-
-            // Only remove if there is no video and not a transition state.
-            // Previous non-react logic created a new video element with each track
-            // removal whereas react reuses the video component so it could be the
-            // stream ended but a new one is being used.
-            if (localVideoContainer && this.videoStream.isEnded()) {
-                ReactDOM.unmountComponentAtNode(localVideoContainer);
-            }
-
             this._notifyOfStreamEnded();
             stream.off(JitsiTrackEvents.LOCAL_TRACK_STOPPED, endedHandler);
         };
@@ -254,35 +209,5 @@ export default class LocalVideo extends SmallVideo {
             : document.getElementById('filmstripLocalVideoThumbnail');
 
         appendTarget && appendTarget.appendChild(this.container);
-        this._updateVideoElement();
-    }
-
-    /**
-     * Renders the React Element for displaying video in {@code LocalVideo}.
-     *
-     */
-    _updateVideoElement() {
-        const localVideoContainer = document.getElementById('localVideoWrapper');
-        const videoTrack
-            = getLocalVideoTrack(APP.store.getState()['features/base/tracks']);
-
-        ReactDOM.render(
-            <Provider store = { APP.store }>
-                <VideoTrack
-                    id = 'localVideo_container'
-                    videoTrack = { videoTrack } />
-            </Provider>,
-            localVideoContainer
-        );
-
-        // Ensure the video gets play() called on it. This may be necessary in the
-        // case where the local video container was moved and re-attached, in which
-        // case video does not autoplay. Also, set the playsinline attribute on the
-        // video element so that local video doesn't open in full screen by default
-        // in Safari browser on iOS.
-        const video = this.container.querySelector('video');
-
-        video && video.setAttribute('playsinline', 'true');
-        video && !config.testing?.noAutoPlayVideo && video.play();
     }
 }

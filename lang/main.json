@@ -300,6 +300,7 @@
         "tokenAuthFailedTitle": "Authentication failed",
         "transcribing": "Transcribing",
         "unlockRoom": "Remove meeting $t(lockRoomPassword)",
+        "user": "user",
         "userPassword": "user password",
         "WaitForHostMsg": "The conference <b>{{room}}</b> has not yet started. If you are the host then please authenticate. Otherwise, please wait for the host to arrive.",
         "WaitForHostMsgWOk": "The conference <b>{{room}}</b> has not yet started. If you are the host then please press Ok to authenticate. Otherwise, please wait for the host to arrive.",
@@ -393,8 +394,7 @@
         "toggleFilmstrip": "Show or hide video thumbnails",
         "toggleScreensharing": "Switch between camera and screen sharing",
         "toggleShortcuts": "Show or hide keyboard shortcuts",
-        "videoMute": "Start or stop your camera",
-        "videoQuality": "Manage call quality"
+        "videoMute": "Start or stop your camera"
     },
     "liveStreaming": {
         "limitNotificationDescriptionWeb": "Due to high demand your streaming will be limited to {{limit}} min. For unlimited streaming try <a href={{url}} rel='noopener noreferrer' target='_blank'>{{app}}</a>.",
@@ -416,7 +416,7 @@
         "invalidStreamKey": "Live stream key may be incorrect.",
         "off": "Live Streaming stopped",
         "offBy": "{{name}} stopped the live streaming",
-        "on": "Live Streaming",
+        "on": "Live Streaming started",
         "onBy": "{{name}} started the live streaming",
         "pending": "Starting Live Stream...",
         "serviceName": "Live Streaming service",
@@ -596,11 +596,12 @@
         "loggedIn": "Logged in as {{userName}}",
         "off": "Recording stopped",
         "offBy": "{{name}} stopped the recording",
-        "on": "Recording",
+        "on": "Recording started",
         "onBy": "{{name}} started the recording",
         "pending": "Preparing to record the meeting...",
         "rec": "REC",
         "serviceDescription": "Your recording will be saved by the recording service",
+        "serviceDescriptionCloud": "Cloud recording",
         "serviceName": "Recording service",
         "signIn": "Sign in",
         "signOut": "Sign out",
@@ -843,6 +844,7 @@
         "standardDefinition": "Standard definition"
     },
     "videothumbnail": {
+        "connectionInfo": "Connection Info",
         "domute": "Mute",
         "domuteOthers": "Mute everyone else",
         "flip": "Flip",
