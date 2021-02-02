@@ -6,7 +6,6 @@ import AbstractDialogTab, {
     type Props as AbstractDialogTabProps
 } from '../../base/dialog/components/web/AbstractDialogTab';
 import { translate } from '../../base/i18n/functions';
-import JitsiMeetJS from '../../base/lib-jitsi-meet/_';
 import { createLocalTrack } from '../../base/lib-jitsi-meet/functions';
 import logger from '../logger';
 
@@ -40,6 +39,16 @@ export type Props = {
      * will display as disabled.
      */
     disableDeviceChange: boolean,
+
+    /**
+     * Whether or not the audio permission was granted.
+     */
+    hasAudioPermission: boolean,
+
+    /**
+     * Whether or not the audio permission was granted.
+     */
+    hasVideoPermission: boolean,
 
     /**
      * If true, the audio meter will not display. Necessary for browsers or
@@ -88,16 +97,6 @@ export type Props = {
 type State = {
 
     /**
-     * Whether or not the audio permission was granted.
-     */
-    hasAudioPermission: boolean,
-
-    /**
-     * Whether or not the audio permission was granted.
-     */
-    hasVideoPermission: boolean,
-
-    /**
      * The JitsiTrack to use for previewing audio input.
      */
     previewAudioTrack: ?Object,
@@ -141,8 +140,6 @@ class DeviceSelection extends AbstractDialogTab<Props, State> {
         super(props);
 
         this.state = {
-            hasAudioPermission: false,
-            hasVideoPermission: false,
             previewAudioTrack: null,
             previewVideoTrack: null,
             previewVideoTrackError: null
@@ -170,27 +167,9 @@ class DeviceSelection extends AbstractDialogTab<Props, State> {
      * video input previews.
      *
      * @param {Object} prevProps - Previous props this component received.
-     * @param {Object} prevState - Previous state this component had.
      * @returns {void}
      */
-    componentDidUpdate(prevProps, prevState) {
-        const { previewAudioTrack, previewVideoTrack } = prevState;
-
-        if ((!previewAudioTrack && this.state.previewAudioTrack)
-                || (!previewVideoTrack && this.state.previewVideoTrack)) {
-            Promise.all([
-                JitsiMeetJS.mediaDevices.isDevicePermissionGranted('audio'),
-                JitsiMeetJS.mediaDevices.isDevicePermissionGranted('video')
-            ]).then(r => {
-                const [ hasAudioPermission, hasVideoPermission ] = r;
-
-                this.setState({
-                    hasAudioPermission,
-                    hasVideoPermission
-                });
-            });
-        }
-
+    componentDidUpdate(prevProps) {
         if (prevProps.selectedAudioInputId
             !== this.props.selectedAudioInputId) {
             this._createAudioInputTrack(this.props.selectedAudioInputId);
@@ -258,7 +237,7 @@ class DeviceSelection extends AbstractDialogTab<Props, State> {
      */
     _createAudioInputTrack(deviceId) {
         return this._disposeAudioInputPreview()
-            .then(() => createLocalTrack('audio', deviceId))
+            .then(() => createLocalTrack('audio', deviceId, 5000))
             .then(jitsiLocalTrack => {
                 if (this._unMounted) {
                     jitsiLocalTrack.dispose();
@@ -286,7 +265,7 @@ class DeviceSelection extends AbstractDialogTab<Props, State> {
      */
     _createVideoInputTrack(deviceId) {
         return this._disposeVideoInputPreview()
-            .then(() => createLocalTrack('video', deviceId))
+            .then(() => createLocalTrack('video', deviceId, 5000))
             .then(jitsiLocalTrack => {
                 if (!jitsiLocalTrack) {
                     return Promise.reject();
@@ -360,8 +339,7 @@ class DeviceSelection extends AbstractDialogTab<Props, State> {
      * @returns {Array<ReactElement>} DeviceSelector instances.
      */
     _renderSelectors() {
-        const { availableDevices } = this.props;
-        const { hasAudioPermission, hasVideoPermission } = this.state;
+        const { availableDevices, hasAudioPermission, hasVideoPermission } = this.props;
 
         const configurations = [
             {

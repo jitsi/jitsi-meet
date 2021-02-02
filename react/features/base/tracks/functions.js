@@ -62,6 +62,7 @@ export async function createLocalPresenterTrack(options, desktopHeight) {
  * and/or 'video'.
  * @param {string|null} [options.micDeviceId] - Microphone device id or
  * {@code undefined} to use app's settings.
+ * @param {number|undefined} [oprions.timeout] - A timeout for JitsiMeetJS.createLocalTracks used to create the tracks.
  * @param {boolean} [firePermissionPromptIsShownEvent] - Whether lib-jitsi-meet
  * should check for a {@code getUserMedia} permission prompt and fire a
  * corresponding event.
@@ -71,6 +72,7 @@ export async function createLocalPresenterTrack(options, desktopHeight) {
  */
 export function createLocalTracksF(options = {}, firePermissionPromptIsShownEvent, store) {
     let { cameraDeviceId, micDeviceId } = options;
+    const { desktopSharingSourceDevice, desktopSharingSources, timeout } = options;
 
     if (typeof APP !== 'undefined') {
         // TODO The app's settings should go in the redux store and then the
@@ -105,16 +107,16 @@ export function createLocalTracksF(options = {}, firePermissionPromptIsShownEven
                     cameraDeviceId,
                     constraints,
                     desktopSharingFrameRate,
-                    desktopSharingSourceDevice:
-                        options.desktopSharingSourceDevice,
-                    desktopSharingSources: options.desktopSharingSources,
+                    desktopSharingSourceDevice,
+                    desktopSharingSources,
 
                     // Copy array to avoid mutations inside library.
                     devices: options.devices.slice(0),
                     effects,
                     firefox_fake_device, // eslint-disable-line camelcase
                     micDeviceId,
-                    resolution
+                    resolution,
+                    timeout
                 },
                 firePermissionPromptIsShownEvent)
             .catch(err => {

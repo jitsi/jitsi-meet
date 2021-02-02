@@ -7,7 +7,6 @@ import { IconArrowDown } from '../../../base/icons';
 import JitsiMeetJS from '../../../base/lib-jitsi-meet/_';
 import { connect } from '../../../base/redux';
 import { ToolboxButtonWithIcon } from '../../../base/toolbox/components';
-import { getMediaPermissionPromptVisibility } from '../../../overlay';
 import { AudioSettingsPopup, toggleAudioSettings } from '../../../settings';
 import { isAudioSettingsButtonDisabled } from '../../functions';
 import AudioMuteButton from '../AudioMuteButton';
@@ -15,15 +14,14 @@ import AudioMuteButton from '../AudioMuteButton';
 type Props = {
 
     /**
+     * Indicates whether audio permissions have been granted or denied.
+     */
+    hasPermissions: boolean,
+
+    /**
      * Click handler for the small icon. Opens audio options.
      */
     onAudioOptionsClick: Function,
-
-    /**
-     * Whether the permission prompt is visible or not.
-     * Useful for enabling the button on permission grant.
-     */
-    permissionPromptVisibility: boolean,
 
     /**
      * If the button should be disabled.
@@ -34,83 +32,15 @@ type Props = {
      * Flag controlling the visibility of the button.
      * AudioSettings popup is disabled on mobile browsers.
      */
-    visible: boolean,
+    visible: boolean
 };
-
-type State = {
-
-    /**
-     * If there are permissions for audio devices.
-     */
-    hasPermissions: boolean,
-}
 
 /**
  * Button used for audio & audio settings.
  *
  * @returns {ReactElement}
  */
-class AudioSettingsButton extends Component<Props, State> {
-    _isMounted: boolean;
-
-    /**
-     * Initializes a new {@code AudioSettingsButton} instance.
-     *
-     * @param {Object} props - The read-only properties with which the new
-     * instance is to be initialized.
-     */
-    constructor(props) {
-        super(props);
-
-        this._isMounted = true;
-        this.state = {
-            hasPermissions: false
-        };
-    }
-
-    /**
-     * Updates device permissions.
-     *
-     * @returns {Promise<void>}
-     */
-    async _updatePermissions() {
-        const hasPermissions = await JitsiMeetJS.mediaDevices.isDevicePermissionGranted(
-            'audio',
-        );
-
-        this._isMounted && this.setState({
-            hasPermissions
-        });
-    }
-
-    /**
-     * Implements React's {@link Component#componentDidMount}.
-     *
-     * @inheritdoc
-     */
-    componentDidMount() {
-        this._updatePermissions();
-    }
-
-    /**
-     * Implements React's {@link Component#componentDidUpdate}.
-     *
-     * @inheritdoc
-     */
-    componentDidUpdate(prevProps) {
-        if (this.props.permissionPromptVisibility !== prevProps.permissionPromptVisibility) {
-            this._updatePermissions();
-        }
-    }
-
-    /**
-     * Implements React's {@link Component#componentWillUnmount}.
-     *
-     * @inheritdoc
-     */
-    componentWillUnmount() {
-        this._isMounted = false;
-    }
+class AudioSettingsButton extends Component<Props> {
 
     /**
      * Implements React's {@link Component#render}.
@@ -118,8 +48,8 @@ class AudioSettingsButton extends Component<Props, State> {
      * @inheritdoc
      */
     render() {
-        const { isDisabled, onAudioOptionsClick, visible } = this.props;
-        const settingsDisabled = !this.state.hasPermissions
+        const { hasPermissions, isDisabled, onAudioOptionsClick, visible } = this.props;
+        const settingsDisabled = !hasPermissions
             || isDisabled
             || !JitsiMeetJS.mediaDevices.isMultipleAudioInputSupported();
 
@@ -143,9 +73,11 @@ class AudioSettingsButton extends Component<Props, State> {
  * @returns {Object}
  */
 function mapStateToProps(state) {
+    const { permissions = {} } = state['features/base/devices'];
+
     return {
+        hasPermissions: permissions.audio,
         isDisabled: isAudioSettingsButtonDisabled(state),
-        permissionPromptVisibility: getMediaPermissionPromptVisibility(state),
         visible: !isMobileBrowser()
     };
 }

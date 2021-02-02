@@ -156,11 +156,12 @@ export function getProfileTabProps(stateful: Object | Function) {
  * all the video jitsiTracks and appropriate errors for the given device ids.
  *
  * @param {string[]} ids - The list of the camera ids for wich to create tracks.
+ * @param {number} [timeout] - A timeout for the createLocalTrack function call.
  *
  * @returns {Promise<Object[]>}
  */
-export function createLocalVideoTracks(ids: string[]) {
-    return Promise.all(ids.map(deviceId => createLocalTrack('video', deviceId)
+export function createLocalVideoTracks(ids: string[], timeout: ?number) {
+    return Promise.all(ids.map(deviceId => createLocalTrack('video', deviceId, timeout)
                    .then(jitsiTrack => {
                        return {
                            jitsiTrack,
@@ -182,6 +183,7 @@ export function createLocalVideoTracks(ids: string[]) {
  * the audio track and the corresponding audio device information.
  *
  * @param {Object[]} devices - A list of microphone devices.
+ * @param {number} [timeout] - A timeout for the createLocalTrack function call.
  * @returns {Promise<{
  *   deviceId: string,
  *   hasError: boolean,
@@ -189,14 +191,14 @@ export function createLocalVideoTracks(ids: string[]) {
  *   label: string
  * }[]>}
  */
-export function createLocalAudioTracks(devices: Object[]) {
+export function createLocalAudioTracks(devices: Object[], timeout: ?number) {
     return Promise.all(
         devices.map(async ({ deviceId, label }) => {
             let jitsiTrack = null;
             let hasError = false;
 
             try {
-                jitsiTrack = await createLocalTrack('audio', deviceId);
+                jitsiTrack = await createLocalTrack('audio', deviceId, timeout);
             } catch (err) {
                 hasError = true;
             }
