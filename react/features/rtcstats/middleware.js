@@ -55,7 +55,8 @@ MiddlewareRegistry.register(store => next => action => {
 
                 // Unique identifier for a conference session, not to be confused with meeting name
                 // i.e. If all participants leave a meeting it will have a different value on the next join.
-                const meetingUniqueId = action.conference?.getMeetingUniqueId();
+                const { conference } = action;
+                const meetingUniqueId = conference && conference.getMeetingUniqueId();
 
                 // The current implementation of rtcstats-server is configured to send data to amplitude, thus
                 // we add identity specific information so we can corelate on the amplitude side. If amplitude is
