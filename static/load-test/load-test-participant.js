@@ -24,6 +24,15 @@ let localTracks = [];
 const remoteTracks = {};
 
 window.APP = {
+    conference: {
+        getStats() {
+            return room.connectionQuality.getStats();
+        },
+        getConnectionState() {
+            return room && room.getConnectionState();
+        },
+    },
+
     get room() {
         return room;
     },
