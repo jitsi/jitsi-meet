@@ -60,15 +60,6 @@ case "$1" in
             JICOFO_AUTH_PASSWORD="$RET"
         fi
 
-        db_get jicofo/jicofosecret
-        if [ -z "$RET" ] ; then
-            # if secret is missing generate it, and store it
-            JICOFO_SECRET=`generateRandomPassword`
-            db_set jicofo/jicofosecret "$JICOFO_SECRET"
-        else
-            JICOFO_SECRET="$RET"
-        fi
-
         JICOFO_AUTH_DOMAIN="auth.$JVB_HOSTNAME"
 
         # detect dpkg-reconfigure, just delete old links
@@ -107,7 +98,6 @@ case "$1" in
             mkdir -p /etc/prosody/conf.d/
             cp /usr/share/jitsi-meet-prosody/prosody.cfg.lua-jvb.example $PROSODY_HOST_CONFIG
             sed -i "s/jitmeet.example.com/$JVB_HOSTNAME/g" $PROSODY_HOST_CONFIG
-            sed -i "s/focusSecret/$JICOFO_SECRET/g" $PROSODY_HOST_CONFIG
             sed -i "s/focusUser/$JICOFO_AUTH_USER/g" $PROSODY_HOST_CONFIG
             sed -i "s/__turnSecret__/$TURN_SECRET/g" $PROSODY_HOST_CONFIG
             if [ ! -f /etc/prosody/conf.d/$JVB_HOSTNAME.cfg.lua ]; then
@@ -141,6 +131,28 @@ case "$1" in
             echo -e "    modules_enabled = { \"ping\"; }" >> $PROSODY_HOST_CONFIG
             echo -e "    admins = { \"$JICOFO_AUTH_USER@auth.$JVB_HOSTNAME\", \"jvb@auth.$JVB_HOSTNAME\" }" >> $PROSODY_HOST_CONFIG
         fi
+
+        # Convert the old focus component config to the new one.
+        # Old:
+        # Component "focus.jitmeet.example.com"
+        #     component_secret = "focusSecret"
+        # New:
+        # Component "focus.jitmeet.example.com" "client_proxy"
+        #    target_address = "focus@auth.jitmeet.example.com"
+        if grep -q "Component \"focus.$JVB_HOSTNAME\"" $PROSODY_HOST_CONFIG && ! grep "Component \"focus.$JVB_HOSTNAME\" \"client_proxy\"" $PROSODY_HOST_CONFIG ;then
+            sed -i "s/Component \"focus.$JVB_HOSTNAME\"/Component \"focus.$JVB_HOSTNAME\" \"client_proxy\"\n    target_address = \"$JICOFO_AUTH_USER@auth.$JVB_HOSTNAME\"/g" $PROSODY_HOST_CONFIG
+            PROSODY_CONFIG_PRESENT="false"
+        fi
+
+        # Old versions of jitsi-meet-prosody come with the extra plugin path commented out (https://github.com/jitsi/jitsi-meet/commit/e11d4d3101e5228bf956a69a9e8da73d0aee7949)
+        # Make sure it is uncommented, as it contains required modules.
+        if grep -q -- '--plugin_paths = { "/usr/share/jitsi-meet/prosody-plugins/" }' $PROSODY_HOST_CONFIG ;then
+            sed -i 's#--plugin_paths = { "/usr/share/jitsi-meet/prosody-plugins/" }#plugin_paths = { "/usr/share/jitsi-meet/prosody-plugins/" }#g' $PROSODY_HOST_CONFIG
+            PROSODY_CONFIG_PRESENT="false"
+        fi
+
+        # Make sure the focus@auth user's roster includes the proxy component (this is idempotent)
+        prosodyctl mod_roster_command subscribe focus.$JVB_HOSTNAME $JICOFO_AUTH_USER@auth.$JVB_HOSTNAME
 
         if [ ! -f /var/lib/prosody/$JVB_HOSTNAME.crt ]; then
             # prosodyctl takes care for the permissions

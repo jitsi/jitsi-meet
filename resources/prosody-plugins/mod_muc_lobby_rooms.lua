@@ -101,9 +101,10 @@ end
 
 -- Sends a json message notifying that the jid was granted/denied access in lobby
 -- the message from is the actor that did the operation
-function notify_lobby_access(room, actor, jid, granted)
+function notify_lobby_access(room, actor, jid, display_name, granted)
     local notify_json = {
-        value = jid
+        value = jid,
+        name = display_name
     };
     if granted then
         notify_json.event = NOTIFY_LOBBY_ACCESS_GRANTED;
@@ -131,7 +132,7 @@ function filter_stanza(stanza)
 
             -- check is an owner, only owners can receive the presence
             local room = main_muc_service.get_room_from_jid(jid_bare(node .. '@' .. main_muc_component_config));
-            if room.get_affiliation(room, stanza.attr.to) == 'owner' then
+            if not room or room.get_affiliation(room, stanza.attr.to) == 'owner' then
                 return stanza;
             end
 
@@ -150,6 +151,40 @@ function filter_session(session)
     if session.host and session.host == module.host then
         -- domain mapper is filtering on default priority 0, and we need it after that
         filters.add_filter(session, 'stanzas/out', filter_stanza, -1);
+    end
+end
+
+function attach_lobby_room(room)
+    local node = jid_split(room.jid);
+    local lobby_room_jid = node .. '@' .. lobby_muc_component_config;
+    if not lobby_muc_service.get_room_from_jid(lobby_room_jid) then
+        local new_room = lobby_muc_service.create_room(lobby_room_jid);
+        -- set persistent the lobby room to avoid it to be destroyed
+        -- there are cases like when selecting new moderator after the current one leaves
+        -- which can leave the room with no occupants and it will be destroyed and we want to
+        -- avoid lobby destroy while it is enabled
+        new_room:set_persistent(true);
+        module:log("debug","Lobby room jid = %s created",lobby_room_jid);
+        new_room.main_room = room;
+        room._data.lobbyroom = new_room.jid;
+        room:save(true);
+        return true
+    end
+    return false
+end
+
+-- destroys lobby room for the supplied main room
+function destroy_lobby_room(room, newjid, message)
+    if not message then
+        message = 'Lobby room closed.';
+    end
+    if lobby_muc_service and room and room._data.lobbyroom then
+        local lobby_room_obj = lobby_muc_service.get_room_from_jid(room._data.lobbyroom);
+        if lobby_room_obj then
+            lobby_room_obj:set_persistent(false);
+            lobby_room_obj:destroy(newjid, message);
+        end
+        room._data.lobbyroom = nil;
     end
 end
 
@@ -220,8 +255,10 @@ function process_lobby_muc_loaded(lobby_muc, host_module)
     host_module:hook('muc-broadcast-presence', function (event)
         local actor, occupant, room, x = event.actor, event.occupant, event.room, event.x;
         if check_status(x, '307') then
+            local display_name = occupant:get_presence():get_child_text(
+                'nick', 'http://jabber.org/protocol/nick');
             -- we need to notify in the main room
-            notify_lobby_access(room.main_room, actor, occupant.nick, false);
+            notify_lobby_access(room.main_room, actor, occupant.nick, display_name, false);
         end
     end);
 end
@@ -251,29 +288,26 @@ process_host_module(main_muc_component_config, function(host_module, host)
     -- hooks when lobby is enabled to create its room, only done here or by admin
     host_module:hook('muc-config-submitted', function(event)
         local actor, room = event.actor, event.room;
+        local actor_node = jid_split(actor);
+        if actor_node == 'focus' then
+            return;
+        end
         local members_only = event.fields['muc#roomconfig_membersonly'] and true or nil;
         if members_only then
-            local node = jid_split(room.jid);
-
-            local lobby_room_jid = node .. '@' .. lobby_muc_component_config;
-            if not lobby_muc_service.get_room_from_jid(lobby_room_jid) then
-                local new_room = lobby_muc_service.create_room(lobby_room_jid);
-                new_room.main_room = room;
-                room._data.lobbyroom = new_room;
+            local lobby_created = attach_lobby_room(room);
+            if lobby_created then
                 event.status_codes['104'] = true;
                 notify_lobby_enabled(room, actor, true);
             end
         elseif room._data.lobbyroom then
-            room._data.lobbyroom:destroy(room.jid, 'Lobby room closed.');
-            room._data.lobbyroom = nil;
+            destroy_lobby_room(room, room.jid);
             notify_lobby_enabled(room, actor, false);
         end
     end);
     host_module:hook('muc-room-destroyed',function(event)
         local room = event.room;
         if room._data.lobbyroom then
-            room._data.lobbyroom:destroy(nil, 'Lobby room closed.');
-            room._data.lobbyroom = nil;
+            destroy_lobby_room(room, nil);
         end
     end);
     host_module:hook('muc-disco#info', function (event)
@@ -284,7 +318,7 @@ process_host_module(main_muc_component_config, function(host_module, host)
                 label = 'Lobby room jid';
                 value = '';
             });
-            event.formdata['muc#roominfo_lobbyroom'] = room._data.lobbyroom.jid;
+            event.formdata['muc#roominfo_lobbyroom'] = room._data.lobbyroom;
         end
     end);
 
@@ -333,7 +367,7 @@ process_host_module(main_muc_component_config, function(host_module, host)
             local reply = st.error_reply(stanza, 'auth', 'registration-required'):up();
             reply.tags[1].attr.code = '407';
             reply:tag('x', {xmlns = MUC_NS}):up();
-            reply:tag('lobbyroom'):text(room._data.lobbyroom.jid);
+            reply:tag('lobbyroom'):text(room._data.lobbyroom);
             event.origin.send(reply:tag('x', {xmlns = MUC_NS}));
             return true;
         end
@@ -346,10 +380,16 @@ process_host_module(main_muc_component_config, function(host_module, host)
         local from = stanza:get_child('x', 'http://jabber.org/protocol/muc#user')
             :get_child('invite').attr.from;
 
-        if room._data.lobbyroom then
-            local occupant = room._data.lobbyroom:get_occupant_by_real_jid(invitee);
-            if occupant then
-                notify_lobby_access(room, from, occupant.nick, true);
+        if lobby_muc_service and room._data.lobbyroom then
+            local lobby_room_obj = lobby_muc_service.get_room_from_jid(room._data.lobbyroom);
+            if lobby_room_obj then
+                local occupant = lobby_room_obj:get_occupant_by_real_jid(invitee);
+                if occupant then
+                    local display_name = occupant:get_presence():get_child_text(
+                            'nick', 'http://jabber.org/protocol/nick');
+
+                    notify_lobby_access(room, from, occupant.nick, display_name, true);
+                end
             end
         end
     end);
@@ -373,6 +413,19 @@ function update_session(event)
     end
 end
 
+function handle_create_lobby(event)
+    local room = event.room;
+    room:set_members_only(true);
+    module:log("info","Set room jid = %s as members only",room.jid);
+    attach_lobby_room(room)
+end
+
+function handle_destroy_lobby(event)
+    destroy_lobby_room(event.room, event.newjid, event.message);
+end
+
 module:hook_global('bosh-session', update_session);
 module:hook_global('websocket-session', update_session);
 module:hook_global('config-reloaded', load_config);
+module:hook_global('create-lobby-room', handle_create_lobby);
+module:hook_global('destroy-lobby-room', handle_destroy_lobby);

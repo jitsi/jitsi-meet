@@ -1,7 +1,8 @@
 // @flow
 
 import VideoLayout from '../../../modules/UI/videolayout/VideoLayout.js';
-import { CONFERENCE_JOINED, CONFERENCE_WILL_LEAVE } from '../base/conference';
+import { CONFERENCE_WILL_LEAVE } from '../base/conference';
+import { MEDIA_TYPE } from '../base/media';
 import {
     DOMINANT_SPEAKER_CHANGED,
     PARTICIPANT_JOINED,
@@ -33,10 +34,6 @@ MiddlewareRegistry.register(store => next => action => {
     const result = next(action);
 
     switch (action.type) {
-    case CONFERENCE_JOINED:
-        VideoLayout.mucJoined();
-        break;
-
     case CONFERENCE_WILL_LEAVE:
         VideoLayout.reset();
         break;
@@ -69,7 +66,7 @@ MiddlewareRegistry.register(store => next => action => {
         break;
 
     case PIN_PARTICIPANT:
-        VideoLayout.onPinChange(action.participant.id);
+        VideoLayout.onPinChange(action.participant?.id);
         break;
 
     case SET_FILMSTRIP_VISIBLE:
@@ -77,13 +74,13 @@ MiddlewareRegistry.register(store => next => action => {
         break;
 
     case TRACK_ADDED:
-        if (!action.track.local) {
+        if (!action.track.local && action.track.mediaType !== MEDIA_TYPE.AUDIO) {
             VideoLayout.onRemoteStreamAdded(action.track.jitsiTrack);
         }
 
         break;
     case TRACK_REMOVED:
-        if (!action.track.local) {
+        if (!action.track.local && action.track.mediaType !== MEDIA_TYPE.AUDIO) {
             VideoLayout.onRemoteStreamRemoved(action.track.jitsiTrack);
         }
 

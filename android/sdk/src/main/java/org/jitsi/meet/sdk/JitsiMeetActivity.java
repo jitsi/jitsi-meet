@@ -16,33 +16,41 @@
 
 package org.jitsi.meet.sdk;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.FragmentActivity;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.facebook.react.modules.core.PermissionListener;
 
 import org.jitsi.meet.sdk.log.JitsiMeetLogger;
 
-import java.util.Map;
-
+import java.util.HashMap;
 
 /**
  * A base activity for SDK users to embed. It uses {@link JitsiMeetFragment} to do the heavy
  * lifting and wires the remaining Activity lifecycle methods so it works out of the box.
  */
 public class JitsiMeetActivity extends FragmentActivity
-        implements JitsiMeetActivityInterface, JitsiMeetViewListener {
+    implements JitsiMeetActivityInterface {
 
     protected static final String TAG = JitsiMeetActivity.class.getSimpleName();
 
     private static final String ACTION_JITSI_MEET_CONFERENCE = "org.jitsi.meet.CONFERENCE";
     private static final String JITSI_MEET_CONFERENCE_OPTIONS = "JitsiMeetConferenceOptions";
 
+    private final BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            onBroadcastReceived(intent);
+        }
+    };
     // Helpers for starting the activity
     //
 
@@ -68,8 +76,7 @@ public class JitsiMeetActivity extends FragmentActivity
 
         setContentView(R.layout.activity_jitsi_meet);
 
-        // Listen for conference events.
-        getJitsiView().setListener(this);
+        registerForBroadcastMessages();
 
         if (!extraInitialize()) {
             initialize();
@@ -91,6 +98,8 @@ public class JitsiMeetActivity extends FragmentActivity
         }
         JitsiMeetOngoingConferenceService.abort(this);
 
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(broadcastReceiver);
+
         super.onDestroy();
     }
 
@@ -107,26 +116,39 @@ public class JitsiMeetActivity extends FragmentActivity
     protected JitsiMeetView getJitsiView() {
         JitsiMeetFragment fragment
             = (JitsiMeetFragment) getSupportFragmentManager().findFragmentById(R.id.jitsiFragment);
-        return fragment.getJitsiView();
+        return fragment != null ? fragment.getJitsiView() : null;
     }
 
     public void join(@Nullable String url) {
         JitsiMeetConferenceOptions options
             = new JitsiMeetConferenceOptions.Builder()
-                .setRoom(url)
-                .build();
+            .setRoom(url)
+            .build();
         join(options);
     }
 
     public void join(JitsiMeetConferenceOptions options) {
-        getJitsiView().join(options);
+        JitsiMeetView view = getJitsiView();
+
+        if (view != null) {
+            view.join(options);
+        } else {
+            JitsiMeetLogger.w("Cannot join, view is null");
+        }
     }
 
     public void leave() {
-        getJitsiView().leave();
+        JitsiMeetView view = getJitsiView();
+
+        if (view != null) {
+            view.leave();
+        } else {
+            JitsiMeetLogger.w("Cannot leave, view is null");
+        }
     }
 
-    private @Nullable JitsiMeetConferenceOptions getConferenceOptions(Intent intent) {
+    private @Nullable
+    JitsiMeetConferenceOptions getConferenceOptions(Intent intent) {
         String action = intent.getAction();
 
         if (Intent.ACTION_VIEW.equals(action)) {
@@ -145,7 +167,7 @@ public class JitsiMeetActivity extends FragmentActivity
      * Helper function called during activity initialization. If {@code true} is returned, the
      * initialization is delayed and the {@link JitsiMeetActivity#initialize()} method is not
      * called. In this case, it's up to the subclass to call the initialize method when ready.
-     *
+     * <p>
      * This is mainly required so we do some extra initialization in the Jitsi Meet app.
      *
      * @return {@code true} if the initialization will be delayed, {@code false} otherwise.
@@ -158,6 +180,37 @@ public class JitsiMeetActivity extends FragmentActivity
         // Join the room specified by the URL the app was launched with.
         // Joining without the room option displays the welcome page.
         join(getConferenceOptions(getIntent()));
+    }
+
+    protected void onConferenceJoined(HashMap<String, Object> extraData) {
+        JitsiMeetLogger.i("Conference joined: " + extraData);
+        // Launch the service for the ongoing notification.
+        JitsiMeetOngoingConferenceService.launch(this);
+    }
+
+    protected void onConferenceTerminated(HashMap<String, Object> extraData) {
+        JitsiMeetLogger.i("Conference terminated: " + extraData);
+        finish();
+    }
+
+    protected void onConferenceWillJoin(HashMap<String, Object> extraData) {
+        JitsiMeetLogger.i("Conference will join: " + extraData);
+    }
+
+    protected void onParticipantJoined(HashMap<String, Object> extraData) {
+        try {
+            JitsiMeetLogger.i("Participant joined: ", extraData);
+        } catch (Exception e) {
+            JitsiMeetLogger.w("Invalid participant joined extraData", e);
+        }
+    }
+
+    protected void onParticipantLeft(HashMap<String, Object> extraData) {
+        try {
+            JitsiMeetLogger.i("Participant left: ", extraData);
+        } catch (Exception e) {
+            JitsiMeetLogger.w("Invalid participant left extraData", e);
+        }
     }
 
     // Activity lifecycle methods
@@ -191,7 +244,11 @@ public class JitsiMeetActivity extends FragmentActivity
 
     @Override
     protected void onUserLeaveHint() {
-        getJitsiView().enterPictureInPicture();
+        JitsiMeetView view = getJitsiView();
+
+        if (view != null) {
+            view.enterPictureInPicture();
+        }
     }
 
     // JitsiMeetActivityInterface
@@ -207,24 +264,37 @@ public class JitsiMeetActivity extends FragmentActivity
         JitsiMeetActivityDelegate.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
-    // JitsiMeetViewListener
-    //
+    private void registerForBroadcastMessages() {
+        IntentFilter intentFilter = new IntentFilter();
 
-    @Override
-    public void onConferenceJoined(Map<String, Object> data) {
-        JitsiMeetLogger.i("Conference joined: " + data);
-        // Launch the service for the ongoing notification.
-        JitsiMeetOngoingConferenceService.launch(this);
+        for (BroadcastEvent.Type type : BroadcastEvent.Type.values()) {
+            intentFilter.addAction(type.getAction());
+        }
+
+        LocalBroadcastManager.getInstance(this).registerReceiver(broadcastReceiver, intentFilter);
     }
 
-    @Override
-    public void onConferenceTerminated(Map<String, Object> data) {
-        JitsiMeetLogger.i("Conference terminated: " + data);
-        finish();
-    }
+    private void onBroadcastReceived(Intent intent) {
+        if (intent != null) {
+            BroadcastEvent event = new BroadcastEvent(intent);
 
-    @Override
-    public void onConferenceWillJoin(Map<String, Object> data) {
-        JitsiMeetLogger.i("Conference will join: " + data);
+            switch (event.getType()) {
+                case CONFERENCE_JOINED:
+                    onConferenceJoined(event.getData());
+                    break;
+                case CONFERENCE_WILL_JOIN:
+                    onConferenceWillJoin(event.getData());
+                    break;
+                case CONFERENCE_TERMINATED:
+                    onConferenceTerminated(event.getData());
+                    break;
+                case PARTICIPANT_JOINED:
+                    onParticipantJoined(event.getData());
+                    break;
+                case PARTICIPANT_LEFT:
+                    onParticipantLeft(event.getData());
+                    break;
+            }
+        }
     }
 }

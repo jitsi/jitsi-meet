@@ -3,6 +3,8 @@
 import InlineDialog from '@atlaskit/inline-dialog';
 import React, { Component } from 'react';
 
+import { Drawer, DrawerPortal } from '../../../toolbox/components/web';
+
 /**
  * A map of dialog positions, relative to trigger, to css classes used to
  * manipulate elements for handling mouse events.
@@ -26,7 +28,7 @@ const DIALOG_TO_PADDING_POSITION = {
  * @returns {string}
  */
 function _mapPositionToPaddingClass(position = 'left') {
-    return DIALOG_TO_PADDING_POSITION[position.split(' ')[0]];
+    return DIALOG_TO_PADDING_POSITION[position.split('-')[0]];
 }
 
 /**
@@ -67,6 +69,11 @@ type Props = {
     onPopoverOpen: Function,
 
     /**
+     * Whether to display the Popover as a drawer.
+     */
+    overflowDrawer: boolean,
+
+    /**
      * From which side of the dialog trigger the dialog should display. The
      * value will be passed to {@code InlineDialog}.
      */
@@ -102,6 +109,11 @@ class Popover extends Component<Props, State> {
     };
 
     /**
+     * Reference to the Popover that is meant to open as a drawer.
+     */
+    _drawerContainerRef: Object;
+
+    /**
      * Initializes a new {@code Popover} instance.
      *
      * @param {Object} props - The read-only properties with which the new
@@ -117,6 +129,51 @@ class Popover extends Component<Props, State> {
         // Bind event handlers so they are only bound once for every instance.
         this._onHideDialog = this._onHideDialog.bind(this);
         this._onShowDialog = this._onShowDialog.bind(this);
+        this._drawerContainerRef = React.createRef();
+    }
+
+    /**
+     * Sets up an event listener to open a drawer when clicking, rather than entering the
+     * overflow area.
+     *
+     * TODO: This should be done by setting an {@code onClick} handler on the div, but for some
+     * reason that doesn't seem to work whatsoever.
+     *
+     * @inheritdoc
+     * @returns {void}
+     */
+    componentDidMount() {
+        if (this._drawerContainerRef && this._drawerContainerRef.current) {
+            this._drawerContainerRef.current.addEventListener('click', this._onShowDialog);
+        }
+    }
+
+    /**
+     * Removes the listener set up in the {@code componentDidMount} method.
+     *
+     * @inheritdoc
+     * @returns {void}
+     */
+    componentWillUnmount() {
+        if (this._drawerContainerRef && this._drawerContainerRef.current) {
+            this._drawerContainerRef.current.removeEventListener('click', this._onShowDialog);
+        }
+    }
+
+    /**
+     * Implements React Component's componentDidUpdate.
+     *
+     * @inheritdoc
+     */
+    componentDidUpdate(prevProps: Props) {
+        if (prevProps.overflowDrawer !== this.props.overflowDrawer) {
+            // Make sure the listeners are set up when resizing the screen past the drawer threshold.
+            if (this.props.overflowDrawer) {
+                this.componentDidMount();
+            } else {
+                this.componentWillUnmount();
+            }
+        }
     }
 
     /**
@@ -126,17 +183,37 @@ class Popover extends Component<Props, State> {
      * @returns {ReactElement}
      */
     render() {
+        const { children, className, content, id, overflowDrawer, position } = this.props;
+
+        if (overflowDrawer) {
+            return (
+                <div
+                    className = { className }
+                    id = { id }
+                    ref = { this._drawerContainerRef }>
+                    { children }
+                    <DrawerPortal>
+                        <Drawer
+                            isOpen = { this.state.showDialog }
+                            onClose = { this._onHideDialog }>
+                            { content }
+                        </Drawer>
+                    </DrawerPortal>
+                </div>
+            );
+        }
+
         return (
             <div
-                className = { this.props.className }
-                id = { this.props.id }
+                className = { className }
+                id = { id }
                 onMouseEnter = { this._onShowDialog }
                 onMouseLeave = { this._onHideDialog }>
                 <InlineDialog
                     content = { this._renderContent() }
                     isOpen = { this.state.showDialog }
-                    position = { this.props.position }>
-                    { this.props.children }
+                    placement = { position }>
+                    { children }
                 </InlineDialog>
             </div>
         );
@@ -160,10 +237,12 @@ class Popover extends Component<Props, State> {
      * Displays the {@code InlineDialog} and calls any registered onPopoverOpen
      * callbacks.
      *
+     * @param {MouseEvent} event - The mouse event to intercept.
      * @private
      * @returns {void}
      */
-    _onShowDialog() {
+    _onShowDialog(event) {
+        event.stopPropagation();
         if (!this.props.disablePopover) {
             this.setState({ showDialog: true });
 

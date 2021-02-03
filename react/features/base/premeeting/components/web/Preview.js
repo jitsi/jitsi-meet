@@ -2,17 +2,11 @@
 
 import React from 'react';
 
-import { Avatar } from '../../../avatar';
 import { Video } from '../../../media';
 import { connect } from '../../../redux';
 import { getLocalVideoTrack } from '../../../tracks';
 
 export type Props = {
-
-    /**
-     * The name of the user that is about to join.
-     */
-    name: string,
 
     /**
      * Flag signaling the visibility of camera preview.
@@ -32,7 +26,7 @@ export type Props = {
  * @returns {ReactElement}
  */
 function Preview(props: Props) {
-    const { name, videoMuted, videoTrack } = props;
+    const { videoMuted, videoTrack } = props;
 
     if (!videoMuted && videoTrack) {
         return (
@@ -44,17 +38,7 @@ function Preview(props: Props) {
         );
     }
 
-    return (
-        <div
-            className = 'no-video'
-            id = 'preview'>
-            <Avatar
-                className = 'preview-avatar'
-                displayName = { name }
-                participantId = 'local'
-                size = { 200 } />
-        </div>
-    );
+    return null;
 }
 
 /**

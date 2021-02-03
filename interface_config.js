@@ -46,8 +46,9 @@ var interfaceConfig = {
 
     DEFAULT_BACKGROUND: '#474747',
     DEFAULT_LOCAL_DISPLAY_NAME: 'me',
-    DEFAULT_LOGO_URL: 'images/watermark.png',
+    DEFAULT_LOGO_URL: 'images/watermark.svg',
     DEFAULT_REMOTE_DISPLAY_NAME: 'Fellow Jitster',
+    DEFAULT_WELCOME_PAGE_LOGO_URL: 'images/watermark.svg',
 
     DISABLE_DOMINANT_SPEAKER_INDICATOR: false,
 
@@ -85,7 +86,9 @@ var interfaceConfig = {
      */
     DISABLE_VIDEO_BACKGROUND: false,
 
-    DISPLAY_WELCOME_PAGE_CONTENT: true,
+    DISPLAY_WELCOME_FOOTER: true,
+    DISPLAY_WELCOME_PAGE_ADDITIONAL_CARD: false,
+    DISPLAY_WELCOME_PAGE_CONTENT: false,
     DISPLAY_WELCOME_PAGE_TOOLBAR_ADDITIONAL_CONTENT: false,
 
     ENABLE_DIAL_OUT: true,
@@ -94,12 +97,12 @@ var interfaceConfig = {
 
     FILM_STRIP_MAX_HEIGHT: 120,
 
-    /**
-     * Whether to only show the filmstrip (and hide the toolbar).
-     */
-    filmStripOnly: false,
-
     GENERATE_ROOMNAMES_ON_WELCOME_PAGE: true,
+
+    /**
+     * Hide the logo on the deep linking pages.
+     */
+    HIDE_DEEP_LINKING_LOGO: false,
 
     /**
      * Hide the invite prompt in the header when alone in the meeting.
@@ -129,6 +132,21 @@ var interfaceConfig = {
      * @type {boolean}
      */
     MOBILE_APP_PROMO: true,
+
+    /**
+     * Specify custom URL for downloading android mobile app.
+     */
+    MOBILE_DOWNLOAD_LINK_ANDROID: 'https://play.google.com/store/apps/details?id=org.jitsi.meet',
+
+    /**
+     * Specify custom URL for downloading f droid app.
+     */
+    MOBILE_DOWNLOAD_LINK_F_DROID: 'https://f-droid.org/en/packages/org.jitsi.meet/',
+
+    /**
+     * Specify URL for downloading ios mobile app.
+     */
+    MOBILE_DOWNLOAD_LINK_IOS: 'https://itunes.apple.com/us/app/jitsi-meet/id1165103905',
 
     NATIVE_APP_NAME: 'Jitsi Meet',
 
@@ -163,7 +181,6 @@ var interfaceConfig = {
     SHOW_JITSI_WATERMARK: true,
     SHOW_POWERED_BY: false,
     SHOW_PROMOTIONAL_CLOSE_PAGE: false,
-    SHOW_WATERMARK_FOR_GUESTS: true, // if watermark is disabled by default, it can be shown only for guests
 
     /*
      * If indicated some of the error dialogs may point to the support URL for
@@ -185,7 +202,7 @@ var interfaceConfig = {
      * - 'desktop' controls the "Share your screen" button
      */
     TOOLBAR_BUTTONS: [
-        'microphone', 'camera', 'closedcaptions', 'desktop', 'fullscreen',
+        'microphone', 'camera', 'closedcaptions', 'desktop', 'embedmeeting', 'fullscreen',
         'fodeviceselection', 'hangup', 'profile', 'chat', 'recording',
         'livestreaming', 'etherpad', 'sharedvideo', 'settings', 'raisehand',
         'videoquality', 'filmstrip', 'invite', 'feedback', 'stats', 'shortcuts',
@@ -218,25 +235,10 @@ var interfaceConfig = {
     VIDEO_QUALITY_LABEL_DISABLED: false,
 
     /**
-     * When enabled, the kick participant button will not be presented for users without a JWT
-     */
-    // HIDE_KICK_BUTTON_FOR_GUESTS: false,
-
-    /**
      * How many columns the tile view can expand to. The respected range is
      * between 1 and 5.
      */
     // TILE_VIEW_MAX_COLUMNS: 5,
-
-    /**
-     * Specify custom URL for downloading android mobile app.
-     */
-    // MOBILE_DOWNLOAD_LINK_ANDROID: 'https://play.google.com/store/apps/details?id=org.jitsi.meet',
-
-    /**
-     * Specify URL for downloading ios mobile app.
-     */
-    // MOBILE_DOWNLOAD_LINK_IOS: 'https://itunes.apple.com/us/app/jitsi-meet/id1165103905',
 
     /**
      * Specify Firebase dynamic link properties for the mobile apps.

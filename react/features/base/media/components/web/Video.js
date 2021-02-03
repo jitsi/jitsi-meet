@@ -99,6 +99,13 @@ class Video extends Component<Props> {
         }
 
         this._attachTrack(this.props.videoTrack);
+
+        if (this._videoElement && this.props.autoPlay) {
+            // Ensure the video gets play() called on it. This may be necessary in the
+            // case where the local video container was moved and re-attached, in which
+            // case video does not autoplay.
+            this._videoElement.play();
+        }
     }
 
     /**

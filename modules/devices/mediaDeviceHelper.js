@@ -209,7 +209,7 @@ export default {
                 })
                 .catch(err => {
                     audioTrackError = err;
-                    showError && APP.store.disptach(notifyMicError(err));
+                    showError && APP.store.dispatch(notifyMicError(err));
 
                     return [];
                 }));

@@ -24,8 +24,36 @@ popd
 
 # Build the SDK
 pushd ${PROJECT_REPO}
-rm -rf ios/sdk/JitsiMeet.framework
-xcodebuild -workspace ios/jitsi-meet.xcworkspace -scheme JitsiMeet -destination='generic/platform=iOS' -configuration Release ENABLE_BITCODE=NO clean archive
+rm -rf ios/sdk/out
+xcodebuild clean \
+    -workspace ios/jitsi-meet.xcworkspace \
+    -scheme JitsiMeetSDK
+xcodebuild archive \
+    -workspace ios/jitsi-meet.xcworkspace \
+    -scheme JitsiMeetSDK  \
+    -configuration Release \
+    -sdk iphonesimulator \
+    -destination='generic/platform=iOS Simulator' \
+    -archivePath ios/sdk/out/ios-simulator \
+    VALID_ARCHS=x86_64 \
+    ENABLE_BITCODE=NO \
+    SKIP_INSTALL=NO \
+    BUILD_LIBRARY_FOR_DISTRIBUTION=YES
+xcodebuild archive \
+    -workspace ios/jitsi-meet.xcworkspace \
+    -scheme JitsiMeetSDK  \
+    -configuration Release \
+    -sdk iphoneos \
+    -destination='generic/platform=iOS' \
+    -archivePath ios/sdk/out/ios-device \
+    VALID_ARCHS=arm64 \
+    ENABLE_BITCODE=NO \
+    SKIP_INSTALL=NO \
+    BUILD_LIBRARY_FOR_DISTRIBUTION=YES
+xcodebuild -create-xcframework \
+    -framework ios/sdk/out/ios-device.xcarchive/Products/Library/Frameworks/JitsiMeetSDK.framework \
+    -framework ios/sdk/out/ios-simulator.xcarchive/Products/Library/Frameworks/JitsiMeetSDK.framework \
+    -output ios/sdk/out/JitsiMeetSDK.xcframework
 if [[ $DO_GIT_TAG == 1 ]]; then
     git tag ios-sdk-${SDK_VERSION}
 fi
@@ -34,12 +62,8 @@ popd
 pushd ${RELEASE_REPO}
 
 # Put the new files in the repo
-cp -r ${PROJECT_REPO}/ios/sdk/JitsiMeet.framework Frameworks/
-cp -r ${PROJECT_REPO}/node_modules/react-native-webrtc/ios/WebRTC.framework Frameworks/
-
-# Strip bitcode
-xcrun bitcode_strip -r Frameworks/JitsiMeet.framework/JitsiMeet -o Frameworks/JitsiMeet.framework/JitsiMeet
-xcrun bitcode_strip -r Frameworks/WebRTC.framework/WebRTC -o Frameworks/WebRTC.framework/WebRTC
+cp -a ${PROJECT_REPO}/ios/sdk/out/JitsiMeetSDK.xcframework Frameworks/
+cp -a ${PROJECT_REPO}/node_modules/react-native-webrtc/apple/WebRTC.xcframework Frameworks/
 
 # Add all files to git
 if [[ $DO_GIT_TAG == 1 ]]; then

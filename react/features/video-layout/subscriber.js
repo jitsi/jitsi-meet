@@ -2,20 +2,12 @@
 
 import debounce from 'lodash/debounce';
 
-import {
-    VIDEO_QUALITY_LEVELS,
-    setMaxReceiverVideoQuality
-} from '../base/conference';
-import {
-    getPinnedParticipant,
-    pinParticipant
-} from '../base/participants';
+import { pinParticipant, getPinnedParticipant } from '../base/participants';
 import { StateListenerRegistry, equals } from '../base/redux';
 import { isFollowMeActive } from '../follow-me';
-import { selectParticipant } from '../large-video';
+import { selectParticipant } from '../large-video/actions';
 
-import { setParticipantsWithScreenShare } from './actions';
-import { shouldDisplayTileView } from './functions';
+import { setRemoteParticipantsWithScreenShare } from './actions';
 
 declare var APP: Object;
 declare var interfaceConfig: Object;
@@ -25,19 +17,11 @@ declare var interfaceConfig: Object;
  * preferred layout state and dispatching additional actions.
  */
 StateListenerRegistry.register(
-    /* selector */ state => shouldDisplayTileView(state),
-    /* listener */ (displayTileView, store) => {
+    /* selector */ state => state['features/video-layout'].tileViewEnabled,
+    /* listener */ (tileViewEnabled, store) => {
         const { dispatch } = store;
 
         dispatch(selectParticipant());
-
-        if (!displayTileView) {
-            dispatch(setMaxReceiverVideoQuality(VIDEO_QUALITY_LEVELS.HIGH));
-
-            if (_getAutoPinSetting()) {
-                _updateAutoPinnedParticipant(store);
-            }
-        }
     }
 );
 
@@ -53,7 +37,7 @@ StateListenerRegistry.register(
             return;
         }
 
-        const oldScreenSharesOrder = store.getState()['features/video-layout'].screenShares || [];
+        const oldScreenSharesOrder = store.getState()['features/video-layout'].remoteScreenShares || [];
         const knownSharingParticipantIds = tracks.reduce((acc, track) => {
             if (track.mediaType === 'video' && track.videoType === 'desktop') {
                 const skipTrack = _getAutoPinSetting() === 'remote-only' && track.local;
@@ -82,7 +66,7 @@ StateListenerRegistry.register(
 
         if (!equals(oldScreenSharesOrder, newScreenSharesOrder)) {
             store.dispatch(
-                setParticipantsWithScreenShare(newScreenSharesOrder));
+                setRemoteParticipantsWithScreenShare(newScreenSharesOrder));
 
             _updateAutoPinnedParticipant(store);
         }
@@ -112,18 +96,20 @@ function _getAutoPinSetting() {
  */
 function _updateAutoPinnedParticipant({ dispatch, getState }) {
     const state = getState();
-    const screenShares = state['features/video-layout'].screenShares;
+    const remoteScreenShares = state['features/video-layout'].remoteScreenShares;
 
-    if (!screenShares) {
+    if (!remoteScreenShares) {
         return;
     }
 
     const latestScreenshareParticipantId
-        = screenShares[screenShares.length - 1];
+        = remoteScreenShares[remoteScreenShares.length - 1];
+
+    const pinned = getPinnedParticipant(getState);
 
     if (latestScreenshareParticipantId) {
         dispatch(pinParticipant(latestScreenshareParticipantId));
-    } else if (getPinnedParticipant(state['features/base/participants'])) {
+    } else if (pinned) {
         dispatch(pinParticipant(null));
     }
 }

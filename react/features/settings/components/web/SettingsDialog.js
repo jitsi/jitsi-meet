@@ -126,14 +126,13 @@ class SettingsDialog extends Component<Props> {
  */
 function _mapStateToProps(state) {
     const configuredTabs = interfaceConfig.SETTINGS_SECTIONS || [];
-    const jwt = state['features/base/jwt'];
 
     // The settings sections to display.
     const showDeviceSettings = configuredTabs.includes('devices');
     const moreTabProps = getMoreTabProps(state);
-    const { showModeratorSettings, showLanguageSettings } = moreTabProps;
+    const { showModeratorSettings, showLanguageSettings, showPrejoinSettings } = moreTabProps;
     const showProfileSettings
-        = configuredTabs.includes('profile') && jwt.isGuest;
+        = configuredTabs.includes('profile') && !state['features/base/config'].disableProfile;
     const showCalendarSettings
         = configuredTabs.includes('calendar') && isCalendarEnabled(state);
     const tabs = [];
@@ -184,7 +183,7 @@ function _mapStateToProps(state) {
         });
     }
 
-    if (showModeratorSettings || showLanguageSettings) {
+    if (showModeratorSettings || showLanguageSettings || showPrejoinSettings) {
         tabs.push({
             name: SETTINGS_TABS.MORE,
             component: MoreTab,
@@ -197,6 +196,7 @@ function _mapStateToProps(state) {
                     ...newProps,
                     currentLanguage: tabState.currentLanguage,
                     followMeEnabled: tabState.followMeEnabled,
+                    showPrejoinPage: tabState.showPrejoinPage,
                     startAudioMuted: tabState.startAudioMuted,
                     startVideoMuted: tabState.startVideoMuted
                 };

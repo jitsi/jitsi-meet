@@ -4,7 +4,7 @@ import { createToolbarEvent, sendAnalytics } from '../../analytics';
 import { translate } from '../../base/i18n';
 import { IconHelp } from '../../base/icons';
 import { connect } from '../../base/redux';
-import { AbstractButton, type AbstractButtonProps } from '../../base/toolbox';
+import { AbstractButton, type AbstractButtonProps } from '../../base/toolbox/components';
 import { openURLInBrowser } from '../../base/util';
 
 

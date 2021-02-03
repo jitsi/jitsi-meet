@@ -4,8 +4,12 @@
 local log = module._log;
 local host = module.host;
 local st = require "util.stanza";
-local is_admin = require "core.usermanager".is_admin;
+local um_is_admin = require "core.usermanager".is_admin;
 
+
+local function is_admin(jid)
+    return um_is_admin(jid, host);
+end
 
 local parentHostName = string.gmatch(tostring(host), "%w+.(%w.+)")();
 if parentHostName == nil then
@@ -40,6 +44,7 @@ local function load_config()
 end
 load_config();
 
+-- verify user and whether he is allowed to join a room based on the token information
 local function verify_user(session, stanza)
 	log("debug", "Session token: %s, session room: %s",
 		tostring(session.auth_token),
@@ -49,7 +54,7 @@ local function verify_user(session, stanza)
 	local user_jid = stanza.attr.from;
 	if is_admin(user_jid) then
 		log("debug", "Token not required from admin user: %s", user_jid);
-		return nil;
+		return true;
 	end
 
     log("debug",
@@ -64,18 +69,23 @@ local function verify_user(session, stanza)
     end
 	log("debug",
         "allowed: %s to enter/create room: %s", user_jid, stanza.attr.to);
+    return true;
 end
 
 module:hook("muc-room-pre-create", function(event)
 	local origin, stanza = event.origin, event.stanza;
 	log("debug", "pre create: %s %s", tostring(origin), tostring(stanza));
-	return verify_user(origin, stanza);
+    if not verify_user(origin, stanza) then
+        return true; -- Returning any value other than nil will halt processing of the event
+    end
 end);
 
 module:hook("muc-occupant-pre-join", function(event)
 	local origin, room, stanza = event.origin, event.room, event.stanza;
 	log("debug", "pre join: %s %s", tostring(room), tostring(stanza));
-	return verify_user(origin, stanza);
+    if not verify_user(origin, stanza) then
+        return true; -- Returning any value other than nil will halt processing of the event
+    end
 end);
 
 for event_name, method in pairs {

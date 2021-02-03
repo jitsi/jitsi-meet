@@ -4,6 +4,7 @@ import { CONFERENCE_FAILED, CONFERENCE_JOINED } from '../base/conference';
 import { JitsiConferenceErrors, JitsiConferenceEvents } from '../base/lib-jitsi-meet';
 import { getFirstLoadableAvatarUrl, getParticipantDisplayName } from '../base/participants';
 import { MiddlewareRegistry, StateListenerRegistry } from '../base/redux';
+import { isTestModeEnabled } from '../base/testing';
 import { NOTIFICATION_TYPE, showNotification } from '../notifications';
 import { isPrejoinPageEnabled } from '../prejoin/functions';
 
@@ -17,7 +18,6 @@ import {
     startKnocking,
     setPasswordJoinFailed
 } from './actions';
-import { getKnockingParticipantById } from './functions';
 
 MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
@@ -144,12 +144,13 @@ function _conferenceJoined({ dispatch }, next, action) {
  * @param {Object} participant - The knocking participant.
  * @returns {void}
  */
-function _findLoadableAvatarForKnockingParticipant({ dispatch, getState }, { id }) {
+function _findLoadableAvatarForKnockingParticipant(store, { id }) {
+    const { dispatch, getState } = store;
     const updatedParticipant = getState()['features/lobby'].knockingParticipants.find(p => p.id === id);
     const { disableThirdPartyRequests } = getState()['features/base/config'];
 
     if (!disableThirdPartyRequests && updatedParticipant && !updatedParticipant.loadableAvatarUrl) {
-        getFirstLoadableAvatarUrl(updatedParticipant).then(loadableAvatarUrl => {
+        getFirstLoadableAvatarUrl(updatedParticipant, store).then(loadableAvatarUrl => {
             if (loadableAvatarUrl) {
                 dispatch(participantIsKnockingOrUpdated({
                     loadableAvatarUrl,
@@ -176,7 +177,8 @@ function _maybeSendLobbyNotification(origin, message, { dispatch, getState }) {
 
     const notificationProps: any = {
         descriptionArguments: {
-            originParticipantName: getParticipantDisplayName(getState, origin._id)
+            originParticipantName: getParticipantDisplayName(getState, origin._id),
+            targetParticipantName: message.name
         },
         titleKey: 'lobby.notificationTitle'
     };
@@ -187,15 +189,11 @@ function _maybeSendLobbyNotification(origin, message, { dispatch, getState }) {
         break;
     case 'LOBBY-ACCESS-GRANTED':
         notificationProps.descriptionKey = 'lobby.notificationLobbyAccessGranted';
-        notificationProps.descriptionArguments.targetParticipantName
-            = getKnockingParticipantById(getState, message.value)?.name;
         break;
     case 'LOBBY-ACCESS-DENIED':
         notificationProps.descriptionKey = 'lobby.notificationLobbyAccessDenied';
-        notificationProps.descriptionArguments.targetParticipantName
-            = getKnockingParticipantById(getState, message.value)?.name;
         break;
     }
 
-    dispatch(showNotification(notificationProps, 5000));
+    dispatch(showNotification(notificationProps, isTestModeEnabled(getState()) ? undefined : 5000));
 }

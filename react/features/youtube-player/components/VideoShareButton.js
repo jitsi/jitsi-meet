@@ -2,12 +2,12 @@
 
 import type { Dispatch } from 'redux';
 
+import { getFeatureFlag, VIDEO_SHARE_BUTTON_ENABLED } from '../../base/flags';
 import { translate } from '../../base/i18n';
 import { IconShareVideo } from '../../base/icons';
 import { getLocalParticipant } from '../../base/participants';
 import { connect } from '../../base/redux';
-import { AbstractButton } from '../../base/toolbox';
-import type { AbstractButtonProps } from '../../base/toolbox';
+import { AbstractButton, type AbstractButtonProps } from '../../base/toolbox/components';
 import { toggleSharedVideo } from '../actions';
 
 /**
@@ -90,21 +90,26 @@ class VideoShareButton extends AbstractButton<Props, *> {
  * Maps part of the Redux state to the props of this component.
  *
  * @param {Object} state - The Redux state.
+ * @param {Object} ownProps - The properties explicitly passed to the component instance.
  * @private
  * @returns {Props}
  */
-function _mapStateToProps(state): Object {
+function _mapStateToProps(state, ownProps): Object {
     const { ownerId, status: sharedVideoStatus } = state['features/youtube-player'];
     const localParticipantId = getLocalParticipant(state).id;
+    const enabled = getFeatureFlag(state, VIDEO_SHARE_BUTTON_ENABLED, true);
+    const { visible = enabled } = ownProps;
 
     if (ownerId !== localParticipantId) {
         return {
             _isDisabled: isSharingStatus(sharedVideoStatus),
-            _sharingVideo: false };
+            _sharingVideo: false,
+            visible };
     }
 
     return {
-        _sharingVideo: isSharingStatus(sharedVideoStatus)
+        _sharingVideo: isSharingStatus(sharedVideoStatus),
+        visible
     };
 }
 

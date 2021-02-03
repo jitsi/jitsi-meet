@@ -1,5 +1,6 @@
 // @flow
 
+import punycode from 'punycode';
 import React, { Component } from 'react';
 import ReactLinkify from 'react-linkify';
 
@@ -44,7 +45,7 @@ export default class Linkify extends Component<Props> {
                 key = { key }
                 rel = 'noopener noreferrer'
                 target = '_blank'>
-                {decoratedText}
+                { punycode.toASCII(decoratedText) }
             </a>
         );
     }

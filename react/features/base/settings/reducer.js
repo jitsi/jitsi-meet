@@ -1,16 +1,13 @@
 // @flow
 
-import { jitsiLocalStorage } from 'js-utils';
-import { randomHexString } from 'js-utils/random';
+import { jitsiLocalStorage } from '@jitsi/js-utils';
 import _ from 'lodash';
 
 import { APP_WILL_MOUNT } from '../app/actionTypes';
-import { browser } from '../lib-jitsi-meet';
 import { PersistenceRegistry, ReducerRegistry } from '../redux';
 import { assignIfDefined } from '../util';
 
 import { SETTINGS_UPDATED } from './actionTypes';
-import logger from './logger';
 
 /**
  * The default/initial redux state of the feature {@code base/settings}.
@@ -19,7 +16,6 @@ import logger from './logger';
  */
 const DEFAULT_STATE = {
     audioOutputDeviceId: undefined,
-    avatarID: undefined,
     avatarURL: undefined,
     cameraDeviceId: undefined,
     disableCallIntegration: undefined,
@@ -78,40 +74,9 @@ ReducerRegistry.register(STORE_NAME, (state = DEFAULT_STATE, action) => {
 });
 
 /**
- * Retrieves the legacy profile values regardless of it's being in pre or
- * post-flattening format.
- *
- * FIXME: Let's remove this after a predefined time (e.g. By July 2018) to avoid
- * garbage in the source.
- *
- * @private
- * @returns {Object}
- */
-function _getLegacyProfile() {
-    let persistedProfile = jitsiLocalStorage.getItem('features/base/profile');
-
-    if (persistedProfile) {
-        try {
-            persistedProfile = JSON.parse(persistedProfile);
-
-            if (persistedProfile && typeof persistedProfile === 'object') {
-                const preFlattenedProfile = persistedProfile.profile;
-
-                return preFlattenedProfile || persistedProfile;
-            }
-        } catch (e) {
-            logger.warn('Error parsing persisted legacy profile', e);
-        }
-    }
-
-    return {};
-}
-
-/**
  * Inits the settings object based on what information we have available.
  * Info taken into consideration:
- *   - Old Settings.js style data
- *   - Things that we stored in profile earlier but belong here.
+ *   - Old Settings.js style data.
  *
  * @private
  * @param {Object} featureState - The current state of the feature.
@@ -126,50 +91,19 @@ function _initSettings(featureState) {
     // jibri, and remove the old settings.js values.
     const savedDisplayName = jitsiLocalStorage.getItem('displayname');
     const savedEmail = jitsiLocalStorage.getItem('email');
-    let avatarID = _.escape(jitsiLocalStorage.getItem('avatarId'));
 
     // The helper _.escape will convert null to an empty strings. The empty
     // string will be saved in settings. On app re-load, because an empty string
     // is a defined value, it will override any value found in local storage.
     // The workaround is sidestepping _.escape when the value is not set in
     // local storage.
-    const displayName
-        = savedDisplayName === null ? undefined : _.escape(savedDisplayName);
+    const displayName = savedDisplayName === null ? undefined : _.escape(savedDisplayName);
     const email = savedEmail === null ? undefined : _.escape(savedEmail);
 
-    if (!avatarID) {
-        // if there is no avatar id, we generate a unique one and use it forever
-        avatarID = randomHexString(32);
-    }
-
     settings = assignIfDefined({
-        avatarID,
         displayName,
         email
     }, settings);
-
-    if (!browser.isReactNative()) {
-        // Browser only
-        const localFlipX = JSON.parse(jitsiLocalStorage.getItem('localFlipX') || 'true');
-        const cameraDeviceId = jitsiLocalStorage.getItem('cameraDeviceId') || '';
-        const micDeviceId = jitsiLocalStorage.getItem('micDeviceId') || '';
-
-        // Currently audio output device change is supported only in Chrome and
-        // default output always has 'default' device ID
-        const audioOutputDeviceId = jitsiLocalStorage.getItem('audioOutputDeviceId') || 'default';
-
-        settings = assignIfDefined({
-            audioOutputDeviceId,
-            cameraDeviceId,
-            localFlipX,
-            micDeviceId
-        }, settings);
-    }
-
-    // Things we stored in profile earlier
-    const legacyProfile = _getLegacyProfile();
-
-    settings = assignIfDefined(legacyProfile, settings);
 
     return settings;
 }

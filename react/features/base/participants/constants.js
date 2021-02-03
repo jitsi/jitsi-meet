@@ -18,6 +18,11 @@ import { IconPhone } from '../icons';
 export const DEFAULT_AVATAR_RELATIVE_PATH = 'images/avatar.png';
 
 /**
+ * The value for the "var" attribute of feature tag in disco-info packets.
+ */
+export const DISCO_REMOTE_CONTROL_FEATURE = 'http://jitsi.org/meet/remotecontrol';
+
+/**
  * Icon URL for jigasi participants.
  *
  * @type {string}

@@ -539,6 +539,26 @@ export function createRemoteVideoMenuButtonEvent(buttonName, attributes) {
 }
 
 /**
+ * The rtcstats websocket onclose event. We send this to amplitude in order
+ * to detect trace ws prematurely closing.
+ *
+ * @param {Object} closeEvent - The event with which the websocket closed.
+ * @returns {Object} The event in a format suitable for sending via
+ * sendAnalytics.
+ */
+export function createRTCStatsTraceCloseEvent(closeEvent) {
+    const event = {
+        action: 'trace.onclose',
+        source: 'rtcstats'
+    };
+
+    event.code = closeEvent.code;
+    event.reason = closeEvent.reason;
+
+    return event;
+}
+
+/**
  * Creates an event indicating that an action related to video blur
  * occurred (e.g. It was started or stopped).
  *
@@ -565,6 +585,19 @@ export function createScreenSharingEvent(action) {
     return {
         action,
         actionSubject: 'screen.sharing'
+    };
+}
+
+/**
+ * Creates an event which indicates the screen sharing video is not displayed when it needs to be displayed.
+ *
+ * @param {Object} attributes - Additional information that describes the issue.
+ * @returns {Object} The event in a format suitable for sending via sendAnalytics.
+ */
+export function createScreenSharingIssueEvent(attributes) {
+    return {
+        action: 'screen.sharing.issue',
+        attributes
     };
 }
 
@@ -748,6 +781,22 @@ export function createTrackMutedEvent(mediaType, reason, muted = true) {
             'media_type': mediaType,
             muted,
             reason
+        }
+    };
+}
+
+/**
+ * Creates an event for joining a vpaas conference.
+ *
+ * @param {string} tenant - The conference tenant.
+ * @returns {Object} The event in a format suitable for sending via
+ * sendAnalytics.
+ */
+export function createVpaasConferenceJoinedEvent(tenant) {
+    return {
+        action: 'vpaas.conference.joined',
+        attributes: {
+            tenant
         }
     };
 }

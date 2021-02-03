@@ -122,7 +122,13 @@
         "status": "Connexion :",
         "transport": "Transpòrt :",
         "transport_plural": "Transpòrts :",
-        "e2e_rtt": "E2E RTT :"
+        "e2e_rtt": "E2E RTT :",
+        "codecs": "Codecs (A/V) : ",
+        "video_ssrc": "Vidèo SSRC :",
+        "maxEnabledResolution": "enviar max",
+        "savelogs": "Enregistrar jornals",
+        "participant_id": "Id participant :",
+        "audio_ssrc": "Àudio SSRC :"
     },
     "dateUtils": {
         "earlier": "Mai d’ora",
@@ -295,7 +301,21 @@
         "muteEveryoneSelf": "vos",
         "muteEveryoneTitle": "Rendre mut tot lo monde ?",
         "muteEveryoneDialog": "Volètz vertadièrament copar lo son a tot lo monde ? Poiretz pas lo restablir, mas eles poiràn o far quora que vòlgan.",
-        "muteEveryoneElseTitle": "Copar lo son a totes levat {{whom}} ?"
+        "muteEveryoneElseTitle": "Copar lo son a totes levat {{whom}} ?",
+        "add": "Ajustar",
+        "copied": "Copiat",
+        "grantModeratorDialog": "Volètz vertadièrament far venir aqueste participant moderator ?",
+        "readMore": "mai",
+        "recordingDisabledBecauseOfActiveLiveStreamingTooltip": "Impossible pendent una difusion activa",
+        "screenSharingFailedTitle": "Fracàs del partiment d'ecran !",
+        "e2eeLabel": "Activar lo chiframant del cap a la fin",
+        "grantModeratorTitle": "Passar moderator",
+        "liveStreamingDisabledBecauseOfActiveRecordingTooltip": "Impossible pendent un enregistrament actiu",
+        "e2eeDescription": "Lo chiframent del cap a la fin es actualament EXPERIMENTALA. Mercés de gardar a l'esperit qu'activar lo chiframent del cap a la fin desactivarà en efièch los servicis costat servidor coma : l'enregistrament, la difusion en dirècte e las participacions telefonicas. Remembratz tanben que la conferéncia foncionarà pas que per lo monde que participan amb un navigador compatible amb los fluxes inseribles.",
+        "screenSharingFailed": "Ops ! Quicòm a trucat, avèm pas pogut començar lo partiment d'ecran!",
+        "e2eeWarning": "AVERTIMENT : pas totes los participants d'aquesta conferéncia semblan poder suportar lo chiframent del cap a la fin. Se l'activatz poiràn pas vos veire nimai vos entendre.",
+        "muteEveryoneElseDialog": "Un còp mut, poiretz pas mai lo tornar la paraula, mas la se pòdon tornar quora vòlgan.",
+        "user": "utilizaire"
     },
     "dialOut": {
         "statusMessage": "ara es {{status}}"
@@ -410,7 +430,9 @@
         "streamIdHelp": "Qu’es aquò ?",
         "unavailableTitle": "Difusion en dirècte indisponibla",
         "googlePrivacyPolicy": "Politica de confidencialitat de Google",
-        "youtubeTerms": "Condicions d’utilizacion de YouTube"
+        "youtubeTerms": "Condicions d’utilizacion de YouTube",
+        "limitNotificationDescriptionWeb": "A causa d'una brava demanda vòstra difusion serà limitada a {{limit}} min. Per de difusion illimitada ensajatz <a href={{url}} rel='noopener noreferrer' target='_blank'>{{app}}</a>.",
+        "limitNotificationDescriptionNative": "Vòstra difusion serà limitada a {{limit}} min. Per de difusions illimitada ensajatz {{app}}."
     },
     "localRecording": {
         "clientState": {
@@ -528,7 +550,8 @@
         "signIn": "Connexion",
         "signOut": "Se desconnectar",
         "unavailable": "Ops ! Lo {{serviceName}} es pas disponible pel moment. Sèm a reglar aqueste problèma. Mercés de tornar ensajar mai tard.",
-        "unavailableTitle": "Enregistrament indisponible"
+        "unavailableTitle": "Enregistrament indisponible",
+        "serviceDescriptionCloud": "Enregistrament distant"
     },
     "sectionList": {
         "pullToRefresh": "Tirar per actualizar"
@@ -595,7 +618,8 @@
     },
     "startupoverlay": {
         "policyText": " ",
-        "title": "{{app}} a besonh d'utilizar vòstre microfòn e camèra."
+        "title": "{{app}} a besonh d'utilizar vòstre microfòn e camèra.",
+        "genericTitle": "Aquesta reünion requerís l'utilizacion del microfòn e de la camèra."
     },
     "suspendedoverlay": {
         "rejoinKeyTitle": "Tornar participar",
@@ -642,7 +666,11 @@
             "muteEveryone": "Rendre mut tot lo monde",
             "moreOptions": "Mostrar mai d’opcions",
             "e2ee": "Chiframent del cap a la fin",
-            "security": "Opcions de seguretat"
+            "security": "Opcions de seguretat",
+            "embedMeeting": "Conferéncia integrada",
+            "grantModerator": "Passar moderator",
+            "lobbyButton": "Activar/Desactivar mòde sala d'espèra",
+            "toggleFilmstrip": "Bascular mòde benda film"
         },
         "addPeople": "Ajustar de monde a vòstra sonada",
         "audioOnlyOff": "Desactivar lo mòde connexion febla",
@@ -693,14 +721,17 @@
         "videomute": "Aviar / Arrestar la camèra",
         "startvideoblur": "Trebolar mon rèire-plan",
         "stopvideoblur": "Desactivar lo borrolatge del rèire-plan",
-        "noisyAudioInputDesc": "",
+        "noisyAudioInputDesc": "Sembla que vòstre microfòn mene bruch, pensatz de lo copar o de lo cambiar.",
         "noisyAudioInputTitle": "Vòstre microfòn sembla brusent !",
         "noAudioSignalDialInLinkDesc": "",
         "noAudioSignalDialInDesc": "",
         "muteEveryone": "Rendre mut tot lo monde",
         "moreOptions": "Autras opcions",
         "e2ee": "Chiframent del cap a la fin",
-        "security": "Opcions de seguretat"
+        "security": "Opcions de seguretat",
+        "embedMeeting": "Integrar conferéncia",
+        "lobbyButtonDisable": "Desactivar lo mòde sala d'espèra",
+        "lobbyButtonEnable": "Activar mòde sala d'espèra"
     },
     "transcribing": {
         "ccButtonTooltip": "Aviar / Arrestat los sostítols",
@@ -764,7 +795,9 @@
         "remoteControl": "Contraròtle alonhat",
         "show": "Mostrar davant",
         "videomute": "Lo participant a arrestat la camèra",
-        "domuteOthers": "Rendre mut totes los autres"
+        "domuteOthers": "Rendre mut totes los autres",
+        "connectionInfo": "Info connexion",
+        "grantModerator": "Nomenar moderator"
     },
     "welcomepage": {
         "accessibilityLabel": {
@@ -795,7 +828,13 @@
         "sendFeedback": "Mandar vòstra opinion",
         "terms": "Tèrmes",
         "title": "Conferéncias vidèo securizadas amb plen de foncionalitats e complètament gratuitas",
-        "getHelp": "Obténer d’ajuda"
+        "getHelp": "Obténer d’ajuda",
+        "startMeeting": "Començar la reünion",
+        "jitsiOnMobile": "Jitsi sus mobil –telecargatz nòstra aplicacion e començatz de conferéncias de pertot",
+        "moderatedMessage": "O <a href=\"{{url}}\" rel=\"noopener noreferrer\" target=\"_blank\">reservatz una URL de conferéncia</a> a l'avança ont sètz l'unic moderator.",
+        "jitsiMeet": "Jitsi Meet",
+        "secureMeetings": "Conferéncias seguras e de nauta qualitat",
+        "headerTitle": "Jitsi Meet"
     },
     "helpView": {
         "header": "Centre d’ajuda"
@@ -832,7 +871,34 @@
         "initiated": "Sonada aviada",
         "joinWithoutAudio": "Rejónher sens àudio",
         "joinMeeting": "Rejónher la conferéncia",
-        "joinAudioByPhone": "Rejónher amb l’àudio del telefòn"
+        "joinAudioByPhone": "Rejónher amb l’àudio del telefòn",
+        "audioDeviceProblem": "I a un problèma amb vòstre periferic àudio",
+        "showScreen": "Activar l'ecran de preconferéncia",
+        "connection": {
+            "good": "Vòstra connexion Internet sembla bona !",
+            "nonOptimal": "Vòstra connexion Internet es pas optimala",
+            "poor": "Vòstra connexion Internet es febla"
+        },
+        "connectionDetails": {
+            "videoHighQuality": "Nos esperam a trobar vòstra qualitat vidèo de bona qualitat.",
+            "audioClipping": "Nos esperam a trobar vòstre àudio troncat.",
+            "audioHighQuality": "Nos esperam a trobar vòstra qualitat àudio excellenta.",
+            "audioLowNoVideo": "Nos esperam a trobar vòstra qualitat àudio febla e cap de vidèo.",
+            "goodQuality": "Crane ! Vòstra qualitat serà geniala.",
+            "noMediaConnectivity": "Avèm pas trobat cap de biais d'establir una connectivitat mèdia per aquesta pròva. Sovent es a causat d'un parafòc o un NAT.",
+            "noVideo": "Nos esperam a trobat vòstra qualitat vidèo òrra.",
+            "veryPoorConnection": "Nos esperam a trobar vòstra qualitat vidèo plan òrra.",
+            "videoFreezing": "Nos esperam a veire vòstra vidèo se gelar, venir negra e se pixelizar."
+        },
+        "premeeting": "Preconferéncia",
+        "errorMissingName": "Mercés de picar vòstre nom per rejónher la conferéncia",
+        "errorDialOutDisconnected": "Impossible de sonar aqueste numèro. Desconnectat",
+        "errorDialOutStatus": "Error en recuperant l’estat de la sonada sortissenta",
+        "errorDialOut": "Impossible de sonar aqueste numèro",
+        "errorDialOutFailed": "Impossible de sonar aqueste numèro. La sonada a fracassat",
+        "dialInMeeting": "Participatz a la reünion",
+        "dialInPin": "Participar a la reünion e picar lo còdi PIN :",
+        "iWantToDialIn": "Vòli me connectar"
     },
     "lobby": {
         "reject": "Regetar",
@@ -855,7 +921,15 @@
         "emailField": "Picata vòstra adreça electronica",
         "disableDialogSubmit": "Desactivar",
         "backToKnockModeButton": "Cap de senhal, demandar a participar a la plaça",
-        "allow": "Autorizar"
+        "allow": "Autorizar",
+        "knockingParticipantList": "Lista de participants en espèra",
+        "dialogTitle": "Mòde sala d'espèra",
+        "notificationLobbyDisabled": "Lo mòde sala d'espèra es estat desactivat per {{originParticipantName}}",
+        "notificationLobbyEnabled": "Lo mòde sala d'espèra activat per {{originParticipantName}}",
+        "notificationTitle": "Sala d'espèra",
+        "toggleLabel": "Activar la sala d'espèra",
+        "notificationLobbyAccessDenied": "{{originParticipantName}} a decidit de regetar la demanda de {{targetParticipantName}}",
+        "notificationLobbyAccessGranted": "{{originParticipantName}} a autorizat {{targetParticipantName}} a dintrar"
     },
     "security": {
         "securityOptions": "Opcions de seguretat",
@@ -865,7 +939,8 @@
     },
     "e2ee": {
         "labelToolTip": "La comunicacion àudio e vidèo d’aquesta sonada es chifrada del cap a la fin"
+    },
+    "embedMeeting": {
+        "title": "Integrar aquesta conferéncia"
     }
 }
-
-

@@ -1,6 +1,7 @@
 // @flow
 
-import { API_ID } from '../../../modules/API';
+import { API_ID } from '../../../modules/API/constants';
+import { getName as getAppName } from '../app/functions';
 import {
     checkChromeExtensionsInstalled,
     isMobileBrowser
@@ -10,7 +11,7 @@ import JitsiMeetJS, {
     browser,
     isAnalyticsEnabled
 } from '../base/lib-jitsi-meet';
-import { getJitsiMeetGlobalNS, loadScript } from '../base/util';
+import { getJitsiMeetGlobalNS, loadScript, parseURIString } from '../base/util';
 
 import { AmplitudeHandler, MatomoHandler } from './handlers';
 import logger from './logger';
@@ -31,6 +32,16 @@ export function sendAnalytics(event: Object) {
 }
 
 /**
+ * Return saved amplitude identity info such as session id, device id and user id. We assume these do not change for
+ * the duration of the conference.
+ *
+ * @returns {Object}
+ */
+export function getAmplitudeIdentity() {
+    return analytics.amplitudeIdentityProps;
+}
+
+/**
  * Resets the analytics adapter to its initial state - removes handlers, cache,
  * disabled state, etc.
  *
@@ -46,12 +57,15 @@ export function resetAnalytics() {
  * @param {Store} store - The redux store in which the specified {@code action} is being dispatched.
  * @returns {Promise} Resolves with the handlers that have been successfully loaded.
  */
-export function createHandlers({ getState }: { getState: Function }) {
+export async function createHandlers({ getState }: { getState: Function }) {
     getJitsiMeetGlobalNS().analyticsHandlers = [];
     window.analyticsHandlers = []; // Legacy support.
 
     if (!isAnalyticsEnabled(getState)) {
-        return Promise.resolve([]);
+        // Avoid all analytics processing if there are no handlers, since no event would be sent.
+        analytics.dispose();
+
+        return [];
     }
 
     const state = getState();
@@ -89,39 +103,47 @@ export function createHandlers({ getState }: { getState: Function }) {
     };
     const handlers = [];
 
-    try {
-        const amplitude = new AmplitudeHandler(handlerConstructorOptions);
+    if (amplitudeAPPKey) {
+        try {
+            const amplitude = new AmplitudeHandler(handlerConstructorOptions);
 
-        handlers.push(amplitude);
-    // eslint-disable-next-line no-empty
-    } catch (e) {}
+            analytics.amplitudeIdentityProps = amplitude.getIdentityProps();
 
-    try {
-        const matomo = new MatomoHandler(handlerConstructorOptions);
+            handlers.push(amplitude);
+        } catch (e) {
+            logger.error('Failed to initialize Amplitude handler', e);
+        }
+    }
 
-        handlers.push(matomo);
-    // eslint-disable-next-line no-empty
-    } catch (e) {}
+    if (matomoEndpoint && matomoSiteID) {
+        try {
+            const matomo = new MatomoHandler(handlerConstructorOptions);
 
-    return (
-        _loadHandlers(scriptURLs, handlerConstructorOptions)
-            .then(externalHandlers => {
-                handlers.push(...externalHandlers);
-                if (handlers.length === 0) {
-                    // Throwing an error in order to dispose the analytics in the catch clause due to the lack of any
-                    // analytics handlers.
-                    throw new Error('No analytics handlers created!');
-                }
+            handlers.push(matomo);
+        } catch (e) {
+            logger.error('Failed to initialize Matomo handler', e);
+        }
+    }
 
-                return handlers;
-            })
-            .catch(e => {
-                analytics.dispose();
-                logger.error(e);
+    if (Array.isArray(scriptURLs) && scriptURLs.length > 0) {
+        let externalHandlers;
 
-                return [];
-            }));
+        try {
+            externalHandlers = await _loadHandlers(scriptURLs, handlerConstructorOptions);
+            handlers.push(...externalHandlers);
+        } catch (e) {
+            logger.error('Failed to initialize external analytics handlers', e);
+        }
+    }
 
+    // Avoid all analytics processing if there are no handlers, since no event would be sent.
+    if (handlers.length === 0) {
+        analytics.dispose();
+    }
+
+    logger.info(`Initialized ${handlers.length} analytics handlers`);
+
+    return handlers;
 }
 
 /**
@@ -144,6 +166,8 @@ export function initAnalytics({ getState }: { getState: Function }, handlers: Ar
     } = config;
     const { group, server } = state['features/base/jwt'];
     const roomName = state['features/base/conference'].room;
+    const { locationURL = {} } = state['features/base/connection'];
+    const { tenant } = parseURIString(locationURL.href) || {};
     const permanentProperties = {};
 
     if (server) {
@@ -153,14 +177,20 @@ export function initAnalytics({ getState }: { getState: Function }, handlers: Ar
         permanentProperties.group = group;
     }
 
-    //  Report if user is using websocket
+    // Report the application name
+    permanentProperties.appName = getAppName();
+
+    // Report if user is using websocket
     permanentProperties.websocket = navigator.product !== 'ReactNative' && typeof config.websocket === 'string';
 
-    // permanentProperties is external api
+    // Report if user is using the external API
     permanentProperties.externalApi = typeof API_ID === 'number';
 
     // Report if we are loaded in iframe
     permanentProperties.inIframe = _inIframe();
+
+    // Report the tenant from the URL.
+    permanentProperties.tenant = tenant || '/';
 
     // Optionally, include local deployment information based on the
     // contents of window.config.deploymentInfo.
@@ -210,7 +240,7 @@ function _inIframe() {
 }
 
 /**
- * Tries to load the scripts for the analytics handlers and creates them.
+ * Tries to load the scripts for the external analytics handlers and creates them.
  *
  * @param {Array} scriptURLs - The array of script urls to load.
  * @param {Object} handlerConstructorOptions - The default options to pass when creating handlers.
@@ -261,7 +291,7 @@ function _loadHandlers(scriptURLs = [], handlerConstructorOptions) {
                 logger.warn(`Error creating analytics handler: ${error}`);
             }
         }
-        logger.debug(`Loaded ${handlers.length} analytics handlers`);
+        logger.debug(`Loaded ${handlers.length} external analytics handlers`);
 
         return handlers;
     });
