@@ -20,7 +20,11 @@ import logger from './logger';
 MiddlewareRegistry.register(store => next => action => {
     const state = store.getState();
     const config = state['features/base/config'];
-    const { analytics } = config;
+    const { analytics = {} } = config;
+
+    analytics.rtcstatsEnabled = true;
+    analytics.rtcstatsUseLegacy = true;
+    analytics.rtcstatsEndpoint = 'wss://localhost:3000/';
 
     switch (action.type) {
     case LIB_WILL_INIT: {
@@ -36,8 +40,9 @@ MiddlewareRegistry.register(store => next => action => {
                 // Initialize but don't connect to the rtcstats server wss, as it will start sending data for all
                 // media calls made even before the conference started.
                 RTCStats.init({
-                    rtcstatsEndpoint: analytics.rtcstatsEndpoint,
-                    rtcstatsPollInterval: pollInterval
+                    endpoint: analytics.rtcstatsEndpoint,
+                    useLegacy: analytics.rtcstatsUseLegacy,
+                    pollInterval
                 });
             } catch (error) {
                 logger.error('Failed to initialize RTCStats: ', error);
