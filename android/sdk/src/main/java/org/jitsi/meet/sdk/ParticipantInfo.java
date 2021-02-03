@@ -21,4 +21,7 @@ public class ParticipantInfo {
 
     @SerializedName("isLocal")
     public boolean isLocal;
+
+    @SerializedName("role")
+    public String role;
 }

@@ -3,25 +3,30 @@ package org.jitsi.meet.sdk;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.util.Log;
 
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
+import com.facebook.react.bridge.Arguments;
+import com.facebook.react.bridge.WritableMap;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import org.jitsi.meet.sdk.log.JitsiMeetLogger;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 import javax.annotation.Nullable;
 
 public class ParticipantsService extends android.content.BroadcastReceiver {
 
     private static final String TAG = ParticipantsService.class.getSimpleName();
+    private static final String REQUEST_ID = "requestId";
 
-    private ParticipantsInfoCallback participantsInfoCallback;
+    private final Map<String, ParticipantsInfoCallback> participantsInfoCallbackMap = new HashMap<>();
 
     private static ParticipantsService instance;
 
@@ -42,11 +47,17 @@ public class ParticipantsService extends android.content.BroadcastReceiver {
         instance = new ParticipantsService(context);
     }
 
-    public void retrieveParticipantsInfo(ParticipantsInfoCallback participantsInfoCallback) {
-        this.participantsInfoCallback = participantsInfoCallback;
+    public void retrieveParticipantsInfo(String callbackKey, ParticipantsInfoCallback participantsInfoCallback) {
+        this.participantsInfoCallbackMap.put(callbackKey, participantsInfoCallback);
 
         String actionName = BroadcastAction.Type.RETRIEVE_PARTICIPANTS_INFO.getAction();
-        ReactInstanceManagerHolder.emitEvent(actionName, null);
+        WritableMap data = Arguments.createMap();
+        data.putString(REQUEST_ID, callbackKey);
+        ReactInstanceManagerHolder.emitEvent(actionName, data);
+    }
+
+    public void unregisterCallback(String callbackKey) {
+        this.participantsInfoCallbackMap.remove(callbackKey);
     }
 
     @Override
@@ -61,8 +72,12 @@ public class ParticipantsService extends android.content.BroadcastReceiver {
                         new TypeToken<ArrayList<ParticipantInfo>>() {
                         }.getType());
 
-                    this.participantsInfoCallback.onReceived(participantInfoList);
-                    Log.i("sdasdasdasdasdasd","dd");
+                    ParticipantsInfoCallback participantsInfoCallback = this.participantsInfoCallbackMap.get(event.getData().get(REQUEST_ID).toString());
+
+                    if (participantsInfoCallback != null) {
+                        participantsInfoCallback.onReceived(participantInfoList);
+                        this.participantsInfoCallbackMap.remove(participantsInfoCallback);
+                    }
                 } catch (Exception e) {
                     JitsiMeetLogger.w(TAG + "error parsing participantsList", e);
                 }

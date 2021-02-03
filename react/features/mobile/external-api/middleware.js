@@ -165,7 +165,8 @@ MiddlewareRegistry.register(store => next => action => {
                 name: participant.name,
                 participantId: participant.id,
                 displayName: participant.displayName,
-                avatarUrl: participant.avatarURL
+                avatarUrl: participant.avatarURL,
+                role: participant.role
             });
         break;
     }
@@ -262,7 +263,7 @@ function _registerForNativeEvents({ getState, dispatch }) {
         dispatch(toggleScreensharing());
     });
 
-    eventEmitter.addListener(ExternalAPI.RETRIEVE_PARTICIPANTS_INFO, () => {
+    eventEmitter.addListener(ExternalAPI.RETRIEVE_PARTICIPANTS_INFO, ({ requestId }) => {
         const store = getState();
 
         const participantsInfo = getParticipants(store).map(participant => {
@@ -272,7 +273,8 @@ function _registerForNativeEvents({ getState, dispatch }) {
                 name: participant.name,
                 participantId: participant.id,
                 displayName: participant.displayName,
-                avatarUrl: participant.avatarURL
+                avatarUrl: participant.avatarURL,
+                role: participant.role
             };
         });
 
@@ -280,7 +282,8 @@ function _registerForNativeEvents({ getState, dispatch }) {
             store,
             PARTICIPANTS_INFO_RETRIEVED,
             /* data */ {
-                participantsInfo
+                participantsInfo,
+                requestId
             });
     });
 }

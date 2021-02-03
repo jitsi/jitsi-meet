@@ -26,6 +26,13 @@ static NSString * const retrieveParticipantsInfoAction = @"org.jitsi.meet.RETRIE
 
 @implementation ExternalAPI
 
+static NSMapTable<NSString*, void (^)(NSArray* participantsInfo)> *participantInfoCompletionHandlers;
+
+__attribute__((constructor))
+static void initializeViewsMap() {
+    participantInfoCompletionHandlers = [NSMapTable strongToWeakObjectsMapTable];
+}
+
 RCT_EXPORT_MODULE();
 
 - (NSDictionary *)constantsToExport {
@@ -83,7 +90,7 @@ RCT_EXPORT_METHOD(sendEvent:(NSString *)name
         return;
     }
     
-    if ([name  isEqual: @"PARTICIPANTS_INFO_RETRIEVED"]) {
+    if ([name isEqual: @"PARTICIPANTS_INFO_RETRIEVED"]) {
         [self onParticipantsInfoRetrieved: data];
     }
 
@@ -96,7 +103,11 @@ RCT_EXPORT_METHOD(sendEvent:(NSString *)name
 
 - (void) onParticipantsInfoRetrieved:(NSDictionary *)data {
     NSArray *participantsInfoArray = [data objectForKey:@"participantsInfo"];
-    self.completionHandler(participantsInfoArray);
+    NSString *completionHandlerId = [data objectForKey:@"requestId"];
+    
+    void (^completionHandler)(NSArray*) = [participantInfoCompletionHandlers objectForKey:completionHandlerId];
+    completionHandler(participantsInfoArray);
+    [participantInfoCompletionHandlers removeObjectForKey:completionHandlerId];
 }
 
 /**
@@ -145,7 +156,11 @@ RCT_EXPORT_METHOD(sendEvent:(NSString *)name
 }
 
 - (void)retrieveParticipantsInfo:(void (^)(NSArray*))completionHandler {
-    [self sendEventWithName:retrieveParticipantsInfoAction body:nil];
-    self.completionHandler = completionHandler;
+    NSString *completionHandlerId = [[NSUUID UUID] UUIDString];
+    NSDictionary *data = @{ @"requestId": completionHandlerId};
+    
+    [participantInfoCompletionHandlers setObject:completionHandler forKey:completionHandlerId];
+    
+    [self sendEventWithName:retrieveParticipantsInfoAction body:data];
 }
 @end
