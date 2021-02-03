@@ -41,8 +41,7 @@ import {
     lockStateChanged,
     onStartMutedPolicyChanged,
     p2pStatusChanged,
-    sendLocalParticipant,
-    conferenceRestarted
+    sendLocalParticipant
 } from './react/features/base/conference';
 import {
     checkAndNotifyForNewDevice,
@@ -338,11 +337,6 @@ class ConferenceConnector {
             APP.UI.notifyFocusDisconnected(focus, retrySec);
             break;
         }
-
-        case JitsiConferenceErrors.CONFERENCE_RESTARTED:
-            APP.store.dispatch(conferenceRestarted(room));
-            APP.store.dispatch(conferenceWillLeave(room));
-            break;
 
         case JitsiConferenceErrors.FOCUS_LEFT:
         case JitsiConferenceErrors.ICE_FAILED:

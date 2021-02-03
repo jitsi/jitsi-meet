@@ -10,7 +10,6 @@ import {
     CONFERENCE_FAILED,
     CONFERENCE_JOINED,
     CONFERENCE_LEFT,
-    CONFERENCE_RESTARTED,
     CONFERENCE_SUBJECT_CHANGED,
     CONFERENCE_TIMESTAMP_CHANGED,
     CONFERENCE_WILL_JOIN,
@@ -48,7 +47,6 @@ ReducerRegistry.register(
             return _authStatusChanged(state, action);
 
         case CONFERENCE_FAILED:
-        case CONFERENCE_RESTARTED:
             return _conferenceFailed(state, action);
 
         case CONFERENCE_JOINED:
