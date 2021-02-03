@@ -133,11 +133,9 @@ function _conferenceFailed({ dispatch, getState }, next, action) {
         break;
     }
     case JitsiConferenceErrors.CONFERENCE_RESTARTED: {
-        const reason = 'Restart initiated because of a bridge failure';
-
         if (enableForcedReload) {
             dispatch(showErrorNotification({
-                description: reason,
+                description: 'Restart initiated because of a bridge failure',
                 titleKey: 'dialog.sessionRestarted'
             }));
         }
