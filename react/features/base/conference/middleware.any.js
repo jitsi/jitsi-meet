@@ -159,29 +159,26 @@ function _conferenceFailed({ dispatch, getState }, next, action) {
         break;
     }
 
-    // FIXME: Workaround for the web version. Currently, the creation of the
-    // conference is handled by /conference.js and appropriate failure handlers
-    // are set there.
-    if (typeof APP !== 'undefined') {
-        if (typeof beforeUnloadHandler !== 'undefined') {
-            window.removeEventListener('beforeunload', beforeUnloadHandler);
-            beforeUnloadHandler = undefined;
-        }
-        enableForcedReload && error?.name === JitsiConferenceErrors.CONFERENCE_RESTARTED && dispatch(reloadNow());
-
-        return result;
-    }
-
-    // XXX After next(action), it is clear whether the error is recoverable.
-    !error.recoverable
+    if (typeof APP === 'undefined') {
+        !error.recoverable
         && conference
         && conference.leave().catch(reason => {
             // Even though we don't care too much about the failure, it may be
             // good to know that it happen, so log it (on the info level).
             logger.info('JitsiConference.leave() rejected with:', reason);
         });
+    } else if (typeof beforeUnloadHandler !== 'undefined') {
+        // FIXME: Workaround for the web version. Currently, the creation of the
+        // conference is handled by /conference.js and appropriate failure handlers
+        // are set there.
+        window.removeEventListener('beforeunload', beforeUnloadHandler);
+        beforeUnloadHandler = undefined;
+    }
 
-    enableForcedReload && error?.name === JitsiConferenceErrors.CONFERENCE_RESTARTED && dispatch(reloadNow());
+    if (enableForcedReload && error?.name === JitsiConferenceErrors.CONFERENCE_RESTARTED) {
+        dispatch(conferenceWillLeave(conference));
+        dispatch(reloadNow());
+    }
 
     return result;
 }
