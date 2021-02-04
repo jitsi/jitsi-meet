@@ -92,6 +92,7 @@ RCT_EXPORT_METHOD(sendEvent:(NSString *)name
     
     if ([name isEqual: @"PARTICIPANTS_INFO_RETRIEVED"]) {
         [self onParticipantsInfoRetrieved: data];
+        return;
     }
 
     SEL sel = NSSelectorFromString([self methodNameFromEventName:name]);

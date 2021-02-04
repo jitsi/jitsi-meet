@@ -13,6 +13,7 @@ import com.google.gson.reflect.TypeToken;
 
 import org.jitsi.meet.sdk.log.JitsiMeetLogger;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -26,7 +27,7 @@ public class ParticipantsService extends android.content.BroadcastReceiver {
     private static final String TAG = ParticipantsService.class.getSimpleName();
     private static final String REQUEST_ID = "requestId";
 
-    private final Map<String, ParticipantsInfoCallback> participantsInfoCallbackMap = new HashMap<>();
+    private final Map<String, WeakReference<ParticipantsInfoCallback>> participantsInfoCallbackMap = new HashMap<>();
 
     private static ParticipantsService instance;
 
@@ -47,17 +48,14 @@ public class ParticipantsService extends android.content.BroadcastReceiver {
         instance = new ParticipantsService(context);
     }
 
-    public void retrieveParticipantsInfo(String callbackKey, ParticipantsInfoCallback participantsInfoCallback) {
-        this.participantsInfoCallbackMap.put(callbackKey, participantsInfoCallback);
+    public void retrieveParticipantsInfo(ParticipantsInfoCallback participantsInfoCallback) {
+        String callbackKey = UUID.randomUUID().toString();
+        this.participantsInfoCallbackMap.put(callbackKey, new WeakReference<>(participantsInfoCallback));
 
         String actionName = BroadcastAction.Type.RETRIEVE_PARTICIPANTS_INFO.getAction();
         WritableMap data = Arguments.createMap();
         data.putString(REQUEST_ID, callbackKey);
         ReactInstanceManagerHolder.emitEvent(actionName, data);
-    }
-
-    public void unregisterCallback(String callbackKey) {
-        this.participantsInfoCallbackMap.remove(callbackKey);
     }
 
     @Override
@@ -72,7 +70,7 @@ public class ParticipantsService extends android.content.BroadcastReceiver {
                         new TypeToken<ArrayList<ParticipantInfo>>() {
                         }.getType());
 
-                    ParticipantsInfoCallback participantsInfoCallback = this.participantsInfoCallbackMap.get(event.getData().get(REQUEST_ID).toString());
+                    ParticipantsInfoCallback participantsInfoCallback = this.participantsInfoCallbackMap.get(event.getData().get(REQUEST_ID).toString()).get();
 
                     if (participantsInfoCallback != null) {
                         participantsInfoCallback.onReceived(participantInfoList);
