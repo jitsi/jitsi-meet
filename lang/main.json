@@ -280,6 +280,7 @@
         "sendPrivateMessageTitle": "Send privately?",
         "serviceUnavailable": "Service unavailable",
         "sessTerminated": "Call terminated",
+        "sessionRestarted": "Call restarted by the bridge",
         "Share": "Share",
         "shareVideoLinkError": "Please provide a correct youtube link.",
         "shareVideoTitle": "Share a video",

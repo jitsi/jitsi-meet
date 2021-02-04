@@ -297,22 +297,6 @@ export function conferenceLeft(conference: Object) {
 }
 
 /**
- * Signals that the unique identifier for conference has been set.
- *
- * @param {JitsiConference} conference - The JitsiConference instance, where the uuid has been set.
- * @returns {{
-    *   type: CONFERENCE_UNIQUE_ID_SET,
-    *   conference: JitsiConference,
-    * }}
-    */
-export function conferenceUniqueIdSet(conference: Object) {
-    return {
-        type: CONFERENCE_UNIQUE_ID_SET,
-        conference
-    };
-}
-
-/**
  * Signals that the conference subject has been changed.
  *
  * @param {string} subject - The new subject.
@@ -341,6 +325,22 @@ export function conferenceTimestampChanged(conferenceTimestamp: number) {
     return {
         type: CONFERENCE_TIMESTAMP_CHANGED,
         conferenceTimestamp
+    };
+}
+
+/**
+* Signals that the unique identifier for conference has been set.
+*
+* @param {JitsiConference} conference - The JitsiConference instance, where the uuid has been set.
+* @returns {{
+*   type: CONFERENCE_UNIQUE_ID_SET,
+*   conference: JitsiConference,
+* }}
+*/
+export function conferenceUniqueIdSet(conference: Object) {
+    return {
+        type: CONFERENCE_UNIQUE_ID_SET,
+        conference
     };
 }
 

@@ -26,6 +26,7 @@ import {
     SET_DIALOUT_STATUS,
     SET_PREJOIN_DISPLAY_NAME_REQUIRED,
     SET_SKIP_PREJOIN,
+    SET_SKIP_PREJOIN_RELOAD,
     SET_JOIN_BY_PHONE_DIALOG_VISIBLITY,
     SET_PRECALL_TEST_RESULTS,
     SET_PREJOIN_DEVICE_ERRORS,
@@ -414,6 +415,20 @@ export function setDialOutNumber(value: string) {
 export function setSkipPrejoin(value: boolean) {
     return {
         type: SET_SKIP_PREJOIN,
+        value
+    };
+}
+
+/**
+ * Sets the visibility of the prejoin page when a client reload
+ * is triggered as a result of call migration initiated by Jicofo.
+ *
+ * @param {boolean} value - The visibility value.
+ * @returns {Object}
+ */
+export function setSkipPrejoinOnReload(value: boolean) {
+    return {
+        type: SET_SKIP_PREJOIN_RELOAD,
         value
     };
 }

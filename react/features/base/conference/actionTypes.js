@@ -43,16 +43,6 @@ export const CONFERENCE_JOINED = 'CONFERENCE_JOINED';
 export const CONFERENCE_LEFT = 'CONFERENCE_LEFT';
 
 /**
- * The type of (redux) action which signals that an uuid for a conference has been set.
- *
- * {
- *     type: CONFERENCE_UNIQUE_ID_SET,
- *     conference: JitsiConference
- * }
- */
-export const CONFERENCE_UNIQUE_ID_SET = 'CONFERENCE_UNIQUE_ID_SET';
-
-/**
  * The type of (redux) action, which indicates conference subject changes.
  *
  * {
@@ -71,6 +61,16 @@ export const CONFERENCE_SUBJECT_CHANGED = 'CONFERENCE_SUBJECT_CHANGED';
 * }
 */
 export const CONFERENCE_TIMESTAMP_CHANGED = 'CONFERENCE_TIMESTAMP_CHANGED';
+
+/**
+ * The type of (redux) action which signals that an uuid for a conference has been set.
+ *
+ * {
+ *     type: CONFERENCE_UNIQUE_ID_SET,
+ *     conference: JitsiConference
+ * }
+ */
+export const CONFERENCE_UNIQUE_ID_SET = 'CONFERENCE_UNIQUE_ID_SET';
 
 /**
  * The type of (redux) action which signals that a specific conference will be

@@ -325,6 +325,11 @@ var config = {
     // TCC sequence numbers starting from 0.
     // enableIceRestart: false,
 
+    // Enables forced reload of the client when the call is migrated as a result of
+    // the bridge going down. Currently enabled by default as call migration through
+    // session-terminate is causing siganling issues when Octo is enabled.
+    // enableForcedReload: true,
+
     // Use TURN/UDP servers for the jitsi-videobridge connection (by default
     // we filter out TURN/UDP because it is usually not needed since the
     // bridge itself is reachable via UDP)
@@ -732,6 +737,7 @@ var config = {
     //     'dialog.reservationError',
     //     'dialog.serviceUnavailable', // shown when server is not reachable
     //     'dialog.sessTerminated', // shown when there is a failed conference session
+    //     'dialog.sessionRestarted', // show when a client reload is initiated because of bridge migration
     //     'dialog.tokenAuthFailed', // show when an invalid jwt is used
     //     'dialog.transcribing', // transcribing notifications (pending, off)
     //     'dialOut.statusMessage', // shown when dial out status is updated.
