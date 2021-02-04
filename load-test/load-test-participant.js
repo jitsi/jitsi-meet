@@ -6,8 +6,8 @@ import { parseURIString } from '../react/features/base/util/uri';
 const params = parseURLParams(window.location, false, 'hash');
 const { isHuman = false } = params;
 const {
-    localAudio = isHuman,
-    localVideo = isHuman,
+    localAudio = params['config.startWithAudioMuted'] !== true,
+    localVideo = params['config.startWithVideoMuted'] !== true,
     remoteVideo = isHuman,
     remoteAudio = isHuman
 } = params;
