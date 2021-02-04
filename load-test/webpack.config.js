@@ -78,7 +78,7 @@ const config = {
 
             loader: 'expose-loader?$!expose-loader?jQuery',
             test: /\/node_modules\/jquery\/.*\.js$/
-        }]
+        } ]
     },
     node: {
         // Allow the use of the real filename of the module being executed. By

@@ -1,4 +1,4 @@
-/* global $, JitsiMeetJS */
+/* global $, config, JitsiMeetJS */
 import 'jquery';
 import { parseURLParams } from '../react/features/base/util/parseURLParams';
 
@@ -30,7 +30,7 @@ window.APP = {
         },
         getConnectionState() {
             return room && room.getConnectionState();
-        },
+        }
     },
 
     get room() {
