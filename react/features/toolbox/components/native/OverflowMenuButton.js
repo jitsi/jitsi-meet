@@ -46,7 +46,7 @@ class OverflowMenuButton extends AbstractButton<Props, *> {
  * @param {Object} state - The Redux state.
  * @private
  * @returns {Props}
-    */
+ */
 function _mapStateToProps(state): Object {
     const enabledFlag = getFeatureFlag(state, OVERFLOW_MENU_ENABLED, true);
 
