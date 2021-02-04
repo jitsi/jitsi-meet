@@ -2,7 +2,7 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 
-import { Icon, IconArrowUp, IconArrowDown } from '../../../base/icons';
+import { Icon, IconArrowUpWide, IconArrowDownWide } from '../../../base/icons';
 
 type Props = {
 
@@ -78,7 +78,7 @@ function Drawer({
                     <div
                         className = 'drawer-toggle'
                         onClick = { toggleExpanded }>
-                        <Icon src = { expanded ? IconArrowDown : IconArrowUp } />
+                        <Icon src = { expanded ? IconArrowDownWide : IconArrowUpWide } />
                     </div>
                 )}
                 {children}
