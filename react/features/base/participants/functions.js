@@ -1,6 +1,6 @@
 // @flow
 import { getGravatarURL } from 'js-utils/avatar';
-
+import jwtDecode from 'jwt-decode';
 import { toState } from '../redux';
 
 import { JitsiParticipantConnectionStatus } from '../lib-jitsi-meet';
@@ -375,4 +375,31 @@ async function _getFirstLoadableAvatarUrl(participant) {
     }
 
     return undefined;
+}
+
+/**
+ * Returns participant info from the jwt token
+ *
+ * @param {Object|Function} state - Object or function that can be resolved
+ * to the Redux state.
+ * @returns {string|null}
+ */
+export function getLocalParticipantFromJwt(state: Object | Function): Object {
+    const { jwt } = state['features/base/jwt'];
+    const jwtPayload = jwt && jwtDecode(jwt) ?? null;
+
+    return jwtPayload && jwtPayload.context && jwtPayload.context.user ?? null;
+}
+
+/**
+ * Returns participant type from the participant info
+ *
+ * @param {Object|Function} state - Object or function that can be resolved
+ * to the Redux state.
+ * @returns {string|null}
+ */
+export function getLocalParticipantType(state: Object | Function): string {
+    const participant = getLocalParticipantFromJwt(state);
+
+    return participant && participant.participant_type ?? null;
 }

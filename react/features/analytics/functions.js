@@ -5,6 +5,7 @@ import JitsiMeetJS, {
     browser,
     isAnalyticsEnabled
 } from '../base/lib-jitsi-meet';
+import { getLocalParticipantType } from '../base/participants';
 import { getJitsiMeetGlobalNS, loadScript } from '../base/util';
 import {
     checkChromeExtensionsInstalled,
@@ -140,9 +141,10 @@ export function initAnalytics({ getState }: { getState: Function }, handlers: Ar
         permanentProperties.group = group;
     }
 
+    permanentProperties.participantType = getLocalParticipantType(state);
+
     //  Report if user is using websocket
     permanentProperties.websocket = navigator.product !== 'ReactNative' && typeof config.websocket === 'string';
-
     // Optionally, include local deployment information based on the
     // contents of window.config.deploymentInfo.
     if (deploymentInfo) {
