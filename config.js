@@ -261,9 +261,16 @@ var config = {
     //    // the available bandwidth calculated by the browser, but it will be capped by the values specified here.
     //    // This is currently not implemented on app based clients on mobile.
     //    maxBitratesVideo: {
-    //        low: 200000,
-    //        standard: 500000,
-    //        high: 1500000
+    //          VP8 : {
+    //              low: 200000,
+    //              standard: 500000,
+    //              high: 1500000
+    //          },
+    //          VP9: {
+    //              low: 100000,
+    //              standard: 300000,
+    //              high:  1200000
+    //          }
     //    },
     //
     //    // The options can be used to override default thresholds of video thumbnail heights corresponding to
