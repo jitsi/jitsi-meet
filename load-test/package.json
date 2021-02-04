@@ -15,7 +15,7 @@
   "author": "",
   "readmeFilename": "../README.md",
   "dependencies": {
-    "jquery": "3.4.0"
+    "jquery": "3.5.0"
   },
   "devDependencies": {
     "@babel/core": "7.5.5",
