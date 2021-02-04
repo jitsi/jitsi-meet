@@ -15,3 +15,5 @@ resources/robots.txt	/usr/share/jitsi-meet/
 resources/*.sh			/usr/share/jitsi-meet/scripts/
 pwa-worker.js			/usr/share/jitsi-meet/
 manifest.json			/usr/share/jitsi-meet/
+load-test/*.html		/usr/share/jitsi-meet/load-test/
+load-test/libs  		/usr/share/jitsi-meet/load-test/
