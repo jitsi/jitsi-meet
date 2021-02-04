@@ -100,6 +100,15 @@ server {
         tcp_nodelay on;
     }
 
+    # load test minimal client, uncomment when used
+    #location ~ ^/_load-test/([^/?&:'"]+)$ {
+    #    rewrite ^/_load-test/(.*)$ /load-test/index.html break;
+    #}
+    #location ~ ^/_load-test/libs/(.*)$ {
+    #    add_header 'Access-Control-Allow-Origin' '*';
+    #    alias /usr/share/jitsi-meet/load-test/libs/$1;
+    #}
+
     location ~ ^/([^/?&:'"]+)$ {
         try_files $uri @root_path;
     }
