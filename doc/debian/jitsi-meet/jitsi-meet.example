@@ -97,10 +97,10 @@ server {
     }
 
     # load test minimal client, uncomment when used
-    #location ~ ^/load-test/([^/?&:'"]+)$ {
-    #    rewrite ^/load-test/(.*)$ /load-test/load-test-participant.html break;
+    #location ~ ^/_load-test/([^/?&:'"]+)$ {
+    #    rewrite ^/_load-test/(.*)$ /load-test/index.html break;
     #}
-    #location ~ ^/load-test/libs/(.*)$ {
+    #location ~ ^/_load-test/libs/(.*)$ {
     #    add_header 'Access-Control-Allow-Origin' '*';
     #    alias /usr/share/jitsi-meet/load-test/libs/$1;
     #}
