@@ -83,7 +83,7 @@ class OverflowMenuProfileItem extends Component<Props> {
                 <span className = 'overflow-menu-item-icon'>
                     <Avatar
                         participantId = { _localParticipant.id }
-                        size = { 24 } />
+                        size = { 20 } />
                 </span>
                 <span className = 'profile-text'>
                     { displayName }

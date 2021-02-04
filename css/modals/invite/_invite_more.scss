@@ -32,8 +32,10 @@
         line-height: 24px;
         cursor: pointer;
 
-        &:hover {
-            background: #278ADF;
+        @media (hover: hover) and (pointer: fine) {
+            &:hover {
+                background: #278ADF;
+            }
         }
 
         &-text {

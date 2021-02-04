@@ -1,9 +1,9 @@
 /* @flow */
 
-import Tooltip from '@atlaskit/tooltip';
 import React from 'react';
 
 import { Icon } from '../../../base/icons';
+import { Tooltip } from '../../../base/tooltip';
 import AbstractToolbarButton from '../AbstractToolbarButton';
 import type { Props as AbstractToolbarButtonProps }
     from '../AbstractToolbarButton';
