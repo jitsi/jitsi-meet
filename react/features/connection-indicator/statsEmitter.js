@@ -2,6 +2,7 @@
 
 import _ from 'lodash';
 
+import { createConnectionQualityChangedEvent, sendAnalytics } from '../analytics';
 import {
     JitsiConnectionQualityEvents,
     JitsiE2ePingEvents
@@ -15,6 +16,23 @@ import {
  * }
  */
 const subscribers = {};
+
+let localConnectionStrength = null;
+
+const CONNECTION_QUALITY_STRENGTH: Array<Object> = [
+    {
+        connectionQuality: 30,
+        strength: 'good'
+    },
+    {
+        connectionQuality: 10,
+        strength: 'nonoptimal'
+    },
+    {
+        connectionQuality: 0,
+        strength: 'poor'
+    }
+];
 
 /**
  * A singleton that acts as a pub/sub service for connection stat updates.
@@ -134,6 +152,19 @@ const statsEmitter = {
             codec: allUserCodecs[localUserId]
         });
 
+        // send local stats data to amplitude if local user's connection strength was changed.
+        if (modifiedLocalStats.connectionQuality) {
+            const modifiedLocalConnectionStrength = this._getConnectionQuality(modifiedLocalStats.connectionQuality)
+                .strength;
+
+            if (localConnectionStrength !== modifiedLocalConnectionStrength) {
+                localConnectionStrength = modifiedLocalConnectionStrength;
+                sendAnalytics(createConnectionQualityChangedEvent(
+                    modifiedLocalConnectionStrength,
+                    modifiedLocalStats));
+            }
+        }
+
         this._emitStatsUpdate(localUserId, modifiedLocalStats);
 
         // Get all the unique user ids from the framerate and resolution stats
@@ -167,6 +198,10 @@ const statsEmitter = {
 
                 this._emitStatsUpdate(id, remoteUserStats);
             });
+    },
+
+    _getConnectionQuality(connectionQuality: number): Object {
+        return CONNECTION_QUALITY_STRENGTH.find(x => connectionQuality >= x.connectionQuality) || {};
     }
 };
 

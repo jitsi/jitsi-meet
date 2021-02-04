@@ -1,3 +1,4 @@
+import _ from "lodash";
 /**
  * The constant for the event type 'track'.
  * TODO: keep these constants in a single place. Can we import them from
@@ -788,4 +789,40 @@ export function createWelcomePageEvent(action, actionSubject, attributes = {}) {
         attributes,
         source: 'welcomePage'
     };
+}
+
+/**
+ * Creates an event which indicates that connection strength was changed.
+ *
+ * @param {string} strength - The subject that was acted upon.
+ * @param {Object} stats - Additional attributes to attach to the event.
+ * @returns {Object} The event in a format suitable for sending via
+ * sendAnalytics.
+ */
+export function createConnectionQualityChangedEvent(strength, stats) {
+    return {
+        action: 'connection.quality.changed',
+        attributes: {
+            bandwidth: stats.bandwidth,
+            bitrate: stats.bitrate,
+            bridgeCount: stats.bridgeCount,
+            codec: removeTrackIdFromEventPropertyObject(stats.codec),
+            connectionQuality: stats.connectionQuality,
+            framerate: removeTrackIdFromEventPropertyObject(stats.framerate),
+            packetLoss: stats.packetLoss,
+            resolution: removeTrackIdFromEventPropertyObject(stats.resolution),
+            strength
+        }
+    };
+}
+
+/**
+ * Remove the track id from the ConnectionQualityChangedEvent property.
+ * If we don't want to send the trackId along with the property to amplitude.
+ *
+ * @param {Object} event - event object.
+ * @returns {Object|number|string|undefined} property.
+ */
+function removeTrackIdFromEventPropertyObject(event) {
+    return event && _.isObject(event) && Object.values(event)[0];
 }
