@@ -53,6 +53,8 @@ class ExternalAPIModule
 
         broadcastEmitter = new BroadcastEmitter(reactContext);
         broadcastReceiver = new BroadcastReceiver(reactContext);
+
+        ParticipantsService.init(reactContext);
     }
 
     /**
@@ -79,6 +81,7 @@ class ExternalAPIModule
         constants.put("HANG_UP", BroadcastAction.Type.HANG_UP.getAction());
         constants.put("SEND_ENDPOINT_TEXT_MESSAGE", BroadcastAction.Type.SEND_ENDPOINT_TEXT_MESSAGE.getAction());
         constants.put("TOGGLE_SCREEN_SHARE", BroadcastAction.Type.TOGGLE_SCREEN_SHARE.getAction());
+        constants.put("RETRIEVE_PARTICIPANTS_INFO", BroadcastAction.Type.RETRIEVE_PARTICIPANTS_INFO.getAction());
 
         return constants;
     }

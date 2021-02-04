@@ -27,7 +27,7 @@ import {
 } from '../../base/connection';
 import { JitsiConferenceEvents } from '../../base/lib-jitsi-meet';
 import { SET_AUDIO_MUTED } from '../../base/media/actionTypes';
-import { PARTICIPANT_JOINED, PARTICIPANT_LEFT } from '../../base/participants';
+import { PARTICIPANT_JOINED, PARTICIPANT_LEFT, getParticipants } from '../../base/participants';
 import { MiddlewareRegistry, StateListenerRegistry } from '../../base/redux';
 import { toggleScreensharing } from '../../base/tracks';
 import { muteLocal } from '../../remote-video-menu/actions';
@@ -54,6 +54,11 @@ const ENDPOINT_TEXT_MESSAGE_RECEIVED = 'ENDPOINT_TEXT_MESSAGE_RECEIVED';
  * the screen share.
  */
 const SCREEN_SHARE_TOGGLED = 'SCREEN_SHARE_TOGGLED';
+
+/**
+ * Event which will be emitted on the native side with the participant info array.
+ */
+const PARTICIPANTS_INFO_RETRIEVED = 'PARTICIPANTS_INFO_RETRIEVED';
 
 const { ExternalAPI } = NativeModules;
 const eventEmitter = new NativeEventEmitter(ExternalAPI);
@@ -158,7 +163,10 @@ MiddlewareRegistry.register(store => next => action => {
                 isLocal: participant.local,
                 email: participant.email,
                 name: participant.name,
-                participantId: participant.id
+                participantId: participant.id,
+                displayName: participant.displayName,
+                avatarUrl: participant.avatarURL,
+                role: participant.role
             });
         break;
     }
@@ -253,6 +261,30 @@ function _registerForNativeEvents({ getState, dispatch }) {
 
     eventEmitter.addListener(ExternalAPI.TOGGLE_SCREEN_SHARE, () => {
         dispatch(toggleScreensharing());
+    });
+
+    eventEmitter.addListener(ExternalAPI.RETRIEVE_PARTICIPANTS_INFO, ({ requestId }) => {
+        const store = getState();
+
+        const participantsInfo = getParticipants(store).map(participant => {
+            return {
+                isLocal: participant.local,
+                email: participant.email,
+                name: participant.name,
+                participantId: participant.id,
+                displayName: participant.displayName,
+                avatarUrl: participant.avatarURL,
+                role: participant.role
+            };
+        });
+
+        sendEvent(
+            store,
+            PARTICIPANTS_INFO_RETRIEVED,
+            /* data */ {
+                participantsInfo,
+                requestId
+            });
     });
 }
 
