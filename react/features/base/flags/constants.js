@@ -7,6 +7,12 @@
 export const ADD_PEOPLE_ENABLED = 'add-people.enabled';
 
 /**
+ * Flag indicating if the audio mute button should be displayed.
+ * Default: enabled (true).
+ */
+export const AUDIO_MUTE_BUTTON_ENABLED = 'audio-mute.enabled';
+
+/**
  * Flag indicating if calendar integration should be enabled.
  * Default: enabled (true) on Android, auto-detected on iOS.
  */
@@ -81,12 +87,17 @@ export const MEETING_NAME_ENABLED = 'meeting-name.enabled';
  */
 export const MEETING_PASSWORD_ENABLED = 'meeting-password.enabled';
 
-
 /**
  * Flag indicating if the notifications should be enabled.
  * Default: enabled (true).
  */
 export const NOTIFICATIONS_ENABLED = 'notifications.enabled';
+
+/**
+ * Flag indicating if the audio overflow menu button should be displayed.
+ * Default: enabled (true).
+ */
+export const OVERFLOW_MENU_ENABLED = 'overflow-menu.enabled';
 
 /**
  * Flag indicating if Picture-in-Picture should be enabled.
@@ -136,6 +147,12 @@ export const TOOLBOX_ALWAYS_VISIBLE = 'toolbox.alwaysVisible';
  * Default: enabled.
  */
 export const TOOLBOX_ENABLED = 'toolbox.enabled';
+
+/**
+ * Flag indicating if the video mute button should be displayed.
+ * Default: enabled (true).
+ */
+export const VIDEO_MUTE_BUTTON_ENABLED = 'video-mute.enabled';
 
 /**
  * Flag indicating if the video share button should be enabled
