@@ -20,7 +20,7 @@ compile: compile-load-test
 	$(WEBPACK) -p
 
 compile-load-test:
-	${NPM} install --prefix load-test && ${NPM} run build --prefix load-test
+	${NPM} install --prefix resources/load-test && ${NPM} run build --prefix resources/load-test
 
 clean:
 	rm -fr $(BUILD_DIR)
