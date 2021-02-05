@@ -1,7 +1,7 @@
 /* global $, config, JitsiMeetJS */
 import 'jquery';
-import { parseURLParams } from '../react/features/base/util/parseURLParams';
-import { parseURIString } from '../react/features/base/util/uri';
+import { parseURLParams } from '../../react/features/base/util/parseURLParams';
+import { parseURIString } from '../../react/features/base/util/uri';
 
 const params = parseURLParams(window.location, false, 'hash');
 const { isHuman = false } = params;
