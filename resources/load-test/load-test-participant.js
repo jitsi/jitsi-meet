@@ -2,12 +2,15 @@
 import 'jquery';
 import { parseURLParams } from '../../react/features/base/util/parseURLParams';
 import { parseURIString } from '../../react/features/base/util/uri';
+import { setConfigFromURLParams } from '../../react/features/base/config/functions';
+
+setConfigFromURLParams(config, {}, {}, window.location);
 
 const params = parseURLParams(window.location, false, 'hash');
 const { isHuman = false } = params;
 const {
-    localAudio = params['config.startWithAudioMuted'] !== true,
-    localVideo = params['config.startWithVideoMuted'] !== true,
+    localAudio = config.startWithAudioMuted !== true,
+    localVideo = config.startWithVideoMuted !== true,
     remoteVideo = isHuman,
     remoteAudio = isHuman
 } = params;
