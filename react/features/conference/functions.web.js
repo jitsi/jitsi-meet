@@ -4,6 +4,7 @@ import { translateToHTML } from '../base/i18n';
 import { getLocalParticipant } from '../base/participants';
 import { toState } from '../base/redux';
 import { getBackendSafePath, getJitsiMeetGlobalNS } from '../base/util';
+import { getVpaasBillingId } from '../billing-counter/functions';
 import { showWarningNotification } from '../notifications';
 import { createRnnoiseProcessorPromise } from '../rnnoise';
 
@@ -84,6 +85,7 @@ export function getConferenceOptions(stateful) {
     options.applicationName = getName();
     options.getWiFiStatsMethod = getWiFiStatsMethod;
     options.createVADProcessor = createRnnoiseProcessorPromise;
+    options.billingId = getVpaasBillingId(state);
 
     // Disable CallStats, if requessted.
     if (options.disableThirdPartyRequests) {
