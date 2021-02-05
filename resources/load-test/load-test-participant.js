@@ -1,15 +1,19 @@
 /* global $, config, JitsiMeetJS */
 import 'jquery';
+import { setConfigFromURLParams } from '../../react/features/base/config/functions';
 import { parseURLParams } from '../../react/features/base/util/parseURLParams';
 import { parseURIString } from '../../react/features/base/util/uri';
+
+setConfigFromURLParams(config, {}, {}, window.location);
 
 const params = parseURLParams(window.location, false, 'hash');
 const { isHuman = false } = params;
 const {
-    localAudio = params['config.startWithAudioMuted'] !== true,
-    localVideo = params['config.startWithVideoMuted'] !== true,
+    localAudio = config.startWithAudioMuted !== true,
+    localVideo = config.startWithVideoMuted !== true,
     remoteVideo = isHuman,
-    remoteAudio = isHuman
+    remoteAudio = isHuman,
+    autoPlayVideo = config.testing.noAutoPlayVideo !== true
 } = params;
 
 const { room: roomName } = parseURIString(window.location.toString());
@@ -56,7 +60,8 @@ window.APP = {
             localAudio,
             localVideo,
             remoteVideo,
-            remoteAudio
+            remoteAudio,
+            autoPlayVideo
         };
     }
 };
@@ -76,7 +81,7 @@ function onLocalTracks(tracks = []) {
     localTracks = tracks;
     for (let i = 0; i < localTracks.length; i++) {
         if (localTracks[i].getType() === 'video') {
-            $('body').append(`<video autoplay='1' id='localVideo${i}' />`);
+            $('body').append(`<video ${autoPlayVideo ? 'autoplay="1" ' : ''}id='localVideo${i}' />`);
             localTracks[i].attach($(`#localVideo${i}`)[0]);
         } else {
             $('body').append(
