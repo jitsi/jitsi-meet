@@ -1,8 +1,8 @@
 /* global $, config, JitsiMeetJS */
 import 'jquery';
-import { parseURIString } from '../../react/features/base/util/uri';
 import { setConfigFromURLParams } from '../../react/features/base/config/functions';
 import { parseURLParams } from '../../react/features/base/util/parseURLParams';
+import { parseURIString } from '../../react/features/base/util/uri';
 
 setConfigFromURLParams(config, {}, {}, window.location);
 
