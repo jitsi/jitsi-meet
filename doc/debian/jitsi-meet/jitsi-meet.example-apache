@@ -44,9 +44,9 @@
     ProxyPreserveHost on
     ProxyPass /http-bind http://localhost:5280/http-bind/
     ProxyPassReverse /http-bind http://localhost:5280/http-bind/
-    ProxyPass /xmpp-websocket http://localhost:5280/xmpp-websocket
-    ProxyPassReverse /xmpp-websocket http://localhost:5280/xmpp-websocket
-    ProxyPassMatch ^/colibri-ws/default-id http://localhost:9090
+    ProxyPass /xmpp-websocket ws://localhost:5280/xmpp-websocket
+    ProxyPassReverse /xmpp-websocket ws://localhost:5280/xmpp-websocket
+    ProxyPassMatch ^/colibri-ws/default-id ws://localhost:9090
 
     RewriteEngine on
     RewriteRule ^/([a-zA-Z0-9]+)$ /index.html
