@@ -4,7 +4,8 @@ import { PersistenceRegistry, ReducerRegistry, set } from '../base/redux';
 
 import {
     SET_SIDEBAR_VISIBLE,
-    SET_WELCOME_PAGE_LISTS_DEFAULT_PAGE
+    SET_WELCOME_PAGE_LISTS_DEFAULT_PAGE,
+    SET_SCREEN
 } from './actionTypes';
 
 /**
@@ -17,7 +18,8 @@ const STORE_NAME = 'features/welcome';
  * Sets up the persistence of the feature {@code welcome}.
  */
 PersistenceRegistry.register(STORE_NAME, {
-    defaultPage: true
+    defaultPage: true,
+    currentScreen: ''
 });
 
 /**
@@ -30,6 +32,9 @@ ReducerRegistry.register(STORE_NAME, (state = {}, action) => {
 
     case SET_WELCOME_PAGE_LISTS_DEFAULT_PAGE:
         return set(state, 'defaultPage', action.pageIndex);
+
+    case SET_SCREEN:
+        return set(state, 'currentScreen', action.screenName);
     }
 
     return state;

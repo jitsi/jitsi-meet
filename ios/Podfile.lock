@@ -266,6 +266,11 @@ PODS:
     - React
   - react-native-netinfo (4.1.5):
     - React
+  - react-native-video (5.1.1):
+    - React-Core
+    - react-native-video/Video (= 5.1.1)
+  - react-native-video/Video (5.1.1):
+    - React-Core
   - react-native-webrtc (1.75.3):
     - React
   - react-native-webview (7.4.1):
@@ -368,6 +373,7 @@ DEPENDENCIES:
   - react-native-calendar-events (from `../node_modules/react-native-calendar-events`)
   - react-native-keep-awake (from `../node_modules/react-native-keep-awake`)
   - "react-native-netinfo (from `../node_modules/@react-native-community/netinfo`)"
+  - react-native-video (from `../node_modules/react-native-video/react-native-video.podspec`)
   - react-native-webrtc (from `../node_modules/react-native-webrtc`)
   - react-native-webview (from `../node_modules/react-native-webview`)
   - React-RCTActionSheet (from `../node_modules/react-native/Libraries/ActionSheetIOS`)
@@ -446,6 +452,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-keep-awake"
   react-native-netinfo:
     :path: "../node_modules/@react-native-community/netinfo"
+  react-native-video:
+    :path: "../node_modules/react-native-video/react-native-video.podspec"
   react-native-webrtc:
     :path: "../node_modules/react-native-webrtc"
   react-native-webview:
@@ -489,9 +497,9 @@ SPEC CHECKSUMS:
   boost-for-react-native: 39c7adb57c4e60d6c5479dd8623128eb5b3f0f2c
   BVLinearGradient: e3aad03778a456d77928f594a649e96995f1c872
   CocoaLumberjack: 2f44e60eb91c176d471fdba43b9e3eae6a721947
-  Crashlytics: 540b7e5f5da5a042647227a5e3ac51d85eed06df
+  Crashlytics: 9220f5bc89e7a618df411b4f639389dbfb0e03d2
   DoubleConversion: 5805e889d232975c086db112ece9ed034df7a0b2
-  Fabric: 706c8b8098fff96c33c0db69cbf81f9c551d0d74
+  Fabric: ea977e3cd9c20425516d3dafd3bf8c941c51223f
   FBLazyVector: 4a5251159a3ed05dc11cc8b74cf937869935814b
   FBReactNativeSpec: 6fa602a20993212cc9877a81838578ffb0008bc9
   Firebase: 02f3281965c075426141a0ce1277e9de6649cab9
@@ -520,6 +528,7 @@ SPEC CHECKSUMS:
   react-native-calendar-events: 2fe35a9294af05de0ed819d3a1b5dac048d2c010
   react-native-keep-awake: eba3137546b10003361b37c761f6c429b59814ae
   react-native-netinfo: 8d8db463bcc5db66a8ac5c48a7d86beb3b92f61a
+  react-native-video: 1574074179ecaf6a9dd067116c8f31bf9fec15c8
   react-native-webrtc: 86d841823e66d68cc1f86712db1c2956056bf0c2
   react-native-webview: 4dbc1d2a4a6b9c5e9e723c62651917aa2b5e579e
   React-RCTActionSheet: b72ddbfbe15b44ce691d128e4b582f4bb9abb540
@@ -539,6 +548,6 @@ SPEC CHECKSUMS:
   RNWatch: 09738b339eceb66e4d80a2371633ca5fb380fa42
   Yoga: 7b4209fda2441f99d54dd6cf4c82b094409bb68f
 
-PODFILE CHECKSUM: e898d4f1146fd00b116de658272756d823112009
+PODFILE CHECKSUM: d75f9f51d6add41c57bfd9922c416dcfb1a39b62
 
-COCOAPODS: 1.9.1
+COCOAPODS: 1.10.0
