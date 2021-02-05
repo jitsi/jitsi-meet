@@ -37,6 +37,12 @@ const RGBA_COLOR_FORMAT
  */
 const _WELL_KNOWN_NUMBER_PROPERTIES = [ 'height', 'width' ];
 
+const isPad = Platform.isPad;
+
+export const JANE_WELCOME_PAGE_DESGIN_MOCKUP_HEIGHT = isPad ? 1080 : 844;
+export const JANE_WELCOME_PAGE_DESGIN_MOCKUP_WIDTH = isPad ? 811 : 390;
+
+
 /**
  * Function to convert complex StyleType styles into a single flat object,
  * so then they can be deconstructed for further processing.

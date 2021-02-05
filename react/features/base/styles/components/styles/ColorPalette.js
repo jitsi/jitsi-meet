@@ -46,4 +46,6 @@ export const ColorPalette = {
 
     /** Jane */
     jane: '#00c1ca',
+    janeDarkGrey: '#333333',
+    janeLight: '#DAF6F7'
 };

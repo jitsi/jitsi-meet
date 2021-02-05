@@ -2,7 +2,8 @@
 
 import {
     SET_SIDEBAR_VISIBLE,
-    SET_WELCOME_PAGE_LISTS_DEFAULT_PAGE
+    SET_WELCOME_PAGE_LISTS_DEFAULT_PAGE,
+    SET_SCREEN
 } from './actionTypes';
 
 /**
@@ -35,5 +36,13 @@ export function setWelcomePageListsDefaultPage(pageIndex: number) {
     return {
         type: SET_WELCOME_PAGE_LISTS_DEFAULT_PAGE,
         pageIndex
+    };
+}
+
+// eslint-disable-next-line require-jsdoc
+export function setScreen(screenName: string) {
+    return {
+        type: SET_SCREEN,
+        screenName
     };
 }
