@@ -1,6 +1,5 @@
 // @flow
-
-import { NativeEventEmitter, NativeModules } from 'react-native';
+import { NativeEventEmitter, NativeModules, Platform } from 'react-native';
 
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../../base/app';
 import { SET_AUDIO_ONLY } from '../../base/audio-only';
@@ -10,6 +9,7 @@ import {
     CONFERENCE_JOINED,
     getCurrentConference
 } from '../../base/conference';
+import { getFeatureFlag, ANDROID_AUDIO_FOCUS_DISABLED } from '../../base/flags';
 import { MiddlewareRegistry } from '../../base/redux';
 
 import { _SET_AUDIOMODE_DEVICES, _SET_AUDIOMODE_SUBSCRIPTIONS } from './actionTypes';
@@ -140,7 +140,9 @@ function _updateAudioMode({ getState }, next, action) {
     const { enabled: audioOnly } = state['features/base/audio-only'];
     let mode;
 
-    if (conference) {
+    if (Platform.OS === 'android' && getFeatureFlag(state, ANDROID_AUDIO_FOCUS_DISABLED, false)) {
+        mode = AudioMode.DEFAULT;
+    } else if (conference) {
         mode = audioOnly ? AudioMode.AUDIO_CALL : AudioMode.VIDEO_CALL;
     } else {
         mode = AudioMode.DEFAULT;

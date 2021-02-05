@@ -7,6 +7,13 @@
 export const ADD_PEOPLE_ENABLED = 'add-people.enabled';
 
 /**
+ * Flag indicating if the SDK should not require the audio focus.
+ * Used by apps that do not use Jitsi audio.
+ * Default: disabled (false)
+ */
+export const ANDROID_AUDIO_FOCUS_DISABLED = 'android.audio-focus.disabled';
+
+/**
  * Flag indicating if the audio mute button should be displayed.
  * Default: enabled (true).
  */
