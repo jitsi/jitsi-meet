@@ -72,18 +72,17 @@ window.APP = {
  * Simple emulation of jitsi-meet's screen layout behavior
  */
 function updateMaxFrameHeight() {
-    var newMaxFrameHeight;
+    let newMaxFrameHeight;
+
     if (numParticipants <= 2) {
         newMaxFrameHeight = 720;
-    }
-    else if (numParticipants <= 4) {
+    } else if (numParticipants <= 4) {
         newMaxFrameHeight = 360;
-    }
-    else {
+    } else {
         newMaxFrameHeight = 180;
     }
 
-    if (room && maxFrameHeight != newMaxFrameHeight) {
+    if (room && maxFrameHeight !== newMaxFrameHeight) {
         maxFrameHeight = newMaxFrameHeight;
         room.setReceiverVideoConstraint(maxFrameHeight);
     }
