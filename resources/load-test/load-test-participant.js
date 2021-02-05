@@ -1,8 +1,8 @@
 /* global $, config, JitsiMeetJS */
 import 'jquery';
-import { parseURLParams } from '../../react/features/base/util/parseURLParams';
 import { parseURIString } from '../../react/features/base/util/uri';
 import { setConfigFromURLParams } from '../../react/features/base/config/functions';
+import { parseURLParams } from '../../react/features/base/util/parseURLParams';
 
 setConfigFromURLParams(config, {}, {}, window.location);
 
@@ -81,7 +81,7 @@ function onLocalTracks(tracks = []) {
     localTracks = tracks;
     for (let i = 0; i < localTracks.length; i++) {
         if (localTracks[i].getType() === 'video') {
-            $('body').append('<video ' + (autoPlayVideo ? "autoplay='1' " : "") + `id='localVideo${i}' />`);
+            $('body').append(`<video ${autoPlayVideo ? 'autoplay="1" ' : ''}id='localVideo${i}' />`);
             localTracks[i].attach($(`#localVideo${i}`)[0]);
         } else {
             $('body').append(
