@@ -1,9 +1,24 @@
 // @flow
 
-import { useWindowDimensions } from 'react-native'
-import { type StyleType } from './functions.any';
+import { Dimensions, useWindowDimensions, Platform } from 'react-native';
+import {
+    JANE_WELCOME_PAGE_DESGIN_MOCKUP_HEIGHT,
+    JANE_WELCOME_PAGE_DESGIN_MOCKUP_WIDTH,
+    type StyleType
+} from './functions.any';
+import JaneWelcomePageSizeHelper from './janeWelcomePageSizeHelper';
 
 export * from './functions.any';
+
+const isPad = Platform.isPad;
+
+/**
+ * Initializes a new JaneWelcomePageSizeHelper instance here.
+ */
+export const sizeHelper = new JaneWelcomePageSizeHelper({
+    mockUpWidth: JANE_WELCOME_PAGE_DESGIN_MOCKUP_WIDTH,
+    mockUpHeight: JANE_WELCOME_PAGE_DESGIN_MOCKUP_HEIGHT
+});
 
 /**
  * Fixes the style prop that is passed to a platform generic component based on platform specific
@@ -18,6 +33,16 @@ export function getFixedPlatformStyle(style: StyleType): StyleType {
     return style;
 }
 
+/**
+ * Detect Screen Notch for iphone.
+ *
+ * @returns {boolean}
+ */
+export function deviceHasNotch() {
+    return Dimensions.get('window').height > 811 && !isPad;
+}
+
+// eslint-disable-next-line require-jsdoc
 export function logDimensions() {
-    console.log(useWindowDimensions())
+    console.log(useWindowDimensions());
 }
