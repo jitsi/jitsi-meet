@@ -218,7 +218,7 @@ case "$1" in
             # apache2 config
             if [ ! -f /etc/apache2/sites-available/$JVB_HOSTNAME.conf ] ; then
                 # when creating new config, make sure all needed modules are enabled
-                a2enmod rewrite ssl headers proxy_http include
+                a2enmod rewrite ssl headers proxy_http proxy_wstunnel include
                 cp /usr/share/jitsi-meet-web-config/jitsi-meet.example-apache /etc/apache2/sites-available/$JVB_HOSTNAME.conf
                 a2ensite $JVB_HOSTNAME.conf
                 sed -i "s/jitsi-meet.example.com/$JVB_HOSTNAME/g" /etc/apache2/sites-available/$JVB_HOSTNAME.conf
