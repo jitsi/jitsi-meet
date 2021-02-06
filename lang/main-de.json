@@ -146,7 +146,7 @@
         "downloadApp": "App herunterladen",
         "ifDoNotHaveApp": "Wenn Sie die App noch nicht haben:",
         "ifHaveApp": "Wenn Sie die App bereits haben:",
-        "joinInApp": "An dem Meeting teilnehmen mit der App",
+        "joinInApp": "Mit der App am Meeting teilnehmen",
         "launchWebButton": "Im Web öffnen",
         "title": "Die Konferenz wird in {{app}} geöffnet …",
         "tryAgainButton": "Erneut mit der nativen Applikation versuchen"
@@ -227,7 +227,7 @@
         "lockTitle": "Sperren fehlgeschlagen",
         "logoutQuestion": "Sind Sie sicher, dass Sie sich abmelden und die Konferenz verlassen möchten?",
         "logoutTitle": "Abmelden",
-        "maxUsersLimitReached": "Das Limit für die maximale Personenzahl ist erreicht. Die Konferenz ist voll. Bitte wenden Sie sich an die verwaltende Person des Meetings oder versuchen Sie es später noch einmal!",
+        "maxUsersLimitReached": "Das Limit für die maximale Personenzahl ist erreicht. Die Konferenz ist voll. Bitte wenden Sie sich an die Konferenzleitung oder versuchen Sie es später noch einmal!",
         "maxUsersLimitReachedTitle": "Maximale Personenzahl erreicht",
         "micConstraintFailedError": "Ihr Mikrofon erfüllt die notwendigen Anforderungen nicht.",
         "micNotFoundError": "Mikrofon nicht gefunden.",
@@ -853,7 +853,7 @@
         "flip": "Spiegeln",
         "grantModerator": "Moderationsrechte vergeben",
         "kick": "Hinauswerfen",
-        "moderator": "Moderator:in",
+        "moderator": "Moderation",
         "mute": "Person ist stumm geschaltet",
         "muted": "Stummgeschaltet",
         "remoteControl": "Fernsteuerung",
@@ -897,7 +897,7 @@
     },
     "lonelyMeetingExperience": {
         "button": "Andere einladen",
-        "youAreAlone": "Sie sind alleine in dieser Konferenz"
+        "youAreAlone": "Nur Sie sind in dieser Konferenz"
     },
     "helpView": {
         "header": "Hilfecenter"
