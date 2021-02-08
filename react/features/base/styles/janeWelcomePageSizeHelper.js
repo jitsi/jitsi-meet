@@ -4,15 +4,12 @@ import { deviceHasNotch } from './functions.native';
 const { height, width } = Dimensions.get('window');
 const isPad = Platform.isPad;
 
-// safe area view padding top + padding bottom
-const SAFE_AREA_VIEW_PADDING = isPad ? 0 : deviceHasNotch() ? 78 : 34;
+// safe area view padding top + padding bottom from design mockup
+const DESIGN_MOCKUP_SAFE_AREA_VIEW_PADDING = isPad ? 0 : deviceHasNotch() ? 53 : 20;
 
 /**
  * Size helper for Jane welcome page.
- * Because the dimensions (height & width) from the welcome page design mockup are not standard.
- * e.g. design mockup iphone dimensions : (390 X 844)
- * e.g. design mockup iPad dimensions : (811 X 1080)
- * we need to re-calculate the pixel size to adapt different iphone/ipads devices.
+ * we need to re-calculate the dp size to adapt different iphone/ipads devices.
  */
 export default class JaneWelcomePageSizeHelper {
     /**
@@ -25,11 +22,11 @@ export default class JaneWelcomePageSizeHelper {
         this.mockUpWidth = options.mockUpWidth || 0;
         this.mockUpHeight = options.mockUpHeight || 0;
         this.scaleWidthRatio = width / this.mockUpWidth;
-        this.scaleHeighthRatio = (height - SAFE_AREA_VIEW_PADDING) / this.mockUpHeight;
+        this.scaleHeighthRatio = (height - DESIGN_MOCKUP_SAFE_AREA_VIEW_PADDING) / this.mockUpHeight;
     }
 
     /**
-     * Calculate actual horizontal direction size from the the design mockup mesaurements.
+     * Calculate actual horizontal direction dp from the the design mockup mesaurements.
      *
      * @param {number}  size - Number.
      * @returns {number}
@@ -43,7 +40,7 @@ export default class JaneWelcomePageSizeHelper {
     }
 
     /**
-     * Calculate actual vertical direction size from the the design mockup mesaurements.
+     * Calculate actual vertical direction dp from the the design mockup mesaurements.
      *
      * @param {number}  size - Number.
      * @returns {number}
@@ -58,7 +55,7 @@ export default class JaneWelcomePageSizeHelper {
 
     /**
      * Calculate actual font size from the the design mockup mesaurements.
-     * Return the actual horizontal direction size if the iphone has notch.
+     * Return the actual horizontal direction dp if the iphone has notch.
      *
      * @param {number}  size - Number.
      * @returns {number}
