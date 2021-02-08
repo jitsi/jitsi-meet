@@ -26,7 +26,7 @@ const commonStyles = {
         flex: 1,
         paddingHorizontal: sizeHelper.getActualSizeW(23),
         width: '100%',
-        paddingBottom: isPad ? 0 : deviceHasNotch() ? 0 : 10
+        paddingBottom: isPad || deviceHasNotch() ? 0 : 10
     },
     bigText: {
         ...JaneWeb.boldFont,
@@ -150,7 +150,7 @@ const stepsScreenStyles = {
     stepFour: {
         mainContainer: {
             ...commonStyles.mainContainer,
-            ...commonStyles.fullIphoneScreenContainer,
+            ...commonStyles.fullIphoneScreenContainer
         },
         innerUpperContainer: {
             ...commonStyles.innerUpperContainer,
@@ -201,7 +201,7 @@ const stepsScreenStyles = {
             paddingTop: sizeHelper.getActualSizeH(isPad ? 80 : 34) },
         innerLowerContainer: {
             ...commonStyles.innerLowerContainer,
-            paddingTop: sizeHelper.getActualSizeH(isPad ? undefined : 25),
+            paddingTop: sizeHelper.getActualSizeH(isPad ? undefined : 25)
         },
         regularText: {
             ...commonStyles.regularText,
@@ -256,6 +256,13 @@ const stepsScreenStyles = {
             aspectRatio: 717 / 1257,
             marginBottom: sizeHelper.getActualSizeH(9.5),
             marginTop: sizeHelper.getActualSizeH(isPad ? 44 : 10)
+        }
+    },
+    default: {
+        mainContainer: {
+            ...commonStyles.fullIphoneScreenContainer,
+            justifyContent: 'center',
+            alignItems: 'center'
         }
     }
 };
