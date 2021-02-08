@@ -216,7 +216,7 @@ class RemoteVideoMenuTriggerButton extends Component<Props> {
                 participantID = { participantID } />
         );
 
-        if (onVolumeChange && initialVolumeValue && !isNaN(initialVolumeValue)) {
+        if (onVolumeChange && typeof initialVolumeValue === 'number' && !isNaN(initialVolumeValue)) {
             buttons.push(
                 <VolumeSlider
                     initialValue = { initialVolumeValue }
