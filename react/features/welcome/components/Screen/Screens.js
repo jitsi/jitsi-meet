@@ -1,5 +1,5 @@
 // @flow
-/* eslint-disable react/jsx-no-bind,react/no-multi-comp */
+/* eslint-disable react/no-multi-comp */
 import React from 'react';
 import {
     Image,
@@ -7,7 +7,7 @@ import {
     SafeAreaView,
     View
 } from 'react-native';
-import { WelcomeScreenButton } from '../WelcomeScreenButton';
+import JaneButton from '../../../base/react/components/native/JaneButton';
 import tutorialStyles from './styles';
 import {
     ColorPalette,
@@ -31,7 +31,7 @@ const ENVELOPE_ICON_SIZE = sizeHelper.getActualSizeW(isPad ? 161 : 130);
 
 const VIDEO_PLAYER_DIMESIONS = {
     width: sizeHelper.getActualSizeW(isPad ? 511 : 291),
-    height: sizeHelper.getActualSizeH(isPad ? 288 : 210)
+    height: sizeHelper.getActualSizeW(isPad ? 288 : 164)
 };
 
 const videoUrl = 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4';
@@ -43,6 +43,8 @@ type Props = {
 type TutorialLayoutProps = {
     screenName: string
 }
+
+const onPressRedirectTo = (screenName, dispatch) => () => dispatch(setScreen(screenName));
 
 const StepOne = (props: Props) => (<View
     style = { tutorialStyles.wrapper }>
@@ -59,15 +61,14 @@ const StepOne = (props: Props) => (<View
                 style = { tutorialStyles.stepOne.messageText } >
                 We’ll give you a quick tour of how to join your online appointment.
             </Text>
-            <WelcomeScreenButton
+            <JaneButton
                 borderColor = { JANE_COLOR }
                 content = 'Next'
-                onPress = { () => {
-                    props.dispatch(setScreen('stepTwo'));
-                } }
+                onPress = { onPressRedirectTo('stepTwo', props.dispatch) }
+                primary = { true }
                 textColor = { JANE_COLOR } />
         </View>
-        <View style = { tutorialStyles.stepOne.insideLowerContainer }>
+        <View style = { tutorialStyles.stepOne.innerLowerContainer }>
             <Indicator
                 count = { 5 }
                 currentIndex = { 0 } />
@@ -75,12 +76,11 @@ const StepOne = (props: Props) => (<View
     </View>
     <View
         style = { tutorialStyles.buttonContainer } >
-        <WelcomeScreenButton
+        <JaneButton
             borderColor = { WHITE_COLOR }
             content = 'Join as a staff member...'
-            onPress = { () => {
-                props.dispatch(setScreen('staff'));
-            } }
+            onPress = { onPressRedirectTo('staff', props.dispatch) }
+            primary = { true }
             textColor = { WHITE_COLOR } />
 
     </View>
@@ -110,12 +110,11 @@ const StepTwo = (props: Props) => (<View
                 }} />
         </View>
         <View style = { tutorialStyles.stepTwo.innerLowerContainer }>
-            <WelcomeScreenButton
+            <JaneButton
                 borderColor = { JANE_COLOR }
                 content = 'Next'
-                onPress = { () => {
-                    props.dispatch(setScreen('stepThree'));
-                } }
+                onPress = { onPressRedirectTo('stepThree', props.dispatch) }
+                primary = { true }
                 textColor = { JANE_COLOR } />
             <Indicator
                 count = { 5 }
@@ -125,12 +124,11 @@ const StepTwo = (props: Props) => (<View
     {
         isPad && <View
             style = { tutorialStyles.buttonContainer } >
-            <WelcomeScreenButton
+            <JaneButton
                 borderColor = { WHITE_COLOR }
                 content = 'Join as a staff member...'
-                onPress = { () => {
-                    props.dispatch(setScreen('staff'));
-                } }
+                onPress = { onPressRedirectTo('staff', props.dispatch) }
+                primary = { true }
                 textColor = { WHITE_COLOR } />
 
         </View>
@@ -151,20 +149,18 @@ const StepThree = (props: Props) => (<View
             <Text style = { tutorialStyles.stepThree.header }>
                 Do you have access to your email on this device?
             </Text>
-            <WelcomeScreenButton
+            <JaneButton
                 borderColor = { JANE_COLOR }
                 content = 'Yes'
                 marginBottom = { 17 }
-                onPress = { () => {
-                    props.dispatch(setScreen('stepFour'));
-                } }
+                onPress = { onPressRedirectTo('stepFour', props.dispatch) }
+                primary = { true }
                 textColor = { JANE_COLOR } />
-            <WelcomeScreenButton
+            <JaneButton
                 borderColor = { JANE_COLOR }
                 content = 'No'
-                onPress = { () => {
-                    props.dispatch(setScreen('noEmail'));
-                } }
+                onPress = { onPressRedirectTo('noEmail', props.dispatch) }
+                primary = { true }
                 textColor = { JANE_COLOR } />
         </View>
         <View style = { tutorialStyles.stepThree.innerLowerContainer }>
@@ -177,12 +173,11 @@ const StepThree = (props: Props) => (<View
     {
         isPad && <View
             style = { tutorialStyles.buttonContainer } >
-            <WelcomeScreenButton
+            <JaneButton
                 borderColor = { WHITE_COLOR }
                 content = 'Join as a staff member...'
-                onPress = { () => {
-                    props.dispatch(setScreen('staff'));
-                } }
+                onPress = { onPressRedirectTo('staff', props.dispatch) }
+                primary = { true }
                 textColor = { WHITE_COLOR } />
 
         </View>
@@ -209,13 +204,12 @@ const StepFour = (props: Props) => (<View
             </Text>
         </View>
         <View style = { tutorialStyles.stepFour.innerLowerContainer }>
-            <WelcomeScreenButton
+            <JaneButton
                 borderColor = { JANE_COLOR }
                 content = 'Next'
                 marginBottom = { sizeHelper.getActualSizeH(36) }
-                onPress = { () => {
-                    props.dispatch(setScreen('done'));
-                } }
+                onPress = { onPressRedirectTo('done', props.dispatch) }
+                primary = { true }
                 textColor = { JANE_COLOR } />
             <Indicator
                 count = { 5 }
@@ -225,12 +219,11 @@ const StepFour = (props: Props) => (<View
     {
         isPad && <View
             style = { tutorialStyles.buttonContainer } >
-            <WelcomeScreenButton
+            <JaneButton
                 borderColor = { WHITE_COLOR }
                 content = 'Join as a staff member...'
-                onPress = { () => {
-                    props.dispatch(setScreen('staff'));
-                } }
+                onPress = { onPressRedirectTo('staff', props.dispatch) }
+                primary = { true }
                 textColor = { WHITE_COLOR } />
 
         </View>
@@ -250,22 +243,20 @@ const Done = (props: Props) => (<View
         <Text style = { tutorialStyles.done.header }>
                 Great. You’re all set.
         </Text>
-        <WelcomeScreenButton
+        <JaneButton
             borderColor = { WHITE_COLOR }
             content = 'Remind me how to join my call'
-            onPress = { () => {
-                props.dispatch(setScreen('stepOne'));
-            } }
+            onPress = { onPressRedirectTo('stepOne', props.dispatch) }
+            primary = { true }
             textColor = { WHITE_COLOR } />
     </View>
     <View
         style = { tutorialStyles.buttonContainer } >
-        <WelcomeScreenButton
+        <JaneButton
             borderColor = { WHITE_COLOR }
             content = 'Join as a staff member...'
-            onPress = { () => {
-                props.dispatch(setScreen('staff'));
-            } }
+            onPress = { onPressRedirectTo('staff', props.dispatch) }
+            primary = { true }
             textColor = { WHITE_COLOR } />
 
     </View>
@@ -300,12 +291,11 @@ const NoEmail = (props: Props) => (<View
             </Text>
         </View>
         <View style = { tutorialStyles.noEmail.innerLowerContainer }>
-            <WelcomeScreenButton
+            <JaneButton
                 borderColor = { JANE_COLOR }
                 content = 'OK.Got it!'
-                onPress = { () => {
-                    props.dispatch(setScreen('done'));
-                } }
+                onPress = { onPressRedirectTo('done', props.dispatch) }
+                primary = { true }
                 textColor = { JANE_COLOR } />
             <Indicator
                 count = { 5 }
@@ -315,12 +305,11 @@ const NoEmail = (props: Props) => (<View
     {
         isPad && <View
             style = { tutorialStyles.buttonContainer } >
-            <WelcomeScreenButton
+            <JaneButton
                 borderColor = { WHITE_COLOR }
                 content = 'Join as a staff member...'
-                onPress = { () => {
-                    props.dispatch(setScreen('staff'));
-                } }
+                onPress = { onPressRedirectTo('staff', props.dispatch) }
+                primary = { true }
                 textColor = { WHITE_COLOR } />
 
         </View>
@@ -349,12 +338,11 @@ const Staff = (props: Props) => (<View
                 style = { tutorialStyles.staff.mobileScreen } />
         </View>
         <View style = { tutorialStyles.staff.innerLowerContainer }>
-            <WelcomeScreenButton
+            <JaneButton
                 borderColor = { JANE_COLOR }
                 content = 'OK Got it!'
-                onPress = { () => {
-                    props.dispatch(setScreen('done'));
-                } }
+                onPress = { onPressRedirectTo('done', props.dispatch) }
+                primary = { true }
                 textColor = { JANE_COLOR } />
         </View>
     </View>

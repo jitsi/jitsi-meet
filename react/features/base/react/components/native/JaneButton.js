@@ -1,0 +1,59 @@
+// @flow
+
+import React from 'react';
+import { Text, TouchableOpacity } from 'react-native';
+import { sizeHelper, JaneWeb } from '../../../styles';
+
+type Props = {
+    content: React$Node,
+    primary: boolean,
+    borderColor: string,
+    textColor: string,
+    marginBottom: number,
+    size: number,
+    onPress: Function
+};
+
+const styles = {
+    primary: {
+        buttonStyle: {
+            borderRadius: 6,
+            borderWidth: 1,
+            width: '100%',
+            height: sizeHelper.getActualSizeH(51),
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            maxWidth: sizeHelper.getActualSizeW(337)
+        },
+        textStyle: {
+            ...JaneWeb.boldFont,
+            fontSize: sizeHelper.getActualFontSize(18)
+        }
+    }
+};
+
+const PrimaryButton = (props: Props) => (<TouchableOpacity
+    onPress = { props.onPress }
+    style = {{ ...styles.primary.buttonStyle,
+        borderColor: props.borderColor,
+        marginBottom: sizeHelper.getActualSizeH(props.marginBottom)
+    }}>
+    <Text
+        style = {{ ...styles.primary.textStyle,
+            color: props.textColor,
+            fontSize: props.size || sizeHelper.getActualFontSize(18) }}>
+        {props.content}
+    </Text>
+</TouchableOpacity>);
+
+// eslint-disable-next-line react/no-multi-comp
+const JaneButton = (props: Props) => {
+    if (props.primary) {
+        return <PrimaryButton { ...props } />;
+    }
+
+    return null;
+};
+
+export default JaneButton;

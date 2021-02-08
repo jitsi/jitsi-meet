@@ -1,7 +1,6 @@
 // @flow
 import {
-    ColorPalette,
-    deviceHasNotch,
+    ColorPalette, deviceHasNotch,
     JaneWeb,
     sizeHelper
 } from '../../../base/styles';
@@ -14,25 +13,20 @@ const DARK_TEXT_COLOR = ColorPalette.janeDarkGrey;
 const INNER_CONTAINER_BACKGROUND = ColorPalette.janeLight;
 
 // Numbers below are from desgin mock up.
-const UPPER_SECTION_HEIGHT_ON_IPAD = 866;
-const UPPER_SECTION_HEIGHT_ON_IPHONE = 746;
-const LOWER_SECTION_HEIGHT_ON_IPAD = 184;
-const LOWER_SECTION_HEIGHT_ON_IPHONE = 98;
+const UPPER_SECTION_HEIGHT = isPad ? 866 : 746;
+const LOWER_SECTION_HEIGHT = isPad ? 184 : 98;
+const INNER_UPPER_CONTAINER_HEIGHT = isPad ? 722 : 668;
 
 const commonStyles = {
     blankPageWrapper: {
         ...StyleSheet.absoluteFillObject,
-        alignItems: 'center',
-        justifyContent: 'center',
         backgroundColor: JANE_COLOR
     },
     wrapper: {
         flex: 1,
         paddingHorizontal: sizeHelper.getActualSizeW(23),
-        flexDirection: 'column',
-        justifyContent: 'space-between',
         width: '100%',
-        paddingTop: sizeHelper.getActualSizeH(deviceHasNotch() ? 10 : 15)
+        paddingBottom: isPad ? 0 : deviceHasNotch() ? 0 : 10
     },
     bigText: {
         ...JaneWeb.boldFont,
@@ -60,28 +54,28 @@ const commonStyles = {
         width: sizeHelper.getActualFontSize(204)
     },
     mainContainer: {
-        height: sizeHelper.getActualSizeH(isPad ? UPPER_SECTION_HEIGHT_ON_IPAD : UPPER_SECTION_HEIGHT_ON_IPHONE),
+        height: sizeHelper.getActualSizeH(UPPER_SECTION_HEIGHT),
         backgroundColor: INNER_CONTAINER_BACKGROUND,
         borderRadius: 6,
-        flexDirection: 'column',
-        alignItems: 'space-between',
         paddingHorizontal: sizeHelper.getActualSizeW(25) },
     fullIphoneScreenContainer: {
-        height: isPad ? sizeHelper.getActualSizeH(UPPER_SECTION_HEIGHT_ON_IPAD) : undefined
+        height: isPad ? sizeHelper.getActualSizeH(UPPER_SECTION_HEIGHT) : undefined,
+        flex: isPad ? 0 : 1
     },
     innerUpperContainer: {
         width: '100%',
         alignItems: 'center',
-        height: sizeHelper.getActualSizeH(668) },
+        height: sizeHelper.getActualSizeH(INNER_UPPER_CONTAINER_HEIGHT) },
     innerLowerContainer: {
+        flex: 1,
         justifyContent: 'space-between',
         alignItems: 'center',
         width: '100%',
-        height: sizeHelper.getActualSizeH(123) },
+        paddingBottom: sizeHelper.getActualSizeH(isPad ? 41 : 25)
+    },
     buttonContainer: {
-        height: sizeHelper.getActualSizeH(isPad ? LOWER_SECTION_HEIGHT_ON_IPAD : LOWER_SECTION_HEIGHT_ON_IPHONE),
+        height: sizeHelper.getActualSizeH(LOWER_SECTION_HEIGHT),
         borderRadius: 6,
-        flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center' }
 };
@@ -93,12 +87,11 @@ const stepsScreenStyles = {
             paddingTop: sizeHelper.getActualSizeH(isPad ? 244 : 64) },
         innerUpperContainer: {
             width: '100%',
-            alignItems: 'center' },
-        insideLowerContainer: {
-            flex: 1,
-            justifyContent: 'flex-end',
-            width: '100%',
-            marginBottom: sizeHelper.getActualSizeH(isPad ? 41 : 25)
+            alignItems: 'center'
+        },
+        innerLowerContainer: {
+            ...commonStyles.innerLowerContainer,
+            justifyContent: 'flex-end'
         },
         messageText: {
             ...commonStyles.regularText,
@@ -123,9 +116,7 @@ const stepsScreenStyles = {
             ...commonStyles.innerUpperContainer,
             paddingTop: sizeHelper.getActualSizeH(64) },
         innerLowerContainer: {
-            ...commonStyles.innerLowerContainer,
-            flex: isPad ? 1 : 0,
-            marginBottom: sizeHelper.getActualSizeH(isPad ? 41 : 25)
+            ...commonStyles.innerLowerContainer
         },
         header: {
             ...commonStyles.bigText,
@@ -153,29 +144,24 @@ const stepsScreenStyles = {
             paddingTop: sizeHelper.getActualSizeH(isPad ? 138 : 64) },
         innerLowerContainer: {
             ...commonStyles.innerLowerContainer,
-            flex: isPad ? 1 : 0,
-            justifyContent: 'flex-end',
-            marginBottom: sizeHelper.getActualSizeH(isPad ? 41 : 25)
+            justifyContent: 'flex-end'
         }
     },
     stepFour: {
         mainContainer: {
             ...commonStyles.mainContainer,
             ...commonStyles.fullIphoneScreenContainer,
-            justifyContent: 'space-between'
         },
         innerUpperContainer: {
             ...commonStyles.innerUpperContainer,
             paddingTop: sizeHelper.getActualSizeH(isPad ? 80 : 34) },
         innerLowerContainer: {
             ...commonStyles.innerLowerContainer,
-            justifyContent: 'flex-end',
-            marginBottom: sizeHelper.getActualSizeH(isPad ? 41 : 25)
+            justifyContent: 'flex-end'
         },
         message: {
             ...commonStyles.regularText,
             textAlign: 'left',
-            marginVertical: sizeHelper.getActualSizeH(28),
             maxWidth: sizeHelper.getActualSizeW(320),
             fontSize: sizeHelper.getActualFontSize(17)
         },
@@ -186,8 +172,8 @@ const stepsScreenStyles = {
         mobileScreen: {
             height: sizeHelper.getActualSizeH(379),
             aspectRatio: 468 / 758,
-            marginBottom: sizeHelper.getActualSizeH(9.5),
-            marginTop: sizeHelper.getActualSizeH(10)
+            marginBottom: sizeHelper.getActualSizeH(isPad ? 0 : 9.5),
+            marginTop: sizeHelper.getActualSizeH(isPad ? 0 : 7)
         }
     },
     done: {
@@ -208,8 +194,7 @@ const stepsScreenStyles = {
     noEmail: {
         mainContainer: {
             ...commonStyles.mainContainer,
-            ...commonStyles.fullIphoneScreenContainer,
-            justifyContent: 'space-between'
+            ...commonStyles.fullIphoneScreenContainer
         },
         innerUpperContainer: {
             ...commonStyles.innerUpperContainer,
@@ -217,14 +202,12 @@ const stepsScreenStyles = {
         innerLowerContainer: {
             ...commonStyles.innerLowerContainer,
             paddingTop: sizeHelper.getActualSizeH(isPad ? undefined : 25),
-            height: sizeHelper.getActualSizeH(isPad ? 100 : 123),
-            marginBottom: sizeHelper.getActualSizeH(isPad ? 41 : 25)
         },
         regularText: {
             ...commonStyles.regularText,
-            marginBottom: sizeHelper.getActualSizeH(28),
-            fontSize: sizeHelper.getActualFontSize(isPad ? 18 : 17),
-            maxWidth: sizeHelper.getActualSizeW(600)
+            marginVertical: undefined,
+            fontSize: sizeHelper.getActualFontSize(isPad ? 18 : 16),
+            maxWidth: sizeHelper.getActualSizeW(isPad ? 600 : 280)
         },
         boldText: {
             fontWeight: 'bold'
@@ -236,25 +219,25 @@ const stepsScreenStyles = {
         mobileScreen: {
             height: sizeHelper.getActualSizeH(180),
             aspectRatio: 810 / 540,
-            marginBottom: sizeHelper.getActualSizeH(isPad ? 23 : 9.5),
+            marginBottom: sizeHelper.getActualSizeH(isPad ? 23 : 25),
             marginTop: sizeHelper.getActualSizeH(isPad ? 50 : 10)
         }
     },
     staff: {
         mainContainer: {
             ...commonStyles.mainContainer,
+            ...commonStyles.fullIphoneScreenContainer,
             height: isPad ? sizeHelper.getActualSizeH(1015) : undefined,
             paddingHorizontal: sizeHelper.getActualSizeW(26)
         },
         innerUpperContainer: {
             ...commonStyles.innerUpperContainer,
-            height: sizeHelper.getActualSizeH(isPad ? 835 : 668),
+            height: sizeHelper.getActualSizeH(isPad ? 835 : INNER_UPPER_CONTAINER_HEIGHT),
             paddingTop: sizeHelper.getActualSizeH(isPad ? 150 : 34) },
         innerLowerContainer: {
             ...commonStyles.innerLowerContainer,
             justifyContent: isPad ? 'center' : 'flex-end',
-            height: sizeHelper.getActualSizeH(isPad ? 180 : 148),
-            paddingBottom: sizeHelper.getActualSizeH(25)
+            paddingBottom: sizeHelper.getActualSizeH(isPad ? undefined : 25)
         },
         lightText: {
             ...JaneWeb.regularFont,
