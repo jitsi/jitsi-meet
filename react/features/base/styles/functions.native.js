@@ -4,7 +4,7 @@ import { Dimensions, useWindowDimensions, Platform } from 'react-native';
 import {
     JANE_WELCOME_PAGE_DESGIN_MOCKUP_HEIGHT,
     JANE_WELCOME_PAGE_DESGIN_MOCKUP_WIDTH,
-    type StyleType
+    JANE_WELCOME_PAGE_DESGIN_MOCKUP_SAFE_AREA_PADDING
 } from './functions.any';
 import JaneWelcomePageSizeHelper from './janeWelcomePageSizeHelper';
 
@@ -17,7 +17,8 @@ const isPad = Platform.isPad;
  */
 export const sizeHelper = new JaneWelcomePageSizeHelper({
     mockUpWidth: JANE_WELCOME_PAGE_DESGIN_MOCKUP_WIDTH,
-    mockUpHeight: JANE_WELCOME_PAGE_DESGIN_MOCKUP_HEIGHT
+    mockUpHeight: JANE_WELCOME_PAGE_DESGIN_MOCKUP_HEIGHT,
+    mockUpSafeAreaPadding: JANE_WELCOME_PAGE_DESGIN_MOCKUP_SAFE_AREA_PADDING
 });
 
 /**

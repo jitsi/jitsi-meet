@@ -2,6 +2,7 @@
 import Platform from '../react/Platform';
 
 import { ColorPalette } from './components';
+import { deviceHasNotch } from './functions.native';
 
 declare type StyleSheet = Object;
 export type StyleType = StyleSheet | Array<StyleSheet>;
@@ -42,6 +43,8 @@ const isPad = Platform.isPad;
 export const JANE_WELCOME_PAGE_DESGIN_MOCKUP_HEIGHT = isPad ? 1080 : 844;
 export const JANE_WELCOME_PAGE_DESGIN_MOCKUP_WIDTH = isPad ? 811 : 390;
 
+// safe area view padding top + padding bottom from design mockup
+export const JANE_WELCOME_PAGE_DESGIN_MOCKUP_SAFE_AREA_PADDING = isPad ? 0 : deviceHasNotch() ? 53 : 20;
 
 /**
  * Function to convert complex StyleType styles into a single flat object,

@@ -1,11 +1,7 @@
 // eslint-disable-next-line require-jsdoc
-import { Dimensions, PixelRatio, Platform } from 'react-native';
+import { Dimensions, PixelRatio } from 'react-native';
 import { deviceHasNotch } from './functions.native';
 const { height, width } = Dimensions.get('window');
-const isPad = Platform.isPad;
-
-// safe area view padding top + padding bottom from design mockup
-const DESIGN_MOCKUP_SAFE_AREA_VIEW_PADDING = isPad ? 0 : deviceHasNotch() ? 53 : 20;
 
 /**
  * Size helper for Jane welcome page.
@@ -21,8 +17,9 @@ export default class JaneWelcomePageSizeHelper {
     constructor(options) {
         this.mockUpWidth = options.mockUpWidth || 0;
         this.mockUpHeight = options.mockUpHeight || 0;
+        this.mockUpSafeAreaPadding = options.mockUpSafeAreaPadding || 0;
         this.scaleWidthRatio = width / this.mockUpWidth;
-        this.scaleHeighthRatio = (height - DESIGN_MOCKUP_SAFE_AREA_VIEW_PADDING) / this.mockUpHeight;
+        this.scaleHeighthRatio = (height - this.mockUpSafeAreaPadding) / this.mockUpHeight;
     }
 
     /**
