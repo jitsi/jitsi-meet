@@ -24,6 +24,11 @@ These instructions are publically visible on Github, do not include any sensativ
 
 
 
+# Update Jitsi Server Components
+Follow these instructions: https://community.jitsi.org/t/how-to-how-to-upgrade-jitsi-meet-monitor-the-logs/73746
+
+
+
 # Jitsi Meet - Secure, Simple and Scalable Video Conferences
 
 Jitsi Meet is an open-source (Apache) WebRTC JavaScript application that uses [Jitsi Videobridge](https://jitsi.org/videobridge) to provide high quality, [secure](https://jitsi.org/security) and scalable video conferences. Jitsi Meet in action can be seen at [here at the session #482 of the VoIP Users Conference](http://youtu.be/7vFUVClsNh0).
