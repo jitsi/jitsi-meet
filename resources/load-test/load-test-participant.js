@@ -29,6 +29,8 @@ let numParticipants = 1;
 let localTracks = [];
 const remoteTracks = {};
 
+let maxFrameHeight = 0;
+
 window.APP = {
     conference: {
         getStats() {
@@ -67,10 +69,31 @@ window.APP = {
 };
 
 /**
+ * Simple emulation of jitsi-meet's screen layout behavior
+ */
+function updateMaxFrameHeight() {
+    let newMaxFrameHeight;
+
+    if (numParticipants <= 2) {
+        newMaxFrameHeight = 720;
+    } else if (numParticipants <= 4) {
+        newMaxFrameHeight = 360;
+    } else {
+        newMaxFrameHeight = 180;
+    }
+
+    if (room && maxFrameHeight !== newMaxFrameHeight) {
+        maxFrameHeight = newMaxFrameHeight;
+        room.setReceiverVideoConstraint(maxFrameHeight);
+    }
+}
+
+/**
  *
  */
 function setNumberOfParticipants() {
     $('#participants').text(numParticipants);
+    updateMaxFrameHeight();
 }
 
 /**
@@ -165,6 +188,7 @@ function onConnectionSuccess() {
     });
     room.on(JitsiMeetJS.events.conference.USER_LEFT, onUserLeft);
     room.join();
+    updateMaxFrameHeight();
 }
 
 /**
