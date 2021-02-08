@@ -504,6 +504,9 @@ export default {
 
         let tryCreateLocalTracks;
 
+        // On Electron there is no permission prompt for granting permissions. That's why we don't need to
+        // spend much time displaying the overlay screen. If GUM is not resolved withing 15 seconds it will
+        // probably never resolve.
         const timeout = browser.isElectron() ? 15000 : 60000;
 
         // FIXME is there any simpler way to rewrite this spaghetti below ?
