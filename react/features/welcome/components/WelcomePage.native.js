@@ -9,6 +9,9 @@ import {
     _mapStateToProps as _abstractMapStateToProps
 } from './AbstractWelcomePage';
 import WelcomePageScreen from './Screen';
+import jitsiLocalStorage from '../../../../modules/util/JitsiLocalStorage';
+
+const LAUNCHED_BEFORE_STORAGE_KEY = 'LAUNCHED_BEFORE';
 
 const WelcomePageLayout = () => <WelcomePageScreen />;
 
@@ -20,21 +23,18 @@ const WelcomePageLayout = () => <WelcomePageScreen />;
 class WelcomePage extends AbstractWelcomePage {
 
     /**
-     * Implements React's {@link Component#componentDidMount()}. Invoked
-     * immediately after mounting occurs. Creates a local video track if none
-     * is available and the camera permission was already granted.
+     * Check if the user is opening the app for the first time.
      *
-     * @inheritdoc
      * @returns {void}
      */
-    async checkIsFirstTimeLoading() {
+    checkIsFirstTimeLoading() {
         try {
-            const launchedBefore = await AsyncStorage.getItem('LAUNCHED_BEFORE');
+            const launchedBefore = jitsiLocalStorage.getItem(LAUNCHED_BEFORE_STORAGE_KEY);
 
             if (launchedBefore === 'true') {
                 this.props.dispatch(setScreen('done'));
             } else {
-                await AsyncStorage.setItem('LAUNCHED_BEFORE', 'true');
+                jitsiLocalStorage.setItem(LAUNCHED_BEFORE_STORAGE_KEY, 'true');
                 this.props.dispatch(setScreen('stepOne'));
             }
         } catch (e) {
