@@ -754,7 +754,7 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
     }
 
     /**
-     * Returns the youtube livestream url.
+     * Returns the current livestream url.
      *
      * @returns {Promise} - Resolves with "youtube livestream url" if exists, with
      * undefined if not and rejects on failure.
