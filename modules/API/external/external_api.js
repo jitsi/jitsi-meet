@@ -754,6 +754,18 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
     }
 
     /**
+     * Returns the current livestream url.
+     *
+     * @returns {Promise} - Resolves with the current livestream URL if exists, with
+     * undefined if not and rejects on failure.
+     */
+    getLivestreamUrl() {
+        return this._transport.sendRequest({
+            name: 'get-livestream-url'
+        });
+    }
+
+    /**
      * Returns the conference participants information.
      *
      * @returns {Array<Object>} - Returns an array containing participants

@@ -441,6 +441,23 @@ function initCommands() {
             });
             break;
         }
+        case 'get-livestream-url': {
+            const state = APP.store.getState();
+            const conference = getCurrentConference(state);
+            let livestreamUrl;
+
+            if (conference) {
+                const activeSession = getActiveSession(state, JitsiRecordingConstants.mode.STREAM);
+
+                livestreamUrl = activeSession?.liveStreamViewURL;
+            } else {
+                logger.error('Conference is not defined');
+            }
+            callback({
+                livestreamUrl
+            });
+            break;
+        }
         default:
             return false;
         }
