@@ -13,7 +13,9 @@ import AbstractChat, {
 import ChatDialog from './ChatDialog';
 import Header from './ChatDialogHeader';
 import ChatInput from './ChatInput';
+import ChatTouchmoveHack from './ChatTouchmoveHack';
 import DisplayNameForm from './DisplayNameForm';
+import KeyboardAvoider from './KeyboardAvoider';
 import MessageContainer from './MessageContainer';
 import MessageRecipient from './MessageRecipient';
 
@@ -112,9 +114,11 @@ class Chat extends AbstractChat<Props> {
     _renderChat() {
         return (
             <>
-                <MessageContainer
-                    messages = { this.props._messages }
-                    ref = { this._messageContainerRef } />
+                <ChatTouchmoveHack isModal = { this.props._isModal }>
+                    <MessageContainer
+                        messages = { this.props._messages }
+                        ref = { this._messageContainerRef } />
+                </ChatTouchmoveHack>
                 <MessageRecipient />
                 <ChatInput
                     onResize = { this._onChatInputResize }
@@ -154,7 +158,14 @@ class Chat extends AbstractChat<Props> {
             if (_isModal) {
                 ComponentToRender = (
                     <ChatDialog>
-                        { _showNamePrompt ? <DisplayNameForm /> : this._renderChat() }
+                        {
+                            _showNamePrompt ? <DisplayNameForm /> : (
+                                <>
+                                    { this._renderChat() }
+                                    <KeyboardAvoider />
+                                </>
+                            )
+                        }
                     </ChatDialog>
                 );
             } else {
