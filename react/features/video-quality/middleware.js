@@ -141,7 +141,7 @@ function _setReceiverVideoConstraint(conference, preferred, max) {
  * @param {number} preferred - The user preferred max frame height.
  * @returns {void}
  */
-function _setSenderVideoConstraint(conference, preferred) {
+export function _setSenderVideoConstraint(conference: Object, preferred: number) {
     if (conference) {
         conference.setSenderVideoConstraint(preferred)
             .catch(err => {

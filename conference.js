@@ -129,6 +129,7 @@ import { setSharedVideoStatus } from './react/features/shared-video';
 import { AudioMixerEffect } from './react/features/stream-effects/audio-mixer/AudioMixerEffect';
 import { createPresenterEffect } from './react/features/stream-effects/presenter';
 import { endpointMessageReceived } from './react/features/subtitles';
+import { _setSenderVideoConstraint } from './react/features/video-quality/middleware';
 import UIEvents from './service/UI/UIEvents';
 import * as RemoteControlEvents
     from './service/remotecontrol/RemoteControlEvents';
@@ -1296,6 +1297,12 @@ export default {
             = connection.initJitsiConference(
                 APP.conference.roomName,
                 this._getConferenceOptions());
+
+        // Temporary fix: If layer suspension is disabled and sender constraint is not configured for the conference,
+        // Jitsi may stop encoding the sender's video track.
+        // So we can set a sender video constraint here to fix the issue.
+        // https://github.com/jitsi/lib-jitsi-meet/issues/1333
+        _setSenderVideoConstraint(room, 720);
 
         APP.store.dispatch(conferenceWillJoin(room));
         this._setLocalAudioVideoStreams(localTracks);
