@@ -18,8 +18,8 @@ const styles = {
         width: '100%'
     },
     indicator: {
-        width: sizeHelper.getActualFontSize(11),
-        height: sizeHelper.getActualFontSize(11),
+        width: sizeHelper.getActualSizeH(11),
+        height: sizeHelper.getActualSizeH(11),
         backgroundColor: ColorPalette.jane,
         marginRight: sizeHelper.getActualSizeW(7),
         borderRadius: 40

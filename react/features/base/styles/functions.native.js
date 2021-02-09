@@ -1,25 +1,41 @@
 // @flow
 
-import { Dimensions, useWindowDimensions, Platform } from 'react-native';
+import { useWindowDimensions, StatusBar, Platform } from 'react-native';
+import DeviceInfo from 'react-native-device-info';
+
 import {
-    JANE_WELCOME_PAGE_DESGIN_MOCKUP_HEIGHT,
-    JANE_WELCOME_PAGE_DESGIN_MOCKUP_WIDTH,
-    JANE_WELCOME_PAGE_DESGIN_MOCKUP_SAFE_AREA_PADDING
+    JANE_WELCOME_PAGE_DESIGN_HEIGHT,
+    JANE_WELCOME_PAGE_DESIGN_WIDTH,
+    JANE_WELCOME_PAGE_DESIGN_SAFE_AREA_VIEW_PADDING
 } from './functions.any';
 import JaneWelcomePageSizeHelper from './janeWelcomePageSizeHelper';
 
 export * from './functions.any';
 
-const isPad = Platform.isPad;
-
 /**
  * Initializes a new JaneWelcomePageSizeHelper instance here.
  */
 export const sizeHelper = new JaneWelcomePageSizeHelper({
-    mockUpWidth: JANE_WELCOME_PAGE_DESGIN_MOCKUP_WIDTH,
-    mockUpHeight: JANE_WELCOME_PAGE_DESGIN_MOCKUP_HEIGHT,
-    mockUpSafeAreaPadding: JANE_WELCOME_PAGE_DESGIN_MOCKUP_SAFE_AREA_PADDING
+    designWidth: JANE_WELCOME_PAGE_DESIGN_WIDTH,
+    designHeight: JANE_WELCOME_PAGE_DESIGN_HEIGHT,
+    designSafeAreaPadding: JANE_WELCOME_PAGE_DESIGN_SAFE_AREA_VIEW_PADDING
 });
+
+/**
+ * Get the Status Bar height on iOS and Android. For iOS,
+ * the calculation is done to get the different StatusBar
+ * height when >= iPhone X (with notch) is used.
+ *
+ * @returns {number}
+ */
+export function getStatusBarHeight() {
+    return Platform.select({
+        ios: isIPhoneX() ? 44 : 20,
+        android: StatusBar.currentHeight,
+        default: 0
+    });
+
+}
 
 /**
  * Fixes the style prop that is passed to a platform generic component based on platform specific
@@ -39,8 +55,8 @@ export function getFixedPlatformStyle(style: StyleType): StyleType {
  *
  * @returns {boolean}
  */
-export function deviceHasNotch() {
-    return Dimensions.get('window').height > 811 && !isPad;
+export function isIPhoneX() {
+    return DeviceInfo.hasNotch();
 }
 
 // eslint-disable-next-line require-jsdoc

@@ -258,9 +258,9 @@ PODS:
     - React-cxxreact (= 0.61.5-jitsi.1)
     - React-jsi (= 0.61.5-jitsi.1)
   - React-jsinspector (0.61.5-jitsi.1)
-  - react-native-background-timer (2.1.1):
+  - react-native-background-timer (2.4.0):
     - React
-  - react-native-calendar-events (1.7.3):
+  - react-native-calendar-events (2.0.0):
     - React
   - react-native-keep-awake (4.0.0):
     - React
@@ -271,7 +271,7 @@ PODS:
     - react-native-video/Video (= 5.1.1)
   - react-native-video/Video (5.1.1):
     - React-Core
-  - react-native-webrtc (1.75.3):
+  - react-native-webrtc (1.84.0):
     - React
   - react-native-webview (7.4.1):
     - React
@@ -331,6 +331,10 @@ PODS:
     - ReactCommon/turbomodule/core (= 0.61.5-jitsi.1)
   - RNCAsyncStorage (1.3.4):
     - React
+  - RNDefaultPreference (1.4.2):
+    - React
+  - RNDeviceInfo (8.0.0):
+    - React-Core
   - RNGoogleSignin (3.0.1):
     - GoogleSignIn (~> 5.0.0)
     - React
@@ -341,7 +345,7 @@ PODS:
     - React
   - RNSVG (9.7.1):
     - React
-  - RNWatch (0.2.0):
+  - RNWatch (0.4.3):
     - React
   - Yoga (1.14.0)
 
@@ -387,6 +391,8 @@ DEPENDENCIES:
   - React-RCTVibration (from `../node_modules/react-native/Libraries/Vibration`)
   - ReactCommon/turbomodule (from `../node_modules/react-native/ReactCommon`)
   - "RNCAsyncStorage (from `../node_modules/@react-native-community/async-storage`)"
+  - RNDefaultPreference (from `../node_modules/react-native-default-preference`)
+  - RNDeviceInfo (from `../node_modules/react-native-device-info`)
   - "RNGoogleSignin (from `../node_modules/@react-native-community/google-signin`)"
   - RNSound (from `../node_modules/react-native-sound`)
   - RNSVG (from `../node_modules/react-native-svg`)
@@ -480,6 +486,10 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon"
   RNCAsyncStorage:
     :path: "../node_modules/@react-native-community/async-storage"
+  RNDefaultPreference:
+    :path: "../node_modules/react-native-default-preference"
+  RNDeviceInfo:
+    :path: "../node_modules/react-native-device-info"
   RNGoogleSignin:
     :path: "../node_modules/@react-native-community/google-signin"
   RNSound:
@@ -524,12 +534,12 @@ SPEC CHECKSUMS:
   React-jsi: 4f35c1a2273d193a80c1c3831c808413840c260c
   React-jsiexecutor: de1c37cf59ae9adcbf2be82eea0e090dc3f3205e
   React-jsinspector: b76c4e84a7833bb4c90549d59ed53ec299ff912b
-  react-native-background-timer: 0d34748e53a972507c66963490c775321a88f6f2
-  react-native-calendar-events: 2fe35a9294af05de0ed819d3a1b5dac048d2c010
+  react-native-background-timer: e0384ea2fa5a98f67f84f9c4dc274260ddd674ed
+  react-native-calendar-events: 1442fad71a00388f933cfa25512588fec300fcf8
   react-native-keep-awake: eba3137546b10003361b37c761f6c429b59814ae
   react-native-netinfo: 8d8db463bcc5db66a8ac5c48a7d86beb3b92f61a
   react-native-video: 1574074179ecaf6a9dd067116c8f31bf9fec15c8
-  react-native-webrtc: 86d841823e66d68cc1f86712db1c2956056bf0c2
+  react-native-webrtc: 9268ae9a2bc9730796b0968d012327e92c392adf
   react-native-webview: 4dbc1d2a4a6b9c5e9e723c62651917aa2b5e579e
   React-RCTActionSheet: b72ddbfbe15b44ce691d128e4b582f4bb9abb540
   React-RCTAnimation: cfaefba5024499d336b76ab850e6bd33b232b5e3
@@ -542,12 +552,14 @@ SPEC CHECKSUMS:
   React-RCTVibration: a1bcfcdc0b5a73a1b0829a34cee22bd0e95bacba
   ReactCommon: 675681aba4fecff5acbc0e440530cc422103c610
   RNCAsyncStorage: 8e31405a9f12fbf42c2bb330e4560bfd79c18323
+  RNDefaultPreference: 56a405ce61033ac77b95004dccd7ac54c2eb50d1
+  RNDeviceInfo: 72ded653ce636b3f03571e90bed99309a714944e
   RNGoogleSignin: 39336070b35fc4cea6a98cf111e00480317be0ae
   RNSound: c980916b596cc15c8dcd2f6ecd3b13c4881dbe20
   RNSVG: aac12785382e8fd4f28d072fe640612e34914631
-  RNWatch: 09738b339eceb66e4d80a2371633ca5fb380fa42
+  RNWatch: a5320c959c75e72845c07985f3e935e58998f1d3
   Yoga: 7b4209fda2441f99d54dd6cf4c82b094409bb68f
 
-PODFILE CHECKSUM: d75f9f51d6add41c57bfd9922c416dcfb1a39b62
+PODFILE CHECKSUM: c71358eaf55d7d2def055b2ebe57c7e9b8c0444f
 
-COCOAPODS: 1.10.0
+COCOAPODS: 1.10.1
