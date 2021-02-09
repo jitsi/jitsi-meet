@@ -449,11 +449,7 @@ function initCommands() {
             if (conference) {
                 const activeSession = getActiveSession(state, JitsiRecordingConstants.mode.STREAM);
 
-                if (activeSession?.liveStreamViewURL) {
-                    livestreamUrl = activeSession.liveStreamViewURL;
-                } else {
-                    logger.error('No streaming session found');
-                }
+                livestreamUrl = activeSession?.liveStreamViewURL;
             } else {
                 logger.error('Conference is not defined');
             }
