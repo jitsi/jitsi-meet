@@ -670,6 +670,7 @@ var config = {
      dialInNumbersUrl
      dialOutAuthUrl
      dialOutCodesUrl
+     disableJoinLeaveSounds
      disableRemoteControl
      displayJids
      etherpad_base
