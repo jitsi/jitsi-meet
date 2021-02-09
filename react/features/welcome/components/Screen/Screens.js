@@ -68,7 +68,6 @@ const StepOne = (props: Props) => {
                     borderColor = { JANE_COLOR }
                     content = 'Next'
                     onPress = { redirectTo('stepTwo') }
-                    primary = { true }
                     textColor = { JANE_COLOR } />
             </View>
             <View style = { tutorialStyles.stepOne.innerLowerContainer }>
@@ -83,7 +82,6 @@ const StepOne = (props: Props) => {
                 borderColor = { WHITE_COLOR }
                 content = 'Join as a staff member...'
                 onPress = { redirectTo('staff') }
-                primary = { true }
                 textColor = { WHITE_COLOR } />
 
         </View>
@@ -109,6 +107,7 @@ const StepTwo = (props: Props) => {
                 </Text>
                 <Video
                     controls = { true }
+                    ignoreSilentSwitch = 'ignore'
                     paused = { true }
                     source = {{ uri: videoUrl }}
                     style = {{
@@ -121,7 +120,6 @@ const StepTwo = (props: Props) => {
                     borderColor = { JANE_COLOR }
                     content = 'Next'
                     onPress = { redirectTo('stepThree') }
-                    primary = { true }
                     textColor = { JANE_COLOR } />
                 <Indicator
                     count = { 5 }
@@ -135,7 +133,6 @@ const StepTwo = (props: Props) => {
                     borderColor = { WHITE_COLOR }
                     content = 'Join as a staff member...'
                     onPress = { redirectTo('staff') }
-                    primary = { true }
                     textColor = { WHITE_COLOR } />
 
             </View>
@@ -165,13 +162,11 @@ const StepThree = (props: Props) => {
                     content = 'Yes'
                     marginBottom = { 17 }
                     onPress = { redirectTo('stepFour') }
-                    primary = { true }
                     textColor = { JANE_COLOR } />
                 <JaneButton
                     borderColor = { JANE_COLOR }
                     content = 'No'
                     onPress = { redirectTo('noEmail') }
-                    primary = { true }
                     textColor = { JANE_COLOR } />
             </View>
             <View style = { tutorialStyles.stepThree.innerLowerContainer }>
@@ -188,7 +183,6 @@ const StepThree = (props: Props) => {
                     borderColor = { WHITE_COLOR }
                     content = 'Join as a staff member...'
                     onPress = { redirectTo('staff') }
-                    primary = { true }
                     textColor = { WHITE_COLOR } />
 
             </View>
@@ -224,7 +218,6 @@ const StepFour = (props: Props) => {
                     content = 'Next'
                     marginBottom = { sizeHelper.getActualSizeH(36) }
                     onPress = { redirectTo('done') }
-                    primary = { true }
                     textColor = { JANE_COLOR } />
                 <Indicator
                     count = { 5 }
@@ -238,7 +231,6 @@ const StepFour = (props: Props) => {
                     borderColor = { WHITE_COLOR }
                     content = 'Join as a staff member...'
                     onPress = { redirectTo('staff') }
-                    primary = { true }
                     textColor = { WHITE_COLOR } />
 
             </View>
@@ -266,7 +258,6 @@ const Done = (props: Props) => {
                 borderColor = { WHITE_COLOR }
                 content = 'Remind me how to join my call'
                 onPress = { redirectTo('stepOne') }
-                primary = { true }
                 textColor = { WHITE_COLOR } />
         </View>
         <View
@@ -275,7 +266,6 @@ const Done = (props: Props) => {
                 borderColor = { WHITE_COLOR }
                 content = 'Join as a staff member...'
                 onPress = { redirectTo('staff') }
-                primary = { true }
                 textColor = { WHITE_COLOR } />
 
         </View>
@@ -318,7 +308,6 @@ const NoEmail = (props: Props) => {
                     borderColor = { JANE_COLOR }
                     content = 'OK.Got it!'
                     onPress = { redirectTo('done') }
-                    primary = { true }
                     textColor = { JANE_COLOR } />
                 <Indicator
                     count = { 5 }
@@ -332,7 +321,6 @@ const NoEmail = (props: Props) => {
                     borderColor = { WHITE_COLOR }
                     content = 'Join as a staff member...'
                     onPress = { redirectTo('staff') }
-                    primary = { true }
                     textColor = { WHITE_COLOR } />
 
             </View>
@@ -369,7 +357,6 @@ const Staff = (props: Props) => {
                     borderColor = { JANE_COLOR }
                     content = 'OK Got it!'
                     onPress = { redirectTo('done') }
-                    primary = { true }
                     textColor = { JANE_COLOR } />
             </View>
         </View>

@@ -331,6 +331,8 @@ PODS:
     - ReactCommon/turbomodule/core (= 0.61.5-jitsi.1)
   - RNCAsyncStorage (1.3.4):
     - React
+  - RNDeviceInfo (8.0.1):
+    - React-Core
   - RNGoogleSignin (3.0.1):
     - GoogleSignIn (~> 5.0.0)
     - React
@@ -387,6 +389,7 @@ DEPENDENCIES:
   - React-RCTVibration (from `../node_modules/react-native/Libraries/Vibration`)
   - ReactCommon/turbomodule (from `../node_modules/react-native/ReactCommon`)
   - "RNCAsyncStorage (from `../node_modules/@react-native-community/async-storage`)"
+  - RNDeviceInfo (from `../node_modules/react-native-device-info`)
   - "RNGoogleSignin (from `../node_modules/@react-native-community/google-signin`)"
   - RNSound (from `../node_modules/react-native-sound`)
   - RNSVG (from `../node_modules/react-native-svg`)
@@ -480,6 +483,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon"
   RNCAsyncStorage:
     :path: "../node_modules/@react-native-community/async-storage"
+  RNDeviceInfo:
+    :path: "../node_modules/react-native-device-info"
   RNGoogleSignin:
     :path: "../node_modules/@react-native-community/google-signin"
   RNSound:
@@ -542,12 +547,13 @@ SPEC CHECKSUMS:
   React-RCTVibration: a1bcfcdc0b5a73a1b0829a34cee22bd0e95bacba
   ReactCommon: 675681aba4fecff5acbc0e440530cc422103c610
   RNCAsyncStorage: 8e31405a9f12fbf42c2bb330e4560bfd79c18323
+  RNDeviceInfo: 54401b60514387f9120ab8265be5ed9103d842b9
   RNGoogleSignin: 39336070b35fc4cea6a98cf111e00480317be0ae
   RNSound: c980916b596cc15c8dcd2f6ecd3b13c4881dbe20
   RNSVG: aac12785382e8fd4f28d072fe640612e34914631
   RNWatch: 09738b339eceb66e4d80a2371633ca5fb380fa42
   Yoga: 7b4209fda2441f99d54dd6cf4c82b094409bb68f
 
-PODFILE CHECKSUM: d75f9f51d6add41c57bfd9922c416dcfb1a39b62
+PODFILE CHECKSUM: baecb950110f33e013d3612df0b76a4b2eaca1b7
 
 COCOAPODS: 1.10.0
