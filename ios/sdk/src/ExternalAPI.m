@@ -30,7 +30,7 @@ static NSMapTable<NSString*, void (^)(NSArray* participantsInfo)> *participantIn
 
 __attribute__((constructor))
 static void initializeViewsMap() {
-    participantInfoCompletionHandlers = [NSMapTable strongToWeakObjectsMapTable];
+    participantInfoCompletionHandlers = [NSMapTable strongToStrongObjectsMapTable];
 }
 
 RCT_EXPORT_MODULE();
@@ -160,7 +160,7 @@ RCT_EXPORT_METHOD(sendEvent:(NSString *)name
     NSString *completionHandlerId = [[NSUUID UUID] UUIDString];
     NSDictionary *data = @{ @"requestId": completionHandlerId};
     
-    [participantInfoCompletionHandlers setObject:completionHandler forKey:completionHandlerId];
+    [participantInfoCompletionHandlers setObject:[completionHandler copy] forKey:completionHandlerId];
     
     [self sendEventWithName:retrieveParticipantsInfoAction body:data];
 }
