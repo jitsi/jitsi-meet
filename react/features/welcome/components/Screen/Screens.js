@@ -34,7 +34,8 @@ const VIDEO_PLAYER_DIMESIONS = {
     height: sizeHelper.getActualSizeW(isPad ? 288 : 164)
 };
 
-const videoUrl = 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4';
+// eslint-disable-next-line max-len
+const videoUrl = 'https://player.vimeo.com/external/509989030.hd.mp4?s=f61e57ff1ff82f97a395a511bd1b04dcfc8d80a0&profile_id=174';
 
 type Props = {
     dispatch: Dispatch<any>,
