@@ -178,7 +178,7 @@ function onUserLeft(id) {
  * That function is called when connection is established successfully
  */
 function onConnectionSuccess() {
-    room = connection.initJitsiConference(roomName, config);
+    room = connection.initJitsiConference(roomName.toLowerCase(), config);
     room.on(JitsiMeetJS.events.conference.TRACK_ADDED, onRemoteTrack);
     room.on(JitsiMeetJS.events.conference.CONFERENCE_JOINED, onConferenceJoined);
     room.on(JitsiMeetJS.events.conference.USER_JOINED, id => {
@@ -231,6 +231,8 @@ $(window).bind('unload', unload);
 JitsiMeetJS.setLogLevel(JitsiMeetJS.logLevels.ERROR);
 
 JitsiMeetJS.init(config);
+
+config.serviceUrl = config.bosh = `${config.websocket || config.bosh}?room=${roomName.toLowerCase()}`;
 
 connection = new JitsiMeetJS.JitsiConnection(null, null, config);
 connection.addEventListener(JitsiMeetJS.events.connection.CONNECTION_ESTABLISHED, onConnectionSuccess);
