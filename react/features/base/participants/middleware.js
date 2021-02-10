@@ -341,7 +341,7 @@ function _maybePlaySounds({ getState, dispatch }, action) {
     const state = getState();
     const { startAudioMuted, disableJoinLeaveSounds } = state['features/base/config'];
 
-    // if we have sounds disabled, don't play anything.
+    // If we have join/leave sounds disabled, don't play anything.
     if (disableJoinLeaveSounds) {
         return;
     }
