@@ -101,10 +101,6 @@ function computeCameraVideoSize( // eslint-disable-line max-params
     const aspectRatio = videoWidth / videoHeight;
     const videoSpaceRatio = videoSpaceWidth / videoSpaceHeight;
 
-    if (videoSpaceRatio === aspectRatio) {
-        return [ videoSpaceWidth, videoSpaceHeight ];
-    }
-
     switch (videoLayoutFit) {
     case 'height':
         return [ videoSpaceHeight * aspectRatio, videoSpaceHeight ];
@@ -120,6 +116,10 @@ function computeCameraVideoSize( // eslint-disable-line max-params
     case 'both': {
         const maxZoomCoefficient = interfaceConfig.MAXIMUM_ZOOMING_COEFFICIENT
             || Infinity;
+
+        if (videoSpaceRatio === aspectRatio) {
+            return [ videoSpaceWidth, videoSpaceHeight ];
+        }
 
         let [ width, height ] = computeCameraVideoSize(
             videoWidth,
