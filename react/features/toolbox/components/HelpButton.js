@@ -1,6 +1,7 @@
 // @flow
 
 import { createToolbarEvent, sendAnalytics } from '../../analytics';
+import { getFeatureFlag, HELP_BUTTON_ENABLED } from '../../base/flags';
 import { translate } from '../../base/i18n';
 import { IconHelp } from '../../base/icons';
 import { connect } from '../../base/redux';
@@ -45,7 +46,8 @@ class HelpButton extends AbstractButton<Props, *> {
  */
 function _mapStateToProps(state: Object) {
     const { userDocumentationURL } = state['features/base/config'].deploymentUrls || {};
-    const visible = typeof userDocumentationURL === 'string';
+    const enabled = getFeatureFlag(state, HELP_BUTTON_ENABLED, true);
+    const visible = typeof userDocumentationURL === 'string' && enabled;
 
     return {
         _userDocumentationURL: userDocumentationURL,
