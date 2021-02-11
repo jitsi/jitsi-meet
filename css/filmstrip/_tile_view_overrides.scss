@@ -22,11 +22,6 @@
         display: none;
     }
 
-    #remoteConnectionMessage,
-    .watermark {
-        z-index: $filmstripVideosZ + 1;
-    }
-
     /**
      * The follow styling uses !important to override inline styles set with
      * javascript.
