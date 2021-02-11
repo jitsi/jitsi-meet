@@ -20,8 +20,6 @@ const { room: roomName } = parseURIString(window.location.toString());
 
 let connection = null;
 
-let isJoined = false;
-
 let room = null;
 
 let numParticipants = 1;
@@ -107,13 +105,15 @@ function onLocalTracks(tracks = []) {
             $('body').append(`<video ${autoPlayVideo ? 'autoplay="1" ' : ''}id='localVideo${i}' />`);
             localTracks[i].attach($(`#localVideo${i}`)[0]);
         } else {
+            if (!localAudio) {
+                localTracks[i].mute();
+            }
+
             $('body').append(
                 `<audio autoplay='1' muted='true' id='localAudio${i}' />`);
             localTracks[i].attach($(`#localAudio${i}`)[0]);
         }
-        if (isJoined) {
-            room.addTrack(localTracks[i]);
-        }
+        room.addTrack(localTracks[i]);
     }
 }
 
@@ -146,7 +146,7 @@ function onRemoteTrack(track) {
  * That function is executed when the conference is joined
  */
 function onConferenceJoined() {
-    isJoined = true;
+    console.log('Conference joined');
 }
 
 /**
@@ -190,9 +190,8 @@ function onConnectionSuccess() {
     if (localVideo) {
         devices.push('video');
     }
-    if (localAudio) {
-        devices.push('audio');
-    }
+    devices.push('audio');
+
     if (devices.length > 0) {
         JitsiMeetJS.createLocalTracks({ devices })
             .then(onLocalTracks)
