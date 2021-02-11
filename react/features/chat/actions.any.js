@@ -102,10 +102,12 @@ export function setPrivateMessageRecipient(participant: Object) {
 /**
  * Toggles display of the chat panel.
  *
- * @returns {Function}
+ * @returns {{
+ *      type: TOGGLE_CHAT
+ * }}
  */
 export function toggleChat() {
-    return function(dispatch: (Object) => Object) {
-        dispatch({ type: TOGGLE_CHAT });
+    return {
+        type: TOGGLE_CHAT
     };
 }

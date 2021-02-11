@@ -15,8 +15,8 @@ import {
 import { parseJWTFromURLParams } from '../../react/features/base/jwt';
 import JitsiMeetJS, { JitsiRecordingConstants } from '../../react/features/base/lib-jitsi-meet';
 import { pinParticipant, getParticipantById } from '../../react/features/base/participants';
-import { openChat } from '../../react/features/chat/';
 import { setPrivateMessageRecipient } from '../../react/features/chat/actions';
+import { openChat } from '../../react/features/chat/actions.web';
 import {
     processExternalDeviceRequest
 } from '../../react/features/device-selection/functions';

@@ -4,8 +4,8 @@ import React from 'react';
 
 import { translate } from '../../../base/i18n';
 import { connect } from '../../../base/redux';
+import { toggleChat } from '../../actions.any';
 import AbstractChat, {
-    _mapDispatchToProps,
     _mapStateToProps,
     type Props
 } from '../AbstractChat';
@@ -52,6 +52,9 @@ class Chat extends AbstractChat<Props> {
 
         // Bind event handlers so they are only bound once for every instance.
         this._onChatInputResize = this._onChatInputResize.bind(this);
+
+        // Bind event handlers so they are only bound once for every instance.
+        this._onToggleChat = this._onToggleChat.bind(this);
     }
 
     /**
@@ -119,7 +122,7 @@ class Chat extends AbstractChat<Props> {
                 <MessageRecipient />
                 <ChatInput
                     onResize = { this._onChatInputResize }
-                    onSend = { this.props._onSendMessage } />
+                    onSend = { this._onSendMessage } />
             </>
         );
     }
@@ -135,7 +138,7 @@ class Chat extends AbstractChat<Props> {
         return (
             <Header
                 className = 'chat-header'
-                onCancel = { this.props._onToggleChat } />
+                onCancel = { this._onToggleChat } />
         );
     }
 
@@ -197,6 +200,20 @@ class Chat extends AbstractChat<Props> {
             this._messageContainerRef.current.scrollToBottom(withAnimation);
         }
     }
+
+    _onSendMessage: (string) => void;
+
+    _onToggleChat: () => void;
+
+    /**
+    * Toggles the chat window.
+    *
+    * @returns {Function}
+    */
+    _onToggleChat() {
+        this.props.dispatch(toggleChat());
+    }
+
 }
 
-export default translate(connect(_mapStateToProps, _mapDispatchToProps)(Chat));
+export default translate(connect(_mapStateToProps)(Chat));
