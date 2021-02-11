@@ -14,7 +14,7 @@ import {
 } from '../../react/features/base/conference';
 import { parseJWTFromURLParams } from '../../react/features/base/jwt';
 import JitsiMeetJS, { JitsiRecordingConstants } from '../../react/features/base/lib-jitsi-meet';
-import { pinParticipant, getParticipantById } from '../../react/features/base/participants';
+import { pinParticipant, getParticipantById, kickParticipant } from '../../react/features/base/participants';
 import { setPrivateMessageRecipient } from '../../react/features/chat/actions';
 import {
     processExternalDeviceRequest
@@ -349,6 +349,9 @@ function initCommands() {
         },
         'cancel-private-chat': () => {
             APP.store.dispatch(setPrivateMessageRecipient());
+        },
+        'kick-participant': participantId => {
+            APP.store.dispatch(kickParticipant(participantId));
         }
     };
     transport.on('event', ({ data, name }) => {
