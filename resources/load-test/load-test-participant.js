@@ -20,8 +20,6 @@ const { room: roomName } = parseURIString(window.location.toString());
 
 let connection = null;
 
-let isJoined = false;
-
 let room = null;
 
 let numParticipants = 1;
@@ -148,7 +146,7 @@ function onRemoteTrack(track) {
  * That function is executed when the conference is joined
  */
 function onConferenceJoined() {
-    isJoined = true;
+    console.log('Conference joined');
 }
 
 /**
