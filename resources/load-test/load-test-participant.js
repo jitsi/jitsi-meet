@@ -147,9 +147,6 @@ function onRemoteTrack(track) {
  */
 function onConferenceJoined() {
     isJoined = true;
-    for (let i = 0; i < localTracks.length; i++) {
-        room.addTrack(localTracks[i]);
-    }
 }
 
 /**
@@ -187,7 +184,28 @@ function onConnectionSuccess() {
         remoteTracks[id] = [];
     });
     room.on(JitsiMeetJS.events.conference.USER_LEFT, onUserLeft);
-    room.join();
+
+    const devices = [];
+
+    if (localVideo) {
+        devices.push('video');
+    }
+    if (localAudio) {
+        devices.push('audio');
+    }
+    if (devices.length > 0) {
+        JitsiMeetJS.createLocalTracks({ devices })
+            .then(onLocalTracks)
+            .then(() => {
+                room.join();
+            })
+            .catch(error => {
+                throw error;
+            });
+    } else {
+        room.join();
+    }
+
     updateMaxFrameHeight();
 }
 
@@ -239,21 +257,3 @@ connection.addEventListener(JitsiMeetJS.events.connection.CONNECTION_ESTABLISHED
 connection.addEventListener(JitsiMeetJS.events.connection.CONNECTION_FAILED, onConnectionFailed);
 connection.addEventListener(JitsiMeetJS.events.connection.CONNECTION_DISCONNECTED, disconnect);
 connection.connect();
-
-const devices = [];
-
-if (localVideo) {
-    devices.push('video');
-}
-if (localAudio) {
-    devices.push('audio');
-}
-if (devices.length > 0) {
-    JitsiMeetJS.createLocalTracks({ devices })
-    .then(onLocalTracks)
-    .catch(error => {
-        throw error;
-    });
-}
-
-
