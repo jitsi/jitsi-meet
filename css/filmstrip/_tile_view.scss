@@ -42,10 +42,9 @@
         height: 100%;
         justify-content: center;
         left: 0;
-        position: fixed;
+        position: absolute;
         top: 0;
         width: 100%;
-        z-index: $filmstripVideosZ;
 
         @media (min-width: 581px) {
             &.shift-right {

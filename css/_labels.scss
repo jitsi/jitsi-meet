@@ -4,7 +4,7 @@
     top: 30px;
     right: 30px;
     transition: right 0.5s;
-    z-index: $filmstripVideosZ + 1;
+    z-index: $labelsZ;
 
     .circular-label {
         align-items: center;

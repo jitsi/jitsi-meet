@@ -480,14 +480,6 @@
     z-index: $reloadZ; /*The reload button should appear on top of the header!*/
 }
 
-.audiolevel {
-    display: inline-block;
-    position: absolute;
-    z-index: $zindex0;
-    border-radius:1px;
-    pointer-events: none;
-}
-
 #dominantSpeaker {
     visibility: hidden;
     width: 300px;

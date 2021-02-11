@@ -8,16 +8,10 @@ import { getParticipantCount } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import { beginAddPeople } from '../../../invite';
 import { isButtonEnabled, isToolboxVisible } from '../../../toolbox/functions.web';
-import { shouldDisplayTileView } from '../../../video-layout/functions';
 
 declare var interfaceConfig: Object;
 
 type Props = {
-
-    /**
-     * Whether tile view is enabled.
-     */
-    _tileViewEnabled: Boolean,
 
     /**
      * Whether to show the option to invite more people
@@ -44,14 +38,13 @@ type Props = {
  * @returns {React$Element<any>}
  */
 function InviteMore({
-    _tileViewEnabled,
     _visible,
     onClick,
     t
 }: Props) {
     return (
         _visible
-            ? <div className = { `invite-more-container${_tileViewEnabled ? ' elevated' : ''}` }>
+            ? <div className = 'invite-more-container'>
                 <div className = 'invite-more-header'>
                     {t('addPeople.inviteMoreHeader')}
                 </div>
@@ -81,7 +74,6 @@ function mapStateToProps(state) {
     const hide = interfaceConfig.HIDE_INVITE_MORE_HEADER;
 
     return {
-        _tileViewEnabled: shouldDisplayTileView(state),
         _visible: isToolboxVisible(state) && isButtonEnabled('invite') && isAlone && !hide
     };
 }
