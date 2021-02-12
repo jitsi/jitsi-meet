@@ -5,8 +5,7 @@ import {
     CLEAR_MESSAGES,
     CLOSE_CHAT,
     SEND_MESSAGE,
-    SET_PRIVATE_MESSAGE_RECIPIENT,
-    TOGGLE_CHAT
+    SET_PRIVATE_MESSAGE_RECIPIENT
 } from './actionTypes';
 
 /**
@@ -96,18 +95,5 @@ export function setPrivateMessageRecipient(participant: Object) {
     return {
         participant,
         type: SET_PRIVATE_MESSAGE_RECIPIENT
-    };
-}
-
-/**
- * Toggles display of the chat panel.
- *
- * @returns {{
- *      type: TOGGLE_CHAT
- * }}
- */
-export function toggleChat() {
-    return {
-        type: TOGGLE_CHAT
     };
 }

@@ -4,7 +4,7 @@ import React from 'react';
 
 import { translate } from '../../../base/i18n';
 import { connect } from '../../../base/redux';
-import { toggleChat } from '../../actions.any';
+import { toggleChat } from '../../actions.web';
 import AbstractChat, {
     _mapStateToProps,
     type Props
@@ -49,11 +49,7 @@ class Chat extends AbstractChat<Props> {
 
         // Bind event handlers so they are only bound once for every instance.
         this._renderPanelContent = this._renderPanelContent.bind(this);
-
-        // Bind event handlers so they are only bound once for every instance.
         this._onChatInputResize = this._onChatInputResize.bind(this);
-
-        // Bind event handlers so they are only bound once for every instance.
         this._onToggleChat = this._onToggleChat.bind(this);
     }
 

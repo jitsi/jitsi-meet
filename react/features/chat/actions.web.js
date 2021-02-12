@@ -1,8 +1,11 @@
 // @flow
 
+import type { Dispatch } from 'redux';
+
 import VideoLayout from '../../../modules/UI/videolayout/VideoLayout';
 
 import { OPEN_CHAT } from './actionTypes';
+import { closeChat } from './actions.any';
 
 export * from './actions.any';
 
@@ -20,5 +23,22 @@ export function openChat(participant: Object) {
         dispatch({ participant,
             type: OPEN_CHAT });
         VideoLayout.onResize();
+    };
+}
+
+/**
+ * Toggles display of the chat panel.
+ *
+ * @returns {Function}
+ */
+export function toggleChat() {
+    return (dispatch: Dispatch<any>, getState: Function) => {
+        const isOpen = getState()['features/chat'].isOpen;
+
+        if (isOpen) {
+            dispatch(closeChat());
+        } else {
+            dispatch(openChat());
+        }
     };
 }

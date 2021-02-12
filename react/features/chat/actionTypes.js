@@ -64,12 +64,3 @@ export const SEND_MESSAGE = 'SEND_MESSAGE';
  * }
  */
 export const SET_PRIVATE_MESSAGE_RECIPIENT = 'SET_PRIVATE_MESSAGE_RECIPIENT';
-
-/**
- * The type of the action which signals to toggle the display of the chat panel.
- *
- * {
- *     type: TOGGLE_CHAT
- * }
- */
-export const TOGGLE_CHAT = 'TOGGLE_CHAT';

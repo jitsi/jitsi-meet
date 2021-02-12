@@ -21,7 +21,7 @@ import { playSound, registerSound, unregisterSound } from '../base/sounds';
 import { openDisplayNamePrompt } from '../display-name';
 import { showToolbox } from '../toolbox/actions';
 
-import { ADD_MESSAGE, TOGGLE_CHAT, SEND_MESSAGE, OPEN_CHAT, CLOSE_CHAT } from './actionTypes';
+import { ADD_MESSAGE, SEND_MESSAGE, OPEN_CHAT, CLOSE_CHAT } from './actionTypes';
 import { addMessage, clearMessages } from './actions';
 import { closeChat } from './actions.any';
 import { ChatPrivacyDialog } from './components';
@@ -34,8 +34,6 @@ import {
 } from './constants';
 import { getUnreadCount } from './functions';
 import { INCOMING_MSG_SOUND_FILE } from './sounds';
-
-import { openChat } from './';
 
 declare var APP: Object;
 declare var interfaceConfig : Object;
@@ -66,16 +64,6 @@ MiddlewareRegistry.register(store => next => action => {
 
         if (typeof APP !== 'undefined') {
             APP.API.notifyChatUpdated(unreadCount, isOpen);
-        }
-        break;
-
-    case TOGGLE_CHAT:
-        isOpen = getState()['features/chat'].isOpen;
-
-        if (isOpen) {
-            dispatch(closeChat());
-        } else {
-            dispatch(openChat());
         }
         break;
 
