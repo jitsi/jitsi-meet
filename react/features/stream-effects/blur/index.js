@@ -39,7 +39,6 @@ export async function createBlurEffect() {
     tflite.HEAPU8.set(new Uint8Array(model), modelBufferOffset);
 
     tflite._loadModel(model.byteLength);
-    
-    return new JitsiStreamBlurEffect(tflite);
 
+    return new JitsiStreamBlurEffect(tflite);
 }

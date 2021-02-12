@@ -60,8 +60,12 @@ export default class JitsiStreamBlurEffect {
         }
     }
 
+    /**
+     * Represents the run post processing.
+     *
+     * @returns {void}
+     */
     runPostProcessing() {
-
         this._outputCanvasCtx.globalCompositeOperation = 'copy';
 
         // draw segmentation mask
@@ -85,22 +89,26 @@ export default class JitsiStreamBlurEffect {
         this._outputCanvasCtx.globalCompositeOperation = 'destination-over';
         this._outputCanvasCtx.filter = 'blur(25px)'; // FIXME Does not work on Safari
         this._outputCanvasCtx.drawImage(this._inputVideoElement, 0, 0);
-
     }
 
+    /**
+     * Represents the run Tensorflow Interference.
+     *
+     * @returns {void}
+     */
     runTFLiteInference() {
         this._bpModel._runInference();
         const outputMemoryOffset = this._bpModel._getOutputMemoryOffset() / 4;
 
         for (let i = 0; i < _segmentationPixelCount; i++) {
-            const background = this._bpModel.HEAPF32[outputMemoryOffset + i * 2];
-            const person = this._bpModel.HEAPF32[outputMemoryOffset + i * 2 + 1];
+            const background = this._bpModel.HEAPF32[outputMemoryOffset + (i * 2)];
+            const person = this._bpModel.HEAPF32[outputMemoryOffset + (i * 2) + 1];
             const shift = Math.max(background, person);
             const backgroundExp = Math.exp(background - shift);
             const personExp = Math.exp(person - shift);
 
             // Sets only the alpha component of each pixel
-            this._segmentationMask.data[i * 4 + 3] = (255 * personExp) / (backgroundExp + personExp);
+            this._segmentationMask.data[(i * 4) + 3] = (255 * personExp) / (backgroundExp + personExp);
         }
         this._segmentationMaskCtx.putImageData(this._segmentationMask, 0, 0);
     }
@@ -111,7 +119,6 @@ export default class JitsiStreamBlurEffect {
      * @private
      * @returns {void}
      */
-
     _renderMask() {
         this.resizeSource();
         this.runTFLiteInference();
@@ -123,6 +130,11 @@ export default class JitsiStreamBlurEffect {
         });
     }
 
+    /**
+     * Represents the resize source process.
+     *
+     * @returns {void}
+     */
     resizeSource() {
         this._segmentationMaskCtx.drawImage(
             this._inputVideoElement,
@@ -145,9 +157,9 @@ export default class JitsiStreamBlurEffect {
         const inputMemoryOffset = this._bpModel._getInputMemoryOffset() / 4;
 
         for (let i = 0; i < _segmentationPixelCount; i++) {
-            this._bpModel.HEAPF32[inputMemoryOffset + i * 3] = imageData.data[i * 4] / 255;
-            this._bpModel.HEAPF32[inputMemoryOffset + i * 3 + 1] = imageData.data[i * 4 + 1] / 255;
-            this._bpModel.HEAPF32[inputMemoryOffset + i * 3 + 2] = imageData.data[i * 4 + 2] / 255;
+            this._bpModel.HEAPF32[inputMemoryOffset + (i * 3)] = imageData.data[i * 4] / 255;
+            this._bpModel.HEAPF32[inputMemoryOffset + (i * 3) + 1] = imageData.data[(i * 4) + 1] / 255;
+            this._bpModel.HEAPF32[inputMemoryOffset + (i * 3) + 2] = imageData.data[(i * 4) + 2] / 255;
         }
     }
 
