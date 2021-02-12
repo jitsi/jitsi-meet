@@ -22,6 +22,10 @@ export default class JitsiStreamBlurEffect {
     _maskFrameTimerWorker: Worker;
     _maskInProgress: boolean;
     _outputCanvasElement: HTMLCanvasElement;
+    _outputCanvasCtx: Object;
+    _segmentationMaskCtx: Object;
+    _segmentationMask: Object;
+    _segmentationMaskCanvas: Object;
     _renderMask: Function;
     _segmentationData: Object;
     isEnabled: Function;

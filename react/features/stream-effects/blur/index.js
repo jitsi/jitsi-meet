@@ -7,8 +7,8 @@ import createTFLiteModule from './vendor/tflite/tflite';
 import createTFLiteSIMDModule from './vendor/tflite/tflite-simd';
 
 const models = {
-    96: '/libs/segm_lite_v681.tflite',
-    144: '/libs/segm_full_v679.tflite'
+    '96': '/libs/segm_lite_v681.tflite',
+    '144': '/libs/segm_full_v679.tflite'
 };
 
 /**
@@ -31,7 +31,7 @@ export async function createBlurEffect() {
 
     const modelBufferOffset = tflite._getModelBufferMemoryOffset();
     const modelResponse = await fetch(
-        models[144]
+        models['144']
     );
 
     const model = await modelResponse.arrayBuffer();
