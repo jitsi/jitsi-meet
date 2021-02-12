@@ -5,8 +5,8 @@ LIBJITSIMEET_DIR = node_modules/lib-jitsi-meet/
 LIBFLAC_DIR = node_modules/libflacjs/dist/min/
 OLM_DIR = node_modules/olm
 RNNOISE_WASM_DIR = node_modules/rnnoise-wasm/dist/
-TFLITE_WASM = background-wasm/tflite/
-MEET_MODELS_DIR  = background-wasm/models/
+TFLITE_WASM = react/features/stream-effects/blur/vendor/tflite
+MEET_MODELS_DIR  = react/features/stream-effects/blur/vendor/models/
 NODE_SASS = ./node_modules/.bin/sass
 NPM = npm
 OUTPUT_DIR = .
@@ -85,7 +85,7 @@ deploy-rnnoise-binary:
 
 deploy-tflite:
 	cp \
-		$(TFLITE_WASM)/tflite.wasm \
+		$(TFLITE_WASM)/*.wasm \
 		$(DEPLOY_DIR)		
 
 deploy-meet-models:

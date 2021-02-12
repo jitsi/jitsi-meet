@@ -1,14 +1,14 @@
 // @flow
-import * as StackBlur from 'stackblur-canvas';
 import {
     CLEAR_TIMEOUT,
     TIMEOUT_TICK,
     SET_TIMEOUT,
     timerWorkerScript
 } from './TimerWorker';
-const segmentationWidth = 256;
-const segmentationHeight = 144;
-const _segmentationPixelCount = 256 * 144;
+
+const segmentationWidth = 160;
+const segmentationHeight = 96;
+const _segmentationPixelCount = segmentationWidth * segmentationHeight;
 /**
  * Represents a modified MediaStream that adds blur to video background.
  * <tt>JitsiStreamBlurEffect</tt> does the processing of the original
@@ -37,7 +37,6 @@ export default class JitsiStreamBlurEffect {
      */
     constructor(bpModel: Object) {
         this._bpModel = bpModel;
-        console.log(this._bpModel, 'are you here?')
         // Bind event handler so it is only bound once for every instance.
         this._onMaskFrameTimer = this._onMaskFrameTimer.bind(this);
 
@@ -57,21 +56,18 @@ export default class JitsiStreamBlurEffect {
      * @returns {void}
      */
     async _onMaskFrameTimer(response: Object) {
-        if (response.data.id === TIMEOUT_TICK) {
-            console.log('running?')
+       if (response.data.id === TIMEOUT_TICK) {
             await this._renderMask();
-        }else{
-            console.log('not running?')
-        }
+       }
     }
 
 
     runPostProcessing() {
-        
+
         this._outputCanvasCtx.globalCompositeOperation = 'copy'
 
         //draw segmentation mask
-        this._outputCanvasCtx.filter = 'blur(8px)' // FIXME Does not work on Safari
+        this._outputCanvasCtx.filter = 'blur(25px)' // FIXME Does not work on Safari
         this._outputCanvasCtx.drawImage(
             this._segmentationMaskCanvas,
             0,
@@ -83,13 +79,13 @@ export default class JitsiStreamBlurEffect {
             this._inputVideoElement.width,
             this._inputVideoElement.height
         )
-        
+
         this._outputCanvasCtx.globalCompositeOperation = 'source-in'
         this._outputCanvasCtx.filter = 'none'
         this._outputCanvasCtx.drawImage(this._inputVideoElement, 0, 0)
 
         this._outputCanvasCtx.globalCompositeOperation = 'destination-over'
-        this._outputCanvasCtx.filter = 'blur(8px)' // FIXME Does not work on Safari
+        this._outputCanvasCtx.filter = 'blur(25px)' // FIXME Does not work on Safari
         this._outputCanvasCtx.drawImage(this._inputVideoElement, 0, 0)
 
     }
@@ -120,93 +116,44 @@ export default class JitsiStreamBlurEffect {
      */
 
     _renderMask() {
-        console.log('running')
         this.resizeSource()
         this.runTFLiteInference();
         this.runPostProcessing();
+
         this._maskFrameTimerWorker.postMessage({
             id: SET_TIMEOUT,
             timeMs: 1000 / 30
         });
     }
 
-     resizeSource() {
+    resizeSource() {
         this._segmentationMaskCtx.drawImage(
             this._inputVideoElement,
-          0,
-          0,
-          this._inputVideoElement.width,
-          this._inputVideoElement.height,
-          0,
-          0,
-          segmentationWidth,
-          segmentationHeight
-        )
-    
-          const imageData = this._segmentationMaskCtx.getImageData(
+            0,
+            0,
+            this._inputVideoElement.width,
+            this._inputVideoElement.height,
             0,
             0,
             segmentationWidth,
             segmentationHeight
-          )
-          const inputMemoryOffset = this._bpModel._getInputMemoryOffset() / 4
-          for (let i = 0; i < _segmentationPixelCount; i++) {
+        )
+
+        const imageData = this._segmentationMaskCtx.getImageData(
+            0,
+            0,
+            segmentationWidth,
+            segmentationHeight
+        )
+        const inputMemoryOffset = this._bpModel._getInputMemoryOffset() / 4
+        for (let i = 0; i < _segmentationPixelCount; i++) {
             this._bpModel.HEAPF32[inputMemoryOffset + i * 3] = imageData.data[i * 4] / 255
             this._bpModel.HEAPF32[inputMemoryOffset + i * 3 + 1] =
-              imageData.data[i * 4 + 1] / 255
-              this._bpModel.HEAPF32[inputMemoryOffset + i * 3 + 2] =
-              imageData.data[i * 4 + 2] / 255
-          }
+                imageData.data[i * 4 + 1] / 255
+            this._bpModel.HEAPF32[inputMemoryOffset + i * 3 + 2] =
+                imageData.data[i * 4 + 2] / 255
         }
-    // async _renderMask() {
-    //     if (!this._maskInProgress) {
-    //         this._maskInProgress = true;
-    //         this._bpModel.segmentPerson(this._inputVideoElement, {
-    //             internalResolution: 'low', // resized to 0.5 times of the original resolution before inference
-    //             maxDetections: 1, // max. number of person poses to detect per image
-    //             segmentationThreshold: 0.7, // represents probability that a pixel belongs to a person
-    //             flipHorizontal: false,
-    //             scoreThreshold: 0.2
-    //         }).then(data => {
-    //             this._segmentationData = data;
-    //             this._maskInProgress = false;
-    //         });
-    //     }
-    //     const inputCanvasCtx = this._inputVideoCanvasElement.getContext('2d');
-
-    //     inputCanvasCtx.drawImage(this._inputVideoElement, 0, 0);
-
-    //     const currentFrame = inputCanvasCtx.getImageData(
-    //         0,
-    //         0,
-    //         this._inputVideoCanvasElement.width,
-    //         this._inputVideoCanvasElement.height
-    //     );
-
-    //     if (this._segmentationData) {
-    //         const blurData = new ImageData(currentFrame.data.slice(), currentFrame.width, currentFrame.height);
-
-    //         StackBlur.imageDataRGB(blurData, 0, 0, currentFrame.width, currentFrame.height, 12);
-
-    //         for (let x = 0; x < this._outputCanvasElement.width; x++) {
-    //             for (let y = 0; y < this._outputCanvasElement.height; y++) {
-    //                 const n = (y * this._outputCanvasElement.width) + x;
-
-    //                 if (this._segmentationData.data[n] === 0) {
-    //                     currentFrame.data[n * 4] = blurData.data[n * 4];
-    //                     currentFrame.data[(n * 4) + 1] = blurData.data[(n * 4) + 1];
-    //                     currentFrame.data[(n * 4) + 2] = blurData.data[(n * 4) + 2];
-    //                     currentFrame.data[(n * 4) + 3] = blurData.data[(n * 4) + 3];
-    //                 }
-    //             }
-    //         }
-    //     }
-    //     this._outputCanvasElement.getContext('2d').putImageData(currentFrame, 0, 0);
-    //     this._maskFrameTimerWorker.postMessage({
-    //         id: SET_TIMEOUT,
-    //         timeMs: 1000 / 30
-    //     });
-    // }
+    }
 
     /**
      * Checks if the local track supports this effect.
@@ -251,7 +198,6 @@ export default class JitsiStreamBlurEffect {
                 timeMs: 1000 / 30
             });
         };
-        
         //final output
         return this._outputCanvasElement.captureStream(parseInt(frameRate, 10));
     }
