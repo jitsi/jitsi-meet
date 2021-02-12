@@ -18,10 +18,12 @@ import {
 } from '../base/participants';
 import { MiddlewareRegistry, StateListenerRegistry } from '../base/redux';
 import { playSound, registerSound, unregisterSound } from '../base/sounds';
+import { openDisplayNamePrompt } from '../display-name';
 import { showToolbox } from '../toolbox/actions';
 
-import { ADD_MESSAGE, TOGGLE_CHAT, SEND_MESSAGE, SET_PRIVATE_MESSAGE_RECIPIENT } from './actionTypes';
-import { addMessage, clearMessages, toggleChat } from './actions';
+import { ADD_MESSAGE, SEND_MESSAGE, OPEN_CHAT, CLOSE_CHAT } from './actionTypes';
+import { addMessage, clearMessages } from './actions';
+import { closeChat } from './actions.any';
 import { ChatPrivacyDialog } from './components';
 import {
     CHAT_VIEW_MODAL_ID,
@@ -52,6 +54,7 @@ const PRIVACY_NOTICE_TIMEOUT = 20 * 1000;
  */
 MiddlewareRegistry.register(store => next => action => {
     const { dispatch, getState } = store;
+    const localParticipant = getLocalParticipant(getState());
     let isOpen, unreadCount;
 
     switch (action.type) {
@@ -63,14 +66,7 @@ MiddlewareRegistry.register(store => next => action => {
             APP.API.notifyChatUpdated(unreadCount, isOpen);
         }
         break;
-    case TOGGLE_CHAT:
-        unreadCount = 0;
-        isOpen = !getState()['features/chat'].isOpen;
 
-        if (typeof APP !== 'undefined') {
-            APP.API.notifyChatUpdated(unreadCount, isOpen);
-        }
-        break;
     case APP_WILL_MOUNT:
         dispatch(
                 registerSound(INCOMING_MSG_SOUND_ID, INCOMING_MSG_SOUND_FILE));
@@ -82,6 +78,32 @@ MiddlewareRegistry.register(store => next => action => {
 
     case CONFERENCE_JOINED:
         _addChatMsgListener(action.conference, store);
+        break;
+
+    case OPEN_CHAT:
+        if (localParticipant.name) {
+            dispatch(setActiveModalId(CHAT_VIEW_MODAL_ID));
+            _maybeFocusField();
+        } else {
+            dispatch(openDisplayNamePrompt(() => {
+                dispatch(setActiveModalId(CHAT_VIEW_MODAL_ID));
+                _maybeFocusField();
+            }));
+        }
+
+        unreadCount = 0;
+
+        if (typeof APP !== 'undefined') {
+            APP.API.notifyChatUpdated(unreadCount, true);
+        }
+        break;
+
+    case CLOSE_CHAT:
+        unreadCount = 0;
+
+        if (typeof APP !== 'undefined') {
+            APP.API.notifyChatUpdated(unreadCount, true);
+        }
         break;
 
     case SEND_MESSAGE: {
@@ -117,12 +139,6 @@ MiddlewareRegistry.register(store => next => action => {
         }
         break;
     }
-
-    case SET_PRIVATE_MESSAGE_RECIPIENT: {
-        Boolean(action.participant) && dispatch(setActiveModalId(CHAT_VIEW_MODAL_ID));
-        _maybeFocusField();
-        break;
-    }
     }
 
     return next(action);
@@ -141,7 +157,7 @@ StateListenerRegistry.register(
 
             if (getState()['features/chat'].isOpen) {
                 // Closes the chat if it's left open.
-                dispatch(toggleChat());
+                dispatch(closeChat());
             }
 
             // Clear chat messages.

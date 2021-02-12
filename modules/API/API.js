@@ -16,6 +16,7 @@ import { parseJWTFromURLParams } from '../../react/features/base/jwt';
 import JitsiMeetJS, { JitsiRecordingConstants } from '../../react/features/base/lib-jitsi-meet';
 import { pinParticipant, getParticipantById, kickParticipant } from '../../react/features/base/participants';
 import { setPrivateMessageRecipient } from '../../react/features/chat/actions';
+import { openChat } from '../../react/features/chat/actions.web';
 import {
     processExternalDeviceRequest
 } from '../../react/features/device-selection/functions';
@@ -342,7 +343,7 @@ function initCommands() {
                 if (!isChatOpen) {
                     APP.UI.toggleChat();
                 }
-                APP.store.dispatch(setPrivateMessageRecipient(participant));
+                APP.store.dispatch(openChat(participant));
             } else {
                 logger.error('No participant found for the given participantId');
             }
