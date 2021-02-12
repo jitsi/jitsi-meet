@@ -36,6 +36,13 @@ import { ENTER_PICTURE_IN_PICTURE } from '../picture-in-picture';
 import { setParticipantsWithScreenShare } from './actions';
 import { sendEvent } from './functions';
 import logger from './logger';
+import { openChat, closeChat } from '../../chat/actions';
+
+/**
+ * Event which will be emitted on the native side when a chat message is received 
+ * through the channel.
+ */
+const CHAT_MESSAGE_RECEIVED = 'CHAT_MESSAGE_RECEIVED';
 
 /**
  * Event which will be emitted on the native side to indicate the conference
@@ -286,6 +293,28 @@ function _registerForNativeEvents({ getState, dispatch }) {
                 requestId
             });
     });
+
+    eventEmitter.addListener(ExternalAPI.TOGGLE_CHAT, ({ to, open }) => {
+        const participant = getParticipantById(store, to);
+
+        if (open) {
+            dispatch(openChat(participant));
+        }
+        else {
+            dispatch(closeChat(participant));
+        }
+    });
+
+    eventEmitter.addListener(ExternalAPI.SEND_CHAT_MESSAGE, ({ message, to }) => {
+        const participant = getParticipantById(store, to);
+        
+        if (participant) {
+            dispatch(setPrivateMessageRecipient(participant));
+        }
+
+        dispatch(sendMessage(message));
+    });
+
 }
 
 /**
@@ -315,6 +344,36 @@ function _registerForEndpointTextMessages(store) {
                 }
             }
         });
+
+    conference.on(
+        JitsiConferenceEvents.MESSAGE_RECEIVED,
+            (id, message, timestamp) => {
+                sendEvent(
+                    store,
+                    CHAT_MESSAGE_RECEIVED,
+                    /* data */ {
+                        senderId: id,
+                        message,
+                        isPrivate: false,
+                        timestamp
+                    });
+            }
+        );
+    
+    conference.on(
+        JitsiConferenceEvents.PRIVATE_MESSAGE_RECEIVED,
+            (id, message, timestamp) => {
+                sendEvent(
+                    store,
+                    CHAT_MESSAGE_RECEIVED,
+                    /* data */ {
+                        senderId: id,
+                        message,
+                        isPrivate: true,
+                        timestamp
+                    });
+            }
+        );
 }
 
 /**
