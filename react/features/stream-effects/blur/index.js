@@ -1,5 +1,7 @@
 // @flow
 
+import * as wasmCheck from 'wasm-check';
+
 import JitsiStreamBlurEffect from './JitsiStreamBlurEffect';
 import createTFLiteModule from './vendor/tflite/tflite'
 import createTFLiteSIMDModule from './vendor/tflite/tflite-simd'
@@ -16,18 +18,20 @@ const models = {
  */
 export async function createBlurEffect() {
     console.log('are you here?')
-    console.log(createTFLiteModule(), 'create tf lite model')
+    //console.log(createTFLiteModule(), 'create tf lite model')
     if (!MediaStreamTrack.prototype.getSettings && !MediaStreamTrack.prototype.getConstraints) {
         throw new Error('JitsiStreamBlurEffect not supported!');
     }
-    let tflite = await createTFLiteModule();
-    try {
-        const TFLiteSIMD = await createTFLiteSIMDModule();
-        tflite = TFLiteSIMD;
+    let tflite;
 
-      } catch (error) {
-        console.warn('Failed to create TFLite SIMD WebAssembly module.', error)
-      }
+    if (wasmCheck.feature.simd) {
+      tflite = await createTFLiteSIMDModule();
+      console.log('SIMD load OK!');
+      console.log(tflite);
+    } else {
+      tflite = await createTFLiteModule();
+    }
+
       console.log(tflite, 'tflite !!!')
         const modelBufferOffset = tflite._getModelBufferMemoryOffset()
         const modelResponse = await fetch(
