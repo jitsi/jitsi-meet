@@ -37,12 +37,18 @@ import { setParticipantsWithScreenShare } from './actions';
 import { sendEvent } from './functions';
 import logger from './logger';
 import { openChat, closeChat } from '../../chat/actions';
+import { OPEN_CHAT, CLOSE_CHAT } from '../../chat';
 
 /**
  * Event which will be emitted on the native side when a chat message is received 
  * through the channel.
  */
 const CHAT_MESSAGE_RECEIVED = 'CHAT_MESSAGE_RECEIVED';
+
+/**
+ * Event which will be emitted on the native side when the chat dialog is displayed/closed.
+ */
+const CHAT_TOGGLED = 'CHAT_TOGGLED';
 
 /**
  * Event which will be emitted on the native side to indicate the conference
@@ -155,6 +161,17 @@ MiddlewareRegistry.register(store => next => action => {
             /* data */ {
                 error: _toErrorString(error),
                 url: _normalizeUrl(locationURL)
+            });
+        break;
+    }
+
+    case OPEN_CHAT:
+    case CLOSE_CHAT: {
+        sendEvent(
+            store,
+            CHAT_TOGGLED,
+            /* data */ {
+                isOpen: action.type == OPEN_CHAT
             });
         break;
     }
