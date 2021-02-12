@@ -84,7 +84,7 @@ class ExternalAPIModule
         constants.put("RETRIEVE_PARTICIPANTS_INFO", BroadcastAction.Type.RETRIEVE_PARTICIPANTS_INFO.getAction());
         constants.put("TOGGLE_CHAT", BroadcastAction.Type.TOGGLE_CHAT.getAction());
         constants.put("SEND_CHAT_MESSAGE", BroadcastAction.Type.SEND_CHAT_MESSAGE.getAction());
-        
+
         return constants;
     }
 

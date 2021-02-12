@@ -96,8 +96,8 @@ public class BroadcastEvent {
         private static final String ENDPOINT_TEXT_MESSAGE_RECEIVED_NAME = "ENDPOINT_TEXT_MESSAGE_RECEIVED";
         private static final String SCREEN_SHARE_TOGGLED_NAME = "SCREEN_SHARE_TOGGLED";
         private static final String PARTICIPANTS_INFO_RETRIEVED_NAME = "PARTICIPANTS_INFO_RETRIEVED";
-        private static final String CHAT_MESSAGE_RECEIVED_NAME = "org.jitsi.meet.CHAT_MESSAGE_RECEIVED";
-        private static final String CHAT_TOGGLED_NAME = "org.jitsi.meet.CHAT_TOGGLED";
+        private static final String CHAT_MESSAGE_RECEIVED_NAME = "CHAT_MESSAGE_RECEIVED";
+        private static final String CHAT_TOGGLED_NAME = "CHAT_TOGGLED";
 
         private final String action;
 
