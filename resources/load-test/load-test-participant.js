@@ -250,6 +250,9 @@ JitsiMeetJS.setLogLevel(JitsiMeetJS.logLevels.ERROR);
 JitsiMeetJS.init(config);
 
 config.serviceUrl = config.bosh = `${config.websocket || config.bosh}?room=${roomName.toLowerCase()}`;
+if (config.websocketKeepAliveUrl) {
+    config.websocketKeepAliveUrl += `?room=${roomName.toLowerCase()}`;
+}
 
 connection = new JitsiMeetJS.JitsiConnection(null, null, config);
 connection.addEventListener(JitsiMeetJS.events.connection.CONNECTION_ESTABLISHED, onConnectionSuccess);
