@@ -224,6 +224,14 @@ var config = {
     // Default value for the channel "last N" attribute. -1 for unlimited.
     channelLastN: -1,
 
+    // Custom constraints to pass in RTCPeerConnection optional section. May be used for additional
+    // labels to mark any particular user connection with customClientId to track it later in
+    // rtcStats-server statistics (https://github.com/jitsi/rtcstats-server)
+    // If you generate urls for conference by yourself, you can pass this parameter in url like:
+    // https://<jitsi.example.com>/roomname?config.customOptionalConstraints=[{customClientId:"myId"}]
+    customOptionalConstraints: [
+    ],
+
     // Provides a way to use different "last N" values based on the number of participants in the conference.
     // The keys in an Object represent number of participants and the values are "last N" to be used when number of
     // participants gets to or above the number.
