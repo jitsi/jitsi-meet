@@ -3,7 +3,10 @@
 import { FieldTextStateless } from '@atlaskit/field-text';
 import React, { useState } from 'react';
 
-import { Dialog } from '../../base/dialog';
+import { Dialog } from '../../../base/dialog';
+
+// import { getYoutubeLink } from '../../functions';
+
 
 /**
  * Example shared video link.
@@ -16,7 +19,7 @@ const defaultSharedVideoLink = 'https://youtu.be/TB7LlM4erx8';
  *
  * @returns {React$Element<any>}
  */
-function VideoShareDialog() {
+function SharedVideoDialog() {
     const [ sharedVideoLink, setSharedVideoLink ] = useState('');
 
     /**
@@ -28,7 +31,9 @@ function VideoShareDialog() {
      * @returns {void}
      */
     function onChangeVideoLink(event) {
-        setSharedVideoLink(event.target.value);
+        const link = event.target.value;
+
+        setSharedVideoLink(link);
     }
 
     return (
@@ -50,4 +55,4 @@ function VideoShareDialog() {
     );
 }
 
-export default VideoShareDialog;
+export default SharedVideoDialog;
