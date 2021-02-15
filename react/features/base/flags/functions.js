@@ -11,7 +11,7 @@ import { toState } from '../redux';
  * @param {string} flag - The name of the React {@code Component} prop of
  * the currently mounted {@code App} to get.
  * @param {*} defaultValue - A default value for the flag, in case it's not defined.
- * @returns {*} The value of the specified React {@code Compoennt} prop of the
+ * @returns {*} The value of the specified React {@code Component} prop of the
  * currently mounted {@code App}.
  */
 export function getFeatureFlag(stateful: Function | Object, flag: string, defaultValue: any) {
