@@ -16,7 +16,7 @@ import {
     getParticipantById,
     getParticipantDisplayName
 } from '../base/participants';
-import { MiddlewareRegistry, StateListenerRegistry } from '../base/redux';
+import { MiddlewareRegistry, StateListenerRegistry, toState } from '../base/redux';
 import { playSound, registerSound, unregisterSound } from '../base/sounds';
 import { openDisplayNamePrompt } from '../display-name';
 import { showToolbox } from '../toolbox/actions';

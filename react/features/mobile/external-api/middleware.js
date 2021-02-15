@@ -27,7 +27,7 @@ import {
 } from '../../base/connection';
 import { JitsiConferenceEvents } from '../../base/lib-jitsi-meet';
 import { SET_AUDIO_MUTED } from '../../base/media/actionTypes';
-import { PARTICIPANT_JOINED, PARTICIPANT_LEFT, getParticipants } from '../../base/participants';
+import { PARTICIPANT_JOINED, PARTICIPANT_LEFT, getParticipants, getParticipantById } from '../../base/participants';
 import { MiddlewareRegistry, StateListenerRegistry } from '../../base/redux';
 import { toggleScreensharing } from '../../base/tracks';
 import { muteLocal } from '../../remote-video-menu/actions';
@@ -36,8 +36,9 @@ import { ENTER_PICTURE_IN_PICTURE } from '../picture-in-picture';
 import { setParticipantsWithScreenShare } from './actions';
 import { sendEvent } from './functions';
 import logger from './logger';
-import { openChat, closeChat } from '../../chat/actions';
+import { openChat } from '../../chat/actions';
 import { OPEN_CHAT, CLOSE_CHAT } from '../../chat';
+import { sendMessage, setPrivateMessageRecipient } from '../../chat/actions.any';
 
 /**
  * Event which will be emitted on the native side when a chat message is received 
@@ -261,7 +262,9 @@ StateListenerRegistry.register(
  * @private
  * @returns {void}
  */
-function _registerForNativeEvents({ getState, dispatch }) {
+function _registerForNativeEvents(store) {
+    const { getState, dispatch } = store;
+
     eventEmitter.addListener(ExternalAPI.HANG_UP, () => {
         dispatch(appNavigate(undefined));
     });
@@ -288,7 +291,6 @@ function _registerForNativeEvents({ getState, dispatch }) {
     });
 
     eventEmitter.addListener(ExternalAPI.RETRIEVE_PARTICIPANTS_INFO, ({ requestId }) => {
-        const store = getState();
 
         const participantsInfo = getParticipants(store).map(participant => {
             return {
@@ -311,20 +313,14 @@ function _registerForNativeEvents({ getState, dispatch }) {
             });
     });
 
-    eventEmitter.addListener(ExternalAPI.TOGGLE_CHAT, ({ to, open }) => {
+    eventEmitter.addListener(ExternalAPI.OPEN_CHAT, ({ to }) => {
         const participant = getParticipantById(store, to);
-
-        if (open) {
-            dispatch(openChat(participant));
-        }
-        else {
-            dispatch(closeChat(participant));
-        }
+        dispatch(openChat(participant));
     });
 
     eventEmitter.addListener(ExternalAPI.SEND_CHAT_MESSAGE, ({ message, to }) => {
         const participant = getParticipantById(store, to);
-        
+
         if (participant) {
             dispatch(setPrivateMessageRecipient(participant));
         }

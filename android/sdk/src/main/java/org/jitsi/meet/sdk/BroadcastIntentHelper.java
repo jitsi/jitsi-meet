@@ -24,8 +24,8 @@ public class BroadcastIntentHelper {
         return new Intent(BroadcastAction.Type.TOGGLE_SCREEN_SHARE.getAction());
     }
 
-    public static Intent buildToggleChatIntent(String participantId) {
-        Intent intent = new Intent(BroadcastAction.Type.TOGGLE_CHAT.getAction());
+    public static Intent buildOpenChatIntent(String participantId) {
+        Intent intent = new Intent(BroadcastAction.Type.OPEN_CHAT.getAction());
         intent.putExtra("to", participantId);
         return intent;
     }

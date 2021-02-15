@@ -64,9 +64,9 @@ public class BroadcastAction {
         SEND_ENDPOINT_TEXT_MESSAGE("org.jitsi.meet.SEND_ENDPOINT_TEXT_MESSAGE"),
         TOGGLE_SCREEN_SHARE("org.jitsi.meet.TOGGLE_SCREEN_SHARE"),
         RETRIEVE_PARTICIPANTS_INFO("org.jitsi.meet.RETRIEVE_PARTICIPANTS_INFO"),
-        TOGGLE_CHAT("org.jitsi.meet.TOGGLE_CHAT"),
+        OPEN_CHAT("org.jitsi.meet.OPEN_CHAT"),
         SEND_CHAT_MESSAGE("org.jitsi.meet.SEND_CHAT_MESSAGE");
-        
+
         private final String action;
 
         Type(String action) {
