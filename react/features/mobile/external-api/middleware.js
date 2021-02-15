@@ -30,18 +30,18 @@ import { SET_AUDIO_MUTED } from '../../base/media/actionTypes';
 import { PARTICIPANT_JOINED, PARTICIPANT_LEFT, getParticipants, getParticipantById } from '../../base/participants';
 import { MiddlewareRegistry, StateListenerRegistry } from '../../base/redux';
 import { toggleScreensharing } from '../../base/tracks';
+import { OPEN_CHAT, CLOSE_CHAT } from '../../chat';
+import { openChat } from '../../chat/actions';
+import { sendMessage, setPrivateMessageRecipient } from '../../chat/actions.any';
 import { muteLocal } from '../../remote-video-menu/actions';
 import { ENTER_PICTURE_IN_PICTURE } from '../picture-in-picture';
 
 import { setParticipantsWithScreenShare } from './actions';
 import { sendEvent } from './functions';
 import logger from './logger';
-import { openChat } from '../../chat/actions';
-import { OPEN_CHAT, CLOSE_CHAT } from '../../chat';
-import { sendMessage, setPrivateMessageRecipient } from '../../chat/actions.any';
 
 /**
- * Event which will be emitted on the native side when a chat message is received 
+ * Event which will be emitted on the native side when a chat message is received
  * through the channel.
  */
 const CHAT_MESSAGE_RECEIVED = 'CHAT_MESSAGE_RECEIVED';
@@ -172,7 +172,7 @@ MiddlewareRegistry.register(store => next => action => {
             store,
             CHAT_TOGGLED,
             /* data */ {
-                isOpen: action.type == OPEN_CHAT
+                isOpen: action.type === OPEN_CHAT
             });
         break;
     }
@@ -315,6 +315,7 @@ function _registerForNativeEvents(store) {
 
     eventEmitter.addListener(ExternalAPI.OPEN_CHAT, ({ to }) => {
         const participant = getParticipantById(store, to);
+
         dispatch(openChat(participant));
     });
 
@@ -371,8 +372,8 @@ function _registerForEndpointTextMessages(store) {
                         timestamp
                     });
             }
-        );
-    
+    );
+
     conference.on(
         JitsiConferenceEvents.PRIVATE_MESSAGE_RECEIVED,
             (id, message, timestamp) => {
@@ -386,7 +387,7 @@ function _registerForEndpointTextMessages(store) {
                         timestamp
                     });
             }
-        );
+    );
 }
 
 /**

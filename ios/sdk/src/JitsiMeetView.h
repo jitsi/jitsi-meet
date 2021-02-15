@@ -47,4 +47,8 @@
 
 - (void)retrieveParticipantsInfo:(void (^)(NSArray*))completionHandler;
 
+- (void)openChat:(NSString*)to;
+
+- (void)sendChatMessage:(NSString*)to :(NSString*)message;
+
 @end

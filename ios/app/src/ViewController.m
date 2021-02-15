@@ -123,6 +123,14 @@
   NSLog(@"%@%@", @"Screen share toggled: ", data);
 }
 
+- (void)chatMessageReceived:(NSDictionary *)data {
+    NSLog(@"%@%@", @"Chat message received: ", data);
+}
+
+- (void)chatToggled:(NSDictionary *)data {
+  NSLog(@"%@%@", @"Chat toggled: ", data);
+}
+
 #pragma mark - Helpers
 
 - (void)terminate {

@@ -140,6 +140,16 @@ static void initializeViewsMap() {
     [externalAPI retrieveParticipantsInfo:completionHandler];
 }
 
+- (void)openChat:(NSString*)to  {
+    ExternalAPI *externalAPI = [[JitsiMeet sharedInstance] getExternalAPI];
+    [externalAPI openChat:to];
+}
+
+- (void)sendChatMessage:(NSString*)to :(NSString*)message  {
+    ExternalAPI *externalAPI = [[JitsiMeet sharedInstance] getExternalAPI];
+    [externalAPI sendChatMessage:to :message];
+}
+
 #pragma mark Private methods
 
 /**
