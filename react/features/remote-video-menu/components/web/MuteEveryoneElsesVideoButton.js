@@ -3,7 +3,7 @@
 import React from 'react';
 
 import { translate } from '../../../base/i18n';
-import { IconCameraDisabled } from '../../../base/icons';
+import { IconMuteVideoEveryoneElse } from '../../../base/icons';
 import { connect } from '../../../base/redux';
 import AbstractMuteEveryoneElsesVideoButton, {
     type Props
@@ -41,7 +41,7 @@ class MuteEveryoneElsesVideoButton extends AbstractMuteEveryoneElsesVideoButton 
             <RemoteVideoMenuButton
                 buttonText = { t('videothumbnail.domuteVideoOfOthers') }
                 displayClass = { 'mutelink' }
-                icon = { IconCameraDisabled }
+                icon = { IconMuteVideoEveryoneElse }
                 id = { `mutelink_${participantID}` }
                 // eslint-disable-next-line react/jsx-handler-names
                 onClick = { this._handleClick } />

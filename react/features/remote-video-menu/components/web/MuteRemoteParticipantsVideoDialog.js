@@ -6,7 +6,7 @@ import { Dialog } from '../../../base/dialog';
 import { translate } from '../../../base/i18n';
 import { connect } from '../../../base/redux';
 import AbstractMuteRemoteParticipantsVideoDialog
-    from '../AbstractMuteRemoteParticipantDialog';
+    from '../AbstractMuteRemoteParticipantsVideoDialog';
 
 /**
  * A React Component with the contents for a dialog that asks for confirmation

@@ -22,7 +22,7 @@ import RemoteVideoMenuButton from './RemoteVideoMenuButton';
  * for the sake of code sharing between web and mobile. Once web uses the
  * {@code AbstractButton} base component, this can be fully removed.
  */
-class MuteButton extends AbstractMuteVideoButton {
+class MuteVideoButton extends AbstractMuteVideoButton {
     /**
      * Instantiates a new {@code Component}.
      *
@@ -41,12 +41,12 @@ class MuteButton extends AbstractMuteVideoButton {
      * @returns {ReactElement}
      */
     render() {
-        const { _audioTrackMuted, participantID, t } = this.props;
-        const muteConfig = _audioTrackMuted ? {
-            translationKey: 'videothumbnail.muted',
+        const { _videoTrackMuted, participantID, t } = this.props;
+        const muteConfig = _videoTrackMuted ? {
+            translationKey: 'videothumbnail.videoMuted',
             muteClassName: 'mutelink disabled'
         } : {
-            translationKey: 'videothumbnail.domute',
+            translationKey: 'videothumbnail.domuteVideo',
             muteClassName: 'mutelink'
         };
 
@@ -64,4 +64,4 @@ class MuteButton extends AbstractMuteVideoButton {
     _handleClick: () => void
 }
 
-export default translate(connect(_mapStateToProps)(MuteButton));
+export default translate(connect(_mapStateToProps)(MuteVideoButton));

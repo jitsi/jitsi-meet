@@ -776,6 +776,7 @@
         "moreOptions": "More options",
         "mute": "Mute / Unmute",
         "muteEveryone": "Mute everyone",
+        "muteEveryonesVideo": "Disable everyone's camera",
         "noAudioSignalTitle": "There is no input coming from your mic!",
         "noAudioSignalDesc": "If you did not purposely mute it from system settings or hardware, consider switching the device.",
         "noAudioSignalDescSuggestion": "If you did not purposely mute it from system settings or hardware, consider switching to the suggested device.",
