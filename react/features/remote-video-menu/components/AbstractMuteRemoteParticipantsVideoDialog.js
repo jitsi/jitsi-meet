@@ -7,7 +7,7 @@ import { muteRemote } from '../actions';
 
 /**
  * The type of the React {@code Component} props of
- * {@link AbstractMuteRemoteParticipantDialog}.
+ * {@link AbstractMuteRemoteParticipantsVideoDialog}.
  */
 export type Props = {
 
@@ -28,14 +28,14 @@ export type Props = {
 };
 
 /**
- * Abstract dialog to confirm a remote participant mute action.
+ * Abstract dialog to confirm a remote participant video ute action.
  *
  * @extends Component
  */
-export default class AbstractMuteRemoteParticipantDialog<P:Props = Props>
+export default class AbstractMuteRemoteParticipantsVideoDialog<P:Props = Props>
     extends Component<P> {
     /**
-     * Initializes a new {@code AbstractMuteRemoteParticipantDialog} instance.
+     * Initializes a new {@code AbstractMuteRemoteParticipantsVideoDialog} instance.
      *
      * @param {Object} props - The read-only properties with which the new
      * instance is to be initialized.
@@ -58,7 +58,7 @@ export default class AbstractMuteRemoteParticipantDialog<P:Props = Props>
     _onSubmit() {
         const { dispatch, participantID } = this.props;
 
-        dispatch(muteRemote(participantID, MEDIA_TYPE.AUDIO));
+        dispatch(muteRemote(participantID, MEDIA_TYPE.VIDEO));
 
         return true;
     }

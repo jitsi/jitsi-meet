@@ -504,15 +504,17 @@ export function createRejoinedEvent({ url, lastConferenceDuration, timeSinceLeft
  *
  * @param {string} participantId - The ID of the participant that was remotely
  * muted.
+ * @param {string} mediaType - The media type of the channel to mute.
  * @returns {Object} The event in a format suitable for sending via
  * sendAnalytics.
  */
-export function createRemoteMuteConfirmedEvent(participantId) {
+export function createRemoteMuteConfirmedEvent(participantId, mediaType) {
     return {
         action: 'clicked',
         actionSubject: 'remote.mute.dialog.confirm.button',
         attributes: {
-            'participant_id': participantId
+            'participant_id': participantId,
+            'media_type': mediaType
         },
         source: 'remote.mute.dialog',
         type: TYPE_UI

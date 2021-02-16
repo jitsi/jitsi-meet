@@ -16,7 +16,10 @@ import {
     PIN_PARTICIPANT,
     SET_LOADABLE_AVATAR_URL
 } from './actionTypes';
-import { DISCO_REMOTE_CONTROL_FEATURE } from './constants';
+import {
+    DISCO_REMOTE_CONTROL_FEATURE,
+    MEDIA_TYPE
+} from './constants';
 import {
     getLocalParticipant,
     getNormalizedDisplayName,
@@ -192,15 +195,18 @@ export function localParticipantRoleChanged(role) {
  * Create an action for muting another participant in the conference.
  *
  * @param {string} id - Participant's ID.
+ * @param {MEDIA_TYPE} mediaType - The media to mute.
  * @returns {{
  *     type: MUTE_REMOTE_PARTICIPANT,
- *     id: string
+ *     id: string,
+ *     mediaType: MEDIA_TYPE
  * }}
  */
-export function muteRemoteParticipant(id) {
+export function muteRemoteParticipant(id, mediaType) {
     return {
         type: MUTE_REMOTE_PARTICIPANT,
-        id
+        id,
+        mediaType
     };
 }
 

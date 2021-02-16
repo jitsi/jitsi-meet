@@ -7,13 +7,13 @@ import { MEDIA_TYPE } from '../../base/media';
 import { getLocalParticipant, getParticipantDisplayName } from '../../base/participants';
 import { muteAllParticipants } from '../actions';
 
-import AbstractMuteRemoteParticipantDialog, {
+import AbstractMuteRemoteParticipantsVideoDialog, {
     type Props as AbstractProps
-} from './AbstractMuteRemoteParticipantDialog';
+} from './AbstractMuteRemoteParticipantsVideoDialog';
 
 /**
  * The type of the React {@code Component} props of
- * {@link AbstractMuteEveryoneDialog}.
+ * {@link AbstractMuteEveryonesVideoDialog}.
  */
 export type Props = AbstractProps & {
 
@@ -25,11 +25,11 @@ export type Props = AbstractProps & {
 /**
  *
  * An abstract Component with the contents for a dialog that asks for confirmation
- * from the user before muting all remote participants.
+ * from the user before disabling all remote participants cameras.
  *
- * @extends AbstractMuteRemoteParticipantDialog
+ * @extends AbstractMuteRemoteParticipantsVideoDialog
  */
-export default class AbstractMuteEveryoneDialog<P: Props> extends AbstractMuteRemoteParticipantDialog<P> {
+export default class AbstractMuteEveryonesVideoDialog<P: Props> extends AbstractMuteRemoteParticipantsVideoDialog<P> {
     static defaultProps = {
         exclude: [],
         muteLocal: false
@@ -46,7 +46,7 @@ export default class AbstractMuteEveryoneDialog<P: Props> extends AbstractMuteRe
 
         return (
             <Dialog
-                okKey = 'dialog.muteParticipantButton'
+                okKey = 'dialog.muteParticipantsVideoButton'
                 onSubmit = { this._onSubmit }
                 titleString = { title }
                 width = 'small'>
@@ -70,14 +70,14 @@ export default class AbstractMuteEveryoneDialog<P: Props> extends AbstractMuteRe
             exclude
         } = this.props;
 
-        dispatch(muteAllParticipants(exclude, MEDIA_TYPE.AUDIO));
+        dispatch(muteAllParticipants(exclude, MEDIA_TYPE.VIDEO));
 
         return true;
     }
 }
 
 /**
- * Maps (parts of) the Redux state to the associated {@code AbstractMuteEveryoneDialog}'s props.
+ * Maps (parts of) the Redux state to the associated {@code AbstractMuteEveryonesVideoDialog}'s props.
  *
  * @param {Object} state - The redux state.
  * @param {Object} ownProps - The properties explicitly passed to the component.
@@ -94,10 +94,10 @@ export function abstractMapStateToProps(state: Object, ownProps: Props) {
         .join(', ');
 
     return whom.length ? {
-        content: t('dialog.muteEveryoneElseDialog'),
-        title: t('dialog.muteEveryoneElseTitle', { whom })
+        content: t('dialog.muteEveryoneElsesVideoDialog'),
+        title: t('dialog.muteEveryoneElsesVideoTitle', { whom })
     } : {
-        content: t('dialog.muteEveryoneDialog'),
-        title: t('dialog.muteEveryoneTitle')
+        content: t('dialog.muteEveryonesVideoDialog'),
+        title: t('dialog.muteEveryonesVideoTitle')
     };
 }
