@@ -5,7 +5,7 @@ import { openDialog } from '../../base/dialog';
 import { IconMuteVideoEveryone } from '../../base/icons';
 import { AbstractButton, type AbstractButtonProps } from '../../base/toolbox/components';
 
-import { MuteEveryoneDialog } from '.';
+import { MuteEveryonesVideoDialog } from '.';
 
 export type Props = AbstractButtonProps & {
 
@@ -43,6 +43,6 @@ export default class AbstractMuteEveryoneElsesVideoButton extends AbstractButton
         const { dispatch, participantID } = this.props;
 
         sendAnalytics(createToolbarEvent('mute.everyoneelsesvideo.pressed'));
-        dispatch(openDialog(MuteEveryoneDialog, { exclude: [ participantID ] }));
+        dispatch(openDialog(MuteEveryonesVideoDialog, { exclude: [ participantID ] }));
     }
 }
