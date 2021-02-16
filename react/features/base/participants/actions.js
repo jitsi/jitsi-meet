@@ -458,15 +458,17 @@ export function participantUpdated(participant = {}) {
  * @param {JitsiParticipant} participant - Information about participant.
  * @returns {Promise}
  */
-export function participantMutedUs(participant) {
+export function participantMutedUs(participant, track) {
     return (dispatch, getState) => {
         if (!participant) {
             return;
         }
 
+        const isAudio = track.isAudioTrack();
+
         dispatch(showNotification({
-            descriptionKey: 'notify.mutedRemotelyDescription',
-            titleKey: 'notify.mutedRemotelyTitle',
+            descriptionKey: isAudio ? 'notify.mutedRemotelyDescription' : 'notify.videoMutedRemotelyDescription',
+            titleKey: isAudio ? 'notify.mutedRemotelyTitle' : 'notify.videoMutedRemotelyTitle',
             titleArguments: {
                 participantDisplayName:
                     getParticipantDisplayName(getState, participant.getId())
