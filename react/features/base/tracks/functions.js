@@ -320,7 +320,7 @@ export function getTrackByMediaTypeAndParticipant(
         mediaType,
         participantId) {
     return tracks.find(
-        t => t.participantId === participantId && t.mediaType === mediaType
+        t => Boolean(t.jitsiTrack) && t.participantId === participantId && t.mediaType === mediaType
     );
 }
 
