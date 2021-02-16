@@ -3,11 +3,10 @@
 import React from 'react';
 import {
     Image,
-    Text,
     SafeAreaView,
     View
 } from 'react-native';
-import JaneButton from '../../../base/react/components/native/JaneButton';
+import { JaneButton, ScaledText } from '../../../base/react/components/native';
 import tutorialStyles from './styles';
 import {
     ColorPalette,
@@ -58,13 +57,14 @@ const StepOne = (props: Props) => {
                 <Image
                     source = { require('../../../../../images/jane-video-logo-blue.png') }
                     style = { tutorialStyles.stepOne.logo } />
-                <Text style = { tutorialStyles.stepOne.header }>
+                <ScaledText
+                    style = { tutorialStyles.stepOne.header }>
                     Nice! You've got the app installed.
-                </Text>
-                <Text
+                </ScaledText>
+                <ScaledText
                     style = { tutorialStyles.stepOne.messageText } >
                     We’ll give you a quick tour of how to join your online appointment.
-                </Text>
+                </ScaledText>
                 <JaneButton
                     borderColor = { JANE_COLOR }
                     content = 'Next'
@@ -103,9 +103,10 @@ const StepTwo = (props: Props) => {
                 <Image
                     source = { require('../../../../../images/jane-video-logo-blue.png') }
                     style = { tutorialStyles.stepTwo.logo } />
-                <Text style = { tutorialStyles.stepTwo.header }>
+                <ScaledText
+                    style = { tutorialStyles.stepTwo.header }>
                     Watch a guided tour of how to join your call.
-                </Text>
+                </ScaledText>
                 <Video
                     controls = { true }
                     ignoreSilentSwitch = 'ignore'
@@ -155,9 +156,10 @@ const StepThree = (props: Props) => {
                     color = { JANE_COLOR }
                     icon = { faEnvelope }
                     size = { ENVELOPE_ICON_SIZE } />
-                <Text style = { tutorialStyles.stepThree.header }>
+                <ScaledText
+                    style = { tutorialStyles.stepThree.header }>
                     Do you have access to your email on this device?
-                </Text>
+                </ScaledText>
                 <JaneButton
                     borderColor = { JANE_COLOR }
                     content = 'Yes'
@@ -201,17 +203,19 @@ const StepFour = (props: Props) => {
         <View
             style = { tutorialStyles.stepFour.mainContainer }>
             <View style = { tutorialStyles.stepFour.innerUpperContainer }>
-                <Text style = { tutorialStyles.stepFour.header }>
+                <ScaledText
+                    style = { tutorialStyles.stepFour.header }>
                     You’ll be emailed a link to join your call.
-                </Text>
+                </ScaledText>
                 <Image
                     source = { require('../../../../../images/patient-email-mobile-screen.png') }
                     style = { tutorialStyles.stepFour.mobileScreen } />
-                <Text style = { tutorialStyles.stepFour.message }>
+                <ScaledText
+                    style = { tutorialStyles.stepFour.message }>
                     You’ll be emailed a link to join your call 30 minutes before your appointment.
                     {'\n'} {'\n'}
                     Check your email on this device and tap the link. That’s it.
-                </Text>
+                </ScaledText>
             </View>
             <View style = { tutorialStyles.stepFour.innerLowerContainer }>
                 <JaneButton
@@ -252,9 +256,10 @@ const Done = (props: Props) => {
             <Image
                 source = { require('../../../../../images/jane-video-logo.png') }
                 style = { [ tutorialStyles.logo, tutorialStyles.done.logo ] } />
-            <Text style = { tutorialStyles.done.header }>
+            <ScaledText
+                style = { tutorialStyles.done.header }>
                 Great. You’re all set.
-            </Text>
+            </ScaledText>
             <JaneButton
                 borderColor = { WHITE_COLOR }
                 content = 'Remind me how to join my call'
@@ -283,26 +288,29 @@ const NoEmail = (props: Props) => {
         <View
             style = { tutorialStyles.noEmail.mainContainer }>
             <View style = { tutorialStyles.noEmail.innerUpperContainer }>
-                <Text style = { [ tutorialStyles.bigText, tutorialStyles.noEmail.header ] }>
+                <ScaledText
+                    style = { [ tutorialStyles.bigText, tutorialStyles.noEmail.header ] }>
                     No email?
                     {'\n'}
                     Sign in to join your call.
-                </Text>
+                </ScaledText>
                 <Image
                     source = { require('../../../../../images/upcoming-appoiment-email.png') }
                     style = { tutorialStyles.noEmail.mobileScreen } />
-                <Text style = { tutorialStyles.noEmail.regularText }>
+                <ScaledText
+                    style = { tutorialStyles.noEmail.regularText }>
                     You can join your call by logging into your account on your clinic’s Jane site,
                     using the Sign In button at the top of the page.
                     {'\n'} {'\n'}
                     The URL to the clinic’s Jane site will look something like:{'\n'}
-                    <Text style = { [ tutorialStyles.noEmail.regularText, tutorialStyles.noEmail.boldText ] }>
+                    <ScaledText
+                        style = { [ tutorialStyles.noEmail.regularText, tutorialStyles.noEmail.boldText ] }>
                         clinicnamehere.janeapp.com
-                    </Text>
+                    </ScaledText>
                     {'\n'} {'\n'}
                     Clinics will often include a direct link to their Jane online booking
                     site on their website, but you can always ask if you are unsure!
-                </Text>
+                </ScaledText>
             </View>
             <View style = { tutorialStyles.noEmail.innerLowerContainer }>
                 <JaneButton
@@ -340,15 +348,18 @@ const Staff = (props: Props) => {
         <View
             style = { tutorialStyles.staff.mainContainer }>
             <View style = { tutorialStyles.staff.innerUpperContainer }>
-                <Text style = { tutorialStyles.bigText }>
+                <ScaledText
+                    style = { tutorialStyles.bigText }>
                     Join as a Staff Member
-                </Text>
-                <Text style = { tutorialStyles.staff.lightText }>
+                </ScaledText>
+                <ScaledText
+                    style = { tutorialStyles.staff.lightText }>
                     1. Sign in to your Jane Account on this device and view your scheduled appointments.
-                </Text>
-                <Text style = { tutorialStyles.staff.lightText }>
+                </ScaledText>
+                <ScaledText
+                    style = { tutorialStyles.staff.lightText }>
                     2. Select the appointment and tap begin.
-                </Text>
+                </ScaledText>
                 <Image
                     source = { require('../../../../../images/staff-mobile-screen.png') }
                     style = { tutorialStyles.staff.mobileScreen } />
