@@ -1,7 +1,8 @@
 // @flow
 
 import React from 'react';
-import { Text, TouchableOpacity } from 'react-native';
+import { TouchableOpacity } from 'react-native';
+import { ScaledText } from './index';
 import { sizeHelper, JaneWeb } from '../../../styles';
 
 type Props = {
@@ -36,12 +37,12 @@ const JaneButton = (props: Props) => (<TouchableOpacity
         borderColor: props.borderColor,
         marginBottom: sizeHelper.getActualSizeH(props.marginBottom)
     }}>
-    <Text
+    <ScaledText
         style = {{ ...styles.textStyle,
             color: props.textColor,
             fontSize: props.size || sizeHelper.getActualSizeH(18) }}>
         {props.content}
-    </Text>
+    </ScaledText>
 </TouchableOpacity>);
 
 export default JaneButton;
