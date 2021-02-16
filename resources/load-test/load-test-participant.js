@@ -13,7 +13,10 @@ const {
     localVideo = config.startWithVideoMuted !== true,
     remoteVideo = isHuman,
     remoteAudio = isHuman,
-    autoPlayVideo = config.testing.noAutoPlayVideo !== true
+    autoPlayVideo = config.testing.noAutoPlayVideo !== true,
+
+    // Whether to create local audio even if muted
+    autoCreateLocalAudio = config.testing.noAutoLocalAudio !== true
 } = params;
 
 const { room: roomName } = parseURIString(window.location.toString());
@@ -212,7 +215,10 @@ function onConnectionSuccess() {
     if (localVideo) {
         devices.push('video');
     }
-    devices.push('audio');
+
+    if (autoCreateLocalAudio) {
+        devices.push('audio');
+    }
 
     if (devices.length > 0) {
         JitsiMeetJS.createLocalTracks({ devices })
