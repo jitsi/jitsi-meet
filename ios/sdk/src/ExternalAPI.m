@@ -151,10 +151,9 @@ RCT_EXPORT_METHOD(sendEvent:(NSString *)name
 }
 
 - (void)sendEndpointTextMessage:(NSString*)to :(NSString*)message {
-    NSDictionary *data = @{
-        @"to": to,
-        @"message": message
-    };
+    NSMutableDictionary *data = [[NSMutableDictionary alloc] init];
+    data[@"to"] = to;
+    data[@"message"] = message;
     
     [self sendEventWithName:sendEndpointTextMessageAction body:data];
 }
@@ -173,18 +172,16 @@ RCT_EXPORT_METHOD(sendEvent:(NSString *)name
 }
 
 - (void)openChat:(NSString*)to {
-    NSDictionary *data = @{
-        @"to": to,
-    };
+    NSMutableDictionary *data = [[NSMutableDictionary alloc] init];
+    data[@"to"] = to;
     
     [self sendEventWithName:openChatAction body:data];
 }
 
 - (void)sendChatMessage:(NSString*)to :(NSString*)message {
-    NSDictionary *data = @{
-        @"to": to,
-        @"message": message
-    };
+    NSMutableDictionary *data = [[NSMutableDictionary alloc] init];
+    data[@"to"] = to;
+    data[@"message"] = message;
     
     [self sendEventWithName:sendChatMessageAction body:data];
 }
