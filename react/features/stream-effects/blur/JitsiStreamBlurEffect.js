@@ -5,9 +5,10 @@ import {
     SET_TIMEOUT,
     timerWorkerScript
 } from './TimerWorker';
+
 const segmentationWidth = 256;
 const segmentationHeight = 144;
-const _segmentationPixelCount = segmentationWidth * segmentationHeight;
+const segmentationPixelCount = segmentationWidth * segmentationHeight;
 
 /**
  * Represents a modified MediaStream that adds blur to video background.
@@ -15,19 +16,16 @@ const _segmentationPixelCount = segmentationWidth * segmentationHeight;
  * video stream.
  */
 export default class JitsiStreamBlurEffect {
-    _bpModel: Object;
+    _model: Object;
     _inputVideoElement: HTMLVideoElement;
-    _inputVideoCanvasElement: HTMLCanvasElement;
     _onMaskFrameTimer: Function;
     _maskFrameTimerWorker: Worker;
-    _maskInProgress: boolean;
     _outputCanvasElement: HTMLCanvasElement;
     _outputCanvasCtx: Object;
     _segmentationMaskCtx: Object;
     _segmentationMask: Object;
     _segmentationMaskCanvas: Object;
     _renderMask: Function;
-    _segmentationData: Object;
     isEnabled: Function;
     startEffect: Function;
     stopEffect: Function;
@@ -39,7 +37,7 @@ export default class JitsiStreamBlurEffect {
      * @param {BodyPix} bpModel - BodyPix model.
      */
     constructor(bpModel: Object) {
-        this._bpModel = bpModel;
+        this._model = bpModel;
 
         // Bind event handler so it is only bound once for every instance.
         this._onMaskFrameTimer = this._onMaskFrameTimer.bind(this);
@@ -48,7 +46,6 @@ export default class JitsiStreamBlurEffect {
         this._outputCanvasElement = document.createElement('canvas');
         this._outputCanvasElement.getContext('2d');
         this._inputVideoElement = document.createElement('video');
-        this._inputVideoCanvasElement = document.createElement('canvas');
     }
 
     /**
@@ -72,7 +69,7 @@ export default class JitsiStreamBlurEffect {
     runPostProcessing() {
         this._outputCanvasCtx.globalCompositeOperation = 'copy';
 
-        // draw segmentation mask
+        // Draw segmentation mask.
         this._outputCanvasCtx.filter = 'blur(25px)';
         this._outputCanvasCtx.drawImage(
             this._segmentationMaskCanvas,
@@ -91,7 +88,7 @@ export default class JitsiStreamBlurEffect {
         this._outputCanvasCtx.drawImage(this._inputVideoElement, 0, 0);
 
         this._outputCanvasCtx.globalCompositeOperation = 'destination-over';
-        this._outputCanvasCtx.filter = 'blur(25px)'; // FIXME Does not work on Safari
+        this._outputCanvasCtx.filter = 'blur(25px)'; // FIXME Does not work on Safari.
         this._outputCanvasCtx.drawImage(this._inputVideoElement, 0, 0);
     }
 
@@ -100,18 +97,18 @@ export default class JitsiStreamBlurEffect {
      *
      * @returns {void}
      */
-    runTFLiteInference() {
-        this._bpModel._runInference();
-        const outputMemoryOffset = this._bpModel._getOutputMemoryOffset() / 4;
+    runInference() {
+        this._model._runInference();
+        const outputMemoryOffset = this._model._getOutputMemoryOffset() / 4;
 
-        for (let i = 0; i < _segmentationPixelCount; i++) {
-            const background = this._bpModel.HEAPF32[outputMemoryOffset + (i * 2)];
-            const person = this._bpModel.HEAPF32[outputMemoryOffset + (i * 2) + 1];
+        for (let i = 0; i < segmentationPixelCount; i++) {
+            const background = this._model.HEAPF32[outputMemoryOffset + (i * 2)];
+            const person = this._model.HEAPF32[outputMemoryOffset + (i * 2) + 1];
             const shift = Math.max(background, person);
             const backgroundExp = Math.exp(background - shift);
             const personExp = Math.exp(person - shift);
 
-            // Sets only the alpha component of each pixel
+            // Sets only the alpha component of each pixel.
             this._segmentationMask.data[(i * 4) + 3] = (255 * personExp) / (backgroundExp + personExp);
         }
         this._segmentationMaskCtx.putImageData(this._segmentationMask, 0, 0);
@@ -125,7 +122,7 @@ export default class JitsiStreamBlurEffect {
      */
     _renderMask() {
         this.resizeSource();
-        this.runTFLiteInference();
+        this.runInference();
         this.runPostProcessing();
 
         this._maskFrameTimerWorker.postMessage({
@@ -158,12 +155,12 @@ export default class JitsiStreamBlurEffect {
             segmentationWidth,
             segmentationHeight
         );
-        const inputMemoryOffset = this._bpModel._getInputMemoryOffset() / 4;
+        const inputMemoryOffset = this._model._getInputMemoryOffset() / 4;
 
-        for (let i = 0; i < _segmentationPixelCount; i++) {
-            this._bpModel.HEAPF32[inputMemoryOffset + (i * 3)] = imageData.data[i * 4] / 255;
-            this._bpModel.HEAPF32[inputMemoryOffset + (i * 3) + 1] = imageData.data[(i * 4) + 1] / 255;
-            this._bpModel.HEAPF32[inputMemoryOffset + (i * 3) + 2] = imageData.data[(i * 4) + 2] / 255;
+        for (let i = 0; i < segmentationPixelCount; i++) {
+            this._model.HEAPF32[inputMemoryOffset + (i * 3)] = imageData.data[i * 4] / 255;
+            this._model.HEAPF32[inputMemoryOffset + (i * 3) + 1] = imageData.data[(i * 4) + 1] / 255;
+            this._model.HEAPF32[inputMemoryOffset + (i * 3) + 2] = imageData.data[(i * 4) + 2] / 255;
         }
     }
 
@@ -199,8 +196,6 @@ export default class JitsiStreamBlurEffect {
         this._outputCanvasElement.width = parseInt(width, 10);
         this._outputCanvasElement.height = parseInt(height, 10);
         this._outputCanvasCtx = this._outputCanvasElement.getContext('2d');
-        this._inputVideoCanvasElement.width = parseInt(width, 10);
-        this._inputVideoCanvasElement.height = parseInt(height, 10);
         this._inputVideoElement.width = parseInt(width, 10);
         this._inputVideoElement.height = parseInt(height, 10);
         this._inputVideoElement.autoplay = true;
@@ -212,7 +207,6 @@ export default class JitsiStreamBlurEffect {
             });
         };
 
-        // final output
         return this._outputCanvasElement.captureStream(parseInt(frameRate, 10));
     }
 
