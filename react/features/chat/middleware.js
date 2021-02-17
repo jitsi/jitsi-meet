@@ -104,6 +104,8 @@ MiddlewareRegistry.register(store => next => action => {
         if (typeof APP !== 'undefined') {
             APP.API.notifyChatUpdated(unreadCount, true);
         }
+
+        dispatch(setActiveModalId());
         break;
 
     case SEND_MESSAGE: {

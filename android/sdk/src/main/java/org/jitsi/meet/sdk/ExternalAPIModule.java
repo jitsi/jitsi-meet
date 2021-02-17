@@ -82,6 +82,9 @@ class ExternalAPIModule
         constants.put("SEND_ENDPOINT_TEXT_MESSAGE", BroadcastAction.Type.SEND_ENDPOINT_TEXT_MESSAGE.getAction());
         constants.put("TOGGLE_SCREEN_SHARE", BroadcastAction.Type.TOGGLE_SCREEN_SHARE.getAction());
         constants.put("RETRIEVE_PARTICIPANTS_INFO", BroadcastAction.Type.RETRIEVE_PARTICIPANTS_INFO.getAction());
+        constants.put("OPEN_CHAT", BroadcastAction.Type.OPEN_CHAT.getAction());
+        constants.put("CLOSE_CHAT", BroadcastAction.Type.CLOSE_CHAT.getAction());
+        constants.put("SEND_CHAT_MESSAGE", BroadcastAction.Type.SEND_CHAT_MESSAGE.getAction());
 
         return constants;
     }
