@@ -95,10 +95,10 @@
     "redux-thunk": "2.2.0",
     "rnnoise-wasm": "github:jitsi/rnnoise-wasm#566a16885897704d6e6d67a1d5ac5d39781db2af",
     "rtcstats": "github:jitsi/rtcstats#v6.2.0",
-    "stackblur-canvas": "2.3.0",
     "styled-components": "3.4.9",
     "util": "0.12.1",
     "uuid": "3.1.0",
+    "wasm-check": "2.0.1",
     "windows-iana": "^3.1.0",
     "xmldom": "0.1.27",
     "zxcvbn": "4.4.2"
