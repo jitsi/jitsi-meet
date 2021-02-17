@@ -24,6 +24,7 @@ static NSString * const sendEndpointTextMessageAction = @"org.jitsi.meet.SEND_EN
 static NSString * const toggleScreenShareAction = @"org.jitsi.meet.TOGGLE_SCREEN_SHARE";
 static NSString * const retrieveParticipantsInfoAction = @"org.jitsi.meet.RETRIEVE_PARTICIPANTS_INFO";
 static NSString * const openChatAction = @"org.jitsi.meet.OPEN_CHAT";
+static NSString * const closeChatAction = @"org.jitsi.meet.CLOSE_CHAT";
 static NSString * const sendChatMessageAction = @"org.jitsi.meet.SEND_CHAT_MESSAGE";
 
 @implementation ExternalAPI
@@ -45,6 +46,7 @@ RCT_EXPORT_MODULE();
         @"TOGGLE_SCREEN_SHARE": toggleScreenShareAction,
         @"RETRIEVE_PARTICIPANTS_INFO": retrieveParticipantsInfoAction,
         @"OPEN_CHAT": openChatAction,
+        @"CLOSE_CHAT": closeChatAction,
         @"SEND_CHAT_MESSAGE": sendChatMessageAction
     };
 };
@@ -67,6 +69,7 @@ RCT_EXPORT_MODULE();
               toggleScreenShareAction,
               retrieveParticipantsInfoAction,
               openChatAction,
+              closeChatAction,
               sendChatMessageAction
     ];
 }
@@ -176,6 +179,10 @@ RCT_EXPORT_METHOD(sendEvent:(NSString *)name
     data[@"to"] = to;
     
     [self sendEventWithName:openChatAction body:data];
+}
+
+- (void)closeChat {
+    [self sendEventWithName:closeChatAction body:nil];
 }
 
 - (void)sendChatMessage:(NSString*)to :(NSString*)message {

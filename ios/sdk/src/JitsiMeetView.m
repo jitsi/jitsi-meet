@@ -145,6 +145,11 @@ static void initializeViewsMap() {
     [externalAPI openChat:to];
 }
 
+- (void)closeChat  {
+    ExternalAPI *externalAPI = [[JitsiMeet sharedInstance] getExternalAPI];
+    [externalAPI closeChat];
+}
+
 - (void)sendChatMessage:(NSString*)to :(NSString*)message  {
     ExternalAPI *externalAPI = [[JitsiMeet sharedInstance] getExternalAPI];
     [externalAPI sendChatMessage:to :message];

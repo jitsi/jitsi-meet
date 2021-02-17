@@ -32,7 +32,7 @@ import { MiddlewareRegistry, StateListenerRegistry } from '../../base/redux';
 import { toggleScreensharing } from '../../base/tracks';
 import { OPEN_CHAT, CLOSE_CHAT } from '../../chat';
 import { openChat } from '../../chat/actions';
-import { sendMessage, setPrivateMessageRecipient } from '../../chat/actions.any';
+import { sendMessage, setPrivateMessageRecipient, closeChat } from '../../chat/actions.any';
 import { muteLocal } from '../../remote-video-menu/actions';
 import { ENTER_PICTURE_IN_PICTURE } from '../picture-in-picture';
 
@@ -317,6 +317,10 @@ function _registerForNativeEvents(store) {
         const participant = getParticipantById(store, to);
 
         dispatch(openChat(participant));
+    });
+
+    eventEmitter.addListener(ExternalAPI.CLOSE_CHAT, () => {
+        dispatch(closeChat());
     });
 
     eventEmitter.addListener(ExternalAPI.SEND_CHAT_MESSAGE, ({ message, to }) => {

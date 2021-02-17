@@ -30,6 +30,10 @@ public class BroadcastIntentHelper {
         return intent;
     }
 
+    public static Intent buildCloseChatIntent() {
+        return new Intent(BroadcastAction.Type.CLOSE_CHAT.getAction());
+    }
+
     public static Intent buildSendChatMessageIntent(String participantId, String message) {
         Intent intent = new Intent(BroadcastAction.Type.SEND_CHAT_MESSAGE.getAction());
         intent.putExtra("to", participantId);

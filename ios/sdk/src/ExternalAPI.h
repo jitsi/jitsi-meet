@@ -24,6 +24,7 @@
 - (void)toggleScreenShare;
 - (void)retrieveParticipantsInfo:(void (^)(NSArray*))completion;
 - (void)openChat:(NSString*)to;
+- (void)closeChat;
 - (void)sendChatMessage:(NSString*)to :(NSString*)message;
 
 @end
