@@ -13,7 +13,10 @@ const {
     localVideo = config.startWithVideoMuted !== true,
     remoteVideo = isHuman,
     remoteAudio = isHuman,
-    autoPlayVideo = config.testing.noAutoPlayVideo !== true
+    autoPlayVideo = config.testing.noAutoPlayVideo !== true,
+
+    // Whether to create local audio even if muted
+    autoCreateLocalAudio = config.testing.noAutoLocalAudio !== true
 } = params;
 
 const { room: roomName } = parseURIString(window.location.toString());
@@ -150,6 +153,27 @@ function onConferenceJoined() {
 }
 
 /**
+ * Handles start muted events, when audio and/or video are muted due to
+ * startAudioMuted or startVideoMuted policy.
+ */
+function onStartMuted() {
+    // Give it some time, as it may be currently in the process of muting
+    setTimeout(() => {
+        const localAudioTrack = room.getLocalAudioTrack();
+
+        if (localAudio && localAudioTrack && localAudioTrack.isMuted()) {
+            localAudioTrack.unmute();
+        }
+
+        const localVideoTrack = room.getLocalVideoTrack();
+
+        if (localVideo && localVideoTrack && localVideoTrack.isMuted()) {
+            localVideoTrack.unmute();
+        }
+    }, 2000);
+}
+
+/**
  *
  * @param id
  */
@@ -176,6 +200,7 @@ function onUserLeft(id) {
  */
 function onConnectionSuccess() {
     room = connection.initJitsiConference(roomName.toLowerCase(), config);
+    room.on(JitsiMeetJS.events.conference.STARTED_MUTED, onStartMuted);
     room.on(JitsiMeetJS.events.conference.TRACK_ADDED, onRemoteTrack);
     room.on(JitsiMeetJS.events.conference.CONFERENCE_JOINED, onConferenceJoined);
     room.on(JitsiMeetJS.events.conference.USER_JOINED, id => {
@@ -190,7 +215,10 @@ function onConnectionSuccess() {
     if (localVideo) {
         devices.push('video');
     }
-    devices.push('audio');
+
+    if (autoCreateLocalAudio) {
+        devices.push('audio');
+    }
 
     if (devices.length > 0) {
         JitsiMeetJS.createLocalTracks({ devices })
