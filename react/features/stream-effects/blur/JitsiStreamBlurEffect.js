@@ -9,6 +9,7 @@ import {
 const segmentationWidth = 256;
 const segmentationHeight = 144;
 const segmentationPixelCount = segmentationWidth * segmentationHeight;
+const blurValue = '25px';
 
 /**
  * Represents a modified MediaStream that adds blur to video background.
@@ -70,7 +71,7 @@ export default class JitsiStreamBlurEffect {
         this._outputCanvasCtx.globalCompositeOperation = 'copy';
 
         // Draw segmentation mask.
-        this._outputCanvasCtx.filter = 'blur(25px)';
+        this._outputCanvasCtx.filter = `blur(${blurValue})`;
         this._outputCanvasCtx.drawImage(
             this._segmentationMaskCanvas,
             0,
@@ -88,7 +89,7 @@ export default class JitsiStreamBlurEffect {
         this._outputCanvasCtx.drawImage(this._inputVideoElement, 0, 0);
 
         this._outputCanvasCtx.globalCompositeOperation = 'destination-over';
-        this._outputCanvasCtx.filter = 'blur(25px)'; // FIXME Does not work on Safari.
+        this._outputCanvasCtx.filter = `blur(${blurValue})`; // FIXME Does not work on Safari.
         this._outputCanvasCtx.drawImage(this._inputVideoElement, 0, 0);
     }
 
