@@ -8,6 +8,7 @@ import { BottomSheet, hideDialog, isDialogOpen } from '../../base/dialog';
 import { type Item } from '../../base/react/Types';
 import { connect } from '../../base/redux';
 import { StyleType } from '../../base/styles';
+import CloseButton from '../../toolbox/components/native/CloseButton';
 
 import DeleteItemButton from './DeleteItemButton.native';
 import ShowDialInInfoButton from './ShowDialInInfoButton.native';
@@ -75,6 +76,9 @@ class RecentListItemMenu extends PureComponent<Props> {
                 renderHeader = { this._renderMenuHeader }>
                 <DeleteItemButton { ...buttonProps } />
                 <ShowDialInInfoButton { ...buttonProps } />
+                <CloseButton
+                    showLabel = { true }
+                    styles = { _bottomSheetStyles.buttons } />
             </BottomSheet>
         );
     }

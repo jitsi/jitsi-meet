@@ -16,6 +16,7 @@ import {
 } from '../../../base/icons';
 import { connect } from '../../../base/redux';
 import { ColorPalette, type StyleType } from '../../../base/styles';
+import CloseButton from '../../../toolbox/components/native/CloseButton';
 
 import styles from './styles';
 
@@ -319,6 +320,9 @@ class AudioRoutePickerDialog extends Component<Props, State> {
         return (
             <BottomSheet onCancel = { this._onCancel }>
                 { content }
+                <CloseButton
+                    showLabel = { true }
+                    styles = { this.props._bottomSheetStyles.buttons } />
             </BottomSheet>
         );
     }

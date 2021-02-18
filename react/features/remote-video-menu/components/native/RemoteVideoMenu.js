@@ -11,6 +11,7 @@ import { getParticipantDisplayName } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import { StyleType } from '../../../base/styles';
 import { PrivateMessageButton } from '../../../chat';
+import CloseButton from '../../../toolbox/components/native/CloseButton';
 import { hideRemoteVideoMenu } from '../../actions';
 
 import ConnectionStatusButton from './ConnectionStatusButton';
@@ -89,12 +90,12 @@ class RemoteVideoMenu extends PureComponent<Props> {
      * @inheritdoc
      */
     render() {
-        const { _disableKick, _disableRemoteMute, participant } = this.props;
+        const { _bottomSheetStyles, _disableKick, _disableRemoteMute, participant } = this.props;
         const buttonProps = {
             afterClick: this._onCancel,
             showLabel: true,
             participantID: participant.id,
-            styles: this.props._bottomSheetStyles.buttons
+            styles: _bottomSheetStyles.buttons
         };
 
         return (
@@ -108,6 +109,9 @@ class RemoteVideoMenu extends PureComponent<Props> {
                 <PrivateMessageButton { ...buttonProps } />
                 <MuteEveryoneElseButton { ...buttonProps } />
                 <ConnectionStatusButton { ...buttonProps } />
+                <CloseButton
+                    showLabel = { true }
+                    styles = { _bottomSheetStyles.buttons } />
             </BottomSheet>
         );
     }

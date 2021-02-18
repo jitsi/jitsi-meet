@@ -22,6 +22,7 @@ import HelpButton from '../HelpButton';
 import MuteEveryoneButton from '../MuteEveryoneButton';
 
 import AudioOnlyButton from './AudioOnlyButton';
+import CloseButton from './CloseButton';
 import MoreOptionsButton from './MoreOptionsButton';
 import RaiseHandButton from './RaiseHandButton';
 import ScreenSharingButton from './ScreenSharingButton.js';
@@ -123,6 +124,11 @@ class OverflowMenu extends PureComponent<Props, State> {
             visible: !showMore
         };
 
+        const closeButtonProps = {
+            ...buttonProps,
+            afterClick: undefined
+        };
+
         return (
             <BottomSheet
                 onCancel = { this._onCancel }
@@ -135,6 +141,7 @@ class OverflowMenu extends PureComponent<Props, State> {
                 <LobbyModeButton { ...buttonProps } />
                 <ScreenSharingButton { ...buttonProps } />
                 <MoreOptionsButton { ...moreOptionsButtonProps } />
+                <CloseButton { ...closeButtonProps } />
                 <Collapsible collapsed = { !showMore }>
                     <ToggleCameraButton { ...buttonProps } />
                     <TileViewButton { ...buttonProps } />

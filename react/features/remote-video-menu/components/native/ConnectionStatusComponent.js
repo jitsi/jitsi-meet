@@ -13,6 +13,7 @@ import { BaseIndicator } from '../../../base/react';
 import { connect } from '../../../base/redux';
 import { StyleType, ColorPalette } from '../../../base/styles';
 import statsEmitter from '../../../connection-indicator/statsEmitter';
+import CloseButton from '../../../toolbox/components/native/CloseButton';
 
 import styles from './styles';
 
@@ -190,6 +191,9 @@ class ConnectionStatusComponent extends Component<Props, State> {
                         </Text>
                     </View>
                 </View>
+                <CloseButton
+                    showLabel = { true }
+                    styles = { this.props._bottomSheetStyles.buttons } />
             </BottomSheet>
         );
     }
