@@ -873,7 +873,7 @@
     },
     "welcomepage": {
         "accessibilityLabel": {
-            "join": "Tap to join",
+            "join": "Join meeting",
             "roomname": "Enter room name",
             "sideBar": "Side bar",
             "sideBarHint": "Opens the side bar which provides access to settings",
