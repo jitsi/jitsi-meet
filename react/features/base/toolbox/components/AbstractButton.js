@@ -98,6 +98,16 @@ export default class AbstractButton<P: Props, S: *> extends Component<P, S> {
     label: string;
 
     /**
+     * A succinct description of what the button does. Used by accessibility
+     * tools and torture tests.
+     *
+     * Used when the button is in the toggled state.
+     *
+     * @abstract
+     */
+    toggledAccessibilityLabel: string;
+
+    /**
      * The label for this button, when toggled.
      */
     toggledLabel: string;
@@ -149,6 +159,18 @@ export default class AbstractButton<P: Props, S: *> extends Component<P, S> {
      */
     _getElementAfter() {
         return null;
+    }
+
+    /**
+     * Gets the current accessibility label, taking the toggled state into account.
+     *
+     * @private
+     * @returns {string}
+     */
+    _getAccessibilityLabel() {
+        return (
+            this._isToggled() ? this.toggledAccessibilityLabel : this.accessibilityLabel
+        ) || this.accessibilityLabel;
     }
 
     /**
@@ -265,7 +287,7 @@ export default class AbstractButton<P: Props, S: *> extends Component<P, S> {
     render(): React$Node {
         const props = {
             ...this.props,
-            accessibilityLabel: this.accessibilityLabel,
+            accessibilityLabel: this._getAccessibilityLabel(),
             disabled: this._isDisabled(),
             elementAfter: this._getElementAfter(),
             icon: this._getIcon(),
