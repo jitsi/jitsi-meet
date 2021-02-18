@@ -646,6 +646,17 @@
         "title": "Settings"
     },
     "settingsView": {
+        "accessibility": {
+            "name": "Your name",
+            "email": "Your email address",
+            "serverURL": "Custom server URL",
+            "startAudioMuted": "Start all calls with audio muted",
+            "startVideoMuted": "Start all calls with video muted",
+            "showAdvanced": "Show advanced settings",
+            "disableCallIntegration": "Disable native call integration",
+            "disableP2P": "Disable peer to peer calling",
+            "disableCrashReporting": "Disable crash reporting"
+        },
         "advanced": "Advanced",
         "alertOk": "OK",
         "alertCancel": "Cancel",

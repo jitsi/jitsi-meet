@@ -140,6 +140,7 @@ class SettingsView extends AbstractSettingsView<Props, State> {
      * @returns {ReactElement}
      */
     render() {
+        const { t } = this.props;
         const { displayName, email, serverURL, startWithAudioMuted, startWithVideoMuted } = this.state;
 
         return (
@@ -157,6 +158,7 @@ class SettingsView extends AbstractSettingsView<Props, State> {
                         label = 'settingsView.displayName'
                         layout = 'column'>
                         <TextInput
+                            accessibilityLabel = { t('settingsView.accessibility.name') }
                             autoCorrect = { false }
                             onChangeText = { this._onChangeDisplayName }
                             placeholder = 'John Doe'
@@ -167,6 +169,7 @@ class SettingsView extends AbstractSettingsView<Props, State> {
                         label = 'settingsView.email'
                         layout = 'column'>
                         <TextInput
+                            accessibilityLabel = { t('settingsView.accessibility.email') }
                             autoCapitalize = 'none'
                             autoCorrect = { false }
                             keyboardType = { 'email-address' }
@@ -182,6 +185,7 @@ class SettingsView extends AbstractSettingsView<Props, State> {
                         label = 'settingsView.serverURL'
                         layout = 'column'>
                         <TextInput
+                            accessibilityLabel = { t('settingsView.accessibility.serverURL') }
                             autoCapitalize = 'none'
                             autoCorrect = { false }
                             editable = { this.props._serverURLChangeEnabled }
@@ -196,11 +200,15 @@ class SettingsView extends AbstractSettingsView<Props, State> {
                         fieldSeparator = { true }
                         label = 'settingsView.startWithAudioMuted'>
                         <Switch
+                            accessibilityLabel = { t('settingsView.accessibility.startAudioMuted') }
+                            accessibilityRole = { 'switch' }
                             onValueChange = { this._onStartAudioMutedChange }
                             value = { startWithAudioMuted } />
                     </FormRow>
                     <FormRow label = 'settingsView.startWithVideoMuted'>
                         <Switch
+                            accessibilityLabel = { t('settingsView.accessibility.startVideoMuted') }
+                            accessibilityRole = { 'switch' }
                             onValueChange = { this._onStartVideoMutedChange }
                             value = { startWithVideoMuted } />
                     </FormRow>
@@ -410,6 +418,7 @@ class SettingsView extends AbstractSettingsView<Props, State> {
      * @returns {React$Element}
      */
     _renderAdvancedSettings() {
+        const { t } = this.props;
         const { disableCallIntegration, disableP2P, disableCrashReporting, showAdvanced } = this.state;
 
         if (!showAdvanced) {
@@ -418,6 +427,8 @@ class SettingsView extends AbstractSettingsView<Props, State> {
                     fieldSeparator = { true }
                     label = 'settingsView.showAdvanced'>
                     <Switch
+                        accessibilityLabel = { t('settingsView.accessibility.showAdvanced') }
+                        accessibilityRole = { 'switch' }
                         onValueChange = { this._onShowAdvanced }
                         value = { showAdvanced } />
                 </FormRow>
@@ -431,6 +442,8 @@ class SettingsView extends AbstractSettingsView<Props, State> {
                         fieldSeparator = { true }
                         label = 'settingsView.disableCallIntegration'>
                         <Switch
+                            accessibilityLabel = { t('settingsView.accessibility.disableCallIntegration') }
+                            accessibilityRole = { 'switch' }
                             onValueChange = { this._onDisableCallIntegration }
                             value = { disableCallIntegration } />
                     </FormRow>
@@ -439,6 +452,8 @@ class SettingsView extends AbstractSettingsView<Props, State> {
                     fieldSeparator = { true }
                     label = 'settingsView.disableP2P'>
                     <Switch
+                        accessibilityLabel = { t('settingsView.accessibility.disableP2P') }
+                        accessibilityRole = { 'switch' }
                         onValueChange = { this._onDisableP2P }
                         value = { disableP2P } />
                 </FormRow>
@@ -447,6 +462,8 @@ class SettingsView extends AbstractSettingsView<Props, State> {
                         fieldSeparator = { true }
                         label = 'settingsView.disableCrashReporting'>
                         <Switch
+                            accessibilityLabel = { t('settingsView.accessibility.disableCrashReporting') }
+                            accessibilityRole = { 'switch' }
                             onValueChange = { this._onDisableCrashReporting }
                             value = { disableCrashReporting } />
                     </FormRow>
