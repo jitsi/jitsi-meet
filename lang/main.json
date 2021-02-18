@@ -332,6 +332,11 @@
     "embedMeeting": {
         "title": "Embed this meeting"
     },
+    "virtualBackground": {
+        "title": "Backgrounds",
+        "enableBlur": "Enable blur",
+        "removeBackground": "Remove background"
+    },
     "feedback": {
         "average": "Average",
         "bad": "Bad",
@@ -748,7 +753,7 @@
             "toggleCamera": "Toggle camera",
             "toggleFilmstrip": "Toggle filmstrip",
             "videomute": "Toggle mute video",
-            "videoblur": "Toggle video blur"
+            "selectBackground": "Select Background"
         },
         "addPeople": "Add people to your call",
         "audioSettings": "Audio settings",
@@ -810,9 +815,7 @@
         "tileViewToggle": "Toggle tile view",
         "toggleCamera": "Toggle camera",
         "videomute": "Start / Stop camera",
-        "videoSettings": "Video settings",
-        "startvideoblur": "Blur my background",
-        "stopvideoblur": "Disable background blur"
+        "selectBackground": "Select background"
     },
     "transcribing": {
         "ccButtonTooltip": "Start / Stop subtitles",

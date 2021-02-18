@@ -12,5 +12,5 @@ import '../remote-control/reducer';
 import '../screenshot-capture/reducer';
 import '../shared-video/reducer';
 import '../talk-while-muted/reducer';
-
+import '../virtual-background/reducer';
 import './reducers.any';

@@ -9,11 +9,11 @@ import {
 const blurValue = '25px';
 
 /**
- * Represents a modified MediaStream that adds blur to video background.
- * <tt>JitsiStreamBlurEffect</tt> does the processing of the original
+ * Represents a modified MediaStream that adds effects to video background.
+ * <tt>JitsiStreamBackgroundEffect</tt> does the processing of the original
  * video stream.
  */
-export default class JitsiStreamBlurEffect {
+export default class JitsiStreamBackgroundEffect {
     _model: Object;
     _options: Object;
     _segmentationPixelCount: number;
@@ -29,6 +29,7 @@ export default class JitsiStreamBlurEffect {
     isEnabled: Function;
     startEffect: Function;
     stopEffect: Function;
+    virtualImage: Image;
 
     /**
      * Represents a modified video MediaStream track.
@@ -38,6 +39,12 @@ export default class JitsiStreamBlurEffect {
      * @param {Object} options - Segmentation dimensions.
      */
     constructor(model: Object, options: Object) {
+        this._options = options;
+
+        if (this._options.virtualBackground.isVirtualBackground) {
+            this.virtualImage = new Image();
+            this.virtualImage.src = this._options.virtualBackground.virtualSource;
+        }
         this._model = model;
         this._options = options;
         this._segmentationPixelCount = this._options.width * this._options.height;
@@ -91,8 +98,12 @@ export default class JitsiStreamBlurEffect {
         this._outputCanvasCtx.drawImage(this._inputVideoElement, 0, 0);
 
         this._outputCanvasCtx.globalCompositeOperation = 'destination-over';
-        this._outputCanvasCtx.filter = `blur(${blurValue})`;
-        this._outputCanvasCtx.drawImage(this._inputVideoElement, 0, 0);
+        if (this._options.virtualBackground.isVirtualBackground) {
+            this._outputCanvasCtx.drawImage(this.virtualImage, 0, 0);
+        } else {
+            this._outputCanvasCtx.filter = `blur(${blurValue})`;
+            this._outputCanvasCtx.drawImage(this._inputVideoElement, 0, 0);
+        }
     }
 
     /**
@@ -196,6 +207,7 @@ export default class JitsiStreamBlurEffect {
         this._segmentationMaskCanvas.width = this._options.width;
         this._segmentationMaskCanvas.height = this._options.height;
         this._segmentationMaskCtx = this._segmentationMaskCanvas.getContext('2d');
+
         this._outputCanvasElement.width = parseInt(width, 10);
         this._outputCanvasElement.height = parseInt(height, 10);
         this._outputCanvasCtx = this._outputCanvasElement.getContext('2d');
