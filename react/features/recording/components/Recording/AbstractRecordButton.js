@@ -53,6 +53,7 @@ export type Props = AbstractButtonProps & {
  */
 export default class AbstractRecordButton<P: Props> extends AbstractButton<P, *> {
     accessibilityLabel = 'toolbar.accessibilityLabel.recording';
+    toggledAccessibilityLabel = 'toolbar.accessibilityLabel.recordingOff';
     icon = IconToggleRecording;
     label = 'dialog.startRecording';
     toggledLabel = 'dialog.stopRecording';

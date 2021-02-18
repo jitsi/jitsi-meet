@@ -25,7 +25,8 @@ type Props = AbstractProps & {
  * Component to render the lobby mode initiator button.
  */
 class LobbyModeButton extends AbstractButton<Props, any> {
-    accessibilityLabel = 'toolbar.accessibilityLabel.lobbyButton';
+    accessibilityLabel = 'toolbar.accessibilityLabel.lobby';
+    toggledAccessibilityLabel = 'toolbar.accessibilityLabel.lobbyOff';
     icon = IconMeetingUnlocked;
     label = 'toolbar.lobbyButtonEnable';
     toggledLabel = 'toolbar.lobbyButtonDisable'

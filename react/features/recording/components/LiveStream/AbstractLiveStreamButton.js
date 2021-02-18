@@ -52,6 +52,7 @@ export type Props = AbstractButtonProps & {
  */
 export default class AbstractLiveStreamButton<P: Props> extends AbstractButton<P, *> {
     accessibilityLabel = 'dialog.accessibilityLabel.liveStreaming';
+    toggledAccessibilityLabel = 'dialog.accessibilityLabel.liveStreamingOff';
     icon = IconLiveStreaming;
     label = 'dialog.startLiveStreaming';
     toggledLabel = 'dialog.stopLiveStreaming';

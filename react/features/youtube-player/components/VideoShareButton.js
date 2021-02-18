@@ -38,6 +38,7 @@ type Props = AbstractButtonProps & {
  */
 class VideoShareButton extends AbstractButton<Props, *> {
     accessibilityLabel = 'toolbar.accessibilityLabel.sharedvideo';
+    toggledAccessibilityLabel = 'toolbar.accessibilityLabel.sharedvideoOff';
     icon = IconShareVideo;
     label = 'toolbar.sharedvideo';
     toggledLabel = 'toolbar.stopSharedVideo';

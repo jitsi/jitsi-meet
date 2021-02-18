@@ -29,6 +29,7 @@ type Props = AbstractButtonProps & {
  */
 class ScreenSharingButton extends AbstractButton<Props, *> {
     accessibilityLabel = 'toolbar.accessibilityLabel.shareYourScreen';
+    toggledAccessibilityLabel = 'toolbar.accessibilityLabel.shareYourScreenOff';
     icon = IconShareDesktop;
     label = 'toolbar.startScreenSharing';
     toggledLabel = 'toolbar.stopScreenSharing';

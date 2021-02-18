@@ -28,6 +28,7 @@ type Props = AbstractButtonProps & {
  */
 class SharedDocumentButton extends AbstractButton<Props, *> {
     accessibilityLabel = 'toolbar.accessibilityLabel.document';
+    toggledAccessibilityLabel = 'toolbar.accessibilityLabel.documentOff';
     icon = IconShareDoc;
     label = 'toolbar.documentOpen';
     toggledLabel = 'toolbar.documentClose';

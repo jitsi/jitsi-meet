@@ -13,9 +13,9 @@ import {
 /**
  * A button which starts/stops the transcriptions.
  */
-class ClosedCaptionButton
-    extends AbstractClosedCaptionButton {
+class ClosedCaptionButton extends AbstractClosedCaptionButton {
     accessibilityLabel = 'toolbar.accessibilityLabel.cc';
+    toggledAccessibilityLabel = 'toolbar.accessibilityLabel.ccOff';
     icon = IconClosedCaption;
     label = 'transcribing.start';
     toggledLabel = 'transcribing.stop';
