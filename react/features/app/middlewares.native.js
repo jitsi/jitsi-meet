@@ -1,6 +1,7 @@
 // @flow
 
 import '../authentication/middleware';
+import '../mobile/accessibility-info/middleware';
 import '../mobile/audio-mode/middleware';
 import '../mobile/back-button/middleware';
 import '../mobile/background/middleware';
