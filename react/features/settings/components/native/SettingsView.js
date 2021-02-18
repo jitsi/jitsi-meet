@@ -1,7 +1,7 @@
 // @flow
 
 import React from 'react';
-import { Alert, NativeModules, ScrollView, Switch, Text, TextInput } from 'react-native';
+import { Alert, NativeModules, Platform, ScrollView, Switch, Text, TextInput } from 'react-native';
 
 import { translate } from '../../../base/i18n';
 import { JitsiModal } from '../../../base/modal';
@@ -426,13 +426,15 @@ class SettingsView extends AbstractSettingsView<Props, State> {
 
         return (
             <>
-                <FormRow
-                    fieldSeparator = { true }
-                    label = 'settingsView.disableCallIntegration'>
-                    <Switch
-                        onValueChange = { this._onDisableCallIntegration }
-                        value = { disableCallIntegration } />
-                </FormRow>
+                { Platform.OS === 'android' && (
+                    <FormRow
+                        fieldSeparator = { true }
+                        label = 'settingsView.disableCallIntegration'>
+                        <Switch
+                            onValueChange = { this._onDisableCallIntegration }
+                            value = { disableCallIntegration } />
+                    </FormRow>
+                )}
                 <FormRow
                     fieldSeparator = { true }
                     label = 'settingsView.disableP2P'>
