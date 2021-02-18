@@ -49,3 +49,23 @@
         z-index: $zindex3;
     }
 }
+
+
+/**
+ * Sort thumbnails in filmstrip
+ * This is optionally, set by SORTED_FILMSTRIP in interface_config.js
+ */
+
+ #filmstripRemoteVideosContainer.sorted  {
+     
+    /* default value */
+    .videocontainer {
+        order: 2;
+    }
+
+    /* show the thumbnails with video first */
+    .videocontainer.display-video,
+    .videocontainer.display-name-on-video {
+        order: 1;
+    }    
+}    

@@ -174,6 +174,12 @@ class Filmstrip extends Component <Props> {
             toolbar = this._renderToggleButton();
         }
 
+        // should thumbnails be sorted?
+        // (handled by css in _small_video.scss)
+        if (interfaceConfig.FILM_STRIP_SORTED || typeof interfaceConfig.FILM_STRIP_SORTED === 'undefined') {
+            remoteVideoContainerClassName += ' sorted';
+        }
+
         return (
             <div
                 className = { `filmstrip ${this.props._className}` }

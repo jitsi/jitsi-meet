@@ -97,6 +97,11 @@ var interfaceConfig = {
 
     FILM_STRIP_MAX_HEIGHT: 120,
 
+    /**
+     * Whether to show participants with video first in the filmstrip
+     */
+    FILM_STRIP_SORTED: true,
+
     GENERATE_ROOMNAMES_ON_WELCOME_PAGE: true,
 
     /**
@@ -219,6 +224,7 @@ var interfaceConfig = {
      * Whether to show thumbnails in filmstrip as a column instead of as a row.
      */
     VERTICAL_FILMSTRIP: true,
+
 
     // Determines how the video would fit the screen. 'both' would fit the whole
     // screen, 'height' would fit the original video height to the height of the
