@@ -62,6 +62,7 @@ class VideoSwitch extends Component<Props> {
      */
     render() {
         const { t, _headerStyles, _settings } = this.props;
+        const accessibilityHint = _settings.startAudioOnly ? 'videoSwitchHintVoice' : 'videoSwitchHintVideo';
 
         return (
             <View style = { styles.audioVideoSwitchContainer }>
@@ -74,6 +75,9 @@ class VideoSwitch extends Component<Props> {
                     </View>
                 </TouchableWithoutFeedback>
                 <Switch
+                    accessibilityHint = { t(`welcomepage.accessibilityLabel.${accessibilityHint}`) }
+                    accessibilityLabel = { t('welcomepage.accessibilityLabel.videoSwitch') }
+                    accessibilityRole = { 'switch' }
                     onValueChange = { this._onStartAudioOnlyChange }
                     style = { styles.audioVideoSwitch }
                     thumbColor = { SWITCH_THUMB_COLOR }

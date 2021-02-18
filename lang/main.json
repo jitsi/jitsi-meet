@@ -865,7 +865,10 @@
             "join": "Tap to join",
             "roomname": "Enter room name",
             "settings": "Settings",
-            "settingsHint": "Opens the settings panel"
+            "settingsHint": "Opens the settings panel",
+            "videoSwitch": "Voice only call mode switch",
+            "videoSwitchHintVoice": "Currently voice only calls will be made",
+            "videoSwitchHintVideo": "Currently video calls will be made"
         },
         "appDescription": "Go ahead, video chat with the whole team. In fact, invite everyone you know. {{app}} is a fully encrypted, 100% open source video conferencing solution that you can use all day, every day, for free — with no account needed.",
         "audioVideoSwitch": {
