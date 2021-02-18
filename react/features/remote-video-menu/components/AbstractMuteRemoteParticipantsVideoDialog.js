@@ -1,8 +1,8 @@
 // @flow
 
 import { Component } from 'react';
-import { MEDIA_TYPE } from '../../base/media';
 
+import { MEDIA_TYPE } from '../../base/media';
 import { muteRemote } from '../actions';
 
 /**

@@ -5,7 +5,8 @@ import React from 'react';
 import { Dialog } from '../../../base/dialog';
 import { translate } from '../../../base/i18n';
 import { connect } from '../../../base/redux';
-import AbstractMuteEveryonesVideoDialog, { abstractMapStateToProps, type Props } from '../AbstractMuteEveryonesVideoDialog';
+import AbstractMuteEveryonesVideoDialog, { abstractMapStateToProps, type Props }
+    from '../AbstractMuteEveryonesVideoDialog';
 
 /**
  * A React Component with the contents for a dialog that asks for confirmation
