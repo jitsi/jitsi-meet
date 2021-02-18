@@ -53,13 +53,16 @@ class BaseDialog<P: Props, S: State> extends AbstractDialog<P, S> {
         const { _dialogStyles, style } = this.props;
 
         return (
-            <TouchableWithoutFeedback>
+            <TouchableWithoutFeedback
+                accessible = { false }>
                 <KeyboardAvoidingView
+                    accessible = { false }
                     behavior = 'height'
                     style = { [
                         styles.overlay
                     ] }>
                     <View
+                        accessible = { false }
                         pointerEvents = 'box-none'
                         style = { [
                             _dialogStyles.dialog,
