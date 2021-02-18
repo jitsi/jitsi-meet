@@ -286,8 +286,8 @@ class WelcomePage extends AbstractWelcomePage {
                 <View style = { _headerStyles.page }>
                     <Header style = { styles.header }>
                         <TouchableOpacity
-                            accessibilityHint = { t('welcomepage.accessibilityLabel.settingsHint') }
-                            accessibilityLabel = { t('welcomepage.accessibilityLabel.settings') }
+                            accessibilityHint = { t('welcomepage.accessibilityLabel.sideBarHint') }
+                            accessibilityLabel = { t('welcomepage.accessibilityLabel.sideBar') }
                             onPress = { this._onShowSideBar } >
                             <Icon
                                 src = { IconMenu }

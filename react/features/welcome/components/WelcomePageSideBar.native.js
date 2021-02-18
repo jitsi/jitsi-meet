@@ -92,6 +92,7 @@ class WelcomePageSideBar extends Component<Props> {
                         onPress = { this._onHideSideBar }
                         style = { styles.backButton } />
                     <View
+                        accessible = { false }
                         style = { styles.sideBarHeaderContent }>
                         <Avatar
                             participantId = { this.props._localParticipantId }

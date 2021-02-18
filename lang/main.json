@@ -875,8 +875,8 @@
         "accessibilityLabel": {
             "join": "Tap to join",
             "roomname": "Enter room name",
-            "settings": "Settings",
-            "settingsHint": "Opens the settings panel",
+            "sideBar": "Side bar",
+            "sideBarHint": "Opens the side bar which provides access to settings",
             "videoSwitch": "Voice only call mode switch",
             "videoSwitchHintVoice": "Currently voice only calls will be made",
             "videoSwitchHintVideo": "Currently video calls will be made"
