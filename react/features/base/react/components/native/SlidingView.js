@@ -168,6 +168,7 @@ export default class SlidingView extends PureComponent<Props, State> {
                 pointerEvents = 'box-none'
                 style = { styles.sliderViewContainer } >
                 <TouchableWithoutFeedback
+                    accessible = { false }
                     onPress = { this._onHide } >
                     <View style = { styles.sliderViewShadow } />
                 </TouchableWithoutFeedback>

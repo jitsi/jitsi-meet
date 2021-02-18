@@ -135,7 +135,6 @@ class WelcomePageSideBar extends Component<Props> {
      * @returns {void}
      */
     _onHideSideBar() {
-        console.log('XXXXXX');
         this.props.dispatch(setSideBarVisible(false));
     }
 
