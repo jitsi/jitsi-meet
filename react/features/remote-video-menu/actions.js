@@ -47,10 +47,12 @@ export function muteLocal(enable: boolean, mediaType: MEDIA_TYPE) {
 
         if (!isAudio && mediaType !== MEDIA_TYPE.VIDEO) {
             console.error(`Unsupported media type: ${mediaType}`);
+
             return;
         }
         sendAnalytics(createToolbarEvent(isAudio ? AUDIO_MUTE : VIDEO_MUTE, { enable }));
-        dispatch(isAudio ? setAudioMuted(enable, /* ensureTrack */ true) : setVideoMuted(enable, mediaType, VIDEO_MUTISM_AUTHORITY.USER, /* ensureTrack */ true));
+        dispatch(isAudio ? setAudioMuted(enable, /* ensureTrack */ true)
+            : setVideoMuted(enable, mediaType, VIDEO_MUTISM_AUTHORITY.USER, /* ensureTrack */ true));
 
         // FIXME: The old conference logic as well as the shared video feature
         // still rely on this event being emitted.
@@ -70,6 +72,7 @@ export function muteRemote(participantId: string, mediaType: MEDIA_TYPE) {
     return (dispatch: Dispatch<any>) => {
         if (mediaType !== MEDIA_TYPE.AUDIO && mediaType !== MEDIA_TYPE.VIDEO) {
             console.error(`Unsupported media type: ${mediaType}`);
+
             return;
         }
         sendAnalytics(createRemoteMuteConfirmedEvent(participantId, mediaType));
@@ -81,6 +84,7 @@ export function muteRemote(participantId: string, mediaType: MEDIA_TYPE) {
  * Mutes all participants.
  *
  * @param {Array<string>} exclude - Array of participant IDs to not mute.
+ * @param {MEDIA_TYPE} mediaType - The media type to mute.
  * @returns {Function}
  */
 export function muteAllParticipants(exclude: Array<string>, mediaType: MEDIA_TYPE) {

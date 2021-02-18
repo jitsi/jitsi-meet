@@ -17,8 +17,7 @@ import {
     SET_LOADABLE_AVATAR_URL
 } from './actionTypes';
 import {
-    DISCO_REMOTE_CONTROL_FEATURE,
-    MEDIA_TYPE
+    DISCO_REMOTE_CONTROL_FEATURE
 } from './constants';
 import {
     getLocalParticipant,
@@ -456,6 +455,7 @@ export function participantUpdated(participant = {}) {
  * Action to signal that a participant has muted us.
  *
  * @param {JitsiParticipant} participant - Information about participant.
+ * @param {JitsiLocalTrack} track - Information about the track that has been muted.
  * @returns {Promise}
  */
 export function participantMutedUs(participant, track) {

@@ -81,7 +81,8 @@ function initCommands() {
             APP.conference.changeLocalDisplayName(displayName);
         },
         'mute-everyone': mediaType => {
-            const muteMediaType = (mediaType) ? mediaType : MEDIA_TYPE.AUDIO;
+            const muteMediaType = mediaType ? mediaType : MEDIA_TYPE.AUDIO;
+
             sendAnalytics(createApiEvent('muted-everyone'));
             const participants = APP.store.getState()['features/base/participants'];
             const localIds = participants
