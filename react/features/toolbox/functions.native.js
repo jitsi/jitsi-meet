@@ -16,10 +16,12 @@ export function isToolboxVisible(stateful: Object | Function) {
     const state = toState(stateful);
     const { alwaysVisible, enabled, visible } = state['features/toolbox'];
     const { length: participantCount } = state['features/base/participants'];
+    const { screenReaderEnabled } = state['features/accessibility-info'];
     const alwaysVisibleFlag = getFeatureFlag(state, TOOLBOX_ALWAYS_VISIBLE, false);
     const enabledFlag = getFeatureFlag(state, TOOLBOX_ENABLED, true);
 
-    return enabledFlag && enabled && (alwaysVisible || visible || participantCount === 1 || alwaysVisibleFlag);
+    return enabledFlag && enabled
+        && (alwaysVisible || visible || participantCount === 1 || alwaysVisibleFlag || screenReaderEnabled);
 }
 
 /**
