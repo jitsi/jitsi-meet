@@ -61,6 +61,7 @@ type Props = AbstractButtonProps & {
  */
 class VideoMuteButton extends AbstractVideoMuteButton<Props, *> {
     accessibilityLabel = 'toolbar.accessibilityLabel.videomute';
+    toggledAccessibilityLabel = 'toolbar.accessibilityLabel.videomuteOff';
     label = 'toolbar.videomute';
     tooltip = 'toolbar.videomute';
 
