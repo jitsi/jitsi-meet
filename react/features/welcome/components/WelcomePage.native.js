@@ -279,14 +279,16 @@ class WelcomePage extends AbstractWelcomePage {
      * @returns {ReactElement}
      */
     _renderFullUI() {
-        const roomnameAccLabel = 'welcomepage.accessibilityLabel.roomname';
         const { _headerStyles, t } = this.props;
 
         return (
             <LocalVideoTrackUnderlay style = { styles.welcomePage }>
                 <View style = { _headerStyles.page }>
                     <Header style = { styles.header }>
-                        <TouchableOpacity onPress = { this._onShowSideBar } >
+                        <TouchableOpacity
+                            accessibilityHint = { t('welcomepage.accessibilityLabel.settingsHint') }
+                            accessibilityLabel = { t('welcomepage.accessibilityLabel.settings') }
+                            onPress = { this._onShowSideBar } >
                             <Icon
                                 src = { IconMenu }
                                 style = { _headerStyles.headerButtonIcon } />
@@ -299,7 +301,7 @@ class WelcomePage extends AbstractWelcomePage {
                                 { t('welcomepage.roomname') }
                             </Text>
                             <TextInput
-                                accessibilityLabel = { t(roomnameAccLabel) }
+                                accessibilityLabel = { t('welcomepage.accessibilityLabel.roomname') }
                                 autoCapitalize = 'none'
                                 autoComplete = 'off'
                                 autoCorrect = { false }
