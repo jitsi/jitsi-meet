@@ -142,7 +142,9 @@ export default class StatelessAvatar extends AbstractStatelessAvatar<Props> {
                         backgroundColor: color
                     }
                 ] }>
-                <Text style = { styles.initialsText(size) }> { initials } </Text>
+                <Text
+                    accessibilityLabel = { '' }
+                    style = { styles.initialsText(size) }> { initials } </Text>
             </View>
         );
     }
