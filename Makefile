@@ -5,8 +5,8 @@ LIBJITSIMEET_DIR = node_modules/lib-jitsi-meet/
 LIBFLAC_DIR = node_modules/libflacjs/dist/min/
 OLM_DIR = node_modules/olm
 RNNOISE_WASM_DIR = node_modules/rnnoise-wasm/dist/
-TFLITE_WASM = react/features/stream-effects/blur/vendor/tflite
-MEET_MODELS_DIR  = react/features/stream-effects/blur/vendor/models/
+TFLITE_WASM = react/features/stream-effects/virtual-background/vendor/tflite
+MEET_MODELS_DIR  = react/features/stream-effects/virtual-background/vendor/models/
 NODE_SASS = ./node_modules/.bin/sass
 NPM = npm
 OUTPUT_DIR = .
@@ -51,8 +51,8 @@ deploy-appbundle:
 		$(OUTPUT_DIR)/analytics-ga.js \
 		$(BUILD_DIR)/analytics-ga.min.js \
 		$(BUILD_DIR)/analytics-ga.min.map \
-		$(BUILD_DIR)/video-blur-effect.min.js \
-		$(BUILD_DIR)/video-blur-effect.min.map \
+		$(BUILD_DIR)/virtual-background-effect.min.js \
+		$(BUILD_DIR)/virtual-background-effect.min.map \
 		$(BUILD_DIR)/rnnoise-processor.min.js \
 		$(BUILD_DIR)/rnnoise-processor.min.map \
 		$(BUILD_DIR)/close3.min.js \

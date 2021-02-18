@@ -7,16 +7,19 @@ let filterSupport;
 /**
  * Returns promise that resolves with the blur effect instance.
  *
- * @returns {Promise<JitsiStreamBlurEffect>} - Resolves with the blur effect instance.
+ * @param {Object} virtualBackground - The virtual object that contains the background image source and
+ * the isVirtualBackground flag that indicates if virtual image is activated .
+ * @returns {Promise<JitsiStreamBackgroundEffect>} - Resolves with the background effect instance.
  */
-export function getBlurEffect() {
+export function getBackgroundEffect(virtualBackground: Object) {
     const ns = getJitsiMeetGlobalNS();
 
-    if (ns.effects && ns.effects.createBlurEffect) {
-        return ns.effects.createBlurEffect();
+    if (ns.effects && ns.effects.createVirtualBackgroundEffect) {
+        return ns.effects.createVirtualBackgroundEffect(virtualBackground);
     }
 
-    return loadScript('libs/video-blur-effect.min.js').then(() => ns.effects.createBlurEffect());
+    return loadScript('libs/virtual-background-effect.min.js').then(() =>
+        ns.effects.createVirtualBackgroundEffect(virtualBackground));
 }
 
 /**

@@ -2,4 +2,4 @@
 
 import { getLogger } from '../base/logging/functions';
 
-export default getLogger('features/blur');
+export default getLogger('features/virtual-background');

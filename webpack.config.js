@@ -240,7 +240,7 @@ module.exports = [
         performance: getPerformanceHints(128 * 1024)
     }),
 
-    // Because both video-blur-effect and rnnoise-processor modules are loaded
+    // Because both virtual-background-effect and rnnoise-processor modules are loaded
     // in a lazy manner using the loadScript function with a hard coded name,
     // i.e.loadScript('libs/rnnoise-processor.min.js'), webpack dev server
     // won't know how to properly load them using the default config filename
@@ -249,7 +249,7 @@ module.exports = [
     // prod and dev mode.
     Object.assign({}, config, {
         entry: {
-            'video-blur-effect': './react/features/stream-effects/blur/index.js'
+            'virtual-background-effect': './react/features/stream-effects/virtual-background/index.js'
         },
         output: Object.assign({}, config.output, {
             library: [ 'JitsiMeetJS', 'app', 'effects' ],
