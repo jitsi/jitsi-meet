@@ -1,7 +1,7 @@
 // @flow
 
 import React, { Component } from 'react';
-import { SafeAreaView, ScrollView, Text } from 'react-native';
+import { SafeAreaView, ScrollView, Text, View } from 'react-native';
 
 import { Avatar } from '../../base/avatar';
 import { IconInfo, IconSettings, IconHelp } from '../../base/icons';
@@ -11,6 +11,7 @@ import {
     getParticipantDisplayName
 } from '../../base/participants';
 import {
+    BackButton,
     Header,
     SlidingView
 } from '../../base/react';
@@ -87,12 +88,18 @@ class WelcomePageSideBar extends Component<Props> {
                 show = { this.props._visible }
                 style = { styles.sideBar } >
                 <Header style = { styles.sideBarHeader }>
-                    <Avatar
-                        participantId = { this.props._localParticipantId }
-                        size = { SIDEBAR_AVATAR_SIZE } />
-                    <Text style = { styles.displayName }>
-                        { this.props._displayName }
-                    </Text>
+                    <BackButton
+                        onPress = { this._onHideSideBar }
+                        style = { styles.backButton } />
+                    <View
+                        style = { styles.sideBarHeaderContent }>
+                        <Avatar
+                            participantId = { this.props._localParticipantId }
+                            size = { SIDEBAR_AVATAR_SIZE } />
+                        <Text style = { styles.displayName }>
+                            { this.props._displayName }
+                        </Text>
+                    </View>
                 </Header>
                 <SafeAreaView style = { styles.sideBarBody }>
                     <ScrollView
@@ -128,6 +135,7 @@ class WelcomePageSideBar extends Component<Props> {
      * @returns {void}
      */
     _onHideSideBar() {
+        console.log('XXXXXX');
         this.props.dispatch(setSideBarVisible(false));
     }
 

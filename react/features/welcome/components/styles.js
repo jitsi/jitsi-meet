@@ -8,7 +8,7 @@ export const PLACEHOLDER_TEXT_COLOR = 'rgba(255, 255, 255, 0.5)';
 
 export const SIDEBAR_AVATAR_SIZE = 100;
 
-const SIDEBAR_HEADER_HEIGHT = 150;
+const SIDEBAR_HEADER_HEIGHT = 190;
 
 export const SWITCH_THUMB_COLOR = ColorPalette.blueHighlight;
 
@@ -49,6 +49,12 @@ export default {
         flex: 1,
         flexDirection: 'column',
         justifyContent: 'center'
+    },
+
+    backButton: {
+        position: 'absolute',
+        top: 0,
+        left: 0
     },
 
     /**
@@ -211,11 +217,18 @@ export default {
      * The style of the side bar header.
      */
     sideBarHeader: {
+        alignItems: 'stretch',
+        flex: 0,
+        height: SIDEBAR_HEADER_HEIGHT,
+        padding: BoxModel.padding
+    },
+
+    sideBarHeaderContent: {
+        flex: 1,
         alignItems: 'center',
         flexDirection: 'column',
-        height: SIDEBAR_HEADER_HEIGHT,
         justifyContent: 'center',
-        padding: BoxModel.padding
+        marginTop: 40
     },
 
     /**

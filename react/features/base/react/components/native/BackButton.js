@@ -42,13 +42,11 @@ class BackButton extends Component<Props> {
         return (
             <TouchableOpacity
                 accessibilityLabel = { 'Back' }
-                onPress = { this.props.onPress }>
+                onPress = { this.props.onPress }
+                style = { this.props.style }>
                 <Icon
                     src = { IconArrowBack }
-                    style = { [
-                        this.props._headerStyles.headerButtonIcon,
-                        this.props.style
-                    ] } />
+                    style = { this.props._headerStyles.headerButtonIcon } />
             </TouchableOpacity>
         );
     }
