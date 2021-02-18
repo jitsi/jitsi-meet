@@ -1994,7 +1994,7 @@ export default {
         room.on(JitsiConferenceEvents.TRACK_MUTE_CHANGED, (track, participantThatMutedUs) => {
             if (participantThatMutedUs) {
                 APP.store.dispatch(participantMutedUs(participantThatMutedUs, track));
-                if(this.isSharingScreen && track.isVideoTrack()) {
+                if (this.isSharingScreen && track.isVideoTrack()) {
                     this._turnScreenSharingOff(false);
                 }
             }
