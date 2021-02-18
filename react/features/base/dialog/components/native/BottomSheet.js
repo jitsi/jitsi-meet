@@ -84,8 +84,6 @@ class BottomSheet extends PureComponent<Props> {
 
         return (
             <SlidingView
-                accessibilityRole = 'menu'
-                accessibilityViewIsModal = { true }
                 onHide = { this.props.onCancel }
                 position = 'bottom'
                 show = { true }>
@@ -97,6 +95,8 @@ class BottomSheet extends PureComponent<Props> {
                         style = { styles.sheetAreaCover } />
                     { renderHeader && renderHeader() }
                     <SafeAreaView
+                        accessibilityRole = 'menu'
+                        accessibilityViewIsModal = { true }
                         style = { [
                             styles.sheetItemContainer,
                             _styles.sheet
