@@ -67,9 +67,12 @@ class VideoSwitch extends Component<Props> {
         return (
             <View style = { styles.audioVideoSwitchContainer }>
                 <TouchableWithoutFeedback
+                    accessible = { false }
                     onPress = { this._onStartAudioOnlyFalse }>
                     <View style = { styles.switchLabel }>
-                        <Text style = { _headerStyles.headerText }>
+                        <Text
+                            accessibilityLabel = { '' }
+                            style = { _headerStyles.headerText }>
                             { t('welcomepage.audioVideoSwitch.video') }
                         </Text>
                     </View>
@@ -84,9 +87,12 @@ class VideoSwitch extends Component<Props> {
                     trackColor = {{ true: SWITCH_UNDER_COLOR }}
                     value = { _settings.startAudioOnly } />
                 <TouchableWithoutFeedback
+                    accessible = { false }
                     onPress = { this._onStartAudioOnlyTrue }>
                     <View style = { styles.switchLabel }>
-                        <Text style = { _headerStyles.headerText }>
+                        <Text
+                            accessibilityLabel = { '' }
+                            style = { _headerStyles.headerText }>
                             { t('welcomepage.audioVideoSwitch.audio') }
                         </Text>
                     </View>
