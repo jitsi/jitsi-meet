@@ -1,4 +1,6 @@
 import { SET_SHARED_VIDEO_STATUS, TOGGLE_SHARED_VIDEO } from './actionTypes';
+import {openDialog} from "../base/dialog";
+import { SharedVideoDialog } from '../shared-video/components';
 
 /**
  * Updates the current known status of the shared YouTube video.
@@ -28,4 +30,14 @@ export function toggleSharedVideo() {
     return {
         type: TOGGLE_SHARED_VIDEO
     };
+}
+
+/**
+ * Displays the dialog for entering the youtube video link.
+ *
+ * @param {Function} onPostSubmit - The function to be invoked when a valid link is entered.
+ * @returns {Function}
+ */
+export function showSharedVideoDialog(onPostSubmit: ?Function) {
+    return openDialog(SharedVideoDialog, { onPostSubmit });
 }

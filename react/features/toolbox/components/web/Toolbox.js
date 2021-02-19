@@ -22,8 +22,7 @@ import {
     IconPresentation,
     IconRaisedHand,
     IconRec,
-    IconShareDesktop,
-    IconShareVideo
+    IconShareDesktop
 } from '../../../base/icons';
 import JitsiMeetJS from '../../../base/lib-jitsi-meet';
 import {
@@ -56,7 +55,7 @@ import {
     SettingsButton,
     openSettingsDialog
 } from '../../../settings';
-import { ShareVideoButton } from '../../../shared-video';
+import { SharedVideoButton } from '../../../shared-video';
 import { SpeakerStats } from '../../../speaker-stats';
 import {
     ClosedCaptionButton
@@ -1028,7 +1027,6 @@ class Toolbox extends Component<Props, State> {
             _feedbackConfigured,
             _fullScreen,
             _screensharing,
-            _sharingVideo,
             t
         } = this.props;
 
@@ -1057,15 +1055,10 @@ class Toolbox extends Component<Props, State> {
                     key = 'record'
                     showLabel = { true } />,
             this._shouldShowButton('sharedvideo')
-                && <OverflowMenuItem
+                && <SharedVideoButton
                     accessibilityLabel = { t('toolbar.accessibilityLabel.sharedvideo') }
-                    icon = { IconShareVideo }
                     key = 'sharedvideo'
-                    onClick = { this._onToolbarToggleSharedVideo }
-                    text = { _sharingVideo ? t('toolbar.stopSharedVideo') : t('toolbar.sharedvideo') } />,
-            <ShareVideoButton
-                key = 'sharedvideos'
-                showLabel = { true } />,
+                    showLabel = { true } />,
             this._shouldShowButton('etherpad')
                 && <SharedDocumentButton
                     key = 'etherpad'

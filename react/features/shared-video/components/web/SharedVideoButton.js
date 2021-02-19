@@ -1,24 +1,41 @@
 // @flow
 
-import { createSharedVideoEvent, sendAnalytics } from '../../../analytics';
-import { toggleDialog } from '../../../base/dialog';
+/* global APP */
+import type { Dispatch } from 'redux';
+
+import {
+    createSharedVideoEvent as createEvent,
+    sendAnalytics
+} from '../../../analytics';
+import { getFeatureFlag, VIDEO_SHARE_BUTTON_ENABLED } from '../../../base/flags';
 import { translate } from '../../../base/i18n';
 import { IconShareVideo } from '../../../base/icons';
+import { getLocalParticipant as getLocalParticipantFromStore } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import {
     AbstractButton,
     type AbstractButtonProps
 } from '../../../base/toolbox/components';
-
-import { ShareVideoDialog } from './';
+import { showSharedVideoDialog } from '../../actions';
+import { isSharingStatus } from '../../functions';
 
 
 type Props = AbstractButtonProps & {
 
     /**
-     * The Redux dispatch function.
+     * Whether or not the button is disabled.
      */
-    dispatch: Function
+    _isDisabled: boolean,
+
+    /**
+     * Whether or not the local participant is sharing a video.
+     */
+    _sharingVideo: boolean,
+
+    /**
+     * The redux {@code dispatch} function.
+     */
+    dispatch: Dispatch<any>
 };
 
 /**
@@ -27,8 +44,9 @@ type Props = AbstractButtonProps & {
 class SharedVideoButton extends AbstractButton<Props, *> {
     accessibilityLabel = 'toolbar.accessibilityLabel.sharedvideo';
     icon = IconShareVideo;
-    label = 'toolbar.sharedvideos';
+    label = 'toolbar.sharedvideo';
     tooltip = 'toolbar.sharedvideo';
+    toggledLabel = 'toolbar.stopSharedVideo';
 
     /**
      * Handles clicking / pressing the button, and opens a new dialog.
@@ -37,12 +55,90 @@ class SharedVideoButton extends AbstractButton<Props, *> {
      * @returns {void}
      */
     _handleClick() {
+        if (this.props._sharingVideo) {
+            this._removeSharedVideo();
+        }
+
+        this._doToggleSharedVideoDialog();
+    }
+
+    /**
+     * Indicates whether this button is in toggled state or not.
+     *
+     * @override
+     * @protected
+     * @returns {boolean}
+     */
+    _isToggled() {
+        return this.props._sharingVideo;
+    }
+
+    /**
+     * Starts the video.
+     *
+     * @param {string} videoId - Video link id.
+     * @returns {boolean}
+     */
+    _startSharedVideo(videoId) {
+        const ownerId = getLocalParticipantFromStore(APP.store.getState()).id;
+
+        if (ownerId && videoId) {
+            APP.UI.onSharedVideoStart(ownerId, videoId, {
+                state: 'start',
+                from: ownerId
+            });
+            sendAnalytics(createEvent('started'));
+        }
+    }
+
+    /**
+     * Removes the video.
+     *
+     * @returns {boolean}
+     */
+    _removeSharedVideo() {
+        const ownerId = getLocalParticipantFromStore(APP.store.getState()).id;
+
+        APP.UI.onSharedVideoStop(ownerId, {
+            state: 'stop',
+            from: ownerId
+        });
+        sendAnalytics(createEvent('removed'));
+    }
+
+    /**
+     * Dispatches an action to toggle YouTube video sharing.
+     *
+     * @private
+     * @returns {void}
+     */
+    _doToggleSharedVideoDialog() {
         const { dispatch } = this.props;
 
-        sendAnalytics(createSharedVideoEvent('started'));
-        dispatch(toggleDialog(ShareVideoDialog));
+        if (!this.props._sharingVideo) {
+            dispatch(showSharedVideoDialog(id => this._startSharedVideo(id)));
+        }
     }
 }
 
+/**
+ * Maps part of the Redux state to the props of this component.
+ *
+ * @param {Object} state - The Redux state.
+ * @param {Object} ownProps - The properties explicitly passed to the component instance.
+ * @private
+ * @returns {Props}
+ */
+function _mapStateToProps(state, ownProps): Object {
+    const { status: sharedVideoStatus } = state['features/shared-video'];
+    const enabled = getFeatureFlag(state, VIDEO_SHARE_BUTTON_ENABLED, true);
+    const { visible = enabled } = ownProps;
 
-export default translate(connect()(SharedVideoButton));
+    return {
+        _sharingVideo: isSharingStatus(sharedVideoStatus),
+        visible
+    };
+}
+
+
+export default translate(connect(_mapStateToProps)(SharedVideoButton));
