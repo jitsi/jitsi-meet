@@ -91,6 +91,8 @@ dependencies {
         implementation 'com.google.firebase:firebase-dynamic-links:19.1.0'
     }
 
+    implementation 'com.jakewharton.timber:timber:4.7.1'
+
     implementation project(':sdk')
 }
 

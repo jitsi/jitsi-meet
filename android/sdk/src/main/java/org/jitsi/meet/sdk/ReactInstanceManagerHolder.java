@@ -35,6 +35,8 @@ import com.oney.WebRTCModule.RTCVideoViewManager;
 import com.oney.WebRTCModule.WebRTCModule;
 
 import org.devio.rn.splashscreen.SplashScreenModule;
+import org.webrtc.Loggable;
+import org.webrtc.Logging;
 import org.webrtc.SoftwareVideoDecoderFactory;
 import org.webrtc.SoftwareVideoEncoderFactory;
 import org.webrtc.audio.AudioDeviceModule;
@@ -44,6 +46,8 @@ import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import timber.log.Timber;
 
 class ReactInstanceManagerHolder {
     /**
@@ -57,7 +61,14 @@ class ReactInstanceManagerHolder {
      */
     private static ReactInstanceManager reactInstanceManager;
 
-    private static List<NativeModule> createNativeModules(ReactApplicationContext reactContext) {
+    private static Loggable webrtcLogger = new Loggable() {
+        @Override
+        public void onLogMessage(String message, Logging.Severity severity, String tag) {
+            Timber.tag(tag).e(message);
+        }
+    };
+
+    private static List<NativeModule> createNativeModules(final ReactApplicationContext reactContext) {
         List<NativeModule> nativeModules
             = new ArrayList<>(Arrays.<NativeModule>asList(
                 new AndroidSettingsModule(reactContext),
@@ -85,9 +96,10 @@ class ReactInstanceManagerHolder {
         AudioDeviceModule adm = JavaAudioDeviceModule.builder(reactContext)
             .createAudioDeviceModule();
         options.setAudioDeviceModule(adm);
-
         options.setVideoDecoderFactory(new SoftwareVideoDecoderFactory());
         options.setVideoEncoderFactory(new SoftwareVideoEncoderFactory());
+        options.setInjectableLogger(webrtcLogger);
+        options.setLoggingSeverity(Logging.Severity.LS_VERBOSE);
 
         nativeModules.add(new WebRTCModule(reactContext, options));
 

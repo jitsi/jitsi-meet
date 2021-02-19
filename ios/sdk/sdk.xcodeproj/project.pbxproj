@@ -42,6 +42,7 @@
 		C6A34261204EF76800E062DD /* DragGestureController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6A3425E204EF76800E062DD /* DragGestureController.swift */; };
 		C6CC49AF207412CF000DFA42 /* PiPViewCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6CC49AE207412CF000DFA42 /* PiPViewCoordinator.swift */; };
 		C81E9AB925AC5AD800B134D9 /* ExternalAPI.h in Headers */ = {isa = PBXBuildFile; fileRef = C81E9AB825AC5AD800B134D9 /* ExternalAPI.h */; };
+		C86F5F9325E3F0800046908B /* JitsiMeetRTCCallbackLoggerHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = C86F5F9225E3F0800046908B /* JitsiMeetRTCCallbackLoggerHandler.m */; };
 		C8AFD27F2462C613000293D2 /* InfoPlistUtil.h in Headers */ = {isa = PBXBuildFile; fileRef = C8AFD27D2462C613000293D2 /* InfoPlistUtil.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		C8AFD2802462C613000293D2 /* InfoPlistUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = C8AFD27E2462C613000293D2 /* InfoPlistUtil.m */; };
 		DE438CDA2350934700DD541D /* JavaScriptSandbox.m in Sources */ = {isa = PBXBuildFile; fileRef = DE438CD82350934700DD541D /* JavaScriptSandbox.m */; };
@@ -107,6 +108,8 @@
 		C6CC49AE207412CF000DFA42 /* PiPViewCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PiPViewCoordinator.swift; sourceTree = "<group>"; };
 		C6F99C13204DB63D0001F710 /* JitsiMeetView+Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "JitsiMeetView+Private.h"; sourceTree = "<group>"; };
 		C81E9AB825AC5AD800B134D9 /* ExternalAPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ExternalAPI.h; sourceTree = "<group>"; };
+		C86F5F9225E3F0800046908B /* JitsiMeetRTCCallbackLoggerHandler.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JitsiMeetRTCCallbackLoggerHandler.m; sourceTree = "<group>"; };
+		C86F5F9525E3F3750046908B /* JitsiMeetRTCCallbackLoggerHandler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JitsiMeetRTCCallbackLoggerHandler.h; sourceTree = "<group>"; };
 		C8AFD27D2462C613000293D2 /* InfoPlistUtil.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = InfoPlistUtil.h; sourceTree = "<group>"; };
 		C8AFD27E2462C613000293D2 /* InfoPlistUtil.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = InfoPlistUtil.m; sourceTree = "<group>"; };
 		DE438CD82350934700DD541D /* JavaScriptSandbox.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JavaScriptSandbox.m; sourceTree = "<group>"; };
@@ -231,6 +234,8 @@
 				C8AFD27D2462C613000293D2 /* InfoPlistUtil.h */,
 				C8AFD27E2462C613000293D2 /* InfoPlistUtil.m */,
 				C81E9AB825AC5AD800B134D9 /* ExternalAPI.h */,
+				C86F5F9225E3F0800046908B /* JitsiMeetRTCCallbackLoggerHandler.m */,
+				C86F5F9525E3F3750046908B /* JitsiMeetRTCCallbackLoggerHandler.h */,
 			);
 			path = src;
 			sourceTree = "<group>";
@@ -452,6 +457,7 @@
 				DE81A2DF2317ED5400AE1940 /* JitsiMeetBaseLogHandler.m in Sources */,
 				0BB9AD7D1F60356D001C08DB /* AppInfo.m in Sources */,
 				DE81A2D92316AC7600AE1940 /* LogBridge.m in Sources */,
+				C86F5F9325E3F0800046908B /* JitsiMeetRTCCallbackLoggerHandler.m in Sources */,
 				DEAFA779229EAD520033A7FA /* RNRootView.m in Sources */,
 				DE762DB622AFDE8D000DEBD6 /* JitsiMeetUserInfo.m in Sources */,
 				DEAD3227220C497000E93636 /* JitsiMeetConferenceOptions.m in Sources */,

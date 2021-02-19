@@ -19,6 +19,7 @@
 #import "FIRUtilities.h"
 #import "Types.h"
 #import "ViewController.h"
+#import "FirebaseLogHandler.h"
 
 @import Firebase;
 @import JitsiMeetSDK;
@@ -53,11 +54,14 @@
         [FIRApp configure];
         // Crashlytics defaults to disabled wirth the FirebaseCrashlyticsCollectionEnabled Info.plist key.
         [[FIRCrashlytics crashlytics] setCrashlyticsCollectionEnabled:![jitsiMeet isCrashReportingDisabled]];
+        [FIRAnalytics setAnalyticsCollectionEnabled:![jitsiMeet isCrashReportingDisabled]];
     }
 
     ViewController *rootController = (ViewController *)self.window.rootViewController;
     [jitsiMeet showSplashScreen:rootController.view];
 
+   [JitsiMeetLogger addHandler:[[FirebaseLogHandler alloc] init]];
+  
     return YES;
 }
 

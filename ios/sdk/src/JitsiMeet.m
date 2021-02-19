@@ -26,11 +26,14 @@
 
 #import <RNGoogleSignin/RNGoogleSignin.h>
 #import <WebRTC/RTCLogging.h>
+#import <WebRTC/RTCCallbackLogger.h>
 
+#import "JitsiMeetRTCCallbackLoggerHandler.h"
 
 @implementation JitsiMeet {
     RCTBridgeWrapper *_bridgeWrapper;
     NSDictionary *_launchOptions;
+    RTCCallbackLogger *_logger;
 }
 
 #pragma mak - This class is a singleton
@@ -42,7 +45,7 @@
     dispatch_once(&onceToken, ^{
         sharedInstance = [[self alloc] init];
     });
-
+    
     return sharedInstance;
 }
 
@@ -57,10 +60,19 @@
         // Register a log handler for React.
         registerReactLogHandler();
 
-#if 0
+        #if 0
         // Enable WebRTC logs
         RTCSetMinDebugLogLevel(RTCLoggingSeverityInfo);
-#endif
+        #endif
+
+        _logger = [[RTCCallbackLogger alloc] init];
+        _logger.severity = RTCLoggingSeverityVerbose;
+        
+        JitsiMeetRTCCallbackLoggerHandler *loggerHandler = [[JitsiMeetRTCCallbackLoggerHandler alloc] init];
+
+        [_logger startWithMessageAndSeverityHandler:^(NSString *_Nonnull message, RTCLoggingSeverity severity) {
+            [loggerHandler onLogReceived: message: severity];
+        }];
     }
 
     return self;

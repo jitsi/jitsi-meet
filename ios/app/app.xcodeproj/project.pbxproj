@@ -24,6 +24,7 @@
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		55BEDABDA92D47D399A70A5E /* libPods-JitsiMeet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D878B07B3FBD6E305EAA6B27 /* libPods-JitsiMeet.a */; };
+		C86F5F4825E3CC310046908B /* FirebaseLogHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = C86F5F4725E3CC310046908B /* FirebaseLogHandler.m */; };
 		DE050389256E904600DEE3A5 /* WebRTC.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = DE050388256E904600DEE3A5 /* WebRTC.xcframework */; };
 		DE05038A256E904600DEE3A5 /* WebRTC.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = DE050388256E904600DEE3A5 /* WebRTC.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		DE4C456121DE1E4E00EA0709 /* FIRUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = DE4C455F21DE1E4E00EA0709 /* FIRUtilities.m */; };
@@ -117,6 +118,8 @@
 		4670A512A688E2DC34528282 /* Pods-jitsi-meet.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-jitsi-meet.debug.xcconfig"; path = "../Pods/Target Support Files/Pods-jitsi-meet/Pods-jitsi-meet.debug.xcconfig"; sourceTree = "<group>"; };
 		609CB2080B75F75A89923F3D /* Pods-JitsiMeet.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JitsiMeet.debug.xcconfig"; path = "../Pods/Target Support Files/Pods-JitsiMeet/Pods-JitsiMeet.debug.xcconfig"; sourceTree = "<group>"; };
 		B3B083EB1D4955FF0069CEE7 /* app.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = app.entitlements; sourceTree = "<group>"; };
+		C86F5F4725E3CC310046908B /* FirebaseLogHandler.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FirebaseLogHandler.m; sourceTree = "<group>"; };
+		C86F5F4B25E3CDD90046908B /* FirebaseLogHandler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FirebaseLogHandler.h; sourceTree = "<group>"; };
 		D878B07B3FBD6E305EAA6B27 /* libPods-JitsiMeet.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-JitsiMeet.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		DE050388256E904600DEE3A5 /* WebRTC.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = WebRTC.xcframework; path = "../../node_modules/react-native-webrtc/apple/WebRTC.xcframework"; sourceTree = "<group>"; };
 		DE4C455F21DE1E4E00EA0709 /* FIRUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FIRUtilities.m; sourceTree = "<group>"; };
@@ -212,6 +215,8 @@
 				0BBD021F212EB69D00CCB19F /* Types.h */,
 				0B412F1D1EDEE6E800B1A0A6 /* ViewController.h */,
 				0B412F1E1EDEE6E800B1A0A6 /* ViewController.m */,
+				C86F5F4725E3CC310046908B /* FirebaseLogHandler.m */,
+				C86F5F4B25E3CDD90046908B /* FirebaseLogHandler.h */,
 			);
 			path = src;
 			sourceTree = "<group>";
@@ -527,6 +532,7 @@
 			files = (
 				0B412F1F1EDEE6E800B1A0A6 /* ViewController.m in Sources */,
 				13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */,
+				C86F5F4825E3CC310046908B /* FirebaseLogHandler.m in Sources */,
 				DE4C456121DE1E4E00EA0709 /* FIRUtilities.m in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
 			);
