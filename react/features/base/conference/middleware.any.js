@@ -12,14 +12,15 @@ import { openDisplayNamePrompt } from '../../display-name';
 import { showErrorNotification } from '../../notifications';
 import { CONNECTION_ESTABLISHED, CONNECTION_FAILED, connectionDisconnected } from '../connection';
 import { JitsiConferenceErrors } from '../lib-jitsi-meet';
-import { MEDIA_TYPE } from '../media';
+import { MEDIA_TYPE, setAudioMuted, setVideoMuted } from '../media';
 import {
     getLocalParticipant,
     getParticipantById,
     getPinnedParticipant,
     PARTICIPANT_ROLE,
     PARTICIPANT_UPDATED,
-    PIN_PARTICIPANT
+    PIN_PARTICIPANT,
+    getParticipantCount
 } from '../participants';
 import { MiddlewareRegistry } from '../redux';
 import { TRACK_ADDED, TRACK_REMOVED } from '../tracks';
@@ -199,8 +200,9 @@ function _conferenceFailed({ dispatch, getState }, next, action) {
 function _conferenceJoined({ dispatch, getState }, next, action) {
     const result = next(action);
     const { conference } = action;
-    const { pendingSubjectChange } = getState()['features/base/conference'];
-    const { requireDisplayName } = getState()['features/base/config'];
+    const state = getState();
+    const { pendingSubjectChange } = state['features/base/conference'];
+    const { requireDisplayName, startAudioMuted, startVideoMuted } = state['features/base/config'];
 
     pendingSubjectChange && dispatch(setSubject(pendingSubjectChange));
 
@@ -218,6 +220,20 @@ function _conferenceJoined({ dispatch, getState }, next, action) {
         && !getLocalParticipant(getState)?.name
         && !conference.isHidden()) {
         dispatch(openDisplayNamePrompt(undefined));
+    }
+
+    const participantCount = getParticipantCount(state);
+    const _startAudioMuted = Number.parseInt(startAudioMuted, 10);
+    const _startVideoMuted = Number.parseInt(startVideoMuted, 10);
+
+    if (!Number.isNaN(_startAudioMuted) && participantCount >= _startAudioMuted) {
+        logger.info(`There are ${participantCount} participants, startAudioMuted is ${_startAudioMuted} - muting`);
+        dispatch(setAudioMuted(true));
+    }
+
+    if (!Number.isNaN(_startVideoMuted) && participantCount >= _startVideoMuted) {
+        logger.info(`There are ${participantCount} participants, startVideoMuted is ${_startVideoMuted} - muting`);
+        dispatch(setVideoMuted(true));
     }
 
     return result;
