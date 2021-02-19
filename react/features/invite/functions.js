@@ -1,5 +1,4 @@
 // @flow
-/* global interfaceConfig */
 
 import { i18next } from '../base/i18n';
 import { isLocalParticipantModerator } from '../base/participants';
@@ -738,6 +737,7 @@ export const sharingFeatures = {
 /**
  * Returns true if a specific sharing feature is enabled in interface configuration.
  *
+ * @param {string} sharingFeature - The sharing feature to check.
  * @returns {boolean}
  */
 export function isSharingEnabled(sharingFeature) {
