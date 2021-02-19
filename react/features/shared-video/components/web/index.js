@@ -1,3 +1,3 @@
-export { default as ShareVideoButton } from './SharedVideoButton';
-export { default as ShareVideoDialog } from './SharedVideoDialog';
+export { default as SharedVideoButton } from './SharedVideoButton';
+export { default as SharedVideoDialog } from './SharedVideoDialog';
 

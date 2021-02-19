@@ -1,58 +1,49 @@
 // @flow
 
 import { FieldTextStateless } from '@atlaskit/field-text';
-import React, { useState } from 'react';
+import React from 'react';
 
 import { Dialog } from '../../../base/dialog';
-
-// import { getYoutubeLink } from '../../functions';
-
-
-/**
- * Example shared video link.
- * @type {string}
- */
-const defaultSharedVideoLink = 'https://youtu.be/TB7LlM4erx8';
+import { translate } from '../../../base/i18n';
+import { connect } from '../../../base/redux';
+import { defaultSharedVideoLink } from '../../constants';
+import AbstractSharedVideoDialog from '../AbstractSharedVideoDialog';
 
 /**
  * Component that renders the video share dialog.
  *
  * @returns {React$Element<any>}
  */
-function SharedVideoDialog() {
-    const [ sharedVideoLink, setSharedVideoLink ] = useState('');
+class SharedVideoDialog extends AbstractSharedVideoDialog<*> {
 
     /**
-     * Method updated shared link input with what the user adds.
+     * Implements React's {@link Component#render()}.
      *
-     * @param {Event} event - Key down event object.
-     *
-     * @private
-     * @returns {void}
+     * @inheritdoc
      */
-    function onChangeVideoLink(event) {
-        const link = event.target.value;
+    render() {
+        const { t, value } = this.props;
 
-        setSharedVideoLink(link);
+        return (
+            <Dialog
+                hideCancelButton = { false }
+                okDisabled = { this.state.okDisabled }
+                okKey = { t('dialog.Share') }
+                onSubmit = { this._onSubmit }
+                titleKey = { t('dialog.shareVideoTitle') }
+                width = { 'small' }>
+                <FieldTextStateless
+                    autoFocus = { true }
+                    compact = { false }
+                    label = { t('dialog.videoLink') }
+                    onChange = { this._onChange }
+                    placeholder = { defaultSharedVideoLink }
+                    shouldFitContainer = { true }
+                    type = 'text'
+                    value = { value } />
+            </Dialog>
+        );
     }
-
-    return (
-        <Dialog
-            hideCancelButton = { false }
-            okKey = 'dialog.Share'
-            submitDisabled = { false }
-            titleKey = 'dialog.shareVideoTitle'
-            width = { 'small' }>
-            <FieldTextStateless
-                autoFocus = { true }
-                compact = { false }
-                onChange = { onChangeVideoLink }
-                placeholder = { defaultSharedVideoLink }
-                shouldFitContainer = { true }
-                type = 'text'
-                value = { sharedVideoLink } />
-        </Dialog>
-    );
 }
 
-export default SharedVideoDialog;
+export default translate(connect()(SharedVideoDialog));
