@@ -740,7 +740,7 @@ export const sharingFeatures = {
  * @param {string} sharingFeature - The sharing feature to check.
  * @returns {boolean}
  */
-export function isSharingEnabled(sharingFeature) {
+export function isSharingEnabled(sharingFeature: string) {
     return typeof interfaceConfig.SHARING_FEATURES === 'undefined'
         || (interfaceConfig.SHARING_FEATURES.length && interfaceConfig.SHARING_FEATURES.indexOf(sharingFeature) > -1);
 }

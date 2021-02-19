@@ -1,9 +1,10 @@
 // @flow
-/* global interfaceConfig */
 
 import { findIndex } from 'lodash';
 
 import { CONNECTION_TYPE } from './constants';
+
+declare var interfaceConfig: Object;
 
 const LOSS_AUDIO_THRESHOLDS = [ 0.33, 0.05 ];
 const LOSS_VIDEO_THRESHOLDS = [ 0.33, 0.1, 0.05 ];
