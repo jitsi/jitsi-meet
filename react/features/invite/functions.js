@@ -731,7 +731,7 @@ export async function executeDialOutStatusRequest(url: string, reqId: string) {
 export const sharingFeatures = {
     email: 'email',
     url: 'url',
-    dialIn: 'dialIn',
+    dialIn: 'dial-in',
     embed: 'embed'
 };
 
