@@ -14,7 +14,14 @@ import { isVpaasMeeting } from '../../../../billing-counter/functions';
 import EmbedMeetingTrigger from '../../../../embed-meeting/components/EmbedMeetingTrigger';
 import { getActiveSession } from '../../../../recording';
 import { updateDialInNumbers } from '../../../actions';
-import { _getDefaultPhoneNumber, getInviteText, isAddPeopleEnabled, isDialOutEnabled } from '../../../functions';
+import {
+    _getDefaultPhoneNumber,
+    getInviteText,
+    isAddPeopleEnabled,
+    isDialOutEnabled,
+    sharingFeatures,
+    isSharingEnabled
+} from '../../../functions';
 
 import CopyMeetingLinkSection from './CopyMeetingLinkSection';
 import DialInSection from './DialInSection';
@@ -40,6 +47,21 @@ type Props = {
      * Whether or not embed meeting should be visible.
      */
     _embedMeetingVisible: boolean,
+
+    /**
+     * Whether or not dial in number should be visible.
+     */
+    _dialInVisible: boolean,
+
+    /**
+     * Whether or not url sharing button should be visible.
+     */
+    _urlSharingVisible: boolean,
+
+    /**
+     * Whether or not email sharing features should be visible.
+     */
+    _emailSharingVisible: boolean,
 
     /**
      * Whether or not invite contacts should be visible.
@@ -86,6 +108,9 @@ function AddPeopleDialog({
     _conferenceName,
     _dialIn,
     _embedMeetingVisible,
+    _dialInVisible,
+    _urlSharingVisible,
+    _emailSharingVisible,
     _inviteContactsVisible,
     _inviteUrl,
     _liveStreamViewURL,
@@ -153,10 +178,14 @@ function AddPeopleDialog({
             width = { 'small' }>
             <div className = 'invite-more-dialog'>
                 { _inviteContactsVisible && <InviteContactsSection /> }
-                <CopyMeetingLinkSection url = { _inviteUrl } />
-                <InviteByEmailSection
-                    inviteSubject = { inviteSubject }
-                    inviteText = { invite } />
+                {_urlSharingVisible ? <CopyMeetingLinkSection url = { _inviteUrl } /> : null}
+                {
+                    _emailSharingVisible
+                        ? <InviteByEmailSection
+                            inviteSubject = { inviteSubject }
+                            inviteText = { invite } />
+                        : null
+                }
                 { _embedMeetingVisible && <EmbedMeetingTrigger /> }
                 <div className = 'invite-more-dialog separator' />
                 {
@@ -165,6 +194,7 @@ function AddPeopleDialog({
                 }
                 {
                     _dialIn.numbers
+                        && _dialInVisible
                         && <DialInSection
                             conferenceName = { _conferenceName }
                             dialIn = { _dialIn }
@@ -196,7 +226,10 @@ function mapStateToProps(state) {
     return {
         _conferenceName: getRoomName(state),
         _dialIn: state['features/invite'],
-        _embedMeetingVisible: !isVpaasMeeting(state),
+        _embedMeetingVisible: !isVpaasMeeting(state) && isSharingEnabled(sharingFeatures.embed),
+        _dialInVisible: isSharingEnabled(sharingFeatures.dialIn),
+        _urlSharingVisible: isSharingEnabled(sharingFeatures.url),
+        _emailSharingVisible: isSharingEnabled(sharingFeatures.email),
         _inviteContactsVisible: interfaceConfig.ENABLE_DIAL_OUT && !hideInviteContacts,
         _inviteUrl: getInviteURL(state),
         _liveStreamViewURL:

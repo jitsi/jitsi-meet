@@ -1,4 +1,5 @@
 // @flow
+/* global interfaceConfig */
 
 import { i18next } from '../base/i18n';
 import { isLocalParticipantModerator } from '../base/participants';
@@ -725,4 +726,21 @@ export async function executeDialOutStatusRequest(url: string, reqId: string) {
     const json = await res.json();
 
     return res.ok ? json : Promise.reject(json);
+}
+
+export const sharingFeatures = {
+    email: 'email',
+    url: 'url',
+    dialIn: 'dialIn',
+    embed: 'embed'
+};
+
+/**
+ * Returns true if a specific sharing feature is enabled in interface configuration.
+ *
+ * @returns {boolean}
+ */
+export function isSharingEnabled(sharingFeature) {
+    return typeof interfaceConfig.SHARING_FEATURES === 'undefined'
+        || (interfaceConfig.SHARING_FEATURES.length && interfaceConfig.SHARING_FEATURES.indexOf(sharingFeature) > -1);
 }

@@ -241,6 +241,12 @@ var interfaceConfig = {
     // TILE_VIEW_MAX_COLUMNS: 5,
 
     /**
+     * Specify which sharing features should be displayed. If the value is not set
+     * all sharing features will be shown. You can set [] to disable all.
+     */
+    // SHARING_FEATURES: ['email', 'url', 'dialIn', 'embed']
+
+    /**
      * Specify Firebase dynamic link properties for the mobile apps.
      */
     // MOBILE_DYNAMIC_LINK: {

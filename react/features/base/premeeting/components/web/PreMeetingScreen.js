@@ -4,6 +4,7 @@ import React, { PureComponent } from 'react';
 
 import { AudioSettingsButton, VideoSettingsButton } from '../../../../toolbox/components/web';
 import { Avatar } from '../../../avatar';
+import { allowUrlSharing } from '../../functions';
 
 import ConnectionStatus from './ConnectionStatus';
 import CopyMeetingUrl from './CopyMeetingUrl';
@@ -79,6 +80,7 @@ export default class PreMeetingScreen extends PureComponent<Props> {
      */
     render() {
         const { name, showAvatar, showConferenceInfo, title, videoMuted, videoTrack } = this.props;
+        const showSharingButton = allowUrlSharing();
 
         return (
             <div
@@ -103,7 +105,7 @@ export default class PreMeetingScreen extends PureComponent<Props> {
                             <div className = 'title'>
                                 { title }
                             </div>
-                            <CopyMeetingUrl />
+                            {showSharingButton ? <CopyMeetingUrl /> : null}
                         </>
                     )}
                     { this.props.children }

@@ -1,4 +1,5 @@
 // @flow
+/* global interfaceConfig */
 
 import { findIndex } from 'lodash';
 
@@ -210,4 +211,14 @@ export function getConnectionData(state: Object) {
         connectionType: CONNECTION_TYPE.NONE,
         connectionDetails: []
     };
+}
+
+/**
+ * Returns if url sharing is enabled in interface configuration.
+ *
+ * @returns {boolean}
+ */
+export function allowUrlSharing() {
+    return typeof interfaceConfig.SHARING_FEATURES === 'undefined'
+        || (interfaceConfig.SHARING_FEATURES.length && interfaceConfig.SHARING_FEATURES.indexOf('url') > -1);
 }
