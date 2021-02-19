@@ -135,7 +135,7 @@ static void initializeViewsMap() {
     [externalAPI toggleScreenShare];
 }
 
-- (void)retrieveParticipantsInfo:(void (^)(NSArray*))completionHandler {
+- (void)retrieveParticipantsInfo:(void (^ _Nonnull)(NSArray * _Nullable))completionHandler {
     ExternalAPI *externalAPI = [[JitsiMeet sharedInstance] getExternalAPI];
     [externalAPI retrieveParticipantsInfo:completionHandler];
 }
@@ -150,7 +150,7 @@ static void initializeViewsMap() {
     [externalAPI closeChat];
 }
 
-- (void)sendChatMessage:(NSString * _Nullable)message :(NSString * _Nullable)to {
+- (void)sendChatMessage:(NSString * _Nonnull)message :(NSString * _Nullable)to {
     ExternalAPI *externalAPI = [[JitsiMeet sharedInstance] getExternalAPI];
     [externalAPI sendChatMessage:message :to];
 }
