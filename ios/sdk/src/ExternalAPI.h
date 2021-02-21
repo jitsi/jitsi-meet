@@ -20,11 +20,11 @@
 
 - (void)sendHangUp;
 - (void)sendSetAudioMuted:(BOOL)muted;
-- (void)sendEndpointTextMessage:(NSString*)to :(NSString*)message;
+- (void)sendEndpointTextMessage:(NSString*)message :(NSString*)to;
 - (void)toggleScreenShare;
 - (void)retrieveParticipantsInfo:(void (^)(NSArray*))completion;
 - (void)openChat:(NSString*)to;
 - (void)closeChat;
-- (void)sendChatMessage:(NSString*)to :(NSString*)message;
+- (void)sendChatMessage:(NSString*)message :(NSString*)to ;
 
 @end

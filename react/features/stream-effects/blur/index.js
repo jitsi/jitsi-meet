@@ -7,8 +7,8 @@ import createTFLiteModule from './vendor/tflite/tflite';
 import createTFLiteSIMDModule from './vendor/tflite/tflite-simd';
 
 const models = {
-    '96': '/libs/segm_lite_v681.tflite',
-    '144': '/libs/segm_full_v679.tflite'
+    '96': 'libs/segm_lite_v681.tflite',
+    '144': 'libs/segm_full_v679.tflite'
 };
 
 /**
@@ -33,6 +33,10 @@ export async function createBlurEffect() {
     const modelResponse = await fetch(
         models['144']
     );
+
+    if (!modelResponse.ok) {
+        throw new Error('Failed to download tflite model!');
+    }
 
     const model = await modelResponse.arrayBuffer();
 

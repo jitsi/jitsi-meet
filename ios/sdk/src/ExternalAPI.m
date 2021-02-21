@@ -153,7 +153,7 @@ RCT_EXPORT_METHOD(sendEvent:(NSString *)name
     [self sendEventWithName:setAudioMutedAction body:data];
 }
 
-- (void)sendEndpointTextMessage:(NSString*)to :(NSString*)message {
+- (void)sendEndpointTextMessage:(NSString*)message :(NSString*)to {
     NSMutableDictionary *data = [[NSMutableDictionary alloc] init];
     data[@"to"] = to;
     data[@"message"] = message;
@@ -185,7 +185,7 @@ RCT_EXPORT_METHOD(sendEvent:(NSString *)name
     [self sendEventWithName:closeChatAction body:nil];
 }
 
-- (void)sendChatMessage:(NSString*)to :(NSString*)message {
+- (void)sendChatMessage:(NSString*)message :(NSString*)to {
     NSMutableDictionary *data = [[NSMutableDictionary alloc] init];
     data[@"to"] = to;
     data[@"message"] = message;
