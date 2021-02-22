@@ -27,6 +27,16 @@ type Props = {
     hasOptions?: boolean,
 
     /**
+     * Icon to display in the options section.
+     */
+    OptionsIcon?: React$Node,
+
+    /**
+     * TestId of the button. Can be used to locate element when testing UI.
+     */
+    testId?: string,
+
+    /**
      * The type of th button: primary, secondary, text.
      */
     type: string,
@@ -52,6 +62,8 @@ function ActionButton({
     className = '',
     disabled,
     hasOptions,
+    OptionsIcon = IconArrowDown,
+    testId,
     type = 'primary',
     onClick,
     onOptionsClick
@@ -59,15 +71,17 @@ function ActionButton({
     return (
         <div
             className = { `action-btn ${className} ${type} ${disabled ? 'disabled' : ''}` }
+            data-testid = { testId ? testId : undefined }
             onClick = { disabled ? undefined : onClick }>
             {children}
             {hasOptions && <div
                 className = 'options'
+                data-testid = 'prejoin.joinOptions'
                 onClick = { disabled ? undefined : onOptionsClick }>
                 <Icon
                     className = 'icon'
                     size = { 14 }
-                    src = { IconArrowDown } />
+                    src = { OptionsIcon } />
             </div>
             }
         </div>

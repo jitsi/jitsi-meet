@@ -7,9 +7,8 @@
     display: flex;
     flex-direction: column;
     position: relative;
-    width: 100%;
-    height: 100%;
     overflow: auto;
+    width: 100%;
 
     .meetings-list-empty {
         text-align: center;
@@ -20,9 +19,32 @@
         flex-direction: column;
 
         .description {
-            font-size: 16px;
-            padding: 20px;
+           color: #2f3237;
+           font-size: 14px;
+           line-height: 18px;
+           margin-bottom: 16px;
+           max-width: 436px;
         }
+    }
+
+    .meetings-list-empty-image {
+        text-align: center;
+        margin: 24px 0 20px 0;
+    }
+
+    .meetings-list-empty-button {
+        align-items: center;
+        color: #0163FF;
+        cursor: pointer;
+        display: flex;
+        font-size: 14px;
+        line-height: 18px;
+        margin: 24px 0 32px 0;
+    }
+
+    .meetings-list-empty-icon {
+        display: inline-block;
+        margin-right: 8px;
     }
 
     .button {
@@ -32,7 +54,7 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        padding: 5px 10px;
+        padding: 8px;
         cursor: pointer;
     }
 
@@ -43,12 +65,13 @@
     }
 
     .item {
-        background: rgba(255,255,255,0.50);
+        background: #fff;
         box-sizing: border-box;
+        border-radius: 4px;
         display: inline-flex;
-        margin-top: 5px;
-        min-height: 92px;
-        width: 100%;
+        margin: 4px 4px 0 4px;
+        min-height: 60px;
+        width: calc(100% - 8px);
         word-break: break-word;
         display: flex;
         flex-direction: row;
@@ -61,37 +84,41 @@
         .left-column {
             display: flex;
             flex-direction: column;
-            width: 140px;
             flex-grow: 0;
-            padding-left: 30px;
-            padding-top: 25px;
-
-            .date {
-                font-weight: bold;
-                padding-bottom: 5px;
-            }
+            padding-left: 16px;
+            padding-top: 13px;
         }
 
         .right-column {
             display: flex;
             flex-direction: column;
             flex-grow: 1;
-            padding-left: 30px;
-            padding-top: 25px;
-
-            .title {
-                font-size: 16px;
-                font-weight: bold;
-                padding-bottom: 5px;
-            }
+            padding-left: 16px;
+            padding-top: 13px;
+            position: relative;
         }
+
+        .title {
+                font-size: 12px;
+                font-weight: 600;
+                line-height: 16px;
+                padding-bottom: 4px;
+            }
+
+        .subtitle {
+            color: #5E6D7A;
+            font-weight: normal;
+            font-size: 12px;
+            line-height: 16px;
+        }
+
 
         .actions {
             display: flex;
             align-items: center;
             justify-content: center;
             flex-grow: 0;
-            padding-right: 30px;
+            margin-right: 16px;
         }
 
         &.with-click-handler {
@@ -99,7 +126,7 @@
         }
 
         &.with-click-handler:hover {
-            background-color: #75A7E7;
+            background-color: #c7ddff;
         }
 
         .add-button {
@@ -118,6 +145,22 @@
 
         &:hover .join-button {
             display: block
+        }
+    }
+
+    .delete-meeting {
+        display: none;
+        margin-right: 16px;
+        position: absolute;
+
+        &> svg {
+            fill: #0074e0;
+        }
+    }
+
+    .item:hover {
+        .delete-meeting {
+            display: block;
         }
     }
 }

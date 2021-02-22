@@ -1,9 +1,7 @@
 // @flow
 
 import React, { Component } from 'react';
-import Swipeout from 'react-native-swipeout';
 
-import { ColorPalette } from '../../../styles';
 import type { Item } from '../../Types';
 
 import AvatarListItem from './AvatarListItem';
@@ -19,6 +17,11 @@ type Props = {
     item: Item,
 
     /**
+     * Function to be invoked when an item is long pressed. The item is passed.
+     */
+    onLongPress: ?Function,
+
+    /**
      * Function to be invoked when an Item is pressed. The Item's URL is passed.
      */
     onPress: ?Function,
@@ -26,13 +29,7 @@ type Props = {
     /**
      * Function to be invoked when secondary action was performed on an Item.
      */
-    secondaryAction: ?Function,
-
-    /**
-     * Optional array of on-slide actions this list should support. For details
-     * see https://github.com/dancormier/react-native-swipeout.
-     */
-    slideActions?: Array<Object>
+    secondaryAction: ?Function
 }
 
 /**
@@ -116,37 +113,15 @@ export default class NavigateSectionListItem extends Component<Props> {
      * @returns {ReactElement}
      */
     render() {
-        const { item, slideActions } = this.props;
-        const { id } = item;
-        let right;
-
-        // NOTE: The {@code Swipeout} component has an onPress prop encapsulated
-        // in the {@code right} array, but we need to bind it to the ID of the
-        // item too.
-
-        if (slideActions) {
-            right = [];
-            for (const slideAction of slideActions) {
-                right.push({
-                    backgroundColor: slideAction.backgroundColor,
-                    onPress: slideAction.onPress.bind(undefined, id),
-                    text: slideAction.text
-                });
-            }
-        }
+        const { item, onLongPress, onPress, secondaryAction } = this.props;
 
         return (
-            <Swipeout
-                autoClose = { true }
-                backgroundColor = { ColorPalette.transparent }
-                right = { right }>
-                <AvatarListItem
-                    item = { item }
-                    onPress = { this.props.onPress } >
-                    { this.props.secondaryAction
-                            && this._renderSecondaryAction() }
-                </AvatarListItem>
-            </Swipeout>
+            <AvatarListItem
+                item = { item }
+                onLongPress = { onLongPress }
+                onPress = { onPress } >
+                { secondaryAction && this._renderSecondaryAction() }
+            </AvatarListItem>
         );
     }
 }

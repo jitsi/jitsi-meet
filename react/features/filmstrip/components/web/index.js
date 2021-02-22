@@ -7,3 +7,4 @@ export { default as ModeratorIndicator } from './ModeratorIndicator';
 export { default as RaisedHandIndicator } from './RaisedHandIndicator';
 export { default as StatusIndicators } from './StatusIndicators';
 export { default as VideoMutedIndicator } from './VideoMutedIndicator';
+export { default as Thumbnail } from './Thumbnail';

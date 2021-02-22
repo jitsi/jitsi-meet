@@ -1,5 +1,5 @@
-// flow-typed signature: d2ddacbbca9700881249a9435381e689
-// flow-typed version: c6154227d1/react-redux_v7.x.x/flow_>=v0.89.x <=v0.103.x
+// flow-typed signature: 8da1e134b3de1d6f6bf9ba1cc7e2dc7e
+// flow-typed version: 387a235736/react-redux_v7.x.x/flow_>=v0.104.x
 
 /**
 The order of type arguments for connect() is as follows:
@@ -219,6 +219,7 @@ declare module "react-redux" {
   declare export class Provider<Store> extends React$Component<{
     store: Store,
     children?: React$Node,
+    ...
   }> {}
 
   declare export function createProvider(
@@ -237,6 +238,7 @@ declare module "react-redux" {
     shouldHandleStateChanges?: boolean,
     storeKey?: string,
     forwardRef?: boolean,
+    ...
   };
 
   declare type SelectorFactoryOptions<Com> = {
@@ -249,6 +251,7 @@ declare module "react-redux" {
     displayName: string,
     wrappedComponentName: string,
     WrappedComponent: Com,
+    ...
   };
 
   declare type MapStateToPropsEx<S: Object, SP: Object, RSP: Object> = (
@@ -275,11 +278,13 @@ declare module "react-redux" {
     OP: Object,
     CP: Object,
     EFO: Object,
-    ST: { [_: $Keys<Com>]: any },
+    ST: { [_: $Keys<Com>]: any, ... },
   >(
     selectorFactory: SelectorFactory<Com, D, S, OP, EFO, CP>,
     connectAdvancedOptions: ?(ConnectAdvancedOptions & EFO),
   ): (component: Com) => React$ComponentType<OP> & $Shape<ST>;
+
+  declare export function batch(() => void): void
 
   declare export default {
     Provider: typeof Provider,
@@ -289,5 +294,7 @@ declare module "react-redux" {
     useDispatch: typeof useDispatch,
     useSelector: typeof useSelector,
     useStore: typeof useStore,
+    batch: typeof batch,
+    ...
   };
 }

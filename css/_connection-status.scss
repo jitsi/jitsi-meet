@@ -1,0 +1,84 @@
+.con-status {
+    position: absolute;
+    top: 24px;
+    width: 100%;
+    z-index: $toolbarZ + 3;
+
+    &-container {
+        border-radius: 3px;
+        color: #fff;
+        font-size: 13px;
+        line-height: 13px;
+        margin: 0 auto;
+        width: 320px;
+    }
+
+    &-header {
+        background: rgba(28, 32, 37, .5);
+        align-items: center;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    &-circle {
+        border-radius: 50%;
+        display: inline-block;
+        padding: 4px;
+        margin: 8px;
+    }
+
+    &--good {
+        background: #31B76A;
+    }
+
+    &--poor {
+        background: #E12D2D;
+    }
+
+    &--non-optimal {
+        background: #E39623;
+    }
+
+    &-arrow {
+        height: 36px;
+        width: 36px;
+        border-radius: 3px;
+        margin-left: 8px;
+        margin-right: 2px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background-color 0.16s ease-out;
+
+        &--up {
+            transform: rotate(180deg);
+        }
+
+        &>svg {
+            cursor: pointer;
+        }
+
+        &:hover {
+            background-color: rgba(1,1,1, 0.1);
+        }
+    }
+
+    &-text {
+        text-align: center;
+    }
+
+    &-details {
+        background: rgba(28, 32, 37, .5);
+        border-top: 1px solid #5E6D7A;
+        padding: 16px;
+        transition: opacity 0.16s ease-out;
+
+        &-visible {
+            opacity: 1;
+        }
+
+        &-hidden {
+            opacity: 0;
+        }
+    }
+}

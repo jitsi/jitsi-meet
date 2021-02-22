@@ -24,4 +24,9 @@ JICOFO_AUTH_PASSWORD=$JICOFO_PASSWORD
 JICOFO_OPTS=""
 
 # adds java system props that are passed to jicofo (default are for home and logging config file)
-JAVA_SYS_PROPS="-Dnet.java.sip.communicator.SC_HOME_DIR_LOCATION=/etc/jitsi -Dnet.java.sip.communicator.SC_HOME_DIR_NAME=jicofo -Dnet.java.sip.communicator.SC_LOG_DIR_LOCATION=/var/log/jitsi -Djava.util.logging.config.file=/etc/jitsi/jicofo/logging.properties"
+JAVA_SYS_PROPS=" \
+    -Dnet.java.sip.communicator.SC_HOME_DIR_LOCATION=/etc/jitsi \
+    -Dnet.java.sip.communicator.SC_HOME_DIR_NAME=jicofo \
+    -Dnet.java.sip.communicator.SC_LOG_DIR_LOCATION=/var/log/jitsi \
+    -Djava.util.logging.config.file=/etc/jitsi/jicofo/logging.properties \
+"

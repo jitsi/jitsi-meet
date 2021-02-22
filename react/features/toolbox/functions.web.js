@@ -20,11 +20,16 @@ export function getToolboxHeight() {
  *
  * @param {string} name - The name of the setting section as defined in
  * interface_config.js.
- * @returns {boolean} - True to indicate that the given toolbar button
- * is enabled, false - otherwise.
+ * @returns {boolean|undefined} - True to indicate that the given toolbar button
+ * is enabled, false - otherwise. In cases where interfaceConfig is not available
+ * undefined is returned.
  */
 export function isButtonEnabled(name: string) {
-    return interfaceConfig.TOOLBAR_BUTTONS.indexOf(name) !== -1;
+    if (typeof interfaceConfig === 'object' && Array.isArray(interfaceConfig.TOOLBAR_BUTTONS)) {
+        return interfaceConfig.TOOLBAR_BUTTONS.indexOf(name) !== -1;
+    }
+
+    return undefined;
 }
 
 
@@ -67,5 +72,15 @@ export function isAudioSettingsButtonDisabled(state: Object) {
  * @returns {boolean}
  */
 export function isVideoSettingsButtonDisabled(state: Object) {
+    return !hasAvailableDevices(state, 'videoInput');
+}
+
+/**
+ * Indicates if the video mute button is disabled or not.
+ *
+ * @param {string} state - The state from the Redux store.
+ * @returns {boolean}
+ */
+export function isVideoMuteButtonDisabled(state: Object) {
     return !hasAvailableDevices(state, 'videoInput');
 }

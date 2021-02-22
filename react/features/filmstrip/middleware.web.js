@@ -1,7 +1,6 @@
 // @flow
 
 import Filmstrip from '../../../modules/UI/videolayout/Filmstrip';
-import { getNearestReceiverVideoQualityLevel, setMaxReceiverVideoQuality } from '../base/conference';
 import { MiddlewareRegistry } from '../base/redux';
 import { CLIENT_RESIZED } from '../base/responsive-ui';
 import {
@@ -11,7 +10,7 @@ import {
 } from '../video-layout';
 
 import { SET_HORIZONTAL_VIEW_DIMENSIONS, SET_TILE_VIEW_DIMENSIONS } from './actionTypes';
-import { setHorizontalViewDimensions, setTileViewDimensions } from './actions';
+import { setHorizontalViewDimensions, setTileViewDimensions } from './actions.web';
 
 import './subscriber.web';
 
@@ -31,10 +30,16 @@ MiddlewareRegistry.register(store => next => action => {
             const { gridDimensions } = state['features/filmstrip'].tileViewDimensions;
             const { clientHeight, clientWidth } = state['features/base/responsive-ui'];
 
-            store.dispatch(setTileViewDimensions(gridDimensions, {
-                clientHeight,
-                clientWidth
-            }));
+            store.dispatch(
+                setTileViewDimensions(
+                    gridDimensions,
+                    {
+                        clientHeight,
+                        clientWidth
+                    },
+                    store
+                )
+            );
             break;
         }
         case LAYOUTS.HORIZONTAL_FILMSTRIP_VIEW:
@@ -48,9 +53,6 @@ MiddlewareRegistry.register(store => next => action => {
 
         if (shouldDisplayTileView(state)) {
             const { width, height } = state['features/filmstrip'].tileViewDimensions.thumbnailSize;
-            const qualityLevel = getNearestReceiverVideoQualityLevel(height);
-
-            store.dispatch(setMaxReceiverVideoQuality(qualityLevel));
 
             // Once the thumbnails are reactified this should be moved there too.
             Filmstrip.resizeThumbnailsForTileView(width, height, true);

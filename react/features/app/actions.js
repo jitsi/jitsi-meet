@@ -2,6 +2,7 @@
 
 import type { Dispatch } from 'redux';
 
+import { API_ID } from '../../../modules/API/constants';
 import { setRoom } from '../base/conference';
 import {
     configWillLoad,
@@ -15,7 +16,7 @@ import { connect, disconnect, setLocationURL } from '../base/connection';
 import { loadConfig } from '../base/lib-jitsi-meet';
 import { MEDIA_TYPE } from '../base/media';
 import { toState } from '../base/redux';
-import { createDesiredLocalTracks, isLocalVideoTrackMuted, isLocalTrackMuted } from '../base/tracks';
+import { createDesiredLocalTracks, isLocalCameraTrackMuted, isLocalTrackMuted } from '../base/tracks';
 import {
     addHashParamsToURL,
     getBackendSafeRoomName,
@@ -23,6 +24,7 @@ import {
     parseURIString,
     toURLString
 } from '../base/util';
+import { isVpaasMeeting } from '../billing-counter/functions';
 import { clearNotifications, showNotification } from '../notifications';
 import { setFatalError } from '../overlay';
 
@@ -168,9 +170,11 @@ export function redirectWithStoredParams(pathname: string) {
  * window.location.pathname. If the specified pathname is relative, the context
  * root of the Web app will be prepended to the specified pathname before
  * assigning it to window.location.pathname.
+ * @param {string} hashParam - Optional hash param to assign to
+ * window.location.hash.
  * @returns {Function}
  */
-export function redirectToStaticPage(pathname: string) {
+export function redirectToStaticPage(pathname: string, hashParam: ?string) {
     return () => {
         const windowLocation = window.location;
         let newPathname = pathname;
@@ -182,6 +186,10 @@ export function redirectToStaticPage(pathname: string) {
             newPathname.startsWith('./')
                 && (newPathname = newPathname.substring(2));
             newPathname = getLocationContextRoot(windowLocation) + newPathname;
+        }
+
+        if (hashParam) {
+            windowLocation.hash = hashParam;
         }
 
         windowLocation.pathname = newPathname;
@@ -224,7 +232,7 @@ export function reloadNow() {
 function addTrackStateToURL(url, stateful) {
     const state = toState(stateful);
     const tracks = state['features/base/tracks'];
-    const isVideoMuted = isLocalVideoTrackMuted(tracks);
+    const isVideoMuted = isLocalCameraTrackMuted(tracks);
     const isAudioMuted = isLocalTrackMuted(tracks, MEDIA_TYPE.AUDIO);
 
     return addHashParamsToURL(new URL(url), { // use new URL object in order to not pollute the passed parameter.
@@ -284,21 +292,33 @@ export function maybeRedirectToWelcomePage(options: Object = {}) {
 
         // if close page is enabled redirect to it, without further action
         if (enableClosePage) {
-            const { isGuest } = getState()['features/base/jwt'];
+            if (isVpaasMeeting(getState())) {
+                redirectToStaticPage('/');
 
-            // save whether current user is guest or not, before navigating
-            // to close page
-            window.sessionStorage.setItem('guest', isGuest);
+                return;
+            }
+
+            const { jwt } = getState()['features/base/jwt'];
+
+            let hashParam;
+
+            // save whether current user is guest or not, and pass auth token,
+            // before navigating to close page
+            window.sessionStorage.setItem('guest', !jwt);
+            window.sessionStorage.setItem('jwt', jwt);
 
             let path = 'close.html';
 
             if (interfaceConfig.SHOW_PROMOTIONAL_CLOSE_PAGE) {
+                if (Number(API_ID) === API_ID) {
+                    hashParam = `#jitsi_meet_external_api_id=${API_ID}`;
+                }
                 path = 'close3.html';
             } else if (!options.feedbackSubmitted) {
                 path = 'close2.html';
             }
 
-            dispatch(redirectToStaticPage(`static/${path}`));
+            dispatch(redirectToStaticPage(`static/${path}`, hashParam));
 
             return;
         }

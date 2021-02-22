@@ -52,7 +52,7 @@ export default class AbstractAudioMuteButton<P: Props, S: *>
      * Helper function to perform the actual setting of the audio mute / unmute
      * action.
      *
-     * @param {boolean} audioMuted - Whether video should be muted or not.
+     * @param {boolean} audioMuted - Whether audio should be muted or not.
      * @protected
      * @returns {void}
      */

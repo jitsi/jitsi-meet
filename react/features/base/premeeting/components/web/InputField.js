@@ -7,9 +7,19 @@ import { getFieldValue } from '../../../react';
 type Props = {
 
     /**
+     * If the input should be focused on display.
+     */
+    autoFocus?: boolean,
+
+    /**
      * Class name to be appended to the default class list.
      */
     className?: string,
+
+    /**
+     * TestId of the button. Can be used to locate element when testing UI.
+     */
+    testId?: string,
 
     /**
      * Callback for the onChange event of the field.
@@ -104,7 +114,9 @@ export default class InputField extends PureComponent<Props, State> {
     render() {
         return (
             <input
+                autoFocus = { this.props.autoFocus }
                 className = { `field ${this.state.focused ? 'focused' : ''} ${this.props.className || ''}` }
+                data-testid = { this.props.testId ? this.props.testId : undefined }
                 onBlur = { this._onBlur }
                 onChange = { this._onChange }
                 onFocus = { this._onFocus }

@@ -2,8 +2,7 @@
 
 import { openDialog } from '../../base/dialog';
 import { IconKick } from '../../base/icons';
-import { AbstractButton } from '../../base/toolbox';
-import type { AbstractButtonProps } from '../../base/toolbox';
+import { AbstractButton, type AbstractButtonProps } from '../../base/toolbox/components';
 
 import { KickRemoteParticipantDialog } from '.';
 

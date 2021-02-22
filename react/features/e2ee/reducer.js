@@ -2,14 +2,10 @@
 
 import { ReducerRegistry } from '../base/redux';
 
-import { SET_E2EE_KEY } from './actionTypes';
+import { TOGGLE_E2EE } from './actionTypes';
 
 const DEFAULT_STATE = {
-
-    /**
-     * E2EE key.
-     */
-    e2eeKey: undefined
+    enabled: false
 };
 
 /**
@@ -17,10 +13,10 @@ const DEFAULT_STATE = {
  */
 ReducerRegistry.register('features/e2ee', (state = DEFAULT_STATE, action) => {
     switch (action.type) {
-    case SET_E2EE_KEY:
+    case TOGGLE_E2EE:
         return {
             ...state,
-            e2eeKey: action.key
+            enabled: action.enabled
         };
 
     default:

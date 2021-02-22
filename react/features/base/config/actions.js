@@ -1,14 +1,28 @@
 // @flow
 
-import { jitsiLocalStorage } from 'js-utils';
+import { jitsiLocalStorage } from '@jitsi/js-utils';
 import type { Dispatch } from 'redux';
 
 import { addKnownDomains } from '../known-domains';
 import { parseURIString } from '../util';
 
-import { CONFIG_WILL_LOAD, LOAD_CONFIG_ERROR, SET_CONFIG } from './actionTypes';
+import { CONFIG_WILL_LOAD, LOAD_CONFIG_ERROR, SET_CONFIG, UPDATE_CONFIG } from './actionTypes';
 import { _CONFIG_STORE_PREFIX } from './constants';
 import { setConfigFromURLParams } from './functions';
+
+
+/**
+ * Updates the config with new options.
+ *
+ * @param {Object} config - The new options (to add).
+ * @returns {Function}
+ */
+export function updateConfig(config: Object) {
+    return {
+        type: UPDATE_CONFIG,
+        config
+    };
+}
 
 /**
  * Signals that the configuration (commonly known in Jitsi Meet as config.js)

@@ -2,7 +2,7 @@
     "addPeople": {
         "add": "Convidar",
         "countryNotSupported": "Aínda non é posíbel chamar a este destino",
-        "countryReminder": "Chamar fóra dos EE.UU. ? Asegúrese de comezar co código de país!",
+        "countryReminder": "Quere chamar fóra dos EEUU? Asegúrese de comezar co código de país!",
         "disabled": "Non pode convidar xente.",
         "failedToAdd": "Produciuse un erro ao engadir participantes",
         "footerText": "As chamadas están desactivadas",
@@ -62,7 +62,7 @@
     "chromeExtensionBanner": {
         "installExtensionText": "Instala a extensión para a integración con Google Calendar e Office 365",
         "buttonText": "Instalar Extensión Chrome",
-        "dontShowAgain": ""
+        "dontShowAgain": "Non mostrar isto máis"
     },
     "connectingOverlay": {
         "joiningRoom": "Está a conectar coa reunión…"
@@ -632,8 +632,8 @@
         "noAudioSignalTitle": "Non hai sinal de entrada desde o seu micro!",
         "noAudioSignalDesc": "Se vostede non o silenciou adrede na configuración do seu sistema ou hardware, considere cambiar de dispositivo.",
         "noAudioSignalDescSuggestion": "Se vostede non o silenciou adrede na configuración do sistema ou no hardware, considere utilizar o seguinte dispositivo:",
-        "noisyAudioInputTitle": "",
-        "noisyAudioInputDesc": "",
+        "noisyAudioInputTitle": "Parece que seu micrófono fai moito ruído",
+        "noisyAudioInputDesc": "Parece que o seu micrófono está a crear ruído. Considere a posibilidade de calalo ou de cambiar de dispositivo",
         "openChat": "Abrir chat",
         "pip": "Entrar no modo Picture-in-Picture",
         "privateMessage": "Enviar mensaxe privada",
@@ -716,7 +716,7 @@
         "moderator": "Moderador",
         "mute": "O participante está silenciado",
         "muted": "Silenciado",
-        "remoteControl": "",
+        "remoteControl": "Iniciar / Deter control remoto",
         "show": "Amosar en primeiro plano",
         "videomute": "O participante parou a cámara"
     },

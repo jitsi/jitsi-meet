@@ -18,6 +18,29 @@
 import CallKit
 import Foundation
 
+public protocol CXProviderProtocol: class {
+    var configuration: CXProviderConfiguration { get set }
+    func setDelegate(_ delegate: CXProviderDelegate?, queue: DispatchQueue?)
+    func reportNewIncomingCall(with UUID: UUID, update: CXCallUpdate, completion: @escaping (Error?) -> Void)
+    func reportCall(with UUID: UUID, updated update: CXCallUpdate)
+    func reportCall(with UUID: UUID, endedAt dateEnded: Date?, reason endedReason: CXCallEndedReason)
+    func reportOutgoingCall(with UUID: UUID, startedConnectingAt dateStartedConnecting: Date?)
+    func reportOutgoingCall(with UUID: UUID, connectedAt dateConnected: Date?)
+    func invalidate()
+}
+
+public protocol CXCallControllerProtocol: class {
+    var calls: [CXCall] { get }
+    func request(_ transaction: CXTransaction, completion: @escaping (Error?) -> Swift.Void)
+}
+
+extension CXProvider: CXProviderProtocol {}
+extension CXCallController: CXCallControllerProtocol {
+    public var calls: [CXCall] {
+        return callObserver.calls
+    }
+}
+
 /// JitsiMeet CallKit proxy
 // NOTE: The methods this class exposes are meant to be called in the UI thread.
 // All delegate methods called by JMCallKitEmitter will be called in the UI thread.
@@ -26,11 +49,17 @@ import Foundation
     private override init() {}
 
     // MARK: - CallKit proxy
+    
+    public static var callKitProvider: CXProviderProtocol?
+    public static var callKitCallController: CXCallControllerProtocol?
 
-    private static var provider: CXProvider = {
-        let configuration = CXProviderConfiguration(localizedName: "")
-        return CXProvider(configuration: configuration)
-    }()
+    private static var provider: CXProviderProtocol {
+        callKitProvider ?? defaultProvider
+    }
+    
+    private static var callController: CXCallControllerProtocol {
+        callKitCallController ?? defaultCallController
+    }
 
     private static var providerConfiguration: CXProviderConfiguration? {
         didSet {
@@ -39,9 +68,14 @@ import Foundation
             provider.setDelegate(emitter, queue: nil)
         }
     }
-
-    private static let callController: CXCallController = {
+    
+    private static let defaultCallController: CXCallController = {
         return CXCallController()
+    }()
+    
+    private static var defaultProvider: CXProvider = {
+        let configuration = CXProviderConfiguration(localizedName: "")
+        return CXProvider(configuration: configuration)
     }()
 
     private static let emitter: JMCallKitEmitter = {
@@ -52,10 +86,16 @@ import Foundation
     /// Defaults to enabled, set to false when you don't want to use CallKit.
     @objc public static var enabled: Bool = true {
         didSet {
-            provider.invalidate()
+            if callKitProvider == nil {
+                provider.invalidate()
+            }
+            
             if enabled {
-                guard isProviderConfigured() else  { return; }
-                provider = CXProvider(configuration: providerConfiguration!)
+                guard isProviderConfigured() else  { return }
+                if callKitProvider == nil {
+                    defaultProvider = CXProvider(configuration: providerConfiguration!)
+                }
+                
                 provider.setDelegate(emitter, queue: nil)
             } else {
                 provider.setDelegate(nil, queue: nil)
@@ -92,19 +132,18 @@ import Foundation
     }
 
     @objc public static func hasActiveCallForUUID(_ callUUID: String) -> Bool {
-        let activeCallForUUID = callController.callObserver.calls.first {
+        let activeCallForUUID = callController.calls.first {
             $0.uuid == UUID(uuidString: callUUID)
         }
         guard activeCallForUUID != nil else { return false }
         return true
     }
 
-    @objc public static func reportNewIncomingCall(
-            UUID: UUID,
-            handle: String?,
-            displayName: String?,
-            hasVideo: Bool,
-            completion: @escaping (Error?) -> Void) {
+    @objc public static func reportNewIncomingCall(UUID: UUID,
+                                                   handle: String?,
+                                                   displayName: String?,
+                                                   hasVideo: Bool,
+                                                   completion: @escaping (Error?) -> Void) {
         guard enabled else { return }
 
         let callUpdate = makeCXUpdate(handle: handle,
@@ -132,7 +171,6 @@ import Foundation
             endedAt dateEnded: Date?,
             reason endedReason: CXCallEndedReason) {
         guard enabled else { return }
-
         provider.reportCall(with: UUID,
                             endedAt: dateEnded,
                             reason: endedReason)
@@ -142,7 +180,6 @@ import Foundation
             with UUID: UUID,
             startedConnectingAt dateStartedConnecting: Date?) {
         guard enabled else { return }
-
         provider.reportOutgoingCall(with: UUID,
                                     startedConnectingAt: dateStartedConnecting)
     }

@@ -23,6 +23,10 @@
         padding: 20px 0px 4px 0px;
     }
 
+    input[type="checkbox"] + svg + span {
+        color: #9FB0CC;
+    }
+
     .calendar-tab,
     .more-tab,
     .profile-edit {
@@ -30,9 +34,11 @@
         width: 100%;
     }
 
-    .profile-edit-field,
-    .settings-sub-pane {
+    .profile-edit-field {
         flex: 1;
+    }
+    .settings-sub-pane {
+        flex-grow: 1;
     }
 
     .profile-edit-field {

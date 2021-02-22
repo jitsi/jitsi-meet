@@ -21,6 +21,7 @@ import {
 } from '../../../base/react';
 import { connect } from '../../../base/redux';
 import { ColorPalette, StyleType } from '../../../base/styles';
+import { isVpaasMeeting } from '../../../billing-counter/functions';
 import { authorizeDropbox, updateDropboxToken } from '../../../dropbox';
 import { RECORDING_TYPES } from '../../constants';
 import { getRecordingDurationEstimation } from '../../functions';
@@ -71,6 +72,11 @@ type Props = {
      * <tt>true</tt> if we are in process of validating the oauth token.
      */
     isValidating: boolean,
+
+    /**
+     * Whether or not the current meeting is a vpaas one.
+     */
+    isVpaas: boolean,
 
     /**
      * The function will be called when there are changes related to the
@@ -156,7 +162,9 @@ class StartRecordingDialogContent extends Component<Props> {
      * @returns {React$Component}
      */
     _renderFileSharingContent() {
-        if (!this.props.fileRecordingsServiceSharingEnabled) {
+        const { fileRecordingsServiceSharingEnabled, isVpaas } = this.props;
+
+        if (!fileRecordingsServiceSharingEnabled || isVpaas) {
             return null;
         }
 
@@ -226,7 +234,7 @@ class StartRecordingDialogContent extends Component<Props> {
             return null;
         }
 
-        const { _dialogStyles, _styles: styles, isValidating, t } = this.props;
+        const { _dialogStyles, _styles: styles, isValidating, isVpaas, t } = this.props;
 
         const switchContent
             = this.props.integrationsEnabled
@@ -240,6 +248,9 @@ class StartRecordingDialogContent extends Component<Props> {
                         value = { this.props.selectedRecordingService === RECORDING_TYPES.JITSI_REC_SERVICE } />
                 ) : null;
 
+        const icon = isVpaas ? ICON_SHARE : JITSI_LOGO;
+        const label = isVpaas ? t('recording.serviceDescriptionCloud') : t('recording.serviceDescription');
+
         return (
             <Container
                 className = 'recording-header'
@@ -248,7 +259,7 @@ class StartRecordingDialogContent extends Component<Props> {
                 <Container className = 'recording-icon-container'>
                     <Image
                         className = 'recording-icon'
-                        src = { JITSI_LOGO }
+                        src = { icon }
                         style = { styles.recordingIcon } />
                 </Container>
                 <Text
@@ -257,7 +268,7 @@ class StartRecordingDialogContent extends Component<Props> {
                         ..._dialogStyles.text,
                         ...styles.title
                     }}>
-                    { t('recording.serviceDescription') }
+                    { label }
                 </Text>
                 { switchContent }
             </Container>
@@ -484,6 +495,7 @@ class StartRecordingDialogContent extends Component<Props> {
 function _mapStateToProps(state) {
     return {
         ..._abstractMapStateToProps(state),
+        isVpaas: isVpaasMeeting(state),
         _styles: ColorSchemeRegistry.get(state, 'StartRecordingDialogContent')
     };
 }

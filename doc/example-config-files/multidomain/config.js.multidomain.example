@@ -9,7 +9,6 @@ var config = {
         muc: 'conference.'+subdomain+'jitsi.example.com', // FIXME: use XEP-0030
         focus: 'focus.jitsi.example.com',
     },
-    useNicks: false,
     bosh: '//jitsi.example.com/http-bind', // FIXME: use xep-0156 for that
     websocket: 'wss://jitsi.example.com/xmpp-websocket'
 };

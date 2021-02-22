@@ -3,7 +3,12 @@
 import { type Dispatch } from 'redux';
 
 import { appNavigate, maybeRedirectToWelcomePage } from '../app/actions';
-import { conferenceWillJoin, getCurrentConference, setPassword } from '../base/conference';
+import {
+    conferenceWillJoin,
+    getCurrentConference,
+    sendLocalParticipant,
+    setPassword
+} from '../base/conference';
 import { hideDialog, openDialog } from '../base/dialog';
 import { getLocalParticipant } from '../base/participants';
 
@@ -183,6 +188,11 @@ export function startKnocking() {
         const localParticipant = getLocalParticipant(state);
 
         dispatch(conferenceWillJoin(membersOnly));
+
+        // We need to update the conference object with the current display name, if approved
+        // we want to send that display name, it was not updated in case when pre-join is disabled
+        sendLocalParticipant(state, membersOnly);
+
         membersOnly.joinLobby(localParticipant.name, localParticipant.email);
         dispatch(setKnockingState(true));
     };

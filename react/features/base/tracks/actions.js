@@ -9,7 +9,8 @@ import {
     MEDIA_TYPE,
     setAudioMuted,
     setVideoMuted,
-    VIDEO_MUTISM_AUTHORITY
+    VIDEO_MUTISM_AUTHORITY,
+    VIDEO_TYPE
 } from '../media';
 import { getLocalParticipant } from '../participants';
 
@@ -22,9 +23,16 @@ import {
     TRACK_NO_DATA_FROM_SOURCE,
     TRACK_REMOVED,
     TRACK_UPDATED,
-    TRACK_WILL_CREATE
+    TRACK_WILL_CREATE,
+    TRACK_UPDATE_LAST_VIDEO_MEDIA_EVENT
 } from './actionTypes';
-import { createLocalTracksF, getLocalTrack, getLocalTracks, getTrackByJitsiTrack } from './functions';
+import {
+    createLocalTracksF,
+    getLocalTrack,
+    getLocalTracks,
+    getLocalVideoTrack,
+    getTrackByJitsiTrack
+} from './functions';
 import logger from './logger';
 
 /**
@@ -39,6 +47,8 @@ import logger from './logger';
 export function createDesiredLocalTracks(...desiredTypes) {
     return (dispatch, getState) => {
         const state = getState();
+
+        dispatch(destroyLocalDesktopTrackIfExists());
 
         if (desiredTypes.length === 0) {
             const { audio, video } = state['features/base/media'];
@@ -664,6 +674,22 @@ function _trackCreateCanceled(mediaType) {
 }
 
 /**
+ * If thee local track if of type Desktop, it calls _disposeAndRemoveTracks) on it.
+ *
+ * @returns {Function}
+ */
+export function destroyLocalDesktopTrackIfExists() {
+    return (dispatch, getState) => {
+        const videoTrack = getLocalVideoTrack(getState()['features/base/tracks']);
+        const isDesktopTrack = videoTrack && videoTrack.videoType === VIDEO_TYPE.DESKTOP;
+
+        if (isDesktopTrack) {
+            dispatch(_disposeAndRemoveTracks([ videoTrack.jitsiTrack ]));
+        }
+    };
+}
+
+/**
  * Sets UID of the displayed no data from source notification. Used to track
  * if the notification was previously displayed in this context.
  *
@@ -677,5 +703,24 @@ export function setNoSrcDataNotificationUid(uid) {
     return {
         type: SET_NO_SRC_DATA_NOTIFICATION_UID,
         uid
+    };
+}
+
+/**
+ * Updates the last media event received for a video track.
+ *
+ * @param {JitsiRemoteTrack} track - JitsiTrack instance.
+ * @param {string} name - The current media event name for the video.
+ * @returns {{
+ *     type: TRACK_UPDATE_LAST_VIDEO_MEDIA_EVENT,
+ *     track: Track,
+ *     name: string
+ * }}
+ */
+export function updateLastTrackVideoMediaEvent(track, name) {
+    return {
+        type: TRACK_UPDATE_LAST_VIDEO_MEDIA_EVENT,
+        track,
+        name
     };
 }
