@@ -161,13 +161,13 @@
 
 .send-button-container {
     display: flex;
+    align-items: center;
 }
 
 .send-button {
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: auto;
     height: 40px;
     width: 40px;
     border-radius: 3px;
@@ -497,19 +497,19 @@
         }
     }
 
-    #touchmove-hack {
-        display: flex;
-        flex: 1;
-        overflow: auto;
-    }
-
     #chatconversation {
         width: 100%;
     }
 
     .chat-input-container {
-        padding: 0;
+        padding: 0 0 24px;
     }
+}
+
+.touchmove-hack {
+    display: flex;
+    flex: 1;
+    overflow: auto;
 }
 
 /**

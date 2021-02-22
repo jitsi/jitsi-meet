@@ -23,7 +23,7 @@ type Props = {
  *
  * @returns {ReactElement}
  */
-function ChatTouchmoveHack({ children, isModal }: Props) {
+function TouchmoveHack({ children, isModal }: Props) {
     if (!isModal || !isMobileBrowser()) {
         return children;
     }
@@ -57,11 +57,11 @@ function ChatTouchmoveHack({ children, isModal }: Props) {
 
     return (
         <div
-            id = 'touchmove-hack'
+            className = 'touchmove-hack'
             ref = { touchMoveElementRef }>
             {children}
         </div>
     );
 }
 
-export default ChatTouchmoveHack;
+export default TouchmoveHack;
