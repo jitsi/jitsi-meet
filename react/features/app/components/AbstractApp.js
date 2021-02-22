@@ -4,12 +4,7 @@ import React, { Fragment } from 'react';
 
 import { BaseApp } from '../../base/app';
 import { toURLString } from '../../base/util';
-import '../../follow-me';
 import { OverlayContainer } from '../../overlay';
-
-import '../../base/lastn'; // Register lastN middleware
-import '../../rejoin'; // Enable rejoin analytics
-
 import { appNavigate } from '../actions';
 import { getDefaultURL } from '../functions';
 
@@ -89,20 +84,8 @@ export class AbstractApp extends BaseApp<Props, *> {
         return (
             <Fragment>
                 <OverlayContainer />
-                { this._createExtraPlatformSpecificElement() }
             </Fragment>
         );
-    }
-
-    /**
-     * Renders platform specific extra elements to be added alongside with the main element, if need be.
-     *
-     * NOTE: Overridden by child components.
-     *
-     * @returns {React$Element}
-     */
-    _createExtraPlatformSpecificElement() {
-        return null;
     }
 
     _createMainElement: (React$Element<*>, Object) => ?React$Element<*>;

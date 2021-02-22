@@ -1,3 +1,5 @@
+import _ from "lodash";
+
 /**
  * The constant for the event type 'track'.
  * TODO: keep these constants in a single place. Can we import them from
@@ -254,6 +256,20 @@ export function createDeviceChangedEvent(mediaType, deviceType) {
             'device_type': deviceType,
             'media_type': mediaType
         }
+    };
+}
+
+/**
+ * Creates an event indicating that an action related to E2EE occurred.
+ *
+ * @param {string} action - The action which occurred.
+ * @returns {Object} The event in a format suitable for sending via
+ * sendAnalytics.
+ */
+export function createE2EEEvent(action) {
+    return {
+        action,
+        actionSubject: 'e2ee'
     };
 }
 
@@ -525,6 +541,26 @@ export function createRemoteVideoMenuButtonEvent(buttonName, attributes) {
 }
 
 /**
+ * The rtcstats websocket onclose event. We send this to amplitude in order
+ * to detect trace ws prematurely closing.
+ *
+ * @param {Object} closeEvent - The event with which the websocket closed.
+ * @returns {Object} The event in a format suitable for sending via
+ * sendAnalytics.
+ */
+export function createRTCStatsTraceCloseEvent(closeEvent) {
+    const event = {
+        action: 'trace.onclose',
+        source: 'rtcstats'
+    };
+
+    event.code = closeEvent.code;
+    event.reason = closeEvent.reason;
+
+    return event;
+}
+
+/**
  * Creates an event indicating that an action related to video blur
  * occurred (e.g. It was started or stopped).
  *
@@ -675,21 +711,6 @@ export function createStartMutedConfigurationEvent(
 }
 
 /**
- * Creates an event which indicates the delay for switching between simulcast
- * streams.
- *
- * @param {Object} attributes - Attributes to attach to the event.
- * @returns {Object} The event in a format suitable for sending via
- * sendAnalytics.
- */
-export function createStreamSwitchDelayEvent(attributes) {
-    return {
-        action: 'stream.switch.delay',
-        attributes
-    };
-}
-
-/**
  * Automatically changing the mute state of a media track in order to match
  * the current stored state in redux.
  *
@@ -769,4 +790,40 @@ export function createWelcomePageEvent(action, actionSubject, attributes = {}) {
         attributes,
         source: 'welcomePage'
     };
+}
+
+/**
+ * Creates an event which indicates that connection strength was changed.
+ *
+ * @param {string} strength - The subject that was acted upon.
+ * @param {Object} stats - Additional attributes to attach to the event.
+ * @returns {Object} The event in a format suitable for sending via
+ * sendAnalytics.
+ */
+export function createConnectionQualityChangedEvent(strength, stats) {
+    return {
+        action: 'connection.quality.changed',
+        attributes: {
+            bandwidth: stats.bandwidth,
+            bitrate: stats.bitrate,
+            bridgeCount: stats.bridgeCount,
+            codec: removeTrackIdFromEventPropertyObject(stats.codec),
+            connectionQuality: stats.connectionQuality,
+            framerate: removeTrackIdFromEventPropertyObject(stats.framerate),
+            packetLoss: stats.packetLoss,
+            resolution: removeTrackIdFromEventPropertyObject(stats.resolution),
+            strength
+        }
+    };
+}
+
+/**
+ * Remove the track id from the ConnectionQualityChangedEvent property.
+ * If we don't want to send the trackId along with the property to amplitude.
+ *
+ * @param {Object} event - event object.
+ * @returns {Object|number|string|undefined} property.
+ */
+function removeTrackIdFromEventPropertyObject(event) {
+    return event && _.isObject(event) && Object.values(event)[0];
 }

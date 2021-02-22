@@ -2,7 +2,6 @@
 
 import React, { Component } from 'react';
 
-import { VIDEO_QUALITY_LEVELS } from '../../base/conference';
 import { translate } from '../../base/i18n';
 import {
     Icon,
@@ -12,6 +11,8 @@ import {
     IconVideoQualitySD
 } from '../../base/icons';
 import { connect } from '../../base/redux';
+import { VIDEO_QUALITY_LEVELS } from '../constants';
+import { findNearestQualityLevel } from '../functions';
 
 /**
  * A map of of selectable receive resolutions to corresponding icons.
@@ -38,9 +39,9 @@ type Props = {
 
     /**
      * The currently configured maximum quality resolution to be received from
-     * remote participants.
+     * and sent to remote participants.
      */
-    _receiverVideoQuality: number,
+    _videoQuality: number,
 
     /**
      * Callback to invoke when {@link OverflowMenuVideoQualityItem} is clicked.
@@ -68,10 +69,11 @@ class OverflowMenuVideoQualityItem extends Component<Props> {
      * @returns {ReactElement}
      */
     render() {
-        const { _audioOnly, _receiverVideoQuality } = this.props;
-        const icon = _audioOnly || !_receiverVideoQuality
+        const { _audioOnly, _videoQuality } = this.props;
+        const videoQualityLevel = findNearestQualityLevel(_videoQuality);
+        const icon = _audioOnly || !videoQualityLevel
             ? IconVideoQualityAudioOnly
-            : VIDEO_QUALITY_TO_ICON[_receiverVideoQuality];
+            : VIDEO_QUALITY_TO_ICON[videoQualityLevel];
 
         return (
             <li
@@ -98,14 +100,13 @@ class OverflowMenuVideoQualityItem extends Component<Props> {
  * @private
  * @returns {{
  *     _audioOnly: boolean,
- *     _receiverVideoQuality: number
+ *     _videoQuality: number
  * }}
  */
 function _mapStateToProps(state) {
     return {
         _audioOnly: state['features/base/audio-only'].enabled,
-        _receiverVideoQuality:
-            state['features/base/conference'].preferredReceiverVideoQuality
+        _videoQuality: state['features/video-quality'].preferredVideoQuality
     };
 }
 

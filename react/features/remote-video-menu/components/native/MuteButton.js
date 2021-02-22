@@ -3,7 +3,6 @@
 import { translate } from '../../../base/i18n';
 import { isLocalParticipantModerator } from '../../../base/participants';
 import { connect } from '../../../base/redux';
-
 import AbstractMuteButton, { _mapStateToProps as _abstractMapStateToProps } from '../AbstractMuteButton';
 
 /**

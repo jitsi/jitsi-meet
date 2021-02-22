@@ -5,9 +5,9 @@ import React, { Component } from 'react';
 import { getConferenceName } from '../../../base/conference/functions';
 import { getParticipantCount } from '../../../base/participants/functions';
 import { connect } from '../../../base/redux';
-import { isToolboxVisible } from '../../../toolbox';
-
+import { isToolboxVisible } from '../../../toolbox/functions.web';
 import ConferenceTimer from '../ConferenceTimer';
+
 import ParticipantsCount from './ParticipantsCount';
 
 /**
@@ -75,7 +75,7 @@ function _mapStateToProps(state) {
     return {
         _showParticipantCount: participantCount > 2,
         _subject: getConferenceName(state),
-        _visible: isToolboxVisible(state)
+        _visible: isToolboxVisible(state) && participantCount > 1
     };
 }
 

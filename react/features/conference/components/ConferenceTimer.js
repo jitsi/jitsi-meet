@@ -2,12 +2,12 @@
 /* eslint-disable */
 import { Component } from 'react';
 
-import { connect } from '../../base/redux';
-import { getLocalizedDurationFormatter } from '../../base/i18n';
-import { getConferenceTimestamp } from '../../base/conference/functions';
 import { renderConferenceTimer } from '../';
-import { getParticipantCount } from '../../base/participants';
+import { getConferenceTimestamp } from '../../base/conference/functions';
+import { getLocalizedDurationFormatter } from '../../base/i18n';
+import { connect } from '../../base/redux';
 import { getRemoteTracks } from '../../base/tracks';
+import { getParticipantCount } from '../../base/participants';
 import { setConferenceStartTime } from '../../base/conference';
 
 /**

@@ -164,19 +164,6 @@ export const SET_DESKTOP_SHARING_ENABLED
 export const SET_FOLLOW_ME = 'SET_FOLLOW_ME';
 
 /**
- * The type of (redux) action which sets the maximum video height that should be
- * received from remote participants, even if the user prefers a larger video
- * height.
- *
- * {
- *     type: SET_MAX_RECEIVER_VIDEO_QUALITY,
- *     maxReceiverVideoQuality: number
- * }
- */
-export const SET_MAX_RECEIVER_VIDEO_QUALITY
-    = 'SET_MAX_RECEIVER_VIDEO_QUALITY';
-
-/**
  * The type of (redux) action which sets the password to join or lock a specific
  * {@code JitsiConference}.
  *
@@ -209,18 +196,6 @@ export const SET_PASSWORD_FAILED = 'SET_PASSWORD_FAILED';
  * }
  */
 export const SET_PENDING_SUBJECT_CHANGE = 'SET_PENDING_SUBJECT_CHANGE';
-
-/**
- * The type of (redux) action which sets the preferred maximum video height that
- * should be received from remote participants.
- *
- * {
- *     type: SET_PREFERRED_RECEIVER_VIDEO_QUALITY,
- *     preferredReceiverVideoQuality: number
- * }
- */
-export const SET_PREFERRED_RECEIVER_VIDEO_QUALITY
-    = 'SET_PREFERRED_RECEIVER_VIDEO_QUALITY';
 
 /**
  * The type of (redux) action which sets the name of the room of the

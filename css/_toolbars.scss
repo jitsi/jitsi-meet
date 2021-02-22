@@ -42,6 +42,11 @@
         display: none;
     }
 
+    &.shift-right {
+        margin-left: $sidebarWidth;
+        width: calc(100% - #{$sidebarWidth});
+    }
+
     .toolbox-background {
         background-image: linear-gradient(to top, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0));
         transition: bottom .3s ease-in;

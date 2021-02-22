@@ -3,16 +3,15 @@
 import type { Dispatch } from 'redux';
 
 import { getInviteURL } from '../base/connection';
-import { inviteVideoRooms } from '../videosipgw';
 import { getParticipants } from '../base/participants';
+import { inviteVideoRooms } from '../videosipgw';
 
 import {
     ADD_PENDING_INVITE_REQUEST,
     BEGIN_ADD_PEOPLE,
+    HIDE_ADD_PEOPLE_DIALOG,
     REMOVE_PENDING_INVITE_REQUESTS,
     SET_CALLEE_INFO_VISIBLE,
-    SET_DIAL_IN_SUMMARY_VISIBLE,
-    SET_INVITE_DIALOG_VISIBLE,
     UPDATE_DIAL_IN_NUMBERS_FAILED,
     UPDATE_DIAL_IN_NUMBERS_SUCCESS
 } from './actionTypes';
@@ -35,6 +34,20 @@ import logger from './logger';
 export function beginAddPeople() {
     return {
         type: BEGIN_ADD_PEOPLE
+    };
+}
+
+/**
+ * Creates a (redux) action to signal that the {@code AddPeopleDialog}
+ * should close.
+ *
+ * @returns {{
+ *     type: HIDE_ADD_PEOPLE_DIALOG
+ * }}
+ */
+export function hideAddPeopleDialog() {
+    return {
+        type: HIDE_ADD_PEOPLE_DIALOG
     };
 }
 
@@ -167,9 +180,10 @@ export function updateDialInNumbers() {
         const state = getState();
         const { dialInConfCodeUrl, dialInNumbersUrl, hosts }
             = state['features/base/config'];
+        const { numbersFetched } = state['features/invite'];
         const mucURL = hosts && hosts.muc;
 
-        if (!dialInConfCodeUrl || !dialInNumbersUrl || !mucURL) {
+        if (numbersFetched || !dialInConfCodeUrl || !dialInNumbersUrl || !mucURL) {
             // URLs for fetching dial in numbers not defined
             return;
         }
@@ -197,22 +211,6 @@ export function updateDialInNumbers() {
                     error
                 });
             });
-    };
-}
-
-/**
- * Sets the visibility of the invite dialog.
- *
- * @param {boolean} visible - The visibility to set.
- * @returns {{
- *     type: SET_INVITE_DIALOG_VISIBLE,
- *     visible: boolean
- * }}
- */
-export function setAddPeopleDialogVisible(visible: boolean) {
-    return {
-        type: SET_INVITE_DIALOG_VISIBLE,
-        visible
     };
 }
 
@@ -257,15 +255,6 @@ export function addPendingInviteRequest(
 }
 
 /**
- * Action to hide the dial in summary.
- *
- * @returns {showDialInSummary}
- */
-export function hideDialInSummary() {
-    return showDialInSummary(undefined);
-}
-
-/**
  * Removes all pending invite requests.
  *
  * @returns {{
@@ -275,21 +264,5 @@ export function hideDialInSummary() {
 export function removePendingInviteRequests() {
     return {
         type: REMOVE_PENDING_INVITE_REQUESTS
-    };
-}
-
-/**
- * Action to set the dial in summary url (and show it).
- *
- * @param {?string} locationUrl - The location URL to show the dial in summary for.
- * @returns {{
- *     type: SET_DIAL_IN_SUMMARY_VISIBLE,
- *     summaryUrl: ?string
- * }}
- */
-export function showDialInSummary(locationUrl: ?string) {
-    return {
-        type: SET_DIAL_IN_SUMMARY_VISIBLE,
-        summaryUrl: locationUrl
     };
 }

@@ -2,8 +2,9 @@
 
 import React, { Component } from 'react';
 
-import AudioSettingsEntry, { type Props as AudioSettingsEntryProps } from './AudioSettingsEntry';
 import JitsiMeetJS from '../../../../base/lib-jitsi-meet/_';
+
+import AudioSettingsEntry, { type Props as AudioSettingsEntryProps } from './AudioSettingsEntry';
 import Meter from './Meter';
 
 const JitsiTrackEvents = JitsiMeetJS.events.track;
@@ -107,9 +108,7 @@ export default class MicrophoneEntry extends Component<Props, State> {
      * @returns {void}
      */
     _stopListening(jitsiTrack) {
-        jitsiTrack && jitsiTrack.off(
-            JitsiTrackEvents.TRACK_AUDIO_LEVEL_CHANGED,
-            this._updateLevel);
+        jitsiTrack && jitsiTrack.off(JitsiTrackEvents.TRACK_AUDIO_LEVEL_CHANGED, this._updateLevel);
         this.setState({
             level: -1
         });

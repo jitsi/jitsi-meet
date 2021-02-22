@@ -1,7 +1,8 @@
 /* global APP */
+import jwtDecode from 'jwt-decode';
 
 import JitsiMeetJS, { JitsiTrackErrors, browser } from '../lib-jitsi-meet';
-import { MEDIA_TYPE } from '../media';
+import { MEDIA_TYPE, setAudioMuted } from '../media';
 import {
     getUserSelectedCameraDeviceId,
     getUserSelectedMicDeviceId
@@ -95,7 +96,9 @@ export function createLocalTracksF(options = {}, firePermissionPromptIsShownEven
     } = state['features/base/config'];
     let constraints = options.constraints ?? state['features/base/config'].constraints;
 
-    if (JitsiMeetJS.util.browser.isFirefox()) {
+    const hdQualityEnabled = isHdQualityEnabled(state);
+
+    if (JitsiMeetJS.util.browser.isFirefox() || hdQualityEnabled) {
         constraints = null;
     }
 
@@ -108,8 +111,6 @@ export function createLocalTracksF(options = {}, firePermissionPromptIsShownEven
                 {
                     cameraDeviceId,
                     constraints,
-                    desktopSharingExtensionExternalInstallation:
-                        options.desktopSharingExtensionExternalInstallation,
                     desktopSharingFrameRate,
                     desktopSharingSourceDevice:
                         options.desktopSharingSourceDevice,
@@ -129,6 +130,89 @@ export function createLocalTracksF(options = {}, firePermissionPromptIsShownEven
                 return Promise.reject(err);
             });
         }));
+}
+
+/**
+ * Returns an object containing a promise which resolves with the created tracks &
+ * the errors resulting from that process.
+ *
+ * @returns {Promise<JitsiLocalTrack>}
+ *
+ * @todo Refactor to not use APP
+ */
+export function createPrejoinTracks() {
+    const errors = {};
+    const initialDevices = [ 'audio' ];
+    const requestedAudio = true;
+    let requestedVideo = false;
+    const { startAudioOnly, startWithAudioMuted, startWithVideoMuted } = APP.store.getState()['features/base/settings'];
+
+    // Always get a handle on the audio input device so that we have statistics even if the user joins the
+    // conference muted. Previous implementation would only acquire the handle when the user first unmuted,
+    // which would results in statistics ( such as "No audio input" or "Are you trying to speak?") being available
+    // only after that point.
+    if (startWithAudioMuted) {
+        APP.store.dispatch(setAudioMuted(true));
+    }
+
+    if (!startWithVideoMuted && !startAudioOnly) {
+        initialDevices.push('video');
+        requestedVideo = true;
+    }
+
+    let tryCreateLocalTracks;
+
+    if (!requestedAudio && !requestedVideo) {
+        // Resolve with no tracks
+        tryCreateLocalTracks = Promise.resolve([]);
+    } else {
+        tryCreateLocalTracks = createLocalTracksF({ devices: initialDevices }, true)
+                .catch(err => {
+                    if (requestedAudio && requestedVideo) {
+
+                        // Try audio only...
+                        errors.audioAndVideoError = err;
+
+                        return (
+                            createLocalTracksF({ devices: [ 'audio' ] }, true));
+                    } else if (requestedAudio && !requestedVideo) {
+                        errors.audioOnlyError = err;
+
+                        return [];
+                    } else if (requestedVideo && !requestedAudio) {
+                        errors.videoOnlyError = err;
+
+                        return [];
+                    }
+                    logger.error('Should never happen');
+                })
+                .catch(err => {
+                    // Log this just in case...
+                    if (!requestedAudio) {
+                        logger.error('The impossible just happened', err);
+                    }
+                    errors.audioOnlyError = err;
+
+                    // Try video only...
+                    return requestedVideo
+                        ? createLocalTracksF({ devices: [ 'video' ] }, true)
+                        : [];
+                })
+                .catch(err => {
+                    // Log this just in case...
+                    if (!requestedVideo) {
+                        logger.error('The impossible just happened', err);
+                    }
+                    errors.videoOnlyError = err;
+
+                    return [];
+                });
+    }
+
+    return {
+        tryCreateLocalTracks,
+        errors
+    };
 }
 
 /**
@@ -226,6 +310,30 @@ export function getLocalVideoType(tracks) {
     const presenterTrack = getLocalTrack(tracks, MEDIA_TYPE.PRESENTER);
 
     return presenterTrack ? MEDIA_TYPE.PRESENTER : MEDIA_TYPE.VIDEO;
+}
+
+/**
+ * Returns the stored local video track.
+ *
+ * @param {Object} state - The redux state.
+ * @returns {Object}
+ */
+export function getLocalJitsiVideoTrack(state) {
+    const track = getLocalVideoTrack(state['features/base/tracks']);
+
+    return track?.jitsiTrack;
+}
+
+/**
+ * Returns the stored local audio track.
+ *
+ * @param {Object} state - The redux state.
+ * @returns {Object}
+ */
+export function getLocalJitsiAudioTrack(state) {
+    const track = getLocalAudioTrack(state['features/base/tracks']);
+
+    return track?.jitsiTrack;
 }
 
 /**
@@ -363,4 +471,22 @@ export function setTrackMuted(track, muted) {
             logger.error(`set track ${f} failed`, error);
         }
     });
+}
+
+/**
+ * Check if the clinic enabled the hd telehealth feature.
+ *
+ * @param {Object} state - The redux state.
+ * @returns {boolean}
+ */
+export function isHdQualityEnabled(state) {
+    const { jwt } = state['features/base/jwt'];
+
+    if (jwt) {
+        const jwtPayload = jwtDecode(jwt);
+
+        return (jwtPayload.context && jwtPayload.context.hd_enabled) ?? false;
+    }
+
+    return false;
 }

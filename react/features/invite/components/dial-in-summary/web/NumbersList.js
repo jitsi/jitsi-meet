@@ -63,8 +63,10 @@ class NumbersList extends Component<Props> {
             hasFlags = true;
             numbers = numbersMapping.reduce(
                 (resultNumbers, number) => {
+                    // The i18n-iso-countries package insists on upper case.
+                    const countryCode = number.countryCode.toUpperCase();
                     const countryName
-                        = t(`countries:countries.${number.countryCode}`);
+                        = t(`countries:countries.${countryCode}`);
 
                     if (resultNumbers[countryName]) {
                         resultNumbers[countryName].push(number);

@@ -1,9 +1,10 @@
 // @flow
 
-import { createScreenshotCaptureEffect } from '../stream-effects/screenshot-capture';
 import { getLocalVideoTrack } from '../../features/base/tracks';
-import logger from './logger';
+import { createScreenshotCaptureEffect } from '../stream-effects/screenshot-capture';
+
 import { SET_SCREENSHOT_CAPTURE } from './actionTypes';
+import logger from './logger';
 
 let ongoingEffect;
 

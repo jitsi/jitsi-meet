@@ -1,7 +1,7 @@
 // @flow
 
-import _ from 'lodash';
 import Logger, { getLogger as _getLogger } from 'jitsi-meet-logger';
+import _ from 'lodash';
 
 import LogTransport from './LogTransport';
 

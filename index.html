@@ -1,5 +1,5 @@
 <html itemscope itemtype="http://schema.org/Product" prefix="og: http://ogp.me/ns#" xmlns="http://www.w3.org/1999/html">
-  <head>
+<head>
     <!--#include virtual="head.html" -->
     <meta charset="utf-8">
     <meta http-equiv="content-type" content="text/html;charset=utf-8">
@@ -8,6 +8,17 @@
 
     <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
     <link rel="stylesheet" href="<%=htmlWebpackPlugin.options.css %>">
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!JitsiMeetJS.app) {
+                return;
+            }
+
+            JitsiMeetJS.app.renderEntryPoint({
+                Component: JitsiMeetJS.app.entryPoints.APP
+            })
+        })
+    </script>
     <script>
         // IE11 and earlier can be identified via their user agent and be
         // redirected to a page that is known to have no newer js syntax.
@@ -106,24 +117,24 @@
 
                     var showMoreElem = document.getElementById("showMore");
                     showMoreElem.addEventListener('click', function () {
-                            var moreInfoElem
-                                    = document.getElementById("moreInfo");
+                        var moreInfoElem
+                            = document.getElementById("moreInfo");
 
-                            if (showMoreElem.innerHTML === showMoreText) {
-                                moreInfoElem.setAttribute(
-                                    "style",
-                                    "display: block;"
-                                    + "color:#FF991F;"
-                                    + "font-size:small;"
-                                    + "user-select:text;");
-                                showMoreElem.innerHTML = showLessText;
-                            }
-                            else {
-                                moreInfoElem.setAttribute(
-                                    "style", "display: none;");
-                                showMoreElem.innerHTML = showMoreText;
-                            }
-                        });
+                        if (showMoreElem.innerHTML === showMoreText) {
+                            moreInfoElem.setAttribute(
+                                "style",
+                                "display: block;"
+                                + "color:#FF991F;"
+                                + "font-size:small;"
+                                + "user-select:text;");
+                            showMoreElem.innerHTML = showLessText;
+                        }
+                        else {
+                            moreInfoElem.setAttribute(
+                                "style", "display: none;");
+                            showMoreElem.innerHTML = showMoreText;
+                        }
+                    });
 
                     window.setTimeout(
                         function () { window.location.replace(href); }, delay);
@@ -151,9 +162,9 @@
     <!--#include virtual="plugin.head.html" -->
     <!--#include virtual="static/welcomePageAdditionalContent.html" -->
     <!--#include virtual="static/settingsToolbarAdditionalContent.html" -->
-  </head>
-  <body>
-    <!--#include virtual="body.html" -->
-    <div id="react"></div>
-  </body>
+</head>
+<body>
+<!--#include virtual="body.html" -->
+<div id="react"></div>
+</body>
 </html>

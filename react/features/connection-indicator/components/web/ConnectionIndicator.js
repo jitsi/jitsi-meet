@@ -7,7 +7,6 @@ import { Icon, IconConnectionActive, IconConnectionInactive } from '../../../bas
 import { JitsiParticipantConnectionStatus } from '../../../base/lib-jitsi-meet';
 import { Popover } from '../../../base/popover';
 import { ConnectionStatsTable } from '../../../connection-stats';
-
 import AbstractConnectionIndicator, {
     INDICATOR_DISPLAY_THRESHOLD,
     type Props as AbstractProps,
@@ -341,8 +340,10 @@ class ConnectionIndicator extends AbstractConnectionIndicator<Props, State> {
             bandwidth,
             bitrate,
             bridgeCount,
+            codec,
             e2eRtt,
             framerate,
+            maxEnabledResolution,
             packetLoss,
             region,
             resolution,
@@ -355,10 +356,12 @@ class ConnectionIndicator extends AbstractConnectionIndicator<Props, State> {
                 bandwidth = { bandwidth }
                 bitrate = { bitrate }
                 bridgeCount = { bridgeCount }
+                codec = { codec }
                 connectionSummary = { this._getConnectionStatusTip() }
                 e2eRtt = { e2eRtt }
                 framerate = { framerate }
                 isLocalVideo = { this.props.isLocalVideo }
+                maxEnabledResolution = { maxEnabledResolution }
                 onShowMore = { this._onToggleShowMore }
                 packetLoss = { packetLoss }
                 region = { region }

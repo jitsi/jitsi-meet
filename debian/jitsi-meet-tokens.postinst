@@ -48,9 +48,9 @@ case "$1" in
         db_stop
 
         if [ -f "$PROSODY_HOST_CONFIG" ] ; then
-            # search for --plugin_paths, if this is not enabled this is the
+            # search for the token auth, if this is not enabled this is the
             # first time we install tokens package and needs a config change
-            if grep -q "\-\-plugin_paths" "$PROSODY_HOST_CONFIG"; then
+            if ! egrep -q '^\s*authentication\s*=\s*"token"' "$PROSODY_HOST_CONFIG"; then
                 # enable tokens in prosody host config
                 sed -i 's/--plugin_paths/plugin_paths/g' $PROSODY_HOST_CONFIG
                 sed -i 's/authentication = "anonymous"/authentication = "token"/g' $PROSODY_HOST_CONFIG
@@ -58,6 +58,7 @@ case "$1" in
                 sed -i "s/ --app_id=\"example_app_id\"/ app_id=\"$APP_ID\"/g" $PROSODY_HOST_CONFIG
                 sed -i "s/ --app_secret=\"example_app_secret\"/ app_secret=\"$APP_SECRET\"/g" $PROSODY_HOST_CONFIG
                 sed -i 's/ --modules_enabled = { "token_verification" }/ modules_enabled = { "token_verification" }/g' $PROSODY_HOST_CONFIG
+                sed -i '/^\s*--\s*"token_verification"/ s/--\s*//' $PROSODY_HOST_CONFIG
 
                 # Install luajwt
                 if ! luarocks install luajwtjitsi; then
@@ -69,12 +70,15 @@ case "$1" in
                    echo "Failed to install basexx - try installing it manually"
                 fi
 
-                PR11_INSTALL_CHECK="$(dpkg-query -f '${Status}' -W 'prosody-0.11' 2>/dev/null | awk '{print $3}' || true)"
+                PR10_INSTALL_CHECK="$(dpkg-query -f '${Status}' -W 'prosody-0.10' 2>/dev/null | awk '{print $3}' || true)"
+                PRTRUNK_INSTALL_CHECK="$(dpkg-query -f '${Status}' -W 'prosody-trunk' 2>/dev/null | awk '{print $3}' || true)"
                 PR_VER_INSTALLED=$(dpkg-query -f='${Version}\n' --show prosody  2>/dev/null || true)
-                if [ "$PR11_INSTALL_CHECK" = "installed" ] \
-                    || [ "$PR11_INSTALL_CHECK" = "unpacked" ] \
-                    || dpkg --compare-versions "$PR_VER_INSTALLED" gt "0.11" ; then
-                    sed -i 's/module:hook/module:hook_global/g' /usr/share/jitsi-meet/prosody-plugins/mod_auth_token.lua
+                if [ "$PR10_INSTALL_CHECK" = "installed" ] \
+                    || [ "$PR10_INSTALL_CHECK" = "unpacked" ] \
+                    || [ "$PRTRUNK_INSTALL_CHECK" = "installed" ] \
+                    || [ "$PRTRUNK_INSTALL_CHECK" = "unpacked" ] \
+                    || dpkg --compare-versions "$PR_VER_INSTALLED" lt "0.11" ; then
+                    sed -i 's/module:hook_global(/module:hook(/g' /usr/share/jitsi-meet/prosody-plugins/mod_auth_token.lua
                 fi
 
                 if [ -x "/etc/init.d/prosody" ]; then

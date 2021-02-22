@@ -10,6 +10,7 @@ import {
     JitsiConferenceErrors,
     JitsiConferenceEvents
 } from '../base/lib-jitsi-meet';
+import { setActiveModalId } from '../base/modal';
 import {
     getLocalParticipant,
     getParticipantById,
@@ -17,12 +18,19 @@ import {
 } from '../base/participants';
 import { MiddlewareRegistry, StateListenerRegistry } from '../base/redux';
 import { playSound, registerSound, unregisterSound } from '../base/sounds';
-import { isButtonEnabled, showToolbox } from '../toolbox';
+import { showToolbox } from '../toolbox/actions';
+import { isButtonEnabled } from '../toolbox/functions';
 
 import { SEND_MESSAGE, SET_PRIVATE_MESSAGE_RECIPIENT } from './actionTypes';
 import { addMessage, clearMessages, toggleChat } from './actions';
 import { ChatPrivacyDialog } from './components';
-import { INCOMING_MSG_SOUND_ID, MESSAGE_TYPE_ERROR, MESSAGE_TYPE_LOCAL, MESSAGE_TYPE_REMOTE } from './constants';
+import {
+    CHAT_VIEW_MODAL_ID,
+    INCOMING_MSG_SOUND_ID,
+    MESSAGE_TYPE_ERROR,
+    MESSAGE_TYPE_LOCAL,
+    MESSAGE_TYPE_REMOTE
+} from './constants';
 import { INCOMING_MSG_SOUND_FILE } from './sounds';
 
 declare var APP: Object;
@@ -94,6 +102,7 @@ MiddlewareRegistry.register(store => next => action => {
     }
 
     case SET_PRIVATE_MESSAGE_RECIPIENT: {
+        Boolean(action.participant) && dispatch(setActiveModalId(CHAT_VIEW_MODAL_ID));
         _maybeFocusField();
         break;
     }

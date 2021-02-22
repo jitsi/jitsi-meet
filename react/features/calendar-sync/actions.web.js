@@ -1,12 +1,10 @@
 // @flow
 
-import { generateRoomWithoutSeparator } from 'js-utils/random';
+import { generateRoomWithoutSeparator } from '@jitsi/js-utils/random';
 import type { Dispatch } from 'redux';
 
-import { loadGoogleAPI } from '../google-api';
-
-import { refreshCalendar, setCalendarEvents } from './actions';
 import { createCalendarConnectedEvent, sendAnalytics } from '../analytics';
+import { loadGoogleAPI } from '../google-api';
 
 import {
     CLEAR_CALENDAR_INTEGRATION,
@@ -16,6 +14,7 @@ import {
     SET_CALENDAR_PROFILE_EMAIL,
     SET_LOADING_CALENDAR_EVENTS
 } from './actionTypes';
+import { refreshCalendar, setCalendarEvents } from './actions';
 import { _getCalendarIntegration, isCalendarEnabled } from './functions';
 import logger from './logger';
 

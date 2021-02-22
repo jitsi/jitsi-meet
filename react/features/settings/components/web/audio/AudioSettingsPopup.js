@@ -1,22 +1,23 @@
 // @flow
 
-import React from 'react';
 import InlineDialog from '@atlaskit/inline-dialog';
+import React from 'react';
 
-import AudioSettingsContent, { type Props as AudioSettingsContentProps } from './AudioSettingsContent';
-import { toggleAudioSettings } from '../../../actions';
 import {
     getAudioInputDeviceData,
     getAudioOutputDeviceData,
-    setAudioInputDevice as setAudioInputDeviceAction,
+    setAudioInputDeviceAndUpdateSettings,
     setAudioOutputDevice as setAudioOutputDeviceAction
 } from '../../../../base/devices';
 import { connect } from '../../../../base/redux';
-import { getAudioSettingsVisibility } from '../../../functions';
 import {
     getCurrentMicDeviceId,
     getCurrentOutputDeviceId
 } from '../../../../base/settings';
+import { toggleAudioSettings } from '../../../actions';
+import { getAudioSettingsVisibility } from '../../../functions';
+
+import AudioSettingsContent, { type Props as AudioSettingsContentProps } from './AudioSettingsContent';
 
 
 type Props = AudioSettingsContentProps & {
@@ -90,7 +91,7 @@ function mapStateToProps(state) {
 
 const mapDispatchToProps = {
     onClose: toggleAudioSettings,
-    setAudioInputDevice: setAudioInputDeviceAction,
+    setAudioInputDevice: setAudioInputDeviceAndUpdateSettings,
     setAudioOutputDevice: setAudioOutputDeviceAction
 };
 

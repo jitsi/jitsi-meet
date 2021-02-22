@@ -5,7 +5,7 @@ import { getLogger } from 'jitsi-meet-logger';
 import {
     JitsiConferenceEvents
 } from '../../react/features/base/lib-jitsi-meet';
-import * as KeyCodes from '../keycode/keycode';
+import UIEvents from '../../service/UI/UIEvents';
 import {
     EVENTS,
     PERMISSIONS_ACTIONS,
@@ -13,7 +13,7 @@ import {
 } from '../../service/remotecontrol/Constants';
 import * as RemoteControlEvents
     from '../../service/remotecontrol/RemoteControlEvents';
-import UIEvents from '../../service/UI/UIEvents';
+import * as KeyCodes from '../keycode/keycode';
 
 import RemoteControlParticipant from './RemoteControlParticipant';
 

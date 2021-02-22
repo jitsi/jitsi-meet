@@ -1,6 +1,9 @@
 // @flow
 
 export {
+    default as GrantModeratorDialog
+} from './GrantModeratorDialog';
+export {
     default as KickRemoteParticipantDialog
 } from './KickRemoteParticipantDialog';
 export {

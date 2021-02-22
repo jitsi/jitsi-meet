@@ -23,14 +23,14 @@ const _RIGHT_WATERMARK_STYLE = {
  * The type of the React {@code Component} props of {@link Watermarks}.
  */
 type Props = {
-
+    
     /**
      * Whether or not the current user is logged in through a JWT.
      */
     _isGuest: boolean,
     conferenceHasStarted: boolean,
     isWelcomePage: boolean,
-
+    
     /**
      * Invoked to obtain translated strings.
      */
@@ -41,33 +41,33 @@ type Props = {
  * The type of the React {@code Component} state of {@link Watermarks}.
  */
 type State = {
-
+    
     /**
      * The url to open when clicking the brand watermark.
      */
     brandWatermarkLink: string,
-
+    
     /**
      * The url to open when clicking the Jitsi watermark.
      */
     jitsiWatermarkLink: string,
-
+    
     /**
      * Whether or not the brand watermark should be displayed.
      */
     showBrandWatermark: boolean,
-
+    
     /**
      * Whether or not the Jitsi watermark should be displayed.
      */
     showJitsiWatermark: boolean,
-
+    
     /**
      * Whether or not the Jitsi watermark should be displayed for users not
      * logged in through a JWT.
      */
     showJitsiWatermarkForGuests: boolean,
-
+    
     /**
      * Whether or not the show the "powered by Jitsi.org" link.
      */
@@ -87,11 +87,11 @@ class Watermarks extends Component<Props, State> {
      */
     constructor(props: Props) {
         super(props);
-
+        
         let showBrandWatermark;
         let showJitsiWatermark;
         let showJitsiWatermarkForGuests;
-
+        
         if (interfaceConfig.filmStripOnly) {
             showBrandWatermark = false;
             showJitsiWatermark = false;
@@ -102,7 +102,7 @@ class Watermarks extends Component<Props, State> {
             showJitsiWatermarkForGuests
                 = interfaceConfig.SHOW_WATERMARK_FOR_GUESTS;
         }
-
+        
         this.state = {
             brandWatermarkLink:
                 showBrandWatermark ? interfaceConfig.BRAND_WATERMARK_LINK : '',
@@ -115,7 +115,7 @@ class Watermarks extends Component<Props, State> {
             showPoweredBy: interfaceConfig.SHOW_POWERED_BY
         };
     }
-
+    
     /**
      * Implements React's {@link Component#render()}.
      *
@@ -131,7 +131,7 @@ class Watermarks extends Component<Props, State> {
             </div>
         );
     }
-
+    
     /**
      * Renders a watermark if it is enabled.
      *
@@ -140,8 +140,8 @@ class Watermarks extends Component<Props, State> {
      */
     _renderWatermark() {
         const { conferenceHasStarted, isWelcomePage } = this.props;
-
-
+        
+        
         return (<div className = 'watermark '>
             <div
                 className = { `leftwatermark ${conferenceHasStarted || isWelcomePage ? '' : 'animate-flicker'}` } />
@@ -164,8 +164,8 @@ function _mapStateToProps(state) {
     const { isGuest } = state['features/base/jwt'];
     const participantCount = getParticipantCount(state);
     const remoteTracks = getRemoteTracks(state['features/base/tracks']);
-
-
+    
+    
     return {
         _isGuest: isGuest,
         conferenceHasStarted: participantCount > 1 && remoteTracks.length > 0

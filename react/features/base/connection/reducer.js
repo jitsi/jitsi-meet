@@ -11,7 +11,6 @@ import {
     CONNECTION_WILL_CONNECT,
     SET_LOCATION_URL
 } from './actionTypes';
-
 import type { ConnectionFailedError } from './actions.native';
 
 /**

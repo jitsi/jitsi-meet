@@ -15,7 +15,6 @@ import {
     signIn
 } from '../../../calendar-sync';
 import { GoogleSignInButton } from '../../../google-api';
-
 import logger from '../../logger';
 
 declare var interfaceConfig: Object;

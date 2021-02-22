@@ -1,7 +1,8 @@
 /* global __dirname */
 
-const process = require('process');
+const CircularDependencyPlugin = require('circular-dependency-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const process = require('process');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 
 const cacheVersionNumber = Math.random().toString(36)
@@ -15,6 +16,7 @@ const devServerProxyTarget
     = process.env.WEBPACK_DEV_SERVER_PROXY_TARGET || 'https://videochat-jwt.jane.qa';
 
 const analyzeBundle = process.argv.indexOf('--analyze-bundle') !== -1;
+const detectCircularDeps = process.argv.indexOf('--detect-circular-deps') !== -1;
 
 const minimize
     = process.argv.indexOf('-p') !== -1
@@ -27,7 +29,7 @@ const generateIndexHtml = new HtmlWebpackPlugin({
     template: 'index.html',
     minify: false,
     inject: false
-})
+});
 
 /**
  * Build a Performance configuration object for the given size.
@@ -66,7 +68,7 @@ const config = {
             // as well.
 
             exclude: [
-                new RegExp(`${__dirname}/node_modules/(?!js-utils)`)
+                new RegExp(`${__dirname}/node_modules/(?!@jitsi/js-utils)`)
             ],
             loader: 'babel-loader',
             options: {
@@ -151,7 +153,11 @@ const config = {
         // Allow the use of the real filename of the module being executed. By
         // default Webpack does not leak path-related information and provides a
         // value that is a mock (/index.js).
-        __filename: true
+        __filename: true,
+
+        // Provide some empty Node modules (required by olm).
+        crypto: 'empty',
+        fs: 'empty'
     },
     optimization: {
         concatenateModules: minimize,
@@ -165,9 +171,23 @@ const config = {
     },
     plugins: [
         analyzeBundle
-        && new BundleAnalyzerPlugin({
-            analyzerMode: 'disabled',
-            generateStatsFile: true
+            && new BundleAnalyzerPlugin({
+                analyzerMode: 'disabled',
+                generateStatsFile: true
+            }),
+        detectCircularDeps
+            && new CircularDependencyPlugin({
+                allowAsyncCycles: false,
+                exclude: /node_modules/,
+                failOnError: false
+            }),
+        new HtmlWebpackPlugin({
+            jitsiLib: `libs/lib-jitsi-meet.min.js?v=${cacheVersionNumber}`,
+            appBundle: `libs/app.bundle.min.js?v=${cacheVersionNumber}`,
+            css: `css/all.css?v=${cacheVersionNumber}`,
+            template: 'index.html',
+            minify: false,
+            inject: false
         })
     ].filter(Boolean),
     resolve: {
@@ -187,20 +207,21 @@ const config = {
     }
 };
 
-const appBundleConfig = {...config, plugins: [...config.plugins, generateIndexHtml]};
+const appBundleConfig = { ...config,
+    plugins: [ ...config.plugins, generateIndexHtml ] };
 
 module.exports = [
     Object.assign({}, appBundleConfig, {
         entry: {
             'app.bundle': './app.js'
         },
-        performance: getPerformanceHints(3 * 1024 * 1024)
+        performance: getPerformanceHints(4 * 1024 * 1024)
     }),
     Object.assign({}, config, {
         entry: {
             'device_selection_popup_bundle': './react/features/settings/popup.js'
         },
-        performance: getPerformanceHints(700 * 1024)
+        performance: getPerformanceHints(750 * 1024)
     }),
     Object.assign({}, config, {
         entry: {
@@ -232,6 +253,12 @@ module.exports = [
         },
         performance: getPerformanceHints(5 * 1024)
     }),
+    Object.assign({}, config, {
+        entry: {
+            'close3': './static/close3.js'
+        },
+        performance: getPerformanceHints(128 * 1024)
+    }),
 
     // Because both video-blur-effect and rnnoise-processor modules are loaded
     // in a lazy manner using the loadScript function with a hard coded name,
@@ -256,12 +283,6 @@ module.exports = [
     Object.assign({}, config, {
         entry: {
             'rnnoise-processor': './react/features/stream-effects/rnnoise/index.js'
-        },
-        node: {
-            // Emscripten generated glue code "rnnoise.js" expects node fs module,
-            // we need to specify this parameter so webpack knows how to properly
-            // interpret it when encountered.
-            fs: 'empty'
         },
         output: Object.assign({}, config.output, {
             library: [ 'JitsiMeetJS', 'app', 'effects', 'rnnoise' ],
@@ -295,10 +316,13 @@ module.exports = [
  */
 function devServerProxyBypass({ path }) {
     if (path.startsWith('/css/') || path.startsWith('/doc/')
-            || path.startsWith('/fonts/') || path.startsWith('/images/')
+            || path.startsWith('/fonts/')
+            || path.startsWith('/images/')
+            || path.startsWith('/lang/')
             || path.startsWith('/sounds/')
             || path.startsWith('/static/')
             || path.endsWith('.wasm')) {
+
         return path;
     }
 

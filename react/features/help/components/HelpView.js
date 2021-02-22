@@ -5,7 +5,6 @@ import WebView from 'react-native-webview';
 
 import { JitsiModal } from '../../base/modal';
 import { connect } from '../../base/redux';
-
 import { HELP_VIEW_MODAL_ID } from '../constants';
 
 const DEFAULT_HELP_CENTRE_URL = 'https://web-cdn.jitsi.net/faq/meet-faq.html';
@@ -31,7 +30,9 @@ class HelpView extends PureComponent<Props> {
     render() {
         return (
             <JitsiModal
-                headerLabelKey = 'helpView.header'
+                headerProps = {{
+                    headerLabelKey: 'helpView.header'
+                }}
                 modalId = { HELP_VIEW_MODAL_ID }>
                 <WebView source = {{ uri: this.props._url }} />
             </JitsiModal>

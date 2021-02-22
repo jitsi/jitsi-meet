@@ -1,15 +1,17 @@
 /* global $, APP, config, interfaceConfig */
-
 /* eslint-disable */
+
+/* eslint-disable no-unused-vars */
+import { AtlasKitThemeProvider } from '@atlaskit/theme';
+import Logger from 'jitsi-meet-logger';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { I18nextProvider } from 'react-i18next';
-import { AtlasKitThemeProvider } from '@atlaskit/theme';
 import { Provider } from 'react-redux';
 
-import { i18next } from '../../../react/features/base/i18n';
 import { AudioLevelIndicator } from '../../../react/features/audio-level-indicator';
 import { Avatar as AvatarDisplay } from '../../../react/features/base/avatar';
+import { i18next } from '../../../react/features/base/i18n';
 import {
     getParticipantCount,
     getPinnedParticipant,
@@ -28,11 +30,8 @@ import {
     setTileView,
     shouldDisplayTileView
 } from '../../../react/features/video-layout';
-/* eslint-enable no-unused-vars */
 
-const logger = require('jitsi-meet-logger').getLogger(__filename);
-
-import UIEvents from '../../../service/UI/UIEvents';
+const logger = Logger.getLogger(__filename);
 
 /**
  * Display mode constant used when video is being displayed on the small video.
@@ -84,10 +83,12 @@ export default class SmallVideo {
     constructor(VideoLayout) {
         this.isAudioMuted = false;
         this.isVideoMuted = false;
+        this.isScreenSharing = false;
         this.videoStream = null;
         this.audioStream = null;
         this.VideoLayout = VideoLayout;
         this.videoIsHovered = false;
+        this.videoType = undefined;
 
         /**
          * The current state of the user's bridge connection. The value should be
@@ -159,28 +160,6 @@ export default class SmallVideo {
     }
 
     /**
-     * Sets the type of the video displayed by this instance.
-     * Note that this is a string without clearly defined or checked values, and
-     * it is NOT one of the strings defined in service/RTC/VideoType in
-     * lib-jitsi-meet.
-     * @param videoType 'camera' or 'desktop', or 'sharedvideo'.
-     */
-    setVideoType(videoType) {
-        this.videoType = videoType;
-    }
-
-    /**
-     * Returns the type of the video displayed by this instance.
-     * Note that this is a string without clearly defined or checked values, and
-     * it is NOT one of the strings defined in service/RTC/VideoType in
-     * lib-jitsi-meet.
-     * @returns {String} 'camera', 'screen', 'sharedvideo', or undefined.
-     */
-    getVideoType() {
-        return this.videoType;
-    }
-
-    /**
      * Creates an audio or video element for a particular MediaStream.
      */
     static createStreamElement(stream) {
@@ -189,6 +168,7 @@ export default class SmallVideo {
 
         if (isVideo) {
             element.setAttribute('muted', 'true');
+            element.setAttribute('playsInline', 'true'); /* for Safari on iOS to work */
         } else if (config.startSilent) {
             element.muted = true;
         }
@@ -257,6 +237,22 @@ export default class SmallVideo {
     }
 
     /**
+     * Shows / hides the screen-share indicator over small videos.
+     *
+     * @param {boolean} isScreenSharing indicates if the screen-share element should be shown
+     * or hidden
+     */
+    setScreenSharing(isScreenSharing) {
+        if (isScreenSharing === this.isScreenSharing) {
+            return;
+        }
+
+        this.isScreenSharing = isScreenSharing;
+        this.updateView();
+        this.updateStatusBar();
+    }
+
+    /**
      * Shows video muted indicator over small videos and disables/enables avatar
      * if video muted.
      *
@@ -287,6 +283,7 @@ export default class SmallVideo {
                 <I18nextProvider i18n = { i18next }>
                     <StatusIndicators
                         showAudioMutedIndicator = { this.isAudioMuted }
+                        showScreenShareIndicator = { this.isScreenSharing }
                         showVideoMutedIndicator = { this.isVideoMuted }
                         participantID = { this.id } />
                 </I18nextProvider>
@@ -451,7 +448,7 @@ export default class SmallVideo {
      * or <tt>false</tt> otherwise.
      */
     isCurrentlyOnLargeVideo() {
-        return this.VideoLayout.isCurrentlyOnLarge(this.id);
+        return APP.store.getState()['features/large-video']?.participantId === this.id;
     }
 
     /**
@@ -472,8 +469,10 @@ export default class SmallVideo {
      * or <tt>DISPLAY_BLACKNESS_WITH_NAME</tt>.
      */
     selectDisplayMode(input) {
-        // Display name is always and only displayed when user is on the stage
-        if (input.isCurrentlyOnLargeVideo && !input.tileViewEnabled) {
+        if (!input.tileViewActive && input.isScreenSharing) {
+            return input.isHovered ? DISPLAY_AVATAR_WITH_NAME : DISPLAY_AVATAR;
+        } else if (input.isCurrentlyOnLargeVideo && !input.tileViewActive) {
+            // Display name is always and only displayed when user is on the stage
             return input.isVideoPlayable && !input.isAudioOnly ? DISPLAY_BLACKNESS_WITH_NAME : DISPLAY_AVATAR_WITH_NAME;
         } else if (input.isVideoPlayable && input.hasVideo && !input.isAudioOnly) {
             // check hovering and change state to video with name
@@ -494,14 +493,15 @@ export default class SmallVideo {
             isCurrentlyOnLargeVideo: this.isCurrentlyOnLargeVideo(),
             isHovered: this._isHovered(),
             isAudioOnly: APP.conference.isAudioOnly(),
-            tileViewEnabled: shouldDisplayTileView(APP.store.getState()),
+            tileViewActive: shouldDisplayTileView(APP.store.getState()),
             isVideoPlayable: this.isVideoPlayable(),
             hasVideo: Boolean(this.selectVideoElement().length),
             connectionStatus: APP.conference.getParticipantConnectionStatus(this.id),
             mutedWhileDisconnected: this.mutedWhileDisconnected,
-            wasVideoPlayed: this.wasVideoPlayed,
+            canPlayEventReceived: this._canPlayEventReceived,
             videoStream: Boolean(this.videoStream),
             isVideoMuted: this.isVideoMuted,
+            isScreenSharing: this.isScreenSharing,
             videoStreamMuted: this.videoStream ? this.videoStream.isMuted() : 'no stream'
         };
     }
@@ -637,39 +637,6 @@ export default class SmallVideo {
 
         this._showRaisedHand = show;
         this.updateIndicators();
-    }
-
-    /**
-     * Adds a listener for onresize events for this video, which will monitor for
-     * resolution changes, will calculate the delay since the moment the listened
-     * is added, and will fire a RESOLUTION_CHANGED event.
-     */
-    waitForResolutionChange() {
-        const beforeChange = window.performance.now();
-        const videos = this.selectVideoElement();
-
-        if (!videos || !videos.length || videos.length <= 0) {
-            return;
-        }
-        const video = videos[0];
-        const oldWidth = video.videoWidth;
-        const oldHeight = video.videoHeight;
-
-        video.onresize = () => {
-            // eslint-disable-next-line eqeqeq
-            if (video.videoWidth != oldWidth || video.videoHeight != oldHeight) {
-                // Only run once.
-                video.onresize = null;
-
-                const delay = window.performance.now() - beforeChange;
-                const emitter = this.VideoLayout.getEventEmitter();
-
-                if (emitter) {
-                    emitter.emit(UIEvents.RESOLUTION_CHANGED, this.getId(), `${oldWidth}x${oldHeight}`,
-                        `${video.videoWidth}x${video.videoHeight}`, delay);
-                }
-            }
-        };
     }
 
     /**

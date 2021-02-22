@@ -86,7 +86,6 @@ export function processExternalDeviceRequest( // eslint-disable-line max-params
     }
     const state = getState();
     const settings = state['features/base/settings'];
-    const { conference } = state['features/base/conference'];
     let result = true;
 
     switch (request.name) {
@@ -165,7 +164,7 @@ export function processExternalDeviceRequest( // eslint-disable-line max-params
     case 'setDevice': {
         const { device } = request;
 
-        if (!conference) {
+        if (!areDeviceLabelsInitialized(state)) {
             dispatch(addPendingDeviceRequest({
                 type: 'devices',
                 name: 'setDevice',

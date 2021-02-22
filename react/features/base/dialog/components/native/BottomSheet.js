@@ -84,6 +84,8 @@ class BottomSheet extends PureComponent<Props> {
 
         return (
             <SlidingView
+                accessibilityRole = 'menu'
+                accessibilityViewIsModal = { true }
                 onHide = { this.props.onCancel }
                 position = 'bottom'
                 show = { true }>

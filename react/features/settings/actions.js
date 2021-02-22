@@ -3,33 +3,17 @@
 import { setFollowMe, setStartMutedPolicy } from '../base/conference';
 import { openDialog } from '../base/dialog';
 import { i18next } from '../base/i18n';
+import { updateSettings } from '../base/settings';
+import { setPrejoinPageVisibility } from '../prejoin/actions';
 
 import {
     SET_AUDIO_SETTINGS_VISIBILITY,
-    SET_SETTINGS_VIEW_VISIBLE,
     SET_VIDEO_SETTINGS_VISIBILITY
 } from './actionTypes';
 import { SettingsDialog } from './components';
 import { getMoreTabProps, getProfileTabProps } from './functions';
 
 declare var APP: Object;
-
-/**
- * Sets the visibility of the view/UI which renders the app's settings.
- *
- * @param {boolean} visible - If the view/UI which renders the app's settings is
- * to be made visible, {@code true}; otherwise, {@code false}.
- * @returns {{
- *     type: SET_SETTINGS_VIEW_VISIBLE,
- *     visible: boolean
- * }}
- */
-export function setSettingsViewVisible(visible: boolean) {
-    return {
-        type: SET_SETTINGS_VIEW_VISIBLE,
-        visible
-    };
-}
 
 /**
  * Opens {@code SettingsDialog}.
@@ -80,6 +64,19 @@ export function submitMoreTab(newState: Object): Function {
 
         if (newState.followMeEnabled !== currentState.followMeEnabled) {
             dispatch(setFollowMe(newState.followMeEnabled));
+        }
+
+        const showPrejoinPage = newState.showPrejoinPage;
+
+        if (showPrejoinPage !== currentState.showPrejoinPage) {
+            // The 'showPrejoin' flag starts as 'true' on every new session.
+            // This prevents displaying the prejoin page when the user re-enables it.
+            if (showPrejoinPage && getState()['features/prejoin']?.showPrejoin) {
+                dispatch(setPrejoinPageVisibility(false));
+            }
+            dispatch(updateSettings({
+                userSelectedSkipPrejoin: !showPrejoinPage
+            }));
         }
 
         if (newState.startAudioMuted !== currentState.startAudioMuted

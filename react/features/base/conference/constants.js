@@ -34,15 +34,3 @@ export const EMAIL_COMMAND = 'email';
  * from the outside is not cool but it should suffice for now.
  */
 export const JITSI_CONFERENCE_URL_KEY = Symbol('url');
-
-/**
- * The supported remote video resolutions. The values are currently based on
- * available simulcast layers.
- *
- * @type {object}
- */
-export const VIDEO_QUALITY_LEVELS = {
-    HIGH: 1080,
-    STANDARD: 360,
-    LOW: 180
-};

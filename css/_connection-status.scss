@@ -1,0 +1,60 @@
+.con-status {
+    position: absolute;
+    top: 40px;
+    width: 100%;
+    z-index: $toolbarZ + 3;
+
+    &-container {
+        background: rgba(28, 32, 37, .5);
+        border-radius: 3px;
+        color: #fff;
+        font-size: 13px;
+        line-height: 20px;
+        margin: 0 auto;
+        width: 304px;
+    }
+
+    &-header {
+        align-items: center;
+        display: flex;
+        justify-content: space-between;
+        padding: 8px;
+    }
+
+    &-circle {
+        border-radius: 50%;
+        display: inline-block;
+        padding: 4px;
+    }
+
+    &--good {
+        background: #31B76A;
+    }
+
+    &--poor {
+        background: #E12D2D;
+    }
+
+    &--non-optimal {
+        background: #E39623;
+    }
+
+    &-arrow {
+        &--up {
+            transform: rotate(180deg);
+        }
+
+        &>svg {
+            cursor: pointer;
+        }
+    }
+
+    &-text {
+        text-align: center;
+    }
+
+    &-details {
+        border-top: 1px solid #5E6D7A;
+        padding: 16px;
+    }
+}

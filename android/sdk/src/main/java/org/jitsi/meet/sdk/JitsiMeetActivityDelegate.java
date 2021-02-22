@@ -1,6 +1,5 @@
 /*
- * Copyright @ 2019-present 8x8, Inc.
- * Copyright @ 2018 Atlassian Pty Ltd
+ * Copyright @ 2018-present 8x8, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,16 +16,15 @@
 
 package org.jitsi.meet.sdk;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Intent;
-import android.os.Build;
 
-import com.calendarevents.CalendarEventsPackage;
 import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.bridge.Callback;
 import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.modules.core.PermissionListener;
+
+import org.jitsi.meet.sdk.log.JitsiMeetLogger;
 
 /**
  * Helper class to encapsulate the work which needs to be done on
@@ -167,13 +165,7 @@ public class JitsiMeetActivityDelegate {
     }
 
     public static void onRequestPermissionsResult(
-        final int requestCode,
-        final String[] permissions,
-        final int[] grantResults) {
-        CalendarEventsPackage.onRequestPermissionsResult(
-            requestCode,
-            permissions,
-            grantResults);
+            final int requestCode, final String[] permissions, final int[] grantResults) {
         permissionsCallback = new Callback() {
             @Override
             public void invoke(Object... args) {
@@ -185,9 +177,18 @@ public class JitsiMeetActivityDelegate {
         };
     }
 
-    @TargetApi(Build.VERSION_CODES.M)
     public static void requestPermissions(Activity activity, String[] permissions, int requestCode, PermissionListener listener) {
         permissionListener = listener;
-        activity.requestPermissions(permissions, requestCode);
+
+        // The RN Permissions module calls this in a non-UI thread. What we observe is a crash in ViewGroup.dispatchCancelPendingInputEvents,
+        // which is called on the calling (ie, non-UI) thread. This doesn't look very safe, so try to avoid a crash by pretending the permission
+        // was denied.
+
+        try {
+            activity.requestPermissions(permissions, requestCode);
+        } catch (Exception e) {
+            JitsiMeetLogger.e(e, "Error requesting permissions");
+            onRequestPermissionsResult(requestCode, permissions, new int[0]);
+        }
     }
 }

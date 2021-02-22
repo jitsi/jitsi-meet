@@ -1,5 +1,6 @@
 /* global $, APP */
 /* eslint-disable no-unused-vars */
+import Logger from 'jitsi-meet-logger';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { I18nextProvider } from 'react-i18next';
@@ -7,24 +8,23 @@ import { Provider } from 'react-redux';
 
 import { Avatar } from '../../../react/features/base/avatar';
 import { i18next } from '../../../react/features/base/i18n';
-import { PresenceLabel } from '../../../react/features/presence-status';
-/* eslint-enable no-unused-vars */
-
-const logger = require('jitsi-meet-logger').getLogger(__filename);
-
-import { VIDEO_TYPE } from '../../../react/features/base/media';
 import {
     JitsiParticipantConnectionStatus
 } from '../../../react/features/base/lib-jitsi-meet';
+import { VIDEO_TYPE } from '../../../react/features/base/media';
+import { CHAT_SIZE } from '../../../react/features/chat';
 import {
     updateKnownLargeVideoResolution
-} from '../../../react/features/large-video';
-import { createDeferred } from '../../util/helpers';
+} from '../../../react/features/large-video/actions';
+import { PresenceLabel } from '../../../react/features/presence-status';
+/* eslint-enable no-unused-vars */
 import UIEvents from '../../../service/UI/UIEvents';
-import UIUtil from '../util/UIUtil';
+import { createDeferred } from '../../util/helpers';
+import AudioLevels from '../audio_levels/AudioLevels';
+
 import { VideoContainer, VIDEO_CONTAINER_TYPE } from './VideoContainer';
 
-import AudioLevels from '../audio_levels/AudioLevels';
+const logger = Logger.getLogger(__filename);
 
 const DESKTOP_CONTAINER_TYPE = 'desktop';
 
@@ -67,7 +67,30 @@ export default class LargeVideoManager {
         // use the same video container to handle desktop tracks
         this.addContainer(DESKTOP_CONTAINER_TYPE, this.videoContainer);
 
+        /**
+         * The preferred width passed as an argument to {@link updateContainerSize}.
+         *
+         * @type {number|undefined}
+         */
+        this.preferredWidth = undefined;
+
+        /**
+         * The preferred height passed as an argument to {@link updateContainerSize}.
+         *
+         * @type {number|undefined}
+         */
+        this.preferredHeight = undefined;
+
+        /**
+         * The calculated width that will be used for the large video.
+         * @type {number}
+         */
         this.width = 0;
+
+        /**
+         * The calculated height that will be used for the large video.
+         * @type {number}
+         */
         this.height = 0;
 
         /**
@@ -184,7 +207,7 @@ export default class LargeVideoManager {
 
             this.newStreamData = null;
 
-            logger.info('hover in %s', id);
+            logger.info(`hover in ${id}`);
             this.state = videoType;
             // eslint-disable-next-line no-shadow
             const container = this.getCurrentContainer();
@@ -322,9 +345,32 @@ export default class LargeVideoManager {
     /**
      * Update container size.
      */
-    updateContainerSize() {
-        this.width = UIUtil.getAvailableVideoWidth();
-        this.height = window.innerHeight;
+    updateContainerSize(width, height) {
+        if (typeof width === 'number') {
+            this.preferredWidth = width;
+        }
+        if (typeof height === 'number') {
+            this.preferredHeight = height;
+        }
+
+        let widthToUse = this.preferredWidth || window.innerWidth;
+        const { isOpen } = APP.store.getState()['features/chat'];
+
+        /**
+         * If chat state is open, we re-compute the container width by subtracting the default width of
+         * the chat. We re-compute the width again after the chat window is closed. This is needed when
+         * custom styling is configured on the large video container through the iFrame API.
+         */
+        if (isOpen && !this.resizedForChat) {
+            widthToUse -= CHAT_SIZE;
+            this.resizedForChat = true;
+        } else if (this.resizedForChat) {
+            this.resizedForChat = false;
+            widthToUse += CHAT_SIZE;
+        }
+
+        this.width = widthToUse;
+        this.height = this.preferredHeight || window.innerHeight;
     }
 
     /**

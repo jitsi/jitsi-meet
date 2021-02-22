@@ -1,7 +1,7 @@
 // @flow
 
 import React, { Component } from 'react';
-import { TextInput, TouchableOpacity, View } from 'react-native';
+import { Platform, TextInput, TouchableOpacity, View } from 'react-native';
 
 import { translate } from '../../../base/i18n';
 import { Icon, IconChatSend } from '../../../base/icons';
@@ -135,7 +135,7 @@ class ChatInputBar extends Component<Props, State> {
      */
     _onFocused(focused) {
         return () => {
-            this.setState({
+            Platform.OS === 'android' && this.setState({
                 addPadding: focused
             });
         };

@@ -2,6 +2,7 @@
 
 import _ from 'lodash';
 
+import { createConnectionQualityChangedEvent, sendAnalytics } from '../analytics';
 import {
     JitsiConnectionQualityEvents,
     JitsiE2ePingEvents
@@ -15,6 +16,23 @@ import {
  * }
  */
 const subscribers = {};
+
+let localConnectionStrength = null;
+
+const CONNECTION_QUALITY_STRENGTH: Array<Object> = [
+    {
+        connectionQuality: 30,
+        strength: 'good'
+    },
+    {
+        connectionQuality: 10,
+        strength: 'nonoptimal'
+    },
+    {
+        connectionQuality: 0,
+        strength: 'poor'
+    }
+];
 
 /**
  * A singleton that acts as a pub/sub service for connection stat updates.
@@ -122,6 +140,7 @@ const statsEmitter = {
     _onStatsUpdated(localUserId: string, stats: Object) {
         const allUserFramerates = stats.framerate || {};
         const allUserResolutions = stats.resolution || {};
+        const allUserCodecs = stats.codec || {};
 
         // FIXME resolution and framerate are maps keyed off of user ids with
         // stat values. Receivers of stats expect resolution and framerate to
@@ -129,8 +148,22 @@ const statsEmitter = {
         // stats objects.
         const modifiedLocalStats = Object.assign({}, stats, {
             framerate: allUserFramerates[localUserId],
-            resolution: allUserResolutions[localUserId]
+            resolution: allUserResolutions[localUserId],
+            codec: allUserCodecs[localUserId]
         });
+
+        // send local stats data to amplitude if local user's connection strength was changed.
+        if (modifiedLocalStats.connectionQuality) {
+            const modifiedLocalConnectionStrength = this._getConnectionQuality(modifiedLocalStats.connectionQuality)
+                .strength;
+
+            if (localConnectionStrength !== modifiedLocalConnectionStrength) {
+                localConnectionStrength = modifiedLocalConnectionStrength;
+                sendAnalytics(createConnectionQualityChangedEvent(
+                    modifiedLocalConnectionStrength,
+                    modifiedLocalStats));
+            }
+        }
 
         this._emitStatsUpdate(localUserId, modifiedLocalStats);
 
@@ -138,8 +171,9 @@ const statsEmitter = {
         // and update remote user stats as needed.
         const framerateUserIds = Object.keys(allUserFramerates);
         const resolutionUserIds = Object.keys(allUserResolutions);
+        const codecUserIds = Object.keys(allUserCodecs);
 
-        _.union(framerateUserIds, resolutionUserIds)
+        _.union(framerateUserIds, resolutionUserIds, codecUserIds)
             .filter(id => id !== localUserId)
             .forEach(id => {
                 const remoteUserStats = {};
@@ -156,8 +190,18 @@ const statsEmitter = {
                     remoteUserStats.resolution = resolution;
                 }
 
+                const codec = allUserCodecs[id];
+
+                if (codec) {
+                    remoteUserStats.codec = codec;
+                }
+
                 this._emitStatsUpdate(id, remoteUserStats);
             });
+    },
+
+    _getConnectionQuality(connectionQuality: number): Object {
+        return CONNECTION_QUALITY_STRENGTH.find(x => connectionQuality >= x.connectionQuality) || {};
     }
 };
 

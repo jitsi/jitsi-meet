@@ -4,13 +4,13 @@
         "countryNotSupported": "Non supportiamo ancora questa destinazione.",
         "countryReminder": "Stai chiamando fuori dagli Stati Uniti? Assicurati d'inserire il prefisso internazionale!",
         "disabled": "Non puoi invitare persone.",
-        "failedToAdd": "",
-        "footerText": "La chiamata dall'esterno è disabilitata.",
-        "loading": "Cercando persone e numeri di telefono",
+        "failedToAdd": "L'aggiunta di nuove persone è fallita",
+        "footerText": "La chiamata all'esterno è disabilitata.",
+        "loading": "Sto cercando persone e numeri di telefono",
         "loadingNumber": "Sto validando il numero di telefono",
-        "loadingPeople": "Ricerca delle persone da invitare",
+        "loadingPeople": "Sto cercando le persone da invitare",
         "noResults": "Nessun risultato corrispondente",
-        "noValidNumbers": "Inserire un numero di telefono",
+        "noValidNumbers": "Per favore inserire un numero di telefono",
         "searchNumbers": "Aggiungi numeri di telefono",
         "searchPeople": "Cerca persone",
         "searchPeopleAndNumbers": "Cerca persone o aggiungi i loro numeri di telefono",
@@ -28,10 +28,10 @@
     },
     "calendarSync": {
         "addMeetingURL": "Aggiungi un collegamento alla conferenza",
-        "confirmAddLink": "Vuoi aggiungere un collegamento a ANDI Conference a questo evento?",
+        "confirmAddLink": "Vuoi aggiungere un collegamento Jitsi a questo evento?",
         "error": {
             "appConfiguration": "L'integrazione del calendario non è configurata in modo appropriato.",
-            "generic": "È stato riscontrato un errore. Controllare le impostazioni del calendario e ricaricare la pagina.",
+            "generic": "È stato riscontrato un errore. Controllare le impostazioni del calendario o ricaricare la pagina.",
             "notSignedIn": "È stato riscontrato un errore durante l'autenticazione per la visualizzazione degli eventi del calendario. Controllare le impostazioni del calendario e provare a ripetere l'accesso."
         },
         "join": "Partecipa",
@@ -45,7 +45,7 @@
         "today": "Oggi"
     },
     "chat": {
-        "error": "Errore: il tuo messaggio “{{originalText}}” non e’ stato inviato. Ragione: {{error}}",
+        "error": "Errore: il tuo messaggio “{{originalText}}” non e’ stato inviato. Motivo: {{error}}",
         "messagebox": "Digitare un messaggio",
         "nickname": {
             "popover": "Scegli un nickname",
@@ -54,7 +54,7 @@
         "title": "Chat"
     },
     "connectingOverlay": {
-        "joiningRoom": "Collegamento al meeting in corso…"
+        "joiningRoom": "Collegamento al tuo meeting in corso…"
     },
     "connection": {
         "ATTACHED": "Collegato",
@@ -63,7 +63,7 @@
         "CONNECTED": "Connesso",
         "CONNECTING": "Connessione",
         "CONNFAIL": "Connessione non riuscita",
-        "DISCONNECTED": "Occupato",
+        "DISCONNECTED": "Disconnesso",
         "DISCONNECTING": "Disconnessione in corso",
         "ERROR": "Errore",
         "RECONNECTING": "Si è verificato un problema di rete. Riconnessione..."
@@ -110,7 +110,7 @@
         "downloadApp": "Scarica l'app",
         "launchWebButton": "Avvia sul web",
         "openApp": "Prosegui verso l'app",
-        "title": "Sto avviando la tua videoconferenza su {{app}}...",
+        "title": "Sto avviando la tua videoconferenza su {{app}}…",
         "tryAgainButton": "Prova di nuovo sul desktop"
     },
     "defaultLink": "es. {{url}}",
@@ -123,8 +123,8 @@
     "deviceSelection": {
         "noPermission": "Permesso negato",
         "previewUnavailable": "Anteprima non disponibile",
-        "selectADevice": "Seleziona un dispositivo",
-        "testAudio": "Riproduci un suono di test"
+        "selectADevice": "Scegli un dispositivo",
+        "testAudio": "Riproduci un suono di prova"
     },
     "dialog": {
         "accessibilityLabel": {
@@ -144,14 +144,14 @@
         "cameraUnsupportedResolutionError": "La tua videocamera non supporta la risoluzione richiesta.",
         "Cancel": "Annulla",
         "close": "Chiudi",
-        "conferenceDisconnectMsg": "Controlla la tua connessione. Riconnessione in {{seconds}} secondi...",
+        "conferenceDisconnectMsg": "Controlla la tua connessione. Riconnessione in {{seconds}} secondi…",
         "conferenceDisconnectTitle": "Sei stato disconnesso.",
-        "conferenceReloadMsg": "Stiamo cercando di risolvere il problema. Riconnessione in {{seconds}} secondi...",
+        "conferenceReloadMsg": "Stiamo cercando di risolvere il problema. Riconnessione in {{seconds}} secondi…",
         "conferenceReloadTitle": "Purtroppo qualcosa è andato storto.",
         "confirm": "Conferma",
         "confirmNo": "No",
         "confirmYes": "Sì",
-        "connectError": "Oops! Qualcosa è andato storto e non ti puoi collegare alla conferenza.",
+        "connectError": "Oh! Qualcosa è andato storto e non ti puoi collegare alla conferenza.",
         "connectErrorWithMsg": "Oops! Qualcosa è andato storto e non ti puoi collegare alla conferenza: {{msg}}",
         "connecting": "Connessione",
         "contactSupport": "Contatta il supporto",
@@ -185,7 +185,7 @@
         "lockTitle": "Blocco fallito",
         "logoutQuestion": "Vuoi disconnetterti e interrompere la conferenza ?",
         "logoutTitle": "Logout",
-        "maxUsersLimitReached": "E' stato raggiunto il numero massimo di partecipanti. La conferenza è al completo. Contatta l'organizzatore, o riprova più tardi!",
+        "maxUsersLimitReached": "È stato raggiunto il numero massimo di partecipanti. La conferenza è al completo. Contatta l'organizzatore, o riprova più tardi!",
         "maxUsersLimitReachedTitle": "Raggiunto limite partecipanti",
         "micConstraintFailedError": "Il tuo microfono non soddisfa alcuni dei requisiti richiesti.",
         "micNotFoundError": "Microfono non trovato.",
@@ -222,7 +222,7 @@
         "reservationError": "Errore di sistema in prenotazione",
         "reservationErrorMsg": "Codice di errore: {{code}}, messaggio: {{msg}}",
         "retry": "Riprova",
-        "screenSharingFailedToInstall": "Oops! Non è stato possibile installare l'estensione per la condivisione schermo. ",
+        "screenSharingFailedToInstall": "Oh! Non è stato possibile installare l'estensione per la condivisione schermo.",
         "screenSharingFailedToInstallTitle": "Impossibile installare l'estensione per la condivisione schermo",
         "screenSharingFirefoxPermissionDeniedError": "Qualcosa è andato storto mentre cercavamo di condividere il tuo schermo. Assicurati di averci dato il premesso di condivisione.",
         "screenSharingFirefoxPermissionDeniedTitle": "Ops! Non siamo stati in grado di avviare la condivisione schermo!",
@@ -301,7 +301,7 @@
         "noPassword": "Nessuna",
         "noRoom": "Non è stata specificata nessuna stanza da chiamare.",
         "numbers": "Numeri da chiamare",
-        "password": "Password",
+        "password": "$t(lockRoomPasswordUppercase):",
         "title": "Condividi",
         "tooltip": "Invia il collegamento e i numeri telefonici di questa conferenza",
         "label": "Informazioni meeting"
@@ -420,7 +420,7 @@
         "somebody": "Qualcuno",
         "startSilentTitle": "",
         "startSilentDescription": "",
-        "suboptimalExperienceDescription": "Ehm... temiamo che la tua esperienza con {{appName}} non sarà granché su questo browser. Stiamo cercando di migliorare la situazione ma, per il momento, prova ad utilizzare uno di questi <a href='static/recommendedBrowsers.html' target='_blank'>browser supportati</a>.",
+        "suboptimalExperienceDescription": "Ehm... temiamo che la tua esperienza con {{appName}} non sarà granché su questo browser. Stiamo cercando di migliorare la situazione ma, per il momento, prova ad utilizzare uno di questi <a href='{{recommendedBrowserPageLink}}' target='_blank'>browser supportati</a>.",
         "suboptimalExperienceTitle": "Problemi con il browser",
         "unmute": "",
         "newDeviceCameraTitle": "Trovata nuova videocamera",
@@ -429,7 +429,7 @@
     },
     "passwordSetRemotely": "definita da altro utente",
     "passwordDigitsOnly": "Fino a {{number}} cifre",
-    "poweredby": "powered by",
+    "poweredby": "offerto da",
     "presenceStatus": {
         "busy": "Occupato",
         "calling": "Chiamata…",
@@ -498,7 +498,7 @@
         "selectCamera": "Videocamera",
         "selectMic": "Microfono",
         "startAudioMuted": "Tutti cominciano con il microfono disattivato",
-        "startVideoMuted": "Tutti cominciano con il video video",
+        "startVideoMuted": "Tutti cominciano con il video disattivato",
         "title": "Impostazioni"
     },
     "settingsView": {
@@ -541,7 +541,7 @@
     "toolbar": {
         "accessibilityLabel": {
             "audioOnly": "Attiva/disattiva solo audio",
-            "audioRoute": "Seleziona la periferica audio",
+            "audioRoute": "Scegli l'uscita audio",
             "callQuality": "Gestisci qualità della chiamata",
             "cc": "Attiva/disattiva sottotitoli",
             "chat": "Attiva/disattiva la chat",
@@ -568,15 +568,15 @@
             "shortcuts": "Attiva/disattiva scorciatoie",
             "show": "",
             "speakerStats": "Attiva/disattiva statistiche relatore",
-            "tileView": "Attiva/disattiva visualizzazione a tessere",
+            "tileView": "Vedi tutti i partecipanti insieme, o uno solo",
             "toggleCamera": "Cambia videocamera",
             "videomute": "Attiva/disattiva videocamera",
             "videoblur": "Attiva/disattiva offuscamento video"
         },
         "addPeople": "Aggiungi persone alla chiamata",
-        "audioOnlyOff": "Disattiva modalità solo audio",
-        "audioOnlyOn": "Attiva modalità solo audio",
-        "audioRoute": "Seleziona la periferica audio",
+        "audioOnlyOff": "Anche video",
+        "audioOnlyOn": "Solo audio",
+        "audioRoute": "Scegli l'uscita audio",
         "authenticate": "Autenticazione",
         "callQuality": "Gestisci qualità della chiamata",
         "chat": "Apri / Chiudi chat",
@@ -584,9 +584,9 @@
         "documentClose": "Chiudi documento condiviso",
         "documentOpen": "Apri documento condiviso",
         "enterFullScreen": "Visualizza a schermo intero",
-        "enterTileView": "Vista a tessere",
+        "enterTileView": "Vedi tutti i partecipanti",
         "exitFullScreen": "Esci da schermo intero",
-        "exitTileView": "Vista utente singolo",
+        "exitTileView": "Vedi una persona sola",
         "feedback": "Lascia un feedback",
         "hangup": "Esci",
         "invite": "Invita persone",
@@ -594,6 +594,7 @@
         "logout": "Logout",
         "lowerYourHand": "Abbassa la mano",
         "moreActions": "Più azioni",
+        "moreOptions": "Più opzioni",
         "mute": "Microfono Attiva / Disattiva",
         "openChat": "Apri una chat",
         "pip": "Abilita visualizzazione immagine nell’immagine",
@@ -611,7 +612,7 @@
         "stopSubtitles": "Ferma sottotitoli",
         "stopSharedVideo": "Ferma video YouTube",
         "talkWhileMutedPopup": "Stai provando a parlare? Il microfono è disattivato.",
-        "tileViewToggle": "Attiva/disattiva visualizzazione griglia",
+        "tileViewToggle": "Vedi tutti i partecipanti insieme, o uno solo",
         "toggleCamera": "Cambia videocamera",
         "videomute": "Attiva / Disattiva videocamera",
         "startvideoblur": "Offusca il video",
@@ -653,19 +654,16 @@
     },
     "videoStatus": {
         "audioOnly": "AUD",
-        "audioOnlyExpanded": "Modalita' solo audio attiva. Questa modalità permette di rispamiare banda ma non vedrai gli altri partecipanti.",
+        "audioOnlyExpanded": "Hai attivato la modalità solo audio. Questa modalità permette di rispamiare banda, ma non vedrai gli altri partecipanti.",
         "callQuality": "Qualità video",
         "hd": "HD",
         "highDefinition": "Alta definizione",
         "labelTooiltipNoVideo": "Nessun video",
-        "labelTooltipAudioOnly": "Modalità solo audio abilitata",
+        "labelTooltipAudioOnly": "Hai attivato la modalità solo audio",
         "ld": "LD",
         "lowDefinition": "Bassa definizione",
         "onlyAudioAvailable": "È disponibile solo l'audio",
         "onlyAudioSupported": "Per questo browser è supportato solo l'audio.",
-        "p2pEnabled": "Peer to Peer abilitato",
-        "p2pVideoQualityDescription": "",
-        "recHighDefinitionOnly": "Preferisci alta risoluzione.",
         "sd": "SD",
         "standardDefinition": "Definizione standard"
     },
@@ -685,7 +683,7 @@
             "join": "Tap per accedere",
             "roomname": "Inserisci Nome Stanza"
         },
-        "appDescription": "Via avanti, video chatta con l'intero team. In effetti, invita tutti quelli che conosci. {{app}} è una soluzione di video conference totalmente crittografata, 100% open source, che puoi utilizzare tutto il giorno, ogni giorno, gratuitamente - senza bisogno di un account.",
+        "appDescription": "Avvia una videochiamata con tutto il team. Invita tutti quelli che conosci.  {{app}} è una soluzione per effettuare videoconferenze totalmente crittografata, 100% open source, che puoi usare sempre, ogni giorno, gratuitamente – senza bisogno di un account.",
         "audioVideoSwitch": {
             "audio": "Voce",
             "video": "Video"
@@ -707,5 +705,9 @@
         "sendFeedback": "Invia feedback",
         "terms": "Termini di utilizzo",
         "title": "Il sistema di conferenza sicuro, funzionale e completamente gratuito."
+    },
+    "lonelyMeetingExperience": {
+        "button": "Invita gli altri",
+        "youAreAlone": "Sei l'unico in riunione"
     }
 }

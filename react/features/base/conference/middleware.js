@@ -1,7 +1,5 @@
 // @flow
 
-import { openDisplayNamePrompt } from '../../display-name';
-
 import {
     ACTION_PINNED,
     ACTION_UNPINNED,
@@ -9,18 +7,31 @@ import {
     createPinnedEvent,
     sendAnalytics
 } from '../../analytics';
-import { CONNECTION_ESTABLISHED, CONNECTION_FAILED } from '../connection';
+import { openDisplayNamePrompt } from '../../display-name';
+import { showErrorNotification } from '../../notifications';
+import { CONNECTION_ESTABLISHED, CONNECTION_FAILED, connectionDisconnected } from '../connection';
 import { JitsiConferenceErrors } from '../lib-jitsi-meet';
+import { MEDIA_TYPE } from '../media';
 import {
     getLocalParticipant,
     getParticipantById,
     getPinnedParticipant,
+    PARTICIPANT_ROLE,
     PARTICIPANT_UPDATED,
     PIN_PARTICIPANT
 } from '../participants';
-import { MiddlewareRegistry, StateListenerRegistry } from '../redux';
+import { MiddlewareRegistry } from '../redux';
 import { TRACK_ADDED, TRACK_REMOVED } from '../tracks';
 
+import {
+    CONFERENCE_FAILED,
+    CONFERENCE_JOINED,
+    CONFERENCE_SUBJECT_CHANGED,
+    CONFERENCE_WILL_LEAVE,
+    SEND_TONES,
+    SET_PENDING_SUBJECT_CHANGE,
+    SET_ROOM
+} from './actionTypes';
 import {
     conferenceFailed,
     conferenceWillLeave,
@@ -28,23 +39,12 @@ import {
     setSubject
 } from './actions';
 import {
-    CONFERENCE_FAILED,
-    CONFERENCE_JOINED,
-    CONFERENCE_SUBJECT_CHANGED,
-    CONFERENCE_WILL_LEAVE,
-    DATA_CHANNEL_OPENED,
-    SEND_TONES,
-    SET_PENDING_SUBJECT_CHANGE,
-    SET_ROOM
-} from './actionTypes';
-import {
     _addLocalTracksToConference,
     _removeLocalTracksFromConference,
     forEachConference,
     getCurrentConference
 } from './functions';
 import logger from './logger';
-import { MEDIA_TYPE } from '../media';
 
 declare var APP: Object;
 
@@ -80,9 +80,6 @@ MiddlewareRegistry.register(store => next => action => {
         _conferenceWillLeave();
         break;
 
-    case DATA_CHANNEL_OPENED:
-        return _syncReceiveVideoQuality(store, next, action);
-
     case PARTICIPANT_UPDATED:
         return _updateLocalParticipantInConference(store, next, action);
 
@@ -103,27 +100,6 @@ MiddlewareRegistry.register(store => next => action => {
     return next(action);
 });
 
-/**
- * Registers a change handler for state['features/base/conference'] to update
- * the preferred video quality levels based on user preferred and internal
- * settings.
- */
-StateListenerRegistry.register(
-    /* selector */ state => state['features/base/conference'],
-    /* listener */ (currentState, store, previousState = {}) => {
-        const {
-            conference,
-            maxReceiverVideoQuality,
-            preferredReceiverVideoQuality
-        } = currentState;
-        const changedPreferredVideoQuality
-            = preferredReceiverVideoQuality !== previousState.preferredReceiverVideoQuality;
-        const changedMaxVideoQuality = maxReceiverVideoQuality !== previousState.maxReceiverVideoQuality;
-
-        if (changedPreferredVideoQuality || changedMaxVideoQuality) {
-            _setReceiverVideoConstraint(conference, preferredReceiverVideoQuality, maxReceiverVideoQuality);
-        }
-    });
 
 /**
  * Makes sure to leave a failed conference in order to release any allocated
@@ -138,13 +114,40 @@ StateListenerRegistry.register(
  * @private
  * @returns {Object} The value returned by {@code next(action)}.
  */
-function _conferenceFailed(store, next, action) {
+function _conferenceFailed({ dispatch, getState }, next, action) {
     const result = next(action);
-
     const { conference, error } = action;
 
-    if (error.name === JitsiConferenceErrors.OFFER_ANSWER_FAILED) {
+    // Handle specific failure reasons.
+    switch (error.name) {
+    case JitsiConferenceErrors.CONFERENCE_DESTROYED: {
+        const [ reason ] = error.params;
+
+        dispatch(showErrorNotification({
+            description: reason,
+            titleKey: 'dialog.sessTerminated'
+        }));
+
+        if (typeof APP !== 'undefined') {
+            APP.UI.hideStats();
+        }
+        break;
+    }
+    case JitsiConferenceErrors.CONNECTION_ERROR: {
+        const [ msg ] = error.params;
+
+        dispatch(connectionDisconnected(getState()['features/base/connection'].connection));
+        dispatch(showErrorNotification({
+            descriptionArguments: { msg },
+            descriptionKey: msg ? 'dialog.connectErrorWithMsg' : 'dialog.connectError',
+            titleKey: 'connection.CONNFAIL'
+        }));
+
+        break;
+    }
+    case JitsiConferenceErrors.OFFER_ANSWER_FAILED:
         sendAnalytics(createOfferAnswerFailedEvent());
+        break;
     }
 
     // FIXME: Workaround for the web version. Currently, the creation of the
@@ -417,23 +420,6 @@ function _sendTones({ getState }, next, action) {
 }
 
 /**
- * Helper function for updating the preferred receiver video constraint, based
- * on the user preference and the internal maximum.
- *
- * @param {JitsiConference} conference - The JitsiConference instance for the
- * current call.
- * @param {number} preferred - The user preferred max frame height.
- * @param {number} max - The maximum frame height the application should
- * receive.
- * @returns {void}
- */
-function _setReceiverVideoConstraint(conference, preferred, max) {
-    if (conference) {
-        conference.setReceiverVideoConstraint(Math.min(preferred, max));
-    }
-}
-
-/**
  * Notifies the feature base/conference that the action
  * {@code SET_ROOM} is being dispatched within a specific
  *  redux store.
@@ -487,33 +473,6 @@ function _syncConferenceLocalTracksWithState({ getState }, action) {
 }
 
 /**
- * Sets the maximum receive video quality.
- *
- * @param {Store} store - The redux store in which the specified {@code action}
- * is being dispatched.
- * @param {Dispatch} next - The redux {@code dispatch} function to dispatch the
- * specified {@code action} to the specified {@code store}.
- * @param {Action} action - The redux action {@code DATA_CHANNEL_STATUS_CHANGED}
- * which is being dispatched in the specified {@code store}.
- * @private
- * @returns {Object} The value returned by {@code next(action)}.
- */
-function _syncReceiveVideoQuality({ getState }, next, action) {
-    const {
-        conference,
-        maxReceiverVideoQuality,
-        preferredReceiverVideoQuality
-    } = getState()['features/base/conference'];
-
-    _setReceiverVideoConstraint(
-        conference,
-        preferredReceiverVideoQuality,
-        maxReceiverVideoQuality);
-
-    return next(action);
-}
-
-/**
  * Notifies the feature base/conference that the action {@code TRACK_ADDED}
  * or {@code TRACK_REMOVED} is being dispatched within a specific redux store.
  *
@@ -554,13 +513,27 @@ function _trackAddedOrRemoved(store, next, action) {
  * @private
  * @returns {Object} The value returned by {@code next(action)}.
  */
-function _updateLocalParticipantInConference({ getState }, next, action) {
+function _updateLocalParticipantInConference({ dispatch, getState }, next, action) {
     const { conference } = getState()['features/base/conference'];
     const { participant } = action;
     const result = next(action);
 
-    if (conference && participant.local && 'name' in participant) {
-        conference.setDisplayName(participant.name);
+    const localParticipant = getLocalParticipant(getState);
+
+    if (conference && participant.id === localParticipant.id) {
+        if ('name' in participant) {
+            conference.setDisplayName(participant.name);
+        }
+
+        if ('role' in participant && participant.role === PARTICIPANT_ROLE.MODERATOR) {
+            const { pendingSubjectChange, subject } = getState()['features/base/conference'];
+
+            // When the local user role is updated to moderator and we have a pending subject change
+            // which was not reflected we need to set it (the first time we tried was before becoming moderator).
+            if (typeof pendingSubjectChange !== 'undefined' && pendingSubjectChange !== subject) {
+                dispatch(setSubject(pendingSubjectChange));
+            }
+        }
     }
 
     return result;
