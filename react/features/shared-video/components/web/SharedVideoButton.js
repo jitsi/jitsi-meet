@@ -55,10 +55,6 @@ class SharedVideoButton extends AbstractButton<Props, *> {
      * @returns {void}
      */
     _handleClick() {
-        if (this.props._sharingVideo) {
-            this._removeSharedVideo();
-        }
-
         this._doToggleSharedVideoDialog();
     }
 
@@ -82,13 +78,11 @@ class SharedVideoButton extends AbstractButton<Props, *> {
     _startSharedVideo(videoId) {
         const ownerId = getLocalParticipantFromStore(APP.store.getState()).id;
 
-        if (ownerId && videoId) {
-            APP.UI.onSharedVideoStart(ownerId, videoId, {
-                state: 'start',
-                from: ownerId
-            });
-            sendAnalytics(createEvent('started'));
-        }
+        APP.UI.onSharedVideoStart(ownerId, videoId, {
+            state: 'start',
+            from: ownerId
+        });
+        sendAnalytics(createEvent('started'));
     }
 
     /**
@@ -115,9 +109,9 @@ class SharedVideoButton extends AbstractButton<Props, *> {
     _doToggleSharedVideoDialog() {
         const { dispatch } = this.props;
 
-        if (!this.props._sharingVideo) {
-            dispatch(showSharedVideoDialog(id => this._startSharedVideo(id)));
-        }
+        this._isToggled()
+            ? this._removeSharedVideo()
+            : dispatch(showSharedVideoDialog(id => this._startSharedVideo(id)));
     }
 }
 

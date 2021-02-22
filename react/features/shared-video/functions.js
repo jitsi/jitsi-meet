@@ -1,3 +1,5 @@
+// @flow
+
 /**
  * Validates the entered video url.
  *
