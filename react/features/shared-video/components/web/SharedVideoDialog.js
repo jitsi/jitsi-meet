@@ -23,11 +23,12 @@ class SharedVideoDialog extends AbstractSharedVideoDialog<*> {
      */
     render() {
         const { t, value } = this.props;
+        const { okDisabled } = this.state;
 
         return (
             <Dialog
                 hideCancelButton = { false }
-                okDisabled = { this.state.okDisabled }
+                okDisabled = { okDisabled }
                 okKey = { t('dialog.Share') }
                 onSubmit = { this._onSubmit }
                 titleKey = { t('dialog.shareVideoTitle') }

@@ -1,3 +1,5 @@
+// @flow
+
 /**
  * Example shared video link.
  * @type {string}
