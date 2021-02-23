@@ -104,7 +104,8 @@ function _mapStateToProps(state, ownProps): Object {
         return {
             _isDisabled: isSharingStatus(sharedVideoStatus),
             _sharingVideo: false,
-            visible };
+            visible
+        };
     }
 
     return {

@@ -89,7 +89,7 @@ export default class AbstractSharedVideoDialog<P: Props> extends Component <P, S
         });
     }
 
-    _onSetVideoLink: string => boolean;
+    _onSetVideoLink: () => boolean;
 
     /**
      * Validates the entered video link by extracting the id and dispatches it.
@@ -98,12 +98,16 @@ export default class AbstractSharedVideoDialog<P: Props> extends Component <P, S
      *     {@code true} - the dialog should be closed.
      *     {@code false} - the dialog should be left open.
      *
-     * @param {string} link - The entered video link.
      * @returns {boolean}
      */
     _onSetVideoLink() {
-        const { inputValue } = this.state,
-            videoId = getYoutubeLink(inputValue);
+        const { inputValue } = this.state;
+
+        if (!inputValue || !inputValue.trim()) {
+            return;
+        }
+
+        const videoId = getYoutubeLink(inputValue);
 
         if (videoId) {
             const { onPostSubmit } = this.props;

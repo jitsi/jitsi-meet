@@ -1,6 +1,5 @@
 // @flow
 
-/* global APP */
 import type { Dispatch } from 'redux';
 
 import { isSharingStatus } from '../../';
@@ -10,7 +9,7 @@ import {
 } from '../../../analytics';
 import { translate } from '../../../base/i18n';
 import { IconShareVideo } from '../../../base/icons';
-import { getLocalParticipant as getLocalParticipantFromStore } from '../../../base/participants';
+import { getLocalParticipant } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import {
     AbstractButton,
@@ -18,8 +17,14 @@ import {
 } from '../../../base/toolbox/components';
 import { showSharedVideoDialog } from '../../actions';
 
+declare var APP: Object;
 
 type Props = AbstractButtonProps & {
+
+    /**
+     * The redux {@code dispatch} function.
+     */
+    dispatch: Dispatch<any>,
 
     /**
      * Whether or not the button is disabled.
@@ -27,14 +32,14 @@ type Props = AbstractButtonProps & {
     _isDisabled: boolean,
 
     /**
-     * Whether or not the local participant is sharing a video.
+     * Meeting participant
      */
-    _sharingVideo: boolean,
+    _participant: string,
 
     /**
-     * The redux {@code dispatch} function.
+     * Whether or not the local participant is sharing a video.
      */
-    dispatch: Dispatch<any>
+    _sharingVideo: boolean
 };
 
 /**
@@ -75,11 +80,13 @@ class SharedVideoButton extends AbstractButton<Props, *> {
      * @returns {boolean}
      */
     _startSharedVideo(videoId) {
+        const { _participant } = this.props;
+
         APP.UI.onSharedVideoStart(
-            getLocalParticipantFromStore(APP.store.getState()).id, videoId,
+            _participant, videoId,
             {
                 state: 'start',
-                from: getLocalParticipantFromStore(APP.store.getState()).id
+                from: _participant
             });
         sendAnalytics(createEvent('started'));
     }
@@ -90,11 +97,13 @@ class SharedVideoButton extends AbstractButton<Props, *> {
      * @returns {boolean}
      */
     _removeSharedVideo() {
+        const { _participant } = this.props;
+
         APP.UI.onSharedVideoStop(
-            getLocalParticipantFromStore(APP.store.getState()).id,
+            _participant,
             {
                 state: 'stop',
-                from: getLocalParticipantFromStore(APP.store.getState()).id
+                from: _participant
             });
         sendAnalytics(createEvent('removed'));
     }
@@ -123,8 +132,10 @@ class SharedVideoButton extends AbstractButton<Props, *> {
  */
 function _mapStateToProps(state): Object {
     const { status: sharedVideoStatus } = state['features/shared-video'];
+    const localParticipantId = getLocalParticipant(state).id;
 
     return {
+        _participant: localParticipantId || '',
         _sharingVideo: isSharingStatus(sharedVideoStatus)
     };
 }
