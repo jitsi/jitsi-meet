@@ -1,3 +1,5 @@
+// @flow
+
 /**
  * The type of the action which signals to update the current known state of the
  * shared YouTube video.

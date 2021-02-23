@@ -2,8 +2,8 @@
 
 import { Component } from 'react';
 
+import { getYoutubeLink } from '../';
 import { getFieldValue } from '../../base/react';
-import { getYoutubeLink } from '../functions';
 
 
 /**
@@ -55,7 +55,6 @@ type State = {
 export default class AbstractSharedVideoDialog<P: Props> extends Component <P, State> {
     /**
      * Instantiates a new component.
-     *
      *
      * @inheritdoc
      */
