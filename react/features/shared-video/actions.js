@@ -1,8 +1,7 @@
 // @flow
 
-import { SET_SHARED_VIDEO_STATUS, TOGGLE_SHARED_VIDEO } from '../shared-video/actionTypes';
-
 import { openDialog } from '../base/dialog';
+import { SET_SHARED_VIDEO_STATUS, TOGGLE_SHARED_VIDEO } from '../shared-video/actionTypes';
 import { SharedVideoDialog } from '../shared-video/components';
 
 
