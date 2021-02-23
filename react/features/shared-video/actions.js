@@ -1,7 +1,6 @@
 // @flow
 
 import { openDialog } from '../base/dialog';
-
 import { SET_SHARED_VIDEO_STATUS, TOGGLE_SHARED_VIDEO } from '../shared-video/actionTypes';
 import { SharedVideoDialog } from '../shared-video/components';
 
@@ -14,7 +13,7 @@ import { SharedVideoDialog } from '../shared-video/components';
  *     status: string
  * }}
  */
-export function setSharedVideoStatus(status :string) {
+export function setSharedVideoStatus(status: string) {
     return {
         type: SET_SHARED_VIDEO_STATUS,
         status
