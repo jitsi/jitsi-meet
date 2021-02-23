@@ -22,8 +22,8 @@ class SharedVideoDialog extends AbstractSharedVideoDialog<*> {
      * @inheritdoc
      */
     render() {
-        const { t, value } = this.props;
-        const { okDisabled } = this.state;
+        const { t, value } = this.props,
+            { okDisabled } = this.state;
 
         return (
             <Dialog

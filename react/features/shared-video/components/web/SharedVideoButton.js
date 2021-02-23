@@ -79,7 +79,7 @@ class SharedVideoButton extends AbstractButton<Props, *> {
      * @param {string} videoId - Video link id.
      * @returns {boolean}
      */
-    _startSharedVideo(videoId) {
+    _startSharedVideo(videoId: string) {
         const { _participant } = this.props;
 
         APP.UI.onSharedVideoStart(
