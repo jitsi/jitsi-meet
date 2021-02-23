@@ -6,12 +6,12 @@ import { SET_SHARED_VIDEO_STATUS, TOGGLE_SHARED_VIDEO } from './actionTypes';
 import { SharedVideoDialog } from './components/native';
 
 /**
- * Updates the current known status of the shared YouTube video.
+ * Updates the current known status of the shared video.
  *
  * @param {string} videoId - The youtubeId of the video to be shared.
- * @param {string} status - The current status of the YouTube video being shared.
- * @param {number} time - The current position of the YouTube video being shared.
- * @param {string} ownerId - The participantId of the user sharing the YouTube video.
+ * @param {string} status - The current status of the video being shared.
+ * @param {number} time - The current position of the video being shared.
+ * @param {string} ownerId - The participantId of the user sharing the video.
  * @returns {{
  *     type: SET_SHARED_VIDEO_STATUS,
  *     ownerId: string,
@@ -31,7 +31,7 @@ export function setSharedVideoStatus(videoId: string, status: string, time: numb
 }
 
 /**
- * Starts the flow for starting or stopping a shared YouTube video.
+ * Starts the flow for starting or stopping a shared video.
  *
  * @returns {{
  *     type: TOGGLE_SHARED_VIDEO

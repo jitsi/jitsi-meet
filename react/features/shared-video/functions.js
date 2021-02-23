@@ -8,7 +8,7 @@
  * @param {string} url - The entered video link.
  * @returns {boolean}
  */
-export function getYoutubeLink(url) {
+export function getYoutubeLink(url: string) {
     const p = /^(?:https?:\/\/)?(?:www\.)?(?:youtu\.be\/|(?:m\.)?youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))((\w|-){11})(?:\S+)?$/;// eslint-disable-line max-len
     const result = url.match(p);
 
@@ -22,6 +22,6 @@ export function getYoutubeLink(url) {
  * @param {string} status - The shared video status.
  * @returns {boolean}
  */
-export function isSharingStatus(status) {
+export function isSharingStatus(status: string) {
     return [ 'playing', 'pause', 'start' ].includes(status);
 }

@@ -1,6 +1,7 @@
 // @flow
 
 import { Component } from 'react';
+import type { Dispatch } from 'redux';
 
 import { getYoutubeLink } from '../';
 import { getFieldValue } from '../../base/react';
@@ -11,6 +12,11 @@ import { getFieldValue } from '../../base/react';
  * {@link AbstractSharedVideoDialog}.
  */
 export type Props = {
+
+    /**
+     * Invoked to update the shared youtube video link.
+     */
+    dispatch: Dispatch<any>,
 
     /**
      * Function to be invoked after typing a valid youtube video .

@@ -1,12 +1,12 @@
 // @flow
 
 import { openDialog } from '../base/dialog';
+
 import { SET_SHARED_VIDEO_STATUS, TOGGLE_SHARED_VIDEO } from '../shared-video/actionTypes';
 import { SharedVideoDialog } from '../shared-video/components';
 
-
 /**
- * Updates the current known status of the shared YouTube video.
+ * Updates the current known status of the shared video.
  *
  * @param {string} status - The current status of the video being shared.
  * @returns {{
@@ -14,7 +14,7 @@ import { SharedVideoDialog } from '../shared-video/components';
  *     status: string
  * }}
  */
-export function setSharedVideoStatus(status) {
+export function setSharedVideoStatus(status :string) {
     return {
         type: SET_SHARED_VIDEO_STATUS,
         status
