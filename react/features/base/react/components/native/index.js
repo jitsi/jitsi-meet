@@ -28,4 +28,4 @@ export { default as Switch } from './Switch';
 export { default as Text } from './Text';
 export { default as TintedView } from './TintedView';
 export { default as JaneButton } from './JaneButton';
-export { default as ScaledText } from './ScaledText';
+export { default as FixedScaleText } from './FixedScaleText';
