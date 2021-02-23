@@ -3,10 +3,10 @@
 import { FieldTextStateless } from '@atlaskit/field-text';
 import React from 'react';
 
+import { defaultSharedVideoLink } from '../../';
 import { Dialog } from '../../../base/dialog';
 import { translate } from '../../../base/i18n';
 import { connect } from '../../../base/redux';
-import { defaultSharedVideoLink } from '../../constants';
 import AbstractSharedVideoDialog from '../AbstractSharedVideoDialog';
 
 /**

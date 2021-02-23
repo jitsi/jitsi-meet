@@ -1,23 +1,32 @@
 // @flow
 
+import { openDialog } from '../base/dialog';
+
 import { SET_SHARED_VIDEO_STATUS, TOGGLE_SHARED_VIDEO } from './actionTypes';
-import {openDialog} from "../base/dialog";
-import { SharedVideoDialog } from '../shared-video/components';
+import { SharedVideoDialog } from './components/native';
 
 /**
  * Updates the current known status of the shared YouTube video.
  *
- * @param {string} status - The current status of the YouTube video being
- * shared.
+ * @param {string} videoId - The youtubeId of the video to be shared.
+ * @param {string} status - The current status of the YouTube video being shared.
+ * @param {number} time - The current position of the YouTube video being shared.
+ * @param {string} ownerId - The participantId of the user sharing the YouTube video.
  * @returns {{
  *     type: SET_SHARED_VIDEO_STATUS,
- *     status: string
+ *     ownerId: string,
+ *     status: string,
+ *     time: number,
+ *     videoId: string
  * }}
  */
-export function setSharedVideoStatus(status) {
+export function setSharedVideoStatus(videoId: string, status: string, time: number, ownerId: string) {
     return {
         type: SET_SHARED_VIDEO_STATUS,
-        status
+        ownerId,
+        status,
+        time,
+        videoId
     };
 }
 
@@ -35,7 +44,7 @@ export function toggleSharedVideo() {
 }
 
 /**
- * Displays the dialog for entering the youtube video link.
+ * Displays the prompt for entering the video link.
  *
  * @param {Function} onPostSubmit - The function to be invoked when a valid link is entered.
  * @returns {Function}
