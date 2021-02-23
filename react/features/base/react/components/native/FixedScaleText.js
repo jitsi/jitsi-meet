@@ -10,7 +10,7 @@ type Props = Text.defaultProps
  * @inheritdoc
  * @returns {ReactElement}
  */
-export default function ScaledText(props: Props) {
+export default function FixedScaleText(props: Props) {
     return (<Text
         { ...props }
         allowFontScaling = { false } />);
