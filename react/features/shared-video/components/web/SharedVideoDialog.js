@@ -30,7 +30,7 @@ class SharedVideoDialog extends AbstractSharedVideoDialog<*> {
                 hideCancelButton = { false }
                 okDisabled = { okDisabled }
                 okKey = { t('dialog.Share') }
-                onSubmit = { this._onSubmit }
+                onSubmit = { this._onSetVideoLink }
                 titleKey = { t('dialog.shareVideoTitle') }
                 width = { 'small' }>
                 <FieldTextStateless

@@ -41,12 +41,7 @@ type State = {
     /**
      * Check if ok button is disabled
      */
-    okDisabled: boolean,
-
-    /**
-     * Check if shared video is shown
-     */
-    sharedVideoShown: boolean
+    okDisabled: boolean
 };
 
 /**
@@ -67,7 +62,7 @@ export default class AbstractSharedVideoDialog<P: Props> extends Component <P, S
         };
 
         this._onChange = this._onChange.bind(this);
-        this._onSubmit = this._onSubmit.bind(this);
+        this._onSetVideoLink = this._onSetVideoLink.bind(this);
     }
 
 
@@ -88,14 +83,19 @@ export default class AbstractSharedVideoDialog<P: Props> extends Component <P, S
         });
     }
 
-    _onSubmit: string => boolean;
+    _onSetVideoLink: string => boolean;
 
     /**
-     * Validates the entered video link by extracting the id and dispatches it to youtube iframe.
+     * Validates the entered video link by extracting the id and dispatches it.
      *
+     * It returns a boolean to comply the Dialog behaviour:
+     *     {@code true} - the dialog should be closed.
+     *     {@code false} - the dialog should be left open.
+     *
+     * @param {string} link - The entered video link.
      * @returns {boolean}
      */
-    _onSubmit() {
+    _onSetVideoLink() {
         const { inputValue } = this.state;
 
         if (!inputValue || !inputValue.trim()) {

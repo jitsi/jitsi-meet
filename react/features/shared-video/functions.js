@@ -20,7 +20,6 @@ export function getYoutubeLink(url) {
  * Checks if the status is one that is actually sharing the video - playing, pause or start.
  *
  * @param {string} status - The shared video status.
- * @private
  * @returns {boolean}
  */
 export function isSharingStatus(status) {

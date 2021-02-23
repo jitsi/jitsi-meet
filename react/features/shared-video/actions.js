@@ -8,8 +8,7 @@ import { SharedVideoDialog } from '../shared-video/components';
 /**
  * Updates the current known status of the shared YouTube video.
  *
- * @param {string} status - The current status of the YouTube video being
- * shared.
+ * @param {string} status - The current status of the video being shared.
  * @returns {{
  *     type: SET_SHARED_VIDEO_STATUS,
  *     status: string

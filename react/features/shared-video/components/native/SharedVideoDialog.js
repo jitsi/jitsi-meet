@@ -19,14 +19,14 @@ class SharedVideoDialog extends AbstractSharedVideoDialog<*> {
         return (
             <InputDialog
                 contentKey = 'dialog.shareVideoTitle'
-                onSubmit = { this._onSubmit }
+                onSubmit = { this._onSetVideoLink }
                 textInputProps = {{
                     placeholder: 'https://youtu.be/TB7LlM4erx8'
                 }} />
         );
     }
 
-    _onSubmit: string => boolean;
+    _onSetVideoLink: string => boolean;
 }
 
 export default connect()(SharedVideoDialog);
