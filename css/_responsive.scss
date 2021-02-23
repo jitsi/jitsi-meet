@@ -53,21 +53,6 @@
     }
 }
 
-@mixin full-size-modal-positioner() {
-    height: 100%;
-    left: 0;
-    position: fixed;
-    top: 0;
-    max-width: 100%;
-    width: 100%;
-}
-
-@mixin full-size-modal-dialog() {
-    height: 100%;
-    max-height: 100%;
-    border-radius: 0;
-}
-
 @media only screen and (max-width: $verySmallScreen) {
     .welcome {
         display: block;
@@ -162,28 +147,6 @@
             .chrome-extension-banner {
                 display: none;
             }
-        }
-    }
-}
-
-@media (min-width: 480px) and (max-width: 580px) {
-    .shift-right .focus-lock > div > div {
-        @include full-size-modal-positioner();
-    }
-
-    .shift-right .focus-lock [role="dialog"] {
-        @include full-size-modal-dialog();
-    }
-}
-
-@media (min-width: 580px) and (max-width: 680px) {
-    .mobile-browser {
-        &.shift-right .focus-lock > div > div {
-            @include full-size-modal-positioner();
-        }
-
-        &.shift-right .focus-lock [role="dialog"] {
-            @include full-size-modal-dialog();
         }
     }
 }

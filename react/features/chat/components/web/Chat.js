@@ -14,8 +14,10 @@ import ChatDialog from './ChatDialog';
 import Header from './ChatDialogHeader';
 import ChatInput from './ChatInput';
 import DisplayNameForm from './DisplayNameForm';
+import KeyboardAvoider from './KeyboardAvoider';
 import MessageContainer from './MessageContainer';
 import MessageRecipient from './MessageRecipient';
+import TouchmoveHack from './TouchmoveHack';
 
 /**
  * React Component for holding the chat feature in a side panel that slides in
@@ -112,13 +114,16 @@ class Chat extends AbstractChat<Props> {
     _renderChat() {
         return (
             <>
-                <MessageContainer
-                    messages = { this.props._messages }
-                    ref = { this._messageContainerRef } />
+                <TouchmoveHack isModal = { this.props._isModal }>
+                    <MessageContainer
+                        messages = { this.props._messages }
+                        ref = { this._messageContainerRef } />
+                </TouchmoveHack>
                 <MessageRecipient />
                 <ChatInput
                     onResize = { this._onChatInputResize }
                     onSend = { this._onSendMessage } />
+                <KeyboardAvoider />
             </>
         );
     }

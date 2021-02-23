@@ -73,6 +73,7 @@ export { default as IconOpenInNew } from './open_in_new.svg';
 export { default as IconOutlook } from './office365.svg';
 export { default as IconPhone } from './phone.svg';
 export { default as IconPin } from './enlarge.svg';
+export { default as IconPlane } from './paper-plane.svg';
 export { default as IconPresentation } from './presentation.svg';
 export { default as IconRaisedHand } from './raised-hand.svg';
 export { default as IconRec } from './rec.svg';
