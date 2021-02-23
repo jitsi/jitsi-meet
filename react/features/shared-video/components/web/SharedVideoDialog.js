@@ -45,6 +45,10 @@ class SharedVideoDialog extends AbstractSharedVideoDialog<*> {
             </Dialog>
         );
     }
+
+    _onSetVideoLink: string => boolean;
+
+    _onChange: Object => void;
 }
 
 export default translate(connect()(SharedVideoDialog));
