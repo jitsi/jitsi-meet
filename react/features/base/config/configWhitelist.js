@@ -157,6 +157,7 @@ export default [
     'roomPasswordNumberOfDigits',
     'replaceParticipant',
     'resolution',
+    'speakerStatsSearch',
     'startAudioMuted',
     'startAudioOnly',
     'startLastN',
