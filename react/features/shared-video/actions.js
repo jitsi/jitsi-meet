@@ -1,8 +1,10 @@
 // @flow
 
-import { SET_SHARED_VIDEO_STATUS, TOGGLE_SHARED_VIDEO } from './actionTypes';
-import {openDialog} from "../base/dialog";
+import { SET_SHARED_VIDEO_STATUS, TOGGLE_SHARED_VIDEO } from '../shared-video/actionTypes';
+
+import { openDialog } from '../base/dialog';
 import { SharedVideoDialog } from '../shared-video/components';
+
 
 /**
  * Updates the current known status of the shared YouTube video.
