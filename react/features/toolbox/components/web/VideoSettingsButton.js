@@ -3,6 +3,7 @@
 import React, { Component } from 'react';
 
 import { isMobileBrowser } from '../../../base/environment/utils';
+import { translate } from '../../../base/i18n';
 import { IconArrowDown } from '../../../base/icons';
 import { connect } from '../../../base/redux';
 import { ToolboxButtonWithIcon } from '../../../base/toolbox/components';
@@ -39,7 +40,12 @@ type Props = {
      * as mobile devices do not support capture of more than one
      * camera at a time.
      */
-    visible: boolean
+    visible: boolean,
+
+    /**
+     * Used for translation
+     */
+    t: Function
 };
 
 /**
@@ -66,13 +72,14 @@ class VideoSettingsButton extends Component<Props> {
      * @inheritdoc
      */
     render() {
-        const { onVideoOptionsClick, visible } = this.props;
+        const { onVideoOptionsClick, t, visible } = this.props;
 
         return visible ? (
             <VideoSettingsPopup>
                 <ToolboxButtonWithIcon
                     icon = { IconArrowDown }
                     iconDisabled = { this._isIconDisabled() }
+                    iconTooltip = { t('toolbar.videoSettings') }
                     onIconClick = { onVideoOptionsClick }>
                     <VideoMuteButton />
                 </ToolboxButtonWithIcon>
@@ -102,7 +109,7 @@ const mapDispatchToProps = {
     onVideoOptionsClick: toggleVideoSettings
 };
 
-export default connect(
+export default translate(connect(
     mapStateToProps,
     mapDispatchToProps,
-)(VideoSettingsButton);
+)(VideoSettingsButton));

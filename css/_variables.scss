@@ -4,7 +4,8 @@
  * Style variables
  */
 $baseFontFamily: -apple-system, BlinkMacSystemFont, 'open_sanslight', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-$hangupColor: #bf2117;
+$hangupColor:#DD3849;
+$hangupHoverColor: #F25363;
 $hangupFontSize: 2em;
 
 /**
@@ -38,19 +39,19 @@ $presence-idle: rgb(172, 172, 172);
  * Toolbar
  */
 $newToolbarBackgroundColor: rgba(22, 38, 55, 0.8);
-$newToolbarButtonHoverColor: rgba(255, 255, 255, 0.15);
-$newToolbarButtonToggleColor: rgba(255, 255, 255, 0.2);
+$newToolbarButtonHoverColor: rgba(255, 255, 255, 0.2);
+$newToolbarButtonToggleColor: rgba(255, 255, 255, 0.15);
 $AOTToolbarButtonHoverColor: rgba(14, 20, 35, 0.6);
 $AOTToolbarButtonToggleColor: rgba(14, 20, 35, 1);
+$menuBG:#242528;
 $newToolbarFontSize: 24px;
 $newToolbarHangupFontSize: 32px;
-$newToolbarSize: 40px;
+$newToolbarSize: 48px;
 $newToolbarSizeWithPadding: calc(#{$newToolbarSize} + 24px);
 $toolbarTitleFontSize: 19px;
-$overflowMenuBG: initial;
-$overflowMenuItemHoverBG: #313D52;
-$overflowMenuItemHoverColor: #B8C7E0;
-$overflowMenuItemColor: #B8C7E0;
+$overflowMenuItemColor: #fff;
+$overflowMenuItemBackground: #36383C;
+
 
 /**
  * Video layout
@@ -122,8 +123,8 @@ $zindex10: 10;
 $reloadZ: 20;
 $poweredByZ: 100;
 $ringingZ: 300;
-$sideToolbarContainerZ: 300;
-$toolbarZ: 350;
+$sideToolbarContainerZ: 200;
+$toolbarZ: 250;
 $drawerZ: 351;
 $tooltipsZ: 401;
 $dropdownMaskZ: 900;

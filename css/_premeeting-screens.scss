@@ -25,7 +25,7 @@
         text {
             fill: black;
             font-size: 26px;
-            font-weight: 400;  
+            font-weight: 400;
         }
     }
 
@@ -196,14 +196,6 @@
 
         &> div {
             margin: 0 12px;
-        }
-
-        .settings-button-small-icon {
-            right: -8px;
-
-            &--hovered {
-                right: -10px;
-            }
         }
     }
 }

@@ -33,9 +33,6 @@
 
     &.visible {
         bottom: 0;
-        .toolbox-background {
-            bottom: 0px;
-        }
     }
 
     &.no-buttons {
@@ -48,253 +45,217 @@
             width: calc(100% - #{$sidebarWidth});
         }
     }
+}
 
-    .toolbox-background {
-        background-image: linear-gradient(to top, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0));
-        transition: bottom .3s ease-in;
-        height: 160px;
-        width: 100%;
-        bottom: -160px;
-        pointer-events: none;
-        position: absolute;
-        z-index: $toolbarBackgroundZ;
+.toolbox-content {
+    align-items: center;
+    box-sizing: border-box;
+    display: flex;
+    margin-bottom: 16px;
+    position: relative;
+    z-index: $toolbarZ;
+
+    .button-group-center,
+    .button-group-left,
+    .button-group-right {
+        display: flex;
+        width: 33%;
     }
 
-    .toolbox-content {
-        box-sizing: border-box;
+    .button-group-center {
+        justify-content: center;
+    }
+
+    .button-group-right {
+        justify-content: flex-end;
+    }
+
+    .toolbox-button-wth-dialog {
+        display: inline-block;
+
+        &> div {
+            padding: 0;
+        }
+    }
+}
+
+.toolbox-button {
+    color: $toolbarButtonColor;
+    cursor: pointer;
+    display: inline-block;
+    line-height: $newToolbarSize;
+    text-align: center;
+}
+
+.toolbar-button-with-badge {
+    display: inline-block;
+    position: relative;
+
+    .badge-round {
+        bottom: -5px;
+        font-size: 12px;
+        line-height: 20px;
+        min-width: 20px;
+        pointer-events: none;
+        position: absolute;
+        right: -5px;
+    }
+}
+
+
+.toolbox-content-items {
+    background: #131519;
+    box-shadow: 0px 2px 8px 4px rgba(0, 0, 0, 0.25), 0px 0px 0px 1px rgba(0, 0, 0, 0.15);
+    border-radius: 6px;
+    margin: 0 auto;
+    padding: 6px;
+    text-align: center;
+
+    >div {
+        margin-left: 6px;
+
+        &:first-child {
+            margin-left: 0;
+        }
+    }
+}
+
+.overflow-menu {
+    font-size: 14px;
+    list-style-type: none;
+    padding: 8px 0;
+    background-color: $menuBG;
+
+    .profile-text {
+        max-width: 150px;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
+    }
+}
+
+.overflow-menu-item {
+    align-items: center;
+    color: $overflowMenuItemColor;
+    cursor: pointer;
+    display: flex;
+    font-size: 14px;
+    font-weight: 400;
+    height: 40px;
+    line-height: 24px;
+    padding: 8px 16px;
+    box-sizing: border-box;
+
+    @media (hover: hover) and (pointer: fine) {
+        &:hover {
+            background: $overflowMenuItemBackground;
+        }
+    }
+
+    div {
         display: flex;
-        justify-content: space-between;
-        margin-left: auto;
-        margin-right: auto;
-        padding: 20px 16px;
-        position: relative;
-        width: 100%;
-        z-index: $toolbarZ;
+        flex-direction: row;
+        align-items: center;
+    }
 
-        .button-group-center,
-        .button-group-left,
-        .button-group-right {
-            display: flex;
-            width: 33%;
+    &.unclickable {
+        cursor: default;
+    }
+    &.disabled {
+        cursor: initial;
+        color: #3b475c;
+    }
+
+    @media (hover: hover) and (pointer: fine) {
+        &.unclickable:hover {
+            background: inherit;
         }
+    }
+}
 
-        .button-group-center {
-            justify-content: center;
+.beta-tag {
+    background: #36383C;
+    border-radius: 3px;
+    color: #fff;
+    font-size: 12px;
+    margin-left: 8px;
+    padding: 0 4px;
+    text-transform: uppercase;
+}
 
-            .toolbox-button {
+.overflow-menu-item-icon {
+    margin-right: 16px;
 
-                .toolbox-icon {
-                    background-color: #fff;
-                    border-radius: 50%;
-                    border: 1px solid #d1dbe8;
-                    margin: 0px 4px;
-                    width: 38px;
-                    height: 38px;
+    i {
+        display: inline;
+        font-size: 24px;
+    }
 
-                    @media (hover: hover) and (pointer: fine) {
-                        &:hover {
-                            background-color: #daebfa;
-                            border: 1px solid #daebfa;
-                        }
-                    }
-
-                    &.toggled {
-                        background: #2a3a4b;
-                        border: 1px solid #5e6d7a;
-
-                        svg {
-                            fill: #fff;
-                        }
-
-                        @media (hover: hover) and (pointer: fine) {
-                            &:hover {
-                                background-color: #5e6d7a;
-                            }
-                        }
-                    }
-
-                    &.disabled, .disabled & {
-                        cursor: initial;
-                        color: #fff;
-                        background-color: #a4b8d1;
-                    }
-
-                    svg {
-                        fill: #5e6d7a;
-                    }
-                }
-
-                &:nth-child(2) {
-                    .toolbox-icon {
-                        background-color: $hangupColor;
-                        border: 1px solid $hangupColor;
-                        width: 40px;
-                        height: 40px;
-
-                        @media (hover: hover) and (pointer: fine) {
-                            &:hover {
-                                background-color: $hangupColor;
-                            }
-                        }
-
-                        svg {
-                            fill: #fff;
-                        }
-                    }
-                }
-            }
+    @media (hover: hover) and (pointer: fine) {
+        i:hover {
+            background-color: initial;
         }
+    }
 
-        .button-group-right {
-            justify-content: flex-end;
+    img {
+        max-width: 24px;
+        max-height: 24px;
+    }
+
+    svg {
+        fill: #fff;
+        height: 20px;
+        width: 20px;
+    }
+}
+
+
+.overflow-menu-hr {
+    border-top: 1px solid #4C4D50;
+    border-bottom: 0;
+    margin: 8px 0;
+}
+
+.toolbox-icon {
+    display: flex;
+    border-radius: 3px;
+    flex-direction: column;
+    font-size: 24px;
+    height: $newToolbarSize;
+    justify-content: center;
+    width: $newToolbarSize;
+
+    @media (hover: hover) and (pointer: fine) {
+        &:hover {
+            background: $newToolbarButtonHoverColor;
         }
+    }
 
-        .overflow-menu {
-            font-size: 1.2em;
-            list-style-type: none;
-            background-color: $overflowMenuBG;
-            /**
-             * Undo atlaskit padding by reducing margins.
-             */
-            margin: -16px -24px;
-            padding: 4px 0;
+    &.toggled {
+        background: $newToolbarButtonToggleColor;
+    }
 
-            .overflow-menu-item {
-                align-items: center;
-                color: $overflowMenuItemColor;
-                cursor: pointer;
-                display: flex;
-                font-size: 14px;
-                height: 40px;
-                padding: 5px 12px;
-                box-sizing: border-box;
+    &.disabled {
+        cursor: initial !important;
+        background-color: #36383c !important;
 
-                div {
-                    display: flex;
-                    flex-direction: row;
-                    align-items: center;
-                }
-
-                @media (hover: hover) and (pointer: fine) {
-                    &:hover {
-                        background-color: $overflowMenuItemHoverBG;
-                        color: $overflowMenuItemHoverColor;
-                    }
-                }
-
-                &.unclickable {
-                    cursor: default;
-                }
-                @media (hover: hover) and (pointer: fine) {
-                    &.unclickable:hover {
-                        background: inherit;
-                    }
-                }
-                &.disabled {
-                    cursor: initial;
-                    color: #3b475c;
-                }
-            }
-
-            .beta-tag {
-                background: $overflowMenuItemColor;
-                border-radius: 2px;
-                color: $overflowMenuBG;
-                font-size: 11px;
-                font-weight: bold;
-                margin-left: 8px;
-                padding: 0 6px;
-            }
-
-            .overflow-menu-item-icon {
-                margin-right: 16px;
-
-                i {
-                    display: inline;
-                    font-size: 24px;
-                }
-
-                @media (hover: hover) and (pointer: fine) {
-                    i:hover {
-                        background-color: initial;
-                    }
-                }
-
-                img {
-                    max-width: 24px;
-                    max-height: 24px;
-                }
-
-                svg {
-                    fill: #B8C7E0 !important;
-                    height: 20px;
-                    width: 20px;
-                }
-            }
-
-            .profile-text {
-                max-width: 150px;
-                text-overflow: ellipsis;
-                overflow: hidden;
-                white-space: nowrap;
-            }
+        svg {
+            fill: #929292 !important;
         }
+    }
+}
 
-        .toolbox-button {
-            color: $toolbarButtonColor;
-            cursor: pointer;
-            display: inline-block;
-            line-height: $newToolbarSize;
-            margin: 0 8px;
-            text-align: center;
+.hangup-button {
+    background-color: $hangupColor;
+
+    @media (hover: hover) and (pointer: fine) {
+        &:hover {
+            background-color: $hangupHoverColor;
         }
+    }
 
-        .toolbar-button-with-badge {
-            position: relative;
-
-            .badge-round {
-                bottom: -5px;
-                font-size: 12px;
-                line-height: 20px;
-                min-width: 20px;
-                pointer-events: none;
-                position: absolute;
-                right: -5px;
-            }
-        }
-
-        .toolbox-button-wth-dialog {
-            display: inline-block;
-        }
-
-        .toolbox-icon {
-            display: flex;
-            border-radius: 5px;
-            flex-direction: column;
-            font-size: 24px;
-            height: $newToolbarSize;
-            justify-content: center;
-            width: $newToolbarSize;
-
-            @media (hover: hover) and (pointer: fine) {
-                &:hover {
-                    background: $newToolbarButtonHoverColor;
-                }
-            }
-
-            &.toggled {
-                background: $newToolbarButtonHoverColor;
-            }
-
-            &.disabled {
-                cursor: initial !important;
-                background-color: #a4b8d1 !important;
-
-                svg {
-                    fill: #fff !important;
-                }
-            }
-        }
+    svg {
+        fill: #fff;
     }
 }
 
@@ -311,4 +272,19 @@
     opacity: 0;
 
     @include transition(all .3s ease-out);
+}
+
+/**
+ * Audio and video buttons do not have toggled state.
+ */
+.audio-preview,
+.video-preview {
+    .toolbox-icon.toggled {
+        background: none;
+
+        &:hover {
+            background: $newToolbarButtonHoverColor;
+        }
+    }
+
 }

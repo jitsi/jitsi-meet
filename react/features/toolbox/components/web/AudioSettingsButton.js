@@ -3,6 +3,7 @@
 import React, { Component } from 'react';
 
 import { isMobileBrowser } from '../../../base/environment/utils';
+import { translate } from '../../../base/i18n';
 import { IconArrowDown } from '../../../base/icons';
 import JitsiMeetJS from '../../../base/lib-jitsi-meet/_';
 import { connect } from '../../../base/redux';
@@ -29,6 +30,11 @@ type Props = {
     isDisabled: boolean,
 
     /**
+     * Used for translation.
+     */
+    t: Function,
+
+    /**
      * Flag controlling the visibility of the button.
      * AudioSettings popup is disabled on mobile browsers.
      */
@@ -48,7 +54,7 @@ class AudioSettingsButton extends Component<Props> {
      * @inheritdoc
      */
     render() {
-        const { hasPermissions, isDisabled, onAudioOptionsClick, visible } = this.props;
+        const { hasPermissions, isDisabled, onAudioOptionsClick, t, visible } = this.props;
         const settingsDisabled = !hasPermissions
             || isDisabled
             || !JitsiMeetJS.mediaDevices.isMultipleAudioInputSupported();
@@ -58,6 +64,7 @@ class AudioSettingsButton extends Component<Props> {
                 <ToolboxButtonWithIcon
                     icon = { IconArrowDown }
                     iconDisabled = { settingsDisabled }
+                    iconTooltip = { t('toolbar.audioSettings') }
                     onIconClick = { onAudioOptionsClick }>
                     <AudioMuteButton />
                 </ToolboxButtonWithIcon>
@@ -86,7 +93,7 @@ const mapDispatchToProps = {
     onAudioOptionsClick: toggleAudioSettings
 };
 
-export default connect(
+export default translate(connect(
     mapStateToProps,
     mapDispatchToProps,
-)(AudioSettingsButton);
+)(AudioSettingsButton));

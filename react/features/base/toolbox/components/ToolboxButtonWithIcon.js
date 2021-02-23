@@ -3,6 +3,7 @@
 import React, { Component } from 'react';
 
 import { Icon } from '../../icons';
+import { Tooltip } from '../../tooltip';
 
 type Props = {
 
@@ -25,6 +26,11 @@ type Props = {
      * Click handler for the small icon.
      */
     onIconClick: Function,
+
+    /**
+     * The tooltip used for the icon.
+     */
+    iconTooltip: string,
 
     /**
      * Additional styles.
@@ -99,6 +105,7 @@ export default class ToolboxButtonWithIcon extends Component<Props, State> {
             children,
             icon,
             iconDisabled,
+            iconTooltip,
             onIconClick,
             styles
         } = this.props;
@@ -124,13 +131,18 @@ export default class ToolboxButtonWithIcon extends Component<Props, State> {
                 className = 'settings-button-container'
                 styles = { styles }>
                 {children}
+
                 <div
                     onMouseEnter = { this._onMouseEnter }
                     onMouseLeave = { this._onMouseLeave }>
-                    <Icon
-                        { ...iconProps }
-                        size = { size }
-                        src = { icon } />
+                    <Tooltip
+                        content = { iconTooltip }
+                        position = 'top'>
+                        <Icon
+                            { ...iconProps }
+                            size = { size }
+                            src = { icon } />
+                    </Tooltip>
                 </div>
             </div>
         );

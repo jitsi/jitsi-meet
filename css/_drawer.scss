@@ -24,12 +24,6 @@
         height: 44px;
         cursor: pointer;
 
-        @media (hover: hover) and (pointer: fine) {
-            &:hover {
-                background-color: $overflowMenuItemHoverBG;
-            }
-        }
-
         svg {
             fill: none;
         }
@@ -67,13 +61,6 @@
                 align-items: center;
             }
 
-            @media (hover: hover) and (pointer: fine) {
-                &:hover {
-                    background-color: $overflowMenuItemHoverBG;
-                    color: $overflowMenuItemHoverColor;
-                }
-            }
-
             &.unclickable {
                 cursor: default;
             }
@@ -85,42 +72,6 @@
             &.disabled {
                 cursor: initial;
                 color: #3b475c;
-            }
-        }
-
-        .beta-tag {
-            background: $overflowMenuItemColor;
-            border-radius: 2px;
-            color: $overflowMenuBG;
-            font-size: 11px;
-            font-weight: bold;
-            margin-left: 8px;
-            padding: 0 6px;
-        }
-
-        .overflow-menu-item-icon {
-            margin-right: 16px;
-
-            i {
-                display: inline;
-                font-size: 24px;
-            }
-
-            @media (hover: hover) and (pointer: fine) {
-                i:hover {
-                    background-color: initial;
-                }
-            }
-
-            img {
-                max-width: 24px;
-                max-height: 24px;
-            }
-
-            svg {
-                fill: #B8C7E0 !important;
-                height: 20px;
-                width: 20px;
             }
         }
 

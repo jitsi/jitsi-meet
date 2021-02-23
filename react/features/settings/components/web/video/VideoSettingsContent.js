@@ -161,7 +161,9 @@ class VideoSettingsContent extends Component<Props, State> {
 
         return (
             <div { ...props }>
-                <div className = 'video-preview-label'>{label}</div>
+                <div className = 'video-preview-label'>
+                    {label && <span className = 'video-preview-label-text'>{label}</span>}
+                </div>
                 <div className = 'video-preview-overlay' />
                 <Video
                     className = { videoClassName }
