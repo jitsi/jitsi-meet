@@ -75,12 +75,12 @@ class SharedVideoButton extends AbstractButton<Props, *> {
      * @returns {boolean}
      */
     _startSharedVideo(videoId) {
-        const ownerId = getLocalParticipantFromStore(APP.store.getState()).id;
-
-        APP.UI.onSharedVideoStart(ownerId, videoId, {
-            state: 'start',
-            from: ownerId
-        });
+        APP.UI.onSharedVideoStart(
+            getLocalParticipantFromStore(APP.store.getState()).id, videoId,
+            {
+                state: 'start',
+                from: getLocalParticipantFromStore(APP.store.getState()).id
+            });
         sendAnalytics(createEvent('started'));
     }
 
@@ -90,12 +90,12 @@ class SharedVideoButton extends AbstractButton<Props, *> {
      * @returns {boolean}
      */
     _removeSharedVideo() {
-        const ownerId = getLocalParticipantFromStore(APP.store.getState()).id;
-
-        APP.UI.onSharedVideoStop(ownerId, {
-            state: 'stop',
-            from: ownerId
-        });
+        APP.UI.onSharedVideoStop(
+            getLocalParticipantFromStore(APP.store.getState()).id,
+            {
+                state: 'stop',
+                from: getLocalParticipantFromStore(APP.store.getState()).id
+            });
         sendAnalytics(createEvent('removed'));
     }
 
