@@ -2,6 +2,7 @@
 
 import {
     PageReloadOverlay,
+    SlowGUMOverlay,
     SuspendedOverlay,
     UserMediaPermissionsOverlay
 } from './components/web';
@@ -17,6 +18,7 @@ export function getOverlays(): Array<Object> {
     return [
         PageReloadOverlay,
         SuspendedOverlay,
-        UserMediaPermissionsOverlay
+        UserMediaPermissionsOverlay,
+        SlowGUMOverlay
     ];
 }
