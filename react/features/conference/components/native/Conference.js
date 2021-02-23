@@ -1,7 +1,7 @@
 // @flow
 
 import React from 'react';
-import { NativeModules, SafeAreaView, StatusBar } from 'react-native';
+import { Clipboard, NativeModules, SafeAreaView, StatusBar } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 
 import { appNavigate } from '../../../app/actions';
@@ -123,6 +123,7 @@ class Conference extends AbstractConference<Props, *> {
      */
     componentDidMount() {
         BackButtonRegistry.addListener(this._onHardwareBackPress);
+        this.clearClipboardContents();
     }
 
     /**
@@ -136,6 +137,17 @@ class Conference extends AbstractConference<Props, *> {
     componentWillUnmount() {
         // Tear handling any hardware button presses for back navigation down.
         BackButtonRegistry.removeListener(this._onHardwareBackPress);
+    }
+
+    /**
+     * Clear the video chat universal link copied from Jane here to
+     * avoid users rejoin the call on the welcome page after hanging up
+     * the call.
+     *
+     * @returns {void}
+     */
+    async clearClipboardContents() {
+        await Clipboard.setString('');
     }
 
     /**

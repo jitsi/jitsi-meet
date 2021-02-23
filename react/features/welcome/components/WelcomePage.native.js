@@ -1,6 +1,6 @@
-import AsyncStorage from '@react-native-community/async-storage';
 import React from 'react';
 
+import jitsiLocalStorage from '../../../../modules/util/JitsiLocalStorage';
 import { ColorSchemeRegistry } from '../../base/color-scheme';
 import { translate } from '../../base/i18n';
 import { connect } from '../../base/redux';
@@ -15,7 +15,6 @@ import {
     _mapStateToProps as _abstractMapStateToProps
 } from './AbstractWelcomePage';
 import WelcomePageScreen from './Screen';
-import jitsiLocalStorage from '../../../../modules/util/JitsiLocalStorage';
 
 const LAUNCHED_BEFORE_STORAGE_KEY = 'LAUNCHED_BEFORE';
 
