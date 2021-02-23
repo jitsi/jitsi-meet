@@ -751,6 +751,7 @@
             "videoblur": "Toggle video blur"
         },
         "addPeople": "Add people to your call",
+        "audioSettings": "Audio settings",
         "audioOnlyOff": "Disable low bandwidth mode",
         "audioOnlyOn": "Enable low bandwidth mode",
         "audioRoute": "Select the sound device",
@@ -809,6 +810,7 @@
         "tileViewToggle": "Toggle tile view",
         "toggleCamera": "Toggle camera",
         "videomute": "Start / Stop camera",
+        "videoSettings": "Video settings",
         "startvideoblur": "Blur my background",
         "stopvideoblur": "Disable background blur"
     },

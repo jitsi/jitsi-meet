@@ -254,9 +254,13 @@ class AudioSettingsContent extends Component<Props, State> {
                         this._renderMicrophoneEntry(data, i),
                     )}
                     { outputDevices.length > 0 && (
-                        <AudioSettingsHeader
-                            IconComponent = { IconVolumeEmpty }
-                            text = { t('settings.speakers') } />)
+                        <>
+                            <hr className = 'audio-preview-hr' />
+                            <AudioSettingsHeader
+                                IconComponent = { IconVolumeEmpty }
+                                text = { t('settings.speakers') } />
+                        </>
+                    )
                     }
                     {outputDevices.map((data, i) =>
                         this._renderSpeakerEntry(data, i),

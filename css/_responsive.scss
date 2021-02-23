@@ -1,58 +1,3 @@
-@mixin small-button-size() {
-    .new-toolbox {
-        .toolbox-content {
-            .button-group-center, .button-group-left, .button-group-right {
-                .toolbox-button {
-                    .toolbox-icon {
-                        width: 28px;
-                        height: 28px;
-                        svg {
-                            width: 18px;
-                            height: 18px;
-                        }
-                    }
-
-                    &:nth-child(2) {
-                        .toolbox-icon {
-                            width: 30px;
-                            height: 30px;
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
-
-@mixin very-small-button-size() {
-    .new-toolbox {
-        .toolbox-content {
-            .button-group-center, .button-group-left, .button-group-right {
-                .settings-button-small-icon {
-                    display: none;
-                }
-                .toolbox-button {
-                    .toolbox-icon {
-                        width: 18px;
-                        height: 18px;
-                        svg {
-                            width: 12px;
-                            height: 12px;
-                        }
-                    }
-
-                    &:nth-child(2) {
-                        .toolbox-icon {
-                            width: 20px;
-                            height: 20px;
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
-
 @media only screen and (max-width: $verySmallScreen) {
     .welcome {
         display: block;
@@ -122,21 +67,9 @@
 }
 
 .desktop-browser {
-    @media only screen and (max-width: $smallScreen) {
-        @include small-button-size();
-    }
-
-    @media only screen and (max-width: $verySmallScreen) {
-        @include very-small-button-size();
-    }
-
     &.shift-right {
-        @media only screen and (max-width: $smallScreen + $sidebarWidth) {
-            @include small-button-size()
-        }
 
         @media only screen and (max-width: $verySmallScreen + $sidebarWidth) {
-            @include very-small-button-size();
 
             #videoResolutionLabel {
                 display: none;

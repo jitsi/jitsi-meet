@@ -38,7 +38,6 @@ class VideoBlurButton extends AbstractButton<Props, *> {
     accessibilityLabel = 'toolbar.accessibilityLabel.videoblur';
     icon = IconBlurBackground;
     label = 'toolbar.startvideoblur';
-    tooltip = 'toolbar.startvideoblur';
     toggledLabel = 'toolbar.stopvideoblur';
 
     /**
