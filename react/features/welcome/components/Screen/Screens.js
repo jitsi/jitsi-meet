@@ -20,6 +20,7 @@ import { connect } from '../../../base/redux';
 import { setScreen } from '../../actions';
 import { Platform } from '../../../base/react';
 import type { Dispatch } from 'redux';
+import VideoChatUrlDetector from '../VideoChatUrlDetector';
 
 const WHITE_COLOR = ColorPalette.white;
 const JANE_COLOR = ColorPalette.jane;
@@ -412,6 +413,7 @@ const TutorialLayout = (props: TutorialLayoutProps) => (<SafeAreaView style = { 
     {
         getStepScreen(props.screenName)
     }
+    <VideoChatUrlDetector/>
 </SafeAreaView>);
 
 export default TutorialLayout;

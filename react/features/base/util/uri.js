@@ -32,6 +32,22 @@ const _URI_AUTHORITY_PATTERN = '(//[^/?#]+)';
 const _URI_PATH_PATTERN = '([^?#]*)';
 
 /**
+ * The {@link RegExp} pattern of the following jane universal link domains.
+ * "videochat-jwt.jane.qa",
+ * "videochat.jane.qa",
+ * "videochat-us.janeapp.com",
+ * "videochat-ca.janeapp.com",
+ * "videochat-ca2.janeapp.com",
+ * "videochat.janeapp.com.au",
+ * "videochat.janeapp.co.uk";
+ *
+ * @private
+ * @type {string}
+ */
+// eslint-disable-next-line max-len,no-useless-escape
+const _JANE_UNIVERSAL_LINK_DOMAINS = /videochat(?:\-(?:(?:ca2?|us)\.janeapp\.com|jwt\.jane\.qa)|\.janeapp\.co(?:m\.au|\.uk))/;
+
+/**
  * The {@link RegExp} pattern of the protocol of a URI.
  *
  * FIXME: The URL class exposed by JavaScript will not include the colon in
@@ -550,4 +566,21 @@ export function urlObjectToString(o: Object): ?string {
     url.hash = hash;
 
     return url.toString() || undefined;
+}
+
+
+/**
+ * Check if the clipboard contents contains Jane video chat universal link
+ *
+ * @param {string} url - The video chat url
+ * function.
+ * @returns {boolean} if the clipboard contents contains Jane video chat universal link return
+ * {@code true}; otherwise, {@code false}.
+ */
+export function isJaneVideoChatLink(url: string) {
+
+    const regExp = new RegExp(_JANE_UNIVERSAL_LINK_DOMAINS);
+
+    return regExp.exec(url) && url.includes('?jwt=');
+
 }
