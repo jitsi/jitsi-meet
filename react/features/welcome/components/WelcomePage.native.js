@@ -1,4 +1,4 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { jitsiLocalStorage } from '@jitsi/js-utils';
 import React from 'react';
 
 import { ColorSchemeRegistry } from '../../base/color-scheme';
@@ -34,12 +34,12 @@ class WelcomePage extends AbstractWelcomePage {
      */
     checkIsFirstTimeLoading() {
         try {
-            const launchedBefore = AsyncStorage.getItem(LAUNCHED_BEFORE_STORAGE_KEY);
+            const launchedBefore = jitsiLocalStorage.getItem(LAUNCHED_BEFORE_STORAGE_KEY);
 
             if (launchedBefore === 'true') {
                 this.props.dispatch(setScreen('done'));
             } else {
-                AsyncStorage.setItem(LAUNCHED_BEFORE_STORAGE_KEY, 'true');
+                jitsiLocalStorage.setItem(LAUNCHED_BEFORE_STORAGE_KEY, 'true');
                 this.props.dispatch(setScreen('stepOne'));
             }
         } catch (e) {
