@@ -28,15 +28,29 @@ import {
 import { JitsiConferenceEvents } from '../../base/lib-jitsi-meet';
 import { MEDIA_TYPE } from '../../base/media';
 import { SET_AUDIO_MUTED } from '../../base/media/actionTypes';
-import { PARTICIPANT_JOINED, PARTICIPANT_LEFT, getParticipants } from '../../base/participants';
+import { PARTICIPANT_JOINED, PARTICIPANT_LEFT, getParticipants, getParticipantById } from '../../base/participants';
 import { MiddlewareRegistry, StateListenerRegistry } from '../../base/redux';
 import { toggleScreensharing } from '../../base/tracks';
+import { OPEN_CHAT, CLOSE_CHAT } from '../../chat';
+import { openChat } from '../../chat/actions';
+import { sendMessage, setPrivateMessageRecipient, closeChat } from '../../chat/actions.any';
 import { muteLocal } from '../../remote-video-menu/actions';
 import { ENTER_PICTURE_IN_PICTURE } from '../picture-in-picture';
 
 import { setParticipantsWithScreenShare } from './actions';
 import { sendEvent } from './functions';
 import logger from './logger';
+
+/**
+ * Event which will be emitted on the native side when a chat message is received
+ * through the channel.
+ */
+const CHAT_MESSAGE_RECEIVED = 'CHAT_MESSAGE_RECEIVED';
+
+/**
+ * Event which will be emitted on the native side when the chat dialog is displayed/closed.
+ */
+const CHAT_TOGGLED = 'CHAT_TOGGLED';
 
 /**
  * Event which will be emitted on the native side to indicate the conference
@@ -153,6 +167,17 @@ MiddlewareRegistry.register(store => next => action => {
         break;
     }
 
+    case OPEN_CHAT:
+    case CLOSE_CHAT: {
+        sendEvent(
+            store,
+            CHAT_TOGGLED,
+            /* data */ {
+                isOpen: action.type === OPEN_CHAT
+            });
+        break;
+    }
+
     case PARTICIPANT_JOINED:
     case PARTICIPANT_LEFT: {
         const { participant } = action;
@@ -238,7 +263,9 @@ StateListenerRegistry.register(
  * @private
  * @returns {void}
  */
-function _registerForNativeEvents({ getState, dispatch }) {
+function _registerForNativeEvents(store) {
+    const { getState, dispatch } = store;
+
     eventEmitter.addListener(ExternalAPI.HANG_UP, () => {
         dispatch(appNavigate(undefined));
     });
@@ -265,7 +292,6 @@ function _registerForNativeEvents({ getState, dispatch }) {
     });
 
     eventEmitter.addListener(ExternalAPI.RETRIEVE_PARTICIPANTS_INFO, ({ requestId }) => {
-        const store = getState();
 
         const participantsInfo = getParticipants(store).map(participant => {
             return {
@@ -287,6 +313,27 @@ function _registerForNativeEvents({ getState, dispatch }) {
                 requestId
             });
     });
+
+    eventEmitter.addListener(ExternalAPI.OPEN_CHAT, ({ to }) => {
+        const participant = getParticipantById(store, to);
+
+        dispatch(openChat(participant));
+    });
+
+    eventEmitter.addListener(ExternalAPI.CLOSE_CHAT, () => {
+        dispatch(closeChat());
+    });
+
+    eventEmitter.addListener(ExternalAPI.SEND_CHAT_MESSAGE, ({ message, to }) => {
+        const participant = getParticipantById(store, to);
+
+        if (participant) {
+            dispatch(setPrivateMessageRecipient(participant));
+        }
+
+        dispatch(sendMessage(message));
+    });
+
 }
 
 /**
@@ -316,6 +363,36 @@ function _registerForEndpointTextMessages(store) {
                 }
             }
         });
+
+    conference.on(
+        JitsiConferenceEvents.MESSAGE_RECEIVED,
+            (id, message, timestamp) => {
+                sendEvent(
+                    store,
+                    CHAT_MESSAGE_RECEIVED,
+                    /* data */ {
+                        senderId: id,
+                        message,
+                        isPrivate: false,
+                        timestamp
+                    });
+            }
+    );
+
+    conference.on(
+        JitsiConferenceEvents.PRIVATE_MESSAGE_RECEIVED,
+            (id, message, timestamp) => {
+                sendEvent(
+                    store,
+                    CHAT_MESSAGE_RECEIVED,
+                    /* data */ {
+                        senderId: id,
+                        message,
+                        isPrivate: true,
+                        timestamp
+                    });
+            }
+    );
 }
 
 /**

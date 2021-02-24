@@ -4,7 +4,6 @@ declare var JitsiMeetJS: Object;
 
 import uuid from 'uuid';
 
-import { getRoomName } from '../base/conference';
 import { getDialOutStatusUrl, getDialOutUrl } from '../base/config/functions';
 import { createLocalTrack } from '../base/lib-jitsi-meet';
 import {
@@ -262,10 +261,7 @@ export function makePrecallTest(conferenceOptions: Object) {
  */
 export function openDialInPage() {
     return function(dispatch: Function, getState: Function) {
-        const state = getState();
-        const locationURL = state['features/base/connection'].locationURL;
-        const roomName = getRoomName(state);
-        const dialInPage = getDialInfoPageURL(roomName, locationURL);
+        const dialInPage = getDialInfoPageURL(getState());
 
         openURLInBrowser(dialInPage, true);
     };
