@@ -11,6 +11,17 @@ const models = {
     '144': 'libs/segm_full_v679.tflite'
 };
 
+const segmentationDimensions = {
+    'version96': {
+        'segmentationHeight': 96,
+        'segmentationWidth': 160
+    },
+    'version144': {
+        'segmentationHeight': 144,
+        'segmentationWidth': 256
+    }
+};
+
 /**
  * Creates a new instance of JitsiStreamBlurEffect. This loads the bodyPix model that is used to
  * extract person segmentation.
@@ -31,7 +42,7 @@ export async function createBlurEffect() {
 
     const modelBufferOffset = tflite._getModelBufferMemoryOffset();
     const modelResponse = await fetch(
-        models['144']
+        wasmCheck.feature.simd ? models['144'] : models['96']
     );
 
     if (!modelResponse.ok) {
@@ -44,5 +55,7 @@ export async function createBlurEffect() {
 
     tflite._loadModel(model.byteLength);
 
-    return new JitsiStreamBlurEffect(tflite);
+    const options = wasmCheck.feature.simd ? segmentationDimensions['version144'] : segmentationDimensions['version96'];
+
+    return new JitsiStreamBlurEffect(tflite, options);
 }

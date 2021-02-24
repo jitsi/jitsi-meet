@@ -1,7 +1,6 @@
 // @flow
 
 import React, { Component } from 'react';
-import * as wasmCheck from 'wasm-check';
 
 import {
     ACTION_SHORTCUT_TRIGGERED,
@@ -35,6 +34,7 @@ import {
 import { connect, equals } from '../../../base/redux';
 import { OverflowMenuItem } from '../../../base/toolbox/components';
 import { getLocalVideoTrack, toggleScreensharing } from '../../../base/tracks';
+import { checkFilterSupport } from '../../../blur/functions';
 import { isVpaasMeeting } from '../../../billing-counter/functions';
 import { VideoBlurButton } from '../../../blur';
 import { CHAT_SIZE, ChatCounter, toggleChat } from '../../../chat';
@@ -1070,7 +1070,7 @@ class Toolbox extends Component<Props, State> {
                 && <VideoBlurButton
                     key = 'videobackgroundblur'
                     showLabel = { true }
-                    visible = { !_screensharing && wasmCheck.feature.simd } />,
+                    visible = { !_screensharing && checkFilterSupport() } />,
             this._shouldShowButton('settings')
                 && <SettingsButton
                     key = 'settings'
