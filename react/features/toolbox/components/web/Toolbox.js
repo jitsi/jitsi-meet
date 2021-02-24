@@ -70,7 +70,6 @@ import {
     OverflowMenuVideoQualityItem,
     VideoQualityDialog
 } from '../../../video-quality';
-import { toggleSharedVideo } from '../../../youtube-player/actions';
 import {
     setFullScreen,
     setOverflowMenuVisible,
@@ -259,7 +258,6 @@ class Toolbox extends Component<Props, State> {
         this._onToolbarToggleProfile = this._onToolbarToggleProfile.bind(this);
         this._onToolbarToggleRaiseHand = this._onToolbarToggleRaiseHand.bind(this);
         this._onToolbarToggleScreenshare = this._onToolbarToggleScreenshare.bind(this);
-        this._onToolbarToggleSharedVideo = this._onToolbarToggleSharedVideo.bind(this);
         this._onToolbarOpenLocalRecordingInfoDialog = this._onToolbarOpenLocalRecordingInfoDialog.bind(this);
         this._onShortcutToggleTileView = this._onShortcutToggleTileView.bind(this);
 
@@ -502,16 +500,6 @@ class Toolbox extends Component<Props, State> {
         if (this.props._desktopSharingEnabled) {
             this.props.dispatch(toggleScreensharing());
         }
-    }
-
-    /**
-     * Dispatches an action to toggle YouTube video sharing.
-     *
-     * @private
-     * @returns {void}
-     */
-    _doToggleSharedVideo() {
-        this.props.dispatch(toggleSharedVideo());
     }
 
     /**
@@ -897,24 +885,6 @@ class Toolbox extends Component<Props, State> {
         this._doToggleScreenshare();
     }
 
-    _onToolbarToggleSharedVideo: () => void;
-
-    /**
-     * Creates an analytics toolbar event and dispatches an action for toggling
-     * the sharing of a YouTube video.
-     *
-     * @private
-     * @returns {void}
-     */
-    _onToolbarToggleSharedVideo() {
-        sendAnalytics(createToolbarEvent('shared.video.toggled',
-            {
-                enable: !this.props._sharingVideo
-            }));
-
-        this._doToggleSharedVideo();
-    }
-
     _onToolbarOpenLocalRecordingInfoDialog: () => void;
 
     /**
@@ -930,7 +900,7 @@ class Toolbox extends Component<Props, State> {
     }
 
     /**
-     * Returns true if the the desktop sharing button should be visible and
+     * Returns true if the desktop sharing button should be visible and
      * false otherwise.
      *
      * @returns {boolean}
@@ -1057,7 +1027,6 @@ class Toolbox extends Component<Props, State> {
                     showLabel = { true } />,
             this._shouldShowButton('sharedvideo')
                 && <SharedVideoButton
-                    accessibilityLabel = { t('toolbar.accessibilityLabel.sharedvideo') }
                     key = 'sharedvideo'
                     showLabel = { true } />,
             this._shouldShowButton('etherpad')
@@ -1428,7 +1397,6 @@ function _mapStateToProps(state) {
         callStatsID,
         enableFeaturesBasedOnToken
     } = state['features/base/config'];
-    const sharedVideoStatus = state['features/shared-video'].status;
     const {
         fullScreen,
         overflowMenuVisible
@@ -1469,9 +1437,6 @@ function _mapStateToProps(state) {
         _overflowMenuVisible: overflowMenuVisible,
         _raisedHand: localParticipant.raisedHand,
         _screensharing: localVideo && localVideo.videoType === 'desktop',
-        _sharingVideo: sharedVideoStatus === 'playing'
-            || sharedVideoStatus === 'start'
-            || sharedVideoStatus === 'pause',
         _visible: isToolboxVisible(state),
         _visibleButtons: equals(visibleButtons, buttons) ? visibleButtons : buttons
     };

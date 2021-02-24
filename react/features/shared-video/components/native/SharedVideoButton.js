@@ -2,7 +2,6 @@
 
 import type { Dispatch } from 'redux';
 
-import { isSharingStatus } from '../../';
 import { getFeatureFlag, VIDEO_SHARE_BUTTON_ENABLED } from '../../../base/flags';
 import { translate } from '../../../base/i18n';
 import { IconShareVideo } from '../../../base/icons';
@@ -10,6 +9,7 @@ import { getLocalParticipant } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
 import { toggleSharedVideo } from '../../actions.native';
+import { isSharingStatus } from '../../functions';
 
 /**
  * The type of the React {@code Component} props of {@link TileViewButton}.
@@ -109,6 +109,7 @@ function _mapStateToProps(state, ownProps): Object {
     }
 
     return {
+        _isDisabled: false,
         _sharingVideo: isSharingStatus(sharedVideoStatus),
         visible
     };
