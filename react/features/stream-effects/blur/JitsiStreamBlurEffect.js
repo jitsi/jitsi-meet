@@ -16,7 +16,7 @@ const blurValue = '25px';
 export default class JitsiStreamBlurEffect {
     _model: Object;
     _options: Object;
-     _segmentationPixelCount: Number;
+     _segmentationPixelCount: number;
     _inputVideoElement: HTMLVideoElement;
     _onMaskFrameTimer: Function;
     _maskFrameTimerWorker: Worker;
