@@ -40,6 +40,7 @@ export default class JitsiStreamBlurEffect {
         this._model = bpModel;
         this._options = dimensionOptions;
         this.segmentationPixelCount = this._options.segmentationWidth * this._options.segmentationHeight;
+
         // Bind event handler so it is only bound once for every instance.
         this._onMaskFrameTimer = this._onMaskFrameTimer.bind(this);
 
