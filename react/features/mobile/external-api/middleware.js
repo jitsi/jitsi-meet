@@ -26,6 +26,7 @@ import {
     getURLWithoutParams
 } from '../../base/connection';
 import { JitsiConferenceEvents } from '../../base/lib-jitsi-meet';
+import { MEDIA_TYPE } from '../../base/media';
 import { SET_AUDIO_MUTED } from '../../base/media/actionTypes';
 import { PARTICIPANT_JOINED, PARTICIPANT_LEFT, getParticipants, getParticipantById } from '../../base/participants';
 import { MiddlewareRegistry, StateListenerRegistry } from '../../base/redux';
@@ -270,7 +271,7 @@ function _registerForNativeEvents(store) {
     });
 
     eventEmitter.addListener(ExternalAPI.SET_AUDIO_MUTED, ({ muted }) => {
-        dispatch(muteLocal(muted === 'true'));
+        dispatch(muteLocal(muted === 'true', MEDIA_TYPE.AUDIO));
     });
 
     eventEmitter.addListener(ExternalAPI.SEND_ENDPOINT_TEXT_MESSAGE, ({ to, message }) => {
