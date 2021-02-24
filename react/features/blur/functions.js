@@ -15,21 +15,22 @@ export function getBlurEffect() {
     }
 
     return loadScript('libs/video-blur-effect.min.js').then(() => ns.effects.createBlurEffect());
-};
+}
 
 /**
- * Checks context filter support
+ * Checks context filter support.
  *
  * @returns {boolean} true if the filter is supported and false if the filter is not supported by the browser.
  */
 export function checkFilterSupport() {
-    const canvas = document.createElement('canvas')
-    const ctx = canvas.getContext('2d')
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+
     if (ctx.filter === 'undefined') {
-        return false
+        return false;
     }
     if (ctx.filter !== 'undefined') {
-        return true
+        return true;
     }
-    canvas.remove()
+    canvas.remove();
 }

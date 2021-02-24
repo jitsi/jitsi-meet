@@ -55,7 +55,7 @@ export async function createBlurEffect() {
 
     tflite._loadModel(model.byteLength);
 
-    const options = wasmCheck.feature.simd ? segmentationDimensions['version144'] : segmentationDimensions['version96'];
+    const options = wasmCheck.feature.simd ? segmentationDimensions.version144 : segmentationDimensions.version96;
 
     return new JitsiStreamBlurEffect(tflite, options);
 }

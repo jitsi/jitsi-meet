@@ -1,7 +1,5 @@
 // @flow
 
-import React from 'react';
-
 import { createVideoBlurEvent, sendAnalytics } from '../../analytics';
 import { translate } from '../../base/i18n';
 import { IconBlurBackground } from '../../base/icons';
