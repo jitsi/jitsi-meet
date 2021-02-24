@@ -83,7 +83,7 @@ class SharedVideoDialog extends AbstractSharedVideoDialog<*> {
                     autoFocus = { true }
                     compact = { false }
                     label = { t('dialog.videoLink') }
-                    name = { 'sharedVideoUrl' }
+                    name = 'sharedVideoUrl'
                     onChange = { this._onChange }
                     placeholder = { defaultSharedVideoLink }
                     shouldFitContainer = { true }

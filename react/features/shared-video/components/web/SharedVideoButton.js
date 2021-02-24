@@ -109,7 +109,7 @@ class SharedVideoButton extends AbstractButton<Props, *> {
     }
 
     /**
-     * Dispatches an action to toggle YouTube video sharing.
+     * Dispatches an action to toggle video sharing.
      *
      * @private
      * @returns {void}

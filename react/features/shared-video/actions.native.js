@@ -8,7 +8,7 @@ import { SharedVideoDialog } from './components/native';
 /**
  * Updates the current known status of the shared video.
  *
- * @param {string} videoId - The youtubeId of the video to be shared.
+ * @param {string} videoId - The id of the video to be shared.
  * @param {string} status - The current status of the video being shared.
  * @param {number} time - The current position of the video being shared.
  * @param {string} ownerId - The participantId of the user sharing the video.

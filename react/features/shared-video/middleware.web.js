@@ -8,7 +8,7 @@ import { TOGGLE_SHARED_VIDEO } from './actionTypes';
 declare var APP: Object;
 
 /**
- * Middleware that captures actions related to YouTube video sharing and updates
+ * Middleware that captures actions related to video sharing and updates
  * components not hooked into redux.
  *
  * @param {Store} store - The redux store.

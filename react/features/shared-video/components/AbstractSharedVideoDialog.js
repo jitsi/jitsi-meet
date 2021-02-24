@@ -13,12 +13,12 @@ import { getYoutubeLink } from '../functions';
 export type Props = {
 
     /**
-     * Invoked to update the shared youtube video link.
+     * Invoked to update the shared video link.
      */
     dispatch: Dispatch<any>,
 
     /**
-     * Function to be invoked after typing a valid youtube video .
+     * Function to be invoked after typing a valid video.
      */
     onPostSubmit: ?Function,
 

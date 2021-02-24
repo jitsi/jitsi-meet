@@ -21,7 +21,7 @@ export function setSharedVideoStatus(status: string) {
 }
 
 /**
- * Starts the flow for starting or stopping a shared YouTube video.
+ * Starts the flow for starting or stopping a shared video.
  *
  * @returns {{
  *     type: TOGGLE_SHARED_VIDEO
@@ -34,7 +34,7 @@ export function toggleSharedVideo() {
 }
 
 /**
- * Displays the dialog for entering the youtube video link.
+ * Displays the dialog for entering the video link.
  *
  * @param {Function} onPostSubmit - The function to be invoked when a valid link is entered.
  * @returns {Function}
