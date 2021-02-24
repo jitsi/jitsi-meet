@@ -55,7 +55,7 @@ type Props = {
      * Whether or not email sharing features should be visible.
      */
     _emailSharingVisible: boolean,
-  
+
     /**
      * The meeting invitation text.
      */
@@ -192,7 +192,6 @@ function mapStateToProps(state, ownProps) {
     const phoneNumber = dialIn && dialIn.numbers ? _getDefaultPhoneNumber(dialIn.numbers) : undefined;
 
     return {
-        _conferenceName: getRoomName(state),
         _dialIn: dialIn,
         _embedMeetingVisible: !isVpaasMeeting(state) && isSharingEnabled(sharingFeatures.embed),
         _dialInVisible: isSharingEnabled(sharingFeatures.dialIn),
