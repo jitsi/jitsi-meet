@@ -12,20 +12,14 @@ import { getDialInfoPageURL, shouldDisplayDialIn } from '../../invite';
 type Props = {
 
     /**
-     * The name of the current conference.
-     */
-    _room: string,
-
-    /**
-     * The current location url of the conference.
-     */
-    _locationURL: string,
-
-
-    /**
      * The redux state representing the dial-in numbers feature.
      */
     _dialIn: Object,
+
+    /**
+     * The url of the page containing the dial-in numbers list.
+     */
+    _dialInfoPageUrl: string,
 
     /**
      * Invoked to obtain translated strings.
@@ -47,7 +41,7 @@ class DialInLink extends Component<Props> {
      * @returns {ReactElement}
      */
     render() {
-        const { _room, _locationURL, _dialIn, t } = this.props;
+        const { _dialIn, _dialInfoPageUrl, t } = this.props;
 
         if (!shouldDisplayDialIn(_dialIn)) {
             return null;
@@ -56,12 +50,7 @@ class DialInLink extends Component<Props> {
         return (
             <div>{t('toolbar.noAudioSignalDialInDesc')}&nbsp;
                 <a
-                    href = {
-                        getDialInfoPageURL(
-                            _room,
-                            _locationURL
-                        )
-                    }
+                    href = { _dialInfoPageUrl }
                     rel = 'noopener noreferrer'
                     target = '_blank'>
                     {t('toolbar.noAudioSignalDialInLinkDesc')}
@@ -77,18 +66,12 @@ class DialInLink extends Component<Props> {
  *
  * @param {Object} state - The Redux state.
  * @private
- * @returns {{
-    *     _room: string,
-    *     _locationURL: string,
-    *     _dialIn: Object,
-    * }}
-    */
+ * @returns {Props}
+ */
 function _mapStateToProps(state) {
-
     return {
-        _room: state['features/base/conference'].room,
-        _locationURL: state['features/base/connection'].locationURL,
-        _dialIn: state['features/invite']
+        _dialIn: state['features/invite'],
+        _dialInfoPageUrl: getDialInfoPageURL(state)
     };
 }
 

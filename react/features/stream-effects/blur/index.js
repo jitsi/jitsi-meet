@@ -34,6 +34,10 @@ export async function createBlurEffect() {
         models['144']
     );
 
+    if (!modelResponse.ok) {
+        throw new Error('Failed to download tflite model!');
+    }
+
     const model = await modelResponse.arrayBuffer();
 
     tflite.HEAPU8.set(new Uint8Array(model), modelBufferOffset);
