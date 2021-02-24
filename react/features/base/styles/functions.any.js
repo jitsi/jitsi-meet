@@ -2,6 +2,7 @@
 import Platform from '../react/Platform';
 
 import { ColorPalette } from './components';
+import { isIPhoneX, getStatusBarHeight } from './functions.native';
 
 declare type StyleSheet = Object;
 export type StyleType = StyleSheet | Array<StyleSheet>;
@@ -36,6 +37,14 @@ const RGBA_COLOR_FORMAT
  * @private
  */
 const _WELL_KNOWN_NUMBER_PROPERTIES = [ 'height', 'width' ];
+
+const isPad = Platform.isPad;
+
+export const JANE_WELCOME_PAGE_DESIGN_HEIGHT = isPad ? 1080 : 844;
+export const JANE_WELCOME_PAGE_DESIGN_WIDTH = isPad ? 811 : 390;
+
+// safe area view padding top + padding bottom from design mockup
+export const JANE_WELCOME_PAGE_DESIGN_SAFE_AREA_VIEW_PADDING = isPad ? 0 : isIPhoneX() ? 53 : getStatusBarHeight();
 
 /**
  * Function to convert complex StyleType styles into a single flat object,

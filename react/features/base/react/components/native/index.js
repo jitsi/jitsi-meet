@@ -27,3 +27,5 @@ export { default as SlidingView } from './SlidingView';
 export { default as Switch } from './Switch';
 export { default as Text } from './Text';
 export { default as TintedView } from './TintedView';
+export { default as JaneButton } from './JaneButton';
+export { default as FixedScaleText } from './FixedScaleText';
