@@ -1,5 +1,9 @@
 // @flow
 
+import { getParticipants } from '../base/participants';
+
+import { VIDEO_PLAYER_PARTICIPANT_NAME } from './constants';
+
 /**
  * Validates the entered video url.
  *
@@ -24,4 +28,17 @@ export function getYoutubeLink(url: string) {
  */
 export function isSharingStatus(status: string) {
     return [ 'playing', 'pause', 'start' ].includes(status);
+}
+
+
+/**
+ * Returns true if there is a video being shared in the meeting.
+ *
+ * @param {Object | Function} stateful - The Redux state or a function that gets resolved to the Redux state.
+ * @returns {boolean}
+ */
+export function isVideoPlaying(stateful: Object | Function): boolean {
+    return Boolean(getParticipants(stateful).find(p => p.isFakeParticipant
+        && p.name === VIDEO_PLAYER_PARTICIPANT_NAME)
+    );
 }

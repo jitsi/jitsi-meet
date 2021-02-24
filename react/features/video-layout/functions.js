@@ -10,7 +10,7 @@ import {
     SINGLE_COLUMN_BREAKPOINT,
     TWO_COLUMN_BREAKPOINT
 } from '../filmstrip/constants';
-import { isYoutubeVideoPlaying } from '../youtube-player/functions';
+import { isVideoPlaying } from '../shared-video/functions';
 
 import { LAYOUTS } from './constants';
 
@@ -154,7 +154,7 @@ export function shouldDisplayTileView(state: Object = {}) {
         || participantCount < 3
 
         // There is a shared YouTube video in the meeting
-        || isYoutubeVideoPlaying(state)
+        || isVideoPlaying(state)
 
         // We want jibri to use stage view by default
         || iAmRecorder
