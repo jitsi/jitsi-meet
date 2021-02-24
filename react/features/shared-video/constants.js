@@ -4,7 +4,7 @@
  * Example shared video link.
  * @type {string}
  */
-export const defaultSharedVideoLink = 'https://youtu.be/TB7LlM4erx8';
+export const defaultSharedVideoLink = 'e.g. https://youtu.be/TB7LlM4erx8';
 
 /**
  * Fixed name of the video player fake participant.

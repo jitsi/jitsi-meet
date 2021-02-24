@@ -81,6 +81,7 @@ class SharedVideoDialog extends AbstractSharedVideoDialog<*> {
                 width = { 'small' }>
                 <FieldTextStateless
                     autoFocus = { true }
+                    className = 'input-control'
                     compact = { false }
                     label = { t('dialog.videoLink') }
                     name = 'sharedVideoUrl'
