@@ -16,6 +16,7 @@ const blurValue = '25px';
 export default class JitsiStreamBlurEffect {
     _model: Object;
     _options: Object;
+     _segmentationPixelCount: Number;
     _inputVideoElement: HTMLVideoElement;
     _onMaskFrameTimer: Function;
     _maskFrameTimerWorker: Worker;
@@ -39,7 +40,7 @@ export default class JitsiStreamBlurEffect {
     constructor(bpModel: Object, dimensionOptions: Object) {
         this._model = bpModel;
         this._options = dimensionOptions;
-        this.segmentationPixelCount = this._options.segmentationWidth * this._options.segmentationHeight;
+        this._segmentationPixelCount = this._options.segmentationWidth * this._options.segmentationHeight;
 
         // Bind event handler so it is only bound once for every instance.
         this._onMaskFrameTimer = this._onMaskFrameTimer.bind(this);
@@ -103,7 +104,7 @@ export default class JitsiStreamBlurEffect {
         this._model._runInference();
         const outputMemoryOffset = this._model._getOutputMemoryOffset() / 4;
 
-        for (let i = 0; i < this.segmentationPixelCount; i++) {
+        for (let i = 0; i < this._segmentationPixelCount; i++) {
             const background = this._model.HEAPF32[outputMemoryOffset + (i * 2)];
             const person = this._model.HEAPF32[outputMemoryOffset + (i * 2) + 1];
             const shift = Math.max(background, person);
@@ -159,7 +160,7 @@ export default class JitsiStreamBlurEffect {
         );
         const inputMemoryOffset = this._model._getInputMemoryOffset() / 4;
 
-        for (let i = 0; i < this.segmentationPixelCount; i++) {
+        for (let i = 0; i < this._segmentationPixelCount; i++) {
             this._model.HEAPF32[inputMemoryOffset + (i * 3)] = imageData.data[i * 4] / 255;
             this._model.HEAPF32[inputMemoryOffset + (i * 3) + 1] = imageData.data[(i * 4) + 1] / 255;
             this._model.HEAPF32[inputMemoryOffset + (i * 3) + 2] = imageData.data[(i * 4) + 2] / 255;
