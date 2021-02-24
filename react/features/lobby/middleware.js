@@ -6,7 +6,7 @@ import { getFirstLoadableAvatarUrl, getParticipantDisplayName } from '../base/pa
 import { MiddlewareRegistry, StateListenerRegistry } from '../base/redux';
 import { isTestModeEnabled } from '../base/testing';
 import { NOTIFICATION_TYPE, showNotification } from '../notifications';
-import { isPrejoinPageEnabled } from '../prejoin/functions';
+import { shouldAutoKnock } from '../prejoin/functions';
 
 import { KNOCKING_PARTICIPANT_ARRIVED_OR_UPDATED } from './actionTypes';
 import {
@@ -100,8 +100,7 @@ function _conferenceFailed({ dispatch, getState }, next, action) {
 
         dispatch(openLobbyScreen());
 
-        if (isPrejoinPageEnabled(state) && !state['features/lobby'].knocking) {
-            // prejoin is enabled, so we knock automatically
+        if (shouldAutoKnock(state)) {
             dispatch(startKnocking());
         }
 

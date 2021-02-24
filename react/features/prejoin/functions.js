@@ -162,3 +162,16 @@ export function isPrejoinPageEnabled(state: Object): boolean {
 export function isPrejoinPageVisible(state: Object): boolean {
     return isPrejoinPageEnabled(state) && state['features/prejoin']?.showPrejoin;
 }
+
+/**
+ * Returns true if we should auto-knock in case lobby is enabled for the room.
+ *
+ * @param {Object} state - The state of the app.
+ * @returns {boolean}
+ */
+export function shouldAutoKnock(state: Object): boolean {
+    const { iAmRecorder, iAmSipGateway } = state['features/base/config'];
+
+    return (isPrejoinPageEnabled(state) || (iAmRecorder && iAmSipGateway))
+        && !state['features/lobby'].knocking;
+}
