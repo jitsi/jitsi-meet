@@ -67,7 +67,6 @@ local datetime = require 'util.datetime';
 local get_room_from_jid = module:require "util".get_room_from_jid;
 local is_healthcheck_room = module:require "util".is_healthcheck_room;
 local room_jid_match_rewrite = module:require "util".room_jid_match_rewrite;
-local internal_room_jid_match_rewrite =  module:require "util".internal_room_jid_match_rewrite;
 
 local api_prefix = module:get_option("reservations_api_prefix");
 local api_headers = module:get_option("reservations_api_headers");
@@ -495,19 +494,21 @@ local function evict_expired_reservations()
         end
     end
 
-    local res;
     local room;
     for _, room_jid in ipairs(expired) do
-        module:log("debug", "Dropped expired reservation for %s", room_jid);
-        res = reservations[room_jid]
-        reservations[room_jid] = nil;
-
         room = get_room_from_jid(room_jid);
         if room then
             -- Close room if still active (reservation duration exceeded)
-            module.log("info", "Room exceeded reservation duration. Terminating %s", room_jid);
+            module:log("info", "Room exceeded reservation duration. Terminating %s", room_jid);
             room:clear();
             room:destroy();
+            -- Rely on room_destroyed to calls DELETE /conference and drops reservation[room_jid]
+        else
+            module:log("error", "Reservation references expired room that is no longer active. Dropping %s", room_jid);
+            -- This should not happen unless evict_expired_reservations somehow gets triggered
+            -- between the time room is destroyed and room_destroyed callback is called. (Possible?)
+            -- But just in case, we drop the reservation to avoid repeating this path on every pass.
+            reservations[room_jid] = nil;
         end
     end
 end
@@ -553,10 +554,11 @@ local function room_destroyed(event)
 
     if not is_healthcheck_room(room.jid) then
         res = reservations[room.jid]
+
+        -- drop reservation data for this room
         reservations[room.jid] = nil
 
-        -- reservation may not exist if room destroyed by expiry check (which drops reservation too)
-        if res then
+        if res then  -- just in case event triggered more than once?
             module:log("info", "Dropped reservation data for destroyed room %s", room.jid);
 
             local conflict_id = res.meta.conflict_id
