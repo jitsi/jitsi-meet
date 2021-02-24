@@ -33,13 +33,13 @@ export default class JitsiStreamBlurEffect {
      * Represents a modified video MediaStream track.
      *
      * @class
-     * @param {BodyPix} bpModel - BodyPix model.
+     * @param {Object} bpModel - Meet model.
+     * @param {Object} dimensionOptions - Segmentation dimensions.
      */
     constructor(bpModel: Object, dimensionOptions: Object) {
         this._model = bpModel;
         this._options = dimensionOptions;
         this.segmentationPixelCount = this._options.segmentationWidth * this._options.segmentationHeight;
-        
         // Bind event handler so it is only bound once for every instance.
         this._onMaskFrameTimer = this._onMaskFrameTimer.bind(this);
 

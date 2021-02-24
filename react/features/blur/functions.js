@@ -20,7 +20,7 @@ export function getBlurEffect() {
 /**
  * Checks context filter support.
  *
- * @returns {boolean} true if the filter is supported and false if the filter is not supported by the browser.
+ * @returns {boolean} True if the filter is supported and false if the filter is not supported by the browser.
  */
 export function checkFilterSupport() {
     const canvas = document.createElement('canvas');
