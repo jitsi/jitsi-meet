@@ -56,7 +56,7 @@ import {
     SettingsButton,
     openSettingsDialog
 } from '../../../settings';
-import { SharedVideoButton } from '../../../shared-video';
+import { SharedVideoButton } from '../../../shared-video/components';
 import { SpeakerStats } from '../../../speaker-stats';
 import {
     ClosedCaptionButton

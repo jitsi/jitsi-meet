@@ -1,8 +1,9 @@
 // @flow
 
 import { openDialog } from '../base/dialog/actions';
-import { SET_SHARED_VIDEO_STATUS, TOGGLE_SHARED_VIDEO } from '../shared-video/actionTypes';
 import { SharedVideoDialog } from '../shared-video/components';
+
+import { SET_SHARED_VIDEO_STATUS, TOGGLE_SHARED_VIDEO } from './actionTypes';
 
 /**
  * Updates the current known status of the shared video.
