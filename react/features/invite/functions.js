@@ -1,7 +1,11 @@
 // @flow
 
+import { getActiveSession } from '../../features/recording/functions';
+import { getRoomName } from '../base/conference';
+import { getInviteURL } from '../base/connection';
 import { i18next } from '../base/i18n';
-import { isLocalParticipantModerator } from '../base/participants';
+import { JitsiRecordingConstants } from '../base/lib-jitsi-meet';
+import { getLocalParticipant, isLocalParticipantModerator } from '../base/participants';
 import { toState } from '../base/redux';
 import { doGetJSON, parseURIString } from '../base/util';
 import { isVpaasMeeting } from '../billing-counter/functions';
@@ -239,43 +243,44 @@ export function getInviteResultsForQuery(
  * @returns {string}
  */
 export function getInviteText({
-    _conferenceName,
-    _localParticipantName,
-    _inviteUrl,
-    _locationUrl,
-    _dialIn,
-    _liveStreamViewURL,
+    state,
     phoneNumber,
     t
 }: Object) {
-    const inviteURL = _decodeRoomURI(_inviteUrl);
+    const dialIn = state['features/invite'];
+    const inviteUrl = getInviteURL(state);
+    const currentLiveStreamingSession = getActiveSession(state, JitsiRecordingConstants.mode.STREAM);
+    const liveStreamViewURL
+        = currentLiveStreamingSession
+            && currentLiveStreamingSession.liveStreamViewURL;
+    const localParticipant = getLocalParticipant(state);
+    const localParticipantName = localParticipant?.name;
 
-    let invite = _localParticipantName
-        ? t('info.inviteURLFirstPartPersonal', { name: _localParticipantName })
+    const inviteURL = _decodeRoomURI(inviteUrl);
+
+    let invite = localParticipantName
+        ? t('info.inviteURLFirstPartPersonal', { name: localParticipantName })
         : t('info.inviteURLFirstPartGeneral');
 
     invite += t('info.inviteURLSecondPart', {
         url: inviteURL
     });
 
-    if (_liveStreamViewURL) {
+    if (liveStreamViewURL) {
         const liveStream = t('info.inviteLiveStream', {
-            url: _liveStreamViewURL
+            url: liveStreamViewURL
         });
 
         invite = `${invite}\n${liveStream}`;
     }
 
-    if (shouldDisplayDialIn(_dialIn)) {
+    if (shouldDisplayDialIn(dialIn)) {
         const dial = t('info.invitePhone', {
             number: phoneNumber,
-            conferenceID: _dialIn.conferenceID
+            conferenceID: dialIn.conferenceID
         });
         const moreNumbers = t('info.invitePhoneAlternatives', {
-            url: getDialInfoPageURL(
-                _conferenceName,
-                _locationUrl
-            ),
+            url: getDialInfoPageURL(state),
             silentUrl: `${inviteURL}#config.startSilent=true`
         });
 
@@ -514,9 +519,7 @@ export function getShareInfoText(
             .catch(error =>
                 logger.error('Error fetching numbers or conferenceID', error))
             .then(defaultDialInNumber => {
-                let dialInfoPageUrl = getDialInfoPageURL(
-                    room,
-                    state['features/base/connection'].locationURL);
+                let dialInfoPageUrl = getDialInfoPageURL(state);
 
                 if (useHtml) {
                     dialInfoPageUrl
@@ -537,28 +540,19 @@ export function getShareInfoText(
 /**
  * Generates the URL for the static dial in info page.
  *
- * @param {string} conferenceName - The conference name.
- * @param {Object} locationURL - The current location URL, the object coming
- * from state ['features/base/connection'].locationURL.
+ * @param {Object} state - The state from the Redux store.
  * @returns {string}
  */
-export function getDialInfoPageURL(
-        conferenceName: string,
-        locationURL: Object) {
-    const origin = locationURL.origin;
-    const pathParts = locationURL.pathname.split('/');
+export function getDialInfoPageURL(state: Object) {
+    const { didPageUrl } = state['features/dynamic-branding'];
+    const conferenceName = getRoomName(state);
+    const { locationURL } = state['features/base/connection'];
+    const { href } = locationURL;
+    const room = _decodeRoomURI(conferenceName);
 
-    pathParts.length = pathParts.length - 1;
+    const url = didPageUrl || `${href.substring(0, href.lastIndexOf('/'))}/static/dialInInfo.html`;
 
-    const newPath = pathParts.reduce((accumulator, currentValue) => {
-        if (currentValue) {
-            return `${accumulator}/${currentValue}`;
-        }
-
-        return accumulator;
-    }, '');
-
-    return `${origin}${newPath}/static/dialInInfo.html?room=${_decodeRoomURI(conferenceName)}`;
+    return `${url}?room=${room}`;
 }
 
 /**

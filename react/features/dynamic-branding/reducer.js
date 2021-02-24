@@ -59,6 +59,14 @@ const DEFAULT_STATE = {
     defaultBranding: true,
 
     /**
+     * Url for a custom page for DID numbers list.
+     *
+     * @public
+     * @type {string}
+     */
+    didPageUrl: '',
+
+    /**
      * The custom invite domain.
      *
      * @public
@@ -101,6 +109,7 @@ ReducerRegistry.register(STORE_NAME, (state = DEFAULT_STATE, action) => {
             backgroundColor,
             backgroundImageUrl,
             defaultBranding,
+            didPageUrl,
             inviteDomain,
             logoClickUrl,
             logoImageUrl
@@ -110,6 +119,7 @@ ReducerRegistry.register(STORE_NAME, (state = DEFAULT_STATE, action) => {
             backgroundColor,
             backgroundImageUrl,
             defaultBranding,
+            didPageUrl,
             inviteDomain,
             logoClickUrl,
             logoImageUrl,
