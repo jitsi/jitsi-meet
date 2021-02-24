@@ -1079,7 +1079,7 @@ class Toolbox extends Component<Props, State> {
                 && <MuteEveryoneButton
                     key = 'mute-everyone'
                     showLabel = { true } />,
-            this._shouldShowButton('mute-mute-video-everyone')
+            this._shouldShowButton('mute-video-everyone')
                 && <MuteEveryonesVideoButton
                     key = 'mute-video-everyone'
                     showLabel = { true } />,
