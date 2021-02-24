@@ -90,4 +90,18 @@
  */
 - (void)screenShareToggled:(NSDictionary *)data;
 
+/**
+ * Called when a chat message is received.
+ *
+ * The `data` dictionary contains `message`, `senderId` and  `isPrivate` keys.
+ */
+- (void)chatMessaageReceived:(NSDictionary *)data;
+
+/**
+ * Called when the chat dialog is displayed/hidden.
+ *
+ * The `data` dictionary contains a `isOpen` key.
+ */
+- (void)chatToggled:(NSDictionary *)data;
+
 @end

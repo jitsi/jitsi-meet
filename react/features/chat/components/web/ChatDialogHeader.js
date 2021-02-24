@@ -5,7 +5,7 @@ import React from 'react';
 import { translate } from '../../../base/i18n';
 import { Icon, IconClose } from '../../../base/icons';
 import { connect } from '../../../base/redux';
-import { closeChat } from '../../actions.any';
+import { toggleChat } from '../../actions.web';
 
 type Props = {
 
@@ -42,6 +42,6 @@ function Header({ onCancel, className, t }: Props) {
     );
 }
 
-const mapDispatchToProps = { onCancel: closeChat };
+const mapDispatchToProps = { onCancel: toggleChat };
 
 export default translate(connect(null, mapDispatchToProps)(Header));

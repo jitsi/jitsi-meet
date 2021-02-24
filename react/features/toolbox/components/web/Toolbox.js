@@ -1,6 +1,7 @@
 // @flow
 
 import React, { Component } from 'react';
+import * as wasmCheck from 'wasm-check';
 
 import {
     ACTION_SHORTCUT_TRIGGERED,
@@ -1070,7 +1071,7 @@ class Toolbox extends Component<Props, State> {
                 && <VideoBlurButton
                     key = 'videobackgroundblur'
                     showLabel = { true }
-                    visible = { !_screensharing } />,
+                    visible = { !_screensharing && wasmCheck.feature.simd } />,
             this._shouldShowButton('settings')
                 && <SettingsButton
                     key = 'settings'

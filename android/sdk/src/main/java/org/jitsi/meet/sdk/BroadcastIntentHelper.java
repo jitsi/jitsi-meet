@@ -23,4 +23,21 @@ public class BroadcastIntentHelper {
     public static Intent buildToggleScreenShareIntent() {
         return new Intent(BroadcastAction.Type.TOGGLE_SCREEN_SHARE.getAction());
     }
+
+    public static Intent buildOpenChatIntent(String participantId) {
+        Intent intent = new Intent(BroadcastAction.Type.OPEN_CHAT.getAction());
+        intent.putExtra("to", participantId);
+        return intent;
+    }
+
+    public static Intent buildCloseChatIntent() {
+        return new Intent(BroadcastAction.Type.CLOSE_CHAT.getAction());
+    }
+
+    public static Intent buildSendChatMessageIntent(String participantId, String message) {
+        Intent intent = new Intent(BroadcastAction.Type.SEND_CHAT_MESSAGE.getAction());
+        intent.putExtra("to", participantId);
+        intent.putExtra("message", message);
+        return intent;
+    }
 }

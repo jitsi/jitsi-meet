@@ -63,7 +63,10 @@ public class BroadcastAction {
         HANG_UP("org.jitsi.meet.HANG_UP"),
         SEND_ENDPOINT_TEXT_MESSAGE("org.jitsi.meet.SEND_ENDPOINT_TEXT_MESSAGE"),
         TOGGLE_SCREEN_SHARE("org.jitsi.meet.TOGGLE_SCREEN_SHARE"),
-        RETRIEVE_PARTICIPANTS_INFO("org.jitsi.meet.RETRIEVE_PARTICIPANTS_INFO");
+        RETRIEVE_PARTICIPANTS_INFO("org.jitsi.meet.RETRIEVE_PARTICIPANTS_INFO"),
+        OPEN_CHAT("org.jitsi.meet.OPEN_CHAT"),
+        CLOSE_CHAT("org.jitsi.meet.CLOSE_CHAT"),
+        SEND_CHAT_MESSAGE("org.jitsi.meet.SEND_CHAT_MESSAGE");
 
         private final String action;
 

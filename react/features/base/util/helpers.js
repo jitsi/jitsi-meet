@@ -31,23 +31,14 @@ export function assignIfDefined(target: Object, source: Object) {
  * @param {string} textToCopy - Text to be copied.
  * @returns {boolean}
  */
-export function copyText(textToCopy: string) {
-    const fakeTextArea = document.createElement('textarea');
+export async function copyText(textToCopy: string) {
     let result;
 
-    // $FlowFixMe
-    document.body.appendChild(fakeTextArea);
-    fakeTextArea.value = textToCopy;
-    fakeTextArea.select();
-
     try {
-        result = document.execCommand('copy');
+        result = await navigator.clipboard.writeText(textToCopy);
     } catch (err) {
         result = false;
     }
-
-    // $FlowFixMe
-    document.body.removeChild(fakeTextArea);
 
     return result;
 }

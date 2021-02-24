@@ -125,9 +125,9 @@ static void initializeViewsMap() {
     [externalAPI sendSetAudioMuted:muted];
 }
 
-- (void)sendEndpointTextMessage:(NSString*)to :(NSString*)message {
+- (void)sendEndpointTextMessage:(NSString * _Nonnull)message :(NSString * _Nullable)to {
     ExternalAPI *externalAPI = [[JitsiMeet sharedInstance] getExternalAPI];
-    [externalAPI sendEndpointTextMessage:to :message];
+    [externalAPI sendEndpointTextMessage:message :to];
 }
 
 - (void)toggleScreenShare {
@@ -135,9 +135,24 @@ static void initializeViewsMap() {
     [externalAPI toggleScreenShare];
 }
 
-- (void)retrieveParticipantsInfo:(void (^)(NSArray*))completionHandler {
+- (void)retrieveParticipantsInfo:(void (^ _Nonnull)(NSArray * _Nullable))completionHandler {
     ExternalAPI *externalAPI = [[JitsiMeet sharedInstance] getExternalAPI];
     [externalAPI retrieveParticipantsInfo:completionHandler];
+}
+
+- (void)openChat:(NSString*)to  {
+    ExternalAPI *externalAPI = [[JitsiMeet sharedInstance] getExternalAPI];
+    [externalAPI openChat:to];
+}
+
+- (void)closeChat  {
+    ExternalAPI *externalAPI = [[JitsiMeet sharedInstance] getExternalAPI];
+    [externalAPI closeChat];
+}
+
+- (void)sendChatMessage:(NSString * _Nonnull)message :(NSString * _Nullable)to {
+    ExternalAPI *externalAPI = [[JitsiMeet sharedInstance] getExternalAPI];
+    [externalAPI sendChatMessage:message :to];
 }
 
 #pragma mark Private methods

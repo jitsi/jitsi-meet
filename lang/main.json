@@ -61,6 +61,7 @@
         "today": "Today"
     },
     "chat": {
+        "enter": "Enter chat room",
         "error": "Error: your message was not sent. Reason: {{error}}",
         "fieldPlaceHolder": "Type your message here",
         "messagebox": "Type a message",
