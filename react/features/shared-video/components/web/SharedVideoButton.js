@@ -2,7 +2,6 @@
 
 import type { Dispatch } from 'redux';
 
-import { isSharingStatus } from '../../';
 import {
     createSharedVideoEvent as createEvent,
     sendAnalytics
@@ -16,6 +15,7 @@ import {
     type AbstractButtonProps
 } from '../../../base/toolbox/components';
 import { showSharedVideoDialog } from '../../actions';
+import { isSharingStatus } from '../../functions';
 
 declare var APP: Object;
 
