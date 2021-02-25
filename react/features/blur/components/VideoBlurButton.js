@@ -1,12 +1,10 @@
 // @flow
 
-import React from 'react';
-
 import { createVideoBlurEvent, sendAnalytics } from '../../analytics';
 import { translate } from '../../base/i18n';
 import { IconBlurBackground } from '../../base/icons';
 import { connect } from '../../base/redux';
-import { AbstractButton, BetaTag } from '../../base/toolbox/components';
+import { AbstractButton } from '../../base/toolbox/components';
 import type { AbstractButtonProps } from '../../base/toolbox/components';
 import { toggleBlurEffect } from '../actions';
 
@@ -36,18 +34,6 @@ class VideoBlurButton extends AbstractButton<Props, *> {
     label = 'toolbar.startvideoblur';
     tooltip = 'toolbar.startvideoblur';
     toggledLabel = 'toolbar.stopvideoblur';
-
-    /**
-     * Helper function to be implemented by subclasses, which returns
-     * a React Element to display (a beta tag) at the end of the button.
-     *
-     * @override
-     * @protected
-     * @returns {ReactElement}
-     */
-    _getElementAfter() {
-        return <BetaTag />;
-    }
 
     /**
      * Handles clicking / pressing the button, and toggles the blur effect

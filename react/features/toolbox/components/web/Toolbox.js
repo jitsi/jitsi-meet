@@ -1,7 +1,6 @@
 // @flow
 
 import React, { Component } from 'react';
-import * as wasmCheck from 'wasm-check';
 
 import {
     ACTION_SHORTCUT_TRIGGERED,
@@ -37,6 +36,7 @@ import { OverflowMenuItem } from '../../../base/toolbox/components';
 import { getLocalVideoTrack, toggleScreensharing } from '../../../base/tracks';
 import { isVpaasMeeting } from '../../../billing-counter/functions';
 import { VideoBlurButton } from '../../../blur';
+import { checkBlurSupport } from '../../../blur/functions';
 import { CHAT_SIZE, ChatCounter, toggleChat } from '../../../chat';
 import { EmbedMeetingDialog } from '../../../embed-meeting';
 import { SharedDocumentButton } from '../../../etherpad';
@@ -1071,7 +1071,7 @@ class Toolbox extends Component<Props, State> {
                 && <VideoBlurButton
                     key = 'videobackgroundblur'
                     showLabel = { true }
-                    visible = { !_screensharing && wasmCheck.feature.simd } />,
+                    visible = { !_screensharing && checkBlurSupport() } />,
             this._shouldShowButton('settings')
                 && <SettingsButton
                     key = 'settings'
