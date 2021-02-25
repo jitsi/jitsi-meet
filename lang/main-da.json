@@ -150,7 +150,7 @@
         },
         "allow": "Tillad",
         "alreadySharedVideoMsg": "En anden deltager deler allerede en video. Denne konference tillader kun en delt video af gangen.",
-        "alreadySharedVideoTitle": "Det er kun muligt at dele én video af gangen",
+        "alreadySharedVideoTitle": "Det er kun muligt at dele én video ad gangen",
         "applicationWindow": "Applikationsvindue",
         "Back": "Tilbage",
         "cameraConstraintFailedError": "Dit kamera lever ikke op til de nødvendige krav..",
