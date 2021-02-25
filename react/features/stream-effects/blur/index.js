@@ -7,18 +7,18 @@ import createTFLiteModule from './vendor/tflite/tflite';
 import createTFLiteSIMDModule from './vendor/tflite/tflite-simd';
 
 const models = {
-    '96': 'libs/segm_lite_v681.tflite',
-    '144': 'libs/segm_full_v679.tflite'
+    'model96': 'libs/segm_lite_v681.tflite',
+    'model144': 'libs/segm_full_v679.tflite'
 };
 
 const segmentationDimensions = {
-    'version96': {
-        'segmentationHeight': 96,
-        'segmentationWidth': 160
+    'model96': {
+        'height': 96,
+        'width': 160
     },
-    'version144': {
-        'segmentationHeight': 144,
-        'segmentationWidth': 256
+    'model144': {
+        'height': 144,
+        'width': 256
     }
 };
 
@@ -42,7 +42,7 @@ export async function createBlurEffect() {
 
     const modelBufferOffset = tflite._getModelBufferMemoryOffset();
     const modelResponse = await fetch(
-        wasmCheck.feature.simd ? models['144'] : models['96']
+        wasmCheck.feature.simd ? models.model144 : models.model96
     );
 
     if (!modelResponse.ok) {
@@ -55,7 +55,7 @@ export async function createBlurEffect() {
 
     tflite._loadModel(model.byteLength);
 
-    const options = wasmCheck.feature.simd ? segmentationDimensions.version144 : segmentationDimensions.version96;
+    const options = wasmCheck.feature.simd ? segmentationDimensions.model144 : segmentationDimensions.model96;
 
     return new JitsiStreamBlurEffect(tflite, options);
 }
