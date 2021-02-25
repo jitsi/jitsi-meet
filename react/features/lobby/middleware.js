@@ -169,9 +169,8 @@ function _conferenceJoined({ dispatch }, next, action) {
 function _findLoadableAvatarForKnockingParticipant(store, { id }) {
     const { dispatch, getState } = store;
     const updatedParticipant = getState()['features/lobby'].knockingParticipants.find(p => p.id === id);
-    const { disableThirdPartyRequests } = getState()['features/base/config'];
 
-    if (!disableThirdPartyRequests && updatedParticipant && !updatedParticipant.loadableAvatarUrl) {
+    if (updatedParticipant && !updatedParticipant.loadableAvatarUrl) {
         getFirstLoadableAvatarUrl(updatedParticipant, store).then(loadableAvatarUrl => {
             if (loadableAvatarUrl) {
                 dispatch(participantIsKnockingOrUpdated({

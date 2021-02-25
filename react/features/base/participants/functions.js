@@ -3,7 +3,7 @@
 import { getGravatarURL } from '@jitsi/js-utils/avatar';
 import type { Store } from 'redux';
 
-import { JitsiParticipantConnectionStatus } from '../lib-jitsi-meet';
+import { isAvatarUrlValid, JitsiParticipantConnectionStatus } from '../lib-jitsi-meet';
 import { MEDIA_TYPE, shouldRenderVideoTrack } from '../media';
 import { toState } from '../redux';
 import { getTrackByMediaTypeAndParticipant } from '../tracks';
@@ -438,7 +438,7 @@ async function _getFirstLoadableAvatarUrl(participant, store) {
                 if (AVATAR_CHECKED_URLS.get(url)) {
                     return url;
                 }
-            } else {
+            } else if (isAvatarUrlValid(store, url)) {
                 try {
                     const finalUrl = await preloadImage(url);
 

@@ -471,9 +471,8 @@ function _participantJoinedOrUpdated(store, next, action) {
     // Only run this if the config is populated, otherwise we preload external resources
     // even if disableThirdPartyRequests is set to true in config
     if (Object.keys(getState()['features/base/config']).length) {
-        const { disableThirdPartyRequests } = getState()['features/base/config'];
 
-        if (!disableThirdPartyRequests && (avatarURL || email || id || name)) {
+        if (avatarURL || email || id || name) {
             const participantId = !id && local ? getLocalParticipant(getState()).id : id;
             const updatedParticipant = getParticipantById(getState(), participantId);
 
