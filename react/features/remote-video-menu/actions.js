@@ -1,4 +1,5 @@
 // @flow
+import { getLogger } from 'jitsi-meet-logger';
 import type { Dispatch } from 'redux';
 
 import UIEvents from '../../../service/UI/UIEvents';
@@ -25,6 +26,8 @@ import { RemoteVideoMenu } from './components';
 
 declare var APP: Object;
 
+const logger = getLogger(__filename);
+
 /**
  * Hides the remote video menu.
  *
@@ -46,7 +49,7 @@ export function muteLocal(enable: boolean, mediaType: MEDIA_TYPE) {
         const isAudio = mediaType === MEDIA_TYPE.AUDIO;
 
         if (!isAudio && mediaType !== MEDIA_TYPE.VIDEO) {
-            console.error(`Unsupported media type: ${mediaType}`);
+            logger.error(`Unsupported media type: ${mediaType}`);
 
             return;
         }
@@ -71,7 +74,7 @@ export function muteLocal(enable: boolean, mediaType: MEDIA_TYPE) {
 export function muteRemote(participantId: string, mediaType: MEDIA_TYPE) {
     return (dispatch: Dispatch<any>) => {
         if (mediaType !== MEDIA_TYPE.AUDIO && mediaType !== MEDIA_TYPE.VIDEO) {
-            console.error(`Unsupported media type: ${mediaType}`);
+            logger.error(`Unsupported media type: ${mediaType}`);
 
             return;
         }
