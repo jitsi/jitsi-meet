@@ -79,25 +79,27 @@ class DialInNumber extends Component<Props> {
 
         return (
             <div className = 'dial-in-number'>
-                <span className = 'phone-number'>
-                    <span className = 'info-label'>
-                        { t('info.dialInNumber') }
+                <div>
+                    <span className = 'phone-number'>
+                        <span className = 'info-label'>
+                            { t('info.dialInNumber') }
+                        </span>
+                        <span className = 'spacer'>&nbsp;</span>
+                        <span className = 'info-value'>
+                            { phoneNumber }
+                        </span>
                     </span>
                     <span className = 'spacer'>&nbsp;</span>
-                    <span className = 'info-value'>
-                        { phoneNumber }
+                    <span className = 'conference-id'>
+                        <span className = 'info-label'>
+                            { t('info.dialInConferenceID') }
+                        </span>
+                        <span className = 'spacer'>&nbsp;</span>
+                        <span className = 'info-value'>
+                            { `${_formatConferenceIDPin(conferenceID)}#` }
+                        </span>
                     </span>
-                </span>
-                <span className = 'spacer'>&nbsp;</span>
-                <span className = 'conference-id'>
-                    <span className = 'info-label'>
-                        { t('info.dialInConferenceID') }
-                    </span>
-                    <span className = 'spacer'>&nbsp;</span>
-                    <span className = 'info-value'>
-                        { `${_formatConferenceIDPin(conferenceID)}#` }
-                    </span>
-                </span>
+                </div>
                 <a
                     className = 'dial-in-copy'
                     onClick = { this._onCopyText }>

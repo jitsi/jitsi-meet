@@ -35,6 +35,7 @@ function getPerformanceHints(size) {
 const config = {
     devServer: {
         https: true,
+        host: '0.0.0.0',
         inline: true,
         proxy: {
             '/': {
@@ -102,7 +103,7 @@ const config = {
             // dependencies including lib-jitsi-meet.
 
             loader: 'expose-loader?$!expose-loader?jQuery',
-            test: /\/node_modules\/jquery\/.*\.js$/
+            test: /[/\\]node_modules[/\\]jquery[/\\].*\.js$/
         }, {
             // Allow CSS to be imported into JavaScript.
 
@@ -115,7 +116,8 @@ const config = {
             test: /\/node_modules\/@atlaskit\/modal-dialog\/.*\.js$/,
             resolve: {
                 alias: {
-                    'react-focus-lock': `${__dirname}/react/features/base/util/react-focus-lock-wrapper.js`
+                    'react-focus-lock': `${__dirname}/react/features/base/util/react-focus-lock-wrapper.js`,
+                    '../styled/Modal': `${__dirname}/react/features/base/dialog/components/web/ThemedDialog.js`
                 }
             }
         }, {
@@ -193,12 +195,6 @@ module.exports = [
             'app.bundle': './app.js'
         },
         performance: getPerformanceHints(4 * 1024 * 1024)
-    }),
-    Object.assign({}, config, {
-        entry: {
-            'device_selection_popup_bundle': './react/features/settings/popup.js'
-        },
-        performance: getPerformanceHints(750 * 1024)
     }),
     Object.assign({}, config, {
         entry: {

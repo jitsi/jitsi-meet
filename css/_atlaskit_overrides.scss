@@ -1,50 +1,116 @@
 /**
- * Move the @atlaskit/flag container up a little bit so it does not cover the
- * toolbar with the first notification.
+ * Mixins that mimic the way Atlaskit fills the screen with modals at low screen widths.
  */
-.jIMojv{
-    bottom: calc(#{$newToolbarSizeWithPadding}) !important;
+@mixin full-size-modal-positioner() {
+    height: 100%;
+    left: 0;
+    position: fixed;
+    top: 0;
+    max-width: 100%;
+    width: 100%;
+}
+
+@mixin full-size-modal-dialog() {
+    height: 100%;
+    max-height: 100%;
+    border-radius: 0;
 }
 
 /**
- * Disable the slide-in animation for @atlaskit/flag due to the animation
- * repeating for each queued flag once it becomes the top flag.
+ * Move the @atlaskit/flag container up a little bit so it does not cover the
+ * toolbar with the first notification.
  */
- .mIBKA:first-child {
-    animation: cbfRuT 0s !important;
-    -webkit-animation: cbfRuT 0s !important;
+.atlaskit-portal > #notifications-container {
+    bottom: calc(#{$newToolbarSizeWithPadding}) !important;
 }
 
 .modal-dialog-form {
     /**
-     * Update the @atlaskit/dropdown-menu trigger wrapper to make sure it looks
-     * click-able.
-     */
-    .cjJUnw {
-        cursor: pointer;
-    }
-
-    /**
      * Override @atlaskit/dropdown-menu styling when in a modal because the
      * dropdown backgrounds clash with the modal backgrounds.
      */
-    .cksvax[data-role=droplistContent] {
-        border: 1px solid #455166;
+    .dropdown-menu div[style*="transform"] {
+        outline: 1px solid #455166;
     }
+}
+
+/**
+ * Override @atlaskit/modal-dialog header styling
+ */
+.atlaskit-portal [role="dialog"] header {
+    .jitsi-icon {
+        cursor: pointer;
+    }
+
+    .jitsi-icon svg {
+        fill: #B8C7E0;
+    }
+}
+
+/**
+ * Make header close button more easily tappable on mobile.
+ */
+.mobile-browser .atlaskit-portal [role="dialog"] header .jitsi-icon {
+    display: grid;
+    place-items: center;
+    height: 48px;
+    width: 48px;
+    background: #2a3a4b;
+    border-radius: 3px;
 }
 
 /**
  * Override @atlaskit/theme styling for the top toolbar so it displays over
  * the video thumbnail while obscuring as little as possible.
  */
-.videocontainer .tOoji {
+.videocontainer__toptoolbar > div > div {
     background: none;
 }
 
+
 /**
- * Override @atlaskit/InlineDialog styling for the overflowmenu so it displays
- * with the correct height.
+ * Keep overflow menu within screen vertical bounds and make it scrollable.
  */
-.toolbox-button-wth-dialog .eYJELv {
-    max-height: initial;
+ .toolbox-button-wth-dialog > div:nth-child(2) {
+    max-height: calc(100vh - #{$newToolbarSizeWithPadding} - 46px);
+    overflow-y: auto;
+}
+
+/**
+ * The following selectors keep the chat modal full-size anywhere between 100px
+ * and 580px for desktop or 680px for mobile.
+ */
+@media (min-width: 100px) and (max-width: 320px) {
+    .smiley-input {
+        display: none;
+    }
+    .shift-right .focus-lock > div > div {
+        @include full-size-modal-positioner();
+    }
+
+    .shift-right .focus-lock [role="dialog"] {
+        @include full-size-modal-dialog();
+    }
+}
+
+@media (min-width: 480px) and (max-width: 580px) {
+    .shift-right .focus-lock > div > div {
+        @include full-size-modal-positioner();
+    }
+
+    .shift-right .focus-lock [role="dialog"] {
+        @include full-size-modal-dialog();
+    }
+}
+
+@media (min-width: 580px) and (max-width: 680px) {
+    .mobile-browser {
+        &.shift-right .focus-lock > div > div {
+            @include full-size-modal-positioner();
+        }
+
+        &.shift-right .focus-lock [role="dialog"] {
+            @include full-size-modal-dialog();
+        }
+    }
 }

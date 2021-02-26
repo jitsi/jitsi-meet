@@ -25,6 +25,24 @@ export const ADD_MESSAGE = 'ADD_MESSAGE';
 export const CLEAR_MESSAGES = 'CLEAR_MESSAGES';
 
 /**
+ * The type of the action which signals the cancelation the chat panel.
+ *
+ * {
+ *     type: CLOSE_CHAT
+ * }
+ */
+export const CLOSE_CHAT = 'CLOSE_CHAT';
+
+/**
+ * The type of the action which signals to display the chat panel.
+ *
+ * {
+ *     type: OPEN_CHAT
+ * }
+ */
+export const OPEN_CHAT = 'OPEN_CHAT';
+
+/**
  * The type of the action which signals a send a chat message to everyone in the
  * conference.
  *
@@ -46,12 +64,3 @@ export const SEND_MESSAGE = 'SEND_MESSAGE';
  * }
  */
 export const SET_PRIVATE_MESSAGE_RECIPIENT = 'SET_PRIVATE_MESSAGE_RECIPIENT';
-
-/**
- * The type of the action which signals to toggle the display of the chat panel.
- *
- * {
- *     type: TOGGLE_CHAT
- * }
- */
-export const TOGGLE_CHAT = 'TOGGLE_CHAT';

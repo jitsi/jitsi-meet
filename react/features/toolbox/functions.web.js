@@ -1,7 +1,6 @@
 // @flow
 
 import { hasAvailableDevices } from '../base/devices';
-import { isMobileBrowser } from '../base/environment/utils';
 
 declare var interfaceConfig: Object;
 
@@ -49,10 +48,8 @@ export function isToolboxVisible(state: Object) {
         visible
     } = state['features/toolbox'];
     const { audioSettingsVisible, videoSettingsVisible } = state['features/settings'];
-    const { isOpen } = state['features/chat'];
-    const isMobileChatOpen = isMobileBrowser() && isOpen;
 
-    return Boolean(!isMobileChatOpen && !iAmSipGateway && (timeoutID || visible || alwaysVisible
+    return Boolean(!iAmSipGateway && (timeoutID || visible || alwaysVisible
                                       || audioSettingsVisible || videoSettingsVisible));
 }
 
@@ -75,5 +72,15 @@ export function isAudioSettingsButtonDisabled(state: Object) {
  * @returns {boolean}
  */
 export function isVideoSettingsButtonDisabled(state: Object) {
+    return !hasAvailableDevices(state, 'videoInput');
+}
+
+/**
+ * Indicates if the video mute button is disabled or not.
+ *
+ * @param {string} state - The state from the Redux store.
+ * @returns {boolean}
+ */
+export function isVideoMuteButtonDisabled(state: Object) {
     return !hasAvailableDevices(state, 'videoInput');
 }

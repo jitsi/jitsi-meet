@@ -13,9 +13,11 @@ import { StyleType } from '../../../base/styles';
 import { PrivateMessageButton } from '../../../chat';
 import { hideRemoteVideoMenu } from '../../actions';
 
+import ConnectionStatusButton from './ConnectionStatusButton';
 import GrantModeratorButton from './GrantModeratorButton';
 import KickButton from './KickButton';
 import MuteButton from './MuteButton';
+import MuteEveryoneElseButton from './MuteEveryoneElseButton';
 import PinButton from './PinButton';
 import styles from './styles';
 
@@ -104,6 +106,8 @@ class RemoteVideoMenu extends PureComponent<Props> {
                 <GrantModeratorButton { ...buttonProps } />
                 <PinButton { ...buttonProps } />
                 <PrivateMessageButton { ...buttonProps } />
+                <MuteEveryoneElseButton { ...buttonProps } />
+                <ConnectionStatusButton { ...buttonProps } />
             </BottomSheet>
         );
     }

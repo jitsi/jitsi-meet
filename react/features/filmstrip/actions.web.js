@@ -1,39 +1,45 @@
 // @flow
 
+import { toState } from '../base/redux';
 import { CHAT_SIZE } from '../chat/constants';
 
 import { SET_HORIZONTAL_VIEW_DIMENSIONS, SET_TILE_VIEW_DIMENSIONS } from './actionTypes';
 import { calculateThumbnailSizeForHorizontalView, calculateThumbnailSizeForTileView } from './functions';
 
 /**
- * The size of the side margins for each tile as set in CSS.
+ * The size of the side margins for the entire tile view area.
  */
-const TILE_VIEW_SIDE_MARGINS = 10 * 2;
+const TILE_VIEW_SIDE_MARGINS = 20;
 
 /**
  * Sets the dimensions of the tile view grid.
  *
  * @param {Object} dimensions - Whether the filmstrip is visible.
  * @param {Object} windowSize - The size of the window.
- * @param {boolean} isChatOpen - Whether the chat panel is displayed, in
- * order to properly compute the tile view size.
+ * @param {Object | Function} stateful - An object or function that can be
+ * resolved to Redux state using the {@code toState} function.
  * @returns {{
  *     type: SET_TILE_VIEW_DIMENSIONS,
  *     dimensions: Object
  * }}
  */
-export function setTileViewDimensions(dimensions: Object, windowSize: Object, isChatOpen: boolean) {
+export function setTileViewDimensions(dimensions: Object, windowSize: Object, stateful: Object | Function) {
+    const state = toState(stateful);
     const { clientWidth, clientHeight } = windowSize;
+    const heightToUse = clientHeight;
     let widthToUse = clientWidth;
+    const { isOpen } = state['features/chat'];
+    const { disableResponsiveTiles } = state['features/base/config'];
 
-    if (isChatOpen) {
+    if (isOpen) {
         widthToUse -= CHAT_SIZE;
     }
 
     const thumbnailSize = calculateThumbnailSizeForTileView({
         ...dimensions,
         clientWidth: widthToUse,
-        clientHeight
+        clientHeight: heightToUse,
+        disableResponsiveTiles
     });
     const filmstripWidth = dimensions.columns * (TILE_VIEW_SIDE_MARGINS + thumbnailSize.width);
 

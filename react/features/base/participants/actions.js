@@ -17,10 +17,15 @@ import {
     SET_LOADABLE_AVATAR_URL
 } from './actionTypes';
 import {
+    DISCO_REMOTE_CONTROL_FEATURE
+} from './constants';
+import {
     getLocalParticipant,
     getNormalizedDisplayName,
-    getParticipantDisplayName
+    getParticipantDisplayName,
+    getParticipantById
 } from './functions';
+import logger from './logger';
 
 /**
  * Create an action for when dominant speaker changes.
@@ -189,15 +194,18 @@ export function localParticipantRoleChanged(role) {
  * Create an action for muting another participant in the conference.
  *
  * @param {string} id - Participant's ID.
+ * @param {MEDIA_TYPE} mediaType - The media to mute.
  * @returns {{
  *     type: MUTE_REMOTE_PARTICIPANT,
- *     id: string
+ *     id: string,
+ *     mediaType: MEDIA_TYPE
  * }}
  */
-export function muteRemoteParticipant(id) {
+export function muteRemoteParticipant(id, mediaType) {
     return {
         type: MUTE_REMOTE_PARTICIPANT,
-        id
+        id,
+        mediaType
     };
 }
 
@@ -269,6 +277,48 @@ export function participantJoined(participant) {
                 participant
             });
         }
+    };
+}
+
+/**
+ * Updates the features of a remote participant.
+ *
+ * @param {JitsiParticipant} jitsiParticipant - The ID of the participant.
+ * @returns {{
+*     type: PARTICIPANT_UPDATED,
+*     participant: Participant
+* }}
+*/
+export function updateRemoteParticipantFeatures(jitsiParticipant) {
+    return (dispatch, getState) => {
+        if (!jitsiParticipant) {
+            return;
+        }
+
+        const id = jitsiParticipant.getId();
+
+        jitsiParticipant.getFeatures()
+            .then(features => {
+                const supportsRemoteControl = features.has(DISCO_REMOTE_CONTROL_FEATURE);
+                const participant = getParticipantById(getState(), id);
+
+                if (!participant || participant.local) {
+                    return;
+                }
+
+                if (participant?.supportsRemoteControl !== supportsRemoteControl) {
+                    return dispatch({
+                        type: PARTICIPANT_UPDATED,
+                        participant: {
+                            id,
+                            supportsRemoteControl
+                        }
+                    });
+                }
+            })
+            .catch(error => {
+                logger.error(`Failed to get participant features for ${id}!`, error);
+            });
     };
 }
 
@@ -405,17 +455,20 @@ export function participantUpdated(participant = {}) {
  * Action to signal that a participant has muted us.
  *
  * @param {JitsiParticipant} participant - Information about participant.
+ * @param {JitsiLocalTrack} track - Information about the track that has been muted.
  * @returns {Promise}
  */
-export function participantMutedUs(participant) {
+export function participantMutedUs(participant, track) {
     return (dispatch, getState) => {
         if (!participant) {
             return;
         }
 
+        const isAudio = track.isAudioTrack();
+
         dispatch(showNotification({
-            descriptionKey: 'notify.mutedRemotelyDescription',
-            titleKey: 'notify.mutedRemotelyTitle',
+            descriptionKey: isAudio ? 'notify.mutedRemotelyDescription' : 'notify.videoMutedRemotelyDescription',
+            titleKey: isAudio ? 'notify.mutedRemotelyTitle' : 'notify.videoMutedRemotelyTitle',
             titleArguments: {
                 participantDisplayName:
                     getParticipantDisplayName(getState, participant.getId())
@@ -495,3 +548,4 @@ export function setLoadableAvatarUrl(participantId, url) {
         }
     };
 }
+

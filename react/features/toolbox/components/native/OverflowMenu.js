@@ -19,10 +19,12 @@ import { ClosedCaptionButton } from '../../../subtitles';
 import { TileViewButton } from '../../../video-layout';
 import { VideoShareButton } from '../../../youtube-player/components';
 import HelpButton from '../HelpButton';
+import MuteEveryoneButton from '../MuteEveryoneButton';
 
 import AudioOnlyButton from './AudioOnlyButton';
 import MoreOptionsButton from './MoreOptionsButton';
 import RaiseHandButton from './RaiseHandButton';
+import ScreenSharingButton from './ScreenSharingButton.js';
 import ToggleCameraButton from './ToggleCameraButton';
 import styles from './styles';
 
@@ -131,6 +133,7 @@ class OverflowMenu extends PureComponent<Props, State> {
                 <AudioOnlyButton { ...buttonProps } />
                 <RaiseHandButton { ...buttonProps } />
                 <LobbyModeButton { ...buttonProps } />
+                <ScreenSharingButton { ...buttonProps } />
                 <MoreOptionsButton { ...moreOptionsButtonProps } />
                 <Collapsible collapsed = { !showMore }>
                     <ToggleCameraButton { ...buttonProps } />
@@ -141,6 +144,7 @@ class OverflowMenu extends PureComponent<Props, State> {
                     <RoomLockButton { ...buttonProps } />
                     <ClosedCaptionButton { ...buttonProps } />
                     <SharedDocumentButton { ...buttonProps } />
+                    <MuteEveryoneButton { ...buttonProps } />
                     <HelpButton { ...buttonProps } />
                 </Collapsible>
             </BottomSheet>
@@ -162,8 +166,9 @@ class OverflowMenu extends PureComponent<Props, State> {
                     styles.expandMenuContainer
                 ] }>
                 <TouchableOpacity onPress = { this._onToggleMenu }>
-                    { /* $FlowFixMeProps */ }
-                    <IconDragHandle style = { this.props._bottomSheetStyles.expandIcon } />
+                    { /* $FlowFixMe */ }
+                    <IconDragHandle
+                        fill = { this.props._bottomSheetStyles.buttons.iconStyle.color } />
                 </TouchableOpacity>
             </View>
         );

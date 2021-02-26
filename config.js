@@ -14,9 +14,6 @@ var config = {
         // Domain for authenticated users. Defaults to <domain>.
         // authdomain: 'jitsi-meet.example.com',
 
-        // Call control component (Jigasi).
-        // call_control: 'callcontrol.jitsi-meet.example.com',
-
         // Focus component domain. Defaults to focus.<domain>.
         // focus: 'focus.jitsi-meet.example.com',
 
@@ -94,6 +91,11 @@ var config = {
     // input and will suggest another valid device if one is present.
     enableNoAudioDetection: true,
 
+    // Enabling this will show a "Save Logs" link in the GSM popover that can be
+    // used to collect debug information (XMPP IQs, SDP offer/answer cycles)
+    // about the call.
+    // enableSaveLogs: false,
+
     // Enabling this will run the lib-jitsi-meet noise detection module which will
     // notify the user if there is noise, other than voice, coming from the current
     // selected microphone. The purpose it to let the user know that the input could
@@ -120,7 +122,7 @@ var config = {
     // Valid values are in the range 6000 to 510000
     // opusMaxAverageBitrate: 20000,
 
-    // Enables redundancy for Opus
+    // Enables support for opus-red (redundancy for Opus).
     // enableOpusRed: false
 
     // Video
@@ -238,6 +240,12 @@ var config = {
     //     90: 2
     // },
 
+    // Provides a way to translate the legacy bridge signaling messages, 'LastNChangedEvent',
+    // 'SelectedEndpointsChangedEvent' and 'ReceiverVideoConstraint' into the new 'ReceiverVideoConstraints' message
+    // that invokes the new bandwidth allocation algorithm in the bridge which is described here
+    // - https://github.com/jitsi/jitsi-videobridge/blob/master/doc/allocation.md.
+    // useNewBandwidthAllocationStrategy: false,
+
     // Specify the settings for video quality optimizations on the client.
     // videoQuality: {
     //    // Provides a way to prevent a video codec from being negotiated on the JVB connection. The codec specified
@@ -259,9 +267,16 @@ var config = {
     //    // the available bandwidth calculated by the browser, but it will be capped by the values specified here.
     //    // This is currently not implemented on app based clients on mobile.
     //    maxBitratesVideo: {
-    //        low: 200000,
-    //        standard: 500000,
-    //        high: 1500000
+    //          VP8 : {
+    //              low: 200000,
+    //              standard: 500000,
+    //              high: 1500000
+    //          },
+    //          VP9: {
+    //              low: 100000,
+    //              standard: 300000,
+    //              high:  1200000
+    //          }
     //    },
     //
     //    // The options can be used to override default thresholds of video thumbnail heights corresponding to
@@ -275,9 +290,13 @@ var config = {
     //    // at least 360 pixels tall. If the thumbnail height reaches 720 pixels then the application will switch to
     //    // the high quality.
     //    minHeightForQualityLvl: {
-    //        360: 'standard,
+    //        360: 'standard',
     //        720: 'high'
-    //    }
+    //    },
+    //
+    //    // Provides a way to resize the desktop track to 720p (if it is greater than 720p) before creating a canvas
+    //    // for the presenter mode (camera picture-in-picture mode with screenshare).
+    //    resizeDesktopForPresenter: false
     // },
 
     // // Options for the recording limit notification.
@@ -298,18 +317,11 @@ var config = {
     // Disables or enables RTX (RFC 4588) (defaults to false).
     // disableRtx: false,
 
-    // Disables or enables TCC (the default is in Jicofo and set to true)
-    // (draft-holmer-rmcat-transport-wide-cc-extensions-01). This setting
-    // affects congestion control, it practically enables send-side bandwidth
-    // estimations.
+    // Disables or enables TCC support in this client (default: enabled).
     // enableTcc: true,
 
-    // Disables or enables REMB (the default is in Jicofo and set to false)
-    // (draft-alvestrand-rmcat-remb-03). This setting affects congestion
-    // control, it practically enables recv-side bandwidth estimations. When
-    // both TCC and REMB are enabled, TCC takes precedence. When both are
-    // disabled, then bandwidth estimations are disabled.
-    // enableRemb: false,
+    // Disables or enables REMB support in this client (default: enabled).
+    // enableRemb: true,
 
     // Enables ICE restart logic in LJM and displays the page reload overlay on
     // ICE failure. Current disabled by default because it's causing issues with
@@ -319,25 +331,21 @@ var config = {
     // TCC sequence numbers starting from 0.
     // enableIceRestart: false,
 
-    // Defines the minimum number of participants to start a call (the default
-    // is set in Jicofo and set to 2).
-    // minParticipants: 2,
+    // Enables forced reload of the client when the call is migrated as a result of
+    // the bridge going down. Currently enabled by default as call migration through
+    // session-terminate is causing siganling issues when Octo is enabled.
+    // enableForcedReload: true,
 
     // Use TURN/UDP servers for the jitsi-videobridge connection (by default
     // we filter out TURN/UDP because it is usually not needed since the
     // bridge itself is reachable via UDP)
     // useTurnUdp: false
 
-    // Enables / disables a data communication channel with the Videobridge.
-    // Values can be 'datachannel', 'websocket', true (treat it as
-    // 'datachannel'), undefined (treat it as 'datachannel') and false (don't
-    // open any channel).
-    // openBridgeChannel: true,
-    openBridgeChannel: 'websocket',
-
-
     // UI
     //
+
+    // Disables responsive tiles.
+    // disableResponsiveTiles: false,
 
     // Hides lobby button
     // hideLobbyButton: false,
@@ -349,6 +357,13 @@ var config = {
     // will be joined when no room is specified.
     enableWelcomePage: true,
 
+    // Disable app shortcuts that are registered upon joining a conference
+    // disableShortcuts: false,
+
+    // Disable initial browser getUserMedia requests.
+    // This is useful for scenarios where users might want to start a conference for screensharing only
+    // disableInitialGUM: false,
+
     // Enabling the close page will ignore the welcome page redirection when
     // a call is hangup.
     // enableClosePage: false,
@@ -359,16 +374,11 @@ var config = {
     // Default language for the user interface.
     // defaultLanguage: 'en',
 
-    // If true all users without a token will be considered guests and all users
-    // with token will be considered non-guests. Only guests will be allowed to
-    // edit their profile.
-    enableUserRolesBasedOnToken: false,
+    // Disables profile and the edit of all fields from the profile settings (display name and email)
+    // disableProfile: false,
 
     // Whether or not some features are checked based on token.
     // enableFeaturesBasedOnToken: false,
-
-    // Enable lock room for all moderators, even when userRolesBasedOnToken is enabled and participants are guests.
-    // lockRoomGuestEnabled: false,
 
     // When enabled the password used for locking a room is restricted to up to the number of digits specified
     // roomPasswordNumberOfDigits: 10,
@@ -385,6 +395,13 @@ var config = {
     // When 'true', it shows an intermediate page before joining, where the user can configure their devices.
     // prejoinPageEnabled: false,
 
+    // If etherpad integration is enabled, setting this to true will
+    // automatically open the etherpad when a participant joins.  This
+    // does not affect the mobile app since opening an etherpad
+    // obscures the conference controls -- it's better to let users
+    // choose to open the pad on their own in that case.
+    // openSharedDocumentOnJoin: false,
+
     // If true, shows the unsafe room name warning label when a room name is
     // deemed unsafe (due to the simplicity in the name) and a password is not
     // set or the lobby is not enabled.
@@ -393,6 +410,9 @@ var config = {
     // Whether to automatically copy invitation URL after creating a room.
     // Document should be focused for this option to work
     // enableAutomaticUrlCopy: false,
+
+    // Base URL for a Gravatar-compatible service. Defaults to libravatar.
+    // gravatarBaseURL: 'https://seccdn.libravatar.org/avatar/';
 
     // Stats
     //
@@ -606,6 +626,9 @@ var config = {
     // If set to true all muting operations of remote participants will be disabled.
     // disableRemoteMute: true,
 
+    // Enables support for lip-sync for this client (if the browser supports it).
+    // enableLipSync: false
+
     /**
      External API url used to receive branding specific information.
      If there is no url set or there are missing fields, the defaults are applied.
@@ -621,12 +644,27 @@ var config = {
          logoImageUrl: 'https://example.com/logo-img.png'
      }
     */
-    // brandingDataUrl: '',
+    // dynamicBrandingUrl: '',
 
     // The URL of the moderated rooms microservice, if available. If it
     // is present, a link to the service will be rendered on the welcome page,
     // otherwise the app doesn't render it.
     // moderatedRoomServiceUrl: 'https://moderated.jitsi-meet.example.com',
+
+    // If true, tile view will not be enabled automatically when the participants count threshold is reached.
+    // disableTileView: true,
+
+    // Hides the conference subject
+    // hideConferenceSubject: true
+
+    // Hides the conference timer.
+    // hideConferenceTimer: true,
+
+    // Hides the participants stats
+    // hideParticipantsStats: true
+
+    // Sets the conference subject
+    // subject: 'Conference Subject',
 
     // List of undocumented settings used in jitsi-meet
     /**
@@ -674,15 +712,75 @@ var config = {
      disableAP
      disableHPF
      disableNS
-     enableLipSync
      enableTalkWhileMuted
      forceJVB121Ratio
+     forceTurnRelay
      hiddenDomain
      ignoreStartMuted
-     nick
-     startBitrate
+     websocketKeepAlive
+     websocketKeepAliveUrl
      */
 
+    /**
+        Use this array to configure which notifications will be shown to the user
+        The items correspond to the title or description key of that notification
+        Some of these notifications also depend on some other internal logic to be displayed or not,
+        so adding them here will not ensure they will always be displayed
+
+        A falsy value for this prop will result in having all notifications enabled (e.g null, undefined, false)
+    */
+    // notifications: [
+    //     'connection.CONNFAIL', // shown when the connection fails,
+    //     'dialog.cameraNotSendingData', // shown when there's no feed from user's camera
+    //     'dialog.kickTitle', // shown when user has been kicked
+    //     'dialog.liveStreaming', // livestreaming notifications (pending, on, off, limits)
+    //     'dialog.lockTitle', // shown when setting conference password fails
+    //     'dialog.maxUsersLimitReached', // shown when maximmum users limit has been reached
+    //     'dialog.micNotSendingData', // shown when user's mic is not sending any audio
+    //     'dialog.passwordNotSupportedTitle', // shown when setting conference password fails due to password format
+    //     'dialog.recording', // recording notifications (pending, on, off, limits)
+    //     'dialog.remoteControlTitle', // remote control notifications (allowed, denied, start, stop, error)
+    //     'dialog.reservationError',
+    //     'dialog.serviceUnavailable', // shown when server is not reachable
+    //     'dialog.sessTerminated', // shown when there is a failed conference session
+    //     'dialog.sessionRestarted', // show when a client reload is initiated because of bridge migration
+    //     'dialog.tokenAuthFailed', // show when an invalid jwt is used
+    //     'dialog.transcribing', // transcribing notifications (pending, off)
+    //     'dialOut.statusMessage', // shown when dial out status is updated.
+    //     'liveStreaming.busy', // shown when livestreaming service is busy
+    //     'liveStreaming.failedToStart', // shown when livestreaming fails to start
+    //     'liveStreaming.unavailableTitle', // shown when livestreaming service is not reachable
+    //     'lobby.joinRejectedMessage', // shown when while in a lobby, user's request to join is rejected
+    //     'lobby.notificationTitle', // shown when lobby is toggled and when join requests are allowed / denied
+    //     'localRecording.localRecording', // shown when a local recording is started
+    //     'notify.disconnected', // shown when a participant has left
+    //     'notify.grantedTo', // shown when moderator rights were granted to a participant
+    //     'notify.invitedOneMember', // shown when 1 participant has been invited
+    //     'notify.invitedThreePlusMembers', // shown when 3+ participants have been invited
+    //     'notify.invitedTwoMembers', // shown when 2 participants have been invited
+    //     'notify.kickParticipant', // shown when a participant is kicked
+    //     'notify.mutedRemotelyTitle', // shown when user is muted by a remote party
+    //     'notify.mutedTitle', // shown when user has been muted upon joining,
+    //     'notify.newDeviceAudioTitle', // prompts the user to use a newly detected audio device
+    //     'notify.newDeviceCameraTitle', // prompts the user to use a newly detected camera
+    //     'notify.passwordRemovedRemotely', // shown when a password has been removed remotely
+    //     'notify.passwordSetRemotely', // shown when a password has been set remotely
+    //     'notify.raisedHand', // shown when a partcipant used raise hand,
+    //     'notify.startSilentTitle', // shown when user joined with no audio
+    //     'prejoin.errorDialOut',
+    //     'prejoin.errorDialOutDisconnected',
+    //     'prejoin.errorDialOutFailed',
+    //     'prejoin.errorDialOutStatus',
+    //     'prejoin.errorStatusCode',
+    //     'prejoin.errorValidation',
+    //     'recording.busy', // shown when recording service is busy
+    //     'recording.failedToStart', // shown when recording fails to start
+    //     'recording.unavailableTitle', // shown when recording service is not reachable
+    //     'toolbar.noAudioSignalTitle', // shown when a broken mic is detected
+    //     'toolbar.noisyAudioInputTitle', // shown when noise is detected for the current microphone
+    //     'toolbar.talkWhileMutedPopup', // shown when user tries to speak while muted
+    //     'transcribing.failedToStart' // shown when transcribing fails to start
+    // ]
 
     // Allow all above example options to include a trailing comma and
     // prevent fear when commenting out the last value.

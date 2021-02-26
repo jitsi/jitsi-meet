@@ -55,6 +55,11 @@ type Props = {
     e2eRtt: number,
 
     /**
+     * Whether or not should display the "Save Logs" link.
+     */
+    enableSaveLogs: boolean,
+
+    /**
      * The endpoint id of this client.
      */
     participantId: string,
@@ -153,13 +158,13 @@ class ConnectionStatsTable extends Component<Props> {
      * @returns {ReactElement}
      */
     render() {
-        const { isLocalVideo } = this.props;
+        const { isLocalVideo, enableSaveLogs } = this.props;
 
         return (
             <div className = 'connection-info'>
                 { this._renderStatistics() }
                 <div className = 'connection-actions'>
-                    { isLocalVideo ? this._renderSaveLogs() : null}
+                    { isLocalVideo && enableSaveLogs ? this._renderSaveLogs() : null}
                     { this._renderShowMoreLink() }
                 </div>
                 { this.props.shouldShowMore ? this._renderAdditionalStats() : null }

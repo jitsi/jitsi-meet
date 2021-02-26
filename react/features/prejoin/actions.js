@@ -4,7 +4,6 @@ declare var JitsiMeetJS: Object;
 
 import uuid from 'uuid';
 
-import { getRoomName } from '../base/conference';
 import { getDialOutStatusUrl, getDialOutUrl } from '../base/config/functions';
 import { createLocalTrack } from '../base/lib-jitsi-meet';
 import {
@@ -18,6 +17,7 @@ import { executeDialOutRequest, executeDialOutStatusRequest, getDialInfoPageURL 
 import { showErrorNotification } from '../notifications';
 
 import {
+    PREJOIN_INITIALIZED,
     PREJOIN_START_CONFERENCE,
     SET_DEVICE_STATUS,
     SET_DIALOUT_COUNTRY,
@@ -25,6 +25,7 @@ import {
     SET_DIALOUT_STATUS,
     SET_PREJOIN_DISPLAY_NAME_REQUIRED,
     SET_SKIP_PREJOIN,
+    SET_SKIP_PREJOIN_RELOAD,
     SET_JOIN_BY_PHONE_DIALOG_VISIBLITY,
     SET_PRECALL_TEST_RESULTS,
     SET_PREJOIN_DEVICE_ERRORS,
@@ -195,7 +196,7 @@ export function dialOut(onSuccess: Function, onFail: Function) {
 export function initPrejoin(tracks: Object[], errors: Object) {
     return async function(dispatch: Function) {
         dispatch(setPrejoinDeviceErrors(errors));
-
+        dispatch(prejoinInitialized());
 
         tracks.forEach(track => dispatch(trackAdded(track)));
     };
@@ -260,12 +261,20 @@ export function makePrecallTest(conferenceOptions: Object) {
  */
 export function openDialInPage() {
     return function(dispatch: Function, getState: Function) {
-        const state = getState();
-        const locationURL = state['features/base/connection'].locationURL;
-        const roomName = getRoomName(state);
-        const dialInPage = getDialInfoPageURL(roomName, locationURL);
+        const dialInPage = getDialInfoPageURL(getState());
 
         openURLInBrowser(dialInPage, true);
+    };
+}
+
+/**
+ * Action used to signal that the prejoin page has been initialized.
+ *
+ * @returns {Object}
+ */
+function prejoinInitialized() {
+    return {
+        type: PREJOIN_INITIALIZED
     };
 }
 
@@ -402,6 +411,20 @@ export function setDialOutNumber(value: string) {
 export function setSkipPrejoin(value: boolean) {
     return {
         type: SET_SKIP_PREJOIN,
+        value
+    };
+}
+
+/**
+ * Sets the visibility of the prejoin page when a client reload
+ * is triggered as a result of call migration initiated by Jicofo.
+ *
+ * @param {boolean} value - The visibility value.
+ * @returns {Object}
+ */
+export function setSkipPrejoinOnReload(value: boolean) {
+    return {
+        type: SET_SKIP_PREJOIN_RELOAD,
         value
     };
 }

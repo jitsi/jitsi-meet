@@ -1,5 +1,5 @@
 /*
- * Copyright @ 2017-present Atlassian Pty Ltd
+ * Copyright @ 2017-present 8x8, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,9 @@ import com.facebook.react.module.annotations.ReactModule;
 
 import org.jitsi.meet.sdk.log.JitsiMeetLogger;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Module implementing an API for sending events from JavaScript to native code.
  */
@@ -35,6 +38,9 @@ class ExternalAPIModule
 
     private static final String TAG = NAME;
 
+    private final BroadcastEmitter broadcastEmitter;
+    private final BroadcastReceiver broadcastReceiver;
+
     /**
      * Initializes a new module instance. There shall be a single instance of
      * this module throughout the lifetime of the app.
@@ -44,6 +50,11 @@ class ExternalAPIModule
      */
     public ExternalAPIModule(ReactApplicationContext reactContext) {
         super(reactContext);
+
+        broadcastEmitter = new BroadcastEmitter(reactContext);
+        broadcastReceiver = new BroadcastReceiver(reactContext);
+
+        ParticipantsService.init(reactContext);
     }
 
     /**
@@ -54,6 +65,28 @@ class ExternalAPIModule
     @Override
     public String getName() {
         return NAME;
+    }
+
+    /**
+     * Gets a mapping with the constants this module is exporting.
+     *
+     * @return a {@link Map} mapping the constants to be exported with their
+     * values.
+     */
+    @Override
+    public Map<String, Object> getConstants() {
+        Map<String, Object> constants = new HashMap<>();
+
+        constants.put("SET_AUDIO_MUTED", BroadcastAction.Type.SET_AUDIO_MUTED.getAction());
+        constants.put("HANG_UP", BroadcastAction.Type.HANG_UP.getAction());
+        constants.put("SEND_ENDPOINT_TEXT_MESSAGE", BroadcastAction.Type.SEND_ENDPOINT_TEXT_MESSAGE.getAction());
+        constants.put("TOGGLE_SCREEN_SHARE", BroadcastAction.Type.TOGGLE_SCREEN_SHARE.getAction());
+        constants.put("RETRIEVE_PARTICIPANTS_INFO", BroadcastAction.Type.RETRIEVE_PARTICIPANTS_INFO.getAction());
+        constants.put("OPEN_CHAT", BroadcastAction.Type.OPEN_CHAT.getAction());
+        constants.put("CLOSE_CHAT", BroadcastAction.Type.CLOSE_CHAT.getAction());
+        constants.put("SEND_CHAT_MESSAGE", BroadcastAction.Type.SEND_CHAT_MESSAGE.getAction());
+
+        return constants;
     }
 
     /**
@@ -79,7 +112,8 @@ class ExternalAPIModule
             JitsiMeetLogger.d(TAG + " Sending event: " + name + " with data: " + data);
             try {
                 view.onExternalAPIEvent(name, data);
-            } catch(Exception e) {
+                broadcastEmitter.sendBroadcast(name, data);
+            } catch (Exception e) {
                 JitsiMeetLogger.e(e, TAG + " onExternalAPIEvent: error sending event");
             }
         }

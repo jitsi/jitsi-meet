@@ -9,7 +9,7 @@ import {
     sendAnalytics
 } from '../../analytics';
 import { setAudioOnly } from '../../base/audio-only';
-import { hasAvailableDevices } from '../../base/devices';
+import { getFeatureFlag, VIDEO_MUTE_BUTTON_ENABLED } from '../../base/flags';
 import { translate } from '../../base/i18n';
 import {
     VIDEO_MUTISM_AUTHORITY,
@@ -18,7 +18,8 @@ import {
 import { connect } from '../../base/redux';
 import { AbstractVideoMuteButton } from '../../base/toolbox/components';
 import type { AbstractButtonProps } from '../../base/toolbox/components';
-import { getLocalVideoType, isLocalVideoTrackMuted } from '../../base/tracks';
+import { getLocalVideoType, isLocalCameraTrackMuted } from '../../base/tracks';
+import { isVideoMuteButtonDisabled } from '../functions';
 
 declare var APP: Object;
 
@@ -187,12 +188,14 @@ class VideoMuteButton extends AbstractVideoMuteButton<Props, *> {
 function _mapStateToProps(state): Object {
     const { enabled: audioOnly } = state['features/base/audio-only'];
     const tracks = state['features/base/tracks'];
+    const enabledFlag = getFeatureFlag(state, VIDEO_MUTE_BUTTON_ENABLED, true);
 
     return {
         _audioOnly: Boolean(audioOnly),
-        _videoDisabled: !hasAvailableDevices(state, 'videoInput'),
+        _videoDisabled: isVideoMuteButtonDisabled(state),
         _videoMediaType: getLocalVideoType(tracks),
-        _videoMuted: isLocalVideoTrackMuted(tracks)
+        _videoMuted: isLocalCameraTrackMuted(tracks),
+        visible: enabledFlag
     };
 }
 

@@ -7,10 +7,6 @@
         text-align: center;
         z-index: $zindex2;
         background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0));
-
-        &.elevated {
-            z-index: $filmstripVideosZ + 1;
-        }
     }
 
     &-header {
@@ -32,8 +28,10 @@
         line-height: 24px;
         cursor: pointer;
 
-        &:hover {
-            background: #278ADF;
+        @media (hover: hover) and (pointer: fine) {
+            &:hover {
+                background: #278ADF;
+            }
         }
 
         &-text {
@@ -46,22 +44,6 @@
         color: #fff;
         font-size: 15px;
         line-height: 24px;
-
-        &.header {
-            display: flex;
-            justify-content: space-between;
-            margin: 16px 16px 24px;
-            width: calc(100% - 32px);
-            color: #fff;
-            font-weight: 600;
-            font-size: 24px;
-            line-height: 32px;
-
-            & > div > svg {
-                cursor: pointer;
-                fill: #A4B8D1;
-            }
-        }
 
         &.separator {
             margin: 24px 0 24px -20px;
@@ -112,11 +94,11 @@
                     border-radius: 4px;
                     cursor: pointer;
                 }
-    
+
                 &:hover > div:hover {
                     background-color: rgba(255, 255, 255, 0.2);
                 }
-    
+
                 & > :not(:last-child) {
                     margin-right: 16px;
                 }
@@ -135,7 +117,6 @@
             .dial-in-copy {
                 display: inline-block;
                 vertical-align: middle;
-                margin-left: 21px;
                 cursor: pointer;
             }
         }

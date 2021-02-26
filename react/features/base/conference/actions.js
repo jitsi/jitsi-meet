@@ -36,6 +36,7 @@ import {
     CONFERENCE_LEFT,
     CONFERENCE_SUBJECT_CHANGED,
     CONFERENCE_TIMESTAMP_CHANGED,
+    CONFERENCE_UNIQUE_ID_SET,
     CONFERENCE_WILL_JOIN,
     CONFERENCE_WILL_LEAVE,
     DATA_CHANNEL_OPENED,
@@ -43,7 +44,6 @@ import {
     LOCK_STATE_CHANGED,
     P2P_STATUS_CHANGED,
     SEND_TONES,
-    SET_DESKTOP_SHARING_ENABLED,
     SET_FOLLOW_ME,
     SET_PASSWORD,
     SET_PASSWORD_FAILED,
@@ -149,9 +149,9 @@ function _addConferenceListeners(conference, dispatch) {
 
     conference.on(
         JitsiConferenceEvents.TRACK_MUTE_CHANGED,
-        (_, participantThatMutedUs) => {
+        (track, participantThatMutedUs) => {
             if (participantThatMutedUs) {
-                dispatch(participantMutedUs(participantThatMutedUs));
+                dispatch(participantMutedUs(participantThatMutedUs, track));
             }
         });
 
@@ -325,6 +325,22 @@ export function conferenceTimestampChanged(conferenceTimestamp: number) {
     return {
         type: CONFERENCE_TIMESTAMP_CHANGED,
         conferenceTimestamp
+    };
+}
+
+/**
+* Signals that the unique identifier for conference has been set.
+*
+* @param {JitsiConference} conference - The JitsiConference instance, where the uuid has been set.
+* @returns {{
+*   type: CONFERENCE_UNIQUE_ID_SET,
+*   conference: JitsiConference,
+* }}
+*/
+export function conferenceUniqueIdSet(conference: Object) {
+    return {
+        type: CONFERENCE_UNIQUE_ID_SET,
+        conference
     };
 }
 
@@ -570,22 +586,6 @@ export function sendTones(tones: string, duration: number, pause: number) {
         tones,
         duration,
         pause
-    };
-}
-
-/**
- * Sets the flag for indicating if desktop sharing is enabled.
- *
- * @param {boolean} desktopSharingEnabled - True if desktop sharing is enabled.
- * @returns {{
- *     type: SET_DESKTOP_SHARING_ENABLED,
- *     desktopSharingEnabled: boolean
- * }}
- */
-export function setDesktopSharingEnabled(desktopSharingEnabled: boolean) {
-    return {
-        type: SET_DESKTOP_SHARING_ENABLED,
-        desktopSharingEnabled
     };
 }
 

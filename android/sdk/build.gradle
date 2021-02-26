@@ -25,10 +25,6 @@ android {
     sourceSets {
         main {
             java {
-                if (rootProject.ext.libreBuild) {
-                    srcDir "src"
-                    exclude "**/AmplitudeModule.java"
-                }
                 exclude "test/"
             }
         }
@@ -40,6 +36,7 @@ dependencies {
 
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'androidx.fragment:fragment:1.2.5'
+    implementation 'androidx.localbroadcastmanager:localbroadcastmanager:1.0.0'
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
 
     //noinspection GradleDynamicVersion
@@ -50,18 +47,25 @@ dependencies {
     implementation 'com.dropbox.core:dropbox-core-sdk:3.0.8'
     implementation 'com.jakewharton.timber:timber:4.7.1'
     implementation 'com.squareup.duktape:duktape-android:1.3.0'
+    implementation 'com.google.code.gson:gson:2.8.6'
 
-    if (!rootProject.ext.libreBuild) {
-        implementation 'com.amplitude:android-sdk:2.14.1'
+    if (rootProject.ext.libreBuild) {
+        implementation(project(':react-native-device-info')) {
+            exclude group: 'com.google.firebase'
+            exclude group: 'com.google.android.gms'
+            exclude group: 'com.android.installreferrer'
+        }
+    } else {
+        implementation project(':react-native-device-info')
         implementation(project(":react-native-google-signin")) {
             exclude group: 'com.google.android.gms'
             exclude group: 'androidx'
         }
     }
 
+    implementation project(':react-native-async-storage')
     implementation project(':react-native-background-timer')
     implementation project(':react-native-calendar-events')
-    implementation project(':react-native-community-async-storage')
     implementation project(':react-native-community_netinfo')
     implementation project(':react-native-default-preference')
     implementation project(':react-native-immersive')

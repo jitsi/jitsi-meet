@@ -106,7 +106,11 @@ function PasswordSection({
      */
     function onPasswordSave() {
         if (formRef.current) {
-            formRef.current.querySelector('form').requestSubmit();
+            const { value } = formRef.current.querySelector('form > input');
+
+            if (value) {
+                onPasswordSubmit(value);
+            }
         }
     }
 
@@ -154,9 +158,15 @@ function PasswordSection({
                     <a
                         className = 'remove-password'
                         onClick = { onPasswordRemove }>{ t('dialog.Remove') }</a>
-                    <a
-                        className = 'copy-password'
-                        onClick = { onPasswordCopy }>{ t('dialog.copy') }</a>
+                    {
+
+                        // There are cases like lobby and grant moderator when password is not available
+                        password ? <>
+                            <a
+                                className = 'copy-password'
+                                onClick = { onPasswordCopy }>{ t('dialog.copy') }</a>
+                        </> : null
+                    }
                 </>
             );
         }

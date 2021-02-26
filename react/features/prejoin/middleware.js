@@ -46,7 +46,9 @@ MiddlewareRegistry.register(store => next => async action => {
             await dispatch(replaceLocalTrack(localVideoTrack.jitsiTrack, null));
         }
 
-        const jitsiTracks = getState()['features/base/tracks'].map(t => t.jitsiTrack);
+        const jitsiTracks = getState()['features/base/tracks']
+            .map(t => t.jitsiTrack)
+            .filter(t => Boolean(t)); // Filter out GUM in progress tracks...
 
         dispatch(setPrejoinPageVisibility(false));
         APP.conference.prejoinStart(jitsiTracks);

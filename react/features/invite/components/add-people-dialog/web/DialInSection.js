@@ -3,6 +3,7 @@
 import React from 'react';
 
 import { translate } from '../../../../base/i18n';
+import { connect } from '../../../../base/redux';
 import { getDialInfoPageURL } from '../../../functions';
 
 import DialInNumber from './DialInNumber';
@@ -10,19 +11,14 @@ import DialInNumber from './DialInNumber';
 type Props = {
 
     /**
-     * The name of the current conference. Used as part of inviting users.
-     */
-    conferenceName: string,
-
-    /**
      * The object representing the dialIn feature.
      */
-    dialIn: Object,
+    _dialIn: Object,
 
     /**
-     * The current location url of the conference.
+     * The url of the page containing the dial-in numbers list.
      */
-    locationUrl: Object,
+    _dialInfoPageUrl: string,
 
     /**
      * The phone number to dial to begin the process of dialing into a
@@ -45,25 +41,19 @@ type Props = {
  * @returns {null|ReactElement}
  */
 function DialInSection({
-    conferenceName,
-    dialIn,
-    locationUrl,
+    _dialIn,
+    _dialInfoPageUrl,
     phoneNumber,
     t
 }: Props) {
     return (
         <div className = 'invite-more-dialog dial-in-display'>
             <DialInNumber
-                conferenceID = { dialIn.conferenceID }
+                conferenceID = { _dialIn.conferenceID }
                 phoneNumber = { phoneNumber } />
             <a
                 className = 'more-numbers'
-                href = {
-                    getDialInfoPageURL(
-                        conferenceName,
-                        locationUrl
-                    )
-                }
+                href = { _dialInfoPageUrl }
                 rel = 'noopener noreferrer'
                 target = '_blank'>
                 { t('info.moreNumbers') }
@@ -72,4 +62,20 @@ function DialInSection({
     );
 }
 
-export default translate(DialInSection);
+
+/**
+ * Maps (parts of) the Redux state to the associated props for the
+ * {@code DialInLink} component.
+ *
+ * @param {Object} state - The Redux state.
+ * @private
+ * @returns {Props}
+ */
+function _mapStateToProps(state) {
+    return {
+        _dialIn: state['features/invite'],
+        _dialInfoPageUrl: getDialInfoPageURL(state)
+    };
+}
+
+export default translate(connect(_mapStateToProps)(DialInSection));

@@ -6,7 +6,6 @@
 }
 
 .horizontal-filmstrip .filmstrip {
-    position: absolute;
     bottom: 0;
     right: 0;
     padding: 10px 5px;
@@ -64,20 +63,6 @@
 
         .remote-videos-container {
             display: flex;
-        }
-    }
-
-    /**
-     * Style the filmstrip videos in filmstrip-only mode.
-     */
-    &__videos-filmstripOnly {
-        margin-top: auto;
-        margin-bottom: auto;
-
-        .filmstrip__videos {
-            &#filmstripLocalVideo {
-                bottom: 0px;
-            }
         }
     }
 

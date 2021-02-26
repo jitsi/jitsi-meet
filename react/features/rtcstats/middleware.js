@@ -1,9 +1,7 @@
 // @flow
 
 import { getAmplitudeIdentity } from '../analytics';
-import {
-    CONFERENCE_JOINED
-} from '../base/conference';
+import { CONFERENCE_UNIQUE_ID_SET } from '../base/conference';
 import { LIB_WILL_INIT } from '../base/lib-jitsi-meet';
 import { getLocalParticipant } from '../base/participants';
 import { MiddlewareRegistry } from '../base/redux';
@@ -47,13 +45,18 @@ MiddlewareRegistry.register(store => next => action => {
         }
         break;
     }
-    case CONFERENCE_JOINED: {
+    case CONFERENCE_UNIQUE_ID_SET: {
         if (isRtcstatsEnabled(state) && RTCStats.isInitialized()) {
             // Once the conference started connect to the rtcstats server and send data.
             try {
                 RTCStats.connect();
 
                 const localParticipant = getLocalParticipant(state);
+
+                // Unique identifier for a conference session, not to be confused with meeting name
+                // i.e. If all participants leave a meeting it will have a different value on the next join.
+                const { conference } = action;
+                const meetingUniqueId = conference && conference.getMeetingUniqueId();
 
                 // The current implementation of rtcstats-server is configured to send data to amplitude, thus
                 // we add identity specific information so we can corelate on the amplitude side. If amplitude is
@@ -65,7 +68,8 @@ MiddlewareRegistry.register(store => next => action => {
                 RTCStats.sendIdentityData({
                     ...getAmplitudeIdentity(),
                     ...config,
-                    displayName: localParticipant?.name
+                    displayName: localParticipant?.name,
+                    meetingUniqueId
                 });
             } catch (error) {
                 // If the connection failed do not impact jitsi-meet just silently fail.

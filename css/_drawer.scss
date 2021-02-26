@@ -1,0 +1,134 @@
+.drawer-portal {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: $drawerZ;
+}
+
+.drawer-menu {
+    padding: 0 16px;
+    max-height: 50vh;
+    background: #242528;
+    border-radius: 16px 16px 0 0;
+    overflow-y: auto;
+
+    &.expanded {
+        max-height: 80vh;
+    }
+
+    .drawer-toggle {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 44px;
+        cursor: pointer;
+
+        @media (hover: hover) and (pointer: fine) {
+            &:hover {
+                background-color: $overflowMenuItemHoverBG;
+            }
+        }
+
+        svg {
+            fill: none;
+        }
+    }
+
+    .popupmenu {
+        margin: auto;
+        width: 100%;
+    }
+
+    .popupmenu__item {
+        height: 48px;
+    }
+
+    &#{&} .overflow-menu {
+        margin: auto;
+        font-size: 1.2em;
+        list-style-type: none;
+        padding: 0;
+
+        .overflow-menu-item {
+            box-sizing: border-box;
+            height: 48px;
+            padding: 12px 16px;
+
+            align-items: center;
+            color: $overflowMenuItemColor;
+            cursor: pointer;
+            display: flex;
+            font-size: 16px;
+
+            div {
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+            }
+
+            @media (hover: hover) and (pointer: fine) {
+                &:hover {
+                    background-color: $overflowMenuItemHoverBG;
+                    color: $overflowMenuItemHoverColor;
+                }
+            }
+
+            &.unclickable {
+                cursor: default;
+            }
+            @media (hover: hover) and (pointer: fine) {
+                &.unclickable:hover {
+                    background: inherit;
+                }
+            }
+            &.disabled {
+                cursor: initial;
+                color: #3b475c;
+            }
+        }
+
+        .beta-tag {
+            background: $overflowMenuItemColor;
+            border-radius: 2px;
+            color: $overflowMenuBG;
+            font-size: 11px;
+            font-weight: bold;
+            margin-left: 8px;
+            padding: 0 6px;
+        }
+
+        .overflow-menu-item-icon {
+            margin-right: 16px;
+
+            i {
+                display: inline;
+                font-size: 24px;
+            }
+
+            @media (hover: hover) and (pointer: fine) {
+                i:hover {
+                    background-color: initial;
+                }
+            }
+
+            img {
+                max-width: 24px;
+                max-height: 24px;
+            }
+
+            svg {
+                fill: #B8C7E0 !important;
+                height: 20px;
+                width: 20px;
+            }
+        }
+
+        .profile-text {
+            max-width: 100%;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+    }
+}

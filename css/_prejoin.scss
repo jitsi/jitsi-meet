@@ -62,12 +62,15 @@
     &-status {
         align-items: center;
         align-self: stretch;
+        bottom: 0;
         color: #fff;
         display: flex;
         font-size: 13px;
         min-height: 24px;
         justify-content: center;
+        position: absolute;
         text-align: center;
+        width: 100%;
         z-index: 1;
 
         &--warning {
@@ -126,7 +129,7 @@
     }
 
     &-dropdown-container {
-        & > div > div:nth-child(2) > div > div {
+        & > div:nth-child(2) {
             background: #fff;
             padding: 0;
         }

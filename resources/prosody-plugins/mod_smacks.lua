@@ -17,7 +17,7 @@ local cache = dep.softreq("util.cache");	-- only available in prosody 0.10+
 local uuid_generate = require "util.uuid".generate;
 local jid = require "util.jid";
 
-local t_insert, t_remove = table.insert, table.remove;
+local t_remove = table.remove;
 local math_min = math.min;
 local math_max = math.max;
 local os_time = os.time;
@@ -26,6 +26,7 @@ local add_filter = require "util.filters".add_filter;
 local timer = require "util.timer";
 local datetime = require "util.datetime";
 
+local xmlns_mam2 = "urn:xmpp:mam:2";
 local xmlns_sm2 = "urn:xmpp:sm:2";
 local xmlns_sm3 = "urn:xmpp:sm:3";
 local xmlns_errors = "urn:ietf:params:xml:ns:xmpp-stanzas";
@@ -34,11 +35,11 @@ local xmlns_delay = "urn:xmpp:delay";
 local sm2_attr = { xmlns = xmlns_sm2 };
 local sm3_attr = { xmlns = xmlns_sm3 };
 
-local resume_timeout = module:get_option_number("smacks_hibernation_time", 300);
+local resume_timeout = module:get_option_number("smacks_hibernation_time", 600);
 local s2s_smacks = module:get_option_boolean("smacks_enabled_s2s", false);
 local s2s_resend = module:get_option_boolean("smacks_s2s_resend", false);
 local max_unacked_stanzas = module:get_option_number("smacks_max_unacked_stanzas", 0);
-local delayed_ack_timeout = module:get_option_number("smacks_max_ack_delay", 60);
+local delayed_ack_timeout = module:get_option_number("smacks_max_ack_delay", 30);
 local max_hibernated_sessions = module:get_option_number("smacks_max_hibernated_sessions", 10);
 local max_old_sessions = module:get_option_number("smacks_max_old_sessions", 10);
 local core_process_stanza = prosody.core_process_stanza;
@@ -200,8 +201,15 @@ local function request_ack_if_needed(session, force, reason)
 end
 
 local function outgoing_stanza_filter(stanza, session)
-	local is_stanza = stanza.attr and not stanza.attr.xmlns and not stanza.name:find":";
-	if is_stanza and not stanza._cached then -- Stanza in default stream namespace
+	-- XXX: Normally you wouldn't have to check the xmlns for a stanza as it's
+	-- supposed to be nil.
+	-- However, when using mod_smacks with mod_websocket, then mod_websocket's
+	-- stanzas/out filter can get called before this one and adds the xmlns.
+	local is_stanza = stanza.attr and
+		(not stanza.attr.xmlns or stanza.attr.xmlns == 'jabber:client')
+		and not stanza.name:find":";
+
+	if is_stanza and not stanza._cached then
 		local queue = session.outgoing_stanza_queue;
 		local cached_stanza = st.clone(stanza);
 		cached_stanza._cached = true;
@@ -400,12 +408,14 @@ local function handle_unacked_stanzas(session)
 		session.outgoing_stanza_queue = {};
 		for i=1,#queue do
 			if not module:fire_event("delivery/failure", { session = session, stanza = queue[i] }) then
-				local reply = st.reply(queue[i]);
-				if reply.attr.to ~= session.full_jid then
-					reply.attr.type = "error";
-					reply:tag("error", error_attr)
-						:tag("recipient-unavailable", {xmlns = "urn:ietf:params:xml:ns:xmpp-stanzas"});
-					core_process_stanza(session, reply);
+				if queue[i].attr.type ~= "error" then
+					local reply = st.reply(queue[i]);
+					if reply.attr.to ~= session.full_jid then
+						reply.attr.type = "error";
+						reply:tag("error", error_attr)
+							:tag("recipient-unavailable", {xmlns = "urn:ietf:params:xml:ns:xmpp-stanzas"});
+						core_process_stanza(session, reply);
+					end
 				end
 			end
 		end
@@ -413,35 +423,44 @@ local function handle_unacked_stanzas(session)
 end
 
 -- don't send delivery errors for messages which will be delivered by mam later on
+-- check if stanza was archived --> this will allow us to send back errors for stanzas not archived
+-- because the user configured the server to do so ("no-archive"-setting for one special contact for example)
+local function get_stanza_id(stanza, by_jid)
+	for tag in stanza:childtags("stanza-id", "urn:xmpp:sid:0") do
+		if tag.attr.by == by_jid then
+			return tag.attr.id;
+		end
+	end
+	return nil;
+end
 module:hook("delivery/failure", function(event)
 	local session, stanza = event.session, event.stanza;
 	-- Only deal with authenticated (c2s) sessions
 	if session.username then
 		if stanza.name == "message" and stanza.attr.xmlns == nil and
 				( stanza.attr.type == "chat" or ( stanza.attr.type or "normal" ) == "normal" ) then
+			-- don't store messages in offline store if they are mam results
+			local mam_result = stanza:get_child("result", xmlns_mam2);
+			if mam_result ~= nil then
+				return true;		-- stanza already "handled", don't send an error and don't add it to offline storage
+			end
 			-- do nothing here for normal messages and don't send out "message delivery errors",
 			-- because messages are already in MAM at this point (no need to frighten users)
-			if session.mam_requested and stanza._was_archived then
+			local stanza_id = get_stanza_id(stanza, jid.bare(session.full_jid));
+			if session.mam_requested and stanza_id ~= nil then
+				session.log("debug", "mod_smacks delivery/failure returning true for mam-handled stanza: mam-archive-id=%s", tostring(stanza_id));
 				return true;		-- stanza handled, don't send an error
 			end
 			-- store message in offline store, if this client does not use mam *and* was the last client online
 			local sessions = prosody.hosts[module.host].sessions[session.username] and
 					prosody.hosts[module.host].sessions[session.username].sessions or nil;
 			if sessions and next(sessions) == session.resource and next(sessions, session.resource) == nil then
-				module:fire_event("message/offline/handle", { origin = session, stanza = stanza } );
-				return true;		-- stanza handled, don't send an error
+				local ok = module:fire_event("message/offline/handle", { origin = session, stanza = stanza } );
+				session.log("debug", "mod_smacks delivery/failuere returning %s for offline-handled stanza", tostring(ok));
+				return ok;			-- if stanza was handled, don't send an error
 			end
 		end
 	end
-end);
-
--- mark stanzas as archived --> this will allow us to send back errors for stanzas not archived
--- because the user configured the server to do so ("no-archive"-setting for one special contact for example)
-module:hook("archive-message-added", function(event)
-	local session, stanza, for_user, stanza_id  = event.origin, event.stanza, event.for_user, event.id;
-	if session then session.log("debug", "Marking stanza as archived, archive_id: %s, stanza: %s", tostring(stanza_id), tostring(stanza:top_tag())); end
-	if not session then module:log("debug", "Marking stanza as archived in unknown session, archive_id: %s, stanza: %s", tostring(stanza_id), tostring(stanza:top_tag())); end
-	stanza._was_archived = true;
 end);
 
 module:hook("pre-resource-unbind", function (event)

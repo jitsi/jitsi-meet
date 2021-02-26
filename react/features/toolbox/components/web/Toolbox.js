@@ -25,6 +25,7 @@ import {
     IconShareDesktop,
     IconShareVideo
 } from '../../../base/icons';
+import JitsiMeetJS from '../../../base/lib-jitsi-meet';
 import {
     getLocalParticipant,
     getParticipants,
@@ -35,6 +36,7 @@ import { OverflowMenuItem } from '../../../base/toolbox/components';
 import { getLocalVideoTrack, toggleScreensharing } from '../../../base/tracks';
 import { isVpaasMeeting } from '../../../billing-counter/functions';
 import { VideoBlurButton } from '../../../blur';
+import { checkBlurSupport } from '../../../blur/functions';
 import { CHAT_SIZE, ChatCounter, toggleChat } from '../../../chat';
 import { EmbedMeetingDialog } from '../../../embed-meeting';
 import { SharedDocumentButton } from '../../../etherpad';
@@ -72,15 +74,17 @@ import {
 import {
     setFullScreen,
     setOverflowMenuVisible,
-    setToolbarHovered
+    setToolbarHovered,
+    setToolboxVisible
 } from '../../actions';
 import { isToolboxVisible } from '../../functions';
 import DownloadButton from '../DownloadButton';
 import HangupButton from '../HangupButton';
 import HelpButton from '../HelpButton';
+import MuteEveryoneButton from '../MuteEveryoneButton';
+import MuteEveryonesVideoButton from '../MuteEveryonesVideoButton';
 
 import AudioSettingsButton from './AudioSettingsButton';
-import MuteEveryoneButton from './MuteEveryoneButton';
 import OverflowMenuButton from './OverflowMenuButton';
 import OverflowMenuProfileItem from './OverflowMenuProfileItem';
 import ToolbarButton from './ToolbarButton';
@@ -128,14 +132,14 @@ type Props = {
     _fullScreen: boolean,
 
     /**
+     * Whether or not the profile is disabled.
+     */
+    _isProfileDisabled: boolean,
+
+    /**
      * Whether or not the tile view is enabled.
      */
     _tileViewEnabled: boolean,
-
-    /**
-     * Whether or not the current user is logged in through a JWT.
-     */
-    _isGuest: boolean,
 
     /**
      * Whether or not the current meeting belongs to a JaaS user.
@@ -237,6 +241,7 @@ class Toolbox extends Component<Props, State> {
         this._onMouseOver = this._onMouseOver.bind(this);
         this._onResize = this._onResize.bind(this);
         this._onSetOverflowVisible = this._onSetOverflowVisible.bind(this);
+        this._onTabIn = this._onTabIn.bind(this);
 
         this._onShortcutToggleChat = this._onShortcutToggleChat.bind(this);
         this._onShortcutToggleFullScreen = this._onShortcutToggleFullScreen.bind(this);
@@ -274,7 +279,7 @@ class Toolbox extends Component<Props, State> {
             this._shouldShowButton('videoquality') && {
                 character: 'A',
                 exec: this._onShortcutToggleVideoQuality,
-                helpDescription: 'keyboardShortcuts.videoQuality'
+                helpDescription: 'toolbar.callQuality'
             },
             this._shouldShowButton('chat') && {
                 character: 'C',
@@ -367,6 +372,7 @@ class Toolbox extends Component<Props, State> {
             <div
                 className = { rootClassNames }
                 id = 'new-toolbox'
+                onFocus = { this._onTabIn }
                 onMouseOut = { this._onMouseOut }
                 onMouseOver = { this._onMouseOver }>
                 <div className = 'toolbox-background' />
@@ -469,6 +475,7 @@ class Toolbox extends Component<Props, State> {
      */
     _doToggleRaiseHand() {
         const { _localParticipantID, _raisedHand } = this.props;
+        const newRaisedStatus = !_raisedHand;
 
         this.props.dispatch(participantUpdated({
             // XXX Only the local participant is allowed to update without
@@ -479,8 +486,10 @@ class Toolbox extends Component<Props, State> {
 
             id: _localParticipantID,
             local: true,
-            raisedHand: !_raisedHand
+            raisedHand: newRaisedStatus
         }));
+
+        APP.API.notifyRaiseHandUpdated(_localParticipantID, newRaisedStatus);
     }
 
     /**
@@ -692,6 +701,19 @@ class Toolbox extends Component<Props, State> {
             }));
 
         this._doToggleScreenshare();
+    }
+
+    _onTabIn: () => void;
+
+    /**
+     * Toggle the toolbar visibility when tabbing into it.
+     *
+     * @returns {void}
+     */
+    _onTabIn() {
+        if (!this.props._visible) {
+            this.props.dispatch(setToolboxVisible(true));
+        }
     }
 
     _onToolbarOpenFeedback: () => void;
@@ -992,7 +1014,7 @@ class Toolbox extends Component<Props, State> {
      * @returns {boolean}
      */
     _isProfileVisible() {
-        return this.props._isGuest && this._shouldShowButton('profile');
+        return !this.props._isProfileDisabled && this._shouldShowButton('profile');
     }
 
     /**
@@ -1026,12 +1048,14 @@ class Toolbox extends Component<Props, State> {
                     key = 'fullscreen'
                     onClick = { this._onToolbarToggleFullScreen }
                     text = { _fullScreen ? t('toolbar.exitFullScreen') : t('toolbar.enterFullScreen') } />,
-            <LiveStreamButton
-                key = 'livestreaming'
-                showLabel = { true } />,
-            <RecordButton
-                key = 'record'
-                showLabel = { true } />,
+            this._shouldShowButton('livestreaming')
+                && <LiveStreamButton
+                    key = 'livestreaming'
+                    showLabel = { true } />,
+            this._shouldShowButton('recording')
+                && <RecordButton
+                    key = 'record'
+                    showLabel = { true } />,
             this._shouldShowButton('sharedvideo')
                 && <OverflowMenuItem
                     accessibilityLabel = { t('toolbar.accessibilityLabel.sharedvideo') }
@@ -1043,18 +1067,23 @@ class Toolbox extends Component<Props, State> {
                 && <SharedDocumentButton
                     key = 'etherpad'
                     showLabel = { true } />,
-            <VideoBlurButton
-                key = 'videobackgroundblur'
-                showLabel = { true }
-                visible = { this._shouldShowButton('videobackgroundblur') && !_screensharing } />,
-            <SettingsButton
-                key = 'settings'
-                showLabel = { true }
-                visible = { this._shouldShowButton('settings') } />,
-            <MuteEveryoneButton
-                key = 'mute-everyone'
-                showLabel = { true }
-                visible = { this._shouldShowButton('mute-everyone') } />,
+            this._shouldShowButton('videobackgroundblur')
+                && <VideoBlurButton
+                    key = 'videobackgroundblur'
+                    showLabel = { true }
+                    visible = { !_screensharing && checkBlurSupport() } />,
+            this._shouldShowButton('settings')
+                && <SettingsButton
+                    key = 'settings'
+                    showLabel = { true } />,
+            this._shouldShowButton('mute-everyone')
+                && <MuteEveryoneButton
+                    key = 'mute-everyone'
+                    showLabel = { true } />,
+            this._shouldShowButton('mute-video-everyone')
+                && <MuteEveryonesVideoButton
+                    key = 'mute-video-everyone'
+                    showLabel = { true } />,
             this._shouldShowButton('stats')
                 && <OverflowMenuItem
                     accessibilityLabel = { t('toolbar.accessibilityLabel.speakerStats') }
@@ -1220,7 +1249,7 @@ class Toolbox extends Component<Props, State> {
             t
         } = this.props;
         const overflowMenuContent = this._renderOverflowMenuContent();
-        const overflowHasItems = Boolean(overflowMenuContent.filter(child => child).length);
+        const overflowHasItems = overflowMenuContent.some(item => Boolean(item));
         const toolbarAccLabel = 'toolbar.accessibilityLabel.moreActionsMenu';
         const buttonsLeft = [];
         const buttonsRight = [];
@@ -1231,10 +1260,10 @@ class Toolbox extends Component<Props, State> {
         let minSpaceBetweenButtons = 48;
         let widthPlusPaddingOfButton = 56;
 
-        if (this.state.windowWidth <= verySmallThreshold) {
+        if (this.state.windowWidth <= verySmallThreshold && !isMobileBrowser()) {
             minSpaceBetweenButtons = 26;
             widthPlusPaddingOfButton = 28;
-        } else if (this.state.windowWidth <= smallThreshold) {
+        } else if (this.state.windowWidth <= smallThreshold && !isMobileBrowser()) {
             minSpaceBetweenButtons = 36;
             widthPlusPaddingOfButton = 40;
         }
@@ -1249,8 +1278,6 @@ class Toolbox extends Component<Props, State> {
             / 2 // divide by the number of groups(left and right group)
         );
 
-        const showOverflowMenu = this.state.windowWidth >= verySmallThreshold || isMobileBrowser();
-
         if (this._shouldShowButton('chat')) {
             buttonsLeft.push('chat');
         }
@@ -1264,7 +1291,7 @@ class Toolbox extends Component<Props, State> {
         if (this._shouldShowButton('closedcaptions')) {
             buttonsLeft.push('closedcaptions');
         }
-        if (overflowHasItems && showOverflowMenu) {
+        if (overflowHasItems) {
             buttonsRight.push('overflowmenu');
         }
         if (this._shouldShowButton('invite')) {
@@ -1287,13 +1314,13 @@ class Toolbox extends Component<Props, State> {
             movedButtons.push(...buttonsLeft.splice(
                 maxNumberOfButtonsPerGroup,
                 buttonsLeft.length - maxNumberOfButtonsPerGroup));
-            if (buttonsRight.indexOf('overflowmenu') === -1 && showOverflowMenu) {
+            if (buttonsRight.indexOf('overflowmenu') === -1) {
                 buttonsRight.unshift('overflowmenu');
             }
         }
 
         if (buttonsRight.length > maxNumberOfButtonsPerGroup) {
-            if (buttonsRight.indexOf('overflowmenu') === -1 && showOverflowMenu) {
+            if (buttonsRight.indexOf('overflowmenu') === -1) {
                 buttonsRight.unshift('overflowmenu');
             }
 
@@ -1403,7 +1430,7 @@ class Toolbox extends Component<Props, State> {
  */
 function _mapStateToProps(state) {
     const { conference, locked } = state['features/base/conference'];
-    let { desktopSharingEnabled } = state['features/base/conference'];
+    let desktopSharingEnabled = JitsiMeetJS.isDesktopSharingEnabled();
     const {
         callStatsID,
         enableFeaturesBasedOnToken
@@ -1425,15 +1452,7 @@ function _mapStateToProps(state) {
         desktopSharingEnabled = getParticipants(state)
             .find(({ features = {} }) =>
                 String(features['screen-sharing']) === 'true') !== undefined;
-
-        // we want to show button and tooltip
-        if (state['features/base/jwt'].isGuest) {
-            desktopSharingDisabledTooltipKey
-                = 'dialog.shareYourScreenDisabledForGuest';
-        } else {
-            desktopSharingDisabledTooltipKey
-                = 'dialog.shareYourScreenDisabled';
-        }
+        desktopSharingDisabledTooltipKey = 'dialog.shareYourScreenDisabled';
     }
 
     // NB: We compute the buttons again here because if URL parameters were used to
@@ -1447,7 +1466,7 @@ function _mapStateToProps(state) {
         _desktopSharingDisabledTooltipKey: desktopSharingDisabledTooltipKey,
         _dialog: Boolean(state['features/base/dialog'].component),
         _feedbackConfigured: Boolean(callStatsID),
-        _isGuest: state['features/base/jwt'].isGuest,
+        _isProfileDisabled: Boolean(state['features/base/config'].disableProfile),
         _isVpaasMeeting: isVpaasMeeting(state),
         _fullScreen: fullScreen,
         _tileViewEnabled: shouldDisplayTileView(state),

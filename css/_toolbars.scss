@@ -42,9 +42,11 @@
         display: none;
     }
 
-    &.shift-right {
-        margin-left: $sidebarWidth;
-        width: calc(100% - #{$sidebarWidth});
+    @media (min-width: 581px) {
+        &.shift-right {
+            margin-left: $sidebarWidth;
+            width: calc(100% - #{$sidebarWidth});
+        }
     }
 
     .toolbox-background {
@@ -88,31 +90,35 @@
                     margin: 0px 4px;
                     width: 38px;
                     height: 38px;
-        
-                    &:hover {
-                        background-color: #daebfa;
-                        border: 1px solid #daebfa;
+
+                    @media (hover: hover) and (pointer: fine) {
+                        &:hover {
+                            background-color: #daebfa;
+                            border: 1px solid #daebfa;
+                        }
                     }
-        
+
                     &.toggled {
                         background: #2a3a4b;
                         border: 1px solid #5e6d7a;
-    
+
                         svg {
                             fill: #fff;
                         }
-        
-                        &:hover {
-                            background-color: #5e6d7a;
+
+                        @media (hover: hover) and (pointer: fine) {
+                            &:hover {
+                                background-color: #5e6d7a;
+                            }
                         }
                     }
-        
+
                     &.disabled, .disabled & {
                         cursor: initial;
                         color: #fff;
                         background-color: #a4b8d1;
                     }
-    
+
                     svg {
                         fill: #5e6d7a;
                     }
@@ -124,9 +130,11 @@
                         border: 1px solid $hangupColor;
                         width: 40px;
                         height: 40px;
-                
-                        &:hover {
-                            background-color: $hangupColor;
+
+                        @media (hover: hover) and (pointer: fine) {
+                            &:hover {
+                                background-color: $hangupColor;
+                            }
                         }
 
                         svg {
@@ -157,8 +165,9 @@
                 cursor: pointer;
                 display: flex;
                 font-size: 14px;
-                height: 22px;
+                height: 40px;
                 padding: 5px 12px;
+                box-sizing: border-box;
 
                 div {
                     display: flex;
@@ -166,16 +175,20 @@
                     align-items: center;
                 }
 
-                &:hover {
-                    background-color: $overflowMenuItemHoverBG;
-                    color: $overflowMenuItemHoverColor;
+                @media (hover: hover) and (pointer: fine) {
+                    &:hover {
+                        background-color: $overflowMenuItemHoverBG;
+                        color: $overflowMenuItemHoverColor;
+                    }
                 }
 
                 &.unclickable {
                     cursor: default;
                 }
-                &.unclickable:hover {
-                    background: inherit;
+                @media (hover: hover) and (pointer: fine) {
+                    &.unclickable:hover {
+                        background: inherit;
+                    }
                 }
                 &.disabled {
                     cursor: initial;
@@ -194,15 +207,17 @@
             }
 
             .overflow-menu-item-icon {
-                margin-right: 10px;
+                margin-right: 16px;
 
                 i {
                     display: inline;
                     font-size: 24px;
                 }
 
-                i:hover {
-                    background-color: initial;
+                @media (hover: hover) and (pointer: fine) {
+                    i:hover {
+                        background-color: initial;
+                    }
                 }
 
                 img {
@@ -212,6 +227,8 @@
 
                 svg {
                     fill: #B8C7E0 !important;
+                    height: 20px;
+                    width: 20px;
                 }
             }
 
@@ -259,10 +276,16 @@
             justify-content: center;
             width: $newToolbarSize;
 
-            &:hover, &.toggled {
+            @media (hover: hover) and (pointer: fine) {
+                &:hover {
+                    background: $newToolbarButtonHoverColor;
+                }
+            }
+
+            &.toggled {
                 background: $newToolbarButtonHoverColor;
             }
-    
+
             &.disabled {
                 cursor: initial !important;
                 background-color: #a4b8d1 !important;

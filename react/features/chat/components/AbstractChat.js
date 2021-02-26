@@ -3,13 +3,20 @@
 import { Component } from 'react';
 import type { Dispatch } from 'redux';
 
+import { isMobileBrowser } from '../../base/environment/utils';
 import { getLocalParticipant } from '../../base/participants';
-import { sendMessage, toggleChat } from '../actions';
+import { sendMessage } from '../actions';
+import { DESKTOP_SMALL_WIDTH_THRESHOLD, MOBILE_SMALL_WIDTH_THRESHOLD } from '../constants';
 
 /**
  * The type of the React {@code Component} props of {@code AbstractChat}.
  */
 export type Props = {
+
+    /**
+     * Whether the chat is opened in a modal or not (computed based on window width).
+     */
+    _isModal: boolean,
 
     /**
      * True if the chat window should be rendered.
@@ -52,41 +59,34 @@ export type Props = {
 /**
  * Implements an abstract chat panel.
  */
-export default class AbstractChat<P: Props> extends Component<P> {}
+export default class AbstractChat<P: Props> extends Component<P> {
 
-/**
- * Maps redux actions to the props of the component.
- *
- * @param {Function} dispatch - The redux action {@code dispatch} function.
- * @returns {{
- *     _onSendMessage: Function,
- *     _onToggleChat: Function
- * }}
- * @private
- */
-export function _mapDispatchToProps(dispatch: Dispatch<any>) {
-    return {
-        /**
-         * Toggles the chat window.
-         *
-         * @returns {Function}
-         */
-        _onToggleChat() {
-            dispatch(toggleChat());
-        },
+    /**
+     * Initializes a new {@code AbstractChat} instance.
+     *
+     * @param {Props} props - The React {@code Component} props to initialize
+     * the new {@code AbstractChat} instance with.
+     */
+    constructor(props: P) {
+        super(props);
 
-        /**
-         * Sends a text message.
-         *
-         * @private
-         * @param {string} text - The text message to be sent.
-         * @returns {void}
-         * @type {Function}
-         */
-        _onSendMessage(text: string) {
-            dispatch(sendMessage(text));
-        }
-    };
+        // Bind event handlers so they are only bound once per instance.
+        this._onSendMessage = this._onSendMessage.bind(this);
+    }
+
+    _onSendMessage: (string) => void;
+
+    /**
+    * Sends a text message.
+    *
+    * @private
+    * @param {string} text - The text message to be sent.
+    * @returns {void}
+    * @type {Function}
+    */
+    _onSendMessage(text: string) {
+        this.props.dispatch(sendMessage(text));
+    }
 }
 
 /**
@@ -106,6 +106,9 @@ export function _mapStateToProps(state: Object) {
     const _localParticipant = getLocalParticipant(state);
 
     return {
+        _isModal: isMobileBrowser()
+            ? window.innerWidth <= MOBILE_SMALL_WIDTH_THRESHOLD
+            : window.innerWidth <= DESKTOP_SMALL_WIDTH_THRESHOLD,
         _isOpen: isOpen,
         _messages: messages,
         _showNamePrompt: !_localParticipant.name

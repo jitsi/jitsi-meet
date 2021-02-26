@@ -1,5 +1,5 @@
 /*
- * Copyright @ 2017-present Atlassian Pty Ltd
+ * Copyright @ 2017-present 8x8, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,5 +54,54 @@
  * The `data` dictionary is empty.
  */
 - (void)enterPictureInPicture:(NSDictionary *)data;
+
+/**
+ * Called when a participant has joined the conference.
+ *
+ * The `data` dictionary contains a `participantId` key with the id of the participant that has joined.
+ */
+- (void)participantJoined:(NSDictionary *)data;
+
+/**
+ * Called when a participant has left the conference.
+ *
+ * The `data` dictionary contains a `participantId` key with the id of the participant that has left.
+ */
+- (void)participantLeft:(NSDictionary *)data;
+
+/**
+ * Called when audioMuted state changed.
+ *
+ * The `data` dictionary contains a `muted` key with state of the audioMuted for the localParticipant.
+ */
+- (void)audioMutedChanged:(NSDictionary *)data;
+
+/**
+ * Called when an endpoint text message is received.
+ *
+ * The `data` dictionary contains a `senderId` key with the participantId of the sender and a 'message' key with the content.
+ */
+- (void)endpointTextMessageReceived:(NSDictionary *)data;
+
+/**
+ * Called when a participant toggled shared screen.
+ *
+ * The `data` dictionary contains a `participantId` key with the id of the participant  and a 'sharing' key with boolean value.
+ */
+- (void)screenShareToggled:(NSDictionary *)data;
+
+/**
+ * Called when a chat message is received.
+ *
+ * The `data` dictionary contains `message`, `senderId` and  `isPrivate` keys.
+ */
+- (void)chatMessaageReceived:(NSDictionary *)data;
+
+/**
+ * Called when the chat dialog is displayed/hidden.
+ *
+ * The `data` dictionary contains a `isOpen` key.
+ */
+- (void)chatToggled:(NSDictionary *)data;
 
 @end

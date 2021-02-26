@@ -8,8 +8,6 @@ import { getInviteURL } from '../../base/connection';
 import { Dialog } from '../../base/dialog';
 import { translate } from '../../base/i18n';
 
-import Header from './Header';
-
 type Props = {
 
     /**
@@ -35,14 +33,14 @@ function EmbedMeeting({ t, url }: Props) {
      * @returns {string} The iframe embed code.
      */
     const getEmbedCode = () =>
-        `<iframe allow="camera; microphone; fullscreen; display-capture" src="${url}"`
+        `<iframe allow="camera; microphone; fullscreen; display-capture; autoplay" src="${url}"`
         + ' style="height: 100%; width: 100%; border: 0px;"></iframe>';
 
     return (
         <Dialog
-            customHeader = { Header }
             hideCancelButton = { true }
             submitDisabled = { true }
+            titleKey = { 'embedMeeting.title' }
             width = 'small'>
             <div className = 'embed-meeting-dialog'>
                 <textarea

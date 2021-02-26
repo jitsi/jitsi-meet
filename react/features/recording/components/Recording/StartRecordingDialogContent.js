@@ -162,7 +162,9 @@ class StartRecordingDialogContent extends Component<Props> {
      * @returns {React$Component}
      */
     _renderFileSharingContent() {
-        if (!this.props.fileRecordingsServiceSharingEnabled) {
+        const { fileRecordingsServiceSharingEnabled, isVpaas } = this.props;
+
+        if (!fileRecordingsServiceSharingEnabled || isVpaas) {
             return null;
         }
 
@@ -247,6 +249,7 @@ class StartRecordingDialogContent extends Component<Props> {
                 ) : null;
 
         const icon = isVpaas ? ICON_SHARE : JITSI_LOGO;
+        const label = isVpaas ? t('recording.serviceDescriptionCloud') : t('recording.serviceDescription');
 
         return (
             <Container
@@ -265,7 +268,7 @@ class StartRecordingDialogContent extends Component<Props> {
                         ..._dialogStyles.text,
                         ...styles.title
                     }}>
-                    { t('recording.serviceDescription') }
+                    { label }
                 </Text>
                 { switchContent }
             </Container>

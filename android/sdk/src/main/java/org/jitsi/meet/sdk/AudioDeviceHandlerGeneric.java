@@ -16,8 +16,11 @@
 
 package org.jitsi.meet.sdk;
 
+import android.media.AudioAttributes;
 import android.media.AudioDeviceInfo;
+import android.media.AudioFocusRequest;
 import android.media.AudioManager;
+import android.os.Build;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -60,7 +63,7 @@ class AudioDeviceHandlerGeneric implements
     private AudioManager audioManager;
 
     /**
-     * {@link Runnable} for running audio device detection the main thread.
+     * {@link Runnable} for running audio device detection in the audio thread.
      * This is only used on Android >= M.
      */
     private final Runnable onAudioDeviceChangeRunner = new Runnable() {
@@ -142,7 +145,7 @@ class AudioDeviceHandlerGeneric implements
                         // Some other application potentially stole our audio focus
                         // temporarily. Restore our mode.
                         if (audioFocusLost) {
-                            module.updateAudioRoute();
+                            module.resetAudioRoute();
                         }
                         audioFocusLost = false;
                         break;
@@ -216,8 +219,24 @@ class AudioDeviceHandlerGeneric implements
         audioManager.setMode(AudioManager.MODE_IN_COMMUNICATION);
         audioManager.setMicrophoneMute(false);
 
-        if (audioManager.requestAudioFocus(this, AudioManager.STREAM_VOICE_CALL, AudioManager.AUDIOFOCUS_GAIN)
-            == AudioManager.AUDIOFOCUS_REQUEST_FAILED) {
+        int gotFocus;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            gotFocus = audioManager.requestAudioFocus(new AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN)
+                .setAudioAttributes(
+                    new AudioAttributes.Builder()
+                        .setUsage(AudioAttributes.USAGE_VOICE_COMMUNICATION)
+                        .setContentType(AudioAttributes.CONTENT_TYPE_SPEECH)
+                        .build()
+                )
+                .setAcceptsDelayedFocusGain(true)
+                .setOnAudioFocusChangeListener(this)
+                .build()
+            );
+        } else {
+            gotFocus = audioManager.requestAudioFocus(this, AudioManager.STREAM_VOICE_CALL, AudioManager.AUDIOFOCUS_GAIN);
+        }
+
+        if (gotFocus == AudioManager.AUDIOFOCUS_REQUEST_FAILED) {
             JitsiMeetLogger.w(TAG + " Audio focus request failed");
             return false;
         }

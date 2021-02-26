@@ -171,10 +171,6 @@ ColorSchemeRegistry.register('BottomSheet', {
         underlayColor: ColorPalette.overflowMenuItemUnderlay
     },
 
-    expandIcon: {
-        color: schemeColor('icon')
-    },
-
     /**
      * Bottom sheet's base style.
      */

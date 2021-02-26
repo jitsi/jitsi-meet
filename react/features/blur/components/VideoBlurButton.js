@@ -1,13 +1,12 @@
 // @flow
 
-import React from 'react';
-
 import { createVideoBlurEvent, sendAnalytics } from '../../analytics';
 import { translate } from '../../base/i18n';
 import { IconBlurBackground } from '../../base/icons';
 import { connect } from '../../base/redux';
-import { AbstractButton, BetaTag } from '../../base/toolbox/components';
+import { AbstractButton } from '../../base/toolbox/components';
 import type { AbstractButtonProps } from '../../base/toolbox/components';
+import { isLocalCameraTrackMuted } from '../../base/tracks';
 import { toggleBlurEffect } from '../actions';
 
 /**
@@ -19,6 +18,11 @@ type Props = AbstractButtonProps & {
      * True if the video background is blurred or false if it is not.
      */
     _isVideoBlurred: boolean,
+
+    /**
+     * Whether video is currently muted or not.
+     */
+    _videoMuted: boolean,
 
     /**
      * The redux {@code dispatch} function.
@@ -36,18 +40,6 @@ class VideoBlurButton extends AbstractButton<Props, *> {
     label = 'toolbar.startvideoblur';
     tooltip = 'toolbar.startvideoblur';
     toggledLabel = 'toolbar.stopvideoblur';
-
-    /**
-     * Helper function to be implemented by subclasses, which returns
-     * a React Element to display (a beta tag) at the end of the button.
-     *
-     * @override
-     * @protected
-     * @returns {ReactElement}
-     */
-    _getElementAfter() {
-        return <BetaTag />;
-    }
 
     /**
      * Handles clicking / pressing the button, and toggles the blur effect
@@ -74,6 +66,17 @@ class VideoBlurButton extends AbstractButton<Props, *> {
     _isToggled() {
         return this.props._isVideoBlurred;
     }
+
+    /**
+     * Returns {@code boolean} value indicating if disabled state is
+     * enabled or not.
+     *
+     * @protected
+     * @returns {boolean}
+     */
+    _isDisabled() {
+        return this.props._videoMuted;
+    }
 }
 
 /**
@@ -87,9 +90,13 @@ class VideoBlurButton extends AbstractButton<Props, *> {
  * }}
  */
 function _mapStateToProps(state): Object {
+    const tracks = state['features/base/tracks'];
+
     return {
-        _isVideoBlurred: Boolean(state['features/blur'].blurEnabled)
+        _isVideoBlurred: Boolean(state['features/blur'].blurEnabled),
+        _videoMuted: isLocalCameraTrackMuted(tracks)
     };
 }
 
 export default translate(connect(_mapStateToProps)(VideoBlurButton));
+

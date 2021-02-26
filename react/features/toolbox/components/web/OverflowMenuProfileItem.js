@@ -83,7 +83,7 @@ class OverflowMenuProfileItem extends Component<Props> {
                 <span className = 'overflow-menu-item-icon'>
                     <Avatar
                         participantId = { _localParticipant.id }
-                        size = { 24 } />
+                        size = { 20 } />
                 </span>
                 <span className = 'profile-text'>
                     { displayName }
@@ -120,7 +120,7 @@ class OverflowMenuProfileItem extends Component<Props> {
 function _mapStateToProps(state) {
     return {
         _localParticipant: getLocalParticipant(state),
-        _unclickable: !state['features/base/jwt'].isGuest
+        _unclickable: state['features/base/config'].disableProfile
             || !interfaceConfig.SETTINGS_SECTIONS.includes('profile')
     };
 }

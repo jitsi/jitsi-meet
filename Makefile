@@ -5,6 +5,8 @@ LIBJITSIMEET_DIR = node_modules/lib-jitsi-meet/
 LIBFLAC_DIR = node_modules/libflacjs/dist/min/
 OLM_DIR = node_modules/olm
 RNNOISE_WASM_DIR = node_modules/rnnoise-wasm/dist/
+TFLITE_WASM = react/features/stream-effects/blur/vendor/tflite
+MEET_MODELS_DIR  = react/features/stream-effects/blur/vendor/models/
 NODE_SASS = ./node_modules/.bin/sass
 NPM = npm
 OUTPUT_DIR = .
@@ -16,14 +18,17 @@ WEBPACK_DEV_SERVER = ./node_modules/.bin/webpack-dev-server
 
 all: compile deploy clean
 
-compile:
+compile: compile-load-test
 	$(WEBPACK) -p
+
+compile-load-test:
+	${NPM} install --prefix resources/load-test && ${NPM} run build --prefix resources/load-test
 
 clean:
 	rm -fr $(BUILD_DIR)
 
 .NOTPARALLEL:
-deploy: deploy-init deploy-appbundle deploy-rnnoise-binary deploy-lib-jitsi-meet deploy-libflac deploy-olm deploy-css deploy-local
+deploy: deploy-init deploy-appbundle deploy-rnnoise-binary deploy-tflite deploy-meet-models deploy-lib-jitsi-meet deploy-libflac deploy-olm deploy-css deploy-local
 
 deploy-init:
 	rm -fr $(DEPLOY_DIR)
@@ -39,8 +44,6 @@ deploy-appbundle:
 		$(BUILD_DIR)/external_api.min.map \
 		$(BUILD_DIR)/flacEncodeWorker.min.js \
 		$(BUILD_DIR)/flacEncodeWorker.min.map \
-		$(BUILD_DIR)/device_selection_popup_bundle.min.js \
-		$(BUILD_DIR)/device_selection_popup_bundle.min.map \
 		$(BUILD_DIR)/dial_in_info_bundle.min.js \
 		$(BUILD_DIR)/dial_in_info_bundle.min.map \
 		$(BUILD_DIR)/alwaysontop.min.js \
@@ -81,6 +84,16 @@ deploy-rnnoise-binary:
 		$(RNNOISE_WASM_DIR)/rnnoise.wasm \
 		$(DEPLOY_DIR)
 
+deploy-tflite:
+	cp \
+		$(TFLITE_WASM)/*.wasm \
+		$(DEPLOY_DIR)		
+
+deploy-meet-models:
+	cp \
+		$(MEET_MODELS_DIR)/*.tflite \
+		$(DEPLOY_DIR)	
+
 deploy-css:
 	$(NODE_SASS) $(STYLES_MAIN) $(STYLES_BUNDLE) && \
 	$(CLEANCSS) --skip-rebase $(STYLES_BUNDLE) > $(STYLES_DESTINATION) ; \
@@ -90,7 +103,7 @@ deploy-local:
 	([ ! -x deploy-local.sh ] || ./deploy-local.sh)
 
 .NOTPARALLEL:
-dev: deploy-init deploy-css deploy-rnnoise-binary deploy-lib-jitsi-meet deploy-libflac deploy-olm
+dev: deploy-init deploy-css deploy-rnnoise-binary deploy-tflite deploy-meet-models deploy-lib-jitsi-meet deploy-libflac deploy-olm
 	$(WEBPACK_DEV_SERVER) --detect-circular-deps
 
 source-package:

@@ -63,6 +63,16 @@ export const CONFERENCE_SUBJECT_CHANGED = 'CONFERENCE_SUBJECT_CHANGED';
 export const CONFERENCE_TIMESTAMP_CHANGED = 'CONFERENCE_TIMESTAMP_CHANGED';
 
 /**
+ * The type of (redux) action which signals that an uuid for a conference has been set.
+ *
+ * {
+ *     type: CONFERENCE_UNIQUE_ID_SET,
+ *     conference: JitsiConference
+ * }
+ */
+export const CONFERENCE_UNIQUE_ID_SET = 'CONFERENCE_UNIQUE_ID_SET';
+
+/**
  * The type of (redux) action which signals that a specific conference will be
  * joined.
  *
@@ -141,18 +151,6 @@ export const P2P_STATUS_CHANGED = 'P2P_STATUS_CHANGED';
 export const SEND_TONES = 'SEND_TONES';
 
 /**
- * The type of (redux) action which sets the desktop sharing enabled flag for
- * the current conference.
- *
- * {
- *     type: SET_DESKTOP_SHARING_ENABLED,
- *     desktopSharingEnabled: boolean
- * }
- */
-export const SET_DESKTOP_SHARING_ENABLED
-    = 'SET_DESKTOP_SHARING_ENABLED';
-
-/**
  * The type of (redux) action which updates the current known status of the
  * Follow Me feature.
  *
@@ -207,17 +205,6 @@ export const SET_PENDING_SUBJECT_CHANGE = 'SET_PENDING_SUBJECT_CHANGE';
  * }
  */
 export const SET_ROOM = 'SET_ROOM';
-
-/**
- * The type of (redux) action, which indicates if a SIP gateway is enabled on
- * the server.
- *
- * {
- *     type: SET_SIP_GATEWAY_ENABLED
- *     isSIPGatewayEnabled: boolean
- * }
- */
-export const SET_SIP_GATEWAY_ENABLED = 'SET_SIP_GATEWAY_ENABLED';
 
 /**
  * The type of (redux) action which updates the current known status of the

@@ -1,12 +1,12 @@
 // @flow
 
-import Tooltip from '@atlaskit/tooltip';
 import React, { Component } from 'react';
 
 import { translate } from '../../base/i18n';
 import { IconE2EE } from '../../base/icons';
 import { CircularLabel } from '../../base/label';
 import { connect } from '../../base/redux';
+import { Tooltip } from '../../base/tooltip';
 
 import { _mapStateToProps, type Props } from './AbstractE2EELabel';
 

@@ -29,7 +29,6 @@ import '../blur/reducer';
 import '../calendar-sync/reducer';
 import '../chat/reducer';
 import '../deep-linking/reducer';
-import '../device-selection/reducer';
 import '../dropbox/reducer';
 import '../dynamic-branding/reducer';
 import '../etherpad/reducer';

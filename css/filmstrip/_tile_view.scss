@@ -15,9 +15,8 @@
         box-sizing: border-box;
         display: flex;
         flex-direction: column;
-        height: calc(100vh - 200px);
+        height: 100%;
         width: 100vw;
-        margin: 100px 0px;
     }
 
     .filmstrip__videos .videocontainer {
@@ -43,17 +42,18 @@
         height: 100%;
         justify-content: center;
         left: 0;
-        position: fixed;
+        position: absolute;
         top: 0;
         width: 100%;
-        z-index: $filmstripVideosZ;
 
-        &.shift-right {
-            margin-left: $sidebarWidth;
-            width: calc(100% - #{$sidebarWidth});
+        @media (min-width: 581px) {
+            &.shift-right {
+                margin-left: $sidebarWidth;
+                width: calc(100% - #{$sidebarWidth});
 
-            #filmstripRemoteVideos {
-                width: calc(100vw - #{$sidebarWidth});
+                #filmstripRemoteVideos {
+                    width: calc(100vw - #{$sidebarWidth});
+                }
             }
         }
     }
@@ -87,6 +87,7 @@
         box-sizing: border-box;
         display: flex;
         flex-wrap: wrap;
+        flex-shrink: 0;
         margin-top: auto;
         margin-bottom: auto;
         justify-content: center;
@@ -95,11 +96,20 @@
             border: 0;
             box-sizing: border-box;
             display: block;
-            margin: 5px;
+            margin: 2px;
         }
 
         video {
             object-fit: contain;
+        }
+
+        /**
+         * Max-width corresponding to the ASPECT_RATIO_BREAKPOINT from features/filmstrip/constants.
+         */
+        @media only screen and (max-width: 500px) {
+            video {
+                object-fit: cover;
+            }
         }
     }
 
@@ -109,15 +119,5 @@
 
     .has-overflow .videocontainer {
         align-self: baseline;
-    }
-
-    /**
-     * Firefox flex acts a little differently. To make sure the bottom row of
-     * thumbnails is not overlapped by the horizontal toolbar, margin is added
-     * to the local thumbnail to keep it from the bottom of the screen. It is
-     * assumed the local thumbnail will always be on the bottom row.
-     */
-    .has-overflow #localVideoContainer {
-        margin-bottom: 100px !important;
     }
 }

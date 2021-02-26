@@ -32,6 +32,13 @@
     width: $sidebarWidth;
     word-wrap: break-word;
 
+    display: flex;
+    flex-direction: column;
+
+    & > :first-child {
+        margin-top: auto;
+    }
+
     a {
         display: block;
     }
@@ -103,35 +110,77 @@
     position: relative;
     width: 100%;
     z-index: 1;
+    display: flex;
+    justify-content: space-between;
+    padding: 16px;
+    align-items: center;
+    box-sizing: border-box;
+    color: #fff;
+    font-weight: 600;
+    font-size: 24px;
+    line-height: 32px;
 
-    .chat-close {
-        align-items: center;
-        bottom: 8px;
-        color: white;
+    .jitsi-icon {
         cursor: pointer;
-        display: flex;
-        font-size: 18px;
-        height: 40px;
-        justify-content: center;
-        line-height: 15px;
-        padding: 4px;
-        position: absolute;
-        right: 5px;
-        width: 40px;
+    }
 
-        &:hover {
-            color: rgba(255, 255, 255, 0.8);
+    .jitsi-icon > svg {
+        fill: #A4B8D1;
+    }
+}
+
+.chat-input-container {
+    padding: 0 16px 24px;
+
+    &.populated {
+        #chat-input {
+            border: 1px solid #619CF4;
+
+            .send-button {
+                background: #1B67EC;
+                cursor: pointer;
+
+                path {
+                    fill: #fff;
+                }
+            }
         }
     }
 }
 
 #chat-input {
-    border-top: 1px solid $chatInputSeparatorColor;
+    border: 1px solid $chatInputSeparatorColor;
     display: flex;
     padding: 5px 10px;
+    border-radius: 3px;
 
     * {
         background-color: transparent;
+    }
+}
+
+.send-button-container {
+    display: flex;
+    align-items: center;
+}
+
+.send-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 40px;
+    width: 40px;
+    border-radius: 3px;
+
+    path {
+        fill: $chatInputSeparatorColor;
+    }
+}
+
+.mobile-browser {
+    .send-button {
+        height: 48px;
+        width: 48px;
     }
 }
 
@@ -164,10 +213,47 @@
 #nickname {
     text-align: center;
     color: #9d9d9d;
-    font-size: 18px;
-    margin-top: 30px;
-    left: 5px;
-    right: 5px;
+    font-size: 16px;
+    margin: auto 0;
+    padding: 0 16px;
+
+    input {
+        height: 40px;
+    }
+
+    label {
+        line-height: 24px;
+    }
+
+    .enter-chat {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-top: 16px;
+        height: 40px;
+        background: #1B67EC;
+        border-radius: 3px;
+        color: #fff;
+        cursor: pointer;
+
+        &.disabled {
+            color: #757575;
+            background: #11336E;
+            pointer-events: none;
+        }
+    }
+}
+
+.mobile-browser {
+    #nickname {
+        input {
+            height: 48px;
+        }
+
+        .enter-chat {
+            height: 48px;
+        }
+    }
 }
 
 .sideToolbarContainer {
@@ -183,6 +269,10 @@
         white-space: nowrap;
         text-overflow: ellipsis;
         overflow: hidden;
+    }
+
+    @media (max-width: 580px) {
+        display: none !important;
     }
 }
 
@@ -378,4 +468,58 @@
             background-color: $chatPrivateMessageBackgroundColor;
         }
     }
+}
+
+.chat-dialog {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    margin-top: -5px; // Margin set by atlaskit.
+
+    &-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin: 16px 16px 24px;
+        width: calc(100% - 32px);
+        box-sizing: border-box;
+        color: #fff;
+        font-weight: 600;
+        font-size: 24px;
+        line-height: 32px;
+
+        .jitsi-icon {
+            cursor: pointer;
+        }
+
+        .jitsi-icon > svg {
+            fill: #A4B8D1;
+        }
+    }
+
+    #chatconversation {
+        width: 100%;
+    }
+
+    .chat-input-container {
+        padding: 0 0 24px;
+    }
+}
+
+.touchmove-hack {
+    display: flex;
+    flex: 1;
+    overflow: auto;
+}
+
+/**
+ * Make header close button more easily tappable on mobile.
+ */
+.mobile-browser .chat-dialog-header .jitsi-icon {
+    display: grid;
+    place-items: center;
+    height: 48px;
+    width: 48px;
+    background: #2a3a4b;
+    border-radius: 3px;
 }

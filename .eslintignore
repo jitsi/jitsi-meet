@@ -5,6 +5,8 @@ build/*
 # modify as little as possible.
 flow-typed/*
 libs/*
+resources/*
+react/features/stream-effects/blur/vendor/*
 
 # ESLint will by default ignore its own configuration file. However, there does
 # not seem to be a reason why we will want to risk being inconsistent with our

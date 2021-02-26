@@ -5,6 +5,7 @@ import { ReducerRegistry, set } from '../base/redux';
 import {
     CLEAR_TOOLBOX_TIMEOUT,
     FULL_SCREEN_CHANGED,
+    SET_OVERFLOW_DRAWER,
     SET_OVERFLOW_MENU_VISIBLE,
     SET_TOOLBAR_HOVERED,
     SET_TOOLBOX_ALWAYS_VISIBLE,
@@ -25,6 +26,7 @@ declare var interfaceConfig: Object;
  *     alwaysVisible: boolean,
  *     enabled: boolean,
  *     hovered: boolean,
+ *     overflowDrawer: boolean,
  *     overflowMenuVisible: boolean,
  *     timeoutID: number,
  *     timeoutMS: number,
@@ -80,6 +82,13 @@ function _getInitialState() {
         hovered: false,
 
         /**
+         * The indicator which determines whether the overflow menu(s) are to be displayed as drawers.
+         *
+         * @type {boolean}
+         */
+        overflowDrawer: false,
+
+        /**
          * The indicator which determines whether the OverflowMenu is visible.
          *
          * @type {boolean}
@@ -103,7 +112,7 @@ function _getInitialState() {
         timeoutMS,
 
         /**
-         * The indicator which determines whether the Toolbox is visible.
+         * The indicator that determines whether the Toolbox is visible.
          *
          * @type {boolean}
          */
@@ -125,6 +134,12 @@ ReducerRegistry.register(
             return {
                 ...state,
                 fullScreen: action.fullScreen
+            };
+
+        case SET_OVERFLOW_DRAWER:
+            return {
+                ...state,
+                overflowDrawer: action.displayAsDrawer
             };
 
         case SET_OVERFLOW_MENU_VISIBLE:

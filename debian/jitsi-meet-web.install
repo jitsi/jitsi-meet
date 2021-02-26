@@ -13,4 +13,7 @@ lang					/usr/share/jitsi-meet/
 connection_optimization	/usr/share/jitsi-meet/
 resources/robots.txt	/usr/share/jitsi-meet/
 resources/*.sh			/usr/share/jitsi-meet/scripts/
-pwa-worker.js /usr/share/jitsi-meet/
+pwa-worker.js			/usr/share/jitsi-meet/
+manifest.json			/usr/share/jitsi-meet/
+resources/load-test/*.html	/usr/share/jitsi-meet/load-test/
+resources/load-test/libs	/usr/share/jitsi-meet/load-test/

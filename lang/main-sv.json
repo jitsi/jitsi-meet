@@ -320,7 +320,7 @@
         "liveStreamURL": "Livesändning:",
         "moreNumbers": "Fler nummer",
         "noNumbers": "Inga inringningsnummer.",
-        "noPassword": "Inga enheter",
+        "noPassword": "Inget lösenord",
         "noRoom": "Inget rum specificerades för inringning.",
         "numbers": "Inringningsnummer",
         "password": "$t(lockRoomPasswordUppercase):",

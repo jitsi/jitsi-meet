@@ -504,15 +504,17 @@ export function createRejoinedEvent({ url, lastConferenceDuration, timeSinceLeft
  *
  * @param {string} participantId - The ID of the participant that was remotely
  * muted.
+ * @param {string} mediaType - The media type of the channel to mute.
  * @returns {Object} The event in a format suitable for sending via
  * sendAnalytics.
  */
-export function createRemoteMuteConfirmedEvent(participantId) {
+export function createRemoteMuteConfirmedEvent(participantId, mediaType) {
     return {
         action: 'clicked',
         actionSubject: 'remote.mute.dialog.confirm.button',
         attributes: {
-            'participant_id': participantId
+            'participant_id': participantId,
+            'media_type': mediaType
         },
         source: 'remote.mute.dialog',
         type: TYPE_UI
@@ -585,6 +587,19 @@ export function createScreenSharingEvent(action) {
     return {
         action,
         actionSubject: 'screen.sharing'
+    };
+}
+
+/**
+ * Creates an event which indicates the screen sharing video is not displayed when it needs to be displayed.
+ *
+ * @param {Object} attributes - Additional information that describes the issue.
+ * @returns {Object} The event in a format suitable for sending via sendAnalytics.
+ */
+export function createScreenSharingIssueEvent(attributes) {
+    return {
+        action: 'screen.sharing.issue',
+        attributes
     };
 }
 
@@ -768,6 +783,22 @@ export function createTrackMutedEvent(mediaType, reason, muted = true) {
             'media_type': mediaType,
             muted,
             reason
+        }
+    };
+}
+
+/**
+ * Creates an event for joining a vpaas conference.
+ *
+ * @param {string} tenant - The conference tenant.
+ * @returns {Object} The event in a format suitable for sending via
+ * sendAnalytics.
+ */
+export function createVpaasConferenceJoinedEvent(tenant) {
+    return {
+        action: 'vpaas.conference.joined',
+        attributes: {
+            tenant
         }
     };
 }
