@@ -18,21 +18,22 @@ package org.jitsi.meet.sdk;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.widget.Button;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
-
+import androidx.appcompat.app.AppCompatActivity;
+import android.os.Bundle;
+import android.widget.Button;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.FragmentActivity;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-
 import com.facebook.react.modules.core.PermissionListener;
 
 import org.jitsi.meet.sdk.log.JitsiMeetLogger;
 
 import java.util.HashMap;
-
 /**
  * A base activity for SDK users to embed. It uses {@link JitsiMeetFragment} to do the heavy
  * lifting and wires the remaining Activity lifecycle methods so it works out of the box.
@@ -66,9 +67,6 @@ public class JitsiMeetActivity extends FragmentActivity
             = new JitsiMeetConferenceOptions.Builder().setRoom(url).build();
         launch(context, options);
     }
-
-    // Overrides
-    //
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

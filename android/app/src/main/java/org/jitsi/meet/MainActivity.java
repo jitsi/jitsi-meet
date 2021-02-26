@@ -26,8 +26,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
-import android.view.KeyEvent;
-
+import android.view.View;
+import android.widget.Button;
 import androidx.annotation.Nullable;
 
 import org.jitsi.meet.sdk.JitsiMeet;
@@ -204,7 +204,7 @@ public class MainActivity extends JitsiMeetActivity {
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-    // ReactAndroid/src/main/java/com/facebook/react/ReactActivity.java
+    // ReactAndroid/src/main/java/com/facebook/react/React Activity.java
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
         if (BuildConfig.DEBUG && keyCode == KeyEvent.KEYCODE_MENU) {

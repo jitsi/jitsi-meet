@@ -16,16 +16,17 @@
 
 package org.jitsi.meet.sdk;
 
+import android.annotation.SuppressLint;
 import android.media.AudioAttributes;
 import android.media.AudioDeviceInfo;
 import android.media.AudioFocusRequest;
 import android.media.AudioManager;
 import android.os.Build;
 
+import org.jitsi.meet.sdk.log.JitsiMeetLogger;
+
 import java.util.HashSet;
 import java.util.Set;
-
-import org.jitsi.meet.sdk.log.JitsiMeetLogger;
 
 
 /**
@@ -35,8 +36,8 @@ import org.jitsi.meet.sdk.log.JitsiMeetLogger;
  * can be disabled.
  */
 class AudioDeviceHandlerGeneric implements
-        AudioModeModule.AudioDeviceHandlerInterface,
-        AudioManager.OnAudioFocusChangeListener {
+    AudioModeModule.AudioDeviceHandlerInterface,
+    AudioManager.OnAudioFocusChangeListener {
 
     private final static String TAG = AudioDeviceHandlerGeneric.class.getSimpleName();
 
@@ -70,7 +71,7 @@ class AudioDeviceHandlerGeneric implements
         @Override
         public void run() {
             Set<String> devices = new HashSet<>();
-            AudioDeviceInfo[] deviceInfos = audioManager.getDevices(AudioManager.GET_DEVICES_ALL);
+            @SuppressLint("WrongConstant") AudioDeviceInfo[] deviceInfos = audioManager.getDevices(AudioManager.GET_DEVICES_ALL);
 
             for (AudioDeviceInfo info: deviceInfos) {
                 switch (info.getType()) {

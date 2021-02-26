@@ -1,12 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
     tools:context=".JitsiMeetActivity">
-    <fragment
+    <TextView
+        android:layout_height="wrap_content"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:name="org.jitsi.meet.sdk.JitsiMeetFragment"
-        android:id="@+id/jitsiFragment"/>
-</FrameLayout>
+        android:gravity="center"
+        android:textSize="18sp"
+        android:textFontWeight="800"
+        android:text="CATIE VIDEO CHAT">
+    </TextView>
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:minHeight="600dp"
+        android:layout_weight="6">
+        <fragment
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:name="org.jitsi.meet.sdk.JitsiMeetFragment"
+            android:id="@+id/jitsiFragment"/>
+    </FrameLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center_vertical"
+        android:minHeight="100dp"
+        android:orientation="horizontal">
+        <LinearLayout
+            android:layout_height="wrap_content" android:layout_width="0dp"
+            android:layout_weight="1"
+            android:gravity="start">
+            <ImageView
+                android:layout_width="120dp"
+                android:layout_marginStart="10dp"
+                android:id="@+id/button_home"
+                android:layout_height="120dp"
+                android:src="@drawable/home">
+            </ImageView>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_height="wrap_content" android:layout_width="0dp"
+            android:gravity="center"
+            android:layout_weight="1">
+            <Button
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:text="INVITE"
+                android:id="@+id/button_invite"
+                android:background="@android:color/holo_blue_bright" />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_height="wrap_content" android:layout_width="0dp"
+            android:layout_weight="1"
+            android:gravity="end">
+            <ImageView
+                android:layout_width="120dp"
+                android:id="@+id/back"
+                android:layout_marginStart="10dp"
+                android:layout_height="120dp"
+                android:src="@drawable/back" />
+        </LinearLayout>
+        </LinearLayout>
+</LinearLayout>

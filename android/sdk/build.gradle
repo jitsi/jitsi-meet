@@ -239,3 +239,6 @@ publishing {
         }
     }
 }
+task wrapper(type: Wrapper){
+    gradleVersion = '6.8'
+}

@@ -1,3 +1,6 @@
-*.bundle.js -text -diff
-*.pbxproj -text
-lib-jitsi-meet.js -text -diff
+#
+# https://help.github.com/articles/dealing-with-line-endings/
+#
+# These are explicitly windows files and should use crlf
+*.bat           text eol=crlf
+
