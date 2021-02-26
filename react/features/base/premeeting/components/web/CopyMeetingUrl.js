@@ -7,6 +7,7 @@ import { translate } from '../../../i18n';
 import { Icon, IconCopy, IconCheck } from '../../../icons';
 import { connect } from '../../../redux';
 import { copyText, getDecodedURI } from '../../../util';
+import logger from '../../logger';
 
 type Props = {
 
@@ -156,6 +157,9 @@ class CopyMeetingUrl extends Component<Props, State> {
             .then(() => {
                 this._showLinkCopied();
                 window.setTimeout(this._hideLinkCopied, COPY_TIMEOUT);
+            })
+            .catch(e => {
+                logger.error(e);
             });
     }
 
