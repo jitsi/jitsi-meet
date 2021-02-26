@@ -320,7 +320,7 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
         const frameName = `jitsiConferenceFrame${id}`;
 
         this._frame = document.createElement('iframe');
-        this._frame.allow = 'camera; microphone; display-capture';
+        this._frame.allow = 'camera; microphone; display-capture; autoplay; clipboard-write';
         this._frame.src = this._url;
         this._frame.name = frameName;
         this._frame.id = frameName;
@@ -752,6 +752,18 @@ export default class JitsiMeetExternalAPI extends EventEmitter {
      */
     getCurrentDevices() {
         return getCurrentDevices(this._transport);
+    }
+
+    /**
+     * Returns the current livestream url.
+     *
+     * @returns {Promise} - Resolves with the current livestream URL if exists, with
+     * undefined if not and rejects on failure.
+     */
+    getLivestreamUrl() {
+        return this._transport.sendRequest({
+            name: 'get-livestream-url'
+        });
     }
 
     /**
