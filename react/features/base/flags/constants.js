@@ -7,6 +7,12 @@
 export const ADD_PEOPLE_ENABLED = 'add-people.enabled';
 
 /**
+ * Flag indicating that the Audio only button in the overflow menu is enabled.
+ * Default: enabled (true).
+ */
+export const AUDIO_ONLY_BUTTON_ENABLED = 'audio-only.enabled';
+
+/**
  * Flag indicating if calendar integration should be enabled.
  * Default: enabled (true) on Android, auto-detected on iOS.
  */
@@ -123,12 +129,6 @@ export const TOOLBOX_ALWAYS_VISIBLE = 'toolbox.alwaysVisible';
  * Default: enabled (true).
  */
 export const VIDEO_SHARE_BUTTON_ENABLED = 'video-share.enabled';
-
-/**
- * Flag indicating that the Audio only button in the overflow menu is enabled.
- * Default: enabled (true).
- */
-export const AUDIO_ONLY_BUTTON_ENABLED = 'audio-only.enabled';
 
 /**
  * Flag indicating if the welcome page should be enabled.
