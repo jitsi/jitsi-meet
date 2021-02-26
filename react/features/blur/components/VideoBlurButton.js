@@ -6,7 +6,7 @@ import { IconBlurBackground } from '../../base/icons';
 import { connect } from '../../base/redux';
 import { AbstractButton } from '../../base/toolbox/components';
 import type { AbstractButtonProps } from '../../base/toolbox/components';
-import { getLocalVideoTrack } from '../../base/tracks';
+import { isLocalCameraTrackMuted } from '../../base/tracks';
 import { toggleBlurEffect } from '../actions';
 
 /**
@@ -20,14 +20,9 @@ type Props = AbstractButtonProps & {
     _isVideoBlurred: boolean,
 
     /**
-     * Flag signaling the visibility of camera preview.
+     * Whether video is currently muted or not.
      */
-    videoMuted: boolean,
-
-    /**
-     * The JitsiLocalTrack to display.
-     */
-    videoTrack: ?Object,
+    _videoMuted: boolean,
 
     /**
      * The redux {@code dispatch} function.
@@ -74,21 +69,13 @@ class VideoBlurButton extends AbstractButton<Props, *> {
 
     /**
      * Returns {@code boolean} value indicating if disabled state is
-     * enabled or not. This checks two cases of true value. The first one
-     * checks the case when user join meeting with disabled camera. The
-     * second case is when user join meeting with enabled camera, but then
-     * he disables it.
+     * enabled or not.
      *
      * @protected
      * @returns {boolean}
      */
     _isDisabled() {
-        if (this.props.videoMuted) {
-            return true;
-        }
-        if (!this.props.videoTrack) {
-            return true;
-        }
+        return this.props._videoMuted;
     }
 }
 
@@ -97,18 +84,19 @@ class VideoBlurButton extends AbstractButton<Props, *> {
  * {@code VideoBlurButton} component.
  *
  * @param {Object} state - The Redux state.
- * @param {Props} ownProps - The own props of the component.
  * @private
  * @returns {{
  *     _isVideoBlurred: boolean
  * }}
  */
-function _mapStateToProps(state, ownProps): Object {
+function _mapStateToProps(state): Object {
+    const tracks = state['features/base/tracks'];
 
     return {
-        videoMuted: ownProps.videoTrack ? ownProps.videoMuted : state['features/base/media'].video.muted,
-        videoTrack: ownProps.videoTrack || (getLocalVideoTrack(state['features/base/tracks']) || {}).jitsiTrack
+        _isVideoBlurred: Boolean(state['features/blur'].blurEnabled),
+        _videoMuted: isLocalCameraTrackMuted(tracks)
     };
 }
 
 export default translate(connect(_mapStateToProps)(VideoBlurButton));
+
