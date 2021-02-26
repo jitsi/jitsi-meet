@@ -220,6 +220,7 @@ export function getConnectionData(state: Object) {
  * @returns {boolean}
  */
 export function allowUrlSharing() {
-    return typeof interfaceConfig.SHARING_FEATURES === 'undefined'
+    return typeof interfaceConfig === 'undefined'
+        || typeof interfaceConfig.SHARING_FEATURES === 'undefined'
         || (interfaceConfig.SHARING_FEATURES.length && interfaceConfig.SHARING_FEATURES.indexOf('url') > -1);
 }
