@@ -51,13 +51,13 @@ function DialInSection({
             <DialInNumber
                 conferenceID = { _dialIn.conferenceID }
                 phoneNumber = { phoneNumber } />
-            {_dialIn.numbers && _dialIn.numbers.length > 1 ? <a
+            <a
                 className = 'more-numbers'
                 href = { _dialInfoPageUrl }
                 rel = 'noopener noreferrer'
                 target = '_blank'>
                 { t('info.moreNumbers') }
-            </a> : null}
+            </a>
         </div>
     );
 }
