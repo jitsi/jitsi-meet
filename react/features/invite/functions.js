@@ -720,3 +720,22 @@ export async function executeDialOutStatusRequest(url: string, reqId: string) {
 
     return res.ok ? json : Promise.reject(json);
 }
+
+export const sharingFeatures = {
+    email: 'email',
+    url: 'url',
+    dialIn: 'dial-in',
+    embed: 'embed'
+};
+
+/**
+ * Returns true if a specific sharing feature is enabled in interface configuration.
+ *
+ * @param {string} sharingFeature - The sharing feature to check.
+ * @returns {boolean}
+ */
+export function isSharingEnabled(sharingFeature: string) {
+    return typeof interfaceConfig === 'undefined'
+        || typeof interfaceConfig.SHARING_FEATURES === 'undefined'
+        || (interfaceConfig.SHARING_FEATURES.length && interfaceConfig.SHARING_FEATURES.indexOf(sharingFeature) > -1);
+}

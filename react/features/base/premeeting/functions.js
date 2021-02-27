@@ -4,6 +4,8 @@ import { findIndex } from 'lodash';
 
 import { CONNECTION_TYPE } from './constants';
 
+declare var interfaceConfig: Object;
+
 const LOSS_AUDIO_THRESHOLDS = [ 0.33, 0.05 ];
 const LOSS_VIDEO_THRESHOLDS = [ 0.33, 0.1, 0.05 ];
 
@@ -210,4 +212,15 @@ export function getConnectionData(state: Object) {
         connectionType: CONNECTION_TYPE.NONE,
         connectionDetails: []
     };
+}
+
+/**
+ * Returns if url sharing is enabled in interface configuration.
+ *
+ * @returns {boolean}
+ */
+export function allowUrlSharing() {
+    return typeof interfaceConfig === 'undefined'
+        || typeof interfaceConfig.SHARING_FEATURES === 'undefined'
+        || (interfaceConfig.SHARING_FEATURES.length && interfaceConfig.SHARING_FEATURES.indexOf('url') > -1);
 }
