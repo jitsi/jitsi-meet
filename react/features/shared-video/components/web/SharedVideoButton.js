@@ -59,6 +59,16 @@ class SharedVideoButton extends AbstractButton<Props, *> {
      * @returns {void}
      */
     _handleClick() {
+        const { _participant } = this.props;
+
+        if (this._isToggled() && !APP.conference.isLocalId(_participant)) {
+            APP.UI.messageHandler.showWarning({
+                descriptionKey: 'dialog.alreadySharedVideoMsg',
+                titleKey: 'dialog.alreadySharedVideoTitle'
+            });
+            sendAnalytics(createEvent('already.shared'));
+        }
+
         this._doToggleSharedVideoDialog();
     }
 
@@ -85,8 +95,8 @@ class SharedVideoButton extends AbstractButton<Props, *> {
         APP.UI.onSharedVideoStart(
             _participant, videoId,
             {
-                state: 'start',
-                from: _participant
+                from: _participant,
+                state: 'start'
             });
         sendAnalytics(createEvent('started'));
     }
@@ -102,8 +112,8 @@ class SharedVideoButton extends AbstractButton<Props, *> {
         APP.UI.onSharedVideoStop(
             _participant,
             {
-                state: 'stop',
-                from: _participant
+                from: _participant,
+                state: 'stop'
             });
         sendAnalytics(createEvent('removed'));
     }
@@ -117,7 +127,7 @@ class SharedVideoButton extends AbstractButton<Props, *> {
     _doToggleSharedVideoDialog() {
         const { dispatch } = this.props;
 
-        this._isToggled()
+        return this._isToggled()
             ? this._removeSharedVideo()
             : dispatch(showSharedVideoDialog(id => this._startSharedVideo(id)));
     }
@@ -135,7 +145,7 @@ function _mapStateToProps(state): Object {
     const localParticipantId = getLocalParticipant(state).id;
 
     return {
-        _participant: localParticipantId || '',
+        _participant: localParticipantId,
         _sharingVideo: isSharingStatus(sharedVideoStatus)
     };
 }
