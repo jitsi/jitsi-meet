@@ -608,7 +608,7 @@ export function hasMultipleNumbers(dialInNumbers: ?Object) {
     // deprecated and will be removed
     const { numbers } = dialInNumbers;
 
-    return Boolean(numbers && Object.values(numbers).map(a => Array.isArray(a) ? a.length : 0)
+    return Boolean(numbers && Object.values(numbers).map(a => (Array.isArray(a) ? a.length : 0))
         .reduce((a, b) => a + b) > 1);
 }
 
