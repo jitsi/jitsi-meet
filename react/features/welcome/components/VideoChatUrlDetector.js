@@ -1,5 +1,4 @@
 // @flow
-import { useEffect } from 'react';
 import { Clipboard } from 'react-native';
 import { connect } from '../../base/redux';
 import { appNavigate } from '../../app';
@@ -24,6 +23,13 @@ type Props = {
 };
 
 /**
+ * Get ios clipboard contents.
+ *
+ * @returns {void}
+ */
+const getClipboardContents = async () => await Clipboard.getString();
+
+/**
  * React component to detect if the contents from the clipboard contain jane video chat url.
  *
  * @param {Object} props - The read-only properties with which the new
@@ -31,8 +37,6 @@ type Props = {
  * @returns {null}
  */
 const VideoChatUrlDetector = (props: Props) => {
-
-    const getClipboardContents = async () => await Clipboard.getString();
 
     const checkClipboardContents = async () => {
         const contents = await getClipboardContents();
@@ -43,15 +47,9 @@ const VideoChatUrlDetector = (props: Props) => {
         }
     };
 
-    useEffect(() => {
+    if (props.appState === 'active') {
         checkClipboardContents();
-    }, []);
-
-    useEffect(() => {
-        if (props.appState === 'active') {
-            checkClipboardContents();
-        }
-    }, [ props.appState ]);
+    }
 
     return null;
 };
