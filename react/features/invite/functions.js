@@ -602,12 +602,14 @@ export function hasMultipleNumbers(dialInNumbers: ?Object) {
     }
 
     if (Array.isArray(dialInNumbers)) {
-        return dialInNumbers.length > 1
+        return dialInNumbers.length > 1;
     }
 
     // deprecated and will be removed
     const { numbers } = dialInNumbers;
-    return Boolean(numbers && Object.values(numbers).map((a) => a.length || 0).reduce((a, b) => a + b) > 1);
+
+    return Boolean(numbers && Object.values(numbers).map(a => a.length || 0)
+        .reduce((a, b) => a + b) > 1);
 }
 
 /**

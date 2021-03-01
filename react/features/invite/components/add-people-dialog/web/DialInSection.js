@@ -80,6 +80,7 @@ function DialInSection({
  */
 function _mapStateToProps(state) {
     const dialIn = state['features/invite'];
+
     return {
         _conferenceID: dialIn.conferenceID,
         _dialInfoPageUrl: getDialInfoPageURL(state),
