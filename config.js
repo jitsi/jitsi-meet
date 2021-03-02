@@ -453,6 +453,13 @@ var config = {
     //    'tileview', 'select-background', 'download', 'help', 'mute-everyone', 'mute-video-everyone', 'security'
     // ],
 
+    // Show customizable buttons on welcome page, prejoin page and in conference
+    // Useful for linking to a privacy notice which needs to be presented to the
+    // user as soon as any data is collected (in the EU).
+    // customButtons: [
+    //    {'id': 'privacy-button', 'text': 'Privacy notice', 'url': '/static/privacy.html'}
+    // ]
+
     // Stats
     //
 

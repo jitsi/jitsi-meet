@@ -37,6 +37,7 @@ import { OverflowMenuItem } from '../../../base/toolbox/components';
 import { getLocalVideoTrack, toggleScreensharing } from '../../../base/tracks';
 import { isVpaasMeeting } from '../../../billing-counter/functions';
 import { ChatCounter, toggleChat } from '../../../chat';
+import { CustomButtonContainer } from '../../../custom-buttons';
 import { EmbedMeetingDialog } from '../../../embed-meeting';
 import { SharedDocumentButton } from '../../../etherpad';
 import { openFeedbackDialog } from '../../../feedback';
@@ -1302,6 +1303,7 @@ class Toolbox extends Component<Props> {
                     onFocus = { this._onTabIn }
                     onMouseOut = { this._onMouseOut }
                     onMouseOver = { this._onMouseOver }>
+                    <CustomButtonContainer onConference = 'true' />
                     <div className = 'toolbox-content-items'>
                         { this._renderAudioButton() }
                         { this._renderVideoButton() }

@@ -2,6 +2,7 @@
 
 import React, { PureComponent } from 'react';
 
+import { CustomButtonContainer } from '../../../../custom-buttons';
 import { AudioSettingsButton, VideoSettingsButton } from '../../../../toolbox/components/web';
 import { VideoBackgroundButton } from '../../../../virtual-background';
 import { checkBlurSupport } from '../../../../virtual-background/functions';
@@ -116,6 +117,7 @@ export default class PreMeetingScreen extends PureComponent<Props> {
                         </>
                     )}
                     { this.props.children }
+                    <CustomButtonContainer onPrejoin = 'true' />
                     <div className = 'media-btn-container'>
                         <div className = 'toolbox-content'>
                             <div className = 'toolbox-content-items'>

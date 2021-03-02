@@ -1,0 +1,34 @@
+.custom-button-container {
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    .custom-button {
+        background-color: white;
+        color: #000000 !important;
+        font-weight: 900;
+        font-size: small;
+        align-self: center;
+        mix-blend-mode: screen;
+        margin-left: 5px;
+    }
+}
+
+.custom-button-on-conference {
+    margin-bottom: 8px;
+}
+
+.custom-button-on-prejoin {
+    margin-top: 16px;
+}
+
+.left-header-group {
+    position: absolute;
+    top: 32px;
+    right: 32px;
+    display: flex;
+    align-items: center;
+
+    &> * {
+        margin-left: 5px;
+    }
+}
