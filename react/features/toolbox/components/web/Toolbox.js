@@ -36,6 +36,7 @@ import { OverflowMenuItem } from '../../../base/toolbox/components';
 import { getLocalVideoTrack, toggleScreensharing } from '../../../base/tracks';
 import { isVpaasMeeting } from '../../../billing-counter/functions';
 import { VideoBlurButton } from '../../../blur';
+import { toggleBlurEffect } from '../../../blur/actions';
 import { checkBlurSupport } from '../../../blur/functions';
 import { CHAT_SIZE, ChatCounter, toggleChat } from '../../../chat';
 import { EmbedMeetingDialog } from '../../../embed-meeting';
@@ -500,6 +501,7 @@ class Toolbox extends Component<Props, State> {
      */
     _doToggleScreenshare() {
         if (this.props._desktopSharingEnabled) {
+            this.props.dispatch(toggleBlurEffect(false));
             this.props.dispatch(toggleScreensharing());
         }
     }
