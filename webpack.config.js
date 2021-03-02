@@ -2,6 +2,7 @@
 
 const CircularDependencyPlugin = require('circular-dependency-plugin');
 const process = require('process');
+const webpack = require('webpack');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 
 /**
@@ -194,6 +195,9 @@ module.exports = [
         entry: {
             'app.bundle': './app.js'
         },
+        plugins: [
+            new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/)
+        ],
         performance: getPerformanceHints(4 * 1024 * 1024)
     }),
     Object.assign({}, config, {
@@ -206,6 +210,9 @@ module.exports = [
         entry: {
             'dial_in_info_bundle': './react/features/invite/components/dial-in-info-page'
         },
+        plugins: [
+            new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/)
+        ],
         performance: getPerformanceHints(500 * 1024)
     }),
     Object.assign({}, config, {
