@@ -45,9 +45,7 @@ require('moment/locale/mn');
 require('moment/locale/mr');
 require('moment/locale/nb');
 require('moment/locale/nl');
-
-// OC is not available. Please submit OC translation to the MomentJS project.
-
+require('moment/locale/oc-lnc');
 require('moment/locale/pl');
 require('moment/locale/pt-br');
 require('moment/locale/pt');
