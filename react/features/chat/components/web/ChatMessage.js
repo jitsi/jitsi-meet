@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { toArray } from 'react-emoji-render';
-
+import ReactMarkdown from 'react-markdown';
 
 import { translate } from '../../../base/i18n';
 import { Linkify } from '../../../base/react';
@@ -11,6 +11,17 @@ import AbstractChatMessage, {
     type Props
 } from '../AbstractChatMessage';
 import PrivateMessageButton from '../PrivateMessageButton';
+
+/**
+ * The type of the React {@code Component} props of {@link ChatMessage}.
+ */
+type Renderer = {
+
+    /**
+     * The text that needs to be rendered with Linkify
+     */
+    children: string;
+};
 
 /**
  * Renders a single chat message.
@@ -28,10 +39,19 @@ class ChatMessage extends AbstractChatMessage<Props> {
 
         // content is an array of text and emoji components
         const content = toArray(this._getMessageText(), { className: 'smiley' });
+        const renderers = {
+            text: ({ children }: Renderer) => <Linkify children = { children } />
+        };
 
         content.forEach(i => {
             if (typeof i === 'string') {
-                processedMessage.push(<Linkify key = { i }>{ i }</Linkify>);
+                processedMessage.push(
+                    <ReactMarkdown
+                        key = { i }
+                        renderers = { renderers }>
+                        { i }
+                    </ReactMarkdown>
+                );
             } else {
                 processedMessage.push(i);
             }
