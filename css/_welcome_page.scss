@@ -9,9 +9,12 @@ body.welcome-page {
     display: flex;
     flex-direction: column;
     font-family: $welcomePageFontFamily;
-    justify-content: space-between;
     min-height: 100vh;
     position: relative;
+
+    &.has-footer {
+        justify-content: space-between;
+    }
 
     .header {
         background-image: $welcomePageHeaderBackground;
@@ -32,7 +35,7 @@ body.welcome-page {
         }
 
         .header-text-title {
-            color: $welcomePageTitleColor;
+            color: $lecleTextColor;
             font-size: $welcomePageHeaderTextTitleFontSize;
             font-weight: $welcomePageHeaderTextTitleFontWeight;
             line-height: $welcomePageHeaderTextTitleLineHeight;
@@ -230,7 +233,7 @@ body.welcome-page {
 
     .welcome-cards-container {
         color:#131519;
-        padding-top: 40px;
+        padding: 40px 0;
     }
 
     .welcome-card-row {
@@ -268,7 +271,6 @@ body.welcome-page {
     .welcome-footer {
         background: #131519;
         color: #fff;
-        margin-top: 40px;
         position: relative;
     }
 
