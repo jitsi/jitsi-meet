@@ -2,13 +2,8 @@
 
 import type { Dispatch } from 'redux';
 
-import {
-    createSharedVideoEvent as createEvent,
-    sendAnalytics
-} from '../../../analytics';
 import { translate } from '../../../base/i18n';
 import { IconShareVideo } from '../../../base/icons';
-import { getLocalParticipant, getParticipants } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import {
     AbstractButton,
@@ -30,16 +25,6 @@ type Props = AbstractButtonProps & {
      * Whether or not the button is disabled.
      */
     _isDisabled: boolean,
-
-    /**
-     * Meeting participant
-     */
-    _participant: string,
-
-    /**
-     * Meeting participants
-     */
-    _participants: string,
 
     /**
      * Whether or not the local participant is sharing a video.
@@ -64,16 +49,6 @@ class SharedVideoButton extends AbstractButton<Props, *> {
      * @returns {void}
      */
     _handleClick() {
-        const { _participant } = this.props;
-
-        if (!APP.conference.isLocalId(_participant)) {
-            APP.UI.messageHandler.showWarning({
-                descriptionKey: 'dialog.alreadySharedVideoMsg',
-                titleKey: 'dialog.alreadySharedVideoTitle'
-            });
-            sendAnalytics(createEvent('already.shared'));
-        }
-
         this._doToggleSharedVideoDialog();
     }
 
@@ -89,38 +64,14 @@ class SharedVideoButton extends AbstractButton<Props, *> {
     }
 
     /**
-     * Starts the video.
+     * Indicates whether this button is disabled or not.
      *
-     * @param {string} videoId - Video link id.
+     * @override
+     * @protected
      * @returns {boolean}
      */
-    _startSharedVideo(videoId: string) {
-        const { _participant } = this.props;
-
-        APP.UI.onSharedVideoStart(
-            _participant, videoId,
-            {
-                from: _participant,
-                state: 'start'
-            });
-        sendAnalytics(createEvent('started'));
-    }
-
-    /**
-     * Removes the video.
-     *
-     * @returns {boolean}
-     */
-    _removeSharedVideo() {
-        const { _participant, _participants } = this.props;
-
-        APP.UI.onSharedVideoStop(
-            _participant,
-            {
-                from: _participants,
-                state: 'stop'
-            });
-        sendAnalytics(createEvent('removed'));
+    _isDisabled() {
+        return this.props._isDisabled;
     }
 
     /**
@@ -133,8 +84,8 @@ class SharedVideoButton extends AbstractButton<Props, *> {
         const { dispatch } = this.props;
 
         return this._isToggled()
-            ? this._removeSharedVideo()
-            : dispatch(showSharedVideoDialog(id => this._startSharedVideo(id)));
+            ? APP.UI.stopSharedVideoEmitter()
+            : dispatch(showSharedVideoDialog(id => APP.UI.startSharedVideoEmitter(id)));
     }
 }
 
@@ -147,12 +98,9 @@ class SharedVideoButton extends AbstractButton<Props, *> {
  */
 function _mapStateToProps(state): Object {
     const { status: sharedVideoStatus } = state['features/shared-video'];
-    const localParticipantId = getLocalParticipant(state).id;
-    const allParticipants = getParticipants(state).map(part => part.id);
 
     return {
-        _participants: allParticipants,
-        _participant: localParticipantId,
+        _isDisabled: false,
         _sharingVideo: isSharingStatus(sharedVideoStatus)
     };
 }

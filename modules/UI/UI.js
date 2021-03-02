@@ -491,6 +491,25 @@ UI.onSharedVideoStop = function(id, attributes) {
     }
 };
 
+/**
+ * Show shared video.
+ * @param {string} url video url
+ */
+UI.startSharedVideoEmitter = function(url) {
+    if (sharedVideoManager) {
+        sharedVideoManager.startSharedVideoEmitter(url);
+    }
+};
+
+/**
+ * Stop shared video.
+ */
+UI.stopSharedVideoEmitter = function() {
+    if (sharedVideoManager) {
+        sharedVideoManager.stopSharedVideoEmitter();
+    }
+};
+
 // TODO: Export every function separately. For now there is no point of doing
 // this because we are importing everything.
 export default UI;
