@@ -8,13 +8,13 @@ import {
 } from '../../../analytics';
 import { translate } from '../../../base/i18n';
 import { IconShareVideo } from '../../../base/icons';
-import { getLocalParticipant } from '../../../base/participants';
+import { getLocalParticipant, getParticipants } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import {
     AbstractButton,
     type AbstractButtonProps
 } from '../../../base/toolbox/components';
-import { showSharedVideoDialog } from '../../actions';
+import { showSharedVideoDialog } from '../../actions.web';
 import { isSharingStatus } from '../../functions';
 
 declare var APP: Object;
@@ -35,6 +35,11 @@ type Props = AbstractButtonProps & {
      * Meeting participant
      */
     _participant: string,
+
+    /**
+     * Meeting participants
+     */
+    _participants: string,
 
     /**
      * Whether or not the local participant is sharing a video.
@@ -61,7 +66,7 @@ class SharedVideoButton extends AbstractButton<Props, *> {
     _handleClick() {
         const { _participant } = this.props;
 
-        if (this._isToggled() && !APP.conference.isLocalId(_participant)) {
+        if (!APP.conference.isLocalId(_participant)) {
             APP.UI.messageHandler.showWarning({
                 descriptionKey: 'dialog.alreadySharedVideoMsg',
                 titleKey: 'dialog.alreadySharedVideoTitle'
@@ -107,12 +112,12 @@ class SharedVideoButton extends AbstractButton<Props, *> {
      * @returns {boolean}
      */
     _removeSharedVideo() {
-        const { _participant } = this.props;
+        const { _participant, _participants } = this.props;
 
         APP.UI.onSharedVideoStop(
             _participant,
             {
-                from: _participant,
+                from: _participants,
                 state: 'stop'
             });
         sendAnalytics(createEvent('removed'));
@@ -143,8 +148,10 @@ class SharedVideoButton extends AbstractButton<Props, *> {
 function _mapStateToProps(state): Object {
     const { status: sharedVideoStatus } = state['features/shared-video'];
     const localParticipantId = getLocalParticipant(state).id;
+    const allParticipants = getParticipants(state).map(part => part.id);
 
     return {
+        _participants: allParticipants,
         _participant: localParticipantId,
         _sharingVideo: isSharingStatus(sharedVideoStatus)
     };

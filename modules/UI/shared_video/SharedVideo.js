@@ -13,6 +13,7 @@ import {
     pinParticipant
 } from '../../../react/features/base/participants';
 import { VIDEO_PLAYER_PARTICIPANT_NAME } from '../../../react/features/shared-video/constants';
+import { getYoutubeLink } from '../../../react/features/shared-video/functions';
 import { dockToolbox, showToolbox } from '../../../react/features/toolbox/actions.web';
 import { getToolboxHeight } from '../../../react/features/toolbox/functions.web';
 import UIEvents from '../../../service/UI/UIEvents';
@@ -674,18 +675,6 @@ class SharedVideoContainer extends LargeContainer {
     stayOnStage() {
         return false;
     }
-}
-
-/**
- * Checks if given string is youtube url.
- * @param {string} url string to check.
- * @returns {boolean}
- */
-function getYoutubeLink(url) {
-    const p = /^(?:https?:\/\/)?(?:www\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))((\w|-){11})(?:\S+)?$/;// eslint-disable-line max-len
-
-
-    return url.match(p) ? RegExp.$1 : false;
 }
 
 /**
