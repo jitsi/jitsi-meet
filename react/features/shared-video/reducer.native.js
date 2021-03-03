@@ -1,12 +1,13 @@
 // @flow
+
 import { ReducerRegistry } from '../base/redux';
 
 import { SET_SHARED_VIDEO_STATUS } from './actionTypes';
 
 /**
- * Reduces the Redux actions of the feature features/youtube-player.
+ * Reduces the Redux actions of the feature features/shared-video.
  */
-ReducerRegistry.register('features/youtube-player', (state = {}, action) => {
+ReducerRegistry.register('features/shared-video', (state = {}, action) => {
     const { videoId, status, time, ownerId } = action;
 
     switch (action.type) {

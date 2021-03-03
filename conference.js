@@ -125,7 +125,7 @@ import {
 } from './react/features/prejoin';
 import { disableReceiver, stopReceiver } from './react/features/remote-control';
 import { toggleScreenshotCaptureEffect } from './react/features/screenshot-capture';
-import { setSharedVideoStatus } from './react/features/shared-video';
+import { setSharedVideoStatus } from './react/features/shared-video/actions';
 import { AudioMixerEffect } from './react/features/stream-effects/audio-mixer/AudioMixerEffect';
 import { createPresenterEffect } from './react/features/stream-effects/presenter';
 import { endpointMessageReceived } from './react/features/subtitles';

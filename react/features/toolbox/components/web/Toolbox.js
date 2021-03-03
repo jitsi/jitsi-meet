@@ -22,8 +22,7 @@ import {
     IconPresentation,
     IconRaisedHand,
     IconRec,
-    IconShareDesktop,
-    IconShareVideo
+    IconShareDesktop
 } from '../../../base/icons';
 import JitsiMeetJS from '../../../base/lib-jitsi-meet';
 import {
@@ -57,7 +56,7 @@ import {
     SettingsButton,
     openSettingsDialog
 } from '../../../settings';
-import { toggleSharedVideo } from '../../../shared-video';
+import { SharedVideoButton } from '../../../shared-video/components';
 import { SpeakerStats } from '../../../speaker-stats';
 import {
     ClosedCaptionButton
@@ -89,6 +88,7 @@ import OverflowMenuButton from './OverflowMenuButton';
 import OverflowMenuProfileItem from './OverflowMenuProfileItem';
 import ToolbarButton from './ToolbarButton';
 import VideoSettingsButton from './VideoSettingsButton';
+
 
 /**
  * The type of the React {@code Component} props of {@link Toolbox}.
@@ -259,7 +259,6 @@ class Toolbox extends Component<Props, State> {
         this._onToolbarToggleProfile = this._onToolbarToggleProfile.bind(this);
         this._onToolbarToggleRaiseHand = this._onToolbarToggleRaiseHand.bind(this);
         this._onToolbarToggleScreenshare = this._onToolbarToggleScreenshare.bind(this);
-        this._onToolbarToggleSharedVideo = this._onToolbarToggleSharedVideo.bind(this);
         this._onToolbarOpenLocalRecordingInfoDialog = this._onToolbarOpenLocalRecordingInfoDialog.bind(this);
         this._onShortcutToggleTileView = this._onShortcutToggleTileView.bind(this);
 
@@ -502,16 +501,6 @@ class Toolbox extends Component<Props, State> {
         if (this.props._desktopSharingEnabled) {
             this.props.dispatch(toggleScreensharing());
         }
-    }
-
-    /**
-     * Dispatches an action to toggle YouTube video sharing.
-     *
-     * @private
-     * @returns {void}
-     */
-    _doToggleSharedVideo() {
-        this.props.dispatch(toggleSharedVideo());
     }
 
     /**
@@ -897,24 +886,6 @@ class Toolbox extends Component<Props, State> {
         this._doToggleScreenshare();
     }
 
-    _onToolbarToggleSharedVideo: () => void;
-
-    /**
-     * Creates an analytics toolbar event and dispatches an action for toggling
-     * the sharing of a YouTube video.
-     *
-     * @private
-     * @returns {void}
-     */
-    _onToolbarToggleSharedVideo() {
-        sendAnalytics(createToolbarEvent('shared.video.toggled',
-            {
-                enable: !this.props._sharingVideo
-            }));
-
-        this._doToggleSharedVideo();
-    }
-
     _onToolbarOpenLocalRecordingInfoDialog: () => void;
 
     /**
@@ -930,7 +901,7 @@ class Toolbox extends Component<Props, State> {
     }
 
     /**
-     * Returns true if the the desktop sharing button should be visible and
+     * Returns true if the desktop sharing button should be visible and
      * false otherwise.
      *
      * @returns {boolean}
@@ -1028,7 +999,6 @@ class Toolbox extends Component<Props, State> {
             _feedbackConfigured,
             _fullScreen,
             _screensharing,
-            _sharingVideo,
             t
         } = this.props;
 
@@ -1057,12 +1027,9 @@ class Toolbox extends Component<Props, State> {
                     key = 'record'
                     showLabel = { true } />,
             this._shouldShowButton('sharedvideo')
-                && <OverflowMenuItem
-                    accessibilityLabel = { t('toolbar.accessibilityLabel.sharedvideo') }
-                    icon = { IconShareVideo }
+                && <SharedVideoButton
                     key = 'sharedvideo'
-                    onClick = { this._onToolbarToggleSharedVideo }
-                    text = { _sharingVideo ? t('toolbar.stopSharedVideo') : t('toolbar.sharedvideo') } />,
+                    showLabel = { true } />,
             this._shouldShowButton('etherpad')
                 && <SharedDocumentButton
                     key = 'etherpad'
@@ -1435,7 +1402,6 @@ function _mapStateToProps(state) {
         callStatsID,
         enableFeaturesBasedOnToken
     } = state['features/base/config'];
-    const sharedVideoStatus = state['features/shared-video'].status;
     const {
         fullScreen,
         overflowMenuVisible
@@ -1476,9 +1442,6 @@ function _mapStateToProps(state) {
         _overflowMenuVisible: overflowMenuVisible,
         _raisedHand: localParticipant.raisedHand,
         _screensharing: localVideo && localVideo.videoType === 'desktop',
-        _sharingVideo: sharedVideoStatus === 'playing'
-            || sharedVideoStatus === 'start'
-            || sharedVideoStatus === 'pause',
         _visible: isToolboxVisible(state),
         _visibleButtons: equals(visibleButtons, buttons) ? visibleButtons : buttons
     };

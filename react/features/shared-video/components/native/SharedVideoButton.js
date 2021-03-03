@@ -2,13 +2,14 @@
 
 import type { Dispatch } from 'redux';
 
-import { getFeatureFlag, VIDEO_SHARE_BUTTON_ENABLED } from '../../base/flags';
-import { translate } from '../../base/i18n';
-import { IconShareVideo } from '../../base/icons';
-import { getLocalParticipant } from '../../base/participants';
-import { connect } from '../../base/redux';
-import { AbstractButton, type AbstractButtonProps } from '../../base/toolbox/components';
-import { toggleSharedVideo } from '../actions';
+import { getFeatureFlag, VIDEO_SHARE_BUTTON_ENABLED } from '../../../base/flags';
+import { translate } from '../../../base/i18n';
+import { IconShareVideo } from '../../../base/icons';
+import { getLocalParticipant } from '../../../base/participants';
+import { connect } from '../../../base/redux';
+import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
+import { toggleSharedVideo } from '../../actions.native';
+import { isSharingStatus } from '../../functions';
 
 /**
  * The type of the React {@code Component} props of {@link TileViewButton}.
@@ -21,7 +22,7 @@ type Props = AbstractButtonProps & {
     _isDisabled: boolean,
 
     /**
-     * Whether or not the local participant is sharing a YouTube video.
+     * Whether or not the local participant is sharing a video.
      */
     _sharingVideo: boolean,
 
@@ -76,7 +77,7 @@ class VideoShareButton extends AbstractButton<Props, *> {
     }
 
     /**
-     * Dispatches an action to toggle YouTube video sharing.
+     * Dispatches an action to toggle video sharing.
      *
      * @private
      * @returns {void}
@@ -95,7 +96,7 @@ class VideoShareButton extends AbstractButton<Props, *> {
  * @returns {Props}
  */
 function _mapStateToProps(state, ownProps): Object {
-    const { ownerId, status: sharedVideoStatus } = state['features/youtube-player'];
+    const { ownerId, status: sharedVideoStatus } = state['features/shared-video'];
     const localParticipantId = getLocalParticipant(state).id;
     const enabled = getFeatureFlag(state, VIDEO_SHARE_BUTTON_ENABLED, true);
     const { visible = enabled } = ownProps;
@@ -104,24 +105,15 @@ function _mapStateToProps(state, ownProps): Object {
         return {
             _isDisabled: isSharingStatus(sharedVideoStatus),
             _sharingVideo: false,
-            visible };
+            visible
+        };
     }
 
     return {
+        _isDisabled: false,
         _sharingVideo: isSharingStatus(sharedVideoStatus),
         visible
     };
-}
-
-/**
- * Checks if the status is one that is actually sharing the video - playing, pause or start.
- *
- * @param {string} status - The shared video status.
- * @private
- * @returns {boolean}
- */
-function isSharingStatus(status) {
-    return [ 'playing', 'pause', 'start' ].includes(status);
 }
 
 export default translate(connect(_mapStateToProps)(VideoShareButton));
