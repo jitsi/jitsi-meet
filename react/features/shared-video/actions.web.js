@@ -25,10 +25,10 @@ export function setSharedVideoStatus(status: string) {
 /**
  * Disabled share video button.
  *
- * @param {string} disabled - The current state of the share video button.
+ * @param {boolean} disabled - The current state of the share video button.
  * @returns {{
  *     type: SET_DISABLE_BUTTON,
- *     status: string
+ *     disabled: boolean
  * }}
  */
 export function setDisableButton(disabled: boolean) {
