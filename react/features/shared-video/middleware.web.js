@@ -47,9 +47,14 @@ StateListenerRegistry.register(
                     const { dispatch, getState } = store;
                     const { from } = attributes;
                     const localParticipantId = getLocalParticipant(getState()).id;
+                    const status = attributes.state;
 
-                    if (localParticipantId !== from) {
-                        dispatch(setDisableButton(true));
+                    if (status === 'playing') {
+                        if (localParticipantId !== from) {
+                            dispatch(setDisableButton(true));
+                        }
+                    } else if (status === 'stop') {
+                        dispatch(setDisableButton(false));
                     }
                 }
             );
