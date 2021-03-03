@@ -22,7 +22,7 @@ class SharedVideoDialog extends AbstractSharedVideoDialog<*> {
                 contentKey = 'dialog.shareVideoTitle'
                 onSubmit = { this._onSetVideoLink }
                 textInputProps = {{
-                    placeholder: { defaultSharedVideoLink }
+                    placeholder: defaultSharedVideoLink
                 }} />
         );
     }
