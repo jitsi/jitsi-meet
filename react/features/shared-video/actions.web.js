@@ -3,7 +3,7 @@
 import { openDialog } from '../base/dialog/actions';
 import { SharedVideoDialog } from '../shared-video/components';
 
-import { SET_SHARED_VIDEO_STATUS, TOGGLE_SHARED_VIDEO } from './actionTypes';
+import { SET_SHARED_VIDEO_STATUS, TOGGLE_SHARED_VIDEO, SET_DISABLE_BUTTON } from './actionTypes';
 
 /**
  * Updates the current known status of the shared video.
@@ -18,6 +18,23 @@ export function setSharedVideoStatus(status: string) {
     return {
         type: SET_SHARED_VIDEO_STATUS,
         status
+    };
+}
+
+
+/**
+ * Disabled share video button.
+ *
+ * @param {string} disabled - The current state of the share video button.
+ * @returns {{
+ *     type: SET_DISABLE_BUTTON,
+ *     status: string
+ * }}
+ */
+export function setDisableButton(disabled: boolean) {
+    return {
+        type: SET_DISABLE_BUTTON,
+        disabled
     };
 }
 

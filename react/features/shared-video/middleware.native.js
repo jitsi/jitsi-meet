@@ -13,7 +13,7 @@ import { MiddlewareRegistry, StateListenerRegistry } from '../base/redux';
 import { TOGGLE_SHARED_VIDEO, SET_SHARED_VIDEO_STATUS } from './actionTypes';
 import { setSharedVideoStatus, showSharedVideoDialog } from './actions.native';
 import { SHARED_VIDEO, VIDEO_PLAYER_PARTICIPANT_NAME } from './constants';
-
+import { isSharingStatus } from './functions';
 
 /**
  * Middleware that captures actions related to video sharing and updates
@@ -70,7 +70,7 @@ StateListenerRegistry.register(
                     const localParticipantId = getLocalParticipant(getState()).id;
                     const status = attributes.state;
 
-                    if ([ 'playing', 'pause', 'start' ].includes(status)) {
+                    if (isSharingStatus(status)) {
                         handleSharingVideoStatus(store, value, attributes, conference);
                     } else if (status === 'stop') {
                         dispatch(participantLeft(value, conference));
@@ -81,7 +81,8 @@ StateListenerRegistry.register(
                 }
             );
         }
-    });
+    }
+);
 
 /**
  * Handles the playing, pause and start statuses for the shared video.

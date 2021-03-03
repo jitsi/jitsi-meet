@@ -97,10 +97,13 @@ class SharedVideoButton extends AbstractButton<Props, *> {
  * @returns {Props}
  */
 function _mapStateToProps(state): Object {
-    const { status: sharedVideoStatus } = state['features/shared-video'];
+    const {
+        disabled: sharedVideoBtnDisabled,
+        status: sharedVideoStatus
+    } = state['features/shared-video'];
 
     return {
-        _isDisabled: false,
+        _isDisabled: sharedVideoBtnDisabled,
         _sharingVideo: isSharingStatus(sharedVideoStatus)
     };
 }
