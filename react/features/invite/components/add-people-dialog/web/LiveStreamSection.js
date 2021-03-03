@@ -37,7 +37,7 @@ function LiveStreamSection({ liveStreamViewURL, t }: Props) {
     async function onClick() {
         setIsHovered(false);
 
-        const isCopied = copyText(liveStreamViewURL);
+        const isCopied = await copyText(liveStreamViewURL);
 
         if (isCopied) {
             setIsClicked(true);
