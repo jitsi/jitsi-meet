@@ -7,7 +7,6 @@ import { translate } from '../../../i18n';
 import { Icon, IconCopy, IconCheck } from '../../../icons';
 import { connect } from '../../../redux';
 import { copyText, getDecodedURI } from '../../../util';
-import logger from '../../logger';
 
 type Props = {
 
@@ -75,8 +74,8 @@ class CopyMeetingUrl extends Component<Props, State> {
      *
      * @returns {void}
      */
-    _copyUrl() {
-        const success = copyText(this.props.url);
+    async _copyUrl() {
+        const success = await copyText(this.props.url);
 
         if (success) {
             this._showLinkCopied();
@@ -152,15 +151,13 @@ class CopyMeetingUrl extends Component<Props, State> {
      * @private
      * @returns {void}
      */
-    _copyUrlAutomatically() {
-        navigator.clipboard.writeText(this.props.url)
-            .then(() => {
-                this._showLinkCopied();
-                window.setTimeout(this._hideLinkCopied, COPY_TIMEOUT);
-            })
-            .catch(e => {
-                logger.error(e);
-            });
+    async _copyUrlAutomatically() {
+        const isCopied = await copyText(this.props.url);
+
+        if (isCopied) {
+            this._showLinkCopied();
+            window.setTimeout(this._hideLinkCopied, COPY_TIMEOUT);
+        }
     }
 
     /**

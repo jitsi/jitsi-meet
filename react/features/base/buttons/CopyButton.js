@@ -49,9 +49,12 @@ function CopyButton({ className, displayedText, textToCopy, textOnHover, textOnC
      *
      * @returns {void}
      */
-    function onClick() {
+    async function onClick() {
         setIsHovered(false);
-        if (copyText(textToCopy)) {
+
+        const isCopied = await copyText(textToCopy);
+
+        if (isCopied) {
             setIsClicked(true);
 
             setTimeout(() => {

@@ -34,9 +34,12 @@ function LiveStreamSection({ liveStreamViewURL, t }: Props) {
      *
      * @returns {void}
      */
-    function onClick() {
+    async function onClick() {
         setIsHovered(false);
-        if (copyText(liveStreamViewURL)) {
+
+        const isCopied = copyText(liveStreamViewURL);
+
+        if (isCopied) {
             setIsClicked(true);
 
             setTimeout(() => {
