@@ -691,6 +691,7 @@
     },
     "startupoverlay": {
         "policyText": " ",
+        "genericTitle": "Die Konferenz muss Ihr Mikrofon und Ihre Kamera verwenden.",
         "title": "{{app}} benötigt Kamera und Mikrofon."
     },
     "suspendedoverlay": {
