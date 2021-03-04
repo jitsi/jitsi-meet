@@ -7,7 +7,7 @@ import type { Dispatch } from 'redux';
 
 import { ColorSchemeRegistry } from '../../../base/color-scheme';
 import { toJid } from '../../../base/connection';
-import { connect } from '../../../base/connection/actions';
+import { connect } from '../../../base/connection/actions.native';
 import {
     CustomSubmitDialog,
     FIELD_UNDERLINE,
