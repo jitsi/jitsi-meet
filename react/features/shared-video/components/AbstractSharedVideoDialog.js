@@ -3,30 +3,37 @@
 import { Component } from 'react';
 import type { Dispatch } from 'redux';
 
+import { getYoutubeLink } from '../functions';
+
+
 /**
  * The type of the React {@code Component} props of
- * {@link AbstractEnterVideoLinkPrompt}.
+ * {@link AbstractSharedVideoDialog}.
  */
 export type Props = {
 
     /**
-     * Invoked to update the shared youtube video link.
+     * Invoked to update the shared video link.
      */
     dispatch: Dispatch<any>,
 
     /**
-     * Function to be invoked after typing a valid youtube video .
+     * Function to be invoked after typing a valid video.
      */
-    onPostSubmit: ?Function
+    onPostSubmit: ?Function,
+
+    /**
+     * Invoked to obtain translated strings.
+     */
+    t: Function
 };
 
 /**
- * Implements an abstract class for {@code EnterVideoLinkPrompt}.
+ * Implements an abstract class for {@code SharedVideoDialog}.
  */
-export default class AbstractEnterVideoLinkPrompt<S: *> extends Component < Props, S > {
+export default class AbstractSharedVideoDialog<S: *> extends Component < Props, S > {
     /**
      * Instantiates a new component.
-     *
      *
      * @inheritdoc
      */
@@ -39,7 +46,7 @@ export default class AbstractEnterVideoLinkPrompt<S: *> extends Component < Prop
     _onSetVideoLink: string => boolean;
 
     /**
-     * Validates the entered video link by extractibg the id and dispatches it.
+     * Validates the entered video link by extracting the id and dispatches it.
      *
      * It returns a boolean to comply the Dialog behaviour:
      *     {@code true} - the dialog should be closed.
@@ -48,7 +55,7 @@ export default class AbstractEnterVideoLinkPrompt<S: *> extends Component < Prop
      * @param {string} link - The entered video link.
      * @returns {boolean}
      */
-    _onSetVideoLink(link) {
+    _onSetVideoLink(link: string) {
         if (!link || !link.trim()) {
             return false;
         }
@@ -67,17 +74,4 @@ export default class AbstractEnterVideoLinkPrompt<S: *> extends Component < Prop
     }
 }
 
-/**
- * Validates the entered video url.
- *
- * It returns a boolean to reflect whether the url matches the youtube regex.
- *
- * @param {string} url - The entered video link.
- * @returns {boolean}
- */
-function getYoutubeLink(url) {
-    const p = /^(?:https?:\/\/)?(?:www\.)?(?:youtu\.be\/|(?:m\.)?youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))((\w|-){11})(?:\S+)?$/;// eslint-disable-line max-len
-    const result = url.match(p);
 
-    return result ? result[1] : false;
-}

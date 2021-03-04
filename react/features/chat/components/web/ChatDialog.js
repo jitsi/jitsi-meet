@@ -24,6 +24,7 @@ function ChatDialog({ children }: Props) {
         <Dialog
             customHeader = { Header }
             disableEnter = { true }
+            disableFooter = { true }
             hideCancelButton = { true }
             submitDisabled = { true }
             titleKey = 'chat.title'>

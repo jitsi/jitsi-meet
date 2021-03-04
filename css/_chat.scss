@@ -32,6 +32,13 @@
     width: $sidebarWidth;
     word-wrap: break-word;
 
+    display: flex;
+    flex-direction: column;
+
+    & > :first-child {
+        margin-top: auto;
+    }
+
     a {
         display: block;
     }
@@ -122,13 +129,58 @@
     }
 }
 
+.chat-input-container {
+    padding: 0 16px 24px;
+
+    &.populated {
+        #chat-input {
+            border: 1px solid #619CF4;
+
+            .send-button {
+                background: #1B67EC;
+                cursor: pointer;
+
+                path {
+                    fill: #fff;
+                }
+            }
+        }
+    }
+}
+
 #chat-input {
-    border-top: 1px solid $chatInputSeparatorColor;
+    border: 1px solid $chatInputSeparatorColor;
     display: flex;
     padding: 5px 10px;
+    border-radius: 3px;
 
     * {
         background-color: transparent;
+    }
+}
+
+.send-button-container {
+    display: flex;
+    align-items: center;
+}
+
+.send-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 40px;
+    width: 40px;
+    border-radius: 3px;
+
+    path {
+        fill: $chatInputSeparatorColor;
+    }
+}
+
+.mobile-browser {
+    .send-button {
+        height: 48px;
+        width: 48px;
     }
 }
 
@@ -161,10 +213,47 @@
 #nickname {
     text-align: center;
     color: #9d9d9d;
-    font-size: 18px;
-    margin-top: 30px;
-    left: 5px;
-    right: 5px;
+    font-size: 16px;
+    margin: auto 0;
+    padding: 0 16px;
+
+    input {
+        height: 40px;
+    }
+
+    label {
+        line-height: 24px;
+    }
+
+    .enter-chat {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-top: 16px;
+        height: 40px;
+        background: #1B67EC;
+        border-radius: 3px;
+        color: #fff;
+        cursor: pointer;
+
+        &.disabled {
+            color: #757575;
+            background: #11336E;
+            pointer-events: none;
+        }
+    }
+}
+
+.mobile-browser {
+    #nickname {
+        input {
+            height: 48px;
+        }
+
+        .enter-chat {
+            height: 48px;
+        }
+    }
 }
 
 .sideToolbarContainer {
@@ -411,6 +500,16 @@
     #chatconversation {
         width: 100%;
     }
+
+    .chat-input-container {
+        padding: 0 0 24px;
+    }
+}
+
+.touchmove-hack {
+    display: flex;
+    flex: 1;
+    overflow: auto;
 }
 
 /**

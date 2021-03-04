@@ -29,27 +29,36 @@ export function assignIfDefined(target: Object, source: Object) {
  * Returns true if the action succeeds.
  *
  * @param {string} textToCopy - Text to be copied.
- * @returns {boolean}
+ * @returns {Promise<boolean>}
  */
-export function copyText(textToCopy: string) {
-    const fakeTextArea = document.createElement('textarea');
-    let result;
-
-    // $FlowFixMe
-    document.body.appendChild(fakeTextArea);
-    fakeTextArea.value = textToCopy;
-    fakeTextArea.select();
-
+export async function copyText(textToCopy: string) {
     try {
-        result = document.execCommand('copy');
-    } catch (err) {
-        result = false;
+        await navigator.clipboard.writeText(textToCopy);
+
+        return true;
+    } catch (clipboardAPIError) { // The Clipboard API is not supported.
+        let fakeTextArea = document.createElement('textarea');
+
+        // $FlowFixMe
+        fakeTextArea = document.body.appendChild(fakeTextArea);
+        fakeTextArea.value = textToCopy;
+        fakeTextArea.focus();
+        fakeTextArea.select();
+
+        let result;
+
+        try {
+            result = document.execCommand('copy');
+        } catch (error) {
+            result = false;
+        }
+
+        // $FlowFixMe
+        document.body.removeChild(fakeTextArea);
+
+
+        return result;
     }
-
-    // $FlowFixMe
-    document.body.removeChild(fakeTextArea);
-
-    return result;
 }
 
 /**

@@ -2,9 +2,9 @@
 
 import React, { useState } from 'react';
 
-import { translate } from '../../base/i18n';
 import { Icon, IconCheck, IconCopy } from '../../base/icons';
-import { copyText } from '../../base/util';
+import { translate } from '../i18n';
+import { copyText } from '../util';
 
 
 type Props = {
@@ -49,9 +49,12 @@ function CopyButton({ className, displayedText, textToCopy, textOnHover, textOnC
      *
      * @returns {void}
      */
-    function onClick() {
+    async function onClick() {
         setIsHovered(false);
-        if (copyText(textToCopy)) {
+
+        const isCopied = await copyText(textToCopy);
+
+        if (isCopied) {
             setIsClicked(true);
 
             setTimeout(() => {

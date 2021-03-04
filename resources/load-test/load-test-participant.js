@@ -216,7 +216,7 @@ function onConnectionSuccess() {
         devices.push('video');
     }
 
-    if (autoCreateLocalAudio) {
+    if (localAudio || autoCreateLocalAudio) {
         devices.push('audio');
     }
 

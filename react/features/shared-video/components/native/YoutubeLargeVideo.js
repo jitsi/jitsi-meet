@@ -6,9 +6,9 @@ import YoutubePlayer from 'react-native-youtube-iframe';
 
 import { getLocalParticipant } from '../../../base/participants';
 import { connect } from '../../../base/redux';
-import { ASPECT_RATIO_WIDE } from '../../../base/responsive-ui/constants';
+import { ASPECT_RATIO_WIDE } from '../../../base/responsive-ui';
 import { setToolboxVisible } from '../../../toolbox/actions';
-import { setSharedVideoStatus } from '../../actions';
+import { setSharedVideoStatus } from '../../actions.native';
 
 import styles from './styles';
 
@@ -383,7 +383,7 @@ function shouldSeekToPosition(newTime, previousTime) {
  * @returns {Props}
  */
 function _mapStateToProps(state) {
-    const { ownerId, status, time } = state['features/youtube-player'];
+    const { ownerId, status, time } = state['features/shared-video'];
     const localParticipant = getLocalParticipant(state);
     const responsiveUi = state['features/base/responsive-ui'];
     const { aspectRatio, clientHeight: screenHeight, clientWidth: screenWidth } = responsiveUi;

@@ -3,20 +3,20 @@
 import React, { Component } from 'react';
 
 import { Icon, IconMenuThumb } from '../../../base/icons';
-import { MEDIA_TYPE } from '../../../base/media';
 import { getLocalParticipant, getParticipantById, PARTICIPANT_ROLE } from '../../../base/participants';
 import { Popover } from '../../../base/popover';
 import { connect } from '../../../base/redux';
-import { isRemoteTrackMuted } from '../../../base/tracks';
 import { requestRemoteControl, stopController } from '../../../remote-control';
 import { getCurrentLayout, LAYOUTS } from '../../../video-layout';
 
 import MuteEveryoneElseButton from './MuteEveryoneElseButton';
+import MuteEveryoneElsesVideoButton from './MuteEveryoneElsesVideoButton';
 import { REMOTE_CONTROL_MENU_STATES } from './RemoteControlButton';
 
 import {
     GrantModeratorButton,
     MuteButton,
+    MuteVideoButton,
     KickButton,
     PrivateMessageMenuButton,
     RemoteControlButton,
@@ -42,11 +42,6 @@ type Props = {
      * Whether or not to display the remote mute buttons.
      */
     _disableRemoteMute: Boolean,
-
-    /**
-     * Whether or not the participant is currently muted.
-     */
-    _isAudioMuted: boolean,
 
     /**
      * Whether or not the participant is a conference moderator.
@@ -151,7 +146,6 @@ class RemoteVideoMenuTriggerButton extends Component<Props> {
         const {
             _disableKick,
             _disableRemoteMute,
-            _isAudioMuted,
             _isModerator,
             dispatch,
             initialVolumeValue,
@@ -166,13 +160,22 @@ class RemoteVideoMenuTriggerButton extends Component<Props> {
             if (!_disableRemoteMute) {
                 buttons.push(
                     <MuteButton
-                        isAudioMuted = { _isAudioMuted }
                         key = 'mute'
                         participantID = { participantID } />
                 );
                 buttons.push(
                     <MuteEveryoneElseButton
                         key = 'mute-others'
+                        participantID = { participantID } />
+                );
+                buttons.push(
+                    <MuteVideoButton
+                        key = 'mute-video'
+                        participantID = { participantID } />
+                );
+                buttons.push(
+                    <MuteEveryoneElsesVideoButton
+                        key = 'mute-others-video'
                         participantID = { participantID } />
                 );
             }
@@ -247,7 +250,6 @@ class RemoteVideoMenuTriggerButton extends Component<Props> {
  */
 function _mapStateToProps(state, ownProps) {
     const { participantID } = ownProps;
-    const tracks = state['features/base/tracks'];
     const localParticipant = getLocalParticipant(state);
     const { remoteVideoMenu = {}, disableRemoteMute } = state['features/base/config'];
     const { disableKick } = remoteVideoMenu;
@@ -286,7 +288,6 @@ function _mapStateToProps(state, ownProps) {
     }
 
     return {
-        _isAudioMuted: isRemoteTrackMuted(tracks, MEDIA_TYPE.AUDIO, participantID) || false,
         _isModerator: Boolean(localParticipant?.role === PARTICIPANT_ROLE.MODERATOR),
         _disableKick: Boolean(disableKick),
         _disableRemoteMute: Boolean(disableRemoteMute),

@@ -11,13 +11,12 @@ import {
 import { MiddlewareRegistry, StateListenerRegistry } from '../base/redux';
 
 import { TOGGLE_SHARED_VIDEO, SET_SHARED_VIDEO_STATUS } from './actionTypes';
-import { setSharedVideoStatus, showEnterVideoLinkPrompt } from './actions';
-import { YOUTUBE_PARTICIPANT_NAME } from './constants';
-
-const SHARED_VIDEO = 'shared-video';
+import { setSharedVideoStatus, showSharedVideoDialog } from './actions.native';
+import { SHARED_VIDEO, VIDEO_PLAYER_PARTICIPANT_NAME } from './constants';
+import { isSharingStatus } from './functions';
 
 /**
- * Middleware that captures actions related to YouTube video sharing and updates
+ * Middleware that captures actions related to video sharing and updates
  * components not hooked into redux.
  *
  * @param {Store} store - The redux store.
@@ -29,7 +28,7 @@ MiddlewareRegistry.register(store => next => action => {
     const conference = getCurrentConference(state);
     const localParticipantId = getLocalParticipant(state)?.id;
     const { videoId, status, ownerId, time } = action;
-    const { ownerId: stateOwnerId, videoId: stateVideoId } = state['features/youtube-player'];
+    const { ownerId: stateOwnerId, videoId: stateVideoId } = state['features/shared-video'];
 
     switch (action.type) {
     case TOGGLE_SHARED_VIDEO:
@@ -71,7 +70,7 @@ StateListenerRegistry.register(
                     const localParticipantId = getLocalParticipant(getState()).id;
                     const status = attributes.state;
 
-                    if ([ 'playing', 'pause', 'start' ].includes(status)) {
+                    if (isSharingStatus(status)) {
                         handleSharingVideoStatus(store, value, attributes, conference);
                     } else if (status === 'stop') {
                         dispatch(participantLeft(value, conference));
@@ -82,7 +81,8 @@ StateListenerRegistry.register(
                 }
             );
         }
-    });
+    }
+);
 
 /**
  * Handles the playing, pause and start statuses for the shared video.
@@ -90,7 +90,7 @@ StateListenerRegistry.register(
  * Sets the SharedVideoStatus if the event was triggered by the local user.
  *
  * @param {Store} store - The redux store.
- * @param {string} videoId - The YoutubeId of the video to the shared.
+ * @param {string} videoId - The id of the video to the shared.
  * @param {Object} attributes - The attributes received from the share video command.
  * @param {JitsiConference} conference - The current conference.
  * @returns {void}
@@ -98,7 +98,7 @@ StateListenerRegistry.register(
 function handleSharingVideoStatus(store, videoId, { state, time, from }, conference) {
     const { dispatch, getState } = store;
     const localParticipantId = getLocalParticipant(getState()).id;
-    const oldStatus = getState()['features/youtube-player']?.status;
+    const oldStatus = getState()['features/shared-video']?.status;
 
     if (state === 'start' || ![ 'playing', 'pause', 'start' ].includes(oldStatus)) {
         dispatch(participantJoined({
@@ -106,7 +106,7 @@ function handleSharingVideoStatus(store, videoId, { state, time, from }, confere
             id: videoId,
             isFakeParticipant: true,
             avatarURL: `https://img.youtube.com/vi/${videoId}/0.jpg`,
-            name: YOUTUBE_PARTICIPANT_NAME
+            name: VIDEO_PLAYER_PARTICIPANT_NAME
         }));
 
         dispatch(pinParticipant(videoId));
@@ -130,7 +130,7 @@ function handleSharingVideoStatus(store, videoId, { state, time, from }, confere
 function _toggleSharedVideo(store, next, action) {
     const { dispatch, getState } = store;
     const state = getState();
-    const { videoId, ownerId, status } = state['features/youtube-player'];
+    const { videoId, ownerId, status } = state['features/shared-video'];
     const localParticipant = getLocalParticipant(state);
 
     if (status === 'playing' || status === 'start' || status === 'pause') {
@@ -138,7 +138,7 @@ function _toggleSharedVideo(store, next, action) {
             dispatch(setSharedVideoStatus(videoId, 'stop', 0, localParticipant.id));
         }
     } else {
-        dispatch(showEnterVideoLinkPrompt(id => _onVideoLinkEntered(store, id)));
+        dispatch(showSharedVideoDialog(id => _onVideoLinkEntered(store, id)));
     }
 
     return next(action);
@@ -148,7 +148,7 @@ function _toggleSharedVideo(store, next, action) {
  * Sends SHARED_VIDEO start command.
  *
  * @param {Store} store - The redux store.
- * @param {string} id - The youtube id of the video to be shared.
+ * @param {string} id - The id of the video to be shared.
  * @returns {void}
  */
 function _onVideoLinkEntered(store, id) {
@@ -167,7 +167,7 @@ function _onVideoLinkEntered(store, id) {
 /**
  * Sends SHARED_VIDEO command.
  *
- * @param {string} id - The youtube id of the video.
+ * @param {string} id - The id of the video.
  * @param {string} status - The status of the shared video.
  * @param {JitsiConference} conference - The current conference.
  * @param {string} localParticipantId - The id of the local participant.

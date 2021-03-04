@@ -4,12 +4,13 @@ import React from 'react';
 
 import { InputDialog } from '../../../base/dialog';
 import { connect } from '../../../base/redux';
-import AbstractEnterVideoLinkPrompt from '../AbstractEnterVideoLinkPrompt';
+import { defaultSharedVideoLink } from '../../constants';
+import AbstractSharedVideoDialog from '../AbstractSharedVideoDialog';
 
 /**
  * Implements a component to render a display name prompt.
  */
-class EnterVideoLinkPrompt extends AbstractEnterVideoLinkPrompt<*> {
+class SharedVideoDialog extends AbstractSharedVideoDialog<*> {
     /**
      * Implements React's {@link Component#render()}.
      *
@@ -21,7 +22,7 @@ class EnterVideoLinkPrompt extends AbstractEnterVideoLinkPrompt<*> {
                 contentKey = 'dialog.shareVideoTitle'
                 onSubmit = { this._onSetVideoLink }
                 textInputProps = {{
-                    placeholder: 'https://youtu.be/TB7LlM4erx8'
+                    placeholder: defaultSharedVideoLink
                 }} />
         );
     }
@@ -29,4 +30,4 @@ class EnterVideoLinkPrompt extends AbstractEnterVideoLinkPrompt<*> {
     _onSetVideoLink: string => boolean;
 }
 
-export default connect()(EnterVideoLinkPrompt);
+export default connect()(SharedVideoDialog);

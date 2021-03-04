@@ -53,6 +53,11 @@ type Props = {
      */
     hideCancelButton: boolean,
 
+    /**
+     * If true, no footer will be displayed.
+     */
+    disableFooter?: boolean,
+
     i18n: Object,
 
     /**
@@ -173,6 +178,10 @@ class StatelessDialog extends Component<Props> {
             this._renderOKButton(),
             this._renderCancelButton()
         ].filter(Boolean);
+
+        if (this.props.disableFooter) {
+            return null;
+        }
 
         return (
             <ModalFooter showKeyline = { propsFromModalFooter.showKeyline } >

@@ -2,6 +2,7 @@
 
 import { Component } from 'react';
 
+import { MEDIA_TYPE } from '../../base/media';
 import { muteRemote } from '../actions';
 
 /**
@@ -57,7 +58,7 @@ export default class AbstractMuteRemoteParticipantDialog<P:Props = Props>
     _onSubmit() {
         const { dispatch, participantID } = this.props;
 
-        dispatch(muteRemote(participantID));
+        dispatch(muteRemote(participantID, MEDIA_TYPE.AUDIO));
 
         return true;
     }

@@ -3,6 +3,7 @@
 import React from 'react';
 
 import { Dialog } from '../../base/dialog';
+import { MEDIA_TYPE } from '../../base/media';
 import { getLocalParticipant, getParticipantDisplayName } from '../../base/participants';
 import { muteAllParticipants } from '../actions';
 
@@ -69,7 +70,7 @@ export default class AbstractMuteEveryoneDialog<P: Props> extends AbstractMuteRe
             exclude
         } = this.props;
 
-        dispatch(muteAllParticipants(exclude));
+        dispatch(muteAllParticipants(exclude, MEDIA_TYPE.AUDIO));
 
         return true;
     }

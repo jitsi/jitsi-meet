@@ -127,7 +127,6 @@ export function createLocalTracksA(options = {}) {
                             options.facingMode || CAMERA_FACING_MODE.USER,
                         micDeviceId: options.micDeviceId
                     },
-                    /* firePermissionPromptIsShownEvent */ false,
                     store)
                 .then(
                     localTracks => {
