@@ -27,7 +27,7 @@ import {
     stopWaitForOwner,
     waitForOwner
 } from './actions';
-import { LoginDialog, WaitForOwnerDialog } from './components';
+import { LoginDialog, WaitForOwnerDialog } from './components/native';
 
 /**
  * Middleware that captures connection or conference failed errors and controls
