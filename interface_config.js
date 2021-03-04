@@ -45,12 +45,11 @@ var interfaceConfig = {
     CONNECTION_INDICATOR_DISABLED: false,
 
     DEFAULT_BACKGROUND: '#474747',
+    DEFAULT_DIAL_OUT_CODE: 1,
     DEFAULT_LOCAL_DISPLAY_NAME: 'me',
     DEFAULT_LOGO_URL: 'images/watermark.svg',
     DEFAULT_REMOTE_DISPLAY_NAME: 'Fellow Jitster',
     DEFAULT_WELCOME_PAGE_LOGO_URL: 'images/watermark.svg',
-    
-    DEFAULT_DIAL_OUT_CODE: 1,
     
     DISABLE_DOMINANT_SPEAKER_INDICATOR: false,
 
