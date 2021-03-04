@@ -183,9 +183,8 @@ export function getInviteResultsForQuery(
         // proper country code has been entered. In such a case, prepend 1 for
         // the country code. The service currently takes care of prepending the
         // +.
-        const countryCode = (typeof interfaceConfig !== 'undefined'
-            && interfaceConfig.DEFAULT_DIAL_OUT_CODE)
-            || 1;
+        const countryCode = (typeof interfaceConfig !== 'undefined' && interfaceConfig.DEFAULT_DIAL_OUT_CODE) || 1;
+
         if (!hasCountryCode && !text.startsWith(countryCode)) {
             numberToVerify = countryCode + numberToVerify;
         }
