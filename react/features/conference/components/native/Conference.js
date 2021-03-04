@@ -151,6 +151,7 @@ class Conference extends AbstractConference<Props, *> {
      */
     render() {
         const { _fullscreenEnabled } = this.props;
+
         return (
             <Container style = { styles.conference }>
                 <StatusBar
