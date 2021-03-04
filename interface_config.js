@@ -49,7 +49,9 @@ var interfaceConfig = {
     DEFAULT_LOGO_URL: 'images/watermark.svg',
     DEFAULT_REMOTE_DISPLAY_NAME: 'Fellow Jitster',
     DEFAULT_WELCOME_PAGE_LOGO_URL: 'images/watermark.svg',
+    
     DEFAULT_DIAL_OUT_CODE: 1,
+    
     DISABLE_DOMINANT_SPEAKER_INDICATOR: false,
 
     DISABLE_FOCUS_INDICATOR: false,
