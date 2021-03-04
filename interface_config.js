@@ -91,9 +91,8 @@ var interfaceConfig = {
     DISPLAY_WELCOME_PAGE_CONTENT: false,
     DISPLAY_WELCOME_PAGE_TOOLBAR_ADDITIONAL_CONTENT: false,
 
-    ENABLE_DIAL_OUT: true,
-    
     DEFAULT_DIAL_OUT_CODE: 1,
+    ENABLE_DIAL_OUT: true,
 
     ENABLE_FEEDBACK_ANIMATION: false, // Enables feedback star animation.
 
