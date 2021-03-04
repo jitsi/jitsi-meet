@@ -1,5 +1,5 @@
-import { ColorSchemeRegistry, schemeColor } from '../../base/color-scheme';
-import { BoxModel } from '../../base/styles';
+import { ColorSchemeRegistry, schemeColor } from '../../../base/color-scheme';
+import { BoxModel } from '../../../base/styles';
 
 /**
  * The styles of the authentication feature.
