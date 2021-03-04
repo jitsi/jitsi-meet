@@ -1,10 +1,8 @@
 // @flow
 
-import type { Dispatch } from 'redux';
-
 import { maybeRedirectToWelcomePage } from '../app/actions';
-import { checkIfCanJoin, conferenceLeft } from '../base/conference/actions';
-import { openDialog, hideDialog } from '../base/dialog/actions';
+import { checkIfCanJoin } from '../base/conference/actions';
+import { openDialog } from '../base/dialog/actions';
 
 import {
     CANCEL_LOGIN,
