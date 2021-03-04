@@ -49,7 +49,7 @@ var interfaceConfig = {
     DEFAULT_LOGO_URL: 'images/watermark.svg',
     DEFAULT_REMOTE_DISPLAY_NAME: 'Fellow Jitster',
     DEFAULT_WELCOME_PAGE_LOGO_URL: 'images/watermark.svg',
-
+    DEFAULT_DIAL_OUT_CODE: 1,
     DISABLE_DOMINANT_SPEAKER_INDICATOR: false,
 
     DISABLE_FOCUS_INDICATOR: false,
@@ -91,7 +91,6 @@ var interfaceConfig = {
     DISPLAY_WELCOME_PAGE_CONTENT: false,
     DISPLAY_WELCOME_PAGE_TOOLBAR_ADDITIONAL_CONTENT: false,
 
-    DEFAULT_DIAL_OUT_CODE: 1,
     ENABLE_DIAL_OUT: true,
 
     ENABLE_FEEDBACK_ANIMATION: false, // Enables feedback star animation.
