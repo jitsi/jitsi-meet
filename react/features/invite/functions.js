@@ -183,8 +183,8 @@ export function getInviteResultsForQuery(
         // proper country code has been entered. In such a case, prepend 1 for
         // the country code. The service currently takes care of prepending the
         // +.
-        if (!hasCountryCode && !text.startsWith('1')) {
-            numberToVerify = `1${numberToVerify}`;
+        if (!hasCountryCode && !text.startsWith(interfaceConfig.DEFAULT_DIAL_OUT_CODE)) {
+            numberToVerify = interfaceConfig.DEFAULT_DIAL_OUT_CODE + numberToVerify;
         }
 
         // The validation service works properly when the query is digits only
