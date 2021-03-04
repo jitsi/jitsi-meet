@@ -4,19 +4,27 @@ import { FieldTextStateless as TextField } from '@atlaskit/field-text';
 import React, { Component } from 'react';
 import type { Dispatch } from 'redux';
 
-import { connect, toJid } from '../../../base/connection';
+import { connect } from '../../../../../connection';
+import { toJid } from '../../../base/connection/functions';
 import { Dialog } from '../../../base/dialog';
 import { translate, translateToHTML } from '../../../base/i18n';
 import { JitsiConnectionErrors } from '../../../base/lib-jitsi-meet';
 import { connect as reduxConnect } from '../../../base/redux';
-import { authenticateAndUpgradeRole, cancelLogin } from '../../actions.web';
-
+import { showNotification } from '../../../notifications';
+import { authenticateAndUpgradeRole } from '../../actions.native';
+import { cancelLogin } from '../../actions.web';
 declare var config: Object;
+declare var APP: Object;
 
 /**
  * The type of the React {@code Component} props of {@link LoginDialog}.
  */
 type Props = {
+
+    /**
+     * Redux store dispatch method.
+     */
+    dispatch: Dispatch<any>,
 
     /**
      * {@link JitsiConference} that needs authentication - will hold a valid
@@ -35,9 +43,14 @@ type Props = {
     _connecting: boolean,
 
     /**
-     * Redux store dispatch method.
+     * Invoked when username and password are submitted.
      */
-    dispatch: Dispatch<any>,
+    onSuccess: Function,
+
+    /**
+     * Conference room name.
+     */
+    roomName: string,
 
     /**
      * The error which occurred during login/authentication.
@@ -69,12 +82,7 @@ type State = {
     /**
      * The user entered local participant name.
      */
-    username: string,
-
-    /**
-     * The type of message that is being rendered.
-     */
-    messageIsError: boolean
+    username: string
 }
 
 /**
@@ -93,8 +101,7 @@ class LoginDialog extends Component<Props, State> {
 
         this.state = {
             username: '',
-            password: '',
-            messageIsError: false
+            password: ''
         };
 
         this._onCancelLogin = this._onCancelLogin.bind(this);
@@ -129,15 +136,28 @@ class LoginDialog extends Component<Props, State> {
         const {
             _conference: conference,
             _configHosts: configHosts,
+            roomName,
+            onSuccess,
             dispatch
         } = this.props;
         const { password, username } = this.state;
         const jid = toJid(username, configHosts);
-        const result = conference
-            ? dispatch(authenticateAndUpgradeRole(jid, password, conference))
-            : dispatch(connect(jid, password));
 
-        return result;
+        if (conference) {
+            dispatch(authenticateAndUpgradeRole(jid, password, conference));
+        } else {
+            connect(jid, password, roomName)
+                .then(connection => {
+                    if (onSuccess) {
+                        onSuccess(connection);
+                        APP.store.dispatch(showNotification({
+                            descriptionArguments: { room: roomName },
+                            descriptionKey: 'notify.canJoinConference',
+                            titleKey: 'connection.AUTHSUCC'
+                        }));
+                    }
+                });
+        }
     }
 
     _onChange: Object => void;
@@ -175,12 +195,9 @@ class LoginDialog extends Component<Props, State> {
 
         const messageOptions = {};
 
-        if (progress && progress > 1) {
+        if (progress && progress >= 0.5) {
             messageKey = t('connection.FETCH_SESSION_ID');
         } else if (error) {
-            this.setState({
-                messageIsError: true
-            });
 
             const { name } = error;
 
@@ -197,9 +214,6 @@ class LoginDialog extends Component<Props, State> {
                 messageOptions.msg = `${name} ${error.message}`;
             }
         } else if (connecting) {
-            this.setState({
-                messageIsError: false
-            });
 
             messageKey = t('connection.CONNECTING');
         }
@@ -226,15 +240,16 @@ class LoginDialog extends Component<Props, State> {
         const placeholder = config.hosts.authdomain
             ? 'user identity'
             : 'user@domain.net';
-        const { _connecting: connecting, t } = this.props;
+        const { t } = this.props;
         const { password, username } = this.state;
 
         return (
             <Dialog
-                hideCancelButton = { connecting }
-                okDisabled = { connecting }
+                okDisabled = { !password || !username }
+                okKey = { t('dialog.confirm') }
                 onCancel = { this._onCancelLogin }
                 onSubmit = { this._onLogin }
+                titleKey = { t('dialog.passwordRequired') }
                 width = { 'small' }>
                 <TextField
                     autoFocus = { true }
@@ -248,7 +263,6 @@ class LoginDialog extends Component<Props, State> {
                     type = 'text'
                     value = { username } />
                 <TextField
-                    autoFocus = { true }
                     className = 'input-control'
                     compact = { false }
                     label = { t('dialog.userPassword') }
