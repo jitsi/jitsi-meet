@@ -2185,7 +2185,7 @@ export default {
                 }
             }
 
-            Promise.all(promises)
+            Promise.allSettled(promises)
                 .then(() => APP.UI.notifyInitiallyMuted());
         });
 
