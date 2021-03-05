@@ -1020,7 +1020,11 @@ export default {
                     // Rollback the video muted status by using null track
                     return null;
                 })
-                .then(videoTrack => this.useVideoStream(videoTrack));
+                .then(videoTrack => {
+                    logger.debug(`muteVideo: calling useVideoStream for track: ${videoTrack}`);
+
+                    return this.useVideoStream(videoTrack);
+                });
         } else {
             // FIXME show error dialog if it fails (should be handled by react)
             muteLocalVideo(mute);
@@ -1343,8 +1347,11 @@ export default {
             if (track.isAudioTrack()) {
                 return this.useAudioStream(track);
             } else if (track.isVideoTrack()) {
+                logger.debug(`_setLocalAudioVideoStreams is calling useVideoStream with track: ${track}`);
+
                 return this.useVideoStream(track);
             }
+
             logger.error(
                     'Ignored not an audio nor a video track: ', track);
 
@@ -1364,6 +1371,8 @@ export default {
      * @returns {Promise}
      */
     useVideoStream(newTrack) {
+        logger.debug(`useVideoStream: ${newTrack}`);
+
         return new Promise((resolve, reject) => {
             _replaceLocalVideoTrackQueue.enqueue(onFinish => {
                 const state = APP.store.getState();
@@ -1373,14 +1382,20 @@ export default {
                 if (isPrejoinPageVisible(state)) {
                     const oldTrack = getLocalJitsiVideoTrack(state);
 
+                    logger.debug(`useVideoStream on the prejoin screen: Replacing ${oldTrack} with ${newTrack}`);
+
                     return APP.store.dispatch(replaceLocalTrack(oldTrack, newTrack))
                         .then(resolve)
-                        .catch(reject)
+                        .catch(error => {
+                            logger.error(`useVideoStream failed on the prejoin screen: ${error}`);
+                            reject(error);
+                        })
                         .then(onFinish);
                 }
 
+                logger.debug(`useVideoStream: Replacing ${this.localVideo} with ${newTrack}`);
                 APP.store.dispatch(
-                replaceLocalTrack(this.localVideo, newTrack, room))
+                    replaceLocalTrack(this.localVideo, newTrack, room))
                     .then(() => {
                         this.localVideo = newTrack;
                         this._setSharingScreen(newTrack);
@@ -1390,7 +1405,10 @@ export default {
                         this.setVideoMuteStatus(this.isLocalVideoMuted());
                     })
                     .then(resolve)
-                    .catch(reject)
+                    .catch(error => {
+                        logger.error(`useVideoStream failed: ${error}`);
+                        reject(error);
+                    })
                     .then(onFinish);
             });
         });
@@ -1537,7 +1555,11 @@ export default {
 
         if (didHaveVideo) {
             promise = promise.then(() => createLocalTracksF({ devices: [ 'video' ] }))
-                .then(([ stream ]) => this.useVideoStream(stream))
+                .then(([ stream ]) => {
+                    logger.debug(`_turnScreenSharingOff using ${stream} for useVideoStream`);
+
+                    return this.useVideoStream(stream);
+                })
                 .catch(error => {
                     logger.error('failed to switch back to local video', error);
 
@@ -1548,7 +1570,11 @@ export default {
                     );
                 });
         } else {
-            promise = promise.then(() => this.useVideoStream(null));
+            promise = promise.then(() => {
+                logger.debug('_turnScreenSharingOff using null for useVideoStream');
+
+                return this.useVideoStream(null);
+            });
         }
 
         return promise.then(
@@ -1559,6 +1585,8 @@ export default {
             },
             error => {
                 this.videoSwitchInProgress = false;
+                logger.error(`_turnScreenSharingOff failed: ${error}`);
+
                 throw error;
             });
     },
@@ -1579,6 +1607,7 @@ export default {
      * @return {Promise.<T>}
      */
     async toggleScreenSharing(toggle = !this._untoggleScreenSharing, options = {}) {
+        logger.debug(`toggleScreenSharing: ${toggle}`);
         if (this.videoSwitchInProgress) {
             return Promise.reject('Switch in progress.');
         }
@@ -1645,6 +1674,8 @@ export default {
                 desktopVideoStream.on(
                     JitsiTrackEvents.LOCAL_TRACK_STOPPED,
                     () => {
+                        logger.debug(`Local screensharing track stopped. ${this.isSharingScreen}`);
+
                         // If the stream was stopped during screen sharing
                         // session then we should switch back to video.
                         this.isSharingScreen
@@ -1809,6 +1840,7 @@ export default {
                 const desktopVideoStream = streams.find(stream => stream.getType() === MEDIA_TYPE.VIDEO);
 
                 if (desktopVideoStream) {
+                    logger.debug(`_switchToScreenSharing is using ${desktopVideoStream} for useVideoStream`);
                     await this.useVideoStream(desktopVideoStream);
                 }
 
@@ -2014,6 +2046,7 @@ export default {
             if (participantThatMutedUs) {
                 APP.store.dispatch(participantMutedUs(participantThatMutedUs, track));
                 if (this.isSharingScreen && track.isVideoTrack()) {
+                    logger.debug('TRACK_MUTE_CHANGED while screen sharing');
                     this._turnScreenSharingOff(false);
                 }
             }
@@ -2237,7 +2270,7 @@ export default {
                         .then(effect => this.localVideo.setEffect(effect))
                         .then(() => {
                             this.setVideoMuteStatus(false);
-                            logger.log('switched local video device');
+                            logger.log('Switched local video device while screen sharing and the video is unmuted');
                             this._updateVideoDeviceId();
                         })
                         .catch(err => APP.store.dispatch(notifyCameraError(err)));
@@ -2246,7 +2279,7 @@ export default {
                 // id for video, dispose the existing presenter track and create a new effect
                 // that can be applied on un-mute.
                 } else if (this.isSharingScreen && videoWasMuted) {
-                    logger.log('switched local video device');
+                    logger.log('Switched local video device: while screen sharing and the video is muted');
                     const { height } = this.localVideo.track.getSettings();
 
                     this._updateVideoDeviceId();
@@ -2273,12 +2306,20 @@ export default {
 
                         return stream;
                     })
-                    .then(stream => this.useVideoStream(stream))
+                    .then(stream => {
+                        logger.log('Switching the local video device.');
+
+                        return this.useVideoStream(stream);
+                    })
                     .then(() => {
-                        logger.log('switched local video device');
+                        logger.log('Switched local video device.');
                         this._updateVideoDeviceId();
                     })
-                    .catch(err => APP.store.dispatch(notifyCameraError(err)));
+                    .catch(error => {
+                        logger.error(`Switching the local video device failed: ${error}`);
+
+                        return APP.store.dispatch(notifyCameraError(error));
+                    });
                 }
             }
         );
@@ -2630,6 +2671,7 @@ export default {
             delete newDevices.videoinput;
 
             // Removing the current video track in order to force the unmute to select the preferred device.
+            logger.debug('_onDeviceListChanged: Removing the current video track.');
             this.useVideoStream(null);
 
         }
