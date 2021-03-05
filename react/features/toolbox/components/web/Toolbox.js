@@ -83,6 +83,7 @@ import MuteEveryoneButton from '../MuteEveryoneButton';
 import AudioSettingsButton from './AudioSettingsButton';
 import OverflowMenuButton from './OverflowMenuButton';
 import OverflowMenuProfileItem from './OverflowMenuProfileItem';
+import ToggleCameraButton from './ToggleCameraButton';
 import ToolbarButton from './ToolbarButton';
 import VideoSettingsButton from './VideoSettingsButton';
 
@@ -929,7 +930,7 @@ class Toolbox extends Component<Props, State> {
     }
 
     /**
-     * Returns true if the profile button is visible and false otherwise.
+     * Returns true if the embed meeting button is visible and false otherwise.
      *
      * @returns {boolean}
      */
@@ -946,6 +947,15 @@ class Toolbox extends Component<Props, State> {
      */
     _isProfileVisible() {
         return !this.props._isProfileDisabled && this._shouldShowButton('profile');
+    }
+
+    /**
+     * Returns true if the camera toggle button is visible and false otherwise.
+     *
+     * @returns {boolean}
+     */
+    _isToggleCameraVisible() {
+        return isMobileBrowser() && this.props._hasMultipleCameras && this._shouldShowButton('toggle');
     }
 
     /**
@@ -967,6 +977,10 @@ class Toolbox extends Component<Props, State> {
         const group1 = [
             ...additionalButtons,
 
+            this._isToggleCameraVisible()
+                && <ToggleCameraButton
+                    key = 'toggle'
+                    showLabel = { true } />,
             this._shouldShowButton('videoquality')
                 && <OverflowMenuVideoQualityItem
                     key = 'videoquality'
@@ -1316,6 +1330,7 @@ function _mapStateToProps(state) {
     const localParticipant = getLocalParticipant(state);
     const localRecordingStates = state['features/local-recording'];
     const localVideo = getLocalVideoTrack(state['features/base/tracks']);
+    const { videoInput } = state['features/base/devices'].availableDevices;
 
     let desktopSharingDisabledTooltipKey;
 
@@ -1335,6 +1350,7 @@ function _mapStateToProps(state) {
         _desktopSharingDisabledTooltipKey: desktopSharingDisabledTooltipKey,
         _dialog: Boolean(state['features/base/dialog'].component),
         _feedbackConfigured: Boolean(callStatsID),
+        _hasMultipleCameras: videoInput.length > 1,
         _isProfileDisabled: Boolean(state['features/base/config'].disableProfile),
         _isMobile: isMobileBrowser(),
         _isVpaasMeeting: isVpaasMeeting(state),

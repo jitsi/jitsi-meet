@@ -3,7 +3,7 @@ import {
     sendAnalytics
 } from '../../analytics';
 import { showErrorNotification, showNotification } from '../../notifications';
-import { JitsiTrackErrors, JitsiTrackEvents } from '../lib-jitsi-meet';
+import { JitsiTrackErrors, JitsiTrackEvents, createLocalTrack } from '../lib-jitsi-meet';
 import {
     CAMERA_FACING_MODE,
     MEDIA_TYPE,
@@ -715,5 +715,27 @@ export function updateLastTrackVideoMediaEvent(track, name) {
         type: TRACK_UPDATE_LAST_VIDEO_MEDIA_EVENT,
         track,
         name
+    };
+}
+
+/**
+ * Toggles the facingMode constraint on the video stream.
+ *
+ * @returns {Function}
+ */
+export function toggleCamera() {
+    return async (dispatch, getState) => {
+        const state = getState();
+        const tracks = state['features/base/tracks'];
+        const localVideoTrack = getLocalVideoTrack(tracks).jitsiTrack;
+        const { _realDeviceId } = localVideoTrack;
+        const { videoInput } = state['features/base/devices'].availableDevices;
+        const { deviceId } = videoInput.find(camera => camera.deviceId !== _realDeviceId);
+
+        await dispatch(replaceLocalTrack(localVideoTrack, null));
+
+        const newVideoTrack = await createLocalTrack('video', deviceId);
+
+        await dispatch(replaceLocalTrack(null, newVideoTrack));
     };
 }
