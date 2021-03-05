@@ -152,6 +152,7 @@ StateListenerRegistry.register(
  * Symbol mapping used for the tile view responsiveness computation.
  */
 const responsiveColumnMapping = {
+    multipleColumns: Symbol('multipleColumns'),
     singleColumn: Symbol('singleColumn'),
     twoColumns: Symbol('twoColumns'),
     twoParticipantsSingleColumn: Symbol('twoParticipantsSingleColumn')
@@ -173,14 +174,13 @@ StateListenerRegistry.register(
             // Forcing the recomputation of tiles when screen switches in or out of
             // the (ASPECT_RATIO_BREAKPOINT, SINGLE_COLUMN_BREAKPOINT] interval.
             return responsiveColumnMapping.twoParticipantsSingleColumn;
+        } else if (clientWidth < SINGLE_COLUMN_BREAKPOINT) {
+            // Forcing the recomputation of tiles when screen switches below SINGLE_COLUMN_BREAKPOINT.
+            return responsiveColumnMapping.singleColumn;
         }
 
-        /**
-         * This gets called either when the width of the screen is above {@code TWO_COLUMN_BREAKPOINT}
-         * or below {@CODE SINGLE_COLUMN_BREAKPOINT}, however, the internal logic from {@code getMaxColumnCount}
-         * only takes the second case into consideration.
-         */
-        return responsiveColumnMapping.singleColumn;
+        // Forcing the recomputation of tiles when screen switches above TWO_COLUMN_BREAKPOINT.
+        return responsiveColumnMapping.multipleColumns;
     },
     /* listener */ (_, store) => {
         const state = store.getState();
