@@ -598,26 +598,20 @@ function _disposeTracks(tracks) {
  * Implements the {@code Promise} rejection handler of
  * {@code createLocalTracksA} and {@code createLocalTracksF}.
  *
- * @param {Object} reason - The {@code Promise} rejection reason.
+ * @param {Object} error - The {@code Promise} rejection reason.
  * @param {string} device - The device/{@code MEDIA_TYPE} associated with the
  * rejection.
  * @private
  * @returns {Function}
  */
-function _onCreateLocalTracksRejected({ gum }, device) {
+function _onCreateLocalTracksRejected(error, device) {
     return dispatch => {
         // If permissions are not allowed, alert the user.
-        if (gum) {
-            const { error } = gum;
-
-            if (error) {
-                dispatch({
-                    type: TRACK_CREATE_ERROR,
-                    permissionDenied: error.name === 'SecurityError',
-                    trackType: device
-                });
-            }
-        }
+        dispatch({
+            type: TRACK_CREATE_ERROR,
+            permissionDenied: error?.name === 'SecurityError',
+            trackType: device
+        });
     };
 }
 
