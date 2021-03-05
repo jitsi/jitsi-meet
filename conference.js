@@ -99,6 +99,7 @@ import {
     destroyLocalTracks,
     getLocalJitsiAudioTrack,
     getLocalJitsiVideoTrack,
+    getLocalTracks,
     isLocalCameraTrackMuted,
     isLocalTrackMuted,
     isUserInteractionRequiredForUnmute,
@@ -473,17 +474,12 @@ export default {
      */
     createInitialLocalTracks(options = {}) {
         const errors = {};
+
+        // Always get a handle on the audio input device so that we have statistics (such as "No audio input" or
+        // "Are you trying to speak?" ) even if the user joins the conference muted.
         const initialDevices = config.disableInitialGUM ? [] : [ 'audio' ];
         const requestedAudio = !config.disableInitialGUM;
         let requestedVideo = false;
-
-        // Always get a handle on the audio input device so that we have statistics even if the user joins the
-        // conference muted. Previous implementation would only acquire the handle when the user first unmuted,
-        // which would results in statistics ( such as "No audio input" or "Are you trying to speak?") being available
-        // only after that point.
-        if (options.startWithAudioMuted) {
-            this.muteAudio(true, true);
-        }
 
         if (!config.disableInitialGUM
                 && !options.startWithVideoMuted
@@ -824,12 +820,16 @@ export default {
             return this._setLocalAudioVideoStreams(tracks);
         }
 
-        const [ tracks, con ] = await this.createInitialLocalTracksAndConnect(
-            roomName, initialOptions);
+        const [ tracks, con ] = await this.createInitialLocalTracksAndConnect(roomName, initialOptions);
+        let localTracks = tracks;
 
         this._initDeviceList(true);
 
-        return this.startConference(con, tracks);
+        if (initialOptions.startWithAudioMuted) {
+            localTracks = localTracks.filter(track => track.getType() !== MEDIA_TYPE.AUDIO);
+        }
+
+        return this.startConference(con, localTracks);
     },
 
     /**
@@ -1320,7 +1320,11 @@ export default {
                 this._getConferenceOptions());
 
         APP.store.dispatch(conferenceWillJoin(room));
-        this._setLocalAudioVideoStreams(localTracks);
+
+        // Filter out the tracks that are muted.
+        const tracks = localTracks.filter(track => !track.isMuted());
+
+        this._setLocalAudioVideoStreams(tracks);
         this._room = room; // FIXME do not use this
 
         sendLocalParticipant(APP.store, room);
@@ -2163,8 +2167,26 @@ export default {
             }
         );
         room.on(JitsiConferenceEvents.STARTED_MUTED, () => {
-            (room.isStartAudioMuted() || room.isStartVideoMuted())
-                && APP.UI.notifyInitiallyMuted();
+            const audioMuted = room.isStartAudioMuted();
+            const videoMuted = room.isStartVideoMuted();
+            const localTracks = getLocalTracks(APP.store.getState()['features/base/tracks']);
+            const promises = [];
+
+            APP.store.dispatch(setAudioMuted(audioMuted));
+            APP.store.dispatch(setVideoMuted(videoMuted));
+
+            // Remove the tracks from the peerconnection.
+            for (const track of localTracks) {
+                if (audioMuted && track.jitsiTrack?.getType() === MEDIA_TYPE.AUDIO) {
+                    promises.push(this.useAudioStream(null));
+                }
+                if (videoMuted && track.jitsiTrack?.getType() === MEDIA_TYPE.VIDEO) {
+                    promises.push(this.useVideoStream(null));
+                }
+            }
+
+            Promise.allSettled(promises)
+                .then(() => APP.UI.notifyInitiallyMuted());
         });
 
         room.on(
