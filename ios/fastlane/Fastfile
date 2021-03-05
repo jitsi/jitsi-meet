@@ -16,6 +16,13 @@ platform :ios do
       app_identifier: "com.atlassian.JitsiMeet.ios"
     )
 
+    # Set the broadcast extension identifier
+    update_app_identifier(
+      xcodeproj: "app/app.xcodeproj",
+      plist_path: "JitsiMeetBroadcast Extension/Info.plist",
+      app_identifier: "com.atlassian.JitsiMeet.ios.broadcast"
+    )
+
     # Set the (watch) app identifier
     update_app_identifier(
       xcodeproj: "app/app.xcodeproj",
