@@ -30,6 +30,13 @@ type Props = {
 const getClipboardContents = async () => await Clipboard.getString();
 
 /**
+ * Clear ios clipboard contents.
+ *
+ * @returns {void}
+ */
+const clearClipboardContents = async () => await Clipboard.setString('');
+
+/**
  * React component to detect if the contents from the clipboard contain jane video chat url.
  *
  * @param {Object} props - The read-only properties with which the new
@@ -44,6 +51,7 @@ const VideoChatUrlDetector = (props: Props) => {
         if (isJaneVideoChatLink(contents)) {
             // Start call with the video chat url.
             props.dispatch(appNavigate(toURLString(contents)));
+            clearClipboardContents();
         }
     };
 
