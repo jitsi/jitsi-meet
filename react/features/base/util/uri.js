@@ -33,9 +33,8 @@ const _URI_AUTHORITY_PATTERN = '(//[^/?#]+)';
 const _URI_PATH_PATTERN = '([^?#]*)';
 
 /**
- * The {@link RegExp} pattern of the following jane universal link domains.
+ * The {@link RegExp} pattern of the following jane universal link domains (jwt servers only).
  * "videochat-jwt.jane.qa",
- * "videochat.jane.qa",
  * "videochat-us.janeapp.com",
  * "videochat-ca.janeapp.com",
  * "videochat-ca2.janeapp.com",
@@ -619,11 +618,11 @@ export function getDecodedURI(uri: string) {
 }
 
 /**
- * Check if the clipboard contents contains Jane video chat universal link.
+ * Checks whether a url param matches the _JANE_UNIVERSAL_LINK_DOMAINS regex expression.
  *
  * @param {string} url - The video chat url
  * function.
- * @returns {boolean} If the clipboard contents contains Jane video chat universal link return
+ * @returns {boolean} If a url matches the _JANE_UNIVERSAL_LINK_DOMAINS regex expression return
  * {@code true}; otherwise, {@code false}.
  */
 export function isJaneVideoChatLink(url: string) {

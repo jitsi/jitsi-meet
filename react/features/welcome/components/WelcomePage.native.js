@@ -1,6 +1,6 @@
+import { jitsiLocalStorage } from '@jitsi/js-utils';
 import React from 'react';
 
-import jitsiLocalStorage from '../../../../modules/util/JitsiLocalStorage';
 import { ColorSchemeRegistry } from '../../base/color-scheme';
 import { translate } from '../../base/i18n';
 import { connect } from '../../base/redux';
