@@ -172,7 +172,7 @@ class AudioSettingsContent extends Component<Props, State> {
      * @returns {void}
      */
     async _setTracks() {
-        if (browser.isSafari()) {
+        if (browser.isWebKitBased()) {
 
             // It appears that at the time of this writing, creating audio tracks blocks the browser's main thread for
             // long time on safari. Wasn't able to confirm which part of track creation does the blocking exactly, but
