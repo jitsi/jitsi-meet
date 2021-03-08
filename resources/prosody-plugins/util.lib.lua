@@ -324,12 +324,31 @@ function http_get_with_retry(url, retry)
     return content;
 end
 
+-- Checks whether there is status in the <x node
+-- @param muc_x the <x element from presence
+-- @param status checks for this status
+-- @returns true if the status is found, false otherwise or if no muc_x is provided.
+function presence_check_status(muc_x, status)
+    if not muc_x then
+        return false;
+    end
+
+    for statusNode in muc_x:childtags('status') do
+        if statusNode.attr.code == status then
+            return true;
+        end
+    end
+
+    return false;
+end
+
 return {
     extract_subdomain = extract_subdomain;
     is_feature_allowed = is_feature_allowed;
     is_healthcheck_room = is_healthcheck_room;
     get_room_from_jid = get_room_from_jid;
     async_handler_wrapper = async_handler_wrapper;
+    presence_check_status = presence_check_status;
     room_jid_match_rewrite = room_jid_match_rewrite;
     room_jid_split_subdomain = room_jid_split_subdomain;
     internal_room_jid_match_rewrite = internal_room_jid_match_rewrite;
