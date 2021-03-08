@@ -3,6 +3,7 @@
 import Logger from 'jitsi-meet-logger';
 
 import { openConnection } from '../../../connection';
+import { openWaitForOwnerDialog } from '../../../react/features/authentication/actions.web';
 import { setJWT } from '../../../react/features/base/jwt';
 import {
     JitsiConnectionErrors
@@ -234,17 +235,26 @@ function logout(room) {
 
 /**
  * Notify user that authentication is required to create the conference.
- * @param {JitsiConference} room
- * @param {string} [lockPassword] password to use if the conference is locked
+ * @param {JitsiConference} - Conference room
+ * @param {string} lockPassword - Password to use if the conference is locked
  */
 function requireAuth(room, lockPassword) {
     if (authRequiredDialog) {
         return;
     }
-
-    authRequiredDialog = LoginDialog.showAuthRequiredDialog(
-        room.getName(), authenticate.bind(null, room, lockPassword)
+    authRequiredDialog = APP.store.dispatch(
+        openWaitForOwnerDialog(
+            () => authenticate.bind(null, room, lockPassword),
+            {
+                key: 'dialog.WaitForHostMsg',
+                params: room
+            }
+        )
     );
+
+    // authRequiredDialog = LoginDialog.showAuthRequiredDialog(
+    //     room.getName(), authenticate.bind(null, room, lockPassword)
+    // );
 }
 
 /**
