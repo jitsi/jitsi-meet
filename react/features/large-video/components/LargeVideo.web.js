@@ -8,6 +8,7 @@ import { InviteMore, Subject } from '../../conference';
 import { fetchCustomBrandingData } from '../../dynamic-branding';
 import { Captions } from '../../subtitles/';
 
+
 declare var interfaceConfig: Object;
 
 type Props = {
@@ -62,7 +63,17 @@ class LargeVideo extends Component<Props> {
      * @returns {React$Element}
      */
     render() {
-        const style = this._getCustomSyles();
+        let style = this._getCustomSyles();
+        let largeVideoWrapperStyle = {}
+        if(interfaceConfig.DEFAULT_BACKGROUND == "aforpineapple" || window.location.href.indexOf("aforpineapple") !== -1){
+            style.backgroundImage = `url("https://storage.googleapis.com/images.platoo.in/Aforpineapple%20stage%20image.jpg")`
+            style.backgroundRepeat = "no-repeat"
+            style.backgroundSize = "cover"
+
+        }
+
+        
+        
         const className = `videocontainer${this.props._isChatOpen ? ' shift-right' : ''}`;
         let is_transparent = false
         console.log("interfaceConfig.DEFAULT_BACKGROUND", interfaceConfig.DEFAULT_BACKGROUND)

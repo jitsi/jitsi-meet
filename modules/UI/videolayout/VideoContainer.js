@@ -19,6 +19,7 @@ import LargeContainer from './LargeContainer';
 export const VIDEO_CONTAINER_TYPE = 'camera';
 
 const FADE_DURATION_MS = 300;
+declare var interfaceConfig: Object;
 
 /**
  * List of container events that we are going to process, will be added as listener to the
@@ -41,13 +42,13 @@ const containerEvents = [
  * @return an array with 2 elements, the video width and the video height
  */
 function computeDesktopVideoSize( // eslint-disable-line max-params
-        videoWidth,
-        videoHeight,
-        videoSpaceWidth,
-        videoSpaceHeight) {
+    videoWidth,
+    videoHeight,
+    videoSpaceWidth,
+    videoSpaceHeight) {
     if (videoWidth === 0 || videoHeight === 0 || videoSpaceWidth === 0 || videoSpaceHeight === 0) {
         // Avoid NaN values caused by devision by 0.
-        return [ 0, 0 ];
+        return [0, 0];
     }
 
     const aspectRatio = videoWidth / videoHeight;
@@ -72,7 +73,7 @@ function computeDesktopVideoSize( // eslint-disable-line max-params
         availableHeight = availableWidth / aspectRatio;
     }
 
-    return [ availableWidth, availableHeight ];
+    return [availableWidth, availableHeight];
 }
 
 
@@ -88,53 +89,53 @@ function computeDesktopVideoSize( // eslint-disable-line max-params
  * @return an array with 2 elements, the video width and the video height
  */
 function computeCameraVideoSize( // eslint-disable-line max-params
-        videoWidth,
-        videoHeight,
-        videoSpaceWidth,
-        videoSpaceHeight,
-        videoLayoutFit) {
+    videoWidth,
+    videoHeight,
+    videoSpaceWidth,
+    videoSpaceHeight,
+    videoLayoutFit) {
     if (videoWidth === 0 || videoHeight === 0 || videoSpaceWidth === 0 || videoSpaceHeight === 0) {
         // Avoid NaN values caused by devision by 0.
-        return [ 0, 0 ];
+        return [0, 0];
     }
 
     const aspectRatio = videoWidth / videoHeight;
 
     switch (videoLayoutFit) {
-    case 'height':
-        return [ videoSpaceHeight * aspectRatio, videoSpaceHeight ];
-    case 'width':
-        return [ videoSpaceWidth, videoSpaceWidth / aspectRatio ];
-    case 'both': {
-        const videoSpaceRatio = videoSpaceWidth / videoSpaceHeight;
-        const maxZoomCoefficient = interfaceConfig.MAXIMUM_ZOOMING_COEFFICIENT
-            || Infinity;
+        case 'height':
+            return [videoSpaceHeight * aspectRatio, videoSpaceHeight];
+        case 'width':
+            return [videoSpaceWidth, videoSpaceWidth / aspectRatio];
+        case 'both': {
+            const videoSpaceRatio = videoSpaceWidth / videoSpaceHeight;
+            const maxZoomCoefficient = interfaceConfig.MAXIMUM_ZOOMING_COEFFICIENT
+                || Infinity;
 
-        if (videoSpaceRatio === aspectRatio) {
-            return [ videoSpaceWidth, videoSpaceHeight ];
+            if (videoSpaceRatio === aspectRatio) {
+                return [videoSpaceWidth, videoSpaceHeight];
+            }
+
+            let [width, height] = computeCameraVideoSize(
+                videoWidth,
+                videoHeight,
+                videoSpaceWidth,
+                videoSpaceHeight,
+                videoSpaceRatio < aspectRatio ? 'height' : 'width');
+            const maxWidth = videoSpaceWidth * maxZoomCoefficient;
+            const maxHeight = videoSpaceHeight * maxZoomCoefficient;
+
+            if (width > maxWidth) {
+                width = maxWidth;
+                height = width / aspectRatio;
+            } else if (height > maxHeight) {
+                height = maxHeight;
+                width = height * aspectRatio;
+            }
+
+            return [width, height];
         }
-
-        let [ width, height ] = computeCameraVideoSize(
-            videoWidth,
-            videoHeight,
-            videoSpaceWidth,
-            videoSpaceHeight,
-            videoSpaceRatio < aspectRatio ? 'height' : 'width');
-        const maxWidth = videoSpaceWidth * maxZoomCoefficient;
-        const maxHeight = videoSpaceHeight * maxZoomCoefficient;
-
-        if (width > maxWidth) {
-            width = maxWidth;
-            height = width / aspectRatio;
-        } else if (height > maxHeight) {
-            height = maxHeight;
-            width = height * aspectRatio;
-        }
-
-        return [ width, height ];
-    }
-    default:
-        return [ videoWidth, videoHeight ];
+        default:
+            return [videoWidth, videoHeight];
     }
 }
 
@@ -146,10 +147,10 @@ function computeCameraVideoSize( // eslint-disable-line max-params
  * indent
  */
 function getCameraVideoPosition( // eslint-disable-line max-params
-        videoWidth,
-        videoHeight,
-        videoSpaceWidth,
-        videoSpaceHeight) {
+    videoWidth,
+    videoHeight,
+    videoSpaceWidth,
+    videoSpaceHeight) {
     // Parent height isn't completely calculated when we position the video in
     // full screen mode and this is why we use the screen height in this case.
     // Need to think it further at some point and implement it properly.
@@ -161,8 +162,10 @@ function getCameraVideoPosition( // eslint-disable-line max-params
     const horizontalIndent = (videoSpaceWidth - videoWidth) / 2;
     const verticalIndent = (videoSpaceHeight - videoHeight) / 2;
 
-    return { horizontalIndent,
-        verticalIndent };
+    return {
+        horizontalIndent,
+        verticalIndent
+    };
 }
 
 /**
@@ -181,6 +184,138 @@ export class VideoContainer extends LargeContainer {
      */
     get id() {
         return this.userId;
+    }
+
+    logic(videoOrgDimension, virtualEvent, virtualEventDim, bgImage) {
+        let backgroundPosition = virtualEvent.css("background-position").split(" ")
+        let backgroundCenterX = backgroundPosition[0] === "50%"
+        let backgroundCenterY = backgroundPosition[1] === "50%"
+
+        var dimensions = {
+            width: virtualEventDim.width,
+            height: virtualEventDim.height
+        };
+        let heightRatio = dimensions.height / bgImage.height
+        let widthRatio = dimensions.width / bgImage.width
+
+        let multiplyFactor = dimensions.width / bgImage.width
+        let newWidth, newHeight
+        let cut = 0
+        let newY = 0
+        let newX = 0
+        if (widthRatio > 1 && heightRatio > 1) {
+
+            if (widthRatio > heightRatio) {
+                let tempHeight = bgImage.height * multiplyFactor
+                cut = tempHeight - dimensions.height
+                newY = videoOrgDimension.top * multiplyFactor - (cut / 2 * (backgroundCenterY ? 1 : 0))
+                newX = videoOrgDimension.left * multiplyFactor
+
+
+            } else {
+                //console.log("282")
+                multiplyFactor = dimensions.height / bgImage.height
+                let tempWidth = bgImage.width * multiplyFactor
+                cut = tempWidth - dimensions.width
+
+                newY = videoOrgDimension.top * multiplyFactor
+                newX = videoOrgDimension.left * multiplyFactor - (cut / 2 * (backgroundCenterX ? 1 : 0))
+            }
+        } else if (heightRatio > 1) {
+            //console.log("292")
+            multiplyFactor = dimensions.height / bgImage.height
+            let tempWidth = bgImage.width * multiplyFactor
+            cut = tempWidth - dimensions.width
+            newY = videoOrgDimension.top * multiplyFactor
+            newX = videoOrgDimension.left * multiplyFactor - (cut / 2 * (backgroundCenterX ? 1 : 0))
+
+        } else if (widthRatio > 1) {
+            //console.log("300")
+            let tempHeight = bgImage.height * multiplyFactor
+            cut = tempHeight - dimensions.height
+
+            newY = videoOrgDimension.top * multiplyFactor - (cut / 2 * (backgroundCenterY ? 1 : 0))
+            newX = videoOrgDimension.left * multiplyFactor
+        } else if (heightRatio < 1) {
+
+
+            if (heightRatio > widthRatio) {
+                //console.log("310")
+                multiplyFactor = dimensions.height / bgImage.height
+                let tempWidth = bgImage.width * multiplyFactor
+
+                cut = tempWidth - dimensions.width
+
+                newY = videoOrgDimension.top * multiplyFactor
+                newX = videoOrgDimension.left * multiplyFactor - (cut / 2 * (backgroundCenterX ? 1 : 0))
+            } else {
+                //console.log("319")
+                let tempHeight = bgImage.height * multiplyFactor
+                cut = tempHeight - dimensions.height
+
+                newY = videoOrgDimension.top * multiplyFactor - (cut / 2 * (backgroundCenterY ? 1 : 0))
+                newX = videoOrgDimension.left * multiplyFactor
+
+
+            }
+
+        } else {
+            //console.log("330")
+            multiplyFactor = dimensions.height / bgImage.height
+
+            let tempWidth = bgImage.width * multiplyFactor
+            cut = tempWidth - dimensions.width
+
+            newY = videoOrgDimension.top * multiplyFactor
+            newX = videoOrgDimension.left * multiplyFactor - (cut / 2 * (backgroundCenterX ? 1 : 0))
+        }
+
+        newWidth = videoOrgDimension.width * multiplyFactor
+        newHeight = videoOrgDimension.height * multiplyFactor
+
+
+        return {
+            "Y": newY,
+            "X": newX,
+            "width": newWidth,
+            "height": newHeight
+        }
+    }
+
+
+    positionCalculationForHeight100vhWidthAuto(videoOrgDimension) {
+        /**actual logic to calcualte position and size dynamically for any object */
+
+        //console.log("calculate position")
+
+        var virtualEvent = $("#largeVideoContainer");
+        // var pageBgLoader = $('#pageBgLoader');
+
+        if (virtualEvent.css("background-size") !== "cover") {
+            console.error("this logic only works for background size cover!!!!!!!!!")
+            virtualEvent.css("background-size", "cover")
+        }
+
+        // const img = new Image();
+        // // img.onload = function() {
+
+        var bgImage = {
+            "width": 1920,
+            "height": 1080
+        }
+
+
+        return this.logic(videoOrgDimension, virtualEvent, {
+            width: virtualEvent.width(),
+            height: virtualEvent.height()
+        }, bgImage)
+        // }
+
+        // virtualEvent.css('background-image');
+        // bg = bg.replace('url(','').replace(')','').replace(/\"/gi, "");
+        // img.src = bg
+
+
     }
 
     /**
@@ -242,7 +377,7 @@ export class VideoContainer extends LargeContainer {
          */
         this.$wrapperParent = this.$wrapper.parent();
         this.avatarHeight = $('#dominantSpeakerAvatarContainer').height();
-        this.$video[0].onplaying = function(event) {
+        this.$video[0].onplaying = function (event) {
             if (typeof resizeContainer === 'function') {
                 resizeContainer(event);
             }
@@ -349,9 +484,9 @@ export class VideoContainer extends LargeContainer {
         }
 
         return getCameraVideoPosition(width,
-                height,
-                containerWidthToUse,
-                containerHeight);
+            height,
+            containerWidthToUse,
+            containerHeight);
 
     }
 
@@ -389,6 +524,9 @@ export class VideoContainer extends LargeContainer {
         }
     }
 
+
+
+
     /**
      *
      */
@@ -408,7 +546,7 @@ export class VideoContainer extends LargeContainer {
 
         this.positionRemoteStatusMessages();
 
-        const [ width, height ] = this._getVideoSize(containerWidth, containerHeight);
+        let [width, height] = this._getVideoSize(containerWidth, containerHeight);
 
         if (width === 0 || height === 0) {
             // We don't need to set 0 for width or height since the visibility is controled by the visibility css prop
@@ -428,22 +566,73 @@ export class VideoContainer extends LargeContainer {
 
         this._updateBackground();
 
-        const { horizontalIndent, verticalIndent }
+        let { horizontalIndent, verticalIndent }
             = this.getVideoPosition(width, height, containerWidth, containerHeight);
 
-        this.$wrapper.animate({
-            width,
-            height,
+        if (interfaceConfig.DEFAULT_BACKGROUND == "aforpineapple" || window.location.href.indexOf("aforpineapple") !== -1) {
 
-            top: verticalIndent,
-            bottom: verticalIndent,
+            // let newPos = this.positionCalculationForHeight100vhWidthAuto({
+            //     "left": 1920 / 2,
+            //     "top": 1080 / 2,
+            //     "width": 200,
+            //     "height": 200
+            // })
+            // $('#dominantSpeakerAvatarContainer').css({
+            //     "top": newPos.Y,
+            //     "left": newPos.X,
+            //     "width": newPos.width,
+            //     "height": newPos.height
+            // })
 
-            left: horizontalIndent,
-            right: horizontalIndent
-        }, {
-            queue: false,
-            duration: animate ? 500 : 0
-        });
+
+            newPos = this.positionCalculationForHeight100vhWidthAuto({
+                left: 626,
+                top: 398,
+                width: 670,
+                height: 375
+            })
+
+
+            console.log("hererererererer11111111111", newPos)
+
+            width = newPos.width
+            height = newPos.height
+            verticalIndent = newPos.Y
+            horizontalIndent = newPos.X
+            // this.$wrapper.css({
+            //     "top" : verticalIndent + "px",
+            //     "left" : horizontalIndent + "px",
+            //     "width" : width + "px",
+            //     "height" : height + "px"
+            // })
+            // return
+
+            this.$wrapper.animate({
+                width,
+                height,
+                top: verticalIndent,
+                left: horizontalIndent,
+            }, {
+                queue: false,
+                duration: animate ? 500 : 0
+            });
+        } else {
+            this.$wrapper.animate({
+                width,
+                height,
+
+                top: verticalIndent,
+                bottom: verticalIndent,
+
+                left: horizontalIndent,
+                right: horizontalIndent
+            }, {
+                queue: false,
+                duration: animate ? 500 : 0
+            });
+        }
+
+
     }
 
     /**
@@ -609,22 +798,22 @@ export class VideoContainer extends LargeContainer {
         // performance issues from the presence of the background or if
         // explicitly disabled.
         if (interfaceConfig.DISABLE_VIDEO_BACKGROUND
-                || browser.isFirefox()
-                || browser.isSafari()) {
+            || browser.isFirefox()
+            || browser.isSafari()) {
             return;
         }
 
         ReactDOM.render(
             <LargeVideoBackground
-                hidden = { this._hideBackground || this._isHidden }
-                mirror = {
+                hidden={this._hideBackground || this._isHidden}
+                mirror={
                     this.stream
                     && this.stream.isLocal()
                     && this.localFlipX
                 }
-                orientationFit = { this._backgroundOrientation }
-                videoElement = { this.$video && this.$video[0] }
-                videoTrack = { this.stream } />,
+                orientationFit={this._backgroundOrientation}
+                videoElement={this.$video && this.$video[0]}
+                videoTrack={this.stream} />,
             document.getElementById('largeVideoBackgroundContainer')
         );
     }
