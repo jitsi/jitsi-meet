@@ -1,3 +1,4 @@
 // @flow
 
-export { default as WaitForOwnerDialog } from './WaitForOwnerDialog.web';
+export { default as WaitForOwnerDialog } from './WaitForOwnerDialog';
+export { default as LoginDialog } from './LoginDialog';
