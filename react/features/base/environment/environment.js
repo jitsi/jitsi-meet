@@ -92,7 +92,7 @@ export function isSupportedBrowser() {
 export function isSupportedMobileBrowser() {
     return (Platform.OS === 'android' && browser.isChromiumBased())
         || (Platform.OS === 'android' && browser.isFirefox())
-        || (Platform.OS === 'ios' && browser.isSafari());
+        || (Platform.OS === 'ios' && browser.isWebKitBased());
 }
 
 /**

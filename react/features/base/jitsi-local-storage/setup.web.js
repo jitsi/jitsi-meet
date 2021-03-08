@@ -24,7 +24,7 @@ function onFakeLocalStorageChanged() {
  * @returns {void}
  */
 function setupJitsiLocalStorage() {
-    if (jitsiLocalStorage.isLocalStorageDisabled() || browser.isSafari()) {
+    if (jitsiLocalStorage.isLocalStorageDisabled() || browser.isWebKitBased()) {
         const urlParams = parseURLParams(window.location);
 
         try {
