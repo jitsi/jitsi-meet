@@ -666,6 +666,11 @@ var config = {
     // Sets the conference subject
     // subject: 'Conference Subject',
 
+    // This property is related to the use case when jitsi-meet is used via the IFrame API. When the property is true
+    // jitsi-meet will use the local storage of the host page instead of its own. This option is useful if the browser
+    // is not persisting the local storage inside the iframe.
+    // useHostPageLocalStorage: true,
+
     // List of undocumented settings used in jitsi-meet
     /**
      _immediateReloadThreshold

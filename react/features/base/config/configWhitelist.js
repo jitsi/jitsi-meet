@@ -157,6 +157,7 @@ export default [
     'stereo',
     'subject',
     'testing',
+    'useHostPageLocalStorage',
     'useTurnUdp',
     'videoQuality.persist',
     'webrtcIceTcpDisable',
