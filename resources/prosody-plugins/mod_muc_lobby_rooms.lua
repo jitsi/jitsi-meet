@@ -148,10 +148,8 @@ function filter_stanza(stanza)
     end
 end
 function filter_session(session)
-    if session.host and session.host == module.host then
-        -- domain mapper is filtering on default priority 0, and we need it after that
-        filters.add_filter(session, 'stanzas/out', filter_stanza, -1);
-    end
+    -- domain mapper is filtering on default priority 0, and we need it after that
+    filters.add_filter(session, 'stanzas/out', filter_stanza, -1);
 end
 
 function attach_lobby_room(room)
