@@ -412,7 +412,7 @@ var config = {
     // enableAutomaticUrlCopy: false,
 
     // Base URL for a Gravatar-compatible service. Defaults to libravatar.
-    // gravatarBaseURL: 'https://seccdn.libravatar.org/avatar/';
+    // gravatarBaseURL: 'https://seccdn.libravatar.org/avatar/',
 
     // Stats
     //
