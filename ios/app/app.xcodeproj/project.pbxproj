@@ -150,7 +150,7 @@
 		4EC49BCA25BEDB6400E76218 /* SocketConnection.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SocketConnection.m; sourceTree = "<group>"; };
 		4EC49BCF25BF19CF00E76218 /* SampleUploader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SampleUploader.h; sourceTree = "<group>"; };
 		4EC49BD025BF19CF00E76218 /* SampleUploader.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SampleUploader.m; sourceTree = "<group>"; };
-		4EC49BDB25BF280A00E76218 /* JitsiMeetBroadcast Extension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "JitsiMeetBroadcast Extension.entitlements"; sourceTree = "<group>"; };
+		4EC49BDB25BF280A00E76218 /* extension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = extension.entitlements; sourceTree = "<group>"; };
 		609CB2080B75F75A89923F3D /* Pods-JitsiMeet.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JitsiMeet.debug.xcconfig"; path = "../Pods/Target Support Files/Pods-JitsiMeet/Pods-JitsiMeet.debug.xcconfig"; sourceTree = "<group>"; };
 		B3B083EB1D4955FF0069CEE7 /* app.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = app.entitlements; sourceTree = "<group>"; };
 		D878B07B3FBD6E305EAA6B27 /* libPods-JitsiMeet.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-JitsiMeet.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -264,7 +264,7 @@
 		4EC49BB825BEDAC100E76218 /* JitsiMeetBroadcast Extension */ = {
 			isa = PBXGroup;
 			children = (
-				4EC49BDB25BF280A00E76218 /* JitsiMeetBroadcast Extension.entitlements */,
+				4EC49BDB25BF280A00E76218 /* extension.entitlements */,
 				4EC49BB925BEDAC100E76218 /* SampleHandler.h */,
 				4EC49BBA25BEDAC100E76218 /* SampleHandler.m */,
 				4EC49BC925BEDB6400E76218 /* SocketConnection.h */,
@@ -275,7 +275,8 @@
 				4E51B75C25E4115F0038575A /* DarwinNotificationCenter.h */,
 				4E51B75D25E4115F0038575A /* DarwinNotificationCenter.m */,
 			);
-			path = "JitsiMeetBroadcast Extension";
+			name = "JitsiMeetBroadcast Extension";
+			path = "broadcast-extension";
 			sourceTree = "<group>";
 		};
 		5E96ADD5E49F3B3822EF9A52 /* Pods */ = {
@@ -419,8 +420,6 @@
 						ProvisioningStyle = Automatic;
 					};
 					13B07F861A680F5B00A75B9A = {
-						DevelopmentTeam = FC967L3QRG;
-						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.SafariKeychain = {
 								enabled = 1;
@@ -828,7 +827,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIconDebug;
 				CODE_SIGN_ENTITLEMENTS = app.entitlements;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = NO;
@@ -858,7 +857,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIconRelease;
 				CODE_SIGN_ENTITLEMENTS = app.entitlements;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = FC967L3QRG;
@@ -890,13 +889,13 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_ENTITLEMENTS = "JitsiMeetBroadcast Extension/JitsiMeetBroadcast Extension.entitlements";
+				CODE_SIGN_ENTITLEMENTS = "broadcast-extension/extension.entitlements";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = FC967L3QRG;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
-				INFOPLIST_FILE = "JitsiMeetBroadcast Extension/Info.plist";
+				INFOPLIST_FILE = "broadcast-extension/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -922,14 +921,14 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_ENTITLEMENTS = "JitsiMeetBroadcast Extension/JitsiMeetBroadcast Extension.entitlements";
+				CODE_SIGN_ENTITLEMENTS = "broadcast-extension/extension.entitlements";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = FC967L3QRG;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
-				INFOPLIST_FILE = "JitsiMeetBroadcast Extension/Info.plist";
+				INFOPLIST_FILE = "broadcast-extension/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
