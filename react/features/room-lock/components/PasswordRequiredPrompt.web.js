@@ -1,12 +1,13 @@
 // @flow
 
-import { FieldTextStateless as TextField } from '@atlaskit/field-text';
+import Textfield from '@atlaskit/textfield';
 import React, { Component } from 'react';
 import type { Dispatch } from 'redux';
 
 import { setPassword } from '../../base/conference';
 import { Dialog } from '../../base/dialog';
 import { translate } from '../../base/i18n';
+import { Icon, IconAudioOnly, IconAudioOnlyOff } from '../../base/icons';
 import { connect } from '../../base/redux';
 import { _cancelPasswordRequiredPrompt } from '../actions';
 
@@ -41,7 +42,12 @@ type State = {
     /**
      * The password entered by the local participant.
      */
-    password: string
+    password: string,
+
+    /**
+     * Type of input field for password
+     */
+    passwordShown: boolean
 }
 
 /**
@@ -50,7 +56,8 @@ type State = {
  */
 class PasswordRequiredPrompt extends Component<Props, State> {
     state = {
-        password: ''
+        password: '',
+        passwordShown: false
     };
 
     /**
@@ -66,6 +73,7 @@ class PasswordRequiredPrompt extends Component<Props, State> {
         this._onPasswordChanged = this._onPasswordChanged.bind(this);
         this._onCancel = this._onCancel.bind(this);
         this._onSubmit = this._onSubmit.bind(this);
+        this._onClickPasswordVisibility = this._onClickPasswordVisibility.bind(this);
     }
 
     /**
@@ -95,17 +103,30 @@ class PasswordRequiredPrompt extends Component<Props, State> {
      * @protected
      */
     _renderBody() {
+        const onIcon = (<Icon
+            alt = 'Show Password'
+            className = 'textfield-icon'
+            onClick = { this._onClickPasswordVisibility }
+            src = { IconAudioOnly } />);
+        const offIcon = (<Icon
+            alt = 'Hide Password'
+            className = 'textfield-icon'
+            onClick = { this._onClickPasswordVisibility }
+            src = { IconAudioOnlyOff } />);
+
         return (
             <div>
-                <TextField
+                <Textfield
                     autoFocus = { true }
                     compact = { true }
+                    elemAfterInput = { this.state.passwordShown ? offIcon : onIcon }
                     label = { this.props.t('dialog.passwordLabel') }
                     name = 'lockKey'
                     onChange = { this._onPasswordChanged }
                     shouldFitContainer = { true }
-                    type = 'password'
+                    type = { this.state.passwordShown ? 'text' : 'password' }
                     value = { this.state.password } />
+
             </div>
         );
     }
@@ -166,6 +187,18 @@ class PasswordRequiredPrompt extends Component<Props, State> {
         });
 
         return true;
+    }
+
+    _onClickPasswordVisibility: () => void ;
+
+    /**
+     * Flips password visibility setting.
+     *
+     * @private
+     * @returns {void}
+     */
+    _onClickPasswordVisibility() {
+        this.setState({ passwordShown: !this.state.passwordShown });
     }
 }
 

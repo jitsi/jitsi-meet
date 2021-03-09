@@ -29,6 +29,7 @@
     "@atlaskit/multi-select": "15.0.5",
     "@atlaskit/spinner": "15.0.6",
     "@atlaskit/tabs": "12.1.2",
+    "@atlaskit/textfield": "^5.0.1",
     "@atlaskit/theme": "11.0.2",
     "@atlaskit/toggle": "12.0.3",
     "@atlaskit/tooltip": "17.1.2",
