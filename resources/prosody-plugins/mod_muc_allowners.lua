@@ -111,15 +111,25 @@ module:hook_global('config-reloaded', load_config);
 -- Filters self-presences to a jid that exist in joining_participants array
 -- We want to filter those presences where we send first `participant` and just after it `moderator`
 function filter_stanza(stanza)
-    if not stanza.attr or not stanza.attr.to or stanza.name ~= "presence" then
+    -- when joining_moderator_participants is empty there is nothing to filter
+    if next(joining_moderator_participants) == nil or not stanza.attr or not stanza.attr.to or stanza.name ~= "presence" then
         return stanza;
     end
 
-    -- Allow self-presence (code=110)
-    local bare_to = jid_bare(stanza.attr.to);
+    local muc_x = stanza:get_child('x', MUC_NS..'#user');
+    if not muc_x then
+        return stanza;
+    end
 
-    if joining_moderator_participants[bare_to] then
-        if presence_check_status(stanza:get_child('x', MUC_NS..'#user'), '110') then
+    local bare_to = jid_bare(stanza.attr.to);
+    if joining_moderator_participants[bare_to] and presence_check_status(muc_x, '110') then
+        -- skip the local presence for participant
+        return nil;
+    end
+
+    -- skip sending the 'participant' presences to all other people in the room
+    for item in muc_x:childtags('item') do
+        if joining_moderator_participants[jid_bare(item.attr.jid)] then
             return nil;
         end
     end
