@@ -22,6 +22,13 @@ platform :ios do
       plist_path: "broadcast-extension/Info.plist",
       app_identifier: "com.atlassian.JitsiMeet.ios.broadcast"
     )
+    update_info_plist(
+      xcodeproj: "app/app.xcodeproj",
+      plist_path: "src/Info.plist",
+      block: proc do |plist|
+        plist["RTCScreenSharingExtension"] = "com.atlassian.JitsiMeet.ios.broadcast"
+      end
+    )
 
     # Set the (watch) app identifier
     update_app_identifier(
