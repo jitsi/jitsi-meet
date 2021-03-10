@@ -125,6 +125,9 @@ var config = {
     // Enables support for opus-red (redundancy for Opus).
     // enableOpusRed: false,
 
+    // Enables HD audio quality (but also disables echo cancellation, noise suppression and AGC).
+    // enableHdAudio: false,
+
     // Video
 
     // Sets the preferred resolution (height) for local video. Defaults to 720.
