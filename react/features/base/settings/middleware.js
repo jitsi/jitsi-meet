@@ -135,9 +135,11 @@ function _maybeUpdateDisplayName({ dispatch, getState }) {
     if (hasJwt) {
         const displayName = getJwtName(state);
 
-        dispatch(updateSettings({
-            displayName
-        }));
+        if (displayName) {
+            dispatch(updateSettings({
+                displayName
+            }));
+        }
     }
 }
 

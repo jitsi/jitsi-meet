@@ -24,5 +24,5 @@ export function parseJWTFromURLParams(url: URL = window.location) {
 export function getJwtName(state: Object) {
     const { user } = state['features/base/jwt'];
 
-    return user?.name || '';
+    return user?.name;
 }
