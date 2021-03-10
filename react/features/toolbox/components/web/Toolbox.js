@@ -23,7 +23,8 @@ import {
     IconPresentation,
     IconRaisedHand,
     IconRec,
-    IconShareDesktop
+    IconShareDesktop,
+    IconTileView
 } from '../../../base/icons';
 import JitsiMeetJS from '../../../base/lib-jitsi-meet';
 import {
@@ -37,6 +38,7 @@ import { getLocalVideoTrack, toggleScreensharing } from '../../../base/tracks';
 import { isVpaasMeeting } from '../../../billing-counter/functions';
 import { ChatCounter, toggleChat } from '../../../chat';
 import { InviteMore } from '../../../conference';
+import { DialDtmfDialog } from '../../../dtmf';
 import { EmbedMeetingDialog } from '../../../embed-meeting';
 import { SharedDocumentButton } from '../../../etherpad';
 import { openFeedbackDialog } from '../../../feedback';
@@ -253,6 +255,7 @@ class Toolbox extends Component<Props> {
         this._onToolbarToggleRaiseHand = this._onToolbarToggleRaiseHand.bind(this);
         this._onToolbarToggleScreenshare = this._onToolbarToggleScreenshare.bind(this);
         this._onToolbarOpenLocalRecordingInfoDialog = this._onToolbarOpenLocalRecordingInfoDialog.bind(this);
+        this._onToolbarOpenDtmf = this._onToolbarOpenDtmf.bind(this);
         this._onShortcutToggleTileView = this._onShortcutToggleTileView.bind(this);
     }
 
@@ -414,6 +417,16 @@ class Toolbox extends Component<Props> {
         this.props.dispatch(openDialog(SpeakerStats, {
             conference: this.props._conference
         }));
+    }
+
+    /**
+     * Callback invoked to display {@code DialDtmfDialog}.
+     *
+     * @private
+     * @returns {void}
+     */
+    _doOpenDtmf() {
+        this.props.dispatch(openDialog(DialDtmfDialog));
     }
 
     /**
@@ -871,6 +884,22 @@ class Toolbox extends Component<Props> {
         this.props.dispatch(openDialog(LocalRecordingInfoDialog));
     }
 
+    _onToolbarOpenDtmf: () => void;
+
+    /**
+     * Creates an analytics toolbar event and dispatches an action for opening
+     * the DTMF modal.
+     *
+     * @private
+     * @returns {void}
+     */
+    _onToolbarOpenDtmf() {
+        sendAnalytics(createToolbarEvent('dtmf'));
+
+        this._doOpenDtmf();
+    }
+
+
     /**
      * Returns true if the desktop sharing button should be visible and
      * false otherwise.
@@ -1058,7 +1087,14 @@ class Toolbox extends Component<Props> {
             this._shouldShowButton('help')
                 && <HelpButton
                     key = 'help'
-                    showLabel = { true } />
+                    showLabel = { true } />,
+            this._shouldShowButton('dtmf')
+                && <OverflowMenuItem
+                    accessibilityLabel = { t('toolbar.accessibilityLabel.dtmf') }
+                    icon = { IconTileView }
+                    key = 'dtmf'
+                    onClick = { this._onToolbarOpenDtmf }
+                    text = { t('toolbar.dtmf') } />
         ];
     }
 

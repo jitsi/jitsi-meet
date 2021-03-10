@@ -324,6 +324,13 @@
     "documentSharing": {
         "title": "Freigegebenes Dokument"
     },
+    "dialDtmf": {
+        "title": "DTMF-Töne wählen",
+        "numbers": "Ziffern",
+        "numbersPlaceholder": "z.B. 12345#",
+        "toneDuration": "Dauer je Ziffer (ms)",
+        "pauseDuration": "Pause nach Ziffer (ms)"
+    },
     "e2ee": {
         "labelToolTip": "Audio- und Videodaten dieser Unterhaltung sind jetzt zwischen den Personen verschlüsselt"
     },
@@ -708,6 +715,7 @@
             "chat": "Chatfenster ein-/ausblenden",
             "document": "Geteiltes Dokument schließen",
             "download": "Unsere Apps herunterladen",
+            "dtmf": "DTMF-Töne wählen",
             "embedMeeting": "Konferenz einbetten",
             "feedback": "Feedback hinterlassen",
             "fullScreen": "Vollbildmodus ein-/ausschalten",
@@ -759,6 +767,7 @@
         "documentClose": "Geteiltes Dokument schließen",
         "documentOpen": "Geteiltes Dokument öffnen",
         "download": "Unsere Apps herunterladen",
+        "dtmf": "DTMF-Töne wählen",
         "e2ee": "Ende-zu-Ende-Verschlüsselung",
         "embedMeeting": "Konferenz einbetten",
         "enterFullScreen": "Vollbildmodus",

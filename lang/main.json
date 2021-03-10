@@ -330,6 +330,13 @@
     "documentSharing": {
         "title": "Shared Document"
     },
+    "dialDtmf": {
+        "title": "Dial DTMF Tones",
+        "numbers": "Number sequence",
+        "numbersPlaceholder": "e.g. 12345#",
+        "toneDuration": "Tone duration (ms)",
+        "pauseDuration": "Pause between tones (ms)"
+    },
     "e2ee": {
         "labelToolTip": "Audio and Video Communication on this call is end-to-end encrypted"
     },
@@ -722,6 +729,7 @@
             "chat": "Toggle chat window",
             "document": "Toggle shared document",
             "download": "Download our apps",
+            "dtmf": "Dial DTMF tones",
             "embedMeeting": "Embed meeting",
             "feedback": "Leave feedback",
             "fullScreen": "Toggle full screen",
@@ -775,6 +783,7 @@
         "documentOpen": "Open shared document",
         "download": "Download our apps",
         "e2ee": "End-to-End Encryption",
+        "dtmf": "Dial DTMF tones",
         "embedMeeting": "Embed meeting",
         "enterFullScreen": "View full screen",
         "enterTileView": "Enter tile view",
