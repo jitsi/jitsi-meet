@@ -8,6 +8,7 @@ import {
     createToolbarEvent,
     sendAnalytics
 } from '../../../analytics';
+import { getToolbarButtons } from '../../../base/config';
 import { openDialog, toggleDialog } from '../../../base/dialog';
 import { translate } from '../../../base/i18n';
 import {
@@ -29,7 +30,7 @@ import {
     getParticipants,
     participantUpdated
 } from '../../../base/participants';
-import { connect, equals } from '../../../base/redux';
+import { connect } from '../../../base/redux';
 import { OverflowMenuItem } from '../../../base/toolbox/components';
 import { getLocalVideoTrack, toggleScreensharing } from '../../../base/tracks';
 import { isVpaasMeeting } from '../../../billing-counter/functions';
@@ -183,9 +184,9 @@ type Props = {
     _visible: boolean,
 
     /**
-     * Set with the buttons which this Toolbox should display.
+     * Array with the buttons which this Toolbox should display.
      */
-    _visibleButtons: Set<string>,
+    _visibleButtons: Array<string>,
 
     /**
      * Invoked to active other features of the app.
@@ -210,11 +211,6 @@ type State = {
 };
 
 declare var APP: Object;
-declare var interfaceConfig: Object;
-
-// XXX: We are not currently using state here, but in the future, when
-// interfaceConfig is part of redux we will. This will have to be retrieved from the store.
-const visibleButtons = new Set(interfaceConfig.TOOLBAR_BUTTONS);
 
 /**
  * Implements the conference toolbox on React/Web.
@@ -360,7 +356,7 @@ class Toolbox extends Component<Props, State> {
     render() {
         const { _chatOpen, _visible, _visibleButtons } = this.props;
         const rootClassNames = `new-toolbox ${_visible ? 'visible' : ''} ${
-            _visibleButtons.size ? '' : 'no-buttons'} ${_chatOpen ? 'shift-right' : ''}`;
+            _visibleButtons.length ? '' : 'no-buttons'} ${_chatOpen ? 'shift-right' : ''}`;
 
         return (
             <div
@@ -1280,7 +1276,7 @@ class Toolbox extends Component<Props, State> {
      * @returns {boolean} True if the button should be displayed.
      */
     _shouldShowButton(buttonName) {
-        return this.props._visibleButtons.has(buttonName);
+        return this.props._visibleButtons.includes(buttonName);
     }
 }
 
@@ -1318,10 +1314,6 @@ function _mapStateToProps(state) {
         desktopSharingDisabledTooltipKey = 'dialog.shareYourScreenDisabled';
     }
 
-    // NB: We compute the buttons again here because if URL parameters were used to
-    // override them we'd miss it.
-    const buttons = new Set(interfaceConfig.TOOLBAR_BUTTONS);
-
     return {
         _chatOpen: state['features/chat'].isOpen,
         _conference: conference,
@@ -1340,7 +1332,7 @@ function _mapStateToProps(state) {
         _raisedHand: localParticipant.raisedHand,
         _screensharing: localVideo && localVideo.videoType === 'desktop',
         _visible: isToolboxVisible(state),
-        _visibleButtons: equals(visibleButtons, buttons) ? visibleButtons : buttons
+        _visibleButtons: getToolbarButtons(state)
     };
 }
 

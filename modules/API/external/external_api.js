@@ -37,6 +37,7 @@ const commands = {
     intiatePrivateChat: 'initiate-private-chat',
     kickParticipant: 'kick-participant',
     muteEveryone: 'mute-everyone',
+    overwriteConfig: 'overwrite-config',
     password: 'password',
     pinParticipant: 'pin-participant',
     resizeLargeVideo: 'resize-large-video',

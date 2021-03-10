@@ -4,8 +4,16 @@ import _ from 'lodash';
 
 import { equals, ReducerRegistry, set } from '../redux';
 
-import { UPDATE_CONFIG, CONFIG_WILL_LOAD, LOAD_CONFIG_ERROR, SET_CONFIG } from './actionTypes';
+import {
+    UPDATE_CONFIG,
+    CONFIG_WILL_LOAD,
+    LOAD_CONFIG_ERROR,
+    SET_CONFIG,
+    OVERWRITE_CONFIG
+} from './actionTypes';
 import { _cleanupConfig } from './functions';
+
+declare var interfaceConfig: Object;
 
 /**
  * The initial state of the feature base/config when executing in a
@@ -88,6 +96,12 @@ ReducerRegistry.register('features/base/config', (state = _getInitialState(), ac
 
     case SET_CONFIG:
         return _setConfig(state, action);
+
+    case OVERWRITE_CONFIG:
+        return {
+            ...state,
+            ...action.config
+        };
     }
 
     return state;
@@ -196,6 +210,10 @@ function _translateLegacyConfig(oldValue: Object) {
             }
         }
     });
+
+    if (typeof interfaceConfig === 'object' && Array.isArray(interfaceConfig.TOOLBAR_BUTTONS)) {
+        newValue.toolbarButtons = interfaceConfig.TOOLBAR_BUTTONS;
+    }
 
     return newValue;
 }

@@ -74,7 +74,7 @@ function mapStateToProps(state) {
     const hide = interfaceConfig.HIDE_INVITE_MORE_HEADER;
 
     return {
-        _visible: isToolboxVisible(state) && isButtonEnabled('invite') && isAlone && !hide
+        _visible: isToolboxVisible(state) && isButtonEnabled('invite', state) && isAlone && !hide
     };
 }
 

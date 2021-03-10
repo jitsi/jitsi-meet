@@ -12,6 +12,7 @@ import {
     setPassword,
     setSubject
 } from '../../react/features/base/conference';
+import { overwriteConfig, getWhitelistedJSON } from '../../react/features/base/config';
 import { parseJWTFromURLParams } from '../../react/features/base/jwt';
 import JitsiMeetJS, { JitsiRecordingConstants } from '../../react/features/base/lib-jitsi-meet';
 import { MEDIA_TYPE } from '../../react/features/base/media';
@@ -356,6 +357,11 @@ function initCommands() {
         },
         'kick-participant': participantId => {
             APP.store.dispatch(kickParticipant(participantId));
+        },
+        'overwrite-config': config => {
+            const whitelistedConfig = getWhitelistedJSON('config', config);
+
+            APP.store.dispatch(overwriteConfig(whitelistedConfig));
         }
     };
     transport.on('event', ({ data, name }) => {
