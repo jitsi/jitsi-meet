@@ -89,7 +89,7 @@ function _mapStateToProps(state: Object, ownProps: Props): $Shape<Props> {
     return {
         ..._abstractMapStateToProps(state, ownProps),
         _hidden: typeof interfaceConfig !== 'undefined'
-            && (interfaceConfig.DISABLE_PRIVATE_MESSAGES || !isButtonEnabled('chat'))
+            && (interfaceConfig.DISABLE_PRIVATE_MESSAGES || !isButtonEnabled('chat', state))
     };
 }
 

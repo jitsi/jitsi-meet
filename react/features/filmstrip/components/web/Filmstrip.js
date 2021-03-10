@@ -8,6 +8,7 @@ import {
     createToolbarEvent,
     sendAnalytics
 } from '../../../analytics';
+import { getToolbarButtons } from '../../../base/config';
 import { translate } from '../../../base/i18n';
 import { Icon, IconMenuDown, IconMenuUp } from '../../../base/icons';
 import { connect } from '../../../base/redux';
@@ -53,6 +54,11 @@ type Props = {
      * Whether the filmstrip toolbar should be hidden or not.
      */
     _hideToolbar: boolean,
+
+    /**
+     * Whether the filmstrip button is enabled.
+     */
+    _isFilmstripButtonEnabled: boolean,
 
     /**
      * The number of rows in tile view.
@@ -170,7 +176,7 @@ class Filmstrip extends Component <Props> {
 
         let toolbar = null;
 
-        if (!this.props._hideToolbar && isButtonEnabled('filmstrip')) {
+        if (!this.props._hideToolbar && this.props._isFilmstripButtonEnabled) {
             toolbar = this._renderToggleButton();
         }
 
@@ -288,9 +294,10 @@ class Filmstrip extends Component <Props> {
  */
 function _mapStateToProps(state) {
     const { iAmSipGateway } = state['features/base/config'];
+    const toolbarButtons = getToolbarButtons(state);
     const { visible } = state['features/filmstrip'];
     const reduceHeight
-        = state['features/toolbox'].visible && interfaceConfig.TOOLBAR_BUTTONS.length;
+        = state['features/toolbox'].visible && toolbarButtons.length;
     const remoteVideosVisible = shouldRemoteVideosBeVisible(state);
     const { isOpen: shiftRight } = state['features/chat'];
     const className = `${remoteVideosVisible ? '' : 'hide-videos'} ${
@@ -306,6 +313,7 @@ function _mapStateToProps(state) {
         _filmstripWidth: filmstripWidth,
         _hideScrollbar: Boolean(iAmSipGateway),
         _hideToolbar: Boolean(iAmSipGateway),
+        _isFilmstripButtonEnabled: isButtonEnabled('filmstrip', state),
         _rows: gridDimensions.rows,
         _videosClassName: videosClassName,
         _visible: visible

@@ -82,7 +82,7 @@ export function overrideConfigJSON(
         }
         if (configObj) {
             const configJSON
-                = _getWhitelistedJSON(configName, json[configName]);
+                = getWhitelistedJSON(configName, json[configName]);
 
             if (!_.isEmpty(configJSON)) {
                 logger.info(
@@ -111,11 +111,10 @@ export function overrideConfigJSON(
  * @param {string} configName - The config name, one of config,
  * interfaceConfig, loggingConfig.
  * @param {Object} configJSON - The object with keys and values to override.
- * @private
  * @returns {Object} - The result object only with the keys
  * that are whitelisted.
  */
-function _getWhitelistedJSON(configName, configJSON) {
+export function getWhitelistedJSON(configName: string, configJSON: Object): Object {
     if (configName === 'interfaceConfig') {
         return _.pick(configJSON, INTERFACE_CONFIG_WHITELIST);
     } else if (configName === 'config') {

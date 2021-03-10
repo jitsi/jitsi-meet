@@ -1,8 +1,7 @@
 // @flow
 
+import { getToolbarButtons } from '../base/config';
 import { hasAvailableDevices } from '../base/devices';
-
-declare var interfaceConfig: Object;
 
 const WIDTH = {
     MEDIUM: 500,
@@ -53,18 +52,15 @@ export function getToolboxHeight() {
  *
  * @param {string} name - The name of the setting section as defined in
  * interface_config.js.
+ * @param {Object} state - The redux state.
  * @returns {boolean|undefined} - True to indicate that the given toolbar button
- * is enabled, false - otherwise. In cases where interfaceConfig is not available
- * undefined is returned.
+ * is enabled, false - otherwise.
  */
-export function isButtonEnabled(name: string) {
-    if (typeof interfaceConfig === 'object' && Array.isArray(interfaceConfig.TOOLBAR_BUTTONS)) {
-        return interfaceConfig.TOOLBAR_BUTTONS.indexOf(name) !== -1;
-    }
+export function isButtonEnabled(name: string, state: Object) {
+    const toolbarButtons = getToolbarButtons(state);
 
-    return undefined;
+    return toolbarButtons.indexOf(name) !== -1;
 }
-
 
 /**
  * Indicates if the toolbox is visible or not.
