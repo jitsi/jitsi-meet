@@ -2,8 +2,8 @@
 
 import React, { Component } from 'react';
 
-import { Icon } from '../../icons';
-import { Tooltip } from '../../tooltip';
+import { Icon } from '../../../icons';
+import { Tooltip } from '../../../tooltip';
 
 /**
  * The type of the React {@code Component} props of {@link OverflowMenuItem}.

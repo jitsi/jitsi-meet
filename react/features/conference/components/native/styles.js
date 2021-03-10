@@ -164,7 +164,6 @@ export default {
         flexDirection: 'column',
         justifyContent: 'flex-end',
         left: 0,
-        paddingBottom: BoxModel.padding,
         position: 'absolute',
         right: 0,
 
