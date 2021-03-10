@@ -221,6 +221,8 @@ export default class RemoteVideo extends SmallVideo {
 
         streamElement.autoplay = !config.testing?.noAutoPlayVideo;
         streamElement.id = `remoteVideo_${stream.getId()}`;
+        streamElement.mute = true;
+        streamElement.playsInline = true;
 
         // Put new stream element always in front
         streamElement = UIUtils.prependChild(this.container, streamElement);
