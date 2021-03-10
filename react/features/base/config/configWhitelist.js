@@ -104,6 +104,7 @@ export default [
     'e2eping',
     'enableDisplayNameInStats',
     'enableEmailInStats',
+    'enableHdAudio',
     'enableIceRestart',
     'enableInsecureRoomNameWarning',
     'enableLayerSuspension',

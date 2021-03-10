@@ -42,9 +42,23 @@ export function initLib() {
     return (dispatch: Dispatch<any>, getState: Function): void => {
         const state = getState();
         const config = state['features/base/config'];
+        const { enableHdAudio } = config;
 
         if (!config) {
             throw new Error('Cannot init lib-jitsi-meet without config');
+        }
+
+        if (enableHdAudio) {
+            Object.assign(config, {
+                ...config,
+                channelCount: 2,
+                disableAP: true,
+                enableNoAudioDetection: false,
+                enableNoisyMicDetection: false,
+                enableTalkWhileMuted: false,
+                opusMaxAverageBitrate: 510000,
+                stereo: true
+            });
         }
 
         dispatch({ type: LIB_WILL_INIT });
