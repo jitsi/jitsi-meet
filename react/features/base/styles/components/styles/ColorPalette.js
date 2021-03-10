@@ -23,6 +23,7 @@ export const ColorPalette = {
     blueHighlight: '#1081b2',
     buttonUnderlay: '#495258',
     darkGrey: '#555555',
+    darkBackground: 'rgb(19,21,25)',
     green: '#40b183',
     lightGrey: '#AAAAAA',
     overflowMenuItemUnderlay: '#EEEEEE',

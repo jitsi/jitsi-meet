@@ -2,8 +2,8 @@
 
 import React from 'react';
 
-import { Icon } from '../../icons';
-import { Tooltip } from '../../tooltip';
+import { Icon } from '../../../icons';
+import { Tooltip } from '../../../tooltip';
 
 type Props = {
 
