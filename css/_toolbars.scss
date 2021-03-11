@@ -163,7 +163,11 @@
     }
     &.disabled {
         cursor: initial;
-        color: #3b475c;
+        color: #929292;
+
+        svg {
+            fill: #929292;
+        }
     }
 
     @media (hover: hover) and (pointer: fine) {
