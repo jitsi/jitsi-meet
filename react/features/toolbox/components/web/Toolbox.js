@@ -86,11 +86,8 @@ import OverflowMenuButton from './OverflowMenuButton';
 import OverflowMenuProfileItem from './OverflowMenuProfileItem';
 import ToolbarButton from './ToolbarButton';
 import VideoSettingsButton from './VideoSettingsButton';
-import {
-    ClosedCaptionButton
-} from '../../../subtitles';
 import JaneHangupButton from '../JaneHangupButton';
-import { isJaneTestMode } from '../../../base/conference';
+import { isJaneTestCall } from '../../../base/conference';
 
 /**
  * The type of the React {@code Component} props of {@link Toolbox}.
@@ -203,7 +200,7 @@ type Props = {
      * Whether or not the local participant is a practitioner.
      */
     _isStaffMember: boolean,
-    _isJaneTestMode: boolean
+    _isJaneTestCall: boolean
 };
 
 /**
@@ -1234,8 +1231,7 @@ class Toolbox extends Component<Props, State> {
             _chatOpen,
             _overflowMenuVisible,
             _raisedHand,
-            _visible,
-            _isJaneTestMode,
+            _isJaneTestCall,
             t
         } = this.props;
         const overflowMenuContent = this._renderOverflowMenuContent();
@@ -1364,11 +1360,9 @@ class Toolbox extends Component<Props, State> {
                 <div className='button-group-center'>
                     {this._renderAudioButton()}
                     <HangupButton
-                        visible={this._shouldShowButton('hangup') && !_isJaneTestMode}/>
-                    <JaneHangupButton showTooltip={_visible}
-                                      visible={_isJaneTestMode}
-                                      tooltipText="Finished testing? Click here."
-                                      hasCloseBtn/>
+                        visible={this._shouldShowButton('hangup') && !_isJaneTestCall}/>
+                    <JaneHangupButton visible={_isJaneTestCall}
+                                      tooltipText="Finished testing? Click here."/>
                     {this._renderVideoButton()}
                 </div>
                 <div className = 'button-group-right'>
@@ -1484,7 +1478,7 @@ function _mapStateToProps(state) {
         _visible: isToolboxVisible(state),
         _visibleButtons: equals(visibleButtons, buttons) ? visibleButtons : buttons,
         _isStaffMember: getLocalParticipantType(state) === 'StaffMember',
-        _isJaneTestMode: isJaneTestMode(state)
+        _isJaneTestCall: isJaneTestCall(state)
     };
 }
 

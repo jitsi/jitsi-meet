@@ -2,6 +2,7 @@
 /* eslint-disable */
 import _ from 'lodash';
 
+import jwtDecode from 'jwt-decode';
 import { JitsiTrackErrors } from '../lib-jitsi-meet';
 import {
     getLocalParticipant,
@@ -20,8 +21,6 @@ import {
     JITSI_CONFERENCE_URL_KEY
 } from './constants';
 import logger from './logger';
-
-import jwtDecode from 'jwt-decode';
 /**
  * Attach a set of local tracks to a conference.
  *
@@ -360,14 +359,28 @@ function safeStartCase(s = '') {
         , '');
 }
 
-export function isJaneTestMode(state: Object) {
+export function isJaneTestCall(state: Object) {
+    // Jane generates the following jwt context for all test calls:
+    // {
+    //   "context": {
+    //     "user": {
+    //       "id": "1-0",
+    //       "name": "Test User",
+    //       "email": "test@test.com",
+    //       "participant_type": "Patient",
+    //       "participant_id": 0
+    //     },
+    //   },
+    //   "aud": "jane-client",
+    //   "iss": "janeapp",
+    //   "sub": "videochat-jwt.jane.qa",
+    //   "room": "1TEST4f0314a2",
+    //  }
     const { jwt } = state['features/base/jwt'];
-    const jwtPayload = jwt && jwtDecode(jwt) || null;
-    const context = jwtPayload && jwtPayload.context || null;
-    const user = context && context.user || null;
-    const participantId = user && user.participant_id;
-    const videoChatSessionId = context && context.video_chat_session_id;
-    const participantEmail = user && user.email;
+    const jwtPayload = jwt && jwtDecode(jwt) ?? {};
+    const participantId = _.get(jwtPayload, 'context.user.participant_id');
+    const videoChatSessionId = _.get(jwtPayload, 'context.video_chat_session_id');
+    const participantEmail = _.get(jwtPayload, 'context.user.email');
 
     return participantId === 0 && videoChatSessionId === 0 && participantEmail === 'test@test.com';
 }

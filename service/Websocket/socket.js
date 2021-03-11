@@ -1,5 +1,6 @@
-/* eslint-disable */
+/* eslint-disable require-jsdoc,react/no-multi-comp,camelcase*/
 import io from 'socket.io-client';
+
 import { checkRoomStatus } from '../../react/features/jane-waiting-area';
 
 export class Socket {
@@ -10,7 +11,7 @@ export class Socket {
         this.ws_token = this.options.ws_token || '';
         this.totalRetries = 0;
         this.socketio = io(this.socket_host, {
-            transports: ['websocket'],
+            transports: [ 'websocket' ],
             autoConnect: false,
             reconnection: true,
             reconnectionDelay: 2000,
@@ -25,14 +26,15 @@ export class Socket {
     auth_and_connect() {
         console.info('reauthorizing websocket');
         this.reauthorizing = true;
-        checkRoomStatus().then(r => (r) => {
+        checkRoomStatus().then(r => {
             if (r.socket_token && r.socket_token.length > 0) {
                 this.ws_token = r.socket_token;
                 console.log('fresh websocket jwt fetched');
             }
             this.reauthorizing = false;
             this.connect();
-        }).catch(error => {
+        })
+        .catch(error => {
             this.connectionStatusListener({ error });
             console.error(error);
         });
@@ -77,8 +79,8 @@ export class Socket {
         });
 
         this.socket.on('error', reason => {
-            if (reason == 'jwt_expired') {
-                if (this.unauthorized_count == 0) {
+            if (reason === 'jwt_expired') {
+                if (this.unauthorized_count === 0) {
                     console.info(
                         'websocket unauthorized. fetching fresh jwt and trying 1 more time'
                     );
@@ -102,9 +104,10 @@ export class Socket {
             }
         });
 
-        this.socket.on('connect', function () {
+        this.socket.on('connect', function() {
             console.info('websocket connected');
             connectionStatusListener('websocket connected');
+            // eslint-disable-next-line no-invalid-this
             this.unauthorized_count = 0;
         });
 
@@ -115,6 +118,7 @@ export class Socket {
 
         this.socket.on('message', payload => {
             const event_object = JSON.parse(payload);
+
             onMessageReceivedListener(event_object);
         });
     }

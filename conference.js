@@ -24,16 +24,6 @@ import {
     reloadWithStoredParams
 } from './react/features/app/actions';
 import {
-    initJaneWaitingArea,
-    isJaneWaitingAreaPageEnabled,
-    isJaneWaitingAreaPageVisible,
-    replaceJaneWaitingAreaAudioTrack,
-    replaceJaneWaitingAreaVideoTrack
-} from './react/features/jane-waiting-area';
-
-import EventEmitter from 'events';
-
-import {
     AVATAR_ID_COMMAND,
     AVATAR_URL_COMMAND,
     EMAIL_COMMAND,
@@ -106,8 +96,6 @@ import {
     createLocalPresenterTrack,
     createLocalTracksF,
     destroyLocalTracks,
-    getLocalJitsiAudioTrack,
-    getLocalJitsiVideoTrack,
     isLocalVideoTrackMuted,
     isLocalTrackMuted,
     isUserInteractionRequiredForUnmute,
@@ -126,15 +114,16 @@ import {
     maybeOpenFeedbackDialog,
     submitFeedback
 } from './react/features/feedback';
+import {
+    initJaneWaitingArea,
+    isJaneWaitingAreaPageEnabled,
+    isJaneWaitingAreaPageVisible,
+    replaceJaneWaitingAreaAudioTrack,
+    replaceJaneWaitingAreaVideoTrack
+} from './react/features/jane-waiting-area';
 import { showNotification } from './react/features/notifications';
 import { mediaPermissionPromptVisibilityChanged } from './react/features/overlay';
 import { suspendDetected } from './react/features/power-monitor';
-import {
-    initPrejoin,
-    isPrejoinPageEnabled,
-    isPrejoinPageVisible,
-    makePrecallTest
-} from './react/features/prejoin';
 import { createRnnoiseProcessorPromise } from './react/features/rnnoise';
 import { toggleScreenshotCaptureEffect } from './react/features/screenshot-capture';
 import { setSharedVideoStatus } from './react/features/shared-video';
@@ -153,7 +142,6 @@ const eventEmitter = new EventEmitter();
 
 let room;
 let connection;
-let _connectionPromise;
 
 /**
  * The promise is used when the prejoin screen is shown.

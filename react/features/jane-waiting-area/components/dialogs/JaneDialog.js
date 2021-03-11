@@ -1,25 +1,28 @@
 // @flow
-/* eslint-disable */
+/* eslint-disable require-jsdoc,react/no-multi-comp,camelcase*/
 
+import jwtDecode from 'jwt-decode';
+import _ from 'lodash';
+import moment from 'moment';
 import React, { Component } from 'react';
+
 import { getLocalizedDateFormatter, translate } from '../../../base/i18n';
+import { getLocalParticipantType } from '../../../base/participants/functions';
 import { connect } from '../../../base/redux';
-import ActionButton from '../buttons/ActionButton';
+import { openURLInBrowser } from '../../../base/util';
+import JaneHangupButton from '../../../toolbox/components/JaneHangupButton';
 import AudioSettingsButton
     from '../../../toolbox/components/web/AudioSettingsButton';
 import VideoSettingsButton
     from '../../../toolbox/components/web/VideoSettingsButton';
-import jwtDecode from 'jwt-decode';
-import moment from 'moment';
+import {
+    joinConference as joinConferenceAction
+} from '../../actions';
 import {
     checkLocalParticipantCanJoin,
     updateParticipantReadyStatus
 } from '../../functions';
-import {
-    joinConference as joinConferenceAction
-} from '../../actions';
-import JaneHangupButton from '../../../toolbox/components/JaneHangupButton';
-import { openURLInBrowser } from '../../../base/util';
+import ActionButton from '../buttons/ActionButton';
 
 type Props = {
     joinConference: Function,
@@ -27,8 +30,8 @@ type Props = {
     jwtPayload: Object,
     participantType: string,
     participant: Object,
-    remoteParticipantsStatuses: string,
-    authState: string
+    authState: string,
+    localParticipantCanJoin: boolean
 };
 
 type DialogTitleProps = {
@@ -57,7 +60,7 @@ function DialogTitleComp(props: DialogTitleProps) {
         header = props.t('janeWaitingArea.authenticationExpired');
     }
 
-    return <div className='jane-waiting-area-info-title'>{header}</div>;
+    return <div className = 'jane-waiting-area-info-title'>{header}</div>;
 }
 
 function DialogTitleMsgComp(props: DialogTitleProps) {
@@ -76,19 +79,21 @@ function DialogTitleMsgComp(props: DialogTitleProps) {
         title = '';
     }
 
-    return <div className='jane-waiting-area-info-title-msg'>{title}</div>;
+    return <div className = 'jane-waiting-area-info-title-msg'>{title}</div>;
 }
 
-const DialogTitle = (translate(DialogTitleComp));
-const DialogTitleMsg = (translate(DialogTitleMsgComp));
+const DialogTitle = translate(DialogTitleComp);
+const DialogTitleMsg = translate(DialogTitleMsgComp);
 
 class JaneDialog extends Component<Props> {
 
     _joinConference: Function;
+    _onFailed: Function;
 
     constructor(props) {
         super(props);
         this._joinConference = this._joinConference.bind(this);
+        this._onFailed = this._onFailed.bind(this);
     }
 
     _joinConference() {
@@ -100,7 +105,7 @@ class JaneDialog extends Component<Props> {
 
     _getStartDate() {
         const { jwtPayload } = this.props;
-        const startAt = jwtPayload && jwtPayload.context && jwtPayload.context.start_at || '';
+        const startAt = _.get(jwtPayload, 'context.start_at') ?? '';
 
         if (startAt) {
             return (<p>
@@ -115,8 +120,8 @@ class JaneDialog extends Component<Props> {
 
     _getStartTimeAndEndTime() {
         const { jwtPayload } = this.props;
-        const startAt = jwtPayload && jwtPayload.context && jwtPayload.context.start_at || '';
-        const endAt = jwtPayload && jwtPayload.context && jwtPayload.context.end_at || '';
+        const startAt = _.get(jwtPayload, 'context.start_at') ?? '';
+        const endAt = _.get(jwtPayload, 'context.end_at') ?? '';
 
         if (!startAt || !endAt) {
             return null;
@@ -132,8 +137,8 @@ class JaneDialog extends Component<Props> {
 
     _getDuration() {
         const { jwtPayload } = this.props;
-        const startAt = jwtPayload && jwtPayload.context && jwtPayload.context.start_at || '';
-        const endAt = jwtPayload && jwtPayload.context && jwtPayload.context.end_at || '';
+        const startAt = _.get(jwtPayload, 'context.start_at') ?? '';
+        const endAt = _.get(jwtPayload, 'context.end_at') ?? '';
 
         if (!startAt || !endAt) {
             return null;
@@ -157,9 +162,10 @@ class JaneDialog extends Component<Props> {
         return participantType === 'StaffMember' ? 'Admit Client' : 'Begin';
     }
 
-    _returnToMyAccount() {
+    _onFailed() {
         const { jwtPayload } = this.props;
         const { leave_waiting_area_url } = jwtPayload && jwtPayload.context;
+
         openURLInBrowser(leave_waiting_area_url);
         updateParticipantReadyStatus('left');
     }
@@ -168,95 +174,96 @@ class JaneDialog extends Component<Props> {
         const {
             participantType,
             jwtPayload,
-            remoteParticipantsStatuses,
+            localParticipantCanJoin,
             authState
         } = this.props;
-        const localParticipantCanJoin = checkLocalParticipantCanJoin(remoteParticipantsStatuses, participantType);
         const { _joinConference } = this;
 
-        return (<div className='jane-waiting-area-info-area-container'>
-                <div className='jane-waiting-area-info-area'>
-                    <div className='jane-waiting-area-info'>
-                        <div className='jane-waiting-area-info-logo-wrapper'>
-                            <div className='jane-waiting-area-info-logo'/>
-                            {participantType === 'StaffMember' && localParticipantCanJoin &&
-                            <p className='jane-waiting-area-info-patient-waiting'>Client
+        return (<div className = 'jane-waiting-area-info-area-container'>
+            <div className = 'jane-waiting-area-info-area'>
+                <div className = 'jane-waiting-area-info'>
+                    <div className = 'jane-waiting-area-info-logo-wrapper'>
+                        <div className = 'jane-waiting-area-info-logo' />
+                        {participantType === 'StaffMember' && localParticipantCanJoin
+                            && <p className = 'jane-waiting-area-info-patient-waiting'>Client
                                 is waiting</p>}
-                        </div>
-                        <div className='jane-waiting-area-info-text-wrapper'>
-                            <DialogTitle participantType={participantType}
-                                         authState={authState}
-                                         localParticipantCanJoin={localParticipantCanJoin}/>
-                            <DialogTitleMsg participantType={participantType}
-                                            authState={authState}
-                                            localParticipantCanJoin={localParticipantCanJoin}/>
-                            <div className='jane-waiting-area-info-detail'>
-                                <p>
-                                    {
-                                        jwtPayload && jwtPayload.context && jwtPayload.context.treatment
-                                    }
-                                </p>
-                                <p>
-                                    {
-                                        jwtPayload && jwtPayload.context && jwtPayload.context.practitioner_name
-                                    }
-                                </p>
+                    </div>
+                    <div className = 'jane-waiting-area-info-text-wrapper'>
+                        <DialogTitle
+                            authState = { authState }
+                            localParticipantCanJoin = { localParticipantCanJoin }
+                            participantType = { participantType } />
+                        <DialogTitleMsg
+                            authState = { authState }
+                            localParticipantCanJoin = { localParticipantCanJoin }
+                            participantType = { participantType } />
+                        <div className = 'jane-waiting-area-info-detail'>
+                            <p>
                                 {
-                                    this._getStartDate()
+                                    _.get(jwtPayload, 'context.treatment')
                                 }
+                            </p>
+                            <p>
                                 {
-                                    this._getStartTimeAndEndTime()
+                                    _.get(jwtPayload, 'context.practitioner_name')
                                 }
-                                {
-                                    this._getDuration()
-                                }
-                            </div>
+                            </p>
+                            {
+                                this._getStartDate()
+                            }
+                            {
+                                this._getStartTimeAndEndTime()
+                            }
+                            {
+                                this._getDuration()
+                            }
                         </div>
                     </div>
-                    {
-                        <div
-                            className='jane-waiting-area-preview-join-btn-container'>
-                            {
-                                authState !== 'failed' && <ActionButton
-                                    onClick={_joinConference}
-                                    disabled={!localParticipantCanJoin}
-                                    type='primary'>
-                                    {this._getBtnText()}
-                                </ActionButton>
-                            }
-                            {
-                                authState === 'failed' && <ActionButton
-                                    onClick={this._returnToMyAccount.bind(this)}
-                                    type='primary'>
-                                    {this._getBtnText()}
-                                </ActionButton>
-                            }
-                        </div>
-                    }
                 </div>
-                <div className='jane-waiting-area-preview-btn-container'>
-                    <AudioSettingsButton visible/>
-                    <JaneHangupButton visible/>
-                    <VideoSettingsButton visible/>
-                </div>
+                {
+                    <div
+                        className = 'jane-waiting-area-preview-join-btn-container'>
+                        {
+                            authState !== 'failed' && <ActionButton
+                                disabled = { !localParticipantCanJoin }
+
+                                onClick = { _joinConference }
+                                type = 'primary'>
+                                {this._getBtnText()}
+                            </ActionButton>
+                        }
+                        {
+                            authState === 'failed' && <ActionButton
+                                onClick = { this._onFailed }
+                                type = 'primary'>
+                                {this._getBtnText()}
+                            </ActionButton>
+                        }
+                    </div>
+                }
             </div>
+            <div className = 'jane-waiting-area-preview-btn-container'>
+                <AudioSettingsButton visible = { true } />
+                <JaneHangupButton visible = { true } />
+                <VideoSettingsButton visible = { true } />
+            </div>
+        </div>
         );
     }
 }
 
 function mapStateToProps(state): Object {
     const { jwt } = state['features/base/jwt'];
-    const { remoteParticipantsStatuses, authState } = state['features/jane-waiting-area'];
-    const jwtPayload = jwt && jwtDecode(jwt) || null;
-    const participant = jwtPayload && jwtPayload.context && jwtPayload.context.user || null;
-    const participantType = participant && participant.participant_type || null;
+    const { authState } = state['features/jane-waiting-area'];
+    const jwtPayload = jwt && jwtDecode(jwt) ?? null;
+    const participantType = getLocalParticipantType(state);
+    const localParticipantCanJoin = checkLocalParticipantCanJoin(state);
 
     return {
         jwtPayload,
         participantType,
-        participant,
-        remoteParticipantsStatuses,
-        authState
+        authState,
+        localParticipantCanJoin
     };
 }
 

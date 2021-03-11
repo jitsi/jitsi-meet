@@ -1,4 +1,7 @@
-/* eslint-disable */
+// @flow
+/* eslint-disable require-jsdoc,camelcase*/
+import { createLocalTrack } from '../base/lib-jitsi-meet';
+
 import {
     ADD_JANE_WAITING_AREA_AUDIO_TRACK,
     ADD_JANE_WAITING_AREA_CONTENT_SHARING_TRACK,
@@ -11,19 +14,16 @@ import {
     SET_JANE_WAITING_AREA_PAGE_VISIBILITY,
     SET_JANE_WAITING_AREA_VIDEO_DISABLED,
     SET_JANE_WAITING_AREA_VIDEO_MUTED,
-    SET_WAITING_MESSAGE_VISIBILITY,
     CONNECT_JANE_SOCKET_SERVER,
     UPDATE_REMOTE_PARTICIPANT_STATUSES,
     SET_JANE_WAITING_AREA_AUTH_STATE
 } from './actionTypes';
-import { createLocalTrack } from '../base/lib-jitsi-meet';
-import logger from './logger';
-
 import {
     detectLegacyMobileApp,
     getAudioTrack,
     getVideoTrack, hasRemoteParticipantInBeginStatus
 } from './functions';
+import logger from './logger';
 
 export function addJaneWaitingAreaAudioTrack(value: Object) {
     return {
@@ -47,7 +47,7 @@ export function addJaneWaitingAreaContentSharingTrack(value: Object) {
 }
 
 export function initJaneWaitingArea(tracks: Object[], errors: Object) {
-    return async function (dispatch: Function) {
+    return async function(dispatch: Function) {
         const audioTrack = tracks.find(t => t.isAudioTrack());
         const videoTrack = tracks.find(t => t.isVideoTrack());
 
@@ -73,7 +73,7 @@ export function initJaneWaitingArea(tracks: Object[], errors: Object) {
 }
 
 export function joinConference() {
-    return function (dispatch: Function) {
+    return function(dispatch: Function) {
         dispatch(setJaneWaitingAreaPageVisibility(false));
         dispatch(startConference());
     };
@@ -196,7 +196,7 @@ export function connectJaneSocketServer() {
     };
 }
 
-export function updateRemoteParticipantsStatuses(remoteParticipantsStatuses) {
+export function updateRemoteParticipantsStatuses(remoteParticipantsStatuses: Array<Object>) {
     return (dispatch: Function) => {
         if (hasRemoteParticipantInBeginStatus(remoteParticipantsStatuses)) {
             detectLegacyMobileApp(remoteParticipantsStatuses);
@@ -209,28 +209,19 @@ export function updateRemoteParticipantsStatuses(remoteParticipantsStatuses) {
     };
 }
 
-export function setWaitingMessageVisibility(showWaitingMessage) {
-    return (dispatch: Function) => {
-        dispatch({
-            type: SET_WAITING_MESSAGE_VISIBILITY,
-            showWaitingMessage
-        });
-    };
-}
-
-export function updateRemoteParticipantsStatusesFromSocket(value) {
+export function updateRemoteParticipantsStatusesFromSocket(event: Object) {
     return (dispatch: Function, getState: Function) => {
         const { remoteParticipantsStatuses } = getState()['features/jane-waiting-area'];
 
-        if (remoteParticipantsStatuses.some(v => v.participant_id === value.participant_id)) {
+        if (remoteParticipantsStatuses.some(v => v.participant_id === event.participant_id)) {
             remoteParticipantsStatuses.forEach(v => {
-                if (v.participant_id === value.participant_id) {
-                    v.info = value.info;
-                    v.updated_at = value.updated_at;
+                if (v.participant_id === event.participant_id) {
+                    v.info = event.info;
+                    v.updated_at = event.updated_at;
                 }
             });
         } else {
-            remoteParticipantsStatuses.push(value);
+            remoteParticipantsStatuses.push(event);
         }
         dispatch(updateRemoteParticipantsStatuses(remoteParticipantsStatuses));
     };

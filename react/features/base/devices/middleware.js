@@ -2,6 +2,8 @@
 
 import UIEvents from '../../../../service/UI/UIEvents';
 import { processExternalDeviceRequest } from '../../device-selection';
+import { replaceAudioTrackById, replaceVideoTrackById, setDeviceStatusWarning } from '../../jane-waiting-area/actions';
+import { isJaneWaitingAreaPageVisible } from '../../jane-waiting-area/functions';
 import { showNotification, showWarningNotification } from '../../notifications';
 import { JitsiTrackErrors } from '../lib-jitsi-meet';
 import { MiddlewareRegistry } from '../redux';
@@ -27,8 +29,6 @@ import {
     setAudioOutputDeviceId
 } from './functions';
 import logger from './logger';
-import { replaceAudioTrackById, replaceVideoTrackById, setDeviceStatusWarning } from '../../jane-waiting-area/actions';
-import { isJaneWaitingAreaPageVisible } from '../../jane-waiting-area/functions';
 
 const JITSI_TRACK_ERROR_TO_MESSAGE_KEY_MAP = {
     microphone: {

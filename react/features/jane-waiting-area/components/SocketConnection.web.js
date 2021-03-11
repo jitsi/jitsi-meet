@@ -1,29 +1,30 @@
 // @flow
-/* eslint-disable */
+/* eslint-disable require-jsdoc,max-len,camelcase*/
 
 import { Component } from 'react';
+
+import { Socket } from '../../../../service/Websocket/socket';
+import { getLocalParticipantInfoFromJwt, getLocalParticipantType } from '../../base/participants/functions';
 import { connect } from '../../base/redux';
-import {
-    checkRoomStatus, getLocalParticipantFromJwt, getLocalParticipantType,
-    getRemoteParticipantsStatues, isRNSocketWebView,
-    updateParticipantReadyStatus
-} from '../functions';
+import { playSound as playSoundAction } from '../../base/sounds';
 import {
     setJaneWaitingAreaAuthState as setJaneWaitingAreaAuthStateAction,
     updateRemoteParticipantsStatuses as updateRemoteParticipantsStatusesAction,
     updateRemoteParticipantsStatusesFromSocket as updateRemoteParticipantsStatusesFromSocketAction
-} from '../actions';
-import { Socket } from '../../../../service/Websocket/socket';
-import jwtDecode from 'jwt-decode';
-import { playSound as playSoundAction } from '../../base/sounds';
+    , joinConference as joinConferenceAction } from '../actions';
+import {
+    checkRoomStatus,
+    getRemoteParticipantsStatuses, isRNSocketWebView,
+    updateParticipantReadyStatus,
+    sendMessageToIosApp
+} from '../functions';
 import {
     WAITING_AREA_NOTIFICATION_SOUND_ID
 } from '../sound';
-import { joinConference as joinConferenceAction } from '../actions';
+
 
 type Props = {
     t: Function,
-    jwtPayload: Object,
     participantType: string,
     participant: Object,
     isRNWebViewPage: boolean,
@@ -48,10 +49,10 @@ class SocketConnection extends Component<Props> {
         const { isRNWebViewPage } = this.props;
 
         if (isRNWebViewPage) {
-            window.ReactNativeWebView.postMessage(JSON.stringify({ message: 'webview page is ready' }));
+            sendMessageToIosApp({ message: 'webview page is ready' });
         } else {
             updateParticipantReadyStatus('waiting');
-            window.onunload = window.onbeforeunload = function () {
+            window.onunload = window.onbeforeunload = function() {
                 updateParticipantReadyStatus('left');
             };
         }
@@ -60,8 +61,9 @@ class SocketConnection extends Component<Props> {
 
     componentDidUpdate() {
         const { isRNWebViewPage, remoteParticipantsStatuses } = this.props;
+
         if (isRNWebViewPage && remoteParticipantsStatuses.length > 0) {
-            window.ReactNativeWebView.postMessage(JSON.stringify({ message: { remoteParticipantsStatuses } }));
+            sendMessageToIosApp({ message: { remoteParticipantsStatuses } });
         }
     }
 
@@ -71,10 +73,12 @@ class SocketConnection extends Component<Props> {
 
     _playSound(remoteParticipantStatus) {
         const { participantType, playSound } = this.props;
+
         if (remoteParticipantStatus && remoteParticipantStatus.info) {
-            const canPlay =
-                (participantType === 'Patient' && remoteParticipantStatus.info.status === 'joined') ||
-                (participantType === 'StaffMember' && remoteParticipantStatus.info.status === 'waiting');
+            const canPlay
+                = (participantType === 'Patient' && remoteParticipantStatus.info.status === 'joined')
+                || (participantType === 'StaffMember' && remoteParticipantStatus.info.status === 'waiting');
+
             if (canPlay) {
                 playSound(WAITING_AREA_NOTIFICATION_SOUND_ID);
             }
@@ -94,7 +98,7 @@ class SocketConnection extends Component<Props> {
         const { isRNWebViewPage, joinConference } = this.props;
 
         if (isRNWebViewPage) {
-            window.ReactNativeWebView.postMessage(JSON.stringify({ message: status }));
+            sendMessageToIosApp({ message: status });
         }
         if (status && status.error) {
             joinConference();
@@ -104,9 +108,11 @@ class SocketConnection extends Component<Props> {
 
     async _connectSocket() {
         const { participantType, isRNWebViewPage, updateRemoteParticipantsStatuses, joinConference, setJaneWaitingAreaAuthState } = this.props;
+
         try {
             const response = await checkRoomStatus();
-            const remoteParticipantsStatuses = getRemoteParticipantsStatues(response.participant_statuses, participantType);
+            const remoteParticipantsStatuses = getRemoteParticipantsStatuses(response.participant_statuses, participantType);
+
             updateRemoteParticipantsStatuses(remoteParticipantsStatuses);
 
             this.socket = new Socket({
@@ -118,7 +124,7 @@ class SocketConnection extends Component<Props> {
             this.socket.connect();
         } catch (error) {
             if (isRNWebViewPage) {
-                window.ReactNativeWebView.postMessage(JSON.stringify({ message: { error } }));
+                sendMessageToIosApp({ message: error });
             } else if (error && error.error === 'Signature has expired') {
                 setJaneWaitingAreaAuthState('failed');
             } else {
@@ -133,16 +139,13 @@ class SocketConnection extends Component<Props> {
 }
 
 function mapStateToProps(state): Object {
-    const { jwt } = state['features/base/jwt'];
-    const jwtPayload = jwt && jwtDecode(jwt) || null;
-    const participant = getLocalParticipantFromJwt(state);
+    const participant = getLocalParticipantInfoFromJwt(state);
     const participantType = getLocalParticipantType(state);
     const { locationURL } = state['features/base/connection'];
     const isRNWebViewPage = isRNSocketWebView(locationURL);
     const { remoteParticipantsStatuses } = state['features/jane-waiting-area'];
 
     return {
-        jwtPayload,
         participantType,
         participant,
         isRNWebViewPage,

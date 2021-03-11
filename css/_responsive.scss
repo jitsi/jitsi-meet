@@ -1,7 +1,10 @@
 @media only screen and (max-width: $smallScreen) {
     .watermark {
-        width: 20%;
-        height: 20%;
+        padding: 20px;
+        height: auto;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
     }
 
     .new-toolbox {

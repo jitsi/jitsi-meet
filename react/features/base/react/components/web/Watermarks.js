@@ -1,15 +1,16 @@
 /* @flow */
-/* eslint-disable */
+/* eslint-disable require-jsdoc,max-len*/
 import React, { Component } from 'react';
 
-import type { Dispatch } from 'redux';
 import { translate } from '../../../i18n';
+import {
+    getParticipantCount
+} from '../../../participants';
 import { connect } from '../../../redux';
-import { getParticipantCount } from '../../../participants';
 import { getRemoteTracks } from '../../../tracks';
-import WaitingMessage from './WaitingMessage';
-import { setWaitingMessageVisibility } from '../../../../jane-waiting-area/actions';
-import { isJaneTestMode } from '../../../conference';
+import { shouldShowPreCallMessage } from '../../functions';
+
+import PreCallMessage from './PreCallMessage';
 
 declare var interfaceConfig: Object;
 
@@ -23,17 +24,14 @@ type Props = {
      */
     _isGuest: boolean,
     conferenceHasStarted: boolean,
-    waitingMessageHeader: string,
 
     /**
      * Invoked to obtain translated strings.
      */
     t: Function,
-    setWaitingMessageVisibility: Function,
-    showWaitingMessage: boolean,
-    hasWaitingMessage: boolean,
+    showPreCallMessage: boolean,
+    hasPreCallMessage: boolean,
     isWelcomePage: boolean,
-    isJaneTestMode: boolean
 };
 
 /**
@@ -115,20 +113,6 @@ class Watermarks extends Component<Props, State> {
         };
     }
 
-    componentDidMount() {
-        const { hasWaitingMessage, isJaneTestMode, isWelcomePage } = this.props;
-        if ((hasWaitingMessage || isJaneTestMode) && !isWelcomePage) {
-            this.props.setWaitingMessageVisibility(true);
-        }
-    }
-
-    componentDidUpdate(props) {
-        if ((props.conferenceHasStarted !== this.props.conferenceHasStarted && this.props.conferenceHasStarted) ||
-            (props.hasWaitingMessage !== this.props.hasWaitingMessage && !this.props.hasWaitingMessage)) {
-            this.props.setWaitingMessageVisibility(false);
-        }
-    }
-
     /**
      * Implements React's {@link Component#render()}.
      *
@@ -152,14 +136,15 @@ class Watermarks extends Component<Props, State> {
      * @returns {ReactElement|null}
      */
     _renderWatermark() {
-        const { conferenceHasStarted, waitingMessageHeader, showWaitingMessage } = this.props;
+        const { conferenceHasStarted, showPreCallMessage } = this.props;
+
         return (<div
-            className={`watermark ${(conferenceHasStarted || !showWaitingMessage) ? '' : 'watermark-with-background'}`}>
+            className = { `watermark ${conferenceHasStarted || !showPreCallMessage ? '' : 'watermark-with-background'}` }>
             <div
-                className={`leftwatermark ${conferenceHasStarted || !showWaitingMessage ? '' : 'animate-flicker'}`}/>
+                className = { `leftwatermark ${conferenceHasStarted || !showPreCallMessage ? '' : 'animate-flicker'}` } />
             {
-                showWaitingMessage &&
-                <WaitingMessage waitingMessageHeader={waitingMessageHeader}/>
+                showPreCallMessage
+                && <PreCallMessage />
             }
         </div>);
     }
@@ -169,31 +154,24 @@ class Watermarks extends Component<Props, State> {
  * Maps parts of Redux store to component prop types.
  *
  * @param {Object} state - Snapshot of Redux store.
+ * @param {Object} props - The read-only properties with which the new
+ * instance is to be initialized.
  * @returns {{
  *      _isGuest: boolean
  * }}
  */
-function _mapStateToProps(state) {
+function _mapStateToProps(state, props) {
     const { isGuest } = state['features/base/jwt'];
+    const { isWelcomePage } = props;
     const participantCount = getParticipantCount(state);
     const remoteTracks = getRemoteTracks(state['features/base/tracks']);
-    const { showWaitingMessage } = state['features/jane-waiting-area'];
+    const showPreCallMessage = !isWelcomePage && shouldShowPreCallMessage(state);
 
     return {
         _isGuest: isGuest,
         conferenceHasStarted: participantCount > 1 && remoteTracks.length > 0,
-        showWaitingMessage,
-        isJaneTestMode: isJaneTestMode(state)
+        showPreCallMessage
     };
 }
 
-function _mapDispatchToProps(dispatch: Dispatch<any>) {
-    return {
-        setWaitingMessageVisibility(showWaitingMessage) {
-            dispatch(setWaitingMessageVisibility(showWaitingMessage));
-        }
-    };
-}
-
-
-export default connect(_mapStateToProps, _mapDispatchToProps)(translate(Watermarks));
+export default connect(_mapStateToProps)(translate(Watermarks));

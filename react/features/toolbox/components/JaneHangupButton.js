@@ -1,96 +1,83 @@
 // @flow
-/* eslint-disable */
+/* eslint-disable require-jsdoc*/
 
-import React, { Component } from 'react';
 import InlineDialog from '@atlaskit/inline-dialog';
-import { Icon } from '../../base/icons/components';
-import { IconHangup, IconClose } from '../../base/icons';
-import { translate } from '../../base/i18n';
-import { connect } from '../../base/redux';
 import _ from 'lodash';
-import { maybeRedirectToWelcomePage } from '../../app';
+import React, { Component } from 'react';
+
+import { createToolbarEvent, sendAnalytics } from '../../analytics';
+import { maybeRedirectToWelcomePage } from '../../app/actions';
+import { isJaneTestCall } from '../../base/conference';
+import { translate } from '../../base/i18n';
+import { IconHangup } from '../../base/icons';
+import { Icon } from '../../base/icons/components';
+import { connect } from '../../base/redux';
+import { updateParticipantReadyStatus, isJaneWaitingAreaPageEnabled } from '../../jane-waiting-area/functions';
 
 export type Props = {
-    showTooltip: boolean,
     dispatch: Function,
     tooltipText: string,
-    hasCloseBtn: boolean,
-    visible: boolean
-};
-
-type State = {
-    showTooltip: boolean,
+    visible: boolean,
+    isTestCall: boolean,
+    isWaitingAreaPageEnabled: boolean
 };
 
 class JaneHangupButton extends Component<Props, State> {
 
+    _onClick: (*) => void;
+
     constructor(props) {
         super(props);
-        this.state = {
-            showTooltip: props.showTooltip || false
-        };
+        this._onClick = this._onClick.bind(this);
     }
 
-    tooltipIsClosedByUser = false;
-
-    _hangup = _.once(() => {
+    _hangup = _.once(props => {
         window.APP.API.notifyReadyToClose();
-        window.APP.store.dispatch(maybeRedirectToWelcomePage());
+        sendAnalytics(createToolbarEvent('hangup'));
+        props.dispatch(maybeRedirectToWelcomePage());
         window.close();
-    });
-
-    static getDerivedStateFromProps(props, state) {
-        if (props.showTooltip !== state.showTooltip) {
-            return {
-                showTooltip: props.showTooltip
-            };
-        }
-        return null;
-    }
+    })
 
     _onClick(): void {
-        this._hangup();
-    }
+        const { isTestCall, isWaitingAreaPageEnabled } = this.props;
 
-    _onCloseIconClick(): void {
-        this.setState({
-            showTooltip: false
-        }, () => {
-            this.tooltipIsClosedByUser = true;
-        });
+        if (!isTestCall && isWaitingAreaPageEnabled) {
+            updateParticipantReadyStatus('left');
+        }
+
+        this._hangup(this.props);
     }
 
     render(): React$Node {
-        const { tooltipText, hasCloseBtn, visible } = this.props;
+        const { tooltipText, visible } = this.props;
 
-        return (visible ?
-                <div className="jane-hangup-btn">
-                    <InlineDialog
-                        content={
-                            <span>
+        return visible
+            ? <div className = 'jane-hangup-btn'>
+                <InlineDialog
+                    content = {
+                        <span>
                             {
                                 tooltipText
                             }
-                                {
-                                    hasCloseBtn && <Icon
-                                        className='tooltip-close-icon'
-                                        src={IconClose}
-                                        size={14}
-                                        onClick={this._onCloseIconClick.bind(this)}
-                                    />
-                                }
-                        </span>}
-                        isOpen={this.state.showTooltip && !this.tooltipIsClosedByUser}
-                        position={'top center'}>
-                        <div className="jane-hangup-btn-icon">
-                            <Icon
-                                src={IconHangup}
-                                onClick={this._onClick.bind(this)}/>
-                        </div>
-                    </InlineDialog>
-                </div> : null
-        );
+                        </span> }
+                    isOpen = { tooltipText && tooltipText.length > 0 }
+                    position = { 'top center' }>
+                    <div className = 'jane-hangup-btn-icon'>
+                        <Icon
+                            onClick = { this._onClick }
+                            src = { IconHangup } />
+                    </div>
+                </InlineDialog>
+            </div> : null
+        ;
     }
 }
 
-export default translate(connect()(JaneHangupButton));
+function _mapStateToProps(state) {
+    return {
+        isTestCall: isJaneTestCall(state),
+        isWaitingAreaPageEnabled: isJaneWaitingAreaPageEnabled(state)
+    };
+}
+
+export default translate(connect(_mapStateToProps)(JaneHangupButton));

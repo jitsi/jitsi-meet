@@ -24,7 +24,6 @@ import {
     isJaneWaitingAreaVideoDisabled,
     isJaneWaitingAreaVideoMuted
 } from '../../jane-waiting-area/functions';
-import UIEvents from '../../../../service/UI/UIEvents';
 
 declare var APP: Object;
 

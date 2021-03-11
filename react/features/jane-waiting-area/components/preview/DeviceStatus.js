@@ -1,6 +1,7 @@
 // @flow
 
 import React from 'react';
+
 import { translate } from '../../../base/i18n';
 import { Icon, IconCheck, IconExclamation } from '../../../base/icons';
 import { connect } from '../../../base/redux';
@@ -55,13 +56,13 @@ function DeviceStatus({ deviceStatusType, deviceStatusText, rawError, t }: Props
     const { src, className } = iconMap[deviceStatusType];
 
     return (
-        <div className={`jane-waiting-area-preview-status ${className}`}>
+        <div className = { `jane-waiting-area-preview-status ${className}` }>
             <Icon
-                className='jane-waiting-area-preview-icon'
-                size={16}
-                src={src}/>
+                className = 'jane-waiting-area-preview-icon'
+                size = { 16 }
+                src = { src } />
             <span
-                className='jane-waiting-area-preview-error-desc'>{t(deviceStatusText)}</span>
+                className = 'jane-waiting-area-preview-error-desc'>{t(deviceStatusText)}</span>
             <span>{rawError}</span>
         </div>
     );

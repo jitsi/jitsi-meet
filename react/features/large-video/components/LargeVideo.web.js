@@ -6,8 +6,8 @@ import { Watermarks } from '../../base/react';
 import { connect } from '../../base/redux';
 import { Subject } from '../../conference';
 import { fetchCustomBrandingData } from '../../dynamic-branding';
-import { Captions } from '../../subtitles/';
 import { isJaneWaitingAreaPageVisible } from '../../jane-waiting-area';
+import { Captions } from '../../subtitles/';
 
 declare var interfaceConfig: Object;
 

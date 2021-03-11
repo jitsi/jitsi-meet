@@ -11,21 +11,12 @@ import { connect as reactReduxConnect } from '../../../base/redux';
 import { Chat } from '../../../chat';
 import { Filmstrip } from '../../../filmstrip';
 import { CalleeInfoContainer } from '../../../invite';
+import { JaneWaitingArea, isJaneWaitingAreaPageVisible } from '../../../jane-waiting-area';
 import { LargeVideo } from '../../../large-video';
 import { KnockingParticipantList, LobbyScreen } from '../../../lobby';
-import { Prejoin, isPrejoinPageVisible } from '../../../prejoin';
 import { fullScreenChanged, setToolboxAlwaysVisible, showToolbox } from '../../../toolbox/actions.web';
 import { Toolbox } from '../../../toolbox/components/web';
 import { LAYOUTS, getCurrentLayout } from '../../../video-layout';
-
-import {
-    Toolbox,
-    fullScreenChanged,
-    setToolboxAlwaysVisible,
-    showToolbox
-} from '../../../toolbox';
-
-import { JaneWaitingArea, isJaneWaitingAreaPageVisible } from '../../../jane-waiting-area';
 import { maybeShowSuboptimalExperienceNotification } from '../../functions';
 import {
     AbstractConference,

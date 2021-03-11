@@ -12,7 +12,6 @@ import {
     SET_JANE_WAITING_AREA_VIDEO_DISABLED,
     SET_JANE_WAITING_AREA_VIDEO_MUTED,
     UPDATE_REMOTE_PARTICIPANT_STATUSES,
-    SET_WAITING_MESSAGE_VISIBILITY,
     SET_JANE_WAITING_AREA_AUTH_STATE
 } from './actionTypes';
 
@@ -31,7 +30,6 @@ const DEFAULT_STATE = {
     videoDisabled: false,
     videoMuted: false,
     remoteParticipantsStatuses: [],
-    showWaitingMessage: false,
     authState: ''
 };
 
@@ -115,13 +113,6 @@ ReducerRegistry.register(
             return {
                 ...state,
                 remoteParticipantsStatuses: action.value
-            };
-        }
-
-        case SET_WAITING_MESSAGE_VISIBILITY: {
-            return {
-                ...state,
-                showWaitingMessage: action.showWaitingMessage
             };
         }
 

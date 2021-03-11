@@ -1,6 +1,17 @@
-/* eslint-disable */
+// @flow
+/* eslint-disable require-jsdoc,max-len, no-undef*/
 import jwtDecode from 'jwt-decode';
+import _ from 'lodash';
+
+import {
+    createWaitingAreaParticipantStatusChangedEvent,
+    sendAnalytics
+} from '../analytics';
+import {
+    getLocalParticipantType
+} from '../base/participants/functions';
 import { doGetJSON } from '../base/util';
+
 import { UPDATE_REMOTE_PARTICIPANT_STATUSES } from './actionTypes';
 import { updateRemoteParticipantsStatuses } from './actions';
 
@@ -99,8 +110,8 @@ export function getJaneWaitingAreaPageDisplayName(state: Object): string {
 
 export function isJaneWaitingAreaPageEnabled(state: Object): boolean {
     const { jwt } = state['features/base/jwt'];
-    const jwtPayload = jwt && jwtDecode(jwt) || null;
-    const shouldEnableJaneWaitingAreaPage = jwtPayload && jwtPayload.context && jwtPayload.context.waiting_area_enabled;
+    const jwtPayload = jwt && jwtDecode(jwt) ?? {};
+    const shouldEnableJaneWaitingAreaPage = _.get(jwtPayload, 'context.waiting_area_enabled');
 
     return state['features/base/config'].janeWaitingAreaPageEnabled || shouldEnableJaneWaitingAreaPage;
 }
@@ -109,13 +120,15 @@ export function isJaneWaitingAreaPageVisible(state: Object): boolean {
     return isJaneWaitingAreaPageEnabled(state) && state['features/jane-waiting-area']?.showJaneWaitingArea;
 }
 
-export async function checkRoomStatus(): Object {
+export async function checkRoomStatus(): Promise<Object> {
     try {
-        const { jwt } = APP.store.getState()['features/base/jwt'];
-        const jwtPayload = jwt && jwtDecode(jwt) || null;
-        const roomStatusUrl = jwtPayload && jwtPayload.context && jwtPayload.context.room_status_url || '';
+        const { jwt } = window.APP.store.getState()['features/base/jwt'];
+        const jwtPayload = jwt && jwtDecode(jwt) ?? {};
+        const roomStatusUrl = _.get(jwtPayload, 'context.room_status_url') ?? '';
+
         const url = new URL(roomStatusUrl);
         const params = { jwt };
+
         url.search = new URLSearchParams(params).toString();
 
         return doGetJSON(url, true);
@@ -124,23 +137,28 @@ export async function checkRoomStatus(): Object {
     }
 }
 
-export function getRemoteParticipantsStatues(participantStatuses: Array, participantType: string): Array {
+export function getRemoteParticipantsStatuses(participantStatuses: Array<Object>, participantType: string): Array<Object> {
     const remoteParticipantType = participantType === 'StaffMember' ? 'Patient' : 'StaffMember';
-    let remoteParticipantStatuses = [];
-    participantStatuses && participantStatuses.forEach((v) => {
+    const remoteParticipantStatuses = [];
+
+    participantStatuses && participantStatuses.forEach(v => {
         if (v.participant_type === remoteParticipantType) {
             remoteParticipantStatuses.push(v);
         }
     });
+
     return remoteParticipantStatuses;
 }
 
-export function updateParticipantReadyStatus(status: string): Promise {
+export function updateParticipantReadyStatus(status: string): void {
     try {
-        const { jwt } = APP.store.getState()['features/base/jwt'];
-        const jwtPayload = jwt && jwtDecode(jwt) || null;
-        const updateParticipantStatusUrl = jwtPayload && jwtPayload.context && jwtPayload.context.update_participant_status_url || '';
+        const { jwt } = window.APP.store.getState()['features/base/jwt'];
+        const jwtPayload = jwt && jwtDecode(jwt) ?? {};
+        const updateParticipantStatusUrl = _.get(jwtPayload, 'context.update_participant_status_url') ?? '';
         const info = { status };
+
+        sendAnalytics(createWaitingAreaParticipantStatusChangedEvent(status));
+
         return fetch(updateParticipantStatusUrl, {
             method: 'POST',
             headers: {
@@ -160,36 +178,29 @@ export function updateParticipantReadyStatus(status: string): Promise {
     }
 }
 
-export function isRNSocketWebView(locationURL: string): boolean {
-    return String(locationURL && locationURL.href || '').includes('RNsocket=true');
+export function isRNSocketWebView(locationURL: Object): boolean {
+    return String(locationURL && locationURL.href ?? '').includes('RNsocket=true');
 }
 
-export function checkLocalParticipantCanJoin(remoteParticipantsStatuses: Array, participantType: string): boolean {
+export function checkLocalParticipantCanJoin(state: Object | Function): boolean {
+    const { remoteParticipantsStatuses } = state['features/jane-waiting-area'];
+    const participantType = getLocalParticipantType(state);
+
     return remoteParticipantsStatuses && remoteParticipantsStatuses.length > 0 && remoteParticipantsStatuses.some(v => {
         if (participantType === 'StaffMember') {
             return v.info && (v.info.status === 'joined' || v.info.status === 'waiting');
         }
+
         return v.info && v.info.status === 'joined';
-    }) || false;
+    }) ?? false;
 }
 
-export function getLocalParticipantFromJwt(state: Object): Object {
-    const { jwt } = state['features/base/jwt'];
-    const jwtPayload = jwt && jwtDecode(jwt) || null;
-
-    return jwtPayload && jwtPayload.context && jwtPayload.context.user || null;
-}
-
-export function getLocalParticipantType(state: Object): string {
-    const participant = getLocalParticipantFromJwt(state);
-
-    return participant && participant.participant_type;
-}
-
-export function detectLegacyMobileApp(remoteParticipantsStatuses) {
+export function detectLegacyMobileApp(remoteParticipantsStatuses: Array<Object>) {
     const now = Math.floor(Date.now() / 1000);
-    const participantType = getLocalParticipantType(APP.store.getState());
-    let fetchRoomStatusAgain = false;
+    // eslint-disable-next-line no-undef
+    const participantType = getLocalParticipantType(window.APP.store.getState());
+    let checkRoomStatusAgain = false;
+
     remoteParticipantsStatuses.forEach(status => {
         if (status.info.status === 'begin') {
             if (now - status.updated_at > 4) {
@@ -197,32 +208,37 @@ export function detectLegacyMobileApp(remoteParticipantsStatuses) {
                     status.info.status = 'waiting';
                 } else {
                     status.info.status = 'joined';
+                    sendAnalytics(createWaitingAreaParticipantStatusChangedEvent('joined'));
                 }
             } else {
-                fetchRoomStatusAgain = true;
+                checkRoomStatusAgain = true;
             }
         }
     });
 
-    if (fetchRoomStatusAgain) {
-        const { jwt } = APP.store.getState()['features/base/jwt'];
+    if (checkRoomStatusAgain) {
         setTimeout(async () => {
             try {
-                const response = await checkRoomStatus(jwt);
-                const remoteParticipantsStatuses = getRemoteParticipantsStatues(response.participant_statuses, participantType);
-                APP.store.dispatch(updateRemoteParticipantsStatuses(remoteParticipantsStatuses));
+                const response = await checkRoomStatus();
+                const newRemoteParticipantsStatuses = getRemoteParticipantsStatuses(response.participant_statuses, participantType);
+
+                window.APP.store.dispatch(updateRemoteParticipantsStatuses(newRemoteParticipantsStatuses));
             } catch (e) {
                 console.error(e);
             }
         }, 5000);
     } else {
-        APP.store.dispatch({
+        window.APP.store.dispatch({
             type: UPDATE_REMOTE_PARTICIPANT_STATUSES,
             value: remoteParticipantsStatuses
         });
     }
 }
 
-export function hasRemoteParticipantInBeginStatus(remoteParticipantsStatuses) {
+export function hasRemoteParticipantInBeginStatus(remoteParticipantsStatuses: Array<Object>) {
     return remoteParticipantsStatuses.some(v => v.info && v.info.status === 'begin');
+}
+
+export function sendMessageToIosApp(message: Object) {
+    window.ReactNativeWebView.postMessage(JSON.stringify(message));
 }

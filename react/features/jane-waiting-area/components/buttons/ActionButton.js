@@ -1,5 +1,5 @@
 // @flow
-/* eslint-disable */
+/* eslint-disable require-jsdoc*/
 import React from 'react';
 
 const classNameByType = {
@@ -33,8 +33,8 @@ function ActionButton({ children, className, disabled, type, onClick }: Props) {
 
     return (
         <div
-            className={cls}
-            onClick={clickHandler}>
+            className = { cls }
+            onClick = { clickHandler }>
             {children}
         </div>
     );

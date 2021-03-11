@@ -1,5 +1,6 @@
 // @flow
-/* eslint-disable */
+/* eslint-disable require-jsdoc*/
+
 import React from 'react';
 
 type Props = {
@@ -17,10 +18,10 @@ function Label({ children, className, number, onClick }: Props) {
 
     return (
         <div
-            className={containerClass}
-            onClick={onClick}>
-            {number &&
-            <div className='jane-waiting-area-dialog-label-num'>{number}</div>}
+            className = { containerClass }
+            onClick = { onClick }>
+            {number
+            && <div className = 'jane-waiting-area-dialog-label-num'>{number}</div>}
             <span>{children}</span>
         </div>
     );

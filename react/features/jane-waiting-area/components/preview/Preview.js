@@ -1,6 +1,7 @@
 // @flow
 
 import React from 'react';
+
 import { Avatar } from '../../../base/avatar';
 import { Video } from '../../../base/media';
 import { connect } from '../../../base/redux';
@@ -42,23 +43,23 @@ function Preview(props: Props) {
 
     if (showCameraPreview && videoTrack) {
         return (
-            <div className='jane-waiting-area-preview'>
-                <div className='jane-waiting-area-preview-overlay'/>
-                <div className='jane-waiting-area-preview-bottom-overlay'/>
+            <div className = 'jane-waiting-area-preview'>
+                <div className = 'jane-waiting-area-preview-overlay' />
+                <div className = 'jane-waiting-area-preview-bottom-overlay' />
                 <Video
-                    className='flipVideoX jane-waiting-area-preview-video'
-                    videoTrack={{ jitsiTrack: videoTrack }}/>
+                    className = 'flipVideoX jane-waiting-area-preview-video'
+                    videoTrack = {{ jitsiTrack: videoTrack }} />
             </div>
         );
     }
 
     return (
         <div
-            className='jane-waiting-area-preview jane-waiting-area-preview--no-video'>
+            className = 'jane-waiting-area-preview jane-waiting-area-preview--no-video'>
             <Avatar
-                className='jane-waiting-area-preview-avatar'
-                displayName={name}
-                size={200}/>
+                className = 'jane-waiting-area-preview-avatar'
+                displayName = { name }
+                size = { 200 } />
         </div>
     );
 }
