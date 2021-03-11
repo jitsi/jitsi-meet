@@ -73,7 +73,15 @@
  */
  .toolbox-button-wth-dialog > div:nth-child(2) {
     max-height: calc(100vh - #{$newToolbarSizeWithPadding} - 46px);
+    margin-bottom: 4px;
     overflow-y: auto;
+}
+
+.audio-preview > div:nth-child(2),
+.video-preview > div:nth-child(2) {
+    margin-bottom: 4px;
+    outline: none;
+    padding: 0;
 }
 
 /**

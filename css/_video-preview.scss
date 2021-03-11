@@ -56,26 +56,26 @@
     &-label {
         bottom: 8px;
         color: #fff;
-        overflow: hidden;
         position: absolute;
-        text-overflow: ellipsis;
-        white-space: nowrap;
         width: 100%;
         z-index: 2;
+
+        &-container {
+            margin: 0 16px;
+        }
 
         &-text {
             background-color: #131519;
             border-radius: 3px;
+            padding: 2px 8px;
             font-size: 13px;
             line-height: 20px;
-            padding: 2px 8px;
-
+            margin: 0 auto;
+            max-width: calc(100% - 16px);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            width: fit-content;
+            white-space: nowrap;
         }
-    }
-
-    // Override @atlaskit/InlineDialog container which is made with styled components
-    & > div:nth-child(2) {
-        outline: none;
-        padding: 0;
     }
 }
