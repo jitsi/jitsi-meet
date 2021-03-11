@@ -1,6 +1,6 @@
 // @flow
 
-import React, { Component } from 'react';
+import React from 'react';
 
 import { Icon } from '../../icons';
 import { Tooltip } from '../../tooltip';
@@ -38,113 +38,49 @@ type Props = {
     styles?: Object,
 };
 
-type State = {
-
-    /**
-     * Whether the button is hovered or not.
-     */
-    isHovered: boolean,
-};
-
 /**
- * Displayes the `ToolboxButtonWithIcon` component.
+ * Displays the `ToolboxButtonWithIcon` component.
  *
+ * @param {Object} props - Component's props.
  * @returns {ReactElement}
  */
-export default class ToolboxButtonWithIcon extends Component<Props, State> {
+export default function ToolboxButtonWithIcon(props: Props) {
+    const {
+        children,
+        icon,
+        iconDisabled,
+        iconTooltip,
+        onIconClick,
+        styles
+    } = props;
 
-    /**
-     * Initializes a new {@code ToolboxButtonWithIcon} instance.
-     *
-     * @param {Props} props - The props of the component.
-     */
-    constructor(props: Props) {
-        super(props);
+    const iconProps = {};
 
-        this.state = {
-            isHovered: false
-        };
-        this._onMouseEnter = this._onMouseEnter.bind(this);
-        this._onMouseLeave = this._onMouseLeave.bind(this);
+    if (iconDisabled) {
+        iconProps.className
+            = 'settings-button-small-icon settings-button-small-icon--disabled';
+    } else {
+        iconProps.className = 'settings-button-small-icon';
+        iconProps.onClick = onIconClick;
     }
 
-    _onMouseEnter: () => void;
 
-    /**
-     * Handler for when the small button has the mouse over.
-     *
-     * @returns {void}.
-     */
-    _onMouseEnter() {
-        this.setState({
-            isHovered: true
-        });
-    }
+    return (
+        <div
+            className = 'settings-button-container'
+            styles = { styles }>
+            {children}
 
-    _onMouseLeave: () => void;
-
-    /**
-     * Handler for when the mouse leaves the small button.
-     *
-     * @returns {void}
-     */
-    _onMouseLeave() {
-        this.setState({
-            isHovered: false
-        });
-    }
-
-    /**
-     * Implements React's {@link Component#render()}.
-     *
-     * @inheritdoc
-     * @returns {React$Node}
-     */
-    render() {
-        const {
-            children,
-            icon,
-            iconDisabled,
-            iconTooltip,
-            onIconClick,
-            styles
-        } = this.props;
-
-        const iconProps = {};
-        let size = 9;
-
-        if (iconDisabled) {
-            iconProps.className
-                = 'settings-button-small-icon settings-button-small-icon--disabled';
-        } else {
-            iconProps.className = 'settings-button-small-icon';
-            iconProps.onClick = onIconClick;
-
-            if (this.state.isHovered) {
-                iconProps.className = `${iconProps.className} settings-button-small-icon--hovered`;
-                size = 11;
-            }
-        }
-
-        return (
-            <div
-                className = 'settings-button-container'
-                styles = { styles }>
-                {children}
-
-                <div
-                    onMouseEnter = { this._onMouseEnter }
-                    onMouseLeave = { this._onMouseLeave }>
-                    <Tooltip
-                        content = { iconTooltip }
-                        position = 'top'>
-                        <Icon
-                            { ...iconProps }
-                            size = { size }
-                            src = { icon } />
-                    </Tooltip>
-                </div>
+            <div>
+                <Tooltip
+                    content = { iconTooltip }
+                    position = 'top'>
+                    <Icon
+                        { ...iconProps }
+                        size = { 9 }
+                        src = { icon } />
+                </Tooltip>
             </div>
-        );
-    }
+        </div>
+    );
 }

@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 
 import { isMobileBrowser } from '../../../base/environment/utils';
 import { translate } from '../../../base/i18n';
-import { IconArrowDown } from '../../../base/icons';
+import { IconArrowUp } from '../../../base/icons';
 import JitsiMeetJS from '../../../base/lib-jitsi-meet/_';
 import { connect } from '../../../base/redux';
 import { ToolboxButtonWithIcon } from '../../../base/toolbox/components';
@@ -62,7 +62,7 @@ class AudioSettingsButton extends Component<Props> {
         return visible ? (
             <AudioSettingsPopup>
                 <ToolboxButtonWithIcon
-                    icon = { IconArrowDown }
+                    icon = { IconArrowUp }
                     iconDisabled = { settingsDisabled }
                     iconTooltip = { t('toolbar.audioSettings') }
                     onIconClick = { onAudioOptionsClick }>

@@ -56,7 +56,7 @@ function VideoSettingsPopup({
                     videoDeviceIds = { videoDeviceIds } /> }
                 isOpen = { isOpen }
                 onClose = { onClose }
-                placement = 'top-end'>
+                placement = 'top-start'>
                 { children }
             </InlineDialog>
         </div>

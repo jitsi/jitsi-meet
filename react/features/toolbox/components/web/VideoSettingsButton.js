@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 
 import { isMobileBrowser } from '../../../base/environment/utils';
 import { translate } from '../../../base/i18n';
-import { IconArrowDown } from '../../../base/icons';
+import { IconArrowUp } from '../../../base/icons';
 import { connect } from '../../../base/redux';
 import { ToolboxButtonWithIcon } from '../../../base/toolbox/components';
 import { getLocalJitsiVideoTrack } from '../../../base/tracks';
@@ -77,7 +77,7 @@ class VideoSettingsButton extends Component<Props> {
         return visible ? (
             <VideoSettingsPopup>
                 <ToolboxButtonWithIcon
-                    icon = { IconArrowDown }
+                    icon = { IconArrowUp }
                     iconDisabled = { this._isIconDisabled() }
                     iconTooltip = { t('toolbar.videoSettings') }
                     onIconClick = { onVideoOptionsClick }>
