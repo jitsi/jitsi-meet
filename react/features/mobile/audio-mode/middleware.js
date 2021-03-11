@@ -141,7 +141,7 @@ function _updateAudioMode({ getState }, next, action) {
     let mode;
 
     if (getFeatureFlag(state, AUDIO_FOCUS_DISABLED, false)) {
-        mode = AudioMode.DEFAULT;
+        return result;
     } else if (conference) {
         mode = audioOnly ? AudioMode.AUDIO_CALL : AudioMode.VIDEO_CALL;
     } else {
