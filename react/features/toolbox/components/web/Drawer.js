@@ -78,7 +78,9 @@ function Drawer({
                     <div
                         className = 'drawer-toggle'
                         onClick = { toggleExpanded }>
-                        <Icon src = { expanded ? IconArrowDownWide : IconArrowUpWide } />
+                        <Icon
+                            size = { 24 }
+                            src = { expanded ? IconArrowDownWide : IconArrowUpWide } />
                     </div>
                 )}
                 {children}
