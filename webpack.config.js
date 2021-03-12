@@ -240,26 +240,6 @@ module.exports = [
         performance: getPerformanceHints(128 * 1024)
     }),
 
-    // Because both virtual-background-effect and rnnoise-processor modules are loaded
-    // in a lazy manner using the loadScript function with a hard coded name,
-    // i.e.loadScript('libs/rnnoise-processor.min.js'), webpack dev server
-    // won't know how to properly load them using the default config filename
-    // and sourceMapFilename parameters which target libs without .min in dev
-    // mode. Thus we change these modules to have the same filename in both
-    // prod and dev mode.
-    Object.assign({}, config, {
-        entry: {
-            'rnnoise-processor': './react/features/stream-effects/rnnoise/index.js'
-        },
-        output: Object.assign({}, config.output, {
-            library: [ 'JitsiMeetJS', 'app', 'effects', 'rnnoise' ],
-            libraryTarget: 'window',
-            filename: '[name].min.js',
-            sourceMapFilename: '[name].min.map'
-        }),
-        performance: getPerformanceHints(30 * 1024)
-    }),
-
     Object.assign({}, config, {
         entry: {
             'external_api': './modules/API/external/index.js'

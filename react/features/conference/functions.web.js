@@ -6,7 +6,7 @@ import { toState } from '../base/redux';
 import { getBackendSafePath, getJitsiMeetGlobalNS } from '../base/util';
 import { getVpaasBillingId } from '../billing-counter/functions';
 import { showWarningNotification } from '../notifications';
-import { createRnnoiseProcessorPromise } from '../rnnoise';
+import { createRnnoiseProcessor } from '../stream-effects/rnnoise';
 
 export * from './functions.any';
 
@@ -84,7 +84,7 @@ export function getConferenceOptions(stateful) {
 
     options.applicationName = getName();
     options.getWiFiStatsMethod = getWiFiStatsMethod;
-    options.createVADProcessor = createRnnoiseProcessorPromise;
+    options.createVADProcessor = createRnnoiseProcessor;
     options.billingId = getVpaasBillingId(state);
 
     // Disable CallStats, if requessted.
