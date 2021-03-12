@@ -51,8 +51,6 @@ deploy-appbundle:
 		$(OUTPUT_DIR)/analytics-ga.js \
 		$(BUILD_DIR)/analytics-ga.min.js \
 		$(BUILD_DIR)/analytics-ga.min.map \
-		$(BUILD_DIR)/virtual-background-effect.min.js \
-		$(BUILD_DIR)/virtual-background-effect.min.map \
 		$(BUILD_DIR)/rnnoise-processor.min.js \
 		$(BUILD_DIR)/rnnoise-processor.min.map \
 		$(BUILD_DIR)/close3.min.js \
