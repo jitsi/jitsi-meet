@@ -1,6 +1,4 @@
-// @flow
-import { BoxModel } from '../../base/styles';
-import { JaneWeb, ColorPalette } from '../../base/styles';
+import { JaneWeb, ColorPalette, BoxModel } from '../../base/styles';
 
 export default {
     janeWaitingAreaContainer: {
@@ -89,5 +87,9 @@ export default {
     },
     disabledButtonText: {
         color: ColorPalette.manatee
+    },
+    socketView: {
+        height: 0,
+        width: 0
     }
 };

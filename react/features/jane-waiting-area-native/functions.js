@@ -1,59 +1,49 @@
 // @flow
-/* eslint-disable require-jsdoc*/
-
+/* eslint-disable require-jsdoc,max-len, no-undef*/
 import jwtDecode from 'jwt-decode';
+import _ from 'lodash';
 
-export function isJaneWaitingAreaPageEnabled(state: Object): boolean {
+import { showErrorNotification } from '../notifications';
+
+export function isJaneWaitingAreaEnabled(state: Object): boolean {
     const { jwt } = state['features/base/jwt'];
-    const jwtPayload = jwt && jwtDecode(jwt) || null;
-    const shouldEnableJaneWaitingAreaPage = jwtPayload
-        && jwtPayload.context && jwtPayload.context.waiting_area_enabled || false;
+    const jwtPayload = jwt && jwtDecode(jwt) ?? null;
+    const janeWaitingAreaEnabled = _.get(jwtPayload, 'context.waiting_area_enabled') ?? false;
 
-    return state['features/base/config'].janeWaitingAreaPageEnabled || shouldEnableJaneWaitingAreaPage;
+    return state['features/base/config'].janeWaitingAreaEnabled || janeWaitingAreaEnabled;
 }
 
-export function isJaneWaitingAreaPageVisible(state: Object): boolean {
-    return isJaneWaitingAreaPageEnabled(state) && state['features/jane-waiting-area-native']?.showJaneWaitingArea;
-}
 
-export function updateParticipantReadyStatus(jwt: string, status: string): Promise {
-    try {
-        const jwtPayload = jwt && jwtDecode(jwt) || null;
-        const updateParticipantStatusUrl = jwtPayload
-            && jwtPayload.context && jwtPayload.context.update_participant_status_url || '';
-        const info = { status };
+export function updateParticipantReadyStatus(jwt: string, status: string): void {
+    const jwtPayload = jwt && jwtDecode(jwt) ?? {};
 
-        return fetch(updateParticipantStatusUrl, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                'jwt': jwt,
-                'info': info
-            })
+    const updateParticipantStatusUrl = _.get(jwtPayload, 'context.update_participant_status_url') ?? '';
+    const info = { status };
+
+    return fetch(updateParticipantStatusUrl, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            'jwt': jwt,
+            'info': info
         })
-            .then(res => {
-                if (!res.ok) {
-                    throw Error('Can Not Update Current Participant\'s Status.');
-                }
-            });
-    } catch (e) {
-        console.error(e);
-    }
-}
-
-export function getLocalParticipantFromJwt(state) {
-    const { jwt } = state['features/base/jwt'];
-    const jwtPayload = jwt && jwtDecode(jwt) || null;
-
-    return jwtPayload && jwtPayload.context && jwtPayload.context.user || null;
-}
-
-export function getLocalParticipantType(state) {
-    const participant = getLocalParticipantFromJwt(state);
-
-    return participant && participant.participant_type || null;
+    })
+        .then(res => {
+            if (!res.ok) {
+                throw new Error('Failed to update the waiting area state for the local participant.');
+            }
+        })
+        .catch(error => {
+            if (navigator.product !== 'ReactNative') {
+                window.APP.store.dispatch(showErrorNotification({
+                    descriptionKey: error,
+                    titleKey: 'Waiting area error'
+                }));
+            }
+            console.error(error);
+        });
 }
 
 export function checkLocalParticipantCanJoin(remoteParticipantsStatuses, participantType) {
@@ -64,5 +54,5 @@ export function checkLocalParticipantCanJoin(remoteParticipantsStatuses, partici
 
         return v.info && v.info.status === 'joined';
 
-    }) || false;
+    }) ?? false;
 }

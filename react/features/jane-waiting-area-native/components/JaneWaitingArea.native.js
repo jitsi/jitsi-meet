@@ -1,5 +1,5 @@
 // @flow
-
+/* eslint-disable require-jsdoc*/
 import React, { Component } from 'react';
 import { connect } from '../../base/redux';
 import { translate } from '../../base/i18n';
@@ -7,17 +7,14 @@ import DialogBox from './DialogBox.native';
 import { updateParticipantReadyStatus } from '../functions';
 
 type Props = {
-    appstate: Object
+    appstate: Object,
+    jwt: string
 };
 
 class JaneWaitingAreaNative extends Component<Props, State> {
-
-    constructor(props) {
-        super(props);
-    }
-
     componentDidMount() {
         const { jwt } = this.props;
+
         updateParticipantReadyStatus(jwt, 'waiting');
     }
 

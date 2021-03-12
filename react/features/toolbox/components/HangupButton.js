@@ -9,7 +9,7 @@ import { translate } from '../../base/i18n';
 import { connect } from '../../base/redux';
 import { AbstractHangupButton } from '../../base/toolbox/components';
 import type { AbstractButtonProps } from '../../base/toolbox/components';
-import { isJaneWaitingAreaPageEnabled, updateParticipantReadyStatus } from '../../jane-waiting-area-native/functions';
+import { isJaneWaitingAreaEnabled, updateParticipantReadyStatus } from '../../jane-waiting-area-native/functions';
 
 /**
  * The type of the React {@code Component} props of {@link HangupButton}.
@@ -20,7 +20,9 @@ type Props = AbstractButtonProps & {
      * The redux {@code dispatch} function.
      */
     dispatch: Function,
-    isJaneWaitingAreaPageEnabled
+    isJaneWaitingAreaEnabled,
+    appstate: string,
+    jwt: string
 };
 
 /**
@@ -49,7 +51,7 @@ class HangupButton extends AbstractHangupButton<Props, *> {
 
             // FIXME: these should be unified.
             if (navigator.product === 'ReactNative') {
-                if (props.isJaneWaitingAreaPageEnabled) {
+                if (props.isJaneWaitingAreaEnabled) {
                     updateParticipantReadyStatus(props.jwt, 'left');
                 }
                 this.props.dispatch(appNavigate(undefined));
@@ -71,11 +73,22 @@ class HangupButton extends AbstractHangupButton<Props, *> {
     }
 }
 
-// eslint-disable-next-line require-jsdoc
+/**
+ * Maps part of the Redux state to the props of the component.
+ *
+ * @param {Object} state - The Redux state.
+ * @returns {{
+ *     appstate: string,
+ *     jwtPayload: Object
+ * }}
+ */
 function mapStateToProps(state): Object {
+    const appstate = state['features/background'];
+
     return {
+        appstate,
         jwt: state['features/base/jwt'],
-        isJaneWaitingAreaPageEnabled: isJaneWaitingAreaPageEnabled(state)
+        isJaneWaitingAreaEnabled: isJaneWaitingAreaEnabled(state)
     };
 }
 

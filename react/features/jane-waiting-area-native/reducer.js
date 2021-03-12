@@ -7,7 +7,7 @@ import {
 } from './actionTypes';
 
 const DEFAULT_STATE = {
-    enableJaneWaitingAreaPage: false,
+    janeWaitingAreaEnabled: false,
     remoteParticipantsStatuses: [],
     authState: ''
 };
@@ -18,7 +18,7 @@ ReducerRegistry.register(
         case ENABLE_JANE_WAITING_AREA_PAGE:
             return {
                 ...state,
-                enableJaneWaitingAreaPage: action.enableJaneWaitingAreaPage
+                janeWaitingAreaEnabled: action.janeWaitingAreaEnabled
             };
         case SET_JANE_WAITING_AREA_AUTH_STATE: {
             return {

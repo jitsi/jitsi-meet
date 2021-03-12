@@ -34,7 +34,8 @@ type Props = {
     /**
      * The redux {@code dispatch} function.
      */
-    dispatch: Function
+    dispatch: Function,
+    _janeWaitingAreaEnabled: boolean
 };
 
 /**
@@ -96,7 +97,7 @@ class Toolbox extends PureComponent<Props> {
      * @returns {React$Node}
      */
     _renderToolbar() {
-        const { _chatEnabled, _styles, _enableJaneWaitingAreaPage } = this.props;
+        const { _styles, _janeWaitingAreaEnabled } = this.props;
         const { buttonStyles, buttonStylesBorderless, hangupButtonStyles, toggledButtonStyles } = _styles;
 
         return (
@@ -105,28 +106,22 @@ class Toolbox extends PureComponent<Props> {
                 pointerEvents = 'box-none'
                 style = { styles.toolbar }>
                 {
-                    _chatEnabled && !_enableJaneWaitingAreaPage
+                    !_janeWaitingAreaEnabled
                         && <ChatButton
                             styles = { buttonStylesBorderless }
                             toggledStyles = {
                                 this._getChatButtonToggledStyle(toggledButtonStyles)
                             } />
                 }
-                {
-                    !_chatEnabled
-                        && <InfoDialogButton
-                            styles = { buttonStyles }
-                            toggledStyles = { toggledButtonStyles } />
-                }
                 <AudioMuteButton
                     styles = { buttonStyles }
                     toggledStyles = { toggledButtonStyles } />
                 <HangupButton
-                    styles={ hangupButtonStyles }/>
+                    styles = { hangupButtonStyles } />
                 <VideoMuteButton
                     styles = { buttonStyles }
                     toggledStyles = { toggledButtonStyles } />
-                {!_enableJaneWaitingAreaPage && <OverflowMenuButton
+                {!_janeWaitingAreaEnabled && <OverflowMenuButton
                     styles = { buttonStylesBorderless }
                     toggledStyles = { toggledButtonStyles } />}
             </View>
@@ -144,12 +139,12 @@ class Toolbox extends PureComponent<Props> {
  * @returns {Props}
  */
 function _mapStateToProps(state: Object): Object {
-    const { enableJaneWaitingAreaPage } = state['features/jane-waiting-area-native'];
+    const { janeWaitingAreaEnabled } = state['features/jane-waiting-area-native'];
 
     return {
         _styles: ColorSchemeRegistry.get(state, 'Toolbox'),
         _visible: isToolboxVisible(state),
-        _enableJaneWaitingAreaPage: enableJaneWaitingAreaPage
+        _janeWaitingAreaEnabled: janeWaitingAreaEnabled
     };
 }
 

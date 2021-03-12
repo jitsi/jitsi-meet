@@ -101,7 +101,13 @@ function _getSupportedLocale() {
     return supportedLocale || 'en';
 }
 
-export function jsCoreDateCreator(dateString: string) {
-    return moment(dateString, 'YYYY-MM-DD HH:mm')
-        .format('YYYY-MM-DD HH:mm');
+/**
+ * Returns a unix timestamp in milliseconds({@code number}).
+ *
+ * @param {Date | string} date - The date from jwt token.
+ * @returns {number}
+ */
+export function getTimeStamp(date) {
+    return moment(date, 'YYYY-MM-DD HH:mm:ss')
+        .valueOf();
 }

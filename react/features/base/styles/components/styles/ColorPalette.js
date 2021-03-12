@@ -35,6 +35,7 @@ export const ColorPalette = {
     manatee: '#8E8E9D',
     santasGray: '#A3A2B1',
     manateeLight: '#9998A7',
+
     /**
      * These are colors from the atlaskit to be used on mobile, when needed.
      *
@@ -55,5 +56,6 @@ export const ColorPalette = {
     btnBorder: '#DDDDDD',
     disabledBtnBackground: '#DDDDDD',
     btnTextDefault: '#333333',
+
     janeDarkColor: JANE_DARK_COLOR
 };
