@@ -37,8 +37,8 @@ ReducerRegistry.register('features/authentication', (state = {}, action) => {
     case UPGRADE_ROLE_STARTED:
         return {
             ...state,
-            error: undefined,
-            progress: undefined,
+            error: action.error,
+            progress: action.progress,
             thenableWithCancel: action.thenableWithCancel
         };
 
