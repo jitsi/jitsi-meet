@@ -42,7 +42,8 @@ type Props = {
     /**
      * The redux {@code dispatch} function.
      */
-    dispatch: Function
+    dispatch: Function,
+    _janeWaitingAreaEnabled: boolean
 };
 
 /**
@@ -104,7 +105,7 @@ class Toolbox extends PureComponent<Props> {
      * @returns {React$Node}
      */
     _renderToolbar() {
-        const { _chatEnabled, _styles, _enableJaneWaitingAreaPage, _startConference } = this.props;
+        const { _chatEnabled, _styles, _janeWaitingAreaEnabled } = this.props;
         const { buttonStyles, buttonStylesBorderless, hangupButtonStyles, toggledButtonStyles } = _styles;
 
         return (
@@ -112,7 +113,7 @@ class Toolbox extends PureComponent<Props> {
                 pointerEvents = 'box-none'
                 style = { styles.toolbar }>
                 {
-                    _chatEnabled && !_enableJaneWaitingAreaPage
+                    _chatEnabled && !_janeWaitingAreaEnabled
                         && <ChatButton
                             styles = { buttonStylesBorderless }
                             toggledStyles = {
@@ -129,13 +130,13 @@ class Toolbox extends PureComponent<Props> {
                     styles = { buttonStyles }
                     toggledStyles = { toggledButtonStyles } />
                 <HangupButton
-                    styles={ hangupButtonStyles }/>
+                    styles = { hangupButtonStyles } />
                 <VideoMuteButton
                     styles = { buttonStyles }
                     toggledStyles = { toggledButtonStyles } />
-                {!_enableJaneWaitingAreaPage && <OverflowMenuButton
-                    styles={buttonStylesBorderless}
-                    toggledStyles={toggledButtonStyles}/>}
+                {!_janeWaitingAreaEnabled && <OverflowMenuButton
+                    styles = { buttonStylesBorderless }
+                    toggledStyles = { toggledButtonStyles } />}
             </View>
         );
     }
@@ -155,12 +156,13 @@ class Toolbox extends PureComponent<Props> {
  * }}
  */
 function _mapStateToProps(state: Object): Object {
-    const { enableJaneWaitingAreaPage } = state['features/jane-waiting-area-native'];
+    const { janeWaitingAreaEnabled } = state['features/jane-waiting-area-native'];
+
     return {
         _chatEnabled: getFeatureFlag(state, CHAT_ENABLED, true),
         _styles: ColorSchemeRegistry.get(state, 'Toolbox'),
         _visible: isToolboxVisible(state),
-        _enableJaneWaitingAreaPage: enableJaneWaitingAreaPage
+        _janeWaitingAreaEnabled: janeWaitingAreaEnabled
     };
 }
 

@@ -1,3 +1,4 @@
+// @flow
 import React from 'react';
 import { Text, TouchableOpacity } from 'react-native';
 import styles from './styles';
@@ -8,18 +9,18 @@ type Props = {
     disabled: boolean,
 };
 
-export const ActionButton: Props = ({ onPress, title, disabled }) => {
+export const ActionButton = (props: Props): React$Node => {
 
-    const containerStyle = disabled ? styles.disabledButtonContainer : styles.joinButtonContainer;
-    const titleStyle = disabled ? styles.disabledButtonText : styles.joinButtonText;
+    const containerStyle = props.disabled ? styles.disabledButtonContainer : styles.joinButtonContainer;
+    const titleStyle = props.disabled ? styles.disabledButtonText : styles.joinButtonText;
 
     return (<TouchableOpacity
-        disabled = { disabled }
-        onPress = { onPress }
+        disabled = { props.disabled }
+        onPress = { props.onPress }
         style = { [ styles.actionButtonContainer, containerStyle ] }>
         <Text style = { [ styles.actionBtnTitle, titleStyle ] }>
             {
-                title
+                props.title
             }
         </Text>
     </TouchableOpacity>);

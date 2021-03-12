@@ -7,13 +7,10 @@ import { ParticipantView } from '../../base/participants';
 import { connect } from '../../base/redux';
 import { DimensionsDetector } from '../../base/responsive-ui';
 import { StyleType } from '../../base/styles';
-import WaitingMessage
-    from '../../base/react/components/native/WaitingMessage.js';
+
+import PreCallMessage
+    from '../../base/react/components/native/PreCallMessage.js';
 import { AVATAR_SIZE } from './styles';
-import {
-    getLocalParticipantType
-} from '../../jane-waiting-area-native/functions';
-import { checkLocalParticipantCanJoin } from '../../jane-waiting-area-native';
 
 /**
  * The type of the React {@link Component} props of {@link LargeVideo}.
@@ -127,18 +124,8 @@ class LargeVideo extends Component<Props, State> {
         const {
             _participantId,
             _styles,
-            onClick,
-            _participantType,
-            _localParticipantCanJoin
+            onClick
         } = this.props;
-        const hideWaitingMessage = _participantType === 'StaffMember' || _localParticipantCanJoin;
-        const waitingMessage = _participantType === 'StaffMember' ? {
-            header: '',
-            text: ''
-        } : {
-            header: 'Waiting for the practitioner...',
-            text: 'Sit back, relax and take a moment for yourself.'
-        };
 
         return (
             <DimensionsDetector
@@ -152,9 +139,7 @@ class LargeVideo extends Component<Props, State> {
                     useConnectivityInfoLabel = { useConnectivityInfoLabel }
                     zOrder = { 0 }
                     zoomEnabled = { true } />
-                <WaitingMessage
-                    hideWaitingMessage = { hideWaitingMessage }
-                    waitingMessageFromProps = { waitingMessage } />
+                <PreCallMessage />
             </DimensionsDetector>
         );
     }
@@ -171,15 +156,10 @@ class LargeVideo extends Component<Props, State> {
  * }}
  */
 function _mapStateToProps(state) {
-    const { remoteParticipantsStatuses } = state['features/jane-waiting-area-native'];
-    const participantType = getLocalParticipantType(state);
-    const localParticipantCanJoin = checkLocalParticipantCanJoin(remoteParticipantsStatuses, participantType);
 
     return {
         _participantId: state['features/large-video'].participantId,
-        _styles: ColorSchemeRegistry.get(state, 'LargeVideo'),
-        _participantType: participantType,
-        _localParticipantCanJoin: localParticipantCanJoin
+        _styles: ColorSchemeRegistry.get(state, 'LargeVideo')
     };
 }
 

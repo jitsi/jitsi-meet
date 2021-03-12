@@ -5,6 +5,8 @@ import { BoxModel, ColorPalette, JaneWeb } from '../../../styles';
 const OVERLAY_FONT_COLOR = 'rgba(255, 255, 255, 0.6)';
 const SECONDARY_ACTION_BUTTON_SIZE = 30;
 
+export const WAITING_MESSAGE_CONTIANER_BACKGROUND_COLOR = 'rgba(98,98,110,0.75)';
+
 export const AVATAR_SIZE = 65;
 export const UNDERLAY_COLOR = 'rgba(255, 255, 255, 0.2)';
 
@@ -204,44 +206,45 @@ const SECTION_LIST_STYLES = {
 };
 
 const WATING_MESSAGE_STYLES = {
-    waitingMessageContainer: {
+    preCallMessageContainer: {
         paddingBottom: 20,
-        paddingRight: 15,
-        flexDirection: 'row'
+        flexDirection: 'row',
+        width: '100%'
     },
 
-    waitingMessageImage: {
-        marginRight: 5
+    watermarkWrapper: {
+        width: 70,
+        justifyContent: 'flex-start',
+        alignItems: 'center'
     },
 
-    waitingMessageHeader: {
+    messageWrapper: {
+        flex: 1
+    },
+
+    preCallMessageHeader: {
         fontSize: 15,
-        marginTop: 5,
         color: ColorPalette.white,
         textAlign: 'left',
         ...JaneWeb.boldFont
     },
 
-    waitingMessageText: {
+    preCallMessageText: {
         marginTop: 5,
         fontSize: 12,
         color: ColorPalette.white,
         textAlign: 'left',
-        paddingRight: 100,
         ...JaneWeb.boldFont
     },
 
-    waitingMessageCloseBtn: {
-        position: 'absolute',
-        right: 10,
-        bottom: 50
+    preCallMessageCloseBtn: {
+        width: 30
     },
 
     watermark: {
-        width: 60,
-        height: 50,
-        marginLeft: 16,
-        marginRight: 8
+        aspectRatio: 300 / 248,
+        width: 50,
+        height: undefined
     }
 };
 

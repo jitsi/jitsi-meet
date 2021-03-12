@@ -19,7 +19,9 @@ type Props = AbstractButtonProps & {
     /**
      * The redux {@code dispatch} function.
      */
-    dispatch: Function
+    dispatch: Function,
+    appstate: string,
+    jwt: string
 };
 
 /**
@@ -49,7 +51,7 @@ class HangupButton extends AbstractHangupButton<Props, *> {
             // FIXME: these should be unified.
             if (navigator.product === 'ReactNative') {
                 this.props.dispatch(appNavigate(undefined));
-                updateParticipantReadyStatus(props.jwt, 'left')
+                updateParticipantReadyStatus(props.jwt, 'left');
             } else {
                 this.props.dispatch(disconnect(true));
             }
@@ -68,10 +70,21 @@ class HangupButton extends AbstractHangupButton<Props, *> {
     }
 }
 
-function mapStateToProps (state): Object {
+/**
+ * Maps part of the Redux state to the props of the component.
+ *
+ * @param {Object} state - The Redux state.
+ * @returns {{
+ *     appstate: string,
+ *     jwtPayload: Object
+ * }}
+ */
+function mapStateToProps(state): Object {
+    const appstate = state['features/background'];
     const { jwt } = state['features/base/jwt'];
 
     return {
+        appstate,
         jwt
     };
 }

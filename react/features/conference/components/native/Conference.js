@@ -39,10 +39,8 @@ import NavigationBar from './NavigationBar';
 import styles, { NAVBAR_GRADIENT_COLORS } from './styles';
 
 import type { AbstractProps } from '../AbstractConference';
-import {
-    getLocalParticipantFromJwt,
-    getLocalParticipantType
-} from '../../../jane-waiting-area-native';
+import { getLocalParticipantFromJwt, getLocalParticipantType
+} from '../../../base/participants';
 
 /**
  * The type of the React {@code Component} props of {@link Conference}.
@@ -115,7 +113,7 @@ type Props = AbstractProps & {
      * The redux {@code dispatch} function.
      */
     dispatch: Function,
-    enableJaneWaitingAreaPage: boolean
+    janeWaitingAreaEnabled: boolean
 };
 
 /**
@@ -261,7 +259,7 @@ class Conference extends AbstractConference<Props, *> {
             _reducedUI,
             _shouldDisplayTileView,
             _toolboxVisible,
-            _enableJaneWaitingAreaPage
+            _janeWaitingAreaEnabled
         } = this.props;
         const showGradient = _toolboxVisible;
         const applyGradientStretching = _filmstripVisible && isNarrowAspectRatio(this) && !_shouldDisplayTileView;
@@ -326,7 +324,7 @@ class Conference extends AbstractConference<Props, *> {
 
                     {_shouldDisplayTileView || <DisplayNameLabel
                         participantId = { _largeVideoParticipantId } />}
-                    {_enableJaneWaitingAreaPage && <JaneWaitingArea />}
+                    {_janeWaitingAreaEnabled && <JaneWaitingArea />}
                     {/*
                       * The Toolbox is in a stacking layer below the Filmstrip.
                       */}
@@ -441,7 +439,7 @@ function _mapStateToProps(state) {
         leaving
     } = state['features/base/conference'];
     const {
-        enableJaneWaitingAreaPage
+        janeWaitingAreaEnabled
     } = state['features/jane-waiting-area-native'];
     const { reducedUI } = state['features/base/responsive-ui'];
 
@@ -514,7 +512,7 @@ function _mapStateToProps(state) {
          * @type {boolean}
          */
         _toolboxVisible: isToolboxVisible(state),
-        _enableJaneWaitingAreaPage: enableJaneWaitingAreaPage,
+        _janeWaitingAreaEnabled: janeWaitingAreaEnabled,
         _jwt: jwt,
         _participantType: getLocalParticipantType(state),
         _participant: getLocalParticipantFromJwt(state)
