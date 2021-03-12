@@ -80,7 +80,15 @@ export default class JitsiStreamBackgroundEffect {
         this._outputCanvasCtx.globalCompositeOperation = 'copy';
 
         // Draw segmentation mask.
-        this._outputCanvasCtx.filter = `blur(${blurValue})`;
+        //
+
+        // Smooth out the edges.
+        if (this._options.virtualBackground.isVirtualBackground) {
+            this._outputCanvasCtx.filter = 'blur(4px)';
+        } else {
+            this._outputCanvasCtx.filter = 'blur(8px)';
+        }
+
         this._outputCanvasCtx.drawImage(
             this._segmentationMaskCanvas,
             0,
@@ -92,10 +100,16 @@ export default class JitsiStreamBackgroundEffect {
             this._inputVideoElement.width,
             this._inputVideoElement.height
         );
-
         this._outputCanvasCtx.globalCompositeOperation = 'source-in';
         this._outputCanvasCtx.filter = 'none';
+
+        // Draw the foreground video.
+        //
+
         this._outputCanvasCtx.drawImage(this._inputVideoElement, 0, 0);
+
+        // Draw the background.
+        //
 
         this._outputCanvasCtx.globalCompositeOperation = 'destination-over';
         if (this._options.virtualBackground.isVirtualBackground) {
