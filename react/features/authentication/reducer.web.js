@@ -11,12 +11,19 @@ import {
 } from './actionTypes';
 
 ReducerRegistry.register('features/authentication', (state = {}, action) => {
+    const {
+        error,
+        progress,
+        waitForOwnerTimeoutID,
+        thenableWithCancel
+    } = action;
+
     switch (action.type) {
 
     case WAIT_FOR_OWNER:
         return {
             ...state,
-            waitForOwnerTimeoutID: action.waitForOwnerTimeoutID
+            waitForOwnerTimeoutID
         };
 
     case STOP_WAIT_FOR_OWNER:
@@ -37,19 +44,15 @@ ReducerRegistry.register('features/authentication', (state = {}, action) => {
     case UPGRADE_ROLE_STARTED:
         return {
             ...state,
-            error: action.error,
-            progress: action.progress,
-            thenableWithCancel: action.thenableWithCancel
+            error: undefined,
+            progress: undefined,
+            thenableWithCancel
         };
 
     case UPGRADE_ROLE_FINISHED: {
-        let { thenableWithCancel } = action;
-
         if (state.thenableWithCancel === thenableWithCancel) {
-            const { error, progress } = action;
-
             if (error || progress === 1) {
-                thenableWithCancel = undefined;
+                action.thenableWithCancel = undefined;
             }
 
             return {
@@ -61,7 +64,6 @@ ReducerRegistry.register('features/authentication', (state = {}, action) => {
         }
         break;
     }
-
     }
 
     return state;
