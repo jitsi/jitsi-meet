@@ -97,7 +97,7 @@
     "uuid": "3.1.0",
     "wasm-check": "2.0.1",
     "windows-iana": "^3.1.0",
-    "xmldom": "0.1.27",
+    "xmldom": "0.5.0",
     "zxcvbn": "4.4.2"
   },
   "devDependencies": {
