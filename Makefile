@@ -51,8 +51,6 @@ deploy-appbundle:
 		$(OUTPUT_DIR)/analytics-ga.js \
 		$(BUILD_DIR)/analytics-ga.min.js \
 		$(BUILD_DIR)/analytics-ga.min.map \
-		$(BUILD_DIR)/rnnoise-processor.min.js \
-		$(BUILD_DIR)/rnnoise-processor.min.map \
 		$(BUILD_DIR)/close3.min.js \
 		$(BUILD_DIR)/close3.min.map \
 		$(DEPLOY_DIR)
