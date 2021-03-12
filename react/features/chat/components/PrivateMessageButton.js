@@ -1,5 +1,6 @@
 // @flow
 
+import { CHAT_ENABLED, getFeatureFlag } from '../../base/flags';
 import { translate } from '../../base/i18n';
 import { IconMessage, IconReply } from '../../base/icons';
 import { getParticipantById } from '../../base/participants';
@@ -77,8 +78,12 @@ class PrivateMessageButton extends AbstractButton<Props, any> {
  * @returns {Props}
  */
 export function _mapStateToProps(state: Object, ownProps: Props): $Shape<Props> {
+    const enabled = getFeatureFlag(state, CHAT_ENABLED, true);
+    const { visible = enabled } = ownProps;
+
     return {
-        _participant: getParticipantById(state, ownProps.participantID)
+        _participant: getParticipantById(state, ownProps.participantID),
+        visible
     };
 }
 
