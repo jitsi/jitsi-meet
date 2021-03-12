@@ -1,9 +1,9 @@
 // @flow
 
-import { getLocalVideoTrack } from '../../features/base/tracks';
+import { getLocalVideoTrack } from '../base/tracks';
+import { createVirtualBackgroundEffect } from '../stream-effects/virtual-background';
 
 import { BACKGROUND_ENABLED, SET_VIRTUAL_BACKGROUND } from './actionTypes';
-import { getBackgroundEffect } from './functions';
 import logger from './logger';
 
 /**
@@ -21,7 +21,7 @@ export function toggleBackgroundEffect(enabled: boolean) {
 
         try {
             if (enabled) {
-                await jitsiTrack.setEffect(await getBackgroundEffect(virtualBackground));
+                await jitsiTrack.setEffect(await createVirtualBackgroundEffect(virtualBackground));
                 dispatch(backgroundEnabled(true));
             } else {
                 await jitsiTrack.setEffect(undefined);
