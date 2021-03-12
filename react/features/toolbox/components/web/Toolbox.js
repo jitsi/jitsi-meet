@@ -10,6 +10,7 @@ import {
 } from '../../../analytics';
 import { getToolbarButtons } from '../../../base/config';
 import { openDialog, toggleDialog } from '../../../base/dialog';
+import { isMobileBrowser } from '../../../base/environment/utils';
 import { translate } from '../../../base/i18n';
 import {
     IconChat,
@@ -126,6 +127,11 @@ type Props = {
      * Whether or not the app is currently in full screen.
      */
     _fullScreen: boolean,
+
+    /**
+     * Whether or not the app is running in mobile browser.
+     */
+    _isMobile: boolean,
 
     /**
      * Whether or not the profile is disabled.
@@ -928,7 +934,9 @@ class Toolbox extends Component<Props, State> {
      * @returns {boolean}
      */
     _isEmbedMeetingVisible() {
-        return !this.props._isVpaasMeeting && this._shouldShowButton('embedmeeting');
+        return !this.props._isVpaasMeeting
+            && !this.props._isMobile
+            && this._shouldShowButton('embedmeeting');
     }
 
     /**
@@ -951,6 +959,7 @@ class Toolbox extends Component<Props, State> {
         const {
             _feedbackConfigured,
             _fullScreen,
+            _isMobile,
             _screensharing,
             t
         } = this.props;
@@ -963,6 +972,7 @@ class Toolbox extends Component<Props, State> {
                     key = 'videoquality'
                     onClick = { this._onToolbarOpenVideoQuality } />,
             this._shouldShowButton('fullscreen')
+                && !_isMobile
                 && <OverflowMenuItem
                     accessibilityLabel = { t('toolbar.accessibilityLabel.fullScreen') }
                     icon = { _fullScreen ? IconExitFullScreen : IconFullScreen }
@@ -1049,6 +1059,7 @@ class Toolbox extends Component<Props, State> {
                     key = 'settings'
                     showLabel = { true } />,
             this._shouldShowButton('shortcuts')
+                && !_isMobile
                 && <OverflowMenuItem
                     accessibilityLabel = { t('toolbar.accessibilityLabel.shortcuts') }
                     icon = { IconDeviceDocument }
@@ -1228,22 +1239,25 @@ class Toolbox extends Component<Props, State> {
      */
     _renderToolboxContent() {
         const {
+            _isMobile,
             _overflowMenuVisible,
             t
         } = this.props;
 
-        const buttonSet = getToolbarAdditionalButtons(this.state.windowWidth);
+        const buttonSet = getToolbarAdditionalButtons(this.state.windowWidth, _isMobile);
         const toolbarAccLabel = 'toolbar.accessibilityLabel.moreActionsMenu';
         const showOverflowMenuButton = buttonSet.has('overflow');
+        const containerClassName = `toolbox-content${_isMobile ? ' toolbox-content-mobile' : ''}`;
         let overflowMenuAdditionalButtons = [];
         let mainMenuAdditionalButtons = [];
+
 
         if (showOverflowMenuButton) {
             ({ overflowMenuAdditionalButtons, mainMenuAdditionalButtons } = this._getAdditionalButtons(buttonSet));
         }
 
         return (
-            <div className = 'toolbox-content'>
+            <div className = { containerClassName }>
                 <div className = 'toolbox-content-items'>
                     { this._renderAudioButton() }
                     { this._renderVideoButton() }
@@ -1322,6 +1336,7 @@ function _mapStateToProps(state) {
         _dialog: Boolean(state['features/base/dialog'].component),
         _feedbackConfigured: Boolean(callStatsID),
         _isProfileDisabled: Boolean(state['features/base/config'].disableProfile),
+        _isMobile: isMobileBrowser(),
         _isVpaasMeeting: isVpaasMeeting(state),
         _fullScreen: fullScreen,
         _tileViewEnabled: shouldDisplayTileView(state),

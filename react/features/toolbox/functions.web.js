@@ -4,36 +4,67 @@ import { getToolbarButtons } from '../base/config';
 import { hasAvailableDevices } from '../base/devices';
 
 const WIDTH = {
-    MEDIUM: 500,
-    SMALL: 390,
-    VERY_SMALL: 332,
-    NARROW: 224
+    FIT_9_ICONS: 520,
+    FIT_8_ICONS: 470,
+    FIT_7_ICONS: 420,
+    FIT_6_ICONS: 370,
+    FIT_5_ICONS: 320,
+    FIT_4_ICONS: 280
 };
 
 /**
- * Returns a set of button names to be displayed in the toolbox, based on the screen width.
+ * Returns a set of button names to be displayed in the toolbox, based on the screen width and platform.
  *
  * @param {number} width - The width of the screen.
+ * @param {number} isMobile - The device is a mobile one.
  * @returns {Set} The button set.
  */
-export function getToolbarAdditionalButtons(width: number): Set<string> {
-    if (width <= WIDTH.MEDIUM) {
-        if (width <= WIDTH.SMALL) {
-            if (width <= WIDTH.VERY_SMALL) {
-                if (width <= WIDTH.NARROW) {
-                    return new Set();
-                }
+export function getToolbarAdditionalButtons(width: number, isMobile: boolean): Set<string> {
+    let buttons = [];
 
-                return new Set([ 'overflow' ]);
-            }
-
-            return new Set([ 'chat', 'tileview', 'overflow' ]);
-        }
-
-        return new Set([ 'chat', 'raisehand', 'tileview', 'overflow' ]);
+    switch (true) {
+    case width >= WIDTH.FIT_9_ICONS: {
+        buttons = isMobile
+            ? [ 'chat', 'raisehand', 'tileview', 'invite', 'overflow' ]
+            : [ 'desktop', 'chat', 'raisehand', 'tileview', 'invite', 'overflow' ];
+        break;
     }
 
-    return new Set([ 'desktop', 'chat', 'raisehand', 'tileview', 'invite', 'overflow' ]);
+    case width >= WIDTH.FIT_8_ICONS: {
+        buttons = [ 'desktop', 'chat', 'raisehand', 'invite', 'overflow' ];
+        break;
+    }
+
+    case width >= WIDTH.FIT_7_ICONS: {
+        buttons = [ 'desktop', 'chat', 'invite', 'overflow' ];
+        break;
+    }
+
+    case width >= WIDTH.FIT_6_ICONS: {
+        buttons = [ 'chat', 'invite', 'overflow' ];
+        break;
+    }
+
+    case width >= WIDTH.FIT_5_ICONS: {
+        buttons = [ 'chat', 'overflow' ];
+        break;
+    }
+
+    case width >= WIDTH.FIT_4_ICONS: {
+        buttons = isMobile
+            ? [ 'chat', 'overflow' ]
+            : [ 'overflow' ];
+        break;
+    }
+
+    default: {
+        buttons = isMobile
+            ? [ 'chat', 'overflow' ]
+            : [];
+    }
+    }
+
+    return new Set(buttons);
 }
 
 /**
