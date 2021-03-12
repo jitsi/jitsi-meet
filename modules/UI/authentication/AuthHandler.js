@@ -242,13 +242,10 @@ function requireAuth(room, lockPassword) {
     if (authRequiredDialog) {
         return;
     }
+
     authRequiredDialog = APP.store.dispatch(
         openWaitForOwnerDialog(
-            () => authenticate.bind(null, room, lockPassword),
-            {
-                key: 'dialog.WaitForHostMsg',
-                params: room
-            }
+            () => authenticate.bind(null, room, lockPassword)
         )
     );
 
