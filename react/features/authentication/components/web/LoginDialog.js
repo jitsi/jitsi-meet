@@ -4,9 +4,12 @@ import { FieldTextStateless as TextField } from '@atlaskit/field-text';
 import React, { Component } from 'react';
 import type { Dispatch } from 'redux';
 
+import { connect, toJid } from '../../../base/connection';
 import { Dialog } from '../../../base/dialog';
-import { translate } from '../../../base/i18n';
-import { connect } from '../../../base/redux';
+import { translate, translateToHTML } from '../../../base/i18n';
+import { JitsiConnectionErrors } from '../../../base/lib-jitsi-meet';
+import { connect as reduxConnect } from '../../../base/redux';
+import { authenticateAndUpgradeRole, cancelLogin } from '../../actions.web';
 
 declare var config: Object;
 
@@ -16,9 +19,36 @@ declare var config: Object;
 type Props = {
 
     /**
+     * {@link JitsiConference} that needs authentication - will hold a valid
+     * value in XMPP login + guest access mode.
+     */
+    _conference: Object,
+
+    /**
+     * The server hosts specified in the global config.
+     */
+    _configHosts: Object,
+
+    /**
+     * Indicates if the dialog should display "connecting" status message.
+     */
+    _connecting: boolean,
+
+    /**
      * Redux store dispatch method.
      */
     dispatch: Dispatch<any>,
+
+    /**
+     * The error which occurred during login/authentication.
+     */
+    _error: Object,
+
+    /**
+     * The progress in the floating range between 0 and 1 of the authenticating
+     * and upgrading the role of the local participant/user.
+     */
+    _progress: number,
 
     /**
      * Invoked to obtain translated strings.
@@ -39,7 +69,12 @@ type State = {
     /**
      * The user entered local participant name.
      */
-    username: string
+    username: string,
+
+    /**
+     * The type of message that is being rendered.
+     */
+    messageIsError: boolean
 }
 
 /**
@@ -59,16 +94,15 @@ class LoginDialog extends Component<Props, State> {
         this.state = {
             username: '',
             password: '',
-            connecting: false,
-            error: {}
+            messageIsError: false
         };
 
-        this._onCancel = this._onCancel.bind(this);
+        this._onCancelLogin = this._onCancelLogin.bind(this);
         this._onLogin = this._onLogin.bind(this);
         this._onChange = this._onChange.bind(this);
     }
 
-    _onCancel: () => void;
+    _onCancelLogin: () => void;
 
     /**
      * Called when the cancel button is clicked.
@@ -76,22 +110,34 @@ class LoginDialog extends Component<Props, State> {
      * @private
      * @returns {void}
      */
-    _onCancel() {
-        console.log('Cancel');
+    _onCancelLogin() {
+        const { dispatch } = this.props;
+
+        dispatch(cancelLogin());
     }
 
     _onLogin: () => void;
 
     /**
-     * Called when the login button is clicked.
+     * Notifies this LoginDialog that the login button (OK) has been pressed by
+     * the user.
      *
      * @private
      * @returns {void}
      */
     _onLogin() {
-        this.setState({
-            connecting: true
-        });
+        const {
+            _conference: conference,
+            _configHosts: configHosts,
+            dispatch
+        } = this.props;
+        const { password, username } = this.state;
+        const jid = toJid(username, configHosts);
+        const result = conference
+            ? dispatch(authenticateAndUpgradeRole(jid, password, conference))
+            : dispatch(connect(jid, password));
+
+        return result;
     }
 
     _onChange: Object => void;
@@ -115,7 +161,60 @@ class LoginDialog extends Component<Props, State> {
      * @private
      */
     renderMessage() {
+        const {
+            _configHosts: configHosts,
+            _connecting: connecting,
+            _error: error,
+            _progress: progress,
+            t
+        } = this.props;
 
+        const { username, password } = this.state;
+
+        let messageKey;
+
+        const messageOptions = {};
+
+        if (progress && progress > 1) {
+            messageKey = t('connection.FETCH_SESSION_ID');
+        } else if (error) {
+            this.setState({
+                messageIsError: true
+            });
+
+            const { name } = error;
+
+            if (name === JitsiConnectionErrors.PASSWORD_REQUIRED) {
+                const { credentials } = error;
+
+                if (credentials
+                    && credentials.jid === toJid(username, configHosts)
+                    && credentials.password === password) {
+                    messageKey = t('dialog.incorrectPassword');
+                }
+            } else if (name) {
+                messageKey = t('dialog.connectErrorWithMsg');
+                messageOptions.msg = `${name} ${error.message}`;
+            }
+        } else if (connecting) {
+            this.setState({
+                messageIsError: false
+            });
+
+            messageKey = t('connection.CONNECTING');
+        }
+
+        if (messageKey) {
+            const message = translateToHTML(t, messageKey, messageOptions);
+
+            return (
+                <span>
+                    { message }
+                </span>
+            );
+        }
+
+        return null;
     }
 
     /**
@@ -127,43 +226,71 @@ class LoginDialog extends Component<Props, State> {
         const placeholder = config.hosts.authdomain
             ? 'user identity'
             : 'user@domain.net';
-        const { t } = this.props;
-        const { connecting, password, username } = this.state;
+        const { _connecting: connecting, t } = this.props;
+        const { password, username } = this.state;
 
         return (
             <Dialog
                 hideCancelButton = { connecting }
                 okDisabled = { connecting }
-                onCancel = { this._onCancel }
+                onCancel = { this._onCancelLogin }
                 onSubmit = { this._onLogin }
-                submitDisabled = { connecting }
                 width = { 'small' }>
-                { connecting ? t('connection.CONNECTING') : (<>
-                    <TextField
-                        autoFocus = { true }
-                        className = 'input-control'
-                        compact = { false }
-                        label = { t('dialog.user') }
-                        name = 'username'
-                        onChange = { this._onChange }
-                        placeholder = { placeholder }
-                        shouldFitContainer = { true }
-                        type = 'text'
-                        value = { username } />
-                    <TextField
-                        autoFocus = { true }
-                        className = 'input-control'
-                        compact = { false }
-                        label = { t('dialog.userPassword') }
-                        name = 'password'
-                        onChange = { this._onChange }
-                        shouldFitContainer = { true }
-                        type = 'password'
-                        value = { password } />
-                </>)}
+                <TextField
+                    autoFocus = { true }
+                    className = 'input-control'
+                    compact = { false }
+                    label = { t('dialog.user') }
+                    name = 'username'
+                    onChange = { this._onChange }
+                    placeholder = { placeholder }
+                    shouldFitContainer = { true }
+                    type = 'text'
+                    value = { username } />
+                <TextField
+                    autoFocus = { true }
+                    className = 'input-control'
+                    compact = { false }
+                    label = { t('dialog.userPassword') }
+                    name = 'password'
+                    onChange = { this._onChange }
+                    shouldFitContainer = { true }
+                    type = 'password'
+                    value = { password } />
+                { this.renderMessage() }
             </Dialog>
         );
     }
 }
 
-export default translate(connect()(LoginDialog));
+/**
+ * Maps (parts of) the Redux state to the associated props for the
+ * {@code LoginDialog} component.
+ *
+ * @param {Object} state - The Redux state.
+ * @private
+ * @returns {Props}
+ */
+function mapStateToProps(state) {
+    const {
+        error: authenticateAndUpgradeRoleError,
+        progress,
+        thenableWithCancel
+    } = state['features/authentication'];
+    const { authRequired } = state['features/base/conference'];
+    const { hosts: configHosts } = state['features/base/config'];
+    const {
+        connecting,
+        error: connectionError
+    } = state['features/base/connection'];
+
+    return {
+        _conference: authRequired,
+        _configHosts: configHosts,
+        _connecting: connecting || thenableWithCancel,
+        _error: connectionError || authenticateAndUpgradeRoleError,
+        _progress: progress
+    };
+}
+
+export default translate(reduxConnect(mapStateToProps)(LoginDialog));

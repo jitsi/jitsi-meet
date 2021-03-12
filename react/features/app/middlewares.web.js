@@ -1,5 +1,5 @@
 // @flow
-
+import '../authentication/middleware';
 import '../base/devices/middleware';
 import '../e2ee/middleware';
 import '../external-api/middleware';
