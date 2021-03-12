@@ -292,3 +292,20 @@
     }
 
 }
+
+/**
+ * On small mobile devices make the toolbar full width.
+ */
+.toolbox-content-mobile {
+    @media (max-width: 500px) {
+        margin-bottom: 0;
+
+        .toolbox-content-items {
+            border-radius: 0;
+            display: flex;
+            justify-content: space-evenly;
+            padding: 6px 0;
+            width: 100%;
+        }
+    }
+}
