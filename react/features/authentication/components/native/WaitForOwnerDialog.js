@@ -6,7 +6,7 @@ import type { Dispatch } from 'redux';
 import { ConfirmDialog } from '../../../base/dialog';
 import { translate } from '../../../base/i18n';
 import { connect } from '../../../base/redux';
-import { cancelWaitForOwner, _openLoginDialog } from '../../actions';
+import { cancelWaitForOwner, _openLoginDialog } from '../../actions.native';
 
 /**
  * The type of the React {@code Component} props of {@link WaitForOwnerDialog}.

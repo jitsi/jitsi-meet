@@ -4,11 +4,19 @@ import React, { Component } from 'react';
 import type { Dispatch } from 'redux';
 
 import { Dialog } from '../../../base/dialog';
-import { translate } from '../../../base/i18n';
+import { translate, translateToHTML } from '../../../base/i18n';
 import { connect } from '../../../base/redux';
-import { openLoginDialog } from '../../actions.web';
+import { openLoginDialog, cancelWaitForOwner } from '../../actions.web';
 
+/**
+ * The type of the React {@code Component} props of {@link WaitForOwnerDialog}.
+ */
 type Props = {
+
+    /**
+     * The name of the conference room (without the domain part).
+     */
+    _room: string,
 
     /**
      * Redux store dispatch method.
@@ -21,23 +29,9 @@ type Props = {
     t: Function,
 
     /**
-     * The name of the conference room (without the domain part).
-     */
-    room: string,
-
-    /**
      * Function to be invoked after click.
      */
-    onAuthNow: ?Function,
-
-    /**
-     * Untranslated i18n key of the content to be displayed.
-     *
-     * NOTE: This dialog also adds support to Object type keys that will be
-     * translated using the provided params. See i18n function
-     * {@code translate(string, Object)} for more details.
-     */
-    contentKey: string | { key: string, params: Object },
+    onAuthNow: ?Function
 }
 
 /**
@@ -55,11 +49,11 @@ class WaitForOwnerDialog extends Component<Props> {
     constructor(props: Props) {
         super(props);
 
-        this._onCancel = this._onCancel.bind(this);
-        this._onLogin = this._onLogin.bind(this);
+        this._onCancelWaitForOwner = this._onCancelWaitForOwner.bind(this);
+        this._onIAmHost = this._onIAmHost.bind(this);
     }
 
-    _onCancel: () => void;
+    _onCancelWaitForOwner: () => void;
 
     /**
      * Called when the cancel button is clicked.
@@ -67,11 +61,13 @@ class WaitForOwnerDialog extends Component<Props> {
      * @private
      * @returns {void}
      */
-    _onCancel() {
-        console.log('Cancel');
+    _onCancelWaitForOwner() {
+        const { dispatch } = this.props;
+
+        dispatch(cancelWaitForOwner());
     }
 
-    _onLogin: () => void;
+    _onIAmHost: () => void;
 
     /**
      * Called when the OK button is clicked.
@@ -79,7 +75,7 @@ class WaitForOwnerDialog extends Component<Props> {
      * @private
      * @returns {void}
      */
-    _onLogin() {
+    _onIAmHost() {
         const { onAuthNow, dispatch } = this.props;
 
         onAuthNow && onAuthNow();
@@ -93,27 +89,44 @@ class WaitForOwnerDialog extends Component<Props> {
      */
     render() {
         const {
-            t,
-            contentKey
+            _room,
+            t
         } = this.props;
-
-        const content
-            = typeof contentKey === 'string'
-                ? t(contentKey)
-                : t(contentKey.key, contentKey.params);
 
         return (
             <Dialog
                 okKey = { t('dialog.IamHost') }
-                onCancel = { this._onCancel }
-                onSubmit = { this._onLogin }
+                onCancel = { this._onCancelWaitForOwner }
+                onSubmit = { this._onIAmHost }
+                titleKey = { t('dialog.WaitingForHost') }
                 width = { 'small' }>
                 <span>
-                    { content }
+                    {
+                        translateToHTML(
+                            t, 'dialog.WaitForHostMsg', { room: _room })
+                    }
                 </span>
             </Dialog>
         );
     }
 }
 
-export default translate(connect()(WaitForOwnerDialog));
+/**
+ * Maps (parts of) the Redux state to the associated props for the
+ * {@code WaitForOwnerDialog} component.
+ *
+ * @param {Object} state - The Redux state.
+ * @private
+ * @returns {{
+ *     _room: string
+ * }}
+ */
+function mapStateToProps(state) {
+    const { authRequired } = state['features/base/conference'];
+
+    return {
+        _room: authRequired && authRequired.getName()
+    };
+}
+
+export default translate(connect(mapStateToProps)(WaitForOwnerDialog));
