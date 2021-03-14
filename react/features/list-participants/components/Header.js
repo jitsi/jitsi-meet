@@ -20,7 +20,7 @@ type Props = {
 
 /**
  * Custom header of the {@code ListParticipantsDialog}.
- * 
+ *
  * @returns {React$Element<any>}
  */
 function Header({ onClose, t }: Props) {

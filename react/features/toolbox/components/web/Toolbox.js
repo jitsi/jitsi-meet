@@ -38,11 +38,11 @@ import { getLocalVideoTrack, toggleScreensharing } from '../../../base/tracks';
 import { isVpaasMeeting } from '../../../billing-counter/functions';
 import { CHAT_SIZE, ChatCounter, toggleChat } from '../../../chat';
 import { EmbedMeetingDialog } from '../../../embed-meeting';
-import { ListParticipantsDialog } from '../../../list-participants';
 import { SharedDocumentButton } from '../../../etherpad';
 import { openFeedbackDialog } from '../../../feedback';
 import { beginAddPeople } from '../../../invite';
 import { openKeyboardShortcutsDialog } from '../../../keyboard-shortcuts';
+import { ListParticipantsDialog } from '../../../list-participants';
 import { LocalRecordingInfoDialog } from '../../../local-recording';
 import {
     LiveStreamButton,

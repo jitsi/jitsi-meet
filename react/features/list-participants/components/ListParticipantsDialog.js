@@ -6,8 +6,6 @@ import { connect } from 'react-redux';
 import CopyButton from '../../base/buttons/CopyButton';
 import { Dialog } from '../../base/dialog';
 import { translate } from '../../base/i18n';
-
-
 import { getParticipants } from '../../base/participants';
 
 
@@ -36,7 +34,7 @@ function ListParticipants({ t, paticipantsList }: Props) {
      * Get the list of participants for a jitsi meeting.
      *
      * @returns {string} The list of participants.
-     */	
+     */
     const getList = () => {
         let list = '';
 
@@ -51,7 +49,7 @@ function ListParticipants({ t, paticipantsList }: Props) {
 
         return list;
     };
-	
+
     return (
         <Dialog
             customHeader = { Header }
