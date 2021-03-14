@@ -426,7 +426,7 @@ var config = {
     // - 'desktop' controls the "Share your screen" button
     // - if `toolbarButtons` is undefined, we fallback to enabling all buttons on the UI
     // toolbarButtons: [
-    //    'microphone', 'camera', 'closedcaptions', 'desktop', 'embedmeeting', 'fullscreen',
+    //    'microphone', 'camera', 'closedcaptions', 'desktop', 'embedmeeting', 'listparticipants', 'fullscreen',
     //    'fodeviceselection', 'hangup', 'profile', 'chat', 'recording',
     //    'livestreaming', 'etherpad', 'sharedvideo', 'settings', 'raisehand',
     //    'videoquality', 'filmstrip', 'invite', 'feedback', 'stats', 'shortcuts',

@@ -332,6 +332,9 @@
     "embedMeeting": {
         "title": "Embed this meeting"
     },
+    "listParticipants": {
+        "title": "List Of Participants"
+    },
     "virtualBackground": {
         "title": "Backgrounds",
         "enableBlur": "Enable blur",
@@ -716,6 +719,7 @@
             "document": "Toggle shared document",
             "download": "Download our apps",
             "embedMeeting": "Embed meeting",
+            "listParticipants": "List Participants",
             "feedback": "Leave feedback",
             "fullScreen": "Toggle full screen",
             "grantModerator": "Grant Moderator",
@@ -769,6 +773,7 @@
         "download": "Download our apps",
         "e2ee": "End-to-End Encryption",
         "embedMeeting": "Embed meeting",
+        "listParticipants": "List Participants",
         "enterFullScreen": "View full screen",
         "enterTileView": "Enter tile view",
         "exitFullScreen": "Exit full screen",

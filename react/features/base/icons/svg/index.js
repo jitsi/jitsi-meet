@@ -2,6 +2,7 @@
 
 export { default as IconAdd } from './add.svg';
 export { default as IconAddPeople } from './link.svg';
+export { default as IconParticipants } from './participant.svg';
 export { default as IconArrowBack } from './arrow_back.svg';
 export { default as IconArrowDown } from './arrow_down.svg';
 export { default as IconArrowDownLarge } from './arrow_down_large.svg';

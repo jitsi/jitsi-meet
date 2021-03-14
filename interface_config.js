@@ -202,7 +202,7 @@ var interfaceConfig = {
      * This config was moved to config.js as `toolbarButtons`.
      */
     // TOOLBAR_BUTTONS: [
-    //     'microphone', 'camera', 'closedcaptions', 'desktop', 'embedmeeting', 'fullscreen',
+    //     'microphone', 'camera', 'closedcaptions', 'desktop', 'embedmeeting', 'listparticipants', 'fullscreen',
     //     'fodeviceselection', 'hangup', 'profile', 'chat', 'recording',
     //     'livestreaming', 'etherpad', 'sharedvideo', 'settings', 'raisehand',
     //     'videoquality', 'filmstrip', 'invite', 'feedback', 'stats', 'shortcuts',

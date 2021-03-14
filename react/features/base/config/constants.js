@@ -15,7 +15,7 @@ export const _CONFIG_STORE_PREFIX = 'config.js';
  */
 export const TOOLBAR_BUTTONS = [
     'microphone', 'camera', 'closedcaptions', 'desktop', 'embedmeeting', 'fullscreen',
-    'fodeviceselection', 'hangup', 'profile', 'chat', 'recording',
+    'fodeviceselection', 'hangup', 'profile', 'chat', 'recording', 'listparticipants',
     'livestreaming', 'etherpad', 'sharedvideo', 'settings', 'raisehand',
     'videoquality', 'filmstrip', 'invite', 'feedback', 'stats', 'shortcuts',
     'tileview', 'select-background', 'download', 'help', 'mute-everyone', 'mute-video-everyone', 'security'

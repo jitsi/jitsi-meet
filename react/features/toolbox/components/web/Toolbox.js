@@ -15,6 +15,7 @@ import { translate } from '../../../base/i18n';
 import {
     IconChat,
     IconCodeBlock,
+    IconParticipants,
     IconDeviceDocument,
     IconExitFullScreen,
     IconFeedback,
@@ -37,6 +38,7 @@ import { getLocalVideoTrack, toggleScreensharing } from '../../../base/tracks';
 import { isVpaasMeeting } from '../../../billing-counter/functions';
 import { CHAT_SIZE, ChatCounter, toggleChat } from '../../../chat';
 import { EmbedMeetingDialog } from '../../../embed-meeting';
+import { ListParticipantsDialog } from '../../../list-participants';
 import { SharedDocumentButton } from '../../../etherpad';
 import { openFeedbackDialog } from '../../../feedback';
 import { beginAddPeople } from '../../../invite';
@@ -250,6 +252,7 @@ class Toolbox extends Component<Props, State> {
         this._onToolbarOpenKeyboardShortcuts = this._onToolbarOpenKeyboardShortcuts.bind(this);
         this._onToolbarOpenSpeakerStats = this._onToolbarOpenSpeakerStats.bind(this);
         this._onToolbarOpenEmbedMeeting = this._onToolbarOpenEmbedMeeting.bind(this);
+        this._onToolbarOpenListParticipants = this._onToolbarOpenListParticipants.bind(this);
         this._onToolbarOpenVideoQuality = this._onToolbarOpenVideoQuality.bind(this);
         this._onToolbarToggleChat = this._onToolbarToggleChat.bind(this);
         this._onToolbarToggleFullScreen = this._onToolbarToggleFullScreen.bind(this);
@@ -408,6 +411,16 @@ class Toolbox extends Component<Props, State> {
      */
     _doOpenEmbedMeeting() {
         this.props.dispatch(openDialog(EmbedMeetingDialog));
+    }
+
+    /**
+     * Callback invoked to display {@code ListParticipantsDialog}.
+     *
+     * @private
+     * @returns {void}
+     */
+    _doOpenListParticipants() {
+        this.props.dispatch(openDialog(ListParticipantsDialog));
     }
 
     /**
@@ -772,6 +785,21 @@ class Toolbox extends Component<Props, State> {
         this._doOpenEmbedMeeting();
     }
 
+    _onToolbarOpenListParticipants: () => void;
+
+    /**
+     * Creates an analytics toolbar event and dispatches an action for opening
+     * the List Participants modal.
+     *
+     * @private
+     * @returns {void}
+     */
+    _onToolbarOpenListParticipants() {
+        sendAnalytics(createToolbarEvent('list.participants'));
+
+        this._doOpenListParticipants();
+    }
+
     _onToolbarOpenSpeakerStats: () => void;
 
     /**
@@ -1073,6 +1101,13 @@ class Toolbox extends Component<Props, State> {
                     key = 'embed'
                     onClick = { this._onToolbarOpenEmbedMeeting }
                     text = { t('toolbar.embedMeeting') } />,
+            this._shouldShowButton('listparticipants')
+                && <OverflowMenuItem
+                    accessibilityLabel = { t('toolbar.accessibilityLabel.listParticipants') }
+                    icon = { IconParticipants }
+                    key = 'list'
+                    onClick = { this._onToolbarOpenListParticipants }
+                    text = { t('toolbar.listParticipants') } />,
             this._shouldShowButton('feedback')
                 && _feedbackConfigured
                 && <OverflowMenuItem
