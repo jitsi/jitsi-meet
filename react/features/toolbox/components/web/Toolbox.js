@@ -950,15 +950,6 @@ class Toolbox extends Component<Props, State> {
     }
 
     /**
-     * Returns true if the camera toggle button is visible and false otherwise.
-     *
-     * @returns {boolean}
-     */
-    _isToggleCameraVisible() {
-        return isMobileBrowser() && this.props._hasMultipleCameras && this._shouldShowButton('toggle');
-    }
-
-    /**
      * Renders the list elements of the overflow menu.
      *
      * @private
@@ -977,9 +968,9 @@ class Toolbox extends Component<Props, State> {
         const group1 = [
             ...additionalButtons,
 
-            this._isToggleCameraVisible()
+            this._shouldShowButton('toggle-camera')
                 && <ToggleCameraButton
-                    key = 'toggle'
+                    key = 'toggle-camera'
                     showLabel = { true } />,
             this._shouldShowButton('videoquality')
                 && <OverflowMenuVideoQualityItem
@@ -1330,7 +1321,6 @@ function _mapStateToProps(state) {
     const localParticipant = getLocalParticipant(state);
     const localRecordingStates = state['features/local-recording'];
     const localVideo = getLocalVideoTrack(state['features/base/tracks']);
-    const { videoInput } = state['features/base/devices'].availableDevices;
 
     let desktopSharingDisabledTooltipKey;
 
@@ -1350,7 +1340,6 @@ function _mapStateToProps(state) {
         _desktopSharingDisabledTooltipKey: desktopSharingDisabledTooltipKey,
         _dialog: Boolean(state['features/base/dialog'].component),
         _feedbackConfigured: Boolean(callStatsID),
-        _hasMultipleCameras: videoInput.length > 1,
         _isProfileDisabled: Boolean(state['features/base/config'].disableProfile),
         _isMobile: isMobileBrowser(),
         _isVpaasMeeting: isVpaasMeeting(state),

@@ -1,5 +1,6 @@
 // @flow
 
+import { isMobileBrowser } from '../../../base/environment/utils';
 import { translate } from '../../../base/i18n';
 import { IconCameraRefresh } from '../../../base/icons';
 import { connect } from '../../../base/redux';
@@ -14,17 +15,17 @@ type Props = AbstractButtonProps & {
     /**
      * Whether the current conference is in audio only mode or not.
      */
-    audioOnly: boolean,
-
-    /**
-     * The action that is dispatched when clicking/pressing the button.
-     */
-    onToggleCameraClick: Function,
+    _audioOnly: boolean,
 
     /**
      * Whether video is currently muted or not.
      */
-    videoMuted: boolean
+    _videoMuted: boolean,
+
+    /**
+     * The Redux dispatch function.
+     */
+    dispatch: Function
 };
 
 /**
@@ -41,7 +42,7 @@ class ToggleCameraButton extends AbstractButton<Props, any> {
      * @returns {void}
      */
     _handleClick() {
-        this.props.onToggleCameraClick();
+        this.props.dispatch(toggleCamera());
     }
 
     /**
@@ -50,7 +51,7 @@ class ToggleCameraButton extends AbstractButton<Props, any> {
      * @returns {boolean}
      */
     _isDisabled() {
-        return this.props.audioOnly || this.props.videoMuted;
+        return this.props._audioOnly || this.props._videoMuted;
     }
 }
 
@@ -64,15 +65,13 @@ class ToggleCameraButton extends AbstractButton<Props, any> {
 function mapStateToProps(state): Object {
     const { enabled: audioOnly } = state['features/base/audio-only'];
     const tracks = state['features/base/tracks'];
+    const { videoInput } = state['features/base/devices'].availableDevices;
 
     return {
-        audioOnly: Boolean(audioOnly),
-        videoMuted: isLocalCameraTrackMuted(tracks)
+        _audioOnly: Boolean(audioOnly),
+        _videoMuted: isLocalCameraTrackMuted(tracks),
+        visible: isMobileBrowser() && videoInput.length === 2
     };
 }
 
-const mapDispatchToProps = {
-    onToggleCameraClick: () => toggleCamera()
-};
-
-export default translate(connect(mapStateToProps, mapDispatchToProps)(ToggleCameraButton));
+export default translate(connect(mapStateToProps)(ToggleCameraButton));

@@ -19,5 +19,5 @@ export const TOOLBAR_BUTTONS = [
     'livestreaming', 'etherpad', 'sharedvideo', 'settings', 'raisehand',
     'videoquality', 'filmstrip', 'invite', 'feedback', 'stats', 'shortcuts',
     'tileview', 'select-background', 'download', 'help', 'mute-everyone', 'mute-video-everyone',
-    'security', 'toggle'
+    'security', 'toggle-camera'
 ];
