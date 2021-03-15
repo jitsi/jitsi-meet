@@ -235,6 +235,11 @@
         }
     }
 
+    @media (max-width: 320px) {
+        height: 36px;
+        width: 36px;
+    }
+
     &.toggled {
         background: $newToolbarButtonToggleColor;
     }
