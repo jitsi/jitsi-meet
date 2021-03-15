@@ -39,6 +39,20 @@ window.APP = {
         },
         getConnectionState() {
             return room && room.getConnectionState();
+        },
+        muteAudio(mute) {
+            // Note: will have no effect if !autoCreateLocalAudio
+            localAudio = mute;
+            for (let i = 0; i < localTracks.length; i++) {
+                if (localTracks[i].getType() === 'audio') {
+                    if (mute) {
+                        localTracks[i].mute();
+                    }
+                    else {
+                        localTracks[i].unmute();
+                    }
+                }
+            }
         }
     },
 
