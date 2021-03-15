@@ -1173,8 +1173,7 @@ class Toolbox extends Component<Props, State> {
                 ? mainMenuAdditionalButtons.push(
                     <TileViewButton
                         key = 'tileview'
-                        showLabel = { false }
-                        visible = { true } />)
+                        showLabel = { false } />)
                 : overflowMenuAdditionalButtons.push(
                     <TileViewButton
                         key = 'tileview'
