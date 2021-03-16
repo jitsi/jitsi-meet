@@ -149,7 +149,7 @@ function VirtualBackground({ dispatch, t }: Props) {
                     </Tooltip>
                 ))}
                 <Tooltip
-                    content = { 'Upload Image' }
+                    content = { t('virtualBackground.uploadImage') }
                     position = { 'top' }>
                     <label
                         className = 'custom-file-upload'

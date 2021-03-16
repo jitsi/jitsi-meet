@@ -335,7 +335,8 @@
     "virtualBackground": {
         "title": "Backgrounds",
         "enableBlur": "Enable blur",
-        "removeBackground": "Remove background"
+        "removeBackground": "Remove background",
+        "uploadImage": "Upload image"
     },
     "feedback": {
         "average": "Average",
