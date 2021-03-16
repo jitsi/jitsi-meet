@@ -103,30 +103,25 @@ class PasswordRequiredPrompt extends Component<Props, State> {
      * @protected
      */
     _renderBody() {
-        const onIcon = (<Icon
-            alt = 'Show Password'
+        const passwordShown = this.state.passwordShown;
+        const eyeIcon = (<Icon
+            alt = { passwordShown ? 'Show Password' : 'Hide Password' }
             className = 'textfield-icon'
             onClick = { this._onClickPasswordVisibility }
-            src = { IconAudioOnly } />);
-        const offIcon = (<Icon
-            alt = 'Hide Password'
-            className = 'textfield-icon'
-            onClick = { this._onClickPasswordVisibility }
-            src = { IconAudioOnlyOff } />);
+            src = { passwordShown ? IconAudioOnlyOff : IconAudioOnly } />);
 
         return (
             <div>
                 <Textfield
                     autoFocus = { true }
                     compact = { true }
-                    elemAfterInput = { this.state.passwordShown ? offIcon : onIcon }
+                    elemAfterInput = { eyeIcon }
                     label = { this.props.t('dialog.passwordLabel') }
                     name = 'lockKey'
                     onChange = { this._onPasswordChanged }
                     shouldFitContainer = { true }
                     type = { this.state.passwordShown ? 'text' : 'password' }
                     value = { this.state.password } />
-
             </div>
         );
     }
