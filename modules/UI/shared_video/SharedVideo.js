@@ -498,7 +498,7 @@ export default class SharedVideoManager {
      * Receives events for local audio mute/unmute by local user.
      * @param muted boolena whether it is muted or not.
      * @param {boolean} indicates if this mute was a result of user interaction,
-     * i.e. pressing the mute button or it was programatically triggerred
+     * i.e. pressing the mute button or it was programmatically triggered
      */
     onLocalAudioMuted(muted, userInteraction) {
         if (!this.player) {

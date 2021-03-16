@@ -350,7 +350,7 @@ export default class SmallVideo {
     }
 
     /**
-     * Initalizes any browser specific properties. Currently sets the overflow
+     * Initializes any browser specific properties. Currently sets the overflow
      * property for Qt browsers on Windows to hidden, thus fixing the following
      * problem:
      * Some browsers don't have full support of the object-fit property for the
@@ -428,9 +428,9 @@ export default class SmallVideo {
     _shouldTriggerPin(event) {
         // TODO Checking the classes is a workround to allow events to bubble into
         // the DisplayName component if it was clicked. React's synthetic events
-        // will fire after jQuery handlers execute, so stop propogation at this
+        // will fire after jQuery handlers execute, so stop propagation at this
         // point will prevent DisplayName from getting click events. This workaround
-        // should be removeable once LocalVideo is a React Component because then
+        // should be removable once LocalVideo is a React Component because then
         // the components share the same eventing system.
         const $source = $(event.target || event.srcElement);
 
