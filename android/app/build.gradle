@@ -122,13 +122,12 @@ gradle.projectsEvaluated {
         android.applicationVariants.all { variant ->
             variant.outputs.each { output ->
                 output.getProcessManifestProvider().get().doLast {
-                    def outputDir = manifestOutputDirectory.get().asFile
-                    def manifestPath = new File(outputDir, 'AndroidManifest.xml')
+                    def manifest = manifestOutputFile.asFile.get()
                     def charset = 'UTF-8'
                     def text
-                    text = manifestPath.getText(charset)
+                    text = manifest.getText(charset)
                     text = text.replace('</application>', "${dropboxActivity}</application>")
-                    manifestPath.write(text, charset)
+                    manifest.write(text, charset)
                 }
             }
         }
