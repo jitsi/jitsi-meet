@@ -26,10 +26,10 @@ export default class JitsiStreamBackgroundEffect {
     _segmentationMask: Object;
     _segmentationMaskCanvas: Object;
     _renderMask: Function;
+    _virtualImage: HTMLImageElement;
     isEnabled: Function;
     startEffect: Function;
     stopEffect: Function;
-    virtualImage: Image;
 
     /**
      * Represents a modified video MediaStream track.
@@ -42,8 +42,8 @@ export default class JitsiStreamBackgroundEffect {
         this._options = options;
 
         if (this._options.virtualBackground.isVirtualBackground) {
-            this.virtualImage = new Image();
-            this.virtualImage.src = this._options.virtualBackground.virtualSource;
+            this._virtualImage = document.createElement('img');
+            this._virtualImage.src = this._options.virtualBackground.virtualSource;
         }
         this._model = model;
         this._options = options;
@@ -113,7 +113,7 @@ export default class JitsiStreamBackgroundEffect {
 
         this._outputCanvasCtx.globalCompositeOperation = 'destination-over';
         if (this._options.virtualBackground.isVirtualBackground) {
-            this._outputCanvasCtx.drawImage(this.virtualImage, 0, 0);
+            this._outputCanvasCtx.drawImage(this._virtualImage, 0, 0);
         } else {
             this._outputCanvasCtx.filter = `blur(${blurValue})`;
             this._outputCanvasCtx.drawImage(this._inputVideoElement, 0, 0);
