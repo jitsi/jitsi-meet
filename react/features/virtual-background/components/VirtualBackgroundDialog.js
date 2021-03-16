@@ -54,7 +54,8 @@ type Props = {
  * @returns {ReactElement}
  */
 function VirtualBackground({ dispatch, t }: Props) {
-    const [ storedImages, setStoredImages ] = useState(JSON.parse(localStorage.getItem('storedImages') || '{}') || []);
+    const localImages = localStorage.getItem('storedImages');
+    const [ storedImages, setStoredImages ] = useState((localImages && JSON.parse(localImages)) || []);
 
     /**
      * Updates stored images on local storage.
