@@ -19,7 +19,7 @@ declare var interfaceConfig: Object;
  * The initial state of the feature base/config when executing in a
  * non-React Native environment. The mandatory configuration to be passed to
  * JitsiMeetJS#init(). The app will download config.js from the Jitsi Meet
- * deployment and take its values into account but the values bellow will be
+ * deployment and take its values into account but the values below will be
  * enforced (because they are essential to the correct execution of the
  * application).
  *
@@ -32,7 +32,7 @@ const INITIAL_NON_RN_STATE = {
  * The initial state of the feature base/config when executing in a React Native
  * environment. The mandatory configuration to be passed to JitsiMeetJS#init().
  * The app will download config.js from the Jitsi Meet deployment and take its
- * values into account but the values bellow will be enforced (because they are
+ * values into account but the values below will be enforced (because they are
  * essential to the correct execution of the application).
  *
  * @type {Object}
@@ -111,7 +111,7 @@ ReducerRegistry.register('features/base/config', (state = _getInitialState(), ac
  * Gets the initial state of the feature base/config. The mandatory
  * configuration to be passed to JitsiMeetJS#init(). The app will download
  * config.js from the Jitsi Meet deployment and take its values into account but
- * the values bellow will be enforced (because they are essential to the correct
+ * the values below will be enforced (because they are essential to the correct
  * execution of the application).
  *
  * @returns {Object}

@@ -332,7 +332,7 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
     _onPressItem: Item => Function
 
     /**
-     * Function to preapre a callback for the onPress event of the touchable.
+     * Function to prepare a callback for the onPress event of the touchable.
      *
      * @param {Item} item - The item on which onPress was invoked.
      * @returns {Function}

@@ -71,7 +71,7 @@ export default {
     },
 
     /**
-     * Style fo the form section separator titles.
+     * Style for the form section separator titles.
      */
     formSectionTitle: {
         backgroundColor: 'rgba(0, 0, 0, 0.1)',

@@ -56,7 +56,7 @@ export function hideAddPeopleDialog() {
  * Invites (i.e. Sends invites to) an array of invitees (which may be a
  * combination of users, rooms, phone numbers, and video rooms.
  *
- * @param  {Array<Object>} invitees - The recepients to send invites to.
+ * @param  {Array<Object>} invitees - The recipients to send invites to.
  * @param  {Array<Object>} showCalleeInfo - Indicates whether the
  * {@code CalleeInfo} should be displayed or not.
  * @returns {Promise<Array<Object>>} A {@code Promise} resolving with an array

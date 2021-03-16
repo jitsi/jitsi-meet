@@ -185,7 +185,7 @@ export function createRecentClickedEvent(eventName, attributes = {}) {
 }
 
 /**
- * Creates an event which indicate an action occured in the chrome extension banner.
+ * Creates an event which indicate an action occurred in the chrome extension banner.
  *
  * @param {boolean} installPressed - Whether the user pressed install or `x` - cancel.
  * @param {Object} attributes - Attributes to attach to the event.
@@ -460,7 +460,7 @@ export function createLocalTracksDurationEvent(duration) {
 
 /**
  * Creates an event which indicates that an action related to recording has
- * occured.
+ * occurred.
  *
  * @param {string} action - The action (e.g. 'start' or 'stop').
  * @param {string} type - The recording type (e.g. 'file' or 'live').

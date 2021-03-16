@@ -4,7 +4,7 @@ import FocusLock, { MoveFocusInside } from 'react-focus-lock';
 
 /**
  * FocusLock wrapper that disable the FocusLock in the @atlaskit/modal-dialog. We need to disable it because if the
- * iframe API is used and a dialog is displayed it is imposible to click on fields outside of the iframe (FocusLock
+ * iframe API is used and a dialog is displayed it is impossible to click on fields outside of the iframe (FocusLock
  * will steal the focus from any element that is not part of the dialog).
  */
 export default class FocusLockWrapper extends FocusLock<*> {

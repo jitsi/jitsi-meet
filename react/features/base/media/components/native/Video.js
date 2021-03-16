@@ -37,8 +37,8 @@ type Props = {
      * thought of as giving a hint rather than as imposing a requirement.
      * For example, video renderers such as Video are commonly implemented
      * using OpenGL and OpenGL views may have different numbers of layers in
-     * their stacking space. Android has three: a layer bellow the window
-     * (aka default), a layer bellow the window again but above the previous
+     * their stacking space. Android has three: a layer below the window
+     * (aka default), a layer below the window again but above the previous
      * layer (aka media overlay), and above the window. Consequently, it is
      * advisable to limit the number of utilized layers in the stacking
      * space to the minimum sufficient for the desired display. For example,

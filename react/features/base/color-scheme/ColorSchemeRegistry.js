@@ -33,12 +33,12 @@ class ColorSchemeRegistry {
     }
 
     /**
-     * Retreives the color-scheme applied style definition of a component.
+     * Retrieves the color-scheme applied style definition of a component.
      *
      * @param {Object | Function} stateful - An object or function that can be
      * resolved to Redux state using the {@code toState} function.
      * @param {string} componentName - The name of the component whose style we
-     * want to retreive.
+     * want to retrieve.
      * @returns {StyleType}
      */
     get(stateful: Object | Function, componentName: string): StyleType {
@@ -115,7 +115,7 @@ class ColorSchemeRegistry {
             ] of Object.entries(schemedStyle)) {
                 if (typeof styleValue === 'object') {
                     // The value is another style object, we apply the same
-                    // transformation recusively.
+                    // transformation recursively.
                     schemedStyle[styleName]
                         = this._applyColorScheme(
                             stateful, componentName, styleValue);

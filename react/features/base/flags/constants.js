@@ -106,7 +106,7 @@ export const MEETING_NAME_ENABLED = 'meeting-name.enabled';
 
 /**
  * Flag indicating if the meeting password button should be enabled.
- * Note that this flag just decides on the buttton, if a meeting has a password
+ * Note that this flag just decides on the button, if a meeting has a password
  * set, the password ddialog will still show up.
  * Default: enabled (true).
  */

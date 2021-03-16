@@ -28,7 +28,7 @@ type Props = {
     isOpen: boolean,
 
     /**
-     * Calback to change the visibility of the overflow menu.
+     * Callback to change the visibility of the overflow menu.
      */
     onVisibilityChange: Function,
 

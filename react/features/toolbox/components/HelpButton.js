@@ -12,7 +12,7 @@ import { openURLInBrowser } from '../../base/util';
 type Props = AbstractButtonProps & {
 
     /**
-     * The URL to the user documenation.
+     * The URL to the user documentation.
      */
     _userDocumentationURL: string
 };

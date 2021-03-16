@@ -157,7 +157,7 @@ export class App extends AbstractApp {
             // it is preferred because it is at a later step of the
             // error/exception handling and it is specific to fatal
             // errors/exceptions which were observed to kill the app. The
-            // solution implemented bellow was tested on Android only so it is
+            // solution implemented below was tested on Android only so it is
             // considered safest to use it there only.
             return;
         }

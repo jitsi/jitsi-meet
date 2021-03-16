@@ -59,7 +59,7 @@ type Props = {
     _isOpen: boolean,
 
     /**
-     * Display name of the participant retreived from Redux.
+     * Display name of the participant retrieved from Redux.
      */
     _participantDisplayName: string
 }

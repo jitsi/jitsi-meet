@@ -25,7 +25,7 @@ export const ADD_MESSAGE = 'ADD_MESSAGE';
 export const CLEAR_MESSAGES = 'CLEAR_MESSAGES';
 
 /**
- * The type of the action which signals the cancelation the chat panel.
+ * The type of the action which signals the cancellation the chat panel.
  *
  * {
  *     type: CLOSE_CHAT
