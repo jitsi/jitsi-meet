@@ -84,7 +84,7 @@
     "react-native-svg-transformer": "0.14.3",
     "react-native-url-polyfill": "1.2.0",
     "react-native-watch-connectivity": "0.4.3",
-    "react-native-webrtc": "1.89.1",
+    "react-native-webrtc": "github:react-native-webrtc/react-native-webrtc#1343580c0322f265ff0fb22722ac5501c5fd77ad",
     "react-native-webview": "11.0.2",
     "react-native-youtube-iframe": "1.2.3",
     "react-redux": "7.1.0",
