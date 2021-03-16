@@ -197,7 +197,7 @@ function parseArguments(args) {
  * @param {any} value - The value to be parsed.
  * @returns {string|undefined} The parsed value that can be used for setting
  * sizes through the style property. If invalid value is passed the method
- * retuns undefined.
+ * returns undefined.
  */
 function parseSizeParam(value) {
     let parsedValue;

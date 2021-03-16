@@ -596,7 +596,7 @@ const VideoLayout = {
         localVideoThumbnail && localVideoThumbnail.updateDOMLocation();
         VideoLayout.resizeVideoArea();
 
-        // Rerender the thumbnails since they are dependant on the layout because of the tooltip positioning.
+        // Rerender the thumbnails since they are dependent on the layout because of the tooltip positioning.
         localVideoThumbnail && localVideoThumbnail.rerender();
         Object.values(remoteVideos).forEach(remoteVideoThumbnail => remoteVideoThumbnail.rerender());
     },
