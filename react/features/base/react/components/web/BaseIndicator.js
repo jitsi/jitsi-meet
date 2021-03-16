@@ -37,7 +37,7 @@ type Props = {
     iconSize: string,
 
     /**
-     * The ID attribue to set on the root element of the component.
+     * The ID attribute to set on the root element of the component.
      */
     id: string,
 

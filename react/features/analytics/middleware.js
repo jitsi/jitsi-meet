@@ -82,7 +82,7 @@ MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
     case SET_CONFIG:
         if (navigator.product === 'ReactNative') {
-            // Reseting the analytics is currently not needed for web because
+            // Resetting the analytics is currently not needed for web because
             // the user will be redirected to another page and new instance of
             // Analytics will be created and initialized.
             resetAnalytics();

@@ -29,7 +29,7 @@ function _getInitialState() {
 
         /**
          * Indicates whether the transcriber has been dialed into the room and
-         * we're currently awaiting successfull joining or failure of joining
+         * we're currently awaiting successful joining or failure of joining
          *
          * @type {boolean}
          */

@@ -80,7 +80,7 @@ export class AbstractWelcomePage extends Component<Props, *> {
      * @property {string} room - Room name.
      * @property {string} roomPlaceholder - Room placeholder that's used as a
      * placeholder for input.
-     * @property {nubmer|null} updateTimeoutId - Identifier of the timeout
+     * @property {number|null} updateTimeoutId - Identifier of the timeout
      * updating the generated room name.
      */
     state = {

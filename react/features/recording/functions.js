@@ -24,7 +24,7 @@ export function getActiveSession(state: Object, mode: string) {
 /**
  * Returns an estimated recording duration based on the size of the video file
  * in MB. The estimate is calculated under the assumption that 1 min of recorded
- * video needs 10MB of storage on avarage.
+ * video needs 10MB of storage on average.
  *
  * @param {number} size - The size in MB of the recorded video.
  * @returns {number} - The estimated duration in minutes.

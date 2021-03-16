@@ -129,7 +129,7 @@ const LOCAL_STORAGE_KEY = 'localRecordingMetadataVersion1';
  * SessionManager manages the metadata of each segment during each local
  * recording session.
  *
- * A segment is a continous portion of recording done using the same adapter
+ * A segment is a continuous portion of recording done using the same adapter
  * on the same microphone device.
  *
  * Browser refreshes, switching of microphone will cause new segments to be

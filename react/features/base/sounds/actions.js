@@ -85,7 +85,7 @@ export function playSound(soundId: string): Object {
  * created for given source object.
  * @param {string} soundName - The name of bundled audio file that will be
  * associated with the given {@code soundId}.
- * @param {Object} options - Optional paramaters.
+ * @param {Object} options - Optional parameters.
  * @param {boolean} options.loop - True in order to loop the sound.
  * @returns {{
  *     type: REGISTER_SOUND,

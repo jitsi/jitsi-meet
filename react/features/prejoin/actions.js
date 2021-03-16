@@ -469,7 +469,7 @@ export function setPrejoinDeviceErrors(value: Object) {
 }
 
 /**
- * Action used to set the visiblity of the prejoin page.
+ * Action used to set the visibility of the prejoin page.
  *
  * @param {boolean} value - The value.
  * @returns {Object}

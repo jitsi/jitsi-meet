@@ -16,7 +16,7 @@ const DEFAULT_TIMEOUT = 5000;
  * @param {number} [timeout] - The timeout in millisecnods after which the
  * loading of the specified {@code url} is to be aborted/rejected (if not
  * settled yet).
- * @param {boolean} skipEval - Wether we want to skip evaluating the loaded content or not.
+ * @param {boolean} skipEval - Whether we want to skip evaluating the loaded content or not.
  * @returns {void}
  */
 export async function loadScript(

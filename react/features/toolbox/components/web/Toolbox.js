@@ -1099,7 +1099,7 @@ class Toolbox extends Component<Props, State> {
     }
 
     /**
-     * Returns the buttons to be displayed in main or the oveflow menu.
+     * Returns the buttons to be displayed in main or the overflow menu.
      *
      * @param {Set} buttons - A set containing the buttons to be displayed
      * in the toolbar beside the main audio/video & hanugup.

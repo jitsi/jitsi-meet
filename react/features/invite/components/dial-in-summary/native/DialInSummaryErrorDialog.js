@@ -7,7 +7,7 @@ import { translate } from '../../../../base/i18n';
 import { connect } from '../../../../base/redux';
 
 /**
- * Dialog to inform the user that we could't fetch the dial-in info page.
+ * Dialog to inform the user that we couldn't fetch the dial-in info page.
  */
 class DialInSummaryErrorDialog extends Component<{}> {
     /**

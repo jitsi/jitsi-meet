@@ -47,7 +47,7 @@ type Props = {
 };
 
 /**
- * This component displays the dialog whith all the information
+ * This component displays the dialog with all the information
  * to join a meeting by calling it.
  *
  * @param {Props} props - The props of the component.
