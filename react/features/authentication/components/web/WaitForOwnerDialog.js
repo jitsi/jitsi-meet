@@ -26,12 +26,7 @@ type Props = {
     /**
      * Invoked to obtain translated strings.
      */
-    t: Function,
-
-    /**
-     * Function to be invoked after click.
-     */
-    onAuthNow: ?Function
+    t: Function
 }
 
 /**
@@ -76,9 +71,8 @@ class WaitForOwnerDialog extends Component<Props> {
      * @returns {void}
      */
     _onIAmHost() {
-        const { onAuthNow, dispatch } = this.props;
+        const { dispatch } = this.props;
 
-        onAuthNow && onAuthNow();
         dispatch(openLoginDialog());
     }
 
@@ -98,7 +92,7 @@ class WaitForOwnerDialog extends Component<Props> {
                 okKey = { t('dialog.IamHost') }
                 onCancel = { this._onCancelWaitForOwner }
                 onSubmit = { this._onIAmHost }
-                titleKey = { t('dialog.WaitingForHost') }
+                titleKey = { t('dialog.WaitingForHostTitle') }
                 width = { 'small' }>
                 <span>
                     {
