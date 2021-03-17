@@ -83,6 +83,7 @@ import MuteEveryoneButton from '../MuteEveryoneButton';
 import AudioSettingsButton from './AudioSettingsButton';
 import OverflowMenuButton from './OverflowMenuButton';
 import OverflowMenuProfileItem from './OverflowMenuProfileItem';
+import ToggleCameraButton from './ToggleCameraButton';
 import ToolbarButton from './ToolbarButton';
 import VideoSettingsButton from './VideoSettingsButton';
 
@@ -929,7 +930,7 @@ class Toolbox extends Component<Props, State> {
     }
 
     /**
-     * Returns true if the profile button is visible and false otherwise.
+     * Returns true if the embed meeting button is visible and false otherwise.
      *
      * @returns {boolean}
      */
@@ -967,6 +968,10 @@ class Toolbox extends Component<Props, State> {
         const group1 = [
             ...additionalButtons,
 
+            this._shouldShowButton('toggle-camera')
+                && <ToggleCameraButton
+                    key = 'toggle-camera'
+                    showLabel = { true } />,
             this._shouldShowButton('videoquality')
                 && <OverflowMenuVideoQualityItem
                     key = 'videoquality'
