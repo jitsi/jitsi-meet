@@ -253,7 +253,8 @@ function _handleReceivedMessage({ dispatch, getState }, { id, message, privateMe
     const { isOpen: isChatOpen } = state['features/chat'];
 
     if (!isChatOpen) {
-        dispatch(playSound(INCOMING_MSG_SOUND_ID));
+        // No more woosh
+        // dispatch(playSound(INCOMING_MSG_SOUND_ID));
     }
 
     // Provide a default for for the case when a message is being
