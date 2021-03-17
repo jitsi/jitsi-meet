@@ -122,7 +122,7 @@ gradle.projectsEvaluated {
         android.applicationVariants.all { variant ->
             variant.outputs.each { output ->
                 output.getProcessManifestProvider().get().doLast {
-                    def outputDir = manifestOutputDirectory.get().asFile
+                    def outputDir = multiApkManifestOutputDirectory.get().asFile
                     def manifestPath = new File(outputDir, 'AndroidManifest.xml')
                     def charset = 'UTF-8'
                     def text
