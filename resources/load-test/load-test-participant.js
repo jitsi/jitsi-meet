@@ -9,7 +9,6 @@ setConfigFromURLParams(config, {}, {}, window.location);
 const params = parseURLParams(window.location, false, 'hash');
 const { isHuman = false } = params;
 const {
-    localAudio = config.startWithAudioMuted !== true,
     localVideo = config.startWithVideoMuted !== true,
     remoteVideo = isHuman,
     remoteAudio = isHuman,
@@ -17,6 +16,10 @@ const {
 
     // Whether to create local audio even if muted
     autoCreateLocalAudio = config.testing.noAutoLocalAudio !== true
+} = params;
+
+let {
+    localAudio = config.startWithAudioMuted !== true,
 } = params;
 
 const { room: roomName } = parseURIString(window.location.toString());
