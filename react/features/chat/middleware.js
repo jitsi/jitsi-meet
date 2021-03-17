@@ -81,9 +81,7 @@ MiddlewareRegistry.register(store => next => action => {
         break;
 
     case OPEN_CHAT:
-        if (navigator.product !== 'ReactNative') {
-            dispatch(setActiveModalId(CHAT_VIEW_MODAL_ID));
-        } else {
+        if (navigator.product === 'ReactNative') {
             if (localParticipant.name) {
                 dispatch(setActiveModalId(CHAT_VIEW_MODAL_ID));
             } else {
@@ -91,6 +89,8 @@ MiddlewareRegistry.register(store => next => action => {
                     dispatch(setActiveModalId(CHAT_VIEW_MODAL_ID));
                 }));
             }
+        } else {
+            dispatch(setActiveModalId(CHAT_VIEW_MODAL_ID));
         }
 
         unreadCount = 0;
