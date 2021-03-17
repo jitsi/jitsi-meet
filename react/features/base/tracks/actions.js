@@ -1,3 +1,5 @@
+/* global APP */
+
 import {
     createTrackMutedEvent,
     sendAnalytics
@@ -13,6 +15,7 @@ import {
     VIDEO_TYPE
 } from '../media';
 import { getLocalParticipant } from '../participants';
+import { updateSettings } from '../settings';
 
 import {
     SET_NO_SRC_DATA_NOTIFICATION_UID,
@@ -728,14 +731,27 @@ export function toggleCamera() {
         const state = getState();
         const tracks = state['features/base/tracks'];
         const localVideoTrack = getLocalVideoTrack(tracks).jitsiTrack;
-        const { _realDeviceId } = localVideoTrack;
-        const { videoInput } = state['features/base/devices'].availableDevices;
-        const { deviceId } = videoInput.find(camera => camera.deviceId !== _realDeviceId);
+        const currentFacingMode = localVideoTrack.getCameraFacingMode();
 
-        await dispatch(replaceLocalTrack(localVideoTrack, null));
+        /**
+         * FIXME: Ideally, we should be dispatching {@code replaceLocalTrack} here,
+         * but it seems to not trigger the re-rendering of the local video on Chrome;
+         * could be due to a plan B vs unified plan issue. Therefore, we use the legacy
+         * method defined in conference.js that manually takes care of updating the local
+         * video as well.
+         */
+        await APP.conference.useVideoStream(null);
 
-        const newVideoTrack = await createLocalTrack('video', deviceId);
+        const targetFacingMode = currentFacingMode === CAMERA_FACING_MODE.USER
+            ? CAMERA_FACING_MODE.ENVIRONMENT
+            : CAMERA_FACING_MODE.USER;
 
-        await dispatch(replaceLocalTrack(null, newVideoTrack));
+        // Update the flipX value so the environment facing camera is not flipped, before the new track is created.
+        dispatch(updateSettings({ localFlipX: targetFacingMode === CAMERA_FACING_MODE.USER }));
+
+        const newVideoTrack = await createLocalTrack('video', null, null, { facingMode: targetFacingMode });
+
+        // FIXME: See above.
+        await APP.conference.useVideoStream(newVideoTrack);
     };
 }

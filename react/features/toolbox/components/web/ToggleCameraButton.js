@@ -70,7 +70,7 @@ function mapStateToProps(state): Object {
     return {
         _audioOnly: Boolean(audioOnly),
         _videoMuted: isLocalCameraTrackMuted(tracks),
-        visible: isMobileBrowser() && videoInput.length === 2
+        visible: isMobileBrowser() && videoInput.length > 1
     };
 }
 
