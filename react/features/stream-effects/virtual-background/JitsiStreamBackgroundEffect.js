@@ -43,6 +43,7 @@ export default class JitsiStreamBackgroundEffect {
 
         if (this._options.virtualBackground.isVirtualBackground) {
             this._virtualImage = document.createElement('img');
+            this._virtualImage.crossOrigin = 'anonymous';
             this._virtualImage.src = this._options.virtualBackground.virtualSource;
         }
         this._model = model;
