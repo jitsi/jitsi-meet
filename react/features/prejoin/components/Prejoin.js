@@ -315,6 +315,7 @@ class Prejoin extends Component<Props, State> {
                     <div className = 'prejoin-input-area-container'>
                         <div className = 'prejoin-input-area'>
                             <InputField
+                                autoFocus = { true }
                                 className = { showError ? 'error' : '' }
                                 hasError = { showError }
                                 onChange = { _setName }
