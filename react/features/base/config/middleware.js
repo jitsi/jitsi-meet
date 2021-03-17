@@ -6,9 +6,10 @@ import { APP_WILL_MOUNT } from '../app';
 import { getFeatureFlag } from '../flags/functions';
 import { addKnownDomains } from '../known-domains';
 import { MiddlewareRegistry } from '../redux';
+import { updateSettings } from '../settings';
 import { parseURIString } from '../util';
 
-import { SET_CONFIG } from './actionTypes';
+import { SET_CONFIG, OVERWRITE_CONFIG } from './actionTypes';
 import { updateConfig } from './actions';
 import { _CONFIG_STORE_PREFIX } from './constants';
 
@@ -26,6 +27,9 @@ MiddlewareRegistry.register(store => next => action => {
 
     case SET_CONFIG:
         return _setConfig(store, next, action);
+
+    case OVERWRITE_CONFIG:
+        return _updateSettings(store, next, action);
     }
 
     return next(action);
@@ -115,6 +119,12 @@ function _setConfig({ dispatch, getState }, next, action) {
         config.resolution = resolutionFlag;
     }
 
+    if (action.config.doNotFlipLocalVideo === true) {
+        dispatch(updateSettings({
+            localFlipX: false
+        }));
+    }
+
     dispatch(updateConfig(config));
 
     // FIXME On Web we rely on the global 'config' variable which gets altered
@@ -127,4 +137,28 @@ function _setConfig({ dispatch, getState }, next, action) {
     }
 
     return result;
+}
+
+/**
+ * Updates settings based on some config values.
+ *
+ * @param {Store} store - The redux store in which the specified {@code action}
+ * is being dispatched.
+ * @param {Dispatch} next - The redux {@code dispatch} function to dispatch the
+ * specified {@code action} in the specified {@code store}.
+ * @param {Action} action - The redux action which is being {@code dispatch}ed
+ * in the specified {@code store}.
+ * @private
+ * @returns {*} The return value of {@code next(action)}.
+ */
+function _updateSettings({ dispatch }, next, action) {
+    const { config: { doNotFlipLocalVideo } } = action;
+
+    if (doNotFlipLocalVideo === true) {
+        dispatch(updateSettings({
+            localFlipX: false
+        }));
+    }
+
+    return next(action);
 }
