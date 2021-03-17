@@ -1,7 +1,5 @@
 // @flow
 
-import type { Dispatch } from 'redux';
-
 import { appNavigate } from '../app/actions';
 import {
     CONFERENCE_FAILED,
@@ -22,10 +20,13 @@ import {
     WAIT_FOR_OWNER
 } from './actionTypes';
 import {
-    openLoginDialog,
-    openWaitForOwnerDialog,
     stopWaitForOwner,
     waitForOwner
+} from './actions.native';
+import {
+    hideLoginDialog,
+    openLoginDialog,
+    openWaitForOwnerDialog
 } from './actions.web';
 import { LoginDialog, WaitForOwnerDialog } from './components/web';
 
@@ -86,7 +87,7 @@ MiddlewareRegistry.register(store => next => action => {
             }
 
             // Go back to the app's entry point.
-            hideLoginDialog(store);
+            store.dispatch(hideLoginDialog);
 
             store.dispatch(appNavigate(undefined));
         }
@@ -97,7 +98,7 @@ MiddlewareRegistry.register(store => next => action => {
         if (isWaitingForOwner(store)) {
             store.dispatch(stopWaitForOwner());
         }
-        hideLoginDialog(store);
+        store.dispatch(hideLoginDialog);
         break;
 
     case CONFERENCE_LEFT:
@@ -105,7 +106,7 @@ MiddlewareRegistry.register(store => next => action => {
         break;
 
     case CONNECTION_ESTABLISHED:
-        hideLoginDialog(store);
+        store.dispatch(hideLoginDialog);
         break;
 
     case CONNECTION_FAILED: {
@@ -136,16 +137,6 @@ function clearExistingWaitForOwnerTimeout(
     const { waitForOwnerTimeoutID } = getState()['features/authentication'];
 
     waitForOwnerTimeoutID && clearTimeout(waitForOwnerTimeoutID);
-}
-
-/**
- * Hides {@link LoginDialog} if it's currently displayed.
- *
- * @param {Object} store - The redux store.
- * @returns {void}
- */
-function hideLoginDialog({ dispatch }: { dispatch: Dispatch<any> }) {
-    dispatch(hideDialog(LoginDialog));
 }
 
 /**

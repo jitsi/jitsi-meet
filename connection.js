@@ -3,7 +3,9 @@
 import { jitsiLocalStorage } from '@jitsi/js-utils';
 import Logger from 'jitsi-meet-logger';
 
-import AuthHandler from './modules/UI/authentication/AuthHandler';
+// import AuthHandler from './modules/UI/authentication/AuthHandler';
+// import UIUtil from './modules/UI/util/UIUtil';
+import { hideLoginDialog, requestAuthDialog } from './react/features/authentication/actions.web';
 import {
     connectionEstablished,
     connectionFailed
@@ -16,6 +18,11 @@ import {
 import { setPrejoinDisplayNameRequired } from './react/features/prejoin/actions';
 
 const logger = Logger.getLogger(__filename);
+
+// const isTokenAuthEnabled
+//     = typeof config.tokenAuthUrl === 'string' && config.tokenAuthUrl.length;
+// const getTokenAuthUrl
+//     = JitsiMeetJS.util.AuthUtil.getTokenAuthUrl.bind(null, config.tokenAuthUrl);
 
 /**
  * The feature announced so we can distinguish jibri participants.
@@ -214,10 +221,40 @@ export function openConnection({ id, password, retry, roomName }) {
             const { jwt } = APP.store.getState()['features/base/jwt'];
 
             if (err === JitsiConnectionErrors.PASSWORD_REQUIRED && !jwt) {
-                return AuthHandler.requestAuth(roomName, connect);
+                return requestAuth(roomName, connect);
             }
         }
 
         throw err;
+    });
+}
+
+/**
+ * Show Authentication Dialog and try to connect with new credentials.
+ * If failed to connect because of PASSWORD_REQUIRED error
+ * then ask for password again.
+ * @param {string} [roomName] name of the conference room
+ * @param {function(id, password, roomName)} [connectJitsi] function that returns
+ * a Promise which resolves with JitsiConnection or fails with one of
+ * JitsiConnectionErrors.
+ * @returns {Promise<JitsiConnection>}
+ */
+function requestAuth(roomName, connectJitsi) {
+
+    return new Promise((resolve, reject) => {
+        APP.store.dispatch(requestAuthDialog(
+            (id, password) => {
+                connectJitsi(id, password, roomName).then(connection => {
+                    APP.store.dispatch(hideLoginDialog());
+                    resolve(connection);
+                }, err => {
+                    if (err === JitsiConnectionErrors.PASSWORD_REQUIRED) {
+                        console.log(err);
+                    } else {
+                        reject(err);
+                    }
+                });
+            }
+        ));
     });
 }

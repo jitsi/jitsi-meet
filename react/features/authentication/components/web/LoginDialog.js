@@ -4,12 +4,14 @@ import { FieldTextStateless as TextField } from '@atlaskit/field-text';
 import React, { Component } from 'react';
 import type { Dispatch } from 'redux';
 
-import { connect, toJid } from '../../../base/connection';
+import { connect } from '../../../base/connection/actions.native';
+import { toJid } from '../../../base/connection/functions';
 import { Dialog } from '../../../base/dialog';
 import { translate, translateToHTML } from '../../../base/i18n';
 import { JitsiConnectionErrors } from '../../../base/lib-jitsi-meet';
 import { connect as reduxConnect } from '../../../base/redux';
-import { authenticateAndUpgradeRole, cancelLogin } from '../../actions.web';
+import { authenticateAndUpgradeRole } from '../../actions.native';
+import { cancelLogin } from '../../actions.web';
 
 declare var config: Object;
 
@@ -45,6 +47,11 @@ type Props = {
     _error: Object,
 
     /**
+     * Callback function.
+     */
+    onSuccess: Function,
+
+    /**
      * The progress in the floating range between 0 and 1 of the authenticating
      * and upgrading the role of the local participant/user.
      */
@@ -69,12 +76,7 @@ type State = {
     /**
      * The user entered local participant name.
      */
-    username: string,
-
-    /**
-     * The type of message that is being rendered.
-     */
-    messageIsError: boolean
+    username: string
 }
 
 /**
@@ -93,8 +95,7 @@ class LoginDialog extends Component<Props, State> {
 
         this.state = {
             username: '',
-            password: '',
-            messageIsError: false
+            password: ''
         };
 
         this._onCancelLogin = this._onCancelLogin.bind(this);
@@ -129,15 +130,19 @@ class LoginDialog extends Component<Props, State> {
         const {
             _conference: conference,
             _configHosts: configHosts,
+            onSuccess,
             dispatch
         } = this.props;
         const { password, username } = this.state;
         const jid = toJid(username, configHosts);
-        const result = conference
-            ? dispatch(authenticateAndUpgradeRole(jid, password, conference))
-            : dispatch(connect(jid, password));
 
-        return result;
+        if (jid && password) {
+            onSuccess && onSuccess(jid, password);
+
+            if (conference) {
+                dispatch(authenticateAndUpgradeRole(jid, password, conference));
+            }
+        }
     }
 
     _onChange: Object => void;
@@ -175,12 +180,9 @@ class LoginDialog extends Component<Props, State> {
 
         const messageOptions = {};
 
-        if (progress && progress > 1) {
+        if (progress && progress >= 0.5) {
             messageKey = t('connection.FETCH_SESSION_ID');
         } else if (error) {
-            this.setState({
-                messageIsError: true
-            });
 
             const { name } = error;
 
@@ -197,9 +199,6 @@ class LoginDialog extends Component<Props, State> {
                 messageOptions.msg = `${name} ${error.message}`;
             }
         } else if (connecting) {
-            this.setState({
-                messageIsError: false
-            });
 
             messageKey = t('connection.CONNECTING');
         }
@@ -231,10 +230,11 @@ class LoginDialog extends Component<Props, State> {
 
         return (
             <Dialog
-                hideCancelButton = { connecting }
-                okDisabled = { connecting }
+                okDisabled = { connecting || !password || !username }
+                okKey = { t('dialog.confirm') }
                 onCancel = { this._onCancelLogin }
                 onSubmit = { this._onLogin }
+                titleKey = { t('dialog.passwordRequired') }
                 width = { 'small' }>
                 <TextField
                     autoFocus = { true }
@@ -248,7 +248,6 @@ class LoginDialog extends Component<Props, State> {
                     type = 'text'
                     value = { username } />
                 <TextField
-                    autoFocus = { true }
                     className = 'input-control'
                     compact = { false }
                     label = { t('dialog.userPassword') }
