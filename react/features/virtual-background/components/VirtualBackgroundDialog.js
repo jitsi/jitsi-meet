@@ -1,5 +1,6 @@
 // @flow
 /* eslint-disable react/jsx-no-bind, no-return-assign */
+import Spinner from '@atlaskit/spinner';
 import React, { useState, useEffect } from 'react';
 
 import { Dialog } from '../../base/dialog';
@@ -56,6 +57,8 @@ type Props = {
 function VirtualBackground({ dispatch, t }: Props) {
     const localImages = localStorage.getItem('storedImages');
     const [ storedImages, setStoredImages ] = useState((localImages && JSON.parse(localImages)) || []);
+    const [ loading, isloading ] = useState(false);
+
 
     /**
      * Updates stored images on local storage.
@@ -65,33 +68,40 @@ function VirtualBackground({ dispatch, t }: Props) {
     }, [ storedImages ]);
 
     const [ selected, setSelected ] = useState('');
-    const enableBlur = () => {
+    const enableBlur = async () => {
+        isloading(true);
         setSelected('blur');
-        dispatch(setVirtualBackground('', false));
-        dispatch(toggleBackgroundEffect(true));
+        await dispatch(setVirtualBackground('', false));
+        await dispatch(toggleBackgroundEffect(true));
+        isloading(false);
     };
 
-    const removeBackground = () => {
+    const removeBackground = async () => {
+        isloading(true);
         setSelected('none');
-        dispatch(setVirtualBackground('', false));
-        dispatch(toggleBackgroundEffect(false));
+        await dispatch(setVirtualBackground('', false));
+        await dispatch(toggleBackgroundEffect(false));
+        isloading(false);
     };
 
-    const addImageBackground = image => {
+    const addImageBackground = async image => {
+        isloading(true);
         setSelected(image.id);
-        dispatch(setVirtualBackground(image.src, true));
-        dispatch(toggleBackgroundEffect(true));
+        await dispatch(setVirtualBackground(image.src, true));
+        await dispatch(toggleBackgroundEffect(true));
+        isloading(false);
     };
 
     const deleteStoredImage = image => {
         setStoredImages(storedImages.filter(item => item !== image));
     };
 
-    const uploadImage = imageFile => {
+    const uploadImage = async imageFile => {
         const reader = new FileReader();
 
         reader.readAsDataURL(imageFile[0]);
-        reader.onload = () => {
+        reader.onload = async () => {
+            isloading(true);
             setStoredImages([
                 ...storedImages,
                 {
@@ -104,10 +114,12 @@ function VirtualBackground({ dispatch, t }: Props) {
                 }
             ]);
 
-            dispatch(setVirtualBackground(reader.result.toString(), true));
-            dispatch(toggleBackgroundEffect(true));
+            await dispatch(setVirtualBackground(reader.result.toString(), true));
+            await dispatch(toggleBackgroundEffect(true));
+            isloading(false);
         };
         reader.onerror = () => {
+            isloading(false);
             throw new Error('Failed to upload virtual image!');
         };
     };
@@ -118,73 +130,84 @@ function VirtualBackground({ dispatch, t }: Props) {
             submitDisabled = { false }
             titleKey = { 'virtualBackground.title' }
             width = 'small'>
-            <div className = 'virtual-background-dialog'>
-                <Tooltip
-                    content = { t('virtualBackground.removeBackground') }
-                    position = { 'top' }>
-                    <div
-                        className = { selected === 'none' ? 'none-selected' : 'virtual-background-none' }
-                        onClick = { () => removeBackground() }>
-                        None
+            {loading ? (
+                <div>
+                    <span>{ t('virtualBackground.pleaseWait') }</span>
+                    <Spinner
+                        isCompleting = { false }
+                        size = 'medium' />
+                </div>
+            ) : (
+                <div>
+                    <div className = 'virtual-background-dialog'>
+                        <Tooltip
+                            content = { t('virtualBackground.removeBackground') }
+                            position = { 'top' }>
+                            <div
+                                className = { selected === 'none' ? 'none-selected' : 'virtual-background-none' }
+                                onClick = { () => removeBackground() }>
+                                None
+                            </div>
+                        </Tooltip>
+                        <Tooltip
+                            content = { t('virtualBackground.enableBlur') }
+                            position = { 'top' }>
+                            <Icon
+                                className = { selected === 'blur' ? 'blur-selected' : '' }
+                                onClick = { () => enableBlur() }
+                                size = { 50 }
+                                src = { IconBlurBackground } />
+                        </Tooltip>
+                        {images.map((image, index) => (
+                            <Tooltip
+                                content = { image.tooltip }
+                                key = { index }
+                                position = { 'top' }>
+                                <img
+                                    className = { selected === image.id ? 'thumbnail-selected' : 'thumbnail' }
+                                    onClick = { () => addImageBackground(image) }
+                                    onError = { event => event.target.style.display = 'none' }
+                                    src = { image.src } />
+                            </Tooltip>
+                        ))}
+                        <Tooltip
+                            content = { t('virtualBackground.uploadImage') }
+                            position = { 'top' }>
+                            <label
+                                className = 'custom-file-upload'
+                                htmlFor = 'file-upload'>
+                                +
+                            </label>
+                            <input
+                                accept = 'image/*'
+                                className = 'file-upload-btn'
+                                id = 'file-upload'
+                                onChange = { e => uploadImage(e.target.files) }
+                                type = 'file' />
+                        </Tooltip>
                     </div>
-                </Tooltip>
-                <Tooltip
-                    content = { t('virtualBackground.enableBlur') }
-                    position = { 'top' }>
-                    <Icon
-                        className = { selected === 'blur' ? 'blur-selected' : '' }
-                        onClick = { () => enableBlur() }
-                        size = { 50 }
-                        src = { IconBlurBackground } />
-                </Tooltip>
-                {images.map((image, index) => (
-                    <Tooltip
-                        content = { image.tooltip }
-                        key = { index }
-                        position = { 'top' }>
-                        <img
-                            className = { selected === image.id ? 'thumbnail-selected' : 'thumbnail' }
-                            onClick = { () => addImageBackground(image) }
-                            onError = { event => event.target.style.display = 'none' }
-                            src = { image.src } />
-                    </Tooltip>
-                ))}
-                <Tooltip
-                    content = { t('virtualBackground.uploadImage') }
-                    position = { 'top' }>
-                    <label
-                        className = 'custom-file-upload'
-                        htmlFor = 'file-upload'>
-                        +
-                    </label>
-                    <input
-                        accept = 'image/*'
-                        className = 'file-upload-btn'
-                        id = 'file-upload'
-                        onChange = { e => uploadImage(e.target.files) }
-                        type = 'file' />
-                </Tooltip>
-            </div>
 
-            <div className = 'virtual-background-dialog'>
-                {storedImages.map((image, index) => (
-                    <Tooltip
-                        content = { image.tooltip }
-                        key = { index }
-                        position = { 'top' }>
-                        <img
-                            className = { selected === image.id ? 'thumbnail-selected' : 'thumbnail' }
-                            onClick = { () => addImageBackground(image) }
-                            onError = { event => event.target.style.display = 'none' }
-                            src = { image.src } />
-                        <Icon
-                            className = { 'delete-image-icon' }
-                            onClick = { () => deleteStoredImage(image) }
-                            size = { 10 }
-                            src = { IconTrash } />
-                    </Tooltip>
-                ))}
-            </div>
+                    <div className = 'virtual-background-dialog'>
+                        {storedImages.map((image, index) => (
+                            <Tooltip
+                                content = { image.tooltip }
+                                key = { index }
+                                position = { 'top' }>
+                                <img
+                                    className = { selected === image.id ? 'thumbnail-selected' : 'thumbnail' }
+                                    onClick = { () => addImageBackground(image) }
+                                    onError = { event => event.target.style.display = 'none' }
+                                    src = { image.src } />
+                                <Icon
+                                    className = { 'delete-image-icon' }
+                                    onClick = { () => deleteStoredImage(image) }
+                                    size = { 10 }
+                                    src = { IconTrash } />
+                            </Tooltip>
+                        ))}
+                    </div>
+                </div>
+            )}
         </Dialog>
     );
 }

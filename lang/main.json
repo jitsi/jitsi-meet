@@ -336,7 +336,8 @@
         "title": "Backgrounds",
         "enableBlur": "Enable blur",
         "removeBackground": "Remove background",
-        "uploadImage": "Upload image"
+        "uploadImage": "Upload image",
+        "pleaseWait": "Please wait..."
     },
     "feedback": {
         "average": "Average",
