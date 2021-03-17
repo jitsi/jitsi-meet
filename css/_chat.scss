@@ -377,6 +377,8 @@
     overflow: hidden;
     position: absolute;
     width: calc(#{$sidebarWidth} - 32px);
+    margin-bottom: 5px;
+    margin-left: -5px;
 
     /**
      * CSS transitions do not apply for auto dimensions. So to produce the css
@@ -392,8 +394,7 @@
 
     #smileysContainer {
         background-color: $chatBackgroundColor;
-        border-bottom: 1px solid;
-        border-top: 1px solid;
+        border-top: 1px solid $chatInputSeparatorColor;
     }
 }
 
