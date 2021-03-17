@@ -618,6 +618,10 @@ var config = {
     // the menu has option to flip the locally seen video for local presentations
     // disableLocalVideoFlip: false,
 
+    // A property used to unset the default flip state of the local video.
+    // When it is set to 'true', the local(self) video will not be mirrored anymore.
+    // doNotFlipLocalVideo: false,
+
     // Mainly privacy related settings
 
     // Disables all invite functions from the app (share, invite, dial out...etc)
