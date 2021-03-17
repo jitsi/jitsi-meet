@@ -1112,26 +1112,6 @@ class Toolbox extends Component<Props, State> {
         const overflowMenuAdditionalButtons = [];
         const mainMenuAdditionalButtons = [];
 
-        if (this._showDesktopSharingButton()) {
-            buttons.has('desktop')
-                ? mainMenuAdditionalButtons.push(<ToolbarButton
-                    accessibilityLabel = { t('toolbar.accessibilityLabel.shareYourScreen') }
-                    disabled = { !_desktopSharingEnabled }
-                    icon = { IconShareDesktop }
-                    key = 'desktop'
-                    onClick = { this._onToolbarToggleScreenshare }
-                    toggled = { _screensharing }
-                    tooltip = { t(_desktopSharingEnabled
-                        ? 'dialog.shareYourScreen' : _desktopSharingDisabledTooltipKey) } />)
-                : overflowMenuAdditionalButtons.push(<OverflowMenuItem
-                    accessibilityLabel = { t('toolbar.accessibilityLabel.shareYourScreen') }
-                    icon = { IconShareDesktop }
-                    iconId = 'share-desktop'
-                    key = 'desktop'
-                    onClick = { this._onToolbarToggleScreenshare }
-                    text = { t(`toolbar.${_screensharing ? 'stopScreenSharing' : 'startScreenSharing'}`) } />);
-        }
-
         if (this._shouldShowButton('chat')) {
             buttons.has('chat')
                 ? mainMenuAdditionalButtons.push(<div
@@ -1153,23 +1133,6 @@ class Toolbox extends Component<Props, State> {
                     text = { t(`toolbar.${_chatOpen ? 'closeChat' : 'openChat'}`) } />);
         }
 
-        if (this._shouldShowButton('raisehand')) {
-            buttons.has('raisehand')
-                ? mainMenuAdditionalButtons.push(<ToolbarButton
-                    accessibilityLabel = { t('toolbar.accessibilityLabel.raiseHand') }
-                    icon = { IconRaisedHand }
-                    key = 'raisehand'
-                    onClick = { this._onToolbarToggleRaiseHand }
-                    toggled = { _raisedHand }
-                    tooltip = { t(`toolbar.${_raisedHand ? 'lowerYourHand' : 'raiseYourHand'}`) } />)
-                : overflowMenuAdditionalButtons.push(<OverflowMenuItem
-                    accessibilityLabel = { t('toolbar.accessibilityLabel.raiseHand') }
-                    icon = { IconRaisedHand }
-                    key = 'raisehand'
-                    onClick = { this._onToolbarToggleRaiseHand }
-                    text = { t(`toolbar.${_raisedHand ? 'lowerYourHand' : 'raiseYourHand'}`) } />);
-        }
-
         if (this._shouldShowButton('tileview')) {
             buttons.has('tileview')
                 ? mainMenuAdditionalButtons.push(
@@ -1183,22 +1146,33 @@ class Toolbox extends Component<Props, State> {
         }
 
         if (this._shouldShowButton('invite')) {
-            buttons.has('invite')
-                ? mainMenuAdditionalButtons.push(
-                    <ToolbarButton
-                        accessibilityLabel = { t('toolbar.accessibilityLabel.invite') }
-                        icon = { IconInviteMore }
-                        key = 'invite'
-                        onClick = { this._onToolbarOpenInvite }
-                        tooltip = { t('toolbar.invite') } />)
-                : overflowMenuAdditionalButtons.push(
-                    <OverflowMenuItem
-                        accessibilityLabel = { t('toolbar.accessibilityLabel.invite') }
-                        icon = { IconInviteMore }
-                        key = 'invite'
-                        onClick = { this._onToolbarOpenInvite }
-                        text = { t('toolbar.invite') } />
-                );
+            overflowMenuAdditionalButtons.push(
+                <OverflowMenuItem
+                    accessibilityLabel = { t('toolbar.accessibilityLabel.invite') }
+                    icon = { IconInviteMore }
+                    key = 'invite'
+                    onClick = { this._onToolbarOpenInvite }
+                    text = { t('toolbar.invite') } />
+            );
+        }
+
+        if (this._shouldShowButton('raisehand')) {
+            overflowMenuAdditionalButtons.push(<OverflowMenuItem
+                accessibilityLabel = { t('toolbar.accessibilityLabel.raiseHand') }
+                icon = { IconRaisedHand }
+                key = 'raisehand'
+                onClick = { this._onToolbarToggleRaiseHand }
+                text = { t(`toolbar.${_raisedHand ? 'lowerYourHand' : 'raiseYourHand'}`) } />);
+        }
+
+        if (this._showDesktopSharingButton()) {
+            overflowMenuAdditionalButtons.push(<OverflowMenuItem
+                accessibilityLabel = { t('toolbar.accessibilityLabel.shareYourScreen') }
+                icon = { IconShareDesktop }
+                iconId = 'share-desktop'
+                key = 'desktop'
+                onClick = { this._onToolbarToggleScreenshare }
+                text = { t(`toolbar.${_screensharing ? 'stopScreenSharing' : 'startScreenSharing'}`) } />);
         }
 
         return {
