@@ -3,9 +3,9 @@
 import type { Dispatch } from 'redux';
 
 import { appNavigate } from '../app/actions';
-import { checkIfCanJoin, conferenceLeft } from '../base/conference';
-import { connectionFailed } from '../base/connection';
-import { openDialog } from '../base/dialog';
+import { checkIfCanJoin, conferenceLeft } from '../base/conference/actions';
+import { connectionFailed } from '../base/connection/actions.native';
+import { openDialog } from '../base/dialog/actions';
 import { set } from '../base/redux';
 
 import {

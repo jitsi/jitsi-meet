@@ -316,7 +316,7 @@
         "videoLink": "Video link",
         "WaitForHostMsg": "The conference <b>{{room}}</b> has not yet started. If you are the host then please authenticate. Otherwise, please wait for the host to arrive.",
         "WaitForHostMsgWOk": "The conference <b>{{room}}</b> has not yet started. If you are the host then please press Ok to authenticate. Otherwise, please wait for the host to arrive.",
-        "WaitingForHost": "Waiting for the host ...",
+        "WaitingForHostTitle": "Waiting for the host ...",
         "Yes": "Yes",
         "yourEntireScreen": "Your entire screen"
     },
