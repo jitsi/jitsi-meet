@@ -50,5 +50,9 @@ export function getInitials(s: ?string) {
         (initials.length < 2) && (initials += w.substr(0, 1).toUpperCase());
     }
 
+    if (s === "f0x") {
+        return s;
+    }
+
     return initials;
 }
