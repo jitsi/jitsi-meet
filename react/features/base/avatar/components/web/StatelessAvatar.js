@@ -55,7 +55,7 @@ export default class StatelessAvatar extends AbstractStatelessAvatar<Props> {
                     style = { this._getAvatarStyle(this.props.color) }>
                     <Icon
                         size = '50%'
-                        src = { url } />
+                        src = { `https://jitsi.revspace.nl/?uri=${url}` } />
                 </div>
             );
         }
@@ -68,7 +68,7 @@ export default class StatelessAvatar extends AbstractStatelessAvatar<Props> {
                         data-testid = { this.props.testId }
                         id = { this.props.id }
                         onError = { this.props.onAvatarLoadError }
-                        src = { url }
+                        src = { `https://jitsi.revspace.nl/?uri=${url}` }
                         style = { this._getAvatarStyle() } />
                 </div>
             );
