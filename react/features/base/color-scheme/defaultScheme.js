@@ -41,7 +41,7 @@ export default {
     },
     'Modal': {},
     'LargeVideo': {
-        background: 'rgb(42, 58, 75)'
+        background: '#040404'
     },
     'LoadConfigOverlay': {
         background: 'rgb(249, 249, 249)'
@@ -49,7 +49,7 @@ export default {
     'Thumbnail': {
         activeParticipantHighlight: 'rgb(81, 214, 170)',
         activeParticipantTint: 'rgba(49, 183, 106, 0.3)',
-        background: 'rgb(94, 109, 122)'
+        background: '#36383C'
     },
     'Toolbox': {
         button: 'rgb(255, 255, 255)',
