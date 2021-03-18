@@ -3,7 +3,6 @@
 import { jitsiLocalStorage } from '@jitsi/js-utils';
 import Logger from 'jitsi-meet-logger';
 
-// import AuthHandler from './modules/UI/authentication/AuthHandler';
 import UIUtil from './modules/UI/util/UIUtil';
 import { hideLoginDialog } from './react/features/authentication/actions.web';
 import { LoginDialog } from './react/features/authentication/components';
@@ -89,7 +88,7 @@ function checkForAttachParametersAndConnect(id, password, connection) {
  * @returns {Promise<JitsiConnection>} connection if
  * everything is ok, else error.
  */
-function connect(id, password, roomName) {
+export function connect(id, password, roomName) {
     const connectionConfig = Object.assign({}, config);
     const { jwt } = APP.store.getState()['features/base/jwt'];
 
@@ -206,6 +205,7 @@ function connect(id, password, roomName) {
  * @returns {Promise<JitsiConnection>}
  */
 export function openConnection({ id, password, retry, roomName }) {
+
     const usernameOverride
         = jitsiLocalStorage.getItem('xmpp_username_override');
     const passwordOverride
@@ -223,7 +223,7 @@ export function openConnection({ id, password, retry, roomName }) {
             const { jwt } = APP.store.getState()['features/base/jwt'];
 
             if (err === JitsiConnectionErrors.PASSWORD_REQUIRED && !jwt) {
-                return requestAuth(roomName, connect);
+                return requestAuth(roomName);
             }
         }
 
@@ -240,7 +240,8 @@ export function openConnection({ id, password, retry, roomName }) {
  *
  * @returns {Promise<JitsiConnection>}
  */
-function requestAuth(roomName, doConnect) {
+function requestAuth(roomName) {
+
     if (isTokenAuthEnabled) {
         // This Promise never resolves as user gets redirected to another URL
         return new Promise(() => UIUtil.redirect(getTokenAuthUrl(roomName, false)));
@@ -254,8 +255,7 @@ function requestAuth(roomName, doConnect) {
 
         APP.store.dispatch(
             openDialog(LoginDialog, { onSuccess,
-                roomName,
-                doConnect })
+                roomName })
         );
     });
 }
