@@ -23,11 +23,6 @@ type Props = {
     _aspectRatio: Symbol,
 
     /**
-     * The indicator which determines whether the filmstrip is enabled.
-     */
-    _enabled: boolean,
-
-    /**
      * The participants in the conference.
      */
     _participants: Array<any>,
@@ -86,9 +81,9 @@ class Filmstrip extends Component<Props> {
      * @returns {ReactElement}
      */
     render() {
-        const { _aspectRatio, _enabled, _participants, _visible } = this.props;
+        const { _aspectRatio, _participants, _visible } = this.props;
 
-        if (!_enabled) {
+        if (!_visible) {
             return null;
         }
 
@@ -178,9 +173,8 @@ function _mapStateToProps(state) {
 
     return {
         _aspectRatio: state['features/base/responsive-ui'].aspectRatio,
-        _enabled: enabled,
         _participants: participants.filter(p => !p.local),
-        _visible: isFilmstripVisible(state)
+        _visible: enabled && isFilmstripVisible(state)
     };
 }
 
