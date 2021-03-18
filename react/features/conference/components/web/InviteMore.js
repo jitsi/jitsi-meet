@@ -14,24 +14,24 @@ declare var interfaceConfig: Object;
 type Props = {
 
     /**
+     * Whether to show the option to invite more people.
+     */
+    _shouldShow: boolean,
+
+    /**
+     * Whether the toolbox is visible.
+     */
+    _toolboxVisible: boolean,
+
+    /**
      * Handler to open the invite dialog.
      */
     onClick: Function,
 
     /**
-     * Whether to show the option to invite more people.
-     */
-    shouldShow: boolean,
-
-    /**
      * Invoked to obtain translated strings.
      */
-    t: Function,
-
-    /**
-     * Whether the toolbox is visible.
-     */
-    toolboxVisible: boolean
+    t: Function
 }
 
 /**
@@ -42,14 +42,14 @@ type Props = {
  * @returns {React$Element<any>}
  */
 function InviteMore({
+    _shouldShow,
+    _toolboxVisible,
     onClick,
-    shouldShow,
-    t,
-    toolboxVisible
+    t
 }: Props) {
     return (
-        shouldShow
-            ? <div className = { `invite-more-container${toolboxVisible ? '' : ' elevated'}` }>
+        _shouldShow
+            ? <div className = { `invite-more-container${_toolboxVisible ? '' : ' elevated'}` }>
                 <div className = 'invite-more-content'>
                     <div className = 'invite-more-header'>
                         {t('addPeople.inviteMoreHeader')}
@@ -81,8 +81,8 @@ function mapStateToProps(state) {
     const hide = interfaceConfig.HIDE_INVITE_MORE_HEADER;
 
     return {
-        shouldShow: isButtonEnabled('invite', state) && isAlone && !hide,
-        toolboxVisible: isToolboxVisible(state)
+        _shouldShow: isButtonEnabled('invite', state) && isAlone && !hide,
+        _toolboxVisible: isToolboxVisible(state)
     };
 }
 
