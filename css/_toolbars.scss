@@ -98,6 +98,12 @@
     }
 }
 
+.toolbox-content-wrapper {
+    display: flex;
+    flex-direction: column;
+    margin: 0 auto;
+    max-width: 100%;
+}
 
 .toolbox-content-items {
     background: $newToolbarBackgroundColor;
@@ -295,11 +301,15 @@
 }
 
 /**
- * On small mobile devices make the toolbar full width.
+ * On small mobile devices make the toolbar full width and pad the invite prompt.
  */
 .toolbox-content-mobile {
     @media (max-width: 500px) {
         margin-bottom: 0;
+
+        .toolbox-content-wrapper {
+            width: 100%;
+        }
 
         .toolbox-content-items {
             border-radius: 0;
@@ -307,6 +317,14 @@
             justify-content: space-evenly;
             padding: 6px 0;
             width: 100%;
+        }
+
+        .invite-more-container {
+            margin: 0 16px 8px;
+        }
+
+        .invite-more-container.elevated {
+            margin-bottom: 52px;
         }
     }
 }

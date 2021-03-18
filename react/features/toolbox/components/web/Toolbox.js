@@ -36,6 +36,7 @@ import { OverflowMenuItem } from '../../../base/toolbox/components';
 import { getLocalVideoTrack, toggleScreensharing } from '../../../base/tracks';
 import { isVpaasMeeting } from '../../../billing-counter/functions';
 import { CHAT_SIZE, ChatCounter, toggleChat } from '../../../chat';
+import { InviteMore } from '../../../conference';
 import { EmbedMeetingDialog } from '../../../embed-meeting';
 import { SharedDocumentButton } from '../../../etherpad';
 import { openFeedbackDialog } from '../../../feedback';
@@ -1264,22 +1265,25 @@ class Toolbox extends Component<Props, State> {
 
         return (
             <div className = { containerClassName }>
-                <div className = 'toolbox-content-items'>
-                    { this._renderAudioButton() }
-                    { this._renderVideoButton() }
-                    { mainMenuAdditionalButtons }
-                    { showOverflowMenuButton && <OverflowMenuButton
-                        isOpen = { _overflowMenuVisible }
-                        onVisibilityChange = { this._onSetOverflowVisible }>
-                        <ul
-                            aria-label = { t(toolbarAccLabel) }
-                            className = 'overflow-menu'>
-                            { this._renderOverflowMenuContent(overflowMenuAdditionalButtons) }
-                        </ul>
-                    </OverflowMenuButton>}
-                    <HangupButton
-                        customClass = 'hangup-button'
-                        visible = { this._shouldShowButton('hangup') } />
+                <div className = 'toolbox-content-wrapper'>
+                    <InviteMore />
+                    <div className = 'toolbox-content-items'>
+                        { this._renderAudioButton() }
+                        { this._renderVideoButton() }
+                        { mainMenuAdditionalButtons }
+                        { showOverflowMenuButton && <OverflowMenuButton
+                            isOpen = { _overflowMenuVisible }
+                            onVisibilityChange = { this._onSetOverflowVisible }>
+                            <ul
+                                aria-label = { t(toolbarAccLabel) }
+                                className = 'overflow-menu'>
+                                { this._renderOverflowMenuContent(overflowMenuAdditionalButtons) }
+                            </ul>
+                        </OverflowMenuButton>}
+                        <HangupButton
+                            customClass = 'hangup-button'
+                            visible = { this._shouldShowButton('hangup') } />
+                    </div>
                 </div>
             </div>
         );
