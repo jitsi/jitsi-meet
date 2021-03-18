@@ -10,6 +10,7 @@ import { PictureInPictureButton } from '../../../mobile/picture-in-picture';
 import { isToolboxVisible } from '../../../toolbox/functions.native';
 import ConferenceTimer from '../ConferenceTimer';
 
+import Labels from './Labels';
 import styles from './styles';
 
 
@@ -68,6 +69,7 @@ const NavigationBar = (props: Props) => {
                 {
                     props._conferenceTimerEnabled && <ConferenceTimer />
                 }
+                <Labels />
             </View>
         </View>
     );
