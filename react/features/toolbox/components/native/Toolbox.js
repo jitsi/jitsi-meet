@@ -1,10 +1,9 @@
 // @flow
 
 import React, { PureComponent } from 'react';
-import { View } from 'react-native';
+import { SafeAreaView, View } from 'react-native';
 
 import { ColorSchemeRegistry } from '../../../base/color-scheme';
-import { Container } from '../../../base/react';
 import { connect } from '../../../base/redux';
 import { StyleType } from '../../../base/styles';
 import { ChatButton } from '../../../chat';
@@ -48,12 +47,37 @@ class Toolbox extends PureComponent<Props> {
      * @returns {ReactElement}
      */
     render() {
+        if (!this.props._visible) {
+            return null;
+        }
+
+        const { _styles } = this.props;
+        const { buttonStylesBorderless, hangupButtonStyles, toggledButtonStyles } = _styles;
+
         return (
-            <Container
-                style = { styles.toolbox }
-                visible = { this.props._visible }>
-                { this._renderToolbar() }
-            </Container>
+            <View
+                pointerEvents = 'box-none'
+                style = { styles.toolboxContainer }>
+                <SafeAreaView
+                    accessibilityRole = 'toolbar'
+                    pointerEvents = 'box-none'
+                    style = { styles.toolbox }>
+                    <AudioMuteButton
+                        styles = { buttonStylesBorderless }
+                        toggledStyles = { toggledButtonStyles } />
+                    <VideoMuteButton
+                        styles = { buttonStylesBorderless }
+                        toggledStyles = { toggledButtonStyles } />
+                    <ChatButton
+                        styles = { buttonStylesBorderless }
+                        toggledStyles = { this._getChatButtonToggledStyle(toggledButtonStyles) } />
+                    <OverflowMenuButton
+                        styles = { buttonStylesBorderless }
+                        toggledStyles = { toggledButtonStyles } />
+                    <HangupButton
+                        styles = { hangupButtonStyles } />
+                </SafeAreaView>
+            </View>
         );
     }
 
@@ -86,40 +110,6 @@ class Toolbox extends PureComponent<Props> {
                 _styles.chatButtonOverride.toggled
             ]
         };
-    }
-
-    /**
-     * Renders the toolbar. In order to avoid a weird visual effect in which the
-     * toolbar is (visually) rendered and then visibly changes its size, it is
-     * rendered only after we've figured out the width available to the toolbar.
-     *
-     * @returns {React$Node}
-     */
-    _renderToolbar() {
-        const { _styles } = this.props;
-        const { buttonStylesBorderless, hangupButtonStyles, toggledButtonStyles } = _styles;
-
-        return (
-            <View
-                accessibilityRole = 'toolbar'
-                pointerEvents = 'box-none'
-                style = { styles.toolbar }>
-                <AudioMuteButton
-                    styles = { buttonStylesBorderless }
-                    toggledStyles = { toggledButtonStyles } />
-                <VideoMuteButton
-                    styles = { buttonStylesBorderless }
-                    toggledStyles = { toggledButtonStyles } />
-                <ChatButton
-                    styles = { buttonStylesBorderless }
-                    toggledStyles = { this._getChatButtonToggledStyle(toggledButtonStyles) } />
-                <OverflowMenuButton
-                    styles = { buttonStylesBorderless }
-                    toggledStyles = { toggledButtonStyles } />
-                <HangupButton
-                    styles = { hangupButtonStyles } />
-            </View>
-        );
     }
 }
 
