@@ -103,23 +103,45 @@ export default {
 
     roomTimer: {
         color: ColorPalette.white,
-        fontSize: 15,
-        opacity: 0.6
+        fontSize: 12,
+        fontWeight: '400'
+    },
+
+    roomTimerView: {
+        backgroundColor: 'rgba(0,0,0,0.8)',
+        borderBottomRightRadius: 3,
+        borderTopRightRadius: 3,
+        height: 28,
+        justifyContent: 'center',
+        paddingHorizontal: 10
     },
 
     roomName: {
         color: ColorPalette.white,
-        fontSize: 17,
+        fontSize: 14,
         fontWeight: '400'
     },
 
-    roomNameWrapper: {
-        flexDirection: 'column',
+    roomNameView: {
+        backgroundColor: 'rgba(0,0,0,0.6)',
+        borderBottomLeftRadius: 3,
+        borderTopLeftRadius: 3,
+        height: 28,
+        justifyContent: 'center',
+        paddingHorizontal: 10
+    },
+
+    roomNameContainer: {
         alignItems: 'center',
         left: 0,
         paddingHorizontal: 48,
         position: 'absolute',
         right: 0
+    },
+
+    roomNameWrapper: {
+        alignItems: 'center',
+        flexDirection: 'row'
     },
 
     /**

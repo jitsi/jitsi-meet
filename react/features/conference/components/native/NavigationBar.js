@@ -57,18 +57,27 @@ const NavigationBar = (props: Props) => {
                 styles = { styles.navBarButton } />
             <View
                 pointerEvents = 'box-none'
-                style = { styles.roomNameWrapper }>
-                {
-                    props._meetingNameEnabled
-                    && <Text
-                        numberOfLines = { 1 }
-                        style = { styles.roomName }>
-                        { props._meetingName }
-                    </Text>
-                }
-                {
-                    props._conferenceTimerEnabled && <ConferenceTimer />
-                }
+                style = { styles.roomNameContainer }>
+                <View
+                    pointerEvents = 'box-none'
+                    style = { styles.roomNameWrapper }>
+                    {
+                        props._meetingNameEnabled
+                        && <View style = { styles.roomNameView }>
+                            <Text
+                                numberOfLines = { 1 }
+                                style = { styles.roomName }>
+                                { props._meetingName }
+                            </Text>
+                        </View>
+                    }
+                    {
+                        props._conferenceTimerEnabled
+                            && <View style = { styles.roomTimerView }>
+                                <ConferenceTimer textStyle = { styles.roomTimer } />
+                            </View>
+                    }
+                </View>
                 <Labels />
             </View>
         </View>
