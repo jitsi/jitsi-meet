@@ -33,7 +33,6 @@ import {
 } from '../AbstractConference';
 import type { AbstractProps } from '../AbstractConference';
 
-import Labels from './Labels';
 import LonelyMeetingExperience from './LonelyMeetingExperience';
 import NavigationBar from './NavigationBar';
 import styles from './styles';
@@ -276,8 +275,6 @@ class Conference extends AbstractConference<Props, *> {
                 <SafeAreaView
                     pointerEvents = 'box-none'
                     style = { styles.toolboxAndFilmstripContainer }>
-
-                    <Labels />
 
                     <Captions onPress = { this._onClick } />
 
