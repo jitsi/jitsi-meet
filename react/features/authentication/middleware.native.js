@@ -26,7 +26,7 @@ import {
     _openWaitForOwnerDialog,
     stopWaitForOwner,
     waitForOwner
-} from './actions';
+} from './actions.native';
 import { LoginDialog, WaitForOwnerDialog } from './components/native';
 
 /**
