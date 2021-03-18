@@ -1,7 +1,7 @@
 // @flow
 
 import React from 'react';
-import { NativeModules, SafeAreaView, StatusBar } from 'react-native';
+import { NativeModules, SafeAreaView, StatusBar, View } from 'react-native';
 
 import { appNavigate } from '../../../app/actions';
 import { PIP_ENABLED, FULLSCREEN_ENABLED, getFeatureFlag } from '../../../base/flags';
@@ -272,7 +272,7 @@ class Conference extends AbstractConference<Props, *> {
                         </TintedView>
                 }
 
-                <SafeAreaView
+                <View
                     pointerEvents = 'box-none'
                     style = { styles.toolboxAndFilmstripContainer }>
 
@@ -285,10 +285,8 @@ class Conference extends AbstractConference<Props, *> {
                     <LonelyMeetingExperience />
 
                     { _shouldDisplayTileView ? undefined : <Filmstrip /> }
-
                     <Toolbox />
-
-                </SafeAreaView>
+                </View>
 
                 <SafeAreaView
                     pointerEvents = 'box-none'

@@ -62,7 +62,7 @@ const styles = {
     /**
      * The style of the toolbar.
      */
-    toolbar: {
+    toolbox: {
         alignItems: 'center',
         backgroundColor: ColorPalette.darkBackground,
         borderRadius: 3,
@@ -74,9 +74,9 @@ const styles = {
     },
 
     /**
-     * The style of the root/top-level {@link Container} of {@link Toolbox}.
+     * The style of the root/top-level container of {@link Toolbox}.
      */
-    toolbox: {
+    toolboxContainer: {
         flexDirection: 'column',
         flexGrow: 0,
         width: '100%',
