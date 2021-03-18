@@ -28,8 +28,7 @@ export default {
     indicatorContainer: {
         flex: 1,
         flexDirection: 'row',
-        justifyContent: 'flex-end',
-        margin: BoxModel.margin
+        justifyContent: 'flex-end'
     },
 
     /**
