@@ -129,10 +129,6 @@
 
     &.populated {
         #chat-input {
-            &:focus-within {
-                border: 1px solid #619CF4;
-            }
-
             .send-button {
                 background: #1B67EC;
                 cursor: pointer;
@@ -160,6 +156,10 @@
     display: flex;
     padding: 4px;
     border-radius: 3px;
+
+    &:focus-within {
+        border: 1px solid #619CF4;
+    }
 
     * {
         background-color: transparent;
@@ -214,7 +214,7 @@
     border-radius:0;
     box-shadow: none;
     color: white;
-    font-size: 15px;
+    font-size: 14px;
     padding: 10px;
     overflow-y: auto;
     resize: none;
@@ -271,6 +271,14 @@
             height: 48px;
         }
     }
+
+    #usermsg {
+        font-size: 16px;
+    }
+
+    .chatmessage .usermessage {
+        font-size: 16px;
+    }
 }
 
 .sideToolbarContainer {
@@ -309,6 +317,7 @@
 
     .usermessage {
         white-space: pre-wrap;
+        font-size: 14px;
     }
 
     &.error {
