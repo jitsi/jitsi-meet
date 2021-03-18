@@ -1,9 +1,9 @@
 // @flow
 
 import React, { Component } from 'react';
-import { ScrollView } from 'react-native';
+import { SafeAreaView, ScrollView } from 'react-native';
 
-import { Container, Platform } from '../../../base/react';
+import { Platform } from '../../../base/react';
 import { connect } from '../../../base/redux';
 import { ASPECT_RATIO_NARROW } from '../../../base/responsive-ui/constants';
 import { isFilmstripVisible } from '../../functions';
@@ -91,9 +91,7 @@ class Filmstrip extends Component<Props> {
         const filmstripStyle = isNarrowAspectRatio ? styles.filmstripNarrow : styles.filmstripWide;
 
         return (
-            <Container
-                style = { filmstripStyle }
-                visible = { _visible }>
+            <SafeAreaView style = { filmstripStyle }>
                 {
                     this._separateLocalThumbnail
                         && !isNarrowAspectRatio
@@ -126,7 +124,7 @@ class Filmstrip extends Component<Props> {
                     this._separateLocalThumbnail && isNarrowAspectRatio
                         && <LocalThumbnail />
                 }
-            </Container>
+            </SafeAreaView>
         );
     }
 
