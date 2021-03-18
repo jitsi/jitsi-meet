@@ -1,9 +1,5 @@
 import { ColorPalette, createStyleSheet } from '../../../base/styles';
 
-export const AVATAR_BORDER_GRADIENT = [ '#4C9AFF', '#0052CC' ];
-
-export const BACKGROUND_OVERLAY_GRADIENT = [ '#0052CC', '#4C9AFF' ];
-
 const BUTTON_SIZE = 56;
 
 const CALLER_AVATAR_BORDER_WIDTH = 3;
@@ -83,15 +79,6 @@ export default createStyleSheet({
 
     backgroundAvatarImage: {
         flex: 1
-    },
-
-    backgroundOverlayGradient: {
-        bottom: 0,
-        left: 0,
-        opacity: 0.9,
-        position: 'absolute',
-        right: 0,
-        top: 0
     },
 
     buttonsContainer: {
