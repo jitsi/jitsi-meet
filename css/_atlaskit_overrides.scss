@@ -123,6 +123,17 @@
     }
 }
 
+// Override Atlaskit inline style for the modal background.
+// Important is unfortunately needed for that.
+.shift-right .focus-lock [role="dialog"][style] {
+    background-color: $chatBackgroundColor !important;
+}
+
+// Remove Atlaskit padding from the chat dialog.
+.shift-right .focus-lock [role="dialog"] > div:first-child > div:nth-child(2) {
+    padding: 0;
+}
+
 div.Tooltip {
     color: #fff;
     font-size: 12px;
