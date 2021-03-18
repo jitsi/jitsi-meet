@@ -2,27 +2,12 @@ import { ColorSchemeRegistry, schemeColor } from '../../../base/color-scheme';
 import { BoxModel, ColorPalette, fixAndroidViewClipping } from '../../../base/styles';
 import { FILMSTRIP_SIZE } from '../../../filmstrip';
 
-export const NAVBAR_GRADIENT_COLORS = [ '#000000FF', '#00000000' ];
 export const INSECURE_ROOM_NAME_LABEL_COLOR = ColorPalette.warning;
-
-// From brand guideline
-const BOTTOM_GRADIENT_HEIGHT = 290;
-const DEFAULT_GRADIENT_SIZE = 140;
 
 /**
  * The styles of the feature conference.
  */
 export default {
-
-    bottomGradient: {
-        bottom: 0,
-        flexDirection: 'column',
-        justifyContent: 'flex-end',
-        minHeight: DEFAULT_GRADIENT_SIZE,
-        left: 0,
-        position: 'absolute',
-        right: 0
-    },
 
     /**
      * {@code Conference} style.
@@ -35,22 +20,6 @@ export default {
 
     displayNameContainer: {
         margin: 10
-    },
-
-    gradient: {
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        right: 0,
-        flex: 1
-    },
-
-    gradientStretchBottom: {
-        height: BOTTOM_GRADIENT_HEIGHT
-    },
-
-    gradientStretchTop: {
-        height: DEFAULT_GRADIENT_SIZE
     },
 
     /**
