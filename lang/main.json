@@ -28,6 +28,7 @@
         "shareInvite": "Share meeting invitation",
         "shareLink": "Share the meeting link to invite others",
         "shareStream": "Share the live streaming link",
+        "sip": "SIP: {{address}}",
         "telephone": "Telephone: {{number}}",
         "title": "Invite people to this meeting",
         "yahooEmail": "Yahoo Email"
