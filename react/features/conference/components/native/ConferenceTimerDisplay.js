@@ -3,20 +3,19 @@
 import React from 'react';
 import { Text } from 'react-native';
 
-import styles from './styles';
-
 /**
  * Returns native element to be rendered.
  *
  * @param {string} timerValue - String to display as time.
+ * @param {Object} textStyle - Style to be applied to the text.
  *
  * @returns {ReactElement}
  */
-export default function renderConferenceTimer(timerValue: string) {
+export default function renderConferenceTimer(timerValue: string, textStyle: Object) {
     return (
         <Text
-            numberOfLines = { 4 }
-            style = { styles.roomTimer }>
+            numberOfLines = { 1 }
+            style = { textStyle }>
             { timerValue }
         </Text>
     );
