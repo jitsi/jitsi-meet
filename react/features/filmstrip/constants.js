@@ -1,9 +1,16 @@
 // @flow
 
+import { BoxModel } from '../base/styles';
+
+/**
+ * The size (height and width) of the small (not tile view) thumbnails.
+ */
+export const SMALL_THUMBNAIL_SIZE = 80;
+
 /**
  * The height of the filmstrip in narrow aspect ratio, or width in wide.
  */
-export const FILMSTRIP_SIZE = 90;
+export const FILMSTRIP_SIZE = SMALL_THUMBNAIL_SIZE + BoxModel.margin;
 
 /**
  * The aspect ratio of a tile in tile view.
