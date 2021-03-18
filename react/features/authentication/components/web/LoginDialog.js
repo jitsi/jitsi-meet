@@ -4,20 +4,27 @@ import { FieldTextStateless as TextField } from '@atlaskit/field-text';
 import React, { Component } from 'react';
 import type { Dispatch } from 'redux';
 
+import { connect } from '../../../../../connection';
 import { toJid } from '../../../base/connection/functions';
 import { Dialog } from '../../../base/dialog';
 import { translate, translateToHTML } from '../../../base/i18n';
 import { JitsiConnectionErrors } from '../../../base/lib-jitsi-meet';
 import { connect as reduxConnect } from '../../../base/redux';
+import { showNotification } from '../../../notifications';
 import { authenticateAndUpgradeRole } from '../../actions.native';
 import { cancelLogin } from '../../actions.web';
-
 declare var config: Object;
+declare var APP: Object;
 
 /**
  * The type of the React {@code Component} props of {@link LoginDialog}.
  */
 type Props = {
+
+    /**
+     * Redux store dispatch method.
+     */
+    dispatch: Dispatch<any>,
 
     /**
      * {@link JitsiConference} that needs authentication - will hold a valid
@@ -36,14 +43,13 @@ type Props = {
     _connecting: boolean,
 
     /**
-     * Redux store dispatch method.
+     * Invoked when username and password are submitted.
      */
-    dispatch: Dispatch<any>,
-
-    doConnect: Function,
-
     onSuccess: Function,
 
+    /**
+     * Conference room name.
+     */
     roomName: string,
 
     /**
@@ -76,7 +82,12 @@ type State = {
     /**
      * The user entered local participant name.
      */
-    username: string
+    username: string,
+
+    /**
+     * Authentication process starts.
+     */
+    isAuthenticating: boolean
 }
 
 /**
@@ -95,7 +106,8 @@ class LoginDialog extends Component<Props, State> {
 
         this.state = {
             username: '',
-            password: ''
+            password: '',
+            isAuthenticating: false
         };
 
         this._onCancelLogin = this._onCancelLogin.bind(this);
@@ -130,7 +142,6 @@ class LoginDialog extends Component<Props, State> {
         const {
             _conference: conference,
             _configHosts: configHosts,
-            doConnect,
             roomName,
             onSuccess,
             dispatch
@@ -141,9 +152,29 @@ class LoginDialog extends Component<Props, State> {
         if (conference) {
             dispatch(authenticateAndUpgradeRole(jid, password, conference));
         } else {
-            doConnect(jid, password, roomName).then(connection => {
-                onSuccess(connection);
+            this.setState({
+                isAuthenticating: true
             });
+
+            // Connect function was exported because the dialog doesn't reset it's state
+            // and after submit
+            // Also, we used isAuthenticating to signal that the submit process has started
+            connect(jid, password, roomName)
+                .then(connection => {
+                    if (onSuccess) {
+                        onSuccess(connection);
+                        APP.store.dispatch(showNotification({
+                            descriptionArguments: { room: roomName },
+                            descriptionKey: 'notify.canJoinConference',
+                            titleKey: 'connection.AUTHSUCC'
+                        }));
+                    }
+                })
+                .catch(() => {
+                    this.setState({
+                        isAuthenticating: false
+                    });
+                });
         }
     }
 
@@ -228,11 +259,11 @@ class LoginDialog extends Component<Props, State> {
             ? 'user identity'
             : 'user@domain.net';
         const { _connecting: connecting, t } = this.props;
-        const { password, username } = this.state;
+        const { password, username, isAuthenticating } = this.state;
 
         return (
             <Dialog
-                okDisabled = { connecting || !password || !username }
+                okDisabled = { connecting || isAuthenticating || !password || !username }
                 okKey = { t('dialog.confirm') }
                 onCancel = { this._onCancelLogin }
                 onSubmit = { this._onLogin }
