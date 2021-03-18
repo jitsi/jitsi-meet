@@ -4,7 +4,6 @@ import { FieldTextStateless as TextField } from '@atlaskit/field-text';
 import React, { Component } from 'react';
 import type { Dispatch } from 'redux';
 
-import { connect } from '../../../base/connection/actions.native';
 import { toJid } from '../../../base/connection/functions';
 import { Dialog } from '../../../base/dialog';
 import { translate, translateToHTML } from '../../../base/i18n';
@@ -41,15 +40,16 @@ type Props = {
      */
     dispatch: Dispatch<any>,
 
+    doConnect: Function,
+
+    onSuccess: Function,
+
+    roomName: string,
+
     /**
      * The error which occurred during login/authentication.
      */
     _error: Object,
-
-    /**
-     * Callback function.
-     */
-    onSuccess: Function,
 
     /**
      * The progress in the floating range between 0 and 1 of the authenticating
@@ -130,18 +130,20 @@ class LoginDialog extends Component<Props, State> {
         const {
             _conference: conference,
             _configHosts: configHosts,
+            doConnect,
+            roomName,
             onSuccess,
             dispatch
         } = this.props;
         const { password, username } = this.state;
         const jid = toJid(username, configHosts);
 
-        if (jid && password) {
-            onSuccess && onSuccess(jid, password);
-
-            if (conference) {
-                dispatch(authenticateAndUpgradeRole(jid, password, conference));
-            }
+        if (conference) {
+            dispatch(authenticateAndUpgradeRole(jid, password, conference));
+        } else {
+            doConnect(jid, password, roomName).then(connection => {
+                onSuccess(connection);
+            });
         }
     }
 

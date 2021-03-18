@@ -44,19 +44,6 @@ export function hideLoginDialog() {
 }
 
 /**
- * Shows a authentication dialog where the local participant
- * should authenticate.
- *
- * @param {Function} onSuccess - Callback function
- *
- * @returns {Function}.
- */
-export function requestAuthDialog(onSuccess: Function) {
-    return openDialog(LoginDialog, { onSuccess }
-    );
-}
-
-/**
  * Cancels {@ink LoginDialog}.
  *
  * @returns {{
