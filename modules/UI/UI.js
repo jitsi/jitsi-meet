@@ -138,7 +138,6 @@ UI.start = function() {
         }
 
         APP.store.dispatch(setToolboxEnabled(false));
-        UI.messageHandler.enablePopups(false);
     }
 };
 
