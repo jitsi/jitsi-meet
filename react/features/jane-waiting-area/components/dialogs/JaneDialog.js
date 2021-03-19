@@ -242,7 +242,7 @@ class JaneDialog extends Component<Props> {
                     </div>
                 }
             </div>
-            <div className = 'jane-waiting-area-preview-btn-container'>
+            <div className = 'jane-waiting-area-preview-btn-container settings-button-container'>
                 <AudioSettingsButton visible = { true } />
                 <JaneHangupButton visible = { true } />
                 <VideoSettingsButton visible = { true } />

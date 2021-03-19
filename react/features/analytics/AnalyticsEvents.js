@@ -831,7 +831,7 @@ function removeTrackIdFromEventPropertyObject(event) {
 // eslint-disable-next-line require-jsdoc
 export function createWaitingAreaParticipantStatusChangedEvent(status) {
     return {
-        action: 'waitingArea.participant.status.changed',
+        action: 'waiting.area.participant.status.changed',
         attributes: {
             status
         }

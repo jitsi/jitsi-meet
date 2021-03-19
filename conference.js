@@ -770,7 +770,13 @@ export default {
         }
 
         if (isJaneWaitingAreaPageEnabled(APP.store.getState())) {
-            _connectionPromise = connect(roomName);
+            _connectionPromise = connect(roomName).then(c => {
+                // we want to initialize it early, in case of errors to be able
+                // to gather logs
+                APP.connection = c;
+
+                return c;
+            });
 
             const { tryCreateLocalTracks, errors } = this.createInitialLocalTracks(initialOptions);
             const tracks = await tryCreateLocalTracks;

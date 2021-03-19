@@ -11,10 +11,6 @@
     }
 
     .jane-hangup-btn-icon {
-        @media all and (max-width: 420px) {
-            height: 60px;
-            width: 60px;
-        }
         cursor: pointer;
         border: 1px solid #bf2117;
         display: flex;

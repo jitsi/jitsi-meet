@@ -22,7 +22,7 @@ export type Props = {
     isWaitingAreaPageEnabled: boolean
 };
 
-class JaneHangupButton extends Component<Props, State> {
+class JaneHangupButton extends Component<Props> {
 
     _onClick: (*) => void;
 

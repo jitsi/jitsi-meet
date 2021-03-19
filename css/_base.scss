@@ -224,6 +224,11 @@ form {
     background-size: contain;
     background-repeat: no-repeat;
     z-index: $zindex2;
+    @media all and (max-width:$smallScreen) {
+        height: $watermarkHeightMobile;
+        width: $watermarkWidthMobile;
+        margin-left: 20px;
+    }
 }
 
 .preCallMessage {
@@ -248,7 +253,7 @@ form {
     @media all and (max-width: $smallScreen) {
         padding-top: 15px;
         padding-right: 50px;
-        padding-left: 0px;
+        padding-left: 20px;
         p {
             &:first-child {
                 font-size: 16px;
