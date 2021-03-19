@@ -6,11 +6,10 @@ import {
     CONFERENCE_JOINED,
     CONFERENCE_LEFT
 } from '../base/conference';
-import { CONNECTION_ESTABLISHED, CONNECTION_FAILED } from '../base/connection';
+import { CONNECTION_ESTABLISHED } from '../base/connection';
 import { hideDialog, isDialogOpen } from '../base/dialog';
 import {
-    JitsiConferenceErrors,
-    JitsiConnectionErrors
+    JitsiConferenceErrors
 } from '../base/lib-jitsi-meet';
 import { MiddlewareRegistry } from '../base/redux';
 
@@ -25,7 +24,6 @@ import {
 } from './actions.native';
 import {
     hideLoginDialog,
-    openLoginDialog,
     openWaitForOwnerDialog
 } from './actions.web';
 import { LoginDialog, WaitForOwnerDialog } from './components/web';
@@ -108,18 +106,6 @@ MiddlewareRegistry.register(store => next => action => {
     case CONNECTION_ESTABLISHED:
         store.dispatch(hideLoginDialog);
         break;
-
-    case CONNECTION_FAILED: {
-        const { error } = action;
-
-        if (error
-                && error.name === JitsiConnectionErrors.PASSWORD_REQUIRED
-                && typeof error.recoverable === 'undefined') {
-            error.recoverable = true;
-            store.dispatch(openLoginDialog());
-        }
-        break;
-    }
     }
 
     return next(action);
