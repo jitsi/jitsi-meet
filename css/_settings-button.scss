@@ -39,6 +39,8 @@
         }
 
         &.settings-button-small-icon--disabled {
+            background: #36383C;
+
             &> svg {
                fill: #929292;
            }

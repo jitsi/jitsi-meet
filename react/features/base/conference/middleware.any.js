@@ -11,6 +11,7 @@ import { reloadNow } from '../../app/actions';
 import { openDisplayNamePrompt } from '../../display-name';
 import { showErrorNotification } from '../../notifications';
 import { CONNECTION_ESTABLISHED, CONNECTION_FAILED, connectionDisconnected } from '../connection';
+import { validateJwt } from '../jwt';
 import { JitsiConferenceErrors } from '../lib-jitsi-meet';
 import { MEDIA_TYPE } from '../media';
 import {
@@ -248,6 +249,26 @@ function _connectionEstablished({ dispatch }, next, action) {
 }
 
 /**
+ * Logs jwt validation errors from xmpp and from the client-side validator.
+ *
+ * @param {string} message -The error message from xmpp.
+ * @param {Object} state - The redux state.
+ * @returns {void}
+ */
+function _logJwtErrors(message, state) {
+    const { jwt } = state['features/base/jwt'];
+
+    if (!jwt) {
+        return;
+    }
+
+    const errorKeys = validateJwt(jwt);
+
+    message && logger.error(`JWT error: ${message}`);
+    errorKeys.length && logger.error('JWT parsing error:', errorKeys);
+}
+
+/**
  * Notifies the feature base/conference that the action
  * {@code CONNECTION_FAILED} is being dispatched within a specific redux
  * store.
@@ -262,6 +283,8 @@ function _connectionEstablished({ dispatch }, next, action) {
  * @returns {Object} The value returned by {@code next(action)}.
  */
 function _connectionFailed({ dispatch, getState }, next, action) {
+    _logJwtErrors(action.error.message, getState());
+
     const result = next(action);
 
     if (typeof beforeUnloadHandler !== 'undefined') {

@@ -1,9 +1,16 @@
 // @flow
 
+import { BoxModel } from '../base/styles';
+
+/**
+ * The size (height and width) of the small (not tile view) thumbnails.
+ */
+export const SMALL_THUMBNAIL_SIZE = 80;
+
 /**
  * The height of the filmstrip in narrow aspect ratio, or width in wide.
  */
-export const FILMSTRIP_SIZE = 90;
+export const FILMSTRIP_SIZE = SMALL_THUMBNAIL_SIZE + BoxModel.margin;
 
 /**
  * The aspect ratio of a tile in tile view.
@@ -47,3 +54,92 @@ export const DEFAULT_MAX_COLUMNS = 5;
  * An extended number of columns for tile view.
  */
 export const ABSOLUTE_MAX_COLUMNS = 7;
+
+/**
+ * An array of attributes of the video element that will be used for adding a listener for every event in the list.
+ * The latest event will be stored in redux. This is currently used by torture only.
+ */
+export const VIDEO_TEST_EVENTS = [
+    'onAbort',
+    'onCanPlay',
+    'onCanPlayThrough',
+    'onEmptied',
+    'onEnded',
+    'onError',
+    'onLoadedData',
+    'onLoadedMetadata',
+    'onLoadStart',
+    'onPause',
+    'onPlay',
+    'onPlaying',
+    'onRateChange',
+    'onStalled',
+    'onSuspend',
+    'onWaiting'
+];
+
+
+/**
+ * Display mode constant used when video is being displayed on the small video.
+ * @type {number}
+ * @constant
+ */
+export const DISPLAY_VIDEO = 0;
+
+/**
+ * Display mode constant used when the user's avatar is being displayed on
+ * the small video.
+ * @type {number}
+ * @constant
+ */
+export const DISPLAY_AVATAR = 1;
+
+/**
+ * Display mode constant used when neither video nor avatar is being displayed
+ * on the small video. And we just show the display name.
+ * @type {number}
+ * @constant
+ */
+export const DISPLAY_BLACKNESS_WITH_NAME = 2;
+
+/**
+ * Display mode constant used when video is displayed and display name
+ * at the same time.
+ * @type {number}
+ * @constant
+ */
+export const DISPLAY_VIDEO_WITH_NAME = 3;
+
+/**
+ * Display mode constant used when neither video nor avatar is being displayed
+ * on the small video. And we just show the display name.
+ * @type {number}
+ * @constant
+ */
+export const DISPLAY_AVATAR_WITH_NAME = 4;
+
+/**
+ * Maps the display modes to class name that will be applied on the thumbnail container.
+ * @type {Array<string>}
+ * @constant
+ */
+export const DISPLAY_MODE_TO_CLASS_NAME = [
+    'display-video',
+    'display-avatar-only',
+    'display-name-on-black',
+    'display-name-on-video',
+    'display-avatar-with-name'
+];
+
+/**
+ * Maps the display modes to string.
+ * @type {Array<string>}
+ * @constant
+ */
+export const DISPLAY_MODE_TO_STRING = [
+    'video',
+    'avatar',
+    'blackness-with-name',
+    'video-with-name',
+    'avatar-with-name'
+];

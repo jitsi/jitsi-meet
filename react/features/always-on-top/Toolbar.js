@@ -48,7 +48,7 @@ export default class Toolbar extends Component<Props> {
 
         return (
             <div
-                className = { `always-on-top-toolbox ${className}` }
+                className = { `toolbox-content-items always-on-top-toolbox ${className}` }
                 onMouseOut = { onMouseOut }
                 onMouseOver = { onMouseOver }>
                 <AudioMuteButton />

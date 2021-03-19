@@ -20,6 +20,12 @@ export const AUDIO_FOCUS_DISABLED = 'audio-focus.disabled';
 export const AUDIO_MUTE_BUTTON_ENABLED = 'audio-mute.enabled';
 
 /**
+ * Flag indicating that the Audio only button in the overflow menu is enabled.
+ * Default: enabled (true).
+ */
+export const AUDIO_ONLY_BUTTON_ENABLED = 'audio-only.enabled';
+
+/**
  * Flag indicating if calendar integration should be enabled.
  * Default: enabled (true) on Android, auto-detected on iOS.
  */

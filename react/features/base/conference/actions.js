@@ -141,7 +141,7 @@ function _addConferenceListeners(conference, dispatch, state) {
             for (const track of localTracks) {
                 if ((audioMuted && track.jitsiTrack.getType() === MEDIA_TYPE.AUDIO)
                     || (videoMuted && track.jitsiTrack.getType() === MEDIA_TYPE.VIDEO)) {
-                    replaceLocalTrack(track.jitsiTrack, null, conference);
+                    dispatch(replaceLocalTrack(track.jitsiTrack, null, conference));
                 }
             }
         });

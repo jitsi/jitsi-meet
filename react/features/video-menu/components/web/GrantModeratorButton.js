@@ -10,7 +10,7 @@ import AbstractGrantModeratorButton, {
     type Props
 } from '../AbstractGrantModeratorButton';
 
-import RemoteVideoMenuButton from './RemoteVideoMenuButton';
+import VideoMenuButton from './VideoMenuButton';
 
 declare var interfaceConfig: Object;
 
@@ -44,7 +44,7 @@ class GrantModeratorButton extends AbstractGrantModeratorButton {
         }
 
         return (
-            <RemoteVideoMenuButton
+            <VideoMenuButton
                 buttonText = { t('videothumbnail.grantModerator') }
                 displayClass = 'grantmoderatorlink'
                 icon = { IconCrown }

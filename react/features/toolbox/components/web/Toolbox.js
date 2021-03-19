@@ -36,6 +36,7 @@ import { OverflowMenuItem } from '../../../base/toolbox/components';
 import { getLocalVideoTrack, toggleScreensharing } from '../../../base/tracks';
 import { isVpaasMeeting } from '../../../billing-counter/functions';
 import { CHAT_SIZE, ChatCounter, toggleChat } from '../../../chat';
+import { InviteMore } from '../../../conference';
 import { EmbedMeetingDialog } from '../../../embed-meeting';
 import { SharedDocumentButton } from '../../../etherpad';
 import { openFeedbackDialog } from '../../../feedback';
@@ -83,6 +84,7 @@ import MuteEveryoneButton from '../MuteEveryoneButton';
 import AudioSettingsButton from './AudioSettingsButton';
 import OverflowMenuButton from './OverflowMenuButton';
 import OverflowMenuProfileItem from './OverflowMenuProfileItem';
+import ToggleCameraButton from './ToggleCameraButton';
 import ToolbarButton from './ToolbarButton';
 import VideoSettingsButton from './VideoSettingsButton';
 
@@ -929,7 +931,7 @@ class Toolbox extends Component<Props, State> {
     }
 
     /**
-     * Returns true if the profile button is visible and false otherwise.
+     * Returns true if the embed meeting button is visible and false otherwise.
      *
      * @returns {boolean}
      */
@@ -967,6 +969,10 @@ class Toolbox extends Component<Props, State> {
         const group1 = [
             ...additionalButtons,
 
+            this._shouldShowButton('toggle-camera')
+                && <ToggleCameraButton
+                    key = 'toggle-camera'
+                    showLabel = { true } />,
             this._shouldShowButton('videoquality')
                 && <OverflowMenuVideoQualityItem
                     key = 'videoquality'
@@ -1134,7 +1140,9 @@ class Toolbox extends Component<Props, State> {
 
         if (this._shouldShowButton('chat')) {
             buttons.has('chat')
-                ? mainMenuAdditionalButtons.push(<div className = 'toolbar-button-with-badge'>
+                ? mainMenuAdditionalButtons.push(<div
+                    className = 'toolbar-button-with-badge'
+                    key = 'chatcontainer'>
                     <ToolbarButton
                         accessibilityLabel = { t('toolbar.accessibilityLabel.chat') }
                         icon = { IconChat }
@@ -1173,8 +1181,7 @@ class Toolbox extends Component<Props, State> {
                 ? mainMenuAdditionalButtons.push(
                     <TileViewButton
                         key = 'tileview'
-                        showLabel = { false }
-                        visible = { true } />)
+                        showLabel = { false } />)
                 : overflowMenuAdditionalButtons.push(
                     <TileViewButton
                         key = 'tileview'
@@ -1258,22 +1265,25 @@ class Toolbox extends Component<Props, State> {
 
         return (
             <div className = { containerClassName }>
-                <div className = 'toolbox-content-items'>
-                    { this._renderAudioButton() }
-                    { this._renderVideoButton() }
-                    { mainMenuAdditionalButtons }
-                    { showOverflowMenuButton && <OverflowMenuButton
-                        isOpen = { _overflowMenuVisible }
-                        onVisibilityChange = { this._onSetOverflowVisible }>
-                        <ul
-                            aria-label = { t(toolbarAccLabel) }
-                            className = 'overflow-menu'>
-                            { this._renderOverflowMenuContent(overflowMenuAdditionalButtons) }
-                        </ul>
-                    </OverflowMenuButton>}
-                    <HangupButton
-                        customClass = 'hangup-button'
-                        visible = { this._shouldShowButton('hangup') } />
+                <div className = 'toolbox-content-wrapper'>
+                    <InviteMore />
+                    <div className = 'toolbox-content-items'>
+                        { this._renderAudioButton() }
+                        { this._renderVideoButton() }
+                        { mainMenuAdditionalButtons }
+                        { showOverflowMenuButton && <OverflowMenuButton
+                            isOpen = { _overflowMenuVisible }
+                            onVisibilityChange = { this._onSetOverflowVisible }>
+                            <ul
+                                aria-label = { t(toolbarAccLabel) }
+                                className = 'overflow-menu'>
+                                { this._renderOverflowMenuContent(overflowMenuAdditionalButtons) }
+                            </ul>
+                        </OverflowMenuButton>}
+                        <HangupButton
+                            customClass = 'hangup-button'
+                            visible = { this._shouldShowButton('hangup') } />
+                    </div>
                 </div>
             </div>
         );

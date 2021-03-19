@@ -178,7 +178,6 @@ class ReactInstanceManagerHolder {
 
         List<ReactPackage> packages
             = new ArrayList<>(Arrays.asList(
-                new com.BV.LinearGradient.LinearGradientPackage(),
                 new com.calendarevents.CalendarEventsPackage(),
                 new com.corbt.keepawake.KCKeepAwakePackage(),
                 new com.facebook.react.shell.MainReactPackage(),

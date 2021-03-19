@@ -15,6 +15,16 @@ export class AudioMixerEffect {
     _mixAudio: Object;
 
     /**
+     * Original MediaStream from the JitsiLocalTrack that uses this effect.
+     */
+    _originalStream: Object;
+
+    /**
+     * MediaStreamTrack obtained from the original MediaStream.
+     */
+    _originalTrack: Object;
+
+    /**
      * lib-jitsi-meet AudioMixer.
      */
     _audioMixer: Object;
@@ -51,9 +61,12 @@ export class AudioMixerEffect {
      * @returns {MediaStream} - MediaStream containing both audio tracks mixed together.
      */
     startEffect(audioStream: MediaStream) {
+        this._originalStream = audioStream;
+        this._originalTrack = audioStream.getTracks()[0];
+
         this._audioMixer = JitsiMeetJS.createAudioMixer();
         this._audioMixer.addMediaStream(this._mixAudio.getOriginalStream());
-        this._audioMixer.addMediaStream(audioStream);
+        this._audioMixer.addMediaStream(this._originalStream);
 
         return this._audioMixer.start();
     }
@@ -67,4 +80,22 @@ export class AudioMixerEffect {
         this._audioMixer.reset();
     }
 
+    /**
+     * Change the muted state of the effect.
+     *
+     * @param {boolean} muted - Should effect be muted or not.
+     * @returns {void}
+     */
+    setMuted(muted: boolean) {
+        this._originalTrack.enabled = !muted;
+    }
+
+    /**
+     * Check wether or not this effect is muted.
+     *
+     * @returns {boolean}
+     */
+    isMuted() {
+        return !this._originalTrack.enabled;
+    }
 }

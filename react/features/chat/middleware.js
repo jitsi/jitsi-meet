@@ -81,14 +81,16 @@ MiddlewareRegistry.register(store => next => action => {
         break;
 
     case OPEN_CHAT:
-        if (localParticipant.name) {
-            dispatch(setActiveModalId(CHAT_VIEW_MODAL_ID));
-            _maybeFocusField();
-        } else {
-            dispatch(openDisplayNamePrompt(() => {
+        if (navigator.product === 'ReactNative') {
+            if (localParticipant.name) {
                 dispatch(setActiveModalId(CHAT_VIEW_MODAL_ID));
-                _maybeFocusField();
-            }));
+            } else {
+                dispatch(openDisplayNamePrompt(() => {
+                    dispatch(setActiveModalId(CHAT_VIEW_MODAL_ID));
+                }));
+            }
+        } else {
+            dispatch(setActiveModalId(CHAT_VIEW_MODAL_ID));
         }
 
         unreadCount = 0;
@@ -288,19 +290,6 @@ function _handleReceivedMessage({ dispatch, getState }, { id, message, privateMe
         });
 
         dispatch(showToolbox(4000));
-    }
-}
-
-/**
- * Focuses the chat text field on web after the message recipient was updated, if needed.
- *
- * @returns {void}
- */
-function _maybeFocusField() {
-    if (navigator.product !== 'ReactNative') {
-        const textField = document.getElementById('usermsg');
-
-        textField && textField.focus();
     }
 }
 

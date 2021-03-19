@@ -10,6 +10,7 @@ import {
     RecordingExpandedLabel
 } from '../../../recording';
 import { TranscribingExpandedLabel } from '../../../transcribing';
+import { shouldDisplayTileView } from '../../../video-layout';
 import { VideoQualityExpandedLabel } from '../../../video-quality';
 import { shouldDisplayNotifications } from '../../functions';
 import AbstractLabels, {
@@ -29,6 +30,11 @@ type Props = AbstractLabelsProps & {
      * Application's aspect ratio.
      */
     _aspectRatio: Symbol,
+
+    /**
+     * True if tile view is being diaplyed, false otherwise.
+     */
+    _shouldDisplayTileView: boolean,
 
     /**
      * True if the labels should be visible, false otherwise.
@@ -151,7 +157,7 @@ class Labels extends AbstractLabels<Props, State> {
      * @inheritdoc
      */
     render() {
-        const { _aspectRatio, _filmstripVisible, _visible } = this.props;
+        const { _aspectRatio, _filmstripVisible, _shouldDisplayTileView, _visible } = this.props;
 
         if (!_visible) {
             return null;
@@ -168,7 +174,7 @@ class Labels extends AbstractLabels<Props, State> {
                     pointerEvents = 'box-none'
                     style = { [
                         styles.indicatorContainer,
-                        wide && _filmstripVisible
+                        wide && _filmstripVisible && !_shouldDisplayTileView
                             && styles.indicatorContainerWide
                     ] }>
                     <TouchableOpacity
@@ -220,7 +226,7 @@ class Labels extends AbstractLabels<Props, State> {
                 <View
                     style = { [
                         styles.indicatorContainer,
-                        wide && _filmstripVisible
+                        wide && _filmstripVisible && !_shouldDisplayTileView
                             && styles.indicatorContainerWide
                     ] }>
                     {
@@ -358,6 +364,7 @@ function _mapStateToProps(state) {
     return {
         ..._abstractMapStateToProps(state),
         _aspectRatio: state['features/base/responsive-ui'].aspectRatio,
+        _shouldDisplayTileView: shouldDisplayTileView(state),
         _visible: !shouldDisplayNotifications(state)
     };
 }

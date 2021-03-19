@@ -97,6 +97,7 @@ export default [
     'disableTileView',
     'displayJids',
     'doNotStoreRoom',
+    'doNotFlipLocalVideo',
     'dropbox',
     'e2eping',
     'enableDisplayNameInStats',

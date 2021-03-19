@@ -34,7 +34,7 @@ import { toggleScreensharing } from '../../base/tracks';
 import { OPEN_CHAT, CLOSE_CHAT } from '../../chat';
 import { openChat } from '../../chat/actions';
 import { sendMessage, setPrivateMessageRecipient, closeChat } from '../../chat/actions.any';
-import { muteLocal } from '../../remote-video-menu/actions';
+import { muteLocal } from '../../video-menu/actions';
 import { ENTER_PICTURE_IN_PICTURE } from '../picture-in-picture';
 
 import { setParticipantsWithScreenShare } from './actions';
