@@ -112,9 +112,6 @@ UI.getSharedVideoManager = function() {
  * established, false - otherwise (for example in the case of welcome page)
  */
 UI.start = function() {
-    // Set the defaults for prompt dialogs.
-    $.prompt.setDefaults({ persistent: false });
-
     VideoLayout.init(eventEmitter);
     VideoLayout.initLargeVideo();
 
@@ -140,7 +137,6 @@ UI.start = function() {
         }
 
         APP.store.dispatch(setToolboxEnabled(false));
-        UI.messageHandler.enablePopups(false);
     }
 };
 

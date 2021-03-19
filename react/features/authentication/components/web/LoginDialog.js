@@ -82,12 +82,7 @@ type State = {
     /**
      * The user entered local participant name.
      */
-    username: string,
-
-    /**
-     * Authentication process starts.
-     */
-    isAuthenticating: boolean
+    username: string
 }
 
 /**
@@ -106,8 +101,7 @@ class LoginDialog extends Component<Props, State> {
 
         this.state = {
             username: '',
-            password: '',
-            isAuthenticating: false
+            password: ''
         };
 
         this._onCancelLogin = this._onCancelLogin.bind(this);
@@ -152,13 +146,6 @@ class LoginDialog extends Component<Props, State> {
         if (conference) {
             dispatch(authenticateAndUpgradeRole(jid, password, conference));
         } else {
-            this.setState({
-                isAuthenticating: true
-            });
-
-            // Connect function was exported because the dialog doesn't reset it's state
-            // and after submit
-            // Also, we used isAuthenticating to signal that the submit process has started
             connect(jid, password, roomName)
                 .then(connection => {
                     if (onSuccess) {
@@ -169,11 +156,6 @@ class LoginDialog extends Component<Props, State> {
                             titleKey: 'connection.AUTHSUCC'
                         }));
                     }
-                })
-                .catch(() => {
-                    this.setState({
-                        isAuthenticating: false
-                    });
                 });
         }
     }
@@ -258,12 +240,12 @@ class LoginDialog extends Component<Props, State> {
         const placeholder = config.hosts.authdomain
             ? 'user identity'
             : 'user@domain.net';
-        const { _connecting: connecting, t } = this.props;
-        const { password, username, isAuthenticating } = this.state;
+        const { t } = this.props;
+        const { password, username } = this.state;
 
         return (
             <Dialog
-                okDisabled = { connecting || isAuthenticating || !password || !username }
+                okDisabled = { !password || !username }
                 okKey = { t('dialog.confirm') }
                 onCancel = { this._onCancelLogin }
                 onSubmit = { this._onLogin }

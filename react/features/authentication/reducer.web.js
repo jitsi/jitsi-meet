@@ -11,8 +11,12 @@ import {
 } from './actionTypes';
 
 ReducerRegistry.register('features/authentication', (state = {}, action) => {
-    const { error, progress, waitForOwnerTimeoutID } = action;
-    let { thenableWithCancel } = action;
+    const {
+        error,
+        progress,
+        waitForOwnerTimeoutID,
+        thenableWithCancel
+    } = action;
 
     switch (action.type) {
 
@@ -48,7 +52,7 @@ ReducerRegistry.register('features/authentication', (state = {}, action) => {
     case UPGRADE_ROLE_FINISHED: {
         if (state.thenableWithCancel === thenableWithCancel) {
             if (error || progress === 1) {
-                thenableWithCancel = undefined;
+                action.thenableWithCancel = undefined;
             }
 
             return {

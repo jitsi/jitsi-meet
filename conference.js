@@ -22,7 +22,6 @@ import {
     redirectToStaticPage,
     reloadWithStoredParams
 } from './react/features/app/actions';
-import { openWaitForOwnerDialog } from './react/features/authentication/actions.web';
 import {
     AVATAR_URL_COMMAND,
     EMAIL_COMMAND,
@@ -139,7 +138,6 @@ const eventEmitter = new EventEmitter();
 
 let room;
 let connection;
-let authRequiredDialog;
 
 /**
  * The promise is used when the prejoin screen is shown.
@@ -311,13 +309,10 @@ class ConferenceConnector {
                 room.join();
             }, 5000);
 
-            if (authRequiredDialog) {
-                return;
-            }
+            const { password }
+                = APP.store.getState()['features/base/conference'];
 
-            authRequiredDialog = APP.store.dispatch(
-                openWaitForOwnerDialog()
-            );
+            AuthHandler.requireAuth(room, password);
 
             break;
         }
@@ -383,7 +378,6 @@ class ConferenceConnector {
         if (this.reconnectTimeout !== null) {
             clearTimeout(this.reconnectTimeout);
         }
-        AuthHandler.closeAuth();
     }
 
     /**

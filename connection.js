@@ -3,7 +3,7 @@
 import { jitsiLocalStorage } from '@jitsi/js-utils';
 import Logger from 'jitsi-meet-logger';
 
-import UIUtil from './modules/UI/util/UIUtil';
+import { redirectToTokenAuthService } from './modules/UI/authentication/AuthHandler';
 import { hideLoginDialog } from './react/features/authentication/actions.web';
 import { LoginDialog } from './react/features/authentication/components';
 import {
@@ -22,8 +22,7 @@ const logger = Logger.getLogger(__filename);
 
 const isTokenAuthEnabled
     = typeof config.tokenAuthUrl === 'string' && config.tokenAuthUrl.length;
-const getTokenAuthUrl
-    = JitsiMeetJS.util.AuthUtil.getTokenAuthUrl.bind(null, config.tokenAuthUrl);
+
 
 /**
  * The feature announced so we can distinguish jibri participants.
@@ -244,7 +243,7 @@ function requestAuth(roomName) {
 
     if (isTokenAuthEnabled) {
         // This Promise never resolves as user gets redirected to another URL
-        return new Promise(() => UIUtil.redirect(getTokenAuthUrl(roomName, false)));
+        return new Promise(() => redirectToTokenAuthService(roomName));
     }
 
     return new Promise(resolve => {

@@ -1,13 +1,10 @@
 // @flow
 
 import { maybeRedirectToWelcomePage } from '../app/actions';
-import { checkIfCanJoin } from '../base/conference/actions';
 import { hideDialog, openDialog } from '../base/dialog/actions';
 
 import {
-    CANCEL_LOGIN,
-    STOP_WAIT_FOR_OWNER,
-    WAIT_FOR_OWNER
+    CANCEL_LOGIN
 } from './actionTypes';
 import { WaitForOwnerDialog, LoginDialog } from './components/web';
 
@@ -17,10 +14,15 @@ import { WaitForOwnerDialog, LoginDialog } from './components/web';
  * Conference, so the local participant should authenticate or wait for a
  * host.
  *
+ * @param {Function} onAuthNow - The callback to invoke if the local
+ * participant wants to authenticate.
+ *
  * @returns {Function}.
  */
-export function openWaitForOwnerDialog() {
-    return openDialog(WaitForOwnerDialog);
+export function openWaitForOwnerDialog(onAuthNow: ?Function) {
+    return openDialog(WaitForOwnerDialog, {
+        onAuthNow
+    });
 }
 
 /**
@@ -67,35 +69,4 @@ export function cancelWaitForOwner() {
         dispatch(maybeRedirectToWelcomePage());
     };
 }
-
-/**
- * Called when Jicofo rejects to create the room for anonymous user. Will
- * start the process of "waiting for the owner" by periodically trying to join
- * the room every five seconds.
- *
- * @returns {Function}
- */
-export function waitForOwner() {
-    return (dispatch: Function) =>
-        dispatch({
-            type: WAIT_FOR_OWNER,
-            handler: () => dispatch(checkIfCanJoin()),
-            timeoutMs: 5000
-        });
-}
-
-/**
- * Stops waiting for the conference owner.
- *
- * @returns {{
- *     type: STOP_WAIT_FOR_OWNER,
- *     error: Object
- * }}
- */
-export function stopWaitForOwner() {
-    return {
-        type: STOP_WAIT_FOR_OWNER
-    };
-}
-
 
