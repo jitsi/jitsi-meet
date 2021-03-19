@@ -52,10 +52,10 @@ const commands = {
     toggleAudio: 'toggle-audio',
     toggleChat: 'toggle-chat',
     toggleFilmStrip: 'toggle-film-strip',
+    toggleRaiseHand: 'toggle-raise-hand',
     toggleShareScreen: 'toggle-share-screen',
     toggleTileView: 'toggle-tile-view',
-    toggleVideo: 'toggle-video',
-    toggleRaiseHand: 'toggle-raise-hand'
+    toggleVideo: 'toggle-video'
 };
 
 /**
