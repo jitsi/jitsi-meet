@@ -30,7 +30,8 @@ import JitsiMeetJS from '../../../base/lib-jitsi-meet';
 import {
     getLocalParticipant,
     getParticipants,
-    participantUpdated
+    participantUpdated,
+    PARTICIPANT_ROLE
 } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import { OverflowMenuItem } from '../../../base/toolbox/components';
@@ -134,6 +135,11 @@ type Props = {
      * Whether or not the app is running in mobile browser.
      */
     _isMobile: boolean,
+
+    /**
+     * Whether moderator or not.
+     */
+    _isModerator: boolean,
 
     /**
      * Whether or not the profile is disabled.
@@ -968,6 +974,16 @@ class Toolbox extends Component<Props, State> {
     }
 
     /**
+     * Returns true if moderator.
+     *
+     * @returns {boolean}
+     */
+    _isListParticipantsVisible() {
+        return this.props._isModerator
+            && this._shouldShowButton('listparticipants');
+    }
+
+    /**
      * Returns true if the profile button is visible and false otherwise.
      *
      * @returns {boolean}
@@ -1101,7 +1117,7 @@ class Toolbox extends Component<Props, State> {
                     key = 'embed'
                     onClick = { this._onToolbarOpenEmbedMeeting }
                     text = { t('toolbar.embedMeeting') } />,
-            this._shouldShowButton('listparticipants')
+            this._isListParticipantsVisible()
                 && <OverflowMenuItem
                     accessibilityLabel = { t('toolbar.accessibilityLabel.listParticipants') }
                     icon = { IconParticipants }
@@ -1352,6 +1368,9 @@ function _mapStateToProps(state) {
     const localRecordingStates = state['features/local-recording'];
     const localVideo = getLocalVideoTrack(state['features/base/tracks']);
 
+    const isModerator = localParticipant.role === PARTICIPANT_ROLE.MODERATOR;
+
+
     let desktopSharingDisabledTooltipKey;
 
     if (enableFeaturesBasedOnToken) {
@@ -1372,6 +1391,7 @@ function _mapStateToProps(state) {
         _feedbackConfigured: Boolean(callStatsID),
         _isProfileDisabled: Boolean(state['features/base/config'].disableProfile),
         _isMobile: isMobileBrowser(),
+        _isModerator: isModerator,
         _isVpaasMeeting: isVpaasMeeting(state),
         _fullScreen: fullScreen,
         _tileViewEnabled: shouldDisplayTileView(state),
