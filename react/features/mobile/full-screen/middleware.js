@@ -5,6 +5,7 @@ import { Immersive } from 'react-native-immersive';
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../../base/app';
 import { getCurrentConference } from '../../base/conference';
 import { isAnyDialogOpen } from '../../base/dialog/functions';
+import { FULLSCREEN_ENABLED, getFeatureFlag } from '../../base/flags';
 import { Platform } from '../../base/react';
 import { MiddlewareRegistry, StateListenerRegistry } from '../../base/redux';
 
@@ -50,8 +51,9 @@ StateListenerRegistry.register(
         const { enabled: audioOnly } = state['features/base/audio-only'];
         const conference = getCurrentConference(state);
         const dialogOpen = isAnyDialogOpen(state);
+        const fullscreenEnabled = getFeatureFlag(state, FULLSCREEN_ENABLED, true);
 
-        return conference ? !audioOnly && !dialogOpen : false;
+        return conference ? !audioOnly && !dialogOpen && fullscreenEnabled : false;
     },
     /* listener */ fullScreen => _setFullScreen(fullScreen)
 );

@@ -1,18 +1,21 @@
 .video-preview {
     background: none;
-    max-height: 290px;
+    display: inline-block;
+    max-height: 344px;
 
     &-container {
+        background: $menuBG;
+        border-radius: 3px;
         overflow: auto;
-        padding: 16px;
+        padding: 8px;
     }
 
     &-entry {
         cursor: pointer;
-        height: 135px;
-        margin-bottom: 16px;
+        height: 168px;
+        margin-bottom: 8px;
         position: relative;
-        width: 240px;
+        width: 284px;
 
         &:last-child {
             margin-bottom: 0;
@@ -20,13 +23,15 @@
 
         &--selected {
             border: 3px solid #31B76A;
+            border-radius: 3px;
             cursor: default;
-            height: 129px;
-            width: 234px;
+            height: 162px;
+            width: 278px;
         }
     }
 
     &-video {
+        border-radius: 3px;
         height: 100%;
         object-fit: cover;
         width: 100%;
@@ -50,21 +55,28 @@
     }
 
     &-label {
+        bottom: 8px;
         color: #fff;
-        font-size: 13px;
-        line-height: 20px;
-        overflow: hidden;
-        padding: 8px;
         position: absolute;
-        text-align: center;
-        text-overflow: ellipsis;
-        width: 220px;
+        width: 100%;
         z-index: 2;
-    }
 
-    // Override @atlaskit/InlineDialog container which is made with styled components
-    & > div:nth-child(2) {
-        outline: none;
-        padding: 0;
+        &-container {
+            margin: 0 16px;
+        }
+
+        &-text {
+            background-color: #131519;
+            border-radius: 3px;
+            padding: 2px 8px;
+            font-size: 13px;
+            line-height: 20px;
+            margin: 0 auto;
+            max-width: calc(100% - 16px);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            width: fit-content;
+            white-space: nowrap;
+        }
     }
 }

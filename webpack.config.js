@@ -2,6 +2,7 @@
 
 const CircularDependencyPlugin = require('circular-dependency-plugin');
 const process = require('process');
+const webpack = require('webpack');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 
 /**
@@ -194,6 +195,9 @@ module.exports = [
         entry: {
             'app.bundle': './app.js'
         },
+        plugins: [
+            new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/)
+        ],
         performance: getPerformanceHints(4 * 1024 * 1024)
     }),
     Object.assign({}, config, {
@@ -206,6 +210,9 @@ module.exports = [
         entry: {
             'dial_in_info_bundle': './react/features/invite/components/dial-in-info-page'
         },
+        plugins: [
+            new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/)
+        ],
         performance: getPerformanceHints(500 * 1024)
     }),
     Object.assign({}, config, {
@@ -231,39 +238,6 @@ module.exports = [
             'close3': './static/close3.js'
         },
         performance: getPerformanceHints(128 * 1024)
-    }),
-
-    // Because both video-blur-effect and rnnoise-processor modules are loaded
-    // in a lazy manner using the loadScript function with a hard coded name,
-    // i.e.loadScript('libs/rnnoise-processor.min.js'), webpack dev server
-    // won't know how to properly load them using the default config filename
-    // and sourceMapFilename parameters which target libs without .min in dev
-    // mode. Thus we change these modules to have the same filename in both
-    // prod and dev mode.
-    Object.assign({}, config, {
-        entry: {
-            'video-blur-effect': './react/features/stream-effects/blur/index.js'
-        },
-        output: Object.assign({}, config.output, {
-            library: [ 'JitsiMeetJS', 'app', 'effects' ],
-            libraryTarget: 'window',
-            filename: '[name].min.js',
-            sourceMapFilename: '[name].min.map'
-        }),
-        performance: getPerformanceHints(1 * 1024 * 1024)
-    }),
-
-    Object.assign({}, config, {
-        entry: {
-            'rnnoise-processor': './react/features/stream-effects/rnnoise/index.js'
-        },
-        output: Object.assign({}, config.output, {
-            library: [ 'JitsiMeetJS', 'app', 'effects', 'rnnoise' ],
-            libraryTarget: 'window',
-            filename: '[name].min.js',
-            sourceMapFilename: '[name].min.map'
-        }),
-        performance: getPerformanceHints(30 * 1024)
     }),
 
     Object.assign({}, config, {

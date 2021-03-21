@@ -16,7 +16,16 @@ import {
     isRemoteTrackMuted
 } from '../base/tracks/functions';
 
-import { ASPECT_RATIO_BREAKPOINT, SQUARE_TILE_ASPECT_RATIO, TILE_ASPECT_RATIO } from './constants';
+import {
+    ASPECT_RATIO_BREAKPOINT,
+    DISPLAY_AVATAR,
+    DISPLAY_AVATAR_WITH_NAME,
+    DISPLAY_BLACKNESS_WITH_NAME,
+    DISPLAY_VIDEO,
+    DISPLAY_VIDEO_WITH_NAME,
+    SQUARE_TILE_ASPECT_RATIO,
+    TILE_ASPECT_RATIO
+} from './constants';
 
 declare var interfaceConfig: Object;
 
@@ -175,4 +184,37 @@ export function getVerticalFilmstripVisibleAreaWidth() {
     const filmstripMaxWidth = (interfaceConfig.FILM_STRIP_MAX_HEIGHT || 120) + 18;
 
     return Math.min(filmstripMaxWidth, window.innerWidth);
+}
+
+/**
+ * Computes information that determine the display mode.
+ *
+ * @param {Object} input - Obejct containing all necessary information for determining the display mode for
+ * the thumbnail.
+ * @returns {number} - One of <tt>DISPLAY_VIDEO</tt>, <tt>DISPLAY_AVATAR</tt> or <tt>DISPLAY_BLACKNESS_WITH_NAME</tt>.
+*/
+export function computeDisplayMode(input: Object) {
+    const {
+        isAudioOnly,
+        isCurrentlyOnLargeVideo,
+        isScreenSharing,
+        canPlayEventReceived,
+        isHovered,
+        isRemoteParticipant,
+        tileViewActive
+    } = input;
+    const adjustedIsVideoPlayable = input.isVideoPlayable && (!isRemoteParticipant || canPlayEventReceived);
+
+    if (!tileViewActive && isScreenSharing && isRemoteParticipant) {
+        return isHovered ? DISPLAY_AVATAR_WITH_NAME : DISPLAY_AVATAR;
+    } else if (isCurrentlyOnLargeVideo && !tileViewActive) {
+        // Display name is always and only displayed when user is on the stage
+        return adjustedIsVideoPlayable && !isAudioOnly ? DISPLAY_BLACKNESS_WITH_NAME : DISPLAY_AVATAR_WITH_NAME;
+    } else if (adjustedIsVideoPlayable && !isAudioOnly) {
+        // check hovering and change state to video with name
+        return isHovered ? DISPLAY_VIDEO_WITH_NAME : DISPLAY_VIDEO;
+    }
+
+    // check hovering and change state to avatar with name
+    return isHovered ? DISPLAY_AVATAR_WITH_NAME : DISPLAY_AVATAR;
 }

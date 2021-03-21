@@ -11,13 +11,19 @@ export const ADD_PEOPLE_ENABLED = 'add-people.enabled';
  * Used by apps that do not use Jitsi audio.
  * Default: disabled (false)
  */
-export const ANDROID_AUDIO_FOCUS_DISABLED = 'android.audio-focus.disabled';
+export const AUDIO_FOCUS_DISABLED = 'audio-focus.disabled';
 
 /**
  * Flag indicating if the audio mute button should be displayed.
  * Default: enabled (true).
  */
 export const AUDIO_MUTE_BUTTON_ENABLED = 'audio-mute.enabled';
+
+/**
+ * Flag indicating that the Audio only button in the overflow menu is enabled.
+ * Default: enabled (true).
+ */
+export const AUDIO_ONLY_BUTTON_ENABLED = 'audio-only.enabled';
 
 /**
  * Flag indicating if calendar integration should be enabled.
@@ -55,6 +61,12 @@ export const CHAT_ENABLED = 'chat.enabled';
  * Default: enabled (true).
  */
 export const FILMSTRIP_ENABLED = 'filmstrip.enabled';
+
+/**
+ * Flag indicating if fullscreen (immersive) mode should be enabled.
+ * Default: enabled (true).
+ */
+export const FULLSCREEN_ENABLED = 'fullscreen.enabled';
 
 /**
  * Flag indicating if the Help button should be enabled.

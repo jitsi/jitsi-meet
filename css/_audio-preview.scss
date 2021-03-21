@@ -1,26 +1,37 @@
 .audio-preview {
+    display: inline-block;
+
     &-content {
-        background: #2A3A4B;
-        font-size: 15px;
+        background: $menuBG;
+        border-radius: 3px;
+        font-size: 14px;
         line-height: 24px;
         max-height: 456px;
         overflow: auto;
-        width: 328px;
+        width: 300px;
     }
 
     &-header {
         color: #fff;
+        align-items: center;
         display: flex;
-        padding: 16px;
+        margin-top: 8px;
+        padding: 8px 16px;
 
         &-icon {
-            color: #A4B8D1;
             display: inline-block;
+
+            svg {
+                fill: #fff;
+            }
+        }
+
+        &--bordered {
+            border-bottom: 1px solid #4C4D50;
         }
 
         &-text {
-            font-weight: bold;
-            margin-left: 8px;
+            margin-left: 12px;
         }
     }
 
@@ -29,19 +40,18 @@
         color: #fff;
         cursor: pointer;
         display: flex;
-        padding: 12px 0;
+        padding: 8px 0;
         margin-left: 48px;
 
         &--selected {
-            background: #1C2025;
+            background: #131519;
             cursor: initial;
             margin-left: 0;
-            padding-left: 21px;
+            padding-left: 18px;
         }
 
         &-text {
             color: #fff;
-            font-size: 15px;
             display: inline-block;
             line-height: 24px;
             text-overflow: ellipsis;
@@ -56,12 +66,13 @@
 
         &:hover {
             .audio-preview-entry {
-                background: #3F4E5E;
+                background: #36383C;
                 margin-left: 0;
                 padding-left: 48px;
 
                 &--selected {
-                    padding-left: 21px;
+                    padding-left: 18px;
+                    background: $newToolbarBackgroundColor;
                 }
             }
 
@@ -74,6 +85,10 @@
             }
         }
 
+        &:last-child {
+            padding-bottom: 8px;
+        }
+
         .audio-preview-entry-text {
             max-width: 256px;
         }
@@ -84,18 +99,19 @@
 
         &:hover {
             .audio-preview-entry {
-                background: #3F4E5E;
+                background: #36383C;
                 margin-left: 0;
                 padding-left: 48px;
 
                 &--selected {
-                    padding-left: 21px;
+                    background: $newToolbarBackgroundColor;
+                    padding-left: 18px;
                 }
             }
         }
 
         .audio-preview-entry-text {
-            max-width: 196px;
+            max-width: 178px;
         }
     }
 
@@ -110,7 +126,7 @@
 
         &--check {
             background: #31B76A;
-            margin-right: 13px;
+            margin-right: 16px;
         }
 
         &--exclamation {
@@ -121,6 +137,11 @@
         }
     }
 
+    &-hr {
+        border-top: 1px solid #4C4D50;
+        border-bottom: 0;
+    }
+
     &-test-button {
         display: none;
         background: #FFF;
@@ -129,23 +150,16 @@
         color: #1C2025;
         cursor: pointer;
         font-weight: 600;
-        font-size: 15px;
         line-height: 24px;
-        padding: 4px 16px;
+        padding: 2px 16px;
         position: absolute;
         right: 16px;
-        top: 8px;
+        top: 5px;
     }
 
     &-meter-mic {
         position: absolute;
         right: 16px;
-        top: 18px;
-    }
-
-    // Override @atlaskit/InlineDialog container which is made with styled components
-    & > div:nth-child(2) {
-        outline: none;
-        padding: 0;
+        top: 14px;
     }
 }

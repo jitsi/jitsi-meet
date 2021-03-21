@@ -76,7 +76,7 @@ internal final class JMCallKitEmitter: NSObject, CXProviderDelegate {
 
         // Avoid mute actions ping-pong: if the mute action was caused by
         // the JS side (we requested a transaction) don't call the delegate
-        // method. If it was called by the provder itself (when the user presses
+        // method. If it was called by the provider itself (when the user presses
         // the mute button in the CallKit view) then call the delegate method.
         //
         // NOTE: don't try to be clever and remove this. Been there, done that.

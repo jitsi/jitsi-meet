@@ -1,5 +1,7 @@
 // @flow
 
+import clipboardCopy from 'clipboard-copy';
+
 /**
  * A helper function that behaves similar to Object.assign, but only reassigns a
  * property in target if it's defined in source.
@@ -33,31 +35,11 @@ export function assignIfDefined(target: Object, source: Object) {
  */
 export async function copyText(textToCopy: string) {
     try {
-        await navigator.clipboard.writeText(textToCopy);
+        await clipboardCopy(textToCopy);
 
         return true;
-    } catch (clipboardAPIError) { // The Clipboard API is not supported.
-        let fakeTextArea = document.createElement('textarea');
-
-        // $FlowFixMe
-        fakeTextArea = document.body.appendChild(fakeTextArea);
-        fakeTextArea.value = textToCopy;
-        fakeTextArea.focus();
-        fakeTextArea.select();
-
-        let result;
-
-        try {
-            result = document.execCommand('copy');
-        } catch (error) {
-            result = false;
-        }
-
-        // $FlowFixMe
-        document.body.removeChild(fakeTextArea);
-
-
-        return result;
+    } catch (e) {
+        return false;
     }
 }
 

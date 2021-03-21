@@ -1,8 +1,71 @@
 // @flow
 
+import { getToolbarButtons } from '../base/config';
 import { hasAvailableDevices } from '../base/devices';
 
-declare var interfaceConfig: Object;
+const WIDTH = {
+    FIT_9_ICONS: 520,
+    FIT_8_ICONS: 470,
+    FIT_7_ICONS: 420,
+    FIT_6_ICONS: 370,
+    FIT_5_ICONS: 320,
+    FIT_4_ICONS: 280
+};
+
+/**
+ * Returns a set of button names to be displayed in the toolbox, based on the screen width and platform.
+ *
+ * @param {number} width - The width of the screen.
+ * @param {number} isMobile - The device is a mobile one.
+ * @returns {Set} The button set.
+ */
+export function getToolbarAdditionalButtons(width: number, isMobile: boolean): Set<string> {
+    let buttons = [];
+
+    switch (true) {
+    case width >= WIDTH.FIT_9_ICONS: {
+        buttons = isMobile
+            ? [ 'chat', 'raisehand', 'tileview', 'invite', 'overflow' ]
+            : [ 'desktop', 'chat', 'raisehand', 'tileview', 'invite', 'overflow' ];
+        break;
+    }
+
+    case width >= WIDTH.FIT_8_ICONS: {
+        buttons = [ 'desktop', 'chat', 'raisehand', 'invite', 'overflow' ];
+        break;
+    }
+
+    case width >= WIDTH.FIT_7_ICONS: {
+        buttons = [ 'desktop', 'chat', 'invite', 'overflow' ];
+        break;
+    }
+
+    case width >= WIDTH.FIT_6_ICONS: {
+        buttons = [ 'chat', 'invite', 'overflow' ];
+        break;
+    }
+
+    case width >= WIDTH.FIT_5_ICONS: {
+        buttons = [ 'chat', 'overflow' ];
+        break;
+    }
+
+    case width >= WIDTH.FIT_4_ICONS: {
+        buttons = isMobile
+            ? [ 'chat', 'overflow' ]
+            : [ 'overflow' ];
+        break;
+    }
+
+    default: {
+        buttons = isMobile
+            ? [ 'chat', 'overflow' ]
+            : [];
+    }
+    }
+
+    return new Set(buttons);
+}
 
 /**
  * Helper for getting the height of the toolbox.
@@ -20,18 +83,15 @@ export function getToolboxHeight() {
  *
  * @param {string} name - The name of the setting section as defined in
  * interface_config.js.
+ * @param {Object} state - The redux state.
  * @returns {boolean|undefined} - True to indicate that the given toolbar button
- * is enabled, false - otherwise. In cases where interfaceConfig is not available
- * undefined is returned.
+ * is enabled, false - otherwise.
  */
-export function isButtonEnabled(name: string) {
-    if (typeof interfaceConfig === 'object' && Array.isArray(interfaceConfig.TOOLBAR_BUTTONS)) {
-        return interfaceConfig.TOOLBAR_BUTTONS.indexOf(name) !== -1;
-    }
+export function isButtonEnabled(name: string, state: Object) {
+    const toolbarButtons = getToolbarButtons(state);
 
-    return undefined;
+    return toolbarButtons.indexOf(name) !== -1;
 }
-
 
 /**
  * Indicates if the toolbox is visible or not.

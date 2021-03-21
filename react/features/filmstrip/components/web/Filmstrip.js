@@ -8,13 +8,17 @@ import {
     createToolbarEvent,
     sendAnalytics
 } from '../../../analytics';
+import { getToolbarButtons } from '../../../base/config';
 import { translate } from '../../../base/i18n';
 import { Icon, IconMenuDown, IconMenuUp } from '../../../base/icons';
+import { getLocalParticipant } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import { isButtonEnabled } from '../../../toolbox/functions.web';
 import { LAYOUTS, getCurrentLayout } from '../../../video-layout';
 import { setFilmstripVisible } from '../../actions';
 import { shouldRemoteVideosBeVisible } from '../../functions';
+
+import Thumbnail from './Thumbnail';
 
 declare var APP: Object;
 declare var interfaceConfig: Object;
@@ -53,6 +57,16 @@ type Props = {
      * Whether the filmstrip toolbar should be hidden or not.
      */
     _hideToolbar: boolean,
+
+    /**
+     * Whether the filmstrip button is enabled.
+     */
+    _isFilmstripButtonEnabled: boolean,
+
+    /**
+     * The participants in the call.
+     */
+    _participants: Array<Object>,
 
     /**
      * The number of rows in tile view.
@@ -132,18 +146,15 @@ class Filmstrip extends Component <Props> {
      * @returns {ReactElement}
      */
     render() {
-        // Note: Appending of {@code RemoteVideo} views is handled through
-        // VideoLayout. The views do not get blown away on render() because
-        // ReactDOMComponent is only aware of the given JSX and not new appended
-        // DOM. As such, when updateDOMProperties gets called, only attributes
-        // will get updated without replacing the DOM. If the known DOM gets
-        // modified, then the views will get blown away.
-
         const filmstripStyle = { };
         const filmstripRemoteVideosContainerStyle = {};
         let remoteVideoContainerClassName = 'remote-videos-container';
+        const { _currentLayout, _participants } = this.props;
+        const remoteParticipants = _participants.filter(p => !p.local);
+        const localParticipant = getLocalParticipant(_participants);
+        const tileViewActive = _currentLayout === LAYOUTS.TILE_VIEW;
 
-        switch (this.props._currentLayout) {
+        switch (_currentLayout) {
         case LAYOUTS.VERTICAL_FILMSTRIP_VIEW:
             // Adding 18px for the 2px margins, 2px borders on the left and right and 5px padding on the left and right.
             // Also adding 7px for the scrollbar.
@@ -170,7 +181,7 @@ class Filmstrip extends Component <Props> {
 
         let toolbar = null;
 
-        if (!this.props._hideToolbar && isButtonEnabled('filmstrip')) {
+        if (!this.props._hideToolbar && this.props._isFilmstripButtonEnabled) {
             toolbar = this._renderToggleButton();
         }
 
@@ -185,7 +196,13 @@ class Filmstrip extends Component <Props> {
                     <div
                         className = 'filmstrip__videos'
                         id = 'filmstripLocalVideo'>
-                        <div id = 'filmstripLocalVideoThumbnail' />
+                        <div id = 'filmstripLocalVideoThumbnail'>
+                            {
+                                !tileViewActive && <Thumbnail
+                                    key = 'local'
+                                    participantID = { localParticipant.id } />
+                            }
+                        </div>
                     </div>
                     <div
                         className = { remoteVideosWrapperClassName }
@@ -199,7 +216,21 @@ class Filmstrip extends Component <Props> {
                             className = { remoteVideoContainerClassName }
                             id = 'filmstripRemoteVideosContainer'
                             style = { filmstripRemoteVideosContainerStyle }>
-                            <div id = 'localVideoTileViewContainer' />
+                            {
+                                remoteParticipants.map(
+                                    p => (
+                                        <Thumbnail
+                                            key = { `remote_${p.id}` }
+                                            participantID = { p.id } />
+                                    ))
+                            }
+                            <div id = 'localVideoTileViewContainer'>
+                                {
+                                    tileViewActive && <Thumbnail
+                                        key = 'local'
+                                        participantID = { localParticipant.id } />
+                                }
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -288,9 +319,10 @@ class Filmstrip extends Component <Props> {
  */
 function _mapStateToProps(state) {
     const { iAmSipGateway } = state['features/base/config'];
+    const toolbarButtons = getToolbarButtons(state);
     const { visible } = state['features/filmstrip'];
     const reduceHeight
-        = state['features/toolbox'].visible && interfaceConfig.TOOLBAR_BUTTONS.length;
+        = state['features/toolbox'].visible && toolbarButtons.length;
     const remoteVideosVisible = shouldRemoteVideosBeVisible(state);
     const { isOpen: shiftRight } = state['features/chat'];
     const className = `${remoteVideosVisible ? '' : 'hide-videos'} ${
@@ -306,6 +338,8 @@ function _mapStateToProps(state) {
         _filmstripWidth: filmstripWidth,
         _hideScrollbar: Boolean(iAmSipGateway),
         _hideToolbar: Boolean(iAmSipGateway),
+        _isFilmstripButtonEnabled: isButtonEnabled('filmstrip', state),
+        _participants: state['features/base/participants'],
         _rows: gridDimensions.rows,
         _videosClassName: videosClassName,
         _visible: visible

@@ -1,5 +1,7 @@
 // @flow
 
+import { TOOLBAR_BUTTONS } from './constants';
+
 export * from './functions.any';
 
 /**
@@ -29,4 +31,16 @@ export function getDialOutStatusUrl(state: Object): string {
  */
 export function getDialOutUrl(state: Object): string {
     return state['features/base/config'].guestDialOutUrl;
+}
+
+/**
+ * Returns the list of enabled toolbar buttons.
+ *
+ * @param {Object} state - The redux state.
+ * @returns {Array<string>} - The list of enabled toolbar buttons.
+ */
+export function getToolbarButtons(state: Object): Array<string> {
+    const { toolbarButtons } = state['features/base/config'];
+
+    return Array.isArray(toolbarButtons) ? toolbarButtons : TOOLBAR_BUTTONS;
 }

@@ -44,7 +44,7 @@ type Props = {
 };
 
 export const DEFAULT_COLOR = navigator.product === 'ReactNative' ? 'white' : undefined;
-export const DEFAULT_SIZE = navigator.product === 'ReactNative' ? 36 : 24;
+export const DEFAULT_SIZE = navigator.product === 'ReactNative' ? 36 : 22;
 
 /**
  * Implements an Icon component that takes a loaded SVG file as prop and renders it as an icon.

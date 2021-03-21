@@ -59,7 +59,7 @@ export default {
         flex: 0,
         height: LABEL_SIZE,
         justifyContent: 'center',
-        margin: LABEL_MARGIN,
+        marginHorizontal: LABEL_MARGIN,
         opacity: 0.6,
         width: LABEL_SIZE
     },

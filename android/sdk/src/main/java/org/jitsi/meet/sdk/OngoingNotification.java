@@ -43,6 +43,7 @@ class OngoingNotification {
     private static final String CHANNEL_NAME = "Ongoing Conference Notifications";
 
     static final int NOTIFICATION_ID = new Random().nextInt(99999) + 10000;
+    private static long startingTime = 0;
 
     static void createOngoingConferenceNotificationChannel() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
@@ -85,6 +86,10 @@ class OngoingNotification {
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID);
 
+        if (startingTime == 0) {
+            startingTime = System.currentTimeMillis();
+        }
+
         builder
             .setCategory(NotificationCompat.CATEGORY_CALL)
             .setContentTitle(context.getString(R.string.ongoing_notification_title))
@@ -92,6 +97,8 @@ class OngoingNotification {
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setContentIntent(pendingIntent)
             .setOngoing(true)
+            .setWhen(startingTime)
+            .setUsesChronometer(true)
             .setAutoCancel(false)
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             .setOnlyAlertOnce(true)
@@ -108,6 +115,10 @@ class OngoingNotification {
         builder.addAction(audioAction);
 
         return builder.build();
+    }
+
+    static void resetStartingtime() {
+        startingTime = 0;
     }
 
     private static NotificationCompat.Action createAction(Context context, JitsiMeetOngoingConferenceService.Action action, @StringRes int titleId) {

@@ -3,10 +3,9 @@
 import { Component } from 'react';
 import type { Dispatch } from 'redux';
 
-import { isMobileBrowser } from '../../base/environment/utils';
 import { getLocalParticipant } from '../../base/participants';
 import { sendMessage } from '../actions';
-import { DESKTOP_SMALL_WIDTH_THRESHOLD, MOBILE_SMALL_WIDTH_THRESHOLD } from '../constants';
+import { SMALL_WIDTH_THRESHOLD } from '../constants';
 
 /**
  * The type of the React {@code Component} props of {@code AbstractChat}.
@@ -106,9 +105,7 @@ export function _mapStateToProps(state: Object) {
     const _localParticipant = getLocalParticipant(state);
 
     return {
-        _isModal: isMobileBrowser()
-            ? window.innerWidth <= MOBILE_SMALL_WIDTH_THRESHOLD
-            : window.innerWidth <= DESKTOP_SMALL_WIDTH_THRESHOLD,
+        _isModal: window.innerWidth <= SMALL_WIDTH_THRESHOLD,
         _isOpen: isOpen,
         _messages: messages,
         _showNamePrompt: !_localParticipant.name

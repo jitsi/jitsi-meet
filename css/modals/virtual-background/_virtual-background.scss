@@ -1,0 +1,44 @@
+.virtual-background-dialog{
+  display: inline-flex;
+  cursor: pointer;
+  .thumbnail{
+    object-fit: cover;
+    padding: 5px;
+    height: 40px;
+    width: 40px;
+  }
+  .thumbnail-selected{
+    object-fit: cover;
+    padding: 5px;
+    height: 40px;
+    width: 40px;
+    border: 2px solid #a4b8d1;
+  }
+  .blur-selected{
+    border: 2px solid #a4b8d1;
+  }
+  .virtual-background-none{
+    font-weight: bold;
+    padding: 5px;
+    height: 35px;
+    width: 35px;
+    border-radius: 10px;
+    border: 1px solid #a4b8d1;
+    text-align: center;
+    vertical-align: middle;
+    line-height: 35px;
+    margin-right: 5px;
+  }
+  .none-selected{
+    font-weight: bold;
+    padding: 5px;
+    height: 35px;
+    width: 35px;
+    border-radius: 10px;
+    border: 2px solid #a4b8d1;
+    text-align: center;
+    vertical-align: middle;
+    line-height: 35px;
+    margin-right: 5px;
+  }
+}

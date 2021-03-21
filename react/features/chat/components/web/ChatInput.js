@@ -1,12 +1,12 @@
 // @flow
 
 import React, { Component } from 'react';
-import Emoji from 'react-emoji-render';
 import TextareaAutosize from 'react-textarea-autosize';
 import type { Dispatch } from 'redux';
 
+import { isMobileBrowser } from '../../../base/environment/utils';
 import { translate } from '../../../base/i18n';
-import { Icon, IconPlane } from '../../../base/icons';
+import { Icon, IconPlane, IconSmile } from '../../../base/icons';
 import { connect } from '../../../base/redux';
 
 import SmileysPanel from './SmileysPanel';
@@ -93,11 +93,10 @@ class ChatInput extends Component<Props, State> {
      * @inheritdoc
      */
     componentDidMount() {
-        /**
-         * HTML Textareas do not support autofocus. Simulate autofocus by
-         * manually focusing.
-         */
-        this._focus();
+        if (isMobileBrowser()) {
+            // Ensure textarea is not focused when opening chat on mobile browser.
+            this._textArea && this._textArea.blur();
+        }
     }
 
     /**
@@ -116,9 +115,11 @@ class ChatInput extends Component<Props, State> {
                     <div className = 'smiley-input'>
                         <div id = 'smileysarea'>
                             <div id = 'smileys'>
-                                <Emoji
-                                    onClick = { this._onToggleSmileysPanel }
-                                    text = ':)' />
+                                <div
+                                    className = 'smiley-button'
+                                    onClick = { this._onToggleSmileysPanel }>
+                                    <Icon src = { IconSmile } />
+                                </div>
                             </div>
                         </div>
                         <div className = { smileysPanelClassName }>
@@ -174,6 +175,9 @@ class ChatInput extends Component<Props, State> {
             this.props.onSend(trimmed);
 
             this.setState({ message: '' });
+
+            // Keep the textarea in focus when sending messages via submit button.
+            this._focus();
         }
 
     }
