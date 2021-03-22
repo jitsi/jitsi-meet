@@ -1,4 +1,4 @@
-/* @flow */
+// @flow
 
 import { assign, ReducerRegistry } from '../base/redux';
 

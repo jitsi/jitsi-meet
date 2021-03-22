@@ -2241,7 +2241,7 @@ export default {
         });
 
         APP.UI.addListener(UIEvents.AUTH_CLICKED, () => {
-            AuthHandler.authenticate(room);
+            AuthHandler.authenticateExternal(room);
         });
 
         APP.UI.addListener(

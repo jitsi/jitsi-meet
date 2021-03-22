@@ -34,7 +34,7 @@ type Props = {
     dispatch: Function,
 
     /**
-     * The current state of the Google api as defined in {@code constants.js}.
+     * The current state of the Google api as defined in {@code functions.js}.
      */
     googleAPIState: number,
 

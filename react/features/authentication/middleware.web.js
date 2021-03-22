@@ -26,7 +26,7 @@ import {
     hideLoginDialog,
     openWaitForOwnerDialog
 } from './actions.web';
-import { LoginDialog, WaitForOwnerDialog } from './components/web';
+import { LoginDialog, WaitForOwnerDialog } from './components';
 
 /**
  * Middleware that captures connection or conference failed errors and controls
@@ -39,6 +39,24 @@ import { LoginDialog, WaitForOwnerDialog } from './components/web';
  */
 MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
+
+    case CANCEL_LOGIN: {
+        // Checks if WaitForOwnerDialog is open
+        if (!isDialogOpen(store, WaitForOwnerDialog)) {
+            if (isWaitingForOwner(store)) {
+
+                store.dispatch(openWaitForOwnerDialog());
+
+                return next(action);
+            }
+
+            // Go back to the app's entry point.
+            store.dispatch(hideLoginDialog());
+
+            store.dispatch(appNavigate(undefined));
+        }
+        break;
+    }
 
     case CONFERENCE_FAILED: {
         const { error } = action;
@@ -58,40 +76,6 @@ MiddlewareRegistry.register(store => next => action => {
         break;
     }
 
-    case WAIT_FOR_OWNER: {
-        clearExistingWaitForOwnerTimeout(store);
-
-        const { handler, timeoutMs } = action;
-
-        action.waitForOwnerTimeoutID = setTimeout(handler, timeoutMs);
-
-        isDialogOpen(store, LoginDialog)
-            || store.dispatch(openWaitForOwnerDialog());
-        break;
-    }
-    case STOP_WAIT_FOR_OWNER:
-        clearExistingWaitForOwnerTimeout(store);
-        store.dispatch(hideDialog(WaitForOwnerDialog));
-        break;
-
-    case CANCEL_LOGIN: {
-        // Checks if WaitForOwnerDialog is open
-        if (!isDialogOpen(store, WaitForOwnerDialog)) {
-            if (isWaitingForOwner(store)) {
-
-                store.dispatch(openWaitForOwnerDialog());
-
-                return next(action);
-            }
-
-            // Go back to the app's entry point.
-            store.dispatch(hideLoginDialog);
-
-            store.dispatch(appNavigate(undefined));
-        }
-        break;
-    }
-
     case CONFERENCE_JOINED:
         if (isWaitingForOwner(store)) {
             store.dispatch(stopWaitForOwner());
@@ -106,6 +90,23 @@ MiddlewareRegistry.register(store => next => action => {
     case CONNECTION_ESTABLISHED:
         store.dispatch(hideLoginDialog);
         break;
+
+    case STOP_WAIT_FOR_OWNER:
+        clearExistingWaitForOwnerTimeout(store);
+        store.dispatch(hideDialog(WaitForOwnerDialog));
+        break;
+
+    case WAIT_FOR_OWNER: {
+        clearExistingWaitForOwnerTimeout(store);
+
+        const { handler, timeoutMs } = action;
+
+        action.waitForOwnerTimeoutID = setTimeout(handler, timeoutMs);
+
+        isDialogOpen(store, LoginDialog)
+            || store.dispatch(openWaitForOwnerDialog());
+        break;
+    }
     }
 
     return next(action);
