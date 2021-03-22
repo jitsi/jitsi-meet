@@ -34,8 +34,6 @@ import org.jitsi.meet.sdk.log.JitsiMeetLogger;
 import java.util.HashMap;
 import android.app.Activity;
 
-import java.util.Map;
-
 /**
  * A base activity for SDK users to embed. It uses {@link JitsiMeetFragment} to do the heavy
  * lifting and wires the remaining Activity lifecycle methods so it works out of the box.
