@@ -244,6 +244,7 @@
         "muteEveryoneElsesVideoDialog": "Once the camera is disabled, you won't be able to turn it back on, but they can turn it back on at any time.",
         "muteEveryoneElsesVideoTitle": "Disable everyone's camera except {{whom}}?",
         "muteEveryonesVideoDialog": "Are you sure you want to disable everyone's camera? You won't be able to turn it back on, but they can turn it back on at any time.",
+        "muteEveryonesVideoDialogOk": "Disable",
         "muteEveryonesVideoTitle": "Disable everyone's camera?",
         "muteEveryoneSelf": "yourself",
         "muteEveryoneStartMuted": "Everyone starts muted from now on",

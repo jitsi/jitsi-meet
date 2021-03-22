@@ -21,6 +21,7 @@ import { TileViewButton } from '../../../video-layout';
 import { getMovableButtons } from '../../functions.native';
 import HelpButton from '../HelpButton';
 import MuteEveryoneButton from '../MuteEveryoneButton';
+import MuteEveryonesVideoButton from '../MuteEveryonesVideoButton';
 
 import AudioOnlyButton from './AudioOnlyButton';
 import MoreOptionsButton from './MoreOptionsButton';
@@ -152,6 +153,7 @@ class OverflowMenu extends PureComponent<Props, State> {
                     <ClosedCaptionButton { ...buttonProps } />
                     <SharedDocumentButton { ...buttonProps } />
                     <MuteEveryoneButton { ...buttonProps } />
+                    <MuteEveryonesVideoButton { ...buttonProps } />
                     <HelpButton { ...buttonProps } />
                 </Collapsible>
             </BottomSheet>
