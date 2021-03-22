@@ -1,6 +1,6 @@
 // @flow
 
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import type { Dispatch } from 'redux';
 
 import { Dialog } from '../../../base/dialog';
@@ -39,7 +39,7 @@ type Props = {
  *
  * @returns {React$Element<any>}
  */
-class WaitForOwnerDialog extends Component<Props> {
+class WaitForOwnerDialog extends PureComponent<Props> {
     /**
      * Instantiates a new component.
      *

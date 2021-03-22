@@ -13,18 +13,13 @@ import { connect as reduxConnect } from '../../../base/redux';
 import { showNotification } from '../../../notifications';
 import { authenticateAndUpgradeRole } from '../../actions.native';
 import { cancelLogin } from '../../actions.web';
-declare var config: Object;
+
 declare var APP: Object;
 
 /**
  * The type of the React {@code Component} props of {@link LoginDialog}.
  */
 type Props = {
-
-    /**
-     * Redux store dispatch method.
-     */
-    dispatch: Dispatch<any>,
 
     /**
      * {@link JitsiConference} that needs authentication - will hold a valid
@@ -43,16 +38,6 @@ type Props = {
     _connecting: boolean,
 
     /**
-     * Invoked when username and password are submitted.
-     */
-    onSuccess: Function,
-
-    /**
-     * Conference room name.
-     */
-    roomName: string,
-
-    /**
      * The error which occurred during login/authentication.
      */
     _error: Object,
@@ -62,6 +47,21 @@ type Props = {
      * and upgrading the role of the local participant/user.
      */
     _progress: number,
+
+    /**
+     * Redux store dispatch method.
+     */
+    dispatch: Dispatch<any>,
+
+    /**
+     * Invoked when username and password are submitted.
+     */
+    onSuccess: Function,
+
+    /**
+     * Conference room name.
+     */
+    roomName: string,
 
     /**
      * Invoked to obtain translated strings.
@@ -188,17 +188,13 @@ class LoginDialog extends Component<Props, State> {
             _progress: progress,
             t
         } = this.props;
-
         const { username, password } = this.state;
-
-        let messageKey;
-
         const messageOptions = {};
+        let messageKey;
 
         if (progress && progress >= 0.5) {
             messageKey = t('connection.FETCH_SESSION_ID');
         } else if (error) {
-
             const { name } = error;
 
             if (name === JitsiConnectionErrors.PASSWORD_REQUIRED) {
@@ -214,16 +210,13 @@ class LoginDialog extends Component<Props, State> {
                 messageOptions.msg = `${name} ${error.message}`;
             }
         } else if (connecting) {
-
             messageKey = t('connection.CONNECTING');
         }
 
         if (messageKey) {
-            const message = translateToHTML(t, messageKey, messageOptions);
-
             return (
                 <span>
-                    { message }
+                    { translateToHTML(t, messageKey, messageOptions) }
                 </span>
             );
         }
@@ -237,9 +230,6 @@ class LoginDialog extends Component<Props, State> {
      * @inheritdoc
      */
     render() {
-        const placeholder = config.hosts.authdomain
-            ? 'user identity'
-            : 'user@domain.net';
         const { t } = this.props;
         const { password, username } = this.state;
 
@@ -258,7 +248,7 @@ class LoginDialog extends Component<Props, State> {
                     label = { t('dialog.user') }
                     name = 'username'
                     onChange = { this._onChange }
-                    placeholder = { placeholder }
+                    placeholder = { t('dialog.userIdentifier') }
                     shouldFitContainer = { true }
                     type = 'text'
                     value = { username } />

@@ -313,6 +313,7 @@
         "transcribing": "Transcribing",
         "unlockRoom": "Remove meeting $t(lockRoomPassword)",
         "user": "User",
+        "userIdentifier": "User identifier",
         "userPassword": "User password",
         "videoLink": "Video link",
         "WaitForHostMsg": "The conference <b>{{room}}</b> has not yet started. If you are the host then please authenticate. Otherwise, please wait for the host to arrive.",
