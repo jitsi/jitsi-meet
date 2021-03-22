@@ -125,17 +125,18 @@ function onLocalTracks(tracks = []) {
         if (localTracks[i].getType() === 'video') {
             $('body').append(`<video ${autoPlayVideo ? 'autoplay="1" ' : ''}id='localVideo${i}' />`);
             localTracks[i].attach($(`#localVideo${i}`)[0]);
+
+            room.addTrack(localTracks[i]);
         } else {
-            if (!localAudio) {
+            if (localAudio) {
+                room.addTrack(localTracks[i]);
+            } else {
                 localTracks[i].mute();
             }
 
             $('body').append(
                 `<audio autoplay='1' muted='true' id='localAudio${i}' />`);
             localTracks[i].attach($(`#localAudio${i}`)[0]);
-        }
-        if (localAudio) {
-            room.addTrack(localTracks[i]);
         }
     }
 }
