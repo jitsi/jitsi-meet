@@ -16,7 +16,13 @@ import { overwriteConfig, getWhitelistedJSON } from '../../react/features/base/c
 import { parseJWTFromURLParams } from '../../react/features/base/jwt';
 import JitsiMeetJS, { JitsiRecordingConstants } from '../../react/features/base/lib-jitsi-meet';
 import { MEDIA_TYPE } from '../../react/features/base/media';
-import { pinParticipant, getParticipantById, kickParticipant } from '../../react/features/base/participants';
+import {
+    getLocalParticipant,
+    getParticipantById,
+    participantUpdated,
+    pinParticipant,
+    kickParticipant
+} from '../../react/features/base/participants';
 import { setPrivateMessageRecipient } from '../../react/features/chat/actions';
 import { openChat } from '../../react/features/chat/actions.web';
 import {
@@ -166,6 +172,23 @@ function initCommands() {
         'toggle-chat': () => {
             sendAnalytics(createApiEvent('chat.toggled'));
             APP.UI.toggleChat();
+        },
+        'toggle-raise-hand': () => {
+            const localParticipant = getLocalParticipant(APP.store.getState());
+
+            if (!localParticipant) {
+                return;
+            }
+            const { raisedHand } = localParticipant;
+
+            sendAnalytics(createApiEvent('raise-hand.toggled'));
+            APP.store.dispatch(
+                participantUpdated({
+                    id: APP.conference.getMyUserId(),
+                    local: true,
+                    raisedHand: !raisedHand
+                })
+            );
         },
 
         /**
