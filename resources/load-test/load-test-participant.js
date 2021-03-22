@@ -13,9 +13,6 @@ const {
     remoteVideo = isHuman,
     remoteAudio = isHuman,
     autoPlayVideo = config.testing.noAutoPlayVideo !== true,
-
-    // Whether to create local audio even if muted
-    autoCreateLocalAudio = config.testing.noAutoLocalAudio !== true
 } = params;
 
 let {
@@ -44,7 +41,6 @@ window.APP = {
             return room && room.getConnectionState();
         },
         muteAudio(mute) {
-            // Note: will have no effect if !autoCreateLocalAudio
             localAudio = mute;
             for (let i = 0; i < localTracks.length; i++) {
                 if (localTracks[i].getType() === 'audio') {
@@ -138,7 +134,9 @@ function onLocalTracks(tracks = []) {
                 `<audio autoplay='1' muted='true' id='localAudio${i}' />`);
             localTracks[i].attach($(`#localAudio${i}`)[0]);
         }
-        room.addTrack(localTracks[i]);
+        if (localAudio) {
+            room.addTrack(localTracks[i]);
+        }
     }
 }
 
@@ -238,9 +236,8 @@ function onConnectionSuccess() {
         devices.push('video');
     }
 
-    if (localAudio || autoCreateLocalAudio) {
-        devices.push('audio');
-    }
+    // we always create audio local tracks
+    devices.push('audio');
 
     if (devices.length > 0) {
         JitsiMeetJS.createLocalTracks({ devices })
