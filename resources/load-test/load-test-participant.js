@@ -53,6 +53,11 @@ window.APP = {
                     }
                     else {
                         localTracks[i].unmute();
+
+                        // if track was not added we need to add it to the peerconnection
+                        if (!room.getLocalAudioTrack()) {
+                            room.replaceTrack(null, localTracks[i]);
+                        }
                     }
                 }
             }
