@@ -1,6 +1,13 @@
 /* eslint-disable no-unused-vars, no-var, max-len */
 /* eslint sort-keys: ["error", "asc", {"caseSensitive": false}] */
 
+/**
+ * !!!IMPORTANT!!!
+ *
+ * This file is considered deprecated. All options will eventually be moved to
+ * config.js, and no new options should be added here.
+ */
+
 var interfaceConfig = {
     APP_NAME: 'Jitsi Meet',
     AUDIO_LEVEL_PRIMARY_COLOR: 'rgba(255,255,255,0.4)',
