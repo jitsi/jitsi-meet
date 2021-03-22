@@ -6,6 +6,7 @@ import Logger from 'jitsi-meet-logger';
 import { redirectToTokenAuthService } from './modules/UI/authentication/AuthHandler';
 import { hideLoginDialog } from './react/features/authentication/actions.web';
 import { LoginDialog } from './react/features/authentication/components';
+import { isTokenAuthEnabled } from './react/features/authentication/functions';
 import {
     connectionEstablished,
     connectionFailed
@@ -17,12 +18,7 @@ import {
     JitsiConnectionEvents
 } from './react/features/base/lib-jitsi-meet';
 import { setPrejoinDisplayNameRequired } from './react/features/prejoin/actions';
-
 const logger = Logger.getLogger(__filename);
-
-const isTokenAuthEnabled
-    = typeof config.tokenAuthUrl === 'string' && config.tokenAuthUrl.length;
-
 
 /**
  * The feature announced so we can distinguish jibri participants.
@@ -204,7 +200,6 @@ export function connect(id, password, roomName) {
  * @returns {Promise<JitsiConnection>}
  */
 export function openConnection({ id, password, retry, roomName }) {
-
     const usernameOverride
         = jitsiLocalStorage.getItem('xmpp_username_override');
     const passwordOverride
@@ -235,13 +230,13 @@ export function openConnection({ id, password, retry, roomName }) {
  * If failed to connect because of PASSWORD_REQUIRED error
  * then ask for password again.
  * @param {string} [roomName] name of the conference room
- * @param {Function} [doConnect]
  *
  * @returns {Promise<JitsiConnection>}
  */
 function requestAuth(roomName) {
+    const config = APP.store.getState()['features/base/config'];
 
-    if (isTokenAuthEnabled) {
+    if (isTokenAuthEnabled(config)) {
         // This Promise never resolves as user gets redirected to another URL
         return new Promise(() => redirectToTokenAuthService(roomName));
     }

@@ -13,12 +13,6 @@ import {
 const logger = Logger.getLogger(__filename);
 
 /**
- * Flag for enabling/disabling popups.
- * @type {boolean}
- */
-const popupEnabled = true;
-
-/**
  * Currently displayed two button dialog.
  * @type {null}
  */
@@ -167,7 +161,7 @@ const messageHandler = {
 
         let { classes } = options;
 
-        if (!popupEnabled || twoButtonDialog) {
+        if (twoButtonDialog) {
             return null;
         }
 
@@ -276,9 +270,6 @@ const messageHandler = {
      * @param translateOptions options passed to translation
      */
     openDialogWithStates(statesObject, options, translateOptions) {
-        if (!popupEnabled) {
-            return;
-        }
         const { classes, size } = options;
         const defaultClasses = this._getDialogClasses(size);
 
@@ -315,10 +306,6 @@ const messageHandler = {
      */
     // eslint-disable-next-line max-params
     openCenteredPopup(url, w, h, onPopupClosed) {
-        if (!popupEnabled) {
-            return;
-        }
-
         const l = window.screenX + (window.innerWidth / 2) - (w / 2);
         const t = window.screenY + (window.innerHeight / 2) - (h / 2);
         const popup = window.open(
