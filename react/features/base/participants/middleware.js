@@ -339,7 +339,12 @@ function _localParticipantLeft({ dispatch }, next, action) {
  */
 function _maybePlaySounds({ getState, dispatch }, action) {
     const state = getState();
-    const { startAudioMuted } = state['features/base/config'];
+    const { startAudioMuted, disableJoinLeaveSounds } = state['features/base/config'];
+
+    // If we have join/leave sounds disabled, don't play anything.
+    if (disableJoinLeaveSounds) {
+        return;
+    }
 
     // We're not playing sounds for local participant
     // nor when the user is joining past the "startAudioMuted" limit.

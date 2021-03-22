@@ -563,6 +563,10 @@ var config = {
     // Decides whether the start/stop recording audio notifications should play on record.
     // disableRecordAudioNotification: false,
 
+    // Disables the sounds that play when other participants join or leave the
+    // conference (if set to true, these sounds will not be played).
+    // disableJoinLeaveSounds: false,
+
     // Information for the chrome extension banner
     // chromeExtensionBanner: {
     //     // The chrome extension to be installed address
