@@ -24,7 +24,7 @@ import { CAMERA_FACING_MODE } from './constants';
 
 // FIXME Technically, _AUDIO_INITIAL_MEDIA_STATE is a constant internal to the
 // feature base/media and used in multiple files so it should be in
-// constants.js. Practically though, AudioMediaState would then be used in
+// functions.js. Practically though, AudioMediaState would then be used in
 // multiple files as well so I don't know where and how to move it.
 /**
  * Initial state for local audio.
@@ -74,7 +74,7 @@ function _audio(state = _AUDIO_INITIAL_MEDIA_STATE, action) {
 
 // FIXME Technically, _VIDEO_INITIAL_MEDIA_STATE is a constant internal to the
 // feature base/media and used in multiple files so it should be in
-// constants.js. Practically though, VideoMediaState would then be used in
+// functions.js. Practically though, VideoMediaState would then be used in
 // multiple files as well so I don't know where and how to move it.
 /**
  * Initial state for video.

@@ -495,6 +495,7 @@
         "invitedOneMember": "{{name}} has been invited",
         "invitedThreePlusMembers": "{{name}} and {{count}} others have been invited",
         "invitedTwoMembers": "{{first}} and {{second}} have been invited",
+        "canJoinConference": "You can now join meeting {{room}}. ",
         "kickParticipant": "{{kicked}} was kicked by {{kicker}}",
         "me": "Me",
         "moderator": "Moderator rights granted!",
