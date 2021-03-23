@@ -183,7 +183,9 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
                     dispatch(playSound(soundID));
                 }
 
-                APP.API.notifyRecordingStatusChanged(true, mode);
+                if (typeof APP !== 'undefined') {
+                    APP.API.notifyRecordingStatusChanged(true, mode);
+                }
             } else if (updatedSessionData.status === OFF
                 && (!oldSessionData || oldSessionData.status !== OFF)) {
                 dispatch(showStoppedRecordingNotification(
@@ -213,7 +215,9 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
                     dispatch(playSound(soundOff));
                 }
 
-                APP.API.notifyRecordingStatusChanged(false, mode);
+                if (typeof APP !== 'undefined') {
+                    APP.API.notifyRecordingStatusChanged(false, mode);
+                }
             }
         }
 
@@ -276,5 +280,7 @@ function _showRecordingErrorNotification(recorderSession, dispatch) {
         break;
     }
 
-    APP.API.notifyRecordingStatusChanged(false, mode, error);
+    if (typeof APP !== 'undefined') {
+        APP.API.notifyRecordingStatusChanged(false, mode, error);
+    }
 }
