@@ -58,15 +58,10 @@ export function openLoginDialog() {
  * Conference, so the local participant should authenticate or wait for a
  * host.
  *
- * @param {Function} onAuthNow - The callback to invoke if the local
- * participant wants to authenticate.
- *
  * @returns {Function}.
  */
-export function openWaitForOwnerDialog(onAuthNow: ?Function) {
-    return openDialog(WaitForOwnerDialog, {
-        onAuthNow
-    });
+export function openWaitForOwnerDialog() {
+    return openDialog(WaitForOwnerDialog);
 }
 
 

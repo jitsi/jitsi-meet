@@ -24,11 +24,6 @@ type Props = {
     dispatch: Dispatch<any>,
 
     /**
-     * Function to be invoked after click.
-     */
-    onAuthNow: ?Function,
-
-    /**
      * Invoked to obtain translated strings.
      */
     t: Function
@@ -76,9 +71,8 @@ class WaitForOwnerDialog extends PureComponent<Props> {
      * @returns {void}
      */
     _onIAmHost() {
-        const { onAuthNow, dispatch } = this.props;
+        const { dispatch } = this.props;
 
-        onAuthNow && onAuthNow();
         dispatch(openLoginDialog());
     }
 
