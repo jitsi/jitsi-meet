@@ -39,7 +39,7 @@ import {
 import { toggleLobbyMode } from '../../react/features/lobby/actions.web';
 import { RECORDING_TYPES } from '../../react/features/recording/constants';
 import { getActiveSession } from '../../react/features/recording/functions';
-import { toggleTileView } from '../../react/features/video-layout';
+import { toggleTileView, setTileView } from '../../react/features/video-layout';
 import { muteAllParticipants } from '../../react/features/video-menu/actions';
 import { setVideoQuality } from '../../react/features/video-quality';
 import { getJitsiMeetTransport } from '../transport';
@@ -208,6 +208,9 @@ function initCommands() {
             sendAnalytics(createApiEvent('tile-view.toggled'));
 
             APP.store.dispatch(toggleTileView());
+        },
+        'set-tile-view': enabled => {
+            APP.store.dispatch(setTileView(enabled));
         },
         'video-hangup': (showFeedbackDialog = true) => {
             sendAnalytics(createApiEvent('video.hangup'));
