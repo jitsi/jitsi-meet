@@ -1151,6 +1151,23 @@ class API {
     }
 
     /**
+     * Notify external application (if API is enabled) that recording has started or stopped.
+     *
+     * @param {boolean} on - True if recording is on, false otherwise.
+     * @param {string} mode - Stream or file.
+     * @param {string} error - Error type or null if success.
+     * @returns {void}
+     */
+    notifyRecordingStatusChanged(on: boolean, mode: string, error?: string) {
+        this._sendEvent({
+            name: 'recording-status-changed',
+            on,
+            mode,
+            error
+        });
+    }
+
+    /**
      * Disposes the allocated resources.
      *
      * @returns {void}
