@@ -677,6 +677,9 @@ var config = {
     */
     // dynamicBrandingUrl: '',
 
+    // Sets the background transparency level. '0' is fully transparent, '1' is opaque.
+    // backgroundAlpha: 1,
+
     // The URL of the moderated rooms microservice, if available. If it
     // is present, a link to the service will be rendered on the welcome page,
     // otherwise the app doesn't render it.

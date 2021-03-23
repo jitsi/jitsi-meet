@@ -7,6 +7,7 @@ import EventEmitter from 'events';
 import Logger from 'jitsi-meet-logger';
 
 import { isMobileBrowser } from '../../react/features/base/environment/utils';
+import { setColorAlpha } from '../../react/features/base/util';
 import { toggleChat } from '../../react/features/chat';
 import { setDocumentUrl } from '../../react/features/etherpad';
 import { setFilmstripVisible } from '../../react/features/filmstrip';
@@ -129,6 +130,13 @@ UI.start = function() {
         $('body').addClass('mobile-browser');
     } else {
         $('body').addClass('desktop-browser');
+
+        if (config.backgroundAlpha !== undefined) {
+            const backgroundColor = $('body').css('background-color');
+            const alphaColor = setColorAlpha(backgroundColor, config.backgroundAlpha);
+
+            $('body').css('background-color', alphaColor);
+        }
     }
 
     if (config.iAmRecorder) {

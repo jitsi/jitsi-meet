@@ -17,6 +17,7 @@ export default [
     'audioLevelsInterval',
     'apiLogLevels',
     'avgRtpStatsN',
+    'backgroundAlpha',
 
     /**
      * The display name of the CallKit call representing the conference/meeting
