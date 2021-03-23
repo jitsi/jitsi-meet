@@ -10,7 +10,6 @@ import { Dialog } from '../../../base/dialog';
 import { translate, translateToHTML } from '../../../base/i18n';
 import { JitsiConnectionErrors } from '../../../base/lib-jitsi-meet';
 import { connect as reduxConnect } from '../../../base/redux';
-import { showNotification } from '../../../notifications';
 import { authenticateAndUpgradeRole } from '../../actions.native';
 import { cancelLogin } from '../../actions.web';
 
@@ -148,14 +147,7 @@ class LoginDialog extends Component<Props, State> {
         } else {
             connect(jid, password, roomName)
                 .then(connection => {
-                    if (onSuccess) {
-                        onSuccess(connection);
-                        APP.store.dispatch(showNotification({
-                            descriptionArguments: { room: roomName },
-                            descriptionKey: 'notify.canJoinConference',
-                            titleKey: 'connection.AUTHSUCC'
-                        }));
-                    }
+                    onSuccess && onSuccess(connection);
                 });
         }
     }
@@ -230,16 +222,19 @@ class LoginDialog extends Component<Props, State> {
      * @inheritdoc
      */
     render() {
-        const { t } = this.props;
+        const {
+            _connecting: connecting,
+            t
+        } = this.props;
         const { password, username } = this.state;
 
         return (
             <Dialog
-                okDisabled = { !password || !username }
-                okKey = { t('dialog.confirm') }
+                okDisabled = { connecting || !password || !username }
+                okKey = { t('dialog.login') }
                 onCancel = { this._onCancelLogin }
                 onSubmit = { this._onLogin }
-                titleKey = { t('dialog.passwordRequired') }
+                titleKey = { t('dialog.authenticationRequired') }
                 width = { 'small' }>
                 <TextField
                     autoFocus = { true }

@@ -1,9 +1,12 @@
 // @flow
 
+import JitsiMeetJS from '../../../react/features/base/lib-jitsi-meet';
+
+
 /**
  * Checks if the token for authentication is available.
  *
- * @param {Object} config - .
+ * @param {Object} config - Configuration state object from store.
  * @returns {boolean}
  */
 export const isTokenAuthEnabled = (config: Object) =>
@@ -14,10 +17,9 @@ export const isTokenAuthEnabled = (config: Object) =>
 /**
  * Token url.
  *
- * @param {Object} config - .
- * @param {Object} JitsiMeetJS - .
+ * @param {Object} config - Configuration state object from store.
  * @returns {string}
  */
-export const getTokenAuthUrl = (config: Object, JitsiMeetJS: Object) =>
+export const getTokenAuthUrl = (config: Object) =>
     JitsiMeetJS.util.AuthUtil.getTokenAuthUrl.bind(null,
          config.tokenAuthUrl);

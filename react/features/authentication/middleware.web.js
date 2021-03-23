@@ -1,6 +1,6 @@
 // @flow
 
-import { appNavigate } from '../app/actions';
+import { maybeRedirectToWelcomePage } from '../app/actions';
 import {
     CONFERENCE_FAILED,
     CONFERENCE_JOINED,
@@ -41,19 +41,16 @@ MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
 
     case CANCEL_LOGIN: {
-        // Checks if WaitForOwnerDialog is open
         if (!isDialogOpen(store, WaitForOwnerDialog)) {
             if (isWaitingForOwner(store)) {
-
                 store.dispatch(openWaitForOwnerDialog());
 
                 return next(action);
             }
 
-            // Go back to the app's entry point.
             store.dispatch(hideLoginDialog());
 
-            store.dispatch(appNavigate(undefined));
+            store.dispatch(maybeRedirectToWelcomePage());
         }
         break;
     }
@@ -130,7 +127,7 @@ function clearExistingWaitForOwnerTimeout(
  * Checks if the cyclic "wait for conference owner" task is currently scheduled.
  *
  * @param {Object} store - The redux store.
- * @returns {boolean}
+ * @returns {void}
  */
 function isWaitingForOwner({ getState }: { getState: Function }) {
     return getState()['features/authentication'].waitForOwnerTimeoutID;
