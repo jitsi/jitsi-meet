@@ -11,13 +11,11 @@ import {
     getTokenAuthUrl
 } from '../../../react/features/authentication/functions';
 import { setJWT } from '../../../react/features/base/jwt';
-import JitsiMeetJS from '../../../react/features/base/lib-jitsi-meet';
 import UIUtil from '../util/UIUtil';
 
 import LoginDialog from './LoginDialog';
 
 let externalAuthWindow;
-let authRequiredDialog;
 declare var APP: Object;
 
 const logger = Logger.getLogger(__filename);
@@ -42,7 +40,7 @@ function doExternalAuth(room, lockPassword) {
         let getUrl;
 
         if (isTokenAuthEnabled(config)) {
-            getUrl = Promise.resolve(getTokenAuthUrl(config, JitsiMeetJS)(room.getName(), true));
+            getUrl = Promise.resolve(getTokenAuthUrl(config)(room.getName(), true));
             initJWTTokenListener(room);
         } else {
             getUrl = room.getExternalAuthUrl(true);
@@ -76,7 +74,7 @@ export function redirectToTokenAuthService(roomName: string) {
 
     // FIXME: This method will not preserve the other URL params that were
     // originally passed.
-    UIUtil.redirect(getTokenAuthUrl(config, JitsiMeetJS)(roomName, false));
+    UIUtil.redirect(getTokenAuthUrl(config)(roomName, false));
 }
 
 /**
@@ -117,14 +115,14 @@ function initJWTTokenListener(room) {
                 // the session-ID from the focus, which will then be used
                 // to upgrade current connection's user role
 
-                newRoom.room.moderator.authenticateExternal()
+                newRoom.room.moderator.authenticate()
                 .then(() => {
                     connection.disconnect();
 
                     // At this point we'll have session-ID stored in
                     // the settings. It will be used in the call below
                     // to upgrade user's role
-                    room.room.moderator.authenticateExternal()
+                    room.room.moderator.authenticate()
                         .then(() => {
                             logger.info('User role upgrade done !');
                             // eslint-disable-line no-use-before-define
@@ -201,11 +199,7 @@ function logout(room: Object) {
  * @param {string} [lockPassword] password to use if the conference is locked
  */
 function requireAuth(room: Object, lockPassword: string) {
-    if (authRequiredDialog) {
-        return;
-    }
-
-    authRequiredDialog = APP.store.dispatch(openWaitForOwnerDialog(() =>
+    APP.store.dispatch(openWaitForOwnerDialog(() =>
         authenticateExternal.bind(null, room, lockPassword))
     );
 }

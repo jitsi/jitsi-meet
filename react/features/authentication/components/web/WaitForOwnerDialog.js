@@ -117,9 +117,7 @@ class WaitForOwnerDialog extends PureComponent<Props> {
  *
  * @param {Object} state - The Redux state.
  * @private
- * @returns {{
- *     _room: string
- * }}
+ * @returns {Props}
  */
 function mapStateToProps(state) {
     const { authRequired } = state['features/base/conference'];
