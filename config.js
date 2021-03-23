@@ -682,6 +682,9 @@ var config = {
     // otherwise the app doesn't render it.
     // moderatedRoomServiceUrl: 'https://moderated.jitsi-meet.example.com',
 
+    // Tileview toolbar button is shown and enabling tileview works even for a single participant.
+    // allowTileviewOnSingleParticipant: false,
+
     // If true, tile view will not be enabled automatically when the participants count threshold is reached.
     // disableTileView: true,
 

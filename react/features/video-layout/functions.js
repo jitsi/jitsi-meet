@@ -106,16 +106,17 @@ export function getTileViewGridDimensions(state: Object) {
  */
 export function shouldDisplayTileView(state: Object = {}) {
     const participantCount = getParticipantCount(state);
+    const { disableTileView, allowTileviewOnSingleParticipant } = state['features/base/config'];
 
-    // In case of a lonely meeting, we don't allow tile view.
+    // In case of a lonely meeting, we don't allow tile view,
+    // unless we explicitely allow it through config.
     // But it's a special case too, as we don't even render the button,
     // see TileViewButton component.
-    if (participantCount < 2) {
+    if (!allowTileviewOnSingleParticipant && participantCount < 2) {
         return false;
     }
 
     const tileViewEnabledFeatureFlag = getFeatureFlag(state, TILE_VIEW_ENABLED, true);
-    const { disableTileView } = state['features/base/config'];
 
     if (disableTileView || !tileViewEnabledFeatureFlag) {
         return false;

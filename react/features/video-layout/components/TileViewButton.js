@@ -87,7 +87,8 @@ class TileViewButton<P: Props> extends AbstractButton<P, *> {
  */
 function _mapStateToProps(state, ownProps) {
     const enabled = getFeatureFlag(state, TILE_VIEW_ENABLED, true);
-    const lonelyMeeting = getParticipantCount(state) < 2;
+    const lonelyMeeting = getParticipantCount(state) < 2
+      && !state['features/base/config'].allowTileviewOnSingleParticipant;
     const { visible = enabled && !lonelyMeeting } = ownProps;
 
     return {

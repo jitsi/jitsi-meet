@@ -13,6 +13,7 @@ export default [
     '_peerConnStatusOutOfLastNTimeout',
     '_peerConnStatusRtcMuteTimeout',
     'abTesting',
+    'allowTileviewOnSingleParticipant',
     'analytics.disabled',
     'audioLevelsInterval',
     'apiLogLevels',
