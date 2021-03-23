@@ -35,7 +35,7 @@ import { connect } from '../../../base/redux';
 import { OverflowMenuItem } from '../../../base/toolbox/components';
 import { getLocalVideoTrack, toggleScreensharing } from '../../../base/tracks';
 import { isVpaasMeeting } from '../../../billing-counter/functions';
-import { CHAT_SIZE, ChatCounter, toggleChat } from '../../../chat';
+import { ChatCounter, toggleChat } from '../../../chat';
 import { InviteMore } from '../../../conference';
 import { EmbedMeetingDialog } from '../../../embed-meeting';
 import { SharedDocumentButton } from '../../../etherpad';
@@ -99,6 +99,11 @@ type Props = {
      * Whether or not the chat feature is currently displayed.
      */
     _chatOpen: boolean,
+
+    /**
+     * The width of the client.
+     */
+    _clientWidth: number,
 
     /**
      * The {@code JitsiConference} for the current conference.
@@ -208,17 +213,6 @@ type Props = {
     t: Function
 };
 
-/**
- * The type of the React {@code Component} state of {@link Toolbox}.
- */
-type State = {
-
-    /**
-     * The width of the browser's window.
-     */
-    windowWidth: number
-};
-
 declare var APP: Object;
 
 /**
@@ -226,7 +220,7 @@ declare var APP: Object;
  *
  * @extends Component
  */
-class Toolbox extends Component<Props, State> {
+class Toolbox extends Component<Props> {
     /**
      * Initializes a new {@code Toolbox} instance.
      *
@@ -239,7 +233,6 @@ class Toolbox extends Component<Props, State> {
         // Bind event handlers so they are only bound once per instance.
         this._onMouseOut = this._onMouseOut.bind(this);
         this._onMouseOver = this._onMouseOver.bind(this);
-        this._onResize = this._onResize.bind(this);
         this._onSetOverflowVisible = this._onSetOverflowVisible.bind(this);
         this._onTabIn = this._onTabIn.bind(this);
 
@@ -261,10 +254,6 @@ class Toolbox extends Component<Props, State> {
         this._onToolbarToggleScreenshare = this._onToolbarToggleScreenshare.bind(this);
         this._onToolbarOpenLocalRecordingInfoDialog = this._onToolbarOpenLocalRecordingInfoDialog.bind(this);
         this._onShortcutToggleTileView = this._onShortcutToggleTileView.bind(this);
-
-        this.state = {
-            windowWidth: window.innerWidth
-        };
     }
 
     /**
@@ -316,8 +305,6 @@ class Toolbox extends Component<Props, State> {
                     shortcut.helpDescription);
             }
         });
-
-        window.addEventListener('resize', this._onResize);
     }
 
     /**
@@ -337,10 +324,6 @@ class Toolbox extends Component<Props, State> {
             this._onSetOverflowVisible(false);
             this.props.dispatch(setToolbarHovered(false));
         }
-
-        if (this.props._chatOpen !== prevProps._chatOpen) {
-            this._onResize();
-        }
     }
 
     /**
@@ -352,8 +335,6 @@ class Toolbox extends Component<Props, State> {
     componentWillUnmount() {
         [ 'A', 'C', 'D', 'R', 'S' ].forEach(letter =>
             APP.keyboardshortcut.unregisterShortcut(letter));
-
-        window.removeEventListener('resize', this._onResize);
     }
 
     /**
@@ -556,28 +537,6 @@ class Toolbox extends Component<Props, State> {
      */
     _onMouseOver() {
         this.props.dispatch(setToolbarHovered(true));
-    }
-
-    _onResize: () => void;
-
-    /**
-     * A window resize handler used to calculate the number of buttons we can
-     * fit in the toolbar.
-     *
-     * @private
-     * @returns {void}
-     */
-    _onResize() {
-        let widthToUse = window.innerWidth;
-
-        // Take chat size into account when resizing toolbox.
-        if (this.props._chatOpen) {
-            widthToUse -= CHAT_SIZE;
-        }
-
-        if (this.state.windowWidth !== widthToUse) {
-            this.setState({ windowWidth: widthToUse });
-        }
     }
 
 
@@ -1251,12 +1210,13 @@ class Toolbox extends Component<Props, State> {
      */
     _renderToolboxContent() {
         const {
+            _clientWidth,
             _isMobile,
             _overflowMenuVisible,
             t
         } = this.props;
 
-        const buttonSet = getToolbarAdditionalButtons(this.state.windowWidth, _isMobile);
+        const buttonSet = getToolbarAdditionalButtons(_clientWidth, _isMobile);
         const toolbarAccLabel = 'toolbar.accessibilityLabel.moreActionsMenu';
         const showOverflowMenuButton = buttonSet.has('overflow');
         const containerClassName = `toolbox-content${_isMobile ? ' toolbox-content-mobile' : ''}`;
@@ -1331,6 +1291,7 @@ function _mapStateToProps(state) {
     const localParticipant = getLocalParticipant(state);
     const localRecordingStates = state['features/local-recording'];
     const localVideo = getLocalVideoTrack(state['features/base/tracks']);
+    const { clientWidth } = state['features/base/responsive-ui'];
 
     let desktopSharingDisabledTooltipKey;
 
@@ -1345,6 +1306,7 @@ function _mapStateToProps(state) {
 
     return {
         _chatOpen: state['features/chat'].isOpen,
+        _clientWidth: clientWidth,
         _conference: conference,
         _desktopSharingEnabled: desktopSharingEnabled,
         _desktopSharingDisabledTooltipKey: desktopSharingDisabledTooltipKey,
