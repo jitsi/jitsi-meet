@@ -249,7 +249,7 @@ class LoginDialog extends Component<Props, State> {
                     || !password
                     || !username
                 }
-                okKey = { t('dialog.confirm') }
+                okKey = { t('dialog.login') }
                 onCancel = { this._onCancelLogin }
                 onSubmit = { this._onLogin }
                 titleKey = { t('dialog.authenticationRequired') }
