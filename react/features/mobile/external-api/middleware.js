@@ -271,7 +271,7 @@ function _registerForNativeEvents(store) {
     });
 
     eventEmitter.addListener(ExternalAPI.SET_AUDIO_MUTED, ({ muted }) => {
-        dispatch(muteLocal(muted === 'true', MEDIA_TYPE.AUDIO));
+        dispatch(muteLocal(muted.toString() === 'true', MEDIA_TYPE.AUDIO));
     });
 
     eventEmitter.addListener(ExternalAPI.SEND_ENDPOINT_TEXT_MESSAGE, ({ to, message }) => {
