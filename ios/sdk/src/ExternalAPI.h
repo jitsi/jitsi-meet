@@ -26,5 +26,6 @@
 - (void)openChat:(NSString*)to;
 - (void)closeChat;
 - (void)sendChatMessage:(NSString*)message :(NSString*)to ;
+- (void)sendSetVideoMuted:(BOOL)muted;
 
 @end
