@@ -26,6 +26,7 @@ static NSString * const retrieveParticipantsInfoAction = @"org.jitsi.meet.RETRIE
 static NSString * const openChatAction = @"org.jitsi.meet.OPEN_CHAT";
 static NSString * const closeChatAction = @"org.jitsi.meet.CLOSE_CHAT";
 static NSString * const sendChatMessageAction = @"org.jitsi.meet.SEND_CHAT_MESSAGE";
+static NSString * const setVideoMutedAction = @"org.jitsi.meet.SET_VIDEO_MUTED";
 
 @implementation ExternalAPI
 
@@ -47,7 +48,8 @@ RCT_EXPORT_MODULE();
         @"RETRIEVE_PARTICIPANTS_INFO": retrieveParticipantsInfoAction,
         @"OPEN_CHAT": openChatAction,
         @"CLOSE_CHAT": closeChatAction,
-        @"SEND_CHAT_MESSAGE": sendChatMessageAction
+        @"SEND_CHAT_MESSAGE": sendChatMessageAction,
+        @"SET_VIDEO_MUTED" : setVideoMutedAction
     };
 };
 
@@ -70,7 +72,8 @@ RCT_EXPORT_MODULE();
               retrieveParticipantsInfoAction,
               openChatAction,
               closeChatAction,
-              sendChatMessageAction
+              sendChatMessageAction,
+              setVideoMutedAction
     ];
 }
 
@@ -192,5 +195,12 @@ RCT_EXPORT_METHOD(sendEvent:(NSString *)name
     
     [self sendEventWithName:sendChatMessageAction body:data];
 }
+
+- (void)sendSetVideoMuted:(BOOL)muted {
+    NSDictionary *data = @{ @"muted": [NSNumber numberWithBool:muted]};
+
+    [self sendEventWithName:setVideoMutedAction body:data];
+}
+
 
 @end

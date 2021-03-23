@@ -131,6 +131,10 @@
   NSLog(@"%@%@", @"Chat toggled: ", data);
 }
 
+- (void)videoMutedChanged:(NSDictionary *)data {
+  NSLog(@"%@%@", @"Video muted changed: ", data[@"muted"]);
+}
+
 #pragma mark - Helpers
 
 - (void)terminate {
