@@ -816,6 +816,7 @@
         "tileViewToggle": "Toggle tile view",
         "toggleCamera": "Toggle camera",
         "videomute": "Start / Stop camera",
+        "videoSettings": "Video settings",
         "selectBackground": "Select background"
     },
     "transcribing": {
