@@ -524,7 +524,7 @@
         "oldElectronClientDescription2": "latest build",
         "oldElectronClientDescription3": " now!"
     },
-    "passwordSetRemotely": "set by another participant",
+    "passwordSetRemotely": "Set by another participant",
     "passwordDigitsOnly": "Up to {{number}} digits",
     "poweredby": "powered by",
     "prejoin": {

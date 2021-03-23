@@ -2,13 +2,13 @@
 
 import React, { useState, useEffect } from 'react';
 
-import { setPassword as setPass } from '../../../base/conference';
-import { Dialog } from '../../../base/dialog';
-import { translate } from '../../../base/i18n';
-import { isLocalParticipantModerator } from '../../../base/participants';
-import { connect } from '../../../base/redux';
-import { E2EESection } from '../../../e2ee/components';
-import { LobbySection } from '../../../lobby';
+import { setPassword as setPass } from '../../../../base/conference';
+import { Dialog } from '../../../../base/dialog';
+import { translate } from '../../../../base/i18n';
+import { isLocalParticipantModerator } from '../../../../base/participants';
+import { connect } from '../../../../base/redux';
+import { E2EESection } from '../../../../e2ee/components';
+import { LobbySection } from '../../../../lobby';
 
 import PasswordSection from './PasswordSection';
 
