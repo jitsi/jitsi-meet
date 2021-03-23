@@ -233,6 +233,10 @@ body.welcome-page {
         }
     }
 
+    &.without-footer {
+        justify-content: start;
+    }
+
     .welcome-cards-container {
         color:#131519;
         padding-top: 40px;
