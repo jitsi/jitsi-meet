@@ -472,7 +472,7 @@
         "knockingParticipantList": "Список ожидающих участников",
         "nameField": "Введите ваше имя",
         "notificationLobbyAccessDenied": "{{originParticipantName}} запретил присоединиться {{targetParticipantName}}",
-        "notificationLobbyAccessGranted": "{{originParticipantName}}разрешил присоединиться {{targetParticipantName}} ",
+        "notificationLobbyAccessGranted": "{{originParticipantName}} разрешил присоединиться {{targetParticipantName}} ",
         "notificationLobbyDisabled": "Лобби отключено пользователем {{originParticipantName}}",
         "notificationLobbyEnabled": "Лобби включено пользователем {{originParticipantName}}",
         "notificationTitle": "Лобби",
