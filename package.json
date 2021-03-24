@@ -61,6 +61,7 @@
     "moment-duration-format": "2.2.2",
     "olm": "https://packages.matrix.org/npm/olm/olm-3.2.1.tgz",
     "pixelmatch": "5.1.0",
+    "promise.allsettled": "1.0.4",
     "punycode": "2.1.1",
     "react": "16.12",
     "react-dom": "16.12",

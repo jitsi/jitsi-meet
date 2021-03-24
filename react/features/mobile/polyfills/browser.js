@@ -108,6 +108,13 @@ function _visitNode(node, callback) {
         global.addEventListener = () => {};
     }
 
+    // Promise.allSettled is supported from RN 0.63 onwards, use a polyfill for that.
+    // Invokes its shim method to shim Promise.allSettled if it is unavailable or noncompliant.
+    //
+    // Required by:
+    // lib-jitsi-meet/JitsiConference.js
+    require('promise.allsettled').shim();
+
     // removeEventListener
     //
     // Required by:
