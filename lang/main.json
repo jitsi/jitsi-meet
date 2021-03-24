@@ -87,7 +87,6 @@
         "ATTACHED": "Attached",
         "AUTHENTICATING": "Authenticating",
         "AUTHFAIL": "Authentication failed",
-        "AUTHSUCC": "Authentication successful",
         "CONNECTED": "Connected",
         "CONNECTING": "Connecting",
         "CONNFAIL": "Connection failed",
