@@ -76,9 +76,8 @@ class WaitForOwnerDialog extends PureComponent<Props> {
      * @returns {void}
      */
     _onIAmHost() {
-        const { onAuthNow, dispatch } = this.props;
+        const { dispatch } = this.props;
 
-        onAuthNow && onAuthNow();
         dispatch(openLoginDialog());
     }
 

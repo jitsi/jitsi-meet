@@ -13,8 +13,6 @@ import { connect as reduxConnect } from '../../../base/redux';
 import { authenticateAndUpgradeRole } from '../../actions.native';
 import { cancelLogin } from '../../actions.web';
 
-declare var APP: Object;
-
 /**
  * The type of the React {@code Component} props of {@link LoginDialog}.
  */
@@ -81,7 +79,12 @@ type State = {
     /**
      * The user entered local participant name.
      */
-    username: string
+    username: string,
+
+    /**
+     * Authentication process starts before joining the conference room.
+     */
+    loginStarted: boolean
 }
 
 /**
@@ -100,7 +103,8 @@ class LoginDialog extends Component<Props, State> {
 
         this.state = {
             username: '',
-            password: ''
+            password: '',
+            loginStarted: false
         };
 
         this._onCancelLogin = this._onCancelLogin.bind(this);
@@ -145,9 +149,18 @@ class LoginDialog extends Component<Props, State> {
         if (conference) {
             dispatch(authenticateAndUpgradeRole(jid, password, conference));
         } else {
+            this.setState({
+                loginStarted: true
+            });
+
             connect(jid, password, roomName)
                 .then(connection => {
                     onSuccess && onSuccess(connection);
+                })
+                .catch(() => {
+                    this.setState({
+                        loginStarted: false
+                    });
                 });
         }
     }
@@ -226,11 +239,16 @@ class LoginDialog extends Component<Props, State> {
             _connecting: connecting,
             t
         } = this.props;
-        const { password, username } = this.state;
+        const { password, loginStarted, username } = this.state;
 
         return (
             <Dialog
-                okDisabled = { connecting || !password || !username }
+                okDisabled = {
+                    connecting
+                    || loginStarted
+                    || !password
+                    || !username
+                }
                 okKey = { t('dialog.login') }
                 onCancel = { this._onCancelLogin }
                 onSubmit = { this._onLogin }

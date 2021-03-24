@@ -193,19 +193,7 @@ function logout(room: Object) {
     });
 }
 
-/**
- * Notify user that authentication is required to create the conference.
- * @param {JitsiConference} room
- * @param {string} [lockPassword] password to use if the conference is locked
- */
-function requireAuth(room: Object, lockPassword: string) {
-    APP.store.dispatch(openWaitForOwnerDialog(() =>
-        authenticateExternal.bind(null, room, lockPassword))
-    );
-}
-
 export default {
     authenticateExternal,
-    requireAuth,
     logout
 };
