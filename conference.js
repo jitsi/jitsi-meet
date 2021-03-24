@@ -309,11 +309,6 @@ class ConferenceConnector {
                 room.join();
             }, 5000);
 
-            const { password }
-                = APP.store.getState()['features/base/conference'];
-
-            AuthHandler.requireAuth(room, password);
-
             break;
         }
 
@@ -378,7 +373,6 @@ class ConferenceConnector {
         if (this.reconnectTimeout !== null) {
             clearTimeout(this.reconnectTimeout);
         }
-        AuthHandler.closeAuth();
     }
 
     /**
@@ -2242,7 +2236,7 @@ export default {
         });
 
         APP.UI.addListener(UIEvents.AUTH_CLICKED, () => {
-            AuthHandler.authenticate(room);
+            AuthHandler.authenticateExternal(room);
         });
 
         APP.UI.addListener(

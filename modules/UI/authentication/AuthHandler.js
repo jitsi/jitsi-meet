@@ -1,25 +1,22 @@
-/* global APP, config, JitsiMeetJS, Promise */
+// @flow
 
 import Logger from 'jitsi-meet-logger';
 
 import { openConnection } from '../../../connection';
-import { setJWT } from '../../../react/features/base/jwt';
 import {
-    JitsiConnectionErrors
-} from '../../../react/features/base/lib-jitsi-meet';
+    isTokenAuthEnabled,
+    getTokenAuthUrl
+} from '../../../react/features/authentication/functions';
+import { setJWT } from '../../../react/features/base/jwt';
 import UIUtil from '../util/UIUtil';
 
 import LoginDialog from './LoginDialog';
 
+let externalAuthWindow;
+declare var APP: Object;
+
 const logger = Logger.getLogger(__filename);
 
-let externalAuthWindow;
-let authRequiredDialog;
-
-const isTokenAuthEnabled
-    = typeof config.tokenAuthUrl === 'string' && config.tokenAuthUrl.length;
-const getTokenAuthUrl
-    = JitsiMeetJS.util.AuthUtil.getTokenAuthUrl.bind(null, config.tokenAuthUrl);
 
 /**
  * Authenticate using external service or just focus
@@ -29,6 +26,8 @@ const getTokenAuthUrl
  * @param {string} [lockPassword] password to use if the conference is locked
  */
 function doExternalAuth(room, lockPassword) {
+    const config = APP.store.getState()['features/base/config'];
+
     if (externalAuthWindow) {
         externalAuthWindow.focus();
 
@@ -37,8 +36,8 @@ function doExternalAuth(room, lockPassword) {
     if (room.isJoined()) {
         let getUrl;
 
-        if (isTokenAuthEnabled) {
-            getUrl = Promise.resolve(getTokenAuthUrl(room.getName(), true));
+        if (isTokenAuthEnabled(config)) {
+            getUrl = Promise.resolve(getTokenAuthUrl(config)(room.getName(), true));
             initJWTTokenListener(room);
         } else {
             getUrl = room.getExternalAuthUrl(true);
@@ -48,13 +47,13 @@ function doExternalAuth(room, lockPassword) {
                 url,
                 () => {
                     externalAuthWindow = null;
-                    if (!isTokenAuthEnabled) {
+                    if (!isTokenAuthEnabled(config)) {
                         room.join(lockPassword);
                     }
                 }
             );
         });
-    } else if (isTokenAuthEnabled) {
+    } else if (isTokenAuthEnabled(config)) {
         redirectToTokenAuthService(room.getName());
     } else {
         room.getExternalAuthUrl().then(UIUtil.redirect);
@@ -67,10 +66,12 @@ function doExternalAuth(room, lockPassword) {
  * back with "?jwt={the JWT token}" query parameter added.
  * @param {string} [roomName] the name of the conference room.
  */
-function redirectToTokenAuthService(roomName) {
+export function redirectToTokenAuthService(roomName: string) {
+    const config = APP.store.getState()['features/base/config'];
+
     // FIXME: This method will not preserve the other URL params that were
     // originally passed.
-    UIUtil.redirect(getTokenAuthUrl(roomName, false));
+    UIUtil.redirect(getTokenAuthUrl(config)(roomName, false));
 }
 
 /**
@@ -157,58 +158,15 @@ function initJWTTokenListener(room) {
 }
 
 /**
- * Authenticate on the server.
- * @param {JitsiConference} room
- * @param {string} [lockPassword] password to use if the conference is locked
- */
-function doXmppAuth(room, lockPassword) {
-    const loginDialog = LoginDialog.showAuthDialog(
-        /* successCallback */ (id, password) => {
-            room.authenticateAndUpgradeRole({
-                id,
-                password,
-                roomPassword: lockPassword,
-
-                /** Called when the XMPP login succeeds. */
-                onLoginSuccessful() {
-                    loginDialog.displayConnectionStatus(
-                        'connection.FETCH_SESSION_ID');
-                }
-            })
-            .then(
-                /* onFulfilled */ () => {
-                    loginDialog.displayConnectionStatus(
-                        'connection.GOT_SESSION_ID');
-                    loginDialog.close();
-                },
-                /* onRejected */ error => {
-                    logger.error('authenticateAndUpgradeRole failed', error);
-
-                    const { authenticationError, connectionError } = error;
-
-                    if (authenticationError) {
-                        loginDialog.displayError(
-                            'connection.GET_SESSION_ID_ERROR',
-                            { msg: authenticationError });
-                    } else if (connectionError) {
-                        loginDialog.displayError(connectionError);
-                    }
-                });
-        },
-        /* cancelCallback */ () => loginDialog.close());
-}
-
-/**
- * Authenticate for the conference.
  * Uses external service for auth if conference supports that.
  * @param {JitsiConference} room
  * @param {string} [lockPassword] password to use if the conference is locked
  */
-function authenticate(room, lockPassword) {
-    if (isTokenAuthEnabled || room.isExternalAuthEnabled()) {
+function authenticateExternal(room: Object, lockPassword: string) {
+    const config = APP.store.getState()['features/base/config'];
+
+    if (isTokenAuthEnabled(config) || room.isExternalAuthEnabled()) {
         doExternalAuth(room, lockPassword);
-    } else {
-        doXmppAuth(room, lockPassword);
     }
 }
 
@@ -219,7 +177,7 @@ function authenticate(room, lockPassword) {
  * @param {string} [lockPassword] password to use if the conference is locked
  * @returns {Promise}
  */
-function logout(room) {
+function logout(room: Object) {
     return new Promise(resolve => {
         room.room.moderator.logout(resolve);
     }).then(url => {
@@ -232,83 +190,7 @@ function logout(room) {
     });
 }
 
-/**
- * Notify user that authentication is required to create the conference.
- * @param {JitsiConference} room
- * @param {string} [lockPassword] password to use if the conference is locked
- */
-function requireAuth(room, lockPassword) {
-    if (authRequiredDialog) {
-        return;
-    }
-
-    authRequiredDialog = LoginDialog.showAuthRequiredDialog(
-        room.getName(), authenticate.bind(null, room, lockPassword)
-    );
-}
-
-/**
- * Close auth-related dialogs if there are any.
- */
-function closeAuth() {
-    if (externalAuthWindow) {
-        externalAuthWindow.close();
-        externalAuthWindow = null;
-    }
-
-    if (authRequiredDialog) {
-        authRequiredDialog.close();
-        authRequiredDialog = null;
-    }
-}
-
-/**
- *
- */
-function showXmppPasswordPrompt(roomName, connect) {
-    return new Promise((resolve, reject) => {
-        const authDialog = LoginDialog.showAuthDialog(
-            (id, password) => {
-                connect(id, password, roomName).then(connection => {
-                    authDialog.close();
-                    resolve(connection);
-                }, err => {
-                    if (err === JitsiConnectionErrors.PASSWORD_REQUIRED) {
-                        authDialog.displayError(err);
-                    } else {
-                        authDialog.close();
-                        reject(err);
-                    }
-                });
-            }
-        );
-    });
-}
-
-/**
- * Show Authentication Dialog and try to connect with new credentials.
- * If failed to connect because of PASSWORD_REQUIRED error
- * then ask for password again.
- * @param {string} [roomName] name of the conference room
- * @param {function(id, password, roomName)} [connect] function that returns
- * a Promise which resolves with JitsiConnection or fails with one of
- * JitsiConnectionErrors.
- * @returns {Promise<JitsiConnection>}
- */
-function requestAuth(roomName, connect) {
-    if (isTokenAuthEnabled) {
-        // This Promise never resolves as user gets redirected to another URL
-        return new Promise(() => redirectToTokenAuthService(roomName));
-    }
-
-    return showXmppPasswordPrompt(roomName, connect);
-
-}
-
 export default {
-    authenticate,
-    requireAuth,
-    requestAuth,
-    closeAuth,
+    authenticateExternal,
     logout
 };
