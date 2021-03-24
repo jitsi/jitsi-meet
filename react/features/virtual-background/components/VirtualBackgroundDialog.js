@@ -1,7 +1,9 @@
 // @flow
 /* eslint-disable react/jsx-no-bind, no-return-assign */
 import Spinner from '@atlaskit/spinner';
+import { jitsiLocalStorage } from '@jitsi/js-utils/jitsi-local-storage';
 import React, { useState, useEffect } from 'react';
+import uuid from 'uuid';
 
 import { Dialog } from '../../base/dialog';
 import { translate } from '../../base/i18n';
@@ -9,6 +11,8 @@ import { Icon, IconBlurBackground, IconTrash } from '../../base/icons';
 import { connect } from '../../base/redux';
 import { Tooltip } from '../../base/tooltip';
 import { toggleBackgroundEffect, setVirtualBackground } from '../actions';
+import { resizeImage } from '../functions';
+import logger from '../logger';
 
 const images = [
     {
@@ -55,23 +59,43 @@ type Props = {
  * @returns {ReactElement}
  */
 function VirtualBackground({ dispatch, t }: Props) {
-    const localImages = localStorage.getItem('storedImages');
+    const localImages = jitsiLocalStorage.getItem('virtualBackgrounds');
     const [ storedImages, setStoredImages ] = useState((localImages && JSON.parse(localImages)) || []);
     const [ loading, isloading ] = useState(false);
 
+    const toDataURL = url =>
+        fetch(url)
+            .then(response => response.blob())
+            .then(
+                blob =>
+                    new Promise((resolve, reject) => {
+                        const reader = new FileReader();
+
+                        reader.onloadend = () => resolve(reader.result);
+                        reader.onerror = reject;
+                        reader.readAsDataURL(blob);
+                    })
+            );
+
+    const deleteStoredImage = image => {
+        setStoredImages(storedImages.filter(item => item !== image));
+    };
 
     /**
      * Updates stored images on local storage.
      */
     useEffect(() => {
-        localStorage.setItem('storedImages', JSON.stringify(storedImages));
+        jitsiLocalStorage.setItem('virtualBackgrounds', JSON.stringify(storedImages));
+        if (storedImages.length === 22) {
+            deleteStoredImage(storedImages[0]);
+        }
     }, [ storedImages ]);
 
     const [ selected, setSelected ] = useState('');
     const enableBlur = async () => {
         isloading(true);
         setSelected('blur');
-        await dispatch(setVirtualBackground('', false));
+        await dispatch(setVirtualBackground(null, false));
         await dispatch(toggleBackgroundEffect(true));
         isloading(false);
     };
@@ -79,7 +103,7 @@ function VirtualBackground({ dispatch, t }: Props) {
     const removeBackground = async () => {
         isloading(true);
         setSelected('none');
-        await dispatch(setVirtualBackground('', false));
+        await dispatch(setVirtualBackground(null, false));
         await dispatch(toggleBackgroundEffect(false));
         isloading(false);
     };
@@ -92,8 +116,12 @@ function VirtualBackground({ dispatch, t }: Props) {
         isloading(false);
     };
 
-    const deleteStoredImage = image => {
-        setStoredImages(storedImages.filter(item => item !== image));
+    const addConvertedImageBackground = async image => {
+        isloading(true);
+        setSelected(image.id);
+        await dispatch(setVirtualBackground(await toDataURL(image.src), true));
+        await dispatch(toggleBackgroundEffect(true));
+        isloading(false);
     };
 
     const uploadImage = async imageFile => {
@@ -101,26 +129,26 @@ function VirtualBackground({ dispatch, t }: Props) {
 
         reader.readAsDataURL(imageFile[0]);
         reader.onload = async () => {
+            const resizedImage = await resizeImage(reader.result);
+
             isloading(true);
             setStoredImages([
                 ...storedImages,
                 {
                     tooltip: imageFile[0].name,
                     name: imageFile[0].name,
-                    id: Math.random()
-                        .toString(36)
-                        .substring(2, 7),
-                    src: reader.result.toString()
+                    id: uuid.v4(),
+                    src: resizedImage
                 }
             ]);
 
-            await dispatch(setVirtualBackground(reader.result.toString(), true));
+            await dispatch(setVirtualBackground(resizedImage, true));
             await dispatch(toggleBackgroundEffect(true));
             isloading(false);
         };
         reader.onerror = () => {
             isloading(false);
-            throw new Error('Failed to upload virtual image!');
+            logger.error('Failed to upload virtual image!');
         };
     };
 
@@ -132,7 +160,7 @@ function VirtualBackground({ dispatch, t }: Props) {
             width = 'small'>
             {loading ? (
                 <div>
-                    <span>{ t('virtualBackground.pleaseWait') }</span>
+                    <span>{t('virtualBackground.pleaseWait')}</span>
                     <Spinner
                         isCompleting = { false }
                         size = 'medium' />
@@ -145,7 +173,7 @@ function VirtualBackground({ dispatch, t }: Props) {
                             position = { 'top' }>
                             <div
                                 className = { selected === 'none' ? 'none-selected' : 'virtual-background-none' }
-                                onClick = { () => removeBackground() }>
+                                onClick = { removeBackground }>
                                 None
                             </div>
                         </Tooltip>
@@ -165,7 +193,7 @@ function VirtualBackground({ dispatch, t }: Props) {
                                 position = { 'top' }>
                                 <img
                                     className = { selected === image.id ? 'thumbnail-selected' : 'thumbnail' }
-                                    onClick = { () => addImageBackground(image) }
+                                    onClick = { () => addConvertedImageBackground(image) }
                                     onError = { event => event.target.style.display = 'none' }
                                     src = { image.src } />
                             </Tooltip>

@@ -1,7 +1,7 @@
 .virtual-background-dialog{
-  max-width: 360px;
-  overflow: auto;
-  display: inline-flex;
+  display: inline-grid;
+  grid-template-columns: auto auto auto auto auto auto auto;
+  max-width: 370px;
   cursor: pointer;
   .thumbnail{
     object-fit: cover;
@@ -22,8 +22,8 @@
   .virtual-background-none{
     font-weight: bold;
     padding: 5px;
-    height: 35px;
-    width: 35px;
+    height: 34px;
+    width: 34px;
     border-radius: 10px;
     border: 1px solid #a4b8d1;
     text-align: center;
@@ -34,8 +34,8 @@
   .none-selected{
     font-weight: bold;
     padding: 5px;
-    height: 35px;
-    width: 35px;
+    height: 34px;
+    width: 34px;
     border-radius: 10px;
     border: 2px solid #a4b8d1;
     text-align: center;

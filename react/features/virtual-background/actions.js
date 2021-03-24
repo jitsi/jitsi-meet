@@ -41,11 +41,11 @@ export function toggleBackgroundEffect(enabled: boolean) {
  * @param {boolean} isVirtualBackground - Indicate if virtual image is activated.
  * @returns {{
  *     type: SET_VIRTUAL_BACKGROUND,
- *     virtualSource: string,
+ *     virtualSource: any,
  *     isVirtualBackground: boolean,
  * }}
  */
-export function setVirtualBackground(virtualSource: string, isVirtualBackground: boolean) {
+export function setVirtualBackground(virtualSource: any, isVirtualBackground: boolean) {
     return {
         type: SET_VIRTUAL_BACKGROUND,
         virtualSource,
