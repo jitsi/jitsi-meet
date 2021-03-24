@@ -113,8 +113,7 @@ function _visitNode(node, callback) {
     //
     // Required by:
     // lib-jitsi-meet/JitsiConference.js
-    global.allSettled = require('promise-allSettled');
-    global.allSettled.shim(); // will be a no-op if not needed.
+    require('promise.allsettled').shim();
 
     // removeEventListener
     //
