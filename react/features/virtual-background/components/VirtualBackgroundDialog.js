@@ -7,35 +7,31 @@ import uuid from 'uuid';
 
 import { Dialog } from '../../base/dialog';
 import { translate } from '../../base/i18n';
-import { Icon, IconBlurBackground, IconTrash } from '../../base/icons';
+import { Icon, IconBlurBackground, IconCancelSelection } from '../../base/icons';
 import { connect } from '../../base/redux';
 import { Tooltip } from '../../base/tooltip';
 import { toggleBackgroundEffect, setVirtualBackground } from '../actions';
-import { resizeImage } from '../functions';
+import { resizeImage, toDataURL } from '../functions';
 import logger from '../logger';
 
+// The limit of virtual background uploads is 21. When the number
+// of uploads is 22 we trigger the deleteStoredImage function to delete
+// the first/oldest uploaded background.
+const backgroundsLimit = 22;
 const images = [
     {
-        tooltip: 'Image 1',
-        name: 'background-1.jpg',
         id: 1,
         src: 'images/virtual-background/background-1.jpg'
     },
     {
-        tooltip: 'Image 2',
-        name: 'background-2.jpg',
         id: 2,
         src: 'images/virtual-background/background-2.jpg'
     },
     {
-        tooltip: 'Image 3',
-        name: 'background-3.jpg',
         id: 3,
         src: 'images/virtual-background/background-3.jpg'
     },
     {
-        tooltip: 'Image 4',
-        name: 'background-4.jpg',
         id: 4,
         src: 'images/virtual-background/background-4.jpg'
     }
@@ -63,20 +59,6 @@ function VirtualBackground({ dispatch, t }: Props) {
     const [ storedImages, setStoredImages ] = useState((localImages && JSON.parse(localImages)) || []);
     const [ loading, isloading ] = useState(false);
 
-    const toDataURL = url =>
-        fetch(url)
-            .then(response => response.blob())
-            .then(
-                blob =>
-                    new Promise((resolve, reject) => {
-                        const reader = new FileReader();
-
-                        reader.onloadend = () => resolve(reader.result);
-                        reader.onerror = reject;
-                        reader.readAsDataURL(blob);
-                    })
-            );
-
     const deleteStoredImage = image => {
         setStoredImages(storedImages.filter(item => item !== image));
     };
@@ -86,7 +68,7 @@ function VirtualBackground({ dispatch, t }: Props) {
      */
     useEffect(() => {
         jitsiLocalStorage.setItem('virtualBackgrounds', JSON.stringify(storedImages));
-        if (storedImages.length === 22) {
+        if (storedImages.length === backgroundsLimit) {
             deleteStoredImage(storedImages[0]);
         }
     }, [ storedImages ]);
@@ -95,7 +77,7 @@ function VirtualBackground({ dispatch, t }: Props) {
     const enableBlur = async () => {
         isloading(true);
         setSelected('blur');
-        await dispatch(setVirtualBackground(null, false));
+        await dispatch(setVirtualBackground('', false));
         await dispatch(toggleBackgroundEffect(true));
         isloading(false);
     };
@@ -103,12 +85,12 @@ function VirtualBackground({ dispatch, t }: Props) {
     const removeBackground = async () => {
         isloading(true);
         setSelected('none');
-        await dispatch(setVirtualBackground(null, false));
+        await dispatch(setVirtualBackground('', false));
         await dispatch(toggleBackgroundEffect(false));
         isloading(false);
     };
 
-    const addImageBackground = async image => {
+    const setUploadedImageBackground = async image => {
         isloading(true);
         setSelected(image.id);
         await dispatch(setVirtualBackground(image.src, true));
@@ -116,7 +98,7 @@ function VirtualBackground({ dispatch, t }: Props) {
         isloading(false);
     };
 
-    const addConvertedImageBackground = async image => {
+    const setImageBackground = async image => {
         isloading(true);
         setSelected(image.id);
         await dispatch(setVirtualBackground(await toDataURL(image.src), true));
@@ -135,8 +117,6 @@ function VirtualBackground({ dispatch, t }: Props) {
             setStoredImages([
                 ...storedImages,
                 {
-                    tooltip: imageFile[0].name,
-                    name: imageFile[0].name,
                     id: uuid.v4(),
                     src: resizedImage
                 }
@@ -160,7 +140,7 @@ function VirtualBackground({ dispatch, t }: Props) {
             width = 'small'>
             {loading ? (
                 <div>
-                    <span>{t('virtualBackground.pleaseWait')}</span>
+                    <span className = 'loading-content-text'>{t('virtualBackground.pleaseWait')}</span>
                     <Spinner
                         isCompleting = { false }
                         size = 'medium' />
@@ -174,7 +154,7 @@ function VirtualBackground({ dispatch, t }: Props) {
                             <div
                                 className = { selected === 'none' ? 'none-selected' : 'virtual-background-none' }
                                 onClick = { removeBackground }>
-                                None
+                                {t('virtualBackground.none')}
                             </div>
                         </Tooltip>
                         <Tooltip
@@ -187,16 +167,12 @@ function VirtualBackground({ dispatch, t }: Props) {
                                 src = { IconBlurBackground } />
                         </Tooltip>
                         {images.map((image, index) => (
-                            <Tooltip
-                                content = { image.tooltip }
+                            <img
+                                className = { selected === image.id ? 'thumbnail-selected' : 'thumbnail' }
                                 key = { index }
-                                position = { 'top' }>
-                                <img
-                                    className = { selected === image.id ? 'thumbnail-selected' : 'thumbnail' }
-                                    onClick = { () => addConvertedImageBackground(image) }
-                                    onError = { event => event.target.style.display = 'none' }
-                                    src = { image.src } />
-                            </Tooltip>
+                                onClick = { () => setImageBackground(image) }
+                                onError = { event => event.target.style.display = 'none' }
+                                src = { image.src } />
                         ))}
                         <Tooltip
                             content = { t('virtualBackground.uploadImage') }
@@ -217,21 +193,20 @@ function VirtualBackground({ dispatch, t }: Props) {
 
                     <div className = 'virtual-background-dialog'>
                         {storedImages.map((image, index) => (
-                            <Tooltip
-                                content = { image.tooltip }
-                                key = { index }
-                                position = { 'top' }>
+                            <div
+                                className = { 'thumbnail-container' }
+                                key = { index }>
                                 <img
                                     className = { selected === image.id ? 'thumbnail-selected' : 'thumbnail' }
-                                    onClick = { () => addImageBackground(image) }
+                                    onClick = { () => setUploadedImageBackground(image) }
                                     onError = { event => event.target.style.display = 'none' }
                                     src = { image.src } />
                                 <Icon
                                     className = { 'delete-image-icon' }
                                     onClick = { () => deleteStoredImage(image) }
-                                    size = { 10 }
-                                    src = { IconTrash } />
-                            </Tooltip>
+                                    size = { 15 }
+                                    src = { IconCancelSelection } />
+                            </div>
                         ))}
                     </div>
                 </div>

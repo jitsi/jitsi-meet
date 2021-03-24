@@ -337,7 +337,8 @@
         "enableBlur": "Enable blur",
         "removeBackground": "Remove background",
         "uploadImage": "Upload image",
-        "pleaseWait": "Please wait..."
+        "pleaseWait": "Please wait...",
+        "none": "None"
     },
     "feedback": {
         "average": "Average",

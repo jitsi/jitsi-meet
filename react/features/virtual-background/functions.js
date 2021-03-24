@@ -20,6 +20,33 @@ export function checkBlurSupport() {
 }
 
 /**
+ * Convert blob to base64.
+ *
+ * @param {Blob} blob - The link to add info with.
+ * @returns {Promise<string>}
+ */
+export const blobToData = (blob: Blob): Promise<string> => new Promise(resolve => {
+    const reader = new FileReader();
+
+    reader.onloadend = () => resolve(reader.result.toString());
+    reader.readAsDataURL(blob);
+});
+
+/**
+ * Convert blob to base64.
+ *
+ * @param {string} url - The image url.
+ * @returns {Object} - Returns the converted blob to base64.
+ */
+export const toDataURL = async (url: string) => {
+    const response = await fetch(url);
+    const blob = await response.blob();
+    const resData = await blobToData(blob);
+
+    return resData;
+};
+
+/**
  * Resize image and adjust original aspect ratio.
  *
  * @param {Object} base64image - Base64 image extraction.
@@ -35,78 +62,18 @@ export async function resizeImage(base64image: any, width: number = 1920, height
     /* eslint-disable no-empty-function */
     img.onload = await function() {};
 
-    // Make sure the width and height preserve the original aspect ratio and adjust if needed.
-    if (img.height > img.width) {
-        /* eslint-disable no-param-reassign */
-        width = Math.floor(height * (img.width / img.height));
-    } else {
-        /* eslint-disable no-param-reassign */
-        height = Math.floor(width * (img.height / img.width));
-    }
+    // Create an off-screen canvas.
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
 
-    const resizingCanvas: HTMLCanvasElement = document.createElement('canvas');
-    const resizingCanvasContext = resizingCanvas.getContext('2d');
+    // Set its dimension to target size.
+    canvas.width = width;
+    canvas.height = height;
 
-    // Start with original image size.
-    resizingCanvas.width = img.width;
-    resizingCanvas.height = img.height;
+    // Draw source image into the off-screen canvas.
+    // TODO: keep aspect ratio and implement object-fit: cover.
+    ctx.drawImage(img, 0, 0, width, height);
 
-    // Draw the original image on the (temp) resizing canvas.
-    resizingCanvasContext.drawImage(img, 0, 0, resizingCanvas.width, resizingCanvas.height);
-
-    const curImageDimensions = {
-        width: Math.floor(img.width),
-        height: Math.floor(img.height)
-    };
-
-    const halfImageDimensions = {
-        width: 0,
-        height: 0
-    };
-
-    // Quickly reduce the dize by 50% each time in few iterations until the size is less then
-    // 2x time the target size - the motivation for it, is to reduce the aliasing that would have been
-    // created with direct reduction of very big image to small image.
-    while (curImageDimensions.width * 0.5 > width) {
-        // Reduce the resizing canvas by half and refresh the image.
-        halfImageDimensions.width = Math.floor(curImageDimensions.width * 0.5);
-        halfImageDimensions.height = Math.floor(curImageDimensions.height * 0.5);
-
-        resizingCanvasContext.drawImage(
-            resizingCanvas,
-            0,
-            0,
-            curImageDimensions.width,
-            curImageDimensions.height,
-            0,
-            0,
-            halfImageDimensions.width,
-            halfImageDimensions.height
-        );
-
-        curImageDimensions.width = halfImageDimensions.width;
-        curImageDimensions.height = halfImageDimensions.height;
-    }
-
-    // Now do final resize for the resizingCanvas to meet the dimension requirments
-    // directly to the output canvas, that will output the final image.
-    const outputCanvas: HTMLCanvasElement = document.createElement('canvas');
-    const outputCanvasContext = outputCanvas.getContext('2d');
-
-    outputCanvas.width = width;
-    outputCanvas.height = height;
-
-    outputCanvasContext.drawImage(
-        resizingCanvas,
-        0,
-        0,
-        curImageDimensions.width,
-        curImageDimensions.height,
-        0,
-        0,
-        width,
-        height
-    );
-
-    return outputCanvas.toDataURL('image/jpeg', 0.1);
+    // Encode image to data-uri with base64 version of compressed image.
+    return canvas.toDataURL('image/jpeg', 0.5);
 }
