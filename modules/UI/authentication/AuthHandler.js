@@ -4,9 +4,6 @@ import Logger from 'jitsi-meet-logger';
 
 import { openConnection } from '../../../connection';
 import {
-    openWaitForOwnerDialog
-} from '../../../react/features/authentication/actions.web';
-import {
     isTokenAuthEnabled,
     getTokenAuthUrl
 } from '../../../react/features/authentication/functions';
