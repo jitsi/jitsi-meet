@@ -5,7 +5,6 @@ import {
     SET_TIMEOUT,
     timerWorkerScript
 } from './TimerWorker';
-
 const blurValue = '25px';
 
 /**
@@ -114,7 +113,13 @@ export default class JitsiStreamBackgroundEffect {
 
         this._outputCanvasCtx.globalCompositeOperation = 'destination-over';
         if (this._options.virtualBackground.isVirtualBackground) {
-            this._outputCanvasCtx.drawImage(this._virtualImage, 0, 0);
+            this._outputCanvasCtx.drawImage(
+                this._virtualImage,
+                0,
+                0,
+                this._inputVideoElement.width,
+                this._inputVideoElement.height
+            );
         } else {
             this._outputCanvasCtx.filter = `blur(${blurValue})`;
             this._outputCanvasCtx.drawImage(this._inputVideoElement, 0, 0);
