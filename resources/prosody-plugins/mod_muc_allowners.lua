@@ -1,6 +1,7 @@
 local filters = require 'util.filters';
 local jid = require "util.jid";
 local jid_bare = require "util.jid".bare;
+local jid_host = require "util.jid".host;
 local um_is_admin = require "core.usermanager".is_admin;
 local util = module:require "util";
 local is_healthcheck_room = util.is_healthcheck_room;
@@ -116,12 +117,24 @@ function filter_stanza(stanza)
         return stanza;
     end
 
+    -- we want to filter presences only on this host for allowners and skip anything like lobby etc.
+    local host_from = jid_host(stanza.attr.from);
+    if host_from ~= module.host then
+        return stanza;
+    end
+
+    local bare_to = jid_bare(stanza.attr.to);
+    if stanza:get_error() and joining_moderator_participants[bare_to] then
+        -- pre-join succeeded but joined did not so we need to clear cache
+        joining_moderator_participants[bare_to] = nil;
+        return stanza;
+    end
+
     local muc_x = stanza:get_child('x', MUC_NS..'#user');
     if not muc_x then
         return stanza;
     end
 
-    local bare_to = jid_bare(stanza.attr.to);
     if joining_moderator_participants[bare_to] and presence_check_status(muc_x, '110') then
         -- skip the local presence for participant
         return nil;
