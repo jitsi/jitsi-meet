@@ -139,7 +139,7 @@ function VirtualBackground({ dispatch, t }: Props) {
             titleKey = { 'virtualBackground.title' }
             width = 'small'>
             {loading ? (
-                <div>
+                <div className = 'virtual-background-loading'>
                     <span className = 'loading-content-text'>{t('virtualBackground.pleaseWait')}</span>
                     <Spinner
                         isCompleting = { false }
