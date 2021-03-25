@@ -23,6 +23,7 @@ import {
     pinParticipant,
     kickParticipant
 } from '../../react/features/base/participants';
+import { isToggleCameraEnabled, toggleCamera } from '../../react/features/base/tracks';
 import { setPrivateMessageRecipient } from '../../react/features/chat/actions';
 import { openChat } from '../../react/features/chat/actions.web';
 import {
@@ -168,6 +169,13 @@ function initCommands() {
         'toggle-film-strip': () => {
             sendAnalytics(createApiEvent('film.strip.toggled'));
             APP.UI.toggleFilmstrip();
+        },
+        'toggle-camera': () => {
+            if (!isToggleCameraEnabled(APP.store.getState())) {
+                return;
+            }
+
+            APP.store.dispatch(toggleCamera());
         },
         'toggle-chat': () => {
             sendAnalytics(createApiEvent('chat.toggled'));
