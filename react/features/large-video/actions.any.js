@@ -170,5 +170,5 @@ function _electParticipantInLargeVideo(state) {
         return participant.id;
     }
 
-    return participants.find(p => p.local);
+    return participants.find(p => p.local)?.id;
 }
