@@ -52,6 +52,7 @@ const commands = {
     submitFeedback: 'submit-feedback',
     toggleAudio: 'toggle-audio',
     toggleCamera: 'toggle-camera',
+    toggleCameraMirror: 'toggle-camera-mirror',
     toggleChat: 'toggle-chat',
     toggleFilmStrip: 'toggle-film-strip',
     toggleRaiseHand: 'toggle-raise-hand',
