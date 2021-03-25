@@ -23,6 +23,7 @@ import {
     pinParticipant,
     kickParticipant
 } from '../../react/features/base/participants';
+import { updateSettings } from '../../react/features/base/settings';
 import { isToggleCameraEnabled, toggleCamera } from '../../react/features/base/tracks';
 import { setPrivateMessageRecipient } from '../../react/features/chat/actions';
 import { openChat } from '../../react/features/chat/actions.web';
@@ -176,6 +177,12 @@ function initCommands() {
             }
 
             APP.store.dispatch(toggleCamera());
+        },
+        'toggle-camera-mirror': () => {
+            const state = APP.store.getState();
+            const { localFlipX: currentFlipX } = state['features/base/settings'];
+
+            APP.store.dispatch(updateSettings({ localFlipX: !currentFlipX }));
         },
         'toggle-chat': () => {
             sendAnalytics(createApiEvent('chat.toggled'));
