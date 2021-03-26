@@ -7,7 +7,7 @@ import { getParticipantsPaneOpen } from '../participants-pane/functions';
 import { setOverflowDrawer } from '../toolbox/actions.web';
 import { getCurrentLayout, getTileViewGridDimensions, shouldDisplayTileView, LAYOUTS } from '../video-layout';
 
-import { setHorizontalViewDimensions, setTileViewDimensions } from './actions.web';
+import { setHorizontalViewDimensions, setTileViewDimensions, setVerticalViewDimensions } from './actions.web';
 import {
     ASPECT_RATIO_BREAKPOINT,
     DISPLAY_DRAWER_THRESHOLD,
@@ -28,18 +28,7 @@ StateListenerRegistry.register(
             const oldGridDimensions = state['features/filmstrip'].tileViewDimensions.gridDimensions;
 
             if (!equals(gridDimensions, oldGridDimensions)) {
-                const { clientHeight, clientWidth } = state['features/base/responsive-ui'];
-
-                store.dispatch(
-                    setTileViewDimensions(
-                        gridDimensions,
-                        {
-                            clientHeight,
-                            clientWidth
-                        },
-                        store
-                    )
-                );
+                store.dispatch(setTileViewDimensions(gridDimensions));
             }
         }
     });
@@ -53,23 +42,14 @@ StateListenerRegistry.register(
         const state = store.getState();
 
         switch (layout) {
-        case LAYOUTS.TILE_VIEW: {
-            const { clientHeight, clientWidth } = state['features/base/responsive-ui'];
-
-            store.dispatch(
-                setTileViewDimensions(
-                    getTileViewGridDimensions(state),
-                    {
-                        clientHeight,
-                        clientWidth
-                    },
-                    store
-                )
-            );
+        case LAYOUTS.TILE_VIEW:
+            store.dispatch(setTileViewDimensions(getTileViewGridDimensions(state)));
             break;
-        }
         case LAYOUTS.HORIZONTAL_FILMSTRIP_VIEW:
-            store.dispatch(setHorizontalViewDimensions(state['features/base/responsive-ui'].clientHeight));
+            store.dispatch(setHorizontalViewDimensions());
+            break;
+        case LAYOUTS.VERTICAL_FILMSTRIP_VIEW:
+            store.dispatch(setVerticalViewDimensions());
             break;
         }
     });
@@ -163,17 +143,7 @@ StateListenerRegistry.register(
 
         if (shouldDisplayTileView(state)) {
             const gridDimensions = getTileViewGridDimensions(state);
-            const { clientHeight, clientWidth } = state['features/base/responsive-ui'];
 
-            store.dispatch(
-                setTileViewDimensions(
-                    gridDimensions,
-                    {
-                        clientHeight,
-                        clientWidth
-                    },
-                    store
-                )
-            );
+            store.dispatch(setTileViewDimensions(gridDimensions));
         }
     });
