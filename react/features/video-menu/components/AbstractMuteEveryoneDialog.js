@@ -84,7 +84,7 @@ export default class AbstractMuteEveryoneDialog<P: Props> extends AbstractMuteRe
  * @returns {Props}
  */
 export function abstractMapStateToProps(state: Object, ownProps: Props) {
-    const { exclude, t } = ownProps;
+    const { exclude = [], t } = ownProps;
 
     const whom = exclude
         // eslint-disable-next-line no-confusing-arrow
