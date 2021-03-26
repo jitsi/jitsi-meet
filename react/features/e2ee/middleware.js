@@ -23,7 +23,7 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
             logger.debug(`E2EE will be ${action.enabled ? 'enabled' : 'disabled'}`);
             conference.toggleE2EE(action.enabled);
 
-            // Broadccast that we enabled / disabled E2EE.
+            // Broadcast that we enabled / disabled E2EE.
             const participant = getLocalParticipant(getState);
 
             dispatch(participantUpdated({

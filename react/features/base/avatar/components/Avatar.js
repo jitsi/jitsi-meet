@@ -11,7 +11,7 @@ import { StatelessAvatar } from '.';
 export type Props = {
 
     /**
-     * The string we base the initials on (this is generated from a list of precendences).
+     * The string we base the initials on (this is generated from a list of precedences).
      */
     _initialsBase: ?string,
 

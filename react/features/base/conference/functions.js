@@ -167,11 +167,11 @@ export function getConferenceName(stateful: Function | Object): string {
 }
 
 /**
- * Returns the name of the conference formated for the title.
+ * Returns the name of the conference formatted for the title.
  *
  * @param {Function | Object} stateful - Reference that can be resolved to Redux state with the {@code toState}
  * function.
- * @returns {string} - The name of the conference formated for the title.
+ * @returns {string} - The name of the conference formatted for the title.
  */
 export function getConferenceNameForTitle(stateful: Function | Object) {
     return safeStartCase(safeDecodeURIComponent(toState(stateful)['features/base/conference'].room));
@@ -205,7 +205,7 @@ export function getCurrentConference(stateful: Function | Object) {
     const { conference, joining, leaving, membersOnly, passwordRequired }
         = toState(stateful)['features/base/conference'];
 
-    // There is a precendence
+    // There is a precedence
     if (conference) {
         return conference === leaving ? undefined : conference;
     }

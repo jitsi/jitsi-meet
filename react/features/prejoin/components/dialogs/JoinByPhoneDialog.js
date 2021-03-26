@@ -27,7 +27,7 @@ type Props = {
     dialInNumber: string,
 
     /**
-     * The status of the call when the meeting calss the user.
+     * The status of the call when the meeting calls the user.
      */
     dialOutStatus: string,
 

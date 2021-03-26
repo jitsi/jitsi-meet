@@ -72,7 +72,7 @@ type Props = {
     submitDisabled: boolean,
 
     /**
-     * Function to be used to retreive translated i18n labels.
+     * Function to be used to retrieve translated i18n labels.
      */
     t: Function,
 

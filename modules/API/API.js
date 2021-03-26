@@ -16,7 +16,15 @@ import { overwriteConfig, getWhitelistedJSON } from '../../react/features/base/c
 import { parseJWTFromURLParams } from '../../react/features/base/jwt';
 import JitsiMeetJS, { JitsiRecordingConstants } from '../../react/features/base/lib-jitsi-meet';
 import { MEDIA_TYPE } from '../../react/features/base/media';
-import { pinParticipant, getParticipantById, kickParticipant } from '../../react/features/base/participants';
+import {
+    getLocalParticipant,
+    getParticipantById,
+    participantUpdated,
+    pinParticipant,
+    kickParticipant
+} from '../../react/features/base/participants';
+import { updateSettings } from '../../react/features/base/settings';
+import { isToggleCameraEnabled, toggleCamera } from '../../react/features/base/tracks';
 import { setPrivateMessageRecipient } from '../../react/features/chat/actions';
 import { openChat } from '../../react/features/chat/actions.web';
 import {
@@ -33,7 +41,7 @@ import {
 import { toggleLobbyMode } from '../../react/features/lobby/actions.web';
 import { RECORDING_TYPES } from '../../react/features/recording/constants';
 import { getActiveSession } from '../../react/features/recording/functions';
-import { toggleTileView } from '../../react/features/video-layout';
+import { toggleTileView, setTileView } from '../../react/features/video-layout';
 import { muteAllParticipants } from '../../react/features/video-menu/actions';
 import { setVideoQuality } from '../../react/features/video-quality';
 import { getJitsiMeetTransport } from '../transport';
@@ -163,9 +171,39 @@ function initCommands() {
             sendAnalytics(createApiEvent('film.strip.toggled'));
             APP.UI.toggleFilmstrip();
         },
+        'toggle-camera': () => {
+            if (!isToggleCameraEnabled(APP.store.getState())) {
+                return;
+            }
+
+            APP.store.dispatch(toggleCamera());
+        },
+        'toggle-camera-mirror': () => {
+            const state = APP.store.getState();
+            const { localFlipX: currentFlipX } = state['features/base/settings'];
+
+            APP.store.dispatch(updateSettings({ localFlipX: !currentFlipX }));
+        },
         'toggle-chat': () => {
             sendAnalytics(createApiEvent('chat.toggled'));
             APP.UI.toggleChat();
+        },
+        'toggle-raise-hand': () => {
+            const localParticipant = getLocalParticipant(APP.store.getState());
+
+            if (!localParticipant) {
+                return;
+            }
+            const { raisedHand } = localParticipant;
+
+            sendAnalytics(createApiEvent('raise-hand.toggled'));
+            APP.store.dispatch(
+                participantUpdated({
+                    id: APP.conference.getMyUserId(),
+                    local: true,
+                    raisedHand: !raisedHand
+                })
+            );
         },
 
         /**
@@ -185,6 +223,9 @@ function initCommands() {
             sendAnalytics(createApiEvent('tile-view.toggled'));
 
             APP.store.dispatch(toggleTileView());
+        },
+        'set-tile-view': enabled => {
+            APP.store.dispatch(setTileView(enabled));
         },
         'video-hangup': (showFeedbackDialog = true) => {
             sendAnalytics(createApiEvent('video.hangup'));
@@ -1121,6 +1162,23 @@ class API {
             name: 'raise-hand-updated',
             handRaised,
             id
+        });
+    }
+
+    /**
+     * Notify external application (if API is enabled) that recording has started or stopped.
+     *
+     * @param {boolean} on - True if recording is on, false otherwise.
+     * @param {string} mode - Stream or file.
+     * @param {string} error - Error type or null if success.
+     * @returns {void}
+     */
+    notifyRecordingStatusChanged(on: boolean, mode: string, error?: string) {
+        this._sendEvent({
+            name: 'recording-status-changed',
+            on,
+            mode,
+            error
         });
     }
 

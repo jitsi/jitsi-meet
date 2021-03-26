@@ -7,7 +7,7 @@ import { ColorPalette, getRGBAFormat } from '../styles';
  */
 export default {
     '_defaultTheme': {
-        // Generic app theme colors that are used accross the entire app.
+        // Generic app theme colors that are used across the entire app.
         // All scheme definitions below inherit these values.
         background: 'rgb(255, 255, 255)',
         errorText: ColorPalette.red,

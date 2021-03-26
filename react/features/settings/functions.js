@@ -155,7 +155,7 @@ export function getProfileTabProps(stateful: Object | Function) {
  * Returns a promise which resolves with a list of objects containing
  * all the video jitsiTracks and appropriate errors for the given device ids.
  *
- * @param {string[]} ids - The list of the camera ids for wich to create tracks.
+ * @param {string[]} ids - The list of the camera ids for which to create tracks.
  * @param {number} [timeout] - A timeout for the createLocalTrack function call.
  *
  * @returns {Promise<Object[]>}

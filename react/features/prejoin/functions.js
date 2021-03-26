@@ -130,7 +130,7 @@ export function getRawError(state: Object): string {
 }
 
 /**
- * Selector for getting the visiblity state for the 'JoinByPhoneDialog'.
+ * Selector for getting the visibility state for the 'JoinByPhoneDialog'.
  *
  * @param {Object} state - The state of the app.
  * @returns {boolean}

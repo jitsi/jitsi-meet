@@ -89,7 +89,7 @@ export default class MicrophoneEntry extends Component<Props, State> {
     }
 
     /**
-     * Subscribes to audio level chanages comming from the jitsiTrack.
+     * Subscribes to audio level changes coming from the jitsiTrack.
      *
      * @returns {void}
      */
@@ -102,7 +102,7 @@ export default class MicrophoneEntry extends Component<Props, State> {
     }
 
     /**
-     * Unsubscribes from chanages comming from the jitsiTrack.
+     * Unsubscribes from changes coming from the jitsiTrack.
      *
      * @param {Object} jitsiTrack - The jitsiTrack to unsubscribe from.
      * @returns {void}

@@ -167,9 +167,14 @@
         cursor: initial;
         color: #929292;
 
+        &:hover {
+            background: none;
+        }
+
         svg {
             fill: #929292;
         }
+
     }
 
     @media (hover: hover) and (pointer: fine) {

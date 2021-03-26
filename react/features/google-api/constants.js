@@ -1,7 +1,7 @@
 // @flow
 
 /**
- * Google API URL to retreive streams for a live broadcast of a user.
+ * Google API URL to retrieve streams for a live broadcast of a user.
  *
  * NOTE: The URL must be appended by a broadcast ID returned by a call towards
  * {@code API_URL_LIVE_BROADCASTS}.
@@ -12,7 +12,7 @@
 export const API_URL_BROADCAST_STREAMS = 'https://content.googleapis.com/youtube/v3/liveStreams?part=id%2Csnippet%2Ccdn%2Cstatus&id=';
 
 /**
- * Google API URL to retreive live broadcasts of a user.
+ * Google API URL to retrieve live broadcasts of a user.
  *
  * @type {string}
  */

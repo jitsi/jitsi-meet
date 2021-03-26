@@ -176,11 +176,12 @@ class WelcomePage extends AbstractWelcomePage {
         const showAdditionalCard = this._shouldShowAdditionalCard();
         const showAdditionalContent = this._shouldShowAdditionalContent();
         const showAdditionalToolbarContent = this._shouldShowAdditionalToolbarContent();
+        const contentClassName = showAdditionalContent ? 'with-content' : 'without-content';
+        const footerClassName = DISPLAY_WELCOME_FOOTER ? 'with-footer' : 'without-footer';
 
         return (
             <div
-                className = { `welcome ${showAdditionalContent
-                    ? 'with-content' : 'without-content'}` }
+                className = { `welcome ${contentClassName} ${footerClassName}` }
                 id = 'welcome_page'>
                 <div className = 'welcome-watermark'>
                     <Watermarks defaultJitsiLogoURL = { DEFAULT_WELCOME_PAGE_LOGO_URL } />

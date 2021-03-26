@@ -72,7 +72,7 @@ class Header extends PureComponent<Props> {
 
     /**
      * Calculates the color of the statusbar content (light or dark) based on
-     * certain criterias.
+     * certain criteria.
      *
      * @returns {string}
      */

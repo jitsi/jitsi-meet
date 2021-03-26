@@ -13,9 +13,6 @@ const {
     remoteVideo = isHuman,
     remoteAudio = isHuman,
     autoPlayVideo = config.testing.noAutoPlayVideo !== true,
-
-    // Whether to create local audio even if muted
-    autoCreateLocalAudio = config.testing.noAutoLocalAudio !== true
 } = params;
 
 let {
@@ -44,7 +41,6 @@ window.APP = {
             return room && room.getConnectionState();
         },
         muteAudio(mute) {
-            // Note: will have no effect if !autoCreateLocalAudio
             localAudio = mute;
             for (let i = 0; i < localTracks.length; i++) {
                 if (localTracks[i].getType() === 'audio') {
@@ -53,6 +49,11 @@ window.APP = {
                     }
                     else {
                         localTracks[i].unmute();
+
+                        // if track was not added we need to add it to the peerconnection
+                        if (!room.getLocalAudioTrack()) {
+                            room.replaceTrack(null, localTracks[i]);
+                        }
                     }
                 }
             }
@@ -124,8 +125,12 @@ function onLocalTracks(tracks = []) {
         if (localTracks[i].getType() === 'video') {
             $('body').append(`<video ${autoPlayVideo ? 'autoplay="1" ' : ''}id='localVideo${i}' />`);
             localTracks[i].attach($(`#localVideo${i}`)[0]);
+
+            room.addTrack(localTracks[i]);
         } else {
-            if (!localAudio) {
+            if (localAudio) {
+                room.addTrack(localTracks[i]);
+            } else {
                 localTracks[i].mute();
             }
 
@@ -133,7 +138,6 @@ function onLocalTracks(tracks = []) {
                 `<audio autoplay='1' muted='true' id='localAudio${i}' />`);
             localTracks[i].attach($(`#localAudio${i}`)[0]);
         }
-        room.addTrack(localTracks[i]);
     }
 }
 
@@ -233,9 +237,8 @@ function onConnectionSuccess() {
         devices.push('video');
     }
 
-    if (localAudio || autoCreateLocalAudio) {
-        devices.push('audio');
-    }
+    // we always create audio local tracks
+    devices.push('audio');
 
     if (devices.length > 0) {
         JitsiMeetJS.createLocalTracks({ devices })

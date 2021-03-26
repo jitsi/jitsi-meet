@@ -113,7 +113,7 @@ export default class AbstractDialog<P : Props, S : State>
         if (!okDisabled) {
             this.setState({ submitting: true });
 
-            // Invoke the React Compnent prop onSubmit if any.
+            // Invoke the React Component prop onSubmit if any.
             const r = !onSubmit || onSubmit(value);
 
             // If the invocation returns a thenable, await its resolution;

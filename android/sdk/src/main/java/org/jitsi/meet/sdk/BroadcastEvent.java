@@ -85,7 +85,9 @@ public class BroadcastEvent {
         SCREEN_SHARE_TOGGLED("org.jitsi.meet.SCREEN_SHARE_TOGGLED"),
         PARTICIPANTS_INFO_RETRIEVED("org.jitsi.meet.PARTICIPANTS_INFO_RETRIEVED"),
         CHAT_MESSAGE_RECEIVED("org.jitsi.meet.CHAT_MESSAGE_RECEIVED"),
-        CHAT_TOGGLED("org.jitsi.meet.CHAT_TOGGLED");
+        CHAT_TOGGLED("org.jitsi.meet.CHAT_TOGGLED"),
+        VIDEO_MUTED_CHANGED("org.jitsi.meet.VIDEO_MUTED_CHANGED");
+
 
         private static final String CONFERENCE_WILL_JOIN_NAME = "CONFERENCE_WILL_JOIN";
         private static final String CONFERENCE_JOINED_NAME = "CONFERENCE_JOINED";
@@ -98,6 +100,7 @@ public class BroadcastEvent {
         private static final String PARTICIPANTS_INFO_RETRIEVED_NAME = "PARTICIPANTS_INFO_RETRIEVED";
         private static final String CHAT_MESSAGE_RECEIVED_NAME = "CHAT_MESSAGE_RECEIVED";
         private static final String CHAT_TOGGLED_NAME = "CHAT_TOGGLED";
+        private static final String VIDEO_MUTED_CHANGED_NAME = "VIDEO_MUTED_CHANGED";
 
         private final String action;
 
@@ -142,6 +145,8 @@ public class BroadcastEvent {
                     return CHAT_MESSAGE_RECEIVED;
                 case CHAT_TOGGLED_NAME:
                     return CHAT_TOGGLED;
+                case VIDEO_MUTED_CHANGED_NAME:
+                    return VIDEO_MUTED_CHANGED;
             }
 
             return null;

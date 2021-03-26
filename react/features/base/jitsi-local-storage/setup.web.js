@@ -29,7 +29,7 @@ function onFakeLocalStorageChanged() {
 function shouldUseHostPageLocalStorage(urlParams) {
     // NOTE: normally the url params and the config will be merged into the redux store. But we want to setup the local
     // storage as soon as possible, the store is not created yet and the merging of the URL params and the config
-    // haven't been executed yet. That's why we need to manually parse the URL params and also access the config trough
+    // haven't been executed yet. That's why we need to manually parse the URL params and also access the config through
     // the global variable.
     if (urlParams['config.useHostPageLocalStorage'] === true
         || (typeof config === 'object' && config.useHostPageLocalStorage)) {

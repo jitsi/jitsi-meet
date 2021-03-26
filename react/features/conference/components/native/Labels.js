@@ -50,7 +50,7 @@ type Props = AbstractLabelsProps & {
 type State = {
 
     /**
-     * Layout object of the outermost container. For stucture please see:
+     * Layout object of the outermost container. For structure please see:
      * https://facebook.github.io/react-native/docs/view#onlayout
      */
     containerLayout: ?Object,

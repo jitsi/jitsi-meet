@@ -367,7 +367,7 @@ export function disconnect() {
 }
 
 /**
- * Sets the location URL of the application, connecton, conference, etc.
+ * Sets the location URL of the application, connection, conference, etc.
  *
  * @param {URL} [locationURL] - The location URL of the application,
  * connection, conference, etc.

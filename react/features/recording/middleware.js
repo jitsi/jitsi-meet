@@ -45,6 +45,7 @@ import {
     RECORDING_ON_SOUND_FILE
 } from './sounds';
 
+declare var APP: Object;
 declare var interfaceConfig: Object;
 
 /**
@@ -181,6 +182,10 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
                 if (soundID) {
                     dispatch(playSound(soundID));
                 }
+
+                if (typeof APP !== 'undefined') {
+                    APP.API.notifyRecordingStatusChanged(true, mode);
+                }
             } else if (updatedSessionData.status === OFF
                 && (!oldSessionData || oldSessionData.status !== OFF)) {
                 dispatch(showStoppedRecordingNotification(
@@ -209,6 +214,10 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
                     dispatch(stopSound(soundOn));
                     dispatch(playSound(soundOff));
                 }
+
+                if (typeof APP !== 'undefined') {
+                    APP.API.notifyRecordingStatusChanged(false, mode);
+                }
             }
         }
 
@@ -231,11 +240,11 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
  * @returns {void}
  */
 function _showRecordingErrorNotification(recorderSession, dispatch) {
-    const isStreamMode
-        = recorderSession.getMode()
-            === JitsiMeetJS.constants.recording.mode.STREAM;
+    const mode = recorderSession.getMode();
+    const error = recorderSession.getError();
+    const isStreamMode = mode === JitsiMeetJS.constants.recording.mode.STREAM;
 
-    switch (recorderSession.getError()) {
+    switch (error) {
     case JitsiMeetJS.constants.recording.error.SERVICE_UNAVAILABLE:
         dispatch(showRecordingError({
             descriptionKey: 'recording.unavailable',
@@ -269,5 +278,9 @@ function _showRecordingErrorNotification(recorderSession, dispatch) {
                 : 'recording.failedToStart'
         }));
         break;
+    }
+
+    if (typeof APP !== 'undefined') {
+        APP.API.notifyRecordingStatusChanged(false, mode, error);
     }
 }

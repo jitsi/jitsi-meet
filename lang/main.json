@@ -175,6 +175,7 @@
         "alreadySharedVideoMsg": "Another participant is already sharing a video. This conference allows only one shared video at a time.",
         "alreadySharedVideoTitle": "Only one shared video is allowed at a time",
         "applicationWindow": "Application window",
+        "authenticationRequired": "Authentication required",
         "Back": "Back",
         "cameraConstraintFailedError": "Your camera does not satisfy some of the required constraints.",
         "cameraNotFoundError": "Camera was not found.",
@@ -227,6 +228,7 @@
         "lockRoom": "Add meeting $t(lockRoomPasswordUppercase)",
         "lockTitle": "Lock failed",
         "logoutQuestion": "Are you sure you want to logout and stop the conference?",
+        "login": "Login",
         "logoutTitle": "Logout",
         "maxUsersLimitReached": "The limit for maximum number of participants has been reached. The conference is full. Please contact the meeting owner or try again later!",
         "maxUsersLimitReachedTitle": "Maximum participants limit reached",
@@ -244,6 +246,7 @@
         "muteEveryoneElsesVideoDialog": "Once the camera is disabled, you won't be able to turn it back on, but they can turn it back on at any time.",
         "muteEveryoneElsesVideoTitle": "Disable everyone's camera except {{whom}}?",
         "muteEveryonesVideoDialog": "Are you sure you want to disable everyone's camera? You won't be able to turn it back on, but they can turn it back on at any time.",
+        "muteEveryonesVideoDialogOk": "Disable",
         "muteEveryonesVideoTitle": "Disable everyone's camera?",
         "muteEveryoneSelf": "yourself",
         "muteEveryoneStartMuted": "Everyone starts muted from now on",
@@ -311,12 +314,13 @@
         "tokenAuthFailedTitle": "Authentication failed",
         "transcribing": "Transcribing",
         "unlockRoom": "Remove meeting $t(lockRoomPassword)",
-        "user": "user",
-        "userPassword": "user password",
+        "user": "User",
+        "userIdentifier": "User identifier",
+        "userPassword": "User password",
         "videoLink": "Video link",
         "WaitForHostMsg": "The conference <b>{{room}}</b> has not yet started. If you are the host then please authenticate. Otherwise, please wait for the host to arrive.",
         "WaitForHostMsgWOk": "The conference <b>{{room}}</b> has not yet started. If you are the host then please press Ok to authenticate. Otherwise, please wait for the host to arrive.",
-        "WaitingForHost": "Waiting for the host ...",
+        "WaitingForHostTitle": "Waiting for the host ...",
         "Yes": "Yes",
         "yourEntireScreen": "Your entire screen"
     },
@@ -335,7 +339,10 @@
     "virtualBackground": {
         "title": "Backgrounds",
         "enableBlur": "Enable blur",
-        "removeBackground": "Remove background"
+        "removeBackground": "Remove background",
+        "uploadImage": "Upload image",
+        "pleaseWait": "Please wait...",
+        "none": "None"
     },
     "feedback": {
         "average": "Average",
@@ -815,6 +822,7 @@
         "tileViewToggle": "Toggle tile view",
         "toggleCamera": "Toggle camera",
         "videomute": "Start / Stop camera",
+        "videoSettings": "Video settings",
         "selectBackground": "Select background"
     },
     "transcribing": {

@@ -1,25 +1,64 @@
-.virtual-background-dialog{
-  display: inline-flex;
-  cursor: pointer;
-  .thumbnail{
-    object-fit: cover;
-    padding: 5px;
-    height: 40px;
-    width: 40px;
-  }
-  .thumbnail-selected{
-    object-fit: cover;
-    padding: 5px;
-    height: 40px;
-    width: 40px;
-    border: 2px solid #a4b8d1;
-  }
-  .blur-selected{
-    border: 2px solid #a4b8d1;
-  }
-  .virtual-background-none{
+.virtual-background-dialog {
+    display: inline-grid;
+    grid-template-columns: auto auto auto auto auto auto auto;
+    max-width: 370px;
+    cursor: pointer;
+    .thumbnail {
+        border-radius: 10px;
+        object-fit: cover;
+        padding: 5px;
+        height: 40px;
+        width: 40px;
+    }
+
+    .thumbnail:hover ~ .delete-image-icon {
+        display: block;
+    }
+    .thumbnail-selected {
+        border-radius: 10px;
+        object-fit: cover;
+        padding: 5px;
+        height: 40px;
+        width: 40px;
+        border: 2px solid #a4b8d1;
+    }
+    .blur-selected {
+        border-radius: 10px;
+        border: 2px solid #a4b8d1;
+    }
+    .virtual-background-none {
+        font-weight: bold;
+        padding: 5px;
+        height: 34px;
+        width: 34px;
+        border-radius: 10px;
+        border: 1px solid #a4b8d1;
+        text-align: center;
+        vertical-align: middle;
+        line-height: 35px;
+        margin-right: 5px;
+    }
+    .none-selected {
+        font-weight: bold;
+        padding: 5px;
+        height: 34px;
+        width: 34px;
+        border-radius: 10px;
+        border: 2px solid #a4b8d1;
+        text-align: center;
+        vertical-align: middle;
+        line-height: 35px;
+        margin-right: 5px;
+    }
+}
+.file-upload-btn {
+    display: none;
+}
+.custom-file-upload {
+    font-size: x-large;
     font-weight: bold;
-    padding: 5px;
+    display: inline-block;
+    padding: 4px;
     height: 35px;
     width: 35px;
     border-radius: 10px;
@@ -27,18 +66,24 @@
     text-align: center;
     vertical-align: middle;
     line-height: 35px;
-    margin-right: 5px;
-  }
-  .none-selected{
-    font-weight: bold;
-    padding: 5px;
-    height: 35px;
-    width: 35px;
-    border-radius: 10px;
-    border: 2px solid #a4b8d1;
-    text-align: center;
-    vertical-align: middle;
-    line-height: 35px;
-    margin-right: 5px;
-  }
+    margin-left: 5px;
+    cursor: pointer;
+}
+
+.delete-image-icon {
+    position: absolute;
+    display: none;
+    left: 36;
+    bottom: 36;
+}
+.delete-image-icon:hover {
+    display: block;
+}
+
+.thumbnail-container {
+    position: relative;
+}
+
+.loading-content-text{
+  margin-right: 15px;
 }

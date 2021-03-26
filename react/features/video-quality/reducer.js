@@ -16,7 +16,7 @@ DEFAULT_STATE.minHeightForQualityLvl.set(360, VIDEO_QUALITY_LEVELS.STANDARD);
 DEFAULT_STATE.minHeightForQualityLvl.set(720, VIDEO_QUALITY_LEVELS.HIGH);
 
 
-// When the persisted state is initialized the current state (for example the deafault state) is erased.
+// When the persisted state is initialized the current state (for example the default state) is erased.
 // In order to workaround this issue we need additional state for the persisted properties.
 PersistenceRegistry.register('features/video-quality-persistent-storage');
 

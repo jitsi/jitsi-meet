@@ -64,7 +64,7 @@ type State = {
 }
 
 /**
- * Implements a React {@link Component} which displayes a list of all
+ * Implements a React {@link Component} which displays a list of all
  * the audio input & output devices to choose from.
  *
  * @extends Component

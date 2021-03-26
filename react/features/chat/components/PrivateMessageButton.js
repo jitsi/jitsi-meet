@@ -31,7 +31,7 @@ export type Props = AbstractButtonProps & {
     dispatch: Function,
 
     /**
-     * The participant object retreived from Redux.
+     * The participant object retrieved from Redux.
      */
     _participant: Object,
 };

@@ -8,7 +8,7 @@ export const ICON_SHARE = require('../../../../../images/icon-users.png');
 export const JITSI_LOGO = require('../../../../../images/jitsiLogo_square.png');
 
 // XXX The "standard" {@code BoxModel.padding} has been deemed insufficient in
-// the special case(s) of the recording feature bellow.
+// the special case(s) of the recording feature below.
 const _PADDING = BoxModel.padding * 1.5;
 
 /**

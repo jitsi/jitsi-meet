@@ -13,7 +13,7 @@ import { _formatConferenceIDPin } from '../../../_utils';
 type Props = {
 
     /**
-     * The numberic identifier for the current conference, used after dialing a
+     * The numeric identifier for the current conference, used after dialing a
      * the number to join the conference.
      */
     conferenceID: number,

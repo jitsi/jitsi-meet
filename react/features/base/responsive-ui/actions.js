@@ -2,6 +2,8 @@
 
 import type { Dispatch } from 'redux';
 
+import { CHAT_SIZE } from '../../chat/constants';
+
 import { CLIENT_RESIZED, SET_ASPECT_RATIO, SET_REDUCED_UI } from './actionTypes';
 import { ASPECT_RATIO_NARROW, ASPECT_RATIO_WIDE } from './constants';
 
@@ -24,10 +26,20 @@ const REDUCED_UI_THRESHOLD = 300;
  * @returns {Object}
  */
 export function clientResized(clientWidth: number, clientHeight: number) {
-    return {
-        type: CLIENT_RESIZED,
-        clientHeight,
-        clientWidth
+    return (dispatch: Dispatch<any>, getState: Function) => {
+        const state = getState();
+        const { isOpen } = state['features/chat'];
+        let availableWidth = clientWidth;
+
+        if (isOpen && navigator.product !== 'ReactNative') {
+            availableWidth -= CHAT_SIZE;
+        }
+
+        return dispatch({
+            type: CLIENT_RESIZED,
+            clientHeight,
+            clientWidth: availableWidth
+        });
     };
 }
 

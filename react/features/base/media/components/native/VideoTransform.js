@@ -30,7 +30,7 @@ const MIN_SCALE = 1;
  * view to. This is large enough now to let the user drag the view to a position
  * where no other displayed components cover it (such as filmstrip). If a
  * ViewPort (hint) support is added to the LargeVideo component then this
- * contant will not be necessary anymore.
+ * constant will not be necessary anymore.
  */
 const MAX_OFFSET = 100;
 
@@ -88,7 +88,7 @@ type Props = {
     style: Object,
 
     /**
-     * The stored transforms retreived from Redux to be initially applied
+     * The stored transforms retrieved from Redux to be initially applied
      * to different streams.
      */
     _transforms: Object,

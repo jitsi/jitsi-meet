@@ -456,6 +456,10 @@ var config = {
     // Enables sending participants' emails (if available) to callstats and other analytics
     // enableEmailInStats: false,
 
+    // Controls the percentage of automatic feedback shown to participants when callstats is enabled.
+    // The default value is 100%. If set to 0, no automatic feedback will be requested
+    // feedbackPercentage: 100,
+
     // Privacy
     //
 
@@ -558,6 +562,10 @@ var config = {
 
     // Decides whether the start/stop recording audio notifications should play on record.
     // disableRecordAudioNotification: false,
+
+    // Disables the sounds that play when other participants join or leave the
+    // conference (if set to true, these sounds will not be played).
+    // disableJoinLeaveSounds: false,
 
     // Information for the chrome extension banner
     // chromeExtensionBanner: {
@@ -668,6 +676,9 @@ var config = {
      }
     */
     // dynamicBrandingUrl: '',
+
+    // Sets the background transparency level. '0' is fully transparent, '1' is opaque.
+    // backgroundAlpha: 1,
 
     // The URL of the moderated rooms microservice, if available. If it
     // is present, a link to the service will be rendered on the welcome page,
