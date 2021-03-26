@@ -3,12 +3,23 @@
 import React, { Component } from 'react';
 
 import { createAudioPlayErrorEvent, createAudioPlaySuccessEvent, sendAnalytics } from '../../../../analytics';
+import { connect } from '../../../redux';
 import logger from '../../logger';
 
 /**
  * The type of the React {@code Component} props of {@link AudioTrack}.
  */
 type Props = {
+
+    /**
+     * Represents muted property of the underlying audio element.
+     */
+    _muted: ?Boolean,
+
+    /**
+     * Represents volume property of the underlying audio element.
+     */
+    _volume: ?number,
 
     /**
      * The value of the id attribute of the audio element.
@@ -28,26 +39,15 @@ type Props = {
     autoPlay: boolean,
 
     /**
-     * Represents muted property of the underlying audio element.
+     * The ID of the participant associated with the audio element.
      */
-    muted: ?Boolean,
-
-    /**
-     * Represents volume property of the underlying audio element.
-     */
-    volume: ?number,
-
-    /**
-     * A function that will be executed when the reference to the underlying audio element changes in order to report
-     * the initial volume value.
-     */
-    onInitialVolumeSet: Function
+    participantId: string
 };
 
 /**
  * The React/Web {@link Component} which is similar to and wraps around {@code HTMLAudioElement}.
  */
-export default class AudioTrack extends Component<Props> {
+class AudioTrack extends Component<Props> {
     /**
      * Reference to the HTML audio element, stored until the file is ready.
      */
@@ -94,14 +94,14 @@ export default class AudioTrack extends Component<Props> {
         this._attachTrack(this.props.audioTrack);
 
         if (this._ref) {
-            const { muted, volume } = this.props;
+            const { _muted, _volume } = this.props;
 
-            if (typeof volume === 'number') {
-                this._ref.volume = volume;
+            if (typeof _volume === 'number') {
+                this._ref.volume = _volume;
             }
 
-            if (typeof muted === 'boolean') {
-                this._ref.muted = muted;
+            if (typeof _muted === 'boolean') {
+                this._ref.muted = _muted;
             }
         }
     }
@@ -136,14 +136,14 @@ export default class AudioTrack extends Component<Props> {
 
         if (this._ref) {
             const currentVolume = this._ref.volume;
-            const nextVolume = nextProps.volume;
+            const nextVolume = nextProps._volume;
 
             if (typeof nextVolume === 'number' && !isNaN(nextVolume) && currentVolume !== nextVolume) {
                 this._ref.volume = nextVolume;
             }
 
             const currentMuted = this._ref.muted;
-            const nextMuted = nextProps.muted;
+            const nextMuted = nextProps._muted;
 
             if (typeof nextMuted === 'boolean' && currentMuted !== nextVolume) {
                 this._ref.muted = nextMuted;
@@ -258,10 +258,24 @@ export default class AudioTrack extends Component<Props> {
      */
     _setRef(audioElement: ?HTMLAudioElement) {
         this._ref = audioElement;
-        const { onInitialVolumeSet } = this.props;
-
-        if (this._ref && onInitialVolumeSet) {
-            onInitialVolumeSet(this._ref.volume);
-        }
     }
 }
+
+/**
+ * Maps (parts of) the Redux state to the associated {@code AudioTrack}'s props.
+ *
+ * @param {Object} state - The Redux state.
+ * @param {Object} ownProps - The props passed to the component.
+ * @private
+ * @returns {Props}
+ */
+function _mapStateToProps(state, ownProps) {
+    const { participantsVolume } = state['features/filmstrip'];
+
+    return {
+        _muted: state['features/base/config'].startSilent,
+        _volume: participantsVolume[ownProps.participantId]
+    };
+}
+
+export default connect(_mapStateToProps)(AudioTrack);
