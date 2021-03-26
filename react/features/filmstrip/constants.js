@@ -143,3 +143,14 @@ export const DISPLAY_MODE_TO_STRING = [
     'video-with-name',
     'avatar-with-name'
 ];
+
+/**
+ * Minimum space to keep between the sides of the tiles and the sides of the window.
+ * @type {number}
+ */
+export const TILE_VIEW_SIDE_MARGINS = 7;
+
+export const TILE_VERTICAL_MARGIN = 4;
+export const TILE_HORIZONTAL_MARGIN = 4;
+
+export const SCROLL_SIZE = 7;

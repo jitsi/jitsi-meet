@@ -89,6 +89,7 @@
     "react-redux": "7.1.0",
     "react-textarea-autosize": "7.1.0",
     "react-transition-group": "2.4.0",
+    "react-window": "^1.8.6",
     "redux": "4.0.4",
     "redux-thunk": "2.2.0",
     "rnnoise-wasm": "github:jitsi/rnnoise-wasm#566a16885897704d6e6d67a1d5ac5d39781db2af",

@@ -88,11 +88,12 @@ export function getTileViewGridDimensions(state: Object) {
     const columnsToMaintainASquare = Math.ceil(Math.sqrt(numberOfParticipants));
     const columns = Math.min(columnsToMaintainASquare, maxColumns);
     const rows = Math.ceil(numberOfParticipants / columns);
-    const visibleRows = Math.min(maxColumns, rows);
+    const minVisibleRows = Math.min(maxColumns, rows);
 
     return {
         columns,
-        visibleRows
+        minVisibleRows,
+        rows
     };
 }
 

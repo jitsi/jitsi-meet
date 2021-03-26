@@ -181,7 +181,7 @@ export type Props = {|
     /**
      * The number of participants in the call.
      */
-    _participantCount: number,
+     _participantCountMoreThan2: boolean,
 
     /**
      * Indicates whether the "start silent" mode is enabled.
@@ -206,7 +206,11 @@ export type Props = {|
     /**
      * The ID of the participant related to the thumbnail.
      */
-    participantID: ?string
+    participantID: ?string,
+
+    style?: ?Object,
+
+    verticalOffset: number
 |};
 
 /**
@@ -457,7 +461,7 @@ class Thumbnail extends Component<Props, State> {
      * @returns {Object} - The styles for the thumbnail.
      */
     _getStyles(): Object {
-        const { _height, _heightToWidthPercent, _currentLayout, _isHidden, _width } = this.props;
+        const { _height, _isHidden, _width, style = {}, verticalOffset } = this.props;
         let styles: {
             thumbnail: Object,
             avatar: Object
@@ -466,38 +470,27 @@ class Thumbnail extends Component<Props, State> {
             avatar: {}
         };
 
-        switch (_currentLayout) {
-        case LAYOUTS.TILE_VIEW:
-        case LAYOUTS.HORIZONTAL_FILMSTRIP_VIEW: {
-            const avatarSize = _height / 2;
+        const avatarSize = _height / 2;
+        let { left } = style;
 
-            styles = {
-                thumbnail: {
-                    height: `${_height}px`,
-                    minHeight: `${_height}px`,
-                    minWidth: `${_width}px`,
-                    width: `${_width}px`
-                },
-                avatar: {
-                    height: `${avatarSize}px`,
-                    width: `${avatarSize}px`
-                }
-            };
-            break;
+        if (typeof left === 'number' && verticalOffset) {
+            left += verticalOffset;
         }
-        case LAYOUTS.VERTICAL_FILMSTRIP_VIEW: {
-            styles = {
-                thumbnail: {
-                    paddingTop: `${_heightToWidthPercent}%`
-                },
-                avatar: {
-                    height: '50%',
-                    width: `${_heightToWidthPercent / 2}%`
-                }
-            };
-            break;
-        }
-        }
+
+        styles = {
+            thumbnail: {
+                ...style,
+                left,
+                height: `${_height}px`,
+                minHeight: `${_height}px`,
+                minWidth: `${_width}px`,
+                width: `${_width}px`
+            },
+            avatar: {
+                height: `${avatarSize}px`,
+                width: `${avatarSize}px`
+            }
+        };
 
         if (_isHidden) {
             styles.thumbnail.display = 'none';
@@ -587,7 +580,7 @@ class Thumbnail extends Component<Props, State> {
             _isDominantSpeakerDisabled,
             _indicatorIconSize: iconSize,
             _participant,
-            _participantCount
+            _participantCountMoreThan2
         } = this.props;
         const { isHovered } = this.state;
         const showConnectionIndicator = isHovered || !_connectionIndicatorAutoHideEnabled;
@@ -624,7 +617,7 @@ class Thumbnail extends Component<Props, State> {
                     iconSize = { iconSize }
                     participantId = { id }
                     tooltipPosition = { tooltipPosition } />
-                { showDominantSpeaker && _participantCount > 2
+                { showDominantSpeaker && _participantCountMoreThan2
                     && <DominantSpeakerIndicator
                         iconSize = { iconSize }
                         tooltipPosition = { tooltipPosition } />
@@ -970,14 +963,21 @@ function _mapStateToProps(state, ownProps): Object {
 
 
     switch (_currentLayout) {
+    case LAYOUTS.VERTICAL_FILMSTRIP_VIEW:
     case LAYOUTS.HORIZONTAL_FILMSTRIP_VIEW: {
         const {
             horizontalViewDimensions = {
                 local: {},
                 remote: {}
+            },
+            verticalViewDimensions = {
+                local: {},
+                remote: {}
             }
         } = state['features/filmstrip'];
-        const { local, remote } = horizontalViewDimensions;
+        const { local, remote }
+            = _currentLayout === LAYOUTS.VERTICAL_FILMSTRIP_VIEW
+                ? verticalViewDimensions : horizontalViewDimensions;
         const { width, height } = isLocal ? local : remote;
 
         size = {
@@ -987,13 +987,6 @@ function _mapStateToProps(state, ownProps): Object {
 
         break;
     }
-    case LAYOUTS.VERTICAL_FILMSTRIP_VIEW:
-        size = {
-            _heightToWidthPercent: isLocal
-                ? 100 / interfaceConfig.LOCAL_THUMBNAIL_RATIO
-                : 100 / interfaceConfig.REMOTE_THUMBNAIL_RATIO
-        };
-        break;
     case LAYOUTS.TILE_VIEW: {
         const { width, height } = state['features/filmstrip'].tileViewDimensions.thumbnailSize;
 
@@ -1023,7 +1016,7 @@ function _mapStateToProps(state, ownProps): Object {
         _indicatorIconSize: NORMAL,
         _localFlipX: Boolean(localFlipX),
         _participant: participant,
-        _participantCount: getParticipantCount(state),
+        _participantCountMoreThan2: getParticipantCount(state) > 2,
         _startSilent: Boolean(startSilent),
         _videoTrack,
         ...size
