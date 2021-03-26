@@ -27,7 +27,7 @@ export const SET_FILMSTRIP_VISIBLE = 'SET_FILMSTRIP_VISIBLE';
  *         gridDimensions: {
  *             columns: number,
  *             height: number,
- *             visibleRows: number,
+ *             minVisibleRows: number,
  *             width: number
  *         },
  *         thumbnailSize: {
@@ -49,3 +49,24 @@ export const SET_TILE_VIEW_DIMENSIONS = 'SET_TILE_VIEW_DIMENSIONS';
  * }
  */
 export const SET_HORIZONTAL_VIEW_DIMENSIONS = 'SET_HORIZONTAL_VIEW_DIMENSIONS';
+
+/**
+ * The type of (redux) action which sets the dimensions of the thumbnails in vertical view.
+ *
+ * {
+ *     type: SET_VERTICAL_VIEW_DIMENSIONS,
+ *     dimensions: Object
+ * }
+ */
+export const SET_VERTICAL_VIEW_DIMENSIONS = 'SET_VERTICAL_VIEW_DIMENSIONS';
+
+/**
+ * The type of (redux) action which sets the volume for a thumnail's audio.
+ *
+ * {
+ *     type: SET_VOLUME,
+ *     participantId: string,
+ *     volume: number
+ * }
+ */
+export const SET_VOLUME = 'SET_VOLUME';
