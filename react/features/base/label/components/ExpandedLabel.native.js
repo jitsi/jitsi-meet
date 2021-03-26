@@ -22,7 +22,7 @@ type State = {
     opacityAnimation: Object,
 
     /**
-     * A boolean to descide to show or not show the arrow. This is required as
+     * A boolean to decide to show or not show the arrow. This is required as
      * we can't easily animate this transformed Component so we render it once
      * the animation is done.
      */

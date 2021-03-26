@@ -1,6 +1,7 @@
 // @flow
 
 import '../analytics/reducer';
+import '../authentication/reducer';
 import '../base/app/reducer';
 import '../base/audio-only/reducer';
 import '../base/color-scheme/reducer';

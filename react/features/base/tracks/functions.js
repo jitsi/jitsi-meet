@@ -1,7 +1,9 @@
 /* global APP */
 
+import { isMobileBrowser } from '../environment/utils';
 import JitsiMeetJS, { JitsiTrackErrors, browser } from '../lib-jitsi-meet';
 import { MEDIA_TYPE, VIDEO_TYPE, setAudioMuted } from '../media';
+import { toState } from '../redux';
 import {
     getUserSelectedCameraDeviceId,
     getUserSelectedMicDeviceId
@@ -474,4 +476,17 @@ export function setTrackMuted(track, muted) {
             logger.error(`set track ${f} failed`, error);
         }
     });
+}
+
+/**
+ * Determines whether toggle camera should be enabled or not.
+ *
+ * @param {Function|Object} stateful - The redux store or {@code getState} function.
+ * @returns {boolean} - Whether toggle camera should be enabled.
+ */
+export function isToggleCameraEnabled(stateful) {
+    const state = toState(stateful);
+    const { videoInput } = state['features/base/devices'].availableDevices;
+
+    return isMobileBrowser() && videoInput.length > 1;
 }

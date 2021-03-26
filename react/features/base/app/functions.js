@@ -10,7 +10,7 @@ import { toState } from '../redux';
  * function.
  * @param {string} propName - The name of the React {@code Component} prop of
  * the currently mounted {@code App} to get.
- * @returns {*} The value of the specified React {@code Compoennt} prop of the
+ * @returns {*} The value of the specified React {@code Component} prop of the
  * currently mounted {@code App}.
  */
 export function getAppProp(stateful: Function | Object, propName: string) {

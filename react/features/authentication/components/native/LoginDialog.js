@@ -5,20 +5,20 @@ import { Text, TextInput, View } from 'react-native';
 import { connect as reduxConnect } from 'react-redux';
 import type { Dispatch } from 'redux';
 
-import { ColorSchemeRegistry } from '../../base/color-scheme';
-import { toJid } from '../../base/connection';
-import { connect } from '../../base/connection/actions.native';
+import { ColorSchemeRegistry } from '../../../base/color-scheme';
+import { toJid } from '../../../base/connection';
+import { connect } from '../../../base/connection/actions.native';
 import {
     CustomSubmitDialog,
     FIELD_UNDERLINE,
     PLACEHOLDER_COLOR,
     _abstractMapStateToProps,
     inputDialog as inputDialogStyle
-} from '../../base/dialog';
-import { translate } from '../../base/i18n';
-import { JitsiConnectionErrors } from '../../base/lib-jitsi-meet';
-import type { StyleType } from '../../base/styles';
-import { authenticateAndUpgradeRole, cancelLogin } from '../actions';
+} from '../../../base/dialog';
+import { translate } from '../../../base/i18n';
+import { JitsiConnectionErrors } from '../../../base/lib-jitsi-meet';
+import type { StyleType } from '../../../base/styles';
+import { authenticateAndUpgradeRole, cancelLogin } from '../../actions.native';
 
 // Register styles.
 import './styles';

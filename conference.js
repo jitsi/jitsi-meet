@@ -309,11 +309,6 @@ class ConferenceConnector {
                 room.join();
             }, 5000);
 
-            const { password }
-                = APP.store.getState()['features/base/conference'];
-
-            AuthHandler.requireAuth(room, password);
-
             break;
         }
 
@@ -378,7 +373,6 @@ class ConferenceConnector {
         if (this.reconnectTimeout !== null) {
             clearTimeout(this.reconnectTimeout);
         }
-        AuthHandler.closeAuth();
     }
 
     /**
@@ -506,7 +500,7 @@ export default {
         let tryCreateLocalTracks;
 
         // On Electron there is no permission prompt for granting permissions. That's why we don't need to
-        // spend much time displaying the overlay screen. If GUM is not resolved withing 15 seconds it will
+        // spend much time displaying the overlay screen. If GUM is not resolved within 15 seconds it will
         // probably never resolve.
         const timeout = browser.isElectron() ? 15000 : 60000;
 
@@ -568,7 +562,7 @@ export default {
 
                         if (err.name === JitsiTrackErrors.TIMEOUT && !browser.isElectron()) {
                             // In this case we expect that the permission prompt is still visible. There is no point of
-                            // executing GUM with different source. Also at the time of writting the following
+                            // executing GUM with different source. Also at the time of writing the following
                             // inconsistency have been noticed in some browsers - if the permissions prompt is visible
                             // and another GUM is executed the prompt does not change its content but if the user
                             // clicks allow the user action isassociated with the latest GUM call.
@@ -625,7 +619,7 @@ export default {
 
         // Hide the permissions prompt/overlay as soon as the tracks are
         // created. Don't wait for the connection to be made, since in some
-        // cases, when auth is rquired, for instance, that won't happen until
+        // cases, when auth is required, for instance, that won't happen until
         // the user inputs their credentials, but the dialog would be
         // overshadowed by the overlay.
         tryCreateLocalTracks.then(tracks => {
@@ -1776,7 +1770,7 @@ export default {
                     };
                 }
 
-                // Apply the contraints on the desktop track.
+                // Apply the constraints on the desktop track.
                 try {
                     await this.localVideo.track.applyConstraints(desktopResizeConstraints);
                 } catch (err) {
@@ -1967,7 +1961,7 @@ export default {
             }
 
             APP.store.dispatch(updateRemoteParticipantFeatures(user));
-            logger.log(`USER ${id} connnected:`, user);
+            logger.log(`USER ${id} connected:`, user);
             APP.UI.addUser(user);
         });
 
@@ -2242,7 +2236,7 @@ export default {
         });
 
         APP.UI.addListener(UIEvents.AUTH_CLICKED, () => {
-            AuthHandler.authenticate(room);
+            AuthHandler.authenticateExternal(room);
         });
 
         APP.UI.addListener(

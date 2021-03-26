@@ -9,7 +9,7 @@ import { shouldDisplayTileView } from '../../video-layout';
  * Constants to describe the dimensions of the video. Landscape videos
  * are wider than they are taller and portrait videos are taller than they
  * are wider. The dimensions will determine how {@code LargeVideoBackground}
- * will strech to fill its container.
+ * will stretch to fill its container.
  *
  * @type {Object}
  */
@@ -217,7 +217,7 @@ export class LargeVideoBackground extends Component<Props> {
         // (for example when the page is loaded in an iframe which is hidden due to the host page styles) to solve
         // the memory leak. Currently we are not handling the use case when the page is hidden with visibility:hidden
         // because we don't have a good way to do it.
-        // All other cases when the canvas is not visible are handled trough the component props
+        // All other cases when the canvas is not visible are handled through the component props
         // (hidden, _shouldDisplayTileView).
         if (!this._canvasEl || this._canvasEl.offsetParent === null
                 || window.innerHeight === 0 || window.innerWidth === 0) {

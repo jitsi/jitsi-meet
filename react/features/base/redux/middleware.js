@@ -21,7 +21,7 @@ const throttledPersistState
         PERSIST_STATE_DELAY);
 
 // Web only code.
-// We need the <tt>if</tt> beacuse it appears that on mobile the polyfill is not
+// We need the <tt>if</tt> because it appears that on mobile the polyfill is not
 // executed yet.
 if (typeof window.addEventListener === 'function') {
     window.addEventListener('unload', () => {

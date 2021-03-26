@@ -6,7 +6,7 @@
  * doesn't settle within a specific time interval.
  *
  * @param {Promise} promise - The {@code Promise} for which automatic rejecting
- * after the speicified timout is to be implemented.
+ * after the specified timeout is to be implemented.
  * @param {number} timeout - The number of milliseconds to wait the specified
  * {@code promise} to settle before automatically rejecting the returned
  * {@code Promise}.

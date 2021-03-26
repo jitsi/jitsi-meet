@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 
 /**
  * Implements a React/Web {@link Component} for displaying text similar to React
- * Native's {@code Text} in order to faciliate cross-platform source code.
+ * Native's {@code Text} in order to facilitate cross-platform source code.
  *
  * @extends Component
  */

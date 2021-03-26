@@ -59,7 +59,7 @@ MiddlewareRegistry.register(store => next => action => {
                 const meetingUniqueId = conference && conference.getMeetingUniqueId();
 
                 // The current implementation of rtcstats-server is configured to send data to amplitude, thus
-                // we add identity specific information so we can corelate on the amplitude side. If amplitude is
+                // we add identity specific information so we can correlate on the amplitude side. If amplitude is
                 // not configured an empty object will be sent.
                 // The current configuration of the conference is also sent as metadata to rtcstats server.
                 // This is done in order to facilitate queries based on different conference configurations.

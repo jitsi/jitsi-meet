@@ -1,18 +1,15 @@
 // @flow
 
-import type { Dispatch } from 'redux';
-
-import { appNavigate } from '../app/actions';
+import { maybeRedirectToWelcomePage } from '../app/actions';
 import {
     CONFERENCE_FAILED,
     CONFERENCE_JOINED,
     CONFERENCE_LEFT
 } from '../base/conference';
-import { CONNECTION_ESTABLISHED, CONNECTION_FAILED } from '../base/connection';
+import { CONNECTION_ESTABLISHED } from '../base/connection';
 import { hideDialog, isDialogOpen } from '../base/dialog';
 import {
-    JitsiConferenceErrors,
-    JitsiConnectionErrors
+    JitsiConferenceErrors
 } from '../base/lib-jitsi-meet';
 import { MiddlewareRegistry } from '../base/redux';
 
@@ -22,11 +19,13 @@ import {
     WAIT_FOR_OWNER
 } from './actionTypes';
 import {
-    _openLoginDialog,
-    _openWaitForOwnerDialog,
     stopWaitForOwner,
     waitForOwner
-} from './actions';
+} from './actions.native';
+import {
+    hideLoginDialog,
+    openWaitForOwnerDialog
+} from './actions.web';
 import { LoginDialog, WaitForOwnerDialog } from './components';
 
 /**
@@ -40,42 +39,24 @@ import { LoginDialog, WaitForOwnerDialog } from './components';
  */
 MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
+
     case CANCEL_LOGIN: {
-        const { dispatch, getState } = store;
-        const { thenableWithCancel } = getState()['features/authentication'];
-
-        thenableWithCancel && thenableWithCancel.cancel();
-
-        // The LoginDialog can be opened on top of "wait for owner". The app
-        // should navigate only if LoginDialog was open without the
-        // WaitForOwnerDialog.
         if (!isDialogOpen(store, WaitForOwnerDialog)) {
-            if (_isWaitingForOwner(store)) {
-                // Instead of hiding show the new one.
-                const result = next(action);
+            if (isWaitingForOwner(store)) {
+                store.dispatch(openWaitForOwnerDialog());
 
-                dispatch(_openWaitForOwnerDialog());
-
-                return result;
+                return next(action);
             }
 
-            // Go back to the app's entry point.
-            _hideLoginDialog(store);
+            store.dispatch(hideLoginDialog());
 
-            // FIXME Like cancelWaitForOwner, dispatch conferenceLeft to notify
-            // the external-api.
-
-            dispatch(appNavigate(undefined));
+            store.dispatch(maybeRedirectToWelcomePage());
         }
         break;
     }
 
     case CONFERENCE_FAILED: {
         const { error } = action;
-
-        // XXX The feature authentication affords recovery from
-        // CONFERENCE_FAILED caused by
-        // JitsiConferenceErrors.AUTHENTICATION_REQUIRED.
         let recoverable;
 
         if (error.name === JitsiConferenceErrors.AUTHENTICATION_REQUIRED) {
@@ -93,10 +74,10 @@ MiddlewareRegistry.register(store => next => action => {
     }
 
     case CONFERENCE_JOINED:
-        if (_isWaitingForOwner(store)) {
+        if (isWaitingForOwner(store)) {
             store.dispatch(stopWaitForOwner());
         }
-        _hideLoginDialog(store);
+        store.dispatch(hideLoginDialog);
         break;
 
     case CONFERENCE_LEFT:
@@ -104,37 +85,23 @@ MiddlewareRegistry.register(store => next => action => {
         break;
 
     case CONNECTION_ESTABLISHED:
-        _hideLoginDialog(store);
+        store.dispatch(hideLoginDialog);
         break;
-
-    case CONNECTION_FAILED: {
-        const { error } = action;
-
-        if (error
-                && error.name === JitsiConnectionErrors.PASSWORD_REQUIRED
-                && typeof error.recoverable === 'undefined') {
-            error.recoverable = true;
-            store.dispatch(_openLoginDialog());
-        }
-        break;
-    }
 
     case STOP_WAIT_FOR_OWNER:
-        _clearExistingWaitForOwnerTimeout(store);
+        clearExistingWaitForOwnerTimeout(store);
         store.dispatch(hideDialog(WaitForOwnerDialog));
         break;
 
     case WAIT_FOR_OWNER: {
-        _clearExistingWaitForOwnerTimeout(store);
+        clearExistingWaitForOwnerTimeout(store);
 
         const { handler, timeoutMs } = action;
 
         action.waitForOwnerTimeoutID = setTimeout(handler, timeoutMs);
 
-        // The WAIT_FOR_OWNER action is cyclic and we don't want to hide the
-        // login dialog every few seconds.
         isDialogOpen(store, LoginDialog)
-            || store.dispatch(_openWaitForOwnerDialog());
+            || store.dispatch(openWaitForOwnerDialog());
         break;
     }
     }
@@ -149,7 +116,7 @@ MiddlewareRegistry.register(store => next => action => {
  * @param {Object} store - The redux store.
  * @returns {void}
  */
-function _clearExistingWaitForOwnerTimeout(
+function clearExistingWaitForOwnerTimeout(
         { getState }: { getState: Function }) {
     const { waitForOwnerTimeoutID } = getState()['features/authentication'];
 
@@ -157,21 +124,11 @@ function _clearExistingWaitForOwnerTimeout(
 }
 
 /**
- * Hides {@link LoginDialog} if it's currently displayed.
+ * Checks if the cyclic "wait for conference owner" task is currently scheduled.
  *
  * @param {Object} store - The redux store.
  * @returns {void}
  */
-function _hideLoginDialog({ dispatch }: { dispatch: Dispatch<any> }) {
-    dispatch(hideDialog(LoginDialog));
-}
-
-/**
- * Checks if the cyclic "wait for conference owner" task is currently scheduled.
- *
- * @param {Object} store - The redux store.
- * @returns {boolean}
- */
-function _isWaitingForOwner({ getState }: { getState: Function }) {
-    return Boolean(getState()['features/authentication'].waitForOwnerTimeoutID);
+function isWaitingForOwner({ getState }: { getState: Function }) {
+    return getState()['features/authentication'].waitForOwnerTimeoutID;
 }

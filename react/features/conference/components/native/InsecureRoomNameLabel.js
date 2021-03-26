@@ -14,7 +14,7 @@ import styles from './styles';
  */
 class InsecureRoomNameLabel extends AbstractInsecureRoomNameLabel {
     /**
-     * Renders the platform dependant content.
+     * Renders the platform dependent content.
      *
      * @inheritdoc
      */

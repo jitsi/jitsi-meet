@@ -14,7 +14,7 @@ import AbstractInsecureRoomNameLabel, { _mapStateToProps } from '../AbstractInse
  */
 class InsecureRoomNameLabel extends AbstractInsecureRoomNameLabel {
     /**
-     * Renders the platform dependant content.
+     * Renders the platform dependent content.
      *
      * @inheritdoc
      */

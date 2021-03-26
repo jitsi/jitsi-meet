@@ -212,45 +212,5 @@ export default {
         }
 
         return dialog;
-    },
-
-    /**
-     * Shows a notification that authentication is required to create the
-     * conference, so the local participant should authenticate or wait for a
-     * host.
-     *
-     * @param {string} room - The name of the conference.
-     * @param {function} onAuthNow - The callback to invoke if the local
-     * participant wants to authenticate.
-     * @returns dialog
-     */
-    showAuthRequiredDialog(room, onAuthNow) {
-        const msg = APP.translation.generateTranslationHTML(
-            '[html]dialog.WaitForHostMsg',
-            { room }
-        );
-        const buttonTxt = APP.translation.generateTranslationHTML(
-            'dialog.IamHost'
-        );
-        const buttons = [ {
-            title: buttonTxt,
-            value: 'authNow'
-        } ];
-
-        return APP.UI.messageHandler.openDialog(
-            'dialog.WaitingForHost',
-            msg,
-            true,
-            buttons,
-            (e, submitValue) => {
-                // Do not close the dialog yet.
-                e.preventDefault();
-
-                // Open login popup.
-                if (submitValue === 'authNow') {
-                    onAuthNow();
-                }
-            }
-        );
     }
 };

@@ -27,7 +27,7 @@ export default {
     /**
      * The operating system version on which the application is executing.
      * This is intentionally set to undefined so we can tell mobile and mobile web
-     * appart easier.
+     * apart easier.
      *
      * @type {number|undefined}
      */

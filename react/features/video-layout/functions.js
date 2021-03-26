@@ -2,7 +2,6 @@
 
 import { getFeatureFlag, TILE_VIEW_ENABLED } from '../base/flags';
 import { getPinnedParticipant, getParticipantCount } from '../base/participants';
-import { CHAT_SIZE } from '../chat/constants';
 import {
     ASPECT_RATIO_BREAKPOINT,
     DEFAULT_MAX_COLUMNS,
@@ -46,26 +45,20 @@ export function getMaxColumnCount(state: Object) {
 
     if (!disableResponsiveTiles) {
         const { clientWidth } = state['features/base/responsive-ui'];
-        let availableWidth = clientWidth;
         const participantCount = getParticipantCount(state);
-        const { isOpen } = state['features/chat'];
-
-        if (isOpen) {
-            availableWidth -= CHAT_SIZE;
-        }
 
         // If there are just two participants in a conference, enforce single-column view for mobile size.
-        if (participantCount === 2 && availableWidth < ASPECT_RATIO_BREAKPOINT) {
+        if (participantCount === 2 && clientWidth < ASPECT_RATIO_BREAKPOINT) {
             return Math.min(1, Math.max(configuredMax, 1));
         }
 
         // Enforce single column view at very small screen widths.
-        if (availableWidth < SINGLE_COLUMN_BREAKPOINT) {
+        if (clientWidth < SINGLE_COLUMN_BREAKPOINT) {
             return Math.min(1, Math.max(configuredMax, 1));
         }
 
         // Enforce two column view below breakpoint.
-        if (availableWidth < TWO_COLUMN_BREAKPOINT) {
+        if (clientWidth < TWO_COLUMN_BREAKPOINT) {
             return Math.min(2, Math.max(configuredMax, 1));
         }
     }
@@ -113,13 +106,6 @@ export function getTileViewGridDimensions(state: Object) {
  */
 export function shouldDisplayTileView(state: Object = {}) {
     const participantCount = getParticipantCount(state);
-
-    // In case of a lonely meeting, we don't allow tile view.
-    // But it's a special case too, as we don't even render the button,
-    // see TileViewButton component.
-    if (participantCount < 2) {
-        return false;
-    }
 
     const tileViewEnabledFeatureFlag = getFeatureFlag(state, TILE_VIEW_ENABLED, true);
     const { disableTileView } = state['features/base/config'];

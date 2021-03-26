@@ -93,7 +93,7 @@ class CalleeInfo extends Component<Props> {
 
         for (const aClassName of classNames) {
             if (aClassName) {
-                // Attemp to convert aClassName into style.
+                // Attempt to convert aClassName into style.
                 if (styles && aClassName in styles) {
                     // React Native will accept an Array as the value of the
                     // style prop. However, I do not know about React.

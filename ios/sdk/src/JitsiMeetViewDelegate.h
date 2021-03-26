@@ -104,4 +104,11 @@
  */
 - (void)chatToggled:(NSDictionary *)data;
 
+/**
+ * Called when videoMuted state changed.
+ *
+ * The `data` dictionary contains a `muted` key with state of the videoMuted for the localParticipant.
+ */
+- (void)videoMutedChanged:(NSDictionary *)data;
+
 @end

@@ -3,6 +3,8 @@
 **/
 
 .popupmenu {
+    background-color: $menuBG;
+    border-radius: 3px;
     min-width: 150px;
     text-align: left;
     padding: 0px;
@@ -38,6 +40,7 @@
 
     &__text {
         display: inline-block;
+        margin-left: 8px;
         vertical-align: middle;
     }
 

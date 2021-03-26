@@ -1,6 +1,7 @@
 // @flow
 
 import { StateListenerRegistry, equals } from '../base/redux';
+import { clientResized } from '../base/responsive-ui';
 import { setFilmstripVisible } from '../filmstrip/actions';
 import { setOverflowDrawer } from '../toolbox/actions.web';
 import { getCurrentLayout, getTileViewGridDimensions, shouldDisplayTileView, LAYOUTS } from '../video-layout';
@@ -73,12 +74,12 @@ StateListenerRegistry.register(
     });
 
 /**
- * Listens for changes in the chat state to calculate the dimensions of the tile view grid and the tiles.
+ * Listens for changes in the chat state to recompute available width.
  */
 StateListenerRegistry.register(
     /* selector */ state => state['features/chat'].isOpen,
     /* listener */ (isChatOpen, store) => {
-        const state = store.getState();
+        const { innerWidth, innerHeight } = window;
 
         if (isChatOpen) {
             // $FlowFixMe
@@ -88,21 +89,7 @@ StateListenerRegistry.register(
             document.body.classList.remove('shift-right');
         }
 
-        if (shouldDisplayTileView(state)) {
-            const gridDimensions = getTileViewGridDimensions(state);
-            const { clientHeight, clientWidth } = state['features/base/responsive-ui'];
-
-            store.dispatch(
-                setTileViewDimensions(
-                    gridDimensions,
-                    {
-                        clientHeight,
-                        clientWidth
-                    },
-                    store
-                )
-            );
-        }
+        store.dispatch(clientResized(innerWidth, innerHeight));
     });
 
 /**

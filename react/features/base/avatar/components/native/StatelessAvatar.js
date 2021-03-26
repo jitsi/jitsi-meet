@@ -19,7 +19,7 @@ type Props = AbstractProps & {
     status?: ?string,
 
     /**
-     * External style passed to the componant.
+     * External style passed to the component.
      */
     style?: StyleType
 };

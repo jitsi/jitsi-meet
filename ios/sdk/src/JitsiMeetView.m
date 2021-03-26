@@ -155,6 +155,11 @@ static void initializeViewsMap() {
     [externalAPI sendChatMessage:message :to];
 }
 
+- (void)setVideoMuted:(BOOL)muted {
+    ExternalAPI *externalAPI = [[JitsiMeet sharedInstance] getExternalAPI];
+    [externalAPI sendSetVideoMuted:muted];
+}
+
 #pragma mark Private methods
 
 /**

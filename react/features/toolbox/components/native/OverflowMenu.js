@@ -18,8 +18,10 @@ import { RoomLockButton } from '../../../room-lock';
 import { SharedVideoButton } from '../../../shared-video/components';
 import { ClosedCaptionButton } from '../../../subtitles';
 import { TileViewButton } from '../../../video-layout';
+import { getMovableButtons } from '../../functions.native';
 import HelpButton from '../HelpButton';
 import MuteEveryoneButton from '../MuteEveryoneButton';
+import MuteEveryonesVideoButton from '../MuteEveryonesVideoButton';
 
 import AudioOnlyButton from './AudioOnlyButton';
 import MoreOptionsButton from './MoreOptionsButton';
@@ -47,6 +49,11 @@ type Props = {
      * Whether the recoding button should be enabled or not.
      */
     _recordingEnabled: boolean,
+
+    /**
+     * The width of the screen.
+     */
+    _width: number,
 
     /**
      * Used for hiding the dialog when the selection was completed.
@@ -108,8 +115,9 @@ class OverflowMenu extends PureComponent<Props, State> {
      * @returns {ReactElement}
      */
     render() {
-        const { _bottomSheetStyles } = this.props;
+        const { _bottomSheetStyles, _width } = this.props;
         const { showMore } = this.state;
+        const toolbarButtons = getMovableButtons(_width);
 
         const buttonProps = {
             afterClick: this._onCancel,
@@ -129,15 +137,15 @@ class OverflowMenu extends PureComponent<Props, State> {
                 onSwipe = { this._onSwipe }
                 renderHeader = { this._renderMenuExpandToggle }>
                 <AudioRouteButton { ...buttonProps } />
-                <InviteButton { ...buttonProps } />
+                {!toolbarButtons.has('invite') && <InviteButton { ...buttonProps } />}
                 <AudioOnlyButton { ...buttonProps } />
-                <RaiseHandButton { ...buttonProps } />
+                {!toolbarButtons.has('raisehand') && <RaiseHandButton { ...buttonProps } />}
                 <LobbyModeButton { ...buttonProps } />
                 <ScreenSharingButton { ...buttonProps } />
                 <MoreOptionsButton { ...moreOptionsButtonProps } />
                 <Collapsible collapsed = { !showMore }>
-                    <ToggleCameraButton { ...buttonProps } />
-                    <TileViewButton { ...buttonProps } />
+                    {!toolbarButtons.has('togglecamera') && <ToggleCameraButton { ...buttonProps } />}
+                    {!toolbarButtons.has('tileview') && <TileViewButton { ...buttonProps } />}
                     <RecordButton { ...buttonProps } />
                     <LiveStreamButton { ...buttonProps } />
                     <SharedVideoButton { ...buttonProps } />
@@ -145,6 +153,7 @@ class OverflowMenu extends PureComponent<Props, State> {
                     <ClosedCaptionButton { ...buttonProps } />
                     <SharedDocumentButton { ...buttonProps } />
                     <MuteEveryoneButton { ...buttonProps } />
+                    <MuteEveryonesVideoButton { ...buttonProps } />
                     <HelpButton { ...buttonProps } />
                 </Collapsible>
             </BottomSheet>
@@ -244,7 +253,8 @@ class OverflowMenu extends PureComponent<Props, State> {
 function _mapStateToProps(state) {
     return {
         _bottomSheetStyles: ColorSchemeRegistry.get(state, 'BottomSheet'),
-        _isOpen: isDialogOpen(state, OverflowMenu_)
+        _isOpen: isDialogOpen(state, OverflowMenu_),
+        _width: state['features/base/responsive-ui'].clientWidth
     };
 }
 

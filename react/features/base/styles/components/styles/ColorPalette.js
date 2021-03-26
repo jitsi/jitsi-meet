@@ -29,6 +29,7 @@ export const ColorPalette = {
     overflowMenuItemUnderlay: '#EEEEEE',
     red: '#D00000',
     transparent: 'rgba(0, 0, 0, 0)',
+    toggled: 'rgba(255,255,255,.15)',
     warning: 'rgb(215, 121, 118)',
     white: '#FFFFFF',
 

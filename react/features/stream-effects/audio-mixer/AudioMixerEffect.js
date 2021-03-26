@@ -91,7 +91,7 @@ export class AudioMixerEffect {
     }
 
     /**
-     * Check wether or not this effect is muted.
+     * Check whether or not this effect is muted.
      *
      * @returns {boolean}
      */

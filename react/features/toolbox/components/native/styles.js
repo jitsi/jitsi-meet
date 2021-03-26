@@ -17,10 +17,8 @@ const toolbarButton = {
     flexDirection: 'row',
     height: BUTTON_SIZE,
     justifyContent: 'center',
-
-    // XXX We probably tested BoxModel.margin and discovered it to be too small
-    // for our taste.
-    marginHorizontal: 7,
+    marginHorizontal: 6,
+    marginTop: 6,
     width: BUTTON_SIZE
 };
 
@@ -65,7 +63,8 @@ const styles = {
     toolbox: {
         alignItems: 'center',
         backgroundColor: ColorPalette.darkBackground,
-        borderRadius: 3,
+        borderTopLeftRadius: 3,
+        borderTopRightRadius: 3,
         flexDirection: 'row',
         flexGrow: 0,
         justifyContent: 'space-between',
@@ -108,14 +107,8 @@ ColorSchemeRegistry.register('Toolbox', {
         }
     },
 
-    /**
-     * Overrides to the standard styles that we apply to the chat button, as
-     * that behaves slightly differently to other buttons.
-     */
-    chatButtonOverride: {
-        toggled: {
-            backgroundColor: ColorPalette.blue
-        }
+    backgroundToggle: {
+        backgroundColor: ColorPalette.toggled
     },
 
     hangupButtonStyles: {

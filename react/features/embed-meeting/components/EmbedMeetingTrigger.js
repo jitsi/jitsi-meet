@@ -28,7 +28,7 @@ type Props = {
  */
 function EmbedMeetingTrigger({ t, openEmbedDialog }: Props) {
     /**
-     * Handles opeming the embed dialog.
+     * Handles opening the embed dialog.
      *
      * @returns {void}
      */
