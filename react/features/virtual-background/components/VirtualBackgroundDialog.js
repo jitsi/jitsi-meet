@@ -111,20 +111,20 @@ function VirtualBackground({ dispatch, t }: Props) {
 
         reader.readAsDataURL(imageFile[0]);
         reader.onload = async () => {
-            const resizedImage = await resizeImage(reader.result);
+            await resizeImage(reader.result, async resizedImage => {
+                isloading(true);
+                setStoredImages([
+                    ...storedImages,
+                    {
+                        id: uuid.v4(),
+                        src: resizedImage
+                    }
+                ]);
 
-            isloading(true);
-            setStoredImages([
-                ...storedImages,
-                {
-                    id: uuid.v4(),
-                    src: resizedImage
-                }
-            ]);
-
-            await dispatch(setVirtualBackground(resizedImage, true));
-            await dispatch(toggleBackgroundEffect(true));
-            isloading(false);
+                await dispatch(setVirtualBackground(resizedImage, true));
+                await dispatch(toggleBackgroundEffect(true));
+                isloading(false);
+            });
         };
         reader.onerror = () => {
             isloading(false);
