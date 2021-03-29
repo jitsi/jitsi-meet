@@ -338,6 +338,14 @@
     "embedMeeting": {
         "title": "Deze vergadering embedden"
     },
+    "virtualBackground": {
+        "title": "Achtergronden",
+        "enableBlur": "Vervagen inschakelen",
+        "removeBackground": "Verwijder achtergrond",
+        "uploadImage": "Afbeelding uploaden",
+        "pleaseWait": "Even geduld a.u.b...",
+        "none": "Geen"
+    },
     "feedback": {
         "average": "Gemiddeld",
         "bad": "Slecht",
