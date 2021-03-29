@@ -9,7 +9,7 @@
             .spinner {
                 margin: 30px;
             }
-    
+
             .joining-message {
                 margin: 10px;
             }
@@ -49,7 +49,7 @@
     position: fixed;
     top: 20;
     transition: top 1s ease;
-    z-index: 100;
+    z-index: $toolbarZ + 1;
 
     &.toolbox-visible {
         // Same as toolbox subject position
@@ -60,31 +60,6 @@
         background-color: rgba(0, 0, 0, .2);
         font-size: 1.2em;
         padding: 15px
-    }
-
-    ul {
-        list-style-type: none;
-        padding: 0 15px 15px 15px;
-
-        li {
-            align-items: center;
-            display: flex;
-            flex-direction: row;
-            margin: 8px 0;
-
-            .details {
-                display: flex;
-                flex: 1;
-                flex-direction: column;
-                justify-content: space-evenly;
-                margin: 0 30px 0 10px;
-            }
-
-            button {
-                align-self: unset;
-                margin: 0 5px;
-            }
-        }
     }
 
     button {
@@ -113,6 +88,53 @@
         &.primary {
             background-color: rgb(3, 118, 218);
             border-width: 0;
+        }
+    }
+}
+
+.knocking-participants-container {
+    list-style-type: none;
+    max-height: 600px;
+    overflow-y: scroll;
+    padding: 0 15px 15px 15px;
+}
+
+.knocking-participant {
+    align-items: center;
+    display: flex;
+    flex-direction: row;
+    margin: 8px 0;
+
+    .details {
+        display: flex;
+        flex: 1;
+        flex-direction: column;
+        justify-content: space-evenly;
+        margin: 0 30px 0 10px;
+    }
+
+    button {
+        align-self: unset;
+        margin: 0 5px;
+    }
+}
+
+@media (max-width: 300px) {
+    #knocking-participant-list {
+        margin: 0;
+        text-align: center;
+        width: 100%;
+
+        .avatar {
+            display: none;
+        }
+    }
+
+    .knocking-participant {
+        flex-direction: column;
+
+        .details {
+            margin: 0;
         }
     }
 }
