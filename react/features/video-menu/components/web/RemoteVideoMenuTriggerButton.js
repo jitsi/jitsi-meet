@@ -250,7 +250,7 @@ function _mapStateToProps(state, ownProps) {
     const { participantID } = ownProps;
     const localParticipant = getLocalParticipant(state);
     const { remoteVideoMenu = {}, disableRemoteMute } = state['features/base/config'];
-    const { disableKick , disableGrantModerator} = remoteVideoMenu;
+    const { disableKick, disableGrantModerator } = remoteVideoMenu;
     let _remoteControlState = null;
     const participant = getParticipantById(state, participantID);
     const _isRemoteControlSessionActive = participant?.remoteControlSessionStatus ?? false;
