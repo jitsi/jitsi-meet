@@ -25,12 +25,13 @@ export function checkBlurSupport() {
  * @param {Blob} blob - The link to add info with.
  * @returns {Promise<string>}
  */
-export const blobToData = (blob: Blob): Promise<string> => new Promise(resolve => {
-    const reader = new FileReader();
+export const blobToData = (blob: Blob): Promise<string> =>
+    new Promise(resolve => {
+        const reader = new FileReader();
 
-    reader.onloadend = () => resolve(reader.result.toString());
-    reader.readAsDataURL(blob);
-});
+        reader.onloadend = () => resolve(reader.result.toString());
+        reader.readAsDataURL(blob);
+    });
 
 /**
  * Convert blob to base64.
@@ -52,28 +53,35 @@ export const toDataURL = async (url: string) => {
  * @param {Object} base64image - Base64 image extraction.
  * @param {number} width - Value for resizing the image width.
  * @param {number} height - Value for resizing the image height.
- * @returns {Object} Returns the canvas output.
+ * @returns {Promise<string>}
  *
  */
-export async function resizeImage(base64image: any, width: number = 1920, height: number = 1080) {
-    const img = document.createElement('img');
+export function resizeImage(base64image: any, width: number = 1920, height: number = 1080): Promise<string> {
 
-    img.src = base64image;
-    /* eslint-disable no-empty-function */
-    img.onload = await function() {};
+    // In order to work on Firefox browser we need to handle the asynchronous nature of image loading;  We need to use
+    // a promise mechanism. The reason why it 'works' without this mechanism in Chrome is actually 'by accident' because
+    // the image happens to be in the cache and the browser is able to deliver the uncompressed/decoded image
+    // before using the image in the drawImage call.
+    return new Promise(resolve => {
+        const img = document.createElement('img');
 
-    // Create an off-screen canvas.
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
+        img.onload = function() {
+            // Create an off-screen canvas.
+            const canvas = document.createElement('canvas');
 
-    // Set its dimension to target size.
-    canvas.width = width;
-    canvas.height = height;
+            // Set its dimension to target size.
+            const context = canvas.getContext('2d');
 
-    // Draw source image into the off-screen canvas.
-    // TODO: keep aspect ratio and implement object-fit: cover.
-    ctx.drawImage(img, 0, 0, width, height);
+            canvas.width = width;
+            canvas.height = height;
 
-    // Encode image to data-uri with base64 version of compressed image.
-    return canvas.toDataURL('image/jpeg', 0.5);
+            // Draw source image into the off-screen canvas.
+            // TODO: keep aspect ratio and implement object-fit: cover.
+            context.drawImage(img, 0, 0, width, height);
+
+            // Encode image to data-uri with base64 version of compressed image.
+            resolve(canvas.toDataURL('image/jpeg', 0.5));
+        };
+        img.src = base64image;
+    });
 }
