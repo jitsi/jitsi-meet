@@ -51,33 +51,37 @@ export const toDataURL = async (url: string) => {
  * Resize image and adjust original aspect ratio.
  *
  * @param {Object} base64image - Base64 image extraction.
- * @param {Function} callback - Function that will return the resized image.
  * @param {number} width - Value for resizing the image width.
  * @param {number} height - Value for resizing the image height.
- * @returns {Object} Returns the canvas output.
+ * @returns {Promise<string>}
  *
  */
-export function resizeImage(base64image: any, callback: Function, width: number = 1920, height: number = 1080) {
-    const img = document.createElement('img');
+export async function resizeImage(base64image: any, width: number = 1920, height: number = 1080): Promise<string> {
 
-    img.onload = function() {
-        // Create an off-screen canvas.
-        const canvas = document.createElement('canvas');
+    // In order to work on Firefox browser we need to handle the asynchronous nature of image loading;  We need to use
+    // a promise mechanism. The reason why it 'works' without this mechanism in Chrome is actually 'by accident' because
+    // the image happens to be in the cache and the browser is able to deliver the uncompressed/decoded image
+    // before using the image in the drawImage call.
+    return new Promise(resolve => {
+        const img = document.createElement('img');
 
-        // Set its dimension to target size.
-        const context = canvas.getContext('2d');
+        img.onload = function() {
+            // Create an off-screen canvas.
+            const canvas = document.createElement('canvas');
 
-        canvas.width = width;
-        canvas.height = height;
+            // Set its dimension to target size.
+            const context = canvas.getContext('2d');
 
-        // Draw source image into the off-screen canvas.
-        // TODO: keep aspect ratio and implement object-fit: cover.
-        context.drawImage(img, 0, 0, width, height);
+            canvas.width = width;
+            canvas.height = height;
 
-        // Encode image to data-uri with base64 version of compressed image.
-        callback(canvas.toDataURL('image/jpeg', 0.5));
-    };
+            // Draw source image into the off-screen canvas.
+            // TODO: keep aspect ratio and implement object-fit: cover.
+            context.drawImage(img, 0, 0, width, height);
 
-    img.src = base64image;
+            // Encode image to data-uri with base64 version of compressed image.
+            resolve(canvas.toDataURL('image/jpeg', 0.5));
+        };
+        img.src = base64image;
+    });
 }
-
