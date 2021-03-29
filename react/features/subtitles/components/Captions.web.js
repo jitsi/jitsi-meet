@@ -7,8 +7,16 @@ import { connect } from '../../base/redux';
 import {
     _abstractMapStateToProps,
     AbstractCaptions,
-    type AbstractCaptionsProps as Props
+    type AbstractCaptionsProps
 } from './AbstractCaptions';
+
+type Props = {
+
+    /**
+     * Whether the subtitles container is lifted above the invite box.
+     */
+    _isLifted: boolean
+} & AbstractCaptionsProps;
 
 /**
  * React {@code Component} which can display speech-to-text results from
@@ -45,12 +53,30 @@ class Captions
      */
     _renderSubtitlesContainer(
             paragraphs: Array<React$Element<*>>): React$Element<*> {
+
+        const className = this.props._isLifted ? 'transcription-subtitles lifted' : 'transcription-subtitles';
+
         return (
-            <div className = 'transcription-subtitles' >
+            <div className = { className } >
                 { paragraphs }
             </div>
         );
     }
 }
 
-export default connect(_abstractMapStateToProps)(Captions);
+/**
+ * Maps (parts of) the redux state to the associated {@code }'s
+ * props.
+ *
+ * @param {Object} state - The redux state.
+ * @private
+ * @returns {Object}
+ */
+function mapStateToProps(state) {
+    return {
+        ..._abstractMapStateToProps(state),
+        _isLifted: state['features/base/participants'].length < 2
+    };
+}
+
+export default connect(mapStateToProps)(Captions);
