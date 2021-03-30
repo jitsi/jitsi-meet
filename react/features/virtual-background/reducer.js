@@ -1,8 +1,31 @@
 // @flow
 
-import { ReducerRegistry } from '../base/redux';
+import { PersistenceRegistry, ReducerRegistry } from '../base/redux';
 
 import { BACKGROUND_ENABLED, SET_VIRTUAL_BACKGROUND } from './actionTypes';
+
+/**
+ * The default/initial redux state of the feature {@code features/virtual-background}.
+ *
+ * @type Object
+ */
+const DEFAULT_STATE = {
+    virtualSource: undefined,
+    isVirtualBackground: undefined,
+    backgroundEffectEnabled: undefined
+};
+
+/**
+ * Sets up the persistence of the feature {@code features/virtual-background}.
+ */
+const virtualBackground = {};
+
+// start with the default state
+Object.keys(DEFAULT_STATE).forEach(key => {
+    virtualBackground[key] = true;
+});
+
+PersistenceRegistry.register('features/virtual-background', virtualBackground);
 
 /**
  * Reduces redux actions which activate/deactivate virtual background image, or
@@ -20,6 +43,9 @@ ReducerRegistry.register('features/virtual-background', (state = {}, action) => 
 
     switch (action.type) {
     case SET_VIRTUAL_BACKGROUND: {
+        virtualBackground.virtualSource = virtualSource;
+        virtualBackground.isVirtualBackground = isVirtualBackground;
+
         return {
             ...state,
             virtualSource,
@@ -27,6 +53,8 @@ ReducerRegistry.register('features/virtual-background', (state = {}, action) => 
         };
     }
     case BACKGROUND_ENABLED: {
+        virtualBackground.backgroundEffectEnabled = backgroundEffectEnabled;
+
         return {
             ...state,
             backgroundEffectEnabled
