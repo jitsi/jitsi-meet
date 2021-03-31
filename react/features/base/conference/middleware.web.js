@@ -32,7 +32,7 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
     }
     case TOGGLE_SCREENSHARING: {
         if (typeof APP === 'object') {
-            APP.UI.emitEvent(UIEvents.TOGGLE_SCREENSHARING);
+            APP.UI.emitEvent(UIEvents.TOGGLE_SCREENSHARING, action.audioOnly);
         }
 
         break;
