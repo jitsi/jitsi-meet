@@ -9,7 +9,6 @@
  */
 export const FEEDBACK_REQUEST_IN_PROGRESS = 'FeedbackRequestInProgress';
 
-
 /**
  * Indicated an attempted audio only screen share session with no audio track present
  *

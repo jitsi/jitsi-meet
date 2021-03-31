@@ -8,7 +8,7 @@ import { SET_SCREEN_AUDIO_SHARE_STATE } from './actionTypes';
  * @param {boolean} isSharingAudio - Is audio currently being shared or not.
  * @returns {{
  *     type: SET_SCREEN_AUDIO_SHARE_STATE,
- *     status: string
+ *     isSharingAudio: boolean
  * }}
  */
 export function setScreenAudioShareState(isSharingAudio: boolean) {

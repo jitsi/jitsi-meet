@@ -1834,15 +1834,16 @@ export default {
 
         return this._createDesktopTrack(options)
             .then(async streams => {
-                let desktopVideoStream = streams.find(stream => stream.getType() === MEDIA_TYPE.VIDEO);
+                const desktopVideoStream = streams.find(stream => stream.getType() === MEDIA_TYPE.VIDEO);
 
                 this._desktopAudioStream = streams.find(stream => stream.getType() === MEDIA_TYPE.AUDIO);
 
                 const { audioOnly = false } = options;
 
+                // If we're in audio only mode dispose of the video track otherwise the screensharing state will be
+                // inconsistent.
                 if (audioOnly) {
                     desktopVideoStream.dispose();
-                    desktopVideoStream = undefined;
 
                     if (!this._desktopAudioStream) {
                         return Promise.reject(AUDIO_ONLY_SCREEN_SHARE_NO_TRACK);
