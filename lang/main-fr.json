@@ -201,9 +201,9 @@
         "dismiss": "Rejeter",
         "displayNameRequired": "Bonjour ! Quel est votre nom ?",
         "done": "Terminé",
-        "e2eeDescription": "Le cryptage de Bout-en-Bout est actuellement EXPERIMENTAL. Veuillez garder à l'esprit que l'activation du cryptage de Bout-en-Bout désactivera les services fournis côté serveur tels que : l'enregistrement, la diffusion en direct et la participation par téléphone. Gardez également à l'esprit que la réunion ne fonctionnera que pour les personnes qui se joignent à partir de navigateurs prenant en charge les flux insérables.",
-        "e2eeLabel": "Activer le cryptage de Bout-en-Bout",
-        "e2eeWarning": "ATTENTION : Tous les participants de cette réunion ne semblent pas prendre en charge le chiffrement de Bout-en-Bout. Si vous activez le cryptage, ils ne pourront ni vous voir, ni vous entendre.",
+        "e2eeDescription": "Le chiffrement de Bout-en-Bout est actuellement EXPERIMENTAL. Veuillez garder à l'esprit que l'activation du chiffrement de Bout-en-Bout désactivera les services fournis côté serveur tels que : l'enregistrement, la diffusion en direct et la participation par téléphone. Gardez également à l'esprit que la réunion ne fonctionnera que pour les personnes qui se joignent à partir de navigateurs prenant en charge les flux insérables.",
+        "e2eeLabel": "Activer le chiffrement de Bout-en-Bout",
+        "e2eeWarning": "ATTENTION : Tous les participants de cette réunion ne semblent pas prendre en charge le chiffrement de Bout-en-Bout. Si vous activez le chiffrement, ils ne pourront ni vous voir, ni vous entendre.",
         "enterDisplayName": "Merci de saisir votre nom ici",
         "error": "Erreur",
         "externalInstallationMsg": "Vous devez installer notre extension de partage de bureau.",
@@ -326,7 +326,7 @@
         "title": "Document partagé"
     },
     "e2ee": {
-        "labelToolTip": "L'audio et la vidéo de cette conférence sont cryptés de Bout-en-Bout"
+        "labelToolTip": "L'audio et la vidéo de cette conférence sont chiffrés de Bout-en-Bout"
     },
     "embedMeeting": {
         "title": "Intégrer cette réunion"
@@ -757,7 +757,7 @@
         "documentClose": "Fermer le document partagé",
         "documentOpen": "Ouvrir le document partagé",
         "download": "Télécharger nos applications",
-        "e2ee": "Cryptage de Bout-en-Bout",
+        "e2ee": "Chiffrement de Bout-en-Bout",
         "embedMeeting": "Intégrer la réunion",
         "enterFullScreen": "Afficher en plein écran",
         "enterTileView": "Accéder au mode mosaïque",
