@@ -10,7 +10,7 @@ import { toState } from '../base/redux';
 import { doGetJSON, parseURIString } from '../base/util';
 import { isVpaasMeeting } from '../billing-counter/functions';
 
-import { EMAIL_ADDRESS_REGEX } from './constants';
+import { SIP_ADDRESS_REGEX } from './constants';
 import logger from './logger';
 
 declare var $: Function;
@@ -428,7 +428,7 @@ function isMaybeAPhoneNumber(text: string): boolean {
  * @returns {boolean} True if provided text matches a sip address format.
  */
 function isASipAddress(text: string): boolean {
-    return EMAIL_ADDRESS_REGEX.test(text);
+    return SIP_ADDRESS_REGEX.test(text);
 }
 
 /**
@@ -807,7 +807,7 @@ export function isSharingEnabled(sharingFeature: string) {
 /**
  * Sends a post request to an invite service.
  *
- * @param {Immutable.List} inviteItems - The list of the "sip" type items to invite.
+ * @param {Array} inviteItems - The list of the "sip" type items to invite.
  * @param {string} sipInviteUrl - The invite service that generates the invitation.
  * @param {string} jwt - The jwt token.
  * @param {string} roomName - The name to the conference.
