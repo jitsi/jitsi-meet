@@ -139,6 +139,11 @@ const eventEmitter = new EventEmitter();
 let room;
 let connection;
 
+// Used to be able to initialize early and wait for _connectionPromise without relying on async code to create
+// the Promise (the code that creates the connection).
+let _connectionResolve;
+let _connectionReject;
+
 /**
  * The promise is used when the prejoin screen is shown.
  * While the user configures the devices the connection can be made.
@@ -146,7 +151,10 @@ let connection;
  * @type {Promise<Object>}
  * @private
  */
-let _connectionPromise;
+const _connectionPromise = new Promise((resolve, reject) => {
+    _connectionResolve = resolve;
+    _connectionReject = reject;
+});
 
 /**
  * This promise is used for chaining mutePresenterVideo calls in order to avoid  calling GUM multiple times if it takes
@@ -791,12 +799,14 @@ export default {
         }
 
         if (isPrejoinPageEnabled(APP.store.getState())) {
-            _connectionPromise = connect(roomName).then(c => {
+            connect(roomName).then(c => {
                 // we want to initialize it early, in case of errors to be able
                 // to gather logs
                 APP.connection = c;
 
-                return c;
+                _connectionResolve(c);
+            }, error => {
+                _connectionReject(error);
             });
 
             APP.store.dispatch(makePrecallTest(this._getConferenceOptions()));
