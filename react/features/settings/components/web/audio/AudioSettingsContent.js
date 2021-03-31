@@ -71,6 +71,10 @@ type State = {
  */
 class AudioSettingsContent extends Component<Props, State> {
     _componentWasUnmounted: boolean;
+    _audioContentRef: Object;
+    microphoneHeaderId = 'microphone_settings_header';
+    speakerHeaderId = 'speaker_settings_header';
+
 
     /**
      * Initializes a new {@code AudioSettingsContent} instance.
@@ -83,6 +87,8 @@ class AudioSettingsContent extends Component<Props, State> {
 
         this._onMicrophoneEntryClick = this._onMicrophoneEntryClick.bind(this);
         this._onSpeakerEntryClick = this._onSpeakerEntryClick.bind(this);
+        this._onEscClick = this._onEscClick.bind(this);
+        this._audioContentRef = React.createRef();
 
         this.state = {
             audioTracks: props.microphoneDevices.map(({ deviceId, label }) => {
@@ -94,6 +100,21 @@ class AudioSettingsContent extends Component<Props, State> {
                 };
             })
         };
+    }
+    _onEscClick: (KeyboardEvent) => void;
+
+    /**
+     * Click handler for the speaker entries.
+     *
+     * @param {KeyboardEvent} event - Esc key click to close the popup.
+     * @returns {void}
+     */
+    _onEscClick(event) {
+        if (event.key === 'Escape') {
+            event.preventDefault();
+            event.stopPropagation();
+            this._audioContentRef.current.style.display = 'none';
+        }
     }
 
     _onMicrophoneEntryClick: (string) => void;
@@ -125,9 +146,10 @@ class AudioSettingsContent extends Component<Props, State> {
      *
      * @param {Object} data - An object with the deviceId, jitsiTrack & label of the microphone.
      * @param {number} index - The index of the element, used for creating a key.
+     * @param {length} length - The length of the microphone list.
      * @returns {React$Node}
      */
-    _renderMicrophoneEntry(data, index) {
+    _renderMicrophoneEntry(data, index, length) {
         const { deviceId, label, jitsiTrack, hasError } = data;
         const isSelected = deviceId === this.props.currentMicDeviceId;
 
@@ -135,9 +157,12 @@ class AudioSettingsContent extends Component<Props, State> {
             <MicrophoneEntry
                 deviceId = { deviceId }
                 hasError = { hasError }
+                index = { index }
                 isSelected = { isSelected }
                 jitsiTrack = { jitsiTrack }
                 key = { `me-${index}` }
+                length = { length }
+                listHeaderId = { this.microphoneHeaderId }
                 onClick = { this._onMicrophoneEntryClick }>
                 {label}
             </MicrophoneEntry>
@@ -149,17 +174,22 @@ class AudioSettingsContent extends Component<Props, State> {
      *
      * @param {Object} data - An object with the deviceId and label of the speaker.
      * @param {number} index - The index of the element, used for creating a key.
+     * @param {length} length - The length of the speaker list.
      * @returns {React$Node}
      */
-    _renderSpeakerEntry(data, index) {
+    _renderSpeakerEntry(data, index, length) {
         const { deviceId, label } = data;
         const key = `se-${index}`;
+        const isSelected = deviceId === this.props.currentOutputDeviceId;
 
         return (
             <SpeakerEntry
                 deviceId = { deviceId }
-                isSelected = { deviceId === this.props.currentOutputDeviceId }
+                index = { index }
+                isSelected = { isSelected }
                 key = { key }
+                length = { length }
+                listHeaderId = { this.speakerHeaderId }
                 onClick = { this._onSpeakerEntryClick }>
                 {label}
             </SpeakerEntry>
@@ -246,25 +276,47 @@ class AudioSettingsContent extends Component<Props, State> {
 
         return (
             <div>
-                <div className = 'audio-preview-content'>
-                    <AudioSettingsHeader
-                        IconComponent = { IconMicrophoneEmpty }
-                        text = { t('settings.microphones') } />
-                    {this.state.audioTracks.map((data, i) =>
-                        this._renderMicrophoneEntry(data, i),
-                    )}
+                <div
+                    aria-labelledby = 'audio-settings-button'
+                    className = 'audio-preview-content'
+                    id = 'audio-settings-dialog'
+                    onKeyDown = { this._onEscClick }
+                    ref = { this._audioContentRef }
+                    role = 'menu'
+                    tabIndex = { -1 }>
+                    <div role = 'menuitem'>
+                        <AudioSettingsHeader
+                            IconComponent = { IconMicrophoneEmpty }
+                            id = { this.microphoneHeaderId }
+                            text = { t('settings.microphones') } />
+                        <ul
+                            aria-labelledby = 'microphone_settings_header'
+                            className = 'audio-preview-content-ul'
+                            role = 'radiogroup'
+                            tabIndex = '-1'>
+                            {this.state.audioTracks.map((data, i) =>
+                                this._renderMicrophoneEntry(data, i, this.state.audioTracks.length),
+                            )}
+                        </ul>
+                    </div>
                     { outputDevices.length > 0 && (
-                        <>
+                        <div role = 'menuitem'>
                             <hr className = 'audio-preview-hr' />
                             <AudioSettingsHeader
                                 IconComponent = { IconVolumeEmpty }
+                                id = { this.speakerHeaderId }
                                 text = { t('settings.speakers') } />
-                        </>
-                    )
+                            <ul
+                                aria-labelledby = 'speaker_settings_header'
+                                className = 'audio-preview-content-ul'
+                                role = 'radiogroup'
+                                tabIndex = '-1'>
+                                { outputDevices.map((data, i) =>
+                                    this._renderSpeakerEntry(data, i, outputDevices.length),
+                                )}
+                            </ul>
+                        </div>)
                     }
-                    {outputDevices.map((data, i) =>
-                        this._renderSpeakerEntry(data, i),
-                    )}
                 </div>
             </div>
         );

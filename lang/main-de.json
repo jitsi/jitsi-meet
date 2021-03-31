@@ -67,17 +67,22 @@
         "messageTo": "Private Nachricht an {{recipient}}",
         "noMessagesMessage": "Es gibt noch keine Nachricht in dieser Konferenz. Starten Sie hier eine Unterhaltung!",
         "nickname": {
-            "popover": "Name",
+            "popover": "Alias",
             "title": "Geben Sie einen Alias zum Chatten ein"
         },
         "privateNotice": "Private Nachricht an {{recipient}}",
         "title": "Chatten",
-        "you": "Sie"
+        "you": "Sie",
+        "message": "Nachricht",
+        "messageAccessibleTitle": "{{user}} sagt:",
+        "messageAccessibleTitleMe": "Ich sage:",
+        "smileysPanel": "Emoji-Auswahl"
     },
     "chromeExtensionBanner": {
         "installExtensionText": "Installieren Sie die Erweiterung für die Integration von Google Calendar und Office 365",
         "buttonText": "Chrome-Erweiterung installieren",
-        "dontShowAgain": "Hinweis nicht mehr anzeigen"
+        "dontShowAgain": "Hinweis nicht mehr anzeigen",
+        "close": "Schließen"
     },
     "connectingOverlay": {
         "joiningRoom": "Eine Verbindung zu Ihrem Meeting wird hergestellt…"
@@ -204,6 +209,8 @@
         "e2eeLabel": "Ende-zu-Ende-Verschlüsselung aktivieren",
         "e2eeWarning": "WARNUNG: Nicht alle Personen dieser Konferenz scheinen Ende-zu-Ende-Verschlüsselung zu unterstützen. Wenn Sie diese aktivieren, können die entsprechenden Personen nichts mehr sehen oder hören.",
         "enterDisplayName": "Bitte geben Sie hier Ihren Namen ein",
+        "enterDisplayNameToJoin" : "Benutzername für Konferenz eingeben" ,
+        "embedMeeting": "Besprechung einbetten",
         "error": "Fehler",
         "gracefulShutdown": "Der Dienst steht momentan wegen Wartungsarbeiten nicht zur Verfügung. Bitte versuchen Sie es später noch einmal.",
         "grantModeratorDialog": "Möchten Sie wirklich Moderationsrechte an diese Person vergeben?",
@@ -292,7 +299,7 @@
         "Share": "Teilen",
         "shareVideoLinkError": "Bitte einen gültigen YouTube-Link angeben.",
         "shareVideoTitle": "Video teilen",
-        "shareYourScreen": "Bildschirm freigeben",
+        "shareYourScreen": "Bildschirmfreigabe ein-/ausschalten",
         "shareYourScreenDisabled": "Bildschirmfreigabe deaktiviert.",
         "shareYourScreenDisabledForGuest": "Gäste können den Bildschirm nicht freigeben.",
         "startLiveStreaming": "Livestream starten",
@@ -316,7 +323,9 @@
         "WaitForHostMsgWOk": "Die Konferenz <b>{{room}}</b> wurde noch nicht gestartet. Falls Sie die Konferenz leiten, authentifizieren Sie sich bitte. Warten Sie andernfalls, bis die Konferenz gestartet wird.",
         "WaitingForHost": "Warten auf den Beginn der Konferenz …",
         "Yes": "Ja",
-        "yourEntireScreen": "Ganzer Bildschirm"
+        "yourEntireScreen": "Ganzer Bildschirm",
+        "remoteUserControls": "Remote Benutzersteuerung von {{username}}",
+        "localUserControls": "Lokale Benutzersteuerung"
     },
     "dialOut": {
         "statusMessage": "ist jetzt {{status}}"
@@ -330,6 +339,20 @@
     "embedMeeting": {
         "title": "Diese Konferenz einbetten"
     },
+    "virtualBackground": {
+        "title": "Hintergründe",
+        "enableBlur": "Verschwommener Hintergrund",
+        "removeBackground": "Hintergrund entfernen",
+        "image1" : "Berghütte",
+        "image2" : "Klettergipfel Höllenhund",
+        "image3" : "Tokio Penthaus",
+        "image4" : "Düsseldorf Penthaus",
+        "uploadImage": "Bild hochladen",
+        "pleaseWait": "Bitte warten...",
+        "none": "Ohne",
+        "uploadedImage": "Hochgeladenes Bild {{index}}",
+        "deleteImage": "Bild löschen"
+    },
     "feedback": {
         "average": "Durchschnittlich",
         "bad": "Schlecht",
@@ -337,7 +360,8 @@
         "good": "Gut",
         "rateExperience": "Bitte bewerten Sie diese Konferenz",
         "veryBad": "Sehr schlecht",
-        "veryGood": "Sehr gut"
+        "veryGood": "Sehr gut",
+        "star": "Sterne"
     },
     "incomingCall": {
         "answer": "Antworten",
@@ -354,6 +378,7 @@
         "country": "Land",
         "dialANumber": "Um am Meeting teilzunehmen, müssen Sie eine dieser Nummern wählen und dann die PIN eingeben.",
         "dialInConferenceID": "PIN:",
+        "copyNumber":"Nummer kopieren",
         "dialInNotSupported": "Entschuldigung, leider wird das Einwählen derzeit nicht unterstützt.",
         "dialInNumber": "Einwählen:",
         "dialInSummaryError": "Fehler beim Abrufen der Einwahlinformationen. Versuchen Sie es später erneut.",
@@ -390,6 +415,7 @@
         "support": "Support",
         "supportMsg": "Wenn der Fehler erneut auftritt, bitte kontaktieren Sie"
     },
+    "jitsiHome": "{{logo}} Logo, verlinkt zur Homepage",
     "keyboardShortcuts": {
         "focusLocal": "Lokales Video fokussieren",
         "focusRemote": "Auf das Video einer anderen Person fokussieren",
@@ -508,7 +534,8 @@
         "OldElectronAPPTitle": "Sicherheitslücke!",
         "oldElectronClientDescription1": "Sie scheinen eine alte Version des Jitsi-Meet-Clients zu nutzen. Diese hat bekannte Schwachstellen. Bitte aktualisieren Sie auf unsere ",
         "oldElectronClientDescription2": "aktuelle Version",
-        "oldElectronClientDescription3": "!"
+        "oldElectronClientDescription3": "!",
+        "groupTitle": "Benachrichtigungen"
     },
     "passwordSetRemotely": "von einer anderen Person gesetzt",
     "passwordDigitsOnly": "Bis zu {{number}} Ziffern",
@@ -564,6 +591,7 @@
         "or": "oder",
         "premeeting": "Vorraum",
         "showScreen": "Konferenzvorraum aktivieren",
+        "keyboardShortcuts" : "Tastaturkurzbefehle aktivieren",
         "startWithPhone": "Mit Telefonaudio starten",
         "screenSharingError": "Fehler bei Bildschirmfreigabe:",
         "videoOnlyError": "Videofehler:",
@@ -585,6 +613,7 @@
         "ringing": "Es klingelt …"
     },
     "profile": {
+        "avatar": "Benutzerbild",
         "setDisplayNameLabel": "Anzeigename festlegen",
         "setEmailInput": "E-Mail eingeben",
         "setEmailLabel": "E-Mail-Adresse für Gravatar",
@@ -700,29 +729,29 @@
         "title": "Die Konferenz wurde unterbrochen, weil der Standby-Modus aktiviert wurde."
     },
     "toolbar": {
-        "accessibilityLabel": {
+            "accessibilityLabel": {
             "audioOnly": "„Nur Audio“ ein-/ausschalten",
             "audioRoute": "Audiogerät auswählen",
             "callQuality": "Qualitätseinstellungen",
             "cc": "Untertitel ein-/ausschalten",
-            "chat": "Chatfenster ein-/ausblenden",
+            "chat": "Chatfenster öffnen / schließen",
             "document": "Geteiltes Dokument schließen",
             "download": "Unsere Apps herunterladen",
             "embedMeeting": "Konferenz einbetten",
             "feedback": "Feedback hinterlassen",
             "fullScreen": "Vollbildmodus ein-/ausschalten",
             "grantModerator": "Moderationsrechte vergeben",
-            "hangup": "Anruf beenden",
+            "hangup": "Konferenz verlassen",
             "help": "Hilfe",
             "invite": "Person einladen",
             "kick": "Person entfernen",
             "lobbyButton": "Lobbymodus ein-/ausschalten",
             "localRecording": "Lokale Aufzeichnungssteuerelemente ein-/ausschalten",
             "lockRoom": "Konferenzpasswort ein-/ausschalten",
-            "moreActions": "Menü „Weitere Aktionen“ ein-/ausschalten",
-            "moreActionsMenu": "Menü „Weitere Aktionen“",
+            "moreActions": "Menü „Weitere Einstellungen“ ein-/ausschalten",
+            "moreActionsMenu": "Menü „Weitere Einstellungen“",
             "moreOptions": "Menü „Weitere Optionen“",
-            "mute": "„Audio stummschalten“ ein-/ausschalten",
+            "mute": "Mikrofon aktivieren / deaktivieren",
             "muteEveryone": "Alle stummschalten",
             "muteEveryoneElse": "Alle anderen stummschalten",
             "muteEveryonesVideo": "Alle Kameras ausschalten",
@@ -730,7 +759,7 @@
             "pip": "Bild-in-Bild-Modus ein-/ausschalten",
             "privateMessage": "Private Nachricht senden",
             "profile": "Profil bearbeiten",
-            "raiseHand": "„Melden“ ein-/ausschalten",
+            "raiseHand": "Hand erheben / senken",
             "recording": "Aufzeichnung ein-/ausschalten",
             "remoteMute": "Personen stummschalten",
             "remoteVideoMute": "Kamera von dieser Person ausschalten",
@@ -745,9 +774,14 @@
             "tileView": "Kachelansicht ein-/ausschalten",
             "toggleCamera": "Kamera wechseln",
             "toggleFilmstrip": "Miniaturansichten ein-/ausschalten",
-            "videomute": "„Video stummschalten“ ein-/ausschalten",
-            "videoblur": "Video-Unschärfe ein-/ausschalten"
+            "videomute": "Kamera ein-/ausschalten",
+            "videoblur": "Video-Unschärfe ein-/ausschalten",
+            "selectBackground": "Hintergrund auswählen",
+            "expand": "Ausklappen",
+            "collapse": "Einklappen"
         },
+        "audioSettings":"Audioeinstellung",
+        "videoSettings": "Videoeinstellung",
         "addPeople": "Personen zur Konferenz hinzufügen",
         "audioOnlyOff": "Modus „Nur Audio“ deaktivieren",
         "audioOnlyOn": "Modus „Nur Audio“ aktivieren",
@@ -766,7 +800,7 @@
         "exitFullScreen": "Vollbildmodus verlassen",
         "exitTileView": "Kachelansicht ausschalten",
         "feedback": "Feedback hinterlassen",
-        "hangup": "Verlassen",
+        "hangup": "Konferenz verlassen",
         "help": "Hilfe",
         "invite": "Personen einladen",
         "lobbyButtonDisable": "Lobbymodus deaktivieren",
@@ -776,7 +810,7 @@
         "lowerYourHand": "Hand senken",
         "moreActions": "Weitere Einstellungen",
         "moreOptions": "Weitere Optionen",
-        "mute": "Stummschaltung aktivieren / deaktivieren",
+        "mute": "Mikrofon aktivieren / deaktivieren",
         "muteEveryone": "Alle stummschalten",
         "muteEveryonesVideo": "Alle Kameras ausschalten",
         "noAudioSignalTitle": "Es kommt kein Input von Ihrem Mikrofon!",
@@ -790,7 +824,7 @@
         "pip": "Bild-in-Bild-Modus einschalten",
         "privateMessage": "Private Nachricht senden",
         "profile": "Profil bearbeiten",
-        "raiseHand": "Hand erheben",
+        "raiseHand": "Hand erheben / senken",
         "raiseYourHand": "Melden",
         "security": "Sicherheitsoptionen",
         "Settings": "Einstellungen",
@@ -808,7 +842,7 @@
         "toggleCamera": "Kamera wechseln",
         "videomute": "Kamera starten / stoppen",
         "startvideoblur": "Hintergrundunschärfe aktivieren",
-        "stopvideoblur": "Hintergrundunschärfe deaktivieren"
+        "selectBackground": "Hintergrund auswählen"
     },
     "transcribing": {
         "ccButtonTooltip": "Untertitel ein-/ausschalten",
@@ -834,6 +868,7 @@
         "react-nativeGrantPermissions": "Wählen Sie <b><i>Erlauben</i></b>, wenn der Browser um Berechtigungen bittet.",
         "safariGrantPermissions": "Wählen Sie <b><i>OK</i></b>, wenn der Browser um Berechtigungen bittet."
     },
+    "volumeSlider": "Lautstärkeregler",
     "videoSIPGW": {
         "busy": "Es stehen keine freien Ressourcen zur Verfügung. Bitte versuchen Sie es später noch einmal.",
         "busyTitle": "Keine freien Ressourcen",
@@ -879,6 +914,7 @@
         "videomute": "Person hat die Kamera angehalten"
     },
     "welcomepage": {
+        "addMeetingName": "Besprechungsnamen hinzufügen",
         "accessibilityLabel": {
             "join": "Zum Teilnehmen tippen",
             "roomname": "Konferenzname eingeben"
@@ -900,6 +936,9 @@
         "info": "Einwahlinformationen",
         "join": "ERSTELLEN / BEITRETEN",
         "moderatedMessage": "Oder <a href=\"{{url}}\" rel=\"noopener noreferrer\" target=\"_blank\">reservieren Sie sich eine Konferenz-URL</a>, die nur Sie moderieren.",
+        "mobileDownLoadLinkIos": "iOS App Download",
+        "mobileDownLoadLinkAndroid": "Android App Download",
+        "mobileDownLoadLinkFDroid": "F-Droid App Download",
         "privacy": "Datenschutz",
         "recentList": "Verlauf",
         "recentListDelete": "Eintrag löschen",
@@ -911,7 +950,15 @@
         "sendFeedback": "Feedback senden",
         "startMeeting": "Meeting starten",
         "terms": "AGB",
-        "title": "Sichere, voll funktionale und komplett kostenlose Videokonferenzen"
+        "title": "Sichere, voll funktionale und komplett kostenlose Videokonferenzen",
+        "logo":{
+           "calendar":"Kalender Logo",
+           "microsoftLogo":"Microsoft Logo",
+           "logoDeepLinking":"Jitsi Meet Logo",
+           "desktopPreviewThumbnail":"Desktop-Vorschau Thumbnail",
+           "googleLogo":"Google Logo",
+           "policyLogo":"Richtlinienlogo"
+        }
     },
     "lonelyMeetingExperience": {
         "button": "Andere einladen",

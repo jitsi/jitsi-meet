@@ -133,6 +133,67 @@ function PasswordSection({
     }
 
     /**
+     * Toggles whether or not the password should currently be shown as being
+     * edited locally.
+     *
+     * @param {Object} e - The key event to handle.
+     *
+     * @private
+     * @returns {void}
+     */
+    function onTogglePasswordEditStateKeyPressHandler(e) {
+        if (e.key === ' ' || e.key === 'Enter') {
+            e.preventDefault();
+            onTogglePasswordEditState();
+        }
+    }
+
+    /**
+     * Method to remotely submit the password from outside of the password form.
+     *
+     * @param {Object} e - The key event to handle.
+     *
+     * @private
+     * @returns {void}
+     */
+    function onPasswordSaveKeyPressHandler(e) {
+        if (e.key === ' ' || e.key === 'Enter') {
+            e.preventDefault();
+            onPasswordSave();
+        }
+    }
+
+    /**
+     * Callback invoked to unlock the current JitsiConference.
+     *
+     * @param {Object} e - The key event to handle.
+     *
+     * @private
+     * @returns {void}
+     */
+    function onPasswordRemoveKeyPressHandler(e) {
+        if (e.key === ' ' || e.key === 'Enter') {
+            e.preventDefault();
+            onPasswordRemove();
+        }
+    }
+
+    /**
+     * Copies the password to the clipboard.
+     *
+     * @param {Object} e - The key event to handle.
+     *
+     * @private
+     * @returns {void}
+     */
+    function onPasswordCopyKeyPressHandler(e) {
+        if (e.key === ' ' || e.key === 'Enter') {
+            e.preventDefault();
+            onPasswordCopy();
+        }
+    }
+
+    /**
      * Method that renders the password action(s) based on the current
      * locked-status of the conference.
      *
@@ -146,8 +207,18 @@ function PasswordSection({
         if (passwordEditEnabled) {
             return (
                 <>
-                    <a onClick = { onTogglePasswordEditState }>{ t('dialog.Cancel') }</a>
-                    <a onClick = { onPasswordSave }>{ t('dialog.add') }</a>
+                    <a
+                        aria-label = { t('dialog.Cancel') }
+                        onClick = { onTogglePasswordEditState }
+                        onKeyPress = { onTogglePasswordEditStateKeyPressHandler }
+                        role = 'button'
+                        tabIndex = { 0 }>{ t('dialog.Cancel') }</a>
+                    <a
+                        aria-label = { t('dialog.add') }
+                        onClick = { onPasswordSave }
+                        onKeyPress = { onPasswordSaveKeyPressHandler }
+                        role = 'button'
+                        tabIndex = { 0 }>{ t('dialog.add') }</a>
                 </>
             );
         }
@@ -156,15 +227,23 @@ function PasswordSection({
             return (
                 <>
                     <a
+                        aria-label = { t('dialog.Remove') }
                         className = 'remove-password'
-                        onClick = { onPasswordRemove }>{ t('dialog.Remove') }</a>
+                        onClick = { onPasswordRemove }
+                        onKeyPress = { onPasswordRemoveKeyPressHandler }
+                        role = 'button'
+                        tabIndex = { 0 }>{ t('dialog.Remove') }</a>
                     {
 
                         // There are cases like lobby and grant moderator when password is not available
                         password ? <>
                             <a
+                                aria-label = { t('dialog.copy') }
                                 className = 'copy-password'
-                                onClick = { onPasswordCopy }>{ t('dialog.copy') }</a>
+                                onClick = { onPasswordCopy }
+                                onKeyPress = { onPasswordCopyKeyPressHandler }
+                                role = 'button'
+                                tabIndex = { 0 }>{ t('dialog.copy') }</a>
                         </> : null
                     }
                 </>
@@ -173,8 +252,12 @@ function PasswordSection({
 
         return (
             <a
+                aria-label = { t('info.addPassword') }
                 className = 'add-password'
-                onClick = { onTogglePasswordEditState }>{ t('info.addPassword') }</a>
+                onClick = { onTogglePasswordEditState }
+                onKeyPress = { onTogglePasswordEditStateKeyPressHandler }
+                role = 'button'
+                tabIndex = { 0 }>{ t('info.addPassword') }</a>
         );
     }
 

@@ -172,9 +172,7 @@ class CountryPicker extends PureComponent<Props, State> {
      * @param {Object} e - The synthetic event.
      * @returns {void}
      */
-    _onCountrySelectorClick(e) {
-        e.stopPropagation();
-
+    _onCountrySelectorClick() {
         this.setState({
             isOpen: !this.setState.isOpen
         });
@@ -215,7 +213,8 @@ class CountryPicker extends PureComponent<Props, State> {
      * @returns {void}
      */
     _onKeyPress(e) {
-        if (e.key === 'Enter') {
+        if (e.key === ' ' || e.key === 'Enter') {
+            e.preventDefault();
             this.props.onSubmit();
         }
     }

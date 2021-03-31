@@ -129,7 +129,9 @@ class Popover extends Component<Props, State> {
         // Bind event handlers so they are only bound once for every instance.
         this._onHideDialog = this._onHideDialog.bind(this);
         this._onShowDialog = this._onShowDialog.bind(this);
+        this._onKeyPress = this._onKeyPress.bind(this);
         this._drawerContainerRef = React.createRef();
+        this._onEscKey = this._onEscKey.bind(this);
     }
 
     /**
@@ -207,6 +209,7 @@ class Popover extends Component<Props, State> {
             <div
                 className = { className }
                 id = { id }
+                onKeyPress = { this._onKeyPress }
                 onMouseEnter = { this._onShowDialog }
                 onMouseLeave = { this._onHideDialog }>
                 <InlineDialog
@@ -231,13 +234,13 @@ class Popover extends Component<Props, State> {
         this.setState({ showDialog: false });
     }
 
-    _onShowDialog: () => void;
+    _onShowDialog: (Object) => void;
 
     /**
      * Displays the {@code InlineDialog} and calls any registered onPopoverOpen
      * callbacks.
      *
-     * @param {MouseEvent} event - The mouse event to intercept.
+     * @param {Object} event - The mouse event or the keypress event to intercept.
      * @private
      * @returns {void}
      */
@@ -248,6 +251,45 @@ class Popover extends Component<Props, State> {
 
             if (this.props.onPopoverOpen) {
                 this.props.onPopoverOpen();
+            }
+        }
+    }
+
+    _onKeyPress: (Object) => void;
+
+    /**
+     * KeyPress handler for accessibility.
+     *
+     * @param {Object} e - The key event to handle.
+     *
+     * @returns {void}
+     */
+    _onKeyPress(e) {
+        if (e.key === ' ' || e.key === 'Enter') {
+            e.preventDefault();
+            if (this.state.showDialog) {
+                this._onHideDialog();
+            } else {
+                this._onShowDialog(e);
+            }
+        }
+    }
+
+    _onEscKey: (Object) => void;
+
+    /**
+     * KeyPress handler for accessibility.
+     *
+     * @param {Object} e - The key event to handle.
+     *
+     * @returns {void}
+     */
+    _onEscKey(e) {
+        if (e.key === 'Escape') {
+            e.preventDefault();
+            e.stopPropagation();
+            if (this.state.showDialog) {
+                this._onHideDialog();
             }
         }
     }
@@ -264,7 +306,9 @@ class Popover extends Component<Props, State> {
         const { content, position } = this.props;
 
         return (
-            <div className = 'popover'>
+            <div
+                className = 'popover'
+                onKeyDown = { this._onEscKey }>
                 { content }
                 <div className = 'popover-mouse-padding-top' />
                 <div className = { _mapPositionToPaddingClass(position) } />

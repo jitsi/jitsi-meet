@@ -13,7 +13,8 @@ import { translate } from '../../../base/i18n';
 import { Icon, IconMenuDown, IconMenuUp } from '../../../base/icons';
 import { getLocalParticipant } from '../../../base/participants';
 import { connect } from '../../../base/redux';
-import { isButtonEnabled } from '../../../toolbox/functions.web';
+import { showToolbox } from '../../../toolbox/actions.web';
+import { isButtonEnabled, isToolboxVisible } from '../../../toolbox/functions.web';
 import { LAYOUTS, getCurrentLayout } from '../../../video-layout';
 import { setFilmstripVisible } from '../../actions';
 import { shouldRemoteVideosBeVisible } from '../../functions';
@@ -84,6 +85,11 @@ type Props = {
     _visible: boolean,
 
     /**
+     * Whether or not the toolbox is displayed.
+     */
+    _isToolboxVisible: Boolean,
+
+    /**
      * The redux {@code dispatch} function.
      */
     dispatch: Dispatch<any>,
@@ -114,6 +120,7 @@ class Filmstrip extends Component <Props> {
         // Bind event handlers so they are only bound once for every instance.
         this._onShortcutToggleFilmstrip = this._onShortcutToggleFilmstrip.bind(this);
         this._onToolbarToggleFilmstrip = this._onToolbarToggleFilmstrip.bind(this);
+        this._onTabIn = this._onTabIn.bind(this);
     }
 
     /**
@@ -238,6 +245,19 @@ class Filmstrip extends Component <Props> {
         );
     }
 
+    _onTabIn: () => void;
+
+    /**
+     * Toggle the toolbar visibility when tabbing into it.
+     *
+     * @returns {void}
+     */
+    _onTabIn() {
+        if (!this.props._isToolboxVisible && this.props._visible) {
+            this.props.dispatch(showToolbox());
+        }
+    }
+
     /**
      * Dispatches an action to change the visibility of the filmstrip.
      *
@@ -298,12 +318,18 @@ class Filmstrip extends Component <Props> {
         const { t } = this.props;
 
         return (
-            <div className = 'filmstrip__toolbar'>
+            <div
+                className = 'filmstrip__toolbar'>
                 <button
+                    aria-expanded = { this.props._visible }
                     aria-label = { t('toolbar.accessibilityLabel.toggleFilmstrip') }
                     id = 'toggleFilmstripButton'
-                    onClick = { this._onToolbarToggleFilmstrip }>
-                    <Icon src = { icon } />
+                    onClick = { this._onToolbarToggleFilmstrip }
+                    onFocus = { this._onTabIn }
+                    tabIndex = { 0 }>
+                    <Icon
+                        aria-label = { t('toolbar.accessibilityLabel.toggleFilmstrip') }
+                        src = { icon } />
                 </button>
             </div>
         );
@@ -342,7 +368,8 @@ function _mapStateToProps(state) {
         _participants: state['features/base/participants'],
         _rows: gridDimensions.rows,
         _videosClassName: videosClassName,
-        _visible: visible
+        _visible: visible,
+        _isToolboxVisible: isToolboxVisible(state)
     };
 }
 

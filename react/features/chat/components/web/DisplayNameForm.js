@@ -74,6 +74,8 @@ class DisplayNameForm extends Component<Props, State> {
             <div id = 'nickname'>
                 <form onSubmit = { this._onSubmit }>
                     <FieldTextStateless
+                        aria-describedby = 'nickname-title'
+                        autoComplete = 'name'
                         autoFocus = { true }
                         compact = { true }
                         id = 'nickinput'

@@ -94,6 +94,10 @@ type Props = AbstractProps & {
     _showPrejoin: boolean,
 
     dispatch: Function,
+
+    /**
+     * Invoked to obtain translated strings.
+     */
     t: Function
 }
 
@@ -201,8 +205,8 @@ class Conference extends AbstractConference<Props, *> {
                 <div id = 'videospace'>
                     <LargeVideo />
                     <KnockingParticipantList />
-                    <Filmstrip />
                     { hideLabels || <Labels /> }
+                    <Filmstrip />
                 </div>
 
                 { _showPrejoin || _isLobbyScreenVisible || <Toolbox /> }

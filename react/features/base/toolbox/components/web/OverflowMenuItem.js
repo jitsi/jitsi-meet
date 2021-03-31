@@ -75,6 +75,35 @@ class OverflowMenuItem extends Component<Props> {
     };
 
     /**
+     * Initializes a new {@code OverflowMenuItem} instance.
+     *
+     * @param {*} props - The read-only properties with which the new instance
+     * is to be initialized.
+     */
+    constructor(props: Props) {
+        super(props);
+
+        // Bind event handler so it is only bound once for every instance.
+        this._onKeyPress = this._onKeyPress.bind(this);
+    }
+
+    _onKeyPress: (Object) => void;
+
+    /**
+     * KeyPress handler for accessibility.
+     *
+     * @param {Object} e - The key event to handle.
+     *
+     * @returns {void}
+     */
+    _onKeyPress(e) {
+        if (!this.props.disabled && this.props.onClick && (e.key === ' ' || e.key === 'Enter')) {
+            e.preventDefault();
+            this.props.onClick();
+        }
+    }
+
+    /**
      * Implements React's {@link Component#render()}.
      *
      * @inheritdoc
@@ -89,9 +118,13 @@ class OverflowMenuItem extends Component<Props> {
 
         return (
             <li
+                aria-disabled = { disabled }
                 aria-label = { accessibilityLabel }
                 className = { className }
-                onClick = { disabled ? null : onClick }>
+                onClick = { disabled ? null : onClick }
+                onKeyPress = { this._onKeyPress }
+                role = 'menuitem'
+                tabIndex = { 0 }>
                 <span className = 'overflow-menu-item-icon'>
                     <Icon
                         id = { iconId }

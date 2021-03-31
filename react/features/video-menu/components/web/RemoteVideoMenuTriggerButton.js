@@ -2,6 +2,7 @@
 
 import React, { Component } from 'react';
 
+import { translate } from '../../../base/i18n';
 import { Icon, IconMenuThumb } from '../../../base/icons';
 import { getLocalParticipant, getParticipantById, PARTICIPANT_ROLE } from '../../../base/participants';
 import { Popover } from '../../../base/popover';
@@ -87,6 +88,16 @@ type Props = {
      * The ID for the participant on which the remote video menu will act.
      */
     participantID: string,
+
+    /**
+     * The ID for the participant on which the remote video menu will act.
+     */
+    _participantDisplayName: string,
+
+    /**
+     * Invoked to obtain translated strings.
+     */
+    t: Function
 };
 
 /**
@@ -109,17 +120,21 @@ class RemoteVideoMenuTriggerButton extends Component<Props> {
             return null;
         }
 
+        const username = this.props._participantDisplayName;
+
         return (
             <Popover
                 content = { content }
                 overflowDrawer = { this.props._overflowDrawer }
                 position = { this.props._menuPosition }>
-                <span
-                    className = 'popover-trigger remote-video-menu-trigger'>
+                <span className = 'popover-trigger remote-video-menu-trigger'>
                     <Icon
-                        size = '1em'
+                        ariaLabel = { this.props.t('dialog.remoteUserControls', { username }) }
+                        role = 'button'
+                        size = '1.4em'
                         src = { IconMenuThumb }
-                        title = 'Remote user controls' />
+                        tabIndex = { 0 }
+                        title = { this.props.t('dialog.remoteUserControls', { username }) } />
                 </span>
             </Popover>
         );
@@ -209,6 +224,7 @@ class RemoteVideoMenuTriggerButton extends Component<Props> {
                 participantID = { participantID } />
         );
 
+
         if (onVolumeChange && typeof initialVolumeValue === 'number' && !isNaN(initialVolumeValue)) {
             buttons.push(
                 <VolumeSlider
@@ -245,6 +261,7 @@ function _mapStateToProps(state, ownProps) {
     const { disableKick } = remoteVideoMenu;
     let _remoteControlState = null;
     const participant = getParticipantById(state, participantID);
+    const _participantDisplayName = participant.name;
     const _isRemoteControlSessionActive = participant?.remoteControlSessionStatus ?? false;
     const _supportsRemoteControl = participant?.supportsRemoteControl ?? false;
     const { active, controller } = state['features/remote-control'];
@@ -283,8 +300,9 @@ function _mapStateToProps(state, ownProps) {
         _disableRemoteMute: Boolean(disableRemoteMute),
         _remoteControlState,
         _menuPosition,
-        _overflowDrawer: overflowDrawer
+        _overflowDrawer: overflowDrawer,
+        _participantDisplayName
     };
 }
 
-export default connect(_mapStateToProps)(RemoteVideoMenuTriggerButton);
+export default translate(connect(_mapStateToProps)(RemoteVideoMenuTriggerButton));

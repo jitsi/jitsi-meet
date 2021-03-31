@@ -2,6 +2,7 @@
 
 import React from 'react';
 
+import { translate } from '../../../base/i18n';
 import { Icon, IconMenuThumb } from '../../../base/icons';
 import { Popover } from '../../../base/popover';
 import { connect } from '../../../base/redux';
@@ -32,7 +33,12 @@ type Props = {
     /**
      * Shows/hides the local video flip button.
      */
-    _showLocalVideoFlipButton: boolean
+    _showLocalVideoFlipButton: boolean,
+
+    /**
+     * Invoked to obtain translated strings.
+     */
+    t: Function
 };
 
 /**
@@ -56,9 +62,12 @@ function LocalVideoMenuTriggerButton(props: Props) {
                 <span
                     className = 'popover-trigger local-video-menu-trigger'>
                     <Icon
+                        ariaLabel = { props.t('dialog.localUserControls') }
+                        role = 'button'
                         size = '1em'
                         src = { IconMenuThumb }
-                        title = 'Local user controls' />
+                        tabIndex = { 0 }
+                        title = { props.t('dialog.localUserControls') } />
                 </span>
             </Popover>
             : null
@@ -97,4 +106,4 @@ function _mapStateToProps(state) {
     };
 }
 
-export default connect(_mapStateToProps)(LocalVideoMenuTriggerButton);
+export default translate(connect(_mapStateToProps)(LocalVideoMenuTriggerButton));

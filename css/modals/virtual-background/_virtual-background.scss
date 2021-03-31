@@ -80,12 +80,18 @@
     left: 36;
     bottom: 36;
 }
+
 .delete-image-icon:hover {
     display: block;
 }
 
 .thumbnail-container {
     position: relative;
+    &:focus-within {
+        .thumbnail ~ .delete-image-icon{
+           display: block;
+       }
+    }
 }
 
 .loading-content-text{

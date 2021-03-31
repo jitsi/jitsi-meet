@@ -62,7 +62,7 @@ class MuteEveryoneButton extends AbstractButton<Props, *> {
 function _mapStateToProps(state: Object, ownProps: Props) {
     const localParticipant = getLocalParticipant(state);
     const isModerator = localParticipant.role === PARTICIPANT_ROLE.MODERATOR;
-    const { visible } = ownProps;
+    const { visible = true } = ownProps;
     const { disableRemoteMute } = state['features/base/config'];
 
     return {

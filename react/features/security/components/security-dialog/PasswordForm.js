@@ -136,6 +136,7 @@ class PasswordForm extends Component<Props, State> {
                     onKeyDown = { this._onKeyDown }
                     onSubmit = { this._onPasswordSubmit }>
                     <input
+                        aria-label = { this.props.t('info.addPassword') }
                         autoFocus = { true }
                         className = 'info-password-input'
                         maxLength = { this.props.passwordNumberOfDigits }
