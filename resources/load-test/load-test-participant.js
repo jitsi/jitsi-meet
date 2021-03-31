@@ -3,6 +3,7 @@ import 'jquery';
 import { setConfigFromURLParams } from '../../react/features/base/config/functions';
 import { parseURLParams } from '../../react/features/base/util/parseURLParams';
 import { parseURIString } from '../../react/features/base/util/uri';
+import { validateLastNLimits, limitLastN } from '../../react/features/base/lastn/functions';
 
 setConfigFromURLParams(config, {}, {}, window.location);
 
@@ -108,11 +109,31 @@ function updateMaxFrameHeight() {
 }
 
 /**
+ * Simple emulation of jitsi-meet's lastN behavior
+ */
+function updateLastN() {
+    let lastN = typeof config.channelLastN === 'undefined' ? -1 : config.channelLastN;
+
+    const limitedLastN = limitLastN(numParticipants, validateLastNLimits(config.lastNLimits));
+
+    if (limitedLastN !== undefined) {
+        lastN = lastN === -1 ? limitedLastN : Math.min(limitedLastN, lastN);
+    }
+
+    if (lastN === room.getLastN()) {
+        return;
+    }
+
+    room.setLastN(lastN);
+}
+
+/**
  *
  */
 function setNumberOfParticipants() {
     $('#participants').text(numParticipants);
     updateMaxFrameHeight();
+    updateLastN();
 }
 
 /**
