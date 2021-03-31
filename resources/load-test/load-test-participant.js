@@ -132,6 +132,9 @@ function updateLastN() {
  */
 function setNumberOfParticipants() {
     $('#participants').text(numParticipants);
+    /* jitsi-meet's current Tile View behavior. */
+    const ids = room.getParticipants().map(participant => participant.id);
+    room.selectParticipants(ids);
     updateMaxFrameHeight();
     updateLastN();
 }
@@ -219,6 +222,16 @@ function onStartMuted() {
  *
  * @param id
  */
+function onUserJoined(id) {
+    numParticipants++;
+    setNumberOfParticipants();
+    remoteTracks[id] = [];
+}
+
+/**
+ *
+ * @param id
+ */
 function onUserLeft(id) {
     numParticipants--;
     setNumberOfParticipants();
@@ -245,11 +258,7 @@ function onConnectionSuccess() {
     room.on(JitsiMeetJS.events.conference.STARTED_MUTED, onStartMuted);
     room.on(JitsiMeetJS.events.conference.TRACK_ADDED, onRemoteTrack);
     room.on(JitsiMeetJS.events.conference.CONFERENCE_JOINED, onConferenceJoined);
-    room.on(JitsiMeetJS.events.conference.USER_JOINED, id => {
-        numParticipants++;
-        setNumberOfParticipants();
-        remoteTracks[id] = [];
-    });
+    room.on(JitsiMeetJS.events.conference.USER_JOINED, onUserJoined);
     room.on(JitsiMeetJS.events.conference.USER_LEFT, onUserLeft);
 
     const devices = [];
