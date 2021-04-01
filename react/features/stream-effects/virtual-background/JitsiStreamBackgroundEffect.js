@@ -5,7 +5,6 @@ import {
     SET_TIMEOUT,
     timerWorkerScript
 } from './TimerWorker';
-const blurValue = '25px';
 
 /**
  * Represents a modified MediaStream that adds effects to video background.
@@ -65,9 +64,9 @@ export default class JitsiStreamBackgroundEffect {
      * @param {EventHandler} response - The onmessage EventHandler parameter.
      * @returns {void}
      */
-    async _onMaskFrameTimer(response: Object) {
+    _onMaskFrameTimer(response: Object) {
         if (response.data.id === TIMEOUT_TICK) {
-            await this._renderMask();
+            this._renderMask();
         }
     }
 
@@ -121,7 +120,7 @@ export default class JitsiStreamBackgroundEffect {
                 this._inputVideoElement.height
             );
         } else {
-            this._outputCanvasCtx.filter = `blur(${blurValue})`;
+            this._outputCanvasCtx.filter = `blur(${this._options.virtualBackground.blurValue}px)`;
             this._outputCanvasCtx.drawImage(this._inputVideoElement, 0, 0);
         }
     }

@@ -10,7 +10,7 @@ import { translate } from '../../base/i18n';
 import { Icon, IconBlurBackground, IconCancelSelection } from '../../base/icons';
 import { connect } from '../../base/redux';
 import { Tooltip } from '../../base/tooltip';
-import { toggleBackgroundEffect, setVirtualBackground } from '../actions';
+import { toggleBackgroundEffect, setVirtualBackground, backgroundEnabled } from '../actions';
 import { resizeImage, toDataURL } from '../functions';
 import logger from '../logger';
 
@@ -74,11 +74,13 @@ function VirtualBackground({ dispatch, t }: Props) {
     }, [ storedImages ]);
 
     const [ selected, setSelected ] = useState('');
-    const enableBlur = async () => {
+
+    const enableBlur = async (blurValue, selection) => {
         isloading(true);
-        setSelected('blur');
+        setSelected(selection);
         await dispatch(setVirtualBackground('', false));
-        await dispatch(toggleBackgroundEffect(true));
+        await dispatch(backgroundEnabled(true, blurValue));
+        await dispatch(toggleBackgroundEffect(true, blurValue));
         isloading(false);
     };
 
@@ -86,7 +88,7 @@ function VirtualBackground({ dispatch, t }: Props) {
         isloading(true);
         setSelected('none');
         await dispatch(setVirtualBackground('', false));
-        await dispatch(toggleBackgroundEffect(false));
+        await dispatch(toggleBackgroundEffect(false, 0));
         isloading(false);
     };
 
@@ -94,7 +96,7 @@ function VirtualBackground({ dispatch, t }: Props) {
         isloading(true);
         setSelected(image.id);
         await dispatch(setVirtualBackground(image.src, true));
-        await dispatch(toggleBackgroundEffect(true));
+        await dispatch(toggleBackgroundEffect(true, 0));
         isloading(false);
     };
 
@@ -102,7 +104,7 @@ function VirtualBackground({ dispatch, t }: Props) {
         isloading(true);
         setSelected(image.id);
         await dispatch(setVirtualBackground(await toDataURL(image.src), true));
-        await dispatch(toggleBackgroundEffect(true));
+        await dispatch(toggleBackgroundEffect(true, 0));
         isloading(false);
     };
 
@@ -123,7 +125,7 @@ function VirtualBackground({ dispatch, t }: Props) {
             ]);
 
             await dispatch(setVirtualBackground(resizedImage, true));
-            await dispatch(toggleBackgroundEffect(true));
+            await dispatch(toggleBackgroundEffect(true, 0));
             isloading(false);
         };
         reader.onerror = () => {
@@ -137,7 +139,7 @@ function VirtualBackground({ dispatch, t }: Props) {
             hideCancelButton = { true }
             submitDisabled = { false }
             titleKey = { 'virtualBackground.title' }
-            width = 'small'>
+            width = '450px'>
             {loading ? (
                 <div className = 'virtual-background-loading'>
                     <span className = 'loading-content-text'>{t('virtualBackground.pleaseWait')}</span>
@@ -162,7 +164,16 @@ function VirtualBackground({ dispatch, t }: Props) {
                             position = { 'top' }>
                             <Icon
                                 className = { selected === 'blur' ? 'blur-selected' : '' }
-                                onClick = { () => enableBlur() }
+                                onClick = { () => enableBlur(25, 'blur') }
+                                size = { 50 }
+                                src = { IconBlurBackground } />
+                        </Tooltip>
+                        <Tooltip
+                            content = { t('virtualBackground.enableBlur') }
+                            position = { 'top' }>
+                            <Icon
+                                className = { selected === 'less-blur' ? 'blur-selected' : '' }
+                                onClick = { () => enableBlur(8, 'less-blur') }
                                 size = { 50 }
                                 src = { IconBlurBackground } />
                         </Tooltip>

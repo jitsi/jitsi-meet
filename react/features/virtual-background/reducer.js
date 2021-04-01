@@ -23,7 +23,7 @@ PersistenceRegistry.register(STORE_NAME, true);
  * specified action.
  */
 ReducerRegistry.register(STORE_NAME, (state = {}, action) => {
-    const { virtualSource, isVirtualBackground, backgroundEffectEnabled } = action;
+    const { virtualSource, isVirtualBackground, backgroundEffectEnabled, blurValue } = action;
 
     switch (action.type) {
     case SET_VIRTUAL_BACKGROUND: {
@@ -36,7 +36,8 @@ ReducerRegistry.register(STORE_NAME, (state = {}, action) => {
     case BACKGROUND_ENABLED: {
         return {
             ...state,
-            backgroundEffectEnabled
+            backgroundEffectEnabled,
+            blurValue
         };
     }
     }

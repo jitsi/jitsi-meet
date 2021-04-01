@@ -10,9 +10,10 @@ import logger from './logger';
  * Signals the local participant activate the virtual background video or not.
  *
  * @param {boolean} enabled - If true enables video background, false otherwise.
+ * @param {number} blurValue - Indicates the selected blur value.
  * @returns {Promise}
  */
-export function toggleBackgroundEffect(enabled: boolean) {
+export function toggleBackgroundEffect(enabled: boolean, blurValue: number) {
     return async function(dispatch: Object => Object, getState: () => any) {
         const state = getState();
 
@@ -22,13 +23,13 @@ export function toggleBackgroundEffect(enabled: boolean) {
         try {
             if (enabled) {
                 await jitsiTrack.setEffect(await createVirtualBackgroundEffect(virtualBackground));
-                dispatch(backgroundEnabled(true));
+                dispatch(backgroundEnabled(true, blurValue));
             } else {
                 await jitsiTrack.setEffect(undefined);
-                dispatch(backgroundEnabled(false));
+                dispatch(backgroundEnabled(false, 0));
             }
         } catch (error) {
-            dispatch(backgroundEnabled(false));
+            dispatch(backgroundEnabled(false, 0));
             logger.error('Error on apply backgroun effect:', error);
         }
     };
@@ -57,14 +58,17 @@ export function setVirtualBackground(virtualSource: string, isVirtualBackground:
  * Signals the local participant that the background effect has been enabled.
  *
  * @param {boolean} backgroundEffectEnabled - Indicate if virtual background effect is activated.
+ * @param {number} blurValue - Indicate the setted blur value.
  * @returns {{
  *      type: BACKGROUND_ENABLED,
  *      backgroundEffectEnabled: boolean,
+ *      blurValue: number
  * }}
  */
-export function backgroundEnabled(backgroundEffectEnabled: boolean) {
+export function backgroundEnabled(backgroundEffectEnabled: boolean, blurValue: number) {
     return {
         type: BACKGROUND_ENABLED,
-        backgroundEffectEnabled
+        backgroundEffectEnabled,
+        blurValue
     };
 }

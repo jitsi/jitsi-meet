@@ -7,6 +7,7 @@
  * @returns {{
  *     type: BACKGROUND_ENABLED,
  *     backgroundEffectEnabled: boolean,
+ *     blurValue: number,
  * }}
  */
 export const BACKGROUND_ENABLED = 'BACKGROUND_ENABLED';
