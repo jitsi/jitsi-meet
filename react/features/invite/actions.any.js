@@ -3,7 +3,7 @@
 import type { Dispatch } from 'redux';
 
 import { getInviteURL } from '../base/connection';
-import { getParticipants } from '../base/participants';
+import { getLocalParticipant, getParticipants } from '../base/participants';
 import { inviteVideoRooms } from '../videosipgw';
 
 import {
@@ -18,7 +18,8 @@ import {
 import {
     getDialInConferenceID,
     getDialInNumbers,
-    invitePeopleAndChatRooms
+    invitePeopleAndChatRooms,
+    inviteSipEndpoints
 } from './functions';
 import logger from './logger';
 
@@ -102,7 +103,9 @@ export function invite(
             inviteServiceCallFlowsUrl
         } = state['features/base/config'];
         const inviteUrl = getInviteURL(state);
+        const { sipInviteUrl } = state['features/base/config'];
         const { jwt } = state['features/base/jwt'];
+        const { name: displayName } = getLocalParticipant(state);
 
         // First create all promises for dialing out.
         const phoneNumbers
@@ -163,6 +166,20 @@ export function invite(
 
         invitesLeftToSend
             = invitesLeftToSend.filter(({ type }) => type !== 'videosipgw');
+
+        const sipEndpoints
+            = invitesLeftToSend.filter(({ type }) => type === 'sip');
+
+        conference && inviteSipEndpoints(
+            sipEndpoints,
+            sipInviteUrl,
+            jwt,
+            conference.options.name,
+            displayName
+        );
+
+        invitesLeftToSend
+            = invitesLeftToSend.filter(({ type }) => type !== 'sip');
 
         return (
             Promise.all(allInvitePromises)
