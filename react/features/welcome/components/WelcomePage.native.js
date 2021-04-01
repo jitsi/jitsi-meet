@@ -1,5 +1,4 @@
 import React from 'react';
-import AsyncStorage from '@react-native-community/async-storage';
 import { ColorSchemeRegistry } from '../../base/color-scheme';
 import { translate } from '../../base/i18n';
 import { connect } from '../../base/redux';
