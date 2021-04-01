@@ -277,12 +277,14 @@ StateListenerRegistry.register(
 function _e2eeUpdated({ dispatch }, conference, participantId, newValue) {
     const e2eeEnabled = newValue === 'true';
 
-    dispatch(toggleE2EE(e2eeEnabled));
-    dispatch(participantUpdated({
-        conference,
-        id: participantId,
-        e2eeEnabled
-    }));
+    if (e2eeEnabled) {
+        dispatch(toggleE2EE(e2eeEnabled));
+        dispatch(participantUpdated({
+            conference,
+            id: participantId,
+            e2eeEnabled
+        }));
+    }
 }
 
 /**
