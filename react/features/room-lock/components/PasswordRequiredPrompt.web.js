@@ -78,7 +78,7 @@ function PasswordRequiredPrompt({ conference, dispatch, t }: PasswordRequiredPro
         // still locked, another password required will be received and the room
         // again will be marked as locked.
         dispatch(
-            setPassword(conference, conference.join, password));
+            setPassword(password));
 
         // We have used the password so let's clean it.
         setPassword(undefined);
