@@ -127,7 +127,7 @@ import {
     makePrecallTest
 } from './react/features/prejoin';
 import { disableReceiver, stopReceiver } from './react/features/remote-control';
-import { setScreenAudioShareState } from './react/features/screen-share/actions';
+import { setScreenAudioShareState, isScreenAudioShared } from './react/features/screen-share/';
 import { toggleScreenshotCaptureEffect } from './react/features/screenshot-capture';
 import { setSharedVideoStatus } from './react/features/shared-video/actions';
 import { AudioMixerEffect } from './react/features/stream-effects/audio-mixer/AudioMixerEffect';
@@ -1666,6 +1666,23 @@ export default {
                 = this._turnScreenSharingOff.bind(this, didHaveVideo);
 
             const desktopVideoStream = desktopStreams.find(stream => stream.getType() === MEDIA_TYPE.VIDEO);
+            const dekstopAudioStream = desktopStreams.find(stream => stream.getType() === MEDIA_TYPE.AUDIO);
+
+            if (dekstopAudioStream) {
+                dekstopAudioStream.on(
+                    JitsiTrackEvents.LOCAL_TRACK_STOPPED,
+                    () => {
+                        logger.debug(`Local screensharing audio track stopped. ${this.isSharingScreen}`);
+
+                        // Handle case where screen share was stopped from  the browsers 'screen share in progress'
+                        // window. If audio screen sharing is stopped via the normal UX flow this point shouldn't
+                        // be reached.
+                        isScreenAudioShared(APP.store.getState())
+                            && this._untoggleScreenSharing
+                            && this._untoggleScreenSharing();
+                    }
+                );
+            }
 
             if (desktopVideoStream) {
                 desktopVideoStream.on(
@@ -1834,7 +1851,7 @@ export default {
 
         return this._createDesktopTrack(options)
             .then(async streams => {
-                const desktopVideoStream = streams.find(stream => stream.getType() === MEDIA_TYPE.VIDEO);
+                let desktopVideoStream = streams.find(stream => stream.getType() === MEDIA_TYPE.VIDEO);
 
                 this._desktopAudioStream = streams.find(stream => stream.getType() === MEDIA_TYPE.AUDIO);
 
@@ -1844,6 +1861,7 @@ export default {
                 // inconsistent.
                 if (audioOnly) {
                     desktopVideoStream.dispose();
+                    desktopVideoStream = undefined;
 
                     if (!this._desktopAudioStream) {
                         return Promise.reject(AUDIO_ONLY_SCREEN_SHARE_NO_TRACK);
