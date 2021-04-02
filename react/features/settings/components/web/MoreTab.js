@@ -10,6 +10,7 @@ import React from 'react';
 import { AbstractDialogTab } from '../../../base/dialog';
 import type { Props as AbstractDialogTabProps } from '../../../base/dialog';
 import { translate } from '../../../base/i18n';
+import TouchmoveHack from '../../../chat/components/web/TouchmoveHack';
 
 /**
  * The type of the React {@code Component} props of {@link MoreTab}.
@@ -185,21 +186,23 @@ class MoreTab extends AbstractDialogTab<Props, State> {
                     { t('settings.language') }
                 </div>
                 <div className = 'dropdown-menu'>
-                    <DropdownMenu
-                        isOpen = { this.state.isLanguageSelectOpen }
-                        onOpenChange = { this._onLanguageDropdownOpenChange }
-                        shouldFitContainer = { true }
-                        trigger = { currentLanguage
-                            ? t(`languages:${currentLanguage}`)
-                            : '' }
-                        triggerButtonProps = {{
-                            shouldFitContainer: true
-                        }}
-                        triggerType = 'button'>
-                        <DropdownItemGroup>
-                            { languageItems }
-                        </DropdownItemGroup>
-                    </DropdownMenu>
+                    <TouchmoveHack isModal = { true }>
+                        <DropdownMenu
+                            isOpen = { this.state.isLanguageSelectOpen }
+                            onOpenChange = { this._onLanguageDropdownOpenChange }
+                            shouldFitContainer = { true }
+                            trigger = { currentLanguage
+                                ? t(`languages:${currentLanguage}`)
+                                : '' }
+                            triggerButtonProps = {{
+                                shouldFitContainer: true
+                            }}
+                            triggerType = 'button'>
+                            <DropdownItemGroup>
+                                { languageItems }
+                            </DropdownItemGroup>
+                        </DropdownMenu>
+                    </TouchmoveHack>
                 </div>
             </div>
         );
