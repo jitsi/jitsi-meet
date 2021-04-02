@@ -736,7 +736,11 @@
             "toggleCamera": "Camera wisselen",
             "toggleFilmstrip": "Filmstrip in- of uitschakelen",
             "videomute": "Video dempen in- of uitschakelen",
-            "videoblur": "Video vervagen in- of uitschakelen"
+            "videoblur": "Video vervagen in- of uitschakelen",<!--
+Thank you for your pull request. Please provide a thorough description below.
+
+Contributors guide: https://github.com/jitsi/jitsi-meet/blob/master/CONTRIBUTING.md
+-->
             "selectBackground": "Achtergrond selecteren"
         },
         "addPeople": "Personen aan uw gesprek toevoegen",
