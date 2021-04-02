@@ -204,9 +204,6 @@
         "done": "Gereed",
         "e2eeDescription": "Eind-tot-Eind-Versleuteling is momenteel EXPERIMENTEEL. Houd er rekening mee dat inschakelen van eind-tot-eind-versleuteling de door de server geleverde services zal uitschakelen zoals: opnemen, livestreamen en deelname via telefoon. Houd er ook rekening mee dat de vergadering alleen zal werken voor personen die deelnemen vanaf browsers met ondersteuning voor insertable streams.",
         "e2eeLabel": "Sleutel",
-        "e2eeNoKey": "Geen",
-        "e2eeToggleSet": "Sleutel instellen",
-        "e2eeSet": "Instellen",
         "e2eeWarning": "WAARSCHUWING: Niet alle deelnemers in deze vergadering lijken ondersteuning te hebben voor eind-tot-eind-versleuteling. Als u het inschakelt zullen zij u niet kunnen zien of horen.",
         "enterDisplayName": "Voer hier uw naam in",
         "error": "Fout",
@@ -268,7 +265,6 @@
         "readMore": "meer",
         "recording": "Opnemen",
         "recordingDisabledBecauseOfActiveLiveStreamingTooltip": "Niet mogelijk tijdens een livestream",
-        "recordingDisabledForGuestTooltip": "Gasten kunnen geen opnamen starten.",
         "recordingDisabledTooltip": "Opname starten uitgeschakeld.",
         "rejoinNow": "Nu opnieuw deelnemen",
         "remoteControlAllowedMessage": "{{user}} heeft uw verzoek om extern beheer geaccepteerd.",
@@ -301,7 +297,6 @@
         "shareVideoTitle": "Een video delen",
         "shareYourScreen": "Uw scherm delen",
         "shareYourScreenDisabled": "Schermdeling is uitgeschakeld.",
-        "shareYourScreenDisabledForGuest": "Gasten kunnen hun scherm niet delen.",
         "startLiveStreaming": "Livestream starten",
         "startRecording": "Opname starten",
         "startRemoteControlErrorMessage": "Er is een fout opgetreden tijdens het starten van de sessie van extern beheer.",
@@ -322,7 +317,6 @@
         "videoLink": "Video link",
         "WaitForHostMsg": "De vergadering <b>{{room}}</b> is nog niet gestart. Authenticeer uzelf als u de host bent. Anders wacht u tot de host aanwezig is.",
         "WaitForHostMsgWOk": "De vergadering <b>{{room}}</b> is nog niet gestart. Als u de host bent, drukt u op 'OK' om uzelf te authenticeren. Anders wacht u tot de host aanwezig is.",
-        "WaitingForHost": "Wachten op de host...",
         "Yes": "Ja",
         "yourEntireScreen": "Uw gehele scherm"
     },
@@ -420,8 +414,7 @@
         "toggleFilmstrip": "Videominiaturen weergeven of verbergen",
         "toggleScreensharing": "Wisselen tussen camera en schermdeling",
         "toggleShortcuts": "Sneltoetsen weergeven of verbergen",
-        "videoMute": "Uw camera starten of stoppen",
-        "videoQuality": "Kwaliteit van gesprek beheren"
+        "videoMute": "Uw camera starten of stoppen"
     },
     "liveStreaming": {
         "limitNotificationDescriptionWeb": "Vanwege een grote vraag zal uw stream beperkt worden tot {{limit}} min. Voor ongelimiteerd streamen, probeer <a href={{url}} rel='noopener noreferrer' target='_blank'>{{app}}</a>.",
@@ -702,7 +695,6 @@
             "document": "Gedeeld document in- of uitschakelen",
             "download": "Download onze apps",
             "embedMeeting": "Vergadering inbedden",
-            "e2ee": "Eind-tot-eind-versleuteling",
             "feedback": "Feedback achterlaten",
             "fullScreen": "Volledig scherm in- of uitschakelen",
             "grantModerator": "Moderatorrechten verlenen",
@@ -736,7 +728,6 @@
             "toggleCamera": "Camera wisselen",
             "toggleFilmstrip": "Filmstrip in- of uitschakelen",
             "videomute": "Video dempen in- of uitschakelen",
-            "videoblur": "Video vervagen in- of uitschakelen",
             "selectBackground": "Achtergrond selecteren"
         },
         "addPeople": "Personen aan uw gesprek toevoegen",
@@ -801,7 +792,6 @@
         "videomute": "Camera starten / stoppen",
         "videoSettings": "Instellingen van camera",
         "selectBackground": "Achtergrond selecteren",
-        "startvideoblur": "Vervaag mijn achtergrond",
         "stopvideoblur": "Achtergrond vervagen uitschakelen"
     },
     "transcribing": {
@@ -850,8 +840,6 @@
         "ld": "LD",
         "ldTooltip": "U bekijkt video in lage resolutie",
         "lowDefinition": "Lage resolutie",
-        "onlyAudioAvailable": "Alleen audio is beschikbaar",
-        "onlyAudioSupported": "In deze browser wordt alleen audio ondersteund.",
         "sd": "SD",
         "sdTooltip": "U bekijkt video in standaard resolutie",
         "standardDefinition": "Standaard resolutie"
