@@ -272,7 +272,12 @@ body.welcome-page {
     }
 
     .welcome-footer {
-        background: #131519;
+        background: linear-gradient(
+            -90deg,
+            #02294b 0%,
+            #044986 50%,
+            #02294b 100%
+        );
         color: #fff;
         margin-top: 40px;
         position: relative;
