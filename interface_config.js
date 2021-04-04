@@ -9,9 +9,9 @@
  */
 
 var interfaceConfig = {
-    APP_NAME: 'Vevomo',
-    AUDIO_LEVEL_PRIMARY_COLOR: 'rgba(255,255,255,0.4)',
-    AUDIO_LEVEL_SECONDARY_COLOR: 'rgba(255,255,255,0.2)',
+    APP_NAME: "Vevomo",
+    AUDIO_LEVEL_PRIMARY_COLOR: "rgba(255,255,255,0.4)",
+    AUDIO_LEVEL_SECONDARY_COLOR: "rgba(255,255,255,0.2)",
 
     /**
      * A UX mode where the last screen share participant is automatically
@@ -21,8 +21,8 @@ var interfaceConfig = {
      *
      * Note: this mode is experimental and subject to breakage.
      */
-    AUTO_PIN_LATEST_SCREEN_SHARE: 'remote-only',
-    BRAND_WATERMARK_LINK: '',
+    AUTO_PIN_LATEST_SCREEN_SHARE: "remote-only",
+    BRAND_WATERMARK_LINK: "",
 
     CLOSE_PAGE_GUEST_HINT: false, // A html text to be shown to guests on the close page, false disables it
     /**
@@ -51,11 +51,11 @@ var interfaceConfig = {
      */
     CONNECTION_INDICATOR_DISABLED: false,
 
-    DEFAULT_BACKGROUND: '#474747',
-    DEFAULT_LOCAL_DISPLAY_NAME: 'me',
-    DEFAULT_LOGO_URL: 'images/watermark-vevomo.svg',
-    DEFAULT_REMOTE_DISPLAY_NAME: 'Vevomo User',
-    DEFAULT_WELCOME_PAGE_LOGO_URL: 'images/watermark-vevomo.svg',
+    DEFAULT_BACKGROUND: "#474747",
+    DEFAULT_LOCAL_DISPLAY_NAME: "me",
+    DEFAULT_LOGO_URL: "images/watermark-vevomo.svg",
+    DEFAULT_REMOTE_DISPLAY_NAME: "Vevomo User",
+    DEFAULT_WELCOME_PAGE_LOGO_URL: "images/watermark-vevomo.svg",
 
     DISABLE_DOMINANT_SPEAKER_INDICATOR: false,
 
@@ -114,13 +114,13 @@ var interfaceConfig = {
     /**
      * Hide the invite prompt in the header when alone in the meeting.
      */
-    HIDE_INVITE_MORE_HEADER: false,
+    HIDE_INVITE_MORE_HEADER: true,
 
     INITIAL_TOOLBAR_TIMEOUT: 20000,
-    JITSI_WATERMARK_LINK: 'https://vevomo.com',
+    JITSI_WATERMARK_LINK: "https://vevomo.com",
 
     LANG_DETECTION: true, // Allow i18n to detect the system language
-    LIVE_STREAMING_HELP_LINK: 'https://vevomo.com', // Documentation reference for the live streaming feature.
+    LIVE_STREAMING_HELP_LINK: "https://vevomo.com", // Documentation reference for the live streaming feature.
     LOCAL_THUMBNAIL_RATIO: 16 / 9, // 16:9
 
     /**
@@ -143,28 +143,38 @@ var interfaceConfig = {
     /**
      * Specify custom URL for downloading android mobile app.
      */
-    MOBILE_DOWNLOAD_LINK_ANDROID: 'https://play.google.com/store/apps/details?id=org.jitsi.meet',
+    MOBILE_DOWNLOAD_LINK_ANDROID:
+        "https://play.google.com/store/apps/details?id=org.jitsi.meet",
 
     /**
      * Specify custom URL for downloading f droid app.
      */
-    MOBILE_DOWNLOAD_LINK_F_DROID: 'https://f-droid.org/en/packages/org.jitsi.meet/',
+    MOBILE_DOWNLOAD_LINK_F_DROID:
+        "https://f-droid.org/en/packages/org.jitsi.meet/",
 
     /**
      * Specify URL for downloading ios mobile app.
      */
-    MOBILE_DOWNLOAD_LINK_IOS: 'https://itunes.apple.com/us/app/jitsi-meet/id1165103905',
+    MOBILE_DOWNLOAD_LINK_IOS:
+        "https://itunes.apple.com/us/app/jitsi-meet/id1165103905",
 
-    NATIVE_APP_NAME: 'Vevomo',
+    NATIVE_APP_NAME: "Vevomo",
 
     // Names of browsers which should show a warning stating the current browser
     // has a suboptimal experience. Browsers which are not listed as optimal or
     // unsupported are considered suboptimal. Valid values are:
     // chrome, chromium, edge, electron, firefox, nwjs, opera, safari
-    OPTIMAL_BROWSERS: [ 'chrome', 'chromium', 'firefox', 'nwjs', 'electron', 'safari' ],
+    OPTIMAL_BROWSERS: [
+        "chrome",
+        "chromium",
+        "firefox",
+        "nwjs",
+        "electron",
+        "safari",
+    ],
 
     POLICY_LOGO: null,
-    PROVIDER_NAME: 'Vevomo',
+    PROVIDER_NAME: "Vevomo",
 
     /**
      * If true, will display recent list
@@ -174,7 +184,13 @@ var interfaceConfig = {
     RECENT_LIST_ENABLED: true,
     REMOTE_THUMBNAIL_RATIO: 1, // 1:1
 
-    SETTINGS_SECTIONS: [ 'devices', 'language', 'moderator', 'profile', 'calendar' ],
+    SETTINGS_SECTIONS: [
+        "devices",
+        "language",
+        "moderator",
+        "profile",
+        "calendar",
+    ],
 
     /**
      * Specify which sharing features should be displayed. If the value is not set
@@ -185,10 +201,10 @@ var interfaceConfig = {
     SHOW_BRAND_WATERMARK: false,
 
     /**
-    * Decides whether the chrome extension banner should be rendered on the landing page and during the meeting.
-    * If this is set to false, the banner will not be rendered at all. If set to true, the check for extension(s)
-    * being already installed is done before rendering.
-    */
+     * Decides whether the chrome extension banner should be rendered on the landing page and during the meeting.
+     * If this is set to false, the banner will not be rendered at all. If set to true, the check for extension(s)
+     * being already installed is done before rendering.
+     */
     SHOW_CHROME_EXTENSION_BANNER: false,
 
     SHOW_DEEP_LINKING_IMAGE: false,
@@ -200,7 +216,7 @@ var interfaceConfig = {
      * If indicated some of the error dialogs may point to the support URL for
      * help.
      */
-    SUPPORT_URL: 'https://vevomo.com/',
+    SUPPORT_URL: "https://vevomo.com/",
 
     TOOLBAR_ALWAYS_VISIBLE: false,
 
@@ -231,7 +247,7 @@ var interfaceConfig = {
     // screen, 'height' would fit the original video height to the height of the
     // screen, 'width' would fit the original video width to the width of the
     // screen respecting ratio.
-    VIDEO_LAYOUT_FIT: 'both',
+    VIDEO_LAYOUT_FIT: "both",
 
     /**
      * If true, hides the video quality label indicating the resolution status
@@ -284,7 +300,7 @@ var interfaceConfig = {
     // Allow all above example options to include a trailing comma and
     // prevent fear when commenting out the last value.
     // eslint-disable-next-line sort-keys
-    makeJsonParserHappy: 'even if last key had a trailing comma'
+    makeJsonParserHappy: "even if last key had a trailing comma",
 
     // No configuration value should follow this line.
 };
