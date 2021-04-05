@@ -9,21 +9,20 @@ import logger from './logger';
 /**
  * Signals the local participant activate the virtual background video or not.
  *
- * @param {boolean} enabled - If true enables video background, false otherwise.
- * @param {number} blurValue - Indicates the selected blur value.
+ * @param {Object} options - Represents the virtual background setted options.
  * @returns {Promise}
  */
-export function toggleBackgroundEffect(enabled: boolean, blurValue: number) {
+export function toggleBackgroundEffect(options: Object) {
     return async function(dispatch: Object => Object, getState: () => any) {
+        await dispatch(backgroundEnabled(options.enabled, options.blurValue));
+        await dispatch(setVirtualBackground(options));
         const state = getState();
-
         const { jitsiTrack } = getLocalVideoTrack(state['features/base/tracks']);
         const virtualBackground = state['features/virtual-background'];
 
         try {
-            if (enabled) {
+            if (options.enabled) {
                 await jitsiTrack.setEffect(await createVirtualBackgroundEffect(virtualBackground));
-                dispatch(backgroundEnabled(true, blurValue));
             } else {
                 await jitsiTrack.setEffect(undefined);
                 dispatch(backgroundEnabled(false, 0));
@@ -38,19 +37,18 @@ export function toggleBackgroundEffect(enabled: boolean, blurValue: number) {
 /**
  * Sets the selected virtual background image object.
  *
- * @param {Object} virtualSource - Virtual background image source.
- * @param {boolean} isVirtualBackground - Indicate if virtual image is activated.
+ * @param {Object} options - Represents the virtual background setted options.
  * @returns {{
  *     type: SET_VIRTUAL_BACKGROUND,
  *     virtualSource: string,
  *     isVirtualBackground: boolean,
  * }}
  */
-export function setVirtualBackground(virtualSource: string, isVirtualBackground: boolean) {
+export function setVirtualBackground(options: Object) {
     return {
         type: SET_VIRTUAL_BACKGROUND,
-        virtualSource,
-        isVirtualBackground
+        virtualSource: options.virtualBackground.url,
+        isVirtualBackground: options.virtualBackground.activated
     };
 }
 

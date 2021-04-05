@@ -10,7 +10,7 @@ import { translate } from '../../base/i18n';
 import { Icon, IconBlurBackground, IconCancelSelection } from '../../base/icons';
 import { connect } from '../../base/redux';
 import { Tooltip } from '../../base/tooltip';
-import { toggleBackgroundEffect, setVirtualBackground, backgroundEnabled } from '../actions';
+import { toggleBackgroundEffect } from '../actions';
 import { resizeImage, toDataURL } from '../functions';
 import logger from '../logger';
 
@@ -74,37 +74,69 @@ function VirtualBackground({ dispatch, t }: Props) {
     }, [ storedImages ]);
 
     const [ selected, setSelected ] = useState('');
-
     const enableBlur = async (blurValue, selection) => {
         isloading(true);
         setSelected(selection);
-        await dispatch(setVirtualBackground('', false));
-        await dispatch(backgroundEnabled(true, blurValue));
-        await dispatch(toggleBackgroundEffect(true, blurValue));
+        await dispatch(
+            toggleBackgroundEffect({
+                enabled: true,
+                blurValue,
+                virtualBackground: {
+                    url: '',
+                    activated: false
+                }
+            })
+        );
         isloading(false);
     };
 
     const removeBackground = async () => {
         isloading(true);
         setSelected('none');
-        await dispatch(setVirtualBackground('', false));
-        await dispatch(toggleBackgroundEffect(false, 0));
+        await dispatch(
+            toggleBackgroundEffect({
+                enabled: false,
+                blurValue: 0,
+                virtualBackground: {
+                    url: '',
+                    activated: false
+                }
+            })
+        );
         isloading(false);
     };
 
     const setUploadedImageBackground = async image => {
         isloading(true);
         setSelected(image.id);
-        await dispatch(setVirtualBackground(image.src, true));
-        await dispatch(toggleBackgroundEffect(true, 0));
+        await dispatch(
+            toggleBackgroundEffect({
+                enabled: true,
+                blurValue: 0,
+                virtualBackground: {
+                    url: image.src,
+                    activated: true
+                }
+            })
+        );
         isloading(false);
     };
 
     const setImageBackground = async image => {
         isloading(true);
         setSelected(image.id);
-        await dispatch(setVirtualBackground(await toDataURL(image.src), true));
-        await dispatch(toggleBackgroundEffect(true, 0));
+        const imgSource = await toDataURL(image.src);
+
+        await dispatch(
+            toggleBackgroundEffect({
+                enabled: true,
+                blurValue: 0,
+                virtualBackground: {
+                    url: imgSource,
+                    activated: true
+                }
+            })
+        );
         isloading(false);
     };
 
@@ -123,9 +155,16 @@ function VirtualBackground({ dispatch, t }: Props) {
                     src: resizedImage
                 }
             ]);
-
-            await dispatch(setVirtualBackground(resizedImage, true));
-            await dispatch(toggleBackgroundEffect(true, 0));
+            await dispatch(
+                toggleBackgroundEffect({
+                    enabled: true,
+                    blurValue: 0,
+                    virtualBackground: {
+                        url: resizedImage,
+                        activated: true
+                    }
+                })
+            );
             isloading(false);
         };
         reader.onerror = () => {
