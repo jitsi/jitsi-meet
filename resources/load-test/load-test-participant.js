@@ -133,7 +133,7 @@ function updateLastN() {
 function setNumberOfParticipants() {
     $('#participants').text(numParticipants);
     /* jitsi-meet's current Tile View behavior. */
-    const ids = room.getParticipants().map(participant => participant.id);
+    const ids = room.getParticipants().map(participant => participant.getId());
     room.selectParticipants(ids);
     updateMaxFrameHeight();
     updateLastN();
