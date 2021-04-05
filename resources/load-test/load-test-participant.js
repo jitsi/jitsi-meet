@@ -24,6 +24,8 @@ const { room: roomName } = parseURIString(window.location.toString());
 
 let connection = null;
 
+let connected = false;
+
 let room = null;
 
 let numParticipants = 1;
@@ -92,6 +94,10 @@ window.APP = {
  * Simple emulation of jitsi-meet's screen layout behavior
  */
 function updateMaxFrameHeight() {
+    if (!connected) {
+        return;
+    }
+
     let newMaxFrameHeight;
 
     if (numParticipants <= 2) {
@@ -112,6 +118,10 @@ function updateMaxFrameHeight() {
  * Simple emulation of jitsi-meet's lastN behavior
  */
 function updateLastN() {
+    if (!connected) {
+        return;
+    }
+
     let lastN = typeof config.channelLastN === 'undefined' ? -1 : config.channelLastN;
 
     const limitedLastN = limitLastN(numParticipants, validateLastNLimits(config.lastNLimits));
@@ -128,13 +138,34 @@ function updateLastN() {
 }
 
 /**
- *
+ * Simple emulation of jitsi-meet's selectParticipants behavior
  */
-function setNumberOfParticipants() {
-    $('#participants').text(numParticipants);
+function selectParticipants() {
+    if (!connected) {
+        return;
+    }
     /* jitsi-meet's current Tile View behavior. */
     const ids = room.getParticipants().map(participant => participant.getId());
     room.selectParticipants(ids);
+}
+
+/**
+ * Called when number of participants changes.
+ */
+function setNumberOfParticipants() {
+    $('#participants').text(numParticipants);
+    selectParticipants();
+    updateMaxFrameHeight();
+    updateLastN();
+}
+
+/**
+ * Called when ICE connects
+ */
+function onConnectionEstablished() {
+    connected = true;
+
+    selectParticipants();
     updateMaxFrameHeight();
     updateLastN();
 }
@@ -258,6 +289,7 @@ function onConnectionSuccess() {
     room.on(JitsiMeetJS.events.conference.STARTED_MUTED, onStartMuted);
     room.on(JitsiMeetJS.events.conference.TRACK_ADDED, onRemoteTrack);
     room.on(JitsiMeetJS.events.conference.CONFERENCE_JOINED, onConferenceJoined);
+    room.on(JitsiMeetJS.events.conference.CONNECTION_ESTABLISHED, onConnectionEstablished);
     room.on(JitsiMeetJS.events.conference.USER_JOINED, onUserJoined);
     room.on(JitsiMeetJS.events.conference.USER_LEFT, onUserLeft);
 
