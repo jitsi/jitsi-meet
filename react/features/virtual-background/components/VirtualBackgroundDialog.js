@@ -14,10 +14,10 @@ import { toggleBackgroundEffect } from '../actions';
 import { resizeImage, toDataURL } from '../functions';
 import logger from '../logger';
 
-// The limit of virtual background uploads is 21. When the number
-// of uploads is 22 we trigger the deleteStoredImage function to delete
+// The limit of virtual background uploads is 24. When the number
+// of uploads is 25 we trigger the deleteStoredImage function to delete
 // the first/oldest uploaded background.
-const backgroundsLimit = 22;
+const backgroundsLimit = 25;
 const images = [
     {
         id: 1,
@@ -67,7 +67,12 @@ function VirtualBackground({ dispatch, t }: Props) {
      * Updates stored images on local storage.
      */
     useEffect(() => {
-        jitsiLocalStorage.setItem('virtualBackgrounds', JSON.stringify(storedImages));
+        try {
+            jitsiLocalStorage.setItem('virtualBackgrounds', JSON.stringify(storedImages));
+        } catch (err) {
+            // Preventing localStorage QUOTA_EXCEEDED_ERR
+            err && deleteStoredImage(storedImages[0]);
+        }
         if (storedImages.length === backgroundsLimit) {
             deleteStoredImage(storedImages[0]);
         }
