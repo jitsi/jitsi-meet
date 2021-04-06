@@ -23,6 +23,7 @@ import {
     IconPresentation,
     IconRaisedHand,
     IconRec,
+    IconShareAudio,
     IconShareDesktop
 } from '../../../base/icons';
 import JitsiMeetJS from '../../../base/lib-jitsi-meet';
@@ -1001,7 +1002,7 @@ class Toolbox extends Component<Props> {
             this._shouldShowButton('shareaudio') && isScreenAudioSupported()
                 && <OverflowMenuItem
                     accessibilityLabel = { t('toolbar.accessibilityLabel.shareaudio') }
-                    icon = { IconRec }
+                    icon = { IconShareAudio }
                     key = 'shareaudio'
                     onClick = { this._onToolbarToggleShareAudio }
                     text = { t('toolbar.shareaudio') } />,
