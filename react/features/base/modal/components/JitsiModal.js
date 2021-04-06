@@ -1,7 +1,7 @@
 // @flow
 
 import React, { PureComponent } from 'react';
-import { KeyboardAvoidingView, SafeAreaView } from 'react-native';
+import { KeyboardAvoidingView, Platform, SafeAreaView } from 'react-native';
 
 import { ColorSchemeRegistry } from '../../color-scheme';
 import { HeaderWithNavigation, SlidingView } from '../../react';
@@ -106,7 +106,12 @@ class JitsiModal extends PureComponent<Props> {
                 position = { position }
                 show = { _show }>
                 <KeyboardAvoidingView
-                    behavior = 'height'
+                    behavior =
+                        {
+                            Platform.OS === 'ios'
+                                ? 'padding' : 'height'
+                        }
+                    enabled = { true }
                     style = { [
                         _headerStyles.page,
                         _styles.page,
