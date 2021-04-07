@@ -41,14 +41,16 @@ export function toggleBackgroundEffect(options: Object) {
  * @returns {{
  *     type: SET_VIRTUAL_BACKGROUND,
  *     virtualSource: string,
- *     blurValue: number
+ *     blurValue: number,
+ *     type: string,
  * }}
  */
 export function setVirtualBackground(options: Object) {
     return {
         type: SET_VIRTUAL_BACKGROUND,
-        virtualSource: options.virtualBackground.url,
-        blurValue: options.blurValue
+        virtualSource: options?.url,
+        blurValue: options?.blurValue,
+        backgroundType: options?.backgroundType
     };
 }
 

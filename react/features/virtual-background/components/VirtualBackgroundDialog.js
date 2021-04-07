@@ -84,11 +84,9 @@ function VirtualBackground({ dispatch, t }: Props) {
         setSelected(selection);
         await dispatch(
             toggleBackgroundEffect({
+                backgroundType: 'blur',
                 enabled: true,
-                blurValue,
-                virtualBackground: {
-                    url: ''
-                }
+                blurValue
             })
         );
         isloading(false);
@@ -99,11 +97,7 @@ function VirtualBackground({ dispatch, t }: Props) {
         setSelected('none');
         await dispatch(
             toggleBackgroundEffect({
-                enabled: false,
-                blurValue: 0,
-                virtualBackground: {
-                    url: ''
-                }
+                enabled: false
             })
         );
         isloading(false);
@@ -114,11 +108,9 @@ function VirtualBackground({ dispatch, t }: Props) {
         setSelected(image.id);
         await dispatch(
             toggleBackgroundEffect({
+                backgroundType: 'image',
                 enabled: true,
-                blurValue: 0,
-                virtualBackground: {
-                    url: image.src
-                }
+                url: image.src
             })
         );
         isloading(false);
@@ -127,15 +119,13 @@ function VirtualBackground({ dispatch, t }: Props) {
     const setImageBackground = async image => {
         isloading(true);
         setSelected(image.id);
-        const imgSource = await toDataURL(image.src);
+        const url = await toDataURL(image.src);
 
         await dispatch(
             toggleBackgroundEffect({
+                backgroundType: 'image',
                 enabled: true,
-                blurValue: 0,
-                virtualBackground: {
-                    url: imgSource
-                }
+                url
             })
         );
         isloading(false);
@@ -146,23 +136,21 @@ function VirtualBackground({ dispatch, t }: Props) {
 
         reader.readAsDataURL(imageFile[0]);
         reader.onload = async () => {
-            const resizedImage = await resizeImage(reader.result);
+            const url = await resizeImage(reader.result);
 
             isloading(true);
             setStoredImages([
                 ...storedImages,
                 {
                     id: uuid.v4(),
-                    src: resizedImage
+                    src: url
                 }
             ]);
             await dispatch(
                 toggleBackgroundEffect({
+                    backgroundType: 'image',
                     enabled: true,
-                    blurValue: 0,
-                    virtualBackground: {
-                        url: resizedImage
-                    }
+                    url
                 })
             );
             isloading(false);
