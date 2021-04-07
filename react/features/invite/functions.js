@@ -825,13 +825,15 @@ export function inviteSipEndpoints( // eslint-disable-line max-params
         return Promise.resolve();
     }
 
+    const baseUrl = window.location.href.toLowerCase().replace(`/${roomName}`, '');
+
     return fetch(
-       `${sipInviteUrl}?token=${jwt}`,
+       sipInviteUrl,
        {
            body: JSON.stringify({
                callParams: {
                    callUrlInfo: {
-                       baseUrl: window.location.origin,
+                       baseUrl,
                        callName: roomName
                    }
                },
@@ -842,6 +844,7 @@ export function inviteSipEndpoints( // eslint-disable-line max-params
            }),
            method: 'POST',
            headers: {
+               'Authorization': `Bearer ${jwt}`,
                'Content-Type': 'application/json'
            }
        }
