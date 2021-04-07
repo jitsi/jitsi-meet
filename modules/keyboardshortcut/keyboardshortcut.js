@@ -87,7 +87,9 @@ const KeyboardShortcut = {
             if (!this.getEnabled()) {
                 return;
             }
-            if (!document.querySelector(_focusedElementsSelector)) {
+            const focusedElement = document.querySelector(_focusedElementsSelector);
+
+            if (!focusedElement) {
                 if (this._getKeyboardKey(e).toUpperCase() === ' ') {
                     if (APP.conference.isLocalAudioMuted()) {
                         sendAnalytics(createShortcutEvent(
@@ -100,8 +102,6 @@ const KeyboardShortcut = {
                 }
             } else if (this._getKeyboardKey(e).toUpperCase() === 'ESCAPE') {
                 // Allow to remove focus from selected elements using ESC key.
-                const focusedElement = document.querySelector(_focusedElementsSelector);
-
                 if (focusedElement && focusedElement.blur) {
                     focusedElement.blur();
                 }
