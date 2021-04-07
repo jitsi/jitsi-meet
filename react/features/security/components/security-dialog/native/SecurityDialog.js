@@ -13,7 +13,7 @@ import {
 import { getFeatureFlag, MEETING_PASSWORD_ENABLED } from '../../../../base/flags';
 import { translate } from '../../../../base/i18n';
 import {
-    isLocalParticipantModerator
+    isLocalParticipantModerator,
 } from '../../../../base/participants';
 import { StyleType } from '../../../../base/styles';
 import { toggleLobbyMode } from '../../../../lobby/actions.any';
@@ -71,6 +71,11 @@ type Props = {
      * as defined by room-lock constants.
      */
     _locked: string,
+
+    /**
+     * Whether the room is locked by another participant than the moderator.
+     */
+    _lockedByAnotherParticipant: boolean,
 
     /**
      * The current known password for the JitsiConference.
@@ -204,7 +209,7 @@ class SecurityDialog extends PureComponent<Props, State> {
      */
     _renderRoomLock() {
         const {
-            _isModerator,
+            _lockedByAnotherParticipant,
             _locked,
             _roomLockSwitchVisible,
             _securityDialogStyles,
@@ -225,7 +230,8 @@ class SecurityDialog extends PureComponent<Props, State> {
                     { t('security.about') }
                 </Text>
                 <RoomLockSwitch
-                    locked = { _locked === LOCKED_REMOTELY || !_isModerator }
+                    locked = { _locked }
+                    lockedByAnotherParticipant = { _lockedByAnotherParticipant }
                     onToggleRoomLock = { this._onToggleRoomLock }
                     toggleRoomLock = { showElement } />
                 { this._renderRoomLockMessage() }
@@ -311,9 +317,9 @@ class SecurityDialog extends PureComponent<Props, State> {
      */
     _onToggleRoomLock() {
         const { showElement } = this.state;
-        const { _locked, dispatch } = this.props;
+        const { _isModerator, _locked, dispatch } = this.props;
 
-        if (_locked === LOCKED_LOCALLY) {
+        if (_locked === LOCKED_LOCALLY || _isModerator) {
             dispatch(unlockRoom());
         }
 
@@ -406,6 +412,7 @@ function _mapStateToProps(state: Object): Object {
         _lobbyModeSwitchVisible:
             lobbySupported && isLocalParticipantModerator(state) && !hideLobbyButton,
         _locked: locked,
+        _lockedByAnotherParticipant: locked && !isLocalParticipantModerator(state),
         _password: password,
         _passwordNumberOfDigits: roomPasswordNumberOfDigits,
         _roomLockSwitchVisible: visible,

@@ -22,6 +22,11 @@ type Props = {
     locked: boolean,
 
     /**
+     * Whether the room is locked by another participant than the moderator.
+     */
+    lockedByAnotherParticipant: boolean,
+
+    /**
      * Callback to be invoked when the user toggles room lock.
      */
     onToggleRoomLock: Function,
@@ -45,6 +50,7 @@ type Props = {
 function RoomLockSwitch(
         {
             locked,
+            lockedByAnotherParticipant,
             onToggleRoomLock,
             toggleRoomLock,
             t
@@ -59,7 +65,7 @@ function RoomLockSwitch(
                 }
             </Text>
             <Switch
-                disabled = { locked }
+                disabled = { lockedByAnotherParticipant }
                 onValueChange = { onToggleRoomLock }
                 thumbColor = {
                     toggleRoomLock
