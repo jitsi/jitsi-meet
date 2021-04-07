@@ -29,7 +29,6 @@ type Props = AbstractButtonProps & {
      * The redux {@code dispatch} function.
      */
     dispatch: Function,
-    _conference: any
 };
 
 /**
@@ -49,8 +48,8 @@ class VideoBackgroundButton extends AbstractButton<Props, *> {
      * @returns {void}
      */
     _handleClick() {
-        const { dispatch, _conference} = this.props;
-console.log(_conference, 'conference???')
+        const { dispatch } = this.props;
+
         dispatch(openDialog(VirtualBackgroundDialog));
     }
 
@@ -91,7 +90,6 @@ function _mapStateToProps(state): Object {
     const tracks = state['features/base/tracks'];
 
     return {
-        _conference: state['features/base/conference'],
         _isBackgroundEnabled: Boolean(state['features/virtual-background'].backgroundEffectEnabled),
         _videoMuted: isLocalCameraTrackMuted(tracks)
     };
