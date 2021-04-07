@@ -59,10 +59,17 @@ export function isAnalyticsEnabled(stateful: Function | Object) {
  * {@code false}, otherwise.
  */
 export function isAvatarUrlValid(stateful: Function | Object, avatarURL: string) {
-    const { disableThirdPartyRequests, gravatarBaseURL } = toState(stateful)['features/base/config'];
+    const state = toState(stateful);
+    const { locationURL } = state['features/base/connection'];
+    const { disableThirdPartyRequests, gravatarBaseURL } = state['features/base/config'];
 
     if (disableThirdPartyRequests) {
-        return avatarURL && avatarURL.startsWith(window.location.origin);
+        if (!locationURL || !locationURL.origin) {
+            return false;
+        }
+
+        return avatarURL && avatarURL.startsWith(locationURL.origin);
+
     } else if (gravatarBaseURL) {
         return avatarURL && avatarURL.startsWith(gravatarBaseURL);
     }
