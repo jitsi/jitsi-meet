@@ -28,7 +28,7 @@ type Props = AbstractButtonProps & {
     /**
      * The redux {@code dispatch} function.
      */
-    dispatch: Function,
+    dispatch: Function
 };
 
 /**
