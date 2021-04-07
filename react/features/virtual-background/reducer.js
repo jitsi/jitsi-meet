@@ -30,14 +30,13 @@ ReducerRegistry.register(STORE_NAME, (state = {}, action) => {
         return {
             ...state,
             virtualSource,
-            isVirtualBackground
+            blurValue
         };
     }
     case BACKGROUND_ENABLED: {
         return {
             ...state,
-            backgroundEffectEnabled,
-            blurValue
+            backgroundEffectEnabled
         };
     }
     }

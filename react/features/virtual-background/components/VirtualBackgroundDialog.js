@@ -87,8 +87,7 @@ function VirtualBackground({ dispatch, t }: Props) {
                 enabled: true,
                 blurValue,
                 virtualBackground: {
-                    url: '',
-                    activated: false
+                    url: ''
                 }
             })
         );
@@ -103,8 +102,7 @@ function VirtualBackground({ dispatch, t }: Props) {
                 enabled: false,
                 blurValue: 0,
                 virtualBackground: {
-                    url: '',
-                    activated: false
+                    url: ''
                 }
             })
         );
@@ -119,8 +117,7 @@ function VirtualBackground({ dispatch, t }: Props) {
                 enabled: true,
                 blurValue: 0,
                 virtualBackground: {
-                    url: image.src,
-                    activated: true
+                    url: image.src
                 }
             })
         );
@@ -137,8 +134,7 @@ function VirtualBackground({ dispatch, t }: Props) {
                 enabled: true,
                 blurValue: 0,
                 virtualBackground: {
-                    url: imgSource,
-                    activated: true
+                    url: imgSource
                 }
             })
         );
@@ -165,8 +161,7 @@ function VirtualBackground({ dispatch, t }: Props) {
                     enabled: true,
                     blurValue: 0,
                     virtualBackground: {
-                        url: resizedImage,
-                        activated: true
+                        url: resizedImage
                     }
                 })
             );

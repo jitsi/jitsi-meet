@@ -14,7 +14,7 @@ import logger from './logger';
  */
 export function toggleBackgroundEffect(options: Object) {
     return async function(dispatch: Object => Object, getState: () => any) {
-        await dispatch(backgroundEnabled(options.enabled, options.blurValue));
+        await dispatch(backgroundEnabled(options.enabled));
         await dispatch(setVirtualBackground(options));
         const state = getState();
         const { jitsiTrack } = getLocalVideoTrack(state['features/base/tracks']);
@@ -25,10 +25,10 @@ export function toggleBackgroundEffect(options: Object) {
                 await jitsiTrack.setEffect(await createVirtualBackgroundEffect(virtualBackground));
             } else {
                 await jitsiTrack.setEffect(undefined);
-                dispatch(backgroundEnabled(false, 0));
+                dispatch(backgroundEnabled(false));
             }
         } catch (error) {
-            dispatch(backgroundEnabled(false, 0));
+            dispatch(backgroundEnabled(false));
             logger.error('Error on apply backgroun effect:', error);
         }
     };
@@ -41,14 +41,14 @@ export function toggleBackgroundEffect(options: Object) {
  * @returns {{
  *     type: SET_VIRTUAL_BACKGROUND,
  *     virtualSource: string,
- *     isVirtualBackground: boolean,
+ *     blurValue: number
  * }}
  */
 export function setVirtualBackground(options: Object) {
     return {
         type: SET_VIRTUAL_BACKGROUND,
         virtualSource: options.virtualBackground.url,
-        isVirtualBackground: options.virtualBackground.activated
+        blurValue: options.blurValue
     };
 }
 
@@ -56,17 +56,14 @@ export function setVirtualBackground(options: Object) {
  * Signals the local participant that the background effect has been enabled.
  *
  * @param {boolean} backgroundEffectEnabled - Indicate if virtual background effect is activated.
- * @param {number} blurValue - Indicate the setted blur value.
  * @returns {{
  *      type: BACKGROUND_ENABLED,
- *      backgroundEffectEnabled: boolean,
- *      blurValue: number
+ *      backgroundEffectEnabled: boolean
  * }}
  */
-export function backgroundEnabled(backgroundEffectEnabled: boolean, blurValue: number) {
+export function backgroundEnabled(backgroundEffectEnabled: boolean) {
     return {
         type: BACKGROUND_ENABLED,
-        backgroundEffectEnabled,
-        blurValue
+        backgroundEffectEnabled
     };
 }

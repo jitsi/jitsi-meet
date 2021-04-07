@@ -6,8 +6,7 @@
  *
  * @returns {{
  *     type: BACKGROUND_ENABLED,
- *     backgroundEffectEnabled: boolean,
- *     blurValue: number,
+ *     backgroundEffectEnabled: boolean
  * }}
  */
 export const BACKGROUND_ENABLED = 'BACKGROUND_ENABLED';
@@ -17,8 +16,8 @@ export const BACKGROUND_ENABLED = 'BACKGROUND_ENABLED';
  *
  * @returns {{
  *     type: SET_VIRTUAL_BACKGROUND,
- *     isVirtualBackground: boolean,
  *     virtualSource: string,
+ *     blurValue: number,
  * }}
  */
 export const SET_VIRTUAL_BACKGROUND = 'SET_VIRTUAL_BACKGROUND';

@@ -39,7 +39,7 @@ export default class JitsiStreamBackgroundEffect {
     constructor(model: Object, options: Object) {
         this._options = options;
 
-        if (this._options.virtualBackground.isVirtualBackground) {
+        if (this._options.virtualBackground.backgroundEffectEnabled) {
             this._virtualImage = document.createElement('img');
             this._virtualImage.crossOrigin = 'anonymous';
             this._virtualImage.src = this._options.virtualBackground.virtualSource;
@@ -82,7 +82,7 @@ export default class JitsiStreamBackgroundEffect {
         //
 
         // Smooth out the edges.
-        if (this._options.virtualBackground.isVirtualBackground) {
+        if (this._options.virtualBackground.backgroundEffectEnabled) {
             this._outputCanvasCtx.filter = 'blur(4px)';
         } else {
             this._outputCanvasCtx.filter = 'blur(8px)';
@@ -111,7 +111,7 @@ export default class JitsiStreamBackgroundEffect {
         //
 
         this._outputCanvasCtx.globalCompositeOperation = 'destination-over';
-        if (this._options.virtualBackground.isVirtualBackground) {
+        if (this._options.virtualBackground.virtualSource) {
             this._outputCanvasCtx.drawImage(
                 this._virtualImage,
                 0,
