@@ -3,6 +3,8 @@
 import React, { PureComponent } from 'react';
 
 import { AudioSettingsButton, VideoSettingsButton } from '../../../../toolbox/components/web';
+import { VideoBackgroundButton } from '../../../../virtual-background';
+import { checkBlurSupport } from '../../../../virtual-background/functions';
 import { Avatar } from '../../../avatar';
 import { allowUrlSharing } from '../../functions';
 
@@ -114,6 +116,7 @@ export default class PreMeetingScreen extends PureComponent<Props> {
                             <div className = 'toolbox-content-items'>
                                 <AudioSettingsButton visible = { true } />
                                 <VideoSettingsButton visible = { true } />
+                                <VideoBackgroundButton visible = { checkBlurSupport() } />
                             </div>
                         </div>
                     </div>
