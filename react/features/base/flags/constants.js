@@ -87,6 +87,12 @@ export const INVITE_ENABLED = 'invite.enabled';
 export const IOS_RECORDING_ENABLED = 'ios.recording.enabled';
 
 /**
+ * Flag indicating if screen sharing should be enabled in iOS.
+ * Default: disabled (false).
+ */
+export const IOS_SCREENSHARING_ENABLED = 'ios.screensharing.enabled';
+
+/**
  * Flag indicating if kickout is enabled.
  * Default: enabled (true).
  */
