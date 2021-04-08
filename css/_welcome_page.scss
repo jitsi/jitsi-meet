@@ -5,7 +5,7 @@ body.welcome-page {
 
 .welcome {
     background-image: $welcomePageBackground;
-    background-color: #fff;
+    background: linear-gradient(-90deg, #02294b 0, #044986 50%, #02294b 100%);
     display: flex;
     flex-direction: column;
     font-family: $welcomePageFontFamily;
@@ -14,12 +14,17 @@ body.welcome-page {
     position: relative;
 
     .header {
-        background-image: $welcomePageHeaderBackground;
+        // background-image: $welcomePageHeaderBackground;
         background-position: $welcomePageHeaderBackgroundPosition;
         background-repeat: $welcomePageHeaderBackgroundRepeat;
         background-size: $welcomePageHeaderBackgroundSize;
         padding-bottom: $welcomePageHeaderPaddingBottom;
-        background-color: #131519;
+        background: linear-gradient(
+            -90deg,
+            #02294b 0,
+            #044986 50%,
+            #02294b 100%
+        );
         height: 400px;
         overflow: hidden;
         position: relative;
