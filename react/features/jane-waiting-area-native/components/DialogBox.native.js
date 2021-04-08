@@ -4,9 +4,10 @@ import jwtDecode from 'jwt-decode';
 import _ from 'lodash';
 import moment from 'moment';
 import React, { Component } from 'react';
-import { Image, Linking, Text, View } from 'react-native';
+import { Image, Linking, Text, View, Clipboard } from 'react-native';
 import { WebView } from 'react-native-webview';
 
+import { createWaitingAreaPageEvent, sendAnalytics } from '../../analytics';
 import { connect as startConference } from '../../base/connection';
 import { getLocalizedDateFormatter } from '../../base/i18n';
 import { getLocalParticipantFromJwt, getLocalParticipantType } from '../../base/participants';
@@ -23,7 +24,6 @@ import {
 
 import { ActionButton } from './ActionButton.native';
 import styles from './styles';
-
 
 type DialogTitleProps = {
     participantType: string,
@@ -87,9 +87,32 @@ class DialogBox extends Component<DialogBoxProps> {
         this._onMessageUpdate = this._onMessageUpdate.bind(this);
     }
 
+    componentDidMount() {
+        const { jwt } = this.props;
+
+        Clipboard.setString('');
+        sendAnalytics(
+            createWaitingAreaPageEvent('loaded', undefined));
+        updateParticipantReadyStatus(jwt, 'waiting');
+    }
+
+
     _webviewOnError(error) {
-        console.log(error, 'webview error');
-        this._joinConference();
+        try {
+            throw new Error(error);
+        } catch (e) {
+            sendAnalytics(
+                createWaitingAreaPageEvent('webview.error', {
+                    error
+                }));
+            this._joinConference();
+        }
+    }
+
+    componentWillUnmount(): * {
+        const { updateRemoteParticipantsStatusesAction } = this.props;
+
+        updateRemoteParticipantsStatusesAction([]);
     }
 
     _joinConference() {
@@ -165,6 +188,10 @@ class DialogBox extends Component<DialogBoxProps> {
         const { jwtPayload, jwt } = this.props;
         const leaveWaitingAreaUrl = _.get(jwtPayload, 'context.leave_waiting_area_url') ?? '';
 
+        sendAnalytics(
+            createWaitingAreaPageEvent('return.button', {
+                event: 'clicked'
+            }));
         updateParticipantReadyStatus(jwt, 'left');
         Linking.openURL(leaveWaitingAreaUrl);
     }
@@ -189,6 +216,10 @@ class DialogBox extends Component<DialogBoxProps> {
         }
 
         if (webViewEvent && webViewEvent.error) {
+            sendAnalytics(
+                createWaitingAreaPageEvent('webview.error', {
+                    error: webViewEvent.error
+                }));
             if (webViewEvent.error.error === 'Signature has expired') {
                 setJaneWaitingAreaAuthStateAction('failed');
             } else {
@@ -217,7 +248,7 @@ class DialogBox extends Component<DialogBoxProps> {
                     </View>
                     <View style = { styles.messageWrapper }>
                         {
-                            <DialogTitle
+                            <DialogTitleHeader
                                 authState = { authState }
                                 localParticipantCanJoin = { localParticipantCanJoin }
                                 participantType = { participantType } />
@@ -306,8 +337,7 @@ const mapDispatchToProps = {
 
 export default connect(mapStateToProps, mapDispatchToProps)(DialogBox);
 
-
-const DialogTitle = (props: DialogTitleProps) => {
+const DialogTitleHeader = (props: DialogTitleProps) => {
     const { participantType, authState, localParticipantCanJoin } = props;
     const tokenExpiredHeader = 'Your appointment booking has expired';
     let header;
@@ -330,16 +360,16 @@ const DialogTitle = (props: DialogTitleProps) => {
 
 const DialogTitleMsg = (props: DialogTitleProps) => {
     const { participantType, authState, localParticipantCanJoin } = props;
-    let title;
+    let message;
 
     if (!localParticipantCanJoin) {
-        title = 'Test your audio and video while you wait.';
+        message = 'Test your audio and video while you wait.';
     } else if (participantType === 'StaffMember') {
-        title = 'When you are ready to begin, click on button below to admit your client into the video session.';
+        message = 'When you are ready to begin, click on button below to admit your client into the video session.';
     } else {
-        title = '';
+        message = '';
     }
 
     return (<Text
-        style = { styles.titleMsg }>{ authState === 'failed' ? '' : title }</Text>);
+        style = { styles.titleMsg }>{ authState === 'failed' ? '' : message }</Text>);
 };

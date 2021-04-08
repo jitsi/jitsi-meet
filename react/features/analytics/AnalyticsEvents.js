@@ -1,4 +1,5 @@
-import _ from "lodash";
+import _ from 'lodash';
+
 /**
  * The constant for the event type 'track'.
  * TODO: keep these constants in a single place. Can we import them from
@@ -820,9 +821,25 @@ export function createConnectionQualityChangedEvent(strength, stats) {
  * Remove the track id from the ConnectionQualityChangedEvent property.
  * If we don't want to send the trackId along with the property to amplitude.
  *
- * @param {Object} event - event object.
- * @returns {Object|number|string|undefined} property.
+ * @param {Object} event - Event object.
+ * @returns {Object|number|string|undefined} Property.
  */
 function removeTrackIdFromEventPropertyObject(event) {
     return event && _.isObject(event) && Object.values(event)[0];
+}
+
+/**
+ * Creates an event for an action on the waiting area page.
+ *
+ * @param {string} action - The action that the event represents.
+ * @param {boolean} attributes - Additional attributes to attach to the event.
+ * @returns {Object} The event in a format suitable for sending via
+ * sendAnalytics.
+ */
+export function createWaitingAreaPageEvent(action, attributes = {}) {
+    return {
+        action,
+        attributes,
+        source: 'waiting.area'
+    };
 }

@@ -3,6 +3,10 @@
 import jwtDecode from 'jwt-decode';
 import _ from 'lodash';
 
+import {
+    createWaitingAreaPageEvent,
+    sendAnalytics
+} from '../analytics';
 import { showErrorNotification } from '../notifications';
 
 export function isJaneWaitingAreaEnabled(state: Object): boolean {
@@ -13,10 +17,8 @@ export function isJaneWaitingAreaEnabled(state: Object): boolean {
     return state['features/base/config'].janeWaitingAreaEnabled || janeWaitingAreaEnabled;
 }
 
-
 export function updateParticipantReadyStatus(jwt: string, status: string): void {
     const jwtPayload = jwt && jwtDecode(jwt) ?? {};
-
     const updateParticipantStatusUrl = _.get(jwtPayload, 'context.update_participant_status_url') ?? '';
     const info = { status };
 
@@ -30,20 +32,23 @@ export function updateParticipantReadyStatus(jwt: string, status: string): void 
             'info': info
         })
     })
-        .then(res => {
-            if (!res.ok) {
-                throw new Error('Failed to update the waiting area state for the local participant.');
-            }
-        })
-        .catch(error => {
-            if (navigator.product !== 'ReactNative') {
-                window.APP.store.dispatch(showErrorNotification({
-                    descriptionKey: error,
-                    titleKey: 'Waiting area error'
-                }));
-            }
-            console.error(error);
-        });
+    .then(res => {
+        if (!res.ok) {
+            throw new Error('Failed to update the waiting area state for the local participant.');
+        }
+        sendAnalytics(createWaitingAreaPageEvent('participant.status.changed', { status }));
+    })
+    .catch(error => {
+        sendAnalytics(createWaitingAreaPageEvent('participant.status.changed', { status: 'failed' }));
+
+        if (navigator.product !== 'ReactNative') {
+            window.APP.store.dispatch(showErrorNotification({
+                descriptionKey: error,
+                titleKey: 'Waiting area error'
+            }));
+        }
+        console.error(error);
+    });
 }
 
 export function checkLocalParticipantCanJoin(remoteParticipantsStatuses, participantType) {
