@@ -69,9 +69,6 @@ import {
 } from './functions';
 import logger from './logger';
 import { Linking } from 'react-native';
-import {
-    updateParticipantReadyStatus
-} from '../../jane-waiting-area-native';
 
 declare var APP: Object;
 
@@ -419,7 +416,6 @@ export function conferenceWillLeave(conference: Object) {
             // eslint-disable-next-line no-mixed-operators
             if (url && surveyUrl) {
 
-                updateParticipantReadyStatus(jwt, 'left');
                 Linking.openURL(surveyUrl).then(() => {
                     sendBeaconToJaneRN(url, data).then(r => {
                         console.log(r, 'response');

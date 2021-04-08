@@ -2,6 +2,10 @@
 /* eslint-disable require-jsdoc,max-len, no-undef*/
 import jwtDecode from 'jwt-decode';
 import _ from 'lodash';
+import {
+    createWaitingAreaPageEvent,
+    sendAnalytics
+} from '../analytics';
 
 export function isJaneWaitingAreaEnabled(state: Object): boolean {
     const { jwt } = state['features/base/jwt'];
@@ -17,7 +21,10 @@ export function updateParticipantReadyStatus(jwt: string, status: string): void 
         const updateParticipantStatusUrl = _.get(jwtPayload, 'context.update_participant_status_url') ?? '';
         const info = { status };
 
-        // sendAnalytics(createWaitingAreaParticipantStatusChangedEvent(status));
+        sendAnalytics(createWaitingAreaPageEvent(
+            'participant.status.changed',
+           { status }
+        ));
 
         return fetch(updateParticipantStatusUrl, {
             method: 'POST',
@@ -30,11 +37,12 @@ export function updateParticipantReadyStatus(jwt: string, status: string): void 
             })
         }).then(res => {
             if (!res.ok) {
-                throw Error('Can Not Update Current Participant\'s Status.');
+                throw Error('Can not update current participant\'s status.');
             }
         });
-    } catch (e) {
-        console.error(e);
+    } catch (error) {
+        sendAnalytics(createWaitingAreaPageEvent('error', { error }));
+        console.error(error);
     }
 }
 
