@@ -12,9 +12,7 @@ import {
 } from '../../../../base/dialog';
 import { getFeatureFlag, MEETING_PASSWORD_ENABLED } from '../../../../base/flags';
 import { translate } from '../../../../base/i18n';
-import {
-    isLocalParticipantModerator,
-} from '../../../../base/participants';
+import { isLocalParticipantModerator } from '../../../../base/participants';
 import { StyleType } from '../../../../base/styles';
 import { toggleLobbyMode } from '../../../../lobby/actions.any';
 import LobbyModeSwitch
@@ -73,9 +71,9 @@ type Props = {
     _locked: string,
 
     /**
-     * Whether the room is locked by another participant than the moderator.
+     * Checks if the conference room is locked or not.
      */
-    _lockedByAnotherParticipant: boolean,
+    _lockedConference: boolean,
 
     /**
      * The current known password for the JitsiConference.
@@ -144,7 +142,7 @@ class SecurityDialog extends PureComponent<Props, State> {
             showElement: Boolean(
                 props._locked === LOCKED_LOCALLY
                 || props._locked === LOCKED_REMOTELY
-            ) || false
+            ) || props._lockedConference
         };
 
         this._onChangeText = this._onChangeText.bind(this);
@@ -209,8 +207,9 @@ class SecurityDialog extends PureComponent<Props, State> {
      */
     _renderRoomLock() {
         const {
-            _lockedByAnotherParticipant,
+            _isModerator,
             _locked,
+            _lockedConference,
             _roomLockSwitchVisible,
             _securityDialogStyles,
             t
@@ -230,10 +229,10 @@ class SecurityDialog extends PureComponent<Props, State> {
                     { t('security.about') }
                 </Text>
                 <RoomLockSwitch
+                    disabled = { !_isModerator }
                     locked = { _locked }
-                    lockedByAnotherParticipant = { _lockedByAnotherParticipant }
                     onToggleRoomLock = { this._onToggleRoomLock }
-                    toggleRoomLock = { showElement } />
+                    toggleRoomLock = { showElement || _lockedConference } />
                 { this._renderRoomLockMessage() }
             </View>
         );
@@ -248,6 +247,7 @@ class SecurityDialog extends PureComponent<Props, State> {
     _renderRoomLockMessage() {
         let textInputProps = _TEXT_INPUT_PROPS;
         const {
+            _isModerator,
             _locked,
             _password,
             _passwordNumberOfDigits,
@@ -263,6 +263,11 @@ class SecurityDialog extends PureComponent<Props, State> {
                 maxLength: _passwordNumberOfDigits
             };
         }
+
+        if (!_isModerator) {
+            return null;
+        }
+
         if (showElement) {
             if (!_locked) {
                 return (
@@ -319,13 +324,13 @@ class SecurityDialog extends PureComponent<Props, State> {
         const { showElement } = this.state;
         const { _isModerator, _locked, dispatch } = this.props;
 
-        if (_locked === LOCKED_LOCALLY || _isModerator) {
-            dispatch(unlockRoom());
-        }
-
         this.setState({
             showElement: !showElement
         });
+
+        if (_locked === LOCKED_LOCALLY || _isModerator) {
+            dispatch(unlockRoom());
+        }
     }
 
     /**
@@ -412,7 +417,7 @@ function _mapStateToProps(state: Object): Object {
         _lobbyModeSwitchVisible:
             lobbySupported && isLocalParticipantModerator(state) && !hideLobbyButton,
         _locked: locked,
-        _lockedByAnotherParticipant: locked && !isLocalParticipantModerator(state),
+        _lockedConference: Boolean(conference && locked),
         _password: password,
         _passwordNumberOfDigits: roomPasswordNumberOfDigits,
         _roomLockSwitchVisible: visible,

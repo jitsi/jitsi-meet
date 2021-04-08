@@ -5,6 +5,7 @@ import { Switch, Text, View } from 'react-native';
 
 import { translate } from '../../base/i18n';
 import { connect } from '../../base/redux';
+import { LOCKED_REMOTELY } from '../constants';
 
 import styles, {
     DISABLED_THUMB_COLOR,
@@ -19,12 +20,12 @@ type Props = {
     /**
      * Checks if the room is locked based on defined room lock constants.
      */
-    locked: boolean,
+    locked: string,
 
     /**
-     * Whether the room is locked by another participant than the moderator.
+     * Whether the switch is disabled.
      */
-    lockedByAnotherParticipant: boolean,
+    disabled: boolean,
 
     /**
      * Callback to be invoked when the user toggles room lock.
@@ -50,7 +51,7 @@ type Props = {
 function RoomLockSwitch(
         {
             locked,
-            lockedByAnotherParticipant,
+            disabled,
             onToggleRoomLock,
             toggleRoomLock,
             t
@@ -60,12 +61,12 @@ function RoomLockSwitch(
         <View style = { styles.roomLockSwitchContainer }>
             <Text>
                 {
-                    locked
+                    locked === LOCKED_REMOTELY
                         && t('passwordSetRemotely')
                 }
             </Text>
             <Switch
-                disabled = { lockedByAnotherParticipant }
+                disabled = { disabled }
                 onValueChange = { onToggleRoomLock }
                 thumbColor = {
                     toggleRoomLock
@@ -77,5 +78,6 @@ function RoomLockSwitch(
         </View>
     );
 }
+
 
 export default translate(connect()(RoomLockSwitch));
