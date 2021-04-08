@@ -75,7 +75,8 @@ function _onImmersiveChange({ getState }) {
         const { enabled: audioOnly } = state['features/base/audio-only'];
         const conference = getCurrentConference(state);
         const dialogOpen = isAnyDialogOpen(state);
-        const fullScreen = conference ? !audioOnly && !dialogOpen : false;
+        const fullscreenEnabled = getFeatureFlag(state, FULLSCREEN_ENABLED, true);
+        const fullScreen = conference ? !audioOnly && !dialogOpen && fullscreenEnabled : false;
 
         _setFullScreen(fullScreen);
     }
