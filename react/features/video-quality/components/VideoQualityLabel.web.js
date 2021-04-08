@@ -3,16 +3,19 @@
 import React from 'react';
 
 import { translate } from '../../base/i18n';
-import { CircularLabel } from '../../base/label';
+import { Label } from '../../base/label';
 import { MEDIA_TYPE } from '../../base/media';
 import { connect } from '../../base/redux';
 import { Tooltip } from '../../base/tooltip';
 import { getTrackByMediaTypeAndParticipant } from '../../base/tracks';
+import { shouldDisplayTileView } from '../../video-layout';
 
 import AbstractVideoQualityLabel, {
     _abstractMapStateToProps,
     type Props as AbstractProps
 } from './AbstractVideoQualityLabel';
+
+declare var interfaceConfig: Object;
 
 type Props = AbstractProps & {
 
@@ -22,6 +25,11 @@ type Props = AbstractProps & {
     _labelKey: string,
 
     /**
+     * Whether to show video quality label or not.
+     */
+     _showVideoQualityLabel: boolean,
+
+    /**
      * The message to show within the label's tooltip.
      */
     _tooltipKey: string,
@@ -29,7 +37,12 @@ type Props = AbstractProps & {
     /**
      * The redux representation of the JitsiTrack displayed on large video.
      */
-    _videoTrack: Object
+    _videoTrack: Object,
+
+    /**
+     * Flag controlling visibility of the component.
+     */
+    _visible: boolean,
 };
 
 /**
@@ -75,9 +88,14 @@ export class VideoQualityLabel extends AbstractVideoQualityLabel<Props> {
             _labelKey,
             _tooltipKey,
             _videoTrack,
+            _visible,
             t
         } = this.props;
 
+
+        if (!_visible) {
+            return null;
+        }
 
         let className, labelContent, tooltipKey;
 
@@ -99,11 +117,11 @@ export class VideoQualityLabel extends AbstractVideoQualityLabel<Props> {
         return (
             <Tooltip
                 content = { t(tooltipKey) }
-                position = { 'left' }>
-                <CircularLabel
+                position = { 'bottom' }>
+                <Label
                     className = { className }
                     id = 'videoResolutionLabel'
-                    label = { labelContent } />
+                    text = { labelContent } />
             </Tooltip>
         );
     }
@@ -171,7 +189,8 @@ function _mapStateToProps(state) {
         ..._abstractMapStateToProps(state),
         _labelKey: translationKeys.labelKey,
         _tooltipKey: translationKeys.tooltipKey,
-        _videoTrack: videoTrackOnLargeVideo
+        _videoTrack: videoTrackOnLargeVideo,
+        _visible: !(shouldDisplayTileView(state) || interfaceConfig.VIDEO_QUALITY_LABEL_DISABLED)
     };
 }
 

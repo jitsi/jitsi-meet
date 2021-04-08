@@ -25,7 +25,7 @@ import {
 } from '../AbstractConference';
 import type { AbstractProps } from '../AbstractConference';
 
-import Labels from './Labels';
+import ConferenceInfo from './ConferenceInfo';
 import { default as Notice } from './Notice';
 
 declare var APP: Object;
@@ -66,11 +66,6 @@ type Props = AbstractProps & {
      * The alpha(opacity) of the background
      */
     _backgroundAlpha: number,
-
-    /**
-     * Whether the local participant is recording the conference.
-     */
-    _iAmRecorder: boolean,
 
     /**
      * Returns true if the 'lobby screen' is visible.
@@ -183,12 +178,10 @@ class Conference extends AbstractConference<Props, *> {
      */
     render() {
         const {
-            _iAmRecorder,
             _isLobbyScreenVisible,
             _layoutClassName,
             _showPrejoin
         } = this.props;
-        const hideLabels = _iAmRecorder;
 
         return (
             <div
@@ -196,13 +189,13 @@ class Conference extends AbstractConference<Props, *> {
                 id = 'videoconference_page'
                 onMouseMove = { this._onShowToolbar }
                 ref = { this._setBackground }>
+                <ConferenceInfo />
 
                 <Notice />
                 <div id = 'videospace'>
                     <LargeVideo />
                     <KnockingParticipantList />
                     <Filmstrip />
-                    { hideLabels || <Labels /> }
                 </div>
 
                 { _showPrejoin || _isLobbyScreenVisible || <Toolbox /> }
@@ -302,7 +295,6 @@ class Conference extends AbstractConference<Props, *> {
 function _mapStateToProps(state) {
     return {
         ...abstractMapStateToProps(state),
-        _iAmRecorder: state['features/base/config'].iAmRecorder,
         _backgroundAlpha: state['features/base/config'].backgroundAlpha,
         _isLobbyScreenVisible: state['features/base/dialog']?.component === LobbyScreen,
         _layoutClassName: LAYOUT_CLASSNAMES[getCurrentLayout(state)],
