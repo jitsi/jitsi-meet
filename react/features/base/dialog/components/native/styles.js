@@ -279,20 +279,19 @@ ColorSchemeRegistry.register('SecurityDialog', {
         borderBottomWidth: 1,
         borderColor: schemeColor('border'),
         color: schemeColor('text'),
-        fontSize: MD_FONT_SIZE,
-        marginRight: 8,
+        fontSize: 14,
         paddingBottom: 8
     },
 
     text: {
         color: schemeColor('text'),
-        fontSize: MD_FONT_SIZE,
-        lineHeight: 24
+        fontSize: 14,
+        marginTop: 8
     },
 
     title: {
+        color: schemeColor('text'),
         fontSize: 18,
-        marginBottom: 8,
-        marginTop: 16
+        fontWeight: 'bold'
     }
 });

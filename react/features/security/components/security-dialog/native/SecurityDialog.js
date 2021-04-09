@@ -1,7 +1,13 @@
 // @flow
 
 import React, { PureComponent } from 'react';
-import { Text, TextInput, View } from 'react-native';
+import {
+    KeyboardAvoidingView,
+    Platform,
+    Text,
+    TextInput,
+    View
+} from 'react-native';
 import { connect } from 'react-redux';
 import type { Dispatch } from 'redux';
 
@@ -17,7 +23,7 @@ import { StyleType } from '../../../../base/styles';
 import { toggleLobbyMode } from '../../../../lobby/actions.any';
 import LobbyModeSwitch
     from '../../../../lobby/components/native/LobbyModeSwitch';
-import { LOCKED_LOCALLY, LOCKED_REMOTELY } from '../../../../room-lock';
+import { LOCKED_LOCALLY } from '../../../../room-lock';
 import {
     endRoomLockRequest,
     unlockRoom
@@ -139,10 +145,7 @@ class SecurityDialog extends PureComponent<Props, State> {
 
         this.state = {
             passwordInputValue: '',
-            showElement: Boolean(
-                props._locked === LOCKED_LOCALLY
-                || props._locked === LOCKED_REMOTELY
-            ) || props._lockedConference
+            showElement: props._locked === LOCKED_LOCALLY || false
         };
 
         this._onChangeText = this._onChangeText.bind(this);
@@ -160,8 +163,16 @@ class SecurityDialog extends PureComponent<Props, State> {
         return (
             <CustomSubmitDialog
                 onSubmit = { this._onSubmit }>
-                { this._renderLobbyMode() }
-                { this._renderRoomLock() }
+                <KeyboardAvoidingView
+                    behavior =
+                        {
+                            Platform.OS === 'ios'
+                                ? 'padding' : 'height'
+                        }
+                    enabled = { true }>
+                    { this._renderLobbyMode() }
+                    { this._renderRoomLock() }
+                </KeyboardAvoidingView>
             </CustomSubmitDialog>
         );
     }
@@ -269,7 +280,7 @@ class SecurityDialog extends PureComponent<Props, State> {
         }
 
         if (showElement) {
-            if (!_locked) {
+            if (typeof _locked === 'undefined') {
                 return (
                     <TextInput
                         onChangeText = { this._onChangeText }
@@ -280,7 +291,7 @@ class SecurityDialog extends PureComponent<Props, State> {
                         { ...textInputProps } />
                 );
             } else if (_locked) {
-                if (_locked === LOCKED_LOCALLY) {
+                if (_locked === LOCKED_LOCALLY && typeof _password !== 'undefined') {
                     return (
                         <TextInput
                             onChangeText = { this._onChangeText }
@@ -321,15 +332,19 @@ class SecurityDialog extends PureComponent<Props, State> {
      * @returns {void}
      */
     _onToggleRoomLock() {
-        const { showElement } = this.state;
         const { _isModerator, _locked, dispatch } = this.props;
+        const { showElement } = this.state;
 
         this.setState({
             showElement: !showElement
         });
 
-        if (_locked === LOCKED_LOCALLY || _isModerator) {
+        if (_locked && _isModerator) {
             dispatch(unlockRoom());
+
+            this.setState({
+                showElement: false
+            });
         }
     }
 
