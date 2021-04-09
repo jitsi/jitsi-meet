@@ -339,7 +339,8 @@
     },
     "virtualBackground": {
         "title": "Backgrounds",
-        "enableBlur": "Enable blur",
+        "blur": "Blur",
+        "slightBlur": "Slight Blur",
         "removeBackground": "Remove background",
         "uploadImage": "Upload image",
         "pleaseWait": "Please wait...",
