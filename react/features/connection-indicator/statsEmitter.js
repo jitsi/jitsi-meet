@@ -7,6 +7,7 @@ import {
     JitsiConnectionQualityEvents,
     JitsiE2ePingEvents
 } from '../base/lib-jitsi-meet';
+import { setHdVideoAlertEnabled } from '../notifications';
 
 /**
  * Contains all the callbacks to be notified when stats are updated.
@@ -156,6 +157,15 @@ const statsEmitter = {
         if (modifiedLocalStats.connectionQuality) {
             const modifiedLocalConnectionStrength = this._getConnectionQuality(modifiedLocalStats.connectionQuality)
                 .strength;
+            const modifiedLocalConnectionBitrate = this._getBandWidthBitrate(modifiedLocalStats.bandwidth);
+
+            if (modifiedLocalConnectionStrength === 'good' && modifiedLocalConnectionBitrate > 2000) {
+                // Enables the hd video alert only if connection strength is "good"
+                // and bitrate > 2000kbps
+                if (navigator.product !== 'ReactNative') {
+                    window.APP.store.dispatch(setHdVideoAlertEnabled(true));
+                }
+            }
 
             if (localConnectionStrength !== modifiedLocalConnectionStrength) {
                 localConnectionStrength = modifiedLocalConnectionStrength;
@@ -204,6 +214,10 @@ const statsEmitter = {
 
     _getConnectionQuality(connectionQuality: number): Object {
         return CONNECTION_QUALITY_STRENGTH.find(x => connectionQuality >= x.connectionQuality) || {};
+    },
+
+    _getBandWidthBitrate(bandwidth: Object): number {
+        return bandwidth.download + bandwidth.upload;
     }
 };
 

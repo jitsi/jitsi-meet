@@ -11,6 +11,21 @@ import {
 import loadEffects from './loadEffects';
 import logger from './logger';
 
+const HD_VIDEO_CONSTRAINTS = {
+    video: {
+        frameRate: {
+            ideal: 15,
+            max: 15,
+            min: 15
+        },
+        height: {
+            ideal: 720,
+            max: 720,
+            min: 240
+        }
+    }
+};
+
 /**
  * Creates a local video track for presenter. The constraints are computed based
  * on the height of the desktop that is being shared.
@@ -98,8 +113,12 @@ export function createLocalTracksF(options = {}, firePermissionPromptIsShownEven
 
     const hdQualityEnabled = isHdQualityEnabled(state);
 
-    if (JitsiMeetJS.util.browser.isFirefox() || hdQualityEnabled) {
+    if (JitsiMeetJS.util.browser.isFirefox()) {
         constraints = null;
+    }
+
+    if (!JitsiMeetJS.util.browser.isFirefox() && hdQualityEnabled) {
+        constraints = HD_VIDEO_CONSTRAINTS;
     }
 
     return (

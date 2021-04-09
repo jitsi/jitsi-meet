@@ -27,7 +27,7 @@ import {
     IconShareVideo
 } from '../../../base/icons';
 import {
-    getLocalParticipant,
+    getLocalParticipant, getLocalParticipantType,
     getParticipants,
     participantUpdated
 } from '../../../base/participants';
@@ -192,7 +192,12 @@ type Props = {
     /**
      * Invoked to obtain translated strings.
      */
-    t: Function
+    t: Function,
+
+    /**
+     * Whether or not the local participant is a practitioner.
+     */
+    _isStaffMember: boolean
 };
 
 /**
@@ -994,6 +999,7 @@ class Toolbox extends Component<Props, State> {
             _fullScreen,
             _screensharing,
             _sharingVideo,
+            _isStaffMember,
             t
         } = this.props;
 
@@ -1387,6 +1393,12 @@ class Toolbox extends Component<Props, State> {
      * @returns {boolean} True if the button should be displayed.
      */
     _shouldShowButton(buttonName) {
+        if (buttonName === 'videoquality'){
+
+            // Only allows practitioner to change the video quality
+            return this.props._visibleButtons.has(buttonName) && this.props._isStaffMember;
+        }
+
         return this.props._visibleButtons.has(buttonName);
     }
 }
@@ -1458,7 +1470,8 @@ function _mapStateToProps(state) {
             || sharedVideoStatus === 'start'
             || sharedVideoStatus === 'pause',
         _visible: isToolboxVisible(state),
-        _visibleButtons: equals(visibleButtons, buttons) ? visibleButtons : buttons
+        _visibleButtons: equals(visibleButtons, buttons) ? visibleButtons : buttons,
+        _isStaffMember: getLocalParticipantType(state) === 'StaffMember'
     };
 }
 

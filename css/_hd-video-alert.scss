@@ -1,0 +1,17 @@
+.hd-video-alert {
+    width: 100%;
+    position: absolute;
+    bottom: 100px;
+    left: 0;
+    z-index: 300;
+
+    &-container {
+        max-width: 300px;
+        margin: auto;
+    }
+
+    .button{
+        background-color: #FFFFFF;
+        color: #5e6d7a !important;
+    }
+}
