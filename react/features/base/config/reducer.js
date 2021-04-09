@@ -56,6 +56,18 @@ const INITIAL_RN_STATE = {
     }
 };
 
+/**
+ * Options that enable stereo and HD audio if the {@code enableHdAudio} config option is set.
+ */
+const hdAudioOptions = {
+    disableAP: true,
+    enableNoAudioDetection: false,
+    enableNoisyMicDetection: false,
+    enableTalkWhileMuted: false,
+    opusMaxAverageBitrate: 510000,
+    stereo: true
+};
+
 ReducerRegistry.register('features/base/config', (state = _getInitialState(), action) => {
     switch (action.type) {
     case UPDATE_CONFIG:
@@ -146,6 +158,7 @@ function _setConfig(state, { config }) {
     const newState = _.merge(
         {},
         config,
+        config.enableHdAudio ? hdAudioOptions : {},
         { error: undefined },
 
         // The config of _getInitialState() is meant to override the config
