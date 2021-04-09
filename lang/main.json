@@ -226,7 +226,7 @@
         "liveStreamingDisabledBecauseOfActiveRecordingTooltip": "Not possible while recording is active",
         "liveStreamingDisabledTooltip": "Start live stream disabled.",
         "lockMessage": "Failed to lock the conference.",
-        "lockRoom": "Add meeting $t(lockRoomPasswordUppercase)",
+        "lockRoom": "Add meeting $t(lockRoomPassword)",
         "lockTitle": "Lock failed",
         "logoutQuestion": "Are you sure you want to logout and stop the conference?",
         "login": "Login",
@@ -525,7 +525,7 @@
         "oldElectronClientDescription2": "latest build",
         "oldElectronClientDescription3": " now!"
     },
-    "passwordSetRemotely": "set by another participant",
+    "passwordSetRemotely": "Set by another participant",
     "passwordDigitsOnly": "Up to {{number}} digits",
     "poweredby": "powered by",
     "prejoin": {

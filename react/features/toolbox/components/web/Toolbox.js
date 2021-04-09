@@ -47,7 +47,7 @@ import {
     LiveStreamButton,
     RecordButton
 } from '../../../recording';
-import { SecurityDialogButton } from '../../../security';
+import SecurityDialogButton from '../../../security/components/security-dialog/SecurityDialogButton';
 import {
     SETTINGS_TABS,
     SettingsButton,
