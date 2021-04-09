@@ -187,20 +187,20 @@ function VirtualBackground({ dispatch, t }: Props) {
                             </div>
                         </Tooltip>
                         <Tooltip
-                            content = { t('virtualBackground.enableBlur') }
+                            content = { t('virtualBackground.slightBlur') }
                             position = { 'top' }>
                             <Icon
-                                className = { selected === 'blur' ? 'blur-selected' : '' }
-                                onClick = { () => enableBlur(25, 'blur') }
+                                className = { selected === 'slight-blur' ? 'blur-selected' : '' }
+                                onClick = { () => enableBlur(8, 'slight-blur') }
                                 size = { 50 }
                                 src = { IconBlurBackground } />
                         </Tooltip>
                         <Tooltip
-                            content = { t('virtualBackground.enableBlur') }
+                            content = { t('virtualBackground.blur') }
                             position = { 'top' }>
                             <Icon
-                                className = { selected === 'less-blur' ? 'blur-selected' : '' }
-                                onClick = { () => enableBlur(8, 'less-blur') }
+                                className = { selected === 'blur' ? 'blur-selected' : '' }
+                                onClick = { () => enableBlur(25, 'blur') }
                                 size = { 50 }
                                 src = { IconBlurBackground } />
                         </Tooltip>
