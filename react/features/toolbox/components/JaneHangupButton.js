@@ -7,12 +7,11 @@ import React, { Component } from 'react';
 
 import { createToolbarEvent, sendAnalytics } from '../../analytics';
 import { maybeRedirectToWelcomePage } from '../../app/actions';
-import { isJaneTestCall } from '../../base/conference';
+import { disconnect } from '../../base/connection';
 import { translate } from '../../base/i18n';
 import { IconHangup } from '../../base/icons';
 import { Icon } from '../../base/icons/components';
 import { connect } from '../../base/redux';
-import { updateParticipantReadyStatus, isJaneWaitingAreaPageEnabled } from '../../jane-waiting-area/functions';
 
 export type Props = {
     dispatch: Function,
@@ -35,16 +34,10 @@ class JaneHangupButton extends Component<Props> {
         window.APP.API.notifyReadyToClose();
         sendAnalytics(createToolbarEvent('hangup'));
         props.dispatch(maybeRedirectToWelcomePage());
-        window.close();
+        props.dispatch(disconnect(false));
     })
 
     _onClick(): void {
-        const { isTestCall, isWaitingAreaPageEnabled } = this.props;
-
-        if (!isTestCall && isWaitingAreaPageEnabled) {
-            updateParticipantReadyStatus('left');
-        }
-
         this._hangup(this.props);
     }
 
@@ -73,11 +66,4 @@ class JaneHangupButton extends Component<Props> {
     }
 }
 
-function _mapStateToProps(state) {
-    return {
-        isTestCall: isJaneTestCall(state),
-        isWaitingAreaPageEnabled: isJaneWaitingAreaPageEnabled(state)
-    };
-}
-
-export default translate(connect(_mapStateToProps)(JaneHangupButton));
+export default translate(connect()(JaneHangupButton));

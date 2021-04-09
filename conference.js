@@ -43,7 +43,7 @@ import {
     onStartMutedPolicyChanged,
     p2pStatusChanged,
     sendLocalParticipant,
-    setDesktopSharingEnabled
+    setDesktopSharingEnabled, isJaneTestCall
 } from './react/features/base/conference';
 import {
     checkAndNotifyForNewDevice,
@@ -119,7 +119,7 @@ import {
     isJaneWaitingAreaPageEnabled,
     isJaneWaitingAreaPageVisible,
     replaceJaneWaitingAreaAudioTrack,
-    replaceJaneWaitingAreaVideoTrack
+    replaceJaneWaitingAreaVideoTrack, updateParticipantReadyStatus
 } from './react/features/jane-waiting-area';
 import { showNotification } from './react/features/notifications';
 import { mediaPermissionPromptVisibilityChanged } from './react/features/overlay';
@@ -2816,6 +2816,11 @@ export default {
 
         APP.UI.removeAllListeners();
         APP.remoteControl.removeAllListeners();
+
+        if (!isJaneTestCall(APP.store.getState())
+            && isJaneWaitingAreaPageEnabled(APP.store.getState())) {
+            updateParticipantReadyStatus('left');
+        }
 
         let requestFeedbackPromise;
 
