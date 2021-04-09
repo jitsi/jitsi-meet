@@ -945,7 +945,7 @@ class Toolbox extends Component<Props> {
                     key = 'fullscreen'
                     onClick = { this._onToolbarToggleFullScreen }
                     text = { _fullScreen ? t('toolbar.exitFullScreen') : t('toolbar.enterFullScreen') } />,
-            this._shouldShowButton('security')
+            (this._shouldShowButton('security') || this._shouldShowButton('info'))
             && <SecurityDialogButton
                 key = 'security'
                 showLabel = { true } />,
