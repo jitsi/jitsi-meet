@@ -295,6 +295,13 @@ function Util:process_and_verify_token(session, acceptedIssuers)
             session.jitsi_meet_context_user = claims["context"]["user"];
           end
 
+          if (session.jitsi_meet_context_user == nil) then
+            local _context = json_safe.decode(claims["context"]);
+            if _context ~= nil then
+                session.jitsi_meet_context_user = _context["user"];
+            end
+          end
+
           if claims["context"]["group"] ~= nil then
             -- Binds any group details to the session
             session.jitsi_meet_context_group = claims["context"]["group"];
