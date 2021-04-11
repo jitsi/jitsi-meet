@@ -1,68 +1,37 @@
-.large-video-labels {
+.label {
+    align-items: center;
+    background: #36383C;
+    border-radius: 3px;
+    color: #fff;
     display: flex;
-    position: absolute;
-    top: 30px;
-    right: 30px;
-    transition: right 0.5s;
-    z-index: $labelsZ;
+    font-size: 12px;
+    font-weight: 600;
+    height: 28px;
+    margin: 0 0 4px 4px;
+    padding: 0 8px;
 
-    .circular-label {
-        align-items: center;
-        color: white;
-        display: flex;
-        font-weight: bold;
-        justify-content: center;
-        margin-left: 8px;
-        opacity: 0.8;
+    &--green {
+        background: #31B76A;
     }
 
-    .circular-label {
-        background: #B8C7E0;
+    &--red {
+        background: #E34F56
     }
 
-    .circular-label.e2ee {
-        align-items: center;
-        background: #76CF9C;
-        display: flex;
-        justify-content: center;
-    }
+    &--white {
+        background: #fff;
+        color: #5e6d7a;
 
-    .circular-label.file {
-        background: #FF5630;
-    }
-
-    .circular-label.local-rec {
-        background: #FF5630;
-    }
-
-    .circular-label.stream {
-        background: #0065FF;
-    }
-
-    .circular-label.insecure {
-        background: $defaultWarningColor;
-    }
-
-    .recording-label.center-message {
-        background: $videoStateIndicatorBackground;
-        bottom: 50%;
-        display: block;
-        left: 50%;
-        padding: 10px;
-        position: fixed;
-        transform: translate(-50%, -50%);
-        z-index: $centeredVideoLabelZ;
+        svg {
+            fill: #5e6d7a;
+        }
     }
 }
 
-.circular-label {
-    background: $videoStateIndicatorBackground;
-    border-radius: 50%;
-    box-sizing: border-box;
-    cursor: default;
-    font-size: 13px;
-    height: $videoStateIndicatorSize;
-    line-height: $videoStateIndicatorSize;
-    text-align: center;
-    min-width: $videoStateIndicatorSize;
+.label-text-with-icon {
+    margin-left: 8px;
+}
+
+.participants-count {
+    cursor: pointer;
 }

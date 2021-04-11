@@ -808,6 +808,7 @@ export function isSharingEnabled(sharingFeature: string) {
  * Sends a post request to an invite service.
  *
  * @param {Array} inviteItems - The list of the "sip" type items to invite.
+ * @param {URL} locationURL - The URL of the location.
  * @param {string} sipInviteUrl - The invite service that generates the invitation.
  * @param {string} jwt - The jwt token.
  * @param {string} roomName - The name to the conference.
@@ -816,6 +817,7 @@ export function isSharingEnabled(sharingFeature: string) {
  */
 export function inviteSipEndpoints( // eslint-disable-line max-params
         inviteItems: Array<Object>,
+        locationURL: URL,
         sipInviteUrl: string,
         jwt: string,
         roomName: string,
@@ -825,13 +827,15 @@ export function inviteSipEndpoints( // eslint-disable-line max-params
         return Promise.resolve();
     }
 
+    const baseUrl = locationURL.href.toLowerCase().replace(`/${roomName}`, '');
+
     return fetch(
-       `${sipInviteUrl}?token=${jwt}`,
+       sipInviteUrl,
        {
            body: JSON.stringify({
                callParams: {
                    callUrlInfo: {
-                       baseUrl: window.location.origin,
+                       baseUrl,
                        callName: roomName
                    }
                },
@@ -842,6 +846,7 @@ export function inviteSipEndpoints( // eslint-disable-line max-params
            }),
            method: 'POST',
            headers: {
+               'Authorization': `Bearer ${jwt}`,
                'Content-Type': 'application/json'
            }
        }

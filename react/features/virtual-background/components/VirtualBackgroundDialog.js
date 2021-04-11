@@ -10,33 +10,38 @@ import { translate } from '../../base/i18n';
 import { Icon, IconBlurBackground, IconCancelSelection } from '../../base/icons';
 import { connect } from '../../base/redux';
 import { Tooltip } from '../../base/tooltip';
-import { toggleBackgroundEffect, setVirtualBackground } from '../actions';
+import { toggleBackgroundEffect } from '../actions';
 import { resizeImage, toDataURL } from '../functions';
 import logger from '../logger';
 
-// The limit of virtual background uploads is 21. When the number
-// of uploads is 22 we trigger the deleteStoredImage function to delete
+// The limit of virtual background uploads is 24. When the number
+// of uploads is 25 we trigger the deleteStoredImage function to delete
 // the first/oldest uploaded background.
-const backgroundsLimit = 22;
+const backgroundsLimit = 25;
 const images = [
     {
-        id: 1,
+        id: '1',
         src: 'images/virtual-background/background-1.jpg'
     },
     {
-        id: 2,
+        id: '2',
         src: 'images/virtual-background/background-2.jpg'
     },
     {
-        id: 3,
+        id: '3',
         src: 'images/virtual-background/background-3.jpg'
     },
     {
-        id: 4,
+        id: '4',
         src: 'images/virtual-background/background-4.jpg'
     }
 ];
 type Props = {
+
+    /**
+     * Returns the selected thumbnail identifier.
+     */
+    _selectedThumbnail: string,
 
     /**
      * The redux {@code dispatch} function.
@@ -54,7 +59,7 @@ type Props = {
  *
  * @returns {ReactElement}
  */
-function VirtualBackground({ dispatch, t }: Props) {
+function VirtualBackground({ _selectedThumbnail, dispatch, t }: Props) {
     const localImages = jitsiLocalStorage.getItem('virtualBackgrounds');
     const [ storedImages, setStoredImages ] = useState((localImages && JSON.parse(localImages)) || []);
     const [ loading, isloading ] = useState(false);
@@ -67,42 +72,66 @@ function VirtualBackground({ dispatch, t }: Props) {
      * Updates stored images on local storage.
      */
     useEffect(() => {
-        jitsiLocalStorage.setItem('virtualBackgrounds', JSON.stringify(storedImages));
+        try {
+            jitsiLocalStorage.setItem('virtualBackgrounds', JSON.stringify(storedImages));
+        } catch (err) {
+            // Preventing localStorage QUOTA_EXCEEDED_ERR
+            err && deleteStoredImage(storedImages[0]);
+        }
         if (storedImages.length === backgroundsLimit) {
             deleteStoredImage(storedImages[0]);
         }
     }, [ storedImages ]);
 
-    const [ selected, setSelected ] = useState('');
-    const enableBlur = async () => {
+    const enableBlur = async (blurValue, selection) => {
         isloading(true);
-        setSelected('blur');
-        await dispatch(setVirtualBackground('', false));
-        await dispatch(toggleBackgroundEffect(true));
+        await dispatch(
+            toggleBackgroundEffect({
+                backgroundType: 'blur',
+                enabled: true,
+                blurValue,
+                selectedThumbnail: selection
+            })
+        );
         isloading(false);
     };
 
     const removeBackground = async () => {
         isloading(true);
-        setSelected('none');
-        await dispatch(setVirtualBackground('', false));
-        await dispatch(toggleBackgroundEffect(false));
+        await dispatch(
+            toggleBackgroundEffect({
+                enabled: false,
+                selectedThumbnail: 'none'
+            })
+        );
         isloading(false);
     };
 
     const setUploadedImageBackground = async image => {
         isloading(true);
-        setSelected(image.id);
-        await dispatch(setVirtualBackground(image.src, true));
-        await dispatch(toggleBackgroundEffect(true));
+        await dispatch(
+            toggleBackgroundEffect({
+                backgroundType: 'image',
+                enabled: true,
+                url: image.src,
+                selectedThumbnail: image.id
+            })
+        );
         isloading(false);
     };
 
     const setImageBackground = async image => {
         isloading(true);
-        setSelected(image.id);
-        await dispatch(setVirtualBackground(await toDataURL(image.src), true));
-        await dispatch(toggleBackgroundEffect(true));
+        const url = await toDataURL(image.src);
+
+        await dispatch(
+            toggleBackgroundEffect({
+                backgroundType: 'image',
+                enabled: true,
+                url,
+                selectedThumbnail: image.id
+            })
+        );
         isloading(false);
     };
 
@@ -111,19 +140,25 @@ function VirtualBackground({ dispatch, t }: Props) {
 
         reader.readAsDataURL(imageFile[0]);
         reader.onload = async () => {
-            const resizedImage = await resizeImage(reader.result);
+            const url = await resizeImage(reader.result);
+            const uuId = uuid.v4();
 
             isloading(true);
             setStoredImages([
                 ...storedImages,
                 {
-                    id: uuid.v4(),
-                    src: resizedImage
+                    id: uuId,
+                    src: url
                 }
             ]);
-
-            await dispatch(setVirtualBackground(resizedImage, true));
-            await dispatch(toggleBackgroundEffect(true));
+            await dispatch(
+                toggleBackgroundEffect({
+                    backgroundType: 'image',
+                    enabled: true,
+                    url,
+                    selectedThumbnail: uuId
+                })
+            );
             isloading(false);
         };
         reader.onerror = () => {
@@ -137,7 +172,7 @@ function VirtualBackground({ dispatch, t }: Props) {
             hideCancelButton = { true }
             submitDisabled = { false }
             titleKey = { 'virtualBackground.title' }
-            width = 'small'>
+            width = '450px'>
             {loading ? (
                 <div className = 'virtual-background-loading'>
                     <span className = 'loading-content-text'>{t('virtualBackground.pleaseWait')}</span>
@@ -152,23 +187,33 @@ function VirtualBackground({ dispatch, t }: Props) {
                             content = { t('virtualBackground.removeBackground') }
                             position = { 'top' }>
                             <div
-                                className = { selected === 'none' ? 'none-selected' : 'virtual-background-none' }
+                                className = { _selectedThumbnail === 'none'
+                                    ? 'none-selected' : 'virtual-background-none' }
                                 onClick = { removeBackground }>
                                 {t('virtualBackground.none')}
                             </div>
                         </Tooltip>
                         <Tooltip
-                            content = { t('virtualBackground.enableBlur') }
+                            content = { t('virtualBackground.slightBlur') }
                             position = { 'top' }>
                             <Icon
-                                className = { selected === 'blur' ? 'blur-selected' : '' }
-                                onClick = { () => enableBlur() }
+                                className = { _selectedThumbnail === 'slight-blur' ? 'blur-selected' : '' }
+                                onClick = { () => enableBlur(8, 'slight-blur') }
+                                size = { 50 }
+                                src = { IconBlurBackground } />
+                        </Tooltip>
+                        <Tooltip
+                            content = { t('virtualBackground.blur') }
+                            position = { 'top' }>
+                            <Icon
+                                className = { _selectedThumbnail === 'blur' ? 'blur-selected' : '' }
+                                onClick = { () => enableBlur(25, 'blur') }
                                 size = { 50 }
                                 src = { IconBlurBackground } />
                         </Tooltip>
                         {images.map((image, index) => (
                             <img
-                                className = { selected === image.id ? 'thumbnail-selected' : 'thumbnail' }
+                                className = { _selectedThumbnail === image.id ? 'thumbnail-selected' : 'thumbnail' }
                                 key = { index }
                                 onClick = { () => setImageBackground(image) }
                                 onError = { event => event.target.style.display = 'none' }
@@ -197,7 +242,7 @@ function VirtualBackground({ dispatch, t }: Props) {
                                 className = { 'thumbnail-container' }
                                 key = { index }>
                                 <img
-                                    className = { selected === image.id ? 'thumbnail-selected' : 'thumbnail' }
+                                    className = { _selectedThumbnail === image.id ? 'thumbnail-selected' : 'thumbnail' }
                                     onClick = { () => setUploadedImageBackground(image) }
                                     onError = { event => event.target.style.display = 'none' }
                                     src = { image.src } />
@@ -215,4 +260,20 @@ function VirtualBackground({ dispatch, t }: Props) {
     );
 }
 
-export default translate(connect()(VirtualBackground));
+/**
+ * Maps (parts of) the redux state to the associated props for the
+ * {@code VirtualBackground} component.
+ *
+ * @param {Object} state - The Redux state.
+ * @private
+ * @returns {{
+ *     _selectedThumbnail: string
+ * }}
+ */
+function _mapStateToProps(state): Object {
+    return {
+        _selectedThumbnail: state['features/virtual-background'].selectedThumbnail
+    };
+}
+
+export default translate(connect(_mapStateToProps)(VirtualBackground));

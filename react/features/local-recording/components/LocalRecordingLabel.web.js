@@ -3,7 +3,7 @@
 import React, { Component } from 'react';
 
 import { translate } from '../../base/i18n/index';
-import { CircularLabel } from '../../base/label/index';
+import { Label } from '../../base/label/index';
 import { connect } from '../../base/redux';
 import { Tooltip } from '../../base/tooltip';
 
@@ -45,10 +45,10 @@ class LocalRecordingLabel extends Component<Props> {
         return (
             <Tooltip
                 content = { this.props.t('localRecording.labelToolTip') }
-                position = { 'left' }>
-                <CircularLabel
+                position = { 'bottom' }>
+                <Label
                     className = 'local-rec'
-                    label = { this.props.t('localRecording.label') } />
+                    text = { this.props.t('localRecording.label') } />
             </Tooltip>
         );
     }
