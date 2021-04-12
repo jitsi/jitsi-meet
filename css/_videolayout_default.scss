@@ -210,6 +210,10 @@
     object-fit: cover;
 }
 
+#largeVideo {
+    pointer-events: none;
+}
+
 #largeVideo,
 #largeVideoWrapper,
 #largeVideoContainer {
