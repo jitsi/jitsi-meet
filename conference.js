@@ -724,9 +724,9 @@ export default {
                 && isHdQualityEnabled(APP.store.getState())
                 && getLocalParticipantType(APP.store.getState()) === 'StaffMember') {
 
-            // If the pratitioner turns on the HD quality in Jane.
+            // If the practitioner turns on the HD quality in Jane.
             // We will still limit the quality to SD(360) at the beginning
-            // the pratitioner can change the quality to HD(720) through hd quality alert
+            // the practitioner can change the quality to HD(720) through hd quality alert
             // or the video quality control modal.
             APP.store.dispatch(setPreferredVideoQuality(360));
         }
