@@ -23,6 +23,9 @@ const SD_VIDEO_CONTAINER_HEIGHT = VIDEO_QUALITY_LEVELS.STANDARD;
 const SD_VIDEO_CONTAINER_PADDING_PERCENTAGE = 0.1;
 const SD_VIDEO_CONTAINER_PADDING_BREAKPOINT = 768;
 
+// minimum top padding + bottom padding
+const SD_VIDEO_CONTAINER_MIN_VERTICAL_PADDING = 248;
+
 /**
  * Returns an array of the video dimensions, so that it keeps it's aspect
  * ratio and fits available area with it's larger dimension. This method
@@ -120,6 +123,10 @@ function computeCameraVideoSize( // eslint-disable-line max-params
         if (width > maxWidth) {
             width = maxWidth < SD_VIDEO_CONTAINER_PADDING_BREAKPOINT ? maxWidth : maxWidth - horizontalPadding;
             height = width / aspectRatio;
+            if (maxZoomCoefficient === 1) {
+                // If the video feed is in SD, fix the height to avoid overlapping with Jane's logo
+                height = maxHeight - verticalPadding;
+            }
         } else if (height > maxHeight) {
             height = maxHeight - verticalPadding;
             width = height * aspectRatio;
@@ -158,8 +165,12 @@ function getMaxZoomCoefficient(videoHeight) {
  */
 function getPaddings(videoSpaceHeight, videoSpaceWidth, videoHeight) {
     if (videoHeight <= SD_VIDEO_CONTAINER_HEIGHT) {
-        const verticalPadding = videoSpaceHeight * SD_VIDEO_CONTAINER_PADDING_PERCENTAGE * 2;
+        let verticalPadding = videoSpaceHeight * SD_VIDEO_CONTAINER_PADDING_PERCENTAGE * 2;
         const horizontalPadding = videoSpaceWidth * SD_VIDEO_CONTAINER_PADDING_PERCENTAGE * 2;
+
+        if (verticalPadding < SD_VIDEO_CONTAINER_MIN_VERTICAL_PADDING) {
+            verticalPadding = SD_VIDEO_CONTAINER_MIN_VERTICAL_PADDING;
+        }
 
         return [ verticalPadding, horizontalPadding ];
     }
