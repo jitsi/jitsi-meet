@@ -827,7 +827,10 @@ export function inviteSipEndpoints( // eslint-disable-line max-params
         return Promise.resolve();
     }
 
-    const baseUrl = locationURL.href.toLowerCase().replace(`/${roomName}`, '');
+    const baseUrl = Object.assign(new URL(locationURL.toString()), {
+        pathname: locationURL.pathname.replace(`/${roomName}`, ''),
+        search: ''
+    });
 
     return fetch(
        sipInviteUrl,
