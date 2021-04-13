@@ -125,8 +125,12 @@ var config = {
     // Enables support for opus-red (redundancy for Opus).
     // enableOpusRed: false,
 
-    // Enables HD audio quality (but also disables echo cancellation, noise suppression and AGC).
-    // enableHdAudio: false,
+    // Specify audio quality stereo and opusMaxAverageBitrate values, both necessary in order to enable HD audio.
+    // Beware, by doing so, you are disabling echo cancellation, noise suppression and AGC.
+    // audioQuality: {
+    //     stereo: false,
+    //     opusMaxAverageBitrate: null // Value to fit the 6000 to 510000 range.
+    // }
 
     // Video
 
