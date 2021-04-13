@@ -338,11 +338,11 @@
         "title": "Embed this meeting"
     },
     "virtualBackground": {
-        "title": "Backgrounds",
+        "title": "Virtual backgrounds",
         "blur": "Blur",
         "slightBlur": "Slight Blur",
         "removeBackground": "Remove background",
-        "uploadImage": "Upload image",
+        "addBackground": "Add background",
         "pleaseWait": "Please wait...",
         "none": "None"
     },
