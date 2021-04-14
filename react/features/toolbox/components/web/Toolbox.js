@@ -75,7 +75,7 @@ import {
     setFullScreen,
     setOverflowMenuVisible,
     setToolbarHovered,
-    setToolboxVisible
+    showToolbox
 } from '../../actions';
 import { getToolbarAdditionalButtons, isToolboxVisible } from '../../functions';
 import DownloadButton from '../DownloadButton';
@@ -675,7 +675,7 @@ class Toolbox extends Component<Props> {
      */
     _onTabIn() {
         if (!this.props._visible) {
-            this.props.dispatch(setToolboxVisible(true));
+            this.props.dispatch(showToolbox());
         }
     }
 
