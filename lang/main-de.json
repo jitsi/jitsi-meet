@@ -230,7 +230,7 @@
         "lockRoom": "Konferenz$t(lockRoomPassword) hinzufügen",
         "lockTitle": "Sperren fehlgeschlagen",
         "logoutQuestion": "Sind Sie sicher, dass Sie sich abmelden und die Konferenz verlassen möchten?",
-        "login": "Login",
+        "login": "Anmelden",
         "logoutTitle": "Abmelden",
         "maxUsersLimitReached": "Das Limit für die maximale Personenzahl ist erreicht. Die Konferenz ist voll. Bitte wenden Sie sich an die Konferenzleitung oder versuchen Sie es später noch einmal!",
         "maxUsersLimitReachedTitle": "Maximale Personenzahl erreicht",
@@ -323,7 +323,7 @@
         "videoLink": "Video link",
         "WaitForHostMsg": "Die Konferenz <b>{{room}}</b> wurde noch nicht gestartet. Falls Sie die Konferenz leiten, authentifizieren Sie sich bitte. Warten Sie andernfalls, bis die Konferenz gestartet wird.",
         "WaitForHostMsgWOk": "Die Konferenz <b>{{room}}</b> wurde noch nicht gestartet. Falls Sie die Konferenz leiten, authentifizieren Sie sich bitte. Warten Sie andernfalls, bis die Konferenz gestartet wird.",
-        "WaitingForHost": "Warten auf den Beginn der Konferenz …",
+        "WaitingForHostTitle": "Warten auf den Beginn der Konferenz …",
         "Yes": "Ja",
         "yourEntireScreen": "Ganzer Bildschirm"
     },
@@ -341,8 +341,8 @@
     },
     "virtualBackground": {
         "title": "Hintergründe",
-        "blur": "Verschwommen",
-        "slightBlur": "leicht verschwommen",
+        "blur": "Hintergrund unscharf",
+        "slightBlur": "Hintergrund leicht unscharf",
         "removeBackground": "Hintergrund entfernen",
         "uploadImage": "Bild hochladen",
         "pleaseWait": "Bitte warten...",
@@ -771,7 +771,7 @@
             "selectBackground": "Hintergrund auswählen"
         },
         "addPeople": "Personen zur Konferenz hinzufügen",
-        "audioSettings": "Audio settings",
+        "audioSettings": "Ton-Einstellungen",
         "audioOnlyOff": "Modus „Nur Audio“ deaktivieren",
         "audioOnlyOn": "Modus „Nur Audio“ aktivieren",
         "audioRoute": "Audiogerät auswählen",
