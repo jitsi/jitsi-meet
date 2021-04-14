@@ -224,7 +224,6 @@
         "kickTitle": "Autsch! {{participantDisplayName}} hat Sie aus dem Meeting geworfen",
         "liveStreaming": "Livestreaming",
         "liveStreamingDisabledBecauseOfActiveRecordingTooltip": "Während einer Aufnahme nicht möglich",
-        "liveStreamingDisabledForGuestTooltip": "Gäste können kein Livestreaming starten.",
         "liveStreamingDisabledTooltip": "Starten des Livestreams deaktiviert.",
         "lockMessage": "Die Konferenz konnte nicht gesperrt werden.",
         "lockRoom": "Konferenz$t(lockRoomPassword) hinzufügen",
@@ -301,7 +300,6 @@
         "shareVideoTitle": "Video teilen",
         "shareYourScreen": "Bildschirm freigeben",
         "shareYourScreenDisabled": "Bildschirmfreigabe deaktiviert.",
-        "shareYourScreenDisabledForGuest": "Gäste können den Bildschirm nicht freigeben.",
         "startLiveStreaming": "Livestream starten",
         "startRecording": "Aufnahme starten",
         "startRemoteControlErrorMessage": "Beim Versuch, die Fernsteuerung zu starten, ist ein Fehler aufgetreten!",
@@ -422,8 +420,7 @@
         "toggleFilmstrip": "Video-Miniaturansichten ein- oder ausblenden",
         "toggleScreensharing": "Zwischen Kamera und Bildschirmfreigabe wechseln",
         "toggleShortcuts": "Tastenkombinationen ein- oder ausblenden",
-        "videoMute": "Kamera starten oder stoppen",
-        "videoQuality": "Anrufqualität verwalten"
+        "videoMute": "Kamera starten oder stoppen"
     },
     "liveStreaming": {
         "limitNotificationDescriptionWeb": "Wegen hoher Nachfrage ist Ihr Stream auf {{limit}} Min. begrenzt. Für unlimitiertes Streaming nutzen Sie bitte <a href={{url}} rel='noopener noreferrer' target='_blank'>{{app}}</a>.",
@@ -880,8 +877,6 @@
         "ld": "LD",
         "ldTooltip": "Video wird in niedriger Auflösung angezeigt",
         "lowDefinition": "Niedrige Auflösung",
-        "onlyAudioAvailable": "Nur Ton",
-        "onlyAudioSupported": "In diesem Browser wird nur Audio unterstützt.",
         "sd": "SD",
         "sdTooltip": "Video wird in Standardauflösung angezeigt",
         "standardDefinition": "Standardauflösung"
