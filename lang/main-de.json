@@ -28,6 +28,7 @@
         "shareInvite": "Einladung zur Versammlung teilen",
         "shareLink": "Teilen Sie den Konferenzlink, um andere einzuladen",
         "shareStream": "Den Livestreaminglink freigeben",
+        "sip": "SIP: {{address}}",
         "telephone": "Telefon: {{number}}",
         "title": "Personen zu dieser Konferenz einladen",
         "yahooEmail": "Yahoo-E-Mail"
@@ -61,13 +62,14 @@
         "today": "Heute"
     },
     "chat": {
+        "enter": "Chat-Raum betreten",
         "error": "Fehler: Ihre Nachricht wurde nicht versendet. Grund: {{error}}",
         "fieldPlaceHolder": "Geben Sie Ihre Nachricht hier ein",
         "messagebox": "Nachricht eingeben",
         "messageTo": "Private Nachricht an {{recipient}}",
         "noMessagesMessage": "Es gibt noch keine Nachricht in dieser Konferenz. Starten Sie hier eine Unterhaltung!",
         "nickname": {
-            "popover": "Name",
+            "popover": "Wähle einen Alias",
             "title": "Geben Sie einen Alias zum Chatten ein"
         },
         "privateNotice": "Private Nachricht an {{recipient}}",
@@ -120,7 +122,7 @@
             "inactive": "Inaktiv",
             "lost": "Verloren",
             "nonoptimal": "Nicht optimal",
-            "poor": "Dürftig"
+            "poor": "Schlecht"
         },
         "remoteaddress": "Entfernte Adresse:",
         "remoteaddress_plural": "Entfernte Adressen:",
@@ -152,7 +154,7 @@
         "tryAgainButton": "Erneut mit der nativen Applikation versuchen"
     },
     "defaultLink": "Bsp.: {{url}}",
-    "defaultNickname": "Z.B. Jane Pink",
+    "defaultNickname": "Z. B. Jane Pink",
     "deviceError": {
         "cameraError": "Fehler beim Zugriff auf die Kamera",
         "cameraPermission": "Fehler beim Bezug der Kamera-Zugriffsberechtigungen",
@@ -174,12 +176,14 @@
         "alreadySharedVideoMsg": "Eine andere Person gibt bereits ein Video weiter. Bei dieser Konferenz ist jeweils nur ein geteiltes Video möglich.",
         "alreadySharedVideoTitle": "Nur ein geteiltes Video gleichzeitig",
         "applicationWindow": "Anwendungsfenster",
+        "authenticationRequired": "Authentifizierung benötigt",
         "Back": "Zurück",
         "cameraConstraintFailedError": "Ihre Kamera erfüllt die notwendigen Anforderungen nicht.",
         "cameraNotFoundError": "Kamera nicht gefunden.",
         "cameraNotSendingData": "Die Kamera ist nicht verfügbar. Bitte prüfen, ob eine andere Applikation die Kamera verwendet, eine andere Kamera vom Einstellungs-Menü auswählen oder die Applikation neu laden.",
         "cameraNotSendingDataTitle": "Zugriff auf Kamera nicht möglich",
         "cameraPermissionDeniedError": "Die Berechtigung zur Verwendung der Kamera wurde nicht erteilt. Sie können trotzdem an der Konferenz teilnehmen, aber die anderen Personen können Sie nicht sehen. Verwenden Sie die Kamera-Schaltfläche in der Adressleiste, um die Berechtigungen zu erteilen.",
+        "cameraTimeoutError": "Die Videoquelle konnte nicht gestartet werden. Es ist eine Zeitüberschreitung aufgetreten!",
         "cameraUnknownError": "Die Kamera kann aus einem unbekannten Grund nicht verwendet werden.",
         "cameraUnsupportedResolutionError": "Die Kamera unterstützt die erforderliche Auflösung nicht.",
         "Cancel": "Abbrechen",
@@ -220,12 +224,12 @@
         "kickTitle": "Autsch! {{participantDisplayName}} hat Sie aus dem Meeting geworfen",
         "liveStreaming": "Livestreaming",
         "liveStreamingDisabledBecauseOfActiveRecordingTooltip": "Während einer Aufnahme nicht möglich",
-        "liveStreamingDisabledForGuestTooltip": "Gäste können kein Livestreaming starten.",
         "liveStreamingDisabledTooltip": "Starten des Livestreams deaktiviert.",
         "lockMessage": "Die Konferenz konnte nicht gesperrt werden.",
         "lockRoom": "Konferenz$t(lockRoomPassword) hinzufügen",
         "lockTitle": "Sperren fehlgeschlagen",
         "logoutQuestion": "Sind Sie sicher, dass Sie sich abmelden und die Konferenz verlassen möchten?",
+        "login": "Anmelden",
         "logoutTitle": "Abmelden",
         "maxUsersLimitReached": "Das Limit für die maximale Personenzahl ist erreicht. Die Konferenz ist voll. Bitte wenden Sie sich an die Konferenzleitung oder versuchen Sie es später noch einmal!",
         "maxUsersLimitReachedTitle": "Maximale Personenzahl erreicht",
@@ -234,6 +238,7 @@
         "micNotSendingData": "Gehen Sie zu den Einstellungen Ihres Computers, um die Stummschaltung Ihres Mikrofons aufzuheben und seinen Pegel einzustellen",
         "micNotSendingDataTitle": "Ihr Mikrofon ist durch Ihre Systemeinstellungen stumm geschaltet",
         "micPermissionDeniedError": "Die Berechtigung zur Verwendung des Mikrofons wurde nicht erteilt. Sie können trotzdem an der Konferenz teilnehmen, aber die anderen Personen können Sie nicht hören. Verwenden Sie die Kamera-Schaltfläche in der Adressleiste, um die Berechtigungen zu erteilen.",
+        "micTimeoutError": "Audioquelle konnte nicht gestartet werden. Zeitüberschreitung",
         "micUnknownError": "Das Mikrofon kann aus einem unbekannten Grund nicht verwendet werden.",
         "muteEveryoneElseDialog": "Einmal stummgeschaltet, können Sie deren Stummschaltung nicht mehr beenden, aber sie können ihre Stummschaltung jederzeit selbst beenden.",
         "muteEveryoneElseTitle": "Alle außer {{whom}} stummschalten?",
@@ -242,6 +247,7 @@
         "muteEveryoneElsesVideoDialog": "Sobald die Kamera deaktiviert ist, können Sie sie nicht wieder aktivieren, die Teilnehmer können dies aber jederzeit wieder ändern.",
         "muteEveryoneElsesVideoTitle": "Die Kamera von allen außer {{whom}} ausschalten?",
         "muteEveryonesVideoDialog": "Sind Sie sicher, dass Sie die Kamera von allen Teilnehmern deaktivieren möchten? Sie können sie nicht wieder aktivieren, die Teilnehmer können dies aber jederzeit wieder ändern.",
+        "muteEveryonesVideoDialogOk": "deaktivieren",
         "muteEveryonesVideoTitle": "Die Kamera von allen anderen ausschalten?",
         "muteEveryoneSelf": "sich selbst",
         "muteEveryoneStartMuted": "Alle beginnen von jetzt an stummgeschaltet",
@@ -294,7 +300,6 @@
         "shareVideoTitle": "Video teilen",
         "shareYourScreen": "Bildschirm freigeben",
         "shareYourScreenDisabled": "Bildschirmfreigabe deaktiviert.",
-        "shareYourScreenDisabledForGuest": "Gäste können den Bildschirm nicht freigeben.",
         "startLiveStreaming": "Livestream starten",
         "startRecording": "Aufnahme starten",
         "startRemoteControlErrorMessage": "Beim Versuch, die Fernsteuerung zu starten, ist ein Fehler aufgetreten!",
@@ -311,10 +316,12 @@
         "transcribing": "Wird transkribiert",
         "unlockRoom": "Konferenz$t(lockRoomPassword) entfernen",
         "user": "Anmeldename",
+        "userIdentifier": "Benutzername",
         "userPassword": "Passwort",
+        "videoLink": "Video link",
         "WaitForHostMsg": "Die Konferenz <b>{{room}}</b> wurde noch nicht gestartet. Falls Sie die Konferenz leiten, authentifizieren Sie sich bitte. Warten Sie andernfalls, bis die Konferenz gestartet wird.",
         "WaitForHostMsgWOk": "Die Konferenz <b>{{room}}</b> wurde noch nicht gestartet. Falls Sie die Konferenz leiten, authentifizieren Sie sich bitte. Warten Sie andernfalls, bis die Konferenz gestartet wird.",
-        "WaitingForHost": "Warten auf den Beginn der Konferenz …",
+        "WaitingForHostTitle": "Warten auf den Beginn der Konferenz …",
         "Yes": "Ja",
         "yourEntireScreen": "Ganzer Bildschirm"
     },
@@ -329,6 +336,15 @@
     },
     "embedMeeting": {
         "title": "Diese Konferenz einbetten"
+    },
+    "virtualBackground": {
+        "title": "Hintergründe",
+        "blur": "Hintergrund unscharf",
+        "slightBlur": "Hintergrund leicht unscharf",
+        "removeBackground": "Hintergrund entfernen",
+        "uploadImage": "Bild hochladen",
+        "pleaseWait": "Bitte warten...",
+        "none": "keiner"
     },
     "feedback": {
         "average": "Durchschnittlich",
@@ -404,8 +420,7 @@
         "toggleFilmstrip": "Video-Miniaturansichten ein- oder ausblenden",
         "toggleScreensharing": "Zwischen Kamera und Bildschirmfreigabe wechseln",
         "toggleShortcuts": "Tastenkombinationen ein- oder ausblenden",
-        "videoMute": "Kamera starten oder stoppen",
-        "videoQuality": "Anrufqualität verwalten"
+        "videoMute": "Kamera starten oder stoppen"
     },
     "liveStreaming": {
         "limitNotificationDescriptionWeb": "Wegen hoher Nachfrage ist Ihr Stream auf {{limit}} Min. begrenzt. Für unlimitiertes Streaming nutzen Sie bitte <a href={{url}} rel='noopener noreferrer' target='_blank'>{{app}}</a>.",
@@ -470,7 +485,7 @@
         "stop": "Aufnahme stoppen",
         "yes": "Ja"
     },
-    "lockRoomPassword": "passwort",
+    "lockRoomPassword": "Passwort",
     "lockRoomPasswordUppercase": "Passwort",
     "me": "ich",
     "notify": {
@@ -496,6 +511,8 @@
         "passwordRemovedRemotely": "$t(lockRoomPasswordUppercase) von einer anderen Person entfernt",
         "passwordSetRemotely": "$t(lockRoomPasswordUppercase) von einer anderen Person gesetzt",
         "raisedHand": "{{name}} möchte sprechen.",
+        "screenShareNoAudio": " Share audio box was not checked in the window selection screen.",
+        "screenShareNoAudioTitle": "Share audio was not checked",
         "somebody": "Jemand",
         "startSilentTitle": "Sie sind ohne Audioausgabe beigetreten!",
         "startSilentDescription": "Treten Sie dem Meeting noch einmal bei, um Ihr Audio zu aktivieren",
@@ -614,6 +631,7 @@
         "pending": "Aufzeichnung des Meetings wird vorbereitet…",
         "rec": "AUFZ",
         "serviceDescription": "Ihre Aufzeichnung wird vom Aufzeichnungsdienst gespeichert",
+        "serviceDescriptionCloud": "Cloud-Aufzeichnung",
         "serviceName": "Aufnahmedienst",
         "signIn": "Anmelden",
         "signOut": "Abmelden",
@@ -624,9 +642,9 @@
         "pullToRefresh": "Ziehen, um zu aktualisieren"
     },
     "security": {
-        "about": "Sie können Ihre Konferenz mit einem Passwort sichern. Personen müssen dieses eingeben, bevor sie an der Sitzung teilnehmen dürfen.",
+        "about": "Sie können Ihre Konferenz mit einem Passwort sichern. Teilnehmer müssen dieses eingeben, bevor sie an der Sitzung teilnehmen dürfen.",
         "aboutReadOnly": "Mit Moderationsrechten kann die Konferenz mit einem Passwort gesichert werden. Personen müssen dieses eingeben, bevor sie an der Sitzung teilnehmen dürfen.",
-        "insecureRoomNameWarning": "Der Raumname ist unsicher. Unerwünschte Personen könnten Ihrer Konferenz beitreten",
+        "insecureRoomNameWarning": "Der Raumname ist unsicher. Unerwünschte Teilnehmer könnten Ihrer Konferenz beitreten",
         "securityOptions": "Sicherheitsoptionen"
     },
     "settings": {
@@ -736,6 +754,7 @@
             "remoteVideoMute": "Kamera von dieser Person ausschalten",
             "security": "Sicherheitsoptionen",
             "Settings": "Einstellungen ein-/ausschalten",
+            "shareaudio": "Audio teilen",
             "sharedvideo": "YouTube-Videofreigabe ein-/ausschalten",
             "shareRoom": "Person einladen",
             "shareYourScreen": "Bildschirmfreigabe ein-/ausschalten",
@@ -746,9 +765,10 @@
             "toggleCamera": "Kamera wechseln",
             "toggleFilmstrip": "Miniaturansichten ein-/ausschalten",
             "videomute": "„Video stummschalten“ ein-/ausschalten",
-            "videoblur": "Video-Unschärfe ein-/ausschalten"
+            "selectBackground": "Hintergrund auswählen"
         },
         "addPeople": "Personen zur Konferenz hinzufügen",
+        "audioSettings": "Ton-Einstellungen",
         "audioOnlyOff": "Modus „Nur Audio“ deaktivieren",
         "audioOnlyOn": "Modus „Nur Audio“ aktivieren",
         "audioRoute": "Audiogerät auswählen",
@@ -794,6 +814,7 @@
         "raiseYourHand": "Melden",
         "security": "Sicherheitsoptionen",
         "Settings": "Einstellungen",
+        "shareaudio": "Audio teilen",
         "sharedvideo": "YouTube-Video teilen",
         "shareRoom": "Person einladen",
         "shortcuts": "Tastenkürzel anzeigen",
@@ -807,8 +828,8 @@
         "tileViewToggle": "Kachelansicht ein-/ausschalten",
         "toggleCamera": "Kamera wechseln",
         "videomute": "Kamera starten / stoppen",
-        "startvideoblur": "Hintergrundunschärfe aktivieren",
-        "stopvideoblur": "Hintergrundunschärfe deaktivieren"
+        "videoSettings": "Video-Einstellungen",
+        "selectBackground": "Hintergrund auswählen"
     },
     "transcribing": {
         "ccButtonTooltip": "Untertitel ein-/ausschalten",
@@ -856,13 +877,12 @@
         "ld": "LD",
         "ldTooltip": "Video wird in niedriger Auflösung angezeigt",
         "lowDefinition": "Niedrige Auflösung",
-        "onlyAudioAvailable": "Nur Ton",
-        "onlyAudioSupported": "In diesem Browser wird nur Audio unterstützt.",
         "sd": "SD",
         "sdTooltip": "Video wird in Standardauflösung angezeigt",
         "standardDefinition": "Standardauflösung"
     },
     "videothumbnail": {
+        "connectionInfo": "Verbindungsinformationen",
         "domute": "Stummschalten",
         "domuteVideo": "Kamera ausschalten",
         "domuteOthers": "Alle anderen stummschalten",
@@ -899,6 +919,7 @@
         "headerSubtitle": "Sichere und hochqualitative Meetings",
         "info": "Einwahlinformationen",
         "join": "ERSTELLEN / BEITRETEN",
+        "jitsiOnMobile": "Jitsi on mobile – Download unsere Apps und starte ein Meeting von überall",
         "moderatedMessage": "Oder <a href=\"{{url}}\" rel=\"noopener noreferrer\" target=\"_blank\">reservieren Sie sich eine Konferenz-URL</a>, die nur Sie moderieren.",
         "privacy": "Datenschutz",
         "recentList": "Verlauf",

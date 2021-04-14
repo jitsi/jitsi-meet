@@ -512,7 +512,7 @@
         "passwordSetRemotely": "$t(lockRoomPasswordUppercase) set by another participant",
         "raisedHand": "{{name}} would like to speak.",
         "screenShareNoAudio": " Share audio box was not checked in the window selection screen.",
-        "screenShareNoAudioTitle": "Share audio was not chcked",
+        "screenShareNoAudioTitle": "Share audio was not checked",
         "somebody": "Somebody",
         "startSilentTitle": "You joined with no audio output!",
         "startSilentDescription": "Rejoin the meeting to enable audio",
