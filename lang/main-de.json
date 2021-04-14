@@ -183,7 +183,7 @@
         "cameraNotSendingData": "Die Kamera ist nicht verfügbar. Bitte prüfen, ob eine andere Applikation die Kamera verwendet, eine andere Kamera vom Einstellungs-Menü auswählen oder die Applikation neu laden.",
         "cameraNotSendingDataTitle": "Zugriff auf Kamera nicht möglich",
         "cameraPermissionDeniedError": "Die Berechtigung zur Verwendung der Kamera wurde nicht erteilt. Sie können trotzdem an der Konferenz teilnehmen, aber die anderen Personen können Sie nicht sehen. Verwenden Sie die Kamera-Schaltfläche in der Adressleiste, um die Berechtigungen zu erteilen.",
-        "cameraTimeoutError": "Could not start video source. Timeout occured!",
+        "cameraTimeoutError": "Die Videoquelle konnte nicht gestartet werden. Es ist eine Zeitüberschreitung aufgetreten!",
         "cameraUnknownError": "Die Kamera kann aus einem unbekannten Grund nicht verwendet werden.",
         "cameraUnsupportedResolutionError": "Die Kamera unterstützt die erforderliche Auflösung nicht.",
         "Cancel": "Abbrechen",
