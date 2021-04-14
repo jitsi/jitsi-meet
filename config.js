@@ -117,20 +117,15 @@ var config = {
     // participants and to enable it back a reload is needed.
     // startSilent: false
 
-    // Sets the preferred target bitrate for the Opus audio codec by setting its
-    // 'maxaveragebitrate' parameter. Currently not available in p2p mode.
-    // Valid values are in the range 6000 to 510000
-    // opusMaxAverageBitrate: 20000,
-
     // Enables support for opus-red (redundancy for Opus).
     // enableOpusRed: false,
 
-    // Specify audio quality stereo and opusMaxAverageBitrate values, both necessary in order to enable HD audio.
+    // Specify audio quality stereo and opusMaxAverageBitrate values in order to enable HD audio.
     // Beware, by doing so, you are disabling echo cancellation, noise suppression and AGC.
     // audioQuality: {
     //     stereo: false,
     //     opusMaxAverageBitrate: null // Value to fit the 6000 to 510000 range.
-    // }
+    // },
 
     // Video
 
