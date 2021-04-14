@@ -142,19 +142,16 @@ function _setConfig(state, { config }) {
 
     // eslint-disable-next-line no-param-reassign
     config = _translateLegacyConfig(config);
-    const hdAudioOptions = {};
+
     const { audioQuality } = config;
+    const hdAudioOptions = {};
 
-    if (audioQuality?.stereo && audioQuality?.opusMaxAverageBitrate) {
-        const { opusMaxAverageBitrate, stereo } = audioQuality;
-
+    if (audioQuality?.stereo) {
         Object.assign(hdAudioOptions, {
             disableAP: true,
             enableNoAudioDetection: false,
             enableNoisyMicDetection: false,
-            enableTalkWhileMuted: false,
-            opusMaxAverageBitrate,
-            stereo
+            enableTalkWhileMuted: false
         });
     }
 
@@ -229,6 +226,13 @@ function _translateLegacyConfig(oldValue: Object) {
 
     if (typeof interfaceConfig === 'object' && Array.isArray(interfaceConfig.TOOLBAR_BUTTONS)) {
         newValue.toolbarButtons = interfaceConfig.TOOLBAR_BUTTONS;
+    }
+
+    if (oldValue.stereo || oldValue.opusMaxAverageBitrate) {
+        newValue.audioQuality = {
+            opusMaxAverageBitrate: oldValue.audioQuality?.opusMaxAverageBitrate ?? oldValue.opusMaxAverageBitrate,
+            stereo: oldValue.audioQuality?.stereo ?? oldValue.stereo
+        };
     }
 
     return newValue;
