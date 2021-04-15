@@ -97,19 +97,20 @@ function _getAutoPinSetting() {
 function _updateAutoPinnedParticipant({ dispatch, getState }) {
     const state = getState();
     const remoteScreenShares = state['features/video-layout'].remoteScreenShares;
+    const pinned = getPinnedParticipant(getState);
 
-    if (!remoteScreenShares) {
+    // Unpin the screenshare when the screensharing participant has left.
+    if (!remoteScreenShares?.length) {
+        const participantId = pinned ? pinned.id : null;
+
+        dispatch(pinParticipant(participantId));
+
         return;
     }
 
-    const latestScreenshareParticipantId
-        = remoteScreenShares[remoteScreenShares.length - 1];
-
-    const pinned = getPinnedParticipant(getState);
+    const latestScreenshareParticipantId = remoteScreenShares[remoteScreenShares.length - 1];
 
     if (latestScreenshareParticipantId) {
         dispatch(pinParticipant(latestScreenshareParticipantId));
-    } else if (pinned) {
-        dispatch(pinParticipant(null));
     }
 }
