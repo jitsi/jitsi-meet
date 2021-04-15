@@ -159,9 +159,9 @@ const statsEmitter = {
                 .strength;
             const modifiedLocalConnectionBitrate = this._getBandWidthBitrate(modifiedLocalStats.bandwidth);
 
-            if (modifiedLocalConnectionStrength === 'good' && modifiedLocalConnectionBitrate > 2000) {
+            if (modifiedLocalConnectionStrength === 'good' && modifiedLocalConnectionBitrate > 2500) {
                 // Enables the hd video alert only if connection strength is "good"
-                // and bitrate > 2000kbps
+                // and bitrate > 2500kbps
                 if (navigator.product !== 'ReactNative') {
                     window.APP.store.dispatch(setHdVideoAlertEnabled(true));
                 }
