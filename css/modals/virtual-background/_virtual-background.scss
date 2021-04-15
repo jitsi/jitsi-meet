@@ -119,6 +119,9 @@
 .modal-dialog-form .virtual-background-loading {
     overflow: hidden;
 }
+.modal-dialog-form .video-preview {
+    height: 250px;
+}
 .file-upload-btn {
     display: none;
 }
@@ -126,6 +129,7 @@
     font-size: 14px;
     font-weight: 600;
     line-height: 20px;
+    margin-top: 16px;
     margin-bottom: 8px;
     color: #669AEC;
     display: inline-flex;
@@ -157,3 +161,19 @@
 .add-background{
     margin-right: 8px;
 }
+
+.apply-background-btn{
+    margin-top: 16px;
+    float: right;
+ }
+
+ .video-background-preview-entry{
+    height: 250px;
+    margin-bottom: 8px;
+    width: 572px;
+    position: fixed;
+    z-index: 2;
+    @media (min-width: 432px) and (max-width: 632px) {
+        width: 340px;
+    }
+ }
