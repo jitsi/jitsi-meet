@@ -49,11 +49,11 @@ const INITIAL_RN_STATE = {
     disableAudioLevels: true,
 
     p2p: {
-        disableH264: false,
-        preferH264: true
-    },
-
-    remoteVideoMenu: {}
+        disabledCodec: '',
+        disableH264: false, // deprecated
+        preferredCodec: 'H264',
+        preferH264: true // deprecated
+    }
 };
 
 ReducerRegistry.register('features/base/config', (state = _getInitialState(), action) => {
