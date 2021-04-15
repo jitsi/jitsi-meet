@@ -261,12 +261,24 @@ var config = {
     //    // to take effect.
     //    preferredCodec: 'VP8',
     //
+    //    // Provides a way to enforce the preferred codec for the conference even when the conference has endpoints
+    //    // that do not support the preferred codec. For example, older versions of Safari do not support VP9 yet.
+    //    // This will result in Safari not being able to decode video from endpoints sending VP9 video.
+    //    // When set to false, the conference falls back to VP8 whenever there is an endpoint that doesn't support the
+    //    // preferred codec and goes back to the preferred codec when that endpoint leaves.
+    //    // enforcePreferredCodec: false,
+    //
     //    // Provides a way to configure the maximum bitrates that will be enforced on the simulcast streams for
     //    // video tracks. The keys in the object represent the type of the stream (LD, SD or HD) and the values
     //    // are the max.bitrates to be set on that particular type of stream. The actual send may vary based on
     //    // the available bandwidth calculated by the browser, but it will be capped by the values specified here.
     //    // This is currently not implemented on app based clients on mobile.
     //    maxBitratesVideo: {
+    //          H264: {
+    //              low: 200000,
+    //              standard: 500000,
+    //              high: 1500000
+    //          },
     //          VP8 : {
     //              low: 200000,
     //              standard: 500000,
@@ -332,8 +344,7 @@ var config = {
     // enableIceRestart: false,
 
     // Enables forced reload of the client when the call is migrated as a result of
-    // the bridge going down. Currently enabled by default as call migration through
-    // session-terminate is causing siganling issues when Octo is enabled.
+    // the bridge going down.
     // enableForcedReload: true,
 
     // Use TURN/UDP servers for the jitsi-videobridge connection (by default
@@ -481,13 +492,6 @@ var config = {
         // connection.
         enabled: true,
 
-        // The STUN servers that will be used in the peer to peer connections
-        stunServers: [
-
-            // { urls: 'stun:jitsi-meet.example.com:3478' },
-            { urls: 'stun:meet-jit-si-turnrelay.jitsi.net:443' }
-        ]
-
         // Sets the ICE transport policy for the p2p connection. At the time
         // of this writing the list of possible values are 'all' and 'relay',
         // but that is subject to change in the future. The enum is defined in
@@ -513,7 +517,14 @@ var config = {
 
         // How long we're going to wait, before going back to P2P after the 3rd
         // participant has left the conference (to filter out page reload).
-        // backToP2PDelay: 5
+        // backToP2PDelay: 5,
+
+        // The STUN servers that will be used in the peer to peer connections
+        stunServers: [
+
+            // { urls: 'stun:jitsi-meet.example.com:3478' },
+            { urls: 'stun:meet-jit-si-turnrelay.jitsi.net:443' }
+        ]
     },
 
     analytics: {
