@@ -88,6 +88,7 @@ static const NSInteger kBufferMaxLenght = 10 * 1024;
   CGFloat scaleFactor = 2;
   size_t width = CVPixelBufferGetWidth(imageBuffer)/scaleFactor;
   size_t height = CVPixelBufferGetHeight(imageBuffer)/scaleFactor;
+  CGImagePropertyOrientation orientation = ((__bridge NSNumber*)CMGetAttachment(sampleBuffer, (__bridge CFStringRef)RPVideoSampleOrientationKey , NULL)).unsignedIntValue;
     
   CGAffineTransform scaleTransform = CGAffineTransformMakeScale(1/scaleFactor, 1/scaleFactor);
   NSData *bufferData = [self jpegDataFromPixelBuffer:imageBuffer withScaling:scaleTransform];
@@ -99,6 +100,7 @@ static const NSInteger kBufferMaxLenght = 10 * 1024;
     CFHTTPMessageSetHeaderFieldValue(httpResponse, (__bridge CFStringRef)@"Content-Length", (__bridge CFStringRef)[NSString stringWithFormat:@"%ld", bufferData.length]);
     CFHTTPMessageSetHeaderFieldValue(httpResponse, (__bridge CFStringRef)@"Buffer-Width", (__bridge CFStringRef)[NSString stringWithFormat:@"%ld", width]);
     CFHTTPMessageSetHeaderFieldValue(httpResponse, (__bridge CFStringRef)@"Buffer-Height", (__bridge CFStringRef)[NSString stringWithFormat:@"%ld", height]);
+    CFHTTPMessageSetHeaderFieldValue(httpResponse, (__bridge CFStringRef)@"Buffer-Orientation", (__bridge CFStringRef)[NSString stringWithFormat:@"%u", orientation]);
 
     CFHTTPMessageSetBody(httpResponse, (__bridge CFDataRef)bufferData);
 
