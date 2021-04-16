@@ -174,6 +174,7 @@ const config = {
     ].filter(Boolean),
     resolve: {
         alias: {
+            'react-native$': require.resolve('react-native-web'),
             'focus-visible': 'focus-visible/dist/focus-visible.min.js',
             jquery: `jquery/dist/jquery${minimize ? '.min' : ''}.js`
         },
