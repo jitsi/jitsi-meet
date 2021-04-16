@@ -4,6 +4,7 @@ import React, { Component } from 'react';
 import { Text, View } from 'react-native';
 
 import { YoutubeLargeVideo } from '../../../shared-video/components';
+import { getYoutubeId } from '../../../shared-video/functions';
 import { Avatar } from '../../avatar';
 import { translate } from '../../i18n';
 import { JitsiParticipantConnectionStatus } from '../../lib-jitsi-meet';
@@ -208,7 +209,8 @@ class ParticipantView extends Component<Props> {
                 ? this.props.testHintId
                 : `org.jitsi.meet.Participant#${this.props.participantId}`;
 
-        const renderYoutubeLargeVideo = _isFakeParticipant && !disableVideo;
+        const youtubeId = getYoutubeId(this.props.participantId);
+        const renderYoutubeLargeVideo = _isFakeParticipant && !disableVideo && Boolean(youtubeId);
 
         return (
             <Container
@@ -224,7 +226,7 @@ class ParticipantView extends Component<Props> {
                     onPress = { renderYoutubeLargeVideo ? undefined : onPress }
                     value = '' />
 
-                { renderYoutubeLargeVideo && <YoutubeLargeVideo youtubeId = { this.props.participantId } /> }
+                { renderYoutubeLargeVideo && <YoutubeLargeVideo youtubeId = { youtubeId } /> }
 
                 { !_isFakeParticipant && renderVideo
                     && <VideoTrack

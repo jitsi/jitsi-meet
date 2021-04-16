@@ -3,9 +3,6 @@
 import { Component } from 'react';
 import type { Dispatch } from 'redux';
 
-import { getYoutubeLink } from '../functions';
-
-
 /**
  * The type of the React {@code Component} props of
  * {@link AbstractSharedVideoDialog}.
@@ -20,7 +17,7 @@ export type Props = {
     /**
      * Function to be invoked after typing a valid video.
      */
-    onPostSubmit: ?Function,
+    onPostSubmit: Function,
 
     /**
      * Invoked to obtain translated strings.
@@ -60,18 +57,10 @@ export default class AbstractSharedVideoDialog<S: *> extends Component < Props, 
             return false;
         }
 
-        const videoId = getYoutubeLink(link);
+        const { onPostSubmit } = this.props;
 
-        if (videoId) {
-            const { onPostSubmit } = this.props;
+        onPostSubmit(link);
 
-            onPostSubmit && onPostSubmit(videoId);
-
-            return true;
-        }
-
-        return false;
+        return true;
     }
 }
-
-

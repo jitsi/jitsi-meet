@@ -292,32 +292,42 @@ class YoutubeLargeVideo extends Component<Props, *> {
     /**
      * Dispatches the video status, time and ownerId if the status is playing or paused.
      *
-     * @param {string} videoId - The youtube id of the video.
+     * @param {string} videoUrl - The youtube id of the video.
      * @param {string} status - The status of the player.
      * @param {number} time - The seek time.
      * @param {string} ownerId - The id of the participant sharing the video.
      * @private
      * @returns {void}
     */
-    onVideoChangeEvent(videoId, status, time, ownerId) {
+    onVideoChangeEvent(videoUrl, status, time, ownerId) {
         if (![ 'playing', 'paused' ].includes(status)) {
             return;
         }
 
-        this.props.dispatch(setSharedVideoStatus(videoId, translateStatus(status), time, ownerId));
+        this.props.dispatch(setSharedVideoStatus({
+            videoUrl,
+            status: translateStatus(status),
+            time,
+            ownerId
+        }));
     }
 
     /**
      * Dispatches the 'playing' as video status, time and ownerId.
      *
-     * @param {string} videoId - The youtube id of the video.
+     * @param {string} videoUrl - The youtube id of the video.
      * @param {number} time - The seek time.
      * @param {string} ownerId - The id of the participant sharing the video.
      * @private
      * @returns {void}
     */
-    onVideoReady(videoId, time, ownerId) {
-        time.then(t => this.props.dispatch(setSharedVideoStatus(videoId, 'playing', t, ownerId)));
+    onVideoReady(videoUrl, time, ownerId) {
+        time.then(t => this.props.dispatch(setSharedVideoStatus({
+            videoUrl,
+            status: 'playing',
+            time: t,
+            ownerId
+        })));
     }
 
     /**
