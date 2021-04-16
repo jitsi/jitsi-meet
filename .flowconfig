@@ -57,8 +57,10 @@ esproposal.nullish_coalescing=enable
 module.file_ext=.web.js
 ; Flow's defaults:
 module.file_ext=.js
-module.file_ext=.json
+module.file_ext=.android.js
 module.file_ext=.ios.js
+module.file_ext=.native.js
+module.file_ext=.json
 
 module.system=haste
 module.system.haste.use_name_reducers=true

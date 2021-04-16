@@ -1,7 +1,8 @@
 // @flow
 
 import React from 'react';
-import { Alert, NativeModules, ScrollView, Switch, Text, TextInput } from 'react-native';
+import { Alert, NativeModules, ScrollView, Switch, Text } from 'react-native';
+import { TextInput } from 'react-native-paper';
 
 import { translate } from '../../../base/i18n';
 import { JitsiModal } from '../../../base/modal';
@@ -158,6 +159,7 @@ class SettingsView extends AbstractSettingsView<Props, State> {
                         layout = 'column'>
                         <TextInput
                             autoCorrect = { false }
+                            label = { this.props.t('settingsView.displayName') }
                             onChangeText = { this._onChangeDisplayName }
                             placeholder = 'John Doe'
                             textContentType = { 'name' } // iOS only
@@ -170,6 +172,7 @@ class SettingsView extends AbstractSettingsView<Props, State> {
                             autoCapitalize = 'none'
                             autoCorrect = { false }
                             keyboardType = { 'email-address' }
+                            label = { this.props.t('settingsView.email') }
                             onChangeText = { this._onChangeEmail }
                             placeholder = 'email@example.com'
                             textContentType = { 'emailAddress' } // iOS only
@@ -186,6 +189,7 @@ class SettingsView extends AbstractSettingsView<Props, State> {
                             autoCorrect = { false }
                             editable = { this.props._serverURLChangeEnabled }
                             keyboardType = { 'url' }
+                            label = { this.props.t('settingsView.serverURL') }
                             onBlur = { this._onBlurServerURL }
                             onChangeText = { this._onChangeServerURL }
                             placeholder = { this.props._serverURL }
