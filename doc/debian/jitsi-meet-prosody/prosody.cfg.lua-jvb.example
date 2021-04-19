@@ -3,12 +3,11 @@ plugin_paths = { "/usr/share/jitsi-meet/prosody-plugins/" }
 -- domain mapper options, must at least have domain base set to use the mapper
 muc_mapper_domain_base = "jitmeet.example.com";
 
-turncredentials_secret = "__turnSecret__";
-
-turncredentials = {
-    { type = "stun", host = "jitmeet.example.com", port = "3478" },
-    { type = "turn", host = "jitmeet.example.com", port = "3478", transport = "udp" },
-    { type = "turns", host = "jitmeet.example.com", port = "5349", transport = "tcp" }
+external_service_secret = "__turnSecret__";
+external_services = {
+     { type = "stun", host = "jitmeet.example.com", port = 3478 },
+     { type = "turn", host = "jitmeet.example.com", port = 3478, transport = "udp", secret = true, ttl = 86400, algorithm = "turn" },
+     { type = "turns", host = "jitmeet.example.com", port = 5349, transport = "tcp", secret = true, ttl = 86400, algorithm = "turn" }
 };
 
 cross_domain_bosh = false;
@@ -44,7 +43,7 @@ VirtualHost "jitmeet.example.com"
         "pubsub";
         "ping"; -- Enable mod_ping
         "speakerstats";
-        "turncredentials";
+        "external_services";
         "conference_duration";
         "muc_lobby_rooms";
     }
@@ -75,7 +74,7 @@ Component "internal.auth.jitmeet.example.com" "muc"
     muc_room_default_public_jids = true
 
 VirtualHost "auth.jitmeet.example.com"
-    authentication = "internal_plain"
+    authentication = "internal_hashed"
 
 -- Proxy to jicofo's user JID, so that it doesn't have to register as a component.
 Component "focus.jitmeet.example.com" "client_proxy"

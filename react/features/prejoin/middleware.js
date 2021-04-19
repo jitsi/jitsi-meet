@@ -5,7 +5,7 @@ import { SET_AUDIO_MUTED, SET_VIDEO_MUTED } from '../base/media';
 import { MiddlewareRegistry } from '../base/redux';
 import { updateSettings } from '../base/settings';
 import {
-    getLocalVideoTrack,
+    getLocalTracks,
     replaceLocalTrack,
     TRACK_ADDED,
     TRACK_NO_DATA_FROM_SOURCE
@@ -33,7 +33,7 @@ MiddlewareRegistry.register(store => next => async action => {
         const { getState, dispatch } = store;
         const state = getState();
         const { userSelectedSkipPrejoin } = state['features/prejoin'];
-        const localVideoTrack = getLocalVideoTrack(state['features/base/tracks']);
+        const localTracks = getLocalTracks(state['features/base/tracks']);
         const { options } = action;
 
         options && store.dispatch(updateConfig(options));
@@ -42,11 +42,13 @@ MiddlewareRegistry.register(store => next => async action => {
             userSelectedSkipPrejoin
         }));
 
-        if (localVideoTrack?.muted) {
-            await dispatch(replaceLocalTrack(localVideoTrack.jitsiTrack, null));
+        // Do not signal audio/video tracks if the user joins muted.
+        for (const track of localTracks) {
+            if (track.muted) {
+                await dispatch(replaceLocalTrack(track.jitsiTrack, null));
+            }
         }
-
-        const jitsiTracks = getState()['features/base/tracks'].map(t => t.jitsiTrack);
+        const jitsiTracks = localTracks.map(t => t.jitsiTrack);
 
         dispatch(setPrejoinPageVisibility(false));
         APP.conference.prejoinStart(jitsiTracks);

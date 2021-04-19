@@ -61,7 +61,6 @@ target 'JitsiMeetSDK' do
   pod 'react-native-splash-screen', :path => '../node_modules/react-native-splash-screen'
   pod 'react-native-webview', :path => '../node_modules/react-native-webview'
   pod 'react-native-webrtc', :path => '../node_modules/react-native-webrtc'
-  pod 'BVLinearGradient', :path => '../node_modules/react-native-linear-gradient'
   pod 'RNCAsyncStorage', :path => '../node_modules/@react-native-async-storage/async-storage'
   pod 'RNDeviceInfo', :path => '../node_modules/react-native-device-info'
   pod 'RNGoogleSignin', :path => '../node_modules/@react-native-community/google-signin'

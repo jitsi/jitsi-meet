@@ -1,0 +1,159 @@
+.virtual-background-dialog {
+    max-height: 300px;
+    color: white;
+    display: inline-grid;
+    grid-template-columns: auto auto auto auto auto;
+    column-gap: 8px;
+    cursor: pointer;
+    .thumbnail:hover, .blur:hover, .slight-blur:hover, .virtual-background-none:hover{
+        height: 56px;
+        width: 103px;
+        opacity: .5;
+        border: 2px solid #99bbf3;
+        @media (min-width: 432px) and (max-width: 632px) {
+            height: 56px;
+            width: 56px;
+        }
+    }
+    .thumbnail {
+        margin-top: 8px;
+        border-radius: 6px;
+        object-fit: cover;
+        height: 60px;
+        width: 107px;
+    }
+
+    .thumbnail:hover ~ .delete-image-icon {
+        display: block;
+    }
+    .thumbnail-selected {
+        margin-top: 8px;
+        border-radius: 6px;
+        object-fit: cover;
+        height: 60px;
+        width: 107px;
+        border: 2px solid #246FE5;
+    }
+    .blur{
+        box-shadow: inset 0 0 12px #000000;
+        margin-top: 8px;
+        background: #7E8287;
+        font-weight: bold;
+        height: 60px;
+        width: 107px;
+        border-radius: 6px;
+        text-align: center;
+        vertical-align: middle;
+        line-height: 60px;
+    }
+    .blur-selected {
+        box-shadow: inset 0 0 12px #000000;
+        margin-top: 8px;
+        background: #7E8287;
+        font-weight: bold;
+        height: 60px;
+        width: 107px;
+        border-radius: 6px;
+        border: 2px solid #246FE5;
+        text-align: center;
+        vertical-align: middle;
+        line-height: 60px;
+    }
+    .slight-blur{
+        box-shadow: inset 0 0 12px #000000;
+        margin-top: 8px;
+        background: #A4A4A4;
+        font-weight: bold;
+        height: 60px;
+        width: 107px;
+        border-radius: 6px;
+        text-align: center;
+        vertical-align: middle;
+        line-height: 60px;
+    }
+    .slight-blur-selected{
+        box-shadow: inset 0 0 12px #000000;
+        margin-top: 8px;
+        background: #A4A4A4;
+        font-weight: bold;
+        height: 60px;
+        width: 107px;
+        border-radius: 6px;
+        border: 2px solid #246FE5;
+        text-align: center;
+        vertical-align: middle;
+        line-height: 60px;
+    }
+    .virtual-background-none {
+        margin-top: 8px;
+        background: #525252;
+        font-weight: bold;
+        height: 60px;
+        width: 107px;
+        border-radius: 6px;
+        text-align: center;
+        vertical-align: middle;
+        line-height: 60px;
+    }
+    .none-selected {
+        margin-top: 8px;
+        background: #525252;
+        font-weight: bold;
+        height: 60px;
+        width: 107px;
+        border-radius: 6px;
+        border: 2px solid #246FE5;
+        text-align: center;
+        vertical-align: middle;
+        line-height: 60px;
+    }
+    @media (min-width: 432px) and (max-width: 632px) {
+        font-size: 1.5vw;
+        .virtual-background-none, .thumbnail, .thumbnail-selected, .none-selected, .blur, .blur-selected, .slight-blur, .slight-blur-selected{
+            height: 60px;
+            width: 60px;
+        }
+    }
+}
+
+.modal-dialog-form .virtual-background-loading {
+    overflow: hidden;
+}
+.file-upload-btn {
+    display: none;
+}
+.file-upload-label{
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 20px;
+    margin-bottom: 8px;
+    color: #669AEC;
+    display: inline-flex;
+    cursor: pointer;
+}
+
+.delete-image-icon {
+    background: #3d3d3d;
+    position: absolute;
+    display: none;
+    left: 96;
+    bottom: 51;
+    @media (min-width: 432px) and (max-width: 632px) {
+        left: 51px
+    }
+}
+.delete-image-icon:hover {
+    display: block;
+}
+
+.thumbnail-container {
+    position: relative;
+}
+
+.loading-content-text{
+  margin-right: 15px;
+}
+
+.add-background{
+    margin-right: 8px;
+}

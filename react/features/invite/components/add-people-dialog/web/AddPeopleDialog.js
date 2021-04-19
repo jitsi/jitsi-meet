@@ -1,24 +1,28 @@
 // @flow
 
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 
 import { createInviteDialogEvent, sendAnalytics } from '../../../../analytics';
-import { getRoomName } from '../../../../base/conference';
 import { getInviteURL } from '../../../../base/connection';
 import { Dialog } from '../../../../base/dialog';
 import { translate } from '../../../../base/i18n';
 import { JitsiRecordingConstants } from '../../../../base/lib-jitsi-meet';
-import { getLocalParticipant } from '../../../../base/participants';
 import { connect } from '../../../../base/redux';
 import { isVpaasMeeting } from '../../../../billing-counter/functions';
 import EmbedMeetingTrigger from '../../../../embed-meeting/components/EmbedMeetingTrigger';
 import { getActiveSession } from '../../../../recording';
 import { updateDialInNumbers } from '../../../actions';
-import { _getDefaultPhoneNumber, getInviteText, isAddPeopleEnabled, isDialOutEnabled } from '../../../functions';
+import {
+    _getDefaultPhoneNumber,
+    getInviteText,
+    isAddPeopleEnabled,
+    isDialOutEnabled,
+    sharingFeatures,
+    isSharingEnabled
+} from '../../../functions';
 
 import CopyMeetingLinkSection from './CopyMeetingLinkSection';
 import DialInSection from './DialInSection';
-import Header from './Header';
 import InviteByEmailSection from './InviteByEmailSection';
 import InviteContactsSection from './InviteContactsSection';
 import LiveStreamSection from './LiveStreamSection';
@@ -26,11 +30,6 @@ import LiveStreamSection from './LiveStreamSection';
 declare var interfaceConfig: Object;
 
 type Props = {
-
-    /**
-     * The name of the current conference. Used as part of inviting users.
-     */
-    _conferenceName: string,
 
     /**
      * The object representing the dialIn feature.
@@ -41,6 +40,26 @@ type Props = {
      * Whether or not embed meeting should be visible.
      */
     _embedMeetingVisible: boolean,
+
+    /**
+     * Whether or not dial in number should be visible.
+     */
+    _dialInVisible: boolean,
+
+    /**
+     * Whether or not url sharing button should be visible.
+     */
+    _urlSharingVisible: boolean,
+
+    /**
+     * Whether or not email sharing features should be visible.
+     */
+    _emailSharingVisible: boolean,
+
+    /**
+     * The meeting invitation text.
+     */
+    _invitationText: string,
 
     /**
      * Whether or not invite contacts should be visible.
@@ -58,14 +77,9 @@ type Props = {
     _liveStreamViewURL: string,
 
     /**
-     * The redux representation of the local participant.
+     * The default phone number.
      */
-    _localParticipantName: ?string,
-
-    /**
-     * The current location url of the conference.
-     */
-    _locationUrl: Object,
+    _phoneNumber: ?string,
 
     /**
      * Invoked to obtain translated strings.
@@ -84,17 +98,18 @@ type Props = {
  * @returns {React$Element<any>}
  */
 function AddPeopleDialog({
-    _conferenceName,
     _dialIn,
     _embedMeetingVisible,
+    _dialInVisible,
+    _urlSharingVisible,
+    _emailSharingVisible,
+    _invitationText,
     _inviteContactsVisible,
     _inviteUrl,
     _liveStreamViewURL,
-    _localParticipantName,
-    _locationUrl,
+    _phoneNumber,
     t,
     updateNumbers }: Props) {
-    const [ phoneNumber, setPhoneNumber ] = useState(undefined);
 
     /**
      * Updates the dial-in numbers.
@@ -120,27 +135,6 @@ function AddPeopleDialog({
         };
     }, []);
 
-    /**
-     * Updates the phone number in the state once the dial-in numbers are fetched.
-     *
-     * @returns {void}
-     */
-    useEffect(() => {
-        if (!phoneNumber && _dialIn && _dialIn.numbers) {
-            setPhoneNumber(_getDefaultPhoneNumber(_dialIn.numbers));
-        }
-    }, [ _dialIn ]);
-
-    const invite = getInviteText({
-        _conferenceName,
-        _localParticipantName,
-        _inviteUrl,
-        _locationUrl,
-        _dialIn,
-        _liveStreamViewURL,
-        phoneNumber,
-        t
-    });
     const inviteSubject = t('addPeople.inviteMoreMailSubject', {
         appName: interfaceConfig.APP_NAME
     });
@@ -148,17 +142,20 @@ function AddPeopleDialog({
     return (
         <Dialog
             cancelKey = { 'dialog.close' }
-            customHeader = { Header }
             hideCancelButton = { true }
             submitDisabled = { true }
             titleKey = 'addPeople.inviteMorePrompt'
             width = { 'small' }>
             <div className = 'invite-more-dialog'>
                 { _inviteContactsVisible && <InviteContactsSection /> }
-                <CopyMeetingLinkSection url = { _inviteUrl } />
-                <InviteByEmailSection
-                    inviteSubject = { inviteSubject }
-                    inviteText = { invite } />
+                {_urlSharingVisible ? <CopyMeetingLinkSection url = { _inviteUrl } /> : null}
+                {
+                    _emailSharingVisible
+                        ? <InviteByEmailSection
+                            inviteSubject = { inviteSubject }
+                            inviteText = { _invitationText } />
+                        : null
+                }
                 { _embedMeetingVisible && <EmbedMeetingTrigger /> }
                 <div className = 'invite-more-dialog separator' />
                 {
@@ -166,12 +163,9 @@ function AddPeopleDialog({
                         && <LiveStreamSection liveStreamViewURL = { _liveStreamViewURL } />
                 }
                 {
-                    _dialIn.numbers
-                        && <DialInSection
-                            conferenceName = { _conferenceName }
-                            dialIn = { _dialIn }
-                            locationUrl = { _locationUrl }
-                            phoneNumber = { phoneNumber } />
+                    _phoneNumber
+                        && _dialInVisible
+                        && <DialInSection phoneNumber = { _phoneNumber } />
                 }
             </div>
         </Dialog>
@@ -183,29 +177,35 @@ function AddPeopleDialog({
  * {@code AddPeopleDialog} component.
  *
  * @param {Object} state - The Redux state.
+ * @param {Object} ownProps - The properties explicitly passed to the component.
  * @private
  * @returns {Props}
  */
-function mapStateToProps(state) {
-    const localParticipant = getLocalParticipant(state);
+function mapStateToProps(state, ownProps) {
     const currentLiveStreamingSession
         = getActiveSession(state, JitsiRecordingConstants.mode.STREAM);
     const { iAmRecorder } = state['features/base/config'];
     const addPeopleEnabled = isAddPeopleEnabled(state);
     const dialOutEnabled = isDialOutEnabled(state);
     const hideInviteContacts = iAmRecorder || (!addPeopleEnabled && !dialOutEnabled);
+    const dialIn = state['features/invite'];
+    const phoneNumber = dialIn && dialIn.numbers ? _getDefaultPhoneNumber(dialIn.numbers) : undefined;
 
     return {
-        _conferenceName: getRoomName(state),
-        _dialIn: state['features/invite'],
-        _embedMeetingVisible: !isVpaasMeeting(state),
+        _dialIn: dialIn,
+        _embedMeetingVisible: !isVpaasMeeting(state) && isSharingEnabled(sharingFeatures.embed),
+        _dialInVisible: isSharingEnabled(sharingFeatures.dialIn),
+        _urlSharingVisible: isSharingEnabled(sharingFeatures.url),
+        _emailSharingVisible: isSharingEnabled(sharingFeatures.email),
+        _invitationText: getInviteText({ state,
+            phoneNumber,
+            t: ownProps.t }),
         _inviteContactsVisible: interfaceConfig.ENABLE_DIAL_OUT && !hideInviteContacts,
         _inviteUrl: getInviteURL(state),
         _liveStreamViewURL:
             currentLiveStreamingSession
                 && currentLiveStreamingSession.liveStreamViewURL,
-        _localParticipantName: localParticipant?.name,
-        _locationUrl: state['features/base/connection'].locationURL
+        _phoneNumber: phoneNumber
     };
 }
 

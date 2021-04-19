@@ -15,9 +15,14 @@ export const PREJOIN_INITIALIZED = 'PREJOIN_INITIALIZED';
 export const SET_DEVICE_STATUS = 'SET_DEVICE_STATUS';
 
 /**
- * Action type to set the visiblity of the prejoin page for the future.
+ * Action type to set the visibility of the prejoin page for the future.
  */
 export const SET_SKIP_PREJOIN = 'SET_SKIP_PREJOIN';
+
+/**
+ * Action type to set the visibility of the prejoin page when client is forcefully reloaded.
+ */
+export const SET_SKIP_PREJOIN_RELOAD = 'SET_SKIP_PREJOIN_RELOAD';
 
 /**
  * Action type used to set the mandatory stance of the prejoin display name.
@@ -40,7 +45,7 @@ export const SET_DIALOUT_NUMBER = 'SET_DIALOUT_NUMBER';
 export const SET_DIALOUT_STATUS = 'SET_DIALOUT_STATUS';
 
 /**
- * Action type to set the visiblity of the 'JoinByPhone' dialog.
+ * Action type to set the visibility of the 'JoinByPhone' dialog.
  */
 export const SET_JOIN_BY_PHONE_DIALOG_VISIBLITY = 'SET_JOIN_BY_PHONE_DIALOG_VISIBLITY';
 

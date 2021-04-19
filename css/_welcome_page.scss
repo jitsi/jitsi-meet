@@ -208,6 +208,11 @@ body.welcome-page {
             cursor: pointer;
             font-size: 32px;
         }
+
+        .toolbox-icon {
+            height: 24px;
+            width: 24px;
+        }
     }
 
     .welcome-watermark {
@@ -226,6 +231,10 @@ body.welcome-page {
             min-width: 500px;
             max-width: 580px;
         }
+    }
+
+    &.without-footer {
+        justify-content: start;
     }
 
     .welcome-cards-container {

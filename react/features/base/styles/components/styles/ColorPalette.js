@@ -23,11 +23,13 @@ export const ColorPalette = {
     blueHighlight: '#1081b2',
     buttonUnderlay: '#495258',
     darkGrey: '#555555',
+    darkBackground: 'rgb(19,21,25)',
     green: '#40b183',
     lightGrey: '#AAAAAA',
     overflowMenuItemUnderlay: '#EEEEEE',
     red: '#D00000',
     transparent: 'rgba(0, 0, 0, 0)',
+    toggled: 'rgba(255,255,255,.15)',
     warning: 'rgb(215, 121, 118)',
     white: '#FFFFFF',
 

@@ -185,7 +185,7 @@ export function createRecentClickedEvent(eventName, attributes = {}) {
 }
 
 /**
- * Creates an event which indicate an action occured in the chrome extension banner.
+ * Creates an event which indicate an action occurred in the chrome extension banner.
  *
  * @param {boolean} installPressed - Whether the user pressed install or `x` - cancel.
  * @param {Object} attributes - Attributes to attach to the event.
@@ -460,7 +460,7 @@ export function createLocalTracksDurationEvent(duration) {
 
 /**
  * Creates an event which indicates that an action related to recording has
- * occured.
+ * occurred.
  *
  * @param {string} action - The action (e.g. 'start' or 'stop').
  * @param {string} type - The recording type (e.g. 'file' or 'live').
@@ -504,15 +504,17 @@ export function createRejoinedEvent({ url, lastConferenceDuration, timeSinceLeft
  *
  * @param {string} participantId - The ID of the participant that was remotely
  * muted.
+ * @param {string} mediaType - The media type of the channel to mute.
  * @returns {Object} The event in a format suitable for sending via
  * sendAnalytics.
  */
-export function createRemoteMuteConfirmedEvent(participantId) {
+export function createRemoteMuteConfirmedEvent(participantId, mediaType) {
     return {
         action: 'clicked',
         actionSubject: 'remote.mute.dialog.confirm.button',
         attributes: {
-            'participant_id': participantId
+            'participant_id': participantId,
+            'media_type': mediaType
         },
         source: 'remote.mute.dialog',
         type: TYPE_UI

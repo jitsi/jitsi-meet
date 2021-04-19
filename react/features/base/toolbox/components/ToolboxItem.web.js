@@ -1,9 +1,9 @@
 // @flow
 
-import Tooltip from '@atlaskit/tooltip';
 import React, { Fragment } from 'react';
 
 import { Icon } from '../../icons';
+import { Tooltip } from '../../tooltip';
 
 import AbstractToolboxItem from './AbstractToolboxItem';
 import type { Props } from './AbstractToolboxItem';

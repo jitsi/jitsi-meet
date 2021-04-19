@@ -64,7 +64,7 @@ type State = {
 }
 
 /**
- * Implements a React {@link Component} which displayes a list of all
+ * Implements a React {@link Component} which displays a list of all
  * the audio input & output devices to choose from.
  *
  * @extends Component
@@ -172,7 +172,7 @@ class AudioSettingsContent extends Component<Props, State> {
      * @returns {void}
      */
     async _setTracks() {
-        if (browser.isSafari()) {
+        if (browser.isWebKitBased()) {
 
             // It appears that at the time of this writing, creating audio tracks blocks the browser's main thread for
             // long time on safari. Wasn't able to confirm which part of track creation does the blocking exactly, but
@@ -182,9 +182,7 @@ class AudioSettingsContent extends Component<Props, State> {
 
         this._disposeTracks(this.state.audioTracks);
 
-        const audioTracks = await createLocalAudioTracks(
-            this.props.microphoneDevices
-        );
+        const audioTracks = await createLocalAudioTracks(this.props.microphoneDevices, 5000);
 
         if (this._componentWasUnmounted) {
             this._disposeTracks(audioTracks);
@@ -256,9 +254,13 @@ class AudioSettingsContent extends Component<Props, State> {
                         this._renderMicrophoneEntry(data, i),
                     )}
                     { outputDevices.length > 0 && (
-                        <AudioSettingsHeader
-                            IconComponent = { IconVolumeEmpty }
-                            text = { t('settings.speakers') } />)
+                        <>
+                            <hr className = 'audio-preview-hr' />
+                            <AudioSettingsHeader
+                                IconComponent = { IconVolumeEmpty }
+                                text = { t('settings.speakers') } />
+                        </>
+                    )
                     }
                     {outputDevices.map((data, i) =>
                         this._renderSpeakerEntry(data, i),

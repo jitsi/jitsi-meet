@@ -1,0 +1,56 @@
+{
+  "name": "jitsi-meet-load-test",
+  "version": "0.0.0",
+  "description": "A load test participant",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/jitsi/jitsi-meet"
+  },
+  "keywords": [
+    "jingle",
+    "webrtc",
+    "xmpp",
+    "browser"
+  ],
+  "author": "",
+  "readmeFilename": "../README.md",
+  "dependencies": {
+    "jquery": "3.5.1"
+  },
+  "devDependencies": {
+    "@babel/core": "7.5.5",
+    "@babel/plugin-proposal-class-properties": "7.1.0",
+    "@babel/plugin-proposal-export-default-from": "7.0.0",
+    "@babel/plugin-proposal-export-namespace-from": "7.0.0",
+    "@babel/plugin-proposal-nullish-coalescing-operator": "7.4.4",
+    "@babel/plugin-proposal-optional-chaining": "7.2.0",
+    "@babel/plugin-transform-flow-strip-types": "7.0.0",
+    "@babel/preset-env": "7.1.0",
+    "@babel/preset-flow": "7.0.0",
+    "@babel/runtime": "7.5.5",
+    "babel-eslint": "10.0.1",
+    "babel-loader": "8.0.4",
+    "eslint": "5.6.1",
+    "eslint-config-jitsi": "github:jitsi/eslint-config-jitsi#1.0.3",
+    "eslint-plugin-flowtype": "2.50.3",
+    "eslint-plugin-import": "2.20.2",
+    "eslint-plugin-jsdoc": "3.8.0",
+    "expose-loader": "0.7.5",
+    "flow-bin": "0.104.0",
+    "imports-loader": "0.7.1",
+    "lodash": "4.17.20",
+    "string-replace-loader": "2.1.1",
+    "style-loader": "0.19.0",
+    "webpack": "4.43.0",
+    "webpack-bundle-analyzer": "3.4.1",
+    "webpack-cli": "3.3.11"
+  },
+  "engines": {
+    "node": ">=8.0.0",
+    "npm": ">=6.0.0"
+  },
+  "license": "Apache-2.0",
+  "scripts": {
+    "build": "webpack -p"
+  }
+}

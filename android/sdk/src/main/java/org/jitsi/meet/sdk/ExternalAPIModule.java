@@ -53,6 +53,8 @@ class ExternalAPIModule
 
         broadcastEmitter = new BroadcastEmitter(reactContext);
         broadcastReceiver = new BroadcastReceiver(reactContext);
+
+        ParticipantsService.init(reactContext);
     }
 
     /**
@@ -77,6 +79,13 @@ class ExternalAPIModule
 
         constants.put("SET_AUDIO_MUTED", BroadcastAction.Type.SET_AUDIO_MUTED.getAction());
         constants.put("HANG_UP", BroadcastAction.Type.HANG_UP.getAction());
+        constants.put("SEND_ENDPOINT_TEXT_MESSAGE", BroadcastAction.Type.SEND_ENDPOINT_TEXT_MESSAGE.getAction());
+        constants.put("TOGGLE_SCREEN_SHARE", BroadcastAction.Type.TOGGLE_SCREEN_SHARE.getAction());
+        constants.put("RETRIEVE_PARTICIPANTS_INFO", BroadcastAction.Type.RETRIEVE_PARTICIPANTS_INFO.getAction());
+        constants.put("OPEN_CHAT", BroadcastAction.Type.OPEN_CHAT.getAction());
+        constants.put("CLOSE_CHAT", BroadcastAction.Type.CLOSE_CHAT.getAction());
+        constants.put("SEND_CHAT_MESSAGE", BroadcastAction.Type.SEND_CHAT_MESSAGE.getAction());
+        constants.put("SET_VIDEO_MUTED", BroadcastAction.Type.SET_VIDEO_MUTED.getAction());
 
         return constants;
     }

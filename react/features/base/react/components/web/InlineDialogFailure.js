@@ -1,6 +1,6 @@
 /* @flow */
 
-import Button from '@atlaskit/button';
+import Button from '@atlaskit/button/standard-button';
 import React, { Component } from 'react';
 
 import { translate } from '../../../i18n';
@@ -20,7 +20,12 @@ type Props = {
     /**
      * Invoked to obtain translated strings.
      */
-    t: Function
+    t: Function,
+
+    /**
+     * Indicates whether the support link should be shown in case of an error
+     */
+     showSupportLink: Boolean,
 };
 
 /**
@@ -33,12 +38,12 @@ class InlineDialogFailure extends Component<Props> {
      * @returns {ReactElement}
      */
     render() {
-        const { t } = this.props;
+        const { t, showSupportLink } = this.props;
 
         const supportLink = interfaceConfig.SUPPORT_URL;
         const supportString = t('inlineDialogFailure.supportMsg');
         const supportLinkElem
-            = supportLink
+            = supportLink && showSupportLink
                 ? (
                     <div className = 'inline-dialog-error-text'>
                         <span>{ supportString.padEnd(supportString.length + 1) }

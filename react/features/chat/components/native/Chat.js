@@ -5,9 +5,9 @@ import React from 'react';
 import { translate } from '../../../base/i18n';
 import { JitsiModal } from '../../../base/modal';
 import { connect } from '../../../base/redux';
+import { closeChat } from '../../actions.any';
 import { CHAT_VIEW_MODAL_ID } from '../../constants';
 import AbstractChat, {
-    _mapDispatchToProps,
     _mapStateToProps,
     type Props
 } from '../AbstractChat';
@@ -48,10 +48,12 @@ class Chat extends AbstractChat<Props> {
 
                 <MessageContainer messages = { this.props._messages } />
                 <MessageRecipient />
-                <ChatInputBar onSend = { this.props._onSendMessage } />
+                <ChatInputBar onSend = { this._onSendMessage } />
             </JitsiModal>
         );
     }
+
+    _onSendMessage: (string) => void;
 
     _onClose: () => boolean
 
@@ -61,10 +63,10 @@ class Chat extends AbstractChat<Props> {
      * @returns {boolean}
      */
     _onClose() {
-        this.props._onToggleChat();
+        this.props.dispatch(closeChat());
 
         return true;
     }
 }
 
-export default translate(connect(_mapStateToProps, _mapDispatchToProps)(Chat));
+export default translate(connect(_mapStateToProps)(Chat));

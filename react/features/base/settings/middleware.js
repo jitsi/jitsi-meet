@@ -14,6 +14,7 @@ import { SETTINGS_UPDATED } from './actionTypes';
 import { updateSettings } from './actions';
 import { handleCallIntegrationChange, handleCrashReportingChange } from './functions';
 
+
 /**
  * The middleware of the feature base/settings. Distributes changes to the state
  * of base/settings to the states of other features computed from the state of
@@ -135,9 +136,11 @@ function _maybeUpdateDisplayName({ dispatch, getState }) {
     if (hasJwt) {
         const displayName = getJwtName(state);
 
-        dispatch(updateSettings({
-            displayName
-        }));
+        if (displayName) {
+            dispatch(updateSettings({
+                displayName
+            }));
+        }
     }
 }
 

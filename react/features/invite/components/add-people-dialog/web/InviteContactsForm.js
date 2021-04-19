@@ -10,6 +10,7 @@ import { Icon, IconPhone } from '../../../../base/icons';
 import { getLocalParticipant } from '../../../../base/participants';
 import { MultiSelectAutocomplete } from '../../../../base/react';
 import { connect } from '../../../../base/redux';
+import { isVpaasMeeting } from '../../../../billing-counter/functions';
 import { hideAddPeopleDialog } from '../../../actions';
 import AbstractAddPeopleDialog, {
     type Props as AbstractProps,
@@ -30,6 +31,11 @@ type Props = AbstractProps & {
      * Whether to show a footer text after the search results as a last element.
      */
     _footerTextEnabled: boolean,
+
+    /**
+     * Whether the meeting belongs to JaaS user
+     */
+    _isVpaas: boolean,
 
     /**
      * The redux {@code dispatch} function.
@@ -110,6 +116,7 @@ class InviteContactsForm extends AbstractAddPeopleDialog<Props, State> {
         const {
             _addPeopleEnabled,
             _dialOutEnabled,
+            _isVpaas,
             t
         } = this.props;
         const footerText = this._renderFooterText();
@@ -152,7 +159,8 @@ class InviteContactsForm extends AbstractAddPeopleDialog<Props, State> {
                     ref = { this._setMultiSelectElement }
                     resourceClient = { this._resourceClient }
                     shouldFitContainer = { true }
-                    shouldFocus = { true } />
+                    shouldFocus = { true }
+                    showSupportLink = { !_isVpaas } />
                 { this._renderFormActions() }
             </div>
         );
@@ -277,7 +285,7 @@ class InviteContactsForm extends AbstractAddPeopleDialog<Props, State> {
      */
     _parseQueryResults(response = []) {
         const { t, _dialOutEnabled } = this.props;
-        const users = response.filter(item => item.type !== 'phone');
+        const users = response.filter(item => item.type !== 'phone' && item.type !== 'sip');
         const userDisplayItems = [];
 
         for (const user of users) {
@@ -340,9 +348,25 @@ class InviteContactsForm extends AbstractAddPeopleDialog<Props, State> {
             };
         });
 
+
+        const sipAddresses = response.filter(item => item.type === 'sip');
+
+        const sipDisplayItems = sipAddresses.map(sip => {
+            return {
+                filterValues: [
+                    sip.address
+                ],
+                content: t('addPeople.sip', { address: sip.address }),
+                description: '',
+                item: sip,
+                value: sip.address
+            };
+        });
+
         return [
             ...userDisplayItems,
-            ...numberDisplayItems
+            ...numberDisplayItems,
+            ...sipDisplayItems
         ];
     }
 
@@ -516,7 +540,8 @@ function _mapStateToProps(state) {
 
     return {
         ..._abstractMapStateToProps(state),
-        _footerTextEnabled: footerTextEnabled
+        _footerTextEnabled: footerTextEnabled,
+        _isVpaas: isVpaasMeeting(state)
     };
 }
 

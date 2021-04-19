@@ -182,10 +182,12 @@
         z-index: $zindex2;
     }
 
-    &.shift-right {
-        &#largeVideoContainer {
-            margin-left: $sidebarWidth;
-            width: calc(100% - #{$sidebarWidth});
+    @media (min-width: 581px) {
+        &.shift-right {
+            &#largeVideoContainer {
+                margin-left: $sidebarWidth;
+                width: calc(100% - #{$sidebarWidth});
+            }
         }
     }
 }
@@ -398,7 +400,9 @@
     }
 }
 
+.local-video-menu-trigger,
 .remote-video-menu-trigger,
+.localvideomenu,
 .remotevideomenu
 {
     display: inline-block;
@@ -416,6 +420,7 @@
         cursor: hand;
     }
 }
+.local-video-menu-trigger,
 .remote-video-menu-trigger {
     margin-top: 7px;
 }
@@ -476,14 +481,6 @@
     -webkit-border-radius: 5px;
     -webkit-background-clip: padding-box;
     z-index: $reloadZ; /*The reload button should appear on top of the header!*/
-}
-
-.audiolevel {
-    display: inline-block;
-    position: absolute;
-    z-index: $zindex0;
-    border-radius:1px;
-    pointer-events: none;
 }
 
 #dominantSpeaker {

@@ -12,5 +12,6 @@ jobs:
       with:
         node-version: '12.x'
     - run: npm install
+    - run: git status -s --untracked-files=no
     - run: npm run lint
     - run: make

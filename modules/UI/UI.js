@@ -7,6 +7,7 @@ import EventEmitter from 'events';
 import Logger from 'jitsi-meet-logger';
 
 import { isMobileBrowser } from '../../react/features/base/environment/utils';
+import { setColorAlpha } from '../../react/features/base/util';
 import { toggleChat } from '../../react/features/chat';
 import { setDocumentUrl } from '../../react/features/etherpad';
 import { setFilmstripVisible } from '../../react/features/filmstrip';
@@ -115,7 +116,6 @@ UI.start = function() {
     // Set the defaults for prompt dialogs.
     $.prompt.setDefaults({ persistent: false });
 
-    VideoLayout.init(eventEmitter);
     VideoLayout.initLargeVideo();
 
     // Do not animate the video area on UI start (second argument passed into
@@ -130,17 +130,22 @@ UI.start = function() {
         $('body').addClass('mobile-browser');
     } else {
         $('body').addClass('desktop-browser');
+
+        if (config.backgroundAlpha !== undefined) {
+            const backgroundColor = $('body').css('background-color');
+            const alphaColor = setColorAlpha(backgroundColor, config.backgroundAlpha);
+
+            $('body').css('background-color', alphaColor);
+        }
     }
 
     if (config.iAmRecorder) {
         // in case of iAmSipGateway keep local video visible
         if (!config.iAmSipGateway) {
-            VideoLayout.setLocalVideoVisible(false);
             APP.store.dispatch(setNotificationsEnabled(false));
         }
 
         APP.store.dispatch(setToolboxEnabled(false));
-        UI.messageHandler.enablePopups(false);
     }
 };
 
@@ -177,14 +182,6 @@ UI.unbindEvents = () => {
             'webkitfullscreenchange mozfullscreenchange fullscreenchange');
 
     $(window).off('resize');
-};
-
-/**
- * Show local video stream on UI.
- * @param {JitsiTrack} track stream to show
- */
-UI.addLocalVideoStream = track => {
-    VideoLayout.changeLocalVideo(track);
 };
 
 /**
@@ -226,14 +223,6 @@ UI.addUser = function(user) {
         UI.updateUserStatus(user, status);
     }
 };
-
-/**
- * Update videotype for specified user.
- * @param {string} id user id
- * @param {string} newVideoType new videotype
- */
-UI.onPeerVideoTypeChanged
-    = (id, newVideoType) => VideoLayout.onVideoTypeChanged(id, newVideoType);
 
 /**
  * Updates the user status.
@@ -289,19 +278,14 @@ UI.setAudioMuted = function(id) {
  * Sets muted video state for participant
  */
 UI.setVideoMuted = function(id) {
-    VideoLayout.onVideoMute(id);
+    VideoLayout._updateLargeVideoIfDisplayed(id, true);
+
     if (APP.conference.isLocalId(id)) {
         APP.conference.updateVideoIconEnabled();
     }
 };
 
-/**
- * Triggers an update of remote video and large video displays so they may pick
- * up any state changes that have occurred elsewhere.
- *
- * @returns {void}
- */
-UI.updateAllVideos = () => VideoLayout.updateAllVideos();
+UI.updateLargeVideo = (id, forceUpdate) => VideoLayout.updateLargeVideo(id, forceUpdate);
 
 /**
  * Adds a listener that would be notified on the given type of event.
@@ -339,8 +323,6 @@ UI.removeListener = function(type, listener) {
  * @param options the parameters for the event
  */
 UI.emitEvent = (type, ...options) => eventEmitter.emit(type, ...options);
-
-UI.clickOnVideo = videoNumber => VideoLayout.togglePin(videoNumber);
 
 // Used by torture.
 UI.showToolbar = timeout => APP.store.dispatch(showToolbox(timeout));
@@ -488,6 +470,25 @@ UI.onSharedVideoUpdate = function(id, url, attributes) {
 UI.onSharedVideoStop = function(id, attributes) {
     if (sharedVideoManager) {
         sharedVideoManager.onSharedVideoStop(id, attributes);
+    }
+};
+
+/**
+ * Show shared video.
+ * @param {string} url video url
+ */
+UI.startSharedVideoEmitter = function(url) {
+    if (sharedVideoManager) {
+        sharedVideoManager.startSharedVideoEmitter(url);
+    }
+};
+
+/**
+ * Stop shared video.
+ */
+UI.stopSharedVideoEmitter = function() {
+    if (sharedVideoManager) {
+        sharedVideoManager.stopSharedVideoEmitter();
     }
 };
 

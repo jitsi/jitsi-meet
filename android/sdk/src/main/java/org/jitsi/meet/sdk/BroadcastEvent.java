@@ -80,7 +80,14 @@ public class BroadcastEvent {
         CONFERENCE_WILL_JOIN("org.jitsi.meet.CONFERENCE_WILL_JOIN"),
         AUDIO_MUTED_CHANGED("org.jitsi.meet.AUDIO_MUTED_CHANGED"),
         PARTICIPANT_JOINED("org.jitsi.meet.PARTICIPANT_JOINED"),
-        PARTICIPANT_LEFT("org.jitsi.meet.PARTICIPANT_LEFT");
+        PARTICIPANT_LEFT("org.jitsi.meet.PARTICIPANT_LEFT"),
+        ENDPOINT_TEXT_MESSAGE_RECEIVED("org.jitsi.meet.ENDPOINT_TEXT_MESSAGE_RECEIVED"),
+        SCREEN_SHARE_TOGGLED("org.jitsi.meet.SCREEN_SHARE_TOGGLED"),
+        PARTICIPANTS_INFO_RETRIEVED("org.jitsi.meet.PARTICIPANTS_INFO_RETRIEVED"),
+        CHAT_MESSAGE_RECEIVED("org.jitsi.meet.CHAT_MESSAGE_RECEIVED"),
+        CHAT_TOGGLED("org.jitsi.meet.CHAT_TOGGLED"),
+        VIDEO_MUTED_CHANGED("org.jitsi.meet.VIDEO_MUTED_CHANGED");
+
 
         private static final String CONFERENCE_WILL_JOIN_NAME = "CONFERENCE_WILL_JOIN";
         private static final String CONFERENCE_JOINED_NAME = "CONFERENCE_JOINED";
@@ -88,6 +95,12 @@ public class BroadcastEvent {
         private static final String AUDIO_MUTED_CHANGED_NAME = "AUDIO_MUTED_CHANGED";
         private static final String PARTICIPANT_JOINED_NAME = "PARTICIPANT_JOINED";
         private static final String PARTICIPANT_LEFT_NAME = "PARTICIPANT_LEFT";
+        private static final String ENDPOINT_TEXT_MESSAGE_RECEIVED_NAME = "ENDPOINT_TEXT_MESSAGE_RECEIVED";
+        private static final String SCREEN_SHARE_TOGGLED_NAME = "SCREEN_SHARE_TOGGLED";
+        private static final String PARTICIPANTS_INFO_RETRIEVED_NAME = "PARTICIPANTS_INFO_RETRIEVED";
+        private static final String CHAT_MESSAGE_RECEIVED_NAME = "CHAT_MESSAGE_RECEIVED";
+        private static final String CHAT_TOGGLED_NAME = "CHAT_TOGGLED";
+        private static final String VIDEO_MUTED_CHANGED_NAME = "VIDEO_MUTED_CHANGED";
 
         private final String action;
 
@@ -122,6 +135,18 @@ public class BroadcastEvent {
                     return PARTICIPANT_JOINED;
                 case PARTICIPANT_LEFT_NAME:
                     return PARTICIPANT_LEFT;
+                case ENDPOINT_TEXT_MESSAGE_RECEIVED_NAME:
+                    return ENDPOINT_TEXT_MESSAGE_RECEIVED;
+                case SCREEN_SHARE_TOGGLED_NAME:
+                    return SCREEN_SHARE_TOGGLED;
+                case PARTICIPANTS_INFO_RETRIEVED_NAME:
+                    return PARTICIPANTS_INFO_RETRIEVED;
+                case CHAT_MESSAGE_RECEIVED_NAME:
+                    return CHAT_MESSAGE_RECEIVED;
+                case CHAT_TOGGLED_NAME:
+                    return CHAT_TOGGLED;
+                case VIDEO_MUTED_CHANGED_NAME:
+                    return VIDEO_MUTED_CHANGED;
             }
 
             return null;

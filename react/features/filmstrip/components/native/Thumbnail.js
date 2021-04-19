@@ -20,9 +20,9 @@ import { StyleType } from '../../../base/styles';
 import { getTrackByMediaTypeAndParticipant } from '../../../base/tracks';
 import { ConnectionIndicator } from '../../../connection-indicator';
 import { DisplayNameLabel } from '../../../display-name';
-import { RemoteVideoMenu } from '../../../remote-video-menu';
-import ConnectionStatusComponent from '../../../remote-video-menu/components/native/ConnectionStatusComponent';
 import { toggleToolboxVisible } from '../../../toolbox/actions.native';
+import { RemoteVideoMenu } from '../../../video-menu';
+import ConnectionStatusComponent from '../../../video-menu/components/native/ConnectionStatusComponent';
 
 import AudioMutedIndicator from './AudioMutedIndicator';
 import DominantSpeakerIndicator from './DominantSpeakerIndicator';

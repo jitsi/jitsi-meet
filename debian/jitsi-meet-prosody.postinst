@@ -35,7 +35,7 @@ case "$1" in
             db_input critical jitsi-videobridge/jvb-hostname || true
             db_go
         fi
-        JVB_HOSTNAME="$RET"
+        JVB_HOSTNAME=$(echo "$RET" | xargs echo -n)
 
         db_get jitsi-videobridge/jvbsecret
         if [ -z "$RET" ] ; then
@@ -60,20 +60,11 @@ case "$1" in
             JICOFO_AUTH_PASSWORD="$RET"
         fi
 
-        db_get jicofo/jicofosecret
-        if [ -z "$RET" ] ; then
-            # if secret is missing generate it, and store it
-            JICOFO_SECRET=`generateRandomPassword`
-            db_set jicofo/jicofosecret "$JICOFO_SECRET"
-        else
-            JICOFO_SECRET="$RET"
-        fi
-
         JICOFO_AUTH_DOMAIN="auth.$JVB_HOSTNAME"
 
         # detect dpkg-reconfigure, just delete old links
         db_get jitsi-meet-prosody/jvb-hostname
-        JVB_HOSTNAME_OLD=$RET
+        JVB_HOSTNAME_OLD=$(echo "$RET" | xargs echo -n)
         if [ -n "$RET" ] && [ ! "$JVB_HOSTNAME_OLD" = "$JVB_HOSTNAME" ] ; then
             rm -f /etc/prosody/conf.d/$JVB_HOSTNAME_OLD.cfg.lua
             rm -f /etc/prosody/certs/$JVB_HOSTNAME_OLD.key
@@ -107,7 +98,6 @@ case "$1" in
             mkdir -p /etc/prosody/conf.d/
             cp /usr/share/jitsi-meet-prosody/prosody.cfg.lua-jvb.example $PROSODY_HOST_CONFIG
             sed -i "s/jitmeet.example.com/$JVB_HOSTNAME/g" $PROSODY_HOST_CONFIG
-            sed -i "s/focusSecret/$JICOFO_SECRET/g" $PROSODY_HOST_CONFIG
             sed -i "s/focusUser/$JICOFO_AUTH_USER/g" $PROSODY_HOST_CONFIG
             sed -i "s/__turnSecret__/$TURN_SECRET/g" $PROSODY_HOST_CONFIG
             if [ ! -f /etc/prosody/conf.d/$JVB_HOSTNAME.cfg.lua ]; then

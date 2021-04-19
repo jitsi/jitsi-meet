@@ -60,7 +60,7 @@ fi
 
 echo "PR_REPO_SLUG=${PR_REPO_SLUG} PR_BRANCH=${PR_BRANCH}"
 
-# do the marge and git log
+# do the merge and git log
 
 if [ $PR_BRANCH != "master" ]; then
     echo "Will merge ${PR_REPO_SLUG}/${PR_BRANCH} into master"

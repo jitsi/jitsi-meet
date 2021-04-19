@@ -12,10 +12,21 @@ import {
     setPassword,
     setSubject
 } from '../../react/features/base/conference';
+import { overwriteConfig, getWhitelistedJSON } from '../../react/features/base/config';
 import { parseJWTFromURLParams } from '../../react/features/base/jwt';
 import JitsiMeetJS, { JitsiRecordingConstants } from '../../react/features/base/lib-jitsi-meet';
-import { pinParticipant, getParticipantById } from '../../react/features/base/participants';
+import { MEDIA_TYPE } from '../../react/features/base/media';
+import {
+    getLocalParticipant,
+    getParticipantById,
+    participantUpdated,
+    pinParticipant,
+    kickParticipant
+} from '../../react/features/base/participants';
+import { updateSettings } from '../../react/features/base/settings';
+import { isToggleCameraEnabled, toggleCamera } from '../../react/features/base/tracks';
 import { setPrivateMessageRecipient } from '../../react/features/chat/actions';
+import { openChat } from '../../react/features/chat/actions.web';
 import {
     processExternalDeviceRequest
 } from '../../react/features/device-selection/functions';
@@ -27,11 +38,11 @@ import {
     resizeLargeVideo,
     selectParticipantInLargeVideo
 } from '../../react/features/large-video/actions';
-import { toggleLobbyMode } from '../../react/features/lobby/actions.web';
+import { toggleLobbyMode } from '../../react/features/lobby/actions';
 import { RECORDING_TYPES } from '../../react/features/recording/constants';
 import { getActiveSession } from '../../react/features/recording/functions';
-import { muteAllParticipants } from '../../react/features/remote-video-menu/actions';
-import { toggleTileView } from '../../react/features/video-layout';
+import { toggleTileView, setTileView } from '../../react/features/video-layout';
+import { muteAllParticipants } from '../../react/features/video-menu/actions';
 import { setVideoQuality } from '../../react/features/video-quality';
 import { getJitsiMeetTransport } from '../transport';
 
@@ -78,7 +89,9 @@ function initCommands() {
             sendAnalytics(createApiEvent('display.name.changed'));
             APP.conference.changeLocalDisplayName(displayName);
         },
-        'mute-everyone': () => {
+        'mute-everyone': mediaType => {
+            const muteMediaType = mediaType ? mediaType : MEDIA_TYPE.AUDIO;
+
             sendAnalytics(createApiEvent('muted-everyone'));
             const participants = APP.store.getState()['features/base/participants'];
             const localIds = participants
@@ -86,7 +99,7 @@ function initCommands() {
                 .filter(participant => participant.role === 'moderator')
                 .map(participant => participant.id);
 
-            APP.store.dispatch(muteAllParticipants(localIds));
+            APP.store.dispatch(muteAllParticipants(localIds, muteMediaType));
         },
         'toggle-lobby': isLobbyEnabled => {
             APP.store.dispatch(toggleLobbyMode(isLobbyEnabled));
@@ -158,9 +171,39 @@ function initCommands() {
             sendAnalytics(createApiEvent('film.strip.toggled'));
             APP.UI.toggleFilmstrip();
         },
+        'toggle-camera': () => {
+            if (!isToggleCameraEnabled(APP.store.getState())) {
+                return;
+            }
+
+            APP.store.dispatch(toggleCamera());
+        },
+        'toggle-camera-mirror': () => {
+            const state = APP.store.getState();
+            const { localFlipX: currentFlipX } = state['features/base/settings'];
+
+            APP.store.dispatch(updateSettings({ localFlipX: !currentFlipX }));
+        },
         'toggle-chat': () => {
             sendAnalytics(createApiEvent('chat.toggled'));
             APP.UI.toggleChat();
+        },
+        'toggle-raise-hand': () => {
+            const localParticipant = getLocalParticipant(APP.store.getState());
+
+            if (!localParticipant) {
+                return;
+            }
+            const { raisedHand } = localParticipant;
+
+            sendAnalytics(createApiEvent('raise-hand.toggled'));
+            APP.store.dispatch(
+                participantUpdated({
+                    id: APP.conference.getMyUserId(),
+                    local: true,
+                    raisedHand: !raisedHand
+                })
+            );
         },
 
         /**
@@ -180,6 +223,9 @@ function initCommands() {
             sendAnalytics(createApiEvent('tile-view.toggled'));
 
             APP.store.dispatch(toggleTileView());
+        },
+        'set-tile-view': enabled => {
+            APP.store.dispatch(setTileView(enabled));
         },
         'video-hangup': (showFeedbackDialog = true) => {
             sendAnalytics(createApiEvent('video.hangup'));
@@ -342,13 +388,21 @@ function initCommands() {
                 if (!isChatOpen) {
                     APP.UI.toggleChat();
                 }
-                APP.store.dispatch(setPrivateMessageRecipient(participant));
+                APP.store.dispatch(openChat(participant));
             } else {
                 logger.error('No participant found for the given participantId');
             }
         },
         'cancel-private-chat': () => {
             APP.store.dispatch(setPrivateMessageRecipient());
+        },
+        'kick-participant': participantId => {
+            APP.store.dispatch(kickParticipant(participantId));
+        },
+        'overwrite-config': config => {
+            const whitelistedConfig = getWhitelistedJSON('config', config);
+
+            APP.store.dispatch(overwriteConfig(whitelistedConfig));
         }
     };
     transport.on('event', ({ data, name }) => {
@@ -438,6 +492,23 @@ function initCommands() {
 
             callback({
                 sharingParticipantIds
+            });
+            break;
+        }
+        case 'get-livestream-url': {
+            const state = APP.store.getState();
+            const conference = getCurrentConference(state);
+            let livestreamUrl;
+
+            if (conference) {
+                const activeSession = getActiveSession(state, JitsiRecordingConstants.mode.STREAM);
+
+                livestreamUrl = activeSession?.liveStreamViewURL;
+            } else {
+                logger.error('Conference is not defined');
+            }
+            callback({
+                livestreamUrl
             });
             break;
         }
@@ -554,6 +625,21 @@ class API {
         if (this._enabled) {
             transport.sendEvent(event);
         }
+    }
+
+    /**
+     * Notify external application (if API is enabled) that the chat state has been updated.
+     *
+     * @param {number} unreadCount - The unread messages counter.
+     * @param {boolean} isOpen - True if the chat panel is open.
+     * @returns {void}
+     */
+    notifyChatUpdated(unreadCount: number, isOpen: boolean) {
+        this._sendEvent({
+            name: 'chat-updated',
+            unreadCount,
+            isOpen
+        });
     }
 
     /**
@@ -1076,6 +1162,23 @@ class API {
             name: 'raise-hand-updated',
             handRaised,
             id
+        });
+    }
+
+    /**
+     * Notify external application (if API is enabled) that recording has started or stopped.
+     *
+     * @param {boolean} on - True if recording is on, false otherwise.
+     * @param {string} mode - Stream or file.
+     * @param {string} error - Error type or null if success.
+     * @returns {void}
+     */
+    notifyRecordingStatusChanged(on: boolean, mode: string, error?: string) {
+        this._sendEvent({
+            name: 'recording-status-changed',
+            on,
+            mode,
+            error
         });
     }
 

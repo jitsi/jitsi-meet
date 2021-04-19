@@ -16,8 +16,10 @@ public class BroadcastReceiver extends android.content.BroadcastReceiver {
         LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(context);
 
         IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(BroadcastAction.Type.SET_AUDIO_MUTED.getAction());
-        intentFilter.addAction(BroadcastAction.Type.HANG_UP.getAction());
+
+        for (BroadcastAction.Type type : BroadcastAction.Type.values()) {
+            intentFilter.addAction(type.getAction());
+        }
 
         localBroadcastManager.registerReceiver(this, intentFilter);
     }

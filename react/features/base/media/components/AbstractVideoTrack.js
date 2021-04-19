@@ -85,7 +85,7 @@ export default class AbstractVideoTrack<P: Props> extends Component<P> {
             if (shouldRenderVideoTrack(videoTrack, true)) {
                 // It appears that onPlaying has come for videoTrack already.
                 // Most probably, another render has already passed through the
-                // else clause bellow already.
+                // else clause below already.
                 render = true;
             } else if (shouldRenderVideoTrack(videoTrack, false)
                     && !videoTrack.videoStarted) {

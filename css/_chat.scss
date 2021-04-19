@@ -1,5 +1,5 @@
 #sideToolbarContainer {
-    background-color: $newToolbarBackgroundColor;
+    background-color: $chatBackgroundColor;
     box-sizing: border-box;
     color: #FFF;
     display: flex;
@@ -31,6 +31,13 @@
     text-align: left;
     width: $sidebarWidth;
     word-wrap: break-word;
+
+    display: flex;
+    flex-direction: column;
+
+    & > :first-child {
+        margin-top: auto;
+    }
 
     a {
         display: block;
@@ -98,40 +105,99 @@
 }
 
 .chat-header {
-    background-color: $chatHeaderBackgroundColor;
     height: 70px;
     position: relative;
     width: 100%;
     z-index: 1;
+    display: flex;
+    justify-content: flex-end;
+    padding: 16px;
+    align-items: center;
+    box-sizing: border-box;
+    color: #fff;
+    font-weight: 600;
+    font-size: 24px;
+    line-height: 32px;
 
-    .chat-close {
-        align-items: center;
-        bottom: 8px;
-        color: white;
+    .jitsi-icon {
         cursor: pointer;
-        display: flex;
-        font-size: 18px;
-        height: 40px;
-        justify-content: center;
-        line-height: 15px;
-        padding: 4px;
-        position: absolute;
-        right: 5px;
-        width: 40px;
+    }
+}
 
-        &:hover {
-            color: rgba(255, 255, 255, 0.8);
+.chat-input-container {
+    padding: 0 16px 16px;
+
+    &.populated {
+        #chat-input {
+            .send-button {
+                background: #1B67EC;
+                cursor: pointer;
+
+                @media (hover: hover) and (pointer: fine) {
+                    &:hover {
+                        background: #3D82FB;
+                    }
+                }
+
+                &:active {
+                    background: #0852D4;
+                }
+
+                path {
+                    fill: #fff;
+                }
+            }
         }
     }
 }
 
 #chat-input {
-    border-top: 1px solid $chatInputSeparatorColor;
+    border: 1px solid $chatInputSeparatorColor;
     display: flex;
-    padding: 5px 10px;
+    padding: 4px;
+    border-radius: 3px;
+
+    &:focus-within {
+        border: 1px solid #619CF4;
+    }
 
     * {
         background-color: transparent;
+    }
+}
+
+.send-button-container {
+    display: flex;
+    align-items: center;
+}
+
+.send-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 40px;
+    width: 40px;
+    border-radius: 3px;
+
+    path {
+        fill: $chatInputSeparatorColor;
+    }
+}
+
+.smiley-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 40px;
+    width: 40px;
+    border-radius: 3px;
+}
+
+#chat-input .smiley-button {
+    @media (hover: hover) and (pointer: fine) {
+        &:hover {
+            background-color: #484A4F;
+        }
     }
 }
 
@@ -148,7 +214,7 @@
     border-radius:0;
     box-shadow: none;
     color: white;
-    font-size: 15px;
+    font-size: 14px;
     padding: 10px;
     overflow-y: auto;
     resize: none;
@@ -164,10 +230,55 @@
 #nickname {
     text-align: center;
     color: #9d9d9d;
-    font-size: 18px;
-    margin-top: 30px;
-    left: 5px;
-    right: 5px;
+    font-size: 16px;
+    margin: auto 0;
+    padding: 0 16px;
+
+    input {
+        height: 40px;
+    }
+
+    label {
+        line-height: 24px;
+    }
+
+    .enter-chat {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-top: 16px;
+        height: 40px;
+        background: #1B67EC;
+        border-radius: 3px;
+        color: #fff;
+        cursor: pointer;
+
+        &.disabled {
+            color: #757575;
+            background: #11336E;
+            pointer-events: none;
+        }
+    }
+}
+
+.mobile-browser {
+    #nickname {
+        input {
+            height: 48px;
+        }
+
+        .enter-chat {
+            height: 48px;
+        }
+    }
+
+    #usermsg {
+        font-size: 16px;
+    }
+
+    .chatmessage .usermessage {
+        font-size: 16px;
+    }
 }
 
 .sideToolbarContainer {
@@ -177,12 +288,16 @@
     }
 
     .display-name {
-        font-size: 13px;
-        font-weight: bold;
+        font-size: 12px;
+        font-weight: 600;
         margin-bottom: 5px;
         white-space: nowrap;
         text-overflow: ellipsis;
         overflow: hidden;
+    }
+
+    @media (max-width: 580px) {
+        display: none !important;
     }
 }
 
@@ -202,6 +317,7 @@
 
     .usermessage {
         white-space: pre-wrap;
+        font-size: 14px;
     }
 
     &.error {
@@ -224,10 +340,14 @@
     }
 
     .messagecontent {
-        margin: 5px 10px;
+        margin: 8px;
         max-width: 100%;
         overflow: hidden;
     }
+}
+
+.timestamp {
+    color: #757575;
 }
 
 .smiley {
@@ -265,7 +385,9 @@
     max-height: 0;
     overflow: hidden;
     position: absolute;
-    width: $sidebarWidth;
+    width: calc(#{$sidebarWidth} - 32px);
+    margin-bottom: 5px;
+    margin-left: -5px;
 
     /**
      * CSS transitions do not apply for auto dimensions. So to produce the css
@@ -280,9 +402,8 @@
     }
 
     #smileysContainer {
-        background-color: $newToolbarBackgroundColor;
-        border-bottom: 1px solid;
-        border-top: 1px solid;
+        background-color: $chatBackgroundColor;
+        border-top: 1px solid $chatInputSeparatorColor;
     }
 }
 
@@ -388,8 +509,9 @@
 
     &-header {
         display: flex;
-        justify-content: space-between;
-        margin: 16px 16px 24px;
+        justify-content: flex-end;
+        align-items: center;
+        margin: 16px;
         width: calc(100% - 32px);
         box-sizing: border-box;
         color: #fff;
@@ -397,13 +519,30 @@
         font-size: 24px;
         line-height: 32px;
 
-        .jitsi-icon > svg {
+        .jitsi-icon {
             cursor: pointer;
-            fill: #A4B8D1;
         }
     }
 
     #chatconversation {
         width: 100%;
     }
+}
+
+.touchmove-hack {
+    display: flex;
+    flex: 1;
+    overflow: auto;
+}
+
+/**
+ * Make header close button more easily tappable on mobile.
+ */
+.mobile-browser .chat-dialog-header .jitsi-icon {
+    display: grid;
+    place-items: center;
+    height: 48px;
+    width: 48px;
+    background: #36383C;
+    border-radius: 3px;
 }

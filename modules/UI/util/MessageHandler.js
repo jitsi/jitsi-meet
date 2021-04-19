@@ -13,12 +13,6 @@ import {
 const logger = Logger.getLogger(__filename);
 
 /**
- * Flag for enabling/disabling popups.
- * @type {boolean}
- */
-let popupEnabled = true;
-
-/**
  * Currently displayed two button dialog.
  * @type {null}
  */
@@ -167,7 +161,7 @@ const messageHandler = {
 
         let { classes } = options;
 
-        if (!popupEnabled || twoButtonDialog) {
+        if (twoButtonDialog) {
             return null;
         }
 
@@ -234,88 +228,6 @@ const messageHandler = {
     },
 
     /**
-     * Shows a message to the user with two buttons: first is given as a
-     * parameter and the second is Cancel.
-     *
-     * @param titleKey the key for the title of the message
-     * @param msgString the text of the message
-     * @param persistent boolean value which determines whether the message is
-     *        persistent or not
-     * @param buttons object with the buttons. The keys must be the name of the
-     *        button and value is the value that will be passed to
-     *        submitFunction
-     * @param submitFunction function to be called on submit
-     * @param loadedFunction function to be called after the prompt is fully
-     *        loaded
-     * @param closeFunction function to be called on dialog close
-     * @param {object} dontShowAgain - options for dont show again checkbox.
-     * @param {string} dontShowAgain.id the id of the checkbox.
-     * @param {string} dontShowAgain.textKey the key for the text displayed
-     * next to checkbox
-     * @param {boolean} dontShowAgain.checked if true the checkbox is foing to
-     * be checked
-     * @param {Array} dontShowAgain.buttonValues The button values that will
-     * trigger storing the checkbox value
-     * @param {string} dontShowAgain.localStorageKey the key for the local
-     * storage. if not provided dontShowAgain.id will be used.
-     */
-    openDialog(// eslint-disable-line max-params
-            titleKey,
-            msgString,
-            persistent,
-            buttons,
-            submitFunction,
-            loadedFunction,
-            closeFunction,
-            dontShowAgain) {
-        if (!popupEnabled) {
-            return;
-        }
-
-        if (dontShowTheDialog(dontShowAgain)) {
-            // Maybe we should pass some parameters here? I'm not sure
-            // and currently we don't need any parameters.
-            submitFunction();
-
-            return;
-        }
-
-        const args = {
-            title: this._getFormattedTitleString(titleKey),
-            persistent,
-            buttons,
-            defaultButton: 1,
-            promptspeed: 0,
-            loaded() {
-                if (loadedFunction) {
-                    // eslint-disable-next-line prefer-rest-params
-                    loadedFunction.apply(this, arguments);
-                }
-
-                // Hide the close button
-                if (persistent) {
-                    $('.jqiclose', this).hide();
-                }
-            },
-            submit: dontShowAgainSubmitFunctionWrapper(
-                dontShowAgain, submitFunction),
-            close: closeFunction,
-            classes: this._getDialogClasses()
-        };
-
-        if (persistent) {
-            args.closeText = '';
-        }
-
-        const dialog = $.prompt(
-            msgString + generateDontShowCheckbox(dontShowAgain), args);
-
-        APP.translation.translateElement(dialog);
-
-        return $.prompt.getApi();
-    },
-
-    /**
      * Returns the formatted title string.
      *
      * @return the title string formatted as a div.
@@ -358,9 +270,6 @@ const messageHandler = {
      * @param translateOptions options passed to translation
      */
     openDialogWithStates(statesObject, options, translateOptions) {
-        if (!popupEnabled) {
-            return;
-        }
         const { classes, size } = options;
         const defaultClasses = this._getDialogClasses(size);
 
@@ -397,10 +306,6 @@ const messageHandler = {
      */
     // eslint-disable-next-line max-params
     openCenteredPopup(url, w, h, onPopupClosed) {
-        if (!popupEnabled) {
-            return;
-        }
-
         const l = window.screenX + (window.innerWidth / 2) - (w / 2);
         const t = window.screenY + (window.innerHeight / 2) - (h / 2);
         const popup = window.open(
@@ -481,19 +386,6 @@ const messageHandler = {
     notify(titleKey, messageKey, messageArguments) {
         this.participantNotification(
             null, titleKey, null, messageKey, messageArguments);
-    },
-
-    enablePopups(enable) {
-        popupEnabled = enable;
-    },
-
-    /**
-     * Returns true if dialog is opened
-     * false otherwise
-     * @returns {boolean} isOpened
-     */
-    isDialogOpened() {
-        return Boolean($.prompt.getCurrentStateName());
     }
 };
 

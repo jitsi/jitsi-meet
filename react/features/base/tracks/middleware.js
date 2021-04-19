@@ -135,7 +135,7 @@ MiddlewareRegistry.register(store => next => action => {
 
     case TOGGLE_SCREENSHARING:
         if (typeof APP === 'object') {
-            APP.UI.emitEvent(UIEvents.TOGGLE_SCREENSHARING);
+            APP.UI.emitEvent(UIEvents.TOGGLE_SCREENSHARING, action.audioOnly);
         }
         break;
 
@@ -163,7 +163,6 @@ MiddlewareRegistry.register(store => next => action => {
                 } else {
                     APP.UI.setVideoMuted(participantID);
                 }
-                APP.UI.onPeerVideoTypeChanged(participantID, jitsiTrack.videoType);
             } else if (jitsiTrack.isLocal()) {
                 APP.conference.setAudioMuteStatus(muted);
             } else {

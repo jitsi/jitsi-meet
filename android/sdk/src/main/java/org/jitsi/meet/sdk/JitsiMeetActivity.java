@@ -32,6 +32,7 @@ import com.facebook.react.modules.core.PermissionListener;
 import org.jitsi.meet.sdk.log.JitsiMeetLogger;
 
 import java.util.HashMap;
+import android.app.Activity;
 
 /**
  * A base activity for SDK users to embed. It uses {@link JitsiMeetFragment} to do the heavy
@@ -58,6 +59,9 @@ public class JitsiMeetActivity extends FragmentActivity
         Intent intent = new Intent(context, JitsiMeetActivity.class);
         intent.setAction(ACTION_JITSI_MEET_CONFERENCE);
         intent.putExtra(JITSI_MEET_CONFERENCE_OPTIONS, options);
+        if (!(context instanceof Activity)) {
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        }
         context.startActivity(intent);
     }
 
@@ -266,11 +270,10 @@ public class JitsiMeetActivity extends FragmentActivity
 
     private void registerForBroadcastMessages() {
         IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(BroadcastEvent.Type.CONFERENCE_JOINED.getAction());
-        intentFilter.addAction(BroadcastEvent.Type.CONFERENCE_WILL_JOIN.getAction());
-        intentFilter.addAction(BroadcastEvent.Type.CONFERENCE_TERMINATED.getAction());
-        intentFilter.addAction(BroadcastEvent.Type.PARTICIPANT_JOINED.getAction());
-        intentFilter.addAction(BroadcastEvent.Type.PARTICIPANT_LEFT.getAction());
+
+        for (BroadcastEvent.Type type : BroadcastEvent.Type.values()) {
+            intentFilter.addAction(type.getAction());
+        }
 
         LocalBroadcastManager.getInstance(this).registerReceiver(broadcastReceiver, intentFilter);
     }

@@ -1,6 +1,6 @@
 // @flow
 
-import Button from '@atlaskit/button';
+import Button from '@atlaskit/button/standard-button';
 import { FieldTextStateless } from '@atlaskit/field-text';
 import React from 'react';
 

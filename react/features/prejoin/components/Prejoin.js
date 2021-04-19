@@ -420,11 +420,11 @@ function mapStateToProps(state, ownProps): Object {
     const name = getDisplayName(state);
     const showErrorOnJoin = isDisplayNameRequired(state) && !name;
     const { showJoinActions } = ownProps;
-    const isInviteButtonEnabled = isButtonEnabled('invite');
+    const isInviteButtonEnabled = isButtonEnabled('invite', state);
 
     // Hide conference info when interfaceConfig is available and the invite button is disabled.
     // In all other cases we want to preserve the behaviour and control the the conference info
-    // visibility trough showJoinActions.
+    // visibility through showJoinActions.
     const showConferenceInfo
         = typeof isInviteButtonEnabled === 'undefined' || isInviteButtonEnabled === true
             ? showJoinActions

@@ -1,11 +1,11 @@
 // @flow
 
-import Tooltip from '@atlaskit/tooltip';
 import React, { Component } from 'react';
 
 import { translate } from '../../base/i18n';
-import { CircularLabel } from '../../base/label';
+import { Label } from '../../base/label';
 import { connect } from '../../base/redux';
+import { Tooltip } from '../../base/tooltip';
 
 import { _mapStateToProps, type Props } from './AbstractTranscribingLabel';
 
@@ -32,9 +32,9 @@ class TranscribingLabel extends Component<Props> {
             <Tooltip
                 content = { this.props.t('transcribing.labelToolTip') }
                 position = { 'left' }>
-                <CircularLabel
+                <Label
                     className = 'recording-label'
-                    label = { this.props.t('transcribing.tr') } />
+                    text = { this.props.t('transcribing.tr') } />
             </Tooltip>
         );
     }

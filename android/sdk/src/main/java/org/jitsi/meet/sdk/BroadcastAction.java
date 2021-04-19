@@ -36,8 +36,17 @@ public class BroadcastAction {
 
         for (String key : this.data.keySet()) {
             try {
-                // TODO add support for different types of objects
-                nativeMap.putString(key, this.data.get(key).toString());
+                if (this.data.get(key) instanceof Boolean) {
+                    nativeMap.putBoolean(key, (Boolean) this.data.get(key));
+                } else if (this.data.get(key) instanceof Integer) {
+                    nativeMap.putInt(key, (Integer) this.data.get(key));
+                } else if (this.data.get(key) instanceof Double) {
+                    nativeMap.putDouble(key, (Double) this.data.get(key));
+                } else if (this.data.get(key) instanceof String) {
+                    nativeMap.putString(key, (String) this.data.get(key));
+                } else {
+                    throw new Exception("Unsupported extra data type");
+                }
             } catch (Exception e) {
                 JitsiMeetLogger.w(TAG + " invalid extra data in event", e);
             }
@@ -60,7 +69,14 @@ public class BroadcastAction {
 
     enum Type {
         SET_AUDIO_MUTED("org.jitsi.meet.SET_AUDIO_MUTED"),
-        HANG_UP("org.jitsi.meet.HANG_UP");
+        HANG_UP("org.jitsi.meet.HANG_UP"),
+        SEND_ENDPOINT_TEXT_MESSAGE("org.jitsi.meet.SEND_ENDPOINT_TEXT_MESSAGE"),
+        TOGGLE_SCREEN_SHARE("org.jitsi.meet.TOGGLE_SCREEN_SHARE"),
+        RETRIEVE_PARTICIPANTS_INFO("org.jitsi.meet.RETRIEVE_PARTICIPANTS_INFO"),
+        OPEN_CHAT("org.jitsi.meet.OPEN_CHAT"),
+        CLOSE_CHAT("org.jitsi.meet.CLOSE_CHAT"),
+        SEND_CHAT_MESSAGE("org.jitsi.meet.SEND_CHAT_MESSAGE"),
+        SET_VIDEO_MUTED("org.jitsi.meet.SET_VIDEO_MUTED");
 
         private final String action;
 

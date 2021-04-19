@@ -38,7 +38,9 @@ local NOTIFY_LOBBY_ENABLED = 'LOBBY-ENABLED';
 local NOTIFY_LOBBY_ACCESS_GRANTED = 'LOBBY-ACCESS-GRANTED';
 local NOTIFY_LOBBY_ACCESS_DENIED = 'LOBBY-ACCESS-DENIED';
 
-local is_healthcheck_room = module:require 'util'.is_healthcheck_room;
+local util = module:require "util";
+local is_healthcheck_room = util.is_healthcheck_room;
+local presence_check_status = util.presence_check_status;
 
 local main_muc_component_config = module:get_option_string('main_muc');
 if main_muc_component_config == nil then
@@ -62,21 +64,6 @@ load_config();
 
 local lobby_muc_service;
 local main_muc_service;
-
--- Checks whether there is status in the <x node
-function check_status(muc_x, status)
-    if not muc_x then
-        return false;
-    end
-
-    for statusNode in muc_x:childtags('status') do
-        if statusNode.attr.code == status then
-            return true;
-        end
-    end
-
-    return false;
-end
 
 function broadcast_json_msg(room, from, json_msg)
     json_msg.type = NOTIFY_JSON_MESSAGE_TYPE;
@@ -124,9 +111,7 @@ function filter_stanza(stanza)
 
     if from_domain == lobby_muc_component_config then
         if stanza.name == 'presence' then
-            local muc_x = stanza:get_child('x', MUC_NS..'#user');
-
-            if check_status(muc_x, '110') then
+            if presence_check_status(stanza:get_child('x', MUC_NS..'#user'), '110') then
                 return stanza;
             end
 
@@ -148,10 +133,8 @@ function filter_stanza(stanza)
     end
 end
 function filter_session(session)
-    if session.host and session.host == module.host then
-        -- domain mapper is filtering on default priority 0, and we need it after that
-        filters.add_filter(session, 'stanzas/out', filter_stanza, -1);
-    end
+    -- domain mapper is filtering on default priority 0, and we need it after that
+    filters.add_filter(session, 'stanzas/out', filter_stanza, -1);
 end
 
 function attach_lobby_room(room)
@@ -254,7 +237,7 @@ function process_lobby_muc_loaded(lobby_muc, host_module)
     -- listens for kicks in lobby room, 307 is the status for kick according to xep-0045
     host_module:hook('muc-broadcast-presence', function (event)
         local actor, occupant, room, x = event.actor, event.occupant, event.room, event.x;
-        if check_status(x, '307') then
+        if presence_check_status(x, '307') then
             local display_name = occupant:get_presence():get_child_text(
                 'nick', 'http://jabber.org/protocol/nick');
             -- we need to notify in the main room

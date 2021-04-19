@@ -2,10 +2,9 @@
 
 import React from 'react';
 
-import { translate } from '../../../base/i18n';
 import { Icon, IconClose } from '../../../base/icons';
 import { connect } from '../../../base/redux';
-import { toggleChat } from '../../../chat';
+import { toggleChat } from '../../actions.web';
 
 type Props = {
 
@@ -15,9 +14,9 @@ type Props = {
     onCancel: Function,
 
     /**
-     * Invoked to obtain translated strings.
+     * An optional class name.
      */
-    t: Function
+    className: string,
 };
 
 /**
@@ -25,11 +24,10 @@ type Props = {
  *
  * @returns {React$Element<any>}
  */
-function Header({ onCancel, t }: Props) {
+function Header({ onCancel, className }: Props) {
     return (
         <div
-            className = 'chat-dialog-header'>
-            { t('chat.title') }
+            className = { className || 'chat-dialog-header' }>
             <Icon
                 onClick = { onCancel }
                 src = { IconClose } />
@@ -39,4 +37,4 @@ function Header({ onCancel, t }: Props) {
 
 const mapDispatchToProps = { onCancel: toggleChat };
 
-export default translate(connect(null, mapDispatchToProps)(Header));
+export default connect(null, mapDispatchToProps)(Header);

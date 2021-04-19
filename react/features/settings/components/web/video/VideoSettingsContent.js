@@ -85,9 +85,7 @@ class VideoSettingsContent extends Component<Props, State> {
     async _setTracks() {
         this._disposeTracks(this.state.trackData);
 
-        const trackData = await createLocalVideoTracks(
-            this.props.videoDeviceIds,
-        );
+        const trackData = await createLocalVideoTracks(this.props.videoDeviceIds, 5000);
 
         // In case the component gets unmounted before the tracks are created
         // avoid a leak by not setting the state
@@ -163,7 +161,12 @@ class VideoSettingsContent extends Component<Props, State> {
 
         return (
             <div { ...props }>
-                <div className = 'video-preview-label'>{label}</div>
+                <div className = 'video-preview-label'>
+                    {label && <div className = 'video-preview-label-container'>
+                        <div className = 'video-preview-label-text'>
+                            <span>{label}</span></div>
+                    </div>}
+                </div>
                 <div className = 'video-preview-overlay' />
                 <Video
                     className = { videoClassName }

@@ -5,7 +5,7 @@ import React, { Component } from 'react';
 
 import { createToolbarEvent, sendAnalytics } from '../../../analytics';
 import { translate } from '../../../base/i18n';
-import { IconMenuThumb } from '../../../base/icons';
+import { IconHorizontalPoints } from '../../../base/icons';
 import { connect } from '../../../base/redux';
 
 import Drawer from './Drawer';
@@ -28,7 +28,7 @@ type Props = {
     isOpen: boolean,
 
     /**
-     * Calback to change the visibility of the overflow menu.
+     * Callback to change the visibility of the overflow menu.
      */
     onVisibilityChange: Function,
 
@@ -93,7 +93,7 @@ class OverflowMenuButton extends Component<Props> {
                             content = { children }
                             isOpen = { isOpen }
                             onClose = { this._onCloseDialog }
-                            position = { 'top right' }>
+                            placement = 'top-end'>
                             {this._renderToolbarButton()}
                         </InlineDialog>
                     )
@@ -116,7 +116,7 @@ class OverflowMenuButton extends Component<Props> {
             <ToolbarButton
                 accessibilityLabel =
                     { t('toolbar.accessibilityLabel.moreActions') }
-                icon = { IconMenuThumb }
+                icon = { IconHorizontalPoints }
                 onClick = { this._onToggleDialogVisibility }
                 toggled = { isOpen }
                 tooltip = { t('toolbar.moreActions') } />

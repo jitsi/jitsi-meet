@@ -67,7 +67,7 @@ VirtualHost "auth.meet.example.com"
         key = "/etc/prosody/certs/auth.meet.example.com.key";
         certificate = "/etc/prosody/certs/auth.meet.example.com.crt";
     }
-    authentication = "internal_plain"
+    authentication = "internal_hashed"
 
 Component "focus.meet.example.com"
     component_secret = "jicofo_secret_test"
@@ -83,5 +83,5 @@ VirtualHost "recorder.meet.example.com"
     modules_enabled = {
         "ping";
     }
-    authentication = "internal_plain"
+    authentication = "internal_hashed"
     c2s_require_encryption = false

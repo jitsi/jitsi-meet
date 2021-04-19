@@ -1,32 +1,29 @@
 .subject {
+    box-sizing: border-box;
+    color: #fff;
+    margin-top: 20px;
+    position: absolute;
     top: -120px;
     transition: top .3s ease-in;
-    // height: 20px;
     width: 100%;
-    pointer-events: none;
-    position: absolute;
-    // padding: 25px 140px 0 140px;
-    text-align: center;
-    font-size: 12px;
-    color: #fff;
-    z-index: $zindex10;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    box-sizing: border-box;
-    white-space: nowrap;
+    z-index: $zindex3;
 
     &.visible {
         top: 0px;
     }
+}
 
-    &.gradient {
-        background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0));
+.subject-info-container {
+    display: flex;
+    justify-content: center;
+    max-width: calc(100% - 280px);
+    margin: 0 auto;
+
+    &--full-width {
+        max-width: 100%;
     }
 
-    &-text {
-        vertical-align: middle;
-    }
-
+<<<<<<< HEAD
     &-conference-timer {
         display: block;
         font-size: 12px;
@@ -34,5 +31,40 @@
         float: right;
         padding-right: 10px;
         padding-top: 5px;
+=======
+    @media (max-width: 500px) {
+        flex-wrap: wrap;
+        max-width: 100%;
+>>>>>>> 67ac48cac6c292d616729476e2515b8c1dff3711
     }
+}
+
+.subject-info {
+    align-items: center;
+    display: flex;
+    margin-bottom: 4px;
+    max-width: 80%;
+    height: 28px;
+}
+
+.subject-text {
+    background: rgba(0, 0, 0, 0.6);
+    border-radius: 3px 0px 0px 3px;
+    font-size: 14px;
+    line-height: 24px;
+    padding: 2px 16px;
+    height: 24px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.subject-timer {
+    background: rgba(0, 0, 0, 0.8);
+    border-radius: 0px 3px 3px 0px;
+    display: inline-block;
+    font-size: 12px;
+    line-height: 16px;
+    min-width: 34px;
+    padding: 6px 8px;
 }

@@ -75,4 +75,40 @@
  * The `data` dictionary contains a `muted` key with state of the audioMuted for the localParticipant.
  */
 - (void)audioMutedChanged:(NSDictionary *)data;
+
+/**
+ * Called when an endpoint text message is received.
+ *
+ * The `data` dictionary contains a `senderId` key with the participantId of the sender and a 'message' key with the content.
+ */
+- (void)endpointTextMessageReceived:(NSDictionary *)data;
+
+/**
+ * Called when a participant toggled shared screen.
+ *
+ * The `data` dictionary contains a `participantId` key with the id of the participant  and a 'sharing' key with boolean value.
+ */
+- (void)screenShareToggled:(NSDictionary *)data;
+
+/**
+ * Called when a chat message is received.
+ *
+ * The `data` dictionary contains `message`, `senderId` and  `isPrivate` keys.
+ */
+- (void)chatMessageReceived:(NSDictionary *)data;
+
+/**
+ * Called when the chat dialog is displayed/hidden.
+ *
+ * The `data` dictionary contains a `isOpen` key.
+ */
+- (void)chatToggled:(NSDictionary *)data;
+
+/**
+ * Called when videoMuted state changed.
+ *
+ * The `data` dictionary contains a `muted` key with state of the videoMuted for the localParticipant.
+ */
+- (void)videoMutedChanged:(NSDictionary *)data;
+
 @end

@@ -1,11 +1,16 @@
 // @flow
 
+import { getActiveSession } from '../../features/recording/functions';
+import { getRoomName } from '../base/conference';
+import { getInviteURL } from '../base/connection';
 import { i18next } from '../base/i18n';
-import { isLocalParticipantModerator } from '../base/participants';
+import { JitsiRecordingConstants } from '../base/lib-jitsi-meet';
+import { getLocalParticipant, isLocalParticipantModerator } from '../base/participants';
 import { toState } from '../base/redux';
 import { doGetJSON, parseURIString } from '../base/util';
 import { isVpaasMeeting } from '../billing-counter/functions';
 
+import { SIP_ADDRESS_REGEX } from './constants';
 import logger from './logger';
 
 declare var $: Function;
@@ -119,6 +124,11 @@ export type GetInviteResultsOptions = {
     peopleSearchUrl: string,
 
     /**
+     * Whether or not to check sip invites.
+     */
+    sipInviteEnabled: boolean,
+
+    /**
      * The jwt token to pass to the search service.
      */
     jwt: string
@@ -145,6 +155,7 @@ export function getInviteResultsForQuery(
         dialOutEnabled,
         peopleSearchQueryTypes,
         peopleSearchUrl,
+        sipInviteEnabled,
         jwt
     } = options;
 
@@ -229,6 +240,13 @@ export function getInviteResultsForQuery(
                 });
             }
 
+            if (sipInviteEnabled && isASipAddress(text)) {
+                results.push({
+                    type: 'sip',
+                    address: text
+                });
+            }
+
             return results;
         });
 }
@@ -239,43 +257,44 @@ export function getInviteResultsForQuery(
  * @returns {string}
  */
 export function getInviteText({
-    _conferenceName,
-    _localParticipantName,
-    _inviteUrl,
-    _locationUrl,
-    _dialIn,
-    _liveStreamViewURL,
+    state,
     phoneNumber,
     t
 }: Object) {
-    const inviteURL = _decodeRoomURI(_inviteUrl);
+    const dialIn = state['features/invite'];
+    const inviteUrl = getInviteURL(state);
+    const currentLiveStreamingSession = getActiveSession(state, JitsiRecordingConstants.mode.STREAM);
+    const liveStreamViewURL
+        = currentLiveStreamingSession
+            && currentLiveStreamingSession.liveStreamViewURL;
+    const localParticipant = getLocalParticipant(state);
+    const localParticipantName = localParticipant?.name;
 
-    let invite = _localParticipantName
-        ? t('info.inviteURLFirstPartPersonal', { name: _localParticipantName })
+    const inviteURL = _decodeRoomURI(inviteUrl);
+
+    let invite = localParticipantName
+        ? t('info.inviteURLFirstPartPersonal', { name: localParticipantName })
         : t('info.inviteURLFirstPartGeneral');
 
     invite += t('info.inviteURLSecondPart', {
         url: inviteURL
     });
 
-    if (_liveStreamViewURL) {
+    if (liveStreamViewURL) {
         const liveStream = t('info.inviteLiveStream', {
-            url: _liveStreamViewURL
+            url: liveStreamViewURL
         });
 
         invite = `${invite}\n${liveStream}`;
     }
 
-    if (shouldDisplayDialIn(_dialIn)) {
+    if (shouldDisplayDialIn(dialIn)) {
         const dial = t('info.invitePhone', {
             number: phoneNumber,
-            conferenceID: _dialIn.conferenceID
+            conferenceID: dialIn.conferenceID
         });
         const moreNumbers = t('info.invitePhoneAlternatives', {
-            url: getDialInfoPageURL(
-                _conferenceName,
-                _locationUrl
-            ),
+            url: getDialInfoPageURL(state),
             silentUrl: `${inviteURL}#config.startSilent=true`
         });
 
@@ -370,6 +389,21 @@ export function isDialOutEnabled(state: Object): boolean {
 }
 
 /**
+ * Determines if inviting sip endpoints is enabled or not.
+ *
+ * @param {Object} state - Current state.
+ * @returns {boolean} Indication of whether dial out is currently enabled.
+ */
+export function isSipInviteEnabled(state: Object): boolean {
+    const { sipInviteUrl } = state['features/base/config'];
+    const { features = {} } = getLocalParticipant(state);
+
+    return state['features/base/jwt'].jwt
+        && Boolean(sipInviteUrl)
+        && String(features['sip-outbound-call']) === 'true';
+}
+
+/**
  * Checks whether a string looks like it could be for a phone number.
  *
  * @param {string} text - The text to check whether or not it could be a phone
@@ -385,6 +419,16 @@ function isMaybeAPhoneNumber(text: string): boolean {
     const digits = getDigitsOnly(text);
 
     return Boolean(digits.length);
+}
+
+/**
+ * Checks whether a string matches a sip address format.
+ *
+ * @param {string} text - The text to check.
+ * @returns {boolean} True if provided text matches a sip address format.
+ */
+function isASipAddress(text: string): boolean {
+    return SIP_ADDRESS_REGEX.test(text);
 }
 
 /**
@@ -514,9 +558,7 @@ export function getShareInfoText(
             .catch(error =>
                 logger.error('Error fetching numbers or conferenceID', error))
             .then(defaultDialInNumber => {
-                let dialInfoPageUrl = getDialInfoPageURL(
-                    room,
-                    state['features/base/connection'].locationURL);
+                let dialInfoPageUrl = getDialInfoPageURL(state);
 
                 if (useHtml) {
                     dialInfoPageUrl
@@ -537,28 +579,19 @@ export function getShareInfoText(
 /**
  * Generates the URL for the static dial in info page.
  *
- * @param {string} conferenceName - The conference name.
- * @param {Object} locationURL - The current location URL, the object coming
- * from state ['features/base/connection'].locationURL.
+ * @param {Object} state - The state from the Redux store.
  * @returns {string}
  */
-export function getDialInfoPageURL(
-        conferenceName: string,
-        locationURL: Object) {
-    const origin = locationURL.origin;
-    const pathParts = locationURL.pathname.split('/');
+export function getDialInfoPageURL(state: Object) {
+    const { didPageUrl } = state['features/dynamic-branding'];
+    const conferenceName = getRoomName(state);
+    const { locationURL } = state['features/base/connection'];
+    const { href } = locationURL;
+    const room = _decodeRoomURI(conferenceName);
 
-    pathParts.length = pathParts.length - 1;
+    const url = didPageUrl || `${href.substring(0, href.lastIndexOf('/'))}/static/dialInInfo.html`;
 
-    const newPath = pathParts.reduce((accumulator, currentValue) => {
-        if (currentValue) {
-            return `${accumulator}/${currentValue}`;
-        }
-
-        return accumulator;
-    }, '');
-
-    return `${origin}${newPath}/static/dialInInfo.html?room=${_decodeRoomURI(conferenceName)}`;
+    return `${url}?room=${room}`;
 }
 
 /**
@@ -592,6 +625,31 @@ export function shouldDisplayDialIn(dialIn: Object) {
             && numbers
             && numbersEnabled
             && phoneNumber);
+}
+
+/**
+ * Returns if multiple dial-in numbers are available.
+ *
+ * @param {Array<string>|Object} dialInNumbers - The array or object of
+ * numbers to check.
+ * @private
+ * @returns {boolean}
+ */
+export function hasMultipleNumbers(dialInNumbers: ?Object) {
+    if (!dialInNumbers) {
+        return false;
+    }
+
+    if (Array.isArray(dialInNumbers)) {
+        return dialInNumbers.length > 1;
+    }
+
+    // deprecated and will be removed
+    const { numbers } = dialInNumbers;
+
+    // eslint-disable-next-line no-confusing-arrow
+    return Boolean(numbers && Object.values(numbers).map(a => Array.isArray(a) ? a.length : 0)
+        .reduce((a, b) => a + b) > 1);
 }
 
 /**
@@ -725,4 +783,75 @@ export async function executeDialOutStatusRequest(url: string, reqId: string) {
     const json = await res.json();
 
     return res.ok ? json : Promise.reject(json);
+}
+
+export const sharingFeatures = {
+    email: 'email',
+    url: 'url',
+    dialIn: 'dial-in',
+    embed: 'embed'
+};
+
+/**
+ * Returns true if a specific sharing feature is enabled in interface configuration.
+ *
+ * @param {string} sharingFeature - The sharing feature to check.
+ * @returns {boolean}
+ */
+export function isSharingEnabled(sharingFeature: string) {
+    return typeof interfaceConfig === 'undefined'
+        || typeof interfaceConfig.SHARING_FEATURES === 'undefined'
+        || (interfaceConfig.SHARING_FEATURES.length && interfaceConfig.SHARING_FEATURES.indexOf(sharingFeature) > -1);
+}
+
+/**
+ * Sends a post request to an invite service.
+ *
+ * @param {Array} inviteItems - The list of the "sip" type items to invite.
+ * @param {URL} locationURL - The URL of the location.
+ * @param {string} sipInviteUrl - The invite service that generates the invitation.
+ * @param {string} jwt - The jwt token.
+ * @param {string} roomName - The name to the conference.
+ * @param {string} displayName - The user display name.
+ * @returns {Promise} - The promise created by the request.
+ */
+export function inviteSipEndpoints( // eslint-disable-line max-params
+        inviteItems: Array<Object>,
+        locationURL: URL,
+        sipInviteUrl: string,
+        jwt: string,
+        roomName: string,
+        displayName: string
+): Promise<void> {
+    if (inviteItems.length === 0) {
+        return Promise.resolve();
+    }
+
+    const baseUrl = Object.assign(new URL(locationURL.toString()), {
+        pathname: locationURL.pathname.replace(`/${roomName}`, ''),
+        search: ''
+    });
+
+    return fetch(
+       sipInviteUrl,
+       {
+           body: JSON.stringify({
+               callParams: {
+                   callUrlInfo: {
+                       baseUrl,
+                       callName: roomName
+                   }
+               },
+               sipClientParams: {
+                   displayName,
+                   sipAddress: inviteItems.map(item => item.address)
+               }
+           }),
+           method: 'POST',
+           headers: {
+               'Authorization': `Bearer ${jwt}`,
+               'Content-Type': 'application/json'
+           }
+       }
+    );
 }

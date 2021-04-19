@@ -12,11 +12,10 @@ import {
     participantLeft,
     pinParticipant
 } from '../../../react/features/base/participants';
+import { VIDEO_PLAYER_PARTICIPANT_NAME } from '../../../react/features/shared-video/constants';
 import { dockToolbox, showToolbox } from '../../../react/features/toolbox/actions.web';
 import { getToolboxHeight } from '../../../react/features/toolbox/functions.web';
-import { YOUTUBE_PARTICIPANT_NAME } from '../../../react/features/youtube-player/constants';
 import UIEvents from '../../../service/UI/UIEvents';
-import UIUtil from '../util/UIUtil';
 import Filmstrip from '../videolayout/Filmstrip';
 import LargeContainer from '../videolayout/LargeContainer';
 import VideoLayout from '../videolayout/VideoLayout';
@@ -29,14 +28,8 @@ export const SHARED_VIDEO_CONTAINER_TYPE = 'sharedvideo';
  * Example shared video link.
  * @type {string}
  */
-const defaultSharedVideoLink = 'https://youtu.be/TB7LlM4erx8';
 const updateInterval = 5000; // milliseconds
 
-/**
- * The dialog for user input (video link).
- * @type {null}
- */
-let dialog = null;
 
 /**
  * Manager of shared video.
@@ -76,52 +69,37 @@ export default class SharedVideoManager {
     }
 
     /**
-     * Starts shared video by asking user for url, or if its already working
-     * asks whether the user wants to stop sharing the video.
+     * Start shared video event emitter if a video is not shown.
+     *
+     * @param url of the video
      */
-    toggleSharedVideo() {
-        if (dialog) {
-            return;
-        }
+    startSharedVideoEmitter(url) {
 
         if (!this.isSharedVideoShown) {
-            requestVideoLink().then(
-                    url => {
-                        this.emitter.emit(
-                            UIEvents.UPDATE_SHARED_VIDEO, url, 'start');
-                        sendAnalytics(createEvent('started'));
-                    },
-                    err => {
-                        logger.log('SHARED VIDEO CANCELED', err);
-                        sendAnalytics(createEvent('canceled'));
-                    }
-            );
+            if (url) {
+                this.emitter.emit(
+                    UIEvents.UPDATE_SHARED_VIDEO, url, 'start');
+                sendAnalytics(createEvent('started'));
+            }
 
-            return;
+            logger.log('SHARED VIDEO CANCELED');
+            sendAnalytics(createEvent('canceled'));
         }
+    }
+
+    /**
+     * Stop shared video event emitter done by the one who shared the video.
+     */
+    stopSharedVideoEmitter() {
 
         if (APP.conference.isLocalId(this.from)) {
-            showStopVideoPropmpt().then(
-                () => {
-                    // make sure we stop updates for playing before we send stop
-                    // if we stop it after receiving self presence, we can end
-                    // up sending stop playing, and on the other end it will not
-                    // stop
-                    if (this.intervalId) {
-                        clearInterval(this.intervalId);
-                        this.intervalId = null;
-                    }
-                    this.emitter.emit(
-                        UIEvents.UPDATE_SHARED_VIDEO, this.url, 'stop');
-                    sendAnalytics(createEvent('stopped'));
-                },
-                () => {}); // eslint-disable-line no-empty-function
-        } else {
-            APP.UI.messageHandler.showWarning({
-                descriptionKey: 'dialog.alreadySharedVideoMsg',
-                titleKey: 'dialog.alreadySharedVideoTitle'
-            });
-            sendAnalytics(createEvent('already.shared'));
+            if (this.intervalId) {
+                clearInterval(this.intervalId);
+                this.intervalId = null;
+            }
+            this.emitter.emit(
+                UIEvents.UPDATE_SHARED_VIDEO, this.url, 'stop');
+            sendAnalytics(createEvent('stopped'));
         }
     }
 
@@ -303,7 +281,7 @@ export default class SharedVideoManager {
                 conference: APP.conference._room,
                 id: self.url,
                 isFakeParticipant: true,
-                name: YOUTUBE_PARTICIPANT_NAME
+                name: VIDEO_PLAYER_PARTICIPANT_NAME
             }));
 
             APP.store.dispatch(pinParticipant(self.url));
@@ -520,7 +498,7 @@ export default class SharedVideoManager {
      * Receives events for local audio mute/unmute by local user.
      * @param muted boolena whether it is muted or not.
      * @param {boolean} indicates if this mute was a result of user interaction,
-     * i.e. pressing the mute button or it was programatically triggerred
+     * i.e. pressing the mute button or it was programmatically triggered
      */
     onLocalAudioMuted(muted, userInteraction) {
         if (!this.player) {
@@ -674,135 +652,4 @@ class SharedVideoContainer extends LargeContainer {
     stayOnStage() {
         return false;
     }
-}
-
-/**
- * Checks if given string is youtube url.
- * @param {string} url string to check.
- * @returns {boolean}
- */
-function getYoutubeLink(url) {
-    const p = /^(?:https?:\/\/)?(?:www\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))((\w|-){11})(?:\S+)?$/;// eslint-disable-line max-len
-
-
-    return url.match(p) ? RegExp.$1 : false;
-}
-
-/**
- * Ask user if he want to close shared video.
- */
-function showStopVideoPropmpt() {
-    return new Promise((resolve, reject) => {
-        const submitFunction = function(e, v) {
-            if (v) {
-                resolve();
-            } else {
-                reject();
-            }
-        };
-
-        const closeFunction = function() {
-            dialog = null;
-        };
-
-        dialog = APP.UI.messageHandler.openTwoButtonDialog({
-            titleKey: 'dialog.removeSharedVideoTitle',
-            msgKey: 'dialog.removeSharedVideoMsg',
-            leftButtonKey: 'dialog.Remove',
-            submitFunction,
-            closeFunction
-        });
-    });
-}
-
-/**
- * Ask user for shared video url to share with others.
- * Dialog validates client input to allow only youtube urls.
- */
-function requestVideoLink() {
-    const i18n = APP.translation;
-    const cancelButton = i18n.generateTranslationHTML('dialog.Cancel');
-    const shareButton = i18n.generateTranslationHTML('dialog.Share');
-    const backButton = i18n.generateTranslationHTML('dialog.Back');
-    const linkError
-        = i18n.generateTranslationHTML('dialog.shareVideoLinkError');
-
-    return new Promise((resolve, reject) => {
-        dialog = APP.UI.messageHandler.openDialogWithStates({
-            state0: {
-                titleKey: 'dialog.shareVideoTitle',
-                html: `
-                    <input name='sharedVideoUrl' type='text'
-                           class='input-control'
-                           data-i18n='[placeholder]defaultLink'
-                           autofocus>`,
-                persistent: false,
-                buttons: [
-                    { title: cancelButton,
-                        value: false },
-                    { title: shareButton,
-                        value: true }
-                ],
-                focus: ':input:first',
-                defaultButton: 1,
-                submit(e, v, m, f) { // eslint-disable-line max-params
-                    e.preventDefault();
-                    if (!v) {
-                        reject('cancelled');
-                        dialog.close();
-
-                        return;
-                    }
-
-                    const sharedVideoUrl = f.sharedVideoUrl;
-
-                    if (!sharedVideoUrl) {
-                        return;
-                    }
-
-                    const urlValue
-                        = encodeURI(UIUtil.escapeHtml(sharedVideoUrl));
-                    const yVideoId = getYoutubeLink(urlValue);
-
-                    if (!yVideoId) {
-                        dialog.goToState('state1');
-
-                        return false;
-                    }
-
-                    resolve(yVideoId);
-                    dialog.close();
-                }
-            },
-
-            state1: {
-                titleKey: 'dialog.shareVideoTitle',
-                html: linkError,
-                persistent: false,
-                buttons: [
-                    { title: cancelButton,
-                        value: false },
-                    { title: backButton,
-                        value: true }
-                ],
-                focus: ':input:first',
-                defaultButton: 1,
-                submit(e, v) {
-                    e.preventDefault();
-                    if (v === 0) {
-                        reject();
-                        dialog.close();
-                    } else {
-                        dialog.goToState('state0');
-                    }
-                }
-            }
-        }, {
-            close() {
-                dialog = null;
-            }
-        }, {
-            url: defaultSharedVideoLink
-        });
-    });
 }

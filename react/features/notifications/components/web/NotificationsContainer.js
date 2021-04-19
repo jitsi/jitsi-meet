@@ -14,7 +14,7 @@ import Notification from './Notification';
 type Props = AbstractProps & {
 
     /**
-     * Whther we are a SIP gateway or not.
+     * Whether we are a SIP gateway or not.
      */
      _iAmSipGateway: boolean
 };
@@ -40,7 +40,9 @@ class NotificationsContainer extends AbstractNotificationsContainer<Props> {
         }
 
         return (
-            <FlagGroup onDismissed = { this._onDismissed }>
+            <FlagGroup
+                id = 'notifications-container'
+                onDismissed = { this._onDismissed }>
                 { this._renderFlags() }
             </FlagGroup>
         );
@@ -69,6 +71,7 @@ class NotificationsContainer extends AbstractNotificationsContainer<Props> {
                     { ...props }
                     id = { uid }
                     key = { uid }
+                    onDismissed = { this._onDismissed }
                     uid = { uid } />
 
             );

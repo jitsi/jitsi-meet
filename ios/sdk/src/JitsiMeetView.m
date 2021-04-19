@@ -116,13 +116,48 @@ static void initializeViewsMap() {
 }
 
 - (void)hangUp {
-    RCTBridge *bridge = [[JitsiMeet sharedInstance] getReactBridge];
-    [[bridge moduleForClass:ExternalAPI.class] sendHangUp];
+    ExternalAPI *externalAPI = [[JitsiMeet sharedInstance] getExternalAPI];
+    [externalAPI sendHangUp];
 }
 
 - (void)setAudioMuted:(BOOL)muted {
-    RCTBridge *bridge = [[JitsiMeet sharedInstance] getReactBridge];
-    [[bridge moduleForClass:ExternalAPI.class] sendSetAudioMuted:muted];
+    ExternalAPI *externalAPI = [[JitsiMeet sharedInstance] getExternalAPI];
+    [externalAPI sendSetAudioMuted:muted];
+}
+
+- (void)sendEndpointTextMessage:(NSString * _Nonnull)message :(NSString * _Nullable)to {
+    ExternalAPI *externalAPI = [[JitsiMeet sharedInstance] getExternalAPI];
+    [externalAPI sendEndpointTextMessage:message :to];
+}
+
+- (void)toggleScreenShare {
+    ExternalAPI *externalAPI = [[JitsiMeet sharedInstance] getExternalAPI];
+    [externalAPI toggleScreenShare];
+}
+
+- (void)retrieveParticipantsInfo:(void (^ _Nonnull)(NSArray * _Nullable))completionHandler {
+    ExternalAPI *externalAPI = [[JitsiMeet sharedInstance] getExternalAPI];
+    [externalAPI retrieveParticipantsInfo:completionHandler];
+}
+
+- (void)openChat:(NSString*)to  {
+    ExternalAPI *externalAPI = [[JitsiMeet sharedInstance] getExternalAPI];
+    [externalAPI openChat:to];
+}
+
+- (void)closeChat  {
+    ExternalAPI *externalAPI = [[JitsiMeet sharedInstance] getExternalAPI];
+    [externalAPI closeChat];
+}
+
+- (void)sendChatMessage:(NSString * _Nonnull)message :(NSString * _Nullable)to {
+    ExternalAPI *externalAPI = [[JitsiMeet sharedInstance] getExternalAPI];
+    [externalAPI sendChatMessage:message :to];
+}
+
+- (void)setVideoMuted:(BOOL)muted {
+    ExternalAPI *externalAPI = [[JitsiMeet sharedInstance] getExternalAPI];
+    [externalAPI sendSetVideoMuted:muted];
 }
 
 #pragma mark Private methods
@@ -154,7 +189,7 @@ static void initializeViewsMap() {
     // conference. However, React and, respectively,
     // appProperties/initialProperties are declarative expressions i.e. one and
     // the same URL will not trigger an automatic re-render in the JavaScript
-    // source code. The workaround implemented bellow introduces imperativeness
+    // source code. The workaround implemented below introduces imperativeness
     // in React Component props by defining a unique value per invocation.
     props[@"timestamp"] = @(mach_absolute_time());
 

@@ -3,7 +3,7 @@
 import type { Dispatch } from 'redux';
 
 import { getInviteURL } from '../base/connection';
-import { getParticipants } from '../base/participants';
+import { getLocalParticipant, getParticipants } from '../base/participants';
 import { inviteVideoRooms } from '../videosipgw';
 
 import {
@@ -18,7 +18,8 @@ import {
 import {
     getDialInConferenceID,
     getDialInNumbers,
-    invitePeopleAndChatRooms
+    invitePeopleAndChatRooms,
+    inviteSipEndpoints
 } from './functions';
 import logger from './logger';
 
@@ -56,7 +57,7 @@ export function hideAddPeopleDialog() {
  * Invites (i.e. Sends invites to) an array of invitees (which may be a
  * combination of users, rooms, phone numbers, and video rooms.
  *
- * @param  {Array<Object>} invitees - The recepients to send invites to.
+ * @param  {Array<Object>} invitees - The recipients to send invites to.
  * @param  {Array<Object>} showCalleeInfo - Indicates whether the
  * {@code CalleeInfo} should be displayed or not.
  * @returns {Promise<Array<Object>>} A {@code Promise} resolving with an array
@@ -102,7 +103,10 @@ export function invite(
             inviteServiceCallFlowsUrl
         } = state['features/base/config'];
         const inviteUrl = getInviteURL(state);
+        const { sipInviteUrl } = state['features/base/config'];
+        const { locationURL } = state['features/base/connection'];
         const { jwt } = state['features/base/jwt'];
+        const { name: displayName } = getLocalParticipant(state);
 
         // First create all promises for dialing out.
         const phoneNumbers
@@ -163,6 +167,21 @@ export function invite(
 
         invitesLeftToSend
             = invitesLeftToSend.filter(({ type }) => type !== 'videosipgw');
+
+        const sipEndpoints
+            = invitesLeftToSend.filter(({ type }) => type === 'sip');
+
+        conference && inviteSipEndpoints(
+            sipEndpoints,
+            locationURL,
+            sipInviteUrl,
+            jwt,
+            conference.options.name,
+            displayName
+        );
+
+        invitesLeftToSend
+            = invitesLeftToSend.filter(({ type }) => type !== 'sip');
 
         return (
             Promise.all(allInvitePromises)

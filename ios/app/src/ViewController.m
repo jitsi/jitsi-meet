@@ -115,6 +115,26 @@
   NSLog(@"%@%@", @"Audio muted changed: ", data[@"muted"]);
 }
 
+- (void)endpointTextMessageReceived:(NSDictionary *)data {
+  NSLog(@"%@%@", @"Endpoint text message received: ", data);
+}
+
+- (void)screenShareToggled:(NSDictionary *)data {
+  NSLog(@"%@%@", @"Screen share toggled: ", data);
+}
+
+- (void)chatMessageReceived:(NSDictionary *)data {
+    NSLog(@"%@%@", @"Chat message received: ", data);
+}
+
+- (void)chatToggled:(NSDictionary *)data {
+  NSLog(@"%@%@", @"Chat toggled: ", data);
+}
+
+- (void)videoMutedChanged:(NSDictionary *)data {
+  NSLog(@"%@%@", @"Video muted changed: ", data[@"muted"]);
+}
+
 #pragma mark - Helpers
 
 - (void)terminate {

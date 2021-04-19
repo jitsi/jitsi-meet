@@ -489,7 +489,7 @@
         "suboptimalBrowserWarning": "あなたのミーティングの体験が、ここではあまり良好ではないのではと心配しています。これを改善する方法を模索していますが、それまでは<a href='{{recommendedBrowserPageLink}}' target='_blank'> フルサポートしているブラウザー</a>のいずれかを利用してください。",
         "suboptimalExperienceTitle": "ブラウザーの警告",
         "unmute": "ミュート解除",
-        "newDeviceCameraTitle": "新しいカメラを麺出しました",
+        "newDeviceCameraTitle": "新しいカメラを検出しました",
         "newDeviceAudioTitle": "新しいオーディオデバイスを検出しました",
         "newDeviceAction": "使用する",
         "OldElectronAPPTitle": "セキュリティ上の脆弱性があります!",

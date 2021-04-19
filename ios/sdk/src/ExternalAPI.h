@@ -19,6 +19,13 @@
 @interface ExternalAPI : RCTEventEmitter<RCTBridgeModule>
 
 - (void)sendHangUp;
-- (void)sendSetAudioMuted: (BOOL)muted;
+- (void)sendSetAudioMuted:(BOOL)muted;
+- (void)sendEndpointTextMessage:(NSString*)message :(NSString*)to;
+- (void)toggleScreenShare;
+- (void)retrieveParticipantsInfo:(void (^)(NSArray*))completion;
+- (void)openChat:(NSString*)to;
+- (void)closeChat;
+- (void)sendChatMessage:(NSString*)message :(NSString*)to ;
+- (void)sendSetVideoMuted:(BOOL)muted;
 
 @end

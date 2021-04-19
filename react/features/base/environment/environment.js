@@ -42,6 +42,15 @@ export function isBrowsersOptimal(browserName: string) {
 }
 
 /**
+ * Returns whether or not the current OS is Mac.
+ *
+ * @returns {boolean}
+ */
+export function isMacOS() {
+    return Platform.OS === 'macos';
+}
+
+/**
  * Returns whether or not the current browser or the list of passed in browsers
  * is considered suboptimal. Suboptimal means it is a supported browser but has
  * not been explicitly listed as being optimal, possibly due to functionality
@@ -92,7 +101,7 @@ export function isSupportedBrowser() {
 export function isSupportedMobileBrowser() {
     return (Platform.OS === 'android' && browser.isChromiumBased())
         || (Platform.OS === 'android' && browser.isFirefox())
-        || (Platform.OS === 'ios' && browser.isSafari());
+        || (Platform.OS === 'ios' && browser.isWebKitBased());
 }
 
 /**
