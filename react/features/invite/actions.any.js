@@ -177,6 +177,7 @@ export function invite(
             sipInviteUrl,
             jwt,
             conference.options.name,
+            conference.password,
             displayName
         );
 
