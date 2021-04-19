@@ -91,12 +91,13 @@ class LargeVideo extends Component<Props> {
                 className = { className }
                 id = 'largeVideoContainer'
                 style = { style }>
-                {/* { is_transparent ? null : <Subject /> }
-                { is_transparent ? null : <InviteMore /> }
-                { is_transparent ? null : <div id = 'sharedVideo'> */}
                 <div id = 'sharedVideo'>
                     <div id = 'sharedVideoIFrame' />
                 </div>
+                
+                {/* { is_transparent ? null : <Subject /> }
+                { is_transparent ? null : <InviteMore /> }
+                { is_transparent ? null : <div id = 'sharedVideo'> */}
                 
                 { is_transparent ? null : <div id = 'etherpad' /> }
                 {/* { is_transparent ? null : <Watermarks /> } */}

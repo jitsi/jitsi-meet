@@ -127,11 +127,12 @@ export function shouldDisplayTileView(state: Object = {}) {
     if(interfaceConfig.DEFAULT_BACKGROUND == "transparent-vertical"){
         return true;
     }
+    const participantCount = getParticipantCount(state);
     if (participantCount < 2) {
         return false;
     }
     
-    const participantCount = getParticipantCount(state);
+    
 
     const tileViewEnabledFeatureFlag = getFeatureFlag(state, TILE_VIEW_ENABLED, true);
     const { disableTileView } = state['features/base/config'];
