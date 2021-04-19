@@ -57,7 +57,12 @@ type Props = {
     /**
      * The video track to render as preview (if omitted, the default local track will be rendered).
      */
-    videoTrack?: Object
+    videoTrack?: Object,
+
+    /**
+     * Array with the buttons which this Toolbox should display.
+     */
+    visibleButtons?: Array<string>
 }
 
 /**
@@ -81,7 +86,7 @@ export default class PreMeetingScreen extends PureComponent<Props> {
      * @inheritdoc
      */
     render() {
-        const { name, showAvatar, showConferenceInfo, title, videoMuted, videoTrack } = this.props;
+        const { name, showAvatar, showConferenceInfo, title, videoMuted, videoTrack, visibleButtons } = this.props;
         const showSharingButton = allowUrlSharing();
 
         return (
@@ -116,7 +121,9 @@ export default class PreMeetingScreen extends PureComponent<Props> {
                             <div className = 'toolbox-content-items'>
                                 <AudioSettingsButton visible = { true } />
                                 <VideoSettingsButton visible = { true } />
-                                <VideoBackgroundButton visible = { checkBlurSupport() } />
+                                { ((visibleButtons && visibleButtons.includes('select-background'))
+                                   || (visibleButtons && visibleButtons.includes('videobackgroundblur')))
+                                   && <VideoBackgroundButton visible = { checkBlurSupport() } /> }
                             </div>
                         </div>
                     </div>
