@@ -1,5 +1,6 @@
 // @flow
 
+import Spinner from '@atlaskit/spinner';
 import React, { Component } from 'react';
 
 import { createLocalVideoTracks } from '../../../features/settings/functions';
@@ -60,7 +61,12 @@ type State = {
     /**
      * An array of all the jitsiTracks and eventual errors.
      */
-    trackData: Object[]
+    trackData: Object[],
+
+    /**
+     * Loader activated on setting virtual background.
+     */
+    loading: boolean
 };
 
 /**
@@ -84,7 +90,8 @@ class VirtualBackgroundPreview extends Component<Props, State> {
         this.state = {
             trackData: new Array(props.videoDeviceIds && props.videoDeviceIds.length).fill({
                 jitsiTrack: null
-            })
+            }),
+            loading: false
         };
     }
 
@@ -135,6 +142,19 @@ class VirtualBackgroundPreview extends Component<Props, State> {
     }
 
     /**
+     * Apply background effect on video preview.
+     *
+     * @returns {Promise}
+     */
+    async _applyBackgroundEffect() {
+        const jitsiTrack = this.state.trackData[0].jitsiTrack;
+
+        this.setState({ loading: true });
+        await this.props.dispatch(toggleBackgroundEffect(this.props.options, jitsiTrack));
+        this.setState({ loading: false });
+    }
+
+    /**
      * Renders a preview entry.
      *
      * @param {Object} data - The track data.
@@ -147,6 +167,17 @@ class VirtualBackgroundPreview extends Component<Props, State> {
         const key = `vp-${index}`;
         const className = 'video-background-preview-entry';
 
+        if (this.state.loading) {
+            return (
+                <div>
+                    <span className = 'loading-content-text'>{t('virtualBackground.pleaseWait')}</span>
+                    <Spinner
+                        invertColor = { true }
+                        isCompleting = { false }
+                        size = { 'large' } />
+                </div>
+            );
+        }
         if (error) {
             return (
                 <div
@@ -197,14 +228,12 @@ class VirtualBackgroundPreview extends Component<Props, State> {
      *
      * @inheritdoc
      */
-    componentDidUpdate(prevProps) {
+    async componentDidUpdate(prevProps) {
         if (!equals(this.props.videoDeviceIds, prevProps.videoDeviceIds)) {
             this._setTracks();
         }
         if (!equals(this.props.options, prevProps.options)) {
-            const jitsiTrack = this.state.trackData[0].jitsiTrack;
-
-            this.props.dispatch(toggleBackgroundEffect(this.props.options, jitsiTrack));
+            this._applyBackgroundEffect();
         }
     }
 
