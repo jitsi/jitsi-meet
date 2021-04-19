@@ -36,7 +36,7 @@ function getPerformanceHints(size) {
 const config = {
     devServer: {
         https: true,
-        host: '0.0.0.0',
+        host: '127.0.0.1',
         inline: true,
         proxy: {
             '/': {

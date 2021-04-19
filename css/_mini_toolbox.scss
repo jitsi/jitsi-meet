@@ -8,6 +8,8 @@
     .toolbox-icon {
         cursor: pointer;
         padding: 7px;
+        width: 25px;
+        height : 25px;
 
         &.toggled {
             background: $AOTToolbarButtonToggleColor;
