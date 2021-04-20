@@ -356,7 +356,7 @@ class InviteContactsForm extends AbstractAddPeopleDialog<Props, State> {
                 filterValues: [
                     sip.address
                 ],
-                content: t('addPeople.sip', { address: sip.address }),
+                content: sip.address,
                 description: '',
                 item: sip,
                 value: sip.address
