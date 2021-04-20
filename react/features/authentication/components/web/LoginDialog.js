@@ -11,7 +11,7 @@ import { translate, translateToHTML } from '../../../base/i18n';
 import { JitsiConnectionErrors } from '../../../base/lib-jitsi-meet';
 import { connect as reduxConnect } from '../../../base/redux';
 import { authenticateAndUpgradeRole } from '../../actions.native';
-import { cancelLogin } from '../../actions.web';
+import { cancelLogin, hideLoginDialog } from '../../actions.web';
 
 /**
  * The type of the React {@code Component} props of {@link LoginDialog}.
@@ -147,7 +147,10 @@ class LoginDialog extends Component<Props, State> {
         const jid = toJid(username, configHosts);
 
         if (conference) {
-            dispatch(authenticateAndUpgradeRole(jid, password, conference));
+            dispatch(authenticateAndUpgradeRole(jid, password, conference))
+                .then(() => {
+                    dispatch(hideLoginDialog());
+                });
         } else {
             this.setState({
                 loginStarted: true
@@ -197,7 +200,7 @@ class LoginDialog extends Component<Props, State> {
         const messageOptions = {};
         let messageKey;
 
-        if (progress && progress >= 0.5) {
+        if (progress && progress < 1) {
             messageKey = t('connection.FETCH_SESSION_ID');
         } else if (error) {
             const { name } = error;
@@ -271,6 +274,7 @@ class LoginDialog extends Component<Props, State> {
                     label = { t('dialog.userPassword') }
                     name = 'password'
                     onChange = { this._onChange }
+                    placeholder = { t('dialog.password') }
                     shouldFitContainer = { true }
                     type = 'password'
                     value = { password } />
