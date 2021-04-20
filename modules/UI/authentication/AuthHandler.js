@@ -3,6 +3,7 @@
 import Logger from 'jitsi-meet-logger';
 
 import { openConnection } from '../../../connection';
+import { externalAuthDialog } from '../../../react/features/authentication/actions';
 import {
     isTokenAuthEnabled,
     getTokenAuthUrl
@@ -11,6 +12,7 @@ import { setJWT } from '../../../react/features/base/jwt';
 import UIUtil from '../util/UIUtil';
 
 import LoginDialog from './LoginDialog';
+
 
 let externalAuthWindow;
 declare var APP: Object;
@@ -168,6 +170,21 @@ function authenticateExternal(room: Object, lockPassword: string) {
     if (isTokenAuthEnabled(config) || room.isExternalAuthEnabled()) {
         doExternalAuth(room, lockPassword);
     }
+
+    return false;
+}
+
+/**
+ * Notify user that authentication is required to create the conference.
+ * @param {JitsiConference} room
+ * @param {string} [lockPassword] password to use if the conference is locked
+ */
+function requireExternalAuth(room: Object, lockPassword: string) {
+
+    APP.store.dispatch(
+        externalAuthDialog(
+        room.getName(), authenticateExternal.bind(null, room, lockPassword))
+    );
 }
 
 /**
@@ -192,5 +209,6 @@ function logout(room: Object) {
 
 export default {
     authenticateExternal,
-    logout
+    logout,
+    requireExternalAuth
 };

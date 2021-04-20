@@ -312,6 +312,11 @@ class ConferenceConnector {
                 room.join();
             }, 5000);
 
+            const { password }
+                = APP.store.getState()['features/base/conference'];
+
+            AuthHandler.requireExternalAuth(room, password);
+
             break;
         }
 

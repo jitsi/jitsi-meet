@@ -64,4 +64,21 @@ export function openWaitForOwnerDialog() {
     return openDialog(WaitForOwnerDialog);
 }
 
+/**
+ * Shows a notification dialog that authentication is required to create the.
+ * Conference.
+ * This is used for external auth.
+ *
+ * @param {string} room - The room name.
+ * @param {Function} onAuthNow - The function to be invoked when external authentication.
+ *
+ * @returns {Function}.
+ */
+export function externalAuthDialog(room: String, onAuthNow: ?Function) {
+    return openDialog(WaitForOwnerDialog, {
+        room,
+        onAuthNow
+    });
+}
+
 
