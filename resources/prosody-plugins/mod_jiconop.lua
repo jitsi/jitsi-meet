@@ -4,6 +4,11 @@ local st = require "util.stanza";
 -- gathers needed information and pushes it with a message to clients
 -- this way we skip 4 request responses during every client setup
 
+local shard_name_config = module:get_option_string('shard_name');
+if shard_name_config then
+    module:add_identity("server", "shard", shard_name_config);
+end
+
 -- this is after xmpp-bind, the moment a client has resource and can be contacted
 module:hook("resource-bind", function (event)
     local session = event.session;
