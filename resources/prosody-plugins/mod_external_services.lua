@@ -114,6 +114,45 @@ local services_mt = {
 	end;
 }
 
+local function get_services(requested_type, origin, stanza, reply)
+	local extras = module:get_host_items("external_service");
+	local services = ( configured_services + extras ) / prepare;
+
+	if requested_type then
+		services:filter(function(item)
+			return item.type == requested_type;
+		end);
+	end
+
+	setmetatable(services, services_mt);
+
+	if origin and stanza and reply then
+		module:fire_event("external_service/services", {
+			origin = origin;
+			stanza = stanza;
+			reply = reply;
+			requested_type = requested_type;
+			services = services;
+		});
+	end
+
+	local res_services = {};
+	for _, srv in ipairs(services) do
+		table.insert(res_services, {
+			type = srv.type;
+			transport = srv.transport;
+			host = srv.host;
+			port = srv.port and string.format("%d", srv.port) or nil;
+			username = srv.username;
+			password = srv.password;
+			expires = srv.expires and dt.datetime(srv.expires) or nil;
+			restricted = srv.restricted and "1" or nil;
+		})
+	end
+
+	return res_services;
+end
+
 local function handle_services(event)
 	local origin, stanza = event.origin, event.stanza;
 	local action = stanza.tags[1];
@@ -126,37 +165,9 @@ local function handle_services(event)
 	end
 
 	local reply = st.reply(stanza):tag("services", { xmlns = action.attr.xmlns });
-	local extras = module:get_host_items("external_service");
-	local services = ( configured_services + extras ) / prepare;
 
-	local requested_type = action.attr.type;
-	if requested_type then
-		services:filter(function(item)
-			return item.type == requested_type;
-		end);
-	end
-
-	setmetatable(services, services_mt);
-
-	module:fire_event("external_service/services", {
-			origin = origin;
-			stanza = stanza;
-			reply = reply;
-			requested_type = requested_type;
-			services = services;
-		});
-
-	for _, srv in ipairs(services) do
-		reply:tag("service", {
-				type = srv.type;
-				transport = srv.transport;
-				host = srv.host;
-				port = srv.port and string.format("%d", srv.port) or nil;
-				username = srv.username;
-				password = srv.password;
-				expires = srv.expires and dt.datetime(srv.expires) or nil;
-				restricted = srv.restricted and "1" or nil;
-			}):up();
+	for _, srv in ipairs(get_services(action.attr.type, origin, stanza, reply)) do
+		reply:tag("service", srv):up();
 	end
 
 	origin.send(reply);
@@ -231,3 +242,5 @@ module:hook("iq-get/host/urn:xmpp:extdisco:2:credentials", handle_credentials);
 module:add_feature("urn:xmpp:extdisco:1");
 module:hook("iq-get/host/urn:xmpp:extdisco:1:services", handle_services);
 module:hook("iq-get/host/urn:xmpp:extdisco:1:credentials", handle_credentials);
+
+module:hook("external_service/get_services", get_services);
