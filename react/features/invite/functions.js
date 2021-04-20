@@ -812,6 +812,7 @@ export function isSharingEnabled(sharingFeature: string) {
  * @param {string} sipInviteUrl - The invite service that generates the invitation.
  * @param {string} jwt - The jwt token.
  * @param {string} roomName - The name to the conference.
+ * @param {string} roomPassword - The password of the conference.
  * @param {string} displayName - The user display name.
  * @returns {Promise} - The promise created by the request.
  */
@@ -821,6 +822,7 @@ export function inviteSipEndpoints( // eslint-disable-line max-params
         sipInviteUrl: string,
         jwt: string,
         roomName: string,
+        roomPassword: String,
         displayName: string
 ): Promise<void> {
     if (inviteItems.length === 0) {
@@ -840,7 +842,8 @@ export function inviteSipEndpoints( // eslint-disable-line max-params
                    callUrlInfo: {
                        baseUrl,
                        callName: roomName
-                   }
+                   },
+                   passcode: roomPassword
                },
                sipClientParams: {
                    displayName,
