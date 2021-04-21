@@ -5,12 +5,10 @@ import type { Dispatch } from 'redux';
 import { appNavigate } from '../app/actions';
 import { conferenceLeft } from '../base/conference/actions';
 import { connectionFailed } from '../base/connection/actions.native';
-import { openDialog } from '../base/dialog/actions';
 import { set } from '../base/redux';
 
 import { CANCEL_LOGIN } from './actionTypes';
 import { stopWaitForOwner } from './actions.any';
-import { LoginDialog } from './components';
 
 /**
  * Cancels {@ink LoginDialog}.
@@ -62,17 +60,6 @@ export function cancelWaitForOwner() {
 
         dispatch(appNavigate(undefined));
     };
-}
-
-/**
- * Opens {@link LoginDialog} which will ask to enter username and password
- * for the current conference.
- *
- * @protected
- * @returns {Action}
- */
-export function _openLoginDialog() {
-    return openDialog(LoginDialog);
 }
 
 

@@ -22,10 +22,10 @@ import {
     WAIT_FOR_OWNER
 } from './actionTypes';
 import {
+    openLoginDialog,
     openWaitForOwnerDialog,
     stopWaitForOwner,
     waitForOwner } from './actions.any';
-import { _openLoginDialog } from './actions.native';
 import { LoginDialog, WaitForOwnerDialog } from './components';
 
 /**
@@ -113,7 +113,7 @@ MiddlewareRegistry.register(store => next => action => {
                 && error.name === JitsiConnectionErrors.PASSWORD_REQUIRED
                 && typeof error.recoverable === 'undefined') {
             error.recoverable = true;
-            store.dispatch(_openLoginDialog());
+            store.dispatch(openLoginDialog());
         }
         break;
     }

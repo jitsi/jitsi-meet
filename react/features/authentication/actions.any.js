@@ -10,7 +10,7 @@ import {
     UPGRADE_ROLE_FINISHED,
     UPGRADE_ROLE_STARTED, WAIT_FOR_OWNER
 } from './actionTypes';
-import { WaitForOwnerDialog } from './components';
+import { LoginDialog, WaitForOwnerDialog } from './components';
 import logger from './logger';
 
 /**
@@ -168,4 +168,15 @@ export function waitForOwner() {
             handler: () => dispatch(checkIfCanJoin()),
             timeoutMs: 5000
         });
+}
+
+/**
+ * Opens {@link LoginDialog} which will ask to enter username and password
+ * for the current conference.
+ *
+ * @protected
+ * @returns {Action}
+ */
+export function openLoginDialog() {
+    return openDialog(LoginDialog);
 }

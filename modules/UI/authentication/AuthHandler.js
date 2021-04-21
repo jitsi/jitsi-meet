@@ -3,7 +3,7 @@
 import Logger from 'jitsi-meet-logger';
 
 import { openConnection } from '../../../connection';
-import { _openLoginDialog } from '../../../react/features/authentication/actions.native';
+import { openLoginDialog } from '../../../react/features/authentication/actions.any';
 import { openAuthDialog } from '../../../react/features/authentication/actions.web';
 import { WaitForOwnerDialog } from '../../../react/features/authentication/components';
 import {
@@ -171,7 +171,7 @@ function authenticate(room: Object, lockPassword: string) {
     if (isTokenAuthEnabled(config) || room.isExternalAuthEnabled()) {
         doExternalAuth(room, lockPassword);
     } else {
-        APP.store.dispatch(_openLoginDialog());
+        APP.store.dispatch(openLoginDialog());
     }
 }
 
