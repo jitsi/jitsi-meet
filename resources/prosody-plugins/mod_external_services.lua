@@ -114,7 +114,7 @@ local services_mt = {
 	end;
 }
 
-local function get_services(requested_type, origin, stanza, reply)
+function get_services(requested_type, origin, stanza, reply)
 	local extras = module:get_host_items("external_service");
 	local services = ( configured_services + extras ) / prepare;
 
@@ -242,5 +242,3 @@ module:hook("iq-get/host/urn:xmpp:extdisco:2:credentials", handle_credentials);
 module:add_feature("urn:xmpp:extdisco:1");
 module:hook("iq-get/host/urn:xmpp:extdisco:1:services", handle_services);
 module:hook("iq-get/host/urn:xmpp:extdisco:1:credentials", handle_credentials);
-
-module:hook("external_service/get_services", get_services);
