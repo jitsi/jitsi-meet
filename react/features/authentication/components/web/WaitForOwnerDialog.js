@@ -6,7 +6,7 @@ import type { Dispatch } from 'redux';
 import { Dialog } from '../../../base/dialog';
 import { translate, translateToHTML } from '../../../base/i18n';
 import { connect } from '../../../base/redux';
-import { openLoginDialog, cancelWaitForOwner } from '../../actions.web';
+import { cancelWaitForOwner } from '../../actions.web';
 
 /**
  * The type of the React {@code Component} props of {@link WaitForOwnerDialog}.
@@ -76,13 +76,9 @@ class WaitForOwnerDialog extends PureComponent<Props> {
      * @returns {void}
      */
     _onIAmHost() {
-        const { dispatch, onAuthNow } = this.props;
+        const { onAuthNow } = this.props;
 
-        if (onAuthNow) {
-            return onAuthNow();
-        }
-
-        dispatch(openLoginDialog());
+        onAuthNow && onAuthNow();
     }
 
     /**

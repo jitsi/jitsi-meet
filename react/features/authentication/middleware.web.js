@@ -19,12 +19,12 @@ import {
     WAIT_FOR_OWNER
 } from './actionTypes';
 import {
+    _openWaitForOwnerDialog,
     stopWaitForOwner,
     waitForOwner
 } from './actions.native';
 import {
-    hideLoginDialog,
-    openWaitForOwnerDialog
+    hideLoginDialog
 } from './actions.web';
 import { LoginDialog, WaitForOwnerDialog } from './components';
 
@@ -43,7 +43,7 @@ MiddlewareRegistry.register(store => next => action => {
     case CANCEL_LOGIN: {
         if (!isDialogOpen(store, WaitForOwnerDialog)) {
             if (isWaitingForOwner(store)) {
-                store.dispatch(openWaitForOwnerDialog());
+                store.dispatch(_openWaitForOwnerDialog());
 
                 return next(action);
             }
@@ -101,7 +101,7 @@ MiddlewareRegistry.register(store => next => action => {
         action.waitForOwnerTimeoutID = setTimeout(handler, timeoutMs);
 
         isDialogOpen(store, LoginDialog)
-            || store.dispatch(openWaitForOwnerDialog());
+            || store.dispatch(_openWaitForOwnerDialog());
         break;
     }
     }
