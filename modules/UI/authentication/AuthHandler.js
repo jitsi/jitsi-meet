@@ -32,10 +32,9 @@ function doExternalAuth(room, lockPassword) {
     const config = APP.store.getState()['features/base/config'];
 
     if (externalAuthWindow) {
-        externalAuthWindow.focus();
-
         return;
     }
+
     if (room.isJoined()) {
         let getUrl;
 
