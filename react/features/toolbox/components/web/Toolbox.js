@@ -972,6 +972,7 @@ class Toolbox extends Component<Props> {
      */
     _renderOverflowMenuContent(additionalButtons: Array<React$Element<any>>) {
         const {
+            _desktopSharingEnabled,
             _feedbackConfigured,
             _fullScreen,
             _isMobile,
@@ -1036,7 +1037,9 @@ class Toolbox extends Component<Props> {
                 && <SharedVideoButton
                     key = 'sharedvideo'
                     showLabel = { true } />,
-            this._shouldShowButton('shareaudio') && isScreenAudioSupported()
+            this._shouldShowButton('shareaudio')
+                && _desktopSharingEnabled
+                && isScreenAudioSupported()
                 && <OverflowMenuItem
                     accessibilityLabel = { t('toolbar.accessibilityLabel.shareaudio') }
                     icon = { IconShareAudio }
