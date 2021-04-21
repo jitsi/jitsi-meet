@@ -19,13 +19,10 @@ import {
     WAIT_FOR_OWNER
 } from './actionTypes';
 import {
-    _openWaitForOwnerDialog,
+    openWaitForOwnerDialog,
     stopWaitForOwner,
-    waitForOwner
-} from './actions.native';
-import {
-    hideLoginDialog
-} from './actions.web';
+    waitForOwner } from './actions.any';
+import { hideLoginDialog } from './actions.web';
 import { LoginDialog, WaitForOwnerDialog } from './components';
 
 /**
@@ -43,7 +40,7 @@ MiddlewareRegistry.register(store => next => action => {
     case CANCEL_LOGIN: {
         if (!isDialogOpen(store, WaitForOwnerDialog)) {
             if (isWaitingForOwner(store)) {
-                store.dispatch(_openWaitForOwnerDialog());
+                store.dispatch(openWaitForOwnerDialog());
 
                 return next(action);
             }
@@ -77,7 +74,7 @@ MiddlewareRegistry.register(store => next => action => {
         if (isWaitingForOwner(store)) {
             store.dispatch(stopWaitForOwner());
         }
-        store.dispatch(hideLoginDialog);
+        store.dispatch(hideLoginDialog());
         break;
 
     case CONFERENCE_LEFT:
@@ -85,7 +82,7 @@ MiddlewareRegistry.register(store => next => action => {
         break;
 
     case CONNECTION_ESTABLISHED:
-        store.dispatch(hideLoginDialog);
+        store.dispatch(hideLoginDialog());
         break;
 
     case STOP_WAIT_FOR_OWNER:
@@ -101,7 +98,7 @@ MiddlewareRegistry.register(store => next => action => {
         action.waitForOwnerTimeoutID = setTimeout(handler, timeoutMs);
 
         isDialogOpen(store, LoginDialog)
-            || store.dispatch(_openWaitForOwnerDialog());
+            || store.dispatch(openWaitForOwnerDialog());
         break;
     }
     }

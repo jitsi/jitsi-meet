@@ -14,8 +14,6 @@ import { isDialogOpen } from '../../../react/features/base/dialog';
 import { setJWT } from '../../../react/features/base/jwt';
 import UIUtil from '../util/UIUtil';
 
-import LoginDialog from './LoginDialog';
-
 
 let externalAuthWindow;
 declare var APP: Object;
@@ -48,7 +46,7 @@ function doExternalAuth(room, lockPassword) {
             getUrl = room.getExternalAuthUrl(true);
         }
         getUrl.then(url => {
-            externalAuthWindow = LoginDialog.showExternalAuthDialog(
+            externalAuthWindow = openAuthDialog(
                 url,
                 () => {
                     externalAuthWindow = null;

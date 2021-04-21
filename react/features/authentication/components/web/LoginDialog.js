@@ -10,8 +10,8 @@ import { Dialog } from '../../../base/dialog';
 import { translate, translateToHTML } from '../../../base/i18n';
 import { JitsiConnectionErrors } from '../../../base/lib-jitsi-meet';
 import { connect as reduxConnect } from '../../../base/redux';
-import { authenticateAndUpgradeRole } from '../../actions.native';
-import { cancelLogin, hideLoginDialog } from '../../actions.web';
+import { authenticateAndUpgradeRole } from '../../actions.any';
+import { cancelLogin } from '../../actions.web';
 
 /**
  * The type of the React {@code Component} props of {@link LoginDialog}.
@@ -147,10 +147,7 @@ class LoginDialog extends Component<Props, State> {
         const jid = toJid(username, configHosts);
 
         if (conference) {
-            dispatch(authenticateAndUpgradeRole(jid, password, conference))
-                .then(() => {
-                    dispatch(hideLoginDialog());
-                });
+            dispatch(authenticateAndUpgradeRole(jid, password, conference));
         } else {
             this.setState({
                 loginStarted: true

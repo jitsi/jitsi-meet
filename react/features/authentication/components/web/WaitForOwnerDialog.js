@@ -16,7 +16,7 @@ type Props = {
     /**
      * The name of the conference room (without the domain part).
      */
-    room: string,
+    _room: string,
 
     /**
      * Redux store dispatch method.
@@ -88,7 +88,7 @@ class WaitForOwnerDialog extends PureComponent<Props> {
      */
     render() {
         const {
-            room,
+            _room: room,
             t
         } = this.props;
 
@@ -122,7 +122,7 @@ function mapStateToProps(state) {
     const { authRequired } = state['features/base/conference'];
 
     return {
-        room: authRequired && authRequired.getName()
+        _room: authRequired && authRequired.getName()
     };
 }
 

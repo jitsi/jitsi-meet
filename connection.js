@@ -4,7 +4,6 @@ import { jitsiLocalStorage } from '@jitsi/js-utils';
 import Logger from 'jitsi-meet-logger';
 
 import { redirectToTokenAuthService } from './modules/UI/authentication/AuthHandler';
-import { hideLoginDialog } from './react/features/authentication/actions.web';
 import { LoginDialog } from './react/features/authentication/components';
 import { isTokenAuthEnabled } from './react/features/authentication/functions';
 import {
@@ -243,7 +242,6 @@ function requestAuth(roomName) {
 
     return new Promise(resolve => {
         const onSuccess = connection => {
-            APP.store.dispatch(hideLoginDialog());
             resolve(connection);
         };
 
