@@ -13,6 +13,78 @@ import loadEffects from './loadEffects';
 import logger from './logger';
 
 /**
+ * Returns root tracks state.
+ *
+ * @param {Object} state - Global state.
+ * @returns {Object} Tracks state.
+ */
+export const getTrackState = state => state['features/base/tracks'];
+
+/**
+ * Higher-order function that returns a selector for a specific participant
+ * and media type.
+ *
+ * @param {Object} participant - Participant reference.
+ * @param {MEDIA_TYPE} mediaType - Media type.
+ * @returns {Function} Selector.
+ */
+export const getIsParticipantMediaMuted = (participant, mediaType) =>
+
+    /**
+     * Bound selector.
+     *
+     * @param {Object} state - Global state.
+     * @returns {boolean} Is the media type muted for the participant.
+     */
+    state => {
+        if (!participant) {
+            return;
+        }
+
+        const tracks = getTrackState(state);
+
+        if (participant?.local) {
+            return isLocalTrackMuted(tracks, mediaType);
+        } else if (!participant?.isFakeParticipant) {
+            return isRemoteTrackMuted(tracks, mediaType, participant.id);
+        }
+
+        return true;
+    };
+
+/**
+ * Higher-order function that returns a selector for a specific participant.
+ *
+ * @param {Object} participant - Participant reference.
+ * @returns {Function} Selector.
+ */
+export const getIsParticipantAudioMuted = participant =>
+
+    /**
+     * Bound selector.
+     *
+     * @param {Object} state - Global state.
+     * @returns {boolean} Is audio muted for the participant.
+     */
+    state => getIsParticipantMediaMuted(participant, MEDIA_TYPE.AUDIO)(state);
+
+/**
+ * Higher-order function that returns a selector for a specific participant.
+ *
+ * @param {Object} participant - Participant reference.
+ * @returns {Function} Selector.
+ */
+export const getIsParticipantVideoMuted = participant =>
+
+    /**
+     * Bound selector.
+     *
+     * @param {Object} state - Global state.
+     * @returns {boolean} Is video muted for the participant.
+     */
+    state => getIsParticipantMediaMuted(participant, MEDIA_TYPE.VIDEO)(state);
+
+/**
  * Creates a local video track for presenter. The constraints are computed based
  * on the height of the desktop that is being shared.
  *
@@ -311,7 +383,7 @@ export function getLocalVideoType(tracks) {
  * @returns {Object}
  */
 export function getLocalJitsiVideoTrack(state) {
-    const track = getLocalVideoTrack(state['features/base/tracks']);
+    const track = getLocalVideoTrack(getTrackState(state));
 
     return track?.jitsiTrack;
 }
@@ -323,7 +395,7 @@ export function getLocalJitsiVideoTrack(state) {
  * @returns {Object}
  */
 export function getLocalJitsiAudioTrack(state) {
-    const track = getLocalAudioTrack(state['features/base/tracks']);
+    const track = getLocalAudioTrack(getTrackState(state));
 
     return track?.jitsiTrack;
 }
@@ -413,7 +485,7 @@ export function isLocalTrackMuted(tracks, mediaType) {
  * @returns {boolean}
  */
 export function isLocalVideoTrackDesktop(state) {
-    const videoTrack = getLocalVideoTrack(state['features/base/tracks']);
+    const videoTrack = getLocalVideoTrack(getTrackState(state));
 
     return videoTrack && videoTrack.videoType === VIDEO_TYPE.DESKTOP;
 }

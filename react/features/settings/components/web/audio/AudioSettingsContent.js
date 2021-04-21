@@ -3,7 +3,7 @@
 import React, { Component } from 'react';
 
 import { translate } from '../../../../base/i18n';
-import { IconMicrophoneEmpty, IconVolumeEmpty } from '../../../../base/icons';
+import { IconMicrophoneHollow, IconVolumeEmpty } from '../../../../base/icons';
 import JitsiMeetJS from '../../../../base/lib-jitsi-meet';
 import { equals } from '../../../../base/redux';
 import { createLocalAudioTracks } from '../../../functions';
@@ -248,7 +248,7 @@ class AudioSettingsContent extends Component<Props, State> {
             <div>
                 <div className = 'audio-preview-content'>
                     <AudioSettingsHeader
-                        IconComponent = { IconMicrophoneEmpty }
+                        IconComponent = { IconMicrophoneHollow }
                         text = { t('settings.microphones') } />
                     {this.state.audioTracks.map((data, i) =>
                         this._renderMicrophoneEntry(data, i),
