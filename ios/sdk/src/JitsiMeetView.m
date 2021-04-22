@@ -130,9 +130,9 @@ static void initializeViewsMap() {
     [externalAPI sendEndpointTextMessage:message :to];
 }
 
-- (void)toggleScreenShare {
+- (void)toggleScreenShare:(BOOL)enabled {
     ExternalAPI *externalAPI = [[JitsiMeet sharedInstance] getExternalAPI];
-    [externalAPI toggleScreenShare];
+    [externalAPI toggleScreenShare:enabled];
 }
 
 - (void)retrieveParticipantsInfo:(void (^ _Nonnull)(NSArray * _Nullable))completionHandler {
