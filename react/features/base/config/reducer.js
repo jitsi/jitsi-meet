@@ -224,7 +224,8 @@ function _translateLegacyConfig(oldValue: Object) {
         }
     });
 
-    if (typeof interfaceConfig === 'object' && Array.isArray(interfaceConfig.TOOLBAR_BUTTONS)) {
+    if (!Array.isArray(oldValue.toolbarButtons)
+            && typeof interfaceConfig === 'object' && Array.isArray(interfaceConfig.TOOLBAR_BUTTONS)) {
         newValue.toolbarButtons = interfaceConfig.TOOLBAR_BUTTONS;
     }
 
