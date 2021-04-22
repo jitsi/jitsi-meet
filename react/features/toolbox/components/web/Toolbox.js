@@ -504,12 +504,13 @@ class Toolbox extends Component<Props> {
      * Dispatches an action to toggle screensharing.
      *
      * @private
+     * @param {boolean} enabled - The state to toggle screen sharing to.
      * @param {boolean} audioOnly - Only share system audio.
      * @returns {void}
      */
-    _doToggleScreenshare(audioOnly = false) {
+    _doToggleScreenshare(enabled, audioOnly = false) {
         if (this.props._desktopSharingEnabled) {
-            this.props.dispatch(toggleScreensharing(audioOnly));
+            this.props.dispatch(toggleScreensharing(enabled, audioOnly));
         }
     }
 
@@ -690,13 +691,15 @@ class Toolbox extends Component<Props> {
      * @returns {void}
      */
     _onShortcutToggleScreenshare() {
+        const enable = !this.props._screensharing;
+
         sendAnalytics(createToolbarEvent(
             'screen.sharing',
             {
-                enable: !this.props._screensharing
+                enable
             }));
 
-        this._doToggleScreenshare();
+        this._doToggleScreenshare(enable);
     }
 
     _onTabIn: () => void;
@@ -889,13 +892,15 @@ class Toolbox extends Component<Props> {
             return;
         }
 
+        const enable = !this.props._screensharing;
+
         sendAnalytics(createShortcutEvent(
             'toggle.screen.sharing',
             ACTION_SHORTCUT_TRIGGERED,
-            { enable: !this.props._screensharing }));
+            { enable }));
 
         this._closeOverflowMenuIfOpen();
-        this._doToggleScreenshare();
+        this._doToggleScreenshare(enable);
     }
 
     _onToolbarToggleShareAudio: () => void;
@@ -906,8 +911,10 @@ class Toolbox extends Component<Props> {
      * @returns {void}
      */
     _onToolbarToggleShareAudio() {
+        const enable = !this.props._screensharing;
+
         this._closeOverflowMenuIfOpen();
-        this._doToggleScreenshare(true);
+        this._doToggleScreenshare(enable, true);
     }
 
     _onToolbarOpenLocalRecordingInfoDialog: () => void;

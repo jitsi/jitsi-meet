@@ -300,8 +300,8 @@ function _registerForNativeEvents(store) {
         }
     });
 
-    eventEmitter.addListener(ExternalAPI.TOGGLE_SCREEN_SHARE, () => {
-        dispatch(toggleScreensharing());
+    eventEmitter.addListener(ExternalAPI.TOGGLE_SCREEN_SHARE, ({ enabled }) => {
+        dispatch(toggleScreensharing(enabled));
     });
 
     eventEmitter.addListener(ExternalAPI.RETRIEVE_PARTICIPANTS_INFO, ({ requestId }) => {

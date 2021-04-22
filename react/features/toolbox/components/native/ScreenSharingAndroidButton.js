@@ -39,7 +39,9 @@ class ScreenSharingAndroidButton extends AbstractButton<Props, *> {
      * @returns {void}
      */
     _handleClick() {
-        this.props.dispatch(toggleScreensharing());
+        const enable = !this._isToggled();
+
+        this.props.dispatch(toggleScreensharing(enable));
     }
 
     /**
