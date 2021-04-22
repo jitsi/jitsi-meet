@@ -3,8 +3,9 @@
 import Logger from 'jitsi-meet-logger';
 
 import { openConnection } from '../../../connection';
-import { openLoginDialog } from '../../../react/features/authentication/actions.any';
-import { openAuthDialog } from '../../../react/features/authentication/actions.web';
+import {
+    openAuthDialog,
+    openLoginDialog } from '../../../react/features/authentication/actions.web';
 import { WaitForOwnerDialog } from '../../../react/features/authentication/components';
 import {
     isTokenAuthEnabled,
@@ -13,6 +14,8 @@ import {
 import { isDialogOpen } from '../../../react/features/base/dialog';
 import { setJWT } from '../../../react/features/base/jwt';
 import UIUtil from '../util/UIUtil';
+
+import LoginDialog from './LoginDialog';
 
 
 let externalAuthWindow;
@@ -32,6 +35,8 @@ function doExternalAuth(room, lockPassword) {
     const config = APP.store.getState()['features/base/config'];
 
     if (externalAuthWindow) {
+        externalAuthWindow.focus();
+
         return;
     }
 
@@ -45,7 +50,7 @@ function doExternalAuth(room, lockPassword) {
             getUrl = room.getExternalAuthUrl(true);
         }
         getUrl.then(url => {
-            externalAuthWindow = openAuthDialog(
+            externalAuthWindow = LoginDialog.showExternalAuthDialog(
                 url,
                 () => {
                     externalAuthWindow = null;
