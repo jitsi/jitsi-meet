@@ -62,5 +62,5 @@ const getState = state => state[REDUCER_KEY];
  * @param {Object} state - Global state.
  * @returns {boolean} Is the participants pane open.
  */
-export const getParticipantsPaneOpen = state => Boolean(getState(state).isOpen);
+export const getParticipantsPaneOpen = state => Boolean(getState(state)?.isOpen);
 
