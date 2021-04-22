@@ -81,7 +81,7 @@ export function invite(
             dispatch(setCalleeInfoVisible(true, invitees[0]));
         }
 
-        const { conference } = state['features/base/conference'];
+        const { conference, password } = state['features/base/conference'];
 
         if (typeof conference === 'undefined') {
             // Invite will fail before CONFERENCE_JOIN. The request will be
@@ -177,7 +177,7 @@ export function invite(
             sipInviteUrl,
             jwt,
             conference.options.name,
-            conference.password,
+            password,
             displayName
         );
 

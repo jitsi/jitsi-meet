@@ -160,7 +160,7 @@ export default class AbstractAddPeopleDialog<P: Props, S: State>
                     if (invitedCount >= 3) {
                         notificationProps = {
                             titleArguments: {
-                                name: invitees[0].name,
+                                name: invitees[0].name || invitees[0].address,
                                 count: invitedCount - 1
                             },
                             titleKey: 'notify.invitedThreePlusMembers'
@@ -168,15 +168,15 @@ export default class AbstractAddPeopleDialog<P: Props, S: State>
                     } else if (invitedCount === 2) {
                         notificationProps = {
                             titleArguments: {
-                                first: invitees[0].name,
-                                second: invitees[1].name
+                                first: invitees[0].name || invitees[0].address,
+                                second: invitees[1].name || invitees[1].address
                             },
                             titleKey: 'notify.invitedTwoMembers'
                         };
                     } else if (invitedCount) {
                         notificationProps = {
                             titleArguments: {
-                                name: invitees[0].name
+                                name: invitees[0].name || invitees[0].address
                             },
                             titleKey: 'notify.invitedOneMember'
                         };
