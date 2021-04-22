@@ -10,8 +10,7 @@ import { Dialog } from '../../../base/dialog';
 import { translate, translateToHTML } from '../../../base/i18n';
 import { JitsiConnectionErrors } from '../../../base/lib-jitsi-meet';
 import { connect as reduxConnect } from '../../../base/redux';
-import { authenticateAndUpgradeRole } from '../../actions.any';
-import { cancelLogin } from '../../actions.web';
+import { authenticateAndUpgradeRole, cancelLogin } from '../../actions.web';
 
 /**
  * The type of the React {@code Component} props of {@link LoginDialog}.

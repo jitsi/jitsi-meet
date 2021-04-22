@@ -10,6 +10,8 @@ import { set } from '../base/redux';
 import { CANCEL_LOGIN } from './actionTypes';
 import { stopWaitForOwner } from './actions.any';
 
+export * from './actions.any';
+
 /**
  * Cancels {@ink LoginDialog}.
  *

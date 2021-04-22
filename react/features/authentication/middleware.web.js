@@ -19,10 +19,11 @@ import {
     WAIT_FOR_OWNER
 } from './actionTypes';
 import {
+    hideLoginDialog,
     openWaitForOwnerDialog,
     stopWaitForOwner,
-    waitForOwner } from './actions.any';
-import { hideLoginDialog } from './actions.web';
+    waitForOwner
+} from './actions.web';
 import { LoginDialog, WaitForOwnerDialog } from './components';
 
 /**

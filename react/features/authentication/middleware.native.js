@@ -25,7 +25,7 @@ import {
     openLoginDialog,
     openWaitForOwnerDialog,
     stopWaitForOwner,
-    waitForOwner } from './actions.any';
+    waitForOwner } from './actions.native';
 import { LoginDialog, WaitForOwnerDialog } from './components';
 
 /**
