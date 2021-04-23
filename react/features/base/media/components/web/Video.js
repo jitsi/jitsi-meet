@@ -2,9 +2,6 @@
 
 import React, { Component } from 'react';
 
-import { connect } from '../../../../base/redux';
-import { createVirtualBackgroundEffect } from '../../../../stream-effects/virtual-background';
-
 /**
  * The type of the React {@code Component} props of {@link Video}.
  */
@@ -137,12 +134,7 @@ type Props = {
     /**
      * The value of the muted attribute for the underlying video element.
      */
-    muted?: boolean,
-
-    /**
-     * The virtual background object.
-     */
-    virtualBackground?: Object
+    muted?: boolean
 };
 
 /**
@@ -300,18 +292,12 @@ class Video extends Component<Props> {
      * @private
      * @returns {void}
      */
-    async _attachTrack(videoTrack) {
+    _attachTrack(videoTrack) {
         if (!videoTrack || !videoTrack.jitsiTrack) {
             return;
         }
 
         videoTrack.jitsiTrack.attach(this._videoElement);
-
-        if (this.props.virtualBackground ?.backgroundEffectEnabled && videoTrack.jitsiTrack) {
-            await videoTrack.jitsiTrack.setEffect(await createVirtualBackgroundEffect(this.props.virtualBackground));
-        } else {
-            await videoTrack.jitsiTrack.setEffect(undefined);
-        }
     }
 
     /**
@@ -359,20 +345,4 @@ class Video extends Component<Props> {
     }
 }
 
-/**
- * Maps (parts of) the redux state to the associated props for the
- * {@code Video} component.
- *
- * @param {Object} state - The Redux state.
- * @private
- * @returns {{
- *     virtualBackground: Object
- * }}
- */
-function _mapStateToProps(state): Object {
-    return {
-        virtualBackground: state['features/virtual-background']
-    };
-}
-
-export default connect(_mapStateToProps)(Video);
+export default Video;

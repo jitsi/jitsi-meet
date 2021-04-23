@@ -53,6 +53,11 @@ const images = [
 type Props = {
 
     /**
+     * Returns the jitsi track that will have backgraund effect applied.
+     */
+    _jitsiTrack: Object,
+
+    /**
      * Returns the selected thumbnail identifier.
      */
     _selectedThumbnail: string,
@@ -66,7 +71,6 @@ type Props = {
      * Invoked to obtain translated strings.
      */
     t: Function,
-    _jitsiTrack: any
 };
 
 /**
@@ -74,7 +78,7 @@ type Props = {
  *
  * @returns {ReactElement}
  */
-function VirtualBackground({ _selectedThumbnail, dispatch, t, _jitsiTrack }: Props) {
+function VirtualBackground({ _jitsiTrack, _selectedThumbnail, dispatch, t }: Props) {
     const [ options, setOptions ] = useState({});
     const localImages = jitsiLocalStorage.getItem('virtualBackgrounds');
     const [ storedImages, setStoredImages ] = useState((localImages && JSON.parse(localImages)) || []);
@@ -172,7 +176,7 @@ function VirtualBackground({ _selectedThumbnail, dispatch, t, _jitsiTrack }: Pro
 
     return (
         <Dialog
-            hideCancelButton = { true }
+            hideCancelButton = { false }
             okKey = { 'virtualBackground.apply' }
             onSubmit = { applyVirtualBackground }
             submitDisabled = { !options || loading }
@@ -269,7 +273,7 @@ function VirtualBackground({ _selectedThumbnail, dispatch, t, _jitsiTrack }: Pro
 function _mapStateToProps(state): Object {
     return {
         _selectedThumbnail: state['features/virtual-background'].selectedThumbnail,
-        _jitsiTrack: getLocalVideoTrack(state['features/base/tracks']).jitsiTrack
+        _jitsiTrack: getLocalVideoTrack(state['features/base/tracks'])?.jitsiTrack
     };
 }
 

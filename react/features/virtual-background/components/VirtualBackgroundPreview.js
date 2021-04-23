@@ -8,6 +8,7 @@ import { getVideoDeviceIds } from '../../base/devices';
 import { translate } from '../../base/i18n';
 import Video from '../../base/media/components/Video';
 import { connect, equals } from '../../base/redux';
+import { createVirtualBackgroundEffect } from '../../stream-effects/virtual-background';
 import { toggleBackgroundEffect } from '../actions';
 
 const videoClassName = 'video-preview-video flipVideoX';
@@ -18,29 +19,20 @@ const videoClassName = 'video-preview-video flipVideoX';
 export type Props = {
 
     /**
-     * The deviceId of the camera device currently being used.
+     * All the camera device ids currently connected.
      */
-    currentCameraDeviceId: string,
+    _videoDeviceIds: string[],
 
     /**
-     * Callback invoked to change current camera.
+     * The virtual background object.
      */
-    setVideoInputDevice: Function,
+
+    _virtualBackground: Object,
 
     /**
      * Invoked to obtain translated strings.
      */
     t: Function,
-
-    /**
-     * Callback invoked to toggle the settings popup visibility.
-     */
-    toggleVideoSettings: Function,
-
-    /**
-     * All the camera device ids currently connected.
-     */
-    videoDeviceIds: string[],
 
     /**
      * The redux {@code dispatch} function.
@@ -59,14 +51,14 @@ export type Props = {
 type State = {
 
     /**
+     * Loader activated on setting virtual background.
+     */
+    loading: boolean,
+
+    /**
      * An array of all the jitsiTracks and eventual errors.
      */
     trackData: Object[],
-
-    /**
-     * Loader activated on setting virtual background.
-     */
-    loading: boolean
 };
 
 /**
@@ -88,7 +80,7 @@ class VirtualBackgroundPreview extends Component<Props, State> {
         super(props);
 
         this.state = {
-            trackData: new Array(props.videoDeviceIds && props.videoDeviceIds.length).fill({
+            trackData: new Array(props._videoDeviceIds && props._videoDeviceIds.length).fill({
                 jitsiTrack: null
             }),
             loading: false
@@ -103,7 +95,7 @@ class VirtualBackgroundPreview extends Component<Props, State> {
     async _setTracks() {
         this._disposeTracks(this.state.trackData);
 
-        const trackData = await createLocalVideoTracks(this.props.videoDeviceIds, 5000);
+        const trackData = await createLocalVideoTracks(this.props._videoDeviceIds, 5000);
 
         // In case the component gets unmounted before the tracks are created
         // avoid a leak by not setting the state
@@ -113,6 +105,11 @@ class VirtualBackgroundPreview extends Component<Props, State> {
             this.setState({
                 trackData
             });
+        }
+        const jitsiTrack = this.state.trackData[0].jitsiTrack;
+
+        if (this.props._virtualBackground ?.backgroundEffectEnabled && jitsiTrack) {
+            await jitsiTrack.setEffect(await createVirtualBackgroundEffect(this.props._virtualBackground));
         }
     }
 
@@ -126,19 +123,6 @@ class VirtualBackgroundPreview extends Component<Props, State> {
         trackData.forEach(({ jitsiTrack }) => {
             jitsiTrack && jitsiTrack.dispose();
         });
-    }
-
-    /**
-     * Returns the click handler used when selecting the video preview.
-     *
-     * @param {string} deviceId - The id of the camera device.
-     * @returns {Function}
-     */
-    _onEntryClick(deviceId) {
-        return () => {
-            this.props.setVideoInputDevice(deviceId);
-            this.props.toggleVideoSettings();
-        };
     }
 
     /**
@@ -158,18 +142,16 @@ class VirtualBackgroundPreview extends Component<Props, State> {
      * Renders a preview entry.
      *
      * @param {Object} data - The track data.
-     * @param {number} index - The index of the entry.
      * @returns {React$Node}
      */
-    _renderPreviewEntry(data, index) {
+    _renderPreviewEntry(data) {
         const { error, jitsiTrack } = data;
         const { t } = this.props;
-        const key = `vp-${index}`;
         const className = 'video-background-preview-entry';
 
         if (this.state.loading) {
             return (
-                <div>
+                <div className = 'video-preview-loader'>
                     <span className = 'loading-content-text'>{t('virtualBackground.pleaseWait')}</span>
                     <Spinner
                         invertColor = { true }
@@ -182,7 +164,6 @@ class VirtualBackgroundPreview extends Component<Props, State> {
             return (
                 <div
                     className = { className }
-                    key = { key }
                     video-preview-container = { true }>
                     <div className = 'video-preview-error'>{t(error)}</div>
                 </div>
@@ -190,8 +171,7 @@ class VirtualBackgroundPreview extends Component<Props, State> {
         }
 
         const props: Object = {
-            className,
-            key
+            className
         };
 
         return (
@@ -229,7 +209,7 @@ class VirtualBackgroundPreview extends Component<Props, State> {
      * @inheritdoc
      */
     async componentDidUpdate(prevProps) {
-        if (!equals(this.props.videoDeviceIds, prevProps.videoDeviceIds)) {
+        if (!equals(this.props._videoDeviceIds, prevProps._videoDeviceIds)) {
             this._setTracks();
         }
         if (!equals(this.props.options, prevProps.options)) {
@@ -245,7 +225,7 @@ class VirtualBackgroundPreview extends Component<Props, State> {
     render() {
         const { trackData } = this.state;
 
-        return <div className = 'video-preview'>{trackData.map((data, i) => this._renderPreviewEntry(data, i))}</div>;
+        return <div className = 'video-preview'>{this._renderPreviewEntry(trackData[0])}</div>;
     }
 }
 
@@ -256,12 +236,13 @@ class VirtualBackgroundPreview extends Component<Props, State> {
  * @param {Object} state - The Redux state.
  * @private
  * @returns {{
- *     videoDeviceIds: string[]
+ *     _videoDeviceIds: string[]
  * }}
  */
 function _mapStateToProps(state): Object {
     return {
-        videoDeviceIds: getVideoDeviceIds(state)
+        _videoDeviceIds: getVideoDeviceIds(state),
+        _virtualBackground: state['features/virtual-background']
     };
 }
 

@@ -19,16 +19,18 @@ export function toggleBackgroundEffect(options: Object, jitsiTrack: Object) {
         const state = getState();
         const virtualBackground = state['features/virtual-background'];
 
-        try {
-            if (options.enabled) {
-                await jitsiTrack.setEffect(await createVirtualBackgroundEffect(virtualBackground));
-            } else {
-                await jitsiTrack.setEffect(undefined);
+        if (jitsiTrack) {
+            try {
+                if (options.enabled) {
+                    await jitsiTrack.setEffect(await createVirtualBackgroundEffect(virtualBackground));
+                } else {
+                    await jitsiTrack.setEffect(undefined);
+                    dispatch(backgroundEnabled(false));
+                }
+            } catch (error) {
                 dispatch(backgroundEnabled(false));
+                logger.error('Error on apply background effect:', error);
             }
-        } catch (error) {
-            dispatch(backgroundEnabled(false));
-            logger.error('Error on apply backgroun effect:', error);
         }
     };
 }
