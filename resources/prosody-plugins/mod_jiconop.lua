@@ -31,7 +31,6 @@ module:hook("resource-bind", function (event)
             {origin = session; reply = query; node = 'lobbyrooms';});
 
     local stanza = st.message({
-            type = 'service-info';
             from = module.host;
             to = session.full_jid; });
     stanza:add_child(query):up();
