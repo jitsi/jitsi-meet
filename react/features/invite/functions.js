@@ -831,6 +831,7 @@ export function inviteSipEndpoints( // eslint-disable-line max-params
 
     const baseUrl = Object.assign(new URL(locationURL.toString()), {
         pathname: locationURL.pathname.replace(`/${roomName}`, ''),
+        hash: '',
         search: ''
     });
 
