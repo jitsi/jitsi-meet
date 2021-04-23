@@ -263,35 +263,6 @@ const messageHandler = {
     },
 
     /**
-     * Shows a dialog with different states to the user.
-     *
-     * @param statesObject object containing all the states of the dialog.
-     * @param options impromptu options
-     * @param translateOptions options passed to translation
-     */
-    openDialogWithStates(statesObject, options, translateOptions) {
-        const { classes, size } = options;
-        const defaultClasses = this._getDialogClasses(size);
-
-        options.classes = Object.assign({}, defaultClasses, classes);
-        options.promptspeed = options.promptspeed || 0;
-
-        for (const state in statesObject) { // eslint-disable-line guard-for-in
-            const currentState = statesObject[state];
-
-            if (currentState.titleKey) {
-                currentState.title
-                    = this._getFormattedTitleString(currentState.titleKey);
-            }
-        }
-        const dialog = $.prompt(statesObject, options);
-
-        APP.translation.translateElement(dialog, translateOptions);
-
-        return $.prompt.getApi();
-    },
-
-    /**
      * Opens new popup window for given <tt>url</tt> centered over current
      * window.
      *
@@ -370,22 +341,6 @@ const messageHandler = {
             title: displayName
         },
         timeout));
-    },
-
-    /**
-     * Displays a notification.
-     *
-     * @param {string} titleKey - The key from the language file for the title
-     * of the notification.
-     * @param {string} messageKey - The key from the language file for the text
-     * of the message.
-     * @param {Object} messageArguments - The arguments for the message
-     * translation.
-     * @returns {void}
-     */
-    notify(titleKey, messageKey, messageArguments) {
-        this.participantNotification(
-            null, titleKey, null, messageKey, messageArguments);
     }
 };
 
