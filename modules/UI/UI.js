@@ -99,14 +99,6 @@ UI.initConference = function() {
 };
 
 /**
- * Returns the shared document manager object.
- * @return {EtherpadManager} the shared document manager object
- */
-UI.getSharedVideoManager = function() {
-    return sharedVideoManager;
-};
-
-/**
  * Starts the UI module and initializes all related components.
  *
  * @returns {boolean} true if the UI is ready and the conference should be
@@ -260,11 +252,6 @@ UI.toggleFilmstrip = function() {
 };
 
 /**
- * Toggles the visibility of the chat panel.
- */
-UI.toggleChat = () => APP.store.dispatch(toggleChat());
-
-/**
  * Sets muted audio state for participant
  */
 UI.setAudioMuted = function(id) {
@@ -304,16 +291,6 @@ UI.addListener = function(type, listener) {
  */
 UI.removeAllListeners = function() {
     eventEmitter.removeAllListeners();
-};
-
-/**
- * Removes the given listener for the given type of event.
- *
- * @param type the type of the event we're listening for
- * @param listener the listener we want to remove
- */
-UI.removeListener = function(type, listener) {
-    eventEmitter.removeListener(type, listener);
 };
 
 /**
