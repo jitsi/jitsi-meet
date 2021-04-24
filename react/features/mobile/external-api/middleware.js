@@ -212,14 +212,6 @@ MiddlewareRegistry.register(store => next => action => {
                 muted: action.muted
             });
         break;
-    case TOGGLE_CAMERA_FACING_MODE:
-        console.log("here::::::")
-            // sendEvent(
-            //     store,
-            //     'TOGGLE_CAMERA_FACING_MODE',
-            //     /* data */ );
-            break;
-
     case SET_VIDEO_MUTED:
         sendEvent(
             store,
@@ -296,9 +288,8 @@ function _registerForNativeEvents(store) {
     eventEmitter.addListener(ExternalAPI.SET_VIDEO_MUTED, ({ muted }) => {
         dispatch(muteLocal(muted, MEDIA_TYPE.VIDEO));
     });
-
+    /*Added listner for event toggle camera for android*/
     eventEmitter.addListener(ExternalAPI.TOGGLE_CAMERA_FACING_MODE, () => {
-        console.log("HEREEEE::::")
         dispatch(toggleCameraFacingMode());
     });
 
