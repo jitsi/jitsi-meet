@@ -8,6 +8,10 @@ public class BroadcastIntentHelper {
         intent.putExtra("muted", muted);
         return intent;
     }
+    public static Intent buildToggleCameraIntent() {
+        Intent intent = new Intent(BroadcastAction.Type.TOGGLE_CAMERA_FACING_MODE.getAction());
+        return intent;
+    }
 
     public static Intent buildHangUpIntent() {
         return new Intent(BroadcastAction.Type.HANG_UP.getAction());

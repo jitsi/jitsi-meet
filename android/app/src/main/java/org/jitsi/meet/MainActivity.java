@@ -30,6 +30,7 @@ import android.view.KeyEvent;
 
 import androidx.annotation.Nullable;
 
+
 import org.jitsi.meet.sdk.JitsiMeet;
 import org.jitsi.meet.sdk.JitsiMeetActivity;
 import org.jitsi.meet.sdk.JitsiMeetConferenceOptions;
@@ -87,7 +88,7 @@ public class MainActivity extends JitsiMeetActivity {
 
     @Override
     protected boolean extraInitialize() {
-        Log.d(this.getClass().getSimpleName(), "LIBRE_BUILD="+BuildConfig.LIBRE_BUILD);
+        Log.d(this.getClass().getSimpleName(), "LIBRE_BUILD="+ BuildConfig.LIBRE_BUILD);
 
         // Setup Crashlytics and Firebase Dynamic Links
         // Here we are using reflection since it may have been disabled at compile time.
@@ -173,7 +174,7 @@ public class MainActivity extends JitsiMeetActivity {
                     restrictions.containsKey(RESTRICTION_SERVER_URL)) {
                     defaultURL = restrictions.getString(RESTRICTION_SERVER_URL);
                     configurationByRestrictions = true;
-                // Otherwise use default URL from app-restrictions.xml.
+                    // Otherwise use default URL from app-restrictions.xml.
                 } else {
                     defaultURL = restrictionEntry.getSelectedString();
                     configurationByRestrictions = false;
