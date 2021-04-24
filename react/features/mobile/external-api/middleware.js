@@ -27,7 +27,8 @@ import {
 } from '../../base/connection';
 import { JitsiConferenceEvents } from '../../base/lib-jitsi-meet';
 import { MEDIA_TYPE } from '../../base/media';
-import { SET_AUDIO_MUTED, SET_VIDEO_MUTED } from '../../base/media/actionTypes';
+// ,TOGGLE_CAMERA_FACING_MODE
+import { SET_AUDIO_MUTED, SET_VIDEO_MUTED,TOGGLE_CAMERA_FACING_MODE} from '../../base/media/actionTypes';
 import { PARTICIPANT_JOINED, PARTICIPANT_LEFT, getParticipants, getParticipantById } from '../../base/participants';
 import { MiddlewareRegistry, StateListenerRegistry } from '../../base/redux';
 import { toggleScreensharing } from '../../base/tracks';
@@ -38,6 +39,8 @@ import { muteLocal } from '../../video-menu/actions';
 import { ENTER_PICTURE_IN_PICTURE } from '../picture-in-picture';
 
 import { setParticipantsWithScreenShare } from './actions';
+import { toggleCameraFacingMode } from '../../base/media';
+
 import { sendEvent } from './functions';
 import logger from './logger';
 
@@ -209,6 +212,13 @@ MiddlewareRegistry.register(store => next => action => {
                 muted: action.muted
             });
         break;
+    case TOGGLE_CAMERA_FACING_MODE:
+        console.log("here::::::")
+            // sendEvent(
+            //     store,
+            //     'TOGGLE_CAMERA_FACING_MODE',
+            //     /* data */ );
+            break;
 
     case SET_VIDEO_MUTED:
         sendEvent(
@@ -285,6 +295,11 @@ function _registerForNativeEvents(store) {
 
     eventEmitter.addListener(ExternalAPI.SET_VIDEO_MUTED, ({ muted }) => {
         dispatch(muteLocal(muted, MEDIA_TYPE.VIDEO));
+    });
+
+    eventEmitter.addListener(ExternalAPI.TOGGLE_CAMERA_FACING_MODE, () => {
+        console.log("HEREEEE::::")
+        dispatch(toggleCameraFacingMode());
     });
 
     eventEmitter.addListener(ExternalAPI.SEND_ENDPOINT_TEXT_MESSAGE, ({ to, message }) => {
