@@ -86,7 +86,6 @@ dependencies {
         // Firebase
         //  - Crashlytics
         //  - Dynamic Links
-        implementation 'androidx.constraintlayout:constraintlayout:2.0.1'
 
         implementation 'com.google.firebase:firebase-analytics:17.5.0'
         implementation 'com.google.firebase:firebase-crashlytics:17.2.1'
