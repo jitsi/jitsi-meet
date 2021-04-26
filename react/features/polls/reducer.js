@@ -2,7 +2,9 @@
 
 import { ReducerRegistry } from '../base/redux';
 
-const INITIAL_STATE = {};
+const INITIAL_STATE = {
+    polls: {},
+};
 
 const STORE_NAME = 'features/polls';
 
