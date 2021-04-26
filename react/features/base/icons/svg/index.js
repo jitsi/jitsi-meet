@@ -88,6 +88,7 @@ export { default as IconParticipants } from './participants.svg';
 export { default as IconPhone } from './phone.svg';
 export { default as IconPin } from './enlarge.svg';
 export { default as IconPlane } from './paper-plane.svg';
+export { default as IconPoll } from './poll.svg';
 export { default as IconPresentation } from './presentation.svg';
 export { default as IconRaisedHand } from './raised-hand.svg';
 export { default as IconRaisedHandHollow } from './raised-hand-hollow.svg';
