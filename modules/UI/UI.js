@@ -8,6 +8,7 @@ import Logger from 'jitsi-meet-logger';
 
 import { isMobileBrowser } from '../../react/features/base/environment/utils';
 import { setColorAlpha } from '../../react/features/base/util';
+import { toggleChat } from '../../react/features/chat';
 import { setDocumentUrl } from '../../react/features/etherpad';
 import { setFilmstripVisible } from '../../react/features/filmstrip';
 import { joinLeaveNotificationsDisabled, setNotificationsEnabled } from '../../react/features/notifications';
@@ -95,6 +96,14 @@ UI.notifyReservationError = function(code, msg) {
  */
 UI.initConference = function() {
     UI.showToolbar();
+};
+
+/**
+ * Returns the shared document manager object.
+ * @return {EtherpadManager} the shared document manager object
+ */
+UI.getSharedVideoManager = function() {
+    return sharedVideoManager;
 };
 
 /**
@@ -251,6 +260,11 @@ UI.toggleFilmstrip = function() {
 };
 
 /**
+ * Toggles the visibility of the chat panel.
+ */
+UI.toggleChat = () => APP.store.dispatch(toggleChat());
+
+/**
  * Sets muted audio state for participant
  */
 UI.setAudioMuted = function(id) {
@@ -290,6 +304,16 @@ UI.addListener = function(type, listener) {
  */
 UI.removeAllListeners = function() {
     eventEmitter.removeAllListeners();
+};
+
+/**
+ * Removes the given listener for the given type of event.
+ *
+ * @param type the type of the event we're listening for
+ * @param listener the listener we want to remove
+ */
+UI.removeListener = function(type, listener) {
+    eventEmitter.removeListener(type, listener);
 };
 
 /**

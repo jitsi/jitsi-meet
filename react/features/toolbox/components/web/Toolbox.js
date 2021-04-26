@@ -59,6 +59,7 @@ import {
     openSettingsDialog
 } from '../../../settings';
 import { SharedVideoButton } from '../../../shared-video/components';
+import { SharedVideoButton2 } from '../../../shared-video2/components';
 import { SpeakerStats } from '../../../speaker-stats';
 import {
     ClosedCaptionButton
@@ -1036,6 +1037,10 @@ class Toolbox extends Component<Props> {
             this._shouldShowButton('sharedvideo')
                 && <SharedVideoButton
                     key = 'sharedvideo'
+                    showLabel = { true } />,
+            this._shouldShowButton('sharedvideo2')
+                && <SharedVideoButton2
+                    key = 'sharedvideo2'
                     showLabel = { true } />,
             this._shouldShowButton('shareaudio')
                 && _desktopSharingEnabled
