@@ -153,6 +153,7 @@ export default [
     'resolution',
     'startAudioMuted',
     'startAudioOnly',
+    'startLastN',
     'startScreenSharing',
     'startSilent',
     'startVideoMuted',

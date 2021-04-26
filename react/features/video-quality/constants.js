@@ -1,3 +1,5 @@
+export const DEFAULT_LAST_N = 20;
+
 /**
  * The supported remote video resolutions. The values are currently based on
  * available simulcast layers.
