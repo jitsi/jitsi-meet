@@ -19,17 +19,15 @@ type Props = {
     t: Function
 };
 
-/**
- * A dialog for creating polls.
- */
-const PollCreateDialog = ({ onSubmit, t }: Props, ) => (
+const PollCreateDialog = ({ onSubmit, t }: Props) => (
     <Dialog
-        titleKey = 'polls.create.title'
-        width = 'small'
         okKey = { t('polls.create.Send') }
-        onSubmit = { onSubmit }>
+        onSubmit = { onSubmit }
+        titleKey = 'polls.create.title'
+        width = 'small'>
         <p>Test</p>
     </Dialog>
 );
 
+// eslint-disable-next-line new-cap
 export default translate(AbstractPollCreateDialog(PollCreateDialog));

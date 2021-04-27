@@ -1,6 +1,6 @@
 // @flow
 
-import React from 'react';
+import React, { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 
 import { COMMAND_NEW_POLL } from '../constants';
@@ -8,7 +8,7 @@ import { COMMAND_NEW_POLL } from '../constants';
 export const AbstractPollCreateDialog = Component => props => {
     const conference = useSelector(state => state['features/base/conference'].conference);
 
-    const onSubmit = () => {
+    const onSubmit = useCallback(() => {
         conference.sendCommandOnce(COMMAND_NEW_POLL, {
             attributes: {
                 id: Math.floor(Math.random() * Number.MAX_SAFE_INTEGER),
@@ -26,7 +26,7 @@ export const AbstractPollCreateDialog = Component => props => {
         });
 
         return true;
-    };
+    }, [ conference ]);
 
     return (<Component
         { ...props }
