@@ -33,6 +33,7 @@ export default {
      */
     fieldLabelContainer: {
         alignItems: 'center',
+        paddingLeft: 8,
         flexDirection: 'row'
     },
 
@@ -66,7 +67,8 @@ export default {
         alignItems: 'center',
         flex: 1,
         flexDirection: 'row',
-        justifyContent: 'flex-end'
+        justifyContent: 'flex-end',
+        paddingRight: 8
     },
 
     /**
@@ -74,7 +76,18 @@ export default {
      */
     formSectionTitle: {
         backgroundColor: 'rgba(0, 0, 0, 0.1)',
-        padding: 8
+        paddingTop: 0,
+        paddingBottom: 0
+    },
+
+    sectionClose: {
+        color: ColorPalette.black,
+        fontSize: 14
+    },
+
+    sectionOpen: {
+        color: ColorPalette.blueHighlight,
+        fontSize: 14
     },
 
     /**
@@ -90,8 +103,10 @@ export default {
     textInputContainer: {
         flex: 1,
         height: 40,
-        paddingTop: 8,
-        paddingBottom: 16
+        paddingBottom: 8,
+        paddingTop: 2,
+        paddingLeft: 16,
+        paddingRight: 16
     },
 
     /**

@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { Alert, NativeModules, ScrollView, Text } from 'react-native';
-import { DefaultTheme, Provider as PaperProvider, Switch, TextInput } from 'react-native-paper';
+import { DefaultTheme, Divider, Provider as PaperProvider, Switch, TextInput } from 'react-native-paper';
 
 import { translate } from '../../../base/i18n';
 import { JitsiModal } from '../../../base/modal';
@@ -17,7 +17,7 @@ import {
 
 import FormRow from './FormRow';
 import FormSectionHeader from './FormSectionHeader';
-import styles, {THUMB_COLOR} from './styles';
+import styles, { THUMB_COLOR } from './styles';
 
 /**
  * Application information module.
@@ -66,11 +66,6 @@ type State = {
      * State variable for the server URL field.
      */
     serverURL: string,
-
-    /**
-     * Whether to show advanced settings or not.
-     */
-    showAdvanced: boolean,
 
     /**
      * State variable for the start with audio muted switch.
@@ -130,7 +125,6 @@ class SettingsView extends AbstractSettingsView<Props, State> {
             displayName,
             email,
             serverURL,
-            showAdvanced: false,
             startWithAudioMuted,
             startWithVideoMuted
         };
@@ -141,7 +135,6 @@ class SettingsView extends AbstractSettingsView<Props, State> {
         this._onDisableCallIntegration = this._onDisableCallIntegration.bind(this);
         this._onDisableCrashReporting = this._onDisableCrashReporting.bind(this);
         this._onDisableP2P = this._onDisableP2P.bind(this);
-        this._onShowAdvanced = this._onShowAdvanced.bind(this);
         this._setURLFieldReference = this._setURLFieldReference.bind(this);
         this._showURLAlert = this._showURLAlert.bind(this);
     }
@@ -153,7 +146,16 @@ class SettingsView extends AbstractSettingsView<Props, State> {
      * @returns {ReactElement}
      */
     render() {
-        const { displayName, email, serverURL, startWithAudioMuted, startWithVideoMuted } = this.state;
+        const {
+            disableCallIntegration,
+            disableCrashReporting,
+            disableP2P,
+            displayName,
+            email,
+            serverURL,
+            startWithAudioMuted,
+            startWithVideoMuted
+        } = this.state;
 
         return (
             <JitsiModal
@@ -165,9 +167,7 @@ class SettingsView extends AbstractSettingsView<Props, State> {
                 <PaperProvider theme = { theme }>
                     <ScrollView>
                         <FormSectionHeader
-                            label = 'settingsView.profileSection' />
-                        <FormRow
-                            fieldSeparator = { true }>
+                            title = 'settingsView.profileSection'>
                             <TextInput
                                 autoCorrect = { false }
                                 label = { this.props.t('settingsView.displayName') }
@@ -177,8 +177,7 @@ class SettingsView extends AbstractSettingsView<Props, State> {
                                 style = { styles.textInputContainer }
                                 textContentType = { 'name' } // iOS only
                                 value = { displayName } />
-                        </FormRow>
-                        <FormRow>
+                            <Divider style = { styles.fieldSeparator } />
                             <TextInput
                                 autoCapitalize = 'none'
                                 autoCorrect = { false }
@@ -190,11 +189,9 @@ class SettingsView extends AbstractSettingsView<Props, State> {
                                 style = { styles.textInputContainer }
                                 textContentType = { 'emailAddress' } // iOS only
                                 value = { email } />
-                        </FormRow>
+                        </FormSectionHeader>
                         <FormSectionHeader
-                            label = 'settingsView.conferenceSection' />
-                        <FormRow
-                            fieldSeparator = { true }>
+                            title = 'settingsView.conferenceSection'>
                             <TextInput
                                 autoCapitalize = 'none'
                                 autoCorrect = { false }
@@ -208,34 +205,65 @@ class SettingsView extends AbstractSettingsView<Props, State> {
                                 style = { styles.textInputContainer }
                                 textContentType = { 'URL' } // iOS only
                                 value = { serverURL } />
-                        </FormRow>
-                        <FormRow
-                            fieldSeparator = { true }
-                            label = 'settingsView.startWithAudioMuted'>
-                            <Switch
-                                onValueChange = { this._onStartAudioMutedChange }
-                                thumbColor = { THUMB_COLOR }
-                                trackColor = {{ true: colors.primary }}
-                                value = { startWithAudioMuted } />
-                        </FormRow>
-                        <FormRow label = 'settingsView.startWithVideoMuted'>
-                            <Switch
-                                onValueChange = { this._onStartVideoMutedChange }
-                                thumbColor = { THUMB_COLOR }
-                                trackColor = {{ true: colors.primary }}
-                                value = { startWithVideoMuted } />
-                        </FormRow>
+                            <Divider style = { styles.fieldSeparator } />
+                            <FormRow
+                                label = 'settingsView.startWithAudioMuted'>
+                                <Switch
+                                    onValueChange = { this._onStartAudioMutedChange }
+                                    thumbColor = { THUMB_COLOR }
+                                    trackColor = {{ true: colors.primary }}
+                                    value = { startWithAudioMuted } />
+                            </FormRow>
+                            <Divider style = { styles.fieldSeparator } />
+                            <FormRow label = 'settingsView.startWithVideoMuted'>
+                                <Switch
+                                    onValueChange = { this._onStartVideoMutedChange }
+                                    thumbColor = { THUMB_COLOR }
+                                    trackColor = {{ true: colors.primary }}
+                                    value = { startWithVideoMuted } />
+                            </FormRow>
+                        </FormSectionHeader>
                         <FormSectionHeader
-                            label = 'settingsView.buildInfoSection' />
-                        <FormRow
-                            label = 'settingsView.version'>
-                            <Text>
-                                {`${AppInfo.version} build ${AppInfo.buildNumber}`}
-                            </Text>
-                        </FormRow>
+                            title = 'settingsView.buildInfoSection'>
+                            <FormRow
+                                label = 'settingsView.version'>
+                                <Text>
+                                    {`${AppInfo.version} build ${AppInfo.buildNumber}`}
+                                </Text>
+                            </FormRow>
+                        </FormSectionHeader>
                         <FormSectionHeader
-                            label = 'settingsView.advanced' />
-                        {this._renderAdvancedSettings()}
+                            title = 'settingsView.advanced'>
+                            <FormRow
+                                label = 'settingsView.disableCallIntegration'>
+                                <Switch
+                                    onValueChange = { this._onDisableCallIntegration }
+                                    thumbColor = { THUMB_COLOR }
+                                    trackColor = {{ true: colors.primary }}
+                                    value = { disableCallIntegration } />
+                            </FormRow>
+                            <Divider style = { styles.fieldSeparator } />
+                            <FormRow
+                                label = 'settingsView.disableP2P'>
+                                <Switch
+                                    onValueChange = { this._onDisableP2P }
+                                    thumbColor = { THUMB_COLOR }
+                                    trackColor = {{ true: colors.primary }}
+                                    value = { disableP2P } />
+                            </FormRow>
+                            <Divider style = { styles.fieldSeparator } />
+                            {AppInfo.GOOGLE_SERVICES_ENABLED && (
+                                <FormRow
+                                    fieldSeparator = { true }
+                                    label = 'settingsView.disableCrashReporting'>
+                                    <Switch
+                                        onValueChange = { this._onDisableCrashReporting }
+                                        thumbColor = { THUMB_COLOR }
+                                        trackColor = {{ true: colors.primary }}
+                                        value = { disableCrashReporting } />
+                                </FormRow>
+                            )}
+                        </FormSectionHeader>
                     </ScrollView>
                 </PaperProvider>
             </JitsiModal>
@@ -359,20 +387,7 @@ class SettingsView extends AbstractSettingsView<Props, State> {
      * @returns {boolean} - True if the modal can be closed.
      */
     _onClose() {
-        this.setState({ showAdvanced: false });
-
         return this._processServerURL(true /* hideOnSuccess */);
-    }
-
-    _onShowAdvanced: () => void;
-
-    /**
-     * Handles the advanced settings button.
-     *
-     * @returns {void}
-     */
-    _onShowAdvanced() {
-        this.setState({ showAdvanced: !this.state.showAdvanced });
     }
 
     /**
@@ -423,73 +438,6 @@ class SettingsView extends AbstractSettingsView<Props, State> {
         this._onChangeServerURL(normalizedURL);
 
         return hideOnSuccess;
-    }
-
-    /**
-     * Renders the advanced settings options.
-     *
-     * @private
-     * @returns {React$Element}
-     */
-    _renderAdvancedSettings() {
-        const { disableCallIntegration, disableP2P, disableCrashReporting, showAdvanced } = this.state;
-
-        if (showAdvanced) {
-            return (
-                <>
-                    <FormRow
-                        fieldSeparator = { true }
-                        label = 'settingsView.showAdvanced'>
-                        <Switch
-                            onValueChange = { this._onShowAdvanced }
-                            thumbColor = { THUMB_COLOR }
-                            trackColor = {{ true: colors.primary }}
-                            value = { showAdvanced } />
-                    </FormRow>
-                    <FormRow
-                        fieldSeparator = { true }
-                        label = 'settingsView.disableCallIntegration'>
-                        <Switch
-                            onValueChange = { this._onDisableCallIntegration }
-                            thumbColor = { THUMB_COLOR }
-                            trackColor = {{ true: colors.primary }}
-                            value = { disableCallIntegration } />
-                    </FormRow>
-                    <FormRow
-                        fieldSeparator = { true }
-                        label = 'settingsView.disableP2P'>
-                        <Switch
-                            onValueChange = { this._onDisableP2P }
-                            thumbColor = { THUMB_COLOR }
-                            trackColor = {{ true: colors.primary }}
-                            value = { disableP2P } />
-                    </FormRow>
-                    {AppInfo.GOOGLE_SERVICES_ENABLED && (
-                        <FormRow
-                            fieldSeparator = { true }
-                            label = 'settingsView.disableCrashReporting'>
-                            <Switch
-                                onValueChange = { this._onDisableCrashReporting }
-                                thumbColor = { THUMB_COLOR }
-                                trackColor = {{ true: colors.primary }}
-                                value = { disableCrashReporting } />
-                        </FormRow>
-                    )}
-                </>
-            );
-        }
-
-        return (
-            <>
-                <FormRow
-                    fieldSeparator = { true }
-                    label = 'settingsView.showAdvanced'>
-                    <Switch
-                        onValueChange = { this._onShowAdvanced }
-                        value = { showAdvanced } />
-                </FormRow>
-            </>
-        );
     }
 
     _setURLFieldReference: (React$ElementRef<*> | null) => void;
