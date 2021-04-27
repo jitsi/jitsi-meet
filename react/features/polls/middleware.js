@@ -8,6 +8,7 @@ import { receiveAnswer, receivePoll } from './actions';
 import { RECEIVE_POLL, RECEIVE_ANSWER } from './actionTypes';
 import PollAnswerDialog from './components/web/PollAnswerDialog';
 
+
 MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
     switch (action.type) {
         case RECEIVE_POLL:

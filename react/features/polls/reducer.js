@@ -10,7 +10,7 @@ const INITIAL_STATE = {
 };
 
 ReducerRegistry.register('features/polls', (state = INITIAL_STATE, action) => {
-    switch(action.type) {
+    switch (action.type) {
     case RECEIVE_POLL:
         console.log('Received poll #' + action.pollId + ':', action.poll);
         return {

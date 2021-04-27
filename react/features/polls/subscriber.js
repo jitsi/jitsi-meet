@@ -5,7 +5,7 @@ import { getCurrentConference } from '../base/conference';
 import { COMMAND_NEW_POLL, COMMAND_ANSWER_POLL } from './constants';
 
 import { receiveAnswer, receivePoll } from './actions';
-import { Answer } from './types';
+import type { Answer } from './types';
 
 StateListenerRegistry.register(
     state => getCurrentConference(state),
