@@ -82,7 +82,7 @@ function _updateLastN({ getState }, value = null) {
     // 3. The last-n value from 'startLastN' if it is specified in config.js
     // 4. The last-n value from 'channelLastN' if specified in config.js.
     // 5. -1 as the default value.
-    let lastNSelected = value || lastN || config.startLastN || config.channelLastN || -1;
+    let lastNSelected = value || lastN || (config.startLastN ?? (config.channelLastN ?? -1));
 
     // Apply last N limit based on the # of participants and config settings.
     const limitedLastN = limitLastN(participantCount, lastNLimits);
