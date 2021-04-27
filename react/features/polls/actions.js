@@ -1,5 +1,20 @@
 // @flow
 
-import { RECEIVE_POLL } from './actionTypes';
+import {Answer, Poll} from './types';
+import { RECEIVE_ANSWER, RECEIVE_POLL,  } from './actionTypes';
 
-export const receivePoll = (id, poll) => ({ type: RECEIVE_POLL, id, poll });
+export const receivePoll = (pollId: string, poll: Poll) => (
+    {
+        type: RECEIVE_POLL,
+        pollId,
+        poll
+    }
+    );
+
+export const receiveAnswer = (pollId: string, answer: Answer) => (
+    {
+        type: RECEIVE_ANSWER,
+        pollId,
+        answer
+    }
+);

@@ -11,7 +11,7 @@ export const AbstractPollCreateDialog = Component => props => {
     const onSubmit = () => {
         conference.sendCommandOnce(COMMAND_NEW_POLL, {
             attributes: {
-                id: Math.floor(Math.random() * Number.MAX_SAFE_INTEGER),
+                pollId: Math.floor(Math.random() * Number.MAX_SAFE_INTEGER),
                 sender: conference.myUserId(),
                 title: 'Example poll',
             },

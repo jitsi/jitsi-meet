@@ -3,15 +3,19 @@
 import * as React from 'react';
 import { useState } from 'react';
 import { Checkbox } from '@atlaskit/checkbox';
+import Spinner from '@atlaskit/spinner';
+
 import { Dialog } from '../../../base/dialog';
 import { getLocalParticipant } from '../../../base/participants';
 import { connect } from '../../../base/redux';
+
 import { Poll, Answer} from "../../types";
 import { COMMAND_ANSWER_POLL } from '../../constants';
 
 
 type Props = {
     conference: any,
+    pollId: number,
     poll: Poll,
     localId: String,
     dispatch: any
@@ -41,9 +45,13 @@ function AnswerPoll(props: Props): React.Node {
 
     const { poll, localId, conference, dispatch } = props;
 
-    const [checkBoxStates, setCheckBoxState] = useState(new Array(poll.answers.length).fill(false));
+    const [checkBoxStates, setCheckBoxState] = useState(Boolean(poll)? new Array(poll.answers.length).fill(false) : []);
 
-    return ( 
+    // if the poll is null, show a spinner, else, show the poll 
+    return (
+        <>
+        { Boolean(poll)
+        ?
         <Dialog
             width = 'small'
             className = 'poll-answers default-scrollbar'
@@ -101,12 +109,33 @@ function AnswerPoll(props: Props): React.Node {
                 }
             </div>
         </Dialog>
+        
+        :
+
+        <Dialog
+        width = 'small'
+        className = 'poll-answers default-scrollbar'
+        cancelKey = { 'dialog.close' }
+        submitDisabled = { true }
+        titleKey = "No active Poll"
+        >
+            <Spinner
+                isCompleting = { false }
+                size = 'medium'
+            />
+        </Dialog>
+        }
+        </>
     );
 }
 
-function _mapStateToProps(state: Object) {
+function _mapStateToProps(state: Object, previousProp: Object) {
     const {conference} = state['features/base/conference'];
+    const {current_poll_id, polls} = state['features/polls'];
+
     return {
+        // if the pollId is not null, we fetch the corresponding poll in the state
+        poll: Boolean(current_poll_id)? polls[current_poll_id] : null,
         conference: conference,
         localId: getLocalParticipant(state).id
     };
