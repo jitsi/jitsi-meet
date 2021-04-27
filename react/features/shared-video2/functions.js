@@ -13,10 +13,16 @@ import { VIDEO_PLAYER_PARTICIPANT_NAME } from './constants';
  * @returns {boolean}
  */
 export function getYoutubeLink(url: string) {
-    const p = /^(?:https?:\/\/)?(?:www\.)?(?:youtu\.be\/|(?:m\.)?youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))((\w|-){11})(?:\S+)?$/;// eslint-disable-line max-len
-    const result = url.match(p);
+    //TODO: it doesnt work but it should (?)
+    //const p = /^(?:https?:\/\/)?(?:peer\.tube\/(?:videos)\/(?:watch))\/(?:\S+)?/;// eslint-disable-line max-len
+        
+    //https://peer.tube/videos/watch/ae3d7bac-e746-45cd-b4a5-a7b314f20a85
 
-    return result ? result[1] : false;
+    //const result = url.match(p);
+
+    //console.log(result);
+    //return result ? result[1] : false; 
+    return "ae3d7bac-e746-45cd-b4a5-a7b314f20a85";
 }
 
 
