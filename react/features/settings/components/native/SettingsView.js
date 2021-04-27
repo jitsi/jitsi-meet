@@ -16,7 +16,7 @@ import {
 } from '../AbstractSettingsView';
 
 import FormRow from './FormRow';
-import FormSectionHeader from './FormSectionHeader';
+import FormSectionAccordion from './FormSectionAccordion';
 import styles, { THUMB_COLOR } from './styles';
 
 /**
@@ -166,7 +166,7 @@ class SettingsView extends AbstractSettingsView<Props, State> {
                 onClose = { this._onClose }>
                 <PaperProvider theme = { theme }>
                     <ScrollView>
-                        <FormSectionHeader
+                        <FormSectionAccordion
                             title = 'settingsView.profileSection'>
                             <TextInput
                                 autoCorrect = { false }
@@ -189,8 +189,8 @@ class SettingsView extends AbstractSettingsView<Props, State> {
                                 style = { styles.textInputContainer }
                                 textContentType = { 'emailAddress' } // iOS only
                                 value = { email } />
-                        </FormSectionHeader>
-                        <FormSectionHeader
+                        </FormSectionAccordion>
+                        <FormSectionAccordion
                             title = 'settingsView.conferenceSection'>
                             <TextInput
                                 autoCapitalize = 'none'
@@ -222,8 +222,8 @@ class SettingsView extends AbstractSettingsView<Props, State> {
                                     trackColor = {{ true: colors.primary }}
                                     value = { startWithVideoMuted } />
                             </FormRow>
-                        </FormSectionHeader>
-                        <FormSectionHeader
+                        </FormSectionAccordion>
+                        <FormSectionAccordion
                             title = 'settingsView.buildInfoSection'>
                             <FormRow
                                 label = 'settingsView.version'>
@@ -231,8 +231,8 @@ class SettingsView extends AbstractSettingsView<Props, State> {
                                     {`${AppInfo.version} build ${AppInfo.buildNumber}`}
                                 </Text>
                             </FormRow>
-                        </FormSectionHeader>
-                        <FormSectionHeader
+                        </FormSectionAccordion>
+                        <FormSectionAccordion
                             title = 'settingsView.advanced'>
                             <FormRow
                                 label = 'settingsView.disableCallIntegration'>
@@ -263,7 +263,7 @@ class SettingsView extends AbstractSettingsView<Props, State> {
                                         value = { disableCrashReporting } />
                                 </FormRow>
                             )}
-                        </FormSectionHeader>
+                        </FormSectionAccordion>
                     </ScrollView>
                 </PaperProvider>
             </JitsiModal>

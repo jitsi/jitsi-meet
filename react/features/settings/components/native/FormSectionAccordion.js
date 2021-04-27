@@ -9,7 +9,7 @@ import { Icon, IconArrowDown, IconArrowUp } from '../../../base/icons';
 import styles from './styles';
 
 /**
- * The type of the React {@code Component} props of {@link FormSectionHeader}
+ * The type of the React {@code Component} props of {@link FormSectionAccordion}
  */
 type Props = {
 
@@ -47,10 +47,10 @@ type State = {
  * Implements a React {@code Component} which renders a section header on a
  * form.
  */
-class FormSectionHeader extends Component<Props, State> {
+class FormSectionAccordion extends Component<Props, State> {
 
     /**
-     * Initializes a new {@code FormSectionHeader} instance.
+     * Initializes a new {@code FormSectionAccordion} instance.
      *
      * @inheritdoc
      */
@@ -78,6 +78,7 @@ class FormSectionHeader extends Component<Props, State> {
             <List.Accordion
                 expanded = { this.state.expandList }
                 onPress = { this._onPress }
+                /* eslint-disable-next-line react/jsx-no-bind */
                 right = { props =>
                     (<Icon
                         { ...props }
@@ -107,4 +108,4 @@ class FormSectionHeader extends Component<Props, State> {
     }
 }
 
-export default translate(FormSectionHeader);
+export default translate(FormSectionAccordion);
