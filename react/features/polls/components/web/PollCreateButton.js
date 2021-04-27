@@ -10,6 +10,7 @@ import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/
 import PollCreateDialog from './PollCreateDialog';
 
 type Props = AbstractButtonProps & {
+
     /**
      * The redux {@code dispatch} function.
      */

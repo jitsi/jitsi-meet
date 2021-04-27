@@ -11,7 +11,7 @@ import { Answer } from './types';
 MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
     switch (action.type) {
     }
-    
+
     return next(action);
 });
 
@@ -24,39 +24,41 @@ StateListenerRegistry.register(
                 const poll = {
                     sender: attributes.sender,
                     title: attributes.title,
-                    answers: children.map(answerData => ({
-                        name: answerData.value,
-                        voters: new Set(),
-                    })),
+                    answers: children.map(answerData => {
+                        return {
+                            name: answerData.value,
+                            voters: new Set()
+                        };
+                    })
                 };
+
                 store.dispatch(receivePoll(attributes.id, poll));
             });
             conference.addCommandListener(COMMAND_ANSWER_POLL,
                 ({ attributes, children }) => {
                     const { dispatch, getState } = store;
                     const localParticipantId = getLocalParticipant(getState()).id;
-                    const {senderId, pollId} = attributes;
+                    const { senderId, pollId } = attributes;
 
-                    let receveid_answer: Answer = {
-                        sender:senderId,
-                        pollId : pollId,
-                        answers : children.map(
-                            (element) => {
-                                return element.attributes.checked
-                            }
+                    const receveid_answer: Answer = {
+                        sender: senderId,
+                        pollId,
+                        answers: children.map(
+                            element => element.attributes.checked
                         )
-                    }
+                    };
 
-                    console.log("reformed answer", receveid_answer); 
+                    console.log('reformed answer', receveid_answer);
 
 
                     if (localParticipantId == senderId) {
-                        console.log("StateListenerRegistry I just received my own poll:");
+                        console.log('StateListenerRegistry I just received my own poll:');
                     } else {
-                        console.log("StateListenerRegistry I received a poll from someone else");
-                        //dispatch(receivePoll({senderId: sender_id}));
+                        console.log('StateListenerRegistry I received a poll from someone else');
+
+                        // dispatch(receivePoll({senderId: sender_id}));
                     }
-            });
+                });
         }
     }
 );
