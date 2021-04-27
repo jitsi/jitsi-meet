@@ -78,7 +78,7 @@
     "react-native-device-info": "8.0.0",
     "react-native-immersive": "2.0.0",
     "react-native-keep-awake": "4.0.0",
-    "react-native-paper": "^4.7.2",
+    "react-native-paper": "^4.8.1",
     "react-native-sound": "github:jitsi/react-native-sound#3fe5480fce935e888d5089d94a191c7c7e3aa190",
     "react-native-splash-screen": "3.2.0",
     "react-native-svg": "12.1.0",
@@ -105,7 +105,7 @@
     "zxcvbn": "4.4.2"
   },
   "devDependencies": {
-    "@babel/core": "^7.13.15",
+    "@babel/core": "^7.13.16",
     "@babel/plugin-proposal-class-properties": "^7.1.0",
     "@babel/plugin-proposal-export-default-from": "^7.0.0",
     "@babel/plugin-proposal-export-namespace-from": "^7.0.0",
@@ -115,7 +115,7 @@
     "@babel/preset-env": "^7.1.0",
     "@babel/preset-flow": "^7.0.0",
     "@babel/preset-react": "^7.0.0",
-    "@babel/runtime": "^7.13.10",
+    "@babel/runtime": "^7.13.17",
     "babel-eslint": "10.0.1",
     "babel-loader": "^8.0.4",
     "babel-plugin-optional-require": "^0.3.1",
