@@ -541,6 +541,12 @@
     },
     "passwordSetRemotely": "Set by another participant",
     "passwordDigitsOnly": "Up to {{number}} digits",
+    "polls": {
+        "create": {
+            "title": "Create a poll",
+            "Send": "Send"
+        }
+    },
     "poweredby": "powered by",
     "prejoin": {
         "audioAndVideoError": "Audio and video error:",

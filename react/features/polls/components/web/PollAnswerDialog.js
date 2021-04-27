@@ -7,7 +7,7 @@ import { Dialog } from '../../../base/dialog';
 import { getLocalParticipant } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import { Poll, Answer} from "../../types";
-import { ANSWER_POLL_COMMAND } from '../../constants';
+import { COMMAND_ANSWER_POLL } from '../../constants';
 
 
 type Props = {
@@ -68,7 +68,7 @@ function AnswerPoll(props: Props): React.Node {
 
 
                 conference.sendCommandOnce(
-                    ANSWER_POLL_COMMAND,
+                    COMMAND_ANSWER_POLL,
                     answer_data
                     );
                 return true;

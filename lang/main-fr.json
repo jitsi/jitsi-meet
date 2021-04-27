@@ -513,6 +513,12 @@
     },
     "passwordSetRemotely": "défini par un autre participant",
     "passwordDigitsOnly": "Jusqu'à {{number}} chiffres",
+    "polls": {
+        "create": {
+            "title": "Créer un sondage",
+            "Send": "Envoyer"
+        }
+    },
     "poweredby": "produit par",
     "prejoin": {
         "audioAndVideoError": "Erreur audio et video:",

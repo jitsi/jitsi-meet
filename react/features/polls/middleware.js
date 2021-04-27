@@ -1,10 +1,12 @@
 // @flow
 
-import { MiddlewareRegistry, StateListenerRegistry } from '../base/redux';
 import { getCurrentConference } from '../base/conference';
 import { getLocalParticipant } from '../base/participants';
-import { ANSWER_POLL_COMMAND } from './constants';
-import { Answer} from './types';
+import { MiddlewareRegistry, StateListenerRegistry } from '../base/redux';
+
+import { receivePoll } from './actions';
+import { COMMAND_NEW_POLL, COMMAND_ANSWER_POLL } from './constants';
+import { Answer } from './types';
 
 MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
     switch (action.type) {
@@ -18,8 +20,19 @@ StateListenerRegistry.register(
     state => getCurrentConference(state),
     (conference, store, previousConference) => {
         if (conference && conference !== previousConference) {
-            conference.addCommandListener( ANSWER_POLL_COMMAND,
-                ({ attributes, children }) => { //FOLLOW_ME_COMMAND
+            conference.addCommandListener(COMMAND_NEW_POLL, ({ attributes, children }) => {
+                const poll = {
+                    sender: attributes.sender,
+                    title: attributes.title,
+                    answers: children.map(answerData => ({
+                        name: answerData.value,
+                        voters: new Set(),
+                    })),
+                };
+                store.dispatch(receivePoll(attributes.id, poll));
+            });
+            conference.addCommandListener(COMMAND_ANSWER_POLL,
+                ({ attributes, children }) => {
                     const { dispatch, getState } = store;
                     const localParticipantId = getLocalParticipant(getState()).id;
                     const {senderId, pollId} = attributes;
