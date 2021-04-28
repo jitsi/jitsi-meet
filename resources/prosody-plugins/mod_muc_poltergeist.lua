@@ -1,5 +1,5 @@
 local bare = require "util.jid".bare;
-local get_room_from_jid = module:require "util".get_room_from_jid;
+local get_room_by_name_and_subdomain = module:require "util".get_room_by_name_and_subdomain;
 local jid = require "util.jid";
 local neturl = require "net.url";
 local parse = neturl.parseQuery;
@@ -38,21 +38,6 @@ local disableTokenVerification
     = module:get_option_boolean("disable_polergeist_token_verification", false);
 
 -- poltergaist management functions
-
--- Returns the room if available, work and in multidomain mode
--- @param room_name the name of the room
--- @param group name of the group (optional)
--- @return returns room if found or nil
-function get_room(room_name, group)
-    local room_address = jid.join(room_name, module:get_host());
-    -- if there is a group we are in multidomain mode and that group is not
-    -- our parent host
-    if group and group ~= "" and group ~= parentHostName then
-        room_address = "["..group.."]"..room_address;
-    end
-
-    return get_room_from_jid(room_address);
-end
 
 --- Verifies room name, domain name with the values in the token
 -- @param token the token we received
@@ -105,7 +90,7 @@ end
 prosody.events.add_handler("pre-jitsi-authentication", function(session)
 
     if (session.jitsi_meet_context_user) then
-        local room = get_room(
+        local room = get_room_by_name_and_subdomain(
             session.jitsi_web_query_room,
             session.jitsi_web_query_prefix);
 
@@ -194,7 +179,7 @@ function handle_create_poltergeist (event)
 
     -- If the provided room conference doesn't exist then we
     -- can't add a poltergeist to it.
-    local room = get_room(room_name, group);
+    local room = get_room_by_name_and_subdomain(room_name, group);
     if (not room) then
         log("error", "no room found %s", room_name);
         return { status_code = 404; };
@@ -257,7 +242,7 @@ function handle_update_poltergeist (event)
         return { status_code = 403; };
     end
 
-    local room = get_room(room_name, group);
+    local room = get_room_by_name_and_subdomain(room_name, group);
     if (not room) then
         log("error", "no room found %s", room_name);
         return { status_code = 404; };
@@ -299,7 +284,7 @@ function handle_remove_poltergeist (event)
         return { status_code = 403; };
     end
 
-    local room = get_room(room_name, group);
+    local room = get_room_by_name_and_subdomain(room_name, group);
     if (not room) then
         log("error", "no room found %s", room_name);
         return { status_code = 404; };
