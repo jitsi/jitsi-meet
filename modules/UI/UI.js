@@ -104,9 +104,6 @@ UI.initConference = function() {
  * established, false - otherwise (for example in the case of welcome page)
  */
 UI.start = function() {
-    // Set the defaults for prompt dialogs.
-    $.prompt.setDefaults({ persistent: false });
-
     VideoLayout.initLargeVideo();
 
     // Do not animate the video area on UI start (second argument passed into
