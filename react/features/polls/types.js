@@ -1,19 +1,14 @@
 // @flow
 
 export type Answer = {
-    sender: string,
+    senderId: string,
     pollId: number,
     answers: Array<boolean>
 };
 
 export type Poll = {
-    id: number,
-    sender: string,
-    title: string,
-
-    // options?: {
-    //     multiple?: bool
-    // },
+    senderId: string,
+    question: string,
     answers: Array<{ name: string, voters: Set<string> }>,
     messageIdx: number
 };

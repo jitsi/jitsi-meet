@@ -53,8 +53,8 @@ export const AbstractPollCreateDialog = Component => props => {
         conference.sendCommandOnce(COMMAND_NEW_POLL, {
             attributes: {
                 pollId: Math.floor(Math.random() * Number.MAX_SAFE_INTEGER),
-                sender: conference.myUserId(),
-                title: question
+                senderId: conference.myUserId(),
+                question,
             },
             children: answers
                 .filter(answer => answer.trim().length > 0)

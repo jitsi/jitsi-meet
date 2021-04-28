@@ -547,6 +547,9 @@
             "questionPlaceholder": "Ask a question",
             "answerPlaceholder": "Option {{index}}",
             "Send": "Send"
+        },
+        "answer": {
+            "title": "Poll"
         }
     },
     "poweredby": "powered by",

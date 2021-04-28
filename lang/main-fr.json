@@ -519,6 +519,9 @@
             "questionPlaceholder": "Poser une question",
             "answerPlaceholder": "Option {{index}}",
             "Send": "Envoyer"
+        },
+        "answer": {
+            "title": "Sondage"
         }
     },
     "poweredby": "produit par",

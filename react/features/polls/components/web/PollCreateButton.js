@@ -6,7 +6,6 @@ import { IconPoll } from '../../../base/icons';
 import { connect } from '../../../base/redux';
 import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
 
-// import PollAnswerDialog, { example_poll } from './PollAnswerDialog';
 import PollCreateDialog from './PollCreateDialog';
 
 type Props = AbstractButtonProps & {
@@ -39,7 +38,6 @@ class PollCreateButton<P: Props> extends AbstractButton<P, *> {
      * @returns {void}
      */
     _handleClick() {
-        // this.props.dispatch(openDialog(PollAnswerDialog, {poll: example_poll}));
         this.props.dispatch(openDialog(PollCreateDialog));
     }
 }

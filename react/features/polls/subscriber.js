@@ -1,10 +1,10 @@
 // @flow
 
-import { StateListenerRegistry } from '../base/redux';
 import { getCurrentConference } from '../base/conference';
-import { COMMAND_NEW_POLL, COMMAND_ANSWER_POLL } from './constants';
+import { StateListenerRegistry } from '../base/redux';
 
 import { receiveAnswer, receivePoll } from './actions';
+import { COMMAND_NEW_POLL, COMMAND_ANSWER_POLL } from './constants';
 import type { Answer } from './types';
 
 StateListenerRegistry.register(
@@ -13,31 +13,32 @@ StateListenerRegistry.register(
         if (conference && conference !== previousConference) {
             conference.addCommandListener(COMMAND_NEW_POLL, ({ attributes, children }) => {
                 const poll = {
-                    sender: attributes.sender,
-                    title: attributes.title,
-                    answers: children.map(answerData => ({
-                        name: answerData.value,
-                        voters: new Set(),
-                    })),
+                    senderId: attributes.senderId,
+                    question: attributes.question,
+                    answers: children.map(answerData => {
+                        return {
+                            name: answerData.value,
+                            voters: new Set()
+                        };
+                    })
                 };
+
                 store.dispatch(receivePoll(attributes.pollId, poll));
             });
 
             conference.addCommandListener(COMMAND_ANSWER_POLL, ({ attributes, children }) => {
-                    const { dispatch } = store;
-                    const {senderId, pollId} = attributes;
+                const { dispatch } = store;
+                const { senderId, pollId } = attributes;
 
-                    let receveid_answer: Answer = {
-                        sender: senderId,
-                        pollId : pollId,
-                        answers : children.map(
-                            (element) => {
-                                return element.attributes.checked
-                            }
-                        )
-                    }
+                const receivedAnswer: Answer = {
+                    senderId,
+                    pollId,
+                    answers: children.map(
+                            element => element.attributes.checked === 'true'
+                    )
+                };
 
-                    store.dispatch(receiveAnswer(pollId, receveid_answer));
+                dispatch(receiveAnswer(pollId, receivedAnswer));
             });
         }
     }
