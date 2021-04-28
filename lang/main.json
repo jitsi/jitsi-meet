@@ -551,7 +551,11 @@
             "Send": "Send"
         },
         "answer": {
-            "title": "Poll"
+            "title": "Poll",
+            "skip": "Skip",
+            "submit": "Submit",
+            "results" : "Results",
+            "close": "Fermer"
         }
     },
     "poweredby": "powered by",

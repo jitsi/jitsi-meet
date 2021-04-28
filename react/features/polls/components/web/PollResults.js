@@ -42,14 +42,17 @@ function PollResults({ detailedVotes, displayQuestion, pollDetails }: Props) {
 
         const answerPercent = Math.round(answer.voters.size / totalVoters * 100);
 
-        const detailedAnswer = detailedVotes
+        const detailedAnswer =
+            detailedVotes
             ? [ ...answer.voters ].map(voterId => {
                 const participant = participants.find(part => part.id === voterId);
+                console.log(participant);
 
-                const name = participant || 'Fellow Jitser';
+                const name: string = participant ? participant.name : 'Fellow Jitser';
 
                 return <li key = { voterId }>{ name }</li>;
             })
+
             : null;
 
         return (
@@ -69,13 +72,18 @@ function PollResults({ detailedVotes, displayQuestion, pollDetails }: Props) {
             <div className = 'poll-question-field'>
                 { question }
             </div>
+
             <div>
                 <ol className = 'poll-answer-fields'>
                     { answers }
                 </ol>
             </div>
+
         </div>
     );
 }
+
+            
+
 
 export default PollResults;

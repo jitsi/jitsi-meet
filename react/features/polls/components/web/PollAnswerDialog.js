@@ -9,7 +9,10 @@ import { useSelector } from 'react-redux';
 import { Dialog } from '../../../base/dialog';
 import { getLocalParticipant } from '../../../base/participants';
 import { COMMAND_ANSWER_POLL } from '../../constants';
+import PollResults from './PollResults';
 import type { Poll } from '../../types';
+
+
 
 /**
  * The type of the React {@code Component} props of {@code AnswerPoll}.
@@ -49,7 +52,7 @@ function AnswerPoll(props: Props): React.Node {
 
 
     const [ checkBoxStates, setCheckBoxState ] = useState(new Array(poll.answers.length).fill(false));
-
+    const [ shouldDisplayResult, setShouldDisplayResult] = useState(false);
 
     const submitAnswer = useCallback(() => {
         const answerData = {
@@ -72,20 +75,39 @@ function AnswerPoll(props: Props): React.Node {
             COMMAND_ANSWER_POLL,
             answerData
         );
-
-        return true;
+        setShouldDisplayResult(true);
+        return false;
     },
     [ pollId, localId, checkBoxStates, conference ]
     );
 
+    const cancelAnswer = useCallback(() => {
+        setShouldDisplayResult(true);
+        return false;
+    },
+    []
+    )
 
     return (
 
+        shouldDisplayResult
+        ?
         <Dialog
-            cancelKey = { 'dialog.close' }
+            okKey = { 'polls.answer.close' }
+            cancelDisabled = {true}
+            titleKey = 'polls.answer.results'
+        >
+            <h1 className = 'poll-answers'> ici des résultats</h1>
+            <PollResults detailedVotes={true} displayQuestion={true} pollDetails= {poll}/>
+            
+        </Dialog>
+        :
+        <Dialog
+            cancelKey = { 'polls.answer.skip' }
+            okKey = { 'polls.answer.submit' }
             className = 'poll-answers default-scrollbar'
             onSubmit = { submitAnswer }
-
+            onCancel = { cancelAnswer }
             titleKey = 'polls.answer.title'
             width = 'small'>
 
@@ -114,6 +136,8 @@ function AnswerPoll(props: Props): React.Node {
             </div>
         </Dialog>
     );
+
+    
 }
 
 

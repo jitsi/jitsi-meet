@@ -523,7 +523,11 @@
             "Send": "Envoyer"
         },
         "answer": {
-            "title": "Sondage"
+            "title": "Sondage",
+            "skip": "Passer",
+            "submit": "Envoyer",
+            "results" : "Résultats",
+            "close": "Fermer"
         }
     },
     "poweredby": "produit par",
