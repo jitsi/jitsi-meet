@@ -520,7 +520,7 @@
             "answerPlaceholder": "Option {{index}}",
             "addAnswer": "Ajouter une réponse",
             "removeAnswer": "Enlever cette réponse",
-            "Send": "Envoyer"
+            "send": "Envoyer"
         },
         "answer": {
             "title": "Sondage",

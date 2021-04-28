@@ -548,7 +548,7 @@
             "answerPlaceholder": "Option {{index}}",
             "addAnswer": "Add an answer",
             "removeAnswer": "Remove this answer",
-            "Send": "Send"
+            "send": "Send"
         },
         "answer": {
             "title": "Poll",

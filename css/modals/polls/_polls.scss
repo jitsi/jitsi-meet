@@ -16,6 +16,11 @@
     
     li {
         display: flex;
+        align-items: center;
+        
+        & > *:not(:last-child) {
+            margin-right: 2px;
+        }
     }
 }
 
@@ -25,6 +30,8 @@
     margin-top: 5px;
 }
 
-.poll-answer-fields button, .poll-add-button button {
-    background-color: #456;
+.poll-icon-button {
+    background-color: #345;
+    border: none;
+    padding: 3px;
 }

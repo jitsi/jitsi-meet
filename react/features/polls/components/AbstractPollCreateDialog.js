@@ -26,10 +26,10 @@ export const AbstractPollCreateDialog = Component => props => {
     const [ question, setQuestion ] = useState('');
 
     const [ answers, setAnswers ] = useState([ '' ]);
-    const setAnswer = useCallback((index, answer) => {
+    const setAnswer = useCallback((i, answer) => {
         const newAnswers = [ ...answers ];
 
-        newAnswers[index] = answer;
+        newAnswers[i] = answer;
         setAnswers(newAnswers);
     });
     const addAnswer = useCallback(i => {

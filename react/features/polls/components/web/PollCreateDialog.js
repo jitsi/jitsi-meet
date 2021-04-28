@@ -98,7 +98,7 @@ const PollCreateDialog = (props: Props) => {
 
     /* eslint-disable react/jsx-no-bind */
     return (<Dialog
-        okKey = { t('polls.create.Send') }
+        okKey = { 'polls.create.send' }
         onSubmit = { onSubmit }
         titleKey = 'polls.create.dialogTitle'
         width = 'small'>
@@ -126,8 +126,9 @@ const PollCreateDialog = (props: Props) => {
                     shouldFitContainer = { true }
                     type = 'text'
                     value = { answer } />
-                <Tooltip content = { t('poll.create.removeAnswer') }>
+                <Tooltip content = { t('polls.create.removeAnswer') }>
                     <button
+                        className = 'poll-icon-button'
                         onClick = { () => removeAnswer(i) }
                         type = 'button'>
                         <Icon src = { IconClose } />
@@ -136,8 +137,9 @@ const PollCreateDialog = (props: Props) => {
             </li>))}
         </ol>
         <div className = 'poll-add-button'>
-            <Tooltip content = { t('poll.create.addAnswer') }>
+            <Tooltip content = { t('polls.create.addAnswer') }>
                 <button
+                    className = 'poll-icon-button'
                     onClick = { () => addAnswer() }
                     type = 'button'>
                     <Icon src = { IconAdd } />
