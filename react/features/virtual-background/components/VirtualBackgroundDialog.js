@@ -70,7 +70,7 @@ type Props = {
     /**
      * Invoked to obtain translated strings.
      */
-    t: Function,
+    t: Function
 };
 
 /**
@@ -185,7 +185,6 @@ function VirtualBackground({ _jitsiTrack, _selectedThumbnail, dispatch, t }: Pro
             <VirtualBackgroundPreview options = { options } />
             {loading ? (
                 <div className = 'virtual-background-loading'>
-                    <span className = 'loading-content-text'>{t('virtualBackground.pleaseWait')}</span>
                     <Spinner
                         isCompleting = { false }
                         size = 'medium' />

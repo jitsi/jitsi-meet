@@ -57,17 +57,6 @@ class VideoBackgroundButton extends AbstractButton<Props, *> {
     _isToggled() {
         return this.props._isBackgroundEnabled;
     }
-
-    /**
-     * Returns {@code boolean} value indicating if disabled state is
-     * enabled or not.
-     *
-     * @protected
-     * @returns {boolean}
-     */
-    _isDisabled() {
-        return false;
-    }
 }
 
 /**

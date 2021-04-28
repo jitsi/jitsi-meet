@@ -30,11 +30,6 @@ export type Props = {
     _virtualBackground: Object,
 
     /**
-     * Invoked to obtain translated strings.
-     */
-    t: Function,
-
-    /**
      * The redux {@code dispatch} function.
      */
     dispatch: Function,
@@ -42,7 +37,12 @@ export type Props = {
     /**
      * Represents the virtual background setted options.
      */
-    options: Object
+    options: Object,
+
+    /**
+     * Invoked to obtain translated strings.
+     */
+    t: Function
 };
 
 /**
@@ -152,7 +152,6 @@ class VirtualBackgroundPreview extends Component<Props, State> {
         if (this.state.loading) {
             return (
                 <div className = 'video-preview-loader'>
-                    <span className = 'loading-content-text'>{t('virtualBackground.pleaseWait')}</span>
                     <Spinner
                         invertColor = { true }
                         isCompleting = { false }
@@ -235,9 +234,7 @@ class VirtualBackgroundPreview extends Component<Props, State> {
  *
  * @param {Object} state - The Redux state.
  * @private
- * @returns {{
- *     _videoDeviceIds: string[]
- * }}
+ * @returns {{Props}}
  */
 function _mapStateToProps(state): Object {
     return {
