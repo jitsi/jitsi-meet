@@ -48,7 +48,6 @@
     "i18next": "17.0.6",
     "i18next-browser-languagedetector": "3.0.1",
     "i18next-xhr-backend": "3.0.0",
-    "jQuery-Impromptu": "github:trentrichardson/jQuery-Impromptu#v6.0.0",
     "jitsi-meet-logger": "github:jitsi/jitsi-meet-logger#v1.0.0",
     "jquery": "3.5.1",
     "jquery-i18next": "1.2.1",
@@ -151,8 +150,5 @@
     "start": "make dev",
     "ios": "react-native run-ios",
     "android": "react-native run-android"
-  },
-  "browser": {
-    "jQuery-Impromptu": "jQuery-Impromptu/src/jquery-impromptu.js"
   }
 }
