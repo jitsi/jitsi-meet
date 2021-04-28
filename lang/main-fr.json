@@ -518,6 +518,8 @@
             "dialogTitle": "Créer un sondage",
             "questionPlaceholder": "Poser une question",
             "answerPlaceholder": "Option {{index}}",
+            "addAnswer": "Ajouter une réponse",
+            "removeAnswer": "Enlever cette réponse",
             "Send": "Envoyer"
         },
         "answer": {

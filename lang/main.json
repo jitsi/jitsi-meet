@@ -546,6 +546,8 @@
             "dialogTitle": "Create a poll",
             "questionPlaceholder": "Ask a question",
             "answerPlaceholder": "Option {{index}}",
+            "addAnswer": "Add an answer",
+            "removeAnswer": "Remove this answer",
             "Send": "Send"
         },
         "answer": {

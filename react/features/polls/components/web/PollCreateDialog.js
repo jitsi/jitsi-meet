@@ -5,6 +5,8 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import { Dialog } from '../../../base/dialog';
 import { translate } from '../../../base/i18n';
+import { Icon, IconAdd, IconClose } from '../../../base/icons';
+import { Tooltip } from '../../../base/tooltip';
 import { AbstractPollCreateDialog, AbstractProps } from '../AbstractPollCreateDialog';
 
 type Props = AbstractProps & {
@@ -57,23 +59,44 @@ const PollCreateDialog = (props: Props) => {
         input.focus();
     }, [ lastFocus ]);
 
+    const onQuestionKeyDown = useCallback(ev => {
+        if (ev.key === 'Enter') {
+            requestFocus(0);
+            ev.preventDefault();
+        }
+    });
+
     // Called on keypress in answer fields
     const onAnswerKeyDown = useCallback((i, ev) => {
+        if (ev.ctrlKey || ev.metaKey) {
+            return;
+        }
         if (ev.key === 'Enter') {
             addAnswer(i + 1);
             requestFocus(i + 1);
             ev.preventDefault();
-        } else if (ev.key === 'Backspace' && ev.target.value === '') {
+        } else if (ev.key === 'Backspace' && ev.target.value === '' && answers.length > 1) {
             removeAnswer(i);
-            requestFocus(i - 1);
+            requestFocus(i > 0 ? i - 1 : 0);
             ev.preventDefault();
-        } else if (ev.key === 'ArrowDown') {
+        } else if (ev.key === 'ArrowDown' || (ev.key === 'Tab' && !ev.shiftKey)) {
+            if (i === answers.length - 1) {
+                addAnswer();
+            }
             requestFocus(i + 1);
-        } else if (ev.key === 'ArrowUp') {
-            requestFocus(i - 1);
+            ev.preventDefault();
+        } else if (ev.key === 'ArrowUp' || (ev.key === 'Tab' && ev.shiftKey)) {
+            if (i === 0) {
+                addAnswer(0);
+                requestFocus(0);
+            } else {
+                requestFocus(i - 1);
+            }
+            ev.preventDefault();
         }
-    }, [ addAnswer, removeAnswer ]);
+    }, [ answers, addAnswer, removeAnswer, requestFocus ]);
 
+    /* eslint-disable react/jsx-no-bind */
     return (<Dialog
         okKey = { t('polls.create.Send') }
         onSubmit = { onSubmit }
@@ -84,31 +107,43 @@ const PollCreateDialog = (props: Props) => {
                 autoFocus = { true }
                 compact = { true }
                 isLabelHidden = { true }
-                // eslint-disable-next-line react/jsx-no-bind
                 onChange = { ev => setQuestion(ev.target.value) }
+                onKeyDown = { onQuestionKeyDown }
                 placeholder = { t('polls.create.questionPlaceholder') }
                 shouldFitContainer = { true }
                 type = 'text'
                 value = { question } />
         </div>
         <ol className = 'poll-answer-fields'>
-            {
-            /* eslint-disable react/jsx-no-bind */
-                answers.map((answer, i) => (<li key = { i }>
-                    <FieldTextStateless
-                        compact = { true }
-                        isLabelHidden = { true }
-                        onChange = { ev => setAnswer(i, ev.target.value) }
-                        onKeyDown = { ev => onAnswerKeyDown(i, ev) }
-                        placeholder = { t('polls.create.answerPlaceholder', { index: i + 1 }) }
-                        ref = { r => registerFieldRef(i, r) }
-                        shouldFitContainer = { true }
-                        type = 'text'
-                        value = { answer } />
-                </li>))
-            /* eslint-enable react/jsx-no-bind */
-            }
+            {answers.map((answer, i) => (<li key = { i }>
+                <FieldTextStateless
+                    compact = { true }
+                    isLabelHidden = { true }
+                    onChange = { ev => setAnswer(i, ev.target.value) }
+                    onKeyDown = { ev => onAnswerKeyDown(i, ev) }
+                    placeholder = { t('polls.create.answerPlaceholder', { index: i + 1 }) }
+                    ref = { r => registerFieldRef(i, r) }
+                    shouldFitContainer = { true }
+                    type = 'text'
+                    value = { answer } />
+                <Tooltip content = { t('poll.create.removeAnswer') }>
+                    <button
+                        onClick = { () => removeAnswer(i) }
+                        type = 'button'>
+                        <Icon src = { IconClose } />
+                    </button>
+                </Tooltip>
+            </li>))}
         </ol>
+        <div className = 'poll-add-button'>
+            <Tooltip content = { t('poll.create.addAnswer') }>
+                <button
+                    onClick = { () => addAnswer() }
+                    type = 'button'>
+                    <Icon src = { IconAdd } />
+                </button>
+            </Tooltip>
+        </div>
     </Dialog>);
 };
 

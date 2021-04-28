@@ -35,7 +35,7 @@ export const AbstractPollCreateDialog = Component => props => {
     const addAnswer = useCallback(i => {
         const newAnswers = [ ...answers ];
 
-        newAnswers.splice(i || answers.length, 0, '');
+        newAnswers.splice(i === undefined ? answers.length : i, 0, '');
         setAnswers(newAnswers);
     });
     const removeAnswer = useCallback(i => {
@@ -54,7 +54,7 @@ export const AbstractPollCreateDialog = Component => props => {
             attributes: {
                 pollId: Math.floor(Math.random() * Number.MAX_SAFE_INTEGER),
                 senderId: conference.myUserId(),
-                question,
+                question
             },
             children: answers
                 .filter(answer => answer.trim().length > 0)

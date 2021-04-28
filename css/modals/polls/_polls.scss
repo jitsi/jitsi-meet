@@ -4,12 +4,27 @@
 
 .poll-question-field {
     margin-bottom: 1.5em;
-}
-.poll-question-field input {
-    font-size: 1.25em;
+    
+    input {
+        font-size: 1.25em;
+    }
 }
 
 .poll-answer-fields {
     list-style-type: none;
     padding: 0;
+    
+    li {
+        display: flex;
+    }
+}
+
+.poll-add-button {
+    display: flex;
+    justify-content: center;
+    margin-top: 5px;
+}
+
+.poll-answer-fields button, .poll-add-button button {
+    background-color: #456;
 }
