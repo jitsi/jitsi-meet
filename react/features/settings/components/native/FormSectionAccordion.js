@@ -1,6 +1,6 @@
 // @flow
 
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import { List } from 'react-native-paper';
 
 import { translate } from '../../../base/i18n';
@@ -34,78 +34,41 @@ type Props = {
     title: string
 }
 
-type State = {
-
-    /**
-     * State variable for the expanding sections.
-     */
-    expandList: boolean
-}
-
-
 /**
- * Implements a React {@code Component} which renders a section header on a
- * form.
+ * Section accordion on settings form.
+ *
+ * @returns {React$Element<any>}
  */
-class FormSectionAccordion extends Component<Props, State> {
+function FormSectionAccordion({ children, style, t, title }: Props) {
+    const [ expandSection, setExpandSection ] = useState(false);
 
     /**
-     * Initializes a new {@code FormSectionAccordion} instance.
-     *
-     * @inheritdoc
-     */
-    constructor(props) {
-        super(props);
-
-        this.state = {
-            expandList: false
-        };
-
-        this._onPress = this._onPress.bind(this);
-    }
-
-    /**
-     * Implements React's {@link Component#render()}.
-     *
-     * @inheritdoc
-     * @override
-     * @returns {ReactElement}
-     */
-    render() {
-        const { children, style, t, title } = this.props;
-
-        return (
-            <List.Accordion
-                expanded = { this.state.expandList }
-                onPress = { this._onPress }
-                /* eslint-disable-next-line react/jsx-no-bind */
-                right = { props =>
-                    (<Icon
-                        { ...props }
-                        src = { this.state.expandList ? IconArrowDown : IconArrowUp }
-                        style = { this.state.expandList ? styles.sectionOpen : styles.sectionClose } />) }
-                style = { [
-                    styles.formSectionTitle,
-                    style
-                ] }
-                title = { t(title) }>
-                { children }
-            </List.Accordion>
-        );
-    }
-
-    _onPress: () => void;
-
-    /**
-     * Callback to expand the section list.
+     * Press handler for expanding form section.
      *
      * @returns {void}
      */
-    _onPress() {
-        this.setState({
-            expandList: !this.state.expandList
-        });
+    function onPress() {
+        setExpandSection(!expandSection);
     }
+
+    return (
+        <List.Accordion
+            expanded = { expandSection }
+            onPress = { onPress }
+            /* eslint-disable-next-line react/jsx-no-bind */
+            right = { props =>
+                (<Icon
+                    { ...props }
+                    src = { expandSection ? IconArrowDown : IconArrowUp }
+                    style = { expandSection ? styles.sectionOpen : styles.sectionClose } />) }
+            style = { [
+                styles.formSectionTitle,
+                style
+            ] }
+            title = { t(title) }>
+            { children }
+        </List.Accordion>
+    );
 }
 
 export default translate(FormSectionAccordion);
