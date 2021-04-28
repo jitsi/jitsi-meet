@@ -515,7 +515,9 @@
     "passwordDigitsOnly": "Jusqu'à {{number}} chiffres",
     "polls": {
         "create": {
-            "title": "Créer un sondage",
+            "dialogTitle": "Créer un sondage",
+            "questionPlaceholder": "Poser une question",
+            "answerPlaceholder": "Option {{index}}",
             "Send": "Envoyer"
         }
     },

@@ -543,7 +543,9 @@
     "passwordDigitsOnly": "Up to {{number}} digits",
     "polls": {
         "create": {
-            "title": "Create a poll",
+            "dialogTitle": "Create a poll",
+            "questionPlaceholder": "Ask a question",
+            "answerPlaceholder": "Option {{index}}",
             "Send": "Send"
         }
     },
