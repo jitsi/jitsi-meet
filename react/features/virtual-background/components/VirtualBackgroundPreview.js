@@ -8,6 +8,7 @@ import { getVideoDeviceIds } from '../../base/devices';
 import { translate } from '../../base/i18n';
 import Video from '../../base/media/components/Video';
 import { connect, equals } from '../../base/redux';
+import { getCurrentCameraDeviceId } from '../../base/settings';
 import { createVirtualBackgroundEffect } from '../../stream-effects/virtual-background';
 import { toggleBackgroundEffect } from '../actions';
 
@@ -17,6 +18,11 @@ const videoClassName = 'video-preview-video flipVideoX';
  * The type of the React {@code Component} props of {@link VirtualBackgroundPreview}.
  */
 export type Props = {
+
+    /**
+     * The deviceId of the camera device currently being used.
+     */
+    _currentCameraDeviceId: string,
 
     /**
      * All the camera device ids currently connected.
@@ -59,6 +65,11 @@ type State = {
      * An array of all the jitsiTracks and eventual errors.
      */
     trackData: Object[],
+
+    /**
+     * Activate the selected device camera only.
+     */
+    selectedTrack: Object
 };
 
 /**
@@ -83,7 +94,8 @@ class VirtualBackgroundPreview extends Component<Props, State> {
             trackData: new Array(props._videoDeviceIds && props._videoDeviceIds.length).fill({
                 jitsiTrack: null
             }),
-            loading: false
+            loading: false,
+            selectedTrack: null
         };
     }
 
@@ -106,10 +118,19 @@ class VirtualBackgroundPreview extends Component<Props, State> {
                 trackData
             });
         }
-        const jitsiTrack = this.state.trackData[0].jitsiTrack;
 
-        if (this.props._virtualBackground ?.backgroundEffectEnabled && jitsiTrack) {
-            await jitsiTrack.setEffect(await createVirtualBackgroundEffect(this.props._virtualBackground));
+        // background preview should open the selected device camera only
+        const selectedTrack = this.state.trackData.filter(
+            track => track.deviceId === this.props._currentCameraDeviceId
+        )[0].jitsiTrack;
+
+        this.setState({
+            selectedTrack
+        });
+        if (this.props._virtualBackground?.backgroundEffectEnabled && this.state.selectedTrack) {
+            await this.state.selectedTrack.setEffect(
+                await createVirtualBackgroundEffect(this.props._virtualBackground)
+            );
         }
     }
 
@@ -131,11 +152,25 @@ class VirtualBackgroundPreview extends Component<Props, State> {
      * @returns {Promise}
      */
     async _applyBackgroundEffect() {
-        const jitsiTrack = this.state.trackData[0].jitsiTrack;
-
         this.setState({ loading: true });
-        await this.props.dispatch(toggleBackgroundEffect(this.props.options, jitsiTrack));
+        await this.props.dispatch(toggleBackgroundEffect(this.props.options, this.state.selectedTrack));
         this.setState({ loading: false });
+    }
+
+    /**
+     * Apply video preview loader.
+     *
+     * @returns {Promise}
+     */
+    _loadVideoPreview() {
+        return (
+            <div className = 'video-preview-loader'>
+                <Spinner
+                    invertColor = { true }
+                    isCompleting = { false }
+                    size = { 'large' } />
+            </div>
+        );
     }
 
     /**
@@ -145,19 +180,12 @@ class VirtualBackgroundPreview extends Component<Props, State> {
      * @returns {React$Node}
      */
     _renderPreviewEntry(data) {
-        const { error, jitsiTrack } = data;
+        const { error } = data;
         const { t } = this.props;
         const className = 'video-background-preview-entry';
 
         if (this.state.loading) {
-            return (
-                <div className = 'video-preview-loader'>
-                    <Spinner
-                        invertColor = { true }
-                        isCompleting = { false }
-                        size = { 'large' } />
-                </div>
-            );
+            return this._loadVideoPreview();
         }
         if (error) {
             return (
@@ -178,7 +206,7 @@ class VirtualBackgroundPreview extends Component<Props, State> {
                 <Video
                     className = { videoClassName }
                     playsinline = { true }
-                    videoTrack = {{ jitsiTrack }} />
+                    videoTrack = {{ jitsiTrack: data }} />
             </div>
         );
     }
@@ -222,9 +250,12 @@ class VirtualBackgroundPreview extends Component<Props, State> {
      * @inheritdoc
      */
     render() {
-        const { trackData } = this.state;
+        const { selectedTrack } = this.state;
 
-        return <div className = 'video-preview'>{this._renderPreviewEntry(trackData[0])}</div>;
+        return selectedTrack
+            ? <div className = 'video-preview'>{this._renderPreviewEntry(selectedTrack)}</div>
+            : <div className = 'video-preview-loader'>{this._loadVideoPreview()}</div>
+        ;
     }
 }
 
@@ -238,6 +269,7 @@ class VirtualBackgroundPreview extends Component<Props, State> {
  */
 function _mapStateToProps(state): Object {
     return {
+        _currentCameraDeviceId: getCurrentCameraDeviceId(state),
         _videoDeviceIds: getVideoDeviceIds(state),
         _virtualBackground: state['features/virtual-background']
     };
