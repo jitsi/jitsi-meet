@@ -42,11 +42,9 @@ function PollResults({ detailedVotes, displayQuestion, pollDetails }: Props) {
 
         const answerPercent = Math.round(answer.voters.size / totalVoters * 100);
 
-        const detailedAnswer =
-            detailedVotes
+        const detailedAnswer = detailedVotes
             ? [ ...answer.voters ].map(voterId => {
                 const participant = participants.find(part => part.id === voterId);
-                console.log(participant);
 
                 const name: string = participant ? participant.name : 'Fellow Jitser';
 
@@ -82,8 +80,6 @@ function PollResults({ detailedVotes, displayQuestion, pollDetails }: Props) {
         </div>
     );
 }
-
-            
 
 
 export default PollResults;

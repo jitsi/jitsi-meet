@@ -9,9 +9,9 @@ import { useSelector } from 'react-redux';
 import { Dialog } from '../../../base/dialog';
 import { getLocalParticipant } from '../../../base/participants';
 import { COMMAND_ANSWER_POLL } from '../../constants';
-import PollResults from './PollResults';
 import type { Poll } from '../../types';
 
+import PollResults from './PollResults';
 
 
 /**
@@ -52,7 +52,7 @@ function AnswerPoll(props: Props): React.Node {
 
 
     const [ checkBoxStates, setCheckBoxState ] = useState(new Array(poll.answers.length).fill(false));
-    const [ shouldDisplayResult, setShouldDisplayResult] = useState(false);
+    const [ shouldDisplayResult, setShouldDisplayResult ] = useState(false);
 
     const submitAnswer = useCallback(() => {
         const answerData = {
@@ -76,6 +76,7 @@ function AnswerPoll(props: Props): React.Node {
             answerData
         );
         setShouldDisplayResult(true);
+
         return false;
     },
     [ pollId, localId, checkBoxStates, conference ]
@@ -83,61 +84,63 @@ function AnswerPoll(props: Props): React.Node {
 
     const cancelAnswer = useCallback(() => {
         setShouldDisplayResult(true);
+
         return false;
     },
     []
-    )
+    );
 
     return (
 
         shouldDisplayResult
-        ?
-        <Dialog
-            okKey = { 'polls.answer.close' }
-            cancelDisabled = {true}
-            titleKey = 'polls.answer.results'
-        >
-            <h1 className = 'poll-answers'> ici des résultats</h1>
-            <PollResults detailedVotes={true} displayQuestion={true} pollDetails= {poll}/>
-            
-        </Dialog>
-        :
-        <Dialog
-            cancelKey = { 'polls.answer.skip' }
-            okKey = { 'polls.answer.submit' }
-            className = 'poll-answers default-scrollbar'
-            onSubmit = { submitAnswer }
-            onCancel = { cancelAnswer }
-            titleKey = 'polls.answer.title'
-            width = 'small'>
+            ? <Dialog
+                cancelDisabled = { true }
+                okKey = { 'polls.answer.close' }
+                titleKey = 'polls.answer.results'>
+                <h1 className = 'poll-answers'> ici des résultats</h1>
+                <PollResults
+                    detailedVotes = { true }
+                    displayQuestion = { true }
+                    pollDetails = { poll } />
+
+            </Dialog>
+            : <Dialog
+                cancelKey = { 'polls.answer.skip' }
+                className = 'poll-answers default-scrollbar'
+                okKey = { 'polls.answer.submit' }
+                onCancel = { cancelAnswer }
+                onSubmit = { submitAnswer }
+                titleKey = 'polls.answer.title'
+                width = 'small'>
 
 
-            <div>
-                <h1 className = 'poll-answers'>{poll.question}</h1>
-                {
-                    poll.answers.map((answer, index) => (
-                        <Checkbox
-                            key = { index }
-                            label = {
-                                <label className = 'poll-answers'> {answer.name}</label>
-                            }
+                <div>
+                    <h1 className = 'poll-answers'>{poll.question}</h1>
+                    {
+                        poll.answers.map((answer, index) => (
+                            <Checkbox
+                                key = { index }
+                                label = {
+                                    <label className = 'poll-answers'> {answer.name}</label>
+                                }
 
-                            name = 'checkbox-poll-answer'
-                            onChange = { () => {
-                                // we toggle the matching checkBox State
-                                const newCheckBoxStates = [ ...checkBoxStates ];
+                                name = 'checkbox-poll-answer'
+                                /* eslint-disable react/jsx-no-bind */
+                                onChange = { () => {
+                                    // we toggle the matching checkBox State
+                                    const newCheckBoxStates = [ ...checkBoxStates ];
 
-                                newCheckBoxStates[index] = !newCheckBoxStates[index];
-                                setCheckBoxState(newCheckBoxStates);
-                            } }
-                            size = 'xlarge' />
-                    ))
-                }
-            </div>
-        </Dialog>
+                                    newCheckBoxStates[index] = !newCheckBoxStates[index];
+                                    setCheckBoxState(newCheckBoxStates);
+                                } }
+                                size = 'xlarge' />
+                        ))
+                    }
+                </div>
+            </Dialog>
     );
 
-    
+
 }
 
 
