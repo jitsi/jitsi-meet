@@ -40,9 +40,7 @@ import { getParticipantsPaneOpen } from '../../../participants-pane/functions';
 import { addReactionToBuffer } from '../../../reactions/actions.any';
 import { ReactionsMenuButton } from '../../../reactions/components';
 import { REACTIONS } from '../../../reactions/constants';
-import {
-    PollCreateButton
-} from '../../../polls/components';
+import { PollCreateButton } from '../../../polls/components';
 import {
     LiveStreamButton,
     RecordButton
