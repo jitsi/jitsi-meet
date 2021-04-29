@@ -19,7 +19,7 @@ These instructions are publically visible on Github, do not include any sensativ
 7. Update from Git using this command ```git pull --ff-only```
    * It may be necessary to run this command ```npm install```
 8. Build the project using this command ```make```
-9. Deploy using this command ```sudo ./deploy_local.sh```
+9. Deploy using this command ```sudo ./deploy-local.sh```
    * It may be necessary to run this command ```sudo chmod +x deploy_local.sh```
 
 
