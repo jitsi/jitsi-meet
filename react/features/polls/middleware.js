@@ -4,7 +4,7 @@ import { openDialog } from '../base/dialog';
 import { MiddlewareRegistry } from '../base/redux';
 
 import { RECEIVE_POLL } from './actionTypes';
-import {PollAnswerDialog} from './components';
+import { PollAnswerDialog } from './components';
 
 
 MiddlewareRegistry.register(({ dispatch }) => next => action => {
