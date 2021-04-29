@@ -5,25 +5,12 @@ index bd48f44..d243ed0 100644
 @@ -767,7 +767,7 @@ - (void)registerExtraLazyModules
  #endif
  }
- 
+
 -- (NSArray<RCTModuleData *> *)_initializeModules:(NSArray<id<RCTBridgeModule>> *)modules
 +- (NSArray<RCTModuleData *> *)_initializeModules:(NSArray<Class> *)modules
                                 withDispatchGroup:(dispatch_group_t)dispatchGroup
                                  lazilyDiscovered:(BOOL)lazilyDiscovered
  {
-diff --git a/node_modules/react-native/ReactAndroid/src/main/java/com/facebook/react/modules/systeminfo/AndroidInfoModule.java b/node_modules/react-native/ReactAndroid/src/main/java/com/facebook/react/modules/systeminfo/AndroidInfoModule.java
-index ef2ae93..2795802 100644
---- a/node_modules/react-native/ReactAndroid/src/main/java/com/facebook/react/modules/systeminfo/AndroidInfoModule.java
-+++ b/node_modules/react-native/ReactAndroid/src/main/java/com/facebook/react/modules/systeminfo/AndroidInfoModule.java
-@@ -92,7 +92,7 @@ public class AndroidInfoModule extends ReactContextBaseJavaModule implements Tur
- 
-   private Boolean isRunningScreenshotTest() {
-     try {
--      Class.forName("android.support.test.rule.ActivityTestRule");
-+      Class.forName("androidx.test.rule.ActivityTestRule");
-       return true;
-     } catch (ClassNotFoundException ignored) {
-       return false;
 diff --git a/node_modules/react-native/ReactCommon/turbomodule/core/platform/ios/RCTTurboModuleManager.mm b/node_modules/react-native/ReactCommon/turbomodule/core/platform/ios/RCTTurboModuleManager.mm
 index 3cb73b5..e4a14b4 100644
 --- a/node_modules/react-native/ReactCommon/turbomodule/core/platform/ios/RCTTurboModuleManager.mm
@@ -36,11 +23,4 @@ index 3cb73b5..e4a14b4 100644
 +          RCTBridgeModuleNameForClass(Class(module)));
      }
    }
- 
-diff --git a/node_modules/react-native/scripts/.packager.env b/node_modules/react-native/scripts/.packager.env
-new file mode 100644
-index 0000000..361f5fb
---- /dev/null
-+++ b/node_modules/react-native/scripts/.packager.env
-@@ -0,0 +1 @@
-+export RCT_METRO_PORT=8081
+
