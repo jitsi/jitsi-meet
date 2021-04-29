@@ -13,16 +13,12 @@ import { VIDEO_PLAYER_PARTICIPANT_NAME } from './constants';
  * @returns {boolean}
  */
 export function getYoutubeLink(url: string) {
-    //TODO: it doesnt work but it should (?)
-    //const p = /^(?:https?:\/\/)?(?:peer\.tube\/(?:videos)\/(?:watch))\/(?:\S+)?/;// eslint-disable-line max-len
-        
+    const p = /^(?:https?:\/\/)?(?:peer\.tube\/(?:videos)\/(?:watch))\/((\w|-){36})(?:\S+)?$/;// eslint-disable-line max-len
+      
     //https://peer.tube/videos/watch/ae3d7bac-e746-45cd-b4a5-a7b314f20a85
 
-    //const result = url.match(p);
-
-    //console.log(result);
-    //return result ? result[1] : false; 
-    return "ae3d7bac-e746-45cd-b4a5-a7b314f20a85";
+    const result = url.match(p);    
+    return result ? result[1] : false;    
 }
 
 

@@ -132,23 +132,21 @@ export default class SharedVideoManager {
         this.localAudioMutedListener = this.onLocalAudioMuted.bind(this);
         this.emitter.on(UIEvents.AUDIO_MUTED, this.localAudioMutedListener);
 
-        // This code loads the IFrame Player API code asynchronously.
-        const tag = document.createElement('script');
-        const tag2 = document.createElement('script');
-
-        
+              
         //from https://peer.tube/videos/watch/ae3d7bac-e746-45cd-b4a5-a7b314f20a85
         //to   https://peer.tube/videos/embed/ae3d7bac-e746-45cd-b4a5-a7b314f20a85?api=1
         
+        const sourceScript = document.createElement('script');
+        sourceScript.type = "text/javascript";
+        sourceScript.src = 'https://unpkg.com/@peertube/embed-api/build/player.min.js';
+        document.head.append(sourceScript);
+      
 
-        tag.src = 'https://unpkg.com/@peertube/embed-api/build/player.min.js';
-        tag2 = "const PeerTubePlayer = window['PeerTubePlayer']";
+        const iframe = document.createElement('iframe');
+        iframe.src = 'https://peer.tube/videos/embed/' + url + '?api=1';
+        iframe.setAttribute('controls','1');
+        document.querySelector('#sharedVideoIFrame').appendChild(iframe);
 
-        const firstScriptTag = document.getElementsByTagName('script')[0];
-        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-
-        const secondScriptTag = document.getElementsByTagName('script')[1];        
-        secondScriptTag.append(tag2);
 
         // sometimes we receive errors like player not defined
         // or player.pauseVideo is not a function
@@ -159,32 +157,33 @@ export default class SharedVideoManager {
 
         const self = this;
 
-        
-        if (self.isPlayerAPILoaded) {
-            window.onYouTubeIframeAPIReady();
-        } else {
-            window.onYouTubeIframeAPIReady = function() {
-                self.isPlayerAPILoaded = true;
-                const showControls
-                    = APP.conference.isLocalId(self.from) ? 1 : 0;
-                const p = new YT.Player('sharedVideoIFrame', {
-                    height: '100%',
-                    width: '100%',
-                    videoId: self.url,
-                    playerVars: {
-                        'origin': location.origin,
-                        'fs': '0',
-                        'autoplay': 0,
-                        'controls': showControls,
-                        'rel': 0
-                    },
-                    events: {
-                        'onReady': onPlayerReady,
-                        'onStateChange': onPlayerStateChange,
-                        'onError': onPlayerError
-                    }
-                });
+       console.log('HOLAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA');
+/*
+            const p = new PeerTubePlayer(iframe, { 
+                height: '100%',
+                width: '100%',
+                videoId: self.url,
+                events: {
+                    'onReady': onPlayerReady,
+                    'onStateChange': onPlayerStateChange,
+                    'onError': onPlayerError
+                }
+            });
+*/
+/*
+            const p = new PeerTubePlayer(document.getElementById,('iframe'), { 
+                height: '100%',
+                width: '100%',
+                videoId: self.url               
+            });
+            // p.ready;
+*/
+            const PeerTubePlayer = window['PeerTubePlayer'];
+            const p = new PeerTubePlayer(document.querySelector,('iframe'));
 
+            self.isPlayerAPILoaded = true;
+            window.onYouTubeIframeAPIReady = function() {
+                       
                 // add listener for volume changes
                 p.addEventListener(
                     'onVolumeChange', 'onVolumeChange');
@@ -197,7 +196,7 @@ export default class SharedVideoManager {
                         'onVideoProgress', 'onVideoProgress');
                 }
             };
-        }
+        
 
         
         /**
