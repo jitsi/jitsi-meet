@@ -54,17 +54,13 @@
     "jquery-i18next": "1.2.1",
     "js-md5": "0.6.1",
     "jwt-decode": "2.2.0",
-    "lib-jitsi-meet": "github:jitsi/lib-jitsi-meet#463e213b3f97fa4b9f56f342be713efcdd74234a",
+    "lib-jitsi-meet": "github:jitsi/lib-jitsi-meet#7dedb59b9c022b7220141211b9b0859dbbaa9409",
     "libflacjs": "github:mmig/libflac.js#93d37e7f811f01cf7d8b6a603e38bd3c3810907d",
     "lodash": "4.17.21",
     "moment": "2.29.1",
     "moment-duration-format": "2.2.2",
     "olm": "https://packages.matrix.org/npm/olm/olm-3.2.1.tgz",
-<<<<<<< HEAD
     "optional-require": "1.0.3",
-=======
-    "optional-require": "^1.0.3",
->>>>>>> eba027a10 (dependency(react-native-paper) fixed rebase conflict)
     "pixelmatch": "5.1.0",
     "promise.allsettled": "1.0.4",
     "punycode": "2.1.1",
@@ -82,15 +78,7 @@
     "react-native-device-info": "8.0.0",
     "react-native-immersive": "2.0.0",
     "react-native-keep-awake": "4.0.0",
-<<<<<<< HEAD
-<<<<<<< HEAD
     "react-native-paper": "4.8.1",
-=======
-    "react-native-paper": "^4.7.2",
->>>>>>> eba027a10 (dependency(react-native-paper) fixed rebase conflict)
-=======
-    "react-native-paper": "^4.8.1",
->>>>>>> 3d99808fc (dependency(react-native-paper) update versions)
     "react-native-sound": "github:jitsi/react-native-sound#3fe5480fce935e888d5089d94a191c7c7e3aa190",
     "react-native-splash-screen": "3.2.0",
     "react-native-svg": "12.1.0",
@@ -117,41 +105,20 @@
     "zxcvbn": "4.4.2"
   },
   "devDependencies": {
-<<<<<<< HEAD
-<<<<<<< HEAD
-    "@babel/core": "7.13.16",
-    "@babel/plugin-proposal-class-properties": "7.13.0",
-    "@babel/plugin-proposal-export-default-from": "7.12.13",
-    "@babel/plugin-proposal-export-namespace-from": "7.12.13",
-    "@babel/plugin-proposal-nullish-coalescing-operator": "7.13.8",
-    "@babel/plugin-proposal-optional-chaining": "7.13.12",
-    "@babel/plugin-transform-flow-strip-types": "7.13.0",
-    "@babel/preset-env": "7.13.15",
-    "@babel/preset-flow": "7.13.13",
-    "@babel/preset-react": "7.13.13",
-    "@babel/runtime": "7.13.17",
+    "@babel/core": "^7.13.16",
+    "@babel/plugin-proposal-class-properties": "^7.13.0",
+    "@babel/plugin-proposal-export-default-from": "^7.12.13",
+    "@babel/plugin-proposal-export-namespace-from": "^7.12.13",
+    "@babel/plugin-proposal-nullish-coalescing-operator": "^7.13.8",
+    "@babel/plugin-proposal-optional-chaining": "^7.13.12",
+    "@babel/plugin-transform-flow-strip-types": "^7.13.0",
+    "@babel/preset-env": "^7.13.15",
+    "@babel/preset-flow": "^7.13.13",
+    "@babel/preset-react": "^7.13.13",
+    "@babel/runtime": "^7.13.17",
     "babel-eslint": "10.0.1",
     "babel-loader": "8.2.2",
     "babel-plugin-optional-require": "0.3.1",
-=======
-    "@babel/core": "^7.13.15",
-=======
-    "@babel/core": "^7.13.16",
->>>>>>> 3d99808fc (dependency(react-native-paper) update versions)
-    "@babel/plugin-proposal-class-properties": "^7.1.0",
-    "@babel/plugin-proposal-export-default-from": "^7.0.0",
-    "@babel/plugin-proposal-export-namespace-from": "^7.0.0",
-    "@babel/plugin-proposal-nullish-coalescing-operator": "^7.4.4",
-    "@babel/plugin-proposal-optional-chaining": "^7.2.0",
-    "@babel/plugin-transform-flow-strip-types": "^7.0.0",
-    "@babel/preset-env": "^7.1.0",
-    "@babel/preset-flow": "^7.0.0",
-    "@babel/preset-react": "^7.0.0",
-    "@babel/runtime": "^7.13.17",
-    "babel-eslint": "10.0.1",
-    "babel-loader": "^8.0.4",
-    "babel-plugin-optional-require": "^0.3.1",
->>>>>>> eba027a10 (dependency(react-native-paper) fixed rebase conflict)
     "circular-dependency-plugin": "5.2.0",
     "clean-css-cli": "4.3.0",
     "css-loader": "3.6.0",
