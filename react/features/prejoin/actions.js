@@ -311,8 +311,11 @@ export function replaceVideoTrackById(deviceId: Object) {
             const tracks = getState()['features/base/tracks'];
             const newTrack = await createLocalTrack('video', deviceId);
             const oldTrack = getLocalVideoTrack(tracks)?.jitsiTrack;
+            const localTrack = getLocalVideoTrack(getState()['features/base/tracks']);
 
-            dispatch(replaceLocalTrack(oldTrack, newTrack));
+            dispatch(
+                replaceLocalTrack(oldTrack, !localTrack || localTrack.muted ? newTrack.mute() && newTrack : newTrack)
+            );
         } catch (err) {
             dispatch(setDeviceStatusWarning('prejoin.videoTrackError'));
             logger.log('Error replacing video track', err);
