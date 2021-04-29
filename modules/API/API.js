@@ -10,7 +10,11 @@ import {
     getCurrentConference,
     sendTones,
     setPassword,
-    setSubject
+    setSubject,
+	
+	// Intulse added to support set-start-muted-policy and set-everyone-follows-me.
+	setFollowMe,
+    setStartMutedPolicy
 } from '../../react/features/base/conference';
 import { parseJWTFromURLParams } from '../../react/features/base/jwt';
 import JitsiMeetJS, { JitsiRecordingConstants } from '../../react/features/base/lib-jitsi-meet';
@@ -77,6 +81,14 @@ function initCommands() {
         'display-name': displayName => {
             sendAnalytics(createApiEvent('display.name.changed'));
             APP.conference.changeLocalDisplayName(displayName);
+        },
+		// Intulse added: set-start-muted-policy.
+		'set-start-muted-policy': policy => {
+            APP.store.dispatch(setStartMutedPolicy(policy.video, policy.audio));
+        },
+		// Intulse added: set-everyone-follows-me.
+        'set-everyone-follows-me': enabled => {
+            APP.store.dispatch(setFollowMe(enabled));
         },
         'mute-everyone': () => {
             sendAnalytics(createApiEvent('muted-everyone'));
