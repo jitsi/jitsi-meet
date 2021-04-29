@@ -122,7 +122,7 @@ class VirtualBackgroundPreview extends Component<Props, State> {
         // background preview should open the selected device camera only
         const selectedTrack = this.state.trackData.filter(
             track => track.deviceId === this.props._currentCameraDeviceId
-        )[0].jitsiTrack;
+        )[0]?.jitsiTrack;
 
         this.setState({
             selectedTrack
