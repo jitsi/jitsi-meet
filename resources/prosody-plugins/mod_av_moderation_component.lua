@@ -146,7 +146,7 @@ function on_message(event)
     return false
 end
 
--- handles new occupants to inform them about the state
+-- handles new occupants to inform them about the state enabled/disabled, new moderators also get and the whitelist
 function occupant_joined(event)
     local room, occupant = event.room, event.occupant;
 
@@ -156,7 +156,11 @@ function occupant_joined(event)
 
     if room.av_moderation then
         notify_occupants_enable(occupant.jid, true, room);
-        notify_whitelist_change(occupant.nick, false, room);
+
+        -- if moderator send the whitelist
+        if occupant.role == 'moderator' then
+            notify_whitelist_change(occupant.jid, false, room);
+        end
     end
 end
 
