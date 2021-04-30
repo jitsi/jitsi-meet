@@ -31,35 +31,37 @@ const PollAnswerDialog = (props: AbstractProps): React.Node => {
                 okKey = { 'polls.answer.close' }
                 titleKey = 'polls.answer.results'
                 width = 'small'>
-                <PollResults
-                    detailedVotes = { true }
-                    displayQuestion = { true }
-                    pollId = { pollId } />
-
+                <div className = 'poll-dialog'>
+                    <PollResults
+                        detailedVotes = { true }
+                        displayQuestion = { true }
+                        pollId = { pollId } />
+                </div>
             </Dialog>
             : <Dialog
                 cancelKey = { 'polls.answer.skip' }
-                className = 'poll-answers default-scrollbar'
                 okKey = { 'polls.answer.submit' }
                 onCancel = { skipAnswer }
                 onSubmit = { submitAnswer }
                 titleKey = 'polls.answer.title'
                 width = 'small'>
 
-                <div>
-                    <h1 className = 'poll-answers'>{poll.question}</h1>
+                <div className = 'poll-dialog'>
+                    <h1 className = 'poll-question'>{poll.question}</h1>
+                    <ol className = 'poll-answer-list'>
                     {
                         poll.answers.map((answer, index) => (
-                            <Checkbox
-                                isChecked = { checkBoxStates[index] }
-                                key = { index }
-                                label = {
-                                    <label className = 'poll-answers'> {answer.name}</label>
-                                }
-                                onChange = { ev => setCheckbox(index, ev.target.checked) }
-                                size = 'xlarge' />
+                            <li key = { index }>
+                                <Checkbox
+                                    isChecked = { checkBoxStates[index] }
+                                    key = { index }
+                                    label = {<label>{answer.name}</label>}
+                                    onChange = { ev => setCheckbox(index, ev.target.checked) }
+                                    size = 'large' />
+                            </li>
                         ))
                     }
+                    </ol>
                 </div>
             </Dialog>
     );

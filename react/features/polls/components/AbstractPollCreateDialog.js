@@ -1,7 +1,9 @@
 // @flow
 
-import React, { useCallback, useState } from 'react';
+import React, { Component, useCallback, useState } from 'react';
 import { useSelector } from 'react-redux';
+
+import { useTranslation } from 'react-i18next';
 
 import { COMMAND_NEW_POLL } from '../constants';
 
@@ -17,16 +19,17 @@ export type AbstractProps = {
     moveAnswer: (number, number) => void,
     removeAnswer: number => void,
     onSubmit: Function,
+    t: Function,
 };
 
 /*
  * Higher Order Component taking in a concrete PollCreateDialog component and
  * augmenting it with state/behavior common to both web and native implementations.
  */
-const AbstractPollCreateDialog = Component => props => {
+const AbstractPollCreateDialog = (Component: Component<any>) => (props: any) => {
     const [ question, setQuestion ] = useState('');
 
-    const [ answers, setAnswers ] = useState([ '', '' ]);
+    const [ answers, setAnswers ] = useState([ '' ]);
     const setAnswer = useCallback((i, answer) => {
         const newAnswers = [ ...answers ];
 
@@ -82,6 +85,8 @@ const AbstractPollCreateDialog = Component => props => {
 
         return true;
     }, [ conference, question, answers ]);
+    
+    const { t } = useTranslation();
 
     return (<Component
         { ...props }
@@ -92,7 +97,8 @@ const AbstractPollCreateDialog = Component => props => {
         question = { question }
         removeAnswer = { removeAnswer }
         setAnswer = { setAnswer }
-        setQuestion = { setQuestion } />);
+        setQuestion = { setQuestion }
+        t = { t } />);
 };
 
 export default AbstractPollCreateDialog;

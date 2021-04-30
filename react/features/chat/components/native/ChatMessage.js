@@ -10,6 +10,7 @@ import { Linkify } from '../../../base/react';
 import { connect } from '../../../base/redux';
 import { type StyleType } from '../../../base/styles';
 import { PollResults } from '../../../polls/components';
+import pollStyles from '../../../polls/components/native/styles';
 import { MESSAGE_TYPE_ERROR, MESSAGE_TYPE_LOCAL } from '../../constants';
 import { replaceNonUnicodeEmojis } from '../../functions';
 import AbstractChatMessage, { type Props as AbstractProps } from '../AbstractChatMessage';
@@ -73,6 +74,7 @@ class ChatMessage extends AbstractChatMessage<Props> {
         }
 
         const isPoll = message.pollId !== undefined;
+        const textStyle = isPoll ? pollStyles.chatQuestion : undefined;
 
         return (
             <View style = { styles.messageWrapper } >
@@ -81,7 +83,7 @@ class ChatMessage extends AbstractChatMessage<Props> {
                     <View style = { messageBubbleStyle }>
                         <View style = { styles.textWrapper } >
                             { this._renderDisplayName() }
-                            <Linkify linkStyle = { styles.chatLink }>
+                            <Linkify linkStyle = { styles.chatLink } textStyle = { textStyle }>
                                 { replaceNonUnicodeEmojis(this._getMessageText()) }
                             </Linkify>
                             { this._renderPrivateNotice() }

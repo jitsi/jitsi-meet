@@ -1,6 +1,9 @@
 // @flow
 
-import * as React from 'react';
+import * as React from "react";
+React.Component
+import type { ComponentType, Element } from "react";
+
 import { useState, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -18,7 +21,7 @@ type InputProps = {
  * Props that will be passed by the AbstractPollAnswerDialog to its
  * concrete implementations (web/native).
  **/
-export type AbstractProps = Props & {
+export type AbstractProps = InputProps & {
     poll: Poll,
     shouldDisplayResult: boolean,
     submitAnswer: void => void,
@@ -35,7 +38,7 @@ export type AbstractProps = Props & {
  * @param {Props} props - The passed props.
  * @returns {React.Node}
  */
-const AbstractPollAnswerDialog = Component => (props: InputProps): React.Node => {
+const AbstractPollAnswerDialog = (Component: React.Component<InputProps>) => (props: AbstractProps): React.Node => {
 
     const { pollId } = props;
 

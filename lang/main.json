@@ -628,8 +628,10 @@
             "skip": "Skip",
             "submit": "Submit",
             "results" : "Results",
-            "close": "Fermer",
-            "empty": "No answer for the moment"
+            "close": "Close",
+            "empty": "No answer for the moment",
+            "vote" : "{{count}} vote",
+            "vote_plural" : "{{count}} votes"
         },
         "chat": {
             "notice": "Poll"

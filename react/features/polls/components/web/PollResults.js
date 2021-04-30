@@ -1,6 +1,6 @@
 // @flow
 
-import React from 'react';
+import React, { useCallback } from 'react';
 
 import AbstractPollResults from '../AbstractPollResults';
 import type { AbstractProps } from '../AbstractPollResults';
@@ -14,53 +14,48 @@ import type { AbstractProps } from '../AbstractPollResults';
  */
 const PollResults = (props: AbstractProps) => {
     const {
+        answers,
         detailedVotes,
         displayQuestion,
-        participants,
-        pollDetails,
-        totalVoters
+        question,
+        t
     } = props;
-
-    const answers = pollDetails.answers.map((answer, index) => {
-
-        const answerPercent = totalVoters === 0 ? 0 : Math.round(answer.voters.size / totalVoters * 100);
-
-        const detailedAnswer
-            = detailedVotes
-                ? [ ...answer.voters ].map(voterId => {
-                    const participant = participants.find(part => part.id === voterId);
-
-                    const name: string = participant ? participant.name : 'Fellow Jitster';
-
-                    return <li key = { voterId }>{ name }</li>;
-                })
-
-                : null;
-
-        return (
-            <li key = { index }>
-                { answer.name } ({ answerPercent } %)
-                <div>
-                    <ul>
-                        { detailedAnswer }
-                    </ul>
-                </div>
-            </li>
-        );
+    
+    const renderRow = useCallback((name, percentage, voterCount) => {
+        return <div className = 'poll-answer-header'>
+            <span>{ name } - { percentage }%</span>
+            <span>{ t('polls.answer.vote', { count: voterCount }) }</span>
+        </div>;
     });
 
     return (
         <div>
-            {displayQuestion
-                && <div className = 'poll-question-field'>
-                    <strong>{ pollDetails.question }</strong>
+            {displayQuestion &&
+                <div className = 'poll-question'>
+                    <strong>{ question }</strong>
                 </div>}
-            <div>
-                <ol className = 'poll-answer-fields'>
-                    { answers }
-                </ol>
-            </div>
-
+            <ol className = 'poll-answer-list'>
+                { detailedVotes
+                    ? answers.map(({ name, percentage, voters, voterCount }, index) => {
+                        return <li key = { index }>
+                            { renderRow(name, percentage, voterCount) }
+                            { voterCount > 0 &&
+                                <ul className = 'poll-answer-voters'>
+                                    {voters.map(voter =>
+                                        <li key = { voter.id }>{ voter.name }</li>
+                                    )}
+                                </ul>}
+                        </li>;
+                    }) : answers.map(({ name, percentage, voterCount }, index) => {
+                        return <li key = { index }>
+                            { renderRow(name, percentage, voterCount) }
+                            <div className = 'poll-bar-container'>
+                                <div className = 'poll-bar' style = {{ width: percentage + '%' }}></div>
+                            </div>
+                        </li>;
+                    })
+                }
+            </ol>
         </div>
     );
 
