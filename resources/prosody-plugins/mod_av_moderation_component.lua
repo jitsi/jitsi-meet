@@ -63,8 +63,8 @@ function notify_whitelist_change(jid, moderators, room)
 
 end
 
--- receives messages from client currently connected to the room
--- clients indicates their own dominant speaker events
+-- receives messages from clients to the component sending A/V moderation enable/disable commands or adding
+-- jids to the whitelist
 function on_message(event)
     local session = event.origin;
 
@@ -90,15 +90,16 @@ function on_message(event)
         end
 
         if moderation_command.attr.enable ~= nil then
-            if moderation_command.attr.enable then
-                -- enabled
+            local enabled;
+            if moderation_command.attr.enable == 'true' then
+                enabled = true;
                 if room.av_moderation then
                     module:log('warn', 'Concurrent moderator enable/disable request or something is out of sync');
                 else
                     room.av_moderation = {};
                 end
             else
-                -- disabled
+                enabled = false;
                 if not room.av_moderation then
                     module:log('warn', 'Concurrent moderator enable/disable request or something is out of sync');
                 else
@@ -107,7 +108,7 @@ function on_message(event)
             end
 
             -- send message to all occupants
-            notify_occupants_enable(nil, moderation_command.attr.enable, room);
+            notify_occupants_enable(nil, enabled, room);
             return true;
         elseif moderation_command.attr.jidToWhitelist and moderation_command.attr.mediaType and room.av_moderation then
 
@@ -145,7 +146,7 @@ function on_message(event)
     return false
 end
 
--- inform for av moderation if enabled and send the whitelists if it is a moderator
+-- handles new occupants to inform them about the state
 function occupant_joined(event)
     local room, occupant = event.room, event.occupant;
 
