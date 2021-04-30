@@ -45,22 +45,33 @@ end
 -- @param jid the jid to notify about the change
 -- @param moderators whether to notify all moderators in the room
 -- @param room the room where to send it
-function notify_whitelist_change(jid, moderators, room)
+-- @param mediaType used only when a participant is approved (not sent to moderators)
+function notify_whitelist_change(jid, moderators, room, mediaType)
     local body_json = {};
     body_json.type = 'av_moderation';
-    body_json.whitelists = room.av_moderation;
     body_json.room = room.jid;
-    local body_json_str = json.encode(body_json);
+    body_json.whitelists = room.av_moderation;
+    local moderators_body_json_str = json.encode(body_json);
+    body_json.whitelists = nil;
+    body_json.approved = true; -- we want to send to participants only that they were approved to unmute
+    body_json.mediaType = mediaType;
+    local participant_body_json_str = json.encode(body_json);
 
     for _, occupant in room:each_occupant() do
-        if (moderators and occupant.role == 'moderator') or occupant.jid == jid then
+        local body_to_send = nil;
+        if moderators and occupant.role == 'moderator' then
+            body_to_send = moderators_body_json_str;
+        elseif occupant.jid == jid then
+            body_to_send = participant_body_json_str;
+        end
+
+        if body_to_send then
             local stanza = st.message({
                 from = module.host; to = occupant.jid; }):tag('json-message',{ xmlns = 'http://jitsi.org/jitmeet' })
-                    :text(body_json_str):up();
+                    :text(body_to_send):up();
             module:send(stanza);
         end
     end
-
 end
 
 -- receives messages from clients to the component sending A/V moderation enable/disable commands or adding
@@ -148,7 +159,7 @@ function on_message(event)
             end
             table.insert(whitelist, occupant_jid);
 
-            notify_whitelist_change(occupant.jid, true, room);
+            notify_whitelist_change(occupant.jid, true, room, mediaType);
 
             return true;
         end
