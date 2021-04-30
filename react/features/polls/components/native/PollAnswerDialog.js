@@ -3,11 +3,11 @@
 import * as React from 'react';
 import { Switch, Text, View } from 'react-native';
 
-import { ConfirmDialog, CustomSubmitDialog } from '../../../base/dialog';
+import { ConfirmDialog } from '../../../base/dialog';
 import AbstractPollAnswerDialog from '../AbstractPollAnswerDialog';
 import type { AbstractProps } from '../AbstractPollAnswerDialog';
 
-import PollResults from './PollResults';
+import PollResultsDialog from './PollResultsDialog';
 import { answerStyles } from './styles';
 
 
@@ -28,15 +28,8 @@ const PollAnswerDialog = (props: AbstractProps): React.Node => {
 
     /* eslint-disable react/jsx-no-bind */
     return shouldDisplayResult
-        ? <CustomSubmitDialog
-            okKey = 'polls.answer.close'
-            titleKey = 'polls.answer.results'>
-            <PollResults
-                detailedVotes = { true }
-                displayQuestion = { true }
-                pollId = { pollId } />
-
-        </CustomSubmitDialog>
+        ? <PollResultsDialog
+            pollId = { pollId } />
         : <ConfirmDialog
             cancelKey = 'polls.answer.skip'
             okKey = 'polls.answer.submit'

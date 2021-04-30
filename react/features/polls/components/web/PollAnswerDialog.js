@@ -7,7 +7,7 @@ import { Dialog } from '../../../base/dialog';
 import AbstractPollAnswerDialog from '../AbstractPollAnswerDialog';
 import type { AbstractProps } from '../AbstractPollAnswerDialog';
 
-import PollResults from './PollResults';
+import PollResultsDialog from './PollResultsDialog';
 
 
 /**
@@ -27,18 +27,8 @@ const PollAnswerDialog = (props: AbstractProps): React.Node => {
     /* eslint-disable react/jsx-no-bind */
     return (
         shouldDisplayResult
-            ? <Dialog
-                cancelDisabled = { true }
-                okKey = { 'polls.answer.close' }
-                titleKey = 'polls.answer.results'
-                width = 'small'>
-                <div className = 'poll-dialog'>
-                    <PollResults
-                        detailedVotes = { true }
-                        displayQuestion = { true }
-                        pollId = { pollId } />
-                </div>
-            </Dialog>
+            ? <PollResultsDialog
+                pollId = { pollId } />
             : <Dialog
                 cancelKey = { 'polls.answer.skip' }
                 okKey = { 'polls.answer.submit' }
