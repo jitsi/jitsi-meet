@@ -109,7 +109,7 @@ function on_message(event)
             -- send message to all occupants
             notify_occupants_enable(nil, moderation_command.attr.enable, room);
             return true;
-        elseif moderation_command.attr.whitelist and moderation_command.attr.mediaType and room.av_moderation then
+        elseif moderation_command.attr.jidToWhitelist and moderation_command.attr.mediaType and room.av_moderation then
 
             local mediaType = moderation_command.attr.mediaType;
 
@@ -118,7 +118,7 @@ function on_message(event)
                 return false;
             end
 
-            local occupant_jid = moderation_command.attr.whitelist;
+            local occupant_jid = moderation_command.attr.jidToWhitelist;
             -- check if jid is in the room, if so add it to whitelist
             -- inform all moderators and admins and the jid
             local occupant = room:get_occupant_by_nick(occupant_jid);
