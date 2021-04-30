@@ -1,11 +1,14 @@
 // @flow
 
 import React, { useCallback } from 'react';
-import { View, Text, FlatList } from 'react-native';
+import { View, Text, FlatList, Button } from 'react-native';
+import { useDispatch } from 'react-redux';
 
+import { openDialog } from '../../../base/dialog';
 import AbstractPollResults from '../AbstractPollResults';
 import type { AbstractProps, AnswerInfo } from '../AbstractPollResults';
 
+import PollResultsDialog from './PollResultsDialog';
 import { dialogStyles, resultsStyles } from './styles';
 
 
@@ -20,9 +23,12 @@ const PollResults = (props: AbstractProps) => {
         answers,
         detailedVotes,
         displayQuestion,
+        pollId,
         question,
         t
     } = props;
+
+    const dispatch = useDispatch();
 
     /* eslint-disable react/no-multi-comp */
     /**
@@ -84,6 +90,12 @@ const PollResults = (props: AbstractProps) => {
             {displayQuestion
                 && <View>
                     <Text style = { dialogStyles.question } > { question } </Text>
+                </View>}
+            {!detailedVotes
+                && <View>
+                    <Button
+                        onPress = { () => dispatch(openDialog(PollResultsDialog, { pollId })) }
+                        title = 'More' />
                 </View>}
             <FlatList
                 data = { answers }

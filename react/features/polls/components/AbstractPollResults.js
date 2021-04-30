@@ -36,6 +36,7 @@ export type AbstractProps = {
     answers: Array<AnswerInfo>,
     detailedVotes: boolean,
     displayQuestion: boolean,
+    pollId: number,
     question: string,
     t: Function
 };
@@ -98,6 +99,7 @@ const AbstractPollResults = (Component: React.Component<InputProps>) => (props: 
         answers = { answers }
         detailedVotes = { detailedVotes }
         displayQuestion = { displayQuestion }
+        pollId = { pollId }
         question = { pollDetails.question }
         t = { t } />);
 };
