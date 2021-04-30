@@ -80,7 +80,6 @@ function on_message(event)
     local moderation_command = event.stanza:get_child('av_moderation');
 
     if moderation_command then
-
         -- get room name with tenant and find room
         local room = get_room_by_name_and_subdomain(session.jitsi_web_query_room, session.jitsi_web_query_prefix);
 
