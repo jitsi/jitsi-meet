@@ -2,7 +2,7 @@
 
 // import { FieldTextStateless } from '@atlaskit/field-text';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { View, Text, TextInput, FlatList, TouchableOpacity } from 'react-native';
+import { View, TextInput, FlatList, TouchableOpacity } from 'react-native';
 
 
 import CustomSubmitDialog from '../../../base/dialog/components/native/CustomSubmitDialog';
@@ -10,7 +10,7 @@ import { Icon, IconAdd, IconClose } from '../../../base/icons';
 import AbstractPollCreateDialog from '../AbstractPollCreateDialog';
 import type { AbstractProps } from '../AbstractPollCreateDialog';
 
-import _DialogStyles from './styles';
+import { dialogStyles } from './styles';
 
 
 const PollCreateDialog = (props: AbstractProps) => {
@@ -74,42 +74,42 @@ const PollCreateDialog = (props: AbstractProps) => {
         const currentText = answers[index];
 
         if (key === 'Enter') {
-            onAnswerSubmit((index, ev));
+            onAnswerSubmit(index);
         } else if (key === 'Backspace' && currentText === '' && answers.length > 1) {
             removeAnswer(index);
             requestFocus(index > 0 ? index - 1 : 0);
         }
     }, [ answers, addAnswer, removeAnswer, requestFocus ]);
 
-
+    /* eslint-disable react/no-multi-comp */
     const createIconButton = (icon, onPress, style) => (
         <TouchableOpacity
             activeOpacity = { 0.8 }
             onPress = { onPress }
-            style = { [ _DialogStyles.buttonContainer, style ] }>
+            style = { [ dialogStyles.buttonContainer, style ] }>
             <Icon
                 size = { 24 }
                 src = { icon }
-                style = { _DialogStyles.icon } />
+                style = { dialogStyles.icon } />
         </TouchableOpacity>
     );
 
 
-    const renderListItem = ({ index }) =>
+    /* eslint-disable react/jsx-no-bind */
+    const renderListItem = ({ index }: { index: number }) =>
 
-    // padding to take into account the two default options
-
+        // padding to take into account the two default options
         (
             <View
-                style = { _DialogStyles.optionContainer }>
+                style = { dialogStyles.optionContainer }>
                 <TextInput
                     blurOnSubmit = { false }
                     onChangeText = { text => setAnswer(index, text) }
                     onKeyPress = { ev => onAnswerKeyDown(index, ev) }
-                    onSubmitEditing = { ev => onAnswerSubmit(index) }
+                    onSubmitEditing = { () => onAnswerSubmit(index) }
                     placeholder = { t('polls.create.answerPlaceholder', { index: index + 1 }) }
                     ref = { input => registerFieldRef(index, input) }
-                    style = { _DialogStyles.field }
+                    style = { dialogStyles.field }
                     value = { answers[index] } />
 
                 {answers.length > 1
@@ -122,9 +122,9 @@ const PollCreateDialog = (props: AbstractProps) => {
 
     return (
         <CustomSubmitDialog
-            titleKey = 'polls.create.dialogTitle'
             okKey = { 'polls.create.send' }
-            onSubmit = { onSubmit }>
+            onSubmit = { onSubmit }
+            titleKey = 'polls.create.dialogTitle'>
             <View>
 
                 <TextInput
@@ -133,7 +133,7 @@ const PollCreateDialog = (props: AbstractProps) => {
                     onChangeText = { setQuestion }
                     onSubmitEditing = { onQuestionKeyDown }
                     placeholder = { t('polls.create.questionPlaceholder') }
-                    style = { _DialogStyles.question }
+                    style = { dialogStyles.question }
                     value = { question } />
 
                 <FlatList
@@ -142,7 +142,7 @@ const PollCreateDialog = (props: AbstractProps) => {
                     keyExtractor = { (item, index) => index.toString() }
                     renderItem = { renderListItem } />
 
-                {createIconButton(IconAdd, () => addAnswer(answers.length), _DialogStyles.plusButton)}
+                {createIconButton(IconAdd, () => addAnswer(answers.length), dialogStyles.plusButton)}
 
 
                 {/* <Button

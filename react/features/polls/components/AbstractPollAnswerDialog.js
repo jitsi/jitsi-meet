@@ -1,9 +1,6 @@
 // @flow
 
-import * as React from "react";
-React.Component
-import type { ComponentType, Element } from "react";
-
+import * as React from 'react';
 import { useState, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -35,8 +32,8 @@ export type AbstractProps = InputProps & {
  * Higher Order Component taking in a concrete PollAnswerDialog component and
  * augmenting it with state/behavior common to both web and native implementations.
  *
- * @param {Props} props - The passed props.
- * @returns {React.Node}
+ * @param {React.Component} Component - The concrete component.
+ * @returns {React.Component}
  */
 const AbstractPollAnswerDialog = (Component: React.Component<InputProps>) => (props: AbstractProps): React.Node => {
 

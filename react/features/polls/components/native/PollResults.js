@@ -1,12 +1,12 @@
 // @flow
 
 import React, { useCallback } from 'react';
-import { View, SectionList, Text, FlatList } from 'react-native';
+import { View, Text, FlatList } from 'react-native';
 
 import AbstractPollResults from '../AbstractPollResults';
-import type { AbstractProps } from '../AbstractPollResults';
-import _DialogStyles from './styles';
-import { ColorPalette } from '../../../base/styles';
+import type { AbstractProps, AnswerInfo } from '../AbstractPollResults';
+
+import { dialogStyles, resultsStyles } from './styles';
 
 
 /**
@@ -23,76 +23,79 @@ const PollResults = (props: AbstractProps) => {
         question,
         t
     } = props;
-    
+
+    /* eslint-disable react/no-multi-comp */
     /**
-     * Render a header summing up answer information
+     * Render a header summing up answer information.
      *
-     * @param {string} answerName - the name of the answer
-     * @param {number} percent - the percentage of voters
-     * @param {number} nbVotes - the number of collected votes
-     * @returns 
+     * @param {string} answer - The name of the answer.
+     * @param {number} percentage - The percentage of voters.
+     * @param {number} nbVotes - The number of collected votes.
+     * @returns {React.Node}
      */
-    const renderHeader = (answer: string, percentage: number, nbVotes: number) => {
-        return (
-            <View style = { _DialogStyles.answerHeader }>
-                <Text>{ answer } - { percentage }%</Text>
-                <Text style = { _DialogStyles.answerVoteCount }>
-                    { t('polls.answer.vote', { count: nbVotes }) }
-                </Text>
-            </View>
-        )
-    }
-    
+    const renderHeader = (answer: string, percentage: number, nbVotes: number) => (
+        <View style = { resultsStyles.answerHeader }>
+            <Text>{ answer } - { percentage }%</Text>
+            <Text style = { resultsStyles.answerVoteCount }>
+                { t('polls.answer.vote', { count: nbVotes }) }
+            </Text>
+        </View>
+    );
+
     /**
      * Render voters of and answer
-     * @param { name: string, voters: Set<string> } answer - the answer 
-     * @param {*} participants - A list of participants (to fetch names)
-     * @param {number} totalVoters - Total number of voters for this poll
-     * @param {boolean} detailed - if true, display all voters, if false, display percent bars
-     * @param {Function} t - translation function
-     * @returns 
+     * @param {AnswerInfo} answer - the answer info
+     * @returns {React.Node}
      */
-    const renderRow = useCallback((answer: { name: string, percentage: number, voters: Array<{ id: number, name: string }>, voterCount: number }) => {
+    const renderRow = useCallback((answer: AnswerInfo) => {
         const { name, percentage, voters, voterCount } = answer;
-        if ( detailedVotes ) {
+
+        if (detailedVotes) {
             return (
-                <View style = { _DialogStyles.answerContainer }>
+                <View style = { resultsStyles.answerContainer }>
                     { renderHeader(name, percentage, voterCount) }
-                    { voterCount > 0 &&
-                    <View style = { _DialogStyles.voters }>
-                        {voters.map(({ id, name }) => 
-                            <Text key = { id }>{ name }</Text>
+                    { voters && voterCount > 0
+                    && <View style = { resultsStyles.voters }>
+                        {voters.map(({ id, name: voterName }) =>
+                            <Text key = { id }>{ voterName }</Text>
                         )}
                     </View>}
                 </View>
             );
-        } else {
-            // else, we display a simple list
-            // We add a progress bar by creating an empty view of width equal to percentage.
-            return (
-                <View style = { _DialogStyles.answerContainer }>
-                    { renderHeader(answer.name, percentage, voterCount) }
-                    <View style = { _DialogStyles.barContainer }>
-                        <View style = {[ _DialogStyles.bar, { width: percentage + '%' } ]}/>
-                    </View>
-                </View>
-            );
         }
+
+
+        // else, we display a simple list
+        // We add a progress bar by creating an empty view of width equal to percentage.
+        return (
+            <View style = { resultsStyles.answerContainer }>
+                { renderHeader(answer.name, percentage, voterCount) }
+                <View style = { resultsStyles.barContainer }>
+                    <View style = { [ resultsStyles.bar, { width: `${percentage}%` } ] } />
+                </View>
+            </View>
+        );
+
     }, []);
 
+    /* eslint-disable react/jsx-no-bind */
     return (
         <View>
             {displayQuestion
                 && <View>
-                    <Text style = { _DialogStyles.question } > { question } </Text>
+                    <Text style = { dialogStyles.question } > { question } </Text>
                 </View>}
             <FlatList
                 data = { answers }
                 keyExtractor = { (item, index) => index.toString() }
-                renderItem = { answer => renderRow(answer.item) }
-            />
+                renderItem = { answer => renderRow(answer.item) } />
         </View>
     );
 };
 
+/*
+ * We apply AbstractPollResults to fill in the AbstractProps common
+ * to both the web and native implementations.
+ */
+// eslint-disable-next-line new-cap
 export default AbstractPollResults(PollResults);
