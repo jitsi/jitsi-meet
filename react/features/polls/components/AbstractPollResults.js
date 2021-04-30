@@ -1,6 +1,7 @@
 // @flow
 
-import React, { useMemo } from 'react';
+import React, { useMemo, Component } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 
 import { getParticipants } from '../../base/participants';
@@ -25,11 +26,13 @@ type InputProps = {
     pollId: number,
 };
 
-export type AbstractProps = InputProps & {
-    participants: Array<Object>,
-    pollDetails: Poll,
-    totalVoters: number
-}
+export type AbstractProps = {
+    answers: Array<{ name: string, percentage: number, voters?: Array<string>, voterCount: number }>,
+    detailedVotes: boolean,
+    displayQuestion: boolean,
+    question: string,
+    t: Function
+};
 
 /**
  * Higher Order Component taking in a concrete PollResult component and
@@ -38,14 +41,14 @@ export type AbstractProps = InputProps & {
  * @param {Props} props - The passed props.
  * @returns {React.Node}
  */
-const AbstractPollResults = Component => (props: InputProps): React.Node => {
-    const { pollId } = props;
+const AbstractPollResults = (Component: Component<InputProps>) => (props: InputProps) => {
+    const { pollId, detailedVotes, displayQuestion } = props;
 
     const pollDetails = useSelector(state => state['features/polls'].polls[pollId]);
 
     const participants = useSelector(state => getParticipants(state));
 
-    const totalVoters = useMemo(() => {
+    const answers = useMemo(() => {
         const voterSet = new Set();
 
         for (const answer of pollDetails.answers) {
@@ -54,14 +57,41 @@ const AbstractPollResults = Component => (props: InputProps): React.Node => {
             }
         }
 
-        return voterSet.size;
+        const totalVoters = voterSet.size;
+        
+        return pollDetails.answers.map((answer, index) => {
+            const percentage = totalVoters === 0 ? 0 : Math.round(answer.voters.size / totalVoters * 100);
+
+            let voters = null;
+            if(detailedVotes) {
+                voters = [ ...answer.voters ].map(voterId => {
+                    const participant = participants.find(part => part.id === voterId);
+                    return {
+                        id: voterId,
+                        name: participant
+                            ? participant.name
+                            : 'Absent Jitster'
+                    };
+                });
+            }
+            
+            return {
+                name: answer.name,
+                percentage,
+                voters,
+                voterCount: answer.voters.size,
+            }
+        });
     }, [ pollDetails.answers ]);
+    
+    const { t } = useTranslation();
 
     return (<Component
-        { ...props }
-        participants = { participants }
-        pollDetails = { pollDetails }
-        totalVoters = { totalVoters } />);
+        answers = { answers }
+        detailedVotes = { detailedVotes }
+        displayQuestion = { displayQuestion }
+        question = { pollDetails.question }
+        t = { t } />);
 };
 
 export default AbstractPollResults;

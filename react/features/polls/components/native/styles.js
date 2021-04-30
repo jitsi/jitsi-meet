@@ -7,9 +7,6 @@ import { ColorPalette, createStyleSheet } from '../../../base/styles';
  */
 export default createStyleSheet({
 
-    mainContainer: {
-    },
-
     title: {
         fontSize: 24,
         fontWeight: 'bold'
@@ -17,8 +14,8 @@ export default createStyleSheet({
 
     question: {
         fontSize: 16,
-        fontStyle: 'italic',
-        paddingBottom: 16
+        fontWeight: 'bold',
+        paddingBottom: 8
     },
 
     optionContainer: {
@@ -27,12 +24,13 @@ export default createStyleSheet({
 
     field: {
         borderBottomWidth: 1,
+        borderColor: ColorPalette.blue,
         fontSize: 14,
-        flexGrow: 1
+        flexGrow: 1,
+        paddingBottom: 0
     },
 
     buttonContainer: {
-        // borderWidth: 2,
         justifyContent: 'flex-end',
         alignItems: 'center'
     },
@@ -41,11 +39,49 @@ export default createStyleSheet({
         color: ColorPalette.white,
         backgroundColor: ColorPalette.blue,
         borderRadius: 5,
-        margin: 0,
-        flexGrow: 0
+        margin: 0
     },
 
     plusButton: {
-        marginTop: 16
+        marginTop: 8
+    },
+    
+    barContainer: {
+        backgroundColor: '#ccc',
+        borderRadius: 3,
+        width: 200,
+        height: 6
+    },
+
+    bar: {
+        backgroundColor: ColorPalette.blue,
+        borderRadius: 3,
+        height: 6
+    },
+    
+    voters: {
+        borderRadius: 3,
+        borderWidth: 1,
+        borderColor: 'gray',
+        padding: 2,
+        marginHorizontal: 8,
+        marginVertical: 4
+    },
+    
+    answerContainer: {
+        marginVertical: 2
+    },
+    
+    answerHeader: {
+        flexDirection: 'row',
+        justifyContent: 'space-between'
+    },
+    
+    answerVoteCount: {
+        paddingLeft: 10
+    },
+    
+    chatQuestion: {
+        fontWeight: 'bold'
     }
 });

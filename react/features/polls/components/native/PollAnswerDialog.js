@@ -1,14 +1,18 @@
 // @flow
 
 import * as React from 'react';
+
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, Switch, Text, TouchableOpacity, View } from 'react-native';
+import { useSelector } from 'react-redux';
 
 import { ConfirmDialog, CustomSubmitDialog, brandedDialog } from '../../../base/dialog';
 import AbstractPollAnswerDialog from '../AbstractPollAnswerDialog';
 import type { AbstractProps } from '../AbstractPollAnswerDialog';
 
 import PollResults from './PollResults';
+import _DialogStyles from './styles';
+
 
 
 /**
@@ -29,11 +33,15 @@ const PollAnswerDialog = (props: AbstractProps): React.Node => {
     const { t } = useTranslation();
 
     return shouldDisplayResult
-        ? <CustomSubmitDialog>
+        ? <CustomSubmitDialog
+            okKey = 'polls.answer.close'
+            titleKey = 'polls.answer.results'>
             <PollResults
                 detailedVotes = { true }
                 displayQuestion = { true }
-                pollId = { pollId } />
+                pollId = { pollId }
+            />
+
         </CustomSubmitDialog>
         : <ConfirmDialog
             titleKey = 'polls.answer.title'

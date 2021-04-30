@@ -4,21 +4,13 @@ import { FieldTextStateless } from '@atlaskit/field-text';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import { Dialog } from '../../../base/dialog';
-import { translate } from '../../../base/i18n';
 import { Icon, IconAdd, IconClose, IconSmallDragHandle } from '../../../base/icons';
 import { Tooltip } from '../../../base/tooltip';
 import AbstractPollCreateDialog from '../AbstractPollCreateDialog';
 import type { AbstractProps } from '../AbstractPollCreateDialog';
 
-type Props = AbstractProps & {
 
-    /**
-     * The i18n translate function.
-     */
-    t: Function
-};
-
-const PollCreateDialog = (props: Props) => {
+const PollCreateDialog = (props: AbstractProps) => {
     const {
         question, setQuestion,
         answers, setAnswer, addAnswer, moveAnswer, removeAnswer,
@@ -137,10 +129,10 @@ const PollCreateDialog = (props: Props) => {
                 type = 'text'
                 value = { question } />
         </div>
-        <ol className = 'poll-answer-fields'>
+        <ol className = 'poll-answer-field-list'>
             {answers.map((answer, i) =>
                 (<li
-                    className = { grabbing === i ? 'poll-dragged' : '' }
+                    className = { 'poll-answer-field' + (grabbing === i ? ' poll-dragged' : '') }
                     key = { i }
                     onMouseOver = { () => onMouseOver(i) }>
                     <button
@@ -189,4 +181,4 @@ const PollCreateDialog = (props: Props) => {
  * to both the web and native implementations.
  */
 // eslint-disable-next-line new-cap
-export default translate(AbstractPollCreateDialog(PollCreateDialog));
+export default AbstractPollCreateDialog(PollCreateDialog);
