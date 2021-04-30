@@ -671,7 +671,9 @@ var config = {
     // Options related to the remote participant menu.
     // remoteVideoMenu: {
     //     // If set to true the 'Kick out' button will be disabled.
-    //     disableKick: true
+    //     disableKick: true,
+    //     // If set to true the 'Grant moderator' button will be disabled.
+    //     disableGrantModerator: true
     // },
 
     // If set to true all muting operations of remote participants will be disabled.
