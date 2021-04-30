@@ -2,16 +2,20 @@
 
 import { ColorPalette, createStyleSheet } from '../../../base/styles';
 
-/**
- * The styles of the React {@code Component}s of the feature subtitles.
- */
-export default createStyleSheet({
-
-    title: {
+export const answerStyles = createStyleSheet({
+    question: {
         fontSize: 24,
-        fontWeight: 'bold'
+        fontWeight: 'bold',
+        marginBottom: 6
     },
+    answer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 3
+    }
+});
 
+export const dialogStyles = createStyleSheet({
     question: {
         fontSize: 16,
         fontWeight: 'bold',
@@ -44,8 +48,15 @@ export default createStyleSheet({
 
     plusButton: {
         marginTop: 8
+    }
+});
+
+export const resultsStyles = createStyleSheet({
+    title: {
+        fontSize: 24,
+        fontWeight: 'bold'
     },
-    
+
     barContainer: {
         backgroundColor: '#ccc',
         borderRadius: 3,
@@ -58,7 +69,7 @@ export default createStyleSheet({
         borderRadius: 3,
         height: 6
     },
-    
+
     voters: {
         borderRadius: 3,
         borderWidth: 1,
@@ -67,20 +78,20 @@ export default createStyleSheet({
         marginHorizontal: 8,
         marginVertical: 4
     },
-    
+
     answerContainer: {
         marginVertical: 2
     },
-    
+
     answerHeader: {
         flexDirection: 'row',
         justifyContent: 'space-between'
     },
-    
+
     answerVoteCount: {
         paddingLeft: 10
     },
-    
+
     chatQuestion: {
         fontWeight: 'bold'
     }

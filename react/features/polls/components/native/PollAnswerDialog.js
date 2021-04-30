@@ -1,18 +1,14 @@
 // @flow
 
 import * as React from 'react';
+import { Switch, Text, View } from 'react-native';
 
-import { useTranslation } from 'react-i18next';
-import { StyleSheet, Switch, Text, TouchableOpacity, View } from 'react-native';
-import { useSelector } from 'react-redux';
-
-import { ConfirmDialog, CustomSubmitDialog, brandedDialog } from '../../../base/dialog';
+import { ConfirmDialog, CustomSubmitDialog } from '../../../base/dialog';
 import AbstractPollAnswerDialog from '../AbstractPollAnswerDialog';
 import type { AbstractProps } from '../AbstractPollAnswerDialog';
 
 import PollResults from './PollResults';
-import _DialogStyles from './styles';
-
+import { answerStyles } from './styles';
 
 
 /**
@@ -30,8 +26,7 @@ const PollAnswerDialog = (props: AbstractProps): React.Node => {
         checkBoxStates, setCheckbox
     } = props;
 
-    const { t } = useTranslation();
-
+    /* eslint-disable react/jsx-no-bind */
     return shouldDisplayResult
         ? <CustomSubmitDialog
             okKey = 'polls.answer.close'
@@ -39,23 +34,22 @@ const PollAnswerDialog = (props: AbstractProps): React.Node => {
             <PollResults
                 detailedVotes = { true }
                 displayQuestion = { true }
-                pollId = { pollId }
-            />
+                pollId = { pollId } />
 
         </CustomSubmitDialog>
         : <ConfirmDialog
-            titleKey = 'polls.answer.title'
             cancelKey = 'polls.answer.skip'
             okKey = 'polls.answer.submit'
             onCancel = { cancelAnswer }
             onDecline = { skipAnswer }
-            onSubmit = { submitAnswer }>
-            <Text style = { styles.question }>{ poll.question }</Text>
+            onSubmit = { submitAnswer }
+            titleKey = 'polls.answer.title'>
+            <Text style = { answerStyles.question }>{ poll.question }</Text>
             <View>
                 {poll.answers.map((answer, index) => (
                     <View
                         key = { index }
-                        style = { styles.answer }>
+                        style = { answerStyles.answer }>
                         <Switch
                             onValueChange = { state => setCheckbox(index, state) }
                             value = { checkBoxStates[index] } />
@@ -65,19 +59,6 @@ const PollAnswerDialog = (props: AbstractProps): React.Node => {
             </View>
         </ConfirmDialog>;
 };
-
-const styles = StyleSheet.create({
-    question: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        marginBottom: 6
-    },
-    answer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginBottom: 3,
-    }
-});
 
 /*
  * We apply AbstractPollAnswerDialog to fill in the AbstractProps common

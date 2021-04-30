@@ -24,6 +24,7 @@ const PollAnswerDialog = (props: AbstractProps): React.Node => {
         checkBoxStates, setCheckbox
     } = props;
 
+    /* eslint-disable react/jsx-no-bind */
     return (
         shouldDisplayResult
             ? <Dialog
@@ -49,18 +50,18 @@ const PollAnswerDialog = (props: AbstractProps): React.Node => {
                 <div className = 'poll-dialog'>
                     <h1 className = 'poll-question'>{poll.question}</h1>
                     <ol className = 'poll-answer-list'>
-                    {
-                        poll.answers.map((answer, index) => (
-                            <li key = { index }>
-                                <Checkbox
-                                    isChecked = { checkBoxStates[index] }
-                                    key = { index }
-                                    label = {<label>{answer.name}</label>}
-                                    onChange = { ev => setCheckbox(index, ev.target.checked) }
-                                    size = 'large' />
-                            </li>
-                        ))
-                    }
+                        {
+                            poll.answers.map((answer, index) => (
+                                <li key = { index }>
+                                    <Checkbox
+                                        isChecked = { checkBoxStates[index] }
+                                        key = { index }
+                                        label = { <label>{answer.name}</label> }
+                                        onChange = { ev => setCheckbox(index, ev.target.checked) }
+                                        size = 'large' />
+                                </li>
+                            ))
+                        }
                     </ol>
                 </div>
             </Dialog>

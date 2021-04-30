@@ -28,6 +28,12 @@ type Props = BaseProps & {
      */
     contentKey: string | { key: string, params: Object},
 
+    /**
+     * The handler for the event when clicking the 'confirmNo' button.
+     * Defaults to onCancel if absent.
+     */
+    onDecline?: Function,
+
     t: Function
 }
 

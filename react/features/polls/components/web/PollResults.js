@@ -20,40 +20,36 @@ const PollResults = (props: AbstractProps) => {
         question,
         t
     } = props;
-    
-    const renderRow = useCallback((name, percentage, voterCount) => {
-        return <div className = 'poll-answer-header'>
-            <span>{ name } - { percentage }%</span>
-            <span>{ t('polls.answer.vote', { count: voterCount }) }</span>
-        </div>;
-    });
+
+    const renderRow = useCallback((name, percentage, voterCount) => (<div className = 'poll-answer-header'>
+        <span>{ name } - { percentage }%</span>
+        <span>{ t('polls.answer.vote', { count: voterCount }) }</span>
+    </div>));
 
     return (
         <div>
-            {displayQuestion &&
-                <div className = 'poll-question'>
+            {displayQuestion
+                && <div className = 'poll-question'>
                     <strong>{ question }</strong>
                 </div>}
             <ol className = 'poll-answer-list'>
                 { detailedVotes
-                    ? answers.map(({ name, percentage, voters, voterCount }, index) => {
-                        return <li key = { index }>
-                            { renderRow(name, percentage, voterCount) }
-                            { voterCount > 0 &&
-                                <ul className = 'poll-answer-voters'>
-                                    {voters.map(voter =>
-                                        <li key = { voter.id }>{ voter.name }</li>
-                                    )}
-                                </ul>}
-                        </li>;
-                    }) : answers.map(({ name, percentage, voterCount }, index) => {
-                        return <li key = { index }>
-                            { renderRow(name, percentage, voterCount) }
-                            <div className = 'poll-bar-container'>
-                                <div className = 'poll-bar' style = {{ width: percentage + '%' }}></div>
-                            </div>
-                        </li>;
-                    })
+                    ? answers.map(({ name, percentage, voters, voterCount }, index) => (<li key = { index }>
+                        { renderRow(name, percentage, voterCount) }
+                        { voters && voterCount > 0
+                            && <ul className = 'poll-answer-voters'>
+                                {voters.map(voter =>
+                                    <li key = { voter.id }>{ voter.name }</li>
+                                )}
+                            </ul>}
+                    </li>)) : answers.map(({ name, percentage, voterCount }, index) => (<li key = { index }>
+                        { renderRow(name, percentage, voterCount) }
+                        <div className = 'poll-bar-container'>
+                            <div
+                                className = 'poll-bar'
+                                style = {{ width: `${percentage}%` }} />
+                        </div>
+                    </li>))
                 }
             </ol>
         </div>
@@ -61,4 +57,9 @@ const PollResults = (props: AbstractProps) => {
 
 };
 
+/*
+ * We apply AbstractPollResults to fill in the AbstractProps common
+ * to both the web and native implementations.
+ */
+// eslint-disable-next-line new-cap
 export default AbstractPollResults(PollResults);
