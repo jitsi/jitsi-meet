@@ -13,6 +13,7 @@ import '../power-monitor/middleware';
 import '../prejoin/middleware';
 import '../remote-control/middleware';
 import '../shared-video/middleware';
+import '../shared-url/middleware';
 import '../talk-while-muted/middleware';
 
 import './middlewares.any';

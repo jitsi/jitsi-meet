@@ -13,6 +13,7 @@ export default {
     VIDEO_MUTED: 'UI.video_muted',
     ETHERPAD_CLICKED: 'UI.etherpad_clicked',
     SHARED_VIDEO_CLICKED: 'UI.start_shared_video',
+    SHARED_URL_CLICKED: 'UI.start_shared_url',
 
     /**
      * Updates shared video with params: url, state, time(optional)
@@ -20,6 +21,7 @@ export default {
      * current video playing time.
      */
     UPDATE_SHARED_VIDEO: 'UI.update_shared_video',
+    UPDATE_SHARED_URL: 'UI.updated_shared_url',
     TOGGLE_FULLSCREEN: 'UI.toogle_fullscreen',
     FULLSCREEN_TOGGLED: 'UI.fullscreen_toggled',
     AUTH_CLICKED: 'UI.auth_clicked',

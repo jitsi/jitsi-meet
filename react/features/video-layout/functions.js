@@ -10,6 +10,7 @@ import {
     TWO_COLUMN_BREAKPOINT
 } from '../filmstrip/constants';
 import { isVideoPlaying } from '../shared-video/functions';
+import { isSharingURL } from '../shared-url/functions';
 
 import { LAYOUTS } from './constants';
 
@@ -141,6 +142,9 @@ export function shouldDisplayTileView(state: Object = {}) {
 
         // There is a shared YouTube video in the meeting
         || isVideoPlaying(state)
+
+        // There is a shared URL
+        || isSharingURL(state)
 
         // We want jibri to use stage view by default
         || iAmRecorder

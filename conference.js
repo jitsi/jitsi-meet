@@ -130,6 +130,7 @@ import { disableReceiver, stopReceiver } from './react/features/remote-control';
 import { setScreenAudioShareState, isScreenAudioShared } from './react/features/screen-share/';
 import { toggleScreenshotCaptureEffect } from './react/features/screenshot-capture';
 import { setSharedVideoStatus } from './react/features/shared-video/actions';
+import { setSharedURLStatus } from './react/features/shared-url/actions';
 import { AudioMixerEffect } from './react/features/stream-effects/audio-mixer/AudioMixerEffect';
 import { createPresenterEffect } from './react/features/stream-effects/presenter';
 import { endpointMessageReceived } from './react/features/subtitles';
@@ -2507,8 +2508,52 @@ export default {
                     APP.UI.onSharedVideoUpdate(id, value, attributes);
                 }
             });
+
+        // TODO: re-write this for shared URL:
+        /* eslint-disable max-params */
+        APP.UI.addListener(
+            UIEvents.UPDATE_SHARED_URL,
+            (url, state) => {
+                /* eslint-enable max-params */
+                // send sharing / not_sharing commands once and remove existing commands
+                if (state === 'sharing'
+                    || state === 'not_sharing') {
+                    const localParticipant = getLocalParticipant(APP.store.getState());
+
+                    room.removeCommand(this.commands.defaults.SHARED_URL);
+                    room.sendCommandOnce(this.commands.defaults.SHARED_URL, {
+                        value: url,
+                        attributes: {
+                            state,
+                            from: localParticipant.id
+                        }
+                    });
+                } else {
+                    // in case of paused, in order to allow late users to join
+                    // paused
+                    room.removeCommand(this.commands.defaults.SHARED_URL);
+                    room.sendCommand(this.commands.defaults.SHARED_URL, {
+                        value: url,
+                        attributes: {
+                            state
+                        }
+                    });
+                }
+
+                APP.store.dispatch(setSharedURLStatus(state));
+            });
+        room.addCommandListener(
+            this.commands.defaults.SHARED_URL,
+            ({ value, attributes }, sharedURL) => {
+                if (attributes.state === 'not_sharing') {
+                    APP.UI.onSharedURLStop(sharedURL, attributes);
+                } else if (attributes.state === 'sharing') {
+                    APP.UI.onSharedURLStart(sharedURL, value, attributes);
+                }
+            });
     },
 
+    
     /**
      * Cleanups local conference on suspend.
      */

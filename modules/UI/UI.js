@@ -20,6 +20,7 @@ import UIEvents from '../../service/UI/UIEvents';
 
 import EtherpadManager from './etherpad/Etherpad';
 import SharedVideoManager from './shared_video/SharedVideo';
+import SharedURLManager from './shared_url/SharedURL';
 import messageHandler from './util/MessageHandler';
 import UIUtil from './util/UIUtil';
 import VideoLayout from './videolayout/VideoLayout';
@@ -34,6 +35,7 @@ UI.eventEmitter = eventEmitter;
 
 let etherpadManager;
 let sharedVideoManager;
+let sharedURLManager;
 
 const UIListeners = new Map([
     [
@@ -42,7 +44,12 @@ const UIListeners = new Map([
     ], [
         UIEvents.SHARED_VIDEO_CLICKED,
         () => sharedVideoManager && sharedVideoManager.toggleSharedVideo()
-    ], [
+    ],
+    [
+        UIEvents.SHARED_URL_CLICKED,
+        () => sharedURLManager && sharedURLManager.toggleSharedURL()
+    ],
+    [
         UIEvents.TOGGLE_FILMSTRIP,
         () => UI.toggleFilmstrip()
     ]
@@ -64,6 +71,14 @@ UI.isFullScreen = function() {
  */
 UI.isSharedVideoShown = function() {
     return Boolean(sharedVideoManager && sharedVideoManager.isSharedVideoShown);
+};
+
+/**
+ * Returns true if there is a shared URL which is being shown (?).
+ * @returns {boolean} - true if there is a shared URL which is being shown.
+ */
+ UI.isSharedURLShown = function() {
+    return Boolean(sharedURLManager && sharedURLManager.isSharedURLShown);
 };
 
 /**
@@ -116,6 +131,8 @@ UI.start = function() {
     VideoLayout.resizeVideoArea();
 
     sharedVideoManager = new SharedVideoManager(eventEmitter);
+
+    sharedURLManager = new SharedURLManager(eventEmitter);
 
     if (isMobileBrowser()) {
         $('body').addClass('mobile-browser');
@@ -465,6 +482,61 @@ UI.startSharedVideoEmitter = function(url) {
 UI.stopSharedVideoEmitter = function() {
     if (sharedVideoManager) {
         sharedVideoManager.stopSharedVideoEmitter();
+    }
+};
+
+// TODO: Need to write the SharedURLManager and export it from modules/ui/shared-url/SharedURL.js (just like video)!
+/**
+ * Show shared URL.
+ * @param {string} id the id of the sender of the command
+ * @param {string} sharedURL shared URL
+ * @param {string} attributes
+*/
+UI.onSharedURLStart = function(id, sharedURL, attributes) {
+    if (sharedURLManager) {
+        sharedURLManager.onSharedURLStart(id, sharedURL, attributes);
+    }
+};
+
+/**
+ * Update shared URL
+ * @param {string} id the id of the sender of the command
+ * @param {string} sharedURL shared URL
+ * @param {string} attributes
+ */
+UI.onSharedURLUpdate = function(id, sharedURL, attributes) {
+    if (sharedURLManager) {
+        sharedURLManager.onSharedURLUpdate(id, sharedURL, attributes);
+    }
+};
+
+/**
+ * Stop showing shared URL
+ * @param {string} id the id of the sender of the command
+ * @param {string} attributes
+ */
+UI.onSharedURLStop = function(id, attributes) {
+    if (sharedURLManager) {
+        sharedURLManager.onSharedURLStop(id, attributes);
+    }
+};
+
+/**
+ * Show shared URL.
+ * @param {string} sharedURL shared URL
+ */
+UI.startSharedURLEmitter = function(sharedURL) {
+    if (sharedURLManager) {
+        sharedURLManager.startSharedURLEmitter(sharedURL);
+    }
+};
+
+/**
+ * Stop shared URL.
+ */
+UI.stopSharedURLEmitter = function() {
+    if (sharedURLManager) {
+        sharedURLManager.stopSharedURLEmitter();
     }
 };
 

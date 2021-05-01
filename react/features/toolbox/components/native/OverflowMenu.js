@@ -15,6 +15,7 @@ import { AudioRouteButton } from '../../../mobile/audio-mode';
 import { LiveStreamButton, RecordButton } from '../../../recording';
 import SecurityDialogButton from '../../../security/components/security-dialog/SecurityDialogButton';
 import { SharedVideoButton } from '../../../shared-video/components';
+import { SharedURLButton } from '../../../shared-url/components';
 import { ClosedCaptionButton } from '../../../subtitles';
 import { TileViewButton } from '../../../video-layout';
 import { getMovableButtons } from '../../functions.native';
@@ -148,6 +149,7 @@ class OverflowMenu extends PureComponent<Props, State> {
                     <RecordButton { ...buttonProps } />
                     <LiveStreamButton { ...buttonProps } />
                     <SharedVideoButton { ...buttonProps } />
+                    <SharedURLButton { ...buttonProps } />
                     <ClosedCaptionButton { ...buttonProps } />
                     <SharedDocumentButton { ...buttonProps } />
                     <MuteEveryoneButton { ...buttonProps } />

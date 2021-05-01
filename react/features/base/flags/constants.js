@@ -192,6 +192,12 @@ export const VIDEO_MUTE_BUTTON_ENABLED = 'video-mute.enabled';
 export const VIDEO_SHARE_BUTTON_ENABLED = 'video-share.enabled';
 
 /**
+ * Flag indicating if the URL share button should be enabled
+ * Default: enabled (true).
+ */
+ export const URL_SHARE_BUTTON_ENABLED = 'url-share.enabled';
+
+/**
  * Flag indicating if the welcome page should be enabled.
  * Default: disabled (false).
  */

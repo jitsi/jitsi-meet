@@ -59,6 +59,7 @@ import {
     openSettingsDialog
 } from '../../../settings';
 import { SharedVideoButton } from '../../../shared-video/components';
+import { SharedURLButton } from '../../../shared-url/components';
 import { SpeakerStats } from '../../../speaker-stats';
 import {
     ClosedCaptionButton
@@ -1037,6 +1038,10 @@ class Toolbox extends Component<Props> {
         ];
 
         const group2 = [
+            this._shouldShowButton('sharedurl')
+                && <SharedURLButton
+                    key = 'sharedurl'
+                    showLabel = { true } />, 
             this._shouldShowButton('sharedvideo')
                 && <SharedVideoButton
                     key = 'sharedvideo'
