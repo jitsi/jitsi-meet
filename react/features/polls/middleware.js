@@ -11,6 +11,8 @@ MiddlewareRegistry.register(({ dispatch }) => next => action => {
     const result = next(action);
 
     switch (action.type) {
+
+    // Middleware triggered when a poll is received
     case RECEIVE_POLL: {
         const { pollId } = action;
 

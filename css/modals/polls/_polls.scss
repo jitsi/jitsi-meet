@@ -70,7 +70,7 @@
 }
 
 .poll-question {
-    font-size: 1.5rem;
+    font-size: 1.2em;
     font-weight: bold;
     margin-bottom: 0.5em;
 }
@@ -91,24 +91,41 @@
 
 .poll-answer-vote-count {
     margin-left: 10px;
+    white-space: nowrap;
 }
 
 .poll-bar-container, .poll-bar {
     border-radius: 2px;
-    width: 200px;
     height: 4px;
 }
 
 .poll-bar-container {
     background-color: #666;
+    min-width: 150px;
 }
 
 .poll-bar {
     background-color: #eee;
 }
 
-.poll-notice {
+.poll-message-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
     margin-top: 5px;
-    font-size: 11px;
+}
+
+.poll-notice {
     font-weight: 100;
+    margin-right: 10px;
+}
+
+.poll-show-details {
+    background-color: transparent;
+    border: none;
+    
+    &:hover {
+        text-decoration: underline;
+    }
 }

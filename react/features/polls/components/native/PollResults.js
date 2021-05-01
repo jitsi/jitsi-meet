@@ -1,14 +1,11 @@
 // @flow
 
 import React, { useCallback } from 'react';
-import { View, Text, FlatList, Button } from 'react-native';
-import { useDispatch } from 'react-redux';
+import { View, Text, FlatList } from 'react-native';
 
-import { openDialog } from '../../../base/dialog';
 import AbstractPollResults from '../AbstractPollResults';
 import type { AbstractProps, AnswerInfo } from '../AbstractPollResults';
 
-import PollResultsDialog from './PollResultsDialog';
 import { dialogStyles, resultsStyles } from './styles';
 
 
@@ -21,14 +18,10 @@ import { dialogStyles, resultsStyles } from './styles';
 const PollResults = (props: AbstractProps) => {
     const {
         answers,
-        detailedVotes,
-        displayQuestion,
-        pollId,
+        showDetails,
         question,
         t
     } = props;
-
-    const dispatch = useDispatch();
 
     /* eslint-disable react/no-multi-comp */
     /**
@@ -56,7 +49,7 @@ const PollResults = (props: AbstractProps) => {
     const renderRow = useCallback((answer: AnswerInfo) => {
         const { name, percentage, voters, voterCount } = answer;
 
-        if (detailedVotes) {
+        if (showDetails) {
             return (
                 <View style = { resultsStyles.answerContainer }>
                     { renderHeader(name, percentage, voterCount) }
@@ -87,16 +80,9 @@ const PollResults = (props: AbstractProps) => {
     /* eslint-disable react/jsx-no-bind */
     return (
         <View>
-            {displayQuestion
-                && <View>
-                    <Text style = { dialogStyles.question } > { question } </Text>
-                </View>}
-            {!detailedVotes
-                && <View>
-                    <Button
-                        onPress = { () => dispatch(openDialog(PollResultsDialog, { pollId })) }
-                        title = 'More' />
-                </View>}
+            <View>
+                <Text style = { dialogStyles.question } >{ question }</Text>
+            </View>
             <FlatList
                 data = { answers }
                 keyExtractor = { (item, index) => index.toString() }

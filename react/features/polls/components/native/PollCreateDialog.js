@@ -12,7 +12,12 @@ import type { AbstractProps } from '../AbstractPollCreateDialog';
 
 import { dialogStyles } from './styles';
 
-
+/**
+ * A modal component to create polls.
+ *
+ * @param {AbstractProps} props - The passed props.
+ * @returns {React.Node}
+ */
 const PollCreateDialog = (props: AbstractProps) => {
 
     const {

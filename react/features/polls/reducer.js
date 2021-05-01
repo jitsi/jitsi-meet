@@ -11,25 +11,24 @@ const INITIAL_STATE = {
 
 ReducerRegistry.register('features/polls', (state = INITIAL_STATE, action) => {
     switch (action.type) {
-    case RECEIVE_POLL:
-        console.log('Received poll', action.pollId, ' :', action.poll);
 
+    // Reducer triggered when a poll is received
+    case RECEIVE_POLL:
         return {
             ...state,
             polls: {
                 ...state.polls,
+
+                // The poll is added to the dictionnary of received polls
                 [action.pollId]: action.poll
             }
         };
 
-    // Here is the logic to add answer to an existing poll
+    // Reducer triggered when an answer is received
+    // The answer is added  to an existing poll
     case RECEIVE_ANSWER: {
 
         const { pollId, answer }: { pollId: string; answer: Answer } = action;
-
-        console.log('currently saved polls: ', state.polls);
-        console.log('Reducer Received answer for poll :', pollId, answer);
-
 
         // if the poll doesn't exist
         if (!(pollId in state.polls)) {
@@ -38,7 +37,7 @@ ReducerRegistry.register('features/polls', (state = INITIAL_STATE, action) => {
             return state;
         }
 
-        // if the poll exists, we will update it with the incoming answer
+        // if the poll exists, we update it with the incoming answer
         const newAnswers = state.polls[pollId].answers
             .map(_answer => {
                 return {
@@ -48,6 +47,7 @@ ReducerRegistry.register('features/polls', (state = INITIAL_STATE, action) => {
             });
 
         for (let i = 0; i < newAnswers.length; i++) {
+            // if the answer was chosen, we add the senderID to the set of voters of this answer
             if (answer.answers[i] === true) {
                 newAnswers[i].voters.add(answer.senderId);
             }

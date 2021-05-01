@@ -19,7 +19,7 @@ export const dialogStyles = createStyleSheet({
     question: {
         fontSize: 16,
         fontWeight: 'bold',
-        paddingBottom: 8
+        marginVertical: 4
     },
 
     optionContainer: {
@@ -93,6 +93,20 @@ export const resultsStyles = createStyleSheet({
     },
 
     chatQuestion: {
+        fontWeight: 'bold'
+    }
+});
+
+export const chatStyles = createStyleSheet({
+    messageFooter: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        fontSize: 11,
+        marginTop: 6
+    },
+
+    showDetails: {
         fontWeight: 'bold'
     }
 });

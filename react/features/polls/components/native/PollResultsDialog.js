@@ -10,7 +10,13 @@ type Props = {
     pollId: number,
 };
 
-const PollResultDialog = (props: Props) => {
+/**
+ * Component that renders the poll results dialog.
+ *
+ * @param {Props} props - The passed props.
+ * @returns {React.Node}
+ */
+const PollResultsDialog = (props: Props) => {
     const { pollId } = props;
 
     return (
@@ -18,12 +24,10 @@ const PollResultDialog = (props: Props) => {
             okKey = 'polls.answer.close'
             titleKey = 'polls.answer.results'>
             <PollResults
-                detailedVotes = { true }
-                displayQuestion = { true }
-                pollId = { pollId } />
-
+                pollId = { pollId }
+                showDetails = { true } />
         </CustomSubmitDialog>
     );
 };
 
-export default PollResultDialog;
+export default PollResultsDialog;

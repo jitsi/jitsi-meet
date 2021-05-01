@@ -9,7 +9,12 @@ import { Tooltip } from '../../../base/tooltip';
 import AbstractPollCreateDialog from '../AbstractPollCreateDialog';
 import type { AbstractProps } from '../AbstractPollCreateDialog';
 
-
+/**
+ * A modal component to answer polls.
+ *
+ * @param {AbstractProps} props - The passed props.
+ * @returns {React.Node}
+ */
 const PollCreateDialog = (props: AbstractProps) => {
     const {
         question, setQuestion,

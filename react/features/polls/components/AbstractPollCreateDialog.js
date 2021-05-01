@@ -1,6 +1,7 @@
 // @flow
 
 import React, { useCallback, useState } from 'react';
+import type { AbstractComponent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 
@@ -26,22 +27,25 @@ export type AbstractProps = {
  * Higher Order Component taking in a concrete PollCreateDialog component and
  * augmenting it with state/behavior common to both web and native implementations.
  */
-const AbstractPollCreateDialog = (Component: React.Component<any>) => (props: any) => {
+const AbstractPollCreateDialog = (Component: AbstractComponent<AbstractProps>) => (props: any) => {
     const [ question, setQuestion ] = useState('');
 
     const [ answers, setAnswers ] = useState([ '' ]);
+
     const setAnswer = useCallback((i, answer) => {
         const newAnswers = [ ...answers ];
 
         newAnswers[i] = answer;
         setAnswers(newAnswers);
     });
+
     const addAnswer = useCallback(i => {
         const newAnswers = [ ...answers ];
 
         newAnswers.splice(i === undefined ? answers.length : i, 0, '');
         setAnswers(newAnswers);
     });
+
     const moveAnswer = useCallback((i, j) => {
         const newAnswers = [ ...answers ];
 
@@ -51,6 +55,7 @@ const AbstractPollCreateDialog = (Component: React.Component<any>) => (props: an
         newAnswers.splice(j, 0, answer);
         setAnswers(newAnswers);
     });
+
     const removeAnswer = useCallback(i => {
         if (answers.length === 1) {
             return;
@@ -62,6 +67,7 @@ const AbstractPollCreateDialog = (Component: React.Component<any>) => (props: an
     });
 
     const conference = useSelector(state => state['features/base/conference'].conference);
+
     const onSubmit = useCallback(() => {
         const filteredAnswers = answers.filter(answer => answer.trim().length > 0);
 

@@ -1,23 +1,22 @@
 // @flow
 
 import React, { useMemo } from 'react';
+import type { AbstractComponent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 
-import { getParticipants } from '../../base/participants';
+import { getParticipantDisplayName, getParticipants } from '../../base/participants';
 
 
+/**
+ * The type of the React {@code Component} props of inheriting component.
+ */
 type InputProps = {
 
     /**
-     * Display or not detailed votes
+     * Whether to display vote details
      */
-    detailedVotes: boolean,
-
-    /**
-     * Display or not the poll question
-     */
-    displayQuestion: boolean,
+    showDetails: boolean,
 
     /**
      * ID of the poll to display
@@ -32,11 +31,12 @@ export type AnswerInfo = {
     voterCount: number
 };
 
+/**
+ * The type of the React {@code Component} props of {@link AbstractPollResults}.
+ */
 export type AbstractProps = {
     answers: Array<AnswerInfo>,
-    detailedVotes: boolean,
-    displayQuestion: boolean,
-    pollId: number,
+    showDetails: boolean,
     question: string,
     t: Function
 };
@@ -45,21 +45,31 @@ export type AbstractProps = {
  * Higher Order Component taking in a concrete PollResult component and
  * augmenting it with state/behavior common to both web and native implementations.
  *
- * @param {React.Component} Component - The concrete component.
- * @returns {React.Node}
+ * @param {React.AbstractComponent} Component - The concrete component.
+ * @returns {React.AbstractComponent}
  */
-const AbstractPollResults = (Component: React.Component<InputProps>) => (props: InputProps) => {
-    const { pollId, detailedVotes, displayQuestion } = props;
+const AbstractPollResults = (Component: AbstractComponent<AbstractProps>) => (props: InputProps) => {
+    const { pollId, showDetails } = props;
 
     const pollDetails = useSelector(state => state['features/polls'].polls[pollId]);
 
-    const participants = useSelector(state => getParticipants(state));
+    let participants = useSelector(state => getParticipants(state));
 
-    const answers = useMemo(() => {
+    participants = useSelector(state => participants.map(part => {
+        const displayName = getParticipantDisplayName(state, part.id);
+
+        return {
+            id: part.id,
+            name: displayName
+        };
+    }));
+
+    const answers: Array<AnswerInfo> = useMemo(() => {
         const voterSet = new Set();
 
-        for (const answer of pollDetails.answers) { // eslint-disable-line no-unused-vars
-            for (const voter of answer.voters) { // eslint-disable-line no-unused-vars
+        // Getting every voters ID that participates to the poll
+        for (const answer of pollDetails.answers) {
+            for (const voter of answer.voters) {
                 voterSet.add(voter);
             }
         }
@@ -71,16 +81,12 @@ const AbstractPollResults = (Component: React.Component<InputProps>) => (props: 
 
             let voters = null;
 
-            if (detailedVotes) {
+            if (showDetails) {
                 voters = [ ...answer.voters ].map(voterId => {
+                    // Getting the name of participant from its ID
                     const participant = participants.find(part => part.id === voterId);
 
-                    return {
-                        id: voterId,
-                        name: participant
-                            ? participant.name
-                            : 'Absent Jitster'
-                    };
+                    return participant;
                 });
             }
 
@@ -97,10 +103,8 @@ const AbstractPollResults = (Component: React.Component<InputProps>) => (props: 
 
     return (<Component
         answers = { answers }
-        detailedVotes = { detailedVotes }
-        displayQuestion = { displayQuestion }
-        pollId = { pollId }
         question = { pollDetails.question }
+        showDetails = { showDetails }
         t = { t } />);
 };
 
