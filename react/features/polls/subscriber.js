@@ -11,6 +11,8 @@ StateListenerRegistry.register(
     state => getCurrentConference(state),
     (conference, store, previousConference) => {
         if (conference && conference !== previousConference) {
+
+            // Command triggered when a new poll is received
             conference.addCommandListener(COMMAND_NEW_POLL, ({ attributes, children }) => {
                 const poll = {
                     senderId: attributes.senderId,
@@ -26,6 +28,7 @@ StateListenerRegistry.register(
                 store.dispatch(receivePoll(attributes.pollId, poll));
             });
 
+            // Command triggered when new answer is received
             conference.addCommandListener(COMMAND_ANSWER_POLL, ({ attributes, children }) => {
                 const { dispatch } = store;
                 const { senderId, pollId } = attributes;
@@ -34,6 +37,9 @@ StateListenerRegistry.register(
                     senderId,
                     pollId,
                     answers: children.map(
+
+                            // Boolean are converted to text through XMPP
+                            // We convert here the strings back to boolean
                             element => element.attributes.checked === 'true'
                     )
                 };

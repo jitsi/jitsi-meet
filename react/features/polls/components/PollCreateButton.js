@@ -1,7 +1,6 @@
 // @flow
 import { type Dispatch } from 'redux';
 
-
 import { openDialog } from '../../base/dialog';
 import { translate } from '../../base/i18n';
 import { IconPoll } from '../../base/icons';
@@ -11,9 +10,9 @@ import { AbstractButton, type AbstractButtonProps } from '../../base/toolbox/com
 import { PollCreateDialog } from '.';
 
 /**
- * The type of the React {@code Component} props of {@link RaiseHandButton}.
+ * The type of the React {@code Component} props of {@link PollCreateButton}.
  */
- type Props = AbstractButtonProps & {
+type Props = AbstractButtonProps & {
 
     /**
      * The redux {@code dispatch} function.
@@ -44,7 +43,6 @@ class PollCreateButton<P: Props> extends AbstractButton<P, *> {
      * @returns {void}
      */
     _handleClick() {
-        // sendAnalytics(createToolbarEvent('toggle.security', { enable: !this.props._locked }));
         this.props.dispatch(openDialog(PollCreateDialog));
     }
 }

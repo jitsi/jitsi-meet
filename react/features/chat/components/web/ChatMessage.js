@@ -6,7 +6,7 @@ import { toArray } from 'react-emoji-render';
 
 import { translate } from '../../../base/i18n';
 import { Linkify } from '../../../base/react';
-import { PollResults } from '../../../polls/components';
+import { PollResultsMessage } from '../../../polls/components';
 import { MESSAGE_TYPE_LOCAL } from '../../constants';
 import AbstractChatMessage, {
     type Props
@@ -38,8 +38,6 @@ class ChatMessage extends AbstractChatMessage<Props> {
             }
         });
 
-        const isPoll = message.pollId !== undefined;
-
         return (
             <div
                 className = 'chatmessage-wrapper'
@@ -58,7 +56,6 @@ class ChatMessage extends AbstractChatMessage<Props> {
                                 { processedMessage }
                             </div>
                             { message.privateMessage && this._renderPrivateNotice() }
-                            { isPoll && this._renderPollResults(message.pollId) }
                         </div>
                         { message.privateMessage && message.messageType !== MESSAGE_TYPE_LOCAL
                             && (
@@ -108,24 +105,6 @@ class ChatMessage extends AbstractChatMessage<Props> {
                 { this._getPrivateNoticeMessage() }
             </div>
         );
-    }
-
-    /**
-     * Renders the poll results.
-     *
-     * @param {number} pollId - Id of the poll.
-     * @returns {React$Element<*>}
-     */
-    _renderPollResults(pollId: number) {
-        return <>
-            <PollResults
-                detailedVotes = { false }
-                displayQuestion = { false }
-                pollId = { pollId } />
-            <div className = 'poll-notice'>
-                { this.props.t('polls.chat.notice') }
-            </div>
-        </>;
     }
 
     /**

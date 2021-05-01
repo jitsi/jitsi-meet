@@ -9,8 +9,7 @@ import { translate } from '../../../base/i18n';
 import { Linkify } from '../../../base/react';
 import { connect } from '../../../base/redux';
 import { type StyleType } from '../../../base/styles';
-import { PollResults } from '../../../polls/components';
-import { resultsStyles } from '../../../polls/components/native/styles';
+import { PollResultsMessage } from '../../../polls/components';
 import { MESSAGE_TYPE_ERROR, MESSAGE_TYPE_LOCAL } from '../../constants';
 import { replaceNonUnicodeEmojis } from '../../functions';
 import AbstractChatMessage, { type Props as AbstractProps } from '../AbstractChatMessage';
@@ -73,9 +72,6 @@ class ChatMessage extends AbstractChatMessage<Props> {
             messageBubbleStyle.push(_styles.privateMessageBubble);
         }
 
-        const isPoll = message.pollId !== undefined;
-        const textStyle = isPoll ? resultsStyles.chatQuestion : undefined;
-
         return (
             <View style = { styles.messageWrapper } >
                 { this._renderAvatar() }
@@ -83,13 +79,12 @@ class ChatMessage extends AbstractChatMessage<Props> {
                     <View style = { messageBubbleStyle }>
                         <View style = { styles.textWrapper } >
                             { this._renderDisplayName() }
-                            <Linkify
-                                linkStyle = { styles.chatLink }
-                                textStyle = { textStyle }>
-                                { replaceNonUnicodeEmojis(this._getMessageText()) }
-                            </Linkify>
+                            { message.pollId === undefined ? (
+                                <Linkify linkStyle = { styles.chatLink }>
+                                    { replaceNonUnicodeEmojis(this._getMessageText()) }
+                                </Linkify>
+                            ) : <PollResultsMessage pollId = { message.pollId } />}
                             { this._renderPrivateNotice() }
-                            { isPoll && this._renderPollResults(message.pollId) }
                         </View>
                         { this._renderPrivateReplyButton() }
                     </View>
@@ -183,30 +178,6 @@ class ChatMessage extends AbstractChatMessage<Props> {
                     reply = { true }
                     showLabel = { false }
                     toggledStyles = { _styles.replyStyles } />
-            </View>
-        );
-    }
-
-    /**
-     * Renders the poll results.
-     *
-     * @param {number} pollId - Id of the poll.
-     * @returns {React$Element<*>}
-     */
-    _renderPollResults(pollId: number) {
-        const { _styles } = this.props;
-
-        return (
-            <View>
-                <PollResults
-                    detailedVotes = { false }
-                    displayQuestion = { false }
-                    pollId = { pollId } />
-                <View style = { _styles.privateNotice }>
-                    <Text>
-                        { this.props.t('polls.chat.notice') }
-                    </Text>
-                </View>
             </View>
         );
     }

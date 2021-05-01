@@ -10,7 +10,13 @@ type Props = {
     pollId: number,
 };
 
-const PollResultDialog = (props: Props) => {
+/**
+ * Component that renders the poll results dialog.
+ *
+ * @param {Props} props - The passed props.
+ * @returns {React.Node}
+ */
+const PollResultsDialog = (props: Props) => {
     const { pollId } = props;
 
     return (
@@ -21,12 +27,11 @@ const PollResultDialog = (props: Props) => {
             width = { 'small' } >
             <div className = 'poll-dialog'>
                 <PollResults
-                    detailedVotes = { true }
-                    displayQuestion = { true }
-                    pollId = { pollId } />
+                    pollId = { pollId }
+                    showDetails = { true } />
             </div>
         </Dialog>
     );
 };
 
-export default PollResultDialog;
+export default PollResultsDialog;
