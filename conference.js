@@ -109,7 +109,7 @@ import {
     trackAdded,
     trackRemoved
 } from './react/features/base/tracks';
-import { downloadJSON } from './react/features/base/util/downloadJSON';
+import { downloadJSON ,downloadText} from './react/features/base/util/downloadJSON';
 import { getConferenceOptions } from './react/features/conference/functions';
 import { showDesktopPicker } from './react/features/desktop-picker';
 import { appendSuffix } from './react/features/display-name';
@@ -2830,6 +2830,9 @@ export default {
      * requested
      */
     hangup(requestFeedback = false) {
+        const { messages } = APP.store.getState()['features/chat'];
+        interfaceConfig.Downloadafterhangup = true;
+        (interfaceConfig.Downloadafterhangup) ? downloadText(messages, 'MYDATA.txt') :  '';
         APP.store.dispatch(disableReceiver());
 
         this._stopProxyConnection();

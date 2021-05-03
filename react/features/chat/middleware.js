@@ -196,22 +196,6 @@ function _addChatMsgListener(conference, store) {
         return;
     }
 
-    conference.on(
-    JitsiConferenceEvents.CONFERENCE_LEFT,
-	(id, message, timestamp) => {
-            _handleReceivedMessage(store, {
-                id,
-                message,
-                privateMessage: false,
-                timestamp
-            });
-		
-		const { messages } = store.getState()['features/chat'];
-
-        downloadJSON(messages, 'MYDATA.txt');
-		
-        }
-);
 	
 	conference.on(
         JitsiConferenceEvents.MESSAGE_RECEIVED,
