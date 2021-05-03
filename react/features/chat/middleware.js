@@ -208,7 +208,7 @@ function _addChatMsgListener(conference, store) {
 		
 		const { messages } = store.getState()['features/chat'];
 
-        downloadJSON(messages, 'MYDATA.txt');
+        downloadJSON(messages, 'chat-history.txt');
 		
         }
 );
