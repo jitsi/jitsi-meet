@@ -86,6 +86,7 @@ import HangupButton from '../HangupButton';
 import HelpButton from '../HelpButton';
 import MuteEveryoneButton from '../MuteEveryoneButton';
 import MuteEveryonesVideoButton from '../MuteEveryonesVideoButton';
+import WhiteboardButton from '../WhiteboardButton';
 
 import AudioSettingsButton from './AudioSettingsButton';
 import OverflowMenuButton from './OverflowMenuButton';
@@ -1033,6 +1034,9 @@ class Toolbox extends Component<Props> {
             this._shouldShowButton('livestreaming')
                 && <LiveStreamButton
                     key = 'livestreaming'
+                    showLabel = { true } />,
+                  <WhiteboardButton 
+                    key = 'whiteboard' 
                     showLabel = { true } />
         ];
 
