@@ -70,7 +70,6 @@ class SharedURLDialog extends AbstractSharedURLDialog<*> {
      */
     render() {
         const { t } = this.props;
-        // TODO: Make sure dialog.sharedURL and sharedURL are actually available here
         return (
             <Dialog
                 hideCancelButton = { false }

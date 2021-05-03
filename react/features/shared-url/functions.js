@@ -16,7 +16,7 @@ export function getSharedURL(sharedURL: string) {
     const p = /^(https?:\/\/)/;
     const result = sharedURL.match(p);
 
-    return result ? result[1] : false;
+    return result ? sharedURL : false;
 }
 
 /**

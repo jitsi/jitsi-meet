@@ -79,6 +79,7 @@ class LargeVideo extends Component<Props> {
                     <div id = 'sharedVideoIFrame' />
                 </div>
                 <div id = 'etherpad' />
+                <div id = 'sharedurl' />
 
                 <Watermarks />
 

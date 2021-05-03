@@ -50,7 +50,7 @@ export default class AbstractSharedURLDialog<S: *> extends Component < Props, S 
      *     {@code true} - the dialog should be closed.
      *     {@code false} - the dialog should be left open.
      *
-     * @param {string} link - The entered video link.
+     * @param {string} link
      * @returns {boolean}
      */
     _onSetURL(link: string) {

@@ -179,7 +179,8 @@ const commands = {
     CUSTOM_ROLE: 'custom-role',
     EMAIL: EMAIL_COMMAND,
     ETHERPAD: 'etherpad',
-    SHARED_VIDEO: 'shared-video'
+    SHARED_VIDEO: 'shared-video',
+    SHARED_URL: 'shared-url'
 };
 
 /**
@@ -2020,6 +2021,7 @@ export default {
             logger.log(`USER ${id} LEFT:`, user);
 
             APP.UI.onSharedVideoStop(id);
+            APP.UI.onSharedURLStop(id);
         });
 
         room.on(JitsiConferenceEvents.USER_STATUS_CHANGED, (id, status) => {

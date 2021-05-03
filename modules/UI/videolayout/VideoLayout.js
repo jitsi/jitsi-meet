@@ -9,7 +9,8 @@ import {
 } from '../../../react/features/base/participants';
 import { getTrackByMediaTypeAndParticipant } from '../../../react/features/base/tracks';
 import { SHARED_VIDEO_CONTAINER_TYPE } from '../shared_video/SharedVideo';
-
+import { SHARED_URL_CONTAINER_TYPE } from '../shared_url/SharedURL';
+import { SHARED_URL_PARTICIPANT_NAME } from '../../../react/features/shared-url/constants';
 import LargeVideoManager from './LargeVideoManager';
 import { VIDEO_CONTAINER_TYPE } from './VideoContainer';
 
@@ -89,7 +90,14 @@ const VideoLayout = {
         const participant = getParticipantById(state, id);
 
         if (participant?.isFakeParticipant) {
-            return SHARED_VIDEO_CONTAINER_TYPE;
+            if (participant.name === SHARED_URL_PARTICIPANT_NAME) {
+                return SHARED_URL_CONTAINER_TYPE;
+            }
+            else {
+                // TODO: perhaps import SHARED_VIDEO_PARTICIPANT_NAME as well?
+                // This assumes the only other option is shared video:
+                return SHARED_VIDEO_CONTAINER_TYPE;
+            }
         }
 
         const videoTrack = getTrackByMediaTypeAndParticipant(state['features/base/tracks'], MEDIA_TYPE.VIDEO, id);

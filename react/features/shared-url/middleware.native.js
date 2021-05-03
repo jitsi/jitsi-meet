@@ -102,12 +102,12 @@ function handleSharedURLStatus(store, sharedURL, { state, from }, conference) {
     const oldStatus = getState()['features/shared-url']?.status;
 
     // TODO: Look at this states are appropriate for URLs
+    // TODO: Make sure we don't have the send the avatarURL (see shared-video for example)
     if (state === 'sharing' || ![ 'not_sharing', 'sharing' ].includes(oldStatus)) {
         dispatch(participantJoined({
             conference,
             id: sharedURL,
             isFakeParticipant: true,
-            avatarURL: `${sharedURL}/favicon.ico`,
             name: SHARED_URL_PARTICIPANT_NAME
         }));
 

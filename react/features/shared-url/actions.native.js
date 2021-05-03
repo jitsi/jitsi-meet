@@ -41,7 +41,7 @@ export function toggleSharedURL() {
 }
 
 /**
- * Displays the prompt for entering the video link.
+ * Displays the prompt for entering the URL.
  *
  * @param {Function} onPostSubmit - The function to be invoked when a valid link is entered.
  * @returns {Function}
