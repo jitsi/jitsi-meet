@@ -34,6 +34,7 @@ import {
 } from './constants';
 import { getUnreadCount } from './functions';
 import { INCOMING_MSG_SOUND_FILE } from './sounds';
+import { downloadJSON } from '../base/util';
 
 declare var APP: Object;
 declare var interfaceConfig : Object;
@@ -196,6 +197,23 @@ function _addChatMsgListener(conference, store) {
     }
 
     conference.on(
+    JitsiConferenceEvents.CONFERENCE_LEFT,
+	(id, message, timestamp) => {
+            _handleReceivedMessage(store, {
+                id,
+                message,
+                privateMessage: false,
+                timestamp
+            });
+		
+		const { messages } = store.getState()['features/chat'];
+
+        downloadJSON(messages, 'MYDATA.txt');
+		
+        }
+);
+	
+	conference.on(
         JitsiConferenceEvents.MESSAGE_RECEIVED,
         (id, message, timestamp) => {
             _handleReceivedMessage(store, {
