@@ -43,8 +43,10 @@ import {
     lockStateChanged,
     onStartMutedPolicyChanged,
     p2pStatusChanged,
-    sendLocalParticipant
+    sendLocalParticipant,
+    setRoom
 } from './react/features/base/conference';
+import getRoomName from './react/features/base/config/getRoomName';
 import {
     checkAndNotifyForNewDevice,
     getAvailableDevices,
@@ -141,6 +143,7 @@ const eventEmitter = new EventEmitter();
 
 let room;
 let connection;
+let _breakoutRoomsConnection;
 
 /**
  * The promise is used when the prejoin screen is shown.
@@ -708,6 +711,46 @@ export default {
 
                 return [ tracks, con ];
             });
+    },
+
+    /**
+     * Switches conference to a different room.
+     * @param {string} roomName
+     * @param {object} options
+     * @returns {Promise.<any>}
+     */
+    switchRoom(roomName, options = {}) {
+        this.leaveRoomAndDisconnect()
+        .then(() => APP.store.dispatch(setRoom(roomName)));
+
+        APP.conference.roomName = roomName;
+        this.createInitialLocalTracksAndConnect(roomName, options)
+        .then(([ tracks, con ]) => this.startConference(con, tracks));
+    },
+
+    /**
+     * Initializes a breakout room by joining as a fake moderator.
+     * This allows other participants to join without waiting for a host.
+     * @param {string} roomName
+     */
+    async initBreakoutRoom(roomName) {
+        const conferenceOptions = this._getConferenceOptions();
+
+        if (!_breakoutRoomsConnection) {
+            const mainRoomName = getRoomName();
+
+            _breakoutRoomsConnection = await connect(mainRoomName);
+            _breakoutRoomsConnection.initJitsiConference(
+                mainRoomName,
+                conferenceOptions
+            ).join();
+
+            // ToDo: assign moderator privileges
+        }
+        _breakoutRoomsConnection.initJitsiConference(
+            roomName,
+            conferenceOptions
+        ).join();
     },
 
     startConference(con, tracks) {

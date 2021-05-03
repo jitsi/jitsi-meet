@@ -7,6 +7,9 @@ import { ThemeProvider } from 'styled-components';
 
 import { openDialog } from '../../base/dialog';
 import { isLocalParticipantModerator } from '../../base/participants';
+import { addBreakoutRoom } from '../../breakout-rooms/actions';
+import { RoomList } from '../../breakout-rooms/components';
+import { getNewBreakoutRoomId } from '../../breakout-rooms/functions';
 import { MuteEveryoneDialog } from '../../video-menu/components/';
 import { close } from '../actions';
 import { classList, getParticipantsPaneOpen } from '../functions';
@@ -31,6 +34,7 @@ export const ParticipantsPane = () => {
 
     const closePane = useCallback(() => dispatch(close(), [ dispatch ]));
     const muteAll = useCallback(() => dispatch(openDialog(MuteEveryoneDialog)), [ dispatch ]);
+    const addRoom = useCallback(() => dispatch(addBreakoutRoom(getNewBreakoutRoomId())), [ dispatch ]);
 
     return (
         <ThemeProvider theme = { theme }>
@@ -47,9 +51,13 @@ export const ParticipantsPane = () => {
                         <LobbyParticipantList />
                         <AntiCollapse />
                         <MeetingParticipantList />
+                        <RoomList />
                     </Container>
                     {isLocalModerator && (
                         <Footer>
+                            <FooterButton onClick = { addRoom }>
+                                {t('breakoutRooms.actions.addRoom')}
+                            </FooterButton>
                             <FooterButton onClick = { muteAll }>
                                 {t('participantsPane.actions.muteAll')}
                             </FooterButton>

@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 
 import { getParticipants } from '../../base/participants';
+import { getCurrentBreakoutRoom, getIsInBreakoutRoom } from '../../breakout-rooms/functions';
 import { findStyledAncestor } from '../functions';
 
 import { InviteButton } from './InviteButton';
@@ -35,9 +36,13 @@ const initialState = Object.freeze(Object.create(null));
 
 export const MeetingParticipantList = () => {
     const isMouseOverMenu = useRef(false);
-    const participants = useSelector(getParticipants, _.isEqual);
+
+    // ToDo: Remove the filtering after the breakout room fake host becomes hidden.
+    const participants = useSelector(getParticipants, _.isEqual).filter(p => p.name);
     const [ raiseContext, setRaiseContext ] = useState<RaiseContext>(initialState);
     const { t } = useTranslation();
+    const isInBreakoutRoom = getIsInBreakoutRoom();
+    const currentBreakoutRoom = getCurrentBreakoutRoom();
 
     const lowerMenu = useCallback(() => {
         /**
@@ -85,7 +90,13 @@ export const MeetingParticipantList = () => {
 
     return (
     <>
-        <Heading>{t('participantsPane.headings.participantsList', { count: participants.length })}</Heading>
+        <Heading> {
+            isInBreakoutRoom
+                ? t('breakoutRooms.headings.breakoutRoom', { index: currentBreakoutRoom.index,
+                    count: participants.length })
+                : t('participantsPane.headings.mainRoom', { count: participants.length })
+        }
+        </Heading>
         <InviteButton />
         <div>
             {participants.map(p => (

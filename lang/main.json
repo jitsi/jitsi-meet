@@ -43,6 +43,17 @@
     "audioOnly": {
         "audioOnly": "Low bandwidth"
     },
+    "breakoutRooms": {
+        "headings": {
+            "breakoutRoom": "Breakout room #{{index}}"
+        },
+        "actions": {
+            "addRoom": "Add room",
+            "removeRoom": "Remove room",
+            "leaveBreakoutRoom": "Leave breakout room",
+            "sendToBreakoutRoom": "Send to breakout room #{{index}}"
+        }
+    },
     "calendarSync": {
         "addMeetingURL": "Add a meeting link",
         "confirmAddLink": "Do you want to add a Jitsi link to this event?",
@@ -532,7 +543,7 @@
     "participantsPane": {
         "headings": {
             "lobby": "Lobby ({{count}})",
-            "participantsList": "Meeting participants ({{count}})"
+            "mainRoom": "Main room ({{count}})"
         },
         "actions": {
             "muteAll": "Mute all",
