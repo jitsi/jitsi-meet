@@ -10,9 +10,9 @@ import {
 } from '../base/participants';
 import { MiddlewareRegistry, StateListenerRegistry } from '../base/redux';
 
-import { TOGGLE_SHARED_VIDEO, SET_SHARED_VIDEO_STATUS } from './actionTypes';
+import { TOGGLE_SHARED_VIDEO2, SET_SHARED_VIDEO_STATUS2 } from './actionTypes';
 import { setSharedVideoStatus, showSharedVideoDialog } from './actions.native';
-import { SHARED_VIDEO, VIDEO_PLAYER_PARTICIPANT_NAME } from './constants';
+import { SHARED_VIDEO2, VIDEO_PLAYER_PARTICIPANT_NAME2 } from './constants';
 import { isSharingStatus } from './functions';
 
 /**
@@ -28,10 +28,10 @@ MiddlewareRegistry.register(store => next => action => {
     const conference = getCurrentConference(state);
     const localParticipantId = getLocalParticipant(state)?.id;
     const { videoId, status, ownerId, time } = action;
-    const { ownerId: stateOwnerId, videoId: stateVideoId } = state['features/shared-video'];
+    const { ownerId: stateOwnerId, videoId: stateVideoId } = state['features/shared-video2'];
 
     switch (action.type) {
-    case TOGGLE_SHARED_VIDEO:
+    case TOGGLE_SHARED_VIDEO2:
         _toggleSharedVideo(store, next, action);
         break;
     case CONFERENCE_LEFT:
@@ -43,7 +43,7 @@ MiddlewareRegistry.register(store => next => action => {
             dispatch(participantLeft(stateVideoId, conference));
         }
         break;
-    case SET_SHARED_VIDEO_STATUS:
+    case SET_SHARED_VIDEO_STATUS2:
         if (localParticipantId === ownerId) {
             sendShareVideoCommand(videoId, status, conference, localParticipantId, time);
         }
@@ -62,7 +62,7 @@ StateListenerRegistry.register(
     state => getCurrentConference(state),
     (conference, store, previousConference) => {
         if (conference && conference !== previousConference) {
-            conference.addCommandListener(SHARED_VIDEO,
+            conference.addCommandListener(SHARED_VIDEO2,
                 ({ value, attributes }) => {
 
                     const { dispatch, getState } = store;
@@ -98,7 +98,7 @@ StateListenerRegistry.register(
 function handleSharingVideoStatus(store, videoId, { state, time, from }, conference) {
     const { dispatch, getState } = store;
     const localParticipantId = getLocalParticipant(getState()).id;
-    const oldStatus = getState()['features/shared-video']?.status;
+    const oldStatus = getState()['features/shared-video2']?.status;
 
     if (state === 'start' || ![ 'playing', 'pause', 'start' ].includes(oldStatus)) {
         dispatch(participantJoined({
@@ -106,7 +106,7 @@ function handleSharingVideoStatus(store, videoId, { state, time, from }, confere
             id: videoId,
             isFakeParticipant: true,
             avatarURL: `https://img.youtube.com/vi/${videoId}/0.jpg`,
-            name: VIDEO_PLAYER_PARTICIPANT_NAME
+            name: VIDEO_PLAYER_PARTICIPANT_NAME2
         }));
 
         dispatch(pinParticipant(videoId));
@@ -130,7 +130,7 @@ function handleSharingVideoStatus(store, videoId, { state, time, from }, confere
 function _toggleSharedVideo(store, next, action) {
     const { dispatch, getState } = store;
     const state = getState();
-    const { videoId, ownerId, status } = state['features/shared-video'];
+    const { videoId, ownerId, status } = state['features/shared-video2'];
     const localParticipant = getLocalParticipant(state);
 
     if (status === 'playing' || status === 'start' || status === 'pause') {
@@ -175,7 +175,7 @@ function _onVideoLinkEntered(store, id) {
  * @returns {void}
  */
 function sendShareVideoCommand(id, status, conference, localParticipantId, time) {
-    conference.sendCommandOnce(SHARED_VIDEO, {
+    conference.sendCommandOnce(SHARED_VIDEO2, {
         value: id,
         attributes: {
             from: localParticipantId,

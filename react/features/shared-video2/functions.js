@@ -2,7 +2,7 @@
 
 import { getParticipants } from '../base/participants';
 
-import { VIDEO_PLAYER_PARTICIPANT_NAME } from './constants';
+import { VIDEO_PLAYER_PARTICIPANT_NAME2 } from './constants';
 
 /**
  * Validates the entered video url.
@@ -12,7 +12,7 @@ import { VIDEO_PLAYER_PARTICIPANT_NAME } from './constants';
  * @param {string} url - The entered video link.
  * @returns {boolean}
  */
-export function getYoutubeLink(url: string) {
+export function getPeerTubeLink(url: string) {
     const p = /^(?:https?:\/\/)?(?:peer\.tube\/(?:videos)\/(?:watch))\/((\w|-){36})(?:\S+)?$/;// eslint-disable-line max-len
       
     //https://peer.tube/videos/watch/ae3d7bac-e746-45cd-b4a5-a7b314f20a85
@@ -29,7 +29,7 @@ export function getYoutubeLink(url: string) {
  * @returns {boolean}
  */
 export function isSharingStatus(status: string) {
-    return [ 'playing', 'pause', 'start' ].includes(status);
+    return [ 'unstarted', 'playing', 'paused', 'ended' ].includes(status);
 }
 
 
@@ -41,6 +41,6 @@ export function isSharingStatus(status: string) {
  */
 export function isVideoPlaying(stateful: Object | Function): boolean {
     return Boolean(getParticipants(stateful).find(p => p.isFakeParticipant
-        && p.name === VIDEO_PLAYER_PARTICIPANT_NAME)
+        && p.name === VIDEO_PLAYER_PARTICIPANT_NAME2)
     );
 }

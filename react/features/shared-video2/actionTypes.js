@@ -9,7 +9,7 @@
  *     status: string
  * }
  */
-export const SET_SHARED_VIDEO_STATUS = 'SET_SHARED_VIDEO_STATUS';
+export const SET_SHARED_VIDEO_STATUS2 = 'SET_SHARED_VIDEO_STATUS2';
 
 /**
  * The type of the action which signals to start the flow for starting or
@@ -19,7 +19,7 @@ export const SET_SHARED_VIDEO_STATUS = 'SET_SHARED_VIDEO_STATUS';
  *     type: TOGGLE_SHARED_VIDEO
  * }
  */
-export const TOGGLE_SHARED_VIDEO = 'TOGGLE_SHARED_VIDEO';
+export const TOGGLE_SHARED_VIDEO2 = 'TOGGLE_SHARED_VIDEO2';
 
 
 /**
@@ -30,4 +30,4 @@ export const TOGGLE_SHARED_VIDEO = 'TOGGLE_SHARED_VIDEO';
  *     type: SET_DISABLE_BUTTON
  * }
  */
-export const SET_DISABLE_BUTTON = 'SET_DISABLE_BUTTON';
+export const SET_DISABLE_BUTTON2 = 'SET_DISABLE_BUTTON2';

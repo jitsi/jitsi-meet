@@ -21,6 +21,8 @@ import UIEvents from '../../service/UI/UIEvents';
 
 import EtherpadManager from './etherpad/Etherpad';
 import SharedVideoManager from './shared_video/SharedVideo';
+//TODO
+import SharedVideoManager2 from './shared_video2/SharedVideo';
 import messageHandler from './util/MessageHandler';
 import UIUtil from './util/UIUtil';
 import VideoLayout from './videolayout/VideoLayout';
@@ -35,6 +37,7 @@ UI.eventEmitter = eventEmitter;
 
 let etherpadManager;
 let sharedVideoManager;
+let sharedVideoManager2;
 
 const UIListeners = new Map([
     [
@@ -43,6 +46,9 @@ const UIListeners = new Map([
     ], [
         UIEvents.SHARED_VIDEO_CLICKED,
         () => sharedVideoManager && sharedVideoManager.toggleSharedVideo()
+    ],[
+        UIEvents.SHARED_VIDEO_CLICKED2,
+        () => sharedVideoManager2 && sharedVideoManager2.toggleSharedVideo()
     ], [
         UIEvents.TOGGLE_FILMSTRIP,
         () => UI.toggleFilmstrip()

@@ -2,7 +2,7 @@
 
 import { openDialog } from '../base/dialog';
 
-import { SET_SHARED_VIDEO_STATUS, TOGGLE_SHARED_VIDEO } from './actionTypes';
+import { SET_SHARED_VIDEO_STATUS2, TOGGLE_SHARED_VIDEO2 } from './actionTypes';
 import { SharedVideoDialog } from './components/native';
 
 /**
@@ -13,7 +13,7 @@ import { SharedVideoDialog } from './components/native';
  * @param {number} time - The current position of the video being shared.
  * @param {string} ownerId - The participantId of the user sharing the video.
  * @returns {{
- *     type: SET_SHARED_VIDEO_STATUS,
+ *     type: SET_SHARED_VIDEO_STATUS2,
  *     ownerId: string,
  *     status: string,
  *     time: number,
@@ -22,7 +22,7 @@ import { SharedVideoDialog } from './components/native';
  */
 export function setSharedVideoStatus(videoId: string, status: string, time: number, ownerId: string) {
     return {
-        type: SET_SHARED_VIDEO_STATUS,
+        type: SET_SHARED_VIDEO_STATUS2,
         ownerId,
         status,
         time,
@@ -34,12 +34,12 @@ export function setSharedVideoStatus(videoId: string, status: string, time: numb
  * Starts the flow for starting or stopping a shared video.
  *
  * @returns {{
- *     type: TOGGLE_SHARED_VIDEO
+ *     type: TOGGLE_SHARED_VIDEO2
  * }}
  */
 export function toggleSharedVideo() {
     return {
-        type: TOGGLE_SHARED_VIDEO
+        type: TOGGLE_SHARED_VIDEO2
     };
 }
 

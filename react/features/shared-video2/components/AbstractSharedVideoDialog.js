@@ -3,7 +3,7 @@
 import { Component } from 'react';
 import type { Dispatch } from 'redux';
 
-import { getYoutubeLink } from '../functions';
+import { getPeerTubeLink } from '../functions';
 
 
 /**
@@ -60,7 +60,7 @@ export default class AbstractSharedVideoDialog<S: *> extends Component < Props, 
             return false;
         }
 
-        const videoId = getYoutubeLink(link);
+        const videoId = getPeerTubeLink(link);
 
         if (videoId) {
             const { onPostSubmit } = this.props;

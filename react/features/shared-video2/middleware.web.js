@@ -5,9 +5,9 @@ import { getCurrentConference } from '../base/conference';
 import { getLocalParticipant } from '../base/participants';
 import { MiddlewareRegistry, StateListenerRegistry } from '../base/redux';
 
-import { TOGGLE_SHARED_VIDEO } from './actionTypes';
+import { TOGGLE_SHARED_VIDEO2 } from './actionTypes';
 import { setDisableButton } from './actions.web';
-import { SHARED_VIDEO } from './constants';
+import { SHARED_VIDEO2 } from './constants';
 
 declare var APP: Object;
 
@@ -25,8 +25,8 @@ MiddlewareRegistry.register(store => next => action => {
     }
 
     switch (action.type) {
-    case TOGGLE_SHARED_VIDEO:
-        APP.UI.emitEvent(UIEvents.SHARED_VIDEO_CLICKED);
+    case TOGGLE_SHARED_VIDEO2:
+        APP.UI.emitEvent(UIEvents.SHARED_VIDEO_CLICKED2);
         break;
     }
 
@@ -41,7 +41,7 @@ StateListenerRegistry.register(
     state => getCurrentConference(state),
     (conference, store, previousConference) => {
         if (conference && conference !== previousConference) {
-            conference.addCommandListener(SHARED_VIDEO,
+            conference.addCommandListener(SHARED_VIDEO2,
                 ({ attributes }) => {
 
                     const { dispatch, getState } = store;

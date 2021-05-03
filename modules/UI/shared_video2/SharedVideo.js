@@ -12,6 +12,8 @@ import {
     participantLeft,
     pinParticipant
 } from '../../../react/features/base/participants';
+
+//TODO VIDEO_PLAYER_PARTICIPANT_NAME => VIDEO_PLAYER_PARTICIPANT_NAME2
 import { VIDEO_PLAYER_PARTICIPANT_NAME } from '../../../react/features/shared-video2/constants';
 import { dockToolbox, showToolbox } from '../../../react/features/toolbox/actions.web';
 import { getToolboxHeight } from '../../../react/features/toolbox/functions.web';
@@ -30,20 +32,21 @@ export const SHARED_VIDEO_CONTAINER_TYPE = 'sharedvideo2';
  * Example shared video link.
  * @type {string}
  */
-const updateInterval = 5000; // milliseconds
+const updateInterval = 500; // milliseconds
 
 
 /**
  * Manager of shared video.
  */
+//TODO
 export default class SharedVideoManager {
     /**
      *
      */
     constructor(emitter) {
         this.emitter = emitter;
-        this.isSharedVideoShown = false;
-        this.isPlayerAPILoaded = false;
+        this.isSharedVideoShown = false;     
+        this.isPlayerAPILoaded = false;  
         this.mutedWithUserInteraction = false;
     }
 
@@ -123,8 +126,10 @@ export default class SharedVideoManager {
         // the video url
         this.url = url;
 
+       
         // the owner of the video
         this.from = id;
+
 
         this.mutedWithUserInteraction = APP.conference.isLocalAudioMuted();
 
@@ -132,147 +137,62 @@ export default class SharedVideoManager {
         this.localAudioMutedListener = this.onLocalAudioMuted.bind(this);
         this.emitter.on(UIEvents.AUDIO_MUTED, this.localAudioMutedListener);
 
+
+        this.initialAttributes = attributes;
+        const self = this;
               
-        //from https://peer.tube/videos/watch/ae3d7bac-e746-45cd-b4a5-a7b314f20a85
-        //to   https://peer.tube/videos/embed/ae3d7bac-e746-45cd-b4a5-a7b314f20a85?api=1
         
-        const sourceScript = document.createElement('script');
-        sourceScript.type = "text/javascript";
-        sourceScript.src = 'https://unpkg.com/@peertube/embed-api/build/player.min.js';
-        document.head.append(sourceScript);
+        //HACKATHON TIME!
+
+        //from https://peer.tube/videos/watch/18cc9866-ea53-426c-bef2-b84880406038
+        //to   https://peer.tube/videos/embed/18cc9866-ea53-426c-bef2-b84880406038?autoplay=0&controls=(showControls)&api=1
+
+
+        const iframeCreated = document.createElement('iframe');
+        const showControls = APP.conference.isLocalId(self.from) ? 1 : 0;
+
+        iframeCreated.src = 'https://peer.tube/videos/embed/' + url + '?autoplay=0&controls=' + showControls + '&api=1';        
+        iframeCreated.id ='peerTubeIFrame';
+        document.querySelector('#sharedVideo').appendChild(iframeCreated);        
+                     
       
 
-        const iframe = document.createElement('iframe');
-        iframe.src = 'https://peer.tube/videos/embed/' + url + '?api=1';
-        iframe.setAttribute('controls','1');
-        document.querySelector('#sharedVideoIFrame').appendChild(iframe);
+        const p = new PeerTubePlayer(document.querySelector('iframe'));
+        window.player = p;
+       
+
+        //according to docs https://docs.joinpeertube.org/api-embed-player
+        // we should be doing this
+        //        
+        //await player.ready
+        //
+        //but it is synchronous (bad user exp. due to waiting times), so I do:
+
+               
+        p.ready.then(() =>{
+
+            logger.log("p is ready.");
+
+            self.isPlayerAPILoaded = true;  
+                            
+            //TODO there should be more events such as volume control          
+
+            p.addEventListener(
+                'playbackStatusChange', 'playbackStatusChange');         
 
 
-        // sometimes we receive errors like player not defined
-        // or player.pauseVideo is not a function
-        // we need to operate with player after start playing
-        // self.player will be defined once it start playing
-        // and will process any initial attributes if any
-        this.initialAttributes = attributes;
+            const player = window.player;
+       
 
-        const self = this;
-
-       console.log('HOLAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA');
-/*
-            const p = new PeerTubePlayer(iframe, { 
-                height: '100%',
-                width: '100%',
-                videoId: self.url,
-                events: {
-                    'onReady': onPlayerReady,
-                    'onStateChange': onPlayerStateChange,
-                    'onError': onPlayerError
-                }
-            });
-*/
-/*
-            const p = new PeerTubePlayer(document.getElementById,('iframe'), { 
-                height: '100%',
-                width: '100%',
-                videoId: self.url               
-            });
-            // p.ready;
-*/
-            const PeerTubePlayer = window['PeerTubePlayer'];
-            const p = new PeerTubePlayer(document.querySelector,('iframe'));
-
-            self.isPlayerAPILoaded = true;
-            window.onYouTubeIframeAPIReady = function() {
-                       
-                // add listener for volume changes
-                p.addEventListener(
-                    'onVolumeChange', 'onVolumeChange');
-
-                if (APP.conference.isLocalId(self.from)) {
-                // adds progress listener that will be firing events
-                // while we are paused and we change the progress of the
-                // video (seeking forward or backward on the video)
-                    p.addEventListener(
-                        'onVideoProgress', 'onVideoProgress');
-                }
-            };
-        
-
-        
-        /**
-         * Indicates that a change in state has occurred for the shared video.
-         * @param event the event notifying us of the change
-         */
-        window.onPlayerStateChange = function(event) {
-            // eslint-disable-next-line eqeqeq
-            if (event.data == YT.PlayerState.PLAYING) {
-                self.player = event.target;
-
-                if (self.initialAttributes) {
-                    // If a network update has occurred already now is the
-                    // time to process it.
-                    self.processVideoUpdate(
-                        self.player,
-                        self.initialAttributes);
-
-                    self.initialAttributes = null;
-                }
-                self.smartAudioMute();
-                // eslint-disable-next-line eqeqeq
-            } else if (event.data == YT.PlayerState.PAUSED) {
-                self.smartAudioUnmute();
-                sendAnalytics(createEvent('paused'));
-            }
-            // eslint-disable-next-line eqeqeq
-            self.fireSharedVideoEvent(event.data == YT.PlayerState.PAUSED);
-        };
-
-        /**
-         * Track player progress while paused.
-         * @param event
-         */
-        window.onVideoProgress = function(event) {
-            const state = event.target.getPlayerState();
-
-            // eslint-disable-next-line eqeqeq
-            if (state == YT.PlayerState.PAUSED) {
-                self.fireSharedVideoEvent(true);
-            }
-        };
-
-        /**
-         * Gets notified for volume state changed.
-         * @param event
-         */
-        window.onVolumeChange = function(event) {
-            self.fireSharedVideoEvent();
-
-            // let's check, if player is not muted lets mute locally
-            if (event.data.volume > 0 && !event.data.muted) {
-                self.smartAudioMute();
-            } else if (event.data.volume <= 0 || event.data.muted) {
-                self.smartAudioUnmute();
-            }
-            sendAnalytics(createEvent(
-                'volume.changed',
-                {
-                    volume: event.data.volume,
-                    muted: event.data.muted
-                }));
-        };
-
-        window.onPlayerReady = function(event) {
-            const player = event.target;
-
-            // do not relay on autoplay as it is not sending all of the events
-            // in onPlayerStateChange
-
-            player.playVideo();
-
-            const iframe = player.getIframe();
+            player.play();
+            //player.pause();
+            
+            const iframe = document.querySelector('#peerTubeIFrame');
+         
+            console.log(iframe);
 
             // eslint-disable-next-line no-use-before-define
-            self.sharedVideo = new SharedVideoContainer(
+            self.sharedVideo2 = new SharedVideoContainer(
                 { url,
                     iframe,
                     player });
@@ -284,7 +204,7 @@ export default class SharedVideoManager {
             }
 
             VideoLayout.addLargeVideoContainer(
-                SHARED_VIDEO_CONTAINER_TYPE, self.sharedVideo);
+                SHARED_VIDEO_CONTAINER_TYPE, self.sharedVideo2);
 
             APP.store.dispatch(participantJoined({
 
@@ -294,7 +214,9 @@ export default class SharedVideoManager {
                 conference: APP.conference._room,
                 id: self.url,
                 isFakeParticipant: true,
-                name: VIDEO_PLAYER_PARTICIPANT_NAME
+                //TODO VIDEO_PLAYER_PARTICIPANT_NAME => VIDEO_PLAYER_PARTICIPANT_NAME2
+                //name: VIDEO_PLAYER_PARTICIPANT_NAME
+                name: 'PeerTube'
             }));
 
             APP.store.dispatch(pinParticipant(self.url));
@@ -306,14 +228,9 @@ export default class SharedVideoManager {
                     self.fireSharedVideoEvent.bind(self),
                     updateInterval);
             }
-        };
 
-        window.onPlayerError = function(event) {
-            logger.error('Error in the player:', event.data);
-
-            // store the error player, so we can remove it
-            self.errorInPlayer = event.target;
-        };
+        });
+        
     }
 
     /**

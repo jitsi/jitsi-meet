@@ -13,6 +13,8 @@ export default {
     VIDEO_MUTED: 'UI.video_muted',
     ETHERPAD_CLICKED: 'UI.etherpad_clicked',
     SHARED_VIDEO_CLICKED: 'UI.start_shared_video',
+    //TODO
+    SHARED_VIDEO_CLICKED2: 'UI.start_shared_video',
 
     /**
      * Updates shared video with params: url, state, time(optional)
