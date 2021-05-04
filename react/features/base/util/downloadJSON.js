@@ -1,6 +1,5 @@
 // @flow
-/**global APP */
-
+/* global APP */
 
 /**
  * Downloads a JSON object.
