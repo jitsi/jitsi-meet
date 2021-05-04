@@ -71,6 +71,11 @@
         "title": "Текстови съобщения",
         "you": "вие"
     },
+    "chromeExtensionBanner": {
+        "dontShowAgain": "Не показвай повече",
+        "buttonText": "Инсталирайте разширението за Chrome",
+        "installExtensionText": "Инсталирайте разширенията за Google Calendar и Office 365"
+    },
     "connectingOverlay": {
         "joiningRoom": "Свързване с вашата среща..."
     },
@@ -153,7 +158,8 @@
         "accessibilityLabel": {
             "liveStreaming": "Излъчване на живо"
         },
-        "allow": "Разрешаване",
+        "add": "Добави",
+        "allow": "Разреши",
         "alreadySharedVideoMsg": "Друг участник вече е споделил видео. Тази среща позволява само едно споделено видео.",
         "alreadySharedVideoTitle": "Разрешено е споделянето само на едно видео в даден момент",
         "applicationWindow": "Прозорец на програмата",
@@ -216,6 +222,12 @@
         "micNotSendingDataTitle": "Микрофонът Ви е спрян от системните настройки",
         "micPermissionDeniedError": "Не сте дали разрешение за използване на микрофона. Ще можете да се присъедините в срещата, но другите няма да Ви чуват. Използвайте бутона с микрофон в адресната лента, за да оправите това.",
         "micUnknownError": "Невъзможен достъп до микрофона по неясна причина.",
+        "muteEveryoneDialog": "Сигурни ли сте, че искате да заглушите всички? Няма да можете да пуснете звука им отново, но участниците ще могат да направят това сами.",
+        "muteEveryoneElseDialog": "След като заглушите някого, няма да можете да пуснете обратно звука му, но участникът ще може да направи това сам.",
+        "muteEveryoneElseTitle": "Заглушете всички, освен {{whom}}?",
+        "muteEveryoneSelf": "себе си",
+        "muteEveryoneStartMuted": "Всички да влизат без звук",
+        "muteEveryoneTitle": "Заглуши всички?",
         "muteParticipantBody": "Вие няма да можете да спрете заглушаването на участника, но той ще може да го направи по всяко време.",
         "muteParticipantButton": "Изключи микрофона",
         "muteParticipantDialog": "Сигурни ли сте, че искате да заглушите този участник? Няма да можете да пуснете обратно звука му, но участникът ще може да направи това сам.",
@@ -278,18 +290,13 @@
         "transcribing": "Транскрипция",
         "unlockRoom": "Премахване $t(lockRoomPassword) от срещата",
         "userPassword": "потребителска парола",
+        "videoLink": "Линк към видео",
         "WaitForHostMsg": "Конференцията <b>{{room}}</b> все още не е започнала. Ако сте домакинът, тогава се идентифицирайте. В противен случай изчакайте докато домакинът пристигне.",
         "WaitForHostMsgWOk": "Конференцията <b>{{room}}</b> все още не е започнала. Ако сте домакинът, тогава натиснете бутона, за да се идентифицирате. В противен случай изчакайте докато домакинът пристигне.",
         "WaitingForHost": "Чакаме домакина...",
         "Yes": "Да",
         "yourEntireScreen": "Целият екран",
-        "screenSharingAudio": "Сподели и звука",
-        "muteEveryoneStartMuted": "Всички да влизат без звук",
-        "muteEveryoneSelf": "себе си",
-        "muteEveryoneTitle": "Заглуши всички?",
-        "muteEveryoneDialog": "Сигурни ли сте, че искате да заглушите всички? Няма да можете да пуснете звука им отново, но участниците ще могат да направят това сами.",
-        "muteEveryoneElseTitle": "Заглушете всички, освен {{whom}}?",
-        "muteEveryoneElseDialog": "След като заглушите някого, няма да можете да пуснете обратно звука му, но участникът ще може да направи това сам."
+        "screenSharingAudio": "Сподели и звука"
     },
     "dialOut": {
         "statusMessage": "в момента е {{status}}"
@@ -523,6 +530,12 @@
     "sectionList": {
         "pullToRefresh": "Издърпай, за да се обнови"
     },
+    "security": {
+        "about": "Може да добавите парола към вашите срещи. Участниците ще трябва да въведат паролата преди да бъдат допуснати до срещата.",
+        "aboutReadOnly": "Модераторите могат да добавят парола към срещата. Участниците ще трябва да въведат паролата преди да бъдат допуснати до срещата.",
+        "insecureRoomNameWarning": "Вашата среща не е обезопасена и нежелани участници могат да се включат. Можете да подсигурите срещата с помощта на бутона сигурност.",
+        "securityOptions": "Сигурност"
+    },
     "settings": {
         "calendar": {
             "about": "Календарната интеграция на {{appName}} сигурно достъпва Вашия календар, за да покаже настъпващите събития.",
@@ -582,7 +595,8 @@
     },
     "startupoverlay": {
         "policyText": " ",
-        "title": "„{{app}}“ се нуждае от достъп до микрофона и камерата."
+        "genericTitle": "Срещата се нуждае от достъп до микрофона и камерата Ви.",
+        "title": "„{{app}}“ се нуждае от достъп до микрофона и камерата Ви."
     },
     "suspendedoverlay": {
         "rejoinKeyTitle": "Повторно присъединяване",
@@ -616,7 +630,7 @@
             "recording": "Пускане/спиране на запис",
             "remoteMute": "Заглуши участник",
             "Settings": "Промяна на настройки",
-            "sharedvideo": "Споделяне на YouTube видео",
+            "sharedvideo": "Пускане/спиране на споделеното YouTube видео",
             "shareRoom": "Добавете някого",
             "shareYourScreen": "Споделяне на екрана",
             "shortcuts": "Бързи клавиши",
@@ -664,7 +678,7 @@
         "raiseHand": "Вдигане/сваляне на ръка",
         "raiseYourHand": "Поискай думата",
         "Settings": "Настройки",
-        "sharedvideo": "Пускане/спиране на споделянето на екрана",
+        "sharedvideo": "Споделяне на YouTube видео",
         "shareRoom": "Добавете някого",
         "shortcuts": "Виж бързите клавиши",
         "speakerStats": "Статистика за говорителите",
@@ -781,16 +795,45 @@
         "title": "Сигурна, с много възможности, и напълно безплатна платформа за видео конференции",
         "getHelp": "Търсене на помощ"
     },
-    "helpView": {
-        "header": "Място за помощ"
-    },
     "lonelyMeetingExperience": {
         "youAreAlone": "Вие сте сами в срещата",
         "button": "Поканете участници"
     },
-    "chromeExtensionBanner": {
-        "dontShowAgain": "Не показвай повече",
-        "buttonText": "Инсталирайте разширението за Chrome",
-        "installExtensionText": "Инсталирайте разширенията за Google Calendar и Office 365"
+    "helpView": {
+        "header": "Място за помощ"
+    },
+    "lobby": {
+        "admit": "Допусни",
+        "knockingParticipantList": "Списък с чакащи участници",
+        "allow": "Разреши",
+        "backToKnockModeButton": "Заявка за включване без парола",
+        "dialogTitle": "Режим лоби",
+        "disableDialogContent": "Режим Лоби е включен. Този решим защитава срещите Ви от случайни посетители. Искате ли да го изключите?",
+        "disableDialogSubmit": "Изключи",
+        "emailField": "Въведи имейл адрес",
+        "enableDialogPasswordField": "Задай парола (не е задължително)",
+        "enableDialogSubmit": "Включи",
+        "enableDialogText": "Режимът Лоби защитава срещите Ви от случайни посетители, чрез изрично одобрение на участниците от модератор.",
+        "enterPasswordButton": "Въведи парола за срещата",
+        "enterPasswordTitle": "Въведи парола за влезеш в срещата",
+        "invalidPassword": "Невалидна парола",
+        "joiningMessage": "Ще влезете в срещата, когато някой ви приеме",
+        "joinWithPasswordMessage": "Опит за включване с парола, моля изчакайте...",
+        "joinRejectedMessage": "Вашето желание за включване беше отхвърлено от модератор.",
+        "joinTitle": "Включи се в срещата",
+        "joiningTitle": "Изчаква одобрение...",
+        "joiningWithPasswordTitle": "Включване с парола...",
+        "knockButton": "Поискай достъп",
+        "knockTitle": "Някой желае да се включи в срещата",
+        "nameField": "Въведи име",
+        "notificationLobbyAccessDenied": "{{targetParticipantName}} не беше допуснат от {{originParticipantName}}",
+        "notificationLobbyAccessGranted": "{{targetParticipantName}} беше допуснат от {{originParticipantName}}",
+        "notificationLobbyDisabled": "Лобито беше изключено от {{originParticipantName}}",
+        "notificationLobbyEnabled": "Лобито беше включено от {{originParticipantName}}",
+        "notificationTitle": "Лоби",
+        "passwordField": "Въведи парола за срещата",
+        "passwordJoinButton": "Влез",
+        "reject": "Откажи",
+        "toggleLabel": "Включи лоби"
     }
 }
