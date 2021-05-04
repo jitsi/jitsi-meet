@@ -8,6 +8,7 @@ import { browser } from '../../../react/features/base/lib-jitsi-meet';
 import { ORIENTATION, LargeVideoBackground } from '../../../react/features/large-video';
 import { LAYOUTS, getCurrentLayout } from '../../../react/features/video-layout';
 /* eslint-enable no-unused-vars */
+import { VIDEO_QUALITY_LEVELS } from '../../../react/features/video-quality/constants';
 import UIEvents from '../../../service/UI/UIEvents';
 import UIUtil from '../util/UIUtil';
 
@@ -18,6 +19,12 @@ import LargeContainer from './LargeContainer';
 export const VIDEO_CONTAINER_TYPE = 'camera';
 
 const FADE_DURATION_MS = 300;
+const SD_VIDEO_CONTAINER_HEIGHT = VIDEO_QUALITY_LEVELS.STANDARD;
+const SD_VIDEO_CONTAINER_PADDING_PERCENTAGE = 0.1;
+const SD_VIDEO_CONTAINER_PADDING_BREAKPOINT = 768;
+
+// minimum top padding + bottom padding
+const SD_VIDEO_CONTAINER_MIN_VERTICAL_PADDING = 248;
 
 /**
  * Returns an array of the video dimensions, so that it keeps it's aspect
@@ -87,6 +94,7 @@ function computeCameraVideoSize( // eslint-disable-line max-params
         // Avoid NaN values caused by devision by 0.
         return [ 0, 0 ];
     }
+    const [ verticalPadding, horizontalPadding ] = getPaddings(videoSpaceHeight, videoSpaceWidth, videoHeight);
 
     const aspectRatio = videoWidth / videoHeight;
 
@@ -97,8 +105,7 @@ function computeCameraVideoSize( // eslint-disable-line max-params
         return [ videoSpaceWidth, videoSpaceWidth / aspectRatio ];
     case 'both': {
         const videoSpaceRatio = videoSpaceWidth / videoSpaceHeight;
-        const maxZoomCoefficient = interfaceConfig.MAXIMUM_ZOOMING_COEFFICIENT
-            || Infinity;
+        const maxZoomCoefficient = getMaxZoomCoefficient(videoHeight);
 
         if (videoSpaceRatio === aspectRatio) {
             return [ videoSpaceWidth, videoSpaceHeight ];
@@ -114,10 +121,14 @@ function computeCameraVideoSize( // eslint-disable-line max-params
         const maxHeight = videoSpaceHeight * maxZoomCoefficient;
 
         if (width > maxWidth) {
-            width = maxWidth;
+            width = maxWidth < SD_VIDEO_CONTAINER_PADDING_BREAKPOINT ? maxWidth : maxWidth - horizontalPadding;
             height = width / aspectRatio;
+            if (maxZoomCoefficient === 1) {
+                // If the video feed is in SD, fix the height to avoid overlapping with Jane's logo
+                height = maxHeight - verticalPadding;
+            }
         } else if (height > maxHeight) {
-            height = maxHeight;
+            height = maxHeight - verticalPadding;
             width = height * aspectRatio;
         }
 
@@ -126,6 +137,45 @@ function computeCameraVideoSize( // eslint-disable-line max-params
     default:
         return [ videoWidth, videoHeight ];
     }
+}
+
+/**
+ * Returns a number of the max zoom coefficient, return 1 if the video stream is
+ * standard definition or low definition
+ *
+ * @param videoHeight the original video height
+ * @return number
+ */
+function getMaxZoomCoefficient(videoHeight) {
+    if (videoHeight <= SD_VIDEO_CONTAINER_HEIGHT) {
+        return 1;
+    }
+
+    return interfaceConfig.MAXIMUM_ZOOMING_COEFFICIENT || Infinity;
+}
+
+/**
+ * Returns an array of the vertical padding & horizonal padding
+ * for SD & LD video stream.
+ *
+ * @param videoSpaceWidth the width of the video space
+ * @param videoSpaceHeight the height of the video space
+ * @param videoHeight the original video height
+ * @return an array with 2 elements, the video width and the video height
+ */
+function getPaddings(videoSpaceHeight, videoSpaceWidth, videoHeight) {
+    if (videoHeight <= SD_VIDEO_CONTAINER_HEIGHT) {
+        let verticalPadding = videoSpaceHeight * SD_VIDEO_CONTAINER_PADDING_PERCENTAGE * 2;
+        const horizontalPadding = videoSpaceWidth * SD_VIDEO_CONTAINER_PADDING_PERCENTAGE * 2;
+
+        if (verticalPadding < SD_VIDEO_CONTAINER_MIN_VERTICAL_PADDING) {
+            verticalPadding = SD_VIDEO_CONTAINER_MIN_VERTICAL_PADDING;
+        }
+
+        return [ verticalPadding, horizontalPadding ];
+    }
+
+    return [ 0, 0 ];
 }
 
 /**

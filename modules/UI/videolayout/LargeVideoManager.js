@@ -640,18 +640,13 @@ export default class LargeVideoManager {
      * @returns {void}
      */
     _onVideoResolutionUpdate() {
-        const { height, width } = this.videoContainer.getStreamSize();
+        const { height } = this.videoContainer.getStreamSize();
         const { resolution } = APP.store.getState()['features/large-video'];
 
         if (height !== resolution) {
             APP.store.dispatch(updateKnownLargeVideoResolution(height));
         }
 
-        const currentAspectRatio = height === 0 ? 0 : width / height;
-
-        if (this._videoAspectRatio !== currentAspectRatio) {
-            this._videoAspectRatio = currentAspectRatio;
-            this.resize();
-        }
+        this.resize();
     }
 }
