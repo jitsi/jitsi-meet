@@ -1,7 +1,6 @@
 // @flow
 /**global APP */
 
-import { date } from "react-emoji-render/data/aliases";
 
 /**
  * Downloads a JSON object.
