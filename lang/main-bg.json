@@ -530,6 +530,12 @@
     "sectionList": {
         "pullToRefresh": "Издърпай, за да се обнови"
     },
+    "security": {
+        "about": "Може да добавите парола към вашите срещи. Участниците ще трябва да въведат паролата преди да бъдат допуснати до срещата.",
+        "aboutReadOnly": "Модераторите могат да добавят парола към срещата. Участниците ще трябва да въведат паролата преди да бъдат допуснати до срещата.",
+        "insecureRoomNameWarning": "Вашата среща не е обезопасена и нежелани участници могат да се включат. Можете да подсигурите срещата с помощта на бутона сигурност.",
+        "securityOptions": "Сигурност"
+    },
     "settings": {
         "calendar": {
             "about": "Календарната интеграция на {{appName}} сигурно достъпва Вашия календар, за да покаже настъпващите събития.",
@@ -797,14 +803,14 @@
         "header": "Място за помощ"
     },
     "lobby": {
-        "admit": "Admit",
-        "knockingParticipantList": "Knocking participant list",
+        "admit": "Допусни",
+        "knockingParticipantList": "Списък с чакащи участници",
         "allow": "Разреши",
-        "backToKnockModeButton": "No password, ask to join instead",
-        "dialogTitle": "Lobby mode",
-        "disableDialogContent": "Lobby mode is currently enabled. This feature ensures that unwanted participants can't join your meeting. Do you want to disable it?",
-        "disableDialogSubmit": "Disable",
-        "emailField": "Enter your email address",
+        "backToKnockModeButton": "Заявка за включване без парола",
+        "dialogTitle": "Режим лоби",
+        "disableDialogContent": "Режим Лоби е включен. Този решим защитава срещите Ви от случайни посетители. Искате ли да го изключите?",
+        "disableDialogSubmit": "Изключи",
+        "emailField": "Въведи имейл адрес",
         "enableDialogPasswordField": "Задай парола (не е задължително)",
         "enableDialogSubmit": "Включи",
         "enableDialogText": "Режимът Лоби защитава срещите Ви от случайни посетители, чрез изрично одобрение на участниците от модератор.",
@@ -827,7 +833,7 @@
         "notificationTitle": "Лоби",
         "passwordField": "Въведи парола за срещата",
         "passwordJoinButton": "Влез",
-        "reject": "Отхвърли",
+        "reject": "Откажи",
         "toggleLabel": "Включи лоби"
     }
 }
