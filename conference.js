@@ -2832,8 +2832,10 @@ export default {
     hangup(requestFeedback = false) {
         const { messages } = APP.store.getState()['features/chat'];
 
-        interfaceConfig.Downloadafterhangup = true;
-        interfaceConfig.Downloadafterhangup ? downloadText(messages, 'message_history.txt') : '';
+        if (interfaceConfig.Downloadafterhangup) {
+            downloadText(messages, 'message_history.txt', APP.conference.roomName);
+        }
+
         APP.store.dispatch(disableReceiver());
 
         this._stopProxyConnection();

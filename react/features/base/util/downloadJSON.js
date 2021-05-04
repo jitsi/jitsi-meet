@@ -1,5 +1,4 @@
 // @flow
-/* global APP */
 
 /**
  * Downloads a JSON object.
@@ -22,10 +21,22 @@ export function downloadJSON(json: Object, filename: string) {
         cancelable: false
     }));
 }
+
+/**
+ * Covert timestamp to date time .
+ *
+ * @param {string} timestamp - The timestamp.
+ * @returns {void}
+ */
 function datetotime(timestamp = null) {
+    let ttime = '';
+
     if (timestamp === null) {
-        timestamp = new Date();
+        ttime = new Date();
+    } else {
+        ttime = timestamp;
     }
+
     const options = {
         year: 'numeric',
         month: 'numeric',
@@ -35,18 +46,23 @@ function datetotime(timestamp = null) {
         second: 'numeric',
         hour12: false
     };
-    const ye = new Intl.DateTimeFormat('en-US', options).format(timestamp);
+    const ye = new Intl.DateTimeFormat('en-US', options).format(ttime);
 
     return `${ye}`;
 }
-export function downloadText(json: Object, filename: string) {
-    let data = `Room \xa0 Name = ${APP.conference.roomName} \n Created  \xa0 at  \xa0 ${datetotime()} \n `;
 
-    data += json.map((num, index) => {
-        const timestampToDate = num.timestamp ? new Date(num.timestamp) : new Date();
+/**
+ * Downloads a JSON object.
+ *
+ * @param {Object} json - The JSON object array to download.
+ * @param {string} filename - The filename to give to the downloaded text file.
+ * @param {string} roomName - The JSON object to download.
+ * @returns {void}
+ */
+export function downloadText(json: Object, filename: string, roomName: string) {
+    let data = `Room \xa0 Name = ${roomName} \n Created  \xa0 at  \xa0 ${datetotime()} \n `;
 
-        return `[${datetotime(num.timestamp)}] ${num.displayName}: ${num.message} \n `;
-    }).join('');
+    data += json.map(num => `[${datetotime(num.timestamp)}] ${num.displayName}: ${num.message} \n `).join('');
     const elem = document.createElement('a');
 
     elem.download = filename;

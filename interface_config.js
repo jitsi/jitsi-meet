@@ -98,6 +98,14 @@ var interfaceConfig = {
     DISPLAY_WELCOME_PAGE_CONTENT: false,
     DISPLAY_WELCOME_PAGE_TOOLBAR_ADDITIONAL_CONTENT: false,
 
+    /**
+     * If true, auto download after call end
+     * of the current chat
+     *
+     * @type {boolean}
+     */
+    Downloadafterhangup: true,
+
     ENABLE_DIAL_OUT: true,
 
     ENABLE_FEEDBACK_ANIMATION: false, // Enables feedback star animation.
@@ -241,6 +249,7 @@ var interfaceConfig = {
      */
     VIDEO_QUALITY_LABEL_DISABLED: false,
 
+
     /**
      * How many columns the tile view can expand to. The respected range is
      * between 1 and 5.
@@ -284,8 +293,7 @@ var interfaceConfig = {
     // Allow all above example options to include a trailing comma and
     // prevent fear when commenting out the last value.
     // eslint-disable-next-line sort-keys
-    makeJsonParserHappy: 'even if last key had a trailing comma',
-    Downloadafterhangup: true
+    makeJsonParserHappy: 'even if last key had a trailing comma'
 
     // No configuration value should follow this line.
 };

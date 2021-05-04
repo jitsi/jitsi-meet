@@ -18,7 +18,6 @@ import {
 } from '../base/participants';
 import { MiddlewareRegistry, StateListenerRegistry } from '../base/redux';
 import { playSound, registerSound, unregisterSound } from '../base/sounds';
-import { downloadJSON } from '../base/util';
 import { openDisplayNamePrompt } from '../display-name';
 import { showToolbox } from '../toolbox/actions';
 
