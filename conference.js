@@ -739,7 +739,7 @@ export default {
         }
 
         if (!tracks.find(t => t.isVideoTrack())) {
-            this.setVideoMuteStatus(true);
+            this.setVideoMuteStatus();
         }
 
         if (config.iAmRecorder) {
@@ -993,7 +993,7 @@ export default {
             // This will only modify base/media.video.muted which is then synced
             // up with the track at the end of local tracks initialization.
             muteLocalVideo(mute);
-            this.setVideoMuteStatus(mute);
+            this.setVideoMuteStatus();
 
             return;
         } else if (this.isLocalVideoMuted() === mute) {
@@ -1402,7 +1402,7 @@ export default {
                     .then(() => {
                         this.localVideo = newTrack;
                         this._setSharingScreen(newTrack);
-                        this.setVideoMuteStatus(this.isLocalVideoMuted());
+                        this.setVideoMuteStatus();
                     })
                     .then(resolve)
                     .catch(error => {
@@ -1821,7 +1821,7 @@ export default {
             try {
                 await this.localVideo.setEffect(effect);
                 APP.store.dispatch(setVideoMuted(mute, MEDIA_TYPE.PRESENTER));
-                this.setVideoMuteStatus(mute);
+                this.setVideoMuteStatus();
             } catch (err) {
                 logger.error('Failed to apply the Presenter effect', err);
             }
@@ -2303,7 +2303,7 @@ export default {
                     return this._createPresenterStreamEffect(height, cameraDeviceId)
                         .then(effect => this.localVideo.setEffect(effect))
                         .then(() => {
-                            this.setVideoMuteStatus(false);
+                            this.setVideoMuteStatus();
                             logger.log('Switched local video device while screen sharing and the video is unmuted');
                             this._updateVideoDeviceId();
                         })
@@ -3105,12 +3105,9 @@ export default {
 
     /**
      * Sets the video muted status.
-     *
-     * @param {boolean} muted - New muted status.
      */
-    setVideoMuteStatus(muted) {
+    setVideoMuteStatus() {
         APP.UI.setVideoMuted(this.getMyUserId());
-        APP.API.notifyVideoMutedStatusChanged(muted);
     },
 
     /**
