@@ -6,6 +6,7 @@ import type { Dispatch } from 'redux';
 import {
     CLEAR_NOTIFICATIONS,
     HIDE_NOTIFICATION,
+    SET_HD_VIDEO_ALERT_ENABLED,
     SET_NOTIFICATIONS_ENABLED,
     SHOW_NOTIFICATION
 } from './actionTypes';
@@ -173,4 +174,20 @@ export function showParticipantJoinedNotification(displayName: string) {
     joinedParticipantsNames.push(displayName);
 
     return (dispatch: Dispatch<any>) => _throttledNotifyParticipantConnected(dispatch);
+}
+
+/**
+ * Enable/disable the hd video alert.
+ *
+ * @param {boolean} hdAlertEnabled - Whether or not the alert should display.
+ * @returns {{
+ *     type: SET_HD_VIDEO_ALERT_ENABLED,
+ *     enabled: boolean
+ * }}
+ */
+export function setHdVideoAlertEnabled(hdAlertEnabled: boolean) {
+    return {
+        type: SET_HD_VIDEO_ALERT_ENABLED,
+        hdAlertEnabled
+    };
 }
