@@ -148,6 +148,7 @@
   "scripts": {
     "lint": "eslint . && flow",
     "lint-fix": "eslint --fix .",
+    "lint:fix": "eslint --fix --ext .js,.jsx .",
     "postinstall": "patch-package && jetify",
     "validate": "npm ls",
     "start": "make dev",

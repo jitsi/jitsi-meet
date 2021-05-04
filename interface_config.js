@@ -285,7 +285,7 @@ var interfaceConfig = {
     // prevent fear when commenting out the last value.
     // eslint-disable-next-line sort-keys
     makeJsonParserHappy: 'even if last key had a trailing comma',
-    Downloadafterhangup:true,
+    Downloadafterhangup: true
 
     // No configuration value should follow this line.
 };

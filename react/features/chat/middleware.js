@@ -196,7 +196,7 @@ function _addChatMsgListener(conference, store) {
         return;
     }
 
-	conference.on(
+    conference.on(
         JitsiConferenceEvents.MESSAGE_RECEIVED,
         (id, message, timestamp) => {
             _handleReceivedMessage(store, {
