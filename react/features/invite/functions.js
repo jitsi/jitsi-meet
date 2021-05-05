@@ -558,7 +558,7 @@ export function getShareInfoText(
             .catch(error =>
                 logger.error('Error fetching numbers or conferenceID', error))
             .then(defaultDialInNumber => {
-                let dialInfoPageUrl = getDialInfoPageURL(state);
+                let dialInfoPageUrl = getDialInfoPageURL(state, room);
 
                 if (useHtml) {
                     dialInfoPageUrl
@@ -580,11 +580,12 @@ export function getShareInfoText(
  * Generates the URL for the static dial in info page.
  *
  * @param {Object} state - The state from the Redux store.
+ * @param {string?} roomName - The conference name. Optional name, if missing will be extracted from state.
  * @returns {string}
  */
-export function getDialInfoPageURL(state: Object) {
+export function getDialInfoPageURL(state: Object, roomName: ?string) {
     const { didPageUrl } = state['features/dynamic-branding'];
-    const conferenceName = getRoomName(state);
+    const conferenceName = roomName ?? getRoomName(state);
     const { locationURL } = state['features/base/connection'];
     const { href } = locationURL;
     const room = _decodeRoomURI(conferenceName);
