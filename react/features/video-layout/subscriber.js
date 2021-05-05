@@ -12,6 +12,8 @@ import { setRemoteParticipantsWithScreenShare } from './actions';
 declare var APP: Object;
 declare var interfaceConfig: Object;
 
+let latestScreenshareParticipantId;
+
 /**
  * StateListenerRegistry provides a reliable way of detecting changes to
  * preferred layout state and dispatching additional actions.
@@ -99,16 +101,22 @@ function _updateAutoPinnedParticipant({ dispatch, getState }) {
     const remoteScreenShares = state['features/video-layout'].remoteScreenShares;
     const pinned = getPinnedParticipant(getState);
 
-    // Unpin the screenshare when the screensharing participant has left.
+    // Unpin the screenshare when the screensharing participant leaves. Switch to tile view if no other
+    // participant was pinned before screenshare was auto-pinned, pin the previously pinned participant otherwise.
     if (!remoteScreenShares?.length) {
-        const participantId = pinned ? pinned.id : null;
+        let participantId = null;
 
+        if (pinned && pinned.id !== latestScreenshareParticipantId) {
+            participantId = pinned.id;
+        }
+
+        latestScreenshareParticipantId = null;
         dispatch(pinParticipant(participantId));
 
         return;
     }
 
-    const latestScreenshareParticipantId = remoteScreenShares[remoteScreenShares.length - 1];
+    latestScreenshareParticipantId = remoteScreenShares[remoteScreenShares.length - 1];
 
     if (latestScreenshareParticipantId) {
         dispatch(pinParticipant(latestScreenshareParticipantId));
