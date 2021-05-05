@@ -7,7 +7,12 @@ import uuid from 'uuid';
 import { getDialOutStatusUrl, getDialOutUrl } from '../base/config/functions';
 import { createLocalTrack } from '../base/lib-jitsi-meet';
 import { isVideoMutedByUser } from '../base/media';
-import { getLocalAudioTrack, getLocalVideoTrack, trackAdded, replaceLocalTrack } from '../base/tracks';
+import {
+    getLocalAudioTrack,
+    getLocalVideoTrack,
+    trackAdded,
+    replaceLocalTrack
+} from '../base/tracks';
 import { createLocalTracksF } from '../base/tracks/functions';
 import { openURLInBrowser } from '../base/util';
 import { executeDialOutRequest, executeDialOutStatusRequest, getDialInfoPageURL } from '../invite/functions';
@@ -70,7 +75,11 @@ const STATUS_REQ_CAP = 45;
  * @param {number} count - The number of retried calls. When it hits STATUS_REQ_CAP it should no longer make requests.
  * @returns {Function}
  */
-function pollForStatus(reqId: string, onSuccess: Function, onFail: Function, count = 0) {
+function pollForStatus(
+        reqId: string,
+        onSuccess: Function,
+        onFail: Function,
+        count = 0) {
     return async function(dispatch: Function, getState: Function) {
         const state = getState();
 
@@ -100,36 +109,31 @@ function pollForStatus(reqId: string, onSuccess: Function, onFail: Function, cou
             }
 
             case DIAL_OUT_STATUS.DISCONNECTED: {
-                dispatch(
-                        showErrorNotification({
-                            titleKey: 'prejoin.errorDialOutDisconnected'
-                        })
-                );
+                dispatch(showErrorNotification({
+                    titleKey: 'prejoin.errorDialOutDisconnected'
+                }));
 
                 return onFail();
             }
 
             case DIAL_OUT_STATUS.FAILED: {
-                dispatch(
-                        showErrorNotification({
-                            titleKey: 'prejoin.errorDialOutFailed'
-                        })
-                );
+                dispatch(showErrorNotification({
+                    titleKey: 'prejoin.errorDialOutFailed'
+                }));
 
                 return onFail();
             }
             }
         } catch (err) {
-            dispatch(
-                showErrorNotification({
-                    titleKey: 'prejoin.errorDialOutStatus'
-                })
-            );
+            dispatch(showErrorNotification({
+                titleKey: 'prejoin.errorDialOutStatus'
+            }));
             logger.error('Error getting dial out status', err);
             onFail();
         }
     };
 }
+
 
 /**
  * Action used for joining the meeting with phone audio.
@@ -227,11 +231,9 @@ export function joinConferenceWithoutAudio() {
             await dispatch(replaceLocalTrack(audioTrack, null));
         }
 
-        dispatch(
-            joinConference({
-                startSilent: true
-            })
-        );
+        dispatch(joinConference({
+            startSilent: true
+        }));
     };
 }
 

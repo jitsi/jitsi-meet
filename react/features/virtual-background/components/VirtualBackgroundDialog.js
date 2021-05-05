@@ -264,10 +264,7 @@ function VirtualBackground({ _jitsiTrack, _selectedThumbnail, dispatch, t }: Pro
  *
  * @param {Object} state - The Redux state.
  * @private
- * @returns {{
- *     _selectedThumbnail: string,
- *     _jitsiTrack: Object
- * }}
+ * @returns {{Props}}
  */
 function _mapStateToProps(state): Object {
     return {
