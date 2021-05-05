@@ -23,22 +23,27 @@ function notify_occupants_enable(jid, enable, room)
     body_json.type = 'av_moderation';
     body_json.enabled = enable;
     body_json.room = room.jid;
-    local body_json_str = json.encode(body_json);
 
-    local notify = function(jid_to_notify)
+    local notify = function(jid_to_notify, mediaType)
+        body_json.actor = room.av_moderation_actors[mediaType];
+        body_json.mediaType = mediaType;
+        local body_json_str = json.encode(body_json);
         local stanza = st.message({ from = module.host; to = jid_to_notify; })
                 :tag('json-message', { xmlns = 'http://jitsi.org/jitmeet' }):text(body_json_str):up();
         module:send(stanza);
     end
 
-    if jid then
-        notify(jid);
-    else
-        for _, occupant in room:each_occupant() do
-            notify(occupant.jid);
+    for _,mediaType in pairs({'audio', 'video'}) do
+        if room.av_moderation[mediaType] then
+            if jid then
+                notify(jid, mediaType);
+            else
+                for _, occupant in room:each_occupant() do
+                    notify(occupant.jid, mediaType);
+                end
+            end
         end
     end
-
 end
 
 -- Notifies about a jid added to the whitelist. Notifies all moderators and admin and the jid itself
@@ -112,36 +117,42 @@ function on_message(event)
             return false;
         end
 
+        local mediaType = moderation_command.attr.mediaType;
+        if mediaType then
+            if mediaType ~= 'audio' and mediaType ~= 'video' then
+                module:log('warn', 'Wrong mediaType %s for %s', mediaType, room.jid);
+                return false;
+            end
+        else
+            module:log('warn', 'Missing mediaType for %s', room.jid);
+            return false;
+        end
+
         if moderation_command.attr.enable ~= nil then
             local enabled;
             if moderation_command.attr.enable == 'true' then
                 enabled = true;
-                if room.av_moderation then
+                if room.av_moderation and room.av_moderation[mediaType] then
                     module:log('warn', 'Concurrent moderator enable/disable request or something is out of sync');
                 else
                     room.av_moderation = {};
+                    room.av_moderation[mediaType] = {};
+                    room.av_moderation_actors[mediaType] = from;
                 end
             else
                 enabled = false;
-                if not room.av_moderation then
+                if not room.av_moderation and not room.av_moderation[mediaType] then
                     module:log('warn', 'Concurrent moderator enable/disable request or something is out of sync');
                 else
-                    room.av_moderation = nil;
+                    room.av_moderation[mediaType] = nil;
+                    room.av_moderation_actors[mediaType] = nil;
                 end
             end
 
             -- send message to all occupants
             notify_occupants_enable(nil, enabled, room);
             return true;
-        elseif moderation_command.attr.jidToWhitelist and moderation_command.attr.mediaType and room.av_moderation then
-
-            local mediaType = moderation_command.attr.mediaType;
-
-            if mediaType ~= 'audio' and mediaType ~= 'video' then
-                module:log('warn', 'Wrong mediaType %s for %s', mediaType, room.jid);
-                return false;
-            end
-
+        elseif moderation_command.attr.jidToWhitelist and room.av_moderation then
             local occupant_jid = moderation_command.attr.jidToWhitelist;
             -- check if jid is in the room, if so add it to whitelist
             -- inform all moderators and admins and the jid
