@@ -12,8 +12,9 @@ import {
 import { connect } from '../../../../base/redux';
 import {
     getCurrentMicDeviceId,
-    getCurrentOutputDeviceId
+    getCurrentOutputDeviceId, getCurrentWaitingAreaMicDeviceId
 } from '../../../../base/settings';
+import { isJaneWaitingAreaPageVisible } from '../../../../jane-waiting-area';
 import { toggleAudioSettings } from '../../../actions';
 import { getAudioSettingsVisibility } from '../../../functions';
 
@@ -80,8 +81,11 @@ function AudioSettingsPopup({
  * @returns {Object}
  */
 function mapStateToProps(state) {
+    const currentMicDeviceId = isJaneWaitingAreaPageVisible(state)
+        ? getCurrentWaitingAreaMicDeviceId(state) : getCurrentMicDeviceId(state);
+
     return {
-        currentMicDeviceId: getCurrentMicDeviceId(state),
+        currentMicDeviceId,
         currentOutputDeviceId: getCurrentOutputDeviceId(state),
         isOpen: getAudioSettingsVisibility(state),
         microphoneDevices: getAudioInputDeviceData(state),

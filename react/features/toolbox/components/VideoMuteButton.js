@@ -19,6 +19,11 @@ import { connect } from '../../base/redux';
 import { AbstractVideoMuteButton } from '../../base/toolbox/components';
 import type { AbstractButtonProps } from '../../base/toolbox/components';
 import { getLocalVideoType, isLocalVideoTrackMuted } from '../../base/tracks';
+import {
+    isJaneWaitingAreaPageVisible,
+    isJaneWaitingAreaVideoDisabled,
+    isJaneWaitingAreaVideoMuted
+} from '../../jane-waiting-area/functions';
 
 declare var APP: Object;
 
@@ -187,12 +192,19 @@ class VideoMuteButton extends AbstractVideoMuteButton<Props, *> {
 function _mapStateToProps(state): Object {
     const { enabled: audioOnly } = state['features/base/audio-only'];
     const tracks = state['features/base/tracks'];
+    let _videoMuted = isLocalVideoTrackMuted(tracks);
+    let _videoDisabled = !hasAvailableDevices(state, 'videoInput');
+
+    if (isJaneWaitingAreaPageVisible(state)) {
+        _videoMuted = isJaneWaitingAreaVideoMuted(state);
+        _videoDisabled = isJaneWaitingAreaVideoDisabled(state);
+    }
 
     return {
         _audioOnly: Boolean(audioOnly),
-        _videoDisabled: !hasAvailableDevices(state, 'videoInput'),
+        _videoDisabled,
         _videoMediaType: getLocalVideoType(tracks),
-        _videoMuted: isLocalVideoTrackMuted(tracks)
+        _videoMuted
     };
 }
 

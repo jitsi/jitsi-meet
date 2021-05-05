@@ -5,6 +5,8 @@ import { isMobileBrowser } from '../base/environment/utils';
 import { Platform } from '../base/react';
 import { URI_PROTOCOL_PATTERN } from '../base/util';
 import { isVpaasMeeting } from '../billing-counter/functions';
+import SocketConnection from '../jane-waiting-area/components/SocketConnection.web';
+import { isRNSocketWebView } from '../jane-waiting-area/functions';
 
 import {
     DeepLinkingDesktopPage,
@@ -63,6 +65,11 @@ export function getDeepLinkingPage(state) {
     const OS = Platform.OS;
     const isIpad = navigator.maxTouchPoints > 0 && OS === 'macos';
     const isUsingMobileBrowser = OS === 'ios' || isIpad || false;
+    const { locationURL } = state['features/base/connection'];
+
+    if (isRNSocketWebView(locationURL)) {
+        return Promise.resolve(SocketConnection);
+    }
 
     if (isUsingMobileBrowser) { // mobile
         const mobileAppPromo

@@ -11,9 +11,9 @@ import { connect as reactReduxConnect } from '../../../base/redux';
 import { Chat } from '../../../chat';
 import { Filmstrip } from '../../../filmstrip';
 import { CalleeInfoContainer } from '../../../invite';
+import { JaneWaitingArea, isJaneWaitingAreaPageVisible } from '../../../jane-waiting-area';
 import { LargeVideo } from '../../../large-video';
 import { KnockingParticipantList, LobbyScreen } from '../../../lobby';
-import { Prejoin, isPrejoinPageVisible } from '../../../prejoin';
 import { fullScreenChanged, setToolboxAlwaysVisible, showToolbox } from '../../../toolbox/actions.web';
 import { Toolbox } from '../../../toolbox/components/web';
 import { LAYOUTS, getCurrentLayout } from '../../../video-layout';
@@ -82,12 +82,7 @@ type Props = AbstractProps & {
      * Name for this conference room.
      */
     _roomName: string,
-
-    /**
-     * If prejoin page is visible or not.
-     */
-    _showPrejoin: boolean,
-
+    _showJaneWaitingArea: boolean,
     dispatch: Function,
     t: Function
 }
@@ -182,9 +177,8 @@ class Conference extends AbstractConference<Props, *> {
         } = interfaceConfig;
         const {
             _iAmRecorder,
-            _isLobbyScreenVisible,
             _layoutClassName,
-            _showPrejoin
+            _showJaneWaitingArea
         } = this.props;
         const hideLabels = filmstripOnly || _iAmRecorder;
 
@@ -202,15 +196,14 @@ class Conference extends AbstractConference<Props, *> {
                     { hideLabels || <Labels /> }
                 </div>
 
-                { filmstripOnly || _showPrejoin || _isLobbyScreenVisible || <Toolbox /> }
+                { filmstripOnly || _showJaneWaitingArea || <Toolbox /> }
                 { filmstripOnly || <Chat /> }
 
                 { this.renderNotificationsContainer() }
                 { this.renderHdVideoAlert() }
+                { !filmstripOnly && _showJaneWaitingArea && <JaneWaitingArea />}
 
                 <CalleeInfoContainer />
-
-                { !filmstripOnly && _showPrejoin && <Prejoin />}
             </div>
         );
     }
@@ -278,7 +271,7 @@ function _mapStateToProps(state) {
         _isLobbyScreenVisible: state['features/base/dialog']?.component === LobbyScreen,
         _layoutClassName: LAYOUT_CLASSNAMES[getCurrentLayout(state)],
         _roomName: getConferenceNameForTitle(state),
-        _showPrejoin: isPrejoinPageVisible(state)
+        _showJaneWaitingArea: isJaneWaitingAreaPageVisible(state)
     };
 }
 

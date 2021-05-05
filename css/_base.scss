@@ -187,16 +187,36 @@ form {
 }
 
 .watermark {
-    position: relative;
-    top: 32px;
-    left: 32px;
+    display: flex;
+    position: absolute;
+    top: 0;
+    left: 0;
     min-width: 120px;
-    height: 74px;
+    padding: 27px 0 27px 30px;
+    width: 100%;
     z-index: 2;
+    align-items: center;
+
+    &-with-background{
+        background-color: rgba(98,98,110,0.75);
+    }
+
+    .close {
+        position: absolute;
+        top: 20px;
+        right: 40px;
+        cursor: pointer;
+
+        svg:focus,
+        svg:hover,
+        svg:active {
+            fill: #cccccc
+        }
+    }
+
 }
 
 .leftwatermark {
-    position: absolute;
     background-image: url($defaultWatermarkLink);
     background-position: center left;
     width: $watermarkWidth;
@@ -204,16 +224,22 @@ form {
     background-size: contain;
     background-repeat: no-repeat;
     z-index: $zindex2;
+    @media all and (max-width:$smallScreen) {
+        height: $watermarkHeightMobile;
+        width: $watermarkWidthMobile;
+        margin-left: 20px;
+    }
 }
 
-.waitingMessage {
-    padding-left: 120px;
-    padding-top: 5px;
+.preCallMessage {
+    padding-left: 20px;
+    padding-right: 200px;
     text-align: left;
-    color: $defaultDarkColor !important;
+    color: $defaultColor !important;
+    flex: 1;
 
     p {
-        font-family: "ProximaNovaLtLight";
+        font-family: "ProximaNovaLtSbold";
 
         &:first-child {
             font-size: 24px;
@@ -224,9 +250,10 @@ form {
         }
     }
 
-    @media all and (max-width: 800px) {
-        padding-left: 0;
-        padding-top: 85px;
+    @media all and (max-width: $smallScreen) {
+        padding-top: 15px;
+        padding-right: 50px;
+        padding-left: 20px;
         p {
             &:first-child {
                 font-size: 16px;

@@ -107,4 +107,11 @@
         transition: 1.2s ease-in-out;
         transition-delay: 0.1s;
     }
+
+    &.has-margin-top {
+        margin-top: 100px;
+        @media all and (max-width: 800px) {
+            margin-top: 155px;
+        }
+    }
 }

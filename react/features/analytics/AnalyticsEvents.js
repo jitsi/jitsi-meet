@@ -1,4 +1,4 @@
-import _ from "lodash";
+import _ from 'lodash';
 
 /**
  * The constant for the event type 'track'.
@@ -821,9 +821,19 @@ export function createConnectionQualityChangedEvent(strength, stats) {
  * Remove the track id from the ConnectionQualityChangedEvent property.
  * If we don't want to send the trackId along with the property to amplitude.
  *
- * @param {Object} event - event object.
- * @returns {Object|number|string|undefined} property.
+ * @param {Object} event - Event object.
+ * @returns {Object|number|string|undefined} Property.
  */
 function removeTrackIdFromEventPropertyObject(event) {
     return event && _.isObject(event) && Object.values(event)[0];
+}
+
+// eslint-disable-next-line require-jsdoc
+export function createWaitingAreaParticipantStatusChangedEvent(status) {
+    return {
+        action: 'waiting.area.participant.status.changed',
+        attributes: {
+            status
+        }
+    };
 }

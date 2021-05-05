@@ -1,8 +1,9 @@
 // @flow
 /* eslint-disable */
 import { getGravatarURL } from '@jitsi/js-utils/avatar';
-
 import jwtDecode from 'jwt-decode';
+import _ from 'lodash';
+
 import { JitsiParticipantConnectionStatus } from '../lib-jitsi-meet';
 import { MEDIA_TYPE, shouldRenderVideoTrack } from '../media';
 import { toState } from '../redux';
@@ -368,30 +369,30 @@ export function shouldRenderParticipantVideo(stateful: Object | Function, id: st
 }
 
 /**
- * Returns participant info from the jwt token
+ * Returns participant info from the jwt token.
  *
  * @param {Object|Function} stateful - Object or function that can be resolved
  * to the Redux state.
  * @returns {string|null}
  */
-export function getLocalParticipantFromJwt(state: Object | Function): Object {
+export function getLocalParticipantInfoFromJwt(state: Object | Function): Object {
     const { jwt } = state['features/base/jwt'];
-    const jwtPayload = jwt && jwtDecode(jwt) || null;
+    const jwtPayload = jwt && jwtDecode(jwt) || {};
 
-    return jwtPayload && jwtPayload.context && jwtPayload.context.user || null;
+    return _.get(jwtPayload,'context.user')
 }
 
 /**
- * Returns participant type from the participant info
+ * Returns participant type from the participant info.
  *
  * @param {Object|Function} stateful - Object or function that can be resolved
  * to the Redux state.
  * @returns {string|null}
  */
 export function getLocalParticipantType(state: Object | Function): string {
-    const participant = getLocalParticipantFromJwt(state);
+    const participant = getLocalParticipantInfoFromJwt(state);
 
-    return participant && participant.participant_type || null;
+    return participant && participant.participant_type ?? null;
 }
 
 /**

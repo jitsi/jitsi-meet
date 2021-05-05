@@ -1,0 +1,48 @@
+.jane-hangup-btn {
+    margin: 0 4px!important;
+
+    .jitsi-icon {
+        display: flex;
+        justify-content: center;
+
+        svg {
+            fill: #fff !important;
+        }
+    }
+
+    .jane-hangup-btn-icon {
+        cursor: pointer;
+        border: 1px solid #bf2117;
+        display: flex;
+        border-radius: 5px;
+        flex-direction: column;
+        font-size: 24px;
+        height: $newToolbarSize;
+        justify-content: center;
+        width: $newToolbarSize;
+        background-color: #bf2117;
+        border-radius: 50%;
+        margin: 0px 4px;
+        width: 38px;
+        height: 38px;
+    }
+
+    & > div > div:nth-child(2) > div {
+        top: -5 !important;
+        & > div:nth-child(1) {
+            padding: 5px 20px 5px 10px;
+            line-height: 20px;
+
+            span:after {
+                content: "";
+                position: absolute;
+                bottom: -5px;
+                right: 90px;
+                border-width: 5px 5px 0;
+                border-style: solid;
+                border-color: #283447 transparent;
+            }
+        }
+    }
+
+}
