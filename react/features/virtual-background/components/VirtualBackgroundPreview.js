@@ -3,12 +3,11 @@
 import Spinner from '@atlaskit/spinner';
 import React, { Component } from 'react';
 
-import { createLocalVideoTracks } from '../../../features/settings/functions';
-import { getVideoDeviceIds } from '../../base/devices';
 import { translate } from '../../base/i18n';
 import Video from '../../base/media/components/Video';
 import { connect, equals } from '../../base/redux';
 import { getCurrentCameraDeviceId } from '../../base/settings';
+import { createLocalTracksF } from '../../base/tracks/functions';
 import { createVirtualBackgroundEffect } from '../../stream-effects/virtual-background';
 import { toggleBackgroundEffect } from '../actions';
 
@@ -23,11 +22,6 @@ export type Props = {
      * The deviceId of the camera device currently being used.
      */
     _currentCameraDeviceId: string,
-
-    /**
-     * All the camera device ids currently connected.
-     */
-    _videoDeviceIds: string[],
 
     /**
      * The virtual background object.
@@ -64,7 +58,7 @@ type State = {
     /**
      * An array of all the jitsiTracks and eventual errors.
      */
-    trackData: Object[],
+    trackData: Object,
 
     /**
      * Activate the selected device camera only.
@@ -91,9 +85,7 @@ class VirtualBackgroundPreview extends Component<Props, State> {
         super(props);
 
         this.state = {
-            trackData: new Array(props._videoDeviceIds && props._videoDeviceIds.length).fill({
-                jitsiTrack: null
-            }),
+            trackData: {},
             loading: false,
             selectedTrack: null
         };
@@ -107,7 +99,11 @@ class VirtualBackgroundPreview extends Component<Props, State> {
     async _setTracks() {
         this._disposeTracks(this.state.trackData);
 
-        const trackData = await createLocalVideoTracks(this.props._videoDeviceIds, 5000);
+        const [ trackData ] = await createLocalTracksF({
+            cameraDeviceId: this.props._currentCameraDeviceId,
+            devices: [ 'video' ]
+        });
+
 
         // In case the component gets unmounted before the tracks are created
         // avoid a leak by not setting the state
@@ -120,9 +116,7 @@ class VirtualBackgroundPreview extends Component<Props, State> {
         }
 
         // background preview should open the selected device camera only
-        const selectedTrack = this.state.trackData.filter(
-            track => track.deviceId === this.props._currentCameraDeviceId
-        )[0]?.jitsiTrack;
+        const selectedTrack = this.state.trackData;
 
         this.setState({
             selectedTrack
@@ -137,13 +131,12 @@ class VirtualBackgroundPreview extends Component<Props, State> {
     /**
      * Destroys all the tracks from trackData object.
      *
-     * @param {Object[]} trackData - An array of tracks that are to be disposed.
+     * @param {Object} trackData - An array of tracks that are to be disposed.
      * @returns {Promise<void>}
      */
     _disposeTracks(trackData) {
-        trackData.forEach(({ jitsiTrack }) => {
-            jitsiTrack && jitsiTrack.dispose();
-        });
+        // eslint-disable-next-line no-unused-expressions
+        Object.keys(trackData).length !== 0 && trackData.disposed === true;
     }
 
     /**
@@ -236,7 +229,7 @@ class VirtualBackgroundPreview extends Component<Props, State> {
      * @inheritdoc
      */
     async componentDidUpdate(prevProps) {
-        if (!equals(this.props._videoDeviceIds, prevProps._videoDeviceIds)) {
+        if (!equals(this.props._currentCameraDeviceId, prevProps._currentCameraDeviceId)) {
             this._setTracks();
         }
         if (!equals(this.props.options, prevProps.options)) {
@@ -270,7 +263,6 @@ class VirtualBackgroundPreview extends Component<Props, State> {
 function _mapStateToProps(state): Object {
     return {
         _currentCameraDeviceId: getCurrentCameraDeviceId(state),
-        _videoDeviceIds: getVideoDeviceIds(state),
         _virtualBackground: state['features/virtual-background']
     };
 }
