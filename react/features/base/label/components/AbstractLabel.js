@@ -12,13 +12,12 @@ export type Props = {
     /**
      * String or component that will be rendered as the label itself.
      */
-    label: string
+    text: string
 };
 
 /**
- * Abstract class for the {@code CircularLabel} component.
+ * Abstract class for the {@code Label} component.
  */
-export default class AbstractCircularLabel<P: Props, S: *>
+export default class Label<P: Props, S: *>
     extends Component<P, S> {
-
 }

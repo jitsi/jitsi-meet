@@ -3,7 +3,7 @@
 import type { Dispatch } from 'redux';
 
 import { getInviteURL } from '../base/connection';
-import { getParticipants } from '../base/participants';
+import { getLocalParticipant, getParticipants } from '../base/participants';
 import { inviteVideoRooms } from '../videosipgw';
 
 import {
@@ -18,7 +18,8 @@ import {
 import {
     getDialInConferenceID,
     getDialInNumbers,
-    invitePeopleAndChatRooms
+    invitePeopleAndChatRooms,
+    inviteSipEndpoints
 } from './functions';
 import logger from './logger';
 
@@ -80,7 +81,7 @@ export function invite(
             dispatch(setCalleeInfoVisible(true, invitees[0]));
         }
 
-        const { conference } = state['features/base/conference'];
+        const { conference, password } = state['features/base/conference'];
 
         if (typeof conference === 'undefined') {
             // Invite will fail before CONFERENCE_JOIN. The request will be
@@ -102,7 +103,10 @@ export function invite(
             inviteServiceCallFlowsUrl
         } = state['features/base/config'];
         const inviteUrl = getInviteURL(state);
+        const { sipInviteUrl } = state['features/base/config'];
+        const { locationURL } = state['features/base/connection'];
         const { jwt } = state['features/base/jwt'];
+        const { name: displayName } = getLocalParticipant(state);
 
         // First create all promises for dialing out.
         const phoneNumbers
@@ -163,6 +167,22 @@ export function invite(
 
         invitesLeftToSend
             = invitesLeftToSend.filter(({ type }) => type !== 'videosipgw');
+
+        const sipEndpoints
+            = invitesLeftToSend.filter(({ type }) => type === 'sip');
+
+        conference && inviteSipEndpoints(
+            sipEndpoints,
+            locationURL,
+            sipInviteUrl,
+            jwt,
+            conference.options.name,
+            password,
+            displayName
+        );
+
+        invitesLeftToSend
+            = invitesLeftToSend.filter(({ type }) => type !== 'sip');
 
         return (
             Promise.all(allInvitePromises)

@@ -11,6 +11,7 @@ import {
 } from '../base/conference';
 import { hideDialog, openDialog } from '../base/dialog';
 import { getLocalParticipant } from '../base/participants';
+export * from './actions.any';
 
 import {
     KNOCKING_PARTICIPANT_ARRIVED_OR_UPDATED,
@@ -198,20 +199,3 @@ export function startKnocking() {
     };
 }
 
-/**
- * Action to toggle lobby mode on or off.
- *
- * @param {boolean} enabled - The desired (new) state of the lobby mode.
- * @returns {Function}
- */
-export function toggleLobbyMode(enabled: boolean) {
-    return async (dispatch: Dispatch<any>, getState: Function) => {
-        const conference = getCurrentConference(getState);
-
-        if (enabled) {
-            conference.enableLobby();
-        } else {
-            conference.disableLobby();
-        }
-    };
-}

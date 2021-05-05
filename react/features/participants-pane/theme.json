@@ -1,0 +1,10 @@
+{
+  "contextFontSize": 14,
+  "contextFontWeight": 400,
+  "headerSize": 60,
+  "panePadding": 16,
+  "participantActionButtonHeight": 32,
+  "participantItemHeight": 48,
+  "participantsPaneWidth": 315,
+  "rangeInputThumbSize": 14
+}

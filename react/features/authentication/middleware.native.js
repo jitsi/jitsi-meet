@@ -22,11 +22,10 @@ import {
     WAIT_FOR_OWNER
 } from './actionTypes';
 import {
-    _openLoginDialog,
-    _openWaitForOwnerDialog,
+    openLoginDialog,
+    openWaitForOwnerDialog,
     stopWaitForOwner,
-    waitForOwner
-} from './actions.native';
+    waitForOwner } from './actions.native';
 import { LoginDialog, WaitForOwnerDialog } from './components';
 
 /**
@@ -54,7 +53,7 @@ MiddlewareRegistry.register(store => next => action => {
                 // Instead of hiding show the new one.
                 const result = next(action);
 
-                dispatch(_openWaitForOwnerDialog());
+                dispatch(openWaitForOwnerDialog());
 
                 return result;
             }
@@ -114,7 +113,7 @@ MiddlewareRegistry.register(store => next => action => {
                 && error.name === JitsiConnectionErrors.PASSWORD_REQUIRED
                 && typeof error.recoverable === 'undefined') {
             error.recoverable = true;
-            store.dispatch(_openLoginDialog());
+            store.dispatch(openLoginDialog());
         }
         break;
     }
@@ -134,7 +133,7 @@ MiddlewareRegistry.register(store => next => action => {
         // The WAIT_FOR_OWNER action is cyclic and we don't want to hide the
         // login dialog every few seconds.
         isDialogOpen(store, LoginDialog)
-            || store.dispatch(_openWaitForOwnerDialog());
+            || store.dispatch(openWaitForOwnerDialog());
         break;
     }
     }

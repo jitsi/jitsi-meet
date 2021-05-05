@@ -5,9 +5,9 @@ import { Animated, Text } from 'react-native';
 import Icon from '../../icons/components/Icon';
 import { combineStyles, type StyleType } from '../../styles';
 
-import AbstractCircularLabel, {
+import AbstractLabel, {
     type Props as AbstractProps
-} from './AbstractCircularLabel';
+} from './AbstractLabel';
 import styles from './styles';
 
 /**
@@ -48,14 +48,14 @@ type State = {
  * Renders a circular indicator to be used for status icons, such as recording
  * on, audio-only conference, video quality and similar.
  */
-export default class CircularLabel extends AbstractCircularLabel<Props, State> {
+export default class Label extends AbstractLabel<Props, State> {
     /**
      * A reference to the started animation of this label.
      */
     animationReference: Object;
 
     /**
-     * Instantiates a new instance of {@code CircularLabel}.
+     * Instantiates a new instance of {@code Label}.
      *
      * @inheritdoc
      */
@@ -91,7 +91,7 @@ export default class CircularLabel extends AbstractCircularLabel<Props, State> {
      * @inheritdoc
      */
     render() {
-        const { icon, label, status, style } = this.props;
+        const { icon, text, status, style } = this.props;
 
         let extraStyle = null;
 
@@ -106,24 +106,18 @@ export default class CircularLabel extends AbstractCircularLabel<Props, State> {
             break;
         }
 
-        const labelComponent = icon
-            ? (
-                <Icon
-                    src = { icon }
-                    style = { styles.indicatorIcon } />
-            ) : (
-                <Text style = { styles.indicatorText }>
-                    { label }
-                </Text>
-            );
-
         return (
             <Animated.View
                 style = { [
-                    combineStyles(styles.indicatorContainer, style),
+                    combineStyles(styles.labelContainer, style),
                     extraStyle
                 ] }>
-                { labelComponent }
+                { icon && <Icon
+                    size = '18'
+                    src = { icon } /> }
+                { text && <Text style = { styles.labelText }>
+                    { text }
+                </Text>}
             </Animated.View>
         );
     }

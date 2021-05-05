@@ -19,12 +19,10 @@ import {
     WAIT_FOR_OWNER
 } from './actionTypes';
 import {
+    hideLoginDialog,
+    openWaitForOwnerDialog,
     stopWaitForOwner,
     waitForOwner
-} from './actions.native';
-import {
-    hideLoginDialog,
-    openWaitForOwnerDialog
 } from './actions.web';
 import { LoginDialog, WaitForOwnerDialog } from './components';
 
@@ -42,7 +40,7 @@ MiddlewareRegistry.register(store => next => action => {
 
     case CANCEL_LOGIN: {
         if (!isDialogOpen(store, WaitForOwnerDialog)) {
-            if (isWaitingForOwner(store)) {
+            if (_isWaitingForOwner(store)) {
                 store.dispatch(openWaitForOwnerDialog());
 
                 return next(action);
@@ -74,10 +72,10 @@ MiddlewareRegistry.register(store => next => action => {
     }
 
     case CONFERENCE_JOINED:
-        if (isWaitingForOwner(store)) {
+        if (_isWaitingForOwner(store)) {
             store.dispatch(stopWaitForOwner());
         }
-        store.dispatch(hideLoginDialog);
+        store.dispatch(hideLoginDialog());
         break;
 
     case CONFERENCE_LEFT:
@@ -85,16 +83,16 @@ MiddlewareRegistry.register(store => next => action => {
         break;
 
     case CONNECTION_ESTABLISHED:
-        store.dispatch(hideLoginDialog);
+        store.dispatch(hideLoginDialog());
         break;
 
     case STOP_WAIT_FOR_OWNER:
-        clearExistingWaitForOwnerTimeout(store);
+        _clearExistingWaitForOwnerTimeout(store);
         store.dispatch(hideDialog(WaitForOwnerDialog));
         break;
 
     case WAIT_FOR_OWNER: {
-        clearExistingWaitForOwnerTimeout(store);
+        _clearExistingWaitForOwnerTimeout(store);
 
         const { handler, timeoutMs } = action;
 
@@ -116,7 +114,7 @@ MiddlewareRegistry.register(store => next => action => {
  * @param {Object} store - The redux store.
  * @returns {void}
  */
-function clearExistingWaitForOwnerTimeout(
+function _clearExistingWaitForOwnerTimeout(
         { getState }: { getState: Function }) {
     const { waitForOwnerTimeoutID } = getState()['features/authentication'];
 
@@ -129,6 +127,6 @@ function clearExistingWaitForOwnerTimeout(
  * @param {Object} store - The redux store.
  * @returns {void}
  */
-function isWaitingForOwner({ getState }: { getState: Function }) {
+function _isWaitingForOwner({ getState }: { getState: Function }) {
     return getState()['features/authentication'].waitForOwnerTimeoutID;
 }

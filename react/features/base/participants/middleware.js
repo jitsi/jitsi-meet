@@ -1,6 +1,7 @@
 // @flow
 
 import UIEvents from '../../../../service/UI/UIEvents';
+import { toggleE2EE } from '../../e2ee/actions';
 import { NOTIFICATION_TIMEOUT, showNotification } from '../../notifications';
 import { CALLING, INVITED } from '../../presence-status';
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../app';
@@ -207,7 +208,7 @@ StateListenerRegistry.register(
     (conference, store) => {
         if (conference) {
             const propertyHandlers = {
-                'e2eeEnabled': (participant, value) => _e2eeUpdated(store, conference, participant.getId(), value),
+                'e2ee.enabled': (participant, value) => _e2eeUpdated(store, conference, participant.getId(), value),
                 'features_e2ee': (participant, value) =>
                     store.dispatch(participantUpdated({
                         conference,
@@ -270,11 +271,15 @@ StateListenerRegistry.register(
  * @param {Function} dispatch - The Redux dispatch function.
  * @param {Object} conference - The conference for which we got an update.
  * @param {string} participantId - The ID of the participant from which we got an update.
- * @param {boolean} newValue - The new value of the E2EE enabled     status.
+ * @param {boolean} newValue - The new value of the E2EE enabled status.
  * @returns {void}
  */
 function _e2eeUpdated({ dispatch }, conference, participantId, newValue) {
     const e2eeEnabled = newValue === 'true';
+
+    if (e2eeEnabled) {
+        dispatch(toggleE2EE(e2eeEnabled));
+    }
 
     dispatch(participantUpdated({
         conference,
@@ -383,7 +388,7 @@ function _maybePlaySounds({ getState, dispatch }, action) {
  */
 function _participantJoinedOrUpdated(store, next, action) {
     const { dispatch, getState } = store;
-    const { participant: { avatarURL, e2eeEnabled, email, id, local, name, raisedHand } } = action;
+    const { participant: { avatarURL, email, id, local, name, raisedHand } } = action;
 
     // Send an external update of the local participant's raised hand state
     // if a new raised hand state is defined in the action.
@@ -395,16 +400,6 @@ function _participantJoinedOrUpdated(store, next, action) {
             if (conference && raisedHand !== getLocalParticipant(getState()).raisedHand) {
                 conference.setLocalParticipantProperty('raisedHand', raisedHand);
             }
-        }
-    }
-
-    // Send an external update of the local participant's E2EE enabled state
-    // if a new state is defined in the action.
-    if (typeof e2eeEnabled !== 'undefined') {
-        if (local) {
-            const { conference } = getState()['features/base/conference'];
-
-            conference && conference.setLocalParticipantProperty('e2eeEnabled', e2eeEnabled);
         }
     }
 

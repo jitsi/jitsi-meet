@@ -38,7 +38,7 @@ import {
     resizeLargeVideo,
     selectParticipantInLargeVideo
 } from '../../react/features/large-video/actions';
-import { toggleLobbyMode } from '../../react/features/lobby/actions.web';
+import { toggleLobbyMode } from '../../react/features/lobby/actions';
 import { RECORDING_TYPES } from '../../react/features/recording/constants';
 import { getActiveSession } from '../../react/features/recording/functions';
 import { toggleTileView, setTileView } from '../../react/features/video-layout';

@@ -9,6 +9,15 @@ platform :ios do
     # Make sure we are on a clean tree
     ensure_git_status_clean
 
+    # Connect to Apple Store Connect
+    app_store_connect_api_key(
+      key_id: ENV["ASC_KEY_ID"],
+      issuer_id: ENV["ASC_ISSUER_ID"],
+      key_content: ENV["ASC_KEY_CONTENT"],
+      duration: 1200,
+      in_house: false
+    )
+
     # Set the app identifier
     update_app_identifier(
       xcodeproj: "app/app.xcodeproj",
@@ -94,12 +103,24 @@ platform :ios do
       uses_non_exempt_encryption: false
     )
 
-    # Upload dSYMs to Crashlytics
-    download_dsyms
-    upload_symbols_to_crashlytics
-
     # Cleanup
     clean_build_artifacts
     reset_git_repo(skip_clean: true)
+  end
+
+  lane :refresh_dsyms do
+    # Connect to Apple Store Connect
+    app_store_connect_api_key(
+      key_id: ENV["ASC_KEY_ID"],
+      issuer_id: ENV["ASC_ISSUER_ID"],
+      key_content: ENV["ASC_KEY_CONTENT"],
+      duration: 1200,
+      in_house: false
+    )
+
+    # Upload dSYMs to Crashlytics
+    download_dsyms(min_version: ENV["DSYMS_MIN_VERSION"])  # Download dSYM files from iTC
+    upload_symbols_to_crashlytics                          # Upload them to Crashlytics
+    clean_build_artifacts                                  # Delete the local dSYM files
   end
 end

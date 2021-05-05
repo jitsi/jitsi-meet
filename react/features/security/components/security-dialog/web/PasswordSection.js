@@ -3,8 +3,8 @@
 
 import React, { useRef } from 'react';
 
-import { translate } from '../../../base/i18n';
-import { copyText } from '../../../base/util';
+import { translate } from '../../../../base/i18n';
+import { copyText } from '../../../../base/util';
 
 import PasswordForm from './PasswordForm';
 

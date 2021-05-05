@@ -15,6 +15,7 @@ export default [
     'abTesting',
     'analytics.disabled',
     'audioLevelsInterval',
+    'audioQuality',
     'apiLogLevels',
     'avgRtpStatsN',
     'backgroundAlpha',

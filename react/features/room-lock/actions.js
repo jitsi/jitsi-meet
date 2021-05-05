@@ -12,33 +12,11 @@ import {
     setPassword
 } from '../base/conference';
 import { hideDialog, openDialog } from '../base/dialog';
+import { SecurityDialog } from '../security/components/security-dialog';
 
-import { PasswordRequiredPrompt, RoomLockPrompt } from './components';
+import { PasswordRequiredPrompt } from './components';
 
 declare var APP: Object;
-
-/**
- * Begins a (user) request to lock a specific conference/room.
- *
- * @param {JitsiConference|undefined} conference - The JitsiConference to lock
- * if specified or undefined if the current JitsiConference is to be locked.
- * @returns {Function}
- */
-export function beginRoomLockRequest(conference: ?Object) {
-    return (dispatch: Function, getState: Function) => {
-        if (typeof conference === 'undefined') {
-            // eslint-disable-next-line no-param-reassign
-            conference = getState()['features/base/conference'].conference;
-        }
-        if (conference) {
-            const passwordNumberOfDigits = getState()['features/base/config'].roomPasswordNumberOfDigits;
-
-            dispatch(openDialog(RoomLockPrompt, {
-                conference,
-                passwordNumberOfDigits }));
-        }
-    };
-}
 
 /**
  * Cancels a prompt for a password to join a specific conference/room.
@@ -99,7 +77,7 @@ export function endRoomLockRequest(
             = password
                 ? dispatch(setPassword(conference, conference.lock, password))
                 : Promise.resolve();
-        const endRoomLockRequest_ = () => dispatch(hideDialog(RoomLockPrompt));
+        const endRoomLockRequest_ = () => dispatch(hideDialog(SecurityDialog));
 
         setPassword_.then(endRoomLockRequest_, endRoomLockRequest_);
     };
@@ -137,3 +115,5 @@ export function unlockRoom() {
         ));
     };
 }
+
+
