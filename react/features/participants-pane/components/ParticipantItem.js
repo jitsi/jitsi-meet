@@ -12,6 +12,7 @@ import {
     IconMicrophoneEmptySlash
 } from '../../base/icons';
 import { ActionTrigger, MediaState } from '../constants';
+import theme from '../theme.json';
 
 import { RaisedHandIndicator } from './RaisedHandIndicator';
 import {
@@ -38,6 +39,7 @@ const Actions = {
 const AudioStateIcons = {
     [MediaState.ForceMuted]: (
         <Icon
+            color = { theme.colors.moderationDisabled }
             size = { 16 }
             src = { IconMicrophoneEmptySlash } />
     ),
@@ -60,6 +62,7 @@ const AudioStateIcons = {
 const VideoStateIcons = {
     [MediaState.ForceMuted]: (
         <Icon
+            color = { theme.colors.moderationDisabled }
             size = { 16 }
             src = { IconCameraEmptyDisabled } />
     ),

@@ -2,12 +2,18 @@
 
 import UIEvents from '../../../../service/UI/UIEvents';
 import { toggleE2EE } from '../../e2ee/actions';
+import {
+    getIsEnabled as getIsModerationEnabled,
+    getIsParticipantIdException,
+    notifyUnmuteRequestFromParticipantId
+} from '../../moderated-audio/functions';
 import { NOTIFICATION_TIMEOUT, showNotification } from '../../notifications';
 import { CALLING, INVITED } from '../../presence-status';
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../app';
 import {
     CONFERENCE_WILL_JOIN,
     forEachConference,
+    getConferenceState,
     getCurrentConference
 } from '../conference';
 import { JitsiConferenceEvents } from '../lib-jitsi-meet';
@@ -42,7 +48,8 @@ import {
     getLocalParticipant,
     getParticipantById,
     getParticipantCount,
-    getParticipantDisplayName
+    getParticipantDisplayName,
+    isLocalParticipantModerator
 } from './functions';
 import { PARTICIPANT_JOINED_FILE, PARTICIPANT_LEFT_FILE } from './sounds';
 
@@ -111,9 +118,15 @@ MiddlewareRegistry.register(store => next => action => {
     }
 
     case MUTE_REMOTE_PARTICIPANT: {
-        const { conference } = store.getState()['features/base/conference'];
+        const { id, mediaType } = action;
+        const state = store.getState();
+        const { conference } = getConferenceState(state);
+        const isModerationEnabled = getIsModerationEnabled(state);
 
-        conference.muteParticipant(action.id, action.mediaType);
+        if (isModerationEnabled) {
+            conference.removeModeratedAudioException(id);
+        }
+        conference.muteParticipant(id, mediaType);
         break;
     }
 
@@ -440,6 +453,8 @@ function _participantJoinedOrUpdated(store, next, action) {
  * @returns {void}
  */
 function _raiseHandUpdated({ dispatch, getState }, conference, participantId, newValue) {
+    const state = getState();
+    const isModerationEnabled = getIsModerationEnabled(state);
     const raisedHand = newValue === 'true';
 
     dispatch(participantUpdated({
@@ -453,12 +468,19 @@ function _raiseHandUpdated({ dispatch, getState }, conference, participantId, ne
     }
 
     if (raisedHand) {
-        dispatch(showNotification({
-            titleArguments: {
-                name: getParticipantDisplayName(getState, participantId)
-            },
-            titleKey: 'notify.raisedHand'
-        }, NOTIFICATION_TIMEOUT));
+        if (isLocalParticipantModerator(state)
+            && isModerationEnabled
+            && !getIsParticipantIdException(participantId)(state)
+        ) {
+            dispatch(notifyUnmuteRequestFromParticipantId(participantId));
+        } else {
+            dispatch(showNotification({
+                titleArguments: {
+                    name: getParticipantDisplayName(getState, participantId)
+                },
+                titleKey: 'notify.raisedHand'
+            }, NOTIFICATION_TIMEOUT));
+        }
     }
 }
 

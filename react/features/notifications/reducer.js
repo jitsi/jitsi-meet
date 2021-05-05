@@ -76,8 +76,14 @@ ReducerRegistry.register('features/notifications',
  * queue.
  */
 function _insertNotificationByPriority(notifications, notification) {
-    const newNotificationPriority
-        = NOTIFICATION_TYPE_PRIORITIES[notification.props.appearance] || 0;
+    const newNotificationPriority = notification.props.sticky
+        ? Infinity
+        : NOTIFICATION_TYPE_PRIORITIES[notification.props.appearance] || 0;
+
+    // Create a copy to avoid mutation and remove existing notifications with
+    // the same uid
+    const nextNotifications = notifications
+        .filter(n => n.uid !== notification.props.uid);
 
     // Default to putting the new notification at the end of the queue.
     let insertAtLocation = notifications.length;
@@ -97,10 +103,7 @@ function _insertNotificationByPriority(notifications, notification) {
         }
     }
 
-    // Create a copy to avoid mutation and insert the notification.
-    const copyOfNotifications = notifications.slice();
+    nextNotifications.splice(insertAtLocation, 0, notification);
 
-    copyOfNotifications.splice(insertAtLocation, 0, notification);
-
-    return copyOfNotifications;
+    return nextNotifications;
 }

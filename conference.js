@@ -117,6 +117,7 @@ import {
     maybeOpenFeedbackDialog,
     submitFeedback
 } from './react/features/feedback';
+import { setupModerationHandlers } from './react/features/moderated-audio/functions';
 import { showNotification } from './react/features/notifications';
 import { mediaPermissionPromptVisibilityChanged, toggleSlowGUMOverlay } from './react/features/overlay';
 import { suspendDetected } from './react/features/power-monitor';
@@ -2261,6 +2262,12 @@ export default {
                 APP.store.dispatch(dataChannelOpened());
             }
         );
+
+
+        const { dispatch, getState } = APP.store;
+
+        // moderation
+        setupModerationHandlers(room, dispatch, getState);
 
         // call hangup
         APP.UI.addListener(UIEvents.HANGUP, () => {

@@ -1,0 +1,23 @@
+export const DISABLE_MODERATED_AUDIO = 'DISABLE_MODERATED_AUDIO';
+
+export const ENABLE_MODERATED_AUDIO = 'ENABLE_MODERATED_AUDIO';
+
+export const DISABLE_MODERATED_AUDIO_FINISH = 'DISABLE_MODERATED_AUDIO_FINISH';
+
+export const ENABLE_MODERATED_AUDIO_FINISH = 'ENABLE_MODERATED_AUDIO_FINISH';
+
+export const ADD_MODERATED_AUDIO_EXCEPTION = 'ADD_MODERATED_AUDIO_EXCEPTION';
+
+export const ADD_MODERATED_AUDIO_EXCEPTION_FINISH = 'ADD_MODERATED_AUDIO_EXCEPTION_FINISH';
+
+export const NOTIFICATION_IDS = {
+    ModerationInEffect: 'moderation-in-effect',
+    UnmuteRequestFromModerator: 'unmute-request-moderator',
+    UnmuteRequestFromParticipant: 'unmute-request-participant'
+};
+
+export const REDUCER_KEY = 'features/moderated-audio';
+
+export const REMOVE_MODERATED_AUDIO_EXCEPTION = 'REMOVE_MODERATED_AUDIO_EXCEPTION';
+
+export const REMOVE_MODERATED_AUDIO_EXCEPTION_FINISH = 'REMOVE_MODERATED_AUDIO_EXCEPTION_FINISH';

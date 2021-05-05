@@ -1,4 +1,7 @@
 {
+  "colors": {
+    "moderationDisabled": "#E54B4B"
+  },
   "contextFontSize": 14,
   "contextFontWeight": 400,
   "headerSize": 60,

@@ -2,6 +2,7 @@
 
 import throttle from 'lodash/throttle';
 import type { Dispatch } from 'redux';
+import uuid from 'uuid';
 
 import { NOTIFICATIONS_ENABLED, getFeatureFlag } from '../base/flags';
 
@@ -73,6 +74,19 @@ export function showErrorNotification(props: Object) {
 }
 
 /**
+ * Queues a sticky notification for display.
+ *
+ * @param {Object} props - The props needed to show the notification component.
+ * @returns {Object}
+ */
+export function showStickyNotification(props: Object) {
+    return showNotification({
+        ...props,
+        sticky: true
+    });
+}
+
+/**
  * Queues a notification for display.
  *
  * @param {Object} props - The props needed to show the notification component.
@@ -95,7 +109,7 @@ export function showNotification(props: Object = {}, timeout: ?number) {
                 type: SHOW_NOTIFICATION,
                 props,
                 timeout,
-                uid: window.Date.now()
+                uid: props.uid || uuid.v4()
             });
         }
     };

@@ -84,7 +84,7 @@ export const ContextMenuIcon = styled(Icon).attrs({
     size: 20
 })`
   & > svg {
-    fill: #a4b8d1;
+    fill: ${props => props.color || '#a4b8d1'};
   }
 `;
 

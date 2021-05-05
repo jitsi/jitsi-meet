@@ -3,6 +3,13 @@
 import type { Dispatch } from 'redux';
 
 import {
+    getIsEnabled as isModerationEnabled,
+    getIsParticipantException,
+    notifyModerationInEffect
+} from '../../moderated-audio/functions';
+import { getLocalParticipant } from '../participants';
+
+import {
     SET_AUDIO_MUTED,
     SET_AUDIO_AVAILABLE,
     SET_CAMERA_FACING_MODE,
@@ -16,6 +23,7 @@ import {
     MEDIA_TYPE,
     VIDEO_MUTISM_AUTHORITY
 } from './constants';
+import { isAudioMuted } from './functions';
 
 /**
  * Action to adjust the availability of the local audio.
@@ -47,13 +55,25 @@ export function setAudioAvailable(available: boolean) {
  *     muted: boolean
  * }}
  */
-export function setAudioMuted(muted: boolean, ensureTrack: boolean = false) {
-    return {
-        type: SET_AUDIO_MUTED,
-        ensureTrack,
-        muted
+export const setAudioMuted = (muted: boolean, ensureTrack: boolean = false) =>
+    (dispatch: Dispatch<any>, getState: Function) => {
+        const state = getState();
+        const isMuted = isAudioMuted(state);
+
+        if (isMuted === muted) {
+            return;
+        }
+
+        if (isMuted && isModerationEnabled(state) && !getIsParticipantException(getLocalParticipant(state))(state)) {
+            dispatch(notifyModerationInEffect());
+        } else {
+            dispatch({
+                type: SET_AUDIO_MUTED,
+                ensureTrack,
+                muted
+            });
+        }
     };
-}
 
 /**
  * Action to set the facing mode of the local camera.

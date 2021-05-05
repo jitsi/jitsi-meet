@@ -38,6 +38,7 @@ import '../google-api/reducer';
 import '../invite/reducer';
 import '../large-video/reducer';
 import '../lobby/reducer';
+import '../moderated-audio/reducer';
 import '../notifications/reducer';
 import '../overlay/reducer';
 import '../recent-list/reducer';

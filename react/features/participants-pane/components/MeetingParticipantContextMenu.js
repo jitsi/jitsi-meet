@@ -9,13 +9,15 @@ import {
     IconCloseCircle,
     IconCrown,
     IconMessage,
+    IconMicrophoneEmptySlash,
     IconMuteEveryoneElse,
     IconVideoOff
 } from '../../base/icons';
 import { isLocalParticipantModerator } from '../../base/participants';
-import { getIsParticipantVideoMuted } from '../../base/tracks';
+import { getIsParticipantAudioMuted, getIsParticipantVideoMuted } from '../../base/tracks';
 import { openChat } from '../../chat/actions';
 import { GrantModeratorDialog, KickRemoteParticipantDialog, MuteEveryoneDialog } from '../../video-menu';
+import MuteRemoteParticipantDialog from '../../video-menu/components/web/MuteRemoteParticipantDialog';
 import MuteRemoteParticipantsVideoDialog from '../../video-menu/components/web/MuteRemoteParticipantsVideoDialog';
 import { getComputedOuterHeight } from '../functions';
 
@@ -65,6 +67,7 @@ export const MeetingParticipantContextMenu = ({
     const dispatch = useDispatch();
     const containerRef = useRef(null);
     const isLocalModerator = useSelector(isLocalParticipantModerator);
+    const isParticipantAudioMuted = useSelector(getIsParticipantAudioMuted(participant));
     const isParticipantVideoMuted = useSelector(getIsParticipantVideoMuted(participant));
     const [ isHidden, setIsHidden ] = useState(true);
     const { t } = useTranslation();
@@ -101,6 +104,12 @@ export const MeetingParticipantContextMenu = ({
         }));
     }, [ dispatch, participant ]);
 
+    const muteAudio = useCallback(() => {
+        dispatch(openDialog(MuteRemoteParticipantDialog, {
+            participantID: participant.id
+        }));
+    }, [ dispatch, participant ]);
+
     const muteEveryoneElse = useCallback(() => {
         dispatch(openDialog(MuteEveryoneDialog, {
             exclude: [ participant.id ]
@@ -130,18 +139,24 @@ export const MeetingParticipantContextMenu = ({
             onMouseEnter = { onEnter }
             onMouseLeave = { onLeave }>
             <ContextMenuItemGroup>
+                {isLocalModerator && !isParticipantAudioMuted && (
+                    <ContextMenuItem onClick = { muteAudio }>
+                        <ContextMenuIcon src = { IconMicrophoneEmptySlash } />
+                        <span>{t('dialog.muteParticipantButton')}</span>
+                    </ContextMenuItem>
+                )}
                 {isLocalModerator && (
                     <ContextMenuItem onClick = { muteEveryoneElse }>
                         <ContextMenuIcon src = { IconMuteEveryoneElse } />
                         <span>{t('toolbar.accessibilityLabel.muteEveryoneElse')}</span>
                     </ContextMenuItem>
                 )}
-                {isLocalModerator && (isParticipantVideoMuted || (
+                {isLocalModerator && !isParticipantVideoMuted && (
                     <ContextMenuItem onClick = { muteVideo }>
                         <ContextMenuIcon src = { IconVideoOff } />
                         <span>{t('participantsPane.actions.stopVideo')}</span>
                     </ContextMenuItem>
-                ))}
+                )}
             </ContextMenuItemGroup>
             <ContextMenuItemGroup>
                 {isLocalModerator && (

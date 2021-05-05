@@ -7,6 +7,7 @@ import {
     sendAnalytics
 } from '../../analytics';
 import { getName } from '../../app/functions';
+import { setupModerationHandlers } from '../../moderated-audio/functions';
 import { endpointMessageReceived } from '../../subtitles';
 import { JITSI_CONNECTION_CONFERENCE_KEY } from '../connection';
 import { JitsiConferenceEvents } from '../lib-jitsi-meet';
@@ -72,11 +73,13 @@ declare var APP: Object;
  *
  * @param {JitsiConference} conference - The JitsiConference instance.
  * @param {Dispatch} dispatch - The Redux dispatch function.
- * @param {Object} state - The Redux state.
+ * @param {Object} getState - The Redux getState function.
  * @private
  * @returns {void}
  */
-function _addConferenceListeners(conference, dispatch, state) {
+function _addConferenceListeners(conference, dispatch, getState) {
+    const state = getState();
+
     // A simple logger for conference errors received through
     // the listener. These errors are not handled now, but logged.
     conference.on(JitsiConferenceEvents.CONFERENCE_ERROR,
@@ -219,6 +222,8 @@ function _addConferenceListeners(conference, dispatch, state) {
             id,
             email: data.value
         })));
+
+    setupModerationHandlers(conference, dispatch, getState);
 }
 
 /**
@@ -456,7 +461,7 @@ export function createConference() {
 
         dispatch(_conferenceWillJoin(conference));
 
-        _addConferenceListeners(conference, dispatch, state);
+        _addConferenceListeners(conference, dispatch, getState);
 
         sendLocalParticipant(state, conference);
 

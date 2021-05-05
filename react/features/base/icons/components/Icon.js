@@ -80,6 +80,7 @@ export default function Icon(props: Props) {
                 fill = { calculatedColor }
                 height = { calculatedSize }
                 id = { id }
+                style = {{ fill: calculatedColor }}
                 width = { calculatedSize } />
         </Container>
     );
