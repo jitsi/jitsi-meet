@@ -1,20 +1,19 @@
 // @flow
 
 import Spinner from '@atlaskit/spinner';
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 
 import { translate } from '../../base/i18n';
 import Video from '../../base/media/components/Video';
 import { connect, equals } from '../../base/redux';
 import { getCurrentCameraDeviceId } from '../../base/settings';
 import { createLocalTracksF } from '../../base/tracks/functions';
-import { createVirtualBackgroundEffect } from '../../stream-effects/virtual-background';
 import { toggleBackgroundEffect } from '../actions';
 
 const videoClassName = 'video-preview-video flipVideoX';
 
 /**
- * The type of the React {@code Component} props of {@link VirtualBackgroundPreview}.
+ * The type of the React {@code PureComponent} props of {@link VirtualBackgroundPreview}.
  */
 export type Props = {
 
@@ -22,12 +21,6 @@ export type Props = {
      * The deviceId of the camera device currently being used.
      */
     _currentCameraDeviceId: string,
-
-    /**
-     * The virtual background object.
-     */
-
-    _virtualBackground: Object,
 
     /**
      * The redux {@code dispatch} function.
@@ -56,23 +49,18 @@ type State = {
     loading: boolean,
 
     /**
-     * An array of all the jitsiTracks and eventual errors.
-     */
-    trackData: Object,
-
-    /**
      * Activate the selected device camera only.
      */
-    selectedTrack: Object
+    jitsiTrack: Object
 };
 
 /**
- * Implements a React {@link Component} which displays the virtual
+ * Implements a React {@link PureComponent} which displays the virtual
  * background preview.
  *
- * @extends Component
+ * @extends PureComponent
  */
-class VirtualBackgroundPreview extends Component<Props, State> {
+class VirtualBackgroundPreview extends PureComponent<Props, State> {
     _componentWasUnmounted: boolean;
 
     /**
@@ -85,9 +73,8 @@ class VirtualBackgroundPreview extends Component<Props, State> {
         super(props);
 
         this.state = {
-            trackData: {},
             loading: false,
-            selectedTrack: null
+            jitsiTrack: null
         };
     }
 
@@ -97,46 +84,19 @@ class VirtualBackgroundPreview extends Component<Props, State> {
      * @returns {void}
      */
     async _setTracks() {
-        this._disposeTracks(this.state.trackData);
-
-        const [ trackData ] = await createLocalTracksF({
+        const [ jitsiTrack ] = await createLocalTracksF({
             cameraDeviceId: this.props._currentCameraDeviceId,
             devices: [ 'video' ]
         });
 
-
         // In case the component gets unmounted before the tracks are created
         // avoid a leak by not setting the state
         if (this._componentWasUnmounted) {
-            this._disposeTracks(trackData);
-        } else {
-            this.setState({
-                trackData
-            });
+            return;
         }
-
-        // background preview should open the selected device camera only
-        const selectedTrack = this.state.trackData;
-
         this.setState({
-            selectedTrack
+            jitsiTrack
         });
-        if (this.props._virtualBackground?.backgroundEffectEnabled && this.state.selectedTrack) {
-            await this.state.selectedTrack.setEffect(
-                await createVirtualBackgroundEffect(this.props._virtualBackground)
-            );
-        }
-    }
-
-    /**
-     * Destroys all the tracks from trackData object.
-     *
-     * @param {Object} trackData - An array of tracks that are to be disposed.
-     * @returns {Promise<void>}
-     */
-    _disposeTracks(trackData) {
-        // eslint-disable-next-line no-unused-expressions
-        Object.keys(trackData).length !== 0 && trackData.disposed === true;
     }
 
     /**
@@ -146,7 +106,7 @@ class VirtualBackgroundPreview extends Component<Props, State> {
      */
     async _applyBackgroundEffect() {
         this.setState({ loading: true });
-        await this.props.dispatch(toggleBackgroundEffect(this.props.options, this.state.selectedTrack));
+        await this.props.dispatch(toggleBackgroundEffect(this.props.options, this.state.jitsiTrack));
         this.setState({ loading: false });
     }
 
@@ -173,23 +133,21 @@ class VirtualBackgroundPreview extends Component<Props, State> {
      * @returns {React$Node}
      */
     _renderPreviewEntry(data) {
-        const { error } = data;
         const { t } = this.props;
         const className = 'video-background-preview-entry';
 
         if (this.state.loading) {
             return this._loadVideoPreview();
         }
-        if (error) {
+        if (!data) {
             return (
                 <div
                     className = { className }
                     video-preview-container = { true }>
-                    <div className = 'video-preview-error'>{t(error)}</div>
+                    <div className = 'video-preview-error'>{t('deviceSelection.previewUnavailable')}</div>
                 </div>
             );
         }
-
         const props: Object = {
             className
         };
@@ -220,7 +178,6 @@ class VirtualBackgroundPreview extends Component<Props, State> {
      */
     componentWillUnmount() {
         this._componentWasUnmounted = true;
-        this._disposeTracks(this.state.trackData);
     }
 
     /**
@@ -243,10 +200,10 @@ class VirtualBackgroundPreview extends Component<Props, State> {
      * @inheritdoc
      */
     render() {
-        const { selectedTrack } = this.state;
+        const { jitsiTrack } = this.state;
 
-        return selectedTrack
-            ? <div className = 'video-preview'>{this._renderPreviewEntry(selectedTrack)}</div>
+        return jitsiTrack
+            ? <div className = 'video-preview'>{this._renderPreviewEntry(jitsiTrack)}</div>
             : <div className = 'video-preview-loader'>{this._loadVideoPreview()}</div>
         ;
     }
@@ -262,8 +219,7 @@ class VirtualBackgroundPreview extends Component<Props, State> {
  */
 function _mapStateToProps(state): Object {
     return {
-        _currentCameraDeviceId: getCurrentCameraDeviceId(state),
-        _virtualBackground: state['features/virtual-background']
+        _currentCameraDeviceId: getCurrentCameraDeviceId(state)
     };
 }
 
