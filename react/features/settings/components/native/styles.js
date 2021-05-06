@@ -2,8 +2,9 @@ import { ColorPalette } from '../../../base/styles';
 
 export const ANDROID_UNDERLINE_COLOR = 'transparent';
 export const PLACEHOLDER_COLOR = ColorPalette.lightGrey;
+export const THUMB_COLOR = ColorPalette.white;
 
-const TEXT_SIZE = 17;
+const TEXT_SIZE = 14;
 
 /**
  * The styles of the native components of the feature {@code settings}.
@@ -15,7 +16,7 @@ export default {
     fieldContainer: {
         alignItems: 'center',
         flexDirection: 'row',
-        minHeight: 65,
+        minHeight: 56,
         paddingHorizontal: 8
     },
 
@@ -24,8 +25,7 @@ export default {
      */
     fieldContainerColumn: {
         alignItems: 'flex-start',
-        flexDirection: 'column',
-        paddingVertical: 3
+        flexDirection: 'column'
     },
 
     /**
@@ -34,7 +34,7 @@ export default {
     fieldLabelContainer: {
         alignItems: 'center',
         flexDirection: 'row',
-        marginRight: 5
+        paddingLeft: 8
     },
 
     /**
@@ -67,7 +67,8 @@ export default {
         alignItems: 'center',
         flex: 1,
         flexDirection: 'row',
-        justifyContent: 'flex-end'
+        justifyContent: 'flex-end',
+        paddingRight: 8
     },
 
     /**
@@ -75,7 +76,18 @@ export default {
      */
     formSectionTitle: {
         backgroundColor: 'rgba(0, 0, 0, 0.1)',
-        padding: 5
+        paddingBottom: 0,
+        paddingTop: 0
+    },
+
+    sectionClose: {
+        color: ColorPalette.black,
+        fontSize: 14
+    },
+
+    sectionOpen: {
+        color: ColorPalette.blueHighlight,
+        fontSize: 14
     },
 
     /**
@@ -84,6 +96,23 @@ export default {
     text: {
         color: ColorPalette.black
     },
+
+    /**
+     * Text input container style.
+     */
+    textInputContainer: {
+        flex: 1,
+        height: 40,
+        paddingBottom: 8,
+        paddingTop: 2,
+        paddingLeft: 16,
+        paddingRight: 16
+    },
+
+    /**
+     * Text input border style.
+     */
+    textInputBorderColor: ColorPalette.blueHighlight,
 
     /**
      * Standard text input field style.
