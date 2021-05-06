@@ -2,7 +2,7 @@
 
 import Spinner from '@atlaskit/spinner';
 import { jitsiLocalStorage } from '@jitsi/js-utils/jitsi-local-storage';
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import uuid from 'uuid';
 
 import { Dialog } from '../../base/dialog';
@@ -92,8 +92,7 @@ function VirtualBackground({ _selectedThumbnail, dispatch, t }: Props) {
     const localImages = jitsiLocalStorage.getItem('virtualBackgrounds');
     const [ storedImages, setStoredImages ] = useState<Array<Image>>((localImages && JSON.parse(localImages)) || []);
     const [ loading, setLoading ] = useState(false);
-
-    // const uploadImageButton: Object = useRef(null);
+    const uploadImageButton: Object = useRef(null);
 
     const deleteStoredImage = useCallback(e => {
         const imageId = e.currentTarget.getAttribute('data-imageid');
@@ -264,13 +263,13 @@ function VirtualBackground({ _selectedThumbnail, dispatch, t }: Props) {
         }
     }, [ deleteStoredImage ]);
 
-    /*
-        const uploadImageKeyPress = useCallback(e => {
-            if (uploadImageButton.current && (e.key === ' ' || e.key === 'Enter')) {
-                e.preventDefault();
-                uploadImageButton.current.click();
-            }
-        }, [ uploadImageButton.current ]); */
+
+    const uploadImageKeyPress = useCallback(e => {
+        if (uploadImageButton.current && (e.key === ' ' || e.key === 'Enter')) {
+            e.preventDefault();
+            uploadImageButton.current.click();
+        }
+    }, [ uploadImageButton.current ]);
 
     return (
         <Dialog
@@ -288,8 +287,12 @@ function VirtualBackground({ _selectedThumbnail, dispatch, t }: Props) {
             ) : (
                 <div>
                     <label
+                        aria-label = { t('virtualBackground.uploadImage') }
                         className = 'file-upload-label'
-                        htmlFor = 'file-upload'>
+                        htmlFor = 'file-upload'
+                        onKeyPress = { uploadImageKeyPress }
+                        role = 'button'
+                        tabIndex = { 0 } >
                         <Icon
                             className = { 'add-background' }
                             size = { 20 }
@@ -301,36 +304,16 @@ function VirtualBackground({ _selectedThumbnail, dispatch, t }: Props) {
                         className = 'file-upload-btn'
                         id = 'file-upload'
                         onChange = { uploadImage }
+                        ref = { uploadImageButton }
                         type = 'file' />
-                    <div className = 'virtual-background-dialog'>
-                        {images.map(image => (
-                            <Tooltip
-                                content = { image.tooltip && t(`virtualBackground.${image.tooltip}`) }
-                                key = { image.id }
-                                position = { 'top' }>
-                                <img
-                                    alt = { image.tooltip && t(`virtualBackground.${image.tooltip}`) }
-                                    className = { _selectedThumbnail === image.id ? 'thumbnail-selected'
-                                        : 'thumbnail' }
-                                    data-imageid = { image.id }
-                                    onClick = { setImageBackground }
-                                    onError = { onError }
-                                    onKeyPress = { setImageBackgroundKeyPress }
-                                    role = 'button'
-                                    src = { image.src }
-                                    tabIndex = { 0 } />
-                            </Tooltip>
-                        ))}
-                    </div>
-
                     <div className = 'virtual-background-dialog'>
                         <Tooltip
                             content = { t('virtualBackground.removeBackground') }
                             position = { 'top' }>
                             <div
                                 aria-label = { t('virtualBackground.removeBackground') }
-                                className = { _selectedThumbnail === 'none' ? 'none-selected'
-                                    : 'virtual-background-none' }
+                                className = { _selectedThumbnail === 'none' ? 'background-option none-selected'
+                                    : 'background-option virtual-background-none' }
                                 onClick = { removeBackground }
                                 onKeyPress = { removeBackgroundKeyPress }
                                 role = 'button'
@@ -344,7 +327,7 @@ function VirtualBackground({ _selectedThumbnail, dispatch, t }: Props) {
                             <div
                                 aria-label = { t('virtualBackground.slightBlur') }
                                 className = { _selectedThumbnail === 'slight-blur'
-                                    ? 'slight-blur-selected' : 'slight-blur' }
+                                    ? 'background-option slight-blur-selected' : 'background-option slight-blur' }
                                 onClick = { enableSlideBlur }
                                 onKeyPress = { enableSlideBlurKeyPress }
                                 role = 'button'
@@ -357,7 +340,8 @@ function VirtualBackground({ _selectedThumbnail, dispatch, t }: Props) {
                             position = { 'top' }>
                             <div
                                 aria-label = { t('virtualBackground.blur') }
-                                className = { _selectedThumbnail === 'blur' ? 'blur-selected' : 'blur' }
+                                className = { _selectedThumbnail === 'blur' ? 'background-option blur-selected'
+                                    : 'background-option blur' }
                                 onClick = { enableBlur }
                                 onKeyPress = { enableBlurKeyPress }
                                 role = 'button'
@@ -365,7 +349,6 @@ function VirtualBackground({ _selectedThumbnail, dispatch, t }: Props) {
                                 {t('virtualBackground.blur')}
                             </div>
                         </Tooltip>
-
                         {images.map(image => (
                             <Tooltip
                                 content = { image.tooltip && t(`virtualBackground.${image.tooltip}`) }
@@ -373,7 +356,8 @@ function VirtualBackground({ _selectedThumbnail, dispatch, t }: Props) {
                                 position = { 'top' }>
                                 <img
                                     alt = { image.tooltip && t(`virtualBackground.${image.tooltip}`) }
-                                    className = { _selectedThumbnail === image.id ? 'thumbnail-selected' : 'thumbnail' }
+                                    className = { _selectedThumbnail === image.id
+                                        ? 'background-option thumbnail-selected' : 'background-option thumbnail' }
                                     data-imageid = { image.id }
                                     onClick = { setImageBackground }
                                     onError = { onError }
@@ -389,7 +373,8 @@ function VirtualBackground({ _selectedThumbnail, dispatch, t }: Props) {
                                 key = { image.id }>
                                 <img
                                     alt = { t('virtualBackground.uploadedImage', { index: index + 1 }) }
-                                    className = { _selectedThumbnail === image.id ? 'thumbnail-selected' : 'thumbnail' }
+                                    className = { _selectedThumbnail === image.id
+                                        ? 'background-option thumbnail-selected' : 'background-option thumbnail' }
                                     data-imageid = { image.id }
                                     onClick = { setUploadedImageBackground }
                                     onError = { onError }
