@@ -339,12 +339,12 @@
         "title": "Embed this meeting"
     },
     "virtualBackground": {
+        "apply": "Apply",
         "title": "Virtual backgrounds",
         "blur": "Blur",
         "slightBlur": "Slight Blur",
         "removeBackground": "Remove background",
         "addBackground": "Add background",
-        "pleaseWait": "Please wait...",
         "none": "None"
     },
     "feedback": {
