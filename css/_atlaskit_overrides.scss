@@ -38,7 +38,7 @@
  * Override @atlaskit/modal-dialog header styling
  */
 .atlaskit-portal [role="dialog"] header {
-    box-shadow: none !important;
+    box-shadow: none;
     .jitsi-icon {
         cursor: pointer;
     }
@@ -52,7 +52,7 @@
  * Override @atlaskit/modal-dialog footer styling.
  */
  .atlaskit-portal [role="dialog"] footer {
-     box-shadow: none !important;
+     box-shadow: none;
  }
 
 /**
