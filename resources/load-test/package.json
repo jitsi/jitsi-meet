@@ -38,7 +38,7 @@
     "expose-loader": "0.7.5",
     "flow-bin": "0.104.0",
     "imports-loader": "0.7.1",
-    "lodash": "4.17.20",
+    "lodash": "4.17.21",
     "string-replace-loader": "2.1.1",
     "style-loader": "0.19.0",
     "webpack": "4.43.0",
