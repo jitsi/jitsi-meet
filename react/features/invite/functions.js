@@ -830,8 +830,9 @@ export function inviteSipEndpoints( // eslint-disable-line max-params
         return Promise.resolve();
     }
 
+    const regex = new RegExp(`/${roomName}`, 'i');
     const baseUrl = Object.assign(new URL(locationURL.toString()), {
-        pathname: locationURL.pathname.replace(`/${roomName}`, ''),
+        pathname: locationURL.pathname.replace(regex, ''),
         hash: '',
         search: ''
     });
