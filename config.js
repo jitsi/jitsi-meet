@@ -59,8 +59,10 @@ var config = {
         // simulcast is turned off for the desktop share. If presenter is turned
         // on while screensharing is in progress, the max bitrate is automatically
         // adjusted to 2.5 Mbps. This takes a value between 0 and 1 which determines
-        // the probability for this to be enabled.
-        // capScreenshareBitrate: 1 // 0 to disable
+        // the probability for this to be enabled. This setting has been deprecated.
+        // desktopSharingFrameRate.max now determines whether simulcast will be enabled
+        // or disabled for the screenshare.
+        // capScreenshareBitrate: 1 // 0 to disable - deprecated.
 
         // Enable callstats only for a percentage of users.
         // This takes a value between 0 and 100 which determines the probability for
@@ -225,6 +227,11 @@ var config = {
 
     // Default value for the channel "last N" attribute. -1 for unlimited.
     channelLastN: -1,
+
+    // Provides a way for the lastN value to be controlled through the UI.
+    // When startLastN is present, conference starts with a last-n value of startLastN and channelLastN
+    // value will be used when the quality level is selected using "Manage Video Quality" slider.
+    // startLastN: 1,
 
     // Provides a way to use different "last N" values based on the number of participants in the conference.
     // The keys in an Object represent number of participants and the values are "last N" to be used when number of
@@ -664,7 +671,9 @@ var config = {
     // Options related to the remote participant menu.
     // remoteVideoMenu: {
     //     // If set to true the 'Kick out' button will be disabled.
-    //     disableKick: true
+    //     disableKick: true,
+    //     // If set to true the 'Grant moderator' button will be disabled.
+    //     disableGrantModerator: true
     // },
 
     // If set to true all muting operations of remote participants will be disabled.

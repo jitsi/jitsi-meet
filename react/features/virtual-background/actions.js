@@ -1,6 +1,5 @@
 // @flow
 
-import { getLocalVideoTrack } from '../base/tracks';
 import { createVirtualBackgroundEffect } from '../stream-effects/virtual-background';
 
 import { BACKGROUND_ENABLED, SET_VIRTUAL_BACKGROUND } from './actionTypes';
@@ -10,26 +9,28 @@ import logger from './logger';
  * Signals the local participant activate the virtual background video or not.
  *
  * @param {Object} options - Represents the virtual background setted options.
+ * @param {Object} jitsiTrack - Represents the jitsi track that will have backgraund effect applied.
  * @returns {Promise}
  */
-export function toggleBackgroundEffect(options: Object) {
+export function toggleBackgroundEffect(options: Object, jitsiTrack: Object) {
     return async function(dispatch: Object => Object, getState: () => any) {
         await dispatch(backgroundEnabled(options.enabled));
         await dispatch(setVirtualBackground(options));
         const state = getState();
-        const { jitsiTrack } = getLocalVideoTrack(state['features/base/tracks']);
         const virtualBackground = state['features/virtual-background'];
 
-        try {
-            if (options.enabled) {
-                await jitsiTrack.setEffect(await createVirtualBackgroundEffect(virtualBackground));
-            } else {
-                await jitsiTrack.setEffect(undefined);
+        if (jitsiTrack) {
+            try {
+                if (options.enabled) {
+                    await jitsiTrack.setEffect(await createVirtualBackgroundEffect(virtualBackground));
+                } else {
+                    await jitsiTrack.setEffect(undefined);
+                    dispatch(backgroundEnabled(false));
+                }
+            } catch (error) {
                 dispatch(backgroundEnabled(false));
+                logger.error('Error on apply background effect:', error);
             }
-        } catch (error) {
-            dispatch(backgroundEnabled(false));
-            logger.error('Error on apply backgroun effect:', error);
         }
     };
 }

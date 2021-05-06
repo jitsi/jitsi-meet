@@ -198,7 +198,6 @@
 				0BCA495C1EC4B6C600B793EE /* AudioMode.m */,
 				C69EFA02209A0EFD0027712B /* callkit */,
 				A4A934E7212F3AB8001E9388 /* dropbox */,
-				0BA13D301EE83FF8007BEF7F /* ExternalAPI.m */,
 				0BD906E91EC0C00300C8C18E /* Info.plist */,
 				DE438CD82350934700DD541D /* JavaScriptSandbox.m */,
 				0BD906E81EC0C00300C8C18E /* JitsiMeet.h */,
@@ -235,6 +234,7 @@
 				C8AFD27D2462C613000293D2 /* InfoPlistUtil.h */,
 				C8AFD27E2462C613000293D2 /* InfoPlistUtil.m */,
 				C81E9AB825AC5AD800B134D9 /* ExternalAPI.h */,
+				0BA13D301EE83FF8007BEF7F /* ExternalAPI.m */,
 				4E51B76225E5345E0038575A /* ScheenshareEventEmiter.h */,
 				4E51B76325E5345E0038575A /* ScheenshareEventEmiter.m */,
 			);

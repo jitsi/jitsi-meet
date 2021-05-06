@@ -5,14 +5,18 @@ import { jitsiLocalStorage } from '@jitsi/js-utils/jitsi-local-storage';
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import uuid from 'uuid';
 
-import { Dialog } from '../../base/dialog';
+import { Dialog, hideDialog } from '../../base/dialog';
 import { translate } from '../../base/i18n';
 import { Icon, IconCloseSmall, IconPlusCircle } from '../../base/icons';
 import { connect } from '../../base/redux';
 import { Tooltip } from '../../base/tooltip';
+import { getLocalVideoTrack } from '../../base/tracks';
 import { toggleBackgroundEffect } from '../actions';
 import { resizeImage, toDataURL } from '../functions';
 import logger from '../logger';
+
+import VirtualBackgroundPreview from './VirtualBackgroundPreview';
+
 
 type Image = {
     tooltip?: string,
@@ -64,6 +68,11 @@ const images: Array<Image> = [
 type Props = {
 
     /**
+     * Returns the jitsi track that will have backgraund effect applied.
+     */
+    _jitsiTrack: Object,
+
+    /**
      * Returns the selected thumbnail identifier.
      */
     _selectedThumbnail: string,
@@ -88,17 +97,12 @@ const onError = event => {
  *
  * @returns {ReactElement}
  */
-function VirtualBackground({ _selectedThumbnail, dispatch, t }: Props) {
+function VirtualBackground({ _jitsiTrack, _selectedThumbnail, dispatch, t }: Props) {
+    const [ options, setOptions ] = useState({});
     const localImages = jitsiLocalStorage.getItem('virtualBackgrounds');
     const [ storedImages, setStoredImages ] = useState<Array<Image>>((localImages && JSON.parse(localImages)) || []);
     const [ loading, setLoading ] = useState(false);
     const uploadImageButton: Object = useRef(null);
-
-    const deleteStoredImage = useCallback(e => {
-        const imageId = e.currentTarget.getAttribute('data-imageid');
-
-        setStoredImages(storedImages.filter(item => item.id !== imageId));
-    }, [ storedImages ]);
 
     /**
      * Updates stored images on local storage.
@@ -115,18 +119,27 @@ function VirtualBackground({ _selectedThumbnail, dispatch, t }: Props) {
         }
     }, [ storedImages ]);
 
+    const deleteStoredImage = useCallback(e => {
+        const imageId = e.currentTarget.getAttribute('data-imageid');
+
+        setStoredImages(storedImages.filter(item => item.id !== imageId));
+    }, [ storedImages ]);
+
+    const deleteStoredImageKeyPress = useCallback(e => {
+        if (e.key === ' ' || e.key === 'Enter') {
+            e.preventDefault();
+            deleteStoredImage(e);
+        }
+    }, [ deleteStoredImage ]);
+
     const enableBlur = useCallback(async () => {
-        setLoading(true);
-        await dispatch(
-            toggleBackgroundEffect({
-                backgroundType: 'blur',
-                enabled: true,
-                blurValue: 25,
-                selectedThumbnail: 'blur'
-            })
-        );
-        setLoading(false);
-    }, [ dispatch ]);
+        setOptions({
+            backgroundType: 'blur',
+            enabled: true,
+            blurValue: 25,
+            selectedThumbnail: 'blur'
+        });
+    }, []);
 
     const enableBlurKeyPress = useCallback(e => {
         if (e.key === ' ' || e.key === 'Enter') {
@@ -136,17 +149,13 @@ function VirtualBackground({ _selectedThumbnail, dispatch, t }: Props) {
     }, [ enableBlur ]);
 
     const enableSlideBlur = useCallback(async () => {
-        setLoading(true);
-        await dispatch(
-            toggleBackgroundEffect({
-                backgroundType: 'blur',
-                enabled: true,
-                blurValue: 8,
-                selectedThumbnail: 'slight-blur'
-            })
-        );
-        setLoading(false);
-    }, [ enableBlur ]);
+        setOptions({
+            backgroundType: 'blur',
+            enabled: true,
+            blurValue: 8,
+            selectedThumbnail: 'slight-blur'
+        });
+    }, []);
 
     const enableSlideBlurKeyPress = useCallback(e => {
         if (e.key === ' ' || e.key === 'Enter') {
@@ -156,51 +165,49 @@ function VirtualBackground({ _selectedThumbnail, dispatch, t }: Props) {
     }, [ enableBlur ]);
 
     const removeBackground = useCallback(async () => {
-        setLoading(true);
-        await dispatch(
-            toggleBackgroundEffect({
-                enabled: false,
-                selectedThumbnail: 'none'
-            })
-        );
-        setLoading(false);
-    }, [ dispatch ]);
+        setOptions({
+            enabled: false,
+            selectedThumbnail: 'none'
+        });
+    }, []);
+
+    const removeBackgroundKeyPress = useCallback(e => {
+        if (e.key === ' ' || e.key === 'Enter') {
+            e.preventDefault();
+            removeBackground();
+        }
+    }, [ removeBackground ]);
 
     const setUploadedImageBackground = useCallback(async e => {
         const imageId = e.currentTarget.getAttribute('data-imageid');
         const image = storedImages.find(img => img.id === imageId);
 
         if (image) {
-            setLoading(true);
-            await dispatch(toggleBackgroundEffect({
+            setOptions({
                 backgroundType: 'image',
                 enabled: true,
                 url: image.src,
                 selectedThumbnail: image.id
-            }));
-            setLoading(false);
+            });
         }
-    }, [ dispatch, storedImages ]);
+    }, [ storedImages ]);
 
     const setImageBackground = useCallback(async e => {
         const imageId = e.currentTarget.getAttribute('data-imageid');
         const image = images.find(img => img.id === imageId);
 
         if (image) {
-            setLoading(true);
             const url = await toDataURL(image.src);
 
-            await dispatch(
-                toggleBackgroundEffect({
-                    backgroundType: 'image',
-                    enabled: true,
-                    url,
-                    selectedThumbnail: image.id
-                })
-            );
+            setOptions({
+                backgroundType: 'image',
+                enabled: true,
+                url,
+                selectedThumbnail: image.id
+            });
             setLoading(false);
         }
-    }, [ dispatch ]);
+    }, []);
 
     const uploadImage = useCallback(async e => {
         const reader = new FileReader();
@@ -211,7 +218,6 @@ function VirtualBackground({ _selectedThumbnail, dispatch, t }: Props) {
             const url = await resizeImage(reader.result);
             const uuId = uuid.v4();
 
-            setLoading(true);
             setStoredImages([
                 ...storedImages,
                 {
@@ -219,15 +225,12 @@ function VirtualBackground({ _selectedThumbnail, dispatch, t }: Props) {
                     src: url
                 }
             ]);
-            await dispatch(
-                toggleBackgroundEffect({
-                    backgroundType: 'image',
-                    enabled: true,
-                    url,
-                    selectedThumbnail: uuId
-                })
-            );
-            setLoading(false);
+            setOptions({
+                backgroundType: 'image',
+                enabled: true,
+                url,
+                selectedThumbnail: uuId
+            });
         };
         reader.onerror = () => {
             setLoading(false);
@@ -235,12 +238,12 @@ function VirtualBackground({ _selectedThumbnail, dispatch, t }: Props) {
         };
     }, [ dispatch, storedImages ]);
 
-    const removeBackgroundKeyPress = useCallback(e => {
-        if (e.key === ' ' || e.key === 'Enter') {
+    const uploadImageKeyPress = useCallback(e => {
+        if (uploadImageButton.current && (e.key === ' ' || e.key === 'Enter')) {
             e.preventDefault();
-            removeBackground();
+            uploadImageButton.current.click();
         }
-    }, [ removeBackground ]);
+    }, [ uploadImageButton.current ]);
 
     const setImageBackgroundKeyPress = useCallback(e => {
         if (e.key === ' ' || e.key === 'Enter') {
@@ -256,30 +259,24 @@ function VirtualBackground({ _selectedThumbnail, dispatch, t }: Props) {
         }
     }, [ setUploadedImageBackground ]);
 
-    const deleteStoredImageKeyPress = useCallback(e => {
-        if (e.key === ' ' || e.key === 'Enter') {
-            e.preventDefault();
-            deleteStoredImage(e);
-        }
-    }, [ deleteStoredImage ]);
-
-
-    const uploadImageKeyPress = useCallback(e => {
-        if (uploadImageButton.current && (e.key === ' ' || e.key === 'Enter')) {
-            e.preventDefault();
-            uploadImageButton.current.click();
-        }
-    }, [ uploadImageButton.current ]);
+    const applyVirtualBackground = useCallback(async () => {
+        setLoading(true);
+        await dispatch(toggleBackgroundEffect(options, _jitsiTrack));
+        await setLoading(false);
+        dispatch(hideDialog());
+    }, [ dispatch ]);
 
     return (
         <Dialog
-            hideCancelButton = { true }
-            submitDisabled = { true }
+            hideCancelButton = { false }
+            okKey = { 'virtualBackground.apply' }
+            onSubmit = { applyVirtualBackground }
+            submitDisabled = { !options || loading }
             titleKey = { 'virtualBackground.title' }
             width = '640px'>
+            <VirtualBackgroundPreview options = { options } />
             {loading ? (
                 <div className = 'virtual-background-loading'>
-                    <span className = 'loading-content-text'>{t('virtualBackground.pleaseWait')}</span>
                     <Spinner
                         isCompleting = { false }
                         size = 'medium' />
@@ -356,8 +353,9 @@ function VirtualBackground({ _selectedThumbnail, dispatch, t }: Props) {
                                 position = { 'top' }>
                                 <img
                                     alt = { image.tooltip && t(`virtualBackground.${image.tooltip}`) }
-                                    className = { _selectedThumbnail === image.id
-                                        ? 'background-option thumbnail-selected' : 'background-option thumbnail' }
+                                    className = {
+                                        options.selectedThumbnail === image.id || _selectedThumbnail === image.id
+                                            ? 'background-option thumbnail-selected' : 'background-option thumbnail' }
                                     data-imageid = { image.id }
                                     onClick = { setImageBackground }
                                     onError = { onError }
@@ -408,13 +406,12 @@ function VirtualBackground({ _selectedThumbnail, dispatch, t }: Props) {
  *
  * @param {Object} state - The Redux state.
  * @private
- * @returns {{
- *     _selectedThumbnail: string
- * }}
+ * @returns {{Props}}
  */
 function _mapStateToProps(state): Object {
     return {
-        _selectedThumbnail: state['features/virtual-background'].selectedThumbnail
+        _selectedThumbnail: state['features/virtual-background'].selectedThumbnail,
+        _jitsiTrack: getLocalVideoTrack(state['features/base/tracks'])?.jitsiTrack
     };
 }
 

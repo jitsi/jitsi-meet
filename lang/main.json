@@ -348,6 +348,7 @@
         "title": "Embed this meeting"
     },
     "virtualBackground": {
+        "apply": "Apply",
         "title": "Virtual backgrounds",
         "blur": "Blur",
         "slightBlur": "Slight Blur",

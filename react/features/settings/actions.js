@@ -10,10 +10,21 @@ import {
     SET_AUDIO_SETTINGS_VISIBILITY,
     SET_VIDEO_SETTINGS_VISIBILITY
 } from './actionTypes';
-import { SettingsDialog } from './components';
+import { LogoutDialog, SettingsDialog } from './components';
 import { getMoreTabProps, getProfileTabProps } from './functions';
 
 declare var APP: Object;
+
+/**
+ * Opens {@code LogoutDialog}.
+ *
+ * @param {Function} onLogout - The event in {@code LogoutDialog} that should be
+ *  enabled on click.
+ * @returns {Function}
+ */
+export function openLogoutDialog(onLogout: Function) {
+    return openDialog(LogoutDialog, { onLogout });
+}
 
 /**
  * Opens {@code SettingsDialog}.
