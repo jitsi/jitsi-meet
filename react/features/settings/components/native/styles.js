@@ -117,6 +117,16 @@ export default {
     },
 
     /**
+     * Standard text input field style.
+     */
+    textInputField: {
+        color: BaseTheme.palette.field01,
+        flex: 1,
+        fontSize: TEXT_SIZE,
+        textAlign: 'right'
+    },
+
+    /**
      * Appended style for column layout fields.
      */
     textInputFieldColumn: {
