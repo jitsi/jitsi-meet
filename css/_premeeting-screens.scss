@@ -252,7 +252,9 @@
     &:hover {
         background: rgba(255, 255, 255, 0.1);
 
-        @include icon-container(#A4B8D1, #1C2025);
+        .toggle-button-icon-container {
+            display: none;
+        }
     }
 
     &-container {
@@ -270,5 +272,15 @@
 
     &--toggled {
         @include icon-container(white, #1C2025);
+
+        &:hover {
+            .toggle-button-icon-container {
+                display: block;
+            }
+        }
+
+        .toggle-button-icon-container {
+            display: block;
+        }
     }
 }
