@@ -104,6 +104,19 @@ function VirtualBackground({ _jitsiTrack, _selectedThumbnail, dispatch, t }: Pro
     const [ loading, setLoading ] = useState(false);
     const uploadImageButton: Object = useRef(null);
 
+    const deleteStoredImage = useCallback(e => {
+        const imageId = e.currentTarget.getAttribute('data-imageid');
+
+        setStoredImages(storedImages.filter(item => item.id !== imageId));
+    }, [ storedImages ]);
+
+    const deleteStoredImageKeyPress = useCallback(e => {
+        if (e.key === ' ' || e.key === 'Enter') {
+            e.preventDefault();
+            deleteStoredImage(e);
+        }
+    }, [ deleteStoredImage ]);
+
     /**
      * Updates stored images on local storage.
      */
@@ -119,18 +132,6 @@ function VirtualBackground({ _jitsiTrack, _selectedThumbnail, dispatch, t }: Pro
         }
     }, [ storedImages ]);
 
-    const deleteStoredImage = useCallback(e => {
-        const imageId = e.currentTarget.getAttribute('data-imageid');
-
-        setStoredImages(storedImages.filter(item => item.id !== imageId));
-    }, [ storedImages ]);
-
-    const deleteStoredImageKeyPress = useCallback(e => {
-        if (e.key === ' ' || e.key === 'Enter') {
-            e.preventDefault();
-            deleteStoredImage(e);
-        }
-    }, [ deleteStoredImage ]);
 
     const enableBlur = useCallback(async () => {
         setOptions({
@@ -264,7 +265,7 @@ function VirtualBackground({ _jitsiTrack, _selectedThumbnail, dispatch, t }: Pro
         await dispatch(toggleBackgroundEffect(options, _jitsiTrack));
         await setLoading(false);
         dispatch(hideDialog());
-    }, [ dispatch ]);
+    }, [ dispatch, options ]);
 
     return (
         <Dialog
@@ -288,7 +289,6 @@ function VirtualBackground({ _jitsiTrack, _selectedThumbnail, dispatch, t }: Pro
                         className = 'file-upload-label'
                         htmlFor = 'file-upload'
                         onKeyPress = { uploadImageKeyPress }
-                        role = 'button'
                         tabIndex = { 0 } >
                         <Icon
                             className = { 'add-background' }
@@ -303,17 +303,21 @@ function VirtualBackground({ _jitsiTrack, _selectedThumbnail, dispatch, t }: Pro
                         onChange = { uploadImage }
                         ref = { uploadImageButton }
                         type = 'file' />
-                    <div className = 'virtual-background-dialog'>
+                    <div
+                        className = 'virtual-background-dialog'
+                        role = 'radiogroup'
+                        tabIndex = '-1'>
                         <Tooltip
                             content = { t('virtualBackground.removeBackground') }
                             position = { 'top' }>
                             <div
+                                aria-checked = { _selectedThumbnail === 'none' }
                                 aria-label = { t('virtualBackground.removeBackground') }
                                 className = { _selectedThumbnail === 'none' ? 'background-option none-selected'
                                     : 'background-option virtual-background-none' }
                                 onClick = { removeBackground }
                                 onKeyPress = { removeBackgroundKeyPress }
-                                role = 'button'
+                                role = 'radio'
                                 tabIndex = { 0 } >
                                 {t('virtualBackground.none')}
                             </div>
@@ -322,12 +326,13 @@ function VirtualBackground({ _jitsiTrack, _selectedThumbnail, dispatch, t }: Pro
                             content = { t('virtualBackground.slightBlur') }
                             position = { 'top' }>
                             <div
+                                aria-checked = { _selectedThumbnail === 'slight-blur' }
                                 aria-label = { t('virtualBackground.slightBlur') }
                                 className = { _selectedThumbnail === 'slight-blur'
                                     ? 'background-option slight-blur-selected' : 'background-option slight-blur' }
                                 onClick = { enableSlideBlur }
                                 onKeyPress = { enableSlideBlurKeyPress }
-                                role = 'button'
+                                role = 'radio'
                                 tabIndex = { 0 }>
                                 {t('virtualBackground.slightBlur')}
                             </div>
@@ -336,12 +341,13 @@ function VirtualBackground({ _jitsiTrack, _selectedThumbnail, dispatch, t }: Pro
                             content = { t('virtualBackground.blur') }
                             position = { 'top' }>
                             <div
+                                aria-checked = { _selectedThumbnail === 'blur' }
                                 aria-label = { t('virtualBackground.blur') }
                                 className = { _selectedThumbnail === 'blur' ? 'background-option blur-selected'
                                     : 'background-option blur' }
                                 onClick = { enableBlur }
                                 onKeyPress = { enableBlurKeyPress }
-                                role = 'button'
+                                role = 'radio'
                                 tabIndex = { 0 }>
                                 {t('virtualBackground.blur')}
                             </div>
@@ -353,6 +359,8 @@ function VirtualBackground({ _jitsiTrack, _selectedThumbnail, dispatch, t }: Pro
                                 position = { 'top' }>
                                 <img
                                     alt = { image.tooltip && t(`virtualBackground.${image.tooltip}`) }
+                                    aria-checked = { options.selectedThumbnail === image.id
+                                        || _selectedThumbnail === image.id }
                                     className = {
                                         options.selectedThumbnail === image.id || _selectedThumbnail === image.id
                                             ? 'background-option thumbnail-selected' : 'background-option thumbnail' }
@@ -360,7 +368,7 @@ function VirtualBackground({ _jitsiTrack, _selectedThumbnail, dispatch, t }: Pro
                                     onClick = { setImageBackground }
                                     onError = { onError }
                                     onKeyPress = { setImageBackgroundKeyPress }
-                                    role = 'button'
+                                    role = 'radio'
                                     src = { image.src }
                                     tabIndex = { 0 } />
                             </Tooltip>
@@ -371,13 +379,14 @@ function VirtualBackground({ _jitsiTrack, _selectedThumbnail, dispatch, t }: Pro
                                 key = { image.id }>
                                 <img
                                     alt = { t('virtualBackground.uploadedImage', { index: index + 1 }) }
+                                    aria-checked = { _selectedThumbnail === image.id }
                                     className = { _selectedThumbnail === image.id
                                         ? 'background-option thumbnail-selected' : 'background-option thumbnail' }
                                     data-imageid = { image.id }
                                     onClick = { setUploadedImageBackground }
                                     onError = { onError }
                                     onKeyPress = { setUploadedImageBackgroundKeyPress }
-                                    role = 'button'
+                                    role = 'radio'
                                     src = { image.src }
                                     tabIndex = { 0 } />
 

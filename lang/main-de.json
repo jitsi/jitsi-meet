@@ -357,10 +357,13 @@
         "none": "keiner",
         "uploadedImage": "Hochgeladenes Bild {{index}}",
         "deleteImage": "Bild löschen",
-        "image1" : "Berghütte",
-        "image2" : "Klettergipfel Höllenhund",
-        "image3" : "Tokio Penthaus",
-        "image4" : "Düsseldorf Penthaus"
+        "image1" : "Strand",
+        "image2" : "Weiße neutrale Wand",
+        "image3" : "Weißer leerer Raum",
+        "image4" : "Schwarze Stehlampe",
+        "image5" : "Berg",
+        "image6" : "Wald",
+        "image7" : "Sonnenaufgang"
     },
     "feedback": {
         "average": "Durchschnittlich",
@@ -546,6 +549,17 @@
         "oldElectronClientDescription2": "aktuelle Version",
         "oldElectronClientDescription3": "!",
         "groupTitle": "Benachrichtigungen"
+    },
+    "participantsPane": {
+        "close": "Schließen",
+        "headings": {
+            "lobby": "Lobby ({{count}})",
+            "participantsList": "Teilnehmer ({{count}})"
+        },
+        "actions": {
+            "muteAll": "Alle stummschalten",
+            "stopVideo": "Video stoppen"
+        }
     },
     "passwordSetRemotely": "von einer anderen Person gesetzt",
     "passwordDigitsOnly": "Bis zu {{number}} Ziffern",

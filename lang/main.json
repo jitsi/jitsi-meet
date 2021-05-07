@@ -358,10 +358,13 @@
         "none": "None",
         "uploadedImage": "Uploaded image {{index}}",
         "deleteImage": "Delete image",
-        "image1" : "Mountain hut",
-        "image2" : "Climbing peak Hellhound",
-        "image3" : "Tokyo penthouse",
-        "image4" : "Duesseldorf penthouse"
+        "image1" : "Beach",
+        "image2" : "White neutral wall",
+        "image3" : "White empty room",
+        "image4" : "Black floor lamp",
+        "image5" : "Mountain",
+        "image6" : "Forest ",
+        "image7" : "Sunrise"
     },
     "feedback": {
         "average": "Average",
@@ -550,6 +553,7 @@
         "groupTitle": "Notifications"
     },
     "participantsPane": {
+        "close": "Close",
         "headings": {
             "lobby": "Lobby ({{count}})",
             "participantsList": "Meeting participants ({{count}})"

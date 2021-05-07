@@ -30,6 +30,12 @@ export const ParticipantsPane = () => {
     const { t } = useTranslation();
 
     const closePane = useCallback(() => dispatch(close(), [ dispatch ]));
+    const closePaneKeyPress = useCallback(e => {
+        if (closePane && (e.key === ' ' || e.key === 'Enter')) {
+            e.preventDefault();
+            closePane();
+        }
+    }, [ closePane ]);
     const muteAll = useCallback(() => dispatch(openDialog(MuteEveryoneDialog)), [ dispatch ]);
 
     return (
@@ -41,7 +47,12 @@ export const ParticipantsPane = () => {
                 ) }>
                 <div className = 'participants_pane-content'>
                     <Header>
-                        <Close onClick = { closePane } />
+                        <Close
+                            aria-label = { t('participantsPane.close', 'Close') }
+                            onClick = { closePane }
+                            onKeyPress = { closePaneKeyPress }
+                            role = 'button'
+                            tabIndex = { 0 } />
                     </Header>
                     <Container>
                         <LobbyParticipantList />
