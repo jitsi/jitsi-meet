@@ -343,7 +343,7 @@ class Thumbnail extends Component<Props, State> {
 
             return {
                 ...newState,
-                dispayMode: computeDisplayMode(Thumbnail.getDisplayModeInput(props, newState))
+                displayMode: computeDisplayMode(Thumbnail.getDisplayModeInput(props, newState))
             };
         }
 
