@@ -26,6 +26,7 @@ ReducerRegistry.register('features/chat', (state = DEFAULT_STATE, action) => {
             id: action.id,
             messageType: action.messageType,
             message: action.message,
+            pollId: action.pollId,
             privateMessage: action.privateMessage,
             recipient: action.recipient,
             timestamp: action.timestamp

@@ -630,6 +630,9 @@
             "results" : "Results",
             "close": "Fermer",
             "empty": "No answer for the moment"
+        },
+        "chat": {
+            "notice": "Poll"
         }
     },
     "poweredby": "powered by",

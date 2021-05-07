@@ -1,54 +1,29 @@
 // @flow
 
 import React from 'react';
-import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
 
-import { getParticipants } from '../../../base/participants';
-import type { Poll } from '../../types';
+import AbstractPollResults from '../AbstractPollResults';
+import type { AbstractProps } from '../AbstractPollResults';
 
-
-type Props = {
-
-    /**
-     * Display or not detailed votes
-     */
-    detailedVotes: boolean,
-
-    /**
-     * Display or not the poll question
-     */
-    displayQuestion: boolean,
-
-    /**
-     * Details of the poll to display
-     */
-    pollDetails: Poll,
-};
 
 /**
  * Component that renders the poll results.
  *
- * @returns {React$Element<any>}
+ * @param {Props} props - The passed props.
+ * @returns {React.Node}
  */
-function PollResults({ detailedVotes, displayQuestion, pollDetails }: Props) {
-
-    const question = displayQuestion ? <strong>{ pollDetails.question }</strong> : null;
-
-    const participants = useSelector(state => getParticipants(state));
-
-    const totalVoters = pollDetails.answers.reduce((accumulator, answer) => accumulator + answer.voters.size, 0);
-
-    const { t } = useTranslation();
-
-    // if no message for the moment, we stop here and display a warning message
-    if (totalVoters === 0) {
-        return <span> {t('poll.answer.empty')} </span>;
-    }
+const PollResults = (props: AbstractProps) => {
+    const {
+        detailedVotes,
+        displayQuestion,
+        participants,
+        pollDetails,
+        totalVoters
+    } = props;
 
     const answers = pollDetails.answers.map((answer, index) => {
 
-        const answerPercent = Math.round(answer.voters.size / totalVoters * 100);
+        const answerPercent = totalVoters === 0 ? 0 : Math.round(answer.voters.size / totalVoters * 100);
 
         const detailedAnswer
             = detailedVotes
@@ -76,10 +51,10 @@ function PollResults({ detailedVotes, displayQuestion, pollDetails }: Props) {
 
     return (
         <div>
-            <div className = 'poll-question-field'>
-                { question }
-            </div>
-
+            {displayQuestion
+                && <div className = 'poll-question-field'>
+                    <strong>{ pollDetails.question }</strong>
+                </div>}
             <div>
                 <ol className = 'poll-answer-fields'>
                     { answers }
@@ -88,7 +63,7 @@ function PollResults({ detailedVotes, displayQuestion, pollDetails }: Props) {
 
         </div>
     );
-}
 
+};
 
-export default PollResults;
+export default AbstractPollResults(PollResults);
