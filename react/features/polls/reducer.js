@@ -3,7 +3,7 @@
 import { ReducerRegistry } from '../base/redux';
 
 import { RECEIVE_POLL, RECEIVE_ANSWER } from './actionTypes';
-import type { Poll, Answer } from './types';
+import type { Answer } from './types';
 
 const INITIAL_STATE = {
     polls: {}
@@ -39,21 +39,29 @@ ReducerRegistry.register('features/polls', (state = INITIAL_STATE, action) => {
         }
 
         // if the poll exists, we will update it with the incoming answer
-        const updatedPoll: Poll = state.polls[pollId];
+        const newAnswers = state.polls[pollId].answers
+            .map(_answer => {
+                return {
+                    name: _answer.name,
+                    voters: new Set(_answer.voters)
+                };
+            });
 
-        for (let i = 0; i < updatedPoll.answers.length; i++) {
+        for (let i = 0; i < newAnswers.length; i++) {
             if (answer.answers[i] === true) {
-                updatedPoll.answers[i].voters.add(answer.senderId);
+                newAnswers[i].voters.add(answer.senderId);
             }
         }
-        console.log('updated poll', updatedPoll);
 
         // finally we update the state by returning the updated poll
         return {
             ...state,
             polls: {
                 ...state.polls,
-                [pollId]: updatedPoll
+                [pollId]: {
+                    ...state.polls[pollId],
+                    answers: newAnswers
+                }
             }
         };
     }

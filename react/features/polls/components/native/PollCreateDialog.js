@@ -2,9 +2,7 @@
 
 // import { FieldTextStateless } from '@atlaskit/field-text';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { View, Text, TextInput, FlatList, Button } from 'react-native';
-import { useSelector } from 'react-redux';
-import _DialogStyles from './styles'
+import { View, Text, TextInput, FlatList, TouchableOpacity } from 'react-native';
 
 
 import CustomSubmitDialog from '../../../base/dialog/components/native/CustomSubmitDialog';
@@ -12,6 +10,8 @@ import { translate } from '../../../base/i18n';
 import { Icon, IconAdd, IconClose } from '../../../base/icons';
 import AbstractPollCreateDialog from '../AbstractPollCreateDialog';
 import type { AbstractProps } from '../AbstractPollCreateDialog';
+
+import _DialogStyles from './styles';
 
 type Props = AbstractProps & {
 
@@ -91,13 +91,25 @@ const PollCreateDialog = (props: Props) => {
     }, [ answers, addAnswer, removeAnswer, requestFocus ]);
 
 
+    const createIconButton = (icon, onPress, style) => (
+        <TouchableOpacity
+            activeOpacity = { 0.8 }
+            onPress = { onPress }
+            style = { [ _DialogStyles.buttonContainer, style ] }>
+            <Icon
+                src = { icon }
+                style = { _DialogStyles.icon } />
+        </TouchableOpacity>
+    );
+
+
     const renderListItem = ({ index }) =>
 
     // padding to take into account the two default options
 
         (
             <View
-                style = {{ flexDirection: 'row' , alignItems:"baseline"}}>
+                style = { _DialogStyles.optionContainer }>
                 <TextInput
                     blurOnSubmit = { false }
                     onChangeText = { text => setAnswer(index, text) }
@@ -105,13 +117,11 @@ const PollCreateDialog = (props: Props) => {
                     onSubmitEditing = { ev => onAnswerSubmit(index) }
                     placeholder = { t('polls.create.answerPlaceholder', { index: index + 1 }) }
                     ref = { input => registerFieldRef(index, input) }
-                    style = {_DialogStyles.field}
+                    style = { _DialogStyles.field }
                     value = { answers[index] } />
 
                 {answers.length > 1
-                    ? <Button
-                        onPress = { () => removeAnswer(index) }
-                        title = "X" />
+                    ? createIconButton(IconClose, () => removeAnswer(index))
                     : null
                 }
             </View>
@@ -121,35 +131,39 @@ const PollCreateDialog = (props: Props) => {
     return (
         <CustomSubmitDialog
             okKey = { 'polls.create.send' }
-            onSubmit = { onSubmit }
-            >
-
-            <Text
-            style={_DialogStyles.title}
-            >
-                {t('polls.create.dialogTitle')}
-            </Text>
-
-
-            <TextInput
-                autoFocus = { true }
-                blurOnSubmit = { false }
-                onChangeText = { setQuestion }
-                onSubmitEditing = { onQuestionKeyDown }
-                placeholder = { t('polls.create.questionPlaceholder') }
-                style = {_DialogStyles.question}
-                value = { question } />
-
-            <FlatList
-                blurOnSubmit = { true }
-                data = { answers }
-                keyExtractor = { (item, index) => index.toString() }
-                renderItem = { renderListItem } />
+            onSubmit = { onSubmit }>
+            <View
+                style = { _DialogStyles.mainContainer }>
+                <Text
+                    style = { _DialogStyles.title }>
+                    {t('polls.create.dialogTitle')}
+                </Text>
 
 
-            <Button
-                onPress = { () => addAnswer(answers.length) }
-                title = "+" />
+                <TextInput
+                    autoFocus = { true }
+                    blurOnSubmit = { false }
+                    onChangeText = { setQuestion }
+                    onSubmitEditing = { onQuestionKeyDown }
+                    placeholder = { t('polls.create.questionPlaceholder') }
+                    style = { _DialogStyles.question }
+                    value = { question } />
+
+                <FlatList
+                    blurOnSubmit = { true }
+                    data = { answers }
+                    keyExtractor = { (item, index) => index.toString() }
+                    renderItem = { renderListItem } />
+
+                {createIconButton(IconAdd, () => addAnswer(answers.length), _DialogStyles.plusButton)}
+
+
+                {/* <Button
+                    onPress = { () => addAnswer(answers.length) }
+                    title = "+" /> */}
+
+            </View>
+
         </CustomSubmitDialog>
     );
 };

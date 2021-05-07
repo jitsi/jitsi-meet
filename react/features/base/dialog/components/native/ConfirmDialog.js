@@ -55,11 +55,11 @@ class ConfirmDialog extends BaseSubmitDialog<Props, *> {
      * @inheritdoc
      */
     _renderAdditionalButtons() {
-        const { _dialogStyles, cancelKey, t } = this.props;
+        const { _dialogStyles, cancelKey, onDecline, t } = this.props;
 
         return (
             <TouchableOpacity
-                onPress = { this._onCancel }
+                onPress = { onDecline || this._onCancel }
                 style = { [
                     _dialogStyles.button,
                     brandedDialog.buttonFarLeft,
