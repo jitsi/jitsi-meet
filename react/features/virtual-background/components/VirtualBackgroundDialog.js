@@ -125,7 +125,7 @@ function VirtualBackground({ _jitsiTrack, _selectedThumbnail, dispatch, t }: Pro
             jitsiLocalStorage.setItem('virtualBackgrounds', JSON.stringify(storedImages));
         } catch (err) {
             // Preventing localStorage QUOTA_EXCEEDED_ERR
-            err && deleteStoredImage(storedImages[0]);
+            err && setStoredImages(storedImages.slice(1));
         }
         if (storedImages.length === backgroundsLimit) {
             setStoredImages(storedImages.slice(1));
