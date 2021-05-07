@@ -35,3 +35,37 @@
     border: none;
     padding: 3px;
 }
+
+.poll-icon-button, .poll-drag-handle {
+    .jitsi-icon svg {
+        fill: #bce;
+    }
+}
+
+.poll-drag-handle {
+    background-color: transparent;
+    border: none;
+    cursor: grab;
+    padding: 0;
+    align-self: stretch;
+    vertical-align: middle;
+}
+
+.poll-dragged {
+    opacity: 0.5;
+    * {
+        cursor: grabbing !important;
+    }
+}
+
+.poll-question {
+    font-size: 1.25em;
+    font-weight: bold;
+    margin-bottom: 0.5em;
+}
+
+.poll-notice {
+    margin-top: 5px;
+    font-size: 11px;
+    font-weight: 100;
+}
