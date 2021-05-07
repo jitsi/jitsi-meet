@@ -25,7 +25,7 @@ const minimize
  */
 function getPerformanceHints(size) {
     return {
-        hints: minimize ? 'error' : false,
+        hints: minimize && !analyzeBundle ? 'error' : false,
         maxAssetSize: size,
         maxEntrypointSize: size
     };
