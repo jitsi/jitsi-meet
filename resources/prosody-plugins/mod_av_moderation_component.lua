@@ -18,14 +18,18 @@ end
 
 -- Notifies that av moderation has been enabled or disabled
 -- @param jid the jid to notify, if missing will notify all occupants
-function notify_occupants_enable(jid, enable, room)
+-- @param enable whether it is enabled or disabled
+-- @param room the room
+-- @param actorJid the jid that is performing the enable/disable operation
+-- @param mediaType the media type for the moderation
+function notify_occupants_enable(jid, enable, room, actorJid, mediaType)
     local body_json = {};
     body_json.type = 'av_moderation';
     body_json.enabled = enable;
     body_json.room = room.jid;
 
     local notify = function(jid_to_notify, mediaType)
-        body_json.actor = room.av_moderation_actors[mediaType];
+        body_json.actor = actorJid;
         body_json.mediaType = mediaType;
         local body_json_str = json.encode(body_json);
         local stanza = st.message({ from = module.host; to = jid_to_notify; })
@@ -33,15 +37,11 @@ function notify_occupants_enable(jid, enable, room)
         module:send(stanza);
     end
 
-    for _,mediaType in pairs({'audio', 'video'}) do
-        if room.av_moderation[mediaType] then
-            if jid then
-                notify(jid, mediaType);
-            else
-                for _, occupant in room:each_occupant() do
-                    notify(occupant.jid, mediaType);
-                end
-            end
+    if jid then
+        notify(jid, mediaType);
+    else
+        for _, occupant in room:each_occupant() do
+            notify(occupant.jid, mediaType);
         end
     end
 end
@@ -150,7 +150,7 @@ function on_message(event)
             end
 
             -- send message to all occupants
-            notify_occupants_enable(nil, enabled, room);
+            notify_occupants_enable(nil, enabled, room, from, mediaType);
             return true;
         elseif moderation_command.attr.jidToWhitelist and room.av_moderation then
             local occupant_jid = moderation_command.attr.jidToWhitelist;
@@ -189,7 +189,12 @@ function occupant_joined(event)
     end
 
     if room.av_moderation then
-        notify_occupants_enable(occupant.jid, true, room);
+        for _,mediaType in pairs({'audio', 'video'}) do
+            if room.av_moderation[mediaType] then
+                notify_occupants_enable(
+                    occupant.jid, true, room, room.av_moderation_actors[mediaType], mediaType);
+            end
+        end
 
         -- if moderator send the whitelist
         if occupant.role == 'moderator' then
