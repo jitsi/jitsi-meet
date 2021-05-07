@@ -64,12 +64,7 @@ type State = {
     /**
      * State variable for the start with video muted switch.
      */
-    startWithVideoMuted: boolean,
-
-    /**
-     * Theme used for styles.
-     */
-    theme: Object,
+    startWithVideoMuted: boolean
 }
 
 /**
@@ -83,7 +78,12 @@ type Props = AbstractProps & {
      *
      * @protected
      */
-    _serverURLChangeEnabled: boolean
+    _serverURLChangeEnabled: boolean,
+
+    /**
+     * Theme used for styles.
+     */
+    theme: Object
 }
 
 /**
@@ -150,7 +150,7 @@ class SettingsView extends AbstractSettingsView<Props, State> {
             startWithAudioMuted,
             startWithVideoMuted
         } = this.state;
-        const { colors } = this.props.theme;
+        const { palette } = this.props.theme;
 
         return (
             <JitsiModal
@@ -161,7 +161,9 @@ class SettingsView extends AbstractSettingsView<Props, State> {
                 onClose = { this._onClose }>
                 <ScrollView>
                     <FormSectionAccordion
-                        title = 'settingsView.profileSection'>
+                        accordion = { false }
+                        expandable = { false }
+                        label = 'settingsView.profileSection'>
                         <TextInput
                             autoCorrect = { false }
                             label = { this.props.t('settingsView.displayName') }
@@ -170,6 +172,12 @@ class SettingsView extends AbstractSettingsView<Props, State> {
                             placeholder = 'John Doe'
                             style = { styles.textInputContainer }
                             textContentType = { 'name' } // iOS only
+                            theme = {{
+                                colors: {
+                                    primary: palette.action01Active,
+                                    underlineColor: 'transparent'
+                                }
+                            }}
                             value = { displayName } />
                         <Divider style = { styles.fieldSeparator } />
                         <TextInput
@@ -182,10 +190,18 @@ class SettingsView extends AbstractSettingsView<Props, State> {
                             placeholder = 'email@example.com'
                             style = { styles.textInputContainer }
                             textContentType = { 'emailAddress' } // iOS only
+                            theme = {{
+                                colors: {
+                                    primary: palette.action01Active,
+                                    underlineColor: 'transparent'
+                                }
+                            }}
                             value = { email } />
                     </FormSectionAccordion>
                     <FormSectionAccordion
-                        title = 'settingsView.conferenceSection'>
+                        accordion = { false }
+                        expandable = { false }
+                        label = 'settingsView.conferenceSection'>
                         <TextInput
                             autoCapitalize = 'none'
                             autoCorrect = { false }
@@ -198,6 +214,12 @@ class SettingsView extends AbstractSettingsView<Props, State> {
                             placeholder = { this.props._serverURL }
                             style = { styles.textInputContainer }
                             textContentType = { 'URL' } // iOS only
+                            theme = {{
+                                colors: {
+                                    primary: palette.action01Active,
+                                    underlineColor: 'transparent'
+                                }
+                            }}
                             value = { serverURL } />
                         <Divider style = { styles.fieldSeparator } />
                         <FormRow
@@ -205,7 +227,7 @@ class SettingsView extends AbstractSettingsView<Props, State> {
                             <Switch
                                 onValueChange = { this._onStartAudioMutedChange }
                                 thumbColor = { THUMB_COLOR }
-                                trackColor = {{ true: colors.primary01 }}
+                                trackColor = {{ true: palette.action01Active }}
                                 value = { startWithAudioMuted } />
                         </FormRow>
                         <Divider style = { styles.fieldSeparator } />
@@ -213,12 +235,14 @@ class SettingsView extends AbstractSettingsView<Props, State> {
                             <Switch
                                 onValueChange = { this._onStartVideoMutedChange }
                                 thumbColor = { THUMB_COLOR }
-                                trackColor = {{ true: colors.primary01 }}
+                                trackColor = {{ true: palette.action01Active }}
                                 value = { startWithVideoMuted } />
                         </FormRow>
                     </FormSectionAccordion>
                     <FormSectionAccordion
-                        title = 'settingsView.buildInfoSection'>
+                        accordion = { false }
+                        expandable = { false }
+                        label = 'settingsView.buildInfoSection'>
                         <FormRow
                             label = 'settingsView.version'>
                             <Text>
@@ -227,13 +251,15 @@ class SettingsView extends AbstractSettingsView<Props, State> {
                         </FormRow>
                     </FormSectionAccordion>
                     <FormSectionAccordion
-                        title = 'settingsView.advanced'>
+                        accordion = { true }
+                        expandable = { true }
+                        label = 'settingsView.advanced'>
                         <FormRow
                             label = 'settingsView.disableCallIntegration'>
                             <Switch
                                 onValueChange = { this._onDisableCallIntegration }
                                 thumbColor = { THUMB_COLOR }
-                                trackColor = {{ true: colors.primary01 }}
+                                trackColor = {{ true: palette.action01Active }}
                                 value = { disableCallIntegration } />
                         </FormRow>
                         <Divider style = { styles.fieldSeparator } />
@@ -242,7 +268,7 @@ class SettingsView extends AbstractSettingsView<Props, State> {
                             <Switch
                                 onValueChange = { this._onDisableP2P }
                                 thumbColor = { THUMB_COLOR }
-                                trackColor = {{ true: colors.primary01 }}
+                                trackColor = {{ true: palette.action01Active }}
                                 value = { disableP2P } />
                         </FormRow>
                         <Divider style = { styles.fieldSeparator } />
@@ -253,7 +279,7 @@ class SettingsView extends AbstractSettingsView<Props, State> {
                                 <Switch
                                     onValueChange = { this._onDisableCrashReporting }
                                     thumbColor = { THUMB_COLOR }
-                                    trackColor = {{ true: colors.primary01 }}
+                                    trackColor = {{ true: palette.action01Active }}
                                     value = { disableCrashReporting } />
                             </FormRow>
                         )}

@@ -14,9 +14,24 @@ import styles from './styles';
 type Props = {
 
     /**
+     * Is the section an accordion or not.
+     */
+    accordion: boolean,
+
+    /**
      * The children to be displayed within this Link.
      */
     children: React$Node,
+
+    /**
+     * Whether the accordion is expandable.
+     */
+    expandable: boolean,
+
+    /**
+     * The i18n key of the text label of the section.
+     */
+    label: string,
 
     /**
      * An external style object passed to the component.
@@ -26,12 +41,7 @@ type Props = {
     /**
      * Invoked to obtain translated strings.
      */
-    t: Function,
-
-    /**
-     * The i18n key of the text label of the section.
-     */
-    title: string
+    t: Function
 }
 
 /**
@@ -39,7 +49,7 @@ type Props = {
  *
  * @returns {React$Element<any>}
  */
-function FormSectionAccordion({ children, style, t, title }: Props) {
+function FormSectionAccordion({ accordion, children, expandable, label, style, t }: Props) {
     const [ expandSection, setExpandSection ] = useState(false);
 
     /**
@@ -53,19 +63,22 @@ function FormSectionAccordion({ children, style, t, title }: Props) {
 
     return (
         <List.Accordion
-            expanded = { expandSection }
+            expanded = { expandSection || !expandable }
             onPress = { onPress }
             /* eslint-disable-next-line react/jsx-no-bind */
             right = { props =>
-                (<Icon
+                accordion && <Icon
                     { ...props }
                     src = { expandSection ? IconArrowDown : IconArrowUp }
-                    style = { expandSection ? styles.sectionOpen : styles.sectionClose } />) }
+                    style = { expandSection ? styles.sectionOpen : styles.sectionClose } /> }
             style = { [
                 styles.formSectionTitle,
                 style
             ] }
-            title = { t(title) }>
+            title = { t(label) }
+            titleStyle = {
+                expandSection || !expandable
+                    ? styles.formSectionTitleActive : styles.formSectionTitleInActive }>
             { children }
         </List.Accordion>
     );

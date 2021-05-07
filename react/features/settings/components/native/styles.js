@@ -1,8 +1,7 @@
-import { ColorPalette } from '../../../base/styles';
-
+import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 export const ANDROID_UNDERLINE_COLOR = 'transparent';
-export const PLACEHOLDER_COLOR = ColorPalette.lightGrey;
-export const THUMB_COLOR = ColorPalette.white;
+export const PLACEHOLDER_COLOR = BaseTheme.palette.action02Focus;
+export const THUMB_COLOR = BaseTheme.palette.field02;
 
 const TEXT_SIZE = 14;
 
@@ -75,18 +74,26 @@ export default {
      * Style for the form section separator titles.
      */
     formSectionTitle: {
-        backgroundColor: 'rgba(0, 0, 0, 0.1)',
+        backgroundColor: BaseTheme.palette.section01,
         paddingBottom: 0,
         paddingTop: 0
     },
 
+    formSectionTitleActive: {
+        color: BaseTheme.palette.section01Active
+    },
+
+    formSectionTitleInActive: {
+        color: BaseTheme.palette.section01Inactive
+    },
+
     sectionClose: {
-        color: ColorPalette.black,
+        color: BaseTheme.palette.section01Inactive,
         fontSize: 14
     },
 
     sectionOpen: {
-        color: ColorPalette.blueHighlight,
+        color: BaseTheme.palette.section01Active,
         fontSize: 14
     },
 
@@ -94,7 +101,7 @@ export default {
      * Global {@code Text} color for the components.
      */
     text: {
-        color: ColorPalette.black
+        color: BaseTheme.palette.field01
     },
 
     /**
@@ -107,21 +114,6 @@ export default {
         paddingTop: 2,
         paddingLeft: 16,
         paddingRight: 16
-    },
-
-    /**
-     * Text input border style.
-     */
-    textInputBorderColor: ColorPalette.blueHighlight,
-
-    /**
-     * Standard text input field style.
-     */
-    textInputField: {
-        color: ColorPalette.black,
-        flex: 1,
-        fontSize: TEXT_SIZE,
-        textAlign: 'right'
     },
 
     /**
