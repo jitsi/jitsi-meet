@@ -1,10 +1,24 @@
 // @flow
 
-import { MiddlewareRegistry, StateListenerRegistry } from '../base/redux';
+import { openDialog } from '../base/dialog';
+import { MiddlewareRegistry } from '../base/redux';
 
-MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
+import { RECEIVE_POLL } from './actionTypes';
+import {PollAnswerDialog} from './components';
+
+
+MiddlewareRegistry.register(({ dispatch }) => next => action => {
+    const result = next(action);
+
     switch (action.type) {
+    case RECEIVE_POLL: {
+        const { pollId } = action;
+
+        dispatch(openDialog(PollAnswerDialog, { pollId }));
+        break;
     }
-    
-    return next(action);
+    }
+
+    return result;
 });
+
