@@ -614,6 +614,24 @@
     },
     "passwordSetRemotely": "Set by another participant",
     "passwordDigitsOnly": "Up to {{number}} digits",
+    "polls": {
+        "create": {
+            "dialogTitle": "Create a poll",
+            "questionPlaceholder": "Ask a question",
+            "answerPlaceholder": "Option {{index}}",
+            "addAnswer": "Add an answer",
+            "removeAnswer": "Remove this answer",
+            "send": "Send"
+        },
+        "answer": {
+            "title": "Poll",
+            "skip": "Skip",
+            "submit": "Submit",
+            "results" : "Results",
+            "close": "Fermer",
+            "empty": "No answer for the moment"
+        }
+    },
     "poweredby": "powered by",
     "prejoin": {
         "audioAndVideoError": "Audio and video error:",
@@ -854,6 +872,7 @@
             "participants": "Participants",
             "party": "Party Popper",
             "pip": "Toggle Picture-in-Picture mode",
+            "poll": "Create a poll",
             "privateMessage": "Send private message",
             "profile": "Edit your profile",
             "raiseHand": "Raise / Lower your hand",
@@ -930,6 +949,7 @@
         "participants": "Participants",
         "party": "Celebration",
         "pip": "Enter Picture-in-Picture mode",
+        "poll": "Create a poll",
         "privateMessage": "Send private message",
         "profile": "Edit your profile",
         "raiseHand": "Raise / Lower your hand",

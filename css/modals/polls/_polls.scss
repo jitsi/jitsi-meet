@@ -1,0 +1,37 @@
+.poll-answers {
+    color: #FFFFFF !important;
+}
+
+.poll-question-field {
+    margin-bottom: 1.5em;
+    
+    input {
+        font-size: 1.25em;
+    }
+}
+
+.poll-answer-fields {
+    list-style-type: none;
+    padding: 0;
+    
+    li {
+        display: flex;
+        align-items: center;
+        
+        & > *:not(:last-child) {
+            margin-right: 2px;
+        }
+    }
+}
+
+.poll-add-button {
+    display: flex;
+    justify-content: center;
+    margin-top: 5px;
+}
+
+.poll-icon-button {
+    background-color: #345;
+    border: none;
+    padding: 3px;
+}
