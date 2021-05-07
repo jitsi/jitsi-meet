@@ -4,6 +4,7 @@ import React from 'react';
 import { findNodeHandle, NativeModules, Platform } from 'react-native';
 import { ScreenCapturePickerView } from 'react-native-webrtc';
 
+import { getFeatureFlag, IOS_SCREENSHARING_ENABLED } from '../../../base/flags';
 import { translate } from '../../../base/i18n';
 import { IconShareDesktop } from '../../../base/icons';
 import { connect } from '../../../base/redux';
@@ -121,11 +122,13 @@ class ScreenSharingIosButton extends AbstractButton<Props, *> {
  * }}
  */
 function _mapStateToProps(state): Object {
+    const enabled = getFeatureFlag(state, IOS_SCREENSHARING_ENABLED, false);
+
     return {
         _screensharing: isLocalVideoTrackDesktop(state),
 
         // TODO: this should work on iOS 12 too, but our trick to show the picker doesn't work.
-        visible: Platform.OS === 'ios' && Platform.Version.split('.')[0] >= 14
+        visible: enabled && Platform.OS === 'ios' && Platform.Version.split('.')[0] >= 14
     };
 }
 

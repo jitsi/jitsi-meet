@@ -11,5 +11,7 @@ export const MEET_FEATURES = [
     'outbound-call',
     'recording',
     'room',
+    'screen-sharing',
+    'sip-outbound-call',
     'transcription'
 ];

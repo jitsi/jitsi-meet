@@ -370,8 +370,17 @@ function Util:verify_room(session, room_address)
             room_to_check = room_node;
         end
     else
-        -- no wildcard, so check room against authorized room in token
-        room_to_check = auth_room;
+        -- no wildcard, so check room against authorized room regex from the token
+        if target_room ~= nil then
+            -- room with subdomain
+            room_to_check = target_room:match(auth_room);
+        else
+            room_to_check = room_node:match(auth_room);
+        end
+        module:log("debug", "room to check: %s", room_to_check)
+        if not room_to_check then
+            return false
+        end
     end
 
     local auth_domain = session.jitsi_meet_domain;

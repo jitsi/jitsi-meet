@@ -3,7 +3,7 @@
 import React, { Component } from 'react';
 import { Animated, Text, View } from 'react-native';
 
-import styles, { DEFAULT_COLOR, LABEL_MARGIN, LABEL_SIZE } from './styles';
+import styles, { DEFAULT_COLOR } from './styles';
 
 export type Props = {
 
@@ -19,20 +19,8 @@ type State = {
     /**
      * The opacity animation Object.
      */
-    opacityAnimation: Object,
-
-    /**
-     * A boolean to decide to show or not show the arrow. This is required as
-     * we can't easily animate this transformed Component so we render it once
-     * the animation is done.
-     */
-    showArrow: boolean
+    opacityAnimation: Object
 };
-
-/**
- * Offset to the arrow to be rendered in the right position.
- */
-const ARROW_OFFSET = 0;
 
 /**
  * A react {@code Component} that implements an expanded label as tooltip-like
@@ -48,8 +36,7 @@ export default class ExpandedLabel<P: Props> extends Component<P, State> {
         super(props);
 
         this.state = {
-            opacityAnimation: new Animated.Value(0),
-            showArrow: false
+            opacityAnimation: new Animated.Value(0)
         };
     }
 
@@ -63,11 +50,7 @@ export default class ExpandedLabel<P: Props> extends Component<P, State> {
             toValue: 1,
             velocity: 1,
             useNativeDriver: true
-        }).start(({ finished }) => {
-            finished && this.setState({
-                showArrow: true
-            });
-        });
+        }).start();
     }
 
     /**
@@ -76,32 +59,12 @@ export default class ExpandedLabel<P: Props> extends Component<P, State> {
      * @inheritdoc
      */
     render() {
-        const arrowPosition
-            = this.props.parentPosition - LABEL_MARGIN - (LABEL_SIZE / 2);
-
         return (
             <Animated.View
-                style = { [
-                    styles.expandedLabelWrapper,
-                    {
-                        opacity: this.state.opacityAnimation
-                    }
-                ] } >
+                style = { [ styles.expandedLabelContainer, { opacity: this.state.opacityAnimation } ] }>
                 <View
-                    style = { [
-                        styles.expandedLabelArrow,
-                        {
-                            backgroundColor: this._getColor() || DEFAULT_COLOR,
-                            marginRight: arrowPosition + ARROW_OFFSET
-                        }
-                    ] } />
-                <View
-                    style = { [
-                        styles.expandedLabelContainer,
-                        {
-                            backgroundColor: this._getColor() || DEFAULT_COLOR
-                        }
-                    ] }>
+                    style = { [ styles.expandedLabelTextContainer,
+                        { backgroundColor: this._getColor() || DEFAULT_COLOR } ] }>
                     <Text style = { styles.expandedLabelText }>
                         { this._getLabel() }
                     </Text>

@@ -175,7 +175,7 @@ class VideoSettingsContent extends Component<Props, State> {
         const label = jitsiTrack && jitsiTrack.getTrackLabel();
 
         if (isSelected) {
-            props['aria-selected'] = true;
+            props['aria-checked'] = true;
             props.className = `${className} video-preview-entry--selected`;
         } else {
             props.onClick = this._onEntryClick(deviceId);
@@ -190,7 +190,7 @@ class VideoSettingsContent extends Component<Props, State> {
         return (
             <div
                 { ...props }
-                role = 'menuitem'>
+                role = 'radio'>
                 <div className = 'video-preview-label'>
                     {label && <div className = 'video-preview-label-container'>
                         <div className = 'video-preview-label-text'>
@@ -251,7 +251,7 @@ class VideoSettingsContent extends Component<Props, State> {
                 id = 'video-settings-dialog'
                 onKeyDown = { this._onEscClick }
                 ref = { this._videoContentRef }
-                role = 'menu'
+                role = 'radiogroup'
                 tabIndex = '-1'>
                 {trackData.map((data, i) => this._renderPreviewEntry(data, i))}
             </div>

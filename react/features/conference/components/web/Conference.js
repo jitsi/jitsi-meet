@@ -14,6 +14,8 @@ import { Filmstrip } from '../../../filmstrip';
 import { CalleeInfoContainer } from '../../../invite';
 import { LargeVideo } from '../../../large-video';
 import { KnockingParticipantList, LobbyScreen } from '../../../lobby';
+import { ParticipantsPane } from '../../../participants-pane/components';
+import { getParticipantsPaneOpen } from '../../../participants-pane/functions';
 import { Prejoin, isPrejoinPageVisible } from '../../../prejoin';
 import { fullScreenChanged, showToolbox } from '../../../toolbox/actions.web';
 import { Toolbox } from '../../../toolbox/components/web';
@@ -25,7 +27,7 @@ import {
 } from '../AbstractConference';
 import type { AbstractProps } from '../AbstractConference';
 
-import Labels from './Labels';
+import ConferenceInfo from './ConferenceInfo';
 import { default as Notice } from './Notice';
 
 declare var APP: Object;
@@ -68,14 +70,14 @@ type Props = AbstractProps & {
     _backgroundAlpha: number,
 
     /**
-     * Whether the local participant is recording the conference.
-     */
-    _iAmRecorder: boolean,
-
-    /**
      * Returns true if the 'lobby screen' is visible.
      */
     _isLobbyScreenVisible: boolean,
+
+    /**
+     * If participants pane is visible or not.
+     */
+    _isParticipantsPaneVisible: boolean,
 
     /**
      * The CSS class to apply to the root of {@link Conference} to modify the
@@ -94,10 +96,6 @@ type Props = AbstractProps & {
     _showPrejoin: boolean,
 
     dispatch: Function,
-
-    /**
-     * Invoked to obtain translated strings.
-     */
     t: Function
 }
 
@@ -187,36 +185,39 @@ class Conference extends AbstractConference<Props, *> {
      */
     render() {
         const {
-            _iAmRecorder,
             _isLobbyScreenVisible,
+            _isParticipantsPaneVisible,
             _layoutClassName,
             _showPrejoin
         } = this.props;
-        const hideLabels = _iAmRecorder;
 
         return (
-            <div
-                className = { _layoutClassName }
-                id = 'videoconference_page'
-                onMouseMove = { this._onShowToolbar }
-                ref = { this._setBackground }>
+            <div id = 'layout_wrapper'>
+                <div
+                    className = { _layoutClassName }
+                    id = 'videoconference_page'
+                    onMouseMove = { this._onShowToolbar }
+                    ref = { this._setBackground }>
+                    <ConferenceInfo />
 
-                <Notice />
-                <div id = 'videospace'>
-                    <LargeVideo />
-                    <KnockingParticipantList />
-                    { hideLabels || <Labels /> }
-                    <Filmstrip />
+                    <Notice />
+                    <div id = 'videospace'>
+                        <LargeVideo />
+                        {!_isParticipantsPaneVisible && <KnockingParticipantList />}
+                        <Filmstrip />
+                    </div>
+
+                    { _showPrejoin || _isLobbyScreenVisible || <Toolbox /> }
+                    <Chat />
+
+                    { this.renderNotificationsContainer() }
+
+                    <CalleeInfoContainer />
+
+                    { _showPrejoin && <Prejoin />}
+
                 </div>
-
-                { _showPrejoin || _isLobbyScreenVisible || <Toolbox /> }
-                <Chat />
-
-                { this.renderNotificationsContainer() }
-
-                <CalleeInfoContainer />
-
-                { _showPrejoin && <Prejoin />}
+                <ParticipantsPane />
             </div>
         );
     }
@@ -306,9 +307,9 @@ class Conference extends AbstractConference<Props, *> {
 function _mapStateToProps(state) {
     return {
         ...abstractMapStateToProps(state),
-        _iAmRecorder: state['features/base/config'].iAmRecorder,
         _backgroundAlpha: state['features/base/config'].backgroundAlpha,
         _isLobbyScreenVisible: state['features/base/dialog']?.component === LobbyScreen,
+        _isParticipantsPaneVisible: getParticipantsPaneOpen(state),
         _layoutClassName: LAYOUT_CLASSNAMES[getCurrentLayout(state)],
         _roomName: getConferenceNameForTitle(state),
         _showPrejoin: isPrejoinPageVisible(state)

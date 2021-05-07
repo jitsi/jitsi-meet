@@ -16,7 +16,7 @@
         display: flex;
         flex-direction: column;
         height: 100%;
-        width: 100vw;
+        width: 100%;
     }
 
     .filmstrip__videos .videocontainer {
@@ -50,10 +50,6 @@
             &.shift-right {
                 margin-left: $sidebarWidth;
                 width: calc(100% - #{$sidebarWidth});
-
-                #filmstripRemoteVideos {
-                    width: calc(100vw - #{$sidebarWidth});
-                }
             }
         }
     }

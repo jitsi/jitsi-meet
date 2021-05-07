@@ -718,7 +718,7 @@
             "join": "Toucher pour rejoindre",
             "roomname": "Entrer le nom de la salle"
         },
-        "appDescription": "Profitez de la conversation vidéo avec toute votre équipe. Allez-y, invitez tous ceux que vous connaissez. {{app}} est une solution 100 % libre de conférence vidéo entièrement cryptée que vous pouvez utiliser en tout temps et gratuitement, sans avoir besoin de compte.",
+        "appDescription": "Profitez de la conversation vidéo avec toute votre équipe. Allez-y, invitez tous ceux que vous connaissez. {{app}} est une solution 100 % libre de conférence vidéo entièrement chiffrée que vous pouvez utiliser en tout temps et gratuitement, sans avoir besoin de compte.",
         "audioVideoSwitch": {
             "audio": "Téléphone",
             "video": "Vidéo"

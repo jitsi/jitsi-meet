@@ -37,14 +37,30 @@ class RTCStats {
      * loaded before it does.
      *
      * @param {Object} options -.
-     * @param {string} options.rtcstatsEndpoint - The Amplitude app key required.
-     * @param {number} options.rtcstatsPollInterval - The getstats poll interval in ms.
+     * @param {string} options.endpoint - The Amplitude app key required.
+     * @param {string} options.useLegacy - Switch to legacy chrome webrtc statistics. Parameter will only have
+     * an effect on chrome based applications.
+     * @param {number} options.pollInterval - The getstats poll interval in ms.
      * @returns {void}
      */
     init(options) {
-        this.handleTraceWSClose = this.handleTraceWSClose.bind(this);
-        this.trace = traceInit(options.rtcstatsEndpoint, this.handleTraceWSClose);
-        rtcstatsInit(this.trace, options.rtcstatsPollInterval, [ '' ], connectionFilter);
+
+        const { endpoint, useLegacy, pollInterval } = options;
+
+        const traceOptions = {
+            endpoint,
+            onCloseCallback: this.handleTraceWSClose.bind(this),
+            useLegacy
+        };
+
+        const rtcstatsOptions = {
+            connectionFilter,
+            pollInterval,
+            useLegacy
+        };
+
+        this.trace = traceInit(traceOptions);
+        rtcstatsInit(this.trace, rtcstatsOptions);
         this.initialized = true;
     }
 
@@ -66,7 +82,7 @@ class RTCStats {
      * @returns {void}
      */
     sendIdentityData(identityData) {
-        this.trace && this.trace('identity', null, identityData);
+        this.trace && this.trace.identity('identity', null, identityData);
     }
 
     /**

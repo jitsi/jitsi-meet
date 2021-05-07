@@ -303,7 +303,7 @@ class InviteContactsForm extends AbstractAddPeopleDialog<Props, State> {
      */
     _parseQueryResults(response = []) {
         const { t, _dialOutEnabled } = this.props;
-        const users = response.filter(item => item.type !== 'phone');
+        const users = response.filter(item => item.type !== 'phone' && item.type !== 'sip');
         const userDisplayItems = [];
 
         for (const user of users) {
@@ -366,9 +366,25 @@ class InviteContactsForm extends AbstractAddPeopleDialog<Props, State> {
             };
         });
 
+
+        const sipAddresses = response.filter(item => item.type === 'sip');
+
+        const sipDisplayItems = sipAddresses.map(sip => {
+            return {
+                filterValues: [
+                    sip.address
+                ],
+                content: sip.address,
+                description: '',
+                item: sip,
+                value: sip.address
+            };
+        });
+
         return [
             ...userDisplayItems,
-            ...numberDisplayItems
+            ...numberDisplayItems,
+            ...sipDisplayItems
         ];
     }
 

@@ -13,7 +13,7 @@ import {
     IconYahoo
 } from '../../../../base/icons';
 import { Tooltip } from '../../../../base/tooltip';
-import { copyText, openURLInBrowser } from '../../../../base/util';
+import { copyText } from '../../../../base/util';
 
 type Props = {
 
@@ -64,33 +64,6 @@ function InviteByEmailSection({ inviteSubject, inviteText, t }: Props) {
             e.preventDefault();
             copyText(inviteText);
         }
-    }
-
-    /**
-     * Opens an email provider containing the conference invite.
-     *
-     * @param {string} url - The url to be opened.
-     * @returns {Function}
-     */
-    function _onSelectProvider(url) {
-        return function() {
-            openURLInBrowser(url, true);
-        };
-    }
-
-    /**
-     * Opens an email provider containing the conference invite.
-     *
-     * @param {string} url - The url to be opened.
-     * @returns {Function}
-     */
-    function _onProviderKeyPress(url) {
-        return function(e) {
-            if (e.key === ' ' || e.key === 'Enter') {
-                e.preventDefault();
-                openURLInBrowser(url, true);
-            }
-        };
     }
 
     /**
@@ -155,14 +128,14 @@ function InviteByEmailSection({ inviteSubject, inviteText, t }: Props) {
                             content = { t(tooltipKey) }
                             key = { idx }
                             position = 'top'>
-                            <div
+                            <a
                                 aria-label = { t(tooltipKey) }
-                                onClick = { _onSelectProvider(url) }
-                                onKeyPress = { _onProviderKeyPress(url) }
-                                role = 'button'
-                                tabIndex = { 0 }>
+                                className = 'provider-icon'
+                                href = { url }
+                                rel = 'noopener noreferrer'
+                                target = '_blank'>
                                 <Icon src = { icon } />
-                            </div>
+                            </a>
                         </Tooltip>
                     ))
                 }

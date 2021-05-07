@@ -8,9 +8,11 @@
     .toolbox-icon {
         cursor: pointer;
         padding: 7px;
+        width: 22px;
+        height : 22px;
 
         &.toggled {
-            background: $AOTToolbarButtonToggleColor;
+            background: none;
         }
 
         &.disabled {
@@ -25,6 +27,7 @@
     position: absolute;
     bottom: 10px;
     transform: translateX(-50%);
+    padding: 3px !important;
 }
 
 .filmstrip-toolbox {

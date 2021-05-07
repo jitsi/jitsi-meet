@@ -25,7 +25,10 @@ import {
 } from '../../react/features/base/participants';
 import { updateSettings } from '../../react/features/base/settings';
 import { isToggleCameraEnabled, toggleCamera } from '../../react/features/base/tracks';
-import { setPrivateMessageRecipient } from '../../react/features/chat/actions';
+import {
+    setPrivateMessageRecipient,
+    toggleChat
+} from '../../react/features/chat/actions';
 import { openChat } from '../../react/features/chat/actions.web';
 import {
     processExternalDeviceRequest
@@ -38,7 +41,7 @@ import {
     resizeLargeVideo,
     selectParticipantInLargeVideo
 } from '../../react/features/large-video/actions';
-import { toggleLobbyMode } from '../../react/features/lobby/actions.web';
+import { toggleLobbyMode } from '../../react/features/lobby/actions';
 import { RECORDING_TYPES } from '../../react/features/recording/constants';
 import { getActiveSession } from '../../react/features/recording/functions';
 import { toggleTileView, setTileView } from '../../react/features/video-layout';
@@ -186,7 +189,7 @@ function initCommands() {
         },
         'toggle-chat': () => {
             sendAnalytics(createApiEvent('chat.toggled'));
-            APP.UI.toggleChat();
+            APP.store.dispatch(toggleChat());
         },
         'toggle-raise-hand': () => {
             const localParticipant = getLocalParticipant(APP.store.getState());
@@ -386,7 +389,7 @@ function initCommands() {
                 const { isOpen: isChatOpen } = state['features/chat'];
 
                 if (!isChatOpen) {
-                    APP.UI.toggleChat();
+                    APP.store.dispatch(toggleChat());
                 }
                 APP.store.dispatch(openChat(participant));
             } else {
