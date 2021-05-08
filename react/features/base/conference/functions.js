@@ -2,6 +2,7 @@
 
 import _ from 'lodash';
 
+import jwtDecode from 'jwt-decode';
 import { JitsiTrackErrors } from '../lib-jitsi-meet';
 import {
     getLocalParticipant,
@@ -350,4 +351,24 @@ export function sendLocalParticipant(
     }
 
     conference.setDisplayName(name);
+}
+
+/**
+ * Check if the call is the test call.
+ *
+ *
+ * @param {Function|Object} state - The redux store, state, or
+ * {@code getState} function.
+ * @returns {boolean}
+ */
+export function isJaneTestCall(state) {
+    const { jwt } = state['features/base/jwt'];
+    const jwtPayload = jwt && jwtDecode(jwt) ?? null;
+    const context = jwtPayload && jwtPayload.context ?? null;
+    const user = context && context.user ?? null;
+    const participantId = user && user.participant_id;
+    const videoChatSessionId = context && context.video_chat_session_id;
+    const participantEmail = user && user.email;
+
+    return participantId === 0 && videoChatSessionId === 0 && participantEmail === 'test@test.com';
 }

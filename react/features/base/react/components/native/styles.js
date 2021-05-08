@@ -1,9 +1,11 @@
 // @flow
 
-import { BoxModel, ColorPalette } from '../../../styles';
+import { BoxModel, ColorPalette, JaneWeb } from '../../../styles';
 
 const OVERLAY_FONT_COLOR = 'rgba(255, 255, 255, 0.6)';
 const SECONDARY_ACTION_BUTTON_SIZE = 30;
+
+export const WAITING_MESSAGE_CONTIANER_BACKGROUND_COLOR = 'rgba(98,98,110,0.75)';
 
 export const AVATAR_SIZE = 65;
 export const UNDERLAY_COLOR = 'rgba(255, 255, 255, 0.2)';
@@ -203,6 +205,49 @@ const SECTION_LIST_STYLES = {
     }
 };
 
+const WATING_MESSAGE_STYLES = {
+    preCallMessageContainer: {
+        paddingBottom: 20,
+        flexDirection: 'row',
+        width: '100%'
+    },
+
+    watermarkWrapper: {
+        width: 70,
+        justifyContent: 'flex-start',
+        alignItems: 'center'
+    },
+
+    messageWrapper: {
+        flex: 1
+    },
+
+    preCallMessageHeader: {
+        fontSize: 15,
+        color: ColorPalette.white,
+        textAlign: 'left',
+        ...JaneWeb.boldFont
+    },
+
+    preCallMessageText: {
+        marginTop: 5,
+        fontSize: 12,
+        color: ColorPalette.white,
+        textAlign: 'left',
+        ...JaneWeb.boldFont
+    },
+
+    preCallMessageCloseBtn: {
+        width: 30
+    },
+
+    watermark: {
+        aspectRatio: 300 / 248,
+        width: 50,
+        height: undefined
+    }
+};
+
 export const TINTED_VIEW_DEFAULT = {
     backgroundColor: ColorPalette.appBackground,
     opacity: 0.8
@@ -214,5 +259,6 @@ export const TINTED_VIEW_DEFAULT = {
  */
 export default {
     ...PAGED_LIST_STYLES,
-    ...SECTION_LIST_STYLES
+    ...SECTION_LIST_STYLES,
+    ...WATING_MESSAGE_STYLES
 };

@@ -28,6 +28,7 @@ import { BackButtonRegistry } from '../../../mobile/back-button';
 import { AddPeopleDialog, CalleeInfoContainer } from '../../../invite';
 import { Captions } from '../../../subtitles';
 import { isToolboxVisible, setToolboxVisible, Toolbox } from '../../../toolbox';
+import JaneWaitingArea from '../../../jane-waiting-area-native/components/JaneWaitingArea.native';
 
 import {
     AbstractConference,
@@ -38,6 +39,8 @@ import NavigationBar from './NavigationBar';
 import styles, { NAVBAR_GRADIENT_COLORS } from './styles';
 
 import type { AbstractProps } from '../AbstractConference';
+import { getLocalParticipantFromJwt, getLocalParticipantType
+} from '../../../base/participants';
 
 /**
  * The type of the React {@code Component} props of {@link Conference}.
@@ -109,7 +112,8 @@ type Props = AbstractProps & {
     /**
      * The redux {@code dispatch} function.
      */
-    dispatch: Function
+    dispatch: Function,
+    janeWaitingAreaEnabled: boolean
 };
 
 /**
@@ -152,8 +156,10 @@ class Conference extends AbstractConference<Props, *> {
      * @returns {void}
      */
     componentWillUnmount() {
+
         // Tear handling any hardware button presses for back navigation down.
         BackButtonRegistry.removeListener(this._onHardwareBackPress);
+
     }
 
     /**
@@ -252,7 +258,8 @@ class Conference extends AbstractConference<Props, *> {
             _largeVideoParticipantId,
             _reducedUI,
             _shouldDisplayTileView,
-            _toolboxVisible
+            _toolboxVisible,
+            _janeWaitingAreaEnabled
         } = this.props;
         const showGradient = _toolboxVisible;
         const applyGradientStretching = _filmstripVisible && isNarrowAspectRatio(this) && !_shouldDisplayTileView;
@@ -315,8 +322,9 @@ class Conference extends AbstractConference<Props, *> {
 
                     <Captions onPress = { this._onClick } />
 
-                    { _shouldDisplayTileView || <DisplayNameLabel participantId = { _largeVideoParticipantId } /> }
-
+                    {_shouldDisplayTileView || <DisplayNameLabel
+                        participantId = { _largeVideoParticipantId } />}
+                    {_janeWaitingAreaEnabled && <JaneWaitingArea />}
                     {/*
                       * The Toolbox is in a stacking layer below the Filmstrip.
                       */}
@@ -342,7 +350,6 @@ class Conference extends AbstractConference<Props, *> {
                 </SafeAreaView>
 
                 <TestConnectionInfo />
-
                 { this._renderConferenceNotification() }
             </>
         );
@@ -431,6 +438,9 @@ function _mapStateToProps(state) {
         joining,
         leaving
     } = state['features/base/conference'];
+    const {
+        janeWaitingAreaEnabled
+    } = state['features/jane-waiting-area-native'];
     const { reducedUI } = state['features/base/responsive-ui'];
 
     // XXX There is a window of time between the successful establishment of the
@@ -444,6 +454,7 @@ function _mapStateToProps(state) {
     //   are leaving one.
     const connecting_
         = connecting || (connection && (joining || (!conference && !leaving)));
+    const { jwt } = state['features/base/jwt'];
 
     return {
         ...abstractMapStateToProps(state),
@@ -500,7 +511,11 @@ function _mapStateToProps(state) {
          * @private
          * @type {boolean}
          */
-        _toolboxVisible: isToolboxVisible(state)
+        _toolboxVisible: isToolboxVisible(state),
+        _janeWaitingAreaEnabled: janeWaitingAreaEnabled,
+        _jwt: jwt,
+        _participantType: getLocalParticipantType(state),
+        _participant: getLocalParticipantFromJwt(state)
     };
 }
 

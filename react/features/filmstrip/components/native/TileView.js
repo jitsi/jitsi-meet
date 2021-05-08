@@ -21,6 +21,8 @@ import {
 
 import Thumbnail from './Thumbnail';
 import styles from './styles';
+import PreCallMessage
+    from '../../../base/react/components/native/PreCallMessage';
 
 /**
  * The type of the React {@link Component} props of {@link TileView}.
@@ -134,6 +136,7 @@ class TileView extends Component<Props, State> {
         return (
             <DimensionsDetector
                 onDimensionsChanged = { this._onDimensionsChanged }>
+                <PreCallMessage />
                 <ScrollView
                     style = {{
                         ...styles.tileView,
