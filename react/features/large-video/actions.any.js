@@ -2,15 +2,9 @@
 
 import type { Dispatch } from 'redux';
 
-import {
-    createSelectParticipantFailedEvent,
-    sendAnalytics
-} from '../analytics';
-import { _handleParticipantError } from '../base/conference';
 import { MEDIA_TYPE } from '../base/media';
 import { getParticipants } from '../base/participants';
-import { reportError } from '../base/util';
-import { shouldDisplayTileView } from '../video-layout';
+import { selectEndpoints, shouldDisplayTileView } from '../video-layout';
 
 import {
     SELECT_LARGE_VIDEO_PARTICIPANT,
@@ -32,16 +26,7 @@ export function selectParticipant() {
                 ? getParticipants(state).map(participant => participant.id)
                 : [ state['features/large-video'].participantId ];
 
-            try {
-                conference.selectParticipants(ids);
-            } catch (err) {
-                _handleParticipantError(err);
-
-                sendAnalytics(createSelectParticipantFailedEvent(err));
-
-                reportError(
-                    err, `Failed to select participants ${ids.toString()}`);
-            }
+            dispatch(selectEndpoints(ids));
         }
     };
 }
