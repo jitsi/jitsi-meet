@@ -69,7 +69,7 @@ function FormSectionAccordion({ accordion, children, expandable, label, style, t
             right = { props =>
                 accordion && <Icon
                     { ...props }
-                    src = { expandSection ? IconArrowDown : IconArrowUp }
+                    src = { expandSection ? IconArrowUp : IconArrowDown }
                     style = { expandSection ? styles.sectionOpen : styles.sectionClose } /> }
             style = { [
                 styles.formSectionTitle,
