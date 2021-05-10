@@ -19,15 +19,11 @@ import {
 export function selectParticipant() {
     return (dispatch: Dispatch<any>, getState: Function) => {
         const state = getState();
-        const { conference } = state['features/base/conference'];
+        const ids = shouldDisplayTileView(state)
+            ? getParticipants(state).map(participant => participant.id)
+            : [ state['features/large-video'].participantId ];
 
-        if (conference) {
-            const ids = shouldDisplayTileView(state)
-                ? getParticipants(state).map(participant => participant.id)
-                : [ state['features/large-video'].participantId ];
-
-            dispatch(selectEndpoints(ids));
-        }
+        dispatch(selectEndpoints(ids));
     };
 }
 
