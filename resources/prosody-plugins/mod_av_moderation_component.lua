@@ -138,7 +138,7 @@ function on_message(event)
                     room.av_moderation = {};
                     room.av_moderation_actors = {};
                     room.av_moderation[mediaType] = {};
-                    room.av_moderation_actors[mediaType] = from;
+                    room.av_moderation_actors[mediaType] = occupant.nick;
                 end
             else
                 enabled = false;
@@ -151,7 +151,7 @@ function on_message(event)
             end
 
             -- send message to all occupants
-            notify_occupants_enable(nil, enabled, room, from, mediaType);
+            notify_occupants_enable(nil, enabled, room, occupant.nick, mediaType);
             return true;
         elseif moderation_command.attr.jidToWhitelist and room.av_moderation then
             local occupant_jid = moderation_command.attr.jidToWhitelist;
