@@ -18,12 +18,11 @@ import {
 import { MiddlewareRegistry } from '../redux';
 import { isLocalVideoTrackDesktop } from '../tracks/functions';
 
-import { SET_LAST_N } from './actionTypes';
+import { setLastN } from './actions';
 import { limitLastN } from './functions';
 import logger from './logger';
 
 declare var APP: Object;
-
 
 MiddlewareRegistry.register(store => next => action => {
     const result = next(action);
@@ -41,12 +40,6 @@ MiddlewareRegistry.register(store => next => action => {
     case SET_TILE_VIEW:
         _updateLastN(store);
         break;
-    case SET_LAST_N: {
-        const { lastN } = action;
-
-        _updateLastN(store, lastN);
-        break;
-    }
     }
 
     return result;
@@ -56,11 +49,10 @@ MiddlewareRegistry.register(store => next => action => {
  * Updates the last N value in the conference based on the current state of the redux store.
  *
  * @param {Store} store - The redux store.
- * @param {number} value - The last-n value to be set.
  * @private
  * @returns {void}
  */
-function _updateLastN({ getState }, value = null) {
+function _updateLastN({ dispatch, getState }) {
     const state = getState();
     const { conference } = state['features/base/conference'];
     const { enabled: audioOnly } = state['features/base/audio-only'];
@@ -77,12 +69,11 @@ function _updateLastN({ getState }, value = null) {
     }
 
     // Select the lastN value based on the following preference order.
-    // 1. The value passed to the setLastN action that is dispatched.
-    // 2. The last-n value in redux.
-    // 3. The last-n value from 'startLastN' if it is specified in config.js
-    // 4. The last-n value from 'channelLastN' if specified in config.js.
-    // 5. -1 as the default value.
-    let lastNSelected = value || lastN || (config.startLastN ?? (config.channelLastN ?? -1));
+    // 1. The last-n value in redux.
+    // 2. The last-n value from 'startLastN' if it is specified in config.js
+    // 3. The last-n value from 'channelLastN' if specified in config.js.
+    // 4. -1 as the default value.
+    let lastNSelected = lastN || (config.startLastN ?? (config.channelLastN ?? -1));
 
     // Apply last N limit based on the # of participants and config settings.
     const limitedLastN = limitLastN(participantCount, lastNLimits);
@@ -111,15 +102,6 @@ function _updateLastN({ getState }, value = null) {
         lastNSelected = 1;
     }
 
-    if (conference.getLastN() === lastNSelected) {
-        return;
-    }
-
     logger.info(`Setting last N to: ${lastNSelected}`);
-
-    try {
-        conference.setLastN(lastNSelected);
-    } catch (err) {
-        logger.error(`Failed to set lastN: ${err}`);
-    }
+    dispatch(setLastN(lastNSelected));
 }
