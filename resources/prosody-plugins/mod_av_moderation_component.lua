@@ -136,6 +136,7 @@ function on_message(event)
                     module:log('warn', 'Concurrent moderator enable/disable request or something is out of sync');
                 else
                     room.av_moderation = {};
+                    room.av_moderation_actors = {};
                     room.av_moderation[mediaType] = {};
                     room.av_moderation_actors[mediaType] = from;
                 end
