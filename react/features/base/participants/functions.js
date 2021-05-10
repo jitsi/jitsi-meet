@@ -186,6 +186,17 @@ export function getParticipantDisplayName(
 }
 
 /**
+ * Curried version of getParticipantDisplayName.
+ *
+ * @see {@link getParticipantDisplayName}
+ * @param {string} id - The ID of the participant's display name to retrieve.
+ * @returns {Function}
+ */
+export const getParticipantDisplayNameWithId = (id: string) =>
+    (state: Object | Function) =>
+        getParticipantDisplayName(state, id);
+
+/**
  * Returns the presence status of a participant associated with the passed id.
  *
  * @param {(Function|Object)} stateful - The (whole) redux state, or redux's

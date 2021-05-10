@@ -2,6 +2,7 @@
 
 import React, { type Node } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useSelector } from 'react-redux';
 
 import { Avatar } from '../../base/avatar';
 import {
@@ -11,6 +12,7 @@ import {
     IconMicrophoneEmpty,
     IconMicrophoneEmptySlash
 } from '../../base/icons';
+import { getParticipantDisplayNameWithId } from '../../base/participants';
 import { ActionTrigger, MediaState } from '../constants';
 
 import { RaisedHandIndicator } from './RaisedHandIndicator';
@@ -125,6 +127,7 @@ export const ParticipantItem = ({
 }: Props) => {
     const ParticipantActions = Actions[actionsTrigger];
     const { t } = useTranslation();
+    const name = useSelector(getParticipantDisplayNameWithId(p.id));
 
     return (
         <ParticipantContainer
@@ -138,7 +141,7 @@ export const ParticipantItem = ({
             <ParticipantContent>
                 <ParticipantNameContainer>
                     <ParticipantName>
-                        { p.name }
+                        { name }
                     </ParticipantName>
                     { p.local ? <span>&nbsp;({t('chat.you')})</span> : null }
                 </ParticipantNameContainer>
