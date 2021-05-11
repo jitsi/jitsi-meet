@@ -57,7 +57,8 @@ const AbstractPollAnswerDialog = (Component: AbstractComponent<AbstractProps>) =
     const [ shouldDisplayResult, setShouldDisplayResult ] = useState(false);
 
     const dispatch = useDispatch();
-    const localName: string = useSelector(state => getParticipantDisplayName(state, localId));
+    const localParticipant = useSelector(state => getParticipantById(state, localId));
+    const localName: string = localParticipant.name ? localParticipant.name : 'Fellow Jitster';
     const senderName: string = useSelector(state => getParticipantDisplayName(state, poll.senderId));
     const isLocal: boolean = useSelector(state => (getParticipantById(state, poll.senderId) || { local: false }).local);
     const isChatOpen = useSelector(state => state['features/chat'].isOpen);
@@ -80,7 +81,8 @@ const AbstractPollAnswerDialog = (Component: AbstractComponent<AbstractProps>) =
         const answerData = {
             attributes: {
                 pollId,
-                senderId: localId
+                senderId: localId,
+                voterName: localName
             },
             children: checkBoxStates.map(checkBoxState => {
                 return {
@@ -101,7 +103,7 @@ const AbstractPollAnswerDialog = (Component: AbstractComponent<AbstractProps>) =
         setShouldDisplayResult(true);
 
         return false;
-    }, [ pollId, localId, checkBoxStates, conference ]);
+    }, [ pollId, localId, localName, checkBoxStates, conference ]);
 
     const skipAnswer = useCallback(() => {
         displayInChat();

@@ -5,8 +5,6 @@ import type { AbstractComponent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 
-import { getParticipantDisplayName, getParticipants } from '../../base/participants';
-
 
 /**
  * The type of the React {@code Component} props of inheriting component.
@@ -53,17 +51,6 @@ const AbstractPollResults = (Component: AbstractComponent<AbstractProps>) => (pr
 
     const pollDetails = useSelector(state => state['features/polls'].polls[pollId]);
 
-    let participants = useSelector(state => getParticipants(state));
-
-    participants = useSelector(state => participants.map(part => {
-        const displayName = getParticipantDisplayName(state, part.id);
-
-        return {
-            id: part.id,
-            name: displayName
-        };
-    }));
-
     const answers: Array<AnswerInfo> = useMemo(() => {
         const voterSet = new Set();
 
@@ -82,11 +69,11 @@ const AbstractPollResults = (Component: AbstractComponent<AbstractProps>) => (pr
             let voters = null;
 
             if (showDetails) {
-                voters = [ ...answer.voters ].map(voterId => {
-                    // Getting the name of participant from its ID
-                    const participant = participants.find(part => part.id === voterId);
-
-                    return participant;
+                voters = [ ...answer.voters ].map(([ id, name ]) => {
+                    return {
+                        id,
+                        name
+                    };
                 });
             }
 

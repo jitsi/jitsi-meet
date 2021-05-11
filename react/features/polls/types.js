@@ -8,6 +8,11 @@ export type Answer = {
     senderId: string,
 
     /**
+     * Name of the voter
+     */
+    voterName: string,
+
+    /**
      * ID of the parent Poll of this answer
      */
     pollId: number,
@@ -32,7 +37,7 @@ export type Poll = {
 
     /**
      * An array of answers:
-     * the name of the answer name and a set of ids of voters voting for this option
+     * the name of the answer name and a map of ids and names of voters voting for this option
      */
-    answers: Array<{ name: string, voters: Set<string> }>,
+    answers: Array<{ name: string, voters: Map<string, string> }>,
 };
