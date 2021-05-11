@@ -20,7 +20,7 @@ const PollAnswerDialog = (props: AbstractProps): React.Node => {
     const {
         pollId, poll,
         shouldDisplayResult,
-        submitAnswer, skipAnswer,
+        submitAnswer, skipAnswer, cancelAnswer,
         checkBoxStates, setCheckbox
     } = props;
 
@@ -32,7 +32,8 @@ const PollAnswerDialog = (props: AbstractProps): React.Node => {
             : <Dialog
                 cancelKey = { 'polls.answer.skip' }
                 okKey = { 'polls.answer.submit' }
-                onCancel = { skipAnswer }
+                onCancel = { cancelAnswer }
+                onDecline = { skipAnswer }
                 onSubmit = { submitAnswer }
                 titleKey = 'polls.answer.title'
                 width = 'small'>
