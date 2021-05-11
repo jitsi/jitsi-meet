@@ -108,38 +108,10 @@
         vertical-align: middle;
         line-height: 60px;
     }
-    .desktop-share{
-        margin-top: 8px;
-        background: #525252;
-        font-weight: bold;
-        height: 60px;
-        width: 107px;
-        border-radius: 6px;
-        text-align: center;
-        vertical-align: middle;
-        line-height: 60px;
-    }
-    .desktop-share-selected{
-        margin-top: 8px;
-        background: #525252;
-        font-weight: bold;
-        height: 60px;
-        width: 107px;
-        border-radius: 6px;
-        border: 2px solid #246FE5;
-        text-align: center;
-        vertical-align: middle;
-        line-height: 60px;
-    }
-    .share-desktop-icon{
-        margin-top: 15%;
-    }
+
     @media (min-width: 432px) and (max-width: 632px) {
         font-size: 1.5vw;
-        .share-desktop-icon{
-            margin-top: 25%;
-        }
-        .desktop-share, .desktop-share-selected, .virtual-background-none, .thumbnail, .thumbnail-selected, .none-selected, .blur, .blur-selected, .slight-blur, .slight-blur-selected{
+        .virtual-background-none, .thumbnail, .thumbnail-selected, .none-selected, .blur, .blur-selected, .slight-blur, .slight-blur-selected{
             height: 60px;
             width: 60px;
         }
