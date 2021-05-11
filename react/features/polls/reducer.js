@@ -42,14 +42,14 @@ ReducerRegistry.register('features/polls', (state = INITIAL_STATE, action) => {
             .map(_answer => {
                 return {
                     name: _answer.name,
-                    voters: new Set(_answer.voters)
+                    voters: new Map(_answer.voters)
                 };
             });
 
         for (let i = 0; i < newAnswers.length; i++) {
-            // if the answer was chosen, we add the senderID to the set of voters of this answer
+            // if the answer was chosen, we add the sender to the set of voters of this answer
             if (answer.answers[i] === true) {
-                newAnswers[i].voters.add(answer.senderId);
+                newAnswers[i].voters.set(answer.senderId, answer.voterName);
             }
         }
 
