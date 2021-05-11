@@ -12,6 +12,9 @@ export const answerStyles = createStyleSheet({
         flexDirection: 'row',
         alignItems: 'center',
         marginBottom: 3
+    },
+    option: {
+        flexShrink: 1
     }
 });
 
@@ -31,7 +34,8 @@ export const dialogStyles = createStyleSheet({
         borderColor: ColorPalette.blue,
         fontSize: 14,
         flexGrow: 1,
-        paddingBottom: 0
+        paddingBottom: 0,
+        flexShrink: 1
     },
 
     buttonContainer: {
@@ -80,12 +84,17 @@ export const resultsStyles = createStyleSheet({
     },
 
     answerContainer: {
-        marginVertical: 2
+        marginVertical: 2,
+        maxWidth: '100%'
     },
 
     answerHeader: {
         flexDirection: 'row',
         justifyContent: 'space-between'
+    },
+
+    answer: {
+        flexShrink: 1
     },
 
     answerVoteCount: {
