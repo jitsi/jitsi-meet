@@ -12,6 +12,7 @@ import { MultiSelectAutocomplete } from '../../../../base/react';
 import { connect } from '../../../../base/redux';
 import { isVpaasMeeting } from '../../../../billing-counter/functions';
 import { hideAddPeopleDialog } from '../../../actions';
+import { INVITE_TYPES } from '../../../constants';
 import AbstractAddPeopleDialog, {
     type Props as AbstractProps,
     type State,
@@ -181,7 +182,7 @@ class InviteContactsForm extends AbstractAddPeopleDialog<Props, State> {
      * @returns {Object} The item to display as selected in the input.
      */
     _onItemSelected(item) {
-        if (item.item.type === 'phone') {
+        if (item.item.type === INVITE_TYPES.PHONE) {
             item.content = item.item.number;
         }
 
@@ -285,7 +286,7 @@ class InviteContactsForm extends AbstractAddPeopleDialog<Props, State> {
      */
     _parseQueryResults(response = []) {
         const { t, _dialOutEnabled } = this.props;
-        const users = response.filter(item => item.type !== 'phone' && item.type !== 'sip');
+        const users = response.filter(item => item.type === INVITE_TYPES.USER);
         const userDisplayItems = [];
 
         for (const user of users) {
@@ -309,7 +310,7 @@ class InviteContactsForm extends AbstractAddPeopleDialog<Props, State> {
                     content: `${phone} (${name})`,
                     elemBefore: elemAvatar,
                     item: {
-                        type: 'phone',
+                        type: INVITE_TYPES.PHONE,
                         number: phone
                     },
                     tag: {
@@ -320,7 +321,7 @@ class InviteContactsForm extends AbstractAddPeopleDialog<Props, State> {
             }
         }
 
-        const numbers = response.filter(item => item.type === 'phone');
+        const numbers = response.filter(item => item.type === INVITE_TYPES.PHONE);
         const telephoneIcon = this._renderTelephoneIcon();
 
         const numberDisplayItems = numbers.map(number => {
@@ -349,7 +350,7 @@ class InviteContactsForm extends AbstractAddPeopleDialog<Props, State> {
         });
 
 
-        const sipAddresses = response.filter(item => item.type === 'sip');
+        const sipAddresses = response.filter(item => item.type === INVITE_TYPES.SIP);
 
         const sipDisplayItems = sipAddresses.map(sip => {
             return {
