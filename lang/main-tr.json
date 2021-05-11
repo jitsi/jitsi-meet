@@ -699,7 +699,7 @@
             "show": "Sahnede göster",
             "speakerStats": "Konuşmacı istatistiklerini aç/kapat",
             "tileView": "Döşeme görünümünü aç/kapat",
-            "toggleCamera": "Kamerayı aç/kapat",
+            "toggleCamera": "Kamerayı değiştir",
             "videomute": "Sessiz videoyu aç/kapat",
             "videoblur": ""
         },
@@ -757,7 +757,7 @@
         "stopSharedVideo": "Youtube videosunu durdur",
         "talkWhileMutedPopup": "Bir şey mi dediniz? Mikrofonunuz kapalı.",
         "tileViewToggle": "Döşeme görünümünü aç/kapat",
-        "toggleCamera": "Kamerayı aç/kapat",
+        "toggleCamera": "Kamerayı değiştir",
         "videomute": "Kamera başlat / durdur",
         "startvideoblur": "",
         "stopvideoblur": ""
