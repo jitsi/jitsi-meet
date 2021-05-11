@@ -46,7 +46,7 @@ const PollAnswerDialog = (props: AbstractProps): React.Node => {
                         <Switch
                             onValueChange = { state => setCheckbox(index, state) }
                             value = { checkBoxStates[index] } />
-                        <Text>{answer.name}</Text>
+                        <Text style = { answerStyles.option }>{answer.name}</Text>
                     </View>
                 ))}
             </View>
