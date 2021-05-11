@@ -21,7 +21,7 @@ const PollResultsDialog = (props: Props) => {
 
     return (
         <Dialog
-            cancelDisabled = { true }
+            hideCancelButton = { true }
             okKey = { 'polls.answer.close' }
             titleKey = { 'polls.answer.results' }
             width = { 'small' } >
