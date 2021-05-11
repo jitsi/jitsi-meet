@@ -118,6 +118,7 @@ import {
 import { downloadJSON } from './react/features/base/util/downloadJSON';
 import { showDesktopPicker } from './react/features/desktop-picker';
 import { appendSuffix } from './react/features/display-name';
+import { maybeStartFacialRecognition } from './react/features/facial-recognition';
 import {
     maybeOpenFeedbackDialog,
     submitFeedback
@@ -1442,6 +1443,7 @@ export default {
                     .then(() => {
                         this._setSharingScreen(newTrack);
                         this.setVideoMuteStatus();
+                        APP.store.dispatch(maybeStartFacialRecognition(newTrack));
                     })
                     .then(resolve)
                     .catch(error => {
