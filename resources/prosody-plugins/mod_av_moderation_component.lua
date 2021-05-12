@@ -61,15 +61,10 @@ function notify_whitelist_change(jid, moderators, room, mediaType)
     local participant_body_json_str = json.encode(body_json);
 
     for _, occupant in room:each_occupant() do
-        local body_to_send = nil;
         if moderators and occupant.role == 'moderator' then
-            body_to_send = moderators_body_json_str;
+            send_json_message(occupant.jid, moderators_body_json_str);
         elseif occupant.jid == jid then
-            body_to_send = participant_body_json_str;
-        end
-
-        if body_to_send then
-            send_json_message(occupant.jid, body_to_send)
+            send_json_message(occupant.jid, participant_body_json_str);
         end
     end
 end
