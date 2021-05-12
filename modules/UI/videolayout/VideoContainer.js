@@ -5,6 +5,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 
 import { browser } from '../../../react/features/base/lib-jitsi-meet';
+import { getRemoteTracks } from '../../../react/features/base/tracks';
 import { ORIENTATION, LargeVideoBackground } from '../../../react/features/large-video';
 import { LAYOUTS, getCurrentLayout } from '../../../react/features/video-layout';
 /* eslint-enable no-unused-vars */
@@ -19,12 +20,9 @@ import LargeContainer from './LargeContainer';
 export const VIDEO_CONTAINER_TYPE = 'camera';
 
 const FADE_DURATION_MS = 300;
-const SD_VIDEO_CONTAINER_HEIGHT = VIDEO_QUALITY_LEVELS.STANDARD;
+const SD_VIDEO_HEIGHT = VIDEO_QUALITY_LEVELS.STANDARD;
 const SD_VIDEO_CONTAINER_PADDING_PERCENTAGE = 0.1;
 const SD_VIDEO_CONTAINER_PADDING_BREAKPOINT = 768;
-
-// minimum top padding + bottom padding
-const SD_VIDEO_CONTAINER_MIN_VERTICAL_PADDING = 248;
 
 /**
  * Returns an array of the video dimensions, so that it keeps it's aspect
@@ -94,8 +92,7 @@ function computeCameraVideoSize( // eslint-disable-line max-params
         // Avoid NaN values caused by devision by 0.
         return [ 0, 0 ];
     }
-    const [ verticalPadding, horizontalPadding ] = getPaddings(videoSpaceHeight, videoSpaceWidth, videoHeight);
-
+    const conferenceHasStarted = getRemoteTracks(APP.store.getState()['features/base/tracks']).length > 0;
     const aspectRatio = videoWidth / videoHeight;
 
     switch (videoLayoutFit) {
@@ -105,7 +102,7 @@ function computeCameraVideoSize( // eslint-disable-line max-params
         return [ videoSpaceWidth, videoSpaceWidth / aspectRatio ];
     case 'both': {
         const videoSpaceRatio = videoSpaceWidth / videoSpaceHeight;
-        const maxZoomCoefficient = getMaxZoomCoefficient(videoHeight);
+        const maxZoomCoefficient = getMaxZoomCoefficient(videoHeight, conferenceHasStarted);
 
         if (videoSpaceRatio === aspectRatio) {
             return [ videoSpaceWidth, videoSpaceHeight ];
@@ -119,17 +116,22 @@ function computeCameraVideoSize( // eslint-disable-line max-params
             videoSpaceRatio < aspectRatio ? 'height' : 'width');
         const maxWidth = videoSpaceWidth * maxZoomCoefficient;
         const maxHeight = videoSpaceHeight * maxZoomCoefficient;
+        const shouldAddPadding = maxZoomCoefficient === 1 && maxWidth > SD_VIDEO_CONTAINER_PADDING_BREAKPOINT;
 
         if (width > maxWidth) {
-            width = maxWidth < SD_VIDEO_CONTAINER_PADDING_BREAKPOINT ? maxWidth : maxWidth - horizontalPadding;
+            width = maxWidth;
             height = width / aspectRatio;
-            if (maxZoomCoefficient === 1) {
-                // If the video feed is in SD, fix the height to avoid overlapping with Jane's logo
-                height = maxHeight - verticalPadding;
-            }
         } else if (height > maxHeight) {
-            height = maxHeight - verticalPadding;
+            height = maxHeight;
             width = height * aspectRatio;
+        }
+
+        if (shouldAddPadding) {
+            const padding = getPadding(videoSpaceHeight);
+
+            // If the video feed source is in SD, apply padding to each side of the video feed container
+            height = maxHeight - padding;
+            width = maxWidth - padding;
         }
 
         return [ width, height ];
@@ -141,13 +143,14 @@ function computeCameraVideoSize( // eslint-disable-line max-params
 
 /**
  * Returns a number of the max zoom coefficient, return 1 if the video stream is
- * standard definition or low definition
+ * standard definition or low definition or if the user is in the pre-conference stage
  *
  * @param videoHeight the original video height
+ * @param conferenceHasStarted attribute to tell if the conference has started
  * @return number
  */
-function getMaxZoomCoefficient(videoHeight) {
-    if (videoHeight <= SD_VIDEO_CONTAINER_HEIGHT) {
+function getMaxZoomCoefficient(videoHeight, conferenceHasStarted) {
+    if (videoHeight <= SD_VIDEO_HEIGHT || !conferenceHasStarted) {
         return 1;
     }
 
@@ -155,27 +158,14 @@ function getMaxZoomCoefficient(videoHeight) {
 }
 
 /**
- * Returns an array of the vertical padding & horizonal padding
- * for SD & LD video stream.
+ * Returns a number of the vertical/horizonal padding if the user is in the
+ * pre-conference stage or the video source is in SD/LD.
  *
- * @param videoSpaceWidth the width of the video space
  * @param videoSpaceHeight the height of the video space
- * @param videoHeight the original video height
- * @return an array with 2 elements, the video width and the video height
+ * @returns {number} The number of video padding.
  */
-function getPaddings(videoSpaceHeight, videoSpaceWidth, videoHeight) {
-    if (videoHeight <= SD_VIDEO_CONTAINER_HEIGHT) {
-        let verticalPadding = videoSpaceHeight * SD_VIDEO_CONTAINER_PADDING_PERCENTAGE * 2;
-        const horizontalPadding = videoSpaceWidth * SD_VIDEO_CONTAINER_PADDING_PERCENTAGE * 2;
-
-        if (verticalPadding < SD_VIDEO_CONTAINER_MIN_VERTICAL_PADDING) {
-            verticalPadding = SD_VIDEO_CONTAINER_MIN_VERTICAL_PADDING;
-        }
-
-        return [ verticalPadding, horizontalPadding ];
-    }
-
-    return [ 0, 0 ];
+function getPadding(videoSpaceHeight) {
+    return videoSpaceHeight * SD_VIDEO_CONTAINER_PADDING_PERCENTAGE * 2;
 }
 
 /**
