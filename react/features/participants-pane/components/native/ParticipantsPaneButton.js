@@ -2,10 +2,13 @@
 
 import type { Dispatch } from 'redux';
 
+import { openDialog } from '../../../base/dialog';
 import { translate } from '../../../base/i18n';
 import { IconParticipants } from '../../../base/icons';
 import { connect } from '../../../base/redux';
 import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
+
+import { ParticipantsPane } from './';
 
 type Props = AbstractButtonProps & {
 
@@ -19,7 +22,7 @@ type Props = AbstractButtonProps & {
 /**
  * Implements an {@link AbstractButton} to open the participants panel.
  */
-class ParticipantsPanelButton extends AbstractButton<Props, *> {
+class ParticipantsPaneButton extends AbstractButton<Props, *> {
     accessibilityLabel = 'toolbar.accessibilityLabel.participants';
     icon = IconParticipants;
     label = 'toolbar.participants';
@@ -30,6 +33,9 @@ class ParticipantsPanelButton extends AbstractButton<Props, *> {
      * @private
      * @returns {void}
      */
+    _handleClick() {
+        this.props.dispatch(openDialog(ParticipantsPane));
+    }
 }
 
 /**
@@ -45,4 +51,4 @@ function mapStateToProps(state: Object) {
     };
 }
 
-export default translate(connect(mapStateToProps)(ParticipantsPanelButton));
+export default translate(connect(mapStateToProps)(ParticipantsPaneButton));
