@@ -2,19 +2,20 @@
 
 import { ReducerRegistry } from '../base/redux';
 
-import { RECEIVE_POLL, RECEIVE_ANSWER } from './actionTypes';
+import { RECEIVE_POLL, RECEIVE_ANSWER, SHOW_POLL } from './actionTypes';
 import type { Answer } from './types';
 
 const INITIAL_STATE = {
-    polls: {}
+    polls: {},
+    pollQueue: []
 };
 
 ReducerRegistry.register('features/polls', (state = INITIAL_STATE, action) => {
     switch (action.type) {
 
     // Reducer triggered when a poll is received
-    case RECEIVE_POLL:
-        return {
+    case RECEIVE_POLL: {
+        const newState = {
             ...state,
             polls: {
                 ...state.polls,
@@ -23,6 +24,33 @@ ReducerRegistry.register('features/polls', (state = INITIAL_STATE, action) => {
                 [action.pollId]: action.poll
             }
         };
+
+        if (action.queue) {
+            newState.pollQueue = [ ...newState.pollQueue, action.pollId ];
+        }
+
+        return newState;
+    }
+
+    // Reducer triggered when a poll should be shown
+    case SHOW_POLL: {
+        // Remove poll from queue if present
+        const index = state.pollQueue.indexOf(action.pollId);
+
+        if (index !== -1) {
+            const newQueue = [ ...state.pollQueue ];
+
+            newQueue.splice(index, 1);
+
+            return {
+                ...state,
+                pollQueue: newQueue
+            };
+        }
+
+        return state;
+
+    }
 
     // Reducer triggered when an answer is received
     // The answer is added  to an existing poll

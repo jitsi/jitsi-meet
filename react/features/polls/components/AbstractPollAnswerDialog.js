@@ -1,6 +1,6 @@
 // @flow
 
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import type { AbstractComponent } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -56,6 +56,13 @@ const AbstractPollAnswerDialog = (Component: AbstractComponent<AbstractProps>) =
 
     const [ shouldDisplayResult, setShouldDisplayResult ] = useState(false);
 
+    // Reset state if pollId changes
+    // Useful in case of two successive answer dialogs
+    useEffect(() => {
+        setCheckBoxState(new Array(poll.answers.length).fill(false));
+        setShouldDisplayResult(false);
+    }, [ pollId ]);
+
     const dispatch = useDispatch();
     const localParticipant = useSelector(state => getParticipantById(state, localId));
     const localName: string = localParticipant.name ? localParticipant.name : 'Fellow Jitster';
@@ -103,19 +110,19 @@ const AbstractPollAnswerDialog = (Component: AbstractComponent<AbstractProps>) =
         setShouldDisplayResult(true);
 
         return false;
-    }, [ pollId, localId, localName, checkBoxStates, conference ]);
+    }, [ pollId, localId, localName, checkBoxStates, conference, displayInChat ]);
 
     const skipAnswer = useCallback(() => {
         displayInChat();
         setShouldDisplayResult(true);
 
         return false;
-    }, []);
+    }, [ displayInChat ]);
     const cancelAnswer = useCallback(() => {
         displayInChat();
 
         return true;
-    }, []);
+    }, [ displayInChat ]);
 
     return (<Component
         { ...props }

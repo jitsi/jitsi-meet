@@ -1,7 +1,8 @@
 // @flow
 
 import { Checkbox } from '@atlaskit/checkbox';
-import * as React from 'react';
+import React from 'react';
+import type { Node } from 'react';
 
 import { Dialog } from '../../../base/dialog';
 import AbstractPollAnswerDialog from '../AbstractPollAnswerDialog';
@@ -16,7 +17,7 @@ import PollResultsDialog from './PollResultsDialog';
  * @param {Props} props - The passed props.
  * @returns {React.Node}
  */
-const PollAnswerDialog = (props: AbstractProps): React.Node => {
+const PollAnswerDialog = (props: AbstractProps): Node => {
     const {
         pollId, poll,
         shouldDisplayResult,
