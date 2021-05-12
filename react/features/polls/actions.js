@@ -1,6 +1,6 @@
 // @flow
 
-import { RECEIVE_ANSWER, RECEIVE_POLL, SHOW_POLL } from './actionTypes';
+import { RECEIVE_ANSWER, RECEIVE_POLL, SET_ANSWERED_STATUS, SHOW_POLL } from './actionTypes';
 import type { Answer, Poll } from './types';
 
 /**
@@ -56,6 +56,25 @@ export const receiveAnswer = (pollId: string, answer: Answer) => {
     return {
         type: RECEIVE_ANSWER,
         answer,
+        pollId
+    };
+};
+
+/**
+ * Action to set the answer status of a poll.
+ *
+ * @param {number} pollId - The id of the poll.
+ * @param {boolean} answered - The new answer status.
+ * @returns {{
+ *     type: SET_ANSWERED_STATUS,
+ *     answered: boolean,
+ *     pollId: string
+ * }}
+ */
+export const setAnsweredStatus = (pollId: number, answered: boolean) => {
+    return {
+        type: SET_ANSWERED_STATUS,
+        answered,
         pollId
     };
 };

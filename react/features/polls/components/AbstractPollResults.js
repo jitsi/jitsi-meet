@@ -33,6 +33,7 @@ export type AnswerInfo = {
  * The type of the React {@code Component} props of {@link AbstractPollResults}.
  */
 export type AbstractProps = {
+    answered: boolean,
     answers: Array<AnswerInfo>,
     showDetails: boolean,
     question: string,
@@ -89,6 +90,7 @@ const AbstractPollResults = (Component: AbstractComponent<AbstractProps>) => (pr
     const { t } = useTranslation();
 
     return (<Component
+        answered = { pollDetails.answered }
         answers = { answers }
         question = { pollDetails.question }
         showDetails = { showDetails }

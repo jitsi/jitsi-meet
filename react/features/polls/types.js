@@ -31,6 +31,11 @@ export type Poll = {
     senderId: string,
 
     /**
+     * If the participant has answered the poll
+     */
+    answered: boolean,
+
+    /**
      * The question asked by this poll
      */
     question: string,

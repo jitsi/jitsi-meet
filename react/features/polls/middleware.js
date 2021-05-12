@@ -1,7 +1,9 @@
 // @flow
 
 import { openDialog } from '../base/dialog';
+import { getLocalParticipant, getParticipantDisplayName } from '../base/participants/functions';
 import { MiddlewareRegistry } from '../base/redux';
+import { addMessage, MESSAGE_TYPE_LOCAL, MESSAGE_TYPE_REMOTE } from '../chat';
 
 import { RECEIVE_POLL, SHOW_POLL } from './actionTypes';
 import { showPoll } from './actions';
@@ -15,7 +17,26 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
 
     // Middleware triggered when a poll is received
     case RECEIVE_POLL: {
-        const { pollId, queue } = action;
+        const { poll, pollId, queue } = action;
+
+        const state = getState();
+        const senderName = getParticipantDisplayName(state, poll.senderId);
+        const localParticipant = getLocalParticipant(state);
+        const localName = getParticipantDisplayName(state, localParticipant.id);
+        const isLocal = poll.senderId === localParticipant.id;
+        const isChatOpen: boolean = state['features/chat'].isOpen;
+
+        dispatch(addMessage({
+            displayName: senderName,
+            hasRead: isChatOpen,
+            id: poll.senderId,
+            messageType: isLocal ? MESSAGE_TYPE_LOCAL : MESSAGE_TYPE_REMOTE,
+            message: '[Poll]',
+            pollId,
+            privateMessage: false,
+            recipient: localName,
+            timestamp: Date.now()
+        }));
 
         if (!queue) {
             dispatch(showPoll(pollId));

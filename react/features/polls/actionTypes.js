@@ -34,3 +34,14 @@ export const SHOW_POLL = 'SHOW_POLL';
  * }
  */
 export const RECEIVE_ANSWER = 'RECEIVE_ANSWER';
+
+/**
+ * The type of the action which set the answered field of a poll.
+ *
+ * {
+ *     type: SET_ANSWERED_STATUS,
+ *     answered: boolean
+ *     pollId: number,
+ * }
+ */
+export const SET_ANSWERED_STATUS = 'SET_ANSWERED_STATUS';
