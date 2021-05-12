@@ -170,9 +170,9 @@ function on_message(event)
             local occupant_jid = moderation_command.attr.jidToWhitelist;
             -- check if jid is in the room, if so add it to whitelist
             -- inform all moderators and admins and the jid
-            local occupant = room:get_occupant_by_nick(occupant_jid);
+            local occupant_to_add = room:get_occupant_by_nick(occupant_jid);
 
-            if not occupant then
+            if not occupant_to_add then
                 module:log('warn', 'No occupant %s found for %s', occupant_jid, room.jid);
                 return false;
             end
@@ -184,7 +184,7 @@ function on_message(event)
             end
             table.insert(whitelist, occupant_jid);
 
-            notify_whitelist_change(occupant.jid, true, room, mediaType);
+            notify_whitelist_change(occupant_to_add.jid, true, room, mediaType);
 
             return true;
         end
