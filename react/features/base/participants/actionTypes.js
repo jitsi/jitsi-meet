@@ -171,3 +171,10 @@ export const HIDDEN_PARTICIPANT_LEFT = 'HIDDEN_PARTICIPANT_LEFT';
  */
 export const SET_LOADABLE_AVATAR_URL = 'SET_LOADABLE_AVATAR_URL';
 
+/**
+ * Raises hand for the local participant.
+ * {
+ *     type: LOCAL_PARTICIPANT_RAISE_HAND
+ * }
+ */
+export const LOCAL_PARTICIPANT_RAISE_HAND = 'LOCAL_PARTICIPANT_RAISE_HAND';
