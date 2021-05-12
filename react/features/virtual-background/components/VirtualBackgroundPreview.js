@@ -82,13 +82,11 @@ class VirtualBackgroundPreview extends PureComponent<Props, State> {
      * Destroys the jitsiTrack object.
      *
      * @param {Object} jitsiTrack - The track that needs to be disposed.
-     * After disposing it stop stream is needed.
      * @returns {Promise<void>}
      */
     _stopStream(jitsiTrack) {
         if (jitsiTrack) {
             jitsiTrack.dispose();
-            jitsiTrack.stopStream();
         }
     }
 
