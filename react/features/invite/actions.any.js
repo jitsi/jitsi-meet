@@ -215,7 +215,7 @@ export function updateDialInNumbers() {
             getDialInNumbers(dialInNumbersUrl, room, mucURL),
             getDialInConferenceID(dialInConfCodeUrl, room, mucURL)
         ])
-            .then(([ dialInNumbers, { conference, id, message } ]) => {
+            .then(([ dialInNumbers, { conference, id, message, sipUri } ]) => {
                 if (!conference || !id) {
                     return Promise.reject(message);
                 }
@@ -223,7 +223,8 @@ export function updateDialInNumbers() {
                 dispatch({
                     type: UPDATE_DIAL_IN_NUMBERS_SUCCESS,
                     conferenceID: id,
-                    dialInNumbers
+                    dialInNumbers,
+                    sipUri
                 });
             })
             .catch(error => {
