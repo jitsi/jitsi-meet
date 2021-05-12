@@ -79,6 +79,18 @@ class VirtualBackgroundPreview extends PureComponent<Props, State> {
     }
 
     /**
+     * Destroys the jitsiTrack object.
+     *
+     * @param {Object} jitsiTrack - The track that needs to be disposed.
+     * @returns {Promise<void>}
+     */
+    _stopStream(jitsiTrack) {
+        if (jitsiTrack) {
+            jitsiTrack.dispose();
+        }
+    }
+
+    /**
      * Creates and updates the track data.
      *
      * @returns {void}
@@ -89,9 +101,12 @@ class VirtualBackgroundPreview extends PureComponent<Props, State> {
             devices: [ 'video' ]
         });
 
+
         // In case the component gets unmounted before the tracks are created
         // avoid a leak by not setting the state
         if (this._componentWasUnmounted) {
+            this._stopStream(jitsiTrack);
+
             return;
         }
         this.setState({
@@ -178,6 +193,7 @@ class VirtualBackgroundPreview extends PureComponent<Props, State> {
      */
     componentWillUnmount() {
         this._componentWasUnmounted = true;
+        this._stopStream(this.state.jitsiTrack);
     }
 
     /**
