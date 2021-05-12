@@ -18,6 +18,7 @@ import {
     DOMINANT_SPEAKER_CHANGED,
     GRANT_MODERATOR,
     KICK_PARTICIPANT,
+    LOCAL_PARTICIPANT_RAISE_HAND,
     MUTE_REMOTE_PARTICIPANT,
     PARTICIPANT_DISPLAY_NAME_CHANGED,
     PARTICIPANT_JOINED,
@@ -107,6 +108,29 @@ MiddlewareRegistry.register(store => next => action => {
         const { conference } = store.getState()['features/base/conference'];
 
         conference.kickParticipant(action.id);
+        break;
+    }
+
+    case LOCAL_PARTICIPANT_RAISE_HAND: {
+        const { enabled } = action;
+        const localId = getLocalParticipant(store.getState())?.id;
+
+        store.dispatch(participantUpdated({
+            // XXX Only the local participant is allowed to update without
+            // stating the JitsiConference instance (i.e. participant property
+            // `conference` for a remote participant) because the local
+            // participant is uniquely identified by the very fact that there is
+            // only one local participant.
+
+            id: localId,
+            local: true,
+            raisedHand: enabled
+        }));
+
+        if (typeof APP !== 'undefined') {
+            APP.API.notifyRaiseHandUpdated(localId, enabled);
+        }
+
         break;
     }
 

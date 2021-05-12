@@ -10,6 +10,11 @@ import {
     sendAnalytics,
     VIDEO_MUTE
 } from '../analytics';
+import { showModeratedNotification } from '../av-moderation/actions';
+import {
+    isEnabledFromState as isAvModerationEnabled,
+    isLocalParticipantApprovedFromState as isLocalParticipantApproved
+} from '../av-moderation/functions';
 import {
     MEDIA_TYPE,
     setAudioMuted,
@@ -33,7 +38,7 @@ const logger = getLogger(__filename);
  * @returns {Function}
  */
 export function muteLocal(enable: boolean, mediaType: MEDIA_TYPE) {
-    return (dispatch: Dispatch<any>) => {
+    return (dispatch: Dispatch<any>, getState: Function) => {
         const isAudio = mediaType === MEDIA_TYPE.AUDIO;
 
         if (!isAudio && mediaType !== MEDIA_TYPE.VIDEO) {
@@ -41,6 +46,20 @@ export function muteLocal(enable: boolean, mediaType: MEDIA_TYPE) {
 
             return;
         }
+
+        // check for A/V Moderation if is trying to unmute
+        if (!enable) {
+            const isModerationEnabled = isAvModerationEnabled(MEDIA_TYPE.AUDIO, getState());
+            const isLocalApproved = isLocalParticipantApproved(MEDIA_TYPE.AUDIO, getState());
+
+            // if moderation is on and we are not approved show notification
+            if (isModerationEnabled && !isLocalApproved) {
+                dispatch(showModeratedNotification());
+
+                return;
+            }
+        }
+
         sendAnalytics(createToolbarEvent(isAudio ? AUDIO_MUTE : VIDEO_MUTE, { enable }));
         dispatch(isAudio ? setAudioMuted(enable, /* ensureTrack */ true)
             : setVideoMuted(enable, mediaType, VIDEO_MUTISM_AUTHORITY.USER, /* ensureTrack */ true));

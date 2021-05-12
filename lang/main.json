@@ -527,7 +527,12 @@
         "OldElectronAPPTitle": "Security vulnerability!",
         "oldElectronClientDescription1": "You appear to be using an old version of the Jitsi Meet client which has known security vulnerabilities. Please make sure you update to our ",
         "oldElectronClientDescription2": "latest build",
-        "oldElectronClientDescription3": " now!"
+        "oldElectronClientDescription3": " now!",
+        "moderationInEffectDescription": "Please raise hand if you want to speak",
+        "moderationInEffectTitle": "The microphone is muted by the moderator",
+        "moderationRequestFromModerator": "The host would like you to unmute",
+        "moderationRequestFromParticipant": "Wants to speak",
+        "raiseHandAction": "Raise hand"
     },
     "participantsPane": {
         "headings": {
@@ -535,7 +540,10 @@
             "participantsList": "Meeting participants ({{count}})"
         },
         "actions": {
+            "askUnmute": "Ask to unmute",
             "muteAll": "Mute all",
+            "startModeration": "Don’t allow attendees to unmute",
+            "stopModeration": "Allow attendees to unmute",
             "stopVideo": "Stop video"
         }
     },
