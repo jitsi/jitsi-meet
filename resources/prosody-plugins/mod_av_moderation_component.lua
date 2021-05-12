@@ -2,7 +2,6 @@ local get_room_by_name_and_subdomain = module:require 'util'.get_room_by_name_an
 local is_healthcheck_room = module:require 'util'.is_healthcheck_room;
 local json = require 'util.json';
 local st = require 'util.stanza';
-local um_is_admin = require "core.usermanager".is_admin;
 
 local muc_component_host = module:get_option_string('muc_component');
 if muc_component_host == nil then
@@ -11,10 +10,6 @@ if muc_component_host == nil then
 end
 
 module:log('info', 'Starting av_moderation for %s', muc_component_host);
-
-local function is_admin(jid)
-    return um_is_admin(jid, module.host);
-end
 
 -- Sends a json-message to the destination jid
 -- @param to_jid the destination jid
@@ -223,10 +218,9 @@ end
 
 -- when a occupant was granted moderator we need to update him with the whitelist
 function occupant_affiliation_changed(event)
-    -- if set from someone and is owner (and that is not jicofo - not admin)
-    -- the actor can be jicofo (auto-owner) this we want to skip as it is handled in occupant_joined
-    -- the actor can be nil if is coming from allowners or similar module
-    if event.actor and event.affiliation == 'owner' and not is_admin(event.actor) and event.room.av_moderation then
+    -- the actor can be nil if is coming from allowners or similar module we want to skip it here
+    -- as we will handle it in occupant_joined
+    if event.actor and event.affiliation == 'owner' and event.room.av_moderation then
         local room = event.room;
         -- event.jid is the bare jid of participant
         for _, occupant in room:each_occupant() do
