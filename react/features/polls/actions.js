@@ -1,6 +1,6 @@
 // @flow
 
-import { RECEIVE_ANSWER, RECEIVE_POLL } from './actionTypes';
+import { RECEIVE_ANSWER, RECEIVE_POLL, SHOW_POLL } from './actionTypes';
 import type { Answer, Poll } from './types';
 
 /**
@@ -8,16 +8,35 @@ import type { Answer, Poll } from './types';
  *
  * @param {string} pollId - The id of the incoming poll.
  * @param {Poll} poll - The incoming Poll object.
+ * @param {boolean} queue - Whether to queue the poll or show modal immediately.
  * @returns {{
  *     type: RECEIVE_POLL,
  *     poll: Poll,
- *     pollId: string
+ *     pollId: string,
+ *     queue: boolean
  * }}
  */
-export const receivePoll = (pollId: string, poll: Poll) => {
+export const receivePoll = (pollId: string, poll: Poll, queue: boolean) => {
     return {
         type: RECEIVE_POLL,
         poll,
+        pollId,
+        queue
+    };
+};
+
+/**
+ * Action to signal that a poll answer modal should be shown.
+ *
+ * @param {string} pollId - The id of the poll to be shown.
+ * @returns {{
+ *     type: SHOW_POLL,
+ *     pollId: string
+ * }}
+ */
+export const showPoll = (pollId: string) => {
+    return {
+        type: SHOW_POLL,
         pollId
     };
 };

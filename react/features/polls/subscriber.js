@@ -25,7 +25,10 @@ StateListenerRegistry.register(
                     })
                 };
 
-                store.dispatch(receivePoll(attributes.pollId, poll));
+                const dialogComponent = store.getState()['features/base/dialog'].component;
+                const queue = dialogComponent !== undefined;
+
+                store.dispatch(receivePoll(attributes.pollId, poll, queue));
             });
 
             // Command triggered when new answer is received
