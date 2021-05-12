@@ -16,32 +16,35 @@ local function is_admin(jid)
     return um_is_admin(jid, module.host);
 end
 
+-- Sends a json-message to the destination jid
+-- @param to_jid the destination jid
+-- @param json_message the message content to send
+function send_json_message(to_jid, json_message)
+    local stanza = st.message({ from = module.host; to = to_jid; })
+         :tag('json-message', { xmlns = 'http://jitsi.org/jitmeet' }):text(json_message):up();
+    module:send(stanza);
+end
+
 -- Notifies that av moderation has been enabled or disabled
 -- @param jid the jid to notify, if missing will notify all occupants
 -- @param enable whether it is enabled or disabled
 -- @param room the room
--- @param actorJid the jid that is performing the enable/disable operation
+-- @param actorJid the jid that is performing the enable/disable operation (the muc jid)
 -- @param mediaType the media type for the moderation
 function notify_occupants_enable(jid, enable, room, actorJid, mediaType)
     local body_json = {};
     body_json.type = 'av_moderation';
     body_json.enabled = enable;
     body_json.room = room.jid;
-
-    local notify = function(jid_to_notify, mediaType)
-        body_json.actor = actorJid;
-        body_json.mediaType = mediaType;
-        local body_json_str = json.encode(body_json);
-        local stanza = st.message({ from = module.host; to = jid_to_notify; })
-                :tag('json-message', { xmlns = 'http://jitsi.org/jitmeet' }):text(body_json_str):up();
-        module:send(stanza);
-    end
+    body_json.actor = actorJid;
+    body_json.mediaType = mediaType;
+    local body_json_str = json.encode(body_json);
 
     if jid then
-        notify(jid, mediaType);
+        send_json_message(jid, body_json_str)
     else
         for _, occupant in room:each_occupant() do
-            notify(occupant.jid, mediaType);
+            send_json_message(occupant.jid, body_json_str)
         end
     end
 end
@@ -71,10 +74,7 @@ function notify_whitelist_change(jid, moderators, room, mediaType)
         end
 
         if body_to_send then
-            local stanza = st.message({
-                from = module.host; to = occupant.jid; }):tag('json-message',{ xmlns = 'http://jitsi.org/jitmeet' })
-                    :text(body_to_send):up();
-            module:send(stanza);
+            send_json_message(occupant.jid, body_to_send)
         end
     end
 end
@@ -134,6 +134,7 @@ function on_message(event)
                 enabled = true;
                 if room.av_moderation and room.av_moderation[mediaType] then
                     module:log('warn', 'Concurrent moderator enable/disable request or something is out of sync');
+                    return true;
                 else
                     room.av_moderation = {};
                     room.av_moderation_actors = {};
@@ -142,11 +143,23 @@ function on_message(event)
                 end
             else
                 enabled = false;
-                if not room.av_moderation and not room.av_moderation[mediaType] then
+                if not room.av_moderation or not room.av_moderation[mediaType] then
                     module:log('warn', 'Concurrent moderator enable/disable request or something is out of sync');
+                    return true;
                 else
                     room.av_moderation[mediaType] = nil;
                     room.av_moderation_actors[mediaType] = nil;
+
+                    -- clears room.av_moderation if empty
+                    local is_empty = false;
+                    for key,_ in pairs(room.av_moderation) do
+                        if room.av_moderation[key] then
+                            is_empty = true;
+                        end
+                    end
+                    if is_empty then
+                        room.av_moderation = nil;
+                    end
                 end
             end
 
@@ -197,9 +210,13 @@ function occupant_joined(event)
             end
         end
 
-        -- if moderator send the whitelist
-        if occupant.role == 'moderator' then
-            notify_whitelist_change(occupant.jid, false, room);
+        -- NOTE for some reason event.occupant.role is not reflecting the actual occupant role (when changed
+        -- from allowners module) but iterating over room occupants returns the correct role
+        for _, room_occupant in room:each_occupant() do
+            -- if moderator send the whitelist
+            if room_occupant.nick == occupant.nick and room_occupant.role == 'moderator'  then
+                notify_whitelist_change(room_occupant.jid, false, room);
+            end
         end
     end
 end
@@ -207,7 +224,9 @@ end
 -- when a occupant was granted moderator we need to update him with the whitelist
 function occupant_affiliation_changed(event)
     -- if set from someone and is owner (and that is not jicofo - not admin)
-    if event.actor and event.affiliation == 'owner' and not is_admin(event.actor) then
+    -- the actor can be jicofo (auto-owner) this we want to skip as it is handled in occupant_joined
+    -- the actor can be nil if is coming from allowners or similar module
+    if event.actor and event.affiliation == 'owner' and not is_admin(event.actor) and event.room.av_moderation then
         local room = event.room;
         -- event.jid is the bare jid of participant
         for _, occupant in room:each_occupant() do
@@ -227,7 +246,7 @@ function process_host(host)
         module:log('info','Hook to muc events on %s', host);
 
         local muc_module = module:context(host);
-        muc_module:hook('muc-occupant-joined', occupant_joined, -1);
+        muc_module:hook('muc-occupant-joined', occupant_joined, -2); -- make sure it runs after allowners or similar
         muc_module:hook('muc-set-affiliation', occupant_affiliation_changed, -1);
     end
 end
