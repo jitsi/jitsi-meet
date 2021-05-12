@@ -35,6 +35,7 @@ VirtualHost "jitmeet.example.com"
         key = "/etc/prosody/certs/jitmeet.example.com.key";
         certificate = "/etc/prosody/certs/jitmeet.example.com.crt";
     }
+    av_moderation_component = "avmoderation.jitmeet.example.com"
     speakerstats_component = "speakerstats.jitmeet.example.com"
     conference_duration_component = "conferenceduration.jitmeet.example.com"
     -- we need bosh
@@ -46,6 +47,7 @@ VirtualHost "jitmeet.example.com"
         "external_services";
         "conference_duration";
         "muc_lobby_rooms";
+        "av_moderation";
     }
     c2s_require_encryption = false
     lobby_muc = "lobby.jitmeet.example.com"
@@ -84,6 +86,9 @@ Component "speakerstats.jitmeet.example.com" "speakerstats_component"
     muc_component = "conference.jitmeet.example.com"
 
 Component "conferenceduration.jitmeet.example.com" "conference_duration_component"
+    muc_component = "conference.jitmeet.example.com"
+
+Component "avmoderation.jitmeet.example.com" "av_moderation_component"
     muc_component = "conference.jitmeet.example.com"
 
 Component "lobby.jitmeet.example.com" "muc"

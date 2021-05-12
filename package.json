@@ -54,7 +54,7 @@
     "jquery-i18next": "1.2.1",
     "js-md5": "0.6.1",
     "jwt-decode": "2.2.0",
-    "lib-jitsi-meet": "github:jitsi/lib-jitsi-meet#923aa449c4e6e46823dc990b19041898e09263ca",
+    "lib-jitsi-meet": "github:jitsi/lib-jitsi-meet#88560a8a5ed1ce6e7b829d7fc8e460b4c963f119",
     "libflacjs": "github:mmig/libflac.js#93d37e7f811f01cf7d8b6a603e38bd3c3810907d",
     "lodash": "4.17.21",
     "moment": "2.29.1",
