@@ -1,3 +1,4 @@
 // @flow
 
-export { default as ParticipantsPanelButton } from './ParticipantsPanelButton';
+export { default as ParticipantsPane } from './ParticipantsPane';
+export { default as ParticipantsPaneButton } from './ParticipantsPaneButton';
