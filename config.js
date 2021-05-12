@@ -685,8 +685,11 @@ var config = {
     /**
      External API url used to receive branding specific information.
      If there is no url set or there are missing fields, the defaults are applied.
+     The config file should be in JSON.
      None of the fields are mandatory and the response must have the shape:
      {
+         // The domain url to apply (will replace the domain in the sharing conference link/embed section)
+         inviteDomain: 'example-company.org,
          // The hex value for the colour used as background
          backgroundColor: '#fff',
          // The url for the image used as background
