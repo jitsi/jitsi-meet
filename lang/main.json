@@ -631,7 +631,8 @@
             "close": "Close",
             "empty": "No answer for the moment",
             "vote" : "{{count}} vote",
-            "vote_plural" : "{{count}} votes"
+            "vote_plural" : "{{count}} votes",
+            "notanswered": "You didn't answer the poll yet"
         },
         "chat": {
             "notice": "Poll",

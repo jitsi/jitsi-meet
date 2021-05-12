@@ -2,7 +2,7 @@
 
 import { ReducerRegistry } from '../base/redux';
 
-import { RECEIVE_POLL, RECEIVE_ANSWER, SHOW_POLL } from './actionTypes';
+import { RECEIVE_POLL, RECEIVE_ANSWER, SET_ANSWERED_STATUS, SHOW_POLL } from './actionTypes';
 import type { Answer } from './types';
 
 const INITIAL_STATE = {
@@ -89,6 +89,22 @@ ReducerRegistry.register('features/polls', (state = INITIAL_STATE, action) => {
                 [pollId]: {
                     ...state.polls[pollId],
                     answers: newAnswers
+                }
+            }
+        };
+    }
+
+    // Reducer triggered to update the answered status of a poll
+    case SET_ANSWERED_STATUS: {
+        const { answered, pollId }: { answered: boolean; pollId: number } = action;
+
+        return {
+            ...state,
+            polls: {
+                ...state.polls,
+                [pollId]: {
+                    ...state.polls[pollId],
+                    answered
                 }
             }
         };
