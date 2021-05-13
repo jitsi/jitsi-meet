@@ -7,11 +7,6 @@ import { BACKGROUND_ENABLED, SET_VIRTUAL_BACKGROUND } from './actionTypes';
 const STORE_NAME = 'features/virtual-background';
 
 /**
- * Sets up the persistence of the feature {@code virtual-background}.
- */
-PersistenceRegistry.register(STORE_NAME, true);
-
-/**
  * Reduces redux actions which activate/deactivate virtual background image, or
  * indicate if the virtual image background is activated/deactivated. The
  * backgroundEffectEnabled flag indicate if virtual background effect is activated.
@@ -24,6 +19,11 @@ PersistenceRegistry.register(STORE_NAME, true);
  */
 ReducerRegistry.register(STORE_NAME, (state = {}, action) => {
     const { virtualSource, backgroundEffectEnabled, blurValue, backgroundType, selectedThumbnail } = action;
+
+    /**
+     * Sets up the persistence of the feature {@code virtual-background}.
+     */
+    PersistenceRegistry.register(STORE_NAME, state.backgroundType !== 'desktop-share');
 
     switch (action.type) {
     case SET_VIRTUAL_BACKGROUND: {

@@ -7,7 +7,7 @@ import uuid from 'uuid';
 
 import { Dialog, hideDialog } from '../../base/dialog';
 import { translate } from '../../base/i18n';
-import { Icon, IconCloseSmall, IconPlusCircle } from '../../base/icons';
+import { Icon, IconCloseSmall, IconPlusCircle, IconShareDesktop } from '../../base/icons';
 import { connect } from '../../base/redux';
 import { getLocalVideoTrack } from '../../base/tracks';
 import { toggleBackgroundEffect } from '../actions';
@@ -119,6 +119,14 @@ function VirtualBackground({ _jitsiTrack, _selectedThumbnail, dispatch, t }: Pro
         });
     };
 
+    const shareDesktop = async selection => {
+        setOptions({
+            backgroundType: 'desktop-share',
+            enabled: true,
+            selectedThumbnail: selection
+        });
+    };
+
     const setUploadedImageBackground = async image => {
         setOptions({
             backgroundType: 'image',
@@ -221,6 +229,16 @@ function VirtualBackground({ _jitsiTrack, _selectedThumbnail, dispatch, t }: Pro
                             className = { _selectedThumbnail === 'blur' ? 'blur-selected' : 'blur' }
                             onClick = { () => enableBlur(25, 'blur') }>
                             {t('virtualBackground.blur')}
+                        </div>
+                        <div
+                            className = { _selectedThumbnail === 'desktop-share'
+                                ? 'desktop-share-selected'
+                                : 'desktop-share' }
+                            onClick = { () => shareDesktop('desktop-share') }>
+                            <Icon
+                                className = 'share-desktop-icon'
+                                size = { 30 }
+                                src = { IconShareDesktop } />
                         </div>
                         {images.map((image, index) => (
                             <img
