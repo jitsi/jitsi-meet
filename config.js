@@ -434,6 +434,10 @@ var config = {
     // Base URL for a Gravatar-compatible service. Defaults to libravatar.
     // gravatarBaseURL: 'https://seccdn.libravatar.org/avatar/',
 
+    // App name to be displayed in the invitation email subject, as an alternative to
+    // interfaceConfig.APP_NAME.
+    // inviteAppName: null,
+
     // Moved from interfaceConfig(TOOLBAR_BUTTONS).
     // The name of the toolbar buttons to display in the toolbar, including the
     // "More actions" menu. If present, the button will display. Exceptions are
