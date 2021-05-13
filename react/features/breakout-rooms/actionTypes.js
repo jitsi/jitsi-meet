@@ -1,24 +1,37 @@
+// @flow
 
 /**
- * The type of (redux) action to add a new breakout room
+ * The type of (redux) action to initialize a dedicated connection used for breakout rooms
  *
  */
-export const BREAKOUT_ROOM_ADDED = 'BREAKOUT_ROOM_ADDED';
+export const CREATE_BREAKOUT_ROOM_CONNECTION = 'CREATE_BREAKOUT_ROOM_CONNECTION';
+
+/**
+ * The type of (redux) action to add a breakout room
+ *
+ */
+export const ADD_BREAKOUT_ROOM = 'ADD_BREAKOUT_ROOM';
 
 /**
  * The type of (redux) action to remove a breakout room
  *
  */
-export const BREAKOUT_ROOM_REMOVED = 'BREAKOUT_ROOM_REMOVED';
+export const REMOVE_BREAKOUT_ROOM = 'REMOVE_BREAKOUT_ROOM';
 
 /**
- * The type of (redux) action to update the breakout rooms list
+ * The type of (redux) action to update the list of breakout rooms
  *
  */
-export const BREAKOUT_ROOMS_UPDATED = 'BREAKOUT_ROOMS_UPDATED';
+export const UPDATE_BREAKOUT_ROOMS = 'UPDATE_BREAKOUT_ROOMS';
 
 /**
- * The type of (redux) action to send a participant to a breakout room
+ * The type of (redux) action to move to a room
  *
  */
-export const PARTICIPANT_SENT_TO_BREAKOUT_ROOM = 'PARTICIPANT_SENT_TO_BREAKOUT_ROOM';
+export const MOVE_TO_ROOM = 'MOVE_TO_ROOM';
+
+/**
+ * The type of (redux) action to send a participant to a room
+ *
+ */
+export const SEND_PARTICIPANT_TO_ROOM = 'SEND_PARTICIPANT_TO_ROOM';

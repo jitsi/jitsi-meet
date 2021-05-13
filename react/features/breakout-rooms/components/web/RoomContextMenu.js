@@ -1,17 +1,17 @@
 // @flow
 
 import React, { useCallback, useLayoutEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 
-import conference from '../../../../conference';
 import {
     IconClose,
     IconMeetingUnlocked
-} from '../../base/icons';
-import { isLocalParticipantModerator } from '../../base/participants';
-import { removeBreakoutRoom } from '../actions';
-import { getComputedOuterHeight } from '../functions';
+} from '../../../base/icons';
+import { isLocalParticipantModerator } from '../../../base/participants';
+import { removeBreakoutRoom, moveToRoom } from '../../actions';
 
+import { getComputedOuterHeight } from './functions';
 import {
     ContextMenu,
     ContextMenuIcon,
@@ -58,6 +58,7 @@ export const RoomContextMenu = ({
 }: Props) => {
     const containerRef = useRef(null);
     const dispatch = useDispatch();
+    const { t } = useTranslation();
     const isLocalModerator = useSelector(isLocalParticipantModerator);
 
     const [ isHidden, setIsHidden ] = useState(true);
@@ -83,11 +84,13 @@ export const RoomContextMenu = ({
     }, [ room, offsetTarget ]);
 
     const onJoinRoom = useCallback(() => {
-        conference.switchRoom(room.id);
-    }, [ room ]);
+        dispatch(moveToRoom(room.id));
+        setIsHidden(true);
+    }, [ dispatch, room ]);
 
     const onRemoveBreakoutRoom = useCallback(() => {
         dispatch(removeBreakoutRoom(room.id));
+        setIsHidden(true);
     }, [ dispatch, room ]);
 
     return (
@@ -101,12 +104,12 @@ export const RoomContextMenu = ({
             <ContextMenuItemGroup>
                 <ContextMenuItem onClick = { onJoinRoom }>
                     <ContextMenuIcon src = { IconMeetingUnlocked } />
-                    <span>Join</span>
+                    <span>{t('breakoutRooms.actions.join')}</span>
                 </ContextMenuItem>
                 {isLocalModerator
                     && <ContextMenuItem onClick = { onRemoveBreakoutRoom }>
                         <ContextMenuIcon src = { IconClose } />
-                        <span>Remove</span>
+                        <span>{t('breakoutRooms.actions.remove')}</span>
                     </ContextMenuItem>
                 }
             </ContextMenuItemGroup>

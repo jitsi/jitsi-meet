@@ -1,33 +1,46 @@
+// @flow
+
 import { ReducerRegistry } from '../base/redux';
 
 import {
-    BREAKOUT_ROOMS_UPDATED,
-    BREAKOUT_ROOM_ADDED,
-    BREAKOUT_ROOM_REMOVED
+    ADD_BREAKOUT_ROOM,
+    CREATE_BREAKOUT_ROOM_CONNECTION,
+    REMOVE_BREAKOUT_ROOM,
+    UPDATE_BREAKOUT_ROOMS
 } from './actionTypes';
-import { REDUCER_KEY } from './constants';
+import { FEATURE_KEY } from './constants';
 
 /**
- * Default State for 'features/transcription' feature
+ * Default state for the breakout-rooms feature.
  */
 const defaultState = {
     breakoutRooms: []
 };
 
 /**
- * Listen for actions for the breakout rooms feature to be used by the actions
- * to update the breakout room list.
+ * Listen for actions for the breakout-rooms feature.
  */
-ReducerRegistry.register(REDUCER_KEY, (
-        state = defaultState, action) => {
+ReducerRegistry.register(FEATURE_KEY, (state = defaultState, action) => {
     switch (action.type) {
-    case BREAKOUT_ROOMS_UPDATED: {
+    case CREATE_BREAKOUT_ROOM_CONNECTION: {
+        const { connection, fakeModeratorId } = action;
+
         return {
             ...state,
-            breakoutRooms: action.breakoutRooms
+            connection,
+            fakeModeratorId
         };
     }
-    case BREAKOUT_ROOM_ADDED: {
+    case UPDATE_BREAKOUT_ROOMS: {
+        const { breakoutRooms, fakeModeratorId } = action;
+
+        return {
+            ...state,
+            breakoutRooms,
+            fakeModeratorId
+        };
+    }
+    case ADD_BREAKOUT_ROOM: {
         const nextIndex = (state.breakoutRooms[state.breakoutRooms.length - 1]?.index || 0) + 1;
         const breakoutRooms = [
             ...state.breakoutRooms,
@@ -40,7 +53,7 @@ ReducerRegistry.register(REDUCER_KEY, (
             breakoutRooms
         };
     }
-    case BREAKOUT_ROOM_REMOVED: {
+    case REMOVE_BREAKOUT_ROOM: {
         const breakoutRooms = state.breakoutRooms.filter(room => room.id !== action.breakoutRoomId);
 
         return {

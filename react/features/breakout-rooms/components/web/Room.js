@@ -3,7 +3,7 @@
 import React, { type Node } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { ActionTrigger } from '../constants';
+import { ActionTrigger } from '../../constants';
 
 import {
     Heading,
@@ -25,7 +25,7 @@ type Props = {
     /**
      * Type of trigger for the breakout room actions
      */
-    actionsTrigger: ActionTrigger,
+    actionsTrigger: string,
 
     /**
      * React children

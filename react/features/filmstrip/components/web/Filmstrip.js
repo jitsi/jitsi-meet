@@ -11,7 +11,7 @@ import {
 import { getToolbarButtons } from '../../../base/config';
 import { translate } from '../../../base/i18n';
 import { Icon, IconMenuDown, IconMenuUp } from '../../../base/icons';
-import { getLocalParticipant } from '../../../base/participants';
+import { getLocalParticipant, getParticipants } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import { isButtonEnabled } from '../../../toolbox/functions.web';
 import { LAYOUTS, getCurrentLayout } from '../../../video-layout';
@@ -339,7 +339,7 @@ function _mapStateToProps(state) {
         _hideScrollbar: Boolean(iAmSipGateway),
         _hideToolbar: Boolean(iAmSipGateway),
         _isFilmstripButtonEnabled: isButtonEnabled('filmstrip', state),
-        _participants: state['features/base/participants'],
+        _participants: getParticipants(state),
         _rows: gridDimensions.rows,
         _videosClassName: videosClassName,
         _visible: visible

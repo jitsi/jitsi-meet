@@ -1,29 +1,42 @@
 // @flow
 
-import conference from '../../../conference';
-import { DATA_CHANNEL_OPENED } from '../base/conference';
+import { DATA_CHANNEL_OPENED, setRoom, setSubject } from '../base/conference';
+import { connect, disconnect } from '../base/connection';
 import {
     getParticipantCount,
     isLocalParticipantModerator,
     isParticipantModerator,
-    getParticipantById
+    getParticipantById,
+    PARTICIPANT_JOINED
 } from '../base/participants';
-import { MiddlewareRegistry } from '../base/redux';
+import { MiddlewareRegistry, StateListenerRegistry } from '../base/redux';
+import { createDesiredLocalTracks } from '../base/tracks';
+import { clearNotifications } from '../notifications';
 import { ENDPOINT_MESSAGE_RECEIVED } from '../subtitles';
 
 import {
-    BREAKOUT_ROOM_ADDED,
-    BREAKOUT_ROOM_REMOVED,
-    PARTICIPANT_SENT_TO_BREAKOUT_ROOM
+    MOVE_TO_ROOM,
+    SEND_PARTICIPANT_TO_ROOM,
+    UPDATE_BREAKOUT_ROOMS
 } from './actionTypes';
-import { updateBreakoutRooms } from './actions';
 import {
-    REDUCER_KEY,
-    JSON_TYPE_BREAKOUT_ROOMS_LIST,
+    JSON_TYPE_BREAKOUT_ROOMS,
     JSON_TYPE_BREAKOUT_ROOMS_REQUEST,
-    JSON_TYPE_MOVE_TO_BREAKOUT_ROOM_REQUEST
+    JSON_TYPE_MOVE_TO_ROOM_REQUEST
 } from './constants';
+import { getMainRoomId, selectBreakoutRooms, selectBreakoutRoomsFakeModeratorId } from './functions';
 import logger from './logger';
+
+declare var APP: Object;
+
+/**
+ * Middleware that catches updates of the breakout rooms list
+ * and sends them to the other participants.
+ */
+StateListenerRegistry.register(
+    /* selector */ selectBreakoutRooms,
+    /* listener */ (_, store) => _sendBreakoutRooms(store)
+);
 
 /**
  * Middleware that catches actions related to breakout rooms
@@ -34,104 +47,122 @@ import logger from './logger';
 MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
     case ENDPOINT_MESSAGE_RECEIVED:
-        return _endpointMessageReceived(store, next, action);
-    case BREAKOUT_ROOM_ADDED:
-        conference.initBreakoutRoom(action.breakoutRoomId);
-
-        // falls through
-    case BREAKOUT_ROOM_REMOVED:
-        return sendBreakoutRooms(store, next, action);
+        _handleEndpointMessage(store, action);
+        break;
     case DATA_CHANNEL_OPENED:
-        return sendBreakoutRoomsRequest(store, next, action);
-    case PARTICIPANT_SENT_TO_BREAKOUT_ROOM:
-        return sendBreakoutRoomsMoveParticipantRequest(store, next, action);
+        _sendBreakoutRoomsRequest(store);
+        break;
+    case SEND_PARTICIPANT_TO_ROOM:
+        _sendParticipantToRoom(store, action);
+        break;
+    case MOVE_TO_ROOM:
+        _moveToRoom(store, action.roomId);
+        break;
+    case PARTICIPANT_JOINED:
+        _grantOwnerToFakeModerator(store, action);
+        break;
     }
 
     return next(action);
 });
 
 /**
- * Notifies the feature breakout rooms that the action
- * {@code ENDPOINT_MESSAGE_RECEIVED} is being dispatched within a specific redux
- * store.
+ * Notifies the feature breakout rooms that the action {@code ENDPOINT_MESSAGE_RECEIVED}
+ * is being dispatched within a specific redux store.
  *
  * @param {Store} store - The redux store in which the specified {@code action}
  * is being dispatched.
- * @param {Dispatch} next - The redux {@code dispatch} function to
- * dispatch the specified {@code action} to the specified {@code store}.
  * @param {Action} action - The redux action {@code ENDPOINT_MESSAGE_RECEIVED}
  * which is being dispatched in the specified {@code store}.
- * @private
- * @returns {Object} The value returned by {@code next(action)}.
+ * @returns {void}
  */
-function _endpointMessageReceived(store, next, action) {
+function _handleEndpointMessage(store, action) {
     const { dispatch, getState } = store;
     const state = getState();
     const { json, participant } = action;
     const sender = getParticipantById(state, participant._id);
 
-    try {
-        if (json) {
-            switch (json.type) {
-            case JSON_TYPE_BREAKOUT_ROOMS_LIST:
-                if (isParticipantModerator(sender)) {
-                    const breakoutRooms = json.breakoutRooms;
+    if (json) {
+        switch (json.type) {
+        case JSON_TYPE_BREAKOUT_ROOMS:
+            if (isParticipantModerator(sender)) {
+                const { breakoutRooms, fakeModeratorId } = json;
 
-                    dispatch(updateBreakoutRooms(breakoutRooms));
-                }
-                break;
-            case JSON_TYPE_BREAKOUT_ROOMS_REQUEST:
-                if (isLocalParticipantModerator(state)) {
-                    sendBreakoutRooms(store, next, action);
-                }
-                break;
-            case JSON_TYPE_MOVE_TO_BREAKOUT_ROOM_REQUEST:
-                if (isParticipantModerator(sender)) {
-                    const breakoutRoom = json.breakoutRoom;
-
-                    conference.switchRoom(breakoutRoom.id);
-                }
-                break;
+                dispatch({
+                    type: UPDATE_BREAKOUT_ROOMS,
+                    breakoutRooms,
+                    fakeModeratorId
+                });
             }
+            break;
+        case JSON_TYPE_BREAKOUT_ROOMS_REQUEST:
+            if (isLocalParticipantModerator(state)) {
+                _sendBreakoutRooms(store);
+            }
+            break;
+        case JSON_TYPE_MOVE_TO_ROOM_REQUEST:
+            if (isParticipantModerator(sender)) {
+                _moveToRoom(store, action.json.roomId);
+            }
+            break;
         }
-    } catch (error) {
-        logger.error('Error occurred while updating breakout rooms\n', error);
     }
-
-    return next(action);
 }
 
 /**
- * Sends the current list of breakout rooms to the other participants.
+ * Move to a room.
  *
  * @param {Store} store - The redux store in which the specified {@code action}
  * is being dispatched.
- * @param {Dispatch} next - The redux {@code dispatch} function to
- * dispatch the specified {@code action} to the specified {@code store}.
+ * @param {string} roomId - The room id to move to. If omitted the move will be to the main room.
+ * @returns {void}
+ */
+function _moveToRoom(store, roomId) {
+    const { getState, dispatch } = store;
+    const state = getState();
+    const mainRoomId = getMainRoomId(state);
+    const _roomId = roomId || mainRoomId;
+    const { subject } = state['features/base/config'];
+    const _subject = subject || mainRoomId;
+
+    if (navigator.product === 'ReactNative') {
+        dispatch(disconnect());
+        dispatch(clearNotifications());
+        dispatch(setRoom(_roomId));
+        dispatch(setSubject(_subject));
+        dispatch(createDesiredLocalTracks());
+        dispatch(connect());
+    } else {
+        APP.conference.leaveRoomAndDisconnect()
+        .then(() => {
+            dispatch(setRoom(_roomId));
+            dispatch(setSubject(_subject));
+        });
+
+        APP.conference.roomName = _roomId;
+        APP.conference.createInitialLocalTracksAndConnect(_roomId)
+        .then(([ tracks, con ]) => APP.conference.startConference(con, tracks));
+    }
+}
+
+/**
+ * Grants owner permission to the breakout rooms fake moderator.
+ *
+ * @param {Store} store - The redux store in which the specified {@code action}
+ * is being dispatched.
  * @param {Action} action - The redux action {@code ENDPOINT_MESSAGE_RECEIVED}
  * which is being dispatched in the specified {@code store}.
- * @private
- * @returns {Object} The value returned by {@code next(action)}.
+ * @returns {void}
  */
-function sendBreakoutRooms(store, next, action) {
-    const result = next(action);
+function _grantOwnerToFakeModerator(store, action) {
     const state = store.getState();
-    const { breakoutRooms } = state[REDUCER_KEY];
+    const { conference } = state['features/base/conference'];
+    const fakeModeratorId = selectBreakoutRoomsFakeModeratorId(state);
+    const { participant } = action;
 
-    if (isLocalParticipantModerator(state) && getParticipantCount(state) > 1) {
-        try {
-            const message = {
-                type: JSON_TYPE_BREAKOUT_ROOMS_LIST,
-                breakoutRooms
-            };
-
-            conference.sendEndpointMessage('', message);
-        } catch (e) {
-            logger.error(e);
-        }
+    if (fakeModeratorId && fakeModeratorId === participant?.id) {
+        conference.grantOwner(fakeModeratorId);
     }
-
-    return result;
 }
 
 /**
@@ -139,14 +170,9 @@ function sendBreakoutRooms(store, next, action) {
  *
  * @param {Store} store - The redux store in which the specified {@code action}
  * is being dispatched.
- * @param {Dispatch} next - The redux {@code dispatch} function to
- * dispatch the specified {@code action} to the specified {@code store}.
- * @param {Action} action - The redux action {@code ENDPOINT_MESSAGE_RECEIVED}
- * which is being dispatched in the specified {@code store}.
- * @private
- * @returns {Object} The value returned by {@code next(action)}.
+ * @returns {void}
  */
-function sendBreakoutRoomsRequest(store, next, action) {
+function _sendBreakoutRoomsRequest(store) {
     const state = store.getState();
 
     if (getParticipantCount(state) > 1) {
@@ -155,40 +181,57 @@ function sendBreakoutRoomsRequest(store, next, action) {
                 type: JSON_TYPE_BREAKOUT_ROOMS_REQUEST
             };
 
-            conference.sendEndpointMessage('', message);
+            APP.conference.sendEndpointMessage('', message);
         } catch (e) {
             logger.error(e);
         }
     }
-
-    return next(action);
 }
 
 /**
- * Sends a request to a user for them to join a breakout room.
+ * Sends the current list of breakout rooms to the other participants.
  *
- * @param {Store} store - The redux store in which the specified {@code action}
- * is being dispatched.
- * @param {Dispatch} next - The redux {@code dispatch} function to
- * dispatch the specified {@code action} to the specified {@code store}.
- * @param {Action} action - The redux action {@code ENDPOINT_MESSAGE_RECEIVED}
- * which is being dispatched in the specified {@code store}.
- * @private
- * @returns {Object} The value returned by {@code next(action)}.
+ * @param {Store} store - The redux store.
+ * @returns {void}
  */
-function sendBreakoutRoomsMoveParticipantRequest(store, next, action) {
-    const { participantId, breakoutRoom } = action;
+function _sendBreakoutRooms(store) {
+    const state = store.getState();
+    const breakoutRooms = selectBreakoutRooms(state);
+    const fakeModeratorId = selectBreakoutRoomsFakeModeratorId(state);
+
+    if (isLocalParticipantModerator(state) && getParticipantCount(state) > 1) {
+        try {
+            const message = {
+                type: JSON_TYPE_BREAKOUT_ROOMS,
+                breakoutRooms,
+                fakeModeratorId
+            };
+
+            APP.conference.sendEndpointMessage('', message);
+        } catch (e) {
+            logger.error(e);
+        }
+    }
+}
+
+/**
+ * Sends a request to a user to move to a room.
+ *
+ * @param {Object} state - The Redux state of the breakout-rooms feature.
+ * @param {Action} action - The Redux action {@code SEND_PARTICIPANT_TO_ROOM}.
+ * @returns {void}
+ */
+function _sendParticipantToRoom(state, action) {
+    const { participantId, roomId } = action;
 
     try {
         const message = {
-            type: JSON_TYPE_MOVE_TO_BREAKOUT_ROOM_REQUEST,
-            breakoutRoom
+            type: JSON_TYPE_MOVE_TO_ROOM_REQUEST,
+            roomId
         };
 
-        conference.sendEndpointMessage(participantId, message);
+        APP.conference.sendEndpointMessage(participantId, message);
     } catch (e) {
         logger.error(e);
     }
-
-    return next(action);
 }

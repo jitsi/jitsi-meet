@@ -1,8 +1,10 @@
+// @flow
+
 import React from 'react';
 import styled from 'styled-components';
 
-import { Icon, IconHorizontalPoints } from '../../base/icons';
-import { ActionTrigger } from '../constants';
+import { Icon, IconHorizontalPoints } from '../../../base/icons';
+import { ActionTrigger } from '../../constants';
 
 export const ignoredChildClassName = 'ignore-child';
 

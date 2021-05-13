@@ -9,6 +9,7 @@ import { BottomSheet, hideDialog, isDialogOpen } from '../../../base/dialog';
 import { IconDragHandle } from '../../../base/icons';
 import { connect } from '../../../base/redux';
 import { StyleType } from '../../../base/styles';
+import { BreakoutRoomButton } from '../../../breakout-rooms/components/native';
 import { SharedDocumentButton } from '../../../etherpad';
 import { InviteButton } from '../../../invite';
 import { AudioRouteButton } from '../../../mobile/audio-mode';
@@ -141,6 +142,7 @@ class OverflowMenu extends PureComponent<Props, State> {
                 {!toolbarButtons.has('raisehand') && <RaiseHandButton { ...buttonProps } />}
                 <SecurityDialogButton { ...buttonProps } />
                 <ScreenSharingButton { ...buttonProps } />
+                <BreakoutRoomButton { ...buttonProps } />
                 <MoreOptionsButton { ...moreOptionsButtonProps } />
                 <Collapsible collapsed = { !showMore }>
                     {!toolbarButtons.has('togglecamera') && <ToggleCameraButton { ...buttonProps } />}

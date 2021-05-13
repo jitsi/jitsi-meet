@@ -11,6 +11,7 @@ import { isFilmstripVisible } from '../../functions';
 import LocalThumbnail from './LocalThumbnail';
 import Thumbnail from './Thumbnail';
 import styles from './styles';
+import { getParticipants } from '../../../base/participants';
 
 /**
  * Filmstrip component's property types.
@@ -166,12 +167,11 @@ class Filmstrip extends Component<Props> {
  * @returns {Props}
  */
 function _mapStateToProps(state) {
-    const participants = state['features/base/participants'];
     const { enabled } = state['features/filmstrip'];
 
     return {
         _aspectRatio: state['features/base/responsive-ui'].aspectRatio,
-        _participants: participants.filter(p => !p.local),
+        _participants: getParticipants(state).filter(p => !p.local),
         _visible: enabled && isFilmstripVisible(state)
     };
 }

@@ -2,4 +2,6 @@
 
 import { getLogger } from '../base/logging/functions';
 
-export default getLogger('features/breakout-rooms');
+import { FEATURE_KEY } from './constants';
+
+export default getLogger(FEATURE_KEY);

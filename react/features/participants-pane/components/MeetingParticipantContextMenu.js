@@ -15,8 +15,8 @@ import {
 } from '../../base/icons';
 import { isLocalParticipantModerator } from '../../base/participants';
 import { getIsParticipantVideoMuted } from '../../base/tracks';
-import { sendParticipantToBreakoutRoom } from '../../breakout-rooms/actions';
-import { REDUCER_KEY } from '../../breakout-rooms/constants';
+import { sendParticipantToRoom } from '../../breakout-rooms/actions';
+import { selectBreakoutRooms } from '../../breakout-rooms/functions';
 import { openChat } from '../../chat/actions';
 import { GrantModeratorDialog, KickRemoteParticipantDialog, MuteEveryoneDialog } from '../../video-menu';
 import MuteRemoteParticipantsVideoDialog from '../../video-menu/components/web/MuteRemoteParticipantsVideoDialog';
@@ -69,7 +69,7 @@ export const MeetingParticipantContextMenu = ({
     const containerRef = useRef(null);
     const isLocalModerator = useSelector(isLocalParticipantModerator);
     const isParticipantVideoMuted = useSelector(getIsParticipantVideoMuted(participant));
-    const { breakoutRooms } = useSelector(state => state[REDUCER_KEY]);
+    const breakoutRooms = useSelector(selectBreakoutRooms);
 
     const [ isHidden, setIsHidden ] = useState(true);
     const { t } = useTranslation();
@@ -123,7 +123,7 @@ export const MeetingParticipantContextMenu = ({
     }, [ dispatch, participant ]);
 
     const sendToBreakoutRoom = useCallback(breakoutRoom => () => {
-        dispatch(sendParticipantToBreakoutRoom(participant.id, breakoutRoom));
+        dispatch(sendParticipantToRoom(participant.id, breakoutRoom.id));
     }, [ dispatch, participant ]);
 
     if (!participant) {

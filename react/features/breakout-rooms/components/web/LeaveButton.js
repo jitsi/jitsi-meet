@@ -2,21 +2,20 @@
 
 import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useDispatch } from 'react-redux';
 
-import conference from '../../../../conference';
-import getRoomName from '../../base/config/getRoomName';
-import { Icon, IconHangup } from '../../base/icons';
+import { Icon, IconHangup } from '../../../base/icons';
+import { moveToMainRoom } from '../../actions';
 
 import { RoomLeaveButton } from './styled';
 
 export const LeaveButton = () => {
     const { t } = useTranslation();
+    const dispatch = useDispatch();
 
     const onLeave = useCallback(() => {
-        const mainRoomName = getRoomName();
-
-        conference.switchRoom(mainRoomName);
-    });
+        dispatch(moveToMainRoom());
+    }, [ dispatch ]);
 
     return (
         <RoomLeaveButton

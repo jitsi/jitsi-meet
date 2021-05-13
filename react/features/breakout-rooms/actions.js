@@ -1,41 +1,74 @@
 // @flow
 
+import type { Dispatch } from 'redux';
+import uuid from 'uuid';
+
+import { openConnection } from '../../../connection';
+import { getConferenceOptions } from '../conference/functions';
+
 import {
-    BREAKOUT_ROOMS_UPDATED,
-    BREAKOUT_ROOM_ADDED,
-    BREAKOUT_ROOM_REMOVED,
-    PARTICIPANT_SENT_TO_BREAKOUT_ROOM
+    ADD_BREAKOUT_ROOM,
+    CREATE_BREAKOUT_ROOM_CONNECTION,
+    MOVE_TO_ROOM,
+    REMOVE_BREAKOUT_ROOM,
+    SEND_PARTICIPANT_TO_ROOM,
+    UPDATE_BREAKOUT_ROOMS
 } from './actionTypes';
+import { selectBreakoutRoomsConnection, getMainRoomId } from './functions';
+
+declare var APP: Object;
 
 /**
- * Action to update breakout rooms.
+ * Action to create a new breakout room.
  *
- * @param {Object} breakoutRooms - The list of breakout rooms.
- * @returns {{
- *      type: BREAKOUT_ROOMS_UPDATED,
- *      breakoutRooms: Object,
- * }}
+ * @returns {Function}
  */
-export function updateBreakoutRooms(breakoutRooms: Object) {
-    return {
-        type: BREAKOUT_ROOMS_UPDATED,
-        breakoutRooms
+export function createBreakoutRoom() {
+    return async (dispatch: Dispatch<any>, getState: Function) => {
+        const mainRoomId = getMainRoomId(getState());
+        const breakoutRoomId = `${mainRoomId}-${uuid.v4()}`;
+
+        await dispatch(_initBreakoutRoom(breakoutRoomId));
+        dispatch({
+            type: ADD_BREAKOUT_ROOM,
+            breakoutRoomId
+        });
     };
 }
 
 /**
- * Action to add a breakout room.
+ * Action to initialize a breakout room by joining as a fake moderator.
+ * This allows other participants to join without waiting for a host.
  *
- * @param {string} breakoutRoomId - The breakout room id.
- * @returns {{
- *      type: BREAKOUT_ROOM_ADDED,
- *      breakoutRoom: Object,
- * }}
+ * @param {string} breakoutRoomId - The id of the breakout room to initialize.
+ * @returns {Function}
  */
-export function addBreakoutRoom(breakoutRoomId: string) {
-    return {
-        type: BREAKOUT_ROOM_ADDED,
-        breakoutRoomId
+function _initBreakoutRoom(breakoutRoomId) {
+    return async (dispatch: Dispatch<any>, getState: Function) => {
+        const state = getState();
+        const conferenceOptions = getConferenceOptions(state);
+        let connection = selectBreakoutRoomsConnection(state);
+
+        if (!connection) {
+            const mainRoomId = getMainRoomId(state);
+
+            connection = await openConnection({
+                retry: false,
+                mainRoomId
+            });
+
+            const room = connection.initJitsiConference(mainRoomId, conferenceOptions);
+
+            room.join();
+            const fakeModeratorId = room.myUserId();
+
+            dispatch({
+                type: CREATE_BREAKOUT_ROOM_CONNECTION,
+                connection,
+                fakeModeratorId
+            });
+        }
+        connection.initJitsiConference(breakoutRoomId, conferenceOptions).join();
     };
 }
 
@@ -44,32 +77,79 @@ export function addBreakoutRoom(breakoutRoomId: string) {
  *
  * @param {string} breakoutRoomId - The breakout room id.
  * @returns {{
- *      type: BREAKOUT_ROOM_REMOVED,
- *      breakoutRoom: Object,
+ *      type: REMOVE_BREAKOUT_ROOM,
+ *      breakoutRoomId: string,
  * }}
  */
 export function removeBreakoutRoom(breakoutRoomId: string) {
     return {
-        type: BREAKOUT_ROOM_REMOVED,
+        type: REMOVE_BREAKOUT_ROOM,
         breakoutRoomId
     };
 }
 
 /**
- * Action to move a participant to a breakout room.
+ * Action to update breakout rooms.
  *
- * @param {string} participantId - The participant id.
- * @param {Object} breakoutRoom - The breakout room.
+ * @param {Object} breakoutRooms - A list of breakout rooms.
+ * @param {string} fakeModeratorId - The user id of the breakout rooms fake user.
  * @returns {{
- *      type: PARTICIPANT_SENT_TO_BREAKOUT_ROOM,
- *      participantId: string,
- *      breakoutRoom: Object,
+ *      type: UPDATE_BREAKOUT_ROOMS,
+ *      breakoutRooms: Object,
+ *      fakeModeratorId: string
  * }}
  */
-export function sendParticipantToBreakoutRoom(participantId: string, breakoutRoom: Object) {
+export function updateBreakoutRooms(breakoutRooms: Object, fakeModeratorId: string) {
     return {
-        type: PARTICIPANT_SENT_TO_BREAKOUT_ROOM,
+        type: UPDATE_BREAKOUT_ROOMS,
+        breakoutRooms,
+        fakeModeratorId
+    };
+}
+
+/**
+ * Action to move to a room.
+ *
+ * @param {Object} roomId - The room id to move to. If empty move to the main room.
+ * @returns {{
+ *      type: MOVE_TO_ROOM,
+ *      roomId: string,
+ * }}
+ */
+export function moveToRoom(roomId?: string) {
+    return {
+        type: MOVE_TO_ROOM,
+        roomId
+    };
+}
+
+/**
+ * Action to move to the main room.
+ *
+ * @returns {{
+ *      type: MOVE_TO_ROOM,
+ *      roomId: undefined,
+ * }}
+ */
+export function moveToMainRoom() {
+    return moveToRoom();
+}
+
+/**
+ * Action to send a participant to a room.
+ *
+ * @param {string} participantId - The participant id.
+ * @param {Object} roomId - The room id.
+ * @returns {{
+ *      type: SEND_PARTICIPANT_TO_ROOM,
+ *      participantId: string,
+ *      roomId: string,
+ * }}
+ */
+export function sendParticipantToRoom(participantId: string, roomId: string) {
+    return {
+        type: SEND_PARTICIPANT_TO_ROOM,
         participantId,
-        breakoutRoom
+        roomId
     };
 }

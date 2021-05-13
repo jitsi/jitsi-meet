@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-import { ActionTrigger } from '../constants';
+import { ActionTrigger } from '../../constants';
 
 import { Room } from './Room';
 import { RoomActionEllipsis } from './styled';

@@ -3,6 +3,7 @@
 import { getGravatarURL } from '@jitsi/js-utils/avatar';
 import type { Store } from 'redux';
 
+import { selectBreakoutRoomsFakeModeratorId } from '../../breakout-rooms/functions';
 import { JitsiParticipantConnectionStatus } from '../lib-jitsi-meet';
 import { MEDIA_TYPE, shouldRenderVideoTrack } from '../media';
 import { toState } from '../redux';
@@ -218,7 +219,11 @@ export function getParticipantPresenceStatus(
  * @returns {Participant[]}
  */
 export function getParticipants(stateful: Object | Function) {
-    return _getAllParticipants(stateful).filter(p => !p.isFakeParticipant);
+    const fakeModeratorId = selectBreakoutRoomsFakeModeratorId(stateful);
+
+    return _getAllParticipants(stateful).filter(
+        p => !p.isFakeParticipant && (!fakeModeratorId || p.id !== fakeModeratorId)
+    );
 }
 
 /**

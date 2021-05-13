@@ -7,9 +7,8 @@ import { ThemeProvider } from 'styled-components';
 
 import { openDialog } from '../../base/dialog';
 import { isLocalParticipantModerator } from '../../base/participants';
-import { addBreakoutRoom } from '../../breakout-rooms/actions';
-import { RoomList } from '../../breakout-rooms/components';
-import { getNewBreakoutRoomId } from '../../breakout-rooms/functions';
+import { createBreakoutRoom } from '../../breakout-rooms/actions';
+import { RoomList } from '../../breakout-rooms/components/web';
 import { MuteEveryoneDialog } from '../../video-menu/components/';
 import { close } from '../actions';
 import { classList, getParticipantsPaneOpen } from '../functions';
@@ -34,7 +33,7 @@ export const ParticipantsPane = () => {
 
     const closePane = useCallback(() => dispatch(close(), [ dispatch ]));
     const muteAll = useCallback(() => dispatch(openDialog(MuteEveryoneDialog)), [ dispatch ]);
-    const addRoom = useCallback(() => dispatch(addBreakoutRoom(getNewBreakoutRoomId())), [ dispatch ]);
+    const addRoom = useCallback(() => dispatch(createBreakoutRoom()), [ dispatch ]);
 
     return (
         <ThemeProvider theme = { theme }>

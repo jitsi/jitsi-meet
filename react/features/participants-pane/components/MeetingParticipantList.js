@@ -3,10 +3,11 @@
 import _ from 'lodash';
 import React, { useCallback, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
+import { useStore, useSelector } from 'react-redux';
+
 
 import { getParticipants } from '../../base/participants';
-import { getCurrentBreakoutRoom, getIsInBreakoutRoom } from '../../breakout-rooms/functions';
+import { getCurrentRoomId, getBreakoutRoom, getIsInBreakoutRoom } from '../../breakout-rooms/functions';
 import { findStyledAncestor } from '../functions';
 
 import { InviteButton } from './InviteButton';
@@ -36,13 +37,13 @@ const initialState = Object.freeze(Object.create(null));
 
 export const MeetingParticipantList = () => {
     const isMouseOverMenu = useRef(false);
-
-    // ToDo: Remove the filtering after the breakout room fake host becomes hidden.
-    const participants = useSelector(getParticipants, _.isEqual).filter(p => p.name);
+    const participants = useSelector(getParticipants, _.isEqual);
     const [ raiseContext, setRaiseContext ] = useState<RaiseContext>(initialState);
     const { t } = useTranslation();
-    const isInBreakoutRoom = getIsInBreakoutRoom();
-    const currentBreakoutRoom = getCurrentBreakoutRoom();
+    const store = useStore();
+    const state = store.getState();
+    const isInBreakoutRoom = getIsInBreakoutRoom(state);
+    const currentBreakoutRoom = getBreakoutRoom(state, getCurrentRoomId(state));
 
     const lowerMenu = useCallback(() => {
         /**
@@ -97,7 +98,7 @@ export const MeetingParticipantList = () => {
                 : t('participantsPane.headings.mainRoom', { count: participants.length })
         }
         </Heading>
-        <InviteButton />
+        {!isInBreakoutRoom && <InviteButton />}
         <div>
             {participants.map(p => (
                 <MeetingParticipantItem

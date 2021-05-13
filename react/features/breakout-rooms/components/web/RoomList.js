@@ -1,15 +1,17 @@
 // @flow
 
 import React, { useCallback, useRef, useState } from 'react';
+import { useSelector, useStore } from 'react-redux';
 import { ThemeProvider } from 'styled-components';
 
-import { getBreakoutRooms, getIsInBreakoutRoom, findStyledAncestor } from '../functions';
-import theme from '../theme.json';
+import { selectBreakoutRooms, getIsInBreakoutRoom } from '../../functions';
 
 import { LeaveButton } from './LeaveButton';
 import { RoomContextMenu } from './RoomContextMenu';
 import { RoomItem } from './RoomItem';
+import { findStyledAncestor } from './functions';
 import { RoomContainer } from './styled';
+import theme from './theme.json';
 
 type NullProto = {
   [key: string]: any,
@@ -33,8 +35,10 @@ const initialState = Object.freeze(Object.create(null));
 
 export const RoomList = () => {
     const isMouseOverMenu = useRef(false);
-    const breakoutRooms = getBreakoutRooms();
-    const isInBreakoutRoom = getIsInBreakoutRoom();
+    const store = useStore();
+    const state = store.getState();
+    const breakoutRooms = useSelector(selectBreakoutRooms);
+    const isInBreakoutRoom = getIsInBreakoutRoom(state);
     const [ raiseContext, setRaiseContext ] = useState<RaiseContext>(initialState);
 
     const lowerMenu = useCallback(() => {

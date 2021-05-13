@@ -1,126 +1,94 @@
-import { useSelector } from 'react-redux';
-import uuid from 'uuid';
+// @flow
 
-import getRoomName from '../base/config/getRoomName';
-
-import { REDUCER_KEY } from './constants';
-
+import { FEATURE_KEY } from './constants';
 
 /**
- * Generates a breakout room id.
+ * Returns the main room id.
  *
- * @returns {string} Room id.
+ * @param {Object} state - Global state.
+ * @returns {string} Room id of the main room or undefined.
  */
-export const getBreakoutRooms = () => {
-    const { breakoutRooms } = useSelector(state => state[REDUCER_KEY]);
+export const getMainRoomId = (state: Object) => {
+    const pathname = state['features/base/connection']?.locationURL?.pathname;
 
-    return breakoutRooms || [];
+    if (pathname) {
+        // Remove the leading '/' from the pathname
+        return pathname.slice(1);
+    }
+
+    return pathname;
 };
 
+/**
+ * Selector for the list of breakout rooms.
+ *
+ * @param {Object} state - Global state.
+ * @returns {Array<Object>} List of breakout rooms.
+ */
+export const selectBreakoutRooms = (state: Object) => state[FEATURE_KEY]?.breakoutRooms || [];
 
 /**
- * Get members of a breakout room.
+ * Returns the connection used to join the breakout room by the creator.
  *
+ * @param {Object} state - Global state.
+ * @returns {Object} Connection object.
+ */
+export const selectBreakoutRoomsConnection = (state: Object) => state[FEATURE_KEY]?.connection;
+
+/**
+ * Returns the user id of the fake participant in breakout rooms.
+ *
+ * @param {Object} state - Global state.
+ * @returns {string} User id.
+ */
+export const selectBreakoutRoomsFakeModeratorId = (state: Object) => state[FEATURE_KEY]?.fakeModeratorId;
+
+/**
+ * Returns a breakout room by id.
+ *
+ * @param {Object} state - Global state.
  * @param {string} breakoutRoomId - The breakout room id.
+ * @returns {Object} Breakout room or undefined.
+ */
+export const getBreakoutRoom = (state: Object, breakoutRoomId: string) =>
+    selectBreakoutRooms(state).find(room => room.id === breakoutRoomId);
+
+/**
+ * Get the id of the current room or undefined.
+ *
+ * @param {Object} state - Global state.
+ * @returns {string} Room id.
+ */
+export const getCurrentRoomId = (state: Object) => {
+    const { room } = state['features/base/conference'];
+
+    return room;
+};
+
+/**
+ * Get members of a room.
+ *
+ * @param {Object} state - Global state.
+ * @param {string} roomId - The room id.
  * @returns {Array} List of room members.
  */
-export const getBreakoutRoomMembers = breakoutRoomId => {
-    const { connection } = useSelector(state => state['features/base/connection']);
+export const getRoomMembers = (state: Object, roomId: string) => {
+    const { connection } = state['features/base/connection'];
     const muc = connection?.options?.hosts?.muc;
-    const members = connection?.xmpp?.connection?.emuc?.rooms[`${breakoutRoomId}@${muc}`]?.members;
+    const members = connection?.xmpp?.connection?.emuc?.rooms[`${roomId}@${muc}`]?.members;
 
     return members ? Object.values(members) : [];
-};
-
-
-/**
- * Generates a breakout room id.
- *
- * @returns {string} Room id.
- */
-export const getNewBreakoutRoomId = () => {
-    const mainRoom = getRoomName();
-
-    return `${mainRoom}-${uuid.v4()}`;
-};
-
-/**
- * Get current breakout room.
- *
- * @returns {Object} Breakout room.
- */
-export const getCurrentBreakoutRoom = () => {
-    const { conference } = useSelector(state => state['features/base/conference']);
-    const currentRoomId = conference?.options?.name;
-
-    return getBreakoutRooms().find(room => room.id === currentRoomId) || null;
 };
 
 /**
  * Determines whether the local participant is in a breakout room.
  *
+ * @param {Object} state - Global state.
  * @returns {boolean}
  */
-export const getIsInBreakoutRoom = () => {
-    const mainRoom = getRoomName();
-    const currentBreakoutRoom = getCurrentBreakoutRoom();
+export const getIsInBreakoutRoom = (state: Object) => {
+    const mainRoomId = getMainRoomId(state);
+    const currentRoomId = getCurrentRoomId(state);
 
-    return currentBreakoutRoom !== null && currentBreakoutRoom?.id !== mainRoom;
+    return typeof currentRoomId !== 'undefined' && currentRoomId !== mainRoomId;
 };
-
-
-/**
- * Generates a class attribute value.
- *
- * @param {Iterable<string>} args - String iterable.
- * @returns {string} Class attribute value.
- */
-export const classList = (...args) => args.filter(Boolean).join(' ');
-
-
-/**
- * Find the first styled ancestor component of an element.
- *
- * @param {Element} target - Element to look up.
- * @param {StyledComponentClass} component - Styled component reference.
- * @returns {Element|null} Ancestor.
- */
-export const findStyledAncestor = (target, component) => {
-    if (!target || target.matches(`.${component.styledComponentId}`)) {
-        return target;
-    }
-
-    return findStyledAncestor(target.parentElement, component);
-};
-
-/**
- * Get a style property from a style declaration as a float.
- *
- * @param {CSSStyleDeclaration} styles - Style declaration.
- * @param {string} name - Property name.
- * @returns {number} Float value.
- */
-export const getFloatStyleProperty = (styles, name) =>
-    parseFloat(styles.getPropertyValue(name));
-
-/**
- * Gets the outer height of an element, including margins.
- *
- * @param {Element} element - Target element.
- * @returns {number} Computed height.
- */
-export const getComputedOuterHeight = element => {
-    const computedStyle = getComputedStyle(element);
-
-    return element.offsetHeight
-    + getFloatStyleProperty(computedStyle, 'margin-top')
-    + getFloatStyleProperty(computedStyle, 'margin-bottom');
-};
-
-/**
- * Returns this feature's root state.
- *
- * @param {Object} state - Global state.
- * @returns {Object} Feature state.
- */
-export const getState = state => state[REDUCER_KEY];
