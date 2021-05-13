@@ -125,7 +125,7 @@ function get_room_by_name_and_subdomain(room_name, subdomain)
 
     -- if there is a subdomain we are in multidomain mode and that subdomain is not our main host
     if subdomain and subdomain ~= "" and subdomain ~= muc_domain_base then
-        room_address = "["..subdomain.."]"..room_address;
+        room_address = jid.join("["..subdomain.."]"..room_name, muc_domain);
     else
         room_address = jid.join(room_name, muc_domain);
     end
