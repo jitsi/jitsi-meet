@@ -532,6 +532,11 @@
         "moderationInEffectTitle": "The microphone is muted by the moderator",
         "moderationRequestFromModerator": "The host would like you to unmute",
         "moderationRequestFromParticipant": "Wants to speak",
+        "moderationAudioStartedTitle": "Voice moderation started",
+        "moderationAudioStoppedTitle": "Voice moderation stopped",
+        "moderationVideoStartedTitle": "Video moderation started",
+        "moderationVideoStoppedTitle": "Video moderation stopped",
+        "moderationToggleDescription": "by {{participantDisplayName}}",
         "raiseHandAction": "Raise hand"
     },
     "participantsPane": {
