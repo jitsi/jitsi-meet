@@ -136,6 +136,7 @@ export default [
     'iAmSipGateway',
     'iceTransportPolicy',
     'ignoreStartMuted',
+    'inviteAppName',
     'liveStreamingEnabled',
     'localRecording',
     'maxFullResolutionParticipants',
