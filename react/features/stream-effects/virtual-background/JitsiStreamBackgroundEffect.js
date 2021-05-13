@@ -16,7 +16,7 @@ import {
 export default class JitsiStreamBackgroundEffect {
     _model: Object;
     _options: Object;
-    _stream: Object;
+    _screenSharing: Object;
     _segmentationPixelCount: number;
     _inputVideoElement: HTMLVideoElement;
     _onMaskFrameTimer: Function;
@@ -43,17 +43,17 @@ export default class JitsiStreamBackgroundEffect {
      */
     constructor(model: Object, options: Object, screenSharing: Object) {
         this._options = options;
-        this._stream = screenSharing;
+        this._screenSharing = screenSharing;
 
         if (this._options.virtualBackground.backgroundType === 'image') {
             this._virtualImage = document.createElement('img');
             this._virtualImage.crossOrigin = 'anonymous';
             this._virtualImage.src = this._options.virtualBackground.virtualSource;
         }
-        if (this._options.virtualBackground.backgroundType === 'desktop-share' && this._stream) {
+        if (this._options.virtualBackground.backgroundType === 'desktop-share' && this._screenSharing) {
             this._virtualVideo = document.createElement('video');
             this._virtualVideo.autoplay = true;
-            this._virtualVideo.srcObject = this._stream.stream;
+            this._virtualVideo.srcObject = this._screenSharing.stream;
         }
         this._model = model;
         this._options = options;
@@ -252,7 +252,7 @@ export default class JitsiStreamBackgroundEffect {
         this._inputVideoElement.height = parseInt(height, 10);
         this._inputVideoElement.autoplay = true;
         this._inputVideoElement.srcObject = stream;
-        this._stream && this._stream.on(
+        this._screenSharing && this._screenSharing.on(
             JitsiTrackEvents.LOCAL_TRACK_STOPPED,
             () => {
                 this._options.virtualBackground.enabled = false;
