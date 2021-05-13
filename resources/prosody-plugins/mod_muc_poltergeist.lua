@@ -11,6 +11,8 @@ if not have_async then
     return;
 end
 
+module:depends("jitsi_session");
+
 local async_handler_wrapper = module:require "util".async_handler_wrapper;
 
 -- Options
