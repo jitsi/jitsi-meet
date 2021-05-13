@@ -6,7 +6,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import { ThemeProvider } from 'styled-components';
 
 import { openDialog } from '../../base/dialog';
-import { isLocalParticipantModerator } from '../../base/participants';
+import {
+    getParticipantCount,
+    isEveryoneModerator,
+    isLocalParticipantModerator
+} from '../../base/participants';
 import { MuteEveryoneDialog } from '../../video-menu/components/';
 import { close } from '../actions';
 import { classList, findStyledAncestor, getParticipantsPaneOpen } from '../functions';
@@ -30,6 +34,10 @@ export const ParticipantsPane = () => {
     const dispatch = useDispatch();
     const paneOpen = useSelector(getParticipantsPaneOpen);
     const isLocalModerator = useSelector(isLocalParticipantModerator);
+    const participantsCount = useSelector(getParticipantCount);
+    const everyoneModerator = useSelector(isEveryoneModerator);
+    const showContextMenu = !everyoneModerator && participantsCount > 2;
+
     const [ contextOpen, setContextOpen ] = useState(false);
     const { t } = useTranslation();
 
@@ -67,12 +75,14 @@ export const ParticipantsPane = () => {
                             <FooterButton onClick = { muteAll }>
                                 {t('participantsPane.actions.muteAll')}
                             </FooterButton>
-                            <FooterEllipsisContainer>
-                                <FooterEllipsisButton
-                                    id = 'participants-pane-context-menu'
-                                    onClick = { toggleContext } />
-                                {contextOpen && <FooterContextMenu onMouseLeave = { toggleContext } />}
-                            </FooterEllipsisContainer>
+                            {showContextMenu && (
+                                <FooterEllipsisContainer>
+                                    <FooterEllipsisButton
+                                        id = 'participants-pane-context-menu'
+                                        onClick = { toggleContext } />
+                                    {contextOpen && <FooterContextMenu onMouseLeave = { toggleContext } />}
+                                </FooterEllipsisContainer>
+                            )}
                         </Footer>
                     )}
                 </div>
