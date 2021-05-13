@@ -104,6 +104,8 @@ var config = {
     // be potentially unpleasant for other meeting participants.
     enableNoisyMicDetection: true,
 
+    enableAudiofeedbackDetection: true,
+
     // Start the conference in audio only mode (no video is being received nor
     // sent).
     // startAudioOnly: false,

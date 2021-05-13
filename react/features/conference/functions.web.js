@@ -7,6 +7,7 @@ import { getBackendSafePath, getJitsiMeetGlobalNS } from '../base/util';
 import { getVpaasBillingId } from '../billing-counter/functions';
 import { showWarningNotification } from '../notifications';
 import { createRnnoiseProcessor } from '../stream-effects/rnnoise';
+import { createAudiofeedback } from '../audiofeedback';
 
 export * from './functions.any';
 
@@ -85,6 +86,7 @@ export function getConferenceOptions(stateful) {
     options.applicationName = getName();
     options.getWiFiStatsMethod = getWiFiStatsMethod;
     options.createVADProcessor = createRnnoiseProcessor;
+    options.createAudiofeedback = createAudiofeedback;
     options.billingId = getVpaasBillingId(state);
 
     // Disable CallStats, if requessted.
