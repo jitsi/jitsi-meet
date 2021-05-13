@@ -1,10 +1,15 @@
 // @flow
 
 /**
- * Example shared video link.
+ * Placeholder for web share video input.
  * @type {string}
  */
 export const defaultSharedVideoLink = 'Youtube link or direct video link';
+
+/**
+ * Mobile example for a youtube video
+ */
+export const defaultMobileSharedVideoLink = 'https://youtu.be/TB7LlM4erx8';
 
 /**
  * Fixed name of the video player fake participant.

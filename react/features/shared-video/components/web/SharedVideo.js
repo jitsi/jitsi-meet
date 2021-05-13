@@ -58,7 +58,7 @@ class SharedVideo extends Component<Props> {
      *  width: number
      * }}
      */
-    getDimmensions() {
+    getDimensions() {
         const { clientHeight, clientWidth } = this.props;
 
         let width;
@@ -114,7 +114,7 @@ class SharedVideo extends Component<Props> {
             <div
                 className = { className }
                 id = 'sharedVideo'
-                style = { this.getDimmensions() }>
+                style = { this.getDimensions() }>
                 {this.getManager()}
             </div>
         );

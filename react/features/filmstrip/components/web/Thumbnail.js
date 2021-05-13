@@ -549,8 +549,7 @@ class Thumbnail extends Component<Props, State> {
      * @returns {ReactElement}
      */
     _renderFakeParticipant() {
-        const { _participant } = this.props;
-        const { id, avatarURL } = _participant;
+        const { _participant: { avatarURL } } = this.props;
         const styles = this._getStyles();
         const containerClassName = this._getContainerClassName();
 
@@ -568,11 +567,6 @@ class Thumbnail extends Component<Props, State> {
                         src = { avatarURL } />
                 )
                     : this._renderAvatar(styles.avatar)}
-                <div className = 'displayNameContainer'>
-                    <DisplayName
-                        elementID = 'sharedVideoContainer_name'
-                        participantID = { id } />
-                </div>
             </span>
         );
     }

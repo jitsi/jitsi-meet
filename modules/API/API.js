@@ -272,7 +272,7 @@ function initCommands() {
 
         'stop-share-video': () => {
             logger.debug('Share video command received');
-            sendAnalytics(createApiEvent('share.video.start'));
+            sendAnalytics(createApiEvent('share.video.stop'));
             APP.store.dispatch(stopSharedVideo());
         },
 
