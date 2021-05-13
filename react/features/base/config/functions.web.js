@@ -44,3 +44,14 @@ export function getToolbarButtons(state: Object): Array<string> {
 
     return Array.isArray(toolbarButtons) ? toolbarButtons : TOOLBAR_BUTTONS;
 }
+
+/**
+ * Curried selector to check if the specified button is enabled.
+ *
+ * @param {string} buttonName - The name of the button.
+ * {@link interfaceConfig}.
+ * @returns {Function} - Selector that returns a boolean.
+ */
+export const isToolbarButtonEnabled = (buttonName: string) =>
+    (state: Object): boolean =>
+        getToolbarButtons(state).includes(buttonName);
