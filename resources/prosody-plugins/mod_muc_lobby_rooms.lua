@@ -40,6 +40,7 @@ local NOTIFY_LOBBY_ACCESS_GRANTED = 'LOBBY-ACCESS-GRANTED';
 local NOTIFY_LOBBY_ACCESS_DENIED = 'LOBBY-ACCESS-DENIED';
 
 local util = module:require "util";
+local get_room_by_name_and_subdomain = util.get_room_by_name_and_subdomain;
 local is_healthcheck_room = util.is_healthcheck_room;
 local presence_check_status = util.presence_check_status;
 
@@ -207,10 +208,9 @@ function process_lobby_muc_loaded(lobby_muc, host_module)
         local session, reply, node = event.origin, event.reply, event.node;
         if node == LOBBY_IDENTITY_TYPE
             and session.jitsi_web_query_room
-            and main_muc_service
             and check_display_name_required then
-            local room = main_muc_service.get_room_from_jid(
-                jid_bare(session.jitsi_web_query_room .. '@' .. main_muc_component_config));
+            local room = get_room_by_name_and_subdomain(session.jitsi_web_query_room, session.jitsi_web_query_prefix);
+
             if room and room._data.lobbyroom then
                 reply:tag('feature', { var = DISPLAY_NAME_REQUIRED_FEATURE }):up();
             end
