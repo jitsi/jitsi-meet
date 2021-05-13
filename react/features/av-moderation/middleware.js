@@ -11,9 +11,15 @@ import {
     raiseHand
 } from '../base/participants';
 import { MiddlewareRegistry, StateListenerRegistry } from '../base/redux';
-import { hideNotification, showNotification } from '../notifications';
+import {
+    hideNotification,
+    NOTIFICATION_TIMEOUT,
+    showNotification
+} from '../notifications';
 
 import {
+    DISABLE_MODERATION,
+    ENABLE_MODERATION,
     LOCAL_PARTICIPANT_MODERATION_NOTIFICATION,
     REQUEST_DISABLE_MODERATION,
     REQUEST_ENABLE_MODERATION
@@ -21,7 +27,8 @@ import {
 import {
     disableModeration,
     enableModeration,
-    localParticipantApproved, participantApproved
+    localParticipantApproved,
+    participantApproved
 } from './actions';
 import { isEnabledFromState as isAvModerationEnabled } from './functions';
 
@@ -38,9 +45,27 @@ const MODERATION_IN_EFFECT_NOTIFICATION_ID = 'av-moderation-in-effect-notificati
 const PARTICIPANT_WANTS_TO_UNMUTE_PREFIX = 'participant-wants-to-unmute-prefix-';
 
 MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
-    const { mediaType, type } = action;
+    const { actor, mediaType, type } = action;
 
     switch (type) {
+    case DISABLE_MODERATION:
+    case ENABLE_MODERATION: {
+        const enabled = type === ENABLE_MODERATION;
+        const i18nKeys = {
+            [MEDIA_TYPE.AUDIO]: enabled ? 'notify.moderationAudioStartedTitle' : 'notify.moderationAudioStoppedTitle',
+            [MEDIA_TYPE.VIDEO]: enabled ? 'notify.moderationVideoStoppedTitle' : 'notify.moderationVideoStartedTitle'
+        };
+
+        dispatch(showNotification({
+            descriptionKey: actor ? 'notify.moderationToggleDescription' : undefined,
+            descriptionArguments: actor ? {
+                participantDisplayName: getParticipantDisplayName(getState, actor.getId())
+            } : undefined,
+            titleKey: i18nKeys[mediaType]
+        }, NOTIFICATION_TIMEOUT));
+
+        break;
+    }
     case LOCAL_PARTICIPANT_MODERATION_NOTIFICATION: {
         dispatch(showNotification({
             customActionNameKey: 'notify.raiseHandAction',
@@ -108,8 +133,8 @@ StateListenerRegistry.register(
                 dispatch(localParticipantApproved(mediaType));
             });
 
-            conference.on(JitsiConferenceEvents.AV_MODERATION_CHANGED, ({ enabled, mediaType }) => {
-                enabled ? dispatch(enableModeration(mediaType)) : dispatch(disableModeration(mediaType));
+            conference.on(JitsiConferenceEvents.AV_MODERATION_CHANGED, ({ enabled, mediaType, actor }) => {
+                enabled ? dispatch(enableModeration(mediaType, actor)) : dispatch(disableModeration(mediaType, actor));
             });
 
             // this is received by moderators

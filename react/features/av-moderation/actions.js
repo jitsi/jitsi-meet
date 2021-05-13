@@ -11,14 +11,16 @@ import {
  * Audio or video moderation is disabled.
  *
  * @param {MediaType} mediaType - The media type that was disabled.
+ * @param {JitsiParticipant} actor - The actor disabling.
  * @returns {{
  *     type: REQUEST_DISABLE_MODERATED_AUDIO
  * }}
  */
-export const disableModeration = mediaType => {
+export const disableModeration = (mediaType, actor) => {
     return {
         type: DISABLE_MODERATION,
-        mediaType
+        mediaType,
+        actor
     };
 };
 
@@ -26,14 +28,16 @@ export const disableModeration = mediaType => {
  * Audio or video moderation is enabled.
  *
  * @param {MediaType} mediaType - The media type that was enabled.
+ * @param {JitsiParticipant} actor - The actor enabling.
  * @returns {{
  *     type: REQUEST_ENABLE_MODERATED_AUDIO
  * }}
  */
-export const enableModeration = mediaType => {
+export const enableModeration = (mediaType, actor) => {
     return {
         type: ENABLE_MODERATION,
-        mediaType
+        mediaType,
+        actor
     };
 };
 
