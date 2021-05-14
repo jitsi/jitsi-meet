@@ -8,6 +8,7 @@ import uuid from 'uuid';
 import { Dialog, hideDialog } from '../../base/dialog';
 import { translate } from '../../base/i18n';
 import { Icon, IconCloseSmall, IconPlusCircle, IconShareDesktop } from '../../base/icons';
+import { createLocalTrack } from '../../base/lib-jitsi-meet/functions';
 import { connect } from '../../base/redux';
 import { getLocalVideoTrack } from '../../base/tracks';
 import { toggleBackgroundEffect } from '../actions';
@@ -120,10 +121,13 @@ function VirtualBackground({ _jitsiTrack, _selectedThumbnail, dispatch, t }: Pro
     };
 
     const shareDesktop = async selection => {
+        const url = await createLocalTrack('desktop', '');
+
         setOptions({
             backgroundType: 'desktop-share',
             enabled: true,
-            selectedThumbnail: selection
+            selectedThumbnail: selection,
+            url
         });
     };
 
