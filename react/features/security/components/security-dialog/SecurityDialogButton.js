@@ -3,6 +3,12 @@
 import type { Dispatch } from 'redux';
 
 import { createToolbarEvent, sendAnalytics } from '../../../analytics';
+import {
+    getFeatureFlag,
+    LOBBY_MODE_ENABLED,
+    MEETING_PASSWORD_ENABLED,
+    SECURITY_OPTIONS_ENABLED
+} from '../../../base/flags';
 import { translate } from '../../../base/i18n';
 import { IconSecurityOff, IconSecurityOn } from '../../../base/icons';
 import { connect } from '../../../base/redux';
@@ -64,9 +70,13 @@ class SecurityDialogButton extends AbstractButton<Props, *> {
 function mapStateToProps(state: Object) {
     const { locked } = state['features/base/conference'];
     const { lobbyEnabled } = state['features/lobby'];
+    const enabledFlag = getFeatureFlag(state, SECURITY_OPTIONS_ENABLED, true);
+    const enabledLobbyModeFlag = getFeatureFlag(state, LOBBY_MODE_ENABLED, true);
+    const enabledMeetingPassFlag = getFeatureFlag(state, MEETING_PASSWORD_ENABLED, true);
 
     return {
-        _locked: locked || lobbyEnabled
+        _locked: locked || lobbyEnabled,
+        visible: enabledFlag || (enabledLobbyModeFlag && enabledMeetingPassFlag)
     };
 }
 

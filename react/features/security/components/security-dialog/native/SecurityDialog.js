@@ -170,37 +170,11 @@ class SecurityDialog extends PureComponent<Props, State> {
                                 ? 'padding' : 'height'
                         }
                     enabled = { true }>
-                    { this._renderNoSecurityOptions() }
                     { this._renderLobbyMode() }
                     { this._renderRoomLock() }
                 </KeyboardAvoidingView>
             </CustomSubmitDialog>
         );
-    }
-
-    /**
-     * Renders no security options message.
-     *
-     * @returns {ReactElement}
-     * @private
-     */
-    _renderNoSecurityOptions() {
-        const {
-            _lobbyModeSwitchVisible,
-            _securityDialogStyles,
-            _roomLockSwitchVisible,
-            t
-        } = this.props;
-
-        if (!_lobbyModeSwitchVisible && !_roomLockSwitchVisible) {
-            return (
-                <View>
-                    <Text style = { _securityDialogStyles.title } >
-                        { t('security.noSecurityOptions') }
-                    </Text>
-                </View>
-            );
-        }
     }
 
     /**
