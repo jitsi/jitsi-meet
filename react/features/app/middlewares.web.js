@@ -14,5 +14,6 @@ import '../prejoin/middleware';
 import '../remote-control/middleware';
 import '../shared-video/middleware';
 import '../talk-while-muted/middleware';
+import '../virtual-background/middleware';
 
 import './middlewares.any';

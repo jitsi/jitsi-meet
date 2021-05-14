@@ -2,8 +2,6 @@
 
 import * as wasmCheck from 'wasm-check';
 
-import { createLocalTrack } from '../../base/lib-jitsi-meet/functions';
-
 import JitsiStreamBackgroundEffect from './JitsiStreamBackgroundEffect';
 import createTFLiteModule from './vendor/tflite/tflite';
 import createTFLiteSIMDModule from './vendor/tflite/tflite-simd';
@@ -37,7 +35,6 @@ export async function createVirtualBackgroundEffect(virtualBackground: Object) {
         throw new Error('JitsiStreamBackgroundEffect not supported!');
     }
     let tflite;
-    let screenSharing;
 
     if (wasmCheck.feature.simd) {
         tflite = await createTFLiteSIMDModule();
@@ -58,14 +55,10 @@ export async function createVirtualBackgroundEffect(virtualBackground: Object) {
 
     tflite._loadModel(model.byteLength);
 
-    if (virtualBackground.backgroundType === 'desktop-share') {
-        screenSharing = await createLocalTrack('desktop', '');
-    }
-
     const options = {
         ...wasmCheck.feature.simd ? segmentationDimensions.model144 : segmentationDimensions.model96,
         virtualBackground
     };
 
-    return new JitsiStreamBackgroundEffect(tflite, options, screenSharing);
+    return new JitsiStreamBackgroundEffect(tflite, options);
 }
