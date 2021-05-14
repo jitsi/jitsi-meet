@@ -131,7 +131,9 @@ export default class JitsiStreamBackgroundEffect {
             this._outputCanvasCtx.drawImage(
                 this._virtualVideo,
                 0,
-                0
+                0,
+                this._inputVideoElement.width,
+                this._inputVideoElement.height
             );
         } else {
             this._outputCanvasCtx.filter = `blur(${this._options.virtualBackground.blurValue}px)`;
