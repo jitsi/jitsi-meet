@@ -102,6 +102,11 @@ import VideoSettingsButton from './VideoSettingsButton';
 type Props = {
 
     /**
+     * String showing if the virtual background type is desktop-share.
+     */
+    _backgroundType: String,
+
+    /**
      * Whether or not the chat feature is currently displayed.
      */
     _chatOpen: boolean,
@@ -891,7 +896,7 @@ class Toolbox extends Component<Props> {
      * @returns {void}
      */
     _onToolbarToggleScreenshare() {
-        if (!this.props._desktopSharingEnabled) {
+        if (!this.props._desktopSharingEnabled || this.props._backgroundType === 'desktop-share') {
             return;
         }
 
@@ -1371,6 +1376,7 @@ function _mapStateToProps(state) {
         _clientWidth: clientWidth,
         _conference: conference,
         _desktopSharingEnabled: desktopSharingEnabled,
+        _backgroundType: state['features/virtual-background'].backgroundType,
         _desktopSharingDisabledTooltipKey: desktopSharingDisabledTooltipKey,
         _dialog: Boolean(state['features/base/dialog'].component),
         _feedbackConfigured: Boolean(callStatsID),
