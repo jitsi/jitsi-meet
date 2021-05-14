@@ -76,7 +76,7 @@ function mapStateToProps(state: Object) {
     const lobbySupported = conference && conference.isLobbySupported();
     const lobby = lobbySupported && isLocalParticipantModerator(state) && !hideLobbyButton;
     const enabledFlag = getFeatureFlag(state, SECURITY_OPTIONS_ENABLED, true);
-    const enabledLobbyModeFlag = getFeatureFlag(state, LOBBY_MODE_ENABLED, true) || lobby;
+    const enabledLobbyModeFlag = getFeatureFlag(state, LOBBY_MODE_ENABLED, true) && lobby;
     const enabledMeetingPassFlag = getFeatureFlag(state, MEETING_PASSWORD_ENABLED, true);
 
     return {
