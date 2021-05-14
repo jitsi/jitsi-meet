@@ -674,6 +674,7 @@
         "more": "More",
         "name": "Name",
         "noDevice": "None",
+        "sameAsSystem": "Same as system ({{label}})",
         "selectAudioOutput": "Audio output",
         "selectCamera": "Camera",
         "selectMic": "Microphone",
