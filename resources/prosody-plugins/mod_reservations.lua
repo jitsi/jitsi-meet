@@ -500,8 +500,7 @@ local function evict_expired_reservations()
         if room then
             -- Close room if still active (reservation duration exceeded)
             module:log("info", "Room exceeded reservation duration. Terminating %s", room_jid);
-            room:clear();
-            room:destroy();
+            room:destroy(nil, "Scheduled conference duration exceeded.");
             -- Rely on room_destroyed to calls DELETE /conference and drops reservation[room_jid]
         else
             module:log("error", "Reservation references expired room that is no longer active. Dropping %s", room_jid);
