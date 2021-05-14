@@ -282,5 +282,6 @@ export default class JitsiStreamBackgroundEffect {
         });
 
         this._maskFrameTimerWorker.terminate();
+        this._screenSharing && this._screenSharing.dispose();
     }
 }
