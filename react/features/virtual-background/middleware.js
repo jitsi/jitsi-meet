@@ -1,3 +1,5 @@
+// @flow
+
 import { JitsiTrackEvents } from '../base/lib-jitsi-meet';
 import { MiddlewareRegistry } from '../base/redux';
 import { getLocalVideoTrack } from '../base/tracks';
