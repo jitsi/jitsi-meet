@@ -156,6 +156,12 @@ export const RECORDING_ENABLED = 'recording.enabled';
 export const RESOLUTION = 'resolution';
 
 /**
+ * Flag indicating if the security options button should be enabled.
+ * Default: enabled (true)
+ */
+export const ENABLED_SECURITY_OPTIONS = 'security-options.enabled';
+
+/**
  * Flag indicating if server URL change is enabled.
  * Default: enabled (true)
  */
