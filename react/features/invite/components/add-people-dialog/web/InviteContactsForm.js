@@ -57,6 +57,8 @@ class InviteContactsForm extends AbstractAddPeopleDialog<Props, State> {
 
     _resourceClient: Object;
 
+    _translations: Object;
+
     state = {
         addToCallError: false,
         addToCallInProgress: false,
@@ -86,6 +88,16 @@ class InviteContactsForm extends AbstractAddPeopleDialog<Props, State> {
             makeQuery: this._query,
             parseResults: this._parseQueryResults
         };
+
+
+        const { t } = props;
+
+        this._translations = {
+            _dialOutEnabled: t('addPeople.phoneNumbers'),
+            _addPeopleEnabled: t('addPeople.contacts'),
+            _sipInviteEnabled: t('addPeople.sipAddresses')
+        };
+
     }
 
     /**
@@ -118,30 +130,29 @@ class InviteContactsForm extends AbstractAddPeopleDialog<Props, State> {
             _addPeopleEnabled,
             _dialOutEnabled,
             _isVpaas,
+            _sipInviteEnabled,
             t
         } = this.props;
         const footerText = this._renderFooterText();
         let isMultiSelectDisabled = this.state.addToCallInProgress;
-        let placeholder;
-        let loadingMessage;
-        let noMatches;
+        const loadingMessage = 'addPeople.searching';
+        const noMatches = 'addPeople.noResults';
 
-        if (_addPeopleEnabled && _dialOutEnabled) {
-            loadingMessage = 'addPeople.loading';
-            noMatches = 'addPeople.noResults';
-            placeholder = 'addPeople.searchPeopleAndNumbers';
-        } else if (_addPeopleEnabled) {
-            loadingMessage = 'addPeople.loadingPeople';
-            noMatches = 'addPeople.noResults';
-            placeholder = 'addPeople.searchPeople';
-        } else if (_dialOutEnabled) {
-            loadingMessage = 'addPeople.loadingNumber';
-            noMatches = 'addPeople.noValidNumbers';
-            placeholder = 'addPeople.searchNumbers';
-        } else {
+        const features = {
+            _dialOutEnabled,
+            _addPeopleEnabled,
+            _sipInviteEnabled
+        };
+
+        const computedPlaceholder = Object.keys(features)
+            .filter(v => Boolean(features[v]))
+            .map(v => this._translations[v])
+            .join(', ');
+
+        const placeholder = computedPlaceholder ? `${t('dialog.add')} ${computedPlaceholder}` : t('addPeople.disabled');
+
+        if (!computedPlaceholder) {
             isMultiSelectDisabled = true;
-            noMatches = 'addPeople.noResults';
-            placeholder = 'addPeople.disabled';
         }
 
         return (
@@ -156,7 +167,7 @@ class InviteContactsForm extends AbstractAddPeopleDialog<Props, State> {
                     noMatchesFound = { t(noMatches) }
                     onItemSelected = { this._onItemSelected }
                     onSelectionChange = { this._onSelectionChange }
-                    placeholder = { t(placeholder) }
+                    placeholder = { placeholder }
                     ref = { this._setMultiSelectElement }
                     resourceClient = { this._resourceClient }
                     shouldFitContainer = { true }
