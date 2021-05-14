@@ -1,13 +1,16 @@
 // @flow
 
 import React, { useCallback } from 'react';
-import { Button, Text, withTheme } from 'react-native-paper';
+import { Button, withTheme } from 'react-native-paper';
 import { useDispatch } from 'react-redux';
 
 
 import { translate } from '../../../base/i18n';
+import { Icon, IconClose } from '../../../base/icons';
 import { JitsiModal } from '../../../base/modal';
 import { close } from '../../actions';
+
+import styles from './styles';
 
 /**
  * {@code ParticipantsPane}'s React {@code Component} prop types.
@@ -31,16 +34,25 @@ function ParticipantsPane({ theme }: Props) {
         () => dispatch(close()),
         [ dispatch ]);
 
+    const { palette } = theme;
+
     return (
         <JitsiModal
-            headerProps = {{
-                onPressBack: closePane()
-            }}>
-            {/* eslint-disable-next-line react/jsx-no-bind */}
-            <Button onPress = { closePane }> X</Button>
-            <Text>
-                OLE
-            </Text>
+            showHeaderWithNavigation = { false }
+            style = { styles.participantsPane }>
+            <Button
+                mode = 'contained'
+                onPress = { closePane }
+                style = { styles.closeButton }
+                theme = {{
+                    colors: {
+                        primary: palette.action02
+                    }
+                }}>
+                <Icon
+                    src = { IconClose }
+                    style = { styles.closeIcon } />
+            </Button>
         </JitsiModal>
     );
 }

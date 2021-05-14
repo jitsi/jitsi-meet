@@ -176,7 +176,8 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
                     headerLabelKey: 'inviteDialog.header',
                     onPressForward: this._onInvite
                 }}
-                modalId = { ADD_PEOPLE_DIALOG_VIEW_ID }>
+                modalId = { ADD_PEOPLE_DIALOG_VIEW_ID }
+                showHeaderWithNavigation = { true }>
                 <View
                     style = { styles.searchFieldWrapper }>
                     <View style = { styles.searchIconWrapper }>
