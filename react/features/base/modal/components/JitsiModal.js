@@ -67,6 +67,11 @@ type Props = {
     position?: string,
 
     /**
+     * True if the header with navigation should be shown, false otherwise.
+     */
+    showHeaderWithNavigation: boolean,
+
+    /**
      * Additional style to be appended to the View containing the content of the modal.
      */
     style?: StyleType
@@ -98,7 +103,17 @@ class JitsiModal extends PureComponent<Props> {
      * @inheritdoc
      */
     render() {
-        const { _headerStyles, _show, _styles, children, footerComponent, headerProps, position, style } = this.props;
+        const {
+            _headerStyles,
+            _show,
+            _styles,
+            children,
+            footerComponent,
+            headerProps,
+            position,
+            showHeaderWithNavigation,
+            style
+        } = this.props;
 
         return (
             <SlidingView
@@ -117,9 +132,10 @@ class JitsiModal extends PureComponent<Props> {
                         _styles.page,
                         style
                     ] }>
-                    <HeaderWithNavigation
+                    {showHeaderWithNavigation
+                    && <HeaderWithNavigation
                         { ...headerProps }
-                        onPressBack = { this._onRequestClose } />
+                        onPressBack = { this._onRequestClose } />}
                     <SafeAreaView style = { styles.safeArea }>
                         { children }
                     </SafeAreaView>

@@ -78,6 +78,7 @@ class SharedDocument extends PureComponent<Props> {
                     headerLabelKey: 'documentSharing.title'
                 }}
                 modalId = { SHARE_DOCUMENT_VIEW_ID }
+                showHeaderWithNavigation = { true }
                 style = { styles.webView }>
                 <WebView
                     onError = { this._onError }
