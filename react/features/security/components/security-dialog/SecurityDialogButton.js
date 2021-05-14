@@ -68,11 +68,14 @@ class SecurityDialogButton extends AbstractButton<Props, *> {
  * @returns {Props}
  */
 function mapStateToProps(state: Object) {
+    const { conference } = state['features/base/conference'];
     const { hideLobbyButton } = state['features/base/config'];
     const { locked } = state['features/base/conference'];
     const { lobbyEnabled } = state['features/lobby'];
+    const lobbySupported = conference && conference.isLobbySupported();
+    const lobby = lobbySupported && !hideLobbyButton;
     const enabledFlag = getFeatureFlag(state, SECURITY_OPTIONS_ENABLED, true);
-    const enabledLobbyMode = getFeatureFlag(state, LOBBY_MODE_ENABLED, true) || !hideLobbyButton;
+    const enabledLobbyMode = getFeatureFlag(state, LOBBY_MODE_ENABLED, true) || lobby;
     const enabledMeetingPassFlag = getFeatureFlag(state, MEETING_PASSWORD_ENABLED, true);
 
     return {
