@@ -611,8 +611,8 @@ var config = {
     // localRecording: {
     // Enables local recording.
     // Additionally, 'localrecording' (all lowercase) needs to be added to
-    // TOOLBAR_BUTTONS in interface_config.js for the Local Recording
-    // button to show up on the toolbar.
+    // the `toolbarButtons`-array for the Local Recording button to show up
+    // on the toolbar.
     //
     //     enabled: true,
     //
