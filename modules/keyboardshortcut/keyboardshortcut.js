@@ -36,6 +36,12 @@ const _shortcutsHelp = new Map();
 let enabled = true;
 
 /**
+ * True is the shortcut SPACE is pressed, i.e. Push-To-Talk/Mute is in action
+ * @type {boolean}
+ */
+let isSpacePressed = false;
+
+/**
  * Maps keycode to character, id of popover for given function and function.
  */
 const KeyboardShortcut = {
@@ -69,12 +75,13 @@ const KeyboardShortcut = {
                 || $(':focus').is('input[type=password]')
                 || $(':focus').is('textarea'))) {
                 if (this._getKeyboardKey(e).toUpperCase() === ' ') {
-                    if (APP.conference.isLocalAudioMuted()) {
+                    if (!isSpacePressed) {
                         sendAnalytics(createShortcutEvent(
                             'push.to.talk',
                             PRESSED));
                         logger.log('Talk shortcut pressed');
-                        APP.conference.muteAudio(false);
+                        APP.conference.toggleAudioMuted(false);
+                        isSpacePressed = true;
                     }
                 }
             }
@@ -200,7 +207,8 @@ const KeyboardShortcut = {
         this.registerShortcut(' ', null, () => {
             sendAnalytics(createShortcutEvent('push.to.talk', RELEASED));
             logger.log('Talk shortcut released');
-            APP.conference.muteAudio(true);
+            APP.conference.toggleAudioMuted(true);
+            isSpacePressed = false;
         });
         this._addShortcutToHelp('SPACE', 'keyboardShortcuts.pushToTalk');
 
