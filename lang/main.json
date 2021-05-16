@@ -532,6 +532,7 @@
             "participantsList": "Meeting participants ({{count}})"
         },
         "actions": {
+            "invite": "Invite Someone",
             "muteAll": "Mute all",
             "stopVideo": "Stop video"
         }

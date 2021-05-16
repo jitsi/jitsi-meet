@@ -535,6 +535,7 @@
             "participantsList": "సదస్యులు ({{count}})"
         },
         "actions": {
+            "invite": "ప్రజలను ఆహ్వానించు",
             "muteAll": "అందరినీ మౌనించు",
             "stopVideo": "వీడియో ఆపివేయి"
         }
