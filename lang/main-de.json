@@ -5,6 +5,7 @@
         "copyInvite": "Sitzungseinladung kopieren",
         "copyLink": "Konferenzlink kopieren",
         "copyStream": "Livestreaminglink kopieren",
+        "contacts": "Kontakte",
         "countryNotSupported": "Wir unterstützen dieses Land noch nicht.",
         "countryReminder": "Telefonnummer nicht in den USA? Bitte sicherstellen, dass die Telefonnummer mit dem Ländercode beginnt.",
         "defaultEmail": "Ihre Standard-E-Mail",
@@ -16,15 +17,10 @@
         "inviteMoreMailSubject": "An {{appName}} Meeting teilnehmen",
         "inviteMorePrompt": "Mehr Leute einladen",
         "linkCopied": "Link in die Zwischenablage kopiert",
-        "loading": "Suche nach Personen und Telefonnummern",
-        "loadingNumber": "Telefonnummer wird überprüft",
-        "loadingPeople": "Suche nach einzuladenden Personen",
         "noResults": "Keine passenden Ergebnisse",
-        "noValidNumbers": "Telefonnummer eingeben",
         "outlookEmail": "Outlook-E-Mail",
-        "searchNumbers": "Telefonnummern hinzufügen",
-        "searchPeople": "Nach Personen suchen",
-        "searchPeopleAndNumbers": "Nach Personen suchen oder deren Telefonnummern hinzufügen",
+        "phoneNumbers": "Telefonnummern",
+        "searching": "Suche...",
         "shareInvite": "Einladung zur Versammlung teilen",
         "shareLink": "Teilen Sie den Konferenzlink, um andere einzuladen",
         "shareStream": "Den Livestreaminglink freigeben",
@@ -259,6 +255,7 @@
         "muteParticipantsVideoTitle": "Die Kamera von dieser Person ausschalten?",
         "muteParticipantsVideoBody": "Sie können die Kamera nicht wieder aktivieren, die Teilnehmer können dies aber jederzeit wieder ändern.",
         "Ok": "OK",
+        "password": "Passwort",
         "passwordLabel": "Dieses Meeting wurde gesichert. Bitte geben Sie das $t(lockRoomPasswordUppercase) ein, um dem Meeting beizutreten.",
         "passwordNotSupported": "Das Festlegen eines Konferenzpassworts wird nicht unterstützt.",
         "passwordNotSupportedTitle": "$t(lockRoomPasswordUppercase) nicht unterstützt",
@@ -268,7 +265,6 @@
         "readMore": "mehr",
         "recording": "Aufnahme",
         "recordingDisabledBecauseOfActiveLiveStreamingTooltip": "Während eines Livestreams nicht möglich",
-        "recordingDisabledForGuestTooltip": "Gäste können keine Aufzeichnungen starten.",
         "recordingDisabledTooltip": "Start der Aufzeichnung deaktiviert.",
         "rejoinNow": "Jetzt erneut beitreten",
         "remoteControlAllowedMessage": "{{user}} hat die Anfrage zur Fernsteuerung angenommen!",
@@ -295,6 +291,7 @@
         "sendPrivateMessageTitle": "Privat antworten?",
         "serviceUnavailable": "Dienst nicht verfügbar",
         "sessTerminated": "Konferenz beendet",
+        "sessionRestarted": "Konferenz neugestartet",
         "Share": "Teilen",
         "shareVideoLinkError": "Bitte einen gültigen YouTube-Link angeben.",
         "shareVideoTitle": "Video teilen",
@@ -378,6 +375,7 @@
         "inviteLiveStream": "Klicken Sie auf {{url}}, um den Livestream dieser Konferenz zu öffnen",
         "invitePhone": "Wenn Sie stattdessen per Telefon beitreten möchten, wählen sie: {{number}},,{{conferenceID}}#\n",
         "invitePhoneAlternatives": "Suchen Sie nach einer anderen Einwahlnummer ?\nEinwahlnummern der Konferenz anzeigen: {{url}}\n\n\nWenn Sie sich auch über ein Raumtelefon einwählen, nehmen Sie teil, ohne sich mit dem Ton zu verbinden: {{silentUrl}}",
+        "inviteSipEndpoint": "Um mit SIP teilzunehmen, folgende Adresse nutzen: {{sipUri}}",
         "inviteURLFirstPartGeneral": "Sie wurden zur Teilnahme an einem Meeting eingeladen.",
         "inviteURLFirstPartPersonal": "{{name}} lädt Sie zu einem Meeting ein.\n",
         "inviteURLSecondPart": "\nAm Meeting teilnehmen:\n{{url}}\n",
@@ -418,6 +416,7 @@
         "showSpeakerStats": "Sprechstatistik anzeigen",
         "toggleChat": "Chat öffnen oder schließen",
         "toggleFilmstrip": "Video-Miniaturansichten ein- oder ausblenden",
+        "toggleParticipantsPane": "Liste der Anwesenden ein- und ausblenden",
         "toggleScreensharing": "Zwischen Kamera und Bildschirmfreigabe wechseln",
         "toggleShortcuts": "Tastenkombinationen ein- oder ausblenden",
         "videoMute": "Kamera starten oder stoppen"
@@ -526,6 +525,17 @@
         "oldElectronClientDescription1": "Sie scheinen eine alte Version des Jitsi-Meet-Clients zu nutzen. Diese hat bekannte Schwachstellen. Bitte aktualisieren Sie auf unsere ",
         "oldElectronClientDescription2": "aktuelle Version",
         "oldElectronClientDescription3": "!"
+    },
+    "participantsPane": {
+        "headings": {
+            "lobby": "Lobby ({{count}})",
+            "participantsList": "Anwesende ({{count}})"
+        },
+        "actions": {
+            "invite": "Person einladen",
+            "muteAll": "Alle stummschalten",
+            "stopVideo": "Kamera ausschalten"
+        }
     },
     "passwordSetRemotely": "von einer anderen Person gesetzt",
     "passwordDigitsOnly": "Bis zu {{number}} Ziffern",
@@ -745,6 +755,7 @@
             "muteEveryoneElse": "Alle anderen stummschalten",
             "muteEveryonesVideo": "Alle Kameras ausschalten",
             "muteEveryoneElsesVideo": "Alle anderen Kameras ausschalten",
+            "participants": "Anwesende",
             "pip": "Bild-in-Bild-Modus ein-/ausschalten",
             "privateMessage": "Private Nachricht senden",
             "profile": "Profil bearbeiten",
@@ -807,6 +818,7 @@
         "noisyAudioInputTitle": "Ihr Mikrofon scheint lärmintensiv zu sein!",
         "noisyAudioInputDesc": "Es klingt, als ob Ihr Mikrofon Störgeräusche verursacht. Bitte überlegen Sie, ob Sie das Gerät stummschalten oder austauschen wollen.",
         "openChat": "Chat öffnen",
+        "participants": "Anwesende",
         "pip": "Bild-in-Bild-Modus einschalten",
         "privateMessage": "Private Nachricht senden",
         "profile": "Profil bearbeiten",
@@ -942,6 +954,7 @@
         "header": "Hilfecenter"
     },
     "lobby": {
+        "admit": "Zulassen",
         "knockingParticipantList": "Liste anklopfender Personen",
         "allow": "Annehmen",
         "backToKnockModeButton": "Kein Passwort, stattdessen Beitritt anfragen",
