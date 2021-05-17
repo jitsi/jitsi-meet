@@ -28,6 +28,7 @@ export const LobbyParticipantItem = ({ participant: p }: Props) => {
         <ParticipantItem
             actionsTrigger = { ActionTrigger.Permanent }
             audioMuteState = { MediaState.None }
+            name = { p.name }
             participant = { p }
             videoMuteState = { MediaState.None }>
             <ParticipantActionButton
