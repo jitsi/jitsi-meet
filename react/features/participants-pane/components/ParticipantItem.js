@@ -101,6 +101,11 @@ type Props = {
     isHighlighted?: boolean,
 
     /**
+     * The name of the participant. Used for showing lobby names.
+     */
+    name?: string,
+
+    /**
      * Callback for when the mouse leaves this component
      */
     onLeave?: Function,
@@ -123,11 +128,12 @@ export const ParticipantItem = ({
     actionsTrigger = ActionTrigger.Hover,
     audioMuteState = MediaState.None,
     videoMuteState = MediaState.None,
+    name,
     participant: p
 }: Props) => {
     const ParticipantActions = Actions[actionsTrigger];
     const { t } = useTranslation();
-    const name = useSelector(getParticipantDisplayNameWithId(p.id));
+    const displayName = name || useSelector(getParticipantDisplayNameWithId(p.id));
 
     return (
         <ParticipantContainer
@@ -141,7 +147,7 @@ export const ParticipantItem = ({
             <ParticipantContent>
                 <ParticipantNameContainer>
                     <ParticipantName>
-                        { name }
+                        { displayName }
                     </ParticipantName>
                     { p.local ? <span>&nbsp;({t('chat.you')})</span> : null }
                 </ParticipantNameContainer>
