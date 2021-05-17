@@ -19,7 +19,7 @@ export default class FocusLockWrapper extends FocusLock<*> {
 
         const props = {
             ...otherProps,
-            crossFrame: false
+            disabled: true
         };
 
         // MoveFocusInside is added in order to initially bring the focus on the dialog.
