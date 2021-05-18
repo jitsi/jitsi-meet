@@ -28,8 +28,9 @@ StateListenerRegistry.register(
 
                 const dialogComponent = store.getState()['features/base/dialog'].component;
                 const queue = dialogComponent !== undefined;
+                const pollId = parseInt(attributes.pollId, 10);
 
-                store.dispatch(receivePoll(attributes.pollId, poll, queue));
+                store.dispatch(receivePoll(pollId, poll, queue));
             });
 
             // Command triggered when new answer is received
@@ -40,7 +41,7 @@ StateListenerRegistry.register(
                 const receivedAnswer: Answer = {
                     senderId,
                     voterName,
-                    pollId,
+                    pollId: parseInt(pollId, 10),
                     answers: children.map(
 
                             // Boolean are converted to text through XMPP
