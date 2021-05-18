@@ -12,6 +12,7 @@ import {
     IconOutlook,
     IconYahoo
 } from '../../../../base/icons';
+import { browser } from '../../../../base/lib-jitsi-meet';
 import { Tooltip } from '../../../../base/tooltip';
 import { copyText } from '../../../../base/util';
 
@@ -72,30 +73,34 @@ function InviteByEmailSection({ inviteSubject, inviteText, t }: Props) {
             {
                 icon: IconEmail,
                 tooltipKey: 'addPeople.defaultEmail',
-                url: `mailto:?subject=${encodedInviteSubject}&body=${encodedInviteText}`
+                url: `mailto:?subject=${encodedInviteSubject}&body=${encodedInviteText}`,
+                target: browser.isFirefox() ? '_self' : '_blank'
             },
             {
                 icon: IconGoogle,
                 tooltipKey: 'addPeople.googleEmail',
-                url: `https://mail.google.com/mail/?view=cm&fs=1&su=${encodedInviteSubject}&body=${encodedInviteText}`
+                url: `https://mail.google.com/mail/?view=cm&fs=1&su=${encodedInviteSubject}&body=${encodedInviteText}`,
+                target: '_blank'
             },
             {
                 icon: IconOutlook,
                 tooltipKey: 'addPeople.outlookEmail',
                 // eslint-disable-next-line max-len
-                url: `https://outlook.office.com/mail/deeplink/compose?subject=${encodedInviteSubject}&body=${encodedInviteText}`
+                url: `https://outlook.office.com/mail/deeplink/compose?subject=${encodedInviteSubject}&body=${encodedInviteText}`,
+                target: '_blank'
             },
             {
                 icon: IconYahoo,
                 tooltipKey: 'addPeople.yahooEmail',
-                url: `https://compose.mail.yahoo.com/?To=&Subj=${encodedInviteSubject}&Body=${encodedInviteText}`
+                url: `https://compose.mail.yahoo.com/?To=&Subj=${encodedInviteSubject}&Body=${encodedInviteText}`,
+                target: '_blank'
             }
         ];
 
         return (
             <>
                 {
-                    PROVIDER_MAPPING.map(({ icon, tooltipKey, url }, idx) => (
+                    PROVIDER_MAPPING.map(({ icon, tooltipKey, url, target }, idx) => (
                         <Tooltip
                             content = { t(tooltipKey) }
                             key = { idx }
@@ -103,8 +108,7 @@ function InviteByEmailSection({ inviteSubject, inviteText, t }: Props) {
                             <a
                                 className = 'provider-icon'
                                 href = { url }
-                                rel = 'noopener noreferrer'
-                                target = '_blank'>
+                                target = { target }>
                                 <Icon src = { icon } />
                             </a>
                         </Tooltip>
