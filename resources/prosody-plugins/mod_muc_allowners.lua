@@ -97,16 +97,6 @@ module:hook("muc-occupant-joined", function (event)
     end
 end, 2);
 
-module:hook("muc-occupant-left", function (event)
-    local room, occupant = event.room, event.occupant;
-
-    if is_healthcheck_room(room.jid) then
-        return;
-    end
-
-    room:set_affiliation(true, occupant.bare_jid, nil);
-end, 2);
-
 module:hook_global('config-reloaded', load_config);
 
 -- Filters self-presences to a jid that exist in joining_participants array
