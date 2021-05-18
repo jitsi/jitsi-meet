@@ -2,7 +2,17 @@
 
 import { isWindows } from '../base/environment';
 import { browser } from '../base/lib-jitsi-meet';
+import { getLocalVideoTrack } from '../base/tracks';
 
+/**
+ * Is the current screen sharing session audio only.
+ *
+ * @param {Object} state - The state of the application.
+ * @returns {boolean}
+ */
+export function isAudioOnlySharing(state: Object) {
+    return isScreenAudioShared(state) && !isScreenVideoShared(state);
+}
 
 /**
  * State of audio sharing.
@@ -22,4 +32,17 @@ export function isScreenAudioShared(state: Object) {
  */
 export function isScreenAudioSupported() {
     return browser.isChrome() || (browser.isElectron() && isWindows());
+}
+
+
+/**
+ * Is screen sharing currently active.
+ *
+ * @param {Object} state - The state of the application.
+ * @returns {boolean}
+ */
+export function isScreenVideoShared(state: Object) {
+    const localVideo = getLocalVideoTrack(state['features/base/tracks']);
+
+    return localVideo && localVideo.videoType === 'desktop';
 }
