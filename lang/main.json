@@ -411,7 +411,7 @@
         "keyboardShortcuts": "Keyboard shortcuts",
         "localRecording": "Show or hide local recording controls",
         "mute": "Mute or unmute your microphone",
-        "pushToTalk": "Push to talk",
+        "pushToTalk": "Push to talk/mute",
         "raiseHand": "Raise or lower your hand",
         "showSpeakerStats": "Show speaker stats",
         "toggleChat": "Open or close the chat",
