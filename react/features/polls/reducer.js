@@ -56,7 +56,7 @@ ReducerRegistry.register('features/polls', (state = INITIAL_STATE, action) => {
     // The answer is added  to an existing poll
     case RECEIVE_ANSWER: {
 
-        const { pollId, answer }: { pollId: string; answer: Answer } = action;
+        const { pollId, answer }: { pollId: number; answer: Answer } = action;
 
         // if the poll doesn't exist
         if (!(pollId in state.polls)) {

@@ -6,7 +6,7 @@
  * {
  *     type: RECEIVE_POLL,
  *     poll: Poll,
- *     pollId: string,
+ *     pollId: number,
  *     queue: boolean
  * }
  *
@@ -18,7 +18,7 @@ export const RECEIVE_POLL = 'RECEIVE_POLL';
  *
  * {
  *     type: SHOW_POLL,
- *     pollId: string
+ *     pollId: number
  * }
  *
  */
@@ -30,7 +30,7 @@ export const SHOW_POLL = 'SHOW_POLL';
  * {
  *     type: RECEIVE_ANSWER,
  *     answer: Answer
- *     pollId: string,
+ *     pollId: number,
  * }
  */
 export const RECEIVE_ANSWER = 'RECEIVE_ANSWER';
