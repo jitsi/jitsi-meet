@@ -1363,6 +1363,7 @@ class Toolbox extends Component<Props> {
                         { showOverflowMenuButton && <OverflowMenuButton
                             ariaControls = 'overflow-menu'
                             isOpen = { _overflowMenuVisible }
+                            key = 'overflow-menu'
                             onVisibilityChange = { this._onSetOverflowVisible }>
                             <ul
                                 aria-label = { t(toolbarAccLabel) }
@@ -1375,6 +1376,7 @@ class Toolbox extends Component<Props> {
                         </OverflowMenuButton>}
                         <HangupButton
                             customClass = 'hangup-button'
+                            key = 'hangup-button'
                             visible = { this.props._shouldShowButton('hangup') } />
                     </div>
                 </div>

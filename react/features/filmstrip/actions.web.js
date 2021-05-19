@@ -7,6 +7,7 @@ import {
     SET_HORIZONTAL_VIEW_DIMENSIONS,
     SET_TILE_VIEW_DIMENSIONS,
     SET_VERTICAL_VIEW_DIMENSIONS,
+    SET_VISIBLE_REMOTE_PARTICIPANTS,
     SET_VOLUME
 } from './actionTypes';
 import {
@@ -150,6 +151,26 @@ export function setVolume(participantId: string, volume: number) {
         type: SET_VOLUME,
         participantId,
         volume
+    };
+}
+
+/**
+ * Sets the list of the visible participants in the filmstrip by storing the start and end index from the remote
+ * participants array.
+ *
+ * @param {number} startIndex - The start index from the remote participants array.
+ * @param {number} endIndex - The end index from the remote participants array.
+ * @returns {{
+ *      type: SET_VISIBLE_REMOTE_PARTICIPANTS,
+ *      startIndex: number,
+ *      endIndex: number
+ * }}
+ */
+export function setVisibleRemoteParticipants(startIndex: number, endIndex: number) {
+    return {
+        type: SET_VISIBLE_REMOTE_PARTICIPANTS,
+        startIndex,
+        endIndex
     };
 }
 
