@@ -337,11 +337,11 @@ function Util:verify_room(session, room_address)
         return true;
     end
 
-    local auth_room = session.jitsi_meet_room;
+    local auth_room = string.lower(session.jitsi_meet_room);
     if not self.enableDomainVerification then
         -- if auth_room is missing, this means user is anonymous (no token for
         -- its domain) we let it through, jicofo is verifying creation domain
-        if auth_room and room ~= string.lower(auth_room) and auth_room ~= '*' then
+        if auth_room and room ~= auth_room and auth_room ~= '*' then
             return false;
         end
 
@@ -383,7 +383,7 @@ function Util:verify_room(session, room_address)
         end
     end
 
-    local auth_domain = session.jitsi_meet_domain;
+    local auth_domain = string.lower(session.jitsi_meet_domain);
     local subdomain_to_check;
     if target_subdomain then
         if auth_domain == '*' then
@@ -401,7 +401,7 @@ function Util:verify_room(session, room_address)
         end
 
         return room_address_to_verify == jid.join(
-            "["..string.lower(subdomain_to_check).."]"..string.lower(room_to_check), self.muc_domain);
+            "["..subdomain_to_check).."]"..room_to_check, self.muc_domain);
     else
         if auth_domain == '*' then
             -- check for wildcard in JWT claim, allow access if found
@@ -412,8 +412,7 @@ function Util:verify_room(session, room_address)
         end
         -- we do not have a domain part (multidomain is not enabled)
         -- verify with info from the token
-        return room_address_to_verify == jid.join(
-            string.lower(room_to_check), string.lower(subdomain_to_check));
+        return room_address_to_verify == jid.join(room_to_check, subdomain_to_check);
     end
 end
 
