@@ -5,6 +5,7 @@ import { openDialog } from '../base/dialog';
 import { DisableLobbyModeDialog, EnableLobbyModeDialog } from './components/native';
 
 export * from './actions.web';
+export * from './actions.any';
 
 /**
  * Action to show the dialog to disable lobby mode.

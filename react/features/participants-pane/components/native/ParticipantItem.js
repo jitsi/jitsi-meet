@@ -8,8 +8,12 @@ import { useSelector } from 'react-redux';
 
 import { Avatar } from '../../../base/avatar';
 import { getParticipantDisplayNameWithId } from '../../../base/participants';
-import { ActionTrigger, MediaState } from '../../constants';
-// import { AudioStateIcons, VideoStateIcons } from '../web/ParticipantItem';
+import {
+    ActionTrigger,
+    AudioStateIcons,
+    MediaState,
+    VideoStateIcons
+} from '../../constants';
 
 import { RaisedHandIndicator } from './RaisedHandIndicator';
 import styles from './styles';
