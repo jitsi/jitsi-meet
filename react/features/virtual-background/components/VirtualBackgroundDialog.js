@@ -64,6 +64,11 @@ type Props = {
     _selectedThumbnail: string,
 
     /**
+     * Returns the selected virtual source object.
+     */
+    _virtualSource: Object,
+
+    /**
      * The redux {@code dispatch} function.
      */
     dispatch: Function,
@@ -79,11 +84,12 @@ type Props = {
  *
  * @returns {ReactElement}
  */
-function VirtualBackground({ _jitsiTrack, _selectedThumbnail, dispatch, t }: Props) {
+function VirtualBackground({ _jitsiTrack, _selectedThumbnail, _virtualSource, dispatch, t }: Props) {
     const [ options, setOptions ] = useState({});
     const localImages = jitsiLocalStorage.getItem('virtualBackgrounds');
     const [ storedImages, setStoredImages ] = useState((localImages && JSON.parse(localImages)) || []);
     const [ loading, isloading ] = useState(false);
+    const [ activeDesktopVideo ] = useState(_virtualSource?.videoType === 'desktop' ? _virtualSource : null);
 
     const deleteStoredImage = image => {
         setStoredImages(storedImages.filter(item => item !== image));
@@ -180,6 +186,9 @@ function VirtualBackground({ _jitsiTrack, _selectedThumbnail, dispatch, t }: Pro
     };
 
     const applyVirtualBackground = async () => {
+        if (activeDesktopVideo) {
+            await activeDesktopVideo.dispose();
+        }
         isloading(true);
         await dispatch(toggleBackgroundEffect(options, _jitsiTrack));
         await isloading(false);
@@ -289,6 +298,7 @@ function VirtualBackground({ _jitsiTrack, _selectedThumbnail, dispatch, t }: Pro
  */
 function _mapStateToProps(state): Object {
     return {
+        _virtualSource: state['features/virtual-background'].virtualSource,
         _selectedThumbnail: state['features/virtual-background'].selectedThumbnail,
         _jitsiTrack: getLocalVideoTrack(state['features/base/tracks'])?.jitsiTrack
     };

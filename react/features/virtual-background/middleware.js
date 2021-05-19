@@ -1,10 +1,9 @@
 // @flow
 
-import { JitsiTrackEvents } from '../base/lib-jitsi-meet';
 import { MiddlewareRegistry } from '../base/redux';
 import { getLocalVideoTrack } from '../base/tracks';
 
-import { toggleBackgroundEffect } from './actions';
+import { localTrackStopped } from './functions';
 
 /**
  * Middleware which intercepts the desktop video type on
@@ -20,17 +19,7 @@ MiddlewareRegistry.register(store => next => action => {
     const currentLocalTrack = getLocalVideoTrack(getState()['features/base/tracks']);
 
     if (virtualSource?.videoType === 'desktop') {
-        const noneOptions = {
-            enabled: false,
-            backgroundType: 'none',
-            selectedThumbnail: 'none',
-            backgroundEffectEnabled: false
-        };
-
-        virtualSource
-            && virtualSource.on(JitsiTrackEvents.LOCAL_TRACK_STOPPED, () => {
-                dispatch(toggleBackgroundEffect(noneOptions, currentLocalTrack.jitsiTrack));
-            });
+        localTrackStopped(dispatch, virtualSource, currentLocalTrack.jitsiTrack);
     }
 
     return next(action);
