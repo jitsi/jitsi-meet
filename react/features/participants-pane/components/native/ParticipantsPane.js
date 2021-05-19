@@ -4,11 +4,10 @@ import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
 import { Button, withTheme } from 'react-native-paper';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
 import { Icon, IconClose, IconHorizontalPoints } from '../../../base/icons';
 import { JitsiModal } from '../../../base/modal';
-import { isLocalParticipantModerator } from '../../../base/participants';
 import { close } from '../../actions.any';
 
 import styles from './styles';
@@ -35,7 +34,6 @@ function ParticipantsPane({ theme }: Props) {
     const closePane = useCallback(
         () => dispatch(close()),
         [ dispatch ]);
-    const isLocalModerator = useSelector(isLocalParticipantModerator);
     const { t } = useTranslation();
     const { palette } = theme;
 
