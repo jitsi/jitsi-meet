@@ -7,7 +7,7 @@ import { Dialog } from '../../../base/dialog';
 import PollResults from './PollResults';
 
 type Props = {
-    pollId: number,
+    pollId: string,
 };
 
 /**

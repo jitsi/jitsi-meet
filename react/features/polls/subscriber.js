@@ -4,53 +4,97 @@ import { getCurrentConference } from '../base/conference';
 import { StateListenerRegistry } from '../base/redux';
 
 import { receiveAnswer, receivePoll } from './actions';
-import { COMMAND_NEW_POLL, COMMAND_ANSWER_POLL } from './constants';
+import { COMMAND_NEW_POLL, COMMAND_ANSWER_POLL, COMMAND_OLD_POLLS } from './constants';
 import type { Answer } from './types';
+
+
+const parsePollData = pollData => {
+    if (typeof pollData !== 'object' || pollData === null) {
+        return null;
+    }
+    const { id, senderId, question, answers } = pollData;
+
+    if (typeof id !== 'string' || typeof senderId !== 'string'
+        || typeof question !== 'string' || !(answers instanceof Array)) {
+        return null;
+    }
+
+    const answers2 = [];
+
+    for (const answer of answers) {
+        const voters = new Map();
+
+        for (const [ voterId, voter ] of Object.entries(answer.voters)) {
+            if (typeof voter !== 'string') {
+                return null;
+            }
+            voters.set(voterId, voter);
+        }
+
+        answers2.push({
+            name: answer.name,
+            voters
+        });
+    }
+
+    return {
+        senderId,
+        question,
+        answered: true,
+        answers: answers2
+    };
+};
 
 StateListenerRegistry.register(
     state => getCurrentConference(state),
     (conference, store, previousConference) => {
         if (conference && conference !== previousConference) {
+            conference.room.addListener('xmmp.json_message_received', (senderJid, data) => {
+                if (data.type === COMMAND_NEW_POLL) {
+                    const { question, answers, pollId, senderId } = data;
 
-            // Command triggered when a new poll is received
-            conference.addCommandListener(COMMAND_NEW_POLL, ({ attributes, children }) => {
-                const poll = {
-                    senderId: attributes.senderId,
-                    answered: false,
-                    question: attributes.question,
-                    answers: children.map(answerData => {
-                        return {
-                            name: answerData.value,
-                            voters: new Map()
-                        };
-                    })
-                };
+                    const poll = {
+                        senderId,
+                        answered: false,
+                        question,
+                        answers: answers.map(answer => {
+                            return {
+                                name: answer,
+                                voters: new Map()
+                            };
+                        })
+                    };
 
-                const dialogComponent = store.getState()['features/base/dialog'].component;
-                const queue = dialogComponent !== undefined;
-                const pollId = parseInt(attributes.pollId, 10);
+                    const dialogComponent = store.getState()['features/base/dialog'].component;
+                    const queue = dialogComponent !== undefined;
 
-                store.dispatch(receivePoll(pollId, poll, queue));
-            });
+                    store.dispatch(receivePoll(pollId, poll, queue));
 
-            // Command triggered when new answer is received
-            conference.addCommandListener(COMMAND_ANSWER_POLL, ({ attributes, children }) => {
-                const { dispatch } = store;
-                const { senderId, voterName, pollId } = attributes;
+                } else if (data.type === COMMAND_ANSWER_POLL) {
+                    const { pollId, answers, senderId, voterName } = data;
 
-                const receivedAnswer: Answer = {
-                    senderId,
-                    voterName,
-                    pollId: parseInt(pollId, 10),
-                    answers: children.map(
+                    const receivedAnswer: Answer = {
+                        senderId,
+                        voterName,
+                        pollId,
+                        answers
+                    };
 
-                            // Boolean are converted to text through XMPP
-                            // We convert here the strings back to boolean
-                            element => element.attributes.checked === 'true'
-                    )
-                };
+                    store.dispatch(receiveAnswer(pollId, receivedAnswer));
 
-                dispatch(receiveAnswer(pollId, receivedAnswer));
+                } else if (data.type === COMMAND_OLD_POLLS) {
+                    const { polls } = data;
+
+                    for (const pollData of polls) {
+                        const poll = parsePollData(pollData);
+
+                        if (poll === null) {
+                            console.warn('[features/polls] Invalid old poll data');
+                        } else {
+                            store.dispatch(receivePoll(pollData.id, poll, false));
+                        }
+                    }
+                }
             });
         }
     }

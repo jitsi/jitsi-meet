@@ -14,7 +14,7 @@ import { PollResults, PollResultsDialog } from '.';
  * The type of the React {@code Component} props of inheriting component.
  */
 type InputProps = {
-    pollId: number
+    pollId: string
 };
 
 /**

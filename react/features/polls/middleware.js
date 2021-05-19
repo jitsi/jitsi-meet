@@ -38,7 +38,7 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
             timestamp: Date.now()
         }));
 
-        if (!queue) {
+        if (!queue && !poll.answered) {
             dispatch(showPoll(pollId));
         }
         break;
