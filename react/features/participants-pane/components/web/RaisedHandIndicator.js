@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-import { Icon, IconRaisedHandHollow } from '../../base/icons';
+import { Icon, IconRaisedHandHollow } from '../../../base/icons';
 
 import { RaisedHandIndicatorBackground } from './styled';
 
