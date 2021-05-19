@@ -9,7 +9,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { IconClose, IconHorizontalPoints } from '../../../base/icons';
 import { JitsiModal } from '../../../base/modal';
 import { isLocalParticipantModerator } from '../../../base/participants';
-import { close } from '../../actions.native';
+import { close } from '../../actions.any';
 
 import Button from './Button';
 import { LobbyParticipantList } from './LobbyParticipantList';

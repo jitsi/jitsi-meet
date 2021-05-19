@@ -14,19 +14,24 @@ let buttonContent;
 type Props = {
 
     /**
+     * Button content.
+     */
+    content?: string,
+
+    /**
      * Is the button icon type?
      */
-    iconButton: boolean,
+    iconButton?: boolean,
 
     /**
      * Style for the icon
      */
-    iconStyle: Object,
+    iconStyle?: Object,
 
     /**
      * Size of the icon.
      */
-    iconSize: number,
+    iconSize?: number,
 
     /**
      * Icon component source.
@@ -34,14 +39,9 @@ type Props = {
     iconSrc?: Object,
 
     /**
-     * Button content.
-     */
-    content: string,
-
-    /**
      * Button mode.
      */
-    mode: string,
+    mode?: string,
 
     /**
      * Style of button's inner content.
@@ -51,17 +51,17 @@ type Props = {
     /**
      * The action to be performed when the button is pressed.
      */
-    onPress: Function,
+    onPress?: Function,
 
     /**
      * An external style object passed to the component.
      */
-    style: Object,
+    style?: Object,
 
     /**
      * Theme to be applied.
      */
-    theme: Object
+    theme?: Object
 };
 
 /**

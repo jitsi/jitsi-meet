@@ -9,7 +9,6 @@ import { useSelector } from 'react-redux';
 import { Avatar } from '../../../base/avatar';
 import { getParticipantDisplayNameWithId } from '../../../base/participants';
 import {
-    ActionTrigger,
     AudioStateIcons,
     MediaState,
     VideoStateIcons
@@ -19,11 +18,6 @@ import { RaisedHandIndicator } from './RaisedHandIndicator';
 import styles from './styles';
 
 type Props = {
-
-    /**
-     * Type of trigger for the participant actions
-     */
-    actionsTrigger: ActionTrigger,
 
     /**
      * Media state for audio
