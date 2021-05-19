@@ -147,16 +147,6 @@ export default {
         ...buttonContent
     },
 
-    moreButtonPaper: {
-        ...smallButton,
-        height: 48
-    },
-
-    moreIconPaper: {
-        alignItems: 'center',
-        flexDirection: 'row-reverse'
-    },
-
     muteAllButton: {
         ...button,
         paddingBottom: 12,
