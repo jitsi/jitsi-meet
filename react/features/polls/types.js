@@ -15,7 +15,7 @@ export type Answer = {
     /**
      * ID of the parent Poll of this answer
      */
-    pollId: number,
+    pollId: string,
 
     /**
      * An array of boolean: true if the answer was chosen by the responder, else false

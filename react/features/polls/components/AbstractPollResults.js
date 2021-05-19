@@ -19,7 +19,7 @@ type InputProps = {
     /**
      * ID of the poll to display
      */
-    pollId: number,
+    pollId: string,
 };
 
 export type AnswerInfo = {

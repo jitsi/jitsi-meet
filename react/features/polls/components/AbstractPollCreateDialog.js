@@ -75,18 +75,12 @@ const AbstractPollCreateDialog = (Component: AbstractComponent<AbstractProps>) =
             return false;
         }
 
-        conference.sendCommandOnce(COMMAND_NEW_POLL, {
-            attributes: {
-                pollId: Math.floor(Math.random() * Number.MAX_SAFE_INTEGER),
-                senderId: conference.myUserId(),
-                question
-            },
-            children: filteredAnswers.map(answer => {
-                return {
-                    tagName: 'answer',
-                    value: answer
-                };
-            })
+        conference.sendMessage({
+            type: COMMAND_NEW_POLL,
+            pollId: Math.floor(Math.random() * Number.MAX_SAFE_INTEGER).toString(36),
+            senderId: conference.myUserId(),
+            question,
+            answers: filteredAnswers
         });
 
         return true;

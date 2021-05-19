@@ -11,7 +11,7 @@ import type { Poll } from '../types';
 
 
 type InputProps = {
-    pollId: number,
+    pollId: string,
 }
 
 /*
@@ -68,26 +68,13 @@ const AbstractPollAnswerDialog = (Component: AbstractComponent<AbstractProps>) =
     const localName: string = localParticipant.name ? localParticipant.name : 'Fellow Jitster';
 
     const submitAnswer = useCallback(() => {
-        const answerData = {
-            attributes: {
-                pollId,
-                senderId: localId,
-                voterName: localName
-            },
-            children: checkBoxStates.map(checkBoxState => {
-                return {
-                    attributes: {
-                        checked: checkBoxState
-                    },
-                    tagName: 'answer'
-                };
-            })
-        };
-
-        conference.sendCommandOnce(
-            COMMAND_ANSWER_POLL,
-            answerData
-        );
+        conference.sendMessage({
+            type: COMMAND_ANSWER_POLL,
+            pollId,
+            senderId: localId,
+            voterName: localName,
+            answers: checkBoxStates
+        });
 
         dispatch(setAnsweredStatus(pollId, true));
         setShouldDisplayResult(true);
