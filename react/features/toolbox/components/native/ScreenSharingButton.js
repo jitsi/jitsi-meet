@@ -8,15 +8,16 @@ import { connect } from '../../../base/redux';
 import ScreenSharingAndroidButton from './ScreenSharingAndroidButton.js';
 import ScreenSharingIosButton from './ScreenSharingIosButton.js';
 
-const ScreenSharingButton = props =>
-    props.visible && <>
+const ScreenSharingButton = props => (
+    <>
         {Platform.OS === 'android'
             && <ScreenSharingAndroidButton { ...props } />
         }
         {Platform.OS === 'ios'
             && <ScreenSharingIosButton { ...props } />
         }
-    </>;
+    </>
+);
 
 /**
  * Maps (parts of) the redux state to the associated props for the
@@ -29,10 +30,10 @@ const ScreenSharingButton = props =>
  * }}
  */
 function _mapStateToProps(state): Object {
-    const visible = !state['features/base/audio-only'].enabled;
+    const disabled = state['features/base/audio-only'].enabled;
 
     return {
-        visible
+        disabled
     };
 }
 

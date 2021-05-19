@@ -17,6 +17,11 @@ type Props = AbstractButtonProps & {
     _screensharing: boolean,
 
     /**
+     * True if the button needs to be disabled.
+     */
+    disabled: Boolean,
+
+    /**
      * The redux {@code dispatch} function.
      */
     dispatch: Function
@@ -45,6 +50,16 @@ class ScreenSharingAndroidButton extends AbstractButton<Props, *> {
     }
 
     /**
+     * Returns a boolean value indicating if this button is disabled or not.
+     *
+     * @protected
+     * @returns {boolean}
+     */
+    _isDisabled() {
+        return this.props.disabled;
+    }
+
+    /**
      * Indicates whether this button is in toggled state or not.
      *
      * @override
@@ -63,7 +78,6 @@ class ScreenSharingAndroidButton extends AbstractButton<Props, *> {
  * @param {Object} state - The Redux state.
  * @private
  * @returns {{
- *     _disabled: boolean,
  *     _screensharing: boolean
  * }}
  */
