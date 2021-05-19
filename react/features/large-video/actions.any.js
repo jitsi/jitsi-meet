@@ -3,29 +3,11 @@
 import type { Dispatch } from 'redux';
 
 import { MEDIA_TYPE } from '../base/media';
-import { getParticipants } from '../base/participants';
-import { selectEndpoints, shouldDisplayTileView } from '../video-layout';
 
 import {
     SELECT_LARGE_VIDEO_PARTICIPANT,
     UPDATE_KNOWN_LARGE_VIDEO_RESOLUTION
 } from './actionTypes';
-
-/**
- * Signals conference to select a participant.
- *
- * @returns {Function}
- */
-export function selectParticipant() {
-    return (dispatch: Dispatch<any>, getState: Function) => {
-        const state = getState();
-        const ids = shouldDisplayTileView(state)
-            ? getParticipants(state).map(participant => participant.id)
-            : [ state['features/large-video'].participantId ];
-
-        dispatch(selectEndpoints(ids));
-    };
-}
 
 /**
  * Action to select the participant to be displayed in LargeVideo based on the
@@ -60,8 +42,6 @@ export function selectParticipantInLargeVideo(participant: ?string) {
                 type: SELECT_LARGE_VIDEO_PARTICIPANT,
                 participantId
             });
-
-            dispatch(selectParticipant());
         }
     };
 }

@@ -9,6 +9,7 @@ import {
     SET_HORIZONTAL_VIEW_DIMENSIONS,
     SET_TILE_VIEW_DIMENSIONS,
     SET_VERTICAL_VIEW_DIMENSIONS,
+    SET_VISIBLE_REMOTE_PARTICIPANTS,
     SET_VOLUME
 } from './actionTypes';
 
@@ -66,7 +67,32 @@ const DEFAULT_STATE = {
      * @public
      * @type {boolean}
      */
-    visible: true
+    visible: true,
+
+    /**
+     * The end index in the remote participants array that is visible in the filmstrip.
+     *
+     * @public
+     * @type {number}
+     */
+    visibleParticipantsEndIndex: 0,
+
+    /**
+     * The visible participants in the filmstrip.
+     *
+     * @public
+     * @type {Array<string>}
+     */
+    visibleParticipants: [],
+
+
+    /**
+     * The start index in the remote participants array that is visible in the filmstrip.
+     *
+     * @public
+     * @type {number}
+     */
+    visibleParticipantsStartIndex: 0
 };
 
 ReducerRegistry.register(
@@ -112,11 +138,24 @@ ReducerRegistry.register(
                     [action.participantId]: action.volume
                 }
             };
+        case SET_VISIBLE_REMOTE_PARTICIPANTS:
+            return {
+                ...state,
+                visibleParticipantsStartIndex: action.startIndex,
+                visibleParticipantsEndIndex: action.endIndex,
+                visibleParticipants: state.remoteParticipants.slice(action.startIndex, action.endIndex + 1)
+            };
         case PARTICIPANT_JOINED: {
             const { id, local } = action.participant;
 
             if (!local) {
                 state.remoteParticipants = [ ...state.remoteParticipants, id ];
+
+                const { visibleParticipantsStartIndex: startIndex, visibleParticipantsEndIndex: endIndex } = state;
+
+                if (state.remoteParticipants.length - 1 <= endIndex) {
+                    state.visibleParticipants = state.remoteParticipants.slice(startIndex, endIndex + 1);
+                }
             }
 
             return state;
@@ -128,7 +167,24 @@ ReducerRegistry.register(
                 return state;
             }
 
-            state.remoteParticipants = state.remoteParticipants.filter(participantId => participantId !== id);
+            let removedParticipantIndex = 0;
+
+            state.remoteParticipants = state.remoteParticipants.filter((participantId, index) => {
+                if (participantId === id) {
+                    removedParticipantIndex = index;
+
+                    return false;
+                }
+
+                return true;
+            });
+
+            const { visibleParticipantsStartIndex: startIndex, visibleParticipantsEndIndex: endIndex } = state;
+
+            if (removedParticipantIndex >= startIndex && removedParticipantIndex <= endIndex) {
+                state.visibleParticipants = state.remoteParticipants.slice(startIndex, endIndex + 1);
+            }
+
             delete state.participantsVolume[id];
 
             return state;

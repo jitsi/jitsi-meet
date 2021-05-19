@@ -70,3 +70,15 @@ export const SET_VERTICAL_VIEW_DIMENSIONS = 'SET_VERTICAL_VIEW_DIMENSIONS';
  * }
  */
 export const SET_VOLUME = 'SET_VOLUME';
+
+/**
+ * The type of the action which sets the list of visible remote participants in the filmstrip by storing the start and
+ * end index in the remote participants array.
+ *
+ * {
+ *      type: SET_VISIBLE_REMOTE_PARTICIPANTS,
+ *      startIndex: number,
+ *      endIndex: number
+ * }
+ */
+export const SET_VISIBLE_REMOTE_PARTICIPANTS = 'SET_VISIBLE_REMOTE_PARTICIPANTS';

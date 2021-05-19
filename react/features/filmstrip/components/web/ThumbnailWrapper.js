@@ -13,14 +13,14 @@ import Thumbnail from './Thumbnail';
 type Props = {
 
     /**
+     * The horizontal offset in px for the thumbnail. Used to center the thumbnails in the last row in tile view.
+     */
+     _horizontalOffset: number,
+
+    /**
      * The ID of the participant associated with the Thumbnail.
      */
     _participantID: ?string,
-
-    /**
-     * The horizontal offset in px for the thumbnail. Used to center the thumbnails in the last row in tile view.
-     */
-    _horizontalOffset: number,
 
     /**
      * The index of the column in tile view.
@@ -114,12 +114,11 @@ function _mapStateToProps(state, ownProps) {
 
         if (rowIndex === rows - 1) { // center the last row
             const { width: thumbnailWidth } = thumbnailSize;
-            const participantsInTheLastRow = (remoteParticipantsLength + 1) % columns;
+            const partialLastRowParticipantsNumber = (remoteParticipantsLength + 1) % columns;
 
-            if (participantsInTheLastRow > 0) {
-                horizontalOffset = Math.floor((columns - participantsInTheLastRow) * (thumbnailWidth + 4) / 2);
+            if (partialLastRowParticipantsNumber > 0) {
+                horizontalOffset = Math.floor((columns - partialLastRowParticipantsNumber) * (thumbnailWidth + 4) / 2);
             }
-
         }
 
         if (index > remoteParticipantsLength) {
@@ -133,12 +132,10 @@ function _mapStateToProps(state, ownProps) {
             };
         }
 
-
         return {
             _participantID: remoteParticipants[index],
             _horizontalOffset: horizontalOffset
         };
-
     }
 
     const { index } = ownProps;
