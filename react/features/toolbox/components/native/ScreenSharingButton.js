@@ -8,16 +8,15 @@ import { connect } from '../../../base/redux';
 import ScreenSharingAndroidButton from './ScreenSharingAndroidButton.js';
 import ScreenSharingIosButton from './ScreenSharingIosButton.js';
 
-const ScreenSharingButton = props => (
-    <>
-        {Platform.OS === 'android' && props.visible
+const ScreenSharingButton = props =>
+    props.visible && <>
+        {Platform.OS === 'android'
             && <ScreenSharingAndroidButton { ...props } />
         }
-        {Platform.OS === 'ios' && props.visible
+        {Platform.OS === 'ios'
             && <ScreenSharingIosButton { ...props } />
         }
-    </>
-);
+    </>;
 
 /**
  * Maps (parts of) the redux state to the associated props for the
