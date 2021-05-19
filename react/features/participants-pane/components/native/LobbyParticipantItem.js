@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { Button } from 'react-native-paper';
 import { useDispatch } from 'react-redux';
 
-// import { setKnockingParticipantApproval } from '../../../lobby/actions';
+import { setKnockingParticipantApproval } from '../../../lobby/actions.native';
 import { MediaState } from '../../constants';
 
 import ParticipantItem from './ParticipantItem';
