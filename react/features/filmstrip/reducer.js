@@ -9,6 +9,7 @@ import {
     SET_HORIZONTAL_VIEW_DIMENSIONS,
     SET_TILE_VIEW_DIMENSIONS,
     SET_VERTICAL_VIEW_DIMENSIONS,
+    SET_VISIBLE_PARTICIPANTS,
     SET_VOLUME
 } from './actionTypes';
 
@@ -66,7 +67,15 @@ const DEFAULT_STATE = {
      * @public
      * @type {boolean}
      */
-    visible: true
+    visible: true,
+
+    /**
+     * The visible participants in the filmstrip.
+     *
+     * @public
+     * @type {Array<string>}
+     */
+    visibleParticipants: []
 };
 
 ReducerRegistry.register(
@@ -112,6 +121,11 @@ ReducerRegistry.register(
                     [action.participantId]: action.volume
                 }
             };
+        case SET_VISIBLE_PARTICIPANTS:
+            return {
+                ...state,
+                visibleParticipants: action.participantIds
+            };
         case PARTICIPANT_JOINED: {
             const { id, local } = action.participant;
 
@@ -129,6 +143,11 @@ ReducerRegistry.register(
             }
 
             state.remoteParticipants = state.remoteParticipants.filter(participantId => participantId !== id);
+
+            if (state.remoteParticipants.length === 0) {
+                state.visibleParticipants = [];
+            }
+
             delete state.participantsVolume[id];
 
             return state;

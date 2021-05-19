@@ -70,3 +70,14 @@ export const SET_VERTICAL_VIEW_DIMENSIONS = 'SET_VERTICAL_VIEW_DIMENSIONS';
  * }
  */
 export const SET_VOLUME = 'SET_VOLUME';
+
+/**
+ * The type of the action which sets the list of the visible participants in the filmstrip.
+ * NOTE: The on-stage participant is not included.
+ *
+ * {
+ *      type: SET_VISIBLE_PARTICIPANTS,
+ *      participantIds: Array<string>
+ * }
+ */
+export const SET_VISIBLE_PARTICIPANTS = 'SET_VISIBLE_PARTICIPANTS';

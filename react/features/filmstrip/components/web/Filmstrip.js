@@ -15,7 +15,7 @@ import { Icon, IconMenuDown, IconMenuUp } from '../../../base/icons';
 import { connect } from '../../../base/redux';
 import { isButtonEnabled } from '../../../toolbox/functions.web';
 import { LAYOUTS, getCurrentLayout } from '../../../video-layout';
-import { setFilmstripVisible } from '../../actions';
+import { setFilmstripVisible, setVisibleParticipants } from '../../actions';
 import { TILE_HORIZONTAL_MARGIN, TILE_VERTICAL_MARGIN, TOOLBAR_HEIGHT } from '../../constants';
 import { shouldRemoteVideosBeVisible } from '../../functions';
 
@@ -130,6 +130,8 @@ class Filmstrip extends PureComponent <Props> {
         this._onToolbarToggleFilmstrip = this._onToolbarToggleFilmstrip.bind(this);
         this._gridItemKey = this._gridItemKey.bind(this);
         this._listItemKey = this._listItemKey.bind(this);
+        this._onGridItemsRendered = this._onGridItemsRendered.bind(this);
+        this._onListItemsRendered = this._onListItemsRendered.bind(this);
     }
 
     /**
@@ -248,6 +250,44 @@ class Filmstrip extends PureComponent <Props> {
         return _remoteParticipants[index];
     }
 
+    _onListItemsRendered: Object => void;
+
+    /**
+     * Handles items rendered changes in stage view.
+     *
+     * @param {Object} data - Information about the rendered items.
+     * @returns {void}
+     */
+    _onListItemsRendered({ overscanStartIndex, overscanStopIndex }) {
+        const { dispatch, _remoteParticipants, _remoteParticipantsLength } = this.props;
+        const endIndex = Math.min(overscanStopIndex, _remoteParticipantsLength - 1);
+
+        dispatch(setVisibleParticipants(_remoteParticipants.slice(overscanStartIndex, endIndex + 1)));
+    }
+
+    _onGridItemsRendered: Object => void;
+
+    /**
+     * Handles items rendered changes in tile view.
+     *
+     * @param {Object} data - Information about the rendered items.
+     * @returns {void}
+     */
+    _onGridItemsRendered({
+        overscanColumnStartIndex,
+        overscanColumnStopIndex,
+        overscanRowStartIndex,
+        overscanRowStopIndex
+    }) {
+        const { _columns, dispatch, _remoteParticipants, _remoteParticipantsLength } = this.props;
+        const startIndex = (overscanRowStartIndex * _columns) + overscanColumnStartIndex;
+        const endIndex = Math.min(
+            (overscanRowStopIndex * _columns) + overscanColumnStopIndex,
+            _remoteParticipantsLength - 1);
+
+        dispatch(setVisibleParticipants(_remoteParticipants.slice(startIndex, endIndex + 1)));
+    }
+
     /**
      * Renders the thumbnails for remote participants.
      *
@@ -281,6 +321,7 @@ class Filmstrip extends PureComponent <Props> {
                     initialScrollLeft = { 0 }
                     initialScrollTop = { 0 }
                     itemKey = { this._gridItemKey }
+                    onItemsRendered = { this._onGridItemsRendered }
                     rowCount = { _rows }
                     rowHeight = { _thumbnailHeight + TILE_VERTICAL_MARGIN }
                     width = { _filmstripWidth }>
@@ -298,6 +339,7 @@ class Filmstrip extends PureComponent <Props> {
             height: _filmstripHeight,
             itemKey: this._listItemKey,
             itemSize: 0,
+            onItemsRendered: this._onListItemsRendered,
             width: _filmstripWidth,
             style: {
                 willChange: 'auto'

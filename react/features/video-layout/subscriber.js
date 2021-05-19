@@ -5,25 +5,11 @@ import debounce from 'lodash/debounce';
 import { pinParticipant, getPinnedParticipant } from '../base/participants';
 import { StateListenerRegistry, equals } from '../base/redux';
 import { isFollowMeActive } from '../follow-me';
-import { selectParticipant } from '../large-video/actions';
 
 import { setRemoteParticipantsWithScreenShare } from './actions';
 
 declare var APP: Object;
 declare var interfaceConfig: Object;
-
-/**
- * StateListenerRegistry provides a reliable way of detecting changes to
- * preferred layout state and dispatching additional actions.
- */
-StateListenerRegistry.register(
-    /* selector */ state => state['features/video-layout'].tileViewEnabled,
-    /* listener */ (tileViewEnabled, store) => {
-        const { dispatch } = store;
-
-        dispatch(selectParticipant());
-    }
-);
 
 /**
  * For auto-pin mode, listen for changes to the known media tracks and look

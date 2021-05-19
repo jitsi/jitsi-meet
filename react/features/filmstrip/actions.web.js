@@ -7,6 +7,7 @@ import {
     SET_HORIZONTAL_VIEW_DIMENSIONS,
     SET_TILE_VIEW_DIMENSIONS,
     SET_VERTICAL_VIEW_DIMENSIONS,
+    SET_VISIBLE_PARTICIPANTS,
     SET_VOLUME
 } from './actionTypes';
 import {
@@ -150,6 +151,23 @@ export function setVolume(participantId: string, volume: number) {
         type: SET_VOLUME,
         participantId,
         volume
+    };
+}
+
+/**
+ * Sets the list of the visible participants in the filmstrip.
+ * NOTE: The on-stage participant is not included.
+ *
+ * @param {Array<string>} participantIds - The IDs of the visible participants.
+ * @returns {{
+ *      type: SET_VISIBLE_PARTICIPANTS,
+ *      participantIds: Array<string>
+ * }}
+ */
+export function setVisibleParticipants(participantIds: Array<string>) {
+    return {
+        type: SET_VISIBLE_PARTICIPANTS,
+        participantIds
     };
 }
 
