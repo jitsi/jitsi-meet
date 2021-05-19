@@ -401,7 +401,7 @@ function Util:verify_room(session, room_address)
         end
 
         return room_address_to_verify == jid.join(
-            "["..subdomain_to_check).."]"..room_to_check, self.muc_domain);
+            "["..subdomain_to_check.."]"..room_to_check, self.muc_domain);
     else
         if auth_domain == '*' then
             -- check for wildcard in JWT claim, allow access if found
