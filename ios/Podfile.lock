@@ -288,7 +288,7 @@ PODS:
     - React
   - react-native-splash-screen (3.2.0):
     - React
-  - react-native-webrtc (1.89.1):
+  - react-native-webrtc (1.89.3):
     - React-Core
   - react-native-webview (11.0.2):
     - React-Core
@@ -559,7 +559,7 @@ SPEC CHECKSUMS:
   react-native-netinfo: 8d8db463bcc5db66a8ac5c48a7d86beb3b92f61a
   react-native-slider: b733e17fdd31186707146debf1f04b5d94aa1a93
   react-native-splash-screen: 200d11d188e2e78cea3ad319964f6142b6384865
-  react-native-webrtc: ccb0c21eb4fb04326648fbdb4a5d49977e2cf274
+  react-native-webrtc: 2e8095a43dd3d95ce796d9750280c0f48aadad3d
   react-native-webview: b2542d6fd424bcc3e3b2ec5f854f0abb4ec86c87
   React-RCTActionSheet: bcbc311dc3b47bc8efb2737ff0940239a45789a9
   React-RCTAnimation: 65f61080ce632f6dea23d52e354ffac9948396c6
