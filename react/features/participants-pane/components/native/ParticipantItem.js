@@ -1,6 +1,7 @@
 // @flow
 
 import React from 'react';
+import type { Node } from 'react';
 import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
 import { Text } from 'react-native-paper';
@@ -25,6 +26,11 @@ type Props = {
     audioMuteState: MediaState,
 
     /**
+     * React children
+     */
+    children: Node,
+
+    /**
      * Callback for when the mouse leaves this component
      */
     onLeave?: Function,
@@ -46,6 +52,7 @@ type Props = {
  * @returns {React$Element<any>}
  */
 function ParticipantItem({
+    children,
     audioMuteState = MediaState.None,
     videoMuteState = MediaState.None,
     participant: p
@@ -57,15 +64,16 @@ function ParticipantItem({
         <View style = { styles.participantContainer } >
             <Avatar
                 className = 'participant-avatar'
-                participant = { p.id }
+                participantId = { p.id }
                 size = { 32 } />
             <View style = { styles.participantContent }>
                 <View style = { styles.participantNameContainer }>
                     <Text style = { styles.participantName }>
                         { name }
                     </Text>
-                    { p.local ? <Text>({t('chat.you')})</Text> : null }
+                    { p.local ? <Text style = { styles.isLocal }>({t('chat.you')})</Text> : null }
                 </View>
+                { !p.local && children }
                 <View style = { styles.participantStates } >
                     {p.raisedHand && <RaisedHandIndicator />}
                     {VideoStateIcons[videoMuteState]}
