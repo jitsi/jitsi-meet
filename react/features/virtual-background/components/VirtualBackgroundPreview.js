@@ -10,7 +10,7 @@ import { getCurrentCameraDeviceId } from '../../base/settings';
 import { createLocalTracksF } from '../../base/tracks/functions';
 import { toggleBackgroundEffect } from '../actions';
 
-const videoClassName = 'video-preview-video flipVideoX';
+const videoClassName = 'virtual-background-preview-video flipVideoX';
 
 /**
  * The type of the React {@code PureComponent} props of {@link VirtualBackgroundPreview}.

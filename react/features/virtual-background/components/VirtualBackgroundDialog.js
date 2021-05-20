@@ -180,8 +180,7 @@ function VirtualBackground({ _jitsiTrack, _selectedThumbnail, dispatch, t }: Pro
             okKey = { 'virtualBackground.apply' }
             onSubmit = { applyVirtualBackground }
             submitDisabled = { !options || loading }
-            titleKey = { 'virtualBackground.title' }
-            width = '640px'>
+            titleKey = { 'virtualBackground.title' } >
             <VirtualBackgroundPreview options = { options } />
             {loading ? (
                 <div className = 'virtual-background-loading'>
