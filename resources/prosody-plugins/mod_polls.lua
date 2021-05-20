@@ -56,6 +56,7 @@ module:hook("message/bare", function(event)
 		local poll = {
 			id = data.pollId,
 			sender_id = data.senderId,
+			sender_name = data.senderName,
 			question = data.question,
 			answers = answers
 		};
@@ -73,7 +74,7 @@ module:hook("message/bare", function(event)
 
 		for i, value in ipairs(data.answers) do
 			if value then
-				poll.answers[i].voters[data.senderId] = data.voterName;
+				poll.answers[i].voters[data.voterId] = data.voterName;
 			end
 		end
 	end
@@ -82,7 +83,9 @@ end);
 module:hook("muc-occupant-joined", function(event)
 	local room = event.room;
 	if is_healthcheck_room(room.jid) then return end
-	if check_polls(room) then return end
+	if room.polls == nil or #room.polls.order == 0 then
+		return
+	end
 
 	local data = {
 		type = "old-polls",
@@ -92,6 +95,7 @@ module:hook("muc-occupant-joined", function(event)
 		data.polls[i] = {
 			id = poll.id,
 			senderId = poll.sender_id,
+			senderName = poll.sender_name,
 			question = poll.question,
 			answers = poll.answers
 		};
