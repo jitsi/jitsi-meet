@@ -71,7 +71,7 @@ const AbstractPollAnswerDialog = (Component: AbstractComponent<AbstractProps>) =
         conference.sendMessage({
             type: COMMAND_ANSWER_POLL,
             pollId,
-            senderId: localId,
+            voterId: localId,
             voterName: localName,
             answers: checkBoxStates
         });

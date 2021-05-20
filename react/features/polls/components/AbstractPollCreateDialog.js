@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 
 
+import { getParticipantDisplayName } from '../../base/participants';
 import { COMMAND_NEW_POLL } from '../constants';
 
 /*
@@ -67,6 +68,9 @@ const AbstractPollCreateDialog = (Component: AbstractComponent<AbstractProps>) =
     });
 
     const conference = useSelector(state => state['features/base/conference'].conference);
+    const myId = conference.myUserId();
+    const myName = useSelector(state => getParticipantDisplayName(state, myId));
+
 
     const onSubmit = useCallback(() => {
         const filteredAnswers = answers.filter(answer => answer.trim().length > 0);
@@ -78,7 +82,8 @@ const AbstractPollCreateDialog = (Component: AbstractComponent<AbstractProps>) =
         conference.sendMessage({
             type: COMMAND_NEW_POLL,
             pollId: Math.floor(Math.random() * Number.MAX_SAFE_INTEGER).toString(36),
-            senderId: conference.myUserId(),
+            senderId: myId,
+            senderName: myName,
             question,
             answers: filteredAnswers
         });

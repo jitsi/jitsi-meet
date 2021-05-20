@@ -3,9 +3,9 @@
 export type Answer = {
 
     /**
-     * ID of the sender of this poll
+     * ID of the voter for this answer
      */
-    senderId: string,
+    voterId: string,
 
     /**
      * Name of the voter
@@ -29,6 +29,13 @@ export type Poll = {
      * ID of the sender of this poll
      */
     senderId: string,
+
+
+    /**
+     * Name of the sender of this poll
+     * Store poll sender name in case they exit the call
+     */
+    senderName: string,
 
     /**
      * If the participant has answered the poll

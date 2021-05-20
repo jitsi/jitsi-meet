@@ -12,9 +12,9 @@ const parsePollData = pollData => {
     if (typeof pollData !== 'object' || pollData === null) {
         return null;
     }
-    const { id, senderId, question, answers } = pollData;
+    const { id, senderId, senderName, question, answers } = pollData;
 
-    if (typeof id !== 'string' || typeof senderId !== 'string'
+    if (typeof id !== 'string' || typeof senderId !== 'string' || typeof senderName !== 'string'
         || typeof question !== 'string' || !(answers instanceof Array)) {
         return null;
     }
@@ -39,6 +39,7 @@ const parsePollData = pollData => {
 
     return {
         senderId,
+        senderName,
         question,
         answered: true,
         answers: answers2
@@ -51,10 +52,11 @@ StateListenerRegistry.register(
         if (conference && conference !== previousConference) {
             conference.room.addListener('xmmp.json_message_received', (senderJid, data) => {
                 if (data.type === COMMAND_NEW_POLL) {
-                    const { question, answers, pollId, senderId } = data;
+                    const { question, answers, pollId, senderId, senderName } = data;
 
                     const poll = {
                         senderId,
+                        senderName,
                         answered: false,
                         question,
                         answers: answers.map(answer => {
@@ -71,10 +73,10 @@ StateListenerRegistry.register(
                     store.dispatch(receivePoll(pollId, poll, queue));
 
                 } else if (data.type === COMMAND_ANSWER_POLL) {
-                    const { pollId, answers, senderId, voterName } = data;
+                    const { pollId, answers, voterId, voterName } = data;
 
                     const receivedAnswer: Answer = {
-                        senderId,
+                        voterId,
                         voterName,
                         pollId,
                         answers

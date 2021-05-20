@@ -20,7 +20,7 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
         const { poll, pollId, queue } = action;
 
         const state = getState();
-        const senderName = getParticipantDisplayName(state, poll.senderId);
+        const senderName = poll.senderName;
         const localParticipant = getLocalParticipant(state);
         const localName = getParticipantDisplayName(state, localParticipant.id);
         const isLocal = poll.senderId === localParticipant.id;
