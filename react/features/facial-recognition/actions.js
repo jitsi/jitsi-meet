@@ -2,6 +2,8 @@
 
 import * as faceapi from 'face-api.js';
 
+import { getLocalVideoTrack } from '../base/tracks';
+
 import { SET_FACIAL_RECOGNITION_MODELS_LOADED } from './actionTypes';
 import { detectFacialExpression } from './functions';
 import logger from './logger';
@@ -37,7 +39,10 @@ export function maybeStartFacialRecognition(track: Object) {
                 dispatch(setFacialRecognitionModelsLoaded(false));
             }
         }
-        const stream = track.getOriginalStream();
+
+        const { jitsiTrack: localVideoTrack } = getLocalVideoTrack(state['features/base/tracks']);
+        const stream = localVideoTrack.getOriginalStream();
+        // const stream = track.getOriginalStream();
         const firstVideoTrack = stream.getVideoTracks()[0];
         const { height, width } = firstVideoTrack.getSettings() ?? firstVideoTrack.getConstraints();
 
@@ -50,7 +55,7 @@ export function maybeStartFacialRecognition(track: Object) {
         videoElement.srcObject = stream;
 
         videoElement.onloadeddata = () => {
-            setInterval(() => detectFacialExpression(videoElement, outputCanvas), 10000);
+            interval = setInterval(() => detectFacialExpression(videoElement, outputCanvas), 5000);
         }
 
     }
