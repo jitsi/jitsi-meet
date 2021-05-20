@@ -1,25 +1,14 @@
 import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 
 /**
- * The style for content.
- */
-const flexContent = {
-    alignItems: 'center',
-    color: BaseTheme.palette.icon01,
-    display: 'flex',
-    flex: 1
-};
-
-/**
  * The style of the participants pane buttons.
  */
 const container = {
     alignItems: 'center',
     display: 'flex',
     flexDirection: 'row',
-    height: 64,
-    justifyContent: 'center',
-    paddingRight: 8,
+    height: 72,
+    paddingRight: 16,
     width: '100%'
 };
 
@@ -32,6 +21,7 @@ const button = {
     borderRadius: BaseTheme.shape.borderRadius,
     display: 'flex',
     height: 48,
+    justifyContent: 'center',
     marginLeft: 'auto'
 };
 
@@ -48,7 +38,7 @@ const smallButton = {
  */
 const buttonContent = {
     ...BaseTheme.typography.labelButtonLarge,
-    ...flexContent,
+    color: BaseTheme.palette.text01,
     justifyContent: 'center'
 };
 
@@ -70,34 +60,39 @@ export default {
 
     participantContainer: {
         alignItems: 'center',
-        color: BaseTheme.palette.text01,
         display: 'flex',
+        flexDirection: 'row',
         fontSize: 13,
         height: 64,
+        justifyContent: 'center',
         margin: BaseTheme.spacing[4],
-        position: 'relative',
-        width: 375
+        paddingLeft: 8,
+        paddingRight: 8
     },
 
     participantContent: {
-        ...flexContent,
+        backgroundColor: 'green',
         boxShadow: BaseTheme.shape.boxShadow,
-        height: '100%',
         overflow: 'hidden',
-        paddingRight: BaseTheme.spacing[4]
+        paddingRight: BaseTheme.spacing[4],
+        width: '100%'
     },
 
     participantNameContainer: {
         display: 'flex',
         flex: 1,
+        flexDirection: 'row',
         marginRight: BaseTheme.spacing[3],
         overflow: 'hidden'
     },
 
     participantName: {
         overflow: 'hidden',
-        textOverflow: 'ellipsis',
-        whiteSpace: 'nowrap'
+        color: BaseTheme.palette.text01
+    },
+
+    isLocal: {
+        color: BaseTheme.palette.text01
     },
 
     participantsPane: {
@@ -105,8 +100,8 @@ export default {
     },
 
     participantStates: {
-        display: 'flex',
-        justifyContent: 'flex-end'
+        alignItems: 'flex-end',
+        display: 'flex'
     },
 
     raisedHandIndicator: {
@@ -121,13 +116,11 @@ export default {
     },
 
     header: {
-        ...container,
-        backgroundColor: 'red'
+        ...container
     },
 
     footer: {
         ...container,
-        backgroundColor: 'green',
         marginTop: 'auto'
     },
 
@@ -136,7 +129,8 @@ export default {
     },
 
     closeIcon: {
-        ...buttonContent
+        ...buttonContent,
+        left: 8
     },
 
     moreButton: {
@@ -144,16 +138,13 @@ export default {
     },
 
     moreIcon: {
-        ...buttonContent
+        ...buttonContent,
+        left: 8
     },
 
     muteAllButton: {
         ...button,
-        paddingBottom: 12,
-        paddingLeft: 16,
-        paddingRight: 16,
-        paddingTop: 12,
-        width: 94
+        left: 80
     },
 
     muteAllContent: {

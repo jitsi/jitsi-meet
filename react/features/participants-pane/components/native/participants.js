@@ -35,6 +35,7 @@ export const participants = [
         name: 'me',
         pinned: false,
         presence: undefined,
+        raisedHand: true,
         role: 'participant',
         startWithAudioMuted: true,
         startWithVideoMuted: false
@@ -95,6 +96,7 @@ export const participants = [
         name: 'Carlin',
         pinned: false,
         presence: undefined,
+        raisedHand: true,
         role: 'participant',
         startWithAudioMuted: true,
         startWithVideoMuted: false

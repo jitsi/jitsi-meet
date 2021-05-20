@@ -31,12 +31,13 @@ export const LobbyParticipantItem = ({ participant: p }: Props) => {
             participant = { p }
             videoMuteState = { MediaState.None }>
             <Button
-                onClick = { reject }
+                mode = 'contained'
+                onPress = { reject }
                 style = { styles.participantActionButton }>
                 {t('lobby.reject')}
             </Button>
             <Button
-                onClick = { admit }
+                onPress = { admit }
                 style = { styles.participantActionButton }>
                 {t('lobby.admit')}
             </Button>

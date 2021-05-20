@@ -10,6 +10,7 @@ import { Icon, IconClose, IconHorizontalPoints } from '../../../base/icons';
 import { JitsiModal } from '../../../base/modal';
 import { close } from '../../actions.any';
 
+import { LobbyParticipantList } from './LobbyParticipantList';
 import styles from './styles';
 
 
@@ -47,7 +48,7 @@ function ParticipantsPane({ theme }: Props) {
                     /* eslint-disable-next-line react/jsx-no-bind */
                     icon = { () =>
                         (<Icon
-                            size = { 16 }
+                            size = { 24 }
                             src = { IconClose } />)
                     }
                     mode = 'contained'
@@ -59,8 +60,11 @@ function ParticipantsPane({ theme }: Props) {
                         }
                     }} />
             </View>
+            <LobbyParticipantList />
             <View style = { styles.footer }>
                 <Button
+                    color = { palette.text01 }
+                    compact = { true }
                     contentStyle = { styles.muteAllContent }
                     onPress = { closePane }
                     style = { styles.muteAllButton } >
@@ -71,7 +75,7 @@ function ParticipantsPane({ theme }: Props) {
                     /* eslint-disable-next-line react/jsx-no-bind */
                     icon = { () =>
                         (<Icon
-                            size = { 16 }
+                            size = { 24 }
                             src = { IconHorizontalPoints } />)
                     }
                     mode = 'contained'
