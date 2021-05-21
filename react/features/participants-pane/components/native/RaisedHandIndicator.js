@@ -9,6 +9,7 @@ export const RaisedHandIndicator = () => (
     <View style = { styles.raisedHandIndicator }>
         <Icon
             size = { 15 }
-            src = { IconRaisedHandHollow } />
+            src = { IconRaisedHandHollow }
+            style = { styles.raisedHandIcon } />
     </View>
 );

@@ -27,19 +27,22 @@ export const LobbyParticipantItem = ({ participant: p }: Props) => {
 
     return (
         <ParticipantItem
-            audioMuteState = { MediaState.None }
+            audioMuteState = { MediaState.Muted }
             participant = { p }
-            videoMuteState = { MediaState.None }>
+            videoMuteState = { MediaState.ForceMuted }>
             <Button
+                labelStyle = { styles.participantActionButtonText }
+                mode = 'contained'
+                onPress = { admit }
+                style = { styles.participantActionButton }>
+                {t('lobby.admit')}
+            </Button>
+            <Button
+                labelStyle = { styles.participantActionButtonText }
                 mode = 'contained'
                 onPress = { reject }
                 style = { styles.participantActionButton }>
                 {t('lobby.reject')}
-            </Button>
-            <Button
-                onPress = { admit }
-                style = { styles.participantActionButton }>
-                {t('lobby.admit')}
             </Button>
         </ParticipantItem>
     );

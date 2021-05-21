@@ -18,6 +18,14 @@ import {
 import { RaisedHandIndicator } from './RaisedHandIndicator';
 import styles from './styles';
 
+// /**
+//  * Participant actions component mapping depending on trigger type.
+//  */
+// const Actions = {
+//     [ActionTrigger.Hover]: ParticipantActionsHover,
+//     [ActionTrigger.Permanent]: ParticipantActionsPermanent
+// };
+
 type Props = {
 
     /**
@@ -73,11 +81,11 @@ function ParticipantItem({
                     </Text>
                     { p.local ? <Text style = { styles.isLocal }>({t('chat.you')})</Text> : null }
                 </View>
-                { !p.local && children }
-                <View style = { styles.participantStates } >
+                { p.local && <Text style = { styles.participantActions }> {children} </Text> }
+                <View style = { styles.participantStatesContainer } >
                     {p.raisedHand && <RaisedHandIndicator />}
-                    {VideoStateIcons[videoMuteState]}
-                    {AudioStateIcons[audioMuteState]}
+                    <View style = { styles.participantStateVideo }>{VideoStateIcons[videoMuteState]}</View>
+                    <View style = { styles.participantStateAudio }>{AudioStateIcons[audioMuteState]}</View>
                 </View>
             </View>
         </View>
