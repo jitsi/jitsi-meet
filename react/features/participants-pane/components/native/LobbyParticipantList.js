@@ -14,7 +14,7 @@ export const LobbyParticipantList = () => {
     return (
         <>
             {/* eslint-disable-next-line max-len */}
-            <Text style = { styles.participantName }>
+            <Text style = { styles.lobbyListDescription }>
                 {t('participantsPane.headings.lobby',
                     { count: participants.length })}
             </Text>
