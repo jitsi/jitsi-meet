@@ -3,8 +3,15 @@
 import type { Dispatch } from 'redux';
 
 import { createToolbarEvent, sendAnalytics } from '../../../analytics';
+import {
+    getFeatureFlag,
+    LOBBY_MODE_ENABLED,
+    MEETING_PASSWORD_ENABLED,
+    SECURITY_OPTIONS_ENABLED
+} from '../../../base/flags';
 import { translate } from '../../../base/i18n';
 import { IconSecurityOff, IconSecurityOn } from '../../../base/icons';
+import { isLocalParticipantModerator } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
 import { toggleSecurityDialog } from '../../actions';
@@ -62,11 +69,19 @@ class SecurityDialogButton extends AbstractButton<Props, *> {
  * @returns {Props}
  */
 function mapStateToProps(state: Object) {
+    const { conference } = state['features/base/conference'];
+    const { hideLobbyButton } = state['features/base/config'];
     const { locked } = state['features/base/conference'];
     const { lobbyEnabled } = state['features/lobby'];
+    const lobbySupported = conference && conference.isLobbySupported();
+    const lobby = lobbySupported && isLocalParticipantModerator(state) && !hideLobbyButton;
+    const enabledFlag = getFeatureFlag(state, SECURITY_OPTIONS_ENABLED, true);
+    const enabledLobbyModeFlag = getFeatureFlag(state, LOBBY_MODE_ENABLED, true) && lobby;
+    const enabledMeetingPassFlag = getFeatureFlag(state, MEETING_PASSWORD_ENABLED, true);
 
     return {
-        _locked: locked || lobbyEnabled
+        _locked: locked || lobbyEnabled,
+        visible: enabledFlag || (enabledLobbyModeFlag || enabledMeetingPassFlag)
     };
 }
 

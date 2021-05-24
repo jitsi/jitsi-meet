@@ -535,6 +535,7 @@
             "participantsList": "({{count}}) partecipanti"
         },
         "actions": {
+            "invite": "Invita persone",
             "muteAll": "Silenzia tutti",
             "stopVideo": "Ferma il video"
         }

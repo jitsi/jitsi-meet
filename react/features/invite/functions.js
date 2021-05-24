@@ -10,7 +10,7 @@ import { toState } from '../base/redux';
 import { doGetJSON, parseURIString } from '../base/util';
 import { isVpaasMeeting } from '../billing-counter/functions';
 
-import { SIP_ADDRESS_REGEX } from './constants';
+import { INVITE_TYPES, SIP_ADDRESS_REGEX } from './constants';
 import logger from './logger';
 
 declare var $: Function;
@@ -227,13 +227,13 @@ export function getInviteResultsForQuery(
              * the phone number can then be cleaned up when convenient.
              */
             const hasPhoneResult
-                = peopleResults.find(result => result.type === 'phone');
+                = peopleResults.find(result => result.type === INVITE_TYPES.PHONE);
 
             if (!hasPhoneResult && typeof phoneResults.allow === 'boolean') {
                 results.push({
                     allowed: phoneResults.allow,
                     country: phoneResults.country,
-                    type: 'phone',
+                    type: INVITE_TYPES.PHONE,
                     number: phoneResults.phone,
                     originalEntry: text,
                     showCountryCodeReminder: !hasCountryCode
@@ -242,7 +242,7 @@ export function getInviteResultsForQuery(
 
             if (sipInviteEnabled && isASipAddress(text)) {
                 results.push({
-                    type: 'sip',
+                    type: INVITE_TYPES.SIP,
                     address: text
                 });
             }
@@ -558,7 +558,7 @@ export function getShareInfoText(
             .catch(error =>
                 logger.error('Error fetching numbers or conferenceID', error))
             .then(defaultDialInNumber => {
-                let dialInfoPageUrl = getDialInfoPageURL(state);
+                let dialInfoPageUrl = getDialInfoPageURL(state, room);
 
                 if (useHtml) {
                     dialInfoPageUrl
@@ -580,11 +580,12 @@ export function getShareInfoText(
  * Generates the URL for the static dial in info page.
  *
  * @param {Object} state - The state from the Redux store.
+ * @param {string?} roomName - The conference name. Optional name, if missing will be extracted from state.
  * @returns {string}
  */
-export function getDialInfoPageURL(state: Object) {
+export function getDialInfoPageURL(state: Object, roomName: ?string) {
     const { didPageUrl } = state['features/dynamic-branding'];
-    const conferenceName = getRoomName(state);
+    const conferenceName = roomName ?? getRoomName(state);
     const { locationURL } = state['features/base/connection'];
     const { href } = locationURL;
     const room = _decodeRoomURI(conferenceName);
@@ -829,8 +830,9 @@ export function inviteSipEndpoints( // eslint-disable-line max-params
         return Promise.resolve();
     }
 
+    const regex = new RegExp(`/${roomName}`, 'i');
     const baseUrl = Object.assign(new URL(locationURL.toString()), {
-        pathname: locationURL.pathname.replace(`/${roomName}`, ''),
+        pathname: locationURL.pathname.replace(regex, ''),
         hash: '',
         search: ''
     });

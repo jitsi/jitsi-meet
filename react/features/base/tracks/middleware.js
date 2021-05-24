@@ -159,7 +159,7 @@ MiddlewareRegistry.register(store => next => action => {
                 if (jitsiTrack.type === MEDIA_TYPE.PRESENTER) {
                     APP.conference.mutePresenter(muted);
                 } else if (jitsiTrack.isLocal()) {
-                    APP.conference.setVideoMuteStatus(muted);
+                    APP.conference.setVideoMuteStatus();
                 } else {
                     APP.UI.setVideoMuted(participantID);
                 }

@@ -15,6 +15,7 @@ import {
     UPDATE_DIAL_IN_NUMBERS_FAILED,
     UPDATE_DIAL_IN_NUMBERS_SUCCESS
 } from './actionTypes';
+import { INVITE_TYPES } from './constants';
 import {
     getDialInConferenceID,
     getDialInNumbers,
@@ -76,7 +77,7 @@ export function invite(
         if (showCalleeInfo
                 && !calleeInfoVisible
                 && invitees.length === 1
-                && invitees[0].type === 'user'
+                && invitees[0].type === INVITE_TYPES.USER
                 && participants.length === 1) {
             dispatch(setCalleeInfoVisible(true, invitees[0]));
         }
@@ -110,7 +111,7 @@ export function invite(
 
         // First create all promises for dialing out.
         const phoneNumbers
-            = invitesLeftToSend.filter(({ type }) => type === 'phone');
+            = invitesLeftToSend.filter(({ type }) => type === INVITE_TYPES.PHONE);
 
         // For each number, dial out. On success, remove the number from
         // {@link invitesLeftToSend}.
@@ -131,7 +132,7 @@ export function invite(
 
         const usersAndRooms
             = invitesLeftToSend.filter(
-                ({ type }) => type === 'user' || type === 'room');
+                ({ type }) => [ INVITE_TYPES.USER, INVITE_TYPES.ROOM ].includes(type));
 
         if (usersAndRooms.length) {
             // Send a request to invite all the rooms and users. On success,
@@ -146,7 +147,7 @@ export function invite(
                 .then(() => {
                     invitesLeftToSend
                         = invitesLeftToSend.filter(
-                            ({ type }) => type !== 'user' && type !== 'room');
+                            ({ type }) => ![ INVITE_TYPES.USER, INVITE_TYPES.ROOM ].includes(type));
                 })
                 .catch(error => {
                     dispatch(setCalleeInfoVisible(false));
@@ -159,17 +160,17 @@ export function invite(
         // Sipgw calls are fire and forget. Invite them to the conference, then
         // immediately remove them from invitesLeftToSend.
         const vrooms
-            = invitesLeftToSend.filter(({ type }) => type === 'videosipgw');
+            = invitesLeftToSend.filter(({ type }) => type === INVITE_TYPES.VIDEO_ROOM);
 
         conference
             && vrooms.length > 0
             && dispatch(inviteVideoRooms(conference, vrooms));
 
         invitesLeftToSend
-            = invitesLeftToSend.filter(({ type }) => type !== 'videosipgw');
+            = invitesLeftToSend.filter(({ type }) => type !== INVITE_TYPES.VIDEO_ROOM);
 
         const sipEndpoints
-            = invitesLeftToSend.filter(({ type }) => type === 'sip');
+            = invitesLeftToSend.filter(({ type }) => type === INVITE_TYPES.SIP);
 
         conference && inviteSipEndpoints(
             sipEndpoints,
@@ -182,7 +183,7 @@ export function invite(
         );
 
         invitesLeftToSend
-            = invitesLeftToSend.filter(({ type }) => type !== 'sip');
+            = invitesLeftToSend.filter(({ type }) => type !== INVITE_TYPES.SIP);
 
         return (
             Promise.all(allInvitePromises)
@@ -214,7 +215,7 @@ export function updateDialInNumbers() {
             getDialInNumbers(dialInNumbersUrl, room, mucURL),
             getDialInConferenceID(dialInConfCodeUrl, room, mucURL)
         ])
-            .then(([ dialInNumbers, { conference, id, message } ]) => {
+            .then(([ dialInNumbers, { conference, id, message, sipUri } ]) => {
                 if (!conference || !id) {
                     return Promise.reject(message);
                 }
@@ -222,7 +223,8 @@ export function updateDialInNumbers() {
                 dispatch({
                     type: UPDATE_DIAL_IN_NUMBERS_SUCCESS,
                     conferenceID: id,
-                    dialInNumbers
+                    dialInNumbers,
+                    sipUri
                 });
             })
             .catch(error => {
