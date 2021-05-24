@@ -19,7 +19,7 @@ function setFacialRecognitionModelsLoaded(loaded: boolean) {
     };
 }
 
-export function maybeStartFacialRecognition(track: Object) {
+export function maybeStartFacialRecognition() {
     return async function(dispatch: Function, getState: Function) {
         if (interval) {
             return;
@@ -42,7 +42,6 @@ export function maybeStartFacialRecognition(track: Object) {
 
         const { jitsiTrack: localVideoTrack } = getLocalVideoTrack(state['features/base/tracks']);
         const stream = localVideoTrack.getOriginalStream();
-        // const stream = track.getOriginalStream();
         const firstVideoTrack = stream.getVideoTracks()[0];
         const { height, width } = firstVideoTrack.getSettings() ?? firstVideoTrack.getConstraints();
 
