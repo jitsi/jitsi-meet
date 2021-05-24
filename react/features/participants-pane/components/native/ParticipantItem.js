@@ -3,8 +3,7 @@
 import React from 'react';
 import type { Node } from 'react';
 import { useTranslation } from 'react-i18next';
-import { View } from 'react-native';
-import { Text } from 'react-native-paper';
+import { Text, View } from 'react-native';
 import { useSelector } from 'react-redux';
 
 import { Avatar } from '../../../base/avatar';
@@ -81,7 +80,7 @@ function ParticipantItem({
                     </Text>
                     { p.local ? <Text style = { styles.isLocal }>({t('chat.you')})</Text> : null }
                 </View>
-                { p.local && <Text style = { styles.participantActions }> {children} </Text> }
+                { p.local ? <Text style = { styles.participantActions }> ({ children }) </Text> : null }
                 <View style = { styles.participantStatesContainer } >
                     {p.raisedHand && <RaisedHandIndicator />}
                     <View style = { styles.participantStateVideo }>{VideoStateIcons[videoMuteState]}</View>
