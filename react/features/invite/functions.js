@@ -301,14 +301,6 @@ export function getInviteText({
         invite = `${invite}\n${dial}\n${moreNumbers}`;
     }
 
-    if (dialIn.sipUri) {
-        const sipText = t('info.inviteSipEndpoint', {
-            sipUri: dialIn.sipUri
-        });
-
-        invite = `${invite}\n${sipText}`;
-    }
-
     return invite;
 }
 
