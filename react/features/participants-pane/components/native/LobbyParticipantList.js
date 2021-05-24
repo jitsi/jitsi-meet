@@ -13,20 +13,20 @@ export const LobbyParticipantList = () => {
     const { t } = useTranslation();
 
     return (
-        <>
-            <View style = { styles.lobbyListContainer } >
+        <View style = { styles.lobbyList }>
+            <View style = { styles.lobbyListDetails } >
                 <Text style = { styles.lobbyListDescription }>
                     {t('participantsPane.headings.lobby',
                         { count: participants.length })}
                 </Text>
                 <View style = { styles.lobbyListActions }>
                     <Button
-                        labelStyle = { styles.allParticipantActionButton }
+                        labelStyle = { styles.allParticipantActionsButton }
                         mode = 'text'>
                         {t('lobby.admitAll')}
                     </Button>
                     <Button
-                        labelStyle = { styles.allParticipantActionButton }
+                        labelStyle = { styles.allParticipantActionsButton }
                         mode = 'text'>
                         {t('lobby.rejectAll')}
                     </Button>
@@ -37,6 +37,6 @@ export const LobbyParticipantList = () => {
                     key = { p.id }
                     participant = { p } />)
             )}
-        </>
+        </View>
     );
 };

@@ -38,17 +38,4 @@ class ParticipantsPaneButton extends AbstractButton<Props, *> {
     }
 }
 
-/**
- * Maps part of the redux state to the component's props.
- *
- * @param {Object} state - The redux store/state.
- * @returns {Props}
- */
-function mapStateToProps(state: Object) {
-
-    return {
-        state
-    };
-}
-
-export default translate(connect(mapStateToProps)(ParticipantsPaneButton));
+export default translate(connect()(ParticipantsPaneButton));
