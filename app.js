@@ -2,7 +2,7 @@
 
 import 'jquery';
 
-import 'olm';
+import '@matrix-org/olm';
 
 import 'focus-visible';
 
