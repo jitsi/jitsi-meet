@@ -32,8 +32,8 @@ const DEFAULT_STATE = {
     backgroundImageUrl: '',
 
     /**
-     * Flag indicating that the logo (JitsiWatermark) can be displayed.
-     * This is used in order to avoid image flickering.
+     * Flag indicating that the branding data can be displayed.
+     * This is used in order to avoid image flickering / text changing(blipping).
      *
      * @public
      * @type {boolean}
