@@ -20,6 +20,11 @@ ssl = {
     ciphers = "ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384"
 }
 
+unlimited_jids = {
+    "focusUser@auth.jitmeet.example.com",
+    "jvb@auth.jitmeet.example.com"
+}
+
 VirtualHost "jitmeet.example.com"
     -- enabled = false -- Remove this line to enable this host
     authentication = "anonymous"
@@ -77,6 +82,9 @@ Component "internal.auth.jitmeet.example.com" "muc"
     muc_room_default_public_jids = true
 
 VirtualHost "auth.jitmeet.example.com"
+    modules_enabled = {
+        "limits_exception";
+    }
     authentication = "internal_hashed"
 
 -- Proxy to jicofo's user JID, so that it doesn't have to register as a component.
