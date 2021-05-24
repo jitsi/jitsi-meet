@@ -11,8 +11,8 @@ import { translate } from '../../../base/i18n';
 import { IconMeetingUnlocked, IconMeetingLocked } from '../../../base/icons';
 import { connect } from '../../../base/redux';
 import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
-import { moveToMainRoom } from '../../actions';
-import { getIsInBreakoutRoom, selectBreakoutRooms } from '../../functions';
+import { moveToRoom } from '../../actions';
+import { isInBreakoutRoom, getRooms } from '../../functions';
 
 import { default as BreakoutRoomPickerDialog } from './BreakoutRoomPickerDialog';
 
@@ -24,7 +24,7 @@ type Props = AbstractButtonProps & {
     /**
      * Whether the local participant is in a breakout room.
      */
-    isInBreakoutRoom: boolean,
+    inBreakoutRoom: boolean,
 
     /**
      * Whether the breakout room button is visible.
@@ -66,7 +66,7 @@ class BreakoutRoomButton extends AbstractButton<Props, *> {
      * @returns {boolean}
      */
     _isToggled() {
-        return this.props.isInBreakoutRoom;
+        return this.props.inBreakoutRoom;
     }
 
     /**
@@ -75,14 +75,14 @@ class BreakoutRoomButton extends AbstractButton<Props, *> {
      * @returns {void}
      */
     _toggleBreakoutRoom() {
-        const join = !this.props.isInBreakoutRoom;
+        const join = !this.props.inBreakoutRoom;
 
         sendAnalytics(createToolbarEvent('join.breakoutRoom', { join }));
 
         if (join) {
             this.props.dispatch(openDialog(BreakoutRoomPickerDialog));
         } else {
-            this.props.dispatch(moveToMainRoom());
+            this.props.dispatch(moveToRoom());
         }
     }
 }
@@ -95,11 +95,12 @@ class BreakoutRoomButton extends AbstractButton<Props, *> {
  * @returns {Props}
  */
 function _mapStateToProps(state): Object {
-    const isInBreakoutRoom = getIsInBreakoutRoom(state);
+    const inBreakoutRoom = isInBreakoutRoom(state);
+    const rooms = Object.values(getRooms(state));
 
     return {
-        isInBreakoutRoom,
-        visible: selectBreakoutRooms(state).length > 0
+        inBreakoutRoom,
+        visible: rooms.length > 1
     };
 }
 

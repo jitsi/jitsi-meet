@@ -2,8 +2,11 @@
 
 import React, { type Node } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useSelector } from 'react-redux';
 
+import { equals } from '../../../base/redux';
 import { ActionTrigger } from '../../constants';
+import { getRoomParticipants } from '../../functions';
 
 import {
     Heading,
@@ -56,6 +59,7 @@ export const Room = ({
     room
 }: Props) => {
     const RoomActions = Actions[actionsTrigger];
+    const participants = useSelector(state => getRoomParticipants(state, room.id), equals);
     const { t } = useTranslation();
 
     return (
@@ -64,7 +68,8 @@ export const Room = ({
             onMouseLeave = { onLeave }
             trigger = { actionsTrigger }>
             <Heading>
-                {t('breakoutRooms.headings.breakoutRoom', { index: room.index })}
+                { room?.name || t('breakoutRooms.mainRoom') }
+                { participants.length > 0 && ` (${participants.length})` }
             </Heading>
             <RoomActions children = { children } />
         </RoomContainer>

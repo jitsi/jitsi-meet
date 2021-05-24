@@ -203,6 +203,18 @@ export const RoomContainer = styled.div`
   ${props => !props.isHighlighted && '}'}
 `;
 
+export const ParticipantsAutoAssignButton = styled(Button).attrs({
+    primary: true
+})`
+  font-size: 15px;
+  height: 40px;
+  width: 100%;
+
+  & > *:not(:last-child) {
+    margin-right: 8px;
+  }
+`;
+
 export const RoomLeaveButton = styled(Button).attrs({
     primary: true
 })`

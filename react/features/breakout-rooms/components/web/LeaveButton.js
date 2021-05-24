@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 
 import { Icon, IconHangup } from '../../../base/icons';
-import { moveToMainRoom } from '../../actions';
+import { moveToRoom } from '../../actions';
 
 import { RoomLeaveButton } from './styled';
 
@@ -14,7 +14,7 @@ export const LeaveButton = () => {
     const dispatch = useDispatch();
 
     const onLeave = useCallback(() => {
-        dispatch(moveToMainRoom());
+        dispatch(moveToRoom());
     }, [ dispatch ]);
 
     return (

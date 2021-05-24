@@ -3,6 +3,7 @@
 import React, { Component } from 'react';
 import { SafeAreaView, ScrollView } from 'react-native';
 
+import { getParticipants } from '../../../base/participants';
 import { Platform } from '../../../base/react';
 import { connect } from '../../../base/redux';
 import { ASPECT_RATIO_NARROW } from '../../../base/responsive-ui/constants';
@@ -11,7 +12,6 @@ import { isFilmstripVisible } from '../../functions';
 import LocalThumbnail from './LocalThumbnail';
 import Thumbnail from './Thumbnail';
 import styles from './styles';
-import { getParticipants } from '../../../base/participants';
 
 /**
  * Filmstrip component's property types.

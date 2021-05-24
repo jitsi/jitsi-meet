@@ -44,15 +44,15 @@
         "audioOnly": "Low bandwidth"
     },
     "breakoutRooms": {
-        "headings": {
-            "breakoutRoom": "Breakout room #{{index}}"
-        },
+        "name": "Breakout room #{{index}}",
+        "mainRoom": "Main room",
         "actions": {
             "addRoom": "Add room",
+            "autoAssign": "Auto assign to breakout rooms",
             "join": "Join",
             "remove": "Remove",
             "leaveBreakoutRoom": "Leave breakout room",
-            "sendToBreakoutRoom": "Send to breakout room #{{index}}"
+            "sendToBreakoutRoom": "Send to {{name}}"
         }
     },
     "calendarSync": {

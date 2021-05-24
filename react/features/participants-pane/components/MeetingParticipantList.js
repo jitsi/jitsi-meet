@@ -3,11 +3,11 @@
 import _ from 'lodash';
 import React, { useCallback, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useStore, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 
 
 import { getParticipants } from '../../base/participants';
-import { getCurrentRoomId, getBreakoutRoom, getIsInBreakoutRoom } from '../../breakout-rooms/functions';
+import { getCurrentRoomId, getRooms, isInBreakoutRoom } from '../../breakout-rooms/functions';
 import { findStyledAncestor } from '../functions';
 
 import { InviteButton } from './InviteButton';
@@ -38,12 +38,11 @@ const initialState = Object.freeze(Object.create(null));
 export const MeetingParticipantList = () => {
     const isMouseOverMenu = useRef(false);
     const participants = useSelector(getParticipants, _.isEqual);
+    const currentRoomId = useSelector(getCurrentRoomId);
+    const { [currentRoomId]: currentRoom } = useSelector(getRooms);
     const [ raiseContext, setRaiseContext ] = useState<RaiseContext>(initialState);
+    const inBreakoutRoom = useSelector(isInBreakoutRoom);
     const { t } = useTranslation();
-    const store = useStore();
-    const state = store.getState();
-    const isInBreakoutRoom = getIsInBreakoutRoom(state);
-    const currentBreakoutRoom = getBreakoutRoom(state, getCurrentRoomId(state));
 
     const lowerMenu = useCallback(() => {
         /**
@@ -92,13 +91,12 @@ export const MeetingParticipantList = () => {
     return (
     <>
         <Heading> {
-            isInBreakoutRoom
-                ? t('breakoutRooms.headings.breakoutRoom', { index: currentBreakoutRoom.index,
-                    count: participants.length })
+            currentRoom?.name
+                ? `${currentRoom.name} (${participants.length})`
                 : t('participantsPane.headings.mainRoom', { count: participants.length })
         }
         </Heading>
-        {!isInBreakoutRoom && <InviteButton />}
+        {!inBreakoutRoom && <InviteButton />}
         <div>
             {participants.map(p => (
                 <MeetingParticipantItem

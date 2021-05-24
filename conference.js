@@ -110,6 +110,7 @@ import {
     trackRemoved
 } from './react/features/base/tracks';
 import { downloadJSON } from './react/features/base/util/downloadJSON';
+import { hangupAllProxyModeratorConferences } from './react/features/breakout-rooms/actions';
 import { getConferenceOptions } from './react/features/conference/functions';
 import { showDesktopPicker } from './react/features/desktop-picker';
 import { appendSuffix } from './react/features/display-name';
@@ -2829,7 +2830,8 @@ export default {
      * @param {boolean} [requestFeedback=false] if user feedback should be
      * requested
      */
-    hangup(requestFeedback = false) {
+    async hangup(requestFeedback = false) {
+        await APP.store.dispatch(hangupAllProxyModeratorConferences());
         APP.store.dispatch(disableReceiver());
 
         this._stopProxyConnection();

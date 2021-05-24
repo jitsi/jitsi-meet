@@ -1,94 +1,102 @@
 // @flow
 
+import { getCurrentConference } from '../base/conference';
+import { toState } from '../base/redux';
+import { getBackendSafeRoomName } from '../base/util';
+
 import { FEATURE_KEY } from './constants';
 
 /**
  * Returns the main room id.
  *
- * @param {Object} state - Global state.
+ * @param {Function|Object} stateful - The redux store, the redux
+ * {@code getState} function, or the redux state itself.
  * @returns {string} Room id of the main room or undefined.
  */
-export const getMainRoomId = (state: Object) => {
-    const pathname = state['features/base/connection']?.locationURL?.pathname;
+export const getMainRoomId = (stateful: Function | Object) => {
+    const pathname = toState(stateful)['features/base/connection']?.locationURL?.pathname;
 
     if (pathname) {
         // Remove the leading '/' from the pathname
-        return pathname.slice(1);
+        return getBackendSafeRoomName(pathname.slice(1));
     }
 
     return pathname;
 };
 
 /**
- * Selector for the list of breakout rooms.
+ * Returns the state of the breakout rooms feature.
  *
- * @param {Object} state - Global state.
- * @returns {Array<Object>} List of breakout rooms.
+ * @param {Function|Object} stateful - The redux store, the redux
+ * {@code getState} function, or the redux state itself.
+ * @returns {Object} Breakout rooms feature state.
  */
-export const selectBreakoutRooms = (state: Object) => state[FEATURE_KEY]?.breakoutRooms || [];
+export const getBreakoutRooms = (stateful: Function | Object) => toState(stateful)[FEATURE_KEY] || {};
 
 /**
- * Returns the connection used to join the breakout room by the creator.
+ * Returns the object with the rooms.
  *
- * @param {Object} state - Global state.
- * @returns {Object} Connection object.
+ * @param {Function|Object} stateful - The redux store, the redux
+ * {@code getState} function, or the redux state itself.
+ * @returns {Object} Object of rooms.
  */
-export const selectBreakoutRoomsConnection = (state: Object) => state[FEATURE_KEY]?.connection;
+export const getRooms = (stateful: Function | Object) => getBreakoutRooms(stateful)?.rooms || {};
 
 /**
- * Returns the user id of the fake participant in breakout rooms.
+ * Returns a room by its id.
  *
- * @param {Object} state - Global state.
- * @returns {string} User id.
- */
-export const selectBreakoutRoomsFakeModeratorId = (state: Object) => state[FEATURE_KEY]?.fakeModeratorId;
-
-/**
- * Returns a breakout room by id.
- *
- * @param {Object} state - Global state.
- * @param {string} breakoutRoomId - The breakout room id.
- * @returns {Object} Breakout room or undefined.
- */
-export const getBreakoutRoom = (state: Object, breakoutRoomId: string) =>
-    selectBreakoutRooms(state).find(room => room.id === breakoutRoomId);
-
-/**
- * Get the id of the current room or undefined.
- *
- * @param {Object} state - Global state.
- * @returns {string} Room id.
- */
-export const getCurrentRoomId = (state: Object) => {
-    const { room } = state['features/base/conference'];
-
-    return room;
-};
-
-/**
- * Get members of a room.
- *
- * @param {Object} state - Global state.
+ * @param {Function|Object} stateful - The redux store, the redux
+ * {@code getState} function, or the redux state itself.
  * @param {string} roomId - The room id.
- * @returns {Array} List of room members.
+ * @returns {Object} The room.
  */
-export const getRoomMembers = (state: Object, roomId: string) => {
-    const { connection } = state['features/base/connection'];
-    const muc = connection?.options?.hosts?.muc;
-    const members = connection?.xmpp?.connection?.emuc?.rooms[`${roomId}@${muc}`]?.members;
+export const getRoomById = (stateful: Function | Object, roomId: string) => getRooms(stateful)?.[roomId];
 
-    return members ? Object.values(members) : [];
+/**
+ * Returns a proxy moderator conference by room id.
+ *
+ * @param {Function|Object} stateful - The redux store, the redux
+ * {@code getState} function, or the redux state itself.
+ * @param {string} roomId - The room id.
+ * @returns {Object} The conference or undefined.
+ */
+export const getProxyModeratorConference = (stateful: Function | Object, roomId: string) => {
+    const { proxyModeratorConferences = {} } = getBreakoutRooms(stateful);
+
+    return proxyModeratorConferences[roomId];
 };
+
+/**
+ * Returns the id of the current room or undefined.
+ *
+ * @param {Function|Object} stateful - The redux store, the redux
+ * {@code getState} function, or the redux state itself.
+ * @returns {string} Room id or undefined.
+ */
+export const getCurrentRoomId = (stateful: Function | Object) =>
+getCurrentConference(stateful)?.options?.name;
+
+/**
+ * Get participants in a room.
+ *
+ * @param {Function|Object} stateful - The redux store, the redux
+ * {@code getState} function, or the redux state itself.
+ * @param {string} roomId - The room id.
+ * @returns {Array} List of participants in the conference.
+ */
+export const getRoomParticipants = (stateful: Function | Object, roomId: string) =>
+    getRoomById(stateful, roomId)?.participants || [];
 
 /**
  * Determines whether the local participant is in a breakout room.
  *
- * @param {Object} state - Global state.
+ * @param {Function|Object} stateful - The redux store, the redux
+ * {@code getState} function, or the redux state itself.
  * @returns {boolean}
  */
-export const getIsInBreakoutRoom = (state: Object) => {
-    const mainRoomId = getMainRoomId(state);
-    const currentRoomId = getCurrentRoomId(state);
+export const isInBreakoutRoom = (stateful: Function | Object) => {
+    const mainRoomId = getMainRoomId(stateful);
+    const currentRoomId = getCurrentRoomId(stateful);
 
     return typeof currentRoomId !== 'undefined' && currentRoomId !== mainRoomId;
 };

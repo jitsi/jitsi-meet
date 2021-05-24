@@ -1,37 +1,49 @@
 // @flow
 
 /**
- * The type of (redux) action to initialize a dedicated connection used for breakout rooms
+ * The type of (redux) action to add a conference for the proxy moderator
  *
  */
-export const CREATE_BREAKOUT_ROOM_CONNECTION = 'CREATE_BREAKOUT_ROOM_CONNECTION';
+export const ADD_PROXY_MODERATOR_CONFERENCE = 'ADD_PROXY_MODERATOR_CONFERENCE';
 
 /**
- * The type of (redux) action to add a breakout room
+ * The type of (redux) action to add a room
  *
  */
-export const ADD_BREAKOUT_ROOM = 'ADD_BREAKOUT_ROOM';
+export const ADD_ROOM = 'ADD_ROOM';
 
 /**
- * The type of (redux) action to remove a breakout room
+ * The type of (redux) action to notify other participants of the removal of a room.
  *
  */
-export const REMOVE_BREAKOUT_ROOM = 'REMOVE_BREAKOUT_ROOM';
+export const NOTIFY_ROOM_REMOVAL = 'NOTIFY_ROOM_REMOVAL';
 
 /**
- * The type of (redux) action to update the list of breakout rooms
- *
- */
-export const UPDATE_BREAKOUT_ROOMS = 'UPDATE_BREAKOUT_ROOMS';
+  * The type of (redux) action to remove a conference for the proxy moderator
+  *
+  */
+export const REMOVE_PROXY_MODERATOR_CONFERENCE = 'REMOVE_PROXY_MODERATOR_CONFERENCE';
 
 /**
- * The type of (redux) action to move to a room
+ * The type of (redux) action to remove a room
  *
  */
-export const MOVE_TO_ROOM = 'MOVE_TO_ROOM';
+export const REMOVE_ROOM = 'REMOVE_ROOM';
 
 /**
- * The type of (redux) action to send a participant to a room
- *
- */
-export const SEND_PARTICIPANT_TO_ROOM = 'SEND_PARTICIPANT_TO_ROOM';
+  * The type of (redux) action to flag whether sending of the rooms to all participants is scheduled.
+  *
+  */
+export const SET_IS_SCHEDULED_SEND_ROOMS_TO_ALL = 'SET_IS_SCHEDULED_SEND_ROOMS_TO_ALL';
+
+/**
+  * The type of (redux) action to set the next room index.
+  *
+  */
+export const SET_NEXT_ROOM_INDEX = 'SET_NEXT_ROOM_INDEX';
+
+/**
+  * The type of (redux) action to update the list of participants in a room.
+  *
+  */
+export const UPDATE_PARTICIPANTS = 'UPDATE_PARTICIPANTS';

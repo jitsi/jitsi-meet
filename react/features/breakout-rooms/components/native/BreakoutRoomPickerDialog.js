@@ -12,7 +12,7 @@ import {
 import { connect } from '../../../base/redux';
 import { ColorPalette, type StyleType } from '../../../base/styles';
 import { moveToRoom } from '../../actions';
-import { selectBreakoutRooms, getCurrentRoomId } from '../../functions';
+import { getCurrentRoomId, getRooms } from '../../functions';
 
 import styles from './styles';
 
@@ -30,7 +30,7 @@ type Props = {
     /**
      * Object describing breakout rooms.
      */
-    _breakoutRooms: Array<Object>,
+    _rooms: Array<Object>,
 
     /**
      * String containing the id of the current room.
@@ -141,8 +141,7 @@ class BreakoutRoomPickerDialog extends Component<Props, State> {
                             styles.breakoutRoomText,
                             _bottomSheetStyles.buttons.labelStyle, selectedStyle
                         ] } >
-                        { this.props.t('breakoutRooms.headings.breakoutRoom', { index: breakoutRoom.index,
-                            count: 0 }) }
+                        { breakoutRoom.name }
                     </Text>
                 </View>
             </TouchableHighlight>
@@ -158,7 +157,7 @@ class BreakoutRoomPickerDialog extends Component<Props, State> {
     render() {
         return (
             <BottomSheet onCancel = { this._onCancel }>
-                { this.props._breakoutRooms.map(this._renderBreakoutRoom, this) }
+                { this.props._rooms.map(this._renderBreakoutRoom, this) }
             </BottomSheet>
         );
     }
@@ -173,7 +172,7 @@ class BreakoutRoomPickerDialog extends Component<Props, State> {
 function _mapStateToProps(state) {
     return {
         _bottomSheetStyles: ColorSchemeRegistry.get(state, 'BottomSheet'),
-        _breakoutRooms: selectBreakoutRooms(state),
+        _rooms: Object.values(getRooms(state)).filter((room: Object) => !room.isMainRoom),
         _currentRoomId: getCurrentRoomId(state)
     };
 }

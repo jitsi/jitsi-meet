@@ -9,7 +9,7 @@ import {
     IconMeetingUnlocked
 } from '../../../base/icons';
 import { isLocalParticipantModerator } from '../../../base/participants';
-import { removeBreakoutRoom, moveToRoom } from '../../actions';
+import { removeRoom, moveToRoom } from '../../actions';
 
 import { getComputedOuterHeight } from './functions';
 import {
@@ -89,7 +89,7 @@ export const RoomContextMenu = ({
     }, [ dispatch, room ]);
 
     const onRemoveBreakoutRoom = useCallback(() => {
-        dispatch(removeBreakoutRoom(room.id));
+        dispatch(removeRoom(room.id));
         setIsHidden(true);
     }, [ dispatch, room ]);
 

@@ -1,11 +1,15 @@
 // @flow
 
 import React, { useCallback, useRef, useState } from 'react';
-import { useSelector, useStore } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { ThemeProvider } from 'styled-components';
 
-import { selectBreakoutRooms, getIsInBreakoutRoom } from '../../functions';
+import { getParticipants, isLocalParticipantModerator } from '../../../base/participants';
+import { equals } from '../../../base/redux';
+import { ParticipantItem } from '../../../participants-pane/components/ParticipantItem';
+import { getRooms, isInBreakoutRoom, getCurrentRoomId } from '../../functions';
 
+import { AutoAssignButton } from './AutoAssignButton';
 import { LeaveButton } from './LeaveButton';
 import { RoomContextMenu } from './RoomContextMenu';
 import { RoomItem } from './RoomItem';
@@ -35,11 +39,13 @@ const initialState = Object.freeze(Object.create(null));
 
 export const RoomList = () => {
     const isMouseOverMenu = useRef(false);
-    const store = useStore();
-    const state = store.getState();
-    const breakoutRooms = useSelector(selectBreakoutRooms);
-    const isInBreakoutRoom = getIsInBreakoutRoom(state);
+    const currentRoomId = useSelector(getCurrentRoomId);
+    // eslint-disable-next-line no-unused-vars
+    const { [currentRoomId]: _currentRoom, ...rooms } = useSelector(getRooms, equals);
     const [ raiseContext, setRaiseContext ] = useState<RaiseContext>(initialState);
+    const inBreakoutRoom = useSelector(isInBreakoutRoom);
+    const isLocalModerator = useSelector(isLocalParticipantModerator);
+    const participantsCount = useSelector(getParticipants).length;
 
     const lowerMenu = useCallback(() => {
         /**
@@ -88,15 +94,28 @@ export const RoomList = () => {
     return (
         <ThemeProvider theme = { theme }>
         <>
-            {isInBreakoutRoom && <LeaveButton />}
+            {inBreakoutRoom && <LeaveButton />}
+            {!inBreakoutRoom
+                && isLocalModerator
+                && participantsCount > 2
+                && Object.keys(rooms).length > 1
+                && <AutoAssignButton />}
             <div>
-                {breakoutRooms.map(room => (
-                    <RoomItem
-                        isHighlighted = { raiseContext.room === room }
-                        key = { room.id }
-                        onContextMenu = { toggleMenu(room) }
-                        onLeave = { lowerMenu }
-                        room = { room } />
+                {Object.values(rooms).map((room: Object) => (
+                    <div key = { room.id }>
+                        <RoomItem
+                            isHighlighted = { raiseContext.room === room }
+                            onContextMenu = { toggleMenu(room) }
+                            onLeave = { lowerMenu }
+                            room = { room } />
+                        {(room.participants || []).map(p => (
+                            <ParticipantItem
+                                children = { null }
+                                key = { p.id }
+                                name = { p.displayName }
+                                participant = { p } />
+                        ))}
+                    </div>
                 ))}
             </div>
             <RoomContextMenu

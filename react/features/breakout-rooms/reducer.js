@@ -3,10 +3,14 @@
 import { ReducerRegistry } from '../base/redux';
 
 import {
-    ADD_BREAKOUT_ROOM,
-    CREATE_BREAKOUT_ROOM_CONNECTION,
-    REMOVE_BREAKOUT_ROOM,
-    UPDATE_BREAKOUT_ROOMS
+    ADD_ROOM,
+    ADD_PROXY_MODERATOR_CONFERENCE,
+    NOTIFY_ROOM_REMOVAL,
+    REMOVE_PROXY_MODERATOR_CONFERENCE,
+    REMOVE_ROOM,
+    SET_IS_SCHEDULED_SEND_ROOMS_TO_ALL,
+    SET_NEXT_ROOM_INDEX,
+    UPDATE_PARTICIPANTS
 } from './actionTypes';
 import { FEATURE_KEY } from './constants';
 
@@ -14,7 +18,8 @@ import { FEATURE_KEY } from './constants';
  * Default state for the breakout-rooms feature.
  */
 const defaultState = {
-    breakoutRooms: []
+    rooms: {},
+    removedRooms: []
 };
 
 /**
@@ -22,43 +27,86 @@ const defaultState = {
  */
 ReducerRegistry.register(FEATURE_KEY, (state = defaultState, action) => {
     switch (action.type) {
-    case CREATE_BREAKOUT_ROOM_CONNECTION: {
-        const { connection, fakeModeratorId } = action;
-
+    case ADD_ROOM: {
         return {
             ...state,
-            connection,
-            fakeModeratorId
+            rooms: {
+                ...state.rooms,
+                [action.room.id]: action.room
+            }
         };
     }
-    case UPDATE_BREAKOUT_ROOMS: {
-        const { breakoutRooms, fakeModeratorId } = action;
+    case REMOVE_ROOM: {
+        const { roomId } = action;
+        const { removedRooms = [] } = state;
+        // eslint-disable-next-line no-unused-vars
+        const { [roomId]: _, ...rooms } = state.rooms || {};
 
         return {
             ...state,
-            breakoutRooms,
-            fakeModeratorId
+            rooms,
+            removedRooms: removedRooms.filter(id => id !== roomId)
         };
     }
-    case ADD_BREAKOUT_ROOM: {
-        const nextIndex = (state.breakoutRooms[state.breakoutRooms.length - 1]?.index || 0) + 1;
-        const breakoutRooms = [
-            ...state.breakoutRooms,
-            { id: action.breakoutRoomId,
-                index: nextIndex }
-        ];
-
+    case NOTIFY_ROOM_REMOVAL: {
         return {
             ...state,
-            breakoutRooms
+            removedRooms: [ ...state.removedRooms, action.roomId ]
         };
     }
-    case REMOVE_BREAKOUT_ROOM: {
-        const breakoutRooms = state.breakoutRooms.filter(room => room.id !== action.breakoutRoomId);
+    case ADD_PROXY_MODERATOR_CONFERENCE: {
+        return {
+            ...state,
+            proxyModeratorConferences: {
+                ...state.proxyModeratorConferences || {},
+                [action.roomId]: action.proxyModeratorConference
+            }
+        };
+    }
+    case REMOVE_PROXY_MODERATOR_CONFERENCE: {
+        const { roomId, proxyModeratorId } = action;
+        const { rooms } = state;
+        const { [roomId]: { proxyModerators } } = rooms;
+        // eslint-disable-next-line no-unused-vars
+        const { [roomId]: _, ...proxyModeratorConferences } = state.proxyModeratorConferences || {};
 
         return {
             ...state,
-            breakoutRooms
+            rooms: {
+                ...rooms,
+                [roomId]: {
+                    ...rooms[roomId],
+                    proxyModerators: proxyModerators.filter(id => id !== proxyModeratorId)
+                }
+            },
+            proxyModeratorConferences
+        };
+    }
+    case UPDATE_PARTICIPANTS: {
+        const { roomId, participants } = action;
+        const { rooms } = state;
+
+        return {
+            ...state,
+            rooms: {
+                ...rooms,
+                [roomId]: {
+                    ...rooms[roomId],
+                    participants
+                }
+            }
+        };
+    }
+    case SET_IS_SCHEDULED_SEND_ROOMS_TO_ALL: {
+        return {
+            ...state,
+            isScheduledSendRoomsToAll: action.isScheduledSendRoomsToAll
+        };
+    }
+    case SET_NEXT_ROOM_INDEX: {
+        return {
+            ...state,
+            nextRoomIndex: action.nextRoomIndex
         };
     }
     }

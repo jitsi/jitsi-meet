@@ -16,7 +16,7 @@ import {
 import { isLocalParticipantModerator } from '../../base/participants';
 import { getIsParticipantVideoMuted } from '../../base/tracks';
 import { sendParticipantToRoom } from '../../breakout-rooms/actions';
-import { selectBreakoutRooms } from '../../breakout-rooms/functions';
+import { getCurrentRoomId, getRooms } from '../../breakout-rooms/functions';
 import { openChat } from '../../chat/actions';
 import { GrantModeratorDialog, KickRemoteParticipantDialog, MuteEveryoneDialog } from '../../video-menu';
 import MuteRemoteParticipantsVideoDialog from '../../video-menu/components/web/MuteRemoteParticipantsVideoDialog';
@@ -69,7 +69,8 @@ export const MeetingParticipantContextMenu = ({
     const containerRef = useRef(null);
     const isLocalModerator = useSelector(isLocalParticipantModerator);
     const isParticipantVideoMuted = useSelector(getIsParticipantVideoMuted(participant));
-    const breakoutRooms = useSelector(selectBreakoutRooms);
+    const rooms = Object.values(useSelector(getRooms));
+    const currentRoomId = useSelector(getCurrentRoomId);
 
     const [ isHidden, setIsHidden ] = useState(true);
     const { t } = useTranslation();
@@ -122,8 +123,8 @@ export const MeetingParticipantContextMenu = ({
         dispatch(openChat(participant));
     }, [ dispatch, participant ]);
 
-    const sendToBreakoutRoom = useCallback(breakoutRoom => () => {
-        dispatch(sendParticipantToRoom(participant.id, breakoutRoom.id));
+    const sendToRoom = useCallback((room: Object) => () => {
+        dispatch(sendParticipantToRoom(participant.id, room.id));
     }, [ dispatch, participant ]);
 
     if (!participant) {
@@ -170,16 +171,19 @@ export const MeetingParticipantContextMenu = ({
                     <span>{t('toolbar.accessibilityLabel.privateMessage')}</span>
                 </ContextMenuItem>
             </ContextMenuItemGroup>
-            {breakoutRooms?.length > 0 && isLocalModerator && (
+            {rooms?.length > 0 && isLocalModerator && (
                 <ContextMenuItemGroup>
-                    {breakoutRooms.map(breakoutRoom => (
-                        <ContextMenuItem
-                            key = { breakoutRoom.id }
-                            onClick = { sendToBreakoutRoom(breakoutRoom) }>
+                    {rooms.map((room: Object) =>
+                        room.id !== currentRoomId && <ContextMenuItem
+                            key = { room.id }
+                            onClick = { sendToRoom(room) }>
                             <ContextMenuIcon src = { IconMeetingUnlocked } />
-                            <span>{t('breakoutRooms.actions.sendToBreakoutRoom', { index: breakoutRoom?.index })}</span>
+                            <span>{
+                                t('breakoutRooms.actions.sendToBreakoutRoom',
+                                { name: room.name || t('breakoutRooms.mainRoom') })
+                            }</span>
                         </ContextMenuItem>
-                    ))}
+                    )}
                 </ContextMenuItemGroup>
             )}
         </ContextMenu>
