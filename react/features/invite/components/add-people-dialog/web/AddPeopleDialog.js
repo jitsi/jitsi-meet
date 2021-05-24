@@ -9,6 +9,7 @@ import { translate } from '../../../../base/i18n';
 import { JitsiRecordingConstants } from '../../../../base/lib-jitsi-meet';
 import { connect } from '../../../../base/redux';
 import { isVpaasMeeting } from '../../../../billing-counter/functions';
+import { isDynamicBrandingDataLoaded } from '../../../../dynamic-branding/functions';
 import EmbedMeetingTrigger from '../../../../embed-meeting/components/EmbedMeetingTrigger';
 import { getActiveSession } from '../../../../recording';
 import { updateDialInNumbers } from '../../../actions';
@@ -201,7 +202,7 @@ function mapStateToProps(state, ownProps) {
         _dialIn: dialIn,
         _embedMeetingVisible: !isVpaasMeeting(state) && isSharingEnabled(sharingFeatures.embed),
         _dialInVisible: isSharingEnabled(sharingFeatures.dialIn),
-        _urlSharingVisible: isSharingEnabled(sharingFeatures.url),
+        _urlSharingVisible: isDynamicBrandingDataLoaded(state) && isSharingEnabled(sharingFeatures.url),
         _emailSharingVisible: isSharingEnabled(sharingFeatures.email),
         _invitationText: getInviteText({ state,
             phoneNumber,
