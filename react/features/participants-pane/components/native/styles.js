@@ -113,7 +113,12 @@ export default {
     },
 
     participantActionButtonText: {
-        fontSize: 5
+        ...BaseTheme.typography.labelRegular
+    },
+
+    allParticipantActionButton: {
+        ...BaseTheme.typography.labelRegular,
+        color: BaseTheme.palette.action01
     },
 
     participantContainer: {
@@ -195,6 +200,11 @@ export default {
 
     lobbyListContainer: {
         ...container
+    },
+
+    lobbyListActions: {
+        flexDirection: 'row',
+        marginLeft: 'auto'
     },
 
     header: {
