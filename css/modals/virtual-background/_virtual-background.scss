@@ -220,12 +220,18 @@
  }
 
  .video-background-preview-entry{
-    margin-left:5px;
+    margin-left: -10px;
     height: 250px;
-    width: 94%;
+    max-width: 95.4%;
     margin-bottom: 8px;
     position: absolute;
     z-index: 2;
+    @media (min-width: 432px) and (max-width: 632px) {
+        max-width: 336;
+    }
+    @media (max-width: 432px){
+        max-width: 336;
+    }
  }
 
  .virtual-background-preview-video{

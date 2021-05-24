@@ -74,6 +74,7 @@ import {
     VideoQualityDialog
 } from '../../../video-quality';
 import { VideoBackgroundButton } from '../../../virtual-background';
+import { toggleBackgroundEffect } from '../../../virtual-background/actions';
 import { checkBlurSupport } from '../../../virtual-background/functions';
 import {
     setFullScreen,
@@ -184,6 +185,11 @@ type Props = {
     _locked: boolean,
 
     /**
+     * The JitsiLocalTrack to display.
+     */
+    _localVideo: Object,
+
+    /**
      * Whether or not the overflow menu is visible.
      */
     _overflowMenuVisible: boolean,
@@ -222,6 +228,11 @@ type Props = {
      * Handler to check if a button is enabled.
      */
      _shouldShowButton: Function,
+
+    /**
+     * Returns the selected virtual source object.
+     */
+     _virtualSource: Object,
 
     /**
      * Invoked to active other features of the app.
@@ -896,7 +907,21 @@ class Toolbox extends Component<Props> {
      * @returns {void}
      */
     _onToolbarToggleScreenshare() {
-        if (!this.props._desktopSharingEnabled || this.props._backgroundType === 'desktop-share') {
+        if (this.props._backgroundType === 'desktop-share') {
+            const noneOptions = {
+                enabled: false,
+                backgroundType: 'none',
+                selectedThumbnail: 'none',
+                backgroundEffectEnabled: false
+            };
+
+            this.props._virtualSource.dispose();
+
+            this.props.dispatch(toggleBackgroundEffect(noneOptions, this.props._localVideo));
+
+            return;
+        }
+        if (!this.props._desktopSharingEnabled) {
             return;
         }
 
@@ -1377,6 +1402,7 @@ function _mapStateToProps(state) {
         _conference: conference,
         _desktopSharingEnabled: desktopSharingEnabled,
         _backgroundType: state['features/virtual-background'].backgroundType,
+        _virtualSource: state['features/virtual-background'].virtualSource,
         _desktopSharingDisabledTooltipKey: desktopSharingDisabledTooltipKey,
         _dialog: Boolean(state['features/base/dialog'].component),
         _feedbackConfigured: Boolean(callStatsID),
@@ -1386,6 +1412,7 @@ function _mapStateToProps(state) {
         _fullScreen: fullScreen,
         _tileViewEnabled: shouldDisplayTileView(state),
         _localParticipantID: localParticipant.id,
+        _localVideo: localVideo,
         _localRecState: localRecordingStates,
         _locked: locked,
         _overflowMenuVisible: overflowMenuVisible,
