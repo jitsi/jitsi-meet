@@ -31,17 +31,17 @@ export const LobbyParticipantItem = ({ participant: p }: Props) => {
             participant = { p }
             videoMuteState = { MediaState.ForceMuted }>
             <Button
-                labelStyle = { styles.participantActionButtonText }
+                labelStyle = { styles.participantActionsButtonText }
                 mode = 'contained'
                 onPress = { admit }
-                style = { styles.participantActionButton }>
+                style = { styles.participantActionsButtonAdmit }>
                 {t('lobby.admit')}
             </Button>
             <Button
-                labelStyle = { styles.participantActionButtonText }
+                labelStyle = { styles.participantActionsButtonText }
                 mode = 'contained'
                 onPress = { reject }
-                style = { styles.participantActionButton }>
+                style = { styles.participantActionsButtonReject }>
                 {t('lobby.reject')}
             </Button>
         </ParticipantItem>

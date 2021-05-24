@@ -80,13 +80,13 @@ function ParticipantItem({
                     </Text>
                     { p.local ? <Text style = { styles.isLocal }>({t('chat.you')})</Text> : null }
                 </View>
-                { p.local ? <Text style = { styles.participantActions }> ({ children }) </Text> : null }
                 <View style = { styles.participantStatesContainer } >
                     {p.raisedHand && <RaisedHandIndicator />}
                     <View style = { styles.participantStateVideo }>{VideoStateIcons[videoMuteState]}</View>
                     <View style = { styles.participantStateAudio }>{AudioStateIcons[audioMuteState]}</View>
                 </View>
             </View>
+            { p.local ? <Text style = { styles.participantActions }> { children } </Text> : null }
         </View>
     );
 }

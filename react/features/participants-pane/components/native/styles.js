@@ -1,19 +1,9 @@
 import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 
-
-/**
- * The style for participant actions.
- */
-const participantActions = {
-    alignItems: 'center',
-    zIndex: 1
-};
-
 /**
  * The style for participant states.
  */
 const participantState = {
-    alignItems: 'center',
     display: 'flex',
     justifyContent: 'center'
 };
@@ -35,7 +25,6 @@ const container = {
     alignItems: 'center',
     display: 'flex',
     flexDirection: 'row',
-    height: 72,
     paddingRight: 16,
     width: '100%'
 };
@@ -77,17 +66,19 @@ const buttonContent = {
 export default {
 
     participantActions: {
-        ...participantActions
+        position: 'absolute',
+        right: 0,
+        zIndex: 1
     },
 
     participantActionsHover: {
-        ...participantActions,
         backgroundColor: '#292929',
         bottom: 1,
         display: 'none',
         position: 'absolute',
         right: 8,
         top: 0,
+        zIndex: 1,
         after: {
             backgroundColor: 'linear-gradient(90deg, rgba(0, 0, 0, 0) 0%, #292929 100%)',
             content: '',
@@ -103,31 +94,40 @@ export default {
     },
 
     participantActionsPermanent: {
-        ...participantActions,
-        display: 'flex'
+        display: 'flex',
+        zIndex: 1
     },
 
-    participantActionButton: {
+    participantActionsButtonAdmit: {
         backgroundColor: BaseTheme.palette.action01,
-        borderRadius: BaseTheme.shape.borderRadius
+        borderRadius: BaseTheme.shape.borderRadius,
+        height: 32
     },
 
-    participantActionButtonText: {
-        ...BaseTheme.typography.labelRegular
+    participantActionsButtonReject: {
+        backgroundColor: BaseTheme.palette.action01,
+        borderRadius: BaseTheme.shape.borderRadius,
+        height: 32
     },
 
-    allParticipantActionButton: {
+    participantActionsButtonText: {
+    },
+
+    allParticipantActionsButton: {
         ...BaseTheme.typography.labelRegular,
-        color: BaseTheme.palette.action01
+        color: BaseTheme.palette.action01,
+        textTransform: 'capitalize'
+
     },
 
     participantContainer: {
         alignItems: 'center',
+        borderBottomColor: BaseTheme.palette.field01Hover,
+        borderBottomWidth: 2,
         display: 'flex',
         flexDirection: 'row',
-        marginRight: BaseTheme.spacing[6],
-        paddingLeft: 8,
-        paddingRight: 8
+        height: 64,
+        width: '100%'
     },
 
     participantContent: {
@@ -135,19 +135,16 @@ export default {
         display: 'flex',
         flexDirection: 'row',
         flexWrap: 'wrap',
-        height: 64,
         overflow: 'hidden',
-        paddingLeft: BaseTheme.spacing[2],
-        paddingTop: BaseTheme.spacing[4],
         width: '100%'
     },
 
     participantNameContainer: {
         display: 'flex',
         flexDirection: 'row',
-        marginRight: BaseTheme.spacing[3],
+        marginLeft: BaseTheme.spacing[2],
         overflow: 'hidden',
-        width: '50%'
+        width: 232
     },
 
     participantName: {
@@ -165,9 +162,7 @@ export default {
 
     participantStatesContainer: {
         display: 'flex',
-        flexDirection: 'row',
-        justifyItems: 'space-between',
-        marginLeft: 'auto'
+        flexDirection: 'row'
     },
 
     participantStateAudio: {
@@ -175,8 +170,7 @@ export default {
     },
 
     participantStateVideo: {
-        ...participantState,
-        marginRight: 8
+        ...participantState
     },
 
     raisedHandIndicator: {
@@ -191,20 +185,26 @@ export default {
         ...flexContent,
         top: 4
     },
+    lobbyList: {
+        marginLeft: 16,
+        marginRight: 16
+    },
+
+    lobbyListDetails: {
+        alignItems: 'center',
+        display: 'flex',
+        flexDirection: 'row',
+        width: '100%'
+    },
 
     lobbyListDescription: {
         color: BaseTheme.palette.text01,
         overflow: 'hidden',
-        padding: BaseTheme.spacing[2]
-    },
-
-    lobbyListContainer: {
-        ...container
+        width: 188
     },
 
     lobbyListActions: {
-        flexDirection: 'row',
-        marginLeft: 'auto'
+        flexDirection: 'row'
     },
 
     header: {
