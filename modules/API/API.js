@@ -44,6 +44,7 @@ import {
 import { toggleLobbyMode } from '../../react/features/lobby/actions';
 import { RECORDING_TYPES } from '../../react/features/recording/constants';
 import { getActiveSession } from '../../react/features/recording/functions';
+import { playSharedVideo, stopSharedVideo } from '../../react/features/shared-video/actions.any';
 import { toggleTileView, setTileView } from '../../react/features/video-layout';
 import { muteAllParticipants } from '../../react/features/video-menu/actions';
 import { setVideoQuality } from '../../react/features/video-quality';
@@ -261,6 +262,18 @@ function initCommands() {
             logger.debug('Set video quality command received');
             sendAnalytics(createApiEvent('set.video.quality'));
             APP.store.dispatch(setVideoQuality(frameHeight));
+        },
+
+        'start-share-video': url => {
+            logger.debug('Share video command received');
+            sendAnalytics(createApiEvent('share.video.start'));
+            APP.store.dispatch(playSharedVideo(url));
+        },
+
+        'stop-share-video': () => {
+            logger.debug('Share video command received');
+            sendAnalytics(createApiEvent('share.video.stop'));
+            APP.store.dispatch(stopSharedVideo());
         },
 
         /**

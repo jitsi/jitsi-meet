@@ -549,8 +549,7 @@ class Thumbnail extends Component<Props, State> {
      * @returns {ReactElement}
      */
     _renderFakeParticipant() {
-        const { _participant } = this.props;
-        const { id } = _participant;
+        const { _participant: { avatarURL } } = this.props;
         const styles = this._getStyles();
         const containerClassName = this._getContainerClassName();
 
@@ -562,14 +561,12 @@ class Thumbnail extends Component<Props, State> {
                 onMouseEnter = { this._onMouseEnter }
                 onMouseLeave = { this._onMouseLeave }
                 style = { styles.thumbnail }>
-                <img
-                    className = 'sharedVideoAvatar'
-                    src = { `https://img.youtube.com/vi/${id}/0.jpg` } />
-                <div className = 'displayNameContainer'>
-                    <DisplayName
-                        elementID = 'sharedVideoContainer_name'
-                        participantID = { id } />
-                </div>
+                {avatarURL ? (
+                    <img
+                        className = 'sharedVideoAvatar'
+                        src = { avatarURL } />
+                )
+                    : this._renderAvatar(styles.avatar)}
             </span>
         );
     }

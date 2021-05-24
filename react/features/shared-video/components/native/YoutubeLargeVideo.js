@@ -9,6 +9,7 @@ import { connect } from '../../../base/redux';
 import { ASPECT_RATIO_WIDE } from '../../../base/responsive-ui';
 import { setToolboxVisible } from '../../../toolbox/actions';
 import { setSharedVideoStatus } from '../../actions.native';
+import { getYoutubeId } from '../../functions';
 
 import styles from './styles';
 
@@ -100,11 +101,11 @@ type Props = {
     dispatch: Function,
 
     /**
-     * Youtube id of the video to be played.
+     * Youtube url of the video to be played.
      *
      * @private
      */
-    youtubeId: string
+    youtubeUrl: string
 };
 
 /**
@@ -199,7 +200,7 @@ class YoutubeLargeVideo extends Component<Props, *> {
             _isPlaying,
             _playerHeight,
             _playerWidth,
-            youtubeId
+            youtubeUrl
         } = this.props;
 
         return (
@@ -220,7 +221,7 @@ class YoutubeLargeVideo extends Component<Props, *> {
                     play = { _isPlaying }
                     playbackRate = { 1 }
                     ref = { this.playerRef }
-                    videoId = { youtubeId }
+                    videoId = { getYoutubeId(youtubeUrl) }
                     volume = { 50 }
                     webViewProps = {{
                         bounces: false,
@@ -243,7 +244,7 @@ class YoutubeLargeVideo extends Component<Props, *> {
     _onReady() {
         if (this.props?._isOwner) {
             this.onVideoReady(
-                this.props.youtubeId,
+                this.props.youtubeUrl,
                 this.playerRef.current && this.playerRef.current.getCurrentTime(),
                 this.props._ownerId);
         }
@@ -266,11 +267,11 @@ class YoutubeLargeVideo extends Component<Props, *> {
                 _isStopped,
                 _ownerId,
                 _seek,
-                youtubeId
+                youtubeUrl
             } = this.props;
 
             if (shouldSetNewStatus(_isStopped, _isOwner, status, _isPlaying, time, _seek)) {
-                this.onVideoChangeEvent(youtubeId, status, time, _ownerId);
+                this.onVideoChangeEvent(youtubeUrl, status, time, _ownerId);
             }
         });
     }
@@ -282,42 +283,52 @@ class YoutubeLargeVideo extends Component<Props, *> {
      * @returns {void}
     */
     saveRefTime() {
-        const { youtubeId, _status, _ownerId } = this.props;
+        const { youtubeUrl, _status, _ownerId } = this.props;
 
         this.playerRef.current && this.playerRef.current.getCurrentTime().then(time => {
-            this.onVideoChangeEvent(youtubeId, _status, time, _ownerId);
+            this.onVideoChangeEvent(youtubeUrl, _status, time, _ownerId);
         });
     }
 
     /**
      * Dispatches the video status, time and ownerId if the status is playing or paused.
      *
-     * @param {string} videoId - The youtube id of the video.
+     * @param {string} videoUrl - The youtube id of the video.
      * @param {string} status - The status of the player.
      * @param {number} time - The seek time.
      * @param {string} ownerId - The id of the participant sharing the video.
      * @private
      * @returns {void}
     */
-    onVideoChangeEvent(videoId, status, time, ownerId) {
+    onVideoChangeEvent(videoUrl, status, time, ownerId) {
         if (![ 'playing', 'paused' ].includes(status)) {
             return;
         }
 
-        this.props.dispatch(setSharedVideoStatus(videoId, translateStatus(status), time, ownerId));
+        this.props.dispatch(setSharedVideoStatus({
+            videoUrl,
+            status: translateStatus(status),
+            time,
+            ownerId
+        }));
     }
 
     /**
      * Dispatches the 'playing' as video status, time and ownerId.
      *
-     * @param {string} videoId - The youtube id of the video.
+     * @param {string} videoUrl - The youtube id of the video.
      * @param {number} time - The seek time.
      * @param {string} ownerId - The id of the participant sharing the video.
      * @private
      * @returns {void}
     */
-    onVideoReady(videoId, time, ownerId) {
-        time.then(t => this.props.dispatch(setSharedVideoStatus(videoId, 'playing', t, ownerId)));
+    onVideoReady(videoUrl, time, ownerId) {
+        time.then(t => this.props.dispatch(setSharedVideoStatus({
+            videoUrl,
+            status: 'playing',
+            time: t,
+            ownerId
+        })));
     }
 
     /**
