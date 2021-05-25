@@ -230,8 +230,7 @@ export default class AudioTrack extends Component<Props> {
                     sendAnalytics(createAudioPlaySuccessEvent(id));
                     logger.info(`Successfully played audio track! retries: ${retries}`);
                 }
-            })
-            .catch(e => {
+            }, e => {
                 logger.error(`Failed to play audio track! retry: ${retries} ; Error: ${e}`);
 
                 if (retries < 3) {
