@@ -26,6 +26,11 @@ type Props = {
     clientWidth: number,
 
     /**
+     * Whether the (vertical) filmstrip is visible or not.
+     */
+    filmstripVisible: boolean,
+
+    /**
      * Is the video shared by the local user.
      *
      * @private
@@ -59,16 +64,24 @@ class SharedVideo extends Component<Props> {
      * }}
      */
     getDimensions() {
-        const { clientHeight, clientWidth } = this.props;
+        const { clientHeight, clientWidth, filmstripVisible } = this.props;
 
         let width;
         let height;
 
         if (interfaceConfig.VERTICAL_FILMSTRIP) {
+            if (filmstripVisible) {
+                width = `${clientWidth - Filmstrip.getVerticalFilmstripWidth()}px`;
+            } else {
+                width = `${clientWidth}px`;
+            }
             height = `${clientHeight - getToolboxHeight()}px`;
-            width = `${clientWidth - Filmstrip.getVerticalFilmstripWidth()}px`;
         } else {
-            height = `${clientHeight - Filmstrip.getFilmstripHeight()}px`;
+            if (filmstripVisible) {
+                height = `${clientHeight - Filmstrip.getFilmstripHeight()}px`;
+            } else {
+                height = `${clientHeight}px`;
+            }
             width = `${clientWidth}px`;
         }
 
@@ -132,12 +145,14 @@ class SharedVideo extends Component<Props> {
 function _mapStateToProps(state) {
     const { ownerId, videoUrl } = state['features/shared-video'];
     const { clientHeight, clientWidth } = state['features/base/responsive-ui'];
+    const { visible } = state['features/filmstrip'];
 
     const localParticipant = getLocalParticipant(state);
 
     return {
         clientHeight,
         clientWidth,
+        filmstripVisible: visible,
         isOwner: ownerId === localParticipant.id,
         sharedVideoId: videoUrl,
         sharedYoutubeVideoId: getYoutubeId(videoUrl)
