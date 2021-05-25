@@ -54,14 +54,14 @@ export function isAnalyticsEnabled(stateful: Function | Object) {
  * @param {Function|Object} stateful - The redux store, state, or
  * {@code getState} function.
  * @param {string} avatarURL - The avatar url to check.
- * @returns {boolean} If the URL matches the origin and disableThirdPartyRequests
- * is defined, or the URL matches the gravatarBaseURL, {@code true};
+ * @returns {boolean} If the URL does not match the origin and disableThirdPartyRequests
+ * is defined, {@code false}; otherwise {@code true};
  * {@code false}, otherwise.
  */
 export function isAvatarUrlValid(stateful: Function | Object, avatarURL: string) {
     const state = toState(stateful);
     const { locationURL } = state['features/base/connection'];
-    const { disableThirdPartyRequests, gravatarBaseURL } = state['features/base/config'];
+    const { disableThirdPartyRequests } = state['features/base/config'];
 
     if (disableThirdPartyRequests) {
         if (!locationURL || !locationURL.origin) {
@@ -69,9 +69,6 @@ export function isAvatarUrlValid(stateful: Function | Object, avatarURL: string)
         }
 
         return avatarURL && avatarURL.startsWith(locationURL.origin);
-
-    } else if (gravatarBaseURL) {
-        return avatarURL && avatarURL.startsWith(gravatarBaseURL);
     }
 
     return true;
