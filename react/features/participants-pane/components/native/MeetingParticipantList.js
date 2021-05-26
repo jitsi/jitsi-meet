@@ -15,8 +15,8 @@ export const MeetingParticipantList = () => {
     const { t } = useTranslation();
 
     return (
-        <View style = { styles.lobbyList }>
-            <Text style = { styles.lobbyListDescription }>
+        <View style = { styles.meetingList }>
+            <Text style = { styles.meetingListDescription }>
                 {t('participantsPane.headings.participantsList',
                     { count: participants.length })}
             </Text>

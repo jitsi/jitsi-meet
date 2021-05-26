@@ -9,6 +9,26 @@ const participantState = {
 };
 
 /**
+ * The style for participant list.
+ */
+const participantList = {
+    marginLeft: 16,
+    marginRight: 16,
+    position: 'relative'
+};
+
+/**
+ * The style for participant list description.
+ */
+const participantListDescription = {
+    color: BaseTheme.palette.text01,
+    paddingBottom: 8,
+    paddingTop: 8,
+    position: 'relative',
+    width: '55%'
+};
+
+/**
  * The style for content.
  */
 const flexContent = {
@@ -186,9 +206,13 @@ export default {
         top: 4
     },
     lobbyList: {
-        marginLeft: 16,
-        marginRight: 16,
-        position: 'relative'
+        ...participantList,
+        marginTop: 8
+    },
+
+    meetingList: {
+        ...participantList,
+        marginTop: 16
     },
 
     lobbyListDetails: {
@@ -196,18 +220,16 @@ export default {
         display: 'flex',
         flexDirection: 'row',
         overflow: 'hidden',
-        paddingBottom: 16,
-        paddingTop: 16,
         position: 'relative',
         width: '100%'
     },
 
     lobbyListDescription: {
-        color: BaseTheme.palette.text01,
-        paddingBottom: 8,
-        paddingTop: 8,
-        position: 'relative',
-        width: '55%'
+        ...participantListDescription
+    },
+
+    meetingListDescription: {
+        ...participantListDescription
     },
 
     lobbyListActions: {
@@ -223,7 +245,7 @@ export default {
         flexDirection: 'row',
         height: 88,
         paddingRight: 16,
-        position: 'absolute',
+        position: 'relative',
         right: 0,
         left: 0
     },
@@ -236,7 +258,7 @@ export default {
         flexDirection: 'row',
         height: 88,
         paddingRight: 16,
-        position: 'absolute',
+        position: 'relative',
         right: 0,
         left: 0
     },
@@ -255,7 +277,8 @@ export default {
     },
 
     inviteButton: {
-        backgroundColor: BaseTheme.palette.action01
+        backgroundColor: BaseTheme.palette.action01,
+        marginTop: 8
     },
 
     inviteLabel: {
