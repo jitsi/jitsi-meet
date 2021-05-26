@@ -12,14 +12,14 @@ import { toggleScreensharing, isLocalVideoTrackDesktop } from '../../../base/tra
 type Props = AbstractButtonProps & {
 
     /**
+     * True if the button needs to be disabled.
+     */
+    _disabled: boolean,
+
+    /**
      * Whether video is currently muted or not.
      */
     _screensharing: boolean,
-
-    /**
-     * True if the button needs to be disabled.
-     */
-    disabled: Boolean,
 
     /**
      * The redux {@code dispatch} function.
@@ -56,7 +56,7 @@ class ScreenSharingAndroidButton extends AbstractButton<Props, *> {
      * @returns {boolean}
      */
     _isDisabled() {
-        return this.props.disabled;
+        return this.props._disabled;
     }
 
     /**

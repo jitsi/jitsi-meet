@@ -26,14 +26,14 @@ const ScreenSharingButton = props => (
  * @param {Object} state - The Redux state.
  * @private
  * @returns {{
- *     enabled: boolean,
+ *     _disabled: boolean,
  * }}
  */
 function _mapStateToProps(state): Object {
     const disabled = state['features/base/audio-only'].enabled;
 
     return {
-        disabled
+        _disabled: disabled
     };
 }
 
