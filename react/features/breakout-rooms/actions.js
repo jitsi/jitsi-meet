@@ -5,7 +5,7 @@ import type { Dispatch } from 'redux';
 import uuid from 'uuid';
 
 import { openConnection } from '../../../connection';
-import { getCurrentConference, setRoom } from '../base/conference';
+import { getConferenceState, getCurrentConference, setPassword, setRoom } from '../base/conference';
 import { connect, disconnect } from '../base/connection';
 import { i18next } from '../base/i18n';
 import { JitsiConferenceEvents } from '../base/lib-jitsi-meet';
@@ -142,7 +142,19 @@ function _initRoom(room) {
             proxyModeratorConference
         });
         dispatch(_setupProxyModeratorConferenceListeners(proxyModeratorConference));
-        await proxyModeratorConference.join();
+        const mainRoomId = getMainRoomId(getState);
+        const { password } = getConferenceState(getState());
+
+        if (password || roomId !== mainRoomId) {
+            await proxyModeratorConference.join(password);
+        } else {
+            const conference = getCurrentConference(getState);
+            const tempPassword = uuid.v4();
+
+            await dispatch(setPassword(conference, conference.lock, tempPassword));
+            await proxyModeratorConference.join(tempPassword);
+            dispatch(setPassword(conference, conference.lock, ''));
+        }
 
         return proxyModeratorConference;
     };
@@ -156,6 +168,9 @@ function _initRoom(room) {
  */
 function _setupProxyModeratorConferenceListeners(proxyModeratorConference: Object) {
     return (dispatch: Dispatch<any>, getState: Function) => {
+        proxyModeratorConference.on(JitsiConferenceEvents.CONFERENCE_JOINED, () =>
+            proxyModeratorConference.setDisplayName(i18next.t('settings.moderator')));
+
         proxyModeratorConference.on(JitsiConferenceEvents.USER_ROLE_CHANGED, id => {
             if (id === proxyModeratorConference.myUserId() && proxyModeratorConference.isModerator()) {
                 const roomId = proxyModeratorConference.options.name;
