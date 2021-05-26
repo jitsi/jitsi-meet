@@ -21,17 +21,6 @@ const flexContent = {
 /**
  * The style of the participants pane buttons.
  */
-const container = {
-    alignItems: 'center',
-    display: 'flex',
-    flexDirection: 'row',
-    paddingRight: 16,
-    width: '100%'
-};
-
-/**
- * The style of the participants pane buttons.
- */
 const button = {
     alignItems: 'center',
     backgroundColor: BaseTheme.palette.action02,
@@ -65,7 +54,8 @@ const buttonContent = {
  */
 export default {
 
-    participantActions: {
+    lobbyParticipantItem: {
+        flexDirection: 'row',
         position: 'absolute',
         right: 0,
         zIndex: 1
@@ -110,7 +100,15 @@ export default {
         height: 32
     },
 
+    participantActionsButtonContent: {
+        alignItems: 'center',
+        display: 'flex',
+        height: 32
+    },
+
     participantActionsButtonText: {
+        color: BaseTheme.palette.text01,
+        textTransform: 'capitalize'
     },
 
     allParticipantActionsButton: {
@@ -134,7 +132,7 @@ export default {
         alignItems: 'center',
         display: 'flex',
         flexDirection: 'row',
-        flexWrap: 'wrap',
+        height: '100%',
         overflow: 'hidden',
         width: '100%'
     },
@@ -144,7 +142,7 @@ export default {
         flexDirection: 'row',
         marginLeft: BaseTheme.spacing[2],
         overflow: 'hidden',
-        width: 232
+        width: '63%'
     },
 
     participantName: {
@@ -162,7 +160,8 @@ export default {
 
     participantStatesContainer: {
         display: 'flex',
-        flexDirection: 'row'
+        flexDirection: 'row',
+        marginLeft: 16
     },
 
     participantStateAudio: {
@@ -170,7 +169,8 @@ export default {
     },
 
     participantStateVideo: {
-        ...participantState
+        ...participantState,
+        marginRight: 8
     },
 
     raisedHandIndicator: {
@@ -187,33 +187,58 @@ export default {
     },
     lobbyList: {
         marginLeft: 16,
-        marginRight: 16
+        marginRight: 16,
+        position: 'relative'
     },
 
     lobbyListDetails: {
         alignItems: 'center',
         display: 'flex',
         flexDirection: 'row',
+        overflow: 'hidden',
+        paddingBottom: 16,
+        paddingTop: 16,
+        position: 'relative',
         width: '100%'
     },
 
     lobbyListDescription: {
         color: BaseTheme.palette.text01,
-        overflow: 'hidden',
-        width: 188
+        paddingBottom: 8,
+        paddingTop: 8,
+        position: 'relative',
+        width: '55%'
     },
 
     lobbyListActions: {
-        flexDirection: 'row'
+        flexDirection: 'row',
+        left: 0
     },
 
     header: {
-        ...container
+        alignItems: 'center',
+        backgroundColor: BaseTheme.palette.ui01,
+        top: 0,
+        display: 'flex',
+        flexDirection: 'row',
+        height: 88,
+        paddingRight: 16,
+        position: 'absolute',
+        right: 0,
+        left: 0
     },
 
     footer: {
-        ...container,
-        marginTop: 'auto'
+        alignItems: 'center',
+        backgroundColor: BaseTheme.palette.ui01,
+        bottom: 0,
+        display: 'flex',
+        flexDirection: 'row',
+        height: 88,
+        paddingRight: 16,
+        position: 'absolute',
+        right: 0,
+        left: 0
     },
 
     closeButton: {
@@ -229,6 +254,15 @@ export default {
         ...smallButton
     },
 
+    inviteButton: {
+        backgroundColor: BaseTheme.palette.action01
+    },
+
+    inviteLabel: {
+        ...BaseTheme.typography.labelButtonLarge,
+        textTransform: 'capitalize'
+    },
+
     moreIcon: {
         ...buttonContent,
         left: 8
@@ -239,7 +273,8 @@ export default {
         left: 80
     },
 
-    muteAllContent: {
-        ...buttonContent
+    muteAllLabel: {
+        color: BaseTheme.palette.text01,
+        textTransform: 'capitalize'
     }
 };

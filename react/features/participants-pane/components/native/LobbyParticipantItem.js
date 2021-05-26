@@ -2,6 +2,7 @@
 
 import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
+import { View } from 'react-native';
 import { Button } from 'react-native-paper';
 import { useDispatch } from 'react-redux';
 
@@ -30,20 +31,22 @@ export const LobbyParticipantItem = ({ participant: p }: Props) => {
             audioMuteState = { MediaState.Muted }
             participant = { p }
             videoMuteState = { MediaState.ForceMuted }>
-            <Button
-                labelStyle = { styles.participantActionsButtonText }
-                mode = 'contained'
-                onPress = { admit }
-                style = { styles.participantActionsButtonAdmit }>
-                {t('lobby.admit')}
-            </Button>
-            <Button
-                labelStyle = { styles.participantActionsButtonText }
-                mode = 'contained'
-                onPress = { reject }
-                style = { styles.participantActionsButtonReject }>
-                {t('lobby.reject')}
-            </Button>
+            <View style = { styles.lobbyParticipantItem }>
+                <Button
+                    children = { t('lobby.admit') }
+                    contentStyle = { styles.participantActionsButtonContent }
+                    labelStyle = { styles.participantActionsButtonText }
+                    mode = 'contained'
+                    onPress = { admit }
+                    style = { styles.participantActionsButtonAdmit } />
+                <Button
+                    children = { t('lobby.reject') }
+                    contentStyle = { styles.participantActionsButtonContent }
+                    labelStyle = { styles.participantActionsButtonText }
+                    mode = 'contained'
+                    onPress = { reject }
+                    style = { styles.participantActionsButtonReject } />
+            </View>
         </ParticipantItem>
     );
 };

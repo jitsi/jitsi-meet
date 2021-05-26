@@ -2,8 +2,8 @@
 
 import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { View } from 'react-native';
-import { Button, withTheme } from 'react-native-paper';
+import { ScrollView, View } from 'react-native';
+import { Button } from 'react-native-paper';
 import { useDispatch } from 'react-redux';
 
 import { hideDialog } from '../../../base/dialog';
@@ -11,32 +11,20 @@ import { Icon, IconClose, IconHorizontalPoints } from '../../../base/icons';
 import { JitsiModal } from '../../../base/modal';
 
 import { LobbyParticipantList } from './LobbyParticipantList';
+import { MeetingParticipantList } from './MeetingParticipantList';
 import styles from './styles';
-
-
-/**
- * {@code ParticipantsPane}'s React {@code Component} prop types.
- */
-type Props = {
-
-    /**
-     * Theme used for styles.
-     */
-    theme: Object
-}
 
 /**
  * Participant pane.
  *
  * @returns {React$Element<any>}
  */
-function ParticipantsPane({ theme }: Props) {
+export function ParticipantsPane() {
     const dispatch = useDispatch();
     const closePane = useCallback(
         () => dispatch(hideDialog()),
         [ dispatch ]);
     const { t } = useTranslation();
-    const { palette } = theme;
 
     return (
         <JitsiModal
@@ -53,21 +41,17 @@ function ParticipantsPane({ theme }: Props) {
                     }
                     mode = 'contained'
                     onPress = { closePane }
-                    style = { styles.closeButton }
-                    theme = {{
-                        colors: {
-                            primary: palette.action02
-                        }
-                    }} />
+                    style = { styles.closeButton } />
             </View>
-            <LobbyParticipantList />
+            <ScrollView>
+                <LobbyParticipantList />
+                <MeetingParticipantList />
+            </ScrollView>
             <View style = { styles.footer }>
                 <Button
-                    color = { palette.text01 }
-                    contentStyle = { styles.muteAllContent }
-                    style = { styles.muteAllButton } >
-                    { t('participantsPane.actions.muteAll') }
-                </Button>
+                    children = { t('participantsPane.actions.muteAll') }
+                    labelStyle = { styles.muteAllLabel }
+                    style = { styles.muteAllButton } />
                 <Button
                     contentStyle = { styles.moreIcon }
                     /* eslint-disable-next-line react/jsx-no-bind */
@@ -77,16 +61,11 @@ function ParticipantsPane({ theme }: Props) {
                             src = { IconHorizontalPoints } />)
                     }
                     mode = 'contained'
-                    style = { styles.moreButton }
-                    theme = {{
-                        colors: {
-                            primary: palette.action02
-                        }
-                    }} />
+                    style = { styles.moreButton } />
             </View>
         </JitsiModal>
     );
 }
 
 
-export default withTheme(ParticipantsPane);
+export default ParticipantsPane;
