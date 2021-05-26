@@ -1,5 +1,6 @@
 // @flow
 
+import { VIDEO_TYPE } from '../base/media';
 import { MiddlewareRegistry } from '../base/redux';
 import { getLocalVideoTrack } from '../base/tracks';
 
@@ -18,7 +19,7 @@ MiddlewareRegistry.register(store => next => action => {
     const virtualSource = getState()['features/virtual-background'].virtualSource;
     const currentLocalTrack = getLocalVideoTrack(getState()['features/base/tracks']);
 
-    if (virtualSource?.videoType === 'desktop') {
+    if (virtualSource?.videoType === VIDEO_TYPE.DESKTOP && currentLocalTrack) {
         localTrackStopped(dispatch, virtualSource, currentLocalTrack.jitsiTrack);
     }
 

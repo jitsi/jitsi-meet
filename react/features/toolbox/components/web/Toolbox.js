@@ -75,6 +75,7 @@ import {
 } from '../../../video-quality';
 import { VideoBackgroundButton } from '../../../virtual-background';
 import { toggleBackgroundEffect } from '../../../virtual-background/actions';
+import { VIRTUAL_BACKGROUND_TYPE } from '../../../virtual-background/constants';
 import { checkBlurSupport } from '../../../virtual-background/functions';
 import {
     setFullScreen,
@@ -907,11 +908,11 @@ class Toolbox extends Component<Props> {
      * @returns {void}
      */
     _onToolbarToggleScreenshare() {
-        if (this.props._backgroundType === 'desktop-share') {
+        if (this.props._backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE) {
             const noneOptions = {
                 enabled: false,
-                backgroundType: 'none',
-                selectedThumbnail: 'none',
+                backgroundType: VIRTUAL_BACKGROUND_TYPE.NONE,
+                selectedThumbnail: VIRTUAL_BACKGROUND_TYPE.NONE,
                 backgroundEffectEnabled: false
             };
 
