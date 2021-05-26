@@ -3,7 +3,8 @@
 import React from 'react';
 import type { Node } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Text, View } from 'react-native';
+import { View } from 'react-native';
+import { Text } from 'react-native-paper';
 import { useSelector } from 'react-redux';
 
 import { Avatar } from '../../../base/avatar';
@@ -35,7 +36,7 @@ type Props = {
     /**
      * React children
      */
-    children: Node,
+    children?: Node,
 
     /**
      * Callback for when the mouse leaves this component
@@ -86,7 +87,7 @@ function ParticipantItem({
                     <View style = { styles.participantStateAudio }>{AudioStateIcons[audioMuteState]}</View>
                 </View>
             </View>
-            { p.local ? <Text style = { styles.participantActions }> { children } </Text> : null }
+            { children }
         </View>
     );
 }
