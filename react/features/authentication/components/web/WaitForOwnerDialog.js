@@ -101,6 +101,7 @@ class WaitForOwnerDialog extends PureComponent<Props> {
 
         return (
             <Dialog
+                hideCloseIconButton = { true }
                 okKey = { t('dialog.IamHost') }
                 onCancel = { this._onCancelWaitForOwner }
                 onSubmit = { this._onIAmHost }

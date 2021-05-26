@@ -30,6 +30,7 @@ type Props = {
     id: string,
     appearance?: 'danger' | 'warning',
     heading: string,
+    hideCloseIconButton: boolean,
     onClose: Function,
     showKeyline: boolean,
     isHeadingMultiline: boolean,
@@ -60,6 +61,7 @@ export default class ModalHeader extends React.Component<Props> {
             id,
             appearance,
             heading,
+            hideCloseIconButton,
             onClose,
             showKeyline,
             isHeadingMultiline,
@@ -81,9 +83,11 @@ export default class ModalHeader extends React.Component<Props> {
                         {heading}
                     </TitleText>
                 </Title>
-                <Icon
-                    onClick = { onClose }
-                    src = { IconClose } />
+                {
+                    !hideCloseIconButton && <Icon
+                        onClick = { onClose }
+                        src = { IconClose } />
+                }
             </Header>
         );
     }

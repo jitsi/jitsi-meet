@@ -252,6 +252,7 @@ class LoginDialog extends Component<Props, State> {
 
         return (
             <Dialog
+                hideCloseIconButton = { true }
                 okDisabled = {
                     connecting
                     || loginStarted
