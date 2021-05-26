@@ -50,13 +50,9 @@ export default class JitsiStreamBackgroundEffect {
             this._virtualImage.src = this._options.virtualBackground.virtualSource;
         }
         if (this._options.virtualBackground.backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE) {
-            const desktopShareTrack = this._options?.virtualBackground?.virtualSource?.track;
-
             this._virtualVideo = document.createElement('video');
             this._virtualVideo.autoplay = true;
             this._virtualVideo.srcObject = this._options?.virtualBackground?.virtualSource?.stream;
-            this._desktopShareDimensions = desktopShareTrack.getSettings ? desktopShareTrack.getSettings()
-                : desktopShareTrack.getConstraints();
         }
         this._model = model;
         this._segmentationPixelCount = this._options.width * this._options.height;
@@ -176,6 +172,12 @@ export default class JitsiStreamBackgroundEffect {
      * @returns {void}
      */
     _renderMask() {
+        const desktopShareTrack = this._options?.virtualBackground?.virtualSource?.track;
+
+        if (desktopShareTrack) {
+            this._desktopShareDimensions = desktopShareTrack.getSettings ? desktopShareTrack.getSettings()
+                : desktopShareTrack.getConstraints();
+        }
         this.resizeSource();
         this.runInference();
         this.runPostProcessing();
