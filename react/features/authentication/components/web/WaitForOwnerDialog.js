@@ -63,8 +63,15 @@ class WaitForOwnerDialog extends PureComponent<Props> {
      */
     _onCancelWaitForOwner() {
         const { dispatch } = this.props;
+        const cancelButton = document.getElementById('modal-dialog-cancel-button');
 
-        dispatch(cancelWaitForOwner());
+        if (cancelButton) {
+            cancelButton.onclick = () => {
+                dispatch(cancelWaitForOwner());
+            };
+        }
+
+        return false;
     }
 
     _onIAmHost: () => void;
@@ -94,6 +101,7 @@ class WaitForOwnerDialog extends PureComponent<Props> {
 
         return (
             <Dialog
+                hideCloseIconButton = { true }
                 okKey = { t('dialog.IamHost') }
                 onCancel = { this._onCancelWaitForOwner }
                 onSubmit = { this._onIAmHost }

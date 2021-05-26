@@ -54,6 +54,11 @@ type Props = {
     hideCancelButton: boolean,
 
     /**
+     * If true, the close icon button will not be displayed.
+     */
+    hideCloseIconButton: boolean,
+
+    /**
      * If true, no footer will be displayed.
      */
     disableFooter?: boolean,
@@ -90,6 +95,10 @@ type Props = {
  * Web dialog that uses atlaskit modal-dialog to display dialogs.
  */
 class StatelessDialog extends Component<Props> {
+    static defaultProps = {
+        hideCloseIconButton: false
+    };
+
     /**
      * The functional component to be used for rendering the modal footer.
      */
@@ -125,6 +134,7 @@ class StatelessDialog extends Component<Props> {
         const {
             customHeader,
             children,
+            hideCloseIconButton,
             t /* The following fixes a flow error: */ = _.identity,
             titleString,
             titleKey,
@@ -138,7 +148,8 @@ class StatelessDialog extends Component<Props> {
                     Header: customHeader ? customHeader : props => (
                         <ModalHeader
                             { ...props }
-                            heading = { titleString || t(titleKey) } />
+                            heading = { titleString || t(titleKey) }
+                            hideCloseIconButton = { hideCloseIconButton } />
                     )
                 }}
                 footer = { this._renderFooter }
