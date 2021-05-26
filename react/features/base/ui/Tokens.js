@@ -215,7 +215,7 @@ export const shape = {
     boxShadow: 'inset 0px -1px 0px rgba(255, 255, 255, 0.15)'
 };
 
-export const spacing = [ 0, 4, 8, 16, 24, 32, 40, 48, 56 ];
+export const spacing = [ 0, 4, 8, 16, 24, 32, 40, 48, 56, 64, 72, 80 ];
 
 export const typography = {
     labelRegular: {

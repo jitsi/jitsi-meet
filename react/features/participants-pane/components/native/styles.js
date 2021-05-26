@@ -12,8 +12,8 @@ const participantState = {
  * The style for participant list.
  */
 const participantList = {
-    marginLeft: 16,
-    marginRight: 16,
+    marginLeft: BaseTheme.spacing[4],
+    marginRight: BaseTheme.spacing[4],
     position: 'relative'
 };
 
@@ -22,8 +22,8 @@ const participantList = {
  */
 const participantListDescription = {
     color: BaseTheme.palette.text01,
-    paddingBottom: 8,
-    paddingTop: 8,
+    paddingBottom: BaseTheme.spacing[3],
+    paddingTop: BaseTheme.spacing[3],
     position: 'relative',
     width: '55%'
 };
@@ -46,7 +46,7 @@ const button = {
     backgroundColor: BaseTheme.palette.action02,
     borderRadius: BaseTheme.shape.borderRadius,
     display: 'flex',
-    height: 48,
+    height: BaseTheme.spacing[7],
     justifyContent: 'center',
     marginLeft: 'auto'
 };
@@ -56,7 +56,7 @@ const button = {
  */
 const smallButton = {
     ...button,
-    width: 48
+    width: BaseTheme.spacing[7]
 };
 
 /**
@@ -81,49 +81,22 @@ export default {
         zIndex: 1
     },
 
-    participantActionsHover: {
-        backgroundColor: '#292929',
-        bottom: 1,
-        display: 'none',
-        position: 'absolute',
-        right: 8,
-        top: 0,
-        zIndex: 1,
-        after: {
-            backgroundColor: 'linear-gradient(90deg, rgba(0, 0, 0, 0) 0%, #292929 100%)',
-            content: '',
-            bottom: 0,
-            display: 'block',
-            left: 0,
-            pointerEvents: 'none',
-            position: 'absolute',
-            top: 0,
-            transform: 'translateX(-100%)',
-            width: 40
-        }
-    },
-
-    participantActionsPermanent: {
-        display: 'flex',
-        zIndex: 1
-    },
-
     participantActionsButtonAdmit: {
         backgroundColor: BaseTheme.palette.action01,
         borderRadius: BaseTheme.shape.borderRadius,
-        height: 32
+        height: BaseTheme.spacing[5]
     },
 
     participantActionsButtonReject: {
         backgroundColor: BaseTheme.palette.action01,
         borderRadius: BaseTheme.shape.borderRadius,
-        height: 32
+        height: BaseTheme.spacing[5]
     },
 
     participantActionsButtonContent: {
         alignItems: 'center',
         display: 'flex',
-        height: 32
+        height: BaseTheme.spacing[5]
     },
 
     participantActionsButtonText: {
@@ -144,7 +117,7 @@ export default {
         borderBottomWidth: 2,
         display: 'flex',
         flexDirection: 'row',
-        height: 64,
+        height: BaseTheme.spacing[9],
         width: '100%'
     },
 
@@ -160,8 +133,8 @@ export default {
     participantNameContainer: {
         display: 'flex',
         flexDirection: 'row',
-        marginLeft: BaseTheme.spacing[2],
         overflow: 'hidden',
+        paddingLeft: BaseTheme.spacing[2],
         width: '63%'
     },
 
@@ -181,7 +154,7 @@ export default {
     participantStatesContainer: {
         display: 'flex',
         flexDirection: 'row',
-        marginLeft: 16
+        marginLeft: BaseTheme.spacing[3]
     },
 
     participantStateAudio: {
@@ -190,29 +163,28 @@ export default {
 
     participantStateVideo: {
         ...participantState,
-        marginRight: 8
+        paddingRight: BaseTheme.spacing[2]
     },
 
     raisedHandIndicator: {
         backgroundColor: BaseTheme.palette.warning02,
         borderRadius: BaseTheme.shape.borderRadius / 2,
-        height: 24,
-        marginRight: 8,
-        width: 24
+        height: BaseTheme.spacing[4],
+        marginRight: BaseTheme.spacing[2],
+        width: BaseTheme.spacing[4]
     },
 
     raisedHandIcon: {
         ...flexContent,
-        top: 4
+        top: BaseTheme.spacing[1]
     },
     lobbyList: {
-        ...participantList,
-        marginTop: 8
+        ...participantList
     },
 
     meetingList: {
         ...participantList,
-        marginTop: 16
+        marginTop: BaseTheme.spacing[3]
     },
 
     lobbyListDetails: {
@@ -234,33 +206,33 @@ export default {
 
     lobbyListActions: {
         flexDirection: 'row',
-        left: 0
+        right: BaseTheme.spacing[2]
     },
 
     header: {
         alignItems: 'center',
         backgroundColor: BaseTheme.palette.ui01,
-        top: 0,
+        top: BaseTheme.spacing[0],
         display: 'flex',
         flexDirection: 'row',
-        height: 88,
-        paddingRight: 16,
+        height: BaseTheme.spacing[10],
+        paddingRight: BaseTheme.spacing[3],
         position: 'relative',
-        right: 0,
-        left: 0
+        right: BaseTheme.spacing[0],
+        left: BaseTheme.spacing[0]
     },
 
     footer: {
         alignItems: 'center',
         backgroundColor: BaseTheme.palette.ui01,
-        bottom: 0,
+        bottom: BaseTheme.spacing[0],
         display: 'flex',
         flexDirection: 'row',
-        height: 88,
-        paddingRight: 16,
+        height: BaseTheme.spacing[10],
+        paddingRight: BaseTheme.spacing[3],
         position: 'relative',
-        right: 0,
-        left: 0
+        right: BaseTheme.spacing[0],
+        left: BaseTheme.spacing[0]
     },
 
     closeButton: {
@@ -269,7 +241,7 @@ export default {
 
     closeIcon: {
         ...buttonContent,
-        left: 8
+        left: BaseTheme.spacing[2]
     },
 
     moreButton: {
@@ -278,7 +250,7 @@ export default {
 
     inviteButton: {
         backgroundColor: BaseTheme.palette.action01,
-        marginTop: 8
+        marginTop: BaseTheme.spacing[2]
     },
 
     inviteLabel: {
@@ -288,12 +260,12 @@ export default {
 
     moreIcon: {
         ...buttonContent,
-        left: 8
+        left: BaseTheme.spacing[2]
     },
 
     muteAllButton: {
         ...button,
-        left: 80
+        left: BaseTheme.spacing[10] + BaseTheme.spacing[2]
     },
 
     muteAllLabel: {

@@ -18,14 +18,6 @@ import {
 import { RaisedHandIndicator } from './RaisedHandIndicator';
 import styles from './styles';
 
-// /**
-//  * Participant actions component mapping depending on trigger type.
-//  */
-// const Actions = {
-//     [ActionTrigger.Hover]: ParticipantActionsHover,
-//     [ActionTrigger.Permanent]: ParticipantActionsPermanent
-// };
-
 type Props = {
 
     /**
