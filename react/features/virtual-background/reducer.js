@@ -3,6 +3,7 @@
 import { PersistenceRegistry, ReducerRegistry } from '../base/redux';
 
 import { BACKGROUND_ENABLED, SET_VIRTUAL_BACKGROUND } from './actionTypes';
+import { VIRTUAL_BACKGROUND_TYPE } from './constants';
 
 const STORE_NAME = 'features/virtual-background';
 
@@ -23,7 +24,7 @@ ReducerRegistry.register(STORE_NAME, (state = {}, action) => {
     /**
      * Sets up the persistence of the feature {@code virtual-background}.
      */
-    PersistenceRegistry.register(STORE_NAME, state.backgroundType !== 'desktop-share');
+    PersistenceRegistry.register(STORE_NAME, state.backgroundType !== VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE);
 
     switch (action.type) {
     case SET_VIRTUAL_BACKGROUND: {

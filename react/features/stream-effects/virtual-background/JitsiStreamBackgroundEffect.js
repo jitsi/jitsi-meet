@@ -1,5 +1,7 @@
 // @flow
 
+import { VIRTUAL_BACKGROUND_TYPE } from '../../virtual-background/constants';
+
 import {
     CLEAR_TIMEOUT,
     TIMEOUT_TICK,
@@ -15,6 +17,7 @@ import {
 export default class JitsiStreamBackgroundEffect {
     _model: Object;
     _options: Object;
+    _desktopShareDimensions: Object;
     _segmentationPixelCount: number;
     _inputVideoElement: HTMLVideoElement;
     _onMaskFrameTimer: Function;
@@ -41,18 +44,21 @@ export default class JitsiStreamBackgroundEffect {
     constructor(model: Object, options: Object) {
         this._options = options;
 
-        if (this._options.virtualBackground.backgroundType === 'image') {
+        if (this._options.virtualBackground.backgroundType === VIRTUAL_BACKGROUND_TYPE.IMAGE) {
             this._virtualImage = document.createElement('img');
             this._virtualImage.crossOrigin = 'anonymous';
             this._virtualImage.src = this._options.virtualBackground.virtualSource;
         }
-        if (this._options.virtualBackground.backgroundType === 'desktop-share') {
+        if (this._options.virtualBackground.backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE) {
+            const desktopShareTrack = this._options?.virtualBackground?.virtualSource?.track;
+
             this._virtualVideo = document.createElement('video');
             this._virtualVideo.autoplay = true;
             this._virtualVideo.srcObject = this._options?.virtualBackground?.virtualSource?.stream;
+            this._desktopShareDimensions = desktopShareTrack.getSettings ? desktopShareTrack.getSettings()
+                : desktopShareTrack.getConstraints();
         }
         this._model = model;
-        this._options = options;
         this._segmentationPixelCount = this._options.width * this._options.height;
 
         // Bind event handler so it is only bound once for every instance.
@@ -89,7 +95,7 @@ export default class JitsiStreamBackgroundEffect {
         //
 
         // Smooth out the edges.
-        if (this._options.virtualBackground.backgroundType === 'image') {
+        if (this._options.virtualBackground.backgroundType === VIRTUAL_BACKGROUND_TYPE.IMAGE) {
             this._outputCanvasCtx.filter = 'blur(4px)';
         } else {
             this._outputCanvasCtx.filter = 'blur(8px)';
@@ -118,7 +124,7 @@ export default class JitsiStreamBackgroundEffect {
         //
 
         this._outputCanvasCtx.globalCompositeOperation = 'destination-over';
-        if (this._options.virtualBackground.backgroundType === 'image') {
+        if (this._options.virtualBackground.backgroundType === VIRTUAL_BACKGROUND_TYPE.IMAGE) {
             this._outputCanvasCtx.drawImage(
                 this._virtualImage,
                 0,
@@ -127,13 +133,13 @@ export default class JitsiStreamBackgroundEffect {
                 this._inputVideoElement.height
             );
         }
-        if (this._options.virtualBackground.backgroundType === 'desktop-share') {
+        if (this._options.virtualBackground.backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE) {
             this._outputCanvasCtx.drawImage(
                 this._virtualVideo,
                 0,
                 0,
-                this._inputVideoElement.width,
-                this._inputVideoElement.height
+                this._desktopShareDimensions.width,
+                this._desktopShareDimensions.height
             );
         } else {
             this._outputCanvasCtx.filter = `blur(${this._options.virtualBackground.blurValue}px)`;

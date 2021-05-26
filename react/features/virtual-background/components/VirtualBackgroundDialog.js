@@ -9,9 +9,11 @@ import { Dialog, hideDialog } from '../../base/dialog';
 import { translate } from '../../base/i18n';
 import { Icon, IconCloseSmall, IconPlusCircle, IconShareDesktop } from '../../base/icons';
 import { createLocalTrack } from '../../base/lib-jitsi-meet/functions';
+import { VIDEO_TYPE } from '../../base/media';
 import { connect } from '../../base/redux';
 import { getLocalVideoTrack } from '../../base/tracks';
 import { toggleBackgroundEffect } from '../actions';
+import { VIRTUAL_BACKGROUND_TYPE } from '../constants';
 import { resizeImage, toDataURL } from '../functions';
 import logger from '../logger';
 
@@ -89,7 +91,7 @@ function VirtualBackground({ _jitsiTrack, _selectedThumbnail, _virtualSource, di
     const localImages = jitsiLocalStorage.getItem('virtualBackgrounds');
     const [ storedImages, setStoredImages ] = useState((localImages && JSON.parse(localImages)) || []);
     const [ loading, isloading ] = useState(false);
-    const [ activeDesktopVideo ] = useState(_virtualSource?.videoType === 'desktop' ? _virtualSource : null);
+    const [ activeDesktopVideo ] = useState(_virtualSource?.videoType === VIDEO_TYPE.DESKTOP ? _virtualSource : null);
 
     const deleteStoredImage = image => {
         setStoredImages(storedImages.filter(item => item !== image));
@@ -112,7 +114,7 @@ function VirtualBackground({ _jitsiTrack, _selectedThumbnail, _virtualSource, di
 
     const enableBlur = async (blurValue, selection) => {
         setOptions({
-            backgroundType: 'blur',
+            backgroundType: VIRTUAL_BACKGROUND_TYPE.BLUR,
             enabled: true,
             blurValue,
             selectedThumbnail: selection
@@ -129,8 +131,11 @@ function VirtualBackground({ _jitsiTrack, _selectedThumbnail, _virtualSource, di
     const shareDesktop = async selection => {
         const url = await createLocalTrack('desktop', '');
 
+        if (!url) {
+            throw new Error('Could not create desktop local track!');
+        }
         setOptions({
-            backgroundType: 'desktop-share',
+            backgroundType: VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE,
             enabled: true,
             selectedThumbnail: selection,
             url
@@ -139,7 +144,7 @@ function VirtualBackground({ _jitsiTrack, _selectedThumbnail, _virtualSource, di
 
     const setUploadedImageBackground = async image => {
         setOptions({
-            backgroundType: 'image',
+            backgroundType: VIRTUAL_BACKGROUND_TYPE.IMAGE,
             enabled: true,
             url: image.src,
             selectedThumbnail: image.id
@@ -150,7 +155,7 @@ function VirtualBackground({ _jitsiTrack, _selectedThumbnail, _virtualSource, di
         const url = await toDataURL(image.src);
 
         setOptions({
-            backgroundType: 'image',
+            backgroundType: VIRTUAL_BACKGROUND_TYPE.IMAGE,
             enabled: true,
             url,
             selectedThumbnail: image.id
@@ -173,7 +178,7 @@ function VirtualBackground({ _jitsiTrack, _selectedThumbnail, _virtualSource, di
                 }
             ]);
             setOptions({
-                backgroundType: 'image',
+                backgroundType: VIRTUAL_BACKGROUND_TYPE.IMAGE,
                 enabled: true,
                 url,
                 selectedThumbnail: uuId
