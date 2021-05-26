@@ -54,6 +54,11 @@ type Props = {
     hideCancelButton: boolean,
 
     /**
+     * If true, the close icon button will not be displayed.
+     */
+    hideCloseIconButton: boolean,
+
+    /**
      * If true, no footer will be displayed.
      */
     disableFooter?: boolean,
