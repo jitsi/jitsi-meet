@@ -12,6 +12,7 @@ import { createLocalTrack } from '../../base/lib-jitsi-meet/functions';
 import { VIDEO_TYPE } from '../../base/media';
 import { connect } from '../../base/redux';
 import { getLocalVideoTrack } from '../../base/tracks';
+import { showErrorNotification } from '../../notifications';
 import { toggleBackgroundEffect } from '../actions';
 import { VIRTUAL_BACKGROUND_TYPE } from '../constants';
 import { resizeImage, toDataURL } from '../functions';
@@ -132,7 +133,12 @@ function VirtualBackground({ _jitsiTrack, _selectedThumbnail, _virtualSource, di
         const url = await createLocalTrack('desktop', '');
 
         if (!url) {
-            throw new Error('Could not create desktop local track!');
+            dispatch(showErrorNotification({
+                titleKey: 'virtualBackground.desktopShareError'
+            }));
+            logger.error('Could not create desktop share as a virtual background!');
+
+            return;
         }
         setOptions({
             backgroundType: VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE,
