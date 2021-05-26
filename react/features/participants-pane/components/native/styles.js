@@ -268,6 +268,10 @@ export default {
         left: BaseTheme.spacing[10] + BaseTheme.spacing[2]
     },
 
+    muteAllContent: {
+        ...buttonContent
+    },
+
     muteAllLabel: {
         color: BaseTheme.palette.text01,
         textTransform: 'capitalize'

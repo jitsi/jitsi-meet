@@ -54,7 +54,9 @@ export function ParticipantsPane() {
             <View style = { styles.footer }>
                 <Button
                     children = { t('participantsPane.actions.muteAll') }
+                    contentStyle = { styles.muteAllContent }
                     labelStyle = { styles.muteAllLabel }
+                    mode = 'contained'
                     onPress = { muteAll }
                     style = { styles.muteAllButton } />
                 <Button
