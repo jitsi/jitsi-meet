@@ -3,9 +3,10 @@
 /**
  * Style variables
  */
-$baseFontFamily: -apple-system, BlinkMacSystemFont, 'open_sanslight', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-$hangupColor:#DD3849;
-$hangupHoverColor: #F25363;
+$baseFontFamily: -apple-system, BlinkMacSystemFont, "open_sanslight",
+    "Helvetica Neue", Helvetica, Arial, sans-serif;
+$hangupColor: #dd3849;
+$hangupHoverColor: #f25363;
 $hangupFontSize: 2em;
 
 /**
@@ -21,13 +22,12 @@ $thumbnailsBorder: 2px;
 $thumbnailVideoBorder: 2px;
 $filmstripToggleButtonWidth: 17px;
 
-
 /**
  * Color variables.
  */
-$defaultColor: #F1F1F1;
-$defaultSideBarFontColor: #44A5FF;
-$defaultSemiDarkColor: #ACACAC;
+$defaultColor: #f1f1f1;
+$defaultSideBarFontColor: #44a5ff;
+$defaultSemiDarkColor: #acacac;
 $defaultDarkColor: #2b3d5c;
 $defaultWarningColor: rgb(215, 121, 118);
 $participantsPaneBgColor: #141414;
@@ -42,26 +42,25 @@ $presence-idle: rgb(172, 172, 172);
 $newToolbarBackgroundColor: #131519;
 $newToolbarButtonHoverColor: rgba(255, 255, 255, 0.2);
 $newToolbarButtonToggleColor: rgba(255, 255, 255, 0.15);
-$menuBG:#242528;
+$menuBG: #242528;
 $newToolbarFontSize: 24px;
 $newToolbarHangupFontSize: 32px;
 $newToolbarSize: 48px;
 $newToolbarSizeWithPadding: calc(#{$newToolbarSize} + 24px);
 $toolbarTitleFontSize: 19px;
 $overflowMenuItemColor: #fff;
-$overflowMenuItemBackground: #36383C;
-
+$overflowMenuItemBackground: #36383c;
 
 /**
  * Video layout
  */
-$videoThumbnailHovered: rgba(22, 94, 204, .4);
-$videoThumbnailSelected: #165ECC;
+$videoThumbnailHovered: rgba(22, 94, 204, 0.4);
+$videoThumbnailSelected: #165ecc;
 $participantNameColor: #fff;
 $thumbnailPictogramColor: #fff;
 $dominantSpeakerBg: #165ecc;
-$raiseHandBg: #D6D61E;
-$audioLevelBg: #44A5FF;
+$raiseHandBg: #d6d61e;
+$audioLevelBg: #44a5ff;
 $connectionIndicatorBg: #165ecc;
 $audioLevelShadow: rgba(9, 36, 77, 0.9);
 $videoStateIndicatorColor: $defaultColor;
@@ -91,13 +90,13 @@ $modalTextColor: #333;
  */
 $chatActionsSeparatorColor: rgb(173, 105, 112);
 $chatBackgroundColor: #131519;
-$chatInputSeparatorColor: #A4B8D1;
-$chatLocalMessageBackgroundColor: #484A4F;
+$chatInputSeparatorColor: #a4b8d1;
+$chatLocalMessageBackgroundColor: #484a4f;
 $chatPrivateMessageBackgroundColor: rgb(153, 69, 77);
-$chatRemoteMessageBackgroundColor:  #242528;
+$chatRemoteMessageBackgroundColor: #242528;
 $sidebarWidth: 315px;
 
- /**
+/**
  * Misc.
  */
 $borderRadius: 4px;
@@ -131,12 +130,11 @@ $dropdownZ: 901;
 $centeredVideoLabelZ: 1010;
 $overlayZ: 1016;
 
-
 /**
  * Font Colors
  */
 $defaultFontColor: #777;
-$defaultLightFontColor: #F1F1F1;
+$defaultLightFontColor: #f1f1f1;
 $defaultDarkFontColor: #000;
 
 /**
@@ -152,7 +150,7 @@ $formPadding: 16px;
 /**
  * Unsupported browser
  */
-$primaryUnsupportedBrowserButtonBgColor: #0052CC;
+$primaryUnsupportedBrowserButtonBgColor: #0052cc;
 $unsupportedBrowserButtonBgColor: rgba(9, 30, 66, 0.04);
 $unsupportedBrowserTextColor: #4a4a4a;
 $unsupportedBrowserTextSmallFontSize: 17px;
@@ -175,13 +173,9 @@ $welcomePageWatermarkHeight: 32px;
  */
 $welcomePageDescriptionColor: #fff;
 $welcomePageFontFamily: inherit;
-$welcomePageBackground: none;
+$welcomePageBackground: linear-gradient(to right, #232526, #414345);
 $welcomePageTitleColor: #fff;
 
-$welcomePageHeaderBackground: linear-gradient(0deg, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)), url('../images/welcome-background.png');
-$welcomePageHeaderBackgroundPosition: center;
-$welcomePageHeaderBackgroundRepeat: none;
-$welcomePageHeaderBackgroundSize: cover;
 $welcomePageHeaderPaddingBottom: 0px;
 $welcomePageHeaderTitleMaxWidth: initial;
 $welcomePageHeaderTextAlign: center;
