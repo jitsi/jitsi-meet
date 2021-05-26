@@ -19,8 +19,8 @@ MiddlewareRegistry.register(store => next => action => {
     const virtualSource = getState()['features/virtual-background'].virtualSource;
     const currentLocalTrack = getLocalVideoTrack(getState()['features/base/tracks']);
 
-    if (virtualSource?.videoType === VIDEO_TYPE.DESKTOP && currentLocalTrack) {
-        localTrackStopped(dispatch, virtualSource, currentLocalTrack.jitsiTrack);
+    if (virtualSource?.videoType === VIDEO_TYPE.DESKTOP) {
+        localTrackStopped(dispatch, virtualSource, currentLocalTrack?.jitsiTrack);
     }
 
     return next(action);
