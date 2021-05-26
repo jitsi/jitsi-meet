@@ -273,7 +273,7 @@
         "Submit": "Submit",
         "thankYou": "Thank you for using {{appName}}!",
         "token": "token",
-        "tokenAuthFailed": "Sorry, you're not allowed to join this call.",
+        "tokenAuthFailed": "Please try accessing your session again and reach out to the clinic for help.",
         "tokenAuthFailedTitle": "Authentication failed",
         "transcribing": "Transcribing",
         "unlockRoom": "Remove meeting $t(lockRoomPassword)",
