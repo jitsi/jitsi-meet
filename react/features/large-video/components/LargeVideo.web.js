@@ -6,6 +6,7 @@ import { Watermarks } from '../../base/react';
 import { connect } from '../../base/redux';
 import { setColorAlpha } from '../../base/util';
 import { fetchCustomBrandingData } from '../../dynamic-branding';
+import { SharedVideo } from '../../shared-video/components/web';
 import { Captions } from '../../subtitles/';
 
 declare var interfaceConfig: Object;
@@ -67,17 +68,19 @@ class LargeVideo extends Component<Props> {
      * @returns {React$Element}
      */
     render() {
+        const {
+            _isChatOpen,
+            _noAutoPlayVideo
+        } = this.props;
         const style = this._getCustomSyles();
-        const className = `videocontainer${this.props._isChatOpen ? ' shift-right' : ''}`;
+        const className = `videocontainer${_isChatOpen ? ' shift-right' : ''}`;
 
         return (
             <div
                 className = { className }
                 id = 'largeVideoContainer'
                 style = { style }>
-                <div id = 'sharedVideo'>
-                    <div id = 'sharedVideoIFrame' />
-                </div>
+                <SharedVideo />
                 <div id = 'etherpad' />
 
                 <Watermarks />
@@ -101,7 +104,7 @@ class LargeVideo extends Component<Props> {
                       */}
                     <div id = 'largeVideoWrapper'>
                         <video
-                            autoPlay = { !this.props._noAutoPlayVideo }
+                            autoPlay = { !_noAutoPlayVideo }
                             id = 'largeVideo'
                             muted = { true }
                             playsInline = { true } /* for Safari on iOS to work */ />
