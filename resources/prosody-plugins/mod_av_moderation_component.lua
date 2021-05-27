@@ -64,7 +64,13 @@ function notify_whitelist_change(jid, moderators, room, mediaType)
         if moderators and occupant.role == 'moderator' then
             send_json_message(occupant.jid, moderators_body_json_str);
         elseif occupant.jid == jid then
-            send_json_message(occupant.jid, participant_body_json_str);
+            -- if the occupant is not moderator we send him that it is approved
+            -- if it is moderator we update him with the list, this is moderator joining or grant moderation was executed
+            if occupant.role == 'moderator' then
+                send_json_message(occupant.jid, moderators_body_json_str);
+            else
+                send_json_message(occupant.jid, participant_body_json_str);
+            end
         end
     end
 end
