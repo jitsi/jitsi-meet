@@ -21,7 +21,6 @@ import UIEvents from '../../service/UI/UIEvents';
 
 import EtherpadManager from './etherpad/Etherpad';
 import GenericIFrameManager from './genericiframe/GenericIFrame';
-import SharedVideoManager from './shared_video/SharedVideo';
 import messageHandler from './util/MessageHandler';
 import UIUtil from './util/UIUtil';
 import VideoLayout from './videolayout/VideoLayout';
@@ -35,7 +34,6 @@ const eventEmitter = new EventEmitter();
 UI.eventEmitter = eventEmitter;
 
 let etherpadManager;
-let sharedVideoManager;
 let genericIFrameManager;
 
 const UIListeners = new Map([
@@ -45,9 +43,6 @@ const UIListeners = new Map([
     ], [
         UIEvents.GENERICIFRAME_CLICKED,
         () => genericIFrameManager && genericIFrameManager.toggleGenericIFrame()
-    ], [
-        UIEvents.SHARED_VIDEO_CLICKED,
-        () => sharedVideoManager && sharedVideoManager.toggleSharedVideo()
     ], [
         UIEvents.TOGGLE_FILMSTRIP,
         () => UI.toggleFilmstrip()
@@ -62,14 +57,6 @@ const UIListeners = new Map([
  */
 UI.isFullScreen = function() {
     return UIUtil.isFullScreen();
-};
-
-/**
- * Returns true if there is a shared video which is being shown (?).
- * @returns {boolean} - true if there is a shared video which is being shown.
- */
-UI.isSharedVideoShown = function() {
-    return Boolean(sharedVideoManager && sharedVideoManager.isSharedVideoShown);
 };
 
 /**
@@ -117,8 +104,6 @@ UI.start = function() {
     // the current dom layout, the quality label is part of the video layout and
     // will be seen animating in.
     VideoLayout.resizeVideoArea();
-
-    sharedVideoManager = new SharedVideoManager(eventEmitter);
 
     if (isMobileBrowser()) {
         $('body').addClass('mobile-browser');
@@ -436,60 +421,6 @@ UI.getLargeVideoID = function() {
  */
 UI.getLargeVideo = function() {
     return VideoLayout.getLargeVideo();
-};
-
-/**
- * Show shared video.
- * @param {string} id the id of the sender of the command
- * @param {string} url video url
- * @param {string} attributes
-*/
-UI.onSharedVideoStart = function(id, url, attributes) {
-    if (sharedVideoManager) {
-        sharedVideoManager.onSharedVideoStart(id, url, attributes);
-    }
-};
-
-/**
- * Update shared video.
- * @param {string} id the id of the sender of the command
- * @param {string} url video url
- * @param {string} attributes
- */
-UI.onSharedVideoUpdate = function(id, url, attributes) {
-    if (sharedVideoManager) {
-        sharedVideoManager.onSharedVideoUpdate(id, url, attributes);
-    }
-};
-
-/**
- * Stop showing shared video.
- * @param {string} id the id of the sender of the command
- * @param {string} attributes
- */
-UI.onSharedVideoStop = function(id, attributes) {
-    if (sharedVideoManager) {
-        sharedVideoManager.onSharedVideoStop(id, attributes);
-    }
-};
-
-/**
- * Show shared video.
- * @param {string} url video url
- */
-UI.startSharedVideoEmitter = function(url) {
-    if (sharedVideoManager) {
-        sharedVideoManager.startSharedVideoEmitter(url);
-    }
-};
-
-/**
- * Stop shared video.
- */
-UI.stopSharedVideoEmitter = function() {
-    if (sharedVideoManager) {
-        sharedVideoManager.stopSharedVideoEmitter();
-    }
 };
 
 // TODO: Export every function separately. For now there is no point of doing

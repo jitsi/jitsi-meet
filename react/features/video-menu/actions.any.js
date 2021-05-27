@@ -45,10 +45,9 @@ export function muteLocal(enable: boolean, mediaType: MEDIA_TYPE) {
         dispatch(isAudio ? setAudioMuted(enable, /* ensureTrack */ true)
             : setVideoMuted(enable, mediaType, VIDEO_MUTISM_AUTHORITY.USER, /* ensureTrack */ true));
 
-        // FIXME: The old conference logic as well as the shared video feature
-        // still rely on this event being emitted.
+        // FIXME: The old conference logic still relies on this event being emitted.
         typeof APP === 'undefined'
-            || APP.UI.emitEvent(isAudio ? UIEvents.AUDIO_MUTED : UIEvents.VIDEO_MUTED, enable, true);
+            || APP.UI.emitEvent(isAudio ? UIEvents.AUDIO_MUTED : UIEvents.VIDEO_MUTED, enable);
     };
 }
 
