@@ -10,6 +10,7 @@ import { IconDragHandle } from '../../../base/icons';
 import { connect } from '../../../base/redux';
 import { StyleType } from '../../../base/styles';
 import { SharedDocumentButton } from '../../../etherpad';
+import { GenericIFrameButton } from '../../../genericiframe';
 import { InviteButton } from '../../../invite';
 import { AudioRouteButton } from '../../../mobile/audio-mode';
 import { LiveStreamButton, RecordButton } from '../../../recording';
@@ -150,6 +151,7 @@ class OverflowMenu extends PureComponent<Props, State> {
                     <SharedVideoButton { ...buttonProps } />
                     <ClosedCaptionButton { ...buttonProps } />
                     <SharedDocumentButton { ...buttonProps } />
+                    <GenericIFrameButton { ...buttonProps } />
                     <MuteEveryoneButton { ...buttonProps } />
                     <MuteEveryonesVideoButton { ...buttonProps } />
                     <HelpButton { ...buttonProps } />

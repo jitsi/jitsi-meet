@@ -32,6 +32,7 @@ import '../deep-linking/reducer';
 import '../dropbox/reducer';
 import '../dynamic-branding/reducer';
 import '../etherpad/reducer';
+import '../genericiframe/reducer';
 import '../filmstrip/reducer';
 import '../follow-me/reducer';
 import '../google-api/reducer';

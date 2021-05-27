@@ -1,70 +1,40 @@
 /* global $, APP, interfaceConfig */
 
-import { getSharedDocumentUrl, setDocumentEditingState } from '../../../react/features/etherpad';
+import {
+    getGenericIFrameUrl,
+    setGenericIFrameVisibilityState
+} from '../../../react/features/genericiframe';
 import { getToolboxHeight } from '../../../react/features/toolbox/functions.web';
 import Filmstrip from '../videolayout/Filmstrip';
 import LargeContainer from '../videolayout/LargeContainer';
 import VideoLayout from '../videolayout/VideoLayout';
 
-/**
- *
- */
-function bubbleIframeMouseMove(iframe) {
-    const existingOnMouseMove = iframe.contentWindow.onmousemove;
-
-    iframe.contentWindow.onmousemove = function(e) {
-        if (existingOnMouseMove) {
-            existingOnMouseMove(e);
-        }
-        const evt = document.createEvent('MouseEvents');
-        const boundingClientRect = iframe.getBoundingClientRect();
-
-        evt.initMouseEvent(
-            'mousemove',
-            true, // bubbles
-            false, // not cancelable
-            window,
-            e.detail,
-            e.screenX,
-            e.screenY,
-            e.clientX + boundingClientRect.left,
-            e.clientY + boundingClientRect.top,
-            e.ctrlKey,
-            e.altKey,
-            e.shiftKey,
-            e.metaKey,
-            e.button,
-            null // no related element
-        );
-        iframe.dispatchEvent(evt);
-    };
-}
 
 /**
- * Default Etherpad frame width.
+ * Default genericiframe frame width.
  */
 const DEFAULT_WIDTH = 640;
 
 /**
- * Default Etherpad frame height.
+ * Default genericiframe frame height.
  */
 const DEFAULT_HEIGHT = 480;
 
-const ETHERPAD_CONTAINER_TYPE = 'etherpad';
+const GENERICIFRAME_CONTAINER_TYPE = 'genericiframe';
 
 /**
- * Container for Etherpad iframe.
+ * Container for genericiframe iframe.
  */
-class Etherpad extends LargeContainer {
+class GenericIFrame extends LargeContainer {
     /**
-     * Creates new Etherpad object
+     * Creates new GenericIFrame object
      */
     constructor(url) {
         super();
 
         const iframe = document.createElement('iframe');
 
-        iframe.id = 'etherpadIFrame';
+        iframe.id = 'genericiframe';
         iframe.src = url;
         iframe.frameBorder = 0;
         iframe.scrolling = 'no';
@@ -73,27 +43,6 @@ class Etherpad extends LargeContainer {
         iframe.setAttribute('style', 'visibility: hidden;');
 
         this.container.appendChild(iframe);
-
-        iframe.onload = function() {
-            // eslint-disable-next-line no-self-assign
-            document.domain = document.domain;
-            bubbleIframeMouseMove(iframe);
-
-            setTimeout(() => {
-                const doc = iframe.contentDocument;
-
-                // the iframes inside of the etherpad are
-                // not yet loaded when the etherpad iframe is loaded
-                const outer = doc.getElementsByName('ace_outer')[0];
-
-                bubbleIframeMouseMove(outer);
-
-                const inner = doc.getElementsByName('ace_inner')[0];
-
-                bubbleIframeMouseMove(inner);
-            }, 2000);
-        };
-
         this.iframe = iframe;
     }
 
@@ -108,7 +57,7 @@ class Etherpad extends LargeContainer {
      *
      */
     get container() {
-        return document.getElementById('etherpad');
+        return document.getElementById('genericiframe');
     }
 
     /**
@@ -146,7 +95,8 @@ class Etherpad extends LargeContainer {
                 $container.css({ zIndex: 2 });
                 $container.css({ position: 'relative' });
 
-                APP.store.dispatch(setDocumentEditingState(true));
+
+                APP.store.dispatch(setGenericIFrameVisibilityState(true));
 
                 resolve();
             });
@@ -167,7 +117,7 @@ class Etherpad extends LargeContainer {
                 $iframe.css({ visibility: 'hidden' });
                 $container.css({ zIndex: 0 });
 
-                APP.store.dispatch(setDocumentEditingState(false));
+                APP.store.dispatch(setGenericIFrameVisibilityState(false));
 
                 resolve();
             });
@@ -183,56 +133,62 @@ class Etherpad extends LargeContainer {
 }
 
 /**
- * Manager of the Etherpad frame.
+ * Manager of the GenericIFrame frame.
  */
-export default class EtherpadManager {
+export default class GenericIFrameManager {
     /**
      *
      */
     constructor(eventEmitter) {
         this.eventEmitter = eventEmitter;
-        this.etherpad = null;
+        this.genericiframe = null;
     }
 
     /**
      *
      */
     get isOpen() {
-        return Boolean(this.etherpad);
+        return Boolean(this.genericiframe);
     }
 
     /**
      *
      */
     isVisible() {
-        return VideoLayout.isLargeContainerTypeVisible(ETHERPAD_CONTAINER_TYPE);
-    }
-
-    /**
-     * Create new Etherpad frame.
-     */
-    openEtherpad() {
-        this.etherpad = new Etherpad(getSharedDocumentUrl(APP.store.getState));
-        VideoLayout.addLargeVideoContainer(
-            ETHERPAD_CONTAINER_TYPE,
-            this.etherpad
+        return VideoLayout.isLargeContainerTypeVisible(
+            GENERICIFRAME_CONTAINER_TYPE
         );
     }
 
     /**
-     * Toggle Etherpad frame visibility.
-     * Open new Etherpad frame if there is no Etherpad frame yet.
+     * Create new GenericIFrame frame.
      */
-    toggleEtherpad() {
+    openGenericIFrame() {
+        this.genericiframe = new GenericIFrame(
+            getGenericIFrameUrl(APP.store.getState)
+        );
+        VideoLayout.addLargeVideoContainer(
+            GENERICIFRAME_CONTAINER_TYPE,
+            this.genericiframe
+        );
+    }
+
+    /**
+     * Toggle GenericIFrame frame visibility.
+     * Open new GenericIFrame frame if there is no GenericIFrame frame yet.
+     */
+    toggleGenericIFrame() {
         if (!this.isOpen) {
-            this.openEtherpad();
+            this.openGenericIFrame();
         }
 
         const isVisible = this.isVisible();
 
         VideoLayout.showLargeVideoContainer(
-            ETHERPAD_CONTAINER_TYPE, !isVisible);
+            GENERICIFRAME_CONTAINER_TYPE,
+            !isVisible
+        );
 
-        APP.store.dispatch(setDocumentEditingState(!isVisible));
+        APP.store.dispatch(setGenericIFrameVisibilityState(!isVisible));
     }
 }

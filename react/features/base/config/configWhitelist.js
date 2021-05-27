@@ -118,6 +118,7 @@ export default [
     'enableTcc',
     'enableAutomaticUrlCopy',
     'etherpad_base',
+    'genericIFrameTemplateUrl',
     'failICE',
     'feedbackPercentage',
     'fileRecordingsEnabled',

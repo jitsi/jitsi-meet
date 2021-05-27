@@ -178,6 +178,7 @@ const commands = {
     CUSTOM_ROLE: 'custom-role',
     EMAIL: EMAIL_COMMAND,
     ETHERPAD: 'etherpad',
+    GENERICIFRAME: 'genericiframe',
     SHARED_VIDEO: 'shared-video'
 };
 
@@ -2201,6 +2202,8 @@ export default {
                 APP.UI.initEtherpad(value);
             }
         );
+
+        APP.UI.initGenericIFrame();
 
         APP.UI.addListener(UIEvents.EMAIL_CHANGED,
             this.changeLocalEmail.bind(this));

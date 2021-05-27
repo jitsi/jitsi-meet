@@ -12,6 +12,7 @@ export default {
     AUDIO_MUTED: 'UI.audio_muted',
     VIDEO_MUTED: 'UI.video_muted',
     ETHERPAD_CLICKED: 'UI.etherpad_clicked',
+    GENERICIFRAME_CLICKED: 'UI.genericiframe_clicked',
     SHARED_VIDEO_CLICKED: 'UI.start_shared_video',
 
     /**

@@ -452,7 +452,7 @@ var config = {
     // toolbarButtons: [
     //    'microphone', 'camera', 'closedcaptions', 'desktop', 'embedmeeting', 'fullscreen',
     //    'fodeviceselection', 'hangup', 'profile', 'chat', 'recording',
-    //    'livestreaming', 'etherpad', 'sharedvideo', 'shareaudio', 'settings', 'raisehand',
+    //    'livestreaming', 'etherpad', 'genericIFrame', 'sharedvideo', 'shareaudio', 'settings', 'raisehand',
     //    'videoquality', 'filmstrip', 'invite', 'feedback', 'stats', 'shortcuts',
     //    'tileview', 'select-background', 'download', 'help', 'mute-everyone', 'mute-video-everyone', 'security'
     // ],
@@ -758,6 +758,14 @@ var config = {
      requireDisplayName
      tokenAuthUrl
      */
+
+    /**
+     * Generic IFrame to be used for any application you like. You can name the menu entries in "/lang/main.json"
+     * The link supports template strings for:
+     *  - {room} - The room id
+     *  - {lang} - The ISO Language tag
+     */
+     //genericIFrameTemplateUrl: "https://example.com/link/to/your/iframe/app/{room}?lang={lang}"
 
     /**
      * This property can be used to alter the generated meeting invite links (in combination with a branding domain
