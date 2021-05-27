@@ -13,6 +13,7 @@ import {
     setSubject
 } from '../../react/features/base/conference';
 import { overwriteConfig, getWhitelistedJSON } from '../../react/features/base/config';
+import { toggleDialog } from '../../react/features/base/dialog/actions';
 import { parseJWTFromURLParams } from '../../react/features/base/jwt';
 import JitsiMeetJS, { JitsiRecordingConstants } from '../../react/features/base/lib-jitsi-meet';
 import { MEDIA_TYPE } from '../../react/features/base/media';
@@ -50,6 +51,7 @@ import { playSharedVideo, stopSharedVideo } from '../../react/features/shared-vi
 import { toggleTileView, setTileView } from '../../react/features/video-layout';
 import { muteAllParticipants } from '../../react/features/video-menu/actions';
 import { setVideoQuality } from '../../react/features/video-quality';
+import VirtualBackgroundDialog from '../../react/features/virtual-background/components/VirtualBackgroundDialog';
 import { getJitsiMeetTransport } from '../transport';
 
 import { API_ID, ENDPOINT_TEXT_MESSAGE_NAME } from './constants';
@@ -421,6 +423,9 @@ function initCommands() {
             const whitelistedConfig = getWhitelistedJSON('config', config);
 
             APP.store.dispatch(overwriteConfig(whitelistedConfig));
+        },
+        'toggle-virtual-background': () => {
+            APP.store.dispatch(toggleDialog(VirtualBackgroundDialog));
         }
     };
     transport.on('event', ({ data, name }) => {
