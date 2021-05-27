@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 
 import { getParticipants } from '../../base/participants';
-import { findStyledAncestor } from '../functions';
+import { findStyledAncestor, shouldRenderInviteButton } from '../functions';
 
 import { InviteButton } from './InviteButton';
 import { MeetingParticipantContextMenu } from './MeetingParticipantContextMenu';
@@ -36,6 +36,7 @@ const initialState = Object.freeze(Object.create(null));
 export const MeetingParticipantList = () => {
     const isMouseOverMenu = useRef(false);
     const participants = useSelector(getParticipants, _.isEqual);
+    const showInviteButton = useSelector(shouldRenderInviteButton);
     const [ raiseContext, setRaiseContext ] = useState<RaiseContext>(initialState);
     const { t } = useTranslation();
 
@@ -86,7 +87,7 @@ export const MeetingParticipantList = () => {
     return (
     <>
         <Heading>{t('participantsPane.headings.participantsList', { count: participants.length })}</Heading>
-        <InviteButton />
+        {showInviteButton && <InviteButton />}
         <div>
             {participants.map(p => (
                 <MeetingParticipantItem
