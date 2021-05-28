@@ -1,15 +1,18 @@
 // @flow
 
-import { DATA_CHANNEL_OPENED } from '../base/conference';
+import { CONFERENCE_FAILED, DATA_CHANNEL_OPENED } from '../base/conference';
+import { JitsiConferenceErrors } from '../base/lib-jitsi-meet';
 import {
     getParticipantById,
     isParticipantModerator,
     PARTICIPANT_JOINED
 } from '../base/participants';
 import { equals, MiddlewareRegistry, StateListenerRegistry } from '../base/redux';
+import { KNOCKING_PARTICIPANT_ARRIVED_OR_UPDATED } from '../lobby/actionTypes';
 import { ENDPOINT_MESSAGE_RECEIVED } from '../subtitles';
 
 import {
+    admitLocalProxyModerator,
     grantOwnerToLocalProxyModerator,
     moveToRoom,
     sendRoomsRequest,
@@ -47,13 +50,25 @@ StateListenerRegistry.register(
  */
 MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
-    case ENDPOINT_MESSAGE_RECEIVED:
-        _handleEndpointMessage(store, action);
+    case CONFERENCE_FAILED: {
+        const { conference, error } = action;
+        const { knockingSharedKey } = getBreakoutRooms(store);
+
+        if (knockingSharedKey && error.name === JitsiConferenceErrors.MEMBERS_ONLY_ERROR) {
+            conference.joinLobby(knockingSharedKey);
+        }
         break;
+    }
     case DATA_CHANNEL_OPENED:
         if (!isInBreakoutRoom(store)) {
             store.dispatch(sendRoomsRequest());
         }
+        break;
+    case ENDPOINT_MESSAGE_RECEIVED:
+        _handleEndpointMessage(store, action);
+        break;
+    case KNOCKING_PARTICIPANT_ARRIVED_OR_UPDATED:
+        store.dispatch(admitLocalProxyModerator(action.participant));
         break;
     case PARTICIPANT_JOINED:
         store.dispatch(grantOwnerToLocalProxyModerator(action.participant));

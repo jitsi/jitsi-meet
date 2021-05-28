@@ -5,10 +5,10 @@ import type { Dispatch } from 'redux';
 import uuid from 'uuid';
 
 import { openConnection } from '../../../connection';
-import { getConferenceState, getCurrentConference, setPassword, setRoom } from '../base/conference';
+import { getConferenceState, getCurrentConference, setRoom } from '../base/conference';
 import { connect, disconnect } from '../base/connection';
 import { i18next } from '../base/i18n';
-import { JitsiConferenceEvents } from '../base/lib-jitsi-meet';
+import { JitsiConferenceErrors, JitsiConferenceEvents } from '../base/lib-jitsi-meet';
 import {
     getLocalParticipant,
     getParticipantCount,
@@ -18,6 +18,7 @@ import {
 } from '../base/participants';
 import { createDesiredLocalTracks } from '../base/tracks';
 import { getConferenceOptions } from '../conference/functions';
+import { setKnockingParticipantApproval } from '../lobby/functions';
 import { clearNotifications } from '../notifications';
 
 import {
@@ -27,6 +28,7 @@ import {
     REMOVE_PROXY_MODERATOR_CONFERENCE,
     REMOVE_ROOM,
     SET_IS_SCHEDULED_SEND_ROOMS_TO_ALL,
+    SET_KNOCKING_SHARED_KEY,
     SET_NEXT_ROOM_INDEX,
     UPDATE_PARTICIPANTS
 } from './actionTypes';
@@ -57,6 +59,10 @@ export function createBreakoutRoom() {
         const mainRoomId = getMainRoomId(getState);
 
         if (!getProxyModeratorConference(getState, mainRoomId)) {
+            dispatch({
+                type: SET_KNOCKING_SHARED_KEY,
+                knockingSharedKey: uuid.v4()
+            });
             const mainRoom = {
                 id: mainRoomId,
                 isMainRoom: true
@@ -142,19 +148,8 @@ function _initRoom(room) {
             proxyModeratorConference
         });
         dispatch(_setupProxyModeratorConferenceListeners(proxyModeratorConference));
-        const mainRoomId = getMainRoomId(getState);
-        const { password } = getConferenceState(getState());
 
-        if (password || roomId !== mainRoomId) {
-            await proxyModeratorConference.join(password);
-        } else {
-            const conference = getCurrentConference(getState);
-            const tempPassword = uuid.v4();
-
-            await dispatch(setPassword(conference, conference.lock, tempPassword));
-            await proxyModeratorConference.join(tempPassword);
-            dispatch(setPassword(conference, conference.lock, ''));
-        }
+        await proxyModeratorConference.join(getConferenceState(getState())?.password);
 
         return proxyModeratorConference;
     };
@@ -168,20 +163,14 @@ function _initRoom(room) {
  */
 function _setupProxyModeratorConferenceListeners(proxyModeratorConference: Object) {
     return (dispatch: Dispatch<any>, getState: Function) => {
-        proxyModeratorConference.on(JitsiConferenceEvents.CONFERENCE_JOINED, () =>
-            proxyModeratorConference.setDisplayName(i18next.t('settings.moderator')));
-
-        proxyModeratorConference.on(JitsiConferenceEvents.USER_ROLE_CHANGED, id => {
-            if (id === proxyModeratorConference.myUserId() && proxyModeratorConference.isModerator()) {
-                const roomId = proxyModeratorConference.options.name;
-                const roomName = getRoomById(getState, roomId)?.name;
-
-                dispatch(_sendRooms(proxyModeratorConference));
-                if (roomName) {
-                    proxyModeratorConference.setSubject(roomName);
-                }
+        proxyModeratorConference.on(JitsiConferenceEvents.CONFERENCE_FAILED, async error => {
+            if (error === JitsiConferenceErrors.MEMBERS_ONLY_ERROR) {
+                await proxyModeratorConference.joinLobby(getBreakoutRooms(getState)?.knockingSharedKey);
             }
         });
+
+        proxyModeratorConference.on(JitsiConferenceEvents.CONFERENCE_JOINED, () =>
+            proxyModeratorConference.setDisplayName(i18next.t('settings.moderator')));
 
         proxyModeratorConference.on(JitsiConferenceEvents.DATA_CHANNEL_OPENED, () =>
             dispatch(_sendRooms(proxyModeratorConference)));
@@ -189,6 +178,12 @@ function _setupProxyModeratorConferenceListeners(proxyModeratorConference: Objec
         proxyModeratorConference.on(JitsiConferenceEvents.ENDPOINT_MESSAGE_RECEIVED, (participant, payload) => {
             if (payload?.type === JSON_TYPE_ROOMS_REQUEST) {
                 dispatch(_sendRooms(proxyModeratorConference, participant.id));
+            }
+        });
+
+        proxyModeratorConference.on(JitsiConferenceEvents.LOBBY_USER_JOINED, (id, name) => {
+            if (name === getBreakoutRooms(getState)?.knockingSharedKey) {
+                proxyModeratorConference.lobbyApproveAccess(id);
             }
         });
 
@@ -205,6 +200,18 @@ function _setupProxyModeratorConferenceListeners(proxyModeratorConference: Objec
 
         proxyModeratorConference.on(JitsiConferenceEvents.USER_LEFT, () => {
             dispatch(_updateParticipants(proxyModeratorConference));
+        });
+
+        proxyModeratorConference.on(JitsiConferenceEvents.USER_ROLE_CHANGED, id => {
+            if (id === proxyModeratorConference.myUserId() && proxyModeratorConference.isModerator()) {
+                const roomId = proxyModeratorConference.options.name;
+                const roomName = getRoomById(getState, roomId)?.name;
+
+                dispatch(_sendRooms(proxyModeratorConference));
+                if (roomName) {
+                    proxyModeratorConference.setSubject(roomName);
+                }
+            }
         });
     };
 }
@@ -271,7 +278,7 @@ export function sendRoomsToAll() {
  */
 function _sendRooms(proxyModeratorConference, participantId = '') {
     return (dispatch: Dispatch<any>, getState: Function) => {
-        const { rooms, removedRooms, nextRoomIndex } = getBreakoutRooms(getState);
+        const { rooms, removedRooms, nextRoomIndex, knockingSharedKey } = getBreakoutRooms(getState);
 
         if (proxyModeratorConference.getParticipants().length > 1) {
             try {
@@ -279,7 +286,8 @@ function _sendRooms(proxyModeratorConference, participantId = '') {
                     type: JSON_TYPE_ROOMS,
                     rooms,
                     removedRooms,
-                    nextRoomIndex
+                    nextRoomIndex,
+                    knockingSharedKey
                 };
 
                 proxyModeratorConference.sendEndpointMessage(participantId, message);
@@ -300,18 +308,21 @@ function _sendRooms(proxyModeratorConference, participantId = '') {
  * }} roomsUpdate - The received room state update.
  * @returns {void}
  */
-export function updateRooms(roomsUpdate: {
+export function updateRooms({ rooms = {}, removedRooms = [], nextRoomIndex, knockingSharedKey }: {
         rooms: Object,
         removedRooms: Array<string>,
-        nextRoomIndex: Number
+        nextRoomIndex: Number,
+        knockingSharedKey: string
         }
 ) {
     return (dispatch: Dispatch<any>, getState: Function) => {
-        const { rooms = {}, removedRooms = [], nextRoomIndex } = roomsUpdate;
-
         dispatch({
             type: SET_NEXT_ROOM_INDEX,
             nextRoomIndex
+        });
+        dispatch({
+            type: SET_KNOCKING_SHARED_KEY,
+            knockingSharedKey
         });
         removedRooms.forEach(id => dispatch(removeRoom(id)));
         Object.values(rooms).forEach((room: Object) => {
@@ -352,6 +363,29 @@ export function grantOwnerToLocalProxyModerator(participant: Object) {
                 && participant.role !== PARTICIPANT_ROLE.MODERATOR) {
                 // Local proxy moderator joined the room of the local moderator participant
                 getCurrentConference(getState).grantOwner(proxyModeratorId);
+            }
+        }
+    };
+}
+
+/**
+* Admit local proxy moderator to a members only conference.
+*
+* @param {Object} participant - The participant in the lobby.
+* @returns {Function}
+*/
+export function admitLocalProxyModerator(participant: Object) {
+    return (dispatch: Dispatch<any>, getState: Function) => {
+        const mainRoomId = getMainRoomId(getState);
+        const proxyModeratorConference = getProxyModeratorConference(getState, mainRoomId);
+
+        if (proxyModeratorConference) {
+            const proxyModeratorId = proxyModeratorConference.myUserId();
+
+            if (proxyModeratorId
+                && participant.name === getBreakoutRooms(getState)?.knockingSharedKey) {
+                // Local proxy moderator is knocking in the lobby
+                setKnockingParticipantApproval(getState, participant.id, true);
             }
         }
     };

@@ -9,6 +9,7 @@ import {
     REMOVE_PROXY_MODERATOR_CONFERENCE,
     REMOVE_ROOM,
     SET_IS_SCHEDULED_SEND_ROOMS_TO_ALL,
+    SET_KNOCKING_SHARED_KEY,
     SET_NEXT_ROOM_INDEX,
     UPDATE_PARTICIPANTS
 } from './actionTypes';
@@ -107,6 +108,12 @@ ReducerRegistry.register(FEATURE_KEY, (state = defaultState, action) => {
         return {
             ...state,
             nextRoomIndex: action.nextRoomIndex
+        };
+    }
+    case SET_KNOCKING_SHARED_KEY: {
+        return {
+            ...state,
+            knockingSharedKey: action.knockingSharedKey
         };
     }
     }

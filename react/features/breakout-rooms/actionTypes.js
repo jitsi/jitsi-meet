@@ -37,6 +37,12 @@ export const REMOVE_ROOM = 'REMOVE_ROOM';
 export const SET_IS_SCHEDULED_SEND_ROOMS_TO_ALL = 'SET_IS_SCHEDULED_SEND_ROOMS_TO_ALL';
 
 /**
+  * The type of (redux) action to set a shared key for auto-admission when returning to the main room.
+  *
+  */
+export const SET_KNOCKING_SHARED_KEY = 'SET_KNOCKING_SHARED_KEY';
+
+/**
   * The type of (redux) action to set the next room index.
   *
   */
