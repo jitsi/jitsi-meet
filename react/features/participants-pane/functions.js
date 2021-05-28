@@ -1,4 +1,3 @@
-// @flow
 
 import { getFeatureFlag, INVITE_ENABLED } from '../base/flags';
 import { toState } from '../base/redux';
@@ -72,14 +71,12 @@ export const getParticipantsPaneOpen = state => Boolean(getState(state)?.isOpen)
 /**
  * Returns true if the invite button should be rendered.
  *
- * @param {Object|Function} stateful - Object or function that can be resolved
- * to the Redux state.
+ * @param {Object} state - Global state.
  * @returns {boolean}
  */
-export function shouldRenderInviteButton(stateful: Object | Function) {
-    const state = toState(stateful);
-    const { disableInviteFunctions } = state['features/base/config'];
+export const shouldRenderInviteButton = state => {
+    const { disableInviteFunctions } = toState(state)['features/base/config'];
     const flagEnabled = getFeatureFlag(state, INVITE_ENABLED, true);
 
     return flagEnabled && !disableInviteFunctions;
-}
+};
