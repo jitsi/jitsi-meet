@@ -73,9 +73,7 @@ module:hook("message/bare", function(event)
 		end
 
 		for i, value in ipairs(data.answers) do
-			if value then
-				poll.answers[i].voters[data.voterId] = data.voterName;
-			end
+			poll.answers[i].voters[data.voterId] = value and data.voterName or nil;
 		end
 	end
 end);

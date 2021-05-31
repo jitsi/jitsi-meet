@@ -5,17 +5,24 @@ import type { AbstractComponent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 
-
 import { getParticipantDisplayName } from '../../base/participants';
 import { COMMAND_NEW_POLL } from '../constants';
 
+/**
+ * The type of the React {@code Component} props of inheriting component.
+ */
+type InputProps = {
+    setCreateMode: boolean => void,
+};
+
 /*
- * Props that will be passed by the AbstractPollCreateDialog to its
+ * Props that will be passed by the AbstractPollCreate to its
  * concrete implementations (web/native).
  **/
-export type AbstractProps = {
-    question: string, setQuestion: string => void,
+export type AbstractProps = InputProps & {
     answers: Array<string>,
+    question: string,
+    setQuestion: string => void,
     setAnswer: (number, string) => void,
     addAnswer: ?number => void,
     moveAnswer: (number, number) => void,
@@ -24,11 +31,17 @@ export type AbstractProps = {
     t: Function,
 };
 
-/*
- * Higher Order Component taking in a concrete PollCreateDialog component and
+/**
+ * Higher Order Component taking in a concrete PollCreate component and
  * augmenting it with state/behavior common to both web and native implementations.
+ *
+ * @param {React.AbstractComponent} Component - The concrete component.
+ * @returns {React.AbstractComponent}
  */
-const AbstractPollCreateDialog = (Component: AbstractComponent<AbstractProps>) => (props: any) => {
+const AbstractPollCreate = (Component: AbstractComponent<AbstractProps>) => (props: InputProps) => {
+
+    const { setCreateMode } = props;
+
     const [ question, setQuestion ] = useState('');
 
     const [ answers, setAnswers ] = useState([ '' ]);
@@ -71,12 +84,15 @@ const AbstractPollCreateDialog = (Component: AbstractComponent<AbstractProps>) =
     const myId = conference.myUserId();
     const myName = useSelector(state => getParticipantDisplayName(state, myId));
 
-
-    const onSubmit = useCallback(() => {
+    const onSubmit = useCallback(ev => {
+        if (ev) {
+            ev.preventDefault();
+        }
+        
         const filteredAnswers = answers.filter(answer => answer.trim().length > 0);
 
         if (filteredAnswers.length === 0) {
-            return false;
+            return;
         }
 
         conference.sendMessage({
@@ -88,13 +104,13 @@ const AbstractPollCreateDialog = (Component: AbstractComponent<AbstractProps>) =
             answers: filteredAnswers
         });
 
-        return true;
+        setCreateMode(false);
+
     }, [ conference, question, answers ]);
 
     const { t } = useTranslation();
 
     return (<Component
-        { ...props }
         addAnswer = { addAnswer }
         answers = { answers }
         moveAnswer = { moveAnswer }
@@ -102,8 +118,10 @@ const AbstractPollCreateDialog = (Component: AbstractComponent<AbstractProps>) =
         question = { question }
         removeAnswer = { removeAnswer }
         setAnswer = { setAnswer }
+        setCreateMode = { setCreateMode }
         setQuestion = { setQuestion }
         t = { t } />);
+
 };
 
-export default AbstractPollCreateDialog;
+export default AbstractPollCreate;

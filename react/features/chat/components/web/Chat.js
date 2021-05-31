@@ -5,6 +5,7 @@ import React from 'react';
 import { translate } from '../../../base/i18n';
 import { connect } from '../../../base/redux';
 import { toggleChat } from '../../actions.web';
+import { PollsPane } from '../../../polls/components';
 import AbstractChat, {
     _mapStateToProps,
     type Props
@@ -18,6 +19,7 @@ import KeyboardAvoider from './KeyboardAvoider';
 import MessageContainer from './MessageContainer';
 import MessageRecipient from './MessageRecipient';
 import TouchmoveHack from './TouchmoveHack';
+
 
 /**
  * React Component for holding the chat feature in a side panel that slides in
@@ -128,8 +130,20 @@ class Chat extends AbstractChat<Props> {
      * @returns {ReactElement}
      */
     _renderChat() {
+
+        if (this.props._isPollsTabFocused) {
+            return (
+                <>
+                    { this._renderTabs()}
+                    <PollsPane />
+                    <KeyboardAvoider />
+                </>
+            );
+        }
+
         return (
             <>
+                { this._renderTabs() }
                 <TouchmoveHack isModal = { this.props._isModal }>
                     <MessageContainer
                         messages = { this.props._messages }
@@ -141,6 +155,30 @@ class Chat extends AbstractChat<Props> {
                     onSend = { this._onSendMessage } />
                 <KeyboardAvoider />
             </>
+        );
+    }
+
+    /**
+     * Returns a React Element showing the Chat and Polls tab.
+     *
+     * @private
+     * @returns {ReactElement}
+     */
+    _renderTabs() {
+
+        return (
+            <div className = { 'chat-tabs-container' } >
+                <div
+                    className = { `chat-tab ${this.props._isPollsTabFocused ? '' : 'chat-tab-focus'}` }
+                    onClick = { this._onToggleChatTab } >
+                    {this.props.t('chat.tabs.chat')}
+                </div>
+                <div
+                    className = { `chat-tab ${this.props._isPollsTabFocused ? 'chat-tab-focus' : ''}` }
+                    onClick = { this._onTogglePollsTab } >
+                    {this.props.t('chat.tabs.polls')}
+                </div>
+            </div>
         );
     }
 
@@ -159,6 +197,7 @@ class Chat extends AbstractChat<Props> {
                 onCancel = { this._onToggleChat } />
         );
     }
+
 
     _renderPanelContent: () => React$Node | null;
 
@@ -233,6 +272,7 @@ class Chat extends AbstractChat<Props> {
     _onToggleChat() {
         this.props.dispatch(toggleChat());
     }
+    _onTogglePollsTab: () => void;
 
 }
 

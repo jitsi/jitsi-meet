@@ -16,27 +16,29 @@ const PollResults = (props: AbstractProps) => {
     const {
         answered,
         answers,
+        changeVote,
         showDetails,
         question,
-        t
+        t,
+        toggleIsDetailed
     } = props;
 
     const renderRow = useCallback((name, percentage, voterCount) =>
         (<div className = 'poll-answer-header'>
-            <span>{ name } - { percentage }%</span>
-            <span className = 'poll-answer-vote-count'>{ t('polls.answer.vote', { count: voterCount }) }</span>
+            <span className = 'poll-answer-vote-name' >{ name }</span>
+            <span className = 'poll-answer-vote-count'>({voterCount}) {percentage}%</span>
         </div>)
     );
 
     return (
-        <div>
+        <div className = 'poll-results'>
             <div className = 'poll-header'>
                 <div className = 'poll-question'>
                     <strong>{ question }</strong>
                 </div>
             </div>
             { answered
-                ? <ol className = 'poll-answer-list'>
+                ? <ol className = 'poll-result-list'>
                     { showDetails
                         ? answers.map(({ name, percentage, voters, voterCount }, index) =>
                             (<li key = { index }>
@@ -65,6 +67,18 @@ const PollResults = (props: AbstractProps) => {
                     { t('polls.answer.notanswered') }
                 </div>
             }
+            <div className = { 'poll-result-links' }>
+                <a
+                    className = { 'poll-detail-link' }
+                    onClick = { toggleIsDetailed }>
+                    {showDetails ? t('polls.results.hideDetailedResults') : t('polls.results.showDetailedResults')}
+                </a>
+                <a
+                    className = { 'poll-change-vote-link' }
+                    onClick = { changeVote }>
+                    {t('polls.results.changeVote')}
+                </a>
+            </div>
         </div>
     );
 

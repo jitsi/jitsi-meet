@@ -67,10 +67,7 @@ StateListenerRegistry.register(
                         })
                     };
 
-                    const dialogComponent = store.getState()['features/base/dialog'].component;
-                    const queue = dialogComponent !== undefined;
-
-                    store.dispatch(receivePoll(pollId, poll, queue));
+                    store.dispatch(receivePoll(pollId, poll, true));
 
                 } else if (data.type === COMMAND_ANSWER_POLL) {
                     const { pollId, answers, voterId, voterName } = data;

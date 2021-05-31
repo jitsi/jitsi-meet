@@ -69,12 +69,21 @@
             "title": "Enter a nickname to use chat"
         },
         "privateNotice": "Private message to {{recipient}}",
+<<<<<<< HEAD
         "title": "Chat",
         "you": "you",
         "message": "Message",
         "messageAccessibleTitle": "{{user}} says:",
         "messageAccessibleTitleMe": "me says:",
         "smileysPanel": "Emoji panel"
+=======
+        "tabs": {
+            "chat": "Chat",
+            "polls": "Polls"
+        },
+        "title": "Chat and Polls",
+        "you": "you"
+>>>>>>> 890b78b24 (Move polls to tab (#23))
     },
     "chromeExtensionBanner": {
         "installExtensionText": "Install the extension for Google Calendar and Office 365 integration",
@@ -615,28 +624,34 @@
     "passwordSetRemotely": "Set by another participant",
     "passwordDigitsOnly": "Up to {{number}} digits",
     "polls": {
+        "notification": {
+            "title": "New poll"
+        },
         "create": {
-            "dialogTitle": "Create a poll",
-            "questionPlaceholder": "Ask a question",
+            "addOption": "Add option",
             "answerPlaceholder": "Option {{index}}",
-            "addAnswer": "Add an answer",
+            "button": "Create a poll",
+            "cancel": "Cancel",
+            "pollOption" : "Poll option {{index}}",
+            "pollQuestion" : "Poll Question",
+            "questionPlaceholder": "Ask a question",
             "removeAnswer": "Remove this answer",
-            "send": "Send"
+            "removeOption": "Remove option",
+            "send": "Send",
+            "sendPoll": "Send poll"
         },
         "answer": {
-            "title": "Poll",
+            "notanswered": "You didn't answer the poll yet",
             "skip": "Skip",
             "submit": "Submit",
-            "results" : "Results",
-            "close": "Close",
-            "empty": "No answer for the moment",
             "vote" : "{{count}} vote",
-            "vote_plural" : "{{count}} votes",
-            "notanswered": "You didn't answer the poll yet"
+            "vote_plural" : "{{count}} votes"
         },
-        "chat": {
-            "notice": "Poll",
-            "details": "Details"
+        "results": {
+            "changeVote": "Change vote",
+            "empty": "The are no polls in the meeting yet. Start a poll here!",
+            "hideDetailedResults": "Hide details",
+            "showDetailedResults": "Show details"
         }
     },
     "poweredby": "powered by",
@@ -881,6 +896,7 @@
             "party": "Party Popper",
             "pip": "Toggle Picture-in-Picture mode",
             "poll": "Create a poll",
+            "polls": "Polls",
             "privateMessage": "Send private message",
             "profile": "Edit your profile",
             "raiseHand": "Raise / Lower your hand",
@@ -958,6 +974,7 @@
         "party": "Celebration",
         "pip": "Enter Picture-in-Picture mode",
         "poll": "Create a poll",
+        "polls": "Polls",
         "privateMessage": "Send private message",
         "profile": "Edit your profile",
         "raiseHand": "Raise / Lower your hand",

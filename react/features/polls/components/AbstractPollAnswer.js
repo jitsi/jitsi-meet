@@ -1,7 +1,8 @@
 // @flow
 
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useCallback, useState } from 'react';
 import type { AbstractComponent } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { getLocalParticipant, getParticipantById } from '../../base/participants';
@@ -9,33 +10,36 @@ import { setAnsweredStatus } from '../actions';
 import { COMMAND_ANSWER_POLL } from '../constants';
 import type { Poll } from '../types';
 
-
+/**
+ * The type of the React {@code Component} props of inheriting component.
+ */
 type InputProps = {
     pollId: string,
-}
+};
 
 /*
- * Props that will be passed by the AbstractPollAnswerDialog to its
+ * Props that will be passed by the AbstractPollAnswer to its
  * concrete implementations (web/native).
  **/
 export type AbstractProps = InputProps & {
+    checkBoxStates: Function,
     poll: Poll,
-    shouldDisplayResult: boolean,
-    submitAnswer: void => boolean,
-    skipAnswer: void => boolean,
-    cancelAnswer: void => boolean,
-    checkBoxStates: Array<boolean>,
-    setCheckbox: (number, boolean) => void,
+    pollId: string,
+    setCheckbox: Function,
+    setCheckBoxState: Function,
+    skipAnswer: Function,
+    submitAnswer: Function,
+    t: Function,
 };
 
 /**
- * Higher Order Component taking in a concrete PollAnswerDialog component and
+ * Higher Order Component taking in a concrete PollAnswer component and
  * augmenting it with state/behavior common to both web and native implementations.
  *
  * @param {React.AbstractComponent} Component - The concrete component.
  * @returns {React.AbstractComponent}
  */
-const AbstractPollAnswerDialog = (Component: AbstractComponent<AbstractProps>) => (props: InputProps) => {
+const AbstractPollAnswer = (Component: AbstractComponent<AbstractProps>) => (props: InputProps) => {
 
     const { pollId } = props;
 
@@ -54,16 +58,8 @@ const AbstractPollAnswerDialog = (Component: AbstractComponent<AbstractProps>) =
         setCheckBoxState(newCheckBoxStates);
     }, [ checkBoxStates ]);
 
-    const [ shouldDisplayResult, setShouldDisplayResult ] = useState(false);
-
-    // Reset state if pollId changes
-    // Useful in case of two successive answer dialogs
-    useEffect(() => {
-        setCheckBoxState(new Array(poll.answers.length).fill(false));
-        setShouldDisplayResult(false);
-    }, [ pollId ]);
-
     const dispatch = useDispatch();
+
     const localParticipant = useSelector(state => getParticipantById(state, localId));
     const localName: string = localParticipant.name ? localParticipant.name : 'Fellow Jitster';
 
@@ -77,32 +73,27 @@ const AbstractPollAnswerDialog = (Component: AbstractComponent<AbstractProps>) =
         });
 
         dispatch(setAnsweredStatus(pollId, true));
-        setShouldDisplayResult(true);
 
         return false;
     }, [ pollId, localId, localName, checkBoxStates, conference ]);
 
     const skipAnswer = useCallback(() => {
         dispatch(setAnsweredStatus(pollId, true));
-        setShouldDisplayResult(true);
 
-        return false;
     }, [ pollId ]);
-    const cancelAnswer = useCallback(() => {
-        dispatch(setAnsweredStatus(pollId, true));
 
-        return true;
-    }, [ pollId ]);
+    const { t } = useTranslation();
 
     return (<Component
-        { ...props }
-        cancelAnswer = { cancelAnswer }
         checkBoxStates = { checkBoxStates }
         poll = { poll }
+        pollId = { pollId }
+        setCheckBoxState = { setCheckBoxState }
         setCheckbox = { setCheckbox }
-        shouldDisplayResult = { shouldDisplayResult }
         skipAnswer = { skipAnswer }
-        submitAnswer = { submitAnswer } />);
+        submitAnswer = { submitAnswer }
+        t = { t } />);
+
 };
 
-export default AbstractPollAnswerDialog;
+export default AbstractPollAnswer;

@@ -7,11 +7,13 @@ import {
     CLEAR_MESSAGES,
     CLOSE_CHAT,
     OPEN_CHAT,
-    SET_PRIVATE_MESSAGE_RECIPIENT
+    SET_PRIVATE_MESSAGE_RECIPIENT,
+    SET_IS_POLL_TAB_FOCUSED
 } from './actionTypes';
 
 const DEFAULT_STATE = {
     isOpen: false,
+    isPollsTabFocused: false,
     lastReadMessage: undefined,
     messages: [],
     privateMessageRecipient: undefined
@@ -26,7 +28,6 @@ ReducerRegistry.register('features/chat', (state = DEFAULT_STATE, action) => {
             id: action.id,
             messageType: action.messageType,
             message: action.message,
-            pollId: action.pollId,
             privateMessage: action.privateMessage,
             recipient: action.recipient,
             timestamp: action.timestamp
@@ -78,6 +79,12 @@ ReducerRegistry.register('features/chat', (state = DEFAULT_STATE, action) => {
             lastReadMessage: state.messages[
                 navigator.product === 'ReactNative' ? 0 : state.messages.length - 1],
             privateMessageRecipient: action.participant
+        };
+
+    case SET_IS_POLL_TAB_FOCUSED:
+        return {
+            ...state,
+            isPollsTabFocused: action.isPollsTabFocused
         };
     }
 

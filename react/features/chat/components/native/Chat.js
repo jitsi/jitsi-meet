@@ -1,10 +1,13 @@
 // @flow
 
 import React from 'react';
+import { View } from 'react-native';
+import { Button } from 'react-native-paper';
 
 import { translate } from '../../../base/i18n';
 import { JitsiModal } from '../../../base/modal';
 import { connect } from '../../../base/redux';
+import { PollsPane } from '../../../polls/components';
 import { closeChat } from '../../actions.any';
 import { CHAT_VIEW_MODAL_ID } from '../../constants';
 import AbstractChat, {
@@ -15,6 +18,7 @@ import AbstractChat, {
 import ChatInputBar from './ChatInputBar';
 import MessageContainer from './MessageContainer';
 import MessageRecipient from './MessageRecipient';
+import styles from './styles';
 
 /**
  * Implements a React native component that renders the chat window (modal) of
@@ -46,9 +50,32 @@ class Chat extends AbstractChat<Props> {
                 modalId = { CHAT_VIEW_MODAL_ID }
                 onClose = { this._onClose }>
 
-                <MessageContainer messages = { this.props._messages } />
-                <MessageRecipient />
-                <ChatInputBar onSend = { this._onSendMessage } />
+                <View style = { styles.tabContainer } >
+                    <Button
+                        color = '#17a0db'
+                        mode = { this.props._isPollsTabFocused ? 'contained' : 'text' }
+                        onPress = { this._onToggleChatTab }
+                        style = { styles.tabLeftButton }
+                        uppercase = { false } >
+                        {this.props.t('chat.tabs.chat')}
+                    </Button>
+                    <Button
+                        color = '#17a0db'
+                        mode = { this.props._isPollsTabFocused ? 'text' : 'contained' }
+                        onPress = { this._onTogglePollsTab }
+                        style = { styles.tabRightButton }
+                        uppercase = { false } >
+                        {this.props.t('chat.tabs.polls')}
+                    </Button>
+                </View>
+                { this.props._isPollsTabFocused
+                    ? <PollsPane />
+                    : <>
+                        <MessageContainer messages = { this.props._messages } />
+                        <MessageRecipient />
+                        <ChatInputBar onSend = { this._onSendMessage } />
+                    </>}
+
             </JitsiModal>
         );
     }
@@ -56,6 +83,9 @@ class Chat extends AbstractChat<Props> {
     _onSendMessage: (string) => void;
 
     _onClose: () => boolean
+
+    _onTogglePollsTab: () => void;
+    _onToggleChatTab: () => void;
 
     /**
      * Closes the modal.
