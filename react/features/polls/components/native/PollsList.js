@@ -27,7 +27,7 @@ const PollsList = () => {
     <>
         {listPolls.length === 0
             ? <Text style = { chatStyles.noPollText } >
-                {t('polls.results.empty.empty')}
+                {t('polls.results.empty')}
             </Text>
             : <FlatList
                 data = { listPolls }

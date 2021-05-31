@@ -98,7 +98,8 @@ const AbstractPollResults = (Component: AbstractComponent<AbstractProps>) => (pr
 
     const conference: Object = useSelector(state => state['features/base/conference'].conference);
     const localId = useSelector(state => getLocalParticipant(state).id);
-    const localName: string = useSelector(state => getParticipantById(state, localId).name || 'Fellow Jitster');
+    const localParticipant = useSelector(state => getParticipantById(state, localId));
+    const localName: string = localParticipant ? localParticipant.name : 'Fellow Jitster';
     const changeVote = useCallback(() => {
         conference.sendMessage({
             type: COMMAND_ANSWER_POLL,

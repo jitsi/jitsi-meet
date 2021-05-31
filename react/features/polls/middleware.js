@@ -1,7 +1,8 @@
 // @flow
 
 import { MiddlewareRegistry } from '../base/redux';
-import { showNotification } from '../notifications';
+import { playSound } from '../base/sounds';
+import { INCOMING_MSG_SOUND_ID } from '../chat/constants';
 
 import { RECEIVE_POLL } from './actionTypes';
 
@@ -20,9 +21,7 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
 
         // Finally, we notify user they received a new poll if their pane is not opened
         if (action.notify && (!isChatOpen || !isPollsTabFocused)) {
-            dispatch(showNotification({
-                titleKey: 'polls.notification.title'
-            }));
+            dispatch(playSound(INCOMING_MSG_SOUND_ID));
         }
         break;
     }

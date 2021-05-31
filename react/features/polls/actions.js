@@ -1,6 +1,7 @@
 // @flow
 
 import {
+    CLOSE_POLL_TAB,
     RECEIVE_ANSWER,
     RECEIVE_POLL,
     SET_ANSWERED_STATUS
@@ -66,3 +67,17 @@ export const setAnsweredStatus = (pollId: string, answered: boolean) => {
         pollId
     };
 };
+
+
+/**
+ * Action to signal the closing of the chat dialog.
+ *
+ * @returns {{
+ *     type: CLOSE_CHAT
+ * }}
+ */
+export function closePollTab() {
+    return {
+        type: CLOSE_POLL_TAB
+    };
+}
