@@ -574,3 +574,29 @@
     background: #36383C;
     border-radius: 3px;
 }
+
+.chat-tabs-container {
+    width: 100%;
+    border: #292929;
+    border-bottom: thin;
+    border-top: 0;
+    border-left: 0;
+    border-right: 0;
+    border-style: solid;
+    display: flex;
+    justify-content: space-around;
+}
+
+.chat-tab {
+    font-size: 1.2em;
+    padding-bottom: 0.5em;
+    width: 50%;
+    text-align: center;
+    color: #8B8B8B;
+    cursor: pointer;
+}
+
+.chat-tab-focus {
+    border-bottom-style: solid;
+    color: #FFF;
+}

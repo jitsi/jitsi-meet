@@ -1,12 +1,12 @@
 // @flow
 
 import React, { useCallback } from 'react';
-import { View, Text, FlatList } from 'react-native';
+import { View, Text, FlatList, TouchableOpacity } from 'react-native';
 
 import AbstractPollResults from '../AbstractPollResults';
 import type { AbstractProps, AnswerInfo } from '../AbstractPollResults';
 
-import { dialogStyles, resultsStyles } from './styles';
+import { chatStyles, dialogStyles, resultsStyles } from './styles';
 
 
 /**
@@ -21,7 +21,8 @@ const PollResults = (props: AbstractProps) => {
         answers,
         showDetails,
         question,
-        t
+        t,
+        toggleIsDetailed
     } = props;
 
     /* eslint-disable react/no-multi-comp */
@@ -35,10 +36,13 @@ const PollResults = (props: AbstractProps) => {
      */
     const renderHeader = (answer: string, percentage: number, nbVotes: number) => (
         <View style = { resultsStyles.answerHeader }>
-            <Text style = { resultsStyles.answer }>{ answer } - { percentage }%</Text>
+            <Text style = { resultsStyles.answer }>{ answer }</Text>
+            <Text style = { resultsStyles.answer }>({nbVotes}) {percentage}%</Text>
+
+            {/* <Text style = { resultsStyles.answer }>{ answer } - { percentage }%</Text>
             <Text style = { resultsStyles.answerVoteCount }>
                 { t('polls.answer.vote', { count: nbVotes }) }
-            </Text>
+            </Text> */}
         </View>
     );
 
@@ -76,7 +80,7 @@ const PollResults = (props: AbstractProps) => {
             </View>
         );
 
-    }, []);
+    }, [ showDetails ]);
 
     /* eslint-disable react/jsx-no-bind */
     return (
@@ -93,6 +97,13 @@ const PollResults = (props: AbstractProps) => {
                     { t('polls.answer.notanswered') }
                 </Text>
             }
+
+            <TouchableOpacity onPress = { toggleIsDetailed }>
+                <Text
+                    style = { chatStyles.toogleText }>
+                    {showDetails ? t('polls.results.hideDetailedResults') : t('polls.results.showDetailedResults')}
+                </Text>
+            </TouchableOpacity>
         </View>
     );
 };

@@ -1,5 +1,6 @@
 // @flow
 
+import { schemeColor } from '../../../base/color-scheme';
 import { ColorPalette, createStyleSheet } from '../../../base/styles';
 
 export const answerStyles = createStyleSheet({
@@ -64,7 +65,7 @@ export const resultsStyles = createStyleSheet({
     barContainer: {
         backgroundColor: '#ccc',
         borderRadius: 3,
-        width: 200,
+        width: '100%',
         height: 6
     },
 
@@ -117,5 +118,68 @@ export const chatStyles = createStyleSheet({
 
     showDetails: {
         fontWeight: 'bold'
+    },
+
+    noPollText: {
+        flex: 1,
+        color: schemeColor('displayName'),
+        textAlign: 'center',
+        paddingTop: '10%'
+    },
+
+    pollItemContainer: {
+        borderRadius: 4,
+        borderColor: '#2183ad',
+        borderWidth: 2,
+        padding: 4,
+        marginBottom: 8
+    },
+
+    pollCreateContainer: {
+        flex: 1,
+        justifyContent: 'space-between'
+    },
+
+    pollCreateSubContainer: {
+        flex: 1
+    },
+
+    pollCreateButton: {
+        flex: 1,
+        marginHorizontal: 8
+    },
+
+    buttonRow: {
+        flexDirection: 'row'
+    },
+
+    switchRow: {
+        alignItems: 'flex-start',
+        flexDirection: 'row'
+    },
+
+    pollCreateAddButton: {
+        margin: 8
+    },
+
+    toogleText: {
+        color: ColorPalette.blue
+    },
+
+    createPollButton: {
+        padding: 8,
+        margin: 4
+    },
+
+    PollPane: {
+        flex: 1,
+        padding: 8
+    },
+
+    PollPaneContent: {
+        justifyContent: 'space-between',
+        flex: 1
     }
 });
+
+

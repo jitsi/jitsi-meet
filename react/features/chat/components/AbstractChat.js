@@ -4,7 +4,7 @@ import { Component } from 'react';
 import type { Dispatch } from 'redux';
 
 import { getLocalParticipant } from '../../base/participants';
-import { sendMessage } from '../actions';
+import { sendMessage, setisPollsTabFocused } from '../actions';
 import { SMALL_WIDTH_THRESHOLD } from '../constants';
 
 /**
@@ -23,6 +23,11 @@ export type Props = {
     _isOpen: boolean,
 
     /**
+     * Whether the poll tab is focused or not.
+     */
+    _isPollsTabFocused: boolean,
+
+    /**
      * All the chat messages in the conference.
      */
     _messages: Array<Object>,
@@ -33,6 +38,20 @@ export type Props = {
      * @protected
      */
     _onSendMessage: Function,
+
+    /**
+     * Function to display the chat tab.
+     *
+     * @protected
+     */
+    _onToggleChatTab: Function,
+
+    /**
+     * Function to display the polls tab.
+     *
+     * @protected
+     */
+    _onTogglePollsTab: Function,
 
     /**
      * Function to toggle the chat window.
@@ -71,6 +90,8 @@ export default class AbstractChat<P: Props> extends Component<P> {
 
         // Bind event handlers so they are only bound once per instance.
         this._onSendMessage = this._onSendMessage.bind(this);
+        this._onToggleChatTab = this._onToggleChatTab.bind(this);
+        this._onTogglePollsTab = this._onTogglePollsTab.bind(this);
     }
 
     _onSendMessage: (string) => void;
@@ -85,6 +106,30 @@ export default class AbstractChat<P: Props> extends Component<P> {
     */
     _onSendMessage(text: string) {
         this.props.dispatch(sendMessage(text));
+    }
+
+    _onToggleChatTab: () => void;
+
+    /**
+     * Display the Chat tab.
+     *
+     * @private
+     * @returns {void}
+     */
+    _onToggleChatTab() {
+        this.props.dispatch(setisPollsTabFocused(false));
+    }
+
+    _onTogglePollsTab: () => void;
+
+    /**
+     * Display the Polls tab.
+     *
+     * @private
+     * @returns {void}
+     */
+    _onTogglePollsTab() {
+        this.props.dispatch(setisPollsTabFocused(true));
     }
 }
 
@@ -101,12 +146,13 @@ export default class AbstractChat<P: Props> extends Component<P> {
  * }}
  */
 export function _mapStateToProps(state: Object) {
-    const { isOpen, messages } = state['features/chat'];
+    const { isOpen, isPollsTabFocused, messages } = state['features/chat'];
     const _localParticipant = getLocalParticipant(state);
 
     return {
         _isModal: window.innerWidth <= SMALL_WIDTH_THRESHOLD,
         _isOpen: isOpen,
+        _isPollsTabFocused: isPollsTabFocused,
         _messages: messages,
         _showNamePrompt: !_localParticipant?.name
     };

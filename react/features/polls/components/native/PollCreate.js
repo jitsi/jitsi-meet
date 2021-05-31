@@ -1,31 +1,26 @@
 // @flow
 
-// import { FieldTextStateless } from '@atlaskit/field-text';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { View, TextInput, FlatList, TouchableOpacity } from 'react-native';
+import { Button } from 'react-native-paper';
 
+import { Icon, IconClose } from '../../../base/icons';
+import AbstractPollCreate from '../AbstractPollCreate';
+import type { AbstractProps } from '../AbstractPollCreate';
 
-import CustomSubmitDialog from '../../../base/dialog/components/native/CustomSubmitDialog';
-import { Icon, IconAdd, IconClose } from '../../../base/icons';
-import AbstractPollCreateDialog from '../AbstractPollCreateDialog';
-import type { AbstractProps } from '../AbstractPollCreateDialog';
+import { chatStyles, dialogStyles } from './styles';
 
-import { dialogStyles } from './styles';
+const PollCreate = (props: AbstractProps) => {
 
-/**
- * A modal component to create polls.
- *
- * @param {AbstractProps} props - The passed props.
- * @returns {React.Node}
- */
-const PollCreateDialog = (props: AbstractProps) => {
 
     const {
         question, setQuestion,
         answers, setAnswer, addAnswer, removeAnswer,
         onSubmit,
-        t
+        t, setCreateMode
     } = props;
+
+    const answerListRef = useRef(null);
 
     /*
      * This ref stores the Array of answer input fields, allowing us to focus on them.
@@ -38,7 +33,7 @@ const PollCreateDialog = (props: AbstractProps) => {
         }
         answerInputs.current[i] = input;
     },
-    [ answerInputs ]
+        [ answerInputs ]
     );
 
     useEffect(() => {
@@ -61,7 +56,8 @@ const PollCreateDialog = (props: AbstractProps) => {
             return;
         }
         input.focus();
-    }, [ lastFocus ]);
+
+    }, [ answerInputs, lastFocus ]);
 
 
     const onQuestionKeyDown = useCallback(() => {
@@ -124,14 +120,9 @@ const PollCreateDialog = (props: AbstractProps) => {
             </View>
         );
 
-
     return (
-        <CustomSubmitDialog
-            okKey = { 'polls.create.send' }
-            onSubmit = { onSubmit }
-            titleKey = 'polls.create.dialogTitle'>
-            <View>
-
+        <View style = { chatStyles.pollCreateContainer }>
+            <View style = { chatStyles.pollCreateSubContainer }>
                 <TextInput
                     autoFocus = { true }
                     blurOnSubmit = { false }
@@ -140,30 +131,54 @@ const PollCreateDialog = (props: AbstractProps) => {
                     placeholder = { t('polls.create.questionPlaceholder') }
                     style = { dialogStyles.question }
                     value = { question } />
-
                 <FlatList
                     blurOnSubmit = { true }
                     data = { answers }
+                    extraData = { answers }
                     keyExtractor = { (item, index) => index.toString() }
+                    ref = { answerListRef }
                     renderItem = { renderListItem } />
 
-                {createIconButton(IconAdd, () => addAnswer(answers.length), dialogStyles.plusButton)}
-
-
-                {/* <Button
-                    onPress = { () => addAnswer(answers.length) }
-                    title = "+" /> */}
-
+                <Button
+                    color = '#3D3D3D'
+                    mode = 'contained'
+                    onPress = { () => {
+                        // adding and answer
+                        addAnswer();
+                        requestFocus(answers.length);
+                    } }
+                    style = { chatStyles.pollCreateAddButton }>
+                    {t('polls.create.addOption')}
+                </Button>
             </View>
 
-        </CustomSubmitDialog>
+            <View
+                style = { chatStyles.buttonRow }>
+
+                <Button
+                    color = '#3D3D3D'
+                    mode = 'contained'
+                    onClick = { () => setCreateMode(false) }
+                    style = { chatStyles.pollCreateButton } >
+                    {t('polls.create.cancel')}
+                </Button>
+
+                <Button
+                    color = '#17a0db'
+                    mode = 'contained'
+                    onPress = { onSubmit }
+                    style = { chatStyles.pollCreateButton } >
+                    {t('polls.create.send')}
+                </Button>
+            </View>
+        </View>
     );
+
 };
 
-
 /*
- * We apply AbstractPollCreateDialog to fill in the AbstractProps common
+ * We apply AbstractPollCreate to fill in the AbstractProps common
  * to both the web and native implementations.
  */
 // eslint-disable-next-line new-cap
-export default AbstractPollCreateDialog(PollCreateDialog);
+export default AbstractPollCreate(PollCreate);

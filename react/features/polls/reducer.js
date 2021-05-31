@@ -2,12 +2,15 @@
 
 import { ReducerRegistry } from '../base/redux';
 
-import { RECEIVE_POLL, RECEIVE_ANSWER, SET_ANSWERED_STATUS, SHOW_POLL } from './actionTypes';
+import {
+    RECEIVE_POLL,
+    RECEIVE_ANSWER,
+    SET_ANSWERED_STATUS
+} from './actionTypes';
 import type { Answer } from './types';
 
 const INITIAL_STATE = {
-    polls: {},
-    pollQueue: []
+    polls: {}
 };
 
 ReducerRegistry.register('features/polls', (state = INITIAL_STATE, action) => {
@@ -25,31 +28,7 @@ ReducerRegistry.register('features/polls', (state = INITIAL_STATE, action) => {
             }
         };
 
-        if (action.queue) {
-            newState.pollQueue = [ ...newState.pollQueue, action.pollId ];
-        }
-
         return newState;
-    }
-
-    // Reducer triggered when a poll should be shown
-    case SHOW_POLL: {
-        // Remove poll from queue if present
-        const index = state.pollQueue.indexOf(action.pollId);
-
-        if (index !== -1) {
-            const newQueue = [ ...state.pollQueue ];
-
-            newQueue.splice(index, 1);
-
-            return {
-                ...state,
-                pollQueue: newQueue
-            };
-        }
-
-        return state;
-
     }
 
     // Reducer triggered when an answer is received
@@ -76,8 +55,13 @@ ReducerRegistry.register('features/polls', (state = INITIAL_STATE, action) => {
 
         for (let i = 0; i < newAnswers.length; i++) {
             // if the answer was chosen, we add the sender to the set of voters of this answer
-            if (answer.answers[i] === true) {
-                newAnswers[i].voters.set(answer.voterId, answer.voterName);
+            const voters = newAnswers[i].voters;
+
+            if (answer.answers[i]) {
+                voters.set(answer.voterId, answer.voterName);
+
+            } else {
+                voters.delete(answer.voterId);
             }
         }
 
@@ -96,7 +80,7 @@ ReducerRegistry.register('features/polls', (state = INITIAL_STATE, action) => {
 
     // Reducer triggered to update the answered status of a poll
     case SET_ANSWERED_STATUS: {
-        const { answered, pollId }: { answered: boolean; pollId: number } = action;
+        const { answered, pollId }: { answered: boolean; pollId: string } = action;
 
         return {
             ...state,
@@ -109,7 +93,6 @@ ReducerRegistry.register('features/polls', (state = INITIAL_STATE, action) => {
             }
         };
     }
-
 
     default:
         return state;
