@@ -34,3 +34,13 @@ export const RECEIVE_ANSWER = 'RECEIVE_ANSWER';
  * }
  */
 export const SET_ANSWERED_STATUS = 'SET_ANSWERED_STATUS';
+
+
+/**
+ * The type of the action triggered when the poll tab in chat pane is closed
+ *
+ * {
+ *     type: CLOSE_POLL_TAB,
+ * }
+ */
+export const CLOSE_POLL_TAB = 'CLOSE_POLL_TAB';

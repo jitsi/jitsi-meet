@@ -154,7 +154,7 @@ export const chatStyles = createStyleSheet({
     },
 
     switchRow: {
-        alignItems: 'flex-start',
+        alignItems: 'center',
         flexDirection: 'row'
     },
 

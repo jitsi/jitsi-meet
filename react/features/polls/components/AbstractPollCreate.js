@@ -53,10 +53,11 @@ const AbstractPollCreate = (Component: AbstractComponent<AbstractProps>) => (pro
         setAnswers(newAnswers);
     });
 
-    const addAnswer = useCallback(i => {
+    const addAnswer = useCallback((i: ?number) => {
+
         const newAnswers = [ ...answers ];
 
-        newAnswers.splice(i === undefined ? answers.length : i, 0, '');
+        newAnswers.splice(typeof i === 'number' ? i : answers.length, 0, '');
         setAnswers(newAnswers);
     });
 
@@ -88,7 +89,7 @@ const AbstractPollCreate = (Component: AbstractComponent<AbstractProps>) => (pro
         if (ev) {
             ev.preventDefault();
         }
-        
+
         const filteredAnswers = answers.filter(answer => answer.trim().length > 0);
 
         if (filteredAnswers.length === 0) {

@@ -5,12 +5,16 @@ import { ReducerRegistry } from '../base/redux';
 import {
     RECEIVE_POLL,
     RECEIVE_ANSWER,
-    SET_ANSWERED_STATUS
+    SET_ANSWERED_STATUS,
+    CLOSE_POLL_TAB
 } from './actionTypes';
 import type { Answer } from './types';
 
 const INITIAL_STATE = {
-    polls: {}
+    polls: {},
+
+    // Number of not read message
+    nbUnreadReadMessage: 0
 };
 
 ReducerRegistry.register('features/polls', (state = INITIAL_STATE, action) => {
@@ -25,7 +29,8 @@ ReducerRegistry.register('features/polls', (state = INITIAL_STATE, action) => {
 
                 // The poll is added to the dictionnary of received polls
                 [action.pollId]: action.poll
-            }
+            },
+            nbUnreadReadMessage: state.nbUnreadReadMessage + 1
         };
 
         return newState;
@@ -91,6 +96,13 @@ ReducerRegistry.register('features/polls', (state = INITIAL_STATE, action) => {
                     answered
                 }
             }
+        };
+    }
+
+    case CLOSE_POLL_TAB: {
+        return {
+            ...state,
+            nbUnreadReadMessage: 0
         };
     }
 

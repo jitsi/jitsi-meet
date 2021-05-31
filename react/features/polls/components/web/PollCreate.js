@@ -58,12 +58,13 @@ const PollCreate = (props: AbstractProps) => {
         }
         input.focus();
     }, [ lastFocus ]);
-    
+
     const checkModifiers = useCallback(ev => {
         // Because this isn't done automatically on MacOS
         if (ev.key === 'Enter' && ev.metaKey) {
             ev.preventDefault();
             onSubmit();
+
             return;
         }
         if (ev.ctrlKey || ev.metaKey || ev.altKey || ev.shiftKey) {
@@ -72,8 +73,10 @@ const PollCreate = (props: AbstractProps) => {
     });
 
     const onQuestionKeyDown = useCallback(ev => {
-        if (checkModifiers(ev)) return;
-        
+        if (checkModifiers(ev)) {
+            return;
+        }
+
         if (ev.key === 'Enter') {
             requestFocus(0);
             ev.preventDefault();
@@ -82,8 +85,10 @@ const PollCreate = (props: AbstractProps) => {
 
     // Called on keypress in answer fields
     const onAnswerKeyDown = useCallback((i, ev) => {
-        if (checkModifiers(ev)) return;
-        
+        if (checkModifiers(ev)) {
+            return;
+        }
+
         if (ev.key === 'Enter') {
             addAnswer(i + 1);
             requestFocus(i + 1);
@@ -132,7 +137,9 @@ const PollCreate = (props: AbstractProps) => {
     });
 
     /* eslint-disable react/jsx-no-bind */
-    return <form onSubmit = { onSubmit } className = 'polls-pane-content'>
+    return (<form
+        className = 'polls-pane-content'
+        onSubmit = { onSubmit }>
         <div className = 'poll-create-container poll-container'>
             <div className = 'poll-question-field'>
                 <span className = 'poll-create-label'>
@@ -218,7 +225,7 @@ const PollCreate = (props: AbstractProps) => {
                 <span>{t('polls.create.sendPoll')}</span>
             </button>
         </div>
-    </form>;
+    </form>);
 
 };
 
