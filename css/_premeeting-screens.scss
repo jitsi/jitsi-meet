@@ -1,8 +1,7 @@
 /**
  * Shared style for full screen local track based dialogs/modals.
  */
- .premeeting-screen,
-  .preview-overlay {
+ .premeeting-screen {
      position: absolute;
      left: 0;
      right: 0;
@@ -91,11 +90,6 @@
                 pointer-events: none;
             }
         }
-    }
-
-    .preview-overlay {
-        background-image: linear-gradient(transparent, black);
-        z-index: $toolbarZ + 1;
     }
 
     .content {
@@ -258,7 +252,9 @@
     &:hover {
         background: rgba(255, 255, 255, 0.1);
 
-        @include icon-container(#A4B8D1, #1C2025);
+        .toggle-button-icon-container {
+            display: none;
+        }
     }
 
     &-container {
@@ -276,5 +272,15 @@
 
     &--toggled {
         @include icon-container(white, #1C2025);
+
+        &:hover {
+            .toggle-button-icon-container {
+                display: block;
+            }
+        }
+
+        .toggle-button-icon-container {
+            display: block;
+        }
     }
 }

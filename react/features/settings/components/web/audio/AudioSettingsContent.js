@@ -3,7 +3,7 @@
 import React, { Component } from 'react';
 
 import { translate } from '../../../../base/i18n';
-import { IconMicrophoneEmpty, IconVolumeEmpty } from '../../../../base/icons';
+import { IconMicrophoneHollow, IconVolumeEmpty } from '../../../../base/icons';
 import JitsiMeetJS from '../../../../base/lib-jitsi-meet';
 import { equals } from '../../../../base/redux';
 import { createLocalAudioTracks } from '../../../functions';
@@ -13,6 +13,20 @@ import MicrophoneEntry from './MicrophoneEntry';
 import SpeakerEntry from './SpeakerEntry';
 
 const browser = JitsiMeetJS.util.browser;
+
+/**
+ * Translates the default device label into a more user friendly one.
+ *
+ * @param {string} deviceId - The device Id.
+ * @param {string} label - The device label.
+ * @param {Function} t - The translation function.
+ * @returns {string}
+ */
+function transformDefaultDeviceLabel(deviceId, label, t) {
+    return deviceId === 'default'
+        ? t('settings.sameAsSystem', { label: label.replace('Default - ', '') })
+        : label;
+}
 
 export type Props = {
 
@@ -125,10 +139,12 @@ class AudioSettingsContent extends Component<Props, State> {
      *
      * @param {Object} data - An object with the deviceId, jitsiTrack & label of the microphone.
      * @param {number} index - The index of the element, used for creating a key.
+     * @param {Function} t - The translation function.
      * @returns {React$Node}
      */
-    _renderMicrophoneEntry(data, index) {
-        const { deviceId, label, jitsiTrack, hasError } = data;
+    _renderMicrophoneEntry(data, index, t) {
+        const { deviceId, jitsiTrack, hasError } = data;
+        const label = transformDefaultDeviceLabel(deviceId, data.label, t);
         const isSelected = deviceId === this.props.currentMicDeviceId;
 
         return (
@@ -149,10 +165,12 @@ class AudioSettingsContent extends Component<Props, State> {
      *
      * @param {Object} data - An object with the deviceId and label of the speaker.
      * @param {number} index - The index of the element, used for creating a key.
+     * @param {Function} t - The translation function.
      * @returns {React$Node}
      */
-    _renderSpeakerEntry(data, index) {
-        const { deviceId, label } = data;
+    _renderSpeakerEntry(data, index, t) {
+        const { deviceId } = data;
+        const label = transformDefaultDeviceLabel(deviceId, data.label, t);
         const key = `se-${index}`;
 
         return (
@@ -248,10 +266,10 @@ class AudioSettingsContent extends Component<Props, State> {
             <div>
                 <div className = 'audio-preview-content'>
                     <AudioSettingsHeader
-                        IconComponent = { IconMicrophoneEmpty }
+                        IconComponent = { IconMicrophoneHollow }
                         text = { t('settings.microphones') } />
                     {this.state.audioTracks.map((data, i) =>
-                        this._renderMicrophoneEntry(data, i),
+                        this._renderMicrophoneEntry(data, i, t),
                     )}
                     { outputDevices.length > 0 && (
                         <>
@@ -263,7 +281,7 @@ class AudioSettingsContent extends Component<Props, State> {
                     )
                     }
                     {outputDevices.map((data, i) =>
-                        this._renderSpeakerEntry(data, i),
+                        this._renderSpeakerEntry(data, i, t),
                     )}
                 </div>
             </div>

@@ -129,7 +129,6 @@ import {
 import { disableReceiver, stopReceiver } from './react/features/remote-control';
 import { setScreenAudioShareState, isScreenAudioShared } from './react/features/screen-share/';
 import { toggleScreenshotCaptureEffect } from './react/features/screenshot-capture';
-import { setSharedVideoStatus } from './react/features/shared-video/actions';
 import { AudioMixerEffect } from './react/features/stream-effects/audio-mixer/AudioMixerEffect';
 import { createPresenterEffect } from './react/features/stream-effects/presenter';
 import { endpointMessageReceived } from './react/features/subtitles';
@@ -177,8 +176,7 @@ const commands = {
     AVATAR_URL: AVATAR_URL_COMMAND,
     CUSTOM_ROLE: 'custom-role',
     EMAIL: EMAIL_COMMAND,
-    ETHERPAD: 'etherpad',
-    SHARED_VIDEO: 'shared-video'
+    ETHERPAD: 'etherpad'
 };
 
 /**
@@ -311,6 +309,11 @@ class ConferenceConnector {
                 APP.store.dispatch(conferenceWillJoin(room));
                 room.join();
             }, 5000);
+
+            const { password }
+                = APP.store.getState()['features/base/conference'];
+
+            AuthHandler.requireAuth(room, password);
 
             break;
         }
@@ -734,7 +737,7 @@ export default {
         }
 
         if (!tracks.find(t => t.isVideoTrack())) {
-            this.setVideoMuteStatus(true);
+            this.setVideoMuteStatus();
         }
 
         if (config.iAmRecorder) {
@@ -988,7 +991,7 @@ export default {
             // This will only modify base/media.video.muted which is then synced
             // up with the track at the end of local tracks initialization.
             muteLocalVideo(mute);
-            this.setVideoMuteStatus(mute);
+            this.setVideoMuteStatus();
 
             return;
         } else if (this.isLocalVideoMuted() === mute) {
@@ -1080,17 +1083,6 @@ export default {
      */
     isCallstatsEnabled() {
         return room && room.isCallstatsEnabled();
-    },
-
-    /**
-     * Sends the given feedback through CallStats if enabled.
-     *
-     * @param overallFeedback an integer between 1 and 5 indicating the
-     * user feedback
-     * @param detailedFeedback detailed feedback from the user. Not yet used
-     */
-    sendFeedback(overallFeedback, detailedFeedback) {
-        return room.sendFeedback(overallFeedback, detailedFeedback);
     },
 
     /**
@@ -1397,7 +1389,7 @@ export default {
                     .then(() => {
                         this.localVideo = newTrack;
                         this._setSharingScreen(newTrack);
-                        this.setVideoMuteStatus(this.isLocalVideoMuted());
+                        this.setVideoMuteStatus();
                     })
                     .then(resolve)
                     .catch(error => {
@@ -1766,16 +1758,12 @@ export default {
             const isPortrait = height >= width;
             const DESKTOP_STREAM_CAP = 720;
 
-            // Config.js setting for resizing high resolution desktop tracks to 720p when presenter is turned on.
-            const resizeEnabled = config.videoQuality && config.videoQuality.resizeDesktopForPresenter;
             const highResolutionTrack
                 = (isPortrait && width > DESKTOP_STREAM_CAP) || (!isPortrait && height > DESKTOP_STREAM_CAP);
 
             // Resizing the desktop track for presenter is causing blurriness of the desktop share on chrome.
             // Disable resizing by default, enable it only when config.js setting is enabled.
-            // Firefox doesn't return width and height for desktop tracks. Therefore, track needs to be resized
-            // for creating the canvas for presenter.
-            const resizeDesktopStream = browser.isFirefox() || (highResolutionTrack && resizeEnabled);
+            const resizeDesktopStream = highResolutionTrack && config.videoQuality?.resizeDesktopForPresenter;
 
             if (resizeDesktopStream) {
                 let desktopResizeConstraints = {};
@@ -1820,7 +1808,7 @@ export default {
             try {
                 await this.localVideo.setEffect(effect);
                 APP.store.dispatch(setVideoMuted(mute, MEDIA_TYPE.PRESENTER));
-                this.setVideoMuteStatus(mute);
+                this.setVideoMuteStatus();
             } catch (err) {
                 logger.error('Failed to apply the Presenter effect', err);
             }
@@ -2016,8 +2004,6 @@ export default {
             }
 
             logger.log(`USER ${id} LEFT:`, user);
-
-            APP.UI.onSharedVideoStop(id);
         });
 
         room.on(JitsiConferenceEvents.USER_STATUS_CHANGED, (id, status) => {
@@ -2278,7 +2264,7 @@ export default {
         });
 
         APP.UI.addListener(UIEvents.AUTH_CLICKED, () => {
-            AuthHandler.authenticateExternal(room);
+            AuthHandler.authenticate(room);
         });
 
         APP.UI.addListener(
@@ -2302,7 +2288,7 @@ export default {
                     return this._createPresenterStreamEffect(height, cameraDeviceId)
                         .then(effect => this.localVideo.setEffect(effect))
                         .then(() => {
-                            this.setVideoMuteStatus(false);
+                            this.setVideoMuteStatus();
                             logger.log('Switched local video device while screen sharing and the video is unmuted');
                             this._updateVideoDeviceId();
                         })
@@ -2453,59 +2439,6 @@ export default {
                 this.toggleScreenSharing(undefined, { audioOnly });
             }
         );
-
-        /* eslint-disable max-params */
-        APP.UI.addListener(
-            UIEvents.UPDATE_SHARED_VIDEO,
-            (url, state, time, isMuted, volume) => {
-                /* eslint-enable max-params */
-                // send start and stop commands once, and remove any updates
-                // that had left
-                if (state === 'stop'
-                        || state === 'start'
-                        || state === 'playing') {
-                    const localParticipant = getLocalParticipant(APP.store.getState());
-
-                    room.removeCommand(this.commands.defaults.SHARED_VIDEO);
-                    room.sendCommandOnce(this.commands.defaults.SHARED_VIDEO, {
-                        value: url,
-                        attributes: {
-                            state,
-                            time,
-                            muted: isMuted,
-                            volume,
-                            from: localParticipant.id
-                        }
-                    });
-                } else {
-                    // in case of paused, in order to allow late users to join
-                    // paused
-                    room.removeCommand(this.commands.defaults.SHARED_VIDEO);
-                    room.sendCommand(this.commands.defaults.SHARED_VIDEO, {
-                        value: url,
-                        attributes: {
-                            state,
-                            time,
-                            muted: isMuted,
-                            volume
-                        }
-                    });
-                }
-
-                APP.store.dispatch(setSharedVideoStatus(state));
-            });
-        room.addCommandListener(
-            this.commands.defaults.SHARED_VIDEO,
-            ({ value, attributes }, id) => {
-                if (attributes.state === 'stop') {
-                    APP.UI.onSharedVideoStop(id, attributes);
-                } else if (attributes.state === 'start') {
-                    APP.UI.onSharedVideoStart(id, value, attributes);
-                } else if (attributes.state === 'playing'
-                    || attributes.state === 'pause') {
-                    APP.UI.onSharedVideoUpdate(id, value, attributes);
-                }
-            });
     },
 
     /**
@@ -2859,14 +2792,15 @@ export default {
             requestFeedbackPromise = Promise.resolve(true);
         }
 
-        // All promises are returning Promise.resolve to make Promise.all to
-        // be resolved when both Promises are finished. Otherwise Promise.all
-        // will reject on first rejected Promise and we can redirect the page
-        // before all operations are done.
-        Promise.all([
-            requestFeedbackPromise,
-            this.leaveRoomAndDisconnect()
-        ]).then(values => {
+        let feedbackResult;
+
+        requestFeedbackPromise
+        .then(res => {
+            feedbackResult = res;
+
+            return this.leaveRoomAndDisconnect();
+        })
+        .then(() => {
             this._room = undefined;
             room = undefined;
 
@@ -2878,7 +2812,7 @@ export default {
             if (!interfaceConfig.SHOW_PROMOTIONAL_CLOSE_PAGE) {
                 APP.API.notifyReadyToClose();
             }
-            APP.store.dispatch(maybeRedirectToWelcomePage(values[0]));
+            APP.store.dispatch(maybeRedirectToWelcomePage(feedbackResult));
         });
     },
 
@@ -3104,12 +3038,9 @@ export default {
 
     /**
      * Sets the video muted status.
-     *
-     * @param {boolean} muted - New muted status.
      */
-    setVideoMuteStatus(muted) {
+    setVideoMuteStatus() {
         APP.UI.setVideoMuted(this.getMyUserId());
-        APP.API.notifyVideoMutedStatusChanged(muted);
     },
 
     /**

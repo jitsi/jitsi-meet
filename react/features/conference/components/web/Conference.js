@@ -14,6 +14,8 @@ import { Filmstrip } from '../../../filmstrip';
 import { CalleeInfoContainer } from '../../../invite';
 import { LargeVideo } from '../../../large-video';
 import { KnockingParticipantList, LobbyScreen } from '../../../lobby';
+import { ParticipantsPane } from '../../../participants-pane/components';
+import { getParticipantsPaneOpen } from '../../../participants-pane/functions';
 import { Prejoin, isPrejoinPageVisible } from '../../../prejoin';
 import { fullScreenChanged, showToolbox } from '../../../toolbox/actions.web';
 import { Toolbox } from '../../../toolbox/components/web';
@@ -71,6 +73,11 @@ type Props = AbstractProps & {
      * Returns true if the 'lobby screen' is visible.
      */
     _isLobbyScreenVisible: boolean,
+
+    /**
+     * If participants pane is visible or not.
+     */
+    _isParticipantsPaneVisible: boolean,
 
     /**
      * The CSS class to apply to the root of {@link Conference} to modify the
@@ -179,33 +186,38 @@ class Conference extends AbstractConference<Props, *> {
     render() {
         const {
             _isLobbyScreenVisible,
+            _isParticipantsPaneVisible,
             _layoutClassName,
             _showPrejoin
         } = this.props;
 
         return (
-            <div
-                className = { _layoutClassName }
-                id = 'videoconference_page'
-                onMouseMove = { this._onShowToolbar }
-                ref = { this._setBackground }>
-                <ConferenceInfo />
+            <div id = 'layout_wrapper'>
+                <div
+                    className = { _layoutClassName }
+                    id = 'videoconference_page'
+                    onMouseMove = { this._onShowToolbar }
+                    ref = { this._setBackground }>
+                    <ConferenceInfo />
 
-                <Notice />
-                <div id = 'videospace'>
-                    <LargeVideo />
-                    <KnockingParticipantList />
-                    <Filmstrip />
+                    <Notice />
+                    <div id = 'videospace'>
+                        <LargeVideo />
+                        {!_isParticipantsPaneVisible && <KnockingParticipantList />}
+                        <Filmstrip />
+                    </div>
+
+                    { _showPrejoin || _isLobbyScreenVisible || <Toolbox /> }
+                    <Chat />
+
+                    { this.renderNotificationsContainer() }
+
+                    <CalleeInfoContainer />
+
+                    { _showPrejoin && <Prejoin />}
+
                 </div>
-
-                { _showPrejoin || _isLobbyScreenVisible || <Toolbox /> }
-                <Chat />
-
-                { this.renderNotificationsContainer() }
-
-                <CalleeInfoContainer />
-
-                { _showPrejoin && <Prejoin />}
+                <ParticipantsPane />
             </div>
         );
     }
@@ -297,6 +309,7 @@ function _mapStateToProps(state) {
         ...abstractMapStateToProps(state),
         _backgroundAlpha: state['features/base/config'].backgroundAlpha,
         _isLobbyScreenVisible: state['features/base/dialog']?.component === LobbyScreen,
+        _isParticipantsPaneVisible: getParticipantsPaneOpen(state),
         _layoutClassName: LAYOUT_CLASSNAMES[getCurrentLayout(state)],
         _roomName: getConferenceNameForTitle(state),
         _showPrejoin: isPrejoinPageVisible(state)

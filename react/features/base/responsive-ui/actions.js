@@ -3,6 +3,8 @@
 import type { Dispatch } from 'redux';
 
 import { CHAT_SIZE } from '../../chat/constants';
+import { getParticipantsPaneOpen } from '../../participants-pane/functions';
+import theme from '../../participants-pane/theme.json';
 
 import { CLIENT_RESIZED, SET_ASPECT_RATIO, SET_REDUCED_UI } from './actionTypes';
 import { ASPECT_RATIO_NARROW, ASPECT_RATIO_WIDE } from './constants';
@@ -28,11 +30,18 @@ const REDUCED_UI_THRESHOLD = 300;
 export function clientResized(clientWidth: number, clientHeight: number) {
     return (dispatch: Dispatch<any>, getState: Function) => {
         const state = getState();
-        const { isOpen } = state['features/chat'];
+        const { isOpen: isChatOpen } = state['features/chat'];
+        const isParticipantsPaneOpen = getParticipantsPaneOpen(state);
         let availableWidth = clientWidth;
 
-        if (isOpen && navigator.product !== 'ReactNative') {
-            availableWidth -= CHAT_SIZE;
+        if (navigator.product !== 'ReactNative') {
+            if (isChatOpen) {
+                availableWidth -= CHAT_SIZE;
+            }
+
+            if (isParticipantsPaneOpen) {
+                availableWidth -= theme.participantsPaneWidth;
+            }
         }
 
         return dispatch({

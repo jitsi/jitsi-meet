@@ -12,6 +12,11 @@ import { toggleScreensharing, isLocalVideoTrackDesktop } from '../../../base/tra
 type Props = AbstractButtonProps & {
 
     /**
+     * True if the button needs to be disabled.
+     */
+    _disabled: boolean,
+
+    /**
      * Whether video is currently muted or not.
      */
     _screensharing: boolean,
@@ -39,7 +44,19 @@ class ScreenSharingAndroidButton extends AbstractButton<Props, *> {
      * @returns {void}
      */
     _handleClick() {
-        this.props.dispatch(toggleScreensharing());
+        const enable = !this._isToggled();
+
+        this.props.dispatch(toggleScreensharing(enable));
+    }
+
+    /**
+     * Returns a boolean value indicating if this button is disabled or not.
+     *
+     * @protected
+     * @returns {boolean}
+     */
+    _isDisabled() {
+        return this.props._disabled;
     }
 
     /**
@@ -61,7 +78,6 @@ class ScreenSharingAndroidButton extends AbstractButton<Props, *> {
  * @param {Object} state - The Redux state.
  * @private
  * @returns {{
- *     _disabled: boolean,
  *     _screensharing: boolean
  * }}
  */

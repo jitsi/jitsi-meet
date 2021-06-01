@@ -1,6 +1,6 @@
 // @flow
 
-import { isMacOS } from '../base/environment';
+import { isWindows } from '../base/environment';
 import { browser } from '../base/lib-jitsi-meet';
 
 
@@ -15,11 +15,11 @@ export function isScreenAudioShared(state: Object) {
 }
 
 /**
- * Returns the visibility of the audio only screen share button. Currently electron on mac os doesn't
- * have support for this functionality.
+ * Returns the visibility of the audio only screen share button. Currently only chrome browser and electron on
+ * windows supports this functionality.
  *
  * @returns {boolean}
  */
 export function isScreenAudioSupported() {
-    return !(browser.isElectron() && isMacOS());
+    return browser.isChrome() || (browser.isElectron() && isWindows());
 }

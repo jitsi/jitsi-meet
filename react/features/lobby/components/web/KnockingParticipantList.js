@@ -6,6 +6,7 @@ import { Avatar } from '../../../base/avatar';
 import { translate } from '../../../base/i18n';
 import { connect } from '../../../base/redux';
 import { isToolboxVisible } from '../../../toolbox/functions.web';
+import { HIDDEN_EMAILS } from '../../constants';
 import AbstractKnockingParticipantList, {
     mapStateToProps as abstractMapStateToProps,
     type Props as AbstractProps
@@ -56,7 +57,7 @@ class KnockingParticipantList extends AbstractKnockingParticipantList<Props> {
                                 <span data-testid = 'knockingParticipant.name'>
                                     { p.name }
                                 </span>
-                                { p.email && (
+                                { p.email && !HIDDEN_EMAILS.includes(p.email) && (
                                     <span data-testid = 'knockingParticipant.email'>
                                         { p.email }
                                     </span>

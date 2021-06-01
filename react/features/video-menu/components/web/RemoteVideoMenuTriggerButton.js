@@ -44,6 +44,11 @@ type Props = {
     _disableRemoteMute: Boolean,
 
     /**
+     * Whether or not to display the grant moderator button.
+     */
+    _disableGrantModerator: Boolean,
+
+    /**
      * Whether or not the participant is a conference moderator.
      */
     _isModerator: boolean,
@@ -136,6 +141,7 @@ class RemoteVideoMenuTriggerButton extends Component<Props> {
         const {
             _disableKick,
             _disableRemoteMute,
+            _disableGrantModerator,
             _isModerator,
             dispatch,
             initialVolumeValue,
@@ -170,11 +176,13 @@ class RemoteVideoMenuTriggerButton extends Component<Props> {
                 );
             }
 
-            buttons.push(
-                <GrantModeratorButton
-                    key = 'grant-moderator'
-                    participantID = { participantID } />
-            );
+            if (!_disableGrantModerator) {
+                buttons.push(
+                    <GrantModeratorButton
+                        key = 'grant-moderator'
+                        participantID = { participantID } />
+                );
+            }
 
             if (!_disableKick) {
                 buttons.push(
@@ -242,7 +250,7 @@ function _mapStateToProps(state, ownProps) {
     const { participantID } = ownProps;
     const localParticipant = getLocalParticipant(state);
     const { remoteVideoMenu = {}, disableRemoteMute } = state['features/base/config'];
-    const { disableKick } = remoteVideoMenu;
+    const { disableKick, disableGrantModerator } = remoteVideoMenu;
     let _remoteControlState = null;
     const participant = getParticipantById(state, participantID);
     const _isRemoteControlSessionActive = participant?.remoteControlSessionStatus ?? false;
@@ -283,7 +291,8 @@ function _mapStateToProps(state, ownProps) {
         _disableRemoteMute: Boolean(disableRemoteMute),
         _remoteControlState,
         _menuPosition,
-        _overflowDrawer: overflowDrawer
+        _overflowDrawer: overflowDrawer,
+        _disableGrantModerator: Boolean(disableGrantModerator)
     };
 }
 

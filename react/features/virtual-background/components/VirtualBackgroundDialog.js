@@ -5,13 +5,20 @@ import { jitsiLocalStorage } from '@jitsi/js-utils/jitsi-local-storage';
 import React, { useState, useEffect } from 'react';
 import uuid from 'uuid';
 
-import { Dialog } from '../../base/dialog';
+import { Dialog, hideDialog } from '../../base/dialog';
 import { translate } from '../../base/i18n';
-import { Icon, IconCloseSmall, IconPlusCircle } from '../../base/icons';
+import { Icon, IconCloseSmall, IconPlusCircle, IconShareDesktop } from '../../base/icons';
+import { createLocalTrack } from '../../base/lib-jitsi-meet/functions';
+import { VIDEO_TYPE } from '../../base/media';
 import { connect } from '../../base/redux';
+import { getLocalVideoTrack } from '../../base/tracks';
+import { showErrorNotification } from '../../notifications';
 import { toggleBackgroundEffect } from '../actions';
+import { VIRTUAL_BACKGROUND_TYPE } from '../constants';
 import { resizeImage, toDataURL } from '../functions';
 import logger from '../logger';
+
+import VirtualBackgroundPreview from './VirtualBackgroundPreview';
 
 // The limit of virtual background uploads is 24. When the number
 // of uploads is 25 we trigger the deleteStoredImage function to delete
@@ -50,9 +57,19 @@ const images = [
 type Props = {
 
     /**
+     * Returns the jitsi track that will have backgraund effect applied.
+     */
+    _jitsiTrack: Object,
+
+    /**
      * Returns the selected thumbnail identifier.
      */
     _selectedThumbnail: string,
+
+    /**
+     * Returns the selected virtual source object.
+     */
+    _virtualSource: Object,
 
     /**
      * The redux {@code dispatch} function.
@@ -70,10 +87,12 @@ type Props = {
  *
  * @returns {ReactElement}
  */
-function VirtualBackground({ _selectedThumbnail, dispatch, t }: Props) {
+function VirtualBackground({ _jitsiTrack, _selectedThumbnail, _virtualSource, dispatch, t }: Props) {
+    const [ options, setOptions ] = useState({});
     const localImages = jitsiLocalStorage.getItem('virtualBackgrounds');
     const [ storedImages, setStoredImages ] = useState((localImages && JSON.parse(localImages)) || []);
     const [ loading, isloading ] = useState(false);
+    const [ activeDesktopVideo ] = useState(_virtualSource?.videoType === VIDEO_TYPE.DESKTOP ? _virtualSource : null);
 
     const deleteStoredImage = image => {
         setStoredImages(storedImages.filter(item => item !== image));
@@ -95,55 +114,58 @@ function VirtualBackground({ _selectedThumbnail, dispatch, t }: Props) {
     }, [ storedImages ]);
 
     const enableBlur = async (blurValue, selection) => {
-        isloading(true);
-        await dispatch(
-            toggleBackgroundEffect({
-                backgroundType: 'blur',
-                enabled: true,
-                blurValue,
-                selectedThumbnail: selection
-            })
-        );
-        isloading(false);
+        setOptions({
+            backgroundType: VIRTUAL_BACKGROUND_TYPE.BLUR,
+            enabled: true,
+            blurValue,
+            selectedThumbnail: selection
+        });
     };
 
     const removeBackground = async () => {
-        isloading(true);
-        await dispatch(
-            toggleBackgroundEffect({
-                enabled: false,
-                selectedThumbnail: 'none'
-            })
-        );
-        isloading(false);
+        setOptions({
+            enabled: false,
+            selectedThumbnail: 'none'
+        });
+    };
+
+    const shareDesktop = async selection => {
+        const url = await createLocalTrack('desktop', '');
+
+        if (!url) {
+            dispatch(showErrorNotification({
+                titleKey: 'virtualBackground.desktopShareError'
+            }));
+            logger.error('Could not create desktop share as a virtual background!');
+
+            return;
+        }
+        setOptions({
+            backgroundType: VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE,
+            enabled: true,
+            selectedThumbnail: selection,
+            url
+        });
     };
 
     const setUploadedImageBackground = async image => {
-        isloading(true);
-        await dispatch(
-            toggleBackgroundEffect({
-                backgroundType: 'image',
-                enabled: true,
-                url: image.src,
-                selectedThumbnail: image.id
-            })
-        );
-        isloading(false);
+        setOptions({
+            backgroundType: VIRTUAL_BACKGROUND_TYPE.IMAGE,
+            enabled: true,
+            url: image.src,
+            selectedThumbnail: image.id
+        });
     };
 
     const setImageBackground = async image => {
-        isloading(true);
         const url = await toDataURL(image.src);
 
-        await dispatch(
-            toggleBackgroundEffect({
-                backgroundType: 'image',
-                enabled: true,
-                url,
-                selectedThumbnail: image.id
-            })
-        );
-        isloading(false);
+        setOptions({
+            backgroundType: VIRTUAL_BACKGROUND_TYPE.IMAGE,
+            enabled: true,
+            url,
+            selectedThumbnail: image.id
+        });
     };
 
     const uploadImage = async imageFile => {
@@ -154,7 +176,6 @@ function VirtualBackground({ _selectedThumbnail, dispatch, t }: Props) {
             const url = await resizeImage(reader.result);
             const uuId = uuid.v4();
 
-            isloading(true);
             setStoredImages([
                 ...storedImages,
                 {
@@ -162,15 +183,12 @@ function VirtualBackground({ _selectedThumbnail, dispatch, t }: Props) {
                     src: url
                 }
             ]);
-            await dispatch(
-                toggleBackgroundEffect({
-                    backgroundType: 'image',
-                    enabled: true,
-                    url,
-                    selectedThumbnail: uuId
-                })
-            );
-            isloading(false);
+            setOptions({
+                backgroundType: VIRTUAL_BACKGROUND_TYPE.IMAGE,
+                enabled: true,
+                url,
+                selectedThumbnail: uuId
+            });
         };
         reader.onerror = () => {
             isloading(false);
@@ -178,15 +196,26 @@ function VirtualBackground({ _selectedThumbnail, dispatch, t }: Props) {
         };
     };
 
+    const applyVirtualBackground = async () => {
+        if (activeDesktopVideo) {
+            await activeDesktopVideo.dispose();
+        }
+        isloading(true);
+        await dispatch(toggleBackgroundEffect(options, _jitsiTrack));
+        await isloading(false);
+        dispatch(hideDialog());
+    };
+
     return (
         <Dialog
-            hideCancelButton = { true }
-            submitDisabled = { true }
-            titleKey = { 'virtualBackground.title' }
-            width = '640px'>
+            hideCancelButton = { false }
+            okKey = { 'virtualBackground.apply' }
+            onSubmit = { applyVirtualBackground }
+            submitDisabled = { !options || loading }
+            titleKey = { 'virtualBackground.title' } >
+            <VirtualBackgroundPreview options = { options } />
             {loading ? (
                 <div className = 'virtual-background-loading'>
-                    <span className = 'loading-content-text'>{t('virtualBackground.pleaseWait')}</span>
                     <Spinner
                         isCompleting = { false }
                         size = 'medium' />
@@ -225,9 +254,23 @@ function VirtualBackground({ _selectedThumbnail, dispatch, t }: Props) {
                             onClick = { () => enableBlur(25, 'blur') }>
                             {t('virtualBackground.blur')}
                         </div>
+                        <div
+                            className = { _selectedThumbnail === 'desktop-share'
+                                ? 'desktop-share-selected'
+                                : 'desktop-share' }
+                            onClick = { () => shareDesktop('desktop-share') }>
+                            <Icon
+                                className = 'share-desktop-icon'
+                                size = { 30 }
+                                src = { IconShareDesktop } />
+                        </div>
                         {images.map((image, index) => (
                             <img
-                                className = { _selectedThumbnail === image.id ? 'thumbnail-selected' : 'thumbnail' }
+                                className = {
+                                    options.selectedThumbnail === image.id || _selectedThumbnail === image.id
+                                        ? 'thumbnail-selected'
+                                        : 'thumbnail'
+                                }
                                 key = { index }
                                 onClick = { () => setImageBackground(image) }
                                 onError = { event => event.target.style.display = 'none' }
@@ -262,13 +305,13 @@ function VirtualBackground({ _selectedThumbnail, dispatch, t }: Props) {
  *
  * @param {Object} state - The Redux state.
  * @private
- * @returns {{
- *     _selectedThumbnail: string
- * }}
+ * @returns {{Props}}
  */
 function _mapStateToProps(state): Object {
     return {
-        _selectedThumbnail: state['features/virtual-background'].selectedThumbnail
+        _virtualSource: state['features/virtual-background'].virtualSource,
+        _selectedThumbnail: state['features/virtual-background'].selectedThumbnail,
+        _jitsiTrack: getLocalVideoTrack(state['features/base/tracks'])?.jitsiTrack
     };
 }
 

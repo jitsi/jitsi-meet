@@ -59,8 +59,10 @@ var config = {
         // simulcast is turned off for the desktop share. If presenter is turned
         // on while screensharing is in progress, the max bitrate is automatically
         // adjusted to 2.5 Mbps. This takes a value between 0 and 1 which determines
-        // the probability for this to be enabled.
-        // capScreenshareBitrate: 1 // 0 to disable
+        // the probability for this to be enabled. This setting has been deprecated.
+        // desktopSharingFrameRate.max now determines whether simulcast will be enabled
+        // or disabled for the screenshare.
+        // capScreenshareBitrate: 1 // 0 to disable - deprecated.
 
         // Enable callstats only for a percentage of users.
         // This takes a value between 0 and 100 which determines the probability for
@@ -225,6 +227,11 @@ var config = {
 
     // Default value for the channel "last N" attribute. -1 for unlimited.
     channelLastN: -1,
+
+    // Provides a way for the lastN value to be controlled through the UI.
+    // When startLastN is present, conference starts with a last-n value of startLastN and channelLastN
+    // value will be used when the quality level is selected using "Manage Video Quality" slider.
+    // startLastN: 1,
 
     // Provides a way to use different "last N" values based on the number of participants in the conference.
     // The keys in an Object represent number of participants and the values are "last N" to be used when number of
@@ -427,6 +434,10 @@ var config = {
     // Base URL for a Gravatar-compatible service. Defaults to libravatar.
     // gravatarBaseURL: 'https://seccdn.libravatar.org/avatar/',
 
+    // App name to be displayed in the invitation email subject, as an alternative to
+    // interfaceConfig.APP_NAME.
+    // inviteAppName: null,
+
     // Moved from interfaceConfig(TOOLBAR_BUTTONS).
     // The name of the toolbar buttons to display in the toolbar, including the
     // "More actions" menu. If present, the button will display. Exceptions are
@@ -600,8 +611,8 @@ var config = {
     // localRecording: {
     // Enables local recording.
     // Additionally, 'localrecording' (all lowercase) needs to be added to
-    // TOOLBAR_BUTTONS in interface_config.js for the Local Recording
-    // button to show up on the toolbar.
+    // the `toolbarButtons`-array for the Local Recording button to show up
+    // on the toolbar.
     //
     //     enabled: true,
     //
@@ -664,7 +675,9 @@ var config = {
     // Options related to the remote participant menu.
     // remoteVideoMenu: {
     //     // If set to true the 'Kick out' button will be disabled.
-    //     disableKick: true
+    //     disableKick: true,
+    //     // If set to true the 'Grant moderator' button will be disabled.
+    //     disableGrantModerator: true
     // },
 
     // If set to true all muting operations of remote participants will be disabled.
@@ -676,8 +689,11 @@ var config = {
     /**
      External API url used to receive branding specific information.
      If there is no url set or there are missing fields, the defaults are applied.
+     The config file should be in JSON.
      None of the fields are mandatory and the response must have the shape:
      {
+         // The domain url to apply (will replace the domain in the sharing conference link/embed section)
+         inviteDomain: 'example-company.org,
          // The hex value for the colour used as background
          backgroundColor: '#fff',
          // The url for the image used as background
