@@ -571,6 +571,7 @@
     },
     "startupoverlay": {
         "policyText": " ",
+        "genericTitle": "此會議需要使用您的麥克風和攝影裝置。",
         "title": "{{app}} 需要使用您的麥克風和攝影裝置。"
     },
     "suspendedoverlay": {
