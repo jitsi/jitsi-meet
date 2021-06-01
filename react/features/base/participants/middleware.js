@@ -407,16 +407,20 @@ function _participantJoinedOrUpdated(store, next, action) {
     // to the new avatar and emit out change events if necessary.
     const result = next(action);
 
-    const { disableThirdPartyRequests } = getState()['features/base/config'];
+    // Only run this if the config is populated, otherwise we preload external resources
+    // even if disableThirdPartyRequests is set to true in config
+    if (Object.keys(getState()['features/base/config']).length) {
+        const { disableThirdPartyRequests } = getState()['features/base/config'];
 
-    if (!disableThirdPartyRequests && (avatarURL || email || id || name)) {
-        const participantId = !id && local ? getLocalParticipant(getState()).id : id;
-        const updatedParticipant = getParticipantById(getState(), participantId);
+        if (!disableThirdPartyRequests && (avatarURL || email || id || name)) {
+            const participantId = !id && local ? getLocalParticipant(getState()).id : id;
+            const updatedParticipant = getParticipantById(getState(), participantId);
 
-        getFirstLoadableAvatarUrl(updatedParticipant, store)
-            .then(url => {
-                dispatch(setLoadableAvatarUrl(participantId, url));
-            });
+            getFirstLoadableAvatarUrl(updatedParticipant, store)
+                .then(url => {
+                    dispatch(setLoadableAvatarUrl(participantId, url));
+                });
+        }
     }
 
     // Notify external listeners of potential avatarURL changes.
