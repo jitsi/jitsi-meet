@@ -1,5 +1,6 @@
 // @flow
 
+import Bourne from '@hapi/bourne';
 import { jitsiLocalStorage } from '@jitsi/js-utils/jitsi-local-storage';
 
 import { browser } from '../lib-jitsi-meet';
@@ -57,7 +58,7 @@ function setupJitsiLocalStorage() {
 
     if (shouldUseHostPageLocalStorage(urlParams)) {
         try {
-            const localStorageContent = JSON.parse(urlParams['appData.localStorageContent']);
+            const localStorageContent = Bourne.parse(urlParams['appData.localStorageContent']);
 
             if (typeof localStorageContent === 'object') {
                 Object.keys(localStorageContent).forEach(key => {
