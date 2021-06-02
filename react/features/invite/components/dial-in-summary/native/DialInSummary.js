@@ -58,7 +58,6 @@ class DialInSummary extends Component<Props> {
                     headerLabelKey: 'info.label'
                 }}
                 modalId = { DIAL_IN_SUMMARY_VIEW_ID }
-                showHeaderWithNavigation = { true }
                 style = { styles.backDrop }>
                 <WebView
                     onError = { this._onError }

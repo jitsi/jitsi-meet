@@ -44,8 +44,7 @@ class Chat extends AbstractChat<Props> {
                     headerLabelKey: 'chat.title'
                 }}
                 modalId = { CHAT_VIEW_MODAL_ID }
-                onClose = { this._onClose }
-                showHeaderWithNavigation = { true }>
+                onClose = { this._onClose }>
 
                 <MessageContainer messages = { this.props._messages } />
                 <MessageRecipient />

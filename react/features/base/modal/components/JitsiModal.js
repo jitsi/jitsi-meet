@@ -51,6 +51,11 @@ type Props = {
     headerProps: Object,
 
     /**
+     * True if the header with navigation should be hidden, false otherwise.
+     */
+    hideHeaderWithNavigation?: boolean,
+
+    /**
      * The ID of the modal that is being rendered. This is used to show/hide the modal.
      */
     modalId: string,
@@ -67,11 +72,6 @@ type Props = {
     position?: string,
 
     /**
-     * True if the header with navigation should be shown, false otherwise.
-     */
-    showHeaderWithNavigation: boolean,
-
-    /**
      * Additional style to be appended to the View containing the content of the modal.
      */
     style?: StyleType
@@ -83,7 +83,8 @@ type Props = {
  */
 class JitsiModal extends PureComponent<Props> {
     static defaultProps = {
-        position: 'bottom'
+        position: 'bottom',
+        hideHeaderWithNavigation: false
     };
 
     /**
@@ -111,7 +112,7 @@ class JitsiModal extends PureComponent<Props> {
             footerComponent,
             headerProps,
             position,
-            showHeaderWithNavigation,
+            hideHeaderWithNavigation,
             style
         } = this.props;
 
@@ -132,10 +133,10 @@ class JitsiModal extends PureComponent<Props> {
                         _styles.page,
                         style
                     ] }>
-                    {showHeaderWithNavigation
-                    && <HeaderWithNavigation
+                    <HeaderWithNavigation
                         { ...headerProps }
-                        onPressBack = { this._onRequestClose } />}
+                        hideHeaderWithNavigation = { hideHeaderWithNavigation }
+                        onPressBack = { this._onRequestClose } />
                     <SafeAreaView style = { styles.safeArea }>
                         { children }
                     </SafeAreaView>

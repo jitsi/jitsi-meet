@@ -158,8 +158,7 @@ class SettingsView extends AbstractSettingsView<Props, State> {
                     headerLabelKey: 'settingsView.header'
                 }}
                 modalId = { SETTINGS_VIEW_ID }
-                onClose = { this._onClose }
-                showHeaderWithNavigation = { true }>
+                onClose = { this._onClose }>
                 <ScrollView>
                     <FormSectionAccordion
                         accordion = { false }
