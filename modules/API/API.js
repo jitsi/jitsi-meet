@@ -39,6 +39,7 @@ import {
 } from '../../react/features/device-selection/functions';
 import { isEnabled as isDropboxEnabled } from '../../react/features/dropbox';
 import { toggleE2EE } from '../../react/features/e2ee/actions';
+import { setVolume } from '../../react/features/filmstrip';
 import { invite } from '../../react/features/invite';
 import {
     selectParticipantInLargeVideo
@@ -173,6 +174,9 @@ function initCommands() {
             logger.debug('Set large video participant command received');
             sendAnalytics(createApiEvent('largevideo.participant.set'));
             APP.store.dispatch(selectParticipantInLargeVideo(participantId));
+        },
+        'set-participant-volume': (participantId, volume) => {
+            APP.store.dispatch(setVolume(participantId, volume));
         },
         'subject': subject => {
             sendAnalytics(createApiEvent('subject.changed'));
