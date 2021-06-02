@@ -20,14 +20,15 @@ type Props = {
     participant: Object
 };
 
-export const MeetingParticipantItem = ({ participant }: Props) => {
-    const isAudioMuted = useSelector(getIsParticipantAudioMuted(participant));
-    const isVideoMuted = useSelector(getIsParticipantVideoMuted(participant));
+export const MeetingParticipantItem = ({ participant: p }: Props) => {
+    const isAudioMuted = useSelector(getIsParticipantAudioMuted(p));
+    const isVideoMuted = useSelector(getIsParticipantVideoMuted(p));
 
     return (
         <ParticipantItem
             audioMuteState = { isAudioMuted ? MediaState.Muted : MediaState.Unmuted }
-            participant = { participant }
+            name = { p.name }
+            participant = { p }
             videoMuteState = { isVideoMuted ? MediaState.Muted : MediaState.Unmuted } />
     );
 };

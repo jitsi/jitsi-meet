@@ -29,6 +29,7 @@ export const LobbyParticipantItem = ({ participant: p }: Props) => {
     return (
         <ParticipantItem
             audioMuteState = { MediaState.Muted }
+            name = { p.name }
             participant = { p }
             videoMuteState = { MediaState.ForceMuted }>
             <View style = { styles.lobbyParticipantItem }>

@@ -12,8 +12,8 @@ const participantState = {
  * The style for participant list.
  */
 const participantList = {
-    marginLeft: BaseTheme.spacing[4],
-    marginRight: BaseTheme.spacing[4],
+    marginLeft: BaseTheme.spacing[3],
+    marginRight: BaseTheme.spacing[3],
     position: 'relative'
 };
 
@@ -205,8 +205,7 @@ export default {
     },
 
     lobbyListActions: {
-        flexDirection: 'row',
-        right: BaseTheme.spacing[2]
+        flexDirection: 'row'
     },
 
     header: {
