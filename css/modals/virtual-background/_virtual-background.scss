@@ -155,12 +155,15 @@
         }
     }
     @media (max-width: 432px){
+        .share-desktop-icon{
+            margin-top: 25%;
+        }
         font-size: 1.5vw;
-        .virtual-background-none, .thumbnail, .blur, .slight-blur{
+        .desktop-share, .virtual-background-none, .thumbnail, .blur, .slight-blur{
             height: 60px;
             width: 60px;
         }
-        .thumbnail-selected, .none-selected, .blur-selected, .slight-blur-selected{
+        .desktop-share-selected, .thumbnail-selected, .none-selected, .blur-selected, .slight-blur-selected{
             height: 56px;
             width: 56px;
         }
@@ -222,9 +225,8 @@
  .video-background-preview-entry{
     margin-left: -10px;
     height: 250px;
-    max-width: 95.4%;
+    width: 570px;
     margin-bottom: 8px;
-    position: absolute;
     z-index: 2;
     @media (min-width: 432px) and (max-width: 632px) {
         max-width: 336;
