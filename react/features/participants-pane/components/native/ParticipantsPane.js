@@ -32,7 +32,7 @@ export function ParticipantsPane() {
 
     return (
         <JitsiModal
-            showHeaderWithNavigation = { false }
+            hideHeaderWithNavigation = { true }
             style = { styles.participantsPane }>
             <View style = { styles.header }>
                 <Button
