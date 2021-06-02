@@ -1,3 +1,7 @@
+
+import { getFeatureFlag, INVITE_ENABLED } from '../base/flags';
+import { toState } from '../base/redux';
+
 import { REDUCER_KEY } from './constants';
 
 /**
@@ -64,3 +68,15 @@ const getState = state => state[REDUCER_KEY];
  */
 export const getParticipantsPaneOpen = state => Boolean(getState(state)?.isOpen);
 
+/**
+ * Returns true if the invite button should be rendered.
+ *
+ * @param {Object} state - Global state.
+ * @returns {boolean}
+ */
+export const shouldRenderInviteButton = state => {
+    const { disableInviteFunctions } = toState(state)['features/base/config'];
+    const flagEnabled = getFeatureFlag(state, INVITE_ENABLED, true);
+
+    return flagEnabled && !disableInviteFunctions;
+};
