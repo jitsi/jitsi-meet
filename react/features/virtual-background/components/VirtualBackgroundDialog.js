@@ -1,6 +1,7 @@
 // @flow
 /* eslint-disable react/jsx-no-bind, no-return-assign */
 import Spinner from '@atlaskit/spinner';
+import Bourne from '@hapi/bourne';
 import { jitsiLocalStorage } from '@jitsi/js-utils/jitsi-local-storage';
 import React, { useState, useEffect } from 'react';
 import uuid from 'uuid';
@@ -90,7 +91,7 @@ type Props = {
 function VirtualBackground({ _jitsiTrack, _selectedThumbnail, _virtualSource, dispatch, t }: Props) {
     const [ options, setOptions ] = useState({});
     const localImages = jitsiLocalStorage.getItem('virtualBackgrounds');
-    const [ storedImages, setStoredImages ] = useState((localImages && JSON.parse(localImages)) || []);
+    const [ storedImages, setStoredImages ] = useState((localImages && Bourne.parse(localImages)) || []);
     const [ loading, isloading ] = useState(false);
     const [ activeDesktopVideo ] = useState(_virtualSource?.videoType === VIDEO_TYPE.DESKTOP ? _virtualSource : null);
 

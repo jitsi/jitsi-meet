@@ -32,6 +32,7 @@
     "@atlaskit/theme": "11.0.2",
     "@atlaskit/toggle": "12.0.3",
     "@atlaskit/tooltip": "17.1.2",
+    "@hapi/bourne": "2.0.0",
     "@jitsi/js-utils": "1.0.6",
     "@material-ui/core": "4.11.3",
     "@microsoft/microsoft-graph-client": "1.1.0",
