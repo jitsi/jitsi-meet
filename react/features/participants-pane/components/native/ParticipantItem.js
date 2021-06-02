@@ -31,6 +31,11 @@ type Props = {
     children?: Node,
 
     /**
+     * The name of the participant. Used for showing lobby names.
+     */
+    name?: string,
+
+    /**
      * Callback for when the mouse leaves this component
      */
     onLeave?: Function,
@@ -52,13 +57,14 @@ type Props = {
  * @returns {React$Element<any>}
  */
 function ParticipantItem({
-    children,
     audioMuteState = MediaState.None,
-    videoMuteState = MediaState.None,
-    participant: p
+    children,
+    name,
+    participant: p,
+    videoMuteState = MediaState.None
 }: Props) {
+    const displayName = name || useSelector(getParticipantDisplayNameWithId(p.id));
     const { t } = useTranslation();
-    const name = useSelector(getParticipantDisplayNameWithId(p.id));
 
     return (
         <View style = { styles.participantContainer } >
@@ -69,7 +75,7 @@ function ParticipantItem({
             <View style = { styles.participantContent }>
                 <View style = { styles.participantNameContainer }>
                     <Text style = { styles.participantName }>
-                        { name }
+                        { displayName }
                     </Text>
                     { p.local ? <Text style = { styles.isLocal }>({t('chat.you')})</Text> : null }
                 </View>
