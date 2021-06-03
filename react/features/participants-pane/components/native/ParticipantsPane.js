@@ -12,9 +12,9 @@ import { JitsiModal } from '../../../base/modal';
 import MuteEveryoneDialog
     from '../../../video-menu/components/native/MuteEveryoneDialog';
 
+import { ContextMenuMore } from './ContextMenuMore';
 import { LobbyParticipantList } from './LobbyParticipantList';
 import { MeetingParticipantList } from './MeetingParticipantList';
-import { ContextMenuMore } from './ContextMenuMore';
 import styles from './styles';
 
 /**
