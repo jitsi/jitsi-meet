@@ -14,6 +14,7 @@ import MuteEveryoneDialog
 
 import { LobbyParticipantList } from './LobbyParticipantList';
 import { MeetingParticipantList } from './MeetingParticipantList';
+import { ContextMenuMore } from './ContextMenuMore';
 import styles from './styles';
 
 /**
@@ -23,6 +24,7 @@ import styles from './styles';
  */
 export function ParticipantsPane() {
     const dispatch = useDispatch();
+    const openMoreMenu = useCallback(() => dispatch(openDialog(ContextMenuMore)));
     const closePane = useCallback(
         () => dispatch(hideDialog()),
         [ dispatch ]);
@@ -68,6 +70,7 @@ export function ParticipantsPane() {
                             src = { IconHorizontalPoints } />)
                     }
                     mode = 'contained'
+                    onPress = { openMoreMenu }
                     style = { styles.moreButton } />
             </View>
         </JitsiModal>

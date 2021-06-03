@@ -93,7 +93,7 @@ export const participants = [
         isJigasi: undefined,
         loadableAvatarUrl: undefined,
         local: true,
-        name: 'Carlin',
+        name: 'Carlin Teodor',
         pinned: false,
         presence: undefined,
         raisedHand: true,

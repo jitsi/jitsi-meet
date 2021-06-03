@@ -3,7 +3,7 @@
 import React from 'react';
 import type { Node } from 'react';
 import { useTranslation } from 'react-i18next';
-import { View } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 import { Text } from 'react-native-paper';
 import { useSelector } from 'react-redux';
 
@@ -41,6 +41,11 @@ type Props = {
     onLeave?: Function,
 
     /**
+     * Callback to be invoked on pressing the participant item.
+     */
+    onPress?: Function,
+
+    /**
      * Participant reference
      */
     participant: Object,
@@ -60,19 +65,24 @@ function ParticipantItem({
     audioMuteState = MediaState.None,
     children,
     name,
+    onPress,
     participant: p,
     videoMuteState = MediaState.None
 }: Props) {
+
     const displayName = name || useSelector(getParticipantDisplayNameWithId(p.id));
     const { t } = useTranslation();
 
     return (
         <View style = { styles.participantContainer } >
-            <Avatar
-                className = 'participant-avatar'
-                participantId = { p.id }
-                size = { 32 } />
-            <View style = { styles.participantContent }>
+            <TouchableOpacity
+                /* eslint-disable-next-line react/jsx-no-bind */
+                onPress = { onPress }
+                style = { styles.participantContent }>
+                <Avatar
+                    className = 'participant-avatar'
+                    participantId = { p.id }
+                    size = { 32 } />
                 <View style = { styles.participantNameContainer }>
                     <Text style = { styles.participantName }>
                         { displayName }
@@ -84,7 +94,7 @@ function ParticipantItem({
                     <View style = { styles.participantStateVideo }>{VideoStateIcons[videoMuteState]}</View>
                     <View style = { styles.participantStateAudio }>{AudioStateIcons[audioMuteState]}</View>
                 </View>
-            </View>
+            </TouchableOpacity>
             { children }
         </View>
     );
