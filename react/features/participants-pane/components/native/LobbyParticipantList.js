@@ -19,18 +19,11 @@ export const LobbyParticipantList = () => {
                     {t('participantsPane.headings.lobby',
                         { count: participants.length })}
                 </Text>
-                <View style = { styles.lobbyListActions }>
-                    <Button
-                        labelStyle = { styles.allParticipantActionsButton }
-                        mode = 'text'>
-                        {t('lobby.admitAll')}
-                    </Button>
-                    <Button
-                        labelStyle = { styles.allParticipantActionsButton }
-                        mode = 'text'>
-                        {t('lobby.rejectAll')}
-                    </Button>
-                </View>
+                <Button
+                    labelStyle = { styles.allParticipantActionsButton }
+                    mode = 'text'>
+                    {t('lobby.admitAll')}
+                </Button>
             </View>
             { participants.map(p => (
                 <LobbyParticipantItem

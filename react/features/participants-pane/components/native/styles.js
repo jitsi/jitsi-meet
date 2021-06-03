@@ -70,21 +70,27 @@ const buttonContent = {
 };
 
 /**
+ * The style of the context menu pane items.
+ */
+const contextMenuItem = {
+    flexDirection: 'row',
+    paddingBottom: 16,
+    paddingTop: 16
+};
+
+/**
  * The styles of the native components of the feature {@code participants}.
  */
 export default {
 
-    lobbyParticipantItem: {
-        flexDirection: 'row',
-        position: 'absolute',
-        right: 0,
-        zIndex: 1
-    },
-
     participantActionsButtonAdmit: {
         backgroundColor: BaseTheme.palette.action01,
         borderRadius: BaseTheme.shape.borderRadius,
-        height: BaseTheme.spacing[5]
+        flexDirection: 'row',
+        height: BaseTheme.spacing[5],
+        position: 'absolute',
+        right: 0,
+        zIndex: 1
     },
 
     participantActionsButtonReject: {
@@ -105,10 +111,10 @@ export default {
     },
 
     allParticipantActionsButton: {
-        ...BaseTheme.typography.labelRegular,
-        color: BaseTheme.palette.action01,
+        ...BaseTheme.typography.heading6,
+        color: BaseTheme.palette.link01,
+        marginRight: 'auto',
         textTransform: 'capitalize'
-
     },
 
     participantContainer: {
@@ -144,7 +150,9 @@ export default {
     },
 
     isLocal: {
-        color: BaseTheme.palette.text01
+        alignSelf: 'center',
+        color: BaseTheme.palette.text01,
+        marginLeft: 4
     },
 
     participantsPane: {
@@ -154,7 +162,8 @@ export default {
     participantStatesContainer: {
         display: 'flex',
         flexDirection: 'row',
-        marginLeft: BaseTheme.spacing[3]
+        marginLeft: 'auto',
+        width: 72
     },
 
     participantStateAudio: {
@@ -191,6 +200,7 @@ export default {
         alignItems: 'center',
         display: 'flex',
         flexDirection: 'row',
+        justifyContent: 'space-between',
         overflow: 'hidden',
         position: 'relative',
         width: '100%'
@@ -202,10 +212,6 @@ export default {
 
     meetingListDescription: {
         ...participantListDescription
-    },
-
-    lobbyListActions: {
-        flexDirection: 'row'
     },
 
     header: {
@@ -243,10 +249,6 @@ export default {
         left: BaseTheme.spacing[2]
     },
 
-    moreButton: {
-        ...smallButton
-    },
-
     inviteButton: {
         backgroundColor: BaseTheme.palette.action01,
         marginTop: BaseTheme.spacing[2]
@@ -257,9 +259,18 @@ export default {
         textTransform: 'capitalize'
     },
 
+    moreButton: {
+        ...smallButton
+    },
+
     moreIcon: {
         ...buttonContent,
         left: BaseTheme.spacing[2]
+    },
+
+    contextMenuMore: {
+        backgroundColor: BaseTheme.palette.action02,
+        borderRadius: BaseTheme.shape.borderRadius
     },
 
     muteAllButton: {
@@ -274,5 +285,40 @@ export default {
     muteAllLabel: {
         color: BaseTheme.palette.text01,
         textTransform: 'capitalize'
+    },
+
+    contextMenuItemMuteVideo: {
+        ...contextMenuItem
+    },
+
+    contextMenuItemDontAllowUnmute: {
+        ...contextMenuItem
+    },
+
+    contextMenuItemDetails: {
+        ...contextMenuItem,
+        borderBottomColor: BaseTheme.palette.section01,
+        borderBottomWidth: 1
+    },
+
+    contextMenuItemReject: {
+        ...contextMenuItem
+    },
+
+    contextMenuItemText: {
+        ...BaseTheme.typography.bodyShortRegularLarge,
+        alignSelf: 'center',
+        color: BaseTheme.palette.text01,
+        flexDirection: 'row',
+        marginLeft: 8
+    },
+
+    contextMenuItemParticipantName: {
+        ...BaseTheme.typography.bodyShortRegularLarge,
+        color: BaseTheme.palette.text01
+    },
+
+    contextMenuIcon: {
+        color: BaseTheme.palette.actionDanger
     }
 };
