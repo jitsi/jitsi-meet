@@ -9,11 +9,12 @@ import {
     IconCloseCircle,
     IconCrown,
     IconMessage,
+    IconMicDisabled,
     IconMuteEveryoneElse,
     IconVideoOff
 } from '../../base/icons';
 import { isLocalParticipantModerator } from '../../base/participants';
-import { getIsParticipantVideoMuted } from '../../base/tracks';
+import { getIsParticipantAudioMuted, getIsParticipantVideoMuted } from '../../base/tracks';
 import { openChat } from '../../chat/actions';
 import { GrantModeratorDialog, KickRemoteParticipantDialog, MuteEveryoneDialog } from '../../video-menu';
 import MuteRemoteParticipantsVideoDialog from '../../video-menu/components/web/MuteRemoteParticipantsVideoDialog';
@@ -28,6 +29,11 @@ import {
 } from './styled';
 
 type Props = {
+
+    /**
+     * Callback used to open a confirmation dialog for audio muting.
+     */
+    muteAudio: Function,
 
     /**
      * Target elements against which positioning calculations are made
@@ -60,12 +66,14 @@ export const MeetingParticipantContextMenu = ({
     onEnter,
     onLeave,
     onSelect,
+    muteAudio,
     participant
 }: Props) => {
     const dispatch = useDispatch();
     const containerRef = useRef(null);
     const isLocalModerator = useSelector(isLocalParticipantModerator);
     const isParticipantVideoMuted = useSelector(getIsParticipantVideoMuted(participant));
+    const isParticipantAudioMuted = useSelector(getIsParticipantAudioMuted(participant));
     const [ isHidden, setIsHidden ] = useState(true);
     const { t } = useTranslation();
 
@@ -131,11 +139,20 @@ export const MeetingParticipantContextMenu = ({
             onMouseLeave = { onLeave }>
             <ContextMenuItemGroup>
                 {isLocalModerator && (
-                    <ContextMenuItem onClick = { muteEveryoneElse }>
-                        <ContextMenuIcon src = { IconMuteEveryoneElse } />
-                        <span>{t('toolbar.accessibilityLabel.muteEveryoneElse')}</span>
-                    </ContextMenuItem>
+                    <>
+                        {!isParticipantAudioMuted
+                         && <ContextMenuItem onClick = { muteAudio(participant) }>
+                             <ContextMenuIcon src = { IconMicDisabled } />
+                             <span>{t('dialog.muteParticipantButton')}</span>
+                         </ContextMenuItem>}
+
+                        <ContextMenuItem onClick = { muteEveryoneElse }>
+                            <ContextMenuIcon src = { IconMuteEveryoneElse } />
+                            <span>{t('toolbar.accessibilityLabel.muteEveryoneElse')}</span>
+                        </ContextMenuItem>
+                    </>
                 )}
+
                 {isLocalModerator && (isParticipantVideoMuted || (
                     <ContextMenuItem onClick = { muteVideo }>
                         <ContextMenuIcon src = { IconVideoOff } />
@@ -143,18 +160,19 @@ export const MeetingParticipantContextMenu = ({
                     </ContextMenuItem>
                 ))}
             </ContextMenuItemGroup>
+
             <ContextMenuItemGroup>
                 {isLocalModerator && (
-                    <ContextMenuItem onClick = { grantModerator }>
-                        <ContextMenuIcon src = { IconCrown } />
-                        <span>{t('toolbar.accessibilityLabel.grantModerator')}</span>
-                    </ContextMenuItem>
-                )}
-                {isLocalModerator && (
-                    <ContextMenuItem onClick = { kick }>
-                        <ContextMenuIcon src = { IconCloseCircle } />
-                        <span>{t('videothumbnail.kick')}</span>
-                    </ContextMenuItem>
+                    <>
+                        <ContextMenuItem onClick = { grantModerator }>
+                            <ContextMenuIcon src = { IconCrown } />
+                            <span>{t('toolbar.accessibilityLabel.grantModerator')}</span>
+                        </ContextMenuItem>
+                        <ContextMenuItem onClick = { kick }>
+                            <ContextMenuIcon src = { IconCloseCircle } />
+                            <span>{t('videothumbnail.kick')}</span>
+                        </ContextMenuItem>
+                    </>
                 )}
                 <ContextMenuItem onClick = { sendPrivateMessage }>
                     <ContextMenuIcon src = { IconMessage } />

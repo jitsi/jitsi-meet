@@ -1203,6 +1203,7 @@ class Toolbox extends Component<Props> {
                     <ToolbarButton
                         accessibilityLabel = { t('toolbar.accessibilityLabel.participants') }
                         icon = { IconParticipants }
+                        key = 'participants'
                         onClick = { this._onToolbarToggleParticipantsPane }
                         toggled = { this.props._participantsPaneOpen }
                         tooltip = { t('toolbar.participants') } />)
