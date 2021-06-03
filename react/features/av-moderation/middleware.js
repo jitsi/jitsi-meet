@@ -26,23 +26,24 @@ import {
 } from './actionTypes';
 import {
     disableModeration,
+    dismissPendingParticipant,
+    dismissPendingAudioParticipant,
     enableModeration,
     localParticipantApproved,
-    participantApproved
+    participantApproved,
+    participantPendingAudio
 } from './actions';
-import { isEnabledFromState as isAvModerationEnabled } from './functions';
+import {
+    isEnabledFromState,
+    isParticipantApproved,
+    isParticipantPending
+} from './functions';
 
 /**
  * The id for the notification shown to local user when moderation is enabled and user wants to unmute.
  * @type {string}
  */
 const MODERATION_IN_EFFECT_NOTIFICATION_ID = 'av-moderation-in-effect-notification';
-
-/**
- * The prefix used for notifications shown to moderators for a participant.
- * @type {string}
- */
-const PARTICIPANT_WANTS_TO_UNMUTE_PREFIX = 'participant-wants-to-unmute-prefix-';
 
 MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
     const { actor, mediaType, type } = action;
@@ -56,13 +57,15 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
             [MEDIA_TYPE.VIDEO]: enabled ? 'notify.moderationVideoStoppedTitle' : 'notify.moderationVideoStartedTitle'
         };
 
-        dispatch(showNotification({
-            descriptionKey: actor ? 'notify.moderationToggleDescription' : undefined,
-            descriptionArguments: actor ? {
-                participantDisplayName: getParticipantDisplayName(getState, actor.getId())
-            } : undefined,
-            titleKey: i18nKeys[mediaType]
-        }, NOTIFICATION_TIMEOUT));
+        batch(() => {
+            dispatch(showNotification({
+                descriptionKey: actor ? 'notify.moderationToggleDescription' : undefined,
+                descriptionArguments: actor ? {
+                    participantDisplayName: getParticipantDisplayName(getState, actor.getId())
+                } : undefined,
+                titleKey: i18nKeys[mediaType]
+            }, NOTIFICATION_TIMEOUT));
+        });
 
         break;
     }
@@ -94,23 +97,20 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
         break;
     }
     case PARTICIPANT_UPDATED: {
+        const state = getState();
+        const audioModerationEnabled = isEnabledFromState(MEDIA_TYPE.AUDIO, state);
 
-        const isModerationEnabled = isAvModerationEnabled(MEDIA_TYPE.AUDIO, getState());
-        const participant = action.participant;
-        const name = getParticipantDisplayName(getState(), participant.id);
+        // this is handled only by moderators
+        if (audioModerationEnabled && isLocalParticipantModerator(state)) {
+            const { participant: { id, raisedHand } } = action;
 
-        if (participant.raisedHand && isLocalParticipantModerator(getState()) && isModerationEnabled) {
-            dispatch(showNotification({
-                customActionNameKey: 'participantsPane.actions.askUnmute',
-                customActionHandler: () => batch(() => {
-                    action.participant.conference.avModerationApprove(MEDIA_TYPE.AUDIO, participant.id);
-                    dispatch(hideNotification(PARTICIPANT_WANTS_TO_UNMUTE_PREFIX + participant.id));
-                }),
-                descriptionKey: 'notify.moderationRequestFromParticipant',
-                sticky: true,
-                title: name,
-                uid: PARTICIPANT_WANTS_TO_UNMUTE_PREFIX + participant.id
-            }));
+            if (raisedHand) {
+                // if participant raises hand show notification
+                !isParticipantApproved(id, MEDIA_TYPE.AUDIO)(state) && dispatch(participantPendingAudio(id));
+            } else {
+                // if participant lowers hand hide notification
+                isParticipantPending(id, MEDIA_TYPE.AUDIO)(state) && dispatch(dismissPendingAudioParticipant(id));
+            }
         }
 
         break;
@@ -130,7 +130,15 @@ StateListenerRegistry.register(
         if (conference && !previousConference) {
             conference.on(JitsiConferenceEvents.AV_MODERATION_APPROVED, ({ mediaType }) => {
                 // local participant is allowed to unmute
-                dispatch(localParticipantApproved(mediaType));
+                batch(() => {
+                    dispatch(localParticipantApproved(mediaType));
+
+                    dispatch(showNotification({
+                        titleKey: 'notify.unmute',
+                        descriptionKey: 'notify.hostAskedUnmute',
+                        sticky: true
+                    }));
+                });
             });
 
             conference.on(JitsiConferenceEvents.AV_MODERATION_CHANGED, ({ enabled, mediaType, actor }) => {
@@ -138,12 +146,18 @@ StateListenerRegistry.register(
             });
 
             // this is received by moderators
-            conference.on(JitsiConferenceEvents.AV_MODERATION_PARTICIPANT_APPROVED, ({ participant, mediaType }) => {
-                // store in the whitelist
-                dispatch(participantApproved(participant, mediaType));
+            conference.on(
+                JitsiConferenceEvents.AV_MODERATION_PARTICIPANT_APPROVED,
+                ({ participant, mediaType }) => {
+                    const { _id: id } = participant;
 
-                // hide the notification about this participant
-                dispatch(hideNotification(PARTICIPANT_WANTS_TO_UNMUTE_PREFIX + participant.id));
-            });
+                    batch(() => {
+                        // store in the whitelist
+                        dispatch(participantApproved(id, mediaType));
+
+                        // remove from pending list
+                        dispatch(dismissPendingParticipant(id, mediaType));
+                    });
+                });
         }
     });

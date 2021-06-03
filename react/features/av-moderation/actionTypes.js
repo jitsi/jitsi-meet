@@ -8,6 +8,17 @@
 export const DISABLE_MODERATION = 'DISABLE_MODERATION';
 
 /**
+ * The type of (redux) action which signals that the notification for audio/video unmute should
+ * be dismissed.
+ *
+ * {
+ *     type: DISMISS_PARTICIPANT_PENDING_AUDIO
+ * }
+ */
+export const DISMISS_PENDING_PARTICIPANT = 'DISMISS_PENDING_PARTICIPANT';
+
+
+/**
  * The type of (redux) action which signals that A/V Moderation had been enabled.
  *
  * {
@@ -15,6 +26,7 @@ export const DISABLE_MODERATION = 'DISABLE_MODERATION';
  * }
  */
 export const ENABLE_MODERATION = 'ENABLE_MODERATION';
+
 
 /**
  * The type of (redux) action which signals that A/V Moderation disable has been requested.
@@ -63,3 +75,13 @@ export const LOCAL_PARTICIPANT_MODERATION_NOTIFICATION = 'LOCAL_PARTICIPANT_MODE
  * }
  */
 export const PARTICIPANT_APPROVED = 'PARTICIPANT_APPROVED';
+
+
+/**
+ * The type of (redux) action which signals that a participant asked to have its audio umuted.
+ *
+ * {
+ *     type: PARTICIPANT_PENDING_AUDIO
+ * }
+ */
+export const PARTICIPANT_PENDING_AUDIO = 'PARTICIPANT_PENDING_AUDIO';

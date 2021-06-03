@@ -12,8 +12,8 @@ import {
     TOGGLE_CAMERA_FACING_MODE
 } from './actionTypes';
 import {
-    CAMERA_FACING_MODE,
     MEDIA_TYPE,
+    type MediaType,
     VIDEO_MUTISM_AUTHORITY
 } from './constants';
 
@@ -64,7 +64,7 @@ export function setAudioMuted(muted: boolean, ensureTrack: boolean = false) {
  *     cameraFacingMode: CAMERA_FACING_MODE
  * }}
  */
-export function setCameraFacingMode(cameraFacingMode: CAMERA_FACING_MODE) {
+export function setCameraFacingMode(cameraFacingMode: string) {
     return {
         type: SET_CAMERA_FACING_MODE,
         cameraFacingMode
@@ -102,7 +102,7 @@ export function setVideoAvailable(available: boolean) {
  */
 export function setVideoMuted(
         muted: boolean,
-        mediaType: MEDIA_TYPE = MEDIA_TYPE.VIDEO,
+        mediaType: MediaType = MEDIA_TYPE.VIDEO,
         authority: number = VIDEO_MUTISM_AUTHORITY.USER,
         ensureTrack: boolean = false) {
     return (dispatch: Dispatch<any>, getState: Function) => {
