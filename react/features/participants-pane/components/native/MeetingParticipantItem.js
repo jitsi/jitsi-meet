@@ -1,12 +1,13 @@
 // @flow
 
-import React from 'react';
-import { useSelector } from 'react-redux';
+import React, { useCallback } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 
 import {
     getIsParticipantAudioMuted,
     getIsParticipantVideoMuted
 } from '../../../base/tracks';
+import { showContextMenuDetails } from '../../actions.native';
 import { MediaState } from '../../constants';
 
 import ParticipantItem from './ParticipantItem';
@@ -21,13 +22,16 @@ type Props = {
 };
 
 export const MeetingParticipantItem = ({ participant: p }: Props) => {
+    const dispatch = useDispatch();
     const isAudioMuted = useSelector(getIsParticipantAudioMuted(p));
     const isVideoMuted = useSelector(getIsParticipantVideoMuted(p));
+    const openContextMenuDetails = useCallback(() => dispatch(showContextMenuDetails(p), [ dispatch ]));
 
     return (
         <ParticipantItem
             audioMuteState = { isAudioMuted ? MediaState.Muted : MediaState.Unmuted }
             name = { p.name }
+            onPress = { openContextMenuDetails }
             participant = { p }
             videoMuteState = { isVideoMuted ? MediaState.Muted : MediaState.Unmuted } />
     );

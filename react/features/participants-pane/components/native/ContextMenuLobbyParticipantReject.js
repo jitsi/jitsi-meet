@@ -23,7 +23,7 @@ type Props = {
     participant: Object
 };
 
-export const ContextMenuReject = ({ participant: p }: Props) => {
+export const ContextMenuLobbyParticipantReject = ({ participant: p }: Props) => {
     const dispatch = useDispatch();
     const cancel = useCallback(() => dispatch(hideDialog()), [ dispatch ]);
     const displayName = p.name;
@@ -35,23 +35,24 @@ export const ContextMenuReject = ({ participant: p }: Props) => {
             onCancel = { cancel }
             style = { styles.contextMenuMore }>
             <View
-                style = { styles.contextMenuItemDetails }>
+                style = { styles.contextMenuItemSection }>
                 <Avatar
                     className = 'participant-avatar'
                     participantId = { p.id }
                     size = { 32 } />
                 <View style = { styles.contextMenuItemText }>
-                    <Text style = { styles.contextMenuItemParticipantName }>
+                    <Text style = { styles.contextMenuItemName }>
                         { displayName }
                     </Text>
                 </View>
             </View>
             <TouchableOpacity
                 onPress = { reject }
-                style = { styles.contextMenuItemReject }>
+                style = { styles.contextMenuItem }>
                 <Icon
                     size = { 24 }
-                    src = { IconClose } />
+                    src = { IconClose }
+                    style = { styles.contextMenuItemIcon } />
                 <Text style = { styles.contextMenuItemText }>{ t('lobby.reject') }</Text>
             </TouchableOpacity>
         </BottomSheet>
