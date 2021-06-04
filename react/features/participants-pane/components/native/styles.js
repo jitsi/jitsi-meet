@@ -287,22 +287,14 @@ export default {
         textTransform: 'capitalize'
     },
 
-    contextMenuItemMuteVideo: {
+    contextMenuItem: {
         ...contextMenuItem
     },
 
-    contextMenuItemDontAllowUnmute: {
-        ...contextMenuItem
-    },
-
-    contextMenuItemDetails: {
+    contextMenuItemSection: {
         ...contextMenuItem,
         borderBottomColor: BaseTheme.palette.section01,
         borderBottomWidth: 1
-    },
-
-    contextMenuItemReject: {
-        ...contextMenuItem
     },
 
     contextMenuItemText: {
@@ -310,10 +302,14 @@ export default {
         alignSelf: 'center',
         color: BaseTheme.palette.text01,
         flexDirection: 'row',
-        marginLeft: 8
+        marginLeft: BaseTheme.spacing[3]
     },
 
-    contextMenuItemParticipantName: {
+    contextMenuItemIcon: {
+        marginLeft: BaseTheme.spacing[1]
+    },
+
+    contextMenuItemName: {
         ...BaseTheme.typography.bodyShortRegularLarge,
         color: BaseTheme.palette.text01
     },
