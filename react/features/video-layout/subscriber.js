@@ -101,6 +101,11 @@ function _updateAutoPinnedParticipant(screenShares, { dispatch, getState }) {
     const remoteScreenShares = state['features/video-layout'].remoteScreenShares;
     const pinned = getPinnedParticipant(getState);
 
+    // if the pinned participant is shared video or some other fake participant we want to skip auto-pinning
+    if (pinned?.isFakeParticipant) {
+        return;
+    }
+
     // Unpin the screenshare when the screensharing participant leaves. Switch to tile view if no other
     // participant was pinned before screenshare was auto-pinned, pin the previously pinned participant otherwise.
     if (!remoteScreenShares?.length) {
