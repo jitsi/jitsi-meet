@@ -195,6 +195,12 @@ class YoutubeVideoManager extends AbstractVideoManager<Props> {
         }
 
         this.play();
+
+        // sometimes youtube can get muted state from previous videos played in the browser
+        // and as we are disabling controls we want to unmute it
+        if (this.isMuted()) {
+            this.unMute();
+        }
     };
 
     /**
