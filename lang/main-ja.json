@@ -244,6 +244,7 @@
         "muteParticipantButton": "ミュート",
         "muteParticipantDialog": "この参加者をミュートします。よろしいですか? あなたがミュートを解除することはできなくなりますが、彼らはいつでも自分自身のミュートを解除することができます。",
         "muteParticipantTitle": "この参加者をミュートしますか?",
+        "muteEveryonesVideoTitle": 
         "Ok": "OK",
         "passwordLabel": "このミーティングは、参加者によりロックされました。参加するには、$t(lockRoomPassword) を入力してください。",
         "passwordNotSupported": "ミーティング $t(lockRoomPassword) の設定はサポートされていません。",
@@ -760,6 +761,7 @@
         "moreOptions": "詳細オプション",
         "mute": "ミュート/ミュート解除",
         "muteEveryone": "全員をミュート",
+        "muteEveryonesVideo": "全員のビデオカメラミュート",
         "noAudioSignalTitle": "マイクから何も入力されていません!",
         "noAudioSignalDesc": "システム設定やハードウェアによる意図的なミュートを行っていない場合は、デバイスの切り替えを検討してみてください。",
         "noAudioSignalDescSuggestion": "システム設定やハードウェアによる意図的なミュートを行っていない場合は、提示されたデバイスへのの切り替えを検討してみてください。",
