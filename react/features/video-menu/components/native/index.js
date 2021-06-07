@@ -5,4 +5,6 @@ export { default as KickRemoteParticipantDialog } from './KickRemoteParticipantD
 export { default as MuteEveryoneDialog } from './MuteEveryoneDialog';
 export { default as MuteEveryonesVideoDialog } from './MuteEveryonesVideoDialog';
 export { default as MuteRemoteParticipantDialog } from './MuteRemoteParticipantDialog';
+export { default as MuteRemoteParticipantsVideoDialog } from './MuteRemoteParticipantsVideoDialog';
 export { default as RemoteVideoMenu } from './RemoteVideoMenu';
+export { default as VolumeSlider } from './VolumeSlider';
