@@ -258,6 +258,7 @@
         "muteParticipantBody": "You won't be able to unmute them, but they can unmute themselves at any time.",
         "muteParticipantButton": "Mute",
         "muteParticipantDialog": "Are you sure you want to mute this participant? You won't be able to unmute them, but they can unmute themselves at any time.",
+        "muteParticipantsVideoDialog": "Are you sure you want to turn off this participant's camera? You won't be able to turn the camera back on, but they can turn it back on at any time.",
         "muteParticipantTitle": "Mute this participant?",
         "muteParticipantsVideoButton": "Disable camera",
         "muteParticipantsVideoTitle": "Disable camera of this participant?",

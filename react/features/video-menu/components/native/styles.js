@@ -6,6 +6,7 @@ import {
     MD_ITEM_MARGIN_PADDING
 } from '../../../base/dialog';
 import { ColorPalette, createStyleSheet } from '../../../base/styles';
+import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 
 export default createStyleSheet({
     participantNameContainer: {
@@ -48,5 +49,22 @@ export default createStyleSheet({
 
     statsWrapper: {
         marginVertical: 10
+    },
+
+    volumeSliderContainer: {
+        alignItems: 'center',
+        flexDirection: 'row',
+        marginBottom: BaseTheme.spacing[3],
+        marginTop: BaseTheme.spacing[3],
+        width: '100%'
+    },
+
+    volumeSliderIcon: {
+        marginLeft: BaseTheme.spacing[1]
+    },
+
+    sliderContainer: {
+        marginLeft: BaseTheme.spacing[3],
+        width: 342
     }
 });
