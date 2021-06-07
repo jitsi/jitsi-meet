@@ -1,13 +1,13 @@
 // @flow
 
 /**
- * Is the poll answered.
+ * Should poll results be shown.
  *
  * @param {Object} state - Global state.
  * @param {string} id - Id of the poll.
- * @returns {boolean} Is the poll answered.
+ * @returns {boolean} Should poll results be shown.
  */
-export const isPollAnswered = (state: Object, id: string) => Boolean(state['features/polls']?.polls[id].answered);
+export const shouldShowResults = (state: Object, id: string) => Boolean(state['features/polls']?.polls[id].showResults);
 
 
 /**

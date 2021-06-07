@@ -4,7 +4,8 @@ import {
     CLOSE_POLL_TAB,
     RECEIVE_ANSWER,
     RECEIVE_POLL,
-    SET_ANSWERED_STATUS
+    REGISTER_VOTE,
+    RETRACT_VOTE
 } from './actionTypes';
 import type { Answer, Poll } from './types';
 
@@ -50,24 +51,39 @@ export const receiveAnswer = (pollId: string, answer: Answer) => {
 };
 
 /**
- * Action to set the answer status of a poll.
+ * Action to register a vote on a poll.
  *
  * @param {string} pollId - The id of the poll.
- * @param {boolean} answered - The new answer status.
+ * @param {?Array<boolean>} answers - The new answers.
  * @returns {{
- *     type: SET_ANSWERED_STATUS,
- *     answered: boolean,
+ *     type: REGISTER_VOTE,
+ *     answers: ?Array<boolean>,
  *     pollId: string
  * }}
  */
-export const setAnsweredStatus = (pollId: string, answered: boolean) => {
+export const registerVote = (pollId: string, answers: Array<boolean> | null) => {
     return {
-        type: SET_ANSWERED_STATUS,
-        answered,
+        type: REGISTER_VOTE,
+        answers,
         pollId
     };
 };
 
+/**
+ * Action to retract a vote on a poll.
+ *
+ * @param {string} pollId - The id of the poll.
+ * @returns {{
+ *     type: RETRACT_VOTE,
+ *     pollId: string
+ * }}
+ */
+export const retractVote = (pollId: string) => {
+    return {
+        type: RETRACT_VOTE,
+        pollId
+    };
+};
 
 /**
  * Action to signal the closing of the chat dialog.

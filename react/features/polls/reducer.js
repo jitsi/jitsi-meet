@@ -5,7 +5,8 @@ import { ReducerRegistry } from '../base/redux';
 import {
     RECEIVE_POLL,
     RECEIVE_ANSWER,
-    SET_ANSWERED_STATUS,
+    REGISTER_VOTE,
+    RETRACT_VOTE,
     CLOSE_POLL_TAB
 } from './actionTypes';
 import type { Answer } from './types';
@@ -83,9 +84,8 @@ ReducerRegistry.register('features/polls', (state = INITIAL_STATE, action) => {
         };
     }
 
-    // Reducer triggered to update the answered status of a poll
-    case SET_ANSWERED_STATUS: {
-        const { answered, pollId }: { answered: boolean; pollId: string } = action;
+    case REGISTER_VOTE: {
+        const { answers, pollId }: { answers: Array<boolean> | null; pollId: string } = action;
 
         return {
             ...state,
@@ -93,7 +93,23 @@ ReducerRegistry.register('features/polls', (state = INITIAL_STATE, action) => {
                 ...state.polls,
                 [pollId]: {
                     ...state.polls[pollId],
-                    answered
+                    lastVote: answers,
+                    showResults: true
+                }
+            }
+        };
+    }
+
+    case RETRACT_VOTE: {
+        const { pollId }: { pollId: string } = action;
+
+        return {
+            ...state,
+            polls: {
+                ...state.polls,
+                [pollId]: {
+                    ...state.polls[pollId],
+                    showResults: false
                 }
             }
         };

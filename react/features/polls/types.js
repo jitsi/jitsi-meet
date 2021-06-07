@@ -38,9 +38,15 @@ export type Poll = {
     senderName: string,
 
     /**
-     * If the participant has answered the poll
+     * Whether the results should be shown instead of the answer form
      */
-    answered: boolean,
+    showResults: boolean,
+
+    /**
+     * The last sent votes for this poll, or null if voting was skipped
+     * Note: This is reset when voting/skipping, not when clicking "Change vote"
+     */
+    lastVote: Array<boolean> | null,
 
     /**
      * The question asked by this poll

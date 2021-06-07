@@ -1,6 +1,6 @@
 // @flow
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Switch, Text, View } from 'react-native';
 import { Button, Title } from 'react-native-paper';
 
@@ -15,18 +15,10 @@ const PollAnswer = (props: AbstractProps) => {
     const {
         checkBoxStates,
         poll,
-        pollId,
         setCheckbox,
-        setCheckBoxState,
         submitAnswer,
         t
     } = props;
-
-    // Reset state if pollId changes
-    // Useful in case of two successive answer dialogs
-    useEffect(() => {
-        setCheckBoxState(new Array(poll.answers.length).fill(false));
-    }, [ pollId ]);
 
     return (
         <View>
