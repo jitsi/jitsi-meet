@@ -640,6 +640,7 @@
             "submit": "Submit"
         },
         "results": {
+            "vote": "Vote",
             "changeVote": "Change vote",
             "empty": "There are no polls in the meeting yet. Start a poll here!",
             "hideDetailedResults": "Hide details",

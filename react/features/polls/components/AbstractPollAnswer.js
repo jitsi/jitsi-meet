@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { getLocalParticipant, getParticipantById } from '../../base/participants';
-import { setAnsweredStatus } from '../actions';
+import { registerVote } from '../actions';
 import { COMMAND_ANSWER_POLL } from '../constants';
 import type { Poll } from '../types';
 
@@ -21,12 +21,10 @@ type InputProps = {
  * Props that will be passed by the AbstractPollAnswer to its
  * concrete implementations (web/native).
  **/
-export type AbstractProps = InputProps & {
+export type AbstractProps = {
     checkBoxStates: Function,
     poll: Poll,
-    pollId: string,
     setCheckbox: Function,
-    setCheckBoxState: Function,
     skipAnswer: Function,
     submitAnswer: Function,
     t: Function,
@@ -49,7 +47,13 @@ const AbstractPollAnswer = (Component: AbstractComponent<AbstractProps>) => (pro
 
     const localId: string = useSelector(state => getLocalParticipant(state).id);
 
-    const [ checkBoxStates, setCheckBoxState ] = useState(new Array(poll.answers.length).fill(false));
+    const [ checkBoxStates, setCheckBoxState ] = useState(() => {
+        if (poll.lastVote !== null) {
+            return [ ...poll.lastVote ];
+        }
+
+        return new Array(poll.answers.length).fill(false);
+    });
 
     const setCheckbox = useCallback((index, state) => {
         const newCheckBoxStates = [ ...checkBoxStates ];
@@ -72,13 +76,13 @@ const AbstractPollAnswer = (Component: AbstractComponent<AbstractProps>) => (pro
             answers: checkBoxStates
         });
 
-        dispatch(setAnsweredStatus(pollId, true));
+        dispatch(registerVote(pollId, checkBoxStates));
 
         return false;
     }, [ pollId, localId, localName, checkBoxStates, conference ]);
 
     const skipAnswer = useCallback(() => {
-        dispatch(setAnsweredStatus(pollId, true));
+        dispatch(registerVote(pollId, null));
 
     }, [ pollId ]);
 
@@ -87,8 +91,6 @@ const AbstractPollAnswer = (Component: AbstractComponent<AbstractProps>) => (pro
     return (<Component
         checkBoxStates = { checkBoxStates }
         poll = { poll }
-        pollId = { pollId }
-        setCheckBoxState = { setCheckBoxState }
         setCheckbox = { setCheckbox }
         skipAnswer = { skipAnswer }
         submitAnswer = { submitAnswer }

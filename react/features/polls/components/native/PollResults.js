@@ -17,7 +17,6 @@ import { chatStyles, dialogStyles, resultsStyles } from './styles';
  */
 const PollResults = (props: AbstractProps) => {
     const {
-        answered,
         answers,
         showDetails,
         question,
@@ -88,16 +87,10 @@ const PollResults = (props: AbstractProps) => {
             <View>
                 <Text style = { dialogStyles.question } >{ question }</Text>
             </View>
-            { answered
-                ? <FlatList
-                    data = { answers }
-                    keyExtractor = { (item, index) => index.toString() }
-                    renderItem = { answer => renderRow(answer.item) } />
-                : <Text>
-                    { t('polls.answer.notanswered') }
-                </Text>
-            }
-
+            <FlatList
+                data = { answers }
+                keyExtractor = { (item, index) => index.toString() }
+                renderItem = { answer => renderRow(answer.item) } />
             <TouchableOpacity onPress = { toggleIsDetailed }>
                 <Text
                     style = { chatStyles.toogleText }>

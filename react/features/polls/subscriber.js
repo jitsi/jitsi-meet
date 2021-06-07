@@ -5,10 +5,10 @@ import { StateListenerRegistry } from '../base/redux';
 
 import { receiveAnswer, receivePoll } from './actions';
 import { COMMAND_NEW_POLL, COMMAND_ANSWER_POLL, COMMAND_OLD_POLLS } from './constants';
-import type { Answer } from './types';
+import type { Answer, Poll } from './types';
 
 
-const parsePollData = pollData => {
+const parsePollData = (pollData): Poll | null => {
     if (typeof pollData !== 'object' || pollData === null) {
         return null;
     }
@@ -41,7 +41,8 @@ const parsePollData = pollData => {
         senderId,
         senderName,
         question,
-        answered: true,
+        showResults: true,
+        lastVote: null,
         answers: answers2
     };
 };
@@ -57,7 +58,8 @@ StateListenerRegistry.register(
                     const poll = {
                         senderId,
                         senderName,
-                        answered: false,
+                        showResults: false,
+                        lastVote: null,
                         question,
                         answers: answers.map(answer => {
                             return {

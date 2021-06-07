@@ -25,16 +25,25 @@ export const RECEIVE_POLL = 'RECEIVE_POLL';
 export const RECEIVE_ANSWER = 'RECEIVE_ANSWER';
 
 /**
- * The type of the action which set the answered field of a poll.
+ * The type of the action which registers a vote.
  *
  * {
- *     type: SET_ANSWERED_STATUS,
- *     answered: boolean
+ *     type: REGISTER_VOTE,
+ *     answers: Array<boolean> | null,
+ *     pollId: string
+ * }
+ */
+export const REGISTER_VOTE = 'REGISTER_VOTE';
+
+/**
+ * The type of the action which retracts a vote.
+ *
+ * {
+ *     type: RETRACT_VOTE,
  *     pollId: string,
  * }
  */
-export const SET_ANSWERED_STATUS = 'SET_ANSWERED_STATUS';
-
+export const RETRACT_VOTE = 'RETRACT_VOTE';
 
 /**
  * The type of the action triggered when the poll tab in chat pane is closed

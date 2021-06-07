@@ -14,9 +14,9 @@ import type { AbstractProps } from '../AbstractPollResults';
  */
 const PollResults = (props: AbstractProps) => {
     const {
-        answered,
         answers,
         changeVote,
+        haveVoted,
         showDetails,
         question,
         t,
@@ -37,36 +37,31 @@ const PollResults = (props: AbstractProps) => {
                     <strong>{ question }</strong>
                 </div>
             </div>
-            { answered
-                ? <ol className = 'poll-result-list'>
-                    { showDetails
-                        ? answers.map(({ name, percentage, voters, voterCount }, index) =>
-                            (<li key = { index }>
-                                { renderRow(name, percentage, voterCount) }
-                                { voters && voterCount > 0
-                                && <ul className = 'poll-answer-voters'>
-                                    {voters.map(voter =>
-                                        <li key = { voter.id }>{ voter.name }</li>
-                                    )}
-                                </ul>}
-                            </li>)
-                        )
-                        : answers.map(({ name, percentage, voterCount }, index) =>
-                            (<li key = { index }>
-                                { renderRow(name, percentage, voterCount) }
-                                <div className = 'poll-bar-container'>
-                                    <div
-                                        className = 'poll-bar'
-                                        style = {{ width: `${percentage}%` }} />
-                                </div>
-                            </li>)
-                        )
-                    }
-                </ol>
-                : <div>
-                    { t('polls.answer.notanswered') }
-                </div>
-            }
+            <ol className = 'poll-result-list'>
+                { showDetails
+                    ? answers.map(({ name, percentage, voters, voterCount }, index) =>
+                        (<li key = { index }>
+                            { renderRow(name, percentage, voterCount) }
+                            { voters && voterCount > 0
+                            && <ul className = 'poll-answer-voters'>
+                                {voters.map(voter =>
+                                    <li key = { voter.id }>{ voter.name }</li>
+                                )}
+                            </ul>}
+                        </li>)
+                    )
+                    : answers.map(({ name, percentage, voterCount }, index) =>
+                        (<li key = { index }>
+                            { renderRow(name, percentage, voterCount) }
+                            <div className = 'poll-bar-container'>
+                                <div
+                                    className = 'poll-bar'
+                                    style = {{ width: `${percentage}%` }} />
+                            </div>
+                        </li>)
+                    )
+                }
+            </ol>
             <div className = { 'poll-result-links' }>
                 <a
                     className = { 'poll-detail-link' }
@@ -76,7 +71,7 @@ const PollResults = (props: AbstractProps) => {
                 <a
                     className = { 'poll-change-vote-link' }
                     onClick = { changeVote }>
-                    {t('polls.results.changeVote')}
+                    {haveVoted ? t('polls.results.changeVote') : t('polls.results.vote')}
                 </a>
             </div>
         </div>

@@ -1,7 +1,7 @@
 // @flow
 
 import { Checkbox } from '@atlaskit/checkbox';
-import React, { useEffect } from 'react';
+import React from 'react';
 
 import AbstractPollAnswer from '../AbstractPollAnswer';
 import type { AbstractProps } from '../AbstractPollAnswer';
@@ -12,19 +12,11 @@ const PollAnswer = (props: AbstractProps) => {
     const {
         checkBoxStates,
         poll,
-        pollId,
         setCheckbox,
-        setCheckBoxState,
         skipAnswer,
         submitAnswer,
         t
     } = props;
-
-    // Reset state if pollId changes
-    // Useful in case of two successive answer dialogs
-    useEffect(() => {
-        setCheckBoxState(new Array(poll.answers.length).fill(false));
-    }, [ pollId ]);
 
     return (
         <div className = 'poll-answer'>

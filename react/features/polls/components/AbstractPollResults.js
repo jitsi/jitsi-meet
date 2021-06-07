@@ -1,12 +1,12 @@
 // @flow
 
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import type { AbstractComponent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { getLocalParticipant, getParticipantById } from '../../base/participants/functions';
-import { setAnsweredStatus } from '../actions';
+import { retractVote } from '../actions';
 import { COMMAND_ANSWER_POLL } from '../constants';
 
 /**
@@ -15,16 +15,9 @@ import { COMMAND_ANSWER_POLL } from '../constants';
 type InputProps = {
 
     /**
-     * Whether to display vote details
-     */
-    showDetails: boolean,
-
-    /**
      * ID of the poll to display
      */
     pollId: string,
-
-    toggleIsDetailed: void => void,
 };
 
 export type AnswerInfo = {
@@ -38,13 +31,13 @@ export type AnswerInfo = {
  * The type of the React {@code Component} props of {@link AbstractPollResults}.
  */
 export type AbstractProps = {
-    answered: boolean,
     answers: Array<AnswerInfo>,
     changeVote: void => void,
     showDetails: boolean,
     question: string,
     t: Function,
     toggleIsDetailed: Function,
+    haveVoted: boolean,
 };
 
 /**
@@ -55,9 +48,14 @@ export type AbstractProps = {
  * @returns {React.AbstractComponent}
  */
 const AbstractPollResults = (Component: AbstractComponent<AbstractProps>) => (props: InputProps) => {
-    const { pollId, showDetails, toggleIsDetailed } = props;
+    const { pollId } = props;
 
     const pollDetails = useSelector(state => state['features/polls'].polls[pollId]);
+
+    const [ showDetails, setShowDetails ] = useState(false);
+    const toggleIsDetailed = useCallback(() => {
+        setShowDetails(!showDetails);
+    });
 
     const answers: Array<AnswerInfo> = useMemo(() => {
         const voterSet = new Set();
@@ -108,15 +106,15 @@ const AbstractPollResults = (Component: AbstractComponent<AbstractProps>) => (pr
             voterName: localName,
             answers: new Array(pollDetails.answers.length).fill(false)
         });
-        dispatch(setAnsweredStatus(pollId, false));
+        dispatch(retractVote(pollId));
     }, [ pollId, localId, localName, pollDetails ]);
 
     const { t } = useTranslation();
 
     return (<Component
-        answered = { pollDetails.answered }
         answers = { answers }
         changeVote = { changeVote }
+        haveVoted = { pollDetails.lastVote !== null }
         question = { pollDetails.question }
         showDetails = { showDetails }
         t = { t }
