@@ -50,7 +50,7 @@ const PollAnswer = (props: AbstractProps) => {
                 color = '#17a0db'
                 mode = 'contained'
                 onPress = { submitAnswer } >
-                {t('polls.create.send')}
+                {t('polls.answer.submit')}
             </Button>
         </View>
 

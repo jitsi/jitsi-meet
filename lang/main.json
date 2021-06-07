@@ -624,9 +624,6 @@
     "passwordSetRemotely": "Set by another participant",
     "passwordDigitsOnly": "Up to {{number}} digits",
     "polls": {
-        "notification": {
-            "title": "New poll"
-        },
         "create": {
             "addOption": "Add option",
             "answerPlaceholder": "Option {{index}}",
@@ -635,21 +632,16 @@
             "pollOption" : "Poll option {{index}}",
             "pollQuestion" : "Poll Question",
             "questionPlaceholder": "Ask a question",
-            "removeAnswer": "Remove this answer",
             "removeOption": "Remove option",
-            "send": "Send",
-            "sendPoll": "Send poll"
+            "send": "Send"
         },
         "answer": {
-            "notanswered": "You didn't answer the poll yet",
             "skip": "Skip",
-            "submit": "Submit",
-            "vote" : "{{count}} vote",
-            "vote_plural" : "{{count}} votes"
+            "submit": "Submit"
         },
         "results": {
             "changeVote": "Change vote",
-            "empty": "The are no polls in the meeting yet. Start a poll here!",
+            "empty": "There are no polls in the meeting yet. Start a poll here!",
             "hideDetailedResults": "Hide details",
             "showDetailedResults": "Show details"
         }
@@ -895,8 +887,6 @@
             "participants": "Participants",
             "party": "Party Popper",
             "pip": "Toggle Picture-in-Picture mode",
-            "poll": "Create a poll",
-            "polls": "Polls",
             "privateMessage": "Send private message",
             "profile": "Edit your profile",
             "raiseHand": "Raise / Lower your hand",
@@ -973,8 +963,6 @@
         "participants": "Participants",
         "party": "Celebration",
         "pip": "Enter Picture-in-Picture mode",
-        "poll": "Create a poll",
-        "polls": "Polls",
         "privateMessage": "Send private message",
         "profile": "Edit your profile",
         "raiseHand": "Raise / Lower your hand",
