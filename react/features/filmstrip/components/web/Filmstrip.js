@@ -324,6 +324,7 @@ class Filmstrip extends PureComponent <Props> {
                     onItemsRendered = { this._onGridItemsRendered }
                     rowCount = { _rows }
                     rowHeight = { _thumbnailHeight + TILE_VERTICAL_MARGIN }
+                    useIsScrolling = { true }
                     width = { _filmstripWidth }>
                     {
                         ThumbnailWrapper
@@ -337,6 +338,7 @@ class Filmstrip extends PureComponent <Props> {
             itemCount: _remoteParticipantsLength,
             className: 'filmstrip__videos remote-videos',
             height: _filmstripHeight,
+            useIsScrolling: true,
             itemKey: this._listItemKey,
             itemSize: 0,
             onItemsRendered: this._onListItemsRendered,

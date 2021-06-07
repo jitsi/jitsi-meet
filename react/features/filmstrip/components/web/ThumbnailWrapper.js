@@ -5,6 +5,7 @@ import { shouldComponentUpdate } from 'react-window';
 import { connect } from '../../../base/redux';
 import { getCurrentLayout, LAYOUTS } from '../../../video-layout';
 
+import ScrollingThumbnail from './ScrollingThumbnail';
 import Thumbnail from './Thumbnail';
 
 /**
@@ -36,6 +37,9 @@ type Props = {
      * The index of the row in tile view.
      */
     rowIndex?: number,
+
+
+    isScrolling: boolean,
 
     /**
      * The styles comming from react-window.
@@ -69,10 +73,27 @@ class ThumbnailWrapper extends Component<Props> {
      * @returns {ReactElement}
      */
     render() {
-        const { _participantID, style, _horizontalOffset = 0 } = this.props;
+        const { _participantID, isScrolling, style, _horizontalOffset = 0 } = this.props;
 
         if (typeof _participantID !== 'string') {
             return null;
+        }
+
+        if (isScrolling) {
+            if (_participantID === 'local') {
+                return (
+                    <ScrollingThumbnail
+                        horizontalOffset = { _horizontalOffset }
+                        key = 'local'
+                        style = { style } />);
+            }
+
+            return (
+                <ScrollingThumbnail
+                    horizontalOffset = { _horizontalOffset }
+                    key = { `remote_${_participantID}` }
+                    participantID = { _participantID }
+                    style = { style } />);
         }
 
         if (_participantID === 'local') {
