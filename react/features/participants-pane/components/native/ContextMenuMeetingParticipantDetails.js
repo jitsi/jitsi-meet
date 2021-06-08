@@ -1,13 +1,12 @@
 // @flow
 
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { TouchableOpacity, View } from 'react-native';
 import { Text } from 'react-native-paper';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector, useStore } from 'react-redux';
 
 import { Avatar } from '../../../base/avatar';
-import { isToolbarButtonEnabled } from '../../../base/config';
 import { hideDialog, openDialog } from '../../../base/dialog';
 import BottomSheet from '../../../base/dialog/components/native/BottomSheet';
 import {
@@ -37,11 +36,14 @@ type Props = {
 };
 
 export const ContextMenuMeetingParticipantDetails = ({ participant: p }: Props) => {
+    const [ volume, setVolume ] = useState(undefined);
+    const store = useStore();
+    const startSilent = store.getState['features/base/config'];
     const dispatch = useDispatch();
     const cancel = useCallback(() => dispatch(hideDialog()), [ dispatch ]);
+    const changeVolume = useCallback(() => setVolume(volume), [ volume ]);
     const displayName = p.name;
     const isLocalModerator = useSelector(isLocalParticipantModerator);
-    const isChatButtonEnabled = useSelector(isToolbarButtonEnabled('chat'));
     const isParticipantVideoMuted = useSelector(getIsParticipantVideoMuted(p));
     const kickRemoteParticipant = useCallback(() => {
         dispatch(openDialog(KickRemoteParticipantDialog, {
@@ -63,7 +65,9 @@ export const ContextMenuMeetingParticipantDetails = ({ participant: p }: Props) 
             participantID: p.id
         }));
     }, [ dispatch, p ]);
+    const onVolumeChange = startSilent ? undefined : changeVolume;
     const sendPrivateMessage = useCallback(() => {
+        dispatch(hideDialog());
         dispatch(openChat(p));
     }, [ dispatch, p ]);
     const { t } = useTranslation();
@@ -142,20 +146,17 @@ export const ContextMenuMeetingParticipantDetails = ({ participant: p }: Props) 
                     </Text>
                 </TouchableOpacity>
             }
-            {
-                isChatButtonEnabled
-                && <TouchableOpacity
-                    onPress = { sendPrivateMessage }
-                    style = { styles.contextMenuItem }>
-                    <Icon
-                        size = { 24 }
-                        src = { IconMessage }
-                        style = { styles.contextMenuItemIcon } />
-                    <Text style = { styles.contextMenuItemText }>
-                        { t('toolbar.accessibilityLabel.privateMessage') }
-                    </Text>
-                </TouchableOpacity>
-            }
+            <TouchableOpacity
+                onPress = { sendPrivateMessage }
+                style = { styles.contextMenuItem }>
+                <Icon
+                    size = { 24 }
+                    src = { IconMessage }
+                    style = { styles.contextMenuItemIcon } />
+                <Text style = { styles.contextMenuItemText }>
+                    { t('toolbar.accessibilityLabel.privateMessage') }
+                </Text>
+            </TouchableOpacity>
             <TouchableOpacity
                 style = { styles.contextMenuItemSection }>
                 <Icon
@@ -164,7 +165,9 @@ export const ContextMenuMeetingParticipantDetails = ({ participant: p }: Props) 
                     style = { styles.contextMenuItemIcon } />
                 <Text style = { styles.contextMenuItemText }>{ t('participantsPane.actions.networkStats') }</Text>
             </TouchableOpacity>
-            <VolumeSlider />
+            <VolumeSlider
+                initialValue = { volume }
+                onChange = { onVolumeChange } />
         </BottomSheet>
     );
 };
