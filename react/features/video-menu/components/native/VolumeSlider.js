@@ -30,7 +30,7 @@ type Props = {
     /**
      * Theme used for styles.
      */
-    theme?: Object
+    theme: Object
 };
 
 /**
@@ -76,8 +76,9 @@ class VolumeSlider extends Component<Props, State> {
      * @returns {ReactElement}
      */
     render() {
+        const { theme } = this.props;
         const { volumeLevel } = this.state;
-        const { palette } = this.props.theme;
+        const { palette } = theme;
 
         return (
             <View style = { styles.volumeSliderContainer }>
