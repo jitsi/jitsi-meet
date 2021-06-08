@@ -23,6 +23,8 @@ import {
     getRemoteParticipants,
     muteRemoteParticipant
 } from '../base/participants';
+import { setKnockingParticipantApproval } from '../lobby/actions';
+import { getLobbyState } from '../lobby/functions';
 
 declare var APP: Object;
 
@@ -104,5 +106,22 @@ export function muteAllParticipants(exclude: Array<string>, mediaType: MEDIA_TYP
 
             dispatch(muteRemote(id, mediaType));
         });
+    };
+}
+
+/**
+ * Admit all knocking participants.
+ *
+ * @returns {Function}
+ */
+export function admitAllKnockingParticipants() {
+    return (dispatch: Dispatch<any>, getState: Function) => {
+        const state = getState();
+        const { knockingParticipants, lobbyEnabled } = getLobbyState(state);
+        const knockingParticipantsIds = knockingParticipants.map(participant => participant.id);
+
+        knockingParticipantsIds
+            .map(id => lobbyEnabled && setKnockingParticipantApproval(id, true))
+            .map(dispatch);
     };
 }
