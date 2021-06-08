@@ -82,6 +82,9 @@ var config = {
     // Media
     //
 
+    // Enable unified plan implementation support on Chromium based browsers.
+    // enableUnifiedOnChrome: false,
+
     // Audio
 
     // Disable measuring of audio levels.

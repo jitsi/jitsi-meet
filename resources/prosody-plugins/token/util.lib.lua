@@ -270,6 +270,13 @@ function Util:process_and_verify_token(session, acceptedIssuers)
         if kid == nil then
             return false, "not-allowed", "'kid' claim is missing";
         end
+        local alg = header["alg"];
+        if alg == nil then
+            return false, "not-allowed", "'alg' claim is missing";
+        end
+        if alg.sub(alg,1,2) ~= "RS" then
+            return false, "not-allowed", "'kid' claim only support with RS family";
+        end
         pubKey = self:get_public_key(kid);
         if pubKey == nil then
             return false, "not-allowed", "could not obtain public key";
@@ -340,7 +347,10 @@ function Util:verify_room(session, room_address)
         return true;
     end
 
-    local auth_room = string.lower(session.jitsi_meet_room);
+    local auth_room = session.jitsi_meet_room;
+    if auth_room then
+        auth_room = string.lower(auth_room);
+    end
     if not self.enableDomainVerification then
         -- if auth_room is missing, this means user is anonymous (no token for
         -- its domain) we let it through, jicofo is verifying creation domain

@@ -255,7 +255,7 @@
         "muteParticipantButton": "Couper le micro",
         "muteParticipantDialog": "Êtes-vous sûr(e) de vouloir couper le micro de ce participant ? Seul le participant pourra ensuite réactiver son micro à tout moment.",
         "muteParticipantTitle": "Couper le micro de ce participant ?",
-        "muteParticipantsVideoButton": "Couper la camréa",
+        "muteParticipantsVideoButton": "Couper la caméra",
         "muteParticipantsVideoTitle": "Couper la caméra de ce participant?",
         "muteParticipantsVideoBody": "Vous ne pourrez pas rallumer la caméra, mais ils peuvent la rallumer à tout moment.",
         "Ok": "Ok",

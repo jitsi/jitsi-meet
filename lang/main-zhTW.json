@@ -21,7 +21,7 @@
         "bluetooth": "藍牙",
         "headphones": "耳機",
         "phone": "電話",
-        "speaker": "發言者",
+        "speaker": "擴音",
         "none": "沒有可用的音效裝置"
     },
     "audioOnly": {
@@ -355,7 +355,7 @@
         "mute": "靜音或解除靜音",
         "pushToTalk": "按鍵通話",
         "raiseHand": "舉手發言或不作發言",
-        "showSpeakerStats": "顯示發言者數據",
+        "showSpeakerStats": "顯示聲音輸出數據",
         "toggleChat": "開啟或關閉交談",
         "toggleFilmstrip": "顯示或隱藏影片縮圖",
         "toggleScreensharing": "在攝影鏡頭和螢幕分享之間進行切換",
@@ -560,17 +560,18 @@
         "dialInfoText": "\n\n=====\n\n正要撥入您的會議電話？\n\n{{defaultDialInNumber}} 點按此連結來查看此會議的電話撥入號碼\n{{dialInfoPageUrl}}",
         "mainText": "按一下下方連結加入會議：\n{{roomUrl}}"
     },
-    "speaker": "發言者",
+    "speaker": "聲音輸出",
     "speakerStats": {
         "hours": "{{count}}時",
         "minutes": "{{count}}分",
         "name": "名稱",
         "seconds": "{{count}}秒",
-        "speakerStats": "發言者數據",
-        "speakerTime": "發言者時間"
+        "speakerStats": "聲音輸出數據",
+        "speakerTime": "聲音輸出時間"
     },
     "startupoverlay": {
         "policyText": " ",
+        "genericTitle": "此會議需要使用您的麥克風和攝影裝置。",
         "title": "{{app}} 需要使用您的麥克風和攝影裝置。"
     },
     "suspendedoverlay": {
@@ -610,7 +611,7 @@
             "shareYourScreen": "切換螢幕分享",
             "shortcuts": "切換快捷鍵",
             "show": "顯示在台上",
-            "speakerStats": "切換發言人統計",
+            "speakerStats": "切換聲音輸出統計",
             "tileView": "切換平鋪檢視",
             "toggleCamera": "切換攝影機",
             "videomute": "切換無影像",
@@ -635,7 +636,7 @@
         "exitFullScreen": "跳出全螢幕",
         "exitTileView": "跳出平鋪檢視",
         "feedback": "留言回報",
-        "hangup": "留言",
+        "hangup": "離開",
         "help": "說明",
         "invite": "邀請人員",
         "login": "登入",
@@ -656,7 +657,7 @@
         "sharedvideo": "分享 YouTube 影片",
         "shareRoom": "邀請某人",
         "shortcuts": "查看快捷鍵",
-        "speakerStats": "發言者數據",
+        "speakerStats": "聲音輸出數據",
         "startScreenSharing": "啟動螢幕分享",
         "startSubtitles": "啟動字幕",
         "stopScreenSharing": "停止螢幕分享",

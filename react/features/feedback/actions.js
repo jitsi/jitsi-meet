@@ -134,7 +134,7 @@ export function sendJaasFeedbackMetadata(conference: Object, feedback: Object) {
         const meetingFqn = extractFqnFromPath(state['features/base/connection'].locationURL.pathname);
         const feedbackData = {
             ...feedback,
-            sessionId: conference.getMeetingUniqueId(),
+            sessionId: conference.sessionId,
             userId: user.id,
             meetingFqn,
             jwt,

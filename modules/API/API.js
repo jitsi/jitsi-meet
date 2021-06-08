@@ -37,10 +37,12 @@ import { isEnabled as isDropboxEnabled } from '../../react/features/dropbox';
 import { toggleE2EE } from '../../react/features/e2ee/actions';
 import { invite } from '../../react/features/invite';
 import {
-    captureLargeVideoScreenshot,
-    resizeLargeVideo,
     selectParticipantInLargeVideo
-} from '../../react/features/large-video/actions';
+} from '../../react/features/large-video/actions.any';
+import {
+    captureLargeVideoScreenshot,
+    resizeLargeVideo
+} from '../../react/features/large-video/actions.web';
 import { toggleLobbyMode } from '../../react/features/lobby/actions';
 import { RECORDING_TYPES } from '../../react/features/recording/constants';
 import { getActiveSession } from '../../react/features/recording/functions';
