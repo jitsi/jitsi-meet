@@ -30,7 +30,7 @@ type Props = {
     /**
      * Theme used for styles.
      */
-    theme: Object
+    theme?: Object
 };
 
 /**
@@ -84,17 +84,15 @@ class VolumeSlider extends Component<Props, State> {
                 <Icon
                     size = { 24 }
                     src = { IconVolumeEmpty }
-                    style = { styles.volumeSliderIcon } />
-                <View style = { styles.sliderContainer }>
-                    <Slider
-                        maximumTrackTintColor = { palette.field02 }
-                        maximumValue = { VOLUME_SLIDER_SCALE }
-                        minimumTrackTintColor = { palette.action01 }
-                        minimumValue = { 0 }
-                        onValueChange = { this._onVolumeChange }
-                        /* eslint-disable-next-line react-native/no-inline-styles */
-                        value = { volumeLevel } />
-                </View>
+                    style = { styles.volumeIcon } />
+                <Slider
+                    maximumTrackTintColor = { palette.field02 }
+                    maximumValue = { VOLUME_SLIDER_SCALE }
+                    minimumTrackTintColor = { palette.action01 }
+                    minimumValue = { 0 }
+                    onValueChange = { this._onVolumeChange }
+                    style = { styles.sliderContainer }
+                    value = { volumeLevel } />
             </View>
 
         );
@@ -111,6 +109,9 @@ class VolumeSlider extends Component<Props, State> {
      * @returns {void}
      */
     _onVolumeChange(volumeLevel) {
+        const { onChange } = this.props;
+
+        onChange(volumeLevel / VOLUME_SLIDER_SCALE);
         this.setState({ volumeLevel });
     }
 }

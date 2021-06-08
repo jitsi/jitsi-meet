@@ -13,7 +13,10 @@ import {
     IconVideoOff
 } from '../../../base/icons';
 import { MEDIA_TYPE } from '../../../base/media';
-import { muteAllParticipants } from '../../../video-menu/actions.any';
+import {
+    muteAllParticipants,
+    unmuteDisabled
+} from '../../../video-menu/actions.any';
 
 import styles from './styles';
 type Props = {
@@ -32,6 +35,7 @@ type Props = {
 export const ContextMenuMore = ({ exclude }: Props) => {
     const dispatch = useDispatch();
     const cancel = useCallback(() => dispatch(hideDialog()), [ dispatch ]);
+    const unMuteDisabled = useCallback(() => dispatch(unmuteDisabled()), [ dispatch ]);
     const muteEveryoneVideo = useCallback(() => dispatch(muteAllParticipants(exclude, MEDIA_TYPE.VIDEO)), [ dispatch ]);
     const { t } = useTranslation();
 
@@ -48,6 +52,7 @@ export const ContextMenuMore = ({ exclude }: Props) => {
                 <Text style = { styles.contextMenuItemText }>{t('participantsPane.actions.stopEveryonesVideo')}</Text>
             </TouchableOpacity>
             <TouchableOpacity
+                onPress = { unMuteDisabled }
                 style = { styles.contextMenuItem }>
                 <Icon
                     size = { 24 }

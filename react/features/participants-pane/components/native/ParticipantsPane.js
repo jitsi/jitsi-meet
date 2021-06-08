@@ -25,9 +25,7 @@ import styles from './styles';
 export function ParticipantsPane() {
     const dispatch = useDispatch();
     const openMoreMenu = useCallback(() => dispatch(openDialog(ContextMenuMore)));
-    const closePane = useCallback(
-        () => dispatch(hideDialog()),
-        [ dispatch ]);
+    const closePane = useCallback(() => dispatch(hideDialog()), [ dispatch ]);
     const muteAll = useCallback(() => dispatch(openDialog(MuteEveryoneDialog)),
         [ dispatch ]);
     const { t } = useTranslation();
