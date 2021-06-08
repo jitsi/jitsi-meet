@@ -23,6 +23,16 @@ export function extractVpaasTenantFromPath(path: string) {
 }
 
 /**
+ * Returns the vpaas tenant.
+ *
+ * @param {Object} state - The global state.
+ * @returns {string}
+ */
+export function getVpaasTenant(state: Object) {
+    return extractVpaasTenantFromPath(state['features/base/connection'].locationURL.pathname);
+}
+
+/**
  * Returns true if the current meeting is a vpaas one.
  *
  * @param {Object} state - The state of the app.
