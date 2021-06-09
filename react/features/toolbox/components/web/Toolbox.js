@@ -93,6 +93,7 @@ import MuteEveryonesVideoButton from '../MuteEveryonesVideoButton';
 import AudioSettingsButton from './AudioSettingsButton';
 import OverflowMenuButton from './OverflowMenuButton';
 import OverflowMenuProfileItem from './OverflowMenuProfileItem';
+import ReactionsMenuButton from './ReactionsMenuButton';
 import ToggleCameraButton from './ToggleCameraButton';
 import ToolbarButton from './ToolbarButton';
 import VideoSettingsButton from './VideoSettingsButton';
@@ -1229,13 +1230,8 @@ class Toolbox extends Component<Props> {
 
         if (this.props._shouldShowButton('raisehand')) {
             buttons.has('raisehand')
-                ? mainMenuAdditionalButtons.push(<ToolbarButton
-                    accessibilityLabel = { t('toolbar.accessibilityLabel.raiseHand') }
-                    icon = { IconRaisedHand }
-                    key = 'raisehand'
-                    onClick = { this._onToolbarToggleRaiseHand }
-                    toggled = { _raisedHand }
-                    tooltip = { t(`toolbar.${_raisedHand ? 'lowerYourHand' : 'raiseYourHand'}`) } />)
+                ? mainMenuAdditionalButtons.push(<ReactionsMenuButton
+                    _raisedHand = { _raisedHand } />)
                 : overflowMenuAdditionalButtons.push(<OverflowMenuItem
                     accessibilityLabel = { t('toolbar.accessibilityLabel.raiseHand') }
                     icon = { IconRaisedHand }

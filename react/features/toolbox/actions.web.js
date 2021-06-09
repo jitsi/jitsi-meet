@@ -5,7 +5,8 @@ import type { Dispatch } from 'redux';
 import {
     FULL_SCREEN_CHANGED,
     SET_FULL_SCREEN,
-    SET_OVERFLOW_DRAWER
+    SET_OVERFLOW_DRAWER,
+    SET_REACTIONS_VISIBLE
 } from './actionTypes';
 import {
     clearToolboxTimeout,
@@ -17,6 +18,19 @@ import {
 declare var interfaceConfig: Object;
 
 export * from './actions.native';
+
+/**
+ * Sets the visibility of the reactions menu.
+ *
+ * @param {boolean} value - The new value.
+ * @returns {Function}
+ */
+function setReactionsMenuVisibility(value: boolean) {
+    return {
+        type: SET_REACTIONS_VISIBLE,
+        reactionsVisible: value
+    };
+}
 
 /**
  * Docks/undocks the Toolbox.
@@ -158,5 +172,18 @@ export function setOverflowDrawer(displayAsDrawer: boolean) {
     return {
         type: SET_OVERFLOW_DRAWER,
         displayAsDrawer
+    };
+}
+
+/**
+ * Toggles the visibility of the reactions menu.
+ *
+ * @returns {void}
+ */
+export function toggleReactionsMenu() {
+    return (dispatch: Function, getState: Function) => {
+        const value = getState()['features/toolbox'].reactionsVisible;
+
+        dispatch(setReactionsMenuVisibility(!value));
     };
 }

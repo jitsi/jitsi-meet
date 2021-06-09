@@ -116,3 +116,13 @@ export const SET_TOOLBOX_VISIBLE = 'SET_TOOLBOX_VISIBLE';
  * }
  */
 export const TOGGLE_TOOLBOX_VISIBLE = 'TOGGLE_TOOLBOX_VISIBLE';
+
+/**
+ * The type of the (redux) action which shows/hides the reactions menu.
+ *
+ * {
+ *     type: SET_REACTIONS_VISIBLE,
+ *     visible: boolean
+ * }
+ */
+export const SET_REACTIONS_VISIBLE = 'SET_REACTIONS_VISIBLE';

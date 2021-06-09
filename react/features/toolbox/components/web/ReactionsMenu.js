@@ -1,0 +1,240 @@
+// @flow
+
+import React, { Component } from 'react';
+import { bindActionCreators } from 'redux';
+
+import {
+    createToolbarEvent,
+    sendAnalytics
+} from '../../../analytics';
+import { translate } from '../../../base/i18n';
+import { getLocalParticipant, participantUpdated } from '../../../base/participants';
+import { connect } from '../../../base/redux';
+import { dockToolbox, toggleReactionsMenu } from '../../actions.web';
+
+import ReactionButton from './ReactionButton';
+
+type Props = {
+
+    /**
+     * Used for translation.
+     */
+    t: Function,
+
+    /**
+     * Whether or not the local participant's hand is raised.
+     */
+    _raisedHand: boolean,
+
+    /**
+     * Handler to close the reactions menu on hand raised
+     */
+    closeReactionsMenu: Function,
+
+    /**
+     * The ID of the local participant.
+     */
+    _localParticipantID: String,
+
+    /**
+     * Invoked to active other features of the app.
+     */
+    dispatch: Function,
+
+    /**
+     * Docks the toolbox
+     */
+    _dockToolbox: Function
+};
+
+declare var APP: Object;
+
+/**
+ * Button used for audio & audio settings.
+ *
+ * @returns {ReactElement}
+ */
+class ReactionsMenu extends Component<Props> {
+    /**
+     * Initializes a new {@code ReactionsMenu} instance.
+     *
+     * @param {Props} props - The read-only React {@code Component} props with
+     * which the new instance is to be initialized.
+     */
+    constructor(props: Props) {
+        super(props);
+
+        this._onToolbarToggleRaiseHand = this._onToolbarToggleRaiseHand.bind(this);
+        this._getReactionButtons = this._getReactionButtons.bind(this);
+    }
+
+    /**
+     * Implements React Component's componentDidMount.
+     *
+     * @inheritdoc
+     */
+    componentDidMount() {
+        this.props._dockToolbox(true);
+    }
+
+    /**
+     * Implements React Component's componentWillUnmount.
+     *
+     * @inheritdoc
+     */
+    componentWillUnmount() {
+        this.props._dockToolbox(false);
+    }
+
+    /**
+     * Creates an analytics toolbar event and dispatches an action for toggling
+     * raise hand.
+     *
+     * @private
+     * @returns {void}
+     */
+    _onToolbarToggleRaiseHand() {
+        sendAnalytics(createToolbarEvent(
+            'raise.hand',
+            { enable: !this.props._raisedHand }));
+        this.props.closeReactionsMenu();
+        this._doToggleRaiseHand();
+    }
+
+    /**
+     * Dispatches an action to toggle the local participant's raised hand state.
+     *
+     * @private
+     * @returns {void}
+     */
+    _doToggleRaiseHand() {
+        const { _localParticipantID, _raisedHand } = this.props;
+        const newRaisedStatus = !_raisedHand;
+
+        this.props.dispatch(participantUpdated({
+            // XXX Only the local participant is allowed to update without
+            // stating the JitsiConference instance (i.e. participant property
+            // `conference` for a remote participant) because the local
+            // participant is uniquely identified by the very fact that there is
+            // only one local participant.
+
+            id: _localParticipantID,
+            local: true,
+            raisedHand: newRaisedStatus
+        }));
+
+        APP.API.notifyRaiseHandUpdated(_localParticipantID, newRaisedStatus);
+    }
+
+    /**
+     * Returns the emoji reaction buttons.
+     *
+     * @returns {Array}
+     */
+    _getReactionButtons() {
+        const buttons = [];
+        const { t } = this.props;
+
+        buttons.push(<ReactionButton
+            accessibilityLabel = { t('toolbar.accessibilityLabel.clap') }
+            icon = '👏'
+            key = 'clap'
+            toggled = { false }
+            tooltip = { t('toolbar.clap') } />);
+        buttons.push(<ReactionButton
+            accessibilityLabel = { t('toolbar.accessibilityLabel.like') }
+            icon = '👍'
+            key = 'like'
+            toggled = { false }
+            tooltip = { t('toolbar.like') } />);
+        buttons.push(<ReactionButton
+            accessibilityLabel = { t('toolbar.accessibilityLabel.smile') }
+            icon = '😀'
+            key = 'smile'
+            toggled = { false }
+            tooltip = { t('toolbar.smile') } />);
+        buttons.push(<ReactionButton
+            accessibilityLabel = { t('toolbar.accessibilityLabel.laugh') }
+            icon = '😂'
+            key = 'laugh'
+            toggled = { false }
+            tooltip = { t('toolbar.laugh') } />);
+        buttons.push(<ReactionButton
+            accessibilityLabel = { t('toolbar.accessibilityLabel.surprised') }
+            icon = '😮'
+            key = 'surprised'
+            toggled = { false }
+            tooltip = { t('toolbar.surprised') } />);
+        buttons.push(<ReactionButton
+            accessibilityLabel = { t('toolbar.accessibilityLabel.celebration') }
+            icon = '🎉'
+            key = 'celebration'
+            toggled = { false }
+            tooltip = { t('toolbar.celebration') } />);
+
+        return buttons;
+    }
+
+    /**
+     * Implements React's {@link Component#render}.
+     *
+     * @inheritdoc
+     */
+    render() {
+        const { _raisedHand, t } = this.props;
+
+        return (
+            <div className = 'reactions-menu'>
+                <div className = 'reactions-row'>
+                    { this._getReactionButtons() }
+                </div>
+                <div className = 'raise-hand-row'>
+                    <ReactionButton
+                        accessibilityLabel = { t('toolbar.accessibilityLabel.raiseHand') }
+                        icon = '✋'
+                        key = 'raisehand'
+                        label = { `${t(`toolbar.${_raisedHand ? 'lowerYourHand' : 'raiseYourHand'}`)} (R)` }
+                        onClick = { this._onToolbarToggleRaiseHand }
+                        toggled = { true } />
+                </div>
+            </div>
+        );
+    }
+}
+
+/**
+ * Function that maps parts of Redux state tree into component props.
+ *
+ * @param {Object} state - Redux state.
+ * @returns {Object}
+ */
+function mapStateToProps(state) {
+    const localParticipant = getLocalParticipant(state);
+
+    return {
+        _localParticipantID: localParticipant.id,
+        _raisedHand: localParticipant.raisedHand
+    };
+}
+
+/**
+ * Function that maps parts of Redux actions into component props.
+ *
+ * @param {Object} dispatch - Redux dispatch.
+ * @returns {Object}
+ */
+function mapDispatchToProps(dispatch) {
+    return {
+        dispatch,
+        ...bindActionCreators(
+        {
+            closeReactionsMenu: toggleReactionsMenu,
+            _dockToolbox: dockToolbox
+        }, dispatch)
+    };
+}
+
+export default translate(connect(
+    mapStateToProps,
+    mapDispatchToProps,
+)(ReactionsMenu));

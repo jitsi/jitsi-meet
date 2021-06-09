@@ -1,0 +1,58 @@
+.reactions-menu {
+  width: 280px;
+  background: #292929;
+  box-shadow: 0px 3px 16px rgba(0, 0, 0, 0.6), 0px 0px 4px 1px rgba(0, 0, 0, 0.25);
+  border-radius: 3px;
+  padding: 16px;
+
+  .toolbox-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 6px;
+
+    span.emoji {
+      width: 40px;
+      height: 40px;
+      font-size: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+
+  .reactions-row {
+    .toolbox-button {
+      margin-right: 8px;
+    }
+
+    .toolbox-button:last-of-type {
+      margin-right: 0;
+    }
+  }
+
+  .raise-hand-row {
+    margin-top: 16px;
+
+    .toolbox-button {
+      width: 100%;
+    }
+
+    .toolbox-icon {
+      width: 100%;
+      flex-direction: row;
+      align-items: center;
+
+      span.text {
+        font-style: normal;
+        font-weight: 600;
+        font-size: 14px;
+        line-height: 24px;
+        margin-left: 8px;
+      }
+    }
+  }
+}
+
+.reactions-menu-popup {
+  display: inline-block;
+}

@@ -13,7 +13,8 @@ import {
     SET_TOOLBOX_TIMEOUT,
     SET_TOOLBOX_TIMEOUT_MS,
     SET_TOOLBOX_VISIBLE,
-    TOGGLE_TOOLBOX_VISIBLE
+    TOGGLE_TOOLBOX_VISIBLE,
+    SET_REACTIONS_VISIBLE
 } from './actionTypes';
 
 declare var interfaceConfig: Object;
@@ -56,6 +57,9 @@ function _getInitialState() {
     if (alwaysVisible === true) {
         visible = true;
     }
+
+    // Reactions menu (initial) visibility.
+    const reactionsVisible = false;
 
     return {
         /**
@@ -116,7 +120,14 @@ function _getInitialState() {
          *
          * @type {boolean}
          */
-        visible
+        visible,
+
+        /**
+         * The indicator that determines whether the reactions menu is visible.
+         *
+         * @type {boolean}
+         */
+        reactionsVisible
     };
 }
 
@@ -185,6 +196,12 @@ ReducerRegistry.register(
 
         case TOGGLE_TOOLBOX_VISIBLE:
             return set(state, 'visible', state.alwaysVisible || !state.visible);
+
+        case SET_REACTIONS_VISIBLE:
+            return {
+                ...state,
+                reactionsVisible: action.reactionsVisible
+            };
         }
 
         return state;
