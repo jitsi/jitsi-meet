@@ -5,12 +5,8 @@ import type { Dispatch } from 'redux';
 import { openDialog } from '../../../base/dialog';
 import { translate } from '../../../base/i18n';
 import { IconParticipants } from '../../../base/icons';
-import { setActiveModalId } from '../../../base/modal';
 import { connect } from '../../../base/redux';
 import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
-import {
-    PARTICIPANTS_PANE_ID
-} from '../../../invite/constants';
 
 import { ParticipantsPane } from './';
 
@@ -39,7 +35,6 @@ class ParticipantsPaneButton extends AbstractButton<Props, *> {
      */
     _handleClick() {
         this.props.dispatch(openDialog(ParticipantsPane));
-        this.props.dispatch(setActiveModalId(PARTICIPANTS_PANE_ID));
     }
 }
 

@@ -23,8 +23,8 @@ import {
     getRemoteParticipants,
     muteRemoteParticipant
 } from '../base/participants';
+import { getIsParticipantAudioMuted } from '../base/tracks';
 import { setKnockingParticipantApproval } from '../lobby/actions';
-import { getLobbyState } from '../lobby/functions';
 
 declare var APP: Object;
 
@@ -112,16 +112,33 @@ export function muteAllParticipants(exclude: Array<string>, mediaType: MEDIA_TYP
 /**
  * Admit all knocking participants.
  *
+ * @param {Array<Object>} knockingParticipants - Array of participants waiting in lobby.
+ * @param {boolean} lobbyEnabled - Is lobby mode enabled.
+ *
  * @returns {Function}
  */
-export function admitAllKnockingParticipants() {
-    return (dispatch: Dispatch<any>, getState: Function) => {
-        const state = getState();
-        const { knockingParticipants, lobbyEnabled } = getLobbyState(state);
+export function admitAllKnockingParticipants(knockingParticipants: Array<Object>, lobbyEnabled: boolean) {
+    return (dispatch: Dispatch<any>) => {
         const knockingParticipantsIds = knockingParticipants.map(participant => participant.id);
 
         knockingParticipantsIds
             .map(id => lobbyEnabled && setKnockingParticipantApproval(id, true))
             .map(dispatch);
+    };
+}
+
+
+/**
+ * Don't allow participants to unmute.
+ *
+ * @returns {Function}
+ */
+export function dontAllowUnmute() {
+    return (dispatch: Dispatch<any>, getState: Function) => {
+        const state = getState();
+        const participants = state['features/base/participants'];
+
+        participants
+            .map(p => !getIsParticipantAudioMuted(p) && setAudioMuted(true));
     };
 }

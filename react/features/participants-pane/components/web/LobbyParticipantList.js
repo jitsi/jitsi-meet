@@ -5,9 +5,9 @@ import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSelector, useDispatch } from 'react-redux';
 
+import { withPixelLineHeight } from '../../../base/styles/functions.web';
+import { admitMultiple } from '../../../lobby/actions.web';
 import { getLobbyState } from '../../../lobby/functions';
-import { withPixelLineHeight } from '../../base/styles/functions.web';
-import { admitMultiple } from '../../lobby/actions.web';
 
 import { LobbyParticipantItem } from './LobbyParticipantItem';
 
