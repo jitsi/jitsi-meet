@@ -44,7 +44,7 @@ const AbstractPollCreate = (Component: AbstractComponent<AbstractProps>) => (pro
 
     const [ question, setQuestion ] = useState('');
 
-    const [ answers, setAnswers ] = useState([ '' ]);
+    const [ answers, setAnswers ] = useState([ '', '' ]);
 
     const setAnswer = useCallback((i, answer) => {
         const newAnswers = [ ...answers ];
@@ -72,7 +72,7 @@ const AbstractPollCreate = (Component: AbstractComponent<AbstractProps>) => (pro
     });
 
     const removeAnswer = useCallback(i => {
-        if (answers.length === 1) {
+        if (answers.length <= 2) {
             return;
         }
         const newAnswers = [ ...answers ];
@@ -92,7 +92,7 @@ const AbstractPollCreate = (Component: AbstractComponent<AbstractProps>) => (pro
 
         const filteredAnswers = answers.filter(answer => answer.trim().length > 0);
 
-        if (filteredAnswers.length === 0) {
+        if (filteredAnswers.length < 2) {
             return;
         }
 
