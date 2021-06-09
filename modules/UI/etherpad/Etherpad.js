@@ -166,6 +166,7 @@ class Etherpad extends LargeContainer {
             $iframe.fadeOut(300, () => {
                 $iframe.css({ visibility: 'hidden' });
                 $container.css({ zIndex: 0 });
+                $container.css({ position: 'absolute' });
 
                 APP.store.dispatch(setDocumentEditingState(false));
 

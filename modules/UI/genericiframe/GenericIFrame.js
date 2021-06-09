@@ -95,7 +95,6 @@ class GenericIFrame extends LargeContainer {
                 $container.css({ zIndex: 2 });
                 $container.css({ position: 'relative' });
 
-
                 APP.store.dispatch(setGenericIFrameVisibilityState(true));
 
                 resolve();
@@ -116,6 +115,7 @@ class GenericIFrame extends LargeContainer {
             $iframe.fadeOut(300, () => {
                 $iframe.css({ visibility: 'hidden' });
                 $container.css({ zIndex: 0 });
+                $container.css({ position: 'absolute' });
 
                 APP.store.dispatch(setGenericIFrameVisibilityState(false));
 
