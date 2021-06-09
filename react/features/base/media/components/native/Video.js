@@ -4,7 +4,8 @@ import React, { Component } from 'react';
 import { RTCView } from 'react-native-webrtc';
 
 import { Pressable } from '../../../react';
-
+import { NativeEventEmitter, NativeModules } from 'react-native';
+import EventEmitter from './EventEmitter';
 import VideoTransform from './VideoTransform';
 import styles from './styles';
 
@@ -60,6 +61,17 @@ type Props = {
  * {@link RTCView}.
  */
 export default class Video extends Component<Props> {
+
+    constructor(props) {
+        super(props);
+        this.state = {
+            // --- for android to trigger snapshot on remote RTCView
+            remoteVideoViewSnapshotOption: null,
+            // --- for ios to control whether should render full screen remote view
+            hideAllViewExceptRemoteRTCView: false,
+        }
+    }
+
     /**
      * React Component method that executes once component is mounted.
      *
@@ -71,7 +83,24 @@ export default class Video extends Component<Props> {
         const { onPlaying } = this.props;
 
         onPlaying && onPlaying();
+        EventEmitter.addListener('WebRTCViewSnapshotResult', this.onWebRTCViewSnapshotResult);
+        EventEmitter.addListener('TakeSnapshot', this.onPressTakeSnapshot);
+
     }
+
+    onWebRTCViewSnapshotResult(data) {
+        console.log("got the data back");
+        
+        if (data.error) {
+            // --- failed
+            console.log("got the data back"+data.error);
+        }
+        if (data.file) {
+            // --- saved file path
+            console.log("got the data back"+data.file);
+        }
+    }
+
 
     /**
      * Implements React's {@link Component#render()}.
@@ -96,7 +125,9 @@ export default class Video extends Component<Props> {
                         objectFit = { objectFit }
                         streamURL = { stream.toURL() }
                         style = { style }
-                        zOrder = { this.props.zOrder } />
+                        zOrder = { this.props.zOrder }
+                        snapshotOption={(stream.toURL() ? this.state.remoteVideoViewSnapshotOption : null)}/>
+                        
                 );
 
             // VideoTransform implements "pinch to zoom". As part of "pinch to
@@ -131,5 +162,33 @@ export default class Video extends Component<Props> {
         // reached here, it means that we explicitly chose to not initialize an
         // RTCView as a way of dealing with its idiosyncrasies.
         return null;
+    }
+
+    async onPressTakeSnapshot() {
+        if (PlatformOS.platform === 'android') {
+                
+                // --- if snapshotOption != null and changed, the remote RTCView will trigger snapshot once and fire an event for result.
+                let snapshotOption = {
+                    id: "21213", // --- use any value you think it's unique for each screenshot
+                    saveTarget: 'temp',
+                };
+                this.setState({ remoteVideoViewSnapshotOption: snapshotOption });
+        } else {
+            // IOS
+            // --- optional: if you want full screen remote view only, take snapshot after you've adjust your views
+            // this.setState({ hideAllViewExceptRemoteRTCView: true }, async () => {
+            //         captureScreen = require("react-native-view-shot").captureScreen;
+            //         CameraRoll = require("@react-native-community/cameraroll");
+
+            //         let uriCache = await captureScreen({ format: 'jpg' });
+            //         if (!uriCache) {
+            //             return false;
+            //         }
+            //         let uriSaved = CameraRoll.saveToCameraRoll(uriCacheRenamed, 'photo');
+
+            //         // --- optional: recover your view setup
+            //         this.setState({ hideAllViewExceptRemoteRTCView: false });
+            // }
+        }
     }
 }
