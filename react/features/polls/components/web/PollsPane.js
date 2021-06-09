@@ -21,11 +21,11 @@ const PollsPane = (props: AbstractProps) => {
             </div>
             <div className = { 'poll-footer' }>
                 <button
-                    aria-label = { t('polls.create.button') }
-                    className = { 'poll-primary-button ' }
+                    aria-label = { t('polls.create.create') }
+                    className = { 'poll-primary-button' }
                     // eslint-disable-next-line react/jsx-no-bind
                     onClick = { onCreate } >
-                    <span>{t('polls.create.button')}</span>
+                    <span>{t('polls.create.create')}</span>
                 </button>
             </div>
         </div>;
