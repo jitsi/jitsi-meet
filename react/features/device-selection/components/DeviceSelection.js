@@ -374,6 +374,7 @@ class DeviceSelection extends AbstractDialogTab<Props, State> {
                 isDisabled: this.props.disableAudioInputChange
                     || this.props.disableDeviceChange,
                 key: 'audioInput',
+                id: 'audioInput',
                 label: 'settings.selectMic',
                 onSelect: selectedAudioInputId =>
                     super._onChange({ selectedAudioInputId }),
@@ -389,6 +390,7 @@ class DeviceSelection extends AbstractDialogTab<Props, State> {
                 icon: 'icon-camera',
                 isDisabled: this.props.disableDeviceChange,
                 key: 'videoInput',
+                id: 'videoInput',
                 label: 'settings.selectCamera',
                 onSelect: selectedVideoInputId =>
                     super._onChange({ selectedVideoInputId }),
@@ -404,6 +406,7 @@ class DeviceSelection extends AbstractDialogTab<Props, State> {
                 icon: 'icon-speaker',
                 isDisabled: this.props.disableDeviceChange,
                 key: 'audioOutput',
+                id: 'audioOutput',
                 label: 'settings.selectAudioOutput',
                 onSelect: selectedAudioOutputId =>
                     super._onChange({ selectedAudioOutputId }),
