@@ -29,6 +29,7 @@ export const LobbyParticipantItem = ({ participant: p }: Props) => {
     return (
         <ParticipantItem
             audioMuteState = { MediaState.Muted }
+            isKnockingParticipant = { true }
             name = { p.name }
             onPress = { openContextMenuReject }
             participant = { p }

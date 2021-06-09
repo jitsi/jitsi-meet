@@ -31,6 +31,11 @@ type Props = {
     children?: Node,
 
     /**
+     * Is the participant waiting?
+     */
+    isKnockingParticipant: boolean,
+
+    /**
      * The name of the participant. Used for showing lobby names.
      */
     name?: string,
@@ -64,6 +69,7 @@ type Props = {
 function ParticipantItem({
     audioMuteState = MediaState.None,
     children,
+    isKnockingParticipant,
     name,
     onPress,
     participant: p,
@@ -89,11 +95,15 @@ function ParticipantItem({
                     </Text>
                     { p.local ? <Text style = { styles.isLocal }>({t('chat.you')})</Text> : null }
                 </View>
-                <View style = { styles.participantStatesContainer } >
-                    {p.raisedHand && <RaisedHandIndicator />}
-                    <View style = { styles.participantStateVideo }>{VideoStateIcons[videoMuteState]}</View>
-                    <View style = { styles.participantStateAudio }>{AudioStateIcons[audioMuteState]}</View>
-                </View>
+                {
+                    !isKnockingParticipant && <>
+                        {p.raisedHand && <RaisedHandIndicator />}
+                        <View style = { styles.participantStatesContainer }>
+                            <View style = { styles.participantStateVideo }>{VideoStateIcons[videoMuteState]}</View>
+                            <View>{AudioStateIcons[audioMuteState]}</View>
+                        </View>
+                    </>
+                }
             </TouchableOpacity>
             { children }
         </View>

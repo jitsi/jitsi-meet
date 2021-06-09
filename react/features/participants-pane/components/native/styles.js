@@ -1,27 +1,11 @@
 import BaseTheme from '../../../base/ui/components/BaseTheme.native';
 
 /**
- * The style for participant states.
- */
-const participantState = {
-    display: 'flex',
-    justifyContent: 'center'
-};
-
-/**
- * The style for participant list.
- */
-const participantList = {
-    marginLeft: BaseTheme.spacing[3],
-    marginRight: BaseTheme.spacing[3],
-    position: 'relative'
-};
-
-/**
  * The style for participant list description.
  */
 const participantListDescription = {
-    color: BaseTheme.palette.text01,
+    ...BaseTheme.typography.heading6,
+    color: BaseTheme.palette.text02,
     paddingBottom: BaseTheme.spacing[3],
     paddingTop: BaseTheme.spacing[3],
     position: 'relative',
@@ -46,7 +30,6 @@ const button = {
     backgroundColor: BaseTheme.palette.action02,
     borderRadius: BaseTheme.shape.borderRadius,
     display: 'flex',
-    height: BaseTheme.spacing[7],
     justifyContent: 'center',
     marginLeft: 'auto'
 };
@@ -55,8 +38,7 @@ const button = {
  * Small buttons.
  */
 const smallButton = {
-    ...button,
-    width: BaseTheme.spacing[7]
+    ...button
 };
 
 /**
@@ -64,7 +46,6 @@ const smallButton = {
  */
 const buttonContent = {
     ...BaseTheme.typography.labelButton,
-    ...flexContent,
     color: BaseTheme.palette.text01,
     justifyContent: 'center'
 };
@@ -87,22 +68,18 @@ export default {
         backgroundColor: BaseTheme.palette.action01,
         borderRadius: BaseTheme.shape.borderRadius,
         flexDirection: 'row',
-        height: BaseTheme.spacing[5],
+        height: BaseTheme.spacing[6],
+        marginRight: BaseTheme.spacing[3],
         position: 'absolute',
         right: 0,
         zIndex: 1
     },
 
-    participantActionsButtonReject: {
-        backgroundColor: BaseTheme.palette.action01,
-        borderRadius: BaseTheme.shape.borderRadius,
-        height: BaseTheme.spacing[5]
-    },
-
     participantActionsButtonContent: {
         alignItems: 'center',
         display: 'flex',
-        height: BaseTheme.spacing[5]
+        height: BaseTheme.spacing[5],
+        top: BaseTheme.spacing[1]
     },
 
     participantActionsButtonText: {
@@ -110,11 +87,14 @@ export default {
         textTransform: 'capitalize'
     },
 
-    allParticipantActionsButton: {
+    admitAllParticipantsActionButtonLabel: {
         ...BaseTheme.typography.heading6,
         color: BaseTheme.palette.link01,
-        marginRight: 'auto',
         textTransform: 'capitalize'
+    },
+
+    admitAllParticipantsActionButton: {
+        marginLeft: 'auto'
     },
 
     participantContainer: {
@@ -124,6 +104,8 @@ export default {
         display: 'flex',
         flexDirection: 'row',
         height: BaseTheme.spacing[9],
+        paddingLeft: BaseTheme.spacing[3],
+        paddingRight: BaseTheme.spacing[3],
         width: '100%'
     },
 
@@ -163,23 +145,18 @@ export default {
         display: 'flex',
         flexDirection: 'row',
         marginLeft: 'auto',
-        width: 72
-    },
-
-    participantStateAudio: {
-        ...participantState
+        width: '15%'
     },
 
     participantStateVideo: {
-        ...participantState,
-        paddingRight: BaseTheme.spacing[2]
+        paddingRight: BaseTheme.spacing[3]
     },
 
     raisedHandIndicator: {
         backgroundColor: BaseTheme.palette.warning02,
         borderRadius: BaseTheme.shape.borderRadius / 2,
         height: BaseTheme.spacing[4],
-        marginRight: BaseTheme.spacing[2],
+        marginLeft: BaseTheme.spacing[1],
         width: BaseTheme.spacing[4]
     },
 
@@ -188,11 +165,11 @@ export default {
         top: BaseTheme.spacing[1]
     },
     lobbyList: {
-        ...participantList
+        position: 'relative'
     },
 
     meetingList: {
-        ...participantList,
+        position: 'relative',
         marginTop: BaseTheme.spacing[3]
     },
 
@@ -202,6 +179,7 @@ export default {
         flexDirection: 'row',
         justifyContent: 'space-between',
         overflow: 'hidden',
+        paddingLeft: BaseTheme.spacing[3],
         position: 'relative',
         width: '100%'
     },
@@ -211,7 +189,8 @@ export default {
     },
 
     meetingListDescription: {
-        ...participantListDescription
+        ...participantListDescription,
+        marginLeft: BaseTheme.spacing[3]
     },
 
     header: {
@@ -241,17 +220,21 @@ export default {
     },
 
     closeButton: {
-        ...smallButton
+        ...smallButton,
+        width: BaseTheme.spacing[8]
     },
 
     closeIcon: {
         ...buttonContent,
+        height: BaseTheme.spacing[8],
         left: BaseTheme.spacing[2]
     },
 
     inviteButton: {
         backgroundColor: BaseTheme.palette.action01,
-        marginTop: BaseTheme.spacing[2]
+        marginTop: BaseTheme.spacing[2],
+        marginLeft: BaseTheme.spacing[3],
+        marginRight: BaseTheme.spacing[3]
     },
 
     inviteLabel: {
@@ -260,11 +243,13 @@ export default {
     },
 
     moreButton: {
-        ...smallButton
+        ...smallButton,
+        width: BaseTheme.spacing[8]
     },
 
     moreIcon: {
         ...buttonContent,
+        height: BaseTheme.spacing[8],
         left: BaseTheme.spacing[2]
     },
 
@@ -279,10 +264,12 @@ export default {
     },
 
     muteAllContent: {
-        ...buttonContent
+        ...buttonContent,
+        height: BaseTheme.spacing[8]
     },
 
     muteAllLabel: {
+        ...BaseTheme.typography.labelButtonLarge,
         color: BaseTheme.palette.text01,
         textTransform: 'capitalize'
     },
@@ -292,16 +279,12 @@ export default {
     },
 
     contextMenuItemSection: {
-        ...contextMenuItem,
-        borderBottomColor: BaseTheme.palette.section01,
-        borderBottomWidth: 1
+        ...contextMenuItem
     },
 
     contextMenuItemText: {
         ...BaseTheme.typography.bodyShortRegularLarge,
-        alignSelf: 'center',
         color: BaseTheme.palette.text01,
-        flexDirection: 'row',
         marginLeft: BaseTheme.spacing[3]
     },
 
@@ -316,5 +299,9 @@ export default {
 
     contextMenuIcon: {
         color: BaseTheme.palette.actionDanger
+    },
+
+    divider: {
+        backgroundColor: BaseTheme.palette.section01
     }
 };

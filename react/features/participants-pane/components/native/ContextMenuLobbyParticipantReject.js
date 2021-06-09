@@ -3,7 +3,7 @@
 import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { TouchableOpacity, View } from 'react-native';
-import { Text } from 'react-native-paper';
+import { Divider, Text } from 'react-native-paper';
 import { useDispatch } from 'react-redux';
 
 import { Avatar } from '../../../base/avatar';
@@ -46,6 +46,7 @@ export const ContextMenuLobbyParticipantReject = ({ participant: p }: Props) => 
                     </Text>
                 </View>
             </View>
+            <Divider style = { styles.divider } />
             <TouchableOpacity
                 onPress = { reject }
                 style = { styles.contextMenuItem }>
