@@ -188,14 +188,15 @@ const PollCreate = (props: AbstractProps) => {
                             </button>
                         </div>
 
-                        <Tooltip content = { t('polls.create.removeOption') }>
+                        { answers.length > 2
+                        && <Tooltip content = { t('polls.create.removeOption') }>
                             <button
                                 className = 'poll-remove-option-button'
                                 onClick = { () => removeAnswer(i) }
                                 type = 'button'>
                                 { t('polls.create.removeOption') }
                             </button>
-                        </Tooltip>
+                        </Tooltip>}
                     </li>)
                 )}
             </ol>
