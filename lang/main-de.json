@@ -360,7 +360,9 @@
         "image4" : "Schwarze Stehlampe",
         "image5" : "Berg",
         "image6" : "Wald",
-        "image7" : "Sonnenaufgang"
+        "image7" : "Sonnenaufgang",
+        "desktopShareError": "Desktop konnte nicht freigegeben werden",
+        "desktopShare":"Desktopfreigabe"
     },
     "feedback": {
         "average": "Durchschnittlich",
