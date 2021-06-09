@@ -23,7 +23,8 @@ if not have_async then
     return;
 end
 
-local formdecode = require "util.http".formdecode;
+module:depends("jitsi_session");
+
 local jid_split = require 'util.jid'.split;
 local jid_bare = require 'util.jid'.bare;
 local json = require 'util.json';
@@ -39,6 +40,7 @@ local NOTIFY_LOBBY_ACCESS_GRANTED = 'LOBBY-ACCESS-GRANTED';
 local NOTIFY_LOBBY_ACCESS_DENIED = 'LOBBY-ACCESS-DENIED';
 
 local util = module:require "util";
+local get_room_by_name_and_subdomain = util.get_room_by_name_and_subdomain;
 local is_healthcheck_room = util.is_healthcheck_room;
 local presence_check_status = util.presence_check_status;
 
@@ -206,10 +208,9 @@ function process_lobby_muc_loaded(lobby_muc, host_module)
         local session, reply, node = event.origin, event.reply, event.node;
         if node == LOBBY_IDENTITY_TYPE
             and session.jitsi_web_query_room
-            and main_muc_service
             and check_display_name_required then
-            local room = main_muc_service.get_room_from_jid(
-                jid_bare(session.jitsi_web_query_room .. '@' .. main_muc_component_config));
+            local room = get_room_by_name_and_subdomain(session.jitsi_web_query_room, session.jitsi_web_query_prefix);
+
             if room and room._data.lobbyroom then
                 reply:tag('feature', { var = DISPLAY_NAME_REQUIRED_FEATURE }):up();
             end
@@ -378,24 +379,6 @@ process_host_module(main_muc_component_config, function(host_module, host)
     end);
 end);
 
--- Extract 'room' param from URL when session is created
-function update_session(event)
-    local session = event.session;
-
-    if session.jitsi_web_query_room then
-        -- no need for an update
-        return;
-    end
-
-    local query = event.request.url.query;
-    if query ~= nil then
-        local params = formdecode(query);
-        -- The room name and optional prefix from the web query
-        session.jitsi_web_query_room = params.room;
-        session.jitsi_web_query_prefix = params.prefix or '';
-    end
-end
-
 function handle_create_lobby(event)
     local room = event.room;
     room:set_members_only(true);
@@ -407,8 +390,6 @@ function handle_destroy_lobby(event)
     destroy_lobby_room(event.room, event.newjid, event.message);
 end
 
-module:hook_global('bosh-session', update_session);
-module:hook_global('websocket-session', update_session);
 module:hook_global('config-reloaded', load_config);
 module:hook_global('create-lobby-room', handle_create_lobby);
 module:hook_global('destroy-lobby-room', handle_destroy_lobby);

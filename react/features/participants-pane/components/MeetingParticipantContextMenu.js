@@ -4,6 +4,7 @@ import React, { useCallback, useLayoutEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 
+import { isToolbarButtonEnabled } from '../../base/config/functions.web';
 import { openDialog } from '../../base/dialog';
 import {
     IconCloseCircle,
@@ -12,7 +13,7 @@ import {
     IconMuteEveryoneElse,
     IconVideoOff
 } from '../../base/icons';
-import { isLocalParticipantModerator } from '../../base/participants';
+import { isLocalParticipantModerator, isParticipantModerator } from '../../base/participants';
 import { getIsParticipantVideoMuted } from '../../base/tracks';
 import { openChat } from '../../chat/actions';
 import { GrantModeratorDialog, KickRemoteParticipantDialog, MuteEveryoneDialog } from '../../video-menu';
@@ -65,6 +66,7 @@ export const MeetingParticipantContextMenu = ({
     const dispatch = useDispatch();
     const containerRef = useRef(null);
     const isLocalModerator = useSelector(isLocalParticipantModerator);
+    const isChatButtonEnabled = useSelector(isToolbarButtonEnabled('chat'));
     const isParticipantVideoMuted = useSelector(getIsParticipantVideoMuted(participant));
     const [ isHidden, setIsHidden ] = useState(true);
     const { t } = useTranslation();
@@ -144,7 +146,7 @@ export const MeetingParticipantContextMenu = ({
                 ))}
             </ContextMenuItemGroup>
             <ContextMenuItemGroup>
-                {isLocalModerator && (
+                {isLocalModerator && !isParticipantModerator(participant) && (
                     <ContextMenuItem onClick = { grantModerator }>
                         <ContextMenuIcon src = { IconCrown } />
                         <span>{t('toolbar.accessibilityLabel.grantModerator')}</span>
@@ -156,10 +158,12 @@ export const MeetingParticipantContextMenu = ({
                         <span>{t('videothumbnail.kick')}</span>
                     </ContextMenuItem>
                 )}
-                <ContextMenuItem onClick = { sendPrivateMessage }>
-                    <ContextMenuIcon src = { IconMessage } />
-                    <span>{t('toolbar.accessibilityLabel.privateMessage')}</span>
-                </ContextMenuItem>
+                {isChatButtonEnabled && (
+                    <ContextMenuItem onClick = { sendPrivateMessage }>
+                        <ContextMenuIcon src = { IconMessage } />
+                        <span>{t('toolbar.accessibilityLabel.privateMessage')}</span>
+                    </ContextMenuItem>
+                )}
             </ContextMenuItemGroup>
         </ContextMenu>
     );

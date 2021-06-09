@@ -4,6 +4,8 @@ import type { Dispatch } from 'redux';
 
 import { FEEDBACK_REQUEST_IN_PROGRESS } from '../../../modules/UI/UIErrors';
 import { openDialog } from '../base/dialog';
+import { isVpaasMeeting } from '../billing-counter/functions';
+import { extractFqnFromPath } from '../dynamic-branding/functions';
 
 import {
     CANCEL_FEEDBACK,
@@ -11,9 +13,9 @@ import {
     SUBMIT_FEEDBACK_SUCCESS
 } from './actionTypes';
 import { FeedbackDialog } from './components';
+import { sendFeedbackToJaaSRequest } from './functions';
 
 declare var config: Object;
-declare var interfaceConfig: Object;
 
 /**
  * Caches the passed in feedback in the redux store.
@@ -111,6 +113,39 @@ export function openFeedbackDialog(conference: Object, onClose: ?Function) {
 }
 
 /**
+ * Sends feedback metadata to JaaS endpoint.
+ *
+ * @param {JitsiConference} conference - The JitsiConference that is being rated.
+ * @param {Object} feedback - The feedback message and score.
+ *
+ * @returns {Promise}
+ */
+export function sendJaasFeedbackMetadata(conference: Object, feedback: Object) {
+    return (dispatch: Dispatch<any>, getState: Function): Promise<any> => {
+        const state = getState();
+        const { jaasFeedbackMetadataURL } = state['features/base/config'];
+
+        const { jwt, user, tenant } = state['features/base/jwt'];
+
+        if (!isVpaasMeeting(state) || !jaasFeedbackMetadataURL) {
+            return Promise.resolve();
+        }
+
+        const meetingFqn = extractFqnFromPath(state['features/base/connection'].locationURL.pathname);
+        const feedbackData = {
+            ...feedback,
+            sessionId: conference.sessionId,
+            userId: user.id,
+            meetingFqn,
+            jwt,
+            tenant
+        };
+
+        return sendFeedbackToJaaSRequest(jaasFeedbackMetadataURL, feedbackData);
+    };
+}
+
+/**
  * Send the passed in feedback.
  *
  * @param {number} score - An integer between 1 and 5 indicating the user
@@ -125,16 +160,17 @@ export function submitFeedback(
         score: number,
         message: string,
         conference: Object) {
-    return (dispatch: Dispatch<any>) => conference.sendFeedback(score, message)
-        .then(
-            () => dispatch({ type: SUBMIT_FEEDBACK_SUCCESS }),
-            error => {
-                dispatch({
-                    type: SUBMIT_FEEDBACK_ERROR,
-                    error
-                });
+    return (dispatch: Dispatch<any>) =>
+        conference.sendFeedback(score, message)
+        .then(() => dispatch({ type: SUBMIT_FEEDBACK_SUCCESS }))
+        .then(() => dispatch(sendJaasFeedbackMetadata(conference, { score,
+            message }))
+        .catch(error => {
+            dispatch({
+                type: SUBMIT_FEEDBACK_ERROR,
+                error
+            });
 
-                return Promise.reject(error);
-            }
-        );
+            return Promise.reject(error);
+        }));
 }

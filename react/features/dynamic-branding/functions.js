@@ -34,3 +34,13 @@ export function getDynamicBrandingUrl(state: Object) {
         return `${baseUrl}?conferenceFqn=${encodeURIComponent(fqn)}`;
     }
 }
+
+/**
+ * Selector used for getting the load state of the dynamic branding data.
+ *
+ * @param {Object} state - Global state of the app.
+ * @returns {boolean}
+ */
+export function isDynamicBrandingDataLoaded(state: Object) {
+    return state['features/dynamic-branding'].customizationReady;
+}

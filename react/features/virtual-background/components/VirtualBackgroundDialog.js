@@ -1,17 +1,22 @@
 // @flow
 
 import Spinner from '@atlaskit/spinner';
+import Bourne from '@hapi/bourne';
 import { jitsiLocalStorage } from '@jitsi/js-utils/jitsi-local-storage';
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import uuid from 'uuid';
 
 import { Dialog, hideDialog } from '../../base/dialog';
 import { translate } from '../../base/i18n';
-import { Icon, IconCloseSmall, IconPlusCircle } from '../../base/icons';
+import { Icon, IconCloseSmall, IconPlusCircle, IconShareDesktop } from '../../base/icons';
+import { createLocalTrack } from '../../base/lib-jitsi-meet/functions';
+import { VIDEO_TYPE } from '../../base/media';
 import { connect } from '../../base/redux';
 import { Tooltip } from '../../base/tooltip';
 import { getLocalVideoTrack } from '../../base/tracks';
+import { showErrorNotification } from '../../notifications';
 import { toggleBackgroundEffect } from '../actions';
+import { VIRTUAL_BACKGROUND_TYPE } from '../constants';
 import { resizeImage, toDataURL } from '../functions';
 import logger from '../logger';
 
@@ -78,6 +83,11 @@ type Props = {
     _selectedThumbnail: string,
 
     /**
+     * Returns the selected virtual source object.
+     */
+    _virtualSource: Object,
+
+    /**
      * The redux {@code dispatch} function.
      */
     dispatch: Function,
@@ -97,12 +107,13 @@ const onError = event => {
  *
  * @returns {ReactElement}
  */
-function VirtualBackground({ _jitsiTrack, _selectedThumbnail, dispatch, t }: Props) {
+function VirtualBackground({ _jitsiTrack, _selectedThumbnail, _virtualSource, dispatch, t }: Props) {
     const [ options, setOptions ] = useState({});
     const localImages = jitsiLocalStorage.getItem('virtualBackgrounds');
-    const [ storedImages, setStoredImages ] = useState<Array<Image>>((localImages && JSON.parse(localImages)) || []);
+    const [ storedImages, setStoredImages ] = useState<Array<Image>>((localImages && Bourne.parse(localImages)) || []);
     const [ loading, setLoading ] = useState(false);
     const uploadImageButton: Object = useRef(null);
+    const [ activeDesktopVideo ] = useState(_virtualSource?.videoType === VIDEO_TYPE.DESKTOP ? _virtualSource : null);
 
     const deleteStoredImage = useCallback(e => {
         const imageId = e.currentTarget.getAttribute('data-imageid');
@@ -135,7 +146,7 @@ function VirtualBackground({ _jitsiTrack, _selectedThumbnail, dispatch, t }: Pro
 
     const enableBlur = useCallback(async () => {
         setOptions({
-            backgroundType: 'blur',
+            backgroundType: VIRTUAL_BACKGROUND_TYPE.BLUR,
             enabled: true,
             blurValue: 25,
             selectedThumbnail: 'blur'
@@ -151,7 +162,7 @@ function VirtualBackground({ _jitsiTrack, _selectedThumbnail, dispatch, t }: Pro
 
     const enableSlideBlur = useCallback(async () => {
         setOptions({
-            backgroundType: 'blur',
+            backgroundType: VIRTUAL_BACKGROUND_TYPE.BLUR,
             enabled: true,
             blurValue: 8,
             selectedThumbnail: 'slight-blur'
@@ -163,7 +174,34 @@ function VirtualBackground({ _jitsiTrack, _selectedThumbnail, dispatch, t }: Pro
             e.preventDefault();
             enableSlideBlur();
         }
-    }, [ enableBlur ]);
+    }, [ enableSlideBlur ]);
+
+
+    const shareDesktop = useCallback(async () => {
+        const url = await createLocalTrack('desktop', '');
+
+        if (!url) {
+            dispatch(showErrorNotification({
+                titleKey: 'virtualBackground.desktopShareError'
+            }));
+            logger.error('Could not create desktop share as a virtual background!');
+
+            return;
+        }
+        setOptions({
+            backgroundType: VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE,
+            enabled: true,
+            selectedThumbnail: 'desktop-share',
+            url
+        });
+    }, []);
+
+    const shareDesktopKeyPress = useCallback(e => {
+        if (e.key === ' ' || e.key === 'Enter') {
+            e.preventDefault();
+            shareDesktop();
+        }
+    }, [ shareDesktop ]);
 
     const removeBackground = useCallback(async () => {
         setOptions({
@@ -227,7 +265,7 @@ function VirtualBackground({ _jitsiTrack, _selectedThumbnail, dispatch, t }: Pro
                 }
             ]);
             setOptions({
-                backgroundType: 'image',
+                backgroundType: VIRTUAL_BACKGROUND_TYPE.IMAGE,
                 enabled: true,
                 url,
                 selectedThumbnail: uuId
@@ -261,6 +299,9 @@ function VirtualBackground({ _jitsiTrack, _selectedThumbnail, dispatch, t }: Pro
     }, [ setUploadedImageBackground ]);
 
     const applyVirtualBackground = useCallback(async () => {
+        if (activeDesktopVideo) {
+            await activeDesktopVideo.dispose();
+        }
         setLoading(true);
         await dispatch(toggleBackgroundEffect(options, _jitsiTrack));
         await setLoading(false);
@@ -273,8 +314,7 @@ function VirtualBackground({ _jitsiTrack, _selectedThumbnail, dispatch, t }: Pro
             okKey = { 'virtualBackground.apply' }
             onSubmit = { applyVirtualBackground }
             submitDisabled = { !options || loading }
-            titleKey = { 'virtualBackground.title' }
-            width = '640px'>
+            titleKey = { 'virtualBackground.title' } >
             <VirtualBackgroundPreview options = { options } />
             {loading ? (
                 <div className = 'virtual-background-loading'>
@@ -352,6 +392,25 @@ function VirtualBackground({ _jitsiTrack, _selectedThumbnail, dispatch, t }: Pro
                                 {t('virtualBackground.blur')}
                             </div>
                         </Tooltip>
+                        <Tooltip
+                            content = { t('virtualBackground.desktopShare') }
+                            position = { 'top' }>
+                            <div
+                                aria-checked = { _selectedThumbnail === 'desktop-share' }
+                                aria-label = { t('virtualBackground.desktopShare') }
+                                className = { _selectedThumbnail === 'desktop-share'
+                                    ? 'background-option desktop-share-selected'
+                                    : 'background-option desktop-share' }
+                                onClick = { shareDesktop }
+                                onKeyPress = { shareDesktopKeyPress }
+                                role = 'radio'
+                                tabIndex = { 0 }>
+                                <Icon
+                                    className = 'share-desktop-icon'
+                                    size = { 30 }
+                                    src = { IconShareDesktop } />
+                            </div>
+                        </Tooltip>
                         {images.map(image => (
                             <Tooltip
                                 content = { image.tooltip && t(`virtualBackground.${image.tooltip}`) }
@@ -419,6 +478,7 @@ function VirtualBackground({ _jitsiTrack, _selectedThumbnail, dispatch, t }: Pro
  */
 function _mapStateToProps(state): Object {
     return {
+        _virtualSource: state['features/virtual-background'].virtualSource,
         _selectedThumbnail: state['features/virtual-background'].selectedThumbnail,
         _jitsiTrack: getLocalVideoTrack(state['features/base/tracks'])?.jitsiTrack
     };

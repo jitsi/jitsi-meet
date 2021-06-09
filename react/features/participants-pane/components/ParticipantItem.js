@@ -2,6 +2,7 @@
 
 import React, { type Node } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useSelector } from 'react-redux';
 
 import { Avatar } from '../../base/avatar';
 import {
@@ -11,6 +12,7 @@ import {
     IconMicrophoneEmpty,
     IconMicrophoneEmptySlash
 } from '../../base/icons';
+import { getParticipantDisplayNameWithId } from '../../base/participants';
 import { ActionTrigger, MediaState } from '../constants';
 
 import { RaisedHandIndicator } from './RaisedHandIndicator';
@@ -99,6 +101,11 @@ type Props = {
     isHighlighted?: boolean,
 
     /**
+     * The name of the participant. Used for showing lobby names.
+     */
+    name?: string,
+
+    /**
      * Callback for when the mouse leaves this component
      */
     onLeave?: Function,
@@ -121,10 +128,12 @@ export const ParticipantItem = ({
     actionsTrigger = ActionTrigger.Hover,
     audioMuteState = MediaState.None,
     videoMuteState = MediaState.None,
+    name,
     participant: p
 }: Props) => {
     const ParticipantActions = Actions[actionsTrigger];
     const { t } = useTranslation();
+    const displayName = name || useSelector(getParticipantDisplayNameWithId(p.id));
 
     return (
         <ParticipantContainer
@@ -138,7 +147,7 @@ export const ParticipantItem = ({
             <ParticipantContent>
                 <ParticipantNameContainer>
                     <ParticipantName>
-                        { p.name }
+                        { displayName }
                     </ParticipantName>
                     { p.local ? <span>&nbsp;({t('chat.you')})</span> : null }
                 </ParticipantNameContainer>

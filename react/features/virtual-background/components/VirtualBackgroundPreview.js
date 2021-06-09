@@ -4,13 +4,16 @@ import Spinner from '@atlaskit/spinner';
 import React, { PureComponent } from 'react';
 
 import { translate } from '../../base/i18n';
+import { VIDEO_TYPE } from '../../base/media';
 import Video from '../../base/media/components/Video';
 import { connect, equals } from '../../base/redux';
 import { getCurrentCameraDeviceId } from '../../base/settings';
 import { createLocalTracksF } from '../../base/tracks/functions';
 import { toggleBackgroundEffect } from '../actions';
+import { VIRTUAL_BACKGROUND_TYPE } from '../constants';
+import { localTrackStopped } from '../functions';
 
-const videoClassName = 'video-preview-video flipVideoX';
+const videoClassName = 'video-preview-video';
 
 /**
  * The type of the React {@code PureComponent} props of {@link VirtualBackgroundPreview}.
@@ -79,6 +82,18 @@ class VirtualBackgroundPreview extends PureComponent<Props, State> {
     }
 
     /**
+     * Destroys the jitsiTrack object.
+     *
+     * @param {Object} jitsiTrack - The track that needs to be disposed.
+     * @returns {Promise<void>}
+     */
+    _stopStream(jitsiTrack) {
+        if (jitsiTrack) {
+            jitsiTrack.dispose();
+        }
+    }
+
+    /**
      * Creates and updates the track data.
      *
      * @returns {void}
@@ -89,9 +104,12 @@ class VirtualBackgroundPreview extends PureComponent<Props, State> {
             devices: [ 'video' ]
         });
 
+
         // In case the component gets unmounted before the tracks are created
         // avoid a leak by not setting the state
         if (this._componentWasUnmounted) {
+            this._stopStream(jitsiTrack);
+
             return;
         }
         this.setState({
@@ -178,6 +196,7 @@ class VirtualBackgroundPreview extends PureComponent<Props, State> {
      */
     componentWillUnmount() {
         this._componentWasUnmounted = true;
+        this._stopStream(this.state.jitsiTrack);
     }
 
     /**
@@ -190,7 +209,13 @@ class VirtualBackgroundPreview extends PureComponent<Props, State> {
             this._setTracks();
         }
         if (!equals(this.props.options, prevProps.options)) {
+            if (prevProps.options.backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE) {
+                prevProps.options.url.dispose();
+            }
             this._applyBackgroundEffect();
+        }
+        if (this.props.options.url?.videoType === VIDEO_TYPE.DESKTOP) {
+            localTrackStopped(this.props.dispatch, this.props.options.url, this.state.jitsiTrack);
         }
     }
 

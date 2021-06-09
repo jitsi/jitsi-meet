@@ -1,14 +1,20 @@
 .virtual-background-dialog {
+    margin-left:-10px;
+    position: relative;
     max-height: 300px;
     color: white;
     display: inline-grid;
     grid-template-columns: auto auto auto auto auto;
-    column-gap: 8px;
+    column-gap: 9px;
     cursor: pointer;
-    .thumbnail:hover, .blur:hover, .slight-blur:hover, .virtual-background-none:hover{
+    .desktop-share:hover,  .thumbnail:hover, .blur:hover, .slight-blur:hover, .virtual-background-none:hover{
         opacity: .5;
         border: 2px solid #99bbf3;
-        @media (min-width: 432px) and (max-width: 632px) {
+        @media (min-width: 432px) and (min-width: 432px) and (max-width: 632px) {
+            height: 56px;
+            width: 56px;
+        }
+        @media (max-width: 432px){
             height: 56px;
             width: 56px;
         }
@@ -67,12 +73,21 @@
         border: 2px solid #246FE5;
         padding: 0 10px;
     }
+
+    .desktop-share{
+        background: #525252;
+    }
+    .desktop-share-selected{
+        background: #525252;
+        border: 2px solid #246FE5;
+        padding: 0 10px;
+    }
+
     @media (min-width: 432px) and (max-width: 632px) {
         font-size: 1.5vw;
-        .virtual-background-none, .thumbnail, .thumbnail-selected, .none-selected, .blur, .blur-selected, .slight-blur, .slight-blur-selected{
-            height: 60px;
-            width: 60px;
-        }
+    }
+    @media (max-width: 432px){
+        font-size: 1.5vw;
     }
 }
 
@@ -93,6 +108,7 @@
     font-size: 14px;
     font-weight: 600;
     line-height: 20px;
+    margin-left: -10px;
     margin-top: 16px;
     margin-bottom: 8px;
     color: #669AEC;
@@ -134,19 +150,41 @@
  }
 
  .video-background-preview-entry{
+    margin-left: -10px;
     height: 250px;
+    width: 570px;
     margin-bottom: 8px;
-    width: 572px;
-    position: fixed;
     z-index: 2;
     @media (min-width: 432px) and (max-width: 632px) {
-        width: 340px;
+        max-width: 336;
+    }
+    @media (max-width: 432px){
+        max-width: 336;
     }
  }
 
+ .virtual-background-preview-video{
+    margin-left: -10;
+    border-radius: 6px;
+    height: 100%;
+    object-fit: cover;
+    width: 100%;
+ }
  .video-preview-loader{
+     border-radius: 6px;
+     background-color: transparent;
+     height: 250px;
+     margin-bottom: 8px;
+     width: 572px;
      position: fixed;
-     left: 50%;
-     top: 35%;
-     transform: translate(-50%,-35%);
+     z-index: 2;
+     @media (min-width: 432px) and (max-width: 632px) {
+         width: 340px;
+     }
+ }
+
+ .video-preview-loader svg{
+    position: absolute;
+    top: 40%;
+    left: 45%;
  }

@@ -2,6 +2,9 @@
 
 import React, { Component } from 'react';
 
+import { createAudioPlayErrorEvent, createAudioPlaySuccessEvent, sendAnalytics } from '../../../../analytics';
+import logger from '../../logger';
+
 /**
  * The type of the React {@code Component} props of {@link AudioTrack}.
  */
@@ -51,6 +54,11 @@ export default class AudioTrack extends Component<Props> {
     _ref: ?HTMLAudioElement;
 
     /**
+     * The current timeout ID for play() retries.
+     */
+    _playTimeout: ?TimeoutID;
+
+    /**
      * Default values for {@code AudioTrack} component's properties.
      *
      * @static
@@ -72,6 +80,7 @@ export default class AudioTrack extends Component<Props> {
 
         // Bind event handlers so they are only bound once for every instance.
         this._setRef = this._setRef.bind(this);
+        this._play = this._play.bind(this);
     }
 
 
@@ -85,14 +94,7 @@ export default class AudioTrack extends Component<Props> {
         this._attachTrack(this.props.audioTrack);
 
         if (this._ref) {
-            const { autoPlay, muted, volume } = this.props;
-
-            if (autoPlay) {
-                // Ensure the audio gets play() called on it. This may be necessary in the
-                // case where the local video container was moved and re-attached, in which
-                // case the audio may not autoplay.
-                this._ref.play();
-            }
+            const { muted, volume } = this.props;
 
             if (typeof volume === 'number') {
                 this._ref.volume = volume;
@@ -181,6 +183,7 @@ export default class AudioTrack extends Component<Props> {
         }
 
         track.jitsiTrack.attach(this._ref);
+        this._play();
     }
 
     /**
@@ -193,7 +196,54 @@ export default class AudioTrack extends Component<Props> {
      */
     _detachTrack(track) {
         if (this._ref && track && track.jitsiTrack) {
+            clearTimeout(this._playTimeout);
+            this._playTimeout = undefined;
             track.jitsiTrack.detach(this._ref);
+        }
+    }
+
+    _play: ?number => void;
+
+    /**
+     * Plays the uderlying HTMLAudioElement.
+     *
+     * @param {number} retries - The number of previously failed retries.
+     * @returns {void}
+     */
+    _play(retries = 0) {
+        if (!this._ref) {
+            // nothing to play.
+
+            return;
+        }
+        const { autoPlay, id } = this.props;
+
+        if (autoPlay) {
+            // Ensure the audio gets play() called on it. This may be necessary in the
+            // case where the local video container was moved and re-attached, in which
+            // case the audio may not autoplay.
+            this._ref.play()
+            .then(() => {
+                if (retries !== 0) {
+                    // success after some failures
+                    this._playTimeout = undefined;
+                    sendAnalytics(createAudioPlaySuccessEvent(id));
+                    logger.info(`Successfully played audio track! retries: ${retries}`);
+                }
+            }, e => {
+                logger.error(`Failed to play audio track! retry: ${retries} ; Error: ${e}`);
+
+                if (retries < 3) {
+                    this._playTimeout = setTimeout(() => this._play(retries + 1), 1000);
+
+                    if (retries === 0) {
+                        // send only 1 error event.
+                        sendAnalytics(createAudioPlayErrorEvent(id));
+                    }
+                } else {
+                    this._playTimeout = undefined;
+                }
+            });
         }
     }
 

@@ -1,6 +1,6 @@
 // @flow
 
-// Default color pallete
+// Default color palette
 export const colors = {
     error03: '#7A141F',
     error04: '#A21B29',
@@ -157,6 +157,15 @@ export const colorMap = {
     // Disabled background for high-contrast input fields
     field02Disabled: 'surface06',
 
+    // Background for section header
+    section01: 'surface10',
+
+    // Active color for section header
+    section01Active: 'primary04',
+
+    // Inactive color for section header
+    section01Inactive: 'surface01',
+
     // Borders
     // Border for the input fields in hover state
     border01: 'surface08',
@@ -184,7 +193,7 @@ export const colorMap = {
     // Color for positive messages applied to icons & borders
     success01: 'success05',
 
-    // Color for positive messages applied tobackgrounds
+    // Color for positive messages applied to backgrounds
     success02: 'success05',
 
     // Color for warning messages applied to icons, borders & backgrounds

@@ -17,7 +17,7 @@ import {
     TRACK_UPDATED
 } from '../base/tracks';
 
-import { selectParticipant, selectParticipantInLargeVideo } from './actions';
+import { selectParticipant, selectParticipantInLargeVideo } from './actions.any';
 import logger from './logger';
 
 import './subscriber';

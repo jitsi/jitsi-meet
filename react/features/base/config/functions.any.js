@@ -1,5 +1,6 @@
 // @flow
 
+import Bourne from '@hapi/bourne';
 import { jitsiLocalStorage } from '@jitsi/js-utils';
 import _ from 'lodash';
 
@@ -141,7 +142,7 @@ export function restoreConfig(baseURL: string): ?Object {
 
     if (config) {
         try {
-            return JSON.parse(config) || undefined;
+            return Bourne.parse(config) || undefined;
         } catch (e) {
             // Somehow incorrect data ended up in the storage. Clean it up.
             jitsiLocalStorage.removeItem(key);

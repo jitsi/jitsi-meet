@@ -47,6 +47,11 @@ export type Props = {
     _passwordJoinFailed: boolean,
 
     /**
+     * True if the password field should be available for lobby participants.
+     */
+     _renderPassword: boolean,
+
+    /**
      * The Redux dispatch function.
      */
     dispatch: Function,
@@ -365,6 +370,7 @@ export function _mapStateToProps(state: Object): $Shape<Props> {
     const localParticipant = getLocalParticipant(state);
     const participantId = localParticipant?.id;
     const { knocking, passwordJoinFailed } = state['features/lobby'];
+    const { iAmSipGateway } = state['features/base/config'];
 
     return {
         _knocking: knocking,
@@ -372,6 +378,7 @@ export function _mapStateToProps(state: Object): $Shape<Props> {
         _participantEmail: localParticipant?.email,
         _participantId: participantId,
         _participantName: localParticipant?.name,
-        _passwordJoinFailed: passwordJoinFailed
+        _passwordJoinFailed: passwordJoinFailed,
+        _renderPassword: !iAmSipGateway
     };
 }
