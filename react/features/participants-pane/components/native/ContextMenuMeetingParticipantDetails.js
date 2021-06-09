@@ -3,7 +3,7 @@
 import React, { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { TouchableOpacity, View } from 'react-native';
-import { Text } from 'react-native-paper';
+import { Divider, Text } from 'react-native-paper';
 import { useDispatch, useSelector, useStore } from 'react-redux';
 
 import { Avatar } from '../../../base/avatar';
@@ -88,6 +88,7 @@ export const ContextMenuMeetingParticipantDetails = ({ participant: p }: Props) 
                     </Text>
                 </View>
             </View>
+            <Divider style = { styles.divider } />
             {
                 isLocalModerator
                 && <TouchableOpacity
@@ -116,6 +117,7 @@ export const ContextMenuMeetingParticipantDetails = ({ participant: p }: Props) 
                     </Text>
                 </TouchableOpacity>
             }
+            <Divider style = { styles.divider } />
             {
                 isLocalModerator && (
                     isParticipantVideoMuted
@@ -165,6 +167,7 @@ export const ContextMenuMeetingParticipantDetails = ({ participant: p }: Props) 
                     style = { styles.contextMenuItemIcon } />
                 <Text style = { styles.contextMenuItemText }>{ t('participantsPane.actions.networkStats') }</Text>
             </TouchableOpacity>
+            <Divider style = { styles.divider } />
             <VolumeSlider
                 initialValue = { volume }
                 onChange = { onVolumeChange } />

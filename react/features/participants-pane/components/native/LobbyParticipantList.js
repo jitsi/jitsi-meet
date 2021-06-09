@@ -21,13 +21,15 @@ export const LobbyParticipantList = () => {
         <View style = { styles.lobbyList }>
             <View style = { styles.lobbyListDetails } >
                 <Text style = { styles.lobbyListDescription }>
-                    {t('participantsPane.headings.lobby',
+                    {t('participantsPane.headings.waitingLobby',
                         { count: participants.length })}
                 </Text>
                 <Button
-                    labelStyle = { styles.allParticipantActionsButton }
+                    color = '#3D3D3D'
+                    labelStyle = { styles.admitAllParticipantsActionButtonLabel }
                     mode = 'text'
-                    onPress = { admitAll }>
+                    onPress = { admitAll }
+                    style = { styles.admitAllParticipantsActionButton }>
                     {t('lobby.admitAll')}
                 </Button>
             </View>

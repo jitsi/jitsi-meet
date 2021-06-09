@@ -30,6 +30,7 @@ export const MeetingParticipantItem = ({ participant: p }: Props) => {
     return (
         <ParticipantItem
             audioMuteState = { isAudioMuted ? MediaState.Muted : MediaState.Unmuted }
+            isKnockingParticipant = { false }
             name = { p.name }
             onPress = { openContextMenuDetails }
             participant = { p }
