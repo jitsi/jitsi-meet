@@ -577,12 +577,7 @@
 
 .chat-tabs-container {
     width: 100%;
-    border: #292929;
-    border-bottom: thin;
-    border-top: 0;
-    border-left: 0;
-    border-right: 0;
-    border-style: solid;
+    border-bottom: thin solid #292929;
     display: flex;
     justify-content: space-around;
 }
