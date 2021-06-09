@@ -4,18 +4,29 @@ import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Text, View } from 'react-native';
 import { Button } from 'react-native-paper';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
+import { getLobbyState } from '../../../lobby/functions';
 import { admitAllKnockingParticipants } from '../../../video-menu/actions.any';
 
 import { LobbyParticipantItem } from './LobbyParticipantItem';
-import { participants } from './participants';
 import styles from './styles';
 
 export const LobbyParticipantList = () => {
+    const {
+        lobbyEnabled,
+        knockingParticipants: participants
+    } = useSelector(getLobbyState);
+
     const dispatch = useDispatch();
-    const admitAll = useCallback(() => dispatch(admitAllKnockingParticipants()), [ dispatch ]);
+    const admitAll = useCallback(() =>
+        dispatch(admitAllKnockingParticipants(participants, lobbyEnabled)),
+        [ dispatch ]);
     const { t } = useTranslation();
+
+    if (!lobbyEnabled || !participants.length) {
+        return null;
+    }
 
     return (
         <View style = { styles.lobbyList }>
@@ -33,11 +44,13 @@ export const LobbyParticipantList = () => {
                     {t('lobby.admitAll')}
                 </Button>
             </View>
-            { participants.map(p => (
-                <LobbyParticipantItem
-                    key = { p.id }
-                    participant = { p } />)
-            )}
+            {
+                participants.map(p => (
+                    <LobbyParticipantItem
+                        key = { p.id }
+                        participant = { p } />)
+                )
+            }
         </View>
     );
 };

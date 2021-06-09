@@ -45,14 +45,14 @@ export const ContextMenuMore = ({ exclude }: Props) => {
                 onPress = { muteEveryoneVideo }
                 style = { styles.contextMenuItem }>
                 <Icon
-                    size = { 24 }
+                    size = { 20 }
                     src = { IconVideoOff } />
                 <Text style = { styles.contextMenuItemText }>{t('participantsPane.actions.stopEveryonesVideo')}</Text>
             </TouchableOpacity>
             <TouchableOpacity
                 style = { styles.contextMenuItem }>
                 <Icon
-                    size = { 24 }
+                    size = { 20 }
                     src = { IconMicDisabledHollow }
                     style = { styles.contextMenuIcon } />
                 <Text style = { styles.contextMenuItemText }>{t('participantsPane.actions.dontAllowUnmute')}</Text>

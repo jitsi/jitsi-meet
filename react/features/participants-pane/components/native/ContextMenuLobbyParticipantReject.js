@@ -39,7 +39,7 @@ export const ContextMenuLobbyParticipantReject = ({ participant: p }: Props) => 
                 <Avatar
                     className = 'participant-avatar'
                     participantId = { p.id }
-                    size = { 24 } />
+                    size = { 20 } />
                 <View style = { styles.contextMenuItemText }>
                     <Text style = { styles.contextMenuItemName }>
                         { displayName }
@@ -51,7 +51,7 @@ export const ContextMenuLobbyParticipantReject = ({ participant: p }: Props) => 
                 onPress = { reject }
                 style = { styles.contextMenuItem }>
                 <Icon
-                    size = { 24 }
+                    size = { 20 }
                     src = { IconClose }
                     style = { styles.contextMenuItemIcon } />
                 <Text style = { styles.contextMenuItemText }>{ t('lobby.reject') }</Text>

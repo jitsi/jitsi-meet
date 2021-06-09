@@ -81,7 +81,7 @@ export const ContextMenuMeetingParticipantDetails = ({ participant: p }: Props) 
                 <Avatar
                     className = 'participant-avatar'
                     participantId = { p.id }
-                    size = { 24 } />
+                    size = { 20 } />
                 <View style = { styles.contextMenuItemText }>
                     <Text style = { styles.contextMenuItemName }>
                         { displayName }
@@ -95,7 +95,7 @@ export const ContextMenuMeetingParticipantDetails = ({ participant: p }: Props) 
                     onPress = { muteAudio }
                     style = { styles.contextMenuItem }>
                     <Icon
-                        size = { 24 }
+                        size = { 20 }
                         src = { IconMicrophoneEmptySlash }
                         style = { styles.contextMenuItemIcon } />
                     <Text style = { styles.contextMenuItemText }>
@@ -109,7 +109,7 @@ export const ContextMenuMeetingParticipantDetails = ({ participant: p }: Props) 
                     onPress = { muteEveryoneElse }
                     style = { styles.contextMenuItem }>
                     <Icon
-                        size = { 24 }
+                        size = { 20 }
                         src = { IconMuteEveryoneElse }
                         style = { styles.contextMenuItemIcon } />
                     <Text style = { styles.contextMenuItemText }>
@@ -125,7 +125,7 @@ export const ContextMenuMeetingParticipantDetails = ({ participant: p }: Props) 
                         onPress = { muteVideo }
                         style = { styles.contextMenuItemSection }>
                         <Icon
-                            size = { 24 }
+                            size = { 20 }
                             src = { IconVideoOff }
                             style = { styles.contextMenuItemIcon } />
                         <Text style = { styles.contextMenuItemText }>
@@ -140,7 +140,7 @@ export const ContextMenuMeetingParticipantDetails = ({ participant: p }: Props) 
                     onPress = { kickRemoteParticipant }
                     style = { styles.contextMenuItem }>
                     <Icon
-                        size = { 24 }
+                        size = { 20 }
                         src = { IconCloseCircle }
                         style = { styles.contextMenuItemIcon } />
                     <Text style = { styles.contextMenuItemText }>
@@ -152,7 +152,7 @@ export const ContextMenuMeetingParticipantDetails = ({ participant: p }: Props) 
                 onPress = { sendPrivateMessage }
                 style = { styles.contextMenuItem }>
                 <Icon
-                    size = { 24 }
+                    size = { 20 }
                     src = { IconMessage }
                     style = { styles.contextMenuItemIcon } />
                 <Text style = { styles.contextMenuItemText }>
@@ -162,7 +162,7 @@ export const ContextMenuMeetingParticipantDetails = ({ participant: p }: Props) 
             <TouchableOpacity
                 style = { styles.contextMenuItemSection }>
                 <Icon
-                    size = { 24 }
+                    size = { 20 }
                     src = { IconConnectionActive }
                     style = { styles.contextMenuItemIcon } />
                 <Text style = { styles.contextMenuItemText }>{ t('participantsPane.actions.networkStats') }</Text>

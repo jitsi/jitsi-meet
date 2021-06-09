@@ -67,12 +67,12 @@ type Props = {
  * @returns {React$Element<any>}
  */
 function ParticipantItem({
-    audioMuteState = MediaState.None,
     children,
     isKnockingParticipant,
     name,
     onPress,
     participant: p,
+    audioMuteState = MediaState.None,
     videoMuteState = MediaState.None
 }: Props) {
 
@@ -96,8 +96,11 @@ function ParticipantItem({
                     { p.local ? <Text style = { styles.isLocal }>({t('chat.you')})</Text> : null }
                 </View>
                 {
-                    !isKnockingParticipant && <>
-                        {p.raisedHand && <RaisedHandIndicator />}
+                    !isKnockingParticipant
+                    && <>
+                        {
+                            p.raisedHand && <RaisedHandIndicator />
+                        }
                         <View style = { styles.participantStatesContainer }>
                             <View style = { styles.participantStateVideo }>{VideoStateIcons[videoMuteState]}</View>
                             <View>{AudioStateIcons[audioMuteState]}</View>
@@ -105,7 +108,7 @@ function ParticipantItem({
                     </>
                 }
             </TouchableOpacity>
-            { children }
+            { !p.local && children }
         </View>
     );
 }
