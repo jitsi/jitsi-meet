@@ -1,6 +1,6 @@
 // @flow
 
-import React, { useCallback } from 'react';
+import React from 'react';
 
 import AbstractPollResults from '../AbstractPollResults';
 import type { AbstractProps } from '../AbstractPollResults';
