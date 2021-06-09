@@ -4,11 +4,12 @@ import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ScrollView, View } from 'react-native';
 import { Button } from 'react-native-paper';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { hideDialog, openDialog } from '../../../base/dialog';
 import { Icon, IconClose, IconHorizontalPoints } from '../../../base/icons';
 import { JitsiModal } from '../../../base/modal';
+import { isLocalParticipantModerator } from '../../../base/participants';
 import MuteEveryoneDialog
     from '../../../video-menu/components/native/MuteEveryoneDialog';
 
@@ -24,8 +25,9 @@ import styles from './styles';
  */
 export function ParticipantsPane() {
     const dispatch = useDispatch();
-    const openMoreMenu = useCallback(() => dispatch(openDialog(ContextMenuMore)));
+    const openMoreMenu = useCallback(() => dispatch(openDialog(ContextMenuMore)), [ dispatch ]);
     const closePane = useCallback(() => dispatch(hideDialog()), [ dispatch ]);
+    const isLocalModerator = useSelector(isLocalParticipantModerator);
     const muteAll = useCallback(() => dispatch(openDialog(MuteEveryoneDialog)),
         [ dispatch ]);
     const { t } = useTranslation();
@@ -51,26 +53,29 @@ export function ParticipantsPane() {
                 <LobbyParticipantList />
                 <MeetingParticipantList />
             </ScrollView>
-            <View style = { styles.footer }>
-                <Button
-                    children = { t('participantsPane.actions.muteAll') }
-                    contentStyle = { styles.muteAllContent }
-                    labelStyle = { styles.muteAllLabel }
-                    mode = 'contained'
-                    onPress = { muteAll }
-                    style = { styles.muteAllButton } />
-                <Button
-                    contentStyle = { styles.moreIcon }
-                    /* eslint-disable-next-line react/jsx-no-bind */
-                    icon = { () =>
-                        (<Icon
-                            size = { 24 }
-                            src = { IconHorizontalPoints } />)
-                    }
-                    mode = 'contained'
-                    onPress = { openMoreMenu }
-                    style = { styles.moreButton } />
-            </View>
+            {
+                isLocalModerator
+                && <View style = { styles.footer }>
+                    <Button
+                        children = { t('participantsPane.actions.muteAll') }
+                        contentStyle = { styles.muteAllContent }
+                        labelStyle = { styles.muteAllLabel }
+                        mode = 'contained'
+                        onPress = { muteAll }
+                        style = { styles.muteAllButton } />
+                    <Button
+                        contentStyle = { styles.moreIcon }
+                        /* eslint-disable-next-line react/jsx-no-bind */
+                        icon = { () =>
+                            (<Icon
+                                size = { 24 }
+                                src = { IconHorizontalPoints } />)
+                        }
+                        mode = 'contained'
+                        onPress = { openMoreMenu }
+                        style = { styles.moreButton } />
+                </View>
+            }
         </JitsiModal>
     );
 }
