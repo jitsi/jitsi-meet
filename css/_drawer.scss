@@ -8,12 +8,23 @@
     border-radius: 16px 16px 0 0;
 }
 
+.drawer-menu-container {
+    height: 100vh;
+    display: flex;
+    align-items: flex-end;
+}
+
 .drawer-menu {
     max-height: calc(80vh - 64px);
     background: #242528;
     border-radius: 16px 16px 0 0;
     overflow-y: hidden;
     margin-bottom: env(safe-area-inset-bottom, 0);
+    width: 100%;
+
+    &.expanded {
+        max-height: 80vh;
+    }
 
     .drawer-toggle {
         display: flex;

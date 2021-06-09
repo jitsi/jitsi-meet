@@ -214,4 +214,4 @@ export const HORIZONTAL_FILMSTRIP_MARGIN = 39;
  *
  * @type {number}
  */
-export const SHOW_TOOLBAR_CONTEXT_MENU_AFTER = 600;
+export const SHOW_TOOLBAR_CONTEXT_MENU_AFTER = 500;
