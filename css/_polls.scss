@@ -283,7 +283,21 @@ a.poll-detail-link, a.poll-change-vote-link {
     flex: 1;
 
     &:hover {
-        background-color: '#246FE5';
+        background-color: #246FE5;
+    }
+
+    &:active {
+        background-color: #0045B3;
+    }
+
+    &:focus {
+        background-color: #0045B3;
+        border: 3px solid #99BBF3;
+    }
+
+    &:disabled {
+        background-color: #00225A;
+        color: #858585;
     }
 
     & > *:not(:last-child) {
@@ -304,7 +318,21 @@ a.poll-detail-link, a.poll-change-vote-link {
     width: 100%;
 
     &:hover {
-        background-color: '#525252';
+        background-color: #525252;
+    }
+
+    &:active {
+        background-color: #292929;
+    }
+
+    &:focus {
+        background-color: #292929;
+        border: 3px solid #858585;
+    }
+
+    &:disabled {
+        background-color: #141414;
+        color: #858585;
     }
 
     & > *:not(:last-child) {
@@ -325,7 +353,21 @@ a.poll-detail-link, a.poll-change-vote-link {
     width: 50%;
 
     &:hover {
-        background-color: '#246FE5';
+        background-color: #246FE5;
+    }
+
+    &:active {
+        background-color: #0045B3;
+    }
+
+    &:focus {
+        background-color: #0045B3;
+        border: 3px solid #99BBF3;
+    }
+
+    &:disabled {
+        background-color: #00225A;
+        color: #858585;
     }
 
     & > *:not(:last-child) {
@@ -346,7 +388,21 @@ a.poll-detail-link, a.poll-change-vote-link {
     width: 50%;
 
     &:hover {
-        background-color: '#525252';
+        background-color: #525252;
+    }
+
+    &:active {
+        background-color: #292929;
+    }
+
+    &:focus {
+        background-color: #292929;
+        border: 3px solid #858585;
+    }
+
+    &:disabled {
+        background-color: #141414;
+        color: #858585;
     }
 
     & > *:not(:last-child) {
