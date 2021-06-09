@@ -328,7 +328,7 @@ export function isLocalParticipantModerator(stateful: Object | Function) {
         return false;
     }
 
-    return localParticipant.role === PARTICIPANT_ROLE.MODERATOR;
+    return isParticipantModerator(localParticipant);
 }
 
 /**
