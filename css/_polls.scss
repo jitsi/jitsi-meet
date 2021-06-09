@@ -10,12 +10,14 @@
 }
 
 .poll-question-field {
-    margin-bottom: 2em;
+    padding: 8px 16px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid #525252;
 }
 
 .poll-answer-field-list, .poll-answer-list, .poll-result-list {
     list-style-type: none;
-    padding: 0;
+    padding: 8px 16px;
 }
 
 ol.poll-result-list {
@@ -34,24 +36,20 @@ ol.poll-result-list {
     margin-bottom: 8px;
 }
 
-/* Solid border */
-.hr.poll-answer-option-separator {
-    display: block;
-	clear: both;
-	height: 0;
-	padding: 0;
-	border: 0;
-	line-height: 1;
-}
-
 .poll-answer-field {
     flex-direction: column;
     align-items: stretch;
-    margin-bottom: 4;
+    margin-bottom: 16;
+
+}
+
+.poll-answer-field:last-child {
+    margin-bottom: 0;
 }
 
 .poll-create-option-row {
-    display: 'flex'
+    display: 'flex';
+    margin-bottom: 4;
 }
 
 // Needeed to override atlaskit default blue color
@@ -64,7 +62,6 @@ ol.poll-result-list {
 .poll-add-button {
     display: flex;
     justify-content: center;
-    margin-top: 5px;
 }
 
 .poll-remove-option-button {
@@ -187,8 +184,7 @@ a.poll-detail-link, a.poll-change-vote-link {
     flex-direction: column;
     font-weight: 600;
     height: 85%;
-    width: 90%;
-    padding: 5%;
+    align-items: stretch;
 }
 
 .poll-results {
@@ -222,7 +218,7 @@ a.poll-detail-link, a.poll-change-vote-link {
     flex: 1;
     overflow-y: auto;
     position: relative;
-    padding: 0;
+    padding: 8px 16px;
 
     & > * + *:not(.ignore-child) {
         margin-top: 16px;
@@ -233,12 +229,22 @@ a.poll-detail-link, a.poll-change-vote-link {
     }
 }
 
+.poll-create-header {
+    font-size: 20px;
+    margin: 20px 16px;
+    font-weight: 600;
+}
+
+.poll-create-container {
+    padding: 8px 0;
+}
+
 .poll-footer {
     display: flex;
     justify-content: flex-end;
-    padding: 0;
-    padding-top: 5%;
-    width: 100%;
+    padding: 8px 16px;
+    height: 40px;
+    align-items: stretch;
 
     & > *:not(:last-child) {
         margin-right: 16px;
@@ -254,8 +260,7 @@ a.poll-detail-link, a.poll-change-vote-link {
     font-weight: unset;
     justify-content: center;
     font-size: 15px;
-    height: 40px;
-    width: 100%;
+    flex: 1;
 
     &:hover {
         background-color: '#246FE5';

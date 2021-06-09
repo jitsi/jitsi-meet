@@ -627,7 +627,7 @@
         "create": {
             "addOption": "Add option",
             "answerPlaceholder": "Option {{index}}",
-            "button": "Create a poll",
+            "create": "Create a poll",
             "cancel": "Cancel",
             "pollOption" : "Poll option {{index}}",
             "pollQuestion" : "Poll Question",

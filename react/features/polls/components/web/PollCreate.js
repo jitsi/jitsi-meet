@@ -141,6 +141,9 @@ const PollCreate = (props: AbstractProps) => {
         className = 'polls-pane-content'
         onSubmit = { onSubmit }>
         <div className = 'poll-create-container poll-container'>
+            <div className = 'poll-create-header'>
+                { t('polls.create.create') }
+            </div>
             <div className = 'poll-question-field'>
                 <span className = 'poll-create-label'>
                     { t('polls.create.pollQuestion') }
@@ -156,7 +159,6 @@ const PollCreate = (props: AbstractProps) => {
                     type = 'text'
                     value = { question } />
             </div>
-            <hr className = 'poll-answer-option-separator' />
             <ol className = 'poll-answer-field-list'>
                 {answers.map((answer, i) =>
                     (<li

@@ -28,7 +28,7 @@ const PollsPane = (props: AbstractProps) => {
                         mode = 'contained'
                         onPress = { onCreate }
                         style = { chatStyles.createPollButton } >
-                        {t('polls.create.button')}
+                        {t('polls.create.create')}
                     </Button>
                 </View>}
         </View>
