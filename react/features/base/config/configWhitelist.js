@@ -140,6 +140,7 @@ export default [
     'liveStreamingEnabled',
     'localRecording',
     'maxFullResolutionParticipants',
+    'mouseMoveCallbackInterval',
     'notifications',
     'openSharedDocumentOnJoin',
     'opusMaxAverageBitrate',

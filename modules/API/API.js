@@ -573,6 +573,44 @@ function toggleScreenSharing(enable) {
 }
 
 /**
+ * Removes sensitive data from a mouse event.
+ *
+ * @param {MouseEvent} event - The mouse event to sanitize.
+ * @returns {Object}
+ */
+function sanitizeMouseEvent(event: MouseEvent) {
+    const {
+        clientX,
+        clientY,
+        movementX,
+        movementY,
+        offsetX,
+        offsetY,
+        pageX,
+        pageY,
+        x,
+        y,
+        screenX,
+        screenY
+    } = event;
+
+    return {
+        clientX,
+        clientY,
+        movementX,
+        movementY,
+        offsetX,
+        offsetY,
+        pageX,
+        pageY,
+        x,
+        y,
+        screenX,
+        screenY
+    };
+}
+
+/**
  * Implements API class that communicates with external API class and provides
  * interface to access Jitsi Meet features by external applications that embed
  * Jitsi Meet.
@@ -672,6 +710,45 @@ class API {
             name: 'outgoing-message',
             message,
             privateMessage
+        });
+    }
+
+    /**
+     * Notify external application (if API is enabled) that the mouse has entered inside the iframe.
+     *
+     * @param {MouseEvent} event - The mousemove event.
+     * @returns {void}
+     */
+    notifyMouseEnter(event: MouseEvent) {
+        this._sendEvent({
+            name: 'mouse-enter',
+            event: sanitizeMouseEvent(event)
+        });
+    }
+
+    /**
+     * Notify external application (if API is enabled) that the mouse has entered inside the iframe.
+     *
+     * @param {MouseEvent} event - The mousemove event.
+     * @returns {void}
+     */
+    notifyMouseLeave(event: MouseEvent) {
+        this._sendEvent({
+            name: 'mouse-leave',
+            event: sanitizeMouseEvent(event)
+        });
+    }
+
+    /**
+     * Notify external application (if API is enabled) that the mouse has moved inside the iframe.
+     *
+     * @param {MouseEvent} event - The mousemove event.
+     * @returns {void}
+     */
+    notifyMouseMove(event: MouseEvent) {
+        this._sendEvent({
+            name: 'mouse-move',
+            event: sanitizeMouseEvent(event)
         });
     }
 
