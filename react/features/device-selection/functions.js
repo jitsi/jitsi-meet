@@ -13,6 +13,7 @@ import {
     setAudioOutputDeviceId,
     setVideoInputDevice
 } from '../base/devices';
+import { isIosMobileBrowser } from '../base/environment/utils';
 import JitsiMeetJS from '../base/lib-jitsi-meet';
 import { toState } from '../base/redux';
 import {
@@ -33,6 +34,7 @@ export function getDeviceSelectionDialogProps(stateful: Object | Function) {
     const settings = state['features/base/settings'];
     const { conference } = state['features/base/conference'];
     const { permissions } = state['features/base/devices'];
+    const isMobileSafari = isIosMobileBrowser();
     let disableAudioInputChange = !JitsiMeetJS.mediaDevices.isMultipleAudioInputSupported();
     let selectedAudioInputId = settings.micDeviceId;
     let selectedAudioOutputId = getAudioOutputDeviceId();
@@ -62,6 +64,8 @@ export function getDeviceSelectionDialogProps(stateful: Object | Function) {
             !JitsiMeetJS.isCollectingLocalStats(),
         hideAudioOutputSelect: !JitsiMeetJS.mediaDevices
                             .isDeviceChangeAvailable('output'),
+        hideVideoInputPreview: isMobileSafari,
+        hideVideoOutputSelect: isMobileSafari,
         selectedAudioInputId,
         selectedAudioOutputId,
         selectedVideoInputId

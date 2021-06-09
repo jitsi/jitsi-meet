@@ -65,6 +65,18 @@ export type Props = {
     hideAudioOutputSelect: boolean,
 
     /**
+     * Whether video input preview should be displayed or not.
+     * (In the case of iOS Safari)
+     */
+    hideVideoInputPreview: boolean,
+
+    /**
+     * Whether video output dropdown should be displayed or not.
+     * (In the case of iOS Safari)
+     */
+    hideVideoOutputSelect: boolean,
+
+    /**
      * An optional callback to invoke after the component has completed its
      * mount logic.
      */
@@ -201,17 +213,20 @@ class DeviceSelection extends AbstractDialogTab<Props, State> {
         const {
             hideAudioInputPreview,
             hideAudioOutputSelect,
+            hideVideoInputPreview,
             selectedAudioOutputId
         } = this.props;
 
         return (
-            <div className = 'device-selection'>
+            <div className = { `device-selection${hideVideoInputPreview ? ' video-hidden' : ''}` }>
                 <div className = 'device-selection-column column-video'>
-                    <div className = 'device-selection-video-container'>
-                        <VideoInputPreview
-                            error = { this.state.previewVideoTrackError }
-                            track = { this.state.previewVideoTrack } />
-                    </div>
+                    { !hideVideoInputPreview
+                        && <div className = 'device-selection-video-container'>
+                            <VideoInputPreview
+                                error = { this.state.previewVideoTrackError }
+                                track = { this.state.previewVideoTrack } />
+                        </div>
+                    }
                     { !hideAudioInputPreview
                         && <AudioInputPreview
                             track = { this.state.previewAudioTrack } /> }
@@ -264,6 +279,12 @@ class DeviceSelection extends AbstractDialogTab<Props, State> {
      * @returns {void}
      */
     _createVideoInputTrack(deviceId) {
+        const { hideVideoInputPreview } = this.props;
+
+        if (hideVideoInputPreview) {
+            return;
+        }
+
         return this._disposeVideoInputPreview()
             .then(() => createLocalTrack('video', deviceId, 5000))
             .then(jitsiLocalTrack => {
@@ -343,18 +364,6 @@ class DeviceSelection extends AbstractDialogTab<Props, State> {
 
         const configurations = [
             {
-                devices: availableDevices.videoInput,
-                hasPermission: hasVideoPermission,
-                icon: 'icon-camera',
-                isDisabled: this.props.disableDeviceChange,
-                key: 'videoInput',
-                label: 'settings.selectCamera',
-                onSelect: selectedVideoInputId =>
-                    super._onChange({ selectedVideoInputId }),
-                selectedDeviceId: this.state.previewVideoTrack
-                    ? this.state.previewVideoTrack.getDeviceId() : null
-            },
-            {
                 devices: availableDevices.audioInput,
                 hasPermission: hasAudioPermission,
                 icon: 'icon-microphone',
@@ -368,6 +377,21 @@ class DeviceSelection extends AbstractDialogTab<Props, State> {
                     ? this.state.previewAudioTrack.getDeviceId() : null
             }
         ];
+
+        if (!this.props.hideVideoOutputSelect) {
+            configurations.unshift({
+                devices: availableDevices.videoInput,
+                hasPermission: hasVideoPermission,
+                icon: 'icon-camera',
+                isDisabled: this.props.disableDeviceChange,
+                key: 'videoInput',
+                label: 'settings.selectCamera',
+                onSelect: selectedVideoInputId =>
+                    super._onChange({ selectedVideoInputId }),
+                selectedDeviceId: this.state.previewVideoTrack
+                    ? this.state.previewVideoTrack.getDeviceId() : null
+            });
+        }
 
         if (!this.props.hideAudioOutputSelect) {
             configurations.push({

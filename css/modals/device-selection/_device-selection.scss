@@ -129,3 +129,20 @@
         }
     }
 }
+
+.device-selection.video-hidden {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+
+    .column-selectors {
+        width: 100%;
+        margin-left: 0;
+    }
+
+    .column-video {
+        order: 1;
+        width: 100%;
+        margin-top: 8px;
+    }
+}
