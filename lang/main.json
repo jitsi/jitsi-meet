@@ -957,6 +957,7 @@
     },
     "lobby": {
         "admit": "Admit",
+        "admitAll": "Admit all",
         "knockingParticipantList": "Knocking participant list",
         "allow": "Allow",
         "backToKnockModeButton": "No password, ask to join instead",
