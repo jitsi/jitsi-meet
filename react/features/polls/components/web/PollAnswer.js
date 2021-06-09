@@ -22,13 +22,15 @@ const PollAnswer = (props: AbstractProps) => {
         <div className = 'poll-answer'>
             <div className = 'poll-header'>
                 <div className = 'poll-question'>
-                    <strong>{ poll.question }</strong>
+                    <span>{ poll.question }</span>
                 </div>
             </div>
             <ol className = 'poll-answer-list'>
                 {
                     poll.answers.map((answer, index) => (
-                        <li key = { index }>
+                        <li
+                            className = 'poll-answer-container'
+                            key = { index }>
                             <Checkbox
                                 isChecked = { checkBoxStates[index] }
                                 key = { index }
