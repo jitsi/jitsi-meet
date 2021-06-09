@@ -131,9 +131,22 @@ ol.poll-result-list {
     overflow-wrap: anywhere
 }
 
+.poll-answer-vote-count-container{
+    display: flex;
+}
+
 .poll-answer-vote-count {
     margin-left: 10px;
     white-space: nowrap;
+    flex: 1;
+    text-align: right;
+}
+
+.poll-answer-short-results{
+    display: flex;
+    min-width: 10em;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .poll-bar-container, .poll-bar {
@@ -143,8 +156,9 @@ ol.poll-result-list {
 
 .poll-bar-container {
     background-color: #616161;
-    min-width: 150px;
+    max-width: 160px;
     margin-top: 3px;
+    flex: 1;
 }
 
 .poll-bar {
@@ -182,6 +196,7 @@ ol.poll-result-list {
 a.poll-detail-link, a.poll-change-vote-link {
     color: #246FE5;
     cursor: pointer;
+    text-decoration: none;
 }
 
 .polls-pane-content {
