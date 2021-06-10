@@ -851,7 +851,10 @@ var config = {
     //     'toolbar.noisyAudioInputTitle', // shown when noise is detected for the current microphone
     //     'toolbar.talkWhileMutedPopup', // shown when user tries to speak while muted
     //     'transcribing.failedToStart' // shown when transcribing fails to start
-    // ]
+    // ],
+
+    // Automatically hides the filmstrip when screen width is under a certain threshold
+    autohideFilmstrip: true,
 
     // Allow all above example options to include a trailing comma and
     // prevent fear when commenting out the last value.
