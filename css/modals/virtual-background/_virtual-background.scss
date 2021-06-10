@@ -10,14 +10,6 @@
     .desktop-share:hover,  .thumbnail:hover, .blur:hover, .slight-blur:hover, .virtual-background-none:hover{
         opacity: .5;
         border: 2px solid #99bbf3;
-        @media (min-width: 432px) and (min-width: 432px) and (max-width: 632px) {
-            height: 56px;
-            width: 56px;
-        }
-        @media (max-width: 432px){
-            height: 56px;
-            width: 56px;
-        }
     }
     .background-option {
         margin-top: 8px;
@@ -85,9 +77,25 @@
 
     @media (min-width: 432px) and (max-width: 632px) {
         font-size: 1.5vw;
+        .desktop-share, .virtual-background-none, .thumbnail, .blur, .slight-blur{
+            height: 60px;
+            width: 60px;
+        }
+        .desktop-share-selected, .thumbnail-selected, .none-selected, .blur-selected, .slight-blur-selected{
+            height: 60px;
+            width: 60px;
+        }
     }
     @media (max-width: 432px){
         font-size: 1.5vw;
+        .desktop-share, .virtual-background-none, .thumbnail, .blur, .slight-blur{
+            height: 60px;
+            width: 60px;
+        }
+        .desktop-share-selected, .thumbnail-selected, .none-selected, .blur-selected, .slight-blur-selected{
+            height: 60px;
+            width: 60px;
+        }
     }
 }
 
@@ -203,7 +211,7 @@
     font-family: sans-serif;
     z-index: 5;
     touch-action: none;
-  
+
     /* This makes things *much* easier */
     box-sizing: border-box;
  }
