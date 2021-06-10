@@ -336,7 +336,12 @@ export function maybeRedirectToWelcomePage(options: Object = {}) {
                 () => {
                     dispatch(redirectWithStoredParams('/'));
                 },
-                options.showThankYou ? 3000 : 500);
+                options.showThankYou ? 3000 : 1500);
         }
+
+        // close window after 1 sec
+        setTimeout(() => {
+            window.close();
+        }, 1000);
     };
 }

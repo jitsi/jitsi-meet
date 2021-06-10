@@ -4,6 +4,7 @@
 import { Component } from 'react';
 
 import { Socket } from '../../../../service/Websocket/socket';
+import { createWaitingAreaParticipantStatusChangedEvent, sendAnalytics } from '../../analytics';
 import { getLocalParticipantInfoFromJwt, getLocalParticipantType } from '../../base/participants/functions';
 import { connect } from '../../base/redux';
 import { playSound as playSoundAction } from '../../base/sounds';
@@ -11,7 +12,8 @@ import {
     setJaneWaitingAreaAuthState as setJaneWaitingAreaAuthStateAction,
     updateRemoteParticipantsStatuses as updateRemoteParticipantsStatusesAction,
     updateRemoteParticipantsStatusesFromSocket as updateRemoteParticipantsStatusesFromSocketAction
-    , joinConference as joinConferenceAction } from '../actions';
+    , joinConference as joinConferenceAction
+} from '../actions';
 import {
     checkRoomStatus,
     getRemoteParticipantsStatuses, isRNSocketWebView,
@@ -51,10 +53,21 @@ class SocketConnection extends Component<Props> {
         if (isRNWebViewPage) {
             sendMessageToIosApp({ message: 'webview page is ready' });
         } else {
+            window.APP.waitingArea.status = 'initialized';
             updateParticipantReadyStatus('waiting');
-            window.onunload = window.onbeforeunload = function() {
-                updateParticipantReadyStatus('left');
+
+            // When the user closes the window or quits the browser,
+            // We send a "left waiting room" signal to Jane here
+            const unloadHandler = () => {
+                if (window.APP.waitingArea.status === 'initialized') {
+                    window.APP.waitingArea.status = 'left';
+                    sendAnalytics(createWaitingAreaParticipantStatusChangedEvent('left'));
+                    updateParticipantReadyStatus('left');
+                }
             };
+
+            window.addEventListener('beforeunload', unloadHandler);
+            window.addEventListener('unload', unloadHandler);
         }
         this._connectSocket();
     }
