@@ -23,7 +23,7 @@ import styles from './styles';
  *
  * @returns {React$Element<any>}
  */
-export function ParticipantsPane() {
+function ParticipantsPane() {
     const dispatch = useDispatch();
     const openMoreMenu = useCallback(() => dispatch(openDialog(ContextMenuMore)), [ dispatch ]);
     const closePane = useCallback(() => dispatch(hideDialog()), [ dispatch ]);

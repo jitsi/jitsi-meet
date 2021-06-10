@@ -1,8 +1,7 @@
 // @flow
 
-import Slider from '@react-native-community/slider';
 import React, { Component } from 'react';
-import { View } from 'react-native';
+import { Slider, View } from 'react-native';
 import { withTheme } from 'react-native-paper';
 
 import { Icon, IconVolumeEmpty } from '../../../base/icons';
@@ -93,6 +92,7 @@ class VolumeSlider extends Component<Props, State> {
                     minimumValue = { 0 }
                     onValueChange = { this._onVolumeChange }
                     style = { styles.sliderContainer }
+                    thumbTintColor = { palette.field02 }
                     value = { volumeLevel } />
             </View>
 
