@@ -1,7 +1,7 @@
 .avatar {
     background-color: #AAA;
     border-radius: 50%;
-    color: rgba(255, 255, 255, 0.6);
+    color: rgba(255, 255, 255, 1);
     font-weight: 100;
     object-fit: cover;
 
@@ -23,10 +23,6 @@
 .avatar-svg {
     height: 100%;
     width: 100%;
-}
-
-.defaultAvatar {
-    opacity: 0.6
 }
 
 .avatar-badge {

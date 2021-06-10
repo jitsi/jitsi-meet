@@ -85,6 +85,7 @@ class E2EESection extends Component<Props, State> {
 
         // Bind event handlers so they are only bound once for every instance.
         this._onExpand = this._onExpand.bind(this);
+        this._onExpandKeyPress = this._onExpandKeyPress.bind(this);
         this._onToggle = this._onToggle.bind(this);
     }
 
@@ -101,12 +102,20 @@ class E2EESection extends Component<Props, State> {
 
         return (
             <div id = 'e2ee-section'>
-                <p className = 'description'>
+                <p
+                    aria-live = 'polite'
+                    className = 'description'
+                    id = 'e2ee-section-description'>
                     { expand && description }
                     { !expand && description.substring(0, 100) }
                     { !expand && <span
+                        aria-controls = 'e2ee-section-description'
+                        aria-expanded = { expand }
                         className = 'read-more'
-                        onClick = { this._onExpand }>
+                        onClick = { this._onExpand }
+                        onKeyPress = { this._onExpandKeyPress }
+                        role = 'button'
+                        tabIndex = { 0 }>
                             ... { t('dialog.readMore') }
                     </span> }
                 </p>
@@ -140,6 +149,22 @@ class E2EESection extends Component<Props, State> {
         this.setState({
             expand: true
         });
+    }
+
+    _onExpandKeyPress: (Object) => void;
+
+    /**
+     * KeyPress handler for accessibility.
+     *
+     * @param {Object} e - The key event to handle.
+     *
+     * @returns {void}
+     */
+    _onExpandKeyPress(e) {
+        if (e.key === ' ' || e.key === 'Enter') {
+            e.preventDefault();
+            this._onExpand();
+        }
     }
 
     _onToggle: () => void;

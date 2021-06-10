@@ -572,7 +572,9 @@ class ConnectionStatsTable extends Component<Props> {
             <span>
                 <a
                     className = 'savelogs link'
-                    onClick = { this.props.onSaveLogs } >
+                    onClick = { this.props.onSaveLogs }
+                    role = 'button'
+                    tabIndex = { 0 }>
                     { this.props.t('connectionindicator.savelogs') }
                 </a>
                 <span> | </span>
@@ -597,7 +599,9 @@ class ConnectionStatsTable extends Component<Props> {
         return (
             <a
                 className = 'showmore link'
-                onClick = { this.props.onShowMore } >
+                onClick = { this.props.onShowMore }
+                role = 'button'
+                tabIndex = { 0 }>
                 { this.props.t(translationKey) }
             </a>
         );

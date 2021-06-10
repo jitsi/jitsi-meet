@@ -2,6 +2,7 @@
 
 import React, { Component } from 'react';
 
+import keyboardShortcut from '../../../../../modules/keyboardshortcut/keyboardshortcut';
 import {
     ACTION_SHORTCUT_TRIGGERED,
     createShortcutEvent,
@@ -289,6 +290,7 @@ class Toolbox extends Component<Props> {
         this._onToolbarToggleShareAudio = this._onToolbarToggleShareAudio.bind(this);
         this._onToolbarOpenLocalRecordingInfoDialog = this._onToolbarOpenLocalRecordingInfoDialog.bind(this);
         this._onShortcutToggleTileView = this._onShortcutToggleTileView.bind(this);
+        this._onEscKey = this._onEscKey.bind(this);
     }
 
     /**
@@ -395,6 +397,21 @@ class Toolbox extends Component<Props> {
                 { this._renderToolboxContent() }
             </div>
         );
+    }
+
+    _onEscKey: (KeyboardEvent) => void;
+
+    /**
+     * Key handler for overflow menu.
+     *
+     * @param {KeyboardEvent} e - Esc key click to close the popup.
+     * @returns {void}
+     */
+    _onEscKey(e) {
+        if (e.key === 'Escape') {
+            e.stopPropagation();
+            this._closeOverflowMenuIfOpen();
+        }
     }
 
     /**
@@ -1065,7 +1082,7 @@ class Toolbox extends Component<Props> {
                     showLabel = { true } />,
             this.props._shouldShowButton('mute-video-everyone')
                 && <MuteEveryonesVideoButton
-                    key = 'mute-everyones-video'
+                    key = 'mute-video-everyone'
                     showLabel = { true } />,
             this.props._shouldShowButton('livestreaming')
                 && <LiveStreamButton
@@ -1134,6 +1151,7 @@ class Toolbox extends Component<Props> {
                     showLabel = { true } />,
             this.props._shouldShowButton('shortcuts')
                 && !_isMobile
+                && keyboardShortcut.getEnabled()
                 && <OverflowMenuItem
                     accessibilityLabel = { t('toolbar.accessibilityLabel.shortcuts') }
                     icon = { IconDeviceDocument }
@@ -1178,7 +1196,6 @@ class Toolbox extends Component<Props> {
             _chatOpen,
             _desktopSharingEnabled,
             _desktopSharingDisabledTooltipKey,
-            _raisedHand,
             _screensharing,
             t
         } = this.props;
@@ -1228,20 +1245,22 @@ class Toolbox extends Component<Props> {
         }
 
         if (this.props._shouldShowButton('raisehand')) {
+            const raisedHand = this.props._raisedHand || false;
+
             buttons.has('raisehand')
                 ? mainMenuAdditionalButtons.push(<ToolbarButton
                     accessibilityLabel = { t('toolbar.accessibilityLabel.raiseHand') }
                     icon = { IconRaisedHand }
                     key = 'raisehand'
                     onClick = { this._onToolbarToggleRaiseHand }
-                    toggled = { _raisedHand }
-                    tooltip = { t(`toolbar.${_raisedHand ? 'lowerYourHand' : 'raiseYourHand'}`) } />)
+                    toggled = { raisedHand }
+                    tooltip = { t(`toolbar.${raisedHand ? 'lowerYourHand' : 'raiseYourHand'}`) } />)
                 : overflowMenuAdditionalButtons.push(<OverflowMenuItem
                     accessibilityLabel = { t('toolbar.accessibilityLabel.raiseHand') }
                     icon = { IconRaisedHand }
                     key = 'raisehand'
                     onClick = { this._onToolbarToggleRaiseHand }
-                    text = { t(`toolbar.${_raisedHand ? 'lowerYourHand' : 'raiseYourHand'}`) } />);
+                    text = { t(`toolbar.${raisedHand ? 'lowerYourHand' : 'raiseYourHand'}`) } />);
         }
 
         if (this.props._shouldShowButton('participants-pane') || this.props._shouldShowButton('invite')) {
@@ -1344,11 +1363,15 @@ class Toolbox extends Component<Props> {
                         { this._renderVideoButton() }
                         { mainMenuAdditionalButtons }
                         { showOverflowMenuButton && <OverflowMenuButton
+                            ariaControls = 'overflow-menu'
                             isOpen = { _overflowMenuVisible }
                             onVisibilityChange = { this._onSetOverflowVisible }>
                             <ul
                                 aria-label = { t(toolbarAccLabel) }
-                                className = 'overflow-menu'>
+                                className = 'overflow-menu'
+                                id = 'overflow-menu'
+                                onKeyDown = { this._onEscKey }
+                                role = 'menu'>
                                 { this._renderOverflowMenuContent(overflowMenuAdditionalButtons) }
                             </ul>
                         </OverflowMenuButton>}

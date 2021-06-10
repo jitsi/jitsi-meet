@@ -16,11 +16,18 @@
     }
 
     .mock-atlaskit-label {
-        color: #56637A;
+        color: #b8c7e0;
         font-size: 12px;
         font-weight: 600;
         line-height: 1.33;
         padding: 20px 0px 4px 0px;
+    }
+    input[type="checkbox"]:checked + svg {
+        --checkbox-background-color: #6492e7;
+        --checkbox-border-color: #6492e7;
+    }
+    input[type="checkbox"] + svg + span {
+        color: #b8c7e0;
     }
 
     input[type="checkbox"] + svg + span {
@@ -64,5 +71,15 @@
 
     .sign-out-cta {
         margin-bottom: 20px;
+    }
+
+    @media only screen and (max-width: $smallScreen) {
+        .device-selection {
+            display: flex;
+            flex-direction: column;
+        }
+        .more-tab {
+            flex-direction: column;
+        }
     }
 }
