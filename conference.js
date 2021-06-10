@@ -16,7 +16,7 @@ import {
     createStartSilentEvent,
     createScreenSharingEvent,
     createTrackMutedEvent,
-    sendAnalytics
+    sendAnalytics, createWaitingAreaParticipantStatusChangedEvent
 } from './react/features/analytics';
 import {
     maybeRedirectToWelcomePage,
@@ -119,7 +119,7 @@ import {
     isJaneWaitingAreaPageEnabled,
     isJaneWaitingAreaPageVisible,
     replaceJaneWaitingAreaAudioTrack,
-    replaceJaneWaitingAreaVideoTrack
+    replaceJaneWaitingAreaVideoTrack, updateParticipantReadyStatus
 } from './react/features/jane-waiting-area';
 import { showNotification } from './react/features/notifications';
 import { mediaPermissionPromptVisibilityChanged } from './react/features/overlay';
@@ -2816,6 +2816,12 @@ export default {
 
         APP.UI.removeAllListeners();
         APP.remoteControl.removeAllListeners();
+
+        if (window.APP.waitingArea.status === 'initialized') {
+            window.APP.waitingArea.status = 'left';
+            sendAnalytics(createWaitingAreaParticipantStatusChangedEvent('left'));
+            updateParticipantReadyStatus('left');
+        }
 
         let requestFeedbackPromise;
 
