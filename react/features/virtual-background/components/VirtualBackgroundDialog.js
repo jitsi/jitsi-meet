@@ -1,5 +1,5 @@
 // @flow
-
+/* eslint-disable react/jsx-no-bind, no-return-assign, arrow-body-style */
 import Spinner from '@atlaskit/spinner';
 import Bourne from '@hapi/bourne';
 import { jitsiLocalStorage } from '@jitsi/js-utils/jitsi-local-storage';
@@ -20,6 +20,7 @@ import { VIRTUAL_BACKGROUND_TYPE } from '../constants';
 import { resizeImage, toDataURL } from '../functions';
 import logger from '../logger';
 
+import SizeAndPosition from './SizeAndPosition';
 import VirtualBackgroundPreview from './VirtualBackgroundPreview';
 
 
@@ -108,6 +109,12 @@ const onError = event => {
  * @returns {ReactElement}
  */
 function VirtualBackground({ _jitsiTrack, _selectedThumbnail, _virtualSource, dispatch, t }: Props) {
+    const [ areaConstrains, setAreaConstrains ] = useState({
+        areaWidth: 400,
+        areaHeight: 200,
+        areaLeft: 860,
+        areaTop: 447
+    });
     const [ options, setOptions ] = useState({});
     const localImages = jitsiLocalStorage.getItem('virtualBackgrounds');
     const [ storedImages, setStoredImages ] = useState<Array<Image>>((localImages && Bourne.parse(localImages)) || []);
@@ -192,7 +199,8 @@ function VirtualBackground({ _jitsiTrack, _selectedThumbnail, _virtualSource, di
             backgroundType: VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE,
             enabled: true,
             selectedThumbnail: 'desktop-share',
-            url
+            url,
+            areaConstrains
         });
     }, []);
 
@@ -308,6 +316,21 @@ function VirtualBackground({ _jitsiTrack, _selectedThumbnail, _virtualSource, di
         dispatch(hideDialog());
     }, [ dispatch, options ]);
 
+    const getSizeAndPosition = async (areaWidth, areaHeight, areaLeft, areaTop) => {
+        const areaConstrainsObj = {
+            areaWidth,
+            areaHeight,
+            areaLeft,
+            areaTop
+        };
+
+        await setAreaConstrains(areaConstrainsObj);
+        await setOptions(prevState => ({
+            ...prevState,
+            areaConstrains: areaConstrainsObj
+        }));
+    };
+
     return (
         <Dialog
             hideCancelButton = { false }
@@ -315,7 +338,11 @@ function VirtualBackground({ _jitsiTrack, _selectedThumbnail, _virtualSource, di
             onSubmit = { applyVirtualBackground }
             submitDisabled = { !options || loading }
             titleKey = { 'virtualBackground.title' } >
-            <VirtualBackgroundPreview options = { options } />
+            <div className = 'preview-area'>
+                {options.selectedThumbnail === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE
+                    && <SizeAndPosition dialogCallback = { getSizeAndPosition } />}
+                <VirtualBackgroundPreview options = { options } />
+            </div>
             {loading ? (
                 <div className = 'virtual-background-loading'>
                     <Spinner

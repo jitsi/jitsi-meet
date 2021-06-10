@@ -103,18 +103,30 @@ export default class JitsiStreamBackgroundEffect {
             0,
             this._options.width,
             this._options.height,
-            0,
-            0,
-            this._inputVideoElement.width,
-            this._inputVideoElement.height
+            this._options.virtualBackground?.areaConstrains?.areaLeft
+                ? this._options.virtualBackground.areaConstrains.areaLeft : 0,
+            this._options.virtualBackground?.areaConstrains?.areaTop
+                ? this._options.virtualBackground.areaConstrains.areaTop : 0,
+            this._options.virtualBackground?.areaConstrains?.areaWidth
+                ? this._options.virtualBackground.areaConstrains.areaWidth : this._inputVideoElement.width,
+            this._options.virtualBackground?.areaConstrains?.areaHeight
+                ? this._options.virtualBackground.areaConstrains.areaHeight : this._inputVideoElement.height
         );
         this._outputCanvasCtx.globalCompositeOperation = 'source-in';
         this._outputCanvasCtx.filter = 'none';
 
         // Draw the foreground video.
         //
-
-        this._outputCanvasCtx.drawImage(this._inputVideoElement, 0, 0);
+        if (this._options.virtualBackground?.areaConstrains?.areaTop) {
+            this._outputCanvasCtx.drawImage(this._inputVideoElement,
+                this._options.virtualBackground.areaConstrains.areaLeft,
+                this._options.virtualBackground.areaConstrains.areaTop,
+                this._options.virtualBackground.areaConstrains.areaWidth,
+                this._options.virtualBackground.areaConstrains.areaHeight
+            );
+        } else {
+            this._outputCanvasCtx.drawImage(this._inputVideoElement, 0, 0);
+        }
 
         // Draw the background.
         //

@@ -1,5 +1,6 @@
 // @flow
 
+import { hideDialog } from '../base/dialog';
 import { JitsiTrackEvents } from '../base/lib-jitsi-meet';
 
 import { toggleBackgroundEffect } from './actions';
@@ -108,7 +109,8 @@ export function localTrackStopped(dispatch: Function, desktopTrack: Object, curr
     };
 
     desktopTrack
-    && desktopTrack.on(JitsiTrackEvents.LOCAL_TRACK_STOPPED, () => {
-        dispatch(toggleBackgroundEffect(noneOptions, currentLocalTrack));
-    });
+        && desktopTrack.on(JitsiTrackEvents.LOCAL_TRACK_STOPPED, () => {
+            dispatch(toggleBackgroundEffect(noneOptions, currentLocalTrack));
+            dispatch(hideDialog());
+        });
 }
