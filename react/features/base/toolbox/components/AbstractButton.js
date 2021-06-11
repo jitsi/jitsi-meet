@@ -257,7 +257,7 @@ export default class AbstractButton<P: Props, S: *> extends Component<P, S> {
         afterClick && afterClick(e);
 
         // blur after click to release focus from button to allow PTT.
-        e && e.currentTarget && e.currentTarget.blur();
+        e?.currentTarget?.blur && e.currentTarget.blur();
     }
 
     /**
