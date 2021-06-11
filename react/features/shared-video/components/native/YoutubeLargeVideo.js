@@ -9,7 +9,6 @@ import { connect } from '../../../base/redux';
 import { ASPECT_RATIO_WIDE } from '../../../base/responsive-ui';
 import { setToolboxVisible } from '../../../toolbox/actions';
 import { setSharedVideoStatus } from '../../actions.native';
-import { getYoutubeId } from '../../functions';
 
 import styles from './styles';
 
@@ -101,11 +100,11 @@ type Props = {
     dispatch: Function,
 
     /**
-     * Youtube url of the video to be played.
+     * Youtube id of the video to be played.
      *
      * @private
      */
-    youtubeUrl: string
+     youtubeId: string
 };
 
 /**
@@ -200,7 +199,7 @@ class YoutubeLargeVideo extends Component<Props, *> {
             _isPlaying,
             _playerHeight,
             _playerWidth,
-            youtubeUrl
+            youtubeId
         } = this.props;
 
         return (
@@ -221,7 +220,7 @@ class YoutubeLargeVideo extends Component<Props, *> {
                     play = { _isPlaying }
                     playbackRate = { 1 }
                     ref = { this.playerRef }
-                    videoId = { getYoutubeId(youtubeUrl) }
+                    videoId = { youtubeId }
                     volume = { 50 }
                     webViewProps = {{
                         bounces: false,
@@ -244,7 +243,7 @@ class YoutubeLargeVideo extends Component<Props, *> {
     _onReady() {
         if (this.props?._isOwner) {
             this.onVideoReady(
-                this.props.youtubeUrl,
+                this.props.youtubeId,
                 this.playerRef.current && this.playerRef.current.getCurrentTime(),
                 this.props._ownerId);
         }
@@ -267,11 +266,11 @@ class YoutubeLargeVideo extends Component<Props, *> {
                 _isStopped,
                 _ownerId,
                 _seek,
-                youtubeUrl
+                youtubeId
             } = this.props;
 
             if (shouldSetNewStatus(_isStopped, _isOwner, status, _isPlaying, time, _seek)) {
-                this.onVideoChangeEvent(youtubeUrl, status, time, _ownerId);
+                this.onVideoChangeEvent(youtubeId, status, time, _ownerId);
             }
         });
     }
@@ -283,10 +282,10 @@ class YoutubeLargeVideo extends Component<Props, *> {
      * @returns {void}
     */
     saveRefTime() {
-        const { youtubeUrl, _status, _ownerId } = this.props;
+        const { youtubeId, _status, _ownerId } = this.props;
 
         this.playerRef.current && this.playerRef.current.getCurrentTime().then(time => {
-            this.onVideoChangeEvent(youtubeUrl, _status, time, _ownerId);
+            this.onVideoChangeEvent(youtubeId, _status, time, _ownerId);
         });
     }
 
