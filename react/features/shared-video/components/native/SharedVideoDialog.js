@@ -49,7 +49,7 @@ class SharedVideoDialog extends AbstractSharedVideoDialog<*> {
         if (videoId) {
             const { onPostSubmit } = this.props;
 
-            onPostSubmit && onPostSubmit(link);
+            onPostSubmit && onPostSubmit(videoId);
 
             return true;
         }

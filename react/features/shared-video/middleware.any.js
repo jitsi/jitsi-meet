@@ -18,7 +18,7 @@ import {
     setSharedVideoStatus
 } from './actions.any';
 import { SHARED_VIDEO, VIDEO_PLAYER_PARTICIPANT_NAME } from './constants';
-import { getYoutubeId, isSharingStatus } from './functions';
+import { isSharingStatus } from './functions';
 
 /**
  * Middleware that captures actions related to video sharing and updates
@@ -126,7 +126,7 @@ function handleSharingVideoStatus(store, videoUrl, { state, time, from, muted },
     const oldStatus = getState()['features/shared-video']?.status;
 
     if (state === 'start' || ![ 'playing', 'pause', 'start' ].includes(oldStatus)) {
-        const youtubeId = getYoutubeId(videoUrl);
+        const youtubeId = videoUrl.match(/http/) ? false : videoUrl;
         const avatarURL = youtubeId ? `https://img.youtube.com/vi/${youtubeId}/0.jpg` : '';
 
         dispatch(participantJoined({
