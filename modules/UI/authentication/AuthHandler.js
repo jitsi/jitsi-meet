@@ -11,6 +11,7 @@ import {
     isTokenAuthEnabled,
     getTokenAuthUrl
 } from '../../../react/features/authentication/functions';
+import { getReplaceParticipant } from '../../../react/features/base/config/functions';
 import { isDialogOpen } from '../../../react/features/base/dialog';
 import { setJWT } from '../../../react/features/base/jwt';
 import UIUtil from '../util/UIUtil';
@@ -209,8 +210,7 @@ function logout(room: Object) {
     }).then(url => {
         // de-authenticate conference on the fly
         if (room.isJoined()) {
-            const { replaceParticipant }
-                = APP.store.getState()['features/base/config'];
+            const replaceParticipant = getReplaceParticipant(APP.store.getState());
 
             room.join(null, replaceParticipant);
         }
