@@ -3,6 +3,7 @@
 import interact from 'interactjs';
 import React, { useState } from 'react';
 
+import { translate } from '../../base/i18n';
 import { connect } from '../../base/redux';
 import { VIRTUAL_BACKGROUND_TYPE } from '../constants';
 
@@ -11,7 +12,7 @@ import { VIRTUAL_BACKGROUND_TYPE } from '../constants';
  *
  * @returns {Function}
  */
-function SizeAndPosition({ dialogCallback, _selectedThumbnail }) {
+function SizeAndPosition({ dialogCallback, _selectedThumbnail, t }) {
     const [ areaHeight, setAreaHeight ] = useState(100);
     const [ areaWidth, setAreaWidth ] = useState(100);
     const [ areaLeft, setAreaLeft ] = useState(350);
@@ -113,7 +114,7 @@ function SizeAndPosition({ dialogCallback, _selectedThumbnail }) {
                 <div
                     className = 'outputCanvas'
                     onMouseUp = { () => dialogCallback(areaWidth, areaHeight, areaLeft, areaTop) }>
-                    Drag & resize
+                    {t('virtualBackground.dragAndResize')}
                 </div>
             )}
         </>
@@ -134,4 +135,4 @@ function _mapStateToProps(state): Object {
     };
 }
 
-export default connect(_mapStateToProps)(SizeAndPosition);
+export default translate(connect(_mapStateToProps)(SizeAndPosition));
