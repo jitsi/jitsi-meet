@@ -460,7 +460,7 @@ export function createConference() {
 
         sendLocalParticipant(state, conference);
 
-        conference.join(password);
+        conference.join(password, config.replaceParticipant);
     };
 }
 
@@ -477,8 +477,11 @@ export function checkIfCanJoin() {
         const { authRequired, password }
             = getState()['features/base/conference'];
 
+        const { replaceParticipant }
+            = getState()['features/base/config'];
+
         authRequired && dispatch(_conferenceWillJoin(authRequired));
-        authRequired && authRequired.join(password);
+        authRequired && authRequired.join(password, replaceParticipant);
     };
 }
 
