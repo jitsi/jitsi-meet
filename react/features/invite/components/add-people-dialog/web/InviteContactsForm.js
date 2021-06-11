@@ -76,9 +76,11 @@ class InviteContactsForm extends AbstractAddPeopleDialog<Props, State> {
 
         // Bind event handlers so they are only bound once per instance.
         this._onClearItems = this._onClearItems.bind(this);
+        this._onClearItemsKeyPress = this._onClearItemsKeyPress.bind(this);
         this._onItemSelected = this._onItemSelected.bind(this);
         this._onSelectionChange = this._onSelectionChange.bind(this);
         this._onSubmit = this._onSubmit.bind(this);
+        this._onSubmitKeyPress = this._onSubmitKeyPress.bind(this);
         this._parseQueryResults = this._parseQueryResults.bind(this);
         this._setMultiSelectElement = this._setMultiSelectElement.bind(this);
         this._renderFooterText = this._renderFooterText.bind(this);
@@ -244,6 +246,22 @@ class InviteContactsForm extends AbstractAddPeopleDialog<Props, State> {
                     this.props.dispatch(hideAddPeopleDialog());
                 }
             });
+    }
+
+    _onSubmitKeyPress: (Object) => void;
+
+    /**
+     * KeyPress handler for accessibility.
+     *
+     * @param {Object} e - The key event to handle.
+     *
+     * @returns {void}
+     */
+    _onSubmitKeyPress(e) {
+        if (e.key === ' ' || e.key === 'Enter') {
+            e.preventDefault();
+            this._onSubmit();
+        }
     }
 
     _onKeyDown: (Object) => void;
@@ -425,6 +443,22 @@ class InviteContactsForm extends AbstractAddPeopleDialog<Props, State> {
         this.setState({ inviteItems: [] });
     }
 
+    _onClearItemsKeyPress: () => void;
+
+    /**
+     * Clears the selected items from state and form.
+     *
+     * @param {Object} e - The key event to handle.
+     *
+     * @returns {void}
+     */
+    _onClearItemsKeyPress(e) {
+        if (e.key === ' ' || e.key === 'Enter') {
+            e.preventDefault();
+            this._onClearItems();
+        }
+    }
+
     /**
      * Renders the add/cancel actions for the form.
      *
@@ -441,13 +475,21 @@ class InviteContactsForm extends AbstractAddPeopleDialog<Props, State> {
         return (
             <div className = { `invite-more-dialog invite-buttons${this._isAddDisabled() ? ' disabled' : ''}` }>
                 <a
+                    aria-label = { t('dialog.Cancel') }
                     className = 'invite-more-dialog invite-buttons-cancel'
-                    onClick = { this._onClearItems }>
+                    onClick = { this._onClearItems }
+                    onKeyPress = { this._onClearItemsKeyPress }
+                    role = 'button'
+                    tabIndex = { 0 }>
                     {t('dialog.Cancel')}
                 </a>
                 <a
+                    aria-label = { t('addPeople.add') }
                     className = 'invite-more-dialog invite-buttons-add'
-                    onClick = { this._onSubmit }>
+                    onClick = { this._onSubmit }
+                    onKeyPress = { this._onSubmitKeyPress }
+                    role = 'button'
+                    tabIndex = { 0 }>
                     {t('addPeople.add')}
                 </a>
             </div>
@@ -480,9 +522,9 @@ class InviteContactsForm extends AbstractAddPeopleDialog<Props, State> {
                 </span>
                 <span>
                     <a
+                        aria-label = { supportLink }
                         href = { supportLink }
-                        rel = 'noopener noreferrer'
-                        target = '_blank'>
+                        rel = 'noopener noreferrer'>
                         { t('inlineDialogFailure.support') }
                     </a>
                 </span>

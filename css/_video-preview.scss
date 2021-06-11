@@ -79,4 +79,8 @@
             white-space: nowrap;
         }
     }
+    // Override @atlaskit/InlineDialog container which is made with styled components
+    & > div:nth-child(2) {
+        padding: 0;
+    }
 }

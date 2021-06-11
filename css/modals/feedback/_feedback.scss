@@ -94,5 +94,9 @@
             };
 
         }
+        .star-btn:focus,
+        .star-btn:active {
+            outline: 1px solid #B8C7E0;
+        }
     }
 }

@@ -16,6 +16,7 @@ export default [
     'analytics.disabled',
     'audioLevelsInterval',
     'audioQuality',
+    'autohideFilmstrip',
     'apiLogLevels',
     'avgRtpStatsN',
     'backgroundAlpha',

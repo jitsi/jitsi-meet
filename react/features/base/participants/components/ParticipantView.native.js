@@ -224,7 +224,7 @@ class ParticipantView extends Component<Props> {
                     onPress = { renderYoutubeLargeVideo ? undefined : onPress }
                     value = '' />
 
-                { renderYoutubeLargeVideo && <YoutubeLargeVideo youtubeUrl = { this.props.participantId } /> }
+                { renderYoutubeLargeVideo && <YoutubeLargeVideo youtubeId = { this.props.participantId } /> }
 
                 { !_isFakeParticipant && renderVideo
                     && <VideoTrack

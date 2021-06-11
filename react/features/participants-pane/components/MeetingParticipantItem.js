@@ -1,6 +1,7 @@
 // @flow
 
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 
 import { getIsParticipantAudioMuted, getIsParticipantVideoMuted } from '../../base/tracks';
@@ -46,6 +47,7 @@ export const MeetingParticipantItem = ({
     muteAudio,
     participant
 }: Props) => {
+    const { t } = useTranslation();
     const isAudioMuted = useSelector(getIsParticipantAudioMuted(participant));
     const isVideoMuted = useSelector(getIsParticipantVideoMuted(participant));
     const audioMediaState = useSelector(getParticipantAudioMediaState(participant, isAudioMuted));
@@ -62,7 +64,9 @@ export const MeetingParticipantItem = ({
                 isAudioMuted = { isAudioMuted }
                 muteAudio = { muteAudio }
                 participant = { participant } />
-            <ParticipantActionEllipsis onClick = { onContextMenu } />
+            <ParticipantActionEllipsis
+                aria-label = { t('MeetingParticipantItem.ParticipantActionEllipsis.options') }
+                onClick = { onContextMenu } />
         </ParticipantItem>
     );
 };

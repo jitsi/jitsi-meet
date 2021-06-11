@@ -4,6 +4,7 @@ import React from 'react';
 
 import { translate } from '../../../base/i18n';
 import { connect } from '../../../base/redux';
+import { toggleChat } from '../../actions.web';
 import AbstractChat, {
     _mapStateToProps,
     type Props
@@ -51,6 +52,8 @@ class Chat extends AbstractChat<Props> {
         // Bind event handlers so they are only bound once for every instance.
         this._renderPanelContent = this._renderPanelContent.bind(this);
         this._onChatInputResize = this._onChatInputResize.bind(this);
+        this._onEscClick = this._onEscClick.bind(this);
+        this._onToggleChat = this._onToggleChat.bind(this);
     }
 
     /**
@@ -72,6 +75,21 @@ class Chat extends AbstractChat<Props> {
             this._scrollMessageContainerToBottom(true);
         } else if (this.props._isOpen && !prevProps._isOpen) {
             this._scrollMessageContainerToBottom(false);
+        }
+    }
+    _onEscClick: (KeyboardEvent) => void;
+
+    /**
+     * Click handler for the chat sidenav.
+     *
+     * @param {KeyboardEvent} event - Esc key click to close the popup.
+     * @returns {void}
+     */
+    _onEscClick(event) {
+        if (event.key === 'Escape' && this.props._isOpen) {
+            event.preventDefault();
+            event.stopPropagation();
+            this._onToggleChat();
         }
     }
 
@@ -135,7 +153,10 @@ class Chat extends AbstractChat<Props> {
      */
     _renderChatHeader() {
         return (
-            <Header className = 'chat-header' />
+            <Header
+                className = 'chat-header'
+                id = 'chat-header'
+                onCancel = { this._onToggleChat } />
         );
     }
 
@@ -177,8 +198,10 @@ class Chat extends AbstractChat<Props> {
 
         return (
             <div
+                aria-haspopup = 'true'
                 className = { `sideToolbarContainer ${className}` }
-                id = 'sideToolbarContainer'>
+                id = 'sideToolbarContainer'
+                onKeyDown = { this._onEscClick } >
                 { ComponentToRender }
             </div>
         );
@@ -199,6 +222,18 @@ class Chat extends AbstractChat<Props> {
     }
 
     _onSendMessage: (string) => void;
+
+    _onToggleChat: () => void;
+
+    /**
+    * Toggles the chat window.
+    *
+    * @returns {Function}
+    */
+    _onToggleChat() {
+        this.props.dispatch(toggleChat());
+    }
+
 }
 
 export default translate(connect(_mapStateToProps)(Chat));

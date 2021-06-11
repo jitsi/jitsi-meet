@@ -2,6 +2,7 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 
+import { translate } from '../../../base/i18n';
 import { Icon, IconArrowUpWide, IconArrowDownWide } from '../../../base/icons';
 
 type Props = {
@@ -24,7 +25,12 @@ type Props = {
     /**
      Function that hides the drawer.
      */
-    onClose: Function
+    onClose: Function,
+
+    /**
+     * Invoked to obtain translated strings.
+     */
+    t: Function
 };
 
 /**
@@ -36,7 +42,8 @@ function Drawer({
     canExpand,
     children,
     isOpen,
-    onClose }: Props) {
+    onClose,
+    t }: Props) {
     const [ expanded, setExpanded ] = useState(false);
     const drawerRef: Object = useRef(null);
 
@@ -69,6 +76,20 @@ function Drawer({
         setExpanded(!expanded);
     }
 
+    /**
+     * KeyPress handler for accessibility.
+     *
+     * @param {React.KeyboardEventHandler<HTMLDivElement>} e - The key event to handle.
+     *
+     * @returns {void}
+     */
+    function onKeyPress(e) {
+        if (e.key === ' ' || e.key === 'Enter') {
+            e.preventDefault();
+            toggleExpanded();
+        }
+    }
+
     return (
         isOpen ? (
             <div
@@ -76,8 +97,14 @@ function Drawer({
                 ref = { drawerRef }>
                 {canExpand && (
                     <div
+                        aria-expanded = { expanded }
+                        aria-label = { expanded ? t('toolbar.accessibilityLabel.collapse')
+                            : t('toolbar.accessibilityLabel.expand') }
                         className = 'drawer-toggle'
-                        onClick = { toggleExpanded }>
+                        onClick = { toggleExpanded }
+                        onKeyPress = { onKeyPress }
+                        role = 'button'
+                        tabIndex = { 0 }>
                         <Icon
                             size = { 24 }
                             src = { expanded ? IconArrowDownWide : IconArrowUpWide } />
@@ -89,4 +116,4 @@ function Drawer({
     );
 }
 
-export default Drawer;
+export default translate(Drawer);

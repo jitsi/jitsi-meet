@@ -1,6 +1,6 @@
 // @flow
 
-import React from 'react';
+import React, { useCallback } from 'react';
 
 import { translate } from '../../../base/i18n';
 import { Icon, IconInviteMore } from '../../../base/icons';
@@ -47,16 +47,28 @@ function InviteMore({
     onClick,
     t
 }: Props) {
+    const onKeyPressHandler = useCallback(e => {
+        if (onClick && (e.key === ' ' || e.key === 'Enter')) {
+            e.preventDefault();
+            onClick();
+        }
+    }, [ onClick ]);
+
     return (
         _shouldShow
             ? <div className = { `invite-more-container${_toolboxVisible ? '' : ' elevated'}` }>
                 <div className = 'invite-more-content'>
-                    <div className = 'invite-more-header'>
+                    <div
+                        className = 'invite-more-header'
+                        role = 'heading'>
                         {t('addPeople.inviteMoreHeader')}
                     </div>
                     <div
                         className = 'invite-more-button'
-                        onClick = { onClick }>
+                        onClick = { onClick }
+                        onKeyPress = { onKeyPressHandler }
+                        role = 'button'
+                        tabIndex = { 0 }>
                         <Icon src = { IconInviteMore } />
                         <div className = 'invite-more-button-text'>
                             {t('addPeople.inviteMorePrompt')}
