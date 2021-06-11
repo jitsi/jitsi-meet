@@ -2,13 +2,11 @@
 
 import type { Dispatch } from 'redux';
 
-import { openDialog } from '../../../base/dialog';
 import { translate } from '../../../base/i18n';
 import { IconParticipants } from '../../../base/icons';
 import { connect } from '../../../base/redux';
 import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
-
-import { ParticipantsPane } from './';
+import { open } from '../../actions.native';
 
 type Props = AbstractButtonProps & {
 
@@ -34,7 +32,7 @@ class ParticipantsPaneButton extends AbstractButton<Props, *> {
      * @returns {void}
      */
     _handleClick() {
-        this.props.dispatch(openDialog(ParticipantsPane));
+        this.props.dispatch(open());
     }
 }
 
