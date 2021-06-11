@@ -93,7 +93,7 @@ export const getParticipantsAskingToAudioUnmute = (state: Object) => {
     if (isLocalParticipantModerator(state)) {
         const ids = getState(state).pendingAudio;
 
-        return ids.map(id => getParticipantById(state, id));
+        return ids.map(id => getParticipantById(state, id)).filter(Boolean);
     }
 
     return [];
