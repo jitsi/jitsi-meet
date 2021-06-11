@@ -72,6 +72,9 @@ type Props = AbstractProps & {
      */
     _fullscreenEnabled: boolean,
 
+    /**
+     * The indicator which determines if the participants pane is open.
+     */
     _isOpen: boolean,
 
     /**
@@ -391,7 +394,6 @@ class Conference extends AbstractConference<Props, *> {
  * @returns {Props}
  */
 function _mapStateToProps(state) {
-    const { isOpen } = state['features/participants-pane'];
     const { connecting, connection } = state['features/base/connection'];
     const {
         conference,
@@ -399,6 +401,7 @@ function _mapStateToProps(state) {
         membersOnly,
         leaving
     } = state['features/base/conference'];
+    const { isOpen } = state['features/participants-pane'];
     const { aspectRatio, reducedUI } = state['features/base/responsive-ui'];
 
     // XXX There is a window of time between the successful establishment of the
