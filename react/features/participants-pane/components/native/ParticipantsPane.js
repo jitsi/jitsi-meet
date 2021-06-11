@@ -4,9 +4,9 @@ import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ScrollView, View } from 'react-native';
 import { Button } from 'react-native-paper';
-import { useDispatch, useSelector, connect } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
-import { hideDialog, openDialog } from '../../../base/dialog';
+import { openDialog } from '../../../base/dialog';
 import { Icon, IconClose, IconHorizontalPoints } from '../../../base/icons';
 import { JitsiModal } from '../../../base/modal';
 import {
@@ -14,40 +14,30 @@ import {
 } from '../../../base/participants';
 import MuteEveryoneDialog
     from '../../../video-menu/components/native/MuteEveryoneDialog';
-import { PARTICIPANTS_PANE_ID } from '../../constants';
+import { close } from '../../actions.native';
 
 import { ContextMenuMore } from './ContextMenuMore';
 import { LobbyParticipantList } from './LobbyParticipantList';
 import { MeetingParticipantList } from './MeetingParticipantList';
 import styles from './styles';
 
-type Props = {
-
-    /**
-     * Is the participants pane open
-     */
-    _isOpen: boolean
-};
-
 /**
  * Participant pane.
  *
  * @returns {React$Element<any>}
  */
-function ParticipantsPane({ _isOpen: paneOpen }: Props) {
+const ParticipantsPane = () => {
     const dispatch = useDispatch();
     const openMoreMenu = useCallback(() => dispatch(openDialog(ContextMenuMore)), [ dispatch ]);
-    const closePane = useCallback(() => dispatch(hideDialog()), [ dispatch ]);
+    const closePane = useCallback(() => dispatch(close()), [ dispatch ]);
     const isLocalModerator = useSelector(isLocalParticipantModerator);
     const muteAll = useCallback(() => dispatch(openDialog(MuteEveryoneDialog)),
         [ dispatch ]);
     const { t } = useTranslation();
 
     return (
-        paneOpen
-        && <JitsiModal
+        <JitsiModal
             hideHeaderWithNavigation = { true }
-            modalId = { PARTICIPANTS_PANE_ID }
             style = { styles.participantsPane }>
             <View style = { styles.header }>
                 <Button
@@ -91,25 +81,6 @@ function ParticipantsPane({ _isOpen: paneOpen }: Props) {
             }
         </JitsiModal>
     );
-}
+};
 
-/**
- * Maps (parts of) the redux state to {@link ParticipantsPane} React {@code Component}
- * props.
- *
- * @param {Object} state - The redux store/state.
- * @private
- * @returns {{
- *     _isOpen: boolean,
- * }}
- */
-function _mapStateToProps(state: Object) {
-    const { isOpen } = state['features/participants-pane'];
-
-    return {
-        _isOpen: isOpen
-    };
-}
-
-
-export default connect(_mapStateToProps)(ParticipantsPane);
+export default ParticipantsPane;

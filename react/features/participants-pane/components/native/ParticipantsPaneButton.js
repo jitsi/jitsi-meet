@@ -32,7 +32,9 @@ class ParticipantsPaneButton extends AbstractButton<Props, *> {
      * @returns {void}
      */
     _handleClick() {
-        this.props.dispatch(open());
+        const { dispatch } = this.props;
+
+        dispatch(open());
     }
 }
 

@@ -23,6 +23,7 @@ import { AddPeopleDialog, CalleeInfoContainer } from '../../../invite';
 import { LargeVideo } from '../../../large-video';
 import { KnockingParticipantList } from '../../../lobby';
 import { BackButtonRegistry } from '../../../mobile/back-button';
+import { ParticipantsPane } from '../../../participants-pane/components/native';
 import { Captions } from '../../../subtitles';
 import { setToolboxVisible } from '../../../toolbox/actions';
 import { Toolbox } from '../../../toolbox/components/native';
@@ -70,6 +71,8 @@ type Props = AbstractProps & {
      * The indicator which determines whether fullscreen (immersive) mode is enabled.
      */
     _fullscreenEnabled: boolean,
+
+    _isOpen: boolean,
 
     /**
      * The ID of the participant currently on stage (if any)
@@ -237,6 +240,7 @@ class Conference extends AbstractConference<Props, *> {
     _renderContent() {
         const {
             _connecting,
+            _isOpen,
             _largeVideoParticipantId,
             _reducedUI,
             _shouldDisplayTileView
@@ -296,11 +300,14 @@ class Conference extends AbstractConference<Props, *> {
                 </SafeAreaView>
 
                 <TestConnectionInfo />
-
                 { this._renderConferenceNotification() }
 
                 { this._renderConferenceModals() }
+
                 {_shouldDisplayTileView && <Toolbox />}
+
+                { _isOpen && <ParticipantsPane /> }
+
             </>
         );
     }
@@ -384,6 +391,7 @@ class Conference extends AbstractConference<Props, *> {
  * @returns {Props}
  */
 function _mapStateToProps(state) {
+    const { isOpen } = state['features/participants-pane'];
     const { connecting, connection } = state['features/base/connection'];
     const {
         conference,
@@ -412,6 +420,7 @@ function _mapStateToProps(state) {
         _connecting: Boolean(connecting_),
         _filmstripVisible: isFilmstripVisible(state),
         _fullscreenEnabled: getFeatureFlag(state, FULLSCREEN_ENABLED, true),
+        _isOpen: isOpen,
         _largeVideoParticipantId: state['features/large-video'].participantId,
         _pictureInPictureEnabled: getFeatureFlag(state, PIP_ENABLED),
         _reducedUI: reducedUI,

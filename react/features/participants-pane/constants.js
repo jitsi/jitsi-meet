@@ -1,7 +1,5 @@
 // @flow
 
-export const PARTICIPANTS_PANE_ID = 'participantsPane';
-
 /**
  * Reducer key for the feature.
  */
