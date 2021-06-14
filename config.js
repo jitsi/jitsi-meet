@@ -795,6 +795,11 @@ var config = {
      */
 
     /**
+     * Default interval (milliseconds) for triggering mouseMoved iframe API event
+     */
+    mouseMoveCallbackInterval: 1000,
+
+    /**
         Use this array to configure which notifications will be shown to the user
         The items correspond to the title or description key of that notification
         Some of these notifications also depend on some other internal logic to be displayed or not,
