@@ -3,10 +3,12 @@
 import type { Dispatch } from 'redux';
 
 import {
+    SET_REACTIONS_MESSAGE,
     FULL_SCREEN_CHANGED,
     SET_FULL_SCREEN,
     SET_OVERFLOW_DRAWER,
-    SET_REACTIONS_VISIBLE
+    SET_REACTIONS_VISIBLE,
+    CLEAR_REACTIONS_MESSAGE
 } from './actionTypes';
 import {
     clearToolboxTimeout,
@@ -28,7 +30,31 @@ export * from './actions.native';
 function setReactionsMenuVisibility(value: boolean) {
     return {
         type: SET_REACTIONS_VISIBLE,
-        reactionsVisible: value
+        visible: value
+    };
+}
+
+/**
+ * Appends the reactions message to the chat and resets the state.
+ *
+ * @returns {void}
+ */
+export function flushReactionsToChat() {
+    return {
+        type: CLEAR_REACTIONS_MESSAGE
+    };
+}
+
+/**
+ * Adds a new reactions to the reactions message.
+ *
+ * @param {boolean} value - The new reaction.
+ * @returns {Function}
+ */
+export function addReactionsMessage(value: string) {
+    return {
+        type: SET_REACTIONS_MESSAGE,
+        reaction: value
     };
 }
 
@@ -182,7 +208,7 @@ export function setOverflowDrawer(displayAsDrawer: boolean) {
  */
 export function toggleReactionsMenu() {
     return (dispatch: Function, getState: Function) => {
-        const value = getState()['features/toolbox'].reactionsVisible;
+        const value = getState()['features/toolbox'].reactions.visible;
 
         dispatch(setReactionsMenuVisibility(!value));
     };

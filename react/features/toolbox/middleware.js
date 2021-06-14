@@ -1,12 +1,17 @@
 // @flow
 
 import { MiddlewareRegistry } from '../base/redux';
+import { addReactionsMessage } from '../chat/actions.any';
 
 import {
     CLEAR_TOOLBOX_TIMEOUT,
     SET_TOOLBOX_TIMEOUT,
-    SET_FULL_SCREEN
+    SET_FULL_SCREEN,
+    SET_REACTIONS_MESSAGE,
+    CLEAR_REACTIONS_MESSAGE
 } from './actionTypes';
+import { flushReactionsToChat } from './actions.web';
+
 
 declare var APP: Object;
 
@@ -18,9 +23,11 @@ declare var APP: Object;
  * @returns {Function}
  */
 MiddlewareRegistry.register(store => next => action => {
+    const { dispatch, getState } = store;
+
     switch (action.type) {
     case CLEAR_TOOLBOX_TIMEOUT: {
-        const { timeoutID } = store.getState()['features/toolbox'];
+        const { timeoutID } = getState()['features/toolbox'];
 
         clearTimeout(timeoutID);
         break;
@@ -30,11 +37,32 @@ MiddlewareRegistry.register(store => next => action => {
         return _setFullScreen(next, action);
 
     case SET_TOOLBOX_TIMEOUT: {
-        const { timeoutID } = store.getState()['features/toolbox'];
+        const { timeoutID } = getState()['features/toolbox'];
         const { handler, timeoutMS } = action;
 
         clearTimeout(timeoutID);
         action.timeoutID = setTimeout(handler, timeoutMS);
+
+        break;
+    }
+
+    case SET_REACTIONS_MESSAGE: {
+        const { timeoutID, message } = getState()['features/toolbox'].reactions;
+        const { reaction } = action;
+
+        clearTimeout(timeoutID);
+        action.message = `${message}${reaction}`;
+        action.timeoutID = setTimeout(() => {
+            dispatch(flushReactionsToChat());
+        }, 500);
+
+        break;
+    }
+
+    case CLEAR_REACTIONS_MESSAGE: {
+        const { message } = getState()['features/toolbox'].reactions;
+
+        dispatch(addReactionsMessage(message));
 
         break;
     }

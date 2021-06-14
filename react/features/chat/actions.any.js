@@ -2,9 +2,11 @@
 
 import {
     ADD_MESSAGE,
+    ADD_REACTIONS_MESSAGE,
     CLEAR_MESSAGES,
     CLOSE_CHAT,
     SEND_MESSAGE,
+    SEND_REACTION,
     SET_PRIVATE_MESSAGE_RECIPIENT
 } from './actionTypes';
 
@@ -95,5 +97,37 @@ export function setPrivateMessageRecipient(participant: Object) {
     return {
         participant,
         type: SET_PRIVATE_MESSAGE_RECIPIENT
+    };
+}
+
+/**
+ * Sends a reaction message to everyone in the conference.
+ *
+ * @param {string} reaction - The reaction to send out.
+ * @returns {{
+ *     type: SEND_REACTION,
+ *     message: string
+ * }}
+ */
+export function sendReaction(reaction: string) {
+    return {
+        type: SEND_REACTION,
+        reaction
+    };
+}
+
+/**
+ * Adds a reaction message to the chat.
+ *
+ * @param {string} message - The reaction message to add to chat.
+ * @returns {{
+ *     type: ADD_REACTIONS_MESSAGE,
+ *     message: string
+ * }}
+ */
+export function addReactionsMessage(message: string) {
+    return {
+        type: ADD_REACTIONS_MESSAGE,
+        message
     };
 }

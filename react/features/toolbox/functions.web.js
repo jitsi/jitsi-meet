@@ -152,5 +152,5 @@ export function isVideoMuteButtonDisabled(state: Object) {
  * @returns {boolean}
  */
 export function getReactionsMenuVisibility(state: Object) {
-    return state['features/toolbox'].reactionsVisible;
+    return state['features/toolbox'].reactions.visible;
 }

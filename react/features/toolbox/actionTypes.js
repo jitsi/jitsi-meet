@@ -126,3 +126,24 @@ export const TOGGLE_TOOLBOX_VISIBLE = 'TOGGLE_TOOLBOX_VISIBLE';
  * }
  */
 export const SET_REACTIONS_VISIBLE = 'SET_REACTIONS_VISIBLE';
+
+/**
+ * The type of the action which adds a new reaction to the reactions message and sets
+ * a new timeout.
+ *
+ * {
+ *     type: SET_REACTION_MESSAGE,
+ *     message: string,
+ *     timeoutID: number
+ * }
+ */
+export const SET_REACTIONS_MESSAGE = 'SET_REACTIONS_MESSAGE';
+
+/**
+ * The type of the action which resets the reactions message and timeout.
+ *
+ * {
+ *     type: CLEAR_REACTION_MESSAGE
+ * }
+ */
+export const CLEAR_REACTIONS_MESSAGE = 'CLEAR_REACTIONS_MESSAGE';

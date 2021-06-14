@@ -10,7 +10,9 @@ import {
 import { translate } from '../../../base/i18n';
 import { getLocalParticipant, participantUpdated } from '../../../base/participants';
 import { connect } from '../../../base/redux';
+import { sendReaction } from '../../../chat/actions.any';
 import { dockToolbox, toggleReactionsMenu } from '../../actions.web';
+import { REACTIONS } from '../../constants';
 
 import ReactionButton from './ReactionButton';
 
@@ -132,47 +134,26 @@ class ReactionsMenu extends Component<Props> {
      * @returns {Array}
      */
     _getReactionButtons() {
-        const buttons = [];
-        const { t } = this.props;
+        const { t, dispatch } = this.props;
 
-        buttons.push(<ReactionButton
-            accessibilityLabel = { t('toolbar.accessibilityLabel.clap') }
-            icon = '👏'
-            key = 'clap'
-            toggled = { false }
-            tooltip = { t('toolbar.clap') } />);
-        buttons.push(<ReactionButton
-            accessibilityLabel = { t('toolbar.accessibilityLabel.like') }
-            icon = '👍'
-            key = 'like'
-            toggled = { false }
-            tooltip = { t('toolbar.like') } />);
-        buttons.push(<ReactionButton
-            accessibilityLabel = { t('toolbar.accessibilityLabel.smile') }
-            icon = '😀'
-            key = 'smile'
-            toggled = { false }
-            tooltip = { t('toolbar.smile') } />);
-        buttons.push(<ReactionButton
-            accessibilityLabel = { t('toolbar.accessibilityLabel.laugh') }
-            icon = '😂'
-            key = 'laugh'
-            toggled = { false }
-            tooltip = { t('toolbar.laugh') } />);
-        buttons.push(<ReactionButton
-            accessibilityLabel = { t('toolbar.accessibilityLabel.surprised') }
-            icon = '😮'
-            key = 'surprised'
-            toggled = { false }
-            tooltip = { t('toolbar.surprised') } />);
-        buttons.push(<ReactionButton
-            accessibilityLabel = { t('toolbar.accessibilityLabel.celebration') }
-            icon = '🎉'
-            key = 'celebration'
-            toggled = { false }
-            tooltip = { t('toolbar.celebration') } />);
+        return Object.entries(REACTIONS).map(([ key, { emoji } ]) => {
+            /**
+             * Sends reaction message.
+             *
+             * @returns {void}
+             */
+            function sendMessage() {
+                dispatch(sendReaction(key));
+            }
 
-        return buttons;
+            return (<ReactionButton
+                accessibilityLabel = { t(`toolbar.accessibilityLabel.${key}`) }
+                icon = { emoji }
+                key = { key }
+                onClick = { sendMessage }
+                toggled = { false }
+                tooltip = { t(`toolbar.${key}`) } />);
+        });
     }
 
     /**

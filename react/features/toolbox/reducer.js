@@ -14,7 +14,9 @@ import {
     SET_TOOLBOX_TIMEOUT_MS,
     SET_TOOLBOX_VISIBLE,
     TOGGLE_TOOLBOX_VISIBLE,
-    SET_REACTIONS_VISIBLE
+    SET_REACTIONS_VISIBLE,
+    SET_REACTIONS_MESSAGE,
+    CLEAR_REACTIONS_MESSAGE
 } from './actionTypes';
 
 declare var interfaceConfig: Object;
@@ -57,9 +59,6 @@ function _getInitialState() {
     if (alwaysVisible === true) {
         visible = true;
     }
-
-    // Reactions menu (initial) visibility.
-    const reactionsVisible = false;
 
     return {
         /**
@@ -123,11 +122,33 @@ function _getInitialState() {
         visible,
 
         /**
-         * The indicator that determines whether the reactions menu is visible.
+         * The object that contains the reactions properties.
          *
-         * @type {boolean}
+         * @type {Object}
          */
-        reactionsVisible
+        reactions: {
+            /**
+             * The indicator that determines whether the reactions menu is visible.
+             *
+             * @type {boolean}
+             */
+            visible: false,
+
+            /**
+             * A string that contains the message to be added to the chat.
+             *
+             * @type {string}
+             */
+            message: '',
+
+            /**
+             * A number, non-zero value which identifies the timer created by a call
+             * to setTimeout().
+             *
+             * @type {number|null}
+             */
+            timeoutID: null
+        }
     };
 }
 
@@ -200,7 +221,30 @@ ReducerRegistry.register(
         case SET_REACTIONS_VISIBLE:
             return {
                 ...state,
-                reactionsVisible: action.reactionsVisible
+                reactions: {
+                    ...state.reactions,
+                    visible: action.visible
+                }
+            };
+
+        case SET_REACTIONS_MESSAGE:
+            return {
+                ...state,
+                reactions: {
+                    ...state.reactions,
+                    message: action.message,
+                    timeoutID: action.timeoutID
+                }
+            };
+
+        case CLEAR_REACTIONS_MESSAGE:
+            return {
+                ...state,
+                reactions: {
+                    ...state.reactions,
+                    message: '',
+                    timeoutID: null
+                }
             };
         }
 
