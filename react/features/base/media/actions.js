@@ -2,6 +2,9 @@
 
 import type { Dispatch } from 'redux';
 
+import { showModeratedNotification } from '../../av-moderation/actions';
+import { shouldShowModeratedNotification } from '../../av-moderation/functions';
+
 import {
     SET_AUDIO_MUTED,
     SET_AUDIO_AVAILABLE,
@@ -106,7 +109,16 @@ export function setVideoMuted(
         authority: number = VIDEO_MUTISM_AUTHORITY.USER,
         ensureTrack: boolean = false) {
     return (dispatch: Dispatch<any>, getState: Function) => {
-        const oldValue = getState()['features/base/media'].video.muted;
+        const state = getState();
+
+        // check for A/V Moderation when trying to unmute
+        if (!muted && shouldShowModeratedNotification(MEDIA_TYPE.VIDEO, state)) {
+            ensureTrack && dispatch(showModeratedNotification(MEDIA_TYPE.VIDEO));
+
+            return;
+        }
+
+        const oldValue = state['features/base/media'].video.muted;
 
         // eslint-disable-next-line no-bitwise
         const newValue = muted ? oldValue | authority : oldValue & ~authority;

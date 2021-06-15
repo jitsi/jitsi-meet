@@ -39,9 +39,9 @@ export const FooterContextMenu = ({ onMouseLeave }: Props) => {
     const isModerationEnabled = useSelector(isAvModerationEnabled(MEDIA_TYPE.AUDIO));
     const { t } = useTranslation();
 
-    const disable = useCallback(() => dispatch(requestDisableModeration(MEDIA_TYPE.AUDIO)), [ dispatch ]);
+    const disable = useCallback(() => dispatch(requestDisableModeration()), [ dispatch ]);
 
-    const enable = useCallback(() => dispatch(requestEnableModeration(MEDIA_TYPE.AUDIO)), [ dispatch ]);
+    const enable = useCallback(() => dispatch(requestEnableModeration()), [ dispatch ]);
 
     return (
         <StyledContextMenu onMouseLeave = { onMouseLeave }>

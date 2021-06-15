@@ -38,12 +38,15 @@ export const isEnabled = (mediaType: MediaType) => (state: Object) => isEnabledF
  *
  * @param {MEDIA_TYPE} mediaType - The media type to check.
  * @param {Object} state - Global state.
- * @returns {null|boolean|*}
+ * @returns {boolean}
  */
-export const isLocalParticipantApprovedFromState = (mediaType: MediaType, state: Object) =>
-    (mediaType === MEDIA_TYPE.AUDIO
+export const isLocalParticipantApprovedFromState = (mediaType: MediaType, state: Object) => {
+    const approved = (mediaType === MEDIA_TYPE.AUDIO
         ? getState(state).audioUnmuteApproved
         : getState(state).videoUnmuteApproved) === true;
+
+    return approved || isLocalParticipantModerator(state);
+};
 
 /**
  * Returns whether local participant is approved to unmute a media type.
@@ -98,3 +101,15 @@ export const getParticipantsAskingToAudioUnmute = (state: Object) => {
 
     return [];
 };
+
+/**
+ * Returns true if a special notification can be displayed when a participant
+ * tries to unmute.
+ *
+ * @param {MediaType} mediaType - 'audio' or 'video' media type.
+ * @param {Object} state - The global state.
+ * @returns {boolean}
+ */
+export const shouldShowModeratedNotification = (mediaType: MediaType, state: Object) =>
+    isEnabledFromState(mediaType, state)
+    && !isLocalParticipantApprovedFromState(mediaType, state);

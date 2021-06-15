@@ -4,7 +4,7 @@ import React, { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 
-import { approveAudio } from '../../av-moderation/actions';
+import { approveParticipant } from '../../av-moderation/actions';
 
 import { QuickActionButton } from './styled';
 
@@ -27,7 +27,7 @@ export default function({ id }: Props) {
     const { t } = useTranslation();
 
     const askToUnmute = useCallback(() => {
-        dispatch(approveAudio(id));
+        dispatch(approveParticipant(id));
     }, [ dispatch, id ]);
 
     return (

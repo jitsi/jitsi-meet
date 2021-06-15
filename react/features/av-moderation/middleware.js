@@ -39,11 +39,8 @@ import {
     isParticipantPending
 } from './functions';
 
-/**
- * The id for the notification shown to local user when moderation is enabled and user wants to unmute.
- * @type {string}
- */
-const MODERATION_IN_EFFECT_NOTIFICATION_ID = 'av-moderation-in-effect-notification';
+const VIDEO_MODERATION_NOTIFICATION_ID = 'video-moderation';
+const AUDIO_MODERATION_NOTIFICATION_ID = 'audio-moderation';
 
 MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
     const { actor, mediaType, type } = action;
@@ -51,35 +48,49 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
     switch (type) {
     case DISABLE_MODERATION:
     case ENABLE_MODERATION: {
-        const enabled = type === ENABLE_MODERATION;
-        const i18nKeys = {
-            [MEDIA_TYPE.AUDIO]: enabled ? 'notify.moderationAudioStartedTitle' : 'notify.moderationAudioStoppedTitle',
-            [MEDIA_TYPE.VIDEO]: enabled ? 'notify.moderationVideoStoppedTitle' : 'notify.moderationVideoStartedTitle'
-        };
+        // Audio & video moderation are both enabled at the same time.
+        // Avoid displaying 2 different notifications.
+        if (mediaType === MEDIA_TYPE.VIDEO) {
+            const titleKey = type === ENABLE_MODERATION
+                ? 'notify.moderationStartedTitle'
+                : 'notify.moderationStoppedTitle';
 
-        batch(() => {
             dispatch(showNotification({
                 descriptionKey: actor ? 'notify.moderationToggleDescription' : undefined,
                 descriptionArguments: actor ? {
                     participantDisplayName: getParticipantDisplayName(getState, actor.getId())
                 } : undefined,
-                titleKey: i18nKeys[mediaType]
+                titleKey
             }, NOTIFICATION_TIMEOUT));
-        });
+        }
 
         break;
     }
     case LOCAL_PARTICIPANT_MODERATION_NOTIFICATION: {
+        let descriptionKey;
+        let titleKey;
+        let uid;
+
+        if (action.mediaType === MEDIA_TYPE.AUDIO) {
+            titleKey = 'notify.moderationInEffectTitle';
+            descriptionKey = 'notify.moderationInEffectDescription';
+            uid = AUDIO_MODERATION_NOTIFICATION_ID;
+        } else {
+            titleKey = 'notify.moderationInEffectVideoTitle';
+            descriptionKey = 'notify.moderationInEffectVideoDescription';
+            uid = VIDEO_MODERATION_NOTIFICATION_ID;
+        }
+
         dispatch(showNotification({
             customActionNameKey: 'notify.raiseHandAction',
             customActionHandler: () => batch(() => {
                 dispatch(raiseHand(true));
-                dispatch(hideNotification(MODERATION_IN_EFFECT_NOTIFICATION_ID));
+                dispatch(hideNotification(uid));
             }),
-            descriptionKey: 'notify.moderationInEffectDescription',
+            descriptionKey,
             sticky: true,
-            titleKey: 'notify.moderationInEffectTitle',
-            uid: MODERATION_IN_EFFECT_NOTIFICATION_ID
+            titleKey,
+            uid
         }));
 
         break;
@@ -87,13 +98,15 @@ MiddlewareRegistry.register(({ dispatch, getState }) => next => action => {
     case REQUEST_DISABLE_MODERATION: {
         const { conference } = getConferenceState(getState());
 
-        conference.disableAVModeration(mediaType);
+        conference.disableAVModeration(MEDIA_TYPE.AUDIO);
+        conference.disableAVModeration(MEDIA_TYPE.VIDEO);
         break;
     }
     case REQUEST_ENABLE_MODERATION: {
         const { conference } = getConferenceState(getState());
 
-        conference.enableAVModeration(mediaType);
+        conference.enableAVModeration(MEDIA_TYPE.AUDIO);
+        conference.enableAVModeration(MEDIA_TYPE.VIDEO);
         break;
     }
     case PARTICIPANT_UPDATED: {
@@ -128,17 +141,19 @@ StateListenerRegistry.register(
     state => state['features/base/conference'].conference,
     (conference, { dispatch }, previousConference) => {
         if (conference && !previousConference) {
+            // local participant is allowed to unmute
             conference.on(JitsiConferenceEvents.AV_MODERATION_APPROVED, ({ mediaType }) => {
-                // local participant is allowed to unmute
-                batch(() => {
-                    dispatch(localParticipantApproved(mediaType));
+                dispatch(localParticipantApproved(mediaType));
 
+                // Audio & video moderation are both enabled at the same time.
+                // Avoid displaying 2 different notifications.
+                if (mediaType === MEDIA_TYPE.VIDEO) {
                     dispatch(showNotification({
                         titleKey: 'notify.unmute',
                         descriptionKey: 'notify.hostAskedUnmute',
                         sticky: true
                     }));
-                });
+                }
             });
 
             conference.on(JitsiConferenceEvents.AV_MODERATION_CHANGED, ({ enabled, mediaType, actor }) => {

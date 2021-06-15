@@ -1,6 +1,10 @@
 // @flow
 
-import { isParticipantApproved, isEnabledFromState } from '../av-moderation/functions';
+import {
+    isParticipantApproved,
+    isEnabledFromState,
+    isLocalParticipantApprovedFromState
+} from '../av-moderation/functions';
 import { getFeatureFlag, INVITE_ENABLED } from '../base/flags';
 import { MEDIA_TYPE, type MediaType } from '../base/media/constants';
 import {
@@ -43,12 +47,22 @@ export const findStyledAncestor = (target: Object, component: any) => {
  * @param {MediaType} mediaType - The media type.
  * @returns {MediaState}.
  */
-export const isForceMuted = (participant: Object, mediaType: MediaType) => (state: Object) =>
-    getParticipantCount(state) > 2
-        && isEnabledFromState(mediaType, state)
-        && !isParticipantApproved(participant.id, MEDIA_TYPE.AUDIO)(state)
-        && !isParticipantModerator(participant);
+export const isForceMuted = (participant: Object, mediaType: MediaType) => (state: Object) => {
+    if (getParticipantCount(state) > 2 && isEnabledFromState(mediaType, state)) {
+        if (participant.local) {
+            return !isLocalParticipantApprovedFromState(mediaType, state);
+        }
 
+        // moderators cannot be force muted
+        if (isParticipantModerator(participant)) {
+            return false;
+        }
+
+        return !isParticipantApproved(participant.id, mediaType)(state);
+    }
+
+    return false;
+};
 
 /**
  * Returns a selector used to determine the audio media state (the mic icon) for a participant.

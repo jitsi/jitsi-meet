@@ -16,15 +16,16 @@ import {
 } from './actionTypes';
 
 /**
- * Action used by moderator to approve audio for a participant.
+ * Action used by moderator to approve audio and video for a participant.
  *
  * @param {staring} id - The id of the participant to be approved.
  * @returns {void}
  */
-export const approveAudio = (id: string) => (dispatch: Function, getState: Function) => {
+export const approveParticipant = (id: string) => (dispatch: Function, getState: Function) => {
     const { conference } = getConferenceState(getState());
 
     conference.avModerationApprove(MEDIA_TYPE.AUDIO, id);
+    conference.avModerationApprove(MEDIA_TYPE.VIDEO, id);
 };
 
 /**
@@ -88,39 +89,35 @@ export const enableModeration = (mediaType: MediaType, actor: Object) => {
 };
 
 /**
- * Requests disable of audio or video moderation.
+ * Requests disable of audio and video moderation.
  *
- * @param {MediaType} mediaType - The media type to disable.
  * @returns {{
  *     type: REQUEST_DISABLE_MODERATED_AUDIO
  * }}
  */
-export const requestDisableModeration = (mediaType: MediaType) => {
+export const requestDisableModeration = () => {
     return {
-        type: REQUEST_DISABLE_MODERATION,
-        mediaType
+        type: REQUEST_DISABLE_MODERATION
     };
 };
 
 /**
- * Requests enabled of audio or video moderation.
+ * Requests enabled audio & video moderation.
  *
- * @param {MediaType} mediaType - The media type to enable.
  * @returns {{
  *     type: REQUEST_ENABLE_MODERATED_AUDIO
  * }}
  */
-export const requestEnableModeration = (mediaType: MediaType) => {
+export const requestEnableModeration = () => {
     return {
-        type: REQUEST_ENABLE_MODERATION,
-        mediaType
+        type: REQUEST_ENABLE_MODERATION
     };
 };
 
 /**
- * Local participant was approved to be able to unmute audio or video.
+ * Local participant was approved to be able to unmute audio and video.
  *
- * @param {MediaType} mediaType - The media type that was approved.
+ * @param {MediaType} mediaType - The media type to disable.
  * @returns {{
  *     type: LOCAL_PARTICIPANT_APPROVED
  * }}
@@ -135,13 +132,13 @@ export const localParticipantApproved = (mediaType: MediaType) => {
 /**
  * Shows notification when A/V moderation is enabled and local participant is still not approved.
  *
- * @returns {{
- *     type: LOCAL_PARTICIPANT_MODERATION_NOTIFICATION
- * }}
+ * @param {MediaType} mediaType - Audio or video media type.
+ * @returns {Object}
  */
-export function showModeratedNotification() {
+export function showModeratedNotification(mediaType: MediaType) {
     return {
-        type: LOCAL_PARTICIPANT_MODERATION_NOTIFICATION
+        type: LOCAL_PARTICIPANT_MODERATION_NOTIFICATION,
+        mediaType
     };
 }
 

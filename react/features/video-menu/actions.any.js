@@ -11,10 +11,7 @@ import {
     VIDEO_MUTE
 } from '../analytics';
 import { showModeratedNotification } from '../av-moderation/actions';
-import {
-    isEnabledFromState as isAvModerationEnabled,
-    isLocalParticipantApprovedFromState as isLocalParticipantApproved
-} from '../av-moderation/functions';
+import { shouldShowModeratedNotification } from '../av-moderation/functions';
 import {
     MEDIA_TYPE,
     setAudioMuted,
@@ -47,17 +44,11 @@ export function muteLocal(enable: boolean, mediaType: MEDIA_TYPE) {
             return;
         }
 
-        // check for A/V Moderation if is trying to unmute
-        if (!enable) {
-            const isModerationEnabled = isAvModerationEnabled(MEDIA_TYPE.AUDIO, getState());
-            const isLocalApproved = isLocalParticipantApproved(MEDIA_TYPE.AUDIO, getState());
+        // check for A/V Moderation when trying to unmute
+        if (!enable && shouldShowModeratedNotification(MEDIA_TYPE.AUDIO, getState())) {
+            dispatch(showModeratedNotification(MEDIA_TYPE.AUDIO));
 
-            // if moderation is on and we are not approved show notification
-            if (isModerationEnabled && !isLocalApproved) {
-                dispatch(showModeratedNotification());
-
-                return;
-            }
+            return;
         }
 
         sendAnalytics(createToolbarEvent(isAudio ? AUDIO_MUTE : VIDEO_MUTE, { enable }));
