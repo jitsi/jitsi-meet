@@ -860,8 +860,8 @@ var config = {
     //     'transcribing.failedToStart' // shown when transcribing fails to start
     // ],
 
-    // Automatically hides the filmstrip when screen width is under a certain threshold
-    autohideFilmstrip: true,
+    // Prevent the filmstrip from autohiding when screen width is under a certain threshold
+    // disableFilmstripAutohiding: false,
 
     // Allow all above example options to include a trailing comma and
     // prevent fear when commenting out the last value.
