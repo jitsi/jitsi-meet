@@ -25,14 +25,14 @@ export const MeetingParticipantItem = ({ participant: p }: Props) => {
     const dispatch = useDispatch();
     const isAudioMuted = useSelector(getIsParticipantAudioMuted(p));
     const isVideoMuted = useSelector(getIsParticipantVideoMuted(p));
-    const openContextMenuDetails = useCallback(() => dispatch(showContextMenuDetails(p), [ dispatch ]));
+    const openContextMenuDetails = useCallback(() => !p.local && dispatch(showContextMenuDetails(p), [ dispatch ]));
 
     return (
         <ParticipantItem
             audioMuteState = { isAudioMuted ? MediaState.Muted : MediaState.Unmuted }
             isKnockingParticipant = { false }
             name = { p.name }
-            onPress = { !p.local && openContextMenuDetails }
+            onPress = { openContextMenuDetails }
             participant = { p }
             videoMuteState = { isVideoMuted ? MediaState.Muted : MediaState.Unmuted } />
     );
