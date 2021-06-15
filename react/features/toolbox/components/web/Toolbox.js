@@ -35,7 +35,6 @@ import {
 } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import { OverflowMenuItem } from '../../../base/toolbox/components';
-import { getLocalVideoTrack, toggleScreensharing } from '../../../base/tracks';
 import { isVpaasMeeting } from '../../../billing-counter/functions';
 import { ChatCounter, toggleChat } from '../../../chat';
 import { EmbedMeetingDialog } from '../../../embed-meeting';
@@ -52,7 +51,12 @@ import {
     LiveStreamButton,
     RecordButton
 } from '../../../recording';
-import { isScreenAudioSupported, ShareAudioButton } from '../../../screen-share/';
+import {
+    isScreenAudioSupported,
+    isScreenVideoShared,
+    ShareAudioButton,
+    startScreenShareFlow
+} from '../../../screen-share/';
 import SecurityDialogButton from '../../../security/components/security-dialog/SecurityDialogButton';
 import {
     SETTINGS_TABS,
@@ -533,9 +537,9 @@ class Toolbox extends Component<Props> {
      * @param {boolean} audioOnly - Only share system audio.
      * @returns {void}
      */
-    _doToggleScreenshare(enabled, audioOnly = false) {
+    _doToggleScreenshare() {
         if (this.props._desktopSharingEnabled) {
-            this.props.dispatch(toggleScreensharing(enabled, audioOnly));
+            this.props.dispatch(startScreenShareFlow());
         }
     }
 
@@ -723,15 +727,13 @@ class Toolbox extends Component<Props> {
      * @returns {void}
      */
     _onShortcutToggleScreenshare() {
-        const enable = !this.props._screensharing;
-
         sendAnalytics(createToolbarEvent(
             'screen.sharing',
             {
-                enable
+                enable: !this.props._screensharing
             }));
 
-        this._doToggleScreenshare(enable);
+        this._doToggleScreenshare();
     }
 
     _onTabIn: () => void;
@@ -938,15 +940,13 @@ class Toolbox extends Component<Props> {
             return;
         }
 
-        const enable = !this.props._screensharing;
-
         sendAnalytics(createShortcutEvent(
             'toggle.screen.sharing',
             ACTION_SHORTCUT_TRIGGERED,
-            { enable }));
+            { enable: !this.props._screensharing }));
 
         this._closeOverflowMenuIfOpen();
-        this._doToggleScreenshare(enable);
+        this._doToggleScreenshare();
     }
 
     _onToolbarOpenLocalRecordingInfoDialog: () => void;
@@ -1387,7 +1387,6 @@ function _mapStateToProps(state) {
     } = state['features/toolbox'];
     const localParticipant = getLocalParticipant(state);
     const localRecordingStates = state['features/local-recording'];
-    const localVideo = getLocalVideoTrack(state['features/base/tracks']);
     const { clientWidth } = state['features/base/responsive-ui'];
 
     let desktopSharingDisabledTooltipKey;
@@ -1423,7 +1422,7 @@ function _mapStateToProps(state) {
         _overflowMenuVisible: overflowMenuVisible,
         _participantsPaneOpen: getParticipantsPaneOpen(state),
         _raisedHand: localParticipant.raisedHand,
-        _screensharing: localVideo && localVideo.videoType === 'desktop',
+        _screensharing: isScreenVideoShared(state),
         _shouldShowButton: buttonName => isToolbarButtonEnabled(buttonName)(state),
         _visible: isToolboxVisible(state),
         _visibleButtons: getToolbarButtons(state)

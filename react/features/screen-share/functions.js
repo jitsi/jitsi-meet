@@ -34,6 +34,15 @@ export function isScreenAudioSupported() {
     return browser.isChrome() || (browser.isElectron() && isWindows());
 }
 
+/**
+ * Is any screen media currently being shared, audio or video.
+ *
+ * @param {Object} state - The state of the application.
+ * @returns {boolean}
+ */
+export function isScreenMediaShared(state: Object) {
+    return isScreenAudioShared(state) || isScreenVideoShared(state);
+}
 
 /**
  * Is screen sharing currently active.

@@ -12,7 +12,6 @@ import {
     shouldHideShareAudioHelper
 } from '../../base/settings';
 import { toggleScreensharing } from '../../base/tracks';
-import { isAudioOnlySharing, isScreenVideoShared } from '../functions';
 
 /**
  * The type of the React {@code Component} props of {@link ShareAudioDialog}.
@@ -25,17 +24,7 @@ export type Props = {
     dispatch: Dispatch<any>,
 
     /**
-     * TODO
-     */
-    _isAudioOnlySharing: boolean,
-
-     /**
-      * TODO
-      */
-    _isScreenVideoShared: boolean,
-
-    /**
-     * TODO
+     * Boolean stored in local storage that determines whether or not the dialog will be displayed again.
      */
      _shouldHideShareAudioHelper: boolean,
 
@@ -46,7 +35,7 @@ export type Props = {
 };
 
 /**
- * Component that displays the share audio helper dialog.
+ * Component that displays the audio screen share helper dialog.
  */
 class ShareAudioDialog extends Component<Props> {
 
@@ -61,19 +50,16 @@ class ShareAudioDialog extends Component<Props> {
         this._onContinue = this._onContinue.bind(this);
     }
 
-    _onContinue: () => void;
+    _onContinue: () => boolean;
 
     /**
-     * TODO.
+     * Continue the normal screen sharing flow when the user clicks continue.
      *
-     * @returns {void}
+     * @returns {boolean}
      */
     _onContinue() {
-        const enable = !this.props._isAudioOnlySharing;
-
-        // First parameter is only used in the mobile flow, and this feature is only
-        // available on web, so it doesn't have any effect but we add it for consistency.
-        this.props.dispatch(toggleScreensharing(enable, true));
+        // Pass undefined as the first parameter so the underlying logic decides weather or not to stop screen sharing.
+        this.props.dispatch(toggleScreensharing(undefined, true));
 
         return true;
     }
@@ -95,6 +81,9 @@ class ShareAudioDialog extends Component<Props> {
                 titleKey = { t('dialog.shareAudioTitle') }
                 width = { 'medium' } >
                 <div className = 'share-audio-dialog'>
+                    <img
+                        className = 'share-audio-animation'
+                        src = 'images/share-audio.gif' />
                     <Checkbox
                         isChecked = { this.props._shouldHideShareAudioHelper }
                         label = { t('dialog.hideShareAudioHelper') }
@@ -120,8 +109,6 @@ class ShareAudioDialog extends Component<Props> {
 function _mapStateToProps(state): Object {
 
     return {
-        _isAudioOnlySharing: isAudioOnlySharing(state),
-        _isScreenVideoShared: isScreenVideoShared(state),
         _shouldHideShareAudioHelper: shouldHideShareAudioHelper(state)
 
     };

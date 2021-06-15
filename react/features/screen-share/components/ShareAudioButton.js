@@ -2,24 +2,18 @@
 
 import type { Dispatch } from 'redux';
 
-
-import { openDialog } from '../../base/dialog/actions';
 import { translate } from '../../base/i18n';
 import {
     IconShareAudio,
     IconStopAudioShare
 } from '../../base/icons';
-import { browser } from '../../base/lib-jitsi-meet';
 import { connect } from '../../base/redux';
-import { shouldHideShareAudioHelper } from '../../base/settings';
 import {
     AbstractButton,
     type AbstractButtonProps
 } from '../../base/toolbox/components';
-import { toggleScreensharing } from '../../base/tracks';
-import { ShareAudioDialog } from '../components';
-import { isAudioOnlySharing, isScreenVideoShared, isScreenAudioSupported } from '../functions';
-
+import { startAudioScreenShareFlow } from '../actions';
+import { isAudioOnlySharing } from '../functions';
 
 type Props = AbstractButtonProps & {
 
@@ -29,28 +23,13 @@ type Props = AbstractButtonProps & {
     dispatch: Dispatch<any>,
 
     /**
-     * TODO
-     */
-    _isDisabled: boolean,
-
-    /**
-     * TODO
+     * Whether or not the local participant is audio only screen sharing.
      */
     _isAudioOnlySharing: boolean,
-
-    /**
-     * TODO
-     */
-    _isScreenVideoShared: boolean,
-
-    /**
-     * TODO
-     */
-     _shouldHideShareAudioHelper: boolean
 }
 
 /**
- * TODO
+ * Component that renders a toolbar button for toggling audio only screen share.
  */
 class ShareAudioButton extends AbstractButton<Props, *> {
     accessibilityLabel = 'toolbar.accessibilityLabel.shareaudio';
@@ -67,7 +46,7 @@ class ShareAudioButton extends AbstractButton<Props, *> {
      * @returns {void}
      */
     _handleClick() {
-        this._doToggleSharedAudioDialog();
+        this.props.dispatch(startAudioScreenShareFlow());
     }
 
     /**
@@ -80,36 +59,6 @@ class ShareAudioButton extends AbstractButton<Props, *> {
     _isToggled() {
         return this.props._isAudioOnlySharing;
     }
-
-    /**
-     * Dispatches an action to toggle video sharing.
-     *
-     * @private
-     * @returns {void}
-     */
-    _doToggleSharedAudioDialog() {
-
-
-        const enable = !this.props._isAudioOnlySharing;
-
-        if (this.props._isScreenVideoShared) {
-            alert('NO GO!');
-
-            return;
-        }
-
-        // if is toggled or is saved in cache or we're in electron go directly to functionality
-        if (this.props._shouldHideShareAudioHelper || browser.isElectron() || this._isToggled()) {
-            // First parameter is ignored is only for the mobile flow, and this feature is only
-            // available on web, so it doesn't have any effect but we add it for consistency.
-            this.props.dispatch(toggleScreensharing(enable, true));
-
-            return;
-        }
-
-        this.props.dispatch(openDialog(ShareAudioDialog));
-    }
-
 }
 
 /**
@@ -122,10 +71,7 @@ class ShareAudioButton extends AbstractButton<Props, *> {
 function _mapStateToProps(state): Object {
 
     return {
-        _isDisabled: isScreenAudioSupported(),
-        _isAudioOnlySharing: isAudioOnlySharing(state),
-        _isScreenVideoShared: isScreenVideoShared(state),
-        _shouldHideShareAudioHelper: shouldHideShareAudioHelper(state)
+        _isAudioOnlySharing: isAudioOnlySharing(state)
     };
 }
 
