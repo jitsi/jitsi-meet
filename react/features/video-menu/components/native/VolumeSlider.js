@@ -1,7 +1,8 @@
 // @flow
 
+import Slider from '@react-native-community/slider';
 import React, { Component } from 'react';
-import { Slider, View } from 'react-native';
+import { View } from 'react-native';
 import { withTheme } from 'react-native-paper';
 
 import { Icon, IconVolumeEmpty } from '../../../base/icons';

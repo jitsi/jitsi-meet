@@ -24,12 +24,7 @@ type Props = {
     /**
      * Array of participant IDs to not mute
      */
-    exclude: Array<string>,
-
-    /**
-     * Participant reference
-     */
-    participant: Object
+    exclude: Array<string>
 };
 
 export const ContextMenuMore = ({ exclude }: Props) => {

@@ -7,9 +7,10 @@ import { Divider, Text } from 'react-native-paper';
 import { useDispatch, useSelector, useStore } from 'react-redux';
 
 import { Avatar } from '../../../base/avatar';
-import { hideDialog, openDialog } from '../../../base/dialog';
+import { hideDialog, openDialog } from '../../../base/dialog/actions';
 import BottomSheet from '../../../base/dialog/components/native/BottomSheet';
 import {
+    // eslint-disable-next-line no-unused-vars
     Icon, IconCloseCircle, IconConnectionActive, IconMessage,
     IconMicrophoneEmptySlash,
     IconMuteEveryoneElse, IconVideoOff
@@ -159,14 +160,15 @@ export const ContextMenuMeetingParticipantDetails = ({ participant: p }: Props) 
                     { t('toolbar.accessibilityLabel.privateMessage') }
                 </Text>
             </TouchableOpacity>
-            <TouchableOpacity
-                style = { styles.contextMenuItemSection }>
-                <Icon
-                    size = { 20 }
-                    src = { IconConnectionActive }
-                    style = { styles.contextMenuItemIcon } />
-                <Text style = { styles.contextMenuItemText }>{ t('participantsPane.actions.networkStats') }</Text>
-            </TouchableOpacity>
+            {/* We need design specs for this*/}
+            {/* <TouchableOpacity*/}
+            {/*    style = { styles.contextMenuItemSection }>*/}
+            {/*    <Icon*/}
+            {/*        size = { 20 }*/}
+            {/*        src = { IconConnectionActive }*/}
+            {/*        style = { styles.contextMenuItemIcon } />*/}
+            {/*    <Text style = { styles.contextMenuItemText }>{ t('participantsPane.actions.networkStats') }</Text>*/}
+            {/* </TouchableOpacity>*/}
             <Divider style = { styles.divider } />
             <VolumeSlider
                 initialValue = { volume }
