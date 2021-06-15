@@ -129,11 +129,11 @@ export function admitAllKnockingParticipants(knockingParticipants: Array<Object>
 
 
 /**
- * Don't allow participants to unmute.
+ * Don't allow participants to unmute video/audio.
  *
  * @returns {Function}
  */
-export function dontAllowUnmute() {
+export function blockParticipantsAudioVideo() {
     return (dispatch: Dispatch<any>, getState: Function) => {
         const state = getState();
         const participants = state['features/base/participants'];

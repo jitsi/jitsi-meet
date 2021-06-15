@@ -1,5 +1,6 @@
 // @flow
 
+export { default as BlockAudioVideoDialog } from './BlockAudioVideoDialog';
 export { default as GrantModeratorDialog } from './GrantModeratorDialog';
 export { default as KickRemoteParticipantDialog } from './KickRemoteParticipantDialog';
 export { default as MuteEveryoneDialog } from './MuteEveryoneDialog';
