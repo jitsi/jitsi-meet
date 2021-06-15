@@ -122,9 +122,9 @@ StateListenerRegistry.register(
     /* selector */ state => state['features/base/responsive-ui'].clientWidth < ASPECT_RATIO_BREAKPOINT,
     /* listener */ (widthBelowThreshold, store) => {
         const state = store.getState();
-        const { autohideFilmstrip } = state['features/base/config'];
+        const { disableFilmstripAutohiding } = state['features/base/config'];
 
-        if (autohideFilmstrip) {
+        if (!disableFilmstripAutohiding) {
             store.dispatch(setFilmstripVisible(!widthBelowThreshold));
         }
     });
