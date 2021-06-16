@@ -7,9 +7,11 @@ import { createToolbarEvent, sendAnalytics } from '../../../analytics';
 import { translate } from '../../../base/i18n';
 import { IconHorizontalPoints } from '../../../base/icons';
 import { connect } from '../../../base/redux';
+import { getReactionsQueue } from '../../functions.web';
 
 import Drawer from './Drawer';
 import DrawerPortal from './DrawerPortal';
+import ReactionEmoji from './ReactionEmoji';
 import ToolbarButton from './ToolbarButton';
 
 /**
@@ -40,7 +42,12 @@ type Props = {
     /**
      * Invoked to obtain translated strings.
      */
-    t: Function
+    t: Function,
+
+    /**
+     * The array of reactions to be displayed.
+     */
+    reactionsQueue: Array
 };
 
 /**
@@ -71,7 +78,7 @@ class OverflowMenuButton extends Component<Props> {
      * @returns {ReactElement}
      */
     render() {
-        const { children, isOpen, overflowDrawer } = this.props;
+        const { children, isOpen, overflowDrawer, reactionsQueue } = this.props;
 
         return (
             <div className = 'toolbox-button-wth-dialog'>
@@ -81,11 +88,17 @@ class OverflowMenuButton extends Component<Props> {
                             {this._renderToolbarButton()}
                             <DrawerPortal>
                                 <Drawer
-                                    canExpand = { true }
                                     isOpen = { isOpen }
                                     onClose = { this._onCloseDialog }>
                                     {children}
                                 </Drawer>
+                                {<div className = 'reactions-animations-container'>
+                                    {reactionsQueue.map(({ reaction, uid }, index) => (<ReactionEmoji
+                                        index = { index }
+                                        key = { uid }
+                                        reaction = { reaction }
+                                        uid = { uid } />))}
+                                </div>}
                             </DrawerPortal>
                         </>
                     ) : (
@@ -163,7 +176,8 @@ function mapStateToProps(state) {
     const { overflowDrawer } = state['features/toolbox'];
 
     return {
-        overflowDrawer
+        overflowDrawer,
+        reactionsQueue: getReactionsQueue(state)
     };
 }
 

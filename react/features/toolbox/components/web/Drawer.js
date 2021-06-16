@@ -1,15 +1,9 @@
 // @flow
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 
-import { Icon, IconArrowUpWide, IconArrowDownWide } from '../../../base/icons';
 
 type Props = {
-
-    /**
-     * Whether the drawer should have a button that expands its size or not.
-     */
-    canExpand: ?boolean,
 
     /**
      * The component(s) to be displayed within the drawer menu.
@@ -33,11 +27,9 @@ type Props = {
  * @returns {ReactElement}
  */
 function Drawer({
-    canExpand,
     children,
     isOpen,
     onClose }: Props) {
-    const [ expanded, setExpanded ] = useState(false);
     const drawerRef: Object = useRef(null);
 
     /**
@@ -60,29 +52,12 @@ function Drawer({
         };
     }, [ drawerRef ]);
 
-    /**
-     * Toggles the menu state between expanded/collapsed.
-     *
-     * @returns {void}
-     */
-    function toggleExpanded() {
-        setExpanded(!expanded);
-    }
 
     return (
         isOpen ? (
             <div
-                className = { `drawer-menu${expanded ? ' expanded' : ''}` }
+                className = 'drawer-menu'
                 ref = { drawerRef }>
-                {canExpand && (
-                    <div
-                        className = 'drawer-toggle'
-                        onClick = { toggleExpanded }>
-                        <Icon
-                            size = { 24 }
-                            src = { expanded ? IconArrowDownWide : IconArrowUpWide } />
-                    </div>
-                )}
                 {children}
             </div>
         ) : null

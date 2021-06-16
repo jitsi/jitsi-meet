@@ -22,7 +22,6 @@ import {
     IconFullScreen,
     IconParticipants,
     IconPresentation,
-    IconRaisedHand,
     IconRec,
     IconShareAudio,
     IconShareDesktop
@@ -47,7 +46,7 @@ import {
     close as closeParticipantsPane,
     open as openParticipantsPane
 } from '../../../participants-pane/actions';
-import { getParticipantsPaneOpen } from '../../../participants-pane/functions';
+import { getParticipantsPaneOpen, shouldRenderInviteButton } from '../../../participants-pane/functions';
 import {
     LiveStreamButton,
     RecordButton
@@ -91,12 +90,15 @@ import MuteEveryoneButton from '../MuteEveryoneButton';
 import MuteEveryonesVideoButton from '../MuteEveryonesVideoButton';
 
 import AudioSettingsButton from './AudioSettingsButton';
+import InviteButton from './InviteButton';
 import OverflowMenuButton from './OverflowMenuButton';
-import OverflowMenuProfileItem from './OverflowMenuProfileItem';
+import ReactionsMenu from './ReactionsMenu';
 import ReactionsMenuButton from './ReactionsMenuButton';
 import ToggleCameraButton from './ToggleCameraButton';
 import ToolbarButton from './ToolbarButton';
 import VideoSettingsButton from './VideoSettingsButton';
+
+// import OverflowMenuProfileItem from './OverflowMenuProfileItem';
 
 
 /**
@@ -244,7 +246,12 @@ type Props = {
     /**
      * Invoked to obtain translated strings.
      */
-    t: Function
+    t: Function,
+
+    /**
+     * Whether or not to display the invite button in the toolbar menu.
+     */
+    _shouldRenderInviteButton: boolean
 };
 
 declare var APP: Object;
@@ -1022,13 +1029,29 @@ class Toolbox extends Component<Props> {
             t
         } = this.props;
 
+        const group0 = [
+            this.props._shouldShowButton('settings')
+            && <SettingsButton
+                key = 'settings'
+                showLabel = { true } />,
+            this.props._shouldRenderInviteButton
+            && <InviteButton
+                key = 'invite'
+                showLabel = { true } />,
+            this.props._shouldShowButton('tileview')
+            && <TileViewButton
+                key = 'tileview'
+                showLabel = { true } />,
+
+            this.props._shouldShowButton('toggle-camera')
+            && <ToggleCameraButton
+                key = 'toggle-camera'
+                showLabel = { true } />
+        ];
+
         const group1 = [
             ...additionalButtons,
 
-            this.props._shouldShowButton('toggle-camera')
-                && <ToggleCameraButton
-                    key = 'toggle-camera'
-                    showLabel = { true } />,
             this.props._shouldShowButton('videoquality')
                 && <OverflowMenuVideoQualityItem
                     key = 'videoquality'
@@ -1108,14 +1131,19 @@ class Toolbox extends Component<Props> {
 
 
         return [
-            this._isProfileVisible()
-                && <OverflowMenuProfileItem
-                    key = 'profile'
-                    onClick = { this._onToolbarToggleProfile } />,
-            this._isProfileVisible()
-                && <hr
-                    className = 'overflow-menu-hr'
-                    key = 'hr1' />,
+
+            // this._isProfileVisible()
+            //     && <OverflowMenuProfileItem
+            //         key = 'profile'
+            //         onClick = { this._onToolbarToggleProfile } />,
+            <div
+                className = 'overflow-header'
+                key = 'overflow-header'>
+                {group0}
+            </div>,
+            <hr
+                className = 'overflow-menu-hr'
+                key = 'hr1' />,
 
             ...group1,
             group1.some(Boolean)
@@ -1129,10 +1157,6 @@ class Toolbox extends Component<Props> {
                 className = 'overflow-menu-hr'
                 key = 'hr3' />,
 
-            this.props._shouldShowButton('settings')
-                && <SettingsButton
-                    key = 'settings'
-                    showLabel = { true } />,
             this.props._shouldShowButton('shortcuts')
                 && !_isMobile
                 && <OverflowMenuItem
@@ -1228,16 +1252,9 @@ class Toolbox extends Component<Props> {
                     text = { t(`toolbar.${_chatOpen ? 'closeChat' : 'openChat'}`) } />);
         }
 
-        if (this.props._shouldShowButton('raisehand')) {
-            buttons.has('raisehand')
-                ? mainMenuAdditionalButtons.push(<ReactionsMenuButton
-                    _raisedHand = { _raisedHand } />)
-                : overflowMenuAdditionalButtons.push(<OverflowMenuItem
-                    accessibilityLabel = { t('toolbar.accessibilityLabel.raiseHand') }
-                    icon = { IconRaisedHand }
-                    key = 'raisehand'
-                    onClick = { this._onToolbarToggleRaiseHand }
-                    text = { t(`toolbar.${_raisedHand ? 'lowerYourHand' : 'raiseYourHand'}`) } />);
+        if (this.props._shouldShowButton('raisehand') && buttons.has('raisehand')) {
+            mainMenuAdditionalButtons.push(<ReactionsMenuButton
+                _raisedHand = { _raisedHand } />);
         }
 
         if (this.props._shouldShowButton('participants-pane') || this.props._shouldShowButton('invite')) {
@@ -1259,16 +1276,11 @@ class Toolbox extends Component<Props> {
                 );
         }
 
-        if (this.props._shouldShowButton('tileview')) {
-            buttons.has('tileview')
-                ? mainMenuAdditionalButtons.push(
-                    <TileViewButton
-                        key = 'tileview'
-                        showLabel = { false } />)
-                : overflowMenuAdditionalButtons.push(
-                    <TileViewButton
-                        key = 'tileview'
-                        showLabel = { true } />);
+        if (this.props._shouldShowButton('tileview') && buttons.has('tileview')) {
+            mainMenuAdditionalButtons.push(
+                <TileViewButton
+                    key = 'tileview'
+                    showLabel = { false } />);
         }
 
         return {
@@ -1347,6 +1359,7 @@ class Toolbox extends Component<Props> {
                                 className = 'overflow-menu'>
                                 { this._renderOverflowMenuContent(overflowMenuAdditionalButtons) }
                             </ul>
+                            <ReactionsMenu overflowMenu = { true } />
                         </OverflowMenuButton>}
                         <HangupButton
                             customClass = 'hangup-button'
@@ -1416,6 +1429,7 @@ function _mapStateToProps(state) {
         _participantsPaneOpen: getParticipantsPaneOpen(state),
         _raisedHand: localParticipant.raisedHand,
         _screensharing: (localVideo && localVideo.videoType === 'desktop') || isScreenAudioShared(state),
+        _shouldRenderInviteButton: shouldRenderInviteButton(state),
         _shouldShowButton: buttonName => isToolbarButtonEnabled(buttonName)(state),
         _visible: isToolboxVisible(state),
         _visibleButtons: getToolbarButtons(state)

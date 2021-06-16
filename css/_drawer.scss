@@ -7,14 +7,10 @@
 }
 
 .drawer-menu {
-    max-height: 50vh;
+    max-height: 80vh;
     background: #242528;
     border-radius: 16px 16px 0 0;
-    overflow-y: auto;
-
-    &.expanded {
-        max-height: 80vh;
-    }
+    overflow-y: hidden;
 
     .drawer-toggle {
         display: flex;
@@ -42,6 +38,8 @@
         font-size: 1.2em;
         list-style-type: none;
         padding: 0;
+        height: calc(80vh - 170px);
+        overflow-y: auto;
 
         .overflow-menu-item {
             box-sizing: border-box;
@@ -80,5 +78,36 @@
             overflow: hidden;
             white-space: nowrap;
         }
+
+        .overflow-header {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+
+            .overflow-menu-item {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                height: 104px;
+                padding: 16px;
+                padding-bottom: 12px;
+
+                .overflow-menu-item-icon {
+                    margin-right: 0;
+                    padding: 15px;
+                    background-color: #1B67EC;
+                    margin-bottom: 8px;
+                    border-radius: 100%;
+                }
+
+                span {
+                    font-weight: 600;
+                    font-size: 14px;
+                    line-height: 20px;
+                }
+            }
+    }
     }
 }

@@ -46,7 +46,12 @@ type Props = {
     /**
      * Docks the toolbox
      */
-    _dockToolbox: Function
+    _dockToolbox: Function,
+
+    /**
+     * Whether or not it's displayed in the overflow menu.
+     */
+    overflowMenu: boolean
 };
 
 declare var APP: Object;
@@ -162,10 +167,10 @@ class ReactionsMenu extends Component<Props> {
      * @inheritdoc
      */
     render() {
-        const { _raisedHand, t } = this.props;
+        const { _raisedHand, t, overflowMenu } = this.props;
 
         return (
-            <div className = 'reactions-menu'>
+            <div className = { `reactions-menu ${overflowMenu ? 'overflow' : ''}` }>
                 <div className = 'reactions-row'>
                     { this._getReactionButtons() }
                 </div>
@@ -174,7 +179,10 @@ class ReactionsMenu extends Component<Props> {
                         accessibilityLabel = { t('toolbar.accessibilityLabel.raiseHand') }
                         icon = '✋'
                         key = 'raisehand'
-                        label = { `${t(`toolbar.${_raisedHand ? 'lowerYourHand' : 'raiseYourHand'}`)} (R)` }
+                        label = {
+                            `${t(`toolbar.${_raisedHand ? 'lowerYourHand' : 'raiseYourHand'}`)}
+                            ${overflowMenu ? '' : ' (R)'}`
+                        }
                         onClick = { this._onToolbarToggleRaiseHand }
                         toggled = { true } />
                 </div>

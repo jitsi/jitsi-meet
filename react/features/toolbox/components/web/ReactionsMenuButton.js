@@ -35,7 +35,7 @@ type Props = {
     isOpen: boolean,
 
     /**
-     * The reactions queue to be animated
+     * The array of reactions to be displayed.
      */
     reactionsQueue: Array
 };
