@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-import { getParticipantCountWithFake } from '../../base/participants';
+import { getDominantSpeakerParticipant } from '../../base/participants';
 import { connect } from '../../base/redux';
 
 import {
@@ -76,7 +76,7 @@ class Captions
 function mapStateToProps(state) {
     return {
         ..._abstractMapStateToProps(state),
-        _isLifted: getParticipantCountWithFake(state) < 2
+        _isLifted: Boolean(getDominantSpeakerParticipant(state))
     };
 }
 
