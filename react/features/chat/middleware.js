@@ -22,7 +22,13 @@ import { playSound, registerSound, unregisterSound } from '../base/sounds';
 import { openDisplayNamePrompt } from '../display-name';
 import { endpointMessageReceived } from '../subtitles';
 import { showToolbox } from '../toolbox/actions';
-import { addReactionsMessage, pushReaction } from '../toolbox/actions.web';
+import {
+    addReactionsMessage,
+    hideToolbox,
+    pushReaction,
+    setToolboxTimeout,
+    setToolboxVisible
+} from '../toolbox/actions.web';
 import { REACTIONS } from '../toolbox/constants';
 
 import { ADD_MESSAGE, SEND_MESSAGE, OPEN_CHAT, CLOSE_CHAT, SEND_REACTION, ADD_REACTIONS_MESSAGE } from './actionTypes';
@@ -257,6 +263,11 @@ function _addChatMsgListener(conference, store) {
                         timeout: null,
                         message: ''
                     };
+                    store.dispatch(setToolboxVisible(true));
+                    store.dispatch(setToolboxTimeout(
+                            () => store.dispatch(hideToolbox()),
+                            5000)
+                    );
 
                     clearTimeout(reactions[_id].timeout);
                     reactions[_id].message = `${reactions[_id].message}${REACTIONS[eventData.reaction].message}`;
