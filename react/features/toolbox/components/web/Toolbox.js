@@ -626,6 +626,13 @@ class Toolbox extends Component<Props> {
                 enable: !this.props._chatOpen
             }));
 
+        // Checks if there was any text selected by the user.
+        // Used for when we press simultaneously keys for copying
+        // text messages from the chat board
+        if (window.getSelection().toString() !== '') {
+            return false;
+        }
+
         this._doToggleChat();
     }
 
