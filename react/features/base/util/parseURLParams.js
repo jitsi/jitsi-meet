@@ -42,7 +42,7 @@ export function parseURLParams(
         const param = part.split('=');
         const key = param[0];
 
-        if (!key || blacklist.includes(key.split('.')[0])) {
+        if (!key || key.split('.').some(k => blacklist.includes(k))) {
             return;
         }
 
