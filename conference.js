@@ -45,6 +45,7 @@ import {
     p2pStatusChanged,
     sendLocalParticipant
 } from './react/features/base/conference';
+import { getReplaceParticipant } from './react/features/base/config/functions';
 import {
     checkAndNotifyForNewDevice,
     getAvailableDevices,
@@ -304,9 +305,8 @@ class ConferenceConnector {
 
         // not enough rights to create conference
         case JitsiConferenceErrors.AUTHENTICATION_REQUIRED: {
-            const { replaceParticipant }
-                = APP.store.getState()['features/base/config'];
 
+            const replaceParticipant = getReplaceParticipant(APP.store.getState());
 
             // Schedule reconnect to check if someone else created the room.
             this.reconnectTimeout = setTimeout(() => {
@@ -397,7 +397,7 @@ class ConferenceConnector {
      *
      */
     connect() {
-        const { replaceParticipant } = APP.store.getState()['features/base/config'];
+        const replaceParticipant = getReplaceParticipant(APP.store.getState());
 
         // the local storage overrides here and in connection.js can be used by jibri
         room.join(jitsiLocalStorage.getItem('xmpp_conference_password_override'), replaceParticipant);
