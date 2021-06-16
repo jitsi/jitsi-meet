@@ -147,3 +147,8 @@ export const SET_REACTIONS_MESSAGE = 'SET_REACTIONS_MESSAGE';
  * }
  */
 export const CLEAR_REACTIONS_MESSAGE = 'CLEAR_REACTIONS_MESSAGE';
+
+/**
+ * The type.
+ */
+export const SET_REACTION_QUEUE = 'SET_REACTION_QUEUE';

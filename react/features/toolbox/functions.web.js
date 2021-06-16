@@ -154,3 +154,13 @@ export function isVideoMuteButtonDisabled(state: Object) {
 export function getReactionsMenuVisibility(state: Object) {
     return state['features/toolbox'].reactions.visible;
 }
+
+/**
+ * Returns the queue of reactions.
+ *
+ * @param {Object} state - The state of the application.
+ * @returns {boolean}
+ */
+export function getReactionsQueue(state: Object) {
+    return state['features/toolbox'].reactions.queue;
+}

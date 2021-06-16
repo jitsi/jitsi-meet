@@ -8,7 +8,8 @@ import {
     SET_FULL_SCREEN,
     SET_OVERFLOW_DRAWER,
     SET_REACTIONS_VISIBLE,
-    CLEAR_REACTIONS_MESSAGE
+    CLEAR_REACTIONS_MESSAGE,
+    SET_REACTION_QUEUE
 } from './actionTypes';
 import {
     clearToolboxTimeout,
@@ -42,6 +43,19 @@ function setReactionsMenuVisibility(value: boolean) {
 export function flushReactionsToChat() {
     return {
         type: CLEAR_REACTIONS_MESSAGE
+    };
+}
+
+/**
+ * Sets the reaction queue.
+ *
+ * @param {Array} value - The new queue.
+ * @returns {Function}
+ */
+function setReactionQueue(value: Array) {
+    return {
+        type: SET_REACTION_QUEUE,
+        value
     };
 }
 
@@ -211,5 +225,35 @@ export function toggleReactionsMenu() {
         const value = getState()['features/toolbox'].reactions.visible;
 
         dispatch(setReactionsMenuVisibility(!value));
+    };
+}
+
+/**
+ * Adds a reaction to the end of the queue.
+ *
+ * @param {Object} store - The redux store.
+ * @param {string} reaction - Reaction to be added to queue.
+ * @returns {void}
+ */
+export function pushReaction(store: Object, reaction: string) {
+    const queue = store.getState()['features/toolbox'].reactions.queue;
+
+    store.dispatch(setReactionQueue([ ...queue, {
+        reaction,
+        uid: window.Date.now()
+    } ]));
+}
+
+/**
+ * Removes a reaction from the queue.
+ *
+ * @param {number} uid - Id of the reaction to be removed.
+ * @returns {void}
+ */
+export function removeReaction(uid) {
+    return (dispatch: Function, getState: Function) => {
+        const queue = getState()['features/toolbox'].reactions.queue;
+
+        dispatch(setReactionQueue(queue.filter(reaction => reaction.uid !== uid)));
     };
 }

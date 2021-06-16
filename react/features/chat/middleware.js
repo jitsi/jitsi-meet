@@ -22,7 +22,7 @@ import { playSound, registerSound, unregisterSound } from '../base/sounds';
 import { openDisplayNamePrompt } from '../display-name';
 import { endpointMessageReceived } from '../subtitles';
 import { showToolbox } from '../toolbox/actions';
-import { addReactionsMessage } from '../toolbox/actions.web';
+import { addReactionsMessage, pushReaction } from '../toolbox/actions.web';
 import { REACTIONS } from '../toolbox/constants';
 
 import { ADD_MESSAGE, SEND_MESSAGE, OPEN_CHAT, CLOSE_CHAT, SEND_REACTION, ADD_REACTIONS_MESSAGE } from './actionTypes';
@@ -149,17 +149,13 @@ MiddlewareRegistry.register(store => next => action => {
     }
 
     case SEND_REACTION: {
-        const state = store.getState();
-        const { conference } = state['features/base/conference'];
-
-        if (conference) {
-            APP.conference.sendEndpointMessage('', {
-                name: ENDPOINT_REACTION_NAME,
-                reaction: action.reaction,
-                timestamp: Date.now()
-            });
-            dispatch(addReactionsMessage(REACTIONS[action.reaction].message));
-        }
+        APP.conference.sendEndpointMessage('', {
+            name: ENDPOINT_REACTION_NAME,
+            reaction: action.reaction,
+            timestamp: Date.now()
+        });
+        dispatch(addReactionsMessage(REACTIONS[action.reaction].message));
+        pushReaction(store, action.reaction);
         break;
     }
 
@@ -256,6 +252,7 @@ function _addChatMsgListener(conference, store) {
                 const [ { _id }, eventData ] = args;
 
                 if (eventData.name === ENDPOINT_REACTION_NAME) {
+                    pushReaction(store, eventData.reaction);
                     reactions[_id] = reactions[_id] ?? {
                         timeout: null,
                         message: ''

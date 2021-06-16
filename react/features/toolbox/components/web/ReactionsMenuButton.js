@@ -6,8 +6,9 @@ import { translate } from '../../../base/i18n';
 import { IconRaisedHand } from '../../../base/icons';
 import { connect } from '../../../base/redux';
 import { toggleReactionsMenu } from '../../actions.web';
-import { getReactionsMenuVisibility } from '../../functions.web';
+import { getReactionsMenuVisibility, getReactionsQueue } from '../../functions.web';
 
+import ReactionEmoji from './ReactionEmoji';
 import ReactionsMenuPopup from './ReactionsMenuPopup';
 import ToolbarButton from './ToolbarButton';
 
@@ -31,7 +32,12 @@ type Props = {
     /**
      * Whether or not the reactions menu is open.
      */
-    isOpen: boolean
+    isOpen: boolean,
+
+    /**
+     * The reactions queue to be animated
+     */
+    reactionsQueue: Array
 };
 
 /**
@@ -47,18 +53,25 @@ class ReactionsMenuButton extends Component<Props> {
      * @inheritdoc
      */
     render() {
-        const { _raisedHand, t, onReactionsClick, isOpen } = this.props;
+        const { _raisedHand, t, onReactionsClick, isOpen, reactionsQueue } = this.props;
 
         return (
-            <ReactionsMenuPopup>
-                <ToolbarButton
-                    accessibilityLabel = { t('toolbar.accessibilityLabel.reactionsMenu') }
-                    icon = { IconRaisedHand }
-                    key = 'reactions'
-                    onClick = { onReactionsClick }
-                    toggled = { _raisedHand }
-                    tooltip = { t(`toolbar.${isOpen ? 'closeReactionsMenu' : 'openReactionsMenu'}`) } />
-            </ReactionsMenuPopup>
+            <div className = 'react-menu-popup-container'>
+                <ReactionsMenuPopup>
+                    <ToolbarButton
+                        accessibilityLabel = { t('toolbar.accessibilityLabel.reactionsMenu') }
+                        icon = { IconRaisedHand }
+                        key = 'reactions'
+                        onClick = { onReactionsClick }
+                        toggled = { _raisedHand }
+                        tooltip = { t(`toolbar.${isOpen ? 'closeReactionsMenu' : 'openReactionsMenu'}`) } />
+                </ReactionsMenuPopup>
+                {reactionsQueue.map(({ reaction, uid }, index) => (<ReactionEmoji
+                    index = { index }
+                    key = { uid }
+                    reaction = { reaction }
+                    uid = { uid } />))}
+            </div>
         );
     }
 }
@@ -71,7 +84,8 @@ class ReactionsMenuButton extends Component<Props> {
  */
 function mapStateToProps(state) {
     return {
-        isOpen: getReactionsMenuVisibility(state)
+        isOpen: getReactionsMenuVisibility(state),
+        reactionsQueue: getReactionsQueue(state)
     };
 }
 

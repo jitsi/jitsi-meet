@@ -1,3 +1,5 @@
+@use 'sass:math';
+
 .reactions-menu {
   width: 280px;
   background: #292929;
@@ -53,6 +55,97 @@
   }
 }
 
+.react-menu-popup-container,
 .reactions-menu-popup {
   display: inline-block;
+  position: relative;
 }
+
+$reactionCount: 20;
+
+@function random($min, $max) {
+  @return math.random() * ($max - $min) + $min;
+}
+
+.reaction-emoji {
+  position: absolute;
+  font-size: 24px;
+  line-height: 32px;
+  width: 32px;
+  height: 32px;
+  bottom: 0;
+  left: 10px;
+  opacity: 0;
+  z-index: 1;
+
+  &.reaction-0 {
+    animation: flowToRight 5s forwards ease-in-out;
+  }
+
+  @for $i from 1 through $reactionCount {
+  &.reaction-#{$i} {
+    animation: animation-#{$i} 5s forwards ease-in-out;
+    bottom: random(-30, 20);
+    left: random(-10, 10);
+  }
+}
+}
+
+@keyframes flowToRight {
+  0% {
+    transform: translate(0px, 0px) scale(0.6);
+    opacity: 1;
+  }
+
+  70% {
+    transform: translate(40px, -70vh) scale(1.5);
+    opacity: 1;
+  }
+
+  75% {
+    transform: translate(40px, -70vh) scale(1.5);
+    opacity: 1;
+  }
+
+  100% {
+    transform: translate(140px, -50vh) scale(1);
+    opacity: 0;
+  }
+}
+
+@mixin animation-list {
+  @for $i from 1 through $reactionCount {
+    $topX: random(-100, 100);
+    $topY: random(65, 75);
+    $bottomX: random(150, 200);
+    $bottomY: random(40, 50);
+
+    @if $topX < 0 {
+      $bottomX: -$bottomX;
+    }
+
+    @keyframes animation-#{$i} {
+      0% {
+        transform: translate(0, 0) scale(0.6);
+        opacity: 1;
+      }
+
+      70% {
+        transform: translate(#{$topX}px, -#{$topY}vh) scale(1.5);
+        opacity: 1;
+      }
+
+      75% {
+        transform: translate(#{$topX}px, -#{$topY}vh) scale(1.5);
+        opacity: 1;
+      }
+
+      100% {
+        transform: translate(#{$bottomX}px, -#{$bottomY}vh) scale(1);
+        opacity: 0;
+      }
+    }
+  }
+}
+
+@include animation-list;

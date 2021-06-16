@@ -16,7 +16,8 @@ import {
     TOGGLE_TOOLBOX_VISIBLE,
     SET_REACTIONS_VISIBLE,
     SET_REACTIONS_MESSAGE,
-    CLEAR_REACTIONS_MESSAGE
+    CLEAR_REACTIONS_MESSAGE,
+    SET_REACTION_QUEUE
 } from './actionTypes';
 
 declare var interfaceConfig: Object;
@@ -147,7 +148,14 @@ function _getInitialState() {
              *
              * @type {number|null}
              */
-            timeoutID: null
+            timeoutID: null,
+
+            /**
+             * The array of reactions to animate
+             *
+             * @type {Array}
+             */
+            queue: []
         }
     };
 }
@@ -246,7 +254,18 @@ ReducerRegistry.register(
                     timeoutID: null
                 }
             };
+
+        case SET_REACTION_QUEUE: {
+            return {
+                ...state,
+                reactions: {
+                    ...state.reactions,
+                    queue: action.value
+                }
+            };
         }
+        }
+
 
         return state;
     });
