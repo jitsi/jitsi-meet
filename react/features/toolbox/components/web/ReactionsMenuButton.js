@@ -22,7 +22,7 @@ type Props = {
     /**
      * Whether or not the local participant's hand is raised.
      */
-    _raisedHand: boolean,
+    raisedHand: boolean,
 
     /**
      * Click handler for the reaction button. Opens reactions menu.
@@ -53,7 +53,7 @@ class ReactionsMenuButton extends Component<Props> {
      * @inheritdoc
      */
     render() {
-        const { _raisedHand, t, onReactionsClick, isOpen, reactionsQueue } = this.props;
+        const { raisedHand, t, onReactionsClick, isOpen, reactionsQueue } = this.props;
 
         return (
             <div className = 'react-menu-popup-container'>
@@ -63,7 +63,7 @@ class ReactionsMenuButton extends Component<Props> {
                         icon = { IconRaisedHand }
                         key = 'reactions'
                         onClick = { onReactionsClick }
-                        toggled = { _raisedHand }
+                        toggled = { raisedHand }
                         tooltip = { t(`toolbar.${isOpen ? 'closeReactionsMenu' : 'openReactionsMenu'}`) } />
                 </ReactionsMenuPopup>
                 {reactionsQueue.map(({ reaction, uid }, index) => (<ReactionEmoji

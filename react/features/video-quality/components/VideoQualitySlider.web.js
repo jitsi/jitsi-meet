@@ -154,6 +154,7 @@ class VideoQualitySlider extends Component<Props> {
                            * removed after upgrading to React 16.
                            */ }
                         <input
+                            aria-label = { t('videoStatus.callQuality') }
                             className = 'video-quality-dialog-slider'
                             max = { this._sliderOptions.length - 1 }
                             min = '0'

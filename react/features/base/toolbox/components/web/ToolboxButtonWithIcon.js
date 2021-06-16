@@ -36,6 +36,36 @@ type Props = {
      * Additional styles.
      */
     styles?: Object,
+
+    /**
+     * aria label for the Icon.
+     */
+    ariaLabel?: string,
+
+    /**
+     * whether the element has a popup
+     */
+    ariaHasPopup?: boolean,
+
+    /**
+     * whether the element popup is expanded
+     */
+    ariaExpanded?: boolean,
+
+    /**
+     * The id of the element this button icon controls
+     */
+    ariaControls?: string,
+
+    /**
+     * keydown handler for icon.
+     */
+    onIconKeyDown?: Function,
+
+    /**
+     * The ID of the icon button
+     */
+    iconId: string
 };
 
 /**
@@ -51,7 +81,13 @@ export default function ToolboxButtonWithIcon(props: Props) {
         iconDisabled,
         iconTooltip,
         onIconClick,
-        styles
+        onIconKeyDown,
+        styles,
+        ariaLabel,
+        ariaHasPopup,
+        ariaControls,
+        ariaExpanded,
+        iconId
     } = props;
 
     const iconProps = {};
@@ -62,6 +98,12 @@ export default function ToolboxButtonWithIcon(props: Props) {
     } else {
         iconProps.className = 'settings-button-small-icon';
         iconProps.onClick = onIconClick;
+        iconProps.onKeyDown = onIconKeyDown;
+        iconProps.role = 'button';
+        iconProps.tabIndex = 0;
+        iconProps.ariaControls = ariaControls;
+        iconProps.ariaExpanded = ariaExpanded;
+        iconProps.containerId = iconId;
     }
 
 
@@ -77,6 +119,8 @@ export default function ToolboxButtonWithIcon(props: Props) {
                     position = 'top'>
                     <Icon
                         { ...iconProps }
+                        ariaHasPopup = { ariaHasPopup }
+                        ariaLabel = { ariaLabel }
                         size = { 9 }
                         src = { icon } />
                 </Tooltip>

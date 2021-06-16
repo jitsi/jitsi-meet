@@ -63,6 +63,36 @@ type Props = {
  * @extends Component
  */
 class OverflowMenuVideoQualityItem extends Component<Props> {
+
+    /**
+     * Initializes a new {@code OverflowMenuVideoQualityItem} instance.
+     *
+     * @param {*} props - The read-only properties with which the new instance
+     * is to be initialized.
+     */
+    constructor(props) {
+        super(props);
+
+        // Bind event handler so it is only bound once for every instance.
+        this._onKeyPress = this._onKeyPress.bind(this);
+    }
+
+    _onKeyPress: (Object) => void;
+
+    /**
+     * KeyPress handler for accessibility.
+     *
+     * @param {Object} e - The key event to handle.
+     *
+     * @returns {void}
+     */
+    _onKeyPress(e) {
+        if (this.props.onClick && (e.key === ' ' || e.key === 'Enter')) {
+            e.preventDefault();
+            this.props.onClick();
+        }
+    }
+
     /**
      * Implements React's {@link Component#render()}.
      *
@@ -78,10 +108,12 @@ class OverflowMenuVideoQualityItem extends Component<Props> {
 
         return (
             <li
-                aria-label =
-                    { this.props.t('toolbar.accessibilityLabel.callQuality') }
+                aria-label = { this.props.t('toolbar.accessibilityLabel.callQuality') }
                 className = 'overflow-menu-item'
-                onClick = { this.props.onClick }>
+                onClick = { this.props.onClick }
+                onKeyPress = { this._onKeyPress }
+                role = 'menuitem'
+                tabIndex = { 0 }>
                 <span className = 'overflow-menu-item-icon'>
                     <Icon src = { icon } />
                 </span>

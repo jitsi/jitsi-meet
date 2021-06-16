@@ -87,6 +87,7 @@ class DeepLinkingDesktopPage<P : Props> extends Component<P> {
                             HIDE_DEEP_LINKING_LOGO
                                 ? null
                                 : <img
+                                    alt = { t('welcomepage.logo.logoDeepLinking') }
                                     className = 'logo'
                                     src = 'images/logo-deep-linking.png' />
                         }

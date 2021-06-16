@@ -21,7 +21,7 @@ export const InviteButton = () => {
 
     return (
         <ParticipantInviteButton
-            aria-label = { t('toolbar.accessibilityLabel.invite') }
+            aria-label = { t('participantsPane.actions.invite') }
             onClick = { onInvite }>
             <Icon
                 size = { 20 }

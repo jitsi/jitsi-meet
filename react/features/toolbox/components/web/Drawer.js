@@ -11,14 +11,19 @@ type Props = {
     children: React$Node,
 
     /**
-     Whether the drawer should be shown or not.
+     * Whether the drawer should be shown or not.
      */
     isOpen: boolean,
 
     /**
-     Function that hides the drawer.
+     * Function that hides the drawer.
      */
-    onClose: Function
+    onClose: Function,
+
+    /**
+     * Invoked to obtain translated strings.
+     */
+    t: Function
 };
 
 /**
@@ -51,7 +56,6 @@ function Drawer({
             window.removeEventListener('mousedown', handleOutsideClick);
         };
     }, [ drawerRef ]);
-
 
     return (
         isOpen ? (

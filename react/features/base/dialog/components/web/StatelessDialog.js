@@ -118,7 +118,7 @@ class StatelessDialog extends Component<Props> {
         // Bind event handlers so they are only bound once for every instance.
         this._onCancel = this._onCancel.bind(this);
         this._onDialogDismissed = this._onDialogDismissed.bind(this);
-        this._onKeyDown = this._onKeyDown.bind(this);
+        this._onKeyPress = this._onKeyPress.bind(this);
         this._onSubmit = this._onSubmit.bind(this);
         this._renderFooter = this._renderFooter.bind(this);
         this._setDialogElement = this._setDialogElement.bind(this);
@@ -159,7 +159,7 @@ class StatelessDialog extends Component<Props> {
                 shouldCloseOnEscapePress = { true }
                 width = { width || 'medium' }>
                 <div
-                    onKeyDown = { this._onKeyDown }
+                    onKeyPress = { this._onKeyPress }
                     ref = { this._setDialogElement }>
                     <form
                         className = 'modal-dialog-form'
@@ -327,7 +327,7 @@ class StatelessDialog extends Component<Props> {
         this._dialogElement = element;
     }
 
-    _onKeyDown: (Object) => void;
+    _onKeyPress: (Object) => void;
 
     /**
      * Handles 'Enter' key in the dialog to submit/hide dialog depending on
@@ -337,7 +337,7 @@ class StatelessDialog extends Component<Props> {
      * @private
      * @returns {void}
      */
-    _onKeyDown(event) {
+    _onKeyPress(event) {
         // If the event coming to the dialog has been subject to preventDefault
         // we don't handle it here.
         if (event.defaultPrevented) {

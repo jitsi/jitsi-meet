@@ -154,6 +154,12 @@ class FeedbackDialog extends Component<Props, State> {
         this._scoreClickConfigurations = SCORES.map((textKey, index) => {
             return {
                 _onClick: () => this._onScoreSelect(index),
+                _onKeyPres: e => {
+                    if (e.key === ' ' || e.key === 'Enter') {
+                        e.preventDefault();
+                        this._onScoreSelect(index);
+                    }
+                },
                 _onMouseOver: () => this._onScoreMouseOver(index)
             };
         });
@@ -200,6 +206,8 @@ class FeedbackDialog extends Component<Props, State> {
         const scoreToDisplayAsSelected
             = mousedOverScore > -1 ? mousedOverScore : score;
 
+        const { t } = this.props;
+
         const scoreIcons = this._scoreClickConfigurations.map(
             (config, index) => {
                 const isFilled = index <= scoreToDisplayAsSelected;
@@ -208,11 +216,15 @@ class FeedbackDialog extends Component<Props, State> {
                     = `star-btn ${scoreAnimationClass} ${activeClass}`;
 
                 return (
-                    <a
+                    <span
+                        aria-label = { t(SCORES[index]) }
                         className = { className }
                         key = { index }
                         onClick = { config._onClick }
-                        onMouseOver = { config._onMouseOver }>
+                        onKeyPress = { config._onKeyPres }
+                        onMouseOver = { config._onMouseOver }
+                        role = 'button'
+                        tabIndex = { 0 }>
                         { isFilled
                             ? <StarFilledIcon
                                 label = 'star-filled'
@@ -220,11 +232,10 @@ class FeedbackDialog extends Component<Props, State> {
                             : <StarIcon
                                 label = 'star'
                                 size = 'xlarge' /> }
-                    </a>
+                    </span>
                 );
             });
 
-        const { t } = this.props;
 
         return (
             <Dialog
@@ -234,7 +245,9 @@ class FeedbackDialog extends Component<Props, State> {
                 titleKey = 'feedback.rateExperience'>
                 <div className = 'feedback-dialog'>
                     <div className = 'rating'>
-                        <div className = 'star-label'>
+                        <div
+                            aria-label = { this.props.t('feedback.star') }
+                            className = 'star-label' >
                             <p id = 'starLabel'>
                                 { t(SCORES[scoreToDisplayAsSelected]) }
                             </p>

@@ -34,6 +34,16 @@ export function getDialOutUrl(state: Object): string {
 }
 
 /**
+ * Returns the replaceParticipant config.
+ *
+ * @param {Object} state - The state of the app.
+ * @returns {boolean}
+ */
+export function getReplaceParticipant(state: Object): string {
+    return state['features/base/config'].replaceParticipant;
+}
+
+/**
  * Returns the list of enabled toolbar buttons.
  *
  * @param {Object} state - The redux state.

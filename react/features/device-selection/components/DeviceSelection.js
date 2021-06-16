@@ -232,7 +232,9 @@ class DeviceSelection extends AbstractDialogTab<Props, State> {
                             track = { this.state.previewAudioTrack } /> }
                 </div>
                 <div className = 'device-selection-column column-selectors'>
-                    <div className = 'device-selectors'>
+                    <div
+                        aria-live = 'polite all'
+                        className = 'device-selectors'>
                         { this._renderSelectors() }
                     </div>
                     { !hideAudioOutputSelect
@@ -344,9 +346,11 @@ class DeviceSelection extends AbstractDialogTab<Props, State> {
     _renderSelector(deviceSelectorProps) {
         return (
             <div key = { deviceSelectorProps.label }>
-                <div className = 'device-selector-label'>
+                <label
+                    className = 'device-selector-label'
+                    htmlFor = { deviceSelectorProps.id }>
                     { this.props.t(deviceSelectorProps.label) }
-                </div>
+                </label>
                 <DeviceSelector { ...deviceSelectorProps } />
             </div>
         );
@@ -370,6 +374,7 @@ class DeviceSelection extends AbstractDialogTab<Props, State> {
                 isDisabled: this.props.disableAudioInputChange
                     || this.props.disableDeviceChange,
                 key: 'audioInput',
+                id: 'audioInput',
                 label: 'settings.selectMic',
                 onSelect: selectedAudioInputId =>
                     super._onChange({ selectedAudioInputId }),
@@ -385,6 +390,7 @@ class DeviceSelection extends AbstractDialogTab<Props, State> {
                 icon: 'icon-camera',
                 isDisabled: this.props.disableDeviceChange,
                 key: 'videoInput',
+                id: 'videoInput',
                 label: 'settings.selectCamera',
                 onSelect: selectedVideoInputId =>
                     super._onChange({ selectedVideoInputId }),
@@ -400,6 +406,7 @@ class DeviceSelection extends AbstractDialogTab<Props, State> {
                 icon: 'icon-speaker',
                 isDisabled: this.props.disableDeviceChange,
                 key: 'audioOutput',
+                id: 'audioOutput',
                 label: 'settings.selectAudioOutput',
                 onSelect: selectedAudioOutputId =>
                     super._onChange({ selectedAudioOutputId }),

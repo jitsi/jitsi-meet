@@ -6,7 +6,6 @@ import Filmstrip from '../../../../../modules/UI/videolayout/Filmstrip';
 import { getLocalParticipant } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import { getToolboxHeight } from '../../../toolbox/functions.web';
-import { getYoutubeId } from '../../functions';
 
 import VideoManager from './VideoManager';
 import YoutubeVideoManager from './YoutubeVideoManager';
@@ -38,14 +37,9 @@ type Props = {
      isOwner: boolean,
 
     /**
-     * The shared video id
+     * The shared video url
      */
-     sharedVideoId: string,
-
-    /**
-     * The shared youtube video id
-     */
-     sharedYoutubeVideoId: string,
+     videoUrl: string,
 }
 
 /**
@@ -97,20 +91,17 @@ class SharedVideo extends Component<Props> {
      * @returns {Component}
      */
     getManager() {
-        const {
-            sharedVideoId,
-            sharedYoutubeVideoId
-        } = this.props;
+        const { videoUrl } = this.props;
 
-        if (!sharedVideoId) {
+        if (!videoUrl) {
             return null;
         }
 
-        if (sharedYoutubeVideoId) {
-            return <YoutubeVideoManager videoId = { sharedYoutubeVideoId } />;
+        if (videoUrl.match(/http/)) {
+            return <VideoManager videoId = { videoUrl } />;
         }
 
-        return <VideoManager videoId = { sharedVideoId } />;
+        return <YoutubeVideoManager videoId = { videoUrl } />;
     }
 
     /**
@@ -154,8 +145,7 @@ function _mapStateToProps(state) {
         clientWidth,
         filmstripVisible: visible,
         isOwner: ownerId === localParticipant.id,
-        sharedVideoId: videoUrl,
-        sharedYoutubeVideoId: getYoutubeId(videoUrl)
+        videoUrl
     };
 }
 
