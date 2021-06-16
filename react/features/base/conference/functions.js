@@ -87,6 +87,8 @@ export function commonUserJoinedHandling(
     if (user.isHidden()) {
         dispatch(hiddenParticipantJoined(id, displayName));
     } else {
+        const isReplacing = user.isReplacing && user.isReplacing();
+
         dispatch(participantJoined({
             botType: user.getBotType(),
             connectionStatus: user.getConnectionStatus(),
@@ -94,7 +96,8 @@ export function commonUserJoinedHandling(
             id,
             name: displayName,
             presence: user.getStatus(),
-            role: user.getRole()
+            role: user.getRole(),
+            isReplacing
         }));
     }
 }
@@ -119,7 +122,9 @@ export function commonUserLeftHandling(
     if (user.isHidden()) {
         dispatch(hiddenParticipantLeft(id));
     } else {
-        dispatch(participantLeft(id, conference));
+        const isReplaced = user.isReplaced && user.isReplaced();
+
+        dispatch(participantLeft(id, conference, isReplaced));
     }
 }
 

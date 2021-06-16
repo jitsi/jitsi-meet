@@ -367,6 +367,7 @@ export function hiddenParticipantLeft(id) {
  * with the participant identified by the specified {@code id}. Only the local
  * participant is allowed to not specify an associated {@code JitsiConference}
  * instance.
+ * @param {boolean} isReplaced - Whether the participant is to be replaced in the meeting.
  * @returns {{
  *     type: PARTICIPANT_LEFT,
  *     participant: {
@@ -375,12 +376,13 @@ export function hiddenParticipantLeft(id) {
  *     }
  * }}
  */
-export function participantLeft(id, conference) {
+export function participantLeft(id, conference, isReplaced) {
     return {
         type: PARTICIPANT_LEFT,
         participant: {
             conference,
-            id
+            id,
+            isReplaced
         }
     };
 }
@@ -491,8 +493,12 @@ export function participantKicked(kicker, kicked) {
         dispatch({
             type: PARTICIPANT_KICKED,
             kicked: kicked.getId(),
-            kicker: kicker.getId()
+            kicker: kicker?.getId()
         });
+
+        if (kicked.isReplaced && kicked.isReplaced()) {
+            return;
+        }
 
         dispatch(showNotification({
             titleArguments: {
