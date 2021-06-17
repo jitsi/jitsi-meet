@@ -10,11 +10,10 @@ import { getReactionsMenuVisibility } from '../../functions.web';
 import ReactionsMenu from './ReactionsMenu';
 
 
-// type Props = AudioSettingsContentProps & {
 type Props = {
 
     /**
-    * Component's children (the audio button).
+    * Component's children (the raise hand button).
     */
     children: React$Node,
 
@@ -30,7 +29,7 @@ type Props = {
 }
 
 /**
- * Popup with audio settings.
+ * Popup with reactions menu.
  *
  * @returns {ReactElement}
  */

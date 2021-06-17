@@ -46,7 +46,7 @@ class ReactionEmoji extends Component<Props> {
         super(props);
 
         this.state = {
-            index: props.index % 21
+            index: props.index % 21 // index of the CSS animation to use
         };
     }
 
@@ -70,7 +70,7 @@ class ReactionEmoji extends Component<Props> {
 
         return (
             <div
-                className = { `reaction-emoji reaction-${index % 21}` }
+                className = { `reaction-emoji reaction-${index}` }
                 id = { uid }>
                 { REACTIONS[reaction].emoji }
             </div>

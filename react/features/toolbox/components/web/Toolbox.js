@@ -98,8 +98,6 @@ import ToggleCameraButton from './ToggleCameraButton';
 import ToolbarButton from './ToolbarButton';
 import VideoSettingsButton from './VideoSettingsButton';
 
-// import OverflowMenuProfileItem from './OverflowMenuProfileItem';
-
 
 /**
  * The type of the React {@code Component} props of {@link Toolbox}.
@@ -1065,7 +1063,6 @@ class Toolbox extends Component<Props> {
             && <TileViewButton
                 key = 'tileview'
                 showLabel = { true } />,
-
             this.props._shouldShowButton('toggle-camera')
             && <ToggleCameraButton
                 key = 'toggle-camera'
@@ -1154,11 +1151,6 @@ class Toolbox extends Component<Props> {
 
 
         return [
-
-            // this._isProfileVisible()
-            //     && <OverflowMenuProfileItem
-            //         key = 'profile'
-            //         onClick = { this._onToolbarToggleProfile } />,
             <div
                 className = 'overflow-header'
                 key = 'overflow-header'>
@@ -1379,9 +1371,9 @@ class Toolbox extends Component<Props> {
                         { mainMenuAdditionalButtons }
                         { showOverflowMenuButton && <OverflowMenuButton
                             ariaControls = 'overflow-menu'
-                            hideMobileReactions = { _shouldShowButton('raisehand') && buttonSet.has('raisehand') }
                             isOpen = { _overflowMenuVisible }
-                            onVisibilityChange = { this._onSetOverflowVisible }>
+                            onVisibilityChange = { this._onSetOverflowVisible }
+                            showMobileReactions = { !(_shouldShowButton('raisehand') && buttonSet.has('raisehand')) }>
                             <ul
                                 aria-label = { t(toolbarAccLabel) }
                                 className = 'overflow-menu'

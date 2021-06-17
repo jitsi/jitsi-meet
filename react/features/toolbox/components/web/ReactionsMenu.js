@@ -39,7 +39,7 @@ type Props = {
     _localParticipantID: String,
 
     /**
-     * Invoked to active other features of the app.
+     * The Redux Dispatch function.
      */
     dispatch: Function,
 

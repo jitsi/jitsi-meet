@@ -58,7 +58,7 @@ type Props = {
     /**
      * Whether or not to display the reactions in the mobile menu.
      */
-    hideMobileReactions: boolean
+    showMobileReactions: boolean
 };
 
 /**
@@ -106,7 +106,7 @@ class OverflowMenuButton extends Component<Props> {
      * @returns {ReactElement}
      */
     render() {
-        const { children, isOpen, overflowDrawer, reactionsQueue, hideMobileReactions } = this.props;
+        const { children, isOpen, overflowDrawer, reactionsQueue, showMobileReactions } = this.props;
 
         return (
             <div className = 'toolbox-button-wth-dialog'>
@@ -119,9 +119,9 @@ class OverflowMenuButton extends Component<Props> {
                                     isOpen = { isOpen }
                                     onClose = { this._onCloseDialog }>
                                     {children}
-                                    {!hideMobileReactions && <ReactionsMenu overflowMenu = { true } />}
+                                    {showMobileReactions && <ReactionsMenu overflowMenu = { true } />}
                                 </Drawer>
-                                {!hideMobileReactions && <div className = 'reactions-animations-container'>
+                                {showMobileReactions && <div className = 'reactions-animations-container'>
                                     {reactionsQueue.map(({ reaction, uid }, index) => (<ReactionEmoji
                                         index = { index }
                                         key = { uid }
