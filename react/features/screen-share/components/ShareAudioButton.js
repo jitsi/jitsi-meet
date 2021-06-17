@@ -12,6 +12,7 @@ import {
     AbstractButton,
     type AbstractButtonProps
 } from '../../base/toolbox/components';
+import { setOverflowMenuVisible } from '../../toolbox/actions';
 import { startAudioScreenShareFlow } from '../actions';
 import { isAudioOnlySharing } from '../functions';
 
@@ -25,7 +26,7 @@ type Props = AbstractButtonProps & {
     /**
      * Whether or not the local participant is audio only screen sharing.
      */
-    _isAudioOnlySharing: boolean,
+    _isAudioOnlySharing: boolean
 }
 
 /**
@@ -47,6 +48,7 @@ class ShareAudioButton extends AbstractButton<Props, *> {
      */
     _handleClick() {
         this.props.dispatch(startAudioScreenShareFlow());
+        this.props.dispatch(setOverflowMenuVisible(false));
     }
 
     /**

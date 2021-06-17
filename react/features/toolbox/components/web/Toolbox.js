@@ -35,6 +35,7 @@ import {
 } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import { OverflowMenuItem } from '../../../base/toolbox/components';
+import { getLocalVideoTrack } from '../../../base/tracks';
 import { isVpaasMeeting } from '../../../billing-counter/functions';
 import { ChatCounter, toggleChat } from '../../../chat';
 import { EmbedMeetingDialog } from '../../../embed-meeting';
@@ -1082,7 +1083,7 @@ class Toolbox extends Component<Props> {
                 && <ShareAudioButton
                     key = 'shareaudio'
                     showLabel = { true } />,
-            this._shouldShowButton('etherpad')
+            this.props._shouldShowButton('etherpad')
                 && <SharedDocumentButton
                     key = 'etherpad'
                     showLabel = { true } />,
@@ -1387,6 +1388,7 @@ function _mapStateToProps(state) {
     } = state['features/toolbox'];
     const localParticipant = getLocalParticipant(state);
     const localRecordingStates = state['features/local-recording'];
+    const localVideo = getLocalVideoTrack(state['features/base/tracks']);
     const { clientWidth } = state['features/base/responsive-ui'];
 
     let desktopSharingDisabledTooltipKey;

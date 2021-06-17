@@ -66,7 +66,7 @@ export function startAudioScreenShareFlow() {
         if (shouldHideShareAudioHelper(state) || browser.isElectron() || audioOnlySharing) {
             // We don't want to explicity set the screens share state, by passing undefined we let the
             // underlying logic decide if it's on or off.
-            dispatch(toggleScreensharing(undefined, audioOnlySharing));
+            dispatch(toggleScreensharing(undefined, true));
 
             return;
         }
