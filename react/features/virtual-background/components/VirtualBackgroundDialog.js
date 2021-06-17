@@ -72,7 +72,7 @@ const images: Array<Image> = [
     }
 ];
 type Props = {
-
+    share: boolean,
     /**
      * Returns the jitsi track that will have backgraund effect applied.
      */
@@ -108,7 +108,8 @@ const onError = event => {
  *
  * @returns {ReactElement}
  */
-function VirtualBackground({ _jitsiTrack, _selectedThumbnail, _virtualSource, dispatch, t }: Props) {
+function VirtualBackground({ share, _jitsiTrack, _selectedThumbnail, _virtualSource, dispatch, t }: Props) {
+
     const [ areaConstrains, setAreaConstrains ] = useState({
         areaWidth: 400,
         areaHeight: 200,
@@ -148,7 +149,11 @@ function VirtualBackground({ _jitsiTrack, _selectedThumbnail, _virtualSource, di
         if (storedImages.length === backgroundsLimit) {
             setStoredImages(storedImages.slice(1));
         }
-    }, [ storedImages ]);
+        //TODO: Find another solution
+        if(share){
+              setTimeout(shareDesktop,1000)
+        }
+    }, [ storedImages, share]);
 
 
     const enableBlur = useCallback(async () => {

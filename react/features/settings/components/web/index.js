@@ -3,3 +3,4 @@ export { default as SettingsButton } from './SettingsButton';
 export { default as SettingsDialog } from './SettingsDialog';
 export { default as AudioSettingsPopup } from './audio/AudioSettingsPopup';
 export { default as VideoSettingsPopup } from './video/VideoSettingsPopup';
+export { default as ScreenShareSettingsPopup } from './screen-share/ScreenShareSettingsPopup'
