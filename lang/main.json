@@ -410,6 +410,7 @@
         "noRoom": "No room was specified to dial-in into.",
         "numbers": "Dial-in Numbers",
         "password": "$t(lockRoomPasswordUppercase):",
+        "sip": "SIP address",
         "title": "Share",
         "tooltip": "Share link and dial-in info for this meeting",
         "label": "Dial-in info"
