@@ -52,8 +52,7 @@ export function setVirtualBackground(options: Object) {
         virtualSource: options?.url,
         blurValue: options?.blurValue,
         backgroundType: options?.backgroundType,
-        selectedThumbnail: options?.selectedThumbnail,
-        areaConstrains: options?.areaConstrains
+        selectedThumbnail: options?.selectedThumbnail
     };
 }
 
