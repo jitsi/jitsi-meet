@@ -22,7 +22,7 @@ export function toggleBackgroundEffect(options: Object, jitsiTrack: Object) {
         if (jitsiTrack) {
             try {
                 if (options.enabled) {
-                    await jitsiTrack.setEffect(await createVirtualBackgroundEffect(virtualBackground));
+                    await jitsiTrack.setEffect(await createVirtualBackgroundEffect(virtualBackground, dispatch));
                 } else {
                     await jitsiTrack.setEffect(undefined);
                     dispatch(backgroundEnabled(false));
@@ -52,7 +52,8 @@ export function setVirtualBackground(options: Object) {
         virtualSource: options?.url,
         blurValue: options?.blurValue,
         backgroundType: options?.backgroundType,
-        selectedThumbnail: options?.selectedThumbnail
+        selectedThumbnail: options?.selectedThumbnail,
+        areaConstrains: options?.areaConstrains
     };
 }
 
