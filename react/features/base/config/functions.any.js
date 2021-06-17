@@ -47,7 +47,7 @@ export function createFakeConfig(baseURL: string) {
  * @returns {string}
  */
 export function getMeetingRegion(state: Object) {
-    return state['features/base/config'].deploymentInfo.region;
+    return state['features/base/config']?.deploymentInfo?.region || '';
 }
 
 /**
