@@ -94,6 +94,10 @@
                 padding: 16px;
                 padding-bottom: 12px;
 
+                div {
+                    flex-direction: column;
+                }
+
                 .overflow-menu-item-icon {
                     margin-right: 0;
                     padding: 15px;

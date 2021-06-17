@@ -93,7 +93,6 @@ import MuteEveryonesVideoButton from '../MuteEveryonesVideoButton';
 import AudioSettingsButton from './AudioSettingsButton';
 import InviteButton from './InviteButton';
 import OverflowMenuButton from './OverflowMenuButton';
-import ReactionsMenu from './ReactionsMenu';
 import ReactionsMenuButton from './ReactionsMenuButton';
 import ToggleCameraButton from './ToggleCameraButton';
 import ToolbarButton from './ToolbarButton';
@@ -1351,6 +1350,7 @@ class Toolbox extends Component<Props> {
             _clientWidth,
             _isMobile,
             _overflowMenuVisible,
+            _shouldShowButton,
             t
         } = this.props;
 
@@ -1379,6 +1379,7 @@ class Toolbox extends Component<Props> {
                         { mainMenuAdditionalButtons }
                         { showOverflowMenuButton && <OverflowMenuButton
                             ariaControls = 'overflow-menu'
+                            hideMobileReactions = { _shouldShowButton('raisehand') && buttonSet.has('raisehand') }
                             isOpen = { _overflowMenuVisible }
                             onVisibilityChange = { this._onSetOverflowVisible }>
                             <ul
@@ -1389,7 +1390,6 @@ class Toolbox extends Component<Props> {
                                 role = 'menu'>
                                 { this._renderOverflowMenuContent(overflowMenuAdditionalButtons) }
                             </ul>
-                            <ReactionsMenu overflowMenu = { true } />
                         </OverflowMenuButton>}
                         <HangupButton
                             customClass = 'hangup-button'

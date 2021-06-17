@@ -12,6 +12,7 @@ import { getReactionsQueue } from '../../functions.web';
 import Drawer from './Drawer';
 import DrawerPortal from './DrawerPortal';
 import ReactionEmoji from './ReactionEmoji';
+import ReactionsMenu from './ReactionsMenu';
 import ToolbarButton from './ToolbarButton';
 
 /**
@@ -52,7 +53,12 @@ type Props = {
     /**
      * The array of reactions to be displayed.
      */
-    reactionsQueue: Array
+    reactionsQueue: Array,
+
+    /**
+     * Whether or not to display the reactions in the mobile menu.
+     */
+    hideMobileReactions: boolean
 };
 
 /**
@@ -100,7 +106,7 @@ class OverflowMenuButton extends Component<Props> {
      * @returns {ReactElement}
      */
     render() {
-        const { children, isOpen, overflowDrawer, reactionsQueue } = this.props;
+        const { children, isOpen, overflowDrawer, reactionsQueue, hideMobileReactions } = this.props;
 
         return (
             <div className = 'toolbox-button-wth-dialog'>
@@ -113,8 +119,9 @@ class OverflowMenuButton extends Component<Props> {
                                     isOpen = { isOpen }
                                     onClose = { this._onCloseDialog }>
                                     {children}
+                                    {!hideMobileReactions && <ReactionsMenu overflowMenu = { true } />}
                                 </Drawer>
-                                {<div className = 'reactions-animations-container'>
+                                {!hideMobileReactions && <div className = 'reactions-animations-container'>
                                     {reactionsQueue.map(({ reaction, uid }, index) => (<ReactionEmoji
                                         index = { index }
                                         key = { uid }

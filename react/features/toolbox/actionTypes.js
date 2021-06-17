@@ -149,6 +149,11 @@ export const SET_REACTIONS_MESSAGE = 'SET_REACTIONS_MESSAGE';
 export const CLEAR_REACTIONS_MESSAGE = 'CLEAR_REACTIONS_MESSAGE';
 
 /**
- * The type.
+ * The type of the action which sets the reactions queue.
+ *
+ * {
+ *     type: SET_REACTION_QUEUE,
+ *     value: Array
+ * }
  */
 export const SET_REACTION_QUEUE = 'SET_REACTION_QUEUE';

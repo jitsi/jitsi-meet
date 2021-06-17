@@ -60,7 +60,7 @@ function setReactionQueue(value: Array) {
 }
 
 /**
- * Adds a new reactions to the reactions message.
+ * Adds a new reaction to the reactions message.
  *
  * @param {boolean} value - The new reaction.
  * @returns {Function}

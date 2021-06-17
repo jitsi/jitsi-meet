@@ -106,7 +106,7 @@ export function setPrivateMessageRecipient(participant: Object) {
  * @param {string} reaction - The reaction to send out.
  * @returns {{
  *     type: SEND_REACTION,
- *     message: string
+ *     reaction: string
  * }}
  */
 export function sendReaction(reaction: string) {
@@ -117,9 +117,9 @@ export function sendReaction(reaction: string) {
 }
 
 /**
- * Adds a reaction message to the chat.
+ * Adds a reactions message to the chat.
  *
- * @param {string} message - The reaction message to add to chat.
+ * @param {string} message - The reactions message to add to chat.
  * @returns {{
  *     type: ADD_REACTIONS_MESSAGE,
  *     message: string
