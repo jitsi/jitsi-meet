@@ -1,0 +1,22 @@
+{
+  "applinks": {
+    "apps": [],
+    "details": [
+      {
+        "appIDs": [ "G82747A532.com.janeapp.videochat.prod", "G82747A532.com.janeapp.videochat.qa" ],
+        "appID": "G82747A532.com.janeapp.videochat.prod",
+        "components": [
+          {
+            "/": "*",
+            "comment": "Matches any URL"
+          }
+        ],
+        "paths": [ "*" ]
+      },
+      {
+        "appID": "G82747A532.com.janeapp.videochat.qa",
+        "paths": [ "*" ]
+      }
+    ]
+  }
+}
