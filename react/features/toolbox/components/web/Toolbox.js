@@ -91,7 +91,6 @@ import MuteEveryoneButton from '../MuteEveryoneButton';
 import MuteEveryonesVideoButton from '../MuteEveryonesVideoButton';
 
 import AudioSettingsButton from './AudioSettingsButton';
-import InviteButton from './InviteButton';
 import OverflowMenuButton from './OverflowMenuButton';
 import OverflowMenuProfileItem from './OverflowMenuProfileItem';
 import ReactionsMenuButton from './ReactionsMenuButton';
@@ -250,12 +249,7 @@ type Props = {
     /**
      * Whether or not to display the invite button in the toolbar menu.
      */
-    _shouldRenderInviteButton: boolean,
-
-    /**
-     * Whether or not the OverflowMenu is displayed as a drawer.
-     */
-    overflowDrawer: boolean
+    _shouldRenderInviteButton: boolean
 };
 
 declare var APP: Object;
@@ -1053,36 +1047,16 @@ class Toolbox extends Component<Props> {
             _fullScreen,
             _isMobile,
             _screensharing,
-            t,
-            overflowDrawer
+            t
         } = this.props;
-
-        const group0 = [
-            this.props._shouldShowButton('settings')
-            && <SettingsButton
-                key = 'settings'
-                showLabel = { true } />,
-            this.props._shouldRenderInviteButton
-            && <InviteButton
-                key = 'invite'
-                showLabel = { true } />,
-            this.props._shouldShowButton('tileview')
-            && <TileViewButton
-                key = 'tileview'
-                showLabel = { true } />,
-            this.props._shouldShowButton('toggle-camera')
-            && <ToggleCameraButton
-                key = 'toggle-camera'
-                showLabel = { true } />
-        ];
 
         const group1 = [
             ...additionalButtons,
 
-            !overflowDrawer && this.props._shouldShowButton('toggle-camera')
-            && <ToggleCameraButton
-                key = 'toggle-camera'
-                showLabel = { true } />,
+            this.props._shouldShowButton('toggle-camera')
+                && <ToggleCameraButton
+                    key = 'toggle-camera'
+                    showLabel = { true } />,
             this.props._shouldShowButton('videoquality')
                 && <OverflowMenuVideoQualityItem
                     key = 'videoquality'
@@ -1162,20 +1136,14 @@ class Toolbox extends Component<Props> {
 
 
         return [
-            overflowDrawer
-                ? <div
-                    className = 'overflow-header'
-                    key = 'overflow-header'>
-                    {group0}
-                </div>
-                : this._isProfileVisible()
+            this._isProfileVisible()
                 && <OverflowMenuProfileItem
                     key = 'profile'
                     onClick = { this._onToolbarToggleProfile } />,
-            this._isProfileVisible(),
-            <hr
-                className = 'overflow-menu-hr'
-                key = 'hr1' />,
+            this._isProfileVisible()
+                && <hr
+                    className = 'overflow-menu-hr'
+                    key = 'hr1' />,
 
             ...group1,
             group1.some(Boolean)
@@ -1189,10 +1157,10 @@ class Toolbox extends Component<Props> {
                 className = 'overflow-menu-hr'
                 key = 'hr3' />,
 
-            !overflowDrawer && this.props._shouldShowButton('settings')
-            && <SettingsButton
-                key = 'settings'
-                showLabel = { true } />,
+            this.props._shouldShowButton('settings')
+                && <SettingsButton
+                    key = 'settings'
+                    showLabel = { true } />,
             this.props._shouldShowButton('shortcuts')
                 && !_isMobile
                 && keyboardShortcut.getEnabled()
@@ -1241,8 +1209,7 @@ class Toolbox extends Component<Props> {
             _desktopSharingEnabled,
             _desktopSharingDisabledTooltipKey,
             _screensharing,
-            t,
-            overflowDrawer
+            t
         } = this.props;
 
         const overflowMenuAdditionalButtons = [];
@@ -1321,7 +1288,7 @@ class Toolbox extends Component<Props> {
                     <TileViewButton
                         key = 'tileview'
                         showLabel = { false } />)
-                : !overflowDrawer && overflowMenuAdditionalButtons.push(
+                : overflowMenuAdditionalButtons.push(
                     <TileViewButton
                         key = 'tileview'
                         showLabel = { true } />);
@@ -1454,7 +1421,6 @@ function _mapStateToProps(state) {
                 String(features['screen-sharing']) === 'true') !== undefined;
         desktopSharingDisabledTooltipKey = 'dialog.shareYourScreenDisabled';
     }
-    const { overflowDrawer } = state['features/toolbox'];
 
     return {
         _chatOpen: state['features/chat'].isOpen,
@@ -1476,7 +1442,6 @@ function _mapStateToProps(state) {
         _localRecState: localRecordingStates,
         _locked: locked,
         _overflowMenuVisible: overflowMenuVisible,
-        overflowDrawer,
         _participantsPaneOpen: getParticipantsPaneOpen(state),
         _raisedHand: localParticipant.raisedHand,
         _screensharing: (localVideo && localVideo.videoType === 'desktop') || isScreenAudioShared(state),
