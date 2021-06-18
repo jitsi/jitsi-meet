@@ -1,0 +1,53 @@
+var config = {
+  hosts: {
+    domain: 'meet.jitsi',
+    muc: 'muc.meet.jitsi'
+  },
+  bosh: '//{{ PUBLIC_URL }}/http-bind',
+  websocket: 'wss://{{ PUBLIC_URL }}/xmpp-websocket',
+  openBridgeChannel: 'websocket',
+  clientNode: 'http://jitsi.org/jitsimeet',
+  testing: {
+    enableFirefoxSimulcast: false,
+    p2pTestMode: false,
+  },
+  disableSuspendVideo: true,
+  desktopSharingChromeExtId: null,
+  desktopSharingChromeSources: [ 'screen', 'window', 'tab' ],
+  desktopSharingChromeMinExtVersion: '0.1',
+  channelLastN: -1,
+  enableWelcomePage: true,
+  enableUserRolesBasedOnToken: false,
+  enableLipSync: false,
+  p2p: {
+    enabled: true,
+    useStunTurn: true,
+    preferH264: false,
+    disableH264: true
+  },
+  resolution: 360,
+  maxFps: 15,
+  constraints: {
+    video: {
+      // aspectRatio: 16 / 9,
+      frameRate: {
+        ideal: 15,
+        max: 15,
+        min: 15
+      },
+      height: {
+        ideal: 360,
+        max: 360,
+        min: 360
+      }
+    }
+  },
+  prejoinPageEnabled: false,
+  analytics: {
+    googleAnalyticsTrackingId: '{{ GOOGLE_ANALYTICS_ID }}',
+    amplitudeAPPKey: '{{ AMPLITUDE_KEY }}',
+    scriptURLs: [
+      "libs/analytics-ga.min.js", // google-analytics
+    ],
+  }
+};

@@ -1,0 +1,32 @@
+server {
+  listen 80 default_server;
+
+  server_name _;
+
+  client_max_body_size 0;
+
+  root /config/nginx/sites/jitsi-meet;
+
+  # ssi on with javascript for multidomain variables in config.js
+  ssi on;
+  ssi_types application/x-javascript application/javascript;
+
+  index index.html index.htm;
+  error_page 404 /static/404.html;
+
+  # Security headers
+  add_header X-Content-Type-Options nosniff;
+  add_header X-XSS-Protection "1; mode=block";
+
+  location = /config.js {
+      alias /config/config.js;
+  }
+
+  location ~ ^/([^/?&:'"]+)$ {
+      try_files $uri @root_path;
+  }
+
+  location @root_path {
+      rewrite ^/(.*)$ / break;
+  }
+}
