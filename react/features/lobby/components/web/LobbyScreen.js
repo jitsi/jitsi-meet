@@ -20,10 +20,12 @@ class LobbyScreen extends AbstractLobbyScreen {
      * @inheritdoc
      */
     render() {
+        const { showCopyUrlButton, t } = this.props;
+
         return (
             <PreMeetingScreen
-                showCopyUrlButton = { this.props.showCopyUrlButton }
-                title = { this.props.t(this._getScreenTitleKey()) }>
+                showCopyUrlButton = { showCopyUrlButton }
+                title = { t(this._getScreenTitleKey()) }>
                 { this._renderContent() }
             </PreMeetingScreen>
         );

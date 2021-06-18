@@ -379,7 +379,7 @@ export function _mapStateToProps(state: Object): $Shape<Props> {
     const { disableInviteFunctions } = state['features/base/config'];
     const { knocking, passwordJoinFailed } = state['features/lobby'];
     const { iAmSipGateway } = state['features/base/config'];
-    const showCopyUrlButton = !flag || disableInviteFunctions;
+    const showCopyUrlButton = flag || !disableInviteFunctions;
 
     return {
         _knocking: knocking,
