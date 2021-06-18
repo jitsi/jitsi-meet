@@ -78,40 +78,5 @@
             overflow: hidden;
             white-space: nowrap;
         }
-
-        .overflow-header {
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            justify-content: space-between;
-
-            .overflow-menu-item {
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                justify-content: center;
-                height: 104px;
-                padding: 16px;
-                padding-bottom: 12px;
-
-                div {
-                    flex-direction: column;
-                }
-
-                .overflow-menu-item-icon {
-                    margin-right: 0;
-                    padding: 15px;
-                    background-color: #1B67EC;
-                    margin-bottom: 8px;
-                    border-radius: 100%;
-                }
-
-                span {
-                    font-weight: 600;
-                    font-size: 14px;
-                    line-height: 20px;
-                }
-            }
-    }
     }
 }
