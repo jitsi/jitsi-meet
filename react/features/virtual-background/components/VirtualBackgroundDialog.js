@@ -108,7 +108,7 @@ const onError = event => {
  * @returns {ReactElement}
  */
 function VirtualBackground({ _jitsiTrack, _selectedThumbnail, _virtualBackground, dispatch, t }: Props) {
-    const [ options, setOptions ] = useState(_virtualBackground);
+    const [ options, setOptions ] = useState({});
     const localImages = jitsiLocalStorage.getItem('virtualBackgrounds');
     const [ storedImages, setStoredImages ] = useState<Array<Image>>((localImages && Bourne.parse(localImages)) || []);
     const [ loading, setLoading ] = useState(false);
