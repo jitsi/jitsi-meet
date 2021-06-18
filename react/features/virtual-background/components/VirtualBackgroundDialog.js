@@ -83,9 +83,9 @@ type Props = {
     _selectedThumbnail: string,
 
     /**
-     * Returns the selected virtual source object.
+     * Returns the selected virtual background object.
      */
-    _virtualSource: Object,
+    _virtualBackground: Object,
 
     /**
      * The redux {@code dispatch} function.
@@ -107,14 +107,16 @@ const onError = event => {
  *
  * @returns {ReactElement}
  */
-function VirtualBackground({ _jitsiTrack, _selectedThumbnail, _virtualSource, dispatch, t }: Props) {
+function VirtualBackground({ _jitsiTrack, _selectedThumbnail, _virtualBackground, dispatch, t }: Props) {
     const [ options, setOptions ] = useState({});
     const localImages = jitsiLocalStorage.getItem('virtualBackgrounds');
     const [ storedImages, setStoredImages ] = useState<Array<Image>>((localImages && Bourne.parse(localImages)) || []);
     const [ loading, setLoading ] = useState(false);
     const uploadImageButton: Object = useRef(null);
-    const [ activeDesktopVideo ] = useState(_virtualSource?.videoType === VIDEO_TYPE.DESKTOP ? _virtualSource : null);
-
+    const [ activeDesktopVideo ] = useState(_virtualBackground?.virtualSource?.videoType === VIDEO_TYPE.DESKTOP
+        ? _virtualBackground.virtualSource
+        : null);
+    const [ initialVirtualBackground ] = useState(_virtualBackground);
     const deleteStoredImage = useCallback(e => {
         const imageId = e.currentTarget.getAttribute('data-imageid');
 
@@ -308,10 +310,23 @@ function VirtualBackground({ _jitsiTrack, _selectedThumbnail, _virtualSource, di
         dispatch(hideDialog());
     }, [ dispatch, options ]);
 
+    // Prevent the selection of a new virtual background if it has not been applied by default
+    const cancelVirtualBackground = useCallback(async () => {
+        await setOptions({
+            backgroundType: initialVirtualBackground.backgroundType,
+            enabled: initialVirtualBackground.backgroundEffectEnabled,
+            url: initialVirtualBackground.virtualSource,
+            selectedThumbnail: initialVirtualBackground.selectedThumbnail,
+            blurValue: initialVirtualBackground.blurValue
+        });
+        dispatch(hideDialog());
+    });
+
     return (
         <Dialog
             hideCancelButton = { false }
             okKey = { 'virtualBackground.apply' }
+            onCancel = { cancelVirtualBackground }
             onSubmit = { applyVirtualBackground }
             submitDisabled = { !options || loading }
             titleKey = { 'virtualBackground.title' } >
@@ -478,7 +493,7 @@ function VirtualBackground({ _jitsiTrack, _selectedThumbnail, _virtualSource, di
  */
 function _mapStateToProps(state): Object {
     return {
-        _virtualSource: state['features/virtual-background'].virtualSource,
+        _virtualBackground: state['features/virtual-background'],
         _selectedThumbnail: state['features/virtual-background'].selectedThumbnail,
         _jitsiTrack: getLocalVideoTrack(state['features/base/tracks'])?.jitsiTrack
     };
