@@ -82,7 +82,7 @@
 .reactions-animations-container {
 	position: absolute;
 	width: 20%;
-	top: 100%;
+	bottom: 0;
 	left: 40%;
 	height: 48px;
 }
@@ -105,7 +105,7 @@ $reactionCount: 20;
 	line-height: 32px;
 	width: 32px;
 	height: 32px;
-	bottom: 0;
+	top: 32px;
 	left: 10px;
 	opacity: 0;
 	z-index: 1;
@@ -117,8 +117,8 @@ $reactionCount: 20;
 	@for $i from 1 through $reactionCount {
 	&.reaction-#{$i} {
 		animation: animation-#{$i} 5s forwards ease-in-out;
-		bottom: random(-30, 20);
-		left: random(-10, 10);
+		top: #{random(50, 0)}px;
+		left: #{random(-10, 10)}px;
 	}
 }
 }
