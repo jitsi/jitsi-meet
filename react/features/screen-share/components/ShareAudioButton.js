@@ -70,7 +70,7 @@ class ShareAudioButton extends AbstractButton<Props, *> {
  * @private
  * @returns {Props}
  */
-function _mapStateToProps(state): Object {
+function _mapStateToProps(state: Object): $Shape<Props> {
 
     return {
         _isAudioOnlySharing: isAudioOnlySharing(state)

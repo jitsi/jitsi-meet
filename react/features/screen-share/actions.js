@@ -1,4 +1,5 @@
 // @flow
+
 import { openDialog } from '../base/dialog/actions';
 import { browser } from '../base/lib-jitsi-meet';
 import { shouldHideShareAudioHelper } from '../base/settings';
@@ -48,7 +49,7 @@ export function setScreenshareFramerate(captureFrameRate: number) {
  * @returns {void}
  */
 export function startAudioScreenShareFlow() {
-    return (dispatch, getState) => {
+    return (dispatch: Object => Object, getState: () => any) => {
         const state = getState();
         const audioOnlySharing = isAudioOnlySharing(state);
 
@@ -79,12 +80,12 @@ export function startAudioScreenShareFlow() {
  * Start normal screen sharing flow.Function will switch between off and on states depending on the context, and if
  * not explicity told otherwise.
  *
- * @param {*} enabled - Explicitly set the screen sharing state. This has been kept for backward compatibility
+ * @param {boolean} enabled - Explicitly set the screen sharing state. This has been kept for backward compatibility
  * with the external API exposed by the iframe, even though it might not be used.
  * @returns {void}
  */
-export function startScreenShareFlow(enabled) {
-    return (dispatch, getState) => {
+export function startScreenShareFlow(enabled: boolean) {
+    return (dispatch: Object => Object, getState: () => any) => {
         const state = getState();
         const audioOnlySharing = isAudioOnlySharing(state);
 

@@ -106,7 +106,7 @@ class ShareAudioDialog extends Component<Props> {
  * @private
  * @returns {Props}
  */
-function _mapStateToProps(state): Object {
+function _mapStateToProps(state: Object): $Shape<Props> {
 
     return {
         _shouldHideShareAudioHelper: shouldHideShareAudioHelper(state)
