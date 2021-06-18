@@ -362,7 +362,8 @@
         "image6" : "Forest ",
         "image7" : "Sunrise",
         "desktopShareError": "Could not create desktop share",
-        "desktopShare":"Desktop share"
+        "desktopShare":"Desktop share",
+        "webAssemblyWarning": "WebAssembly not supported"
     },
     "feedback": {
         "average": "Average",
