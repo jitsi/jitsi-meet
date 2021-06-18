@@ -98,7 +98,7 @@ export const ContextMenuItem = styled.div`
   box-sizing: border-box;
   cursor: pointer;
   display: flex;
-  height: 40px;
+  min-height: 40px;
   padding: 8px 16px;
 
   & > *:not(:last-child) {

@@ -569,11 +569,12 @@
             "participantsList": "Meeting participants ({{count}})"
         },
         "actions": {
+            "allow": "Allow attendees to:",
             "invite": "Invite Someone",
             "askUnmute": "Ask to unmute",
             "muteAll": "Mute all",
-            "startModeration": "Don’t allow attendees to unmute",
-            "stopModeration": "Allow attendees to unmute",
+            "startModeration": "Unmute themselves or start video",
+            "stopEveryonesVideo": "Stop everyone's video",
             "stopVideo": "Stop video"
         }
     },
