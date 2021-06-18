@@ -4,13 +4,15 @@
     right: 0;
     bottom: 0;
     z-index: $drawerZ;
+    background-color: #141414;
 }
 
 .drawer-menu {
-    max-height: 80vh;
+    max-height: calc(80vh - 64px);
     background: #242528;
     border-radius: 16px 16px 0 0;
     overflow-y: hidden;
+    margin-bottom: env(safe-area-inset-bottom, 0);
 
     .drawer-toggle {
         display: flex;
@@ -38,7 +40,7 @@
         font-size: 1.2em;
         list-style-type: none;
         padding: 0;
-        height: calc(80vh - 170px);
+        height: calc(80vh - 144px - 64px);
         overflow-y: auto;
 
         .overflow-menu-item {

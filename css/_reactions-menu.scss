@@ -9,7 +9,7 @@
 
 	&.overflow {
 		width: auto;
-		height: 170px;
+		padding-bottom: max(env(safe-area-inset-bottom, 0), 16px);
 		background-color: #141414;
 		box-shadow: none;
 		border-radius: 0;
