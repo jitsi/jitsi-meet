@@ -375,11 +375,11 @@ export default class AbstractLobbyScreen<P: Props = Props> extends PureComponent
 export function _mapStateToProps(state: Object): $Shape<Props> {
     const localParticipant = getLocalParticipant(state);
     const participantId = localParticipant?.id;
-    const flag = getFeatureFlag(state, INVITE_ENABLED, true);
+    const inviteEnabledFlag = getFeatureFlag(state, INVITE_ENABLED, true);
     const { disableInviteFunctions } = state['features/base/config'];
     const { knocking, passwordJoinFailed } = state['features/lobby'];
     const { iAmSipGateway } = state['features/base/config'];
-    const showCopyUrlButton = flag || !disableInviteFunctions;
+    const showCopyUrlButton = inviteEnabledFlag || !disableInviteFunctions;
 
     return {
         _knocking: knocking,
