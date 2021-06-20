@@ -115,6 +115,10 @@ class VirtualBackgroundPreview extends PureComponent<Props, State> {
         this.setState({
             jitsiTrack
         });
+
+        if (this.props.options.backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE) {
+            this._applyBackgroundEffect();
+        }
     }
 
     /**
