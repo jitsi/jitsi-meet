@@ -8,6 +8,7 @@ import { createWaitingAreaParticipantStatusChangedEvent, sendAnalytics } from '.
 import { getLocalParticipantInfoFromJwt, getLocalParticipantType } from '../../base/participants/functions';
 import { connect } from '../../base/redux';
 import { playSound as playSoundAction } from '../../base/sounds';
+import { sleep } from '../../base/util/helpers';
 import {
     setJaneWaitingAreaAuthState as setJaneWaitingAreaAuthStateAction,
     updateRemoteParticipantsStatuses as updateRemoteParticipantsStatusesAction,
@@ -61,8 +62,11 @@ class SocketConnection extends Component<Props> {
             const unloadHandler = () => {
                 if (window.APP.waitingArea.status === 'initialized') {
                     window.APP.waitingArea.status = 'left';
-                    sendAnalytics(createWaitingAreaParticipantStatusChangedEvent('left'));
                     updateParticipantReadyStatus('left');
+                    sendAnalytics(createWaitingAreaParticipantStatusChangedEvent('left'));
+
+                    // sleep here to ensure the above code can be executed when the browser window is closed.
+                    sleep(2000);
                 }
             };
 

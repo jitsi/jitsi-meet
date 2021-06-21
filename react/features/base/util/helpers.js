@@ -135,3 +135,18 @@ export function reportError(e: Object, msg: string = '') {
     console.error(msg, e);
     window.onerror && window.onerror(msg, null, null, null, e);
 }
+
+/**
+ * A synchronous function that guarantees to execute the code in
+ * the window.beforeunload & window.unload callbacks.
+ * Https://stackoverflow.com/a/42914045.
+ *
+ * @param {num} delay - Milliseconds.
+ * @returns {void}
+ */
+export function sleep(delay: number) {
+    const start = new Date().getTime();
+
+    // eslint-disable-next-line no-empty
+    while (new Date().getTime() < start + delay) { }
+}
