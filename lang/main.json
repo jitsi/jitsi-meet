@@ -655,12 +655,15 @@
         "beta": "BETA",
         "busy": "We're working on freeing recording resources. Please try again in a few minutes.",
         "busyTitle": "All recorders are currently busy",
+        "copyLink": "Copy Link",
         "error": "Recording failed. Please try again.",
+        "errorFetchingLink": "Error fetching recording link.",
         "expandedOff": "Recording has stopped",
         "expandedOn": "The meeting is currently being recorded.",
         "expandedPending": "Recording is being started...",
         "failedToStart": "Recording failed to start",
         "fileSharingdescription": "Share recording with meeting participants",
+        "linkGenerated": "We have generated a link to your recording.",
         "live": "LIVE",
         "loggedIn": "Logged in as {{userName}}",
         "off": "Recording stopped",
@@ -675,7 +678,8 @@
         "signIn": "Sign in",
         "signOut": "Sign out",
         "unavailable": "Oops! The {{serviceName}} is currently unavailable. We're working on resolving the issue. Please try again later.",
-        "unavailableTitle": "Recording unavailable"
+        "unavailableTitle": "Recording unavailable",
+        "uploadToCloud": "Upload to the cloud"
     },
     "sectionList": {
         "pullToRefresh": "Pull to refresh"
