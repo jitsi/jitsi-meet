@@ -416,7 +416,7 @@
     "lonelyMeetingExperience": {
         "youAreAlone": "Você é o único na reunião",
         "button": "Convidar outros"
-    }
+    },
     "me": "eu",
     "notify": {
         "connectedOneMember": "{{name}} entrou na reunião",
@@ -457,7 +457,7 @@
         "joinMeeting": "Participar na reunião",
         "joinWithoutAudio": "Participar sem áudio",
         "lookGood": "O seu microfone está a funcionar corretamente"
-    }
+    },
     "presenceStatus": {
         "busy": "Ocupado",
         "calling": "Chamando...",
