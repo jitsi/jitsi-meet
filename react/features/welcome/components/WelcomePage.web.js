@@ -367,6 +367,7 @@ class WelcomePage extends AbstractWelcomePage {
             MOBILE_DOWNLOAD_LINK_IOS,
         } = interfaceConfig;
 
+<<<<<<< HEAD
         return (
             <footer className="welcome-footer">
                 <div className="welcome-footer-centered">
@@ -394,6 +395,7 @@ class WelcomePage extends AbstractWelcomePage {
                                 <img src="./images/f-droid-badge.png" />
                             </a>
                         </div>
+=======
         return (<footer className = 'welcome-footer'>
             <div className = 'welcome-footer-centered'>
                 <div className = 'welcome-footer-padded'>
@@ -420,6 +422,7 @@ class WelcomePage extends AbstractWelcomePage {
                                 alt = { t('welcomepage.mobileDownLoadLinkFDroid') }
                                 src = './images/f-droid-badge.png' />
                         </a>
+>>>>>>> 0e6addbfadd0764bf3f6c1b1f6217661aedf4212
                     </div>
                 </div>
             </footer>
