@@ -645,6 +645,10 @@
             "empty": "There are no polls in the meeting yet. Start a poll here!",
             "hideDetailedResults": "Hide details",
             "showDetailedResults": "Show details"
+        },
+        "notification": {
+            "title": "A new poll was added to this meeting",
+            "description": "Open polls tab to vote"
         }
     },
     "poweredby": "powered by",
