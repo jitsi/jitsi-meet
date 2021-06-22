@@ -15,8 +15,8 @@ import { VIRTUAL_BACKGROUND_TYPE } from '../constants';
 function SizeAndPosition({ dialogCallback, _selectedThumbnail, t }) {
     const [ areaHeight, setAreaHeight ] = useState(100);
     const [ areaWidth, setAreaWidth ] = useState(100);
-    const [ areaLeft, setAreaLeft ] = useState(350);
-    const [ areaTop, setAreaTop ] = useState(136);
+    const [ areaLeft, setAreaLeft ] = useState(355);
+    const [ areaTop, setAreaTop ] = useState(140);
 
     if (areaHeight) {
         interact('.outputCanvas')
@@ -45,9 +45,6 @@ function SizeAndPosition({ dialogCallback, _selectedThumbnail, t }) {
 
                         target.setAttribute('data-x', x);
                         target.setAttribute('data-y', y);
-
-                        setAreaHeight(Math.round(event.rect.height) * 2);
-                        setAreaWidth(Math.round(event.rect.width) * 2);
                     },
                     end(event) {
                         dragMoveListener(event);
@@ -64,7 +61,11 @@ function SizeAndPosition({ dialogCallback, _selectedThumbnail, t }) {
                     interact.modifiers.restrictSize({
                         min: { width: 200,
                             height: 100 }
-                    })
+                    }),
+                    interact.modifiers.aspectRatio({
+                        // make sure the width is always double the height
+                        ratio: 2,
+                      }),
                 ],
 
                 // keep aspectratio
@@ -98,14 +99,20 @@ function SizeAndPosition({ dialogCallback, _selectedThumbnail, t }) {
 
         // translate the element
         target.style.webkitTransform = target.style.transform = `translate(${x}px, ${y}px)`;
-        setAreaLeft(x * 2.5);
-        setAreaTop(y * 3);
 
         // update the posiion attributes
         target.setAttribute('data-x', x);
         target.setAttribute('data-y', y);
         setAreaHeight(Math.round(event.rect.height) * 2);
         setAreaWidth(Math.round(event.rect.width) * 2);
+        setAreaLeft(x * 2.5);
+
+        if(y < 40 ){
+            setAreaTop(90);
+        }
+        else{
+            setAreaTop(y * 3);
+        }
     }
 
     return (
