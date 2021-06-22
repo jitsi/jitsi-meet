@@ -21,6 +21,22 @@ import {
 import logger from './logger';
 
 /**
+ * Returns root conference state.
+ *
+ * @param {Object} state - Global state.
+ * @returns {Object} Conference state.
+ */
+export const getConferenceState = (state: Object) => state['features/base/conference'];
+
+/**
+ * Is the conference joined or not.
+ *
+ * @param {Object} state - Global state.
+ * @returns {boolean}
+ */
+export const getIsConferenceJoined = (state: Object) => Boolean(getConferenceState(state).conference);
+
+/**
  * Attach a set of local tracks to a conference.
  *
  * @param {JitsiConference} conference - Conference instance.
@@ -71,6 +87,8 @@ export function commonUserJoinedHandling(
     if (user.isHidden()) {
         dispatch(hiddenParticipantJoined(id, displayName));
     } else {
+        const isReplacing = user.isReplacing && user.isReplacing();
+
         dispatch(participantJoined({
             botType: user.getBotType(),
             connectionStatus: user.getConnectionStatus(),
@@ -78,7 +96,8 @@ export function commonUserJoinedHandling(
             id,
             name: displayName,
             presence: user.getStatus(),
-            role: user.getRole()
+            role: user.getRole(),
+            isReplacing
         }));
     }
 }
@@ -103,7 +122,9 @@ export function commonUserLeftHandling(
     if (user.isHidden()) {
         dispatch(hiddenParticipantLeft(id));
     } else {
-        dispatch(participantLeft(id, conference));
+        const isReplaced = user.isReplaced && user.isReplaced();
+
+        dispatch(participantLeft(id, conference, isReplaced));
     }
 }
 
@@ -123,7 +144,7 @@ export function commonUserLeftHandling(
 export function forEachConference(
         stateful: Function | Object,
         predicate: (Object, URL) => boolean) {
-    const state = toState(stateful)['features/base/conference'];
+    const state = getConferenceState(toState(stateful));
 
     for (const v of Object.values(state)) {
         // Does the value of the base/conference's property look like a
@@ -157,7 +178,7 @@ export function getConferenceName(stateful: Function | Object): string {
     const state = toState(stateful);
     const { callee } = state['features/base/jwt'];
     const { callDisplayName } = state['features/base/config'];
-    const { pendingSubjectChange, room, subject } = state['features/base/conference'];
+    const { pendingSubjectChange, room, subject } = getConferenceState(state);
 
     return pendingSubjectChange
         || subject
@@ -174,7 +195,7 @@ export function getConferenceName(stateful: Function | Object): string {
  * @returns {string} - The name of the conference formatted for the title.
  */
 export function getConferenceNameForTitle(stateful: Function | Object) {
-    return safeStartCase(safeDecodeURIComponent(toState(stateful)['features/base/conference'].room));
+    return safeStartCase(safeDecodeURIComponent(getConferenceState(toState(stateful)).room));
 }
 
 /**
@@ -186,7 +207,7 @@ export function getConferenceNameForTitle(stateful: Function | Object) {
 */
 export function getConferenceTimestamp(stateful: Function | Object): number {
     const state = toState(stateful);
-    const { conferenceTimestamp } = state['features/base/conference'];
+    const { conferenceTimestamp } = getConferenceState(state);
 
     return conferenceTimestamp;
 }
@@ -203,7 +224,7 @@ export function getConferenceTimestamp(stateful: Function | Object): number {
  */
 export function getCurrentConference(stateful: Function | Object) {
     const { conference, joining, leaving, membersOnly, passwordRequired }
-        = toState(stateful)['features/base/conference'];
+        = getConferenceState(toState(stateful));
 
     // There is a precedence
     if (conference) {
@@ -220,7 +241,7 @@ export function getCurrentConference(stateful: Function | Object) {
  * @returns {string}
  */
 export function getRoomName(state: Object): string {
-    return state['features/base/conference'].room;
+    return getConferenceState(state).room;
 }
 
 /**

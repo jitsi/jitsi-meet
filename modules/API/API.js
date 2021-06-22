@@ -13,6 +13,7 @@ import {
     setSubject
 } from '../../react/features/base/conference';
 import { overwriteConfig, getWhitelistedJSON } from '../../react/features/base/config';
+import { toggleDialog } from '../../react/features/base/dialog/actions';
 import { parseJWTFromURLParams } from '../../react/features/base/jwt';
 import JitsiMeetJS, { JitsiRecordingConstants } from '../../react/features/base/lib-jitsi-meet';
 import { MEDIA_TYPE } from '../../react/features/base/media';
@@ -25,7 +26,10 @@ import {
 } from '../../react/features/base/participants';
 import { updateSettings } from '../../react/features/base/settings';
 import { isToggleCameraEnabled, toggleCamera } from '../../react/features/base/tracks';
-import { setPrivateMessageRecipient } from '../../react/features/chat/actions';
+import {
+    setPrivateMessageRecipient,
+    toggleChat
+} from '../../react/features/chat/actions';
 import { openChat } from '../../react/features/chat/actions.web';
 import {
     processExternalDeviceRequest
@@ -34,16 +38,20 @@ import { isEnabled as isDropboxEnabled } from '../../react/features/dropbox';
 import { toggleE2EE } from '../../react/features/e2ee/actions';
 import { invite } from '../../react/features/invite';
 import {
-    captureLargeVideoScreenshot,
-    resizeLargeVideo,
     selectParticipantInLargeVideo
-} from '../../react/features/large-video/actions';
-import { toggleLobbyMode } from '../../react/features/lobby/actions.web';
+} from '../../react/features/large-video/actions.any';
+import {
+    captureLargeVideoScreenshot,
+    resizeLargeVideo
+} from '../../react/features/large-video/actions.web';
+import { toggleLobbyMode } from '../../react/features/lobby/actions';
 import { RECORDING_TYPES } from '../../react/features/recording/constants';
 import { getActiveSession } from '../../react/features/recording/functions';
+import { playSharedVideo, stopSharedVideo } from '../../react/features/shared-video/actions.any';
 import { toggleTileView, setTileView } from '../../react/features/video-layout';
 import { muteAllParticipants } from '../../react/features/video-menu/actions';
 import { setVideoQuality } from '../../react/features/video-quality';
+import VirtualBackgroundDialog from '../../react/features/virtual-background/components/VirtualBackgroundDialog';
 import { getJitsiMeetTransport } from '../transport';
 
 import { API_ID, ENDPOINT_TEXT_MESSAGE_NAME } from './constants';
@@ -186,7 +194,7 @@ function initCommands() {
         },
         'toggle-chat': () => {
             sendAnalytics(createApiEvent('chat.toggled'));
-            APP.UI.toggleChat();
+            APP.store.dispatch(toggleChat());
         },
         'toggle-raise-hand': () => {
             const localParticipant = getLocalParticipant(APP.store.getState());
@@ -258,6 +266,18 @@ function initCommands() {
             logger.debug('Set video quality command received');
             sendAnalytics(createApiEvent('set.video.quality'));
             APP.store.dispatch(setVideoQuality(frameHeight));
+        },
+
+        'start-share-video': url => {
+            logger.debug('Share video command received');
+            sendAnalytics(createApiEvent('share.video.start'));
+            APP.store.dispatch(playSharedVideo(url));
+        },
+
+        'stop-share-video': () => {
+            logger.debug('Share video command received');
+            sendAnalytics(createApiEvent('share.video.stop'));
+            APP.store.dispatch(stopSharedVideo());
         },
 
         /**
@@ -386,7 +406,7 @@ function initCommands() {
                 const { isOpen: isChatOpen } = state['features/chat'];
 
                 if (!isChatOpen) {
-                    APP.UI.toggleChat();
+                    APP.store.dispatch(toggleChat());
                 }
                 APP.store.dispatch(openChat(participant));
             } else {
@@ -403,6 +423,9 @@ function initCommands() {
             const whitelistedConfig = getWhitelistedJSON('config', config);
 
             APP.store.dispatch(overwriteConfig(whitelistedConfig));
+        },
+        'toggle-virtual-background': () => {
+            APP.store.dispatch(toggleDialog(VirtualBackgroundDialog));
         }
     };
     transport.on('event', ({ data, name }) => {
@@ -555,6 +578,44 @@ function toggleScreenSharing(enable) {
 }
 
 /**
+ * Removes sensitive data from a mouse event.
+ *
+ * @param {MouseEvent} event - The mouse event to sanitize.
+ * @returns {Object}
+ */
+function sanitizeMouseEvent(event: MouseEvent) {
+    const {
+        clientX,
+        clientY,
+        movementX,
+        movementY,
+        offsetX,
+        offsetY,
+        pageX,
+        pageY,
+        x,
+        y,
+        screenX,
+        screenY
+    } = event;
+
+    return {
+        clientX,
+        clientY,
+        movementX,
+        movementY,
+        offsetX,
+        offsetY,
+        pageX,
+        pageY,
+        x,
+        y,
+        screenX,
+        screenY
+    };
+}
+
+/**
  * Implements API class that communicates with external API class and provides
  * interface to access Jitsi Meet features by external applications that embed
  * Jitsi Meet.
@@ -654,6 +715,45 @@ class API {
             name: 'outgoing-message',
             message,
             privateMessage
+        });
+    }
+
+    /**
+     * Notify external application (if API is enabled) that the mouse has entered inside the iframe.
+     *
+     * @param {MouseEvent} event - The mousemove event.
+     * @returns {void}
+     */
+    notifyMouseEnter(event: MouseEvent) {
+        this._sendEvent({
+            name: 'mouse-enter',
+            event: sanitizeMouseEvent(event)
+        });
+    }
+
+    /**
+     * Notify external application (if API is enabled) that the mouse has entered inside the iframe.
+     *
+     * @param {MouseEvent} event - The mousemove event.
+     * @returns {void}
+     */
+    notifyMouseLeave(event: MouseEvent) {
+        this._sendEvent({
+            name: 'mouse-leave',
+            event: sanitizeMouseEvent(event)
+        });
+    }
+
+    /**
+     * Notify external application (if API is enabled) that the mouse has moved inside the iframe.
+     *
+     * @param {MouseEvent} event - The mousemove event.
+     * @returns {void}
+     */
+    notifyMouseMove(event: MouseEvent) {
+        this._sendEvent({
+            name: 'mouse-move',
+            event: sanitizeMouseEvent(event)
         });
     }
 

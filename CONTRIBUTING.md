@@ -152,3 +152,20 @@ this model but new features should follow this new layout.
 
 When working on an old feature, adding the necessary changes to migrate to the new
 model is encouraged.
+
+
+### Avoiding bundle bloat
+
+When adding a new feature it's possible that it triggers a build failure due to the increased bundle size. We have safeguards inplace to avoid bundles growing disproportionatelly. While there are legit reasons for increasing the limits, please analyze the bundle first to make sure no unintended dependencies have been included, causing the increase in size.
+
+First, make a production build with bundle-analysis enabled:
+
+```
+npx webpack -p --analyze-bundle
+```
+
+Then open the interactive bundle analyzer tool:
+
+```
+npx webpack-bundle-analyzer build/app-stats.json
+```

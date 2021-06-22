@@ -2,7 +2,7 @@
 
 import { getParticipants } from '../base/participants';
 
-import { VIDEO_PLAYER_PARTICIPANT_NAME } from './constants';
+import { VIDEO_PLAYER_PARTICIPANT_NAME, YOUTUBE_PLAYER_PARTICIPANT_NAME } from './constants';
 
 /**
  * Validates the entered video url.
@@ -10,15 +10,18 @@ import { VIDEO_PLAYER_PARTICIPANT_NAME } from './constants';
  * It returns a boolean to reflect whether the url matches the youtube regex.
  *
  * @param {string} url - The entered video link.
- * @returns {boolean}
+ * @returns {string} The youtube video id if matched.
  */
-export function getYoutubeLink(url: string) {
+export function getYoutubeId(url: string) {
+    if (!url) {
+        return null;
+    }
+
     const p = /^(?:https?:\/\/)?(?:www\.)?(?:youtu\.be\/|(?:m\.)?youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))((\w|-){11})(?:\S+)?$/;// eslint-disable-line max-len
     const result = url.match(p);
 
-    return result ? result[1] : false;
+    return result ? result[1] : null;
 }
-
 
 /**
  * Checks if the status is one that is actually sharing the video - playing, pause or start.
@@ -39,6 +42,6 @@ export function isSharingStatus(status: string) {
  */
 export function isVideoPlaying(stateful: Object | Function): boolean {
     return Boolean(getParticipants(stateful).find(p => p.isFakeParticipant
-        && p.name === VIDEO_PLAYER_PARTICIPANT_NAME)
+        && (p.name === VIDEO_PLAYER_PARTICIPANT_NAME || p.name === YOUTUBE_PLAYER_PARTICIPANT_NAME))
     );
 }

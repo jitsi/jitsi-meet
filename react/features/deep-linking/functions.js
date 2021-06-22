@@ -52,9 +52,13 @@ export function generateDeepLinkingURL() {
 export function getDeepLinkingPage(state) {
     const { room } = state['features/base/conference'];
     const { launchInWeb } = state['features/deep-linking'];
+    const appScheme = typeof interfaceConfig !== 'undefined' && interfaceConfig.APP_SCHEME;
 
     // Show only if we are about to join a conference.
-    if (launchInWeb || !room || state['features/base/config'].disableDeepLinking || isVpaasMeeting(state)) {
+    if (launchInWeb
+            || !room
+            || state['features/base/config'].disableDeepLinking
+            || (isVpaasMeeting(state) && !appScheme)) {
         return Promise.resolve();
     }
 

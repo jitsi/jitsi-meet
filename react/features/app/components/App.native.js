@@ -11,6 +11,7 @@ import { getFeatureFlag } from '../../base/flags/functions';
 import { Platform } from '../../base/react';
 import { DimensionsDetector, clientResized } from '../../base/responsive-ui';
 import { updateSettings } from '../../base/settings';
+import JitsiThemePaperProvider from '../../base/ui/components/JitsiThemeProvider.native';
 import logger from '../logger';
 
 import { AbstractApp } from './AbstractApp';
@@ -127,10 +128,12 @@ export class App extends AbstractApp {
      */
     _createMainElement(component, props) {
         return (
-            <DimensionsDetector
-                onDimensionsChanged = { this._onDimensionsChanged }>
-                { super._createMainElement(component, props) }
-            </DimensionsDetector>
+            <JitsiThemePaperProvider>
+                <DimensionsDetector
+                    onDimensionsChanged = { this._onDimensionsChanged }>
+                    { super._createMainElement(component, props) }
+                </DimensionsDetector>
+            </JitsiThemePaperProvider>
         );
     }
 

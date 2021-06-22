@@ -689,7 +689,7 @@ export function resume() {
         area.mouseup(event => dispatch(mouseClicked(EVENTS.mouseup, event)));
         area.dblclick(event => dispatch(mouseClicked(EVENTS.mousedblclick, event)));
         area.contextmenu(() => false);
-        area[0].onmousewheel = event => {
+        area[0].onwheel = event => {
             event.preventDefault();
             event.stopPropagation();
             dispatch(mouseScrolled(event));
@@ -739,7 +739,7 @@ export function pause() {
             area.off('mousedown');
             area.off('mousemove');
             area.off('mouseup');
-            area[0].onmousewheel = undefined;
+            area[0].onwheel = undefined;
         }
 
         $(window).off('keydown');

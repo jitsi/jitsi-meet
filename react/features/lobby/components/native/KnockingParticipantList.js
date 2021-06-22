@@ -6,6 +6,7 @@ import { ScrollView, Text, View, TouchableOpacity } from 'react-native';
 import { Avatar } from '../../../base/avatar';
 import { translate } from '../../../base/i18n';
 import { connect } from '../../../base/redux';
+import { HIDDEN_EMAILS } from '../../constants';
 import AbstractKnockingParticipantList, {
     mapStateToProps as abstractMapStateToProps,
     type Props
@@ -44,7 +45,7 @@ class KnockingParticipantList extends AbstractKnockingParticipantList {
                             <Text style = { styles.knockingParticipantListText }>
                                 { p.name }
                             </Text>
-                            { p.email && (
+                            { p.email && !HIDDEN_EMAILS.includes(p.email) && (
                                 <Text style = { styles.knockingParticipantListText }>
                                     { p.email }
                                 </Text>

@@ -1,6 +1,5 @@
 import { ColorSchemeRegistry, schemeColor } from '../../../base/color-scheme';
 import { BoxModel, ColorPalette, fixAndroidViewClipping } from '../../../base/styles';
-import { FILMSTRIP_SIZE } from '../../../filmstrip';
 
 export const INSECURE_ROOM_NAME_LABEL_COLOR = ColorPalette.warning;
 
@@ -27,23 +26,9 @@ export default {
      */
     indicatorContainer: {
         flex: 1,
-        flexDirection: 'row',
-        justifyContent: 'flex-end'
+        flexDirection: 'row'
     },
 
-    /**
-     * Indicator container for wide aspect ratio.
-     */
-    indicatorContainerWide: {
-        marginRight: FILMSTRIP_SIZE + BoxModel.margin
-    },
-
-    labelWrapper: {
-        flexDirection: 'column',
-        position: 'absolute',
-        right: 0,
-        top: 0
-    },
 
     lonelyButton: {
         alignItems: 'center',
@@ -68,21 +53,19 @@ export default {
         paddingVertical: 12
     },
 
-    navBarButton: {
+    pipButtonContainer: {
+        position: 'absolute',
+        top: 10,
+        left: 5,
+        zIndex: 1
+    },
+
+    pipButton: {
         iconStyle: {
             color: ColorPalette.white,
             fontSize: 24
         },
-
         underlayColor: 'transparent'
-    },
-
-    navBarContainer: {
-        flexDirection: 'column',
-        left: 0,
-        position: 'absolute',
-        right: 0,
-        top: 0
     },
 
     navBarSafeView: {
@@ -97,14 +80,15 @@ export default {
         flex: 1,
         flexDirection: 'row',
         height: 44,
-        justifyContent: 'space-between',
+        justifyContent: 'center',
         paddingHorizontal: 14
     },
 
     roomTimer: {
         color: ColorPalette.white,
         fontSize: 12,
-        fontWeight: '400'
+        fontWeight: '400',
+        paddingHorizontal: 8
     },
 
     roomTimerView: {
@@ -113,7 +97,7 @@ export default {
         borderTopRightRadius: 3,
         height: 28,
         justifyContent: 'center',
-        paddingHorizontal: 10
+        minWidth: 50
     },
 
     roomName: {
@@ -126,21 +110,13 @@ export default {
         backgroundColor: 'rgba(0,0,0,0.6)',
         borderBottomLeftRadius: 3,
         borderTopLeftRadius: 3,
+        flexShrink: 1,
         height: 28,
         justifyContent: 'center',
         paddingHorizontal: 10
     },
 
-    roomNameContainer: {
-        alignItems: 'center',
-        left: 0,
-        paddingHorizontal: 48,
-        position: 'absolute',
-        right: 0
-    },
-
     roomNameWrapper: {
-        alignItems: 'center',
         flexDirection: 'row'
     },
 

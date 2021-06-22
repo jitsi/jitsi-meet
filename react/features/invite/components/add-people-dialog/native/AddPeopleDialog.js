@@ -31,7 +31,7 @@ import {
 } from '../../../../base/react';
 import { connect } from '../../../../base/redux';
 import { beginShareRoom } from '../../../../share-room';
-import { ADD_PEOPLE_DIALOG_VIEW_ID } from '../../../constants';
+import { ADD_PEOPLE_DIALOG_VIEW_ID, INVITE_TYPES } from '../../../constants';
 import AbstractAddPeopleDialog, {
     type Props as AbstractProps,
     type State as AbstractState,
@@ -242,13 +242,13 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
         const { item } = flatListItem;
 
         switch (item.type) {
-        case 'phone':
+        case INVITE_TYPES.PHONE:
             return {
                 avatar: IconPhone,
                 key: item.number,
                 title: item.number
             };
-        case 'user':
+        case INVITE_TYPES.USER:
             return {
                 avatar: item.avatar,
                 key: item.id || item.user_id,
@@ -273,7 +273,7 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
      * @returns {string}
      */
     _keyExtractor(item) {
-        return item.type === 'user' ? item.id || item.user_id : item.number;
+        return item.type === INVITE_TYPES.USER ? item.id || item.user_id : item.number;
     }
 
     _onClearField: () => void
@@ -340,7 +340,7 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
     _onPressItem(item) {
         return () => {
             const { inviteItems } = this.state;
-            const finderKey = item.type === 'phone' ? 'number' : 'user_id';
+            const finderKey = item.type === INVITE_TYPES.PHONE ? 'number' : 'user_id';
 
             if (inviteItems.find(
                     _.matchesProperty(finderKey, item[finderKey]))) {
@@ -504,10 +504,10 @@ class AddPeopleDialog extends AbstractAddPeopleDialog<Props, State> {
         }
 
         switch (item.type) {
-        case 'phone':
+        case INVITE_TYPES.PHONE:
             selected = inviteItems.find(_.matchesProperty('number', item.number));
             break;
-        case 'user':
+        case INVITE_TYPES.USER:
             selected = item.id
                 ? inviteItems.find(_.matchesProperty('id', item.id))
                 : inviteItems.find(_.matchesProperty('user_id', item.user_id));

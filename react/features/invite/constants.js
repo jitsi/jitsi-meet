@@ -42,3 +42,20 @@ export const OUTGOING_CALL_RINGING_SOUND_ID = 'OUTGOING_CALL_RINGING_SOUND_ID';
  * @type {string}
  */
 export const OUTGOING_CALL_START_SOUND_ID = 'OUTGOING_CALL_START_SOUND_ID';
+
+/**
+ * Regex for matching sip addresses.
+ */
+// eslint-disable-next-line max-len
+export const SIP_ADDRESS_REGEX = /^[+a-zA-Z0-9]+(?:([^\s>:@]+)(?::([^\s@>]+))?@)?([\w\-.]+)(?::(\d+))?((?:;[^\s=?>;]+(?:=[^\s?;]+)?)*)(?:\?(([^\s&=>]+=[^\s&=>]+)(&[^\s&=>]+=[^\s&=>]+)*))?$/;
+
+/**
+ * Different invite types mapping
+ */
+export const INVITE_TYPES = {
+    PHONE: 'phone',
+    ROOM: 'room',
+    SIP: 'sip',
+    USER: 'user',
+    VIDEO_ROOM: 'videosipgw'
+};

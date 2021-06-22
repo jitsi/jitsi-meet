@@ -9,10 +9,8 @@ import {
     AbstractButton,
     type AbstractButtonProps
 } from '../../../base/toolbox/components';
-import { showSharedVideoDialog } from '../../actions.web';
+import { toggleSharedVideo } from '../../actions.any';
 import { isSharingStatus } from '../../functions';
-
-declare var APP: Object;
 
 type Props = AbstractButtonProps & {
 
@@ -49,7 +47,7 @@ class SharedVideoButton extends AbstractButton<Props, *> {
      * @returns {void}
      */
     _handleClick() {
-        this._doToggleSharedVideoDialog();
+        this._doToggleSharedVideo();
     }
 
     /**
@@ -80,12 +78,8 @@ class SharedVideoButton extends AbstractButton<Props, *> {
      * @private
      * @returns {void}
      */
-    _doToggleSharedVideoDialog() {
-        const { dispatch } = this.props;
-
-        return this._isToggled()
-            ? APP.UI.stopSharedVideoEmitter()
-            : dispatch(showSharedVideoDialog(id => APP.UI.startSharedVideoEmitter(id)));
+    _doToggleSharedVideo() {
+        this.props.dispatch(toggleSharedVideo());
     }
 }
 

@@ -343,7 +343,7 @@ class Thumbnail extends Component<Props, State> {
 
             return {
                 ...newState,
-                dispayMode: computeDisplayMode(Thumbnail.getDisplayModeInput(props, newState))
+                displayMode: computeDisplayMode(Thumbnail.getDisplayModeInput(props, newState))
             };
         }
 
@@ -549,8 +549,7 @@ class Thumbnail extends Component<Props, State> {
      * @returns {ReactElement}
      */
     _renderFakeParticipant() {
-        const { _participant } = this.props;
-        const { id } = _participant;
+        const { _participant: { avatarURL } } = this.props;
         const styles = this._getStyles();
         const containerClassName = this._getContainerClassName();
 
@@ -562,14 +561,12 @@ class Thumbnail extends Component<Props, State> {
                 onMouseEnter = { this._onMouseEnter }
                 onMouseLeave = { this._onMouseLeave }
                 style = { styles.thumbnail }>
-                <img
-                    className = 'sharedVideoAvatar'
-                    src = { `https://img.youtube.com/vi/${id}/0.jpg` } />
-                <div className = 'displayNameContainer'>
-                    <DisplayName
-                        elementID = 'sharedVideoContainer_name'
-                        participantID = { id } />
-                </div>
+                {avatarURL ? (
+                    <img
+                        className = 'sharedVideoAvatar'
+                        src = { avatarURL } />
+                )
+                    : this._renderAvatar(styles.avatar)}
             </span>
         );
     }
@@ -740,11 +737,11 @@ class Thumbnail extends Component<Props, State> {
                         participantID = { id } />
                 </div>
                 { this._renderAvatar(styles.avatar) }
-                <span className = 'localvideomenu'>
-                    <LocalVideoMenuTriggerButton />
-                </span>
                 <span className = 'audioindicator-container'>
                     <AudioLevelIndicator audioLevel = { audioLevel } />
+                </span>
+                <span className = 'localvideomenu'>
+                    <LocalVideoMenuTriggerButton />
                 </span>
             </span>
         );
@@ -870,14 +867,14 @@ class Thumbnail extends Component<Props, State> {
                         className = 'presence-label'
                         participantID = { id } />
                 </div>
+                <span className = 'audioindicator-container'>
+                    <AudioLevelIndicator audioLevel = { audioLevel } />
+                </span>
                 <span className = 'remotevideomenu'>
                     <RemoteVideoMenuTriggerButton
                         initialVolumeValue = { volume }
                         onVolumeChange = { onVolumeChange }
                         participantID = { id } />
-                </span>
-                <span className = 'audioindicator-container'>
-                    <AudioLevelIndicator audioLevel = { audioLevel } />
                 </span>
             </span>
         );

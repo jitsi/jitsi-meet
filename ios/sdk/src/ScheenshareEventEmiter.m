@@ -42,8 +42,8 @@ NSNotificationName const kBroadcastStoppedNotification = @"iOS_BroadcastStopped"
 // MARK: Private Methods
 
 - (void)setupObserver {
-    CFNotificationCenterAddObserver(_notificationCenter, (__bridge const void *)(self), broadcastToggleNotificationCallback, (__bridge CFStringRef)kBroadcastStartedNotification, NULL, CFNotificationSuspensionBehaviorDeliverImmediately);
-    CFNotificationCenterAddObserver(_notificationCenter, (__bridge const void *)(self), broadcastToggleNotificationCallback, (__bridge CFStringRef)kBroadcastStoppedNotification, NULL, CFNotificationSuspensionBehaviorDeliverImmediately);
+    CFNotificationCenterAddObserver(_notificationCenter, (__bridge const void *)(self), broadcastStartedNotificationCallback, (__bridge CFStringRef)kBroadcastStartedNotification, NULL, CFNotificationSuspensionBehaviorDeliverImmediately);
+    CFNotificationCenterAddObserver(_notificationCenter, (__bridge const void *)(self), broadcastStoppedNotificationCallback, (__bridge CFStringRef)kBroadcastStoppedNotification, NULL, CFNotificationSuspensionBehaviorDeliverImmediately);
 }
 
 - (void)clearObserver {
@@ -51,13 +51,22 @@ NSNotificationName const kBroadcastStoppedNotification = @"iOS_BroadcastStopped"
     CFNotificationCenterRemoveObserver(_notificationCenter, (__bridge const void *)(self), (__bridge CFStringRef)kBroadcastStoppedNotification, NULL);
 }
 
-void broadcastToggleNotificationCallback(CFNotificationCenterRef center,
-                                         void *observer,
-                                         CFStringRef name,
-                                         const void *object,
-                                         CFDictionaryRef userInfo) {
+void broadcastStartedNotificationCallback(CFNotificationCenterRef center,
+                                          void *observer,
+                                          CFStringRef name,
+                                          const void *object,
+                                          CFDictionaryRef userInfo) {
     ExternalAPI *externalAPI = [[JitsiMeet sharedInstance] getExternalAPI];
-    [externalAPI toggleScreenShare];
+    [externalAPI toggleScreenShare:true];
+}
+
+void broadcastStoppedNotificationCallback(CFNotificationCenterRef center,
+                                          void *observer,
+                                          CFStringRef name,
+                                          const void *object,
+                                          CFDictionaryRef userInfo) {
+    ExternalAPI *externalAPI = [[JitsiMeet sharedInstance] getExternalAPI];
+    [externalAPI toggleScreenShare:false];
 }
 
 @end

@@ -1,6 +1,7 @@
 // @flow
 
 import UIEvents from '../../../../service/UI/UIEvents';
+import { toggleE2EE } from '../../e2ee/actions';
 import { NOTIFICATION_TIMEOUT, showNotification } from '../../notifications';
 import { CALLING, INVITED } from '../../presence-status';
 import { APP_WILL_MOUNT, APP_WILL_UNMOUNT } from '../app';
@@ -160,7 +161,7 @@ StateListenerRegistry.register(
         for (const p of getState()['features/base/participants']) {
             !p.local
                 && (!conference || p.conference !== conference)
-                && dispatch(participantLeft(p.id, p.conference));
+                && dispatch(participantLeft(p.id, p.conference, p.isReplaced));
         }
     });
 
@@ -207,7 +208,7 @@ StateListenerRegistry.register(
     (conference, store) => {
         if (conference) {
             const propertyHandlers = {
-                'e2eeEnabled': (participant, value) => _e2eeUpdated(store, conference, participant.getId(), value),
+                'e2ee.enabled': (participant, value) => _e2eeUpdated(store, conference, participant.getId(), value),
                 'features_e2ee': (participant, value) =>
                     store.dispatch(participantUpdated({
                         conference,
@@ -270,11 +271,13 @@ StateListenerRegistry.register(
  * @param {Function} dispatch - The Redux dispatch function.
  * @param {Object} conference - The conference for which we got an update.
  * @param {string} participantId - The ID of the participant from which we got an update.
- * @param {boolean} newValue - The new value of the E2EE enabled     status.
+ * @param {boolean} newValue - The new value of the E2EE enabled status.
  * @returns {void}
  */
 function _e2eeUpdated({ dispatch }, conference, participantId, newValue) {
     const e2eeEnabled = newValue === 'true';
+
+    dispatch(toggleE2EE(e2eeEnabled));
 
     dispatch(participantUpdated({
         conference,
@@ -353,14 +356,16 @@ function _maybePlaySounds({ getState, dispatch }, action) {
     if (!action.participant.local
             && (!startAudioMuted
                 || getParticipantCount(state) < startAudioMuted)) {
+        const { isReplacing, isReplaced } = action.participant;
+
         if (action.type === PARTICIPANT_JOINED) {
             const { presence } = action.participant;
 
             // The sounds for the poltergeist are handled by features/invite.
-            if (presence !== INVITED && presence !== CALLING) {
+            if (presence !== INVITED && presence !== CALLING && !isReplacing) {
                 dispatch(playSound(PARTICIPANT_JOINED_SOUND_ID));
             }
-        } else if (action.type === PARTICIPANT_LEFT) {
+        } else if (action.type === PARTICIPANT_LEFT && !isReplaced) {
             dispatch(playSound(PARTICIPANT_LEFT_SOUND_ID));
         }
     }
@@ -383,7 +388,7 @@ function _maybePlaySounds({ getState, dispatch }, action) {
  */
 function _participantJoinedOrUpdated(store, next, action) {
     const { dispatch, getState } = store;
-    const { participant: { avatarURL, e2eeEnabled, email, id, local, name, raisedHand } } = action;
+    const { participant: { avatarURL, email, id, local, name, raisedHand } } = action;
 
     // Send an external update of the local participant's raised hand state
     // if a new raised hand state is defined in the action.
@@ -398,30 +403,24 @@ function _participantJoinedOrUpdated(store, next, action) {
         }
     }
 
-    // Send an external update of the local participant's E2EE enabled state
-    // if a new state is defined in the action.
-    if (typeof e2eeEnabled !== 'undefined') {
-        if (local) {
-            const { conference } = getState()['features/base/conference'];
-
-            conference && conference.setLocalParticipantProperty('e2eeEnabled', e2eeEnabled);
-        }
-    }
-
     // Allow the redux update to go through and compare the old avatar
     // to the new avatar and emit out change events if necessary.
     const result = next(action);
 
-    const { disableThirdPartyRequests } = getState()['features/base/config'];
+    // Only run this if the config is populated, otherwise we preload external resources
+    // even if disableThirdPartyRequests is set to true in config
+    if (Object.keys(getState()['features/base/config']).length) {
+        const { disableThirdPartyRequests } = getState()['features/base/config'];
 
-    if (!disableThirdPartyRequests && (avatarURL || email || id || name)) {
-        const participantId = !id && local ? getLocalParticipant(getState()).id : id;
-        const updatedParticipant = getParticipantById(getState(), participantId);
+        if (!disableThirdPartyRequests && (avatarURL || email || id || name)) {
+            const participantId = !id && local ? getLocalParticipant(getState()).id : id;
+            const updatedParticipant = getParticipantById(getState(), participantId);
 
-        getFirstLoadableAvatarUrl(updatedParticipant, store)
-            .then(url => {
-                dispatch(setLoadableAvatarUrl(participantId, url));
-            });
+            getFirstLoadableAvatarUrl(updatedParticipant, store)
+                .then(url => {
+                    dispatch(setLoadableAvatarUrl(participantId, url));
+                });
+        }
     }
 
     // Notify external listeners of potential avatarURL changes.

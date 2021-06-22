@@ -6,7 +6,8 @@ import type { Dispatch } from 'redux';
 import { Dialog } from '../../../base/dialog';
 import { translate, translateToHTML } from '../../../base/i18n';
 import { connect } from '../../../base/redux';
-import { openLoginDialog, cancelWaitForOwner } from '../../actions.web';
+import { safeDecodeURIComponent } from '../../../base/util';
+import { cancelWaitForOwner } from '../../actions.web';
 
 /**
  * The type of the React {@code Component} props of {@link WaitForOwnerDialog}.
@@ -63,8 +64,15 @@ class WaitForOwnerDialog extends PureComponent<Props> {
      */
     _onCancelWaitForOwner() {
         const { dispatch } = this.props;
+        const cancelButton = document.getElementById('modal-dialog-cancel-button');
 
-        dispatch(cancelWaitForOwner());
+        if (cancelButton) {
+            cancelButton.onclick = () => {
+                dispatch(cancelWaitForOwner());
+            };
+        }
+
+        return false;
     }
 
     _onIAmHost: () => void;
@@ -76,9 +84,9 @@ class WaitForOwnerDialog extends PureComponent<Props> {
      * @returns {void}
      */
     _onIAmHost() {
-        const { dispatch } = this.props;
+        const { onAuthNow } = this.props;
 
-        dispatch(openLoginDialog());
+        onAuthNow && onAuthNow();
     }
 
     /**
@@ -88,12 +96,13 @@ class WaitForOwnerDialog extends PureComponent<Props> {
      */
     render() {
         const {
-            _room,
+            _room: room,
             t
         } = this.props;
 
         return (
             <Dialog
+                hideCloseIconButton = { true }
                 okKey = { t('dialog.IamHost') }
                 onCancel = { this._onCancelWaitForOwner }
                 onSubmit = { this._onIAmHost }
@@ -102,7 +111,7 @@ class WaitForOwnerDialog extends PureComponent<Props> {
                 <span>
                     {
                         translateToHTML(
-                            t, 'dialog.WaitForHostMsg', { room: _room })
+                            t, 'dialog.WaitForHostMsg', { room })
                     }
                 </span>
             </Dialog>
@@ -122,7 +131,7 @@ function mapStateToProps(state) {
     const { authRequired } = state['features/base/conference'];
 
     return {
-        _room: authRequired && authRequired.getName()
+        _room: authRequired && safeDecodeURIComponent(authRequired.getName())
     };
 }
 

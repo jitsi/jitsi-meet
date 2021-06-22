@@ -11,6 +11,7 @@ import {
 } from '../base/conference';
 import { hideDialog, openDialog } from '../base/dialog';
 import { getLocalParticipant } from '../base/participants';
+export * from './actions.any';
 
 import {
     KNOCKING_PARTICIPANT_ARRIVED_OR_UPDATED,
@@ -129,6 +130,22 @@ export function setKnockingParticipantApproval(id: string, approved: boolean) {
 }
 
 /**
+ * Action used to admit multiple participants in the conference.
+ *
+ * @param {Array<Object>} participants - A list of knocking participants.
+ * @returns {void}
+ */
+export function admitMultiple(participants: Array<Object>) {
+    return (dispatch: Function, getState: Function) => {
+        const conference = getCurrentConference(getState);
+
+        participants.forEach(p => {
+            conference.lobbyApproveAccess(p.id);
+        });
+    };
+}
+
+/**
  * Action to set the knocking state of the participant.
  *
  * @param {boolean} knocking - The new state.
@@ -195,23 +212,5 @@ export function startKnocking() {
 
         membersOnly.joinLobby(localParticipant.name, localParticipant.email);
         dispatch(setKnockingState(true));
-    };
-}
-
-/**
- * Action to toggle lobby mode on or off.
- *
- * @param {boolean} enabled - The desired (new) state of the lobby mode.
- * @returns {Function}
- */
-export function toggleLobbyMode(enabled: boolean) {
-    return async (dispatch: Dispatch<any>, getState: Function) => {
-        const conference = getCurrentConference(getState);
-
-        if (enabled) {
-            conference.enableLobby();
-        } else {
-            conference.disableLobby();
-        }
     };
 }

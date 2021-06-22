@@ -1,6 +1,6 @@
 // @flow
 
-import React from 'react';
+import React, { useCallback } from 'react';
 
 import { Icon, IconCheck } from '../../../icons';
 
@@ -32,10 +32,22 @@ type Props = {
 function ToggleButton({ children, isToggled, onClick }: Props) {
     const className = isToggled ? `${mainClass} ${mainClass}--toggled` : mainClass;
 
+    const onKeyPressHandler = useCallback(e => {
+        if (onClick && (e.key === ' ')) {
+            e.preventDefault();
+            onClick();
+        }
+    }, [ onClick ]);
+
     return (
         <div
+            aria-checked = { isToggled }
             className = { className }
-            onClick = { onClick }>
+            id = 'toggle-button'
+            onClick = { onClick }
+            onKeyPress = { onKeyPressHandler }
+            role = 'switch'
+            tabIndex = { 0 }>
             <div className = 'toggle-button-container'>
                 <div className = 'toggle-button-icon-container'>
                     <Icon
@@ -43,7 +55,7 @@ function ToggleButton({ children, isToggled, onClick }: Props) {
                         size = { 10 }
                         src = { IconCheck } />
                 </div>
-                <span>{children}</span>
+                <label htmlFor = 'toggle-button'>{children}</label>
             </div>
         </div>
     );

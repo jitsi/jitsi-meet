@@ -8,11 +8,13 @@ import {
     showNotification
 } from '../../../notifications';
 import { invite } from '../../actions';
+import { INVITE_TYPES } from '../../constants';
 import {
     getInviteResultsForQuery,
     getInviteTypeCounts,
     isAddPeopleEnabled,
-    isDialOutEnabled
+    isDialOutEnabled,
+    isSipInviteEnabled
 } from '../../functions';
 import logger from '../../logger';
 
@@ -37,6 +39,11 @@ export type Props = {
      * Whether or not to show Dial Out functionality.
      */
     _dialOutEnabled: boolean,
+
+    /**
+     * Whether or not to allow sip invites.
+     */
+     _sipInviteEnabled: boolean,
 
     /**
      * The JWT token.
@@ -95,8 +102,26 @@ export default class AbstractAddPeopleDialog<P: Props, S: State>
     }
 
     /**
+     * Retrieves the notification display name for the invitee.
+     *
+     * @param {Object} invitee - The invitee object.
+     * @returns {string}
+     */
+    _getDisplayName(invitee) {
+        if (invitee.type === INVITE_TYPES.PHONE) {
+            return invitee.number;
+        }
+
+        if (invitee.type === INVITE_TYPES.SIP) {
+            return invitee.address;
+        }
+
+        return invitee.name;
+    }
+
+    /**
      * Invite people and numbers to the conference. The logic works by inviting
-     * numbers, people/rooms, and videosipgw in parallel. All invitees are
+     * numbers, people/rooms, sip endpoints and videosipgw in parallel. All invitees are
      * stored in an array. As each invite succeeds, the invitee is removed
      * from the array. After all invites finish, close the modal if there are
      * no invites left to send. If any are left, that means an invite failed
@@ -154,7 +179,7 @@ export default class AbstractAddPeopleDialog<P: Props, S: State>
                     if (invitedCount >= 3) {
                         notificationProps = {
                             titleArguments: {
-                                name: invitees[0].name,
+                                name: this._getDisplayName(invitees[0]),
                                 count: invitedCount - 1
                             },
                             titleKey: 'notify.invitedThreePlusMembers'
@@ -162,15 +187,15 @@ export default class AbstractAddPeopleDialog<P: Props, S: State>
                     } else if (invitedCount === 2) {
                         notificationProps = {
                             titleArguments: {
-                                first: invitees[0].name,
-                                second: invitees[1].name
+                                first: this._getDisplayName(invitees[0]),
+                                second: this._getDisplayName(invitees[1])
                             },
                             titleKey: 'notify.invitedTwoMembers'
                         };
                     } else if (invitedCount) {
                         notificationProps = {
                             titleArguments: {
-                                name: invitees[0].name
+                                name: this._getDisplayName(invitees[0])
                             },
                             titleKey: 'notify.invitedOneMember'
                         };
@@ -214,7 +239,8 @@ export default class AbstractAddPeopleDialog<P: Props, S: State>
             _dialOutEnabled: dialOutEnabled,
             _jwt: jwt,
             _peopleSearchQueryTypes: peopleSearchQueryTypes,
-            _peopleSearchUrl: peopleSearchUrl
+            _peopleSearchUrl: peopleSearchUrl,
+            _sipInviteEnabled: sipInviteEnabled
         } = this.props;
         const options = {
             addPeopleEnabled,
@@ -222,7 +248,8 @@ export default class AbstractAddPeopleDialog<P: Props, S: State>
             dialOutEnabled,
             jwt,
             peopleSearchQueryTypes,
-            peopleSearchUrl
+            peopleSearchUrl,
+            sipInviteEnabled
         };
 
         return getInviteResultsForQuery(query, options);
@@ -259,6 +286,7 @@ export function _mapStateToProps(state: Object) {
         _dialOutEnabled: isDialOutEnabled(state),
         _jwt: state['features/base/jwt'].jwt,
         _peopleSearchQueryTypes: peopleSearchQueryTypes,
-        _peopleSearchUrl: peopleSearchUrl
+        _peopleSearchUrl: peopleSearchUrl,
+        _sipInviteEnabled: isSipInviteEnabled(state)
     };
 }

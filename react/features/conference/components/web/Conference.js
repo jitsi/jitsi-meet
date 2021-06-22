@@ -14,6 +14,8 @@ import { Filmstrip } from '../../../filmstrip';
 import { CalleeInfoContainer } from '../../../invite';
 import { LargeVideo } from '../../../large-video';
 import { KnockingParticipantList, LobbyScreen } from '../../../lobby';
+import { ParticipantsPane } from '../../../participants-pane/components';
+import { getParticipantsPaneOpen } from '../../../participants-pane/functions';
 import { Prejoin, isPrejoinPageVisible } from '../../../prejoin';
 import { fullScreenChanged, showToolbox } from '../../../toolbox/actions.web';
 import { Toolbox } from '../../../toolbox/components/web';
@@ -25,7 +27,7 @@ import {
 } from '../AbstractConference';
 import type { AbstractProps } from '../AbstractConference';
 
-import Labels from './Labels';
+import ConferenceInfo from './ConferenceInfo';
 import { default as Notice } from './Notice';
 
 declare var APP: Object;
@@ -68,20 +70,25 @@ type Props = AbstractProps & {
     _backgroundAlpha: number,
 
     /**
-     * Whether the local participant is recording the conference.
-     */
-    _iAmRecorder: boolean,
-
-    /**
      * Returns true if the 'lobby screen' is visible.
      */
     _isLobbyScreenVisible: boolean,
+
+    /**
+     * If participants pane is visible or not.
+     */
+    _isParticipantsPaneVisible: boolean,
 
     /**
      * The CSS class to apply to the root of {@link Conference} to modify the
      * application layout.
      */
     _layoutClassName: string,
+
+    /**
+     * The config specified interval for triggering mouseMoved iframe api events
+     */
+    _mouseMoveCallbackInterval: number,
 
     /**
      * Name for this conference room.
@@ -102,7 +109,11 @@ type Props = AbstractProps & {
  */
 class Conference extends AbstractConference<Props, *> {
     _onFullScreenChange: Function;
+    _onMouseEnter: Function;
+    _onMouseLeave: Function;
+    _onMouseMove: Function;
     _onShowToolbar: Function;
+    _originalOnMouseMove: Function;
     _originalOnShowToolbar: Function;
     _setBackground: Function;
 
@@ -115,12 +126,24 @@ class Conference extends AbstractConference<Props, *> {
     constructor(props) {
         super(props);
 
+        const { _mouseMoveCallbackInterval } = props;
+
         // Throttle and bind this component's mousemove handler to prevent it
         // from firing too often.
         this._originalOnShowToolbar = this._onShowToolbar;
+        this._originalOnMouseMove = this._onMouseMove;
+
         this._onShowToolbar = _.throttle(
             () => this._originalOnShowToolbar(),
             100,
+            {
+                leading: true,
+                trailing: false
+            });
+
+        this._onMouseMove = _.throttle(
+            event => this._originalOnMouseMove(event),
+            _mouseMoveCallbackInterval,
             {
                 leading: true,
                 trailing: false
@@ -183,36 +206,43 @@ class Conference extends AbstractConference<Props, *> {
      */
     render() {
         const {
-            _iAmRecorder,
             _isLobbyScreenVisible,
+            _isParticipantsPaneVisible,
             _layoutClassName,
             _showPrejoin
         } = this.props;
-        const hideLabels = _iAmRecorder;
 
         return (
             <div
-                className = { _layoutClassName }
-                id = 'videoconference_page'
-                onMouseMove = { this._onShowToolbar }
-                ref = { this._setBackground }>
+                id = 'layout_wrapper'
+                onMouseEnter = { this._onMouseEnter }
+                onMouseLeave = { this._onMouseLeave }
+                onMouseMove = { this._onMouseMove } >
+                <div
+                    className = { _layoutClassName }
+                    id = 'videoconference_page'
+                    onMouseMove = { this._onShowToolbar }
+                    ref = { this._setBackground }>
+                    <ConferenceInfo />
 
-                <Notice />
-                <div id = 'videospace'>
-                    <LargeVideo />
-                    <KnockingParticipantList />
-                    <Filmstrip />
-                    { hideLabels || <Labels /> }
+                    <Notice />
+                    <div id = 'videospace'>
+                        <LargeVideo />
+                        {!_isParticipantsPaneVisible && <KnockingParticipantList />}
+                        <Filmstrip />
+                    </div>
+
+                    { _showPrejoin || _isLobbyScreenVisible || <Toolbox /> }
+                    <Chat />
+
+                    { this.renderNotificationsContainer() }
+
+                    <CalleeInfoContainer />
+
+                    { _showPrejoin && <Prejoin />}
+
                 </div>
-
-                { _showPrejoin || _isLobbyScreenVisible || <Toolbox /> }
-                <Chat />
-
-                { this.renderNotificationsContainer() }
-
-                <CalleeInfoContainer />
-
-                { _showPrejoin && <Prejoin />}
+                <ParticipantsPane />
             </div>
         );
     }
@@ -258,6 +288,39 @@ class Conference extends AbstractConference<Props, *> {
     }
 
     /**
+     * Triggers iframe API mouseEnter event.
+     *
+     * @param {MouseEvent} event - The mouse event.
+     * @private
+     * @returns {void}
+     */
+    _onMouseEnter(event) {
+        APP.API.notifyMouseEnter(event);
+    }
+
+    /**
+     * Triggers iframe API mouseLeave event.
+     *
+     * @param {MouseEvent} event - The mouse event.
+     * @private
+     * @returns {void}
+     */
+    _onMouseLeave(event) {
+        APP.API.notifyMouseLeave(event);
+    }
+
+    /**
+     * Triggers iframe API mouseMove event.
+     *
+     * @param {MouseEvent} event - The mouse event.
+     * @private
+     * @returns {void}
+     */
+    _onMouseMove(event) {
+        APP.API.notifyMouseMove(event);
+    }
+
+    /**
      * Displays the toolbar.
      *
      * @private
@@ -300,12 +363,15 @@ class Conference extends AbstractConference<Props, *> {
  * @returns {Props}
  */
 function _mapStateToProps(state) {
+    const { backgroundAlpha, mouseMoveCallbackInterval } = state['features/base/config'];
+
     return {
         ...abstractMapStateToProps(state),
-        _iAmRecorder: state['features/base/config'].iAmRecorder,
-        _backgroundAlpha: state['features/base/config'].backgroundAlpha,
+        _backgroundAlpha: backgroundAlpha,
         _isLobbyScreenVisible: state['features/base/dialog']?.component === LobbyScreen,
+        _isParticipantsPaneVisible: getParticipantsPaneOpen(state),
         _layoutClassName: LAYOUT_CLASSNAMES[getCurrentLayout(state)],
+        _mouseMoveCallbackInterval: mouseMoveCallbackInterval,
         _roomName: getConferenceNameForTitle(state),
         _showPrejoin: isPrejoinPageVisible(state)
     };

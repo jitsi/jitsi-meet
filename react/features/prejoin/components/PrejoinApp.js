@@ -6,6 +6,7 @@ import { batch } from 'react-redux';
 
 import { BaseApp } from '../../../features/base/app';
 import { setConfig } from '../../base/config';
+import { DialogContainer } from '../../base/dialog';
 import { createPrejoinTracks } from '../../base/tracks';
 import { getConferenceOptions } from '../../conference/functions';
 import { initPrejoin, makePrecallTest } from '../actions';
@@ -99,6 +100,10 @@ export default class PrejoinApp extends BaseApp<Props> {
      * @returns {React$Element}
      */
     _renderDialogContainer() {
-        return null;
+        return (
+            <AtlasKitThemeProvider mode = 'dark'>
+                <DialogContainer />
+            </AtlasKitThemeProvider>
+        );
     }
 }

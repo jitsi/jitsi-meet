@@ -1,8 +1,17 @@
 // @flow
 
+import type { Dispatch } from 'redux';
+
 import { createToolbarEvent, sendAnalytics } from '../../../analytics';
+import {
+    getFeatureFlag,
+    LOBBY_MODE_ENABLED,
+    MEETING_PASSWORD_ENABLED,
+    SECURITY_OPTIONS_ENABLED
+} from '../../../base/flags';
 import { translate } from '../../../base/i18n';
 import { IconSecurityOff, IconSecurityOn } from '../../../base/icons';
+import { isLocalParticipantModerator } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
 import { toggleSecurityDialog } from '../../actions';
@@ -16,10 +25,9 @@ type Props = AbstractButtonProps & {
     _locked: boolean,
 
     /**
-     * On click handler that opens the security dialog.
+     * The redux {@code dispatch} function.
      */
-    onClick: Function
-
+    dispatch: Dispatch<any>
 };
 
 
@@ -40,7 +48,7 @@ class SecurityDialogButton extends AbstractButton<Props, *> {
      */
     _handleClick() {
         sendAnalytics(createToolbarEvent('toggle.security', { enable: !this.props._locked }));
-        this.props.onClick();
+        this.props.dispatch(toggleSecurityDialog());
     }
 
     /**
@@ -61,22 +69,20 @@ class SecurityDialogButton extends AbstractButton<Props, *> {
  * @returns {Props}
  */
 function mapStateToProps(state: Object) {
+    const { conference } = state['features/base/conference'];
+    const { hideLobbyButton } = state['features/base/config'];
     const { locked } = state['features/base/conference'];
     const { lobbyEnabled } = state['features/lobby'];
+    const lobbySupported = conference && conference.isLobbySupported();
+    const lobby = lobbySupported && isLocalParticipantModerator(state) && !hideLobbyButton;
+    const enabledFlag = getFeatureFlag(state, SECURITY_OPTIONS_ENABLED, true);
+    const enabledLobbyModeFlag = getFeatureFlag(state, LOBBY_MODE_ENABLED, true) && lobby;
+    const enabledMeetingPassFlag = getFeatureFlag(state, MEETING_PASSWORD_ENABLED, true);
 
     return {
-        _locked: locked || lobbyEnabled
+        _locked: locked || lobbyEnabled,
+        visible: enabledFlag || (enabledLobbyModeFlag || enabledMeetingPassFlag)
     };
 }
 
-/**
- * Maps dispatching of some action to React component props.
- *
- * @param {Function} dispatch - Redux action dispatcher.
- * @returns {Props}
- */
-const mapDispatchToProps = {
-    onClick: () => toggleSecurityDialog()
-};
-
-export default translate(connect(mapStateToProps, mapDispatchToProps)(SecurityDialogButton));
+export default translate(connect(mapStateToProps)(SecurityDialogButton));

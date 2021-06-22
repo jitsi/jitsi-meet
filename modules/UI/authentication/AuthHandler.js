@@ -4,13 +4,20 @@ import Logger from 'jitsi-meet-logger';
 
 import { openConnection } from '../../../connection';
 import {
+    openAuthDialog,
+    openLoginDialog } from '../../../react/features/authentication/actions.web';
+import { WaitForOwnerDialog } from '../../../react/features/authentication/components';
+import {
     isTokenAuthEnabled,
     getTokenAuthUrl
 } from '../../../react/features/authentication/functions';
+import { getReplaceParticipant } from '../../../react/features/base/config/functions';
+import { isDialogOpen } from '../../../react/features/base/dialog';
 import { setJWT } from '../../../react/features/base/jwt';
 import UIUtil from '../util/UIUtil';
 
 import LoginDialog from './LoginDialog';
+
 
 let externalAuthWindow;
 declare var APP: Object;
@@ -33,6 +40,7 @@ function doExternalAuth(room, lockPassword) {
 
         return;
     }
+
     if (room.isJoined()) {
         let getUrl;
 
@@ -158,16 +166,35 @@ function initJWTTokenListener(room) {
 }
 
 /**
+ * Authenticate for the conference.
  * Uses external service for auth if conference supports that.
  * @param {JitsiConference} room
  * @param {string} [lockPassword] password to use if the conference is locked
  */
-function authenticateExternal(room: Object, lockPassword: string) {
+function authenticate(room: Object, lockPassword: string) {
     const config = APP.store.getState()['features/base/config'];
 
     if (isTokenAuthEnabled(config) || room.isExternalAuthEnabled()) {
         doExternalAuth(room, lockPassword);
+    } else {
+        APP.store.dispatch(openLoginDialog());
     }
+}
+
+/**
+ * Notify user that authentication is required to create the conference.
+ * @param {JitsiConference} room
+ * @param {string} [lockPassword] password to use if the conference is locked
+ */
+function requireAuth(room: Object, lockPassword: string) {
+    if (!isDialogOpen(APP.store, WaitForOwnerDialog)) {
+        return;
+    }
+
+    APP.store.dispatch(
+        openAuthDialog(
+        room.getName(), authenticate.bind(null, room, lockPassword))
+    );
 }
 
 /**
@@ -183,7 +210,9 @@ function logout(room: Object) {
     }).then(url => {
         // de-authenticate conference on the fly
         if (room.isJoined()) {
-            room.join();
+            const replaceParticipant = getReplaceParticipant(APP.store.getState());
+
+            room.join(null, replaceParticipant);
         }
 
         return url;
@@ -191,6 +220,7 @@ function logout(room: Object) {
 }
 
 export default {
-    authenticateExternal,
-    logout
+    authenticate,
+    logout,
+    requireAuth
 };

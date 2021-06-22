@@ -113,7 +113,7 @@ MiddlewareRegistry.register(store => next => action => {
                 id: getLocalParticipant(store.getState()).id,
                 local: true
             },
-            { id: action.participant.getId() }
+            { id: action.participant ? action.participant.getId() : undefined }
         );
         break;
 

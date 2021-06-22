@@ -2,6 +2,8 @@
 
 import { NativeModules } from 'react-native';
 
+import { getFeatureFlag, REPLACE_PARTICIPANT } from '../flags';
+
 export * from './functions.any';
 
 /**
@@ -18,4 +20,14 @@ export function _cleanupConfig(config: Object) {
         delete config.callStatsID;
         delete config.callStatsSecret;
     }
+}
+
+/**
+ * Returns the replaceParticipant config.
+ *
+ * @param {Object} state - The state of the app.
+ * @returns {boolean}
+ */
+export function getReplaceParticipant(state: Object): string {
+    return getFeatureFlag(state, REPLACE_PARTICIPANT, false);
 }
