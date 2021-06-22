@@ -288,7 +288,7 @@
         "user": "Utilizador",
         "userIdentifier": "Identificador do utilizador",
         "userPassword": "Palavra-passe do utilizador",
-        "videoLink": "Ligação vídeo",
+        "videoLink": "Ligação do vídeo",
         "WaitForHostMsg": "A conferência <b>{{room}}</b> ainda não começou. Se for o anfitrião, por favor autentique. Caso contrário, por favor aguarde que o anfitrião chegue.",
         "WaitForHostMsgWOk": "A conferência <b>{{room}}</b> ainda não começou. Se for o anfitrião, por favor prima Ok para autenticar. Caso contrário, por favor aguarde que o anfitrião chegue.",
         "WaitingForHostTitle": "À espera do anfitrião ...",
