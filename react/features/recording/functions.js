@@ -47,6 +47,27 @@ export function getSessionById(state: Object, id: string) {
 }
 
 /**
+ * Fetches the recording link from the server.
+ *
+ * @param {string} url - The base url.
+ * @param {string} recordingSessionId - The ID of the recording session to find.
+ * @param {string} region - The meeting region.
+ * @param {string} tenant - The meeting tenant.
+ * @returns {Promise<any>}
+ */
+export async function getRecordingLink(url: string, recordingSessionId: string, region: string, tenant: string) {
+    const fullUrl = `${url}?recordingSessionId=${recordingSessionId}&region=${region}&tenant=${tenant}`;
+    const res = await fetch(fullUrl, {
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    });
+    const json = await res.json();
+
+    return res.ok ? json.url : Promise.reject(json);
+}
+
+/**
  * Returns the recording session status that is to be shown in a label. E.g. If
  * there is a session with the status OFF and one with PENDING, then the PENDING
  * one will be shown, because that is likely more important for the user to see.
@@ -71,4 +92,19 @@ export function getSessionStatusToShow(state: Object, mode: string): ?string {
     }
 
     return status;
+}
+
+
+/**
+ * Returns the resource id.
+ *
+ * @param {Object | string} recorder - A participant or it's resource.
+ * @returns {string|undefined}
+ */
+export function getResourceId(recorder: string | Object) {
+    if (recorder) {
+        return typeof recorder === 'string'
+            ? recorder
+            : recorder.getId();
+    }
 }

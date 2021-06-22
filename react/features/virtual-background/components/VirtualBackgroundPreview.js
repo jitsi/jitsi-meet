@@ -4,13 +4,16 @@ import Spinner from '@atlaskit/spinner';
 import React, { PureComponent } from 'react';
 
 import { translate } from '../../base/i18n';
+import { VIDEO_TYPE } from '../../base/media';
 import Video from '../../base/media/components/Video';
 import { connect, equals } from '../../base/redux';
 import { getCurrentCameraDeviceId } from '../../base/settings';
 import { createLocalTracksF } from '../../base/tracks/functions';
 import { toggleBackgroundEffect } from '../actions';
+import { VIRTUAL_BACKGROUND_TYPE } from '../constants';
+import { localTrackStopped } from '../functions';
 
-const videoClassName = 'virtual-background-preview-video flipVideoX';
+const videoClassName = 'video-preview-video';
 
 /**
  * The type of the React {@code PureComponent} props of {@link VirtualBackgroundPreview}.
@@ -112,6 +115,10 @@ class VirtualBackgroundPreview extends PureComponent<Props, State> {
         this.setState({
             jitsiTrack
         });
+
+        if (this.props.options.backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE) {
+            this._applyBackgroundEffect();
+        }
     }
 
     /**
@@ -206,7 +213,13 @@ class VirtualBackgroundPreview extends PureComponent<Props, State> {
             this._setTracks();
         }
         if (!equals(this.props.options, prevProps.options)) {
+            if (prevProps.options.backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE) {
+                prevProps.options.url.dispose();
+            }
             this._applyBackgroundEffect();
+        }
+        if (this.props.options.url?.videoType === VIDEO_TYPE.DESKTOP) {
+            localTrackStopped(this.props.dispatch, this.props.options.url, this.state.jitsiTrack);
         }
     }
 

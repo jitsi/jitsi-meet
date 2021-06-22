@@ -6,6 +6,7 @@
         "disabled": "Você não pode convidar pessoas.",
         "failedToAdd": "Falha ao adicionar participantes",
         "footerText": "Digitação está desativada.",
+        "inviteMorePrompt": "Convide mais pessoas",
         "loading": "A procurar por pessoas e números de telefone",
         "loadingNumber": "A validar o número de telefone",
         "loadingPeople": "A procurar pessoas para convidar",
@@ -412,6 +413,10 @@
     },
     "lockRoomPassword": "senha",
     "lockRoomPasswordUppercase": "Senha",
+    "lonelyMeetingExperience": {
+        "youAreAlone": "Você é o único na reunião",
+        "button": "Convidar outros"
+    },
     "me": "eu",
     "notify": {
         "connectedOneMember": "{{name}} entrou na reunião",
@@ -447,6 +452,12 @@
     "passwordSetRemotely": "Definido por outro participante",
     "passwordDigitsOnly": "Até {{number}} dígitos",
     "poweredby": "distribuído por",
+    "prejoin": {
+        "doNotShow": "Não mostre este ecrã novamente",
+        "joinMeeting": "Participar na reunião",
+        "joinWithoutAudio": "Participar sem áudio",
+        "lookGood": "O seu microfone está a funcionar corretamente"
+    },
     "presenceStatus": {
         "busy": "Ocupado",
         "calling": "Chamando...",

@@ -7,9 +7,7 @@
     grid-template-columns: auto auto auto auto auto;
     column-gap: 9px;
     cursor: pointer;
-    .thumbnail:hover, .blur:hover, .slight-blur:hover, .virtual-background-none:hover{
-        height: 56px;
-        width: 103px;
+    .desktop-share:hover,  .thumbnail:hover, .blur:hover, .slight-blur:hover, .virtual-background-none:hover{
         opacity: .5;
         border: 2px solid #99bbf3;
         @media (min-width: 432px) and (min-width: 432px) and (max-width: 632px) {
@@ -21,120 +19,75 @@
             width: 56px;
         }
     }
-    .thumbnail {
+    .background-option {
         margin-top: 8px;
         border-radius: 6px;
-        object-fit: cover;
         height: 60px;
         width: 107px;
+        text-align: center;
+        justify-content: center;
+        font-weight: bold;
+        box-sizing: border-box;
+        display: flex;
+        align-items: center;
+    }
+    .thumbnail {
+        object-fit: cover;
     }
 
     .thumbnail:hover ~ .delete-image-icon {
         display: block;
     }
     .thumbnail-selected {
-        margin-top: 8px;
-        border-radius: 6px;
         object-fit: cover;
-        height: 56px;
-        width: 103px;
         border: 2px solid #246FE5;
     }
     .blur{
         box-shadow: inset 0 0 12px #000000;
-        margin-top: 8px;
         background: #7E8287;
-        font-weight: bold;
-        height: 60px;
-        width: 107px;
-        border-radius: 6px;
-        text-align: center;
-        vertical-align: middle;
-        line-height: 60px;
+        padding: 0 10px;
     }
     .blur-selected {
         box-shadow: inset 0 0 12px #000000;
-        margin-top: 8px;
         background: #7E8287;
-        font-weight: bold;
-        height: 56px;
-        width: 103px;
-        border-radius: 6px;
         border: 2px solid #246FE5;
-        text-align: center;
-        vertical-align: middle;
-        line-height: 60px;
+        padding: 0 10px;
     }
     .slight-blur{
         box-shadow: inset 0 0 12px #000000;
-        margin-top: 8px;
         background: #A4A4A4;
-        font-weight: bold;
-        height: 60px;
-        width: 107px;
-        border-radius: 6px;
-        text-align: center;
-        vertical-align: middle;
-        line-height: 60px;
+        padding: 0 10px;
     }
     .slight-blur-selected{
         box-shadow: inset 0 0 12px #000000;
-        margin-top: 8px;
         background: #A4A4A4;
-        font-weight: bold;
-        height: 56px;
-        width: 103px;
-        border-radius: 6px;
         border: 2px solid #246FE5;
-        text-align: center;
-        vertical-align: middle;
-        line-height: 60px;
+        padding: 0 10px;
     }
     .virtual-background-none {
-        margin-top: 8px;
         background: #525252;
-        font-weight: bold;
-        height: 60px;
-        width: 107px;
-        border-radius: 6px;
-        text-align: center;
-        vertical-align: middle;
-        line-height: 60px;
+        padding: 0 10px;
     }
     .none-selected {
-        margin-top: 8px;
         background: #525252;
-        font-weight: bold;
-        height: 56px;
-        width: 103px;
-        border-radius: 6px;
         border: 2px solid #246FE5;
-        text-align: center;
-        vertical-align: middle;
-        line-height: 60px;
+        padding: 0 10px;
+    }
+
+    .desktop-share{
+        background: #525252;
+    }
+    .desktop-share-selected{
+        background: #525252;
+        border: 2px solid #246FE5;
+        padding: 0 10px;
     }
 
     @media (min-width: 432px) and (max-width: 632px) {
         font-size: 1.5vw;
-        .virtual-background-none, .thumbnail, .blur, .slight-blur{
-            height: 60px;
-            width: 60px;
-        }
-        .thumbnail-selected, .none-selected, .blur-selected, .slight-blur-selected{
-            height: 56px;
-            width: 56px;
-        }
     }
     @media (max-width: 432px){
         font-size: 1.5vw;
-        .virtual-background-none, .thumbnail, .blur, .slight-blur{
-            height: 60px;
-            width: 60px;
-        }
-        .thumbnail-selected, .none-selected, .blur-selected, .slight-blur-selected{
-            height: 56px;
-            width: 56px;
-        }
     }
 }
 
@@ -173,12 +126,18 @@
         left: 51px
     }
 }
+
 .delete-image-icon:hover {
     display: block;
 }
 
 .thumbnail-container {
     position: relative;
+    &:focus-within {
+        .thumbnail ~ .delete-image-icon{
+           display: block;
+       }
+    }
 }
 
 .add-background{
@@ -191,12 +150,17 @@
  }
 
  .video-background-preview-entry{
-    margin-left:5px;
+    margin-left: -10px;
     height: 250px;
-    width: 94%;
+    width: 570px;
     margin-bottom: 8px;
-    position: absolute;
     z-index: 2;
+    @media (min-width: 432px) and (max-width: 632px) {
+        max-width: 336;
+    }
+    @media (max-width: 432px){
+        max-width: 336;
+    }
  }
 
  .virtual-background-preview-video{

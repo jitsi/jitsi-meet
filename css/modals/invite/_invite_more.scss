@@ -130,6 +130,7 @@
                 display: inline-block;
                 vertical-align: middle;
                 cursor: pointer;
+                height: 24px;
             }
         }
 
@@ -141,7 +142,7 @@
             & > a {
                 display: inline-block;
                 height: 24px;
-                width: 48px;
+                min-width: 48px;
                 border-radius: 3px;
                 text-align: center;
                 text-decoration: none;

@@ -114,7 +114,6 @@ $zindex2: 2;
 $zindex3: 3;
 $toolbarBackgroundZ: 4;
 $labelsZ: 5;
-$filmstripVideosZ: 6;
 $subtitlesZ: 7;
 $popoverZ: 8;
 $zindex10: 10;
@@ -129,6 +128,9 @@ $dropdownMaskZ: 900;
 $dropdownZ: 901;
 $centeredVideoLabelZ: 1010;
 $overlayZ: 1016;
+// Place filmstrip videos over toolbar in order
+// to make connection info visible.
+$filmstripVideosZ: $toolbarZ + 1;
 
 /**
  * Font Colors

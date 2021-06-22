@@ -7,7 +7,7 @@
      * see.
      */
     .active-speaker {
-        box-shadow: 0 0 5px 3px $videoThumbnailSelected
+        box-shadow: 0px 0px 1px 1.5px black, 0px 0px 1.3px 4px $videoThumbnailSelected;
     }
 
     #filmstripRemoteVideos {

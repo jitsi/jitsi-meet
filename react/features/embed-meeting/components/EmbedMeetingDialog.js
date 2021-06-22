@@ -44,10 +44,12 @@ function EmbedMeeting({ t, url }: Props) {
             width = 'small'>
             <div className = 'embed-meeting-dialog'>
                 <textarea
+                    aria-label = { t('dialog.embedMeeting') }
                     className = 'embed-meeting-code'
                     readOnly = { true }
                     value = { getEmbedCode() } />
                 <CopyButton
+                    aria-label = { t('addPeople.copyLink') }
                     className = 'embed-meeting-copy'
                     displayedText = { t('dialog.copy') }
                     textOnCopySuccess = { t('dialog.copied') }

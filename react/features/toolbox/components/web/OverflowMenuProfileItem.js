@@ -55,6 +55,7 @@ class OverflowMenuProfileItem extends Component<Props> {
 
         // Bind event handler so it is only bound once for every instance.
         this._onClick = this._onClick.bind(this);
+        this._onKeyPress = this._onKeyPress.bind(this);
     }
 
     /**
@@ -79,7 +80,10 @@ class OverflowMenuProfileItem extends Component<Props> {
             <li
                 aria-label = { t('toolbar.accessibilityLabel.profile') }
                 className = { classNames }
-                onClick = { this._onClick }>
+                onClick = { this._onClick }
+                onKeyPress = { this._onKeyPress }
+                role = 'menuitem'
+                tabIndex = { 0 }>
                 <span className = 'overflow-menu-item-icon'>
                     <Avatar
                         participantId = { _localParticipant.id }
@@ -101,6 +105,22 @@ class OverflowMenuProfileItem extends Component<Props> {
      */
     _onClick() {
         if (!this.props._unclickable) {
+            this.props.onClick();
+        }
+    }
+
+    _onKeyPress: (Object) => void;
+
+    /**
+     * KeyPress handler for accessibility.
+     *
+     * @param {Object} e - The key event to handle.
+     *
+     * @returns {void}
+     */
+    _onKeyPress(e) {
+        if (!this.props._unclickable && (e.key === ' ' || e.key === 'Enter')) {
+            e.preventDefault();
             this.props.onClick();
         }
     }

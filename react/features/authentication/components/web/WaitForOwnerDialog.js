@@ -6,6 +6,7 @@ import type { Dispatch } from 'redux';
 import { Dialog } from '../../../base/dialog';
 import { translate, translateToHTML } from '../../../base/i18n';
 import { connect } from '../../../base/redux';
+import { safeDecodeURIComponent } from '../../../base/util';
 import { cancelWaitForOwner } from '../../actions.web';
 
 /**
@@ -63,8 +64,15 @@ class WaitForOwnerDialog extends PureComponent<Props> {
      */
     _onCancelWaitForOwner() {
         const { dispatch } = this.props;
+        const cancelButton = document.getElementById('modal-dialog-cancel-button');
 
-        dispatch(cancelWaitForOwner());
+        if (cancelButton) {
+            cancelButton.onclick = () => {
+                dispatch(cancelWaitForOwner());
+            };
+        }
+
+        return false;
     }
 
     _onIAmHost: () => void;
@@ -94,6 +102,7 @@ class WaitForOwnerDialog extends PureComponent<Props> {
 
         return (
             <Dialog
+                hideCloseIconButton = { true }
                 okKey = { t('dialog.IamHost') }
                 onCancel = { this._onCancelWaitForOwner }
                 onSubmit = { this._onIAmHost }
@@ -122,7 +131,7 @@ function mapStateToProps(state) {
     const { authRequired } = state['features/base/conference'];
 
     return {
-        _room: authRequired && authRequired.getName()
+        _room: authRequired && safeDecodeURIComponent(authRequired.getName())
     };
 }
 

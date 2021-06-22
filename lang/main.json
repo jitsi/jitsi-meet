@@ -70,12 +70,17 @@
         },
         "privateNotice": "Private message to {{recipient}}",
         "title": "Chat",
-        "you": "you"
+        "you": "you",
+        "message": "Message",
+        "messageAccessibleTitle": "{{user}} says:",
+        "messageAccessibleTitleMe": "me says:",
+        "smileysPanel": "Emoji panel"
     },
     "chromeExtensionBanner": {
         "installExtensionText": "Install the extension for Google Calendar and Office 365 integration",
         "buttonText": "Install Chrome Extension",
-        "dontShowAgain": "Don’t show me this again"
+        "dontShowAgain": "Don’t show me this again",
+        "close": "Close"
     },
     "connectingOverlay": {
         "joiningRoom": "Connecting you to your meeting..."
@@ -204,6 +209,8 @@
         "e2eeLabel": "Enable End-to-End Encryption",
         "e2eeWarning": "WARNING: Not all participants in this meeting seem to have support for End-to-End encryption. If you enable it they won't be able to see nor hear you.",
         "enterDisplayName": "Please enter your name here",
+        "enterDisplayNameToJoin": "Please enter your name to join",
+        "embedMeeting": "Embed meeting",
         "error": "Error",
         "gracefulShutdown": "Our service is currently down for maintenance. Please try again later.",
         "grantModeratorDialog": "Are you sure you want to make this participant a moderator?",
@@ -320,7 +327,9 @@
         "WaitForHostMsgWOk": "The conference <b>{{room}}</b> has not yet started. If you are the host then please press Ok to authenticate. Otherwise, please wait for the host to arrive.",
         "WaitingForHostTitle": "Waiting for the host ...",
         "Yes": "Yes",
-        "yourEntireScreen": "Your entire screen"
+        "yourEntireScreen": "Your entire screen",
+        "remoteUserControls": "Remote user controls of {{username}}",
+        "localUserControls": "Local user controls"
     },
     "dialOut": {
         "statusMessage": "is now {{status}}"
@@ -341,7 +350,20 @@
         "slightBlur": "Slight Blur",
         "removeBackground": "Remove background",
         "addBackground": "Add background",
-        "none": "None"
+        "pleaseWait": "Please wait...",
+        "none": "None",
+        "uploadedImage": "Uploaded image {{index}}",
+        "deleteImage": "Delete image",
+        "image1" : "Beach",
+        "image2" : "White neutral wall",
+        "image3" : "White empty room",
+        "image4" : "Black floor lamp",
+        "image5" : "Mountain",
+        "image6" : "Forest ",
+        "image7" : "Sunrise",
+        "desktopShareError": "Could not create desktop share",
+        "desktopShare":"Desktop share",
+        "webAssemblyWarning": "WebAssembly not supported"
     },
     "feedback": {
         "average": "Average",
@@ -350,7 +372,8 @@
         "good": "Good",
         "rateExperience": "Rate your meeting experience",
         "veryBad": "Very Bad",
-        "veryGood": "Very Good"
+        "veryGood": "Very Good",
+        "star": "Star"
     },
     "incomingCall": {
         "answer": "Answer",
@@ -367,6 +390,7 @@
         "country": "Country",
         "dialANumber": "To join your meeting, dial one of these numbers and then enter the pin.",
         "dialInConferenceID": "PIN:",
+        "copyNumber":"Copy number",
         "dialInNotSupported": "Sorry, dialing in is currently not supported.",
         "dialInNumber": "Dial-in:",
         "dialInSummaryError": "Error fetching dial-in info now. Please try again later.",
@@ -404,6 +428,7 @@
         "support": "Support",
         "supportMsg": "If this keeps happening, reach out to"
     },
+    "jitsiHome": "{{logo}} Logo, links to  Homepage",
     "keyboardShortcuts": {
         "focusLocal": "Focus on your video",
         "focusRemote": "Focus on another person's video",
@@ -524,9 +549,11 @@
         "OldElectronAPPTitle": "Security vulnerability!",
         "oldElectronClientDescription1": "You appear to be using an old version of the Jitsi Meet client which has known security vulnerabilities. Please make sure you update to our ",
         "oldElectronClientDescription2": "latest build",
-        "oldElectronClientDescription3": " now!"
+        "oldElectronClientDescription3": " now!",
+        "groupTitle": "Notifications"
     },
     "participantsPane": {
+        "close": "Close",
         "headings": {
             "lobby": "Lobby ({{count}})",
             "participantsList": "Meeting participants ({{count}})"
@@ -591,6 +618,7 @@
         "or": "or",
         "premeeting": "Pre meeting",
         "showScreen": "Enable pre meeting screen",
+        "keyboardShortcuts" : "Enable Keyboard shortcuts",
         "startWithPhone": "Start with phone audio",
         "screenSharingError": "Screen sharing error:",
         "videoOnlyError": "Video error:",
@@ -612,6 +640,7 @@
         "ringing": "Ringing..."
     },
     "profile": {
+        "avatar": "avatar",
         "setDisplayNameLabel": "Set your display name",
         "setEmailInput": "Enter e-mail",
         "setEmailLabel": "Set your gravatar email",
@@ -626,12 +655,15 @@
         "beta": "BETA",
         "busy": "We're working on freeing recording resources. Please try again in a few minutes.",
         "busyTitle": "All recorders are currently busy",
+        "copyLink": "Copy Link",
         "error": "Recording failed. Please try again.",
+        "errorFetchingLink": "Error fetching recording link.",
         "expandedOff": "Recording has stopped",
         "expandedOn": "The meeting is currently being recorded.",
         "expandedPending": "Recording is being started...",
         "failedToStart": "Recording failed to start",
         "fileSharingdescription": "Share recording with meeting participants",
+        "linkGenerated": "We have generated a link to your recording.",
         "live": "LIVE",
         "loggedIn": "Logged in as {{userName}}",
         "off": "Recording stopped",
@@ -646,7 +678,8 @@
         "signIn": "Sign in",
         "signOut": "Sign out",
         "unavailable": "Oops! The {{serviceName}} is currently unavailable. We're working on resolving the issue. Please try again later.",
-        "unavailableTitle": "Recording unavailable"
+        "unavailableTitle": "Recording unavailable",
+        "uploadToCloud": "Upload to the cloud"
     },
     "sectionList": {
         "pullToRefresh": "Pull to refresh"
@@ -734,24 +767,24 @@
             "audioRoute": "Select the sound device",
             "callQuality": "Manage video quality",
             "cc": "Toggle subtitles",
-            "chat": "Toggle chat window",
+            "chat": "Open / Close chat",
             "document": "Toggle shared document",
             "download": "Download our apps",
             "embedMeeting": "Embed meeting",
             "feedback": "Leave feedback",
             "fullScreen": "Toggle full screen",
             "grantModerator": "Grant Moderator",
-            "hangup": "Leave the call",
+            "hangup": "Leave the meeting",
             "help": "Help",
             "invite": "Invite people",
             "kick": "Kick participant",
             "lobbyButton": "Enable/disable lobby mode",
             "localRecording": "Toggle local recording controls",
             "lockRoom": "Toggle meeting password",
-            "moreActions": "Toggle more actions menu",
+            "moreActions": "More actions",
             "moreActionsMenu": "More actions menu",
             "moreOptions": "Show more options",
-            "mute": "Toggle mute audio",
+            "mute": "Mute / Unmute",
             "muteEveryone": "Mute everyone",
             "muteEveryoneElse": "Mute everyone else",
             "muteEveryonesVideo": "Disable everyone's camera",
@@ -760,7 +793,7 @@
             "pip": "Toggle Picture-in-Picture mode",
             "privateMessage": "Send private message",
             "profile": "Edit your profile",
-            "raiseHand": "Toggle raise hand",
+            "raiseHand": "Raise / Lower your hand",
             "recording": "Toggle recording",
             "remoteMute": "Mute participant",
             "remoteVideoMute": "Disable camera of participant",
@@ -769,18 +802,22 @@
             "shareaudio": "Share audio",
             "sharedvideo": "Toggle YouTube video sharing",
             "shareRoom": "Invite someone",
-            "shareYourScreen": "Toggle screenshare",
+            "shareYourScreen": "Start / Stop sharing your screen",
             "shortcuts": "Toggle shortcuts",
             "show": "Show on stage",
             "speakerStats": "Toggle speaker statistics",
             "tileView": "Toggle tile view",
             "toggleCamera": "Toggle camera",
             "toggleFilmstrip": "Toggle filmstrip",
-            "videomute": "Toggle mute video",
-            "selectBackground": "Select Background"
+            "videomute": "Start / Stop camera",
+            "videoblur": "Toggle video blur",
+            "selectBackground": "Select Background",
+            "expand": "Expand",
+            "collapse": "Collapse"
         },
         "addPeople": "Add people to your call",
         "audioSettings": "Audio settings",
+        "videoSettings": "Video settings",
         "audioOnlyOff": "Disable low bandwidth mode",
         "audioOnlyOn": "Enable low bandwidth mode",
         "audioRoute": "Select the sound device",
@@ -798,7 +835,7 @@
         "exitFullScreen": "Exit full screen",
         "exitTileView": "Exit tile view",
         "feedback": "Leave feedback",
-        "hangup": "Leave",
+        "hangup": "Leave the meeting",
         "help": "Help",
         "invite": "Invite people",
         "lobbyButtonDisable": "Disable lobby mode",
@@ -841,7 +878,6 @@
         "tileViewToggle": "Toggle tile view",
         "toggleCamera": "Toggle camera",
         "videomute": "Start / Stop camera",
-        "videoSettings": "Video settings",
         "selectBackground": "Select background"
     },
     "transcribing": {
@@ -868,6 +904,7 @@
         "react-nativeGrantPermissions": "Select <b><i>Allow</i></b> when your browser asks for permissions.",
         "safariGrantPermissions": "Select <b><i>OK</i></b> when your browser asks for permissions."
     },
+    "volumeSlider": "Volume slider",
     "videoSIPGW": {
         "busy": "We're working on freeing resources. Please try again in a few minutes.",
         "busyTitle": "The Room service is currently busy",
@@ -912,6 +949,7 @@
         "videomute": "Participant has stopped the camera"
     },
     "welcomepage": {
+        "addMeetingName": "Add Meeting name",
         "accessibilityLabel": {
             "join": "Tap to join",
             "roomname": "Enter room name"
@@ -933,6 +971,9 @@
         "info": "Dial-in info",
         "join": "CREATE / JOIN",
         "jitsiOnMobile": "Jitsi on mobile – download our apps and start a meeting from anywhere",
+        "mobileDownLoadLinkIos": "Download mobile app for iOS",
+        "mobileDownLoadLinkAndroid": "Download mobile app for Android",
+        "mobileDownLoadLinkFDroid": "Download mobile app for F-Droid",
         "moderatedMessage": "Or <a href=\"{{url}}\" rel=\"noopener noreferrer\" target=\"_blank\">book a meeting URL</a> in advance where you are the only moderator.",
         "privacy": "Privacy",
         "recentList": "Recent",
@@ -945,7 +986,15 @@
         "sendFeedback": "Send feedback",
         "startMeeting": "Start meeting",
         "terms": "Terms",
-        "title": "Secure, fully featured, and completely free video conferencing"
+        "title": "Secure, fully featured, and completely free video conferencing",
+        "logo":{
+           "calendar":"Calendar logo",
+           "microsoftLogo":"Microsoft logo",
+           "logoDeepLinking":"Jitsi meet logo",
+           "desktopPreviewThumbnail":"Desktop preview thumbnail",
+           "googleLogo":"Google Logo",
+           "policyLogo":"Policy logo"
+        }
     },
     "lonelyMeetingExperience": {
         "button": "Invite others",
@@ -956,6 +1005,7 @@
     },
     "lobby": {
         "admit": "Admit",
+        "admitAll": "Admit all",
         "knockingParticipantList": "Knocking participant list",
         "allow": "Allow",
         "backToKnockModeButton": "No password, ask to join instead",

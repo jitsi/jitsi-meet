@@ -737,11 +737,11 @@ class Thumbnail extends Component<Props, State> {
                         participantID = { id } />
                 </div>
                 { this._renderAvatar(styles.avatar) }
-                <span className = 'localvideomenu'>
-                    <LocalVideoMenuTriggerButton />
-                </span>
                 <span className = 'audioindicator-container'>
                     <AudioLevelIndicator audioLevel = { audioLevel } />
+                </span>
+                <span className = 'localvideomenu'>
+                    <LocalVideoMenuTriggerButton />
                 </span>
             </span>
         );
@@ -867,14 +867,14 @@ class Thumbnail extends Component<Props, State> {
                         className = 'presence-label'
                         participantID = { id } />
                 </div>
+                <span className = 'audioindicator-container'>
+                    <AudioLevelIndicator audioLevel = { audioLevel } />
+                </span>
                 <span className = 'remotevideomenu'>
                     <RemoteVideoMenuTriggerButton
                         initialVolumeValue = { volume }
                         onVolumeChange = { onVolumeChange }
                         participantID = { id } />
-                </span>
-                <span className = 'audioindicator-container'>
-                    <AudioLevelIndicator audioLevel = { audioLevel } />
                 </span>
             </span>
         );

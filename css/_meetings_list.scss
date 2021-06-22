@@ -125,7 +125,8 @@
             cursor: pointer;
         }
 
-        &.with-click-handler:hover {
+        &.with-click-handler:hover,
+        &.with-click-handler:focus {
             background-color: #c7ddff;
         }
 
@@ -158,7 +159,7 @@
         }
     }
 
-    .item:hover {
+    .item:hover, .item:focus, .item:focus-within {
         .delete-meeting {
             display: block;
         }

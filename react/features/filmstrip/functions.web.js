@@ -66,6 +66,7 @@ export function shouldRemoteVideosBeVisible(state: Object) {
     // in the filmstrip.
     const participantCount = getParticipantCountWithFake(state);
     let pinnedParticipant;
+    const { disable1On1Mode } = state['features/base/config'];
 
     return Boolean(
         participantCount > 2
@@ -73,11 +74,12 @@ export function shouldRemoteVideosBeVisible(state: Object) {
             // Always show the filmstrip when there is another participant to
             // show and the  local video is pinned, or the toolbar is displayed.
             || (participantCount > 1
+                && disable1On1Mode !== null
                 && (state['features/toolbox'].visible
                     || ((pinnedParticipant = getPinnedParticipant(state))
                         && pinnedParticipant.local)))
 
-            || state['features/base/config'].disable1On1Mode);
+            || disable1On1Mode);
 }
 
 /**

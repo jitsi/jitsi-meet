@@ -30,12 +30,17 @@ class UserMediaPermissionsOverlay extends AbstractUserMediaPermissionsOverlay {
                 <div className = 'inlay'>
                     <span className = 'inlay__icon icon-microphone' />
                     <span className = 'inlay__icon icon-camera' />
-                    <h3 className = 'inlay__title'>
+                    <h3
+                        aria-label = { t('startupoverlay.genericTitle') }
+                        className = 'inlay__title'
+                        role = 'alert' >
                         {
                             t('startupoverlay.genericTitle')
                         }
                     </h3>
-                    <span className = 'inlay__text'>
+                    <span
+                        className = 'inlay__text'
+                        role = 'alert' >
                         {
                             translateToHTML(t,
                                 `userMedia.${browser}GrantPermissions`)
@@ -43,7 +48,9 @@ class UserMediaPermissionsOverlay extends AbstractUserMediaPermissionsOverlay {
                     </span>
                 </div>
                 <div className = 'policy overlay__policy'>
-                    <p className = 'policy__text'>
+                    <p
+                        className = 'policy__text'
+                        role = 'alert'>
                         { translateToHTML(t, 'startupoverlay.policyText') }
                     </p>
                     {
@@ -66,7 +73,9 @@ class UserMediaPermissionsOverlay extends AbstractUserMediaPermissionsOverlay {
         if (policyLogoSrc) {
             return (
                 <div className = 'policy__logo'>
-                    <img src = { policyLogoSrc } />
+                    <img
+                        alt = { this.props.t('welcomepage.logo.policyLogo') }
+                        src = { policyLogoSrc } />
                 </div>
             );
         }
