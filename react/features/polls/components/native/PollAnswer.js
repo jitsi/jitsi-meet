@@ -2,12 +2,12 @@
 
 import React from 'react';
 import { Switch, Text, View } from 'react-native';
-import { Button, Title } from 'react-native-paper';
+import { Button } from 'react-native-paper';
 
 import AbstractPollAnswer from '../AbstractPollAnswer';
 import type { AbstractProps } from '../AbstractPollAnswer';
 
-import { chatStyles } from './styles';
+import { chatStyles, dialogStyles } from './styles';
 
 
 const PollAnswer = (props: AbstractProps) => {
@@ -16,6 +16,7 @@ const PollAnswer = (props: AbstractProps) => {
         checkBoxStates,
         poll,
         setCheckbox,
+        skipAnswer,
         submitAnswer,
         t
     } = props;
@@ -23,9 +24,9 @@ const PollAnswer = (props: AbstractProps) => {
     return (
         <View>
             <View>
-                <Title>{ poll.question }</Title>
+                <Text style = { dialogStyles.question } >{ poll.question }</Text>
             </View>
-            <View>
+            <View style = { chatStyles.answerContent }>
                 {poll.answers.map((answer, index) => (
                     <View
                         key = { index }
@@ -38,12 +39,22 @@ const PollAnswer = (props: AbstractProps) => {
                     </View>
                 ))}
             </View>
-            <Button
-                color = '#17a0db'
-                mode = 'contained'
-                onPress = { submitAnswer } >
-                {t('polls.answer.submit')}
-            </Button>
+            <View style = { chatStyles.buttonRow }>
+                <Button
+                    color = '#3D3D3D'
+                    mode = 'contained'
+                    onPress = { skipAnswer }
+                    style = { chatStyles.pollCreateButton } >
+                    {t('polls.answer.skip')}
+                </Button>
+                <Button
+                    color = '#17a0db'
+                    mode = 'contained'
+                    onPress = { submitAnswer }
+                    style = { chatStyles.pollCreateButton } >
+                    {t('polls.answer.submit')}
+                </Button>
+            </View>
         </View>
 
     );

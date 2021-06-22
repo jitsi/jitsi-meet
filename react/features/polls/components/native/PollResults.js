@@ -18,6 +18,7 @@ import { chatStyles, dialogStyles, resultsStyles } from './styles';
 const PollResults = (props: AbstractProps) => {
     const {
         answers,
+        changeVote,
         showDetails,
         question,
         t,
@@ -91,12 +92,21 @@ const PollResults = (props: AbstractProps) => {
                 data = { answers }
                 keyExtractor = { (item, index) => index.toString() }
                 renderItem = { answer => renderRow(answer.item) } />
-            <TouchableOpacity onPress = { toggleIsDetailed }>
-                <Text
-                    style = { chatStyles.toogleText }>
-                    {showDetails ? t('polls.results.hideDetailedResults') : t('polls.results.showDetailedResults')}
-                </Text>
-            </TouchableOpacity>
+            <View style = { chatStyles.bottomLinks }>
+                <TouchableOpacity onPress = { toggleIsDetailed }>
+                    <Text
+                        style = { chatStyles.toggleText }>
+                        {showDetails ? t('polls.results.hideDetailedResults') : t('polls.results.showDetailedResults')}
+                    </Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress = { changeVote }>
+                    <Text
+                        style = { chatStyles.toggleText }>
+                        {showDetails ? t('polls.results.changeVote') : t('polls.results.vote')}
+                    </Text>
+                </TouchableOpacity>
+            </View>
+
         </View>
     );
 };

@@ -66,7 +66,8 @@ export const resultsStyles = createStyleSheet({
         backgroundColor: '#ccc',
         borderRadius: 3,
         width: '100%',
-        height: 6
+        height: 6,
+        marginTop: 2
     },
 
     bar: {
@@ -131,7 +132,7 @@ export const chatStyles = createStyleSheet({
         borderRadius: 4,
         borderColor: '#2183ad',
         borderWidth: 2,
-        padding: 4,
+        padding: 16,
         marginBottom: 8
     },
 
@@ -153,17 +154,23 @@ export const chatStyles = createStyleSheet({
         flexDirection: 'row'
     },
 
+    answerContent: {
+        paddingBottom: 8
+    },
+
     switchRow: {
         alignItems: 'center',
-        flexDirection: 'row'
+        flexDirection: 'row',
+        padding: 6
     },
 
     pollCreateAddButton: {
         margin: 8
     },
 
-    toogleText: {
-        color: ColorPalette.blue
+    toggleText: {
+        color: ColorPalette.blue,
+        paddingTop: 16
     },
 
     createPollButton: {
@@ -179,7 +186,10 @@ export const chatStyles = createStyleSheet({
     PollPaneContent: {
         justifyContent: 'space-between',
         flex: 1
+    },
+
+    bottomLinks: {
+        flexDirection: 'row',
+        justifyContent: 'space-between'
     }
 });
-
-
