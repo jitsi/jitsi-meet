@@ -96,7 +96,8 @@ export default class PreMeetingScreen extends PureComponent<Props> {
             name,
             showAvatar,
             showConferenceInfo,
-            showCopyUrlButton, title,
+            showCopyUrlButton,
+            title,
             videoMuted,
             videoTrack,
             visibleButtons
