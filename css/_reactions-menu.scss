@@ -49,6 +49,7 @@
 	.reactions-row {
 		.toolbox-button {
 			margin-right: 8px;
+			touch-action: manipulation;
 		}
 
 		.toolbox-button:last-of-type {
