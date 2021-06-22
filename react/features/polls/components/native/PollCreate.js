@@ -14,10 +14,15 @@ const PollCreate = (props: AbstractProps) => {
 
 
     const {
-        question, setQuestion,
-        answers, setAnswer, addAnswer, removeAnswer,
+        addAnswer,
+        answers,
         onSubmit,
-        t, setCreateMode
+        question,
+        removeAnswer,
+        setAnswer,
+        setCreateMode,
+        setQuestion,
+        t
     } = props;
 
     const answerListRef = useRef(null);
@@ -158,7 +163,7 @@ const PollCreate = (props: AbstractProps) => {
                 <Button
                     color = '#3D3D3D'
                     mode = 'contained'
-                    onClick = { () => setCreateMode(false) }
+                    onPress = { () => setCreateMode(false) }
                     style = { chatStyles.pollCreateButton } >
                     {t('polls.create.cancel')}
                 </Button>

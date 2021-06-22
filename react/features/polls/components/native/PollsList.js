@@ -1,6 +1,6 @@
 // @flow
 
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FlatList } from 'react-native';
 import { Text } from 'react-native-paper';
@@ -23,6 +23,16 @@ const PollsList = () => {
             pollId = { item } />)
     , []);
 
+    const flatlistRef = useRef();
+
+    const scrollToBottom = () => {
+        flatlistRef.current.scrollToEnd({ animating: true });
+    };
+
+    useEffect(() => {
+        scrollToBottom();
+    }, [ polls ]);
+
     return (
     <>
         {listPolls.length === 0
@@ -34,6 +44,7 @@ const PollsList = () => {
                 extraData = { listPolls }
                 // eslint-disable-next-line react/jsx-no-bind
                 keyExtractor = { (item, index) => index.toString() }
+                ref = { flatlistRef }
                 renderItem = { renderItem } />
         }
     </>
