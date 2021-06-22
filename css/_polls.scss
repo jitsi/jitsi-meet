@@ -207,6 +207,25 @@ a.poll-detail-link, a.poll-change-vote-link {
     align-items: stretch;
 }
 
+.pane-content{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+}
+
+.empty-pane-icon{
+    fill: #3D3D3D;
+    width: 50%;
+    padding: 24px;
+}
+
+.empty-pane-message {
+    text-align: center;
+}
+
 .poll-results {
     color: white;
 }
@@ -231,6 +250,19 @@ a.poll-detail-link, a.poll-change-vote-link {
     color: white;
     margin-bottom: 4;
     display: flex;
+}
+
+.expandable-input{
+    resize: none;
+    width: 100%;
+    height: 40px;
+    box-sizing: border-box;
+    overflow: hidden;
+    border: 1px solid #666666;
+    background-color: #141414;
+    color: #FFF;
+    border-radius: 6px;
+    padding: 10px 16px;
 }
 
 .poll-container {

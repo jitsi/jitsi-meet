@@ -2,6 +2,11 @@
 
 import { getCurrentConference } from '../base/conference';
 import { StateListenerRegistry } from '../base/redux';
+import {
+    NOTIFICATION_TIMEOUT,
+    NOTIFICATION_TYPE,
+    showNotification
+} from '../notifications';
 
 import { receiveAnswer, receivePoll } from './actions';
 import { COMMAND_NEW_POLL, COMMAND_ANSWER_POLL, COMMAND_OLD_POLLS } from './constants';
@@ -70,6 +75,11 @@ StateListenerRegistry.register(
                     };
 
                     store.dispatch(receivePoll(pollId, poll, true));
+                    store.dispatch(showNotification({
+                        appearance: NOTIFICATION_TYPE.NORMAL,
+                        titleKey: 'polls.notification.title',
+                        descriptionKey: 'polls.notification.description'
+                    }, NOTIFICATION_TIMEOUT));
 
                 } else if (data.type === COMMAND_ANSWER_POLL) {
                     const { pollId, answers, voterId, voterName } = data;
