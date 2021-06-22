@@ -20,7 +20,7 @@ export const REACTIONS = {
         emoji: '😮'
     },
     party: {
-        message: ':tada:',
+        message: ':party_popper:',
         emoji: '🎉'
     }
 };

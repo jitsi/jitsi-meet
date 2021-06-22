@@ -5,7 +5,9 @@ import React, { Component } from 'react';
 import { translate } from '../../../base/i18n';
 import { IconRaisedHand } from '../../../base/icons';
 import { connect } from '../../../base/redux';
+import { sendReactionMessage } from '../../../chat/actions.web';
 import { toggleReactionsMenu } from '../../actions.web';
+import { REACTIONS } from '../../constants';
 import { getReactionsMenuVisibility, getReactionsQueue } from '../../functions.web';
 
 import ReactionEmoji from './ReactionEmoji';
@@ -37,8 +39,16 @@ type Props = {
     /**
      * The array of reactions to be displayed.
      */
-    reactionsQueue: Array
+    reactionsQueue: Array,
+
+    /**
+     * Sends a reaction message
+     */
+    sendReactionMessage: Function
 };
+
+
+declare var APP: Object;
 
 /**
  * Button used for reaction menu.
@@ -46,6 +56,46 @@ type Props = {
  * @returns {ReactElement}
  */
 class ReactionsMenuButton extends Component<Props> {
+
+    /**
+     * Sets keyboard shortcuts for reactions.
+     *
+     * @inheritdoc
+     * @returns {void}
+     */
+    componentDidMount() {
+        const KEYBOARD_SHORTCUTS = Object.entries(REACTIONS).map(([ key, { message } ]) => {
+            return {
+                character: message.slice(1, 2).toUpperCase(),
+                exec: () => this.props.sendReactionMessage(key),
+                helpDescription: this.props.t(`toolbar.reaction${key.charAt(0).toUpperCase()}${key.slice(1)}`),
+                altKey: true
+            };
+        });
+
+        KEYBOARD_SHORTCUTS.forEach(shortcut => {
+            if (typeof shortcut === 'object') {
+                APP.keyboardshortcut.registerShortcut(
+                    shortcut.character,
+                    null,
+                    shortcut.exec,
+                    shortcut.helpDescription,
+                    shortcut.altKey);
+            }
+        });
+    }
+
+    /**
+     * Removes keyboard shortcuts registered by this component.
+     *
+     * @inheritdoc
+     * @returns {void}
+     */
+    componentWillUnmount() {
+        Object.keys(REACTIONS).map(key => REACTIONS[key].message.slice(1, 2).toUpperCase())
+            .forEach(letter =>
+                APP.keyboardshortcut.unregisterShortcut(letter));
+    }
 
     /**
      * Implements React's {@link Component#render}.
@@ -90,7 +140,8 @@ function mapStateToProps(state) {
 }
 
 const mapDispatchToProps = {
-    onReactionsClick: toggleReactionsMenu
+    onReactionsClick: toggleReactionsMenu,
+    sendReactionMessage
 };
 
 export default translate(connect(

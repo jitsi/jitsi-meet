@@ -5,7 +5,7 @@ import type { Dispatch } from 'redux';
 import VideoLayout from '../../../modules/UI/videolayout/VideoLayout';
 
 import { OPEN_CHAT } from './actionTypes';
-import { closeChat } from './actions.any';
+import { closeChat, sendReaction } from './actions.any';
 
 export * from './actions.any';
 
@@ -44,5 +44,17 @@ export function toggleChat() {
 
         // Recompute the large video size whenever we toggle the chat, as it takes chat state into account.
         VideoLayout.onResize();
+    };
+}
+
+/**
+ * Sends a reaction message.
+ *
+ * @param {string} reaction - The reaction to send.
+ * @returns {Function}
+ */
+export function sendReactionMessage(reaction) {
+    return (dispatch: Dispatch<any>) => {
+        dispatch(sendReaction(reaction));
     };
 }
