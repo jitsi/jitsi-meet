@@ -230,11 +230,9 @@ const KeyboardShortcut = {
         // register SPACE shortcut in two steps to insure visibility of help
         // message
         this.registerShortcut(' ', null, () => {
-            if (!APP.conference.isLocalAudioMuted()) {
-                sendAnalytics(createShortcutEvent('push.to.talk', RELEASED));
-                logger.log('Talk shortcut released');
-                APP.conference.muteAudio(true);
-            }
+            sendAnalytics(createShortcutEvent('push.to.talk', RELEASED));
+            logger.log('Talk shortcut released');
+            APP.conference.muteAudio(true);
         });
         this._addShortcutToHelp('SPACE', 'keyboardShortcuts.pushToTalk');
 
