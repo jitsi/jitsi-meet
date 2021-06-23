@@ -243,7 +243,7 @@ class Filmstrip extends PureComponent <Props> {
             return `empty-${index}`;
         }
 
-        return _remoteParticipants[_remoteParticipantsLength - index - 1];
+        return _remoteParticipants[index];
     }
 
     _gridItemKey: Object => string;
