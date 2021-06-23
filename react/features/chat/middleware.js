@@ -24,8 +24,10 @@ import { endpointMessageReceived } from '../subtitles';
 import { showToolbox } from '../toolbox/actions';
 import {
     addReactionsMessage,
+    pushReaction
+} from '../toolbox/actions.any';
+import {
     hideToolbox,
-    pushReaction,
     setToolboxTimeout,
     setToolboxVisible
 } from '../toolbox/actions.web';
@@ -155,13 +157,18 @@ MiddlewareRegistry.register(store => next => action => {
     }
 
     case SEND_REACTION: {
-        APP.conference.sendEndpointMessage('', {
-            name: ENDPOINT_REACTION_NAME,
-            reaction: action.reaction,
-            timestamp: Date.now()
-        });
-        dispatch(addReactionsMessage(REACTIONS[action.reaction].message));
-        pushReaction(store, action.reaction);
+        const state = store.getState();
+        const { conference } = state['features/base/conference'];
+
+        if (conference) {
+            conference.sendEndpointMessage('', {
+                name: ENDPOINT_REACTION_NAME,
+                reaction: action.reaction,
+                timestamp: Date.now()
+            });
+            dispatch(addReactionsMessage(REACTIONS[action.reaction].message));
+            pushReaction(store, action.reaction);
+        }
         break;
     }
 

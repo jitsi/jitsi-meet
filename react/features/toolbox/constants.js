@@ -16,7 +16,7 @@ export const REACTIONS = {
         emoji: '😂'
     },
     surprised: {
-        message: ':open_mouth:',
+        message: ':face_with_open_mouth:',
         emoji: '😮'
     },
     party: {

@@ -10,7 +10,7 @@ import {
     SET_REACTIONS_MESSAGE,
     CLEAR_REACTIONS_MESSAGE
 } from './actionTypes';
-import { flushReactionsToChat } from './actions.web';
+import { flushReactionsToChat } from './actions.any';
 
 
 declare var APP: Object;

@@ -3,14 +3,14 @@
 import type { Dispatch } from 'redux';
 
 import {
-    SET_REACTIONS_MESSAGE,
     FULL_SCREEN_CHANGED,
     SET_FULL_SCREEN,
     SET_OVERFLOW_DRAWER,
-    SET_REACTIONS_VISIBLE,
-    CLEAR_REACTIONS_MESSAGE,
-    SET_REACTION_QUEUE
+    SET_REACTIONS_VISIBLE
 } from './actionTypes';
+import {
+    setReactionQueue
+} from './actions.any';
 import {
     clearToolboxTimeout,
     setToolboxTimeout,
@@ -32,43 +32,6 @@ function setReactionsMenuVisibility(value: boolean) {
     return {
         type: SET_REACTIONS_VISIBLE,
         visible: value
-    };
-}
-
-/**
- * Appends the reactions message to the chat and resets the state.
- *
- * @returns {void}
- */
-export function flushReactionsToChat() {
-    return {
-        type: CLEAR_REACTIONS_MESSAGE
-    };
-}
-
-/**
- * Sets the reaction queue.
- *
- * @param {Array} value - The new queue.
- * @returns {Function}
- */
-function setReactionQueue(value: Array) {
-    return {
-        type: SET_REACTION_QUEUE,
-        value
-    };
-}
-
-/**
- * Adds a new reaction to the reactions message.
- *
- * @param {boolean} value - The new reaction.
- * @returns {Function}
- */
-export function addReactionsMessage(value: string) {
-    return {
-        type: SET_REACTIONS_MESSAGE,
-        reaction: value
     };
 }
 
@@ -229,22 +192,6 @@ export function toggleReactionsMenu() {
 
         dispatch(setReactionsMenuVisibility(!value));
     };
-}
-
-/**
- * Adds a reaction to the end of the queue.
- *
- * @param {Object} store - The redux store.
- * @param {string} reaction - Reaction to be added to queue.
- * @returns {void}
- */
-export function pushReaction(store: Object, reaction: string) {
-    const queue = store.getState()['features/toolbox'].reactions.queue;
-
-    store.dispatch(setReactionQueue([ ...queue, {
-        reaction,
-        uid: window.Date.now()
-    } ]));
 }
 
 /**
