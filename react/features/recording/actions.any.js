@@ -16,9 +16,10 @@ import {
     CLEAR_RECORDING_SESSIONS,
     RECORDING_SESSION_UPDATED,
     SET_PENDING_RECORDING_NOTIFICATION_UID,
+    SET_SELECTED_RECORDING_SERVICE,
     SET_STREAM_KEY
 } from './actionTypes';
-import { getRecordingLink, getResourceId } from './functions';
+import { getRecordingLink, getResourceId, isSavingRecordingOnDropbox } from './functions';
 import logger from './logger';
 
 /**
@@ -179,7 +180,8 @@ export function showStartedRecordingNotification(
             // fetch the recording link from the server for recording initiators in jaas meetings
             if (recordingSharingUrl
                 && isVpaasMeeting(state)
-                && iAmRecordingInitiator) {
+                && iAmRecordingInitiator
+                && !isSavingRecordingOnDropbox(state)) {
                 const region = getMeetingRegion(state);
                 const tenant = getVpaasTenant(state);
 
@@ -235,6 +237,19 @@ export function updateRecordingSessionData(session: Object) {
             terminator: session.getTerminator(),
             timestamp
         }
+    };
+}
+
+/**
+ * Sets the selected recording service.
+ *
+ * @param {string} selectedRecordingService - The new selected recording service.
+ * @returns {Object}
+ */
+export function setSelectedRecordingService(selectedRecordingService: string) {
+    return {
+        type: SET_SELECTED_RECORDING_SERVICE,
+        selectedRecordingService
     };
 }
 

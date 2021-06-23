@@ -1,8 +1,9 @@
 // @flow
 
 import { JitsiRecordingConstants } from '../base/lib-jitsi-meet';
+import { isEnabled as isDropboxEnabled } from '../dropbox';
 
-import { RECORDING_STATUS_PRIORITIES } from './constants';
+import { RECORDING_STATUS_PRIORITIES, RECORDING_TYPES } from './constants';
 
 /**
  * Searches in the passed in redux state for an active recording session of the
@@ -65,6 +66,17 @@ export async function getRecordingLink(url: string, recordingSessionId: string, 
     const json = await res.json();
 
     return res.ok ? json.url : Promise.reject(json);
+}
+
+/**
+ * Selector used for determining if recording is saved on dropbox.
+ *
+ * @param {Object} state - The redux state to search in.
+ * @returns {string}
+ */
+export function isSavingRecordingOnDropbox(state: Object) {
+    return isDropboxEnabled(state)
+        && state['features/recording'].selectedRecordingService === RECORDING_TYPES.DROPBOX;
 }
 
 /**
