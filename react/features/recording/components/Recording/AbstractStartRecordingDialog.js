@@ -12,6 +12,7 @@ import {
     isEnabled as isDropboxEnabled
 } from '../../../dropbox';
 import { toggleRequestingSubtitles } from '../../../subtitles';
+import { setSelectedRecordingService } from '../../actions';
 import { RECORDING_TYPES } from '../../constants';
 
 type Props = {
@@ -196,7 +197,9 @@ class AbstractStartRecordingDialog extends Component<Props, State> {
      * @returns {void}
      */
     _onSelectedRecordingServiceChanged(selectedRecordingService) {
-        this.setState({ selectedRecordingService });
+        this.setState({ selectedRecordingService }, () => {
+            this.props.dispatch(setSelectedRecordingService(selectedRecordingService));
+        });
     }
 
     /**
