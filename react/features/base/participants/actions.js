@@ -7,6 +7,7 @@ import {
     HIDDEN_PARTICIPANT_LEFT,
     GRANT_MODERATOR,
     KICK_PARTICIPANT,
+    LOCAL_PARTICIPANT_RAISE_HAND,
     MUTE_REMOTE_PARTICIPANT,
     PARTICIPANT_ID_CHANGED,
     PARTICIPANT_JOINED,
@@ -555,3 +556,18 @@ export function setLoadableAvatarUrl(participantId, url) {
     };
 }
 
+/**
+ * Raise hand for the local participant.
+ *
+ * @param {boolean} enabled - Raise or lower hand.
+ * @returns {{
+ *     type: LOCAL_PARTICIPANT_RAISE_HAND,
+ *     enabled: boolean
+ * }}
+ */
+export function raiseHand(enabled) {
+    return {
+        type: LOCAL_PARTICIPANT_RAISE_HAND,
+        enabled
+    };
+}

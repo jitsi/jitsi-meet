@@ -38,17 +38,17 @@
     }
 }
 
-#knocking-participant-list {
+#notification-participant-list {
     background-color: $newToolbarBackgroundColor;
     border: 1px solid rgba(255, 255, 255, .4);
     border-radius: 8px;
-    display: flex;
-    flex-direction: column;
     left: 0;
     margin: 20px;
+    max-height: 600px;
+    overflow: hidden;
+    overflow-y: auto;
     position: fixed;
-    top: 20;
-    transition: top 1s ease;
+    top: 30px;
     z-index: $toolbarZ + 1;
 
     &.toolbox-visible {
@@ -94,8 +94,6 @@
 
 .knocking-participants-container {
     list-style-type: none;
-    max-height: 600px;
-    overflow-y: scroll;
     padding: 0 15px 15px 15px;
 }
 

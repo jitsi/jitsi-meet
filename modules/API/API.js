@@ -20,9 +20,9 @@ import { MEDIA_TYPE } from '../../react/features/base/media';
 import {
     getLocalParticipant,
     getParticipantById,
-    participantUpdated,
     pinParticipant,
-    kickParticipant
+    kickParticipant,
+    raiseHand
 } from '../../react/features/base/participants';
 import { updateSettings } from '../../react/features/base/settings';
 import { isToggleCameraEnabled, toggleCamera } from '../../react/features/base/tracks';
@@ -205,13 +205,7 @@ function initCommands() {
             const { raisedHand } = localParticipant;
 
             sendAnalytics(createApiEvent('raise-hand.toggled'));
-            APP.store.dispatch(
-                participantUpdated({
-                    id: APP.conference.getMyUserId(),
-                    local: true,
-                    raisedHand: !raisedHand
-                })
-            );
+            APP.store.dispatch(raiseHand(!raisedHand));
         },
 
         /**

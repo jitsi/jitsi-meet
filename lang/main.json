@@ -521,6 +521,7 @@
         "focus": "Conference focus",
         "focusFail": "{{component}} not available - retry in {{ms}} sec",
         "grantedTo": "Moderator rights granted to {{to}}!",
+        "hostAskedUnmute": "The host would like you to unmute",
         "invitedOneMember": "{{name}} has been invited",
         "invitedThreePlusMembers": "{{name}} and {{count}} others have been invited",
         "invitedTwoMembers": "{{first}} and {{second}} have been invited",
@@ -551,6 +552,18 @@
         "oldElectronClientDescription1": "You appear to be using an old version of the Jitsi Meet client which has known security vulnerabilities. Please make sure you update to our ",
         "oldElectronClientDescription2": "latest build",
         "oldElectronClientDescription3": " now!",
+        "moderationInEffectDescription": "Please raise hand if you want to speak",
+        "moderationInEffectCSDescription": "Please raise hand if you want to share your video",
+        "moderationInEffectVideoDescription": "Please raise your hand if you want your video to be visible",
+        "moderationInEffectTitle": "The microphone is muted by the moderator",
+        "moderationInEffectCSTitle": "Content sharing is disabled by moderator",
+        "moderationInEffectVideoTitle": "The video is muted by the moderator",
+        "moderationRequestFromModerator": "The host would like you to unmute",
+        "moderationRequestFromParticipant": "Wants to speak",
+        "moderationStartedTitle": "Moderation started",
+        "moderationStoppedTitle": "Moderation stopped",
+        "moderationToggleDescription": "by {{participantDisplayName}}",
+        "raiseHandAction": "Raise hand",
         "groupTitle": "Notifications"
     },
     "participantsPane": {
@@ -560,8 +573,12 @@
             "participantsList": "Meeting participants ({{count}})"
         },
         "actions": {
+            "allow": "Allow attendees to:",
             "invite": "Invite Someone",
+            "askUnmute": "Ask to unmute",
             "muteAll": "Mute all",
+            "startModeration": "Unmute themselves or start video",
+            "stopEveryonesVideo": "Stop everyone's video",
             "stopVideo": "Stop video"
         }
     },

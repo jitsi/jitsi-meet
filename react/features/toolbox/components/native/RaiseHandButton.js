@@ -11,7 +11,7 @@ import { translate } from '../../../base/i18n';
 import { IconRaisedHand } from '../../../base/icons';
 import {
     getLocalParticipant,
-    participantUpdated
+    raiseHand
 } from '../../../base/participants';
 import { connect } from '../../../base/redux';
 import { AbstractButton, type AbstractButtonProps } from '../../../base/toolbox/components';
@@ -78,17 +78,7 @@ class RaiseHandButton extends AbstractButton<Props, *> {
 
         sendAnalytics(createToolbarEvent('raise.hand', { enable }));
 
-        this.props.dispatch(participantUpdated({
-            // XXX Only the local participant is allowed to update without
-            // stating the JitsiConference instance (i.e. participant property
-            // `conference` for a remote participant) because the local
-            // participant is uniquely identified by the very fact that there is
-            // only one local participant.
-
-            id: this.props._localParticipant.id,
-            local: true,
-            raisedHand: enable
-        }));
+        this.props.dispatch(raiseHand(enable));
     }
 }
 

@@ -10,6 +10,8 @@ import {
     sendAnalytics,
     VIDEO_MUTE
 } from '../analytics';
+import { showModeratedNotification } from '../av-moderation/actions';
+import { shouldShowModeratedNotification } from '../av-moderation/functions';
 import {
     MEDIA_TYPE,
     setAudioMuted,
@@ -33,7 +35,7 @@ const logger = getLogger(__filename);
  * @returns {Function}
  */
 export function muteLocal(enable: boolean, mediaType: MEDIA_TYPE) {
-    return (dispatch: Dispatch<any>) => {
+    return (dispatch: Dispatch<any>, getState: Function) => {
         const isAudio = mediaType === MEDIA_TYPE.AUDIO;
 
         if (!isAudio && mediaType !== MEDIA_TYPE.VIDEO) {
@@ -41,6 +43,14 @@ export function muteLocal(enable: boolean, mediaType: MEDIA_TYPE) {
 
             return;
         }
+
+        // check for A/V Moderation when trying to unmute
+        if (!enable && shouldShowModeratedNotification(MEDIA_TYPE.AUDIO, getState())) {
+            dispatch(showModeratedNotification(MEDIA_TYPE.AUDIO));
+
+            return;
+        }
+
         sendAnalytics(createToolbarEvent(isAudio ? AUDIO_MUTE : VIDEO_MUTE, { enable }));
         dispatch(isAudio ? setAudioMuted(enable, /* ensureTrack */ true)
             : setVideoMuted(enable, mediaType, VIDEO_MUTISM_AUTHORITY.USER, /* ensureTrack */ true));
