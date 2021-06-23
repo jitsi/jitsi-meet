@@ -80,20 +80,20 @@ export const FooterContextMenu = ({ onMouseLeave }: Props) => {
             </div>
             { isModerationEnabled ? (
                 <ContextMenuItem
-                    id = 'participants-pane-context-menu-stop-moderation'
+                    id = 'participants-pane-context-menu-start-moderation'
                     onClick = { disable }>
+                    <span className = { classes.paddedAction }>
+                        { t('participantsPane.actions.startModeration') }
+                    </span>
+                </ContextMenuItem>
+            ) : (
+                <ContextMenuItem
+                    id = 'participants-pane-context-menu-stop-moderation'
+                    onClick = { enable }>
                     <Icon
                         size = { 20 }
                         src = { IconCheck } />
                     <span>{ t('participantsPane.actions.startModeration') }</span>
-                </ContextMenuItem>
-            ) : (
-                <ContextMenuItem
-                    id = 'participants-pane-context-menu-start-moderation'
-                    onClick = { enable }>
-                    <span className = { classes.paddedAction }>
-                        { t('participantsPane.actions.startModeration') }
-                    </span>
                 </ContextMenuItem>
             )}
         </ContextMenu>
