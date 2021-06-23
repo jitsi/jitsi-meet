@@ -9,3 +9,7 @@ export const SETTINGS_TABS = {
  * View ID for the Settings modal.
  */
 export const SETTINGS_VIEW_ID = 'SETTINGS_VIEW_ID';
+
+export const SS_DEFAULT_FRAME_RATE = 5;
+
+export const SS_SUPPORTED_FRAMERATES = [ 5, 15, 30 ];

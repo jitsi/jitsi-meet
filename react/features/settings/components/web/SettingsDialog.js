@@ -194,6 +194,7 @@ function _mapStateToProps(state) {
 
                 return {
                     ...newProps,
+                    currentFramerate: tabState.currentFramerate,
                     currentLanguage: tabState.currentLanguage,
                     followMeEnabled: tabState.followMeEnabled,
                     showPrejoinPage: tabState.showPrejoinPage,
