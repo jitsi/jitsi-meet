@@ -86,8 +86,8 @@ export default class JitsiStreamBackgroundEffect {
      */
     runPostProcessing() {
 
-        const { height, width } = this._stream.getVideoTracks()[0].getSettings()
-        ?? this._stream.getVideoTracks()[0].getConstraints();
+        const track = this._stream.getVideoTracks()[0];
+        const { height, width } = track.getSettings() ?? track.getConstraints();
 
         this._outputCanvasElement.height = height;
         this._outputCanvasElement.width = width;
