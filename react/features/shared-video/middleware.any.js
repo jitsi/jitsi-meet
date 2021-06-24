@@ -39,7 +39,7 @@ MiddlewareRegistry.register(store => next => action => {
     case CONFERENCE_LEFT:
         dispatch(resetSharedVideoStatus());
         break;
-    case PARTICIPANT_LEFT:
+    case PARTICIPANT_LEFT: // left
         if (action.participant.id === stateOwnerId) {
             batch(() => {
                 dispatch(resetSharedVideoStatus());

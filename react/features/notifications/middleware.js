@@ -29,7 +29,7 @@ declare var interfaceConfig: Object;
  */
 MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
-    case PARTICIPANT_JOINED: {
+    case PARTICIPANT_JOINED: { // join
         const result = next(action);
         const { participant: p } = action;
         const { dispatch, getState } = store;
@@ -58,7 +58,7 @@ MiddlewareRegistry.register(store => next => action => {
 
         return result;
     }
-    case PARTICIPANT_LEFT: {
+    case PARTICIPANT_LEFT: { // left
         if (!joinLeaveNotificationsDisabled()) {
             const participant = getParticipantById(
                 store.getState(),

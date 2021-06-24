@@ -256,6 +256,7 @@ export function getPinnedParticipant(stateful: Object | Function) {
  * @returns {Participant[]}
  */
 function _getAllParticipants(stateful) {
+    // where we use this
     return (
         Array.isArray(stateful)
             ? stateful

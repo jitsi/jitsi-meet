@@ -178,6 +178,7 @@ MiddlewareRegistry.register(store => next => action => {
  * features/base/conference by ensuring that the former does not contain remote
  * participants no longer relevant to the latter. Introduced to address an issue
  * with multiplying thumbnails in the filmstrip.
+ * What is this????
  */
 StateListenerRegistry.register(
     /* selector */ state => getCurrentConference(state),

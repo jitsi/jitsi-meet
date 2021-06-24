@@ -30,9 +30,9 @@ MiddlewareRegistry.register(store => next => action => {
     switch (action.type) {
     case APP_STATE_CHANGED:
     case CONFERENCE_JOINED:
-    case PARTICIPANT_JOINED:
+    case PARTICIPANT_JOINED: // joined
     case PARTICIPANT_KICKED:
-    case PARTICIPANT_LEFT:
+    case PARTICIPANT_LEFT:   // left
     case SCREEN_SHARE_REMOTE_PARTICIPANTS_UPDATED:
     case SELECT_LARGE_VIDEO_PARTICIPANT:
     case SET_AUDIO_ONLY:
@@ -53,6 +53,7 @@ MiddlewareRegistry.register(store => next => action => {
  * @returns {void}
  */
 function _updateLastN({ dispatch, getState }) {
+    // participants dependent
     const state = getState();
     const { conference } = state['features/base/conference'];
     const { enabled: audioOnly } = state['features/base/audio-only'];

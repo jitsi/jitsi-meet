@@ -81,6 +81,7 @@ export function commonUserJoinedHandling(
         { dispatch }: Object,
         conference: Object,
         user: Object) {
+    // joined
     const id = user.getId();
     const displayName = user.getDisplayName();
 
@@ -117,6 +118,7 @@ export function commonUserLeftHandling(
         { dispatch }: Object,
         conference: Object,
         user: Object) {
+    // left
     const id = user.getId();
 
     if (user.isHidden()) {

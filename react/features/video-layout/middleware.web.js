@@ -36,7 +36,7 @@ MiddlewareRegistry.register(store => next => action => {
         VideoLayout.reset();
         break;
 
-    case PARTICIPANT_JOINED:
+    case PARTICIPANT_JOINED: // join
         if (!action.participant.local) {
             VideoLayout.updateVideoMutedForNoTracks(action.participant.id);
         }
@@ -62,6 +62,7 @@ MiddlewareRegistry.register(store => next => action => {
 
     case TRACK_ADDED:
         if (action.track.mediaType !== MEDIA_TYPE.AUDIO) {
+            // participant dependent
             VideoLayout._updateLargeVideoIfDisplayed(action.track.participantId, true);
         }
 

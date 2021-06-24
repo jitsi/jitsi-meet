@@ -1,6 +1,10 @@
 // @flow
 
-import { PARTICIPANT_JOINED, PARTICIPANT_LEFT } from '../base/participants';
+import {
+    MULTIPLE_PARTICIPANTS_JOINED, MULTIPLE_PARTICIPANTS_LEFT,
+    PARTICIPANT_JOINED,
+    PARTICIPANT_LEFT
+} from '../base/participants';
 import { ReducerRegistry } from '../base/redux';
 
 import {
@@ -145,7 +149,7 @@ ReducerRegistry.register(
                 visibleParticipantsEndIndex: action.endIndex,
                 visibleParticipants: state.remoteParticipants.slice(action.startIndex, action.endIndex + 1)
             };
-        case PARTICIPANT_JOINED: {
+        case PARTICIPANT_JOINED: { // join
             const { id, local } = action.participant;
 
             if (!local) {
@@ -160,7 +164,22 @@ ReducerRegistry.register(
 
             return state;
         }
-        case PARTICIPANT_LEFT: {
+        case MULTIPLE_PARTICIPANTS_JOINED: { // joined
+            const participants = action.participants;
+            const newParticipants = participants.map(p => p.id);
+
+            state.remoteParticipants = [ ...state.remoteParticipants, ...newParticipants ];
+
+            const { visibleParticipantsStartIndex: startIndex, visibleParticipantsEndIndex: endIndex } = state;
+
+            if (state.remoteParticipants.length - 1 <= endIndex) {
+                state.visibleParticipants = state.remoteParticipants.slice(startIndex, endIndex + 1);
+            }
+
+            return state;
+        }
+
+        case PARTICIPANT_LEFT: { // left
             const { id, local } = action.participant;
 
             if (local) {
@@ -186,6 +205,33 @@ ReducerRegistry.register(
             }
 
             delete state.participantsVolume[id];
+
+            return state;
+        }
+        case MULTIPLE_PARTICIPANTS_LEFT: { // left
+            const participants = action.participants;
+
+            // return state.filter(p => participants.find(p1 => p1.id === p.id));
+
+            let removedParticipantIndex = 0;
+
+            state.remoteParticipants = state.remoteParticipants.filter((participantId, index) => {
+                if (participants.find(p1 => p1.id === participantId)) {
+                    removedParticipantIndex = index;
+
+                    return false;
+                }
+
+                return true;
+            });
+
+            const { visibleParticipantsStartIndex: startIndex, visibleParticipantsEndIndex: endIndex } = state;
+
+            if (removedParticipantIndex >= startIndex && removedParticipantIndex <= endIndex) {
+                state.visibleParticipants = state.remoteParticipants.slice(startIndex, endIndex + 1);
+            }
+
+            participants.forEach(p => delete state.participantsVolume[p.id]);
 
             return state;
         }

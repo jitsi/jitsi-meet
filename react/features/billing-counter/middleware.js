@@ -21,7 +21,7 @@ MiddlewareRegistry.register(store => next => async action => {
         break;
     }
 
-    case PARTICIPANT_JOINED: {
+    case PARTICIPANT_JOINED: { // joined
         const shouldCount = !store.getState()['features/billing-counter'].endpointCounted
               && !action.participant.local;
 

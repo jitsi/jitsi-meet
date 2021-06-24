@@ -64,7 +64,7 @@ MiddlewareRegistry.register(store => next => async action => {
 
         return result;
     }
-    case PARTICIPANT_LEFT: {
+    case PARTICIPANT_LEFT: { // left
         const { getState, dispatch } = store;
         const state = getState();
         const { id } = action.participant;

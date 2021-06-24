@@ -250,6 +250,8 @@ function _handleChatError({ dispatch }, error) {
  * @returns {void}
  */
 function _handleReceivedMessage({ dispatch, getState }, { id, message, privateMessage, timestamp }) {
+    // participant dependent
+
     // Logic for all platforms:
     const state = getState();
     const { isOpen: isChatOpen } = state['features/chat'];

@@ -32,7 +32,7 @@ MiddlewareRegistry.register(store => next => action => {
     let shouldUpdateAutoPin = false;
 
     switch (action.type) {
-    case PARTICIPANT_LEFT: {
+    case PARTICIPANT_LEFT: { // left
         if (!getAutoPinSetting() || isFollowMeActive(store)) {
             break;
         }

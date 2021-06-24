@@ -181,8 +181,8 @@ MiddlewareRegistry.register(store => next => action => {
         break;
     }
 
-    case PARTICIPANT_JOINED:
-    case PARTICIPANT_LEFT: {
+    case PARTICIPANT_JOINED: // join
+    case PARTICIPANT_LEFT: { // left
         const { participant } = action;
 
         sendEvent(

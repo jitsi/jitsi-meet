@@ -44,8 +44,8 @@ MiddlewareRegistry.register(store => next => action => {
 
         break;
     }
-    case PARTICIPANT_JOINED:
-    case PARTICIPANT_LEFT:
+    case PARTICIPANT_JOINED: // joined
+    case PARTICIPANT_LEFT: // left
     case PIN_PARTICIPANT:
     case TRACK_ADDED:
     case TRACK_REMOVED:

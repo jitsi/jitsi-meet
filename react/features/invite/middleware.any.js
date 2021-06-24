@@ -76,7 +76,7 @@ MiddlewareRegistry.register(store => next => action => {
     const state = getState();
 
     if (action.type === PARTICIPANT_UPDATED
-        || action.type === PARTICIPANT_LEFT) {
+        || action.type === PARTICIPANT_LEFT) { // left
         oldParticipantPresence
             = getParticipantPresenceStatus(state, action.participant.id);
     }
@@ -109,8 +109,8 @@ MiddlewareRegistry.register(store => next => action => {
         _onConferenceJoined(store);
         break;
 
-    case PARTICIPANT_JOINED:
-    case PARTICIPANT_LEFT:
+    case PARTICIPANT_JOINED: // joined
+    case PARTICIPANT_LEFT: // left
     case PARTICIPANT_UPDATED: {
         _maybeHideCalleeInfo(action, store);
 

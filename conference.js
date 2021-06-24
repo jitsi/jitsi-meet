@@ -82,8 +82,12 @@ import {
     getLocalParticipant,
     getNormalizedDisplayName,
     getParticipantById,
+    hiddenParticipantJoined,
+    hiddenParticipantLeft,
     localParticipantConnectionStatusChanged,
     localParticipantRoleChanged,
+    MULTIPLE_PARTICIPANTS_JOINED,
+    MULTIPLE_PARTICIPANTS_LEFT,
     participantConnectionStatusChanged,
     participantKicked,
     participantMutedUs,
@@ -442,6 +446,108 @@ function _connectionFailedHandler(error) {
     }
 }
 
+/**
+ * Accumulates events.
+ */
+class EventsAccumulator {
+
+    eventsReceived = new Map();
+
+    // eslint-disable-next-line require-jsdoc
+    constructor(isJoin, conference) {
+        this.isJoin = isJoin;
+        this.conference = conference;
+        console.log('createeeeeeeee', isJoin);
+        this._scheduleCheck();
+    }
+
+    // eslint-disable-next-line require-jsdoc
+    _scheduleCheck() {
+        setTimeout(() => {
+            if (this.eventsReceived.size > 0) {
+                const eventsCopy = new Map(this.eventsReceived);
+
+                console.log('executeeeeeeeee', eventsCopy);
+                this.eventsReceived.clear();
+
+                const usersToProcess = [];
+
+                eventsCopy.forEach(user => {
+                    if (this.isJoin) {
+                        const id = user.getId();
+                        const displayName = user.getDisplayName();
+
+                        if (user.isHidden()) {
+
+                            APP.store.dispatch(hiddenParticipantJoined(id, displayName));
+                        } else {
+                            const isReplacing = user.isReplacing && user.isReplacing();
+
+                            usersToProcess.push({
+                                botType: user.getBotType(),
+                                connectionStatus: user.getConnectionStatus(),
+                                conference: this.conference,
+                                id,
+                                name: displayName,
+                                presence: user.getStatus(),
+                                role: user.getRole(),
+                                isReplacing
+                            });
+                        }
+
+                        if (user.isHidden()) {
+                            return;
+                        }
+
+                        APP.store.dispatch(updateRemoteParticipantFeatures(user));
+                        logger.log(`USER ${id} connected:`, user);
+                        APP.UI.addUser(user);
+                    } else {
+                        const id = user.getId();
+
+                        if (user.isHidden()) {
+                            APP.store.dispatch(hiddenParticipantLeft(id));
+                        } else {
+                            const isReplaced = user.isReplaced && user.isReplaced();
+
+                            usersToProcess.push({
+                                id,
+                                conference: this.conference,
+                                isReplaced
+                            });
+                        }
+
+                        if (user.isHidden()) {
+                            return;
+                        }
+
+                        logger.log(`USER ${id} LEFT:`, user);
+                    }
+                });
+
+                if (this.isJoin) {
+                    APP.store.dispatch({
+                        type: MULTIPLE_PARTICIPANTS_JOINED,
+                        participants: usersToProcess
+                    });
+                } else {
+                    APP.store.dispatch({
+                        type: MULTIPLE_PARTICIPANTS_LEFT,
+                        participants: usersToProcess
+                    });
+                }
+            }
+
+            this._scheduleCheck();
+        }, 1000);
+    }
+
+    // eslint-disable-next-line valid-jsdoc,require-jsdoc
+    add(id, user) {
+        this.eventsReceived.set(id, user);
+    }
+}
+
 export default {
     /**
      * Flag used to delay modification of the muted status of local media tracks
@@ -472,6 +578,10 @@ export default {
      * @type {JitsiLocalTrack|null}
      */
     localVideo: null,
+
+    joinAccumulator: null,
+
+    leftAccumulator: null,
 
     /**
      * Returns an object containing a promise which resolves with the created tracks &
@@ -1993,28 +2103,33 @@ export default {
         room.on(JitsiConferenceEvents.PARTCIPANT_FEATURES_CHANGED, user => {
             APP.store.dispatch(updateRemoteParticipantFeatures(user));
         });
+        this.joinAccumulator = new EventsAccumulator(true, room);
         room.on(JitsiConferenceEvents.USER_JOINED, (id, user) => {
             // The logic shared between RN and web.
-            commonUserJoinedHandling(APP.store, room, user);
+            // commonUserJoinedHandling(APP.store, room, user);
+            //
+            // if (user.isHidden()) {
+            //     return;
+            // }
+            //
+            // APP.store.dispatch(updateRemoteParticipantFeatures(user));
+            // logger.log(`USER ${id} connected:`, user);
+            // APP.UI.addUser(user);
 
-            if (user.isHidden()) {
-                return;
-            }
-
-            APP.store.dispatch(updateRemoteParticipantFeatures(user));
-            logger.log(`USER ${id} connected:`, user);
-            APP.UI.addUser(user);
+            this.joinAccumulator.add(id, user);
         });
-
+        this.leftAccumulator = new EventsAccumulator(false, room);
         room.on(JitsiConferenceEvents.USER_LEFT, (id, user) => {
-            // The logic shared between RN and web.
-            commonUserLeftHandling(APP.store, room, user);
+            this.leftAccumulator.add(id, user);
 
-            if (user.isHidden()) {
-                return;
-            }
-
-            logger.log(`USER ${id} LEFT:`, user);
+            // // The logic shared between RN and web.
+            // commonUserLeftHandling(APP.store, room, user);
+            //
+            // if (user.isHidden()) {
+            //     return;
+            // }
+            //
+            // logger.log(`USER ${id} LEFT:`, user);
         });
 
         room.on(JitsiConferenceEvents.USER_STATUS_CHANGED, (id, status) => {

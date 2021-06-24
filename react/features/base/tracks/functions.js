@@ -412,6 +412,7 @@ export function getTrackByMediaTypeAndParticipant(
         tracks,
         mediaType,
         participantId) {
+    // ???
     return tracks.find(
         t => Boolean(t.jitsiTrack) && t.participantId === participantId && t.mediaType === mediaType
     );
@@ -501,6 +502,7 @@ export function isLocalVideoTrackDesktop(state) {
  * @returns {boolean}
  */
 export function isRemoteTrackMuted(tracks, mediaType, participantId) {
+    // ???
     const track = getTrackByMediaTypeAndParticipant(
         tracks, mediaType, participantId);
 

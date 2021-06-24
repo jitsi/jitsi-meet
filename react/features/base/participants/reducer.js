@@ -4,6 +4,8 @@ import { ReducerRegistry, set } from '../redux';
 
 import {
     DOMINANT_SPEAKER_CHANGED,
+    MULTIPLE_PARTICIPANTS_JOINED,
+    MULTIPLE_PARTICIPANTS_LEFT,
     PARTICIPANT_ID_CHANGED,
     PARTICIPANT_JOINED,
     PARTICIPANT_LEFT,
@@ -71,10 +73,23 @@ ReducerRegistry.register('features/base/participants', (state = [], action) => {
     case PIN_PARTICIPANT:
         return state.map(p => _participant(p, action));
 
-    case PARTICIPANT_JOINED:
+    case PARTICIPANT_JOINED: // joined
         return [ ...state, _participantJoined(action) ];
 
-    case PARTICIPANT_LEFT: {
+    case MULTIPLE_PARTICIPANTS_JOINED: { // joined
+        const participants = action.participants;
+        const newParticipants = participants.map(p => _participantJoined({ participant: p }));
+
+        return [ ...state, ...newParticipants ];
+    }
+
+    case MULTIPLE_PARTICIPANTS_LEFT: { // left
+        const participants = action.participants;
+
+        return state.filter(p => participants.find(p1 => p1.id === p.id));
+    }
+
+    case PARTICIPANT_LEFT: { // left
         // XXX A remote participant is uniquely identified by their id in a
         // specific JitsiConference instance. The local participant is uniquely
         // identified by the very fact that there is only one local participant

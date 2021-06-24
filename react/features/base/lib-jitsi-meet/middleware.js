@@ -39,6 +39,7 @@ MiddlewareRegistry.register(store => next => action => {
         break;
 
     case PARTICIPANT_LEFT:
+        // left
         action.participant.local && store.dispatch(disposeLib());
         break;
 

@@ -67,7 +67,7 @@ MiddlewareRegistry.register(store => next => action => {
             });
         break;
     }
-    case PARTICIPANT_LEFT:
+    case PARTICIPANT_LEFT: // left
         if (store.getState()['features/follow-me'].moderator === action.participant.id) {
             store.dispatch(setFollowMeModerator());
         }

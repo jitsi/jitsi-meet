@@ -101,6 +101,7 @@ export function getTileViewGridDimensions(state: Object) {
     // When in tile view mode, we must discount ourselves (the local participant) because our
     // tile is not visible.
     const { iAmRecorder } = state['features/base/config'];
+    // getParticipantCount
     const numberOfParticipants = state['features/base/participants'].length - (iAmRecorder ? 1 : 0);
 
     const columnsToMaintainASquare = Math.ceil(Math.sqrt(numberOfParticipants));

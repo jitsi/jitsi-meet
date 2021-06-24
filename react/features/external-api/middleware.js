@@ -139,11 +139,11 @@ MiddlewareRegistry.register(store => next => action => {
             { id: action.kicker });
         break;
 
-    case PARTICIPANT_LEFT:
+    case PARTICIPANT_LEFT: // left
         APP.API.notifyUserLeft(action.participant.id);
         break;
 
-    case PARTICIPANT_JOINED: {
+    case PARTICIPANT_JOINED: { // joined
         const { participant } = action;
         const { id, local, name } = participant;
 

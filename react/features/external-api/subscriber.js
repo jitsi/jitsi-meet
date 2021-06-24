@@ -46,6 +46,7 @@ StateListenerRegistry.register(
 StateListenerRegistry.register(
     /* selector */ state => state['features/large-video'].participantId,
     /* listener */ (participantId, store) => {
+        // ???
         const videoTrack = getTrackByMediaTypeAndParticipant(
             store.getState()['features/base/tracks'], MEDIA_TYPE.VIDEO, participantId);
 

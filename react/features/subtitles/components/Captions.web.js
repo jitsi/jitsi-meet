@@ -75,7 +75,7 @@ class Captions
 function mapStateToProps(state) {
     return {
         ..._abstractMapStateToProps(state),
-        _isLifted: state['features/base/participants'].length < 2
+        _isLifted: state['features/base/participants'].length < 2 // getParticipantCount
     };
 }
 

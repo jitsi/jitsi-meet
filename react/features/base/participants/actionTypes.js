@@ -91,6 +91,16 @@ export const PARTICIPANT_ROLE_CHANGED = 'PARTICIPANT_ROLE_CHANGED';
 export const PARTICIPANT_JOINED = 'PARTICIPANT_JOINED';
 
 /**
+ * Action to signal that a participant has joined.
+ *
+ * {
+ *     type: MULTIPLE_PARTICIPANTS_JOINED,
+ *     participant: Participant
+ * }
+ */
+export const MULTIPLE_PARTICIPANTS_JOINED = 'MULTIPLE_PARTICIPANTS_JOINED';
+
+/**
  * Action to signal that a participant has been removed from a conference by
  * another participant.
  *
@@ -113,6 +123,18 @@ export const PARTICIPANT_KICKED = 'PARTICIPANT_KICKED';
  * }
  */
 export const PARTICIPANT_LEFT = 'PARTICIPANT_LEFT';
+
+/**
+ * Action to handle case when participant lefts.
+ *
+ * {
+ *     type: PARTICIPANT_LEFT,
+ *     participant: {
+ *         id: string
+ *     }
+ * }
+ */
+export const MULTIPLE_PARTICIPANTS_LEFT = 'MULTIPLE_PARTICIPANTS_LEFT';
 
 /**
  * Action to handle case when info about participant changes.
