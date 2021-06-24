@@ -8,7 +8,7 @@ import {
     getIsParticipantVideoMuted
 } from '../../../base/tracks';
 import { showContextMenuDetails } from '../../actions.native';
-import { MediaState } from '../../constants';
+import { MEDIA_STATE } from '../../constants';
 
 import ParticipantItem from './ParticipantItem';
 
@@ -29,11 +29,11 @@ export const MeetingParticipantItem = ({ participant: p }: Props) => {
 
     return (
         <ParticipantItem
-            audioMuteState = { isAudioMuted ? MediaState.Muted : MediaState.Unmuted }
+            audioMuteState = { isAudioMuted ? MEDIA_STATE.MUTED : MEDIA_STATE.UNMUTED }
             isKnockingParticipant = { false }
             name = { p.name }
             onPress = { openContextMenuDetails }
             participant = { p }
-            videoMuteState = { isVideoMuted ? MediaState.Muted : MediaState.Unmuted } />
+            videoMuteState = { isVideoMuted ? MEDIA_STATE.Muted : MEDIA_STATE.Unmuted } />
     );
 };
