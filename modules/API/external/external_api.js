@@ -41,6 +41,7 @@ const commands = {
     password: 'password',
     pinParticipant: 'pin-participant',
     resizeLargeVideo: 'resize-large-video',
+    sendChatMessage: 'send-chat-message',
     sendEndpointTextMessage: 'send-endpoint-text-message',
     sendTones: 'send-tones',
     setLargeVideoParticipant: 'set-large-video-participant',
