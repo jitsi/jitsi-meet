@@ -54,3 +54,17 @@ export function pushReaction(store: Object, reaction: string) {
         uid: window.Date.now()
     } ]));
 }
+
+/**
+ * Removes a reaction from the queue.
+ *
+ * @param {number} uid - Id of the reaction to be removed.
+ * @returns {void}
+ */
+export function removeReaction(uid) {
+    return (dispatch: Function, getState: Function) => {
+        const queue = getState()['features/toolbox'].reactions.queue;
+
+        dispatch(setReactionQueue(queue.filter(reaction => reaction.uid !== uid)));
+    };
+}

@@ -9,9 +9,6 @@ import {
     SET_REACTIONS_VISIBLE
 } from './actionTypes';
 import {
-    setReactionQueue
-} from './actions.any';
-import {
     clearToolboxTimeout,
     setToolboxTimeout,
     setToolboxTimeoutMS,
@@ -191,19 +188,5 @@ export function toggleReactionsMenu() {
         const value = getState()['features/toolbox'].reactions.visible;
 
         dispatch(setReactionsMenuVisibility(!value));
-    };
-}
-
-/**
- * Removes a reaction from the queue.
- *
- * @param {number} uid - Id of the reaction to be removed.
- * @returns {void}
- */
-export function removeReaction(uid) {
-    return (dispatch: Function, getState: Function) => {
-        const queue = getState()['features/toolbox'].reactions.queue;
-
-        dispatch(setReactionQueue(queue.filter(reaction => reaction.uid !== uid)));
     };
 }

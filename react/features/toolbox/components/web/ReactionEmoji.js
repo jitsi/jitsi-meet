@@ -3,7 +3,7 @@
 import React, { Component } from 'react';
 
 import { connect } from '../../../base/redux';
-import { removeReaction } from '../../actions.web';
+import { removeReaction } from '../../actions.any';
 import { REACTIONS } from '../../constants';
 
 type Props = {
