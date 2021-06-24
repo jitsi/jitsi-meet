@@ -27,6 +27,7 @@ import {
 import { updateSettings } from '../../react/features/base/settings';
 import { isToggleCameraEnabled, toggleCamera } from '../../react/features/base/tracks';
 import {
+    sendMessage,
     setPrivateMessageRecipient,
     toggleChat
 } from '../../react/features/chat/actions';
@@ -240,6 +241,24 @@ function initCommands() {
         'avatar-url': avatarUrl => {
             sendAnalytics(createApiEvent('avatar.url.changed'));
             APP.conference.changeLocalAvatarUrl(avatarUrl);
+        },
+        'send-chat-message': (message, to, ignorePrivacy = false) => {
+            logger.debug('Send chat message command received');
+            if (to) {
+                const participant = getParticipantById(APP.store.getState(), to);
+
+                if (participant) {
+                    APP.store.dispatch(setPrivateMessageRecipient(participant));
+                } else {
+                    logger.error(`Participant with id ${to} not found!`);
+
+                    return;
+                }
+            } else {
+                APP.store.dispatch(setPrivateMessageRecipient());
+            }
+
+            APP.store.dispatch(sendMessage(message, ignorePrivacy));
         },
         'send-endpoint-text-message': (to, text) => {
             logger.debug('Send endpoint message command received');
