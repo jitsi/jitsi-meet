@@ -31,7 +31,7 @@ type Props = {
 
 
 /**
- * Button used for audio & audio settings.
+ * Used to display animated reactions.
  *
  * @returns {ReactElement}
  */

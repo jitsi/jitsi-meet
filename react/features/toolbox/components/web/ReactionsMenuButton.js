@@ -8,7 +8,8 @@ import { connect } from '../../../base/redux';
 import { sendReactionMessage } from '../../../chat/actions.web';
 import { toggleReactionsMenu } from '../../actions.web';
 import { REACTIONS } from '../../constants';
-import { getReactionsMenuVisibility, getReactionsQueue } from '../../functions.web';
+import { getReactionsQueue } from '../../functions.any';
+import { getReactionsMenuVisibility } from '../../functions.web';
 
 import ReactionEmoji from './ReactionEmoji';
 import ReactionsMenuPopup from './ReactionsMenuPopup';

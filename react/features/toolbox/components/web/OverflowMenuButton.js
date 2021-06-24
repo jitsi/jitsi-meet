@@ -7,7 +7,7 @@ import { createToolbarEvent, sendAnalytics } from '../../../analytics';
 import { translate } from '../../../base/i18n';
 import { IconHorizontalPoints } from '../../../base/icons';
 import { connect } from '../../../base/redux';
-import { getReactionsQueue } from '../../functions.web';
+import { getReactionsQueue } from '../../functions.any';
 
 import Drawer from './Drawer';
 import DrawerPortal from './DrawerPortal';
