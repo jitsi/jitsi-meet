@@ -23,7 +23,7 @@ type Props = {
     /**
      * Media state for audio
      */
-    audioMuteState: MediaState,
+    audioMediaState: MediaState,
 
     /**
      * React children
@@ -58,7 +58,7 @@ type Props = {
     /**
      * Media state for video
      */
-    videoMuteState: MediaState
+    videoMediaState: MediaState
 }
 
 /**
@@ -72,8 +72,8 @@ function ParticipantItem({
     name,
     onPress,
     participant: p,
-    audioMuteState = MediaState.None,
-    videoMuteState = MediaState.None
+    audioMediaState = MediaState.None,
+    videoMediaState = MediaState.None
 }: Props) {
 
     const displayName = name || useSelector(getParticipantDisplayNameWithId(p.id));
@@ -102,8 +102,8 @@ function ParticipantItem({
                             p.raisedHand && <RaisedHandIndicator />
                         }
                         <View style = { styles.participantStatesContainer }>
-                            <View style = { styles.participantStateVideo }>{VideoStateIcons[videoMuteState]}</View>
-                            <View>{AudioStateIcons[audioMuteState]}</View>
+                            <View style = { styles.participantStateVideo }>{VideoStateIcons[videoMediaState]}</View>
+                            <View>{AudioStateIcons[audioMediaState]}</View>
                         </View>
                     </>
                 }

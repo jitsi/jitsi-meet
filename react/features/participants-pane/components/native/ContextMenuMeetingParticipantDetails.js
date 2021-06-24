@@ -10,8 +10,7 @@ import { Avatar } from '../../../base/avatar';
 import { hideDialog, openDialog } from '../../../base/dialog/actions';
 import BottomSheet from '../../../base/dialog/components/native/BottomSheet';
 import {
-    // eslint-disable-next-line no-unused-vars
-    Icon, IconCloseCircle, IconConnectionActive, IconMessage,
+    Icon, IconCloseCircle, IconMessage,
     IconMicrophoneEmptySlash,
     IconMuteEveryoneElse, IconVideoOff
 } from '../../../base/icons';
