@@ -539,7 +539,7 @@ class EventsAccumulator {
             }
 
             this._scheduleCheck();
-        }, 1000);
+        }, 250);
     }
 
     // eslint-disable-next-line valid-jsdoc,require-jsdoc

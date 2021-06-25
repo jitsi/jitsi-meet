@@ -86,7 +86,7 @@ ReducerRegistry.register('features/base/participants', (state = [], action) => {
     case MULTIPLE_PARTICIPANTS_LEFT: { // left
         const participants = action.participants;
 
-        return state.filter(p => participants.find(p1 => p1.id === p.id));
+        return state.filter(p => !participants.find(p1 => p1.id === p.id));
     }
 
     case PARTICIPANT_LEFT: { // left
