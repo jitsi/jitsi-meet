@@ -176,7 +176,7 @@ class MoreTab extends AbstractDialogTab<Props, State> {
     _onFramerateItemSelect(e) {
         const frameRate = e.currentTarget.getAttribute('data-framerate');
 
-        super._onChange({ currentFramerate: `${frameRate} frames-per-second` });
+        super._onChange({ currentFramerate: frameRate });
     }
 
     _onLanguageDropdownOpenChange: (Object) => void;
@@ -290,7 +290,7 @@ class MoreTab extends AbstractDialogTab<Props, State> {
                 data-framerate = { frameRate }
                 key = { frameRate }
                 onClick = { this._onFramerateItemSelect }>
-                { `${frameRate} frames-per-second` }
+                { `${frameRate} ${t('settings.framesPerSecond')}` }
             </DropdownItem>));
 
         return (
@@ -307,7 +307,7 @@ class MoreTab extends AbstractDialogTab<Props, State> {
                             onOpenChange = { this._onFramerateDropdownOpenChange }
                             shouldFitContainer = { true }
                             trigger = { currentFramerate
-                                ? currentFramerate
+                                ? `${currentFramerate} ${t('settings.framesPerSecond')}`
                                 : '' }
                             triggerButtonProps = {{
                                 shouldFitContainer: true

@@ -115,7 +115,7 @@ export function getMoreTabProps(stateful: Object | Function) {
             && isLocalParticipantModerator(state));
 
     return {
-        currentFramerate: `${framerate} frames-per-second`,
+        currentFramerate: framerate,
         currentLanguage: language,
         desktopShareFramerates: SS_SUPPORTED_FRAMERATES,
         followMeActive: Boolean(conference && followMeActive),

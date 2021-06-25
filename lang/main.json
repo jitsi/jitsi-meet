@@ -721,6 +721,7 @@
         "desktopShareHighFpsWarning": "A higher frame rate for desktop sharing might affect your bandwidth. You need to restart the screen share for the new settings to take effect.",
         "devices": "Devices",
         "followMe": "Everyone follows me",
+        "framesPerSecond": "frames-per-second",
         "language": "Language",
         "loggedIn": "Logged in as {{name}}",
         "microphones": "Microphones",
