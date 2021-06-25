@@ -4,6 +4,6 @@ export default {};
 
 export const DROPBOX_LOGO = 'images/dropboxLogo_square.png';
 
-export const ICON_SHARE = 'images/icon-users.png';
+export const ICON_CLOUD = 'images/icon-cloud.png';
 
 export const JITSI_LOGO = 'images/jitsiLogo_square.png';

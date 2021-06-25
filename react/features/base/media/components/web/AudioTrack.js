@@ -2,10 +2,24 @@
 
 import React, { Component } from 'react';
 
+import { createAudioPlayErrorEvent, createAudioPlaySuccessEvent, sendAnalytics } from '../../../../analytics';
+import { connect } from '../../../redux';
+import logger from '../../logger';
+
 /**
  * The type of the React {@code Component} props of {@link AudioTrack}.
  */
 type Props = {
+
+    /**
+     * Represents muted property of the underlying audio element.
+     */
+    _muted: ?Boolean,
+
+    /**
+     * Represents volume property of the underlying audio element.
+     */
+    _volume: ?number,
 
     /**
      * The value of the id attribute of the audio element.
@@ -25,30 +39,24 @@ type Props = {
     autoPlay: boolean,
 
     /**
-     * Represents muted property of the underlying audio element.
+     * The ID of the participant associated with the audio element.
      */
-    muted: ?Boolean,
-
-    /**
-     * Represents volume property of the underlying audio element.
-     */
-    volume: ?number,
-
-    /**
-     * A function that will be executed when the reference to the underlying audio element changes in order to report
-     * the initial volume value.
-     */
-    onInitialVolumeSet: Function
+    participantId: string
 };
 
 /**
  * The React/Web {@link Component} which is similar to and wraps around {@code HTMLAudioElement}.
  */
-export default class AudioTrack extends Component<Props> {
+class AudioTrack extends Component<Props> {
     /**
      * Reference to the HTML audio element, stored until the file is ready.
      */
     _ref: ?HTMLAudioElement;
+
+    /**
+     * The current timeout ID for play() retries.
+     */
+    _playTimeout: ?TimeoutID;
 
     /**
      * Default values for {@code AudioTrack} component's properties.
@@ -72,6 +80,7 @@ export default class AudioTrack extends Component<Props> {
 
         // Bind event handlers so they are only bound once for every instance.
         this._setRef = this._setRef.bind(this);
+        this._play = this._play.bind(this);
     }
 
 
@@ -85,21 +94,14 @@ export default class AudioTrack extends Component<Props> {
         this._attachTrack(this.props.audioTrack);
 
         if (this._ref) {
-            const { autoPlay, muted, volume } = this.props;
+            const { _muted, _volume } = this.props;
 
-            if (autoPlay) {
-                // Ensure the audio gets play() called on it. This may be necessary in the
-                // case where the local video container was moved and re-attached, in which
-                // case the audio may not autoplay.
-                this._ref.play();
+            if (typeof _volume === 'number') {
+                this._ref.volume = _volume;
             }
 
-            if (typeof volume === 'number') {
-                this._ref.volume = volume;
-            }
-
-            if (typeof muted === 'boolean') {
-                this._ref.muted = muted;
+            if (typeof _muted === 'boolean') {
+                this._ref.muted = _muted;
             }
         }
     }
@@ -134,14 +136,14 @@ export default class AudioTrack extends Component<Props> {
 
         if (this._ref) {
             const currentVolume = this._ref.volume;
-            const nextVolume = nextProps.volume;
+            const nextVolume = nextProps._volume;
 
             if (typeof nextVolume === 'number' && !isNaN(nextVolume) && currentVolume !== nextVolume) {
                 this._ref.volume = nextVolume;
             }
 
             const currentMuted = this._ref.muted;
-            const nextMuted = nextProps.muted;
+            const nextMuted = nextProps._muted;
 
             if (typeof nextMuted === 'boolean' && currentMuted !== nextVolume) {
                 this._ref.muted = nextMuted;
@@ -181,6 +183,7 @@ export default class AudioTrack extends Component<Props> {
         }
 
         track.jitsiTrack.attach(this._ref);
+        this._play();
     }
 
     /**
@@ -193,7 +196,54 @@ export default class AudioTrack extends Component<Props> {
      */
     _detachTrack(track) {
         if (this._ref && track && track.jitsiTrack) {
+            clearTimeout(this._playTimeout);
+            this._playTimeout = undefined;
             track.jitsiTrack.detach(this._ref);
+        }
+    }
+
+    _play: ?number => void;
+
+    /**
+     * Plays the uderlying HTMLAudioElement.
+     *
+     * @param {number} retries - The number of previously failed retries.
+     * @returns {void}
+     */
+    _play(retries = 0) {
+        if (!this._ref) {
+            // nothing to play.
+
+            return;
+        }
+        const { autoPlay, id } = this.props;
+
+        if (autoPlay) {
+            // Ensure the audio gets play() called on it. This may be necessary in the
+            // case where the local video container was moved and re-attached, in which
+            // case the audio may not autoplay.
+            this._ref.play()
+            .then(() => {
+                if (retries !== 0) {
+                    // success after some failures
+                    this._playTimeout = undefined;
+                    sendAnalytics(createAudioPlaySuccessEvent(id));
+                    logger.info(`Successfully played audio track! retries: ${retries}`);
+                }
+            }, e => {
+                logger.error(`Failed to play audio track! retry: ${retries} ; Error: ${e}`);
+
+                if (retries < 3) {
+                    this._playTimeout = setTimeout(() => this._play(retries + 1), 1000);
+
+                    if (retries === 0) {
+                        // send only 1 error event.
+                        sendAnalytics(createAudioPlayErrorEvent(id));
+                    }
+                } else {
+                    this._playTimeout = undefined;
+                }
+            });
         }
     }
 
@@ -208,10 +258,24 @@ export default class AudioTrack extends Component<Props> {
      */
     _setRef(audioElement: ?HTMLAudioElement) {
         this._ref = audioElement;
-        const { onInitialVolumeSet } = this.props;
-
-        if (this._ref && onInitialVolumeSet) {
-            onInitialVolumeSet(this._ref.volume);
-        }
     }
 }
+
+/**
+ * Maps (parts of) the Redux state to the associated {@code AudioTrack}'s props.
+ *
+ * @param {Object} state - The Redux state.
+ * @param {Object} ownProps - The props passed to the component.
+ * @private
+ * @returns {Props}
+ */
+function _mapStateToProps(state, ownProps) {
+    const { participantsVolume } = state['features/filmstrip'];
+
+    return {
+        _muted: state['features/base/config'].startSilent,
+        _volume: participantsVolume[ownProps.participantId]
+    };
+}
+
+export default connect(_mapStateToProps)(AudioTrack);

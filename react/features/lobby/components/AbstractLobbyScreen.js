@@ -3,6 +3,7 @@
 import React, { PureComponent } from 'react';
 
 import { getConferenceName } from '../../base/conference';
+import { getFeatureFlag, INVITE_ENABLED } from '../../base/flags';
 import { getLocalParticipant } from '../../base/participants';
 import { getFieldValue } from '../../base/react';
 import { updateSettings } from '../../base/settings';
@@ -47,9 +48,19 @@ export type Props = {
     _passwordJoinFailed: boolean,
 
     /**
+     * True if the password field should be available for lobby participants.
+     */
+     _renderPassword: boolean,
+
+    /**
      * The Redux dispatch function.
      */
     dispatch: Function,
+
+    /**
+     * Indicates whether the copy url button should be shown
+     */
+    showCopyUrlButton: boolean,
 
     /**
      * Function to be used to translate i18n labels.
@@ -364,7 +375,11 @@ export default class AbstractLobbyScreen<P: Props = Props> extends PureComponent
 export function _mapStateToProps(state: Object): $Shape<Props> {
     const localParticipant = getLocalParticipant(state);
     const participantId = localParticipant?.id;
+    const inviteEnabledFlag = getFeatureFlag(state, INVITE_ENABLED, true);
+    const { disableInviteFunctions } = state['features/base/config'];
     const { knocking, passwordJoinFailed } = state['features/lobby'];
+    const { iAmSipGateway } = state['features/base/config'];
+    const showCopyUrlButton = inviteEnabledFlag || !disableInviteFunctions;
 
     return {
         _knocking: knocking,
@@ -372,6 +387,8 @@ export function _mapStateToProps(state: Object): $Shape<Props> {
         _participantEmail: localParticipant?.email,
         _participantId: participantId,
         _participantName: localParticipant?.name,
-        _passwordJoinFailed: passwordJoinFailed
+        _passwordJoinFailed: passwordJoinFailed,
+        _renderPassword: !iAmSipGateway,
+        showCopyUrlButton
     };
 }

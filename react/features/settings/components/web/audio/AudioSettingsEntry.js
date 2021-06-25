@@ -20,6 +20,11 @@ export type Props = {
     hasError?: boolean,
 
     /**
+     * The id for the label, that contains the item text.
+     */
+    labelId?: string,
+
+    /**
      * Flag indicating the selection state.
      */
     isSelected: boolean,
@@ -30,7 +35,9 @@ export type Props = {
  *
  * @returns { ReactElement}
  */
-export default function AudioSettingsEntry({ children, hasError, isSelected }: Props) {
+export default function AudioSettingsEntry(
+        { children, hasError, labelId, isSelected }: Props) {
+
     const className = `audio-preview-entry ${isSelected
         ? 'audio-preview-entry--selected' : ''}`;
 
@@ -43,7 +50,11 @@ export default function AudioSettingsEntry({ children, hasError, isSelected }: P
                     size = { 14 }
                     src = { IconCheck } />
             )}
-            <span className = 'audio-preview-entry-text'>{children}</span>
+            <span
+                className = 'audio-preview-entry-text'
+                id = { labelId }>
+                {children}
+            </span>
             {hasError && <Icon
                 className = 'audio-preview-icon audio-preview-icon--exclamation'
                 size = { 16 }

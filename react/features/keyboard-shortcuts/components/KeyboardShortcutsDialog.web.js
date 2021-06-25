@@ -71,7 +71,9 @@ class KeyboardShortcutsDialog extends Component<Props> {
             <li
                 className = 'shortcuts-list__item'
                 key = { keyboardKey }>
-                <span className = 'shortcuts-list__description'>
+                <span
+                    aria-label = { this.props.t(translationKey) }
+                    className = 'shortcuts-list__description'>
                     { this.props.t(translationKey) }
                 </span>
                 <span className = 'item-action'>

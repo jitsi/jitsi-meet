@@ -20,8 +20,12 @@ class LobbyScreen extends AbstractLobbyScreen {
      * @inheritdoc
      */
     render() {
+        const { showCopyUrlButton, t } = this.props;
+
         return (
-            <PreMeetingScreen title = { this.props.t(this._getScreenTitleKey()) }>
+            <PreMeetingScreen
+                showCopyUrlButton = { showCopyUrlButton }
+                title = { t(this._getScreenTitleKey()) }>
                 { this._renderContent() }
             </PreMeetingScreen>
         );
@@ -152,7 +156,7 @@ class LobbyScreen extends AbstractLobbyScreen {
      * @inheritdoc
      */
     _renderStandardButtons() {
-        const { _knocking, t } = this.props;
+        const { _knocking, _renderPassword, t } = this.props;
 
         return (
             <>
@@ -163,12 +167,12 @@ class LobbyScreen extends AbstractLobbyScreen {
                     type = 'primary'>
                     { t('lobby.knockButton') }
                 </ActionButton> }
-                <ActionButton
+                {_renderPassword && <ActionButton
                     onClick = { this._onSwitchToPasswordMode }
                     testId = 'lobby.enterPasswordButton'
                     type = 'secondary'>
                     { t('lobby.enterPasswordButton') }
-                </ActionButton>
+                </ActionButton> }
             </>
         );
     }

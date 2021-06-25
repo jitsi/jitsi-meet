@@ -38,6 +38,16 @@ export const SET_PENDING_RECORDING_NOTIFICATION_UID
     = 'SET_PENDING_RECORDING_NOTIFICATION_UID';
 
 /**
+ * The type of Redux action which sets the selected recording service.
+ *
+ * {
+ *     type: SET_SELECTED_RECORDING_SERVICE
+ * }
+ * @public
+ */
+export const SET_SELECTED_RECORDING_SERVICE = 'SET_SELECTED_RECORDING_SERVICE';
+
+/**
  * Sets the stream key last used by the user for later reuse.
  *
  * {

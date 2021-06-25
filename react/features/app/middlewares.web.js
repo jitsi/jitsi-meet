@@ -1,6 +1,7 @@
 // @flow
 
 import '../authentication/middleware';
+import '../av-moderation/middleware';
 import '../base/devices/middleware';
 import '../e2ee/middleware';
 import '../external-api/middleware';
@@ -14,5 +15,6 @@ import '../prejoin/middleware';
 import '../remote-control/middleware';
 import '../shared-video/middleware';
 import '../talk-while-muted/middleware';
+import '../virtual-background/middleware';
 
 import './middlewares.any';

@@ -130,7 +130,7 @@
         "remoteport_plural": "Porte remote:",
         "resolution": "Risoluzione:",
         "savelogs": "Salva log",
-        "participant_id": "Id participante:",
+        "participant_id": "Id partecipante:",
         "status": "Connessione:",
         "transport": "Trasporto:",
         "transport_plural": "Trasporti:",
@@ -259,6 +259,7 @@
         "muteParticipantsVideoTitle": "Vuoi spegnere la videocamera di questo partecipante?",
         "muteParticipantsVideoBody": "Una volta spenta la videocamera non potrai riaccenderla, ma lui potrà riattivarla in qualsiasi momento.",
         "Ok": "OK",
+        "password": "Password",
         "passwordLabel": "La riunione è stata bloccata da un partecipante. Immetti la $t(lockRoomPassword) per collegarti, per favore.",
         "passwordNotSupported": "Impostare una $t(lockRoomPassword) non è supportato.",
         "passwordNotSupportedTitle": "$t(lockRoomPasswordUppercase) non supportato",
@@ -418,6 +419,7 @@
         "showSpeakerStats": "Mostra statistiche",
         "toggleChat": "Apri o chiudi la conversazione",
         "toggleFilmstrip": "Mostra o nascondi miniature video",
+        "toggleParticipantsPane": "Mostra o nascondi i partecipanti",
         "toggleScreensharing": "Cambia modalità tra videocamera e condivisione schermo",
         "toggleShortcuts": "Mostra o nascondi le scorciatoie",
         "videoMute": "Accendi o spegni la videocamera"
@@ -526,6 +528,17 @@
         "oldElectronClientDescription1": "Sembri stare usando una versione obsoleta del client Jitsi Meet che ha dei problemi di sicurezza noti. Assicurati di aggiornarla presso il nostro ",
         "oldElectronClientDescription2": "ultima build",
         "oldElectronClientDescription3": " ora!"
+    },
+    "participantsPane": {
+        "headings": {
+            "lobby": "({{count}}) in sala d'attesa",
+            "participantsList": "({{count}}) partecipanti"
+        },
+        "actions": {
+            "invite": "Invita persone",
+            "muteAll": "Silenzia tutti",
+            "stopVideo": "Ferma il video"
+        }
     },
     "passwordSetRemotely": "definita da altro utente",
     "passwordDigitsOnly": "Fino a {{number}} cifre",
@@ -745,6 +758,7 @@
             "muteEveryoneElse": "Spegni i microfoni di tutti gli altri",
             "muteEveryonesVideo": "Spegni le videocamere a tutti",
             "muteEveryoneElsesVideo": "Spegni le videocamere di tutti gli altri",
+            "participants": "Partecipanti",
             "pip": "Attiva/disattiva immagine nell’immagine",
             "privateMessage": "Invia messaggio privato",
             "profile": "Modifica profilo",
@@ -807,6 +821,7 @@
         "noisyAudioInputTitle": "Il tuo microfono sembra rumoroso!",
         "noisyAudioInputDesc": "Sembra che il tuo microfono faccia dei rumori, prova a spegnerlo o cambiarlo per favore.",
         "openChat": "Apri una conversazione",
+        "participants": "Partecipanti",
         "pip": "Abilita visualizzazione immagine nell'immagine",
         "privateMessage": "invia un messaggio privato",
         "profile": "Modifica profilo",

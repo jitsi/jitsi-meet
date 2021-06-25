@@ -12,6 +12,7 @@ import { MultiSelectAutocomplete } from '../../../../base/react';
 import { connect } from '../../../../base/redux';
 import { isVpaasMeeting } from '../../../../billing-counter/functions';
 import { hideAddPeopleDialog } from '../../../actions';
+import { INVITE_TYPES } from '../../../constants';
 import AbstractAddPeopleDialog, {
     type Props as AbstractProps,
     type State,
@@ -56,6 +57,8 @@ class InviteContactsForm extends AbstractAddPeopleDialog<Props, State> {
 
     _resourceClient: Object;
 
+    _translations: Object;
+
     state = {
         addToCallError: false,
         addToCallInProgress: false,
@@ -73,9 +76,11 @@ class InviteContactsForm extends AbstractAddPeopleDialog<Props, State> {
 
         // Bind event handlers so they are only bound once per instance.
         this._onClearItems = this._onClearItems.bind(this);
+        this._onClearItemsKeyPress = this._onClearItemsKeyPress.bind(this);
         this._onItemSelected = this._onItemSelected.bind(this);
         this._onSelectionChange = this._onSelectionChange.bind(this);
         this._onSubmit = this._onSubmit.bind(this);
+        this._onSubmitKeyPress = this._onSubmitKeyPress.bind(this);
         this._parseQueryResults = this._parseQueryResults.bind(this);
         this._setMultiSelectElement = this._setMultiSelectElement.bind(this);
         this._renderFooterText = this._renderFooterText.bind(this);
@@ -85,6 +90,16 @@ class InviteContactsForm extends AbstractAddPeopleDialog<Props, State> {
             makeQuery: this._query,
             parseResults: this._parseQueryResults
         };
+
+
+        const { t } = props;
+
+        this._translations = {
+            _dialOutEnabled: t('addPeople.phoneNumbers'),
+            _addPeopleEnabled: t('addPeople.contacts'),
+            _sipInviteEnabled: t('addPeople.sipAddresses')
+        };
+
     }
 
     /**
@@ -117,30 +132,29 @@ class InviteContactsForm extends AbstractAddPeopleDialog<Props, State> {
             _addPeopleEnabled,
             _dialOutEnabled,
             _isVpaas,
+            _sipInviteEnabled,
             t
         } = this.props;
         const footerText = this._renderFooterText();
         let isMultiSelectDisabled = this.state.addToCallInProgress;
-        let placeholder;
-        let loadingMessage;
-        let noMatches;
+        const loadingMessage = 'addPeople.searching';
+        const noMatches = 'addPeople.noResults';
 
-        if (_addPeopleEnabled && _dialOutEnabled) {
-            loadingMessage = 'addPeople.loading';
-            noMatches = 'addPeople.noResults';
-            placeholder = 'addPeople.searchPeopleAndNumbers';
-        } else if (_addPeopleEnabled) {
-            loadingMessage = 'addPeople.loadingPeople';
-            noMatches = 'addPeople.noResults';
-            placeholder = 'addPeople.searchPeople';
-        } else if (_dialOutEnabled) {
-            loadingMessage = 'addPeople.loadingNumber';
-            noMatches = 'addPeople.noValidNumbers';
-            placeholder = 'addPeople.searchNumbers';
-        } else {
+        const features = {
+            _dialOutEnabled,
+            _addPeopleEnabled,
+            _sipInviteEnabled
+        };
+
+        const computedPlaceholder = Object.keys(features)
+            .filter(v => Boolean(features[v]))
+            .map(v => this._translations[v])
+            .join(', ');
+
+        const placeholder = computedPlaceholder ? `${t('dialog.add')} ${computedPlaceholder}` : t('addPeople.disabled');
+
+        if (!computedPlaceholder) {
             isMultiSelectDisabled = true;
-            noMatches = 'addPeople.noResults';
-            placeholder = 'addPeople.disabled';
         }
 
         return (
@@ -155,7 +169,7 @@ class InviteContactsForm extends AbstractAddPeopleDialog<Props, State> {
                     noMatchesFound = { t(noMatches) }
                     onItemSelected = { this._onItemSelected }
                     onSelectionChange = { this._onSelectionChange }
-                    placeholder = { t(placeholder) }
+                    placeholder = { placeholder }
                     ref = { this._setMultiSelectElement }
                     resourceClient = { this._resourceClient }
                     shouldFitContainer = { true }
@@ -181,7 +195,7 @@ class InviteContactsForm extends AbstractAddPeopleDialog<Props, State> {
      * @returns {Object} The item to display as selected in the input.
      */
     _onItemSelected(item) {
-        if (item.item.type === 'phone') {
+        if (item.item.type === INVITE_TYPES.PHONE) {
             item.content = item.item.number;
         }
 
@@ -232,6 +246,22 @@ class InviteContactsForm extends AbstractAddPeopleDialog<Props, State> {
                     this.props.dispatch(hideAddPeopleDialog());
                 }
             });
+    }
+
+    _onSubmitKeyPress: (Object) => void;
+
+    /**
+     * KeyPress handler for accessibility.
+     *
+     * @param {Object} e - The key event to handle.
+     *
+     * @returns {void}
+     */
+    _onSubmitKeyPress(e) {
+        if (e.key === ' ' || e.key === 'Enter') {
+            e.preventDefault();
+            this._onSubmit();
+        }
     }
 
     _onKeyDown: (Object) => void;
@@ -285,7 +315,7 @@ class InviteContactsForm extends AbstractAddPeopleDialog<Props, State> {
      */
     _parseQueryResults(response = []) {
         const { t, _dialOutEnabled } = this.props;
-        const users = response.filter(item => item.type !== 'phone' && item.type !== 'sip');
+        const users = response.filter(item => item.type === INVITE_TYPES.USER);
         const userDisplayItems = [];
 
         for (const user of users) {
@@ -309,7 +339,7 @@ class InviteContactsForm extends AbstractAddPeopleDialog<Props, State> {
                     content: `${phone} (${name})`,
                     elemBefore: elemAvatar,
                     item: {
-                        type: 'phone',
+                        type: INVITE_TYPES.PHONE,
                         number: phone
                     },
                     tag: {
@@ -320,7 +350,7 @@ class InviteContactsForm extends AbstractAddPeopleDialog<Props, State> {
             }
         }
 
-        const numbers = response.filter(item => item.type === 'phone');
+        const numbers = response.filter(item => item.type === INVITE_TYPES.PHONE);
         const telephoneIcon = this._renderTelephoneIcon();
 
         const numberDisplayItems = numbers.map(number => {
@@ -349,7 +379,7 @@ class InviteContactsForm extends AbstractAddPeopleDialog<Props, State> {
         });
 
 
-        const sipAddresses = response.filter(item => item.type === 'sip');
+        const sipAddresses = response.filter(item => item.type === INVITE_TYPES.SIP);
 
         const sipDisplayItems = sipAddresses.map(sip => {
             return {
@@ -413,6 +443,22 @@ class InviteContactsForm extends AbstractAddPeopleDialog<Props, State> {
         this.setState({ inviteItems: [] });
     }
 
+    _onClearItemsKeyPress: () => void;
+
+    /**
+     * Clears the selected items from state and form.
+     *
+     * @param {Object} e - The key event to handle.
+     *
+     * @returns {void}
+     */
+    _onClearItemsKeyPress(e) {
+        if (e.key === ' ' || e.key === 'Enter') {
+            e.preventDefault();
+            this._onClearItems();
+        }
+    }
+
     /**
      * Renders the add/cancel actions for the form.
      *
@@ -429,13 +475,21 @@ class InviteContactsForm extends AbstractAddPeopleDialog<Props, State> {
         return (
             <div className = { `invite-more-dialog invite-buttons${this._isAddDisabled() ? ' disabled' : ''}` }>
                 <a
+                    aria-label = { t('dialog.Cancel') }
                     className = 'invite-more-dialog invite-buttons-cancel'
-                    onClick = { this._onClearItems }>
+                    onClick = { this._onClearItems }
+                    onKeyPress = { this._onClearItemsKeyPress }
+                    role = 'button'
+                    tabIndex = { 0 }>
                     {t('dialog.Cancel')}
                 </a>
                 <a
+                    aria-label = { t('addPeople.add') }
                     className = 'invite-more-dialog invite-buttons-add'
-                    onClick = { this._onSubmit }>
+                    onClick = { this._onSubmit }
+                    onKeyPress = { this._onSubmitKeyPress }
+                    role = 'button'
+                    tabIndex = { 0 }>
                     {t('addPeople.add')}
                 </a>
             </div>
@@ -468,9 +522,9 @@ class InviteContactsForm extends AbstractAddPeopleDialog<Props, State> {
                 </span>
                 <span>
                     <a
+                        aria-label = { supportLink }
                         href = { supportLink }
-                        rel = 'noopener noreferrer'
-                        target = '_blank'>
+                        rel = 'noopener noreferrer'>
                         { t('inlineDialogFailure.support') }
                     </a>
                 </span>

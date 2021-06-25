@@ -183,6 +183,9 @@ class Prejoin extends Component<Props, State> {
         this._onDropdownClose = this._onDropdownClose.bind(this);
         this._onOptionsClick = this._onOptionsClick.bind(this);
         this._setName = this._setName.bind(this);
+        this._onJoinConferenceWithoutAudioKeyPress = this._onJoinConferenceWithoutAudioKeyPress.bind(this);
+        this._showDialogKeyPress = this._showDialogKeyPress.bind(this);
+        this._onJoinKeyPress = this._onJoinKeyPress.bind(this);
     }
     _onJoinButtonClick: () => void;
 
@@ -203,6 +206,22 @@ class Prejoin extends Component<Props, State> {
 
         this.setState({ showError: false });
         this.props.joinConference();
+    }
+
+    _onJoinKeyPress: (Object) => void;
+
+    /**
+     * KeyPress handler for accessibility.
+     *
+     * @param {Object} e - The key event to handle.
+     *
+     * @returns {void}
+     */
+    _onJoinKeyPress(e) {
+        if (e.key === ' ' || e.key === 'Enter') {
+            e.preventDefault();
+            this._onJoinButtonClick();
+        }
     }
 
     _onToggleButtonClick: () => void;
@@ -283,6 +302,40 @@ class Prejoin extends Component<Props, State> {
         this._onDropdownClose();
     }
 
+    _showDialogKeyPress: (Object) => void;
+
+    /**
+     * KeyPress handler for accessibility.
+     *
+     * @param {Object} e - The key event to handle.
+     *
+     * @returns {void}
+     */
+    _showDialogKeyPress(e) {
+        if (e.key === ' ' || e.key === 'Enter') {
+            e.preventDefault();
+            this._showDialog();
+        }
+    }
+
+    _onJoinConferenceWithoutAudioKeyPress: (Object) => void;
+
+    /**
+     * KeyPress handler for accessibility.
+     *
+     * @param {Object} e - The key event to handle.
+     *
+     * @returns {void}
+     */
+    _onJoinConferenceWithoutAudioKeyPress(e) {
+        if (this.props.joinConferenceWithoutAudio
+            && (e.key === ' '
+                || e.key === 'Enter')) {
+            e.preventDefault();
+            this.props.joinConferenceWithoutAudio();
+        }
+    }
+
     /**
      * Implements React's {@link Component#render()}.
      *
@@ -305,7 +358,8 @@ class Prejoin extends Component<Props, State> {
             visibleButtons
         } = this.props;
 
-        const { _closeDialog, _onDropdownClose, _onJoinButtonClick, _onOptionsClick, _setName, _showDialog } = this;
+        const { _closeDialog, _onDropdownClose, _onJoinButtonClick, _onJoinKeyPress, _showDialogKeyPress,
+            _onJoinConferenceWithoutAudioKeyPress, _onOptionsClick, _setName, _showDialog } = this;
         const { showJoinByPhoneButtons, showError } = this.state;
 
         return (
@@ -322,10 +376,16 @@ class Prejoin extends Component<Props, State> {
                 {showJoinActions && (
                     <div className = 'prejoin-input-area-container'>
                         <div className = 'prejoin-input-area'>
+                            <label
+                                className = 'prejoin-input-area-label'
+                                htmlFor = { 'Prejoin-input-field-id' } >
+                                { t('dialog.enterDisplayNameToJoin') }</label>
                             <InputField
+                                autoComplete = { 'name' }
                                 autoFocus = { true }
                                 className = { showError ? 'error' : '' }
                                 hasError = { showError }
+                                id = { 'Prejoin-input-field-id' }
                                 onChange = { _setName }
                                 onSubmit = { joinConference }
                                 placeHolder = { t('dialog.enterDisplayName') }
@@ -341,7 +401,10 @@ class Prejoin extends Component<Props, State> {
                                         <div
                                             className = 'prejoin-preview-dropdown-btn'
                                             data-testid = 'prejoin.joinWithoutAudio'
-                                            onClick = { joinConferenceWithoutAudio }>
+                                            onClick = { joinConferenceWithoutAudio }
+                                            onKeyPress = { _onJoinConferenceWithoutAudioKeyPress }
+                                            role = 'button'
+                                            tabIndex = { 0 }>
                                             <Icon
                                                 className = 'prejoin-preview-dropdown-icon'
                                                 size = { 24 }
@@ -350,7 +413,10 @@ class Prejoin extends Component<Props, State> {
                                         </div>
                                         {hasJoinByPhoneButton && <div
                                             className = 'prejoin-preview-dropdown-btn'
-                                            onClick = { _showDialog }>
+                                            onClick = { _showDialog }
+                                            onKeyPress = { _showDialogKeyPress }
+                                            role = 'button'
+                                            tabIndex = { 0 }>
                                             <Icon
                                                 className = 'prejoin-preview-dropdown-icon'
                                                 data-testid = 'prejoin.joinByPhone'
@@ -363,9 +429,15 @@ class Prejoin extends Component<Props, State> {
                                     onClose = { _onDropdownClose }>
                                     <ActionButton
                                         OptionsIcon = { showJoinByPhoneButtons ? IconArrowUp : IconArrowDown }
+                                        ariaDropDownLabel = { t('prejoin.joinWithoutAudio') }
+                                        ariaLabel = { t('prejoin.joinMeeting') }
+                                        ariaPressed = { showJoinByPhoneButtons }
                                         hasOptions = { true }
                                         onClick = { _onJoinButtonClick }
+                                        onKeyPress = { _onJoinKeyPress }
                                         onOptionsClick = { _onOptionsClick }
+                                        role = 'button'
+                                        tabIndex = { 0 }
                                         testId = 'prejoin.joinMeeting'
                                         type = 'primary'>
                                         { t('prejoin.joinMeeting') }

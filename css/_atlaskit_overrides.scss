@@ -32,12 +32,25 @@
     .dropdown-menu div[style*="transform"] {
         outline: 1px solid #455166;
     }
+    .dropdown-menu button:not(:active):not(:hover) > span {
+        color: #B8C7E0;
+    }
+
+    /**
+    * Override @atlaskit/tab styling when in a modal because the
+    * tab text color clash with the modal backgrounds.
+    */
+    div[role="tablist"] > div:not([data-selected]):not(:hover),
+    label > div > span {
+        color: #B8C7E0 !important;
+    }
 }
 
 /**
  * Override @atlaskit/modal-dialog header styling
  */
 .atlaskit-portal [role="dialog"] header {
+    box-shadow: none;
     .jitsi-icon {
         cursor: pointer;
     }
@@ -46,6 +59,13 @@
         fill: #B8C7E0;
     }
 }
+
+/**
+ * Override @atlaskit/modal-dialog footer styling.
+ */
+ .atlaskit-portal [role="dialog"] footer {
+     box-shadow: none;
+ }
 
 /**
  * Make header close button more easily tappable on mobile.

@@ -2,6 +2,7 @@
 
 import React, { type Node } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useSelector } from 'react-redux';
 
 import { Avatar } from '../../base/avatar';
 import {
@@ -11,10 +12,12 @@ import {
     IconMicrophoneEmpty,
     IconMicrophoneEmptySlash
 } from '../../base/icons';
-import { ActionTrigger, MediaState } from '../constants';
+import { getParticipantDisplayNameWithId } from '../../base/participants';
+import { ACTION_TRIGGER, MEDIA_STATE, type ActionTrigger, type MediaState } from '../constants';
 
 import { RaisedHandIndicator } from './RaisedHandIndicator';
 import {
+    ColoredIcon,
     ParticipantActionsHover,
     ParticipantActionsPermanent,
     ParticipantContainer,
@@ -28,52 +31,56 @@ import {
  * Participant actions component mapping depending on trigger type.
  */
 const Actions = {
-    [ActionTrigger.Hover]: ParticipantActionsHover,
-    [ActionTrigger.Permanent]: ParticipantActionsPermanent
+    [ACTION_TRIGGER.HOVER]: ParticipantActionsHover,
+    [ACTION_TRIGGER.PERMANENT]: ParticipantActionsPermanent
 };
 
 /**
  * Icon mapping for possible participant audio states.
  */
-const AudioStateIcons = {
-    [MediaState.ForceMuted]: (
+const AudioStateIcons: {[MediaState]: React$Element<any> | null} = {
+    [MEDIA_STATE.FORCE_MUTED]: (
+        <ColoredIcon color = '#E04757'>
+            <Icon
+                size = { 16 }
+                src = { IconMicrophoneEmptySlash } />
+        </ColoredIcon>
+    ),
+    [MEDIA_STATE.MUTED]: (
         <Icon
             size = { 16 }
             src = { IconMicrophoneEmptySlash } />
     ),
-    [MediaState.Muted]: (
-        <Icon
-            size = { 16 }
-            src = { IconMicrophoneEmptySlash } />
+    [MEDIA_STATE.UNMUTED]: (
+        <ColoredIcon color = '#1EC26A'>
+            <Icon
+                size = { 16 }
+                src = { IconMicrophoneEmpty } />
+        </ColoredIcon>
     ),
-    [MediaState.Unmuted]: (
-        <Icon
-            size = { 16 }
-            src = { IconMicrophoneEmpty } />
-    ),
-    [MediaState.None]: null
+    [MEDIA_STATE.NONE]: null
 };
 
 /**
  * Icon mapping for possible participant video states.
  */
 const VideoStateIcons = {
-    [MediaState.ForceMuted]: (
+    [MEDIA_STATE.FORCE_MUTED]: (
         <Icon
             size = { 16 }
             src = { IconCameraEmptyDisabled } />
     ),
-    [MediaState.Muted]: (
+    [MEDIA_STATE.MUTED]: (
         <Icon
             size = { 16 }
             src = { IconCameraEmptyDisabled } />
     ),
-    [MediaState.Unmuted]: (
+    [MEDIA_STATE.UNMUTED]: (
         <Icon
             size = { 16 }
             src = { IconCameraEmpty } />
     ),
-    [MediaState.None]: null
+    [MEDIA_STATE.NONE]: null
 };
 
 type Props = {
@@ -86,7 +93,7 @@ type Props = {
     /**
      * Media state for audio
      */
-    audioMuteState: MediaState,
+    audioMediaState: MediaState,
 
     /**
      * React children
@@ -97,6 +104,11 @@ type Props = {
      * Is this item highlighted/raised
      */
     isHighlighted?: boolean,
+
+    /**
+     * The name of the participant. Used for showing lobby names.
+     */
+    name?: string,
 
     /**
      * Callback for when the mouse leaves this component
@@ -118,13 +130,15 @@ export const ParticipantItem = ({
     children,
     isHighlighted,
     onLeave,
-    actionsTrigger = ActionTrigger.Hover,
-    audioMuteState = MediaState.None,
-    videoMuteState = MediaState.None,
+    actionsTrigger = ACTION_TRIGGER.HOVER,
+    audioMediaState = MEDIA_STATE.NONE,
+    videoMuteState = MEDIA_STATE.NONE,
+    name,
     participant: p
 }: Props) => {
     const ParticipantActions = Actions[actionsTrigger];
     const { t } = useTranslation();
+    const displayName = name || useSelector(getParticipantDisplayNameWithId(p.id));
 
     return (
         <ParticipantContainer
@@ -138,7 +152,7 @@ export const ParticipantItem = ({
             <ParticipantContent>
                 <ParticipantNameContainer>
                     <ParticipantName>
-                        { p.name }
+                        { displayName }
                     </ParticipantName>
                     { p.local ? <span>&nbsp;({t('chat.you')})</span> : null }
                 </ParticipantNameContainer>
@@ -146,7 +160,7 @@ export const ParticipantItem = ({
                 <ParticipantStates>
                     {p.raisedHand && <RaisedHandIndicator />}
                     {VideoStateIcons[videoMuteState]}
-                    {AudioStateIcons[audioMuteState]}
+                    {AudioStateIcons[audioMediaState]}
                 </ParticipantStates>
             </ParticipantContent>
         </ParticipantContainer>

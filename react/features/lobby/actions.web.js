@@ -130,6 +130,50 @@ export function setKnockingParticipantApproval(id: string, approved: boolean) {
 }
 
 /**
+ * Action used to admit multiple participants in the conference.
+ *
+ * @param {Array<Object>} participants - A list of knocking participants.
+ * @returns {void}
+ */
+export function admitMultiple(participants: Array<Object>) {
+    return (dispatch: Function, getState: Function) => {
+        const conference = getCurrentConference(getState);
+
+        participants.forEach(p => {
+            conference.lobbyApproveAccess(p.id);
+        });
+    };
+}
+
+/**
+ * Approves the request of a knocking participant to join the meeting.
+ *
+ * @param {string} id - The id of the knocking participant.
+ * @returns {Function}
+ */
+export function approveKnockingParticipant(id: string) {
+    return (dispatch: Dispatch<any>, getState: Function) => {
+        const conference = getCurrentConference(getState);
+
+        conference && conference.lobbyApproveAccess(id);
+    };
+}
+
+/**
+ * Denies the request of a knocking participant to join the meeting.
+ *
+ * @param {string} id - The id of the knocking participant.
+ * @returns {Function}
+ */
+export function rejectKnockingParticipant(id: string) {
+    return (dispatch: Dispatch<any>, getState: Function) => {
+        const conference = getCurrentConference(getState);
+
+        conference && conference.lobbyDenyAccess(id);
+    };
+}
+
+/**
  * Action to set the knocking state of the participant.
  *
  * @param {boolean} knocking - The new state.
@@ -198,4 +242,3 @@ export function startKnocking() {
         dispatch(setKnockingState(true));
     };
 }
-

@@ -2,49 +2,12 @@
 
 import type { Dispatch } from 'redux';
 
-import {
-    createSelectParticipantFailedEvent,
-    sendAnalytics
-} from '../analytics';
-import { _handleParticipantError } from '../base/conference';
 import { MEDIA_TYPE } from '../base/media';
-import { getParticipants } from '../base/participants';
-import { reportError } from '../base/util';
-import { shouldDisplayTileView } from '../video-layout';
 
 import {
     SELECT_LARGE_VIDEO_PARTICIPANT,
     UPDATE_KNOWN_LARGE_VIDEO_RESOLUTION
 } from './actionTypes';
-
-/**
- * Signals conference to select a participant.
- *
- * @returns {Function}
- */
-export function selectParticipant() {
-    return (dispatch: Dispatch<any>, getState: Function) => {
-        const state = getState();
-        const { conference } = state['features/base/conference'];
-
-        if (conference) {
-            const ids = shouldDisplayTileView(state)
-                ? getParticipants(state).map(participant => participant.id)
-                : [ state['features/large-video'].participantId ];
-
-            try {
-                conference.selectParticipants(ids);
-            } catch (err) {
-                _handleParticipantError(err);
-
-                sendAnalytics(createSelectParticipantFailedEvent(err));
-
-                reportError(
-                    err, `Failed to select participants ${ids.toString()}`);
-            }
-        }
-    };
-}
 
 /**
  * Action to select the participant to be displayed in LargeVideo based on the
@@ -79,8 +42,6 @@ export function selectParticipantInLargeVideo(participant: ?string) {
                 type: SELECT_LARGE_VIDEO_PARTICIPANT,
                 participantId
             });
-
-            dispatch(selectParticipant());
         }
     };
 }

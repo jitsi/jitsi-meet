@@ -1,8 +1,7 @@
 /**
  * Shared style for full screen local track based dialogs/modals.
  */
- .premeeting-screen,
-  .preview-overlay {
+ .premeeting-screen {
      position: absolute;
      left: 0;
      right: 0;
@@ -93,11 +92,6 @@
         }
     }
 
-    .preview-overlay {
-        background-image: linear-gradient(transparent, black);
-        z-index: $toolbarZ + 1;
-    }
-
     .content {
         align-items: center;
         display: flex;
@@ -119,7 +113,7 @@
             cursor: pointer;
             color: #fff;
             display: flex;
-            flex-direction: row;
+            flex-direction: column;
             font-size: 15px;
             font-weight: 300;
             justify-content: center;
@@ -145,6 +139,9 @@
                     margin-left: 10px;
                 }
             }
+            .copy-button{
+                width: 298px;
+             }
 
             .copy-meeting-text {
                 width: 266px;
@@ -183,7 +180,7 @@
             }
 
             &.focused {
-                box-shadow: 0px 0px 4px 3px #0376DA;
+                box-shadow: 0px 0px 1px 1.5px black, 0px 0px 1.3px 4px white;
             }
         }
     }
@@ -255,10 +252,16 @@
         fill: transparent;
     }
 
+    label {
+        cursor: pointer;
+    }
+
     &:hover {
         background: rgba(255, 255, 255, 0.1);
 
-        @include icon-container(#A4B8D1, #1C2025);
+        .toggle-button-icon-container {
+            display: none;
+        }
     }
 
     &-container {
@@ -276,5 +279,15 @@
 
     &--toggled {
         @include icon-container(white, #1C2025);
+
+        &:hover {
+            .toggle-button-icon-container {
+                display: block;
+            }
+        }
+
+        .toggle-button-icon-container {
+            display: block;
+        }
     }
 }

@@ -1,4 +1,7 @@
 // @flow
+
+import { VIRTUAL_BACKGROUND_TYPE } from '../../virtual-background/constants';
+
 import {
     CLEAR_TIMEOUT,
     TIMEOUT_TICK,
@@ -14,6 +17,7 @@ import {
 export default class JitsiStreamBackgroundEffect {
     _model: Object;
     _options: Object;
+    _stream: Object;
     _segmentationPixelCount: number;
     _inputVideoElement: HTMLVideoElement;
     _onMaskFrameTimer: Function;
@@ -25,6 +29,7 @@ export default class JitsiStreamBackgroundEffect {
     _segmentationMaskCanvas: Object;
     _renderMask: Function;
     _virtualImage: HTMLImageElement;
+    _virtualVideo: HTMLVideoElement;
     isEnabled: Function;
     startEffect: Function;
     stopEffect: Function;
@@ -39,13 +44,17 @@ export default class JitsiStreamBackgroundEffect {
     constructor(model: Object, options: Object) {
         this._options = options;
 
-        if (this._options.virtualBackground.backgroundType === 'image') {
+        if (this._options.virtualBackground.backgroundType === VIRTUAL_BACKGROUND_TYPE.IMAGE) {
             this._virtualImage = document.createElement('img');
             this._virtualImage.crossOrigin = 'anonymous';
             this._virtualImage.src = this._options.virtualBackground.virtualSource;
         }
+        if (this._options.virtualBackground.backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE) {
+            this._virtualVideo = document.createElement('video');
+            this._virtualVideo.autoplay = true;
+            this._virtualVideo.srcObject = this._options?.virtualBackground?.virtualSource?.stream;
+        }
         this._model = model;
-        this._options = options;
         this._segmentationPixelCount = this._options.width * this._options.height;
 
         // Bind event handler so it is only bound once for every instance.
@@ -76,13 +85,19 @@ export default class JitsiStreamBackgroundEffect {
      * @returns {void}
      */
     runPostProcessing() {
+
+        const track = this._stream.getVideoTracks()[0];
+        const { height, width } = track.getSettings() ?? track.getConstraints();
+
+        this._outputCanvasElement.height = height;
+        this._outputCanvasElement.width = width;
         this._outputCanvasCtx.globalCompositeOperation = 'copy';
 
         // Draw segmentation mask.
         //
 
         // Smooth out the edges.
-        if (this._options.virtualBackground.backgroundType === 'image') {
+        if (this._options.virtualBackground.backgroundType === VIRTUAL_BACKGROUND_TYPE.IMAGE) {
             this._outputCanvasCtx.filter = 'blur(4px)';
         } else {
             this._outputCanvasCtx.filter = 'blur(8px)';
@@ -111,7 +126,7 @@ export default class JitsiStreamBackgroundEffect {
         //
 
         this._outputCanvasCtx.globalCompositeOperation = 'destination-over';
-        if (this._options.virtualBackground.backgroundType === 'image') {
+        if (this._options.virtualBackground.backgroundType === VIRTUAL_BACKGROUND_TYPE.IMAGE) {
             this._outputCanvasCtx.drawImage(
                 this._virtualImage,
                 0,
@@ -119,6 +134,25 @@ export default class JitsiStreamBackgroundEffect {
                 this._inputVideoElement.width,
                 this._inputVideoElement.height
             );
+        }
+        if (this._options.virtualBackground.backgroundType === VIRTUAL_BACKGROUND_TYPE.DESKTOP_SHARE) {
+
+            // save current context before applying transformations
+            this._outputCanvasCtx.save();
+
+            // flip the canvas and prevent mirror behaviour
+            this._outputCanvasCtx.scale(-1, 1);
+            this._outputCanvasCtx.translate(-this._outputCanvasElement.width, 0);
+            this._outputCanvasCtx.drawImage(
+                this._virtualVideo,
+                0,
+                0,
+                this._outputCanvasElement.width,
+                this._outputCanvasElement.height
+            );
+
+            // restore the canvas
+            this._outputCanvasCtx.restore();
         } else {
             this._outputCanvasCtx.filter = `blur(${this._options.virtualBackground.blurValue}px)`;
             this._outputCanvasCtx.drawImage(this._inputVideoElement, 0, 0);
@@ -215,9 +249,10 @@ export default class JitsiStreamBackgroundEffect {
      * @returns {MediaStream} - The stream with the applied effect.
      */
     startEffect(stream: MediaStream) {
+        this._stream = stream;
         this._maskFrameTimerWorker = new Worker(timerWorkerScript, { name: 'Blur effect worker' });
         this._maskFrameTimerWorker.onmessage = this._onMaskFrameTimer;
-        const firstVideoTrack = stream.getVideoTracks()[0];
+        const firstVideoTrack = this._stream.getVideoTracks()[0];
         const { height, frameRate, width }
             = firstVideoTrack.getSettings ? firstVideoTrack.getSettings() : firstVideoTrack.getConstraints();
 
@@ -233,7 +268,7 @@ export default class JitsiStreamBackgroundEffect {
         this._inputVideoElement.width = parseInt(width, 10);
         this._inputVideoElement.height = parseInt(height, 10);
         this._inputVideoElement.autoplay = true;
-        this._inputVideoElement.srcObject = stream;
+        this._inputVideoElement.srcObject = this._stream;
         this._inputVideoElement.onloadeddata = () => {
             this._maskFrameTimerWorker.postMessage({
                 id: SET_TIMEOUT,
