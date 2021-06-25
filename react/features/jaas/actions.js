@@ -60,7 +60,7 @@ export function getCustomerDetails() {
  * @returns {Function}
  */
 export function maybeShowPremiumFeatureDialog(feature: string) {
-    return async function(dispatch: Function, getState: Function) {
+    return function(dispatch: Function, getState: Function) {
         if (isFeatureDisabled(getState(), feature)) {
             dispatch(openDialog(PremiumFeatureDialog));
 

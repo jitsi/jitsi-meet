@@ -1,7 +1,7 @@
 // @flow
 
 /**
- * Sends a billing counter request.
+ * Sends a request for retrieving jaas customer details.
  *
  * @param {Object} reqData - The request info.
  * @param {string} reqData.appId - The client appId.

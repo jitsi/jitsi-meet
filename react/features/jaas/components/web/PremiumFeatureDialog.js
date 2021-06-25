@@ -5,7 +5,6 @@ import React, { PureComponent } from 'react';
 
 import { Dialog } from '../../../base/dialog';
 import { translate } from '../../../base/i18n';
-import { connect } from '../../../base/redux';
 import { openURLInBrowser } from '../../../base/util';
 import { JAAS_UPGRADE_URL } from '../../constants';
 
@@ -60,4 +59,4 @@ class PremiumFeatureDialog extends PureComponent<*> {
     }
 }
 
-export default translate(connect()(PremiumFeatureDialog));
+export default translate(PremiumFeatureDialog);
