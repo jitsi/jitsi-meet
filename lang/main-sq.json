@@ -7,13 +7,13 @@
         "copyStream": "Kopjo lidhje transmetimi të drejtpërdrejtë",
         "contacts": "kontakte",
         "countryNotSupported": "S’e mbulojmë ende këtë vend.",
-        "countryReminder": "Thirrje jashtë ShBA-s? Ju lutemi, sigurohuni se e nisni me kodin e vendit!",
+        "countryReminder": "Thirrje nga jashtë ShBA-s? Ju lutemi, sigurohuni se e nisni me kodin e vendit!",
         "defaultEmail": "Email-i Juaj Parazgjedhje",
         "disabled": "S’mund të ftoni persona.",
         "failedToAdd": "S’u arrit të shtohen pjesëmarrës",
         "footerText": "Formimi i numrave është i çaktivizuar.",
         "googleEmail": "Email Google",
-        "inviteMoreHeader": "Jeni i vetmi në takim",
+        "inviteMoreHeader": "Në takim jeni vetëm ju",
         "inviteMoreMailSubject": "Merrni pjesë në takim me {{appName}}",
         "inviteMorePrompt": "Ftoni më tepër persona",
         "linkCopied": "Lidhja u kopjua në të papastër",
@@ -37,7 +37,7 @@
         "none": "S’ka pajisje audio"
     },
     "audioOnly": {
-        "audioOnly": "Sasi e vogël trafiku"
+        "audioOnly": "Gjerësi e ulët bande"
     },
     "calendarSync": {
         "addMeetingURL": "Shtoni një lidhje takimi",
@@ -53,7 +53,7 @@
         "noEvents": "S’ka veprimtari të ardhshme të vëna në plan.",
         "ongoingMeeting": "takim në zhvillim e sipër",
         "permissionButton": "Hapni rregullimet",
-        "permissionMessage": "Që të shihni në aplikacion takimet tuaja, lejet mbi Kalendarin janë të domosdoshme.",
+        "permissionMessage": "Që të shihni në aplikacion takimet tuaja, janë të domosdoshme lejet mbi Kalendarin.",
         "refresh": "Rifresko kalendarin",
         "today": "Sot"
     },
@@ -70,7 +70,7 @@
         },
         "privateNotice": "Mesazh privat për {{recipient}}",
         "title": "Fjalosje",
-        "you": "ju"
+        "you": "ju",
         "message": "Mesazh",
         "messageAccessibleTitle": "{{user}} thotë:",
         "messageAccessibleTitleMe": "unë them:",
@@ -79,7 +79,7 @@
     "chromeExtensionBanner": {
         "installExtensionText": "Instaloni zgjerimin për integrim të Google Calendar-it dhe Office 365-s",
         "buttonText": "Instaloni Zgjerimin për Chrome",
-        "dontShowAgain": "Mos ma shfaq sërish këtë"
+        "dontShowAgain": "Mos ma shfaq sërish këtë",
         "close": "Mbylle"
     },
     "connectingOverlay": {
@@ -96,14 +96,14 @@
         "DISCONNECTING": "Po shkëputet",
         "ERROR": "Gabim",
         "FETCH_SESSION_ID": "Po merret ID sesioni…",
-        "GET_SESSION_ID_ERROR": "Gabim marrjeje IS sesioni: {{code}}",
+        "GET_SESSION_ID_ERROR": "Gabim marrjeje ID sesioni: {{code}}",
         "GOT_SESSION_ID": "Po merret ID sesioni… U bë",
         "LOW_BANDWIDTH": "Videoja për {{displayName}} është mbyllur, për të kursyer sasi trafiku"
     },
     "connectionindicator": {
         "address": "Adresë:",
         "audio_ssrc": "SSRC Audioje:",
-        "bandwidth": "Sasi e hamendësuar trafiku:",
+        "bandwidth": "Gjerësi e hamendësuar bande:",
         "bitrate": "Bitrate:",
         "bridgeCount": "Numër shërbyesish: ",
         "codecs": "Kodekë (A/V): ",
@@ -115,7 +115,7 @@
         "localaddress_plural": "Adresa vendore:",
         "localport": "Portë vendore:",
         "localport_plural": "Porta vendore:",
-        "maxEnabledResolution": "dërgo maksimumi",
+        "maxEnabledResolution": "maksimum dërgimi",
         "more": "Shfaq më tepër",
         "packetloss": "Humbje paketesh:",
         "quality": {
@@ -152,10 +152,10 @@
         "joinInApp": "Merrni pjesë në këtë takim duke përdorur aplikacionin",
         "launchWebButton": "Nise në web",
         "title": "Po niset takimi juaj në {{app}}…",
-        "tryAgainButton": "Riprovo në desktop"
+        "tryAgainButton": "Riprovoni në desktop"
     },
     "defaultLink": "p.sh., {{url}}",
-    "defaultNickname": "shembull. Ndrikulla",
+    "defaultNickname": "p.sh., Ndrikulla",
     "deviceError": {
         "cameraError": "S’u arrit të hyhej në kamerën tuaj",
         "cameraPermission": "Gabim në marrje lejesh mbi kamerën",
@@ -215,7 +215,7 @@
         "gracefulShutdown": "Shërbimi ynë është aktualisht i ndërprerë, për punë mirëmbajtjeje. Ju lutemi, riprovoni më vonë.",
         "grantModeratorDialog": "Jeni i sigurt se doni ta bëni moderator këtë pjesëmarrës?",
         "grantModeratorTitle": "Akordoni të drejta moderatori",
-        "IamHost": "Jam organizatori",
+        "IamHost": "Jam organizuesi",
         "incorrectRoomLockPassword": "Fjalëkalim i pasaktë",
         "incorrectPassword": "Emër përdoruesi ose fjalëkalim i pasaktë",
         "internalError": "Hëm! Diç shkoi ters. Ndodhi gabimi vijues: {{error}}",
@@ -234,8 +234,8 @@
         "logoutQuestion": "Jeni i sigurt se doni të dilet dhe të ndalet konferenca?",
         "login": "Hyrje",
         "logoutTitle": "Dalje",
-        "maxUsersLimitReached": "U mbërrit në kufirin për numër maksimum pjesëmarrësish. Konferenca është plot. Ju lutemi, lidhuni me të zotin e takimit, ose provoni më vonë!",
-        "maxUsersLimitReachedTitle": "U mbërrit në kufirin për numër maksimum pjesëmarrësish",
+        "maxUsersLimitReached": "U mbërrit në kufi numri maksimum pjesëmarrësish. Konferenca është plot. Ju lutemi, lidhuni me të zotin e takimit, ose provoni më vonë!",
+        "maxUsersLimitReachedTitle": "U mbërrit në kufi numri maksimum pjesëmarrësish",
         "micConstraintFailedError": "Mikrofoni juaj s’plotëson disa nga kufizimet e domosdoshme.",
         "micNotFoundError": "S’u gjet mikrofon.",
         "micNotSendingData": "Kaloni te rregullimet e kompjuterit tuaj që t’i hiqni mikrofonit heshtimin dhe të ujdisni volumin për të",
@@ -301,7 +301,7 @@
         "sessionRestarted": "Thirrje e rinisur nga ura",
         "Share": "Ndajeni",
         "shareVideoLinkError": "Ju lutemi, jepni një lidhje Youtube të saktë.",
-        "shareVideoTitle": "Ndani një video me të tjerë",
+        "shareVideoTitle": "Ndani video me të tjerë",
         "shareYourScreen": "Tregojuni ekranin tuaj",
         "shareYourScreenDisabled": "Tregimi i ekrani është i çaktivizuar.",
         "startLiveStreaming": "Nis transmetim të drejtpërdrejtë",
@@ -327,7 +327,7 @@
         "WaitForHostMsgWOk": "Konferenca <b>{{room}}</b> s’ka nisur ende. Nëse jeni organizatori, atëherë ju lutemi, shtypni OK, që të kryhet mirëfilltësimi. Përndryshe, ju lutemi, pritni që të mbërrijë organizatori.",
         "WaitingForHostTitle": "Po pritet për organizatorin…",
         "Yes": "Po",
-        "yourEntireScreen": "Krejt ekranin tuaj"
+        "yourEntireScreen": "Krejt ekranin tuaj",
         "remoteUserControls": "Kontrolle përdoruesi të largët për {{username}}",
         "localUserControls": "Kontrolle përdoruesi vendor"
     },
@@ -351,7 +351,7 @@
         "removeBackground": "Hiqe sfondin",
         "addBackground": "Shtoni sfond",
         "pleaseWait": "Ju lutemi, pritni…",
-        "none": "Asnjë"
+        "none": "Asnjë",
         "uploadedImage": "Ngarkoni figurë {{index}}",
         "deleteImage": "Fshije figurën",
         "image1" : "Plazh",
@@ -372,7 +372,7 @@
         "good": "E mirë",
         "rateExperience": "Vlerësoni rastin tuaj",
         "veryBad": "Shumë e Keqe",
-        "veryGood": "Shumë e Mirë"
+        "veryGood": "Shumë e Mirë",
         "star": "Yll"
     },
     "incomingCall": {
@@ -429,7 +429,7 @@
         "support": "Asistencë",
         "supportMsg": "Nëse kjo vazhdon të ndodhë, lidhuni me"
     },
-    "jitsiHome": "Stemë {{logo}}, lidhje për Faqja Hyrëse",
+    "jitsiHome": "Stemë {{logo}}, lidhje për te Faqja Hyrëse",
     "keyboardShortcuts": {
         "focusLocal": "Fokusi te videoja juaj",
         "focusRemote": "Fokusi te videoja e një personi tjetër",
@@ -521,7 +521,7 @@
         "focus": "Fokusi te konferenca",
         "focusFail": "{{component}} jo i passhëm - riprovoni pas {{ms}} sekondash",
         "grantedTo": "U akorduan të drejta moderatori për {{to}}!",
-        "hostAskedUnmute": "Strehuesi do të donte që të hiqnit heshtimin",
+        "hostAskedUnmute": "Organizuesi do të donte që të hiqnit heshtimin",
         "invitedOneMember": "U ftua {{name}}",
         "invitedThreePlusMembers": "U ftuan {{name}} dhe {{count}} të tjerë",
         "invitedTwoMembers": "U ftua {{first}} dhe {{second}} tjetër",
@@ -570,16 +570,16 @@
         "close": "Mbylle",
         "headings": {
             "lobby": "Holli ({{count}})",
-            "participantsList": "Pjesëmarrës takimi ({{count}})"
+            "participantsList": "Pjesëmarrës në takim ({{count}})"
         },
         "actions": {
-            "allow": "Lejoji pjesëmarrësit të:",
-            "invite": "Ftojnë Dikë",
+            "allow": "Lejoji pjesëmarrësit:",
+            "invite": "Të Ftojnë Dikë",
             "askUnmute": "Të kërkojnë çheshtim",
-            "muteAll": "Heshtojnë të tërë",
+            "muteAll": "Të Heshtojnë të tërë",
             "startModeration": "Të çheshtojnë veten ose të nisin videon",
             "stopEveryonesVideo": "Të ndalin videon e gjithkujt",
-            "stopVideo": "Të ndalin ideo"
+            "stopVideo": "Të ndalin video"
         }
     },
     "passwordSetRemotely": "caktuar nga një tjetër pjesëmarrës",
@@ -673,7 +673,7 @@
         "beta": "BETA",
         "busy": "Po përpiqemi të lirojmë burime regjistrimi. Ju lutemi, riprovoni pas pak minutash.",
         "busyTitle": "Krejt regjistruesit janë të zënë",
-        "copyLink": "Kopjoje Lidhjen,
+        "copyLink": "Kopjoje Lidhjen",
         "error": "Regjistrimi dështoi. Ju lutemi, riprovoni.",
         "errorFetchingLink": "Gabim në sjellje lidhje regjistrimi.",
         "expandedOff": "Regjistrimi u ndal",
@@ -696,7 +696,7 @@
         "signIn": "Hyni",
         "signOut": "Dilni",
         "unavailable": "Hëm! {{serviceName}} s’është i passhëm aktualisht. Po punojmë për të zgjidhur problemin. Ju lutemi, riprovoni më vonë.",
-        "unavailableTitle": "Regjistrim jo i passhëm"
+        "unavailableTitle": "Regjistrim jo i passhëm",
         "uploadToCloud": "Ngarkojeni te reja"
     },
     "sectionList": {
@@ -710,7 +710,7 @@
     },
     "settings": {
         "calendar": {
-            "about": "Integrimi i me kalendar {{appName}} përdoret për të hyrë me sukses te kalendari juaj, që kështu të mund të lexojë veprimtari të ardhshme.",
+            "about": "Integrimi i me kalendar {{appName}} përdoret për të hyrë me sukses te kalendari juaj, që kështu të mund të lexohen veprimtari të ardhshme.",
             "disconnect": "Shkëputu",
             "microsoftSignIn": "Hyni me Microsoft",
             "signedIn": "Aktualisht duke parë veprimtari kalendari për {{email}}. Klikoni mbi butonin Shkëputu më poshtë që të ndalni parjen e veprimtarive të kalendarit.",
@@ -757,7 +757,7 @@
         "version": "Version"
     },
     "share": {
-        "dialInfoText": "\n\n=====\n\nThjesht doni t’i bini numrin në telefonin tuaj?\n\n{{defaultDialInNumber}}Klikoni mbi këtë lidhje që të shihni numra telefoni për këtë takim\n{{dialInfoPageUrl}}",
+        "dialInfoText": "\n\n=====\n\nThjesht doni t’i bini numrit në telefonin tuaj?\n\n{{defaultDialInNumber}}Klikoni mbi këtë lidhje, që të shihni numra telefoni për këtë takim\n{{dialInfoPageUrl}}",
         "mainText": "Që të merrni pjesë në takim, klikoni lidhjen vijuese:\n{{roomUrl}}"
     },
     "speaker": "Folës",
@@ -771,7 +771,7 @@
     },
     "startupoverlay": {
         "policyText": " ",
-        "genericTitle": "Takimit i duhet të përdorë mikrofonin dhe kamerën tuaj.",
+        "genericTitle": "Takimi lyp përdorimin e mikrofonit dhe kamerës tuaj.",
         "title": "{{app}} i duhet të përdorë mikrofonin dhe kamerën tuaj."
     },
     "suspendedoverlay": {
@@ -781,28 +781,28 @@
     },
     "toolbar": {
         "accessibilityLabel": {
-            "audioOnly": "Hap/mbyll vetëm audion",
+            "audioOnly": "Hap/Mbyll vetëm audion",
             "audioRoute": "Përzgjidhni pajisje zëri",
             "callQuality": "Administroni cilësi video",
             "cc": "Shfaq/Fshih titra",
-            "chat": "Shfaq/Fshih dritare fjalosjesh",
+            "chat": "Hap / Mbyll fjalosje",
             "document": "Shfaq/Fshih dokument të ndarë",
             "download": "Shkarkoni aplikacionet tona",
             "embedMeeting": "Trupëzoni takimin",
             "feedback": "Lini përshtypje",
             "fullScreen": "Kalo/Dil nga mënyra “Sa krejt ekrani”",
             "grantModerator": "Akordoji të Drejta Moderatori",
-            "hangup": "Braktiseni thirrjen",
+            "hangup": "Braktiseni takimin",
             "help": "Ndihmë",
             "invite": "Ftoni persona",
             "kick": "Përzini pjesëmarrës",
-            "lobbyButton": "Aktivizo/çaktivizo mënyrën holl",
-            "localRecording": "Shfaq/fshi kontrolle regjistrimi vendor",
-            "lockRoom": "Aktivizoni/Çaktivizoni fjalëkalim takimi",
-            "moreActions": "Shfaq/fshih menunë Më tepër veprime",
-            "moreActionsMenu": "Menu më tepër veprime",
+            "lobbyButton": "Aktivizo/Çaktivizo mënyrën holl",
+            "localRecording": "Shfaq/Fshi kontrolle regjistrimi vendor",
+            "lockRoom": "Aktivizo/Çaktivizo fjalëkalim takimi",
+            "moreActions": "Më tepër veprime",
+            "moreActionsMenu": "Menu “Më tepër veprime”",
             "moreOptions": "Shfaq më tepër mundësi",
-            "mute": "Mbyllni/Hapni zërin",
+            "mute": "Mbyll/Hap zërin",
             "muteEveryone": "Heshto gjithkënd",
             "muteEveryoneElse": "Heshto gjithkënd tjetër",
             "muteEveryonesVideo": "Çaktivizo kamerën e gjithkujt",
@@ -811,25 +811,25 @@
             "pip": "Kalo/Dil nga mënyra “Picture-in-Picture”",
             "privateMessage": "Dërgo mesazh privat",
             "profile": "Përpunoni profilin tuaj",
-            "raiseHand": "Ngrini/ulni dorën",
-            "recording": "Nisni/Ndalni regjistrim",
+            "raiseHand": "Ngrini/Ulni dorën",
+            "recording": "Nis/Ndal regjistrim",
             "remoteMute": "Heshto pjesëmarrësin",
             "remoteVideoMute": "Çaktivizo kamerën e pjesëmarrësit",
             "security": "Mundësi sigurie",
-            "Settings": "Shfaqni/Fshihni rregullime",
+            "Settings": "Shfaq/Fshih rregullime",
             "shareaudio": "Ndani audio me të tjerë",
-            "sharedvideo": "Shfaqni/Fshini skenë për ndarje videoje YouTube me të tjerët",
+            "sharedvideo": "Shfaq/Fshih skenë për ndarje videoje YouTube me të tjerët",
             "shareRoom": "Ftoni dikë",
-            "shareYourScreen": "Aktivizoni/Çaktivizoni ndarje ekrani",
-            "shortcuts": "Shfaqni/Fshini shkurtoret",
+            "shareYourScreen": "Nisni / Ndalni dhënien e ekranit tuaj",
+            "shortcuts": "Shfaq/Fshih shkurtoret",
             "show": "Show on stage",
             "speakerStats": "Shfaqni statistika folësi",
-            "tileView": "Kaloni/Dilni nga mënyra mozaik",
-            "toggleCamera": "Hapni/Mbyllni kamerën",
-            "toggleFilmstrip": "Shfaqni/Fshihni shirit filmi",
-            "videomute": "Hapni/Mbyllni videon",
-            "videoblur": "Aktivizoni/Çaktivizoni turbullim videoje",
-            "selectBackground": "Përzgjidhni Sfond"
+            "tileView": "Kalo/Dil nga mënyra mozaik",
+            "toggleCamera": "Hap/Mbyll kamerën",
+            "toggleFilmstrip": "Shfaq/Fshih shirit filmi",
+            "videomute": "Nis / Ndal kamerën",
+            "videoblur": "Aktivizo/Çaktivizo turbullim videoje",
+            "selectBackground": "Përzgjidhni Sfond",
             "expand": "Zgjeroje",
             "collapse": "Tkurre"
         },
@@ -850,10 +850,10 @@
         "embedMeeting": "Trupëzoni takim",
         "enterFullScreen": "Shiheni sa krejt ekrani",
         "enterTileView": "Kalo te pamja me kuadrate",
-        "exitFullScreen": "Dilni nga mënyra sa krejt ekrani",
+        "exitFullScreen": "Dil nga mënyra sa krejt ekrani",
         "exitTileView": "Dil nga pamja me kuadrate",
         "feedback": "Lini përshtypje",
-        "hangup": "Dilni",
+        "hangup": "Braktisni takimin",
         "help": "Ndihmë",
         "invite": "Ftoni persona",
         "lobbyButtonDisable": "Çaktivizo mënyrën holl",
@@ -883,7 +883,7 @@
         "security": "Mundësi sigurie",
         "Settings": "Rregullime",
         "shareaudio": "Ndani audio me të tjerë",
-        "sharedvideo": "Ndani një video YouTube",
+        "sharedvideo": "Ndani video me të tjerë",
         "shareRoom": "Ftoni dikë",
         "shortcuts": "Shihni shkurtore",
         "speakerStats": "Statistika folësi",
@@ -891,7 +891,7 @@
         "startSubtitles": "Nis titra",
         "stopScreenSharing": "Ndale tregimin e ekranit",
         "stopSubtitles": "Ndali titrat",
-        "stopSharedVideo": "Ndale videon YouTube",
+        "stopSharedVideo": "Ndale videon",
         "talkWhileMutedPopup": "Po provoni të flisni? Jeni i heshtuar.",
         "tileViewToggle": "Kaloni/Dilni nga mënyra mozaik",
         "toggleCamera": "Hapni/Mbyllni kamerën",
@@ -904,7 +904,7 @@
         "expandedLabel": "Transkriptimi aktualisht është aktiv",
         "failedToStart": "S’u arrit të nisej transkriptim",
         "labelToolTip": "Takimit po i bëhet transkriptim",
-        "off": "Transkriptimi i ndal",
+        "off": "Transkriptimi u ndal",
         "pending": "Po përgatitet të transkriptohet takimi…",
         "start": "Fillo shfaqje titrash",
         "stop": "Ndal shfaqje titrash",
@@ -962,7 +962,7 @@
         "mute": "Pjesëmarrësi është heshtuar",
         "muted": "I heshtuar",
         "videoMuted": "Kamera e çaktivizuar",
-        "remoteControl": "Nis / Ndal kontroll së largëti",
+        "remoteControl": "Nisni / Ndalni kontroll së largëti",
         "show": "Show on stage",
         "videomute": "Pjesëmarrësi ka ndalur kamerën"
     },
@@ -987,7 +987,7 @@
         "headerTitle": "Jitsi Meet",
         "headerSubtitle": "Takime me siguri dhe me cilësi të lartë",
         "info": "Hollësi për dial-in",
-        "join": "KRIJONI / MERRNI PJESËS",
+        "join": "KRIJONI / MERRNI PJESË",
         "jitsiOnMobile": "Jitsi në celular – Shkarkoni aplikacione tona dhe nisni një takim prej ngado",
         "mobileDownLoadLinkIos": "Shkarkoni aplikacionin për celular me iOS",
         "mobileDownLoadLinkAndroid": "Shkarkoni aplikacionin për celular me Android",
@@ -1004,7 +1004,7 @@
         "sendFeedback": "Dërgoni përshtypje",
         "startMeeting": "Nisni takim",
         "terms": "Kushte",
-        "title": "Konferenca video të parrezik, me të gjitha veçoritë dhe plotësisht të lira"
+        "title": "Konferenca video të parrezik, me të gjitha veçoritë dhe plotësisht të lira",
         "logo":{
            "calendar":"Stemë Calendar-i",
            "microsoftLogo":"Stemë Microsoft-i",
